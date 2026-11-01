@@ -1,0 +1,14 @@
+# Packet-path guards: packets after stop are ignored (a packet before any start dereferences a NULL stream: outside the
+# preconditions, not tested); NULL packet = encoder failure -> ENCODE_ERROR then internal
+# stop; header missing -> INVALID_STREAM.
+create
+state
+start
+pktnull
+events
+state
+stop 0
+events
+# a packet arriving after the stop is ignored
+pkt v 0 0 0 1 100
+state

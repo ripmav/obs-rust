@@ -1,0 +1,44 @@
+# 2D texture creation with initial data for the formats the backend accepts, read back through
+# stage surfaces (glGetTexImage into a pack buffer).  Bytes come back exactly as uploaded for
+# integer formats.  Data are tightly packed rows; one pixel = bytes-per-pixel bytes.
+create
+enter
+tex rgba 2 1 RGBA 1 0 ff0000800000ff40
+read rgba
+tex bgra 2 1 BGRA 1 0 112233440a0b0c0d
+read bgra
+tex bgrx 2 1 BGRX 1 0 112233ff0a0b0cff
+read bgrx
+tex r8 3 2 R8 1 0 0102030405060708
+texinfo r8
+tex a8 4 1 A8 1 0 01020304
+read a8
+tex r8g8 2 1 R8G8 1 0 01020304
+read r8g8
+tex r16 2 1 R16 1 0 0100ff7f
+read r16
+tex rg16 1 1 RG16 1 0 01000200
+read rg16
+tex rgba16 1 1 RGBA16 1 0 0100020003000400
+read rgba16
+tex r10 2 1 R10G10B10A2 1 0 ffffff3f00000000
+read r10
+tex rgba16f 1 1 RGBA16F 1 0 003c00400000003c
+read rgba16f
+tex rg16f 1 1 RG16F 1 0 003c0040
+read rg16f
+tex r16f 2 1 R16F 1 0 003c0040
+read r16f
+tex r32f 1 1 R32F 1 0 0000803f
+read r32f
+tex rg32f 1 1 RG32F 1 0 0000803f00000040
+read rg32f
+tex rgba32f 1 1 RGBA32F 1 0 0000803f000000400000404000008040
+read rgba32f
+tex unorm 1 1 RGBA_UNORM 1 0 11223344
+read unorm
+tex unk 1 1 UNKNOWN 1 0 00
+tex zero 0 0 RGBA 1 0 -
+tex dxt1 4 4 DXT1 1 0 0000000000000000
+texinfo dxt1
+destroy

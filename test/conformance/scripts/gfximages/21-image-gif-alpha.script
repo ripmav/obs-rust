@@ -1,0 +1,40 @@
+# gs_image_file_ex_init alpha modes for animated GIFs. Only the frame decoded by init is premultiplied; frames
+# decoded later by tick/update_texture are always straight (the exported entry points pass STRAIGHT). Frame
+# 0 has a transparent pixel (index 1); with disposal 2 the next frame is composed on the background.
+file ta.gif 47494638396102000200a20000ff000000ff000000ffffffff00000000000000000000000021ff0b4e45545343415045322e30030100000021f90409050001002c00000000020002000003030821930021f90409050001002c0000000002000200000303183193003b
+echo == alpha mode straight
+img_init ta.gif straight
+img_state
+img_tex_init
+img_tex
+img_tick 60000000
+img_update
+img_tex
+img_tick 60000000
+img_update
+img_tex
+img_free
+echo == alpha mode srgb
+img_init ta.gif srgb
+img_state
+img_tex_init
+img_tex
+img_tick 60000000
+img_update
+img_tex
+img_tick 60000000
+img_update
+img_tex
+img_free
+echo == alpha mode premul
+img_init ta.gif premul
+img_state
+img_tex_init
+img_tex
+img_tick 60000000
+img_update
+img_tex
+img_tick 60000000
+img_update
+img_tex
+img_free

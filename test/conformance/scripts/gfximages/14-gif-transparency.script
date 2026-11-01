@@ -1,0 +1,36 @@
+# libnsgif transparency via the graphic control extension. Shows: the pixel value written for the transparent
+# index (alpha 0, colour bytes as listed), compositing a transparent pixel over the previous frame
+# (disposal 1) versus over the background (disposal 2), a transparent index outside the palette (200), and a
+# transparent index that refers to a local palette entry. frame_info.transparency reports the flag.
+file t1.gif 47494638396102000200a20400ff000000ff000000ffffffff00000000000000000000000021f90405050001002c00000000020002000003030821930021f90405050001002c000000000200020000030318a409003b
+file t2.gif 47494638396102000200a20400ff000000ff000000ffffffff00000000000000000000000021f90409050001002c00000000020002000003030821930021f90401050001002c000000000200020000030318a009003b
+file t3.gif 47494638396102000200a20400ff000000ff000000ffffffff00000000000000000000000021f904050500c8002c00000000020002000003030821930021f90404050000002c0000000002000200000303080a09003b
+file t4.gif 47494638396102000200a20000ff000000ff000000ffffffff00000000000000000000000021f90401050000002c0000000002000200800000ffffffff0202445c0021f90400050000002c000000000200020000030318a009003b
+echo == transparent index 1, frame 1 keeps previous (disposal 1)
+gif_new t1.gif
+gif_scan
+gif_complete
+gif_info
+gif_frame 0
+gif_frame 1
+echo == transparent index 1, frame 0 restored to background (disposal 2)
+gif_new t2.gif
+gif_scan
+gif_complete
+gif_info
+gif_frame 0
+gif_frame 1
+echo == transparent index 200 outside a 5 entry palette
+gif_new t3.gif
+gif_scan
+gif_complete
+gif_info
+gif_frame 0
+gif_frame 1
+echo == transparent index 0 with a local palette
+gif_new t4.gif
+gif_scan
+gif_complete
+gif_info
+gif_frame 0
+gif_frame 1

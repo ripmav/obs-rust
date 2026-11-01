@@ -1,0 +1,7 @@
+log debug Found dbus service: org.gnome.SessionManager
+dsi_create 0 ok
+dsi_inhibit done
+dsi_inhibit done
+svc call org.gnome.SessionManager.Inhibit path=/org/gnome/SessionManager body=('libobs', 0, 'Recording', 12)
+svc call org.gnome.SessionManager.Uninhibit path=/org/gnome/SessionManager body=(43,)
+dsi_destroy done

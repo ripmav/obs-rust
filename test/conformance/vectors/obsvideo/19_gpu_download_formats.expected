@@ -1,0 +1,370 @@
+--- I420 4x4: Y 4x4, U/V 2x2 ; tight line sizes
+loop -> 1 last_time=1000 frame_time_total=0 fps_total_ns=1000 fps_frames=1
+loop -> 1 last_time=2000 frame_time_total=0 fps_total_ns=2000 fps_frames=2
+out I plane0 01080f161d242b323940474e555c636a
+out I plane1 0e151c23
+out I plane2 1b222930
+--- I420 with padded output line sizes
+loop -> 1 last_time=3000 frame_time_total=0 fps_total_ns=3000 fps_frames=3
+out I plane0 01080f16000000001d242b32000000003940474e00000000555c636a00000000
+out I plane1 0e1500001c230000
+--- I420 with a padded input surface (line size 6 > width)
+loop -> 1 last_time=4000 frame_time_total=0 fps_total_ns=4000 fps_frames=4
+loop -> 1 last_time=5000 frame_time_total=0 fps_total_ns=5000 fps_frames=5
+out I plane0 01080f162b323940555c636a7f868d94
+--- NV12 two surfaces
+loop -> 1 last_time=6000 frame_time_total=0 fps_total_ns=6000 fps_frames=6
+loop -> 1 last_time=7000 frame_time_total=0 fps_total_ns=7000 fps_frames=7
+out N plane0 01080f161d242b323940474e555c636a
+out N plane1 0e151c232a31383f
+--- NV12 single surface (no second surface: UV follows Y inside surface 0, linesize[1]==0)
+loop -> 1 last_time=8000 frame_time_total=0 fps_total_ns=8000 fps_frames=8
+loop -> 1 last_time=9000 frame_time_total=0 fps_total_ns=9000 fps_frames=9
+out N plane0 01080f161d242b323940474e555c636a
+out N plane1 71787f868d949ba2
+--- I444
+loop -> 1 last_time=10000 frame_time_total=0 fps_total_ns=10000 fps_frames=10
+loop -> 1 last_time=11000 frame_time_total=0 fps_total_ns=11000 fps_frames=11
+out F plane0 01080f161d242b32
+out F plane1 0e151c232a31383f
+out F plane2 1b222930373e454c
+--- I010 (16-bit samples: Y rows are width*2 bytes, chroma rows width bytes)
+loop -> 1 last_time=12000 frame_time_total=0 fps_total_ns=12000 fps_frames=12
+loop -> 1 last_time=13000 frame_time_total=0 fps_total_ns=13000 fps_frames=13
+out T plane0 01080f161d242b323940474e555c636a
+out T plane1 0e151c23
+out T plane2 1b222930
+--- P010 two surfaces
+loop -> 1 last_time=14000 frame_time_total=0 fps_total_ns=14000 fps_frames=14
+loop -> 1 last_time=15000 frame_time_total=0 fps_total_ns=15000 fps_frames=15
+out P plane0 01080f161d242b323940474e555c636a
+out P plane1 0e151c232a31383f
+--- P010 single surface (UV follows the Y rows)
+loop -> 1 last_time=16000 frame_time_total=0 fps_total_ns=16000 fps_frames=16
+loop -> 1 last_time=17000 frame_time_total=0 fps_total_ns=17000 fps_frames=17
+out P plane1 71787f868d949ba2
+--- P216 (two full-height planes of width*2 bytes)
+loop -> 1 last_time=18000 frame_time_total=0 fps_total_ns=18000 fps_frames=18
+loop -> 1 last_time=19000 frame_time_total=0 fps_total_ns=19000 fps_frames=19
+out Q plane0 01080f161d242b323940474e555c636a
+out Q plane1 0e151c232a31383f464d545b62697077
+--- P416 (Y width*2 bytes, UV width*4 bytes)
+loop -> 1 last_time=20000 frame_time_total=0 fps_total_ns=20000 fps_frames=20
+loop -> 1 last_time=21000 frame_time_total=0 fps_total_ns=21000 fps_frames=21
+out R plane0 01080f161d242b323940474e555c636a
+out R plane1 0e151c232a31383f464d545b62697077
+--- unsupported GPU format (YUY2): nothing is copied, the frame is still locked and unlocked
+ev sp_frame_begin
+ev gs_enter_context
+ev gs_begin_frame
+ev gs_leave_context
+ev sp_render_begin
+ev gs_enter_context
+ev gs_begin_scene
+ev gs_enable_depth_test 0
+ev gs_set_cull_mode 2
+ev gs_set_render_target_cs I.render cs=0
+ev gs_clear flags=1 color=0,0,0,0 depth=1 stencil=0
+ev gs_enable_depth_test 0
+ev gs_set_cull_mode 2
+ev gs_ortho 0 4 0 4 -100 100
+ev gs_set_viewport 0 0 4 4
+ev obs_view_render I.view
+ev gs_set_render_target null
+ev gs_enable_blending 1
+ev gs_end_scene
+ev gs_flush
+ev gs_leave_context
+ev gs_enter_context
+ev gs_begin_scene
+ev gs_enable_depth_test 0
+ev gs_set_cull_mode 2
+ev gs_set_render_target_cs N.render cs=0
+ev gs_clear flags=1 color=0,0,0,0 depth=1 stencil=0
+ev gs_enable_depth_test 0
+ev gs_set_cull_mode 2
+ev gs_ortho 0 4 0 4 -100 100
+ev gs_set_viewport 0 0 4 4
+ev obs_view_render N.view
+ev gs_set_render_target null
+ev gs_enable_blending 1
+ev gs_end_scene
+ev gs_flush
+ev gs_leave_context
+ev gs_enter_context
+ev gs_begin_scene
+ev gs_enable_depth_test 0
+ev gs_set_cull_mode 2
+ev gs_set_render_target_cs F.render cs=0
+ev gs_clear flags=1 color=0,0,0,0 depth=1 stencil=0
+ev gs_enable_depth_test 0
+ev gs_set_cull_mode 2
+ev gs_ortho 0 4 0 2 -100 100
+ev gs_set_viewport 0 0 4 2
+ev obs_view_render F.view
+ev gs_set_render_target null
+ev gs_enable_blending 1
+ev gs_end_scene
+ev gs_flush
+ev gs_leave_context
+ev gs_enter_context
+ev gs_begin_scene
+ev gs_enable_depth_test 0
+ev gs_set_cull_mode 2
+ev gs_set_render_target_cs T.render cs=0
+ev gs_clear flags=1 color=0,0,0,0 depth=1 stencil=0
+ev gs_enable_depth_test 0
+ev gs_set_cull_mode 2
+ev gs_ortho 0 4 0 2 -100 100
+ev gs_set_viewport 0 0 4 2
+ev obs_view_render T.view
+ev gs_set_render_target null
+ev gs_enable_blending 1
+ev gs_end_scene
+ev gs_flush
+ev gs_leave_context
+ev gs_enter_context
+ev gs_begin_scene
+ev gs_enable_depth_test 0
+ev gs_set_cull_mode 2
+ev gs_set_render_target_cs P.render cs=0
+ev gs_clear flags=1 color=0,0,0,0 depth=1 stencil=0
+ev gs_enable_depth_test 0
+ev gs_set_cull_mode 2
+ev gs_ortho 0 4 0 2 -100 100
+ev gs_set_viewport 0 0 4 2
+ev obs_view_render P.view
+ev gs_set_render_target null
+ev gs_enable_blending 1
+ev gs_end_scene
+ev gs_flush
+ev gs_leave_context
+ev gs_enter_context
+ev gs_begin_scene
+ev gs_enable_depth_test 0
+ev gs_set_cull_mode 2
+ev gs_set_render_target_cs Q.render cs=0
+ev gs_clear flags=1 color=0,0,0,0 depth=1 stencil=0
+ev gs_enable_depth_test 0
+ev gs_set_cull_mode 2
+ev gs_ortho 0 4 0 2 -100 100
+ev gs_set_viewport 0 0 4 2
+ev obs_view_render Q.view
+ev gs_set_render_target null
+ev gs_enable_blending 1
+ev gs_end_scene
+ev gs_flush
+ev gs_leave_context
+ev gs_enter_context
+ev gs_begin_scene
+ev gs_enable_depth_test 0
+ev gs_set_cull_mode 2
+ev gs_set_render_target_cs R.render cs=0
+ev gs_clear flags=1 color=0,0,0,0 depth=1 stencil=0
+ev gs_enable_depth_test 0
+ev gs_set_cull_mode 2
+ev gs_ortho 0 4 0 2 -100 100
+ev gs_set_viewport 0 0 4 2
+ev obs_view_render R.view
+ev gs_set_render_target null
+ev gs_enable_blending 1
+ev gs_end_scene
+ev gs_flush
+ev gs_leave_context
+ev gs_enter_context
+ev gs_begin_scene
+ev gs_enable_depth_test 0
+ev gs_set_cull_mode 2
+ev gs_set_render_target_cs U.render cs=0
+ev gs_clear flags=1 color=0,0,0,0 depth=1 stencil=0
+ev gs_enable_depth_test 0
+ev gs_set_cull_mode 2
+ev gs_ortho 0 4 0 2 -100 100
+ev gs_set_viewport 0 0 4 2
+ev obs_view_render U.view
+ev gs_enable_blending 0
+ev effect_set_texture conversion.image = U.render
+ev effect_set_vec4 color_vec0 = 4.5,5.5,6.5,7.5
+ev effect_set_float sdr_white_nits_over_maximum = 0.0299999993
+ev effect_set_float hdr_lw = 1000
+ev gs_set_render_target U.conv0
+ev gs_enable_depth_test 0
+ev gs_set_cull_mode 2
+ev gs_ortho 0 4 0 2 -100 100
+ev gs_set_viewport 0 0 4 2
+ev technique_begin conversion.Tech0 passes=1
+ev technique_pass 0
+ev gs_draw mode=3 start=0 n=3
+ev technique_end
+ev gs_enable_blending 1
+ev gs_stage_texture U.surf0_0 <- U.conv0
+ev gs_set_render_target null
+ev gs_enable_blending 1
+ev gs_end_scene
+ev gs_flush
+ev gs_leave_context
+ev gs_enter_context
+ev gs_leave_context
+ev sp_render_end
+ev sp_frame_collect
+ev sleepto 23000 -> 1
+loop -> 1 last_time=22000 frame_time_total=0 fps_total_ns=22000 fps_frames=22
+ev sp_frame_begin
+ev gs_enter_context
+ev gs_begin_frame
+ev gs_leave_context
+ev sp_render_begin
+ev gs_enter_context
+ev gs_begin_scene
+ev gs_enable_depth_test 0
+ev gs_set_cull_mode 2
+ev gs_set_render_target_cs I.render cs=0
+ev gs_clear flags=1 color=0,0,0,0 depth=1 stencil=0
+ev gs_enable_depth_test 0
+ev gs_set_cull_mode 2
+ev gs_ortho 0 4 0 4 -100 100
+ev gs_set_viewport 0 0 4 4
+ev obs_view_render I.view
+ev gs_set_render_target null
+ev gs_enable_blending 1
+ev gs_end_scene
+ev gs_flush
+ev gs_leave_context
+ev gs_enter_context
+ev gs_begin_scene
+ev gs_enable_depth_test 0
+ev gs_set_cull_mode 2
+ev gs_set_render_target_cs N.render cs=0
+ev gs_clear flags=1 color=0,0,0,0 depth=1 stencil=0
+ev gs_enable_depth_test 0
+ev gs_set_cull_mode 2
+ev gs_ortho 0 4 0 4 -100 100
+ev gs_set_viewport 0 0 4 4
+ev obs_view_render N.view
+ev gs_set_render_target null
+ev gs_enable_blending 1
+ev gs_end_scene
+ev gs_flush
+ev gs_leave_context
+ev gs_enter_context
+ev gs_begin_scene
+ev gs_enable_depth_test 0
+ev gs_set_cull_mode 2
+ev gs_set_render_target_cs F.render cs=0
+ev gs_clear flags=1 color=0,0,0,0 depth=1 stencil=0
+ev gs_enable_depth_test 0
+ev gs_set_cull_mode 2
+ev gs_ortho 0 4 0 2 -100 100
+ev gs_set_viewport 0 0 4 2
+ev obs_view_render F.view
+ev gs_set_render_target null
+ev gs_enable_blending 1
+ev gs_end_scene
+ev gs_flush
+ev gs_leave_context
+ev gs_enter_context
+ev gs_begin_scene
+ev gs_enable_depth_test 0
+ev gs_set_cull_mode 2
+ev gs_set_render_target_cs T.render cs=0
+ev gs_clear flags=1 color=0,0,0,0 depth=1 stencil=0
+ev gs_enable_depth_test 0
+ev gs_set_cull_mode 2
+ev gs_ortho 0 4 0 2 -100 100
+ev gs_set_viewport 0 0 4 2
+ev obs_view_render T.view
+ev gs_set_render_target null
+ev gs_enable_blending 1
+ev gs_end_scene
+ev gs_flush
+ev gs_leave_context
+ev gs_enter_context
+ev gs_begin_scene
+ev gs_enable_depth_test 0
+ev gs_set_cull_mode 2
+ev gs_set_render_target_cs P.render cs=0
+ev gs_clear flags=1 color=0,0,0,0 depth=1 stencil=0
+ev gs_enable_depth_test 0
+ev gs_set_cull_mode 2
+ev gs_ortho 0 4 0 2 -100 100
+ev gs_set_viewport 0 0 4 2
+ev obs_view_render P.view
+ev gs_set_render_target null
+ev gs_enable_blending 1
+ev gs_end_scene
+ev gs_flush
+ev gs_leave_context
+ev gs_enter_context
+ev gs_begin_scene
+ev gs_enable_depth_test 0
+ev gs_set_cull_mode 2
+ev gs_set_render_target_cs Q.render cs=0
+ev gs_clear flags=1 color=0,0,0,0 depth=1 stencil=0
+ev gs_enable_depth_test 0
+ev gs_set_cull_mode 2
+ev gs_ortho 0 4 0 2 -100 100
+ev gs_set_viewport 0 0 4 2
+ev obs_view_render Q.view
+ev gs_set_render_target null
+ev gs_enable_blending 1
+ev gs_end_scene
+ev gs_flush
+ev gs_leave_context
+ev gs_enter_context
+ev gs_begin_scene
+ev gs_enable_depth_test 0
+ev gs_set_cull_mode 2
+ev gs_set_render_target_cs R.render cs=0
+ev gs_clear flags=1 color=0,0,0,0 depth=1 stencil=0
+ev gs_enable_depth_test 0
+ev gs_set_cull_mode 2
+ev gs_ortho 0 4 0 2 -100 100
+ev gs_set_viewport 0 0 4 2
+ev obs_view_render R.view
+ev gs_set_render_target null
+ev gs_enable_blending 1
+ev gs_end_scene
+ev gs_flush
+ev gs_leave_context
+ev gs_enter_context
+ev gs_begin_scene
+ev gs_enable_depth_test 0
+ev gs_set_cull_mode 2
+ev gs_set_render_target_cs U.render cs=0
+ev gs_clear flags=1 color=0,0,0,0 depth=1 stencil=0
+ev gs_enable_depth_test 0
+ev gs_set_cull_mode 2
+ev gs_ortho 0 4 0 2 -100 100
+ev gs_set_viewport 0 0 4 2
+ev obs_view_render U.view
+ev gs_enable_blending 0
+ev effect_set_texture conversion.image = U.render
+ev effect_set_vec4 color_vec0 = 4.5,5.5,6.5,7.5
+ev effect_set_float sdr_white_nits_over_maximum = 0.0299999993
+ev effect_set_float hdr_lw = 1000
+ev gs_set_render_target U.conv0
+ev gs_enable_depth_test 0
+ev gs_set_cull_mode 2
+ev gs_ortho 0 4 0 2 -100 100
+ev gs_set_viewport 0 0 4 2
+ev technique_begin conversion.Tech0 passes=1
+ev technique_pass 0
+ev gs_draw mode=3 start=0 n=3
+ev technique_end
+ev gs_enable_blending 1
+ev gs_stage_texture U.surf1_0 <- U.conv0
+ev gs_set_render_target null
+ev gs_enable_blending 1
+ev gs_end_scene
+ev gs_stagesurface_map U.surf0_0 linesize=4
+ev gs_flush
+ev gs_leave_context
+ev video_output_lock_frame U count=1 ts=22000 -> 1
+ev video_output_unlock_frame U
+ev gs_enter_context
+ev gs_leave_context
+ev sp_render_end
+ev sp_frame_collect
+ev sleepto 24000 -> 1
+loop -> 1 last_time=23000 frame_time_total=0 fps_total_ns=23000 fps_frames=23
+out U plane0 00000000000000000000000000000000

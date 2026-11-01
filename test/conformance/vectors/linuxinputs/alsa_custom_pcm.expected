@@ -1,0 +1,52 @@
+> alsa-reset
+> set-str device_id __custom__
+> set-str custom_pcm plughw:1,0
+> set-int rate 48000
+> alsa-create
+snd_pcm_open 'plughw:1,0' stream=1 mode=0
+hw_params_any
+hw_params_set_access 3
+hw_params_test_format S16_LE -> ok
+hw_params_set_format S16_LE
+hw_params_set_rate_near req=48000 dir=null
+log info alsa-input: PCM 'plughw:1,0' rate set to 48000
+hw_params_get_channels -> EINVAL (range 1..8)
+hw_params_set_channels_near req=2
+log info alsa-input: PCM 'plughw:1,0' channels set to 2
+hw_params commit
+hw_params_get_period_size -> 1024
+snd_pcm_start
+create -> ok
+> alsa-state
+state device=plughw:1,0 rate=48000 channels=2 format=S16_LE sample_size=4 period=1024 handle=1 listen_thread=1 reopen_thread=0 reopen=0 shutdown=0 buffer=1 first_ts=0
+log debug alsa-input: Capture thread started.
+> echo --- switching away from custom reopens with the new name
+> set-str device_id front:CARD=PCH
+> alsa-update
+snd_pcm_drop
+snd_pcm_close
+snd_pcm_open 'front:CARD=PCH' stream=1 mode=0
+hw_params_any
+hw_params_set_access 3
+hw_params_test_format S16_LE -> ok
+hw_params_set_format S16_LE
+hw_params_set_rate_near req=48000 dir=null
+log info alsa-input: PCM 'front:CARD=PCH' rate set to 48000
+hw_params_get_channels -> EINVAL (range 1..8)
+hw_params_set_channels_near req=2
+log info alsa-input: PCM 'front:CARD=PCH' channels set to 2
+hw_params commit
+hw_params_get_period_size -> 1024
+snd_pcm_start
+log debug alsa-input: Capture thread is about to exit.
+> alsa-state
+state device=front:CARD=PCH rate=48000 channels=2 format=S16_LE sample_size=4 period=1024 handle=1 listen_thread=1 reopen_thread=0 reopen=0 shutdown=0 buffer=1 first_ts=0
+> echo --- same name and rate: update is a no-op (no reopen)
+> alsa-update
+> alsa-counts
+counts opened=2 closed=1
+log debug alsa-input: Capture thread started.
+> alsa-destroy
+snd_pcm_drop
+snd_pcm_close
+log debug alsa-input: Capture thread is about to exit.

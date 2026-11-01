@@ -1,0 +1,21 @@
+# REAL noise-suppress-filter.c (version 2, method rnnoise) running on REAL RNNoise at 48 kHz stereo, fake host.
+# Packet handling (segmentation into 10 ms, null until enough output, timestamp = input timestamp - 10 ms latency).
+audio 48000 2
+ns_create f v2 rnnoise -30
+ns_gen f 0 speechlike 200 0.25 0.01 7
+ns_gen f 1 noise 0.1 9
+echo exact-segment-packets
+ns_process f 480 10000000000
+ns_process f 480 10010000000
+ns_process f 480 10020000000
+echo small-packets-buffer-then-release
+ns_process f 200 10030000000
+ns_process f 200 10040000000
+ns_process f 200 10050000000
+ns_process f 1000 10060000000
+echo timestamp-jump-over-1s-resets-buffers
+ns_process f 100 20000000000
+ns_process f 480 20010000000
+echo backwards-jump-also-resets
+ns_process f 480 5000000000
+ns_destroy f

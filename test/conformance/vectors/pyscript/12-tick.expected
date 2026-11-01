@@ -1,0 +1,37 @@
+scripting load -> 1 python=1 ticks=1
+log info [obs-scripting]: Loaded python script: tick_a.py
+create S0 -> loaded=1 lang=2 file=tick_a.py desc=NULL
+counts ticks=1 renders=0 hotkeys=0 fe_event=0 fe_save=0
+log info [obs-scripting]: Loaded python script: tick_b.py
+create S1 -> loaded=1 lang=2 file=tick_b.py desc=NULL
+counts ticks=3 renders=0 hotkeys=0 fe_event=0 fe_save=0
+log info [Python: tick_b.py] tick_b 0.500
+log info [Python: tick_a.py] tick_a 0.500
+log info [Python: tick_b.py] cb tick 1 0.500
+log info [Python: tick_b.py] lambda tick
+log info [Python: tick_b.py] tick_b 0.250
+log info [Python: tick_a.py] tick_a 0.250
+log info [Python: tick_b.py] cb tick 2 0.250
+log info [Python: tick_b.py] lambda tick
+echo third tick: cb was removed by remove_current_callback after the second one
+log info [Python: tick_b.py] tick_b 0.125
+log info [Python: tick_a.py] tick_a 0.125
+log info [Python: tick_b.py] lambda tick
+callbacks S1 total=1 removed=0
+echo unloading tick_a removes it from the list
+log info [obs-scripting]: Unloaded python script: tick_a.py
+destroy S0
+log info [Python: tick_b.py] tick_b 0.062
+log info [Python: tick_b.py] lambda tick
+echo explicit removal; wrong kinds of argument are ignored
+log info [obs-scripting]: Loaded python script: tick_c.py
+create S2 -> loaded=1 lang=2 file=tick_c.py desc=NULL
+log info [Python: tick_b.py] tick_b 1.000
+log info [Python: tick_b.py] lambda tick
+log info [obs-scripting]: Unloaded python script: tick_b.py
+destroy S1
+log info [obs-scripting]: Unloaded python script: tick_c.py
+destroy S2
+counts ticks=1 renders=0 hotkeys=0 fe_event=0 fe_save=0
+log info [Scripting] Total detached callbacks: 3
+scripting unload ticks=0

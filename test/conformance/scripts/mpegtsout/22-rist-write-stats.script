@@ -1,0 +1,22 @@
+# librist_write / stats callback / risterr2ret.
+log info
+rist_open "rist://192.0.2.20:8000"
+rist_write 1316
+rist_write 0
+rist_fail data_write -1
+rist_write 1316
+srt_reset_net
+rist_open "rist://192.0.2.20:8000"
+rist_fail data_write -5
+rist_write 188
+srt_reset_net
+risterr -1
+risterr -2
+risterr -999
+# the periodic statistics callback logs the sender's summary only for sender-peer statistics (debug) and always frees the block
+rist_open "rist://192.0.2.20:8000"
+log debug
+rist_stats
+rist_stats_other
+log info
+rist_close

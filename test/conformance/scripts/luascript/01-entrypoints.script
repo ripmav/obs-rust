@@ -1,0 +1,35 @@
+# Entry points of a well-behaved script, in the order the backend calls them while loading:
+# chunk runs, then script_defaults(settings), script_description(), script_load(settings), and finally
+# (from obs_lua_script_load) script_update(settings).  Settings given at creation are applied to the
+# script's private settings BEFORE script_defaults runs, so defaults never override them.
+scripting load
+lua_begin entry.lua
+print("chunk start")
+function script_defaults(s)
+  print("defaults user_has_a=" .. tostring(obslua.obs_data_has_user_value(s, "a")))
+  obslua.obs_data_set_default_string(s, "a", "default-a")
+  obslua.obs_data_set_default_int(s, "n", 7)
+end
+function script_description() print("description()"); return "Entry point demo" end
+function script_load(s)
+  print("load a=" .. obslua.obs_data_get_string(s, "a") .. " n=" .. obslua.obs_data_get_int(s, "n"))
+end
+function script_update(s)
+  print("update a=" .. obslua.obs_data_get_string(s, "a"))
+end
+function script_save(s)
+  print("save")
+  obslua.obs_data_set_string(s, "saved_by_script", "yes")
+end
+function script_unload() print("unload") end
+print("chunk end")
+lua_end
+create S0 entry.lua
+create S1 entry.lua s:a=user-a
+settings S0 s:a i:n u:a
+settings S1 s:a i:n u:a
+save S1 s:a s:saved_by_script
+save S0 s:saved_by_script
+destroy S0
+destroy S1
+scripting unload

@@ -1,0 +1,38 @@
+# timer_add(fn, ms) / timer_remove(fn) / remove_current_callback(): the timer list is processed from the libobs tick
+# callback. A timer fires when (frame_time - last_ts) >= interval, at most once per tick, and last_ts advances by
+# exactly one interval (so a late tick fires once per tick until it catches up). Registration is deferred (barrier).
+scripting load
+py_begin timers.py
+import obspython as obs
+n = 0
+def every_100ms():
+    global n
+    n += 1
+    print("timer fired, n =", n)
+def once():
+    print("one-shot fired")
+    obs.remove_current_callback()
+def script_load(settings):
+    obs.timer_add(every_100ms, 100)
+    obs.timer_add(once, 250)
+py_end
+time 1000000000
+create S0 timers.py
+barrier
+callbacks S0
+echo 50ms later: nothing
+tick 0.05 1050000000
+echo 100ms: first timer fires
+tick 0.05 1100000000
+echo 250ms: both are due (the newer timer is first in the list)
+tick 0.15 1250000000
+echo 1 s later: one fire per tick only, last_ts catches up by one interval each time
+tick 0.75 2000000000
+tick 0.0 2000000000
+tick 0.0 2000000000
+echo the one-shot is gone
+callbacks S0
+echo timers do not run after the script is unloaded
+destroy S0
+tick 0.1 5000000000
+scripting unload

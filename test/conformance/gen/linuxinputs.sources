@@ -1,0 +1,13 @@
+# S-062 linuxinputs: real linux-alsa, xcomposite, oss, sndio, jack, v4l2-output/udev/decoder plugin sources compiled in wrappers
+# against scripted fakes of ALSA PCM, X11/xcb, OSS ioctls, sndio, JACK, udev and v4l2 (libasound/libjack/... are NOT linked).
+# -I paths are relative to test/conformance (run.sh must be started there).
+test/conformance/gen/linuxinputs_runner.c
+test/conformance/gen/linuxinputs_common.c
+test/conformance/gen/linuxinputs_w_alsa.c
+test/conformance/gen/linuxinputs_stub_cmds.c
+libobs/obs-properties.c
+libobs/obs-data.c
+-ljansson
+-I../../deps/glad/include
+-Wno-deprecated-declarations
+-Wno-pointer-sign

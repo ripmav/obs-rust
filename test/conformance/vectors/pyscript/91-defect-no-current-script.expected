@@ -1,0 +1,8 @@
+scripting load -> 1 python=1 ticks=1
+try pyexec -> crash
+try pyexec -> crash
+try pyexec -> crash
+try pyexec -> crash
+try pyexec -> crash
+log info [Scripting] Total detached callbacks: 0
+scripting unload ticks=0

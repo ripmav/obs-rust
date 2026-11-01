@@ -1,0 +1,20 @@
+# A host name resolving to several addresses: on any failure other than "interrupted" the next address is tried
+# ("trying next address" warning); the last address' failure is the final result. Descriptors are not reused.
+log warning
+srt_open "srt://multi.test:9000"
+srt_close
+srt_reset_net
+srt_fail connect ECONNFAIL 0 1
+srt_open "srt://multi.test:9000"
+srt_close
+srt_reset_net
+srt_fail connect ECONNFAIL
+srt_open "srt://multi.test:9000"
+srt_reset_net
+# a socket option failure on the first address also takes the retry path (label fail): the second address is then used
+srt_fail setsockopt:SRTO_PAYLOADSIZE EUNKNOWN 0 1
+srt_open "srt://multi.test:9000"
+srt_reset_net
+# epoll error while connecting to the first address: retried
+srt_epoll error ECONNFAIL 0
+srt_open "srt://multi.test:9000?timeout=1000"

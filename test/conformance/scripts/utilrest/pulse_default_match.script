@@ -1,0 +1,28 @@
+# get_default_id / devices_match: the monitoring device "default" resolves through the server's default sink name.
+pa_server pulse 16.1 alsa_output.a
+pa_default_id
+pa_server pulse 16.1 -
+pa_default_id
+# an empty default name also yields ""
+pa_server pulse 16.1 ""
+pa_default_id
+pa_server pulse 16.1 alsa_output.a
+# devices_match(id1 = capture device of a source, id2 = monitoring output): id1 must be the ".monitor" of id2
+pa_match alsa_output.a.monitor alsa_output.a
+pa_match alsa_output.a alsa_output.a
+pa_match alsa_output.b.monitor alsa_output.a
+# "default" on either side is replaced by "<default sink>.monitor" (id1) / "<default sink>.monitor" (id2: also gets .monitor)
+pa_match default alsa_output.a
+pa_match alsa_output.a.monitor default
+pa_match default default
+pa_match default alsa_output.b
+pa_match alsa_output.b.monitor default
+# NULL on either side: false without touching the server
+pa_match - alsa_output.a
+pa_match alsa_output.a -
+pa_match - -
+# a missing default name: "default" becomes ".monitor"
+pa_server pulse 16.1 -
+pa_match .monitor default
+pa_match default default
+pa_match default x

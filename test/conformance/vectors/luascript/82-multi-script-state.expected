@@ -1,0 +1,16 @@
+scripting load -> 1 ticks=1
+log info [obs-scripting]: Loaded lua script: multi2.lua
+create S0 -> loaded=1 lang=1 file=multi2.lua desc=NULL
+log info [obs-scripting]: Loaded lua script: multi2.lua
+create S1 -> loaded=1 lang=1 file=multi2.lua desc=NULL
+log info [obs-scripting]: Loaded lua script: multi2.lua
+create S2 -> loaded=1 lang=1 file=multi2.lua desc=NULL
+log info [Lua: multi2.lua] tick of three
+log info [Lua: multi2.lua] tick of two
+log info [Lua: multi2.lua] tick of one
+log info [obs-scripting]: Unloaded lua script: multi2.lua
+destroy S1
+log info [Lua: multi2.lua] tick of three
+log info [Lua: multi2.lua] tick of one
+settings S0 seed="one"
+settings S2 seed="three"

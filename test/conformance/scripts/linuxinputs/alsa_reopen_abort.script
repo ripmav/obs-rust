@@ -1,0 +1,12 @@
+# S-062 ALSA: update() while the reopen thread is waiting aborts it through the abort event; the new settings are opened synchronously.
+alsa-reset
+set-int rate 44100
+alsa-cfg open-fail 100 -19
+alsa-create
+alsa-reopen-tick
+alsa-state
+alsa-cfg open-fail 0 0
+set-str device_id plug:other
+alsa-update
+alsa-state
+alsa-destroy

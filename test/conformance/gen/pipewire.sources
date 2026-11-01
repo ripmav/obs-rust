@@ -1,0 +1,41 @@
+# S-056 pipewire: the REAL plugins/linux-pipewire C files (formats, portal, screencast-portal, camera-portal,
+# pipewire stream engine, module entry) linked against scripted fakes of GIO/D-Bus, libpipewire and the OBS
+# core/graphics (gen/pipewire_stubs.c). Real libobs obs-data.c / obs-properties.c are used for settings/properties.
+# Needs: glib/gio headers+libs, libpipewire-0.3 (+spa) headers, libdrm headers. Paths below are the Arch/Debian defaults;
+# run.sh must be started in test/conformance (relative -I).
+test/conformance/gen/pipewire_runner.c
+test/conformance/gen/pipewire_stubs.c
+plugins/linux-pipewire/formats.c
+plugins/linux-pipewire/portal.c
+plugins/linux-pipewire/screencast-portal.c
+plugins/linux-pipewire/camera-portal.c
+plugins/linux-pipewire/pipewire.c
+plugins/linux-pipewire/linux-pipewire.c
+libobs/obs-properties.c
+libobs/obs-data.c
+libobs/media-io/video-matrices.c
+libobs/graphics/vec2.c
+libobs/graphics/vec3.c
+libobs/graphics/vec4.c
+libobs/graphics/quat.c
+libobs/graphics/axisang.c
+libobs/graphics/matrix3.c
+libobs/graphics/matrix4.c
+libobs/graphics/plane.c
+libobs/graphics/math-extra.c
+-ljansson
+-Wno-deprecated-declarations
+-Wno-unused-parameter
+-Wno-pointer-sign
+-Wno-address-of-packed-member
+-DG_DISABLE_CAST_CHECKS
+-I../../deps/glad/include
+-I../../plugins/linux-pipewire
+-I/usr/include/pipewire-0.3
+-I/usr/include/spa-0.2
+-I/usr/include/glib-2.0
+-I/usr/lib/glib-2.0/include
+-lpipewire-0.3
+-lgio-2.0
+-lgobject-2.0
+-lglib-2.0

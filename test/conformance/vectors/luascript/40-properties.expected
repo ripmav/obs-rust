@@ -1,0 +1,19 @@
+scripting load -> 1 ticks=1
+log info [obs-scripting]: Loaded lua script: props.lua
+create S0 -> loaded=1 lang=1 file=props.lua desc=NULL
+log info [Lua: props.lua] button returned userdata: true
+props P0 -> name:text:"Name" count:int:"Count" go:button:"Go!" nothing:button:"Nothing" boom:button:"Boom" num:button:"Num" flag:bool:"Flag"
+log info [Lua: props.lua] go clicked
+click P0 go -> 1
+log info [Lua: props.lua] nothing clicked
+click P0 nothing -> 0
+log warning [Lua: props.lua] Failed to call button_prop_clicked for button_prop_clicked: [string "<chunk>"]:7: attempt to index local 't' (a nil value)
+click P0 boom -> 0
+click P0 num -> 0
+log info [Lua: props.lua] modified flag=false
+modify P0 flag -> 1
+log info [Lua: props.lua] button returned userdata: true
+props P1 -> name:text:"Name" count:int:"Count" go:button:"Go!" nothing:button:"Nothing" boom:button:"Boom" num:button:"Num" flag:bool:"Flag"
+echo --- second call builds a fresh set
+log info [Lua: props.lua] go clicked
+click P1 go -> 1

@@ -1,0 +1,12 @@
+scripting load -> 1 ticks=1
+log warning [Lua: missing_then_created.lua] Error opening file: (null)
+create S0 -> loaded=0 lang=1 file=missing_then_created.lua desc=NULL
+update S0 done
+save S0
+props P0 ->
+settings S0 a=""
+log info [obs-scripting]: Loaded lua script: missing_then_created.lua
+log info [Lua: missing_then_created.lua] update a=
+reload S0 -> 1
+log info [Lua: missing_then_created.lua] update a=
+update S0 done

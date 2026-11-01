@@ -1,0 +1,42 @@
+# self-monitor feedback prevention, reset and destroy.
+pa_server pulse 16.1 alsa_output.a
+pa_sink alsa_output.a "A" f32 48000 2
+pa_sink alsa_output.b "B" s16 48000 2
+# OBS_SOURCE_DO_NOT_SELF_MONITOR (512) with a capture device that is the monitor of the monitoring output:
+# the monitor is created in "ignore" mode: no stream, no callback, but it is registered
+mon_dev alsa_output.a
+mon_src 0 512 1.0 alsa_output.a.monitor 1
+mon_create 0 0
+pa_stats
+mon_destroy 0
+# the device setting "default" is resolved through the server's default sink
+mon_src 0 512 1.0 default 1
+mon_create 0 0
+mon_destroy 0
+# different device: a real monitor
+mon_src 0 512 1.0 alsa_output.b.monitor 1
+mon_create 0 0
+mon_destroy 0
+# without the flag the setting is not consulted
+mon_src 0 0 1.0 alsa_output.a.monitor 1
+mon_create 0 0
+mon_destroy 0
+# monitoring device "default"
+mon_dev default
+mon_src 0 0 1.0 - 1
+mon_create 0 0
+# reset after the monitoring device changed: old stream stopped, new stream started on the new device
+mon_dev alsa_output.b
+mon_reset 0
+mon_play 0 1200 0.25 0
+mon_destroy 0
+# reset when the new device cannot be set up: the old monitor has already been torn down (its capture callback is gone,
+# the monitor stays in the registry). DEFECT D-3: audio_monitor_free ran on the SAME struct and left dangling pointers
+# (device, resampler), so a later audio_monitor_destroy double-frees them; the script therefore does not destroy it.
+# Required behaviour: after a failed reset the monitor must be inert and safe to destroy.
+mon_dev alsa_output.a
+mon_create 0 0
+mon_dev no_such_sink
+mon_reset 0
+mon_destroy_null
+pa_stats

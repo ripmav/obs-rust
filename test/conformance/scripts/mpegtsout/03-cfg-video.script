@@ -1,0 +1,38 @@
+# setup_video_settings: size, codec id, pixel format, colour description and bitrate / GOP derivation.
+create
+cfg video
+# keyint 0 -> gop 250; otherwise keyint_sec * fps_num / fps_den (integer arithmetic)
+world keyint 0
+cfg video
+world keyint 4
+world fps 60 1
+cfg video
+world fps 30000 1001
+world keyint 2
+cfg video
+world fps 25 2
+cfg video
+# video codec: only "h264" selects H264, anything else is mapped to AV1 without further checks
+world vcodec hevc
+cfg video
+world vcodec av1
+cfg video
+world vcodec h264
+# pixel formats
+world vformat i420
+cfg video
+world vformat i444
+cfg video
+world vformat bgra
+cfg video
+world vformat p010
+cfg video
+world vformat i010
+cfg video
+world vformat i422
+cfg video
+# unsupported -> OBS_OUTPUT_ERROR, "Invalid pixel format used for mpegts output" warning
+world vformat none
+cfg video
+world vformat y800
+cfg video

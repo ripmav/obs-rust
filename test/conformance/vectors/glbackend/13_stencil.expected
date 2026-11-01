@@ -1,0 +1,33 @@
+create rc=0 device=yes
+tex rt ok
+vshader vs ok
+pshader ps ok
+vb quad ok
+zs z ok
+vb full ok
+read rt 4x4 linesize=16
+  row 0 00ff00ff00ff00ff00ff00ff00ff00ff
+  row 1 00ff00ffff0000ffff0000ff00ff00ff
+  row 2 00ff00ffff0000ffff0000ff00ff00ff
+  row 3 00ff00ff00ff00ff00ff00ff00ff00ff
+read rt 4x4 linesize=16
+  row 0 000000ff000000ff000000ff000000ff
+  row 1 000000ff0000ffff0000ffff000000ff
+  row 2 000000ff0000ffff0000ffff000000ff
+  row 3 000000ff000000ff000000ff000000ff
+read rt 4x4 linesize=16
+  row 0 000000ff000000ff000000ff000000ff
+  row 1 000000ffffffffffffffffff000000ff
+  row 2 000000ffffffffffffffffff000000ff
+  row 3 000000ff000000ff000000ff000000ff
+read rt 4x4 linesize=16
+  row 0 ffffffffffffffffffffffffffffffff
+  row 1 ffffffff000000ff000000ffffffffff
+  row 2 ffffffff000000ff000000ffffffffff
+  row 3 ffffffffffffffffffffffffffffffff
+read rt 4x4 linesize=16
+  row 0 ffffffffffffffffffffffffffffffff
+  row 1 ffffffffffffffffffffffffffffffff
+  row 2 ffffffffffffffffffffffffffffffff
+  row 3 ffffffffffffffffffffffffffffffff
+destroyed

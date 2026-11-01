@@ -1,0 +1,36 @@
+# script_properties() returns an obs_properties_t built with the (stand-in) bindings.  Buttons added by the script
+# call fn(properties, property) when clicked and their boolean result is returned (non-boolean = false).
+# property modified callbacks get (properties, property, settings).  Errors are logged and mean `false`.
+scripting load
+lua_begin props.lua
+function script_properties()
+  local p = obslua.obs_properties_create()
+  obslua.obs_properties_add_text(p, "name", "Name", obslua.OBS_TEXT_DEFAULT)
+  obslua.obs_properties_add_int(p, "count", "Count", 0, 10, 1)
+  local b = obslua.obs_properties_add_button(p, "go", "Go!", function(props, prop) print("go clicked"); return true end)
+  obslua.obs_properties_add_button(p, "nothing", "Nothing", function() print("nothing clicked") end)
+  obslua.obs_properties_add_button(p, "boom", "Boom", function() local t = nil; t.x = 1 end)
+  obslua.obs_properties_add_button(p, "num", "Num", function() return 1 end)
+  print("button returned userdata: " .. tostring(obslua.fake_is_userdata(b)))
+  local cb = obslua.obs_properties_add_bool(p, "flag", "Flag")
+  obslua.obs_property_set_modified_callback(cb, function(props, prop, settings)
+    print("modified flag=" .. tostring(obslua.obs_data_get_bool(settings, "flag")))
+    obslua.obs_property_set_enabled(obslua.obs_properties_get(props, "count"), false)
+    return true
+  end)
+  -- invalid button registrations are ignored
+  obslua.obs_properties_add_button(p, "nofn", "NoFn", 5)
+  obslua.obs_properties_add_button(p, nil, "NoName", function() end)
+  return p
+end
+lua_end
+create S0 props.lua
+props S0 P0
+click P0 go
+click P0 nothing
+click P0 boom
+click P0 num
+modify P0 flag S0
+props S0 P1
+echo --- second call builds a fresh set
+click P1 go

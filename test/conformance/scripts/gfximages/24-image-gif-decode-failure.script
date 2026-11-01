@@ -1,0 +1,23 @@
+# gs_image_file_ex with an animation whose middle frame cannot be decoded (corrupt LZW data, header and table
+# scan fine). Shows the error handling in init/tick/update_texture: the failure is only logged (init); later
+# ticks switch to the frame normally and the frame then shows the previous canvas.
+file bf.gif 47494638396102000200910000ff000000ff000000ffffffff21ff0b4e45545343415045322e30030100000021f90400050000002c000000000200020000020284510021f90400050000002c0000000002000200000204ffffffff0021f90400050000002c00000000020002000002029455003b
+echo == frame 1 holds a corrupt LZW stream: init logs it and goes on
+img_init bf.gif straight
+img_tex_init
+img_tex
+echo == update_texture before any tick: frame 0 is not cached yet and is decoded now
+img_update
+img_tex
+echo == tick onto the frame that failed at init: the tick reports a change and the frame later shows the previous canvas
+img_tick 50000001
+img_state
+img_update
+img_tex
+echo == tick on to frame 2
+img_tick 50000000
+img_state
+img_update
+img_tex
+img_tick 50000000 3
+img_free

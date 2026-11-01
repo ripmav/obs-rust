@@ -1,0 +1,28 @@
+scripting load -> 1 ticks=1
+log info [Lua: life.lua] fresh state, counter=1
+log info [obs-scripting]: Loaded lua script: life.lua
+log info [Lua: life.lua] update u=1
+create S0 -> loaded=1 lang=1 file=life.lua desc=NULL
+callbacks S0 total=2 removed=0
+log info [Lua: life.lua] tick
+log info [Lua: life.lua] timer
+log info [Lua: life.lua] signal
+echo --- reload
+log info [Lua: life.lua] script_unload, can still log
+log info [obs-scripting]: Unloaded lua script: life.lua
+log info [Lua: life.lua] fresh state, counter=1
+log info [obs-scripting]: Loaded lua script: life.lua
+log info [Lua: life.lua] update u=1
+reload S0 -> 1
+callbacks S0 total=2 removed=0
+settings S0 keep="me"
+echo --- old timer record is dropped lazily on the next tick; only the new one fires
+log info [Lua: life.lua] tick
+log info [Lua: life.lua] timer
+log info [Lua: life.lua] signal
+echo --- destroy
+log info [Lua: life.lua] script_unload, can still log
+log info [obs-scripting]: Unloaded lua script: life.lua
+destroy S0
+log info [Scripting] Total detached callbacks: 4
+scripting unload ticks=0

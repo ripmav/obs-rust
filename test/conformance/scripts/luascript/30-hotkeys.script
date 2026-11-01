@@ -1,0 +1,29 @@
+# obs_hotkey_register_frontend(name, desc, fn) returns the id; presses are re-posted to the deferred worker
+# (fn(pressed) runs after a barrier, never inside libobs' call).  obs_hotkey_unregister(fn) flags the record and its
+# on_remove hook posts the libobs unregister.  A failed registration (invalid id 0) removes the record again
+# and returns that id.  Missing name/description/function: ignored, nothing returned.
+scripting load
+lua_begin hk.lua
+function hot(pressed) print("hot pressed=" .. tostring(pressed)) end
+id1 = obslua.obs_hotkey_register_frontend("hk1", "First", hot)
+print("id1=" .. id1)
+id2 = obslua.obs_hotkey_register_frontend("bad-one", "Bad", hot)
+print("id2=" .. id2)
+print("noname results=" .. select("#", obslua.obs_hotkey_register_frontend(nil, "x", hot)))
+print("nodesc results=" .. select("#", obslua.obs_hotkey_register_frontend("hk3", nil, hot)))
+print("nofn results=" .. select("#", obslua.obs_hotkey_register_frontend("hk4", "x", 5)))
+function script_update(s)
+  if obslua.obs_data_get_string(s, "cmd") == "unreg" then obslua.obs_hotkey_unregister(hot) end
+end
+lua_end
+create S0 hk.lua
+callbacks S0
+hotkey 1 1
+barrier
+hotkey 1 0
+barrier
+update S0 s:cmd=unreg
+barrier
+callbacks S0
+hotkey 1 1
+barrier

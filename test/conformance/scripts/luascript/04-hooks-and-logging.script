@@ -1,0 +1,28 @@
+# print()/error() are replaced by logging hooks (INFO / ERROR on the script channel).  error() does NOT raise:
+# execution continues after it (reference quirk Q-2).  Only the first argument is used; non-strings that are not
+# numbers are ignored.  obslua.script_log(level, text) splits text at newlines and logs one line per piece
+# (a trailing newline produces no empty extra line; an empty line in the middle is logged as an empty line;
+# a call without text does nothing; an EMPTY text crashes the reference: see 90-defect-script-log-empty).
+scripting load
+lua_begin hooks.lua
+print("plain")
+print("two", "args")
+print(12)
+print(nil)
+print({})
+print(true)
+print("")
+error("reported")
+print("after error")
+error({})
+obslua.script_log(obslua.LOG_ERROR, "e-level")
+obslua.script_log(obslua.LOG_WARNING, "w-level")
+obslua.script_log(obslua.LOG_INFO, "i-level")
+obslua.script_log(obslua.LOG_DEBUG, "d-level")
+obslua.script_log(obslua.LOG_INFO, "line1\nline2\n")
+obslua.script_log(obslua.LOG_INFO, "a\n\nb")
+obslua.script_log(obslua.LOG_INFO)
+obslua.script_log(5, "level five")
+obslua.script_log("x", "level zero")
+lua_end
+create S0 hooks.lua

@@ -1,0 +1,130 @@
+> create
+create ok
+> srt_fail connect ECONNREJ
+> start
+start returned 1
+srt startup
+srt create_socket -> 1
+srt setsockopt fd=1 SRTO_TRANSTYPE=0
+srt setsockopt fd=1 SRTO_ENFORCEDENCRYPTION=0
+srt setsockopt fd=1 SRTO_KMREFRESHRATE=0
+srt setsockopt fd=1 SRTO_KMPREANNOUNCE=0
+srt setsockopt fd=1 SRTO_SNDDROPDELAY=0
+srt setsockopt fd=1 SRTO_PAYLOADSIZE=1316
+srt setsockopt fd=1 SRTO_SENDER=1
+srt setsockopt fd=1 SRTO_SNDSYN=0
+srt setsockopt fd=1 SRTO_RCVSYN=0
+srt connect fd=1 192.0.2.10:9000
+log error [obs-ffmpeg mpegts muxer / libsrt]: fake srt error 1002
+log error [obs-ffmpeg mpegts muxer / libsrt]: Connection rejected, fake reject reason 2
+srt epoll_release
+srt close fd=1
+srt cleanup
+srt epoll_release
+srt close fd=0
+srt cleanup
+log error [obs-ffmpeg mpegts muxer: 'mpegts']: I/O error
+log error [obs-ffmpeg mpegts muxer: 'mpegts']: Failed to open the url
+log error failed to start the mpegts output
+> events
+events ERROR
+> srt_reset_net
+> srt_state connecting
+> start
+start returned 1
+srt startup
+srt create_socket -> 1
+srt setsockopt fd=1 SRTO_TRANSTYPE=0
+srt setsockopt fd=1 SRTO_ENFORCEDENCRYPTION=0
+srt setsockopt fd=1 SRTO_KMREFRESHRATE=0
+srt setsockopt fd=1 SRTO_KMPREANNOUNCE=0
+srt setsockopt fd=1 SRTO_SNDDROPDELAY=0
+srt setsockopt fd=1 SRTO_PAYLOADSIZE=1316
+srt setsockopt fd=1 SRTO_SENDER=1
+srt setsockopt fd=1 SRTO_SNDSYN=0
+srt setsockopt fd=1 SRTO_RCVSYN=0
+srt connect fd=1 192.0.2.10:9000
+srt epoll_release
+srt close fd=1
+srt cleanup
+srt epoll_release
+srt close fd=0
+srt cleanup
+log error [obs-ffmpeg mpegts muxer: 'mpegts']: Failed to open the url or invalid stream
+log error [obs-ffmpeg mpegts muxer: 'mpegts']: Failed to open the url
+log error failed to start the mpegts output
+> events
+events CONNECT_FAILED
+> srt_reset_net
+> world url srt://192.0.2.10:70000
+> start
+start returned 1
+srt startup
+log error [obs-ffmpeg mpegts muxer / libsrt]: Port missing in uri
+srt cleanup
+srt epoll_release
+srt close fd=0
+srt cleanup
+log error [obs-ffmpeg mpegts muxer: 'mpegts']: URL is malformed
+log error [obs-ffmpeg mpegts muxer: 'mpegts']: Failed to open the url
+log error failed to start the mpegts output
+> events
+events BAD_PATH
+> world url srt://bad.test:9000
+> start
+start returned 1
+srt startup
+log error [obs-ffmpeg mpegts muxer / libsrt]: Failed to resolve hostname bad.test
+srt cleanup
+srt epoll_release
+srt close fd=0
+srt cleanup
+log error [obs-ffmpeg mpegts muxer: 'mpegts']: URL is malformed
+log error [obs-ffmpeg mpegts muxer: 'mpegts']: Failed to open the url
+log error failed to start the mpegts output
+> events
+events BAD_PATH
+> world url srt://192.0.2.10:9000?mode=bogus
+> start
+start returned 1
+srt startup
+srt cleanup
+srt epoll_release
+srt close fd=0
+srt cleanup
+log error [obs-ffmpeg mpegts muxer: 'mpegts']: I/O error
+log error [obs-ffmpeg mpegts muxer: 'mpegts']: Failed to open the url
+log error failed to start the mpegts output
+> events
+events ERROR
+> world url rist://192.0.2.20:8000?aes-type=128
+> start
+start returned 1
+rist sender_create profile=1 flow_id=0
+log error [obs-ffmpeg mpegts muxer / librist]: Secret is mandatory if encryption is enabled
+rist destroy
+log error [obs-ffmpeg mpegts muxer: 'mpegts']: Failed to open the url or invalid stream
+log error [obs-ffmpeg mpegts muxer: 'mpegts']: Failed to open the url
+log error failed to start the mpegts output
+> events
+events INVALID_STREAM
+> srt_reset_net
+> rist_fail start -1
+> world url rist://192.0.2.20:8000
+> start
+start returned 1
+rist sender_create profile=1 flow_id=0
+rist peer_create address=rist://192.0.2.20:8000 physical_port=0 virt_dst_port=1968 key_size=0 secret=""
+rist   srp_username="" srp_password="" recovery_length_min=3000 recovery_length_max=3000
+rist   initiate_conn=0 recovery_mode=2 weight=0 session_timeout=0 cname="" compression=0
+rist start
+log error [obs-ffmpeg mpegts muxer / librist]: RIST failed to start
+rist destroy
+log error [obs-ffmpeg mpegts muxer: 'mpegts']: I/O error
+log error [obs-ffmpeg mpegts muxer: 'mpegts']: Failed to open the url
+log error failed to start the mpegts output
+> events
+events ERROR
+> state
+state running=0 stopping=0 write_thread_active=0 has_connected=0 got_headers=0 queued=0
+state total_bytes=0 initialized=0 begin_calls=0 stop_ts=0

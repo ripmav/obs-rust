@@ -1,0 +1,23 @@
+scripting load -> 1 python=1 ticks=1
+refs One=1 Two=1 Three=1 Three-f0=1 Three-f1=1 item100=0 item101=0 item102=0
+log info [Python: lists.py] sources: ['One', 'Two', 'Three', 'Three-f0', 'Three-f1']
+log info [Python: lists.py] items: [100, 101, 102]
+log info [Python: lists.py] group items: 3
+log info [obs-scripting]: Loaded python script: lists.py
+create S0 -> loaded=1 lang=2 file=lists.py desc=NULL
+echo each list element holds one extra reference (the group enumeration reuses the scene items: 3 + 3)
+refs One=2 Two=2 Three=2 Three-f0=2 Three-f1=2 item100=2 item101=2 item102=2
+log info [Python: lists.py] released
+update S0 done
+echo released
+refs One=1 Two=1 Three=1 Three-f0=1 Three-f1=1 item100=0 item101=0 item102=0
+log warning [Python] scene_enum_items:<line>: SWIG failed to convert python object to obs object: obs_scene_t *
+log info [Python: lists.py] result: NoneType -
+log info [Python: lists.py] raised: SystemError
+log info [Python: lists.py] raised: SystemError
+log info [Python: lists.py] result: list 5
+save S0
+log info [obs-scripting]: Unloaded python script: lists.py
+auto-destroy S0
+log info [Scripting] Total detached callbacks: 0
+scripting unload ticks=0

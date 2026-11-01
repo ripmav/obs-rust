@@ -1,0 +1,94 @@
+> unique_name :1.5
+> prop ScreenCast AvailableSourceTypes uint32 1
+> prop ScreenCast version uint32 2
+> screencast_load
+dbus.bus_get type=2 -> ok
+dbus.proxy_new org.freedesktop.portal.Desktop /org/freedesktop/portal/desktop org.freedesktop.portal.ScreenCast flags=0
+log info [pipewire] Available capture sources:
+log info [pipewire]     - Monitor source
+host.register_source pipewire-desktop-capture-source type=0 flags=0x481 icon=6
+host.register_source pipewire-screen-capture-source type=0 flags=0x81 icon=6
+> gs_dmabuf 1 ARGB8888
+> gs_modifiers ARGB8888 0x0 0x7 0x9
+> pw_server_version 1.2.0
+> new a pipewire-desktop-capture-source
+log info PipeWire initialized
+dbus.subscribe#1 org.freedesktop.portal.Desktop org.freedesktop.portal.Request.Response path=/org/freedesktop/portal/desktop/request/1_5/obs1 arg0=NULL flags=1
+dbus.call#1 CreateSession ({'handle_token': <'obs1'>, 'session_handle_token': <'obs1'>},)
+created a
+> portal_ok 45
+dbus.signal Response -> /org/freedesktop/portal/desktop/request/1_5/obs1
+log info [pipewire] Screencast session created
+dbus.subscribe#2 org.freedesktop.portal.Desktop org.freedesktop.portal.Request.Response path=/org/freedesktop/portal/desktop/request/1_5/obs2 arg0=NULL flags=1
+dbus.call#2 SelectSources (objectpath '/s/auto', {'types': <uint32 1>, 'multiple': <false>, 'handle_token': <'obs2'>, 'cursor_mode': <uint32 1>})
+dbus.unsubscribe#1
+dbus.signal Response -> /org/freedesktop/portal/desktop/request/1_5/obs2
+log debug [pipewire] Response to select source received
+log info [pipewire] Asking for monitor
+dbus.subscribe#3 org.freedesktop.portal.Desktop org.freedesktop.portal.Request.Response path=/org/freedesktop/portal/desktop/request/1_5/obs3 arg0=NULL flags=1
+dbus.call#3 Start (objectpath '/s/auto', '', {'handle_token': <'obs3'>})
+dbus.unsubscribe#2
+dbus.signal Response -> /org/freedesktop/portal/desktop/request/1_5/obs3
+log info [pipewire] source selected, setting up screencast
+dbus.call#4 OpenPipeWireRemote (objectpath '/s/auto', @a{sv} {})
+dbus.unsubscribe#3
+dbus.finish#4 OpenPipeWireRemote
+pw.thread_loop_new "PipeWire thread loop"
+pw.thread_loop_start -> 0
+pw.context_connect_fd -> core
+pw.core_add_listener
+pw.core_sync id=0 seq_in=0 -> 1
+log info [pipewire] Server version: 1.2.0
+log info [pipewire] Library version: lib-version
+log info [pipewire] Header version: <hdr>
+gs.query_dmabuf_capabilities -> 1
+gs.query_dmabuf_modifiers 0x34325241 -> 3
+pw.loop_add_event#1
+log debug [pipewire] registered event <ptr>
+pw.stream_new#1 "OBS Studio" props={media.type=Video,media.category=Capture,media.role=Screen}
+log info [pipewire] Created stream <ptr>
+pw.stream_connect#1 dir=input target=45 flags=0x5 n_params=7
+  param[0] Object(type=0x40003,id=3){mediaType=Id:2(video); mediaSubtype=Id:1(raw); format=Id:12(BGRA); modifier[flags=0x18]=Choice:Enum<Long:0,Long:0,Long:7,Long:9,Long:72057594037927935>; size=Choice:Range<Rect:1920x1080,Rect:1x1,Rect:8192x4320>; framerate=Choice:Range<Frac:60/1,Frac:0/1,Frac:360/1>}
+  param[1] Object(type=0x40003,id=3){mediaType=Id:2(video); mediaSubtype=Id:1(raw); format=Id:12(BGRA); size=Choice:Range<Rect:1920x1080,Rect:1x1,Rect:8192x4320>; framerate=Choice:Range<Frac:60/1,Frac:0/1,Frac:360/1>}
+  param[2] Object(type=0x40003,id=3){mediaType=Id:2(video); mediaSubtype=Id:1(raw); format=Id:11(RGBA); size=Choice:Range<Rect:1920x1080,Rect:1x1,Rect:8192x4320>; framerate=Choice:Range<Frac:60/1,Frac:0/1,Frac:360/1>}
+  param[3] Object(type=0x40003,id=3){mediaType=Id:2(video); mediaSubtype=Id:1(raw); format=Id:8(BGRx); size=Choice:Range<Rect:1920x1080,Rect:1x1,Rect:8192x4320>; framerate=Choice:Range<Frac:60/1,Frac:0/1,Frac:360/1>}
+  param[4] Object(type=0x40003,id=3){mediaType=Id:2(video); mediaSubtype=Id:1(raw); format=Id:7(RGBx); size=Choice:Range<Rect:1920x1080,Rect:1x1,Rect:8192x4320>; framerate=Choice:Range<Frac:60/1,Frac:0/1,Frac:360/1>}
+  param[5] Object(type=0x40003,id=3){mediaType=Id:2(video); mediaSubtype=Id:1(raw); format=Id:85(ABGR_210LE); size=Choice:Range<Rect:1920x1080,Rect:1x1,Rect:8192x4320>; framerate=Choice:Range<Frac:60/1,Frac:0/1,Frac:360/1>}
+  param[6] Object(type=0x40003,id=3){mediaType=Id:2(video); mediaSubtype=Id:1(raw); format=Id:81(xBGR_210LE); size=Choice:Range<Rect:1920x1080,Rect:1x1,Rect:8192x4320>; framerate=Choice:Range<Frac:60/1,Frac:0/1,Frac:360/1>}
+log info [pipewire] Playing stream <ptr>
+> dmabuf_import fail
+> param_changed format=BGRA size=64x64 modifier=0x7
+pw.event param_changed id=4 Object(type=0x40003,id=4){mediaType=Id:2(video); mediaSubtype=Id:1(raw); format=Id:12(BGRA); modifier=Long:7; size=Rect:64x64; framerate=Frac:60/1}
+gs.query_sync_capabilities -> 0
+log info [pipewire] Negotiated format:
+log info [pipewire]     Format: 12 (Spa:Enum:VideoFormat:BGRA)
+log info [pipewire]     Modifier: 0x7
+log info [pipewire]     Size: 64x64
+log info [pipewire]     Framerate: 60/1
+pw.stream_update_params#1 n_params=5
+  param[0] Object(type=0x40005,id=6){type=Id:2(VideoCrop); size=Int:16}
+  param[1] Object(type=0x40005,id=6){type=Id:5(Cursor); size=Choice:Range<Int:16432,Int:52,Int:4194352>}
+  param[2] Object(type=0x40004,id=5){dataType=Int:10}
+  param[3] Object(type=0x40005,id=6){type=Id:1(Header); size=Int:32}
+  param[4] Object(type=0x40005,id=6){type=Id:8(VideoTransform); size=Int:4}
+> buf_data 0 0 dmabuf 11 0 256 100 0 0
+> buf_push 0
+> process
+pw.event process
+pw.dequeue_buffer #0
+gs.texture_create_from_dmabuf 64x64 drm=0x34325241 cf=4 planes=1 [fd#11 stride=256 off=0 mod=0x7] -> NULL
+pw.loop_signal_event#1
+pw.queue_buffer #0
+> run_events
+pw.run_event#1
+log info [pipewire] Renegotiating stream
+pw.stream_update_params#1 n_params=7
+  param[0] Object(type=0x40003,id=3){mediaType=Id:2(video); mediaSubtype=Id:1(raw); format=Id:12(BGRA); modifier[flags=0x18]=Choice:Enum<Long:0,Long:0,Long:9,Long:72057594037927935>; size=Choice:Range<Rect:1920x1080,Rect:1x1,Rect:8192x4320>; framerate=Choice:Range<Frac:60/1,Frac:0/1,Frac:360/1>}
+  param[1] Object(type=0x40003,id=3){mediaType=Id:2(video); mediaSubtype=Id:1(raw); format=Id:12(BGRA); size=Choice:Range<Rect:1920x1080,Rect:1x1,Rect:8192x4320>; framerate=Choice:Range<Frac:60/1,Frac:0/1,Frac:360/1>}
+  param[2] Object(type=0x40003,id=3){mediaType=Id:2(video); mediaSubtype=Id:1(raw); format=Id:11(RGBA); size=Choice:Range<Rect:1920x1080,Rect:1x1,Rect:8192x4320>; framerate=Choice:Range<Frac:60/1,Frac:0/1,Frac:360/1>}
+  param[3] Object(type=0x40003,id=3){mediaType=Id:2(video); mediaSubtype=Id:1(raw); format=Id:8(BGRx); size=Choice:Range<Rect:1920x1080,Rect:1x1,Rect:8192x4320>; framerate=Choice:Range<Frac:60/1,Frac:0/1,Frac:360/1>}
+  param[4] Object(type=0x40003,id=3){mediaType=Id:2(video); mediaSubtype=Id:1(raw); format=Id:7(RGBx); size=Choice:Range<Rect:1920x1080,Rect:1x1,Rect:8192x4320>; framerate=Choice:Range<Frac:60/1,Frac:0/1,Frac:360/1>}
+  param[5] Object(type=0x40003,id=3){mediaType=Id:2(video); mediaSubtype=Id:1(raw); format=Id:85(ABGR_210LE); size=Choice:Range<Rect:1920x1080,Rect:1x1,Rect:8192x4320>; framerate=Choice:Range<Frac:60/1,Frac:0/1,Frac:360/1>}
+  param[6] Object(type=0x40003,id=3){mediaType=Id:2(video); mediaSubtype=Id:1(raw); format=Id:81(xBGR_210LE); size=Choice:Range<Rect:1920x1080,Rect:1x1,Rect:8192x4320>; framerate=Choice:Range<Frac:60/1,Frac:0/1,Frac:360/1>}
+> leaks
+leaks textures=0 lock_depth=0

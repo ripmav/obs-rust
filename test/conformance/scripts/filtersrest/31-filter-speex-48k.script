@@ -1,0 +1,26 @@
+# REAL noise-suppress-filter.c (version 1 default method speex, and version 2 with method speex) on REAL libspeexdsp.
+audio 48000 2
+ns_create s v1 - -30
+ns_gen s 0 noise 0.05 3
+ns_gen s 1 noise 0.05 4
+ns_process s 480 1000000000
+ns_process s 480 1010000000
+ns_process s 480 1020000000
+ns_process s 480 1030000000
+ns_destroy s
+echo level-minus-60
+ns_create t v2 speex -60
+ns_gen t 0 noise 0.05 3
+ns_gen t 1 silence
+ns_process t 480 1000000000
+ns_process t 480 1010000000
+ns_process t 480 1020000000
+ns_process t 960 1030000000
+ns_destroy t
+echo mono-1ch-host
+audio 48000 1
+ns_create m v2 speex -30
+ns_gen m 0 sine 440 0.5
+ns_process m 480 1000000000
+ns_process m 480 1010000000
+ns_destroy m

@@ -1,0 +1,3 @@
+scripting load -> 1 ticks=1
+log info [Lua: crash.lua] before
+try create -> crash signal 11

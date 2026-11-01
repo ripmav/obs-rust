@@ -1,0 +1,26 @@
+scripting load -> 1 ticks=1
+log info [Lua: fe.lua] scene names: Scene A,Scene B
+log info [Lua: fe.lua] scenes: SceneA,SceneB
+log info [Lua: fe.lua] current scene: SceneA
+fake set_current_scene SceneB
+log info [Lua: fe.lua] current transition is nil: true
+log info [Lua: fe.lua] transitions: SceneA
+log info [Lua: fe.lua] duration: 300
+log info [Lua: fe.lua] duration: 450
+log info [Lua: fe.lua] collections: Default,Other current Default
+log info [Lua: fe.lua] profiles: Untitled,Second current Untitled
+log warning [Lua] Wrong parameter type for parameter 1 of add_event_callback
+log info [obs-scripting]: Loaded lua script: fe.lua
+create S0 -> loaded=1 lang=1 file=fe.lua desc=NULL
+fe_state duration=450 collection=Other profile=Second
+counts ticks=1 renders=0 hotkeys=0 fe_event=1 fe_save=1
+log info [Lua: fe.lua] event 3
+log info [Lua: fe.lua] save saving=true sd=true
+fe_save result mark="x"
+log info [Lua: fe.lua] save saving=false sd=true
+fe_save result
+update S0 done
+fake frontend event callback removed
+fake frontend save callback removed
+fe_save result
+fe_state duration=450 collection=Other profile=Second

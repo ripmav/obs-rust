@@ -1,0 +1,85 @@
+# Errors in the write thread: INVALIDDATA and EINVAL from the muxer are tolerated (packet dropped, stream continues); any other
+# error ends the write thread and signals a stop: SRT -> DISCONNECTED if the socket is BROKEN/NONEXIST else ERROR, RIST ->
+# DISCONNECTED, other protocols -> ERROR. The next encoded packet then triggers an internal stop (stopping flag is set).
+create
+start
+pkt v 0 0 0 1 3000
+pkt a 0 0 0 1 200
+drain
+write_fail 1 INVALIDDATA
+pkt v 0 1 1 0 800
+drain
+events
+write_fail 1 EINVAL
+pkt v 0 2 2 0 800
+drain
+events
+state
+drain
+write_fail 1 -5
+srt_state broken
+pkt v 0 3 3 0 800
+wait_event 1
+events
+state
+pkt v 0 4 4 0 800
+events
+state
+stop 0
+events
+# non-broken socket -> ERROR
+srt_reset_net
+write_fail 0
+start
+pkt v 0 0 0 1 3000
+pkt a 0 0 0 1 200
+drain
+write_fail 1 -5
+pkt v 0 1 1 0 800
+wait_event 1
+events
+stop 0
+events
+# socket NONEXIST -> DISCONNECTED
+srt_reset_net
+write_fail 0
+start
+pkt v 0 0 0 1 3000
+pkt a 0 0 0 1 200
+drain
+srt_state nonexist
+write_fail 1 -5
+pkt v 0 1 1 0 800
+wait_event 1
+events
+stop 0
+events
+# RIST
+srt_reset_net
+srt_state auto
+world url "rist://192.0.2.20:8000"
+write_fail 0
+start
+pkt v 0 0 0 1 3000
+pkt a 0 0 0 1 200
+drain
+write_fail 1 -5
+pkt v 0 1 1 0 800
+wait_event 1
+events
+stop 0
+events
+# real transport error through the AVIO callback: a failing srt_send makes the muxer's I/O fail (the first big write)
+srt_reset_net
+world url "srt://192.0.2.10:9000"
+write_fail 0
+start
+pkt v 0 0 0 1 100
+pkt a 0 0 0 1 100
+drain
+srt_fail send ECONNLOST 32
+pkt v 0 1 1 0 3000
+wait_event 1
+events
+stop 0
+events

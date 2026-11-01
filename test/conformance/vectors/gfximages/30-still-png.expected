@@ -1,0 +1,77 @@
+file rgba.png 80 bytes
+== rgba.png alpha mode straight
+texfile format=RGBA cx=2 cy=2 space=0 data=ff0000ff00ff00800000ff00ffffff40
+== rgba.png alpha mode srgb
+texfile format=RGBA cx=2 cy=2 space=0 data=ff0000ff00bc00800000000089898940
+== rgba.png alpha mode premul
+texfile format=RGBA cx=2 cy=2 space=0 data=ff0000ff008000800000000040404040
+file rgb.png 77 bytes
+== rgb.png alpha mode straight
+texfile format=BGRA cx=2 cy=2 space=0 data=0000ffff00ff00ffff0000ffffffffff
+== rgb.png alpha mode srgb
+texfile format=BGRA cx=2 cy=2 space=0 data=0000ffff00ff00ffff0000ffffffffff
+== rgb.png alpha mode premul
+texfile format=BGRA cx=2 cy=2 space=0 data=0000ffff00ff00ffff0000ffffffffff
+file gray.png 71 bytes
+== gray.png alpha mode straight
+texfile format=BGRA cx=2 cy=2 space=0 data=000000ff555555ffaaaaaaffffffffff
+== gray.png alpha mode srgb
+texfile format=BGRA cx=2 cy=2 space=0 data=000000ff555555ffaaaaaaffffffffff
+== gray.png alpha mode premul
+texfile format=BGRA cx=2 cy=2 space=0 data=000000ff555555ffaaaaaaffffffffff
+file ga.png 75 bytes
+== ga.png alpha mode straight
+texfile format=BGRA cx=2 cy=2 space=0 data=000000ff55555580aaaaaa40ffffff00
+== ga.png alpha mode srgb
+texfile format=BGRA cx=2 cy=2 space=0 data=000000ff3c3c3c805959594000000000
+== ga.png alpha mode premul
+texfile format=BGRA cx=2 cy=2 space=0 data=000000ff2b2b2b802b2b2b4000000000
+file pal.png 95 bytes
+== pal.png alpha mode straight
+texfile format=BGRA cx=2 cy=2 space=0 data=0000ffff00ff00ffff0000ffffffffff
+== pal.png alpha mode srgb
+texfile format=BGRA cx=2 cy=2 space=0 data=0000ffff00ff00ffff0000ffffffffff
+== pal.png alpha mode premul
+texfile format=BGRA cx=2 cy=2 space=0 data=0000ffff00ff00ffff0000ffffffffff
+file pal_t.png 110 bytes
+== pal_t.png alpha mode straight
+texfile format=BGRA cx=2 cy=2 space=0 data=0000ffff00ff0080ff000000ffffffff
+== pal_t.png alpha mode srgb
+texfile format=BGRA cx=2 cy=2 space=0 data=0000ffff00bc008000000000ffffffff
+== pal_t.png alpha mode premul
+texfile format=BGRA cx=2 cy=2 space=0 data=0000ffff0080008000000000ffffffff
+file rgb_t.png 90 bytes
+== rgb_t.png alpha mode straight
+texfile format=RGBA cx=2 cy=1 space=0 data=ff00000000ff00ff
+== rgb_t.png alpha mode srgb
+texfile format=RGBA cx=2 cy=1 space=0 data=0000000000ff00ff
+== rgb_t.png alpha mode premul
+texfile format=RGBA cx=2 cy=1 space=0 data=0000000000ff00ff
+file rgba16.png 80 bytes
+== rgba16.png alpha mode straight
+texfile format=RGBA cx=2 cy=1 space=0 data=ff0000ff0080ff80
+== rgba16.png alpha mode srgb
+texfile format=RGBA cx=2 cy=1 space=0 data=ff0000ff005cbc80
+== rgba16.png alpha mode premul
+texfile format=RGBA cx=2 cy=1 space=0 data=ff0000ff00408080
+file rgb16.png 72 bytes
+== rgb16.png alpha mode straight
+texfile format=BGRA cx=1 cy=1 space=0 data=0080ffff
+== rgb16.png alpha mode srgb
+texfile format=BGRA cx=1 cy=1 space=0 data=0080ffff
+== rgb16.png alpha mode premul
+texfile format=BGRA cx=1 cy=1 space=0 data=0080ffff
+file g16.png 68 bytes
+== g16.png alpha mode straight
+texfile format=BGRA cx=1 cy=1 space=0 data=9c9c9cff
+== g16.png alpha mode srgb
+texfile format=BGRA cx=1 cy=1 space=0 data=9c9c9cff
+== g16.png alpha mode premul
+texfile format=BGRA cx=1 cy=1 space=0 data=9c9c9cff
+file wide.png 88 bytes
+== wide.png alpha mode straight
+texfile format=RGBA cx=3 cy=2 space=0 data=ff0000ff00ff00ff0000ffff0102030405060708090a0b0c
+== wide.png alpha mode srgb
+texfile format=RGBA cx=3 cy=2 space=0 data=ff0000ff00ff00ff0000ffff00000004000000080000010c
+== wide.png alpha mode premul
+texfile format=RGBA cx=3 cy=2 space=0 data=ff0000ff00ff00ff0000ffff00000004000000080000010c

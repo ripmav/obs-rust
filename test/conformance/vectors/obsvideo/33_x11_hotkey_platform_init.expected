@@ -1,0 +1,42 @@
+hotkeys_platform_init -> 0 context=null
+--- connect
+xi_select_events window=0x1234 n=1 deviceid=1 mask_len=1 mask=0x18000
+log debug found alternate keycode 13 for OBS_KEY_SHIFT which already has keycode 12
+log debug found alternate keycode 18 for OBS_KEY_RETURN which already has keycode 17
+hotkeys_platform_init -> 1 context=set min_keycode=8 super_l=15 super_r=16 num_keysyms=132 syms_per_code=4
+x11 opens=2 closes=0 flushes=1 select_events=1 pending_events=0
+keycodes OBS_KEY_ESCAPE: 9
+keycodes OBS_KEY_1: 10
+keycodes OBS_KEY_EXCLAM:
+keycodes OBS_KEY_A: 11
+keycodes OBS_KEY_SHIFT: 12 13
+keycodes OBS_KEY_CONTROL: 14
+keycodes OBS_KEY_ALT: 21
+keycodes OBS_KEY_META:
+keycodes OBS_KEY_RETURN: 17 18
+keycodes OBS_KEY_NUM0: 19
+keycodes OBS_KEY_F1: 20
+keycodes OBS_KEY_B:
+keycodes OBS_KEY_MENU: 25
+--- base keysyms of the static table
+base_keysym OBS_KEY_A = 0x41
+base_keysym OBS_KEY_ESCAPE = 0xff1b
+base_keysym OBS_KEY_SHIFT = 0xffe1
+base_keysym OBS_KEY_META = 0x0
+base_keysym OBS_KEY_NONE = 0x0
+base_keysym OBS_KEY_MOUSE1 = 0x10000
+--- free closes the connection and clears the context and vtable
+hotkeys_platform_free context=null vtable=null
+x11 opens=2 closes=1 flushes=1 select_events=1 pending_events=0
+--- keyboard mapping request fails: init still succeeds, nothing learned
+xi_select_events window=0x1234 n=1 deviceid=1 mask_len=1 mask=0x18000
+log warning xcb_get_keyboard_mapping_reply failed
+hotkeys_platform_init -> 1 context=set min_keycode=8 super_l=0 super_r=0 num_keysyms=0 syms_per_code=0
+keycodes OBS_KEY_ESCAPE:
+hotkeys_platform_free context=null vtable=null
+--- a default screen index that does not exist: root window falls back to 0 (select_events on window 0)
+xi_select_events window=0x0 n=1 deviceid=1 mask_len=1 mask=0x18000
+log debug found alternate keycode 13 for OBS_KEY_SHIFT which already has keycode 12
+log debug found alternate keycode 18 for OBS_KEY_RETURN which already has keycode 17
+hotkeys_platform_init -> 1 context=set min_keycode=8 super_l=15 super_r=16 num_keysyms=132 syms_per_code=4
+hotkeys_platform_free context=null vtable=null

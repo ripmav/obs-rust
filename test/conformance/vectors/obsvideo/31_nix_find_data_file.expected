@@ -1,0 +1,15 @@
+find a.effect -> (null)
+--- prefix only
+find a.effect -> prefix/data/libobs/libobs/a.effect
+--- executable-relative beats prefix
+find a.effect -> <work>/bin/../data/libobs/libobs/a.effect
+--- working directory beats both
+find a.effect -> data/libobs/libobs/a.effect
+--- removing in reverse order falls back down the list
+find a.effect -> <work>/bin/../data/libobs/libobs/a.effect
+find a.effect -> prefix/data/libobs/libobs/a.effect
+find a.effect -> (null)
+--- the file name is appended verbatim (subdirectory)
+find sub/b.effect -> <work>/bin/../data/libobs/libobs/sub/b.effect
+find sub -> <work>/bin/../data/libobs/libobs/sub
+find  -> data/libobs/libobs/

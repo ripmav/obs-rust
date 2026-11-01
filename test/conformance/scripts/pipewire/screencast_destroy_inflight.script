@@ -1,0 +1,11 @@
+# Destroying a source while a portal Request is still pending: the cancellable fires, the plugin closes the Request
+# (org.freedesktop.portal.Request.Close) and drops its Response subscription. No session exists yet -> no Session.Close.
+unique_name :1.5
+prop ScreenCast AvailableSourceTypes "uint32 1"
+prop ScreenCast version "uint32 2"
+screencast_load
+new sc pipewire-desktop-capture-source
+destroy sc
+new sd pipewire-desktop-capture-source
+response 2 "(0, {'session_handle': <'/s/d'>})"
+destroy sd

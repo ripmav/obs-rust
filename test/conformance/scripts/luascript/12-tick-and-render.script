@@ -1,0 +1,43 @@
+# script_tick(seconds) is called once per libobs tick for every loaded script, newest-loaded script first
+# (scripts are linked at the head of the tick list).  obs_add_tick_callback / obs_add_main_render_callback register
+# callbacks through the deferred queue; remove_* flag the first matching record; a flagged callback is dropped
+# (and disconnected from libobs) the next time libobs invokes it, without calling Lua.
+scripting load
+lua_begin tickA.lua
+function script_tick(s) print(string.format("A tick %.3f", s)) end
+lua_end
+lua_begin tickB.lua
+function script_tick(s) print(string.format("B tick %.3f", s)) end
+function cbt(s) print(string.format("B cbt %.3f", s)) end
+function render(cx, cy) print("B render " .. cx .. "x" .. cy) end
+function render_bad(cx, cy) local t = nil; t.x = 1 end
+obslua.obs_add_tick_callback(cbt)
+obslua.obs_add_main_render_callback(render)
+obslua.obs_add_main_render_callback(render_bad)
+-- invalid arguments are rejected with a warning
+obslua.obs_add_tick_callback(1)
+obslua.obs_add_tick_callback()
+obslua.obs_add_tick_callback(cbt, 2)
+obslua.obs_remove_tick_callback("x")
+obslua.obs_remove_main_render_callback()
+function script_update(s)
+  local cmd = obslua.obs_data_get_string(s, "cmd")
+  if cmd == "drop" then
+    obslua.obs_remove_tick_callback(cbt)
+    obslua.obs_remove_main_render_callback(render)
+  end
+end
+lua_end
+create S0 tickA.lua
+create S1 tickB.lua
+barrier
+counts
+tick 0.0166
+render 640 360
+echo --- remove the tick and one render callback
+update S1 s:cmd=drop
+echo --- flagged records stay registered with libobs until libobs calls them; Lua is not called
+counts
+tick 0.0166
+render 640 360
+counts

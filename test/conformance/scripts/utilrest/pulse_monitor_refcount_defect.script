@@ -1,0 +1,15 @@
+# DEFECT D-2: audio_monitor_create with no monitoring device configured (obs->audio.monitoring_device_id == NULL)
+# fails BEFORE pulseaudio_init(), but the failure path still calls pulseaudio_unref(). The reference counter is
+# unsigned, so 0 - 1 wraps; the next init sees a non-zero count, never creates the mainloop/context and every later
+# pulse call runs against a NULL mainloop (the real libpulse would crash; the fake counts "null_mainloop_calls").
+# Required behaviour: failed create must leave the counter untouched and later monitoring must work.
+pa_server pulse 16.1 alsa_output.a
+pa_sink alsa_output.a "A" f32 48000 2
+mon_src 0 0 1.0 - 1
+mon_dev -
+mon_create 0 0
+pa_stats
+# a correct implementation can now monitor and enumerate; the reference cannot (no sink is reported)
+mon_dev alsa_output.a
+pa_enum
+pa_stats

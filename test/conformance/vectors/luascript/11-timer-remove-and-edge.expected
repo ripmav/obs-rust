@@ -1,0 +1,17 @@
+scripting load -> 1 ticks=1
+log info [obs-scripting]: Loaded lua script: tr.lua
+create S0 -> loaded=1 lang=1 file=tr.lua desc="timers"
+callbacks S0 total=4 removed=0
+log info [Lua: tr.lua] t1
+log info [Lua: tr.lua] once
+log info [Lua: tr.lua] t1
+log info [Lua: tr.lua] t1
+echo --- once is gone; remove one t1 registration
+log info [obs-scripting]: Loaded lua script: remover.lua
+create S1 -> loaded=1 lang=1 file=remover.lua desc=NULL
+callbacks S1 total=1 removed=0
+log info [Lua: remover.lua] t1
+log info [Lua: tr.lua] t1
+log info [Lua: tr.lua] t1
+log info [Lua: tr.lua] t1
+callbacks S1 total=1 removed=0

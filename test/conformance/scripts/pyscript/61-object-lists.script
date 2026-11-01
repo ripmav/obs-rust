@@ -1,0 +1,43 @@
+# obs_enum_sources / obs_scene_enum_items / obs_sceneitem_group_enum_items return Python lists whose elements
+# carry an extra reference taken by the backend; source_list_release / sceneitem_list_release drop them.
+# Wrong arguments return None (and leave the argument error pending: SystemError in the caller).
+scripting load
+fake_source One
+fake_source Two
+fake_source Three 2
+scene_items 3
+refs
+py_begin lists.py
+import obspython as obs
+def script_load(settings):
+    srcs = obs.obs_enum_sources()
+    print("sources:", [obs.obs_source_get_name(s) for s in srcs])
+    items = obs.obs_scene_enum_items(obs.fake_scene())
+    print("items:", [obs.obs_sceneitem_get_id(i) for i in items])
+    group = obs.obs_sceneitem_group_enum_items(obs.fake_sceneitem(0))
+    print("group items:", len(group))
+    globals()["held"] = (srcs, items, group)
+def script_update(settings):
+    if settings is not None and obs.obs_data_has_user_value(settings, "release"):
+        srcs, items, group = held
+        obs.source_list_release(srcs)
+        obs.sceneitem_list_release(items)
+        obs.sceneitem_list_release(group)
+        print("released")
+def script_save(settings):
+    for bad in (lambda: obs.obs_scene_enum_items("nope"), lambda: obs.obs_scene_enum_items(),
+                lambda: obs.source_list_release(), lambda: obs.obs_enum_sources()):
+        try:
+            r = bad()
+            print("result:", type(r).__name__, len(r) if r is not None else "-")
+        except Exception as e:
+            print("raised:", type(e).__name__)
+py_end
+create S0 lists.py
+echo each list element holds one extra reference (the group enumeration reuses the scene items: 3 + 3)
+refs
+update S0 i:release=1
+echo released
+refs
+save S0
+scripting unload

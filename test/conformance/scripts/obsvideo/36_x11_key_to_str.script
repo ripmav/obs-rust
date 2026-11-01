@@ -1,0 +1,53 @@
+# obs_key_to_str on X11. Order of rules: mouse keys -> translation or "Mouse N"; numpad digits -> translation or "Numpad N";
+# a fixed list of named keys (Insert, Home, ..., Escape, Space, Super for META) -> translation (obs_get_hotkey_translation) or the
+# English default; F1..F35 -> "F<n>"; otherwise the learned keycodes are tried in order through XLookupString (first non-empty
+# result wins, upper-cased); finally the obs key name (OBS_KEY_...) when still empty. OBS_KEY_NONE stays empty. NOTE: the result is
+# COPIED over the destination (dstr_copy) for the named keys but the keycode path uses dstr_ncopy; the prefilled destination
+# demonstrates which rules overwrite and which append/leave it.
+x11_setup 8 40 4
+x11_map 11 XK_a XK_A
+x11_map 12 XK_1
+x11_map 13 XK_b XK_B
+x11_map 14 XK_comma
+x11_map 15 XK_Menu
+hk_init
+x11_lookup 11 a
+x11_lookup 12 1
+x11_lookup 13 -
+x11_lookup 14 ,
+echo "--- mouse"
+hk_to_str OBS_KEY_MOUSE1
+hk_to_str OBS_KEY_MOUSE29
+hk_translation OBS_KEY_MOUSE2 "Right Click"
+hk_to_str OBS_KEY_MOUSE2
+hk_translation OBS_KEY_MOUSE2 -
+echo "--- numpad digits"
+hk_to_str OBS_KEY_NUM0
+hk_to_str OBS_KEY_NUM9
+hk_translation OBS_KEY_NUM3 "Pad 3"
+hk_to_str OBS_KEY_NUM3
+echo "--- fixed names and translations"
+hk_to_str OBS_KEY_INSERT
+hk_to_str OBS_KEY_PAGEUP
+hk_to_str OBS_KEY_META
+hk_to_str OBS_KEY_SPACE
+hk_to_str OBS_KEY_NUMPLUS
+hk_translation OBS_KEY_ESCAPE "Esc"
+hk_to_str OBS_KEY_ESCAPE
+hk_to_str OBS_KEY_ESCAPE prefill
+echo "--- function keys"
+hk_to_str OBS_KEY_F1
+hk_to_str OBS_KEY_F35
+echo "--- keycode lookup via XLookupString, upper-cased"
+hk_to_str OBS_KEY_A
+hk_to_str OBS_KEY_1
+hk_to_str OBS_KEY_COMMA
+echo "--- lookup yields nothing: falls back to the obs key name"
+hk_to_str OBS_KEY_B
+echo "--- key with no keycode: obs key name; NONE stays empty"
+hk_to_str OBS_KEY_C
+hk_to_str OBS_KEY_NONE
+echo "--- keycode path appends nothing but ncopy replaces; prefilled value with a successful lookup"
+hk_to_str OBS_KEY_A prefill
+hk_to_str OBS_KEY_C prefill
+hk_free

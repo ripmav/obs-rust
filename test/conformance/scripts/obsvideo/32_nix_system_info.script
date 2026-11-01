@@ -1,0 +1,32 @@
+# log_system_info on Linux: CPU, core counts, memory, kernel, distribution (or Flatpak block), desktop session env vars and,
+# for the X11 platform, the X window system line. Machine specific values are masked to the label; the environment driven
+# lines are printed in full. Desktop: "<XDG_CURRENT_DESKTOP> (<XDG_SESSION_DESKTOP>)" when both set, the single set one
+# otherwise, none when neither; Session Type only when XDG_SESSION_TYPE is set.
+nix_platform_set 1
+nix_display_set null
+nix_env XDG_CURRENT_DESKTOP GNOME
+nix_env XDG_SESSION_DESKTOP gnome-xorg
+nix_env XDG_SESSION_TYPE x11
+echo "--- X11 platform without a display"
+nix_system_info
+echo "--- display with an X.Org server: release split into major.minor.patch"
+nix_display_set fake
+x11_vendor "The X.Org Foundation" 12101003 11 0
+nix_system_info
+echo "--- non X.Org vendor"
+x11_vendor "Some Vendor" 42 11 0
+nix_env XDG_SESSION_DESKTOP -
+nix_env XDG_SESSION_TYPE -
+nix_system_info
+echo "--- only the session desktop set"
+nix_env XDG_CURRENT_DESKTOP -
+nix_env XDG_SESSION_DESKTOP KDE
+nix_system_info
+echo "--- no desktop variables"
+nix_env XDG_SESSION_DESKTOP -
+nix_system_info
+echo "--- Wayland platform: no X line"
+nix_platform_set 2
+nix_system_info
+nix_platform_set 1
+nix_display_set null

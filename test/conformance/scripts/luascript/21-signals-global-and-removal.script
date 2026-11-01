@@ -1,0 +1,26 @@
+# signal_handler_connect_global(handler, fn): fn(signal_name, calldata) for every signal of the handler.
+# remove_current_callback() inside a signal callback flags the record; the dispatcher then returns without
+# calling Lua and disconnects it from the signal handler (signal_handler_remove_current).
+# Unloading the script flags all records: later emissions never call Lua.
+scripting load
+handler H0 "void ping(int n)"
+handler H0 "void pong(int n)"
+lua_begin glob.lua
+local h = obslua.fake_handler(0)
+function g(name, cd) print("global " .. name .. " n=" .. obslua.calldata_get_int(cd, "n")) end
+function once(cd) print("once n=" .. obslua.calldata_get_int(cd, "n")); obslua.remove_current_callback() end
+function bad(cd) local t = nil; t.x = 1 end
+obslua.signal_handler_connect_global(h, g)
+obslua.signal_handler_connect(h, "ping", once)
+obslua.signal_handler_connect(h, "pong", bad)
+lua_end
+create S0 glob.lua
+barrier
+emit H0 ping i:n=1
+emit H0 ping i:n=2
+emit H0 pong i:n=3
+callbacks S0
+destroy S0
+echo --- after unload nothing is called, records are flagged/detached
+emit H0 ping i:n=4
+emit H0 pong i:n=5

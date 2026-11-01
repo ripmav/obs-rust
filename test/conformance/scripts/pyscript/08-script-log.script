@@ -1,0 +1,29 @@
+# obspython.script_log(level, text) and script_log_no_endl: text is split at newlines, each piece logged at the
+# given level (any integer is passed to the log handler as is); empty text and bad arguments log nothing; the
+# buffer for an unfinished line is shared with sys.stdout / sys.stderr.
+scripting load
+py_begin logs.py
+import obspython as obs, sys
+def script_load(settings):
+    obs.script_log(obs.LOG_ERROR, "error text")
+    obs.script_log(obs.LOG_WARNING, "warning text")
+    obs.script_log(obs.LOG_INFO, "info text")
+    obs.script_log(obs.LOG_DEBUG, "debug text")
+    obs.script_log(5, "level five")
+    obs.script_log(obs.LOG_INFO, "two\nlines")
+    obs.script_log(obs.LOG_INFO, "")
+    obs.script_log(obs.LOG_INFO, "trailing newline\n")
+    obs.script_log_no_endl(obs.LOG_INFO, "no ")
+    obs.script_log_no_endl(obs.LOG_WARNING, "end")
+    obs.script_log_no_endl(obs.LOG_ERROR, "ing\n")
+    obs.script_log_no_endl(obs.LOG_INFO, "pending")
+    obs.script_log(obs.LOG_INFO, " + endl")
+    for bad in (("x",), (1,), (obs.LOG_INFO,), (obs.LOG_INFO, 5), ()):
+        try:
+            obs.script_log(*bad)
+        except Exception as e:
+            print("raised", type(e).__name__, "for", bad)
+    print("done")
+py_end
+create S0 logs.py
+scripting unload

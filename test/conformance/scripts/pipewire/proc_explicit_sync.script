@@ -1,0 +1,47 @@
+# Explicit sync (PipeWire >= 1.2): a dmabuf buffer carries [planes..., acquire syncobj, release syncobj] plus a SyncTimeline
+# meta. The plugin keeps duplicated syncobj fds; render waits on the acquire point and later exports the release point.
+# A release point that was never exported by a render is signalled when the next frame replaces it; an unused older buffer
+# returned to PipeWire has its release point signalled immediately.
+unique_name :1.5
+prop ScreenCast AvailableSourceTypes "uint32 1"
+prop ScreenCast version "uint32 2"
+screencast_load
+gs_sync 1
+new a pipewire-desktop-capture-source
+portal_ok 51
+param_changed format=BGRA size=64x64 modifier=0x7
+buf_data 0 0 dmabuf 11 0 256 100 0 0
+buf_data 0 1 syncobj 12 0 0 0 0 0
+buf_data 0 2 syncobj 13 0 0 0 0 0
+buf_meta 0 sync 100 200
+buf_push 0
+process
+render a
+# next frame, previous one was rendered (release exported): not signalled again
+buf_data 1 0 dmabuf 21 0 256 100 0 0
+buf_data 1 1 syncobj 22 0 0 0 0 0
+buf_data 1 2 syncobj 23 0 0 0 0 0
+buf_meta 1 sync 101 201
+buf_push 1
+process
+# third frame without any render in between: release point of frame 2 must be signalled by the plugin
+buf_data 2 0 dmabuf 31 0 256 100 0 0
+buf_data 2 1 syncobj 32 0 0 0 0 0
+buf_data 2 2 syncobj 33 0 0 0 0 0
+buf_meta 2 sync 102 202
+buf_push 2
+process
+# two queued buffers: the older (3) is returned unused and its release point signalled
+buf_data 3 0 dmabuf 41 0 256 100 0 0
+buf_data 3 1 syncobj 42 0 0 0 0 0
+buf_data 3 2 syncobj 43 0 0 0 0 0
+buf_meta 3 sync 103 203
+buf_data 4 0 dmabuf 51 0 256 100 0 0
+buf_data 4 1 syncobj 52 0 0 0 0 0
+buf_data 4 2 syncobj 53 0 0 0 0 0
+buf_meta 4 sync 104 204
+buf_push 3
+buf_push 4
+process
+render a
+destroy a

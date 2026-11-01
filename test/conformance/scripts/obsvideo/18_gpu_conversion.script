@@ -1,0 +1,42 @@
+# GPU colour conversion (gpu_conversion=1, planar/semi-planar output formats). render_convert_texture drives the
+# conversion effect once per plane: plane 0 sets color_vec0 (matrix elems 4..7), plane 1 color_vec1 (elems 0..3) and
+# plane 2 (or plane 1 when there are only two planes) color_vec2 (elems 8..11). sdr_white_nits_over_maximum = sdr white
+# level / 10000 (300 nits -> 0.03), hdr_lw = nominal peak. Blending is disabled during conversion. texture_converted
+# is set even when plane 0 is missing. Staging copies each converted plane to its own surface (channel_count planes).
+core 1000
+trace 1
+ctx_new 1000
+clock 1000
+video_time 1000
+echo "--- I420: three planes"
+mix_add Y 1 16 16 16 16 I420 1 0 0
+stop_after Y 100
+mix_active Y 1 0
+loop 1
+mix_dump Y
+echo "--- NV12 (two planes: UV plane gets color_vec1 AND color_vec2)"
+mix_add N 1 16 16 16 16 NV12 1 0 0
+stop_after N 100
+mix_active N 1 0
+mix_active Y 0 0
+loop 1
+mix_dump N
+echo "--- I444 uses three full size planes"
+mix_add T 1 16 16 16 16 I444 1 0 0
+stop_after T 100
+mix_active T 1 0
+mix_active N 0 0
+loop 1
+echo "--- no plane-0 texture at all: nothing rendered, texture_converted is still set, staging copies nothing (surfaces still recorded)"
+mix_set T convert_null 0
+loop 1
+mix_dump T
+echo "--- missing copy surface for plane 1 is skipped but still recorded as null"
+mix_set T surf_null 1
+loop 1
+mix_dump T
+echo "--- a different sdr white level"
+mix_active T 0 0
+mix_active Y 1 0
+video_time 5000
+loop 1

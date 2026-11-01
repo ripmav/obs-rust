@@ -1,0 +1,81 @@
+# gs_create_texture_file_data3 on hand-built PNG files (decoded by FFmpeg): output format (RGBA / BGRA / BGRX /
+# RGBA16 by the decoder's pixel format), pixel bytes and the three alpha modes. 8-bit RGBA is copied (or
+# premultiplied) as RGBA; 16-bit RGBA becomes 8-bit through float conversion (format reported as in the source
+# path); everything else goes through swscale to BGRA. Colour tables and tRNS exercise the conversion.
+file rgba.png 89504e470d0a1a0a0000000d494844520000000200000002080600000072b60d240000001749444154789c63f8cfc0f09fe13f43030398feffdf01003f1807bade426efa0000000049454e44ae426082
+echo == rgba.png alpha mode straight
+texfile rgba.png straight
+echo == rgba.png alpha mode srgb
+texfile rgba.png srgb
+echo == rgba.png alpha mode premul
+texfile rgba.png premul
+file rgb.png 89504e470d0a1a0a0000000d4948445200000002000000020802000000fdd49a730000001449444154789c63f8cfc0c000c20cffffffff0f001fee05fbb0b897c90000000049454e44ae426082
+echo == rgb.png alpha mode straight
+texfile rgb.png straight
+echo == rgb.png alpha mode srgb
+texfile rgb.png srgb
+echo == rgb.png alpha mode premul
+texfile rgb.png premul
+file gray.png 89504e470d0a1a0a0000000d494844520000000200000002080000000057dd52f80000000e49444154789c6360086558f51f0003ad01ff67fbca090000000049454e44ae426082
+echo == gray.png alpha mode straight
+texfile gray.png straight
+echo == gray.png alpha mode srgb
+texfile gray.png srgb
+echo == gray.png alpha mode premul
+texfile gray.png premul
+file ga.png 89504e470d0a1a0a0000000d4948445200000002000000020804000000d8bfc5af0000001249444154789c6360f81fdac0b0cae13f030012bb03bea7c7a7000000000049454e44ae426082
+echo == ga.png alpha mode straight
+texfile ga.png straight
+echo == ga.png alpha mode srgb
+texfile ga.png srgb
+echo == ga.png alpha mode premul
+texfile ga.png premul
+file pal.png 89504e470d0a1a0a0000000d49484452000000020000000208030000004568fd160000000c504c5445ff000000ff000000fffffffffb0060f60000000e49444154789c6360606460620600001100079ea22a120000000049454e44ae426082
+echo == pal.png alpha mode straight
+texfile pal.png straight
+echo == pal.png alpha mode srgb
+texfile pal.png srgb
+echo == pal.png alpha mode premul
+texfile pal.png premul
+file pal_t.png 89504e470d0a1a0a0000000d49484452000000020000000208030000004568fd160000000c504c5445ff000000ff000000fffffffffb0060f60000000374524e53ff80007f6d68780000000e49444154789c6360606460620600001100079ea22a120000000049454e44ae426082
+echo == pal_t.png alpha mode straight
+texfile pal_t.png straight
+echo == pal_t.png alpha mode srgb
+texfile pal_t.png srgb
+echo == pal_t.png alpha mode premul
+texfile pal_t.png premul
+file rgb_t.png 89504e470d0a1a0a0000000d49484452000000020000000108020000007b40e8dd0000000674524e5300ff00000000a4c2c01d0000000f49444154789c63f8cfc0c0f09f010007ff01ff017f89a70000000049454e44ae426082
+echo == rgb_t.png alpha mode straight
+texfile rgb_t.png straight
+echo == rgb_t.png alpha mode srgb
+texfile rgb_t.png srgb
+echo == rgb_t.png alpha mode premul
+texfile rgb_t.png premul
+file rgba16.png 89504e470d0a1a0a0000000d4948445200000002000000011006000000a4b2a3c90000001749444154789c63f8ff9f81818101443630fcffdfc000003cd806fb3971cc030000000049454e44ae426082
+echo == rgba16.png alpha mode straight
+texfile rgba16.png straight
+echo == rgba16.png alpha mode srgb
+texfile rgba16.png srgb
+echo == rgba16.png alpha mode premul
+texfile rgba16.png premul
+file rgb16.png 89504e470d0a1a0a0000000d4948445200000001000000011002000000c0e78f9d0000000f49444154789c63f8ffbf81818101000cfc027fa37794cc0000000049454e44ae426082
+echo == rgb16.png alpha mode straight
+texfile rgb16.png straight
+echo == rgb16.png alpha mode srgb
+texfile rgb16.png srgb
+echo == rgb16.png alpha mode premul
+texfile rgb16.png premul
+file g16.png 89504e470d0a1a0a0000000d49484452000000010000000110000000006aee47160000000b49444154789c6398e30000017b00dd40e605810000000049454e44ae426082
+echo == g16.png alpha mode straight
+texfile g16.png straight
+echo == g16.png alpha mode srgb
+texfile g16.png srgb
+echo == g16.png alpha mode premul
+texfile g16.png premul
+file wide.png 89504e470d0a1a0a0000000d49484452000000030000000208060000009d74661a0000001f49444154789c63f8cfc0f01f0c19feff6760646266616563e7e0e4e2e60100731406491da25d010000000049454e44ae426082
+echo == wide.png alpha mode straight
+texfile wide.png straight
+echo == wide.png alpha mode srgb
+texfile wide.png srgb
+echo == wide.png alpha mode premul
+texfile wide.png premul

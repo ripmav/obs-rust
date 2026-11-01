@@ -1,0 +1,40 @@
+# do_stream_write: buffering, cork/uncork, PulseAudio-chosen chunk sizes and buffer growth.
+# Sink: float32 48 kHz stereo -> 8 bytes/frame, tlength = 25 ms = 9600 bytes.
+pa_server pulse 16.1 alsa_output.a
+pa_sink alsa_output.a "A" f32 48000 2
+mon_dev alsa_output.a
+mon_src 0 0 1.0 - 1
+# 1) PulseAudio offers a smaller chunk than we have: the loop writes in pieces until the buffer is empty
+mon_create 0 0
+pa_cfg begin_size 3200
+mon_play 0 1200 0.25 0
+pa_cfg begin_size 0
+mon_destroy 0
+# 1b) the default: PulseAudio accepts the whole request in one chunk
+mon_create 0 0
+mon_play 0 1200 0.25 0
+mon_destroy 0
+# 2) PulseAudio offers a larger chunk than we hold: cancel and wait for more data (nothing is written, stays queued)
+mon_create 0 0
+pa_cfg begin_size 100000
+mon_play 0 1200 0.25 0
+pa_cfg begin_size 0
+mon_destroy 0
+# 3) begin_write fails: finish without writing
+mon_create 0 0
+pa_cfg begin_ret -1
+mon_play 0 1200 0.25 0
+pa_cfg begin_ret 0
+# next packet succeeds and sends everything that accumulated (2400 frames = 19200 bytes: exactly 2 x tlength, no growth)
+mon_play 0 1200 0.25 0
+mon_destroy 0
+# 4) the internal buffer grows past 2 x tlength (here 3000 frames = 24000 bytes > 19200) while corked:
+#    the stream's tlength is raised to the buffered size, then the stream is uncorked and written
+mon_create 0 0
+mon_play 0 3000 0.25 0
+mon_destroy 0
+# 5) a source with no active references is ignored
+mon_src 0 0 1.0 - 0
+mon_create 0 0
+mon_play 0 1200 0.25 0
+mon_destroy 0

@@ -1,0 +1,259 @@
+effect libobs/data/format_conversion.effect parse=ok params=22 techniques=78 viewproj=- world=-
+  param 0 width FLOAT default=-
+  param 1 height FLOAT default=-
+  param 2 width_i FLOAT default=-
+  param 3 height_i FLOAT default=-
+  param 4 width_d2 FLOAT default=-
+  param 5 height_d2 FLOAT default=-
+  param 6 width_x2_i FLOAT default=-
+  param 7 height_x2_i FLOAT default=-
+  param 8 maximum_over_sdr_white_nits FLOAT default=-
+  param 9 sdr_white_nits_over_maximum FLOAT default=-
+  param 10 hlg_exponent FLOAT default=-
+  param 11 hdr_lw FLOAT default=-
+  param 12 hdr_lmax FLOAT default=-
+  param 13 color_vec0 VEC4 default=-
+  param 14 color_vec1 VEC4 default=-
+  param 15 color_vec2 VEC4 default=-
+  param 16 color_range_min VEC3 default=[0,0,0]
+  param 17 color_range_max VEC3 default=[1,1,1]
+  param 18 image TEXTURE default=-
+  param 19 image1 TEXTURE default=-
+  param 20 image2 TEXTURE default=-
+  param 21 image3 TEXTURE default=-
+  technique Planar_Y passes=1
+    pass 0 name=@null vertex=VSPos(id); pixel=PS_Y(frag_in);
+      vs_params=[] ps_params=[image,color_vec0]
+  technique Planar_U passes=1
+    pass 0 name=@null vertex=VSPos(id); pixel=PS_U(frag_in);
+      vs_params=[] ps_params=[image,color_vec1]
+  technique Planar_V passes=1
+    pass 0 name=@null vertex=VSPos(id); pixel=PS_V(frag_in);
+      vs_params=[] ps_params=[image,color_vec2]
+  technique Planar_U_Left passes=1
+    pass 0 name=@null vertex=VSTexPos_Left(id); pixel=PS_U_Wide(frag_in);
+      vs_params=[width_i] ps_params=[image,color_vec1]
+  technique Planar_V_Left passes=1
+    pass 0 name=@null vertex=VSTexPos_Left(id); pixel=PS_V_Wide(frag_in);
+      vs_params=[width_i] ps_params=[image,color_vec2]
+  technique NV12_Y passes=1
+    pass 0 name=@null vertex=VSPos(id); pixel=PS_Y(frag_in);
+      vs_params=[] ps_params=[image,color_vec0]
+  technique NV12_UV passes=1
+    pass 0 name=@null vertex=VSTexPos_Left(id); pixel=PS_UV_Wide(frag_in);
+      vs_params=[width_i] ps_params=[image,color_vec1,color_vec2]
+  technique I010_PQ_Y passes=1
+    pass 0 name=@null vertex=VSPos(id); pixel=PS_I010_PQ_Y_709_2020(frag_in);
+      vs_params=[] ps_params=[image,sdr_white_nits_over_maximum,color_vec0]
+  technique I010_HLG_Y passes=1
+    pass 0 name=@null vertex=VSPos(id); pixel=PS_I010_HLG_Y_709_2020(frag_in);
+      vs_params=[] ps_params=[image,sdr_white_nits_over_maximum,hdr_lw,color_vec0]
+  technique I010_SRGB_Y passes=1
+    pass 0 name=@null vertex=VSPos(id); pixel=PS_I010_SRGB_Y(frag_in);
+      vs_params=[] ps_params=[image,color_vec0]
+  technique I010_PQ_U passes=1
+    pass 0 name=@null vertex=VSTexPos_TopLeft(id); pixel=PS_I010_PQ_U_709_2020_WideWide(frag_in);
+      vs_params=[width_i,height_i] ps_params=[image,sdr_white_nits_over_maximum,color_vec1]
+  technique I010_HLG_U passes=1
+    pass 0 name=@null vertex=VSTexPos_TopLeft(id); pixel=PS_I010_HLG_U_709_2020_WideWide(frag_in);
+      vs_params=[width_i,height_i] ps_params=[image,sdr_white_nits_over_maximum,hdr_lw,color_vec1]
+  technique I010_SRGB_U passes=1
+    pass 0 name=@null vertex=VSTexPos_Left(id); pixel=PS_I010_SRGB_U_Wide(frag_in);
+      vs_params=[width_i] ps_params=[image,color_vec1]
+  technique I010_PQ_V passes=1
+    pass 0 name=@null vertex=VSTexPos_TopLeft(id); pixel=PS_I010_PQ_V_709_2020_WideWide(frag_in);
+      vs_params=[width_i,height_i] ps_params=[image,sdr_white_nits_over_maximum,color_vec2]
+  technique I010_HLG_V passes=1
+    pass 0 name=@null vertex=VSTexPos_TopLeft(id); pixel=PS_I010_HLG_V_709_2020_WideWide(frag_in);
+      vs_params=[width_i,height_i] ps_params=[image,sdr_white_nits_over_maximum,hdr_lw,color_vec2]
+  technique I010_SRGB_V passes=1
+    pass 0 name=@null vertex=VSTexPos_Left(id); pixel=PS_I010_SRGB_V_Wide(frag_in);
+      vs_params=[width_i] ps_params=[image,color_vec2]
+  technique P010_PQ_Y passes=1
+    pass 0 name=@null vertex=VSPos(id); pixel=PS_P010_PQ_Y_709_2020(frag_in);
+      vs_params=[] ps_params=[image,sdr_white_nits_over_maximum,color_vec0]
+  technique P010_HLG_Y passes=1
+    pass 0 name=@null vertex=VSPos(id); pixel=PS_P010_HLG_Y_709_2020(frag_in);
+      vs_params=[] ps_params=[image,sdr_white_nits_over_maximum,hdr_lw,color_vec0]
+  technique P010_SRGB_Y passes=1
+    pass 0 name=@null vertex=VSPos(id); pixel=PS_P010_SRGB_Y(frag_in);
+      vs_params=[] ps_params=[image,color_vec0]
+  technique P010_PQ_UV passes=1
+    pass 0 name=@null vertex=VSTexPos_TopLeft(id); pixel=PS_P010_PQ_UV_709_2020_WideWide(frag_in);
+      vs_params=[width_i,height_i] ps_params=[image,sdr_white_nits_over_maximum,color_vec1,color_vec2]
+  technique P010_HLG_UV passes=1
+    pass 0 name=@null vertex=VSTexPos_TopLeft(id); pixel=PS_P010_HLG_UV_709_2020_WideWide(frag_in);
+      vs_params=[width_i,height_i] ps_params=[image,sdr_white_nits_over_maximum,hdr_lw,color_vec1,color_vec2]
+  technique P010_SRGB_UV passes=1
+    pass 0 name=@null vertex=VSTexPos_Left(id); pixel=PS_P010_SRGB_UV_Wide(frag_in);
+      vs_params=[width_i] ps_params=[image,color_vec1,color_vec2]
+  technique P216_PQ_Y passes=1
+    pass 0 name=@null vertex=VSPos(id); pixel=PS_P216_PQ_Y_709_2020(frag_in);
+      vs_params=[] ps_params=[image,sdr_white_nits_over_maximum,color_vec0]
+  technique P216_HLG_Y passes=1
+    pass 0 name=@null vertex=VSPos(id); pixel=PS_P216_HLG_Y_709_2020(frag_in);
+      vs_params=[] ps_params=[image,sdr_white_nits_over_maximum,hdr_lw,color_vec0]
+  technique P216_SRGB_Y passes=1
+    pass 0 name=@null vertex=VSPos(id); pixel=PS_P216_SRGB_Y(frag_in);
+      vs_params=[] ps_params=[image,color_vec0]
+  technique P216_PQ_UV passes=1
+    pass 0 name=@null vertex=VSTexPos_Left(id); pixel=PS_P216_PQ_UV_709_2020_Wide(frag_in);
+      vs_params=[width_i] ps_params=[image,sdr_white_nits_over_maximum,color_vec1,color_vec2]
+  technique P216_HLG_UV passes=1
+    pass 0 name=@null vertex=VSTexPos_Left(id); pixel=PS_P216_HLG_UV_709_2020_Wide(frag_in);
+      vs_params=[width_i] ps_params=[image,sdr_white_nits_over_maximum,hdr_lw,color_vec1,color_vec2]
+  technique P216_SRGB_UV passes=1
+    pass 0 name=@null vertex=VSTexPos_Left(id); pixel=PS_P216_SRGB_UV_Wide(frag_in);
+      vs_params=[width_i] ps_params=[image,color_vec1,color_vec2]
+  technique P416_PQ_Y passes=1
+    pass 0 name=@null vertex=VSPos(id); pixel=PS_P416_PQ_Y_709_2020(frag_in);
+      vs_params=[] ps_params=[image,sdr_white_nits_over_maximum,color_vec0]
+  technique P416_HLG_Y passes=1
+    pass 0 name=@null vertex=VSPos(id); pixel=PS_P416_HLG_Y_709_2020(frag_in);
+      vs_params=[] ps_params=[image,sdr_white_nits_over_maximum,hdr_lw,color_vec0]
+  technique P416_SRGB_Y passes=1
+    pass 0 name=@null vertex=VSPos(id); pixel=PS_P416_SRGB_Y(frag_in);
+      vs_params=[] ps_params=[image,color_vec0]
+  technique P416_PQ_UV passes=1
+    pass 0 name=@null vertex=VSPos(id); pixel=PS_P416_PQ_UV_709_2020(frag_in);
+      vs_params=[] ps_params=[image,color_vec1,color_vec2]
+  technique P416_HLG_UV passes=1
+    pass 0 name=@null vertex=VSPos(id); pixel=PS_P416_HLG_UV_709_2020(frag_in);
+      vs_params=[] ps_params=[image,hdr_lw,color_vec1,color_vec2]
+  technique P416_SRGB_UV passes=1
+    pass 0 name=@null vertex=VSPos(id); pixel=PS_P416_SRGB_UV(frag_in);
+      vs_params=[] ps_params=[image,color_vec1,color_vec2]
+  technique UYVY_Reverse passes=1
+    pass 0 name=@null vertex=VSPacked422Left_Reverse(id); pixel=PSUYVY_Reverse(frag_in);
+      vs_params=[width_d2,height,width_x2_i] ps_params=[image,color_range_min,color_range_max,color_vec0,color_vec1,color_vec2]
+  technique YUY2_Reverse passes=1
+    pass 0 name=@null vertex=VSPacked422Left_Reverse(id); pixel=PSYUY2_Reverse(frag_in);
+      vs_params=[width_d2,height,width_x2_i] ps_params=[image,color_range_min,color_range_max,color_vec0,color_vec1,color_vec2]
+  technique YUY2_PQ_Reverse passes=1
+    pass 0 name=@null vertex=VSPacked422Left_Reverse(id); pixel=PSYUY2_PQ_Reverse(frag_in);
+      vs_params=[width_d2,height,width_x2_i] ps_params=[image,hdr_lw,hdr_lmax,maximum_over_sdr_white_nits,color_range_min,color_range_max,color_vec0,color_vec1,color_vec2]
+  technique YUY2_HLG_Reverse passes=1
+    pass 0 name=@null vertex=VSPacked422Left_Reverse(id); pixel=PSYUY2_HLG_Reverse(frag_in);
+      vs_params=[width_d2,height,width_x2_i] ps_params=[image,hlg_exponent,maximum_over_sdr_white_nits,color_range_min,color_range_max,color_vec0,color_vec1,color_vec2]
+  technique YVYU_Reverse passes=1
+    pass 0 name=@null vertex=VSPacked422Left_Reverse(id); pixel=PSYVYU_Reverse(frag_in);
+      vs_params=[width_d2,height,width_x2_i] ps_params=[image,color_range_min,color_range_max,color_vec0,color_vec1,color_vec2]
+  technique I420_Reverse passes=1
+    pass 0 name=@null vertex=VS420Left_Reverse(id); pixel=PSPlanar420_Reverse(frag_in);
+      vs_params=[width_x2_i] ps_params=[image,image1,image2,color_range_min,color_range_max,color_vec0,color_vec1,color_vec2]
+  technique I420_PQ_Reverse passes=1
+    pass 0 name=@null vertex=VS420TopLeft_Reverse(id); pixel=PSPlanar420_PQ_Reverse(frag_in);
+      vs_params=[width_x2_i,height_x2_i] ps_params=[image,image1,image2,hdr_lw,hdr_lmax,maximum_over_sdr_white_nits,color_range_min,color_range_max,color_vec0,color_vec1,color_vec2]
+  technique I420_HLG_Reverse passes=1
+    pass 0 name=@null vertex=VS420TopLeft_Reverse(id); pixel=PSPlanar420_HLG_Reverse(frag_in);
+      vs_params=[width_x2_i,height_x2_i] ps_params=[image,image1,image2,hlg_exponent,maximum_over_sdr_white_nits,color_range_min,color_range_max,color_vec0,color_vec1,color_vec2]
+  technique I40A_Reverse passes=1
+    pass 0 name=@null vertex=VS420Left_Reverse(id); pixel=PSPlanar420A_Reverse(frag_in);
+      vs_params=[width_x2_i] ps_params=[image,image3,image1,image2,color_range_min,color_range_max,color_vec0,color_vec1,color_vec2]
+  technique I422_Reverse passes=1
+    pass 0 name=@null vertex=VS422Left_Reverse(id); pixel=PSPlanar422_Reverse(frag_in);
+      vs_params=[width_x2_i] ps_params=[image,image1,image2,color_range_min,color_range_max,color_vec0,color_vec1,color_vec2]
+  technique I210_Reverse passes=1
+    pass 0 name=@null vertex=VS422Left_Reverse(id); pixel=PSPlanar422_10LE_Reverse(frag_in);
+      vs_params=[width_x2_i] ps_params=[image,image1,image2,color_range_min,color_range_max,color_vec0,color_vec1,color_vec2]
+  technique I210_PQ_Reverse passes=1
+    pass 0 name=@null vertex=VS422Left_Reverse(id); pixel=PSPlanar422_10LE_PQ_Reverse(frag_in);
+      vs_params=[width_x2_i] ps_params=[image,image1,image2,hdr_lw,hdr_lmax,maximum_over_sdr_white_nits,color_range_min,color_range_max,color_vec0,color_vec1,color_vec2]
+  technique I210_HLG_Reverse passes=1
+    pass 0 name=@null vertex=VS422Left_Reverse(id); pixel=PSPlanar422_10LE_HLG_Reverse(frag_in);
+      vs_params=[width_x2_i] ps_params=[image,image1,image2,hlg_exponent,maximum_over_sdr_white_nits,color_range_min,color_range_max,color_vec0,color_vec1,color_vec2]
+  technique I42A_Reverse passes=1
+    pass 0 name=@null vertex=VS422Left_Reverse(id); pixel=PSPlanar422A_Reverse(frag_in);
+      vs_params=[width_x2_i] ps_params=[image,image3,image1,image2,color_range_min,color_range_max,color_vec0,color_vec1,color_vec2]
+  technique I444_Reverse passes=1
+    pass 0 name=@null vertex=VSPos(id); pixel=PSPlanar444_Reverse(frag_in);
+      vs_params=[] ps_params=[image,image1,image2,color_range_min,color_range_max,color_vec0,color_vec1,color_vec2]
+  technique I412_Reverse passes=1
+    pass 0 name=@null vertex=VSPos(id); pixel=PSPlanar444_12LE_Reverse(frag_in);
+      vs_params=[] ps_params=[image,image1,image2,color_range_min,color_range_max,color_vec0,color_vec1,color_vec2]
+  technique I412_PQ_Reverse passes=1
+    pass 0 name=@null vertex=VSPos(id); pixel=PSPlanar444_12LE_PQ_Reverse(frag_in);
+      vs_params=[] ps_params=[image,image1,image2,hdr_lw,hdr_lmax,maximum_over_sdr_white_nits,color_range_min,color_range_max,color_vec0,color_vec1,color_vec2]
+  technique I412_HLG_Reverse passes=1
+    pass 0 name=@null vertex=VSPos(id); pixel=PSPlanar444_12LE_HLG_Reverse(frag_in);
+      vs_params=[] ps_params=[image,image1,image2,hlg_exponent,maximum_over_sdr_white_nits,color_range_min,color_range_max,color_vec0,color_vec1,color_vec2]
+  technique YUVA_Reverse passes=1
+    pass 0 name=@null vertex=VSPos(id); pixel=PSPlanar444A_Reverse(frag_in);
+      vs_params=[] ps_params=[image,image1,image2,image3,color_range_min,color_range_max,color_vec0,color_vec1,color_vec2]
+  technique YA2L_Reverse passes=1
+    pass 0 name=@null vertex=VSPos(id); pixel=PSPlanar444A_12LE_Reverse(frag_in);
+      vs_params=[] ps_params=[image,image1,image2,image3,color_range_min,color_range_max,color_vec0,color_vec1,color_vec2]
+  technique AYUV_Reverse passes=1
+    pass 0 name=@null vertex=VSPos(id); pixel=PSAYUV_Reverse(frag_in);
+      vs_params=[] ps_params=[image,color_range_min,color_range_max,color_vec0,color_vec1,color_vec2]
+  technique NV12_Reverse passes=1
+    pass 0 name=@null vertex=VS420Left_Reverse(id); pixel=PSNV12_Reverse(frag_in);
+      vs_params=[width_x2_i] ps_params=[image,image1,color_range_min,color_range_max,color_vec0,color_vec1,color_vec2]
+  technique NV12_PQ_Reverse passes=1
+    pass 0 name=@null vertex=VS420TopLeft_Reverse(id); pixel=PSNV12_PQ_Reverse(frag_in);
+      vs_params=[width_x2_i,height_x2_i] ps_params=[image,image1,hdr_lw,hdr_lmax,maximum_over_sdr_white_nits,color_range_min,color_range_max,color_vec0,color_vec1,color_vec2]
+  technique NV12_HLG_Reverse passes=1
+    pass 0 name=@null vertex=VS420TopLeft_Reverse(id); pixel=PSNV12_HLG_Reverse(frag_in);
+      vs_params=[width_x2_i,height_x2_i] ps_params=[image,image1,hlg_exponent,maximum_over_sdr_white_nits,color_range_min,color_range_max,color_vec0,color_vec1,color_vec2]
+  technique I010_SRGB_Reverse passes=1
+    pass 0 name=@null vertex=VS420Left_Reverse(id); pixel=PSI010_SRGB_Reverse(frag_in);
+      vs_params=[width_x2_i] ps_params=[image,image1,image2,color_range_min,color_range_max,color_vec0,color_vec1,color_vec2]
+  technique I010_PQ_2020_709_Reverse passes=1
+    pass 0 name=@null vertex=VS420TopLeft_Reverse(id); pixel=PSI010_PQ_2020_709_Reverse(frag_in);
+      vs_params=[width_x2_i,height_x2_i] ps_params=[image,image1,image2,hdr_lw,hdr_lmax,maximum_over_sdr_white_nits,color_range_min,color_range_max,color_vec0,color_vec1,color_vec2]
+  technique I010_HLG_2020_709_Reverse passes=1
+    pass 0 name=@null vertex=VS420TopLeft_Reverse(id); pixel=PSI010_HLG_2020_709_Reverse(frag_in);
+      vs_params=[width_x2_i,height_x2_i] ps_params=[image,image1,image2,hlg_exponent,maximum_over_sdr_white_nits,color_range_min,color_range_max,color_vec0,color_vec1,color_vec2]
+  technique P010_SRGB_Reverse passes=1
+    pass 0 name=@null vertex=VS420Left_Reverse(id); pixel=PSP010_SRGB_Reverse(frag_in);
+      vs_params=[width_x2_i] ps_params=[image,image1,color_range_min,color_range_max,color_vec0,color_vec1,color_vec2]
+  technique P010_PQ_2020_709_Reverse passes=1
+    pass 0 name=@null vertex=VS420TopLeft_Reverse(id); pixel=PSP010_PQ_2020_709_Reverse(frag_in);
+      vs_params=[width_x2_i,height_x2_i] ps_params=[image,image1,hdr_lw,hdr_lmax,maximum_over_sdr_white_nits,color_range_min,color_range_max,color_vec0,color_vec1,color_vec2]
+  technique P010_HLG_2020_709_Reverse passes=1
+    pass 0 name=@null vertex=VS420TopLeft_Reverse(id); pixel=PSP010_HLG_2020_709_Reverse(frag_in);
+      vs_params=[width_x2_i,height_x2_i] ps_params=[image,image1,hlg_exponent,maximum_over_sdr_white_nits,color_range_min,color_range_max,color_vec0,color_vec1,color_vec2]
+  technique V210_SRGB_Reverse passes=1
+    pass 0 name=@null vertex=VSPos(id); pixel=PSV210_SRGB_Reverse(frag_in);
+      vs_params=[] ps_params=[image,width,color_range_min,color_range_max,color_vec0,color_vec1,color_vec2]
+  technique V210_PQ_2020_709_Reverse passes=1
+    pass 0 name=@null vertex=VSPos(id); pixel=PSV210_PQ_2020_709_Reverse(frag_in);
+      vs_params=[] ps_params=[hdr_lw,hdr_lmax,maximum_over_sdr_white_nits,image,width,color_range_min,color_range_max,color_vec0,color_vec1,color_vec2]
+  technique V210_HLG_2020_709_Reverse passes=1
+    pass 0 name=@null vertex=VSPos(id); pixel=PSV210_HLG_2020_709_Reverse(frag_in);
+      vs_params=[] ps_params=[hlg_exponent,maximum_over_sdr_white_nits,image,width,color_range_min,color_range_max,color_vec0,color_vec1,color_vec2]
+  technique Y800_Limited passes=1
+    pass 0 name=@null vertex=VSPos(id); pixel=PSY800_Limited(frag_in);
+      vs_params=[] ps_params=[image]
+  technique Y800_Full passes=1
+    pass 0 name=@null vertex=VSPos(id); pixel=PSY800_Full(frag_in);
+      vs_params=[] ps_params=[image]
+  technique RGB_Limited passes=1
+    pass 0 name=@null vertex=VSPos(id); pixel=PSRGB_Limited(frag_in);
+      vs_params=[] ps_params=[image]
+  technique BGR3_Limited passes=1
+    pass 0 name=@null vertex=VSPos(id); pixel=PSBGR3_Limited(frag_in);
+      vs_params=[] ps_params=[image]
+  technique BGR3_Full passes=1
+    pass 0 name=@null vertex=VSPos(id); pixel=PSBGR3_Full(frag_in);
+      vs_params=[] ps_params=[image]
+  technique R10L_SRGB_Full_Reverse passes=1
+    pass 0 name=@null vertex=VSPos(id); pixel=PSR10L_SRGB_Full_Reverse(frag_in);
+      vs_params=[] ps_params=[image]
+  technique R10L_PQ_2020_709_Full_Reverse passes=1
+    pass 0 name=@null vertex=VSPos(id); pixel=PSR10L_PQ_2020_709_Full_Reverse(frag_in);
+      vs_params=[] ps_params=[hdr_lw,hdr_lmax,maximum_over_sdr_white_nits,image]
+  technique R10L_HLG_2020_709_Full_Reverse passes=1
+    pass 0 name=@null vertex=VSPos(id); pixel=PSR10L_HLG_2020_709_Full_Reverse(frag_in);
+      vs_params=[] ps_params=[hlg_exponent,maximum_over_sdr_white_nits,image]
+  technique R10L_SRGB_Limited_Reverse passes=1
+    pass 0 name=@null vertex=VSPos(id); pixel=PSR10L_SRGB_Limited_Reverse(frag_in);
+      vs_params=[] ps_params=[image]
+  technique R10L_PQ_2020_709_Limited_Reverse passes=1
+    pass 0 name=@null vertex=VSPos(id); pixel=PSR10L_PQ_2020_709_Limited_Reverse(frag_in);
+      vs_params=[] ps_params=[hdr_lw,hdr_lmax,maximum_over_sdr_white_nits,image]
+  technique R10L_HLG_2020_709_Limited_Reverse passes=1
+    pass 0 name=@null vertex=VSPos(id); pixel=PSR10L_HLG_2020_709_Limited_Reverse(frag_in);
+      vs_params=[] ps_params=[hlg_exponent,maximum_over_sdr_white_nits,image]
+  funcs=108 structs=9 samplers=1
+  sampler def_sampler Filter=Linear AddressU=Clamp AddressV=Clamp

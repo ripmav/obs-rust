@@ -1,0 +1,101 @@
+# Body of the GPU encode thread (run synchronously: each "token" is one successful semaphore wait; when the budget is
+# spent the wait fails and the thread returns). The first NUM_ENCODE_TEXTURE_FRAMES_TO_WAIT (1) tokens are swallowed
+# without encoding. Per frame: pop the oldest queue frame, count a texture frame, take a reference on every GPU encoder, then
+# per encoder: group start gate, paired-encoder (audio) wait, pause check, frame-rate divisor counter, reconfigure, start_ts,
+# lock-key chain (next_key = 0 for the last encoder to run, otherwise lock_key+1...), the encode call, packet-time bookkeeping,
+# send_off_encoder_packet, cur_pts += timebase_num*divisor. After all encoders: if frame.count-1 > 0 the frame is pushed back to
+# the FRONT with timestamp += interval (and a skipped-frame counter), else it returns to the avail queue.
+core 1000
+trace 1
+mix_add M 1 16 16 16 16 NV12 1 0 0
+trace 0
+gpu_init M
+trace 1
+clock 100000
+echo "--- token 1 is swallowed, token 2 encodes one frame with an encode_texture2 encoder (frame returns to avail)"
+enc_add E1 M 1 60 1 1 1 1
+gpu_queue_push M f1 1 5000 7 1
+gpu_thread M 2
+gpu_queue_dump M
+enc_dump E1
+echo "--- only the first token: swallowed, queue untouched"
+gpu_queue_push M f2 1 6000 0 0
+gpu_thread M 1
+gpu_queue_dump M
+echo "--- the legacy encode_texture entry point is used when encode_texture2 is absent; handle is -1 on this platform"
+enc_add E2 M 1 60 1 0 1 1
+gpu_queue_clear M
+gpu_queue_push M f2b 1 6100 0 0
+gpu_thread M 2
+gpu_queue_dump M
+enc_dump E2
+echo "--- the frame timestamp 0 produces no packet-time record (packet_times unchanged)"
+gpu_queue_clear M
+gpu_queue_push M f3 1 0 0 0
+gpu_thread M 2
+enc_dump E1
+echo "--- an encode failure still records packet times but with ferc = 0 (ferc_set=0)"
+enc_set E1 success 0
+gpu_queue_push M f3b 1 7000 0 0
+gpu_thread M 2
+enc_dump E1
+echo "--- lock key chain with two encoders: E1 gets lock_key, E2 (last) is told next_key 0"
+enc_set E1 success 1
+gpu_queue_push M f4 1 8000 40 0
+gpu_thread M 2
+echo "--- frame count 3: re-queued at the FRONT with timestamp += interval, skipped counter incremented, encoded again"
+gpu_queue_push M f5 3 9000 0 0
+gpu_thread M 4
+gpu_queue_dump M
+echo "--- paused encoder is skipped (its pts does not advance)"
+enc_set E2 pause 1
+enc_set E1 pause 1
+gpu_queue_push M f6 1 9500 0 0
+gpu_thread M 2
+enc_dump E1
+enc_set E1 pause 0
+enc_set E2 pause 1
+echo "--- frame rate divisor 3: encodes only every third frame, pts advances by timebase_num*divisor"
+enc_add E3 M 2 90 3 1 1 1
+enc_set E1 pause 1
+gpu_queue_push M g1 1 10000 0 0
+gpu_queue_push M g2 1 10001 0 0
+gpu_queue_push M g3 1 10002 0 0
+gpu_queue_push M g4 1 10003 0 0
+gpu_thread M 5
+enc_dump E3
+echo "--- reconfigure request: handled via the group hook and the encoder update callback before the encode"
+enc_set E3 reconfigure 1
+enc_set E3 divisor_counter 0
+gpu_queue_push M h1 1 11000 0 0
+gpu_thread M 2
+enc_dump E3
+enc_set E3 pause 1
+echo "--- audio pairing: a video encoder that has not received its first packet waits until every live paired encoder has"
+echo "--- received one AND its first raw timestamp is not after this frame"
+enc_add A1 M 1 48000 1 0 1 1
+enc_add V1 M 1 60 1 1 1 1
+enc_pair V1 A1
+enc_set A1 pause 1
+gpu_queue_push M p1 1 12000 0 0
+gpu_thread M 2
+enc_dump V1
+enc_set A1 first_received 1
+enc_set A1 first_raw_ts 13000
+gpu_queue_push M p2 1 12500 0 0
+gpu_thread M 2
+enc_dump V1
+enc_set A1 first_raw_ts 12000
+gpu_queue_push M p3 1 12500 0 0
+gpu_thread M 2
+enc_dump V1
+echo "--- a paired encoder that cannot be promoted (dead) does not block"
+enc_add V2 M 1 60 1 1 1 1
+enc_add A2 M 1 48000 1 0 1 1
+enc_pair V2 A2
+enc_set A2 dead 1
+enc_set A2 pause 1
+enc_set V1 pause 1
+gpu_queue_push M p4 1 14000 0 0
+gpu_thread M 2
+enc_dump V2

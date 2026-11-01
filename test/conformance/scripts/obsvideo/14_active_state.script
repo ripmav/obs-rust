@@ -1,0 +1,45 @@
+# update_active_states (start of every frame): the *_was_active latches follow the atomic counters. A rising edge
+# resets buffers: any consumer (raw or gpu) -> base data (texture_rendered/converted false, vframe buffer freed,
+# cur_texture 0); raw -> textures_copied cleared + raw vframe buffer; gpu -> gpu vframe buffer. A falling edge keeps data.
+core 1000
+trace 0
+ctx_new 1000
+mix_add M 1 8 8 8 8 BGRA 0 0 0
+stop_after M 100
+clock 100000
+video_time 100000
+mix_set M texture_rendered 1
+mix_set M cur_texture 1
+vframe_push M raw 5 1
+vframe_push M gpu 6 1
+echo "--- idle mix: nothing latched, stale data untouched (but cur_texture advanced by the frame)"
+loop 1
+mix_dump M
+echo "--- raw consumer appears"
+mix_active M 1 0
+loop 1
+mix_dump M
+echo "--- push a raw vframe then drop the consumer: data kept"
+vframe_push M raw 7 1
+mix_active M 0 0
+loop 1
+mix_dump M
+echo "--- gpu consumer appears while the raw buffer still holds data: base reset also frees raw info"
+mix_active M 0 1
+loop 1
+mix_dump M
+echo "--- both active at once (raw rising while gpu already active -> only raw reset; was_active stays true)"
+vframe_push M gpu 8 1
+mix_active M 1 1
+loop 1
+mix_dump M
+echo "--- counters above 1 count as active"
+mix_active M 0 0
+loop 1
+mix_active M 3 2
+loop 1
+mix_dump M
+echo "--- negative counter does not count as active"
+mix_active M -1 -1
+loop 1
+mix_dump M

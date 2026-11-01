@@ -1,0 +1,18 @@
+# stop(ts): ts == 0 stops immediately; ts > 0 records stop_ts and sets stopping but QUIRK: full_stop follows at once so queued
+# packets are not drained. destroy while running stops without signalling twice. Restart after stop works (new connection).
+create
+start
+pkt v 0 0 0 1 3000
+pkt a 0 0 0 1 200
+drain
+stop 5000000
+state
+events
+start
+state
+pkt v 0 0 0 1 3000
+pkt a 0 0 0 1 200
+drain
+state
+destroy
+events

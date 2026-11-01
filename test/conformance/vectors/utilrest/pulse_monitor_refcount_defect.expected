@@ -1,0 +1,4 @@
+mon_create 0 null monitors_registered=0 cb=0 adds=0 removes=1
+pa loops created=0 freed=0 contexts created=0 freed=0 null_mainloop_calls=0
+enum done count=0
+pa loops created=0 freed=0 contexts created=0 freed=0 null_mainloop_calls=2

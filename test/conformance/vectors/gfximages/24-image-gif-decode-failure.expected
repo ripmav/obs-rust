@@ -1,0 +1,24 @@
+file bf.gif 116 bytes
+== frame 1 holds a corrupt LZW stream: init logs it and goes on
+log warning init_animated_gif: Couldn't decode frame 1 of 'bf.gif'
+image loaded=1 animated=1 cx=2 cy=2 format=RGBA frame_updated=0 cur_frame=0 cur_loop=0 cur_time=0 mem_usage=204 alpha_mode=0 space=0 texture=no texture_data=no
+image loaded=1 animated=1 cx=2 cy=2 format=RGBA frame_updated=0 cur_frame=0 cur_loop=0 cur_time=0 mem_usage=204 alpha_mode=0 space=0 texture=yes texture_data=no
+texture cx=2 cy=2 format=RGBA flags=2 map_calls=0 data=ff0000ffff0000ffff0000ffff0000ff
+== update_texture before any tick: frame 0 is not cached yet and is decoded now
+update_texture
+texture cx=2 cy=2 format=RGBA flags=2 map_calls=1 data=ff0000ffff0000ffff0000ffff0000ff
+== tick onto the frame that failed at init: the tick reports a change and the frame later shows the previous canvas
+tick 50000001 -> 1 cur_frame=1 cur_loop=0 cur_time=1
+image loaded=1 animated=1 cx=2 cy=2 format=RGBA frame_updated=0 cur_frame=1 cur_loop=0 cur_time=1 mem_usage=204 alpha_mode=0 space=0 texture=yes texture_data=no
+update_texture
+texture cx=2 cy=2 format=RGBA flags=2 map_calls=2 data=ff0000ffff0000ffff0000ffff0000ff
+== tick on to frame 2
+tick 50000000 -> 1 cur_frame=2 cur_loop=0 cur_time=1
+image loaded=1 animated=1 cx=2 cy=2 format=RGBA frame_updated=0 cur_frame=2 cur_loop=0 cur_time=1 mem_usage=204 alpha_mode=0 space=0 texture=yes texture_data=no
+update_texture
+texture cx=2 cy=2 format=RGBA flags=2 map_calls=3 data=0000ffff0000ffff0000ffff0000ffff
+tick 50000000 -> 1 cur_frame=0 cur_loop=0 cur_time=1
+tick 50000000 -> 1 cur_frame=1 cur_loop=0 cur_time=1
+tick 50000000 -> 1 cur_frame=2 cur_loop=0 cur_time=1
+image loaded=0 animated=0 cx=0 cy=0 format=UNKNOWN frame_updated=0 cur_frame=0 cur_loop=0 cur_time=0 mem_usage=0 alpha_mode=0 space=0 texture=no texture_data=no
+textures_alive=0

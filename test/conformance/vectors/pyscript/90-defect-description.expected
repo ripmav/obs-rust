@@ -1,0 +1,8 @@
+scripting load -> 1 python=1 ticks=1
+log warning [Python] Python failure in load_python_script:<line>:
+log error [Python: desc_raises.py] Traceback (most recent call last):
+log error [Python: desc_raises.py]   File "$TMP/desc_raises.py", line 2, in script_description
+log error [Python: desc_raises.py] KeyError: 'bad description'
+try create -> crash
+log info [Scripting] Total detached callbacks: 0
+scripting unload ticks=0

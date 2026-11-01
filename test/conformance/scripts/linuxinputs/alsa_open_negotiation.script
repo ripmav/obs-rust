@@ -1,0 +1,27 @@
+# S-062 ALSA: successful open: format preference S16 > S32 > FLOAT > U8, rate_near, channels, buffer sizing.
+alsa-reset
+alsa-defaults
+set-str device_id default
+set-str custom_pcm unused
+set-int rate 44100
+alsa-create
+alsa-state
+alsa-destroy
+alsa-counts
+echo --- device only offers FLOAT and U8; rate 44100 snaps to 48000; stereo-only hardware
+alsa-reset
+alsa-cfg formats float,u8
+alsa-cfg rates 48000
+alsa-cfg channels 2 2
+alsa-cfg period 480
+alsa-create
+alsa-state
+alsa-destroy
+echo --- fixed 6-channel U8-only device
+alsa-reset
+alsa-cfg formats u8
+alsa-cfg channels 6 6
+alsa-cfg period 256
+alsa-create
+alsa-state
+alsa-destroy

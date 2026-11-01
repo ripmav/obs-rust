@@ -1,0 +1,31 @@
+# Stage surfaces and texture copies, including every rejected combination.
+create
+enter
+tex src 4 2 RGBA 1 0 0102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f20
+tex dst 4 2 RGBA 1 RENDER_TARGET -
+clear CLEAR_COLOR 0 0 0 0
+copy dst src
+read dst
+# region copy: 2x1 block from src (1,1) into dst (2,0)
+tex dst2 4 2 RGBA 1 0 rep:8:00000000
+copyr dst2 2 0 src 1 1 2 1
+read dst2
+# src_w = src_h = 0 means "to the end of the source"
+tex dst3 4 2 RGBA 1 0 rep:8:00000000
+copyr dst3 0 0 src 2 1 0 0
+read dst3
+# errors: destination too small, format mismatch
+tex small 2 2 RGBA 1 0 rep:4:00000000
+copy small src
+tex r8 4 2 R8 1 0 0102030405060708
+copy r8 src
+# BGRA and BGRX are the same "generalized" format; RGBA is not
+tex bgra 4 2 BGRA 1 0 rep:8:00000000
+copy bgra src
+tex bgrx 4 2 BGRX 1 0 rep:8:00000000
+copy bgrx bgra
+# stage surface with other format or other size than the source
+stage 4 2 BGRA src
+stage 2 2 RGBA src
+stage 4 2 RGBA src
+destroy

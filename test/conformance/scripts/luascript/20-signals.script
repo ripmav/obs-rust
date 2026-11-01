@@ -1,0 +1,44 @@
+# signal_handler_connect(handler, name, fn): connection to libobs is deferred (barrier first).  The callback gets
+# the calldata; fn is called with ONE argument (the calldata).  The same function can be connected to several
+# signals; signal_handler_disconnect(handler, name, fn) removes the record matching handler+name+fn.
+# Invalid arguments (non-pointer handler, non-string name, non-function) are ignored silently
+# (only a failed pointer conversion would warn).
+scripting load
+handler H0 "void sig_a(string msg, int n)"
+handler H1 "void sig_a(string msg, int n)"
+handler H0 "void sig_b(int n)"
+lua_begin sig.lua
+function on(cd) print("on msg=" .. tostring(obslua.calldata_get_string(cd, "msg")) .. " n=" .. obslua.calldata_get_int(cd, "n")) end
+local h0 = obslua.fake_handler(0)
+local h1 = obslua.fake_handler(1)
+obslua.signal_handler_connect(h0, "sig_a", on)
+obslua.signal_handler_connect(h1, "sig_a", on)
+obslua.signal_handler_connect(h0, "sig_b", on)
+-- ignored
+obslua.signal_handler_connect(h0, nil, on)
+obslua.signal_handler_connect(h0, "sig_a", 5)
+obslua.signal_handler_connect(5, "sig_a", on)
+function script_update(s)
+  local cmd = obslua.obs_data_get_string(s, "cmd")
+  if cmd == "disc_a0" then obslua.signal_handler_disconnect(h0, "sig_a", on)
+  elseif cmd == "disc_wrong_name" then obslua.signal_handler_disconnect(h0, "sig_x", on)
+  elseif cmd == "disc_wrong_fn" then obslua.signal_handler_disconnect(h0, "sig_a", function() end)
+  end
+end
+lua_end
+create S0 sig.lua
+barrier
+callbacks S0
+emit H0 sig_a s:msg=hello i:n=1
+emit H1 sig_a s:msg=world i:n=2
+emit H0 sig_b i:n=3
+echo --- disconnect with wrong signal / wrong function does nothing
+update S0 s:cmd=disc_wrong_name
+update S0 s:cmd=disc_wrong_fn
+emit H0 sig_a s:msg=still i:n=4
+echo --- disconnect matches handler+signal+function
+update S0 s:cmd=disc_a0
+callbacks S0
+emit H0 sig_a s:msg=gone i:n=5
+emit H1 sig_a s:msg=other-handler i:n=6
+emit H0 sig_b i:n=7

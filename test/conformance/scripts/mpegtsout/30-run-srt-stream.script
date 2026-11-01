@@ -1,0 +1,25 @@
+# Complete life of an SRT stream: start -> connected (network side only, no header yet) -> first encoded packet writes the
+# header -> packets are queued and muxed on the write thread -> bytes leave through the custom AVIO write callback as
+# srt_send() calls -> stop (SUCCESS, trailer, close). MPEG-TS is checked structurally: 188-byte packets, sync bytes, PAT/PMT,
+# PIDs, stream types, continuity counters and PES timestamp spacing (90 kHz). total_bytes counts input payload bytes.
+create
+start
+state
+events
+pkt v 0 0 0 1 3000
+drain
+state
+pkt a 0 0 0 1 200
+pkt v 0 1 1 0 800
+pkt a 0 1024 1024 1 200
+pkt v 0 2 2 0 800
+pkt a 0 2048 2048 1 200
+pkt v 0 3 3 0 800
+drain
+state
+stop 0
+events
+state
+ts
+sends
+destroy

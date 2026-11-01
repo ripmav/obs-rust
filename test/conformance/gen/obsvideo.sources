@@ -1,0 +1,26 @@
+# S-058 obsvideo: part 1 #includes libobs/obs-video.c and obs-video-gpu-encode.c (graphics-thread frame loop) with a
+# recording fake graphics device / video output / clock; part 2 #includes obs-nix.c, obs-nix-platform.c and
+# obs-nix-x11.c with a fake X server. Real: obs-hotkey-name-map.c, util platform, dstr, deque, config-file.
+# Not covered: obs-nix-wayland.c.
+test/conformance/gen/obsvideo_runner.c
+test/conformance/gen/obsvideo_nix.c
+libobs/obs-hotkey-name-map.c
+libobs/util/config-file.c
+libobs/util/cf-lexer.c
+libobs/util/cf-parser.c
+libobs/util/lexer.c
+libobs/util/platform.c
+libobs/util/platform-nix.c
+libobs/util/utf8.c
+libobs/util/bmem.c
+libobs/util/base.c
+libobs/util/threading-posix.c
+libobs/util/dstr.c
+-DXCB_XINPUT_FOUND
+-ljansson
+-ldl
+-lm
+-no-pie
+-Wno-deprecated-declarations
+-Wl,--unresolved-symbols=ignore-all
+!nostubs

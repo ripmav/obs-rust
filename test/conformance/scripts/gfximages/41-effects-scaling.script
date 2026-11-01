@@ -1,0 +1,8 @@
+# Built-in effect files of libobs/data/ loaded through the real effect parser (spec S-020) against a fake
+# backend. Per file: parser result, parameters (type, default, annotations), techniques, passes with the
+# entry functions of both stages and the effect parameters each stage reads, the number of functions, structs and
+# samplers, and sampler states. The repository relative path is also the label.
+effect libobs/data/area.effect
+effect libobs/data/bicubic_scale.effect
+effect libobs/data/bilinear_lowres_scale.effect
+effect libobs/data/lanczos_scale.effect

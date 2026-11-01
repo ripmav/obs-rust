@@ -1,0 +1,116 @@
+effect libobs/data/area.effect parse=ok params=5 techniques=8 viewproj=ViewProj world=-
+  param 0 ViewProj MATRIX4X4 default=-
+  param 1 base_dimension VEC2 default=-
+  param 2 base_dimension_i VEC2 default=-
+  param 3 image TEXTURE default=-
+  param 4 multiplier FLOAT default=-
+  technique Draw passes=1
+    pass 0 name=@null vertex=VSDefault(vert_in); pixel=PSDrawAreaRGBA(frag_in);
+      vs_params=[ViewProj] ps_params=[base_dimension,base_dimension_i,image]
+  technique DrawMultiply passes=1
+    pass 0 name=@null vertex=VSDefault(vert_in); pixel=PSDrawAreaRGBAMultiply(frag_in);
+      vs_params=[ViewProj] ps_params=[multiplier,base_dimension,base_dimension_i,image]
+  technique DrawTonemap passes=1
+    pass 0 name=@null vertex=VSDefault(vert_in); pixel=PSDrawAreaRGBATonemap(frag_in);
+      vs_params=[ViewProj] ps_params=[base_dimension,base_dimension_i,image]
+  technique DrawMultiplyTonemap passes=1
+    pass 0 name=@null vertex=VSDefault(vert_in); pixel=PSDrawAreaRGBAMultiplyTonemap(frag_in);
+      vs_params=[ViewProj] ps_params=[multiplier,base_dimension,base_dimension_i,image]
+  technique DrawUpscale passes=1
+    pass 0 name=@null vertex=VSDefault(vert_in); pixel=PSDrawAreaRGBAUpscale(frag_in);
+      vs_params=[ViewProj] ps_params=[base_dimension,base_dimension_i,image]
+  technique DrawUpscaleMultiply passes=1
+    pass 0 name=@null vertex=VSDefault(vert_in); pixel=PSDrawAreaRGBAUpscaleMultiply(frag_in);
+      vs_params=[ViewProj] ps_params=[multiplier,base_dimension,base_dimension_i,image]
+  technique DrawUpscaleTonemap passes=1
+    pass 0 name=@null vertex=VSDefault(vert_in); pixel=PSDrawAreaRGBAUpscaleTonemap(frag_in);
+      vs_params=[ViewProj] ps_params=[base_dimension,base_dimension_i,image]
+  technique DrawUpscaleMultiplyTonemap passes=1
+    pass 0 name=@null vertex=VSDefault(vert_in); pixel=PSDrawAreaRGBAUpscaleMultiplyTonemap(frag_in);
+      vs_params=[ViewProj] ps_params=[multiplier,base_dimension,base_dimension_i,image]
+  funcs=32 structs=3 samplers=1
+  sampler textureSampler Filter=Linear AddressU=Clamp AddressV=Clamp
+effect libobs/data/bicubic_scale.effect parse=ok params=6 techniques=8 viewproj=ViewProj world=-
+  param 0 ViewProj MATRIX4X4 default=-
+  param 1 image TEXTURE default=-
+  param 2 base_dimension VEC2 default=-
+  param 3 base_dimension_i VEC2 default=-
+  param 4 undistort_factor FLOAT default=[1]
+  param 5 multiplier FLOAT default=-
+  technique Draw passes=1
+    pass 0 name=@null vertex=VSDefault(v_in); pixel=PSDrawBicubicRGBA(f_in,false);
+      vs_params=[base_dimension,ViewProj] ps_params=[base_dimension_i,base_dimension,image,undistort_factor]
+  technique DrawMultiply passes=1
+    pass 0 name=@null vertex=VSDefault(v_in); pixel=PSDrawBicubicRGBAMultiply(f_in,false);
+      vs_params=[base_dimension,ViewProj] ps_params=[multiplier,base_dimension_i,base_dimension,image,undistort_factor]
+  technique DrawTonemap passes=1
+    pass 0 name=@null vertex=VSDefault(v_in); pixel=PSDrawBicubicRGBATonemap(f_in,false);
+      vs_params=[base_dimension,ViewProj] ps_params=[base_dimension_i,base_dimension,image,undistort_factor]
+  technique DrawMultiplyTonemap passes=1
+    pass 0 name=@null vertex=VSDefault(v_in); pixel=PSDrawBicubicRGBAMultiplyTonemap(f_in,false);
+      vs_params=[base_dimension,ViewProj] ps_params=[multiplier,base_dimension_i,base_dimension,image,undistort_factor]
+  technique DrawUndistort passes=1
+    pass 0 name=@null vertex=VSDefault(v_in); pixel=PSDrawBicubicRGBA(f_in,true);
+      vs_params=[base_dimension,ViewProj] ps_params=[base_dimension_i,base_dimension,image,undistort_factor]
+  technique DrawUndistortMultiply passes=1
+    pass 0 name=@null vertex=VSDefault(v_in); pixel=PSDrawBicubicRGBAMultiply(f_in,true);
+      vs_params=[base_dimension,ViewProj] ps_params=[multiplier,base_dimension_i,base_dimension,image,undistort_factor]
+  technique DrawUndistortTonemap passes=1
+    pass 0 name=@null vertex=VSDefault(v_in); pixel=PSDrawBicubicRGBATonemap(f_in,true);
+      vs_params=[base_dimension,ViewProj] ps_params=[base_dimension_i,base_dimension,image,undistort_factor]
+  technique DrawUndistortMultiplyTonemap passes=1
+    pass 0 name=@null vertex=VSDefault(v_in); pixel=PSDrawBicubicRGBAMultiplyTonemap(f_in,true);
+      vs_params=[base_dimension,ViewProj] ps_params=[multiplier,base_dimension_i,base_dimension,image,undistort_factor]
+  funcs=33 structs=3 samplers=1
+  sampler textureSampler Filter=Linear AddressU=Clamp AddressV=Clamp
+effect libobs/data/bilinear_lowres_scale.effect parse=ok params=3 techniques=4 viewproj=ViewProj world=-
+  param 0 ViewProj MATRIX4X4 default=-
+  param 1 image TEXTURE default=-
+  param 2 multiplier FLOAT default=-
+  technique Draw passes=1
+    pass 0 name=@null vertex=VSDefault(v_in); pixel=PSDrawLowresBilinearRGBA(f_in);
+      vs_params=[ViewProj] ps_params=[image]
+  technique DrawMultiply passes=1
+    pass 0 name=@null vertex=VSDefault(v_in); pixel=PSDrawLowresBilinearRGBAMultiply(f_in);
+      vs_params=[ViewProj] ps_params=[multiplier,image]
+  technique DrawTonemap passes=1
+    pass 0 name=@null vertex=VSDefault(v_in); pixel=PSDrawLowresBilinearRGBATonemap(f_in);
+      vs_params=[ViewProj] ps_params=[image]
+  technique DrawMultiplyTonemap passes=1
+    pass 0 name=@null vertex=VSDefault(v_in); pixel=PSDrawLowresBilinearRGBAMultiplyTonemap(f_in);
+      vs_params=[ViewProj] ps_params=[multiplier,image]
+  funcs=28 structs=1 samplers=1
+  sampler textureSampler Filter=Linear AddressU=Clamp AddressV=Clamp
+effect libobs/data/lanczos_scale.effect parse=ok params=6 techniques=8 viewproj=ViewProj world=-
+  param 0 ViewProj MATRIX4X4 default=-
+  param 1 image TEXTURE default=-
+  param 2 base_dimension VEC2 default=-
+  param 3 base_dimension_i VEC2 default=-
+  param 4 undistort_factor FLOAT default=[1]
+  param 5 multiplier FLOAT default=-
+  technique Draw passes=1
+    pass 0 name=@null vertex=VSDefault(v_in); pixel=PSDrawLanczosRGBA(f_in,false);
+      vs_params=[base_dimension,ViewProj] ps_params=[base_dimension_i,base_dimension,image,undistort_factor]
+  technique DrawMultiply passes=1
+    pass 0 name=@null vertex=VSDefault(v_in); pixel=PSDrawLanczosRGBAMultiply(f_in,false);
+      vs_params=[base_dimension,ViewProj] ps_params=[multiplier,base_dimension_i,base_dimension,image,undistort_factor]
+  technique DrawTonemap passes=1
+    pass 0 name=@null vertex=VSDefault(v_in); pixel=PSDrawLanczosRGBATonemap(f_in,false);
+      vs_params=[base_dimension,ViewProj] ps_params=[base_dimension_i,base_dimension,image,undistort_factor]
+  technique DrawMultiplyTonemap passes=1
+    pass 0 name=@null vertex=VSDefault(v_in); pixel=PSDrawLanczosRGBAMultiplyTonemap(f_in,false);
+      vs_params=[base_dimension,ViewProj] ps_params=[multiplier,base_dimension_i,base_dimension,image,undistort_factor]
+  technique DrawUndistort passes=1
+    pass 0 name=@null vertex=VSDefault(v_in); pixel=PSDrawLanczosRGBA(f_in,true);
+      vs_params=[base_dimension,ViewProj] ps_params=[base_dimension_i,base_dimension,image,undistort_factor]
+  technique DrawUndistortMultiply passes=1
+    pass 0 name=@null vertex=VSDefault(v_in); pixel=PSDrawLanczosRGBAMultiply(f_in,true);
+      vs_params=[base_dimension,ViewProj] ps_params=[multiplier,base_dimension_i,base_dimension,image,undistort_factor]
+  technique DrawUndistortTonemap passes=1
+    pass 0 name=@null vertex=VSDefault(v_in); pixel=PSDrawLanczosRGBATonemap(f_in,true);
+      vs_params=[base_dimension,ViewProj] ps_params=[base_dimension_i,base_dimension,image,undistort_factor]
+  technique DrawUndistortMultiplyTonemap passes=1
+    pass 0 name=@null vertex=VSDefault(v_in); pixel=PSDrawLanczosRGBAMultiplyTonemap(f_in,true);
+      vs_params=[base_dimension,ViewProj] ps_params=[multiplier,base_dimension_i,base_dimension,image,undistort_factor]
+  funcs=34 structs=3 samplers=1
+  sampler textureSampler AddressU=Clamp AddressV=Clamp Filter=Linear

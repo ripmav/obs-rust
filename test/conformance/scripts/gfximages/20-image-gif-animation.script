@@ -1,0 +1,60 @@
+# gs_image_file_ex_* with animated GIFs: the clock (nanoseconds, 1 cs = 10,000,000 ns), looping, the stop at the
+# end of a finite animation and the texture contents after gs_image_file_ex_update_texture. The texture lives
+# on a fake backend that keeps its pixels, so `img_tex` shows exactly what the caller would upload.
+# Fixture frames are solid colour (frame 0 red, 1 green, 2 blue); delays 10, 5 and 0 centiseconds.
+file a3.gif 47494638396102000200910000ff000000ff000000ffffffff21ff0b4e45545343415045322e30030100000021f904000a0000002c000000000200020000020284510021f90400050000002c00000000020002000002028c530021f90400000000002c00000000020002000002029455003b
+file a3l1.gif 47494638396102000200910000ff000000ff000000ffffffff21ff0b4e45545343415045322e30030101000021f904000a0000002c000000000200020000020284510021f90400050000002c00000000020002000002028c530021f90400000000002c00000000020002000002029455003b
+file a3l2.gif 47494638396102000200910000ff000000ff000000ffffffff21ff0b4e45545343415045322e30030102000021f904000a0000002c000000000200020000020284510021f90400050000002c00000000020002000002028c530021f90400000000002c00000000020002000002029455003b
+echo == infinite animation (3 frames, delays 10, 5, 0 cs)
+img_init a3.gif straight
+img_tex_init
+img_tex
+img_tick 99999999
+img_tick 1
+img_tick 1
+img_update
+img_tex
+img_tick 50000000 2
+img_update
+img_tex
+img_tick 100000000 3
+img_update
+img_tex
+echo == state after a 1 s tick (frame 2 has delay 0 = 100 ms)
+img_tick 1000000000
+img_state
+img_free
+echo == NETSCAPE count 1 = loop_max 2 = two plays: stops on the last frame
+img_init a3l1.gif straight
+img_tex_init
+img_tick 150000000
+img_update
+img_tex
+img_tick 150000000
+img_tick 1000000000 3
+img_state
+img_update
+img_tex
+img_free
+echo == NETSCAPE count 2 = three plays
+img_init a3l2.gif straight
+img_tex_init
+img_tick 150000000
+img_tick 150000000
+img_tick 1000000000
+img_tick 150000000
+img_tick 1000000000 2
+img_state
+img_free
+echo == one huge tick spans several loops
+img_init a3l2.gif straight
+img_tex_init
+img_tick 10000000000
+img_state
+img_free
+echo == one huge tick on an infinite animation
+img_init a3.gif straight
+img_tex_init
+img_tick 10000000000
+img_state
+img_free

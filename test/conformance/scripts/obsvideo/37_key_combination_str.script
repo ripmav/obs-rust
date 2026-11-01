@@ -1,0 +1,23 @@
+# obs_key_combination_to_str: modifiers in the fixed order Control, Command (META -> "Super"), Alt, Shift, then the key, each
+# separated by " + "; modifier names come from obs_key_to_str (translations apply); an empty rendering (e.g. NONE key) adds nothing.
+# Modifier bits: CAPS=0x1 (ignored), SHIFT=0x2, CONTROL=0x4, ALT=0x8, MOUSE_LEFT=0x10 (ignored), COMMAND=0x80.
+x11_setup 8 40 4
+x11_map 11 XK_A
+x11_lookup 11 a
+hk_init
+hk_combo 0 OBS_KEY_A
+hk_combo 4 OBS_KEY_A
+hk_combo 0x80 OBS_KEY_A
+hk_combo 12 OBS_KEY_A
+hk_combo 0x8d OBS_KEY_A
+hk_combo 0x2 OBS_KEY_A
+hk_combo 0x8e OBS_KEY_A
+echo "--- modifiers only"
+hk_combo 5 OBS_KEY_NONE
+hk_combo 0 OBS_KEY_NONE
+echo "--- modifier bits that are not keyboard modifiers are ignored"
+hk_combo 0x12 OBS_KEY_F2
+echo "--- translations"
+hk_translation OBS_KEY_CONTROL Ctrl
+hk_combo 4 OBS_KEY_ESCAPE
+hk_free

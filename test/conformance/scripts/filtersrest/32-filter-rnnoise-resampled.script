@@ -1,0 +1,21 @@
+# REAL filter + REAL RNNoise + REAL (libswresample backed) audio resampler: host rate 44100 and 96000 are converted to
+# 48 kHz before and back after RNNoise. Only frame counts and coarse rms (3 decimals) are recorded; the resampler's exact
+# samples are an input of the system, tolerance: rms +-10 %.
+audio 44100 2
+ns_create r v2 rnnoise -30
+ns_gen r 0 speechlike 200 0.25 0.01 7
+ns_gen r 1 speechlike 200 0.25 0.01 7
+ns_process r 441 1000000000
+ns_process r 441 1010000000
+ns_process r 441 1020000000
+ns_process r 441 1030000000
+ns_destroy r
+audio 96000 2
+ns_create r v2 rnnoise -30
+ns_gen r 0 speechlike 200 0.25 0.01 7
+ns_gen r 1 speechlike 200 0.25 0.01 7
+ns_process r 960 1000000000
+ns_process r 960 1010000000
+ns_process r 960 1020000000
+ns_process r 960 1030000000
+ns_destroy r

@@ -1,0 +1,44 @@
+file t1.gif 86 bytes
+file t2.gif 86 bytes
+file t3.gif 86 bytes
+file t4.gif 91 bytes
+== transparent index 1, frame 1 keeps previous (disposal 1)
+gif_new size=86 -> Success
+gif_scan 86 -> Success
+gif_complete
+gif_info width=2 height=2 frames=2 loop_max=1 background=ff000000 global_palette=1
+  frame 0 display=1 transparency=1 local_palette=0 interlaced=0 disposal=None(1) delay=5 rect=0,0,2,2
+  frame 1 display=1 transparency=1 local_palette=0 interlaced=0 disposal=None(1) delay=5 rect=0,0,2,2
+  frame_info(frame_count) null
+gif_frame 0 -> Success pixels=ff0000ff000000000000ffffffffffff
+gif_frame 1 -> Success pixels=ff0000ff000000ff0000ffff000000ff
+== transparent index 1, frame 0 restored to background (disposal 2)
+gif_new size=86 -> Success
+gif_scan 86 -> Success
+gif_complete
+gif_info width=2 height=2 frames=2 loop_max=1 background=ff000000 global_palette=1
+  frame 0 display=1 transparency=1 local_palette=0 interlaced=0 disposal=Restore background(2) delay=5 rect=0,0,2,2
+  frame 1 display=1 transparency=1 local_palette=0 interlaced=0 disposal=Unspecified(0) delay=5 rect=0,0,2,2
+  frame_info(frame_count) null
+gif_frame 0 -> Success pixels=ff0000ff000000000000ffffffffffff
+gif_frame 1 -> Success pixels=00000000ff0000ff00000000ff0000ff
+== transparent index 200 outside a 5 entry palette
+gif_new size=86 -> Success
+gif_scan 86 -> Success
+gif_complete
+gif_info width=2 height=2 frames=2 loop_max=1 background=ff000000 global_palette=1
+  frame 0 display=1 transparency=1 local_palette=0 interlaced=0 disposal=None(1) delay=5 rect=0,0,2,2
+  frame 1 display=1 transparency=0 local_palette=0 interlaced=0 disposal=None(1) delay=5 rect=0,0,2,2
+  frame_info(frame_count) null
+gif_frame 0 -> Success pixels=ff0000ff00ff00ff0000ffffffffffff
+gif_frame 1 -> Success pixels=ff0000ffff0000ffff0000ffff0000ff
+== transparent index 0 with a local palette
+gif_new size=91 -> Success
+gif_scan 91 -> Success
+gif_complete
+gif_info width=2 height=2 frames=2 loop_max=1 background=ff0000ff global_palette=1
+  frame 0 display=1 transparency=1 local_palette=1 interlaced=0 disposal=Unspecified(0) delay=5 rect=0,0,2,2
+  frame 1 display=1 transparency=0 local_palette=0 interlaced=0 disposal=Unspecified(0) delay=5 rect=0,0,2,2
+  frame_info(frame_count) null
+gif_frame 0 -> Success pixels=00000000ffffffff00000000ffffffff
+gif_frame 1 -> Success pixels=00ff00ffff0000ff00ff00ffff0000ff

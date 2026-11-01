@@ -1,0 +1,28 @@
+# Statistics: once the accumulated frame spacing (video_time - last_time per frame) reaches 1 s the loop publishes
+# video_fps = frames / seconds and video_avg_frame_time_ns = frame_time_total / frames, then resets the accumulators.
+# The fake clock advances 7 ns per os_gettime_ns call so the frame time is measurable (2 calls per frame: start and end).
+core 250000000
+trace 0
+ctx_new 250000000 0
+mix_add M 1 8 8 8 8 BGRA 0 0 0
+stop_after M 100
+clock 1000000000
+clock_step 7
+video_time 1000000000
+sleep_result 1
+echo "--- three frames: below 1 s, nothing published"
+loop 3
+counters
+echo "--- fourth frame crosses 1 s"
+loop 1
+counters
+echo "--- accumulators reset; next frames start a new second"
+loop 2
+counters
+echo "--- a lagging second: each frame takes 2 intervals"
+sleep_result 0
+clock_step 0
+clock 3000000000
+video_time 2000000000
+loop 1
+counters

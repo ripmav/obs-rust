@@ -1,0 +1,19 @@
+log debug Found dbus service: org.freedesktop.PowerManagement.Inhibit
+dsi_create 0 ok
+dsi_inhibit done
+dsi_inhibit done
+dsi_inhibit done
+dsi_inhibit done
+dsi_inhibit done
+svc call org.freedesktop.PowerManagement.Inhibit.Inhibit path=/org/freedesktop/PowerManagement body=('libobs', 'Streaming')
+svc call org.freedesktop.PowerManagement.Inhibit.UnInhibit path=/org/freedesktop/PowerManagement body=(42,)
+svc call org.freedesktop.PowerManagement.Inhibit.Inhibit path=/org/freedesktop/PowerManagement body=('libobs', 'Again')
+dsi_destroy done
+log debug Found dbus service: org.freedesktop.PowerManagement.Inhibit
+dsi_create 0 ok
+log error Failed to call Inhibit:
+dsi_inhibit done
+svc call org.freedesktop.PowerManagement.Inhibit.Inhibit path=/org/freedesktop/PowerManagement body=('libobs', 'Fails')
+dsi_inhibit done
+dsi_destroy done
+svc call org.freedesktop.PowerManagement.Inhibit.Inhibit path=/org/freedesktop/PowerManagement body=('libobs', 'Works')

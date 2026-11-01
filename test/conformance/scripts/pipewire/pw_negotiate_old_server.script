@@ -1,0 +1,18 @@
+# Old servers: DmaBuf is only offered when the format carries a modifier or the server is >= 0.3.24; VideoTransform meta
+# only for servers >= 0.3.62. Three servers: 0.3.23 without modifier (MemPtr only), 0.3.23 with modifier (DmaBuf too), 0.3.61.
+unique_name :1.5
+prop ScreenCast AvailableSourceTypes "uint32 1"
+prop ScreenCast version "uint32 2"
+screencast_load
+pw_server_version 0.3.23
+new a pipewire-desktop-capture-source
+portal_ok 33
+param_changed format=BGRx
+new b pipewire-desktop-capture-source
+portal_ok 34
+stream 2
+param_changed format=BGRx modifier=0x0
+pw_server_version 0.3.61
+new c pipewire-desktop-capture-source
+portal_ok 35
+param_changed format=RGBA size=64x64

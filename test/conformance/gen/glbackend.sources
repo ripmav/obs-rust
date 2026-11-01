@@ -1,0 +1,45 @@
+# OpenGL backend libobs-opengl (X11/EGL platform glue included) run against a real headless
+# software GL context (Xvfb + Mesa llvmpipe), spec S-057.  graphics.c is NOT linked: the backend
+# exports gs_* symbols itself, the runner calls device_* / gs_* of the backend directly.
+test/conformance/gen/glbackend_runner.c
+test/conformance/gen/glbackend_stubs.c
+libobs-opengl/gl-egl-common.c
+libobs-opengl/gl-nix.c
+libobs-opengl/gl-x11-egl.c
+libobs-opengl/gl-helpers.c
+libobs-opengl/gl-indexbuffer.c
+libobs-opengl/gl-shader.c
+libobs-opengl/gl-shaderparser.c
+libobs-opengl/gl-stagesurf.c
+libobs-opengl/gl-subsystem.c
+libobs-opengl/gl-texture2d.c
+libobs-opengl/gl-texture3d.c
+libobs-opengl/gl-texturecube.c
+libobs-opengl/gl-vertexbuffer.c
+libobs-opengl/gl-zstencil.c
+deps/glad/src/glad.c
+deps/glad/src/glad_egl.c
+libobs/graphics/shader-parser.c
+libobs/graphics/vec2.c
+libobs/graphics/vec3.c
+libobs/graphics/vec4.c
+libobs/graphics/quat.c
+libobs/graphics/axisang.c
+libobs/graphics/matrix3.c
+libobs/graphics/matrix4.c
+libobs/graphics/plane.c
+libobs/graphics/math-extra.c
+libobs/util/lexer.c
+libobs/util/cf-lexer.c
+libobs/util/cf-parser.c
+-w
+-I../../libobs-opengl
+-I../../deps/glad/include
+-I/usr/include/libdrm
+-lEGL
+-lGL
+-lX11-xcb
+-lX11
+-lxcb
+-ldrm
+-ldl

@@ -1,0 +1,41 @@
+# video_sleep also publishes encoder-group start timestamps: for every encoder registered with add_ready_encoder_group
+# (weak reference) whose weak ref still resolves and that belongs to a group, if num_encoders_started >= number of encoders in
+# the group and the group has no start timestamp yet, the group's start_timestamp becomes the NEW video_time (after the
+# sleep). The ready list is cleared afterwards (even for dead entries). The GPU encode thread then lets an encoder with
+# start_ts == 0 begin only on the frame whose timestamp equals the group's start timestamp.
+core 1000
+trace 0
+ctx_new 1000
+mix_add M 1 16 16 16 16 NV12 1 0 0
+stop_after M 1000
+clock 1000
+video_time 1000
+sleep_result 1
+enc_add G1 M 1 60 1 1 1 1
+enc_add G2 M 1 60 1 1 1 1
+enc_group G1 grp 2 1 0
+enc_group G2 grp 2 1 0
+ready_group G1
+echo "--- group not complete (1 of 2 started): timestamp stays 0"
+loop 1
+group_ts G1
+echo "--- both started: the first frame after registration sets it to video_time after the sleep"
+enc_group G1 grp 2 2 0
+ready_group G2
+loop 1
+group_ts G2
+echo "--- already set: not overwritten"
+ready_group G1
+loop 1
+group_ts G1
+echo "--- a dead weak reference is skipped and the list still cleared"
+enc_group G1 grp 2 2 0
+ready_group G1
+enc_set G1 dead 1
+loop 1
+group_ts G1
+enc_set G1 dead 0
+echo "--- an encoder without a group is ignored"
+enc_add S1 M 1 60 1 1 1 1
+ready_group S1
+loop 1

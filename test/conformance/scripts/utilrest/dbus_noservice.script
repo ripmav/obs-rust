@@ -1,0 +1,4 @@
+# a bus without any of the four services: create returns NULL
+dbus_service portal
+dsi_create 0
+dbus_log

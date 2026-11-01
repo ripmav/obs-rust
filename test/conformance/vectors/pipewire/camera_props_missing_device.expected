@@ -1,0 +1,61 @@
+> unique_name :1.8
+> camera_load
+host.register_source pipewire-camera-source type=0 flags=0x5 icon=9
+> set a device_id str gone
+> new a pipewire-camera-source
+log error obs-data.c: [obs_data_create_from_json] Failed reading json string <jansson>
+dbus.bus_get type=2 -> ok
+dbus.subscribe#1 org.freedesktop.portal.Desktop org.freedesktop.portal.Request.Response path=/org/freedesktop/portal/desktop/request/1_8/obs1 arg0=NULL flags=1
+dbus.proxy_new org.freedesktop.portal.Desktop /org/freedesktop/portal/desktop org.freedesktop.portal.Camera flags=0
+dbus.call#1 AccessCamera ({'handle_token': <'obs1'>},)
+created a
+> props a
+prop device_id type=list desc="PipeWireCameraDevice" visible=1 enabled=1 format=3 items=1
+  item "gone" = "gone" disabled=1
+prop format type=list desc="VideoFormat" visible=1 enabled=1 format=3 items=0
+prop framerate type=list desc="FrameRate" visible=1 enabled=1 format=3 items=0
+prop controls type=group desc="CameraControls" visible=1 enabled=1
+> get a device_id str
+device_id = "gone"
+> response 1 (0, {})
+dbus.signal Response -> /org/freedesktop/portal/desktop/request/1_8/obs1
+log info [camera-portal] Successfully accessed cameras
+dbus.call#2 OpenPipeWireRemote (@a{sv} {},)
+dbus.unsubscribe#1
+> finish 2 fd
+dbus.finish#2 OpenPipeWireRemote
+pw.thread_loop_new "PipeWire thread loop"
+pw.thread_loop_start -> 0
+pw.context_connect_fd -> core
+pw.core_add_listener
+pw.core_sync id=0 seq_in=0 -> 1
+log info [pipewire] Server version: 1.0.0
+log info [pipewire] Library version: lib-version
+log info [pipewire] Header version: <hdr>
+pw.core_get_registry version=3
+pw.registry_add_listener
+log info [pipewire] Created registry <ptr>
+pw.core_sync id=0 seq_in=1 -> 2
+> registry_global 50 PipeWire:Interface:Node 3 node.name=cam0 node.description=Front Camera
+pw.event registry_global id=50 type=PipeWire:Interface:Node
+log info [camera-portal] Found device cam0
+pw.registry_bind id=50 type=PipeWire:Interface:Node version=3 -> proxy
+host.update_properties a
+> dump a
+prop device_id type=list desc="PipeWireCameraDevice" visible=1 enabled=1 format=3 items=1
+  item "gone" = "gone" disabled=1
+prop format type=list desc="VideoFormat" visible=1 enabled=1 format=3 items=0
+prop framerate type=list desc="FrameRate" visible=1 enabled=1 format=3 items=0
+prop controls type=group desc="CameraControls" visible=1 enabled=1
+> props a
+prop device_id type=list desc="PipeWireCameraDevice" visible=1 enabled=1 format=3 items=2
+  item "Front Camera" = "cam0" disabled=0
+  item "gone" = "gone" disabled=1
+prop format type=list desc="VideoFormat" visible=1 enabled=1 format=3 items=0
+prop framerate type=list desc="FrameRate" visible=1 enabled=1 format=3 items=0
+prop controls type=group desc="CameraControls" visible=1 enabled=1
+> modified a device_id
+log info [camera-portal] selected camera 'gone'
+modified -> 0
+> name a
+name = PipeWireCamera

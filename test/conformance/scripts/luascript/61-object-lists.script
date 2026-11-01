@@ -1,0 +1,44 @@
+# Enumeration wrappers return Lua tables that OWN one extra reference per element, to be dropped with
+# source_list_release / sceneitem_list_release.  Also calldata_source / calldata_sceneitem and the hiding of
+# unavailable SWIG types (the wrapper then warns and yields nothing).
+scripting load
+fake_source Cam 2
+fake_source Mic
+scene_items 3
+handler H0 "void src_sig(ptr source, ptr item)"
+lua_begin lists.lua
+local srcs = obslua.obs_enum_sources()
+print("sources: " .. #srcs)
+local names = {}
+for i, s in ipairs(srcs) do names[#names + 1] = obslua.obs_source_get_name(s) end
+print(table.concat(names, ","))
+function script_update(s)
+  local cmd = obslua.obs_data_get_string(s, "cmd")
+  if cmd == "release" then obslua.source_list_release(srcs)
+  elseif cmd == "filters" then
+    local f = obslua.obs_source_enum_filters(obslua.fake_source(0))
+    print("filters: " .. #f)
+    obslua.source_list_release(f)
+  elseif cmd == "items" then
+    local it = obslua.obs_scene_enum_items(obslua.fake_scene())
+    local ids = {}
+    for i, x in ipairs(it) do ids[#ids + 1] = obslua.obs_sceneitem_get_id(x) end
+    print("items: " .. table.concat(ids, ","))
+    obslua.sceneitem_list_release(it)
+    local g = obslua.obs_sceneitem_group_enum_items(obslua.fake_sceneitem())
+    print("group items: " .. #g)
+    obslua.sceneitem_list_release(g)
+  end
+end
+lua_end
+create S0 lists.lua
+refs
+update S0 s:cmd=release
+refs
+update S0 s:cmd=filters
+update S0 s:cmd=items
+refs
+echo --- unavailable SWIG type: warning and an empty/short result
+swig_hide "obs_source_t *" 1
+update S0 s:cmd=filters
+swig_hide "obs_source_t *" 0

@@ -1,0 +1,17 @@
+# URL validation inside libsrt_setup: scheme must be exactly "srt", port must be 1..65535, host must resolve.
+srt_open "srt://192.0.2.10"
+srt_open "srt://192.0.2.10:0"
+srt_open "srt://192.0.2.10:65536"
+srt_open "srt://192.0.2.10:65535"
+srt_close
+srt_open "rist://192.0.2.10:9000"
+srt_open "srtx://192.0.2.10:9000"
+srt_open "srt://bad.test:9000"
+# IPv6 literal in brackets and a name that the fake resolver maps to loopback
+srt_open "srt://[2001:db8::1]:9000"
+srt_close
+srt_open "srt://localhost:9000"
+srt_close
+# empty host: resolver is asked for NULL (loopback for a caller)
+srt_open "srt://:9000"
+srt_close

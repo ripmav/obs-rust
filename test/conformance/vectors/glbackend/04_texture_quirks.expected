@@ -1,0 +1,22 @@
+create rc=0 device=yes
+tex r8w3 ok
+read r8w3 3x3 linesize=3
+  row 0 010203
+  row 1 000405
+  row 2 060007
+tex r8w5 ok
+read r8w5 5x2 linesize=5
+  row 0 0102030405
+  row 1 0000000607
+tex r8w4 ok
+read r8w4 4x2 linesize=4
+  row 0 01020304
+  row 1 05060708
+tex a8w2 ok
+read a8w2 2x2 linesize=2
+  row 0 0102
+  row 1 0000
+tex rgbaw3 ok
+read rgbaw3 3x1 linesize=12
+  row 0 112233445566778899aabbcc
+destroyed

@@ -1,0 +1,24 @@
+# Timestamp conversion: encoder pts/dts are divided by the codec time base numerator (integer division) and rescaled to the
+# stream time base. For integer frame rates the numerator is 1. DEFECT D-2: for 29.97 fps (time base 1001/30000) pts are
+# divided by 1001, collapsing small frame indexes to 0: PES timestamps do not advance. Required behaviour: rescale without the
+# division (pts counts frames).
+create
+world fps 60 1
+start
+pkt v 0 0 0 1 3000
+pkt v 0 1 1 0 800
+pkt v 0 2 2 0 800
+pkt a 0 0 0 1 200
+drain
+stop 0
+ts
+capture_clear
+world fps 30000 1001
+start
+pkt v 0 0 0 1 3000
+pkt v 0 1 1 0 800
+pkt v 0 2 2 0 800
+pkt a 0 0 0 1 200
+drain
+stop 0
+ts

@@ -1,0 +1,49 @@
+# libnsgif (vendored GIF decoder): header, logical screen, frame table, decoded canvas bytes.
+# Fixtures are 2x2 GIFs with the palette red, green, blue, white. Pixels are RGBA bytes (NSGIF_BITMAP_FMT_R8G8B8A8).
+# Demonstrates: scan/complete lifecycle, info fields (loop_max, background, global palette), per-frame fields,
+# GIF87a acceptance, comment/application extensions, the four bitmap byte orders, out-of-range frame access.
+file two.gif 47494638396102000200910000ff000000ff000000ffffffff21ff0b4e45545343415045322e30030100000021f904000a0000002c00000000020002000002034434050021f90400140000002c00000000020002000002039c0205003b
+file still.gif 47494638396102000200910000ff000000ff000000ffffffff2c0000000002000200000203443405003b
+file g87.gif 47494638376102000200910000ff000000ff000000ffffffff2c0000000002000200000203443405003b
+file cmt.gif 47494638396102000200910000ff000000ff000000ffffffff21ff0b4e45545343415045322e30030105000021fe0568656c6c6f0021f90400030000002c0000000002000200000203443405003b
+echo == two frames, loop 0
+gif_new two.gif
+gif_scan
+gif_complete
+gif_info
+gif_frame 0
+gif_frame 1
+gif_frame 2
+gif_palette global
+gif_palette local 0
+gif_palette local 5
+echo == still image
+gif_new still.gif
+gif_scan
+gif_complete
+gif_info
+gif_frame 0
+echo == GIF87a
+gif_new g87.gif
+gif_scan
+gif_complete
+gif_info
+gif_frame 0
+echo == comment extension and NETSCAPE loop 5, delay 3 (below the default minimum)
+gif_new cmt.gif
+gif_scan
+gif_complete
+gif_info
+echo == byte orders of the decoded bitmap
+gif_new two.gif bgra
+gif_scan
+gif_complete
+gif_frame 0
+gif_new two.gif argb
+gif_scan
+gif_complete
+gif_frame 0
+gif_new two.gif abgr
+gif_scan
+gif_complete
+gif_frame 0

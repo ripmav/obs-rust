@@ -1,0 +1,41 @@
+# on_audio_playback applies the source's user volume to the converted samples unless it is within EPSILON of 1.0
+# (process_volume). u8 scales around the 128 midpoint, integer formats truncate toward zero after multiplication.
+pa_server pulse 16.1 alsa_output.a
+pa_sink u8 "" u8 100 1
+pa_sink s16 "" s16 100 1
+pa_sink s32 "" s32 100 1
+pa_sink f32 "" f32 100 1
+mon_dev u8
+mon_src 0 0 0.5 - 1
+mon_create 0 0
+mon_play 0 4 0.125 0.125
+mon_destroy 0
+mon_dev s16
+mon_create 0 0
+mon_play 0 4 0.125 0.125
+mon_destroy 0
+mon_dev s32
+mon_create 0 0
+mon_play 0 4 0.125 0.125
+mon_destroy 0
+mon_dev f32
+mon_create 0 0
+mon_play 0 4 0.125 0.125
+mon_destroy 0
+# volume 1.0 and 1.0000001 skip the scaling; 0 silences (u8 -> 128)
+mon_src 0 0 1.0000001 - 1
+mon_dev s16
+mon_create 0 0
+mon_play 0 4 0.125 0.125
+mon_destroy 0
+mon_src 0 0 0.0 - 1
+mon_dev u8
+mon_create 0 0
+mon_play 0 4 0.125 0.125
+mon_destroy 0
+# gain above 1 on s16 wraps in the conversion back to int16 (no clipping)
+mon_src 0 0 2.0 - 1
+mon_dev s16
+mon_create 0 0
+mon_play 0 4 0.25 0.0625
+mon_destroy 0

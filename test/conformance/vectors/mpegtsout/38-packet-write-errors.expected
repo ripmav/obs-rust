@@ -1,0 +1,190 @@
+> create
+create ok
+> start
+start returned 1
+srt startup
+srt create_socket -> 1
+srt setsockopt fd=1 SRTO_TRANSTYPE=0
+srt setsockopt fd=1 SRTO_ENFORCEDENCRYPTION=0
+srt setsockopt fd=1 SRTO_KMREFRESHRATE=0
+srt setsockopt fd=1 SRTO_KMPREANNOUNCE=0
+srt setsockopt fd=1 SRTO_SNDDROPDELAY=0
+srt setsockopt fd=1 SRTO_PAYLOADSIZE=1316
+srt setsockopt fd=1 SRTO_SENDER=1
+srt setsockopt fd=1 SRTO_SNDSYN=0
+srt setsockopt fd=1 SRTO_RCVSYN=0
+srt connect fd=1 192.0.2.10:9000
+srt epoll_release
+srt setsockopt fd=1 SRTO_INPUTBW=0
+srt setsockopt fd=1 SRTO_OHEADBW=25
+> pkt v 0 0 0 1 3000
+> pkt a 0 0 0 1 200
+> drain
+> write_fail 1 INVALIDDATA
+> pkt v 0 1 1 0 800
+> drain
+log warning process_packet: Error writing packet: Invalid data found when processing input
+> events
+events -
+> write_fail 1 EINVAL
+> pkt v 0 2 2 0 800
+> drain
+log warning process_packet: Error writing packet: Invalid argument
+> events
+events -
+> state
+state running=1 stopping=0 write_thread_active=1 has_connected=1 got_headers=1 queued=0
+state total_bytes=4800 initialized=1 begin_calls=1 stop_ts=0
+> drain
+> write_fail 1 -5
+> srt_state broken
+> pkt v 0 3 3 0 800
+> wait_event 1
+log warning process_packet: Error writing packet: Input/output error
+> events
+events DISCONNECTED
+> state
+state running=1 stopping=1 write_thread_active=1 has_connected=1 got_headers=1 queued=0
+state total_bytes=5600 initialized=1 begin_calls=1 stop_ts=0
+> pkt v 0 4 4 0 800
+srt epoll_release
+srt close fd=1
+srt cleanup
+> events
+events -
+> state
+state running=1 stopping=1 write_thread_active=0 has_connected=0 got_headers=1 queued=0
+state total_bytes=5600 initialized=0 begin_calls=1 stop_ts=0
+> stop 0
+> events
+events SUCCESS
+> srt_reset_net
+> write_fail 0
+> start
+start returned 1
+srt startup
+srt create_socket -> 1
+srt setsockopt fd=1 SRTO_TRANSTYPE=0
+srt setsockopt fd=1 SRTO_ENFORCEDENCRYPTION=0
+srt setsockopt fd=1 SRTO_KMREFRESHRATE=0
+srt setsockopt fd=1 SRTO_KMPREANNOUNCE=0
+srt setsockopt fd=1 SRTO_SNDDROPDELAY=0
+srt setsockopt fd=1 SRTO_PAYLOADSIZE=1316
+srt setsockopt fd=1 SRTO_SENDER=1
+srt setsockopt fd=1 SRTO_SNDSYN=0
+srt setsockopt fd=1 SRTO_RCVSYN=0
+srt connect fd=1 192.0.2.10:9000
+srt epoll_release
+srt setsockopt fd=1 SRTO_INPUTBW=0
+srt setsockopt fd=1 SRTO_OHEADBW=25
+> pkt v 0 0 0 1 3000
+> pkt a 0 0 0 1 200
+> drain
+> write_fail 1 -5
+> pkt v 0 1 1 0 800
+> wait_event 1
+log warning process_packet: Error writing packet: Input/output error
+> events
+events ERROR
+> stop 0
+srt epoll_release
+srt close fd=1
+srt cleanup
+> events
+events SUCCESS
+> srt_reset_net
+> write_fail 0
+> start
+start returned 1
+srt startup
+srt create_socket -> 1
+srt setsockopt fd=1 SRTO_TRANSTYPE=0
+srt setsockopt fd=1 SRTO_ENFORCEDENCRYPTION=0
+srt setsockopt fd=1 SRTO_KMREFRESHRATE=0
+srt setsockopt fd=1 SRTO_KMPREANNOUNCE=0
+srt setsockopt fd=1 SRTO_SNDDROPDELAY=0
+srt setsockopt fd=1 SRTO_PAYLOADSIZE=1316
+srt setsockopt fd=1 SRTO_SENDER=1
+srt setsockopt fd=1 SRTO_SNDSYN=0
+srt setsockopt fd=1 SRTO_RCVSYN=0
+srt connect fd=1 192.0.2.10:9000
+srt epoll_release
+srt setsockopt fd=1 SRTO_INPUTBW=0
+srt setsockopt fd=1 SRTO_OHEADBW=25
+> pkt v 0 0 0 1 3000
+> pkt a 0 0 0 1 200
+> drain
+> srt_state nonexist
+> write_fail 1 -5
+> pkt v 0 1 1 0 800
+> wait_event 1
+log warning process_packet: Error writing packet: Input/output error
+> events
+events DISCONNECTED
+> stop 0
+srt epoll_release
+srt close fd=1
+srt cleanup
+> events
+events SUCCESS
+> srt_reset_net
+> srt_state auto
+> world url rist://192.0.2.20:8000
+> write_fail 0
+> start
+start returned 1
+rist sender_create profile=1 flow_id=0
+rist peer_create address=rist://192.0.2.20:8000 physical_port=0 virt_dst_port=1968 key_size=0 secret=""
+rist   srp_username="" srp_password="" recovery_length_min=3000 recovery_length_max=3000
+rist   initiate_conn=0 recovery_mode=2 weight=0 session_timeout=0 cname="" compression=0
+rist start
+rist stats_callback_set interval=60000
+> pkt v 0 0 0 1 3000
+> pkt a 0 0 0 1 200
+> drain
+> write_fail 1 -5
+> pkt v 0 1 1 0 800
+> wait_event 1
+log warning process_packet: Error writing packet: Input/output error
+> events
+events DISCONNECTED
+> stop 0
+rist destroy
+> events
+events SUCCESS
+> srt_reset_net
+> world url srt://192.0.2.10:9000
+> write_fail 0
+> start
+start returned 1
+srt startup
+srt create_socket -> 1
+srt setsockopt fd=1 SRTO_TRANSTYPE=0
+srt setsockopt fd=1 SRTO_ENFORCEDENCRYPTION=0
+srt setsockopt fd=1 SRTO_KMREFRESHRATE=0
+srt setsockopt fd=1 SRTO_KMPREANNOUNCE=0
+srt setsockopt fd=1 SRTO_SNDDROPDELAY=0
+srt setsockopt fd=1 SRTO_PAYLOADSIZE=1316
+srt setsockopt fd=1 SRTO_SENDER=1
+srt setsockopt fd=1 SRTO_SNDSYN=0
+srt setsockopt fd=1 SRTO_RCVSYN=0
+srt connect fd=1 192.0.2.10:9000
+srt epoll_release
+srt setsockopt fd=1 SRTO_INPUTBW=0
+srt setsockopt fd=1 SRTO_OHEADBW=25
+> pkt v 0 0 0 1 100
+> pkt a 0 0 0 1 100
+> drain
+> srt_fail send ECONNLOST 32
+> pkt v 0 1 1 0 3000
+> wait_event 1
+wait_event timeout
+> events
+events -
+> stop 0
+log error [obs-ffmpeg mpegts muxer / libsrt]: fake srt error 2001
+srt epoll_release
+srt close fd=1
+srt cleanup
+> events
+events SUCCESS

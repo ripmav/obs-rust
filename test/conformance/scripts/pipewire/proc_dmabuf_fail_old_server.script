@@ -1,0 +1,17 @@
+# On servers older than 0.3.40 a failed import drops ALL modifiers of the format except the last list element (the erase range
+# is [0, n-1)); the plain shared-memory param is unaffected.
+unique_name :1.5
+prop ScreenCast AvailableSourceTypes "uint32 1"
+prop ScreenCast version "uint32 2"
+screencast_load
+gs_dmabuf 1 ARGB8888
+gs_modifiers ARGB8888 0x0 0x7 0x9
+pw_server_version 0.3.39
+new a pipewire-desktop-capture-source
+portal_ok 46
+dmabuf_import fail
+param_changed format=BGRA size=64x64 modifier=0x7
+buf_data 0 0 dmabuf 11 0 256 100 0 0
+buf_push 0
+process
+run_events

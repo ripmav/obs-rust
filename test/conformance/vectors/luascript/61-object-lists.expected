@@ -1,0 +1,20 @@
+scripting load -> 1 ticks=1
+log info [Lua: lists.lua] sources: 4
+log info [Lua: lists.lua] Cam,Cam-f0,Cam-f1,Mic
+log info [obs-scripting]: Loaded lua script: lists.lua
+create S0 -> loaded=1 lang=1 file=lists.lua desc=NULL
+refs Cam=2 Cam-f0=2 Cam-f1=2 Mic=2 item100=0 item101=0 item102=0
+update S0 done
+refs Cam=1 Cam-f0=1 Cam-f1=1 Mic=1 item100=0 item101=0 item102=0
+log info [Lua: lists.lua] filters: 2
+update S0 done
+log info [Lua: lists.lua] items: 100,101,102
+log info [Lua: lists.lua] group items: 3
+update S0 done
+refs Cam=1 Cam-f0=1 Cam-f1=1 Mic=1 item100=0 item101=0 item102=0
+echo --- unavailable SWIG type: warning and an empty/short result
+swig_hide obs_source_t * -> 1
+log warning [Lua] source_enum_filters:604: SWIG could not find type: obs_source_t *
+log warning [Lua: lists.lua] Failed to call script_update for obs_lua_script_update: [string "<chunk>"]:11: attempt to get length of local 'f' (a nil value)
+update S0 done
+swig_hide obs_source_t * -> 1

@@ -1,0 +1,12 @@
+# DEFECT D-2: timer_add, timer_remove, obs_hotkey_register_frontend, obs_properties_add_button,
+# obs_property_set_modified_callback and the frontend (de)registration functions use the "current script" without
+# checking it (the tick/signal functions raise RuntimeError instead, see 13). Called while no script is current
+# (e.g. from a Python thread) the reference dereferences NULL. Required behaviour: raise RuntimeError like the others.
+# Each case runs in a forked child.
+scripting load
+try pyexec "import obspython as o; o.timer_add(len, 10)"
+try pyexec "import obspython as o; o.timer_remove(len)"
+try pyexec "import obspython as o; print(o.obs_hotkey_register_frontend('a', 'b', lambda p: 0))"
+try pyexec "import obspython as o; o.obs_frontend_add_event_callback(lambda e: 0)"
+try pyexec "import obspython as o; o.obs_frontend_remove_save_callback(lambda e, s: 0)"
+scripting unload

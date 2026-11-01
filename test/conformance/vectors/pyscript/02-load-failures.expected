@@ -1,0 +1,42 @@
+scripting load -> 1 python=1 ticks=1
+echo syntax error
+log warning [Python] Python failure in load_python_script:<line>:
+log error [Python: syntax_bad.py]   File "$TMP/syntax_bad.py", line 1
+log error [Python: syntax_bad.py] SyntaxError: <message>
+create S0 -> loaded=0 lang=2 file=syntax_bad.py desc=NULL
+echo exception while importing
+log info [Python: raises_on_import.py] before raise
+log warning [Python] Python failure in load_python_script:<line>:
+log error [Python: raises_on_import.py] Traceback (most recent call last):
+log error [Python: raises_on_import.py]   File "$TMP/raises_on_import.py", line 3, in <module>
+log error [Python: raises_on_import.py] RuntimeError: boom at import
+create S1 -> loaded=0 lang=2 file=raises_on_import.py desc=NULL
+echo import of a missing module
+log warning [Python] Python failure in load_python_script:<line>:
+log error [Python: missing_dep.py] Traceback (most recent call last):
+log error [Python: missing_dep.py]   File "$TMP/missing_dep.py", line 1, in <module>
+log error [Python: missing_dep.py] ModuleNotFoundError: No module named 'no_such_module_zzz'
+create S2 -> loaded=0 lang=2 file=missing_dep.py desc=NULL
+echo file does not exist (module not found, path still split)
+log warning [Python] Python failure in load_python_script:<line>:
+log error [Python: does_not_exist.py] ModuleNotFoundError: No module named 'does_not_exist'
+create S3 -> loaded=0 lang=2 file=does_not_exist.py desc=NULL
+echo the interpreter survives failures
+log info [Python: ok_after.py] fine
+log info [obs-scripting]: Loaded python script: ok_after.py
+create S4 -> loaded=1 lang=2 file=ok_after.py desc=NULL
+echo reload of a failed script retries the import
+log info [Python: raises_on_import.py] before raise
+log warning [Python] Python failure in load_python_script:<line>:
+log error [Python: raises_on_import.py] Traceback (most recent call last):
+log error [Python: raises_on_import.py]   File "$TMP/raises_on_import.py", line 3, in <module>
+log error [Python: raises_on_import.py] RuntimeError: boom at import
+reload S1 -> 0
+auto-destroy S0
+auto-destroy S1
+auto-destroy S2
+auto-destroy S3
+log info [obs-scripting]: Unloaded python script: ok_after.py
+auto-destroy S4
+log info [Scripting] Total detached callbacks: 0
+scripting unload ticks=0

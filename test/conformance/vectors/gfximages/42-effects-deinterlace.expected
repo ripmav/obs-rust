@@ -1,0 +1,186 @@
+effect libobs/data/deinterlace_base.effect parse=ok params=7 techniques=0 viewproj=ViewProj world=-
+  param 0 ViewProj MATRIX4X4 default=-
+  param 1 image TEXTURE default=-
+  param 2 multiplier FLOAT default=-
+  param 3 previous_image TEXTURE default=-
+  param 4 dimensions VEC2 default=-
+  param 5 field_order INT default=-
+  param 6 frame2 BOOL default=-
+  funcs=49 structs=1 samplers=1
+  sampler textureSampler Filter=Linear AddressU=Clamp AddressV=Clamp
+effect libobs/data/deinterlace_blend.effect parse=ok params=7 techniques=4 viewproj=ViewProj world=-
+  param 0 ViewProj MATRIX4X4 default=-
+  param 1 image TEXTURE default=-
+  param 2 multiplier FLOAT default=-
+  param 3 previous_image TEXTURE default=-
+  param 4 dimensions VEC2 default=-
+  param 5 field_order INT default=-
+  param 6 frame2 BOOL default=-
+  technique Draw passes=1
+    pass 0 name=@null vertex=VSDefault(v_in); pixel=PSBlendRGBA(v_in);
+      vs_params=[ViewProj] ps_params=[field_order,image,dimensions]
+  technique DrawMultiply passes=1
+    pass 0 name=@null vertex=VSDefault(v_in); pixel=PSBlendRGBA_multiply(v_in);
+      vs_params=[ViewProj] ps_params=[multiplier,field_order,image,dimensions]
+  technique DrawTonemap passes=1
+    pass 0 name=@null vertex=VSDefault(v_in); pixel=PSBlendRGBA_tonemap(v_in);
+      vs_params=[ViewProj] ps_params=[field_order,image,dimensions]
+  technique DrawMultiplyTonemap passes=1
+    pass 0 name=@null vertex=VSDefault(v_in); pixel=PSBlendRGBA_multiply_tonemap(v_in);
+      vs_params=[ViewProj] ps_params=[multiplier,field_order,image,dimensions]
+  funcs=52 structs=1 samplers=1
+  sampler textureSampler Filter=Linear AddressU=Clamp AddressV=Clamp
+effect libobs/data/deinterlace_blend_2x.effect parse=ok params=7 techniques=4 viewproj=ViewProj world=-
+  param 0 ViewProj MATRIX4X4 default=-
+  param 1 image TEXTURE default=-
+  param 2 multiplier FLOAT default=-
+  param 3 previous_image TEXTURE default=-
+  param 4 dimensions VEC2 default=-
+  param 5 field_order INT default=-
+  param 6 frame2 BOOL default=-
+  technique Draw passes=1
+    pass 0 name=@null vertex=VSDefault(v_in); pixel=PSBlendRGBA_2x(v_in);
+      vs_params=[ViewProj] ps_params=[field_order,frame2,image,previous_image,dimensions]
+  technique DrawMultiply passes=1
+    pass 0 name=@null vertex=VSDefault(v_in); pixel=PSBlendRGBA_2x_multiply(v_in);
+      vs_params=[ViewProj] ps_params=[multiplier,field_order,frame2,image,previous_image,dimensions]
+  technique DrawTonemap passes=1
+    pass 0 name=@null vertex=VSDefault(v_in); pixel=PSBlendRGBA_2x_tonemap(v_in);
+      vs_params=[ViewProj] ps_params=[field_order,frame2,image,previous_image,dimensions]
+  technique DrawMultiplyTonemap passes=1
+    pass 0 name=@null vertex=VSDefault(v_in); pixel=PSBlendRGBA_2x_multiply_tonemap(v_in);
+      vs_params=[ViewProj] ps_params=[multiplier,field_order,frame2,image,previous_image,dimensions]
+  funcs=52 structs=1 samplers=1
+  sampler textureSampler Filter=Linear AddressU=Clamp AddressV=Clamp
+effect libobs/data/deinterlace_discard.effect parse=ok params=7 techniques=4 viewproj=ViewProj world=-
+  param 0 ViewProj MATRIX4X4 default=-
+  param 1 image TEXTURE default=-
+  param 2 multiplier FLOAT default=-
+  param 3 previous_image TEXTURE default=-
+  param 4 dimensions VEC2 default=-
+  param 5 field_order INT default=-
+  param 6 frame2 BOOL default=-
+  technique Draw passes=1
+    pass 0 name=@null vertex=VSDefault(v_in); pixel=PSDiscardRGBA(v_in);
+      vs_params=[ViewProj] ps_params=[field_order,image,dimensions]
+  technique DrawMultiply passes=1
+    pass 0 name=@null vertex=VSDefault(v_in); pixel=PSDiscardRGBA_multiply(v_in);
+      vs_params=[ViewProj] ps_params=[multiplier,field_order,image,dimensions]
+  technique DrawTonemap passes=1
+    pass 0 name=@null vertex=VSDefault(v_in); pixel=PSDiscardRGBA_tonemap(v_in);
+      vs_params=[ViewProj] ps_params=[field_order,image,dimensions]
+  technique DrawMultiplyTonemap passes=1
+    pass 0 name=@null vertex=VSDefault(v_in); pixel=PSDiscardRGBA_multiply_tonemap(v_in);
+      vs_params=[ViewProj] ps_params=[multiplier,field_order,image,dimensions]
+  funcs=52 structs=1 samplers=1
+  sampler textureSampler Filter=Linear AddressU=Clamp AddressV=Clamp
+effect libobs/data/deinterlace_discard_2x.effect parse=ok params=7 techniques=4 viewproj=ViewProj world=-
+  param 0 ViewProj MATRIX4X4 default=-
+  param 1 image TEXTURE default=-
+  param 2 multiplier FLOAT default=-
+  param 3 previous_image TEXTURE default=-
+  param 4 dimensions VEC2 default=-
+  param 5 field_order INT default=-
+  param 6 frame2 BOOL default=-
+  technique Draw passes=1
+    pass 0 name=@null vertex=VSDefault(v_in); pixel=PSDiscardRGBA_2x(v_in);
+      vs_params=[ViewProj] ps_params=[field_order,frame2,image,dimensions]
+  technique DrawMultiply passes=1
+    pass 0 name=@null vertex=VSDefault(v_in); pixel=PSDiscardRGBA_2x_multiply(v_in);
+      vs_params=[ViewProj] ps_params=[multiplier,field_order,frame2,image,dimensions]
+  technique DrawTonemap passes=1
+    pass 0 name=@null vertex=VSDefault(v_in); pixel=PSDiscardRGBA_2x_tonemap(v_in);
+      vs_params=[ViewProj] ps_params=[field_order,frame2,image,dimensions]
+  technique DrawMultiplyTonemap passes=1
+    pass 0 name=@null vertex=VSDefault(v_in); pixel=PSDiscardRGBA_2x_multiply_tonemap(v_in);
+      vs_params=[ViewProj] ps_params=[multiplier,field_order,frame2,image,dimensions]
+  funcs=52 structs=1 samplers=1
+  sampler textureSampler Filter=Linear AddressU=Clamp AddressV=Clamp
+effect libobs/data/deinterlace_linear.effect parse=ok params=7 techniques=4 viewproj=ViewProj world=-
+  param 0 ViewProj MATRIX4X4 default=-
+  param 1 image TEXTURE default=-
+  param 2 multiplier FLOAT default=-
+  param 3 previous_image TEXTURE default=-
+  param 4 dimensions VEC2 default=-
+  param 5 field_order INT default=-
+  param 6 frame2 BOOL default=-
+  technique Draw passes=1
+    pass 0 name=@null vertex=VSDefault(v_in); pixel=PSLinearRGBA(v_in);
+      vs_params=[ViewProj] ps_params=[field_order,image,dimensions]
+  technique DrawMultiply passes=1
+    pass 0 name=@null vertex=VSDefault(v_in); pixel=PSLinearRGBA_multiply(v_in);
+      vs_params=[ViewProj] ps_params=[multiplier,field_order,image,dimensions]
+  technique DrawTonemap passes=1
+    pass 0 name=@null vertex=VSDefault(v_in); pixel=PSLinearRGBA_tonemap(v_in);
+      vs_params=[ViewProj] ps_params=[field_order,image,dimensions]
+  technique DrawMultiplyTonemap passes=1
+    pass 0 name=@null vertex=VSDefault(v_in); pixel=PSLinearRGBA_multiply_tonemap(v_in);
+      vs_params=[ViewProj] ps_params=[multiplier,field_order,image,dimensions]
+  funcs=52 structs=1 samplers=1
+  sampler textureSampler Filter=Linear AddressU=Clamp AddressV=Clamp
+effect libobs/data/deinterlace_linear_2x.effect parse=ok params=7 techniques=4 viewproj=ViewProj world=-
+  param 0 ViewProj MATRIX4X4 default=-
+  param 1 image TEXTURE default=-
+  param 2 multiplier FLOAT default=-
+  param 3 previous_image TEXTURE default=-
+  param 4 dimensions VEC2 default=-
+  param 5 field_order INT default=-
+  param 6 frame2 BOOL default=-
+  technique Draw passes=1
+    pass 0 name=@null vertex=VSDefault(v_in); pixel=PSLinearRGBA_2x(v_in);
+      vs_params=[ViewProj] ps_params=[field_order,frame2,image,dimensions]
+  technique DrawMultiply passes=1
+    pass 0 name=@null vertex=VSDefault(v_in); pixel=PSLinearRGBA_2x_multiply(v_in);
+      vs_params=[ViewProj] ps_params=[multiplier,field_order,frame2,image,dimensions]
+  technique DrawTonemap passes=1
+    pass 0 name=@null vertex=VSDefault(v_in); pixel=PSLinearRGBA_2x_tonemap(v_in);
+      vs_params=[ViewProj] ps_params=[field_order,frame2,image,dimensions]
+  technique DrawMultiplyTonemap passes=1
+    pass 0 name=@null vertex=VSDefault(v_in); pixel=PSLinearRGBA_2x_multiply_tonemap(v_in);
+      vs_params=[ViewProj] ps_params=[multiplier,field_order,frame2,image,dimensions]
+  funcs=52 structs=1 samplers=1
+  sampler textureSampler Filter=Linear AddressU=Clamp AddressV=Clamp
+effect libobs/data/deinterlace_yadif.effect parse=ok params=7 techniques=4 viewproj=ViewProj world=-
+  param 0 ViewProj MATRIX4X4 default=-
+  param 1 image TEXTURE default=-
+  param 2 multiplier FLOAT default=-
+  param 3 previous_image TEXTURE default=-
+  param 4 dimensions VEC2 default=-
+  param 5 field_order INT default=-
+  param 6 frame2 BOOL default=-
+  technique Draw passes=1
+    pass 0 name=@null vertex=VSDefault(v_in); pixel=PSYadifMode0RGBA(v_in);
+      vs_params=[ViewProj] ps_params=[field_order,image,previous_image,dimensions]
+  technique DrawMultiply passes=1
+    pass 0 name=@null vertex=VSDefault(v_in); pixel=PSYadifMode0RGBA_multiply(v_in);
+      vs_params=[ViewProj] ps_params=[multiplier,field_order,image,previous_image,dimensions]
+  technique DrawTonemap passes=1
+    pass 0 name=@null vertex=VSDefault(v_in); pixel=PSYadifMode0RGBA_tonemap(v_in);
+      vs_params=[ViewProj] ps_params=[field_order,image,previous_image,dimensions]
+  technique DrawMultiplyTonemap passes=1
+    pass 0 name=@null vertex=VSDefault(v_in); pixel=PSYadifMode0RGBA_multiply_tonemap(v_in);
+      vs_params=[ViewProj] ps_params=[multiplier,field_order,image,previous_image,dimensions]
+  funcs=52 structs=1 samplers=1
+  sampler textureSampler Filter=Linear AddressU=Clamp AddressV=Clamp
+effect libobs/data/deinterlace_yadif_2x.effect parse=ok params=7 techniques=4 viewproj=ViewProj world=-
+  param 0 ViewProj MATRIX4X4 default=-
+  param 1 image TEXTURE default=-
+  param 2 multiplier FLOAT default=-
+  param 3 previous_image TEXTURE default=-
+  param 4 dimensions VEC2 default=-
+  param 5 field_order INT default=-
+  param 6 frame2 BOOL default=-
+  technique Draw passes=1
+    pass 0 name=@null vertex=VSDefault(v_in); pixel=PSYadifMode0RGBA_2x(v_in);
+      vs_params=[ViewProj] ps_params=[field_order,frame2,image,previous_image,dimensions]
+  technique DrawMultiply passes=1
+    pass 0 name=@null vertex=VSDefault(v_in); pixel=PSYadifMode0RGBA_2x_multiply(v_in);
+      vs_params=[ViewProj] ps_params=[multiplier,field_order,frame2,image,previous_image,dimensions]
+  technique DrawTonemap passes=1
+    pass 0 name=@null vertex=VSDefault(v_in); pixel=PSYadifMode0RGBA_2x_tonemap(v_in);
+      vs_params=[ViewProj] ps_params=[field_order,frame2,image,previous_image,dimensions]
+  technique DrawMultiplyTonemap passes=1
+    pass 0 name=@null vertex=VSDefault(v_in); pixel=PSYadifMode0RGBA_2x_multiply_tonemap(v_in);
+      vs_params=[ViewProj] ps_params=[multiplier,field_order,frame2,image,previous_image,dimensions]
+  funcs=52 structs=1 samplers=1
+  sampler textureSampler Filter=Linear AddressU=Clamp AddressV=Clamp

@@ -1,0 +1,15 @@
+# audio_monitor_create / playback path (pulseaudio-output.c). Fake sink: float32 48 kHz stereo; engine output 48 kHz stereo.
+# Lines starting with "pa " are the fake PulseAudio server seeing the real client calls; "log" lines are libobs logs.
+pa_server pulse 16.1 alsa_output.a
+pa_sink alsa_output.a "Speakers A" f32 48000 2
+mon_dev default
+mon_src 0 0 1.0 - 1
+mon_create 0 0
+# 100 frames * 8 bytes = 800 < tlength (25 ms = 9600 bytes): data is buffered, stream stays corked, nothing is written
+mon_play 0 100 0.25 0
+# 1100 more frames -> 9600 bytes buffered in total: the stream is uncorked and everything is written in one chunk
+mon_play 0 1100 0.5 0
+# once running every packet is written immediately
+mon_play 0 10 0.125 0
+mon_destroy 0
+pa_stats

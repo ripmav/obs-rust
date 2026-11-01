@@ -1,0 +1,21 @@
+scripting load -> 1 python=1 ticks=1
+log info [Python: timer_edge.py] removing a once
+log info [Python: timer_edge.py] SystemError for 2 args
+log info [Python: timer_edge.py] SystemError for 1 args
+log info [Python: timer_edge.py] SystemError for 3 args
+log info [Python: timer_edge.py] SystemError for 0 args
+log info [obs-scripting]: Loaded python script: timer_edge.py
+create S0 -> loaded=1 lang=2 file=timer_edge.py desc=NULL
+callbacks S0 total=4 removed=0
+echo tick at 10ms: the surviving a fires, lambda fires, 42 and x raise TypeError (logged)
+log warning [Python] Python failure in timer_call:<line>:
+log error [Python: timer_edge.py] TypeError: 'str' object is not callable
+log warning [Python] Python failure in timer_call:<line>:
+log error [Python: timer_edge.py] TypeError: 'int' object is not callable
+log info [Python: timer_edge.py] lambda
+log info [Python: timer_edge.py] a
+callbacks S0 total=4 removed=0
+log info [obs-scripting]: Unloaded python script: timer_edge.py
+auto-destroy S0
+log info [Scripting] Total detached callbacks: 6
+scripting unload ticks=0

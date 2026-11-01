@@ -1,0 +1,36 @@
+# S-062 ALSA: every failure stage of the open sequence; each one closes what was opened and leaves no capture thread.
+# After a failed create a reopen thread is started; the script reaps it by update() (which stops it).
+alsa-reset
+set-str device_id hw:9
+set-int rate 44100
+echo --- snd_pcm_open fails (ENOENT=-2): no handle, reopen thread waits 1000 ms
+alsa-cfg fail open -2
+alsa-create
+alsa-state
+echo --- fixing the config and calling update with unchanged settings does NOT retry (no reset)
+alsa-cfg fail open 0
+alsa-update
+alsa-state
+echo --- but a rate change resets: stops reopen thread, opens
+set-int rate 48000
+alsa-update
+alsa-state
+alsa-wait-drain
+alsa-destroy
+echo --- later stages
+alsa-reset
+set-int rate 44100
+alsa-cfg fail any -22
+alsa-create
+alsa-state
+alsa-cfg fail clear 0
+set-int rate 48000
+alsa-update
+alsa-destroy
+alsa-reset
+alsa-cfg fail access -22
+alsa-create
+set-int rate 44100
+alsa-cfg fail clear 0
+alsa-update
+alsa-destroy

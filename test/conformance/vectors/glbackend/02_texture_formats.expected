@@ -1,0 +1,58 @@
+create rc=0 device=yes
+tex rgba ok
+read rgba 2x1 linesize=8
+  row 0 ff0000800000ff40
+tex bgra ok
+read bgra 2x1 linesize=8
+  row 0 112233440a0b0c0d
+tex bgrx ok
+read bgrx 2x1 linesize=8
+  row 0 112233ff0a0b0cff
+tex r8 ok
+texinfo r8 3x2 fmt=R8 type=TEXTURE_2D rect=0
+tex a8 ok
+read a8 4x1 linesize=4
+  row 0 01020304
+tex r8g8 ok
+read r8g8 2x1 linesize=4
+  row 0 01020304
+tex r16 ok
+read r16 2x1 linesize=4
+  row 0 0100ff7f
+tex rg16 ok
+read rg16 1x1 linesize=4
+  row 0 01000200
+tex rgba16 ok
+read rgba16 1x1 linesize=8
+  row 0 0100020003000400
+tex r10 ok
+read r10 2x1 linesize=8
+  row 0 ffffff3f00000000
+tex rgba16f ok
+read rgba16f 1x1 linesize=8
+  row 0 003c00400000003c
+tex rg16f ok
+read rg16f 1x1 linesize=4
+  row 0 003c0040
+tex r16f ok
+read r16f 2x1 linesize=4
+  row 0 003c0040
+tex r32f ok
+read r32f 1x1 linesize=4
+  row 0 0000803f
+tex rg32f ok
+read rg32f 1x1 linesize=8
+  row 0 0000803f00000040
+tex rgba32f ok
+read rgba32f 1x1 linesize=16
+  row 0 0000803f000000400000404000008040
+tex unorm ok
+read unorm 1x1 linesize=4
+  row 0 11223344
+log error glTexImage2D failed, glGetError returned GL_INVALID_ENUM(0x500)
+log error device_texture_create (GL) failed
+tex unk fail
+tex zero ok
+tex dxt1 ok
+texinfo dxt1 4x4 fmt=DXT1 type=TEXTURE_2D rect=0
+destroyed

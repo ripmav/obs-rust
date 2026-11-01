@@ -1,0 +1,39 @@
+# source-profiler.c, CPU part. Clock is fake (nanoseconds); one "frame" is: frame_begin, ticks, renders, frame_collect.
+# A frame's samples are collected one frame late (NUM_TEXTURES = 2): frame N's collect processes frame N-1's tick/render.
+# fill_result zero-fills the output even when it returns false for an enabled profiler (Q-2); when disabled it leaves it untouched.
+# disabled: every entry point is inert and fill_result is false
+sp_source 0 0
+sp_clock 1000
+sp_tick 0 500
+sp_result 0
+sp_get 0
+sp_fill_null
+# enabling takes effect at the next frame_begin
+sp_enable 1
+sp_tick 0 500
+sp_frame_begin
+sp_reset_video 60 1
+sp_clock 2000
+# frame 1
+sp_frame_begin
+sp_tick 0 100
+sp_render 0 40
+sp_frame_collect
+sp_result 0
+# frame 2: the first sample is collected now
+sp_frame_begin
+sp_tick 0 300
+sp_render 0 60
+sp_frame_collect
+sp_result 0
+# frame 3: ring contains two samples
+sp_frame_begin
+sp_tick 0 200
+sp_render 0 10
+sp_render 0 20
+sp_frame_collect
+sp_result 0
+sp_get 0
+# an unknown source has no entry
+sp_result 1
+sp_get 1

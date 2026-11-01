@@ -1,0 +1,28 @@
+# librist_open: the sender is created in the MAIN profile with flow id 0; URL parsing and the peer defaults are done by the real
+# librist (rist_parse_address2 / rist_peer_config_defaults_set), the shim only prints what the output hands to rist_peer_create.
+# Output code: the buffer size (3000 ms) overrides recovery_length_min/max of the URL; secret / username / password given by the
+# service are used only when the URL does not carry its own.
+log error
+rist_open rist://192.0.2.20:8000
+rist_close
+rist_open "rist://192.0.2.20:8000?buffer=500"
+rist_close
+rist_open "rist://@192.0.2.20:8000"
+rist_close
+# secret and aes-type from the URL
+rist_open "rist://192.0.2.20:8000?secret=urlsecret1&aes-type=128"
+rist_close
+# secret supplied by the service only: copied into the peer config; key_size stays 0 (the output's own "encryption" is 0)
+rist_open "rist://192.0.2.20:8000" svc-secret
+rist_close
+# URL secret wins over the service secret
+rist_open "rist://192.0.2.20:8000?secret=urlsecret1&aes-type=256" svc-secret
+rist_close
+# SRP credentials
+rist_open "rist://192.0.2.20:8000" - alice s3cret
+rist_close
+rist_open "rist://192.0.2.20:8000?username=bob&password=pw2" - alice s3cret
+rist_close
+# virt-dst-port from the URL is handed to the peer unchanged
+rist_open "rist://192.0.2.20:8000?virt-dst-port=1970"
+rist_close

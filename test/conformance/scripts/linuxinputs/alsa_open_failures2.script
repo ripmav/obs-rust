@@ -1,0 +1,64 @@
+# S-062 ALSA: remaining configure/start failures.
+alsa-reset
+set-str device_id default
+set-int rate 44100
+echo --- no supported format
+alsa-cfg formats -
+alsa-create
+set-int rate 48000
+alsa-cfg formats s16
+alsa-update
+alsa-destroy
+echo --- rate_near fails
+alsa-reset
+alsa-cfg fail rate -22
+set-int rate 44100
+alsa-create
+alsa-cfg fail clear 0
+set-int rate 32000
+alsa-update
+alsa-destroy
+echo --- channels_near fails
+alsa-reset
+alsa-cfg fail channels -22
+alsa-create
+alsa-cfg fail clear 0
+set-int rate 48000
+alsa-update
+alsa-destroy
+echo --- hw_params commit fails
+alsa-reset
+alsa-cfg fail hwparams -16
+set-int rate 44100
+alsa-create
+alsa-cfg fail clear 0
+set-int rate 32000
+alsa-update
+alsa-destroy
+echo --- period query fails
+alsa-reset
+alsa-cfg fail period -22
+set-int rate 44100
+alsa-create
+alsa-cfg fail clear 0
+set-int rate 48000
+alsa-update
+alsa-destroy
+echo --- device not PREPARED after configuration
+alsa-reset
+alsa-cfg state setup
+set-int rate 44100
+alsa-create
+alsa-cfg state prepared
+set-int rate 32000
+alsa-update
+alsa-destroy
+echo --- snd_pcm_start fails
+alsa-reset
+alsa-cfg fail start -5
+set-int rate 44100
+alsa-create
+alsa-cfg fail clear 0
+set-int rate 48000
+alsa-update
+alsa-destroy

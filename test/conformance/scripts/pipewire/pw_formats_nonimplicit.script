@@ -1,0 +1,11 @@
+# Without the implicit-modifier flag no DRM_FORMAT_MOD_INVALID is appended. A format with an empty modifier list gets only
+# the plain (shared-memory) param.
+unique_name :1.5
+prop ScreenCast AvailableSourceTypes "uint32 1"
+prop ScreenCast version "uint32 2"
+screencast_load
+gs_dmabuf 0 ARGB8888 ABGR8888
+gs_modifiers ARGB8888 0x7
+gs_modifiers ABGR8888
+new a pipewire-desktop-capture-source
+portal_ok 21

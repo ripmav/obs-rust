@@ -1,0 +1,50 @@
+> create
+create ok
+> cfg video
+cfg video=1 size=1280x720 venc=h264 id=27 pix_fmt=nv12 range=1 pri=1 trc=1 cs=1 bitrate=2500 gop=60
+> world keyint 0
+> cfg video
+cfg video=1 size=1280x720 venc=h264 id=27 pix_fmt=nv12 range=1 pri=1 trc=1 cs=1 bitrate=2500 gop=250
+> world keyint 4
+> world fps 60 1
+> cfg video
+cfg video=1 size=1280x720 venc=h264 id=27 pix_fmt=nv12 range=1 pri=1 trc=1 cs=1 bitrate=2500 gop=240
+> world fps 30000 1001
+> world keyint 2
+> cfg video
+cfg video=1 size=1280x720 venc=h264 id=27 pix_fmt=nv12 range=1 pri=1 trc=1 cs=1 bitrate=2500 gop=59
+> world fps 25 2
+> cfg video
+cfg video=1 size=1280x720 venc=h264 id=27 pix_fmt=nv12 range=1 pri=1 trc=1 cs=1 bitrate=2500 gop=25
+> world vcodec hevc
+> cfg video
+cfg video=1 size=1280x720 venc=hevc id=222 pix_fmt=nv12 range=1 pri=1 trc=1 cs=1 bitrate=2500 gop=25
+> world vcodec av1
+> cfg video
+cfg video=1 size=1280x720 venc=av1 id=222 pix_fmt=nv12 range=1 pri=1 trc=1 cs=1 bitrate=2500 gop=25
+> world vcodec h264
+> world vformat i420
+> cfg video
+cfg video=1 size=1280x720 venc=h264 id=27 pix_fmt=yuv420p range=1 pri=1 trc=1 cs=1 bitrate=2500 gop=25
+> world vformat i444
+> cfg video
+cfg video=1 size=1280x720 venc=h264 id=27 pix_fmt=yuv444p range=1 pri=1 trc=1 cs=1 bitrate=2500 gop=25
+> world vformat bgra
+> cfg video
+cfg video=1 size=1280x720 venc=h264 id=27 pix_fmt=bgra range=1 pri=1 trc=1 cs=1 bitrate=2500 gop=25
+> world vformat p010
+> cfg video
+cfg video=1 size=1280x720 venc=h264 id=27 pix_fmt=p010le range=1 pri=1 trc=1 cs=1 bitrate=2500 gop=25
+> world vformat i010
+> cfg video
+cfg video=1 size=1280x720 venc=h264 id=27 pix_fmt=yuv420p10le range=1 pri=1 trc=1 cs=1 bitrate=2500 gop=25
+> world vformat i422
+> cfg video
+cfg video=1 size=1280x720 venc=h264 id=27 pix_fmt=yuv422p range=1 pri=1 trc=1 cs=1 bitrate=2500 gop=25
+> world vformat none
+> cfg video
+log warning Invalid pixel format used for mpegts output
+cfg video=0 code=ERROR
+> world vformat y800
+> cfg video
+cfg video=1 size=1280x720 venc=h264 id=27 pix_fmt=gray range=1 pri=1 trc=1 cs=1 bitrate=2500 gop=25

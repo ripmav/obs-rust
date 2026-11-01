@@ -1,0 +1,29 @@
+scripting load -> 1 python=1 ticks=1
+log info [Python: thr_a.py] load thread: True
+log info [obs-scripting]: Loaded python script: thr_a.py
+create S0 -> loaded=1 lang=2 file=thr_a.py desc=NULL
+log info [Python: thr_a.py] tick thread is the loading thread: True
+echo release the thread while no script is current
+log info [Unknown Script] message from a thread started by thr_a
+pyexec -> 0
+echo release it again from inside another script's callback: attributed to that script
+log info [obs-scripting]: Loaded python script: thr_b.py
+log info [Python: thr_b.py] message from a thread started by thr_a
+log info [Python: thr_b.py] joined
+create S1 -> loaded=1 lang=2 file=thr_b.py desc=NULL
+echo a Python thread that outlives its start can call the API without a script
+log info [Unknown Script] thread result [0]
+pyexec -> 0
+echo timers run on the tick thread too
+log info [obs-scripting]: Loaded python script: thr_c.py
+create S2 -> loaded=1 lang=2 file=thr_c.py desc=NULL
+log info [Python: thr_a.py] tick thread is the loading thread: True
+log info [Python: thr_c.py] timer on tick thread: True
+log info [obs-scripting]: Unloaded python script: thr_a.py
+auto-destroy S0
+log info [obs-scripting]: Unloaded python script: thr_b.py
+auto-destroy S1
+log info [obs-scripting]: Unloaded python script: thr_c.py
+auto-destroy S2
+log info [Scripting] Total detached callbacks: 1
+scripting unload ticks=0

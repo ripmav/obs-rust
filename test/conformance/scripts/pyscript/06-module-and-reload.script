@@ -1,0 +1,53 @@
+# The script is an ordinary Python module imported by its file name (text before the FIRST ".py"); the backend
+# injects "obspython", "__script_dir__", "__script_data__" and script_path(). A reload re-executes the SAME module
+# object (globals of the previous run survive), unlike the Lua backend which builds a fresh state.
+scripting load
+py_begin modattrs.py
+import sys
+def script_load(settings):
+    print("name:", __name__)
+    print("injected:", "obspython" in globals(), "__script_data__" in globals(), callable(script_path))
+    print("capsule type:", type(__script_data__).__name__)
+    print("in sys.modules:", "modattrs" in sys.modules)
+    global counter
+    counter = globals().get("counter", 0) + 1
+    print("counter after load:", counter)
+def script_unload():
+    print("unload counter:", counter)
+py_end
+create S0 modattrs.py
+reload S0
+reload S0
+echo the injected module attribute is usable inside functions without an import
+py_begin noimport.py
+def script_update(settings):
+    print(obspython.LOG_INFO, obspython.obs_data_get_string(settings, "who"))
+py_end
+create S1 noimport.py s:who=nobody
+echo reload re-reads the file (new source is picked up)
+py_begin changing.py
+def script_load(settings):
+    print("version 1")
+py_end
+create S2 changing.py
+py_begin changing.py
+def script_load(settings):
+    print("version 2")
+py_end
+reload S2
+echo name derivation: first ".py" wins, so "dupx.pyz.py" is module "dupx" (loads dupx.py, not the named file)
+py_begin dupx.py
+print("this is dupx.py")
+py_end
+py_begin dupx.pyz.py
+print("this is dupx.pyz.py")
+py_end
+create S3 dupx.pyz.py
+echo a module of the standard library wins over the script (sys.path is appended): colorsys.py never runs
+py_begin colorsys.py
+print("script body of colorsys.py")
+py_end
+create S4 colorsys.py
+echo no slash in the path: file name only, directory empty
+create S5 raw:nonexistent_in_cwd.py
+scripting unload

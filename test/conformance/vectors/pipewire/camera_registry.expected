@@ -1,0 +1,121 @@
+> unique_name :1.8
+> camera_load
+host.register_source pipewire-camera-source type=0 flags=0x5 icon=9
+> set cam device_id str cam0
+> set cam format str {"encoded":false,"video_format":4,"width":1280,"height":720}
+> new cam pipewire-camera-source
+log error obs-data.c: [obs_data_create_from_json] Failed reading json string <jansson>
+dbus.bus_get type=2 -> ok
+dbus.subscribe#1 org.freedesktop.portal.Desktop org.freedesktop.portal.Request.Response path=/org/freedesktop/portal/desktop/request/1_8/obs1 arg0=NULL flags=1
+dbus.proxy_new org.freedesktop.portal.Desktop /org/freedesktop/portal/desktop org.freedesktop.portal.Camera flags=0
+dbus.call#1 AccessCamera ({'handle_token': <'obs1'>},)
+created cam
+> response 1 (0, {})
+dbus.signal Response -> /org/freedesktop/portal/desktop/request/1_8/obs1
+log info [camera-portal] Successfully accessed cameras
+dbus.call#2 OpenPipeWireRemote (@a{sv} {},)
+dbus.unsubscribe#1
+> finish 2 fd
+dbus.finish#2 OpenPipeWireRemote
+pw.thread_loop_new "PipeWire thread loop"
+pw.thread_loop_start -> 0
+pw.context_connect_fd -> core
+pw.core_add_listener
+pw.core_sync id=0 seq_in=0 -> 1
+log info [pipewire] Server version: 1.0.0
+log info [pipewire] Library version: lib-version
+log info [pipewire] Header version: <hdr>
+pw.core_get_registry version=3
+pw.registry_add_listener
+log info [pipewire] Created registry <ptr>
+pw.core_sync id=0 seq_in=1 -> 2
+> registry_global 7 PipeWire:Interface:Client 3 node.name=ignored
+pw.event registry_global id=7 type=PipeWire:Interface:Client
+> registry_global 50 PipeWire:Interface:Node 3 node.name=cam0 node.description=Front Camera
+pw.event registry_global id=50 type=PipeWire:Interface:Node
+log info [camera-portal] Found device cam0
+pw.registry_bind id=50 type=PipeWire:Interface:Node version=3 -> proxy
+host.update_properties cam
+log info [camera-portal] streaming camera 'cam0'
+pw.loop_add_event#1
+log debug [pipewire] registered event <ptr>
+pw.stream_new#1 "OBS PipeWire Camera" props={media.type=Video,media.category=Capture,media.role=Camera}
+log info [pipewire] Created stream <ptr>
+pw.stream_connect#1 dir=input target=50 flags=0x5 n_params=1
+  param[0] Object(type=0x40003,id=3){mediaType=Id:2(video); mediaSubtype=Id:1(raw); format=Id:4(YUY2); size=Choice:Range<Rect:1280x720,Rect:1280x720,Rect:1280x720>; framerate=Choice:Range<Frac:60/1,Frac:0/1,Frac:360/1>}
+log info [pipewire] Playing stream <ptr>
+> registry_global 51 PipeWire:Interface:Node 3 node.name=cam1 node.description=Back Camera
+pw.event registry_global id=51 type=PipeWire:Interface:Node
+log info [camera-portal] Found device cam1
+pw.registry_bind id=51 type=PipeWire:Interface:Node version=3 -> proxy
+host.update_properties cam
+> set cam2 device_id str cam1
+> set cam2 framerate str {"framerate":{"numerator":24.0,"denominator":1.0}}
+> new cam2 pipewire-camera-source
+log info [camera-portal] streaming camera 'cam1'
+pw.loop_add_event#2
+log debug [pipewire] registered event <ptr>
+pw.stream_new#2 "OBS PipeWire Camera" props={media.type=Video,media.category=Capture,media.role=Camera}
+log info [pipewire] Created stream <ptr>
+pw.stream_connect#2 dir=input target=51 flags=0x5 n_params=1
+  param[0] Object(type=0x40003,id=3){mediaType=Id:2(video); mediaSubtype=Id:1(raw); format=Id:0(UNKNOWN); size=Choice:Range<Rect:1920x1080,Rect:1x1,Rect:8192x4320>; framerate=Choice:Range<Frac:24/1,Frac:24/1,Frac:24/1>}
+log info [pipewire] Playing stream <ptr>
+created cam2
+> props cam
+prop device_id type=list desc="PipeWireCameraDevice" visible=1 enabled=1 format=3 items=2
+  item "Back Camera" = "cam1" disabled=0
+  item "Front Camera" = "cam0" disabled=0
+prop format type=list desc="VideoFormat" visible=1 enabled=1 format=3 items=0
+prop framerate type=list desc="FrameRate" visible=1 enabled=1 format=3 items=0
+prop controls type=group desc="CameraControls" visible=1 enabled=1
+> registry_global_remove 51
+pw.event registry_global_remove id=51
+pw.proxy_destroy node#51
+log info [pipewire-camera] Removed device <id>
+host.update_properties cam
+> registry_global_remove 999
+pw.event registry_global_remove id=999
+host.update_properties cam
+> props cam
+prop device_id type=list desc="PipeWireCameraDevice" visible=1 enabled=1 format=3 items=1
+  item "Front Camera" = "cam0" disabled=0
+prop format type=list desc="VideoFormat" visible=1 enabled=1 format=3 items=0
+prop framerate type=list desc="FrameRate" visible=1 enabled=1 format=3 items=0
+prop controls type=group desc="CameraControls" visible=1 enabled=1
+> pw_bind fail
+> registry_global 52 PipeWire:Interface:Node 3 node.name=cam2 node.description=Third
+pw.event registry_global id=52 type=PipeWire:Interface:Node
+log info [camera-portal] Found device cam2
+pw.registry_bind id=52 type=PipeWire:Interface:Node version=3 -> NULL
+log warning [camera-portal] Failed to bind device cam2
+> pw_bind ok
+> set cam device_id str cam9
+> update cam
+log info [camera-portal] Updating device cam9
+host.output_video NULL
+pw.stream_disconnect#1
+pw.stream_destroy#1
+> set cam device_id str cam0
+> update cam
+log info [camera-portal] Updating device cam0
+log info [camera-portal] streaming camera 'cam0'
+pw.loop_add_event#3
+log debug [pipewire] registered event <ptr>
+pw.stream_new#3 "OBS PipeWire Camera" props={media.type=Video,media.category=Capture,media.role=Camera}
+log info [pipewire] Created stream <ptr>
+pw.stream_connect#3 dir=input target=50 flags=0x5 n_params=1
+  param[0] Object(type=0x40003,id=3){mediaType=Id:2(video); mediaSubtype=Id:1(raw); format=Id:4(YUY2); size=Choice:Range<Rect:1280x720,Rect:1280x720,Rect:1280x720>; framerate=Choice:Range<Frac:60/1,Frac:0/1,Frac:360/1>}
+log info [pipewire] Playing stream <ptr>
+> destroy cam2
+host.output_video NULL
+pw.stream_disconnect#2
+pw.stream_destroy#2
+> camera_unload
+pw.proxy_destroy node#50
+host.output_video NULL
+pw.stream_disconnect#3
+pw.stream_destroy#3
+pw.thread_loop_stop
+pw.registry_destroy
+pw.context_destroy
+pw.thread_loop_destroy lock_depth=0

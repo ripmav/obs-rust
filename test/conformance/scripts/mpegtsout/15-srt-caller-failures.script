@@ -1,0 +1,130 @@
+# Error matrix of the caller path of libsrt_open (spec S-059 section on error mapping). Each case injects one fault into the
+# fake libsrt, calls libsrt_open and prints the returned OBS code and the context's last_error (obs code / srt code).
+# ret is what libsrt_open returns; 'srt_open last_error' shows the stored mapping. Every error path closes what it opened.
+log error
+
+# create_socket fails (EUNKNOWN)
+srt_reset_net
+srt_fail create_socket EUNKNOWN
+srt_open "srt://192.0.2.10:9000"
+
+# a socket option fails: SRTO_LATENCY (EUNKNOWN)
+srt_reset_net
+srt_fail setsockopt:SRTO_LATENCY EUNKNOWN
+srt_open "srt://192.0.2.10:9000?latency=100000"
+
+# SRTO_PAYLOADSIZE fails
+srt_reset_net
+srt_fail setsockopt:SRTO_PAYLOADSIZE EUNKNOWN
+srt_open "srt://192.0.2.10:9000"
+
+# SRTO_SENDER fails
+srt_reset_net
+srt_fail setsockopt:SRTO_SENDER EUNKNOWN
+srt_open "srt://192.0.2.10:9000"
+
+# epoll_create fails
+srt_reset_net
+srt_fail epoll_create EUNKNOWN
+srt_open "srt://192.0.2.10:9000"
+
+# connect fails: connection rejected, bad secret
+srt_reset_net
+srt_fail connect ECONNREJ
+srt_reject badsecret
+srt_open "srt://192.0.2.10:9000"
+
+# connect fails: connection rejected, other reason
+srt_reset_net
+srt_fail connect ECONNREJ
+srt_open "srt://192.0.2.10:9000"
+
+# connect fails: ECONNSOCK
+srt_reset_net
+srt_fail connect ECONNSOCK
+srt_open "srt://192.0.2.10:9000"
+
+# connect fails: ESECFAIL
+srt_reset_net
+srt_fail connect ESECFAIL
+srt_open "srt://192.0.2.10:9000"
+
+# connect fails: ECONNLOST
+srt_reset_net
+srt_fail connect ECONNLOST
+srt_open "srt://192.0.2.10:9000"
+
+# connect fails: ENOCONN
+srt_reset_net
+srt_fail connect ENOCONN
+srt_open "srt://192.0.2.10:9000"
+
+# connect fails: ECONNFAIL
+srt_reset_net
+srt_fail connect ECONNFAIL
+srt_open "srt://192.0.2.10:9000"
+
+# connect fails: ENOSERVER
+srt_reset_net
+srt_fail connect ENOSERVER
+srt_open "srt://192.0.2.10:9000"
+
+# connect fails: ETIMEOUT
+srt_reset_net
+srt_fail connect ETIMEOUT
+srt_open "srt://192.0.2.10:9000"
+
+# connect fails: EASYNCSND (mapped to EAGAIN)
+srt_reset_net
+srt_fail connect EASYNCSND
+srt_open "srt://192.0.2.10:9000"
+
+# connect fails: unknown code
+srt_reset_net
+srt_fail connect 9999
+srt_open "srt://192.0.2.10:9000"
+
+# connect ok but the socket never reaches CONNECTED (non-blocking caller)
+srt_reset_net
+srt_state connecting
+srt_open "srt://192.0.2.10:9000"
+
+# connect ok, socket BROKEN afterwards
+srt_reset_net
+srt_state broken
+srt_open "srt://192.0.2.10:9000"
+
+# epoll wait reports an error while connecting
+srt_reset_net
+srt_epoll error ECONNLOST
+srt_open "srt://192.0.2.10:9000"
+
+# epoll wait times out forever; timeout=1000 usec bounds it
+srt_reset_net
+srt_epoll timeout
+srt_open "srt://192.0.2.10:9000?timeout=1000"
+
+# post options (INPUTBW) fail
+srt_reset_net
+srt_fail setsockopt:SRTO_INPUTBW EUNKNOWN
+srt_open "srt://192.0.2.10:9000"
+
+# post options (OHEADBW) fail
+srt_reset_net
+srt_fail setsockopt:SRTO_OHEADBW EUNKNOWN
+srt_open "srt://192.0.2.10:9000"
+
+# reading back SRTO_PAYLOADSIZE fails
+srt_reset_net
+srt_fail getsockopt EUNKNOWN
+srt_open "srt://192.0.2.10:9000"
+
+# second epoll_create (write wait set after connect) fails
+srt_reset_net
+srt_fail epoll_create EUNKNOWN 0 2
+srt_open "srt://192.0.2.10:9000"
+
+# srt_startup fails
+srt_reset_net
+srt_fail startup EUNKNOWN
+srt_open "srt://192.0.2.10:9000"

@@ -1,0 +1,10 @@
+# Stream state changes are only logged (state name via pw_stream_state_as_string, error text or "none").
+unique_name :1.5
+prop ScreenCast AvailableSourceTypes "uint32 1"
+prop ScreenCast version "uint32 2"
+screencast_load
+new a pipewire-desktop-capture-source
+portal_ok 39
+state_changed 1 2
+state_changed 2 3 "node vanished"
+state_changed 0 -1 "boom"

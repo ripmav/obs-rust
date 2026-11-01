@@ -1,0 +1,41 @@
+--- X11 platform without a display
+sysinfo Physical Cores:
+sysinfo Physical Memory:
+sysinfo Kernel Version:
+sysinfo <distribution-or-flatpak>
+sysinfo Desktop Environment: GNOME (gnome-xorg)
+sysinfo Session Type: x11
+sysinfo Unable to open X display
+--- display with an X.Org server: release split into major.minor.patch
+sysinfo Physical Cores:
+sysinfo Physical Memory:
+sysinfo Kernel Version:
+sysinfo <distribution-or-flatpak>
+sysinfo Desktop Environment: GNOME (gnome-xorg)
+sysinfo Session Type: x11
+sysinfo Window System: X11.0, Vendor: The X.Org Foundation, Version: 1.21.1
+--- non X.Org vendor
+sysinfo Physical Cores:
+sysinfo Physical Memory:
+sysinfo Kernel Version:
+sysinfo <distribution-or-flatpak>
+sysinfo Desktop Environment: GNOME
+sysinfo Window System: X11.0 - vendor string: Some Vendor - vendor release: 42
+--- only the session desktop set
+sysinfo Physical Cores:
+sysinfo Physical Memory:
+sysinfo Kernel Version:
+sysinfo <distribution-or-flatpak>
+sysinfo Desktop Environment: KDE
+sysinfo Window System: X11.0 - vendor string: Some Vendor - vendor release: 42
+--- no desktop variables
+sysinfo Physical Cores:
+sysinfo Physical Memory:
+sysinfo Kernel Version:
+sysinfo <distribution-or-flatpak>
+sysinfo Window System: X11.0 - vendor string: Some Vendor - vendor release: 42
+--- Wayland platform: no X line
+sysinfo Physical Cores:
+sysinfo Physical Memory:
+sysinfo Kernel Version:
+sysinfo <distribution-or-flatpak>

@@ -1,0 +1,39 @@
+> unique_name :1.5
+> prop ScreenCast AvailableSourceTypes uint32 1
+> prop ScreenCast version uint32 3
+> screencast_load
+dbus.bus_get type=2 -> ok
+dbus.proxy_new org.freedesktop.portal.Desktop /org/freedesktop/portal/desktop org.freedesktop.portal.ScreenCast flags=0
+log info [pipewire] Available capture sources:
+log info [pipewire]     - Monitor source
+host.register_source pipewire-desktop-capture-source type=0 flags=0x481 icon=6
+host.register_source pipewire-screen-capture-source type=0 flags=0x81 icon=6
+> set a RestoreToken str stored-A
+> new a pipewire-desktop-capture-source
+log info PipeWire initialized
+dbus.subscribe#1 org.freedesktop.portal.Desktop org.freedesktop.portal.Request.Response path=/org/freedesktop/portal/desktop/request/1_5/obs1 arg0=NULL flags=1
+dbus.call#1 CreateSession ({'handle_token': <'obs1'>, 'session_handle_token': <'obs1'>},)
+created a
+> response 1 (0, {'session_handle': <'/s/a'>})
+dbus.signal Response -> /org/freedesktop/portal/desktop/request/1_5/obs1
+log info [pipewire] Screencast session created
+dbus.subscribe#2 org.freedesktop.portal.Desktop org.freedesktop.portal.Request.Response path=/org/freedesktop/portal/desktop/request/1_5/obs2 arg0=NULL flags=1
+dbus.call#2 SelectSources (objectpath '/s/a', {'types': <uint32 1>, 'multiple': <false>, 'handle_token': <'obs2'>, 'cursor_mode': <uint32 1>})
+dbus.unsubscribe#1
+> response 2 (0, {})
+dbus.signal Response -> /org/freedesktop/portal/desktop/request/1_5/obs2
+log debug [pipewire] Response to select source received
+log info [pipewire] Asking for monitor
+dbus.subscribe#3 org.freedesktop.portal.Desktop org.freedesktop.portal.Request.Response path=/org/freedesktop/portal/desktop/request/1_5/obs3 arg0=NULL flags=1
+dbus.call#3 Start (objectpath '/s/a', '', {'handle_token': <'obs3'>})
+dbus.unsubscribe#2
+> response 3 (0, {'streams': <[(@u 1, @a{sv} {})]>, 'restore_token': <'ignored'>})
+dbus.signal Response -> /org/freedesktop/portal/desktop/request/1_5/obs3
+log info [pipewire] source selected, setting up screencast
+dbus.call#4 OpenPipeWireRemote (objectpath '/s/a', @a{sv} {})
+dbus.unsubscribe#3
+> get a RestoreToken str
+RestoreToken = "stored-A"
+> save a
+> settings_json a
+{"RestoreToken":"stored-A"}

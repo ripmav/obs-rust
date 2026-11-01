@@ -1,0 +1,28 @@
+> bus fail
+> screencast_load
+dbus.bus_get type=2 -> error
+log warning [portals] Error retrieving D-Bus connection: bus unavailable
+dbus.proxy_new org.freedesktop.portal.Desktop /org/freedesktop/portal/desktop org.freedesktop.portal.ScreenCast flags=0
+log info [pipewire] No capture sources available
+> bus ok
+> proxy ScreenCast fail
+> screencast_load
+dbus.bus_get type=2 -> ok
+dbus.proxy_new org.freedesktop.portal.Desktop /org/freedesktop/portal/desktop org.freedesktop.portal.ScreenCast flags=0
+log warning [portals] Error retrieving D-Bus proxy: no such portal
+log info [pipewire] No capture sources available
+> prop ScreenCast AvailableSourceTypes uint32 3
+> proxy ScreenCast ok
+> screencast_load
+dbus.proxy_new org.freedesktop.portal.Desktop /org/freedesktop/portal/desktop org.freedesktop.portal.ScreenCast flags=0
+log info [pipewire] Available capture sources:
+log info [pipewire]     - Monitor source
+log info [pipewire]     - Window source
+host.register_source pipewire-desktop-capture-source type=0 flags=0x481 icon=6
+host.register_source pipewire-window-capture-source type=0 flags=0x481 icon=7
+host.register_source pipewire-screen-capture-source type=0 flags=0x81 icon=6
+> new a pipewire-screen-capture-source
+log info PipeWire initialized
+dbus.subscribe#1 org.freedesktop.portal.Desktop org.freedesktop.portal.Request.Response path=/org/freedesktop/portal/desktop/request/1_42/obs1 arg0=NULL flags=1
+dbus.call#1 CreateSession ({'handle_token': <'obs1'>, 'session_handle_token': <'obs1'>},)
+created a

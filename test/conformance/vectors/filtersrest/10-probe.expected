@@ -1,0 +1,17 @@
+rnn_info frame_size=480 sample_rate=48000 size_positive=1
+rnn_create a ok=1
+rnn a frame=0 vad=0.778 rms_in=3501 rms_out=81 peak_out=372
+rnn a frame=1 vad=0.949 rms_in=3511 rms_out=2815 peak_out=7139
+rnn a frame=2 vad=0.984 rms_in=3496 rms_out=3453 peak_out=7500
+rnn a frame=3 vad=0.991 rms_in=3488 rms_out=3469 peak_out=7450
+rnn a frame=4 vad=0.993 rms_in=3503 rms_out=3488 peak_out=7432
+rnn a frame=5 vad=0.994 rms_in=3500 rms_out=3496 peak_out=7402
+rnn a frame=6 vad=0.995 rms_in=3507 rms_out=3493 peak_out=7544
+rnn a frame=7 vad=0.994 rms_in=3510 rms_out=3494 peak_out=7378
+rnn a frame=8 vad=0.994 rms_in=3499 rms_out=3498 peak_out=7488
+rnn a frame=9 vad=0.996 rms_in=3487 rms_out=3493 peak_out=7379
+rnn a frame=10 vad=0.996 rms_in=3505 rms_out=3477 peak_out=7461
+rnn a frame=11 vad=0.996 rms_in=3472 rms_out=3497 peak_out=7421
+rnn a frame=0 vad=0.995 rms_in=0 rms_out=3346 peak_out=7343
+rnn a frame=1 vad=0.992 rms_in=0 rms_out=665 peak_out=1979
+rnn a frame=2 vad=0.974 rms_in=0 rms_out=43 peak_out=94

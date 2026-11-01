@@ -1,0 +1,43 @@
+# S-060 Lua scripting backend: REAL shared/obs-scripting/{obs-scripting-lua.c,obs-scripting-lua-source.c,
+# obs-scripting-lua-frontend.c} on LuaJIT, plus the real scripting core (obs-scripting.c, logging, cstrcache).
+# The SWIG-generated runtime header and the "obslua" module are not available (SWIG not installed); they are
+# replaced by gen/luascript_swig/swig/swigluarun.h and a hand-written mini "obslua" in gen/luascript_stubs.c.
+# libobs is faked in gen/luascript_stubs.c except obs-data, obs-properties, calldata and the signal handler.
+test/conformance/gen/luascript_runner.c
+test/conformance/gen/luascript_stubs.c
+shared/obs-scripting/obs-scripting.c
+shared/obs-scripting/obs-scripting-logging.c
+shared/obs-scripting/cstrcache.cpp
+shared/obs-scripting/obs-scripting-lua.c
+shared/obs-scripting/obs-scripting-lua-source.c
+shared/obs-scripting/obs-scripting-lua-frontend.c
+libobs/callback/calldata.c
+libobs/callback/decl.c
+libobs/callback/signal.c
+libobs/callback/proc.c
+libobs/util/lexer.c
+libobs/util/cf-lexer.c
+libobs/util/cf-parser.c
+libobs/obs-data.c
+libobs/obs-properties.c
+libobs/graphics/vec2.c
+libobs/graphics/vec3.c
+libobs/graphics/vec4.c
+libobs/graphics/quat.c
+libobs/graphics/axisang.c
+libobs/graphics/matrix3.c
+libobs/graphics/matrix4.c
+libobs/graphics/plane.c
+libobs/graphics/math-extra.c
+-DLUAJIT_FOUND
+-DENABLE_FRONTEND
+-DSCRIPT_DIR=\"share/obs/obs-scripting\"
+-I/usr/include/luajit-2.1
+-Igen/luascript_swig
+-I../../frontend/api
+-I../../shared/obs-scripting
+-lstdc++
+-ljansson
+-lluajit-5.1
+-ldl
+-Wno-deprecated-declarations

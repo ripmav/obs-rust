@@ -1,0 +1,26 @@
+# REAL RNNoise: determinism, state isolation, in-place operation (out may alias in), fresh state after destroy.
+rnn_create a
+rnn_create b
+rnn_gen a speechlike 150 6000 500 3
+echo two-fresh-states-fed-identically-give-bit-identical-output
+rnn_cmp a b 10
+rnn_destroy b
+echo state-keeps-history-so-a-warm-state-differs-from-a-fresh-one
+rnn_create c
+rnn_run a 10
+rnn_gen a speechlike 150 6000 500 3
+rnn_gen c speechlike 150 6000 500 3
+rnn_run c 3
+rnn_run a 3
+echo in-place-processing-matches-copy-processing
+rnn_create p
+rnn_create q
+rnn_gen p noise 2000 5
+rnn_gen q noise 2000 5
+rnn_run p 5
+rnn_run q 5 inplace
+echo destroy-and-recreate-restarts-from-scratch
+rnn_destroy p
+rnn_create p
+rnn_gen p noise 2000 5
+rnn_run p 5

@@ -1,0 +1,23 @@
+# QUIRK Q-1 (pixel row alignment): the backend never sets GL's pixel store alignment, so GL's
+# default of 4 bytes applies to BOTH directions.
+#   - uploads: row r of the caller's data starts at r*align4(width*bpp)
+#   - stage-surface read-back: rows in the mapped memory are padded to 4 bytes too, but
+#     gs_stagesurface_map reports linesize = width*bpp (unpadded).
+# The input data below therefore contains the padding bytes (00).  The vector prints rows at
+# linesize stride, so for widths that are not multiples of 4 the printed rows are sheared.
+create
+enter
+# width 3: row stride in memory is 4
+tex r8w3 3 3 R8 1 0 010203000405060007080900
+read r8w3
+tex r8w5 5 2 R8 1 0 0102030405000000060708090a000000
+read r8w5
+# width a multiple of 4: no padding, no shear
+tex r8w4 4 2 R8 1 0 0102030405060708
+read r8w4
+tex a8w2 2 2 A8 1 0 0102000003040000
+read a8w2
+# 3 bytes/pixel formats do not exist, 4 bytes/pixel formats are always aligned
+tex rgbaw3 3 1 RGBA 1 0 112233445566778899aabbcc
+read rgbaw3
+destroy

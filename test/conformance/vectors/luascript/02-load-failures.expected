@@ -1,0 +1,31 @@
+scripting load -> 1 ticks=1
+log warning [Lua: missing.lua] Error opening file: (null)
+create S0 -> loaded=0 lang=1 file=missing.lua desc=NULL
+log warning [Lua: syntax.lua] Error loading file: [string "<chunk>"]:1: '=' expected near 'is'
+create S1 -> loaded=0 lang=1 file=syntax.lua desc=NULL
+log info [Lua: runtime.lua] before
+log warning [Lua: runtime.lua] Error running file: [string "<chunk>"]:3: attempt to index local 'x' (a nil value)
+create S2 -> loaded=0 lang=1 file=runtime.lua desc=NULL
+log info [Lua: refuse.lua] refusing
+log info [obs-scripting]: Loaded lua script: refuse.lua
+create S3 -> loaded=1 lang=1 file=refuse.lua desc="never read"
+log info [obs-scripting]: Loaded lua script: accept_true.lua
+create S4 -> loaded=1 lang=1 file=accept_true.lua desc=NULL
+log info [obs-scripting]: Loaded lua script: accept_number.lua
+create S5 -> loaded=1 lang=1 file=accept_number.lua desc="number return ok"
+destroy S0
+log info [obs-scripting]: Loaded lua script: accept_two.lua
+create S0 -> loaded=1 lang=1 file=accept_two.lua desc="two returns ok"
+destroy S1
+log info [obs-scripting]: Loaded lua script: accept_nil.lua
+create S1 -> loaded=1 lang=1 file=accept_nil.lua desc="nil return ok"
+log info [Lua: runtime.lua] before
+log warning [Lua: runtime.lua] Error running file: [string "<chunk>"]:3: attempt to index local 'x' (a nil value)
+reload S2 -> 0
+log info [obs-scripting]: Unloaded lua script: refuse.lua
+log info [Lua: refuse.lua] refusing
+log info [obs-scripting]: Loaded lua script: refuse.lua
+reload S3 -> 1
+log info [obs-scripting]: Unloaded lua script: accept_true.lua
+log info [obs-scripting]: Loaded lua script: accept_true.lua
+reload S4 -> 1

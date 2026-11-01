@@ -1,0 +1,4 @@
+# Which sources are registered depends on the AvailableSourceTypes bitmask of the portal: monitor(1) and window(2) sources
+# are registered individually, the unified screen-capture source is registered whenever at least one type exists, none -> nothing.
+prop ScreenCast AvailableSourceTypes "uint32 0"
+screencast_load

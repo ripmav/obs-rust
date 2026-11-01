@@ -1,0 +1,14 @@
+> prop ScreenCast AvailableSourceTypes uint32 3
+> module_load
+gl.gladLoadGL
+host.register_source pipewire-camera-source type=0 flags=0x5 icon=9
+dbus.bus_get type=2 -> ok
+dbus.proxy_new org.freedesktop.portal.Desktop /org/freedesktop/portal/desktop org.freedesktop.portal.ScreenCast flags=0
+log info [pipewire] Available capture sources:
+log info [pipewire]     - Monitor source
+log info [pipewire]     - Window source
+host.register_source pipewire-desktop-capture-source type=0 flags=0x481 icon=6
+host.register_source pipewire-window-capture-source type=0 flags=0x481 icon=7
+host.register_source pipewire-screen-capture-source type=0 flags=0x81 icon=6
+module_load -> 1
+> module_unload

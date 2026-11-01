@@ -1,0 +1,13 @@
+# Restore token handling: with portal version >= 4 the token in the Start reply replaces the stored one and the source is
+# saved (RestoreToken persisted); a reply without a token clears it; with version < 4 nothing is read or saved.
+unique_name :1.5
+prop ScreenCast AvailableSourceTypes "uint32 1"
+prop ScreenCast version "uint32 4"
+screencast_load
+set a RestoreToken str stored-A
+new a pipewire-desktop-capture-source
+response 1 "(0, {'session_handle': <'/s/a'>})"
+response 2 "(0, {})"
+response 3 "(0, {'streams': <[(@u 1, @a{sv} {})]>, 'restore_token': <'fresh-A'>})"
+get a RestoreToken str
+settings_json a

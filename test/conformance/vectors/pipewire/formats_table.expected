@@ -1,0 +1,30 @@
+> format BGRA
+format BGRA id=12 found=1 drm=0x34325241 gs=5 video=7 swap_rb=0 bpp=4 name=ARGB8888
+> format RGBA
+format RGBA id=11 found=1 drm=0x34324241 gs=3 video=6 swap_rb=0 bpp=4 name=ABGR8888
+> format BGRx
+format BGRx id=8 found=1 drm=0x34325258 gs=4 video=8 swap_rb=0 bpp=4 name=XRGB8888
+> format RGBx
+format RGBx id=7 found=1 drm=0x34324258 gs=4 video=0 swap_rb=1 bpp=4 name=XBGR8888
+> format YUY2
+format YUY2 id=4 found=1 drm=0x56595559 gs=0 video=4 swap_rb=0 bpp=2 name=YUYV422
+> format NV12
+format NV12 id=23 found=1 drm=0x3231564e gs=0 video=2 swap_rb=0 bpp=2 name=NV12
+> format ABGR_210LE
+format ABGR_210LE id=85 found=1 drm=0x30334241 gs=6 video=0 swap_rb=0 bpp=10 name=ABGR2101010
+> format xBGR_210LE
+format xBGR_210LE id=81 found=1 drm=0x30334258 gs=6 video=0 swap_rb=0 bpp=10 name=XBGR2101010
+> format I420
+format I420 id=2 found=0
+> format ARGB
+format ARGB id=13 found=0
+> format UNKNOWN
+format UNKNOWN id=0 found=0
+> format ENCODED
+format ENCODED id=1 found=0
+> format 99999
+format 99999 id=99999 found=0
+> format_null BGRA
+format_null -> 1
+> format_null I420
+format_null -> 0

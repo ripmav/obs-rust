@@ -1,0 +1,58 @@
+> create
+create ok
+> world can_begin off
+> start
+start returned 0
+> world can_begin on
+> world init_ok off
+> start
+start returned 0
+> world init_ok on
+> state
+state running=0 stopping=0 write_thread_active=0 has_connected=0 got_headers=0 queued=0
+state total_bytes=0 initialized=0 begin_calls=0 stop_ts=0
+> world service off
+> start
+start returned 1
+log error failed to start the mpegts output
+> events
+events ERROR
+> world service on
+> world vformat none
+> start
+start returned 1
+log warning Invalid pixel format used for mpegts output
+log error failed to start the mpegts output
+> events
+events ERROR
+> world vformat nv12
+> world ainfo off
+> start
+start returned 1
+log warning No active audio
+log error [obs-ffmpeg mpegts muxer: 'mpegts']: mpegts avstream failed to be created
+log error failed to start the mpegts output
+> events
+events ERROR
+> world ainfo on
+> world vinfo off
+> start
+start returned 1
+log warning No active video
+log error [obs-ffmpeg mpegts muxer: 'mpegts']: mpegts avstream failed to be created
+log error failed to start the mpegts output
+> events
+events ERROR
+> world vinfo on
+> world vcodec nonexistent
+> start
+start returned 1
+log error [obs-ffmpeg mpegts muxer: 'mpegts']: Couldn't find codec 'nonexistent'
+log error [obs-ffmpeg mpegts muxer: 'mpegts']: mpegts avstream failed to be created
+log error failed to start the mpegts output
+> events
+events ERROR
+> world vcodec h264
+> state
+state running=0 stopping=0 write_thread_active=0 has_connected=0 got_headers=0 queued=0
+state total_bytes=0 initialized=0 begin_calls=0 stop_ts=0

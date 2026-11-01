@@ -1,0 +1,14 @@
+--- group not complete (1 of 2 started): timestamp stays 0
+loop -> 1 last_time=1000 frame_time_total=0 fps_total_ns=1000 fps_frames=1
+group_ts G1 0
+--- both started: the first frame after registration sets it to video_time after the sleep
+loop -> 1 last_time=2000 frame_time_total=0 fps_total_ns=2000 fps_frames=2
+group_ts G2 3000
+--- already set: not overwritten
+loop -> 1 last_time=3000 frame_time_total=0 fps_total_ns=3000 fps_frames=3
+group_ts G1 3000
+--- a dead weak reference is skipped and the list still cleared
+loop -> 1 last_time=4000 frame_time_total=0 fps_total_ns=4000 fps_frames=4
+group_ts G1 0
+--- an encoder without a group is ignored
+loop -> 1 last_time=5000 frame_time_total=0 fps_total_ns=5000 fps_frames=5

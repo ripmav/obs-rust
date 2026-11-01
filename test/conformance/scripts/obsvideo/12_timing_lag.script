@@ -1,0 +1,41 @@
+# Frame timing: video_sleep. If the sleep reaches its deadline, exactly one frame is accounted. Otherwise the loop
+# computes how many whole intervals have elapsed (never fewer than 1), advances video_time by that many intervals and
+# adds count-1 to lagged_frames. total_frames always grows by count.
+core 100
+trace 0
+ctx_new 100
+mix_add M 1 8 8 8 8 BGRA 0 0 0
+stop_after M 100
+clock 1000
+video_time 1000
+sleep_result 1
+echo "--- on time: the clock jumps to the deadline"
+loop 1
+counters
+echo "--- late by 0 (sleep fails, clock still at the frame start + 0): count clamps to 1"
+sleep_result 0
+clock 1100
+loop 1
+counters
+echo "--- late by 250ns of a 100ns interval -> 2 intervals elapsed"
+clock 1450
+loop 1
+counters
+echo "--- late by 999 -> 9 intervals"
+clock 2300
+loop 1
+counters
+echo "--- exactly 3 intervals late"
+clock 2900
+loop 1
+counters
+echo "--- clock behind video_time (negative difference) clamps to one interval"
+clock 10
+loop 1
+counters
+echo "--- explicit sequence of sleep results: ok, fail, ok"
+sleep_result 1 1 0 1
+clock 3000
+video_time 3000
+loop 3
+counters

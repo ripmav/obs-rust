@@ -1,0 +1,71 @@
+file badlzw.gif 49 bytes
+file w4097.gif 116 bytes
+file w4097b.gif 206 bytes
+file h4096.gif 206 bytes
+file w4096.gif 206 bytes
+file one.gif 42 bytes
+file fake.gif 70 bytes
+file junk.gif 16 bytes
+file empty.gif 0 bytes
+file x.GIF 93 bytes
+file ab.gif 93 bytes
+== 4097x1, one frame: rejected even though a still image would be fine elsewhere
+log warning init_animated_gif: Bad texture dimensions (4097x1) in 'w4097.gif'
+image loaded=0 animated=0 cx=0 cy=0 format=UNKNOWN frame_updated=0 cur_frame=0 cur_loop=0 cur_time=0 mem_usage=0 alpha_mode=0 space=0 texture=no texture_data=no
+image loaded=0 animated=0 cx=0 cy=0 format=UNKNOWN frame_updated=0 cur_frame=0 cur_loop=0 cur_time=0 mem_usage=0 alpha_mode=0 space=0 texture=no texture_data=no
+== 4097x1, two frames
+log warning init_animated_gif: Bad texture dimensions (4097x1) in 'w4097b.gif'
+image loaded=0 animated=0 cx=0 cy=0 format=UNKNOWN frame_updated=0 cur_frame=0 cur_loop=0 cur_time=0 mem_usage=0 alpha_mode=0 space=0 texture=no texture_data=no
+image loaded=0 animated=0 cx=0 cy=0 format=UNKNOWN frame_updated=0 cur_frame=0 cur_loop=0 cur_time=0 mem_usage=0 alpha_mode=0 space=0 texture=no texture_data=no
+== 1x4096 two frames (limit is inclusive)
+image loaded=1 animated=1 cx=1 cy=4096 format=RGBA frame_updated=0 cur_frame=0 cur_loop=0 cur_time=0 mem_usage=49374 alpha_mode=0 space=0 texture=no texture_data=no
+image loaded=1 animated=1 cx=1 cy=4096 format=RGBA frame_updated=0 cur_frame=0 cur_loop=0 cur_time=0 mem_usage=49374 alpha_mode=0 space=0 texture=no texture_data=no
+image loaded=0 animated=0 cx=0 cy=0 format=UNKNOWN frame_updated=0 cur_frame=0 cur_loop=0 cur_time=0 mem_usage=0 alpha_mode=0 space=0 texture=no texture_data=no
+textures_alive=0
+== 4096x1 two frames
+image loaded=1 animated=1 cx=4096 cy=1 format=RGBA frame_updated=0 cur_frame=0 cur_loop=0 cur_time=0 mem_usage=49374 alpha_mode=0 space=0 texture=no texture_data=no
+image loaded=1 animated=1 cx=4096 cy=1 format=RGBA frame_updated=0 cur_frame=0 cur_loop=0 cur_time=0 mem_usage=49374 alpha_mode=0 space=0 texture=no texture_data=no
+image loaded=0 animated=0 cx=0 cy=0 format=UNKNOWN frame_updated=0 cur_frame=0 cur_loop=0 cur_time=0 mem_usage=0 alpha_mode=0 space=0 texture=no texture_data=no
+textures_alive=0
+== a single-frame GIF is not animated: loaded by the generic still-image path
+image loaded=1 animated=0 cx=2 cy=2 format=BGRA frame_updated=0 cur_frame=0 cur_loop=0 cur_time=0 mem_usage=16 alpha_mode=0 space=0 texture=no texture_data=yes
+image loaded=1 animated=0 cx=2 cy=2 format=BGRA frame_updated=0 cur_frame=0 cur_loop=0 cur_time=0 mem_usage=16 alpha_mode=0 space=0 texture=no texture_data=yes
+pixels 0000ffff00ff00ffff0000ffffffffff
+image loaded=0 animated=0 cx=0 cy=0 format=UNKNOWN frame_updated=0 cur_frame=0 cur_loop=0 cur_time=0 mem_usage=0 alpha_mode=0 space=0 texture=no texture_data=no
+textures_alive=0
+== a PNG named .gif: DEFECT D-1, the reference never returns (scan error is not detected)
+img_try fake.gif: hang (no return within 2 s)
+== garbage named .gif (same hang)
+img_try junk.gif: hang (no return within 2 s)
+== empty file named .gif: DEFECT D-2, bmalloc(0) invokes the crash handler
+crash handler: bmalloc: Allocating 0 bytes is broken behavior, please fix your code!
+img_try empty.gif: terminated by the crash handler
+== upper-case extension .GIF is recognised (case-insensitive)
+image loaded=1 animated=1 cx=2 cy=2 format=RGBA frame_updated=0 cur_frame=0 cur_loop=0 cur_time=0 mem_usage=157 alpha_mode=0 space=0 texture=no texture_data=no
+image loaded=1 animated=1 cx=2 cy=2 format=RGBA frame_updated=0 cur_frame=0 cur_loop=0 cur_time=0 mem_usage=157 alpha_mode=0 space=0 texture=no texture_data=no
+image loaded=0 animated=0 cx=0 cy=0 format=UNKNOWN frame_updated=0 cur_frame=0 cur_loop=0 cur_time=0 mem_usage=0 alpha_mode=0 space=0 texture=no texture_data=no
+textures_alive=0
+file two.gif 93 bytes
+== truncated animated GIFs (img_try: the child is killed after 2 s)
+trunc cut13.gif 13 bytes
+img_try cut13.gif: hang (no return within 2 s)
+trunc cut50.gif 50 bytes
+img_try cut50.gif: hang (no return within 2 s)
+trunc cut70.gif 70 bytes
+image loaded=1 animated=0 cx=2 cy=2 format=BGRA frame_updated=0 cur_frame=0 cur_loop=0 cur_time=0 mem_usage=16 alpha_mode=0 space=0 texture=no texture_data=yes
+img_try cut70.gif: returned
+trunc cut92.gif 92 bytes
+image loaded=1 animated=1 cx=2 cy=2 format=RGBA frame_updated=0 cur_frame=0 cur_loop=0 cur_time=0 mem_usage=156 alpha_mode=0 space=0 texture=no texture_data=no
+img_try cut92.gif: returned
+== a GIF whose first frame has an illegal LZW minimum code size
+img_try badlzw.gif: hang (no return within 2 s)
+== missing file
+log warning init_animated_gif: Failed to open file 'nothere.gif'
+image loaded=0 animated=0 cx=0 cy=0 format=UNKNOWN frame_updated=0 cur_frame=0 cur_loop=0 cur_time=0 mem_usage=0 alpha_mode=0 space=0 texture=no texture_data=no
+image loaded=0 animated=0 cx=0 cy=0 format=UNKNOWN frame_updated=0 cur_frame=0 cur_loop=0 cur_time=0 mem_usage=0 alpha_mode=0 space=0 texture=no texture_data=no
+== NULL path (clears the image)
+image loaded=0 animated=0 cx=0 cy=0 format=UNKNOWN frame_updated=0 cur_frame=0 cur_loop=0 cur_time=0 mem_usage=0 alpha_mode=0 space=0 texture=no texture_data=no
+image loaded=0 animated=0 cx=0 cy=0 format=UNKNOWN frame_updated=0 cur_frame=0 cur_loop=0 cur_time=0 mem_usage=0 alpha_mode=0 space=0 texture=no texture_data=no
+textures_alive=0
+image loaded=0 animated=0 cx=0 cy=0 format=UNKNOWN frame_updated=0 cur_frame=0 cur_loop=0 cur_time=0 mem_usage=0 alpha_mode=0 space=0 texture=no texture_data=no
+textures_alive=0

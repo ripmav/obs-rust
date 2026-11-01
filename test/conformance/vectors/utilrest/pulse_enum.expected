@@ -1,0 +1,18 @@
+available=1
+enum done count=0
+pa loops created=1 freed=1 contexts created=1 freed=1 null_mainloop_calls=0
+enum name=Speakers A id=alsa_output.a
+enum name=Headphones B id=alsa_output.b
+enum name=HDMI "C" id=hdmi.c
+enum done count=3
+enum name=Speakers A id=alsa_output.a
+enum done count=1
+enum name=Speakers A id=alsa_output.a
+enum name=Headphones B id=alsa_output.b
+enum done count=2
+pa loops created=4 freed=4 contexts created=4 freed=4 null_mainloop_calls=0
+enum done count=0
+pa loops created=5 freed=5 contexts created=5 freed=5 null_mainloop_calls=0
+enum done count=0
+enum name=Speakers A id=alsa_output.a
+enum done count=1

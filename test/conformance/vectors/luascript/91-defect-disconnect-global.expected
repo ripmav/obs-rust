@@ -1,0 +1,8 @@
+scripting load -> 1 ticks=1
+log info [obs-scripting]: Loaded lua script: dg.lua
+create S0 -> loaded=1 lang=1 file=dg.lua desc=NULL
+log info [Lua: dg.lua] g1 ping
+log info [Lua: dg.lua] g2 ping
+update S0 done
+callbacks S0 total=1 removed=0
+log info [Lua: dg.lua] g1 ping

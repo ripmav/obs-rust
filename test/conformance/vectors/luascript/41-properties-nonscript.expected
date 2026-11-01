@@ -1,0 +1,11 @@
+scripting load -> 1 ticks=1
+log info [obs-scripting]: Loaded lua script: np.lua
+create S0 -> loaded=1 lang=1 file=np.lua desc=NULL
+props P0 ->
+log info [obs-scripting]: Loaded lua script: nilp.lua
+create S1 -> loaded=1 lang=1 file=nilp.lua desc=NULL
+props P0 ->
+log info [obs-scripting]: Loaded lua script: numprops.lua
+create S2 -> loaded=1 lang=1 file=numprops.lua desc=NULL
+log warning [Lua] obs_lua_script_get_properties:1281: SWIG failed to convert lua object to obs object: obs_properties_t *
+props P0 ->

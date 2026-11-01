@@ -1,0 +1,15 @@
+# When several buffers are queued the newest one is used; all older ones are returned to PipeWire unused (in dequeue order).
+unique_name :1.5
+prop ScreenCast AvailableSourceTypes "uint32 1"
+prop ScreenCast version "uint32 2"
+screencast_load
+new a pipewire-desktop-capture-source
+portal_ok 43
+param_changed format=BGRx size=4x2
+buf_data 0 0 memptr 0 0 16 32 0 0x10
+buf_data 1 0 memptr 0 0 16 32 0 0x20
+buf_data 2 0 memptr 0 0 16 32 0 0x30
+buf_push 0
+buf_push 1
+buf_push 2
+process

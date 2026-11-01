@@ -1,0 +1,10 @@
+create rc=0 device=yes
+name OpenGL
+type 1
+preprocessor _OPENGL
+adapters ret=1 count=1
+log warning device_get_size (GL): No active swap
+log warning device_get_width (GL): No active swap
+log warning device_get_height (GL): No active swap
+size 0 0 width 0 height 0
+destroyed

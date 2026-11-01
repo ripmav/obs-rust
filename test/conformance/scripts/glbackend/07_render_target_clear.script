@@ -1,0 +1,40 @@
+# Render targets, clear, viewport, scissor, colour write mask.
+# Pixel row 0 of a read-back is the TOP row of the render target (the backend flips the
+# projection when drawing into an FBO), so read-back is top-down like Direct3D.
+create
+enter
+tex rt 4 4 RGBA 1 RENDER_TARGET -
+tex plain 4 4 RGBA 1 0 -
+get_rt
+set_rt rt
+get_rt
+clear CLEAR_COLOR 1 0 0 1
+read rt
+clear CLEAR_COLOR 0 1 0 0
+read rt
+# only flagged buffers are cleared: no colour flag leaves the colour untouched
+clear CLEAR_DEPTH 0 0 1 1
+read rt
+# scissor limits clear (and draw); the rectangle is passed straight to GL: y counts from the
+# first memory row (row 0 of the read-back), which is also the top of the picture when drawing
+# into a render target
+scissor 1 0 2 2
+clear CLEAR_COLOR 0 0 1 1
+scissor off
+read rt
+# colour mask
+clear CLEAR_COLOR 0 0 0 0
+colormask 1 0 0 1
+clear CLEAR_COLOR 1 1 1 1
+colormask 1 1 1 1
+read rt
+# viewport: stored as given; in an FBO the y is not flipped
+viewport 1 1 2 2
+get_viewport
+set_rt -
+get_rt
+# errors
+set_rt plain
+get_rt
+cube c 2 RGBA 1 0
+destroy

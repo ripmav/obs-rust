@@ -1,0 +1,46 @@
+# libnsgif colour tables and frame geometry: interlaced vs. sequential row order of the same pixel data, a GIF
+# without any colour table, a frame larger than the logical screen, a frame partly or fully outside the screen.
+file il.gif 47494638396104000800a20000ff000000ff000000ffffffff0000000909090909090909092c000000000400080040030d0821b3438c14c51ca123169b00003b
+file nl.gif 47494638396104000800a20000ff000000ff000000ffffffff0000000909090909090909092c000000000400080000030c0821b3438c14c51c7cd3d904003b
+file nopal.gif 4749463839610200020000000021f90400050000002c0000000002000200000202445c003b
+file big.gif 47494638396102000200910000ff000000ff000000ffffffff21f90400050000002c00000000040004000002064434869a3705003b
+file off.gif 47494638396102000200910000ff000000ff000000ffffffff21f90400050000002c0100010002000200000203443405003b
+file off2.gif 47494638396102000200910000ff000000ff000000ffffffff21f90400050000002c05000500020002000002034434050021f90400050000002c00000000020002000002039c0205003b
+echo == interlaced (row order 0 | 4 | 2 6 | 1 3 5 7 in the stream)
+gif_new il.gif
+gif_scan
+gif_complete
+gif_info
+gif_frame 0
+echo == the same pixels, sequential
+gif_new nl.gif
+gif_scan
+gif_complete
+gif_info
+gif_frame 0
+echo == no colour table anywhere
+gif_new nopal.gif
+gif_scan
+gif_complete
+gif_info
+gif_frame 0
+gif_palette global
+echo == frame 4x4 on a 2x2 screen
+gif_new big.gif
+gif_scan
+gif_complete
+gif_info
+gif_frame 0
+echo == frame at (1,1) extends past the screen
+gif_new off.gif
+gif_scan
+gif_complete
+gif_info
+gif_frame 0
+echo == first frame entirely outside the screen
+gif_new off2.gif
+gif_scan
+gif_complete
+gif_info
+gif_frame 0
+gif_frame 1

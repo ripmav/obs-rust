@@ -1,0 +1,15 @@
+create rc=0 device=yes
+vshader vs ok
+pshader ps ok
+vb quad ok
+log error No vertex shader specified
+log error device_draw (GL) failed
+tex rt ok
+log error No vertex shader specified
+log error device_draw (GL) failed
+log error No pixel shader specified
+log error device_draw (GL) failed
+vs vs ps ps
+log error No active swap chain or render target
+log error device_draw (GL) failed
+destroyed

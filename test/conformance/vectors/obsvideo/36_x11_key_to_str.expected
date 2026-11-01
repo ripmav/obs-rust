@@ -1,0 +1,34 @@
+xi_select_events window=0x1234 n=1 deviceid=1 mask_len=1 mask=0x18000
+hotkeys_platform_init -> 1 context=set min_keycode=8 super_l=0 super_r=0 num_keysyms=132 syms_per_code=4
+--- mouse
+key_to_str OBS_KEY_MOUSE1 = "Mouse 1"
+key_to_str OBS_KEY_MOUSE29 = "Mouse 29"
+key_to_str OBS_KEY_MOUSE2 = "Right Click"
+--- numpad digits
+key_to_str OBS_KEY_NUM0 = "Numpad 0"
+key_to_str OBS_KEY_NUM9 = "Numpad 9"
+key_to_str OBS_KEY_NUM3 = "Pad 3"
+--- fixed names and translations
+key_to_str OBS_KEY_INSERT = "Insert"
+key_to_str OBS_KEY_PAGEUP = "Page Up"
+key_to_str OBS_KEY_META = "Super"
+key_to_str OBS_KEY_SPACE = "Space"
+key_to_str OBS_KEY_NUMPLUS = "Numpad +"
+key_to_str OBS_KEY_ESCAPE = "Esc"
+key_to_str OBS_KEY_ESCAPE = "Esc"
+--- function keys
+key_to_str OBS_KEY_F1 = "F1"
+key_to_str OBS_KEY_F35 = "F35"
+--- keycode lookup via XLookupString, upper-cased
+key_to_str OBS_KEY_A = "A"
+key_to_str OBS_KEY_1 = "1"
+key_to_str OBS_KEY_COMMA = ","
+--- lookup yields nothing: falls back to the obs key name
+key_to_str OBS_KEY_B = "OBS_KEY_B"
+--- key with no keycode: obs key name; NONE stays empty
+key_to_str OBS_KEY_C = "OBS_KEY_C"
+key_to_str OBS_KEY_NONE = ""
+--- keycode path appends nothing but ncopy replaces; prefilled value with a successful lookup
+key_to_str OBS_KEY_A = "A"
+key_to_str OBS_KEY_C = "prefill"
+hotkeys_platform_free context=null vtable=null

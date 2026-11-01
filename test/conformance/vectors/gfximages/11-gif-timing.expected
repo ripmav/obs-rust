@@ -1,0 +1,117 @@
+file d.gif 181 bytes
+file two.gif 93 bytes
+file loop1.gif 85 bytes
+file loop2.gif 85 bytes
+== default behaviour
+gif_new size=181 -> Success
+gif_scan 181 -> Success
+gif_complete
+gif_info width=1 height=1 frames=7 loop_max=1 background=ff0000ff global_palette=1
+  frame 0 display=1 transparency=0 local_palette=0 interlaced=0 disposal=Unspecified(0) delay=0 rect=0,0,1,1
+  frame 1 display=1 transparency=0 local_palette=0 interlaced=0 disposal=Unspecified(0) delay=1 rect=0,0,1,1
+  frame 2 display=1 transparency=0 local_palette=0 interlaced=0 disposal=Unspecified(0) delay=2 rect=0,0,1,1
+  frame 3 display=1 transparency=0 local_palette=0 interlaced=0 disposal=Unspecified(0) delay=3 rect=0,0,1,1
+  frame 4 display=1 transparency=0 local_palette=0 interlaced=0 disposal=Unspecified(0) delay=10 rect=0,0,1,1
+  frame 5 display=1 transparency=0 local_palette=0 interlaced=0 disposal=Unspecified(0) delay=255 rect=0,0,1,1
+  frame 6 display=1 transparency=0 local_palette=0 interlaced=0 disposal=Unspecified(0) delay=65535 rect=0,0,1,1
+  frame_info(frame_count) null
+gif_prepare -> Success area=0,0,1,1 delay=10 frame=0
+gif_prepare -> Success area=0,0,1,1 delay=10 frame=1
+gif_prepare -> Success area=0,0,1,1 delay=2 frame=2
+gif_prepare -> Success area=0,0,1,1 delay=3 frame=3
+gif_prepare -> Success area=0,0,1,1 delay=10 frame=4
+gif_prepare -> Success area=0,0,1,1 delay=255 frame=5
+gif_prepare -> Success area=0,0,1,1 delay=4294967295 frame=6
+gif_prepare -> Success area=0,0,1,1 delay=10 frame=0
+== min 0 default 0 (no substitution)
+gif_new size=181 -> Success
+gif_delay min=0 default=0
+gif_scan 181 -> Success
+gif_complete
+gif_prepare -> Success area=0,0,1,1 delay=0 frame=0
+gif_prepare -> Success area=0,0,1,1 delay=1 frame=1
+gif_prepare -> Success area=0,0,1,1 delay=2 frame=2
+gif_prepare -> Success area=0,0,1,1 delay=3 frame=3
+gif_prepare -> Success area=0,0,1,1 delay=10 frame=4
+gif_prepare -> Success area=0,0,1,1 delay=255 frame=5
+gif_prepare -> Success area=0,0,1,1 delay=4294967295 frame=6
+gif_prepare -> Success area=0,0,1,1 delay=0 frame=0
+== min 3 default 7
+gif_new size=181 -> Success
+gif_delay min=3 default=7
+gif_scan 181 -> Success
+gif_complete
+gif_prepare -> Success area=0,0,1,1 delay=7 frame=0
+gif_prepare -> Success area=0,0,1,1 delay=7 frame=1
+gif_prepare -> Success area=0,0,1,1 delay=7 frame=2
+gif_prepare -> Success area=0,0,1,1 delay=3 frame=3
+gif_prepare -> Success area=0,0,1,1 delay=10 frame=4
+gif_prepare -> Success area=0,0,1,1 delay=255 frame=5
+gif_prepare -> Success area=0,0,1,1 delay=4294967295 frame=6
+gif_prepare -> Success area=0,0,1,1 delay=7 frame=0
+== min 65535 default 1
+gif_new size=181 -> Success
+gif_delay min=65535 default=1
+gif_scan 181 -> Success
+gif_complete
+gif_prepare -> Success area=0,0,1,1 delay=1 frame=0
+gif_prepare -> Success area=0,0,1,1 delay=1 frame=1
+gif_prepare -> Success area=0,0,1,1 delay=1 frame=2
+gif_prepare -> Success area=0,0,1,1 delay=1 frame=3
+gif_prepare -> Success area=0,0,1,1 delay=1 frame=4
+gif_prepare -> Success area=0,0,1,1 delay=1 frame=5
+gif_prepare -> Success area=0,0,1,1 delay=4294967295 frame=6
+gif_prepare -> Success area=0,0,1,1 delay=1 frame=0
+== delay rule set after scanning
+gif_new size=181 -> Success
+gif_scan 181 -> Success
+gif_delay min=3 default=7
+gif_complete
+gif_prepare -> Success area=0,0,1,1 delay=7 frame=0
+gif_prepare -> Success area=0,0,1,1 delay=7 frame=1
+gif_prepare -> Success area=0,0,1,1 delay=7 frame=2
+gif_prepare -> Success area=0,0,1,1 delay=3 frame=3
+gif_prepare -> Success area=0,0,1,1 delay=10 frame=4
+gif_prepare -> Success area=0,0,1,1 delay=255 frame=5
+gif_prepare -> Success area=0,0,1,1 delay=4294967295 frame=6
+gif_prepare -> Success area=0,0,1,1 delay=7 frame=0
+== frame_prepare over a finite animation (NETSCAPE count 1), then reset
+gif_new size=85 -> Success
+gif_scan 85 -> Success
+gif_complete
+gif_info width=1 height=1 frames=2 loop_max=2 background=ff0000ff global_palette=1
+  frame 0 display=1 transparency=0 local_palette=0 interlaced=0 disposal=Unspecified(0) delay=4 rect=0,0,1,1
+  frame 1 display=1 transparency=0 local_palette=0 interlaced=0 disposal=Unspecified(0) delay=5 rect=0,0,1,1
+  frame_info(frame_count) null
+gif_prepare -> Success area=0,0,1,1 delay=4 frame=0
+gif_prepare -> Success area=0,0,1,1 delay=5 frame=1
+gif_prepare -> Success area=0,0,1,1 delay=4 frame=0
+gif_prepare -> Success area=0,0,1,1 delay=4294967295 frame=1
+gif_prepare -> Success area=0,0,1,1 delay=4 frame=0
+gif_prepare -> Animation complete
+gif_reset -> Success
+gif_prepare -> Success area=0,0,1,1 delay=4 frame=0
+gif_prepare -> Success area=0,0,1,1 delay=5 frame=1
+gif_prepare -> Success area=0,0,1,1 delay=4 frame=0
+== NETSCAPE count 2
+gif_new size=85 -> Success
+gif_scan 85 -> Success
+gif_complete
+gif_prepare -> Success area=0,0,1,1 delay=4 frame=0
+gif_prepare -> Success area=0,0,1,1 delay=5 frame=1
+gif_prepare -> Success area=0,0,1,1 delay=4 frame=0
+gif_prepare -> Success area=0,0,1,1 delay=5 frame=1
+gif_prepare -> Success area=0,0,1,1 delay=4 frame=0
+gif_prepare -> Success area=0,0,1,1 delay=4294967295 frame=1
+gif_prepare -> Success area=0,0,1,1 delay=4 frame=0
+gif_prepare -> Animation complete
+== infinite animation
+gif_new size=93 -> Success
+gif_scan 93 -> Success
+gif_complete
+gif_prepare -> Success area=0,0,2,2 delay=10 frame=0
+gif_prepare -> Success area=0,0,2,2 delay=20 frame=1
+gif_prepare -> Success area=0,0,2,2 delay=10 frame=0
+gif_prepare -> Success area=0,0,2,2 delay=20 frame=1
+gif_prepare -> Success area=0,0,2,2 delay=10 frame=0
+gif_prepare -> Success area=0,0,2,2 delay=20 frame=1

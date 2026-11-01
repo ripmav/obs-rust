@@ -1,0 +1,49 @@
+# signal_handler_connect / disconnect on a real libobs signal handler. The callback receives the calldata as a
+# wrapped pointer valid only during the call. Argument validation: handler must convert (None -> NULL is accepted
+# by the SWIG conversion), callbacks must be plain Python functions, otherwise the call is silently ignored.
+scripting load
+py_begin sig.py
+import obspython as obs
+h = obs.fake_handler(0)
+def on_sig(cd):
+    print("sig:", obs.calldata_get_string(cd, "msg"), obs.calldata_get_int(cd, "n"))
+def on_other(cd):
+    print("other:", obs.calldata_get_int(cd, "n"))
+    obs.remove_current_callback()
+def script_load(settings):
+    obs.signal_handler_connect(h, "ping", on_sig)
+    obs.signal_handler_connect(h, "ping", on_other)
+    obs.signal_handler_connect(h, "pong", on_sig)
+    obs.signal_handler_connect(h, "ping", len)
+    obs.signal_handler_connect(h, "ping", None)
+    obs.signal_handler_connect(obs.fake_source(0) if False else "not a handler", "ping", on_sig)
+py_end
+handler H0 "void ping(string msg, int n)"
+handler H0 "void pong(string msg, int n)"
+create S0 sig.py
+callbacks S0
+echo ping reaches both callbacks in connection order of libobs
+emit H0 ping s:msg=hi i:n=1
+echo the self-removing callback is gone; pong reaches on_sig
+emit H0 ping s:msg=again i:n=2
+emit H0 pong s:msg=pong i:n=3
+echo disconnect: needs the same signal name and handler
+py_begin sig2.py
+import obspython as obs
+h = obs.fake_handler(0)
+def f(cd):
+    print("f", obs.calldata_get_int(cd, "n"))
+def script_load(settings):
+    obs.signal_handler_connect(h, "ping", f)
+    obs.signal_handler_disconnect(h, "pong", f)
+    obs.signal_handler_disconnect(h, "ping", len)
+    obs.signal_handler_disconnect(h, "ping", f)
+    obs.signal_handler_disconnect(h, "ping", f)
+py_end
+create S1 sig2.py
+emit H0 ping s:msg=x i:n=4
+echo unloading marks the script's callbacks removed: libobs drops them at the next emission
+destroy S0
+emit H0 ping s:msg=x i:n=5
+emit H0 pong s:msg=x i:n=6
+scripting unload

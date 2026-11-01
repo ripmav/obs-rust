@@ -1,0 +1,28 @@
+# NULL and error handling of the pipe API, and os_process_pipe_create2 with an argument list (no shell involved).
+popen 0 - "true"
+popen 0 r -
+popen 0 - -
+pnull_ops
+pclose_null
+# create2: argv[0] is the executable path (posix_spawn, no PATH search); shell metacharacters are literal
+args /bin/echo hello "a b" "c;d" "$HOME" "*"
+popen2 0 r
+pread 0 100
+pclose 0
+# no PATH lookup: a bare name fails in posix_spawn and returns NULL
+args echo x
+popen2 1 r
+# a path that does not exist
+args /nonexistent/binary
+popen2 1 r
+# argf formats its argument
+args /bin/printf %fmt
+popen2 1 r
+pread 1 100
+pclose 1
+# create2 in write mode with a custom shell as the executable
+args /bin/sh -c "read a; [ \"$a\" = line ] && exit 4; exit 5"
+popen2 2 w
+pwrite 2 "line\n"
+
+pclose 2

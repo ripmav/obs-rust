@@ -1,0 +1,12 @@
+scripting load -> 1 ticks=1
+log info [obs-scripting]: Loaded lua script: glob.lua
+create S0 -> loaded=1 lang=1 file=glob.lua desc=NULL
+log info [Lua: glob.lua] once n=1
+log info [Lua: glob.lua] global ping n=1
+log info [Lua: glob.lua] global ping n=2
+log warning [Lua: glob.lua] Failed to call calldata_signal_callback for calldata_signal_callback: [string "<chunk>"]:4: attempt to index local 't' (a nil value)
+log info [Lua: glob.lua] global pong n=3
+callbacks S0 total=2 removed=0
+log info [obs-scripting]: Unloaded lua script: glob.lua
+destroy S0
+echo --- after unload nothing is called, records are flagged/detached

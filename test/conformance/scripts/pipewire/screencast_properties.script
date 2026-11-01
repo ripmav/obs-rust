@@ -1,0 +1,17 @@
+# Settings defaults and properties of the three screencast sources: ShowCursor default true, RestoreToken default empty,
+# the property list (a "Reload" button whose label depends on the capture type, plus the ShowCursor checkbox).
+prop ScreenCast AvailableSourceTypes "uint32 3"
+prop ScreenCast AvailableCursorModes "uint32 1"
+prop ScreenCast version "uint32 1"
+screencast_load
+new mon pipewire-desktop-capture-source
+get mon ShowCursor bool
+get mon ShowCursor user
+get mon RestoreToken str
+props mon
+new win pipewire-window-capture-source
+props win
+new all pipewire-screen-capture-source
+props all
+name mon
+name all

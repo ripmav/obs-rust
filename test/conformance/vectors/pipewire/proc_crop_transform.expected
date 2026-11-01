@@ -1,0 +1,303 @@
+> unique_name :1.5
+> prop ScreenCast AvailableSourceTypes uint32 1
+> prop ScreenCast version uint32 2
+> screencast_load
+dbus.bus_get type=2 -> ok
+dbus.proxy_new org.freedesktop.portal.Desktop /org/freedesktop/portal/desktop org.freedesktop.portal.ScreenCast flags=0
+log info [pipewire] Available capture sources:
+log info [pipewire]     - Monitor source
+host.register_source pipewire-desktop-capture-source type=0 flags=0x481 icon=6
+host.register_source pipewire-screen-capture-source type=0 flags=0x81 icon=6
+> new a pipewire-desktop-capture-source
+log info PipeWire initialized
+dbus.subscribe#1 org.freedesktop.portal.Desktop org.freedesktop.portal.Request.Response path=/org/freedesktop/portal/desktop/request/1_5/obs1 arg0=NULL flags=1
+dbus.call#1 CreateSession ({'handle_token': <'obs1'>, 'session_handle_token': <'obs1'>},)
+created a
+> portal_ok 53
+dbus.signal Response -> /org/freedesktop/portal/desktop/request/1_5/obs1
+log info [pipewire] Screencast session created
+dbus.subscribe#2 org.freedesktop.portal.Desktop org.freedesktop.portal.Request.Response path=/org/freedesktop/portal/desktop/request/1_5/obs2 arg0=NULL flags=1
+dbus.call#2 SelectSources (objectpath '/s/auto', {'types': <uint32 1>, 'multiple': <false>, 'handle_token': <'obs2'>, 'cursor_mode': <uint32 1>})
+dbus.unsubscribe#1
+dbus.signal Response -> /org/freedesktop/portal/desktop/request/1_5/obs2
+log debug [pipewire] Response to select source received
+log info [pipewire] Asking for monitor
+dbus.subscribe#3 org.freedesktop.portal.Desktop org.freedesktop.portal.Request.Response path=/org/freedesktop/portal/desktop/request/1_5/obs3 arg0=NULL flags=1
+dbus.call#3 Start (objectpath '/s/auto', '', {'handle_token': <'obs3'>})
+dbus.unsubscribe#2
+dbus.signal Response -> /org/freedesktop/portal/desktop/request/1_5/obs3
+log info [pipewire] source selected, setting up screencast
+dbus.call#4 OpenPipeWireRemote (objectpath '/s/auto', @a{sv} {})
+dbus.unsubscribe#3
+dbus.finish#4 OpenPipeWireRemote
+pw.thread_loop_new "PipeWire thread loop"
+pw.thread_loop_start -> 0
+pw.context_connect_fd -> core
+pw.core_add_listener
+pw.core_sync id=0 seq_in=0 -> 1
+log info [pipewire] Server version: 1.0.0
+log info [pipewire] Library version: lib-version
+log info [pipewire] Header version: <hdr>
+gs.query_dmabuf_capabilities -> 0
+pw.loop_add_event#1
+log debug [pipewire] registered event <ptr>
+pw.stream_new#1 "OBS Studio" props={media.type=Video,media.category=Capture,media.role=Screen}
+log info [pipewire] Created stream <ptr>
+pw.stream_connect#1 dir=input target=53 flags=0x5 n_params=6
+  param[0] Object(type=0x40003,id=3){mediaType=Id:2(video); mediaSubtype=Id:1(raw); format=Id:12(BGRA); size=Choice:Range<Rect:1920x1080,Rect:1x1,Rect:8192x4320>; framerate=Choice:Range<Frac:60/1,Frac:0/1,Frac:360/1>}
+  param[1] Object(type=0x40003,id=3){mediaType=Id:2(video); mediaSubtype=Id:1(raw); format=Id:11(RGBA); size=Choice:Range<Rect:1920x1080,Rect:1x1,Rect:8192x4320>; framerate=Choice:Range<Frac:60/1,Frac:0/1,Frac:360/1>}
+  param[2] Object(type=0x40003,id=3){mediaType=Id:2(video); mediaSubtype=Id:1(raw); format=Id:8(BGRx); size=Choice:Range<Rect:1920x1080,Rect:1x1,Rect:8192x4320>; framerate=Choice:Range<Frac:60/1,Frac:0/1,Frac:360/1>}
+  param[3] Object(type=0x40003,id=3){mediaType=Id:2(video); mediaSubtype=Id:1(raw); format=Id:7(RGBx); size=Choice:Range<Rect:1920x1080,Rect:1x1,Rect:8192x4320>; framerate=Choice:Range<Frac:60/1,Frac:0/1,Frac:360/1>}
+  param[4] Object(type=0x40003,id=3){mediaType=Id:2(video); mediaSubtype=Id:1(raw); format=Id:85(ABGR_210LE); size=Choice:Range<Rect:1920x1080,Rect:1x1,Rect:8192x4320>; framerate=Choice:Range<Frac:60/1,Frac:0/1,Frac:360/1>}
+  param[5] Object(type=0x40003,id=3){mediaType=Id:2(video); mediaSubtype=Id:1(raw); format=Id:81(xBGR_210LE); size=Choice:Range<Rect:1920x1080,Rect:1x1,Rect:8192x4320>; framerate=Choice:Range<Frac:60/1,Frac:0/1,Frac:360/1>}
+log info [pipewire] Playing stream <ptr>
+> param_changed format=BGRx size=100x50
+pw.event param_changed id=4 Object(type=0x40003,id=4){mediaType=Id:2(video); mediaSubtype=Id:1(raw); format=Id:8(BGRx); size=Rect:100x50; framerate=Frac:60/1}
+gs.query_sync_capabilities -> 0
+log info [pipewire] Negotiated format:
+log info [pipewire]     Format: 8 (Spa:Enum:VideoFormat:BGRx)
+log info [pipewire]     Size: 100x50
+log info [pipewire]     Framerate: 60/1
+pw.stream_update_params#1 n_params=5
+  param[0] Object(type=0x40005,id=6){type=Id:2(VideoCrop); size=Int:16}
+  param[1] Object(type=0x40005,id=6){type=Id:5(Cursor); size=Choice:Range<Int:16432,Int:52,Int:4194352>}
+  param[2] Object(type=0x40004,id=5){dataType=Int:10}
+  param[3] Object(type=0x40005,id=6){type=Id:1(Header); size=Int:32}
+  param[4] Object(type=0x40005,id=6){type=Id:8(VideoTransform); size=Int:4}
+> buf_data 0 0 memptr 0 0 400 5000 0 0x10
+> buf_meta 0 crop 10 20 30 40
+> buf_meta 0 transform 0
+> buf_push 0
+> process
+pw.event process
+pw.dequeue_buffer #0
+log debug [pipewire] Buffer has memory texture
+gs.texture_create #1 100x50 fmt=4 levels=1 flags=0x2 data0=10111213
+pw.queue_buffer #0
+> size a
+size = 30x40
+> render a
+gs.effect_get_param image
+gs.effect_set_texture #1
+gs.blend_push
+gs.blend_function 1 5
+gs.draw_sprite_subregion #1 flip=0 x=10 y=20 30x40
+gs.blend_pop
+> buf_data 1 0 memptr 0 0 400 5000 0 0x10
+> buf_meta 1 crop 0 0 100 50
+> buf_push 1
+> process
+pw.event process
+pw.dequeue_buffer #1
+log debug [pipewire] Buffer has memory texture
+gs.texture_destroy #1
+gs.texture_create #2 100x50 fmt=4 levels=1 flags=0x2 data0=10111213
+pw.queue_buffer #1
+> size a
+size = 100x50
+> render a
+gs.effect_get_param image
+gs.effect_set_texture #2
+gs.blend_push
+gs.blend_function 1 5
+gs.draw_sprite #2 flip=0 0x0
+gs.blend_pop
+> buf_data 2 0 memptr 0 0 400 5000 0 0x10
+> buf_meta 2 crop 5 5 0 40
+> buf_push 2
+> process
+pw.event process
+pw.dequeue_buffer #2
+log debug [pipewire] Buffer has memory texture
+gs.texture_destroy #2
+gs.texture_create #3 100x50 fmt=4 levels=1 flags=0x2 data0=10111213
+pw.queue_buffer #2
+> size a
+size = 100x50
+> buf_data 11 0 memptr 0 0 400 5000 0 0x10
+> buf_meta 11 crop 10 20 30 40
+> buf_meta 11 transform 1
+> buf_push 11
+> process
+pw.event process
+pw.dequeue_buffer #11
+log debug [pipewire] Buffer has memory texture
+gs.texture_destroy #3
+gs.texture_create #4 100x50 fmt=4 levels=1 flags=0x2 data0=10111213
+pw.queue_buffer #11
+> size a
+size = 40x30
+> render a
+gs.effect_get_param image
+gs.effect_set_texture #4
+gs.matrix_push
+gs.matrix_rotaa4f 0 0 1 1.5708
+gs.matrix_translate3f -0 -40 0
+gs.blend_push
+gs.blend_function 1 5
+gs.draw_sprite_subregion #4 flip=0 x=10 y=20 30x40
+gs.matrix_pop
+gs.blend_pop
+> buf_data 12 0 memptr 0 0 400 5000 0 0x10
+> buf_meta 12 crop 10 20 30 40
+> buf_meta 12 transform 2
+> buf_push 12
+> process
+pw.event process
+pw.dequeue_buffer #12
+log debug [pipewire] Buffer has memory texture
+gs.texture_destroy #4
+gs.texture_create #5 100x50 fmt=4 levels=1 flags=0x2 data0=10111213
+pw.queue_buffer #12
+> size a
+size = 30x40
+> render a
+gs.effect_get_param image
+gs.effect_set_texture #5
+gs.matrix_push
+gs.matrix_rotaa4f 0 0 1 3.14159
+gs.matrix_translate3f -30 -40 0
+gs.blend_push
+gs.blend_function 1 5
+gs.draw_sprite_subregion #5 flip=0 x=10 y=20 30x40
+gs.matrix_pop
+gs.blend_pop
+> buf_data 13 0 memptr 0 0 400 5000 0 0x10
+> buf_meta 13 crop 10 20 30 40
+> buf_meta 13 transform 3
+> buf_push 13
+> process
+pw.event process
+pw.dequeue_buffer #13
+log debug [pipewire] Buffer has memory texture
+gs.texture_destroy #5
+gs.texture_create #6 100x50 fmt=4 levels=1 flags=0x2 data0=10111213
+pw.queue_buffer #13
+> size a
+size = 40x30
+> render a
+gs.effect_get_param image
+gs.effect_set_texture #6
+gs.matrix_push
+gs.matrix_rotaa4f 0 0 1 4.71239
+gs.matrix_translate3f -30 -0 0
+gs.blend_push
+gs.blend_function 1 5
+gs.draw_sprite_subregion #6 flip=0 x=10 y=20 30x40
+gs.matrix_pop
+gs.blend_pop
+> buf_data 14 0 memptr 0 0 400 5000 0 0x10
+> buf_meta 14 crop 10 20 30 40
+> buf_meta 14 transform 4
+> buf_push 14
+> process
+pw.event process
+pw.dequeue_buffer #14
+log debug [pipewire] Buffer has memory texture
+gs.texture_destroy #6
+gs.texture_create #7 100x50 fmt=4 levels=1 flags=0x2 data0=10111213
+pw.queue_buffer #14
+> size a
+size = 30x40
+> render a
+gs.effect_get_param image
+gs.effect_set_texture #7
+gs.blend_push
+gs.blend_function 1 5
+gs.draw_sprite_subregion #7 flip=1 x=10 y=20 30x40
+gs.blend_pop
+> buf_data 15 0 memptr 0 0 400 5000 0 0x10
+> buf_meta 15 crop 10 20 30 40
+> buf_meta 15 transform 5
+> buf_push 15
+> process
+pw.event process
+pw.dequeue_buffer #15
+log debug [pipewire] Buffer has memory texture
+gs.texture_destroy #7
+gs.texture_create #8 100x50 fmt=4 levels=1 flags=0x2 data0=10111213
+pw.queue_buffer #15
+> size a
+size = 40x30
+> render a
+gs.effect_get_param image
+gs.effect_set_texture #8
+gs.matrix_push
+gs.matrix_rotaa4f 0 0 1 1.5708
+gs.matrix_translate3f -0 -40 0
+gs.blend_push
+gs.blend_function 1 5
+gs.draw_sprite_subregion #8 flip=2 x=10 y=20 30x40
+gs.matrix_pop
+gs.blend_pop
+> buf_data 16 0 memptr 0 0 400 5000 0 0x10
+> buf_meta 16 crop 10 20 30 40
+> buf_meta 16 transform 6
+> buf_push 16
+> process
+pw.event process
+pw.dequeue_buffer #16
+log debug [pipewire] Buffer has memory texture
+gs.texture_destroy #8
+gs.texture_create #9 100x50 fmt=4 levels=1 flags=0x2 data0=10111213
+pw.queue_buffer #16
+> size a
+size = 30x40
+> render a
+gs.effect_get_param image
+gs.effect_set_texture #9
+gs.matrix_push
+gs.matrix_rotaa4f 0 0 1 3.14159
+gs.matrix_translate3f -30 -40 0
+gs.blend_push
+gs.blend_function 1 5
+gs.draw_sprite_subregion #9 flip=1 x=10 y=20 30x40
+gs.matrix_pop
+gs.blend_pop
+> buf_data 17 0 memptr 0 0 400 5000 0 0x10
+> buf_meta 17 crop 10 20 30 40
+> buf_meta 17 transform 7
+> buf_push 17
+> process
+pw.event process
+pw.dequeue_buffer #17
+log debug [pipewire] Buffer has memory texture
+gs.texture_destroy #9
+gs.texture_create #10 100x50 fmt=4 levels=1 flags=0x2 data0=10111213
+pw.queue_buffer #17
+> size a
+size = 40x30
+> render a
+gs.effect_get_param image
+gs.effect_set_texture #10
+gs.matrix_push
+gs.matrix_rotaa4f 0 0 1 4.71239
+gs.matrix_translate3f -30 -0 0
+gs.blend_push
+gs.blend_function 1 5
+gs.draw_sprite_subregion #10 flip=2 x=10 y=20 30x40
+gs.matrix_pop
+gs.blend_pop
+> buf_data 20 0 memptr 0 0 400 5000 0 0x10
+> buf_meta 20 transform 2
+> buf_push 20
+> process
+pw.event process
+pw.dequeue_buffer #20
+log debug [pipewire] Buffer has memory texture
+gs.texture_destroy #10
+gs.texture_create #11 100x50 fmt=4 levels=1 flags=0x2 data0=10111213
+pw.queue_buffer #20
+> size a
+size = 100x50
+> render a
+gs.effect_get_param image
+gs.effect_set_texture #11
+gs.matrix_push
+gs.matrix_rotaa4f 0 0 1 3.14159
+gs.matrix_translate3f -100 -50 0
+gs.blend_push
+gs.blend_function 1 5
+gs.draw_sprite #11 flip=0 0x0
+gs.matrix_pop
+gs.blend_pop

@@ -1,0 +1,77 @@
+# obs_hotkeys_platform_is_pressed (X11). Keyboard keys: query the server keymap bit set; a key is pressed when ANY of its
+# learned keycodes is down; META is pressed when Super_L OR Super_R is down; a failed keymap query logs a warning and reports
+# not pressed. Mouse keys (MOUSE1..MOUSE29) use the XInput raw button events: each call drains ALL queued events, clears
+# the per-call "pressed/update" arrays, applies press/release, then answers from pressed OR the latched button_pressed (a release
+# only clears the latch for buttons that saw an event, and the answer is computed BEFORE the latch is updated, so a release
+# is reported one poll late - QUIRK Q-5). OBS Mouse2 = X button 3 (right), Mouse3 = X button 2 (wheel click);
+# buttons 4..7 are wheel axes and are not mapped (MOUSE4 = button index 8).
+x11_setup 8 40 4
+x11_map 9 XK_Escape
+x11_map 12 XK_Shift_L
+x11_map 13 XK_Shift_R
+x11_map 15 XK_Super_L
+x11_map 16 XK_Super_R
+hk_init
+echo "--- keyboard"
+x11_keys_down -
+hk_pressed OBS_KEY_ESCAPE
+x11_keys_down 9
+hk_pressed OBS_KEY_ESCAPE
+hk_pressed OBS_KEY_SHIFT
+x11_keys_down 13
+hk_pressed OBS_KEY_SHIFT
+x11_keys_down 12 13
+hk_pressed OBS_KEY_SHIFT
+echo "--- META needs either super keycode; an obs key without keycodes is never pressed"
+x11_keys_down 15
+hk_pressed OBS_KEY_META
+x11_keys_down 16
+hk_pressed OBS_KEY_META
+x11_keys_down 9
+hk_pressed OBS_KEY_META
+hk_pressed OBS_KEY_B
+echo "--- keymap query failure"
+x11_keymap_fail 1
+x11_keys_down 9
+hk_pressed OBS_KEY_ESCAPE
+x11_keymap_fail 0
+echo "--- mouse: press button 1 (OBS Mouse1), stays latched after the event is consumed"
+x11_event press 1
+hk_pressed OBS_KEY_MOUSE1
+hk_pressed OBS_KEY_MOUSE1
+hk_pressed OBS_KEY_MOUSE2
+echo "--- release: the poll that consumes the release event still answers pressed (latch not yet updated); the next poll answers released"
+x11_event release 1
+hk_pressed OBS_KEY_MOUSE1
+hk_pressed OBS_KEY_MOUSE1
+echo "--- X button 3 is OBS Mouse2, X button 2 is OBS Mouse3"
+x11_event press 3
+x11_event press 2
+hk_pressed OBS_KEY_MOUSE2
+hk_pressed OBS_KEY_MOUSE3
+x11_event release 3
+hk_pressed OBS_KEY_MOUSE2
+hk_pressed OBS_KEY_MOUSE2
+hk_pressed OBS_KEY_MOUSE3
+echo "--- wheel axes (4..7) are ignored, 8 is OBS Mouse4"
+x11_event press 4
+x11_event press 8
+hk_pressed OBS_KEY_MOUSE4
+hk_pressed OBS_KEY_MOUSE1
+echo "--- a press and a release drained in the same poll: pressed wins and the latch sticks until a later release event (QUIRK Q-6)"
+x11_event press 9
+x11_event release 9
+hk_pressed OBS_KEY_MOUSE5
+hk_pressed OBS_KEY_MOUSE5
+x11_event release 9
+hk_pressed OBS_KEY_MOUSE5
+hk_pressed OBS_KEY_MOUSE5
+echo "--- buttons >= 33 warn (QUIRK Q-7: button 33 is rejected although slot 32 exists, so OBS Mouse29 can never fire); non generic and unknown generic events are skipped"
+x11_event press 40
+x11_event other 5
+x11_event nongeneric 1
+x11_event press 33
+hk_pressed OBS_KEY_MOUSE29
+hk_pressed OBS_KEY_MOUSE29
+x11_stats
+hk_free

@@ -1,0 +1,32 @@
+# Network failures during start map to the stop signal code returned by open_output_file: SRT/RIST open codes pass through
+# (libsrt_open returns ERROR for most connect failures, CONNECT_FAILED when the socket is not connected afterwards).
+# DEFECT D-1 (visible here): on a failed SRT connect the failure path closes the session twice: libsrt_open's own cleanup and
+# then connect_mpegts_url calls libsrt_close() again on a never-opened context (epoll_release / srt_close(fd 0) / srt_cleanup
+# a second time). Required behaviour: close once.
+create
+srt_fail connect ECONNREJ
+start
+events
+srt_reset_net
+srt_state connecting
+start
+events
+srt_reset_net
+world url "srt://192.0.2.10:70000"
+start
+events
+world url "srt://bad.test:9000"
+start
+events
+world url "srt://192.0.2.10:9000?mode=bogus"
+start
+events
+world url "rist://192.0.2.20:8000?aes-type=128"
+start
+events
+srt_reset_net
+rist_fail start -1
+world url "rist://192.0.2.20:8000"
+start
+events
+state

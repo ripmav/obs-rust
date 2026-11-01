@@ -1,0 +1,8 @@
+# Registration data of the native MPEG-TS output (struct obs_output_info ffmpeg_mpegts_muxer) and its single property.
+# flags 0x1f = VIDEO|AUDIO|ENCODED|SERVICE|MULTI_TRACK (without CAN_PAUSE); note: ENABLE_HEVC is not defined in this build.
+info
+props
+create
+state
+destroy
+# destroy of a never started output: no running state, no crash

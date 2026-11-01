@@ -1,0 +1,60 @@
+# render_output_texture: the output texture is rendered through a scale effect only when the output TEXTURE size
+# differs from the base size. Effect choice (get_scale_effect): base and target within 16 px (both axes) -> default;
+# else if the OUTPUT video size is under half of the base size on BOTH axes -> bilinear_lowres; else by scale_type
+# (BILINEAR->default, LANCZOS, AREA, everything else incl. DISABLE/POINT/BICUBIC -> bicubic); a missing effect falls
+# back to bicubic, else default. base_dimension params are set only when the effect has them.
+core 1000
+trace 1
+ctx_new 1000
+clock 1000
+video_time 1000
+echo "--- same size: texture passed through (no scale pass)"
+mix_add S 1 1920 1080 1920 1080 BGRA 0 2 0
+mix_active S 1 0
+stop_after S 100
+loop 1
+echo "--- within 16 px: default effect even though bicubic is configured"
+render_tex_size S 1904 1064
+loop 1
+echo "--- 17 px apart on one axis: configured scale type (bicubic)"
+render_tex_size S 1903 1080
+loop 1
+echo "--- exactly half is NOT under half -> configured type; one under half on one axis only -> configured type"
+render_tex_size S 960 540
+loop 1
+render_tex_size S 959 600
+loop 1
+echo "--- under half on both axes -> bilinear lowres (no base_dimension params on that effect)"
+render_tex_size S 959 539
+loop 1
+echo "--- scale types at 1280x720"
+render_tex_size S 1280 720
+mix_set S scale 3
+loop 1
+mix_set S scale 4
+loop 1
+mix_set S scale 5
+loop 1
+mix_set S scale 0
+loop 1
+mix_set S scale 1
+loop 1
+mix_set S scale 99
+loop 1
+echo "--- missing effects: lanczos missing -> bicubic; both missing -> default"
+effect_missing lanczos
+mix_set S scale 4
+loop 1
+effect_missing bicubic
+loop 1
+echo "--- missing lowres effect: under half falls through to the scale type (area missing too -> default)"
+effect_missing bilinear_lowres
+effect_missing area
+mix_set S scale 5
+render_tex_size S 100 100
+loop 1
+echo "--- multi-pass technique runs each pass"
+effect_passes default 3
+mix_set S scale 3
+render_tex_size S 1280 720
+loop 1

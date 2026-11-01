@@ -1,0 +1,13 @@
+# Operations on a script whose load failed or that was unloaded: update/save/properties are silent no-ops
+# (the core still hands back the settings object / an empty property set); reload of a failed script retries.
+scripting load
+create S0 missing_then_created.lua
+update S0 s:a=1
+save S0
+props S0 P0
+settings S0 s:a
+lua_begin missing_then_created.lua
+function script_update(s) print("update a=" .. obslua.obs_data_get_string(s, "a")) end
+lua_end
+reload S0
+update S0 s:b=2

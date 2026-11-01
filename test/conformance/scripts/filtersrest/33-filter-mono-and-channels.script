@@ -1,0 +1,15 @@
+# REAL filter: mono parent in a stereo host (has_mono_src flag path), 8-channel host, and 6-channel host with RNNoise.
+audio 48000 2
+ns_create a v2 rnnoise -30 mono-parent
+ns_gen a 0 speechlike 200 0.25 0.01 7
+ns_gen a 1 speechlike 200 0.25 0.01 7
+ns_process a 480 1000000000
+ns_process a 480 1010000000
+ns_destroy a
+audio 48000 8
+ns_create b v2 rnnoise -30
+ns_gen b 0 speechlike 200 0.25 0.01 7
+ns_gen b 7 noise 0.1 2
+ns_process b 480 1000000000
+ns_process b 480 1010000000
+ns_destroy b

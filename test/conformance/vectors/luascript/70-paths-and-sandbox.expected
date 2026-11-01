@@ -1,0 +1,22 @@
+scripting load -> 1 ticks=1
+log info [Lua: paths.lua] ends with slash: true
+log info [Lua: paths.lua] path has dir: true
+log info [Lua: paths.lua] cpath has dir: true
+log info [Lua: paths.lua] cpath ./: true
+log info [Lua: paths.lua] cpath exe-relative: true
+log info [Lua: paths.lua] cpath SCRIPT_DIR: true
+log info [Lua: paths.lua] sibling loaded
+log info [Lua: paths.lua] require sibling: 42
+log info [Lua: paths.lua] preload empty: true
+log info [Lua: paths.lua] ffi: function
+log info [Lua: paths.lua] string lib: OK math: 2
+log info [Lua: paths.lua] obslua global: table same as require: true
+log info [obs-scripting]: Loaded lua script: paths.lua
+create S0 -> loaded=1 lang=1 file=paths.lua desc=NULL
+log info [Lua: other.lua] shared_global seen from other script: nil
+log info [Lua: other.lua] script_path ends with slash: true
+log info [obs-scripting]: Loaded lua script: other.lua
+create S1 -> loaded=1 lang=1 file=other.lua desc=NULL
+log info [Lua: other2.lua] private_marker from other state: nil
+log info [obs-scripting]: Loaded lua script: other2.lua
+create S2 -> loaded=1 lang=1 file=other2.lua desc=NULL

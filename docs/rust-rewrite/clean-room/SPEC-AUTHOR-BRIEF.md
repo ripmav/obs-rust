@@ -76,3 +76,12 @@ Study these finished examples first (they define the quality bar and style):
 Return: spec file, rule count, number of scripts/vectors, quirks and defects found (one line
 each), sufficiency-check result (`N/N`), spec bugs the check exposed, open questions, and anything
 you could not specify and why.
+
+## Repository layout (new repository)
+
+Work in this repository (`obs-studio-rust`) only. The OBS Studio checkout (`../obs-studio`) is
+**read-only reference**: never create, edit or delete files there, and run builds with
+`CONFORMANCE_BUILD_DIR` set to your scratchpad. Run `tools/link-obs-source.sh` once so that
+`libobs/`, `plugins/`, `shared/` and `deps/` resolve to the reference (the links are git-ignored).
+All paths in this brief ("repository root", `gen/<area>.sources`) refer to this repository.
+Coverage of the reference is measured with `python3 tools/coverage.py`.

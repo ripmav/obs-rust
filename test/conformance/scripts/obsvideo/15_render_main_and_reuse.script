@@ -1,0 +1,33 @@
+# render_main_texture: set target+clear (0,0,0,0), projection, draw callbacks (REVERSE registration order), then the
+# view is rendered - unless an EARLIER mix in the array has the same view, render_space and base size and has
+# texture_rendered=true, in which case that mix's texture is drawn with the default effect instead. Then
+# rendered callbacks (registration order). The mix's render space selects the render target colour space.
+core 1000
+trace 1
+ctx_new 1000
+cb_add draw D1
+cb_add draw D2
+cb_add draw D3
+cb_add rendered R1
+cb_add rendered R2
+mix_add A 1 640 360 640 360 BGRA 0 0 0
+mix_add B 0 640 360 640 360 BGRA 0 0 0
+mix_view_copy B A
+stop_after A 100
+stop_after B 100
+clock 1000
+video_time 1000
+echo "--- two mixes share the view: B reuses A's texture (A is rendered first within the same frame)"
+loop 1
+echo "--- different colour space: no reuse"
+mix_set B render_space 2
+loop 1
+echo "--- different base size: no reuse"
+mix_set B render_space 0
+mix_set B base_w 641
+loop 1
+echo "--- C has its own view object: it renders the view itself (A and B are not candidates for C because the view differs)"
+mix_set B base_w 640
+mix_add C 1 640 360 640 360 BGRA 0 0 3
+stop_after C 100
+loop 1

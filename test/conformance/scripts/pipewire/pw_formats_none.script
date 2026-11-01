@@ -1,0 +1,10 @@
+# A source that is not a video source gets an empty format list: building the params fails ("No format found") and
+# obs_pipewire_connect_stream returns NULL, so the source stays without a stream.
+unique_name :1.5
+prop ScreenCast AvailableSourceTypes "uint32 1"
+prop ScreenCast version "uint32 2"
+screencast_load
+new a pipewire-desktop-capture-source
+outflags a 0
+portal_ok 23
+size a

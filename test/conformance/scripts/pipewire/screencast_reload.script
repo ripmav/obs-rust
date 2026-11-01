@@ -1,0 +1,15 @@
+# The "Reload" button: forgets the restore token, drops stream and PipeWire connection, closes the old portal session
+# and starts a brand-new CreateSession flow (fresh request/session tokens).
+unique_name :1.5
+prop ScreenCast AvailableSourceTypes "uint32 1"
+prop ScreenCast version "uint32 4"
+screencast_load
+set sc RestoreToken str keep-me
+new sc pipewire-desktop-capture-source
+response 1 "(0, {'session_handle': <'/s/first'>})"
+response 2 "(0, {})"
+response 3 "(0, {'streams': <[(@u 8, @a{sv} {})]>, 'restore_token': <'t2'>})"
+finish 4 fd
+props sc
+click sc Reload
+get sc RestoreToken str

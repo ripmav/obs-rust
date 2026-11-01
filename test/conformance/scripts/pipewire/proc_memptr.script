@@ -1,0 +1,25 @@
+# Sync-source frame processing, shared-memory buffers: the latest dequeued buffer becomes a dynamic GS texture of the
+# negotiated size (format from the SPA->GS table), RGBx gets a red/blue swizzle, the buffer is always handed back,
+# and render draws it with premultiplied-alpha blending.
+unique_name :1.5
+prop ScreenCast AvailableSourceTypes "uint32 1"
+prop ScreenCast version "uint32 2"
+screencast_load
+new a pipewire-desktop-capture-source
+portal_ok 41
+param_changed format=BGRx size=4x2 fps=60/1
+buf_data 0 0 memptr 0 0 16 32 0 0x10
+buf_meta 0 header 0
+buf_push 0
+process
+render a
+param_changed format=RGBx size=4x2
+buf_data 1 0 memptr 0 0 16 32 0 0x20
+buf_push 1
+process
+param_changed format=ABGR_210LE size=4x2
+buf_push 1
+process
+leaks
+destroy a
+leaks

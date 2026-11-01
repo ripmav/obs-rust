@@ -1,0 +1,17 @@
+xi_select_events window=0x1234 n=1 deviceid=1 mask_len=1 mask=0x18000
+hotkeys_platform_init -> 1 context=set min_keycode=8 super_l=0 super_r=0 num_keysyms=132 syms_per_code=4
+combination_to_str 0x0 OBS_KEY_A = "A"
+combination_to_str 0x4 OBS_KEY_A = "Control + A"
+combination_to_str 0x80 OBS_KEY_A = "Super + A"
+combination_to_str 0xc OBS_KEY_A = "Control + Alt + A"
+combination_to_str 0x8d OBS_KEY_A = "Control + Super + Alt + A"
+combination_to_str 0x2 OBS_KEY_A = "Shift + A"
+combination_to_str 0x8e OBS_KEY_A = "Control + Super + Alt + Shift + A"
+--- modifiers only
+combination_to_str 0x5 OBS_KEY_NONE = "Control"
+combination_to_str 0x0 OBS_KEY_NONE = ""
+--- modifier bits that are not keyboard modifiers are ignored
+combination_to_str 0x12 OBS_KEY_F2 = "Shift + F2"
+--- translations
+combination_to_str 0x4 OBS_KEY_ESCAPE = "Ctrl + Escape"
+hotkeys_platform_free context=null vtable=null

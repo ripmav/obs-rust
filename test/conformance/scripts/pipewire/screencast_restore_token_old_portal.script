@@ -1,0 +1,13 @@
+# Portal version 3: restore_token in the reply is ignored, obs_source_save is not called, persist_mode not sent.
+unique_name :1.5
+prop ScreenCast AvailableSourceTypes "uint32 1"
+prop ScreenCast version "uint32 3"
+screencast_load
+set a RestoreToken str stored-A
+new a pipewire-desktop-capture-source
+response 1 "(0, {'session_handle': <'/s/a'>})"
+response 2 "(0, {})"
+response 3 "(0, {'streams': <[(@u 1, @a{sv} {})]>, 'restore_token': <'ignored'>})"
+get a RestoreToken str
+save a
+settings_json a

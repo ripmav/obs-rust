@@ -1,0 +1,36 @@
+> unique_name :1.8
+> camera_load
+host.register_source pipewire-camera-source type=0 flags=0x5 icon=9
+> new c1 pipewire-camera-source
+log error obs-data.c: [obs_data_create_from_json] Failed reading json string <jansson>
+dbus.bus_get type=2 -> ok
+dbus.subscribe#1 org.freedesktop.portal.Desktop org.freedesktop.portal.Request.Response path=/org/freedesktop/portal/desktop/request/1_8/obs1 arg0=NULL flags=1
+dbus.proxy_new org.freedesktop.portal.Desktop /org/freedesktop/portal/desktop org.freedesktop.portal.Camera flags=0
+dbus.call#1 AccessCamera ({'handle_token': <'obs1'>},)
+created c1
+> response 1 (2, {})
+dbus.signal Response -> /org/freedesktop/portal/desktop/request/1_8/obs1
+log warning [camera-portal] Failed to create session, denied or cancelled by user
+dbus.unsubscribe#1
+> new c2 pipewire-camera-source
+log error obs-data.c: [obs_data_create_from_json] Failed reading json string <jansson>
+created c2
+> size c2
+size = 0x0
+> camera_unload
+> new c3 pipewire-camera-source
+log error obs-data.c: [obs_data_create_from_json] Failed reading json string <jansson>
+dbus.subscribe#2 org.freedesktop.portal.Desktop org.freedesktop.portal.Request.Response path=/org/freedesktop/portal/desktop/request/1_8/obs2 arg0=NULL flags=1
+dbus.call#2 AccessCamera ({'handle_token': <'obs2'>},)
+created c3
+> finish 2 error failed no camera portal
+dbus.finish#2 AccessCamera
+log error [camera-portal] Error accessing camera: no camera portal
+> camera_unload
+> new c4 pipewire-camera-source
+log error obs-data.c: [obs_data_create_from_json] Failed reading json string <jansson>
+dbus.subscribe#3 org.freedesktop.portal.Desktop org.freedesktop.portal.Request.Response path=/org/freedesktop/portal/desktop/request/1_8/obs3 arg0=NULL flags=1
+dbus.call#3 AccessCamera ({'handle_token': <'obs3'>},)
+created c4
+> finish 3 error cancelled x
+dbus.finish#3 AccessCamera

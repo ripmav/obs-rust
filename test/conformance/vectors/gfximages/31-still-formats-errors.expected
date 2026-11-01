@@ -1,0 +1,64 @@
+file rgba.png 80 bytes
+file bmp24.bmp 70 bytes
+file img.ppm 23 bytes
+file noext 80 bytes
+file trunc.png 40 bytes
+file junk.png 20 bytes
+file empty.png 0 bytes
+file w3.png 88 bytes
+file one.png 70 bytes
+== bmp24.bmp
+texfile format=BGRA cx=2 cy=2 space=0 data=0000ffff00ff00ffff0000ffffffffff
+== img.ppm
+texfile format=BGRA cx=2 cy=2 space=0 data=0000ffff00ff00ffff0000ffffffffff
+== noext
+texfile format=RGBA cx=2 cy=2 space=0 data=ff0000ff00ff00800000ff00ffffff40
+== trunc.png
+log warning Failed to decode frame for 'trunc.png' <ffmpeg-error>
+texfile null
+== junk.png
+log warning Failed to decode frame for 'junk.png' <ffmpeg-error>
+texfile null
+== empty.png
+log warning Failed to open file 'empty.png' <ffmpeg-error>
+texfile null
+== one.png
+texfile format=RGBA cx=1 cy=1 space=0 data=c86432c8
+== file errors
+log warning Failed to open file 'does-not-exist.png' <ffmpeg-error>
+texfile_missing null
+texfile_null null
+texfile_empty null
+== gs_image_file_ex_init on still images
+image loaded=1 animated=0 cx=1 cy=1 format=RGBA frame_updated=0 cur_frame=0 cur_loop=0 cur_time=0 mem_usage=4 alpha_mode=0 space=0 texture=no texture_data=yes
+image loaded=1 animated=0 cx=1 cy=1 format=RGBA frame_updated=0 cur_frame=0 cur_loop=0 cur_time=0 mem_usage=4 alpha_mode=0 space=0 texture=no texture_data=yes
+pixels 9d4e27c8
+image loaded=1 animated=0 cx=1 cy=1 format=RGBA frame_updated=0 cur_frame=0 cur_loop=0 cur_time=0 mem_usage=4 alpha_mode=0 space=0 texture=yes texture_data=no
+texture cx=1 cy=1 format=RGBA flags=0 map_calls=0 data=9d4e27c8
+image loaded=1 animated=0 cx=1 cy=1 format=RGBA frame_updated=0 cur_frame=0 cur_loop=0 cur_time=0 mem_usage=4 alpha_mode=0 space=0 texture=yes texture_data=no
+image loaded=0 animated=0 cx=0 cy=0 format=UNKNOWN frame_updated=0 cur_frame=0 cur_loop=0 cur_time=0 mem_usage=0 alpha_mode=0 space=0 texture=no texture_data=no
+textures_alive=0
+image loaded=1 animated=0 cx=1 cy=1 format=RGBA frame_updated=0 cur_frame=0 cur_loop=0 cur_time=0 mem_usage=4 alpha_mode=0 space=0 texture=no texture_data=yes
+pixels b3592cc8
+image loaded=0 animated=0 cx=0 cy=0 format=UNKNOWN frame_updated=0 cur_frame=0 cur_loop=0 cur_time=0 mem_usage=0 alpha_mode=0 space=0 texture=no texture_data=no
+textures_alive=0
+image loaded=1 animated=0 cx=1 cy=1 format=RGBA frame_updated=0 cur_frame=0 cur_loop=0 cur_time=0 mem_usage=4 alpha_mode=0 space=0 texture=no texture_data=yes
+pixels c86432c8
+image loaded=0 animated=0 cx=0 cy=0 format=UNKNOWN frame_updated=0 cur_frame=0 cur_loop=0 cur_time=0 mem_usage=0 alpha_mode=0 space=0 texture=no texture_data=no
+textures_alive=0
+log warning Failed to decode frame for 'junk.png' <ffmpeg-error>
+log warning gs_image_file_ex_init_internal: Failed to load file 'junk.png'
+image loaded=0 animated=0 cx=0 cy=0 format=UNKNOWN frame_updated=0 cur_frame=0 cur_loop=0 cur_time=0 mem_usage=0 alpha_mode=0 space=0 texture=no texture_data=no
+image loaded=0 animated=0 cx=0 cy=0 format=UNKNOWN frame_updated=0 cur_frame=0 cur_loop=0 cur_time=0 mem_usage=0 alpha_mode=0 space=0 texture=no texture_data=no
+log warning Failed to open file 'nothere.png' <ffmpeg-error>
+log warning gs_image_file_ex_init_internal: Failed to load file 'nothere.png'
+image loaded=0 animated=0 cx=0 cy=0 format=UNKNOWN frame_updated=0 cur_frame=0 cur_loop=0 cur_time=0 mem_usage=0 alpha_mode=0 space=0 texture=no texture_data=no
+image loaded=0 animated=0 cx=0 cy=0 format=UNKNOWN frame_updated=0 cur_frame=0 cur_loop=0 cur_time=0 mem_usage=0 alpha_mode=0 space=0 texture=no texture_data=no
+== still tick/update are no-ops
+image loaded=1 animated=0 cx=1 cy=1 format=RGBA frame_updated=0 cur_frame=0 cur_loop=0 cur_time=0 mem_usage=4 alpha_mode=0 space=0 texture=no texture_data=yes
+image loaded=1 animated=0 cx=1 cy=1 format=RGBA frame_updated=0 cur_frame=0 cur_loop=0 cur_time=0 mem_usage=4 alpha_mode=0 space=0 texture=yes texture_data=no
+tick 1000000000 -> 0 cur_frame=0 cur_loop=0 cur_time=0
+update_texture
+texture cx=1 cy=1 format=RGBA flags=0 map_calls=0 data=c86432c8
+image loaded=0 animated=0 cx=0 cy=0 format=UNKNOWN frame_updated=0 cur_frame=0 cur_loop=0 cur_time=0 mem_usage=0 alpha_mode=0 space=0 texture=no texture_data=no
+textures_alive=0

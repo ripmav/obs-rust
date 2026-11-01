@@ -1,0 +1,39 @@
+# Loop termination and mix pruning. obs_graphics_thread_loop returns false (= "thread should exit") when EVERY
+# mix's video output reports stopped; with no mixes at all this is vacuously true (QUIRK Q-1: the loop ends after one frame).
+# Mixes whose view is gone are freed in the render pass (not rendered) and removed from the array.
+core 1000
+clock 5000
+video_time 5000
+ctx_new 1000
+echo "--- no mixes: one frame is still executed, then the loop reports stop"
+cb_add tick T
+loop 1
+echo "--- two mixes, A keeps running (stop_after 5), B already stopped (stop_after 0)"
+mix_add A 1 64 36 64 36 BGRA 0 0 0
+mix_add B 1 64 36 64 36 BGRA 0 0 0
+stop_after A 5
+stop_after B 0
+trace 0
+loop 3
+trace 1
+echo "--- all stopped again"
+stop_after A 0
+loop 1
+echo "--- a mix that lost its view is freed by the render pass and removed; the others still render"
+mix_add C 1 64 36 64 36 BGRA 0 0 0
+mix_add D 1 64 36 64 36 BGRA 0 0 0
+mix_view_none C
+stop_after A 9
+stop_after B 9
+stop_after C 9
+stop_after D 9
+counters
+loop 1
+counters
+freed
+echo "--- data.valid=0 skips display rendering (and the context switch around it)"
+display_add disp1
+data_valid 0
+loop 1
+data_valid 1
+loop 1

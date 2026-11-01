@@ -1,0 +1,30 @@
+# obslua.obs_register_source(table) from Lua.  Required: exactly one table argument, non-empty string `id`,
+# `get_name` returning a non-empty string, non-zero `output_flags`.  `type` defaults to 0 (input).  All other
+# fields are optional callbacks (non-function, non-nil values warn).  Display name and id are interned.
+# Invalid registrations are silent no-ops (the function never returns a value).
+scripting load
+lua_begin src.lua
+local function ok(id, name) return {id = id, type = obslua.OBS_SOURCE_TYPE_INPUT, output_flags = obslua.OBS_SOURCE_VIDEO,
+  get_name = function() return name end} end
+obslua.obs_register_source(ok("good_src", "Good Source"))
+local f = ok("filter_src", "A Filter"); f.type = obslua.OBS_SOURCE_TYPE_FILTER; f.output_flags = obslua.OBS_SOURCE_VIDEO + obslua.OBS_SOURCE_AUDIO
+obslua.obs_register_source(f)
+-- rejected
+obslua.obs_register_source(ok("", "Empty id"))
+obslua.obs_register_source({output_flags = 1, get_name = function() return "no id" end})
+obslua.obs_register_source({id = "no_flags", get_name = function() return "NF" end})
+obslua.obs_register_source({id = "no_flags2", output_flags = 0, get_name = function() return "NF" end})
+obslua.obs_register_source({id = "no_getname", output_flags = 1})
+obslua.obs_register_source({id = "bad_getname", output_flags = 1, get_name = function() local t = nil; t.x = 1 end})
+obslua.obs_register_source({id = "empty_name", output_flags = 1, get_name = function() return "" end})
+obslua.obs_register_source(5)
+obslua.obs_register_source()
+obslua.obs_register_source({}, {})
+-- accepted with a warning for a non-function callback
+local w = ok("warn_src", "Warn"); w.create = "not a function"; w.update = 5
+obslua.obs_register_source(w)
+-- duplicate id while the first definition is alive: ignored
+obslua.obs_register_source(ok("good_src", "Duplicate"))
+lua_end
+create S0 src.lua
+src_types

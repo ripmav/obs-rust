@@ -1,0 +1,15 @@
+# S-062 ALSA: device_id "__custom__" selects custom_pcm as the PCM name (create and update).
+alsa-reset
+set-str device_id __custom__
+set-str custom_pcm plughw:1,0
+set-int rate 48000
+alsa-create
+alsa-state
+echo --- switching away from custom reopens with the new name
+set-str device_id front:CARD=PCH
+alsa-update
+alsa-state
+echo --- same name and rate: update is a no-op (no reopen)
+alsa-update
+alsa-counts
+alsa-destroy

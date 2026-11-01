@@ -1,0 +1,12 @@
+> info
+info id=ffmpeg_mpegts_muxer flags=0x1f protocols=SRT;RIST video_codecs=h264 audio_codecs=aac;opus name=FFmpegMpegts
+info callbacks create=1 destroy=1 start=1 stop=1 encoded_packet=1 total_bytes=1 properties=1
+> props
+prop name=path desc=FilePath type=4 text_type=0
+> create
+create ok
+> state
+state running=0 stopping=0 write_thread_active=0 has_connected=0 got_headers=0 queued=0
+state total_bytes=0 initialized=0 begin_calls=0 stop_ts=0
+> destroy
+destroyed

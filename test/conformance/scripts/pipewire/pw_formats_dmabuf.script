@@ -1,0 +1,13 @@
+# Sync (graphics) sources: format list built from the supported table minus formats without a GS format; each format gets
+# its DRM modifiers from the graphics backend when the DRM format is in the advertised list, plus the implicit modifier
+# (DRM_FORMAT_MOD_INVALID) when IMPLICIT_MODIFIERS_SUPPORTED(bit 0) is set. Modifier-bearing params come first, then plain ones.
+unique_name :1.5
+prop ScreenCast AvailableSourceTypes "uint32 1"
+prop ScreenCast version "uint32 2"
+screencast_load
+gs_dmabuf 1 ARGB8888 XRGB8888 ABGR2101010
+gs_modifiers ARGB8888 0x0 0x100000000000001 0x200000000000001
+gs_modifiers XRGB8888
+pw_server_version 1.0.0
+new a pipewire-desktop-capture-source
+portal_ok 20

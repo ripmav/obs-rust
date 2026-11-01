@@ -1,0 +1,15 @@
+scripting load -> 1 python=1 ticks=1
+log info [Python: entry.py] import time
+log info [Python: entry.py] load greeting=hello
+log info [obs-scripting]: Loaded python script: entry.py
+log info [Python: entry.py] update count=7
+create S0 -> loaded=1 lang=2 file=entry.py desc="Entry script"
+log info [Python: entry.py] save
+save S0 saved="yes"
+log info [Python: entry.py] update count=9
+update S0 done
+log info [Python: entry.py] unload
+log info [obs-scripting]: Unloaded python script: entry.py
+destroy S0
+log info [Scripting] Total detached callbacks: 0
+scripting unload ticks=0

@@ -1,0 +1,56 @@
+# libnsgif frame delay handling (centiseconds). gif_info shows the delay exactly as stored in the file
+# (frame_info.delay is NOT adjusted). nsgif_frame_prepare returns the delay after the substitution rule
+# "delay < min -> default"; gif_delay MIN DEFAULT sets that rule (nsgif_set_frame_delay_behaviour). The last frame of
+# a finite animation reports an infinite delay (4294967295). nsgif_reset restarts the animation.
+file d.gif 47494638396101000100800000ff000000ff0021f90400000000002c000000000100010000020244010021f90400010000002c00000000010001000002024c010021f90400020000002c000000000100010000020244010021f90400030000002c00000000010001000002024c010021f904000a0000002c000000000100010000020244010021f90400ff0000002c00000000010001000002024c010021f90400ffff00002c00000000010001000002024401003b
+file two.gif 47494638396102000200910000ff000000ff000000ffffffff21ff0b4e45545343415045322e30030100000021f904000a0000002c00000000020002000002034434050021f90400140000002c00000000020002000002039c0205003b
+file loop1.gif 47494638396101000100800000ff000000ff0021ff0b4e45545343415045322e30030101000021f90400040000002c000000000100010000020244010021f90400050000002c00000000010001000002024c01003b
+file loop2.gif 47494638396101000100800000ff000000ff0021ff0b4e45545343415045322e30030102000021f90400040000002c000000000100010000020244010021f90400050000002c00000000010001000002024c01003b
+echo == default behaviour
+gif_new d.gif
+gif_scan
+gif_complete
+gif_info
+gif_prepare 8
+echo == min 0 default 0 (no substitution)
+gif_new d.gif
+gif_delay 0 0
+gif_scan
+gif_complete
+gif_prepare 8
+echo == min 3 default 7
+gif_new d.gif
+gif_delay 3 7
+gif_scan
+gif_complete
+gif_prepare 8
+echo == min 65535 default 1
+gif_new d.gif
+gif_delay 65535 1
+gif_scan
+gif_complete
+gif_prepare 8
+echo == delay rule set after scanning
+gif_new d.gif
+gif_scan
+gif_delay 3 7
+gif_complete
+gif_prepare 8
+echo == frame_prepare over a finite animation (NETSCAPE count 1), then reset
+gif_new loop1.gif
+gif_scan
+gif_complete
+gif_info
+gif_prepare 6
+gif_reset
+gif_prepare 3
+echo == NETSCAPE count 2
+gif_new loop2.gif
+gif_scan
+gif_complete
+gif_prepare 8
+echo == infinite animation
+gif_new two.gif
+gif_scan
+gif_complete
+gif_prepare 6

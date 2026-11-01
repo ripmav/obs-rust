@@ -1,0 +1,16 @@
+ns_create f frames=480 channels=2 use_rnnoise=1 latency=10000000 resampler=0
+exact-segment-packets
+ns_process f in_frames=480 in_ts=10000000000 -> frames=480 ts=9990000000 rms0=0.003 rms1=0 rms_in0=0.109 queued_in=0 queued_out=0
+ns_process f in_frames=480 in_ts=10010000000 -> frames=480 ts=10000000000 rms0=0.088 rms1=0.010 rms_in0=0.110 queued_in=0 queued_out=0
+ns_process f in_frames=480 in_ts=10020000000 -> frames=480 ts=10010000000 rms0=0.108 rms1=0.024 rms_in0=0.109 queued_in=0 queued_out=0
+small-packets-buffer-then-release
+ns_process f in_frames=200 in_ts=10030000000 -> null rms_in0=0.097 queued_in=200 queued_out=0
+ns_process f in_frames=200 in_ts=10040000000 -> null rms_in0=0.110 queued_in=400 queued_out=0
+ns_process f in_frames=200 in_ts=10050000000 -> frames=200 ts=10020000000 rms0=0.102 rms1=0.031 rms_in0=0.118 queued_in=120 queued_out=280
+ns_process f in_frames=1000 in_ts=10060000000 -> frames=200 ts=10030000000 rms0=0.110 rms1=0.043 rms_in0=0.108 queued_in=160 queued_out=1040
+timestamp-jump-over-1s-resets-buffers
+ns_process f in_frames=100 in_ts=20000000000 -> null rms_in0=0.139 queued_in=100 queued_out=0
+ns_process f in_frames=480 in_ts=20010000000 -> frames=100 ts=19990000000 rms0=0.126 rms1=0.044 rms_in0=0.110 queued_in=100 queued_out=380
+backwards-jump-also-resets
+ns_process f in_frames=480 in_ts=5000000000 -> frames=480 ts=4990000000 rms0=0.093 rms1=0.050 rms_in0=0.110 queued_in=0 queued_out=0
+ns_destroy f

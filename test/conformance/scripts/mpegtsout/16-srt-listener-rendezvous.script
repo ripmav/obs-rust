@@ -1,0 +1,43 @@
+# Modes other than caller. Listener: bind, listen(backlog 1), wait for a connection (read-side epoll), accept, close the
+# listening socket and continue with the accepted one (new descriptor); SO_REUSEADDR is applied to the listening socket and its
+# failure is only a warning. Rendezvous: needs localip= and localport= (IPv4 literal / port 1..65535), sets SRTO_RENDEZVOUS,
+# binds to the local address (QUIRK: the bind uses the REMOTE port from the URL, localport is only validated).
+log warning
+srt_open "srt://0.0.0.0:9000?mode=listener"
+srt_close
+# listener with an explicit host binds that address
+srt_open "srt://192.0.2.10:9000?mode=listener&listen_timeout=5000000"
+srt_close
+# empty host in listener mode: AI_PASSIVE -> wildcard address
+srt_open "srt://:9000?mode=listener"
+srt_close
+# accept fails
+srt_fail accept ECONNLOST
+srt_open "srt://0.0.0.0:9000?mode=listener"
+srt_reset_net
+# bind fails
+srt_fail bind ECONNSOCK
+srt_open "srt://0.0.0.0:9000?mode=listener"
+srt_reset_net
+# listen fails
+srt_fail listen ECONNSOCK
+srt_open "srt://0.0.0.0:9000?mode=listener"
+srt_reset_net
+# nobody connects within listen_timeout (epoll wait times out for ever)
+srt_epoll timeout
+srt_open "srt://0.0.0.0:9000?mode=listener&listen_timeout=1000"
+srt_reset_net
+# REUSEADDR failure is tolerated
+srt_fail setsockopt:SRTO_REUSEADDR EUNKNOWN
+srt_open "srt://0.0.0.0:9000?mode=listener"
+srt_close
+srt_reset_net
+# rendezvous
+srt_open "srt://192.0.2.10:9000?mode=rendezvous&localip=192.0.2.99&localport=9001"
+srt_close
+srt_open "srt://192.0.2.10:9000?mode=rendezvous"
+srt_open "srt://192.0.2.10:9000?mode=rendezvous&localip=192.0.2.99"
+srt_open "srt://192.0.2.10:9000?mode=rendezvous&localip=192.0.2.99&localport=0"
+srt_open "srt://192.0.2.10:9000?mode=rendezvous&localip=192.0.2.99&localport=70000"
+srt_fail bind ECONNSOCK
+srt_open "srt://192.0.2.10:9000?mode=rendezvous&localip=192.0.2.99&localport=9001"

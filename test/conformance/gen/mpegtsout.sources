@@ -1,0 +1,27 @@
+# S-059 mpegtsout: the real plugins/obs-ffmpeg/obs-ffmpeg-mpegts.c (+ obs-ffmpeg-srt.h / -rist.h / -url.h, compiled in) is
+# #included by the runner. libobs is a fake (mpegtsout_stubs.c) except obs_data / obs_properties (real); libsrt is replaced entirely by a
+# scripted fake (mpegtsout_net.c), librist's sender side too (address parsing is the REAL librist, -lrist); libav* is the real
+# system FFmpeg, the MPEG-TS muxer runs for real and its bytes leave through the custom AVIO write callback into the fake.
+test/conformance/gen/mpegtsout_runner.c
+test/conformance/gen/mpegtsout_stubs.c
+test/conformance/gen/mpegtsout_net.c
+libobs/obs-data.c
+libobs/obs-properties.c
+libobs/graphics/vec2.c
+libobs/graphics/vec3.c
+libobs/graphics/vec4.c
+libobs/graphics/quat.c
+libobs/graphics/axisang.c
+libobs/graphics/matrix3.c
+libobs/graphics/matrix4.c
+libobs/graphics/plane.c
+libobs/graphics/math-extra.c
+-ljansson
+-lavformat
+-lavcodec
+-lavutil
+-lrist
+-DNEW_MPEGTS_OUTPUT
+-Wno-deprecated-declarations
+-Wno-pointer-sign
+-pthread

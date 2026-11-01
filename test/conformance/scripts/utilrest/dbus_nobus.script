@@ -1,0 +1,6 @@
+# platform-nix-dbus.c / platform-nix-portal.c without a session bus: create returns NULL (and logs an error).
+dbus_bus none
+dsi_create 0
+pii_create 0
+dsi_destroy_null
+pii_destroy_null

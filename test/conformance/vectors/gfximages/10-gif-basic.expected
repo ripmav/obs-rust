@@ -1,0 +1,54 @@
+file two.gif 93 bytes
+file still.gif 42 bytes
+file g87.gif 42 bytes
+file cmt.gif 78 bytes
+== two frames, loop 0
+gif_new size=93 -> Success
+gif_scan 93 -> Success
+gif_complete
+gif_info width=2 height=2 frames=2 loop_max=0 background=ff0000ff global_palette=1
+  frame 0 display=1 transparency=0 local_palette=0 interlaced=0 disposal=Unspecified(0) delay=10 rect=0,0,2,2
+  frame 1 display=1 transparency=0 local_palette=0 interlaced=0 disposal=Unspecified(0) delay=20 rect=0,0,2,2
+  frame_info(frame_count) null
+gif_frame 0 -> Success pixels=ff0000ff00ff00ff0000ffffffffffff
+gif_frame 1 -> Success pixels=ffffffff0000ffff00ff00ffff0000ff
+gif_frame 2 -> Requested frame does not exist
+gif_palette global ok=1 entries=4 ff0000ff ff00ff00 ffff0000 ffffffff
+gif_palette local ok=0 entries=0
+gif_palette local ok=0 entries=0
+== still image
+gif_new size=42 -> Success
+gif_scan 42 -> Success
+gif_complete
+gif_info width=2 height=2 frames=1 loop_max=1 background=ff0000ff global_palette=1
+  frame 0 display=1 transparency=0 local_palette=0 interlaced=0 disposal=Unspecified(0) delay=10 rect=0,0,2,2
+  frame_info(frame_count) null
+gif_frame 0 -> Success pixels=ff0000ff00ff00ff0000ffffffffffff
+== GIF87a
+gif_new size=42 -> Success
+gif_scan 42 -> Success
+gif_complete
+gif_info width=2 height=2 frames=1 loop_max=1 background=ff0000ff global_palette=1
+  frame 0 display=1 transparency=0 local_palette=0 interlaced=0 disposal=Unspecified(0) delay=10 rect=0,0,2,2
+  frame_info(frame_count) null
+gif_frame 0 -> Success pixels=ff0000ff00ff00ff0000ffffffffffff
+== comment extension and NETSCAPE loop 5, delay 3 (below the default minimum)
+gif_new size=78 -> Success
+gif_scan 78 -> Success
+gif_complete
+gif_info width=2 height=2 frames=1 loop_max=6 background=ff0000ff global_palette=1
+  frame 0 display=1 transparency=0 local_palette=0 interlaced=0 disposal=Unspecified(0) delay=3 rect=0,0,2,2
+  frame_info(frame_count) null
+== byte orders of the decoded bitmap
+gif_new size=93 -> Success
+gif_scan 93 -> Success
+gif_complete
+gif_frame 0 -> Success pixels=0000ffff00ff00ffff0000ffffffffff
+gif_new size=93 -> Success
+gif_scan 93 -> Success
+gif_complete
+gif_frame 0 -> Success pixels=ffff0000ff00ff00ff0000ffffffffff
+gif_new size=93 -> Success
+gif_scan 93 -> Success
+gif_complete
+gif_frame 0 -> Success pixels=ff0000ffff00ff00ffff0000ffffffff

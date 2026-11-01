@@ -1,0 +1,30 @@
+scripting load -> 1 python=1 ticks=1
+echo create two scripts from the same directory
+log info [Python: paths_a.py] at import: script_path undefined
+log info [Python: paths_a.py] script_path == __script_dir__: True
+log info [Python: paths_a.py] ends with slash: True
+log info [Python: paths_a.py] entries: ['', '/fakeroot/bin/../share/obs/obs-scripting', '/fakeroot/abs/share/obs/obs-scripting', '<DIR>']
+log info [Python: paths_a.py] dir appended last: True
+log info [Python: paths_a.py] dir count: 1
+log info [obs-scripting]: Loaded python script: paths_a.py
+create S0 -> loaded=1 lang=2 file=paths_a.py desc=NULL
+log info [Python: paths_b.py] second script, same dir, count: 1
+log info [obs-scripting]: Loaded python script: paths_b.py
+create S1 -> loaded=1 lang=2 file=paths_b.py desc=NULL
+log info [Python: paths_c.py] script appended: /fakeroot/added/by/script
+log info [obs-scripting]: Loaded python script: paths_c.py
+create S2 -> loaded=1 lang=2 file=paths_c.py desc=NULL
+echo the entry added by a script itself stays after the script is destroyed
+log info [obs-scripting]: Unloaded python script: paths_c.py
+destroy S2
+log info [Python: paths_d.py] still there: True
+log info [obs-scripting]: Loaded python script: paths_d.py
+create S3 -> loaded=1 lang=2 file=paths_d.py desc=NULL
+log info [obs-scripting]: Unloaded python script: paths_a.py
+auto-destroy S0
+log info [obs-scripting]: Unloaded python script: paths_b.py
+auto-destroy S1
+log info [obs-scripting]: Unloaded python script: paths_d.py
+auto-destroy S3
+log info [Scripting] Total detached callbacks: 0
+scripting unload ticks=0

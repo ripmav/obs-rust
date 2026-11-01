@@ -1,0 +1,20 @@
+scripting load -> 1 ticks=1
+log info [Lua: hooks.lua] plain
+log info [Lua: hooks.lua] two
+log info [Lua: hooks.lua] 12
+log info [Lua: hooks.lua] 
+log error [Lua: hooks.lua] reported
+log info [Lua: hooks.lua] after error
+log error [Lua: hooks.lua] e-level
+log warning [Lua: hooks.lua] w-level
+log info [Lua: hooks.lua] i-level
+log debug [Lua: hooks.lua] d-level
+log info [Lua: hooks.lua] line1
+log info [Lua: hooks.lua] line2
+log info [Lua: hooks.lua] a
+log info [Lua: hooks.lua] 
+log info [Lua: hooks.lua] b
+log 5 [Lua: hooks.lua] level five
+log 0 [Lua: hooks.lua] level zero
+log info [obs-scripting]: Loaded lua script: hooks.lua
+create S0 -> loaded=1 lang=1 file=hooks.lua desc=NULL

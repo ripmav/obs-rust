@@ -1,0 +1,193 @@
+> unique_name :1.5
+> prop ScreenCast AvailableSourceTypes uint32 1
+> prop ScreenCast version uint32 2
+> screencast_load
+dbus.bus_get type=2 -> ok
+dbus.proxy_new org.freedesktop.portal.Desktop /org/freedesktop/portal/desktop org.freedesktop.portal.ScreenCast flags=0
+log info [pipewire] Available capture sources:
+log info [pipewire]     - Monitor source
+host.register_source pipewire-desktop-capture-source type=0 flags=0x481 icon=6
+host.register_source pipewire-screen-capture-source type=0 flags=0x81 icon=6
+> new a pipewire-desktop-capture-source
+log info PipeWire initialized
+dbus.subscribe#1 org.freedesktop.portal.Desktop org.freedesktop.portal.Request.Response path=/org/freedesktop/portal/desktop/request/1_5/obs1 arg0=NULL flags=1
+dbus.call#1 CreateSession ({'handle_token': <'obs1'>, 'session_handle_token': <'obs1'>},)
+created a
+> outflags a 5
+> portal_ok 55
+dbus.signal Response -> /org/freedesktop/portal/desktop/request/1_5/obs1
+log info [pipewire] Screencast session created
+dbus.subscribe#2 org.freedesktop.portal.Desktop org.freedesktop.portal.Request.Response path=/org/freedesktop/portal/desktop/request/1_5/obs2 arg0=NULL flags=1
+dbus.call#2 SelectSources (objectpath '/s/auto', {'types': <uint32 1>, 'multiple': <false>, 'handle_token': <'obs2'>, 'cursor_mode': <uint32 1>})
+dbus.unsubscribe#1
+dbus.signal Response -> /org/freedesktop/portal/desktop/request/1_5/obs2
+log debug [pipewire] Response to select source received
+log info [pipewire] Asking for monitor
+dbus.subscribe#3 org.freedesktop.portal.Desktop org.freedesktop.portal.Request.Response path=/org/freedesktop/portal/desktop/request/1_5/obs3 arg0=NULL flags=1
+dbus.call#3 Start (objectpath '/s/auto', '', {'handle_token': <'obs3'>})
+dbus.unsubscribe#2
+dbus.signal Response -> /org/freedesktop/portal/desktop/request/1_5/obs3
+log info [pipewire] source selected, setting up screencast
+dbus.call#4 OpenPipeWireRemote (objectpath '/s/auto', @a{sv} {})
+dbus.unsubscribe#3
+dbus.finish#4 OpenPipeWireRemote
+pw.thread_loop_new "PipeWire thread loop"
+pw.thread_loop_start -> 0
+pw.context_connect_fd -> core
+pw.core_add_listener
+pw.core_sync id=0 seq_in=0 -> 1
+log info [pipewire] Server version: 1.0.0
+log info [pipewire] Library version: lib-version
+log info [pipewire] Header version: <hdr>
+pw.loop_add_event#1
+log debug [pipewire] registered event <ptr>
+pw.stream_new#1 "OBS Studio" props={media.type=Video,media.category=Capture,media.role=Screen}
+log info [pipewire] Created stream <ptr>
+pw.stream_connect#1 dir=input target=55 flags=0x5 n_params=2
+  param[0] Object(type=0x40003,id=3){mediaType=Id:2(video); mediaSubtype=Id:1(raw); format=Id:11(RGBA); size=Choice:Range<Rect:1920x1080,Rect:1x1,Rect:8192x4320>; framerate=Choice:Range<Frac:60/1,Frac:0/1,Frac:360/1>}
+  param[1] Object(type=0x40003,id=3){mediaType=Id:2(video); mediaSubtype=Id:1(raw); format=Id:4(YUY2); size=Choice:Range<Rect:1920x1080,Rect:1x1,Rect:8192x4320>; framerate=Choice:Range<Frac:60/1,Frac:0/1,Frac:360/1>}
+log info [pipewire] Playing stream <ptr>
+> param_changed format=BGRA size=5x2 cm=3 cr=1
+pw.event param_changed id=4 Object(type=0x40003,id=4){mediaType=Id:2(video); mediaSubtype=Id:1(raw); format=Id:12(BGRA); size=Rect:5x2; framerate=Frac:60/1; colorMatrix=Id:3; colorRange=Id:1}
+log info [pipewire] Negotiated format:
+log info [pipewire]     Format: 12 (Spa:Enum:VideoFormat:BGRA)
+log info [pipewire]     Size: 5x2
+log info [pipewire]     Framerate: 60/1
+pw.stream_update_params#1 n_params=5
+  param[0] Object(type=0x40005,id=6){type=Id:2(VideoCrop); size=Int:16}
+  param[1] Object(type=0x40005,id=6){type=Id:5(Cursor); size=Choice:Range<Int:16432,Int:52,Int:4194352>}
+  param[2] Object(type=0x40004,id=5){dataType=Int:2}
+  param[3] Object(type=0x40005,id=6){type=Id:1(Header); size=Int:32}
+  param[4] Object(type=0x40005,id=6){type=Id:8(VideoTransform); size=Int:4}
+> buf_data 0 0 memptr 0 0 20 40 0 0x10
+> buf_push 0
+> process
+pw.event process
+pw.dequeue_buffer #0
+host.output_video 5x2 format=7 linesize0=20 range=0..1 m0=1,0,-0.187324,0
+  plane0 data0=10111213
+pw.queue_buffer #0
+> param_changed format=YUY2 size=3x2 cm=4 cr=2
+pw.event param_changed id=4 Object(type=0x40003,id=4){mediaType=Id:2(video); mediaSubtype=Id:1(raw); format=Id:4(YUY2); size=Rect:3x2; framerate=Frac:60/1; colorMatrix=Id:4; colorRange=Id:2}
+log info [pipewire] Negotiated format:
+log info [pipewire]     Format: 4 (Spa:Enum:VideoFormat:YUY2)
+log info [pipewire]     Size: 3x2
+log info [pipewire]     Framerate: 60/1
+pw.stream_update_params#1 n_params=5
+  param[0] Object(type=0x40005,id=6){type=Id:2(VideoCrop); size=Int:16}
+  param[1] Object(type=0x40005,id=6){type=Id:5(Cursor); size=Choice:Range<Int:16432,Int:52,Int:4194352>}
+  param[2] Object(type=0x40004,id=5){dataType=Int:2}
+  param[3] Object(type=0x40005,id=6){type=Id:1(Header); size=Int:32}
+  param[4] Object(type=0x40005,id=6){type=Id:8(VideoTransform); size=Int:4}
+> buf_data 1 0 memptr 0 0 6 12 0 0x20
+> buf_push 1
+> process
+pw.event process
+pw.dequeue_buffer #1
+host.output_video 3x2 format=4 linesize0=8 range=0.0627451..0.921569 m0=1.16438,0,-0.391762,0
+  plane0 data0=20212223
+pw.queue_buffer #1
+> param_changed format=NV12 size=3x2 cm=1 cr=0
+pw.event param_changed id=4 Object(type=0x40003,id=4){mediaType=Id:2(video); mediaSubtype=Id:1(raw); format=Id:23(NV12); size=Rect:3x2; framerate=Frac:60/1; colorMatrix=Id:1; colorRange=Id:0}
+log info [pipewire] Negotiated format:
+log info [pipewire]     Format: 23 (Spa:Enum:VideoFormat:NV12)
+log info [pipewire]     Size: 3x2
+log info [pipewire]     Framerate: 60/1
+pw.stream_update_params#1 n_params=5
+  param[0] Object(type=0x40005,id=6){type=Id:2(VideoCrop); size=Int:16}
+  param[1] Object(type=0x40005,id=6){type=Id:5(Cursor); size=Choice:Range<Int:16432,Int:52,Int:4194352>}
+  param[2] Object(type=0x40004,id=5){dataType=Int:2}
+  param[3] Object(type=0x40005,id=6){type=Id:1(Header); size=Int:32}
+  param[4] Object(type=0x40005,id=6){type=Id:8(VideoTransform); size=Int:4}
+> buf_data 2 0 memptr 0 0 6 12 0 0x30
+> buf_data 2 1 memptr 0 0 6 6 0 0x40
+> buf_push 2
+> process
+pw.event process
+pw.dequeue_buffer #2
+host.output_video 3x2 format=2 linesize0=8 range=0.0627451..0.921569 m0=1.16438,0,-0.213249,0
+  plane0 data0=30313233
+  plane1 data0=40414243
+pw.queue_buffer #2
+> param_changed format=RGBA size=2x2
+pw.event param_changed id=4 Object(type=0x40003,id=4){mediaType=Id:2(video); mediaSubtype=Id:1(raw); format=Id:11(RGBA); size=Rect:2x2; framerate=Frac:60/1}
+log info [pipewire] Negotiated format:
+log info [pipewire]     Format: 11 (Spa:Enum:VideoFormat:RGBA)
+log info [pipewire]     Size: 2x2
+log info [pipewire]     Framerate: 60/1
+pw.stream_update_params#1 n_params=5
+  param[0] Object(type=0x40005,id=6){type=Id:2(VideoCrop); size=Int:16}
+  param[1] Object(type=0x40005,id=6){type=Id:5(Cursor); size=Choice:Range<Int:16432,Int:52,Int:4194352>}
+  param[2] Object(type=0x40004,id=5){dataType=Int:2}
+  param[3] Object(type=0x40005,id=6){type=Id:1(Header); size=Int:32}
+  param[4] Object(type=0x40005,id=6){type=Id:8(VideoTransform); size=Int:4}
+> buf_push 0
+> process
+pw.event process
+pw.dequeue_buffer #0
+host.output_video 2x2 format=6 linesize0=8 range=0.0627451..0.921569 m0=1.16438,0,-0.213249,0
+  plane0 data0=10111213
+pw.queue_buffer #0
+> param_changed format=RGBx size=2x2
+pw.event param_changed id=4 Object(type=0x40003,id=4){mediaType=Id:2(video); mediaSubtype=Id:1(raw); format=Id:7(RGBx); size=Rect:2x2; framerate=Frac:60/1}
+log info [pipewire] Negotiated format:
+log info [pipewire]     Format: 7 (Spa:Enum:VideoFormat:RGBx)
+log info [pipewire]     Size: 2x2
+log info [pipewire]     Framerate: 60/1
+pw.stream_update_params#1 n_params=5
+  param[0] Object(type=0x40005,id=6){type=Id:2(VideoCrop); size=Int:16}
+  param[1] Object(type=0x40005,id=6){type=Id:5(Cursor); size=Choice:Range<Int:16432,Int:52,Int:4194352>}
+  param[2] Object(type=0x40004,id=5){dataType=Int:2}
+  param[3] Object(type=0x40005,id=6){type=Id:1(Header); size=Int:32}
+  param[4] Object(type=0x40005,id=6){type=Id:8(VideoTransform); size=Int:4}
+> buf_push 0
+> process
+pw.event process
+pw.dequeue_buffer #0
+log error [pipewire] Couldn't prepare frame
+pw.queue_buffer #0
+> param_changed format=I420 size=2x2
+pw.event param_changed id=4 Object(type=0x40003,id=4){mediaType=Id:2(video); mediaSubtype=Id:1(raw); format=Id:2(I420); size=Rect:2x2; framerate=Frac:60/1}
+log info [pipewire] Negotiated format:
+log info [pipewire]     Format: 2 (Spa:Enum:VideoFormat:I420)
+log info [pipewire]     Size: 2x2
+log info [pipewire]     Framerate: 60/1
+pw.stream_update_params#1 n_params=5
+  param[0] Object(type=0x40005,id=6){type=Id:2(VideoCrop); size=Int:16}
+  param[1] Object(type=0x40005,id=6){type=Id:5(Cursor); size=Choice:Range<Int:16432,Int:52,Int:4194352>}
+  param[2] Object(type=0x40004,id=5){dataType=Int:2}
+  param[3] Object(type=0x40005,id=6){type=Id:1(Header); size=Int:32}
+  param[4] Object(type=0x40005,id=6){type=Id:8(VideoTransform); size=Int:4}
+> buf_push 0
+> process
+pw.event process
+pw.dequeue_buffer #0
+log error [pipewire] Couldn't prepare frame
+pw.queue_buffer #0
+> param_changed format=BGRx size=2x2
+pw.event param_changed id=4 Object(type=0x40003,id=4){mediaType=Id:2(video); mediaSubtype=Id:1(raw); format=Id:8(BGRx); size=Rect:2x2; framerate=Frac:60/1}
+log info [pipewire] Negotiated format:
+log info [pipewire]     Format: 8 (Spa:Enum:VideoFormat:BGRx)
+log info [pipewire]     Size: 2x2
+log info [pipewire]     Framerate: 60/1
+pw.stream_update_params#1 n_params=5
+  param[0] Object(type=0x40005,id=6){type=Id:2(VideoCrop); size=Int:16}
+  param[1] Object(type=0x40005,id=6){type=Id:5(Cursor); size=Choice:Range<Int:16432,Int:52,Int:4194352>}
+  param[2] Object(type=0x40004,id=5){dataType=Int:2}
+  param[3] Object(type=0x40005,id=6){type=Id:1(Header); size=Int:32}
+  param[4] Object(type=0x40005,id=6){type=Id:8(VideoTransform); size=Int:4}
+> buf_data 3 0 memptr 0 0 8 0 0 0x10
+> buf_push 3
+> process
+pw.event process
+pw.dequeue_buffer #3
+pw.queue_buffer #3
+> buf_data 4 0 memptr-null 0 0 8 8 0 0x10
+> buf_push 4
+> process
+pw.event process
+pw.dequeue_buffer #4
+log error [pipewire] Failed to access data
+pw.queue_buffer #4
+> size a
+size = 2x2

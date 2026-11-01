@@ -1,0 +1,42 @@
+# Frontend API wrappers (obs-scripting-lua-frontend.c): getters return Lua tables/strings, setters ignore
+# parameters of the wrong type; event and save callbacks are registered through the deferred queue.
+scripting load
+fake_source SceneA
+fake_source SceneB
+lua_begin fe.lua
+local function dump(t) local o = {} for i, v in ipairs(t) do o[#o + 1] = type(v) == "string" and v or obslua.obs_source_get_name(v) end return table.concat(o, ",") end
+print("scene names: " .. dump(obslua.obs_frontend_get_scene_names()))
+print("scenes: " .. dump(obslua.obs_frontend_get_scenes()))
+print("current scene: " .. obslua.obs_source_get_name(obslua.obs_frontend_get_current_scene()))
+obslua.obs_frontend_set_current_scene(obslua.fake_source(1))
+print("current transition is nil: " .. tostring(obslua.obs_frontend_get_current_transition() == nil))
+print("transitions: " .. dump(obslua.obs_frontend_get_transitions()))
+print("duration: " .. obslua.obs_frontend_get_transition_duration())
+obslua.obs_frontend_set_transition_duration(450)
+obslua.obs_frontend_set_transition_duration("nope")
+print("duration: " .. obslua.obs_frontend_get_transition_duration())
+print("collections: " .. dump(obslua.obs_frontend_get_scene_collections()) .. " current " .. obslua.obs_frontend_get_current_scene_collection())
+obslua.obs_frontend_set_current_scene_collection("Other")
+obslua.obs_frontend_set_current_scene_collection({})
+print("profiles: " .. dump(obslua.obs_frontend_get_profiles()) .. " current " .. obslua.obs_frontend_get_current_profile())
+obslua.obs_frontend_set_current_profile("Second")
+function ev(e) print("event " .. e) end
+function sv(d, saving) print("save saving=" .. tostring(saving) .. " sd=" .. tostring(obslua.fake_is_userdata(d))); obslua.obs_data_set_string(d, "mark", "x") end
+obslua.obs_frontend_add_event_callback(ev)
+obslua.obs_frontend_add_save_callback(sv)
+obslua.obs_frontend_add_event_callback(5)
+function script_update(s)
+  if obslua.obs_data_get_string(s, "cmd") == "drop" then obslua.obs_frontend_remove_event_callback(ev); obslua.obs_frontend_remove_save_callback(sv) end
+end
+lua_end
+create S0 fe.lua
+barrier
+fe_state
+counts
+fe_event 3
+fe_save 1 s:mark
+fe_save 0
+update S0 s:cmd=drop
+fe_event 4
+fe_save 1
+fe_state

@@ -1,0 +1,20 @@
+# Errors inside script_tick are reported as "Failed to call tick for lua_tick" and do not stop other scripts.
+# A script_tick that is defined as a non-function is ignored.  After script_unload the tick is no longer called.
+scripting load
+lua_begin bad.lua
+function script_tick(s) print("bad tick"); local t = nil; t.x = 1 end
+lua_end
+lua_begin good.lua
+function script_tick(s) print("good tick") end
+lua_end
+lua_begin notfn.lua
+script_tick = 5
+lua_end
+create S0 bad.lua
+create S1 good.lua
+create S2 notfn.lua
+tick 0.01
+reload S0
+tick 0.01
+destroy S1
+tick 0.01

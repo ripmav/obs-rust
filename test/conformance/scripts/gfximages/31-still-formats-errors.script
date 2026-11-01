@@ -1,0 +1,53 @@
+# Other still formats (BMP, PPM), a PNG without file extension (content sniffing), damaged files, and the
+# gs_image_file_ex_init path for non-animated images: texture data ownership, mem_usage and the texture hand-over
+# (the still pixels are freed once the texture exists).
+file rgba.png 89504e470d0a1a0a0000000d494844520000000200000002080600000072b60d240000001749444154789c63f8cfc0f09fe13f43030398feffdf01003f1807bade426efa0000000049454e44ae426082
+file bmp24.bmp 424d460000000000000036000000280000000200000002000000010018000000000010000000130b0000130b00000000000000000000ff0000ffffff00000000ff00ff000000
+file img.ppm 50360a3220320a3235350aff000000ff000000ffffffff
+file noext 89504e470d0a1a0a0000000d494844520000000200000002080600000072b60d240000001749444154789c63f8cfc0f09fe13f43030398feffdf01003f1807bade426efa0000000049454e44ae426082
+file trunc.png 89504e470d0a1a0a0000000d494844520000000200000002080600000072b60d2400000017494441
+file junk.png 74686973206973206e6f7420616e20696d616765
+file empty.png -
+file w3.png 89504e470d0a1a0a0000000d49484452000000030000000208060000009d74661a0000001f49444154789c63f8cfc0f01f0c19feff6760646266616563e7e0e4e2e60100731406491da25d010000000049454e44ae426082
+file one.png 89504e470d0a1a0a0000000d49484452000000010000000108060000001f15c4890000000d49444154789c63389162740200057d02279fc3642b0000000049454e44ae426082
+echo == bmp24.bmp
+texfile bmp24.bmp straight
+echo == img.ppm
+texfile img.ppm straight
+echo == noext
+texfile noext straight
+echo == trunc.png
+texfile trunc.png straight
+echo == junk.png
+texfile junk.png straight
+echo == empty.png
+texfile empty.png straight
+echo == one.png
+texfile one.png straight
+echo == file errors
+texfile_missing
+echo == gs_image_file_ex_init on still images
+img_init one.png premul
+img_state
+img_pixels
+img_tex_init
+img_tex
+img_state
+img_free
+img_init one.png srgb
+img_pixels
+img_free
+img_init one.png straight
+img_pixels
+img_free
+img_init junk.png straight
+img_state
+img_init nothere.png straight
+img_state
+echo == still tick/update are no-ops
+img_init one.png straight
+img_tex_init
+img_tick 1000000000
+img_update
+img_tex
+img_free

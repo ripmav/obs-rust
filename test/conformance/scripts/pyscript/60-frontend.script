@@ -1,0 +1,69 @@
+# Frontend API functions added to the module when built with the frontend: queries return Python lists/strings,
+# setters take wrapped sources; event / save callbacks are registered through the deferred queue and receive
+# (int event) / (save_data, bool saving). obs_frontend_get_current_scene returns a new reference (not wrapped twice).
+scripting load
+fake_source SceneA
+fake_source SceneB
+py_begin fe.py
+import obspython as obs
+def on_event(ev):
+    print("event", ev, type(ev).__name__)
+    if ev == 99:
+        obs.remove_current_callback()
+def on_save(save_data, saving):
+    print("save callback; saving =", saving, type(saving).__name__)
+    obs.obs_data_set_string(save_data, "from_script", "yes" if saving else "no")
+def script_load(settings):
+    print("scenes:", obs.obs_frontend_get_scene_names())
+    print("scene objects:", [obs.obs_source_get_name(s) for s in obs.obs_frontend_get_scenes()])
+    cur = obs.obs_frontend_get_current_scene()
+    print("current:", obs.obs_source_get_name(cur))
+    obs.obs_frontend_set_current_scene(cur)
+    print("transitions:", [obs.obs_source_get_name(s) for s in obs.obs_frontend_get_transitions()])
+    print("current transition:", obs.obs_frontend_get_current_transition())
+    print("duration:", obs.obs_frontend_get_transition_duration())
+    obs.obs_frontend_set_transition_duration(750)
+    print("duration now:", obs.obs_frontend_get_transition_duration())
+    print("collections:", obs.obs_frontend_get_scene_collections(), obs.obs_frontend_get_current_scene_collection())
+    obs.obs_frontend_set_current_scene_collection("Other")
+    print("collection now:", obs.obs_frontend_get_current_scene_collection())
+    print("profiles:", obs.obs_frontend_get_profiles(), obs.obs_frontend_get_current_profile())
+    obs.obs_frontend_set_current_profile("Second")
+    print("profile now:", obs.obs_frontend_get_current_profile())
+    obs.obs_frontend_set_current_scene(None)
+    obs.obs_frontend_add_event_callback(on_event)
+    obs.obs_frontend_add_event_callback(len)
+    obs.obs_frontend_add_save_callback(on_save)
+py_end
+create S0 fe.py
+fe_state
+counts
+echo events
+fe_event 5
+fe_event 99
+fe_event 6
+echo save callback, saving and loading
+fe_save 1 s:from_script
+fe_save 0 s:from_script
+echo removal API
+py_begin fe2.py
+import obspython as obs
+def ev(e):
+    print("fe2 event", e)
+def sv(d, s):
+    print("fe2 save", s)
+def script_load(settings):
+    obs.obs_frontend_add_event_callback(ev)
+    obs.obs_frontend_add_save_callback(sv)
+def script_update(settings):
+    obs.obs_frontend_remove_event_callback(ev)
+    obs.obs_frontend_remove_save_callback(sv)
+py_end
+create S1 fe2.py
+fe_event 1
+fe_save 1
+echo unload: libobs drops the callbacks on the next event
+destroy S0
+fe_event 1
+fe_save 1
+scripting unload

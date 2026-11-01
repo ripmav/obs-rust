@@ -1,0 +1,31 @@
+scripting load -> 1 ticks=1
+log info [Lua: entry.lua] chunk start
+log info [Lua: entry.lua] chunk end
+log info [Lua: entry.lua] defaults user_has_a=false
+log info [Lua: entry.lua] description()
+log info [Lua: entry.lua] load a=default-a n=7
+log info [obs-scripting]: Loaded lua script: entry.lua
+log info [Lua: entry.lua] update a=default-a
+create S0 -> loaded=1 lang=1 file=entry.lua desc="Entry point demo"
+log info [Lua: entry.lua] chunk start
+log info [Lua: entry.lua] chunk end
+log info [Lua: entry.lua] defaults user_has_a=true
+log info [Lua: entry.lua] description()
+log info [Lua: entry.lua] load a=user-a n=7
+log info [obs-scripting]: Loaded lua script: entry.lua
+log info [Lua: entry.lua] update a=user-a
+create S1 -> loaded=1 lang=1 file=entry.lua desc="Entry point demo"
+settings S0 a="default-a" n=7 a?=0
+settings S1 a="user-a" n=7 a?=1
+log info [Lua: entry.lua] save
+save S1 a="user-a" saved_by_script="yes"
+log info [Lua: entry.lua] save
+save S0 saved_by_script="yes"
+log info [Lua: entry.lua] unload
+log info [obs-scripting]: Unloaded lua script: entry.lua
+destroy S0
+log info [Lua: entry.lua] unload
+log info [obs-scripting]: Unloaded lua script: entry.lua
+destroy S1
+log info [Scripting] Total detached callbacks: 0
+scripting unload ticks=0

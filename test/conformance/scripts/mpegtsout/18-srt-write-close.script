@@ -1,0 +1,53 @@
+# libsrt_write / libsrt_close on an open session.
+log info
+srt_open srt://192.0.2.10:9000
+srt_write 1316
+srt_write 188
+srt_write 0
+# send error with an OS errno: returned as AVERROR(errno) (here EPIPE=32 -> -32)
+srt_fail send ECONNLOST 32
+srt_write 1316
+srt_reset_net
+# send error without errno -> AVERROR_UNKNOWN (-1313558101 = FFERRTAG('U','N','K','N') negated)
+srt_open srt://192.0.2.10:9000
+srt_fail send ENOCONN 0
+srt_write 1316
+# EASYNCSND maps to EAGAIN (-11)
+srt_reset_net
+srt_open srt://192.0.2.10:9000
+srt_fail send EASYNCSND 0
+srt_write 1316
+srt_reset_net
+# writes wait for the socket to become writable first: a persistent timeout with rw timeout 1000 usec -> ETIMEDOUT
+srt_open "srt://192.0.2.10:9000?timeout=1000"
+srt_epoll timeout
+srt_write 1316
+srt_reset_net
+# an error from the wait itself is returned as is
+srt_open srt://192.0.2.10:9000
+srt_epoll error ECONNLOST 0
+srt_write 1316
+srt_reset_net
+# after 60 s of wall clock the link statistics are logged at debug level (clock skewed by the runner)
+srt_open srt://192.0.2.10:9000
+clock_skew 61
+log debug
+srt_write 1316
+clock_skew 0
+log info
+# session summary at close: percentages are computed only when bytes were sent
+srt_stats 12345 4.5 5000000 250000 50000
+srt_close
+# QUIRK: both percentages are computed with integer division (uint32 / uint64) before the multiplication by 100.0, so they
+# print 0.0 unless retransmitted/dropped >= sent (then 100.0 * the integer quotient)
+srt_stats 5000 8 5000000 5000000 10000000
+srt_open srt://192.0.2.10:9000
+srt_close
+srt_stats 0 0 0 100 100
+srt_open srt://192.0.2.10:9000
+srt_close
+# close failing: returns -1 (cleanup is NOT called)
+srt_open srt://192.0.2.10:9000
+srt_fail close EUNKNOWN
+srt_close
+# close of a context without priv_data returns 0 without touching the library (not scriptable here)

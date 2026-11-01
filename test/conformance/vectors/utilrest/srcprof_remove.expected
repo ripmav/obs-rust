@@ -1,0 +1,19 @@
+tasks_queued=0
+tick_start_was_zero=0
+tick_start_was_zero=0
+fill=1
+tick_avg=10 tick_max=10 render_avg=0 render_max=0 render_sum=0
+gpu_avg=0 gpu_max=0 gpu_sum=0
+async_input=0 in_best=0 in_worst=0 async_rendered=0 out_best=0 out_worst=0
+tasks_queued=1
+fill=1
+tick_avg=10 tick_max=10 render_avg=0 render_max=0 render_sum=0
+gpu_avg=0 gpu_max=0 gpu_sum=0
+async_input=0 in_best=0 in_worst=0 async_rendered=0 out_best=0 out_worst=0
+tasks_run=1
+fill=0
+untouched=0
+tasks_queued=1
+tasks_run=1
+fill=0
+untouched=0

@@ -1,0 +1,112 @@
+# set_gpu_converted_data (what output_video_data does for GPU-converted frames): copies planes from the mapped staging
+# surfaces into the video output's frame, honouring both line sizes. If input and output line sizes both equal the
+# plane width the plane is one memcpy, otherwise row by row. NV12/P010 with a missing second surface (input linesize[1]==0)
+# read UV from the same surface directly after the Y rows. Formats without GPU support copy nothing.
+# Staging surface bytes are b[k] = (k*7 + ch*13 + 1) mod 256 (k = offset in the surface).
+core 1000
+trace 0
+ctx_new 1000
+clock 1000
+video_time 1000
+echo "--- I420 4x4: Y 4x4, U/V 2x2 ; tight line sizes"
+mix_add I 1 4 4 4 4 I420 1 0 0
+stop_after I 100
+mix_active I 1 0
+lock_cfg I 1 4 2 2
+loop 2
+out_dump I 0 16
+out_dump I 1 4
+out_dump I 2 4
+echo "--- I420 with padded output line sizes"
+out_clear I
+lock_cfg I 1 8 4 4
+loop 1
+out_dump I 0 32
+out_dump I 1 8
+echo "--- I420 with a padded input surface (line size 6 > width)"
+out_clear I
+surf_cfg I 0 0 6
+surf_cfg I 1 0 6
+lock_cfg I 1 4 2 2
+loop 2
+out_dump I 0 16
+echo "--- NV12 two surfaces"
+mix_add N 1 4 4 4 4 NV12 1 0 0
+stop_after N 100
+mix_active N 1 0
+mix_active I 0 0
+lock_cfg N 1 4 4 0
+loop 2
+out_dump N 0 16
+out_dump N 1 8
+echo "--- NV12 single surface (no second surface: UV follows Y inside surface 0, linesize[1]==0)"
+mix_set N surf_null 1
+surf_rows N 0 0 6
+surf_rows N 1 0 6
+out_clear N
+loop 2
+out_dump N 0 16
+out_dump N 1 8
+echo "--- I444"
+mix_add F 1 4 2 4 2 I444 1 0 0
+stop_after F 100
+mix_active F 1 0
+mix_active N 0 0
+lock_cfg F 1 4 4 4
+loop 2
+out_dump F 0 8
+out_dump F 1 8
+out_dump F 2 8
+echo "--- I010 (16-bit samples: Y rows are width*2 bytes, chroma rows width bytes)"
+mix_add T 1 4 2 4 2 I010 1 0 0
+stop_after T 100
+mix_active T 1 0
+mix_active F 0 0
+lock_cfg T 1 8 4 4
+loop 2
+out_dump T 0 16
+out_dump T 1 4
+out_dump T 2 4
+echo "--- P010 two surfaces"
+mix_add P 1 4 2 4 2 P010 1 0 0
+stop_after P 100
+mix_active P 1 0
+mix_active T 0 0
+lock_cfg P 1 8 8 0
+loop 2
+out_dump P 0 16
+out_dump P 1 8
+echo "--- P010 single surface (UV follows the Y rows)"
+mix_set P surf_null 1
+surf_rows P 0 0 3
+surf_rows P 1 0 3
+out_clear P
+loop 2
+out_dump P 1 8
+echo "--- P216 (two full-height planes of width*2 bytes)"
+mix_add Q 1 4 2 4 2 P216 1 0 0
+stop_after Q 100
+mix_active Q 1 0
+mix_active P 0 0
+lock_cfg Q 1 8 8 0
+loop 2
+out_dump Q 0 16
+out_dump Q 1 16
+echo "--- P416 (Y width*2 bytes, UV width*4 bytes)"
+mix_add R 1 4 2 4 2 P416 1 0 0
+stop_after R 100
+mix_active R 1 0
+mix_active Q 0 0
+lock_cfg R 1 8 16 0
+loop 2
+out_dump R 0 16
+out_dump R 1 16
+echo "--- unsupported GPU format (YUY2): nothing is copied, the frame is still locked and unlocked"
+mix_add U 1 4 2 4 2 YUY2 1 0 0
+stop_after U 100
+mix_active U 1 0
+mix_active R 0 0
+trace 1
+loop 2
+trace 0
+out_dump U 0 16

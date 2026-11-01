@@ -1,0 +1,44 @@
+log info pulse-am: Server name: 'pulse 16.1'
+log error pulse-am: An error occurred while getting the source info!
+mon_create 0 null monitors_registered=0 cb=0 adds=0 removes=1
+log info pulse-am: Server name: 'pulse 16.1'
+log info pulse-am: Audio format: s16le, 0 Hz, 2 channels
+log error pulse-am: Sample spec is not valid
+mon_create 0 null monitors_registered=0 cb=0 adds=0 removes=2
+log error pulse-am: Unable to get server info !
+mon_create 0 null monitors_registered=0 cb=0 adds=0 removes=3
+log info pulse-am: Server name: 'pulse 16.1'
+log info pulse-am: Audio format: float32le, 48000 Hz, 2 channels
+log warning pulse-am: audio_monitor_init: Failed to create resampler
+mon_create 0 null monitors_registered=0 cb=0 adds=0 removes=4
+log info pulse-am: Server name: 'pulse 16.1'
+log info pulse-am: Audio format: float32le, 48000 Hz, 2 channels
+log error pulse-am: Unable to create stream
+mon_create 0 null monitors_registered=0 cb=0 adds=0 removes=5
+log info pulse-am: Server name: 'pulse 16.1'
+log info pulse-am: Audio format: float32le, 48000 Hz, 2 channels
+pa stream_new "src" spec=float32le 2ch 48000Hz map_channels=2 map0=1 map3=7 map4=5
+pa stream_connect dev="alsa_output.a" tlength=9600 fragsize=4294967295 maxlength=4294967295 minreq=4294967295 prebuf=4294967295 flags=0xb
+pa stream_disconnect
+pa stream_set_write_callback cleared
+pa stream_unref
+log info pulse-am: Stopped Monitoring in 'alsa_output.a'
+log info pulse-am: Got 0 packets with 0 frames
+log error pulse-am: Unable to connect to stream
+mon_create 0 null monitors_registered=0 cb=0 adds=0 removes=6
+log error pulse-am: Unable to get server info !
+mon_create 0 null monitors_registered=0 cb=0 adds=0 removes=7
+pa loops created=7 freed=7 contexts created=7 freed=7 null_mainloop_calls=0
+log info pulse-am: Server name: 'pulse 16.1'
+log info pulse-am: Audio format: float32le, 48000 Hz, 2 channels
+pa stream_new "src" spec=float32le 2ch 48000Hz map_channels=2 map0=1 map3=7 map4=5
+pa stream_connect dev="alsa_output.a" tlength=9600 fragsize=4294967295 maxlength=4294967295 minreq=4294967295 prebuf=4294967295 flags=0xb
+log info pulse-am: Started Monitoring in 'alsa_output.a'
+mon_create 0 ok monitors_registered=1 cb=1 adds=1 removes=7
+pa stream_disconnect
+pa stream_set_write_callback cleared
+pa stream_unref
+log info pulse-am: Stopped Monitoring in 'alsa_output.a'
+log info pulse-am: Got 0 packets with 0 frames
+mon_destroy monitors_registered=0
+pa loops created=8 freed=8 contexts created=8 freed=8 null_mainloop_calls=0

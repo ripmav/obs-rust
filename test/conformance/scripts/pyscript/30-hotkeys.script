@@ -1,0 +1,52 @@
+# obs_hotkey_register_frontend(name, description, fn) returns the libobs id (invalid id 2**64-1... as an unsigned
+# 64-bit integer when registration fails or the arguments are wrong). Hotkey events from libobs are posted to the
+# scripting worker thread; the callback runs there with the GIL and receives a bool. Unload unregisters (deferred).
+scripting load
+py_begin hk.py
+import obspython as obs, threading
+ids = []
+main_ident = threading.get_ident()
+def on_key(pressed):
+    print("key:", pressed, type(pressed).__name__, "other thread:", threading.get_ident() != main_ident)
+def script_load(settings):
+    ids.append(obs.obs_hotkey_register_frontend("hk.first", "First", on_key))
+    ids.append(obs.obs_hotkey_register_frontend("bad.name", "Rejected by libobs", on_key))
+    ids.append(obs.obs_hotkey_register_frontend("hk.third", "Third", len))
+    ids.append(obs.obs_hotkey_register_frontend("hk.second", "Second", lambda p: print("second", p)))
+    print("ids:", ids)
+py_end
+create S0 hk.py
+counts
+hotkey 1 1
+hotkey 1 0
+hotkey 2 1
+hotkey 3 1
+echo explicit unregister
+py_begin hk2.py
+import obspython as obs
+def f(p):
+    print("f", p)
+def script_load(settings):
+    obs.obs_hotkey_register_frontend("hk.f", "F", f)
+    obs.obs_hotkey_unregister(len)
+    obs.obs_hotkey_unregister(f)
+py_end
+create S1 hk2.py
+hotkey 3 1
+echo a callback removing itself on press
+py_begin hk3.py
+import obspython as obs
+def once(p):
+    print("once", p)
+    obs.remove_current_callback()
+def script_load(settings):
+    obs.obs_hotkey_register_frontend("hk.once", "Once", once)
+py_end
+create S2 hk3.py
+hotkey 4 1
+hotkey 4 1
+echo unload unregisters the remaining live hotkeys
+destroy S0
+hotkey 1 1
+hotkey 3 1
+scripting unload

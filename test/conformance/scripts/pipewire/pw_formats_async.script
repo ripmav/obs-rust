@@ -1,0 +1,10 @@
+# Async-video sources (cameras / CPU frames) only offer RGBA and YUY2, never modifiers and never touch graphics.
+unique_name :1.5
+prop ScreenCast AvailableSourceTypes "uint32 1"
+prop ScreenCast version "uint32 2"
+screencast_load
+gs_dmabuf 1 ARGB8888 ABGR8888
+gs_modifiers ABGR8888 0x1
+new a pipewire-desktop-capture-source
+outflags a 5
+portal_ok 22

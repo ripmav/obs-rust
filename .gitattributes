@@ -1,0 +1,4 @@
+*.text -text
+*.golden -text
+test/conformance/scripts/**/*.script -text
+test/conformance/vectors/**/*.expected -text

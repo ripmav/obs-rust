@@ -1,0 +1,13 @@
+# param_changed is ignored (no reply, stream stays "not negotiated", size 0x0) for: a NULL pod (format cleared), a param id
+# other than Format, a non-video media type, a non-raw subtype.
+unique_name :1.5
+prop ScreenCast AvailableSourceTypes "uint32 1"
+prop ScreenCast version "uint32 2"
+screencast_load
+new a pipewire-desktop-capture-source
+portal_ok 37
+param_changed null
+param_changed id=3 format=BGRx
+param_changed media=audio
+param_changed subtype=mjpg
+size a

@@ -1,0 +1,10 @@
+# DEFECT D-1: a script_description that raises makes the reference dereference NULL (crash of the host).
+# Required behaviour: log the failure, leave the description empty, continue loading.
+# Each case runs in a forked child ("try").
+scripting load
+py_begin desc_raises.py
+def script_description():
+    raise KeyError("bad description")
+py_end
+try create S0 desc_raises.py
+scripting unload

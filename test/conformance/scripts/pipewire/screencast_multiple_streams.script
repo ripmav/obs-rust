@@ -1,0 +1,11 @@
+# Start reply with more than one stream (known KDE portal bug): a warning is logged, all but the last stream are
+# skipped and the LAST entry's node id is used.
+unique_name :1.5
+prop ScreenCast AvailableSourceTypes "uint32 1"
+prop ScreenCast version "uint32 2"
+screencast_load
+new sc pipewire-desktop-capture-source
+response 1 "(0, {'session_handle': <'/s/x'>})"
+response 2 "(0, {})"
+response 3 "(0, {'streams': <[(@u 11, @a{sv} {}), (@u 12, @a{sv} {}), (@u 99, @a{sv} {})]>})"
+finish 4 fd

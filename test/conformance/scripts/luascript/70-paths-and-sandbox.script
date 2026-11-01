@@ -1,0 +1,35 @@
+# Per-script Lua state: script_path() returns the script's directory with trailing slash; package.path/cpath get
+# "<dir>/?.lua" and "<dir>/?.so" appended; require finds sibling modules; package.preload is emptied before
+# the script runs; every script has its own globals and its own copy of obslua; ffi and the standard libraries
+# are loaded.  Global cpath entries come from "./", the (fake) executable-relative script dir and SCRIPT_DIR.
+scripting load
+lua_begin mod_sibling.lua
+print("sibling loaded")
+return {answer = 42}
+lua_end
+lua_begin paths.lua
+local p = script_path()
+print("ends with slash: " .. tostring(p:sub(-1) == "/"))
+print("path has dir: " .. tostring(package.path:find(p .. "/?.lua", 1, true) ~= nil))
+print("cpath has dir: " .. tostring(package.cpath:find(p .. "/?.so", 1, true) ~= nil))
+print("cpath ./: " .. tostring(package.cpath:find("./?.so", 1, true) ~= nil))
+print("cpath exe-relative: " .. tostring(package.cpath:find("/fakeroot/bin/../share/obs/obs-scripting/?.so", 1, true) ~= nil))
+print("cpath SCRIPT_DIR: " .. tostring(package.cpath:find("share/obs/obs-scripting/?.so", 1, true) ~= nil))
+print("require sibling: " .. require("mod_sibling").answer)
+print("preload empty: " .. tostring(next(package.preload) == nil))
+print("ffi: " .. type(require("ffi").cdef))
+print("string lib: " .. string.upper("ok") .. " math: " .. math.floor(2.5))
+print("obslua global: " .. type(obslua) .. " same as require: " .. tostring(require("obslua") == obslua))
+shared_global = "S-paths"
+lua_end
+lua_begin other.lua
+print("shared_global seen from other script: " .. tostring(shared_global))
+print("script_path ends with slash: " .. tostring(script_path():sub(-1) == "/"))
+obslua.private_marker = 1
+lua_end
+lua_begin other2.lua
+print("private_marker from other state: " .. tostring(obslua.private_marker))
+lua_end
+create S0 paths.lua
+create S1 other.lua
+create S2 other2.lua

@@ -1,0 +1,8 @@
+ns_create a frames=480 channels=2 use_rnnoise=1 latency=10000000 resampler=0
+ns_process a in_frames=480 in_ts=1000000000 -> frames=480 ts=990000000 rms0=0.003 rms1=0.003 rms_in0=0.109 queued_in=0 queued_out=0
+ns_process a in_frames=480 in_ts=1010000000 -> frames=480 ts=1000000000 rms0=0.088 rms1=0.088 rms_in0=0.110 queued_in=0 queued_out=0
+ns_destroy a
+ns_create b frames=480 channels=8 use_rnnoise=1 latency=10000000 resampler=0
+ns_process b in_frames=480 in_ts=1000000000 -> frames=480 ts=990000000 rms0=0.003 rms1=0 rms2=0 rms3=0 rms4=0 rms5=0 rms6=0 rms7=0 rms_in0=0.109 queued_in=0 queued_out=0
+ns_process b in_frames=480 in_ts=1010000000 -> frames=480 ts=1000000000 rms0=0.088 rms1=0 rms2=0 rms3=0 rms4=0 rms5=0 rms6=0 rms7=0.008 rms_in0=0.110 queued_in=0 queued_out=0
+ns_destroy b

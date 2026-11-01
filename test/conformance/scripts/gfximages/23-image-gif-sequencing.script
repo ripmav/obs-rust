@@ -1,0 +1,20 @@
+# gs_image_file_ex tick/update with jumps over several frames at once (frames in between are decoded to keep
+# the library's canvas consistent), and a looped-around jump. 1x1 pixel, six frames with delays 1..6 cs.
+file s6.gif 47494638396101000100910000ff000000ff000000ffffffff21ff0b4e45545343415045322e30030100000021f90400010000002c000000000100010000020244010021f90400020000002c00000000010001000002024c010021f90400030000002c000000000100010000020254010021f90400040000002c00000000010001000002025c010021f90400050000002c000000000100010000020244010021f90400060000002c00000000010001000002024c01003b
+img_init s6.gif straight
+img_tex_init
+img_tex
+echo == skip ahead
+img_tick 100000000 1
+img_state
+img_tick 100000000
+img_update
+img_tex
+img_tick 300000000
+img_update
+img_tex
+img_tick 1000000000
+img_update
+img_tex
+img_state
+img_free

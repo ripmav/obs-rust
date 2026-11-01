@@ -1,0 +1,21 @@
+scripting load -> 1 python=1 ticks=1
+log info [obs-scripting]: Loaded python script: timers.py
+create S0 -> loaded=1 lang=2 file=timers.py desc=NULL
+callbacks S0 total=2 removed=0
+echo 50ms later: nothing
+echo 100ms: first timer fires
+log info [Python: timers.py] timer fired, n = 1
+echo 250ms: both are due (the newer timer is first in the list)
+log info [Python: timers.py] one-shot fired
+log info [Python: timers.py] timer fired, n = 2
+echo 1 s later: one fire per tick only, last_ts catches up by one interval each time
+log info [Python: timers.py] timer fired, n = 3
+log info [Python: timers.py] timer fired, n = 4
+log info [Python: timers.py] timer fired, n = 5
+echo the one-shot is gone
+callbacks S0 total=1 removed=0
+echo timers do not run after the script is unloaded
+log info [obs-scripting]: Unloaded python script: timers.py
+destroy S0
+log info [Scripting] Total detached callbacks: 2
+scripting unload ticks=0

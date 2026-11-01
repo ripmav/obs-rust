@@ -1,0 +1,33 @@
+# Draw preconditions: render target/swap required, shaders required, buffers required.
+create
+enter
+vshader vs
+uniform float4x4 ViewProj;
+struct VI { float4 pos : POSITION; };
+VI main(VI v) { VI o; o.pos = mul(float4(v.pos.xyz, 1.0), ViewProj); return o; }
+end
+pshader ps
+struct VI { float4 pos : POSITION; };
+float4 main(VI v) : TARGET { return float4(1.0, 1.0, 1.0, 1.0); }
+end
+vb quad 3 0 0 0
+0 0 0
+1 0 0
+0 1 0
+end
+load_vb quad
+draw TRIS 0 3
+tex rt 2 2 RGBA 1 RENDER_TARGET -
+set_rt rt
+draw TRIS 0 3
+load_vs vs
+draw TRIS 0 3
+load_ps ps
+cur_shaders
+draw TRIS 0 3
+set_rt -
+draw TRIS 0 3
+set_rt rt
+load_vb -
+draw TRIS 0 3
+destroy

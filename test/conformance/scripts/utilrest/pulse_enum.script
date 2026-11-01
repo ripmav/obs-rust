@@ -1,0 +1,27 @@
+# audio-monitoring/pulse: obs_audio_monitoring_available, obs_enum_audio_monitoring_devices and the pulseaudio_*
+# reference-counted wrapper, against the fake PulseAudio (all operations complete synchronously).
+pa_available
+# no sinks: the callback is never called
+pa_server pulse 16.1 alsa_output.a
+pa_enum
+pa_stats
+pa_sink alsa_output.a "Speakers A" f32 48000 2
+pa_sink alsa_output.b "Headphones B" s16 44100 2
+pa_sink hdmi.c "HDMI \"C\"" s32 96000 8
+# the callback receives (description, name) in the server's order
+pa_enum
+# returning false stops the delivery (later sinks are skipped)
+pa_enum 1
+pa_enum 2
+# every enumeration creates and tears down mainloop + context again
+pa_stats
+# the server is unreachable: nothing is reported, nothing crashes
+pa_cfg connect_fails 1
+pa_enum
+pa_stats
+# operations that cannot be started: nothing reported
+pa_cfg connect_fails 0
+pa_cfg ops_fail 1
+pa_enum
+pa_cfg ops_fail 0
+pa_enum 1

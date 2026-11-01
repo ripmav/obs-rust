@@ -1,0 +1,2 @@
+# No ScreenCast portal capabilities: the module still loads successfully and registers only the camera source.
+module_load

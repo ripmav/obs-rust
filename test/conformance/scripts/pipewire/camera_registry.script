@@ -1,0 +1,29 @@
+# Registry events: a device that matches a source's device_id starts streaming (with the source's stored format) as soon as it
+# appears; every source gets its properties refreshed on add/remove; removing a device drops it from the table (running streams
+# are not touched); a failed bind is logged and skipped; a source created after the connection exists streams immediately.
+unique_name :1.8
+camera_load
+set cam device_id str cam0
+set cam format str "{\"encoded\":false,\"video_format\":4,\"width\":1280,\"height\":720}"
+new cam pipewire-camera-source
+response 1 "(0, {})"
+finish 2 fd
+registry_global 7 PipeWire:Interface:Client 3 node.name=ignored
+registry_global 50 PipeWire:Interface:Node 3 node.name=cam0 "node.description=Front Camera"
+registry_global 51 PipeWire:Interface:Node 3 node.name=cam1 "node.description=Back Camera"
+set cam2 device_id str cam1
+set cam2 framerate str "{\"framerate\":{\"numerator\":24.0,\"denominator\":1.0}}"
+new cam2 pipewire-camera-source
+props cam
+registry_global_remove 51
+registry_global_remove 999
+props cam
+pw_bind fail
+registry_global 52 PipeWire:Interface:Node 3 node.name=cam2 "node.description=Third"
+pw_bind ok
+set cam device_id str cam9
+update cam
+set cam device_id str cam0
+update cam
+destroy cam2
+camera_unload

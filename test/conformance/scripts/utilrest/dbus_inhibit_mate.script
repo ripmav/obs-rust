@@ -1,0 +1,7 @@
+# MATE comes before GNOME in the probe order.
+dbus_service mate gnome
+dsi_create 0
+dsi_inhibit 0 "Recording" 1
+dsi_inhibit 0 "-" 0
+dbus_log
+dsi_destroy 0

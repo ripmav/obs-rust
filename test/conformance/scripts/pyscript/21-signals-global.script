@@ -1,0 +1,38 @@
+# signal_handler_connect_global: fn(signal_name, calldata); an exception is logged, delivery continues.
+scripting load
+py_begin sigglob.py
+import obspython as obs
+h = obs.fake_handler(1)
+def on_any(name, cd):
+    print("global:", name, obs.calldata_get_int(cd, "n"))
+    if name == "boom":
+        raise ValueError("global failure")
+def script_load(settings):
+    obs.signal_handler_connect_global(h, on_any)
+    obs.signal_handler_connect_global(h, len)
+    obs.signal_handler_connect_global("junk", on_any)
+py_end
+handler H1 "void a(int n)"
+handler H1 "void boom(int n)"
+create S0 sigglob.py
+emit H1 a i:n=1
+emit H1 boom i:n=2
+echo disconnect_global matches by handler only (the callback argument is not used for matching)
+py_begin sigglob2.py
+import obspython as obs
+h = obs.fake_handler(1)
+def one(name, cd):
+    print("one", name)
+def two(name, cd):
+    print("two", name)
+def script_load(settings):
+    obs.signal_handler_connect_global(h, one)
+    obs.signal_handler_connect_global(h, two)
+    obs.signal_handler_disconnect_global(h, one)
+py_end
+create S1 sigglob2.py
+emit H1 a i:n=3
+destroy S0
+destroy S1
+emit H1 a i:n=4
+scripting unload

@@ -1,0 +1,28 @@
+> create
+create ok
+> world colorspace 601
+> cfg video
+cfg video=1 size=1280x720 venc=h264 id=27 pix_fmt=nv12 range=1 pri=6 trc=6 cs=6 bitrate=2500 gop=60
+> world colorspace 709
+> cfg video
+cfg video=1 size=1280x720 venc=h264 id=27 pix_fmt=nv12 range=1 pri=1 trc=1 cs=1 bitrate=2500 gop=60
+> world colorspace default
+> cfg video
+cfg video=1 size=1280x720 venc=h264 id=27 pix_fmt=nv12 range=1 pri=1 trc=1 cs=1 bitrate=2500 gop=60
+> world colorspace srgb
+> cfg video
+cfg video=1 size=1280x720 venc=h264 id=27 pix_fmt=nv12 range=1 pri=1 trc=13 cs=1 bitrate=2500 gop=60
+> world colorspace pq
+> cfg video
+cfg video=1 size=1280x720 venc=h264 id=27 pix_fmt=nv12 range=1 pri=9 trc=16 cs=9 bitrate=2500 gop=60
+> world colorspace hlg
+> cfg video
+cfg video=1 size=1280x720 venc=h264 id=27 pix_fmt=nv12 range=1 pri=9 trc=18 cs=9 bitrate=2500 gop=60
+> world range full
+> world colorspace 709
+> cfg video
+cfg video=1 size=1280x720 venc=h264 id=27 pix_fmt=nv12 range=2 pri=1 trc=1 cs=1 bitrate=2500 gop=60
+> world vformat bgra
+> world colorspace 709
+> cfg video
+cfg video=1 size=1280x720 venc=h264 id=27 pix_fmt=bgra range=2 pri=1 trc=1 cs=1 bitrate=2500 gop=60

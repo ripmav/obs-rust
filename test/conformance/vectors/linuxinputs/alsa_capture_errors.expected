@@ -1,0 +1,56 @@
+> alsa-reset
+> alsa-cfg period 480
+> set-int rate 48000
+> alsa-create
+snd_pcm_open '' stream=1 mode=0
+hw_params_any
+hw_params_set_access 3
+hw_params_test_format S16_LE -> ok
+hw_params_set_format S16_LE
+hw_params_set_rate_near req=48000 dir=null
+log info alsa-input: PCM '' rate set to 48000
+hw_params_get_channels -> EINVAL (range 1..8)
+hw_params_set_channels_near req=2
+log info alsa-input: PCM '' channels set to 2
+hw_params commit
+hw_params_get_period_size -> 480
+snd_pcm_start
+create -> ok
+> alsa-push 480 1000000000
+> alsa-push-err -32 3000000000
+> alsa-push-err -4 3000000000
+> alsa-push-err -86 3000000000
+> alsa-push-err -5 3000000000
+> alsa-push 0 3000000000
+> alsa-push 480 4000000000
+log debug alsa-input: Capture thread started.
+snd_pcm_recover err=-32 -> 0
+snd_pcm_wait 100
+> alsa-wait-drain
+snd_pcm_recover err=-4 -> 0
+snd_pcm_wait 100
+snd_pcm_recover err=-86 -> 0
+snd_pcm_wait 100
+snd_pcm_recover err=-5 -> -5
+snd_pcm_wait 100
+snd_pcm_recover err=0 -> 0
+snd_pcm_wait 100
+snd_pcm_recover err=-11 -> -11
+snd_pcm_wait 100
+> audio-dump
+audio[0] speakers=STEREO format=16BIT rate=48000 frames=480 ts=3990000000 head=030405060708090a
+snd_pcm_recover err=-11 -> -11
+snd_pcm_wait 100
+> echo --- suspended device that cannot resume
+> alsa-reset
+> alsa-cfg resume 0
+> alsa-push-err -86 4100000000
+> alsa-wait-drain
+snd_pcm_recover err=-86 -> -86
+snd_pcm_wait 100
+snd_pcm_recover err=-11 -> -11
+snd_pcm_wait 100
+> alsa-destroy
+snd_pcm_drop
+snd_pcm_close
+log debug alsa-input: Capture thread is about to exit.

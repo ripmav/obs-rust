@@ -1,0 +1,74 @@
+--- nv12 init
+ev gs_texture_create_nv12 16x16 flags=68
+ev gs_texture_create_nv12 16x16 flags=68
+ev gs_texture_create_nv12 16x16 flags=68
+ev gs_texture_create_nv12 16x16 flags=68
+ev gs_texture_create_nv12 16x16 flags=68
+ev gs_texture_create_nv12 16x16 flags=68
+ev gs_texture_create_nv12 16x16 flags=68
+ev gs_texture_create_nv12 16x16 flags=68
+ev gs_texture_create_nv12 16x16 flags=68
+ev gs_texture_create_nv12 16x16 flags=68
+ev pthread_create -> 0
+init_gpu_encoding -> 1 initialized=1 avail=10
+avail_count=10
+texture_frames=0 skipped=0
+--- p010 init
+ev gs_texture_create_p010 16x16 flags=68
+ev gs_texture_create_p010 16x16 flags=68
+ev gs_texture_create_p010 16x16 flags=68
+ev gs_texture_create_p010 16x16 flags=68
+ev gs_texture_create_p010 16x16 flags=68
+ev gs_texture_create_p010 16x16 flags=68
+ev gs_texture_create_p010 16x16 flags=68
+ev gs_texture_create_p010 16x16 flags=68
+ev gs_texture_create_p010 16x16 flags=68
+ev gs_texture_create_p010 16x16 flags=68
+ev pthread_create -> 0
+init_gpu_encoding -> 1 initialized=1 avail=10
+--- texture creation failure on the first pair
+ev gs_texture_create_nv12 16x16 flags=68 -> fail
+init_gpu_encoding -> 0 initialized=0 avail=0
+--- thread creation failure
+ev gs_texture_create_nv12 16x16 flags=68
+ev gs_texture_create_nv12 16x16 flags=68
+ev gs_texture_create_nv12 16x16 flags=68
+ev gs_texture_create_nv12 16x16 flags=68
+ev gs_texture_create_nv12 16x16 flags=68
+ev gs_texture_create_nv12 16x16 flags=68
+ev gs_texture_create_nv12 16x16 flags=68
+ev gs_texture_create_nv12 16x16 flags=68
+ev gs_texture_create_nv12 16x16 flags=68
+ev gs_texture_create_nv12 16x16 flags=68
+ev pthread_create -> 11
+init_gpu_encoding -> 0 initialized=0 avail=10
+--- stop on a mix whose thread never started: no join
+gpu_stop stop_flag=0 joins=0
+--- stop on a running one
+ev sem_post
+ev pthread_join
+gpu_stop stop_flag=1 joins=1
+gpu_stop stop_flag=1 joins=1
+--- free destroys every queued texture exactly once
+ev gs_texture_destroy extra.y
+ev gs_texture_destroy extra.uv
+ev gs_texture_destroy enc0.y
+ev gs_texture_destroy enc0.uv
+ev gs_texture_destroy enc1.y
+ev gs_texture_destroy enc1.uv
+ev gs_texture_destroy enc2.y
+ev gs_texture_destroy enc2.uv
+ev gs_texture_destroy enc3.y
+ev gs_texture_destroy enc3.uv
+ev gs_texture_destroy enc4.y
+ev gs_texture_destroy enc4.uv
+ev gs_texture_destroy enc5.y
+ev gs_texture_destroy enc5.uv
+ev gs_texture_destroy enc6.y
+ev gs_texture_destroy enc6.uv
+ev gs_texture_destroy enc7.y
+ev gs_texture_destroy enc7.uv
+ev gs_texture_destroy enc8.y
+ev gs_texture_destroy enc8.uv
+ev gs_texture_destroy enc9.y
+ev gs_texture_destroy enc9.uv

@@ -1,0 +1,160 @@
+# libnsgif error handling: progressive scanning, truncated files at many offsets, bad signature, missing
+# trailer, degenerate dimensions. Every result is the library's error string for the return code
+# (nsgif_strerror). `trunc` cuts a fixture; gif_scan N feeds only the first N bytes.
+file ok.gif 47494638396102000200910000ff000000ff000000ffffffff21ff0b4e45545343415045322e30030100000021f904000a0000002c00000000020002000002034434050021f90400140000002c00000000020002000002039c0205003b
+echo == scan the first N bytes only (progressive input), then the rest
+gif_new ok.gif
+gif_scan 5
+gif_scan 13
+gif_scan 20
+gif_scan 60
+gif_info
+gif_scan
+gif_info
+trunc ok.gif t0.gif 0
+echo == truncated to 0 bytes
+gif_new t0.gif
+gif_scan
+gif_info
+gif_complete
+gif_info
+gif_frame 0
+gif_frame 1
+trunc ok.gif t3.gif 3
+echo == truncated to 3 bytes
+gif_new t3.gif
+gif_scan
+gif_info
+gif_complete
+gif_info
+gif_frame 0
+gif_frame 1
+trunc ok.gif t6.gif 6
+echo == truncated to 6 bytes
+gif_new t6.gif
+gif_scan
+gif_info
+gif_complete
+gif_info
+gif_frame 0
+gif_frame 1
+trunc ok.gif t10.gif 10
+echo == truncated to 10 bytes
+gif_new t10.gif
+gif_scan
+gif_info
+gif_complete
+gif_info
+gif_frame 0
+gif_frame 1
+trunc ok.gif t13.gif 13
+echo == truncated to 13 bytes
+gif_new t13.gif
+gif_scan
+gif_info
+gif_complete
+gif_info
+gif_frame 0
+gif_frame 1
+trunc ok.gif t14.gif 14
+echo == truncated to 14 bytes
+gif_new t14.gif
+gif_scan
+gif_info
+gif_complete
+gif_info
+gif_frame 0
+gif_frame 1
+trunc ok.gif t20.gif 20
+echo == truncated to 20 bytes
+gif_new t20.gif
+gif_scan
+gif_info
+gif_complete
+gif_info
+gif_frame 0
+gif_frame 1
+trunc ok.gif t30.gif 30
+echo == truncated to 30 bytes
+gif_new t30.gif
+gif_scan
+gif_info
+gif_complete
+gif_info
+gif_frame 0
+gif_frame 1
+trunc ok.gif t50.gif 50
+echo == truncated to 50 bytes
+gif_new t50.gif
+gif_scan
+gif_info
+gif_complete
+gif_info
+gif_frame 0
+gif_frame 1
+trunc ok.gif t70.gif 70
+echo == truncated to 70 bytes
+gif_new t70.gif
+gif_scan
+gif_info
+gif_complete
+gif_info
+gif_frame 0
+gif_frame 1
+trunc ok.gif t92.gif 92
+echo == truncated to 92 bytes
+gif_new t92.gif
+gif_scan
+gif_info
+gif_complete
+gif_info
+gif_frame 0
+gif_frame 1
+file badsig.gif 47494639396102000200910000ff000000ff000000ffffffff21ff0b4e45545343415045322e30030100000021f904000a0000002c00000000020002000002034434050021f90400140000002c00000000020002000002039c0205003b
+echo == bad version
+gif_new badsig.gif
+gif_scan
+gif_complete
+gif_info
+file badmagic.gif 504e4738396102000200910000ff000000ff000000ffffffff21ff0b4e45545343415045322e30030100000021f904000a0000002c00000000020002000002034434050021f90400140000002c00000000020002000002039c0205003b
+echo == bad magic
+gif_new badmagic.gif
+gif_scan
+gif_complete
+gif_info
+file notrailer.gif 47494638396102000200910000ff000000ff000000ffffffff21f90400050000002c000000000200020000020344340500
+echo == no trailer byte
+gif_new notrailer.gif
+gif_scan
+gif_info
+gif_complete
+gif_info
+gif_frame 0
+file zero.gif 47494638396100000000910000ff000000ff000000ffffffff21f90400050000002c00000000010001000002024401003b
+echo == logical screen 0x0
+gif_new zero.gif
+gif_scan
+gif_complete
+gif_info
+file zeroframe.gif 47494638396102000200910000ff000000ff000000ffffffff21f90400050000002c00000000000000000002012c003b
+echo == frame 0x0
+gif_new zeroframe.gif
+gif_scan
+gif_complete
+gif_info
+gif_frame 0
+file noframes.gif 47494638396102000200910000ff000000ff000000ffffffff3b
+echo == header and trailer only
+gif_new noframes.gif
+gif_scan
+gif_complete
+gif_info
+gif_frame 0
+echo == scan after complete, complete twice, destroy
+gif_new ok.gif
+gif_scan
+gif_complete
+gif_complete
+gif_scan
+gif_info
+gif_destroy

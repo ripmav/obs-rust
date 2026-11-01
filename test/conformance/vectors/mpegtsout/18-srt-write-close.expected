@@ -1,0 +1,235 @@
+> log info
+> srt_open srt://192.0.2.10:9000
+srt startup
+srt create_socket -> 1
+srt setsockopt fd=1 SRTO_TRANSTYPE=0
+srt setsockopt fd=1 SRTO_ENFORCEDENCRYPTION=0
+srt setsockopt fd=1 SRTO_KMREFRESHRATE=0
+srt setsockopt fd=1 SRTO_KMPREANNOUNCE=0
+srt setsockopt fd=1 SRTO_SNDDROPDELAY=0
+srt setsockopt fd=1 SRTO_PAYLOADSIZE=1316
+srt setsockopt fd=1 SRTO_SENDER=1
+srt setsockopt fd=1 SRTO_SNDSYN=0
+srt setsockopt fd=1 SRTO_RCVSYN=0
+srt connect fd=1 192.0.2.10:9000
+srt epoll_release
+srt setsockopt fd=1 SRTO_INPUTBW=0
+srt setsockopt fd=1 SRTO_OHEADBW=25
+srt_open ret=SUCCESS(0) max_packet_size=1316 rw_timeout=0 mode=0 transtype=0
+srt_open last_error obs=SUCCESS srt=0 listen_timeout=-1 payload_size=1316
+> srt_write 1316
+srt_write ret=1316
+> srt_write 188
+srt_write ret=188
+> srt_write 0
+srt_write ret=0
+> srt_fail send ECONNLOST 32
+> srt_write 1316
+log error [obs-ffmpeg mpegts muxer / libsrt]: fake srt error 2001
+srt_write ret=-32
+> srt_reset_net
+> srt_open srt://192.0.2.10:9000
+srt startup
+srt create_socket -> 1
+srt setsockopt fd=1 SRTO_TRANSTYPE=0
+srt setsockopt fd=1 SRTO_ENFORCEDENCRYPTION=0
+srt setsockopt fd=1 SRTO_KMREFRESHRATE=0
+srt setsockopt fd=1 SRTO_KMPREANNOUNCE=0
+srt setsockopt fd=1 SRTO_SNDDROPDELAY=0
+srt setsockopt fd=1 SRTO_PAYLOADSIZE=1316
+srt setsockopt fd=1 SRTO_SENDER=1
+srt setsockopt fd=1 SRTO_SNDSYN=0
+srt setsockopt fd=1 SRTO_RCVSYN=0
+srt connect fd=1 192.0.2.10:9000
+srt epoll_release
+srt setsockopt fd=1 SRTO_INPUTBW=0
+srt setsockopt fd=1 SRTO_OHEADBW=25
+srt_open ret=SUCCESS(0) max_packet_size=1316 rw_timeout=0 mode=0 transtype=0
+srt_open last_error obs=SUCCESS srt=0 listen_timeout=-1 payload_size=1316
+> srt_fail send ENOCONN 0
+> srt_write 1316
+log error [obs-ffmpeg mpegts muxer / libsrt]: fake srt error 2002
+srt_write ret=-1313558101
+> srt_reset_net
+> srt_open srt://192.0.2.10:9000
+srt startup
+srt create_socket -> 1
+srt setsockopt fd=1 SRTO_TRANSTYPE=0
+srt setsockopt fd=1 SRTO_ENFORCEDENCRYPTION=0
+srt setsockopt fd=1 SRTO_KMREFRESHRATE=0
+srt setsockopt fd=1 SRTO_KMPREANNOUNCE=0
+srt setsockopt fd=1 SRTO_SNDDROPDELAY=0
+srt setsockopt fd=1 SRTO_PAYLOADSIZE=1316
+srt setsockopt fd=1 SRTO_SENDER=1
+srt setsockopt fd=1 SRTO_SNDSYN=0
+srt setsockopt fd=1 SRTO_RCVSYN=0
+srt connect fd=1 192.0.2.10:9000
+srt epoll_release
+srt setsockopt fd=1 SRTO_INPUTBW=0
+srt setsockopt fd=1 SRTO_OHEADBW=25
+srt_open ret=SUCCESS(0) max_packet_size=1316 rw_timeout=0 mode=0 transtype=0
+srt_open last_error obs=SUCCESS srt=0 listen_timeout=-1 payload_size=1316
+> srt_fail send EASYNCSND 0
+> srt_write 1316
+log error [obs-ffmpeg mpegts muxer / libsrt]: fake srt error 6001
+srt_write ret=-11
+> srt_reset_net
+> srt_open srt://192.0.2.10:9000?timeout=1000
+srt startup
+srt create_socket -> 1
+srt setsockopt fd=1 SRTO_TRANSTYPE=0
+srt setsockopt fd=1 SRTO_ENFORCEDENCRYPTION=0
+srt setsockopt fd=1 SRTO_KMREFRESHRATE=0
+srt setsockopt fd=1 SRTO_KMPREANNOUNCE=0
+srt setsockopt fd=1 SRTO_SNDDROPDELAY=0
+srt setsockopt fd=1 SRTO_PAYLOADSIZE=1316
+srt setsockopt fd=1 SRTO_SENDER=1
+srt setsockopt fd=1 SRTO_SNDSYN=0
+srt setsockopt fd=1 SRTO_RCVSYN=0
+srt connect fd=1 192.0.2.10:9000
+srt epoll_release
+srt setsockopt fd=1 SRTO_INPUTBW=0
+srt setsockopt fd=1 SRTO_OHEADBW=25
+srt_open ret=SUCCESS(0) max_packet_size=1316 rw_timeout=1000 mode=0 transtype=0
+srt_open last_error obs=SUCCESS srt=0 listen_timeout=-1 payload_size=1316
+> srt_epoll timeout
+> srt_write 1316
+srt_write ret=-110
+> srt_reset_net
+> srt_open srt://192.0.2.10:9000
+srt startup
+srt create_socket -> 1
+srt setsockopt fd=1 SRTO_TRANSTYPE=0
+srt setsockopt fd=1 SRTO_ENFORCEDENCRYPTION=0
+srt setsockopt fd=1 SRTO_KMREFRESHRATE=0
+srt setsockopt fd=1 SRTO_KMPREANNOUNCE=0
+srt setsockopt fd=1 SRTO_SNDDROPDELAY=0
+srt setsockopt fd=1 SRTO_PAYLOADSIZE=1316
+srt setsockopt fd=1 SRTO_SENDER=1
+srt setsockopt fd=1 SRTO_SNDSYN=0
+srt setsockopt fd=1 SRTO_RCVSYN=0
+srt connect fd=1 192.0.2.10:9000
+srt epoll_release
+srt setsockopt fd=1 SRTO_INPUTBW=0
+srt setsockopt fd=1 SRTO_OHEADBW=25
+srt_open ret=SUCCESS(0) max_packet_size=1316 rw_timeout=0 mode=0 transtype=0
+srt_open last_error obs=SUCCESS srt=0 listen_timeout=-1 payload_size=1316
+> srt_epoll error ECONNLOST 0
+> srt_write 1316
+log error [obs-ffmpeg mpegts muxer / libsrt]: fake srt error 2001
+srt_write ret=-1313558101
+> srt_reset_net
+> srt_open srt://192.0.2.10:9000
+srt startup
+srt create_socket -> 1
+srt setsockopt fd=1 SRTO_TRANSTYPE=0
+srt setsockopt fd=1 SRTO_ENFORCEDENCRYPTION=0
+srt setsockopt fd=1 SRTO_KMREFRESHRATE=0
+srt setsockopt fd=1 SRTO_KMPREANNOUNCE=0
+srt setsockopt fd=1 SRTO_SNDDROPDELAY=0
+srt setsockopt fd=1 SRTO_PAYLOADSIZE=1316
+srt setsockopt fd=1 SRTO_SENDER=1
+srt setsockopt fd=1 SRTO_SNDSYN=0
+srt setsockopt fd=1 SRTO_RCVSYN=0
+srt connect fd=1 192.0.2.10:9000
+srt epoll_release
+srt setsockopt fd=1 SRTO_INPUTBW=0
+srt setsockopt fd=1 SRTO_OHEADBW=25
+srt_open ret=SUCCESS(0) max_packet_size=1316 rw_timeout=0 mode=0 transtype=0
+srt_open last_error obs=SUCCESS srt=0 listen_timeout=-1 payload_size=1316
+> clock_skew 61
+> log debug
+> srt_write 1316
+log debug [obs-ffmpeg mpegts muxer / libsrt]: RTT [12.50 ms], Link Bandwidth [100.0 Mbps]
+srt_write ret=1316
+> clock_skew 0
+> log info
+> srt_stats 12345 4.5 5000000 250000 50000
+> srt_close
+log info ---------------------------------
+log info [obs-ffmpeg mpegts muxer / libsrt]: Session Summary  time elapsed [12.3 sec]  mean speed [4.5 Mbp]  total bytes sent [5.0 MB]  bytes retransmitted [0.0 %]  bytes dropped [0.0 %] 
+srt epoll_release
+srt close fd=1
+srt cleanup
+log info [obs-ffmpeg mpegts muxer / libsrt]: SRT connection closed
+srt_close ret=0
+> srt_stats 5000 8 5000000 5000000 10000000
+> srt_open srt://192.0.2.10:9000
+srt startup
+srt create_socket -> 1
+srt setsockopt fd=1 SRTO_TRANSTYPE=0
+srt setsockopt fd=1 SRTO_ENFORCEDENCRYPTION=0
+srt setsockopt fd=1 SRTO_KMREFRESHRATE=0
+srt setsockopt fd=1 SRTO_KMPREANNOUNCE=0
+srt setsockopt fd=1 SRTO_SNDDROPDELAY=0
+srt setsockopt fd=1 SRTO_PAYLOADSIZE=1316
+srt setsockopt fd=1 SRTO_SENDER=1
+srt setsockopt fd=1 SRTO_SNDSYN=0
+srt setsockopt fd=1 SRTO_RCVSYN=0
+srt connect fd=1 192.0.2.10:9000
+srt epoll_release
+srt setsockopt fd=1 SRTO_INPUTBW=0
+srt setsockopt fd=1 SRTO_OHEADBW=25
+srt_open ret=SUCCESS(0) max_packet_size=1316 rw_timeout=0 mode=0 transtype=0
+srt_open last_error obs=SUCCESS srt=0 listen_timeout=-1 payload_size=1316
+> srt_close
+log info ---------------------------------
+log info [obs-ffmpeg mpegts muxer / libsrt]: Session Summary  time elapsed [5.0 sec]  mean speed [8.0 Mbp]  total bytes sent [5.0 MB]  bytes retransmitted [100.0 %]  bytes dropped [200.0 %] 
+srt epoll_release
+srt close fd=1
+srt cleanup
+log info [obs-ffmpeg mpegts muxer / libsrt]: SRT connection closed
+srt_close ret=0
+> srt_stats 0 0 0 100 100
+> srt_open srt://192.0.2.10:9000
+srt startup
+srt create_socket -> 1
+srt setsockopt fd=1 SRTO_TRANSTYPE=0
+srt setsockopt fd=1 SRTO_ENFORCEDENCRYPTION=0
+srt setsockopt fd=1 SRTO_KMREFRESHRATE=0
+srt setsockopt fd=1 SRTO_KMPREANNOUNCE=0
+srt setsockopt fd=1 SRTO_SNDDROPDELAY=0
+srt setsockopt fd=1 SRTO_PAYLOADSIZE=1316
+srt setsockopt fd=1 SRTO_SENDER=1
+srt setsockopt fd=1 SRTO_SNDSYN=0
+srt setsockopt fd=1 SRTO_RCVSYN=0
+srt connect fd=1 192.0.2.10:9000
+srt epoll_release
+srt setsockopt fd=1 SRTO_INPUTBW=0
+srt setsockopt fd=1 SRTO_OHEADBW=25
+srt_open ret=SUCCESS(0) max_packet_size=1316 rw_timeout=0 mode=0 transtype=0
+srt_open last_error obs=SUCCESS srt=0 listen_timeout=-1 payload_size=1316
+> srt_close
+log info ---------------------------------
+log info [obs-ffmpeg mpegts muxer / libsrt]: Session Summary  time elapsed [0.0 sec]  mean speed [0.0 Mbp]  total bytes sent [0.0 MB]  bytes retransmitted [0.0 %]  bytes dropped [0.0 %] 
+srt epoll_release
+srt close fd=1
+srt cleanup
+log info [obs-ffmpeg mpegts muxer / libsrt]: SRT connection closed
+srt_close ret=0
+> srt_open srt://192.0.2.10:9000
+srt startup
+srt create_socket -> 1
+srt setsockopt fd=1 SRTO_TRANSTYPE=0
+srt setsockopt fd=1 SRTO_ENFORCEDENCRYPTION=0
+srt setsockopt fd=1 SRTO_KMREFRESHRATE=0
+srt setsockopt fd=1 SRTO_KMPREANNOUNCE=0
+srt setsockopt fd=1 SRTO_SNDDROPDELAY=0
+srt setsockopt fd=1 SRTO_PAYLOADSIZE=1316
+srt setsockopt fd=1 SRTO_SENDER=1
+srt setsockopt fd=1 SRTO_SNDSYN=0
+srt setsockopt fd=1 SRTO_RCVSYN=0
+srt connect fd=1 192.0.2.10:9000
+srt epoll_release
+srt setsockopt fd=1 SRTO_INPUTBW=0
+srt setsockopt fd=1 SRTO_OHEADBW=25
+srt_open ret=SUCCESS(0) max_packet_size=1316 rw_timeout=0 mode=0 transtype=0
+srt_open last_error obs=SUCCESS srt=0 listen_timeout=-1 payload_size=1316
+> srt_fail close EUNKNOWN
+> srt_close
+log info ---------------------------------
+log info [obs-ffmpeg mpegts muxer / libsrt]: Session Summary  time elapsed [0.0 sec]  mean speed [0.0 Mbp]  total bytes sent [0.0 MB]  bytes retransmitted [0.0 %]  bytes dropped [0.0 %] 
+srt epoll_release
+srt close fd=1
+log error [obs-ffmpeg mpegts muxer / libsrt]: fake srt error -1
+srt_close ret=-1

@@ -1,0 +1,4 @@
+# S-062 ALSA: source registration data and defaults (alsa-input.c).
+alsa-reset
+alsa-info
+alsa-defaults
