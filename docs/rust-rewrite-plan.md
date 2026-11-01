@@ -8,24 +8,24 @@ Status: proposal. Nothing here is implemented yet. Tick the checkboxes as phases
 |---|---|---|---|
 | Core engine (`libobs`) | `libobs/` | 94k | C (+ObjC for macOS) |
 | Graphics backends | `libobs-opengl`, `libobs-d3d11`, `libobs-metal`, `libobs-winrt` | 17k | C / C++ / Swift |
-| Frontend (Qt6 GUI) | `frontend/` | 89k | C++ |
-| Plugins (~40 modules) | `plugins/` | 170k | C / C++ / ObjC |
+| Frontend (Qt6 GUI) | `frontend/` | 109k | C++ (+ `.ui`) |
+| Plugins (~40 modules) | `plugins/` | 172k | C / C++ / ObjC |
 | Shared helpers | `shared/` | 22k | C / C++ |
 | Vendored deps | `deps/` (blake2, glad, json11, libcaption, libdshowcapture, ...) | 70k | C / C++ |
 
-Total about 460k lines, 15.8k commits, 3 OSes, 40 plugins.
+Total about 494k tracked source lines (`tools/task-coverage.py` against libobs 33.0.1), 15.8k commits, 3 OSes, 40 plugins.
 
 Key architectural facts that shape the plan:
 
 - **`libobs` is the product.** It owns sources, scenes, outputs, encoders, services, filters, the video/audio mixing threads, hotkeys, `obs_data` settings, and the signal/proc/calldata callback system. It is ~680 exported `EXPORT` symbols in `obs.h` alone.
 - **The plugin ABI is C.** Plugins are shared libraries exporting `obs_module_load` etc. via `OBS_DECLARE_MODULE` (40 in-tree), registering `struct obs_source_info` and similar vtables. Hundreds of third-party plugins (and the scripting, browser and websocket integrations) depend on this ABI.
 - **Graphics is an abstraction layer** (`libobs/graphics`, `gs_*` API) with a custom effect/shader language (`effect-parser.c`, `shader-parser.c`) transpiled per backend.
-- **The frontend is Qt6 C++** (~89k lines, `.ui` forms, docks, settings, wizards, importers, updater, plugin manager) and also embeds Lua/Python scripting (`plugins/frontend-tools`).
+- **The frontend is Qt6 C++** (~109k lines incl. `.ui` forms, docks, settings, wizards, importers, updater, plugin manager) and also embeds Lua/Python scripting (`plugins/frontend-tools`).
 - **Heavy native dependencies**: FFmpeg, x264, libcurl, Qt6, CEF (browser), PipeWire, Pulse/ALSA/JACK, V4L2, WASAPI, DirectShow, CoreAudio, AVFoundation, NVENC/AMF/QSV/VideoToolbox, Python/Lua.
 
 ## 2. Honest assessment
 
-A big-bang rewrite is not advisable. At ~460k lines with a de-facto public C plugin ABI, it would take a multi-year effort by a team, freeze feature work, and break the plugin ecosystem, which is OBS's biggest asset. Rust also does not remove the need for FFmpeg, CEF, Qt, or platform capture APIs, so a large share of the code stays FFI glue regardless.
+A big-bang rewrite is not advisable. At ~490k lines with a de-facto public C plugin ABI, it would take a multi-year effort by a team, freeze feature work, and break the plugin ecosystem, which is OBS's biggest asset. Rust also does not remove the need for FFmpeg, CEF, Qt, or platform capture APIs, so a large share of the code stays FFI glue regardless.
 
 **Recommended strategy: a strangler-fig migration.** Rust and C coexist in one build for years. Each phase ships a working OBS. The C ABI (`obs.h`, `obs-module.h`, `obs-source.h`, ...) stays as a stable compatibility layer generated from Rust (`#[no_mangle] extern "C"`, `cbindgen`) until a native Rust plugin API is proven. "Everything in Rust" is the end state, reached incrementally.
 
@@ -148,9 +148,13 @@ Realistic total: **3-4 years**. A useful interim milestone, a Rust headless core
 
 ## 8. Open questions for the maintainers
 
-1. Is plugin ABI compatibility a hard requirement for the first Rust release? (This plan assumes yes.)
-2. Which GUI toolkit? Staying on Qt via `cxx-qt` is assumed.
-3. Is dropping the native GL/D3D11/Metal backends in favour of `wgpu` acceptable?
-4. Which platforms/vendor SDKs are in scope for the first all-Rust release?
+These are tracked, with a default for each so work is never blocked, in
+[`docs/rust-rewrite/DECISIONS-NEEDED.md`](rust-rewrite/DECISIONS-NEEDED.md) (strategy D-01…D-07,
+C/C++ that stays D-08…D-14, dependency choices D-15…D-26, spec backlog D-27…D-33). The original four:
+
+1. Is plugin ABI compatibility a hard requirement for the first Rust release? (Assumed yes — D-02.)
+2. Which GUI toolkit? Staying on Qt via `cxx-qt` is assumed (D-01).
+3. Is dropping the native GL/D3D11/Metal backends in favour of `wgpu` acceptable? (D-03/D-13.)
+4. Which platforms/vendor SDKs are in scope for the first all-Rust release? (D-04.)
 
 Detailed per-phase task lists live in [`docs/rust-rewrite/`](rust-rewrite/README.md).

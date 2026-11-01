@@ -44,7 +44,11 @@ Pattern for every task: (1) Rust crate with a safe API, (2) `extern "C"` shim wi
 - [ ] **P1-27 `obs_properties`** (L): `obs-properties.c/h`: all property kinds (list, path, editable list, font, group, button, color), modified callbacks, `obs_property_list_*`. Done when: ABI plugin test (P0-15) exercises each kind.
 - [ ] **P1-28 `obs-hotkey` data layer** (S): `obs-hotkey-name-map.c`, key combo serialisation. Core hotkey system comes in Phase 4.
 
-## E. Integration
+## E. `shared/` leaf helpers
+
+- [ ] **P1-33 Port the `shared/` leaf helpers** (M) (added): the five dependency-free helpers under `shared/` that no earlier task owned — `shared/bpm` (P1-33.1), `shared/file-updater` (P1-33.2), `shared/happy-eyeballs` (P1-33.3), `shared/obs-inject-library` (P1-33.4), `shared/opts-parser` (P1-33.5). bpm, file-updater, happy-eyeballs and opts-parser are specified by S-024 (M8/M10/M9/M1) and conformance-tested by the `helpers` area; `obs-inject-library` is a thin `LoadLibrary`/`dlopen` helper with no spec — implement from the C (it is ~100 lines, no clean-room value). Done when: S-024 helpers scripts pass and the C files are excluded from the build behind `OBS_ENABLE_RUST=ON`. Note: `shared/ipc-util` is owned by P5-31.6 (its only consumers are win-capture game capture and its hook build), `shared/obs-d3d8-api`/`shared/obs-hook-config` stay C per D-08, and `shared/qt`/`shared/properties-view` are frontend (Phase 6).
+
+## F. Integration
 
 - [ ] **P1-29 `obs-ffi` header diff check** (S): CI step comparing `cbindgen` output with the committed `libobs/*.h` for all migrated functions.
 - [ ] **P1-30 Switch default** (S): turn `OBS_ENABLE_RUST` on for Phase 1 crates in nightly builds, run for two weeks, then default on.

@@ -167,6 +167,7 @@ Verified facts: the main window is split across `frontend/widgets/OBSBasic*.cpp`
 - [ ] **P6-26.3 Studio** — `importers/studio.cpp`.
 - [ ] **P6-26.4 XSplit** — `importers/xsplit.cpp`.
 - [ ] **P6-26.5 Goldens** — sample inputs → expected collection.
+- [ ] **P6-26.6 Importer dialog UI (added)** — `frontend/importer/` (`OBSImporter.cpp/.hpp`, `ImporterModel.cpp/.hpp`, `ImporterEntryPathItemDelegate.cpp/.hpp`) + `frontend/forms/OBSImporter.ui` + view-model. +UI bookend. Done when: the dialog lists parsed entries from each of the four importers and the P6-26.5 goldens still pass.
 
 ### P6-27 Missing files dialog
 - [ ] **P6-27.1 List/relink** — `dialogs/OBSMissingFiles.cpp`, `utility/MissingFilesModel`. +UI.
@@ -287,3 +288,9 @@ Verified facts: the main window is split across `frontend/widgets/OBSBasic*.cpp`
 ### P6-48 Phase 6 review
 - [ ] **P6-48.1 Parity checklist** — generate `parity-checklist.md` by walking menus (from the 34 `.ui` files) and settings.
 - [ ] **P6-48.2 Verify and tick**.
+
+### P6-49 Frontend components sweep (added)
+- [ ] **P6-49.1 Inventory and order** — run `python3 tools/task-coverage.py`, take the P6-49 rows (67 files), sort by number of consumers. Done when: port order documented.
+- [ ] **P6-49.2 `frontend/components/*`** — the 21 generic Qt widgets (FlowFrame/FlowLayout, FocusList, MenuButton, ClickableLabel, DelButton, EditWidget, InfoChip, UIValidation, UrlPushButton, SilentUpdate*…): view-model unit test + port, UI bookend each. Done when: each widget has its snapshot test and the C file is excluded.
+- [ ] **P6-49.3 `shared/qt/*`** — the 45 shared Qt widgets (obs-spinbox, idian components, icon-label, plain-text-edit, qt-wrappers, slider-ignorewheel, vertical-scroll-area), per the D-01 toolkit decision. Done when: same as above.
+- [ ] **P6-49.4 Final sweep** — `frontend/data/striped_line.effect` + regeneration of `docs/rust-rewrite/coverage/coverage-matrix.md` (`tools/task-coverage.py --write`). Done when: P6-49 owns zero rows.
