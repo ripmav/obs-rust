@@ -1,0 +1,8 @@
+echo largest-safe-bitrate
+vid bit_rate=2147483000 rc_buffer_size=2147483000 size=1920x1080 time_base=1/60 framerate=60/1 pix_fmt=nv12
+vid color_range=1 primaries=1 trc=1 colorspace=1 chroma_loc=1 gop_size=12345 height=1080
+echo overflowing-bitrate
+info_vid bit_rate=-2147483296 rc_buffer_size=-2147483296 size=1920x1080 time_base=1/60 framerate=60/1 pix_fmt=nv12
+vid color_range=1 primaries=1 trc=1 colorspace=1 chroma_loc=1 gop_size=12345 height=1080
+info_vid bit_rate=-296 rc_buffer_size=-296 size=1920x1080 time_base=1/60 framerate=60/1 pix_fmt=nv12
+vid color_range=1 primaries=1 trc=1 colorspace=1 chroma_loc=1 gop_size=12345 height=1080

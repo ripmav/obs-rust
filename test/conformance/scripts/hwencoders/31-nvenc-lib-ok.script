@@ -1,0 +1,7 @@
+# S-050 nvenc: success path; the function table is filled by NvEncodeAPICreateInstance and a
+# second call is a no-op returning the cached result. A driver reporting a NEWER version than the
+# compiled one is accepted.
+maxver 0xD3
+initnv
+sym create 0
+initnv

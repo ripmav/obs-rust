@@ -1,0 +1,66 @@
+# polar / cartesian conversions (S-009-R90..R92).  polar = (elevation x, azimuth y, radius z).
+# The w lane of polar_to_cart / cart_to_polar results is UNINITIALISED in the reference (D-3);
+# the runner prints it as '?'. Rust must store 0.
+vec3 pa 0 0 1
+vec3 pb 0.5235988 0 2
+vec3 pc 0 1.5707964 3
+vec3 pd 0.7853982 0.7853982 1
+vec3 pe 1.5707964 0 1
+vec3 pf -0.5235988 3.14159265 2
+call c polar_to_cart pa
+call c polar_to_cart pb
+call c polar_to_cart pc
+call c polar_to_cart pd
+call c polar_to_cart pe
+call c polar_to_cart pf
+vec3 zero 0 0 0
+call c polar_to_cart zero
+# cart_to_polar: z = length; if length <= EPSILON the result is the zero vector
+vec3 ca 0 0 1
+vec3 cb 1 0 0
+vec3 cc 0 1 0
+vec3 cd 1 1 1
+vec3 ce 0 0 -2
+vec3 cf 0.00005 0 0
+vec3 cg 0.0001 0 0
+vec3 ch 0.00011 0 0
+call p cart_to_polar ca
+call p cart_to_polar cb
+call p cart_to_polar cc
+call p cart_to_polar cd
+call p cart_to_polar ce
+call p cart_to_polar cf
+call p cart_to_polar cg
+call p cart_to_polar ch
+call p cart_to_polar zero
+# round trip
+call rt cart_to_polar cd
+call rt2 polar_to_cart rt
+# norm_to_polar: (atan2(x, z), asin(y)); polar_to_norm: (sin(px) cos(py), sin(px) sin(py), cos(px))
+vec3 n1 0 0 1
+vec3 n2 1 0 0
+vec3 n3 0 1 0
+vec3 n4 0.6 0 0.8
+vec3 n5 0 0 -1
+vec3 n6 0 -1 0
+vec3 n7 0 2 0
+call np norm_to_polar n1
+call np norm_to_polar n2
+call np norm_to_polar n3
+call np norm_to_polar n4
+call np norm_to_polar n5
+call np norm_to_polar n6
+call np norm_to_polar n7
+vec2 q1 0 0
+vec2 q2 1.5707964 0
+vec2 q3 1.5707964 1.5707964
+vec2 q4 0.7853982 0.5235988
+vec2 q5 3.14159265 1
+call pn polar_to_norm q1
+call pn polar_to_norm q2
+call pn polar_to_norm q3
+call pn polar_to_norm q4
+call pn polar_to_norm q5
+# polar_to_norm does not write w: it keeps the destination's previous lane
+vec3 keep 0 0 0 42
+call keep polar_to_norm q4

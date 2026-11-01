@@ -1,0 +1,10 @@
+tl_create 0 tu-1 -> ok
+tl_get 0 "A" -> "1"
+tl_get 0 "B" -> "unterminated"
+tl_get 0 "C" -> "3"
+tl_get 0 "D" -> "abc\\"
+tl_get 0 "E" -> "5"
+tl_create 1 tu-2 -> ok
+tl_get 1 "A" -> "1"
+tl_get 1 "B" -> false
+tl_get 1 "C" -> "3"

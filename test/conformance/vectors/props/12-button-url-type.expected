@@ -1,0 +1,24 @@
+add button b ok
+add bool x ok
+info
+  prop b type=button desc="B" long=@null enabled=1 visible=1
+    buttontype=default url=@null
+info
+  prop b type=button desc="B" long=@null enabled=1 visible=1
+    buttontype=url url="https://example.com/a"
+info
+  prop b type=button desc="B" long=@null enabled=1 visible=1
+    buttontype=url url="https://example.com/b"
+info
+  prop b type=button desc="B" long=@null enabled=1 visible=1
+    buttontype=url url=@null
+probe int: 0 0 0 scroller @null
+probe float: 0 0 0 scroller @null
+probe text: default 0 normal 1
+probe path: directory @null @null
+probe list: invalid invalid count=0 name0=@null str0=@null int0=0 float0=0 bool0=0 disabled0=0
+probe editable_list: strings @null @null
+probe frame_rate: options=0 ranges=0 name0=@null desc0=@null min0=0/0 max0=0/0
+probe group: invalid content=@null
+probe button: default ""
+echo setters-on-null-handle

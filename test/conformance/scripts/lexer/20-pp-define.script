@@ -1,0 +1,12 @@
+# CORE: #define (object-like), #undef, expansion, an expansion starts with one space token.
+parse "#define A 1\nx A y\nA\n"
+tokens pp
+errors
+reset
+parse "#define Z\nZ x\n#define W  2 3 \nW|\n#undef Z\nZ\n#undef Nope\n"
+tokens pp
+errors
+reset
+parse "# define  S  ( 4 )\nS\n#define B A A\n#define A 1\nB\n"
+tokens pp
+errors

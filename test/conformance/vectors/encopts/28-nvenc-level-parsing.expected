@@ -1,0 +1,80 @@
+log debug [obs-nvenc] Applying custom level = 4.2 (42)
+nv_apply success=1
+nvconfig gopLength=0 frameIntervalP=0
+nvrc avg=0 max=0 vbvbuf=0 vbvdelay=0 tq=0 tqlsb=0 cb=0 cr=0 lookaheadLevel=0
+nvrc constQP=0/0/0 minQP=0/0/0 maxQP=0/0/0 initialRCQP=0/0/0
+nvrc bits minQP=0 maxQP=0 initialRCQP=0 aq=0 lookahead=0 disableIadapt=0 disableBadapt=0 temporalAQ=0 aqStrength=0
+nvcodec h264 level=42 idrPeriod=0 useBFramesAsRef=0 tfLevel=0 filler=0
+log debug [obs-nvenc] Applying custom level = 5.10 (60)
+nv_apply success=1
+nvconfig gopLength=0 frameIntervalP=0
+nvrc avg=0 max=0 vbvbuf=0 vbvdelay=0 tq=0 tqlsb=0 cb=0 cr=0 lookaheadLevel=0
+nvrc constQP=0/0/0 minQP=0/0/0 maxQP=0/0/0 initialRCQP=0/0/0
+nvrc bits minQP=0 maxQP=0 initialRCQP=0 aq=0 lookahead=0 disableIadapt=0 disableBadapt=0 temporalAQ=0 aqStrength=0
+nvcodec h264 level=60 idrPeriod=0 useBFramesAsRef=0 tfLevel=0 filler=0
+nv_apply success=1
+nvconfig gopLength=0 frameIntervalP=0
+nvrc avg=0 max=0 vbvbuf=0 vbvdelay=0 tq=0 tqlsb=0 cb=0 cr=0 lookaheadLevel=0
+nvrc constQP=0/0/0 minQP=0/0/0 maxQP=0/0/0 initialRCQP=0/0/0
+nvrc bits minQP=0 maxQP=0 initialRCQP=0 aq=0 lookahead=0 disableIadapt=0 disableBadapt=0 temporalAQ=0 aqStrength=0
+nvcodec h264 level=0 idrPeriod=0 useBFramesAsRef=0 tfLevel=0 filler=0
+log debug [obs-nvenc] Applying custom level = 41 (41)
+nv_apply success=1
+nvconfig gopLength=0 frameIntervalP=0
+nvrc avg=0 max=0 vbvbuf=0 vbvdelay=0 tq=0 tqlsb=0 cb=0 cr=0 lookaheadLevel=0
+nvrc constQP=0/0/0 minQP=0/0/0 maxQP=0/0/0 initialRCQP=0/0/0
+nvrc bits minQP=0 maxQP=0 initialRCQP=0 aq=0 lookahead=0 disableIadapt=0 disableBadapt=0 temporalAQ=0 aqStrength=0
+nvcodec h264 level=41 idrPeriod=0 useBFramesAsRef=0 tfLevel=0 filler=0
+nv_apply success=1
+nvconfig gopLength=0 frameIntervalP=0
+nvrc avg=0 max=0 vbvbuf=0 vbvdelay=0 tq=0 tqlsb=0 cb=0 cr=0 lookaheadLevel=0
+nvrc constQP=0/0/0 minQP=0/0/0 maxQP=0/0/0 initialRCQP=0/0/0
+nvrc bits minQP=0 maxQP=0 initialRCQP=0 aq=0 lookahead=0 disableIadapt=0 disableBadapt=0 temporalAQ=0 aqStrength=0
+nvcodec h264 level=0 idrPeriod=0 useBFramesAsRef=0 tfLevel=0 filler=0
+nv_apply success=1
+nvconfig gopLength=0 frameIntervalP=0
+nvrc avg=0 max=0 vbvbuf=0 vbvdelay=0 tq=0 tqlsb=0 cb=0 cr=0 lookaheadLevel=0
+nvrc constQP=0/0/0 minQP=0/0/0 maxQP=0/0/0 initialRCQP=0/0/0
+nvrc bits minQP=0 maxQP=0 initialRCQP=0 aq=0 lookahead=0 disableIadapt=0 disableBadapt=0 temporalAQ=0 aqStrength=0
+nvcodec h264 level=0 idrPeriod=0 useBFramesAsRef=0 tfLevel=0 filler=0
+nv_apply success=1
+nvconfig gopLength=0 frameIntervalP=0
+nvrc avg=0 max=0 vbvbuf=0 vbvdelay=0 tq=0 tqlsb=0 cb=0 cr=0 lookaheadLevel=0
+nvrc constQP=0/0/0 minQP=0/0/0 maxQP=0/0/0 initialRCQP=0/0/0
+nvrc bits minQP=0 maxQP=0 initialRCQP=0 aq=0 lookahead=0 disableIadapt=0 disableBadapt=0 temporalAQ=0 aqStrength=0
+nvcodec h264 level=0 idrPeriod=0 useBFramesAsRef=0 tfLevel=0 filler=0
+log debug [obs-nvenc] Applying custom level = -1.5 (4294967291)
+nv_apply success=1
+nvconfig gopLength=0 frameIntervalP=0
+nvrc avg=0 max=0 vbvbuf=0 vbvdelay=0 tq=0 tqlsb=0 cb=0 cr=0 lookaheadLevel=0
+nvrc constQP=0/0/0 minQP=0/0/0 maxQP=0/0/0 initialRCQP=0/0/0
+nvrc bits minQP=0 maxQP=0 initialRCQP=0 aq=0 lookahead=0 disableIadapt=0 disableBadapt=0 temporalAQ=0 aqStrength=0
+nvcodec h264 level=4294967291 idrPeriod=0 useBFramesAsRef=0 tfLevel=0 filler=0
+log debug [obs-nvenc] Applying custom level = 3.1 (93)
+nv_apply success=1
+nvconfig gopLength=0 frameIntervalP=0
+nvrc avg=0 max=0 vbvbuf=0 vbvdelay=0 tq=0 tqlsb=0 cb=0 cr=0 lookaheadLevel=0
+nvrc constQP=0/0/0 minQP=0/0/0 maxQP=0/0/0 initialRCQP=0/0/0
+nvrc bits minQP=0 maxQP=0 initialRCQP=0 aq=0 lookahead=0 disableIadapt=0 disableBadapt=0 temporalAQ=0 aqStrength=0
+nvcodec hevc level=93 tier=0 idrPeriod=0 useBFramesAsRef=0 tfLevel=0 filler=0
+log debug [obs-nvenc] Applying custom level = 93 (279)
+nv_apply success=1
+nvconfig gopLength=0 frameIntervalP=0
+nvrc avg=0 max=0 vbvbuf=0 vbvdelay=0 tq=0 tqlsb=0 cb=0 cr=0 lookaheadLevel=0
+nvrc constQP=0/0/0 minQP=0/0/0 maxQP=0/0/0 initialRCQP=0/0/0
+nvrc bits minQP=0 maxQP=0 initialRCQP=0 aq=0 lookahead=0 disableIadapt=0 disableBadapt=0 temporalAQ=0 aqStrength=0
+nvcodec hevc level=279 tier=0 idrPeriod=0 useBFramesAsRef=0 tfLevel=0 filler=0
+log debug [obs-nvenc] Changing parameter: "level": 0 -> 4 (uint32_t)
+nv_apply success=1
+nvconfig gopLength=0 frameIntervalP=0
+nvrc avg=0 max=0 vbvbuf=0 vbvdelay=0 tq=0 tqlsb=0 cb=0 cr=0 lookaheadLevel=0
+nvrc constQP=0/0/0 minQP=0/0/0 maxQP=0/0/0 initialRCQP=0/0/0
+nvrc bits minQP=0 maxQP=0 initialRCQP=0 aq=0 lookahead=0 disableIadapt=0 disableBadapt=0 temporalAQ=0 aqStrength=0
+nvcodec av1 level=4 tier=0 tiles=0x0 idrPeriod=0 useBFramesAsRef=0 tfLevel=0 padding=0
+log debug [obs-nvenc] Changing parameter: "level": 0 -> 4 (uint32_t)
+nv_apply success=1
+nvconfig gopLength=0 frameIntervalP=0
+nvrc avg=0 max=0 vbvbuf=0 vbvdelay=0 tq=0 tqlsb=0 cb=0 cr=0 lookaheadLevel=0
+nvrc constQP=0/0/0 minQP=0/0/0 maxQP=0/0/0 initialRCQP=0/0/0
+nvrc bits minQP=0 maxQP=0 initialRCQP=0 aq=0 lookahead=0 disableIadapt=0 disableBadapt=0 temporalAQ=0 aqStrength=0
+nvcodec av1 level=4 tier=0 tiles=0x0 idrPeriod=0 useBFramesAsRef=0 tfLevel=0 padding=0

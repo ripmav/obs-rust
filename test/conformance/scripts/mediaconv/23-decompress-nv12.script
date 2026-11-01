@@ -1,0 +1,15 @@
+# decompress_nv12: planar luma + interleaved UV (U first) -> 32-bit pixels. The output word is
+# (UV16 << 8) | Y where UV16 is the little-endian 16-bit chroma sample (U in the low byte, V in the high byte)
+# so the BYTES in memory are  Y U V 0 .   Pixels per row = 2 * (min(ILS0, OUT_LS) / 2).
+# Command: decompress nv12 START END ILS0 ILS1 ILS2 OUT_LS OUT_ROWS PLANE0 PLANE1 PLANE2   (PLANE2 unused: -)
+# IN_LINESIZE[2] is never read for NV12.
+decompress nv12 0 2 4 4 0 16 2 0102030405060708 aa11bb22 -
+decompress nv12 0 4 4 4 0 16 4 0102030405060708090a0b0c0d0e0f10 aa11bb22cc33dd44 -
+decompress nv12 0 2 4 4 0 16 2 ff00ff00ff00ff00 ffffffff -
+# slices follow the same rule as 4:2:0: START/2 .. END/2
+decompress nv12 2 4 4 4 0 16 4 0102030405060708090a0b0c0d0e0f10 aa11bb22cc33dd44 -
+decompress nv12 1 3 4 4 0 16 4 0102030405060708090a0b0c0d0e0f10 aa11bb22cc33dd44 -
+# chroma stride bigger than needed (6)
+decompress nv12 0 4 4 6 0 16 4 0102030405060708090a0b0c0d0e0f10 aa11bb22eeee cc33dd44eeee -
+# odd ILS0 = 5 -> 2 chroma samples per row (only 4 pixels written)
+decompress nv12 0 2 5 4 0 20 2 0102030405060708090a aa11bb22 -

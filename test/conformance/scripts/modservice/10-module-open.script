@@ -1,0 +1,37 @@
+# S-035 obs_open_module: result codes and failure modes. Fake plugins are compiled at run time (see README).
+mkmod good @TMP/m/good.so svc=gsvc loc unload postload modname=Good
+mkmod noload @TMP/m/noload.so noload
+mkmod noset @TMP/m/noset.so noset
+mkmod nover @TMP/m/nover.so nover
+mkmod badsym @TMP/m/badsym.so badsym
+mkmod newminor @TMP/m/newminor.so ver=minor+1
+mkmod newmajor @TMP/m/newmajor.so ver=major+1
+mkmod newpatch @TMP/m/newpatch.so ver=patch+5
+mkmod oldmajor @TMP/m/oldmajor.so ver=major-1
+mkmod zero @TMP/m/zero.so ver=zero
+write @TMP/m/notso.so "this is not an ELF file"
+# NULL path / NULL module out-pointer / NULL core -> MODULE_ERROR (-1)
+open_module nul - d
+open_module_nullout @TMP/m/good.so
+core_null 1
+open_module x @TMP/m/good.so d
+core_null 0
+lists
+# file does not exist / not a shared object / unresolved symbol -> MODULE_FAILED_TO_OPEN (-2)
+open_module a @TMP/m/missing.so d
+open_module b @TMP/m/notso.so d
+open_module c @TMP/m/badsym.so d
+# exports missing -> MODULE_MISSING_EXPORTS (-3); no module is added to any list
+open_module d @TMP/m/noload.so d
+open_module e @TMP/m/noset.so d
+open_module f @TMP/m/nover.so d
+lists
+# newer libobs -> MODULE_INCOMPATIBLE_VER (-4); the patch level is ignored; older/zero versions load
+open_module g @TMP/m/newminor.so d
+open_module h @TMP/m/newmajor.so d
+lists
+open_module i @TMP/m/newpatch.so d
+open_module j @TMP/m/oldmajor.so d
+open_module k @TMP/m/zero.so d
+lists
+mod_info i

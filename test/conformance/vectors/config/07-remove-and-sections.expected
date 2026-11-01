@@ -1,0 +1,15 @@
+create ok
+remove A x 1
+remove A x 0
+remove A nosuch 0
+remove NoSection x 0
+has_user A x 0
+has_user A y 1
+sections 2 [A] [B]
+section 1 B
+section 2 @null
+section 99 @null
+remove A y 1
+sections 2 [A] [B]
+save rc=0
+"[A]\n\n[B]\nz=3\n"

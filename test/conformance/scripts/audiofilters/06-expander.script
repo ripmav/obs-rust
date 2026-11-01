@@ -1,0 +1,62 @@
+# CORE. expander / gate presets / upward compressor: RMS or peak detector per channel, gain computed in dB
+# with attack/release smoothing in the dB domain, per channel (no linking).
+audio 2 48000
+create e expander
+state e
+echo rms-detector-block
+process e 480 out=0:0:480:40 sine:0.5:1000 sine:0.001:1000
+state e
+echo peak-detector
+data d
+set d detector string peak
+set d ratio double 4
+set d threshold double -20
+set d attack_time int 1
+set d release_time int 20
+update e d
+state e
+process e 240 out=0:0:240:24 sine:0.5:1000 sine:0.01:1000
+echo unknown-detector-keeps-previous-mode
+set d detector string bogus
+update e d
+state e
+echo detector-name-is-case-sensitive
+set d detector string rms
+update e d
+state e
+set d detector string RMS
+update e d
+state e
+echo gain-floor-at-minus-60-db
+set d ratio double 20
+set d threshold double 0
+update e d
+process e 480 out=0:0:480:48 const:0.0001 const:0.0001
+echo output-gain
+set d output_gain double -6
+update e d
+process e 4 const:1 const:1
+echo ratio-1-no-expansion
+set d ratio double 1
+set d output_gain double 0
+update e d
+state e
+process e 64 out=0:0:64:8 sine:0.01:300 sine:0.01:300
+echo cross-block-state-continuity
+create e2 expander
+process e2 5 out=all const:0.2 const:0.2
+process e2 5 out=all const:0.2 const:0.2
+create e3 expander
+process e3 10 out=all const:0.2 const:0.2
+echo zero-frames-and-nan
+process e2 0 const:1 const:1
+process e2 3 const:nan const:0.1
+state e2
+process e2 3 const:0.1 const:0.1
+echo stereo-constant-below-threshold-region
+create e4 expander
+process e4 3 const:0.5 const:0.5
+echo 4ch
+audio 4 48000
+create e5 expander
+process e5 3 const:0.3 const:0.3 const:0.3 const:0.3

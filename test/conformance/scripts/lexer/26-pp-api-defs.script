@@ -1,0 +1,8 @@
+# CORE: cf_preprocessor_add_def / remove_def (API definitions, no leading space token), duplicate-name warnings are not scripted (see spec D-5).
+def FOO 7
+def BAR "a b"
+parse "FOO BAR FOO\n#ifdef FOO\ny\n#endif\n"
+tokens pp
+undef FOO
+undef Nothing
+errors

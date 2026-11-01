@@ -1,0 +1,112 @@
+# CORE: parameter value storage (effect.c). Every effect parameter has a byte buffer for the current value
+# (cur_val, initially empty), the immutable default (default_val, from the declaration) and a "changed" flag.
+#   set_* copies the raw bytes: bool -> 4-byte int, float -> 4, int -> 4, vec2 -> 8, vec3 -> 12 (only x,y,z),
+#   vec4 -> 16, matrix4 -> 64, color(argb) -> a vec4 (r,g,b,a in 0..1, from the 0xAARRGGBB value), set_val -> n bytes.
+#   The buffer is resized to the new size when the size differs (changed=1); when the size is the same the buffer is
+#   compared and "changed" is only raised for different bytes. Setting a NULL param or NULL data logs an ERROR and
+#   does nothing. get_val returns a copy of cur_val (NULL when empty); get_default_val a copy of default_val.
+#   set_default copies default_val into cur_val (as set_val, so the same change tracking applies).
+# NOTE: the value size is whatever the caller passes; it is not checked against the parameter's declared type.
+backend text none
+backend events off
+text a
+uniform float f = 1.5;
+uniform int i = 3;
+uniform bool b = true;
+uniform float2 v2;
+uniform float3 v3;
+uniform float4 v4 = {1,2,3,4};
+uniform float4x4 m;
+uniform float4 c;
+uniform string s = "str";
+uniform texture2d t;
+uniform float noDefault;
+uniform float p1;
+float4 VS() : POSITION { return p1; }
+float4 PS() : TARGET { return p1; }
+technique T { pass { vertex_shader = VS(); pixel_shader = PS(); } }
+@end
+effect e a.effect @text:a
+echo --- initially empty
+flags e:f
+get_val e:f
+get_default_val e:f
+echo --- scalars
+set_float e:f 2.5
+flags e:f
+get_val e:f
+set_int e:i -2
+get_val e:i
+set_bool e:b 1
+get_val e:b
+set_bool e:b 0
+get_val e:b
+echo --- vectors
+set_vec2 e:v2 1 2
+get_val e:v2
+set_vec3 e:v3 1 2 3
+get_val e:v3
+set_vec4 e:v4 5 6 7 8
+get_val e:v4
+echo --- color: 0xAARRGGBB -> (r,g,b,a)
+set_color e:c 0xFF336699
+get_val e:c
+set_color e:c 0x00000000
+get_val e:c
+set_color e:c 0x80FFFFFF
+get_val e:c
+echo --- matrix
+set_matrix4 e:m 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16
+get_val e:m
+echo --- raw bytes of any size
+set_val e:f 0000803f
+get_val e:f
+set_val e:f 0102030405
+get_val e:f
+set_val e:f 01
+get_val e:f
+set_val e:noDefault 000102030405060708090a0b0c0d0e0f1011
+get_val e:noDefault
+echo --- change tracking: uploading a pass clears the flag; equal bytes do not set it again
+set_val e:p1 0000803f
+flags e:p1
+tbegin e T
+pbegin e T 0
+flags e:p1
+set_val e:p1 0000803f
+flags e:p1
+set_val e:p1 0000803e
+flags e:p1
+set_val e:p1 000000
+flags e:p1
+pend e T
+tend e T
+flags e:p1
+echo --- the annotation handle of a missing annotation is NULL
+set_float e:v4/none 1
+echo --- defaults
+get_default_val e:f
+get_default_val e:i
+get_default_val e:b
+get_default_val e:v4
+get_default_val e:s
+get_default_val e:t
+get_default_val e:noDefault
+set_default e:v4
+get_val e:v4
+set_default e:noDefault
+get_val e:noDefault
+echo --- set_default on a parameter that never had a value and has no default logs an error and does nothing
+set_default e:t
+get_val e:t
+echo --- NULL param / NULL data
+set_float @null 1
+set_val @null 00
+set_val e:f @null
+get_val @null
+get_default_val @null
+set_matrix4_null e:m
+get_val e:m
+echo --- zero-size set_val
+set_val e:f -
+get_val e:f

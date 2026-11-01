@@ -1,0 +1,61 @@
+> ini "[general]\nnvenc_supported=true\nnvenc_devices=2\nnvenc_ver=13.0\ncuda_ver=12.0\ndriver_ver=560.1\n[h264]\ncodec_supported=true\n[av1]\ncodec_supported=true\n"
+> supported
+os.dlopen "libnvidia-encode.so.1" -> ok
+log info [obs-nvenc] NVENC version: 13.0 (compiled) / 13.0 (driver), CUDA driver version: 12.0, AV1 supported: true
+nvenc_supported -> 1
+> compat_register
+encoder id=jim_nvenc codec=h264 type=video caps=[deprecated pass_texture dyn_bitrate roi mt_dyn_bitrate] cb=[encode_texture2 defaults properties destroy create]
+encoder id=obs_nvenc_h264_cuda codec=h264 type=video caps=[deprecated dyn_bitrate roi mt_dyn_bitrate] cb=[encode defaults properties destroy create]
+encoder id=jim_hevc_nvenc codec=hevc type=video caps=[deprecated pass_texture dyn_bitrate roi mt_dyn_bitrate] cb=[encode_texture2 defaults properties destroy create]
+encoder id=obs_nvenc_hevc_cuda codec=hevc type=video caps=[deprecated dyn_bitrate roi mt_dyn_bitrate] cb=[encode defaults properties destroy create]
+encoder id=jim_av1_nvenc codec=av1 type=video caps=[deprecated pass_texture dyn_bitrate roi mt_dyn_bitrate] cb=[encode_texture2 defaults properties destroy create]
+encoder id=obs_nvenc_av1_cuda codec=av1 type=video caps=[deprecated dyn_bitrate roi mt_dyn_bitrate] cb=[encode defaults properties destroy create]
+> invoke jim_nvenc defaults
+defaults of jim_nvenc: bitrate=2500 max_bitrate=5000 keyint_sec=0 cqp=20 gpu=0 bf=2 rate_control=CBR preset2=p5 multipass=qres tune=hq profile=high psycho_aq=1 repeat_headers=0
+> invoke jim_hevc_nvenc defaults
+defaults of jim_hevc_nvenc: bitrate=2500 max_bitrate=5000 keyint_sec=0 cqp=20 gpu=0 bf=2 rate_control=CBR preset2=p5 multipass=qres tune=hq profile=main psycho_aq=1 repeat_headers=0
+> invoke jim_av1_nvenc defaults
+defaults of jim_av1_nvenc: bitrate=2500 max_bitrate=5000 keyint_sec=0 cqp=20 gpu=0 bf=2 rate_control=CBR preset2=p5 multipass=qres tune=hq profile=main psycho_aq=1 repeat_headers=0
+> invoke jim_nvenc properties
+properties of jim_nvenc: rate_control bitrate max_bitrate cqp keyint_sec preset2 tune multipass profile lookahead repeat_headers(hidden) psycho_aq gpu bf
+> invoke jim_av1_nvenc properties
+properties of jim_av1_nvenc: rate_control bitrate max_bitrate cqp keyint_sec preset2 tune multipass profile lookahead repeat_headers(hidden) psycho_aq gpu bf
+> set str preset2 p3
+> set bool psycho_aq 0
+> set int gpu 1
+> invoke jim_nvenc create
+host.create_rerouted "obs_nvenc_h264_tex"
+invoke create -> non-null
+> get str preset
+preset = "p3"
+> get bool adaptive_quantization
+adaptive_quantization = false
+> get int device
+device = 1
+> has_user device
+has_user_value(device) = 1
+> invoke obs_nvenc_h264_cuda create
+host.create_rerouted "obs_nvenc_h264_soft"
+invoke create -> non-null
+> invoke jim_hevc_nvenc create
+host.create_rerouted "obs_nvenc_hevc_tex"
+invoke create -> non-null
+> invoke obs_nvenc_hevc_cuda create
+host.create_rerouted "obs_nvenc_hevc_soft"
+invoke create -> non-null
+> invoke jim_av1_nvenc create
+host.create_rerouted "obs_nvenc_av1_tex"
+invoke create -> non-null
+> invoke obs_nvenc_av1_cuda create
+host.create_rerouted "obs_nvenc_av1_soft"
+invoke create -> non-null
+> reset
+> invoke jim_nvenc create
+host.create_rerouted "obs_nvenc_h264_tex"
+invoke create -> non-null
+> get str preset
+preset = ""
+> get bool adaptive_quantization
+adaptive_quantization = false
+> has_user device
+has_user_value(device) = 0

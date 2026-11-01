@@ -1,0 +1,15 @@
+# S-022 basic file: one H.264 video track (30 fps, no B-frames) and one AAC track, no fragment boundary,
+# finalised. Shows the whole layout of a default file: ftyp | mdat(placeholder + init moov + one moof/mdat) | moov.
+# The tree descends into the first mdat (see README: soft-remuxed file); the 'hex' rows are the file.
+# Both timestamps/sizes are worked in the spec (section 4.1).
+enc v video codec h264 width 640 height 360 fps 30/1 extra 000000016742c01ed900a047fe880000000168ce3c80
+enc a audio codec aac rate 48000 extra 1190 bitrate 160
+mux mp4
+pkt v 0 0 1 gen:20
+pkt v 1 1 0 gen:12
+pkt v 2 2 0 gen:13
+pkt a 0 0 1 gen:10
+pkt a 1024 1024 1 gen:11
+pkt a 2048 2048 1 gen:12
+finalise
+dump

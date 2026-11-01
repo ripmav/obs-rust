@@ -1,0 +1,45 @@
+reset ok
+> reset
+reset ok
+> set audio_bitrate 160
+> dbr_frame 0 10000000 50000
+dbr enabled=0 cur=0 orig=0 prev=0 est=0 inc=0 audio=160 data_size=50000 inc_timeout=0 frames=1
+> dbr_frame 500000000 510000000 50000
+dbr enabled=0 cur=0 orig=0 prev=0 est=0 inc=0 audio=160 data_size=100000 inc_timeout=0 frames=2
+> dbr_frame 990000000 1000000000 50000
+dbr enabled=0 cur=0 orig=0 prev=0 est=1040 inc=0 audio=160 data_size=150000 inc_timeout=0 frames=3
+> dbr_frame 1000000000 1000000000 0
+dbr enabled=0 cur=0 orig=0 prev=0 est=1040 inc=0 audio=160 data_size=150000 inc_timeout=0 frames=4
+> dbr_frame 1990000000 2000000000 50000
+dbr enabled=0 cur=0 orig=0 prev=0 est=440 inc=0 audio=160 data_size=150000 inc_timeout=0 frames=4
+> dbr_frame 2900000000 3000000000 50000
+dbr enabled=0 cur=0 orig=0 prev=0 est=320 inc=0 audio=160 data_size=150000 inc_timeout=0 frames=4
+> reset
+reset ok
+> set audio_bitrate 160
+> dbr_frame 0 1000000 1000
+dbr enabled=0 cur=0 orig=0 prev=0 est=0 inc=0 audio=160 data_size=1000 inc_timeout=0 frames=1
+> dbr_frame 1000000000 1001000000 1000
+dbr enabled=0 cur=0 orig=0 prev=0 est=50 inc=0 audio=160 data_size=2000 inc_timeout=0 frames=2
+> dbr_frame 1500000000 1500000000 1000
+dbr enabled=0 cur=0 orig=0 prev=0 est=50 inc=0 audio=160 data_size=3000 inc_timeout=0 frames=3
+> reset
+reset ok
+> set audio_bitrate 5000
+> dbr_frame 0 1 100000
+dbr enabled=0 cur=0 orig=0 prev=0 est=0 inc=0 audio=5000 data_size=100000 inc_timeout=0 frames=1
+> dbr_frame 1500000000 1500000001 100000
+dbr enabled=0 cur=0 orig=0 prev=0 est=50 inc=0 audio=5000 data_size=200000 inc_timeout=0 frames=2
+> reset
+reset ok
+> set audio_bitrate 0
+> dbr_frame 0 1 12345
+dbr enabled=0 cur=0 orig=0 prev=0 est=0 inc=0 audio=0 data_size=12345 inc_timeout=0 frames=1
+> dbr_frame 1234567890 1234567891 6789
+dbr enabled=0 cur=0 orig=0 prev=0 est=124 inc=0 audio=0 data_size=19134 inc_timeout=0 frames=2
+> reset
+reset ok
+> dbr_frame 5000000000 5000000001 100
+dbr enabled=0 cur=0 orig=0 prev=0 est=0 inc=0 audio=0 data_size=100 inc_timeout=0 frames=1
+> dbr_frame 10 11 100
+dbr enabled=0 cur=0 orig=0 prev=0 est=0 inc=0 audio=0 data_size=100 inc_timeout=0 frames=1

@@ -1,0 +1,9 @@
+args_dump argc=1
+  argv[0]=@null
+  argv[1]=@null
+args_dump argc=4
+  argv[0]=@null
+  argv[1]="after"
+  argv[2]=@null
+  argv[3]="last"
+  argv[4]=@null

@@ -1,0 +1,45 @@
+# Audio enum helpers: get_audio_channels, get_audio_bytes_per_channel, is_audio_planar, get_audio_planes,
+# get_audio_size (bytes of ONE plane: planar => 1 channel), get_total_audio_size (all channels).
+# Command: ainfo FORMAT SPEAKERS FRAMES.  Formats: 0 UNKNOWN 1 U8BIT 2 16BIT 3 32BIT 4 FLOAT 5..8 the same planar.
+# Speakers: 0 UNKNOWN 1 MONO 2 STEREO 3 2.1 4 4.0 5 4.1 6 5.1 8 7.1. Values 7, 9 and 99 are not layouts => 0 channels.
+# FORMAT 3 (32BIT) is 4 bytes; U8BIT is unsigned 8 bits.
+ainfo 0 2 480
+ainfo 1 2 480
+ainfo 2 2 480
+ainfo 3 2 480
+ainfo 4 2 480
+ainfo 5 2 480
+ainfo 6 2 480
+ainfo 7 2 480
+ainfo 8 2 480
+# all speaker layouts with a planar and an interleaved format
+ainfo 4 0 1024
+ainfo 8 0 1024
+ainfo 4 1 1024
+ainfo 8 1 1024
+ainfo 4 2 1024
+ainfo 8 2 1024
+ainfo 4 3 1024
+ainfo 8 3 1024
+ainfo 4 4 1024
+ainfo 8 4 1024
+ainfo 4 5 1024
+ainfo 8 5 1024
+ainfo 4 6 1024
+ainfo 8 6 1024
+ainfo 4 7 1024
+ainfo 8 7 1024
+ainfo 4 8 1024
+ainfo 8 8 1024
+ainfo 4 9 1024
+ainfo 8 9 1024
+ainfo 4 99 1024
+ainfo 8 99 1024
+# unknown format values and zero frames
+ainfo 9 2 100
+ainfo 99 2 100
+ainfo 4 2 0
+ainfo 2 8 1
+# size arithmetic is size_t but the product starts from uint32 frames: 0xffffffff frames of 7.1 float
+ainfo 4 8 0xffffffff
+ainfo 8 8 0xffffffff

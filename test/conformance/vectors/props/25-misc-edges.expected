@@ -1,0 +1,68 @@
+add bool  ok
+add bool héllo wörld ok
+add bool with space ok
+dump P flags=0 param=@null
+  prop  type=bool desc="empty name" long=@null enabled=1 visible=1
+    -
+  prop héllo wörld type=bool desc="\xc3\x9cn\xc3\xafcode" long=@null enabled=1 visible=1
+    -
+  prop with space type=bool desc="x" long=@null enabled=1 visible=1
+    -
+get  found
+get héllo wörld found
+echo group-type-values
+add group g0 ok
+add group g1 ok
+add group g2 ok
+add group g3 ok
+info
+  prop g0 type=group desc="g0" long=@null enabled=1 visible=1
+    grouptype=invalid content=G0
+info
+  prop g3 type=group desc="g3" long=@null enabled=1 visible=1
+    grouptype=?7 content=G3
+echo many-list-items
+add list big ok
+list_add int -> 0
+list_add int -> 1
+list_add int -> 2
+list_add int -> 3
+list_add int -> 4
+list_add int -> 5
+list_add int -> 6
+list_add int -> 7
+list_add int -> 8
+list_add int -> 9
+list_item 9 name="i9" disabled=1 str=@null int=9 float=0 bool=0
+list_item 4 name="again" disabled=0 str=@null int=44 float=0 bool=0
+echo toggling-group-children
+add bool child ok
+dump P flags=0 param=@null
+  prop  type=bool desc="empty name" long=@null enabled=1 visible=1
+    -
+  prop héllo wörld type=bool desc="\xc3\x9cn\xc3\xafcode" long=@null enabled=1 visible=1
+    -
+  prop with space type=bool desc="x" long=@null enabled=1 visible=1
+    -
+  prop g0 type=group desc="g0" long=@null enabled=1 visible=1
+    grouptype=invalid content=G0
+  prop g1 type=group desc="g1" long=@null enabled=1 visible=0
+    grouptype=normal content=G1
+      prop child type=bool desc="c" long=@null enabled=0 visible=1
+        -
+  prop g2 type=group desc="g2" long=@null enabled=1 visible=1
+    grouptype=checkable content=G2
+  prop g3 type=group desc="g3" long=@null enabled=1 visible=1
+    grouptype=?7 content=G3
+  prop big type=list desc="big" long=@null enabled=1 visible=1
+    listtype=list format=int count=10
+     item 0 name="i0" disabled=0 value=0
+     item 1 name="i1" disabled=0 value=1
+     item 2 name="i2" disabled=0 value=2
+     item 3 name="i3" disabled=0 value=3
+     item 4 name="again" disabled=0 value=44
+     item 5 name="i5" disabled=0 value=5
+     item 6 name="i6" disabled=0 value=6
+     item 7 name="i7" disabled=0 value=7
+     item 8 name="i8" disabled=0 value=8
+     item 9 name="i9" disabled=1 value=9

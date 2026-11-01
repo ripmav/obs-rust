@@ -1,0 +1,31 @@
+# Interleaver start-up: the output buffers packets (sorted by dts_usec) until both streams delivered a first
+# packet and audio extends past the first video packet, then starts sending. All times are encoder-relative
+# (both encoders' start_ts are 0, so dts_usec is dts converted to microseconds).
+video 30 1 1280 720
+audio 48000
+venc v kf=0
+aenc a frame_size=1024
+out o av,encoded autobegin=1
+set_venc o v
+set_aenc o a
+start o
+echo --- audio first: nothing is sent yet
+emit a 0 0 0 4
+queue o
+emit a 1024 1024 0 4
+queue o
+echo --- first video keyframe arrives: audio does not yet reach past it
+emit v 0 0 1 4
+queue o
+state o
+echo --- audio at 42.6ms passes video dts 0 -> start; everything is released one packet at a time
+emit a 2048 2048 0 4
+queue o
+state o
+emit v 1 1 0 4
+queue o
+emit a 3072 3072 0 4
+queue o
+emit a 4096 4096 0 4
+queue o
+stop o

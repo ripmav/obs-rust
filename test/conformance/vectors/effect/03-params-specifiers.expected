@@ -1,0 +1,127 @@
+ep result=ok
+  errors count=0 has_errors=0
+  ep params=4 structs=0 funcs=0 samplers=0 techniques=0
+  ep_param 0 type=float name=a property=0 const=0 uniform=1 texture=0 array_count=0 annotations=0
+  ep_param 1 type=float name=b property=0 const=1 uniform=0 texture=0 array_count=0 annotations=0
+  ep_param 2 type=float name=c property=1 const=0 uniform=0 texture=0 array_count=0 annotations=0
+  ep_param 3 type=float name=d property=0 const=0 uniform=0 texture=0 array_count=0 annotations=0
+  error_string=@null
+effect (effect) params=4 techniques=0 viewproj=- world=-
+  param 0 name=a type=FLOAT annotations=0 default_size=0 default=-
+  param 1 name=b type=FLOAT annotations=0 default_size=0 default=-
+  param 2 name=c type=FLOAT annotations=0 default_size=0 default=-
+  param 3 name=d type=FLOAT annotations=0 default_size=0 default=-
+ep result=ok
+  errors count=0 has_errors=0
+  ep params=1 structs=0 funcs=0 samplers=0 techniques=0
+  ep_param 0 type=float name=a property=0 const=1 uniform=1 texture=0 array_count=0 annotations=0
+  error_string=@null
+effect (effect) params=1 techniques=0 viewproj=- world=-
+  param 0 name=a type=FLOAT annotations=0 default_size=0 default=-
+ep result=ok
+  errors count=0 has_errors=0
+  ep params=1 structs=0 funcs=0 samplers=0 techniques=0
+  ep_param 0 type=float name=a property=1 const=1 uniform=1 texture=0 array_count=0 annotations=0
+  error_string=@null
+effect (effect) params=1 techniques=0 viewproj=- world=-
+  param 0 name=a type=FLOAT annotations=0 default_size=0 default=-
+ep result=ok
+  errors count=1 has_errors=0
+    err 0 warning file="s4" row=1 col=19 msg="'property' keyword already specified"
+  ep params=1 structs=0 funcs=0 samplers=0 techniques=0
+  ep_param 0 type=float name=a property=1 const=0 uniform=0 texture=0 array_count=0 annotations=0
+  error_string="s4 (1, 19): 'property' keyword already specified\n"
+effect (effect) params=1 techniques=0 viewproj=- world=-
+  param 0 name=a type=FLOAT annotations=0 default_size=0 default=-
+ep result=ok
+  errors count=2 has_errors=0
+    err 0 warning file="s5" row=1 col=17 msg="'uniform' keyword already specified"
+    err 1 warning file="s5" row=1 col=25 msg="'uniform' keyword already specified"
+  ep params=1 structs=0 funcs=0 samplers=0 techniques=0
+  ep_param 0 type=float name=a property=0 const=0 uniform=1 texture=0 array_count=0 annotations=0
+  error_string="s5 (1, 17): 'uniform' keyword already specified\ns5 (1, 25): 'uniform' keyword already specified\n"
+effect (effect) params=1 techniques=0 viewproj=- world=-
+  param 0 name=a type=FLOAT annotations=0 default_size=0 default=-
+ep result=ok
+  errors count=2 has_errors=0
+    err 0 warning file="s6" row=1 col=13 msg="'const' keyword already specified"
+    err 1 warning file="s6" row=1 col=38 msg="'uniform' keyword already specified"
+  ep params=2 structs=0 funcs=0 samplers=0 techniques=0
+  ep_param 0 type=float name=a property=0 const=1 uniform=0 texture=0 array_count=0 annotations=0
+  ep_param 1 type=float name=b property=0 const=0 uniform=1 texture=0 array_count=0 annotations=0
+  error_string="s6 (1, 13): 'const' keyword already specified\ns6 (1, 38): 'uniform' keyword already specified\n"
+effect (effect) params=2 techniques=0 viewproj=- world=-
+  param 0 name=a type=FLOAT annotations=0 default_size=0 default=-
+  param 1 name=b type=FLOAT annotations=0 default_size=0 default=-
+ep result=ok
+  errors count=0 has_errors=0
+  ep params=2 structs=0 funcs=0 samplers=0 techniques=0
+  ep_param 0 type=float2 name=a property=0 const=0 uniform=1 texture=0 array_count=0 annotations=0
+  ep_param 1 type=float3 name=b property=1 const=0 uniform=0 texture=0 array_count=0 annotations=0
+  error_string=@null
+effect (effect) params=2 techniques=0 viewproj=- world=-
+  param 0 name=a type=VEC2 annotations=0 default_size=8 default=0000803f00000040 f=[1,2]
+  param 1 name=b type=VEC3 annotations=0 default_size=12 default=0000803f0000004000004040 f=[1,2,3]
+ep result=fail
+  errors count=1 has_errors=1
+    err 0 error file="s8" row=1 col=8 msg="Unexpected EOF"
+  ep params=0 structs=0 funcs=0 samplers=0 techniques=0
+  error_string="s8 (1, 8): Unexpected EOF\n"
+ep result=fail
+  errors count=1 has_errors=1
+    err 0 error file="s9" row=1 col=16 msg="Unexpected EOF"
+  ep params=0 structs=0 funcs=0 samplers=0 techniques=0
+  error_string="s9 (1, 16): Unexpected EOF\n"
+ep result=fail
+  errors count=1 has_errors=1
+    err 0 error file="s10" row=1 col=14 msg="Unexpected EOF"
+  ep params=0 structs=0 funcs=0 samplers=0 techniques=0
+  error_string="s10 (1, 14): Unexpected EOF\n"
+ep result=fail
+  errors count=1 has_errors=1
+    err 0 error file="s11" row=1 col=7 msg="Expected 'type'"
+  ep params=0 structs=0 funcs=0 samplers=0 techniques=0
+  error_string="s11 (1, 7): Expected 'type'\n"
+ep result=fail
+  errors count=1 has_errors=1
+    err 0 error file="f1" row=1 col=16 msg="'uniform' keyword cannot be used with a function"
+  ep params=0 structs=0 funcs=1 samplers=0 techniques=0
+  ep_func 0 name=f ret=float mapping=@null params=0
+    struct_deps=[] func_deps=[] param_deps=[] sampler_deps=[]
+    contents="{ return 1; }"
+  error_string="f1 (1, 16): 'uniform' keyword cannot be used with a function\n"
+ep result=fail
+  errors count=1 has_errors=1
+    err 0 error file="f2" row=1 col=14 msg="'const' keyword cannot be used with a function"
+  ep params=0 structs=0 funcs=1 samplers=0 techniques=0
+  ep_func 0 name=f ret=float mapping=@null params=0
+    struct_deps=[] func_deps=[] param_deps=[] sampler_deps=[]
+    contents="{ return 1; }"
+  error_string="f2 (1, 14): 'const' keyword cannot be used with a function\n"
+ep result=fail
+  errors count=1 has_errors=1
+    err 0 error file="f3" row=1 col=17 msg="'property' keyword cannot be used with a function"
+  ep params=0 structs=0 funcs=1 samplers=0 techniques=0
+  ep_func 0 name=f ret=float mapping=@null params=0
+    struct_deps=[] func_deps=[] param_deps=[] sampler_deps=[]
+    contents="{ return 1; }"
+  error_string="f3 (1, 17): 'property' keyword cannot be used with a function\n"
+ep result=fail
+  errors count=3 has_errors=1
+    err 0 error file="f4" row=1 col=31 msg="'property' keyword cannot be used with a function"
+    err 1 error file="f4" row=1 col=31 msg="'const' keyword cannot be used with a function"
+    err 2 error file="f4" row=1 col=31 msg="'uniform' keyword cannot be used with a function"
+  ep params=0 structs=0 funcs=1 samplers=0 techniques=0
+  ep_func 0 name=f ret=float mapping=@null params=0
+    struct_deps=[] func_deps=[] param_deps=[] sampler_deps=[]
+    contents="{ return 1; }"
+  error_string="f4 (1, 31): 'property' keyword cannot be used with a function\nf4 (1, 31): 'const' keyword cannot be used with a function\nf4 (1, 31): 'uniform' keyword cannot be used with a function\n"
+ep result=fail
+  errors count=2 has_errors=1
+    err 0 warning file="f5" row=1 col=17 msg="'uniform' keyword already specified"
+    err 1 error file="f5" row=1 col=24 msg="'uniform' keyword cannot be used with a function"
+  ep params=0 structs=0 funcs=1 samplers=0 techniques=0
+  ep_func 0 name=f ret=float mapping=@null params=0
+    struct_deps=[] func_deps=[] param_deps=[] sampler_deps=[]
+    contents="{ return 1; }"
+  error_string="f5 (1, 17): 'uniform' keyword already specified\nf5 (1, 24): 'uniform' keyword cannot be used with a function\n"

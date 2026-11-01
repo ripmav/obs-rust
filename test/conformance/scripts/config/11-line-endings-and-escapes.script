@@ -1,0 +1,15 @@
+# Lone CR as line terminator, header followed directly by another header, trailing backslash.
+open_string "[A]\rk=v\rz=1\r"
+sections
+get_string A k
+get_string A z
+open_string "[A][B]\nk=1\n"
+sections
+get_string B k
+open_string "[A]\nk=end\\\nz=2\n"
+get_string A k
+get_string A z
+open_string "[A]\nk=tail\\"
+get_string A k
+open_string "[A]\nk=\\q\\\\\\n\n"
+get_string A k

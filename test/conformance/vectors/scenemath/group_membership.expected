@@ -1,0 +1,74 @@
+add a ok
+add b ok
+add c ok
+group g ok
+item g id=4 parent=main group=1 scene=0 abs=0 vis=0 user_vis=1 sel=0 lock=0 need_update=0
+  stored pos=-1.5925926,-0.814814806 rot=0 scale=1,1 scale_ref=1920,1080 align=5
+  bounds type=0 align=0 size=0,0 crop_to_bounds=0
+  crop l=0 r=0 t=0 b=0 bounds_crop l=0 r=0 t=0 b=0 last=200,100
+  output_scale=1,1 box_scale=200,100
+  draw [1,0,0,0] [0,1,0,0] [0,0,1,0] [100,100,0,1]
+  box [200,0,0,0] [0,100,0,0] [0,0,1,0] [100,100,0,1]
+-- add b
+order main: g{b a} c
+item g id=4 parent=main group=1 scene=0 abs=0 vis=0 user_vis=1 sel=0 lock=0 need_update=0
+  stored pos=-1.5925926,-0.814814806 rot=0 scale=1,1 scale_ref=1920,1080 align=5
+  bounds type=0 align=0 size=0,0 crop_to_bounds=0
+  crop l=0 r=0 t=0 b=0 bounds_crop l=0 r=0 t=0 b=0 last=500,400
+  output_scale=1,1 box_scale=500,400
+  draw [1,0,0,0] [0,1,0,0] [0,0,1,0] [100,100,0,1]
+  box [500,0,0,0] [0,400,0,0] [0,0,1,0] [100,100,0,1]
+scene_size g 500 400 (cx=500 cy=400 custom=1 last=0,0)
+item b id=2 parent=g group=0 scene=0 abs=0 vis=1 user_vis=1 sel=0 lock=0 need_update=0
+  stored pos=-1.22222221,-0.444444418 rot=0 scale=1,1 scale_ref=1920,1080 align=5
+  bounds type=0 align=0 size=0,0 crop_to_bounds=0
+  crop l=0 r=0 t=0 b=0 bounds_crop l=0 r=0 t=0 b=0 last=200,100
+  output_scale=1,1 box_scale=200,100
+  draw [1,0,0,0] [0,1,0,0] [0,0,1,0] [300,300,0,1]
+  box [200,0,0,0] [0,100,0,0] [0,0,1,0] [300,300,0,1]
+-- add c (outside in the middle of the order)
+order main: g{c b a}
+item g id=4 parent=main group=1 scene=0 abs=0 vis=0 user_vis=1 sel=0 lock=0 need_update=0
+  stored pos=-1.5925926,-0.814814806 rot=0 scale=1,1 scale_ref=1920,1080 align=5
+  bounds type=0 align=0 size=0,0 crop_to_bounds=0
+  crop l=0 r=0 t=0 b=0 bounds_crop l=0 r=0 t=0 b=0 last=1000,600
+  output_scale=1,1 box_scale=1000,600
+  draw [1,0,0,0] [0,1,0,0] [0,0,1,0] [100,100,0,1]
+  box [1000,0,0,0] [0,600,0,0] [0,0,1,0] [100,100,0,1]
+-- remove b: goes to the bottom of main
+order main: b g{c a}
+item g id=4 parent=main group=1 scene=0 abs=0 vis=0 user_vis=1 sel=0 lock=0 need_update=0
+  stored pos=-1.5925926,-0.814814806 rot=0 scale=1,1 scale_ref=1920,1080 align=5
+  bounds type=0 align=0 size=0,0 crop_to_bounds=0
+  crop l=0 r=0 t=0 b=0 bounds_crop l=0 r=0 t=0 b=0 last=1000,600
+  output_scale=1,1 box_scale=1000,600
+  draw [1,0,0,0] [0,1,0,0] [0,0,1,0] [100,100,0,1]
+  box [1000,0,0,0] [0,600,0,0] [0,0,1,0] [100,100,0,1]
+item b id=2 parent=main group=0 scene=0 abs=0 vis=1 user_vis=1 sel=0 lock=0 need_update=0
+  stored pos=-1.03703701,-0.259259284 rot=0 scale=1,1 scale_ref=1920,1080 align=5
+  bounds type=0 align=0 size=0,0 crop_to_bounds=0
+  crop l=0 r=0 t=0 b=0 bounds_crop l=0 r=0 t=0 b=0 last=200,100
+  output_scale=1,1 box_scale=200,100
+  draw [1,0,0,0] [0,1,0,0] [0,0,1,0] [400,400,0,1]
+  box [200,0,0,0] [0,100,0,0] [0,0,1,0] [400,400,0,1]
+get b pos=400,400 rot=0 scale=1,1 align=5 btype=0 balign=0 bounds=0,0 bcrop=0 crop=0,0,0,0
+info b pos=400,400 rot=0 scale=1,1 align=5 btype=0 balign=0 bounds=0,0 crop_to_bounds=0
+ box_scale=200,100
+-- removing the last child leaves an empty group
+order main: c a b g{}
+scene_size g 0 0 (cx=0 cy=0 custom=1 last=0,0)
+-- QUIRK: the empty group keeps its stale matrices until the next update
+item g id=4 parent=main group=1 scene=0 abs=0 vis=0 user_vis=1 sel=0 lock=0 need_update=0
+  stored pos=-0.111111112,0.111111164 rot=0 scale=1,1 scale_ref=1920,1080 align=5
+  bounds type=0 align=0 size=0,0 crop_to_bounds=0
+  crop l=0 r=0 t=0 b=0 bounds_crop l=0 r=0 t=0 b=0 last=200,100
+  output_scale=1,1 box_scale=200,100
+  draw [1,0,0,0] [0,1,0,0] [0,0,1,0] [900,600,0,1]
+  box [200,0,0,0] [0,100,0,0] [0,0,1,0] [900,600,0,1]
+item g id=4 parent=main group=1 scene=0 abs=0 vis=0 user_vis=1 sel=0 lock=0 need_update=0
+  stored pos=-0.111111112,0.111111164 rot=0 scale=1,1 scale_ref=1920,1080 align=5
+  bounds type=0 align=0 size=0,0 crop_to_bounds=0
+  crop l=0 r=0 t=0 b=0 bounds_crop l=0 r=0 t=0 b=0 last=0,0
+  output_scale=1,1 box_scale=0,0
+  draw [1,0,0,0] [0,1,0,0] [0,0,1,0] [900,600,0,1]
+  box [0,0,0,0] [0,0,0,0] [0,0,1,0] [900,600,0,1]

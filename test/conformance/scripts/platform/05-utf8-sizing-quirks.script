@@ -1,0 +1,21 @@
+# QUIRK Q-4: in sizing mode (out = null) utf8_to_wchar does not apply the surrogate/BOM checks, so
+# the size it reports can be larger than what a following real conversion produces. The library
+# header documents this. Callers must use the return value of the real conversion.
+u2w 1 len 61eda08062 null
+u2w 1 len 61eda08062 4
+u2w 2 len efbbbf61 null
+u2w 2 len efbbbf61 4
+u2w 3 len 61efbbbfeda08062 null
+u2w 3 len 61efbbbfeda08062 4
+# strict mode: sizing succeeds where the real conversion fails
+u2w 0 len eda080 null
+u2w 0 len eda080 4
+# QUIRK Q-5: with IGNORE_ERROR a skipped character still needs room in the output buffer when
+# it comes after the buffer is full (the buffer check happens before the character is dropped)
+u2w 1 len 61eda080 1
+u2w 1 len 61eda080 2
+u2w 1 len eda08061 1
+u2w 1 len eda08061 2
+# the sequence validity checks do apply in sizing mode
+u2w 1 len 61ff62 null
+u2w 0 len 61ff62 null

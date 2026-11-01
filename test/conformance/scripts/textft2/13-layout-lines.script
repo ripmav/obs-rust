@@ -1,0 +1,42 @@
+# Vertex layout without wrapping: baseline, line step max_h+4, CR skipped, repeated newlines, empty text,
+# unmapped characters (notdef glyph), trailing newline not counted in cy (S-038-R57..R66).
+events off
+reset
+ascii 5 8 0 8 384
+glyph 0x67 0x67 5 12 0 8 384
+font "Sans Serif" - 0 p/sans
+load
+create s 2
+setfont s "Sans Serif" - 20 0
+set s text "ab"
+update s
+verts s
+size s
+echo --- a tall glyph (g: h=12, top=8) enlarges cy below the baseline
+set s text "agb"
+update s
+verts s
+size s
+echo --- newline: x back to 0, y + (max_h + 4)
+set s text "ab\ncg"
+update s
+verts s
+size s
+echo --- CRLF: the CR produces no quad but is part of the allocated count
+set s text "a\r\nb"
+update s
+verts s
+echo --- consecutive and leading newlines each add a line; a trailing newline adds none to cy
+set s text "\n\na\n"
+update s
+verts s
+size s
+echo --- unmapped character draws glyph 0
+set s text "a\xc3\xa9b"
+update s
+verts s
+echo --- text of only newlines
+set s text "\n\n"
+update s
+verts s
+size s

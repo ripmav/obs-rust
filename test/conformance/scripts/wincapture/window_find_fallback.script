@@ -1,0 +1,24 @@
+# Enumeration through FindWindowEx fails (returns no window): the finder falls back to GetWindow(GW_CHILD)/GetNextWindow.
+# Same results are required as in the normal path. Also: windows whose process cannot be opened or whose image
+# path has no backslash are reported with exe "unknown"; windows of the current process never match.
+win_reset
+win_add 1 "First" "C1" "\\Device\\X\\a.exe" 50
+win_add 2 "Second" "C2" "\\Device\\X\\b.exe" 51
+win_add 3 "Mine" "C3" "\\Device\\X\\obs.exe" 4242
+win_add 4 "NoAccess" "C4" "!noaccess" 52
+win_add 5 "NoPath" "C5" "!nopath" 53
+win_add 6 "NoSlash" "C6" "bare.exe" 54
+find include title C2 "Second" b.exe
+win_fallback 1
+find include title C2 "Second" b.exe
+find include title C1 "First" a.exe
+find include class C3 "Mine" obs.exe
+find include exe C4 "x" unknown
+find include exe C5 "x" unknown
+find include exe C6 "x" unknown
+find include class C6 "NoSlash" unknown
+win_info 1
+win_info 3
+win_info 4
+win_info 5
+win_info 6

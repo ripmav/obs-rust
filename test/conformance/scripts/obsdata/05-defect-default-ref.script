@@ -1,0 +1,35 @@
+# DEFECT D1: re-setting a default OBJECT or ARRAY on an item that has no user value
+# does not take a reference on the new object in the reference implementation (the
+# old default is released). A conforming implementation takes the reference.
+# Lines starting with "info_" are informational and not compared (README).
+# Everything runs in a forked child (`try`) because the reference corrupts its
+# own counts; the parent state is untouched.
+new p
+new q
+new r
+try set_default_obj p k q ; refs q ; set_default_obj p k r ; info_refs q ; info_refs r
+echo --- correct behaviour when a user value exists
+new u
+new o1
+new o2
+set_obj u k o1
+set_default_obj u k o1
+refs o1
+set_default_obj u k o2
+refs o1
+refs o2
+echo --- correct behaviour on the first default (item created by the default)
+new v
+set_default_obj v k q
+refs q
+echo --- same defect for arrays
+a_new a1
+a_new a2
+new w
+try set_default_array w k a1 ; info_a_refs a1 ; set_default_array w k a2 ; info_a_refs a1 ; info_a_refs a2
+echo --- autoselect layer counts correctly
+new x
+set_autoselect_obj x k q
+set_autoselect_obj x k r
+refs q
+refs r

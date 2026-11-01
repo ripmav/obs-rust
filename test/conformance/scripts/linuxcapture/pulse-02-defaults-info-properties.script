@@ -1,0 +1,24 @@
+# S-049 pulse: registration data, defaults and the device lists. Input list = sources that are not
+# monitors; output list = sinks having a monitor source (listed under the monitor source's name);
+# a "default" entry is inserted at index 0 only if at least one device was listed.
+pulse-info input
+pulse-info output
+pulse-defaults
+get device_id str
+# no devices: no "Default" entry
+pulse-props input
+props
+pulse-props output
+props
+pulse-source alsa_input.mic "Built-in Microphone" - s16le 48000 2
+pulse-source alsa_output.speakers.monitor "Monitor of Speakers" 0 s16le 48000 2
+pulse-source alsa_input.usb "USB \"Mic\"" - float32le 44100 1
+pulse-sink alsa_output.speakers "Speakers" 1 alsa_output.speakers.monitor
+pulse-sink bad.sink "Sink without monitor" - ""
+pulse-sink hdmi "HDMI" 5 hdmi.monitor
+pulse-props input
+props
+pulse-props output
+props
+# context cannot be initialised: list calls still happen (return value ignored), unref is balanced
+pulse-defaults

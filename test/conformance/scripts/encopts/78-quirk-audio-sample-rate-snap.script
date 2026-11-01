@@ -1,0 +1,20 @@
+# QUIRK (Q-12). Sample-rate snapping starts from candidate 0 and only replaces it when a
+# listed rate is strictly closer than the current candidate. An output rate that is closer
+# to 0 than to every listed rate stays unchanged (unsupported); otherwise the closest
+# listed rate wins and ties keep the earlier list entry.
+data D
+aud_defaults D
+aud_formats fltp
+aud_rates 44100,48000
+audio 2 2 8000
+aud_create aac D
+audio 2 2 22000
+aud_create aac D
+audio 2 2 22050
+aud_create aac D
+audio 2 2 22051
+aud_create aac D
+audio 2 2 46050
+aud_create aac D
+audio 2 2 46049
+aud_create aac D

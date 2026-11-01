@@ -1,0 +1,98 @@
+log debug canvas 'Main' (<uuid>) created
+startup -> true
+ev gs_create module=fake-gfx adapter=0
+ev effect default.effect
+ev effect opaque.effect
+ev effect solid.effect
+ev effect repeat.effect
+ev effect format_conversion.effect
+ev effect bicubic_scale.effect
+ev effect lanczos_scale.effect
+ev effect area.effect
+ev effect bilinear_lowres_scale.effect
+ev effect premultiplied_alpha.effect
+ev sampler max_anisotropy=1
+ev texture 2x2 fmt=3 levels=1 flags=0
+log info ---------------------------------
+log info video settings reset:  base resolution:   1920x1080  output resolution: 1280x720  downscale filter:  Bicubic  fps:               30/1  format:            I420  YUV mode:          Rec. 709/Partial
+log info NV12 texture support not available
+log info P010 texture support not available
+ev texture 1280x720 fmt=2 levels=1 flags=4
+ev texture 640x360 fmt=2 levels=1 flags=4
+ev texture 640x360 fmt=2 levels=1 flags=4
+ev stagesurface 1280x720 fmt=2
+ev stagesurface 640x360 fmt=2
+ev stagesurface 640x360 fmt=2
+ev stagesurface 1280x720 fmt=2
+ev stagesurface 640x360 fmt=2
+ev stagesurface 640x360 fmt=2
+ev texture 1920x1080 fmt=5 levels=1 flags=4
+ev texture 1280x720 fmt=5 levels=1 flags=4
+reset_video -> success
+  after_call base=1920x1080 out=1280x720 fps=30/1 fmt=I420 cs=2 range=1 scale=2 gpu=1 adapter=0
+log info ---------------------------------
+log info video settings reset:  base resolution:   1920x1080  output resolution: 1280x720  downscale filter:  Bicubic  fps:               30/1  format:            BGRA  YUV mode:          None
+ev stagesurface 1280x720 fmt=5
+ev stagesurface 1280x720 fmt=5
+ev texture 1920x1080 fmt=5 levels=1 flags=4
+ev texture 1280x720 fmt=5 levels=1 flags=4
+reset_video -> success
+  after_call base=1920x1080 out=1280x720 fps=30/1 fmt=BGRA cs=2 range=1 scale=2 gpu=0 adapter=0
+log info ---------------------------------
+log info video settings reset:  base resolution:   640x360  output resolution: 640x360  downscale filter:  Bicubic  fps:               30/1  format:            I010  YUV mode:          Rec. 709/Partial
+ev stagesurface 640x360 fmt=9
+ev stagesurface 640x360 fmt=9
+ev texture 640x360 fmt=9 levels=1 flags=4
+ev texture 640x360 fmt=9 levels=1 flags=4
+reset_video -> success
+  after_call base=640x360 out=640x360 fps=30/1 fmt=I010 cs=2 range=1 scale=2 gpu=0 adapter=0
+log info ---------------------------------
+log info video settings reset:  base resolution:   640x360  output resolution: 640x360  downscale filter:  Bicubic  fps:               30/1  format:            P010  YUV mode:          Rec. 709/Partial
+log info NV12 texture support not available
+log info P010 texture support enabled
+ev texture_p010 640x360 flags=68
+ev texture 640x360 fmt=8 levels=1 flags=4
+ev texture 320x180 fmt=22 levels=1 flags=4
+ev stagesurface 640x360 fmt=8
+ev stagesurface 320x180 fmt=22
+ev stagesurface 640x360 fmt=8
+ev stagesurface 320x180 fmt=22
+ev texture 640x360 fmt=9 levels=1 flags=4
+ev texture 640x360 fmt=9 levels=1 flags=4
+reset_video -> success
+  after_call base=640x360 out=640x360 fps=30/1 fmt=P010 cs=2 range=1 scale=2 gpu=1 adapter=0
+log info ---------------------------------
+log info video settings reset:  base resolution:   640x360  output resolution: 640x360  downscale filter:  Bicubic  fps:               30/1  format:            NV12  YUV mode:          Rec. 709/Partial
+log info NV12 texture support not available
+log info P010 texture support not available
+ev texture 640x360 fmt=2 levels=1 flags=4
+ev texture 320x180 fmt=18 levels=1 flags=4
+ev stagesurface 640x360 fmt=2
+ev stagesurface 320x180 fmt=18
+ev stagesurface 640x360 fmt=2
+ev stagesurface 320x180 fmt=18
+ev texture 640x360 fmt=5 levels=1 flags=4
+ev texture 640x360 fmt=5 levels=1 flags=4
+reset_video -> success
+  after_call base=640x360 out=640x360 fps=30/1 fmt=NV12 cs=2 range=1 scale=2 gpu=1 adapter=0
+log info ---------------------------------
+log info video settings reset:  base resolution:   640x360  output resolution: 640x360  downscale filter:  Bicubic  fps:               30/1  format:            P010  YUV mode:          Rec. 709/Partial
+log info NV12 texture support not available
+log info P010 texture support not available
+ev texture 640x360 fmt=8 levels=1 flags=4
+ev texture 320x180 fmt=22 levels=1 flags=4
+ev stagesurface 640x360 fmt=8
+ev stagesurface 320x180 fmt=22
+ev stagesurface 640x360 fmt=8
+ev stagesurface 320x180 fmt=22
+ev texture 640x360 fmt=9 levels=1 flags=4
+ev texture 640x360 fmt=9 levels=1 flags=4
+reset_video -> success
+  after_call base=640x360 out=640x360 fps=30/1 fmt=P010 cs=2 range=1 scale=2 gpu=1 adapter=0
+mix gpu_conversion=1 conversion_needed=1 techs=P010_SRGB_Y,P010_SRGB_UV,- wi=0.00156250002 hi=0.00277777785 nv12=0 p010=0 render_space=1 mix_audio=1 view=set
+mix matrix -0.100348592 -0.337579101 0.437927693 0.500488698 0.182050452 0.61242938 0.0618252233 0.0625611171 0.437927693 -0.397772253 -0.0401554219 0.500488758 -0 0 -0 1
+  ovi base=640x360 out=640x360 fps=30/1 fmt=P010 cs=2 range=1 scale=2 gpu=1 adapter=0
+shutdown begin
+log info Freeing OBS context data
+log debug canvas 'Main' (<uuid>) destroyed
+shutdown end obs=NULL

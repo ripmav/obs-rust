@@ -1,0 +1,70 @@
+# File watching in video_tick: checks at most once per second; a changed mtime sets update_file, the reload
+# happens on the NEXT check (>= 1 s later) (S-038-R104..R109).
+events off
+reset
+ascii 5 8 0 8 384
+font "Sans Serif" - 0 p/sans
+load
+create s 2
+setfont s "Sans Serif" - 20 0
+set s from_file true
+clock 1000
+file w.txt "v1"
+touch w.txt 100
+sets s text_file @TMP@/w.txt
+update s
+state s
+echo --- tick before 1 s passed: nothing
+clock 1500
+tick s
+state s
+echo --- first check after 1 s: mtime differs from 0 -> update_file set, no reload yet
+clock 2000
+file w.txt "v2"
+touch w.txt 200
+tick s
+state s
+echo --- next check reloads
+clock 3000
+tick s
+state s
+echo --- unchanged file: no further reload
+file w.txt "v3-written-but-same-mtime"
+touch w.txt 200
+clock 4000
+tick s
+clock 5000
+tick s
+state s
+echo --- deleted file: mtime -1 recorded, then reload attempt fails with one warning and keeps text
+rm w.txt
+clock 6000
+tick s
+clock 7000
+tick s
+clock 8000
+tick s
+state s
+echo --- log mode reload on tick
+set s log_mode true
+set s log_lines 1
+file w.txt "a\nb\nc"
+touch w.txt 300
+update s
+state s
+clock 9000
+tick s
+clock 10000
+file w.txt "a\nb\nc\nd"
+touch w.txt 400
+tick s
+clock 11000
+tick s
+state s
+echo --- not from_file: tick does nothing
+set s from_file false
+set s text "m"
+update s
+clock 20000
+tick s
+state s

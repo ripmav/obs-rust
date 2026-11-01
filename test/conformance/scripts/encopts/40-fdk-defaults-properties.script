@@ -1,0 +1,7 @@
+# CORE. libfdk AAC encoder settings: defaults (bitrate 128 kbps, afterburner on) and
+# property list (bitrate 32..1024 step 32, afterburner checkbox).
+data D
+fdk_defaults D
+dump D
+fdk_props P
+props_dump P

@@ -1,0 +1,91 @@
+backend vertexshader_create location="a.effect (Vertex shader, technique Draw, pass 0)" len=164 fnv=50eaacbce1b074a9
+  sparam 0 name=World type=MATRIX4X4 array=0
+  sparam 1 name=ViewProj type=MATRIX4X4 array=0
+  result ok
+backend pixelshader_create location="a.effect (Pixel shader, technique Draw, pass 0)" len=253 fnv=9f6787840c5178e7
+  sparam 0 name=image type=TEXTURE array=0
+  sparam 1 name=color type=VEC4 array=0
+  sparam 2 name=amount type=FLOAT array=0
+  sparam 3 name=count type=INT array=0
+  sparam 4 name=weights type=FLOAT array=4
+  result ok
+backend vertexshader_create location="a.effect (Vertex shader, technique Draw, pass 1)" len=164 fnv=50eaacbce1b074a9
+  sparam 0 name=World type=MATRIX4X4 array=0
+  sparam 1 name=ViewProj type=MATRIX4X4 array=0
+  result ok
+backend pixelshader_create location="a.effect (Pixel shader, technique Draw, pass 1)" len=253 fnv=9f6787840c5178e7
+  sparam 0 name=image type=TEXTURE array=0
+  sparam 1 name=color type=VEC4 array=0
+  sparam 2 name=amount type=FLOAT array=0
+  sparam 3 name=count type=INT array=0
+  sparam 4 name=weights type=FLOAT array=4
+  result ok
+backend vertexshader_create location="a.effect (Vertex shader, technique Other, pass 0)" len=164 fnv=50eaacbce1b074a9
+  sparam 0 name=World type=MATRIX4X4 array=0
+  sparam 1 name=ViewProj type=MATRIX4X4 array=0
+  result ok
+backend pixelshader_create location="a.effect (Pixel shader, technique Other, pass 0)" len=253 fnv=9f6787840c5178e7
+  sparam 0 name=image type=TEXTURE array=0
+  sparam 1 name=color type=VEC4 array=0
+  sparam 2 name=amount type=FLOAT array=0
+  sparam 3 name=count type=INT array=0
+  sparam 4 name=weights type=FLOAT array=4
+  result ok
+effect e result=ok
+  error_string=@null
+--- parameters
+nparams -> 7
+nparams -> 0
+param e:#0 -> name=ViewProj type=MATRIX4X4
+param e:#6 -> name=weights type=FLOAT
+param e:#7 -> null
+param e:#100 -> null
+param e:color -> name=color type=VEC4
+param e:Color -> null
+param e:nothing -> null
+param e:@null -> null
+param @null -> null
+--- special parameters
+viewproj -> name=ViewProj type=MATRIX4X4
+world -> name=World type=MATRIX4X4
+viewproj -> null
+world -> null
+--- annotations
+nannotations -> 3
+nannotations -> 0
+nannotations -> 0
+param e:amount/label -> name=label type=STRING
+param e:amount/#2 -> name=max type=FLOAT
+param e:amount/MIN -> null
+annotation_idx 2 -> name=max type=FLOAT
+annotation_idx 3 -> past-end
+annotation_idx 4 -> null
+annotation_idx 0 -> null
+annotation_idx 0 -> null
+--- annotation values are plain parameters: defaults only
+get_default_val size=7 hex=416d6f756e7400
+get_default_val size=4 hex=0000803f
+--- techniques and passes
+technique Draw -> found passes=2
+technique Other -> found passes=1
+technique draw -> null
+technique  -> null
+technique Draw -> null
+pass_by_idx 0 -> name=first
+pass_by_idx 1 -> name=second
+pass_by_idx 2 -> past-end
+pass_by_idx 3 -> null
+pass_by_name first -> index=0
+pass_by_name second -> index=1
+pass_by_name third -> null
+current_technique -> null
+current_technique -> null
+--- duplicate declarations: the LAST parameter named ViewProj / World is the special one, lookups by name find the FIRST
+effect d result=ok
+  error_string=@null
+nparams -> 6
+viewproj -> name=ViewProj type=MATRIX4X4
+world -> name=World type=MATRIX4X4
+param d:ViewProj -> name=ViewProj type=FLOAT
+param d:other -> name=other type=INT
+param d:#1 -> name=ViewProj type=MATRIX4X4

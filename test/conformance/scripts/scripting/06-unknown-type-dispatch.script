@@ -1,0 +1,27 @@
+# Scripts whose type is not LUA or PYTHON (forced by the runner) fall through every dispatch:
+# get_properties -> empty set, save -> settings only, update/reload -> no backend call, destroy -> nothing.
+fake_define /s/u.lua load=ok desc=D props=2
+load
+create S0 /s/u.lua k v
+forcetype S0 unknown
+info S0
+props S0
+save S0
+settings S0 saved
+update S0 k w
+settings S0 k
+reload S0
+destroy S0
+# destroy did nothing: the object is still alive and must be released by the backend directly
+info S0
+free_backend S0
+# type PYTHON without a Python backend compiled in behaves the same way (no dispatch entry)
+create S1 /s/u.lua
+forcetype S1 python
+info S1
+props S1
+reload S1
+destroy S1
+forcetype S1 lua
+free_backend S1
+unload

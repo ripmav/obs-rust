@@ -1,0 +1,3 @@
+source id=ffmpeg_source type=0 output_flags=0x2087 icon=11 name=FFmpegSource
+  callbacks create=1 destroy=1 get_defaults=1 get_properties=1 activate=1 deactivate=1 video_tick=1 missing_files=1 update=1
+  media play_pause=1 restart=1 stop=1 get_duration=1 get_time=1 set_time=1 get_state=1

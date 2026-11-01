@@ -1,0 +1,50 @@
+# S-022 avc1 sample entry: visual sample entry fields, compressorname from the encoder id
+# (length-prefixed in 32 bytes, truncated to 31), colr box for every colour space / range, pasp,
+# width/height from the encoder. SPS/PPS are converted to an avcC (S-012). Each case flushes to the
+# end of its stsd; only the tree and the entry bytes matter.
+enc v video codec h264 width 1280 height 720 fps 60/1 id obs_x264 cs default range partial extra 000000016742c01ed900a047fe880000000168ce3c80
+mux mp4 skipfin
+pkt v 0 0 1 gen:10
+finalise
+hex
+echo --- colour space matrix
+reset
+enc v video codec h264 width 64 height 48 fps 25/1 id - cs 601 range full extra 000000016742c01ed900a047fe880000000168ce3c80
+mux mp4 skipfin
+pkt v 0 0 1 gen:10
+finalise
+hex
+reset
+enc v video codec h264 width 64 height 48 fps 25/1 id "a_very_long_encoder_id_that_exceeds_31_chars" cs srgb range default extra 000000016742c01ed900a047fe880000000168ce3c80
+mux mp4 skipfin
+pkt v 0 0 1 gen:10
+finalise
+hex
+reset
+enc v video codec h264 width 64 height 48 fps 25/1 cs pq range partial extra 000000016742c01ed900a047fe880000000168ce3c80
+mux mp4 skipfin
+pkt v 0 0 1 gen:10
+finalise
+tree
+hex
+reset
+enc v video codec h264 width 64 height 48 fps 25/1 cs hlg range full extra 000000016742c01ed900a047fe880000000168ce3c80
+mux mp4 skipfin
+pkt v 0 0 1 gen:10
+finalise
+hex
+echo --- no extra data: avcC is omitted, the rest of the entry follows
+reset
+enc v video codec h264 width 64 height 48 fps 25/1 extra -
+mux mp4 skipfin
+pkt v 0 0 1 gen:10
+finalise
+tree
+echo --- big dimensions (16-bit wrap in the sample entry, 32-bit 16.16 in tkhd)
+reset
+enc v video codec h264 width 70000 height 4096 fps 25/1 extra 000000016742c01ed900a047fe880000000168ce3c80
+mux mp4
+pkt v 0 0 1 gen:10
+pkt v 1 1 0 gen:10
+finalise
+hex

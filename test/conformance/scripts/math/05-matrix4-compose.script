@@ -1,0 +1,19 @@
+mat4 i 1 0 0 0  0 1 0 0  0 0 1 0  0 0 0 1
+vec3 t 10 20 30
+vec3 s 2 3 4
+aa rot 0 0 1 1.5707963
+call tr matrix4_translate3v i t
+call sc matrix4_scale i s
+call ro matrix4_rotate_aa i rot
+call trsc matrix4_scale tr s
+call sctr matrix4_translate3v sc t
+call ti matrix4_translate3v_i t sc
+call si matrix4_scale_i s tr
+quat q 0 0 0.70710678 0.70710678
+call fq matrix4_from_quat q
+call fa matrix4_from_axisang rot
+call rq matrix4_rotate i q
+call ri matrix4_rotate_i q tr
+call m43 matrix4_mul_4x3_only tr sc
+quat zq 0 0 0 0
+call fzq matrix4_from_quat zq

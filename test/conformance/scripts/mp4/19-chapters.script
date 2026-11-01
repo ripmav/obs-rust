@@ -1,0 +1,71 @@
+# S-022 chapters. The first mp4_mux_add_chapter call creates a text track with the next free track id
+# (after the audio/video tracks) and timescale 1000. A chapter at dts_usec > 0 as the very first
+# chapter first inserts an automatic chapter at 0 named by the locale string MP4Output.StartChapter.
+# Negative times are rejected (returns false, nothing created). dts is converted to milliseconds
+# (truncating). Chapter sample = u16 name length + name + 12-byte 'encd' trailer. At the final flush a
+# 'Dummy' chapter at the longest track duration terminates the list; chapter samples are the last
+# bytes of the final mdat and have no traf. The A/V tracks get tref/chap -> chapter track id.
+enc v video codec h264 width 320 height 240 fps 30/1 extra 000000016742c01ed900a047fe880000000168ce3c80
+enc a audio codec aac rate 48000 extra 1190
+mux mp4
+echo negative-rejected
+chapter -1 Nope
+chapter 1500000 "Intro"
+chapter 2500999 "Second"
+chapter 1000000 "OutOfOrder"
+pkt v 0 0 1 gen:10
+pkt v 30 30 0 gen:10
+pkt a 0 0 1 gen:10
+pkt a 48000 48000 1 gen:10
+finalise
+dump
+echo --- chapter at 0 does not trigger the automatic chapter; empty name; very long name
+reset
+enc v video codec h264 width 320 height 240 fps 30/1 extra 000000016742c01ed900a047fe880000000168ce3c80
+mux mp4
+chapter 0 -
+chapter 500000 "Half"
+pkt v 0 0 1 gen:10
+pkt v 3 3 0 gen:10
+finalise
+tree
+hex
+echo --- start chapter text from the locale
+reset
+enc v video codec h264 width 320 height 240 fps 30/1 extra 000000016742c01ed900a047fe880000000168ce3c80
+start_chapter_text Anfang
+mux mp4
+chapter 1000000 Ende
+pkt v 0 0 1 gen:10
+pkt v 3 3 0 gen:10
+finalise
+hex
+echo --- chapter added after the first fragment was written; MOV flavor with chapters
+reset
+enc v video codec h264 width 320 height 240 fps 30/1 extra 000000016742c01ed900a047fe880000000168ce3c80
+mux mov
+pkt v 0 0 1 gen:10
+pkt v 1 1 0 gen:10
+pkt v 2 2 1 gen:10
+pkt v 3 3 0 gen:10
+pkt v 4 4 1 gen:10
+pkt v 5 5 0 gen:10
+chapter 66666 "Late"
+finalise
+dump
+echo --- chapters only (no packets): Dummy chapter has duration of previous
+reset
+enc v video codec h264 width 320 height 240 fps 30/1 extra 000000016742c01ed900a047fe880000000168ce3c80
+mux mp4
+chapter 100000 "Only"
+finalise
+tree
+echo --- skipfin with chapters: chapter track missing from the fragmented moov but tref present
+reset
+enc v video codec h264 width 320 height 240 fps 30/1 extra 000000016742c01ed900a047fe880000000168ce3c80
+mux mp4 skipfin
+chapter 0 "Zero"
+pkt v 0 0 1 gen:10
+pkt v 1 1 0 gen:10
+finalise
+tree

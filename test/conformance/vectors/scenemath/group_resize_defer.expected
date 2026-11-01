@@ -1,0 +1,37 @@
+add a ok
+add b ok
+group g ok
+scene_size g 600 300 (cx=600 cy=300 custom=1 last=0,0)
+item g id=3 parent=main group=1 scene=0 abs=0 vis=0 user_vis=1 sel=0 lock=0 need_update=0
+  stored pos=-1.77777779,-1 rot=0 scale=1,1 scale_ref=1920,1080 align=5
+  bounds type=0 align=0 size=0,0 crop_to_bounds=0
+  crop l=0 r=0 t=0 b=0 bounds_crop l=0 r=0 t=0 b=0 last=600,300
+  output_scale=1,1 box_scale=600,300
+  draw [1,0,0,0] [0,1,0,0] [0,0,1,0] [0,0,0,1]
+  box [600,0,0,0] [0,300,0,0] [0,0,1,0] [0,0,0,1]
+-- move a child: group size changes after update
+scene_size g 700 350 (cx=700 cy=350 custom=1 last=0,0)
+item g id=3 parent=main group=1 scene=0 abs=0 vis=0 user_vis=1 sel=0 lock=0 need_update=0
+  stored pos=-1.96296299,-1.0925926 rot=0 scale=1,1 scale_ref=1920,1080 align=5
+  bounds type=0 align=0 size=0,0 crop_to_bounds=0
+  crop l=0 r=0 t=0 b=0 bounds_crop l=0 r=0 t=0 b=0 last=700,350
+  output_scale=1,1 box_scale=700,350
+  draw [1,0,0,0] [0,1,0,0] [0,0,1,0] [-100,-50,0,1]
+  box [700,0,0,0] [0,350,0,0] [0,0,1,0] [-100,-50,0,1]
+-- deferred: change two children, resize only at end
+scene_size g 700 350 (cx=700 cy=350 custom=1 last=0,0)
+item g id=3 parent=main group=1 scene=0 abs=0 vis=0 user_vis=1 sel=0 lock=0 need_update=0
+  stored pos=-1.96296299,-1.0925926 rot=0 scale=1,1 scale_ref=1920,1080 align=5
+  bounds type=0 align=0 size=0,0 crop_to_bounds=0
+  crop l=0 r=0 t=0 b=0 bounds_crop l=0 r=0 t=0 b=0 last=700,350
+  output_scale=1,1 box_scale=700,350
+  draw [1,0,0,0] [0,1,0,0] [0,0,1,0] [-100,-50,0,1]
+  box [700,0,0,0] [0,350,0,0] [0,0,1,0] [-100,-50,0,1]
+scene_size g 1200 900 (cx=1200 cy=900 custom=1 last=0,0)
+item g id=3 parent=main group=1 scene=0 abs=0 vis=0 user_vis=1 sel=0 lock=0 need_update=0
+  stored pos=-1.96296299,-1.0925926 rot=0 scale=1,1 scale_ref=1920,1080 align=5
+  bounds type=0 align=0 size=0,0 crop_to_bounds=0
+  crop l=0 r=0 t=0 b=0 bounds_crop l=0 r=0 t=0 b=0 last=1200,900
+  output_scale=1,1 box_scale=1200,900
+  draw [1,0,0,0] [0,1,0,0] [0,0,1,0] [-100,-50,0,1]
+  box [1200,0,0,0] [0,900,0,0] [0,0,1,0] [-100,-50,0,1]

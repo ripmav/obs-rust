@@ -1,0 +1,13 @@
+get_float i ok 2
+get_ptr i ok 0x4000000000000000
+get_bool i fail
+get_int flag fail
+get_bool flag ok 1
+get_int d ok 4611686018427387904
+get_ptr d ok 0x4000000000000000
+get_int str fail
+get_string i ok ""
+get_string flag ok "\x01\x02"
+get_data i 8 ok 0000000000000040
+get_data i 7 fail
+get_data i 9 fail

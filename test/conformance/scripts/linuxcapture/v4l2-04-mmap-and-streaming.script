@@ -1,0 +1,44 @@
+# S-049 v4l2: buffer allocation, queueing, stream start/stop/reset and teardown.
+trace on
+dev /dev/video0
+dev-reqbufs 4
+h-open /dev/video0
+h-create-mmap
+h-start
+h-stop
+h-reset
+h-destroy-mmap
+# destroying twice is harmless (count already 0)
+h-destroy-mmap
+# the driver grants fewer than 2 buffers
+dev-reqbufs 1
+h-create-mmap
+# a driver may grant more than requested (4)
+dev-reqbufs 6
+h-create-mmap
+h-destroy-mmap
+# failures
+fail REQBUFS
+h-create-mmap
+unfail
+fail QUERYBUF
+h-create-mmap
+unfail
+h-destroy-mmap
+mmap-fail
+h-create-mmap
+h-destroy-mmap
+mmap-ok
+fail QBUF
+h-start
+unfail
+fail STREAMON
+h-start
+unfail
+fail STREAMOFF
+h-stop
+h-reset
+unfail
+fail STREAMON
+h-reset
+unfail

@@ -1,0 +1,32 @@
+# Time-between-calls statistics (CORE): bucket fractions below / within / above the +-2% window
+# of the expected interval (window = [expected*0.98, expected*1.02 + 0.5] truncated).
+p_name 0 t
+p_begin
+p_root 0 10000000
+p_clock 0
+p_call 0 1000
+p_tick 9000000
+p_call 0 1000
+p_tick 9000000
+p_call 0 1000
+p_tick 9000000
+p_call 0 1000
+p_tick 8000000
+p_call 0 1000
+p_tick 10000000
+p_call 0 1000
+p_tick 9100000
+p_call 0 1000
+p_tick 8850000
+p_call 0 1000
+p_tick 11000000
+p_call 0 1000
+p_tick 7000000
+p_call 0 1000
+p_tick 9000000
+p_call 0 1000
+p_snap
+p_dump
+p_print_between snap
+p_print snap
+p_free

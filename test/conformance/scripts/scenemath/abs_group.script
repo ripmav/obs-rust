@@ -1,0 +1,21 @@
+# Absolute mode with groups: no scale_ref/nudge; group children stored in pixels relative to the group origin.
+absolute on
+source s 200 100
+scene main
+add main s a
+add main s b
+pos a 100.25 100.75
+pos b 400 300
+group main g a b
+update main
+print g
+print a
+print b
+pos g 50 50
+rot g 30
+update main
+print g
+get a
+canvas 640 360
+update main
+print g

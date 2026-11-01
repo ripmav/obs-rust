@@ -1,0 +1,20 @@
+# Volume, mute and mixer-mask application when rendering a source (obs_source_audio_render).
+# render mixers=3 hands mixes 0,1; the source belongs to mixes 0 and 2 only (mask 5).
+init 48000 2
+clock 1000000000
+timeline 1000000000
+source a input
+output a 48000 2 1024 1000000000 const 0.5
+set a mixers 5
+render a 3 
+set a volume 0.5
+output a 48000 2 1024 1021333333 const 0.5
+render a 3
+set a mute 1
+render a 3
+set a mute 0
+set a volume 0.99995
+render a 3
+set a volume 0.00005
+render a 3
+state a

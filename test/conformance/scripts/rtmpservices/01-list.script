@@ -1,0 +1,28 @@
+# S-026 service list: which services are offered, in file order; show_all; protocol availability.
+# Delta (no servers), Echo (servers not an array), Foxtrot (empty), Hotel (http url, no protocol key)
+# and the SRT/RIST services (protocol not registered) are all hidden. Bravo/Juliet/etc. are not "common".
+fs-load /mod/data/services.json data/services-ok.json
+settings S {"service":"Alpha"}
+new A rtmp_common S
+echo default-protocols-RTMP-RTMPS
+props P A S
+echo toggle-show_all
+set S show_all bool 1
+modify P show_all S
+props-show P
+echo untoggle
+set S show_all bool 0
+modify P show_all S
+props-show P
+echo register-SRT-and-RIST
+protocols RTMP RTMPS SRT RIST
+modify P show_all S
+props-show P
+echo only-RTMP
+protocols RTMP
+modify P show_all S
+props-show P
+echo no-protocols
+protocols -
+modify P show_all S
+props-show P

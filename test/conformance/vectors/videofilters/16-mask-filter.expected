@@ -1,0 +1,217 @@
+call source_update a deferred=1
+create a -> ok
+echo before the first tick nothing is loaded: skipped
+render a
+call skip_video_filter a
+call image_free
+call image_init mask.png
+call image_init_texture -> ok
+call effect_create file=mask_color_filter.effect -> e1 uniforms=6 techniques=1
+call deferred_update a
+tick a 0.016
+render a
+call filter_begin_cs a format=RGBA space=SRGB allow=ALLOW_DIRECT -> 1
+call get_param e1:target -> ok
+call set_texture_srgb e1:target t1
+call get_param e1:color -> ok
+call set_vec4 e1:color 0.250980407 0.501960814 1 0.5
+call get_param e1:mul_val -> ok
+call set_vec2 e1:mul_val 0.99999994 1.12499988
+call get_param e1:add_val -> ok
+call set_vec2 e1:add_val 3.1789142e-08 -0.0624999627
+call blend_push
+call blend_function ONE INVSRCALPHA
+call filter_end a e1 size=0x0
+call blend_pop
+echo v2: srgb colour conversion, double opacity, other effect types
+call source_update b deferred=1
+create b -> ok
+call image_free
+call image_init mask.png
+call image_init_texture -> ok
+call effect_create file=blend_mul_filter.effect -> e2 uniforms=6 techniques=1
+call deferred_update b
+tick b 0.016
+render b
+call filter_begin_cs b format=RGBA space=SRGB allow=ALLOW_DIRECT -> 1
+call get_param e2:target -> ok
+call set_texture_srgb e2:target t2
+call get_param e2:color -> ok
+call set_vec4 e2:color 0.0512694679 0.215860531 1 0.25
+call get_param e2:mul_val -> ok
+call set_vec2 e2:mul_val 0.99999994 1.12499988
+call get_param e2:add_val -> ok
+call set_vec2 e2:add_val 3.1789142e-08 -0.0624999627
+call blend_push
+call blend_function ONE INVSRCALPHA
+call filter_end b e2 size=0x0
+call blend_pop
+echo stretch: mul_val 1,1 add_val 0,0
+call source_update c deferred=1
+create c -> ok
+call image_free
+call image_init mask.png
+call image_init_texture -> ok
+call effect_create file=mask_alpha_filter.effect -> e3 uniforms=6 techniques=1
+call deferred_update c
+tick c 0.016
+render c
+call filter_begin_cs c format=RGBA space=SRGB allow=ALLOW_DIRECT -> 1
+call get_param e3:target -> ok
+call set_texture_srgb e3:target t3
+call get_param e3:color -> ok
+call set_vec4 e3:color 0.0512694679 0.215860531 1 0.25
+call get_param e3:mul_val -> ok
+call set_vec2 e3:mul_val 1 1
+call get_param e3:add_val -> ok
+call set_vec2 e3:add_val 0 0
+call blend_push
+call blend_function ONE INVSRCALPHA
+call filter_end c e3 size=0x0
+call blend_pop
+echo mask taller than source aspect: sized to the source height
+call source_update e deferred=1
+create e -> ok
+call image_free
+call image_init mask.png
+call image_init_texture -> ok
+call effect_create file=mask_color_filter.effect -> e4 uniforms=6 techniques=1
+call deferred_update e
+tick e 0.016
+render e
+call filter_begin_cs e format=RGBA space=SRGB allow=ALLOW_DIRECT -> 1
+call get_param e4:target -> ok
+call set_texture_srgb e4:target t4
+call get_param e4:color -> ok
+call set_vec4 e4:color 1 1 1 1
+call get_param e4:mul_val -> ok
+call set_vec2 e4:mul_val 1 2
+call get_param e4:add_val -> ok
+call set_vec2 e4:add_val -0 -0.5
+call blend_push
+call blend_function ONE INVSRCALPHA
+call filter_end e e4 size=0x0
+call blend_pop
+echo mask image taller
+call source_update f deferred=1
+create f -> ok
+call image_free
+call image_init tall.png
+call image_init_texture -> ok
+call effect_create file=mask_color_filter.effect -> e5 uniforms=6 techniques=1
+call deferred_update f
+tick f 0.016
+render f
+call filter_begin_cs f format=RGBA space=SRGB allow=ALLOW_DIRECT -> 1
+call get_param e5:target -> ok
+call set_texture_srgb e5:target t5
+call get_param e5:color -> ok
+call set_vec4 e5:color 1 1 1 1
+call get_param e5:mul_val -> ok
+call set_vec2 e5:mul_val 7.11111116 1
+call get_param e5:add_val -> ok
+call set_vec2 e5:add_val -3.05555558 -0
+call blend_push
+call blend_function ONE INVSRCALPHA
+call filter_end f e5 size=0x0
+call blend_pop
+echo image that fails to load, empty path
+call source_update g deferred=1
+create g -> ok
+call image_free
+call image_init broken.png
+call image_init_texture -> none
+call effect_create file=mask_color_filter.effect -> e6 uniforms=6 techniques=1
+call deferred_update g
+tick g 0.016
+render g
+call skip_video_filter g
+call source_update h deferred=1
+create h -> ok
+call image_free
+call effect_create file=mask_color_filter.effect -> e7 uniforms=6 techniques=1
+call deferred_update h
+tick h 0.016
+render h
+call skip_video_filter h
+echo target missing / begin refused / extended colour space
+call source_update i deferred=1
+create i -> ok
+call image_free
+call image_init tall.png
+call image_init_texture -> ok
+call effect_create file=mask_color_filter.effect -> e8 uniforms=6 techniques=1
+call deferred_update i
+tick i 0.016
+render i
+call skip_video_filter i
+render f
+call filter_begin_cs f format=RGBA space=SRGB allow=ALLOW_DIRECT -> 0
+render f
+call skip_video_filter f
+render f
+call filter_begin_cs f format=RGBA16F space=SRGB_16F allow=ALLOW_DIRECT -> 1
+call set_texture_srgb e5:target t5
+call set_vec4 e5:color 1 1 1 1
+call set_vec2 e5:mul_val 7.11111116 1
+call set_vec2 e5:add_val -3.05555558 -0
+call blend_push
+call blend_function ONE INVSRCALPHA
+call filter_end f e5 size=0x0
+call blend_pop
+cs f -> SRGB_16F
+echo effect type that cannot load: render skipped
+call source_update j deferred=1
+create j -> ok
+call image_free
+call image_init tall.png
+call image_init_texture -> ok
+call effect_create file=mask_color_filter.effect -> null
+call deferred_update j
+tick j 0.016
+render j
+call skip_video_filter j
+echo missing_files: a path that does not exist is reported once; the callback re-points the setting
+call missing_files_create
+missing a -> list
+call source_update k deferred=1
+create k -> ok
+call image_free
+call image_init gone.png
+call image_init_texture -> none
+call effect_create file=mask_color_filter.effect -> e9 uniforms=6 techniques=1
+call deferred_update k
+tick k 0.016
+call missing_files_create
+call missing_file_create path=gone.png type=0
+call missing_files_add
+missing k -> list
+call source_update k deferred=1
+resolve
+data k
+  type string "mask_color_filter.effect" default
+  color int 16777215 default
+  opacity double 1 default
+  image_path string "@TMP/mask.png" user
+end data k
+call image_free
+call image_init mask.png
+call image_init_texture -> ok
+call effect_destroy e9
+call effect_create file=mask_color_filter.effect -> e10 uniforms=6 techniques=1
+call deferred_update k
+tick k 0.016
+render k
+call filter_begin_cs k format=RGBA16F space=SRGB_16F allow=ALLOW_DIRECT -> 1
+call get_param e10:target -> ok
+call set_texture_srgb e10:target t8
+call get_param e10:color -> ok
+call set_vec4 e10:color 1 1 1 1
+call get_param e10:mul_val -> ok
+call set_vec2 e10:mul_val 0.99999994 1.12499988
+call get_param e10:add_val -> ok
+call set_vec2 e10:add_val 3.1789142e-08 -0.0624999627
+call blend_push
+call blend_function ONE INVSRCALPHA
+call filter_end k e10 size=0x0
+call blend_pop

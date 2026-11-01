@@ -1,0 +1,51 @@
+frame 0 aligned32=1 linesize: 4 2 2 0 0 0 0 0 offsets: 0 32 64 - - - - -
+frame 1 aligned32=1 linesize: 4 2 2 0 0 0 0 0 offsets: 0 32 64 - - - - -
+frame_copy done
+frame 1 plane 0 ls=4 rows=4: 01020304 05060708 090a0b0c 0d0e0f10
+frame 1 plane 1 ls=2 rows=2: 4142 4344
+frame 1 plane 2 ls=2 rows=2: 8182 8384
+frame 2 aligned32=1 linesize: 6 3 3 0 0 0 0 0 offsets: 0 32 64 - - - - -
+frame_copy done
+frame 2 plane 0 ls=6 rows=4: 01020304eeee 05060708eeee 090a0b0ceeee 0d0e0f10eeee
+frame 2 plane 1 ls=3 rows=2: 4142ee 4344ee
+frame 2 plane 2 ls=3 rows=2: 8182ee 8384ee
+frame 3 aligned32=1 linesize: 2 1 1 0 0 0 0 0 offsets: 0 32 64 - - - - -
+frame_copy done
+frame 3 plane 0 ls=2 rows=4: 0102 0506 090a 0d0e
+frame 3 plane 1 ls=1 rows=2: 41 43
+frame 3 plane 2 ls=1 rows=2: 81 83
+frame 4 aligned32=1 linesize: 4 2 2 0 0 0 0 0 offsets: 0 32 64 - - - - -
+frame 5 aligned32=1 linesize: 4 2 2 0 0 0 0 0 offsets: 0 32 64 - - - - -
+frame_copy done
+frame 5 plane 0 ls=4 rows=3: 10111213 14151617 18191a1b
+frame 5 plane 1 ls=2 rows=2: 5051 5253
+frame 5 plane 2 ls=2 rows=2: 9091 9293
+frame_copy done
+frame 1 plane 0 ls=4 rows=4: 01020304 05060708 eeeeeeee eeeeeeee
+frame 1 plane 1 ls=2 rows=2: 4142 eeee
+frame 1 plane 2 ls=2 rows=2: 8182 eeee
+frame 6 aligned32=1 linesize: 4 4 0 0 0 0 0 0 offsets: 0 32 - - - - - -
+frame 7 aligned32=1 linesize: 4 4 0 0 0 0 0 0 offsets: 0 32 - - - - - -
+frame_copy done
+frame 7 plane 0 ls=4 rows=2: 20212223 24252627
+frame 7 plane 1 ls=4 rows=1: 60616263
+frame_free zeroed=1
+null-frame ok
+frame_free zeroed=1
+null-frame ok
+frame 6 aligned32=1 linesize: 4 2 2 4 0 0 0 0 offsets: 0 32 64 96 - - - -
+frame 7 aligned32=1 linesize: 4 2 2 4 0 0 0 0 offsets: 0 32 64 96 - - - -
+frame_copy done
+frame 7 plane 0 ls=4 rows=2: 30313233 34353637
+frame 7 plane 1 ls=2 rows=1: 7071
+frame 7 plane 2 ls=2 rows=1: b0b1
+frame 7 plane 3 ls=4 rows=2: f0f1f2f3 f4f5f6f7
+frame_copy done
+frame 7 plane 0 ls=4 rows=2: eeeeeeee eeeeeeee
+frame 7 plane 1 ls=2 rows=1: eeee
+frame 7 plane 2 ls=2 rows=1: eeee
+frame 7 plane 3 ls=4 rows=2: eeeeeeee eeeeeeee
+frame 0 aligned32=1 linesize: 8 0 0 0 0 0 0 0 offsets: 0 - - - - - - -
+frame 1 aligned32=1 linesize: 4 0 0 0 0 0 0 0 offsets: 0 - - - - - - -
+frame_copy done
+frame 1 plane 0 ls=4 rows=2: 00010203 08090a0b

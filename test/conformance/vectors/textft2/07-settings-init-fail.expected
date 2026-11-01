@@ -1,0 +1,31 @@
+> reset
+> ascii 5 8 0 8 384
+> font Sans Serif - 0 p/sans
+> fail_init on
+> load
+load -> 1
+registered id=text_ft2_source version=0
+registered id=text_ft2_source version=2
+> create s 2
+ev ft init fail
+log warning FT2-text: Failed to initialize FT2.
+create s -> 1
+> setfont s Sans Serif - 20 0
+> set s text ab
+> set s outline true
+> update s
+update done
+> state s
+state s font=NULL style=NULL size=0 flags=0 face=0 from_file=0 aa=0
+state s outline=1 shadow=0 outline_width=4 word_wrap=0 custom_width=0 log_mode=0 log_lines=6 color=ffffffff,ffffffff
+state s cx=0 cy=0 max_h=0 texbuf=0,0 tex=0 vbuf=0 effect=0
+state s file=NULL load_failed=0 update_file=0 mtime=0 last_checked_ms=0
+state s text=NULL
+> size s
+size s 4x4
+> render s
+render done
+> echo --- unload with an uninitialised plugin does not call FT_Done_FreeType
+--- unload with an uninitialised plugin does not call FT_Done_FreeType
+> destroy s
+> unload

@@ -1,0 +1,79 @@
+log debug canvas 'Main' (<uuid>) created
+startup -> true
+ev gs_create module=fake-gfx adapter=0
+ev effect default.effect
+ev effect opaque.effect
+ev effect solid.effect
+ev effect repeat.effect -> fail
+ev effect format_conversion.effect
+ev effect bicubic_scale.effect -> fail
+ev effect lanczos_scale.effect -> fail
+ev effect area.effect -> fail
+ev effect bilinear_lowres_scale.effect -> fail
+ev effect premultiplied_alpha.effect
+ev sampler max_anisotropy=1
+ev texture 2x2 fmt=3 levels=1 flags=0
+log info ---------------------------------
+log info video settings reset:  base resolution:   1920x1080  output resolution: 1280x720  downscale filter:  Bicubic  fps:               30/1  format:            NV12  YUV mode:          Rec. 709/Partial
+log info NV12 texture support enabled
+log info P010 texture support not available
+ev texture_nv12 1280x720 flags=68
+ev texture 1280x720 fmt=2 levels=1 flags=4
+ev texture 640x360 fmt=18 levels=1 flags=4
+ev stagesurface 1280x720 fmt=2
+ev stagesurface 640x360 fmt=18
+ev stagesurface 1280x720 fmt=2
+ev stagesurface 640x360 fmt=18
+ev texture 1920x1080 fmt=5 levels=1 flags=4
+ev texture 1280x720 fmt=5 levels=1 flags=4
+reset_video -> success
+  after_call base=1920x1080 out=1280x720 fps=30/1 fmt=NV12 cs=2 range=1 scale=2 gpu=1 adapter=0
+base_effect default=1 rect=0 opaque=1 solid=1 repeat=0 bicubic=0 lanczos=0 area=0 lowres=0 premult=1 bad=0
+report ctx_depth=0 ctx_underflow=0
+log info ---------------------------------
+log info video settings reset:  base resolution:   1920x1080  output resolution: 1280x720  downscale filter:  Bicubic  fps:               30/1  format:            NV12  YUV mode:          Rec. 709/Partial
+log info NV12 texture support enabled
+log info P010 texture support not available
+reset_video -> success
+  after_call base=1920x1080 out=1280x720 fps=30/1 fmt=NV12 cs=2 range=1 scale=2 gpu=1 adapter=0
+state core=up locale=en-US modcfg=NULL name_store_owned=1
+  types source=3 input=1 filter=0 transition=0 output=0 encoder=0 service=0
+  graphics=yes audio=no mixes=1 thread_initialized=1 valid=1
+  main_canvas name="Main" flags=0xf mix=yes
+shutdown begin
+log info Freeing OBS context data
+log debug canvas 'Main' (<uuid>) destroyed
+shutdown end obs=NULL
+log debug canvas 'Main' (<uuid>) created
+startup -> true
+log info ---------------------------------
+log info video settings reset:  base resolution:   1920x1080  output resolution: 1280x720  downscale filter:  Bicubic  fps:               30/1  format:            NV12  YUV mode:          Rec. 709/Partial
+log info NV12 texture support enabled
+log info P010 texture support not available
+reset_video -> success
+  after_call base=1920x1080 out=1280x720 fps=30/1 fmt=NV12 cs=2 range=1 scale=2 gpu=1 adapter=0
+base_effect default=1 rect=0 opaque=1 solid=1 repeat=1 bicubic=1 lanczos=1 area=1 lowres=1 premult=1 bad=0
+shutdown begin
+log info Freeing OBS context data
+log debug canvas 'Main' (<uuid>) destroyed
+shutdown end obs=NULL
+log debug canvas 'Main' (<uuid>) created
+startup -> true
+reset_video -> fail
+  after_call base=1920x1080 out=1280x720 fps=30/1 fmt=NV12 cs=2 range=1 scale=2 gpu=1 adapter=0
+state core=up locale=en-US modcfg=NULL name_store_owned=1
+  types source=3 input=1 filter=0 transition=0 output=0 encoder=0 service=0
+  graphics=no audio=no mixes=0 thread_initialized=0 valid=1
+  main_canvas name="Main" flags=0xf mix=none
+log info ---------------------------------
+log info video settings reset:  base resolution:   1920x1080  output resolution: 1280x720  downscale filter:  Bicubic  fps:               30/1  format:            NV12  YUV mode:          Rec. 709/Partial
+log info NV12 texture support enabled
+log info P010 texture support not available
+reset_video -> success
+  after_call base=1920x1080 out=1280x720 fps=30/1 fmt=NV12 cs=2 range=1 scale=2 gpu=1 adapter=0
+base_effect default=1 rect=1 opaque=1 solid=1 repeat=1 bicubic=1 lanczos=1 area=1 lowres=1 premult=1 bad=0
+shutdown begin
+log info Freeing OBS context data
+log debug canvas 'Main' (<uuid>) destroyed
+shutdown end obs=NULL
+report ctx_depth=0 ctx_underflow=0

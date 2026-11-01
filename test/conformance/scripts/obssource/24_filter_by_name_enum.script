@@ -1,0 +1,19 @@
+# filter_by_name returns a NEW strong reference (array order search, first match); enum_filters visits the filters
+# from the highest array index to 0 (oldest first).
+kind in input video
+kind fl filter video
+create a in A
+create f1 fl F
+create f2 fl F
+create f3 fl G
+filter_add a f1
+filter_add a f2
+filter_add a f3
+filter_by_name a F r1
+filter_by_name a G r2
+filter_by_name a H r3
+refs f1
+refs f2
+refs r1
+enum_filters a
+names a

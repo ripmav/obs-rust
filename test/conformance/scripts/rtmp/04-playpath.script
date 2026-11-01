@@ -1,0 +1,26 @@
+# RTMP_ParsePlaypath (stream-key rewriting, R17..R24).
+playpath live_12345
+playpath live_12345?token=abc
+playpath stream.flv
+playpath stream.flv?x=1
+playpath stream.mp4
+playpath mp4:stream.mp4
+playpath stream.f4v
+playpath stream.mp3
+playpath mp3:stream.mp3
+playpath foo.FLV
+playpath a.flv.mp4
+playpath ab.mp4
+playpath .mp4
+playpath .flv
+playpath x.f4v?a=b.mp4
+playpath a%20b
+playpath a%2fb%41
+playpath %41
+playpath ?slist=foo.flv&x=1
+playpath ?slist=bar.mp4&x=1
+playpath ?slist=baz&x=1
+playpath ?slist=baz
+playpath abc
+playpath ab
+playpath 

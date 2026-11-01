@@ -1,0 +1,16 @@
+# S-035 obs_load_core_modules: the generated core-module list (here set by the script) is loaded in order; the
+# first module whose FILE is missing stops the loop (error log) but is NOT counted as a failure (Q-7), so the
+# core_modules_loaded flag becomes true and later calls return immediately.
+mkmod ca @TMP/cm/bin/ca.so svc=core_svc_a
+mkmod cb @TMP/cm/bin/cb.so
+mkmod cc @TMP/cm/bin/cc.so
+mkdir @TMP/cm/data
+core_modules @TMP/cm/bin/%module% @TMP/cm/data/%module% ca cb missing cc
+load_core
+lists
+mod_info ca
+get_module cc
+# the flag short-circuits: nothing is opened again even if the list changes
+core_modules @TMP/cm/bin/%module% @TMP/cm/data/%module% cc
+load_core
+lists

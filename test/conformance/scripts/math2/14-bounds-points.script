@@ -1,0 +1,22 @@
+# bounds_get_point(b, i): bit 2 of i selects max.x, bit 1 max.y, bit 0 max.z (S-009-R71).
+bounds b 1 2 3 5 6 9
+vec3 sent 77 88 99 55
+call p bounds_get_point b 0
+call p bounds_get_point b 1
+call p bounds_get_point b 2
+call p bounds_get_point b 3
+call p bounds_get_point b 4
+call p bounds_get_point b 5
+call p bounds_get_point b 6
+call p bounds_get_point b 7
+# only x,y,z are written; the destination's w lane is preserved
+vec3 keep 0 0 0 42
+call keep bounds_get_point b 3
+# Q-7: the guard is `i > 8`, so index 8 is accepted and behaves like index 6;
+# indices above 8 leave the destination untouched.
+vec3 k8 1000 1000 1000 1000
+call k8 bounds_get_point b 8
+vec3 k9 1000 1000 1000 1000
+call k9 bounds_get_point b 9
+vec3 k100 1000 1000 1000 1000
+call k100 bounds_get_point b 4294967295

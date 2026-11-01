@@ -1,0 +1,59 @@
+# S-012 CORE: obs_parse_avc_header (Annex-B parameter sets -> AVCDecoderConfigurationRecord).
+# avc_header DATA prints ret=N (return value = record length, 0 = failure) and the record.
+# Record layout: 01 | profile compat level (sps[1..3]) | ff | e1 | len16(sps) sps | 01 | len16(pps) pps
+# plus, for profile_idc 100/110/122/244: (fc|chroma_format_idc) (f8|bit_depth_luma_minus8)
+# (f8|bit_depth_chroma_minus8) 00. The SPS/PPS are copied WITH their NAL header byte.
+buf sps_base 6742c01ed900a047fe88
+buf pps 68ce3c80
+buf sps_main 674d4028a6808044
+buf sps_high 6764001facd9405005bb016a020202800000030080000019078c18cb
+# profile 110, 4:2:0, 10 bit luma and chroma (ue: id 0, chroma 1, luma 2, chroma 2)
+buf sps_high10 676e001ea6c0
+# profile 122, 4:2:2 (chroma_format_idc 2), 8 bit
+buf sps_high422 677a001ebc00
+# profile 244, 4:4:4 (idc 3 + separate_colour_plane_flag 0), 10 bit luma / chroma
+echo baseline
+cat au 00000001 @sps_base 00000001 @pps
+avc_header @au
+echo main-and-three-byte-start-codes
+cat au 000001 @sps_main 000001 @pps
+avc_header @au
+echo pps-first
+cat au 00000001 @pps 00000001 @sps_base
+avc_header @au
+echo other-nals-are-ignored
+buf sei 06050a0102030405
+buf idr 6588840021ffe0
+cat au 00000001 0910 00000001 @sei 00000001 @sps_base 00000001 @pps 00000001 @idr
+avc_header @au
+echo high-profile-with-emulation-prevention-bytes-in-sps
+cat au 00000001 @sps_high 00000001 @pps
+avc_header @au
+echo high10
+cat au 00000001 @sps_high10 00000001 @pps
+avc_header @au
+echo high422
+cat au 00000001 @sps_high422 00000001 @pps
+avc_header @au
+echo high444
+buf sps_high444 67f4002890d8
+cat au 00000001 @sps_high444 00000001 @pps
+avc_header @au
+echo last-sps-and-last-pps-win
+buf pps2 68aabb
+buf sps_main_b 674d0029a680
+cat au 00000001 @sps_base 00000001 @pps 00000001 @sps_main_b 00000001 @pps2
+avc_header @au
+echo minimal-sps-of-4-bytes-and-1-byte-pps
+cat au 00000001 67420020 00000001 68
+avc_header @au
+echo emulation-prevention-byte-inside-the-profile-level-bytes
+buf sps_ep 6764000003acd9
+cat au 00000001 @sps_ep 00000001 @pps
+avc_header @au
+echo emulation-prevention-is-only-removed-for-000003
+buf sps_ep2 6764001f0300acd9
+cat au 00000001 @sps_ep2 00000001 @pps
+avc_header @au
+echo trailing-zero-bytes-are-part-of-the-nal
+avc_header 000000016742c01e0000000168ce3c800000

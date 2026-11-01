@@ -1,0 +1,54 @@
+ff open path=cm format=- nobuffer=1 interrupt=0 opts=[]
+cinit -> ok
+ff seek stream=0 target=0 flags=BACKWARD
+ff decoder flush
+ff decoder flush
+ff read #0 stream=0 pts=0 size=4
+ff read #1 stream=1 pts=0 size=4
+ff read #2 stream=0 pts=40 size=4
+ff read #3 stream=1 pts=1920 size=4
+ff read #4 stream=0 pts=80 size=4
+ff read #5 stream=1 pts=3840 size=4
+ff decoder drain
+ff decoder drain
+ff seek stream=0 target=0 flags=BACKWARD
+ff decoder flush
+ff decoder flush
+ff read #0 stream=0 pts=0 size=4
+ff read #1 stream=1 pts=0 size=4
+cdecode -> ok frames=3 segs=3
+cstate frames=3 segs=3 has_v=1 has_a=1 active=0 stopping=0 looping=0 pause=0 seek_next_ts=0
+  cur_v=0 next_v=0 cur_a=0 next_a=0 next_v_ts=0 next_a_ts=0 final_v=50000000 final_a=20000000
+  base_ts=0 start_ts=0 play_sys_ts=0 next_pts_ns=0 next_ns=0 start_time=0 media_duration=300000 speed=100
+cframe 0 ts=0 8x4 fmt=I420
+cframe 1 ts=40000000 8x4 fmt=I420
+cframe 2 ts=80000000 8x4 fmt=I420
+csegment 0 ts=0 frames=1920 rate=48000
+csegment 1 ts=40000000 frames=1920 rate=48000
+csegment 2 ts=80000000 frames=960 rate=48000
+cframes -> 3
+cduration -> 300000
+# ---- container start time is remembered
+cfree
+ff open path=cm_start format=- nobuffer=1 interrupt=0 opts=[]
+cinit -> ok
+ff seek stream=0 target=500 flags=BACKWARD
+ff decoder flush
+ff read #0 stream=0 pts=500 size=4
+ff read #1 stream=0 pts=540 size=4
+ff decoder drain
+ff seek stream=0 target=500 flags=BACKWARD
+ff decoder flush
+ff read #0 stream=0 pts=500 size=4
+cdecode -> ok frames=2 segs=0
+cframe 0 ts=500000000 8x4 fmt=I420
+cframe 1 ts=540000000 8x4 fmt=I420
+cstate frames=2 segs=0 has_v=1 has_a=0 active=0 stopping=0 looping=0 pause=0 seek_next_ts=0
+  cur_v=0 next_v=0 cur_a=0 next_a=0 next_v_ts=0 next_a_ts=0 final_v=40000000 final_a=0
+  base_ts=0 start_ts=0 play_sys_ts=0 next_pts_ns=0 next_ns=0 start_time=500000 media_duration=300000 speed=100
+cfree
+# ---- decode failure: cannot open
+ff open path=nothere format=- nobuffer=1 interrupt=0 opts=[]
+ff open -> fail
+log warning MP: Failed to open media: 'nothere'
+cinit -> fail

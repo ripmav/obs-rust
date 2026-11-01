@@ -1,0 +1,9 @@
+mf_ref 0 1
+mf_ref 0 2
+mf_destroy 0
+mf_ref 0 1
+mf_get 1 0 path="/r/file.bin" source_name="Src" ref=1 same_as_file=0
+mf_release_null ok
+mf_ref 1 1
+mf_release 1
+mf_destroy 1

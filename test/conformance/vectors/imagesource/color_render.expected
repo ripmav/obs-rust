@@ -1,0 +1,38 @@
+ev create color_source_v3#1 public
+ev create color_source_v3#2 public
+ev render color_source_v3#1
+gfx enable_framebuffer_srgb 0
+gfx set_vec4 color 0.600000024 0.400000006 0.200000003 1
+gfx technique_begin Solid
+gfx begin_pass 0
+gfx draw_sprite tex=-1 flip=0 10x20
+gfx end_pass
+gfx technique_end
+gfx enable_framebuffer_srgb 0
+ev render color_source_v3#1
+gfx enable_framebuffer_srgb 1
+gfx set_vec4 color 0.318546832 0.132868335 0.0331047624 1
+gfx technique_begin Solid
+gfx begin_pass 0
+gfx draw_sprite tex=-1 flip=0 10x20
+gfx end_pass
+gfx technique_end
+gfx enable_framebuffer_srgb 0
+ev render color_source_v3#1
+gfx enable_framebuffer_srgb 0
+gfx set_vec4 color 0.600000024 0.400000006 0.200000003 1
+gfx technique_begin Solid
+gfx begin_pass 0
+gfx draw_sprite tex=-1 flip=0 10x20
+gfx end_pass
+gfx technique_end
+gfx enable_framebuffer_srgb 1
+ev render color_source_v3#2
+gfx enable_framebuffer_srgb 1
+gfx set_vec4 color 0.318546832 0.0595112406 0.0802198276 0.501960814
+gfx technique_begin Solid
+gfx begin_pass 0
+gfx draw_sprite tex=-1 flip=0 10x20
+gfx end_pass
+gfx technique_end
+gfx enable_framebuffer_srgb 1

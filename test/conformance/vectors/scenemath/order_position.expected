@@ -1,0 +1,16 @@
+add a ok
+add b ok
+add c ok
+add d ok
+add e ok
+order main: e a b c d
+order main: a b e c d
+order main: a b c d e
+order main: a b c d e
+order main: b a c d e
+order main: b c d a e
+order main: c b d a e
+order_pos c 0
+order_pos e 4
+-- note: moving an item to its own current index keeps it in place
+order main: c b d a e

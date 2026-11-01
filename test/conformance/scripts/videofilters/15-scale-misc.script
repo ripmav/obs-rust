@@ -1,0 +1,86 @@
+# scale_filter: invalid state handling, base canvas follows video info at every tick, colour-space variants, point sampler.
+source T 1920 1080 1920 1080 SRGB video
+source P 1920 1080 1920 1080 SRGB video
+video 1280 720 30 1
+data d
+dset d resolution str Base.Canvas
+dset d sampling str area
+filter a scale_filter 0 d T P
+tick a 0.016
+size a
+render a
+echo video info changes: base canvas is re-read each tick
+video 640 480 30 1
+tick a 0.016
+size a
+render a
+echo zero-size target: output size 0 and filter skipped
+resize T 0 0 0 0
+tick a 0.016
+size a
+render a
+resize T 1920 1080 1920 1080
+echo no target: tick marks target invalid
+filter n scale_filter 0 d @null P
+tick n 0.016
+size n
+render n
+echo before the first tick the filter is not valid for render (target_valid false)
+filter m scale_filter 0 d T P
+render m
+echo colour space combinations (area sampling, upscaling target)
+data u
+dset u resolution str 3840x2160
+dset u sampling str area
+filter s scale_filter 0 u T P
+tick s 0.016
+sdr_white 400
+srcspace T SRGB
+space 709_SCRGB
+render s
+srcspace T 709_EXTENDED
+space SRGB
+render s
+space 709_SCRGB
+render s
+srcspace T 709_SCRGB
+space SRGB
+render s
+space 709_EXTENDED
+render s
+space 709_SCRGB
+render s
+echo point sampling sets the point sampler on image; created at filter creation
+data p
+dset p resolution str 800x600
+dset p sampling str point
+filter q scale_filter 0 p T P
+tick q 0.016
+srcspace T SRGB
+space SRGB
+render q
+echo undistort techniques per colour space (bicubic)
+data w
+dset w resolution str 800x600
+dset w sampling str bicubic
+dset w undistort bool 1
+filter r scale_filter 0 w T P
+tick r 0.016
+srcspace T SRGB
+space 709_SCRGB
+render r
+srcspace T 709_EXTENDED
+space SRGB
+render r
+space 709_SCRGB
+render r
+srcspace T 709_SCRGB
+space SRGB
+render r
+space 709_EXTENDED
+render r
+echo begin refused: nothing is set
+knob begin 0
+render r
+knob begin 1
+cs r 2 SRGB_16F SRGB

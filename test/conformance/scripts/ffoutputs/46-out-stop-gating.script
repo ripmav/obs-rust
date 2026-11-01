@@ -1,0 +1,41 @@
+# ffmpeg_output stop handling and the "stop at timestamp" gate of process_packet (called directly here because in the
+# real program it only races with the stop request). Packet system time = start_ts + pause_offset + dts converted to
+# nanoseconds with the stream time base (video stream, or the FIRST audio stream for everything else); a packet at or
+# after stop_ts is discarded (counted nowhere, returns success); earlier ones are written.
+reset
+output ff
+size 320 240
+video_info 30 1 709 P NV12
+mixers 1
+set str url x.null
+set str format_name null
+fo_create
+fo_start
+fo_connect
+fo_video 1000000000
+fo_video 1033333333
+fo_video 1066666666
+fo_audio 0 1024 1000000000
+fo_audio 0 1024 1000000000
+fo_packets
+fo_sys_dts 0
+fo_sys_dts 1
+fo_sys_dts 2
+fo_sys_dts 3
+fo_set pause_offset 500
+fo_sys_dts 1
+fo_set stopping 1
+fo_set stop_ts 1033333834
+fo_process
+fo_process
+fo_process
+fo_process
+fo_process
+fo_state
+echo not_stopping_ignores_stop_ts
+fo_set stopping 0
+fo_process
+echo stop_with_timestamp_arms_stop_then_shuts_down
+fo_stop 1099999999
+fo_state
+fo_destroy

@@ -1,0 +1,11 @@
+p_snap roots=1
+p_dump roots=1
+  entry name="root" count=1 min=2 max=2 expected=0 bcount=0 bmin=0 bmax=0 children=0
+    times 2:1
+    between
+p_snap roots=1
+p_dump roots=1
+  entry name="root" count=7 min=0 max=3 expected=0 bcount=0 bmin=0 bmax=0 children=0
+    times 3:1 2:4 1:1 0:1
+    between
+p_free done

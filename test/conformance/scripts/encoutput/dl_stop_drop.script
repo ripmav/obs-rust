@@ -1,0 +1,38 @@
+# Delay stop: stop() on a delayed output only queues a STOP message (signal "stopping"); the plugin stop
+# callback runs when that message is released by a later packet and receives the time of the stop request.
+# Packets (and any other message) that sit behind the STOP message in the delay queue are dropped when the
+# stop has been processed (delayq goes back to 0).
+video 30 1 1280 720
+audio 48000
+venc v
+aenc a frame_size=1024
+out o av,encoded autobegin=1
+set_venc o v
+set_aenc o a
+set_delay o 2
+clock 0
+start o
+clock 3000000001
+emit a 0 0 0 4
+emit v 0 0 1 4
+emit a 1024 1024 0 4
+emit a 2048 2048 0 4
+state o
+echo --- stop requested at t=3.0s: nothing happens yet
+clock 3500000000
+stop o
+state o
+echo --- more packets arrive at 3.6s; they are queued behind STOP
+clock 3600000000
+emit a 3072 3072 0 4
+emit v 1 1 0 4
+state o
+queue o
+echo --- time passes: the earlier packets drain; the STOP message is released at 5.5s+
+clock 5500000001
+emit a 4096 4096 0 4
+state o
+clock 5600000000
+emit a 5120 5120 0 4
+state o
+info o

@@ -1,0 +1,53 @@
+# CORE: write -> read -> write is stable for user values; defaults and autoselect values
+# are not part of the saved text; the int/double distinction survives; arrays of non-object
+# values are lost (Q3).
+new a
+set_string a s "caf\xc3\xa9 \"quoted\" \\ back\nslash"
+set_int a i 123456789012
+set_double a d 1.0
+set_double a e 0.1
+set_double a f 1e22
+set_bool a b 1
+new o
+set_int o x 1
+set_double o y 2
+new oo
+set_string oo deep "d"
+set_obj o oo oo
+set_obj a o o
+a_new ar
+new e1
+set_int e1 id 1
+new e2
+set_string e2 id "two"
+a_push ar e1
+a_push ar e2
+set_array a list ar
+set_obj a nothing @null
+set_default_int a dflt 5
+set_autoselect_int a auto 6
+json a
+json_pretty a
+json_defaults a
+echo --- read the compact text back
+json a
+from_json b "{\"s\":\"caf\xc3\xa9 \\\"quoted\\\" \\\\ back\\nslash\",\"i\":123456789012,\"d\":1.0,\"e\":0.1,\"f\":1e22,\"b\":true,\"o\":{\"x\":1,\"y\":2.0,\"oo\":{\"deep\":\"d\"}},\"list\":[{\"id\":1},{\"id\":\"two\"}],\"nothing\":null}"
+json b
+dump b
+get_double b d
+get_int b i
+echo --- an int stays an int, a double stays a double, through two rounds
+new c
+set_int c i 2
+set_double c d 2
+from_json c2 "{\"i\":2,\"d\":2.0}"
+dump c2
+json c2
+echo --- apply copy of a parsed object is independent
+new t
+apply t b
+json t
+echo --- pretty text reads back the same
+from_json p "{\n    \"k\": [\n        {\n            \"a\": 1\n        }\n    ],\n    \"m\": {}\n}"
+json p
+json_pretty p

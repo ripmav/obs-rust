@@ -1,0 +1,10 @@
+# DEFECT (D-2, no observable effect). update_latency obtains async_depth / la_depth items
+# with obs_data_item_byname and never releases them: a reference leak in the C code (visible
+# only under LeakSanitizer). Required behaviour: none to reproduce; observable results are
+# the same as the migration described in script 33.
+data D
+set D rate_control str CBR
+set D async_depth int 1
+set D la_depth int 20
+qsv_migrate D
+dump D

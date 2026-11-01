@@ -1,0 +1,71 @@
+> reset
+> output ff
+> size 320 240
+> video_info 30 1 709 P NV12
+> mixers 3
+> set str url x.null
+> set str format_name null
+> set int video_bitrate 800
+> set int audio_bitrate 128
+> names left right
+> fo_create
+fo_create -> ok
+> fo_info
+info id=ffmpeg_output flags=0x33
+> fo_start
+fo_start -> 1 connecting=1
+> fo_start
+fo_start -> 0 connecting=1
+> fo_state
+fo_state active=0 connecting=1 stopping=0 write_thread_active=0 total_bytes_without_video=0
+  video_start_ts=0 audio_start_ts=0 stop_ts=0 queued=0 writes=0
+  initialized=0 has_video=0 audio_streams=0 tracks=0x0 frame_size=0 total_frames=0 start_timestamp=0
+  audio_format=0 audio_planes=0 audio_size=0 samplerate=0 last_error=""
+> fo_connect
+cfg url=x.null format_name=null mime=(null) muxer_settings=""
+  gop=120 vbitrate=800 abitrate=128 venc=(null) venc_id=0 aenc=(null) aenc_id=0
+  vsettings="" asettings="" mix_count=2 tracks=0x3
+  pix_fmt=nv12 range=1 pri=1 trc=1 cs=1
+  size=320x240 scale=320x240
+  audio_name[0]=left
+  audio_name[1]=right
+set_video_conversion NULL
+set_audio_conversion format=2
+begin_data_capture
+fo_connect done connecting=0 active=1
+  video: 320x240 pix_fmt=nv12 tb=1/30 fps=30/1 gop=120 bit_rate=800000 range=1 pri=1 trc=1 cs=1 chroma=1 swscale=0
+  audio[0]: codec=pcm_s16le rate=48000 channels=2 sample_fmt=s16 stream_index=1 title=left
+  audio[1]: codec=pcm_s16le rate=48000 channels=2 sample_fmt=s16 stream_index=2 title=right
+> fo_state
+fo_state active=1 connecting=0 stopping=0 write_thread_active=1 total_bytes_without_video=0
+  video_start_ts=0 audio_start_ts=0 stop_ts=0 queued=0 writes=0
+  initialized=1 has_video=1 audio_streams=2 tracks=0x3 frame_size=1024 total_frames=0 start_timestamp=0
+  track[0] total_samples=0 excess_bytes=0
+  track[1] total_samples=0 excess_bytes=0
+  audio_format=2 audio_planes=1 audio_size=4 samplerate=48000 last_error=""
+> fo_stop 0
+end_data_capture
+> fo_state
+fo_state active=0 connecting=0 stopping=0 write_thread_active=0 total_bytes_without_video=0
+  video_start_ts=0 audio_start_ts=0 stop_ts=0 queued=0 writes=0
+  initialized=0 has_video=0 audio_streams=0 tracks=0x0 frame_size=0 total_frames=0 start_timestamp=0
+  audio_format=0 audio_planes=0 audio_size=0 samplerate=0 last_error=""
+> fo_destroy
+> echo not_connected_start_then_destroy_joins_the_pending_thread
+not_connected_start_then_destroy_joins_the_pending_thread
+> fo_create
+fo_create -> ok
+> fo_start
+fo_start -> 1 connecting=1
+> fo_destroy
+cfg url=x.null format_name=null mime=(null) muxer_settings=""
+  gop=120 vbitrate=800 abitrate=128 venc=(null) venc_id=0 aenc=(null) aenc_id=0
+  vsettings="" asettings="" mix_count=2 tracks=0x3
+  pix_fmt=nv12 range=1 pri=1 trc=1 cs=1
+  size=320x240 scale=320x240
+  audio_name[0]=left
+  audio_name[1]=right
+set_video_conversion NULL
+set_audio_conversion format=2
+begin_data_capture
+end_data_capture

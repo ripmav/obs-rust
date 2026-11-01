@@ -1,0 +1,7 @@
+# Cache package version >= local version: nothing is copied (CORE).
+fu_put /L/package.json "{\"version\":2,\"files\":[{\"name\":\"a.json\",\"version\":2}]}"
+fu_put /L/a.json "A-local"
+fu_put /C/package.json "{\"version\":2,\"files\":[{\"name\":\"a.json\",\"version\":2}]}"
+fu_put /C/a.json "A-cache"
+fu_run /L /C http://srv/updates UA/1.0
+fu_cat /C/a.json

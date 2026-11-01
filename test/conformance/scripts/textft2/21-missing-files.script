@@ -1,0 +1,27 @@
+# missing_files callback list (v2 only) and the replacement callback (S-038-R110..R112).
+events off
+reset
+ascii 5 8 0 8 384
+font "Sans Serif" - 0 p/sans
+load
+create s 2
+setfont s "Sans Serif" - 20 0
+set s from_file true
+file a.txt "x"
+sets s text_file @TMP@/a.txt
+update s
+missing s
+rm a.txt
+missing s
+echo --- from_file off or empty path: nothing reported
+set s from_file false
+missing s
+set s from_file true
+sets s text_file ""
+missing s
+echo --- callback stores the new path in the settings and updates the source
+sets s text_file @TMP@/gone.txt
+file new.txt "fresh"
+missing s @TMP@/new.txt
+update s
+state s

@@ -1,0 +1,10 @@
+backend lua_load
+load -> 1
+defer_try_wait completed
+backend lua_unload
+log info [Scripting] Total detached callbacks: 0
+info_detached_head_after_unload null
+unload done
+backend lua_load
+load -> 1
+info_defer_try_wait timeout

@@ -1,0 +1,99 @@
+> trace 0
+> gs_create g
+ret 0 created
+> gs_enter_context g
+> trace 1
+> dump full
+== without DUP the backend receives the caller's own arrays (ownership passes to the backend)
+> gs_vertexbuffer_create 3 0 1 1 1 > vb
+  dev device_vertexbuffer_create flags=0
+    vb num=3 num_tex=1 points=(0,0,0) (1,2,3) (2,4,6) normals=(0,0,1) (0,0,1) (0,0,1) tangents=null colors=ff000000 ff000001 ff000002 tex0[w=2]=(0,0) (0.5,0) (1,0)
+ret #6
+> gs_vertexbuffer_get_data vb
+  dev gs_vertexbuffer_get_data vb=#6
+ret data num=3
+== with DUP the backend receives a deep copy (points, normals, colors, texcoords, but no tangents)
+> gs_vertexbuffer_create 2 GS_DUP_BUFFER 1 1 2 > vb2
+  dev device_vertexbuffer_create flags=16
+    vb num=2 num_tex=2 points=(0,0,0) (1,2,3) normals=(0,0,1) (0,0,1) tangents=null colors=ff000000 ff000001 tex0[w=2]=(0,0) (0.5,0) tex1[w=2]=(0,1) (0.5,1)
+ret #7
+== DUP with an empty buffer is NOT copied: the very same pointer is passed through
+> gs_vertexbuffer_create 0 GS_DUP_BUFFER 0 0 0 > vb3
+  dev device_vertexbuffer_create flags=16
+    vb num=0 num_tex=0 points=- normals=null tangents=null colors=null
+ret #8
+== NULL data
+> gs_vertexbuffer_create null 0
+  dev device_vertexbuffer_create flags=0 data=null
+ret #9
+> gs_vertexbuffer_create null GS_DUP_BUFFER
+  dev device_vertexbuffer_create flags=16 data=null
+ret #10
+== flush / queries
+> gs_vertexbuffer_flush vb
+  dev gs_vertexbuffer_flush vb=#6
+    vb num=3 num_tex=1 points=(0,0,0) (1,2,3) (2,4,6) normals=(0,0,1) (0,0,1) (0,0,1) tangents=null colors=ff000000 ff000001 ff000002 tex0[w=2]=(0,0) (0.5,0) (1,0)
+> gs_vertexbuffer_flush_direct vb
+log debug gs_vertexbuffer_flush_direct: Null 'data' parameter
+> gs_vertexbuffer_flush -
+log debug gs_vertexbuffer_flush: Null 'vertbuffer' parameter
+> gs_vertexbuffer_flush_direct -
+log debug gs_vertexbuffer_flush_direct: Null 'vertbuffer' parameter
+> gs_vertexbuffer_get_data -
+log debug gs_vertexbuffer_get_data: Null 'vertbuffer' parameter
+ret null num=0
+== index buffers: 16- and 32-bit, DUP copy
+> gs_indexbuffer_create GS_UNSIGNED_SHORT 4 0 > ib
+  dev device_indexbuffer_create type=0 num=4 flags=0 indices=0,3,6,9
+ret #11
+> gs_indexbuffer_create GS_UNSIGNED_LONG 3 GS_DUP_BUFFER > ib2
+  dev device_indexbuffer_create type=1 num=3 flags=16 indices=0,3,6
+ret #12
+> gs_indexbuffer_get_num_indices ib
+  dev gs_indexbuffer_get_num_indices ib=#11
+ret 4
+> gs_indexbuffer_get_type ib
+  dev gs_indexbuffer_get_type ib=#11
+ret 0
+> gs_indexbuffer_get_type ib2
+  dev gs_indexbuffer_get_type ib=#12
+ret 1
+> gs_indexbuffer_get_data ib
+  dev gs_indexbuffer_get_data ib=#11
+ret data
+> gs_indexbuffer_flush ib
+  dev gs_indexbuffer_flush indexbuffer=#11
+> gs_indexbuffer_flush_direct ib
+log debug gs_indexbuffer_flush_direct: Null 'data' parameter
+> gs_indexbuffer_get_num_indices -
+log debug gs_indexbuffer_get_num_indices: Null 'indexbuffer' parameter
+ret 0
+> gs_indexbuffer_get_type -
+log debug gs_indexbuffer_get_type: Null 'indexbuffer' parameter
+ret 0
+> gs_indexbuffer_get_data -
+log debug gs_indexbuffer_get_data: Null 'indexbuffer' parameter
+ret null
+> gs_indexbuffer_flush -
+log debug gs_indexbuffer_flush: Null 'indexbuffer' parameter
+> gs_indexbuffer_flush_direct -
+log debug gs_indexbuffer_flush_direct: Null 'indexbuffer' parameter
+== loading
+> gs_load_vertexbuffer vb
+  dev device_load_vertexbuffer vertbuffer=#6
+> gs_load_vertexbuffer -
+  dev device_load_vertexbuffer vertbuffer=null
+> gs_load_indexbuffer ib
+  dev device_load_indexbuffer indexbuffer=#11
+> gs_load_indexbuffer -
+  dev device_load_indexbuffer indexbuffer=null
+> gs_vertexbuffer_destroy vb
+  dev gs_vertexbuffer_destroy vb=#6
+> gs_vertexbuffer_destroy vb2
+  dev gs_vertexbuffer_destroy vb=#7
+> gs_vertexbuffer_destroy vb3
+  dev gs_vertexbuffer_destroy vb=#8
+> gs_indexbuffer_destroy ib
+  dev gs_indexbuffer_destroy ib=#11
+> gs_indexbuffer_destroy ib2
+  dev gs_indexbuffer_destroy ib=#12

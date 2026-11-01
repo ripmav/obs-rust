@@ -1,0 +1,31 @@
+# s_wlf/s_wbf/s_wld/s_wbd: the IEEE-754 bit pattern written little/big endian (CORE).
+# "bits:0x.." gives the exact bit pattern (NaN payloads, signed zero).
+open array
+wlf 1.5
+wbf 1.5
+wlf -2
+wbf -2
+dump
+array_reset
+wlf 0
+wlf -0.0
+wlf bits:0x7fc00001
+wbf bits:0x7fc00001
+wlf bits:0x7f800000
+wbf bits:0xff800000
+dump
+array_reset
+wld 1.5
+wbd 1.5
+wld -2
+wbd -2
+wld 0.1
+wbd 0.1
+dump
+array_reset
+wld bits:0xfff8000000000001
+wbd bits:0xfff8000000000001
+wld bits:0x7ff0000000000000
+wbd bits:0x8000000000000000
+dump
+close

@@ -1,0 +1,10 @@
+  cb A create
+log debug source 'A' (in) created
+create a ok
+  cb F create
+log debug private source 'F' (fl) created
+create f ok
+log debug - filter 'F' (fl) added to source 'A'
+refs f 2
+pending 0
+log debug - filter 'F' (fl) removed from source 'A'

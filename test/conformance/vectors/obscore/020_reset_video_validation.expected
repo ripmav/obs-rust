@@ -1,0 +1,65 @@
+log debug canvas 'Main' (<uuid>) created
+startup -> true
+reset_video -> invalid_param
+  after_call base=1x1080 out=1280x720 fps=30/1 fmt=NV12 cs=2 range=1 scale=2 gpu=1 adapter=0
+reset_video -> invalid_param
+  after_call base=1920x1 out=1280x720 fps=30/1 fmt=NV12 cs=2 range=1 scale=2 gpu=1 adapter=0
+reset_video -> invalid_param
+  after_call base=1920x1080 out=1x720 fps=30/1 fmt=NV12 cs=2 range=1 scale=2 gpu=1 adapter=0
+reset_video -> invalid_param
+  after_call base=1920x1080 out=1280x1 fps=30/1 fmt=NV12 cs=2 range=1 scale=2 gpu=1 adapter=0
+reset_video -> invalid_param
+  after_call base=0x0 out=0x0 fps=30/1 fmt=NV12 cs=2 range=1 scale=2 gpu=1 adapter=0
+reset_video -> invalid_param
+  after_call base=32769x1080 out=1280x720 fps=30/1 fmt=NV12 cs=2 range=1 scale=2 gpu=1 adapter=0
+reset_video -> invalid_param
+  after_call base=1920x32769 out=1280x720 fps=30/1 fmt=NV12 cs=2 range=1 scale=2 gpu=1 adapter=0
+reset_video -> invalid_param
+  after_call base=1920x1080 out=32769x720 fps=30/1 fmt=NV12 cs=2 range=1 scale=2 gpu=1 adapter=0
+reset_video -> invalid_param
+  after_call base=1920x1080 out=1280x32769 fps=30/1 fmt=NV12 cs=2 range=1 scale=2 gpu=1 adapter=0
+video_info -> 0
+state core=up locale=en-US modcfg=NULL name_store_owned=1
+  types source=3 input=1 filter=0 transition=0 output=0 encoder=0 service=0
+  graphics=no audio=no mixes=0 thread_initialized=0 valid=1
+  main_canvas name="Main" flags=0xf mix=none
+log info ---------------------------------
+log info video settings reset:  base resolution:   2x2  output resolution: 0x2  downscale filter:  Bicubic  fps:               30/1  format:            NV12  YUV mode:          Rec. 709/Partial
+log error Invalid video parameters specified
+reset_video -> fail
+  after_call base=2x2 out=0x2 fps=30/1 fmt=NV12 cs=2 range=1 scale=2 gpu=1 adapter=0
+log info ---------------------------------
+log info video settings reset:  base resolution:   32768x32768  output resolution: 32768x32768  downscale filter:  Bicubic  fps:               30/1  format:            NV12  YUV mode:          Rec. 709/Partial
+log info NV12 texture support enabled
+log info P010 texture support not available
+reset_video -> success
+  after_call base=32768x32768 out=32768x32768 fps=30/1 fmt=NV12 cs=2 range=1 scale=2 gpu=1 adapter=0
+log info ---------------------------------
+log info video settings reset:  base resolution:   2x2  output resolution: 0x2  downscale filter:  Bicubic  fps:               30/1  format:            NV12  YUV mode:          Rec. 709/Partial
+log error Invalid video parameters specified
+reset_video -> fail
+  after_call base=2x2 out=0x2 fps=30/1 fmt=NV12 cs=2 range=1 scale=2 gpu=1 adapter=0
+log info ---------------------------------
+log info video settings reset:  base resolution:   100x100  output resolution: 4x6  downscale filter:  Bicubic  fps:               30/1  format:            NV12  YUV mode:          Rec. 709/Partial
+log info NV12 texture support enabled
+log info P010 texture support not available
+reset_video -> success
+  after_call base=100x100 out=4x6 fps=30/1 fmt=NV12 cs=2 range=1 scale=2 gpu=1 adapter=0
+log info ---------------------------------
+log info video settings reset:  base resolution:   100x100  output resolution: 1280x720  downscale filter:  Bicubic  fps:               30/1  format:            NV12  YUV mode:          Rec. 709/Partial
+log info NV12 texture support enabled
+log info P010 texture support not available
+reset_video -> success
+  after_call base=100x100 out=1280x720 fps=30/1 fmt=NV12 cs=2 range=1 scale=2 gpu=1 adapter=0
+log info ---------------------------------
+log info video settings reset:  base resolution:   100x100  output resolution: 4x2  downscale filter:  Bicubic  fps:               30/1  format:            NV12  YUV mode:          Rec. 709/Partial
+log info NV12 texture support enabled
+log info P010 texture support not available
+reset_video -> success
+  after_call base=100x100 out=4x2 fps=30/1 fmt=NV12 cs=2 range=1 scale=2 gpu=1 adapter=0
+video_info -> 1
+   base=100x100 out=4x2 fps=30/1 fmt=NV12 cs=2 range=1 scale=2 gpu=1 adapter=0
+shutdown begin
+log info Freeing OBS context data
+log debug canvas 'Main' (<uuid>) destroyed
+shutdown end obs=NULL

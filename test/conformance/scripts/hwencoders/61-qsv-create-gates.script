@@ -1,0 +1,37 @@
+# S-050 obs-qsv11: create(): format / HDR gates, then qsv_encoder_open; on success headers are
+# loaded (H.264/AV1: SPS then PPS - AV1 omits PPS; HEVC: VPS+SPS+PPS), a library version line is
+# always logged, a high-performance token is requested; failure to open yields NULL (+ warning).
+# The settings translation itself is S-025.
+q_set open_ok 1
+q_headers 40aa 6742 68ee
+q_create h264 soft
+q_extra
+q_destroy
+q_create av1 soft
+q_extra
+q_destroy
+q_create hevc soft
+q_extra
+q_destroy
+# 10-bit: H.264 refuses, AV1/HEVC accept
+host format p010
+q_create h264 soft
+q_create av1 soft
+q_destroy
+host format i010
+q_create hevc soft
+q_destroy
+host format p216
+q_create av1 soft
+host format p416
+q_create hevc soft
+# HDR with 8-bit input
+host format nv12
+host colorspace pq
+q_create av1 soft
+host colorspace hlg
+q_create h264 soft
+host colorspace 709
+# library open fails
+q_set open_ok 0
+q_create h264 soft

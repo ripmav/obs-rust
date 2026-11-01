@@ -1,0 +1,53 @@
+# CHANGE_FILE packet (type 2, size = length of the new path, payload = path, no terminator): the current output is
+# finished (trailer written), the program re-initialises from the ORIGINAL command line with the file name replaced,
+# and then expects a complete set of header packets again before the next data packet.
+reset
+rmfile @c1.nut
+rmfile @c2.nut
+rmfile @c3.nut
+args @c1.nut 1 1 h264 6000 640 360 1 1 1 1 1 0 25 1 0 aac "A" 128 48000 1024 0 2 "" ""
+hdr video 0 0164001fffe100046764001f01000468ce3c80
+hdr audio 0 1190
+frame video 0 1 0 0 4 a1
+frame audio 0 0 0 0 4 b1
+frame video 0 0 1 1 4 a2
+change @c2.nut
+hdr video 0 0164001fffe100046764001f01000468ce3c80
+hdr audio 0 1190
+frame video 0 1 0 0 4 c1
+frame audio 0 0 0 0 4 d1
+run
+probe @c1.nut
+probe @c2.nut
+echo --- the new file name is read verbatim: any bytes, here a name with a space, and the length excludes any NUL
+reset
+args @c1.nut 0 1 aac "A" 128 48000 1024 0 2 "" ""
+hdr audio 0 1190
+frame audio 0 0 0 0 4 b1
+change "@c3 x.nut"
+hdr audio 0 1190
+frame audio 0 0 1024 1024 4 b2
+run
+probe @c1.nut
+probe "@c3 x.nut"
+exists "@c3 x.nut"
+echo --- no header packets after the change: the next data packet is consumed as the audio header (its payload becomes extradata)
+reset
+rmfile @c2.nut
+args @c1.nut 0 1 aac "A" 128 48000 1024 0 2 "" ""
+hdr audio 0 1190
+frame audio 0 0 0 0 4 b1
+change @c2.nut
+frame audio 0 0 0 0 4 b2
+run
+probe @c1.nut
+exists @c2.nut
+echo --- change file to a name with unknown extension: re-init fails, exit 0
+reset
+args @c1.nut 0 1 aac "A" 128 48000 1024 0 2 "" ""
+hdr audio 0 1190
+frame audio 0 0 0 0 4 b1
+change @bad.zzz
+hdr audio 0 1190
+run
+probe @c1.nut

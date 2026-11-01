@@ -1,0 +1,23 @@
+add h ok
+emit s
+call rec n=0
+nested-emit s
+call rec n=1
+nested-emit s
+call rec n=2
+nested-emit s
+call rec n=3
+nested-emit s
+call rec n=4
+nested-emit s
+call rec n=5
+nested-emit s
+call rec n=6
+call watcher n=7
+call watcher n=7
+call watcher n=7
+call watcher n=7
+call watcher n=7
+call watcher n=7
+call watcher n=7
+emit-done n=7

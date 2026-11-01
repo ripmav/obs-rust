@@ -1,0 +1,33 @@
+# Header (extradata) packets: one 32-byte info + payload per announced stream, video first, then audio tracks 0..n-1.
+# The program trusts the type/index fields of each header packet to decide where the payload goes.
+reset
+echo --- video + 2 audio, payloads are stored per stream
+args @h.mkv 1 2 h264 6000 640 360 1 1 1 1 1 0 30 1 0 aac "A" 128 48000 1024 0 2 "B" 128 48000 1024 0 2 "" ""
+hdr video 0 0164001fffe100046764001f01000468ce3c80
+hdr audio 0 1190
+hdr audio 1 1210
+inspect
+echo --- audio headers may arrive in any order: the index field decides, not the position
+reset
+args @h.mkv 0 2 aac "A" 128 48000 1024 0 2 "B" 128 48000 1024 0 2 "" ""
+hdr audio 1 1210
+hdr audio 0 1190
+inspect
+echo --- empty headers (size 0) mean no extradata
+reset
+args @h.mkv 1 1 h264 6000 640 360 1 1 1 1 1 0 30 1 0 aac "A" 128 48000 1024 0 2 "" ""
+hdr video 0 0164001fffe100046764001f01000468ce3c80
+hdr audio 0 -
+inspect
+echo --- the keyframe/pts/dts fields of header packets are ignored
+reset
+args @h.mkv 0 1 aac "A" 128 48000 1024 0 2 "" ""
+info audio 0 1 123456 -99 2
+raw 1190
+inspect
+echo --- the same header twice for one stream: the later one wins; the stream is complete after 1 header
+reset
+args @h.mkv 0 1 aac "A" 128 48000 1024 0 2 "" ""
+hdr audio 0 1190
+hdr audio 0 1208
+inspect

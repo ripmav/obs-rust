@@ -1,0 +1,25 @@
+fader_new 0 ok
+fader_get 0 db=0 def=1 mul=1
+fader_set 0 db ret=1
+fader_get 0 db=-6 def=0.794328213 mul=0.501187205
+fader_set 0 db ret=0
+fader_get 0 db=0 def=1 mul=1
+fader_set 0 def ret=1
+fader_get 0 db=-18.0618 def=0.5 mul=0.124999993
+fader_set 0 mul ret=1
+fader_get 0 db=-6.02060032 def=0.793700516 mul=0.49999997
+fader_set 0 mul ret=1
+fader_get 0 db=-inf def=0 mul=0
+fader_set 0 db ret=1
+fader_get 0 db=-inf def=0 mul=0
+fader_new 1 ok
+fader_set 1 def ret=1
+fader_get 1 db=-15.5999985 def=0.600000024 mul=0.165958717
+fader_new 2 ok
+fader_set 2 db ret=0
+fader_get 2 db=-inf def=0 mul=0
+fader_set 2 def ret=1
+fader_get 2 db=-37.5978889 def=0.300000072 mul=0.0131857703
+fader_set 2 db ret=1
+fader_get 2 db=-96 def=0 mul=1.58489256e-05
+fader_null set_db=0 get_db=0 def=0 mul=0 attach=0 create_bad=0

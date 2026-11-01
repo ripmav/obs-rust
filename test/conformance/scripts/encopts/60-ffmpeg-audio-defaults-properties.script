@@ -1,0 +1,8 @@
+# CORE. Settings shared by every obs-ffmpeg audio encoder (aac, opus, pcm16/24/32, alac,
+# flac): default bitrate 128 kbps; property: "bitrate" int 64..1024 step 32 (also shown for
+# lossless codecs, whose bitrate is ignored at create time).
+data D
+aud_defaults D
+dump D
+aud_props P
+props_dump P

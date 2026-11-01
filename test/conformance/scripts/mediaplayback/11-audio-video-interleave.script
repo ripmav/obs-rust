@@ -1,0 +1,20 @@
+# Audio + video: the player always works on the stream whose next frame is earliest ('min pts'); both
+# decoders are primed by prepare_frames. Video 40 ms frames, audio 1024-sample AAC-like frames of 32 ms @32000 Hz
+# (stereo, planar float). A frame is delivered when its pts <= next_pts_ns (the minimum of the pending pts).
+media av 200000 0
+video 1 1000 32 32 yuv420p frames=3
+audio 1 32000 32000 2 fltp
+pkt 0 0 fdur=40
+pkt 1 0 samples=1024
+pkt 0 40 fdur=40
+pkt 1 1024 samples=1024
+pkt 0 80 fdur=40
+pkt 1 2048 samples=1024
+endmedia
+clock 5000
+minit av local=1
+mreset
+mplay 0
+mtickw 0 0
+mtick 8
+mstate

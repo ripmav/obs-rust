@@ -1,0 +1,29 @@
+# All blocks are 32-byte aligned (POSIX builds use an alignment shim around
+# malloc); bnum_allocs counts live allocations.
+alignment
+count
+alloc 0 1
+alloc 1 7
+alloc 2 33
+alloc 3 4096
+alloc 4 100000
+aligned 0
+aligned 1
+aligned 2
+aligned 3
+aligned 4
+count
+free 1
+count
+free 1
+count
+zalloc 5 64
+check 5 64 0
+aligned 5
+count
+free 0
+free 2
+free 3
+free 4
+free 5
+count

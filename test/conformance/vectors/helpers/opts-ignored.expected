@@ -1,0 +1,60 @@
+opts_parse "flag"
+  count=0 ignored_count=1 ptrs options=1 ignored=1 input=1
+  ignored 0 "flag"
+  input_words=1
+  word 0 "flag"
+opts_parse "=value"
+  count=0 ignored_count=1 ptrs options=1 ignored=1 input=1
+  ignored 0 "=value"
+  input_words=1
+  word 0 "=value"
+opts_parse "key="
+  count=0 ignored_count=1 ptrs options=1 ignored=1 input=1
+  ignored 0 "key="
+  input_words=1
+  word 0 "key="
+opts_parse "="
+  count=0 ignored_count=1 ptrs options=1 ignored=1 input=1
+  ignored 0 "="
+  input_words=1
+  word 0 "="
+opts_parse "=="
+  count=0 ignored_count=1 ptrs options=1 ignored=1 input=1
+  ignored 0 "=="
+  input_words=1
+  word 0 "=="
+opts_parse "a=1 flag b=2 =x c= d=4"
+  count=3 ignored_count=3 ptrs options=1 ignored=1 input=1
+  opt 0 name="a" value="1"
+  opt 1 name="b" value="2"
+  opt 2 name="d" value="4"
+  ignored 0 "flag"
+  ignored 1 "=x"
+  ignored 2 "c="
+  input_words=6
+  word 0 "a=1"
+  word 1 "flag"
+  word 2 "b=2"
+  word 3 "=x"
+  word 4 "c="
+  word 5 "d=4"
+opts_parse "only ignored words here"
+  count=0 ignored_count=4 ptrs options=1 ignored=1 input=1
+  ignored 0 "only"
+  ignored 1 "ignored"
+  ignored 2 "words"
+  ignored 3 "here"
+  input_words=4
+  word 0 "only"
+  word 1 "ignored"
+  word 2 "words"
+  word 3 "here"
+opts_parse "a= =b c"
+  count=0 ignored_count=3 ptrs options=1 ignored=1 input=1
+  ignored 0 "a="
+  ignored 1 "=b"
+  ignored 2 "c"
+  input_words=3
+  word 0 "a="
+  word 1 "=b"
+  word 2 "c"

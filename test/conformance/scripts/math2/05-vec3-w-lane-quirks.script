@@ -1,0 +1,15 @@
+# Q-2: the four-lane dot product makes the w lane of the operands observable.
+# vec3_rotate keeps v.w in the dot products; vec3_transform3x4 zeroes it (via the subtraction).
+vec3 pw 1 2 3 10
+mat3 mw 1 0 0 0.5  0 1 0 0.25  0 0 1 2  0 0 0 0
+call r vec3_rotate pw mw
+call r vec3_transform3x4 pw mw
+# plane direction w lane participates in plane_dist and mirror
+plane pw1 0 1 0 1 3
+vec3 q 0 4 0 2
+call d vec3_plane_dist q pw1
+call m vec3_mirror q pw1
+vec3 vv 0 1 0 5
+call m vec3_mirrorv q vv
+# the result of mirror/mirrorv always has w = 0 (final subtraction)
+# vec3_rotate result w = 0 even when the input had w

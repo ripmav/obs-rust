@@ -1,0 +1,17 @@
+# image_source: animated image playback timing (CORE; the decoder is the scripted fake of S-030 section 4).
+fs_file /g/a.gif 1
+# 3 frames, delays 10 20 0 centiseconds (0 -> 100 ms), loop forever
+img_anim /g/a.gif 4 4 0 1000 10 20 0
+create a image_source {"file":"/g/a.gif"}
+state a
+refs a 1 0
+clock 1000000000
+tick 0.05
+state a
+tick 0.05
+state a
+tick 0.05 3
+state a
+tick 0.1 4
+state a
+render a

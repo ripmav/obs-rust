@@ -1,0 +1,61 @@
+create g1 -> ok
+state gain channels=2 multiple=1
+process g1 frames=8 ts=0 pos=0 in-crc: cf6fe8b8 4918c105
+  ret same frames=8 ts=0
+  out p0 [0] 1 0.5 -0.25 0 2 -2 0.125 1
+  out p1 [0] 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5
+state gain channels=2 multiple=1.99526238
+process g1 frames=4 ts=0 pos=8 in-crc: 542e8f65 51dad965
+  ret same frames=4 ts=0
+  out p0 [0] 0.997631192 0.997631192 0.997631192 0.997631192
+  out p1 [0] -0.997631192 -0.997631192 -0.997631192 -0.997631192
+state gain channels=2 multiple=0.0316227749
+state gain channels=2 multiple=33.4965439
+echo non-finite-db-gives-zero-gain
+state gain channels=2 multiple=0
+process g1 frames=3 ts=0 pos=12 in-crc: 97f0f7c8 97f0f7c8
+  ret same frames=3 ts=0
+  out p0 [0] 0 0 0
+  out p1 [0] 0 0 0
+state gain channels=2 multiple=0
+echo null-planes-and-extra-planes
+process g1 frames=3 ts=0 pos=15 in-crc: 97f0f7c8 - 19299235
+  ret same frames=3 ts=0
+  out p0 [0] 1.99526238 1.99526238 1.99526238
+  out p2 [0] 3 3 3
+echo channels-fewer-than-planes
+process g1 frames=3 ts=0 pos=18 in-crc: 97f0f7c8 97f0f7c8
+  ret same frames=3 ts=0
+  out p0 [0] 1.99526238 1.99526238 1.99526238
+  out p1 [0] 1 1 1
+echo zero-frames
+process g1 frames=0 ts=0 pos=21 in-crc: 811c9dc5 811c9dc5
+  ret same frames=0 ts=0
+echo nan-input
+process g1 frames=3 ts=0 pos=21 in-crc: a51f5f48 804fa888
+  ret same frames=3 ts=0
+  out p0 [0] nan nan nan
+  out p1 [0] inf inf inf
+destroy g1
+create i1 -> ok
+process i1 frames=5 ts=0 pos=0 in-crc: c86aaf08 28c09e6b
+  ret same frames=5 ts=0
+  out p0 [0] -1 2 0 -0.5 nan
+  out p1 [0] -0.25 -0.25 -0.25 -0.25 -0.25
+echo null-first-plane-stops-the-loop
+process i1 frames=3 ts=0 pos=5 in-crc: - 97f0f7c8 97f0f7c8
+  ret same frames=3 ts=0
+  out p1 [0] 1 1 1
+  out p2 [0] 1 1 1
+echo planes-beyond-channel-count-are-inverted
+process i1 frames=2 ts=0 pos=8 in-crc: a86cc695 05b2fd65 1d2fb7e5 d979cc65 a3e97e65 f370efe5 bde0a1e5 c00bb735
+  ret same frames=2 ts=0
+  out p0 [0] -1 -1
+  out p1 [0] -2 -2
+  out p2 [0] -3 -3
+  out p3 [0] -4 -4
+  out p4 [0] -5 -5
+  out p5 [0] -6 -6
+  out p6 [0] -7 -7
+  out p7 [0] -8 -8
+destroy i1

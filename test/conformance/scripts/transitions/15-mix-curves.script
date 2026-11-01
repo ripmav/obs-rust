@@ -1,0 +1,27 @@
+# CORE: audio mix callbacks (mix_a / mix_b) of every transition as a function of t.
+load quiet
+create c cut_transition
+create f fade_transition
+create x fade_to_color_transition int:switch_point=50
+create w wipe_transition
+create s slide_transition
+create p swipe_transition
+tick x
+mix c 0x1 2 48000 0 0.25 0.5 0.75 1
+mix f 0x1 2 48000 0 0.25 0.5 0.75 1
+mix w 0x1 2 48000 0 0.25 0.5 0.75 1
+mix s 0x1 2 48000 0 0.1 0.25 0.4 0.5 0.6 0.75 0.9 1
+mix p 0x1 2 48000 0 0.1 0.25 0.4 0.5 0.6 0.75 0.9 1
+mix x 0x1 2 48000 0 0.1 0.25 0.4 0.5 0.6 0.75 0.9 1
+settings x int:switch_point=20
+tick x
+mix x 0x1 2 48000 0 0.1 0.2 0.25 0.5 0.6 1
+settings x int:switch_point=0
+tick x
+mix x 0x1 2 48000 0 0.25 0.5 1
+settings x int:switch_point=100
+tick x
+mix x 0x1 2 48000 0 0.25 0.5 1
+# out-of-range t values are not clamped by the callbacks
+mix f 0x1 2 48000 -0.5 1.5
+mix s 0x1 2 48000 -0.5 1.5

@@ -1,0 +1,158 @@
+call effect_create file=crop_filter.effect -> e1 uniforms=5 techniques=4
+call get_param e1:mul_val -> ok
+call get_param e1:add_val -> ok
+call get_param e1:multiplier -> ok
+call source_update a deferred=1
+create a -> ok
+size a width=0 height=0
+call deferred_update a
+tick a 0.016
+size a width=1920 height=1080
+render a
+call filter_begin_cs a format=RGBA space=SRGB allow=NO_DIRECT -> 1
+call set_vec2 e1:mul_val 1 1
+call set_vec2 e1:add_val 0 0
+call set_float e1:multiplier 1
+call blend_push
+call blend_function ONE INVSRCALPHA
+call filter_tech_end a e1 size=1920x1080 technique=Draw exists=1
+call blend_pop
+echo relative crop left/top/right/bottom
+call effect_create file=crop_filter.effect -> e2 uniforms=5 techniques=4
+call get_param e2:mul_val -> ok
+call get_param e2:add_val -> ok
+call get_param e2:multiplier -> ok
+call source_update b deferred=1
+create b -> ok
+call deferred_update b
+tick b 0.016
+size b width=1800 height=1020
+render b
+call filter_begin_cs b format=RGBA space=SRGB allow=NO_DIRECT -> 1
+call set_vec2 e2:mul_val 0.9375 0.944444418
+call set_vec2 e2:add_val 0.0520833321 0.0462962948
+call set_float e2:multiplier 1
+call blend_push
+call blend_function ONE INVSRCALPHA
+call filter_tech_end b e2 size=1800x1020 technique=Draw exists=1
+call blend_pop
+echo over-crop clamps width/height to 1
+call effect_create file=crop_filter.effect -> e3 uniforms=5 techniques=4
+call get_param e3:mul_val -> ok
+call get_param e3:add_val -> ok
+call get_param e3:multiplier -> ok
+call source_update c deferred=1
+create c -> ok
+call deferred_update c
+tick c 0.016
+size c width=1 height=1
+render c
+call filter_begin_cs c format=RGBA space=SRGB allow=NO_DIRECT -> 1
+call set_vec2 e3:mul_val 0.00052083336 0.00092592591
+call set_vec2 e3:add_val 1.04166663 1
+call set_float e3:multiplier 1
+call blend_push
+call blend_function ONE INVSRCALPHA
+call filter_tech_end c e3 size=1x1 technique=Draw exists=1
+call blend_pop
+echo negative values pad (width grows); add_val is negative
+call effect_create file=crop_filter.effect -> e4 uniforms=5 techniques=4
+call get_param e4:mul_val -> ok
+call get_param e4:add_val -> ok
+call get_param e4:multiplier -> ok
+call source_update e deferred=1
+create e -> ok
+call deferred_update e
+tick e 0.016
+size e width=2080 height=1140
+render e
+call filter_begin_cs e format=RGBA space=SRGB allow=NO_DIRECT -> 1
+call set_vec2 e4:mul_val 1.08333337 1.05555558
+call set_vec2 e4:add_val -0.0520833321 -0.0370370373
+call set_float e4:multiplier 1
+call blend_push
+call blend_function ONE INVSRCALPHA
+call filter_tech_end e e4 size=2080x1140 technique=Draw exists=1
+call blend_pop
+echo absolute mode: width/height from cx/cy, left/top are offsets, right/bottom ignored
+call effect_create file=crop_filter.effect -> e5 uniforms=5 techniques=4
+call get_param e5:mul_val -> ok
+call get_param e5:add_val -> ok
+call get_param e5:multiplier -> ok
+call source_update f deferred=1
+create f -> ok
+call deferred_update f
+tick f 0.016
+size f width=640 height=360
+render f
+call filter_begin_cs f format=RGBA space=SRGB allow=NO_DIRECT -> 1
+call set_vec2 e5:mul_val 0.333333343 0.333333343
+call set_vec2 e5:add_val 0.00520833349 0.0185185187
+call set_float e5:multiplier 1
+call blend_push
+call blend_function ONE INVSRCALPHA
+call filter_tech_end f e5 size=640x360 technique=Draw exists=1
+call blend_pop
+echo absolute with cx = cy = 0 -> clamped to 1
+call effect_create file=crop_filter.effect -> e6 uniforms=5 techniques=4
+call get_param e6:mul_val -> ok
+call get_param e6:add_val -> ok
+call get_param e6:multiplier -> ok
+call source_update g deferred=1
+create g -> ok
+call deferred_update g
+tick g 0.016
+size g width=1 height=1
+echo base size follows the target on every tick
+tick b 0.016
+size b width=880 height=440
+render b
+call filter_begin_cs b format=RGBA space=SRGB allow=NO_DIRECT -> 1
+call set_vec2 e2:mul_val 0.879999995 0.879999995
+call set_vec2 e2:add_val 0.100000001 0.100000001
+call set_float e2:multiplier 1
+call blend_push
+call blend_function ONE INVSRCALPHA
+call filter_tech_end b e2 size=880x440 technique=Draw exists=1
+call blend_pop
+echo zero base size: mul/add stay zero; relative width = 0 - left - right clamped to 1
+tick b 0.016
+size b width=1 height=1
+render b
+call filter_begin_cs b format=RGBA space=SRGB allow=NO_DIRECT -> 1
+call set_vec2 e2:mul_val 0 0
+call set_vec2 e2:add_val 0 0
+call set_float e2:multiplier 1
+call blend_push
+call blend_function ONE INVSRCALPHA
+call filter_tech_end b e2 size=1x1 technique=Draw exists=1
+call blend_pop
+echo no target: tick returns before touching anything
+call effect_create file=crop_filter.effect -> e7 uniforms=5 techniques=4
+call get_param e7:mul_val -> ok
+call get_param e7:add_val -> ok
+call get_param e7:multiplier -> ok
+call source_update h deferred=1
+create h -> ok
+call deferred_update h
+tick h 0.016
+size h width=0 height=0
+echo settings truncated to int (value 4294967297 -> 1)
+call effect_create file=crop_filter.effect -> e8 uniforms=5 techniques=4
+call get_param e8:mul_val -> ok
+call get_param e8:add_val -> ok
+call get_param e8:multiplier -> ok
+call source_update i deferred=1
+create i -> ok
+call deferred_update i
+tick i 0.016
+size i width=1919 height=1080
+render i
+call filter_begin_cs i format=RGBA space=SRGB allow=NO_DIRECT -> 1
+call set_vec2 e8:mul_val 0.999479175 1
+call set_vec2 e8:add_val 0.00052083336 0
+call set_float e8:multiplier 1
+call blend_push
+call blend_function ONE INVSRCALPHA
+call filter_tech_end i e8 size=1919x1080 technique=Draw exists=1
+call blend_pop

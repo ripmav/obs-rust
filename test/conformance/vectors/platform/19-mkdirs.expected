@@ -1,0 +1,34 @@
+mkdirs x 0
+mkdirs x 1
+mkdirs p/q/r/s 0
+info p dir
+info p/q/r/s dir
+mkdirs p/q/r/s 1
+mkdirs p/q/r/t 0
+mkdirs u/v/ 1
+info u/v dir
+mkdirs w//x///y 0
+info w/x/y dir
+mkdirs ./z/./k 0
+info z/k dir
+mkdirs b1\b2\b3 0
+info b1/b2/b3 dir
+mkdirs m1/m2\m3 0
+info m1/m2/m3 dir
+mkdirs f.txt 1
+mkdirs f.txt/sub -1
+mkdirs f.txt/sub/deeper -1
+mkdirs g/f2 0
+mkdirs g/file/more -1
+info g/file/more none
+exists f.txt/sub 0
+mkdirs . 1
+mkdirs .. 1
+mkdirs ./ 1
+symlink 1
+mkdirs lnk 1
+mkdirs lnk/q/new 0
+info p/q/new dir
+symlink 1
+mkdirs dangling 1
+mkdirs dangling/child -1

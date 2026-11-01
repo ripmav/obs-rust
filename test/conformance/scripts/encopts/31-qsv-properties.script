@@ -1,0 +1,23 @@
+# CORE. obs-qsv11 property lists. H.264 v1 has qpi/qpp/qpb, the other variants a single
+# cqp (AV1: max 63, else 51). Profile lists differ per codec. ICQ rate control is offered only
+# on Haswell or newer (or unknown platform). cpu_platform values: 0 unknown, 2 SNB, 3 IVB,
+# 6 HSW, 14 generic Intel (enum qsv_cpu_platform).
+cpu_platform 0
+qsv_props h264v1 A
+props_dump A
+qsv_props h264v2 B
+props_dump B
+qsv_props av1 C
+props_dump C
+qsv_props hevc E
+props_dump E
+echo rate-control-list-by-platform
+cpu_platform 3
+qsv_props h264v2 B
+props_dump B
+cpu_platform 6
+qsv_props h264v2 B
+props_vis B
+cpu_platform 2
+qsv_props hevc E
+props_vis E

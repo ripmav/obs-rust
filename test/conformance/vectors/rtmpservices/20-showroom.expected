@@ -1,0 +1,45 @@
+echo no-route
+fake curl GET https://showroom.example/api/obs/streaming_info?obs_key=AK1 timeout=30 verifypeer=1 verifyhost=2
+fake curl -> no-route
+log warning showroom_get_ingest: curl_easy_perform() failed: fake curl error
+get url = ""
+fake curl GET https://showroom.example/api/obs/streaming_info?obs_key=AK1 timeout=30 verifypeer=1 verifyhost=2
+fake curl -> no-route
+log warning showroom_get_ingest: curl_easy_perform() failed: fake curl error
+get key = ""
+echo success-one-request-serves-url-and-key
+fake curl GET https://showroom.example/api/obs/streaming_info?obs_key=AK1 timeout=30 verifypeer=1 verifyhost=2
+fake curl -> status=200 bytes=74
+get url = "rtmp://sr.example/live"
+get key = "real-key"
+echo cached-9s
+get url = "rtmp://sr.example/live"
+get key = "real-key"
+echo cache-expired-at-10s
+fake curl GET https://showroom.example/api/obs/streaming_info?obs_key=AK1 timeout=30 verifypeer=1 verifyhost=2
+fake curl -> status=200 bytes=71
+get url = "rtmp://sr2.example/live"
+get key = "key2"
+echo refresh-failure-after-expiry-returns-invalid-ingest
+fake curl GET https://showroom.example/api/obs/streaming_info?obs_key=AK1 timeout=30 verifypeer=1 verifyhost=2
+fake curl -> status=500 bytes=1
+log warning showroom_get_ingest: curl_easy_perform() returned code: 500
+get url = ""
+fake curl GET https://showroom.example/api/obs/streaming_info?obs_key=AK1 timeout=30 verifypeer=1 verifyhost=2
+fake curl -> status=500 bytes=1
+log warning showroom_get_ingest: curl_easy_perform() returned code: 500
+get key = ""
+echo different-access-key-new-request
+fake curl GET https://showroom.example/api/obs/streaming_info?obs_key=AK2 timeout=30 verifypeer=1 verifyhost=2
+fake curl -> status=200 bytes=48
+get url = "rtmp://sr3.example/live"
+get key = @null
+echo can-connect-uses-the-fetched-key
+get can_connect = 0
+get connect:0 = "rtmp://sr3.example/live"
+get connect:2 = @null
+get user = @null
+get pass = @null
+echo empty-server-string-still-takes-the-showroom-path-and-hits-the-cache
+get url = "rtmp://sr3.example/live"
+get key = @null

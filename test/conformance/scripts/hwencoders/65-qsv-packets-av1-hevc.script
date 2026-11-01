@@ -1,0 +1,24 @@
+# S-050 obs-qsv11: AV1 and HEVC packets use the same timestamp / keyframe / priority rules but never
+# touch the payload, and the default priority is DISPOSABLE (0).
+q_set open_ok 1
+q_headers 40aa 6742 68ee
+q_set bs_present 1
+q_create av1 soft
+q_bs 12000a01aa 0x81 3000 1500
+q_encode 0
+q_bs 320100 0x02 4500 3000
+q_encode 1
+q_bs 320100 0x04 6000 4500
+q_encode 2
+q_destroy
+q_create hevc soft
+q_bs 0000000126010a 0x81 3000 1500
+q_encode 0
+q_bs 0000000102010b 0x42 4500 3000
+q_encode 1
+q_bs 0000000102010c 0x04 6000 4500
+q_encode 2
+# the texture entry point shares the post-processing
+q_encode 3 tex
+q_encode 4 badtex
+q_destroy

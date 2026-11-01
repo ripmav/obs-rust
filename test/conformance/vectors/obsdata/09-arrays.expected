@@ -1,0 +1,39 @@
+a_count ar 0
+a_count @null 0
+a_push ar 0
+a_push ar 1
+a_push ar 2
+a_count ar 3
+a_dump ar [{n:number[user=num(I,1,1)]},{n:number[user=num(I,2,2)]},{n:number[user=num(I,3,3)]}]
+echo --- insert
+a_dump ar [{n:number[user=num(I,0,0)]},{n:number[user=num(I,1,1)]},{n:number[user=num(I,0,0)]},{n:number[user=num(I,2,2)]},{n:number[user=num(I,3,3)]},{n:number[user=num(I,0,0)]}]
+refs a0 4
+echo --- indexing: out of range gives NULL
+a_item ar 0 ok
+a_item ar 99 null
+a_item @null 0 null
+echo --- erase
+a_dump ar [{n:number[user=num(I,1,1)]},{n:number[user=num(I,2,2)]},{n:number[user=num(I,3,3)]}]
+refs a0 2
+echo --- NULL objects are refused
+a_push ar 0
+a_push @null 0
+a_count ar 3
+echo --- push_back_array adds references to the same objects
+a_push b 0
+a_dump b [{n:number[user=num(I,1,1)]},{n:number[user=num(I,1,1)]},{n:number[user=num(I,2,2)]},{n:number[user=num(I,3,3)]}]
+refs a1 4
+echo --- enum visits in order; NULL callback and NULL array are no-ops
+enum 0 {n:number[user=num(I,1,1)]}
+enum 1 {n:number[user=num(I,2,2)]}
+enum 2 {n:number[user=num(I,3,3)]}
+a_enum ar done 3
+a_enum @null done 0
+echo --- objects in an array are shared, not copied
+a_item ar 0 ok
+a_dump ar [{n:number[user=num(I,100,100)]},{n:number[user=num(I,2,2)]},{n:number[user=num(I,3,3)]}]
+echo --- an array of an array item set on an object and read back through json
+json top "{\"list\":[{\"n\":100},{\"n\":2},{\"n\":3}]}"
+json_pretty top "{\n    \"list\": [\n        {\n            \"n\": 100\n        },\n        {\n            \"n\": 2\n        },\n        {\n            \"n\": 3\n        }\n    ]\n}"
+json top "{\"list\":[{\"n\":100},{\"n\":2},{\"n\":3}],\"none\":[]}"
+dump top {list:array[user=[{n:number[user=num(I,100,100)]},{n:number[user=num(I,2,2)]},{n:number[user=num(I,3,3)]}]],none:array[user=[]]}

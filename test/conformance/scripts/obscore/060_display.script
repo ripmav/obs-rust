@@ -1,0 +1,48 @@
+# Displays: creation (needs a swap chain unless created without graphics data), the registry list
+# (newest first), enable/disable, resizing, drawing, colour-space refresh, background colour and
+# draw callbacks. Rendering applies the *pending* size lazily: obs_display_size reports the size of
+# the last render, not of the last resize request.
+startup en-US -
+reset_video
+trace gs on
+display_create d1 800 600 0xff102030
+display_create d2 320 240 nogfx
+display_list
+display_info d1
+display_info d2
+display_cb_add d1 A
+display_cb_add d1 B
+display_render d1
+display_resize d1 1024 768
+display_info d1
+display_render d1
+display_info d1
+display_render d1
+display_color_space d1
+display_render d1
+display_render d1
+display_enable d1 0
+display_info d1
+display_render d1
+display_enable d1 1
+display_bg d1 0x80ff8000
+display_render d1
+# QUIRK Q-7: a colour-space refresh requested together with a resize is dropped (only the resize is applied)
+display_resize d1 640 480
+display_color_space d1
+display_render d1
+display_info d1
+display_cb_remove d1 A
+display_render d1
+display_cb_remove d1 Z
+display_render d1
+fake present_ready 0
+display_render d1
+fake present_ready 1
+trace gs off
+display_destroy d1
+display_list
+display_destroy d2
+display_list
+display_null
+shutdown

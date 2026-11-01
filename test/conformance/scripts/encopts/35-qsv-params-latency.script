@@ -1,0 +1,28 @@
+# CORE. latency -> async depth and lookahead depth: ultra-low -> async 1, no lookahead;
+# low -> async 4, LA depth 30 and normal -> async 4, LA depth 60, but the lookahead depth is
+# only set for CBR and VBR rate control (CQP/ICQ get 0); an unknown latency name leaves
+# async depth 0. The LA depth is clamped to 10..100 if nonzero (never triggers with 30/60).
+data D
+qsv_defaults h264v2 D
+set D latency str ultra-low
+qsv_create h264v2 X D
+qsv_destroy X
+set D latency str low
+qsv_create h264v2 X D
+qsv_destroy X
+set D latency str normal
+set D rate_control str VBR
+qsv_create h264v2 X D
+qsv_destroy X
+set D rate_control str ICQ
+qsv_create h264v2 X D
+qsv_destroy X
+echo unknown-latency
+set D latency str turbo
+set D rate_control str CBR
+qsv_create h264v2 X D
+qsv_destroy X
+echo case-insensitive-latency
+set D latency str LOW
+qsv_create h264v2 X D
+qsv_destroy X

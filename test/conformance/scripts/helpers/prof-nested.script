@@ -1,0 +1,35 @@
+# profiler: nested calls build a tree; children are stored in order of first appearance (CORE).
+# Child entries are aggregated across all calls of the root.
+p_name 0 frame
+p_name 1 update
+p_name 2 render
+p_name 3 draw
+p_begin
+p_clock 5000
+p_start 0
+p_tick 1000
+p_start 1
+p_tick 2000
+p_end 1
+p_start 2
+p_tick 3000
+p_start 3
+p_tick 4000
+p_end 3
+p_start 3
+p_tick 5000
+p_end 3
+p_end 2
+p_tick 1000
+p_end 0
+p_start 0
+p_start 2
+p_tick 7000
+p_end 2
+p_start 1
+p_tick 100
+p_end 1
+p_end 0
+p_snap
+p_dump
+p_free

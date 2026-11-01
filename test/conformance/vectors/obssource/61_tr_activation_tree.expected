@@ -1,0 +1,23 @@
+  cb T create
+log debug source 'T' (tr) created
+create t ok
+  cb G create
+log debug source 'G' (grp) created
+create g ok
+  cb L create
+log debug source 'L' (leaf) created
+create l ok
+  cb M create
+log debug source 'M' (leaf) created
+create m ok
+state g show_refs=1 activate_refs=1 showing=0 active=0 obs_showing=1 obs_active=1
+state l show_refs=1 activate_refs=1 showing=0 active=0 obs_showing=1 obs_active=1
+enum_active t: (t>g)
+enum_tree t: (g>l) (t>g)
+tr_start t 1
+state m show_refs=1 activate_refs=1 showing=0 active=0 obs_showing=1 obs_active=1
+state l show_refs=1 activate_refs=1 showing=0 active=0 obs_showing=1 obs_active=1
+enum_tree t: (g>l) (t>g) (t>m)
+state g show_refs=0 activate_refs=0 showing=0 active=0 obs_showing=0 obs_active=0
+state l show_refs=0 activate_refs=0 showing=0 active=0 obs_showing=0 obs_active=0
+state m show_refs=0 activate_refs=0 showing=0 active=0 obs_showing=0 obs_active=0

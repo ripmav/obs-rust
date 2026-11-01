@@ -1,0 +1,40 @@
+# CORE: malformed techniques and passes. Notable recovery rules:
+#   - a technique with a bad name is skipped to the next ';' ("Expected 'name'"); a missing '{' after the name is
+#     "Expected '{'" (after skipping to ';' / reporting "Expected ';'" when there is none);
+#   - inside a technique every item that does not start with "pass" is skipped WITHOUT a message, up to the next '}'
+#     (nested {...} blocks are skipped as a unit);
+#   - inside a pass, anything but vertex_shader/vertex_program/pixel_shader/pixel_program gives "Syntax error" and
+#     skips to the next ';' or '}'; a missing '=' is "Expected '='"; a missing ';' before '}' is "Expected ';'".
+# Passes whose shaders are missing are NOT parse errors; they fail later, when the backend is asked for shaders
+# (logged errors only, no entry in the error list; see 43-backend).
+backend text none
+ep t1 "technique { pass { } }"
+ep t2 "technique C;"
+ep t3 "technique C"
+ep t4 "technique C {"
+ep t5 "technique C { pass"
+ep t6 "technique C { pass {"
+ep t7 "technique C { foo { } pass { } }"
+ep t8 "technique C { foo; bar; pass { } }"
+ep t9 "technique C { pass { foo = 1; } }"
+ep t10 "technique C { pass { vertex_shader VS(); } }"
+ep t11 "technique C { pass { vertex_shader = VS() } }"
+ep t12 "technique C { pass { vertex_shader = VS(); "
+ep t13 "technique C { pass x y { vertex_shader = VS(); } }"
+ep t14 "technique C { pass { vertex_shader = ; } }"
+ep t15 "technique 3 { pass { } }"
+ep t16 "technique C { pass { vertex_shader = VS(); } } }"
+ep t17 "technique C { pass {} pass {} pass {} }"
+ep t18 "technique C pass {} "
+ep t19 "technique C x; technique D {}"
+ep t20 "technique C { pass { pixel_shader; } }"
+ep t21 "technique C { pass { } "
+ep t22 "technique C { pass { } pass { "
+ep t23 "technique C { pass { vertex_shader = (a; } }"
+ep t24 "technique C { pass { } ; }"
+ep t25 "technique C { } technique D { pass { foo } }"
+ep t26 "technique C { pass { vertex_shader = VS(); foo } }"
+ep t27 "technique C { pass { ; } }"
+ep t28 "technique C { pass { vertex_shader = VS(); } pass }"
+ep t29 "technique C { pass { vertex_shader = compile } }"
+ep t30 "technique C { pass { vertex_shader = compile compile VS(); } }"

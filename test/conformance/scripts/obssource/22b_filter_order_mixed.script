@@ -1,0 +1,33 @@
+# set_order UP/DOWN with mixed filter kinds: a filter only swaps with the nearest neighbour whose ASYNC flag equals
+# its own; TOP/BOTTOM ignore kinds.  Array (newest first) is built as: v3 a2 v2 a1 v1 (v = video filter, a = async).
+kind in input asyncvideo,audio
+kind va filter asyncvideo
+kind vb filter video
+create s in S
+create v1 vb V1
+create a1 va A1
+create v2 vb V2
+create a2 va A2
+create v3 vb V3
+filter_add s v1
+filter_add s a1
+filter_add s v2
+filter_add s a2
+filter_add s v3
+names s
+filter_order s v3 up
+names s
+filter_order s v3 up
+names s
+filter_order s v1 down
+names s
+filter_order s a1 up
+names s
+filter_order s a1 down
+names s
+filter_order s a2 up
+names s
+filter_order s v2 bottom
+names s
+filter_order s a2 top
+names s

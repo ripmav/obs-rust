@@ -1,0 +1,80 @@
+# gpu_delay: delay change (update), target resize, frame-rate change, delay 0, zero/NO target, texrender problems.
+video 1920 1080 60 1
+source S 640 480 640 480 SRGB video
+source Q 100 100 100 100 SRGB video
+data d
+dset d delay_ms int 100
+filter a gpu_delay 0 d S Q
+tick a 0.016
+echo 100 ms -> 6 frames; target differs from parent -> source_video_render
+render a
+tick a 0.016
+echo shrink the delay to 20 ms through update: full reset, then re-created at the next tick
+data d2
+dset d2 delay_ms int 20
+update a d2
+tick a 0.016
+render a
+echo target resize: all textures are re-created
+resize S 320 240 320 240
+tick a 0.016
+render a
+echo fps 30: interval doubles, frame count shrinks (the oldest frames are destroyed)
+video 1920 1080 30 1
+tick a 0.016
+echo fps 24000/1001: interval 41708333 ns
+video 1920 1080 24000 1001
+tick a 0.016
+echo delay 0: zero frames -> skip
+data d3
+dset d3 delay_ms int 0
+update a d3
+tick a 0.016
+render a
+echo zero-size target: textures are freed and the filter is skipped
+update a d
+resize S 0 0 0 0
+tick a 0.016
+render a
+resize S 640 480 640 480
+tick a 0.016
+render a
+echo target is also the parent: default render; custom_draw or async targets use the video render
+filter b gpu_delay 0 d S S
+tick b 0.016
+render b
+srcflags S custom_draw
+render b
+tick b 0.016
+render b
+srcflags S async
+tick b 0.016
+render b
+srcflags S video
+echo non-SRGB target space: frames use RGBA16F; the cached texrender is replaced when its format differs
+srcspace S 709_EXTENDED
+tick b 0.016
+render b
+tick b 0.016
+render b
+cs b 3 SRGB SRGB_16F 709_EXTENDED
+cs b 2 SRGB SRGB_16F
+srcspace S SRGB
+tick b 0.016
+render b
+echo texture creation failure: begin fails, frame keeps its previous space, the queue still rotates
+knob texrender_fail 1
+resize S 800 600 800 600
+tick b 0.016
+render b
+tick b 0.016
+render b
+knob texrender_fail 0
+echo no target
+filter c gpu_delay 0 d @null S
+tick c 0.016
+render c
+cs c 1 709_EXTENDED
+cs c 0
+echo destroy frees every texrender
+destroy b

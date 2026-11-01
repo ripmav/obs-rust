@@ -1,0 +1,23 @@
+# Size based split: cur_size (payload bytes written to the current file; the header packets of the first file are counted,
+# those of a following file are not because cur_size is reset after them) plus the
+# keyframe's size must reach max_size_mb * 1048576. Non-keyframes never split. 1 MB limit with 400000-byte packets.
+reset
+output o
+venc h264 bitrate=2500 extra=0a0b
+set str path /v/first.mkv
+set bool split_file 1
+set int max_size_mb 1
+set str directory /rec
+set str format part%N
+set str extension mp4
+create ffmpeg_muxer
+start
+pkt v pts=0 key=1 size=400000
+pkt v pts=1 key=0 size=400000
+state_split
+pkt v pts=2 key=0 size=400000
+state_split
+pkt v pts=3 key=1 size=100
+state_split
+pkt v pts=4 key=1 size=100
+state_split

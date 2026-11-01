@@ -1,0 +1,36 @@
+# CORE. Channel layout choice (printed as native-order channel masks: FL=1 FR=2 FC=4 LFE=8
+# BL=0x10 BR=0x20 BC=0x100 SL=0x200 SR=0x400): default layout of N channels from the (fake)
+# libavutil table, then overrides: 4.1 (speakers 5) -> 4.1 (FL FR FC LFE BC), 2.1 (speakers 3) ->
+# 3.0 "surround" (FL FR FC), 7.1 for ALAC -> "7.1 wide back" (FL FR FC LFE BL BR FLC FRC).
+data D
+aud_defaults D
+aud_formats fltp
+aud_rates none
+echo mono
+audio 1 1 48000
+aud_create aac D
+echo 2.1-is-treated-as-3.0
+audio 3 3 48000
+aud_create aac D
+echo quad
+audio 4 4 48000
+aud_create aac D
+echo 4.1-override
+audio 5 5 48000
+aud_create aac D
+echo 5.1
+audio 6 6 48000
+aud_create aac D
+echo 7.1
+audio 8 8 48000
+aud_create aac D
+echo 7.1-alac
+aud_create alac D
+echo 7.1-flac
+aud_create flac D
+echo 5.1-alac-unchanged
+audio 6 6 48000
+aud_create alac D
+echo 4.1-count-with-wrong-speaker-layout
+audio 5 1 48000
+aud_create aac D

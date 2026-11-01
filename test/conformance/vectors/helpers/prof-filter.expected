@@ -1,0 +1,36 @@
+p_snap roots=6
+p_dump roots=6
+  entry name="keep1" count=1 min=1 max=1 expected=0 bcount=0 bmin=0 bmax=0 children=0
+    times 1:1
+    between
+  entry name="drop1" count=1 min=1 max=1 expected=0 bcount=0 bmin=0 bmax=0 children=0
+    times 1:1
+    between
+  entry name="keep2" count=1 min=1 max=1 expected=0 bcount=0 bmin=0 bmax=0 children=0
+    times 1:1
+    between
+  entry name="drop2" count=1 min=1 max=1 expected=0 bcount=0 bmin=0 bmax=0 children=0
+    times 1:1
+    between
+  entry name="stop" count=1 min=1 max=1 expected=0 bcount=0 bmin=0 bmax=0 children=0
+    times 1:1
+    between
+  entry name="drop3" count=1 min=1 max=1 expected=0 bcount=0 bmin=0 bmax=0 children=0
+    times 1:1
+    between
+p_filter roots=4
+p_dump roots=4
+  entry name="keep1" count=1 min=1 max=1 expected=0 bcount=0 bmin=0 bmax=0 children=0
+    times 1:1
+    between
+  entry name="keep2" count=1 min=1 max=1 expected=0 bcount=0 bmin=0 bmax=0 children=0
+    times 1:1
+    between
+  entry name="stop" count=1 min=1 max=1 expected=0 bcount=0 bmin=0 bmax=0 children=0
+    times 1:1
+    between
+  entry name="drop3" count=1 min=1 max=1 expected=0 bcount=0 bmin=0 bmax=0 children=0
+    times 1:1
+    between
+p_null roots=0 children=0 name=@null count=0
+p_free done

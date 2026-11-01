@@ -1,0 +1,54 @@
+> reset
+> output o
+> venc h264 bitrate=2500 extra=0a0b
+> aenc t0 aac 48000 1024 0
+> set str path /v/a.mkv
+> create ffmpeg_muxer
+signal_add "void file_changed(string next_file)"
+proc_add "void split_file(out bool split_file_enabled)"
+create ffmpeg_muxer -> ok
+> start
+unlink "/v/a.mkv"
+pipe create type=w
+  argv[0] "<bin>/obs-ffmpeg-mux"
+  argv[1] "/v/a.mkv"
+  argv[2] "1"
+  argv[3] "1"
+  argv[4] "h264"
+  argv[5] "2500"
+  argv[6] "1280"
+  argv[7] "720"
+  argv[8] "1"
+  argv[9] "1"
+  argv[10] "1"
+  argv[11] "1"
+  argv[12] "1"
+  argv[13] "0"
+  argv[14] "30"
+  argv[15] "1"
+  argv[16] "0"
+  argv[17] "aac"
+  argv[18] "t0"
+  argv[19] "0"
+  argv[20] "48000"
+  argv[21] "1024"
+  argv[22] "0"
+  argv[23] "2"
+  argv[24] ""
+  argv[25] ""
+begin_data_capture
+log info [ffmpeg muxer: 'o'] Writing file '/v/a.mkv'...
+start -> 1
+> pkt v pts=0 key=1
+wire V idx=0 key=0 pts=0 dts=0 size=2 data=0a0b
+> state
+state active=1 capturing=1 stopping=0 sent_headers=0 total_bytes=2 stop_ts=0 pipe=1 refs=0
+  path="/v/a.mkv" is_network=0 is_hls=0
+> aenc_extra 0 cc
+> pkt v pts=1 key=1
+wire V idx=0 key=0 pts=0 dts=0 size=2 data=0a0b
+wire A idx=0 key=0 pts=0 dts=0 size=1 data=cc
+wire V idx=0 key=1 pts=1 dts=1 size=8 data=101112131415
+> state
+state active=1 capturing=1 stopping=0 sent_headers=1 total_bytes=13 stop_ts=0 pipe=1 refs=0
+  path="/v/a.mkv" is_network=0 is_hls=0

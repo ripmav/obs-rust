@@ -1,0 +1,28 @@
+# Capacity: first allocation is exactly the requested size, afterwards it doubles
+# (or becomes the requested size if that is larger).
+dump
+push 1
+dump
+push 2
+dump
+push 3
+dump
+push 4
+push 5
+dump
+ensure 20
+dump
+ensure 21
+dump
+ensure 100
+dump
+reserve 50
+dump
+reserve 200
+dump
+reserve 0
+dump
+clear
+dump
+free
+dump

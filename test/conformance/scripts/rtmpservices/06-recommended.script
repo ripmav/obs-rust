@@ -1,0 +1,79 @@
+# S-026 apply_encoder_settings: "recommended" values applied to video/audio encoder settings objects.
+# Service Alpha: keyint 3, profile high, max video 4000, max audio 128, bframes 2, x264opts, bitrate matrix.
+fs-load /mod/data/services.json data/services-ok.json
+settings S {"service":"Alpha"}
+new A rtmp_common S
+echo no-video-info-matrix-ignored-max-video-bitrate-4000-applies
+video-info -
+settings V {"bitrate":6000,"buffer_size":6000}
+settings AU {"bitrate":320}
+apply A V AU
+echo below-limit-untouched
+settings V {"bitrate":2000,"buffer_size":123,"x264opts":"ref=2","profile":"baseline"}
+settings AU {"bitrate":96}
+apply A V AU
+echo profile-only-replaced-when-existing-item-is-a-string
+settings V {"profile":5}
+apply A V -
+settings V {}
+apply A V -
+echo audio-only
+apply A - AU
+echo both-null-not-forwarded
+apply A - -
+echo bitrate-matrix-selects-by-output-size-and-fps
+video-info 1280 720 30 1
+settings V {"bitrate":9000,"buffer_size":9000}
+apply A V -
+video-info 1280 720 60 1
+settings V {"bitrate":9000,"buffer_size":9000}
+apply A V -
+video-info 1280 720 6000 100
+settings V {"bitrate":9000,"buffer_size":9000}
+apply A V -
+echo fps-above-all-rows-for-size-falls-back-to-max-video-bitrate
+video-info 1280 720 120 1
+settings V {"bitrate":9000,"buffer_size":9000}
+apply A V -
+echo size-without-row-falls-back
+video-info 640 480 30 1
+settings V {"bitrate":9000,"buffer_size":9000}
+apply A V -
+echo first-matching-row-wins
+video-info 1920 1080 30 1
+settings V {"bitrate":9000,"buffer_size":9000}
+apply A V -
+echo Golf-matrix-beats-max-video-bitrate
+settings S {"service":"Golf"}
+update A S
+video-info 1920 1080 30 1
+settings V {"bitrate":9000,"buffer_size":9000}
+apply A V -
+echo Golf-fps-60-has-no-matching-row-so-max-video-bitrate-9000-applies
+video-info 1920 1080 60 1
+settings V {"bitrate":9500,"buffer_size":9500}
+apply A V -
+echo Bravo-has-keyint-and-bitrate-only
+settings S {"service":"Bravo"}
+update A S
+settings V {"bitrate":9000,"buffer_size":1}
+apply A V -
+echo Charlie-no-recommended-object-nothing-changes
+settings S {"service":"Charlie"}
+protocols RTMP RTMPS SRT
+update A S
+settings V {"bitrate":9000}
+apply A V -
+echo Twitch-x264opts-appended-to-existing
+settings S {"service":"Twitch"}
+update A S
+settings V {"bitrate":9000,"x264opts":"ref=2"}
+apply A V -
+echo unknown-service-warns-and-leaves-settings
+settings S {"service":"Zulu"}
+update A S
+apply A V -
+echo empty-service-name-no-warning
+settings S {"service":""}
+update A S
+apply A V -

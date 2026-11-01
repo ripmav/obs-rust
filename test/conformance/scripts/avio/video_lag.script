@@ -1,0 +1,23 @@
+# S-044: encoder lag. While an input callback is blocked (gate), further frames fill the cache; when the cache has no
+# free slot lock_frame fails and the frame is folded into the newest cached frame as extra count + skipped.
+vopen v I420 30 1 16 8 2
+vconnect v a 1
+vgate on
+vlock v 1 100 0x01
+vunlock_async v
+venter
+# the thread is inside the callback for frame 0 (slot 0); two more slots exist? cache_size is 2
+vdump v
+vlock v 1 200 0x02
+vunlock_async v
+vdump v
+# cache is full now (avail 0): the next two locks fail and merge into the newest frame
+vlock v 1 300 0x03
+vlock v 1 400 0x04
+vdump v
+vgate off
+vrelease 1
+vwait 2
+vstate v
+vdump v
+vclose v

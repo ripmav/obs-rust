@@ -1,0 +1,8 @@
+opts_parse @null
+  count=0 ignored_count=0 ptrs options=0 ignored=0 input=0
+opts_parse ""
+  count=0 ignored_count=0 ptrs options=0 ignored=0 input=0
+opts_parse " "
+  count=0 ignored_count=0 ptrs options=0 ignored=0 input=0
+opts_parse "     "
+  count=0 ignored_count=0 ptrs options=0 ignored=0 input=0

@@ -1,0 +1,124 @@
+backend vertexshader_create location="a.effect (Vertex shader, technique One, pass 0)" len=98 fnv=06f7a0a4238c5864
+  sparam 0 name=color type=VEC4 array=0
+  result ok
+backend pixelshader_create location="a.effect (Pixel shader, technique One, pass 0)" len=232 fnv=4f6ec41d0b0ea87a
+  sparam 0 name=image type=TEXTURE array=0
+  sparam 1 name=color type=VEC4 array=0
+  sparam 2 name=amount type=FLOAT array=0
+  result ok
+backend vertexshader_create location="a.effect (Vertex shader, technique One, pass 1)" len=98 fnv=06f7a0a4238c5864
+  sparam 0 name=color type=VEC4 array=0
+  result ok
+backend pixelshader_create location="a.effect (Pixel shader, technique One, pass 1)" len=127 fnv=7435008c7ca09102
+  sparam 0 name=color type=VEC4 array=0
+  sparam 1 name=other type=FLOAT array=0
+  result ok
+effect e result=ok
+  error_string=@null
+--- begin / end and the pass counts
+tbegin -> 2
+current_technique -> One
+backend load_vertexshader "a.effect (Vertex shader, technique One, pass 0)"
+backend load_pixelshader "a.effect (Pixel shader, technique One, pass 0)"
+backend set_val shader=vertex param=color size=16 hex=0000803f0000003f0000803e0000803f
+backend set_val shader=pixel param=color size=16 hex=0000803f0000003f0000803e0000803f
+backend set_val shader=pixel param=amount size=4 hex=00000040
+pbegin -> 1
+update
+--- update sends only changed values
+backend set_val shader=pixel param=amount size=4 hex=00004040
+update
+update
+--- values set for a parameter that is not used by the current pass stay pending
+get_val size=4 hex=00008040
+backend set_texture shader=pixel param=image texture=-1
+pend
+backend load_vertexshader "a.effect (Vertex shader, technique One, pass 1)"
+backend load_pixelshader "a.effect (Pixel shader, technique One, pass 1)"
+backend set_val shader=vertex param=color size=16 hex=0000803f0000003f0000803e0000803f
+backend set_val shader=pixel param=color size=16 hex=0000803f0000003f0000803e0000803f
+backend set_val shader=pixel param=other size=4 hex=00008040
+pbegin -> 1
+pend
+--- index out of range
+pbegin -> 0
+pbegin -> 0
+--- by name
+backend load_vertexshader "a.effect (Vertex shader, technique One, pass 0)"
+backend load_pixelshader "a.effect (Pixel shader, technique One, pass 0)"
+backend set_val shader=vertex param=color size=16 hex=0000803f0000003f0000803e0000803f
+backend set_val shader=pixel param=color size=16 hex=0000803f0000003f0000803e0000803f
+backend set_val shader=pixel param=amount size=4 hex=00004040
+pbegin_name -> 1
+backend set_texture shader=pixel param=image texture=-1
+pend
+backend load_vertexshader "a.effect (Vertex shader, technique One, pass 1)"
+backend load_pixelshader "a.effect (Pixel shader, technique One, pass 1)"
+backend set_val shader=vertex param=color size=16 hex=0000803f0000003f0000803e0000803f
+backend set_val shader=pixel param=color size=16 hex=0000803f0000003f0000803e0000803f
+backend set_val shader=pixel param=other size=4 hex=00008040
+pbegin_name -> 1
+pend
+pbegin_name -> 0
+pbegin_name -> 0
+pbegin_name -> 0
+--- ending
+backend load_vertexshader "none"
+backend load_pixelshader "none"
+tend
+current_technique -> null
+update
+--- begin_pass outside tbegin: the shaders are loaded all the same, current technique stays unset
+backend load_vertexshader "a.effect (Vertex shader, technique One, pass 0)"
+backend load_pixelshader "a.effect (Pixel shader, technique One, pass 0)"
+backend set_val shader=vertex param=color size=16 hex=0000803f0000003f0000803e0000803f
+backend set_val shader=pixel param=color size=16 hex=0000803f0000003f0000803e0000803f
+backend set_val shader=pixel param=amount size=4 hex=00000040
+pbegin -> 1
+update
+backend set_texture shader=pixel param=image texture=-1
+pend
+--- tbegin of a NULL technique; tend/pend of the same
+tbegin -> 0
+tend
+pend
+pbegin -> 0
+pbegin_name -> 0
+--- end_pass twice and without begin
+pend
+pend
+--- update with no current pass is silent
+update
+update
+--- next sampler: uploaded on every pass begin / update until the technique ends
+tbegin -> 2
+flags changed=0 cur_size=0 next_sampler=7
+backend load_vertexshader "a.effect (Vertex shader, technique One, pass 0)"
+backend load_pixelshader "a.effect (Pixel shader, technique One, pass 0)"
+backend set_val shader=vertex param=color size=16 hex=0000803f0000003f0000803e0000803f
+backend set_next_sampler shader=pixel param=image sampler=7
+backend set_val shader=pixel param=color size=16 hex=0000803f0000003f0000803e0000803f
+backend set_val shader=pixel param=amount size=4 hex=00000040
+pbegin -> 1
+flags changed=0 cur_size=0 next_sampler=7
+backend set_next_sampler shader=pixel param=image sampler=7
+update
+backend set_texture shader=pixel param=image texture=-1
+pend
+backend load_vertexshader "a.effect (Vertex shader, technique One, pass 0)"
+backend load_pixelshader "a.effect (Pixel shader, technique One, pass 0)"
+backend set_val shader=vertex param=color size=16 hex=0000803f0000003f0000803e0000803f
+backend set_next_sampler shader=pixel param=image sampler=7
+backend set_val shader=pixel param=color size=16 hex=0000803f0000003f0000803e0000803f
+backend set_val shader=pixel param=amount size=4 hex=00000040
+pbegin -> 1
+backend load_vertexshader "none"
+backend load_pixelshader "none"
+tend
+flags changed=0 cur_size=0 next_sampler=-1
+--- next sampler on a non-texture parameter is ignored
+flags changed=0 cur_size=0 next_sampler=-1
+backend shader_destroy location="a.effect (Vertex shader, technique One, pass 0)"
+backend shader_destroy location="a.effect (Pixel shader, technique One, pass 0)"
+backend shader_destroy location="a.effect (Vertex shader, technique One, pass 1)"
+backend shader_destroy location="a.effect (Pixel shader, technique One, pass 1)"

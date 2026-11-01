@@ -1,0 +1,30 @@
+# CORE: the generated wrapper function "main". Its return type is the entry function's return type, followed by the
+# entry function's return semantic (":" SEMANTIC) when it has one. Its parameter list contains only the entry
+# function's MAPPED parameters: a parameter is mapped when it has its own semantic, or when its type is a declared
+# struct whose FIRST member has a semantic. A mapped parameter is written as "TYPE NAME" plus " : SEMANTIC" when the
+# parameter itself carries the semantic (struct-typed parameters never get a semantic). Unmapped parameters (and
+# in/out/inout/uniform modifiers) are not part of main. The body is "return <call text>" where the call text is the
+# pass command's argument tokens joined without any whitespace.
+backend text full
+echo --- struct parameter with mapped members
+effect e1 m1.effect "struct V { float4 p : POSITION; };\nfloat4 F(V v) : TARGET { return v.p; }\ntechnique T { pass { vertex_shader = F(v); pixel_shader = F(v); } }"
+echo --- struct parameter whose first member has no semantic: not mapped, main has no parameter
+effect e2 m2.effect "struct V { float a; float4 p : POSITION; };\nfloat4 F(V v) : TARGET { return v.p; }\ntechnique T { pass { vertex_shader = F(v); pixel_shader = F(v); } }"
+echo --- scalar parameter with a semantic
+effect e3 m3.effect "float4 F(float4 pos : POSITION) : TARGET { return pos; }\ntechnique T { pass { vertex_shader = F(pos); pixel_shader = F(pos); } }"
+echo --- unmapped scalar parameter is dropped from main (the call text still passes it)
+effect e4 m4.effect "float4 F(float k) : TARGET { return k; }\ntechnique T { pass { vertex_shader = F(1.0); pixel_shader = F(2.0); } }"
+echo --- in/out/inout/uniform modifiers appear on the entry function but are not copied to main
+effect e5 m5.effect "float4 F(in float4 a : POSITION, uniform float u) : TARGET { return a; }\ntechnique T { pass { vertex_shader = F(a, 1); pixel_shader = F(a, 1); } }"
+echo --- entry function without return semantic: main has none
+effect e6 m6.effect "struct O { float4 p : POSITION; };\nO F() { O o; o.p = 0; return o; }\ntechnique T { pass { vertex_shader = F(); pixel_shader = F(); } }"
+echo --- entry function with a struct return and a mapped parameter
+effect e7 m7.effect "struct I { float4 p : POSITION; float2 uv : TEXCOORD0; };\nstruct O { float4 p : POSITION; };\nO F(I i) { O o; o.p = i.p; return o; }\ntechnique T { pass { vertex_shader = F(i); pixel_shader = F(i); } }"
+echo --- struct declared AFTER the function is not recognised as a struct parameter
+effect e8 m8.effect "float4 F(V v) : TARGET { return 0; }\nstruct V { float4 p : POSITION; };\ntechnique T { pass { vertex_shader = F(v); pixel_shader = F(v); } }"
+echo --- a function with no body parameters at all
+effect e9 m9.effect "float4 F() : TARGET { return 0; }\ntechnique T { pass { vertex_shader = F(); pixel_shader = F(); } }"
+echo --- parameter whose type is a struct with zero members: not mapped
+effect e10 m10.effect "struct E { };\nfloat4 F(E e) : TARGET { return 0; }\ntechnique T { pass { vertex_shader = F(e); pixel_shader = F(e); } }"
+echo --- mapped struct and a mapped scalar side by side. See 70-quirks for the missing comma between main's parameters.
+effect e11 m11.effect "struct V { float4 p : POSITION; };\nfloat4 F(V v) : TARGET { return v.p; }\ntechnique T { pass { vertex_shader = F(v); pixel_shader = F(v); } }"

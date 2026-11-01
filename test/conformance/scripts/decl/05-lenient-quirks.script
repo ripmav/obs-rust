@@ -1,0 +1,23 @@
+# QUIRKS of the reference parser (conformance level SHOULD, see spec S-003 section 8).
+# Input the reference accepts although it is malformed, or rejects although it is
+# harmless. Compatible implementations reproduce these; a stricter implementation
+# must document the deviation.
+# Leading whitespace/comment before the return type is an error ...
+parse "  void f()"
+parse " void f()"
+parse "/* c */ void f()"
+parse "// c\nvoid f()"
+# ... trailing whitespace and comments are fine.
+parse "void f()  "
+parse "void f() // trailing"
+parse "void f() /* trailing */"
+# Everything after the closing parenthesis is ignored.
+parse "void f() extra"
+parse "void f() garbage ( ) ,,,"
+# A trailing comma before ')' is accepted.
+parse "void f(int a,)"
+# After a parameter the parser stops at the first token that is neither ',' nor ')'.
+parse "void f(int a int b)"
+parse "void f(int a-b)"
+parse "void f(int a; int b)"
+parse "void f(int a, int b c)"

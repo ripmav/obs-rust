@@ -1,0 +1,46 @@
+# NV12 / P010 planar texture creation: dimensions must be even; the backend may create the pair itself
+# (device_texture_create_nv12/p010, optional) otherwise two single-plane textures are created.
+trace 0
+gs_create g
+gs_enter_context g
+trace 1
+echo == odd dimensions are rejected before anything reaches the backend
+gs_texture_create_nv12 15 16 0
+gs_texture_create_nv12 16 15 0
+gs_texture_create_p010 15 16 0
+echo == backend returns false (default) -> fallback planes R8 + R8G8 at half size
+gs_texture_create_nv12 16 8 GS_RENDER_TARGET
+echo == P010 fallback planes R16 + RG16
+gs_texture_create_p010 16 8 GS_RENDER_TARGET
+echo == native creation succeeds
+ret device_texture_create_nv12 1
+gs_texture_create_nv12 16 8 0
+ret device_texture_create_nv12 0
+echo == fallback: first plane fails
+fail device_texture_create 1
+gs_texture_create_nv12 16 8 0
+fail device_texture_create 0
+echo == fallback: second plane fails, the first is destroyed and both outputs are NULL
+failnth device_texture_create 2
+gs_texture_create_nv12 16 8 0
+failnth device_texture_create 0
+echo == availability queries (optional exports)
+gs_nv12_available
+ret device_nv12_available 1
+gs_nv12_available
+ret device_p010_available 1
+gs_p010_available
+echo == backend without the optional exports at all: create goes straight to the fallback
+trace 0
+gs_leave_context
+missing device_nv12_available 1
+missing device_p010_available 1
+missing device_texture_create_nv12 1
+missing device_texture_create_p010 1
+gs_create g2
+gs_enter_context g2
+trace 1
+gs_nv12_available
+gs_p010_available
+gs_texture_create_nv12 16 8 0
+gs_texture_create_p010 16 8 0

@@ -1,0 +1,38 @@
+# QUIRK: reference behaviours of the effect machinery that look accidental, but that effect files or backends could
+# depend on (a clean-room port SHOULD reproduce them; deviations must be documented):
+#  Q-A  main() parameters are concatenated WITHOUT separator: an entry function with two or more mapped parameters
+#       yields "main(T1 n1 : S1T2 n2 : S2)", which a real shader parser rejects. (First case: the fake backend runs
+#       the real shader parser and fails the shader; second: the backend is told not to parse.)
+#  Q-B  "written" bookkeeping is only reset after a shader whose entry function was FOUND. When a pass names an
+#       unknown function, the parameters mentioned in that call stay marked "written" and are missing from the next
+#       shader texts until some shader with a known entry function resets the marks.
+#  Q-C  The error text of a failed shader creation is appended to the parser's error list at the parser's final
+#       cursor position (the end of the input), not at the pass, and contains the backend's own text verbatim,
+#       including its trailing newline, so an empty line follows it in the error string.
+#  Q-D  Only uniform parameters are looked up in the created shader (const/plain ones are never "not found").
+#  Q-E  "BorderColor = #RRGGBB" cannot be expressed: the effect parser keeps '#RRGGBB' as one concatenated value,
+#       but the shader parser used by backends reads ONE token ('#') and then fails with "Expected ';'".
+#  Q-F  The sampler 'info' skips the first character of BorderColor (strtol(value+1, 16)).
+backend text full
+echo --- Q-A: struct parameter plus a mapped scalar
+effect a1 qa1.effect "struct V { float4 p : POSITION; };\nfloat4 F(V v, float2 uv : TEXCOORD0) : TARGET { return v.p; }\ntechnique T { pass { vertex_shader = F(v, uv); pixel_shader = F(v, uv); } }"
+backend parse off
+effect a2 qa2.effect "struct V { float4 p : POSITION; };\nfloat4 F(V v, float2 uv : TEXCOORD0, float4 c : COLOR) : TARGET { return v.p; }\ntechnique T { pass { vertex_shader = F(v, uv, c); pixel_shader = F(v, uv, c); } }"
+backend parse on
+echo --- Q-B: pass 0 uses an unknown vertex entry; its pixel shader loses the parameters it mentions, pass 1 is normal
+effect b1 qb1.effect "uniform float a;\nuniform float b;\nfloat F(float x) { return x + a + b; }\ntechnique T { pass { vertex_shader = Missing(a, b); pixel_shader = F(a); } pass { vertex_shader = F(a); pixel_shader = F(a); } }"
+echo --- Q-C
+backend fail pixel "boom\n"
+effect c1 qc1.effect "float4 F() : TARGET { return 0; }\ntechnique T { pass { vertex_shader = F(); pixel_shader = F(); } }"
+backend fail pixel off
+echo --- Q-D
+backend parse off
+effect d1 qd1.effect "const float c = 1;\nfloat p = 2;\nfloat F() { return c + p; }\ntechnique T { pass { vertex_shader = F(); pixel_shader = F(); } }"
+backend parse on
+echo --- Q-E / Q-F
+sparse f1 "sampler_state s { BorderColor = #FF336699; };"
+sparse f2 "sampler_state s { BorderColor = xFF336699; };"
+sparse f3 "sampler_state s { BorderColor = 0xFF336699; };"
+sparse f4 "sampler_state s { BorderColor = _FF336699; };"
+ep f5 "sampler_state s { BorderColor = #FF336699; };"
+effect f6 qf6.effect "sampler_state s { BorderColor = #FF336699; };\nuniform texture2d t;\nfloat4 F() : TARGET { return t.Sample(s, float2(0,0)); }\ntechnique T { pass { vertex_shader = F(); pixel_shader = F(); } }"

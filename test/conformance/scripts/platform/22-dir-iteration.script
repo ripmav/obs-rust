@@ -1,0 +1,38 @@
+# os_opendir / os_readdir / os_closedir: entries come in file system order, so the runner sorts
+# them bytewise before printing. "." and ".." are returned like any other entry (directory = true).
+# The flag is computed with stat(), i.e. symbolic links are followed; when stat fails (dangling link)
+# the flag is false and a debug message is logged. d_name is at most 255 bytes.
+# ls DIR prints: ls DIR <count> end_repeat=<1 if readdir keeps returning NULL at the end>, then
+# one line per entry: "name" d|f
+mkdir empty
+ls empty
+mkdir full
+put full/a.txt A
+put full/B.txt B
+put full/.hidden H
+put "full/sp ace" S
+put "full/\xc3\xa9.txt" U
+mkdir full/sub
+mkdir full/.hdir
+ls full
+# trailing slash and "./" are fine, a nested path too
+ls full/
+ls ./full/sub
+# links: to a file, to a directory, dangling
+symlink a.txt full/lnkfile
+symlink sub full/lnkdir
+symlink nowhere full/lnkdead
+ls full
+# errors: missing directory, a regular file, NULL
+ls nosuch
+ls full/a.txt
+dir_nulls
+# the longest possible name (255 bytes) is returned whole
+mkdir long
+put long/nnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn L
+ls long
+# a deleted file does not show up afterwards (the link to it dangles now; the other dangling link is
+# removed first so that only one debug message is logged, their order would follow the file system)
+unlink full/lnkdead
+unlink full/a.txt
+ls full

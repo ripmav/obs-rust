@@ -1,0 +1,23 @@
+# stop(0) behaves like stop(ts) with stop_ts 0: the very next packet ends the recording. An encoder failure (NULL
+# packet) while active signals ENCODE_ERROR and closes the pipe without end_data_capture. Packets on an inactive
+# stream are ignored. destroy() with an open pipe just closes it (no stop signal).
+reset
+output o
+venc h264 bitrate=2500 extra=0a0b
+set str path /v/a.mkv
+create ffmpeg_muxer
+start
+stop 0
+state
+pkt v pts=1 key=1 sys=1
+state
+pkt v pts=2 key=1 sys=2
+echo restart_then_encoder_failure
+start
+pkt v pts=3 key=1
+pkt v null=1
+state
+pkt v pts=4 key=1
+echo restart_then_destroy
+start
+destroy

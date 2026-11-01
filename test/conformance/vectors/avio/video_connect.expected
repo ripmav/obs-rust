@@ -1,0 +1,71 @@
+> vopen v I420 30 1 16 8 3 PARTIAL 709
+= 0
+> vinputs v
+no inputs
+> vconnect v a 1
+= 1
+> vinputs v
+input0 cb=a param=1 div=1 ctr=0 scaler=0 conv=(1 16x8 r1 cs709) cur=0
+> vstate v
+active=1 stopped=0 skipped=0 total=0
+> vconnect v a 1
+= 0
+> vconnect v a 2
+= 1
+> vconnect v b 1
+= 1
+> vinputs v
+input0 cb=a param=1 div=1 ctr=0 scaler=0 conv=(1 16x8 r1 cs709) cur=0
+input1 cb=a param=2 div=1 ctr=0 scaler=0 conv=(1 16x8 r1 cs709) cur=0
+input2 cb=b param=1 div=1 ctr=0 scaler=0 conv=(1 16x8 r1 cs709) cur=0
+> vconnect_nocb v
+= 0
+> vconnect2 v a 9 0
+= 0
+> vinputs v
+input0 cb=a param=1 div=1 ctr=0 scaler=0 conv=(1 16x8 r1 cs709) cur=0
+input1 cb=a param=2 div=1 ctr=0 scaler=0 conv=(1 16x8 r1 cs709) cur=0
+input2 cb=b param=1 div=1 ctr=0 scaler=0 conv=(1 16x8 r1 cs709) cur=0
+> vconnect v a 10 - I420 0 0 PARTIAL 709
+= 1
+> vconnect v a 11 - I420 16 8 PARTIAL DEFAULT
+= 1
+> vconnect v a 12 - I420 16 8 PARTIAL SRGB
+scaler create dst=(1 16x8 r1 cs3) src=(1 16x8 r1 cs709) type=2
+= 1
+> vconnect v a 13 - I420 16 8 DEFAULT 709
+= 1
+> vconnect v a 14 - I420 16 8 FULL 709
+scaler create dst=(1 16x8 r2 cs709) src=(1 16x8 r1 cs709) type=2
+= 1
+> vconnect v a 15 - I420 16 8 PARTIAL 601
+scaler create dst=(1 16x8 r1 cs601) src=(1 16x8 r1 cs709) type=2
+= 1
+> vconnect v a 16 - I420 16 8 PARTIAL 2100_PQ
+scaler create dst=(1 16x8 r1 cs4) src=(1 16x8 r1 cs709) type=2
+= 1
+> vconnect v a 17 - NV12 16 8 PARTIAL 709
+scaler create dst=(2 16x8 r1 cs709) src=(1 16x8 r1 cs709) type=2
+= 1
+> vconnect v a 18 - I420 32 16 PARTIAL 709
+scaler create dst=(1 32x16 r1 cs709) src=(1 16x8 r1 cs709) type=2
+= 1
+> vinputs v
+input0 cb=a param=1 div=1 ctr=0 scaler=0 conv=(1 16x8 r1 cs709) cur=0
+input1 cb=a param=2 div=1 ctr=0 scaler=0 conv=(1 16x8 r1 cs709) cur=0
+input2 cb=b param=1 div=1 ctr=0 scaler=0 conv=(1 16x8 r1 cs709) cur=0
+input3 cb=a param=10 div=1 ctr=0 scaler=0 conv=(1 16x8 r1 cs709) cur=0
+input4 cb=a param=11 div=1 ctr=0 scaler=0 conv=(1 16x8 r1 cs0) cur=0
+input5 cb=a param=12 div=1 ctr=0 scaler=1 conv=(1 16x8 r1 cs3) cur=0
+input6 cb=a param=13 div=1 ctr=0 scaler=0 conv=(1 16x8 r0 cs709) cur=0
+input7 cb=a param=14 div=1 ctr=0 scaler=1 conv=(1 16x8 r2 cs709) cur=0
+input8 cb=a param=15 div=1 ctr=0 scaler=1 conv=(1 16x8 r1 cs601) cur=0
+input9 cb=a param=16 div=1 ctr=0 scaler=1 conv=(1 16x8 r1 cs4) cur=0
+input10 cb=a param=17 div=1 ctr=0 scaler=1 conv=(2 16x8 r1 cs709) cur=0
+input11 cb=a param=18 div=1 ctr=0 scaler=1 conv=(1 32x16 r1 cs709) cur=0
+scaler destroy scales=0
+scaler destroy scales=0
+scaler destroy scales=0
+scaler destroy scales=0
+scaler destroy scales=0
+scaler destroy scales=0

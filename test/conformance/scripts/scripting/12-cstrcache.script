@@ -1,0 +1,18 @@
+# cstrcache_get: interned, stable constant strings.
+# NULL and "" both give the empty string (not cached).
+cstr 0 @null
+cstr 1 ""
+# equal content -> equal pointer; different content -> different pointer
+cstr 2 hello
+cstr 3 hello
+cstr 4 world
+cstr 5 Hello
+# the returned pointer is a copy, never the caller's buffer
+# interning many strings does not move earlier ones
+cstr_many 500
+cstr_check
+cstr 6 hello
+# only up to the first NUL (a script token cannot hold one) and spaces are kept
+cstr 7 "a b  c"
+cstr 8 "a b  c"
+cstr_check

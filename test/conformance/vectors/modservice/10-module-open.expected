@@ -1,0 +1,69 @@
+mkmod good ok
+mkmod noload ok
+mkmod noset ok
+mkmod nover ok
+mkmod badsym ok
+mkmod newminor ok
+mkmod newmajor ok
+mkmod newpatch ok
+mkmod oldmajor ok
+mkmod zero ok
+open_module nul -> -1
+open_module_nullout -> -1
+open_module x -> -1
+enabled
+disabled
+log debug ---------------------------------
+log error os_dlopen(@TMP/m/missing.so->@TMP/m/missing.so)
+log warning Module '@TMP/m/missing.so' not loaded
+open_module a -> -2
+log debug ---------------------------------
+log error os_dlopen(@TMP/m/notso.so->@TMP/m/notso.so)
+log warning Module '@TMP/m/notso.so' not loaded
+open_module b -> -2
+log debug ---------------------------------
+log error os_dlopen(@TMP/m/badsym.so->@TMP/m/badsym.so)
+log warning Module '@TMP/m/badsym.so' not loaded
+open_module c -> -2
+log debug ---------------------------------
+ev mod noload ctor
+log debug Required module function 'obs_module_load' in module '@TMP/m/noload.so' not found, loading of module failed
+open_module d -> -3
+log debug ---------------------------------
+ev mod noset ctor
+log debug Required module function 'obs_module_set_pointer' in module '@TMP/m/noset.so' not found, loading of module failed
+open_module e -> -3
+log debug ---------------------------------
+ev mod nover ctor
+log debug Required module function 'obs_module_ver' in module '@TMP/m/nover.so' not found, loading of module failed
+open_module f -> -3
+enabled
+disabled
+log debug ---------------------------------
+ev mod newminor ctor
+log warning Module '@TMP/m/newminor.so' compiled with newer libobs 33.1
+open_module g -> -4
+log debug ---------------------------------
+ev mod newmajor ctor
+log warning Module '@TMP/m/newmajor.so' compiled with newer libobs 34.0
+open_module h -> -4
+enabled
+disabled
+log debug ---------------------------------
+ev mod newpatch ctor
+log debug Loading module: newpatch.so
+ev mod newpatch set_pointer
+open_module i -> 0
+log debug ---------------------------------
+ev mod oldmajor ctor
+log debug Loading module: oldmajor.so
+ev mod oldmajor set_pointer
+open_module j -> 0
+log debug ---------------------------------
+ev mod zero ctor
+log debug Loading module: zero.so
+ev mod zero set_pointer
+open_module k -> 0
+enabled zero oldmajor newpatch
+disabled
+mod_info i file=newpatch.so name=(null) author=(null) desc=(null) bin=@TMP/m/newpatch.so data=d id=(null) ver=(null) lib=set core=0 legacy=0 state=enabled loaded=0 mtype=0

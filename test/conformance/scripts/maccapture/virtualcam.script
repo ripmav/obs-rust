@@ -1,0 +1,2 @@
+# S-052 mac-virtualcam: only the portable constants of the mach message protocol (MachProtocol.h).
+mach_ids

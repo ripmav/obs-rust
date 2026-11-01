@@ -1,0 +1,26 @@
+  cb A create
+log debug source 'A' (in) created
+create a ok
+state a show_refs=1 activate_refs=0 showing=0 active=0 obs_showing=1 obs_active=0
+  cb A show
+  gsig source_show source=A
+  sig show source=A
+  cb A tick 0.5
+state a show_refs=1 activate_refs=0 showing=1 active=0 obs_showing=1 obs_active=0
+state a show_refs=2 activate_refs=1 showing=1 active=0 obs_showing=1 obs_active=1
+  cb A activate
+  gsig source_activate source=A
+  sig activate source=A
+  cb A tick 0.5
+state a show_refs=2 activate_refs=1 showing=1 active=1 obs_showing=1 obs_active=1
+  cb A tick 0.5
+  cb A deactivate
+  gsig source_deactivate source=A
+  sig deactivate source=A
+  cb A tick 0.5
+state a show_refs=1 activate_refs=0 showing=1 active=0 obs_showing=1 obs_active=0
+  cb A hide
+  gsig source_hide source=A
+  sig hide source=A
+  cb A tick 0.5
+state a show_refs=0 activate_refs=0 showing=0 active=0 obs_showing=0 obs_active=0

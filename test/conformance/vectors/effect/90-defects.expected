@@ -1,0 +1,95 @@
+backend vertexshader_create location="a.effect (Vertex shader, technique T, pass 0)" len=87 fnv=657ac010302854a4
+  sparam 0 name=f type=FLOAT array=0
+  result ok
+backend pixelshader_create location="a.effect (Pixel shader, technique T, pass 0)" len=87 fnv=657ac010302854a4
+  sparam 0 name=f type=FLOAT array=0
+  result ok
+backend vertexshader_create location="a.effect (Vertex shader, technique T, pass 1)" len=87 fnv=657ac010302854a4
+  sparam 0 name=f type=FLOAT array=0
+  result ok
+backend pixelshader_create location="a.effect (Pixel shader, technique T, pass 1)" len=87 fnv=657ac010302854a4
+  sparam 0 name=f type=FLOAT array=0
+  result ok
+effect e result=ok
+  error_string=@null
+--- D-1 function body that is not closed before the end of the text: out-of-bounds token read
+ignore-begin
+ignore-end
+ignore-begin
+ignore-end
+ignore-begin
+ignore-end
+ignore-begin
+ignore-end
+ignore-begin
+ignore-end
+--- D-2 the backend's preprocessor name used as an identifier (an empty macro with no token array)
+backend shader_destroy location="a.effect (Vertex shader, technique T, pass 0)"
+backend shader_destroy location="a.effect (Pixel shader, technique T, pass 0)"
+backend shader_destroy location="a.effect (Vertex shader, technique T, pass 1)"
+backend shader_destroy location="a.effect (Pixel shader, technique T, pass 1)"
+gfx preprocessor=_OPENGL
+try-begin
+try-end crash
+try-begin
+try-end crash
+try-begin
+try-end crash
+gfx preprocessor=_D3D11
+try-begin
+try-end crash
+gfx preprocessor=@null
+ep result=ok
+  errors count=0 has_errors=0
+  ep params=1 structs=0 funcs=0 samplers=0 techniques=0
+  ep_param 0 type=float name=_OPENGL property=0 const=0 uniform=0 texture=0 array_count=0 annotations=0
+  error_string=@null
+effect (effect) params=1 techniques=0 viewproj=- world=-
+  param 0 name=_OPENGL type=FLOAT annotations=0 default_size=0 default=-
+backend vertexshader_create location="a.effect (Vertex shader, technique T, pass 0)" len=87 fnv=657ac010302854a4
+  sparam 0 name=f type=FLOAT array=0
+  result ok
+backend pixelshader_create location="a.effect (Pixel shader, technique T, pass 0)" len=87 fnv=657ac010302854a4
+  sparam 0 name=f type=FLOAT array=0
+  result ok
+backend vertexshader_create location="a.effect (Vertex shader, technique T, pass 1)" len=87 fnv=657ac010302854a4
+  sparam 0 name=f type=FLOAT array=0
+  result ok
+backend pixelshader_create location="a.effect (Pixel shader, technique T, pass 1)" len=87 fnv=657ac010302854a4
+  sparam 0 name=f type=FLOAT array=0
+  result ok
+effect e result=ok
+  error_string=@null
+--- D-3 NULL technique name
+try-begin
+try-end crash
+--- D-4 pass lookup by name when an unnamed pass is reached before a match
+try-begin
+try-end crash
+try-begin
+try-end crash
+backend load_vertexshader "a.effect (Vertex shader, technique T, pass 0)"
+backend load_pixelshader "a.effect (Pixel shader, technique T, pass 0)"
+backend set_val shader=vertex param=f size=4 hex=0000803f
+backend set_val shader=pixel param=f size=4 hex=0000803f
+pbegin_name -> 1
+pass_by_name named -> index=0
+--- D-5 NULL parameter given to gs_effect_set_default
+try-begin
+try-end crash
+--- D-6 NULL names for parameter and annotation lookup
+try-begin
+try-end crash
+try-begin
+try-end crash
+--- D-7 off-by-one bounds: lookups at index == count return a pointer past the end
+pass_by_idx 1 -> name=@null
+pass_by_idx 2 -> past-end
+pass_by_idx 3 -> null
+--- D-8 tokens of an included file keep a pointer to a dead stack object; errors positioned in them are garbage
+ignore-begin
+ignore-end
+backend shader_destroy location="a.effect (Vertex shader, technique T, pass 0)"
+backend shader_destroy location="a.effect (Pixel shader, technique T, pass 0)"
+backend shader_destroy location="a.effect (Vertex shader, technique T, pass 1)"
+backend shader_destroy location="a.effect (Pixel shader, technique T, pass 1)"

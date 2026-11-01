@@ -1,0 +1,22 @@
+add h ok
+add h ok
+log warning Signal declaration 'a' exists
+add h fail
+log warning Errors/warnings for 'not a declaration':  declaration (1, 1): Expected 'return type' 
+log error Signal declaration invalid: not a declaration
+add h fail
+add h ok
+log warning Errors/warnings for 'void':  declaration (1, 5): Unexpected EOF 
+log error Signal declaration invalid: void
+add h fail
+log error Signal declaration invalid: 
+add h fail
+emit a
+call c
+emit-done
+emit A
+call c
+emit-done
+emit returns_value
+call c
+emit-done

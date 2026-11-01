@@ -1,0 +1,29 @@
+# QUIRK: set_order_position only special-cases position 0; any other value (including NEGATIVE ones) walks the list
+# "position-1" steps from the bottom, so a negative value behaves like 1 (item lands directly above the bottom item).
+source s 10 10
+scene main
+add main s a
+add main s b
+add main s c
+order_pos a 1
+order_of main
+order_pos a 2
+order_of main
+order_pos a 3
+order_of main
+echo -- negative position behaves like position 1
+add main s d
+order_pos d -5
+order_of main
+order_pos d -1
+order_of main
+echo -- single-item scene
+scene one
+add one s x
+order_pos x 5
+order_of one
+order x up
+order x down
+order x top
+order x bottom
+order_of one

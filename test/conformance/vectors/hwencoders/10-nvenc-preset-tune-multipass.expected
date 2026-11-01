@@ -1,0 +1,149 @@
+> dump 1
+> nvcap dyn_bitrate 1
+> defaults h264
+> set str preset p1
+> set str preset P2
+> create h264 soft
+log info [obs-nvenc: 'enc'] settings: 	codec:        H264 	rate_control: cbr 	bitrate:      10000 	keyint:       250 	preset:       P2 	tuning:       hq 	multipass:    qres 	profile:      high 	width:        1920 	height:       1080 	b-frames:     0 	b-ref-mode:   0 	lookahead:    false (0 frames) 	aq:           true 
+nv.InitializeEncoder
+  compact: preset=NV_ENC_PRESET_P2_GUID tuning=HIGH_QUALITY profile=NV_ENC_H264_PROFILE_HIGH_GUID gop=250 P=1 rc=CBR avg=10000000 max=10000000 vbv=10000000 tq=0 qp=0 aq=1 la=0/0 iadapt_off=0 mp=QUARTER
+create -> ok
+> destroy
+nv.DestroyEncoder
+destroyed
+> set str preset p3
+> create h264 soft
+log info [obs-nvenc: 'enc'] settings: 	codec:        H264 	rate_control: cbr 	bitrate:      10000 	keyint:       250 	preset:       p3 	tuning:       hq 	multipass:    qres 	profile:      high 	width:        1920 	height:       1080 	b-frames:     0 	b-ref-mode:   0 	lookahead:    false (0 frames) 	aq:           true 
+nv.InitializeEncoder
+  compact: preset=NV_ENC_PRESET_P3_GUID tuning=HIGH_QUALITY profile=NV_ENC_H264_PROFILE_HIGH_GUID gop=250 P=1 rc=CBR avg=10000000 max=10000000 vbv=10000000 tq=0 qp=0 aq=1 la=0/0 iadapt_off=0 mp=QUARTER
+create -> ok
+> destroy
+nv.DestroyEncoder
+destroyed
+> set str preset p4
+> create h264 soft
+log info [obs-nvenc: 'enc'] settings: 	codec:        H264 	rate_control: cbr 	bitrate:      10000 	keyint:       250 	preset:       p4 	tuning:       hq 	multipass:    qres 	profile:      high 	width:        1920 	height:       1080 	b-frames:     0 	b-ref-mode:   0 	lookahead:    false (0 frames) 	aq:           true 
+nv.InitializeEncoder
+  compact: preset=NV_ENC_PRESET_P4_GUID tuning=HIGH_QUALITY profile=NV_ENC_H264_PROFILE_HIGH_GUID gop=250 P=1 rc=CBR avg=10000000 max=10000000 vbv=10000000 tq=0 qp=0 aq=1 la=0/0 iadapt_off=0 mp=QUARTER
+create -> ok
+> destroy
+nv.DestroyEncoder
+destroyed
+> set str preset p6
+> create h264 soft
+log info [obs-nvenc: 'enc'] settings: 	codec:        H264 	rate_control: cbr 	bitrate:      10000 	keyint:       250 	preset:       p6 	tuning:       hq 	multipass:    qres 	profile:      high 	width:        1920 	height:       1080 	b-frames:     0 	b-ref-mode:   0 	lookahead:    false (0 frames) 	aq:           true 
+nv.InitializeEncoder
+  compact: preset=NV_ENC_PRESET_P6_GUID tuning=HIGH_QUALITY profile=NV_ENC_H264_PROFILE_HIGH_GUID gop=250 P=1 rc=CBR avg=10000000 max=10000000 vbv=10000000 tq=0 qp=0 aq=1 la=0/0 iadapt_off=0 mp=QUARTER
+create -> ok
+> destroy
+nv.DestroyEncoder
+destroyed
+> set str preset p7
+> create h264 soft
+log info [obs-nvenc: 'enc'] settings: 	codec:        H264 	rate_control: cbr 	bitrate:      10000 	keyint:       250 	preset:       p7 	tuning:       hq 	multipass:    qres 	profile:      high 	width:        1920 	height:       1080 	b-frames:     0 	b-ref-mode:   0 	lookahead:    false (0 frames) 	aq:           true 
+nv.InitializeEncoder
+  compact: preset=NV_ENC_PRESET_P7_GUID tuning=HIGH_QUALITY profile=NV_ENC_H264_PROFILE_HIGH_GUID gop=250 P=1 rc=CBR avg=10000000 max=10000000 vbv=10000000 tq=0 qp=0 aq=1 la=0/0 iadapt_off=0 mp=QUARTER
+create -> ok
+> destroy
+nv.DestroyEncoder
+destroyed
+> set str preset p5
+> create h264 soft
+log info [obs-nvenc: 'enc'] settings: 	codec:        H264 	rate_control: cbr 	bitrate:      10000 	keyint:       250 	preset:       p5 	tuning:       hq 	multipass:    qres 	profile:      high 	width:        1920 	height:       1080 	b-frames:     0 	b-ref-mode:   0 	lookahead:    false (0 frames) 	aq:           true 
+nv.InitializeEncoder
+  compact: preset=NV_ENC_PRESET_P5_GUID tuning=HIGH_QUALITY profile=NV_ENC_H264_PROFILE_HIGH_GUID gop=250 P=1 rc=CBR avg=10000000 max=10000000 vbv=10000000 tq=0 qp=0 aq=1 la=0/0 iadapt_off=0 mp=QUARTER
+create -> ok
+> destroy
+nv.DestroyEncoder
+destroyed
+> set str preset bogus
+> create h264 soft
+log info [obs-nvenc: 'enc'] settings: 	codec:        H264 	rate_control: cbr 	bitrate:      10000 	keyint:       250 	preset:       bogus 	tuning:       hq 	multipass:    qres 	profile:      high 	width:        1920 	height:       1080 	b-frames:     0 	b-ref-mode:   0 	lookahead:    false (0 frames) 	aq:           true 
+nv.InitializeEncoder
+  compact: preset=NV_ENC_PRESET_P5_GUID tuning=HIGH_QUALITY profile=NV_ENC_H264_PROFILE_HIGH_GUID gop=250 P=1 rc=CBR avg=10000000 max=10000000 vbv=10000000 tq=0 qp=0 aq=1 la=0/0 iadapt_off=0 mp=QUARTER
+create -> ok
+> destroy
+nv.DestroyEncoder
+destroyed
+> set str preset p8
+> create h264 soft
+log info [obs-nvenc: 'enc'] settings: 	codec:        H264 	rate_control: cbr 	bitrate:      10000 	keyint:       250 	preset:       p8 	tuning:       hq 	multipass:    qres 	profile:      high 	width:        1920 	height:       1080 	b-frames:     0 	b-ref-mode:   0 	lookahead:    false (0 frames) 	aq:           true 
+nv.InitializeEncoder
+  compact: preset=NV_ENC_PRESET_P5_GUID tuning=HIGH_QUALITY profile=NV_ENC_H264_PROFILE_HIGH_GUID gop=250 P=1 rc=CBR avg=10000000 max=10000000 vbv=10000000 tq=0 qp=0 aq=1 la=0/0 iadapt_off=0 mp=QUARTER
+create -> ok
+> destroy
+nv.DestroyEncoder
+destroyed
+> set str preset p5
+> set str tune ll
+> create h264 soft
+log info [obs-nvenc: 'enc'] settings: 	codec:        H264 	rate_control: cbr 	bitrate:      10000 	keyint:       250 	preset:       p5 	tuning:       ll 	multipass:    qres 	profile:      high 	width:        1920 	height:       1080 	b-frames:     0 	b-ref-mode:   0 	lookahead:    false (0 frames) 	aq:           true 
+nv.InitializeEncoder
+  compact: preset=NV_ENC_PRESET_P5_GUID tuning=LOW_LATENCY profile=NV_ENC_H264_PROFILE_HIGH_GUID gop=250 P=1 rc=CBR avg=10000000 max=10000000 vbv=10000000 tq=0 qp=0 aq=1 la=0/0 iadapt_off=0 mp=QUARTER
+create -> ok
+> destroy
+nv.DestroyEncoder
+destroyed
+> set str tune ULL
+> create h264 soft
+log info [obs-nvenc: 'enc'] settings: 	codec:        H264 	rate_control: cbr 	bitrate:      10000 	keyint:       250 	preset:       p5 	tuning:       ULL 	multipass:    qres 	profile:      high 	width:        1920 	height:       1080 	b-frames:     0 	b-ref-mode:   0 	lookahead:    false (0 frames) 	aq:           true 
+nv.InitializeEncoder
+  compact: preset=NV_ENC_PRESET_P5_GUID tuning=ULTRA_LOW_LATENCY profile=NV_ENC_H264_PROFILE_HIGH_GUID gop=250 P=1 rc=CBR avg=10000000 max=10000000 vbv=10000000 tq=0 qp=0 aq=1 la=0/0 iadapt_off=0 mp=QUARTER
+create -> ok
+> destroy
+nv.DestroyEncoder
+destroyed
+> set str tune hq
+> create h264 soft
+log info [obs-nvenc: 'enc'] settings: 	codec:        H264 	rate_control: cbr 	bitrate:      10000 	keyint:       250 	preset:       p5 	tuning:       hq 	multipass:    qres 	profile:      high 	width:        1920 	height:       1080 	b-frames:     0 	b-ref-mode:   0 	lookahead:    false (0 frames) 	aq:           true 
+nv.InitializeEncoder
+  compact: preset=NV_ENC_PRESET_P5_GUID tuning=HIGH_QUALITY profile=NV_ENC_H264_PROFILE_HIGH_GUID gop=250 P=1 rc=CBR avg=10000000 max=10000000 vbv=10000000 tq=0 qp=0 aq=1 la=0/0 iadapt_off=0 mp=QUARTER
+create -> ok
+> destroy
+nv.DestroyEncoder
+destroyed
+> set str tune weird
+> create h264 soft
+log info [obs-nvenc: 'enc'] settings: 	codec:        H264 	rate_control: cbr 	bitrate:      10000 	keyint:       250 	preset:       p5 	tuning:       weird 	multipass:    qres 	profile:      high 	width:        1920 	height:       1080 	b-frames:     0 	b-ref-mode:   0 	lookahead:    false (0 frames) 	aq:           true 
+nv.InitializeEncoder
+  compact: preset=NV_ENC_PRESET_P5_GUID tuning=HIGH_QUALITY profile=NV_ENC_H264_PROFILE_HIGH_GUID gop=250 P=1 rc=CBR avg=10000000 max=10000000 vbv=10000000 tq=0 qp=0 aq=1 la=0/0 iadapt_off=0 mp=QUARTER
+create -> ok
+> destroy
+nv.DestroyEncoder
+destroyed
+> set str multipass fullres
+> create h264 soft
+log info [obs-nvenc: 'enc'] settings: 	codec:        H264 	rate_control: cbr 	bitrate:      10000 	keyint:       250 	preset:       p5 	tuning:       weird 	multipass:    fullres 	profile:      high 	width:        1920 	height:       1080 	b-frames:     0 	b-ref-mode:   0 	lookahead:    false (0 frames) 	aq:           true 
+nv.InitializeEncoder
+  compact: preset=NV_ENC_PRESET_P5_GUID tuning=HIGH_QUALITY profile=NV_ENC_H264_PROFILE_HIGH_GUID gop=250 P=1 rc=CBR avg=10000000 max=10000000 vbv=10000000 tq=0 qp=0 aq=1 la=0/0 iadapt_off=0 mp=FULL
+create -> ok
+> destroy
+nv.DestroyEncoder
+destroyed
+> set str multipass disabled
+> create h264 soft
+log info [obs-nvenc: 'enc'] settings: 	codec:        H264 	rate_control: cbr 	bitrate:      10000 	keyint:       250 	preset:       p5 	tuning:       weird 	multipass:    disabled 	profile:      high 	width:        1920 	height:       1080 	b-frames:     0 	b-ref-mode:   0 	lookahead:    false (0 frames) 	aq:           true 
+nv.InitializeEncoder
+  compact: preset=NV_ENC_PRESET_P5_GUID tuning=HIGH_QUALITY profile=NV_ENC_H264_PROFILE_HIGH_GUID gop=250 P=1 rc=CBR avg=10000000 max=10000000 vbv=10000000 tq=0 qp=0 aq=1 la=0/0 iadapt_off=0 mp=DISABLED
+create -> ok
+> destroy
+nv.DestroyEncoder
+destroyed
+> set str multipass QRES
+> create h264 soft
+log info [obs-nvenc: 'enc'] settings: 	codec:        H264 	rate_control: cbr 	bitrate:      10000 	keyint:       250 	preset:       p5 	tuning:       weird 	multipass:    QRES 	profile:      high 	width:        1920 	height:       1080 	b-frames:     0 	b-ref-mode:   0 	lookahead:    false (0 frames) 	aq:           true 
+nv.InitializeEncoder
+  compact: preset=NV_ENC_PRESET_P5_GUID tuning=HIGH_QUALITY profile=NV_ENC_H264_PROFILE_HIGH_GUID gop=250 P=1 rc=CBR avg=10000000 max=10000000 vbv=10000000 tq=0 qp=0 aq=1 la=0/0 iadapt_off=0 mp=QUARTER
+create -> ok
+> destroy
+nv.DestroyEncoder
+destroyed
+> set str multipass nonsense
+> create h264 soft
+log info [obs-nvenc: 'enc'] settings: 	codec:        H264 	rate_control: cbr 	bitrate:      10000 	keyint:       250 	preset:       p5 	tuning:       weird 	multipass:    nonsense 	profile:      high 	width:        1920 	height:       1080 	b-frames:     0 	b-ref-mode:   0 	lookahead:    false (0 frames) 	aq:           true 
+nv.InitializeEncoder
+  compact: preset=NV_ENC_PRESET_P5_GUID tuning=HIGH_QUALITY profile=NV_ENC_H264_PROFILE_HIGH_GUID gop=250 P=1 rc=CBR avg=10000000 max=10000000 vbv=10000000 tq=0 qp=0 aq=1 la=0/0 iadapt_off=0 mp=DISABLED
+create -> ok
+> destroy
+nv.DestroyEncoder
+destroyed

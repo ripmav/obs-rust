@@ -1,0 +1,8 @@
+t_create nothere
+ff open path=nothere format=- nobuffer=1 interrupt=0 opts=[]
+ff open -> fail
+log warning MP: Failed to open media: 'nothere'
+cb stop
+t_query time=0 frames=0 duration=0 has_video=0 has_audio=0
+t_destroy
+t_null query time=0 frames=0 duration=0 has_video=0 has_audio=0

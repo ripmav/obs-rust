@@ -1,0 +1,21 @@
+# Renaming: empty or NULL names are ignored, so are same-name renames (no signal); the main canvas
+# can not be renamed; renaming onto an existing public name appends " 2", " 3"... (a warning is
+# logged); a private canvas is not in the name table so no uniqueness is enforced for it.
+startup en-US -
+canvas_create a One
+canvas_create b Two
+sig_obs canvas_rename
+canvas_name b One
+canvas_name b One
+canvas_name b Three
+canvas_name b One
+canvas_name a "One 2"
+canvas_name a "One 3"
+canvas_create_private p One
+canvas_name p One
+canvas_name p Three
+canvas_name p Zed
+enum canvases
+get canvas_by_name Three
+get canvas_by_name Zed
+shutdown

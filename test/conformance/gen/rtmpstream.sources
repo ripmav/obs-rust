@@ -1,0 +1,11 @@
+# Spec S-045: plugins/obs-outputs/rtmp-stream.c and net-if.c are #included into the runner (their static
+# functions are driven directly). Everything outward is faked inside the runner: libobs objects, librtmp,
+# the FLV muxer, the kernel interface list (getifaddrs), ioctl(FIONREAD), threads (pthread_create is a
+# fake; the send-thread body is run synchronously) and the clock.
+# Not linked (and therefore not tested): the real librtmp transport (S-031), the real FLV muxer (S-021),
+# the Windows socket thread (rtmp-windows.c), real threads and sockets.
+test/conformance/gen/rtmpstream_runner.c
+-ljansson
+-DSSL_CTX=void
+-DENABLE_HEVC
+-Wno-unused-parameter

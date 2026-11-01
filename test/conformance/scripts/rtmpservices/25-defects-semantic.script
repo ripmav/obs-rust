@@ -1,0 +1,10 @@
+# S-026 DEFECTS that do not crash.
+echo D-5-twitch-ingest-update-with-only-deprecated-entries-wipes-the-ingest-list
+fs-load /mod/data/services.json data/services-ok.json
+updater-route https://ingest.twitch.tv/ingests 0 "{\"ingests\":[{\"name\":\"a (deprecated)\",\"url_template\":\"rtmp://a/{stream_key}\"},{\"name\":\"b (depracated)\",\"url_template\":\"rtmp://b/{stream_key}\"}]}"
+module-load
+settings S {"service":"Twitch","server":"auto","key":"k"}
+new T rtmp_common S
+get T url
+props P T S
+module-unload

@@ -1,0 +1,52 @@
+echo header-room
+enc_obj len=4 hex=03000009
+enc_obj null
+enc_obj null
+enc_obj null
+enc_obj null
+enc_obj null
+enc_obj len=5 hex=0a00000000
+enc_obj null
+enc_obj len=5 hex=0a00000000
+enc_obj len=5 hex=0a00000000
+echo end-marker-room
+enc_obj len=4 hex=03000009
+enc_obj null
+echo property-does-not-fit
+log error AMF_Encode - failed to encode property in index 2
+enc_obj len=30 hex=030005776964746800409e000000000000000673746572656f0101000009
+log error AMF_Encode - failed to encode property in index 2
+enc_obj len=30 hex=030005776964746800409e000000000000000673746572656f0101000009
+log error AMF_Encode - failed to encode property in index 2
+enc_obj null
+log error AMF_Encode - failed to encode property in index 1
+enc_obj len=20 hex=030005776964746800409e000000000000000009
+log error AMF_Encode - failed to encode property in index 1
+enc_obj len=20 hex=030005776964746800409e000000000000000009
+log error AMF_Encode - failed to encode property in index 0
+enc_obj len=4 hex=03000009
+log error AMF_Encode - failed to encode property in index 0
+enc_obj len=4 hex=03000009
+echo ecma-count-still-reports-all-properties
+log error AMF_Encode - failed to encode property in index 1
+enc_obj len=24 hex=08000000030005776964746800409e000000000000000009
+log error AMF_Encode - failed to encode property in index 1
+enc_obj len=24 hex=08000000030005776964746800409e000000000000000009
+log error AMF_Encode - failed to encode property in index 0
+enc_obj len=8 hex=0800000003000009
+log error AMF_Encode - failed to encode property in index 2
+enc_obj len=31 hex=0a000000030005776964746800409e000000000000000673746572656f0101
+log error AMF_Encode - failed to encode property in index 1
+enc_obj len=21 hex=0a000000030005776964746800409e000000000000
+log error AMF_Encode - failed to encode property in index 0
+enc_obj len=5 hex=0a00000003
+echo prop-room
+enc_prop null
+enc_prop len=10 hex=000673746572656f0101
+enc_prop len=10 hex=000673746572656f0101
+enc_prop len=10 hex=000673746572656f0101
+enc_prop len=10 hex=000673746572656f0101
+enc_prop len=10 hex=000673746572656f0101
+enc_prop len=10 hex=000673746572656f0101
+enc_prop len=10 hex=000673746572656f0101
+enc_prop len=10 hex=000673746572656f0101

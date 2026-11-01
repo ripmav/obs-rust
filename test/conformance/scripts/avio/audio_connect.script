@@ -1,0 +1,32 @@
+# S-044: audio input registration. Identity is (mix, callback, param); the same pair on another mix is a different
+# input; duplicates return false; mix index must be < 6. conversion == NULL -> output format; UNKNOWN/0 fields are
+# replaced by the output's values; a resampler (fake, logged) is created only when format, rate or layout differ.
+aopen main 48000 FLOAT_PLANAR STEREO
+aconnect a 1 0
+aconnect a 1 0
+aconnect a 1 1
+aconnect a 2 0
+aconnect b 1 0
+aconnect a 1 6
+aconnect a 1 99
+aconnect_null
+ainfo
+adump
+# partial conversion info: unknown fields fall back to the output
+aconnect a 10 2 - - - 0
+aconnect a 11 2 44100 - - 0
+aconnect a 12 2 - 16BIT_PLANAR - 1
+aconnect a 13 2 - - MONO 0
+aconnect a 14 2 48000 FLOAT_PLANAR STEREO 1
+adump
+# disconnect: unknown pair / wrong mix / out-of-range mix are ignored; order of the rest is preserved
+adisconnect a 99 0
+adisconnect a 1 5
+adisconnect a 1 6
+adisconnect a 2 0
+adump
+adisconnect a 1 0
+adisconnect a 1 1
+adump
+ainfo
+aclose

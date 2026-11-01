@@ -1,0 +1,31 @@
+# Data flow with the "null" muxer: audio before the first video frame is ignored; mixes not selected in the track mask
+# are ignored; audio is buffered per track and encoded in exact codec frames (1024 samples, the buffer keeps the
+# remainder); video frames become one queued packet each, rescaled to the stream time base; packets are written by the
+# worker only when pumped; total_bytes counts written packet bytes; video_start_ts / start_timestamp keep the first
+# frame's timestamp (a first timestamp of 0 is re-taken by the next frame).
+reset
+output ff
+size 320 240
+video_info 30 1 709 P NV12
+mixers 5
+set str url x.null
+set str format_name null
+fo_create
+fo_start
+fo_connect
+fo_audio 0 1024 100
+fo_state
+fo_video 0
+fo_video 33333333
+fo_state
+fo_audio 0 600 40000000
+fo_audio 1 1024 40000000
+fo_audio 0 600 40000000
+fo_audio 2 1024 40000000
+fo_state
+fo_audio 2 2048 40000000
+fo_packets
+fo_pump 100
+fo_state
+fo_stop 0
+fo_destroy

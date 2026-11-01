@@ -1,0 +1,16 @@
+decl "void 1f()"
+parse crash
+decl "void 123()"
+parse crash
+decl "void +()"
+parse crash
+decl "void \"s\"()"
+parse crash
+decl "void ()"
+log warning Errors/warnings for 'void ()':  declaration (1, 6): Expected 'function name' declaration (1, 8): Unexpected EOF 
+parse fail
+decl "void f("
+log warning Errors/warnings for 'void f(':  declaration (1, 7): Unexpected EOF 
+parse fail
+decl "int 1f(int a)"
+parse crash

@@ -1,0 +1,51 @@
+# S-022 ftyp contents for every flavor/flag combination, both the interim (fragmented, 'skipfin') and
+# the final form. The ftyp is rewritten at finalisation and MUST keep its size.
+enc v video codec h264 width 320 height 240 fps 30/1 extra 000000016742c01ed900a047fe880000000168ce3c80
+echo mp4-default-fragmented
+mux mp4 skipfin
+pkt v 0 0 1 gen:10
+pkt v 1 1 0 gen:10
+finalise
+size
+hex
+echo mp4-default-final
+mux mp4
+pkt v 0 0 1 gen:10
+pkt v 1 1 0 gen:10
+finalise
+tree
+echo mp4-negcts-fragmented
+mux mp4 skipfin negcts
+pkt v 0 0 1 gen:10
+pkt v 1 1 0 gen:10
+finalise
+size
+hex
+echo mp4-negcts-final
+mux mp4 negcts
+pkt v 0 0 1 gen:10
+pkt v 1 1 0 gen:10
+finalise
+tree
+echo mov-fragmented
+mux mov skipfin
+pkt v 0 0 1 gen:10
+pkt v 1 1 0 gen:10
+finalise
+size
+hex
+echo mov-final
+mux mov
+pkt v 0 0 1 gen:10
+pkt v 1 1 0 gen:10
+finalise
+tree
+echo audio-only-no-avc1-brand
+reset
+enc a audio codec aac rate 48000 extra 1190
+mux mp4 skipfin
+pkt a 0 0 1 gen:10
+pkt a 1024 1024 1 gen:10
+finalise
+size
+hex

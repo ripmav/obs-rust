@@ -1,0 +1,16 @@
+# S-050 obs-qsv11: module load probes the adapters and registers: the four H.264 encoders if ANY
+# adapter is Intel; the two AV1 encoders if any Intel adapter supports AV1; the two HEVC encoders
+# if any Intel adapter supports HEVC. Order: tex_v2, tex(v1), soft_v2, soft(v1), then AV1 tex/soft,
+# then HEVC tex/soft. (Facts are per adapter and ORed independently: AV1 on an Intel iGPU and
+# "intel" on another adapter is enough.)
+q_adapter 0 0 0 0 0
+q_load
+q_adapter 0 1 0 0 0
+q_load
+q_adapter 1 0 1 1 1
+q_load
+q_adapter 1 1 1 1 0
+q_load
+q_adapter 0 1 0 0 1
+q_adapter 1 0 0 1 0
+q_load

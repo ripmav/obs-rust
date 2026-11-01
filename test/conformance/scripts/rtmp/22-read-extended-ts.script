@@ -1,0 +1,19 @@
+# Extended timestamps on read headers (type 0/1/2) and one-byte-per-recv delivery (R75..R76).
+new
+clock 1000
+seturl rtmp://h/a
+enablewrite
+set flashver FMLE
+feed 03
+feed_s1 0 1000 00000000
+feed_echo
+connect
+recvcap 1
+feed 05ffffff00000a090100000001312d0045454545454545454545
+feed 45ffffff00000a090100005446464646464646464646
+feed 8500000547474747474747474747
+read
+read
+read
+chts 5
+state

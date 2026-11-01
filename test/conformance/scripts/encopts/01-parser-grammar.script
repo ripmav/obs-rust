@@ -1,0 +1,19 @@
+# CORE. Shared option-string parser (obs_parse_options, used by x264, nvenc and the ffmpeg
+# encoders). Words are separated by the space character only; a word is an option when it
+# has the form NAME=VALUE with a non-empty NAME and a non-empty VALUE; the first '=' splits.
+opts "a=1 b=2 c=3"
+opts "keyint=60 bframes=2"
+opts "a=b=c x=y=z=w"
+opts "k=v=  =w"
+echo words-that-are-not-options-are-ignored-in-order
+opts "novalue a=1 empty= =noname = == z=1"
+echo runs-of-spaces-and-leading-trailing-spaces-are-skipped
+opts "   a=1     b=2   "
+opts "     "
+echo empty-and-null-input
+opts ""
+opts @null
+echo duplicates-are-kept-in-order
+opts "a=1 a=2 a=1"
+echo case-is-preserved
+opts "Preset=Slow PRESET=fast"

@@ -1,0 +1,32 @@
+# math-defs.h: constants, RAD/DEG and close_float (S-009-R01..R03).
+call e const EPSILON
+call le const LARGE_EPSILON
+call te const TINY_EPSILON
+call mi const M_INFINITE
+call r1 const RAD1
+call d1 const DEG1
+call r RAD 180
+call r RAD 90
+call r RAD -45
+call r RAD 0
+call d DEG 3.14159274
+call d DEG 1
+call d DEG 0
+# close_float is |a-b| <= p (inclusive) and false whenever the difference is NaN.
+call c close_float 1 1.5 0.5
+call c close_float 1 1.5 0.4999
+call c close_float 1.5 1 0.5
+call c close_float -1 1 2
+call c close_float 0 -0 0
+call c close_float 1 1 0
+call c close_float 1 2 -1
+# NaN and equal infinities are NOT close (inf - inf = NaN)
+call c close_float inf inf 1
+call c close_float -inf -inf 1
+call c close_float inf 1 1e30
+call c close_float nan nan 1
+call c close_float 1 nan 1
+call c close_float 1 2 nan
+# a huge precision accepts finite values but not NaN differences
+call c close_float 1e20 -1e20 inf
+call c close_float inf inf inf

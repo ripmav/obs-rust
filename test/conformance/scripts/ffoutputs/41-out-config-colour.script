@@ -1,0 +1,33 @@
+# Colour mapping of the ffmpeg_output start for every OBS colour space, plus the pixel format mapping and the
+# unsupported-format early exit (no initialisation attempt, CONNECT_FAILED). Range: full -> JPEG(2), else MPEG(1).
+reset
+output ff
+video_info 30 1 DEFAULT P NV12
+set str url out.zzz
+set str format_name nosuchfmt
+fo_create
+fo_start
+fo_connect
+video_info 30 1 601 F I420
+fo_start
+fo_connect
+video_info 30 1 709 P I444
+fo_start
+fo_connect
+video_info 30 1 SRGB P BGRA
+fo_start
+fo_connect
+video_info 30 1 PQ P P010
+fo_start
+fo_connect
+video_info 30 1 HLG P YUY2
+fo_start
+fo_connect
+video_info 30 1 709 P UYVY
+fo_start
+fo_connect
+echo unsupported_pixel_format
+video_info 30 1 709 P NONE
+fo_start
+fo_connect
+fo_state

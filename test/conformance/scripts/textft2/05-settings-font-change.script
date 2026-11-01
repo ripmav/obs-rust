@@ -1,0 +1,28 @@
+# Font identity changes, failure paths and the quirk that a failed lookup is remembered (S-038-R28..R34).
+reset
+ascii 5 8 0 8 384
+font "Sans Serif" - 0 p/sans
+load
+create s 2
+setfont s "Sans Serif" - 20 0
+set s text "ab"
+update s
+echo --- change only the size: face reloaded, glyph cache rebuilt, max_h reset
+setfont s "Sans Serif" - 30 0
+update s
+state s
+echo --- change style/flags: lookup repeated with the new arguments
+font "Sans Serif" Bold 1 p/bold
+setfont s "Sans Serif" Bold 30 1
+update s
+state s
+echo --- unknown font: warning, state records the NEW name, old face is still installed
+setfont s Missing - 30 0
+update s
+state s
+echo --- QUIRK: the same unknown font again is not retried (name equal -> skip_font_load)
+update s
+echo --- text still follows settings after the failed load
+set s text "abc"
+update s
+state s

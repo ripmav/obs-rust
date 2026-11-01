@@ -1,0 +1,34 @@
+# S-035 obs_load_plugins: open + init every module found in a path; outcome per file.
+mkmod ok1 @TMP/pl/bin/ok1.so svc=pl_svc1 unload
+mkmod ok2 @TMP/pl/bin/ok2.so svc=pl_svc2
+mkmod initfail @TMP/pl/bin/initfail.so load=0 freeloc unload svc=pl_never
+mkmod newer @TMP/pl/bin/newer.so ver=minor+1
+mkmod noexp @TMP/pl/bin/noexp.so noload
+mkmod badsym @TMP/pl/bin/badsym.so badsym
+write @TMP/pl/bin/notso.so "plain text"
+write @TMP/pl/bin/other.txt "ignored: wrong extension"
+mkdir @TMP/pl/data
+# files are visited in byte order of their path; failures are reported by file name, in that order
+load_plugins @TMP/pl/bin @TMP/pl/data/%module% 2
+# outcome: ok1/ok2 enabled+loaded; initfail -> disabled(failed_to_initialize) and not counted as a failure;
+# newer/badsym/notso -> disabled(failed_to_open) and counted; noexp -> silently skipped (no module object)
+lists
+mod_lists ok1
+get_module initfail
+get_module noexp
+get_module newer
+mod_info initfail
+mod_info ok1
+svc_types
+service_module pl_svc1
+service_module pl_never
+# a second pass: already-loaded names are skipped with a warning (not counted); failed ones are retried
+load_plugins @TMP/pl/bin @TMP/pl/data/%module% 2
+lists
+# post-load order = reverse of load order
+mkmod pp1 @TMP/pl2/bin/pp1.so postload
+mkmod pp2 @TMP/pl2/bin/pp2.so postload
+load_plugins @TMP/pl2/bin @TMP/pl2/data/%module% 2
+post_load
+# nothing found / no failures: count 0, failed list empty
+load_plugins @TMP/nothing/bin @TMP/nothing/data 2

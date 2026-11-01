@@ -1,0 +1,11 @@
+# S-022 QuickTime flavor with video: visual sample entry vendor 'OBSS' and quality fields, ftyp 'qt  ',
+# 'wide' placeholder, Pascal-string handler names, dinf hdlr (dhlr), language 32767, no avc1 brand.
+enc v video codec h264 width 1920 height 1080 fps 60/1 id x264 extra 000000016742c01ed900a047fe880000000168ce3c80
+enc a audio codec aac rate 48000 extra 1190
+mux mov
+pkt v 0 0 1 gen:20
+pkt v 1 1 0 gen:12
+pkt a 0 0 1 gen:10
+pkt a 1024 1024 1 gen:10
+finalise
+dump

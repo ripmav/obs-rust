@@ -1,0 +1,34 @@
+# CORE/QUIRK. rate_control_modified (apply P D): visibility of max_bitrate (VBR only),
+# bitrate (hidden for CQP/ICQ), qpi/qpb/qpp/cqp (CQP only), icq_quality (ICQ only). The
+# callback ALSO rewrites the settings object (Q-9): legacy rate controls are mapped
+# (VCM->CBR, AVBR->VBR, LA_CBR->CBR, LA_VBR->VBR, LA_ICQ->ICQ with latency derived) and legacy
+# target_usage names mapped to TU1..TU7. Properties missing from this variant are skipped.
+cpu_platform 0
+qsv_props h264v2 P
+data D
+qsv_defaults h264v2 D
+echo CBR
+props_apply P D
+props_vis P
+set D rate_control str VBR
+props_apply P D
+props_vis P
+set D rate_control str CQP
+props_apply P D
+props_vis P
+set D rate_control str ICQ
+props_apply P D
+props_vis P
+echo case-insensitive
+set D rate_control str icq
+props_apply P D
+props_vis P
+echo v1-variant-has-qpi-qpb-qpp-instead-of-cqp
+qsv_props h264v1 Q
+set D rate_control str CQP
+props_apply Q D
+props_vis Q
+echo unknown-rate-control-shows-bitrate-only
+set D rate_control str bogus
+props_apply P D
+props_vis P

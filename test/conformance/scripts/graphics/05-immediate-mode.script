@@ -1,0 +1,41 @@
+# gs_render_start(false) / gs_vertex* / gs_render_stop: the shared 512-vertex immediate buffer.
+# The backend sees the vb_data arrays being filled (printed at flush) followed by load/draw calls.
+trace 0
+gs_create g
+gs_enter_context g
+trace 1
+echo == triangle with colors and texcoords
+gs_render_start 0
+gs_vertex3f 0 0 0
+gs_vertex2f 1 0
+gs_vertex3f 0 1 0.5
+gs_color 0xff0000ff
+gs_color 0xff00ff00
+gs_color 0xffff0000
+gs_texcoord 0 0 0
+gs_texcoord 1 0 0
+gs_texcoord 0 1 0
+gs_render_stop GS_TRIS
+echo == defaults: with no color calls the buffer colors are 0xffffffff
+gs_render_start 0
+gs_vertex2f 5 5
+gs_vertex2f 6 6
+gs_render_stop GS_LINES
+echo == vector forms
+gs_render_start 0
+gs_vertex2v 2 3
+gs_vertex3v 4 5 6
+gs_normal3v 0 0 1
+gs_normal3f 0 1 0
+gs_texcoord2v 0.5 0.25 0
+gs_texcoord2v 0.75 0.125 0
+gs_render_stop GS_LINESTRIP
+echo == no vertices: nothing is flushed or drawn
+gs_render_start 0
+gs_render_stop GS_TRIS
+echo == color4v and gs_get_input are stubs
+gs_render_start 0
+gs_color4v 1 1 1 1
+gs_vertex2f 1 1
+gs_render_stop GS_POINTS
+gs_get_input

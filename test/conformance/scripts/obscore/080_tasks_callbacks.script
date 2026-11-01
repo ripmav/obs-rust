@@ -1,0 +1,35 @@
+# Task queues and callback lists. Tasks queued to the graphics / audio / destroy queues run on
+# those threads (identified by name); wait=1 blocks until done; a task queued from the thread that
+# owns the queue runs inline (not exercised here). UI tasks go to the registered UI handler, or are
+# dropped with an error log when none is registered. Tick / render callbacks are inserted at the
+# FRONT of their lists (newest first); removal matches function and parameter.
+startup en-US -
+reset_video fmt=BGRA gpu=0
+reset_audio
+queue_task ui 0 t0
+ui_handler on
+queue_task ui 0 t1
+queue_task ui 1 t2
+in_task_thread
+queue_task graphics 1 g1
+queue_task audio 1 a1
+queue_task destroy 1 d1
+queue_task graphics 0 g2
+wait_destroy
+callbacks
+tick_add a
+tick_add b
+tick_add a
+render_cb_add first
+render_cb_add second
+rendered_cb add
+rendered_cb add
+callbacks
+tick_remove a
+render_cb_remove first
+rendered_cb remove
+callbacks
+tick_remove a
+tick_remove a
+callbacks
+shutdown

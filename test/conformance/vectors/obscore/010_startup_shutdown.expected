@@ -1,0 +1,39 @@
+initialized -> 0
+reset_video -> fail
+  after_call base=1920x1080 out=1280x720 fps=30/1 fmt=NV12 cs=2 range=1 scale=2 gpu=1 adapter=0
+log debug canvas 'Main' (<uuid>) created
+startup -> true
+initialized -> 1
+state core=up locale=en-US modcfg=set name_store_owned=1
+  types source=3 input=1 filter=0 transition=0 output=0 encoder=0 service=0
+  graphics=no audio=no mixes=0 thread_initialized=0 valid=1
+  main_canvas name="Main" flags=0xf mix=none
+locale -> en-US
+log warning Tried to call obs_startup more than once
+startup -> false
+locale -> en-US
+name_store non_null=1 external=0
+enum_types source
+  [0] scene
+  [1] group
+  [2] audio_line
+  past_end -> 0 out=UNTOUCHED
+enum_types input
+  [0] audio_line
+  past_end -> 0 out=UNTOUCHED
+shutdown begin
+log info Freeing OBS context data
+log debug canvas 'Main' (<uuid>) destroyed
+shutdown end obs=NULL
+initialized -> 0
+log debug canvas 'Main' (<uuid>) created
+startup -> true
+locale -> NULL
+state core=up locale=NULL modcfg=NULL name_store_owned=1
+  types source=3 input=1 filter=0 transition=0 output=0 encoder=0 service=0
+  graphics=no audio=no mixes=0 thread_initialized=0 valid=1
+  main_canvas name="Main" flags=0xf mix=none
+shutdown begin
+log info Freeing OBS context data
+log debug canvas 'Main' (<uuid>) destroyed
+shutdown end obs=NULL

@@ -1,0 +1,31 @@
+p_snap roots=4
+p_dump roots=4
+  entry name="never" count=0 min=18446744073709551615 max=0 expected=1000 bcount=0 bmin=18446744073709551615 bmax=0 children=0
+    times
+    between
+  entry name="late" count=3 min=1 max=1 expected=4000 bcount=2 bmin=4 bmax=5001 children=0
+    times 1:3
+    between 5001:1 4:1
+  entry name="early" count=1 min=1 max=1 expected=0 bcount=0 bmin=0 bmax=0 children=1
+    times 1:1
+    between
+    entry name="inner" count=1 min=1 max=1 expected=0 bcount=0 bmin=0 bmax=0 children=0
+      times 1:1
+      between
+  entry name="inner" count=1 min=2 max=2 expected=0 bcount=0 bmin=0 bmax=0 children=0
+    times 2:1
+    between
+p_print
+text "== Profiler Results ============================="
+text "never: min=1.84467e+16\xc2\xa0ms, median=0\xc2\xa0ms, max=0\xc2\xa0ms, 99th percentile=0\xc2\xa0ms, 0% below 1\xc2\xa0ms"
+text "late: 0.001\xc2\xa0ms"
+text "early: 0.001\xc2\xa0ms"
+text " \xe2\x94\x97inner: 0.001\xc2\xa0ms"
+text "inner: 0.002\xc2\xa0ms"
+text "================================================="
+p_print_between
+text "== Profiler Time Between Calls =================="
+text "never: min=1.84467e+16\xc2\xa0ms, median=0\xc2\xa0ms, max=0\xc2\xa0ms, 0% within \xc2\xb12% of 1\xc2\xa0ms (0% lower, 0% higher)"
+text "late: min=0.004\xc2\xa0ms, median=5.001\xc2\xa0ms, max=5.001\xc2\xa0ms, 0% within \xc2\xb12% of 4\xc2\xa0ms (50% lower, 50% higher)"
+text "================================================="
+p_free done

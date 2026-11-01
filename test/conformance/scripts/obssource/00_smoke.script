@@ -1,0 +1,6 @@
+kind in input video,audio create,destroy
+create a in A
+info a
+release a
+pending
+drain

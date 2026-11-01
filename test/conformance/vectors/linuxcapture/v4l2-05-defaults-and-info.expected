@@ -1,0 +1,33 @@
+> src-name
+name V4L2Input
+flags async_video=1 do_not_duplicate=1
+> src-defaults
+> get input int
+input = -1
+> get pixelformat int
+pixelformat = -1
+> get standard int
+standard = -1
+> get dv_timing int
+dv_timing = -1
+> get resolution int
+resolution = -1
+> get framerate int
+framerate = -1
+> get color_range int
+color_range = 0
+> get buffering bool
+buffering = 1
+> get auto_reset bool
+auto_reset = 0
+> get timeout_frames int
+timeout_frames = 5
+> get device_id str
+device_id = ""
+> set-int timeout_frames 9
+> set-bool buffering 0
+> src-defaults
+> get timeout_frames int
+timeout_frames = 9
+> get buffering bool
+buffering = 0

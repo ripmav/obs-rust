@@ -1,0 +1,10 @@
+# A task may queue more work on its own queue. A pending wait() marker is deferred behind
+# tasks that are queued while it is already waiting, so the new task still runs before
+# wait() returns (CORE).
+task_create 0
+task_gate 0
+task_requeue 0 a a-child
+task_queue 0 b
+task_wait_release 0
+task_log
+task_destroy 0

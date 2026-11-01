@@ -1,0 +1,24 @@
+# Contracts of the platform queries whose values depend on the machine. Only properties are printed.
+# monotonic N: N consecutive os_gettime_ns() calls never go backwards, and are non-zero.
+monotonic 1000
+# sleeping
+sleep_ms 1
+sleep_ms 20
+# os_sleepto_ns: false when the target is already past, else sleeps until the target (REL_MS from now)
+sleepto -1
+sleepto 5
+sleepto_fast -1
+sleepto_fast 5
+# disk space: unknown directory -> error (-1) / zero; existing directory -> readable
+free_space .
+free_space nosuch
+free_space sub
+mkdir sub
+free_space sub
+# system information
+system
+cpu_usage
+uuid
+exe_path obs-plugins
+exe_path @null
+exe_path ""

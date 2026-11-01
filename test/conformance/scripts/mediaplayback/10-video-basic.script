@@ -1,0 +1,38 @@
+# Basic synchronous driving of the media thread loop for a local video-only file (4 frames, 40 ms apart,
+# time base 1/1000, frame durations reported by the decoder). 'mtick' = one iteration of the thread's loop
+# without the semaphore wait; 'sleep N' lines are the (fake) sleeps the thread would perform.
+# Clock 1000000000 at minit: base_sys_ts = 1e9. Output timestamps = base_ts + pts - start_ts + play_sys_ts - base_sys_ts.
+media clip 160000 0
+video 1 1000 64 48 yuv420p frames=4
+pkt 0 0 fdur=40
+pkt 0 40 fdur=40
+pkt 0 80 fdur=40
+pkt 0 120 fdur=40
+endmedia
+clock 1000000000
+minit clip local=1
+mstate
+# initial reset (the thread does this once after opening): inactive -> preload callback for the first frame
+mreset
+mstate
+# start playing, no loop. The thread was asleep on the semaphore (it had read active=0 before sleeping), so
+# the iteration right after the wake-up ('mtickw 0 0') plays nothing: the stale local 'is_active' is false.
+mplay 0
+mstate
+mtickw 0 0
+mstate
+mtick
+mstate
+mtick
+mstate
+mtick
+mstate
+mtick
+mstate
+mtick
+mstate
+mtick 3
+mstate
+mtime
+mframes
+mduration

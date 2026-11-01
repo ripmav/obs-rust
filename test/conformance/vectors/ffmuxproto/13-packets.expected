@@ -1,0 +1,14 @@
+--- audio index 2 does not exist: packet consumed and ignored
+--- video, audio 0, audio 1
+--- type values other than 0 are routed like audio (type 7 here, index 1)
+exit 0
+probe: format=nut streams=3
+  stream 0: video h264 640x360 tb=1/51200 extradata=0164001fffe100046764001f01000468ce3c80
+  stream 1: audio aac rate=48000 ch=2 title="A" tb=1/48000 extradata=1190
+  stream 2: audio aac rate=48000 ch=2 title="B" tb=1/48000 extradata=1190
+  pkt stream=0 size=4 pts=0 dts=-9223372036854775808 key=1 first=a1a1a1a1
+  pkt stream=1 size=4 pts=0 dts=0 key=0 first=b1b1b1b1
+  pkt stream=2 size=4 pts=0 dts=0 key=0 first=c1c1c1c1
+  pkt stream=2 size=4 pts=1024 dts=1024 key=0 first=d1d1d1d1
+  pkt stream=0 size=4 pts=2048 dts=-9223372036854775808 key=0 first=a2a2a2a2
+  packets=5

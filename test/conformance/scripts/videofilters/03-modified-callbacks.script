@@ -1,0 +1,94 @@
+# Property modified callbacks: visibility / description changes driven by the settings (fset = user edit, pmod = callback).
+source T 1920 1080 1920 1080 SRGB video
+source P 1920 1080 1920 1080 SRGB video
+# chroma key: key_color only visible for "custom"
+filter ck chroma_key_filter 2 @null T P
+props ck
+props ck
+fset ck key_color_type str custom
+pmod ck key_color_type
+pvis ck
+fset ck key_color_type str blue
+pmod ck key_color_type
+pvis ck
+fset ck key_color_type str bogus
+pmod ck key_color_type
+pvis ck
+# color key has an additional red entry and the same callback
+filter kk color_key_filter 2 @null T P
+props kk
+fset kk key_color_type str custom
+pmod kk key_color_type
+pvis kk
+# crop: relative toggles descriptions and which fields are visible
+filter cr crop_filter 0 @null T P
+props cr
+props cr
+fset cr relative bool 0
+pmod cr relative
+props cr
+pvis cr
+fset cr relative bool 1
+pmod cr relative
+pvis cr
+# scroll: limit_cx / limit_cy toggle cx / cy
+filter sc scroll_filter 0 @null T P
+props sc
+fset sc limit_cx bool 1
+pmod sc limit_cx
+pvis sc
+fset sc limit_cy bool 1
+pmod sc limit_cy
+pvis sc
+fset sc limit_cx bool 0
+pmod sc limit_cx
+pvis sc
+# scale: undistort only for bicubic / lanczos (case-insensitive compare)
+filter sl scale_filter 0 @null T P
+props sl
+props sl
+fset sl sampling str point
+pmod sl sampling
+pvis sl
+fset sl sampling str LANCZOS
+pmod sl sampling
+pvis sl
+fset sl sampling str area
+pmod sl sampling
+pvis sl
+fset sl sampling str nonsense
+pmod sl sampling
+pvis sl
+# hdr tonemap: transform selects the visible nits fields
+filter ht hdr_tonemap_filter 0 @null T P
+props ht
+props ht
+fset ht transform int 1
+pmod ht transform
+pvis ht
+fset ht transform int 2
+pmod ht transform
+pvis ht
+fset ht transform int 7
+pmod ht transform
+pvis ht
+fset ht transform int 0
+pmod ht transform
+pvis ht
+# sdr on hdr: power only visible for the power gamma
+filter sh sdr_on_hdr_filter 0 @null T P
+props sh
+props sh
+fset sh gamma int 2
+pmod sh gamma
+pvis sh
+fset sh gamma int 1
+pmod sh gamma
+pvis sh
+fset sh gamma int 0
+pmod sh gamma
+pvis sh
+# apply_settings runs every callback (reverse insertion order, S-015)
+fset sh gamma int 2
+papply sh
+pvis sh

@@ -1,0 +1,18 @@
+# Wire output of a normal recording: headers are sent lazily before the first packet (video extradata, then each
+# audio track's), each packet is an info write plus a payload write, total_bytes counts payload bytes only.
+# Without split_file the timestamps are passed through unchanged.
+reset
+output o
+venc h264 bitrate=2500 extra=0a0b
+aenc t0 aac 48000 1024 0 extra=cc
+aenc t1 aac 48000 1024 0 extra=dd
+set str path /v/a.mkv
+create ffmpeg_muxer
+start
+state
+pkt v pts=100 dts=90 key=1 size=5
+pkt a pts=48 dts=48 track=0 size=3
+pkt a pts=48 dts=48 track=1 size=3
+pkt v pts=200 dts=190 size=0
+state
+total_bytes

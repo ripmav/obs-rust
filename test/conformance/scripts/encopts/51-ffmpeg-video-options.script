@@ -1,0 +1,14 @@
+# CORE/QUIRK. The ffmpeg_opts text is applied with av_opt_set(priv_data, name, value, 0) for
+# each valid NAME=VALUE word in order AFTER the computed context fields. Words that are not
+# options are dropped without any log message (unlike obs-x264), and errors reported by
+# av_opt_set are ignored. The fake reports names starting with "nosuch" as not found.
+video NV12 709 partial 60 1 1920 1080
+vid_update 6000 2 "preset=fast tune=zerolatency x264-params=a=b:c=d"
+echo duplicates-and-garbage
+vid_update 6000 2 "crf=20 junk crf=21 =x y= nosuch=1 profile=high"
+echo empty
+vid_update 6000 2 ""
+echo null
+vid_update 6000 2 @null
+echo values-may-contain-equals-but-not-spaces
+vid_update 6000 2 "a=b=c d=e"

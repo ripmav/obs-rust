@@ -1,0 +1,29 @@
+u2w rc=1
+u2w rc=1 cp=41
+u2w rc=5 cp=48,65,6c,6c,6f
+u2w rc=1
+u2w rc=1 cp=e9
+u2w rc=1 cp=20ac
+u2w rc=1 cp=1f600
+u2w rc=1 cp=7f
+u2w rc=1 cp=80
+u2w rc=1 cp=7ff
+u2w rc=1 cp=800
+u2w rc=1 cp=ffff
+u2w rc=1 cp=10000
+u2w rc=1 cp=10ffff
+u2w rc=4 cp=48,e9,20ac,1f600
+u2w rc=4
+u2w rc=3 cp=61,62,63
+u2w rc=0
+u2w rc=3 cp=61,62,63
+u2w rc=0
+u2w rc=2 cp=61,62
+u2w rc=1
+u2w rc=5 cp=61,0,62,0,63
+u2w rc=3 cp=61,0,62
+u2w rc=1 cp=0
+u2w rc=0
+u2w rc=0
+u2w rc=0
+u2w rc=0

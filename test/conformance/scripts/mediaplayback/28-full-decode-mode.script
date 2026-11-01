@@ -1,0 +1,26 @@
+# full_decode (the mode used by the cache): frames are always "playable" (no wait on next_pts_ns) and the
+# timestamp handed to the callbacks is the raw frame pts in ns (not rebased on the wall clock).
+media fd 0 0
+video 1 1000 8 4 yuv420p
+audio 1 48000 48000 1 u8p
+pkt 0 0 fdur=40
+pkt 1 0 samples=480
+pkt 0 40 fdur=40
+pkt 1 480 samples=480
+endmedia
+clock 1000000000
+minit fd local=1
+mfull 1
+mreset
+mplay 0
+echo drive by hand: deliver whatever is decoded, prepare more
+mnextv
+mnexta
+mprepare
+mnextv
+mnexta
+mprepare
+mnextv
+mnexta
+mprepare
+meof

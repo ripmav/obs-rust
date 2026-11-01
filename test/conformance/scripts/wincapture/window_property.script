@@ -1,0 +1,26 @@
+# ms_check_window_property_setting: if the setting's current value is non-empty and not among the list values,
+# an extra disabled item "[exe]: title" (value = the setting string) is inserted at idx and true is returned.
+# Otherwise false and the list is untouched.
+s_reset
+prop_clear
+prop_add "[a.exe]: A" "A:cls:a.exe"
+prop_add "[b.exe]: B" "B:cls:b.exe"
+s_set window str "B:cls:b.exe"
+prop_check window 0
+s_set window str "Gone:Cls:gone.exe"
+prop_check window 0
+prop_clear
+prop_add "" ""
+prop_add "[a.exe]: A" "A:cls:a.exe"
+s_set window str "Gone:Cls:gone.exe"
+prop_check window 1
+# empty value never inserts
+s_set window str ""
+prop_check window 1
+# value missing from the store counts as empty
+s_reset
+prop_check window 0
+# the preserved item name is "[exe]: title" built from the decoded parts
+prop_clear
+s_set window str "T#3Ax:C:E#3A.exe"
+prop_check window 0

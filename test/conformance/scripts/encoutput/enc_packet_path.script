@@ -1,0 +1,22 @@
+# Packet path of send_off_encoder_packet: dts_usec = start_ts/1000 + dts_us - first_packet_dts_us (dts_us uses only
+# the denominator of the timebase!); the first video packet is withheld until a keyframe; SEI data is prefixed to the
+# first video packet only; a packet with received=false is not delivered.
+video 30 1 1280 720
+audio 48000
+venc v sei=aabb size=3
+out vo video,encoded autobegin=1
+set_venc vo v
+start vo
+echo --- delta frames before the first keyframe are not delivered
+emit v 0 0 0 3
+emit v 1 1 0 3
+echo --- keyframe: delivered with SEI prefix (size grows by 2, data starts with aabb)
+emit v 2 2 1 3
+emit v 3 3 0 3
+echo --- B-frame style dts < pts, timebase with num != 1: dts_us ignores the numerator
+emit v 4 2 0 3 5 30
+emit v 5 3 0 3 7 30
+echo --- start timestamp shifts dts_usec
+enc_start_ts v 2000000000
+emit v 6 4 0 3
+stop vo

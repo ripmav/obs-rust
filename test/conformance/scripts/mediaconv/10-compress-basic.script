@@ -1,0 +1,12 @@
+# compress_uyvx_to_i420 / compress_uyvx_to_nv12 / convert_uyvx_to_i444 on a 4x2 image.
+# Input pixel = 4 bytes: U Y V X (byte 0 = U, byte 1 = Y, byte 2 = V, byte 3 ignored).
+#   row0: U=10..13 Y=20..23 V=30..33 X=aa      row1: U=50..53 Y=60..63 V=70..73 X=bb
+# Command: compress FN START END IN_LINESIZE OUT_LS0 OUT_LS1 OUT_LS2 ROWS0 ROWS1 ROWS2 INPUT_HEX
+# Output planes are pre-filled with ee; the printed planes are the whole allocation.
+# Luma is a plain copy of byte 1. Chroma of a 2x2 block = floor((a+b+c+d)/4) (shift, no rounding).
+# U block (0,1 / row0,row1): (10+11+50+51) = 194 -> 48 = 0x30 ; second block (12+13+52+53) = 198 -> 49 = 0x31
+# NOTE: both chroma values of one pair of columns appear in the output as separate samples.
+compress i420 0 2 16 4 2 2 2 1 1 102030aa112131aa122232aa132333aa506070bb516171bb526272bb536373bb
+compress nv12 0 2 16 4 4 0 2 1 0 102030aa112131aa122232aa132333aa506070bb516171bb526272bb536373bb
+# 4:4:4: three full planes, no averaging; U from byte 0, V from byte 2
+compress i444 0 2 16 4 4 4 2 2 2 102030aa112131aa122232aa132333aa506070bb516171bb526272bb536373bb

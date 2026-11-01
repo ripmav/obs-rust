@@ -1,0 +1,25 @@
+# Callback record details: zeroed tail ("extra" bytes), calldata extra, on_remove hook ordering.
+load
+cb_add L0 C0 12 S0
+cb_tail_get C0 0 12
+cb_tail_set C0 0 0102030405060708090a0b0c
+cb_tail_get C0 0 12
+cb_extra_get C0 handler
+cb_extra_set C0 id 77
+cb_extra_get C0 id
+cb_extra_get C0 missing
+# on_remove runs after the flag is set and after the record is at the head of the detached list
+cb_hook C0
+cb_removed C0
+cb_remove C0
+cb_removed C0
+# tail and extra data survive removal
+cb_tail_get C0 0 12
+cb_extra_get C0 id
+cb_free C0
+lists
+# a record with a hook but never removed: free does not call the hook
+cb_add L2 C1 0
+cb_hook C1
+cb_free C1
+unload

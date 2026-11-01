@@ -1,0 +1,20 @@
+# Deinterlace configuration: mode 0 = disabled.  Enabling from disabled / disabling / switching between modes.
+# Field order defaults to TOP; any value other than TOP selects BOTTOM.
+kind cam input asyncvideo
+create c cam C
+deint_get c
+deint_mode c 2
+deint_get c
+deint_mode c 2
+deint_mode c 5
+deint_get c
+deint_field c 1
+deint_get c
+deint_field c 0
+deint_get c
+deint_field c 7
+deint_get c
+deint_mode c 0
+deint_get c
+deint_mode c 99
+deint_get c

@@ -1,0 +1,10 @@
+# Channel count -> layout: default layout of the count, except that 5 channels is 4.1 (not 5.0).
+reset
+args @s5.mkv 0 5 aac "c3" 128 48000 1024 0 3 "c4" 128 48000 1024 0 4 "c5" 128 48000 1024 0 5
+argsadd "c7" 128 48000 1024 0 7 "c8" 128 48000 1024 0 8 "" ""
+hdr audio 0 -
+hdr audio 1 -
+hdr audio 2 -
+hdr audio 3 -
+hdr audio 4 -
+inspect

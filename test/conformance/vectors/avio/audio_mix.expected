@@ -1,0 +1,36 @@
+> aopen main 48000 FLOAT_PLANAR STEREO
+= 0
+> atick
+in start=1000000000 end=1021333333 active=0x00 nonnull=[2,2,2,2,2,2] clean=yes
+tick sleepto=1021333333
+> aconnect a 1 0
+= 1
+> aconnect b 2 3
+= 1
+> afeed 0 0 0 4 0.25 set
+> afeed 3 0 0 2 -3 set
+> afeed 3 1 0 1 nan set
+> afeed 3 1 1 1 inf set
+> afeed 3 1 2 1 -inf set
+> anewts delta 0
+> aprobe 0 1 2 3 1023
+> atick
+in start=1021333333 end=1042666666 active=0x09 nonnull=[2,2,2,2,2,2] clean=yes
+out a param=1 mix=0 ts=1042666666 frames=1024 buf=clamped p0=[0.25 0.25 0.25 0.25 0] p1=[0 0 0 0 0]
+out b param=2 mix=3 ts=1042666666 frames=1024 buf=clamped p0=[-1 -1 0 0 0] p1=[0 1 -1 0 0]
+tick sleepto=1042666666
+> afeed_clear
+> afeed 0 0 0 1 0.5 add
+> atick 2
+in start=1042666666 end=1064000000 active=0x09 nonnull=[2,2,2,2,2,2] clean=yes
+out a param=1 mix=0 ts=1064000000 frames=1024 buf=clamped p0=[0.5 0 0 0 0] p1=[0 0 0 0 0]
+out b param=2 mix=3 ts=1064000000 frames=1024 buf=clamped p0=[0 0 0 0 0] p1=[0 0 0 0 0]
+tick sleepto=1064000000
+in start=1064000000 end=1085333333 active=0x09 nonnull=[2,2,2,2,2,2] clean=yes
+out a param=1 mix=0 ts=1085333333 frames=1024 buf=clamped p0=[0.5 0 0 0 0] p1=[0 0 0 0 0]
+out b param=2 mix=3 ts=1085333333 frames=1024 buf=clamped p0=[0 0 0 0 0] p1=[0 0 0 0 0]
+tick sleepto=1085333333
+> adump
+adump mix0=[(a 1 rate=48000 fmt=8 spk=2 clip=0 rs=0)] mix1=[] mix2=[] mix3=[(b 2 rate=48000 fmt=8 spk=2 clip=0 rs=0)] mix4=[] mix5=[]
+> aclose
+= closed

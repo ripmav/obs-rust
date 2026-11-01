@@ -1,0 +1,12 @@
+# DEFECT: os_process_args_add_argf() with a format that expands to the EMPTY string stores a
+# NULL pointer (the temporary dstr never allocates), whereas add_arg("") stores an empty
+# string. The NULL sits in the middle of argv and truncates the list for C consumers.
+# Required behaviour: argv[i] must be the empty string "" (like add_arg("")). The comparison
+# treats an expected `@null` at an index < argc as equal to `""`.
+args_create 0 prog
+args_addf_plain 0 ""
+args_add 0 ""
+args_addf_plain 0 ""
+args_add 0 tail
+args_dump 0
+args_destroy 0

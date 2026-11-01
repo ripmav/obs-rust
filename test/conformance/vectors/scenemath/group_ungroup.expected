@@ -1,0 +1,30 @@
+add a ok
+add b ok
+add c ok
+group g ok
+order main: g{a b} c
+ungroup g
+order main: a b c
+item a id=5 parent=main group=0 scene=0 abs=0 vis=1 user_vis=1 sel=0 lock=0 need_update=0
+  stored pos=-0.481481493,-0.259259284 rot=20 scale=1.50000012,1.50000012 scale_ref=1920,1080 align=5
+  bounds type=0 align=0 size=0,0 crop_to_bounds=0
+  crop l=0 r=0 t=0 b=0 bounds_crop l=0 r=0 t=0 b=0 last=200,100
+  output_scale=1.50000012,1.50000012 box_scale=300.000031,150.000015
+  draw [1.40953898,0.513030291,0,0] [-0.513030291,1.40953898,0,0] [0,0,1,0] [700,400,0,1]
+  box [281.907806,102.606056,0,0] [-51.3030281,140.953903,0,0] [0,0,1,0] [700,400,0,1]
+item b id=6 parent=main group=0 scene=0 abs=0 vis=1 user_vis=1 sel=0 lock=0 need_update=0
+  stored pos=0.11158447,0.547809005 rot=20 scale=1.50000012,1.50000012 scale_ref=1920,1080 align=5
+  bounds type=0 align=0 size=0,0 crop_to_bounds=0
+  crop l=0 r=0 t=0 b=0 bounds_crop l=0 r=0 t=0 b=0 last=200,100
+  output_scale=1.50000012,1.50000012 box_scale=300.000031,150.000015
+  draw [1.40953898,0.513030291,0,0] [-0.513030291,1.40953898,0,0] [0,0,1,0] [1020.5,836,0,1]
+  box [281.907806,102.606056,0,0] [-51.3030281,140.953903,0,0] [0,0,1,0] [1020.5,836,0,1]
+get a pos=700,400 rot=20 scale=1.50000012,1.50000012 align=5 btype=0 balign=0 bounds=0,0 bcrop=0 crop=0,0,0,0
+info a pos=700,400 rot=20 scale=1.50000012,1.50000012 align=5 btype=0 balign=0 bounds=0,0 crop_to_bounds=0
+ box_scale=300.000031,150.000015
+get b pos=1020.5,836 rot=20 scale=1.50000012,1.50000012 align=5 btype=0 balign=0 bounds=0,0 bcrop=0 crop=0,0,0,0
+info b pos=1020.5,836 rot=20 scale=1.50000012,1.50000012 align=5 btype=0 balign=0 bounds=0,0 crop_to_bounds=0
+ box_scale=300.000031,150.000015
+get c pos=900,600 rot=0 scale=1,1 align=5 btype=0 balign=0 bounds=0,0 bcrop=0 crop=0,0,0,0
+info c pos=900,600 rot=0 scale=1,1 align=5 btype=0 balign=0 bounds=0,0 crop_to_bounds=0
+ box_scale=200,100

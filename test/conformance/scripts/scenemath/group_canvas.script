@@ -1,0 +1,36 @@
+# Dimension source for groups: a group inside a scene of the alternative canvas (1280x720) reads that canvas;
+# a group whose own source has no canvas (scene created without one) falls back to the MAIN video mix size
+# (1920x1080). Children of a group use the group's dimensions to convert relative coordinates.
+source s 200 100
+scene alt_scene alt
+scene main
+add alt_scene s a
+add alt_scene s b
+group alt_scene ga a b
+pos a 10 10
+pos b 500 300
+update alt_scene
+print ga
+get a
+get b
+echo -- same in main canvas
+add main s c
+add main s d
+group main gm c d
+pos c 10 10
+pos d 500 300
+update main
+print gm
+get c
+get d
+echo -- scene without canvas: items use mix size, groups are stored in mix units
+scene nc none
+add nc s e
+add nc s f
+group nc gn e f
+pos e 10 10
+pos f 500 300
+update nc
+print gn
+get e
+get f

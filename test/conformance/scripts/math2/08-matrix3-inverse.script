@@ -1,0 +1,27 @@
+# matrix3_inv: inverse of the 4x4 matrix (rows x,y,z, t with t.w=1); w lanes of the result:
+# rows x,y,z get the 4x4 inverse's w column, t.w is forced to 0 (S-009-R40).
+mat3 a 2 0 0 0  0 4 0 0  0 0 5 0  1 2 3 0
+call i matrix3_inv a
+mat3 rot 0 1 0 0  -1 0 0 0  0 0 1 0  1 2 3 0
+call i matrix3_inv rot
+mat3 id 1 0 0 0  0 1 0 0  0 0 1 0  0 0 0 0
+call i matrix3_inv id
+# inverse composed with the 4x4 view: matrix4 product recovers identity
+call ia matrix3_inv a
+call m4a matrix4_from_matrix3 a
+call m4i matrix4_from_matrix3 ia
+call chk matrix4_mul m4a m4i
+# general invertible matrix
+mat3 g 1 2 3 0  0 1 4 0  5 6 0 0  7 8 9 0
+call gi matrix3_inv g
+# D-1: det below 0.0005 => the matrix4 inverse fails; dst keeps its previous rows but t.w becomes 0
+mat3 small 0.01 0 0 0  0 0.01 0 0  0 0 0.01 0  0 0 0 0
+mat3 keep 1 2 3 4  5 6 7 8  9 10 11 12  13 14 15 16
+call keep matrix3_inv small
+# singular matrix: same
+mat3 sing 1 2 3 0  2 4 6 0  0 0 1 0  0 0 0 0
+mat3 keep2 1 2 3 4  5 6 7 8  9 10 11 12  13 14 15 16
+call keep2 matrix3_inv sing
+# in place
+mat3 ip 2 0 0 0  0 4 0 0  0 0 5 0  1 2 3 0
+call ip matrix3_inv ip

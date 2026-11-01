@@ -1,0 +1,31 @@
+> aopen main 48000 FLOAT_PLANAR STEREO
+= 0
+> aconnect a 1 0
+= 1
+> anewts none
+> atick
+in start=1000000000 end=1021333333 active=0x01 nonnull=[2,2,2,2,2,2] clean=yes
+out a param=1 mix=0 ts=0 frames=1024 buf=clamped p0=[0 0 0 0] p1=[0 0 0 0]
+tick sleepto=1021333333
+> anewts delta -1000
+> atick
+in start=1021333333 end=1042666666 active=0x01 nonnull=[2,2,2,2,2,2] clean=yes
+out a param=1 mix=0 ts=1042665666 frames=1024 buf=clamped p0=[0 0 0 0] p1=[0 0 0 0]
+tick sleepto=1042666666
+> anewts abs 777
+> atick
+in start=1042666666 end=1064000000 active=0x01 nonnull=[2,2,2,2,2,2] clean=yes
+out a param=1 mix=0 ts=777 frames=1024 buf=clamped p0=[0 0 0 0] p1=[0 0 0 0]
+tick sleepto=1064000000
+> ainret false
+> atick
+in start=1064000000 end=1085333333 active=0x01 nonnull=[2,2,2,2,2,2] clean=yes
+tick sleepto=1085333333
+> ainret true
+> anewts delta 5
+> atick
+in start=1085333333 end=1106666666 active=0x01 nonnull=[2,2,2,2,2,2] clean=yes
+out a param=1 mix=0 ts=1106666671 frames=1024 buf=clamped p0=[0 0 0 0] p1=[0 0 0 0]
+tick sleepto=1106666666
+> aclose
+= closed

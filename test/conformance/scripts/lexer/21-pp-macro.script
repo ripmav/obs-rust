@@ -1,0 +1,13 @@
+# CORE: function-like macros: argument splitting honours nested parentheses, a macro name needs '(' immediately
+# at use, wrong parameter count is an error.
+parse "#define F(a,b) a+b\nF(1,2) F( x , y) F(g(1,2),3)\n"
+tokens pp
+errors
+reset
+parse "#define N() k\nN() N(1)\n#define M(a) [a]\nM() M(1,2)\n"
+tokens pp
+errors
+reset
+parse "#define F(a) a\nF (1)\n"
+tokens pp
+errors

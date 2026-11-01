@@ -1,0 +1,15 @@
+mul_div64 ref=0 exact=0
+mul_div64 ref=1 exact=1
+mul_div64 ref=7 exact=7
+mul_div64 ref=48000 exact=48000
+mul_div64 ref=1000 exact=1000
+mul_div64 ref=5291005243 exact=5291005243
+mul_div64 ref=2147483647 exact=2147483647
+mul_div64 ref=333333333333333333 exact=333333333333333333
+mul_div64 ref=18446744073709551615 exact=18446744073709551615
+mul_div64 ref=1 exact=1
+mul_div64 ref=18446744073709551615 exact=18446744073709551615
+mul_div64 ref=90000000 exact=90000000
+mul_div64 ref=10 exact=10
+mul_div64 ref=4294967295 exact=4294967295
+mul_div64 ref=0 exact=3

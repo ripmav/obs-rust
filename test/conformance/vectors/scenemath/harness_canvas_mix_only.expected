@@ -1,0 +1,8 @@
+add i1 ok
+add i3 ok
+get i1 pos=960,540 rot=0 scale=1,1 align=5 btype=0 balign=0 bounds=0,0 bcrop=0 crop=0,0,0,0
+info i1 pos=960,540 rot=0 scale=1,1 align=5 btype=0 balign=0 bounds=0,0 crop_to_bounds=0
+ box_scale=100,100
+get i3 pos=400,300 rot=0 scale=0.555555582,0.555555582 align=5 btype=0 balign=0 bounds=0,0 bcrop=0 crop=0,0,0,0
+info i3 pos=400,300 rot=0 scale=0.555555582,0.555555582 align=5 btype=0 balign=0 bounds=0,0 crop_to_bounds=0
+ box_scale=100,100

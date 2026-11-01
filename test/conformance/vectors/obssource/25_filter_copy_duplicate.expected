@@ -1,0 +1,56 @@
+  cb A create
+log debug source 'A' (in) created
+create a ok
+  cb F create
+log debug private source 'F' (fl) created
+create f1 ok
+  cb F create
+log debug private source 'F' (fl) created
+create f2 ok
+log debug - filter 'F' (fl) added to source 'A'
+log debug - filter 'F' (fl) added to source 'A'
+  cb B create
+log debug source 'B' (in) created
+  cb F create
+log debug private source 'F' (fl) created
+log debug - filter 'F' (fl) added to source 'B'
+  cb F 2 create
+log debug private source 'F 2' (fl) created
+log debug - filter 'F 2' (fl) added to source 'B'
+duplicate a new
+setting b x 5
+names b: F 2 F
+info b name=B id=in type=0 enabled=1 hidden=0 flags=0 mixers=0 private=0
+  cb C create
+log debug source 'C' (in) created
+create c ok
+  cb F create
+log debug private source 'F' (fl) created
+log debug - filter 'F' (fl) added to source 'C'
+  cb F 2 create
+log debug private source 'F 2' (fl) created
+log debug - filter 'F 2' (fl) added to source 'C'
+names c: F 2 F
+  cb F 3 create
+log debug private source 'F 3' (fl) created
+log debug - filter 'F 3' (fl) added to source 'C'
+  cb F 4 create
+log debug private source 'F 4' (fl) created
+log debug - filter 'F 4' (fl) added to source 'C'
+names c: F 4 F 3 F 2 F
+  cb N create
+log debug source 'N' (nd) created
+create n ok
+duplicate n same
+refs n 2
+  cb D create
+log debug source 'D' (in) created
+create d ok
+  cb F create
+log debug private source 'F' (fl) created
+log debug - filter 'F' (fl) added to source 'D'
+names d: F
+  cb F 2 create
+log debug private source 'F 2' (fl) created
+log debug - filter 'F 2' (fl) added to source 'D'
+names d: F 2 F

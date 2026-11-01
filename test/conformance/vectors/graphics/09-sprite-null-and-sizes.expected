@@ -1,0 +1,22 @@
+> trace 0
+> gs_create g
+ret 0 created
+> gs_enter_context g
+> trace 1
+> gs_matrix_translate3f 5 6 7
+> gs_texture_create 4 4 GS_RGBA 1 0 > t
+  dev device_texture_create w=4 h=4 fmt=3 levels=1 data=null flags=0
+ret #6
+> gs_draw_sprite t 0 8 8
+  dev device_get_texture_type tex=#6
+  dev device_load_indexbuffer indexbuffer=null
+  dev gs_texture_is_rect tex=#6
+  dev device_load_vertexbuffer vertbuffer=#3
+  dev device_draw mode=4 start=0 num=0 world=8,0,0,0,0,8,0,0,0,0,1,0,5,6,7,1
+== the caller's matrix is unchanged after drawing
+> gs_matrix_get
+matrix 1 0 0 0 0 1 0 0 0 0 1 0 5 6 7 1
+> gs_draw_sprite - 0 0 0
+log error A sprite cannot be drawn without a width/height
+> gs_matrix_get
+matrix 1 0 0 0 0 1 0 0 0 0 1 0 5 6 7 1

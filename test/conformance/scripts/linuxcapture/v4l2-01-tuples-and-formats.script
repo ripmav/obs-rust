@@ -1,0 +1,31 @@
+# S-049 v4l2: pack/unpack of (a,b) tuples stored in one int64 setting (resolution, framerate),
+# the legacy 32-bit encoding, the V4L2 fourcc -> OBS video format map and the hardcoded size/rate tables.
+v4l2-pack 1920 1080
+v4l2-pack 1 30
+v4l2-pack 0 0
+v4l2-pack -1 5
+v4l2-pack 0 70000
+v4l2-pack 1 -1
+v4l2-unpack 8246337209400
+v4l2-unpack 4294967326
+# legacy encoding: high 32 bits zero => a = packed >> 16, b = packed & 0xffff
+v4l2-unpack 83886800
+v4l2-unpack 30
+# a == 0 collides with the legacy encoding: pack(0,70000) = 70000 unpacks as (1, 4464)
+v4l2-unpack 70000
+v4l2-unpack 0
+v4l2-unpack -1
+v4l2-obsfmt YUYV
+v4l2-obsfmt YVYU
+v4l2-obsfmt UYVY
+v4l2-obsfmt NV12
+v4l2-obsfmt YU12
+v4l2-obsfmt YV12
+v4l2-obsfmt XR24
+v4l2-obsfmt AR24
+v4l2-obsfmt BGR3
+v4l2-obsfmt RGB3
+v4l2-obsfmt MJPG
+v4l2-obsfmt H264
+v4l2-obsfmt 0
+v4l2-tables

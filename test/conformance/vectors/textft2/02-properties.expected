@@ -1,0 +1,42 @@
+> load
+load -> 1
+registered id=text_ft2_source version=0
+registered id=text_ft2_source version=2
+> props 2
+prop font type=font desc=Font visible=1 enabled=1
+prop from_file type=list desc=TextInputMode visible=1 enabled=1 list_type=3 format=4 item[0]=TextInputMode.Manual:0 item[1]=TextInputMode.FromFile:1
+prop text_file type=path desc=TextFile visible=1 enabled=1 long=TextFile.Encoding path_type=0 filter=TextFileFilter
+prop text type=text desc=Text visible=1 enabled=1 text_type=2
+prop antialiasing type=bool desc=Antialiasing visible=1 enabled=1
+prop log_mode type=bool desc=ChatLogMode visible=1 enabled=1
+prop log_lines type=int desc=ChatLogLines visible=1 enabled=1 min=1 max=1000 step=1
+prop color1 type=color_alpha desc=Color1 visible=1 enabled=1
+prop color2 type=color_alpha desc=Color2 visible=1 enabled=1
+prop outline type=bool desc=Outline visible=1 enabled=1
+prop drop_shadow type=bool desc=DropShadow visible=1 enabled=1
+prop custom_width type=int desc=CustomWidth visible=1 enabled=1 min=0 max=4096 step=1
+prop word_wrap type=bool desc=WordWrap visible=1 enabled=1
+> echo --- v1 has the same sheet
+--- v1 has the same sheet
+> props 1
+prop font type=font desc=Font visible=1 enabled=1
+prop from_file type=list desc=TextInputMode visible=1 enabled=1 list_type=3 format=4 item[0]=TextInputMode.Manual:0 item[1]=TextInputMode.FromFile:1
+prop text_file type=path desc=TextFile visible=1 enabled=1 long=TextFile.Encoding path_type=0 filter=TextFileFilter
+prop text type=text desc=Text visible=1 enabled=1 text_type=2
+prop antialiasing type=bool desc=Antialiasing visible=1 enabled=1
+prop log_mode type=bool desc=ChatLogMode visible=1 enabled=1
+prop log_lines type=int desc=ChatLogLines visible=1 enabled=1 min=1 max=1000 step=1
+prop color1 type=color_alpha desc=Color1 visible=1 enabled=1
+prop color2 type=color_alpha desc=Color2 visible=1 enabled=1
+prop outline type=bool desc=Outline visible=1 enabled=1
+prop drop_shadow type=bool desc=DropShadow visible=1 enabled=1
+prop custom_width type=int desc=CustomWidth visible=1 enabled=1 min=0 max=4096 step=1
+prop word_wrap type=bool desc=WordWrap visible=1 enabled=1
+> echo --- text vs text_file visibility
+--- text vs text_file visibility
+> props_modify 2 1
+modified -> 1
+visible text=0 text_file=1
+> props_modify 2 0
+modified -> 1
+visible text=1 text_file=0

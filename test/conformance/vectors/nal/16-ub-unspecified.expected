@@ -1,0 +1,4 @@
+echo sps-ends-before-the-first-exp-golomb-code
+avc_header ret=23 data=0164001fffe100046764001f01000468ce3c80fcf8f800
+echo sps-has-32-zero-bits-then-data
+avc_header ret=28 data=0164001fffe100096764001f000000008001000468ce3c80fcf8f800

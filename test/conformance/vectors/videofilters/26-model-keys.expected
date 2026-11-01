@@ -1,0 +1,26 @@
+echo pure green texel is fully keyed out
+model chroma2 -> 0 0 0 0
+echo pure red texel is kept
+model chroma2 -> 1 0 0 1
+echo half transparent grey, opacity 0.5
+model chroma2 -> 0.125 0.125 0.125 0.25
+echo spill reduction region: slightly green pixel
+model chroma2 -> 0.222467557 0.233366132 0.222467557 0.340819091
+echo transparent texel (alpha 0 -> rgb scale 0)
+model chroma2 -> 0 0 0 0
+echo colour key v2 (key r g b, similarity smoothness, opacity contrast brightness gamma)
+model colorkey_v2 -> 0 0 0 0
+model colorkey_v2 -> 0.5 0.5 0.5 1
+model colorkey_v2 -> 0.214548722 0.6768049 0.12811771 0.283204615
+echo colour key v1 (multiplies by colour rgba, no srgb conversion; output NOT premultiplied)
+model colorkey_v1 -> 0 1 0 0
+model colorkey_v1 -> 0.789219022 0.789219022 0.789219022 0.5
+echo luma key v2 (premultiplied texel, lumaMax lumaMin maxSmooth minSmooth)
+model luma_v2 -> 0.5 0.5 0.5 1
+model luma_v2 -> 0 0 0 0
+model luma_v2 -> 0 0 0 0
+model luma_v2 -> 0.449999988 0.449999988 0.449999988 0.5
+echo luma key v1 (bt601-like weights, alpha = mask only, rgb unchanged)
+model luma_v1 -> 0.5 0.5 0.5 1
+model luma_v1 -> 0.100000001 0.100000001 0.100000001 0
+model luma_v1 -> 0.899999976 0.800000012 0.100000001 0.156193733

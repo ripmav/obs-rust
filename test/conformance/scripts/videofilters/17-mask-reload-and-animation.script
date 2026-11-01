@@ -1,0 +1,46 @@
+# mask_filter tick(): the file modification time is polled once the accumulated time reaches 1 s; animated
+# images are ticked with the delta of the video frame time.
+source T 100 100 100 100 SRGB video
+source P 100 100 100 100 SRGB video
+image m.png 64 64 RGBA 1 0
+image g.gif 64 64 RGBA 1 1
+file m.png x
+touch m.png 1000
+data d
+dset d image_path str @TMP/m.png
+filter a mask_filter 2 d T P
+tick a 0.1
+echo less than one second accumulated: no poll
+touch m.png 2000
+tick a 0.5
+tick a 0.39
+echo reaching 1.0 polls: changed -> reload
+tick a 0.2
+echo unchanged -> no reload at the next poll
+tick a 1.0
+echo existing file whose image cannot be loaded: stamp unchanged -> never reloaded
+file n.png y
+touch n.png 3000
+data e
+dset e image_path str @TMP/n.png
+filter b mask_filter 2 e T P
+tick b 0
+tick b 1
+tick b 1
+echo animated image: first tick uses elapsed 0, then the frame-time delta
+file g.gif z
+data f
+dset f image_path str @TMP/g.gif
+filter c mask_filter 2 f T P
+time 5000
+tick c 0
+time 5016000
+tick c 0
+time 5040000
+tick c 0
+echo empty path (QUIRK): the stored stamp stays 0 while the poll sees -1, so the image is reloaded at EVERY poll
+data h
+filter e1 mask_filter 2 h T P
+tick e1 0
+tick e1 1
+tick e1 1

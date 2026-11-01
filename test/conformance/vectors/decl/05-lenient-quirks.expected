@@ -1,0 +1,38 @@
+decl "  void f()"
+log warning Errors/warnings for '  void f()':  declaration (1, 1): Expected 'return type' declaration (1, 1): Expected 'return type' declaration (1, 3): 'void' is a reserved name declaration (1, 9): Expected '(' 
+parse fail
+decl " void f()"
+log warning Errors/warnings for ' void f()':  declaration (1, 1): Expected 'return type' declaration (1, 1): Expected 'return type' declaration (1, 2): 'void' is a reserved name declaration (1, 8): Expected '(' 
+parse fail
+decl "/* c */ void f()"
+log warning Errors/warnings for '/* c */ void f()':  declaration (1, 1): Expected 'return type' declaration (1, 1): Expected 'return type' declaration (1, 9): 'void' is a reserved name declaration (1, 15): Expected '(' 
+parse fail
+decl "// c\nvoid f()"
+log warning Errors/warnings for '// c void f()':  declaration (1, 1): Expected 'return type' declaration (1, 1): Expected 'return type' declaration (2, 1): 'void' is a reserved name declaration (2, 7): Expected '(' 
+parse fail
+decl "void f()  "
+parse ok name=f params=0
+decl "void f() // trailing"
+parse ok name=f params=0
+decl "void f() /* trailing */"
+parse ok name=f params=0
+decl "void f() extra"
+parse ok name=f params=0
+decl "void f() garbage ( ) ,,,"
+parse ok name=f params=0
+decl "void f(int a,)"
+parse ok name=f params=1
+  param 0 name=a type=int in=1 out=0
+decl "void f(int a int b)"
+parse ok name=f params=1
+  param 0 name=a type=int in=1 out=0
+decl "void f(int a-b)"
+parse ok name=f params=1
+  param 0 name=a type=int in=1 out=0
+decl "void f(int a; int b)"
+parse ok name=f params=1
+  param 0 name=a type=int in=1 out=0
+decl "void f(int a, int b c)"
+parse ok name=f params=2
+  param 0 name=a type=int in=1 out=0
+  param 1 name=b type=int in=1 out=0

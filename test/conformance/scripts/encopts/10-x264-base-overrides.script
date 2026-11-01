@@ -1,0 +1,35 @@
+# CORE. preset / profile / tune given in x264opts override the settings fields (before the
+# x264 preset reset). Values are validated against x264's name lists with a CASE-SENSITIVE
+# comparison; an invalid value in x264opts is ignored (settings value stays).
+# The option NAME is matched case-insensitively here (PRESET=slow works) but the
+# skip-list for forwarding is case-sensitive (Q-1).
+data D
+x264_defaults D
+set D profile str main
+set D tune str film
+set D preset str medium
+echo no-overrides
+x264_settings D
+echo override-all-three
+set D x264opts str "preset=slow tune=zerolatency profile=high"
+x264_settings D
+echo last-valid-occurrence-wins
+set D x264opts str "preset=slow preset=fast preset=bogus"
+x264_settings D
+echo value-validation-is-case-sensitive
+set D x264opts str "preset=SLOW tune=Film profile=HIGH"
+x264_settings D
+echo option-name-case-insensitive-but-also-forwarded
+set D x264opts str "PRESET=slower Tune=grain"
+x264_settings D
+echo profile-list-in-x264opts-includes-high10-high422-high444
+set D x264opts str "profile=high444"
+x264_settings D
+echo profile-from-the-settings-field-is-NOT-validated
+set D x264opts str ""
+set D profile str anything-goes
+x264_settings D
+echo empty-values-are-not-options
+set D profile str ""
+set D x264opts str "preset= tune="
+x264_settings D

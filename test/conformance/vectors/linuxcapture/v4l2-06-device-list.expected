@@ -1,0 +1,248 @@
+> trace on
+> fake-dir video0 video1 video2 d:subdir video3 video4
+> dev /dev/video0
+> dev-cap Webcam A usb-0000:00:14.0-1 0x85200001 0x04200001
+> dev-input Camera 0
+> dev-fmt YUYV YUYV 0
+> dev-cur 0 640 480 YUYV 1280 1 30 0
+> dev /dev/video1
+> dev-cap Webcam A usb-0000:00:14.0-1 0x85200001 0x04a00000
+> dev /dev/video2
+> dev-cap Old Grabber pci-1 0x00000001 0x00000000
+> dev /dev/video4
+> dev-cap No Capture pci-2 0x04000000 0x04000000
+> source-name Cam
+> src-defaults
+> set-str device_id /dev/video0
+> src-create
+  | set_async_unbuffered 0
+log info v4l2-input: Start capture from /dev/video0
+  | open /dev/video0 -> ok
+  | ioctl G_INPUT -> 0
+log info v4l2-input: Input: 0
+  | ioctl G_INPUT -> 0
+  | ioctl G_FMT -> 640x480 56595559 bpl=1280
+log info v4l2-input: Resolution: 640x480
+log info v4l2-input: Pixelformat: YUYV
+log info v4l2-input: Linesize: 1280 Bytes
+  | ioctl G_PARM -> 1/30
+log info v4l2-input: Framerate: 30.00 fps
+  | ioctl REQBUFS count=4 -> 4
+  | ioctl QUERYBUF index=0
+  | mmap len=4096 offset=0 -> ok
+  | ioctl QUERYBUF index=1
+  | mmap len=4096 offset=4096 -> ok
+  | ioctl QUERYBUF index=2
+  | mmap len=4096 offset=8192 -> ok
+  | ioctl QUERYBUF index=3
+  | mmap len=4096 offset=12288 -> ok
+  | thread start
+log info v4l2-input: Compiled without libudev, you can't reconnect devices
+src-create
+state device_id=/dev/video0 input=0 pixfmt=1448695129 standard=-1 dv_timing=-1 resolution=2748779069920 framerate=4294967326 color_range=0 auto_reset=0 timeout_frames=5 dev=open width=640 height=480 linesize=1280 buffers=4 res_unch=0 fr_unch=0 thread=1
+> src-props
+  | opendir /sys/class/video4linux -> ok
+  | open /dev/video0 -> ok
+log info v4l2-input: Found device 'Webcam A' at /dev/video0
+  | close fd0
+  | open /dev/video1 -> ok
+log info v4l2-input: /dev/video1 seems to not support video capture
+  | close fd1
+  | open /dev/video2 -> ok
+log info v4l2-input: Found device 'Old Grabber' at /dev/video2
+  | close fd2
+  | open /dev/video3 -> fail
+log info v4l2-input: Unable to open /dev/video3
+  | open /dev/video4 -> ok
+log info v4l2-input: /dev/video4 seems to not support video capture
+  | close fd3
+> props
+prop device_id type=list desc="Device" visible=1 enabled=1 format=string items=2
+  - "Webcam A (usb-0000:00:14.0-1)" = "/dev/video0" disabled=0
+  - "Old Grabber (pci-1)" = "/dev/video2" disabled=0
+prop input type=list desc="Input" visible=1 enabled=1 format=int items=0
+prop pixelformat type=list desc="VideoFormat" visible=1 enabled=1 format=int items=0
+prop standard type=list desc="VideoStandard" visible=0 enabled=1 format=int items=0
+prop dv_timing type=list desc="DVTiming" visible=0 enabled=1 format=int items=0
+prop resolution type=list desc="Resolution" visible=1 enabled=1 format=int items=0
+prop framerate type=list desc="FrameRate" visible=1 enabled=1 format=int items=0
+prop color_range type=list desc="ColorRange" visible=1 enabled=1 format=int items=3
+  - "ColorRange.Default" = 0 disabled=0
+  - "ColorRange.Partial" = 1 disabled=0
+  - "ColorRange.Full" = 2 disabled=0
+prop buffering type=bool desc="UseBuffering" visible=1 enabled=1
+prop auto_reset type=bool desc="AutoresetOnTimeout" visible=1 enabled=1
+prop timeout_frames type=int desc="FramesUntilTimeout" visible=1 enabled=1 min=2 max=120 step=1 slider=0
+prop controls type=group desc="CameraCtrls" visible=1 enabled=1
+> set-str device_id /dev/video9
+> src-props
+  | opendir /sys/class/video4linux -> ok
+  | open /dev/video0 -> ok
+log info v4l2-input: Found device 'Webcam A' at /dev/video0
+  | close fd0
+  | open /dev/video1 -> ok
+log info v4l2-input: /dev/video1 seems to not support video capture
+  | close fd1
+  | open /dev/video2 -> ok
+log info v4l2-input: Found device 'Old Grabber' at /dev/video2
+  | close fd2
+  | open /dev/video3 -> fail
+log info v4l2-input: Unable to open /dev/video3
+  | open /dev/video4 -> ok
+log info v4l2-input: /dev/video4 seems to not support video capture
+  | close fd3
+> props
+prop device_id type=list desc="Device" visible=1 enabled=1 format=string items=3
+  - "Webcam A (usb-0000:00:14.0-1)" = "/dev/video0" disabled=0
+  - "Old Grabber (pci-1)" = "/dev/video2" disabled=0
+  - "/dev/video9" = "/dev/video9" disabled=1
+prop input type=list desc="Input" visible=1 enabled=1 format=int items=0
+prop pixelformat type=list desc="VideoFormat" visible=1 enabled=1 format=int items=0
+prop standard type=list desc="VideoStandard" visible=0 enabled=1 format=int items=0
+prop dv_timing type=list desc="DVTiming" visible=0 enabled=1 format=int items=0
+prop resolution type=list desc="Resolution" visible=1 enabled=1 format=int items=0
+prop framerate type=list desc="FrameRate" visible=1 enabled=1 format=int items=0
+prop color_range type=list desc="ColorRange" visible=1 enabled=1 format=int items=3
+  - "ColorRange.Default" = 0 disabled=0
+  - "ColorRange.Partial" = 1 disabled=0
+  - "ColorRange.Full" = 2 disabled=0
+prop buffering type=bool desc="UseBuffering" visible=1 enabled=1
+prop auto_reset type=bool desc="AutoresetOnTimeout" visible=1 enabled=1
+prop timeout_frames type=int desc="FramesUntilTimeout" visible=1 enabled=1 min=2 max=120 step=1 slider=0
+prop controls type=group desc="CameraCtrls" visible=1 enabled=1
+> set-str device_id 
+> src-props
+  | opendir /sys/class/video4linux -> ok
+  | open /dev/video0 -> ok
+log info v4l2-input: Found device 'Webcam A' at /dev/video0
+  | close fd0
+  | open /dev/video1 -> ok
+log info v4l2-input: /dev/video1 seems to not support video capture
+  | close fd1
+  | open /dev/video2 -> ok
+log info v4l2-input: Found device 'Old Grabber' at /dev/video2
+  | close fd2
+  | open /dev/video3 -> fail
+log info v4l2-input: Unable to open /dev/video3
+  | open /dev/video4 -> ok
+log info v4l2-input: /dev/video4 seems to not support video capture
+  | close fd3
+> props
+prop device_id type=list desc="Device" visible=1 enabled=1 format=string items=2
+  - "Webcam A (usb-0000:00:14.0-1)" = "/dev/video0" disabled=0
+  - "Old Grabber (pci-1)" = "/dev/video2" disabled=0
+prop input type=list desc="Input" visible=1 enabled=1 format=int items=0
+prop pixelformat type=list desc="VideoFormat" visible=1 enabled=1 format=int items=0
+prop standard type=list desc="VideoStandard" visible=0 enabled=1 format=int items=0
+prop dv_timing type=list desc="DVTiming" visible=0 enabled=1 format=int items=0
+prop resolution type=list desc="Resolution" visible=1 enabled=1 format=int items=0
+prop framerate type=list desc="FrameRate" visible=1 enabled=1 format=int items=0
+prop color_range type=list desc="ColorRange" visible=1 enabled=1 format=int items=3
+  - "ColorRange.Default" = 0 disabled=0
+  - "ColorRange.Partial" = 1 disabled=0
+  - "ColorRange.Full" = 2 disabled=0
+prop buffering type=bool desc="UseBuffering" visible=1 enabled=1
+prop auto_reset type=bool desc="AutoresetOnTimeout" visible=1 enabled=1
+prop timeout_frames type=int desc="FramesUntilTimeout" visible=1 enabled=1 min=2 max=120 step=1 slider=0
+prop controls type=group desc="CameraCtrls" visible=1 enabled=1
+> set-str device_id /dev/video2
+> src-props
+  | opendir /sys/class/video4linux -> ok
+  | open /dev/video0 -> ok
+log info v4l2-input: Found device 'Webcam A' at /dev/video0
+  | close fd0
+  | open /dev/video1 -> ok
+log info v4l2-input: /dev/video1 seems to not support video capture
+  | close fd1
+  | open /dev/video2 -> ok
+log info v4l2-input: Found device 'Old Grabber' at /dev/video2
+  | close fd2
+  | open /dev/video3 -> fail
+log info v4l2-input: Unable to open /dev/video3
+  | open /dev/video4 -> ok
+log info v4l2-input: /dev/video4 seems to not support video capture
+  | close fd3
+> props
+prop device_id type=list desc="Device" visible=1 enabled=1 format=string items=2
+  - "Webcam A (usb-0000:00:14.0-1)" = "/dev/video0" disabled=0
+  - "Old Grabber (pci-1)" = "/dev/video2" disabled=0
+prop input type=list desc="Input" visible=1 enabled=1 format=int items=0
+prop pixelformat type=list desc="VideoFormat" visible=1 enabled=1 format=int items=0
+prop standard type=list desc="VideoStandard" visible=0 enabled=1 format=int items=0
+prop dv_timing type=list desc="DVTiming" visible=0 enabled=1 format=int items=0
+prop resolution type=list desc="Resolution" visible=1 enabled=1 format=int items=0
+prop framerate type=list desc="FrameRate" visible=1 enabled=1 format=int items=0
+prop color_range type=list desc="ColorRange" visible=1 enabled=1 format=int items=3
+  - "ColorRange.Default" = 0 disabled=0
+  - "ColorRange.Partial" = 1 disabled=0
+  - "ColorRange.Full" = 2 disabled=0
+prop buffering type=bool desc="UseBuffering" visible=1 enabled=1
+prop auto_reset type=bool desc="AutoresetOnTimeout" visible=1 enabled=1
+prop timeout_frames type=int desc="FramesUntilTimeout" visible=1 enabled=1 min=2 max=120 step=1 slider=0
+prop controls type=group desc="CameraCtrls" visible=1 enabled=1
+> fail QUERYCAP
+> src-props
+  | opendir /sys/class/video4linux -> ok
+  | open /dev/video0 -> ok
+  | ioctl QUERYCAP -> -1 (injected)
+log info v4l2-input: Failed to query capabilities for /dev/video0
+  | close fd0
+  | open /dev/video1 -> ok
+  | ioctl QUERYCAP -> -1 (injected)
+log info v4l2-input: Failed to query capabilities for /dev/video1
+  | close fd1
+  | open /dev/video2 -> ok
+  | ioctl QUERYCAP -> -1 (injected)
+log info v4l2-input: Failed to query capabilities for /dev/video2
+  | close fd2
+  | open /dev/video3 -> fail
+log info v4l2-input: Unable to open /dev/video3
+  | open /dev/video4 -> ok
+  | ioctl QUERYCAP -> -1 (injected)
+log info v4l2-input: Failed to query capabilities for /dev/video4
+  | close fd3
+> props
+prop device_id type=list desc="Device" visible=1 enabled=1 format=string items=1
+  - "/dev/video2" = "/dev/video2" disabled=1
+prop input type=list desc="Input" visible=1 enabled=1 format=int items=0
+prop pixelformat type=list desc="VideoFormat" visible=1 enabled=1 format=int items=0
+prop standard type=list desc="VideoStandard" visible=0 enabled=1 format=int items=0
+prop dv_timing type=list desc="DVTiming" visible=0 enabled=1 format=int items=0
+prop resolution type=list desc="Resolution" visible=1 enabled=1 format=int items=0
+prop framerate type=list desc="FrameRate" visible=1 enabled=1 format=int items=0
+prop color_range type=list desc="ColorRange" visible=1 enabled=1 format=int items=3
+  - "ColorRange.Default" = 0 disabled=0
+  - "ColorRange.Partial" = 1 disabled=0
+  - "ColorRange.Full" = 2 disabled=0
+prop buffering type=bool desc="UseBuffering" visible=1 enabled=1
+prop auto_reset type=bool desc="AutoresetOnTimeout" visible=1 enabled=1
+prop timeout_frames type=int desc="FramesUntilTimeout" visible=1 enabled=1 min=2 max=120 step=1 slider=0
+prop controls type=group desc="CameraCtrls" visible=1 enabled=1
+> unfail
+> fake-dir-missing
+> src-props
+  | opendir /sys/class/video4linux -> fail
+> props
+prop device_id type=list desc="Device" visible=1 enabled=1 format=string items=0
+prop input type=list desc="Input" visible=1 enabled=1 format=int items=0
+prop pixelformat type=list desc="VideoFormat" visible=1 enabled=1 format=int items=0
+prop standard type=list desc="VideoStandard" visible=0 enabled=1 format=int items=0
+prop dv_timing type=list desc="DVTiming" visible=0 enabled=1 format=int items=0
+prop resolution type=list desc="Resolution" visible=1 enabled=1 format=int items=0
+prop framerate type=list desc="FrameRate" visible=1 enabled=1 format=int items=0
+prop color_range type=list desc="ColorRange" visible=1 enabled=1 format=int items=3
+  - "ColorRange.Default" = 0 disabled=0
+  - "ColorRange.Partial" = 1 disabled=0
+  - "ColorRange.Full" = 2 disabled=0
+prop buffering type=bool desc="UseBuffering" visible=1 enabled=1
+prop auto_reset type=bool desc="AutoresetOnTimeout" visible=1 enabled=1
+prop timeout_frames type=int desc="FramesUntilTimeout" visible=1 enabled=1 min=2 max=120 step=1 slider=0
+prop controls type=group desc="CameraCtrls" visible=1 enabled=1
+> src-destroy
+  | thread join
+  | munmap len=4096
+  | munmap len=4096
+  | munmap len=4096
+  | munmap len=4096
+  | close fd0
+src-destroy

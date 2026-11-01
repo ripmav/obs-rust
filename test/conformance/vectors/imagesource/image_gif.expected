@@ -1,0 +1,36 @@
+ev create image_source#1[/g/a.gif] public
+ev image_init /g/a.gif alpha=2
+log debug [image_source: 'a'] loading texture '/g/a.gif'
+ev texture_create 1 4x4 dynamic=1
+state image file="/g/a.gif" persistent=1 is_slide=0 linear_alpha=0 file_timestamp=1 update_time_elapsed=0 last_time=0 active=0 restart_gif=0 file_decoded=1 texture_loaded=1
+state image.file loaded=1 cx=4 cy=4 animated=1 texture=1 cur_frame=0 cur_loop=0 cur_time=0 mem_usage=1280 format=3 alpha_mode=0 space=0
+ev show image_source#1[/g/a.gif]
+tick 0 clock=1050000001
+state image file="/g/a.gif" persistent=1 is_slide=0 linear_alpha=0 file_timestamp=1 update_time_elapsed=0.0500000007 last_time=1050000001 active=1 restart_gif=0 file_decoded=1 texture_loaded=1
+state image.file loaded=1 cx=4 cy=4 animated=1 texture=1 cur_frame=0 cur_loop=0 cur_time=0 mem_usage=1280 format=3 alpha_mode=0 space=0
+tick 0 clock=1100000002
+state image file="/g/a.gif" persistent=1 is_slide=0 linear_alpha=0 file_timestamp=1 update_time_elapsed=0.100000001 last_time=1100000002 active=1 restart_gif=0 file_decoded=1 texture_loaded=1
+state image.file loaded=1 cx=4 cy=4 animated=1 texture=1 cur_frame=0 cur_loop=0 cur_time=50000001 mem_usage=1280 format=3 alpha_mode=0 space=0
+ev texture_set_image 1 frame=1
+tick 0 clock=1150000003
+tick 1 clock=1200000004
+tick 2 clock=1250000005
+state image file="/g/a.gif" persistent=1 is_slide=0 linear_alpha=0 file_timestamp=1 update_time_elapsed=0.25 last_time=1250000005 active=1 restart_gif=0 file_decoded=1 texture_loaded=1
+state image.file loaded=1 cx=4 cy=4 animated=1 texture=1 cur_frame=1 cur_loop=0 cur_time=100000004 mem_usage=1280 format=3 alpha_mode=0 space=0
+ev texture_set_image 1 frame=2
+tick 0 clock=1350000006
+ev texture_set_image 1 frame=0
+tick 1 clock=1450000007
+ev texture_set_image 1 frame=1
+tick 2 clock=1550000008
+tick 3 clock=1650000009
+state image file="/g/a.gif" persistent=1 is_slide=0 linear_alpha=0 file_timestamp=1 update_time_elapsed=0.650000036 last_time=1650000009 active=1 restart_gif=0 file_decoded=1 texture_loaded=1
+state image.file loaded=1 cx=4 cy=4 animated=1 texture=1 cur_frame=1 cur_loop=0 cur_time=100000008 mem_usage=1280 format=3 alpha_mode=0 space=0
+ev render image_source#1[/g/a.gif]
+gfx enable_framebuffer_srgb 1
+gfx blend_push
+gfx blend_function 1 5
+gfx set_texture_srgb image tex=1
+gfx draw_sprite tex=1 flip=0 4x4
+gfx blend_pop
+gfx enable_framebuffer_srgb 0

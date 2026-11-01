@@ -1,0 +1,13 @@
+# os_process_args: building an argv array (CORE). create() stores the executable as
+# argv[0]; add_arg() appends a COPY of the string; get_argv() always has a NULL terminator at
+# index argc; argc does not count the terminator. No quoting or splitting is performed.
+args_create 0 /usr/bin/tool
+args_dump 0
+args_add 0 --flag
+args_add 0 value
+args_add 0 "with space"
+args_add 0 ""
+args_add 0 "--key=val ue"
+args_add 0 "quote\"d \\ back"
+args_dump 0
+args_destroy 0

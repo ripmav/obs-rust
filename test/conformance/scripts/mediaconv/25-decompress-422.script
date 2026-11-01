@@ -1,0 +1,25 @@
+# decompress_422(input, in_linesize, start_y, end_y, output, out_linesize, leading_lum)
+# Per 4-byte input word [b0 b1 b2 b3] two output words are written:
+#   leading_lum = true  (YUY2 / YVYU order Y0 U Y1 V):  [b0 b1 b2 b3] , [b2 b1 b2 b3]
+#   leading_lum = false (UYVY order U Y0 V Y1):         [b0 b1 b2 b3] , [b0 b3 b2 b3]
+# The second pixel copies byte 0 (lead) or byte 1 (trail) from the second luma byte. Bytes 1..3 of the first output pixel
+# are the input unchanged (so byte 3 / byte 2 is a stray luma/chroma byte, not zero).
+# QUIRK Q-4 (see spec): the number of input words per row is min(IN_LINESIZE, OUT_LINESIZE) / 2 (OUT_LINESIZE is
+# always >= 4*IN_LINESIZE in valid calls, so it is IN_LINESIZE / 2) -- the code treats
+# the input linesize as a pixel count although it is also the byte stride of the input rows. A one-row call
+# with IN_LINESIZE = 4 therefore consumes 2 words (8 bytes) and writes 4 output pixels (16 bytes).
+# Command: decompress422 lead|trail START END IN_LS OUT_LS OUT_ROWS INPUT_HEX [OFFSET]
+decompress422 lead 0 1 4 16 1 aabbccdd11223344
+decompress422 trail 0 1 4 16 1 aabbccdd11223344
+# IN_LS = 8 -> 4 words -> 8 pixels
+decompress422 lead 0 1 8 32 1 000102030405060708090a0b0c0d0e0f
+decompress422 trail 0 1 8 32 1 000102030405060708090a0b0c0d0e0f
+# bytes are never sign-extended or clipped
+decompress422 lead 0 1 4 16 1 80ff7f00ff00ff80
+decompress422 trail 0 1 4 16 1 80ff7f00ff00ff80
+# two rows: input row y starts at y*IN_LS (4), so row 1 reads bytes 4..11 (overlapping the end of row 0's 8 bytes);
+# output row y starts at y*OUT_LS
+decompress422 lead 0 2 4 16 2 aabbccdd11223344556677889900aabb
+decompress422 trail 1 2 4 16 2 aabbccdd11223344556677889900aabb
+# empty range
+decompress422 lead 1 1 4 16 1 aabbccdd11223344

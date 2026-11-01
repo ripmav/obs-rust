@@ -1,0 +1,79 @@
+# crop_filter: update() is deferred (create -> obs_source_update); the first tick applies settings and derives
+# width/height, mul_val and add_val from the target's BASE size every tick.
+source T 1920 1080 1920 1080 SRGB video
+source P 1920 1080 1920 1080 SRGB video
+filter a crop_filter 0 @null T P
+size a
+tick a 0.016
+size a
+render a
+echo relative crop left/top/right/bottom
+data d
+dset d left int 100
+dset d top int 50
+dset d right int 20
+dset d bottom int 10
+filter b crop_filter 0 d T P
+tick b 0.016
+size b
+render b
+echo over-crop clamps width/height to 1
+dset d left int 2000
+dset d right int 500
+dset d top int 1080
+dset d bottom int 1
+filter c crop_filter 0 d T P
+tick c 0.016
+size c
+render c
+echo negative values pad (width grows); add_val is negative
+data n
+dset n left int -100
+dset n top int -40
+dset n right int -60
+dset n bottom int -20
+filter e crop_filter 0 n T P
+tick e 0.016
+size e
+render e
+echo absolute mode: width/height from cx/cy, left/top are offsets, right/bottom ignored
+data ab
+dset ab relative bool 0
+dset ab left int 10
+dset ab top int 20
+dset ab right int 999
+dset ab bottom int 999
+dset ab cx int 640
+dset ab cy int 360
+filter f crop_filter 0 ab T P
+tick f 0.016
+size f
+render f
+echo absolute with cx = cy = 0 -> clamped to 1
+dset ab cx int 0
+dset ab cy int 0
+filter g crop_filter 0 ab T P
+tick g 0.016
+size g
+echo base size follows the target on every tick
+resize T 1000 500 1000 500
+tick b 0.016
+size b
+render b
+echo zero base size: mul/add stay zero; relative width = 0 - left - right clamped to 1
+resize T 0 0 0 0
+tick b 0.016
+size b
+render b
+echo no target: tick returns before touching anything
+filter h crop_filter 0 d @null P
+tick h 0.016
+size h
+echo settings truncated to int (value 4294967297 -> 1)
+data t
+dset t left int 4294967297
+filter i crop_filter 0 t T P
+resize T 1920 1080 1920 1080
+tick i 0.016
+size i
+render i

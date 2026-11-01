@@ -1,0 +1,64 @@
+# Error and odd-input handling in the demux/decode path.
+#  - a packet of size 0 is dropped (not decoded)
+#  - a packet for an unknown stream is dropped
+#  - a decode error drops that packet only, playback continues (no log in the default build)
+#  - a demuxer error other than EOF/EXIT makes prepare_frames fail (thread ends, stop callback)
+#  - AVERROR_EXIT behaves like EOF
+#  - a decoder with latency holds frames back and releases them at the end of the stream
+media err 0 0
+video 1 1000 16 16 yuv420p
+pkt 0 0 fdur=40
+pkt 0 40 size=0 fdur=40
+pkt 0 80 decerr=1
+pkt 7 90
+pkt 0 120 fdur=40
+endmedia
+media rd 0 0
+video 1 1000 16 16 yuv420p
+pkt 0 0 fdur=40
+rderr eio
+pkt 0 40 fdur=40
+endmedia
+media ex 0 0
+video 1 1000 16 16 yuv420p
+pkt 0 0 fdur=40
+rderr exit
+pkt 0 40 fdur=40
+endmedia
+media lat 160000 0
+video 1 1000 16 16 yuv420p latency=2
+pkt 0 0 fdur=40
+pkt 0 40 fdur=40
+pkt 0 80 fdur=40
+pkt 0 120 fdur=40
+endmedia
+clock 1000000000
+echo ---- drops and decode errors
+minit err local=1
+mreset
+mplay 0
+mtickw 0 0
+mtick 6
+mfree
+echo ---- demuxer I/O error
+minit rd local=1
+mreset
+mplay 0
+mtickw 0 0
+echo the media thread ends here: it calls the stop callback and exits (no further ticks)
+mtick 1
+mfree
+echo ---- AVERROR_EXIT ends the stream like EOF
+minit ex local=1
+mreset
+mplay 0
+mtickw 0 0
+mtick 4
+mfree
+echo ---- decoder latency of 2 packets
+minit lat local=1
+mreset
+mplay 0
+mtickw 0 0
+mtick 6
+mstate

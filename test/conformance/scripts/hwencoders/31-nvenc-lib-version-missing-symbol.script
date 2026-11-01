@@ -1,0 +1,7 @@
+# S-050 nvenc: init_nvenc() with NvEncodeAPIGetMaxSupportedVersion missing. The failure is STICKY
+# (QUIRK Q-2): the first call reports through the last-error string, every later call in the same
+# process returns false immediately and reports nothing, even if the library would now work.
+sym maxver 0
+initnv
+sym maxver 1
+initnv

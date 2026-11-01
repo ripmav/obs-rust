@@ -1,0 +1,53 @@
+decl "void f(int a,,int b)"
+log warning Errors/warnings for 'void f(int a,,int b)':  declaration (1, 14): Expected ')' 
+parse fail
+decl "void f(,)"
+log warning Errors/warnings for 'void f(,)':  declaration (1, 8): Expected ')' 
+parse fail
+decl "void f(int a, 5)"
+log warning Errors/warnings for 'void f(int a, 5)':  declaration (1, 15): Expected ')' 
+parse fail
+decl "void f(int a, int)"
+log warning Errors/warnings for 'void f(int a, int)':  declaration (1, 18): Expected 'parameter name' declaration (1, 19): Unexpected EOF 
+parse fail
+decl "void f(int, int b)"
+log warning Errors/warnings for 'void f(int, int b)':  declaration (1, 11): Expected 'parameter name' declaration (1, 19): Unexpected EOF 
+parse fail
+decl "void f((int a)"
+log warning Errors/warnings for 'void f((int a)':  declaration (1, 8): Expected ')' 
+parse fail
+decl "void f(int a))"
+parse ok name=f params=1
+  param 0 name=a type=int in=1 out=0
+decl "void f(int a) )"
+parse ok name=f params=1
+  param 0 name=a type=int in=1 out=0
+decl "void f(int a, int b,)"
+parse ok name=f params=2
+  param 0 name=a type=int in=1 out=0
+  param 1 name=b type=int in=1 out=0
+decl "void f(int a, int b, )"
+parse ok name=f params=2
+  param 0 name=a type=int in=1 out=0
+  param 1 name=b type=int in=1 out=0
+decl "void f(out)"
+log warning Errors/warnings for 'void f(out)':  declaration (1, 11): Expected 'type or storage specifier' declaration (1, 12): Unexpected EOF 
+parse fail
+decl "void f(in)"
+log warning Errors/warnings for 'void f(in)':  declaration (1, 10): Expected 'type or storage specifier' declaration (1, 11): Unexpected EOF 
+parse fail
+decl "void f(in out)"
+log warning Errors/warnings for 'void f(in out)':  declaration (1, 14): Expected 'type or storage specifier' declaration (1, 15): Unexpected EOF 
+parse fail
+decl "void f(out int)"
+log warning Errors/warnings for 'void f(out int)':  declaration (1, 15): Expected 'parameter name' declaration (1, 16): Unexpected EOF 
+parse fail
+decl "void f(int a,\n)"
+parse ok name=f params=1
+  param 0 name=a type=int in=1 out=0
+decl "void f( , )"
+log warning Errors/warnings for 'void f( , )':  declaration (1, 9): Expected ')' 
+parse fail
+decl "void f(,int a,)"
+log warning Errors/warnings for 'void f(,int a,)':  declaration (1, 8): Expected ')' 
+parse fail

@@ -1,0 +1,10 @@
+# muted flag semantic: callback flag muted && !source.user_muted -> multiplier 0 (push-to-mute/talk/disabled); user mute leaves dB values unscaled.
+init 48000 2
+clock 1000000000
+source a input
+meter_new 0 0
+meter_attach 0 a
+meter_cb 0 add
+meter_feed 0 a 1 1 4 const 0.5
+set a mute 1
+meter_feed 0 a 1 1 4 const 0.5

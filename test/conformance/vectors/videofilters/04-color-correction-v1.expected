@@ -1,0 +1,57 @@
+call effect_create file=color_correction_filter.effect -> e1 uniforms=4 techniques=1
+call get_param e1:gamma -> ok
+call get_param e1:color_matrix -> ok
+create a -> ok
+render a
+call filter_begin a format=RGBA allow=ALLOW_DIRECT -> 1
+call set_float e1:gamma 1
+call set_matrix4 e1:color_matrix 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1
+call blend_push
+call blend_function ONE INVSRCALPHA
+call filter_end a e1 size=0x0
+call blend_pop
+call effect_create file=color_correction_filter.effect -> e2 uniforms=4 techniques=1
+call get_param e2:gamma -> ok
+call get_param e2:color_matrix -> ok
+create b -> ok
+render b
+call filter_begin b format=RGBA allow=ALLOW_DIRECT -> 1
+call set_float e2:gamma 1.5
+call set_matrix4 e2:color_matrix 0.144879043 -0.797020137 2.74231124 0 0.525631011 -0.0355125591 -2.23581362 0 -0.294039518 1.5854739 0.993502438 0 0.0943637118 0.188727438 0.375980407 0.5
+call blend_push
+call blend_function ONE INVSRCALPHA
+call filter_end b e2 size=0x0
+call blend_pop
+call effect_create file=color_correction_filter.effect -> e3 uniforms=4 techniques=1
+call get_param e3:gamma -> ok
+call get_param e3:color_matrix -> ok
+create c -> ok
+render c
+call filter_begin c format=RGBA allow=ALLOW_DIRECT -> 1
+call set_float e3:gamma 0.5
+call set_matrix4 e3:color_matrix 0 0 0 0 0 0 0 0 0 0 0 0 0.5 0.5 0.5 1
+call blend_push
+call blend_function ONE INVSRCALPHA
+call filter_end c e3 size=0x0
+call blend_pop
+render c
+call filter_begin c format=RGBA allow=ALLOW_DIRECT -> 0
+call source_update c deferred=1
+render c
+call filter_begin c format=RGBA allow=ALLOW_DIRECT -> 1
+call set_float e3:gamma 0.5
+call set_matrix4 e3:color_matrix 0 0 0 0 0 0 0 0 0 0 0 0 0.5 0.5 0.5 1
+call blend_push
+call blend_function ONE INVSRCALPHA
+call filter_end c e3 size=0x0
+call blend_pop
+call deferred_update c
+tick c 0.016
+render c
+call filter_begin c format=RGBA allow=ALLOW_DIRECT -> 1
+call set_float e3:gamma 0.5
+call set_matrix4 e3:color_matrix 0 0 0 0 0 0 0 0 0 0 0 0 0.5 0.5 0.5 1
+call blend_push
+call blend_function ONE INVSRCALPHA
+call filter_end c e3 size=0x0
+call blend_pop

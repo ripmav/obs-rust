@@ -1,0 +1,9 @@
+# QUIRK Q-4: read_bits with more than 8 bits keeps only the LAST 8 bits read (the result is
+# 8 bits wide) although all requested bits are consumed.
+bs_init 123456789a
+bs_bits 12
+bs_state
+bs_bits 16
+bs_state
+bs_bits 9
+bs_state

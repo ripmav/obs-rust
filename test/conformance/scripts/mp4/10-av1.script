@@ -1,0 +1,26 @@
+# S-022 av01 sample entry with av1C = encoder extra data. A first byte with the top bit set and
+# version 1 and length >= 4 is a finished av1C and copied verbatim (building one from a sequence
+# header is outside this spec). AV1 packets lose temporal delimiter, redundant frame header and
+# tile list OBUs; a frame OBU with show_existing_frame=0, frame_type=KEY makes the packet a keyframe.
+enc v video codec av1 width 1280 height 720 fps 30/1 id obs_av1 extra 81000c000a0500000024cf
+mux mp4
+pkt v 0 0 0 1200320410aabbcc
+pkt v 1 1 0 gen:12
+pkt v 2 2 0 120032023011
+pkt v 3 3 0 3a0400000000
+finalise
+dump
+echo --- invalid av1C: the box is empty (8 bytes)
+reset
+enc v video codec av1 width 1280 height 720 fps 30/1 extra 8100
+mux mp4 skipfin
+pkt v 0 0 1 gen:12
+finalise
+tree
+echo --- extra data version 0 with the high bit: the verbatim branch is NOT taken (fails to parse as OBUs)
+reset
+enc v video codec av1 width 1280 height 720 fps 30/1 extra 0000000000
+mux mp4 skipfin
+pkt v 0 0 1 gen:12
+finalise
+tree

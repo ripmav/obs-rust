@@ -1,0 +1,49 @@
+# half_from_float: float32 -> IEEE binary16 bits, round-to-nearest-even (S-009-R110..R112).
+# normal values
+call h half_from_float 1
+call h half_from_float -1
+call h half_from_float 2
+call h half_from_float 0.5
+call h half_from_float 0.1
+call h half_from_float 3.14159274
+call h half_from_float 1000
+call h half_from_float -0.333333343
+call h half_from_float 65504
+call h half_from_float -65504
+# zeros keep their sign
+call h half_from_float 0
+call h half_from_float -0
+# infinities, and the NaN encoding (payload and sign are not preserved: 0x7fff | sign)
+call h half_from_float inf
+call h half_from_float -inf
+call h half_from_float nan
+call h half_from_float -nan
+f32bits n1 0x7fc00001
+f32bits n2 0x7f800001
+f32bits n3 0xffffffff
+f32bits n4 0x7fa55555
+call h half_from_float_var n1
+call h half_from_float_var n2
+call h half_from_float_var n3
+call h half_from_float_var n4
+# smallest normal 2^-14 = 0x0400, largest subnormal, smallest subnormal 2^-24 = 0x0001
+float v1 0x1p-14
+float v2 0x1.ff8p-15
+float v3 0x1p-24
+float v4 0x1p-15
+float v5 0x1.8p-24
+call h half_from_float_var v1
+call h half_from_float_var v2
+call h half_from_float_var v3
+call h half_from_float_var v4
+call h half_from_float_var v5
+# negative subnormal
+float v6 -0x1p-24
+call h half_from_float_var v6
+# exponent boundary: powers of two
+float p1 0x1p-10
+float p2 0x1p10
+float p3 0x1p15
+call h half_from_float_var p1
+call h half_from_float_var p2
+call h half_from_float_var p3

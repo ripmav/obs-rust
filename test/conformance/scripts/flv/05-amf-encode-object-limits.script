@@ -1,0 +1,82 @@
+# S-021 AMFObject encoding when the output buffer is (nearly) full.
+# AMF_Encode* require 5 bytes of room before they start (output+4 < end); a property that does
+# not fit is dropped with a logged error and the container is still closed if the end marker
+# fits (QUIRK Q-3: silently truncated object); otherwise NULL is returned.
+obj flat
+add flat width number 1920
+add flat stereo bool 1
+add flat name string abc
+obj empty
+echo header-room
+cap 5
+enc_obj empty object
+cap 4
+enc_obj empty object
+cap 3
+enc_obj empty object
+cap 5
+enc_obj empty ecma
+cap 4
+enc_obj empty ecma
+cap 6
+enc_obj empty ecma
+cap 5
+enc_obj empty strict
+cap 4
+enc_obj empty strict
+cap 6
+enc_obj empty strict
+cap 9
+enc_obj empty strict
+echo end-marker-room
+cap 5
+enc_obj empty object
+cap 4
+enc_obj empty object
+echo property-does-not-fit
+cap 36
+enc_obj flat object
+cap 31
+enc_obj flat object
+cap 30
+enc_obj flat object
+cap 25
+enc_obj flat object
+cap 24
+enc_obj flat object
+cap 16
+enc_obj flat object
+cap 10
+enc_obj flat object
+echo ecma-count-still-reports-all-properties
+cap 30
+enc_obj flat ecma
+cap 25
+enc_obj flat ecma
+cap 14
+enc_obj flat ecma
+cap 40
+enc_obj flat strict
+cap 30
+enc_obj flat strict
+cap 20
+enc_obj flat strict
+echo prop-room
+cap 3
+enc_prop flat 0
+cap 11
+enc_prop flat 1
+cap 12
+enc_prop flat 1
+cap 13
+enc_prop flat 1
+cap 14
+enc_prop flat 1
+cap 15
+enc_prop flat 1
+cap 16
+enc_prop flat 1
+cap 17
+enc_prop flat 1
+cap 18
+enc_prop flat 1

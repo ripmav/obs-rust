@@ -1,0 +1,299 @@
+call effect_create file=color_correction_filter.effect -> e1 uniforms=4 techniques=1
+call get_param e1:gamma -> ok
+call get_param e1:color_matrix -> ok
+create f1 -> ok
+props f1
+  gamma float desc="Gamma" visible=1 enabled=1 min=-3 max=3 step=0.01 numtype=1
+  contrast float desc="Contrast" visible=1 enabled=1 min=-2 max=2 step=0.01 numtype=1
+  brightness float desc="Brightness" visible=1 enabled=1 min=-1 max=1 step=0.01 numtype=1
+  saturation float desc="Saturation" visible=1 enabled=1 min=-1 max=5 step=0.01 numtype=1
+  hue_shift float desc="HueShift" visible=1 enabled=1 min=-180 max=180 step=0.01 numtype=1
+  opacity int desc="Opacity" visible=1 enabled=1 min=0 max=100 step=1 numtype=1
+  color color_alpha desc="Color" visible=1 enabled=1
+end props f1
+call effect_create file=color_correction_filter.effect -> e2 uniforms=4 techniques=1
+call get_param e2:gamma -> ok
+call get_param e2:color_matrix -> ok
+create f2 -> ok
+props f2
+  sdr_only_info text desc="SdrOnlyInfo" visible=1 enabled=1 texttype=3
+  gamma float desc="Gamma" visible=1 enabled=1 min=-3 max=3 step=0.01 numtype=1
+  contrast float desc="Contrast" visible=1 enabled=1 min=-4 max=4 step=0.01 numtype=1
+  brightness float desc="Brightness" visible=1 enabled=1 min=-1 max=1 step=0.0001 numtype=1
+  saturation float desc="Saturation" visible=1 enabled=1 min=-1 max=5 step=0.01 numtype=1
+  hue_shift float desc="HueShift" visible=1 enabled=1 min=-180 max=180 step=0.01 numtype=1
+  opacity float desc="Opacity" visible=1 enabled=1 min=0 max=1 step=0.0001 numtype=1
+  color_multiply color desc="ColorMultiply" visible=1 enabled=1
+  color_add color desc="ColorAdd" visible=1 enabled=1
+end props f2
+call source_update f3 deferred=1
+create f3 -> ok
+props f3
+  sdr_only_info text desc="SdrOnlyInfo" visible=1 enabled=1 texttype=3
+  image_path path desc="Path" visible=1 enabled=1 pathtype=0 filter="PNG/Cube (*.cube *.png)" default="@data/LUTs/"
+  clut_amount float desc="Amount" visible=1 enabled=1 min=0 max=1 step=0.0001 numtype=1
+  passthrough_alpha bool desc="PassthroughAlpha" visible=1 enabled=1
+end props f3
+call effect_create file=chroma_key_filter.effect -> e3 uniforms=12 techniques=1
+call get_param e3:color -> ok
+call get_param e3:contrast -> ok
+call get_param e3:brightness -> ok
+call get_param e3:gamma -> ok
+call get_param e3:chroma_key -> ok
+call get_param e3:pixel_size -> ok
+call get_param e3:similarity -> ok
+call get_param e3:smoothness -> ok
+call get_param e3:spill -> ok
+create f4 -> ok
+props f4
+  key_color_type list desc="KeyColorType" visible=1 enabled=1 combo=2 format=3 count=4
+    item 0 "Green" = "green"
+    item 1 "Blue" = "blue"
+    item 2 "Magenta" = "magenta"
+    item 3 "CustomColor" = "custom"
+  key_color color desc="KeyColor" visible=1 enabled=1
+  similarity int desc="Similarity" visible=1 enabled=1 min=1 max=1000 step=1 numtype=1
+  smoothness int desc="Smoothness" visible=1 enabled=1 min=1 max=1000 step=1 numtype=1
+  spill int desc="ColorSpillReduction" visible=1 enabled=1 min=1 max=1000 step=1 numtype=1
+  opacity int desc="Opacity" visible=1 enabled=1 min=0 max=100 step=1 numtype=1
+  contrast float desc="Contrast" visible=1 enabled=1 min=-1 max=1 step=0.01 numtype=1
+  brightness float desc="Brightness" visible=1 enabled=1 min=-1 max=1 step=0.01 numtype=1
+  gamma float desc="Gamma" visible=1 enabled=1 min=-1 max=1 step=0.01 numtype=1
+end props f4
+call effect_create file=chroma_key_filter_v2.effect -> e4 uniforms=13 techniques=1
+call get_param e4:opacity -> ok
+call get_param e4:contrast -> ok
+call get_param e4:brightness -> ok
+call get_param e4:gamma -> ok
+call get_param e4:chroma_key -> ok
+call get_param e4:pixel_size -> ok
+call get_param e4:similarity -> ok
+call get_param e4:smoothness -> ok
+call get_param e4:spill -> ok
+create f5 -> ok
+props f5
+  sdr_only_info text desc="SdrOnlyInfo" visible=1 enabled=1 texttype=3
+  key_color_type list desc="KeyColorType" visible=1 enabled=1 combo=2 format=3 count=4
+    item 0 "Green" = "green"
+    item 1 "Blue" = "blue"
+    item 2 "Magenta" = "magenta"
+    item 3 "CustomColor" = "custom"
+  key_color color desc="KeyColor" visible=1 enabled=1
+  similarity int desc="Similarity" visible=1 enabled=1 min=1 max=1000 step=1 numtype=1
+  smoothness int desc="Smoothness" visible=1 enabled=1 min=1 max=1000 step=1 numtype=1
+  spill int desc="ColorSpillReduction" visible=1 enabled=1 min=1 max=1000 step=1 numtype=1
+  opacity float desc="Opacity" visible=1 enabled=1 min=0 max=1 step=0.0001 numtype=1
+  contrast float desc="Contrast" visible=1 enabled=1 min=-4 max=4 step=0.01 numtype=1
+  brightness float desc="Brightness" visible=1 enabled=1 min=-1 max=1 step=0.0001 numtype=1
+  gamma float desc="Gamma" visible=1 enabled=1 min=-1 max=1 step=0.01 numtype=1
+end props f5
+call effect_create file=color_key_filter.effect -> e5 uniforms=9 techniques=1
+call get_param e5:color -> ok
+call get_param e5:contrast -> ok
+call get_param e5:brightness -> ok
+call get_param e5:gamma -> ok
+call get_param e5:key_color -> ok
+call get_param e5:similarity -> ok
+call get_param e5:smoothness -> ok
+create f6 -> ok
+props f6
+  key_color_type list desc="KeyColorType" visible=1 enabled=1 combo=2 format=3 count=5
+    item 0 "Green" = "green"
+    item 1 "Blue" = "blue"
+    item 2 "Red" = "red"
+    item 3 "Magenta" = "magenta"
+    item 4 "CustomColor" = "custom"
+  key_color color desc="KeyColor" visible=1 enabled=1
+  similarity int desc="Similarity" visible=1 enabled=1 min=1 max=1000 step=1 numtype=1
+  smoothness int desc="Smoothness" visible=1 enabled=1 min=1 max=1000 step=1 numtype=1
+  opacity int desc="Opacity" visible=1 enabled=1 min=0 max=100 step=1 numtype=1
+  contrast float desc="Contrast" visible=1 enabled=1 min=-1 max=1 step=0.01 numtype=1
+  brightness float desc="Brightness" visible=1 enabled=1 min=-1 max=1 step=0.01 numtype=1
+  gamma float desc="Gamma" visible=1 enabled=1 min=-1 max=1 step=0.01 numtype=1
+end props f6
+call effect_create file=color_key_filter_v2.effect -> e6 uniforms=9 techniques=1
+call get_param e6:opacity -> ok
+call get_param e6:contrast -> ok
+call get_param e6:brightness -> ok
+call get_param e6:gamma -> ok
+call get_param e6:key_color -> ok
+call get_param e6:similarity -> ok
+call get_param e6:smoothness -> ok
+create f7 -> ok
+props f7
+  sdr_only_info text desc="SdrOnlyInfo" visible=1 enabled=1 texttype=3
+  key_color_type list desc="KeyColorType" visible=1 enabled=1 combo=2 format=3 count=5
+    item 0 "Green" = "green"
+    item 1 "Blue" = "blue"
+    item 2 "Red" = "red"
+    item 3 "Magenta" = "magenta"
+    item 4 "CustomColor" = "custom"
+  key_color color desc="KeyColor" visible=1 enabled=1
+  similarity int desc="Similarity" visible=1 enabled=1 min=1 max=1000 step=1 numtype=1
+  smoothness int desc="Smoothness" visible=1 enabled=1 min=1 max=1000 step=1 numtype=1
+  opacity float desc="Opacity" visible=1 enabled=1 min=0 max=1 step=0.0001 numtype=1
+  contrast float desc="Contrast" visible=1 enabled=1 min=-4 max=4 step=0.01 numtype=1
+  brightness float desc="Brightness" visible=1 enabled=1 min=-1 max=1 step=0.0001 numtype=1
+  gamma float desc="Gamma" visible=1 enabled=1 min=-1 max=1 step=0.01 numtype=1
+end props f7
+call effect_create file=luma_key_filter.effect -> e7 uniforms=6 techniques=1
+call get_param e7:lumaMax -> ok
+call get_param e7:lumaMin -> ok
+call get_param e7:lumaMaxSmooth -> ok
+call get_param e7:lumaMinSmooth -> ok
+create f8 -> ok
+props f8
+  sdr_only_info text desc="SdrOnlyInfo" visible=1 enabled=1 texttype=3
+  luma_max float desc="Luma.LumaMax" visible=1 enabled=1 min=0 max=1 step=0.0001 numtype=1
+  luma_max_smooth float desc="Luma.LumaMaxSmooth" visible=1 enabled=1 min=0 max=1 step=0.0001 numtype=1
+  luma_min float desc="Luma.LumaMin" visible=1 enabled=1 min=0 max=1 step=0.0001 numtype=1
+  luma_min_smooth float desc="Luma.LumaMinSmooth" visible=1 enabled=1 min=0 max=1 step=0.0001 numtype=1
+end props f8
+call effect_create file=luma_key_filter_v2.effect -> e8 uniforms=6 techniques=1
+call get_param e8:lumaMax -> ok
+call get_param e8:lumaMin -> ok
+call get_param e8:lumaMaxSmooth -> ok
+call get_param e8:lumaMinSmooth -> ok
+create f9 -> ok
+props f9
+  sdr_only_info text desc="SdrOnlyInfo" visible=1 enabled=1 texttype=3
+  luma_max float desc="Luma.LumaMax" visible=1 enabled=1 min=0 max=1 step=0.0001 numtype=1
+  luma_max_smooth float desc="Luma.LumaMaxSmooth" visible=1 enabled=1 min=0 max=1 step=0.0001 numtype=1
+  luma_min float desc="Luma.LumaMin" visible=1 enabled=1 min=0 max=1 step=0.0001 numtype=1
+  luma_min_smooth float desc="Luma.LumaMinSmooth" visible=1 enabled=1 min=0 max=1 step=0.0001 numtype=1
+end props f9
+call effect_create file=sharpness.effect -> e9 uniforms=5 techniques=1
+call get_param e9:sharpness -> ok
+call get_param e9:texture_width -> ok
+call get_param e9:texture_height -> ok
+create f10 -> ok
+props f10
+  sdr_only_info text desc="SdrOnlyInfo" visible=1 enabled=1 texttype=3
+  sharpness float desc="Sharpness" visible=1 enabled=1 min=0 max=1 step=0.01 numtype=1
+end props f10
+call effect_create file=crop_filter.effect -> e10 uniforms=5 techniques=4
+call get_param e10:add_val -> ok
+call get_param e10:mul_val -> ok
+call get_param e10:image -> ok
+call get_param e10:multiplier -> ok
+call source_update f11 deferred=1
+create f11 -> ok
+props f11
+  speed_x float desc="ScrollFilter.SpeedX" visible=1 enabled=1 min=-500 max=500 step=1 numtype=1
+  speed_y float desc="ScrollFilter.SpeedY" visible=1 enabled=1 min=-500 max=500 step=1 numtype=1
+  limit_cx bool desc="ScrollFilter.LimitWidth" visible=1 enabled=1
+  cx int desc="Crop.Width" visible=1 enabled=1 min=1 max=8192 step=1 numtype=0
+  limit_cy bool desc="ScrollFilter.LimitHeight" visible=1 enabled=1
+  cy int desc="Crop.Height" visible=1 enabled=1 min=1 max=8192 step=1 numtype=0
+  loop bool desc="ScrollFilter.Loop" visible=1 enabled=1
+end props f11
+call effect_create file=crop_filter.effect -> e11 uniforms=5 techniques=4
+call get_param e11:mul_val -> ok
+call get_param e11:add_val -> ok
+call get_param e11:multiplier -> ok
+call source_update f12 deferred=1
+create f12 -> ok
+props f12
+  relative bool desc="Crop.Relative" visible=1 enabled=1
+  left int desc="Crop.Left" visible=1 enabled=1 min=-8192 max=8192 step=1 numtype=0
+  top int desc="Crop.Top" visible=1 enabled=1 min=-8192 max=8192 step=1 numtype=0
+  right int desc="Crop.Right" visible=1 enabled=1 min=-8192 max=8192 step=1 numtype=0
+  bottom int desc="Crop.Bottom" visible=1 enabled=1 min=-8192 max=8192 step=1 numtype=0
+  cx int desc="Crop.Width" visible=1 enabled=1 min=0 max=8192 step=1 numtype=0
+  cy int desc="Crop.Height" visible=1 enabled=1 min=0 max=8192 step=1 numtype=0
+end props f12
+call samplerstate_create s1 filter=POINT u=CLAMP v=CLAMP w=CLAMP aniso=0 border=0
+create f13 -> ok
+props f13
+  sampling list desc="ScaleFiltering" visible=1 enabled=1 combo=2 format=3 count=5
+    item 0 "ScaleFiltering.Point" = "point"
+    item 1 "ScaleFiltering.Bilinear" = "bilinear"
+    item 2 "ScaleFiltering.Bicubic" = "bicubic"
+    item 3 "ScaleFiltering.Lanczos" = "lanczos"
+    item 4 "ScaleFiltering.Area" = "area"
+  resolution list desc="Resolution" visible=1 enabled=1 combo=1 format=3 count=17
+    item 0 "None" = "None"
+    item 1 "Base.Canvas" = "Base.Canvas"
+    item 2 "16:9" = "16:9"
+    item 3 "16:10" = "16:10"
+    item 4 "4:3" = "4:3"
+    item 5 "1:1" = "1:1"
+    item 6 "1920x1080" = "1920x1080"
+    item 7 "1536x864" = "1536x864"
+    item 8 "1440x810" = "1440x810"
+    item 9 "1280x720" = "1280x720"
+    item 10 "1152x648" = "1152x648"
+    item 11 "1097x617" = "1097x617"
+    item 12 "960x540" = "960x540"
+    item 13 "853x480" = "853x480"
+    item 14 "768x432" = "768x432"
+    item 15 "698x392" = "698x392"
+    item 16 "640x360" = "640x360"
+  undistort bool desc="UndistortCenter" visible=1 enabled=1
+end props f13
+call source_update f14 deferred=1
+create f14 -> ok
+props f14
+  sdr_only_info text desc="SdrOnlyInfo" visible=1 enabled=1 texttype=3
+  type list desc="Type" visible=1 enabled=1 combo=2 format=3 count=5
+    item 0 "MaskBlendType.MaskColor" = "mask_color_filter.effect"
+    item 1 "MaskBlendType.MaskAlpha" = "mask_alpha_filter.effect"
+    item 2 "MaskBlendType.BlendMultiply" = "blend_mul_filter.effect"
+    item 3 "MaskBlendType.BlendAddition" = "blend_add_filter.effect"
+    item 4 "MaskBlendType.BlendSubtraction" = "blend_sub_filter.effect"
+  image_path path desc="Path" visible=1 enabled=1 pathtype=0 filter="BrowsePath.Images (*.bmp *.jpg *.jpeg *.tga *.gif *.png);;BrowsePath.AllFiles (*.*)" default=@null
+  color color desc="Color" visible=1 enabled=1
+  opacity int desc="Opacity" visible=1 enabled=1 min=0 max=100 step=1 numtype=1
+  stretch bool desc="StretchImage" visible=1 enabled=1
+end props f14
+call source_update f15 deferred=1
+create f15 -> ok
+props f15
+  sdr_only_info text desc="SdrOnlyInfo" visible=1 enabled=1 texttype=3
+  type list desc="Type" visible=1 enabled=1 combo=2 format=3 count=5
+    item 0 "MaskBlendType.MaskColor" = "mask_color_filter.effect"
+    item 1 "MaskBlendType.MaskAlpha" = "mask_alpha_filter.effect"
+    item 2 "MaskBlendType.BlendMultiply" = "blend_mul_filter.effect"
+    item 3 "MaskBlendType.BlendAddition" = "blend_add_filter.effect"
+    item 4 "MaskBlendType.BlendSubtraction" = "blend_sub_filter.effect"
+  image_path path desc="Path" visible=1 enabled=1 pathtype=0 filter="BrowsePath.Images (*.bmp *.jpg *.jpeg *.tga *.gif *.png);;BrowsePath.AllFiles (*.*)" default=@null
+  color color desc="Color" visible=1 enabled=1
+  opacity float desc="Opacity" visible=1 enabled=1 min=0 max=1 step=0.0001 numtype=1
+  stretch bool desc="StretchImage" visible=1 enabled=1
+end props f15
+call source_update f16 deferred=1
+create f16 -> ok
+props f16
+  delay_ms int desc="DelayMs" visible=1 enabled=1 min=0 max=500 step=1 numtype=0 suffix=" ms"
+end props f16
+call effect_create file=hdr_tonemap_filter.effect -> e12 uniforms=5 techniques=3
+call get_param e12:multiplier -> ok
+call get_param e12:input_maximum_nits -> ok
+call get_param e12:output_maximum_nits -> ok
+call source_update f17 deferred=1
+create f17 -> ok
+props f17
+  override_info text desc="HdrTonemap.Description" visible=1 enabled=1 texttype=3
+  transform list desc="HdrTonemap.ToneTransform" visible=1 enabled=1 combo=2 format=1 count=3
+    item 0 "HdrTonemap.SdrReinhard" = 0
+    item 1 "HdrTonemap.HdrMaxrgb" = 1
+    item 2 "HdrTonemap.SdrMaxrgb" = 2
+  sdr_white_level_nits int desc="HdrTonemap.SdrWhiteLevel" visible=1 enabled=1 min=80 max=480 step=1 numtype=0 suffix=" nits"
+  hdr_input_maximum_nits int desc="HdrTonemap.HdrInputMaximum" visible=1 enabled=1 min=5 max=10000 step=1 numtype=0 suffix=" nits"
+  hdr_output_maximum_nits int desc="HdrTonemap.HdrOutputMaximum" visible=1 enabled=1 min=5 max=10000 step=1 numtype=0 suffix=" nits"
+  sdr_input_maximum_nits int desc="HdrTonemap.SdrInputMaximum" visible=1 enabled=1 min=5 max=10000 step=1 numtype=0 suffix=" nits"
+  sdr_output_maximum_nits int desc="HdrTonemap.SdrOutputMaximum" visible=1 enabled=1 min=5 max=10000 step=1 numtype=0 suffix=" nits"
+end props f17
+call effect_create file=sdr_on_hdr_filter.effect -> e13 uniforms=4 techniques=2
+call get_param e13:multiplier -> ok
+call get_param e13:power -> ok
+call source_update f18 deferred=1
+create f18 -> ok
+props f18
+  override_info text desc="SdrOnHdr.Description" visible=1 enabled=1 texttype=3
+  gamma list desc="SdrOnHdr.Gamma" visible=1 enabled=1 combo=2 format=1 count=2
+    item 0 "SdrOnHdr.GammaSrgb" = 1
+    item 1 "SdrOnHdr.GammaPower" = 2
+  sdr_white_level_nits int desc="SdrOnHdr.SdrWhiteLevel" visible=1 enabled=1 min=80 max=480 step=1 numtype=0 suffix=" nits"
+  power float desc="SdrOnHdr.Power" visible=1 enabled=1 min=1.8 max=2.6 step=0.1 numtype=0
+end props f18

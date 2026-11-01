@@ -1,0 +1,12 @@
+# obs_missing_file_issue_callback(file, new_path): for SOURCE records forwards to the source's
+# replace function, which calls the record's callback with the source's context data, the new
+# path and the record's user data (CORE). For SCRIPT records it does NOTHING (QUIRK: scripts
+# are accepted but never notified). The callback receives new_path unchanged (even NULL).
+mf_file_new 0 "/c/img.png" source "Source A"
+mf_file_new 1 "/c/script.py" script
+mf_issue 0 "/new/location.png"
+mf_issue 0 ""
+mf_issue 0 @null
+mf_issue 1 "/new/script.py"
+mf_destroy_file 0
+mf_destroy_file 1

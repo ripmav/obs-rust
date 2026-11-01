@@ -1,0 +1,12 @@
+# file-updater, step 1: seeding the cache from the bundled (local) package (CORE).
+# When the cache package version is lower than the local one (missing cache = version 0),
+# every local file that is missing from the cache or has a lower version there is copied
+# local -> temp -> cache (the old cache file is removed first), then package.json is copied the
+# same way. The remote request here fails (no server registered), which only logs a warning.
+fu_put /L/package.json "{\"version\":2,\"files\":[{\"name\":\"a.json\",\"version\":1},{\"name\":\"b.json\",\"version\":2}]}"
+fu_put /L/a.json "A-local"
+fu_put /L/b.json "B-local"
+fu_run /L /C http://srv/updates UA/1.0
+fu_ls
+fu_cat /C/a.json
+fu_cat /C/package.json

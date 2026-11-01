@@ -1,0 +1,19 @@
+open_file rc=-1
+open_file rc=0
+sections 0
+open_file rc=0
+get_string A k "bom"
+open_file rc=0
+save rc=0
+"[A]\nk=v\n"
+open_file rc=0
+get_string X a "1"
+open_defaults rc=0
+has_default X a 1
+default_string X a "1"
+get_string X a "1"
+open_defaults rc=0
+default_string X a "2"
+get_string X a "1"
+get_string X b "3"
+has_user X b 0

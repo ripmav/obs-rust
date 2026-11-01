@@ -1,0 +1,39 @@
+reset ok
+> reset
+reset ok
+> netif_get
+netif_get n=0
+> ifa lo v4 127.0.0.1
+> ifa lo0 v4 127.0.0.1
+> ifa lo v6 ::1
+> netif_get
+netif_get n=0
+> ifa eth0 v4 192.168.1.20
+> ifa eth0 v6 fe80::1
+> ifa eth0 other
+> ifa eth1 null
+> ifa wlan0 v4 10.0.0.5
+> ifa lo1 v4 127.0.0.2
+> ifa LO v4 127.0.0.3
+> ifa  v4 172.16.0.9
+> ifa docker0 v6 2001:db8::5
+> netif_get
+netif_get n=7
+  name="[eth0] 192.168.1.20" addr="192.168.1.20"
+  name="[eth0] fe80::1" addr="fe80::1"
+  name="[wlan0] 10.0.0.5" addr="10.0.0.5"
+  name="[lo1] 127.0.0.2" addr="127.0.0.2"
+  name="[LO] 127.0.0.3" addr="127.0.0.3"
+  name="172.16.0.9" addr="172.16.0.9"
+  name="[docker0] 2001:db8::5" addr="2001:db8::5"
+log info [net if] 		[eth0] 192.168.1.20
+log info [net if] 		[eth0] fe80::1
+log info [net if] 		[wlan0] 10.0.0.5
+log info [net if] 		[lo1] 127.0.0.2
+log info [net if] 		[LO] 127.0.0.3
+log info [net if] 		172.16.0.9
+log info [net if] 		[docker0] 2001:db8::5
+> ifa_fail
+> netif_get
+log warning [net if] getifaddrs() failed
+netif_get n=0

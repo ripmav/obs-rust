@@ -1,0 +1,49 @@
+# Viewport stack (frontend), projection push/pop and helper modes (forwarded), scissor, device size.
+trace 0
+gs_create g
+gs_enter_context g
+trace 1
+size 800 600
+gs_set_viewport 10 20 300 200
+echo == viewport push records the current backend viewport; pop restores it via set_viewport
+gs_viewport_push
+gs_set_viewport 0 0 50 50
+gs_get_viewport
+gs_viewport_pop
+gs_get_viewport
+echo == pop on an empty stack does nothing
+gs_viewport_pop
+echo == stack is LIFO
+gs_viewport_push
+gs_set_viewport 1 1 1 1
+gs_viewport_push
+gs_set_viewport 2 2 2 2
+gs_viewport_pop
+gs_get_viewport
+gs_viewport_pop
+gs_get_viewport
+echo == reset viewport uses the device size
+gs_reset_viewport
+gs_get_viewport
+gs_get_size
+gs_get_width
+gs_get_height
+echo == 2d mode = ortho(0,w,0,h,-1,-1024) from device size
+gs_set_2d_mode
+echo == 3d mode is a no-op stub
+gs_set_3d_mode
+echo == perspective derives the frustum (angle in degrees, aspect scales x)
+gs_perspective 90 2 1 100
+gs_perspective 60 1.5 0.5 50
+echo == frustum / ortho / projection stack are forwarded
+gs_ortho 0 100 0 50 -1 1
+gs_frustum -1 1 -1 1 1 10
+gs_projection_push
+gs_projection_pop
+echo == scissor, NULL means disable
+gs_set_scissor_rect 1 2 3 4
+gs_set_scissor_rect null
+gs_get_viewport null
+echo == resize and colour space
+gs_resize 1024 768
+gs_update_color_space

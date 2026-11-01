@@ -1,0 +1,23 @@
+# CORE: base lexer tokens: ALPHA/DIGIT runs, one-char WHITESPACE (CRLF/LFCR pairs are one token), OTHER
+# (underscore and bytes >= 0x80 are OTHER, one byte each), ignore-whitespace mode, reset, empty/NULL input.
+lstart "ab_1 \t\r\n\n\r\r\n\n\n x\xc3\xa9"
+lall
+lreset
+lall ignore
+lstart "   "
+lall ignore
+lstart ""
+lall
+lstart @null
+lall
+lstart "a\x01b"
+lall
+lstart_move "x y"
+lnext
+lnext
+lnext
+lnext
+lreset
+lnext ignore
+lfree
+lnext

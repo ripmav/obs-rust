@@ -1,0 +1,6 @@
+tick 0 ret=1 out_ts=1000000000 wait=0 total=0 bufq=0
+order a b | roots a b
+mix 0 0 first=0 last=1023 sum=256 peak=0.25
+mix 0 1 first=0 last=1023 sum=192 peak=0.1875
+mix 1 0 first=0 last=1023 sum=768 peak=0.75
+mix 1 1 first=0 last=1023 sum=576 peak=0.5625

@@ -1,0 +1,14 @@
+# QUIRK: gs_create() ends with "no current context" on the calling thread, even if the thread was inside
+# another graphics object's context.  That object's mutex stays locked by this thread and its use count
+# stays 1, so entering it again blocks forever (reported here as a hang, signal 14).
+gs_create g
+gs_enter_context g
+gs_create h
+echo == the thread lost its context although g was never left
+gs_get_context
+echo == re-entering g deadlocks on its own mutex
+crash gs_enter_context g
+echo == entering the new object works and leaves the thread in h
+gs_enter_context h
+gs_get_context
+gs_leave_context

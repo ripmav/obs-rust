@@ -1,0 +1,14 @@
+# S-013 mediaconv: pure parts of libobs/media-io (format conversion, frames, matrices, fourcc, enum helpers)
+test/conformance/gen/mediaconv_runner.c
+libobs/media-io/format-conversion.c
+libobs/media-io/video-frame.c
+libobs/media-io/video-matrices.c
+libobs/media-io/video-fourcc.c
+libobs/graphics/vec3.c
+libobs/graphics/matrix3.c
+# vec3_rotate (used by the matrix builder) drags in the rest of the small math library
+libobs/graphics/vec4.c
+libobs/graphics/quat.c
+libobs/graphics/matrix4.c
+libobs/graphics/axisang.c
+libobs/graphics/math-extra.c

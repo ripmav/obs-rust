@@ -1,0 +1,47 @@
+ev create slideshow_v2#1 public
+ev hotkey_register slideshow_v2#1 id=1 name=SlideShow.PlayPause desc=SlideShow.PlayPause
+ev hotkey_register slideshow_v2#1 id=2 name=SlideShow.Restart desc=SlideShow.Restart
+ev hotkey_register slideshow_v2#1 id=3 name=SlideShow.Stop desc=SlideShow.Stop
+ev hotkey_register slideshow_v2#1 id=4 name=SlideShow.NextSlide desc=SlideShow.NextSlide
+ev hotkey_register slideshow_v2#1 id=5 name=SlideShow.PreviousSlide desc=SlideShow.PreviousSlide
+ev create cut_transition#2 private
+ev create image_source#3[/s/a.png] private
+ev task_queued
+ev create image_source#4[/s/b.png] private
+ev task_queued
+ev tr_size cut_transition#2 1920x1080
+ev tr_align cut_transition#2 0
+ev tr_scale cut_transition#2 1
+ev tr_start cut_transition#2 mode=0 ms=0 dest=image_source#3[/s/a.png] -> started
+ev signal media_started slideshow_v2#1
+tick 0 clock=16000001
+ev image_init /s/a.png alpha=2
+ev image_init /s/b.png alpha=2
+log debug [image_source: ''] loading texture '/s/a.png'
+ev texture_create 1 10x10 dynamic=0
+log debug [image_source: ''] loading texture '/s/b.png'
+ev texture_create 2 20x20 dynamic=0
+tick 0 clock=32000002
+ev create cut_transition#5 private
+ev destroy cut_transition#2
+ev destroy image_source#4[/s/b.png]
+ev texture_destroy 2
+ev destroy image_source#3[/s/a.png]
+ev texture_destroy 1
+ev create image_source#6[/s/c.png] private
+ev task_queued
+ev image_init /s/c.png alpha=2
+ev tr_size cut_transition#5 1920x1080
+ev tr_align cut_transition#5 0
+ev tr_scale cut_transition#5 1
+ev tr_start cut_transition#5 mode=0 ms=0 dest=image_source#6[/s/c.png] -> started
+ev signal media_started slideshow_v2#1
+tick 0 clock=48000003
+log debug [image_source: ''] loading texture '/s/c.png'
+ev texture_create 3 30x30 dynamic=0
+tick 0 clock=64000004
+ev destroy slideshow_v2#1
+ev task_queue_destroy pending=0
+ev destroy cut_transition#5
+ev destroy image_source#6[/s/c.png]
+ev texture_destroy 3

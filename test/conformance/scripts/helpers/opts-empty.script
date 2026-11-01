@@ -1,0 +1,6 @@
+# opts-parser: inputs that produce the all-zero result (CORE): NULL, empty string, and
+# strings that contain only separators. All three pointers are NULL and counts are 0.
+opts_parse @null
+opts_parse ""
+opts_parse " "
+opts_parse "     "

@@ -1,0 +1,40 @@
+props P
+  rate_control list desc="RateControl" visible=1 enabled=1 combo=2 format=3 count=4
+    item 0 "CBR" = "CBR"
+    item 1 "ABR" = "ABR"
+    item 2 "VBR" = "VBR"
+    item 3 "CRF" = "CRF"
+  bitrate int desc="Bitrate" visible=1 enabled=1 min=50 max=10000000 step=50 numtype=0 suffix=" Kbps"
+  use_bufsize bool desc="CustomBufsize" visible=1 enabled=1
+  buffer_size int desc="BufferSize" visible=1 enabled=1 min=0 max=10000000 step=1 numtype=0
+  crf int desc="CRF" visible=1 enabled=1 min=0 max=51 step=1 numtype=0
+  keyint_sec int desc="KeyframeIntervalSec" visible=1 enabled=1 min=0 max=20 step=1 numtype=0 suffix=" s"
+  preset list desc="CPUPreset" visible=1 enabled=1 combo=2 format=3 count=10
+    item 0 "ultrafast" = "ultrafast"
+    item 1 "superfast" = "superfast"
+    item 2 "veryfast" = "veryfast"
+    item 3 "faster" = "faster"
+    item 4 "fast" = "fast"
+    item 5 "medium" = "medium"
+    item 6 "slow" = "slow"
+    item 7 "slower" = "slower"
+    item 8 "veryslow" = "veryslow"
+    item 9 "placebo" = "placebo"
+  profile list desc="Profile" visible=1 enabled=1 combo=2 format=3 count=4
+    item 0 "None" = ""
+    item 1 "baseline" = "baseline"
+    item 2 "main" = "main"
+    item 3 "high" = "high"
+  tune list desc="Tune" visible=1 enabled=1 combo=2 format=3 count=9
+    item 0 "None" = ""
+    item 1 "film" = "film"
+    item 2 "animation" = "animation"
+    item 3 "grain" = "grain"
+    item 4 "stillimage" = "stillimage"
+    item 5 "psnr" = "psnr"
+    item 6 "ssim" = "ssim"
+    item 7 "fastdecode" = "fastdecode"
+    item 8 "zerolatency" = "zerolatency"
+  x264opts text desc="EncoderOptions" visible=1 enabled=1 texttype=0
+  repeat_headers bool desc="repeat_headers" visible=0 enabled=1
+end props P

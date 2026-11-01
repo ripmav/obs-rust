@@ -1,0 +1,16 @@
+# MAKE_SEMANTIC_VERSION(major, minor, patch) = (major << 24) | (minor << 16) | patch  (CORE for
+# major < 128, minor < 256, patch < 65536). QUIRKS beyond those ranges: no masking is done, so a
+# patch >= 65536 overlaps the minor field (bitwise OR) and a minor >= 256 overlaps the major
+# field. Results are printed as 32-bit hex.
+semver 0 0 0
+semver 33 0 1
+semver 1 2 3
+semver 27 2 4
+semver 127 255 65535
+semver 100 0 0
+semver 0 255 0
+semver 0 0 65535
+semver 1 0 65536
+semver 1 0 131072
+semver 0 256 0
+semver 0 1 65536

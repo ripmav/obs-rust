@@ -1,0 +1,64 @@
+# S-012 CORE: obs_extract_avc_headers. Splits an Annex-B access unit into three byte strings:
+#   new     : every NAL that is neither SPS(7)/PPS(8) nor SEI(6)
+#   header  : SPS and PPS NALs
+#   sei     : SEI NALs
+# Each NAL is copied together with its start code (leading zero bytes included), unchanged.
+# Output is "-" for an empty string.
+buf sps 6742c01ed900a047fe88
+buf pps 68ce3c80
+buf sei 06050a0102030405
+buf idr 6588840021ffe0
+buf nidr 419a24c1
+buf aud 0910
+buf filler 0cffff
+buf sps2 6764001f
+echo idr-access-unit
+cat au 00000001 @aud 00000001 @sps 00000001 @pps 00000001 @sei 00000001 @idr
+avc_extract @au
+echo p-access-unit
+cat au_p 00000001 @aud 00000001 @sei 00000001 @nidr
+avc_extract @au_p
+echo three-byte-start-codes
+cat au3 000001 @sps 000001 @pps 000001 @sei 000001 @idr
+avc_extract @au3
+echo mixed-start-code-lengths
+cat aum 00000001 @sps 000001 @pps 00000001 @idr 000001 @sei
+avc_extract @aum
+echo order-is-preserved-inside-each-output
+cat auo 00000001 @pps 00000001 @sps 00000001 @nidr 00000001 @sei 00000001 @idr 00000001 @sei 00000001 @pps
+avc_extract @auo
+echo other-types-stay-in-new
+cat auf 00000001 @filler 00000001 @aud 00000001 @idr
+avc_extract @auf
+echo nal-ref-idc-and-forbidden-bit-do-not-matter-for-the-type
+avc_extract 00000001270000000001680000000001060000000001e5
+avc_extract 0000000167aa0000000147bb
+echo only-header-nals
+cat onlyh 00000001 @sps 00000001 @pps
+avc_extract @onlyh
+echo garbage-before-the-first-start-code-is-dropped
+avc_extract ffeedd00000165aa
+cat gb ffeedd 00000001 @sps 00000001 @idr
+avc_extract @gb
+echo no-start-code
+avc_extract aabbcc
+avc_extract 6742c01e
+echo empty
+avc_extract -
+echo extra-zero-bytes-before-the-start-code
+avc_extract 0000000000016588
+avc_extract 000000000000000165aa0000000000000141bb
+echo trailing-zero-bytes-belong-to-the-last-nal
+avc_extract 0000000165aa0000
+avc_extract 0000000165aa00
+echo trailing-start-code-at-the-end-is-not-seen
+avc_extract 0000000165aa00000001
+avc_extract 0000000165aa000001
+avc_extract 0000000165aa0000000141
+echo empty-nal-between-start-codes
+avc_extract 00000001000000014188
+avc_extract 0000000100000001
+echo header-only-bytes
+avc_extract 000001
+avc_extract 00000167
+avc_extract 0000016700

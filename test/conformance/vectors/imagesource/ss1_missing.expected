@@ -1,0 +1,62 @@
+ev create slideshow#1 public
+ev hotkey_register slideshow#1 id=1 name=SlideShow.PlayPause desc=SlideShow.PlayPause
+ev hotkey_register slideshow#1 id=2 name=SlideShow.Restart desc=SlideShow.Restart
+ev hotkey_register slideshow#1 id=3 name=SlideShow.Stop desc=SlideShow.Stop
+ev hotkey_register slideshow#1 id=4 name=SlideShow.NextSlide desc=SlideShow.NextSlide
+ev hotkey_register slideshow#1 id=5 name=SlideShow.PreviousSlide desc=SlideShow.PreviousSlide
+ev create fade_transition#2 private
+ev create image_source#3[/s/a.png] private
+ev image_init /s/a.png alpha=2
+log debug [image_source: ''] loading texture '/s/a.png'
+ev texture_create 1 10x10 dynamic=0
+ev create image_source#4[/gone/q.png] private
+ev image_init /gone/q.png alpha=2
+log warning gs_image_file_ex_init_internal: Failed to load file '/gone/q.png'
+log debug [image_source: ''] loading texture '/gone/q.png'
+log warning [image_source: ''] failed to load texture '/gone/q.png'
+ev create image_source#5[/gone/r.png] private
+ev image_init /gone/r.png alpha=2
+log warning gs_image_file_ex_init_internal: Failed to load file '/gone/r.png'
+log debug [image_source: ''] loading texture '/gone/r.png'
+log warning [image_source: ''] failed to load texture '/gone/r.png'
+ev tr_size fade_transition#2 10x10
+ev tr_align fade_transition#2 0
+ev tr_scale fade_transition#2 1
+ev tr_start fade_transition#2 mode=0 ms=700 dest=image_source#3[/s/a.png] -> started
+ev signal media_started slideshow#1
+tick 0 clock=16000001
+missing count=2
+missing 0 path="/gone/q.png"
+missing 1 path="/gone/r.png"
+missing count=2
+missing 0 path="/gone/q.png"
+missing 1 path="/gone/r.png"
+ev missing_file_replace slideshow#1 new=/s/b.png
+ev create image_source#6[/s/b.png] private
+ev image_init /s/b.png alpha=2
+log debug [image_source: ''] loading texture '/s/b.png'
+ev texture_create 2 20x20 dynamic=0
+ev destroy image_source#4[/gone/q.png]
+ev tr_size fade_transition#2 20x20
+ev tr_align fade_transition#2 0
+ev tr_scale fade_transition#2 1
+ev tr_start fade_transition#2 mode=0 ms=700 dest=image_source#3[/s/a.png] -> ignored
+ev signal media_started slideshow#1
+tick 0 clock=32000002
+state slideshow1 behavior=2 manual=0 randomize=0 loop=1 hide=0 use_cut=0 paused=0 stop=0 restart_on_activate=0 pause_on_deactivate=0 slide_time=8.69999981 tr_speed=700 tr_name=fade_transition cur_item=0 elapsed=0.0160000008 cx=20 cy=20 mem_usage=2000 state=1 transition=fade_transition#2
+state   file 0 /s/a.png image_source#3[/s/a.png]
+state   file 1 /s/b.png image_source#6[/s/b.png]
+state   file 2 /gone/r.png image_source#5[/gone/r.png]
+missing count=1
+missing 0 path="/gone/r.png"
+ev missing_file_replace slideshow#1 new=@null
+ev destroy image_source#5[/gone/r.png]
+ev tr_size fade_transition#2 20x20
+ev tr_align fade_transition#2 0
+ev tr_scale fade_transition#2 1
+ev tr_start fade_transition#2 mode=0 ms=700 dest=image_source#3[/s/a.png] -> ignored
+ev signal media_started slideshow#1
+tick 0 clock=48000003
+state slideshow1 behavior=2 manual=0 randomize=0 loop=1 hide=0 use_cut=0 paused=0 stop=0 restart_on_activate=0 pause_on_deactivate=0 slide_time=8.69999981 tr_speed=700 tr_name=fade_transition cur_item=0 elapsed=0.0160000008 cx=20 cy=20 mem_usage=2000 state=1 transition=fade_transition#2
+state   file 0 /s/a.png image_source#3[/s/a.png]
+state   file 1 /s/b.png image_source#6[/s/b.png]

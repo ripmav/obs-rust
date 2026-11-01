@@ -1,0 +1,46 @@
+fopen a null
+fopen a null
+fopen a null
+fopen a null
+fopen a ok
+fwrite a 5
+fclose a 0
+info one.txt file size=5 fnv=4f9f2cab
+fopen a ok
+fwrite a 5
+fclose a 0
+cat one.txt size=10 hex=68656c6c6f2d6d6f7265
+fopen a ok
+fread a 10 hex=68656c6c6f2d6d6f7265
+fwrite a 0
+fclose a 0
+fopen a ok
+fwrite a 2
+fclose a 0
+cat one.txt size=10 hex=48456c6c6f2d6d6f7265
+fopen a ok
+fclose a 0
+info one.txt file size=0 fnv=811c9dc5
+fopen a ok
+fwrite a 3
+fseeki a rc=0
+fread a 3 hex=616263
+fclose a 0
+fopen a null
+mkdir d 0
+fopen a null
+wfopen a ok
+fwrite a 4
+fclose a 0
+ls . 5 end_repeat=1
+  "." d
+  ".." d
+  "d" d
+  "one.txt" f
+  "w\xc3\xa9.txt" f
+wfopen_cp a ok
+fclose a 0
+wfopen_cp a null
+wfopen_cp a null
+wfopen a null
+wfopen a null

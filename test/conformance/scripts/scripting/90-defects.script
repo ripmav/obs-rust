@@ -1,0 +1,8 @@
+# Reference defects, recorded as informational lines ("info_"): not compared by a conforming runner.
+# D-1: obs_scripting_load after obs_scripting_unload leaves the deferred-call queue permanently shut,
+#      so every later deferred call is dropped. Required behaviour: "completed".
+load
+defer_try_wait
+unload
+load
+defer_try_wait info

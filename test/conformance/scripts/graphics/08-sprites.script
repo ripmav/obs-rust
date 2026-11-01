@@ -1,0 +1,46 @@
+# gs_draw_sprite / gs_draw_quadf / gs_draw_sprite_subregion: sprite geometry comes from the three
+# frontend-owned vertex buffers created at init (right after the device #1 and the immediate buffer #2:
+# sprite = #3, subregion = #4, flipped = #5); the matrix stack carries the size (shown as world= at draw time).
+trace 0
+gs_create g
+gs_enter_context g
+trace 1
+gs_texture_create 64 32 GS_RGBA 1 0 > t
+gs_texture_create 64 32 GS_RGBA 1 0 > rect
+ret gs_texture_is_rect 0
+echo == plain sprite: scale matrix, no index buffer, sprite vertex buffer, tristrip draw
+gs_draw_sprite t 0 0 0
+gs_matrix_get
+echo == explicit size overrides the texture size; flip selects the flipped buffer
+gs_draw_sprite t 0 10 20
+gs_draw_sprite t GS_FLIP_V 10 20
+gs_draw_sprite t GS_FLIP_U 0 0
+gs_draw_sprite t "GS_FLIP_U|GS_FLIP_V" 0 0
+echo == quad without a texture needs both dimensions
+gs_draw_quadf - 0 100 50
+gs_draw_quadf - 0 0 50
+gs_draw_quadf - 0 100 0
+gs_draw_quadf - 0 0 0
+echo == quad with float size and texture
+gs_draw_quadf t 0 2.5 3.5
+gs_draw_quadf t 0 0 7
+echo == rectangle textures build UVs in texel units in the subregion buffer
+ret gs_texture_is_rect 1
+gs_draw_sprite rect 0 0 0
+gs_draw_sprite rect GS_FLIP_U 0 0
+gs_draw_sprite rect "GS_FLIP_U|GS_FLIP_V" 8 4
+ret gs_texture_is_rect 0
+echo == non-2D textures are refused
+gs_cubetexture_create 16 GS_RGBA 1 0 > cube
+gs_draw_sprite cube 0 0 0
+gs_draw_quadf cube 0 1 1
+echo == subregion covering the whole texture falls back to a plain sprite
+gs_draw_sprite_subregion t 0 0 0 64 32
+echo == subregion: UVs are the region divided by the texture size, flip swaps them
+gs_draw_sprite_subregion t 0 16 8 32 16
+gs_draw_sprite_subregion t GS_FLIP_U 16 8 32 16
+gs_draw_sprite_subregion t GS_FLIP_V 16 8 32 16
+echo == subregion on a cube texture is refused
+gs_draw_sprite_subregion cube 0 0 0 1 1
+echo == NULL texture for a subregion: size lookups return 0 (debug logs) so the sprite is refused
+gs_draw_sprite_subregion - 0 0 0 0 0

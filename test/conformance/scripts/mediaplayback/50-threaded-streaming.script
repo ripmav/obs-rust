@@ -1,0 +1,24 @@
+# The real threaded public API (media_playback_*) on the streaming path, with the fake clock and a fake sleep that
+# advances it. Output is the queue of everything the media thread did, printed after the thread went quiet.
+# t_wait N waits until N callback events happened in total; t_wait_stop N until the Nth stop callback.
+media th 160000 0
+video 1 1000 16 16 yuv420p frames=4
+audio 1 1000 1000 1 u8
+pkt 0 0 fdur=40
+pkt 1 0 samples=40
+pkt 0 40 fdur=40
+pkt 1 40 samples=40
+pkt 0 80 fdur=40
+pkt 1 80 samples=40
+pkt 0 120 fdur=40
+pkt 1 120 samples=40
+endmedia
+clock 1000000000
+pix off
+t_create th local=1
+echo the initial preload frame (event 1) means the thread has finished starting
+t_wait 1
+t_play 0
+t_wait_stop 1
+t_query
+t_destroy

@@ -1,0 +1,28 @@
+# S-045 second stage: when the queue exceeds pframe_drop_threshold, priority 3 is required (P-frames are dropped too).
+reset
+codec 0 h264
+set active 1
+# B threshold very large so only the P stage can trigger
+set drop_threshold_usec 5000000
+set pframe_drop_threshold_usec 900000
+pkt video 0 3 1
+pkt video 100000 2 0
+pkt video 200000 2 0
+pkt video 300000 2 0
+pkt video 400000 2 0
+pkt video 500000 2 0
+pkt video 1000000 2 0
+queue
+# the check runs with the previous last_dts (1000000): 1000000-100000 = 900000 is NOT > 900000
+pkt video 1100000 2 0
+queue
+# 1100000-100000 = 1000000 > 900000: drop everything below 3
+pkt video 1200000 2 0
+queue
+state
+# min_priority 3: only priority >= 3 packets are accepted; accepting one resets min_priority to 0
+pkt video 1300000 2 0
+pkt video 1400000 3 0
+state
+pkt video 1500000 2 0
+state

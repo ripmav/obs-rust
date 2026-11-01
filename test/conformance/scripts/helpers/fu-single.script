@@ -1,0 +1,12 @@
+# update_info_create_single(): fetch ONE url and hand the bytes to the callback; nothing is
+# written to disk (CORE). The callback sees name = the URL, version = 0 and a buffer size that
+# includes the terminating NUL. An empty body (first byte NUL) or a failed request skips the
+# callback.
+fu_http http://x/single.txt 200 "single-file-body"
+fu_http http://x/empty.txt 200 ""
+fu_http http://x/missing.txt 404 "nope"
+fu_confirm accept
+fu_single http://x/single.txt
+fu_single http://x/empty.txt
+fu_single http://x/missing.txt
+fu_single http://x/unregistered.txt

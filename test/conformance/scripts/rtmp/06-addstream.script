@@ -1,0 +1,18 @@
+# RTMP_AddStream: playpath rewriting + stream table (R25). The 9th stream overflows the
+# fixed table of RTMP_MAX_STREAMS (8) entries in the reference (D-3).
+new
+addstream live_key
+addstream clip.mp4
+addstream -
+state
+new
+addstream s1
+addstream s2
+addstream s3
+addstream s4
+addstream s5
+addstream s6
+addstream s7
+addstream s8
+state
+ignore addstream s9

@@ -1,0 +1,91 @@
+> v4l2-pack 1920 1080
+pack 8246337209400
+> v4l2-pack 1 30
+pack 4294967326
+> v4l2-pack 0 0
+pack 0
+> v4l2-pack -1 5
+pack -4294967291
+> v4l2-pack 0 70000
+pack 70000
+> v4l2-pack 1 -1
+pack 8589934591
+> v4l2-unpack 8246337209400
+unpack 1920 1080
+> v4l2-unpack 4294967326
+unpack 1 30
+> v4l2-unpack 83886800
+unpack 1280 720
+> v4l2-unpack 30
+unpack 0 30
+> v4l2-unpack 70000
+unpack 1 4464
+> v4l2-unpack 0
+unpack 0 0
+> v4l2-unpack -1
+unpack -1 -1
+> v4l2-obsfmt YUYV
+obsfmt YUY2
+> v4l2-obsfmt YVYU
+obsfmt YVYU
+> v4l2-obsfmt UYVY
+obsfmt UYVY
+> v4l2-obsfmt NV12
+obsfmt NV12
+> v4l2-obsfmt YU12
+obsfmt I420
+> v4l2-obsfmt YV12
+obsfmt I420
+> v4l2-obsfmt XR24
+obsfmt BGRX
+> v4l2-obsfmt AR24
+obsfmt BGRA
+> v4l2-obsfmt BGR3
+obsfmt BGR3
+> v4l2-obsfmt RGB3
+obsfmt NONE
+> v4l2-obsfmt MJPG
+obsfmt NONE
+> v4l2-obsfmt H264
+obsfmt NONE
+> v4l2-obsfmt 0
+obsfmt NONE
+> v4l2-tables
+framesize 160x120
+framesize 320x240
+framesize 480x320
+framesize 640x480
+framesize 800x600
+framesize 1024x768
+framesize 1280x960
+framesize 1440x1050
+framesize 1440x1080
+framesize 1600x1200
+framesize 640x360
+framesize 960x540
+framesize 1280x720
+framesize 1600x900
+framesize 1920x1080
+framesize 1920x1200
+framesize 2560x1440
+framesize 3840x2160
+framesize 2560x1080
+framesize 3440x1440
+framesize 5120x2160
+framesize 432x520
+framesize 480x320
+framesize 480x530
+framesize 486x440
+framesize 576x310
+framesize 576x520
+framesize 576x570
+framesize 720x576
+framesize 1024x576
+framerate 1/60
+framerate 1/50
+framerate 1/30
+framerate 1/25
+framerate 1/20
+framerate 1/15
+framerate 1/10
+framerate 1/5

@@ -1,0 +1,86 @@
+# Technique / multiplier selection of crop_filter for every (source colour space, current colour space) pair; SDR white level 300.
+sdr_white 300
+source T 1920 1080 1920 1080 SRGB video
+source P 1920 1080 1920 1080 SRGB video
+filter a crop_filter 0 @null T P
+tick a 0.016
+echo source=SRGB current=SRGB
+srcspace T SRGB
+space SRGB
+render a
+echo source=SRGB current=SRGB_16F
+srcspace T SRGB
+space SRGB_16F
+render a
+echo source=SRGB current=709_EXTENDED
+srcspace T SRGB
+space 709_EXTENDED
+render a
+echo source=SRGB current=709_SCRGB
+srcspace T SRGB
+space 709_SCRGB
+render a
+echo source=SRGB_16F current=SRGB
+srcspace T SRGB_16F
+space SRGB
+render a
+echo source=SRGB_16F current=SRGB_16F
+srcspace T SRGB_16F
+space SRGB_16F
+render a
+echo source=SRGB_16F current=709_EXTENDED
+srcspace T SRGB_16F
+space 709_EXTENDED
+render a
+echo source=SRGB_16F current=709_SCRGB
+srcspace T SRGB_16F
+space 709_SCRGB
+render a
+echo source=709_EXTENDED current=SRGB
+srcspace T 709_EXTENDED
+space SRGB
+render a
+echo source=709_EXTENDED current=SRGB_16F
+srcspace T 709_EXTENDED
+space SRGB_16F
+render a
+echo source=709_EXTENDED current=709_EXTENDED
+srcspace T 709_EXTENDED
+space 709_EXTENDED
+render a
+echo source=709_EXTENDED current=709_SCRGB
+srcspace T 709_EXTENDED
+space 709_SCRGB
+render a
+echo source=709_SCRGB current=SRGB
+srcspace T 709_SCRGB
+space SRGB
+render a
+echo source=709_SCRGB current=SRGB_16F
+srcspace T 709_SCRGB
+space SRGB_16F
+render a
+echo source=709_SCRGB current=709_EXTENDED
+srcspace T 709_SCRGB
+space 709_EXTENDED
+render a
+echo source=709_SCRGB current=709_SCRGB
+srcspace T 709_SCRGB
+space 709_SCRGB
+render a
+echo colour-space negotiation of the filter itself (count preferred spaces, scan order, first match wins)
+srcspace T SRGB
+cs a 3 SRGB SRGB_16F 709_EXTENDED
+cs a 2 SRGB_16F SRGB
+cs a 1 709_EXTENDED
+cs a 0
+srcspace T SRGB_16F
+cs a 3 SRGB SRGB_16F 709_EXTENDED
+cs a 2 SRGB_16F SRGB
+cs a 1 709_EXTENDED
+cs a 0
+srcspace T 709_EXTENDED
+cs a 3 SRGB SRGB_16F 709_EXTENDED
+cs a 2 SRGB_16F SRGB
+cs a 1 709_EXTENDED
+cs a 0

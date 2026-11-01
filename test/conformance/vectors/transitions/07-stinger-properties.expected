@@ -1,0 +1,244 @@
+create st obs_stinger_transition
+  ev enter_graphics
+  ev effect_create file=@data/stinger_matte_transition.effect
+  ev leave_graphics
+  ev transition_enable_fixed 1 duration_ms=0
+  ev source_update st deferred (count 1)
+  instance=1
+  fields tp_is_frame=0 tp_ns=0 tp_frame=0 tp=0 a_mul=0 b_mul=0
+  fields duration_ns=0 duration_frames=0 transitioning=0 monitoring=0 fade_style=0
+  fields matte_enabled=0 layout=0 wf=0 hf=0 invert=0 texrender=0 rendered=0 media=0 matte_src=0 mix_fn=fadeinout
+props st
+  flags=1
+  prop path type=path desc="VideoFile" visible=1 enabled=1 pathtype=0 filter="FileFilter.VideoFiles (*.mp4 *.ts *.mov *.wmv *.flv *.mkv *.avi *.gif *.webm);;FileFilter.AllFiles (*.*)"
+  prop tp_type type=list desc="TransitionPointType" visible=1 enabled=1
+    list type=2 format=1 count=2
+    item 0 name="TransitionPointTypeTime" value=0
+    item 1 name="TransitionPointTypeFrame" value=1
+  prop hw_decode type=bool desc="HardwareDecode" visible=1 enabled=1
+  prop preload type=bool desc="PreloadVideoToRam" visible=1 enabled=1 long="PreloadVideoToRam.Description"
+  prop transition_point type=int desc="TransitionPoint" visible=1 enabled=1 min=0 max=120000 step=1 numtype=0 suffix=""
+  prop track_matte_enabled type=group desc="TrackMatteEnabled" visible=1 enabled=1 grouptype=2
+      prop track_matte_layout type=list desc="TrackMatteLayout" visible=1 enabled=1
+        list type=2 format=1 count=3
+        item 0 name="TrackMatteLayoutHorizontal" value=0
+        item 1 name="TrackMatteLayoutVertical" value=1
+        item 2 name="TrackMatteLayoutMask" value=3
+      prop track_matte_path type=path desc="TrackMatteVideoFile" visible=1 enabled=1 pathtype=0 filter="FileFilter.VideoFiles (*.mp4 *.ts *.mov *.wmv *.flv *.mkv *.avi *.gif *.webm);;FileFilter.AllFiles (*.*)"
+      prop invert_matte type=bool desc="InvertTrackMatte" visible=1 enabled=1
+  prop enable_monitoring type=bool desc="AudioMonitoring" visible=1 enabled=1
+  prop audio_fade_style type=list desc="AudioFadeStyle" visible=1 enabled=1
+    list type=2 format=1 count=2
+    item 0 name="AudioFadeStyle.FadeOutFadeIn" value=0
+    item 1 name="AudioFadeStyle.CrossFade" value=1
+props st (data=NULL)
+  flags=1
+  prop path type=path desc="VideoFile" visible=1 enabled=1 pathtype=0 filter="FileFilter.VideoFiles (*.mp4 *.ts *.mov *.wmv *.flv *.mkv *.avi *.gif *.webm);;FileFilter.AllFiles (*.*)"
+  prop tp_type type=list desc="TransitionPointType" visible=1 enabled=1
+    list type=2 format=1 count=2
+    item 0 name="TransitionPointTypeTime" value=0
+    item 1 name="TransitionPointTypeFrame" value=1
+  prop hw_decode type=bool desc="HardwareDecode" visible=1 enabled=1
+  prop preload type=bool desc="PreloadVideoToRam" visible=1 enabled=1 long="PreloadVideoToRam.Description"
+  prop transition_point type=int desc="TransitionPoint" visible=1 enabled=1 min=0 max=120000 step=1 numtype=0 suffix=""
+  prop track_matte_enabled type=group desc="TrackMatteEnabled" visible=1 enabled=1 grouptype=2
+      prop track_matte_layout type=list desc="TrackMatteLayout" visible=1 enabled=1
+        list type=2 format=1 count=3
+        item 0 name="TrackMatteLayoutHorizontal" value=0
+        item 1 name="TrackMatteLayoutVertical" value=1
+        item 2 name="TrackMatteLayoutMask" value=3
+      prop track_matte_path type=path desc="TrackMatteVideoFile" visible=1 enabled=1 pathtype=0 filter="FileFilter.VideoFiles (*.mp4 *.ts *.mov *.wmv *.flv *.mkv *.avi *.gif *.webm);;FileFilter.AllFiles (*.*)"
+      prop invert_matte type=bool desc="InvertTrackMatte" visible=1 enabled=1
+  prop enable_monitoring type=bool desc="AudioMonitoring" visible=1 enabled=1
+  prop audio_fade_style type=list desc="AudioFadeStyle" visible=1 enabled=1
+    list type=2 format=1 count=2
+    item 0 name="AudioFadeStyle.FadeOutFadeIn" value=0
+    item 1 name="AudioFadeStyle.CrossFade" value=1
+modify tp_type -> 1
+  prop path type=path desc="VideoFile" visible=1 enabled=1 pathtype=0 filter="FileFilter.VideoFiles (*.mp4 *.ts *.mov *.wmv *.flv *.mkv *.avi *.gif *.webm);;FileFilter.AllFiles (*.*)"
+  prop tp_type type=list desc="TransitionPointType" visible=1 enabled=1
+    list type=2 format=1 count=2
+    item 0 name="TransitionPointTypeTime" value=0
+    item 1 name="TransitionPointTypeFrame" value=1
+  prop hw_decode type=bool desc="HardwareDecode" visible=1 enabled=1
+  prop preload type=bool desc="PreloadVideoToRam" visible=1 enabled=1 long="PreloadVideoToRam.Description"
+  prop transition_point type=int desc="TransitionPoint" visible=1 enabled=1 min=0 max=120000 step=1 numtype=0 suffix=" ms"
+  prop track_matte_enabled type=group desc="TrackMatteEnabled" visible=1 enabled=1 grouptype=2
+      prop track_matte_layout type=list desc="TrackMatteLayout" visible=1 enabled=1
+        list type=2 format=1 count=3
+        item 0 name="TrackMatteLayoutHorizontal" value=0
+        item 1 name="TrackMatteLayoutVertical" value=1
+        item 2 name="TrackMatteLayoutMask" value=3
+      prop track_matte_path type=path desc="TrackMatteVideoFile" visible=1 enabled=1 pathtype=0 filter="FileFilter.VideoFiles (*.mp4 *.ts *.mov *.wmv *.flv *.mkv *.avi *.gif *.webm);;FileFilter.AllFiles (*.*)"
+      prop invert_matte type=bool desc="InvertTrackMatte" visible=1 enabled=1
+  prop enable_monitoring type=bool desc="AudioMonitoring" visible=1 enabled=1
+  prop audio_fade_style type=list desc="AudioFadeStyle" visible=1 enabled=1
+    list type=2 format=1 count=2
+    item 0 name="AudioFadeStyle.FadeOutFadeIn" value=0
+    item 1 name="AudioFadeStyle.CrossFade" value=1
+settings st
+  ev source_update st deferred (count 2)
+modify tp_type -> 1
+  prop path type=path desc="VideoFile" visible=1 enabled=1 pathtype=0 filter="FileFilter.VideoFiles (*.mp4 *.ts *.mov *.wmv *.flv *.mkv *.avi *.gif *.webm);;FileFilter.AllFiles (*.*)"
+  prop tp_type type=list desc="TransitionPointType" visible=1 enabled=1
+    list type=2 format=1 count=2
+    item 0 name="TransitionPointTypeTime" value=0
+    item 1 name="TransitionPointTypeFrame" value=1
+  prop hw_decode type=bool desc="HardwareDecode" visible=1 enabled=1
+  prop preload type=bool desc="PreloadVideoToRam" visible=1 enabled=1 long="PreloadVideoToRam.Description"
+  prop transition_point type=int desc="TransitionPointFrame" visible=1 enabled=1 min=0 max=120000 step=1 numtype=0 suffix=""
+  prop track_matte_enabled type=group desc="TrackMatteEnabled" visible=1 enabled=1 grouptype=2
+      prop track_matte_layout type=list desc="TrackMatteLayout" visible=1 enabled=1
+        list type=2 format=1 count=3
+        item 0 name="TrackMatteLayoutHorizontal" value=0
+        item 1 name="TrackMatteLayoutVertical" value=1
+        item 2 name="TrackMatteLayoutMask" value=3
+      prop track_matte_path type=path desc="TrackMatteVideoFile" visible=1 enabled=1 pathtype=0 filter="FileFilter.VideoFiles (*.mp4 *.ts *.mov *.wmv *.flv *.mkv *.avi *.gif *.webm);;FileFilter.AllFiles (*.*)"
+      prop invert_matte type=bool desc="InvertTrackMatte" visible=1 enabled=1
+  prop enable_monitoring type=bool desc="AudioMonitoring" visible=1 enabled=1
+  prop audio_fade_style type=list desc="AudioFadeStyle" visible=1 enabled=1
+    list type=2 format=1 count=2
+    item 0 name="AudioFadeStyle.FadeOutFadeIn" value=0
+    item 1 name="AudioFadeStyle.CrossFade" value=1
+modify track_matte_enabled -> 1
+  prop path type=path desc="VideoFile" visible=1 enabled=1 pathtype=0 filter="FileFilter.VideoFiles (*.mp4 *.ts *.mov *.wmv *.flv *.mkv *.avi *.gif *.webm);;FileFilter.AllFiles (*.*)"
+  prop tp_type type=list desc="TransitionPointType" visible=1 enabled=1
+    list type=2 format=1 count=2
+    item 0 name="TransitionPointTypeTime" value=0
+    item 1 name="TransitionPointTypeFrame" value=1
+  prop hw_decode type=bool desc="HardwareDecode" visible=1 enabled=1
+  prop preload type=bool desc="PreloadVideoToRam" visible=1 enabled=1 long="PreloadVideoToRam.Description"
+  prop transition_point type=int desc="TransitionPointFrame" visible=1 enabled=1 min=0 max=120000 step=1 numtype=0 suffix=""
+  prop track_matte_enabled type=group desc="TrackMatteEnabled" visible=1 enabled=1 grouptype=2
+      prop track_matte_layout type=list desc="TrackMatteLayout" visible=1 enabled=1
+        list type=2 format=1 count=3
+        item 0 name="TrackMatteLayoutHorizontal" value=0
+        item 1 name="TrackMatteLayoutVertical" value=1
+        item 2 name="TrackMatteLayoutMask" value=3
+      prop track_matte_path type=path desc="TrackMatteVideoFile" visible=1 enabled=1 pathtype=0 filter="FileFilter.VideoFiles (*.mp4 *.ts *.mov *.wmv *.flv *.mkv *.avi *.gif *.webm);;FileFilter.AllFiles (*.*)"
+      prop invert_matte type=bool desc="InvertTrackMatte" visible=1 enabled=1
+  prop enable_monitoring type=bool desc="AudioMonitoring" visible=1 enabled=1
+  prop audio_fade_style type=list desc="AudioFadeStyle" visible=1 enabled=1
+    list type=2 format=1 count=2
+    item 0 name="AudioFadeStyle.FadeOutFadeIn" value=0
+    item 1 name="AudioFadeStyle.CrossFade" value=1
+settings st
+  ev source_update st deferred (count 3)
+modify track_matte_enabled -> 1
+  prop path type=path desc="VideoFile" visible=1 enabled=1 pathtype=0 filter="FileFilter.VideoFiles (*.mp4 *.ts *.mov *.wmv *.flv *.mkv *.avi *.gif *.webm);;FileFilter.AllFiles (*.*)"
+  prop tp_type type=list desc="AudioTransitionPointType" visible=1 enabled=1
+    list type=2 format=1 count=2
+    item 0 name="TransitionPointTypeTime" value=0
+    item 1 name="TransitionPointTypeFrame" value=1
+  prop hw_decode type=bool desc="HardwareDecode" visible=1 enabled=1
+  prop preload type=bool desc="PreloadVideoToRam" visible=1 enabled=1 long="PreloadVideoToRam.Description"
+  prop transition_point type=int desc="TransitionPointFrame" visible=1 enabled=1 min=0 max=120000 step=1 numtype=0 suffix=""
+  prop track_matte_enabled type=group desc="TrackMatteEnabled" visible=1 enabled=1 grouptype=2
+      prop track_matte_layout type=list desc="TrackMatteLayout" visible=1 enabled=1
+        list type=2 format=1 count=3
+        item 0 name="TrackMatteLayoutHorizontal" value=0
+        item 1 name="TrackMatteLayoutVertical" value=1
+        item 2 name="TrackMatteLayoutMask" value=3
+      prop track_matte_path type=path desc="TrackMatteVideoFile" visible=1 enabled=1 pathtype=0 filter="FileFilter.VideoFiles (*.mp4 *.ts *.mov *.wmv *.flv *.mkv *.avi *.gif *.webm);;FileFilter.AllFiles (*.*)"
+      prop invert_matte type=bool desc="InvertTrackMatte" visible=1 enabled=1
+  prop enable_monitoring type=bool desc="AudioMonitoring" visible=1 enabled=1
+  prop audio_fade_style type=list desc="AudioFadeStyle" visible=1 enabled=1
+    list type=2 format=1 count=2
+    item 0 name="AudioFadeStyle.FadeOutFadeIn" value=0
+    item 1 name="AudioFadeStyle.CrossFade" value=1
+modify track_matte_layout -> 1
+  prop path type=path desc="VideoFile" visible=1 enabled=1 pathtype=0 filter="FileFilter.VideoFiles (*.mp4 *.ts *.mov *.wmv *.flv *.mkv *.avi *.gif *.webm);;FileFilter.AllFiles (*.*)"
+  prop tp_type type=list desc="AudioTransitionPointType" visible=1 enabled=1
+    list type=2 format=1 count=2
+    item 0 name="TransitionPointTypeTime" value=0
+    item 1 name="TransitionPointTypeFrame" value=1
+  prop hw_decode type=bool desc="HardwareDecode" visible=1 enabled=1
+  prop preload type=bool desc="PreloadVideoToRam" visible=1 enabled=1 long="PreloadVideoToRam.Description"
+  prop transition_point type=int desc="TransitionPointFrame" visible=1 enabled=1 min=0 max=120000 step=1 numtype=0 suffix=""
+  prop track_matte_enabled type=group desc="TrackMatteEnabled" visible=1 enabled=1 grouptype=2
+      prop track_matte_layout type=list desc="TrackMatteLayout" visible=1 enabled=1
+        list type=2 format=1 count=3
+        item 0 name="TrackMatteLayoutHorizontal" value=0
+        item 1 name="TrackMatteLayoutVertical" value=1
+        item 2 name="TrackMatteLayoutMask" value=3
+      prop track_matte_path type=path desc="TrackMatteVideoFile" visible=0 enabled=1 pathtype=0 filter="FileFilter.VideoFiles (*.mp4 *.ts *.mov *.wmv *.flv *.mkv *.avi *.gif *.webm);;FileFilter.AllFiles (*.*)"
+      prop invert_matte type=bool desc="InvertTrackMatte" visible=1 enabled=1
+  prop enable_monitoring type=bool desc="AudioMonitoring" visible=1 enabled=1
+  prop audio_fade_style type=list desc="AudioFadeStyle" visible=1 enabled=1
+    list type=2 format=1 count=2
+    item 0 name="AudioFadeStyle.FadeOutFadeIn" value=0
+    item 1 name="AudioFadeStyle.CrossFade" value=1
+settings st
+  ev source_update st deferred (count 4)
+modify track_matte_layout -> 1
+  prop path type=path desc="VideoFile" visible=1 enabled=1 pathtype=0 filter="FileFilter.VideoFiles (*.mp4 *.ts *.mov *.wmv *.flv *.mkv *.avi *.gif *.webm);;FileFilter.AllFiles (*.*)"
+  prop tp_type type=list desc="AudioTransitionPointType" visible=1 enabled=1
+    list type=2 format=1 count=2
+    item 0 name="TransitionPointTypeTime" value=0
+    item 1 name="TransitionPointTypeFrame" value=1
+  prop hw_decode type=bool desc="HardwareDecode" visible=1 enabled=1
+  prop preload type=bool desc="PreloadVideoToRam" visible=1 enabled=1 long="PreloadVideoToRam.Description"
+  prop transition_point type=int desc="TransitionPointFrame" visible=1 enabled=1 min=0 max=120000 step=1 numtype=0 suffix=""
+  prop track_matte_enabled type=group desc="TrackMatteEnabled" visible=1 enabled=1 grouptype=2
+      prop track_matte_layout type=list desc="TrackMatteLayout" visible=1 enabled=1
+        list type=2 format=1 count=3
+        item 0 name="TrackMatteLayoutHorizontal" value=0
+        item 1 name="TrackMatteLayoutVertical" value=1
+        item 2 name="TrackMatteLayoutMask" value=3
+      prop track_matte_path type=path desc="TrackMatteVideoFile" visible=1 enabled=1 pathtype=0 filter="FileFilter.VideoFiles (*.mp4 *.ts *.mov *.wmv *.flv *.mkv *.avi *.gif *.webm);;FileFilter.AllFiles (*.*)"
+      prop invert_matte type=bool desc="InvertTrackMatte" visible=1 enabled=1
+  prop enable_monitoring type=bool desc="AudioMonitoring" visible=1 enabled=1
+  prop audio_fade_style type=list desc="AudioFadeStyle" visible=1 enabled=1
+    list type=2 format=1 count=2
+    item 0 name="AudioFadeStyle.FadeOutFadeIn" value=0
+    item 1 name="AudioFadeStyle.CrossFade" value=1
+settings st
+  ev source_update st deferred (count 5)
+modify track_matte_layout -> 1
+  prop path type=path desc="VideoFile" visible=1 enabled=1 pathtype=0 filter="FileFilter.VideoFiles (*.mp4 *.ts *.mov *.wmv *.flv *.mkv *.avi *.gif *.webm);;FileFilter.AllFiles (*.*)"
+  prop tp_type type=list desc="AudioTransitionPointType" visible=1 enabled=1
+    list type=2 format=1 count=2
+    item 0 name="TransitionPointTypeTime" value=0
+    item 1 name="TransitionPointTypeFrame" value=1
+  prop hw_decode type=bool desc="HardwareDecode" visible=1 enabled=1
+  prop preload type=bool desc="PreloadVideoToRam" visible=1 enabled=1 long="PreloadVideoToRam.Description"
+  prop transition_point type=int desc="TransitionPointFrame" visible=1 enabled=1 min=0 max=120000 step=1 numtype=0 suffix=""
+  prop track_matte_enabled type=group desc="TrackMatteEnabled" visible=1 enabled=1 grouptype=2
+      prop track_matte_layout type=list desc="TrackMatteLayout" visible=1 enabled=1
+        list type=2 format=1 count=3
+        item 0 name="TrackMatteLayoutHorizontal" value=0
+        item 1 name="TrackMatteLayoutVertical" value=1
+        item 2 name="TrackMatteLayoutMask" value=3
+      prop track_matte_path type=path desc="TrackMatteVideoFile" visible=0 enabled=1 pathtype=0 filter="FileFilter.VideoFiles (*.mp4 *.ts *.mov *.wmv *.flv *.mkv *.avi *.gif *.webm);;FileFilter.AllFiles (*.*)"
+      prop invert_matte type=bool desc="InvertTrackMatte" visible=1 enabled=1
+  prop enable_monitoring type=bool desc="AudioMonitoring" visible=1 enabled=1
+  prop audio_fade_style type=list desc="AudioFadeStyle" visible=1 enabled=1
+    list type=2 format=1 count=2
+    item 0 name="AudioFadeStyle.FadeOutFadeIn" value=0
+    item 1 name="AudioFadeStyle.CrossFade" value=1
+missing_files count=0
+settings st
+  ev source_update st deferred (count 6)
+missing_files count=2
+  file 0 path="/nonexistent/stinger.mov"
+  file 1 path="/nonexistent/matte.mov"
+settings st
+  ev source_update st deferred (count 7)
+missing_files count=1
+  file 0 path="/nonexistent/m.mov"
+settings st
+  ev source_update st deferred (count 8)
+missing_files count=2
+  file 0 path="/nonexistent/stinger.mov"
+  file 1 path="/nonexistent/m.mov"
+  ev source_update st deferred (count 9)
+  fixed 0 path="/new/stinger.mov" track_matte_path="/nonexistent/m.mov"
+settings st
+  ev source_update st deferred (count 10)
+missing_files count=2
+  file 0 path="/nonexistent/s.mov"
+  file 1 path="/nonexistent/m.mov"
+  ev source_update st deferred (count 11)
+  fixed 1 path="/nonexistent/s.mov" track_matte_path="/new/matte.mov"
+  ev source_update st deferred (count 12)
+  fixed 0 path="/new/s2.mov" track_matte_path="/new/matte.mov"

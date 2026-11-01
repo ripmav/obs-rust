@@ -1,0 +1,22 @@
+pl plane 0 0 1 0 2
+pl plane 0 0 -1 0 -2
+pl plane 0 0 1 0 2
+pl plane 0 0 0 0 0
+p plane 0 1 0 0 -3
+p2 plane 0 0 1 0 4
+p3 plane 0 1 0 0 -3
+h hit 1 5
+h hit 1 -5
+h hit 0 0
+h hit 1 2.5
+h hit 0 0
+h hit 1 -50000
+h hit 1 -45454.5469
+h hit 1 0.75
+h hit 0 -7777
+h hit 1 0.5
+h hit 1 0
+h hit 1 1
+h hit 0 -7777
+h hit 1 0
+h hit 0 -7777

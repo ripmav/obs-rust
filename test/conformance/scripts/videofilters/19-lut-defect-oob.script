@@ -1,0 +1,21 @@
+# DEFECT D-2: LUT images whose tile grid is wider than tall (4096x64, 2048x128, 1024x256) make the tile row index
+# (z / macro_height) * 64 run past the last image row: the reference reads beyond the pixel buffer. The fake image
+# buffer ends at a PROT_NONE page, so the reference crashes. A conforming implementation MUST NOT read out of
+# bounds (spec S-028 D-2 states the required behaviour: reject the image, no texture, filter skipped).
+source T 1920 1080 1920 1080 SRGB video
+source P 1920 1080 1920 1080 SRGB video
+image lut4096x64.png 4096 64 RGBA 1 0
+image lut2048x128.png 2048 128 RGBA 1 0
+image lut1024x256.png 1024 256 RGBA 1 0
+data d1
+dset d1 image_path str lut4096x64.png
+filter a clut_filter 0 d1 T P
+data d2
+dset d2 image_path str lut2048x128.png
+filter b clut_filter 0 d2 T P
+data d3
+dset d3 image_path str lut1024x256.png
+filter c clut_filter 0 d3 T P
+try tick a 0.016
+try tick b 0.016
+try tick c 0.016

@@ -1,0 +1,42 @@
+# CORE/QUIRK. rate_control_modified of obs-nvenc, driven through props_apply. Comparisons are
+# CASE-SENSITIVE (strcmp) against "CQP", "VBR", "CQVBR", "lossless". The default rate control
+# is the lowercase "cbr" which matches none of them (so all-false flags => same as CBR).
+# A lowercase "vbr"/"cqp" does NOT trigger the VBR/CQP layout (Q-7).
+nv_caps 4 3 2 1 1 1 1
+nv_props h264 P
+data D
+nv_defaults h264 D
+echo default-cbr
+props_apply P D
+props_vis P
+echo CBR-uppercase
+set D rate_control str CBR
+props_apply P D
+props_vis P
+echo CQP
+set D rate_control str CQP
+props_apply P D
+props_vis P
+echo VBR
+set D rate_control str VBR
+props_apply P D
+props_vis P
+echo CQVBR
+set D rate_control str CQVBR
+props_apply P D
+props_vis P
+echo lossless
+set D rate_control str lossless
+props_apply P D
+props_vis P
+echo case-quirk-lowercase-vbr-and-cqp-do-nothing
+set D rate_control str vbr
+props_apply P D
+props_vis P
+set D rate_control str cqp
+props_apply P D
+props_vis P
+echo uppercase-LOSSLESS-is-not-lossless
+set D rate_control str LOSSLESS
+props_apply P D
+props_vis P

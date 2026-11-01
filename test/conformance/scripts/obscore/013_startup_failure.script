@@ -1,0 +1,12 @@
+# Startup failure path: if the hotkey subsystem cannot initialise, obs_startup returns false and the
+# core is torn down again (obs_shutdown is called internally), leaving the process uninitialised.
+trace sub on
+fake hotkey_platform_fail 1
+startup en-US -
+initialized
+fake hotkey_platform_fail 0
+trace sub off
+# a later startup succeeds normally
+startup en-US -
+state
+shutdown

@@ -1,0 +1,24 @@
+copy abcdef
+remove 0 6
+dump
+copy abcdef
+resize 3
+dump
+resize 10
+info
+terminated
+resize 0
+dump
+reserve 20
+info
+copy abc
+reserve 20
+dump
+reserve 2
+dump
+reserve 0
+dump
+ensure 10
+dump
+ensure 100
+dump

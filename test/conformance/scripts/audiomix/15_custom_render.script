@@ -1,0 +1,21 @@
+# audio_render sources: ok/fail, reported timestamp, mixer mask zeroing, volume application.
+init 48000 2
+clock 1000000000
+timeline 1000000000
+source s custom_audio
+video_mix 1
+channel 0 0 s
+set s active 1
+custom s 1 tick 0.5
+run 1 1
+set s volume 0.5
+run 1 3
+custom s 0 tick 0.5
+run 1 1
+state s
+custom s 1 0 0.5
+run 1 1
+state s
+set s mixers 2
+custom s 1 tick 0.5
+run 1 3

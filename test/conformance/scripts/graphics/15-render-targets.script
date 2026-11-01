@@ -1,0 +1,58 @@
+# Render targets, depth/stencil, colour space, sRGB switches, copies and clears are thin pass-throughs.
+trace 0
+gs_create g
+gs_enter_context g
+trace 1
+gs_texture_create 16 16 GS_RGBA 1 GS_RENDER_TARGET > rt
+gs_zstencil_create 16 16 GS_Z24_S8 > zs
+echo == initially no target
+gs_get_render_target
+gs_get_zstencil_target
+gs_set_render_target rt zs
+gs_get_render_target
+gs_get_zstencil_target
+gs_set_render_target_with_color_space rt - GS_CS_709_SCRGB
+gs_get_zstencil_target
+gs_set_render_target - -
+gs_get_render_target
+gs_cubetexture_create 16 GS_RGBA 1 GS_RENDER_TARGET > cube
+gs_set_cube_render_target cube 3 zs
+echo == colour space comes from the backend
+ret device_get_color_space 3
+gs_get_color_space
+ret device_get_color_space 0
+gs_get_color_space
+echo == framebuffer sRGB is stored by the backend; linear sRGB is a frontend flag (returns previous)
+gs_framebuffer_srgb_enabled
+gs_enable_framebuffer_srgb 1
+gs_framebuffer_srgb_enabled
+gs_get_linear_srgb
+gs_set_linear_srgb 1
+gs_set_linear_srgb 1
+gs_get_linear_srgb
+gs_set_linear_srgb 0
+echo == copy requires both textures; region copy requires only dst (src may be NULL)
+gs_texture_create 16 16 GS_RGBA 1 0 > other
+gs_copy_texture rt other
+gs_copy_texture rt -
+gs_copy_texture - other
+gs_copy_texture_region rt 1 2 other 3 4 5 6
+gs_copy_texture_region rt 1 2 - 3 4 5 6
+gs_copy_texture_region - 1 2 other 3 4 5 6
+echo == stage_texture has no NULL checks of its own
+gs_stagesurface_create 16 16 GS_RGBA > st
+gs_stage_texture st rt
+gs_stage_texture - -
+echo == clear
+gs_clear "GS_CLEAR_COLOR|GS_CLEAR_DEPTH" 0.25 0.5 0.75 1 1 0
+gs_clear GS_CLEAR_STENCIL null 0 7
+echo == frame cycle
+gs_begin_frame
+gs_begin_scene
+gs_draw GS_TRIS 0 6
+gs_end_scene
+gs_flush
+gs_is_present_ready
+ret device_is_present_ready 1
+gs_is_present_ready
+gs_present

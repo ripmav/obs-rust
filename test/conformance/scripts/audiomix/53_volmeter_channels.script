@@ -1,0 +1,21 @@
+# Channel handling: nr_channels counts non-null planes (max 8); unused channels report peak 0 -> -inf dB; volmeter channel count clamps source speakers to the output speakers.
+init 48000 2
+clock 1000000000
+source a input
+meter_new 0 0
+meter_attach 0 a
+meter_cb 0 add
+meter_channels 0
+meter_feed 0 a 0 1 8 const 0.5
+meter_feed 0 a 0 2 8 const 0.5
+meter_feed 0 a 0 8 8 const 0.5
+output a 48000 2 1024 1000000000 const 0.1
+meter_channels 0
+init 48000 6
+source b input
+meter_new 1 0
+meter_channels 1
+meter_attach 1 b
+meter_channels 1
+output b 48000 6 1024 1000000000 const 0.1
+meter_channels 1

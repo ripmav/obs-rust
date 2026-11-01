@@ -1,0 +1,126 @@
+fork create
+create w wipe_transition
+  ev enter_graphics
+  ev effect_create file=@data/luma_wipe_transition.effect
+  ev leave_graphics
+  ev enter_graphics
+  ev image_free loaded=0
+  ev leave_graphics
+  ev image_init file=@data/luma_wipes/linear-h.png alpha_mode=0
+  ev   -> loaded 720x576 depth=8 color_type=0
+  ev enter_graphics
+  ev image_init_texture -> texture 301
+  ev leave_graphics
+  instance=1
+  fields invert=0 softness=0.0299999993 luma_loaded=1 luma_size=720x576 luma_tex=1 wipes_list=0
+create st obs_stinger_transition
+  ev enter_graphics
+  ev effect_create file=@data/stinger_matte_transition.effect
+  ev leave_graphics
+  ev transition_enable_fixed 1 duration_ms=0
+  ev source_update st deferred (count 1)
+  instance=1
+  fields tp_is_frame=0 tp_ns=0 tp_frame=0 tp=0 a_mul=0 b_mul=0
+  fields duration_ns=0 duration_frames=0 transitioning=0 monitoring=0 fade_style=0
+  fields matte_enabled=0 layout=0 wf=0 hf=0 invert=0 texrender=0 rendered=0 media=0 matte_src=0 mix_fn=fadeinout
+fork stop
+stop st
+  ev proc_call (null handler) preload_first_frame -> false
+  fields tp_is_frame=0 tp_ns=0 tp_frame=0 tp=0 a_mul=0 b_mul=0
+  fields duration_ns=0 duration_frames=0 transitioning=0 monitoring=0 fade_style=0
+  fields matte_enabled=0 layout=0 wf=0 hf=0 invert=0 texrender=0 rendered=0 media=0 matte_src=0 mix_fn=fadeinout
+fork start
+start st
+  fields tp_is_frame=0 tp_ns=0 tp_frame=0 tp=0 a_mul=0 b_mul=0
+  fields duration_ns=0 duration_frames=0 transitioning=1 monitoring=0 fade_style=0
+  fields matte_enabled=0 layout=0 wf=0 hf=0 invert=0 texrender=0 rendered=0 media=0 matte_src=0 mix_fn=fadeinout
+create w wipe_transition
+  ev enter_graphics
+  ev effect_create file=@data/luma_wipe_transition.effect
+  ev leave_graphics
+  ev enter_graphics
+  ev image_free loaded=0
+  ev leave_graphics
+  ev image_init file=@data/luma_wipes/linear-h.png alpha_mode=0
+  ev   -> loaded 720x576 depth=8 color_type=0
+  ev enter_graphics
+  ev image_init_texture -> texture 301
+  ev leave_graphics
+  instance=1
+  fields invert=0 softness=0.0299999993 luma_loaded=1 luma_size=720x576 luma_tex=1 wipes_list=1
+fork props
+props w (data=NULL)
+  flags=0
+  prop luma_image type=list desc="LumaWipe.Image" visible=1 enabled=1
+    list type=2 format=3 count=0
+  prop luma_softness type=float desc="LumaWipe.Softness" visible=1 enabled=1 min=0 max=1 step=0.05 numtype=0
+  prop luma_invert type=bool desc="LumaWipe.Invert" visible=1 enabled=1
+create st obs_stinger_transition
+  ev enter_graphics
+  ev effect_create file=@data/stinger_matte_transition.effect
+  ev leave_graphics
+  ev transition_enable_fixed 1 duration_ms=0
+  ev source_update st deferred (count 1)
+  instance=1
+  fields tp_is_frame=0 tp_ns=0 tp_frame=0 tp=0 a_mul=0 b_mul=0
+  fields duration_ns=0 duration_frames=0 transitioning=0 monitoring=0 fade_style=0
+  fields matte_enabled=0 layout=0 wf=0 hf=0 invert=0 texrender=0 rendered=0 media=0 matte_src=0 mix_fn=fadeinout
+fork tick
+tick st
+  ev source_create_private media#1 id=ffmpeg_source name="st (Stinger)"
+  ev   setting local_file="/m/s.mov"
+  ev   setting hw_decode=1
+  ev   setting looping=0
+  ev   setting full_decode=0
+  ev   setting is_stinger=1
+  ev   setting is_track_matte=0
+  ev source_set_monitoring media#1 0
+  fields tp_is_frame=0 tp_ns=18446744073708551616 tp_frame=0 tp=0 a_mul=0 b_mul=0
+  fields duration_ns=0 duration_frames=0 transitioning=0 monitoring=0 fade_style=0
+  fields matte_enabled=0 layout=0 wf=2 hf=1 invert=0 texrender=0 rendered=0 media=1 matte_src=0 mix_fn=fadeinout
+settings st
+  ev source_update st deferred (count 2)
+fork tick
+tick st
+  ev source_create_private media#1 id=ffmpeg_source name="st (Stinger)"
+  ev   setting local_file="/m/s.mov"
+  ev   setting hw_decode=1
+  ev   setting looping=0
+  ev   setting full_decode=0
+  ev   setting is_stinger=1
+  ev   setting is_track_matte=0
+  ev source_set_monitoring media#1 0
+  fields tp_is_frame=0 tp_ns=1000000 tp_frame=0 tp=0 a_mul=0 b_mul=0
+  fields duration_ns=0 duration_frames=0 transitioning=0 monitoring=0 fade_style=0
+  fields matte_enabled=0 layout=0 wf=2 hf=1 invert=0 texrender=0 rendered=0 media=1 matte_src=0 mix_fn=fadeinout
+create st obs_stinger_transition
+  ev enter_graphics
+  ev effect_create file=@data/stinger_matte_transition.effect
+  ev leave_graphics
+  ev transition_enable_fixed 1 duration_ms=0
+  ev source_update st deferred (count 1)
+  instance=1
+  fields tp_is_frame=0 tp_ns=0 tp_frame=0 tp=0 a_mul=0 b_mul=0
+  fields duration_ns=0 duration_frames=0 transitioning=0 monitoring=0 fade_style=0
+  fields matte_enabled=0 layout=0 wf=0 hf=0 invert=0 texrender=0 rendered=0 media=0 matte_src=0 mix_fn=fadeinout
+tick st
+  ev source_create_private media#1 id=ffmpeg_source name="st (Stinger)"
+  ev   setting local_file="/m/s.mov"
+  ev   setting hw_decode=1
+  ev   setting looping=0
+  ev   setting full_decode=0
+  ev   setting is_stinger=1
+  ev   setting is_track_matte=0
+  ev source_set_monitoring media#1 0
+  fields tp_is_frame=0 tp_ns=1000000 tp_frame=0 tp=0 a_mul=0 b_mul=0
+  fields duration_ns=0 duration_frames=0 transitioning=0 monitoring=0 fade_style=0
+  fields matte_enabled=0 layout=0 wf=2 hf=1 invert=0 texrender=0 rendered=0 media=1 matte_src=0 mix_fn=fadeinout
+start st
+  ev proc_call media#1 get_duration
+  ev proc_call media#1 get_nb_frames
+  ev transition_enable_fixed 1 duration_ms=705032954
+  ev add_active_child st <- media#1
+  fields tp_is_frame=0 tp_ns=1000000 tp_frame=0 tp=0.00100000005 a_mul=999.999939 b_mul=1.001001
+  fields duration_ns=5000000250000000 duration_frames=1 transitioning=1 monitoring=0 fade_style=0
+  fields matte_enabled=0 layout=0 wf=2 hf=1 invert=0 texrender=0 rendered=0 media=1 matte_src=0 mix_fn=fadeinout
+  source media#1 name="st (Stinger)" id=ffmpeg_source refs=1 active_child_refs=1 muted=0 monitoring=0

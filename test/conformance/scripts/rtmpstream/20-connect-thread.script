@@ -1,0 +1,53 @@
+# S-045 connect_thread(): results signalled to the output.
+reset
+aenc 0 aac 160
+venc 0 h264 2500
+service rtmp://h/a KEY - -
+# success
+connect_thread
+# no service: BAD_PATH(-1); QUIRK Q-10: 'connecting' is left set on this early return
+reset
+no_service
+connect_thread
+# connect failure is signalled with the try_connect code
+reset
+aenc 0 aac 160
+venc 0 h264 2500
+service rtmp://h/a KEY - -
+fake connect_ok 0
+fake connect_err 113
+connect_thread
+# empty url from the service -> try_connect returns BAD_PATH
+reset
+venc 0 h264 2500
+service "" KEY - -
+connect_thread
+# HDR (2100 PQ=4, HLG=5) is refused for AV1 (the codec check is "not h264 and not hevc")
+reset
+aenc 0 aac 160
+venc 0 av1 2500
+service rtmp://h/a KEY - -
+colorspace 4 18
+connect_thread
+colorspace 5 18
+connect_thread
+# HDR with hevc or h264 is allowed
+reset
+aenc 0 aac 160
+venc 0 hevc 2500
+service rtmp://h/a KEY - -
+colorspace 4 18
+connect_thread
+reset
+aenc 0 aac 160
+venc 0 h264 2500
+service rtmp://h/a KEY - -
+colorspace 5 18
+connect_thread
+# SDR AV1 is fine
+reset
+aenc 0 aac 160
+venc 0 av1 2500
+service rtmp://h/a KEY - -
+colorspace 2 2
+connect_thread

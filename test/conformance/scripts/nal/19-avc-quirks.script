@@ -1,0 +1,22 @@
+# S-012 QUIRKS of the AVC helpers.
+# Q-2: priority is NAL header byte >> 5, so the forbidden_zero_bit (bit 7) raises the value to 4..7
+#      and the value is taken from EVERY NAL type (SPS/PPS have nal_ref_idc 3, SEI usually 0).
+# Q-4: an empty NAL (two start codes back to back) is emitted as a zero-length record whose
+#      priority byte is the first byte of the following start code.
+# Q-6: parse_avc_packet never clears a keyframe flag already set on the source packet.
+echo forbidden-bit-raises-priority
+avc_priority 000001c1aa
+avc_priority 000001e1aa
+avc_priority 00000180aa
+avc_priority 000001ffaa
+avc_packet 000001e1aa
+echo priority-from-parameter-sets
+avc_priority 0000000167420020
+avc_priority 000000010910
+avc_priority 00000001060102
+echo empty-nal
+avc_packet 00000001000000014188
+avc_packet 0000000100000001
+avc_priority 00000001000000010910
+echo source-keyframe-flag-kept
+avc_packet 0000000141aa 0 1

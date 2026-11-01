@@ -1,0 +1,32 @@
+  cb S create
+log debug source 'S' (in) created
+create s ok
+  cb V1 create
+log debug private source 'V1' (vb) created
+create v1 ok
+  cb A1 create
+log debug private source 'A1' (va) created
+create a1 ok
+  cb V2 create
+log debug private source 'V2' (vb) created
+create v2 ok
+  cb A2 create
+log debug private source 'A2' (va) created
+create a2 ok
+  cb V3 create
+log debug private source 'V3' (vb) created
+create v3 ok
+log debug - filter 'V1' (vb) added to source 'S'
+log debug - filter 'A1' (va) added to source 'S'
+log debug - filter 'V2' (vb) added to source 'S'
+log debug - filter 'A2' (va) added to source 'S'
+log debug - filter 'V3' (vb) added to source 'S'
+names s: V3 A2 V2 A1 V1
+names s: A2 V2 V3 A1 V1
+names s: A2 V2 A1 V1 V3
+names s: A2 V1 V2 A1 V3
+names s: A2 V1 V2 A1 V3
+names s: A1 A2 V1 V2 V3
+names s: A1 A2 V1 V2 V3
+names s: V2 A1 A2 V1 V3
+names s: V2 A1 V1 V3 A2

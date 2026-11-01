@@ -1,0 +1,54 @@
+# S-045 when dynamic bitrate (DBR) is enabled in init_connect: capability, multitrack, stream delay.
+reset
+aenc 0 aac 160
+aenc 1 aac 96
+venc 0 h264 4000 4 enc0
+service rtmp://h/a KEY - -
+# user enables DBR; encoder cap bit 2 (1<<2 = 4) = DYN_BITRATE
+opt bool dyn_bitrate 1
+init_connect
+# encoder without the capability: DBR disabled
+reset
+venc 0 h264 4000 0 enc0
+service rtmp://h/a KEY - -
+opt bool dyn_bitrate 1
+init_connect
+# user did not enable
+reset
+venc 0 h264 4000 4 enc0
+service rtmp://h/a KEY - -
+init_connect
+# stream delay disables DBR
+reset
+venc 0 h264 4000 4 enc0
+service rtmp://h/a KEY - -
+opt bool dyn_bitrate 1
+delay 20
+init_connect
+# multitrack: needs bit 6 (1<<6 = 64) on every encoder; bit 2 alone is not enough
+reset
+venc 0 h264 4000 4 big
+venc 1 h264 2000 4 small
+service rtmp://h/a KEY - -
+opt bool dyn_bitrate 1
+init_connect
+reset
+venc 0 h264 4000 64 big
+venc 1 h264 2000 64 small
+service rtmp://h/a KEY - -
+opt bool dyn_bitrate 1
+init_connect
+# multitrack where only one encoder has the multitrack capability
+reset
+venc 0 h264 4000 64 big
+venc 1 h264 2000 4 small
+service rtmp://h/a KEY - -
+opt bool dyn_bitrate 1
+init_connect
+# multitrack capable encoder (64) but not DYN_BITRATE (4): single-track message is NOT printed, only the multitrack one
+reset
+venc 0 h264 4000 4 big
+venc 1 h264 2000 64 small
+service rtmp://h/a KEY - -
+opt bool dyn_bitrate 1
+init_connect

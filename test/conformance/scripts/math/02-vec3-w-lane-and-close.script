@@ -1,0 +1,17 @@
+# QUIRKS around the w lane and vec3_close.
+vec3 w1 1 2 3 10
+vec3 w2 1 1 1 10
+call dw vec3_dot w1 w2
+call mw vec3_mul w1 w2
+call aw vec3_add w1 w2
+call cw vec3_cross w1 w2
+call mfw vec3_mulf w1 2
+call lenw vec3_len w1
+vec3 a 1 2 3
+vec3 far 100 200 300
+call c1 vec3_close a far 0.001
+call c2 vec3_close far a 0.001
+call c3 vec3_close a a 0.001
+vec3 near 1.0005 2 3
+call c4 vec3_close a near 0.001
+call c5 vec3_close near a 0.001

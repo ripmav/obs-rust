@@ -1,0 +1,11 @@
+# Getters on a NULL script handle ("-"): each logs a warning naming the function and the parameter, and
+# returns a neutral value ("" for path/file, NULL description, UNKNOWN language, false loaded).
+load
+info -
+settings - k
+save -
+props -
+update - k v
+reload -
+destroy -
+unload

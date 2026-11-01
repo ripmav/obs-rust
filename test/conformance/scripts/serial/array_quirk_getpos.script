@@ -1,0 +1,15 @@
+# QUIRK Q-1: get_pos of the array serializer reports the LENGTH of the data, not the
+# position set by seek. seek returns the true position.
+open array
+write 0102030405
+pos
+seek start 2
+pos
+write ff
+pos
+dump
+seek start 0
+pos
+seek cur 3
+pos
+close

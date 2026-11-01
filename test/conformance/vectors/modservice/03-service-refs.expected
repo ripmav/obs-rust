@@ -1,0 +1,20 @@
+register A size=full
+service_types=1
+cb svcA create d1 settings={}
+log debug service 's' (svcA) created
+create s -> ok
+ref_counts s strong=0 weak=0
+get_ref s2 -> ok
+ref_counts s strong=1 weak=0
+weak w -> ok
+ref_counts s strong=1 weak=1
+weak_refs w s -> 1
+weak_refs w - -> 0
+weak_refs - s -> 0
+weak_to_service s3 -> ok
+ref_counts s strong=2 weak=1
+ref_counts s strong=0 weak=1
+cb svcA destroy d1
+log debug service 's' destroyed
+list
+weak_to_service dead -> null

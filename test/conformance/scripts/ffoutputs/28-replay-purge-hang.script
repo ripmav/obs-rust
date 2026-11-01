@@ -1,0 +1,26 @@
+# DEFECT D-1: the purge loops of the replay buffer never terminate once they have emptied the ring. Each probe runs
+# the offending packet in a forked child with a 2 second alarm. (a) no limits configured (defaults not applied) and
+# three queued keyframes: the time loop runs with max_time 0. (b) a 1 s ring, three keyframes within 200 ms, then a
+# packet at 1.5 s: the front group is purged until the queue is empty and cur_time is 0.
+# A conforming implementation MUST NOT hang (treat 0 as unlimited; never purge the newest keyframe group).
+reset
+output rb
+venc h264 bitrate=2500 extra=0a0b
+create replay_buffer
+start
+pkt v pts=0 key=1 size=10
+pkt v pts=1000 key=1 size=10
+pkt v pts=2000 key=1 size=10
+probe pkt v pts=2500 key=0 size=10
+reset
+output rb
+venc h264 bitrate=2500 extra=0a0b
+set int max_time_sec 1
+create replay_buffer
+start
+pkt v pts=0 key=1 size=10
+pkt v pts=100 key=1 size=10
+pkt v pts=200 key=1 size=10
+probe pkt v pts=1500 key=0 size=10
+echo parent_state_unchanged
+state_rb

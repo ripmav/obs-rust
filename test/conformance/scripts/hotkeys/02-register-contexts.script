@@ -1,0 +1,43 @@
+# S-034 registration through the five registerer kinds: type codes (frontend 0, source 1, output 2,
+# encoder 3, service 4), NULL object -> invalid id, private sources, weak-reference ownership
+# (one per hotkey), context release unregistering everything, and the effect of "core off".
+ctx encoder E1
+ctx output O1
+ctx service S1
+ctx source SRC1
+ctx private-source PRIV
+reg encoder E1 he "enc.key" "d"
+reg output O1 ho "out.key" "d"
+reg service S1 hs "svc.key" "d"
+reg source SRC1 hsrc "src.key" "d"
+info he
+info ho
+info hs
+info hsrc
+weaks
+# NULL object and private source: invalid id, no signal, no id consumed
+reg encoder - hn1 "x" "d"
+reg output - hn2 "x" "d"
+reg service - hn3 "x" "d"
+reg source - hn4 "x" "d"
+reg source PRIV hpriv "x" "d"
+reg frontend hf "front" "d"
+echo release-one-context
+release E1
+enum
+weaks
+echo release-source
+release SRC1
+enum
+weaks
+echo unregister-explicit
+unreg ho
+weaks
+# core absent: everything is refused / ignored
+core off
+reg frontend hz "z" "d"
+reg output O1 hz2 "z" "d"
+unreg hs
+enum
+core on
+enum

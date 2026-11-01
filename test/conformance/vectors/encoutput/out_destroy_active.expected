@@ -1,0 +1,31 @@
+log debug encoder 'v' (v) created
+encoder v created tb=1/30
+log debug encoder 'a' (a) created
+encoder a created tb=1/48000
+log debug output 'o' (o) created
+output o created flags=7 reconnect=20/2
+set_venc o idx=0 -> video_slots=01 audio_slots=00
+set_aenc o idx=0 -> video_slots=01 audio_slots=01
+plugin out o start
+plugin enc v create
+plugin enc a create
+log debug Maximum interleaver batch size for 'o' calculated to be 5 packets
+signal o activate
+signal o start
+plugin out o begin_data_capture -> 1
+signal o starting
+start o -> 1
+encstate v init=1 active=1 first_received=0 start_ts=0 offset_usec=0 cur_pts=0 frames=0 callbacks=1 paired=1 outputs=1
+log debug output 'o' destroyed
+plugin out o stop ts=0
+log info Output 'o': stopping
+log info Output 'o': Total frames output: 0
+log info Output 'o': Total drawn frames: 0
+signal o stop code=0 last_error=-
+plugin enc v destroy
+plugin enc a destroy
+signal o deactivate
+plugin out o destroy
+destroy o done
+encstate v init=0 active=0 first_received=0 start_ts=0 offset_usec=0 cur_pts=0 frames=0 callbacks=0 paired=0 outputs=0
+conns video=0 audio=0

@@ -1,0 +1,32 @@
+# Relative (default) coordinates: set_pos/set_scale/set_bounds store canvas-height-normalised values; the getters
+# convert back and snap absolute pixel results to the nearest 0.5 (nudge). Canvas 1920x1080, source 1280x720.
+source cam 1280 720
+scene main
+add main cam c
+echo -- fresh item: nothing computed yet
+print c
+echo -- position round-trip (integers, halves, quarter px snap to .5)
+pos c 100 50
+get c
+pos c 100.2 50.3
+get c
+pos c 100.25 50.74
+get c
+pos c 100.26 50.76
+get c
+pos c -37.5 2000
+get c
+echo -- after set_pos the matrices are recomputed at once (parent is a plain scene)
+pos c 0 0
+print c
+echo -- scale stored relative to the canvas height at creation (scale_ref)
+scale c 2 0.5
+print c
+scale c -1 1
+print c
+echo -- bounds go through the same size conversion
+bounds_type c 2
+bounds c 640 360
+get c
+bounds c 640.3 360.3
+get c

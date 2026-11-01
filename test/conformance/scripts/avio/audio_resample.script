@@ -1,0 +1,28 @@
+# S-044: resampler hook (fake resampler: output = input*0.5, out frames = in_frames*dst_rate/src_rate unless
+# overridden, ts_offset configurable). The callback of a converting input receives the resampler's output, its frame
+# count, and timestamp - offset. A failing resample skips that input's callback for the tick only.
+aopen main 48000 FLOAT_PLANAR STEREO
+afeed 0 0 0 2 0.5 set
+afeed 0 1 0 1 -0.75 set
+anewts delta 0
+aprobe 0 1 2
+# creation arguments are (dst = input's wish, src = output format)
+aconnect a 1 0 24000 - - 0
+aconnect b 2 0 - - - 0
+resamp offset 1000
+atick
+resamp offset 0
+resamp resample fail
+atick
+resamp resample ok
+resamp frames 7
+atick
+# creation failure -> connect returns false, nothing registered
+resamp create fail
+aconnect a 3 0 44100 FLOAT_PLANAR STEREO 0
+adump
+resamp create ok
+# disconnecting a converting input destroys its resampler; close destroys the remaining ones
+adisconnect a 1 0
+aconnect a 4 1 96000 - - 0
+aclose

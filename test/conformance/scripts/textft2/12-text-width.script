@@ -1,0 +1,27 @@
+# get_ft2_text_width: widest line in whole pixels, cached advance when cached else (advance>>6) of an uncached
+# glyph, newline resets, carriage return counts (S-038-R53..R56).
+events off
+reset
+ascii 5 8 0 8 384
+glyph 0x67 0x67 5 12 0 8 384
+font "Sans Serif" - 0 p/sans
+load
+create s 2
+setfont s "Sans Serif" - 20 0
+glyph 0x57 0x57 11 9 1 9 800
+glyph 0x69 0x69 2 8 -1 8 450
+notdef 6 10 1 10 512
+update s
+width s ""
+width s "a"
+width s "ab"
+width s "WWi"
+width s "ab\nWWWW\nc"
+width s "ab\r\nc"
+echo --- uncached glyph: not in cache, advance of the loaded glyph shifted right by 6; unmapped -> glyph 0
+glyph 0x3b1 0x500 7 7 0 7 1000
+width s "\xce\xb1"
+width s "\xce\xb1\xce\xb1a"
+width s "\xc3\xa9"
+echo --- the width query does not cache anything
+glyphs s 0x500 0

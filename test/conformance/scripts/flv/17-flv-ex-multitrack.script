@@ -1,0 +1,36 @@
+# S-021 Enhanced-RTMP multitrack video: track index idx > 0 switches to the multitrack form:
+#   byte0 = 0x80 | frametype<<4 | 6 (Multitrack) ; byte1 = 0x00 (OneTrack) | real packet type ;
+#   FourCC ; trackId u8 (idx truncated to 8 bits) ; [composition time] ; payload
+# idx == 0 is never written as a trackId. datasize grows by 2 (+ 3 for composition time).
+pkt idr video 0 0 1 1000 1 6588840000
+pkt b   video 100 67 1 1000 0 0a0b0c
+pkt p   video 33 33 1 1000 0 4101020304
+echo h264-tracks
+ex_start idr h264 1
+ex_frames idr h264 0 1
+ex_frames b h264 0 1
+ex_frames p h264 0 1
+ex_end idr h264 1
+ex_frames b h264 0 2
+ex_frames b h264 0 7
+echo hevc-and-av1
+ex_frames b hevc 0 3
+ex_frames p hevc 0 3
+ex_frames b av1 0 3
+ex_start idr av1 4
+echo track-id-is-truncated-to-8-bits-but-multitrack-stays-on
+ex_frames p h264 0 127
+ex_frames p h264 0 128
+ex_frames p h264 0 255
+ex_frames p h264 0 256
+ex_frames p h264 0 257
+ex_frames b h264 0 4294967296
+ex_frames p av1 0 511
+echo ex_raw-multitrack-with-odd-packet-types
+ex_raw idr h264 0 4 1
+ex_raw idr h264 0 6 1
+ex_raw idr h264 0 5 1
+ex_raw idr h264 0 15 1
+echo idx-0-vs-1-for-the-same-packet
+ex_frames b h264 0 0
+ex_frames b h264 0 1

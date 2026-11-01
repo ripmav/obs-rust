@@ -1,0 +1,41 @@
+# S-022 degenerate streams. (a) finalising with no packets writes a file with a header-only
+# fragmented moov and an empty moof/mdat pair; the final moov contains NO trak (tracks without chunks
+# are omitted) -- Q-5: such a file has an mvhd and nothing else. (b) A single packet per track: the last
+# packet of a final flush needs a previous sample to take its duration from, so it is dropped and
+# the track is omitted. (c) Two packets: the second reuses the first's duration.
+enc v video codec h264 width 320 height 240 fps 30/1 extra 000000016742c01ed900a047fe880000000168ce3c80
+enc a audio codec aac rate 48000 extra 1190
+mux mp4
+finalise
+dump
+echo --- one packet each
+mux mp4
+pkt v 0 0 1 gen:10
+pkt a 0 0 1 gen:10
+finalise
+tree
+echo --- two packets each, second duration is reused (video durations 2, audio 1000)
+mux mp4
+pkt v 0 0 1 gen:10
+pkt v 2 2 0 gen:10
+pkt a 0 0 1 gen:10
+pkt a 1000 1000 1 gen:10
+finalise
+dump
+echo --- audio track with a single packet next to a video track with many: audio dropped from moov
+mux mp4
+pkt v 0 0 1 gen:10
+pkt v 1 1 0 gen:10
+pkt v 2 2 0 gen:10
+pkt a 0 0 1 gen:10
+finalise
+tree
+echo --- audio-only file: mvhd duration is 0 (no video track)
+reset
+enc a audio codec aac rate 48000 extra 1190
+mux mp4
+pkt a 0 0 1 gen:10
+pkt a 1024 1024 1 gen:10
+pkt a 2048 2048 1 gen:10
+finalise
+hex

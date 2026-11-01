@@ -1,0 +1,14 @@
+add a ok
+add b ok
+add c ok
+order main: b a c
+order main: b c a
+order main: b c a
+-- negative position behaves like position 1
+add d ok
+order main: b d c a
+order main: b d c a
+-- single-item scene
+add x ok
+order one: x
+order one: x

@@ -1,0 +1,15 @@
+mf_count 0 3
+mf_count 1 2
+mf_get 0 0 path="/m/a" source_name="A" ref=1 same_as_file=0
+mf_get 0 1 path="/m/b" source_name="B" ref=2 same_as_file=1
+mf_get 0 2 path="/m/c" source_name=@null ref=2 same_as_file=2
+mf_get 1 0 path="/m/b" source_name="B" ref=2 same_as_file=1
+mf_ref 0 1
+mf_ref 1 2
+mf_ref 2 2
+mf_destroy 1
+mf_ref 1 1
+mf_ref 2 1
+mf_get 0 1 path="/m/b" source_name="B" ref=1 same_as_file=1
+mf_get 0 2 path="/m/c" source_name=@null ref=1 same_as_file=2
+mf_destroy 0

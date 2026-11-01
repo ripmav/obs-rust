@@ -1,0 +1,8 @@
+# Zero-byte allocation is a programming error: libobs reports it through bcrash
+# and the process terminates (here: the harness crash handler exits with status 77).
+fatal alloc0
+fatal zalloc0
+fatal memdup0
+fatal realloc0
+fatal realloc_null0
+count

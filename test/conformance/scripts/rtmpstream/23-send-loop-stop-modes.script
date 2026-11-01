@@ -1,0 +1,57 @@
+# S-045 send thread: stop modes (forced, timeout, encoder error) and what is sent at the end.
+# forced stop (ts 0): the loop exits at the first semaphore wake without sending queued packets
+reset
+aenc 0 aac 160
+venc 0 h264 2500
+service rtmp://h/a KEY - -
+init_connect
+set active 1
+pkt audio 100000 0 0
+pkt video 200000 3 1
+stop 0
+run_send
+queue
+# encoder error + forced stop: footers are still sent, the output gets ENCODE_ERROR
+reset
+aenc 0 aac 160
+venc 0 h264 2500
+service rtmp://h/a KEY - -
+init_connect
+set active 1
+pkt_null
+stop 0
+run_send
+# shutdown timeout: the time limit passed -> exit even though the packet is before the cutoff
+reset
+aenc 0 aac 160
+venc 0 h264 2500
+service rtmp://h/a KEY - -
+init_connect
+set active 1
+opt int max_shutdown_time_sec 5
+init_connect
+pkt audio 100000 0 0
+pkt video 200000 3 1
+fake now 1000000000
+stop 99000000000
+fake now 110000000000
+run_send
+# timestamps: shutdown_timeout_ts = ts + 5 s exactly: reaching it counts as timeout (>=)
+reset
+aenc 0 aac 160
+venc 0 h264 2500
+service rtmp://h/a KEY - -
+init_connect
+set active 1
+opt int max_shutdown_time_sec 5
+init_connect
+pkt audio 100000 0 0
+stop 99000000000
+fake now 103999999999
+can_shutdown 0
+fake now 104000000000
+can_shutdown 0
+# a packet at/after the cutoff (99000000 us) also allows shutdown, before the timeout
+fake now 1000
+can_shutdown 98999999
+can_shutdown 99000000

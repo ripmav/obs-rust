@@ -1,0 +1,80 @@
+fresh_install_lastversion_0
+migrate_legacy -> user_saved=1 app_saved=0
+user: General.Pre19Defaults user=1 default=0 str="false"
+user: General.Pre24.1Defaults user=1 default=0 str="false"
+app: General.Pre33.0Migrated user=0 default=0 str=@null
+from_18
+migrate_legacy -> user_saved=1 app_saved=1
+user: General.Pre19Defaults user=1 default=0 str="true"
+user: General.Pre21Defaults user=1 default=0 str="true"
+user: General.Pre23Defaults user=1 default=0 str="true"
+user: General.Pre24.1Defaults user=1 default=0 str="true"
+from_22
+migrate_legacy -> user_saved=1 app_saved=1
+user: General.Pre19Defaults user=1 default=0 str="false"
+user: General.Pre21Defaults user=1 default=0 str="false"
+user: General.Pre23Defaults user=1 default=0 str="true"
+user: General.Pre24.1Defaults user=1 default=0 str="true"
+existing_flags_preserved
+migrate_legacy -> user_saved=1 app_saved=1
+user: General.Pre19Defaults user=1 default=0 str="true"
+user: General.Pre21Defaults user=1 default=0 str="false"
+hotkey_focus_pre24
+migrate_legacy -> user_saved=1 app_saved=1
+user: General.HotkeyFocusType user=1 default=0 str="DisableHotkeysInFocus"
+hotkey_focus_not_changed_when_24_or_newer
+migrate_legacy -> user_saved=1 app_saved=1
+user: General.HotkeyFocusType user=0 default=0 str=@null
+snap_distance_10_to_5
+migrate_legacy -> user_saved=1 app_saved=1
+user: BasicWindow.SnapDistance user=1 default=0 str="5.0"
+app: General.Pre33.0Migrated user=1 default=0 str="true"
+migrate_legacy -> user_saved=0 app_saved=0
+snap_distance_custom_kept
+migrate_legacy -> user_saved=1 app_saved=1
+user: BasicWindow.SnapDistance user=1 default=0 str="12.0"
+app: General.Pre33.0Migrated user=1 default=0 str="true"
+snap_no_value_stays_unset
+migrate_legacy -> user_saved=1 app_saved=1
+user: BasicWindow.SnapDistance user=0 default=0 str=@null
+already_33_not_applied
+migrate_legacy -> user_saved=1 app_saved=0
+user: BasicWindow.SnapDistance user=1 default=0 str="10.0"
+app: General.Pre33.0Migrated user=0 default=0 str=@null
+second_run_is_idempotent
+migrate_legacy -> user_saved=1 app_saved=1
+migrate_legacy -> user_saved=1 app_saved=0
+multiview_pre22
+multiview_pre22 -> 1
+user: BasicWindow.MultiviewLayout user=1 default=0 str="0"
+multiview_pre22 -> 1
+user: BasicWindow.MultiviewLayout user=1 default=0 str="3"
+multiview_pre22 -> 1
+user: BasicWindow.MultiviewLayout user=1 default=0 str="2"
+multiview_pre22 -> 1
+user: BasicWindow.MultiviewLayout user=1 default=0 str="1"
+multiview_pre22 -> 0
+multiview_pre22 -> 0
+multiview_pre22 -> 0
+multiview_layout_in_migration
+migrate_legacy -> user_saved=1 app_saved=0
+user: BasicWindow.MultiviewLayout user=1 default=0 str="2"
+migrate_legacy -> user_saved=1 app_saved=0
+user: BasicWindow.MultiviewLayout user=1 default=0 str="4"
+pre31_decision
+pre31 not applicable
+pre31 attempted migrated=1
+app: General.Pre31Migrated user=1 default=0 str="true"
+user_ini_exists_means_failed
+pre31 attempted migrated=0
+app: General.Pre31Migrated user=1 default=0 str="false"
+copy_failed
+pre31 attempted migrated=0
+app: General.Pre31Migrated user=1 default=0 str="false"
+already_flagged_true
+pre31 skipped (already flagged)
+already_flagged_false_retries
+pre31 attempted migrated=1
+app: General.Pre31Migrated user=1 default=0 str="true"
+version_31_not_applicable
+pre31 not applicable

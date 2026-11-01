@@ -1,0 +1,37 @@
+copy Hello
+cmp Hello
+cmp hello
+cmp HellO!
+cmp @null
+cmpi hello
+cmpi HELLO
+cmpi helloo
+ncmp Help 3
+ncmp Help 4
+ncmp Help 0
+ncmpi HELp 3
+ncmpi HELp 4
+find ell
+find_i ELL
+find zzz
+find ""
+is_empty
+end
+free
+is_empty
+end
+cmp ""
+cmp @null
+astrcmpi abc ABD
+astrcmpi @null ""
+astrcmpi abc @null
+astrcmpi "" ""
+astrcmp_n abcX abcY 3
+astrcmp_n abcX abcY 4
+astrcmp_n abc abcd 5
+astrcmpi_n ABCx abcY 3
+astrstri "Hello World" WORLD
+astrstri "Hello" zz
+astrstri "Hello" ""
+astrstri @null a
+astrstri a @null

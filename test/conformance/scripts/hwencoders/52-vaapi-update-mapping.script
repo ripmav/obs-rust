@@ -1,0 +1,45 @@
+# S-050 obs-ffmpeg-vaapi: settings -> AVCodecContext fields, traced at avcodec_open2.
+#   cbr: maxrate := bitrate; modes with maxrate: maxrate < bitrate (and non-zero) -> 0;
+#   qp only for qp-capable modes (AV1: qp * 5 as global_quality); bitrate only for bitrate modes;
+#   rc_initial_buffer_occupancy = (maxrate or bitrate) * 1000; gop = keyint_sec * fps (120 if 0);
+#   time_base = fps_den/fps_num.
+va_defaults h264
+set str rate_control CBR
+set int bitrate 6000
+set int maxrate 9999
+set int qp 30
+va_create h264
+va_destroy
+set str rate_control VBR
+va_create h264
+va_destroy
+# maxrate below bitrate is dropped to 0 (ffmpeg would reject it)
+set int maxrate 4000
+va_create h264
+va_destroy
+set int maxrate 8000
+va_create h264
+va_destroy
+set str rate_control QVBR
+va_create h264
+va_destroy
+set str rate_control CQP
+va_create h264
+va_destroy
+# AV1: qp * 5
+set str rate_control CQP
+va_create av1
+va_destroy
+# keyframe interval and frame rate
+set int keyint_sec 2
+host fps 30000 1001
+set str rate_control CBR
+va_create h264
+va_destroy
+host fps 60 1
+# bf, level, profile pass through
+set int bf 3
+set int level 41
+set int profile 77
+va_create h264
+va_destroy

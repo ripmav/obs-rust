@@ -1,0 +1,166 @@
+> dump 2
+> nvcap dyn_bitrate 1
+> nvcap 10bit 1
+> defaults av1
+> create av1 soft
+cuda.ctx_init
+nv.OpenEncodeSessionEx deviceType=CUDA apiVersion=13.0
+nv.GetEncodePresetConfigEx codec=NV_ENC_CODEC_AV1_GUID preset=NV_ENC_PRESET_P5_GUID tuning=HIGH_QUALITY
+log info [obs-nvenc: 'enc'] settings: 	codec:        AV1 	rate_control: cbr 	bitrate:      10000 	keyint:       250 	preset:       p5 	tuning:       hq 	multipass:    qres 	profile:      main 	width:        1920 	height:       1080 	b-frames:     0 	b-ref-mode:   0 	lookahead:    false (0 frames) 	aq:           true 
+nv.InitializeEncoder
+  params: codec=NV_ENC_CODEC_AV1_GUID preset=NV_ENC_PRESET_P5_GUID tuning=HIGH_QUALITY size=1920x1080 dar=1920x1080 fps=60/1 async=0 ptd=1 split=0
+  config: profile=NV_ENC_AV1_PROFILE_MAIN_GUID gop=250 frameIntervalP=1
+  rc: mode=CBR avg=10000000 max=10000000 vbv=10000000 vbvInit=0 tq=0 cqP=0 cqB=0 cqI=0 aq=1 aqStrength=8 taq=0
+  rc: lookahead=0 depth=0 iadapt_off=0 badapt_off=0 multipass=QUARTER qpmap=2
+  av1: level=0 tier=0 tiles=0x0 idr=250 bref=0 padding=1 repeatSeqHdr=1 mdi=0 cll=0 range=0 prim=1 trc=1 matrix=1 chroma=1 inDepth=8 outDepth=8 refs=1/1
+cuda.init_surfaces n=4
+create -> ok
+> destroy
+nv.DestroyBitstreamBuffer
+nv.DestroyBitstreamBuffer
+nv.DestroyBitstreamBuffer
+nv.DestroyBitstreamBuffer
+nv.DestroyEncoder
+cuda.ctx_free
+destroyed
+> host size 3840 2160
+> create av1 soft
+cuda.ctx_init
+nv.OpenEncodeSessionEx deviceType=CUDA apiVersion=13.0
+nv.GetEncodePresetConfigEx codec=NV_ENC_CODEC_AV1_GUID preset=NV_ENC_PRESET_P5_GUID tuning=HIGH_QUALITY
+log info [obs-nvenc: 'enc'] settings: 	codec:        AV1 	rate_control: cbr 	bitrate:      10000 	keyint:       250 	preset:       p5 	tuning:       hq 	multipass:    qres 	profile:      main 	width:        3840 	height:       2160 	b-frames:     0 	b-ref-mode:   0 	lookahead:    false (0 frames) 	aq:           true 
+nv.InitializeEncoder
+  params: codec=NV_ENC_CODEC_AV1_GUID preset=NV_ENC_PRESET_P5_GUID tuning=HIGH_QUALITY size=3840x2160 dar=3840x2160 fps=60/1 async=0 ptd=1 split=0
+  config: profile=NV_ENC_AV1_PROFILE_MAIN_GUID gop=250 frameIntervalP=1
+  rc: mode=CBR avg=10000000 max=10000000 vbv=10000000 vbvInit=0 tq=0 cqP=0 cqB=0 cqI=0 aq=1 aqStrength=8 taq=0
+  rc: lookahead=0 depth=0 iadapt_off=0 badapt_off=0 multipass=QUARTER qpmap=2
+  av1: level=0 tier=0 tiles=2x0 idr=250 bref=0 padding=1 repeatSeqHdr=1 mdi=0 cll=0 range=0 prim=1 trc=1 matrix=1 chroma=1 inDepth=8 outDepth=8 refs=1/1
+cuda.init_surfaces n=4
+create -> ok
+> destroy
+nv.DestroyBitstreamBuffer
+nv.DestroyBitstreamBuffer
+nv.DestroyBitstreamBuffer
+nv.DestroyBitstreamBuffer
+nv.DestroyEncoder
+cuda.ctx_free
+destroyed
+> host size 3839 2160
+> create av1 soft
+cuda.ctx_init
+nv.OpenEncodeSessionEx deviceType=CUDA apiVersion=13.0
+nv.GetEncodePresetConfigEx codec=NV_ENC_CODEC_AV1_GUID preset=NV_ENC_PRESET_P5_GUID tuning=HIGH_QUALITY
+log info [obs-nvenc: 'enc'] settings: 	codec:        AV1 	rate_control: cbr 	bitrate:      10000 	keyint:       250 	preset:       p5 	tuning:       hq 	multipass:    qres 	profile:      main 	width:        3839 	height:       2160 	b-frames:     0 	b-ref-mode:   0 	lookahead:    false (0 frames) 	aq:           true 
+nv.InitializeEncoder
+  params: codec=NV_ENC_CODEC_AV1_GUID preset=NV_ENC_PRESET_P5_GUID tuning=HIGH_QUALITY size=3839x2160 dar=3839x2160 fps=60/1 async=0 ptd=1 split=0
+  config: profile=NV_ENC_AV1_PROFILE_MAIN_GUID gop=250 frameIntervalP=1
+  rc: mode=CBR avg=10000000 max=10000000 vbv=10000000 vbvInit=0 tq=0 cqP=0 cqB=0 cqI=0 aq=1 aqStrength=8 taq=0
+  rc: lookahead=0 depth=0 iadapt_off=0 badapt_off=0 multipass=QUARTER qpmap=2
+  av1: level=0 tier=0 tiles=0x0 idr=250 bref=0 padding=1 repeatSeqHdr=1 mdi=0 cll=0 range=0 prim=1 trc=1 matrix=1 chroma=1 inDepth=8 outDepth=8 refs=1/1
+cuda.init_surfaces n=4
+create -> ok
+> destroy
+nv.DestroyBitstreamBuffer
+nv.DestroyBitstreamBuffer
+nv.DestroyBitstreamBuffer
+nv.DestroyBitstreamBuffer
+nv.DestroyEncoder
+cuda.ctx_free
+destroyed
+> host size 4096 1716
+> create av1 soft
+cuda.ctx_init
+nv.OpenEncodeSessionEx deviceType=CUDA apiVersion=13.0
+nv.GetEncodePresetConfigEx codec=NV_ENC_CODEC_AV1_GUID preset=NV_ENC_PRESET_P5_GUID tuning=HIGH_QUALITY
+log info [obs-nvenc: 'enc'] settings: 	codec:        AV1 	rate_control: cbr 	bitrate:      10000 	keyint:       250 	preset:       p5 	tuning:       hq 	multipass:    qres 	profile:      main 	width:        4096 	height:       1716 	b-frames:     0 	b-ref-mode:   0 	lookahead:    false (0 frames) 	aq:           true 
+nv.InitializeEncoder
+  params: codec=NV_ENC_CODEC_AV1_GUID preset=NV_ENC_PRESET_P5_GUID tuning=HIGH_QUALITY size=4096x1716 dar=4096x1716 fps=60/1 async=0 ptd=1 split=0
+  config: profile=NV_ENC_AV1_PROFILE_MAIN_GUID gop=250 frameIntervalP=1
+  rc: mode=CBR avg=10000000 max=10000000 vbv=10000000 vbvInit=0 tq=0 cqP=0 cqB=0 cqI=0 aq=1 aqStrength=8 taq=0
+  rc: lookahead=0 depth=0 iadapt_off=0 badapt_off=0 multipass=QUARTER qpmap=2
+  av1: level=0 tier=0 tiles=0x0 idr=250 bref=0 padding=1 repeatSeqHdr=1 mdi=0 cll=0 range=0 prim=1 trc=1 matrix=1 chroma=1 inDepth=8 outDepth=8 refs=1/1
+cuda.init_surfaces n=4
+create -> ok
+> destroy
+nv.DestroyBitstreamBuffer
+nv.DestroyBitstreamBuffer
+nv.DestroyBitstreamBuffer
+nv.DestroyBitstreamBuffer
+nv.DestroyEncoder
+cuda.ctx_free
+destroyed
+> host size 1920 1080
+> host format p010
+> host colorspace pq
+> host range full
+> create av1 soft
+cuda.ctx_init
+nv.OpenEncodeSessionEx deviceType=CUDA apiVersion=13.0
+nv.GetEncodePresetConfigEx codec=NV_ENC_CODEC_AV1_GUID preset=NV_ENC_PRESET_P5_GUID tuning=HIGH_QUALITY
+log info [obs-nvenc: 'enc'] settings: 	codec:        AV1 	rate_control: cbr 	bitrate:      10000 	keyint:       250 	preset:       p5 	tuning:       hq 	multipass:    qres 	profile:      main 	width:        1920 	height:       1080 	b-frames:     0 	b-ref-mode:   0 	lookahead:    false (0 frames) 	aq:           true 
+nv.InitializeEncoder
+  params: codec=NV_ENC_CODEC_AV1_GUID preset=NV_ENC_PRESET_P5_GUID tuning=HIGH_QUALITY size=1920x1080 dar=1920x1080 fps=60/1 async=0 ptd=1 split=0
+  config: profile=NV_ENC_AV1_PROFILE_MAIN_GUID gop=250 frameIntervalP=1
+  rc: mode=CBR avg=10000000 max=10000000 vbv=10000000 vbvInit=0 tq=0 cqP=0 cqB=0 cqI=0 aq=1 aqStrength=8 taq=0
+  rc: lookahead=0 depth=0 iadapt_off=0 badapt_off=0 multipass=QUARTER qpmap=2
+  av1: level=0 tier=0 tiles=0x0 idr=250 bref=0 padding=1 repeatSeqHdr=1 mdi=1 cll=1 range=1 prim=9 trc=16 matrix=9 chroma=1 inDepth=10 outDepth=10 refs=1/1
+cuda.init_surfaces n=4
+create -> ok
+> state
+state: codec=AV1 cx=1920 cy=1080 in_format=18 buf_count=4 output_delay=3 can_change_bitrate=1 non_texture=1 queued=0 header_size=0 bitstreams=4 hdr_mdi=1 hdr_cll=1
+state: mdi r=13250,34500 g=7500,3000 b=34000,16000 white=15635,16450 maxLuma=10000000 minLuma=0 cll=1000/1000
+state: props rate_control=cbr preset=p5 tune=hq multipass=qres profile=main bf=0 aq=1
+> destroy
+nv.DestroyBitstreamBuffer
+nv.DestroyBitstreamBuffer
+nv.DestroyBitstreamBuffer
+nv.DestroyBitstreamBuffer
+nv.DestroyEncoder
+cuda.ctx_free
+destroyed
+> host colorspace hlg
+> create av1 soft
+cuda.ctx_init
+nv.OpenEncodeSessionEx deviceType=CUDA apiVersion=13.0
+nv.GetEncodePresetConfigEx codec=NV_ENC_CODEC_AV1_GUID preset=NV_ENC_PRESET_P5_GUID tuning=HIGH_QUALITY
+log info [obs-nvenc: 'enc'] settings: 	codec:        AV1 	rate_control: cbr 	bitrate:      10000 	keyint:       250 	preset:       p5 	tuning:       hq 	multipass:    qres 	profile:      main 	width:        1920 	height:       1080 	b-frames:     0 	b-ref-mode:   0 	lookahead:    false (0 frames) 	aq:           true 
+nv.InitializeEncoder
+  params: codec=NV_ENC_CODEC_AV1_GUID preset=NV_ENC_PRESET_P5_GUID tuning=HIGH_QUALITY size=1920x1080 dar=1920x1080 fps=60/1 async=0 ptd=1 split=0
+  config: profile=NV_ENC_AV1_PROFILE_MAIN_GUID gop=250 frameIntervalP=1
+  rc: mode=CBR avg=10000000 max=10000000 vbv=10000000 vbvInit=0 tq=0 cqP=0 cqB=0 cqI=0 aq=1 aqStrength=8 taq=0
+  rc: lookahead=0 depth=0 iadapt_off=0 badapt_off=0 multipass=QUARTER qpmap=2
+  av1: level=0 tier=0 tiles=0x0 idr=250 bref=0 padding=1 repeatSeqHdr=1 mdi=1 cll=1 range=1 prim=9 trc=18 matrix=9 chroma=1 inDepth=10 outDepth=10 refs=1/1
+cuda.init_surfaces n=4
+create -> ok
+> destroy
+nv.DestroyBitstreamBuffer
+nv.DestroyBitstreamBuffer
+nv.DestroyBitstreamBuffer
+nv.DestroyBitstreamBuffer
+nv.DestroyEncoder
+cuda.ctx_free
+destroyed
+> host format nv12
+> host colorspace 601
+> set str rate_control VBR
+> create av1 soft
+cuda.ctx_init
+nv.OpenEncodeSessionEx deviceType=CUDA apiVersion=13.0
+nv.GetEncodePresetConfigEx codec=NV_ENC_CODEC_AV1_GUID preset=NV_ENC_PRESET_P5_GUID tuning=HIGH_QUALITY
+log info [obs-nvenc: 'enc'] settings: 	codec:        AV1 	rate_control: VBR 	bitrate:      10000 	max_bitrate:  10000 	keyint:       250 	preset:       p5 	tuning:       hq 	multipass:    qres 	profile:      main 	width:        1920 	height:       1080 	b-frames:     0 	b-ref-mode:   0 	lookahead:    false (0 frames) 	aq:           true 
+nv.InitializeEncoder
+  params: codec=NV_ENC_CODEC_AV1_GUID preset=NV_ENC_PRESET_P5_GUID tuning=HIGH_QUALITY size=1920x1080 dar=1920x1080 fps=60/1 async=0 ptd=1 split=0
+  config: profile=NV_ENC_AV1_PROFILE_MAIN_GUID gop=250 frameIntervalP=1
+  rc: mode=VBR avg=10000000 max=10000000 vbv=10000000 vbvInit=0 tq=0 cqP=0 cqB=0 cqI=0 aq=1 aqStrength=8 taq=0
+  rc: lookahead=0 depth=0 iadapt_off=0 badapt_off=0 multipass=QUARTER qpmap=2
+  av1: level=0 tier=0 tiles=0x0 idr=250 bref=0 padding=0 repeatSeqHdr=1 mdi=0 cll=0 range=1 prim=6 trc=6 matrix=6 chroma=1 inDepth=8 outDepth=8 refs=1/1
+cuda.init_surfaces n=4
+create -> ok
+> destroy
+nv.DestroyBitstreamBuffer
+nv.DestroyBitstreamBuffer
+nv.DestroyBitstreamBuffer
+nv.DestroyBitstreamBuffer
+nv.DestroyEncoder
+cuda.ctx_free
+destroyed

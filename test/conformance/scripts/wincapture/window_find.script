@@ -1,0 +1,48 @@
+# ms_find_window / ms_find_window_top_level: rating = 0x7FFFFFFF means no match; best (lowest) wins, first wins ties,
+# a rating of 0 ends the search immediately. Comparison of class/exe/title is ASCII case-insensitive.
+# Rating per priority (non-UWP, non-generic class):
+#   class: class equal ? title_cmp (0 or 1) (+0x1000 if exe differs) : none
+#   title: title equal ? 0 : none            exe: exe equal ? title_cmp : none
+win_reset
+win_add 1 "Doc - Editor" "EditorClass" "\\Device\\X\\editor.exe" 10
+win_add 2 "Other Doc" "EditorClass" "\\Device\\X\\editor.exe" 10
+win_add 3 "Doc - Editor" "OtherClass" "\\Device\\X\\other.exe" 11
+win_add 4 "Doc - Editor" "EditorClass" "\\Device\\X\\clone.exe" 12
+win_add 5 "doc - editor" "editorclass" "\\Device\\X\\EDITOR.EXE" 13
+win_add 6 "Hidden Doc" "EditorClass" "\\Device\\X\\editor.exe" 14 hidden
+rating 1 class EditorClass "Doc - Editor" editor.exe
+rating 2 class EditorClass "Doc - Editor" editor.exe
+rating 3 class EditorClass "Doc - Editor" editor.exe
+rating 4 class EditorClass "Doc - Editor" editor.exe
+rating 5 class EditorClass "Doc - Editor" editor.exe
+rating 1 title EditorClass "Doc - Editor" editor.exe
+rating 2 title EditorClass "Doc - Editor" editor.exe
+rating 3 title EditorClass "Doc - Editor" editor.exe
+rating 1 exe EditorClass "Doc - Editor" editor.exe
+rating 2 exe EditorClass "Doc - Editor" editor.exe
+rating 3 exe EditorClass "Doc - Editor" editor.exe
+rating 4 exe EditorClass "Doc - Editor" editor.exe
+find include class EditorClass "Doc - Editor" editor.exe
+find include title EditorClass "Doc - Editor" editor.exe
+find include exe EditorClass "Doc - Editor" editor.exe
+# title mismatch: class priority still picks first class match with lowest title distance
+find include class EditorClass "Nope" editor.exe
+find include title EditorClass "Nope" editor.exe
+find include exe EditorClass "Nope" editor.exe
+find include exe EditorClass "Nope" other.exe
+find include exe EditorClass "Nope" missing.exe
+# NULL class => nothing; NULL title/exe are accepted and compare equal to empty
+find include class - "Doc - Editor" editor.exe
+find include title EditorClass - editor.exe
+find include class EditorClass "Doc - Editor" -
+find_top include class EditorClass "Doc - Editor" editor.exe
+find_top include title EditorClass "Doc - Editor" editor.exe
+find_top include exe EditorClass "Other Doc" editor.exe
+find_top include class - "Doc - Editor" editor.exe
+# an invisible window never matches, even on an exact title
+find include title EditorClass "Hidden Doc" editor.exe
+# the case-insensitive window (id 5) is the only exact match once the earlier ones are not eligible
+win_reset
+win_add 5 "doc - editor" "editorclass" "\\Device\\X\\EDITOR.EXE" 13
+find include class EditorClass "Doc - Editor" editor.exe
+rating 5 exe EditorClass "Doc - Editor" editor.exe

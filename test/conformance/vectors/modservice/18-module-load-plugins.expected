@@ -1,0 +1,96 @@
+mkmod ok1 ok
+mkmod ok2 ok
+mkmod initfail ok
+mkmod newer ok
+mkmod noexp ok
+mkmod badsym ok
+log debug ---------------------------------
+log error os_dlopen(@TMP/pl/bin/badsym.so->@TMP/pl/bin/badsym.so)
+log warning Module '@TMP/pl/bin/badsym.so' not loaded
+log debug Failed to load module file '@TMP/pl/bin/badsym.so', module failed to open
+log debug ---------------------------------
+ev mod initfail ctor
+log debug Loading module: initfail.so
+ev mod initfail set_pointer
+ev mod initfail load
+log warning Failed to initialize module 'initfail.so'
+ev mod initfail free_locale
+log debug ---------------------------------
+ev mod newer ctor
+log warning Module '@TMP/pl/bin/newer.so' compiled with newer libobs 33.1
+log debug Failed to load module file '@TMP/pl/bin/newer.so', incompatible version
+log debug ---------------------------------
+ev mod noexp ctor
+log debug Required module function 'obs_module_load' in module '@TMP/pl/bin/noexp.so' not found, loading of module failed
+log debug Failed to load module file '@TMP/pl/bin/noexp.so', not an OBS plugin
+log debug ---------------------------------
+log error os_dlopen(@TMP/pl/bin/notso.so->@TMP/pl/bin/notso.so)
+log warning Module '@TMP/pl/bin/notso.so' not loaded
+log debug Failed to load module file '@TMP/pl/bin/notso.so', module failed to open
+log debug ---------------------------------
+ev mod ok1 ctor
+log debug Loading module: ok1.so
+ev mod ok1 set_pointer
+ev mod ok1 load
+log debug ---------------------------------
+ev mod ok2 ctor
+log debug Loading module: ok2.so
+ev mod ok2 set_pointer
+ev mod ok2 load
+load_plugins -> count=3 failed badsym newer notso
+enabled ok2 ok1
+disabled notso newer initfail badsym
+sources 0
+outputs 0
+encoders 0
+services 1 pl_svc1
+get_module initfail -> enabled=null disabled=initfail allow_disable=1
+get_module noexp -> enabled=null disabled=null allow_disable=1
+get_module newer -> enabled=null disabled=newer allow_disable=1
+mod_info initfail file=initfail.so name=(null) author=(null) desc=(null) bin=@TMP/pl/bin/initfail.so data=@TMP/pl/data/initfail id=(null) ver=(null) lib=null core=0 legacy=0 state=failed_to_initialize loaded=0 mtype=2
+mod_info ok1 file=ok1.so name=(null) author=(null) desc=(null) bin=@TMP/pl/bin/ok1.so data=@TMP/pl/data/ok1 id=(null) ver=(null) lib=set core=0 legacy=0 state=enabled loaded=1 mtype=2
+types pl_never pl_svc1 pl_svc2
+service_module pl_svc1 -> ok1 state=enabled
+service_module pl_never -> null state=missing
+log debug ---------------------------------
+log error os_dlopen(@TMP/pl/bin/badsym.so->@TMP/pl/bin/badsym.so)
+log warning Module '@TMP/pl/bin/badsym.so' not loaded
+log debug Failed to load module file '@TMP/pl/bin/badsym.so', module failed to open
+log debug ---------------------------------
+log debug Loading module: initfail.so
+ev mod initfail set_pointer
+ev mod initfail load
+log warning obs_register_service: Service id 'pl_never' already exists!  Duplicate library?
+log warning Failed to initialize module 'initfail.so'
+ev mod initfail free_locale
+log debug ---------------------------------
+log warning Module '@TMP/pl/bin/newer.so' compiled with newer libobs 33.1
+log debug Failed to load module file '@TMP/pl/bin/newer.so', incompatible version
+log debug ---------------------------------
+log debug Required module function 'obs_module_load' in module '@TMP/pl/bin/noexp.so' not found, loading of module failed
+log debug Failed to load module file '@TMP/pl/bin/noexp.so', not an OBS plugin
+log debug ---------------------------------
+log error os_dlopen(@TMP/pl/bin/notso.so->@TMP/pl/bin/notso.so)
+log warning Module '@TMP/pl/bin/notso.so' not loaded
+log debug Failed to load module file '@TMP/pl/bin/notso.so', module failed to open
+log warning Skipping plugin 'ok1' at '@TMP/pl/bin/ok1.so', already loaded from '@TMP/pl/bin/ok1.so'
+log warning Skipping plugin 'ok2' at '@TMP/pl/bin/ok2.so', already loaded from '@TMP/pl/bin/ok2.so'
+load_plugins -> count=3 failed badsym newer notso
+enabled ok2 ok1
+disabled notso newer initfail badsym notso newer initfail badsym
+mkmod pp1 ok
+mkmod pp2 ok
+log debug ---------------------------------
+ev mod pp1 ctor
+log debug Loading module: pp1.so
+ev mod pp1 set_pointer
+ev mod pp1 load
+log debug ---------------------------------
+ev mod pp2 ctor
+log debug Loading module: pp2.so
+ev mod pp2 set_pointer
+ev mod pp2 load
+load_plugins -> count=0 failed
+ev mod pp2 post_load
+ev mod pp1 post_load
+load_plugins -> count=0 failed

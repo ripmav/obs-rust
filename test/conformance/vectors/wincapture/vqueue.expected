@@ -1,0 +1,27 @@
+vq_create[0] ok
+header write_idx=0 read_idx=0 state=1 offsets=96,160,224 type=0 cx=4 cy=2 interval=333333
+sizeof queue_header 80
+vq_info 4 2 333333
+vq_state[0] 1
+vq_create[1] null
+vq_open[2] ok
+vq_state[2] 1
+vq_info 4 2 333333
+vq_write write_idx=1 read_idx=1 state=2
+header write_idx=1 read_idx=1 state=2 offsets=96,160,224 type=0 cx=4 cy=2 interval=333333
+sizeof queue_header 80
+vq_state[2] 2
+vq_read[2] true ts=1000 y0=10 yLast=10 uv0=80 uvLast=80
+vq_write write_idx=2 read_idx=2 state=2
+vq_write write_idx=3 read_idx=3 state=2
+vq_write write_idx=4 read_idx=4 state=2
+header write_idx=4 read_idx=4 state=2 offsets=96,160,224 type=0 cx=4 cy=2 interval=333333
+sizeof queue_header 80
+vq_read[2] true ts=4000 y0=40 yLast=40 uv0=b0 uvLast=b0
+vq_close[2]
+vq_close[0]
+vq_open[2] null
+vq_create[0] ok
+header write_idx=0 read_idx=0 state=1 offsets=96,160,224 type=0 cx=8 cy=2 interval=500000
+sizeof queue_header 80
+vq_close[0]

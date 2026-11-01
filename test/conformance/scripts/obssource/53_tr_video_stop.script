@@ -1,0 +1,31 @@
+# Completion of a transition.  The video part stops when a video render sees t >= 1 ("transition_video_stop"
+# signal); the audio part stops when an audio render sees t >= 1.  Only when BOTH have stopped does the transition
+# complete: B replaces A, slot B empties, the stop callback runs and "transition_stop" is signalled.
+kind in input video,audio size
+kind tr transition video,audio tstart,tstop,size
+create t tr T
+create a in A
+create b in B
+fksize a 100 100
+fksize b 100 100
+watch t
+watch_global
+inc_active t
+tr_set t a
+clock 1000
+tr_start t 0 1000 b
+vtime 500001000
+tr_video t
+tr_state t
+vtime 2000000000
+echo --- t >= 1: video part stops, transition still waits for audio
+tr_video t
+tr_state t
+tr_video t
+echo --- audio render with both children delivering audio at t >= 1 finishes the transition
+audio_ts a 2000000000 0 0
+audio_ts b 2000000000 0 0
+audio_fill a 0.25
+audio_fill b 0.5
+tr_audio t 1 2 48000
+tr_state t

@@ -1,0 +1,30 @@
+# S-044: audio_output_open validation and derived geometry.
+# Invalid: format UNKNOWN (0), name NULL, rate 0, speakers UNKNOWN (0). Result: 0 ok, -1 invalid parameter.
+aopen - 48000 FLOAT_PLANAR STEREO
+aopen x 48000 UNKNOWN STEREO
+aopen x 0 FLOAT_PLANAR STEREO
+aopen x 48000 FLOAT_PLANAR UNKNOWN
+# planar float stereo: block_size = 4 (one channel), planes = channels = 2
+aopen main 48000 FLOAT_PLANAR STEREO
+ainfo
+aclose
+# interleaved float 5.1: block_size = 4 * 6, one plane
+aopen main 44100 FLOAT 5POINT1
+ainfo
+aclose
+# 16-bit planar 7.1
+aopen main 96000 16BIT_PLANAR 7POINT1
+ainfo
+aclose
+# 8-bit interleaved mono
+aopen main 8000 U8BIT MONO
+ainfo
+aclose
+# 32-bit interleaved 2.1
+aopen main 48000 32BIT 2POINT1
+ainfo
+aclose
+# speakers value that is not a layout (7 > 0 passes validation): channels 0, so planar output has 0 planes
+aopen main 48000 FLOAT_PLANAR 7
+ainfo
+aclose

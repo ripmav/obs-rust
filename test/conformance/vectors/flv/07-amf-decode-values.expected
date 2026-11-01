@@ -1,0 +1,182 @@
+echo anonymous-values
+decode ret=9 num=1
+  [0] name=- type=NUMBER value=1 bits=3ff0000000000000
+decode ret=2 num=1
+  [0] name=- type=BOOLEAN value=1
+decode ret=2 num=1
+  [0] name=- type=BOOLEAN value=0
+decode ret=6 num=1
+  [0] name=- type=STRING len=3 value="abc"
+decode ret=1 num=1
+  [0] name=- type=NULL
+decode ret=1 num=1
+  [0] name=- type=NULL
+decode ret=1 num=1
+  [0] name=- type=NULL
+decode ret=11 num=1
+  [0] name=- type=DATE value=2 bits=4000000000000000 utc=60
+decode ret=8 num=1
+  [0] name=- type=STRING len=3 value="abc"
+decode ret=7 num=1
+  [0] name=- type=XML_DOC len=2 value="<>"
+echo several-anonymous-values
+decode ret=18 num=4
+  [0] name=- type=NUMBER value=1 bits=3ff0000000000000
+  [1] name=- type=BOOLEAN value=1
+  [2] name=- type=STRING len=3 value="abc"
+  [3] name=- type=NULL
+echo named-values
+decode ret=12 num=1
+  [0] name="a" type=NUMBER value=1 bits=3ff0000000000000
+decode ret=14 num=2
+  [0] name="a" type=BOOLEAN value=1
+  [1] name="a" type=STRING len=3 value="abc"
+decode ret=14 num=1
+  [0] name="a" type=DATE value=2 bits=4000000000000000 utc=60
+echo object-and-ecma-array-and-strict-array
+decode ret=16 num=1
+  [0] name=- type=OBJECT num=1
+    [0] name="x" type=NUMBER value=1 bits=3ff0000000000000
+decode ret=20 num=1
+  [0] name=- type=ECMA_ARRAY num=1
+    [0] name="x" type=NUMBER value=1 bits=3ff0000000000000
+decode ret=20 num=1
+  [0] name=- type=ECMA_ARRAY num=1
+    [0] name="x" type=NUMBER value=1 bits=3ff0000000000000
+decode ret=18 num=1
+  [0] name=- type=STRICT_ARRAY num=2
+    [0] name=- type=NUMBER value=1 bits=3ff0000000000000
+    [1] name=- type=STRING len=1 value="a"
+decode ret=5 num=1
+  [0] name=- type=STRICT_ARRAY num=0
+decode ret=4 num=1
+  [0] name=- type=OBJECT num=0
+echo nested-object-in-named-property
+decode ret=19 num=1
+  [0] name="a" type=OBJECT num=1
+    [0] name="x" type=NUMBER value=1 bits=3ff0000000000000
+decode ret=44 num=2
+  [0] name="a" type=ECMA_ARRAY num=1
+    [0] name="x" type=NUMBER value=1 bits=3ff0000000000000
+  [1] name="a" type=STRICT_ARRAY num=2
+    [0] name=- type=NUMBER value=1 bits=3ff0000000000000
+    [1] name=- type=STRING len=1 value="a"
+echo end-marker-stops-decoding
+decode ret=12 num=1
+  [0] name=- type=NUMBER value=1 bits=3ff0000000000000
+decode ret=3 num=0
+decode ret=-1
+decode ret=-1
+echo trailing-bytes-after-the-end-marker-are-not-consumed
+decode ret=15 num=1
+  [0] name="a" type=NUMBER value=1 bits=3ff0000000000000
+echo decode_array COUNT anonymous values
+decode_array ret=18 num=4
+  [0] name=- type=NUMBER value=1 bits=3ff0000000000000
+  [1] name=- type=BOOLEAN value=1
+  [2] name=- type=STRING len=3 value="abc"
+  [3] name=- type=NULL
+decode_array ret=11 num=2
+  [0] name=- type=NUMBER value=1 bits=3ff0000000000000
+  [1] name=- type=BOOLEAN value=1
+decode_array ret=0 num=0
+decode_array ret=-1
+decode_array ret=0 num=0
+decode ret=0 num=0
+prop_decode ret=-1
+echo decode_array with names
+decode_array ret=17 num=2
+  [0] name="a" type=NUMBER value=1 bits=3ff0000000000000
+  [1] name="a" type=BOOLEAN value=1
+echo prop_decode
+prop_decode ret=9
+  [0] name=- type=NUMBER value=1 bits=3ff0000000000000
+prop_decode ret=6
+  [0] name=- type=STRING len=3 value="abc"
+prop_decode ret=12
+  [0] name="a" type=NUMBER value=1 bits=3ff0000000000000
+prop_decode ret=16
+  [0] name=- type=OBJECT num=1
+    [0] name="x" type=NUMBER value=1 bits=3ff0000000000000
+prop_decode ret=11
+  [0] name=- type=DATE value=2 bits=4000000000000000 utc=60
+prop_decode ret=1
+  [0] name=- type=NULL
+prop_decode ret=1
+  [0] name=- type=NULL
+prop_decode ret=1
+  [0] name=- type=NULL
+echo type-codes-that-become-other-types
+echo (undefined 06 and unsupported 0d are reported as NULL; long string 0c as STRING; xml 0f stays XML_DOC)
+prop_decode ret=1
+  [0] name=- type=NULL
+prop_decode ret=1
+  [0] name=- type=NULL
+prop_decode ret=6
+  [0] name=- type=STRING len=1 value="A"
+prop_decode ret=6
+  [0] name=- type=XML_DOC len=1 value="A"
+echo string-edge-cases
+decode ret=3 num=1
+  [0] name=- type=STRING len=0 value=""
+decode ret=5 num=1
+  [0] name=- type=STRING len=2 value="AB"
+decode ret=5 num=1
+  [0] name=- type=STRING len=0 value=""
+decode ret=-1
+decode ret=-1
+echo double-edge-values
+decode ret=9 num=1
+  [0] name=- type=NUMBER value=nan bits=7ff8000000000000
+decode ret=9 num=1
+  [0] name=- type=NUMBER value=-0 bits=8000000000000000
+decode ret=9 num=1
+  [0] name=- type=NUMBER value=-inf bits=fff0000000000000
+decode ret=2 num=1
+  [0] name=- type=BOOLEAN value=1
+decode ret=2 num=1
+  [0] name=- type=BOOLEAN value=0
+echo reserved-and-unsupported-type-codes (logged as errors where the reference logs them)
+log error AMF_MOVIECLIP reserved!
+prop_decode ret=-1
+log error AMF_MOVIECLIP reserved!
+prop_decode ret=-1
+log error AMF_REFERENCE not supported!
+prop_decode ret=-1
+log error AMF_REFERENCE not supported!
+prop_decode ret=-1
+prop_decode ret=-1
+log error AMF_RECORDSET reserved!
+prop_decode ret=-1
+log error AMF_TYPED_OBJECT not supported!
+prop_decode ret=-1
+log error AMF_TYPED_OBJECT not supported!
+prop_decode ret=-1
+prop_decode ret=-1
+prop_decode ret=-1
+prop_decode ret=-1
+prop_decode ret=-1
+prop_decode ret=1
+  [0] name=- type=NULL
+prop_decode ret=1
+  [0] name=- type=NULL
+prop_decode ret=1
+  [0] name=- type=NULL
+echo QUIRK-Q7-strict-array-counts-of-2^31-and-more-are-negative-ints-and-decode-as-empty
+decode ret=5 num=1
+  [0] name=- type=STRICT_ARRAY num=0
+decode ret=5 num=1
+  [0] name=- type=STRICT_ARRAY num=0
+decode ret=14 num=2
+  [0] name=- type=STRICT_ARRAY num=0
+  [1] name=- type=NUMBER value=1 bits=3ff0000000000000
+decode ret=-1
+decode ret=-1
+decode ret=-1
+echo date-with-negative-utc-offset
+decode ret=11 num=1
+  [0] name=- type=DATE value=0 bits=0000000000000000 utc=-60
+decode ret=11 num=1
+  [0] name=- type=DATE value=0 bits=0000000000000000 utc=-32768
+decode ret=11 num=1
+  [0] name=- type=DATE value=0 bits=0000000000000000 utc=32767

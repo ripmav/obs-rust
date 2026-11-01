@@ -1,0 +1,141 @@
+info color_filter v0 type=1 flags=0x401 callbacks:
+data color_filter.v0
+  gamma double 0 default
+  contrast double 0 default
+  brightness double 0 default
+  saturation double 0 default
+  hue_shift double 0 default
+  opacity int 100 default
+  color int 16777215 default
+end data color_filter.v0
+info color_filter v2 type=1 flags=0x8001 callbacks: colorspace
+data color_filter.v2
+  gamma double 0 default
+  contrast double 0 default
+  brightness double 0 default
+  saturation double 0 default
+  hue_shift double 0 default
+  opacity double 1 default
+  color_multiply int 16777215 default
+  color_add int 0 default
+end data color_filter.v2
+info clut_filter v0 type=1 flags=0x8001 callbacks: colorspace missing_files
+data clut_filter.v0
+  clut_amount double 1 default
+  passthrough_alpha bool 0 default
+end data clut_filter.v0
+info chroma_key_filter v0 type=1 flags=0x401 callbacks:
+data chroma_key_filter.v0
+  opacity int 100 default
+  contrast double 0 default
+  brightness double 0 default
+  gamma double 0 default
+  key_color int 65280 default
+  key_color_type string "green" default
+  similarity int 400 default
+  smoothness int 80 default
+  spill int 100 default
+end data chroma_key_filter.v0
+info chroma_key_filter v2 type=1 flags=0x8001 callbacks: colorspace
+data chroma_key_filter.v2
+  opacity double 1 default
+  contrast double 0 default
+  brightness double 0 default
+  gamma double 0 default
+  key_color int 65280 default
+  key_color_type string "green" default
+  similarity int 400 default
+  smoothness int 80 default
+  spill int 100 default
+end data chroma_key_filter.v2
+info color_key_filter v0 type=1 flags=0x401 callbacks:
+data color_key_filter.v0
+  opacity int 100 default
+  contrast double 0 default
+  brightness double 0 default
+  gamma double 0 default
+  key_color int 65280 default
+  key_color_type string "green" default
+  similarity int 80 default
+  smoothness int 50 default
+end data color_key_filter.v0
+info color_key_filter v2 type=1 flags=0x8001 callbacks: colorspace
+data color_key_filter.v2
+  opacity double 1 default
+  contrast double 0 default
+  brightness double 0 default
+  gamma double 0 default
+  key_color int 65280 default
+  key_color_type string "green" default
+  similarity int 80 default
+  smoothness int 50 default
+end data color_key_filter.v2
+info luma_key_filter v0 type=1 flags=0x401 callbacks:
+data luma_key_filter.v0
+  luma_max double 1 default
+  luma_min double 0 default
+  luma_max_smooth double 0 default
+  luma_min_smooth double 0 default
+end data luma_key_filter.v0
+info luma_key_filter v2 type=1 flags=0x8001 callbacks: colorspace
+data luma_key_filter.v2
+  luma_max double 1 default
+  luma_min double 0 default
+  luma_max_smooth double 0 default
+  luma_min_smooth double 0 default
+end data luma_key_filter.v2
+info sharpness_filter v0 type=1 flags=0x401 callbacks:
+data sharpness_filter.v0
+  sharpness double 0.080000000000000002 default
+end data sharpness_filter.v0
+info sharpness_filter v2 type=1 flags=0x8001 callbacks: colorspace
+data sharpness_filter.v2
+  sharpness double 0.080000000000000002 default
+end data sharpness_filter.v2
+info scroll_filter v0 type=1 flags=0x8001 callbacks: tick size show colorspace
+data scroll_filter.v0
+  limit_size bool 0 default
+  cx int 100 default
+  cy int 100 default
+  loop bool 1 default
+end data scroll_filter.v0
+info crop_filter v0 type=1 flags=0x8001 callbacks: tick size colorspace
+data crop_filter.v0
+  relative bool 1 default
+end data crop_filter.v0
+info scale_filter v0 type=1 flags=0x8001 callbacks: tick size colorspace
+data scale_filter.v0
+  sampling string "bicubic" default
+  resolution string "None" default
+  undistort bool 0 default
+end data scale_filter.v0
+info mask_filter v0 type=1 flags=0x401 callbacks: tick missing_files
+data mask_filter.v0
+  type string "mask_color_filter.effect" default
+  color int 16777215 default
+  opacity int 100 default
+end data mask_filter.v0
+info mask_filter v2 type=1 flags=0x8001 callbacks: tick colorspace missing_files
+data mask_filter.v2
+  type string "mask_color_filter.effect" default
+  color int 16777215 default
+  opacity double 1 default
+end data mask_filter.v2
+info gpu_delay v0 type=1 flags=0x1 callbacks: tick colorspace
+data gpu_delay.v0
+end data gpu_delay.v0
+info hdr_tonemap_filter v0 type=1 flags=0x8001 callbacks: colorspace
+data hdr_tonemap_filter.v0
+  transform int 0 default
+  sdr_white_level_nits int 300 default
+  hdr_input_maximum_nits int 4000 default
+  hdr_output_maximum_nits int 1000 default
+  sdr_input_maximum_nits int 1000 default
+  sdr_output_maximum_nits int 300 default
+end data hdr_tonemap_filter.v0
+info sdr_on_hdr_filter v0 type=1 flags=0x8001 callbacks: colorspace
+data sdr_on_hdr_filter.v0
+  gamma int 1 default
+  sdr_white_level_nits int 300 default
+  power double 2.3999999999999999 default
+end data sdr_on_hdr_filter.v0

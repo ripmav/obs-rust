@@ -1,0 +1,40 @@
+# S-049 pulse: pure maps of the PulseAudio input source: pa sample format -> OBS audio format,
+# channel count -> speaker layout, speaker layout -> pa channel map, frames -> ns.
+pulse-fmt u8
+pulse-fmt s16le
+pulse-fmt s32le
+pulse-fmt float32le
+pulse-fmt s24le
+pulse-fmt s24-32le
+pulse-fmt alaw
+pulse-fmt ulaw
+pulse-fmt s16be
+pulse-fmt float32be
+pulse-fmt-num -1
+pulse-ch 0
+pulse-ch 1
+pulse-ch 2
+pulse-ch 3
+pulse-ch 4
+pulse-ch 5
+pulse-ch 6
+pulse-ch 7
+pulse-ch 8
+pulse-ch 9
+# speaker layout enum values: 0 unknown, 1 mono, 2 stereo, 3 2.1, 4 4.0, 5 4.1, 6 5.1, 8 7.1
+pulse-chmap 0
+pulse-chmap 1
+pulse-chmap 2
+pulse-chmap 3
+pulse-chmap 4
+pulse-chmap 5
+pulse-chmap 6
+pulse-chmap 7
+pulse-chmap 8
+pulse-chmap 99
+pulse-timecalc 480 48000
+pulse-timecalc 1 48000
+pulse-timecalc 1 44100
+pulse-timecalc 0 48000
+pulse-timecalc 4096 44100
+pulse-timecalc 10000000000 48000

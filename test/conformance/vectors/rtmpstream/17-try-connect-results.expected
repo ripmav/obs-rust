@@ -1,0 +1,92 @@
+reset ok
+> reset
+reset ok
+> set path rtmp://h/a
+> set key k
+> aenc 0 aac 160
+> venc 0 h264 2500
+> fake connect_ok 0
+> fake connect_err 110
+> try_connect
+log info [rtmp stream: 'out'] Connecting to RTMP URL rtmp://h/a...
+fake RTMP_Init
+fake RTMP_SetupURL "rtmp://h/a" -> 1
+fake RTMP_EnableWrite
+fake RTMP_AddStream "k"
+fake RTMP_Connect pubUser="" pubPasswd="" flashVer="FMLE/3.0 (compatible; FMSc/1.0)" swfUrl_is_tcUrl=1 outChunk=4096 sendChunkInfo=1 nagle=1 bindLen=0
+fake set_last_error "T:ConnectionTimedOut"
+try_connect -> -2 wbuf_size=0 new_socket_loop=0 low_latency=0
+bind len=0 family=0
+after active=0 disconnected=0 total_bytes=0
+> fake connect_ok 1
+> fake connect_err 0
+> fake connectstream_ok 0
+> try_connect
+log info [rtmp stream: 'out'] Connecting to RTMP URL rtmp://h/a...
+fake RTMP_Init
+fake RTMP_SetupURL "rtmp://h/a" -> 1
+fake RTMP_EnableWrite
+fake RTMP_AddStream "k"
+fake RTMP_Connect pubUser="" pubPasswd="" flashVer="FMLE/3.0 (compatible; FMSc/1.0)" swfUrl_is_tcUrl=1 outChunk=4096 sendChunkInfo=1 nagle=1 bindLen=0
+fake RTMP_ConnectStream seek=0 -> 0
+try_connect -> -3 wbuf_size=0 new_socket_loop=0 low_latency=0
+bind len=0 family=0
+after active=0 disconnected=0 total_bytes=0
+> fake connectstream_ok 1
+> try_connect
+log info [rtmp stream: 'out'] Connecting to RTMP URL rtmp://h/a...
+fake RTMP_Init
+fake RTMP_SetupURL "rtmp://h/a" -> 1
+fake RTMP_EnableWrite
+fake RTMP_AddStream "k"
+fake RTMP_Connect pubUser="" pubPasswd="" flashVer="FMLE/3.0 (compatible; FMSc/1.0)" swfUrl_is_tcUrl=1 outChunk=4096 sendChunkInfo=1 nagle=1 bindLen=0
+fake RTMP_ConnectStream seek=0 -> 1
+log info [rtmp stream: 'out'] Connection to rtmp://h/a (192.0.2.7) successful
+fake pthread_create #1
+fake RTMP_Write #1 kind=meta len=10 -> 10
+fake begin_data_capture
+try_connect -> 0 wbuf_size=0 new_socket_loop=0 low_latency=0
+bind len=0 family=0
+after active=1 disconnected=0 total_bytes=0
+> reset
+reset ok
+> set path rtmp://h/a
+> set key k
+> fake pthread_create_fail 1
+> try_connect
+log info [rtmp stream: 'out'] Connecting to RTMP URL rtmp://h/a...
+fake RTMP_Init
+fake RTMP_SetupURL "rtmp://h/a" -> 1
+fake RTMP_EnableWrite
+fake RTMP_AddStream "k"
+fake RTMP_Connect pubUser="" pubPasswd="" flashVer="FMLE/3.0 (compatible; FMSc/1.0)" swfUrl_is_tcUrl=1 outChunk=4096 sendChunkInfo=1 nagle=1 bindLen=0
+fake RTMP_ConnectStream seek=0 -> 1
+log info [rtmp stream: 'out'] Connection to rtmp://h/a (192.0.2.7) successful
+fake pthread_create -> fail
+fake RTMP_Close
+log warning [rtmp stream: 'out'] Failed to create send thread
+try_connect -> -4 wbuf_size=0 new_socket_loop=0 low_latency=0
+bind len=0 family=0
+after active=0 disconnected=0 total_bytes=0
+> reset
+reset ok
+> set path rtmp://h/a
+> set key k
+> fake write_fail_at 1
+> fake connect_err 104
+> try_connect
+log info [rtmp stream: 'out'] Connecting to RTMP URL rtmp://h/a...
+fake RTMP_Init
+fake RTMP_SetupURL "rtmp://h/a" -> 1
+fake RTMP_EnableWrite
+fake RTMP_AddStream "k"
+fake RTMP_Connect pubUser="" pubPasswd="" flashVer="FMLE/3.0 (compatible; FMSc/1.0)" swfUrl_is_tcUrl=1 outChunk=4096 sendChunkInfo=1 nagle=1 bindLen=0
+fake RTMP_ConnectStream seek=0 -> 1
+log info [rtmp stream: 'out'] Connection to rtmp://h/a (192.0.2.7) successful
+fake pthread_create #1
+fake RTMP_Write #1 kind=meta len=10 -> -1
+log warning [rtmp stream: 'out'] Disconnected while attempting to send metadata
+fake set_last_error "T:ConnectionReset"
+try_connect -> -5 wbuf_size=0 new_socket_loop=0 low_latency=0
+bind len=0 family=0
+after active=1 disconnected=0 total_bytes=0

@@ -1,0 +1,48 @@
+> aclock 1000000000
+> aopen main 48000 FLOAT_PLANAR STEREO
+= 0
+> atick 3
+in start=1000000000 end=1021333333 active=0x00 nonnull=[2,2,2,2,2,2] clean=yes
+tick sleepto=1021333333
+in start=1021333333 end=1042666666 active=0x00 nonnull=[2,2,2,2,2,2] clean=yes
+tick sleepto=1042666666
+in start=1042666666 end=1064000000 active=0x00 nonnull=[2,2,2,2,2,2] clean=yes
+tick sleepto=1064000000
+> aclose
+= closed
+> aclock 0
+> aopen main 44100 FLOAT_PLANAR STEREO
+= 0
+> atick 4
+in start=0 end=23219954 active=0x00 nonnull=[2,2,2,2,2,2] clean=yes
+tick sleepto=23219954
+in start=23219954 end=46439909 active=0x00 nonnull=[2,2,2,2,2,2] clean=yes
+tick sleepto=46439909
+in start=46439909 end=69659863 active=0x00 nonnull=[2,2,2,2,2,2] clean=yes
+tick sleepto=69659863
+in start=69659863 end=92879818 active=0x00 nonnull=[2,2,2,2,2,2] clean=yes
+tick sleepto=92879818
+> aclose
+= closed
+> aclock 123456789012
+> aopen main 8000 FLOAT_PLANAR MONO
+= 0
+> atick 2
+in start=123456789012 end=123584789012 active=0x00 nonnull=[1,1,1,1,1,1] clean=yes
+tick sleepto=123584789012
+in start=123584789012 end=123712789012 active=0x00 nonnull=[1,1,1,1,1,1] clean=yes
+tick sleepto=123712789012
+> aclose
+= closed
+> aclock 0
+> aopen main 3 FLOAT_PLANAR MONO
+= 0
+> atick 3
+in start=0 end=341333333333 active=0x00 nonnull=[1,1,1,1,1,1] clean=yes
+tick sleepto=341333333333
+in start=341333333333 end=682666666666 active=0x00 nonnull=[1,1,1,1,1,1] clean=yes
+tick sleepto=682666666666
+in start=682666666666 end=1024000000000 active=0x00 nonnull=[1,1,1,1,1,1] clean=yes
+tick sleepto=1024000000000
+> aclose
+= closed

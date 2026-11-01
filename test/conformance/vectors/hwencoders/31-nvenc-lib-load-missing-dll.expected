@@ -1,0 +1,5 @@
+> dll 0
+> ini "[general]\nnvenc_supported=true\n"
+> supported
+os.dlopen "libnvidia-encode.so.1" -> fail
+nvenc_supported -> 0

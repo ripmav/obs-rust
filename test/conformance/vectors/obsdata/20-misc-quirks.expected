@@ -1,0 +1,18 @@
+echo --- apply drops NULL objects and nested defaults, replaces (not merges) sub-objects
+dump t {sub:object[user={other:number[user=num(I,2,2)]}]}
+echo --- a user NULL object hides the default object (get_obj gives NULL); the default getter still sees it
+get_obj a o ok
+get_obj a o null
+get_default_obj a o ok
+json_defaults a "{\"o\":null}"
+echo --- erasing then re-adding puts the name at the end
+names b two one
+echo --- get_defaults uses the user value's number type for the conversion
+dump gd {x:number[user=num(I,2,2)]}
+echo --- set_default on an item holding a user value of another kind is ignored
+has_default h k 0
+dump h {k:string[user="s"]}
+echo --- obs_data_newref
+refs n 2
+dump fresh {}
+refs fresh 1

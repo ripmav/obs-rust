@@ -1,0 +1,17 @@
+  cb A create
+log debug source 'A' (in) created
+create a ok
+weak_expired w 0
+getref a ok
+refs a 2
+weak_get w ok
+refs a 3
+weak_expired w 1
+weak_get w null
+getref a null
+  destroying a
+  destroying b
+  destroying c
+  cb A destroy
+log debug source 'A' destroyed
+drain ran=1

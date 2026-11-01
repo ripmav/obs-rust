@@ -1,0 +1,76 @@
+> va_defaults h264
+va.open_device "/dev/dri/renderD128" by vaapi_defaults -> ok
+> set str rate_control CBR
+> va_fail 1
+> va_create h264
+av.find_encoder h264_vaapi
+log info ---------------------------------
+log info [FFmpeg VAAPI encoder: 'enc'] settings: 	device:       /dev/dri/renderD128 	rate_control: CBR 	profile:      100 	level:        -99 	qp:           0 	bitrate:      6000 	maxrate:      6000 	keyint:       120 	width:        1920 	height:       1080 	b-frames:     0 	ffmpeg opts:   
+av.hwdevice_ctx_create vaapi "/dev/dri/renderD128"
+log warning [FFmpeg VAAPI encoder: 'enc'] Failed to create VAAPI device context: averr(-22)
+va_create -> NULL
+> va_fail 2
+> va_create h264
+av.find_encoder h264_vaapi
+log info ---------------------------------
+log info [FFmpeg VAAPI encoder: 'enc'] settings: 	device:       /dev/dri/renderD128 	rate_control: CBR 	profile:      100 	level:        -99 	qp:           0 	bitrate:      6000 	maxrate:      6000 	keyint:       120 	width:        1920 	height:       1080 	b-frames:     0 	ffmpeg opts:   
+av.hwdevice_ctx_create vaapi "/dev/dri/renderD128"
+log warning [FFmpeg VAAPI encoder: 'enc'] Failed to alloc HW frames context
+va_create -> NULL
+> va_fail 3
+> va_create h264
+av.find_encoder h264_vaapi
+log info ---------------------------------
+log info [FFmpeg VAAPI encoder: 'enc'] settings: 	device:       /dev/dri/renderD128 	rate_control: CBR 	profile:      100 	level:        -99 	qp:           0 	bitrate:      6000 	maxrate:      6000 	keyint:       120 	width:        1920 	height:       1080 	b-frames:     0 	ffmpeg opts:   
+av.hwdevice_ctx_create vaapi "/dev/dri/renderD128"
+av.hwframe_ctx_init format=44 sw_format=23 size=1920x1080
+log warning [FFmpeg VAAPI encoder: 'enc'] Failed to init HW frames context: averr(-22)
+va_create -> NULL
+> va_fail 4
+> va_create h264
+av.find_encoder h264_vaapi
+log info ---------------------------------
+log info [FFmpeg VAAPI encoder: 'enc'] settings: 	device:       /dev/dri/renderD128 	rate_control: CBR 	profile:      100 	level:        -99 	qp:           0 	bitrate:      6000 	maxrate:      6000 	keyint:       120 	width:        1920 	height:       1080 	b-frames:     0 	ffmpeg opts:   
+av.hwdevice_ctx_create vaapi "/dev/dri/renderD128"
+av.hwframe_ctx_init format=44 sw_format=23 size=1920x1080
+log warning [FFmpeg VAAPI encoder: 'enc'] Failed to allocate video frame
+va_create -> NULL
+> va_fail 5
+> va_create h264
+av.find_encoder h264_vaapi
+log info ---------------------------------
+log info [FFmpeg VAAPI encoder: 'enc'] settings: 	device:       /dev/dri/renderD128 	rate_control: CBR 	profile:      100 	level:        -99 	qp:           0 	bitrate:      6000 	maxrate:      6000 	keyint:       120 	width:        1920 	height:       1080 	b-frames:     0 	ffmpeg opts:   
+av.hwdevice_ctx_create vaapi "/dev/dri/renderD128"
+av.hwframe_ctx_init format=44 sw_format=23 size=1920x1080
+av.frame_get_buffer format=23 size=1920x1080 colorspace=1 range=1 chroma_loc=1
+log warning [FFmpeg VAAPI encoder: 'enc'] Failed to allocate vframe: averr(-22)
+va_create -> NULL
+> va_fail 6
+> va_create h264
+av.find_encoder h264_vaapi
+log info ---------------------------------
+log info [FFmpeg VAAPI encoder: 'enc'] settings: 	device:       /dev/dri/renderD128 	rate_control: CBR 	profile:      100 	level:        -99 	qp:           0 	bitrate:      6000 	maxrate:      6000 	keyint:       120 	width:        1920 	height:       1080 	b-frames:     0 	ffmpeg opts:   
+av.hwdevice_ctx_create vaapi "/dev/dri/renderD128"
+av.hwframe_ctx_init format=44 sw_format=23 size=1920x1080
+av.frame_get_buffer format=23 size=1920x1080 colorspace=1 range=1 chroma_loc=1
+av.codec_open pix_fmt=44 profile=100 level=-99 bit_rate=6000000 rc_max_rate=6000000 rc_buf_occ=6000000 gq=0 bf=0 gop=120 size=1920x1080 tb=1/60 range=1 prim=1 trc=1 cs=1 chroma_loc=1
+log warning [FFmpeg VAAPI encoder: 'enc'] Failed to open VAAPI codec: averr(-22)
+va_create -> NULL
+> va_fail 100
+> va_create h264
+av.find_encoder h264_vaapi
+log info ---------------------------------
+log warning [FFmpeg VAAPI encoder: 'enc'] Couldn't find encoder
+va_create -> NULL
+> va_fail 0
+> va_create h264
+av.find_encoder h264_vaapi
+log info ---------------------------------
+log info [FFmpeg VAAPI encoder: 'enc'] settings: 	device:       /dev/dri/renderD128 	rate_control: CBR 	profile:      100 	level:        -99 	qp:           0 	bitrate:      6000 	maxrate:      6000 	keyint:       120 	width:        1920 	height:       1080 	b-frames:     0 	ffmpeg opts:   
+av.hwdevice_ctx_create vaapi "/dev/dri/renderD128"
+av.hwframe_ctx_init format=44 sw_format=23 size=1920x1080
+av.frame_get_buffer format=23 size=1920x1080 colorspace=1 range=1 chroma_loc=1
+av.codec_open pix_fmt=44 profile=100 level=-99 bit_rate=6000000 rc_max_rate=6000000 rc_buf_occ=6000000 gq=0 bf=0 gop=120 size=1920x1080 tb=1/60 range=1 prim=1 trc=1 cs=1 chroma_loc=1
+va_create -> ok
+> va_destroy
+va_destroyed

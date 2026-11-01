@@ -1,0 +1,48 @@
+# CORE. 3-band EQ: 4-pole low pass at 800 Hz and at 5000 Hz built from a state-variable style one-pole cascade,
+# band split with a 3-sample delay of the input; gains per band; state is per channel and
+# is never reset by update(); lf/hf are computed at create time only.
+audio 2 48000
+create q eq
+state q
+echo flat-unity-gain-impulse-response
+process q 32 out=all impulse:1:0 impulse:1:0
+echo silence-is-not-exactly-silent-epsilon-bias
+process q 8 const:0 const:0
+echo gains
+data d
+set d low double 20
+set d mid double -20
+set d high double 6
+update q d
+state q
+process q 64 out=0:0:64:4 sine:0.5:300 sine:0.5:3000
+process q 64 out=0:0:64:4 sine:0.5:300 sine:0.5:3000
+echo update-keeps-filter-state
+state q
+echo rate-and-channels-fixed-at-create
+audio 2 44100
+update q d
+state q
+create q2 eq d
+state q2
+audio 6 48000
+create q6 eq
+process q6 4 const:1 const:1 const:1 const:1 const:1 const:1
+echo extreme-gains
+audio 2 48000
+data e
+set e low double -1000
+set e mid double 1000
+set e high double nan
+update q e
+state q
+echo block-split-equals-whole
+create a eq d
+create b eq d
+process a 8 out=all noise:0.5:7 noise:0.5:8
+seek a 0
+process a 8 out=all noise:0.5:7 noise:0.5:8
+create c eq d
+process c 16 out=all noise:0.5:7 noise:0.5:8
+echo zero-frames
+process c 0 const:1 const:1

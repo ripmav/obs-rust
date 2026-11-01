@@ -1,0 +1,114 @@
+--- Q-A: struct parameter plus a mapped scalar
+backend vertexshader_create location="qa1.effect (Vertex shader, technique T, pass 0)" len=159 fnv=c4ceee05484c8ee5
+  text "struct V {\n\tfloat4 p : POSITION;\n};\n\nfloat4 F(V v, float2 uv : TEXCOORD0)\n{ return v.p; }\n\nfloat4 main(V vfloat2 uv : TEXCOORD0) : TARGET\n{\n\treturn F(v,uv);\n}\n"
+  result fail (shader_parse) errors="qa1.effect (Vertex shader, technique T, pass 0) (8, 23): Syntax error\nqa1.effect (Vertex shader, technique T, pass 0) (8, 26): Expected 'type'\n"
+log error Pass (0) <> missing vertex shader!
+backend pixelshader_create location="qa1.effect (Pixel shader, technique T, pass 0)" len=159 fnv=c4ceee05484c8ee5
+  text "struct V {\n\tfloat4 p : POSITION;\n};\n\nfloat4 F(V v, float2 uv : TEXCOORD0)\n{ return v.p; }\n\nfloat4 main(V vfloat2 uv : TEXCOORD0) : TARGET\n{\n\treturn F(v,uv);\n}\n"
+  result fail (shader_parse) errors="qa1.effect (Pixel shader, technique T, pass 0) (8, 23): Syntax error\nqa1.effect (Pixel shader, technique T, pass 0) (8, 26): Expected 'type'\n"
+log error Pass (0) <> missing pixel shader!
+effect a1 result=fail
+  error_string="qa1.effect (3, 76): Error creating shader: qa1.effect (Vertex shader, technique T, pass 0) (8, 23): Syntax error\nqa1.effect (Vertex shader, technique T, pass 0) (8, 26): Expected 'type'\n\nqa1.effect (3, 76): Error creating shader: qa1.effect (Pixel shader, technique T, pass 0) (8, 23): Syntax error\nqa1.effect (Pixel shader, technique T, pass 0) (8, 26): Expected 'type'\n\n"
+backend vertexshader_create location="qa2.effect (Vertex shader, technique T, pass 0)" len=195 fnv=8e7c4a6679a02f5e
+  text "struct V {\n\tfloat4 p : POSITION;\n};\n\nfloat4 F(V v, float2 uv : TEXCOORD0, float4 c : COLOR)\n{ return v.p; }\n\nfloat4 main(V vfloat2 uv : TEXCOORD0float4 c : COLOR) : TARGET\n{\n\treturn F(v,uv,c);\n}\n"
+  result ok
+backend pixelshader_create location="qa2.effect (Pixel shader, technique T, pass 0)" len=195 fnv=8e7c4a6679a02f5e
+  text "struct V {\n\tfloat4 p : POSITION;\n};\n\nfloat4 F(V v, float2 uv : TEXCOORD0, float4 c : COLOR)\n{ return v.p; }\n\nfloat4 main(V vfloat2 uv : TEXCOORD0float4 c : COLOR) : TARGET\n{\n\treturn F(v,uv,c);\n}\n"
+  result ok
+effect a2 result=ok
+  error_string=@null
+--- Q-B: pass 0 uses an unknown vertex entry; its pixel shader loses the parameters it mentions, pass 1 is normal
+backend vertexshader_create location="qb1.effect (Vertex shader, technique T, pass 0)" len=34 fnv=5e6466f0cec93730
+  text "uniform float a;\nuniform float b;\n"
+  sparam 0 name=a type=FLOAT array=0
+  sparam 1 name=b type=FLOAT array=0
+  result ok
+backend pixelshader_create location="qb1.effect (Pixel shader, technique T, pass 0)" len=73 fnv=d492d631441deb76
+  text "\n\nfloat F(float x)\n{ return x + a + b; }\n\nfloat main()\n{\n\treturn F(a);\n}\n"
+  result ok
+backend vertexshader_create location="qb1.effect (Vertex shader, technique T, pass 1)" len=107 fnv=baa8475a28434909
+  text "uniform float a;\nuniform float b;\n\n\nfloat F(float x)\n{ return x + a + b; }\n\nfloat main()\n{\n\treturn F(a);\n}\n"
+  sparam 0 name=a type=FLOAT array=0
+  sparam 1 name=b type=FLOAT array=0
+  result ok
+backend pixelshader_create location="qb1.effect (Pixel shader, technique T, pass 1)" len=107 fnv=baa8475a28434909
+  text "uniform float a;\nuniform float b;\n\n\nfloat F(float x)\n{ return x + a + b; }\n\nfloat main()\n{\n\treturn F(a);\n}\n"
+  sparam 0 name=a type=FLOAT array=0
+  sparam 1 name=b type=FLOAT array=0
+  result ok
+effect b1 result=ok
+  error_string=@null
+--- Q-C
+backend vertexshader_create location="qc1.effect (Vertex shader, technique T, pass 0)" len=66 fnv=9768e103a0e2bad5
+  text "float4 F()\n{ return 0; }\n\nfloat4 main() : TARGET\n{\n\treturn F();\n}\n"
+  result ok
+backend pixelshader_create location="qc1.effect (Pixel shader, technique T, pass 0)" len=66 fnv=9768e103a0e2bad5
+  text "float4 F()\n{ return 0; }\n\nfloat4 main() : TARGET\n{\n\treturn F();\n}\n"
+  result fail (forced)
+log error Pass (0) <> missing pixel shader!
+backend shader_destroy location="qc1.effect (Vertex shader, technique T, pass 0)"
+effect c1 result=fail
+  error_string="qc1.effect (2, 66): Error creating shader: boom\n\n"
+--- Q-D
+backend vertexshader_create location="qd1.effect (Vertex shader, technique T, pass 0)" len=85 fnv=53f1814796c35efc
+  text "const float c;\nfloat p;\n\n\nfloat F()\n{ return c + p; }\n\nfloat main()\n{\n\treturn F();\n}\n"
+  result ok
+backend pixelshader_create location="qd1.effect (Pixel shader, technique T, pass 0)" len=85 fnv=53f1814796c35efc
+  text "const float c;\nfloat p;\n\n\nfloat F()\n{ return c + p; }\n\nfloat main()\n{\n\treturn F();\n}\n"
+  result ok
+effect d1 result=ok
+  error_string=@null
+--- Q-E / Q-F
+sparse result=fail
+  errors count=1 has_errors=1
+    err 0 error file="f1" row=1 col=42 msg="Expected ';'"
+  error_string="f1 (1, 42): Expected ';'\n"
+  sp params=0 structs=0 samplers=1 funcs=0
+  sampler 0 name=s states=0
+    info filter=POINT address_u=CLAMP address_v=CLAMP address_w=CLAMP max_anisotropy=1 border_color=00000000
+sparse result=ok
+  errors count=0 has_errors=0
+  error_string=@null
+  sp params=0 structs=0 samplers=1 funcs=0
+  sampler 0 name=s states=1
+    state "BorderColor" = "xFF336699"
+    info filter=POINT address_u=CLAMP address_v=CLAMP address_w=CLAMP max_anisotropy=1 border_color=ff336699
+sparse result=ok
+  errors count=0 has_errors=0
+  error_string=@null
+  sp params=0 structs=0 samplers=1 funcs=0
+  sampler 0 name=s states=1
+    state "BorderColor" = "0xFF336699"
+    info filter=POINT address_u=CLAMP address_v=CLAMP address_w=CLAMP max_anisotropy=1 border_color=00000000
+sparse result=ok
+  errors count=0 has_errors=0
+  error_string=@null
+  sp params=0 structs=0 samplers=1 funcs=0
+  sampler 0 name=s states=1
+    state "BorderColor" = "_FF336699"
+    info filter=POINT address_u=CLAMP address_v=CLAMP address_w=CLAMP max_anisotropy=1 border_color=ff336699
+ep result=ok
+  errors count=0 has_errors=0
+  ep params=0 structs=0 funcs=0 samplers=1 techniques=0
+  ep_sampler 0 name=s states=1
+    state "BorderColor" = "#FF336699"
+  error_string=@null
+effect (effect) params=0 techniques=0 viewproj=- world=-
+backend vertexshader_create location="qf6.effect (Vertex shader, technique T, pass 0)" len=161 fnv=6f94bb5e3e979bd3
+  text "uniform texture2d t;\n\n\nsampler_state s {\n\tBorderColor = #FF336699;\n\n};\n\nfloat4 F()\n{ return t.Sample(s, float2(0,0)); }\n\nfloat4 main() : TARGET\n{\n\treturn F();\n}\n"
+  result fail (shader_parse) errors="qf6.effect (Vertex shader, technique T, pass 0) (5, 25): Expected ';'\n"
+log error Pass (0) <> missing vertex shader!
+backend pixelshader_create location="qf6.effect (Pixel shader, technique T, pass 0)" len=161 fnv=6f94bb5e3e979bd3
+  text "uniform texture2d t;\n\n\nsampler_state s {\n\tBorderColor = #FF336699;\n\n};\n\nfloat4 F()\n{ return t.Sample(s, float2(0,0)); }\n\nfloat4 main() : TARGET\n{\n\treturn F();\n}\n"
+  result fail (shader_parse) errors="qf6.effect (Pixel shader, technique T, pass 0) (5, 25): Expected ';'\n"
+log error Pass (0) <> missing pixel shader!
+effect f6 result=fail
+  error_string="qf6.effect (4, 66): Error creating shader: qf6.effect (Vertex shader, technique T, pass 0) (5, 25): Expected ';'\n\nqf6.effect (4, 66): Error creating shader: qf6.effect (Pixel shader, technique T, pass 0) (5, 25): Expected ';'\n\n"
+backend shader_destroy location="qd1.effect (Vertex shader, technique T, pass 0)"
+backend shader_destroy location="qd1.effect (Pixel shader, technique T, pass 0)"
+backend shader_destroy location="qb1.effect (Vertex shader, technique T, pass 0)"
+backend shader_destroy location="qb1.effect (Pixel shader, technique T, pass 0)"
+backend shader_destroy location="qb1.effect (Vertex shader, technique T, pass 1)"
+backend shader_destroy location="qb1.effect (Pixel shader, technique T, pass 1)"
+backend shader_destroy location="qa2.effect (Vertex shader, technique T, pass 0)"
+backend shader_destroy location="qa2.effect (Pixel shader, technique T, pass 0)"

@@ -1,0 +1,14 @@
+--- empty stdin
+exit -1
+stderr|"Couldn't initialize muxer"
+exists @t.mkv: 0
+--- stdin ends inside the first info structure
+exit -1
+stderr|"Couldn't initialize muxer"
+--- info complete but payload short
+exit -1
+stderr|"Couldn't initialize muxer"
+--- video header ok but the audio header is missing
+exit -1
+stderr|"Couldn't initialize muxer"
+exists @t.mkv: 0

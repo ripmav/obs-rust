@@ -1,0 +1,37 @@
+# Groups: obs_scene_insert_group makes a group item (placed right above the last listed item) and moves the listed
+# items into it, converting each item's transform so it stays visually in place. The group's own size and position
+# derive from the union of its children. Canvas 1920x1080, children 200x100.
+source s 200 100
+scene main
+add main s a
+add main s b
+add main s c
+pos a 100 100
+pos b 400 300
+pos c 900 600
+group main g a b
+echo -- group item and children
+order_of main
+print g
+print a
+print b
+scene_size g
+echo -- children are stored relative to the group origin (the minimum corner of the children): a=0,0 b=300,200
+get a
+get b
+echo -- the remaining outside item untouched
+get c
+echo -- empty group (note: no item_add signal for it, unlike non-empty groups)
+log
+group main empty
+log
+order_of main
+print empty
+scene_size empty
+echo -- a group item cannot be put into a group; an item of another scene cannot either
+group main g2 g
+scene other
+add other s z
+group main g4 z
+group main g3 c
+order_of main

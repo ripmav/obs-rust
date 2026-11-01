@@ -1,0 +1,32 @@
+# S-050 obs-ffmpeg-vaapi: packet post-processing. The first non-empty packet is split with the
+# codec's header extractor (header and SEI are stored, the data returned has them removed); keyframe
+# detection per codec on the returned data. Empty packets, EAGAIN (-11) and EOF (-541478725) from
+# the codec produce no packet and no error; other errors fail (and unref the packet).
+va_defaults h264
+set str rate_control CBR
+va_create h264
+# EAGAIN from send then receive: nothing, still waiting for the first packet
+va_encode 00 0 0 -11 -11
+# end of stream from receive: nothing
+va_encode 00 0 0 0 -541478725
+# other error: failure
+va_encode 00 0 0 0 -22
+# empty packet: no output, still "first"
+va_encode - 0 0 0 0
+# SPS(67) + SEI(06) + PPS(68) + IDR(65)
+va_encode 00000001670102030000000106aabb0000000168cc000000016588ff 10 8 0 0
+# a P slice (41): no keyframe
+va_encode 000000014188 11 9 0 0
+va_destroy
+# HEVC: VPS(40 01) SPS(42 01) PPS(44 01) IDR(26 01)
+va_defaults hevc
+va_create hevc
+va_encode 00000001400101aa00000001420101bb00000001440101cc000000012601eeff 20 18 0 0
+va_encode 0000000102010099 21 19 0 0
+va_destroy
+# AV1: temporal delimiter, sequence header, key frame OBU
+va_defaults av1
+va_create av1
+va_encode 12000a02aabb32021000 30 28 0 0
+va_encode 120032021000 31 29 0 0
+va_destroy

@@ -1,0 +1,32 @@
+# CORE: sampler_state blocks "sampler_state NAME { STATE = VALUE...; };". The effect parser stores each
+# state name and the CONCATENATION of every token between '=' and ';' (whitespace tokens are skipped, so
+# "a b c" becomes "abc"). A state whose value is empty is dropped. Duplicate state names are kept in order.
+# Samplers are only emitted into shader text when a function uses them (see 31-assembly-deps).
+backend text none
+ep ok1 "sampler_state s { Filter = Linear; AddressU = Wrap; MaxAnisotropy = 8; BorderColor = 0xFF00FF; };"
+ep ok2 "sampler_state s { };"
+ep ok3 "sampler_state s { Filter = MIN_MAG_MIP_POINT; Filter = Point; };"
+ep ok4 "sampler_state s { Filter = a b c; };"
+ep ok5 "sampler_state s { F = \"x y\"; G = 1.5e3; };"
+ep ok6 "sampler_state s { BorderColor = #FF0000FF; };"
+ep ok7 "sampler_state s { Filter = Linear; }; sampler_state s { Filter = Point; };"
+ep ok8 "sampler_state s{Filter=Linear;AddressU=Clamp;};"
+ep ok9 "sampler_state s { Filter = ; AddressU = Clamp; };"
+ep ok10 "sampler_state s { Filter =\n Linear\n ;\n };"
+ep ok11 "sampler_state s { Filter = (1+2)*3; };"
+ep ok12 "sampler_state s { Filter = { x; };"
+echo --- errors
+ep e1 "sampler_state"
+ep e2 "sampler_state s"
+ep e3 "sampler_state s {"
+ep e4 "sampler_state s { Filter"
+ep e5 "sampler_state s { Filter = Linear"
+ep e6 "sampler_state s { Filter = Linear; }"
+ep e7 "sampler_state s { Filter Linear; };"
+ep e8 "sampler_state { Filter = Linear; };"
+ep e9 "sampler_state s { 3 = 3; };"
+ep e10 "sampler_state s Filter = Linear; };"
+ep e11 "sampler_state s { Filter = Linear; } x;"
+ep e12 "sampler_state 3 { };"
+ep e13 "sampler_state s { Filter = Linear; ; };"
+ep e14 "sampler_state s { Filter = Linear; }; float x"

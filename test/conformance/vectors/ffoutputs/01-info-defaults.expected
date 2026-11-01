@@ -1,0 +1,50 @@
+> reset
+> output o
+> create ffmpeg_muxer
+signal_add "void file_changed(string next_file)"
+proc_add "void split_file(out bool split_file_enabled)"
+create ffmpeg_muxer -> ok
+> info
+info id=ffmpeg_muxer flags=0x37 protocols=- vcodecs=- acodecs=-
+> getname
+name FFmpegMuxer
+> props
+property text name=path desc=FilePath type=0
+> defaults
+no defaults callback
+> create ffmpeg_mpegts_muxer
+signal_add "void file_changed(string next_file)"
+proc_add "void split_file(out bool split_file_enabled)"
+create ffmpeg_mpegts_muxer -> ok
+> info
+info id=ffmpeg_mpegts_muxer flags=0x1f protocols=SRT;RIST vcodecs=h264 acodecs=aac;opus
+> getname
+name FFmpegMpegtsMuxer
+> create replay_buffer
+proc_add "void save()"
+proc_add "void get_last_replay(out string path)"
+signal_add "void saved()"
+signal_add "void saving(ptr output)"
+create replay_buffer -> ok
+> info
+info id=replay_buffer flags=0x37 protocols=- vcodecs=- acodecs=-
+> getname
+name ReplayBuffer
+> defaults
+> settings
+settings
+  max_time_sec default-int 15
+  max_size_mb default-int 500
+  format default-str "%CCYY-%MM-%DD %hh-%mm-%ss"
+  extension default-str "mp4"
+  allow_spaces default-bool 1
+> props
+no properties callback
+> create hls
+create hls -> ok
+> info
+info id=ffmpeg_hls_muxer flags=0x1f protocols=HLS vcodecs=h264 acodecs=aac
+> getname
+name FFmpegHlsMuxer
+> defaults
+no defaults callback

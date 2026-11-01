@@ -1,0 +1,40 @@
+av.find_encoder nosuch_enc -> missing
+av.find_encoder nosuch_alt -> missing
+log info ---------------------------------
+host.set_last_error "Couldn't find encoder: nosuch_enc"
+log warning [Fake encoder: 'enc'] Couldn't find encoder: 'nosuch_enc'
+child: init -> 0
+child: last_error "Couldn't find encoder: nosuch_enc"
+av.free_context
+child: freed
+child exit 0
+av.find_encoder nosuch_enc -> missing
+av.find_encoder nosuch_alt -> missing
+log info ---------------------------------
+crash (child killed by a signal)
+av.find_encoder nosuch_enc -> missing
+av.find_encoder alt_enc -> found
+log info ---------------------------------
+vid_init -> 1
+last_error @null
+vid initialized=0 first_packet=1 start_ts=0 height=0 buffer=0 enc_name="Fake"
+av.free_context
+av.find_encoder prim_enc -> found
+log info ---------------------------------
+vid_init -> 1
+vid initialized=0 first_packet=1 start_ts=0 height=0 buffer=0 enc_name="Fake"
+av.free_context
+av.find_encoder prim_enc -> found
+log info ---------------------------------
+vid_init -> 1
+av.free_context
+av.find_encoder prim_gone -> missing
+av.find_encoder alt_enc -> missing
+log info ---------------------------------
+host.set_last_error "Couldn't find encoder: prim_gone"
+log warning [Fake encoder: 'enc'] Couldn't find encoder: 'prim_gone'
+child: init -> 0
+child: last_error "Couldn't find encoder: prim_gone"
+av.free_context
+child: freed
+child exit 0

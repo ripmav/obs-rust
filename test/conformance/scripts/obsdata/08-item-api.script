@@ -1,0 +1,79 @@
+# CORE: item-level set/get/has/unset through a held item handle. The handle follows
+# the item if the item has to be reallocated. Setting through a handle that is the only
+# one held is the supported use. Growth moves the item to the end of the order (Q1).
+new b
+set_int b p 1
+set_int b q 2
+set_int b r 3
+byname b p ip
+item_get_int ip
+item_set_string ip "hello world, this is long enough to force growth beyond capacity xxxxxxxxxxxxxxxxxxx"
+item_get_string ip
+item_type ip
+item_name ip
+names b
+item_dump ip
+item_set_int ip 3
+item_dump ip
+item_set_double ip 1.25
+item_numtype ip
+item_get_int ip
+item_get_double ip
+item_set_bool ip 1
+item_get_bool ip
+item_dump ip
+echo --- layers through the item
+item_set_default_bool ip 0
+item_set_autoselect_bool ip 1
+item_dump ip
+item_has_user ip
+item_has_default ip
+item_has_autoselect ip
+item_get_default_bool ip
+item_get_autoselect_bool ip
+item_unset_user ip
+item_get_bool ip
+item_unset_default ip
+item_get_bool ip
+item_unset_autoselect ip
+item_has_autoselect ip
+item_dump ip
+dump b
+echo --- default of a different type on an item is ignored
+byname b q iq
+item_set_default_string iq "zzz"
+item_has_default iq
+item_set_default_int iq 8
+item_has_default iq
+item_get_default_int iq
+echo --- getters on a mismatching item type
+item_get_string iq
+item_get_bool iq
+item_get_obj iq o
+item_get_array iq ar
+echo --- items holding objects and arrays
+new h
+new o
+set_int o v 1
+set_obj h obj o
+a_new ar
+set_array h arr ar
+byname h obj io
+item_get_obj io got
+same o got
+refs o
+byname h arr ia
+item_get_array ia gar
+a_refs ar
+item_type ia
+item_set_obj io @null
+refs o
+item_dump io
+item_set_array ia @null
+item_dump ia
+echo --- removing through the item
+byname h arr ir
+item_remove ir
+names h
+echo --- item_remove / release on a NULL handle slot
+next_null

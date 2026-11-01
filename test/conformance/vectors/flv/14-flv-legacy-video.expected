@@ -1,0 +1,120 @@
+echo sequence-header-keyframe
+flv_mux size=45 hex=0900001e0000000000000017000000000164001fffe1000f6742c01fda0a0fd888000000000300000100000029
+  tag type=9 datasize=30 ts=0 streamid=0
+    video ex=0 frametype=1 codec=7 avcptype=0 cts=0 payload=0164001fffe1000f6742c01fda0a0fd8880000000003000001
+  prevsize=41 expected=41
+echo keyframe-then-inter-frames
+flv_mux size=25 hex=0900000a000000000000001701000000650088840000000015
+  tag type=9 datasize=10 ts=0 streamid=0
+    video ex=0 frametype=1 codec=7 avcptype=1 cts=0 payload=6500888400
+  prevsize=21 expected=21
+flv_mux size=25 hex=0900000a000021000000002701000000410123456700000015
+  tag type=9 datasize=10 ts=33 streamid=0
+    video ex=0 frametype=2 codec=7 avcptype=1 cts=0 payload=4101234567
+  prevsize=21 expected=21
+flv_mux size=25 hex=0900000a000043000000002701000021010203040500000015
+  tag type=9 datasize=10 ts=67 streamid=0
+    video ex=0 frametype=2 codec=7 avcptype=1 cts=33 payload=0102030405
+  prevsize=21 expected=21
+echo header-flag-only-changes-byte-1
+flv_mux size=25 hex=0900000a000000000000001700000000650088840000000015
+  tag type=9 datasize=10 ts=0 streamid=0
+    video ex=0 frametype=1 codec=7 avcptype=0 cts=0 payload=6500888400
+  prevsize=21 expected=21
+flv_mux size=25 hex=0900000a000021000000002700000000410123456700000015
+  tag type=9 datasize=10 ts=33 streamid=0
+    video ex=0 frametype=2 codec=7 avcptype=0 cts=0 payload=4101234567
+  prevsize=21 expected=21
+echo inter-frame-flagged-as-header
+flv_mux size=25 hex=0900000a000021000000002700000000410123456700000015
+  tag type=9 datasize=10 ts=33 streamid=0
+    video ex=0 frametype=2 codec=7 avcptype=0 cts=0 payload=4101234567
+  prevsize=21 expected=21
+echo dts-offset-is-subtracted
+flv_mux size=21 hex=0900000600000000000000170100000aaa00000011
+  tag type=9 datasize=6 ts=0 streamid=0
+    video ex=0 frametype=1 codec=7 avcptype=1 cts=10 payload=aa
+  prevsize=17 expected=17
+flv_mux size=21 hex=090000060003de00000000170100000aaa00000011
+  tag type=9 datasize=6 ts=990 streamid=0
+    video ex=0 frametype=1 codec=7 avcptype=1 cts=10 payload=aa
+  prevsize=17 expected=17
+flv_mux size=21 hex=0900000600137e00000000170100000aaa00000011
+  tag type=9 datasize=6 ts=4990 streamid=0
+    video ex=0 frametype=1 codec=7 avcptype=1 cts=10 payload=aa
+  prevsize=17 expected=17
+flv_mux size=21 hex=09000006fffff67f000000170100000aaa00000011
+  tag type=9 datasize=6 ts=2147483638 streamid=0
+    video ex=0 frametype=1 codec=7 avcptype=1 cts=10 payload=aa
+  prevsize=17 expected=17
+flv_mux size=21 hex=09000006fffc0e7f000000170100000aaa00000011
+  tag type=9 datasize=6 ts=2147482638 streamid=0
+    video ex=0 frametype=1 codec=7 avcptype=1 cts=10 payload=aa
+  prevsize=17 expected=17
+echo timebase-1-over-90000
+flv_mux size=21 hex=09000006000021000000001701000043bb00000011
+  tag type=9 datasize=6 ts=33 streamid=0
+    video ex=0 frametype=1 codec=7 avcptype=1 cts=67 payload=bb
+  prevsize=17 expected=17
+flv_mux size=21 hex=09000006000031000000002701000001bb00000011
+  tag type=9 datasize=6 ts=49 streamid=0
+    video ex=0 frametype=2 codec=7 avcptype=1 cts=1 payload=bb
+  prevsize=17 expected=17
+echo timebase-30000-over-1001-style
+flv_mux size=21 hex=09000006000000000000002701000001cc00000011
+  tag type=9 datasize=6 ts=0 streamid=0
+    video ex=0 frametype=2 codec=7 avcptype=1 cts=1 payload=cc
+  prevsize=17 expected=17
+flv_mux size=21 hex=090000060003e8000000002701000001cc00000011
+  tag type=9 datasize=6 ts=1000 streamid=0
+    video ex=0 frametype=2 codec=7 avcptype=1 cts=1 payload=cc
+  prevsize=17 expected=17
+echo the numerator of the time base is ignored; only the denominator is used
+flv_mux size=21 hex=090000060003e8000000002701000000dd00000011
+  tag type=9 datasize=6 ts=1000 streamid=0
+    video ex=0 frametype=2 codec=7 avcptype=1 cts=0 payload=dd
+  prevsize=17 expected=17
+flv_mux size=21 hex=090000060003e8000000002701000000dd00000011
+  tag type=9 datasize=6 ts=1000 streamid=0
+    video ex=0 frametype=2 codec=7 avcptype=1 cts=0 payload=dd
+  prevsize=17 expected=17
+echo negative-composition-time-is-24-bit-two-s-complement
+flv_mux size=21 hex=09000006000028000000002701ffffd8ee00000011
+  tag type=9 datasize=6 ts=40 streamid=0
+    video ex=0 frametype=2 codec=7 avcptype=1 cts=-40 payload=ee
+  prevsize=17 expected=17
+flv_mux size=21 hex=09000006015f90000000002701fea0d4ee00000011
+  tag type=9 datasize=6 ts=90000 streamid=0
+    video ex=0 frametype=2 codec=7 avcptype=1 cts=-89900 payload=ee
+  prevsize=17 expected=17
+echo composition-time-wraps-at-24-bit
+flv_mux size=21 hex=09000006000000000000002701312d00ee00000011
+  tag type=9 datasize=6 ts=0 streamid=0
+    video ex=0 frametype=2 codec=7 avcptype=1 cts=3222784 payload=ee
+  prevsize=17 expected=17
+flv_mux size=21 hex=09000006000000000000002701000000ee00000011
+  tag type=9 datasize=6 ts=0 streamid=0
+    video ex=0 frametype=2 codec=7 avcptype=1 cts=0 payload=ee
+  prevsize=17 expected=17
+flv_mux size=21 hex=09000006000000000000002701800000ee00000011
+  tag type=9 datasize=6 ts=0 streamid=0
+    video ex=0 frametype=2 codec=7 avcptype=1 cts=-8388608 payload=ee
+  prevsize=17 expected=17
+echo keyframe-flag-with-nonzero-value
+flv_mux size=21 hex=09000006000000000000001701000000ff00000011
+  tag type=9 datasize=6 ts=0 streamid=0
+    video ex=0 frametype=1 codec=7 avcptype=1 cts=0 payload=ff
+  prevsize=17 expected=17
+echo payload-sizes
+flv_mux size=21 hex=090000060000000000000017010000000000000011
+  tag type=9 datasize=6 ts=0 streamid=0
+    video ex=0 frametype=1 codec=7 avcptype=1 cts=0 payload=00
+  prevsize=17 expected=17
+flv_mux size=320 hex=090001310000000000000027010000007a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a0000013c
+  tag type=9 datasize=305 ts=0 streamid=0
+    video ex=0 frametype=2 codec=7 avcptype=1 cts=0 payload=7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a...7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a(300)
+  prevsize=316 expected=316
+flv_mux size=70020 hex=090111750000000000000027010000007a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a...7a7a7a7a7a7a7a7a7a7a7a7a00011180(70020)
+  tag type=9 datasize=70005 ts=0 streamid=0
+    video ex=0 frametype=2 codec=7 avcptype=1 cts=0 payload=7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a...7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a(70000)
+  prevsize=70016 expected=70016

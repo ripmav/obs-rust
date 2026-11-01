@@ -1,0 +1,39 @@
+# sdr_on_hdr_filter: always reports 709_EXTENDED; renders only for SDR sources; multiplier = level / sdr white.
+sdr_white 300
+source T 1920 1080 1920 1080 SRGB video
+source P 1920 1080 1920 1080 SRGB video
+filter a sdr_on_hdr_filter 0 @null T P
+cs a 3 SRGB SRGB_16F 709_EXTENDED
+cs a 0
+tick a 0.016
+render a
+srcspace T SRGB_16F
+render a
+echo gamma power
+data d
+dset d gamma int 2
+dset d power dbl 2.2
+dset d sdr_white_level_nits int 400
+filter b sdr_on_hdr_filter 0 d T P
+tick b 0.016
+sdr_white 200
+render b
+echo gamma invalid (0) uses the power technique, an unknown value too
+data e
+dset e gamma int 0
+filter c sdr_on_hdr_filter 0 e T P
+tick c 0.016
+render c
+dset e gamma int 99
+filter f sdr_on_hdr_filter 0 e T P
+tick f 0.016
+render f
+echo HDR sources are skipped
+srcspace T 709_EXTENDED
+render a
+srcspace T 709_SCRGB
+render a
+echo sdr white level 0 -> inf multiplier
+sdr_white 0
+srcspace T SRGB
+render a

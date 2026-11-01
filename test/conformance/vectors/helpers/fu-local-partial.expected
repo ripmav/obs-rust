@@ -1,0 +1,21 @@
+fu_run local=/L cache=/C temp=/C/.temp url=http://srv/updates/package.json
+fs read /L/package.json -> ok
+fs read /C/package.json -> ok
+fs read /C/meta.json -> missing
+fs copy /L/newer.json -> /C/.temp/newer.json : ok
+fs unlink /C/newer.json : ok
+fs rename /C/.temp/newer.json -> /C/newer.json : ok
+fs copy /L/new.json -> /C/.temp/new.json : ok
+fs unlink /C/new.json : fail
+fs rename /C/.temp/new.json -> /C/new.json : ok
+fs copy /L/package.json -> /C/.temp/package.json : ok
+fs unlink /C/package.json : ok
+fs rename /C/.temp/package.json -> /C/package.json : ok
+http GET http://srv/updates/package.json "User-Agent: UA/1.0"
+log warning [fu] Remote update of URL "http://srv/updates/package.json" failed: transfer failed
+fs rmdir /C/.temp
+fu_run done
+fu_cat /C/same.json "same-cache"
+fu_cat /C/newer.json "newer-local"
+fu_cat /C/older.json "older-cache"
+fu_cat /C/new.json "new-local"

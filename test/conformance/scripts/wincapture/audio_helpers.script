@@ -1,0 +1,9 @@
+# win-capture audio-helpers: the helper only updates the child WASAPI source when window or priority changed.
+# priority only counts when the new window string is non-empty. MODEL (source-derived).
+m_audio_changed A 0 A 0
+m_audio_changed A 0 B 0
+m_audio_changed A 0 A 1
+m_audio_changed - 0 - 1
+m_audio_changed A 0 - 0
+m_audio_changed - 0 A 0
+m_audio_changed - 1 A 1

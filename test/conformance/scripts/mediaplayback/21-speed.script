@@ -1,0 +1,77 @@
+# Playback speed (local files only, 1..200 percent, anything else -> 100): frame pts and durations are scaled
+# by 100/speed when decoded, audio sample rate is reported as rate*speed/100, get_current_time scales back.
+media sp 1000000 0
+video 1 1000 16 16 yuv420p
+audio 1 48000 48000 2 s16
+pkt 0 0 fdur=100
+pkt 1 0 samples=4800
+pkt 0 100 fdur=100
+pkt 1 4800 samples=4800
+endmedia
+media sp2 0 0
+video 1 1000 16 16 yuv420p
+pkt 0 0
+pkt 0 100
+pkt 0 200
+pkt 0 300
+endmedia
+clock 1000000000
+echo speed 50 (half speed: timestamps double)
+minit sp local=1 speed=50
+mreset
+mplay 0
+mtickw 0 0
+mtick 3
+mstate
+mtime
+mfree
+echo speed 200
+minit sp local=1 speed=200
+mreset
+mplay 0
+mtickw 0 0
+mtick 3
+mtime
+mfree
+echo out of range speeds become 100
+minit sp local=1 speed=0
+mstate
+mfree
+minit sp local=1 speed=201
+mstate
+mfree
+minit sp local=1 speed=-5
+mstate
+mfree
+minit sp local=1 speed=1
+mstate
+mfree
+minit sp local=1 speed=200
+mstate
+mfree
+echo ---- QUIRK: duration estimate from the pts difference mixes the scaled previous pts with the unscaled new one
+minit sp2 local=1 speed=50
+mnextpkt
+mdecode v
+mstate
+mnextpkt
+mdecode v
+mstate
+mnextpkt
+mdecode v
+mstate
+mnextpkt
+mdecode v
+mstate
+mfree
+echo the same without scaling
+minit sp2 local=1 speed=100
+mnextpkt
+mdecode v
+mnextpkt
+mdecode v
+mnextpkt
+mdecode v
+mnextpkt
+mdecode v
+mstate

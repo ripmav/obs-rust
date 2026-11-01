@@ -1,0 +1,48 @@
+# Per-child transform matrices (scale + translation) computed at start and on every tick from the child size
+# and the transition size (fixed size if set, otherwise the max of the children sizes).
+# Scale types: 0 MAX_ONLY (no upscale; aspect fit when larger), 1 ASPECT (fit), 2 STRETCH. Alignment is the OBS bitmask.
+kind in input video size
+kind tr transition video,audio size
+create t tr T
+create a in A
+create b in B
+fksize a 1920 1080
+fksize b 640 480
+tr_set t a
+tr_size t 1280 720
+tick t 0.016
+tr_matrix t 0
+echo --- MAX_ONLY with a smaller child: scale 1, aligned top-left
+tr_set t b
+tick t 0.016
+tr_matrix t 0
+echo --- centered (align 0)
+tr_align t 0
+tick t 0.016
+tr_matrix t 0
+echo --- bottom-right (align 10)
+tr_align t 10
+tick t 0.016
+tr_matrix t 0
+echo --- ASPECT
+tr_scale t 1
+tr_align t 0
+tick t 0.016
+tr_matrix t 0
+echo --- STRETCH
+tr_scale t 2
+tick t 0.016
+tr_matrix t 0
+echo --- child zero size keeps old matrix
+fksize b 0 0
+tr_scale t 0
+tick t 0.016
+tr_matrix t 0
+echo --- no fixed size: use max of children
+tr_size t 0 0
+fksize a 800 600
+fksize b 400 600
+tr_set t a
+tick t 0.016
+tr_state t
+tr_matrix t 0

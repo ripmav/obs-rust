@@ -1,0 +1,15 @@
+# Threaded cache path (local file + full_decode): the container is opened synchronously in create, decoded on the
+# thread; queries work after the decode. First-play quirk (negative timestamps, see 41-cache-playback.script).
+media tc 120000 0
+video 1 1000 16 16 yuv420p frames=3
+pkt 0 0 fdur=40
+pkt 0 40 fdur=40
+pkt 0 80 fdur=40
+endmedia
+clock 1000000000
+pix off
+t_create tc local=1 full=1 speed=250
+t_play 0
+t_wait_stop 1
+t_query
+t_destroy

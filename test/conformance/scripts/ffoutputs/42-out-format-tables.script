@@ -1,0 +1,12 @@
+# Pure mapping tables of obs-ffmpeg-formats.h used by the ffmpeg_output: OBS video format -> libav pixel format
+# (NONE and AYUV have no mapping), chroma location (4:4:4 center=2, 4:2:2 left=1, 4:2:0 left=1 / top-left=3 for
+# BT2020_NCL, others unspecified=0), libav sample format -> OBS audio format (unknown -> 16-bit).
+fo_formats
+fo_sample_formats
+fo_rescale 100 1 30 1 1000
+fo_rescale 1 1 30 1 1000
+fo_rescale -1 1 30 1 1000
+fo_rescale 3 1 2 1 1
+fo_rescale -3 1 2 1 1
+fo_rescale -9223372036854775808 1 30 1 1000
+fo_rescale 9223372036854775807 1 30 1 1000

@@ -1,0 +1,43 @@
+# S-050 nvenc: nvenc_create_base decides between the texture encoder and the "soft" (CUDA, copies
+# frames) encoder. A rerouted create returns whatever obs_encoder_create_rerouted returns.
+dump 0
+nvcap dyn_bitrate 1
+defaults h264
+# texture encoder, nothing special: stays
+create h264 tex
+destroy
+# a user-selected GPU other than -1 while the setting is set by the user: reroute to soft
+set int device 1
+create h264 tex
+create hevc tex
+create av1 tex
+# the soft encoder itself ignores the device
+create h264 soft
+destroy
+# device -1 stays
+set int device -1
+create h264 tex
+destroy
+# CPU scaling: reroute; GPU scaling: stays
+reset
+defaults h264
+host scaling 1
+create h264 tex
+host gpu_scaling 1
+create h264 tex
+destroy
+host scaling 0
+host gpu_scaling 0
+# neither NV12 nor P010 textures active: reroute
+host tex_nv12 0
+create h264 tex
+host tex_p010 1
+create h264 tex
+destroy
+# the "texture" create failing (open session fails) also reroutes; failing in the soft encoder
+# yields NULL ("Already in non_texture encoder")
+host tex_nv12 1
+host tex_p010 0
+nvstatus open NV_ENC_ERR_OUT_OF_MEMORY
+create h264 tex
+create h264 soft

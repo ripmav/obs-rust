@@ -1,0 +1,133 @@
+> events off
+> reset
+> ascii 5 8 0 8 384
+> font Sans Serif - 0 p/sans
+> load
+load -> 1
+registered id=text_ft2_source version=0
+registered id=text_ft2_source version=2
+> create s 2
+create s -> 1
+> setfont s Sans Serif - 20 0
+> set s from_file true
+> clock 1000
+> file w.txt v1
+> touch w.txt 100
+> sets s text_file @TMP@/w.txt
+> update s
+update done
+> state s
+state s font="Sans Serif" style="" size=20 flags=0 face=1 from_file=1 aa=1
+state s outline=0 shadow=0 outline_width=0 word_wrap=0 custom_width=0 log_mode=0 log_lines=6 color=ffffffff,ffffffff
+state s cx=12 cy=8 max_h=8 texbuf=553,0 tex=1 vbuf=1 effect=1
+state s file="/w.txt" load_failed=0 update_file=0 mtime=0 last_checked_ms=1000
+state s text="v1"
+> echo --- tick before 1 s passed: nothing
+--- tick before 1 s passed: nothing
+> clock 1500
+> tick s
+> state s
+state s font="Sans Serif" style="" size=20 flags=0 face=1 from_file=1 aa=1
+state s outline=0 shadow=0 outline_width=0 word_wrap=0 custom_width=0 log_mode=0 log_lines=6 color=ffffffff,ffffffff
+state s cx=12 cy=8 max_h=8 texbuf=553,0 tex=1 vbuf=1 effect=1
+state s file="/w.txt" load_failed=0 update_file=0 mtime=0 last_checked_ms=1000
+state s text="v1"
+> echo --- first check after 1 s: mtime differs from 0 -> update_file set, no reload yet
+--- first check after 1 s: mtime differs from 0 -> update_file set, no reload yet
+> clock 2000
+> file w.txt v2
+> touch w.txt 200
+> tick s
+> state s
+state s font="Sans Serif" style="" size=20 flags=0 face=1 from_file=1 aa=1
+state s outline=0 shadow=0 outline_width=0 word_wrap=0 custom_width=0 log_mode=0 log_lines=6 color=ffffffff,ffffffff
+state s cx=12 cy=8 max_h=8 texbuf=553,0 tex=1 vbuf=1 effect=1
+state s file="/w.txt" load_failed=0 update_file=1 mtime=200 last_checked_ms=2000
+state s text="v1"
+> echo --- next check reloads
+--- next check reloads
+> clock 3000
+> tick s
+> state s
+state s font="Sans Serif" style="" size=20 flags=0 face=1 from_file=1 aa=1
+state s outline=0 shadow=0 outline_width=0 word_wrap=0 custom_width=0 log_mode=0 log_lines=6 color=ffffffff,ffffffff
+state s cx=12 cy=8 max_h=8 texbuf=553,0 tex=1 vbuf=1 effect=1
+state s file="/w.txt" load_failed=0 update_file=0 mtime=200 last_checked_ms=3000
+state s text="v2"
+> echo --- unchanged file: no further reload
+--- unchanged file: no further reload
+> file w.txt v3-written-but-same-mtime
+> touch w.txt 200
+> clock 4000
+> tick s
+> clock 5000
+> tick s
+> state s
+state s font="Sans Serif" style="" size=20 flags=0 face=1 from_file=1 aa=1
+state s outline=0 shadow=0 outline_width=0 word_wrap=0 custom_width=0 log_mode=0 log_lines=6 color=ffffffff,ffffffff
+state s cx=12 cy=8 max_h=8 texbuf=553,0 tex=1 vbuf=1 effect=1
+state s file="/w.txt" load_failed=0 update_file=0 mtime=200 last_checked_ms=5000
+state s text="v2"
+> echo --- deleted file: mtime -1 recorded, then reload attempt fails with one warning and keeps text
+--- deleted file: mtime -1 recorded, then reload attempt fails with one warning and keeps text
+> rm w.txt
+> clock 6000
+> tick s
+> clock 7000
+> tick s
+log warning Failed to open file $TMP/w.txt
+> clock 8000
+> tick s
+> state s
+state s font="Sans Serif" style="" size=20 flags=0 face=1 from_file=1 aa=1
+state s outline=0 shadow=0 outline_width=0 word_wrap=0 custom_width=0 log_mode=0 log_lines=6 color=ffffffff,ffffffff
+state s cx=12 cy=8 max_h=8 texbuf=553,0 tex=1 vbuf=1 effect=1
+state s file="/w.txt" load_failed=1 update_file=0 mtime=-1 last_checked_ms=8000
+state s text="v2"
+> echo --- log mode reload on tick
+--- log mode reload on tick
+> set s log_mode true
+> set s log_lines 1
+> file w.txt a
+b
+c
+> touch w.txt 300
+> update s
+update done
+> state s
+state s font="Sans Serif" style="" size=20 flags=0 face=1 from_file=1 aa=1
+state s outline=0 shadow=0 outline_width=0 word_wrap=0 custom_width=0 log_mode=1 log_lines=1 color=ffffffff,ffffffff
+state s cx=6 cy=24 max_h=10 texbuf=560,0 tex=1 vbuf=1 effect=1
+state s file="/w.txt" load_failed=0 update_file=0 mtime=-1 last_checked_ms=8000
+state s text="b\nc"
+> clock 9000
+> tick s
+> clock 10000
+> file w.txt a
+b
+c
+d
+> touch w.txt 400
+> tick s
+> clock 11000
+> tick s
+> state s
+state s font="Sans Serif" style="" size=20 flags=0 face=1 from_file=1 aa=1
+state s outline=0 shadow=0 outline_width=0 word_wrap=0 custom_width=0 log_mode=1 log_lines=1 color=ffffffff,ffffffff
+state s cx=6 cy=24 max_h=10 texbuf=560,0 tex=1 vbuf=1 effect=1
+state s file="/w.txt" load_failed=0 update_file=0 mtime=400 last_checked_ms=11000
+state s text="c\nd"
+> echo --- not from_file: tick does nothing
+--- not from_file: tick does nothing
+> set s from_file false
+> set s text m
+> update s
+update done
+> clock 20000
+> tick s
+> state s
+state s font="Sans Serif" style="" size=20 flags=0 face=1 from_file=0 aa=1
+state s outline=0 shadow=0 outline_width=0 word_wrap=0 custom_width=0 log_mode=1 log_lines=1 color=ffffffff,ffffffff
+state s cx=6 cy=10 max_h=10 texbuf=560,0 tex=1 vbuf=1 effect=1
+state s file="/w.txt" load_failed=0 update_file=0 mtime=400 last_checked_ms=11000
+state s text="m"

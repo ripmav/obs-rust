@@ -1,0 +1,29 @@
+# CORE. obs_x264_create refuses high-precision formats (I010 P010 P216 P416) and Rec.2100
+# colorspaces before touching x264: last error is set to a locale key and NULL returned.
+# The check order is: format first, then colorspace.
+data D
+x264_defaults D
+echo ok-baseline
+x264_create X D
+x264_destroy X
+echo high-precision-formats
+video I010 709 partial 60 1 1920 1080
+x264_create X D
+video P010 709 partial 60 1 1920 1080
+x264_create X D
+video P216 709 partial 60 1 1920 1080
+x264_create X D
+video P416 709 partial 60 1 1920 1080
+x264_create X D
+echo hdr-colorspaces-with-8-bit-formats
+video NV12 pq partial 60 1 1920 1080
+x264_create X D
+video I420 hlg partial 60 1 1920 1080
+x264_create X D
+echo format-check-wins-over-colorspace
+video P010 pq partial 60 1 1920 1080
+x264_create X D
+echo other-8-bit-formats-are-not-rejected
+video BGRA 709 partial 60 1 1920 1080
+x264_create X D
+x264_destroy X

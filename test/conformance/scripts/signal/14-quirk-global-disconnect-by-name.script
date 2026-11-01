@@ -1,0 +1,15 @@
+# QUIRK (conformance level SHOULD, spec S-004 section 7.3): a global callback that
+# disconnects ITSELF through signal_handler_disconnect_global while it is running
+# is not found (the reference compares whole records, including the "currently
+# signalling" counter), so it stays connected. Disconnecting it from outside a
+# signal works.
+handler h
+add h "void s()"
+gcallback by_name disconnect_global:h:by_name
+gcallback plain
+connect_global h by_name
+connect_global h plain
+emit h s
+emit h s
+disconnect_global h by_name
+emit h s

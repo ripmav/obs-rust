@@ -1,0 +1,6 @@
+# Hotkey name table, fallback path (the global obs core does not exist): every key id
+# 0..OBS_KEY_LAST_VALUE-1, its name, and the id that obs_key_from_name() returns for that
+# name (must equal the index). This vector is the NORMATIVE name table (CORE).
+hk_mode null
+hk_count
+hk_dump

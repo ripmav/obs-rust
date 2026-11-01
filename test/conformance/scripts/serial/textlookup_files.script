@@ -1,0 +1,35 @@
+# create/add error paths and merging (CORE): missing or empty files fail (create -> NULL,
+# add -> false and the lookup is unchanged); a later add overrides equal keys (last wins);
+# getstr on a NULL lookup is false.
+fput tf-empty -
+fput tf-bom efbbbf
+fputs tf-a "A=\"1\"\nB=\"2\"\n"
+fputs tf-b "B=\"20\"\nC=\"30\"\n"
+funlink tf-missing
+tl_create 0 tf-missing
+tl_create 0 tf-empty
+tl_create 0 tf-bom
+tl_get 0 A
+tl_create 1 tf-a
+tl_get 1 A
+tl_get 1 B
+tl_get 1 C
+tl_add 1 tf-b
+tl_get 1 A
+tl_get 1 B
+tl_get 1 C
+tl_add 1 tf-missing
+tl_add 1 tf-empty
+tl_add 1 tf-bom
+tl_get 1 A
+tl_get 1 B
+fputs tf-dup "A=\"first\"\nA=\"second\"\nA=\"third\"\n"
+tl_create 2 tf-dup
+tl_get 2 A
+tl_destroy 1
+tl_destroy 2
+funlink tf-empty
+funlink tf-bom
+funlink tf-a
+funlink tf-b
+funlink tf-dup

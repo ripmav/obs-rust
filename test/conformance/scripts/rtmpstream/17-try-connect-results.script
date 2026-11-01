@@ -1,0 +1,31 @@
+# S-045 try_connect(): each failure stage and the success path including init_send (send thread, metadata).
+reset
+set path "rtmp://h/a"
+set key k
+aenc 0 aac 160
+venc 0 h264 2500
+# TCP/TLS connect fails: error code mapped to a message (110 = timed out), result -2
+fake connect_ok 0
+fake connect_err 110
+try_connect
+# connect succeeds but the RTMP handshake/stream creation fails: -3, no message is set
+fake connect_ok 1
+fake connect_err 0
+fake connectstream_ok 0
+try_connect
+# success: send thread created, metadata written (not counted in total bytes), capture started
+fake connectstream_ok 1
+try_connect
+# the send thread cannot be created: session is closed, result -4
+reset
+set path "rtmp://h/a"
+set key k
+fake pthread_create_fail 1
+try_connect
+# metadata write fails (first RTMP_Write): result -5, message set from the error code, active stays 1
+reset
+set path "rtmp://h/a"
+set key k
+fake write_fail_at 1
+fake connect_err 104
+try_connect

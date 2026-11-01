@@ -1,0 +1,16 @@
+open null ok
+write aa 1 -> 0
+read 2 -> 0 data=-
+serialize_w aa 1 -> 0
+serialize_r 2 -> 0 data=-
+seek start 3 -> -1
+seek cur 0 -> -1
+seek end 0 -> -1
+pos -> -1
+open empty ok
+write aa 1 -> 0
+read 2 -> 0 data=-
+serialize_w aa 1 -> 0
+serialize_r 2 -> 0 data=-
+seek start 3 -> -1
+pos -> -1

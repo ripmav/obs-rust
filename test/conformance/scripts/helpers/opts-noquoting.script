@@ -1,0 +1,10 @@
+# opts-parser: there is NO quoting or escaping (CORE). Only the space character
+# separates words; quotes, tabs and backslashes are ordinary data. A value that "looks
+# quoted" is split in the middle and its pieces are classified independently.
+opts_parse "title=\"hello world\""
+opts_parse "a='x y' b=2"
+opts_parse "tab=a\tb"
+opts_parse "back=a\\b c=d"
+opts_parse "\"quoted=1\""
+opts_parse "utf8=\xc3\xa4\xc3\xb6 \xe2\x82\xac=euro"
+opts_parse "nl=a\nb"

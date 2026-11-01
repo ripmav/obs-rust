@@ -1,0 +1,50 @@
+fake proc_handler_add "void twitch_ingests_refresh(int seconds)"
+fake proc_handler_add "void amazon_ivs_ingests_refresh(int seconds)"
+fake update_info_create prefix="[rtmp-services plugin] " agent="rtmp-services plugin (libobs 99.0.0-test)" url=https://obsproject.com/obs2_update/rtmp-services/v5 local=/mod/data cache=/cfg/rtmp-services/ confirm=set
+fake obs_register_service id=rtmp_common
+fake obs_register_service id=rtmp_custom
+module-load -> 1 name="rtmp-services plugin (libobs 99.0.0-test)"
+fake update_info_create_single prefix="[amazon ivs ingest update] " agent="rtmp-services plugin (libobs 99.0.0-test)" url=https://ingest.contribute.live-video.net/ingests
+fake updater-deliver https://ingest.contribute.live-video.net/ingests len=228
+fake write /cfg/rtmp-services/amazon_ivs_ingests.new.json len=228
+fake replace /cfg/rtmp-services/amazon_ivs_ingests.json
+get url = "rtmps://va.example:443/app"
+clock 200 ms
+get url = "rtmp://va.example:1935/app"
+props P
+  prop service type=list desc="Service" visible=1 enabled=1 combo=2 format=3 items=6
+    item 0 name="Alpha" value="Alpha" disabled=0
+    item 1 name="Golf" value="Golf" disabled=0
+    item 2 name="Facebook Live X" value="Facebook Live X" disabled=0
+    item 3 name="Kilo" value="Kilo" disabled=0
+    item 4 name="Twitch" value="Twitch" disabled=0
+    item 5 name="Amazon IVS" value="Amazon IVS" disabled=0
+  prop show_all type=bool desc="Show all services" visible=1 enabled=1
+  prop server type=list desc="Server" visible=1 enabled=1 combo=2 format=3 items=6
+    item 0 name="Auto (RTMPS, Recommended)" value="auto-rtmps" disabled=0
+    item 1 name="Auto (RTMP)" value="auto-rtmp" disabled=0
+    item 2 name="Virginia (RTMPS)" value="rtmps://va.example:443/app" disabled=0
+    item 3 name="Tokyo (RTMPS)" value=@null disabled=0
+    item 4 name="Virginia (RTMP)" value="rtmp://va.example:1935/app" disabled=0
+    item 5 name="Tokyo (RTMP)" value="rtmp://tk.example:1935/app" disabled=0
+  prop key type=text desc="Stream key" visible=1 enabled=1 text_type=1
+fs-cat /cfg/rtmp-services/amazon_ivs_ingests.json "{\"ingests\":[{\"name\":\"Virginia\",\"url_template\":\"rtmp://va.example:1935/app/{stream_key}\",\"url_template_secure\":\"rtmps://va.example:443/app/{stream_key}\"},{\"name\":\"Tokyo\",\"url_template\":\"rtmp://tk.example:1935/app/{stream_key}\"}]}"
+echo only-RTMP-registered-lists-auto-rtmp-and-RTMP-entries
+modify service -> 1
+props P
+  prop service type=list desc="Service" visible=1 enabled=1 combo=2 format=3 items=6
+    item 0 name="Alpha" value="Alpha" disabled=0
+    item 1 name="Golf" value="Golf" disabled=0
+    item 2 name="Facebook Live X" value="Facebook Live X" disabled=0
+    item 3 name="Kilo" value="Kilo" disabled=0
+    item 4 name="Twitch" value="Twitch" disabled=0
+    item 5 name="Amazon IVS" value="Amazon IVS" disabled=0
+  prop show_all type=bool desc="Show all services" visible=1 enabled=1
+  prop server type=list desc="Server" visible=1 enabled=1 combo=2 format=3 items=3
+    item 0 name="Auto (RTMP)" value="auto-rtmp" disabled=0
+    item 1 name="Virginia (RTMP)" value="rtmp://va.example:1935/app" disabled=0
+    item 2 name="Tokyo (RTMP)" value="rtmp://tk.example:1935/app" disabled=0
+  prop key type=text desc="Stream key" visible=1 enabled=1 text_type=1
+fake update_info_destroy url=https://obsproject.com/obs2_update/rtmp-services/v5 pending=0
+fake update_info_destroy url=https://ingest.contribute.live-video.net/ingests pending=0
+module-unload

@@ -1,0 +1,114 @@
+> q_set open_ok 1
+> q_headers 40aa 6742 68ee
+> q_create h264 soft
+log info [qsv encoder: 'enc'] settings: 	codec:          H.264 	rate_control:   
+log info 	target_bitrate: 0
+log info 	target_usage:    	profile:         	keyint:         0 	latency:         	b-frames:       0 	fps_num:        60 	fps_den:        1 	width:          1920 	height:         1080
+log info [qsv encoder: 'enc'] debug info:
+qsv.encoder_open codec=0 tex=0 -> ok
+log info 	major:          2 	minor:          9
+os.request_high_performance "qsv encoding"
+q_create -> ok
+> q_extra
+extra_data -> 1 674268ee
+sei -> 1 00
+> q_destroy
+os.end_high_performance
+qsv.encoder_close
+q_destroyed
+> q_create av1 soft
+log info [qsv encoder: 'enc'] settings: 	codec:          AV1 	rate_control:   
+log info 	target_bitrate: 0
+log info 	target_usage:    	profile:         	keyint:         0 	latency:         	b-frames:       0 	fps_num:        60 	fps_den:        1 	width:          1920 	height:         1080
+log info [qsv encoder: 'enc'] debug info:
+qsv.encoder_open codec=1 tex=0 -> ok
+log info 	major:          2 	minor:          9
+os.request_high_performance "qsv encoding"
+q_create -> ok
+> q_extra
+extra_data -> 1 6742
+sei -> 1 00
+> q_destroy
+os.end_high_performance
+qsv.encoder_close
+q_destroyed
+> q_create hevc soft
+log info [qsv encoder: 'enc'] settings: 	codec:          HEVC 	rate_control:   
+log info 	target_bitrate: 0
+log info 	target_usage:    	profile:         	keyint:         0 	latency:         	b-frames:       0 	fps_num:        60 	fps_den:        1 	width:          1920 	height:         1080
+log info [qsv encoder: 'enc'] debug info:
+qsv.encoder_open codec=2 tex=0 -> ok
+log info 	major:          2 	minor:          9
+os.request_high_performance "qsv encoding"
+q_create -> ok
+> q_extra
+extra_data -> 1 40aa674268ee
+sei -> 1 -
+> q_destroy
+os.end_high_performance
+qsv.encoder_close
+q_destroyed
+> host format p010
+> q_create h264 soft
+host.set_last_error "10bitUnsupportedAvc"
+log error [qsv encoder: 'enc'] 10bitUnsupportedAvc
+q_create -> NULL
+> q_create av1 soft
+log info [qsv encoder: 'enc'] settings: 	codec:          AV1 	rate_control:   
+log info 	target_bitrate: 0
+log info 	target_usage:    	profile:         	keyint:         0 	latency:         	b-frames:       0 	fps_num:        60 	fps_den:        1 	width:          1920 	height:         1080
+log info [qsv encoder: 'enc'] debug info:
+qsv.encoder_open codec=1 tex=0 -> ok
+log info 	major:          2 	minor:          9
+os.request_high_performance "qsv encoding"
+q_create -> ok
+> q_destroy
+os.end_high_performance
+qsv.encoder_close
+q_destroyed
+> host format i010
+> q_create hevc soft
+log info [qsv encoder: 'enc'] settings: 	codec:          HEVC 	rate_control:   
+log info 	target_bitrate: 0
+log info 	target_usage:    	profile:         	keyint:         0 	latency:         	b-frames:       0 	fps_num:        60 	fps_den:        1 	width:          1920 	height:         1080
+log info [qsv encoder: 'enc'] debug info:
+qsv.encoder_open codec=2 tex=0 -> ok
+log info 	major:          2 	minor:          9
+os.request_high_performance "qsv encoding"
+q_create -> ok
+> q_destroy
+os.end_high_performance
+qsv.encoder_close
+q_destroyed
+> host format p216
+> q_create av1 soft
+host.set_last_error "16bitUnsupported"
+log error [qsv encoder: 'enc'] 16bitUnsupported
+q_create -> NULL
+> host format p416
+> q_create hevc soft
+host.set_last_error "16bitUnsupported"
+log error [qsv encoder: 'enc'] 16bitUnsupported
+q_create -> NULL
+> host format nv12
+> host colorspace pq
+> q_create av1 soft
+host.set_last_error "8bitUnsupportedHdr"
+log error [qsv encoder: 'enc'] 8bitUnsupportedHdr
+q_create -> NULL
+> host colorspace hlg
+> q_create h264 soft
+host.set_last_error "8bitUnsupportedHdr"
+log error [qsv encoder: 'enc'] 8bitUnsupportedHdr
+q_create -> NULL
+> host colorspace 709
+> q_set open_ok 0
+> q_create h264 soft
+log info [qsv encoder: 'enc'] settings: 	codec:          H.264 	rate_control:   
+log info 	target_bitrate: 0
+log info 	target_usage:    	profile:         	keyint:         0 	latency:         	b-frames:       0 	fps_num:        60 	fps_den:        1 	width:          1920 	height:         1080
+log info [qsv encoder: 'enc'] debug info:
+qsv.encoder_open codec=0 tex=0 -> NULL
+log warning [qsv encoder: 'enc'] qsv failed to load
+log info 	major:          2 	minor:          9
+q_create -> NULL

@@ -1,0 +1,4 @@
+> ini "[general]\nnvenc_supported=true\nnvenc_devices=1\nnvenc_ver=13.0\ncuda_ver=12.0\n"
+> fsupported
+os.dlopen "libnvidia-encode.so.1" -> ok
+crash: signal 11

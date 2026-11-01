@@ -1,0 +1,59 @@
+add int i ok
+add int_slider is ok
+add float f ok
+add float_slider fs ok
+info
+  prop i type=int desc="Int" long=@null enabled=1 visible=1
+    min=1 max=100 step=5 numtype=scroller suffix=@null
+info
+  prop is type=int desc="Int slider" long=@null enabled=1 visible=1
+    min=-10 max=10 step=2 numtype=slider suffix=@null
+info
+  prop f type=float desc="Float" long=@null enabled=1 visible=1
+    min=0.5 max=99.25 step=0.25 numtype=scroller suffix=@null
+info
+  prop fs type=float desc="Float slider" long=@null enabled=1 visible=1
+    min=0 max=1 step=0.001 numtype=slider suffix=@null
+echo no-validation-min-greater-than-max
+add int weird ok
+add float weirdf ok
+info
+  prop weird type=int desc="w" long=@null enabled=1 visible=1
+    min=10 max=-10 step=0 numtype=scroller suffix=@null
+info
+  prop weirdf type=float desc="w" long=@null enabled=1 visible=1
+    min=1.0000000000000001e+300 max=-1.0000000000000001e+300 step=0 numtype=scroller suffix=@null
+echo set-limits
+info
+  prop i type=int desc="Int" long=@null enabled=1 visible=1
+    min=7 max=8 step=9 numtype=scroller suffix=@null
+info
+  prop f type=float desc="Float" long=@null enabled=1 visible=1
+    min=-1.5 max=2.5 step=0.125 numtype=scroller suffix=@null
+echo set-limits-on-wrong-kind-is-ignored
+info
+  prop i type=int desc="Int" long=@null enabled=1 visible=1
+    min=7 max=8 step=9 numtype=scroller suffix=@null
+info
+  prop f type=float desc="Float" long=@null enabled=1 visible=1
+    min=-1.5 max=2.5 step=0.125 numtype=scroller suffix=@null
+echo suffix
+info
+  prop i type=int desc="Int" long=@null enabled=1 visible=1
+    min=7 max=8 step=9 numtype=scroller suffix=" px"
+info
+  prop f type=float desc="Float" long=@null enabled=1 visible=1
+    min=-1.5 max=2.5 step=0.125 numtype=scroller suffix="%"
+info
+  prop i type=int desc="Int" long=@null enabled=1 visible=1
+    min=7 max=8 step=9 numtype=scroller suffix=@null
+info
+  prop f type=float desc="Float" long=@null enabled=1 visible=1
+    min=-1.5 max=2.5 step=0.125 numtype=scroller suffix=""
+echo suffix-on-wrong-kind-ignored
+info
+  prop i type=int desc="Int" long=@null enabled=1 visible=1
+    min=7 max=8 step=9 numtype=scroller suffix=@null
+info
+  prop f type=float desc="Float" long=@null enabled=1 visible=1
+    min=-1.5 max=2.5 step=0.125 numtype=scroller suffix=""

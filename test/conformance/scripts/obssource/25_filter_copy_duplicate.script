@@ -1,0 +1,30 @@
+# duplicate / copy_filters: the duplicate is created with the same id and a copy of the settings; filters are
+# duplicated oldest first, each copy gets a unique name (name, "name 2", "name 3", ...) and keeps its enabled state.
+# DO_NOT_DUPLICATE sources return the same source (new reference).
+kind in input video
+kind nd input video,nodup
+kind fl filter video defaults
+create a in A
+setting a x 5
+create f1 fl F
+create f2 fl F
+enable f2 0
+filter_add a f1
+filter_add a f2
+duplicate a b B
+get_setting b x
+names b
+info b
+create c in C
+copy_filters c a
+names c
+copy_filters c a
+names c
+create n nd N
+duplicate n m M
+refs n
+create d in D
+copy_filter d f2
+names d
+copy_filter d f2
+names d

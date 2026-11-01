@@ -1,0 +1,83 @@
+> dump 0
+> nvcap dyn_bitrate 1
+> defaults h264
+> create h264 tex
+log info [obs-nvenc: 'enc'] settings: 	codec:        H264 	rate_control: cbr 	bitrate:      10000 	keyint:       250 	preset:       p5 	tuning:       hq 	multipass:    qres 	profile:      high 	width:        1920 	height:       1080 	b-frames:     0 	b-ref-mode:   0 	lookahead:    false (0 frames) 	aq:           true 
+nv.InitializeEncoder
+create -> ok
+> destroy
+nv.DestroyEncoder
+destroyed
+> set int device 1
+> create h264 tex
+log info [obs-nvenc] different GPU selected by user, falling back to non-texture encoder
+host.create_rerouted "obs_nvenc_h264_soft"
+create -> rerouted
+> create hevc tex
+log info [obs-nvenc] different GPU selected by user, falling back to non-texture encoder
+host.create_rerouted "obs_nvenc_hevc_soft"
+create -> rerouted
+> create av1 tex
+log info [obs-nvenc] different GPU selected by user, falling back to non-texture encoder
+host.create_rerouted "obs_nvenc_av1_soft"
+create -> rerouted
+> create h264 soft
+log info [obs-nvenc: 'enc'] settings: 	codec:        H264 	rate_control: cbr 	bitrate:      10000 	keyint:       250 	preset:       p5 	tuning:       hq 	multipass:    qres 	profile:      high 	width:        1920 	height:       1080 	b-frames:     0 	b-ref-mode:   0 	lookahead:    false (0 frames) 	aq:           true 
+nv.InitializeEncoder
+create -> ok
+> destroy
+nv.DestroyEncoder
+destroyed
+> set int device -1
+> create h264 tex
+log info [obs-nvenc: 'enc'] settings: 	codec:        H264 	rate_control: cbr 	bitrate:      10000 	keyint:       250 	preset:       p5 	tuning:       hq 	multipass:    qres 	profile:      high 	width:        1920 	height:       1080 	b-frames:     0 	b-ref-mode:   0 	lookahead:    false (0 frames) 	aq:           true 
+nv.InitializeEncoder
+create -> ok
+> destroy
+nv.DestroyEncoder
+destroyed
+> reset
+> defaults h264
+> host scaling 1
+> create h264 tex
+log info [obs-nvenc] CPU scaling enabled, falling back to non-texture encoder
+host.create_rerouted "obs_nvenc_h264_soft"
+create -> rerouted
+> host gpu_scaling 1
+> create h264 tex
+log info [obs-nvenc] GPU scaling enabled
+log info [obs-nvenc: 'enc'] settings: 	codec:        H264 	rate_control: cbr 	bitrate:      10000 	keyint:       250 	preset:       p5 	tuning:       hq 	multipass:    qres 	profile:      high 	width:        1920 	height:       1080 	b-frames:     0 	b-ref-mode:   0 	lookahead:    false (0 frames) 	aq:           true 
+nv.InitializeEncoder
+create -> ok
+> destroy
+nv.DestroyEncoder
+destroyed
+> host scaling 0
+> host gpu_scaling 0
+> host tex_nv12 0
+> create h264 tex
+log info [obs-nvenc] nv12/p010 not active, falling back to non-texture encoder
+host.create_rerouted "obs_nvenc_h264_soft"
+create -> rerouted
+> host tex_p010 1
+> create h264 tex
+host.set_last_error "NVENC Error: 10bitUnsupported"
+log error [obs-nvenc] NVENC Error: 10bitUnsupported
+nv.DestroyEncoder
+host.create_rerouted "obs_nvenc_h264_soft"
+create -> rerouted
+> destroy
+destroy: no encoder
+> host tex_nv12 1
+> host tex_p010 0
+> nvstatus open NV_ENC_ERR_OUT_OF_MEMORY
+> create h264 tex
+host.set_last_error "TooManySessions"
+log error [obs-nvenc] init_session: nv.nvEncOpenEncodeSessionEx(&params, &enc->session) failed: 10 (NV_ENC_ERR_OUT_OF_MEMORY)
+host.create_rerouted "obs_nvenc_h264_soft"
+create -> rerouted
+> create h264 soft
+host.set_last_error "TooManySessions"
+log error [obs-nvenc] init_session: nv.nvEncOpenEncodeSessionEx(&params, &enc->session) failed: 10 (NV_ENC_ERR_OUT_OF_MEMORY)
+log error Already in non_texture encoder, can't fall back further!
+create -> NULL

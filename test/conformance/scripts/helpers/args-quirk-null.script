@@ -1,0 +1,10 @@
+# QUIRK: NULL arguments are not rejected. create(NULL) stores a NULL argv[0] while argc is
+# still 1; add_arg(NULL) inserts a NULL entry in the middle of argv (argc counts it) so a
+# consumer walking argv up to the first NULL sees a truncated list.
+args_create 0 @null
+args_dump 0
+args_add 0 after
+args_add 0 @null
+args_add 0 last
+args_dump 0
+args_destroy 0

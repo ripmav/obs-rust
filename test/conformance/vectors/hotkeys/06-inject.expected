@@ -1,0 +1,51 @@
+signal hotkey_register id=0
+reg A -> 0
+signal hotkey_register id=1
+reg B -> 1
+signal hotkey_bindings_changed id=0
+signal hotkey_bindings_changed id=1
+exact-match
+cb A id=0 same_ptr=1 pressed=1
+b 0 hk=0 mods=0x2 key=OBS_KEY_A pressed=1 modmatch=1 hkptr_ok=1
+b 1 hk=1 mods=0x0 key=OBS_KEY_B pressed=0 modmatch=0 hkptr_ok=1
+enumb done
+repeated-press-does-nothing
+release-event-is-ignored
+b 0 hk=0 mods=0x2 key=OBS_KEY_A pressed=1 modmatch=1 hkptr_ok=1
+b 1 hk=1 mods=0x0 key=OBS_KEY_B pressed=0 modmatch=0 hkptr_ok=1
+enumb done
+strict-extra-modifier-does-not-match
+b 0 hk=0 mods=0x2 key=OBS_KEY_A pressed=1 modmatch=1 hkptr_ok=1
+b 1 hk=1 mods=0x0 key=OBS_KEY_B pressed=0 modmatch=0 hkptr_ok=1
+enumb done
+strict-exact-modifiers-match
+cb B id=1 same_ptr=1 pressed=1
+b 0 hk=0 mods=0x2 key=OBS_KEY_A pressed=1 modmatch=1 hkptr_ok=1
+b 1 hk=1 mods=0x0 key=OBS_KEY_B pressed=1 modmatch=1 hkptr_ok=1
+enumb done
+non-strict-extra-modifier-matches
+b 0 hk=0 mods=0x2 key=OBS_KEY_A pressed=1 modmatch=1 hkptr_ok=1
+b 1 hk=1 mods=0x0 key=OBS_KEY_B pressed=1 modmatch=1 hkptr_ok=1
+enumb done
+wrong-key
+a-poll-with-key-up-releases-injected-presses
+poll
+cb A id=0 same_ptr=1 pressed=0
+cb B id=1 same_ptr=1 pressed=0
+b 0 hk=0 mods=0x2 key=OBS_KEY_A pressed=0 modmatch=0 hkptr_ok=1
+b 1 hk=1 mods=0x0 key=OBS_KEY_B pressed=0 modmatch=1 hkptr_ok=1
+enumb done
+injection-ignores-bgpress-setting
+bgpress thread_disable_press=1
+cb B id=1 same_ptr=1 pressed=1
+poll
+cb B id=1 same_ptr=1 pressed=0
+b 0 hk=0 mods=0x2 key=OBS_KEY_A pressed=0 modmatch=0 hkptr_ok=1
+b 1 hk=1 mods=0x0 key=OBS_KEY_B pressed=0 modmatch=1 hkptr_ok=1
+enumb done
+removing-bindings-releases-injected-press
+cb B id=1 same_ptr=1 pressed=1
+cb B id=1 same_ptr=1 pressed=0
+signal hotkey_bindings_changed id=1
+b 0 hk=0 mods=0x2 key=OBS_KEY_A pressed=0 modmatch=0 hkptr_ok=1
+enumb done

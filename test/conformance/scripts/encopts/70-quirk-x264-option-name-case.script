@@ -1,0 +1,8 @@
+# QUIRK (Q-1). In x264opts the names preset/profile/tune are matched case-insensitively when
+# overriding the base settings, but the "do not forward to x264_param_parse" list is compared
+# with strcmp: "PRESET=slow" overrides the preset AND is then forwarded to x264 as an unknown
+# option. A lowercase "preset=slow" is not forwarded. Same for fps/width/height/...
+data D
+x264_defaults D
+set D x264opts str "PRESET=slow Profile=high TUNE=film preset=fast"
+x264_settings D

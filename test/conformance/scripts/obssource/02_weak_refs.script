@@ -1,0 +1,17 @@
+# Weak references: get_ref / weak_get succeed while a strong reference exists and fail after the last one is gone.
+kind in input video create
+create a in A
+weak a w
+weak_expired w
+getref a b
+refs a
+weak_get w c
+refs a
+release b
+release c
+release a
+weak_expired w
+weak_get w d
+getref a e
+drain
+weak_release w

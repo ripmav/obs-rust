@@ -1,0 +1,30 @@
+# CORE: stinger video rendering without track matte: source A before the transition point, B after; media overlay.
+load quiet
+create st obs_stinger_transition str:path=/m/s.mov int:transition_point=500
+tick st
+src st w=1920 h=1080
+mdef w=1280 h=720
+# tick again so that a new media source gets the sizes: re-create through an update
+settings st str:path=/m/s2.mov
+tick st
+src media#2 dur_ns=1750000000 frames=100
+start st
+# transition_point = 500/2000 = 0.25
+src st time=0.1
+render st
+src st time=0.25
+render st
+src st time=0.9
+render st
+# the transition already ended (render_direct false): nothing else is drawn
+gfx direct_ret=0
+render st
+gfx direct_ret=1
+# media without size: nothing is drawn after the underlying source
+src media#2 w=0 h=720
+render st
+src media#2 w=1280 h=0
+render st
+src media#2 w=640 h=360
+render st
+stop st

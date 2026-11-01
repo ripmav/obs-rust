@@ -1,0 +1,46 @@
+refs o 1
+refs o 2
+get_obj a sub ok
+refs o 3
+same o o2 1
+refs o 2
+echo --- the caller may drop its handle; the container keeps the object alive
+get_obj a sub ok
+refs o3 2
+dump a {sub:object[user={x:number[user=num(I,1,1)]}]}
+echo --- replacing a value releases the old object
+refs o3 1
+refs p 2
+refs p 2
+echo --- replacing with NULL releases too, and stores a NULL object
+refs p 1
+dump a {sub:object[user=null]}
+get_obj a sub null
+has_user a sub 1
+echo --- addref/newref
+refs p 2
+refs p 3
+refs fresh 1
+refs p 1
+echo --- erase and clear release the references
+refs p 2
+refs p 1
+refs p 1
+echo --- destroying the container releases its children
+refs p 1
+echo --- arrays are counted the same way
+a_refs ar 2
+get_array b list ok
+a_refs ar 3
+a_refs ar 3
+echo --- pushing into an array takes a reference
+a_push ar 0
+refs e1 2
+a_item ar 0 ok
+refs e1 3
+same e1 e1b 1
+a_item ar 0 ok
+refs e1c 2
+a_count ar 0
+echo --- destroying a container destroys children (no leak under a sanitizer)
+dump deep {child:object[user={child:object[user={v:number[user=num(I,1,1)]}]}]}

@@ -1,0 +1,14 @@
+# Timestamp validity rules (CORE). CTS and PIR are always rendered. FER is rendered only if
+# non-zero and strictly greater than CTS; FERC only if FER was rendered and FERC is non-zero
+# and strictly greater than FER. The first SEI payload lists the rendered timestamps
+# (count byte = number - 1), in order CTS, FER, FERC, PIR; RFC 3339 text uses millisecond
+# precision (truncated), UTC, trailing "Z".
+bpm_set codec h264
+bpm_inject 0 0 1 1 1 1 00000001aa 1000000000 1005000000 1006000000 1009999999
+bpm_inject 1 0 1 1 1 1 00000001aa 1000000000 0 1006000000 1009999999
+bpm_inject 2 0 1 1 1 1 00000001aa 1000000000 1000000000 1006000000 1009999999
+bpm_inject 3 0 1 1 1 1 00000001aa 1000000000 999999999 1006000000 1009999999
+bpm_inject 0 1 1 1 1 1 00000001aa 1000000000 1005000000 1005000000 1000000000
+bpm_inject 1 1 1 1 1 1 00000001aa 1000000000 1005000000 0 1000000000
+bpm_inject 2 1 1 1 1 1 00000001aa 0 0 0 0
+bpm_inject 3 1 1 1 1 1 00000001aa 1735689600123456789 1735689600223456789 1735689600323456789 1735689600423456789

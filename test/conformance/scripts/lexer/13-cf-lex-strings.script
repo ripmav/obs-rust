@@ -1,0 +1,9 @@
+# CORE: string tokens ('..' and "..", backslash-escaped delimiters, stop at newline/EOF, #include <..> strings).
+lex "\"abc"
+tokens lex
+reset
+lex "'x\\'y' \"p\\\"q\" \"a\nb\""
+tokens lex
+reset
+lex "#include <abc.h>\n#include \"a\\b\"\n# include \"x\" \n a <b> #include <c> \n#import <q>\n/* c */ #include <z>"
+tokens lex

@@ -1,0 +1,64 @@
+log debug obs_service_get_name: Null 'service' parameter
+null get_name -> (null)
+log debug obs_service_get_type: Null 'service' parameter
+null get_type -> (null)
+log debug obs_service_get_id: Null 'service' parameter
+null get_id -> (null)
+log debug obs_service_get_settings: Null 'service' parameter
+null get_settings -> (null)
+log debug obs_service_properties: Null 'service' parameter
+null properties -> (null)
+log debug obs_service_get_type_data: Null 'service' parameter
+null get_type_data -> (null)
+log debug obs_service_get_protocol: Null 'service' parameter
+null get_protocol -> (null)
+log debug obs_service_get_preferred_output_type: Null 'service' parameter
+null preferred_output_type -> (null)
+log debug obs_service_get_info: Null 'service' parameter
+null connect_info -> (null)
+log debug obs_service_can_connect: Null 'service' parameter
+null can_try_to_connect -> 0
+log debug obs_service_get_signal_handler: Null 'service' parameter
+null signal_handler -> (null)
+log debug obs_service_get_proc_handler: Null 'service' parameter
+null proc_handler -> (null)
+log debug obs_service_get_max_fps: Null 'service' parameter
+log debug obs_service_get_max_bitrate: Null 'service' parameter
+log debug obs_service_supported_resolutions: Null 'service' parameter
+null out-params fps=123 vb=0 ab=0 res=untouched n=99
+log debug obs_service_update: Null 'service' parameter
+log debug obs_service_apply_encoder_settings: Null 'service' parameter
+null get_ref -> (null)
+null get_weak_service -> (null)
+null weak_get_service -> (null)
+log debug obs_service_initialize: Null 'service' parameter
+null initialize -> 0
+try-begin
+try-end crash
+try-begin
+try-end crash
+register A size=full
+service_types=1
+cb svcA create d1 settings={}
+log debug service 'a' (svcA) created
+create a -> ok
+state a active=0 destroy=0 output=null listed=1
+register F size=full
+service_types=2
+cb svcF create -> fail
+log error Failed to create service 'f'!
+log debug service 'f' (svcF) created
+create f -> ok
+info f name=f type=svcF id=svcF signals=1 procs=1
+cb - update d0 settings={"k":2}
+settings f {"k":2}
+q f typedata -> set
+log debug service 'f' destroyed
+list a
+register G size=full
+service_types=3
+cb svcG create d2 settings={}
+log debug service 'g' (svcG) created
+create g -> ok
+cb get_properties d2
+props g -> null

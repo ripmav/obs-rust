@@ -1,0 +1,25 @@
+# Start-up pruning: when the first audio packet is more than one video frame duration after the first video
+# packet, the early video packets are discarded until video and audio are within one frame of each other.
+video 30 1 1280 720
+audio 48000
+venc v
+aenc a frame_size=1024
+out o av,encoded autobegin=1
+set_venc o v
+set_aenc o a
+start o
+echo --- three video keyframes at 0, 33333, 66666us
+emit v 0 0 1 4
+emit v 1 1 1 4
+emit v 2 2 1 4
+queue o
+echo --- first audio is at 100000us (enc start_ts shifts it); video prefix before it is pruned on the next packet
+enc_start_ts a 100000000
+emit a 0 0 0 4
+queue o
+emit a 1024 1024 0 4
+queue o
+emit a 2048 2048 0 4
+queue o
+state o
+stop o

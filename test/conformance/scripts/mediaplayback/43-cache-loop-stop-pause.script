@@ -1,0 +1,54 @@
+# Cache: looping, stop, pause/resume, preload request. A reset ('creset') is run first to avoid the first-play
+# quirk of 41-cache-playback.script. cache reset: indices to 0, start_ts/next_pts_ns = min(next ts), play_sys_ts = now when inactive.
+media cl 120000 0
+video 1 1000 8 4 yuv420p
+pkt 0 0 fdur=40
+pkt 0 40 fdur=40
+pkt 0 80 fdur=40
+endmedia
+clock 1000000000
+pix off
+cinit cl request_preload=1
+creset
+cstate
+echo ---- loop: no stop callback, timestamps continue
+cplay 1
+ctickw 0 0
+ctick 8
+cstate
+echo ---- stop (not looping): reset, stop callback
+cstop
+ctickw 1 0
+cstate
+echo ---- pause and resume (every wake while paused rebases)
+cplay 0
+ctickw 0 0
+ctick 1
+cpause 1
+ctickw 1 1
+clock 5000000000
+ctickw 1 1
+cstate
+cpause 0
+ctickw 1 0
+cstate
+ctick 2
+echo ---- preload request: needs a live thread (thread_valid), request_preload and a preload callback
+cstop
+ctickw 1 0
+cpreload
+cset thread_valid 1
+cpreload
+cstate
+cset thread_valid 0
+cset thread_valid 1
+ctick 1
+cset thread_valid 0
+echo ---- without request_preload nothing is requested; the reset itself delivers the preload frame instead
+cfree
+cinit cl
+cset thread_valid 1
+cpreload
+cset thread_valid 0
+creset
+ctick 1

@@ -1,0 +1,27 @@
+# S-045 default interpolation table and user-supplied tables read by init_connect().
+reset
+aenc 0 aac 160
+venc 0 h264 4000 4 e0
+service rtmp://h/a KEY - -
+opt bool dyn_bitrate 1
+init_connect
+# QUIRK Q-1: the default table is appended to on every init_connect (never cleared) so a second start grows it
+init_connect
+init_connect
+# user value present for the table key: the table is built from the JSON (cleared first)
+reset
+venc 0 h264 4000 4 e0
+venc 1 h264 2000 64 e1
+service rtmp://h/a KEY - -
+opt str interpolation_table_data "[[0,3000,4000],[0,1500,2000]]"
+init_connect
+# valid table, DBR not requested: table is still loaded, dbr stays off
+opt bool dyn_bitrate 0
+init_connect
+# malformed JSON: DBR disabled with a warning even if it had been enabled
+reset
+venc 0 h264 4000 4 e0
+service rtmp://h/a KEY - -
+opt bool dyn_bitrate 1
+opt str interpolation_table_data "[[0,3000,"
+init_connect

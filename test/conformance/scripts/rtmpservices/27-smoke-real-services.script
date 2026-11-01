@@ -1,0 +1,10 @@
+# S-026 smoke test on the production plugins/rtmp-services/data/services.json (structural summary only; the
+# numbers are intentionally not printed so that the vector survives service list updates): key sets used in
+# the file, every listed service can be created, its properties opened, url/protocol/key/codecs read without
+# a crash (one forked child per service), every service has servers and a non-empty url.
+fs-load /mod/data/services.json ../../../../plugins/rtmp-services/data/services.json
+protocols RTMP RTMPS SRT RIST HLS
+smoke /mod/data/services.json
+echo same-with-only-RTMP-registered
+protocols RTMP
+smoke /mod/data/services.json

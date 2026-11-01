@@ -1,0 +1,42 @@
+# S-022 mp4a + esds: descriptor lengths are always written as 4-byte expanded sizes; DecoderSpecificInfo
+# (the encoder extra data) is optional; bitrate comes from the encoder setting "bitrate" in kbps
+# (x1000, u32) and is 0 if the setting is absent or no settings object exists. ES_ID = track id.
+enc a audio codec aac rate 44100 extra 1210 bitrate 192 name "Voice"
+mux mp4 skipfin
+pkt a 0 0 1 gen:10
+finalise
+hex
+echo --- no extra data: no DecoderSpecificInfo, descriptor sizes shrink
+reset
+enc a audio codec aac rate 44100 extra - bitrate 128
+mux mp4 skipfin
+pkt a 0 0 1 gen:10
+finalise
+hex
+echo --- no settings object / empty settings
+reset
+enc a audio codec aac rate 48000 extra 1190 settings none
+mux mp4 skipfin
+pkt a 0 0 1 gen:10
+finalise
+tree
+reset
+enc a audio codec aac rate 48000 extra 1190 settings empty
+mux mp4 skipfin
+pkt a 0 0 1 gen:10
+finalise
+hex
+echo --- 200 byte extra data: sizes above 127 still use the fixed 4-byte form
+reset
+enc a audio codec aac rate 48000 extra 1111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111 bitrate 96
+mux mp4 skipfin
+pkt a 0 0 1 gen:10
+finalise
+hex
+echo --- very large bitrate setting wraps in 32 bits
+reset
+enc a audio codec aac rate 48000 extra 1190 bitrate 5000000
+mux mp4 skipfin
+pkt a 0 0 1 gen:10
+finalise
+hex

@@ -1,0 +1,226 @@
+create st obs_stinger_transition
+  ev enter_graphics
+  ev effect_create file=@data/stinger_matte_transition.effect
+  ev leave_graphics
+  ev transition_enable_fixed 1 duration_ms=0
+  ev source_update st deferred (count 1)
+  instance=1
+  fields tp_is_frame=0 tp_ns=0 tp_frame=0 tp=0 a_mul=0 b_mul=0
+  fields duration_ns=0 duration_frames=0 transitioning=0 monitoring=0 fade_style=0
+  fields matte_enabled=0 layout=0 wf=0 hf=0 invert=0 texrender=0 rendered=0 media=0 matte_src=0 mix_fn=fadeinout
+tick st
+  ev source_create_private media#1 id=ffmpeg_source name="st (Stinger)"
+  ev   setting local_file="/m/s.mov"
+  ev   setting hw_decode=1
+  ev   setting looping=0
+  ev   setting full_decode=0
+  ev   setting is_stinger=1
+  ev   setting is_track_matte=0
+  ev source_set_monitoring media#1 0
+  fields tp_is_frame=0 tp_ns=500000000 tp_frame=0 tp=0 a_mul=0 b_mul=0
+  fields duration_ns=0 duration_frames=0 transitioning=0 monitoring=0 fade_style=0
+  fields matte_enabled=0 layout=0 wf=2 hf=1 invert=0 texrender=0 rendered=0 media=1 matte_src=0 mix_fn=fadeinout
+start st
+  ev proc_call media#1 get_duration
+  ev proc_call media#1 get_nb_frames
+  ev transition_enable_fixed 1 duration_ms=2250
+  ev add_active_child st <- media#1
+  fields tp_is_frame=0 tp_ns=500000000 tp_frame=0 tp=0.222222224 a_mul=4.5 b_mul=1.28571427
+  fields duration_ns=2250000000 duration_frames=120 transitioning=1 monitoring=0 fade_style=0
+  fields matte_enabled=0 layout=0 wf=2 hf=1 invert=0 texrender=0 rendered=0 media=1 matte_src=0 mix_fn=fadeinout
+  source media#1 name="st (Stinger)" id=ffmpeg_source refs=1 active_child_refs=1 muted=0 monitoring=0
+  fields tp_is_frame=0 tp_ns=500000000 tp_frame=0 tp=0.222222224 a_mul=4.5 b_mul=1.28571427
+  fields duration_ns=2250000000 duration_frames=120 transitioning=1 monitoring=0 fade_style=0
+  fields matte_enabled=0 layout=0 wf=2 hf=1 invert=0 texrender=0 rendered=0 media=1 matte_src=0 mix_fn=fadeinout
+  source media#1 name="st (Stinger)" id=ffmpeg_source refs=1 active_child_refs=1 muted=0 monitoring=0
+stop st
+  ev remove_active_child st <- media#1
+  ev proc_call media#1 preload_first_frame
+  fields tp_is_frame=0 tp_ns=500000000 tp_frame=0 tp=0.222222224 a_mul=4.5 b_mul=1.28571427
+  fields duration_ns=2250000000 duration_frames=120 transitioning=0 monitoring=0 fade_style=0
+  fields matte_enabled=0 layout=0 wf=2 hf=1 invert=0 texrender=0 rendered=0 media=1 matte_src=0 mix_fn=fadeinout
+  source media#1 name="st (Stinger)" id=ffmpeg_source refs=1 active_child_refs=0 muted=0 monitoring=0
+tick st
+  fields tp_is_frame=0 tp_ns=500000000 tp_frame=0 tp=0.222222224 a_mul=4.5 b_mul=1.28571427
+  fields duration_ns=2250000000 duration_frames=120 transitioning=0 monitoring=0 fade_style=0
+  fields matte_enabled=0 layout=0 wf=2 hf=1 invert=0 texrender=0 rendered=0 media=1 matte_src=0 mix_fn=fadeinout
+settings st
+  ev source_update st deferred (count 1)
+tick st
+  ev source_release media#1 refs=0
+  ev source_create_private media#2 id=ffmpeg_source name="st (Stinger)"
+  ev   setting local_file="/m/s.mov"
+  ev   setting hw_decode=1
+  ev   setting looping=0
+  ev   setting full_decode=0
+  ev   setting is_stinger=1
+  ev   setting is_track_matte=0
+  ev source_set_monitoring media#2 0
+  fields tp_is_frame=1 tp_ns=500000000 tp_frame=60 tp=0.222222224 a_mul=4.5 b_mul=1.28571427
+  fields duration_ns=2250000000 duration_frames=120 transitioning=0 monitoring=0 fade_style=0
+  fields matte_enabled=0 layout=0 wf=2 hf=1 invert=0 texrender=0 rendered=0 media=1 matte_src=0 mix_fn=fadeinout
+start st
+  ev proc_call media#2 get_duration
+  ev proc_call media#2 get_nb_frames
+  ev transition_enable_fixed 1 duration_ms=2250
+  ev add_active_child st <- media#2
+  fields tp_is_frame=1 tp_ns=500000000 tp_frame=60 tp=0.5 a_mul=2 b_mul=2
+  fields duration_ns=2250000000 duration_frames=120 transitioning=1 monitoring=0 fade_style=0
+  fields matte_enabled=0 layout=0 wf=2 hf=1 invert=0 texrender=0 rendered=0 media=1 matte_src=0 mix_fn=fadeinout
+  source media#1 name="st (Stinger)" id=ffmpeg_source refs=0 active_child_refs=0 muted=0 monitoring=0
+  source media#2 name="st (Stinger)" id=ffmpeg_source refs=1 active_child_refs=1 muted=0 monitoring=0
+stop st
+  ev remove_active_child st <- media#2
+  ev proc_call media#2 preload_first_frame
+  fields tp_is_frame=1 tp_ns=500000000 tp_frame=60 tp=0.5 a_mul=2 b_mul=2
+  fields duration_ns=2250000000 duration_frames=120 transitioning=0 monitoring=0 fade_style=0
+  fields matte_enabled=0 layout=0 wf=2 hf=1 invert=0 texrender=0 rendered=0 media=1 matte_src=0 mix_fn=fadeinout
+  source media#1 name="st (Stinger)" id=ffmpeg_source refs=0 active_child_refs=0 muted=0 monitoring=0
+  source media#2 name="st (Stinger)" id=ffmpeg_source refs=1 active_child_refs=0 muted=0 monitoring=0
+settings st
+  ev source_update st deferred (count 1)
+tick st
+  ev source_release media#2 refs=0
+  ev source_create_private media#3 id=ffmpeg_source name="st (Stinger)"
+  ev   setting local_file="/m/s.mov"
+  ev   setting hw_decode=1
+  ev   setting looping=0
+  ev   setting full_decode=0
+  ev   setting is_stinger=1
+  ev   setting is_track_matte=0
+  ev source_set_monitoring media#3 0
+  fields tp_is_frame=0 tp_ns=0 tp_frame=60 tp=0.5 a_mul=2 b_mul=2
+  fields duration_ns=2250000000 duration_frames=120 transitioning=0 monitoring=0 fade_style=0
+  fields matte_enabled=0 layout=0 wf=2 hf=1 invert=0 texrender=0 rendered=0 media=1 matte_src=0 mix_fn=fadeinout
+start st
+  ev proc_call media#3 get_duration
+  ev proc_call media#3 get_nb_frames
+  ev transition_enable_fixed 1 duration_ms=2250
+  ev add_active_child st <- media#3
+  fields tp_is_frame=0 tp_ns=0 tp_frame=60 tp=0.00100000005 a_mul=999.999939 b_mul=1.001001
+  fields duration_ns=2250000000 duration_frames=120 transitioning=1 monitoring=0 fade_style=0
+  fields matte_enabled=0 layout=0 wf=2 hf=1 invert=0 texrender=0 rendered=0 media=1 matte_src=0 mix_fn=fadeinout
+  source media#1 name="st (Stinger)" id=ffmpeg_source refs=0 active_child_refs=0 muted=0 monitoring=0
+  source media#2 name="st (Stinger)" id=ffmpeg_source refs=0 active_child_refs=0 muted=0 monitoring=0
+  source media#3 name="st (Stinger)" id=ffmpeg_source refs=1 active_child_refs=1 muted=0 monitoring=0
+stop st
+  ev remove_active_child st <- media#3
+  ev proc_call media#3 preload_first_frame
+  fields tp_is_frame=0 tp_ns=0 tp_frame=60 tp=0.00100000005 a_mul=999.999939 b_mul=1.001001
+  fields duration_ns=2250000000 duration_frames=120 transitioning=0 monitoring=0 fade_style=0
+  fields matte_enabled=0 layout=0 wf=2 hf=1 invert=0 texrender=0 rendered=0 media=1 matte_src=0 mix_fn=fadeinout
+  source media#1 name="st (Stinger)" id=ffmpeg_source refs=0 active_child_refs=0 muted=0 monitoring=0
+  source media#2 name="st (Stinger)" id=ffmpeg_source refs=0 active_child_refs=0 muted=0 monitoring=0
+  source media#3 name="st (Stinger)" id=ffmpeg_source refs=1 active_child_refs=0 muted=0 monitoring=0
+settings st
+  ev source_update st deferred (count 1)
+tick st
+  ev source_release media#3 refs=0
+  ev source_create_private media#4 id=ffmpeg_source name="st (Stinger)"
+  ev   setting local_file="/m/s.mov"
+  ev   setting hw_decode=1
+  ev   setting looping=0
+  ev   setting full_decode=0
+  ev   setting is_stinger=1
+  ev   setting is_track_matte=0
+  ev source_set_monitoring media#4 0
+  fields tp_is_frame=0 tp_ns=999999000000 tp_frame=60 tp=0.00100000005 a_mul=999.999939 b_mul=1.001001
+  fields duration_ns=2250000000 duration_frames=120 transitioning=0 monitoring=0 fade_style=0
+  fields matte_enabled=0 layout=0 wf=2 hf=1 invert=0 texrender=0 rendered=0 media=1 matte_src=0 mix_fn=fadeinout
+start st
+  ev proc_call media#4 get_duration
+  ev proc_call media#4 get_nb_frames
+  ev transition_enable_fixed 1 duration_ms=2250
+  ev add_active_child st <- media#4
+  fields tp_is_frame=0 tp_ns=999999000000 tp_frame=60 tp=0.999000013 a_mul=1.001001 b_mul=1000.01288
+  fields duration_ns=2250000000 duration_frames=120 transitioning=1 monitoring=0 fade_style=0
+  fields matte_enabled=0 layout=0 wf=2 hf=1 invert=0 texrender=0 rendered=0 media=1 matte_src=0 mix_fn=fadeinout
+  source media#1 name="st (Stinger)" id=ffmpeg_source refs=0 active_child_refs=0 muted=0 monitoring=0
+  source media#2 name="st (Stinger)" id=ffmpeg_source refs=0 active_child_refs=0 muted=0 monitoring=0
+  source media#3 name="st (Stinger)" id=ffmpeg_source refs=0 active_child_refs=0 muted=0 monitoring=0
+  source media#4 name="st (Stinger)" id=ffmpeg_source refs=1 active_child_refs=1 muted=0 monitoring=0
+stop st
+  ev remove_active_child st <- media#4
+  ev proc_call media#4 preload_first_frame
+  fields tp_is_frame=0 tp_ns=999999000000 tp_frame=60 tp=0.999000013 a_mul=1.001001 b_mul=1000.01288
+  fields duration_ns=2250000000 duration_frames=120 transitioning=0 monitoring=0 fade_style=0
+  fields matte_enabled=0 layout=0 wf=2 hf=1 invert=0 texrender=0 rendered=0 media=1 matte_src=0 mix_fn=fadeinout
+  source media#1 name="st (Stinger)" id=ffmpeg_source refs=0 active_child_refs=0 muted=0 monitoring=0
+  source media#2 name="st (Stinger)" id=ffmpeg_source refs=0 active_child_refs=0 muted=0 monitoring=0
+  source media#3 name="st (Stinger)" id=ffmpeg_source refs=0 active_child_refs=0 muted=0 monitoring=0
+  source media#4 name="st (Stinger)" id=ffmpeg_source refs=1 active_child_refs=0 muted=0 monitoring=0
+settings st
+  ev source_update st deferred (count 1)
+tick st
+  ev source_release media#4 refs=0
+  ev source_create_private media#5 id=ffmpeg_source name="st (Stinger)"
+  ev   setting local_file="/m/s.mov"
+  ev   setting hw_decode=1
+  ev   setting looping=0
+  ev   setting full_decode=0
+  ev   setting is_stinger=1
+  ev   setting is_track_matte=0
+  ev source_set_monitoring media#5 0
+  fields tp_is_frame=0 tp_ns=1000000000 tp_frame=60 tp=0.999000013 a_mul=1.001001 b_mul=1000.01288
+  fields duration_ns=2250000000 duration_frames=120 transitioning=0 monitoring=0 fade_style=0
+  fields matte_enabled=0 layout=0 wf=2 hf=1 invert=0 texrender=0 rendered=0 media=1 matte_src=0 mix_fn=fadeinout
+start st
+  ev proc_call media#5 restart
+  fields tp_is_frame=0 tp_ns=1000000000 tp_frame=60 tp=0.999000013 a_mul=1.001001 b_mul=1000.01288
+  fields duration_ns=2250000000 duration_frames=120 transitioning=0 monitoring=0 fade_style=0
+  fields matte_enabled=0 layout=0 wf=2 hf=1 invert=0 texrender=0 rendered=0 media=1 matte_src=0 mix_fn=fadeinout
+  source media#1 name="st (Stinger)" id=ffmpeg_source refs=0 active_child_refs=0 muted=0 monitoring=0
+  source media#2 name="st (Stinger)" id=ffmpeg_source refs=0 active_child_refs=0 muted=0 monitoring=0
+  source media#3 name="st (Stinger)" id=ffmpeg_source refs=0 active_child_refs=0 muted=0 monitoring=0
+  source media#4 name="st (Stinger)" id=ffmpeg_source refs=0 active_child_refs=0 muted=0 monitoring=0
+  source media#5 name="st (Stinger)" id=ffmpeg_source refs=1 active_child_refs=0 muted=0 monitoring=0
+  fields tp_is_frame=0 tp_ns=1000000000 tp_frame=60 tp=0.999000013 a_mul=1.001001 b_mul=1000.01288
+  fields duration_ns=2250000000 duration_frames=120 transitioning=0 monitoring=0 fade_style=0
+  fields matte_enabled=0 layout=0 wf=2 hf=1 invert=0 texrender=0 rendered=0 media=1 matte_src=0 mix_fn=fadeinout
+  source media#1 name="st (Stinger)" id=ffmpeg_source refs=0 active_child_refs=0 muted=0 monitoring=0
+  source media#2 name="st (Stinger)" id=ffmpeg_source refs=0 active_child_refs=0 muted=0 monitoring=0
+  source media#3 name="st (Stinger)" id=ffmpeg_source refs=0 active_child_refs=0 muted=0 monitoring=0
+  source media#4 name="st (Stinger)" id=ffmpeg_source refs=0 active_child_refs=0 muted=0 monitoring=0
+  source media#5 name="st (Stinger)" id=ffmpeg_source refs=1 active_child_refs=0 muted=0 monitoring=0
+start st
+  ev proc_call media#5 get_duration
+  ev proc_call media#5 get_nb_frames
+  ev transition_enable_fixed 1 duration_ms=1250
+  ev add_active_child st <- media#5
+  fields tp_is_frame=0 tp_ns=1000000000 tp_frame=60 tp=0.800000012 a_mul=1.25 b_mul=5.00000048
+  fields duration_ns=1250000000 duration_frames=60 transitioning=1 monitoring=0 fade_style=0
+  fields matte_enabled=0 layout=0 wf=2 hf=1 invert=0 texrender=0 rendered=0 media=1 matte_src=0 mix_fn=fadeinout
+  source media#1 name="st (Stinger)" id=ffmpeg_source refs=0 active_child_refs=0 muted=0 monitoring=0
+  source media#2 name="st (Stinger)" id=ffmpeg_source refs=0 active_child_refs=0 muted=0 monitoring=0
+  source media#3 name="st (Stinger)" id=ffmpeg_source refs=0 active_child_refs=0 muted=0 monitoring=0
+  source media#4 name="st (Stinger)" id=ffmpeg_source refs=0 active_child_refs=0 muted=0 monitoring=0
+  source media#5 name="st (Stinger)" id=ffmpeg_source refs=1 active_child_refs=1 muted=0 monitoring=0
+  fields tp_is_frame=0 tp_ns=1000000000 tp_frame=60 tp=0.800000012 a_mul=1.25 b_mul=5.00000048
+  fields duration_ns=1250000000 duration_frames=60 transitioning=1 monitoring=0 fade_style=0
+  fields matte_enabled=0 layout=0 wf=2 hf=1 invert=0 texrender=0 rendered=0 media=1 matte_src=0 mix_fn=fadeinout
+  source media#1 name="st (Stinger)" id=ffmpeg_source refs=0 active_child_refs=0 muted=0 monitoring=0
+  source media#2 name="st (Stinger)" id=ffmpeg_source refs=0 active_child_refs=0 muted=0 monitoring=0
+  source media#3 name="st (Stinger)" id=ffmpeg_source refs=0 active_child_refs=0 muted=0 monitoring=0
+  source media#4 name="st (Stinger)" id=ffmpeg_source refs=0 active_child_refs=0 muted=0 monitoring=0
+  source media#5 name="st (Stinger)" id=ffmpeg_source refs=1 active_child_refs=1 muted=0 monitoring=0
+start st
+  ev proc_call media#5 restart
+  fields tp_is_frame=0 tp_ns=1000000000 tp_frame=60 tp=0.800000012 a_mul=1.25 b_mul=5.00000048
+  fields duration_ns=1250000000 duration_frames=60 transitioning=1 monitoring=0 fade_style=0
+  fields matte_enabled=0 layout=0 wf=2 hf=1 invert=0 texrender=0 rendered=0 media=1 matte_src=0 mix_fn=fadeinout
+  source media#1 name="st (Stinger)" id=ffmpeg_source refs=0 active_child_refs=0 muted=0 monitoring=0
+  source media#2 name="st (Stinger)" id=ffmpeg_source refs=0 active_child_refs=0 muted=0 monitoring=0
+  source media#3 name="st (Stinger)" id=ffmpeg_source refs=0 active_child_refs=0 muted=0 monitoring=0
+  source media#4 name="st (Stinger)" id=ffmpeg_source refs=0 active_child_refs=0 muted=0 monitoring=0
+  source media#5 name="st (Stinger)" id=ffmpeg_source refs=1 active_child_refs=1 muted=0 monitoring=0
+stop st
+  ev remove_active_child st <- media#5
+  ev proc_call media#5 preload_first_frame
+  fields tp_is_frame=0 tp_ns=1000000000 tp_frame=60 tp=0.800000012 a_mul=1.25 b_mul=5.00000048
+  fields duration_ns=1250000000 duration_frames=60 transitioning=0 monitoring=0 fade_style=0
+  fields matte_enabled=0 layout=0 wf=2 hf=1 invert=0 texrender=0 rendered=0 media=1 matte_src=0 mix_fn=fadeinout
+  source media#1 name="st (Stinger)" id=ffmpeg_source refs=0 active_child_refs=0 muted=0 monitoring=0
+  source media#2 name="st (Stinger)" id=ffmpeg_source refs=0 active_child_refs=0 muted=0 monitoring=0
+  source media#3 name="st (Stinger)" id=ffmpeg_source refs=0 active_child_refs=0 muted=0 monitoring=0
+  source media#4 name="st (Stinger)" id=ffmpeg_source refs=0 active_child_refs=0 muted=0 monitoring=0
+  source media#5 name="st (Stinger)" id=ffmpeg_source refs=1 active_child_refs=0 muted=0 monitoring=0

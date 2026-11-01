@@ -1,0 +1,76 @@
+av.find_encoder aac -> found
+log info ---------------------------------
+log info [FFmpeg aac encoder: 'enc'] bitrate: 128, channels: 2, channel_layout: stereo, track: 1 
+av.open2 codec=aac bit_rate=128000 sample_rate=48000 channels=2 sample_fmt=8 strict=-2 flags=4194304 0x0 pix_fmt=0
+audio_create aac ok
+info aac format=8 samples_per_sec=48000 speakers=2 allow_clipping=0
+info aac extra_data=1 size=5 deadbeef01
+info aac frame_size=960 priming=312
+info opus format=8 samples_per_sec=48000 speakers=2 allow_clipping=0
+info opus extra_data=1 size=5 deadbeef01
+info opus frame_size=960 priming=312
+info pcm format=8 samples_per_sec=48000 speakers=2 allow_clipping=0
+info pcm extra_data=1 size=5 deadbeef01
+info pcm frame_size=960 priming=none
+info pcm32 format=8 samples_per_sec=48000 speakers=2 allow_clipping=1
+info pcm32 extra_data=1 size=5 deadbeef01
+info pcm32 frame_size=960 priming=none
+av.free_context
+echo ---- format and speakers follow the opened context
+av.find_encoder flac -> found
+log info ---------------------------------
+log info [FFmpeg flac encoder: 'enc'] bitrate: 0, channels: 2, channel_layout: stereo, track: 1 
+av.open2 codec=flac bit_rate=0 sample_rate=48000 channels=2 sample_fmt=1 strict=-2 flags=4194304 0x0 pix_fmt=0
+audio_create flac ok
+info flac format=2 samples_per_sec=48000 speakers=2 allow_clipping=0
+info flac extra_data=1 size=5 deadbeef01
+info flac frame_size=960 priming=none
+av.free_context
+av.find_encoder alac -> found
+log info ---------------------------------
+log info [FFmpeg alac encoder: 'enc'] bitrate: 0, channels: 1, channel_layout: mono, track: 1 
+av.open2 codec=alac bit_rate=0 sample_rate=44100 channels=1 sample_fmt=7 strict=-2 flags=4194304 0x0 pix_fmt=0
+audio_create alac ok
+info alac format=7 samples_per_sec=44100 speakers=1 allow_clipping=0
+info alac extra_data=1 size=0
+info alac frame_size=960 priming=none
+av.free_context
+echo ---- 4.1 and 2.1 host layouts keep their OBS speaker numbers (5 and 3 channels)
+av.find_encoder aac -> found
+log info ---------------------------------
+log info [FFmpeg aac encoder: 'enc'] bitrate: 128, channels: 5, channel_layout: 4.1, track: 1 
+av.open2 codec=aac bit_rate=128000 sample_rate=48000 channels=5 sample_fmt=8 strict=-2 flags=4194304 0x0 pix_fmt=0
+audio_create aac ok
+info aac format=8 samples_per_sec=48000 speakers=5 allow_clipping=0
+info aac extra_data=1 size=0
+info aac frame_size=960 priming=312
+av.free_context
+av.find_encoder aac -> found
+log info ---------------------------------
+log info [FFmpeg aac encoder: 'enc'] bitrate: 128, channels: 3, channel_layout: 3.0, track: 1 
+av.open2 codec=aac bit_rate=128000 sample_rate=48000 channels=3 sample_fmt=8 strict=-2 flags=4194304 0x0 pix_fmt=0
+audio_create aac ok
+info aac format=8 samples_per_sec=48000 speakers=3 allow_clipping=0
+info aac extra_data=1 size=0
+info aac frame_size=960 priming=312
+av.free_context
+echo ---- a 7-channel context never yields a speaker layout (UNKNOWN); harness-only configuration
+av.find_encoder aac -> found
+log info ---------------------------------
+log info [FFmpeg aac encoder: 'enc'] bitrate: 128, channels: 7, channel_layout: 6.1, track: 1 
+av.open2 codec=aac bit_rate=128000 sample_rate=48000 channels=7 sample_fmt=8 strict=-2 flags=4194304 0x0 pix_fmt=0
+audio_create aac ok
+info aac format=8 samples_per_sec=48000 speakers=0 allow_clipping=0
+info aac extra_data=1 size=0
+info aac frame_size=960 priming=312
+av.free_context
+echo ---- rate list: the sample rate of the context follows the nearest supported rate
+av.find_encoder aac -> found
+log info ---------------------------------
+log info [FFmpeg aac encoder: 'enc'] bitrate: 128, channels: 2, channel_layout: stereo, track: 1 
+av.open2 codec=aac bit_rate=128000 sample_rate=48000 channels=2 sample_fmt=8 strict=-2 flags=4194304 0x0 pix_fmt=0
+audio_create aac ok
+info aac format=8 samples_per_sec=48000 speakers=2 allow_clipping=0
+info aac extra_data=1 size=0
+info aac frame_size=960 priming=312
+av.free_context

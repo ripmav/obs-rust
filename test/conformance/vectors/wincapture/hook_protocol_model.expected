@@ -1,0 +1,15 @@
+shmem total=16588864 tex1_offset=32 tex2_offset=8294432
+shmem total=7372864 tex1_offset=32 tex2_offset=3686432
+shmem total=128 tex1_offset=32 tex2_offset=64
+shmem total=128 tex1_offset=24 tex2_offset=56
+shmem total=128 tex1_offset=40 tex2_offset=72
+shmem total=128 tex1_offset=43 tex2_offset=75
+shmem total=128 tex1_offset=12 tex2_offset=44
+frame_interval 8333333
+frame_interval 16666666
+frame_interval 8341666
+frame_interval 33333333
+frame_interval 3472222
+hook_ver_ok 1
+hook_ver_ok 1
+hook_ver_ok 0

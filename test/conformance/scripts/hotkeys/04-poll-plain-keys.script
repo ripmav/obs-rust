@@ -1,0 +1,51 @@
+# S-034 polling of key-only bindings (no modifiers) against the scripted platform state.
+# One "poll" = one run of the 25 ms hotkey-thread step. Press -> callback(true) on the poll that sees the
+# key down; release -> callback(false) on the poll that sees it up. Several bindings on one hotkey:
+# the callback fires on the first press and the last release only (press counter).
+reg frontend A "A" "a"
+reg frontend B "B" "b"
+loadbind A 0:OBS_KEY_A
+loadbind B 0:OBS_KEY_B 0:OBS_KEY_C
+echo single-press-release
+down OBS_KEY_A
+poll
+poll
+enumb
+up OBS_KEY_A
+poll
+poll
+echo two-bindings-one-hotkey
+down OBS_KEY_B
+poll
+down OBS_KEY_C
+poll
+info B
+up OBS_KEY_B
+poll
+info B
+up OBS_KEY_C
+poll
+info B
+echo unrelated-modifier-held-with-strict-modifiers-blocks
+strict on
+down OBS_KEY_SHIFT
+down OBS_KEY_A
+poll
+enumb
+up OBS_KEY_A
+poll
+up OBS_KEY_SHIFT
+echo same-with-non-strict
+strict off
+down OBS_KEY_SHIFT
+down OBS_KEY_A
+poll 3
+up OBS_KEY_A
+poll
+upall
+echo keys-up-while-no-bindings-loaded
+loadbind A
+down OBS_KEY_A
+poll
+up OBS_KEY_A
+poll

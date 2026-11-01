@@ -1,0 +1,103 @@
+> x-ext randr 1
+> x-screen 0 0 1920 1080 DP-1
+> x-screen 1920 100 2560 1440 HDMI-1
+> x-screen -1280 -50 1280 1024 DP-2
+> xshm-defaults
+> set-int screen 0
+> set-int cut_top 10
+> set-int cut_left 20
+> set-int cut_right 30
+> set-int cut_bot 40
+> xshm-create
+log info xshm-input: Missing Xinerama extension !
+log info xshm-input: Geometry 1920x1080 @ 0,0
+xshm-create
+state screen=0 origin=0,0 size=1920x1080 cut=t10,l20,r30,b40 adj=20,10 1870x1030 cursor=1 advanced=0 randr=1 xinerama=0 server= texture=1 xcb=1 shm=1 cursorobj=1 get=1870x1030
+> xshm-destroy
+xshm-destroy textures=0
+> set-int screen 1
+> xshm-create
+log info xshm-input: Missing Xinerama extension !
+log info xshm-input: Geometry 2560x1440 @ 1920,100
+xshm-create
+state screen=1 origin=1920,100 size=2560x1440 cut=t10,l20,r30,b40 adj=1940,110 2510x1390 cursor=1 advanced=0 randr=1 xinerama=0 server= texture=1 xcb=1 shm=1 cursorobj=1 get=2510x1390
+> xshm-destroy
+xshm-destroy textures=0
+> set-int screen 2
+> xshm-create
+log info xshm-input: Missing Xinerama extension !
+log info xshm-input: Geometry 1280x1024 @ -1280,-50
+xshm-create
+state screen=2 origin=-1280,-50 size=1280x1024 cut=t10,l20,r30,b40 adj=20,10 1230x974 cursor=1 advanced=0 randr=1 xinerama=0 server= texture=1 xcb=1 shm=1 cursorobj=1 get=1230x974
+> xshm-destroy
+xshm-destroy textures=0
+> set-int screen 0
+> set-int cut_top -10
+> set-int cut_left -20
+> set-int cut_right 0
+> set-int cut_bot 0
+> xshm-create
+log info xshm-input: Missing Xinerama extension !
+log info xshm-input: Geometry 1920x1080 @ 0,0
+xshm-create
+state screen=0 origin=0,0 size=1920x1080 cut=t-10,l-20,r0,b0 adj=-20,-10 1940x1090 cursor=1 advanced=0 randr=1 xinerama=0 server= texture=1 xcb=1 shm=1 cursorobj=1 get=1940x1090
+> xshm-destroy
+xshm-destroy textures=0
+> set-int screen 1
+> xshm-create
+log info xshm-input: Missing Xinerama extension !
+log info xshm-input: Geometry 2560x1440 @ 1920,100
+xshm-create
+state screen=1 origin=1920,100 size=2560x1440 cut=t-10,l-20,r0,b0 adj=1900,90 2580x1450 cursor=1 advanced=0 randr=1 xinerama=0 server= texture=1 xcb=1 shm=1 cursorobj=1 get=2580x1450
+> xshm-destroy
+xshm-destroy textures=0
+> set-int screen 0
+> set-int cut_top 0
+> set-int cut_left 0
+> set-int cut_right 1920
+> set-int cut_bot 0
+> xshm-create
+log info xshm-input: Missing Xinerama extension !
+log info xshm-input: Geometry 1920x1080 @ 0,0
+xshm-create
+state screen=0 origin=0,0 size=1920x1080 cut=t0,l0,r1920,b0 adj=0,0 0x1080 cursor=1 advanced=0 randr=1 xinerama=0 server= texture=1 xcb=1 shm=1 cursorobj=1 get=0x1080
+> xshm-destroy
+xshm-destroy textures=0
+> set-int cut_right 2000
+> xshm-create
+log info xshm-input: Missing Xinerama extension !
+log info xshm-input: Geometry 1920x1080 @ 0,0
+xshm-create
+state screen=0 origin=0,0 size=1920x1080 cut=t0,l0,r2000,b0 adj=0,0 -80x1080 cursor=1 advanced=0 randr=1 xinerama=0 server= texture=1 xcb=1 shm=1 cursorobj=1 get=4294967216x1080
+> xshm-destroy
+xshm-destroy textures=0
+> set-int cut_right 0
+> set-int cut_bot 1080
+> xshm-create
+log info xshm-input: Missing Xinerama extension !
+log info xshm-input: Geometry 1920x1080 @ 0,0
+xshm-create
+state screen=0 origin=0,0 size=1920x1080 cut=t0,l0,r0,b1080 adj=0,0 1920x0 cursor=1 advanced=0 randr=1 xinerama=0 server= texture=1 xcb=1 shm=1 cursorobj=1 get=1920x0
+> xshm-destroy
+xshm-destroy textures=0
+> set-int cut_bot 0
+> xshm-create
+log info xshm-input: Missing Xinerama extension !
+log info xshm-input: Geometry 1920x1080 @ 0,0
+xshm-create
+state screen=0 origin=0,0 size=1920x1080 cut=t0,l0,r0,b0 adj=0,0 1920x1080 cursor=1 advanced=0 randr=1 xinerama=0 server= texture=1 xcb=1 shm=1 cursorobj=1 get=1920x1080
+> xshm-geometry
+log info xshm-input: Geometry 1920x1080 @ 0,0
+update_geometry ret=0
+state screen=0 origin=0,0 size=1920x1080 cut=t0,l0,r0,b0 adj=0,0 1920x1080 cursor=1 advanced=0 randr=1 xinerama=0 server= texture=1 xcb=1 shm=1 cursorobj=1 get=1920x1080
+> set-int cut_top 8
+> xshm-update
+log info xshm-input: Missing Xinerama extension !
+log info xshm-input: Geometry 1920x1080 @ 0,0
+state screen=0 origin=0,0 size=1920x1080 cut=t8,l0,r0,b0 adj=0,8 1920x1072 cursor=1 advanced=0 randr=1 xinerama=0 server= texture=1 xcb=1 shm=1 cursorobj=1 get=1920x1072
+> xshm-geometry
+log info xshm-input: Geometry 1920x1080 @ 0,0
+update_geometry ret=0
+state screen=0 origin=0,0 size=1920x1080 cut=t8,l0,r0,b0 adj=0,8 1920x1072 cursor=1 advanced=0 randr=1 xinerama=0 server= texture=1 xcb=1 shm=1 cursorobj=1 get=1920x1072
+> xshm-destroy
+xshm-destroy textures=0

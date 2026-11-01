@@ -1,0 +1,24 @@
+open fout ok
+pos -> 0
+write 01020304 4 -> 4
+pos -> 4
+seek start 2 -> 2
+pos -> 2
+write aa 1 -> 1
+pos -> 3
+seek end 0 -> 4
+pos -> 4
+seek end 2 -> 6
+seek cur -1 -> 5
+seek start -1 -> -1
+pos -> 5
+seek start 8 -> 8
+write bb 1 -> 1
+pos -> 9
+read 2 -> 0 data=-
+serialize_r 2 -> 2 data=0000
+serialize_w cc 1 -> 1
+file fo-a size=12 bytes=0102aa0400000000bb0000cc
+open fout ok
+file fo-a size=0 bytes=-
+open fout fail

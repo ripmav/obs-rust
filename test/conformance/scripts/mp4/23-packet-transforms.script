@@ -1,0 +1,29 @@
+# S-022 how submitted packets are transformed before storage. H.264: Annex-B -> 4-byte length
+# prefixes (S-012); an IDR NAL (type 5) makes the packet a keyframe even if the flag was 0, but a
+# packet flagged keyframe without IDR stays a keyframe. The keyframe flag drives stss and the split
+# point. Audio and ProRes packets are stored untouched.
+enc v video codec h264 width 320 height 240 fps 30/1 extra 000000016742c01ed900a047fe880000000168ce3c80
+mux mp4
+pkt v 0 0 0 000000016588aabb
+pkt v 1 1 1 0000000141ccdd
+pkt v 2 2 0 0000000141eeff
+pkt v 3 3 0 0000000106aa0000000141cc
+finalise
+dump
+echo --- 3-byte start code and a packet without any start code (zero NALs -> empty sample)
+reset
+enc v video codec h264 width 320 height 240 fps 30/1 extra 000000016742c01ed900a047fe880000000168ce3c80
+mux mp4
+pkt v 0 0 1 0000016588aabb
+pkt v 1 1 0 aabbcc
+pkt v 2 2 0 0000000141dd
+finalise
+dump
+echo --- unknown AUDIO codec: sample entry is missing (stsd count 1 but no entry), packets are stored
+reset
+enc a audio codec mp3 rate 48000
+mux mp4
+pkt a 0 0 1 gen:10
+pkt a 1152 1152 1 gen:10
+finalise
+tree

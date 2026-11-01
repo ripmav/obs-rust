@@ -1,0 +1,29 @@
+# Split with an audio track: the splitting video keyframe is parked in mux_packets; further video is parked too;
+# audio older than the parked keyframe still goes to the old file; the first audio packet at/after the keyframe's
+# pts (microseconds) triggers the new file, then the parked packets are flushed and per-stream offsets are taken
+# from the first packet of each stream in the new file (video pts offset, audio dts offset).
+reset
+output o
+venc h264 bitrate=2500 extra=0a0b
+aenc t0 aac 48000 1024 0 extra=cc
+set str path /v/first.mkv
+set bool split_file 1
+set int max_time_sec 1
+set str directory /rec
+set str format seg%N
+set str extension mkv
+create ffmpeg_muxer
+start
+pkt v pts=0 dts=0 key=1 size=4
+pkt a pts=0 dts=0 size=4
+pkt v pts=1000 dts=1000 key=1 size=4
+state_split
+queue
+pkt v pts=1033 dts=1033 key=0 size=4
+pkt a pts=990 dts=990 size=4
+echo audio_before_keyframe_goes_to_old_file
+pkt a pts=1000 dts=1000 size=4
+state_split
+pkt a pts=1021 dts=1021 size=4
+pkt v pts=1066 dts=1066 key=0 size=4
+state_split

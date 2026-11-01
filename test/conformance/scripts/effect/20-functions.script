@@ -1,0 +1,50 @@
+# CORE: function declarations. "RET NAME ( [in|inout|out|uniform] TYPE NAME [: SEMANTIC], ... ) [: SEMANTIC] { body }".
+# The parser records the parameter list, the (optional) return semantic and the body text verbatim (every token of the
+# body from '{' to the matching '}', merged tokens, comments reduced to a blank), plus the dependency lists described in
+# 31-assembly-deps: names of structs, functions, samplers and global parameters that were declared BEFORE the
+# function and are mentioned in its return type, parameter types or body. Duplicate names are accepted.
+backend text none
+text a
+uniform float4 col;
+uniform texture2d img;
+sampler_state smp { Filter = Linear; };
+struct V { float4 pos : POSITION; float2 uv : TEXCOORD0; };
+struct W { float4 pos : POSITION; };
+float helper(float x) { return x + 1; }
+float4 f1(V v, float t) : TARGET { return img.Sample(smp, v.uv) * col * helper(t); }
+V f2() { V v; v.pos = col; return v; }
+void f3(in float a, out float b, inout float c, uniform float d) { b = a; c = d; }
+float4 f4(float4 a : POSITION, W w : FOO) : COLOR { return a + w.pos; }
+float f5() { return 1; }
+float f5() { return 2; }
+float later_user() { return later_decl(1) + later_param + 1; }
+float later_decl(float x) { return x; }
+uniform float later_param;
+float noargs() { { { nested } } return 1; }
+float f6(float x) { return x /* comment */ + 1; // trailing
+}
+@end
+ep f.effect @text:a
+echo --- specifiers on functions are errors
+ep s1 "uniform float f() { return 1; }"
+ep s2 "const float f() { return 1; }"
+ep s3 "property float f() { return 1; }"
+ep s4 "uniform const property float f() { return 1; }"
+ep s5 "uniform uniform float f() { return 1; }"
+echo --- parameter modifiers
+ep m1 "float y(in float a, out float b, inout float c, uniform float d) { return 1; }"
+ep m2 "float y(in in float a) { return 1; }"
+ep m3 "float y(in out float a) { return 1; }"
+ep m4 "float y(uniform in float a) { return 1; }"
+ep m5 "float y(in) { return 1; }"
+ep m6 "float y(IN float a) { return 1; }"
+echo --- semantics
+ep k1 "float y(float a : POS) { return 1; }"
+ep k2 "float4 y() : COLOR { return 1; } float y() { return 2; }"
+ep k3 "float4 y() :COLOR{ return 1; }"
+echo --- body capture
+ep b1 "float y() { }"
+ep b2 "float y() { return \"}\"; }"
+ep b3 "float y() { if (1) { return 2; } return 1; }"
+ep b4 "float y() { return 1; }\nfloat z() { return y(); }"
+ep b5 "#define ONE 1\nfloat y() { return ONE; }"

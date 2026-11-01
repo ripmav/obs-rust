@@ -1,0 +1,22 @@
+# Registration data, display names, settings defaults and properties of the four mux-based outputs.
+# Only replay_buffer has a get_defaults callback; only ffmpeg_muxer / mpegts carry a properties callback ("path" text).
+reset
+output o
+create ffmpeg_muxer
+info
+getname
+props
+defaults
+create ffmpeg_mpegts_muxer
+info
+getname
+create replay_buffer
+info
+getname
+defaults
+settings
+props
+create hls
+info
+getname
+defaults

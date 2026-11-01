@@ -1,0 +1,25 @@
+# Missing-files report and the replacement callback.
+data D
+src_defaults D
+set_str D local_file "/gone/a.mp4"
+host_settings D
+src_create S D
+exists /gone/a.mp4 0
+src_missing S
+echo ---- the callback writes the new path into the settings and calls update
+missing_cb S 0 "/new/b.mp4"
+echo ---- existing file: nothing reported
+exists /gone/a.mp4 1
+src_missing S
+echo ---- empty path: nothing reported
+data E
+src_defaults E
+src_create T E
+src_missing T
+echo ---- network source: nothing reported
+data F
+src_defaults F
+set_bool F is_local_file 0
+set_str F input "http://x/y"
+src_create U F
+src_missing U

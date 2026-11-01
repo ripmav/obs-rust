@@ -1,0 +1,18 @@
+# Scenes and groups count as audio-capable (COMPOSITE flag): their items become `visible` only after the queued
+# action is applied, even though they have no audio of their own. Items freshly added start visible=0 for them.
+source s 100 100
+scene main
+scene inner
+add inner s x
+add main inner n
+print n
+audio_flush n
+print n
+group main g
+print g
+audio_flush g
+print g
+visible g 0
+print g
+audio_flush g
+print g

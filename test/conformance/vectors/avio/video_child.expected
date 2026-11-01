@@ -1,0 +1,52 @@
+> vopen v I420 60 1 16 8 3
+= 0
+> vdivider x v 0
+= 0
+> vdivider x v 1
+= 0
+> vdivider c v 2
+= 1
+> vinfo c
+info fmt=1 16x8 fps=60/2 cache=3 range=0 cs=0
+get fmt=1 w=16 h=8 rate=60 frame_time=16666666
+> vinfo v
+info fmt=1 16x8 fps=60/1 cache=3 range=0 cs=0
+get fmt=1 w=16 h=8 rate=60 frame_time=16666666
+> vconnect c a 1
+= 1
+> vinputs v
+input0 cb=a param=1 div=1 ctr=0 scaler=0 conv=(1 16x8 r0 cs0) cur=0
+> vstate c
+active=1 stopped=0 skipped=0 total=0
+> vstate v
+active=1 stopped=0 skipped=0 total=0
+> vlock c 1 10 0x0c
+= 1 slot=0
+> vunlock c
+vcb a param=1 ts=10 ls0=16 d0=0c5a src=cache0
+= done
+> vstate v
+active=1 stopped=0 skipped=0 total=1
+> vtex c frames
+= void
+> vstate c
+active=1 stopped=0 skipped=0 total=2
+> vdump c
+vdump first=1 last=1 avail=3 skipped=0 total=2 inputs=1 raw=1 gpu=0 stop=0
+  slot0 count=0 skipped=0 ts=16666676
+  slot1 count=0 skipped=0 ts=0
+  slot2 count=0 skipped=0 ts=0
+> vdisconnect2 c a 1
+= 1
+> vstate v
+active=0 stopped=0 skipped=0 total=2
+> vstop c
+= stopped
+> vstate v
+active=0 stopped=1 skipped=0 total=2
+> vfree_divider_root v
+= void
+> vfree_divider c
+= void
+> vclose v
+= closed

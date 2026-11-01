@@ -1,0 +1,58 @@
+ff_audio_track
+basic_migrate -> changed=1
+prof: AdvOut.FFAudioMixes user=1 default=0 str="4"
+prof: AdvOut.Pre22.1Settings user=1 default=0 str="true"
+basic_migrate -> changed=0
+ff_audio_track_pre22_1_done
+basic_migrate -> changed=0
+prof: AdvOut.FFAudioMixes user=0 default=0 str=@null
+rec_track_index
+basic_migrate -> changed=1
+prof: AdvOut.RecTracks user=1 default=0 str="8"
+prof: AdvOut.RecTrackIndex user=0 default=0 str=@null
+rec_track_index_with_rectracks
+basic_migrate -> changed=0
+prof: AdvOut.RecTracks user=1 default=0 str="3"
+prof: AdvOut.RecTrackIndex user=1 default=0 str="4"
+twitch_addon_choice
+basic_migrate -> changed=1
+prof: Twitch.AddonChoice user=1 default=0 str="3"
+basic_migrate -> changed=0
+prof: Twitch.AddonChoice user=1 default=0 str="1"
+enforce_bitrate
+basic_migrate -> changed=1
+prof: Stream1.IgnoreRecommended user=1 default=0 str="false"
+prof: Stream1.MovedOldEnforce user=1 default=0 str="true"
+basic_migrate -> changed=1
+prof: Stream1.IgnoreRecommended user=1 default=0 str="true"
+basic_migrate -> changed=0
+prof: Stream1.MovedOldEnforce user=0 default=0 str=@null
+retry_delay
+basic_migrate -> changed=1
+prof: Output.RetryDelay user=1 default=0 str="1"
+basic_migrate -> changed=0
+prof: Output.RetryDelay user=1 default=0 str="5"
+basic_migrate -> changed=0
+prof: Output.RetryDelay user=0 default=0 str=@null
+rec_format
+basic_migrate -> changed=1
+prof: AdvOut.RecFormat2 user=1 default=0 str="mpegts"
+prof: AdvOut.RecFormat user=1 default=0 str="ts"
+basic_migrate -> changed=1
+prof: AdvOut.RecFormat2 user=1 default=0 str="hls"
+prof: SimpleOutput.RecFormat2 user=1 default=0 str="fragmented_mp4"
+basic_migrate -> changed=1
+prof: SimpleOutput.RecFormat2 user=1 default=0 str="fragmented_mov"
+basic_migrate -> changed=1
+prof: SimpleOutput.RecFormat2 user=1 default=0 str="mkv"
+basic_migrate -> changed=0
+basic_migrate -> changed=0
+prof: SimpleOutput.RecFormat2 user=1 default=0 str="mkv"
+rescale_filter
+basic_migrate -> changed=0
+prof: AdvOut.RescaleFilter user=1 default=0 str="3"
+prof: AdvOut.RecRescaleFilter user=1 default=0 str="3"
+basic_migrate -> changed=0
+prof: AdvOut.RescaleFilter user=1 default=0 str="5"
+nothing_to_do
+basic_migrate -> changed=0

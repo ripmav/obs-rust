@@ -1,0 +1,75 @@
+log debug canvas 'Main' (<uuid>) created
+startup -> true
+ev gs_create module=fake-gfx adapter=0
+reset_video -> module_not_found
+  after_call base=1920x1080 out=1280x720 fps=30/1 fmt=NV12 cs=2 range=1 scale=2 gpu=1 adapter=0
+ev gs_create module=fake-gfx adapter=0
+reset_video -> not_supported
+  after_call base=1920x1080 out=1280x720 fps=30/1 fmt=NV12 cs=2 range=1 scale=2 gpu=1 adapter=0
+ev gs_create module=fake-gfx adapter=0
+reset_video -> fail
+  after_call base=1920x1080 out=1280x720 fps=30/1 fmt=NV12 cs=2 range=1 scale=2 gpu=1 adapter=0
+ev gs_create module=fake-gfx adapter=0
+reset_video -> fail
+  after_call base=1920x1080 out=1280x720 fps=30/1 fmt=NV12 cs=2 range=1 scale=2 gpu=1 adapter=0
+state core=up locale=en-US modcfg=NULL name_store_owned=1
+  types source=3 input=1 filter=0 transition=0 output=0 encoder=0 service=0
+  graphics=no audio=no mixes=0 thread_initialized=0 valid=1
+  main_canvas name="Main" flags=0xf mix=none
+report ctx_depth=0 ctx_underflow=0
+ev gs_create module=fake-gfx adapter=0
+ev effect default.effect
+ev effect opaque.effect
+ev effect solid.effect -> fail
+ev effect repeat.effect
+ev effect format_conversion.effect
+ev effect bicubic_scale.effect
+ev effect lanczos_scale.effect
+ev effect area.effect
+ev effect bilinear_lowres_scale.effect
+ev effect premultiplied_alpha.effect
+ev sampler max_anisotropy=1
+ev texture 2x2 fmt=3 levels=1 flags=0
+ev gs_destroy
+reset_video -> fail
+  after_call base=1920x1080 out=1280x720 fps=30/1 fmt=NV12 cs=2 range=1 scale=2 gpu=1 adapter=0
+report ctx_depth=0 ctx_underflow=0
+state core=up locale=en-US modcfg=NULL name_store_owned=1
+  types source=3 input=1 filter=0 transition=0 output=0 encoder=0 service=0
+  graphics=no audio=no mixes=0 thread_initialized=0 valid=1
+  main_canvas name="Main" flags=0xf mix=none
+reset_video -> fail
+  after_call base=1920x1080 out=1280x720 fps=30/1 fmt=NV12 cs=2 range=1 scale=2 gpu=1 adapter=0
+reset_video -> fail
+  after_call base=1920x1080 out=1280x720 fps=30/1 fmt=NV12 cs=2 range=1 scale=2 gpu=1 adapter=0
+reset_video -> fail
+  after_call base=1920x1080 out=1280x720 fps=30/1 fmt=NV12 cs=2 range=1 scale=2 gpu=1 adapter=0
+reset_video -> fail
+  after_call base=1920x1080 out=1280x720 fps=30/1 fmt=NV12 cs=2 range=1 scale=2 gpu=1 adapter=0
+reset_video -> fail
+  after_call base=1920x1080 out=1280x720 fps=30/1 fmt=NV12 cs=2 range=1 scale=2 gpu=1 adapter=0
+state core=up locale=en-US modcfg=NULL name_store_owned=1
+  types source=3 input=1 filter=0 transition=0 output=0 encoder=0 service=0
+  graphics=no audio=no mixes=0 thread_initialized=0 valid=1
+  main_canvas name="Main" flags=0xf mix=none
+log error Failed to find file 'default.effect' in libobs data directory
+log error Failed to find file 'opaque.effect' in libobs data directory
+log error Failed to find file 'solid.effect' in libobs data directory
+log error Failed to find file 'repeat.effect' in libobs data directory
+log error Failed to find file 'format_conversion.effect' in libobs data directory
+log error Failed to find file 'bicubic_scale.effect' in libobs data directory
+log error Failed to find file 'lanczos_scale.effect' in libobs data directory
+log error Failed to find file 'area.effect' in libobs data directory
+log error Failed to find file 'bilinear_lowres_scale.effect' in libobs data directory
+log error Failed to find file 'premultiplied_alpha.effect' in libobs data directory
+reset_video -> fail
+  after_call base=1920x1080 out=1280x720 fps=30/1 fmt=NV12 cs=2 range=1 scale=2 gpu=1 adapter=0
+state core=up locale=en-US modcfg=NULL name_store_owned=1
+  types source=3 input=1 filter=0 transition=0 output=0 encoder=0 service=0
+  graphics=no audio=no mixes=0 thread_initialized=0 valid=1
+  main_canvas name="Main" flags=0xf mix=none
+report ctx_depth=0 ctx_underflow=0
+shutdown begin
+log info Freeing OBS context data
+log debug canvas 'Main' (<uuid>) destroyed
+shutdown end obs=NULL

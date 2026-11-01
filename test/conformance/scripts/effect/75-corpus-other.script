@@ -1,0 +1,71 @@
+# CORPUS (CORE): every shipped effect file of this group is parsed by the real effect parser against the fake
+# OpenGL backend (preprocessor name _OPENGL). For each file the runner prints, in order: the backend calls
+# (location string, exact assembled shader text, shader parameters), the creation result, the effect structure
+# (parameters with types and defaults, techniques, passes with the parameters bound to each shader) and the
+# parser-internal structure (counts, struct/function/sampler/technique tables, dependency lists). The files
+# are read from the repository; the file name given to the parser is the repository relative path (it also
+# decides where "#include" is resolved; the runner starts in the repository root).
+gfx _OPENGL
+echo === plugins/nv-filters/data/color.effect
+backend text full
+backend events off
+effect e plugins/nv-filters/data/color.effect @file:plugins/nv-filters/data/color.effect
+dump e
+backend text none
+backend ep brief
+ep plugins/nv-filters/data/color.effect @file:plugins/nv-filters/data/color.effect
+destroy e
+echo === plugins/nv-filters/data/rtx_blur.effect
+backend text full
+backend events off
+effect e plugins/nv-filters/data/rtx_blur.effect @file:plugins/nv-filters/data/rtx_blur.effect
+dump e
+backend text none
+backend ep brief
+ep plugins/nv-filters/data/rtx_blur.effect @file:plugins/nv-filters/data/rtx_blur.effect
+destroy e
+echo === plugins/nv-filters/data/rtx_greenscreen.effect
+backend text full
+backend events off
+effect e plugins/nv-filters/data/rtx_greenscreen.effect @file:plugins/nv-filters/data/rtx_greenscreen.effect
+dump e
+backend text none
+backend ep brief
+ep plugins/nv-filters/data/rtx_greenscreen.effect @file:plugins/nv-filters/data/rtx_greenscreen.effect
+destroy e
+echo === plugins/text-freetype2/data/text_default.effect
+backend text full
+backend events off
+effect e plugins/text-freetype2/data/text_default.effect @file:plugins/text-freetype2/data/text_default.effect
+dump e
+backend text none
+backend ep brief
+ep plugins/text-freetype2/data/text_default.effect @file:plugins/text-freetype2/data/text_default.effect
+destroy e
+echo === frontend/data/striped_line.effect
+backend text full
+backend events off
+effect e frontend/data/striped_line.effect @file:frontend/data/striped_line.effect
+dump e
+backend text none
+backend ep brief
+ep frontend/data/striped_line.effect @file:frontend/data/striped_line.effect
+destroy e
+echo === test/test-input/data/draw.effect
+backend text full
+backend events off
+effect e test/test-input/data/draw.effect @file:test/test-input/data/draw.effect
+dump e
+backend text none
+backend ep brief
+ep test/test-input/data/draw.effect @file:test/test-input/data/draw.effect
+destroy e
+echo === test/test-input/data/test.effect
+backend text full
+backend events off
+effect e test/test-input/data/test.effect @file:test/test-input/data/test.effect
+dump e
+backend text none
+backend ep brief
+ep test/test-input/data/test.effect @file:test/test-input/data/test.effect
+destroy e

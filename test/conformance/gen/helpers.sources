@@ -1,0 +1,32 @@
+# Spec S-024: small helper modules.
+# Included (not linked) by the runner because the code under test is file-local:
+#   libobs/obs-missing-files.c, libobs/util/task.c, shared/bpm/bpm.c,
+#   shared/happy-eyeballs/happy-eyeballs.c, shared/file-updater/file-updater/file-updater.c
+# Run run.sh from test/conformance (the -I flag below is relative to that directory).
+test/conformance/gen/helpers_runner.c
+test/conformance/gen/helpers_stubs.c
+shared/opts-parser/opts-parser.c
+libobs/util/pipe.c
+libobs/obs-hotkey-name-map.c
+libobs/util/profiler.c
+libobs/obs-data.c
+libobs/obs-av1.c
+libobs/util/array-serializer.c
+libobs/util/bitstream.c
+deps/libcaption/src/caption.c
+deps/libcaption/src/cea708.c
+deps/libcaption/src/eia608.c
+deps/libcaption/src/eia608_charmap.c
+deps/libcaption/src/eia608_from_utf8.c
+deps/libcaption/src/mpeg.c
+deps/libcaption/src/scc.c
+deps/libcaption/src/utf8.c
+deps/libcaption/src/xds.c
+-I../../deps/libcaption
+-I../../deps/libcaption/caption
+-DENABLE_HEVC
+-D__STDC_CONSTANT_MACROS
+-ljansson
+-lcurl
+-lz
+-Wno-deprecated-declarations

@@ -1,0 +1,40 @@
+# CORE. Cross-filter edge cases: rate/channel changes via update, extreme values, denormals, large blocks.
+audio 2 48000
+echo gain-channel-change-via-update
+create g gain
+audio 4 48000
+data d
+set d db double 6
+update g d
+process g 2 const:1 const:1 const:1 const:1
+echo gate-rate-change
+create n gate
+audio 2 96000
+update n d
+state n
+echo limiter-extreme-rate
+audio 2 8000
+create l limiter
+state l
+process l 8 const:1 const:1
+audio 2 192000
+create l2 limiter
+state l2
+echo compressor-big-block-1024
+audio 2 48000
+create c compressor
+process c 1024 out=0:1000:1024:3 noise:1:5 noise:1:6
+state c
+echo expander-block-sizes-1-and-1024
+create e expander
+process e 1 const:0.5 const:0.5
+process e 1024 out=0:1010:1024:2 noise:0.7:9 noise:0.7:10
+echo eq-large-block
+create q eq
+process q 1024 out=0:0:1024:128 noise:0.5:1 noise:0.5:2
+echo inf-input-eq
+process q 2 const:inf const:-inf
+process q 4 const:0.1 const:0.1
+echo denormal-input
+create g2 gain
+process g2 2 const:1e-40 const:-1e-40

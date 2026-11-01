@@ -1,0 +1,94 @@
+# S-034 polling with modifiers: the modifier set is read from the platform (OBS_KEY_SHIFT, OBS_KEY_CONTROL,
+# OBS_KEY_ALT, OBS_KEY_META) each poll. Covers strict vs. non-strict matching, the "modifiers must be
+# held BEFORE the key" latch (binding.modifiers_match), modifier-only bindings and background press.
+reg frontend A "A" "a"
+reg frontend M "M" "modonly"
+loadbind A 0x2:OBS_KEY_A
+echo mods-first-then-key-strict
+strict on
+down OBS_KEY_SHIFT
+poll
+down OBS_KEY_A
+poll
+up OBS_KEY_A
+poll
+echo key-first-then-mods-needs-one-extra-poll-and-fires-late
+up OBS_KEY_SHIFT
+poll
+down OBS_KEY_A
+poll
+down OBS_KEY_SHIFT
+poll
+poll
+enumb
+echo releasing-the-modifier-releases-the-hotkey
+up OBS_KEY_SHIFT
+poll
+enumb
+upall
+poll
+echo strict-extra-modifier-blocks-non-strict-allows
+down OBS_KEY_SHIFT
+down OBS_KEY_CONTROL
+down OBS_KEY_A
+poll 2
+up OBS_KEY_CONTROL
+poll 2
+up OBS_KEY_A
+poll
+strict off
+down OBS_KEY_CONTROL
+poll
+down OBS_KEY_A
+poll 2
+upall
+poll
+echo meta-maps-to-command-bit
+loadbind A 0x80:OBS_KEY_A
+strict on
+down OBS_KEY_META
+poll
+down OBS_KEY_A
+poll
+upall
+poll
+echo modifier-only-binding-fires-when-all-its-modifiers-are-held
+loadbind M 0x6:OBS_KEY_NONE
+strict on
+down OBS_KEY_CONTROL
+poll
+down OBS_KEY_SHIFT
+poll
+up OBS_KEY_SHIFT
+poll
+echo modifier-only-strict-extra-modifier
+down OBS_KEY_SHIFT
+down OBS_KEY_ALT
+poll
+upall
+poll
+echo modifier-only-nonstrict-extra-modifier
+strict off
+down OBS_KEY_SHIFT
+down OBS_KEY_CONTROL
+down OBS_KEY_ALT
+poll
+upall
+poll
+echo background-press-disabled-no-new-presses-but-release-still-happens
+strict on
+loadbind A 0:OBS_KEY_A
+loadbind M
+poll
+down OBS_KEY_A
+poll
+bgpress off
+upall
+poll
+down OBS_KEY_A
+poll 2
+bgpress on
+poll 2
+bgpress off
+up OBS_KEY_A
+poll

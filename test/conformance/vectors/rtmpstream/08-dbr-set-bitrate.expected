@@ -1,0 +1,56 @@
+reset ok
+> reset
+reset ok
+> venc 0 h264 4000 64 e0
+> venc 1 h264 2000 64 e1
+> dbr_json [[0,3000,4000],[0,1500,2000]]
+build_dbr_interpolation_table -> 1
+table n=3
+  [0] 0 0 0 0 0 0 0 0 0 0
+  [1] 3000 1500 0 0 0 0 0 0 0 0
+  [2] 4000 2000 0 0 0 0 0 0 0 0
+> set dbr_cur_bitrate 4500
+> dbr_set
+fake encoder_update track=0 bitrate=3000
+fake encoder_update track=1 bitrate=1500
+> set dbr_cur_bitrate 5250
+> dbr_set
+fake encoder_update track=0 bitrate=3500
+fake encoder_update track=1 bitrate=1750
+> set dbr_cur_bitrate 5001
+> dbr_set
+fake encoder_update track=0 bitrate=3334
+fake encoder_update track=1 bitrate=1667
+> set dbr_cur_bitrate 1000
+> dbr_set
+fake encoder_update track=0 bitrate=666
+fake encoder_update track=1 bitrate=333
+> set dbr_cur_bitrate 6000
+> dbr_set
+fake encoder_update track=0 bitrate=4000
+fake encoder_update track=1 bitrate=2000
+> set dbr_cur_bitrate 99999
+> dbr_set
+> dbr_set
+> dbr_json [[1000,4000],[500,2000]]
+build_dbr_interpolation_table -> 1
+table n=2
+  [0] 1000 500 0 0 0 0 0 0 0 0
+  [1] 4000 2000 0 0 0 0 0 0 0 0
+> set dbr_cur_bitrate 3000
+> dbr_set
+fake encoder_update track=0 bitrate=2000
+fake encoder_update track=1 bitrate=1000
+> set dbr_cur_bitrate 100
+> dbr_set
+fake encoder_update track=0 bitrate=4000
+fake encoder_update track=1 bitrate=2000
+> set dbr_cur_bitrate 1500
+> dbr_set
+fake encoder_update track=0 bitrate=1000
+fake encoder_update track=1 bitrate=500
+> dbr_json [[],[]]
+build_dbr_interpolation_table -> 1
+table n=0
+> set dbr_cur_bitrate 3000
+> dbr_set

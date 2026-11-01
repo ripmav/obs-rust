@@ -1,0 +1,61 @@
+defaults
+tget OBS_KEY_INSERT "fallback"
+tget OBS_KEY_NUM1 "fallback"
+tget OBS_KEY_NONE null
+tget OBS_KEY_A null
+mute=null
+unmute=null
+push_to_mute=null
+push_to_talk=null
+monitor_on=null
+monitor_off=null
+sceneitem_show=null
+sceneitem_hide=null
+simple-fields
+tget OBS_KEY_INSERT "Einfg"
+tget OBS_KEY_DELETE "Entf"
+tget OBS_KEY_HOME "Pos1"
+tget OBS_KEY_ESCAPE "Esc"
+tget OBS_KEY_SHIFT "Umschalt"
+left-right-up-down-fields-are-never-applied-Q-6
+tget OBS_KEY_LEFT "fb"
+numpad-template-with-and-without-placeholder
+tget OBS_KEY_NUM0 "Block 0"
+tget OBS_KEY_NUM9 "Block 9"
+tget OBS_KEY_NUM5 "Pad 5"
+tget OBS_KEY_NUM7 "7 (Pad) 7"
+numpad-operators
+tget OBS_KEY_NUMSLASH "Div"
+tget OBS_KEY_NUMASTERISK "Mul"
+tget OBS_KEY_NUMMINUS "Min"
+tget OBS_KEY_NUMPLUS "Plus"
+tget OBS_KEY_NUMPERIOD "Dec"
+tget OBS_KEY_NUMEQUAL "fb"
+mouse-template
+tget OBS_KEY_MOUSE1 "Maus 1"
+tget OBS_KEY_MOUSE29 "Maus 29"
+tget OBS_KEY_MOUSE2 "Btn 2"
+fields-not-set-keep-previous-values
+tget OBS_KEY_INSERT "Einfg"
+tget OBS_KEY_TAB "Tabulator"
+tget OBS_KEY_MOUSE2 "Btn 2"
+empty-string-is-a-translation
+tget OBS_KEY_SPACE ""
+smaller-struct-size-copies-only-the-prefix
+tget OBS_KEY_INSERT "XX"
+tget OBS_KEY_DELETE "YY"
+tget OBS_KEY_HOME "Pos1"
+null-argument-ignored
+tget OBS_KEY_INSERT "XX"
+audio-and-sceneitem-templates
+mute="m"
+unmute="u"
+push_to_mute="ptm"
+push_to_talk="ptt"
+monitor_on="mon"
+monitor_off="moff"
+sceneitem_show="Zeige %1"
+sceneitem_hide="Verberge %1"
+free-clears-key-translations
+hkfree hotkeys=0 pairs=0 bindings=0 weak_live=0
+tget OBS_KEY_INSERT "fb"

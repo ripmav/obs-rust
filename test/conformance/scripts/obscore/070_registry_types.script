@@ -1,0 +1,44 @@
+# Type registries and their enumeration: sources are listed globally in registration order (the
+# three core types come first) and per category (input / filter / transition; scene types are only
+# in the global list); versioned registrations get the id "<id>_v<N>" and keep the plain id as
+# unversioned id. Indices past the end return false and leave the output untouched.
+# (Registration itself is specified in S-035; here the registries are filled through its entry point
+# / directly, the enumeration functions are what is under test.)
+startup en-US -
+enum_types source
+reg_source image_source type=input
+reg_source color_filter type=filter
+reg_source fade type=transition
+reg_source image_source type=input version=2
+reg_source image_source type=input version=3
+reg_source color_filter type=filter version=1
+reg_source other_scene type=scene
+reg_output rtmp_output
+reg_output ffmpeg_output
+reg_encoder x264
+reg_encoder aac
+reg_encoder nvenc
+reg_service rtmp_common
+enum_types source
+enum_types input
+enum_types filter
+enum_types transition
+enum_types output
+enum_types encoder
+enum_types service
+# the two-output variant: either pointer may be NULL
+enum_input2 0
+enum_input2 0 noid
+enum_input2 0 nouv
+enum_input2 2
+enum_input2 3
+enum_input2 4
+enum_input2 99
+# highest version wins; the first registration is kept on ties; NULL input gives NULL
+latest_input image_source
+latest_input color_filter
+latest_input fade
+latest_input -
+latest_input scene
+latest_input group
+shutdown

@@ -1,0 +1,25 @@
+  cb A create
+log debug source 'A' (in) created
+  gsig source_create source=A
+create a ok
+  cb P create
+log debug private source 'P' (in) created
+create p ok
+  cb F create
+log debug private source 'F' (fl) created
+create f ok
+  cb B create-fail
+log error Failed to create source 'B'!
+log debug source 'B' (bad) created
+  gsig source_create source=B
+create b ok
+log error Source ID 'missing' not found
+log error Failed to create source 'U'!
+log debug source 'U' (missing) created
+  gsig source_create source=U
+create u ok
+info a name=A id=in type=0 enabled=1 hidden=0 flags=0 mixers=0 private=0
+info p name=P id=in type=0 enabled=1 hidden=0 flags=0 mixers=0 private=1
+info f name=F id=fl type=1 enabled=1 hidden=0 flags=0 mixers=0 private=1
+info b name=B id=bad type=0 enabled=1 hidden=0 flags=0 mixers=0 private=0
+info u name=U id=missing type=0 enabled=1 hidden=0 flags=0 mixers=255 private=0

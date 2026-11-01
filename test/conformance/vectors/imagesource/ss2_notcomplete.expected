@@ -1,0 +1,35 @@
+ev create slideshow_v2#1 public
+ev hotkey_register slideshow_v2#1 id=1 name=SlideShow.PlayPause desc=SlideShow.PlayPause
+ev hotkey_register slideshow_v2#1 id=2 name=SlideShow.Restart desc=SlideShow.Restart
+ev hotkey_register slideshow_v2#1 id=3 name=SlideShow.Stop desc=SlideShow.Stop
+ev hotkey_register slideshow_v2#1 id=4 name=SlideShow.NextSlide desc=SlideShow.NextSlide
+ev hotkey_register slideshow_v2#1 id=5 name=SlideShow.PreviousSlide desc=SlideShow.PreviousSlide
+ev create fade_transition#2 private
+ev create image_source#3[/s/a.png] private
+ev task_queued
+ev create image_source#4[/s/b.png] private
+ev task_queued
+ev tr_size fade_transition#2 1920x1080
+ev tr_align fade_transition#2 0
+ev tr_scale fade_transition#2 1
+ev tr_start fade_transition#2 mode=0 ms=1000 dest=image_source#3[/s/a.png] -> started
+ev signal media_started slideshow_v2#1
+tick 0 clock=16000001
+ev signal media_next slideshow_v2#1
+tick 0 clock=516000001
+state slideshow2 behavior=2 manual=1 randomize=0 loop=1 hide=0 use_cut=0 paused=0 stop=0 restart_on_activate=0 pause_on_deactivate=0 slide_time=3 tr_speed=1000 tr_name=null elapsed=0 cx=1920 cy=1080 state=4 transition=fade_transition#2 files=2
+state   file 0 /s/a.png
+state   file 1 /s/b.png
+state   cur 0 image_source#3[/s/a.png]
+state   prev 1:image_source#4[/s/b.png] 0:image_source#3[/s/a.png] 1:image_source#4[/s/b.png] 0:image_source#3[/s/a.png] 1:image_source#4[/s/b.png]
+state   next 1:image_source#4[/s/b.png] 0:image_source#3[/s/a.png] 1:image_source#4[/s/b.png] 0:image_source#3[/s/a.png] 1:image_source#4[/s/b.png]
+tick 0 clock=1116000025
+ev tr_start fade_transition#2 mode=0 ms=1000 dest=image_source#4[/s/b.png] -> started
+ev signal media_next slideshow_v2#1
+tick 0 clock=1132000026
+state slideshow2 behavior=2 manual=1 randomize=0 loop=1 hide=0 use_cut=0 paused=0 stop=0 restart_on_activate=0 pause_on_deactivate=0 slide_time=3 tr_speed=1000 tr_name=null elapsed=0 cx=1920 cy=1080 state=4 transition=fade_transition#2 files=2
+state   file 0 /s/a.png
+state   file 1 /s/b.png
+state   cur 1 image_source#4[/s/b.png]
+state   prev 0:image_source#3[/s/a.png] 1:image_source#4[/s/b.png] 0:image_source#3[/s/a.png] 1:image_source#4[/s/b.png] 0:image_source#3[/s/a.png]
+state   next 0:image_source#3[/s/a.png] 1:image_source#4[/s/b.png] 0:image_source#3[/s/a.png] 1:image_source#4[/s/b.png] 0:image_source#3[/s/a.png]

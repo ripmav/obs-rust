@@ -1,0 +1,47 @@
+# os_fopen(path, mode): fopen of the C library on this platform (the path is used as raw bytes);
+# a NULL path gives NULL. os_wfopen(wide path, mode) converts the path to UTF-8 first.
+# fopen H PATH MODE   wfopen H UTF8PATH MODE   wfopen_cp H CODEPOINTS MODE
+fopen a missing.txt rb
+fopen a missing.txt r+b
+fopen a @null rb
+fopen a @null wb
+fopen a one.txt wb
+fwrite a hello
+fclose a
+info one.txt
+# "wb" truncates, "ab" appends, "rb" reads, "r+b" reads and writes without truncating
+fopen a one.txt ab
+fwrite a "-more"
+fclose a
+cat one.txt
+fopen a one.txt rb
+fread a 100
+fwrite a x
+fclose a
+fopen a one.txt r+b
+fwrite a HE
+fclose a
+cat one.txt
+fopen a one.txt wb
+fclose a
+info one.txt
+fopen a one.txt w+b
+fwrite a abc
+fseeki a 0 set
+fread a 10
+fclose a
+# a directory cannot be opened for writing, a missing directory component fails
+fopen a nodir/x.txt wb
+mkdir d
+fopen a d wb
+# wide-character variants
+wfopen a "w\xc3\xa9.txt" wb
+fwrite a data
+fclose a
+ls .
+wfopen_cp a 77,e9,2e,74,78,74 rb
+fclose a
+wfopen_cp a 77,d800,2e,74,78,74 rb
+wfopen_cp a 77,d800 wb
+wfopen a @null rb
+wfopen a missing-wide.txt rb

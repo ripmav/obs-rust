@@ -1,0 +1,86 @@
+# CORE: every item has up to three layers (user, default, autoselect). A getter returns
+# user, else default, else autoselect, else the type's zero. Default/autoselect getters
+# read only their own layer. has_/unset_ per layer; unsetting all layers leaves an
+# empty item ("shell") that still iterates.
+new a
+set_default_int a n 5
+get_int a n
+has_user a n
+has_default a n
+has_autoselect a n
+dump a
+json a
+json_defaults a
+set_int a n 7
+get_int a n
+get_default_int a n
+has_user a n
+dump a
+unset_user a n
+get_int a n
+has_user a n
+dump a
+unset_user a n
+echo --- autoselect only
+set_autoselect_int a m 9
+get_int a m
+get_default_int a m
+get_autoselect_int a m
+has_autoselect a m
+dump a
+echo --- all three layers
+set_default_int a m 3
+get_int a m
+set_int a m 1
+get_int a m
+get_default_int a m
+get_autoselect_int a m
+dump a
+unset_default a m
+get_int a m
+get_default_int a m
+unset_user a m
+get_int a m
+unset_autoselect a m
+get_int a m
+dump a
+names a
+json_defaults a
+echo --- defaults ignore a different layer's type only when numbers
+set_default_double a x 1.5
+set_int a x 2
+get_int a x
+get_double a x
+get_default_int a x
+get_default_double a x
+dump a
+echo --- default with the wrong type for an existing item is ignored
+set_string a str "user"
+set_default_int a str 5
+has_default a str
+get_default_string a str
+get_string a str
+echo --- default / autoselect for each type
+set_default_string a ds "dflt"
+set_default_bool a db 1
+set_default_double a dd 0.25
+get_string a ds
+get_bool a db
+get_double a dd
+set_autoselect_string a as "auto"
+set_autoselect_bool a ab 1
+set_autoselect_double a ad 0.75
+get_string a as
+get_bool a ab
+get_double a ad
+get_autoselect_string a as
+get_autoselect_bool a ab
+get_autoselect_double a ad
+get_default_string a as
+echo --- the unsetters on missing names or missing layers do nothing
+unset_user a nosuch
+unset_default a nosuch
+unset_autoselect a nosuch
+unset_default a str
+unset_autoselect a n
+dump a

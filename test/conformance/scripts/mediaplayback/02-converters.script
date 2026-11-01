@@ -1,0 +1,71 @@
+# Pure conversion helpers: FFmpeg sample format -> OBS audio format, channel count -> speaker layout,
+# colour space/transfer/primaries -> OBS colour space, colour range -> OBS range, pixel format -> video format.
+cv_sample u8
+cv_sample s16
+cv_sample s32
+cv_sample flt
+cv_sample dbl
+cv_sample s64
+cv_sample u8p
+cv_sample s16p
+cv_sample s32p
+cv_sample fltp
+cv_sample dblp
+cv_sample s64p
+# channel counts: 0..9 (7 and 9 and 0 are unknown)
+cv_speakers 0
+cv_speakers 1
+cv_speakers 2
+cv_speakers 3
+cv_speakers 4
+cv_speakers 5
+cv_speakers 6
+cv_speakers 7
+cv_speakers 8
+cv_speakers 9
+cv_speakers 255
+# colour space: BT.709 with sRGB transfer is SRGB, otherwise 709
+cv_space 709 709 unspec
+cv_space 709 srgb unspec
+cv_space 709 pq unspec
+cv_space fcc 709 unspec
+cv_space 470bg 709 unspec
+cv_space 170m 709 unspec
+cv_space 240m 709 unspec
+# BT.2020 non-constant: HLG transfer -> 2100_HLG, anything else -> 2100_PQ
+cv_space 2020 hlg unspec
+cv_space 2020 pq unspec
+cv_space 2020 709 unspec
+cv_space 2020 unspec unspec
+# any other colour space falls back on the primaries: BT.2020 primaries select PQ/HLG, else DEFAULT
+cv_space unspec unspec unspec
+cv_space unspec hlg unspec
+cv_space unspec hlg 2020
+cv_space unspec pq 2020
+cv_space unspec 709 2020
+cv_space rgb unspec 2020
+cv_space rgb pq unspec
+cv_range jpeg
+cv_range mpeg
+cv_pixfmt yuv420p
+cv_pixfmt yuyv422
+cv_pixfmt yuv422p
+cv_pixfmt yuv422p10le
+cv_pixfmt yuv444p
+cv_pixfmt yuv444p12le
+cv_pixfmt uyvy422
+cv_pixfmt yvyu422
+cv_pixfmt nv12
+cv_pixfmt rgba
+cv_pixfmt bgra
+cv_pixfmt yuva420p
+cv_pixfmt yuv420p10le
+cv_pixfmt yuva422p
+cv_pixfmt yuva444p
+cv_pixfmt yuva444p12le
+cv_pixfmt bgr0
+cv_pixfmt p010le
+cv_pixfmt nv21
+cv_pixfmt rgb24
+cv_pixfmt gray
+cv_pixfmt none

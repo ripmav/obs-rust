@@ -1,0 +1,30 @@
+# S-047 obs-ffmpeg sources/encoders: wrappers #include the real obs-ffmpeg-source.c and
+# obs-ffmpeg-audio-encoders.c; obs-ffmpeg-video-encoders.c is linked; libobs data/properties are real;
+# libavcodec and the OBS host are recording fakes, libavutil is the real system library.
+# -I paths are relative to test/conformance (run.sh must be started there).
+test/conformance/gen/ffsources_runner.c
+test/conformance/gen/ffsources_stubs.c
+test/conformance/gen/ffsources_src.c
+test/conformance/gen/ffsources_aud.c
+plugins/obs-ffmpeg/obs-ffmpeg-video-encoders.c
+libobs/obs-properties.c
+libobs/obs-data.c
+libobs/callback/calldata.c
+libobs/graphics/vec2.c
+libobs/graphics/vec3.c
+libobs/graphics/vec4.c
+libobs/graphics/quat.c
+libobs/graphics/axisang.c
+libobs/graphics/matrix3.c
+libobs/graphics/matrix4.c
+libobs/graphics/plane.c
+libobs/graphics/math-extra.c
+shared/opts-parser/opts-parser.c
+-ljansson
+-lavutil
+-I../../shared/media-playback
+-I../../shared/opts-parser
+-Wno-deprecated-declarations
+-ffunction-sections
+-fdata-sections
+-Wl,--gc-sections

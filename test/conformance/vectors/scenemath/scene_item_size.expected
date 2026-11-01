@@ -1,0 +1,43 @@
+add ic ok
+add n ok
+scene_size main 1920 1080 (cx=0 cy=0 custom=0 last=0,0)
+scene_size inner 800 600 (cx=800 cy=600 custom=1 last=0,0)
+item n id=1 parent=main group=0 scene=1 abs=0 vis=0 user_vis=1 sel=0 lock=0 need_update=0
+  stored pos=-1.68518519,-0.907407403 rot=0 scale=1,1 scale_ref=1920,1080 align=5
+  bounds type=0 align=0 size=0,0 crop_to_bounds=0
+  crop l=0 r=0 t=0 b=0 bounds_crop l=0 r=0 t=0 b=0 last=800,600
+  output_scale=1,1 box_scale=800,600
+  draw [1,0,0,0] [0,1,0,0] [0,0,1,0] [50,50,0,1]
+  box [800,0,0,0] [0,600,0,0] [0,0,1,0] [50,50,0,1]
+item n id=1 parent=main group=0 scene=1 abs=0 vis=0 user_vis=1 sel=0 lock=0 need_update=0
+  stored pos=-1.68518519,-0.907407403 rot=0 scale=1,1 scale_ref=1920,1080 align=5
+  bounds type=0 align=0 size=0,0 crop_to_bounds=0
+  crop l=0 r=0 t=0 b=0 bounds_crop l=0 r=0 t=0 b=0 last=800,600
+  output_scale=1,1 box_scale=800,600
+  draw [1,0,0,0] [0,1,0,0] [0,0,1,0] [33.5,33.5,0,1]
+  box [800,0,0,0] [0,600,0,0] [0,0,1,0] [33.5,33.5,0,1]
+-- nested scene crop is rescaled when the nested size changes between updates
+item n id=1 parent=main group=0 scene=1 abs=0 vis=0 user_vis=1 sel=0 lock=0 need_update=0
+  stored pos=-1.68518519,-0.907407403 rot=0 scale=1,1 scale_ref=1920,1080 align=5
+  bounds type=0 align=0 size=0,0 crop_to_bounds=0
+  crop l=80 r=80 t=60 b=60 bounds_crop l=0 r=0 t=0 b=0 last=800,600
+  output_scale=1,1 box_scale=640,480
+  draw [1,0,0,0] [0,1,0,0] [0,0,1,0] [33.5,33.5,0,1]
+  box [640,0,0,0] [0,480,0,0] [0,0,1,0] [33.5,33.5,0,1]
+-- the nested scene doubles its size: crop (80,80,60,60) is multiplied by the size ratio (truncating)
+item n id=1 parent=main group=0 scene=1 abs=0 vis=0 user_vis=1 sel=0 lock=0 need_update=0
+  stored pos=-1.68518519,-0.907407403 rot=0 scale=1,1 scale_ref=1920,1080 align=5
+  bounds type=0 align=0 size=0,0 crop_to_bounds=0
+  crop l=160 r=160 t=120 b=120 bounds_crop l=0 r=0 t=0 b=0 last=1600,1200
+  output_scale=1,1 box_scale=1280,960
+  draw [1,0,0,0] [0,1,0,0] [0,0,1,0] [33.5,33.5,0,1]
+  box [1280,0,0,0] [0,960,0,0] [0,0,1,0] [33.5,33.5,0,1]
+-- and shrinks to 300x250: ratios 0.1875 and 0.2083 truncate
+item n id=1 parent=main group=0 scene=1 abs=0 vis=0 user_vis=1 sel=0 lock=0 need_update=0
+  stored pos=-1.68518519,-0.907407403 rot=0 scale=1,1 scale_ref=1920,1080 align=5
+  bounds type=0 align=0 size=0,0 crop_to_bounds=0
+  crop l=30 r=30 t=25 b=25 bounds_crop l=0 r=0 t=0 b=0 last=300,250
+  output_scale=1,1 box_scale=240,200
+  draw [1,0,0,0] [0,1,0,0] [0,0,1,0] [33.5,33.5,0,1]
+  box [240,0,0,0] [0,200,0,0] [0,0,1,0] [33.5,33.5,0,1]
+scene_size inner 300 250 (cx=300 cy=250 custom=1 last=0,0)

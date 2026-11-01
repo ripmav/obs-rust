@@ -1,0 +1,31 @@
+quat a 0.1 0.2 0.3 0.9
+quat b 0.5 -0.5 0.5 0.5
+call add quat_add a b
+call sub quat_sub a b
+call mul quat_mul a b
+call mul2 quat_mul b a
+call inv quat_inv a
+call neg quat_neg a
+call dot quat_dot a b
+call len quat_len a
+call dist quat_dist a b
+call nrm quat_norm a
+quat z 0 0 0 0
+call nz quat_norm z
+call id quat_identity
+call close1 quat_close a b 0.001
+call close2 quat_close b a 0.001
+aa x90 1 0 0 1.5707963
+aa y45 0 1 0 0.7853982
+call qx quat_from_axisang x90
+call qy quat_from_axisang y45
+call mq quat_mul qx qy
+call dir quat_get_dir qy
+call mat matrix4_from_quat qy
+call back quat_from_matrix4 mat
+call mat2 matrix4_from_quat mq
+call back2 quat_from_matrix4 mat2
+mat4 flip -1 0 0 0  0 -1 0 0  0 0 1 0  0 0 0 1
+call back3 quat_from_matrix4 flip
+mat4 flip2 1 0 0 0  0 -1 0 0  0 0 -1 0  0 0 0 1
+call back4 quat_from_matrix4 flip2

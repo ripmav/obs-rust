@@ -1,0 +1,14 @@
+# Async audio filters run before buffering: gain filter scales, a dropping filter discards the packet (nothing stored).
+init 48000 2
+clock 1000000000
+timeline 1000000000
+source a input
+source f filter
+filter a f 0.5 0
+output a 48000 2 1024 1000000000 const 0.5
+state a
+render a 1
+source g filter
+filter a g 1 1
+output a 48000 2 1024 1021333333 const 0.5
+state a

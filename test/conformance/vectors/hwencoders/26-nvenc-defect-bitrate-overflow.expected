@@ -1,0 +1,23 @@
+> dump 1
+> nvcap dyn_bitrate 1
+> defaults h264
+> set int bitrate 2147484
+> set int max_bitrate 4294967
+> set str rate_control VBR
+> create h264 soft
+log info [obs-nvenc: 'enc'] settings: 	codec:        H264 	rate_control: VBR 	bitrate:      2147484 	max_bitrate:  4294967 	keyint:       250 	preset:       p5 	tuning:       hq 	multipass:    qres 	profile:      high 	width:        1920 	height:       1080 	b-frames:     0 	b-ref-mode:   0 	lookahead:    false (0 frames) 	aq:           true 
+nv.InitializeEncoder
+  compact: preset=NV_ENC_PRESET_P5_GUID tuning=HIGH_QUALITY profile=NV_ENC_H264_PROFILE_HIGH_GUID gop=250 P=1 rc=VBR avg=2147484000 max=4294967000 vbv=2147484000 tq=0 qp=0 aq=1 la=0/0 iadapt_off=0 mp=QUARTER
+create -> ok
+> destroy
+nv.DestroyEncoder
+destroyed
+> set int bitrate 4294967
+> create h264 soft
+log info [obs-nvenc: 'enc'] settings: 	codec:        H264 	rate_control: VBR 	bitrate:      4294967 	max_bitrate:  4294967 	keyint:       250 	preset:       p5 	tuning:       hq 	multipass:    qres 	profile:      high 	width:        1920 	height:       1080 	b-frames:     0 	b-ref-mode:   0 	lookahead:    false (0 frames) 	aq:           true 
+nv.InitializeEncoder
+  compact: preset=NV_ENC_PRESET_P5_GUID tuning=HIGH_QUALITY profile=NV_ENC_H264_PROFILE_HIGH_GUID gop=250 P=1 rc=VBR avg=4294967000 max=4294967000 vbv=4294967000 tq=0 qp=0 aq=1 la=0/0 iadapt_off=0 mp=QUARTER
+create -> ok
+> destroy
+nv.DestroyEncoder
+destroyed

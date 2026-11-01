@@ -1,0 +1,380 @@
+reset ok
+> reset
+reset ok
+> venc 0 h264 2500
+> aenc 0 aac 160
+> service   rtmp://host/app     streamkey   user pw
+> init_connect
+log info [rtmp stream: 'out'] Dynamic bitrate disabled. The encoder 'enc' does not support on-the-fly bitrate reconfiguration.
+init_connect -> 1
+conn path="rtmp://host/app" key="streamkey" user="user" pass="pw" bind_ip="default" addrlen_hint=0 max_shutdown=30 new_socket_loop=0 low_latency=0
+codecs v: 1 0 0 0 0 0 0 0 0 0 a: 1 0 0 0 0 0
+dbr enabled=0 cur=2500 orig=2500 prev=0 est=0 inc=250 audio=160 data_size=0 inc_timeout=0 frames=0
+table n=2
+  [0] 0 0 0 0 0 0 0 0 0 0
+  [1] 2500 0 0 0 0 0 0 0 0 0
+state packets=0 dropped=0 min_priority=0 congestion=0 last_dts_usec=0 drop_thr_usec=700000 pframe_thr_usec=900000 total_bytes=0 active=0 disconnected=0 encode_error=0 sent_headers=0 start_dts_offset=0 got_first=0
+> no_defaults
+> init_connect
+log info [rtmp stream: 'out'] Dynamic bitrate disabled. The encoder 'enc' does not support on-the-fly bitrate reconfiguration.
+init_connect -> 1
+conn path="rtmp://host/app" key="streamkey" user="user" pass="pw" bind_ip="" addrlen_hint=0 max_shutdown=0 new_socket_loop=0 low_latency=0
+codecs v: 1 0 0 0 0 0 0 0 0 0 a: 1 0 0 0 0 0
+dbr enabled=0 cur=2500 orig=2500 prev=0 est=0 inc=250 audio=160 data_size=0 inc_timeout=0 frames=0
+table n=4
+  [0] 0 0 0 0 0 0 0 0 0 0
+  [1] 2500 0 0 0 0 0 0 0 0 0
+  [2] 0 0 0 0 0 0 0 0 0 0
+  [3] 2500 0 0 0 0 0 0 0 0 0
+state packets=0 dropped=0 min_priority=0 congestion=0 last_dts_usec=0 drop_thr_usec=0 pframe_thr_usec=200000 total_bytes=0 active=0 disconnected=0 encode_error=0 sent_headers=0 start_dts_offset=0 got_first=0
+> opt int drop_threshold_ms 700
+> opt int pframe_drop_threshold_ms 900
+> opt int max_shutdown_time_sec 30
+> init_connect
+log info [rtmp stream: 'out'] Dynamic bitrate disabled. The encoder 'enc' does not support on-the-fly bitrate reconfiguration.
+init_connect -> 1
+conn path="rtmp://host/app" key="streamkey" user="user" pass="pw" bind_ip="" addrlen_hint=0 max_shutdown=30 new_socket_loop=0 low_latency=0
+codecs v: 1 0 0 0 0 0 0 0 0 0 a: 1 0 0 0 0 0
+dbr enabled=0 cur=2500 orig=2500 prev=0 est=0 inc=250 audio=160 data_size=0 inc_timeout=0 frames=0
+table n=6
+  [0] 0 0 0 0 0 0 0 0 0 0
+  [1] 2500 0 0 0 0 0 0 0 0 0
+  [2] 0 0 0 0 0 0 0 0 0 0
+  [3] 2500 0 0 0 0 0 0 0 0 0
+  [4] 0 0 0 0 0 0 0 0 0 0
+  [5] 2500 0 0 0 0 0 0 0 0 0
+state packets=0 dropped=0 min_priority=0 congestion=0 last_dts_usec=0 drop_thr_usec=700000 pframe_thr_usec=900000 total_bytes=0 active=0 disconnected=0 encode_error=0 sent_headers=0 start_dts_offset=0 got_first=0
+> opt int pframe_drop_threshold_ms 800
+> init_connect
+log info [rtmp stream: 'out'] Dynamic bitrate disabled. The encoder 'enc' does not support on-the-fly bitrate reconfiguration.
+init_connect -> 1
+conn path="rtmp://host/app" key="streamkey" user="user" pass="pw" bind_ip="" addrlen_hint=0 max_shutdown=30 new_socket_loop=0 low_latency=0
+codecs v: 1 0 0 0 0 0 0 0 0 0 a: 1 0 0 0 0 0
+dbr enabled=0 cur=2500 orig=2500 prev=0 est=0 inc=250 audio=160 data_size=0 inc_timeout=0 frames=0
+table n=8
+  [0] 0 0 0 0 0 0 0 0 0 0
+  [1] 2500 0 0 0 0 0 0 0 0 0
+  [2] 0 0 0 0 0 0 0 0 0 0
+  [3] 2500 0 0 0 0 0 0 0 0 0
+  [4] 0 0 0 0 0 0 0 0 0 0
+  [5] 2500 0 0 0 0 0 0 0 0 0
+  [6] 0 0 0 0 0 0 0 0 0 0
+  [7] 2500 0 0 0 0 0 0 0 0 0
+state packets=0 dropped=0 min_priority=0 congestion=0 last_dts_usec=0 drop_thr_usec=700000 pframe_thr_usec=900000 total_bytes=0 active=0 disconnected=0 encode_error=0 sent_headers=0 start_dts_offset=0 got_first=0
+> opt int pframe_drop_threshold_ms 1100
+> init_connect
+log info [rtmp stream: 'out'] Dynamic bitrate disabled. The encoder 'enc' does not support on-the-fly bitrate reconfiguration.
+init_connect -> 1
+conn path="rtmp://host/app" key="streamkey" user="user" pass="pw" bind_ip="" addrlen_hint=0 max_shutdown=30 new_socket_loop=0 low_latency=0
+codecs v: 1 0 0 0 0 0 0 0 0 0 a: 1 0 0 0 0 0
+dbr enabled=0 cur=2500 orig=2500 prev=0 est=0 inc=250 audio=160 data_size=0 inc_timeout=0 frames=0
+table n=10
+  [0] 0 0 0 0 0 0 0 0 0 0
+  [1] 2500 0 0 0 0 0 0 0 0 0
+  [2] 0 0 0 0 0 0 0 0 0 0
+  [3] 2500 0 0 0 0 0 0 0 0 0
+  [4] 0 0 0 0 0 0 0 0 0 0
+  [5] 2500 0 0 0 0 0 0 0 0 0
+  [6] 0 0 0 0 0 0 0 0 0 0
+  [7] 2500 0 0 0 0 0 0 0 0 0
+  [8] 0 0 0 0 0 0 0 0 0 0
+  [9] 2500 0 0 0 0 0 0 0 0 0
+state packets=0 dropped=0 min_priority=0 congestion=0 last_dts_usec=0 drop_thr_usec=700000 pframe_thr_usec=1100000 total_bytes=0 active=0 disconnected=0 encode_error=0 sent_headers=0 start_dts_offset=0 got_first=0
+> opt int drop_threshold_ms 200
+> opt int pframe_drop_threshold_ms 100
+> init_connect
+log info [rtmp stream: 'out'] Dynamic bitrate disabled. The encoder 'enc' does not support on-the-fly bitrate reconfiguration.
+init_connect -> 1
+conn path="rtmp://host/app" key="streamkey" user="user" pass="pw" bind_ip="" addrlen_hint=0 max_shutdown=30 new_socket_loop=0 low_latency=0
+codecs v: 1 0 0 0 0 0 0 0 0 0 a: 1 0 0 0 0 0
+dbr enabled=0 cur=2500 orig=2500 prev=0 est=0 inc=250 audio=160 data_size=0 inc_timeout=0 frames=0
+table n=12
+  [0] 0 0 0 0 0 0 0 0 0 0
+  [1] 2500 0 0 0 0 0 0 0 0 0
+  [2] 0 0 0 0 0 0 0 0 0 0
+  [3] 2500 0 0 0 0 0 0 0 0 0
+  [4] 0 0 0 0 0 0 0 0 0 0
+  [5] 2500 0 0 0 0 0 0 0 0 0
+  [6] 0 0 0 0 0 0 0 0 0 0
+  [7] 2500 0 0 0 0 0 0 0 0 0
+  [8] 0 0 0 0 0 0 0 0 0 0
+  [9] 2500 0 0 0 0 0 0 0 0 0
+  [10] 0 0 0 0 0 0 0 0 0 0
+  [11] 2500 0 0 0 0 0 0 0 0 0
+state packets=0 dropped=0 min_priority=0 congestion=0 last_dts_usec=0 drop_thr_usec=200000 pframe_thr_usec=400000 total_bytes=0 active=0 disconnected=0 encode_error=0 sent_headers=0 start_dts_offset=0 got_first=0
+> opt str ip_family IPv4
+> init_connect
+log info [rtmp stream: 'out'] Dynamic bitrate disabled. The encoder 'enc' does not support on-the-fly bitrate reconfiguration.
+init_connect -> 1
+conn path="rtmp://host/app" key="streamkey" user="user" pass="pw" bind_ip="" addrlen_hint=16 max_shutdown=30 new_socket_loop=0 low_latency=0
+codecs v: 1 0 0 0 0 0 0 0 0 0 a: 1 0 0 0 0 0
+dbr enabled=0 cur=2500 orig=2500 prev=0 est=0 inc=250 audio=160 data_size=0 inc_timeout=0 frames=0
+table n=14
+  [0] 0 0 0 0 0 0 0 0 0 0
+  [1] 2500 0 0 0 0 0 0 0 0 0
+  [2] 0 0 0 0 0 0 0 0 0 0
+  [3] 2500 0 0 0 0 0 0 0 0 0
+  [4] 0 0 0 0 0 0 0 0 0 0
+  [5] 2500 0 0 0 0 0 0 0 0 0
+  [6] 0 0 0 0 0 0 0 0 0 0
+  [7] 2500 0 0 0 0 0 0 0 0 0
+  [8] 0 0 0 0 0 0 0 0 0 0
+  [9] 2500 0 0 0 0 0 0 0 0 0
+  [10] 0 0 0 0 0 0 0 0 0 0
+  [11] 2500 0 0 0 0 0 0 0 0 0
+  [12] 0 0 0 0 0 0 0 0 0 0
+  [13] 2500 0 0 0 0 0 0 0 0 0
+state packets=0 dropped=0 min_priority=0 congestion=0 last_dts_usec=0 drop_thr_usec=200000 pframe_thr_usec=400000 total_bytes=0 active=0 disconnected=0 encode_error=0 sent_headers=0 start_dts_offset=0 got_first=0
+> opt str ip_family IPv6
+> init_connect
+log info [rtmp stream: 'out'] Dynamic bitrate disabled. The encoder 'enc' does not support on-the-fly bitrate reconfiguration.
+init_connect -> 1
+conn path="rtmp://host/app" key="streamkey" user="user" pass="pw" bind_ip="" addrlen_hint=28 max_shutdown=30 new_socket_loop=0 low_latency=0
+codecs v: 1 0 0 0 0 0 0 0 0 0 a: 1 0 0 0 0 0
+dbr enabled=0 cur=2500 orig=2500 prev=0 est=0 inc=250 audio=160 data_size=0 inc_timeout=0 frames=0
+table n=16
+  [0] 0 0 0 0 0 0 0 0 0 0
+  [1] 2500 0 0 0 0 0 0 0 0 0
+  [2] 0 0 0 0 0 0 0 0 0 0
+  [3] 2500 0 0 0 0 0 0 0 0 0
+  [4] 0 0 0 0 0 0 0 0 0 0
+  [5] 2500 0 0 0 0 0 0 0 0 0
+  [6] 0 0 0 0 0 0 0 0 0 0
+  [7] 2500 0 0 0 0 0 0 0 0 0
+  [8] 0 0 0 0 0 0 0 0 0 0
+  [9] 2500 0 0 0 0 0 0 0 0 0
+  [10] 0 0 0 0 0 0 0 0 0 0
+  [11] 2500 0 0 0 0 0 0 0 0 0
+  [12] 0 0 0 0 0 0 0 0 0 0
+  [13] 2500 0 0 0 0 0 0 0 0 0
+  [14] 0 0 0 0 0 0 0 0 0 0
+  [15] 2500 0 0 0 0 0 0 0 0 0
+state packets=0 dropped=0 min_priority=0 congestion=0 last_dts_usec=0 drop_thr_usec=200000 pframe_thr_usec=400000 total_bytes=0 active=0 disconnected=0 encode_error=0 sent_headers=0 start_dts_offset=0 got_first=0
+> opt str ip_family IPv4+IPv6
+> init_connect
+log info [rtmp stream: 'out'] Dynamic bitrate disabled. The encoder 'enc' does not support on-the-fly bitrate reconfiguration.
+init_connect -> 1
+conn path="rtmp://host/app" key="streamkey" user="user" pass="pw" bind_ip="" addrlen_hint=28 max_shutdown=30 new_socket_loop=0 low_latency=0
+codecs v: 1 0 0 0 0 0 0 0 0 0 a: 1 0 0 0 0 0
+dbr enabled=0 cur=2500 orig=2500 prev=0 est=0 inc=250 audio=160 data_size=0 inc_timeout=0 frames=0
+table n=18
+  [0] 0 0 0 0 0 0 0 0 0 0
+  [1] 2500 0 0 0 0 0 0 0 0 0
+  [2] 0 0 0 0 0 0 0 0 0 0
+  [3] 2500 0 0 0 0 0 0 0 0 0
+  [4] 0 0 0 0 0 0 0 0 0 0
+  [5] 2500 0 0 0 0 0 0 0 0 0
+  [6] 0 0 0 0 0 0 0 0 0 0
+  [7] 2500 0 0 0 0 0 0 0 0 0
+  [8] 0 0 0 0 0 0 0 0 0 0
+  [9] 2500 0 0 0 0 0 0 0 0 0
+  [10] 0 0 0 0 0 0 0 0 0 0
+  [11] 2500 0 0 0 0 0 0 0 0 0
+  [12] 0 0 0 0 0 0 0 0 0 0
+  [13] 2500 0 0 0 0 0 0 0 0 0
+  [14] 0 0 0 0 0 0 0 0 0 0
+  [15] 2500 0 0 0 0 0 0 0 0 0
+  [16] 0 0 0 0 0 0 0 0 0 0
+  [17] 2500 0 0 0 0 0 0 0 0 0
+state packets=0 dropped=0 min_priority=0 congestion=0 last_dts_usec=0 drop_thr_usec=200000 pframe_thr_usec=400000 total_bytes=0 active=0 disconnected=0 encode_error=0 sent_headers=0 start_dts_offset=0 got_first=0
+> opt str ip_family IPv5
+> init_connect
+log info [rtmp stream: 'out'] Dynamic bitrate disabled. The encoder 'enc' does not support on-the-fly bitrate reconfiguration.
+init_connect -> 1
+conn path="rtmp://host/app" key="streamkey" user="user" pass="pw" bind_ip="" addrlen_hint=0 max_shutdown=30 new_socket_loop=0 low_latency=0
+codecs v: 1 0 0 0 0 0 0 0 0 0 a: 1 0 0 0 0 0
+dbr enabled=0 cur=2500 orig=2500 prev=0 est=0 inc=250 audio=160 data_size=0 inc_timeout=0 frames=0
+table n=20
+  [0] 0 0 0 0 0 0 0 0 0 0
+  [1] 2500 0 0 0 0 0 0 0 0 0
+  [2] 0 0 0 0 0 0 0 0 0 0
+  [3] 2500 0 0 0 0 0 0 0 0 0
+  [4] 0 0 0 0 0 0 0 0 0 0
+  [5] 2500 0 0 0 0 0 0 0 0 0
+  [6] 0 0 0 0 0 0 0 0 0 0
+  [7] 2500 0 0 0 0 0 0 0 0 0
+  [8] 0 0 0 0 0 0 0 0 0 0
+  [9] 2500 0 0 0 0 0 0 0 0 0
+  [10] 0 0 0 0 0 0 0 0 0 0
+  [11] 2500 0 0 0 0 0 0 0 0 0
+  [12] 0 0 0 0 0 0 0 0 0 0
+  [13] 2500 0 0 0 0 0 0 0 0 0
+  [14] 0 0 0 0 0 0 0 0 0 0
+  [15] 2500 0 0 0 0 0 0 0 0 0
+  [16] 0 0 0 0 0 0 0 0 0 0
+  [17] 2500 0 0 0 0 0 0 0 0 0
+  [18] 0 0 0 0 0 0 0 0 0 0
+  [19] 2500 0 0 0 0 0 0 0 0 0
+state packets=0 dropped=0 min_priority=0 congestion=0 last_dts_usec=0 drop_thr_usec=200000 pframe_thr_usec=400000 total_bytes=0 active=0 disconnected=0 encode_error=0 sent_headers=0 start_dts_offset=0 got_first=0
+> opt str ip_family IPv4 
+> init_connect
+log info [rtmp stream: 'out'] Dynamic bitrate disabled. The encoder 'enc' does not support on-the-fly bitrate reconfiguration.
+init_connect -> 1
+conn path="rtmp://host/app" key="streamkey" user="user" pass="pw" bind_ip="" addrlen_hint=0 max_shutdown=30 new_socket_loop=0 low_latency=0
+codecs v: 1 0 0 0 0 0 0 0 0 0 a: 1 0 0 0 0 0
+dbr enabled=0 cur=2500 orig=2500 prev=0 est=0 inc=250 audio=160 data_size=0 inc_timeout=0 frames=0
+table n=22
+  [0] 0 0 0 0 0 0 0 0 0 0
+  [1] 2500 0 0 0 0 0 0 0 0 0
+  [2] 0 0 0 0 0 0 0 0 0 0
+  [3] 2500 0 0 0 0 0 0 0 0 0
+  [4] 0 0 0 0 0 0 0 0 0 0
+  [5] 2500 0 0 0 0 0 0 0 0 0
+  [6] 0 0 0 0 0 0 0 0 0 0
+  [7] 2500 0 0 0 0 0 0 0 0 0
+  [8] 0 0 0 0 0 0 0 0 0 0
+  [9] 2500 0 0 0 0 0 0 0 0 0
+  [10] 0 0 0 0 0 0 0 0 0 0
+  [11] 2500 0 0 0 0 0 0 0 0 0
+  [12] 0 0 0 0 0 0 0 0 0 0
+  [13] 2500 0 0 0 0 0 0 0 0 0
+  [14] 0 0 0 0 0 0 0 0 0 0
+  [15] 2500 0 0 0 0 0 0 0 0 0
+  [16] 0 0 0 0 0 0 0 0 0 0
+  [17] 2500 0 0 0 0 0 0 0 0 0
+  [18] 0 0 0 0 0 0 0 0 0 0
+  [19] 2500 0 0 0 0 0 0 0 0 0
+  [20] 0 0 0 0 0 0 0 0 0 0
+  [21] 2500 0 0 0 0 0 0 0 0 0
+state packets=0 dropped=0 min_priority=0 congestion=0 last_dts_usec=0 drop_thr_usec=200000 pframe_thr_usec=400000 total_bytes=0 active=0 disconnected=0 encode_error=0 sent_headers=0 start_dts_offset=0 got_first=0
+> opt str ip_family 
+> init_connect
+log info [rtmp stream: 'out'] Dynamic bitrate disabled. The encoder 'enc' does not support on-the-fly bitrate reconfiguration.
+init_connect -> 1
+conn path="rtmp://host/app" key="streamkey" user="user" pass="pw" bind_ip="" addrlen_hint=0 max_shutdown=30 new_socket_loop=0 low_latency=0
+codecs v: 1 0 0 0 0 0 0 0 0 0 a: 1 0 0 0 0 0
+dbr enabled=0 cur=2500 orig=2500 prev=0 est=0 inc=250 audio=160 data_size=0 inc_timeout=0 frames=0
+table n=24
+  [0] 0 0 0 0 0 0 0 0 0 0
+  [1] 2500 0 0 0 0 0 0 0 0 0
+  [2] 0 0 0 0 0 0 0 0 0 0
+  [3] 2500 0 0 0 0 0 0 0 0 0
+  [4] 0 0 0 0 0 0 0 0 0 0
+  [5] 2500 0 0 0 0 0 0 0 0 0
+  [6] 0 0 0 0 0 0 0 0 0 0
+  [7] 2500 0 0 0 0 0 0 0 0 0
+  [8] 0 0 0 0 0 0 0 0 0 0
+  [9] 2500 0 0 0 0 0 0 0 0 0
+  [10] 0 0 0 0 0 0 0 0 0 0
+  [11] 2500 0 0 0 0 0 0 0 0 0
+  [12] 0 0 0 0 0 0 0 0 0 0
+  [13] 2500 0 0 0 0 0 0 0 0 0
+  [14] 0 0 0 0 0 0 0 0 0 0
+  [15] 2500 0 0 0 0 0 0 0 0 0
+  [16] 0 0 0 0 0 0 0 0 0 0
+  [17] 2500 0 0 0 0 0 0 0 0 0
+  [18] 0 0 0 0 0 0 0 0 0 0
+  [19] 2500 0 0 0 0 0 0 0 0 0
+  [20] 0 0 0 0 0 0 0 0 0 0
+  [21] 2500 0 0 0 0 0 0 0 0 0
+  [22] 0 0 0 0 0 0 0 0 0 0
+  [23] 2500 0 0 0 0 0 0 0 0 0
+state packets=0 dropped=0 min_priority=0 congestion=0 last_dts_usec=0 drop_thr_usec=200000 pframe_thr_usec=400000 total_bytes=0 active=0 disconnected=0 encode_error=0 sent_headers=0 start_dts_offset=0 got_first=0
+> opt str bind_ip 192.168.1.20
+> init_connect
+log info [rtmp stream: 'out'] Dynamic bitrate disabled. The encoder 'enc' does not support on-the-fly bitrate reconfiguration.
+init_connect -> 1
+conn path="rtmp://host/app" key="streamkey" user="user" pass="pw" bind_ip="192.168.1.20" addrlen_hint=0 max_shutdown=30 new_socket_loop=0 low_latency=0
+codecs v: 1 0 0 0 0 0 0 0 0 0 a: 1 0 0 0 0 0
+dbr enabled=0 cur=2500 orig=2500 prev=0 est=0 inc=250 audio=160 data_size=0 inc_timeout=0 frames=0
+table n=26
+  [0] 0 0 0 0 0 0 0 0 0 0
+  [1] 2500 0 0 0 0 0 0 0 0 0
+  [2] 0 0 0 0 0 0 0 0 0 0
+  [3] 2500 0 0 0 0 0 0 0 0 0
+  [4] 0 0 0 0 0 0 0 0 0 0
+  [5] 2500 0 0 0 0 0 0 0 0 0
+  [6] 0 0 0 0 0 0 0 0 0 0
+  [7] 2500 0 0 0 0 0 0 0 0 0
+  [8] 0 0 0 0 0 0 0 0 0 0
+  [9] 2500 0 0 0 0 0 0 0 0 0
+  [10] 0 0 0 0 0 0 0 0 0 0
+  [11] 2500 0 0 0 0 0 0 0 0 0
+  [12] 0 0 0 0 0 0 0 0 0 0
+  [13] 2500 0 0 0 0 0 0 0 0 0
+  [14] 0 0 0 0 0 0 0 0 0 0
+  [15] 2500 0 0 0 0 0 0 0 0 0
+  [16] 0 0 0 0 0 0 0 0 0 0
+  [17] 2500 0 0 0 0 0 0 0 0 0
+  [18] 0 0 0 0 0 0 0 0 0 0
+  [19] 2500 0 0 0 0 0 0 0 0 0
+  [20] 0 0 0 0 0 0 0 0 0 0
+  [21] 2500 0 0 0 0 0 0 0 0 0
+  [22] 0 0 0 0 0 0 0 0 0 0
+  [23] 2500 0 0 0 0 0 0 0 0 0
+  [24] 0 0 0 0 0 0 0 0 0 0
+  [25] 2500 0 0 0 0 0 0 0 0 0
+state packets=0 dropped=0 min_priority=0 congestion=0 last_dts_usec=0 drop_thr_usec=200000 pframe_thr_usec=400000 total_bytes=0 active=0 disconnected=0 encode_error=0 sent_headers=0 start_dts_offset=0 got_first=0
+> service rtmp://h/a - - -
+> init_connect
+log info [rtmp stream: 'out'] Dynamic bitrate disabled. The encoder 'enc' does not support on-the-fly bitrate reconfiguration.
+init_connect -> 1
+conn path="rtmp://h/a" key="" user="" pass="" bind_ip="192.168.1.20" addrlen_hint=0 max_shutdown=30 new_socket_loop=0 low_latency=0
+codecs v: 1 0 0 0 0 0 0 0 0 0 a: 1 0 0 0 0 0
+dbr enabled=0 cur=2500 orig=2500 prev=0 est=0 inc=250 audio=160 data_size=0 inc_timeout=0 frames=0
+table n=28
+  [0] 0 0 0 0 0 0 0 0 0 0
+  [1] 2500 0 0 0 0 0 0 0 0 0
+  [2] 0 0 0 0 0 0 0 0 0 0
+  [3] 2500 0 0 0 0 0 0 0 0 0
+  [4] 0 0 0 0 0 0 0 0 0 0
+  [5] 2500 0 0 0 0 0 0 0 0 0
+  [6] 0 0 0 0 0 0 0 0 0 0
+  [7] 2500 0 0 0 0 0 0 0 0 0
+  [8] 0 0 0 0 0 0 0 0 0 0
+  [9] 2500 0 0 0 0 0 0 0 0 0
+  [10] 0 0 0 0 0 0 0 0 0 0
+  [11] 2500 0 0 0 0 0 0 0 0 0
+  [12] 0 0 0 0 0 0 0 0 0 0
+  [13] 2500 0 0 0 0 0 0 0 0 0
+  [14] 0 0 0 0 0 0 0 0 0 0
+  [15] 2500 0 0 0 0 0 0 0 0 0
+  [16] 0 0 0 0 0 0 0 0 0 0
+  [17] 2500 0 0 0 0 0 0 0 0 0
+  [18] 0 0 0 0 0 0 0 0 0 0
+  [19] 2500 0 0 0 0 0 0 0 0 0
+  [20] 0 0 0 0 0 0 0 0 0 0
+  [21] 2500 0 0 0 0 0 0 0 0 0
+  [22] 0 0 0 0 0 0 0 0 0 0
+  [23] 2500 0 0 0 0 0 0 0 0 0
+  [24] 0 0 0 0 0 0 0 0 0 0
+  [25] 2500 0 0 0 0 0 0 0 0 0
+  [26] 0 0 0 0 0 0 0 0 0 0
+  [27] 2500 0 0 0 0 0 0 0 0 0
+state packets=0 dropped=0 min_priority=0 congestion=0 last_dts_usec=0 drop_thr_usec=200000 pframe_thr_usec=400000 total_bytes=0 active=0 disconnected=0 encode_error=0 sent_headers=0 start_dts_offset=0 got_first=0
+> no_service
+> init_connect
+init_connect -> 0
+conn path="rtmp://h/a" key="" user="" pass="" bind_ip="192.168.1.20" addrlen_hint=0 max_shutdown=30 new_socket_loop=0 low_latency=0
+codecs v: 1 0 0 0 0 0 0 0 0 0 a: 1 0 0 0 0 0
+dbr enabled=0 cur=2500 orig=2500 prev=0 est=0 inc=250 audio=160 data_size=0 inc_timeout=0 frames=0
+table n=28
+  [0] 0 0 0 0 0 0 0 0 0 0
+  [1] 2500 0 0 0 0 0 0 0 0 0
+  [2] 0 0 0 0 0 0 0 0 0 0
+  [3] 2500 0 0 0 0 0 0 0 0 0
+  [4] 0 0 0 0 0 0 0 0 0 0
+  [5] 2500 0 0 0 0 0 0 0 0 0
+  [6] 0 0 0 0 0 0 0 0 0 0
+  [7] 2500 0 0 0 0 0 0 0 0 0
+  [8] 0 0 0 0 0 0 0 0 0 0
+  [9] 2500 0 0 0 0 0 0 0 0 0
+  [10] 0 0 0 0 0 0 0 0 0 0
+  [11] 2500 0 0 0 0 0 0 0 0 0
+  [12] 0 0 0 0 0 0 0 0 0 0
+  [13] 2500 0 0 0 0 0 0 0 0 0
+  [14] 0 0 0 0 0 0 0 0 0 0
+  [15] 2500 0 0 0 0 0 0 0 0 0
+  [16] 0 0 0 0 0 0 0 0 0 0
+  [17] 2500 0 0 0 0 0 0 0 0 0
+  [18] 0 0 0 0 0 0 0 0 0 0
+  [19] 2500 0 0 0 0 0 0 0 0 0
+  [20] 0 0 0 0 0 0 0 0 0 0
+  [21] 2500 0 0 0 0 0 0 0 0 0
+  [22] 0 0 0 0 0 0 0 0 0 0
+  [23] 2500 0 0 0 0 0 0 0 0 0
+  [24] 0 0 0 0 0 0 0 0 0 0
+  [25] 2500 0 0 0 0 0 0 0 0 0
+  [26] 0 0 0 0 0 0 0 0 0 0
+  [27] 2500 0 0 0 0 0 0 0 0 0
+state packets=0 dropped=0 min_priority=0 congestion=0 last_dts_usec=0 drop_thr_usec=200000 pframe_thr_usec=400000 total_bytes=0 active=0 disconnected=0 encode_error=0 sent_headers=0 start_dts_offset=0 got_first=0

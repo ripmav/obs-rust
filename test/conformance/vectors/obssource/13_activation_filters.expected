@@ -1,0 +1,23 @@
+  cb A create
+log debug source 'A' (in) created
+create a ok
+  cb F1 create
+log debug private source 'F1' (fl) created
+create f1 ok
+  cb F2 create
+log debug private source 'F2' (fl) created
+create f2 ok
+log debug - filter 'F1' (fl) added to source 'A'
+log debug - filter 'F2' (fl) added to source 'A'
+  cb A show
+  cb F1 show
+  cb F2 show
+  cb A activate
+  cb F1 activate
+  cb F2 activate
+  cb A hide
+  cb F1 hide
+  cb F2 hide
+  cb A deactivate
+  cb F1 deactivate
+  cb F2 deactivate

@@ -1,0 +1,10 @@
+# Timestamps far from the clock (not "direct"): timing_adjust = os_time - ts is learned, then a >2 s jump resets timing and buffered data.
+init 48000 2
+clock 5000000000
+source a input
+output a 48000 2 480 100 const 0.1
+state a
+output a 48000 2 480 10000100 const 0.1
+state a
+output a 48000 2 480 4000000000 const 0.1
+state a

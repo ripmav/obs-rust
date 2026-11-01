@@ -1,0 +1,14 @@
+# QUIRK: the "current callback" used by signal_handler_remove_current is cleared when
+# any callback returns, not restored. After a nested emit (of another signal) has
+# finished, remove_current in the outer callback no longer refers to it.
+handler h
+add h "void outer()"
+add h "void inner()"
+callback in_cb
+connect h inner in_cb
+callback victim emit:h:inner remove_current
+callback other
+connect h outer victim
+connect h outer other
+emit h outer
+emit h outer

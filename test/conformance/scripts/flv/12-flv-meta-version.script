@@ -1,0 +1,21 @@
+# S-021 the "encoder" property is "obs-output module (libobs version <version>)" where <version>
+# is obs_get_version_string(). The property buffer is 4096 bytes: a version of 3699 characters
+# is the longest that fits; 3700 makes the reference dereference NULL (DEFECT D-5; required
+# behaviour: fail cleanly, produce no output).
+cfg version ""
+meta 0
+cfg version "33.0.1"
+meta 0
+cfg version "32.1.0-rc2 (\"quoted\" \xc3\xa9)"
+meta 0
+cfg version_rep 3000
+meta 0
+cfg version_rep 3699
+meta 0
+echo D-5-version-too-long
+cfg version_rep 3700
+meta 0
+cfg version_rep 3701
+meta 0
+cfg version_rep 8000
+meta 0

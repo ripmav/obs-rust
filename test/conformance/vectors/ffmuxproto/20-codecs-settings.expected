@@ -1,0 +1,44 @@
+--- unknown video codec but a valid audio track: the video stream is simply absent
+exit 0
+stderr|"Couldn't find codec 'nosuchcodec'"
+probe: format=matroska,webm streams=1
+  stream 0: audio aac rate=48000 ch=2 title="A" tb=1/1000 extradata=1190
+  pkt stream=0 size=4 pts=0 dts=0 key=0 first=b1b1b1b1
+  packets=1
+--- audio codec known to the library but without an encoder: no audio stream
+exit 0
+stdout|"init=0"
+stdout|"params: has_video=1 tracks=1 num_audio_streams=0 nb_streams=1"
+stdout|"format=matroska"
+stdout|"stream_key=\"\" printable_file=\"@m.mkv\""
+stdout|"video: stream_id=0 type=video codec=h264 tag=0x00000000 bit_rate=6000000"
+stdout|"  size=640x360 coded=640x360 primaries=1 trc=1 space=1 range=1 chroma_loc=1"
+stdout|"  ctx_time_base=1/30 avg_frame_rate=30/1 global_header=1"
+stdout|"  extradata=0164001fffe100046764001f01000468ce3c80"
+stderr|"Couldn't find codec 'wmapro'"
+--- muxer settings are parsed as key=value pairs split at spaces and echoed on stdout
+exit 0
+stdout|"Using muxer settings:"
+stdout|"\tfoo=bar"
+stdout|"\tlive=0"
+stdout|"\tx=1"
+stdout|"init=0"
+stdout|"params: has_video=0 tracks=1 num_audio_streams=1 nb_streams=1"
+stdout|"format=matroska"
+stdout|"stream_key=\"\" printable_file=\"@m.mkv\""
+stdout|"audio0: stream_id=0 type=audio codec=aac tag=0x00000000 bit_rate=128000"
+stdout|"  sample_rate=48000 frame_size=1024 channels=2 layout=stereo initial_padding=0"
+stdout|"  ctx_time_base=1/48000 global_header=1 title=\"A\""
+stdout|"  extradata=1190"
+--- a pair without = is a parse error: reported on stderr, settings dropped, initialisation continues
+exit 0
+stdout|"init=0"
+stdout|"params: has_video=0 tracks=1 num_audio_streams=1 nb_streams=1"
+stdout|"format=matroska"
+stdout|"stream_key=\"\" printable_file=\"@m.mkv\""
+stdout|"audio0: stream_id=0 type=audio codec=aac tag=0x00000000 bit_rate=128000"
+stdout|"  sample_rate=48000 frame_size=1024 channels=2 layout=stereo initial_padding=0"
+stdout|"  ctx_time_base=1/48000 global_header=1 title=\"A\""
+stdout|"  extradata=1190"
+stderr|"Failed to parse muxer settings: Invalid argument"
+stderr|"novalue"

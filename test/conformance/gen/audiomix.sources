@@ -1,0 +1,13 @@
+# S-032 audiomix: real obs-source.c (via stubs), obs-audio.c, obs-audio-controls.c with a fake core / audio output / clock.
+test/conformance/gen/audiomix_runner.c
+test/conformance/gen/audiomix_stubs.c
+libobs/callback/signal.c
+libobs/callback/calldata.c
+libobs/callback/decl.c
+libobs/callback/proc.c
+libobs/util/lexer.c
+libobs/util/cf-lexer.c
+libobs/util/cf-parser.c
+-Wl,--unresolved-symbols=ignore-all
+-no-pie
+-lm

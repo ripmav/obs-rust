@@ -1,0 +1,68 @@
+decl ""
+parse fail
+decl "void"
+log warning Errors/warnings for 'void':  declaration (1, 5): Unexpected EOF 
+parse fail
+decl "void f"
+log warning Errors/warnings for 'void f':  declaration (1, 7): Unexpected EOF 
+parse fail
+decl "void f("
+log warning Errors/warnings for 'void f(':  declaration (1, 7): Unexpected EOF 
+parse fail
+decl "void f(int)"
+log warning Errors/warnings for 'void f(int)':  declaration (1, 11): Expected 'parameter name' declaration (1, 12): Unexpected EOF 
+parse fail
+decl "void f(int a"
+log warning Errors/warnings for 'void f(int a':  declaration (1, 13): Unexpected EOF 
+parse fail
+decl "void f(,int a)"
+log warning Errors/warnings for 'void f(,int a)':  declaration (1, 8): Expected ')' 
+parse fail
+decl "void f(int a, int a)"
+log warning Errors/warnings for 'void f(int a, int a)':  declaration (1, 19): 'a' already exists 
+parse fail
+decl "void f(in in int a)"
+log warning Errors/warnings for 'void f(in in int a)':  declaration (1, 11): 'in' specifier already exists 
+parse fail
+decl "void f(out out int a)"
+log warning Errors/warnings for 'void f(out out int a)':  declaration (1, 12): 'out' specifier already exists 
+parse fail
+decl "void f(unknown a)"
+log warning Errors/warnings for 'void f(unknown a)':  declaration (1, 8): Expected 'type' 
+parse fail
+decl "void f(void a)"
+log warning Errors/warnings for 'void f(void a)':  declaration (1, 8): Expected 'type' 
+parse fail
+decl "unknown f()"
+log warning Errors/warnings for 'unknown f()':  declaration (1, 1): Expected 'return type' 
+parse fail
+decl "f()"
+log warning Errors/warnings for 'f()':  declaration (1, 1): Expected 'return type' declaration (1, 2): Expected 'function name' declaration (1, 4): Unexpected EOF 
+parse fail
+decl "void (int a)"
+log warning Errors/warnings for 'void (int a)':  declaration (1, 6): Expected 'function name' declaration (1, 13): Unexpected EOF 
+parse fail
+decl "void f(int return)"
+log warning Errors/warnings for 'void f(int return)':  declaration (1, 12): 'return' is a reserved name 
+parse fail
+decl "void f(int int)"
+log warning Errors/warnings for 'void f(int int)':  declaration (1, 12): 'int' is a reserved name 
+parse fail
+decl "void f(int string)"
+log warning Errors/warnings for 'void f(int string)':  declaration (1, 12): 'string' is a reserved name 
+parse fail
+decl "void f(int void)"
+log warning Errors/warnings for 'void f(int void)':  declaration (1, 12): 'void' is a reserved name 
+parse fail
+decl "void void()"
+log warning Errors/warnings for 'void void()':  declaration (1, 6): 'void' is a reserved name 
+parse fail
+decl "void int()"
+log warning Errors/warnings for 'void int()':  declaration (1, 6): 'int' is a reserved name 
+parse fail
+decl "void return()"
+log warning Errors/warnings for 'void return()':  declaration (1, 6): 'return' is a reserved name 
+parse fail
+decl "void f(int 1a)"
+log warning Errors/warnings for 'void f(int 1a)':  declaration (1, 12): Expected 'parameter name' declaration (1, 15): Unexpected EOF 
+parse fail

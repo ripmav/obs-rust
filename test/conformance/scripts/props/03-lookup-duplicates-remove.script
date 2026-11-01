@@ -1,0 +1,39 @@
+# CORE. Names are unique per property tree; a duplicate add returns NULL (and logs a warning).
+# Lookup is by exact (case-sensitive) name. Removing a property and adding it again appends it.
+props P
+add bool P a "A"
+add bool P b "B"
+add bool P c "C"
+add bool P a "again"
+add int P b "again" 0 1 1
+add bool P A "case differs"
+dump P
+get P b as hb
+get P nope
+get P B
+echo remove-middle
+remove P b
+dump P
+echo remove-missing-is-silent
+remove P b
+remove P zzz
+remove @null b
+echo re-add-appends
+add bool P b "B2"
+dump P
+echo remove-first-and-last
+remove P a
+remove P b
+dump P
+echo remove-all
+remove P c
+remove P A
+dump P
+first P
+echo add-after-empty
+add bool P x "X"
+dump P
+echo null-container
+add bool @null x "X"
+get_flags @null
+destroy P

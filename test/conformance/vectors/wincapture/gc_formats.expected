@@ -1,0 +1,12 @@
+convert_format 2 -> RGBA32F sixteen_bit=0
+convert_format 10 -> RGBA16F sixteen_bit=0
+convert_format 11 -> RGBA16 sixteen_bit=0
+convert_format 24 -> R10G10B10A2 sixteen_bit=0
+convert_format 28 -> RGBA sixteen_bit=0
+convert_format 85 -> UNKNOWN sixteen_bit=1
+convert_format 86 -> UNKNOWN sixteen_bit=1
+convert_format 87 -> BGRA sixteen_bit=0
+convert_format 88 -> BGRX sixteen_bit=0
+convert_format 0 -> UNKNOWN sixteen_bit=0
+convert_format 29 -> UNKNOWN sixteen_bit=0
+convert_format 91 -> UNKNOWN sixteen_bit=0

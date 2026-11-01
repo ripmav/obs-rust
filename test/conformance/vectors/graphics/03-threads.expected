@@ -1,0 +1,53 @@
+> gs_create g
+  dev device_create adapter=0
+  dev device_enter_context
+  dev device_vertexbuffer_create flags=2 num=512 num_tex=1 (large, contents not dumped)
+  dev device_vertexbuffer_create flags=16
+    vb num=4 num_tex=1 points=(0,0,0) (1,0,0) (0,1,0) (1,1,0) normals=null tangents=null colors=null tex0[w=2]=(0,0) (1,0) (0,1) (1,1)
+  dev device_vertexbuffer_create flags=18
+    vb num=4 num_tex=1 points=(0,0,0) (1,0,0) (0,1,0) (1,1,0) normals=null tangents=null colors=null tex0[w=2]=(0,0) (1,0) (0,1) (1,1)
+  dev device_vertexbuffer_create flags=0
+    vb num=4 num_tex=1 points=(0,0,0) (1,0,0) (0,1,0) (1,1,0) normals=null tangents=null colors=null tex0[w=2]=(0,1) (1,1) (0,0) (1,0)
+  dev device_blend_function_separate src_c=4 dest_c=5 src_a=1 dest_a=5
+  dev device_blend_op op=0
+  dev device_leave_context
+ret 0 created
+> gs_enter_context g
+  dev device_enter_context
+== main thread is inside
+> gs_get_width
+  dev device_get_width
+ret 1920
+== another thread sees no context
+> thread gs_get_context ; gs_get_width ; gs_matrix_push
+ret none
+log debug gs_get_width: called while not in a graphics context
+ret 0
+log debug gs_matrix_push: called while not in a graphics context
+> gs_leave_context
+  dev device_leave_context
+== once released, another thread can enter, use and leave
+> thread gs_enter_context g ; gs_get_context ; gs_get_height ; gs_leave_context ; gs_get_context
+  dev device_enter_context
+ret G
+ret is g
+  dev device_get_height
+ret 1080
+  dev device_leave_context
+ret none
+== and the main thread can enter again afterwards
+> gs_enter_context g
+  dev device_enter_context
+> gs_get_context
+ret G
+ret is g
+> gs_leave_context
+  dev device_leave_context
+> gs_destroy g
+  dev device_enter_context
+  dev gs_vertexbuffer_destroy vb=#4
+  dev gs_vertexbuffer_destroy vb=#5
+  dev gs_vertexbuffer_destroy vb=#3
+  dev gs_vertexbuffer_destroy vb=#2
+  dev device_destroy device=#1
+  os_dlclose

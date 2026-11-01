@@ -1,0 +1,99 @@
+> reset
+> ascii 5 8 0 8 384
+> font Sans Serif - 0 p/sans
+> load
+load -> 1
+registered id=text_ft2_source version=0
+registered id=text_ft2_source version=2
+> create s 2
+ev ft init ok
+create s -> 1
+> setfont s Sans Serif - 20 0
+> set s text ab
+> update s
+ev gfx effect_create file=text_default.effect ok
+ev font_lookup face=Sans Serif size=20 style= flags=0
+ev ft new_face path=p/sans index=0 ok
+ev ft set_pixel_sizes 0 20
+ev ft select_charmap unicode=1
+ev gfx texture_create 2048x2048 a8=1
+ev gfx vertexbuffer_create verts=12 colors=1
+ev gfx vertexbuffer_flush
+update done
+> echo --- change only the size: face reloaded, glyph cache rebuilt, max_h reset
+--- change only the size: face reloaded, glyph cache rebuilt, max_h reset
+> setfont s Sans Serif - 30 0
+> update s
+ev font_lookup face=Sans Serif size=30 style= flags=0
+ev ft done_face
+ev ft new_face path=p/sans index=0 ok
+ev ft set_pixel_sizes 0 30
+ev ft select_charmap unicode=1
+ev gfx texture_destroy
+ev gfx texture_create 2048x2048 a8=1
+ev gfx vertexbuffer_destroy
+ev gfx vertexbuffer_create verts=12 colors=1
+ev gfx vertexbuffer_flush
+update done
+> state s
+state s font="Sans Serif" style="" size=30 flags=0 face=1 from_file=0 aa=1
+state s outline=0 shadow=0 outline_width=0 word_wrap=0 custom_width=0 log_mode=0 log_lines=6 color=ffffffff,ffffffff
+state s cx=12 cy=8 max_h=8 texbuf=553,0 tex=1 vbuf=1 effect=1
+state s file=NULL load_failed=0 update_file=0 mtime=0 last_checked_ms=0
+state s text="ab"
+> echo --- change style/flags: lookup repeated with the new arguments
+--- change style/flags: lookup repeated with the new arguments
+> font Sans Serif Bold 1 p/bold
+> setfont s Sans Serif Bold 30 1
+> update s
+ev font_lookup face=Sans Serif size=30 style=Bold flags=1
+ev ft done_face
+ev ft new_face path=p/bold index=1 ok
+ev ft set_pixel_sizes 0 30
+ev ft select_charmap unicode=1
+ev gfx texture_destroy
+ev gfx texture_create 2048x2048 a8=1
+ev gfx vertexbuffer_destroy
+ev gfx vertexbuffer_create verts=12 colors=1
+ev gfx vertexbuffer_flush
+update done
+> state s
+state s font="Sans Serif" style="Bold" size=30 flags=1 face=1 from_file=0 aa=1
+state s outline=0 shadow=0 outline_width=0 word_wrap=0 custom_width=0 log_mode=0 log_lines=6 color=ffffffff,ffffffff
+state s cx=12 cy=8 max_h=8 texbuf=553,0 tex=1 vbuf=1 effect=1
+state s file=NULL load_failed=0 update_file=0 mtime=0 last_checked_ms=0
+state s text="ab"
+> echo --- unknown font: warning, state records the NEW name, old face is still installed
+--- unknown font: warning, state records the NEW name, old face is still installed
+> setfont s Missing - 30 0
+> update s
+ev font_lookup face=Missing size=30 style= flags=0
+log warning FT2-text: Failed to load font Missing
+update done
+> state s
+state s font="Missing" style="" size=30 flags=0 face=1 from_file=0 aa=1
+state s outline=0 shadow=0 outline_width=0 word_wrap=0 custom_width=0 log_mode=0 log_lines=6 color=ffffffff,ffffffff
+state s cx=12 cy=8 max_h=0 texbuf=553,0 tex=1 vbuf=1 effect=1
+state s file=NULL load_failed=0 update_file=0 mtime=0 last_checked_ms=0
+state s text="ab"
+> echo --- QUIRK: the same unknown font again is not retried (name equal -> skip_font_load)
+--- QUIRK: the same unknown font again is not retried (name equal -> skip_font_load)
+> update s
+ev gfx vertexbuffer_destroy
+ev gfx vertexbuffer_create verts=12 colors=1
+ev gfx vertexbuffer_flush
+update done
+> echo --- text still follows settings after the failed load
+--- text still follows settings after the failed load
+> set s text abc
+> update s
+ev gfx vertexbuffer_destroy
+ev gfx vertexbuffer_create verts=18 colors=1
+ev gfx vertexbuffer_flush
+update done
+> state s
+state s font="Missing" style="" size=30 flags=0 face=1 from_file=0 aa=1
+state s outline=0 shadow=0 outline_width=0 word_wrap=0 custom_width=0 log_mode=0 log_lines=6 color=ffffffff,ffffffff
+state s cx=18 cy=0 max_h=0 texbuf=553,0 tex=1 vbuf=1 effect=1
+state s file=NULL load_failed=0 update_file=0 mtime=0 last_checked_ms=0
+state s text="abc"

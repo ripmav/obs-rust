@@ -1,0 +1,94 @@
+# CORE: scalar set/get, replacing values, int/double typing, getters on wrong types
+# and missing names, NULL data object, set_string with NULL.
+new a
+set_string a s "hello"
+set_int a i 42
+set_double a d 2.5
+set_bool a b 1
+dump a
+get_string a s
+get_int a i
+get_double a d
+get_bool a b
+# int <-> double conversion in getters (double -> int truncates toward zero)
+get_double a i
+get_int a d
+set_double a neg -2.9
+get_int a neg
+set_double a big 3000000000.75
+get_int a big
+set_int a i64 9007199254740993
+get_int a i64
+get_double a i64
+set_int a minll -9223372036854775808
+get_int a minll
+get_double a minll
+# a value set with set_double stays a double even if integral
+set_double a five 5.0
+byname a five it
+item_numtype it
+item_release it
+json a
+# replacing a value with another type changes the item's type, keeps one item
+set_int a s 7
+get_string a s
+get_int a s
+set_string a i "x"
+get_int a i
+get_string a i
+byname a b it
+item_type it
+item_numtype it
+item_release it
+# bool: any non-zero C bool is true
+set_bool a b 0
+get_bool a b
+dump a
+echo --- wrong types and missing names read as type default
+get_int a b
+get_double a b
+get_string a b
+get_bool a d
+get_bool a i
+get_bool a s
+get_obj a s o
+get_array a s ar
+get_int a nosuch
+get_double a nosuch
+get_string a nosuch
+get_bool a nosuch
+get_obj a nosuch o
+get_array a nosuch ar
+has_user a nosuch
+has_default a nosuch
+has_autoselect a nosuch
+echo --- NULL strings are stored as the empty string
+set_string a n @null
+get_string a n
+has_user a n
+set_string a e ""
+get_string a e
+echo --- NULL data object is tolerated by readers and writers
+get_int @null x
+get_string @null x
+get_bool @null x
+get_double @null x
+get_obj @null x o
+has_user @null x
+has_default @null x
+set_int @null x 1
+set_string @null x "v"
+erase @null x
+clear @null
+unset_user @null x
+json @null
+echo --- names are byte strings compared exactly
+set_int a "A" 1
+set_int a "a" 2
+set_int a "" 3
+set_int a "with space" 4
+get_int a A
+get_int a a
+get_int a ""
+get_int a "with space"
+names a

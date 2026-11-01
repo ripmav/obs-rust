@@ -1,0 +1,116 @@
+> dump 0
+> header 0000000167
+> nvcap dyn_bitrate 1
+> host timebase 1
+> defaults h264
+> set int bf 2
+> create h264 soft
+log info [obs-nvenc: 'enc'] settings: 	codec:        H264 	rate_control: cbr 	bitrate:      10000 	keyint:       250 	preset:       p5 	tuning:       hq 	multipass:    qres 	profile:      high 	width:        1920 	height:       1080 	b-frames:     2 	b-ref-mode:   0 	lookahead:    false (0 frames) 	aq:           true 
+nv.InitializeEncoder
+create -> ok
+> state
+state: codec=H264 cx=1920 cy=1080 in_format=2 buf_count=12 output_delay=11 can_change_bitrate=1 non_texture=1 queued=0 header_size=0 bitstreams=12 hdr_mdi=0 hdr_cll=0
+state: props rate_control=cbr preset=p5 tune=hq multipass=qres profile=high bf=2 aq=1
+> lockpic 3 0 10
+> lockpic 1 2 10
+> lockpic 1 1 10
+> lockpic 0 4 10
+> encodes 0 13
+nv.EncodePicture ts=0 frameIdx=0 in=1920x1080 pitch=1920 fmt=NV12
+nv.EncodePicture ts=1 frameIdx=1 in=1920x1080 pitch=1920 fmt=NV12
+nv.EncodePicture ts=2 frameIdx=2 in=1920x1080 pitch=1920 fmt=NV12
+nv.EncodePicture ts=3 frameIdx=3 in=1920x1080 pitch=1920 fmt=NV12
+nv.EncodePicture ts=4 frameIdx=4 in=1920x1080 pitch=1920 fmt=NV12
+nv.EncodePicture ts=5 frameIdx=5 in=1920x1080 pitch=1920 fmt=NV12
+nv.EncodePicture ts=6 frameIdx=6 in=1920x1080 pitch=1920 fmt=NV12
+nv.EncodePicture ts=7 frameIdx=7 in=1920x1080 pitch=1920 fmt=NV12
+nv.EncodePicture ts=8 frameIdx=8 in=1920x1080 pitch=1920 fmt=NV12
+nv.EncodePicture ts=9 frameIdx=9 in=1920x1080 pitch=1920 fmt=NV12
+nv.EncodePicture ts=10 frameIdx=10 in=1920x1080 pitch=1920 fmt=NV12
+nv.LockBitstream -> type=3 size=10 ts=0
+nv.GetSequenceParams bufsize=256
+encode pts=10 -> 1 received=1 size=10 out_pts=0 dts=-2 keyframe=1 priority=3
+nv.EncodePicture ts=11 frameIdx=11 in=1920x1080 pitch=1920 fmt=NV12
+nv.LockBitstream -> type=1 size=10 ts=2
+encode pts=11 -> 1 received=1 size=10 out_pts=2 dts=-1 keyframe=0 priority=0
+nv.EncodePicture ts=12 frameIdx=12 in=1920x1080 pitch=1920 fmt=NV12
+nv.LockBitstream -> type=1 size=10 ts=1
+encode pts=12 -> 1 received=1 size=10 out_pts=1 dts=0 keyframe=0 priority=0
+nv.EncodePicture ts=13 frameIdx=13 in=1920x1080 pitch=1920 fmt=NV12
+nv.LockBitstream -> type=0 size=10 ts=4
+encode pts=13 -> 1 received=1 size=10 out_pts=4 dts=1 keyframe=0 priority=2
+submitted 14 frames
+> destroy
+nv.EncodePicture EOS
+fake: lockpic queue empty
+host.set_last_error "NVENC Error: get_encoded_packet: nv.nvEncLockBitstream(s, &lock) failed: 20 (NV_ENC_ERR_GENERIC)"
+log error [obs-nvenc] get_encoded_packet: nv.nvEncLockBitstream(s, &lock) failed: 20 (NV_ENC_ERR_GENERIC)
+nv.DestroyEncoder
+destroyed
+> host timebase 1001
+> defaults hevc
+> set int bf 1
+> create hevc soft
+log info [obs-nvenc: 'enc'] settings: 	codec:        HEVC 	rate_control: cbr 	bitrate:      10000 	keyint:       250 	preset:       p5 	tuning:       hq 	multipass:    qres 	profile:      main 	width:        1920 	height:       1080 	b-frames:     1 	b-ref-mode:   0 	lookahead:    false (0 frames) 	aq:           true 
+nv.InitializeEncoder
+create -> ok
+> state
+state: codec=HEVC cx=1920 cy=1080 in_format=2 buf_count=8 output_delay=7 can_change_bitrate=1 non_texture=1 queued=0 header_size=0 bitstreams=8 hdr_mdi=0 hdr_cll=0
+state: props rate_control=cbr preset=p5 tune=hq multipass=qres profile=main bf=1 aq=1
+> lockpic 3 0 10
+> lockpic 0 2002 10
+> encodes 0 7
+nv.EncodePicture ts=0 frameIdx=0 in=1920x1080 pitch=1920 fmt=NV12
+nv.EncodePicture ts=1 frameIdx=1 in=1920x1080 pitch=1920 fmt=NV12
+nv.EncodePicture ts=2 frameIdx=2 in=1920x1080 pitch=1920 fmt=NV12
+nv.EncodePicture ts=3 frameIdx=3 in=1920x1080 pitch=1920 fmt=NV12
+nv.EncodePicture ts=4 frameIdx=4 in=1920x1080 pitch=1920 fmt=NV12
+nv.EncodePicture ts=5 frameIdx=5 in=1920x1080 pitch=1920 fmt=NV12
+nv.EncodePicture ts=6 frameIdx=6 in=1920x1080 pitch=1920 fmt=NV12
+nv.LockBitstream -> type=3 size=10 ts=0
+nv.GetSequenceParams bufsize=256
+encode pts=6 -> 1 received=1 size=10 out_pts=0 dts=-1001 keyframe=1 priority=3
+nv.EncodePicture ts=7 frameIdx=7 in=1920x1080 pitch=1920 fmt=NV12
+nv.LockBitstream -> type=0 size=10 ts=2002
+encode pts=7 -> 1 received=1 size=10 out_pts=2002 dts=-1000 keyframe=0 priority=2
+submitted 8 frames
+> destroy
+nv.EncodePicture EOS
+fake: lockpic queue empty
+host.set_last_error "NVENC Error: get_encoded_packet: nv.nvEncLockBitstream(s, &lock) failed: 20 (NV_ENC_ERR_GENERIC)"
+log error [obs-nvenc] get_encoded_packet: nv.nvEncLockBitstream(s, &lock) failed: 20 (NV_ENC_ERR_GENERIC)
+nv.DestroyEncoder
+destroyed
+> defaults av1
+> set int bf 1
+> create av1 soft
+log info [obs-nvenc: 'enc'] settings: 	codec:        AV1 	rate_control: cbr 	bitrate:      10000 	keyint:       250 	preset:       p5 	tuning:       hq 	multipass:    qres 	profile:      main 	width:        1920 	height:       1080 	b-frames:     1 	b-ref-mode:   0 	lookahead:    false (0 frames) 	aq:           true 
+nv.InitializeEncoder
+create -> ok
+> state
+state: codec=AV1 cx=1920 cy=1080 in_format=2 buf_count=8 output_delay=7 can_change_bitrate=1 non_texture=1 queued=0 header_size=0 bitstreams=8 hdr_mdi=0 hdr_cll=0
+state: props rate_control=cbr preset=p5 tune=hq multipass=qres profile=main bf=1 aq=1
+> lockpic 3 0 10
+> lockpic 0 1 10
+> encodes 0 7
+nv.EncodePicture ts=0 frameIdx=0 in=1920x1080 pitch=1920 fmt=NV12
+nv.EncodePicture ts=1 frameIdx=1 in=1920x1080 pitch=1920 fmt=NV12
+nv.EncodePicture ts=2 frameIdx=2 in=1920x1080 pitch=1920 fmt=NV12
+nv.EncodePicture ts=3 frameIdx=3 in=1920x1080 pitch=1920 fmt=NV12
+nv.EncodePicture ts=4 frameIdx=4 in=1920x1080 pitch=1920 fmt=NV12
+nv.EncodePicture ts=5 frameIdx=5 in=1920x1080 pitch=1920 fmt=NV12
+nv.EncodePicture ts=6 frameIdx=6 in=1920x1080 pitch=1920 fmt=NV12
+nv.LockBitstream -> type=3 size=10 ts=0
+nv.GetSequenceParams bufsize=256
+encode pts=6 -> 1 received=1 size=10 out_pts=0 dts=0 keyframe=1 priority=3
+nv.EncodePicture ts=7 frameIdx=7 in=1920x1080 pitch=1920 fmt=NV12
+nv.LockBitstream -> type=0 size=10 ts=1
+encode pts=7 -> 1 received=1 size=10 out_pts=1 dts=1 keyframe=0 priority=2
+submitted 8 frames
+> destroy
+nv.EncodePicture EOS
+fake: lockpic queue empty
+host.set_last_error "NVENC Error: get_encoded_packet: nv.nvEncLockBitstream(s, &lock) failed: 20 (NV_ENC_ERR_GENERIC)"
+log error [obs-nvenc] get_encoded_packet: nv.nvEncLockBitstream(s, &lock) failed: 20 (NV_ENC_ERR_GENERIC)
+nv.DestroyEncoder
+destroyed

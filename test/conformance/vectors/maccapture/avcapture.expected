@@ -1,0 +1,62 @@
+av_defaults device="" use_preset=true preset=High enable_audio=true
+av_defaults(fast) device="" use_preset=false enable_audio=true
+av_preset Low -> "Low"
+av_preset High -> "High"
+av_preset 960x540 -> "960x460"
+av_preset 1920x1080 -> "1920x1080"
+av_preset 3840x2160 -> "3840x2160"
+av_preset foo -> "Unknown (foo)"
+av_aspect 1920x1080 -> "16:9"
+av_aspect 1280x800 -> "16:10"
+av_aspect 1024x768 -> "4:3"
+av_aspect 720x480 -> "3:2"
+av_aspect 1080x1920 -> "9:16"
+av_aspect 3840x2160 -> "16:9"
+av_aspect 0x10 -> ""
+av_aspect 3000x2000 -> "3:2"
+av_aspect 1000x1 -> "1000.00:1"
+av_aspect 1100x100 -> "11:1"
+av_fps_desc "30 FPS"
+av_fps_desc "29.97 FPS"
+av_fps_desc "1-30, 1-60 FPS"
+av_fps_desc "15, 30, 60 FPS"
+av_fps_desc "24-144 FPS (11 values)"
+av_fps_desc "5.00-10.50 FPS"
+av_fps_desc (nil)
+av_fallback_fps 30/1 (closest at-or-below)
+av_fallback_fps 25/1 (closest at-or-below)
+av_fallback_fps 15/1 (closest above)
+av_fallback_fps 0/0 (closest above)
+av_subtype 422YpCbCr8 -> format=UYVY full_range=false
+av_subtype 422YpCbCr8_yuvs -> format=YUY2 full_range=false
+av_subtype 420YpCbCr8BiPlanarFullRange -> format=NV12 full_range=true
+av_subtype 420YpCbCr8BiPlanarVideoRange -> format=NV12 full_range=false
+av_subtype 420YpCbCr10BiPlanarFullRange -> format=P010 full_range=true
+av_subtype 420YpCbCr8PlanarFullRange -> format=NONE full_range=true
+av_subtype 422YpCbCr8FullRange -> format=NONE full_range=true
+av_subtype 32BGRA -> format=BGRA full_range=false
+av_subtype 32ARGB -> format=NONE full_range=false
+av_fourcc UYVY full=0 -> 422YpCbCr8
+av_fourcc YUY2 full=1 -> 422YpCbCr8_yuvs
+av_fourcc NV12 full=0 -> 420YpCbCr8BiPlanarVideoRange
+av_fourcc NV12 full=1 -> 420YpCbCr8BiPlanarFullRange
+av_fourcc P010 full=1 -> 420YpCbCr10BiPlanarFullRange
+av_fourcc BGRA full=1 -> 32BGRA
+av_fourcc I420 full=0 -> 0
+av_cs 0 -> "Default" valid=true
+av_cs 1 -> "CS 601" valid=true
+av_cs 2 -> "CS 709" valid=true
+av_cs 3 -> "sRGB" valid=false
+av_cs 4 -> "CS 2100 (PQ)" valid=false
+av_cs 5 -> "CS 2100 (HLG)" valid=false
+av_cs 9 -> "Unknown" valid=false
+av_range 0 -> "Default"
+av_range 1 -> "Partial"
+av_range 2 -> "Full"
+av_fourcc_str "2vuy" -> 0x32767579
+av_fourcc_str "420v" -> 0x34323076
+av_update switch_device_then_reconfigure
+av_update no_change
+av_update configure_with_preset
+av_update configure_with_preset
+av_update configure_manual

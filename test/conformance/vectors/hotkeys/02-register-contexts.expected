@@ -1,0 +1,52 @@
+signal hotkey_register id=0
+reg he -> 0
+signal hotkey_register id=1
+reg ho -> 1
+signal hotkey_register id=2
+reg hs -> 2
+signal hotkey_register id=3
+reg hsrc -> 3
+info he id=0 type=3 partner=INVALID registerer=weak pressed_count=0
+  name="enc.key"
+  desc="d"
+info ho id=1 type=2 partner=INVALID registerer=weak pressed_count=0
+  name="out.key"
+  desc="d"
+info hs id=2 type=4 partner=INVALID registerer=weak pressed_count=0
+  name="svc.key"
+  desc="d"
+info hsrc id=3 type=1 partner=INVALID registerer=weak pressed_count=0
+  name="src.key"
+  desc="d"
+weaks live=4 null_releases=0
+reg hn1 -> INVALID
+reg hn2 -> INVALID
+reg hn3 -> INVALID
+reg hn4 -> INVALID
+reg hpriv -> INVALID
+signal hotkey_register id=4
+reg hf -> 4
+release-one-context
+signal hotkey_unregister id=0
+h id=1 name="out.key"
+h id=2 name="svc.key"
+h id=3 name="src.key"
+h id=4 name="front"
+enum done
+weaks live=3 null_releases=0
+release-source
+signal hotkey_unregister id=3
+h id=1 name="out.key"
+h id=2 name="svc.key"
+h id=4 name="front"
+enum done
+weaks live=2 null_releases=1
+unregister-explicit
+signal hotkey_unregister id=1
+weaks live=1 null_releases=1
+reg hz -> INVALID
+reg hz2 -> INVALID
+enum done
+h id=2 name="svc.key"
+h id=4 name="front"
+enum done

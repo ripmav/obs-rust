@@ -1,0 +1,15 @@
+addstream idx=0  playpath="live_key"
+addstream idx=1  playpath="mp4:clip"
+addstream idx=2  playpath=-
+state connected=0 playing=0 stream_id=0 invokes=0 calls=[] bytes_in=0 bytes_in_sent=0 in_chunk=128 out_chunk=128 server_bw=2500000 client_bw=2500000 client_bw2=2 bwcheck=0 streams=[-1: pp="live_key",-1: pp="mp4:clip",-1: pp=-] cur=0 playing_streams=0 pflags=0 timedout=0
+addstream idx=0  playpath="s1"
+addstream idx=1  playpath="s2"
+addstream idx=2  playpath="s3"
+addstream idx=3  playpath="s4"
+addstream idx=4  playpath="s5"
+addstream idx=5  playpath="s6"
+addstream idx=6  playpath="s7"
+addstream idx=7  playpath="s8"
+state connected=0 playing=0 stream_id=0 invokes=0 calls=[] bytes_in=0 bytes_in_sent=0 in_chunk=128 out_chunk=128 server_bw=2500000 client_bw=2500000 client_bw2=2 bwcheck=0 streams=[-1: pp="s1",-1: pp="s2",-1: pp="s3",-1: pp="s4",-1: pp="s5",-1: pp="s6",-1: pp="s7",-1: pp="s8"] cur=0 playing_streams=0 pflags=0 timedout=0
+ignore-begin
+ignore-end ok

@@ -1,0 +1,47 @@
+# Preload requests (stinger/transition support). preload_frame() only does something with request_preload,
+# a running thread (thread_valid; set by hand in this synchronous harness) and a preload callback. The thread then
+# re-delivers the last prepared frame through the PRELOAD callback, only while inactive and only if a frame
+# has been prepared. With request_preload the reset-time preload (normally delivered when a stopped player is
+# reset) is suppressed, because the caller asks for it explicitly.
+media pre 120000 0
+video 1 1000 8 4 yuv420p
+pkt 0 0 fdur=40
+pkt 0 40 fdur=40
+pkt 0 80 fdur=40
+endmedia
+clock 1000000000
+pix off
+echo ---- request_preload=0: reset delivers the preload frame, preload_frame() is a no-op
+minit pre local=1
+mreset
+mset thread_valid 1
+mpreload
+mstate
+mset thread_valid 0
+mfree
+echo ---- request_preload=1: reset delivers nothing; an explicit request does
+minit pre local=1 request_preload=1
+mreset
+mpreload
+mstate
+mset thread_valid 1
+mpreload
+mstate
+mtick
+mset thread_valid 0
+echo ---- while active the request is consumed without delivery
+mplay 0
+mtickw 0 0
+mtick 1
+mset thread_valid 1
+mpreload
+mtick 1
+mset thread_valid 0
+echo ---- without a preload callback preload_frame() is a no-op
+mfree
+minit pre local=1 request_preload=1 cbs=v,a,stop
+mreset
+mset thread_valid 1
+mpreload
+mstate
+mset thread_valid 0

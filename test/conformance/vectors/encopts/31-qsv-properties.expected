@@ -1,0 +1,146 @@
+props A
+  rate_control list desc="RateControl" visible=1 enabled=1 combo=2 format=3 count=4
+    item 0 "CBR" = "CBR"
+    item 1 "VBR" = "VBR"
+    item 2 "CQP" = "CQP"
+    item 3 "ICQ" = "ICQ"
+  bitrate int desc="Bitrate" visible=1 enabled=1 min=50 max=10000000 step=50 numtype=0 suffix=" Kbps"
+  max_bitrate int desc="MaxBitrate" visible=1 enabled=1 min=50 max=10000000 step=50 numtype=0 suffix=" Kbps"
+  qpi int desc="QPI" visible=1 enabled=1 min=1 max=51 step=1 numtype=0
+  qpp int desc="QPP" visible=1 enabled=1 min=1 max=51 step=1 numtype=0
+  qpb int desc="QPB" visible=1 enabled=1 min=1 max=51 step=1 numtype=0
+  icq_quality int desc="ICQQuality" visible=1 enabled=1 min=1 max=51 step=1 numtype=0
+  target_usage list desc="TargetUsage" visible=1 enabled=1 combo=2 format=3 count=7
+    item 0 "TargetUsage.TU1" = "TU1"
+    item 1 "TargetUsage.TU2" = "TU2"
+    item 2 "TargetUsage.TU3" = "TU3"
+    item 3 "TargetUsage.TU4" = "TU4"
+    item 4 "TargetUsage.TU5" = "TU5"
+    item 5 "TargetUsage.TU6" = "TU6"
+    item 6 "TargetUsage.TU7" = "TU7"
+  profile list desc="Profile" visible=1 enabled=1 combo=2 format=3 count=3
+    item 0 "high" = "high"
+    item 1 "main" = "main"
+    item 2 "baseline" = "baseline"
+  keyint_sec int desc="KeyframeIntervalSec" visible=1 enabled=1 min=0 max=20 step=1 numtype=0 suffix=" s"
+  latency list desc="Latency" visible=1 enabled=1 long="Latency.ToolTip" combo=2 format=3 count=3
+    item 0 "ultra-low" = "ultra-low"
+    item 1 "low" = "low"
+    item 2 "normal" = "normal"
+  bframes int desc="BFrames" visible=1 enabled=1 min=0 max=3 step=1 numtype=0
+end props A
+props B
+  rate_control list desc="RateControl" visible=1 enabled=1 combo=2 format=3 count=4
+    item 0 "CBR" = "CBR"
+    item 1 "VBR" = "VBR"
+    item 2 "CQP" = "CQP"
+    item 3 "ICQ" = "ICQ"
+  bitrate int desc="Bitrate" visible=1 enabled=1 min=50 max=10000000 step=50 numtype=0 suffix=" Kbps"
+  max_bitrate int desc="MaxBitrate" visible=1 enabled=1 min=50 max=10000000 step=50 numtype=0 suffix=" Kbps"
+  cqp int desc="CQP" visible=1 enabled=1 min=1 max=51 step=1 numtype=0
+  icq_quality int desc="ICQQuality" visible=1 enabled=1 min=1 max=51 step=1 numtype=0
+  target_usage list desc="TargetUsage" visible=1 enabled=1 combo=2 format=3 count=7
+    item 0 "TargetUsage.TU1" = "TU1"
+    item 1 "TargetUsage.TU2" = "TU2"
+    item 2 "TargetUsage.TU3" = "TU3"
+    item 3 "TargetUsage.TU4" = "TU4"
+    item 4 "TargetUsage.TU5" = "TU5"
+    item 5 "TargetUsage.TU6" = "TU6"
+    item 6 "TargetUsage.TU7" = "TU7"
+  profile list desc="Profile" visible=1 enabled=1 combo=2 format=3 count=3
+    item 0 "high" = "high"
+    item 1 "main" = "main"
+    item 2 "baseline" = "baseline"
+  keyint_sec int desc="KeyframeIntervalSec" visible=1 enabled=1 min=0 max=20 step=1 numtype=0 suffix=" s"
+  latency list desc="Latency" visible=1 enabled=1 long="Latency.ToolTip" combo=2 format=3 count=3
+    item 0 "ultra-low" = "ultra-low"
+    item 1 "low" = "low"
+    item 2 "normal" = "normal"
+  bframes int desc="BFrames" visible=1 enabled=1 min=0 max=3 step=1 numtype=0
+end props B
+props C
+  rate_control list desc="RateControl" visible=1 enabled=1 combo=2 format=3 count=4
+    item 0 "CBR" = "CBR"
+    item 1 "VBR" = "VBR"
+    item 2 "CQP" = "CQP"
+    item 3 "ICQ" = "ICQ"
+  bitrate int desc="Bitrate" visible=1 enabled=1 min=50 max=10000000 step=50 numtype=0 suffix=" Kbps"
+  max_bitrate int desc="MaxBitrate" visible=1 enabled=1 min=50 max=10000000 step=50 numtype=0 suffix=" Kbps"
+  cqp int desc="CQP" visible=1 enabled=1 min=1 max=63 step=1 numtype=0
+  icq_quality int desc="ICQQuality" visible=1 enabled=1 min=1 max=51 step=1 numtype=0
+  target_usage list desc="TargetUsage" visible=1 enabled=1 combo=2 format=3 count=7
+    item 0 "TargetUsage.TU1" = "TU1"
+    item 1 "TargetUsage.TU2" = "TU2"
+    item 2 "TargetUsage.TU3" = "TU3"
+    item 3 "TargetUsage.TU4" = "TU4"
+    item 4 "TargetUsage.TU5" = "TU5"
+    item 5 "TargetUsage.TU6" = "TU6"
+    item 6 "TargetUsage.TU7" = "TU7"
+  profile list desc="Profile" visible=1 enabled=1 combo=2 format=3 count=1
+    item 0 "main" = "main"
+  keyint_sec int desc="KeyframeIntervalSec" visible=1 enabled=1 min=0 max=20 step=1 numtype=0 suffix=" s"
+  latency list desc="Latency" visible=1 enabled=1 long="Latency.ToolTip" combo=2 format=3 count=3
+    item 0 "ultra-low" = "ultra-low"
+    item 1 "low" = "low"
+    item 2 "normal" = "normal"
+  bframes int desc="BFrames" visible=1 enabled=1 min=0 max=3 step=1 numtype=0
+end props C
+props E
+  rate_control list desc="RateControl" visible=1 enabled=1 combo=2 format=3 count=4
+    item 0 "CBR" = "CBR"
+    item 1 "VBR" = "VBR"
+    item 2 "CQP" = "CQP"
+    item 3 "ICQ" = "ICQ"
+  bitrate int desc="Bitrate" visible=1 enabled=1 min=50 max=10000000 step=50 numtype=0 suffix=" Kbps"
+  max_bitrate int desc="MaxBitrate" visible=1 enabled=1 min=50 max=10000000 step=50 numtype=0 suffix=" Kbps"
+  cqp int desc="CQP" visible=1 enabled=1 min=1 max=51 step=1 numtype=0
+  icq_quality int desc="ICQQuality" visible=1 enabled=1 min=1 max=51 step=1 numtype=0
+  target_usage list desc="TargetUsage" visible=1 enabled=1 combo=2 format=3 count=7
+    item 0 "TargetUsage.TU1" = "TU1"
+    item 1 "TargetUsage.TU2" = "TU2"
+    item 2 "TargetUsage.TU3" = "TU3"
+    item 3 "TargetUsage.TU4" = "TU4"
+    item 4 "TargetUsage.TU5" = "TU5"
+    item 5 "TargetUsage.TU6" = "TU6"
+    item 6 "TargetUsage.TU7" = "TU7"
+  profile list desc="Profile" visible=1 enabled=1 combo=2 format=3 count=2
+    item 0 "main" = "main"
+    item 1 "main10" = "main10"
+  keyint_sec int desc="KeyframeIntervalSec" visible=1 enabled=1 min=0 max=20 step=1 numtype=0 suffix=" s"
+  latency list desc="Latency" visible=1 enabled=1 long="Latency.ToolTip" combo=2 format=3 count=3
+    item 0 "ultra-low" = "ultra-low"
+    item 1 "low" = "low"
+    item 2 "normal" = "normal"
+  bframes int desc="BFrames" visible=1 enabled=1 min=0 max=3 step=1 numtype=0
+end props E
+echo rate-control-list-by-platform
+props B
+  rate_control list desc="RateControl" visible=1 enabled=1 combo=2 format=3 count=3
+    item 0 "CBR" = "CBR"
+    item 1 "VBR" = "VBR"
+    item 2 "CQP" = "CQP"
+  bitrate int desc="Bitrate" visible=1 enabled=1 min=50 max=10000000 step=50 numtype=0 suffix=" Kbps"
+  max_bitrate int desc="MaxBitrate" visible=1 enabled=1 min=50 max=10000000 step=50 numtype=0 suffix=" Kbps"
+  cqp int desc="CQP" visible=1 enabled=1 min=1 max=51 step=1 numtype=0
+  icq_quality int desc="ICQQuality" visible=1 enabled=1 min=1 max=51 step=1 numtype=0
+  target_usage list desc="TargetUsage" visible=1 enabled=1 combo=2 format=3 count=7
+    item 0 "TargetUsage.TU1" = "TU1"
+    item 1 "TargetUsage.TU2" = "TU2"
+    item 2 "TargetUsage.TU3" = "TU3"
+    item 3 "TargetUsage.TU4" = "TU4"
+    item 4 "TargetUsage.TU5" = "TU5"
+    item 5 "TargetUsage.TU6" = "TU6"
+    item 6 "TargetUsage.TU7" = "TU7"
+  profile list desc="Profile" visible=1 enabled=1 combo=2 format=3 count=3
+    item 0 "high" = "high"
+    item 1 "main" = "main"
+    item 2 "baseline" = "baseline"
+  keyint_sec int desc="KeyframeIntervalSec" visible=1 enabled=1 min=0 max=20 step=1 numtype=0 suffix=" s"
+  latency list desc="Latency" visible=1 enabled=1 long="Latency.ToolTip" combo=2 format=3 count=3
+    item 0 "ultra-low" = "ultra-low"
+    item 1 "low" = "low"
+    item 2 "normal" = "normal"
+  bframes int desc="BFrames" visible=1 enabled=1 min=0 max=3 step=1 numtype=0
+end props B
+vis B rate_control:11 bitrate:11 max_bitrate:11 cqp:11 icq_quality:11 target_usage:11 profile:11 keyint_sec:11 latency:11 bframes:11
+vis E rate_control:11 bitrate:11 max_bitrate:11 cqp:11 icq_quality:11 target_usage:11 profile:11 keyint_sec:11 latency:11 bframes:11

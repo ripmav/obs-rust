@@ -1,0 +1,53 @@
+> q_set open_ok 1
+> q_headers 40aa 6742 68ee
+> q_set bs_present 1
+> q_create h264 soft
+log info [qsv encoder: 'enc'] settings: 	codec:          H.264 	rate_control:   
+log info 	target_bitrate: 0
+log info 	target_usage:    	profile:         	keyint:         0 	latency:         	b-frames:       0 	fps_num:        60 	fps_den:        1 	width:          1920 	height:         1080
+log info [qsv encoder: 'enc'] debug info:
+qsv.encoder_open codec=0 tex=0 -> ok
+log info 	major:          2 	minor:          9
+os.request_high_performance "qsv encoding"
+q_create -> ok
+> q_bs 0000000165aa 0x21 0 0
+> host has_roi 1
+> host roi_increment 0
+> roi 0 0 16 16 0.5
+> roi 16 16 32 32 1.0
+> q_encode 0
+qsv.encode ts=0
+q_encode -> 1 received=1 size=6 data=0000000165aa pts=0 dts=0 keyframe=0 priority=3 type=1
+> host roi_increment 1
+> q_encode 1
+qsv.clear_roi
+qsv.add_roi left=16 top=16 right=32 bottom=32 prio=1
+qsv.add_roi left=0 top=0 right=16 bottom=16 prio=0.5
+qsv.encode ts=1500
+q_encode -> 1 received=0
+> q_encode 2
+qsv.encode ts=3000
+q_encode -> 1 received=0
+> host roi_increment 2
+> roi_clear
+> roi 8 8 24 24 -0.25
+> q_encode 3
+qsv.clear_roi
+qsv.add_roi left=8 top=8 right=24 bottom=24 prio=-0.25
+qsv.encode ts=4500
+q_encode -> 1 received=0
+> host roi_increment 3
+> roi_clear
+> q_encode 4
+qsv.clear_roi
+qsv.encode ts=6000
+q_encode -> 1 received=0
+> host has_roi 0
+> host roi_increment 4
+> q_encode 5
+qsv.encode ts=7500
+q_encode -> 1 received=0
+> q_destroy
+os.end_high_performance
+qsv.encoder_close
+q_destroyed

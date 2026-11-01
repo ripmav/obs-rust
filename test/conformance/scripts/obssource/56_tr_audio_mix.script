@@ -1,0 +1,39 @@
+# Transition audio: both children's mix buffers are scaled by the plug-in's mix functions (here A: 1-t, B: t),
+# evaluated per sample at the sample's time (ts + i*1e9/rate), and ADDED into the output.  Children that are pending,
+# have no timestamp, or are duplicated are skipped; the earliest valid child timestamp is the output timestamp
+# and a later child is offset by its distance in samples.
+kind in input video,audio size
+kind tr transition video,audio tstart,tstop,size
+create t tr T
+create a in A
+create b in B
+fksize a 10 10
+fksize b 10 10
+tr_set t a
+clock 0
+tr_start t 0 1000 b
+audio_fill a 1
+audio_fill b 2
+echo --- no child has audio yet
+tr_audio t 1 2 48000
+audio_ts a 100000000 0 0
+audio_ts b 100000000 0 0
+vtime 100000000
+echo --- same timestamps, t=0.1 at the start of the tick
+tr_audio t 1 2 48000
+echo --- mixer mask 3 puts the audio into mixes 0 and 1; mask 0 into none
+tr_audio t 3 2 48000
+tr_audio t 0 2 48000
+echo --- B pending, A duplicated
+audio_ts b 100000000 1 0
+tr_audio t 1 2 48000
+audio_ts b 100000000 0 0
+audio_ts a 100000000 0 1
+tr_audio t 1 2 48000
+echo --- B starts 10 ms later: offset of 480 samples
+audio_ts a 100000000 0 0
+audio_ts b 110000000 0 0
+tr_audio t 1 2 48000
+echo --- B more than a tick later is dropped
+audio_ts b 200000000 0 0
+tr_audio t 1 2 48000

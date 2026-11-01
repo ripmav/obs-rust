@@ -1,0 +1,41 @@
+create S0 -> null
+formats: lua
+backend lua_load
+load -> 1
+log warning obs-scripting: [obs_script_create] path is null
+create S0 -> null
+create S0 -> null
+create S0 -> null
+log warning Unsupported/unknown script type: /s/dir.d/file
+create S0 -> null
+log warning Unsupported/unknown script type: /s/a.txt
+create S0 -> null
+log warning Unsupported/unknown script type: /s/a.LUA
+create S0 -> null
+log warning Unsupported/unknown script type: /s/a.Lua
+create S0 -> null
+log warning Unsupported/unknown script type: /s/a.py
+create S0 -> null
+log warning Unsupported/unknown script type: /s/a.
+create S0 -> null
+backend create /s/a.b.lua
+backend load a.b.lua -> 1 deferred_done=0
+backend update a.b.lua k=""
+create S1 -> ok
+backend create /s/a.lua
+backend load a.lua -> 1 deferred_done=0
+backend update a.lua k=""
+create S0 -> ok
+info S0 desc="Hello" path="/s/a.lua" file="a.lua" lang=lua loaded=1
+info S1 desc=@null path="/s/a.b.lua" file="a.b.lua" lang=lua loaded=1
+backend unload a.lua
+backend destroy a.lua
+destroy S0 done
+backend unload a.b.lua
+backend destroy a.b.lua
+destroy S1 done
+backend lua_unload
+log info [Scripting] Total detached callbacks: 0
+info_detached_head_after_unload null
+unload done
+create S0 -> null

@@ -1,0 +1,14 @@
+# Destroying an output that is still active force-stops it first (plugin stop is called with ts 0) and
+# releases its encoders (an encoder with no remaining user shuts down).
+video 30 1 1280 720
+audio 48000
+venc v
+aenc a
+out o av,encoded autobegin=1
+set_venc o v
+set_aenc o a
+start o
+encstate v
+destroy o
+encstate v
+conns

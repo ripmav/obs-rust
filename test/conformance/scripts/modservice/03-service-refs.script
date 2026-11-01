@@ -1,0 +1,25 @@
+# S-035 strong/weak reference semantics: a new service has 0 "extra" strong refs (counter -1 = dead) and 0 weak refs.
+svc_def A svcA
+svc_register A
+service_create s svcA s -
+ref_counts s
+service_get_ref s2 s
+ref_counts s
+service_weak w s
+ref_counts s
+weak_refs w s
+weak_refs w -
+weak_refs - s
+weak_to_service s3 w
+ref_counts s
+# drop the three strong references; the last release destroys the service
+service_release s3
+service_release s2
+ref_counts s
+service_release s
+service_list
+# the weak ref outlives the object but cannot produce a strong ref any more
+weak_to_service dead w
+weak_addref w
+weak_release w
+weak_release w

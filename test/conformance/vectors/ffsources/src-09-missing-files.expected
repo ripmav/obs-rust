@@ -1,0 +1,40 @@
+event.init manual
+host.hotkey_register MediaSource.Restart desc=RestartMedia id=100
+host.hotkey_pair_register MediaSource.Play/MediaSource.Pause desc=Play/Pause id=101
+host.hotkey_register MediaSource.Stop desc=Stop id=102
+host.proc_add "void restart()"
+host.proc_add "void preload_first_frame()"
+host.proc_add "void get_duration(out int duration)"
+host.proc_add "void get_nb_frames(out int num_frames)"
+mp.create path="/gone/a.mp4" format=@null options=""
+    buffering=2097152 speed=100 force_range=0 linear_alpha=0 hw=0 local=1 reconnecting=0 preload=0 full_decode=0 cbs=11111
+log info [Media Source 'src']: settings: 	input:                   /gone/a.mp4 	input_format:            (null) 	speed:                   100 	is_looping:              no 	is_linear_alpha:         no 	is_hw_decoding:          no 	is_clear_on_media_end:   yes 	restart_on_activate:     yes 	close_when_inactive:     no 	full_decode:             no 	ffmpeg_options:          
+src_create ok
+host.missing_file path="/gone/a.mp4" type=0
+echo ---- the callback writes the new path into the settings and calls update
+host.source_update local_file="/new/b.mp4"
+echo ---- existing file: nothing reported
+echo ---- empty path: nothing reported
+event.init manual
+host.hotkey_register MediaSource.Restart desc=RestartMedia id=103
+host.hotkey_pair_register MediaSource.Play/MediaSource.Pause desc=Play/Pause id=104
+host.hotkey_register MediaSource.Stop desc=Stop id=105
+host.proc_add "void restart()"
+host.proc_add "void preload_first_frame()"
+host.proc_add "void get_duration(out int duration)"
+host.proc_add "void get_nb_frames(out int num_frames)"
+log info [Media Source 'src']: settings: 	input:                    	input_format:            (null) 	speed:                   100 	is_looping:              no 	is_linear_alpha:         no 	is_hw_decoding:          no 	is_clear_on_media_end:   yes 	restart_on_activate:     yes 	close_when_inactive:     no 	full_decode:             no 	ffmpeg_options:          
+src_create ok
+echo ---- network source: nothing reported
+event.init manual
+host.hotkey_register MediaSource.Restart desc=RestartMedia id=106
+host.hotkey_pair_register MediaSource.Play/MediaSource.Pause desc=Play/Pause id=107
+host.hotkey_register MediaSource.Stop desc=Stop id=108
+host.proc_add "void restart()"
+host.proc_add "void preload_first_frame()"
+host.proc_add "void get_duration(out int duration)"
+host.proc_add "void get_nb_frames(out int num_frames)"
+mp.create path="http://x/y" format="" options=""
+    buffering=2097152 speed=100 force_range=0 linear_alpha=0 hw=0 local=0 reconnecting=0 preload=0 full_decode=0 cbs=11111
+log info [Media Source 'src']: settings: 	input:                   http://x/y 	input_format:             	speed:                   100 	is_looping:              no 	is_linear_alpha:         no 	is_hw_decoding:          no 	is_clear_on_media_end:   yes 	restart_on_activate:     yes 	close_when_inactive:     no 	full_decode:             no 	ffmpeg_options:          
+src_create ok

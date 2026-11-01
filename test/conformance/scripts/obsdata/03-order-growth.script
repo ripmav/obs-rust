@@ -1,0 +1,74 @@
+# QUIRK Q1: iteration order (and so JSON key order) is insertion order, except that an
+# item whose storage has to grow is moved to the end. Capacity never shrinks.
+new a
+set_string a x "ab"
+set_int a y 1
+set_int a z 2
+names a
+echo --- replacing with an equal-size value does not move
+set_string a x "cd"
+names a
+echo --- a longer string moves x to the end
+set_string a x "a much longer string value than before, more than thirty two bytes ok"
+names a
+json a
+echo --- capacity is never reduced: shrink then grow back does not move again
+set_string a y "q"
+set_int a y 5
+names a
+set_string a x "s"
+set_string a x "a much longer string value than before, more than thirty two bytes ok"
+names a
+echo --- adding a default after a user value moves the item
+new b
+set_int b x 1
+set_int b y 2
+set_default_int b x 5
+names b
+echo --- adding a user value after a default moves the item
+new c
+set_default_int c x 5
+set_int c y 2
+set_int c x 1
+names c
+echo --- but a user value over a user value of the same type and size does not
+set_int c x 99
+set_int c y 98
+names c
+echo --- a user value after the default only; then same-size rewrite
+new d
+set_default_string d s "dd"
+set_default_int d p 1
+set_string d s "u"
+names d
+echo --- the length of the name never matters
+new e
+set_int e k 1
+set_int e abcdefghijklmnopqrstuvwxyzabcd 2
+set_int e m 3
+set_default_int e k 4
+names e
+set_default_int e m 4
+names e
+echo --- autoselect layer
+new f
+set_int f a 1
+set_int f b 2
+set_autoselect_int f a 3
+names f
+set_double f a 1.5
+names f
+echo --- doubles and ints are the same size
+new g
+set_int g a 1
+set_int g b 1
+set_double g a 1.5
+set_bool g c 1
+set_int g c 1
+names g
+echo --- bool then int on the same item grows it
+new h
+set_bool h a 1
+set_int h b 1
+set_int h a 5
+names h

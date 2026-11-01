@@ -1,0 +1,27 @@
+data D
+  bitrate int 6000 default
+  use_bufsize bool 0 default
+  buffer_size int 6000 default
+  keyint_sec int 0 default
+  crf int 23 default
+  rate_control string "CBR" default
+  preset string "veryfast" default
+  profile string "" default
+  tune string "" default
+  x264opts string "" default
+  repeat_headers bool 0 default
+end data D
+echo explicit-user-values-take-priority-over-defaults
+data D
+  use_bufsize bool 0 default
+  buffer_size int 6000 default
+  keyint_sec int 0 default
+  crf int 23 default
+  preset string "veryfast" default
+  profile string "" default
+  tune string "" default
+  x264opts string "" default
+  repeat_headers bool 0 default
+  bitrate int 2500 user
+  rate_control string "VBR" user
+end data D

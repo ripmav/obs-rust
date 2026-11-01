@@ -1,0 +1,111 @@
+> dump 1
+> nvcap dyn_bitrate 1
+> defaults h264
+> host format i444
+> create h264 soft
+host.set_last_error "NVENC Error: 444Unsupported"
+log error [obs-nvenc] NVENC Error: 444Unsupported
+nv.DestroyEncoder
+log error Already in non_texture encoder, can't fall back further!
+create -> NULL
+> nvcap 444 1
+> create h264 soft
+log info [obs-nvenc: 'enc'] settings: 	codec:        H264 	rate_control: cbr 	bitrate:      10000 	keyint:       250 	preset:       p5 	tuning:       hq 	multipass:    qres 	profile:      high 	width:        1920 	height:       1080 	b-frames:     0 	b-ref-mode:   0 	lookahead:    false (0 frames) 	aq:           true 
+nv.InitializeEncoder
+  compact: preset=NV_ENC_PRESET_P5_GUID tuning=HIGH_QUALITY profile=NV_ENC_H264_PROFILE_HIGH_444_GUID gop=250 P=1 rc=CBR avg=10000000 max=10000000 vbv=10000000 tq=0 qp=0 aq=1 la=0/0 iadapt_off=0 mp=QUARTER
+create -> ok
+> state
+state: codec=H264 cx=1920 cy=1080 in_format=10 buf_count=4 output_delay=3 can_change_bitrate=1 non_texture=1 queued=0 header_size=0 bitstreams=4 hdr_mdi=0 hdr_cll=0
+state: props rate_control=cbr preset=p5 tune=hq multipass=qres profile=high bf=0 aq=1
+> destroy
+nv.DestroyEncoder
+destroyed
+> host format bgra
+> create h264 soft
+log info [obs-nvenc: 'enc'] settings: 	codec:        H264 	rate_control: cbr 	bitrate:      10000 	keyint:       250 	preset:       p5 	tuning:       hq 	multipass:    qres 	profile:      high 	width:        1920 	height:       1080 	b-frames:     0 	b-ref-mode:   0 	lookahead:    false (0 frames) 	aq:           true 
+nv.InitializeEncoder
+  compact: preset=NV_ENC_PRESET_P5_GUID tuning=HIGH_QUALITY profile=NV_ENC_H264_PROFILE_HIGH_444_GUID gop=250 P=1 rc=CBR avg=10000000 max=10000000 vbv=10000000 tq=0 qp=0 aq=1 la=0/0 iadapt_off=0 mp=QUARTER
+create -> ok
+> state
+state: codec=H264 cx=1920 cy=1080 in_format=10 buf_count=4 output_delay=3 can_change_bitrate=1 non_texture=1 queued=0 header_size=0 bitstreams=4 hdr_mdi=0 hdr_cll=0
+state: props rate_control=cbr preset=p5 tune=hq multipass=qres profile=high bf=0 aq=1
+> destroy
+nv.DestroyEncoder
+destroyed
+> host format i444
+> host pref_format nv12
+> create h264 soft
+log info [obs-nvenc: 'enc'] settings: 	codec:        H264 	rate_control: cbr 	bitrate:      10000 	keyint:       250 	preset:       p5 	tuning:       hq 	multipass:    qres 	profile:      high 	width:        1920 	height:       1080 	b-frames:     0 	b-ref-mode:   0 	lookahead:    false (0 frames) 	aq:           true 
+nv.InitializeEncoder
+  compact: preset=NV_ENC_PRESET_P5_GUID tuning=HIGH_QUALITY profile=NV_ENC_H264_PROFILE_HIGH_GUID gop=250 P=1 rc=CBR avg=10000000 max=10000000 vbv=10000000 tq=0 qp=0 aq=1 la=0/0 iadapt_off=0 mp=QUARTER
+create -> ok
+> state
+state: codec=H264 cx=1920 cy=1080 in_format=2 buf_count=4 output_delay=3 can_change_bitrate=1 non_texture=1 queued=0 header_size=0 bitstreams=4 hdr_mdi=0 hdr_cll=0
+state: props rate_control=cbr preset=p5 tune=hq multipass=qres profile=high bf=0 aq=1
+> destroy
+nv.DestroyEncoder
+destroyed
+> host pref_format none
+> host format p010
+> create h264 soft
+host.set_last_error "NVENC Error: 10bitUnsupported"
+log error [obs-nvenc] NVENC Error: 10bitUnsupported
+nv.DestroyEncoder
+log error Already in non_texture encoder, can't fall back further!
+create -> NULL
+> nvcap 10bit 1
+> host format i010
+> create h264 soft
+log info [obs-nvenc: 'enc'] settings: 	codec:        H264 	rate_control: cbr 	bitrate:      10000 	keyint:       250 	preset:       p5 	tuning:       hq 	multipass:    qres 	profile:      high 	width:        1920 	height:       1080 	b-frames:     0 	b-ref-mode:   0 	lookahead:    false (0 frames) 	aq:           true 
+log warning [obs-nvenc: 'enc'] Forcing high10 for P010
+nv.InitializeEncoder
+  compact: preset=NV_ENC_PRESET_P5_GUID tuning=HIGH_QUALITY profile=NV_ENC_H264_PROFILE_HIGH_10_GUID gop=250 P=1 rc=CBR avg=10000000 max=10000000 vbv=10000000 tq=0 qp=0 aq=1 la=0/0 iadapt_off=0 mp=QUARTER
+create -> ok
+> state
+state: codec=H264 cx=1920 cy=1080 in_format=18 buf_count=4 output_delay=3 can_change_bitrate=1 non_texture=1 queued=0 header_size=0 bitstreams=4 hdr_mdi=0 hdr_cll=0
+state: props rate_control=cbr preset=p5 tune=hq multipass=qres profile=high bf=0 aq=1
+> destroy
+nv.DestroyEncoder
+destroyed
+> host format nv12
+> host colorspace pq
+> create h264 soft
+host.set_last_error "NVENC Error: 8bitUnsupportedHdr"
+log error [obs-nvenc] NVENC Error: 8bitUnsupportedHdr
+nv.DestroyEncoder
+log error Already in non_texture encoder, can't fall back further!
+create -> NULL
+> host colorspace hlg
+> create h264 soft
+host.set_last_error "NVENC Error: 8bitUnsupportedHdr"
+log error [obs-nvenc] NVENC Error: 8bitUnsupportedHdr
+nv.DestroyEncoder
+log error Already in non_texture encoder, can't fall back further!
+create -> NULL
+> host format p010
+> create h264 soft
+log info [obs-nvenc: 'enc'] settings: 	codec:        H264 	rate_control: cbr 	bitrate:      10000 	keyint:       250 	preset:       p5 	tuning:       hq 	multipass:    qres 	profile:      high 	width:        1920 	height:       1080 	b-frames:     0 	b-ref-mode:   0 	lookahead:    false (0 frames) 	aq:           true 
+log warning [obs-nvenc: 'enc'] Forcing high10 for P010
+nv.InitializeEncoder
+  compact: preset=NV_ENC_PRESET_P5_GUID tuning=HIGH_QUALITY profile=NV_ENC_H264_PROFILE_HIGH_10_GUID gop=250 P=1 rc=CBR avg=10000000 max=10000000 vbv=10000000 tq=0 qp=0 aq=1 la=0/0 iadapt_off=0 mp=QUARTER
+create -> ok
+> state
+state: codec=H264 cx=1920 cy=1080 in_format=18 buf_count=4 output_delay=3 can_change_bitrate=1 non_texture=1 queued=0 header_size=0 bitstreams=4 hdr_mdi=1 hdr_cll=1
+state: mdi r=13250,34500 g=7500,3000 b=34000,16000 white=15635,16450 maxLuma=10000000 minLuma=0 cll=1000/1000
+state: props rate_control=cbr preset=p5 tune=hq multipass=qres profile=high bf=0 aq=1
+> destroy
+nv.DestroyEncoder
+destroyed
+> host colorspace 709
+> host format yuy2
+> create h264 soft
+log info [obs-nvenc: 'enc'] settings: 	codec:        H264 	rate_control: cbr 	bitrate:      10000 	keyint:       250 	preset:       p5 	tuning:       hq 	multipass:    qres 	profile:      high 	width:        1920 	height:       1080 	b-frames:     0 	b-ref-mode:   0 	lookahead:    false (0 frames) 	aq:           true 
+nv.InitializeEncoder
+  compact: preset=NV_ENC_PRESET_P5_GUID tuning=HIGH_QUALITY profile=NV_ENC_H264_PROFILE_HIGH_GUID gop=250 P=1 rc=CBR avg=10000000 max=10000000 vbv=10000000 tq=0 qp=0 aq=1 la=0/0 iadapt_off=0 mp=QUARTER
+create -> ok
+> state
+state: codec=H264 cx=1920 cy=1080 in_format=2 buf_count=4 output_delay=3 can_change_bitrate=1 non_texture=1 queued=0 header_size=0 bitstreams=4 hdr_mdi=0 hdr_cll=0
+state: props rate_control=cbr preset=p5 tune=hq multipass=qres profile=high bf=0 aq=1
+> destroy
+nv.DestroyEncoder
+destroyed

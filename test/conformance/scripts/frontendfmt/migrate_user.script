@@ -1,0 +1,110 @@
+# S-048 user.ini / global.ini migrations (MigrateLegacySettings) and Pre31 decision.
+echo fresh_install_lastversion_0
+migrate_legacy 0
+show user General Pre19Defaults
+show user General Pre24.1Defaults
+show app General Pre33.0Migrated
+reset
+echo from_18
+migrate_legacy 301989888
+show user General Pre19Defaults
+show user General Pre21Defaults
+show user General Pre23Defaults
+show user General Pre24.1Defaults
+reset
+echo from_22
+migrate_legacy 369098752
+show user General Pre19Defaults
+show user General Pre21Defaults
+show user General Pre23Defaults
+show user General Pre24.1Defaults
+reset
+echo existing_flags_preserved
+set user General Pre19Defaults bool true
+migrate_legacy 520093696
+show user General Pre19Defaults
+show user General Pre21Defaults
+reset
+echo hotkey_focus_pre24
+set user General DisableHotkeysInFocus bool true
+migrate_legacy 369098752
+show user General HotkeyFocusType
+reset
+echo hotkey_focus_not_changed_when_24_or_newer
+set user General DisableHotkeysInFocus bool true
+migrate_legacy 402653184
+show user General HotkeyFocusType
+reset
+echo snap_distance_10_to_5
+set user BasicWindow SnapDistance double 10
+migrate_legacy 520093696
+show user BasicWindow SnapDistance
+show app General Pre33.0Migrated
+migrate_legacy 520093696
+reset
+echo snap_distance_custom_kept
+set user BasicWindow SnapDistance double 12
+migrate_legacy 520093696
+show user BasicWindow SnapDistance
+show app General Pre33.0Migrated
+reset
+echo snap_no_value_stays_unset
+migrate_legacy 520093696
+show user BasicWindow SnapDistance
+reset
+echo already_33_not_applied
+set user BasicWindow SnapDistance double 10
+migrate_legacy 553648128
+show user BasicWindow SnapDistance
+show app General Pre33.0Migrated
+reset
+echo second_run_is_idempotent
+migrate_legacy 301989888
+migrate_legacy 301989888
+reset
+echo multiview_pre22
+multiview_pre22 horizontaltop
+show user BasicWindow MultiviewLayout
+multiview_pre22 VerticalRight
+show user BasicWindow MultiviewLayout
+multiview_pre22 verticalleft
+show user BasicWindow MultiviewLayout
+multiview_pre22 horizontalbottom
+show user BasicWindow MultiviewLayout
+multiview_pre22 4
+multiview_pre22 @null
+multiview_pre22 ""
+reset
+echo multiview_layout_in_migration
+set user BasicWindow MultiviewLayout string verticalleft
+migrate_legacy 0
+show user BasicWindow MultiviewLayout
+reset
+set user BasicWindow MultiviewLayout int 4
+migrate_legacy 0
+show user BasicWindow MultiviewLayout
+reset
+echo pre31_decision
+pre31 0 0 1
+pre31 503316480 0 1
+show app General Pre31Migrated
+reset
+echo user_ini_exists_means_failed
+pre31 503316480 1 1
+show app General Pre31Migrated
+reset
+echo copy_failed
+pre31 503316480 0 0
+show app General Pre31Migrated
+reset
+echo already_flagged_true
+set app General Pre31Migrated bool true
+pre31 503316480 0 1
+reset
+echo already_flagged_false_retries
+set app General Pre31Migrated bool false
+pre31 503316480 0 1
+show app General Pre31Migrated
+reset
+echo version_31_not_applicable
+pre31 520093696 0 1

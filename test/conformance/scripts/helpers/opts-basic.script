@@ -1,0 +1,13 @@
+# opts-parser: splitting "key=value" words on single spaces (CORE).
+# Order is preserved, duplicate names are kept, names are the text before the FIRST '='
+# and values are everything after it (so a second '=' belongs to the value).
+opts_parse "key=value"
+opts_parse "a=1 b=2 c=3"
+opts_parse "dup=1 dup=2 dup=3"
+opts_parse "eq=a=b==c"
+opts_parse "path=/tmp/some/file.txt url=http://x/y?z=1&w=2"
+opts_parse "k=v   spaced=out"
+opts_parse " lead=1 trail=2 "
+opts_parse "UPPER=Case lower=case"
+opts_parse "x=1"
+opts_parse "very_long_option_name_with_many_characters=very_long_option_value_with_many_characters"

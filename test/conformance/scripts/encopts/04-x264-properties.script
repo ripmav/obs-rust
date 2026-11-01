@@ -1,0 +1,5 @@
+# CORE. obs-x264 property list: names, types, descriptions (locale keys), ranges, steps,
+# suffixes, list items, visibility. Initial visibility is the property's own default
+# (everything visible, enabled) except the hidden repeat_headers flag.
+x264_props P
+props_dump P

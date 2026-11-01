@@ -1,0 +1,6 @@
+> maxver 0xD3
+> initnv
+init_nvenc -> 1
+> sym create 0
+> initnv
+init_nvenc -> 1

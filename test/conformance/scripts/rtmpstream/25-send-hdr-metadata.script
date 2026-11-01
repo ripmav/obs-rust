@@ -1,0 +1,60 @@
+# S-045 HDR colour metadata is written before the video header, only for HDR output and non-H.264 codecs.
+# colorspace: 0 default 1 601 2 709 3 sRGB 4 PQ 5 HLG ; format: 17 I010, 18 P010, 19 I210, 20 I412, 21 YA2L, 2 NV12
+reset
+aenc 0 aac 160
+venc 0 hevc 2500
+service rtmp://h/a KEY - -
+init_connect
+set active 1
+peak 1000
+colorspace 4 18
+send_headers
+reset
+aenc 0 aac 160
+venc 0 hevc 2500
+service rtmp://h/a KEY - -
+init_connect
+set active 1
+colorspace 5 17
+send_headers
+# default peak level is passed as an int (truncated)
+reset
+aenc 0 aac 160
+venc 0 av1 2500
+service rtmp://h/a KEY - -
+init_connect
+set active 1
+peak 603
+colorspace 4 20
+send_headers
+# legacy H.264 never gets the colour metadata
+reset
+aenc 0 aac 160
+venc 0 h264 2500
+service rtmp://h/a KEY - -
+init_connect
+set active 1
+colorspace 4 18
+send_headers
+# SDR: none
+reset
+aenc 0 aac 160
+venc 0 hevc 2500
+service rtmp://h/a KEY - -
+init_connect
+set active 1
+colorspace 2 2
+send_headers
+# encoder without a video output: fails
+reset
+aenc 0 aac 160
+venc 0 hevc 2500
+service rtmp://h/a KEY - -
+init_connect
+set active 1
+enc_flag v 0 no_video 1
+colorspace 4 18
+send_headers
+# still fails: the encoder has no video output, whatever the colour space (the check precedes the HDR test)
+colorspace 3 2
+send_headers

@@ -1,0 +1,73 @@
+# Shader (not effect) parameter wrappers: every setter checks the param (and value pointer) for NULL.
+# Effect-level parameters by name are specified in S-020.
+trace 0
+gs_create g
+gs_enter_context g
+trace 1
+gs_vertexshader_create "vs-text" "vs.hlsl" > vs
+gs_pixelshader_create "ps-text" "ps.hlsl" > ps
+echo == shader creation passes the text and file name; the error string pointer is forwarded
+gs_vertexshader_create - "x.hlsl"
+ret shader_error "line 3: syntax error"
+gs_vertexshader_create "bad" "bad.hlsl"
+ret shader_error -
+fail device_vertexshader_create 1
+gs_vertexshader_create "bad" "bad.hlsl"
+fail device_vertexshader_create 0
+echo == queries
+gs_shader_get_num_params vs
+ret gs_shader_get_num_params 3
+gs_shader_get_num_params vs
+gs_shader_get_param_by_idx vs 1 > p
+gs_shader_get_param_by_name vs "ViewProj" > p2
+gs_shader_get_param_by_name vs - 
+gs_shader_get_param_by_name - "x"
+gs_shader_get_viewproj_matrix vs
+gs_shader_get_world_matrix vs
+gs_shader_get_viewproj_matrix -
+gs_shader_get_world_matrix -
+gs_shader_get_num_params -
+gs_shader_get_param_by_idx - 0
+gs_shader_get_param_info p
+gs_shader_get_param_info p null
+gs_shader_get_param_info - 
+echo == setters
+gs_shader_set_bool p 1
+gs_shader_set_float p 1.5
+gs_shader_set_int p -7
+gs_shader_set_vec2 p 1 2
+gs_shader_set_vec3 p 1 2 3
+gs_shader_set_vec4 p 1 2 3 4
+gs_shader_set_matrix3 p
+gs_shader_set_matrix4 p 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1
+gs_texture_create 4 4 GS_RGBA 1 0 > tex
+gs_shader_set_texture p tex
+gs_shader_set_texture p -
+gs_shader_set_val p 0102ff 
+gs_shader_set_default p
+gs_samplerstate_create 0 0 0 0 1 0 > smp
+gs_shader_set_next_sampler p smp
+gs_shader_set_next_sampler p -
+echo == NULL param: ignored with debug log
+gs_shader_set_bool - 1
+gs_shader_set_float - 1
+gs_shader_set_int - 1
+gs_shader_set_vec2 - 1 2
+gs_shader_set_vec3 - 1 2 3
+gs_shader_set_vec4 - 1 2 3 4
+gs_shader_set_matrix3 -
+gs_shader_set_matrix4 - 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1
+gs_shader_set_texture - tex
+gs_shader_set_val - 00
+gs_shader_set_default -
+gs_shader_set_next_sampler - smp
+echo == NULL value pointer for the by-pointer setters
+gs_shader_set_vec2_null p
+echo == loading shaders
+gs_load_vertexshader vs
+gs_load_pixelshader ps
+gs_get_vertex_shader
+gs_get_pixel_shader
+gs_load_vertexshader -
+gs_get_vertex_shader
+gs_shader_destroy vs

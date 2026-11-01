@@ -1,0 +1,41 @@
+# S-012 CORE: obs_extract_hevc_headers. VPS(32), SPS(33), PPS(34) -> header;
+# SEI prefix(39) and suffix(40) -> sei; everything else -> new. NALs are copied with their
+# start codes, in input order, unchanged. Same framing rules as the AVC variant (05).
+buf vps 40010c01ffff0160
+buf sps 420101016000000300
+buf pps 4401c172b4
+buf aud 460150
+buf sei_p 4e0105010203
+buf sei_s 5001050102
+buf idr 2601af0630
+buf trail 0201d0aa
+buf eos 4801
+buf fd 4c01ffff
+echo idr-access-unit
+cat au 00000001 @aud 00000001 @vps 00000001 @sps 00000001 @pps 00000001 @sei_p 00000001 @idr 00000001 @sei_s
+hevc_extract @au
+echo three-byte-start-codes
+cat au 000001 @vps 000001 @sps 000001 @pps 000001 @trail
+hevc_extract @au
+echo eos-eob-filler-aud-stay-in-new
+cat au 00000001 @eos 00000001 @fd 00000001 @aud
+hevc_extract @au
+echo avc-parameter-set-types-are-not-hevc-ones
+cat au 00000001 6742c01e 00000001 68ce3c80
+hevc_extract @au
+echo only-first-header-byte-matters
+hevc_extract 0000000140 
+hevc_extract 000000014000
+hevc_extract 00000001c001
+echo order-is-kept
+cat au 00000001 @pps 00000001 @sps 00000001 @trail 00000001 @vps 00000001 @sei_s 00000001 @sei_p
+hevc_extract @au
+echo no-start-code-garbage-and-empty
+hevc_extract aabbcc
+hevc_extract -
+hevc_extract ffee0000012601
+hevc_extract ffee000001260100
+echo trailing-zeros-belong-to-the-last-nal
+hevc_extract 000000014001aa0000
+echo trailing-start-code-at-end-is-not-seen
+hevc_extract 000000014001aa00000001

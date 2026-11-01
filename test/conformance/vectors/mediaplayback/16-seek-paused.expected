@@ -1,0 +1,72 @@
+minit -> ok
+ff open path=sp format=- nobuffer=1 interrupt=0 opts=[]
+minit2 -> ok has_v=1 has_a=0
+ff seek stream=0 target=0 flags=BACKWARD
+ff decoder flush
+ff read #0 stream=0 pts=0 size=4
+cb preload ts=0 fmt=I420 16x16 flip=0 full=0 trc=DEFAULT maxlum=0 flags=0 ls0=16 d0=01 mat0=1.16438 min0=0.0627451 max0=0.921569
+mreset -> 1
+tick -> idle
+cb video ts=0 fmt=I420 16x16 flip=0 full=0 trc=DEFAULT maxlum=0 flags=0 ls0=16 d0=01 mat0=1.16438 min0=0.0627451 max0=0.921569
+ff read #1 stream=0 pts=40 size=4
+tick -> played
+sleep 40
+cb video ts=40000000 fmt=I420 16x16 flip=0 full=0 trc=DEFAULT maxlum=0 flags=0 ls0=16 d0=11 mat0=1.16438 min0=0.0627451 max0=0.921569
+ff read #2 stream=0 pts=80 size=4
+tick -> played
+tick -> paused
+# seek while paused (seek callback, frame near 120 ms)
+ff seek stream=0 target=120 flags=BACKWARD
+ff decoder flush
+ff read #3 stream=0 pts=120 size=4
+cb seek ts=320000000 fmt=I420 16x16 flip=0 full=0 trc=DEFAULT maxlum=0 flags=0 ls0=16 d0=31 mat0=1.16438 min0=0.0627451 max0=0.921569
+tick -> seek
+mstate eof=0 active=1 stopping=0 looping=0 pause=1 reset=0 seek=0 seek_next_ts=1 reset_ts=0 preload_frame=0 has_v=1 has_a=0
+  base_ts=240000000 start_ts=80000000 play_sys_ts=1040000000 next_pts_ns=80000000 next_ns=0 seek_pos=120000 speed=100 cur_space=DEFAULT cur_range=DEFAULT
+  v ready=1 pts=120000000 next_pts=160000000 last_dur=40000000 eof=0 key=0 pending=0 npkts=0
+# again with the seek callback disabled and request_preload=0: preload callback
+mfree
+minit -> ok
+ff open path=sp format=- nobuffer=1 interrupt=0 opts=[]
+minit2 -> ok has_v=1 has_a=0
+ff seek stream=0 target=0 flags=BACKWARD
+ff decoder flush
+ff read #0 stream=0 pts=0 size=4
+cb preload ts=0 fmt=I420 16x16 flip=0 full=0 trc=DEFAULT maxlum=0 flags=0 ls0=16 d0=01 mat0=1.16438 min0=0.0627451 max0=0.921569
+mreset -> 1
+tick -> idle
+cb video ts=0 fmt=I420 16x16 flip=0 full=0 trc=DEFAULT maxlum=0 flags=0 ls0=16 d0=01 mat0=1.16438 min0=0.0627451 max0=0.921569
+ff read #1 stream=0 pts=40 size=4
+tick -> played
+sleep 40
+cb video ts=40000000 fmt=I420 16x16 flip=0 full=0 trc=DEFAULT maxlum=0 flags=0 ls0=16 d0=11 mat0=1.16438 min0=0.0627451 max0=0.921569
+ff read #2 stream=0 pts=80 size=4
+tick -> played
+tick -> paused
+ff seek stream=0 target=120 flags=BACKWARD
+ff decoder flush
+ff read #3 stream=0 pts=120 size=4
+cb preload ts=320000000 fmt=I420 16x16 flip=0 full=0 trc=DEFAULT maxlum=0 flags=0 ls0=16 d0=31 mat0=1.16438 min0=0.0627451 max0=0.921569
+tick -> seek
+# with request_preload=1 and no seek callback nothing is delivered
+mfree
+minit -> ok
+ff open path=sp format=- nobuffer=1 interrupt=0 opts=[]
+minit2 -> ok has_v=1 has_a=0
+ff seek stream=0 target=0 flags=BACKWARD
+ff decoder flush
+ff read #0 stream=0 pts=0 size=4
+mreset -> 1
+tick -> idle
+cb video ts=0 fmt=I420 16x16 flip=0 full=0 trc=DEFAULT maxlum=0 flags=0 ls0=16 d0=01 mat0=1.16438 min0=0.0627451 max0=0.921569
+ff read #1 stream=0 pts=40 size=4
+tick -> played
+sleep 40
+cb video ts=40000000 fmt=I420 16x16 flip=0 full=0 trc=DEFAULT maxlum=0 flags=0 ls0=16 d0=11 mat0=1.16438 min0=0.0627451 max0=0.921569
+ff read #2 stream=0 pts=80 size=4
+tick -> played
+tick -> paused
+ff seek stream=0 target=120 flags=BACKWARD
+ff decoder flush
+ff read #3 stream=0 pts=120 size=4
+tick -> seek

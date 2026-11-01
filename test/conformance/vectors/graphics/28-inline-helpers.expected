@@ -1,0 +1,81 @@
+> inline_format_info 0
+format 0 bpp=0 compressed=0 srgb=0 generalized=0
+> inline_format_info 1
+format 1 bpp=8 compressed=0 srgb=0 generalized=1
+> inline_format_info 2
+format 2 bpp=8 compressed=0 srgb=0 generalized=2
+> inline_format_info 3
+format 3 bpp=32 compressed=0 srgb=1 generalized=3
+> inline_format_info 4
+format 4 bpp=32 compressed=0 srgb=1 generalized=4
+> inline_format_info 5
+format 5 bpp=32 compressed=0 srgb=1 generalized=5
+> inline_format_info 6
+format 6 bpp=32 compressed=0 srgb=0 generalized=6
+> inline_format_info 7
+format 7 bpp=64 compressed=0 srgb=0 generalized=7
+> inline_format_info 8
+format 8 bpp=16 compressed=0 srgb=0 generalized=8
+> inline_format_info 9
+format 9 bpp=64 compressed=0 srgb=0 generalized=9
+> inline_format_info 10
+format 10 bpp=128 compressed=0 srgb=0 generalized=10
+> inline_format_info 11
+format 11 bpp=32 compressed=0 srgb=0 generalized=11
+> inline_format_info 12
+format 12 bpp=64 compressed=0 srgb=0 generalized=12
+> inline_format_info 13
+format 13 bpp=16 compressed=0 srgb=0 generalized=13
+> inline_format_info 14
+format 14 bpp=32 compressed=0 srgb=0 generalized=14
+> inline_format_info 15
+format 15 bpp=4 compressed=1 srgb=0 generalized=15
+> inline_format_info 16
+format 16 bpp=8 compressed=1 srgb=0 generalized=16
+> inline_format_info 17
+format 17 bpp=8 compressed=1 srgb=0 generalized=17
+> inline_format_info 18
+format 18 bpp=16 compressed=0 srgb=0 generalized=18
+> inline_format_info 19
+format 19 bpp=32 compressed=0 srgb=0 generalized=3
+> inline_format_info 20
+format 20 bpp=32 compressed=0 srgb=0 generalized=4
+> inline_format_info 21
+format 21 bpp=32 compressed=0 srgb=0 generalized=5
+> inline_format_info 22
+format 22 bpp=32 compressed=0 srgb=0 generalized=22
+== out-of-range format values fall back to 0 / unchanged
+> inline_format_info 99
+format 99 bpp=0 compressed=0 srgb=0 generalized=99
+> inline_format_from_space 0
+ret 3
+> inline_format_from_space 1
+ret 9
+> inline_format_from_space 2
+ret 9
+> inline_format_from_space 3
+ret 9
+> inline_total_levels 1 1 1
+ret 1
+> inline_total_levels 2 1 1
+ret 2
+> inline_total_levels 3 1 1
+ret 2
+> inline_total_levels 4 4 1
+ret 3
+> inline_total_levels 1024 1 1
+ret 11
+> inline_total_levels 1023 1 1
+ret 10
+> inline_total_levels 1 2048 1
+ret 12
+> inline_total_levels 100 100 100
+ret 7
+> inline_total_levels 0 0 0
+ret 1
+> inline_total_levels 1920 1080 1
+ret 11
+> inline_total_levels 5 5 5000
+ret 13
+> inline_total_levels 4 4 0
+ret 3

@@ -1,0 +1,66 @@
+log debug encoder 'v' (v) created
+encoder v created tb=1/30
+log debug encoder 'a' (a) created
+encoder a created tb=1/48000
+log debug output 'o' (o) created
+output o created flags=7 reconnect=20/2
+set_venc o idx=0 -> video_slots=01 audio_slots=00
+set_aenc o idx=0 -> video_slots=01 audio_slots=01
+--- stop and force_stop on an idle output do nothing visible except force_stop's signal
+stop o done
+info o flags=7 active=0 reconnecting=0 delay=0 active_delay=0
+signal o stopping
+plugin out o stop ts=0
+signal o stop code=0 last_error=-
+force_stop o done
+--- plugin start succeeds and begins capture synchronously
+plugin out o start
+plugin enc v create
+plugin enc a create
+log debug Maximum interleaver batch size for 'o' calculated to be 5 packets
+signal o activate
+signal o start
+plugin out o begin_data_capture -> 1
+signal o starting
+start o -> 1
+info o flags=7 active=1 reconnecting=0 delay=0 active_delay=0
+--- start while active: the plugin start callback is called again (no guard in obs_output_start)
+plugin out o start
+plugin out o cannot begin
+start o -> 0
+--- stop: stopping, plugin stop (ts = clock), then the plugin ends capture
+signal o stopping
+plugin out o stop ts=777
+log info Output 'o': stopping
+log info Output 'o': Total frames output: 0
+log info Output 'o': Total drawn frames: 0
+signal o stop code=0 last_error=-
+stop o done
+plugin enc v destroy
+plugin enc a destroy
+signal o deactivate
+info o flags=7 active=0 reconnecting=0 delay=0 active_delay=0
+state o active=0 data_active=0 delay_active=0 delay_capturing=0 reconnecting=0 stopping=0 stop_code=0 total_frames=0 delay_ns=0 refs=0 queued=0 recv_v=00 recv_a=0 hi_a=0 hi_v0=-9223372036854775808 voff=0 aoff=0 batch=5 retries=0 cur_ms=0
+--- stop again: nothing
+stop o done
+--- second run works
+plugin out o start
+plugin enc v create
+plugin enc a create
+log debug Maximum interleaver batch size for 'o' calculated to be 10 packets
+signal o activate
+signal o start
+plugin out o begin_data_capture -> 1
+signal o starting
+start o -> 1
+signal o stopping
+plugin out o stop ts=0
+log info Output 'o': stopping
+log info Output 'o': Total frames output: 0
+log info Output 'o': Total drawn frames: 0
+signal o stop code=0 last_error=-
+force_stop o done
+plugin enc v destroy
+plugin enc a destroy
+signal o deactivate
+state o active=0 data_active=0 delay_active=0 delay_capturing=0 reconnecting=0 stopping=0 stop_code=0 total_frames=0 delay_ns=0 refs=0 queued=0 recv_v=00 recv_a=0 hi_a=0 hi_v0=-9223372036854775808 voff=0 aoff=0 batch=10 retries=0 cur_ms=0

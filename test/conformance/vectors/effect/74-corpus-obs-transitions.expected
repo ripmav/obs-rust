@@ -1,0 +1,508 @@
+gfx preprocessor=_OPENGL
+=== plugins/obs-transitions/data/fade_to_color_transition.effect
+backend vertexshader_create location="plugins/obs-transitions/data/fade_to_color_transition.effect (Vertex shader, technique FadeToColor, pass 0)" len=317 fnv=b06d11de3e765c86
+  text "uniform float4x4 ViewProj;\n\n\nstruct VertData {\n\tfloat4 pos : POSITION;\n\tfloat2 uv : TEXCOORD0;\n};\n\nVertData VSDefault(VertData v_in)\n{\n\tVertData vert_out;\n\tvert_out.pos = mul(float4(v_in.pos.xyz, 1.0), ViewProj);\n\tvert_out.uv  = v_in.uv;\n\treturn vert_out;\n}\n\nVertData main(VertData v_in)\n{\n\treturn VSDefault(v_in);\n}\n"
+  sparam 0 name=ViewProj type=MATRIX4X4 array=0
+  result ok
+backend pixelshader_create location="plugins/obs-transitions/data/fade_to_color_transition.effect (Pixel shader, technique FadeToColor, pass 0)" len=424 fnv=bc6b20d3f3f5d4d4
+  text "uniform texture2d tex;\nuniform float4 color;\nuniform float swp;\n\n\nsampler_state textureSampler {\n\tFilter = Linear;\n\n\tAddressU = Clamp;\n\n\tAddressV = Clamp;\n\n};\n\nstruct VertData {\n\tfloat4 pos : POSITION;\n\tfloat2 uv : TEXCOORD0;\n};\n\nfloat4 PSFadeToColor(VertData v_in)\n{\n\tfloat4 rgba = lerp(tex.Sample(textureSampler, v_in.uv), color, swp);\n\treturn rgba;\n}\n\nfloat4 main(VertData v_in) : TARGET\n{\n\treturn PSFadeToColor(v_in);\n}\n"
+  sparam 0 name=tex type=TEXTURE array=0
+  sparam 1 name=color type=VEC4 array=0
+  sparam 2 name=swp type=FLOAT array=0
+  result ok
+effect e result=ok
+  error_string=@null
+effect e params=4 techniques=1 viewproj=ViewProj world=-
+  param 0 name=ViewProj type=MATRIX4X4 annotations=0 default_size=0 default=-
+  param 1 name=tex type=TEXTURE annotations=0 default_size=0 default=-
+  param 2 name=swp type=FLOAT annotations=0 default_size=0 default=-
+  param 3 name=color type=VEC4 annotations=0 default_size=0 default=-
+  technique 0 name=FadeToColor passes=1
+    pass 0 name=@null vertex_params=[ViewProj] pixel_params=[tex,color,swp] vertex=yes pixel=yes
+backend vertexshader_create location="plugins/obs-transitions/data/fade_to_color_transition.effect (Vertex shader, technique FadeToColor, pass 0)" len=317 fnv=b06d11de3e765c86
+  sparam 0 name=ViewProj type=MATRIX4X4 array=0
+  result ok
+backend pixelshader_create location="plugins/obs-transitions/data/fade_to_color_transition.effect (Pixel shader, technique FadeToColor, pass 0)" len=424 fnv=bc6b20d3f3f5d4d4
+  sparam 0 name=tex type=TEXTURE array=0
+  sparam 1 name=color type=VEC4 array=0
+  sparam 2 name=swp type=FLOAT array=0
+  result ok
+ep result=ok
+  errors count=0 has_errors=0
+  ep params=4 structs=1 funcs=4 samplers=1 techniques=1
+  ep_param 0 type=float4x4 name=ViewProj property=0 const=0 uniform=1 texture=0 array_count=0 annotations=0
+  ep_param 1 type=texture2d name=tex property=0 const=0 uniform=1 texture=1 array_count=0 annotations=0
+  ep_param 2 type=float name=swp property=0 const=0 uniform=1 texture=0 array_count=0 annotations=0
+  ep_param 3 type=float4 name=color property=0 const=0 uniform=1 texture=0 array_count=0 annotations=0
+  ep_struct 0 name=VertData vars=2
+    var type=float4 name=pos mapping="POSITION" var_type=IN
+    var type=float2 name=uv mapping="TEXCOORD0" var_type=IN
+  ep_func 0 name=VSDefault ret=VertData mapping=@null params=1
+    var type=VertData name=v_in mapping=@null var_type=IN
+    struct_deps=["VertData","VertData","VertData"] func_deps=[] param_deps=["ViewProj"] sampler_deps=[] contents_len=124
+  ep_func 1 name=srgb_nonlinear_to_linear_channel ret=float mapping=@null params=1
+    var type=float name=u mapping=@null var_type=IN
+    struct_deps=[] func_deps=[] param_deps=[] sampler_deps=[] contents_len=86
+  ep_func 2 name=srgb_nonlinear_to_linear ret=float3 mapping=@null params=1
+    var type=float3 name=v mapping=@null var_type=IN
+    struct_deps=[] func_deps=["srgb_nonlinear_to_linear_channel","srgb_nonlinear_to_linear_channel","srgb_nonlinear_to_linear_channel"] param_deps=[] sampler_deps=[] contents_len=136
+  ep_func 3 name=PSFadeToColor ret=float4 mapping="TARGET" params=1
+    var type=VertData name=v_in mapping=@null var_type=IN
+    struct_deps=["VertData"] func_deps=[] param_deps=["tex","color","swp"] sampler_deps=["textureSampler"] contents_len=87
+  ep_sampler 0 name=textureSampler states=3
+    state "Filter" = "Linear"
+    state "AddressU" = "Clamp"
+    state "AddressV" = "Clamp"
+  ep_technique 0 name=FadeToColor passes=1
+    ep_pass 0 name=@null
+      vertex=["VSDefault","(","v_in",")",";"]
+      fragment=["PSFadeToColor","(","v_in",")",";"]
+  error_string=@null
+effect (effect) params=4 techniques=1 viewproj=ViewProj world=-
+  param 0 name=ViewProj type=MATRIX4X4 annotations=0 default_size=0 default=-
+  param 1 name=tex type=TEXTURE annotations=0 default_size=0 default=-
+  param 2 name=swp type=FLOAT annotations=0 default_size=0 default=-
+  param 3 name=color type=VEC4 annotations=0 default_size=0 default=-
+  technique 0 name=FadeToColor passes=1
+    pass 0 name=@null vertex_params=[ViewProj] pixel_params=[tex,color,swp] vertex=yes pixel=yes
+destroy e cached=1
+=== plugins/obs-transitions/data/fade_transition.effect
+backend vertexshader_create location="plugins/obs-transitions/data/fade_transition.effect (Vertex shader, technique Fade, pass 0)" len=317 fnv=47192a2e0fe34688
+  text "uniform float4x4 ViewProj;\n\n\nstruct VertData {\n\tfloat2 uv : TEXCOORD0;\n\tfloat4 pos : POSITION;\n};\n\nVertData VSDefault(VertData v_in)\n{\n\tVertData vert_out;\n\tvert_out.uv  = v_in.uv;\n\tvert_out.pos = mul(float4(v_in.pos.xyz, 1.0), ViewProj);\n\treturn vert_out;\n}\n\nVertData main(VertData v_in)\n{\n\treturn VSDefault(v_in);\n}\n"
+  sparam 0 name=ViewProj type=MATRIX4X4 array=0
+  result ok
+backend pixelshader_create location="plugins/obs-transitions/data/fade_transition.effect (Pixel shader, technique Fade, pass 0)" len=922 fnv=40840b7bf7e4d1d4
+  text "struct FragData {\n\tfloat2 uv : TEXCOORD0;\n};\n\nuniform texture2d tex_a;\nuniform texture2d tex_b;\nuniform float fade_val;\n\n\nsampler_state textureSampler {\n\tFilter = Linear;\n\n\tAddressU = Clamp;\n\n\tAddressV = Clamp;\n\n};\n\n\nfloat4 Fade(FragData f_in)\n{\n\tfloat4 a_val = tex_a.Sample(textureSampler, f_in.uv);\n\tfloat4 b_val = tex_b.Sample(textureSampler, f_in.uv);\n\tfloat4 rgba = lerp(a_val, b_val, fade_val);\n\treturn rgba;\n}\n\n\nfloat srgb_nonlinear_to_linear_channel(float u)\n{\n\treturn (u <= 0.04045) ? (u / 12.92) : pow(mad(u, 1. / 1.055, .055 / 1.055), 2.4);\n}\n\n\nfloat3 srgb_nonlinear_to_linear(float3 v)\n{\n\treturn float3(srgb_nonlinear_to_linear_channel(v.r), srgb_nonlinear_to_linear_channel(v.g), srgb_nonlinear_to_linear_channel(v.b));\n}\n\n\nfloat4 PSFade(FragData f_in)\n{\n\tfloat4 rgba = Fade(f_in);\n\trgba.rgb = srgb_nonlinear_to_linear(rgba.rgb);\n\treturn rgba;\n}\n\nfloat4 main(FragData f_in) : TARGET\n{\n\treturn PSFade(f_in);\n}\n"
+  sparam 0 name=tex_a type=TEXTURE array=0
+  sparam 1 name=tex_b type=TEXTURE array=0
+  sparam 2 name=fade_val type=FLOAT array=0
+  result ok
+backend vertexshader_create location="plugins/obs-transitions/data/fade_transition.effect (Vertex shader, technique FadeLinear, pass 0)" len=317 fnv=47192a2e0fe34688
+  text "uniform float4x4 ViewProj;\n\n\nstruct VertData {\n\tfloat2 uv : TEXCOORD0;\n\tfloat4 pos : POSITION;\n};\n\nVertData VSDefault(VertData v_in)\n{\n\tVertData vert_out;\n\tvert_out.uv  = v_in.uv;\n\tvert_out.pos = mul(float4(v_in.pos.xyz, 1.0), ViewProj);\n\treturn vert_out;\n}\n\nVertData main(VertData v_in)\n{\n\treturn VSDefault(v_in);\n}\n"
+  sparam 0 name=ViewProj type=MATRIX4X4 array=0
+  result ok
+backend pixelshader_create location="plugins/obs-transitions/data/fade_transition.effect (Pixel shader, technique FadeLinear, pass 0)" len=568 fnv=02334bb12a35f017
+  text "struct FragData {\n\tfloat2 uv : TEXCOORD0;\n};\n\nuniform texture2d tex_a;\nuniform texture2d tex_b;\nuniform float fade_val;\n\n\nsampler_state textureSampler {\n\tFilter = Linear;\n\n\tAddressU = Clamp;\n\n\tAddressV = Clamp;\n\n};\n\n\nfloat4 Fade(FragData f_in)\n{\n\tfloat4 a_val = tex_a.Sample(textureSampler, f_in.uv);\n\tfloat4 b_val = tex_b.Sample(textureSampler, f_in.uv);\n\tfloat4 rgba = lerp(a_val, b_val, fade_val);\n\treturn rgba;\n}\n\n\nfloat4 PSFadeLinear(FragData f_in)\n{\n\tfloat4 rgba = Fade(f_in);\n\treturn rgba;\n}\n\nfloat4 main(FragData f_in) : TARGET\n{\n\treturn PSFadeLinear(f_in);\n}\n"
+  sparam 0 name=tex_a type=TEXTURE array=0
+  sparam 1 name=tex_b type=TEXTURE array=0
+  sparam 2 name=fade_val type=FLOAT array=0
+  result ok
+backend vertexshader_create location="plugins/obs-transitions/data/fade_transition.effect (Vertex shader, technique FadeSingle, pass 0)" len=317 fnv=47192a2e0fe34688
+  text "uniform float4x4 ViewProj;\n\n\nstruct VertData {\n\tfloat2 uv : TEXCOORD0;\n\tfloat4 pos : POSITION;\n};\n\nVertData VSDefault(VertData v_in)\n{\n\tVertData vert_out;\n\tvert_out.uv  = v_in.uv;\n\tvert_out.pos = mul(float4(v_in.pos.xyz, 1.0), ViewProj);\n\treturn vert_out;\n}\n\nVertData main(VertData v_in)\n{\n\treturn VSDefault(v_in);\n}\n"
+  sparam 0 name=ViewProj type=MATRIX4X4 array=0
+  result ok
+backend pixelshader_create location="plugins/obs-transitions/data/fade_transition.effect (Pixel shader, technique FadeSingle, pass 0)" len=487 fnv=a315cb0c167789d3
+  text "struct FragData {\n\tfloat2 uv : TEXCOORD0;\n};\n\nuniform texture2d tex_a;\nuniform float fade_val;\n\n\nsampler_state textureSampler {\n\tFilter = Linear;\n\n\tAddressU = Clamp;\n\n\tAddressV = Clamp;\n\n};\n\nfloat4 FadeSingle(FragData f_in)\n{\n\tfloat4 a_val = tex_a.Sample(textureSampler, f_in.uv);\n\tfloat4 rgba = a_val * fade_val;\n\treturn rgba;\n}\n\n\nfloat4 PSFadeSingle(FragData f_in)\n{\n\tfloat4 rgba = FadeSingle(f_in);\n\treturn rgba;\n}\n\nfloat4 main(FragData f_in) : TARGET\n{\n\treturn PSFadeSingle(f_in);\n}\n"
+  sparam 0 name=tex_a type=TEXTURE array=0
+  sparam 1 name=fade_val type=FLOAT array=0
+  result ok
+effect e result=ok
+  error_string=@null
+effect e params=4 techniques=3 viewproj=ViewProj world=-
+  param 0 name=ViewProj type=MATRIX4X4 annotations=0 default_size=0 default=-
+  param 1 name=tex_a type=TEXTURE annotations=0 default_size=0 default=-
+  param 2 name=tex_b type=TEXTURE annotations=0 default_size=0 default=-
+  param 3 name=fade_val type=FLOAT annotations=0 default_size=0 default=-
+  technique 0 name=Fade passes=1
+    pass 0 name=@null vertex_params=[ViewProj] pixel_params=[tex_a,tex_b,fade_val] vertex=yes pixel=yes
+  technique 1 name=FadeLinear passes=1
+    pass 0 name=@null vertex_params=[ViewProj] pixel_params=[tex_a,tex_b,fade_val] vertex=yes pixel=yes
+  technique 2 name=FadeSingle passes=1
+    pass 0 name=@null vertex_params=[ViewProj] pixel_params=[tex_a,fade_val] vertex=yes pixel=yes
+backend vertexshader_create location="plugins/obs-transitions/data/fade_transition.effect (Vertex shader, technique Fade, pass 0)" len=317 fnv=47192a2e0fe34688
+  sparam 0 name=ViewProj type=MATRIX4X4 array=0
+  result ok
+backend pixelshader_create location="plugins/obs-transitions/data/fade_transition.effect (Pixel shader, technique Fade, pass 0)" len=922 fnv=40840b7bf7e4d1d4
+  sparam 0 name=tex_a type=TEXTURE array=0
+  sparam 1 name=tex_b type=TEXTURE array=0
+  sparam 2 name=fade_val type=FLOAT array=0
+  result ok
+backend vertexshader_create location="plugins/obs-transitions/data/fade_transition.effect (Vertex shader, technique FadeLinear, pass 0)" len=317 fnv=47192a2e0fe34688
+  sparam 0 name=ViewProj type=MATRIX4X4 array=0
+  result ok
+backend pixelshader_create location="plugins/obs-transitions/data/fade_transition.effect (Pixel shader, technique FadeLinear, pass 0)" len=568 fnv=02334bb12a35f017
+  sparam 0 name=tex_a type=TEXTURE array=0
+  sparam 1 name=tex_b type=TEXTURE array=0
+  sparam 2 name=fade_val type=FLOAT array=0
+  result ok
+backend vertexshader_create location="plugins/obs-transitions/data/fade_transition.effect (Vertex shader, technique FadeSingle, pass 0)" len=317 fnv=47192a2e0fe34688
+  sparam 0 name=ViewProj type=MATRIX4X4 array=0
+  result ok
+backend pixelshader_create location="plugins/obs-transitions/data/fade_transition.effect (Pixel shader, technique FadeSingle, pass 0)" len=487 fnv=a315cb0c167789d3
+  sparam 0 name=tex_a type=TEXTURE array=0
+  sparam 1 name=fade_val type=FLOAT array=0
+  result ok
+ep result=ok
+  errors count=0 has_errors=0
+  ep params=4 structs=2 funcs=8 samplers=1 techniques=3
+  ep_param 0 type=float4x4 name=ViewProj property=0 const=0 uniform=1 texture=0 array_count=0 annotations=0
+  ep_param 1 type=texture2d name=tex_a property=0 const=0 uniform=1 texture=1 array_count=0 annotations=0
+  ep_param 2 type=texture2d name=tex_b property=0 const=0 uniform=1 texture=1 array_count=0 annotations=0
+  ep_param 3 type=float name=fade_val property=0 const=0 uniform=1 texture=0 array_count=0 annotations=0
+  ep_struct 0 name=VertData vars=2
+    var type=float2 name=uv mapping="TEXCOORD0" var_type=IN
+    var type=float4 name=pos mapping="POSITION" var_type=IN
+  ep_struct 1 name=FragData vars=1
+    var type=float2 name=uv mapping="TEXCOORD0" var_type=IN
+  ep_func 0 name=VSDefault ret=VertData mapping=@null params=1
+    var type=VertData name=v_in mapping=@null var_type=IN
+    struct_deps=["VertData","VertData","VertData"] func_deps=[] param_deps=["ViewProj"] sampler_deps=[] contents_len=124
+  ep_func 1 name=srgb_nonlinear_to_linear_channel ret=float mapping=@null params=1
+    var type=float name=u mapping=@null var_type=IN
+    struct_deps=[] func_deps=[] param_deps=[] sampler_deps=[] contents_len=86
+  ep_func 2 name=srgb_nonlinear_to_linear ret=float3 mapping=@null params=1
+    var type=float3 name=v mapping=@null var_type=IN
+    struct_deps=[] func_deps=["srgb_nonlinear_to_linear_channel","srgb_nonlinear_to_linear_channel","srgb_nonlinear_to_linear_channel"] param_deps=[] sampler_deps=[] contents_len=136
+  ep_func 3 name=Fade ret=float4 mapping=@null params=1
+    var type=FragData name=f_in mapping=@null var_type=IN
+    struct_deps=["FragData"] func_deps=[] param_deps=["tex_a","tex_b","fade_val"] sampler_deps=["textureSampler","textureSampler"] contents_len=172
+  ep_func 4 name=PSFade ret=float4 mapping="TARGET" params=1
+    var type=FragData name=f_in mapping=@null var_type=IN
+    struct_deps=["FragData"] func_deps=["Fade","srgb_nonlinear_to_linear"] param_deps=[] sampler_deps=[] contents_len=92
+  ep_func 5 name=PSFadeLinear ret=float4 mapping="TARGET" params=1
+    var type=FragData name=f_in mapping=@null var_type=IN
+    struct_deps=["FragData"] func_deps=["Fade"] param_deps=[] sampler_deps=[] contents_len=44
+  ep_func 6 name=FadeSingle ret=float4 mapping=@null params=1
+    var type=FragData name=f_in mapping=@null var_type=IN
+    struct_deps=["FragData"] func_deps=[] param_deps=["tex_a","fade_val"] sampler_deps=["textureSampler"] contents_len=105
+  ep_func 7 name=PSFadeSingle ret=float4 mapping="TARGET" params=1
+    var type=FragData name=f_in mapping=@null var_type=IN
+    struct_deps=["FragData"] func_deps=["FadeSingle"] param_deps=[] sampler_deps=[] contents_len=50
+  ep_sampler 0 name=textureSampler states=3
+    state "Filter" = "Linear"
+    state "AddressU" = "Clamp"
+    state "AddressV" = "Clamp"
+  ep_technique 0 name=Fade passes=1
+    ep_pass 0 name=@null
+      vertex=["VSDefault","(","v_in",")",";"]
+      fragment=["PSFade","(","f_in",")",";"]
+  ep_technique 1 name=FadeLinear passes=1
+    ep_pass 0 name=@null
+      vertex=["VSDefault","(","v_in",")",";"]
+      fragment=["PSFadeLinear","(","f_in",")",";"]
+  ep_technique 2 name=FadeSingle passes=1
+    ep_pass 0 name=@null
+      vertex=["VSDefault","(","v_in",")",";"]
+      fragment=["PSFadeSingle","(","f_in",")",";"]
+  error_string=@null
+effect (effect) params=4 techniques=3 viewproj=ViewProj world=-
+  param 0 name=ViewProj type=MATRIX4X4 annotations=0 default_size=0 default=-
+  param 1 name=tex_a type=TEXTURE annotations=0 default_size=0 default=-
+  param 2 name=tex_b type=TEXTURE annotations=0 default_size=0 default=-
+  param 3 name=fade_val type=FLOAT annotations=0 default_size=0 default=-
+  technique 0 name=Fade passes=1
+    pass 0 name=@null vertex_params=[ViewProj] pixel_params=[tex_a,tex_b,fade_val] vertex=yes pixel=yes
+  technique 1 name=FadeLinear passes=1
+    pass 0 name=@null vertex_params=[ViewProj] pixel_params=[tex_a,tex_b,fade_val] vertex=yes pixel=yes
+  technique 2 name=FadeSingle passes=1
+    pass 0 name=@null vertex_params=[ViewProj] pixel_params=[tex_a,fade_val] vertex=yes pixel=yes
+destroy e cached=1
+=== plugins/obs-transitions/data/luma_wipe_transition.effect
+backend vertexshader_create location="plugins/obs-transitions/data/luma_wipe_transition.effect (Vertex shader, technique LumaWipe, pass 0)" len=317 fnv=b06d11de3e765c86
+  text "uniform float4x4 ViewProj;\n\n\nstruct VertData {\n\tfloat4 pos : POSITION;\n\tfloat2 uv : TEXCOORD0;\n};\n\nVertData VSDefault(VertData v_in)\n{\n\tVertData vert_out;\n\tvert_out.pos = mul(float4(v_in.pos.xyz, 1.0), ViewProj);\n\tvert_out.uv  = v_in.uv;\n\treturn vert_out;\n}\n\nVertData main(VertData v_in)\n{\n\treturn VSDefault(v_in);\n}\n"
+  sparam 0 name=ViewProj type=MATRIX4X4 array=0
+  result ok
+backend pixelshader_create location="plugins/obs-transitions/data/luma_wipe_transition.effect (Pixel shader, technique LumaWipe, pass 0)" len=907 fnv=1757e67147c18465
+  text "uniform texture2d a_tex;\nuniform texture2d b_tex;\nuniform texture2d l_tex;\nuniform bool invert;\nuniform float softness;\nuniform float progress;\n\n\nsampler_state textureSampler {\n\tFilter = Linear;\n\n\tAddressU = Clamp;\n\n\tAddressV = Clamp;\n\n};\n\n\n\nstruct VertData {\n\tfloat4 pos : POSITION;\n\tfloat2 uv : TEXCOORD0;\n};\n\nfloat4 PSLumaWipe(VertData v_in)\n{\n\tfloat2 uv = v_in.uv;\n\tfloat4 a_color = a_tex.Sample(textureSampler, uv);\n\tfloat4 b_color = b_tex.Sample(textureSampler, uv);\n\tfloat luma     = l_tex.Sample(textureSampler, uv).x;\n\n\tif (invert)\n\t\tluma = 1.0f - luma;\n\n\tfloat time = lerp(0.0f, 1.0f + softness, progress);\n\n\tfloat4 rgba;\n\tif (luma <= time - softness) {\n\t\trgba = b_color;\n\t} else if (luma >= time) {\n\t\trgba = a_color;\n\t} else {\n\t\tfloat alpha = (time - luma) / softness;\n\t\trgba = lerp(a_color, b_color, alpha);\n\t}\n\n\treturn rgba;\n}\n\nfloat4 main(VertData v_in) : TARGET\n{\n\treturn PSLumaWipe(v_in);\n}\n"
+  sparam 0 name=a_tex type=TEXTURE array=0
+  sparam 1 name=b_tex type=TEXTURE array=0
+  sparam 2 name=l_tex type=TEXTURE array=0
+  sparam 3 name=invert type=BOOL array=0
+  sparam 4 name=softness type=FLOAT array=0
+  sparam 5 name=progress type=FLOAT array=0
+  result ok
+effect e result=ok
+  error_string=@null
+effect e params=7 techniques=1 viewproj=ViewProj world=-
+  param 0 name=ViewProj type=MATRIX4X4 annotations=0 default_size=0 default=-
+  param 1 name=a_tex type=TEXTURE annotations=0 default_size=0 default=-
+  param 2 name=b_tex type=TEXTURE annotations=0 default_size=0 default=-
+  param 3 name=l_tex type=TEXTURE annotations=0 default_size=0 default=-
+  param 4 name=progress type=FLOAT annotations=0 default_size=0 default=-
+  param 5 name=invert type=BOOL annotations=0 default_size=0 default=-
+  param 6 name=softness type=FLOAT annotations=0 default_size=0 default=-
+  technique 0 name=LumaWipe passes=1
+    pass 0 name=@null vertex_params=[ViewProj] pixel_params=[a_tex,b_tex,l_tex,invert,softness,progress] vertex=yes pixel=yes
+backend vertexshader_create location="plugins/obs-transitions/data/luma_wipe_transition.effect (Vertex shader, technique LumaWipe, pass 0)" len=317 fnv=b06d11de3e765c86
+  sparam 0 name=ViewProj type=MATRIX4X4 array=0
+  result ok
+backend pixelshader_create location="plugins/obs-transitions/data/luma_wipe_transition.effect (Pixel shader, technique LumaWipe, pass 0)" len=907 fnv=1757e67147c18465
+  sparam 0 name=a_tex type=TEXTURE array=0
+  sparam 1 name=b_tex type=TEXTURE array=0
+  sparam 2 name=l_tex type=TEXTURE array=0
+  sparam 3 name=invert type=BOOL array=0
+  sparam 4 name=softness type=FLOAT array=0
+  sparam 5 name=progress type=FLOAT array=0
+  result ok
+ep result=ok
+  errors count=0 has_errors=0
+  ep params=7 structs=1 funcs=2 samplers=1 techniques=1
+  ep_param 0 type=float4x4 name=ViewProj property=0 const=0 uniform=1 texture=0 array_count=0 annotations=0
+  ep_param 1 type=texture2d name=a_tex property=0 const=0 uniform=1 texture=1 array_count=0 annotations=0
+  ep_param 2 type=texture2d name=b_tex property=0 const=0 uniform=1 texture=1 array_count=0 annotations=0
+  ep_param 3 type=texture2d name=l_tex property=0 const=0 uniform=1 texture=1 array_count=0 annotations=0
+  ep_param 4 type=float name=progress property=0 const=0 uniform=1 texture=0 array_count=0 annotations=0
+  ep_param 5 type=bool name=invert property=0 const=0 uniform=1 texture=0 array_count=0 annotations=0
+  ep_param 6 type=float name=softness property=0 const=0 uniform=1 texture=0 array_count=0 annotations=0
+  ep_struct 0 name=VertData vars=2
+    var type=float4 name=pos mapping="POSITION" var_type=IN
+    var type=float2 name=uv mapping="TEXCOORD0" var_type=IN
+  ep_func 0 name=VSDefault ret=VertData mapping=@null params=1
+    var type=VertData name=v_in mapping=@null var_type=IN
+    struct_deps=["VertData","VertData","VertData"] func_deps=[] param_deps=["ViewProj"] sampler_deps=[] contents_len=124
+  ep_func 1 name=PSLumaWipe ret=float4 mapping="TARGET" params=1
+    var type=VertData name=v_in mapping=@null var_type=IN
+    struct_deps=["VertData"] func_deps=[] param_deps=["a_tex","b_tex","l_tex","invert","softness","progress","softness","softness"] sampler_deps=["textureSampler","textureSampler","textureSampler"] contents_len=494
+  ep_sampler 0 name=textureSampler states=3
+    state "Filter" = "Linear"
+    state "AddressU" = "Clamp"
+    state "AddressV" = "Clamp"
+  ep_technique 0 name=LumaWipe passes=1
+    ep_pass 0 name=@null
+      vertex=["VSDefault","(","v_in",")",";"]
+      fragment=["PSLumaWipe","(","v_in",")",";"]
+  error_string=@null
+effect (effect) params=7 techniques=1 viewproj=ViewProj world=-
+  param 0 name=ViewProj type=MATRIX4X4 annotations=0 default_size=0 default=-
+  param 1 name=a_tex type=TEXTURE annotations=0 default_size=0 default=-
+  param 2 name=b_tex type=TEXTURE annotations=0 default_size=0 default=-
+  param 3 name=l_tex type=TEXTURE annotations=0 default_size=0 default=-
+  param 4 name=progress type=FLOAT annotations=0 default_size=0 default=-
+  param 5 name=invert type=BOOL annotations=0 default_size=0 default=-
+  param 6 name=softness type=FLOAT annotations=0 default_size=0 default=-
+  technique 0 name=LumaWipe passes=1
+    pass 0 name=@null vertex_params=[ViewProj] pixel_params=[a_tex,b_tex,l_tex,invert,softness,progress] vertex=yes pixel=yes
+destroy e cached=1
+=== plugins/obs-transitions/data/slide_transition.effect
+backend vertexshader_create location="plugins/obs-transitions/data/slide_transition.effect (Vertex shader, technique Slide, pass 0)" len=317 fnv=b06d11de3e765c86
+  text "uniform float4x4 ViewProj;\n\n\nstruct VertData {\n\tfloat4 pos : POSITION;\n\tfloat2 uv : TEXCOORD0;\n};\n\nVertData VSDefault(VertData v_in)\n{\n\tVertData vert_out;\n\tvert_out.pos = mul(float4(v_in.pos.xyz, 1.0), ViewProj);\n\tvert_out.uv  = v_in.uv;\n\treturn vert_out;\n}\n\nVertData main(VertData v_in)\n{\n\treturn VSDefault(v_in);\n}\n"
+  sparam 0 name=ViewProj type=MATRIX4X4 array=0
+  result ok
+backend pixelshader_create location="plugins/obs-transitions/data/slide_transition.effect (Pixel shader, technique Slide, pass 0)" len=675 fnv=3158b6929be2a78c
+  text "uniform float2 tex_a_dir;\nuniform float2 tex_b_dir;\nuniform texture2d tex_b;\nuniform texture2d tex_a;\n\n\nsampler_state textureSampler {\n\tFilter = Linear;\n\n\tAddressU = Clamp;\n\n\tAddressV = Clamp;\n\n};\n\n\nstruct VertData {\n\tfloat4 pos : POSITION;\n\tfloat2 uv : TEXCOORD0;\n};\n\nfloat4 PSSlide(VertData v_in)\n{\n\tfloat2 tex_a_uv = v_in.uv + tex_a_dir;\n\tfloat2 tex_b_uv = v_in.uv - tex_b_dir;\n\tfloat4 outc;\n\n\toutc = (tex_a_uv.x - saturate(tex_a_uv.x) != 0.0) ||\n\t       (tex_a_uv.y - saturate(tex_a_uv.y) != 0.0)\n\t\t   ? tex_b.Sample(textureSampler, tex_b_uv)\n\t\t   : tex_a.Sample(textureSampler, tex_a_uv);\n\n\treturn outc;\n}\n\nfloat4 main(VertData v_in) : TARGET\n{\n\treturn PSSlide(v_in);\n}\n"
+  sparam 0 name=tex_a_dir type=VEC2 array=0
+  sparam 1 name=tex_b_dir type=VEC2 array=0
+  sparam 2 name=tex_b type=TEXTURE array=0
+  sparam 3 name=tex_a type=TEXTURE array=0
+  result ok
+effect e result=ok
+  error_string=@null
+effect e params=5 techniques=1 viewproj=ViewProj world=-
+  param 0 name=ViewProj type=MATRIX4X4 annotations=0 default_size=0 default=-
+  param 1 name=tex_a type=TEXTURE annotations=0 default_size=0 default=-
+  param 2 name=tex_b type=TEXTURE annotations=0 default_size=0 default=-
+  param 3 name=tex_a_dir type=VEC2 annotations=0 default_size=0 default=-
+  param 4 name=tex_b_dir type=VEC2 annotations=0 default_size=0 default=-
+  technique 0 name=Slide passes=1
+    pass 0 name=@null vertex_params=[ViewProj] pixel_params=[tex_a_dir,tex_b_dir,tex_b,tex_a] vertex=yes pixel=yes
+backend vertexshader_create location="plugins/obs-transitions/data/slide_transition.effect (Vertex shader, technique Slide, pass 0)" len=317 fnv=b06d11de3e765c86
+  sparam 0 name=ViewProj type=MATRIX4X4 array=0
+  result ok
+backend pixelshader_create location="plugins/obs-transitions/data/slide_transition.effect (Pixel shader, technique Slide, pass 0)" len=675 fnv=3158b6929be2a78c
+  sparam 0 name=tex_a_dir type=VEC2 array=0
+  sparam 1 name=tex_b_dir type=VEC2 array=0
+  sparam 2 name=tex_b type=TEXTURE array=0
+  sparam 3 name=tex_a type=TEXTURE array=0
+  result ok
+ep result=ok
+  errors count=0 has_errors=0
+  ep params=5 structs=1 funcs=2 samplers=1 techniques=1
+  ep_param 0 type=float4x4 name=ViewProj property=0 const=0 uniform=1 texture=0 array_count=0 annotations=0
+  ep_param 1 type=texture2d name=tex_a property=0 const=0 uniform=1 texture=1 array_count=0 annotations=0
+  ep_param 2 type=texture2d name=tex_b property=0 const=0 uniform=1 texture=1 array_count=0 annotations=0
+  ep_param 3 type=float2 name=tex_a_dir property=0 const=0 uniform=1 texture=0 array_count=0 annotations=0
+  ep_param 4 type=float2 name=tex_b_dir property=0 const=0 uniform=1 texture=0 array_count=0 annotations=0
+  ep_struct 0 name=VertData vars=2
+    var type=float4 name=pos mapping="POSITION" var_type=IN
+    var type=float2 name=uv mapping="TEXCOORD0" var_type=IN
+  ep_func 0 name=VSDefault ret=VertData mapping=@null params=1
+    var type=VertData name=v_in mapping=@null var_type=IN
+    struct_deps=["VertData","VertData","VertData"] func_deps=[] param_deps=["ViewProj"] sampler_deps=[] contents_len=124
+  ep_func 1 name=PSSlide ret=float4 mapping="TARGET" params=1
+    var type=VertData name=v_in mapping=@null var_type=IN
+    struct_deps=["VertData"] func_deps=[] param_deps=["tex_a_dir","tex_b_dir","tex_b","tex_a"] sampler_deps=["textureSampler","textureSampler"] contents_len=311
+  ep_sampler 0 name=textureSampler states=3
+    state "Filter" = "Linear"
+    state "AddressU" = "Clamp"
+    state "AddressV" = "Clamp"
+  ep_technique 0 name=Slide passes=1
+    ep_pass 0 name=@null
+      vertex=["VSDefault","(","v_in",")",";"]
+      fragment=["PSSlide","(","v_in",")",";"]
+  error_string=@null
+effect (effect) params=5 techniques=1 viewproj=ViewProj world=-
+  param 0 name=ViewProj type=MATRIX4X4 annotations=0 default_size=0 default=-
+  param 1 name=tex_a type=TEXTURE annotations=0 default_size=0 default=-
+  param 2 name=tex_b type=TEXTURE annotations=0 default_size=0 default=-
+  param 3 name=tex_a_dir type=VEC2 annotations=0 default_size=0 default=-
+  param 4 name=tex_b_dir type=VEC2 annotations=0 default_size=0 default=-
+  technique 0 name=Slide passes=1
+    pass 0 name=@null vertex_params=[ViewProj] pixel_params=[tex_a_dir,tex_b_dir,tex_b,tex_a] vertex=yes pixel=yes
+destroy e cached=1
+=== plugins/obs-transitions/data/stinger_matte_transition.effect
+backend vertexshader_create location="plugins/obs-transitions/data/stinger_matte_transition.effect (Vertex shader, technique StingerMatte, pass 0)" len=317 fnv=b06d11de3e765c86
+  text "uniform float4x4 ViewProj;\n\n\nstruct VertData {\n\tfloat4 pos : POSITION;\n\tfloat2 uv : TEXCOORD0;\n};\n\nVertData VSDefault(VertData v_in)\n{\n\tVertData vert_out;\n\tvert_out.pos = mul(float4(v_in.pos.xyz, 1.0), ViewProj);\n\tvert_out.uv  = v_in.uv;\n\treturn vert_out;\n}\n\nVertData main(VertData v_in)\n{\n\treturn VSDefault(v_in);\n}\n"
+  sparam 0 name=ViewProj type=MATRIX4X4 array=0
+  result ok
+backend pixelshader_create location="plugins/obs-transitions/data/stinger_matte_transition.effect (Pixel shader, technique StingerMatte, pass 0)" len=1277 fnv=98c555f8d849afad
+  text "struct VertData {\n\tfloat4 pos : POSITION;\n\tfloat2 uv : TEXCOORD0;\n};\n\nuniform texture2d a_tex;\nuniform texture2d b_tex;\nuniform texture2d matte_tex;\nuniform bool invert_matte;\n\n\nsampler_state textureSampler {\n\tFilter = Linear;\n\n\tAddressU = Clamp;\n\n\tAddressV = Clamp;\n\n};\n\n\n\nfloat4 StingerMatte(VertData f_in)\n{\n\tfloat2 uv = f_in.uv;\n\tfloat4 a_color = a_tex.Sample(textureSampler, uv);\n\tfloat4 b_color = b_tex.Sample(textureSampler, uv);\n\tfloat4 matte_color = matte_tex.Sample(textureSampler, uv);\n\n\t \n\tfloat matte_luma = (\n\t\t(matte_color.x * 0.2126) +\n\t\t(matte_color.y * 0.7152) +\n\t\t(matte_color.z * 0.0722)\n\t);\n\n\t \n\tmatte_luma = (invert_matte ? (1.0 - matte_luma) : matte_luma);\n\n\tfloat4 rgba = lerp(a_color, b_color, matte_luma);\n\treturn rgba;\n}\n\n\nfloat srgb_nonlinear_to_linear_channel(float u)\n{\n\treturn (u <= 0.04045) ? (u / 12.92) : pow(mad(u, 1. / 1.055, .055 / 1.055), 2.4);\n}\n\n\nfloat3 srgb_nonlinear_to_linear(float3 v)\n{\n\treturn float3(srgb_nonlinear_to_linear_channel(v.r), srgb_nonlinear_to_linear_channel(v.g), srgb_nonlinear_to_linear_channel(v.b));\n}\n\n\nfloat4 PSStingerMatte(VertData f_in)\n{\n\tfloat4 rgba = StingerMatte(f_in);\n\trgba.rgb = srgb_nonlinear_to_linear(rgba.rgb);\n\treturn rgba;\n}\n\nfloat4 main(VertData f_in) : TARGET\n{\n\treturn PSStingerMatte(f_in);\n}\n"
+  sparam 0 name=a_tex type=TEXTURE array=0
+  sparam 1 name=b_tex type=TEXTURE array=0
+  sparam 2 name=matte_tex type=TEXTURE array=0
+  sparam 3 name=invert_matte type=BOOL array=0
+  result ok
+backend vertexshader_create location="plugins/obs-transitions/data/stinger_matte_transition.effect (Vertex shader, technique StingerMatteLinear, pass 0)" len=317 fnv=b06d11de3e765c86
+  text "uniform float4x4 ViewProj;\n\n\nstruct VertData {\n\tfloat4 pos : POSITION;\n\tfloat2 uv : TEXCOORD0;\n};\n\nVertData VSDefault(VertData v_in)\n{\n\tVertData vert_out;\n\tvert_out.pos = mul(float4(v_in.pos.xyz, 1.0), ViewProj);\n\tvert_out.uv  = v_in.uv;\n\treturn vert_out;\n}\n\nVertData main(VertData v_in)\n{\n\treturn VSDefault(v_in);\n}\n"
+  sparam 0 name=ViewProj type=MATRIX4X4 array=0
+  result ok
+backend pixelshader_create location="plugins/obs-transitions/data/stinger_matte_transition.effect (Pixel shader, technique StingerMatteLinear, pass 0)" len=923 fnv=08f5c9235ab73206
+  text "struct VertData {\n\tfloat4 pos : POSITION;\n\tfloat2 uv : TEXCOORD0;\n};\n\nuniform texture2d a_tex;\nuniform texture2d b_tex;\nuniform texture2d matte_tex;\nuniform bool invert_matte;\n\n\nsampler_state textureSampler {\n\tFilter = Linear;\n\n\tAddressU = Clamp;\n\n\tAddressV = Clamp;\n\n};\n\n\n\nfloat4 StingerMatte(VertData f_in)\n{\n\tfloat2 uv = f_in.uv;\n\tfloat4 a_color = a_tex.Sample(textureSampler, uv);\n\tfloat4 b_color = b_tex.Sample(textureSampler, uv);\n\tfloat4 matte_color = matte_tex.Sample(textureSampler, uv);\n\n\t \n\tfloat matte_luma = (\n\t\t(matte_color.x * 0.2126) +\n\t\t(matte_color.y * 0.7152) +\n\t\t(matte_color.z * 0.0722)\n\t);\n\n\t \n\tmatte_luma = (invert_matte ? (1.0 - matte_luma) : matte_luma);\n\n\tfloat4 rgba = lerp(a_color, b_color, matte_luma);\n\treturn rgba;\n}\n\n\nfloat4 PSStingerMatteLinear(VertData f_in)\n{\n\tfloat4 rgba = StingerMatte(f_in);\n\treturn rgba;\n}\n\nfloat4 main(VertData f_in) : TARGET\n{\n\treturn PSStingerMatteLinear(f_in);\n}\n"
+  sparam 0 name=a_tex type=TEXTURE array=0
+  sparam 1 name=b_tex type=TEXTURE array=0
+  sparam 2 name=matte_tex type=TEXTURE array=0
+  sparam 3 name=invert_matte type=BOOL array=0
+  result ok
+effect e result=ok
+  error_string=@null
+effect e params=5 techniques=2 viewproj=ViewProj world=-
+  param 0 name=ViewProj type=MATRIX4X4 annotations=0 default_size=0 default=-
+  param 1 name=a_tex type=TEXTURE annotations=0 default_size=0 default=-
+  param 2 name=b_tex type=TEXTURE annotations=0 default_size=0 default=-
+  param 3 name=matte_tex type=TEXTURE annotations=0 default_size=0 default=-
+  param 4 name=invert_matte type=BOOL annotations=0 default_size=0 default=-
+  technique 0 name=StingerMatte passes=1
+    pass 0 name=@null vertex_params=[ViewProj] pixel_params=[a_tex,b_tex,matte_tex,invert_matte] vertex=yes pixel=yes
+  technique 1 name=StingerMatteLinear passes=1
+    pass 0 name=@null vertex_params=[ViewProj] pixel_params=[a_tex,b_tex,matte_tex,invert_matte] vertex=yes pixel=yes
+backend vertexshader_create location="plugins/obs-transitions/data/stinger_matte_transition.effect (Vertex shader, technique StingerMatte, pass 0)" len=317 fnv=b06d11de3e765c86
+  sparam 0 name=ViewProj type=MATRIX4X4 array=0
+  result ok
+backend pixelshader_create location="plugins/obs-transitions/data/stinger_matte_transition.effect (Pixel shader, technique StingerMatte, pass 0)" len=1277 fnv=98c555f8d849afad
+  sparam 0 name=a_tex type=TEXTURE array=0
+  sparam 1 name=b_tex type=TEXTURE array=0
+  sparam 2 name=matte_tex type=TEXTURE array=0
+  sparam 3 name=invert_matte type=BOOL array=0
+  result ok
+backend vertexshader_create location="plugins/obs-transitions/data/stinger_matte_transition.effect (Vertex shader, technique StingerMatteLinear, pass 0)" len=317 fnv=b06d11de3e765c86
+  sparam 0 name=ViewProj type=MATRIX4X4 array=0
+  result ok
+backend pixelshader_create location="plugins/obs-transitions/data/stinger_matte_transition.effect (Pixel shader, technique StingerMatteLinear, pass 0)" len=923 fnv=08f5c9235ab73206
+  sparam 0 name=a_tex type=TEXTURE array=0
+  sparam 1 name=b_tex type=TEXTURE array=0
+  sparam 2 name=matte_tex type=TEXTURE array=0
+  sparam 3 name=invert_matte type=BOOL array=0
+  result ok
+ep result=ok
+  errors count=0 has_errors=0
+  ep params=5 structs=1 funcs=6 samplers=1 techniques=2
+  ep_param 0 type=float4x4 name=ViewProj property=0 const=0 uniform=1 texture=0 array_count=0 annotations=0
+  ep_param 1 type=texture2d name=a_tex property=0 const=0 uniform=1 texture=1 array_count=0 annotations=0
+  ep_param 2 type=texture2d name=b_tex property=0 const=0 uniform=1 texture=1 array_count=0 annotations=0
+  ep_param 3 type=texture2d name=matte_tex property=0 const=0 uniform=1 texture=1 array_count=0 annotations=0
+  ep_param 4 type=bool name=invert_matte property=0 const=0 uniform=1 texture=0 array_count=0 annotations=0
+  ep_struct 0 name=VertData vars=2
+    var type=float4 name=pos mapping="POSITION" var_type=IN
+    var type=float2 name=uv mapping="TEXCOORD0" var_type=IN
+  ep_func 0 name=VSDefault ret=VertData mapping=@null params=1
+    var type=VertData name=v_in mapping=@null var_type=IN
+    struct_deps=["VertData","VertData","VertData"] func_deps=[] param_deps=["ViewProj"] sampler_deps=[] contents_len=124
+  ep_func 1 name=srgb_nonlinear_to_linear_channel ret=float mapping=@null params=1
+    var type=float name=u mapping=@null var_type=IN
+    struct_deps=[] func_deps=[] param_deps=[] sampler_deps=[] contents_len=86
+  ep_func 2 name=srgb_nonlinear_to_linear ret=float3 mapping=@null params=1
+    var type=float3 name=v mapping=@null var_type=IN
+    struct_deps=[] func_deps=["srgb_nonlinear_to_linear_channel","srgb_nonlinear_to_linear_channel","srgb_nonlinear_to_linear_channel"] param_deps=[] sampler_deps=[] contents_len=136
+  ep_func 3 name=StingerMatte ret=float4 mapping=@null params=1
+    var type=VertData name=f_in mapping=@null var_type=IN
+    struct_deps=["VertData"] func_deps=[] param_deps=["a_tex","b_tex","matte_tex","invert_matte"] sampler_deps=["textureSampler","textureSampler","textureSampler"] contents_len=438
+  ep_func 4 name=PSStingerMatte ret=float4 mapping="TARGET" params=1
+    var type=VertData name=f_in mapping=@null var_type=IN
+    struct_deps=["VertData"] func_deps=["StingerMatte","srgb_nonlinear_to_linear"] param_deps=[] sampler_deps=[] contents_len=100
+  ep_func 5 name=PSStingerMatteLinear ret=float4 mapping="TARGET" params=1
+    var type=VertData name=f_in mapping=@null var_type=IN
+    struct_deps=["VertData"] func_deps=["StingerMatte"] param_deps=[] sampler_deps=[] contents_len=52
+  ep_sampler 0 name=textureSampler states=3
+    state "Filter" = "Linear"
+    state "AddressU" = "Clamp"
+    state "AddressV" = "Clamp"
+  ep_technique 0 name=StingerMatte passes=1
+    ep_pass 0 name=@null
+      vertex=["VSDefault","(","v_in",")",";"]
+      fragment=["PSStingerMatte","(","f_in",")",";"]
+  ep_technique 1 name=StingerMatteLinear passes=1
+    ep_pass 0 name=@null
+      vertex=["VSDefault","(","v_in",")",";"]
+      fragment=["PSStingerMatteLinear","(","f_in",")",";"]
+  error_string=@null
+effect (effect) params=5 techniques=2 viewproj=ViewProj world=-
+  param 0 name=ViewProj type=MATRIX4X4 annotations=0 default_size=0 default=-
+  param 1 name=a_tex type=TEXTURE annotations=0 default_size=0 default=-
+  param 2 name=b_tex type=TEXTURE annotations=0 default_size=0 default=-
+  param 3 name=matte_tex type=TEXTURE annotations=0 default_size=0 default=-
+  param 4 name=invert_matte type=BOOL annotations=0 default_size=0 default=-
+  technique 0 name=StingerMatte passes=1
+    pass 0 name=@null vertex_params=[ViewProj] pixel_params=[a_tex,b_tex,matte_tex,invert_matte] vertex=yes pixel=yes
+  technique 1 name=StingerMatteLinear passes=1
+    pass 0 name=@null vertex_params=[ViewProj] pixel_params=[a_tex,b_tex,matte_tex,invert_matte] vertex=yes pixel=yes
+destroy e cached=1
+=== plugins/obs-transitions/data/swipe_transition.effect
+backend vertexshader_create location="plugins/obs-transitions/data/swipe_transition.effect (Vertex shader, technique Swipe, pass 0)" len=317 fnv=b06d11de3e765c86
+  text "uniform float4x4 ViewProj;\n\n\nstruct VertData {\n\tfloat4 pos : POSITION;\n\tfloat2 uv : TEXCOORD0;\n};\n\nVertData VSDefault(VertData v_in)\n{\n\tVertData vert_out;\n\tvert_out.pos = mul(float4(v_in.pos.xyz, 1.0), ViewProj);\n\tvert_out.uv  = v_in.uv;\n\treturn vert_out;\n}\n\nVertData main(VertData v_in)\n{\n\treturn VSDefault(v_in);\n}\n"
+  sparam 0 name=ViewProj type=MATRIX4X4 array=0
+  result ok
+backend pixelshader_create location="plugins/obs-transitions/data/swipe_transition.effect (Pixel shader, technique Swipe, pass 0)" len=608 fnv=9a43d9d4a9e51107
+  text "uniform float2 swipe_val;\nuniform texture2d tex_b;\nuniform texture2d tex_a;\n\n\nsampler_state textureSampler {\n\tFilter = Linear;\n\n\tAddressU = Clamp;\n\n\tAddressV = Clamp;\n\n};\n\n\nstruct VertData {\n\tfloat4 pos : POSITION;\n\tfloat2 uv : TEXCOORD0;\n};\n\nfloat4 PSSwipe(VertData v_in)\n{\n\tfloat2 swipe_uv = v_in.uv + swipe_val;\n\tfloat4 outc;\n\n\toutc = (swipe_uv.x - saturate(swipe_uv.x) != 0.0) ||\n\t       (swipe_uv.y - saturate(swipe_uv.y) != 0.0)\n\t\t   ? tex_b.Sample(textureSampler, v_in.uv)\n\t\t   : tex_a.Sample(textureSampler, swipe_uv);\n\n\treturn outc;\n}\n\nfloat4 main(VertData v_in) : TARGET\n{\n\treturn PSSwipe(v_in);\n}\n"
+  sparam 0 name=swipe_val type=VEC2 array=0
+  sparam 1 name=tex_b type=TEXTURE array=0
+  sparam 2 name=tex_a type=TEXTURE array=0
+  result ok
+effect e result=ok
+  error_string=@null
+effect e params=4 techniques=1 viewproj=ViewProj world=-
+  param 0 name=ViewProj type=MATRIX4X4 annotations=0 default_size=0 default=-
+  param 1 name=tex_a type=TEXTURE annotations=0 default_size=0 default=-
+  param 2 name=tex_b type=TEXTURE annotations=0 default_size=0 default=-
+  param 3 name=swipe_val type=VEC2 annotations=0 default_size=0 default=-
+  technique 0 name=Swipe passes=1
+    pass 0 name=@null vertex_params=[ViewProj] pixel_params=[swipe_val,tex_b,tex_a] vertex=yes pixel=yes
+backend vertexshader_create location="plugins/obs-transitions/data/swipe_transition.effect (Vertex shader, technique Swipe, pass 0)" len=317 fnv=b06d11de3e765c86
+  sparam 0 name=ViewProj type=MATRIX4X4 array=0
+  result ok
+backend pixelshader_create location="plugins/obs-transitions/data/swipe_transition.effect (Pixel shader, technique Swipe, pass 0)" len=608 fnv=9a43d9d4a9e51107
+  sparam 0 name=swipe_val type=VEC2 array=0
+  sparam 1 name=tex_b type=TEXTURE array=0
+  sparam 2 name=tex_a type=TEXTURE array=0
+  result ok
+ep result=ok
+  errors count=0 has_errors=0
+  ep params=4 structs=1 funcs=2 samplers=1 techniques=1
+  ep_param 0 type=float4x4 name=ViewProj property=0 const=0 uniform=1 texture=0 array_count=0 annotations=0
+  ep_param 1 type=texture2d name=tex_a property=0 const=0 uniform=1 texture=1 array_count=0 annotations=0
+  ep_param 2 type=texture2d name=tex_b property=0 const=0 uniform=1 texture=1 array_count=0 annotations=0
+  ep_param 3 type=float2 name=swipe_val property=0 const=0 uniform=1 texture=0 array_count=0 annotations=0
+  ep_struct 0 name=VertData vars=2
+    var type=float4 name=pos mapping="POSITION" var_type=IN
+    var type=float2 name=uv mapping="TEXCOORD0" var_type=IN
+  ep_func 0 name=VSDefault ret=VertData mapping=@null params=1
+    var type=VertData name=v_in mapping=@null var_type=IN
+    struct_deps=["VertData","VertData","VertData"] func_deps=[] param_deps=["ViewProj"] sampler_deps=[] contents_len=124
+  ep_func 1 name=PSSwipe ret=float4 mapping="TARGET" params=1
+    var type=VertData name=v_in mapping=@null var_type=IN
+    struct_deps=["VertData"] func_deps=[] param_deps=["swipe_val","tex_b","tex_a"] sampler_deps=["textureSampler","textureSampler"] contents_len=270
+  ep_sampler 0 name=textureSampler states=3
+    state "Filter" = "Linear"
+    state "AddressU" = "Clamp"
+    state "AddressV" = "Clamp"
+  ep_technique 0 name=Swipe passes=1
+    ep_pass 0 name=@null
+      vertex=["VSDefault","(","v_in",")",";"]
+      fragment=["PSSwipe","(","v_in",")",";"]
+  error_string=@null
+effect (effect) params=4 techniques=1 viewproj=ViewProj world=-
+  param 0 name=ViewProj type=MATRIX4X4 annotations=0 default_size=0 default=-
+  param 1 name=tex_a type=TEXTURE annotations=0 default_size=0 default=-
+  param 2 name=tex_b type=TEXTURE annotations=0 default_size=0 default=-
+  param 3 name=swipe_val type=VEC2 annotations=0 default_size=0 default=-
+  technique 0 name=Swipe passes=1
+    pass 0 name=@null vertex_params=[ViewProj] pixel_params=[swipe_val,tex_b,tex_a] vertex=yes pixel=yes
+destroy e cached=1

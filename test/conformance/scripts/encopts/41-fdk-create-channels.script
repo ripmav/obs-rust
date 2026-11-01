@@ -1,0 +1,28 @@
+# CORE. libfdk create: channel count -> MPEG channel mode (1 MODE_1=1, 2 MODE_2=2, 3 MODE_1_2=3,
+# 4 MODE_1_2_1=4, 5 MODE_1_2_2=5, 6 MODE_1_2_2_1=6, 8 MODE_7_1_REAR_SURROUND=33); 7 and other
+# counts fail with "Invalid channel count" before the library is opened. The fake library prints
+# every call in order: Open, SetParam xN, a null-encode init call, Info, Close at destroy.
+# packet buffer = max(8192, channels*768); frame_size_bytes = frameLength*2*channels (16 bit).
+data D
+fdk_defaults D
+audio 1 1 48000
+fdk_create D
+audio 2 2 44100
+fdk_create D
+audio 3 3 48000
+fdk_create D
+audio 4 4 48000
+fdk_create D
+audio 5 5 48000
+fdk_create D
+audio 6 6 48000
+fdk_create D
+echo seven-channels-invalid
+audio 7 7 48000
+fdk_create D
+audio 8 8 48000
+fdk_create D
+echo nine-channels-invalid
+audio 9 8 48000
+fdk_create D
+audio 2 2 48000

@@ -1,0 +1,40 @@
+# S-022 timescales. Video: timescale = fps numerator, one frame = fps_den ticks, so the packets of a
+# 30000/1001 stream carry pts/dts in steps of 1001 (the encoder_packet timebase_num is ignored by the muxer:
+# time in microseconds is pts*1e6/timebase_den). Audio: timescale = encoder sample rate (Opus: 48000).
+# Millisecond values (mvhd/tkhd/elst) are truncated: 3 frames of 1001/30000 s = 100.1 ms -> 100.
+# The 'fps 24000/1001' case also checks that fragmenting uses microseconds: keyframe at pts 6006
+# (250.25 ms).
+enc v video codec h264 width 640 height 360 fps 30000/1001 extra 000000016742c01ed900a047fe880000000168ce3c80
+mux mp4
+pkt v 0 0 1 gen:10
+pkt v 1001 1001 0 gen:11
+pkt v 2002 2002 0 gen:12
+finalise
+dump
+reset
+enc v video codec h264 width 640 height 360 fps 24000/1001 extra 000000016742c01ed900a047fe880000000168ce3c80
+enc a audio codec aac rate 44100 extra 1210
+mux mp4
+pkt v 0 0 1 gen:10
+pkt a 0 0 1 gen:10
+pkt v 1001 1001 0 gen:10
+pkt v 2002 2002 0 gen:10
+pkt v 3003 3003 0 gen:10
+pkt v 4004 4004 0 gen:10
+pkt v 5005 5005 0 gen:10
+pkt v 6006 6006 1 gen:10
+pkt a 1024 1024 1 gen:10
+pkt a 2048 2048 1 gen:10
+pkt a 3072 3072 1 gen:10
+pkt a 4096 4096 1 gen:10
+pkt a 5120 5120 1 gen:10
+pkt a 6144 6144 1 gen:10
+pkt a 7168 7168 1 gen:10
+pkt a 8192 8192 1 gen:10
+pkt a 9216 9216 1 gen:10
+pkt a 10240 10240 1 gen:10
+pkt a 11264 11264 1 gen:10
+pkt v 7007 7007 0 gen:10
+pkt v 8008 8008 0 gen:10
+finalise
+dump

@@ -1,0 +1,30 @@
+# S-021 flv_packet_metadata: the Enhanced-RTMP "metadata" video packet (packet type 4) carrying
+# colour information as AMF0: string "colorInfo" followed by an object:
+#   colorInfo { colorConfig { bitDepth, colorPrimaries, transferCharacteristics,
+#                             matrixCoefficients }, [hdrMdcv { maxLuminance, minLuminance }] }
+# hdrMdcv is present only when max_luminance != 0. All values are AMF numbers.
+# Tag: 09 | datasize | timestamp 0 | streamid 0 | 0x84 (ExHeader | type 4; no frame type bits) |
+#      FourCC | AMF payload | prevsize. Multitrack (idx > 0): 0x86 | (0x00|4) | FourCC | trackId | payload.
+# Arguments: CODEC IDX BITS_PER_RAW_SAMPLE COLOR_PRIMARIES(u8) TRC SPACE MIN_LUM MAX_LUM
+echo sdr-8-bit-bt709
+ex_metadata h264 0 8 1 1 1 0 0
+ex_metadata hevc 0 8 1 1 1 0 0
+ex_metadata av1 0 8 1 1 1 0 0
+echo hdr10-pq-bt2020
+ex_metadata hevc 0 10 9 16 9 1 1000
+ex_metadata av1 0 10 9 16 9 50 10000
+echo hlg
+ex_metadata hevc 0 10 9 18 9 0 1000
+echo min-luminance-without-max-is-dropped
+ex_metadata hevc 0 10 9 16 9 5 0
+echo zero-and-negative-values
+ex_metadata hevc 0 0 0 0 0 0 0
+ex_metadata hevc 0 -1 255 -1 -1 -7 -9
+ex_metadata hevc 0 12 2 2147483647 -2147483648 2147483647 2147483647
+echo color-primaries-255
+ex_metadata hevc 0 10 255 16 9 0 1000
+echo multitrack
+ex_metadata hevc 1 10 9 16 9 1 1000
+ex_metadata av1 2 8 1 1 1 0 0
+ex_metadata h264 255 8 1 1 1 0 0
+ex_metadata h264 256 8 1 1 1 0 0

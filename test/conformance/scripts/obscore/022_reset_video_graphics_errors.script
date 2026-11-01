@@ -1,0 +1,50 @@
+# Mapping of graphics-device creation errors to obs_reset_video results, and failure of the
+# built-in effect/texture setup. On any failure the graphics context is destroyed again so the next
+# attempt starts from scratch (graphics=no). Counts: report gs_live = live fake graphics objects.
+startup en-US -
+trace gs on
+fake gs_error module_not_found
+reset_video
+fake gs_error not_supported
+reset_video
+fake gs_error fail
+reset_video
+fake gs_error -42
+reset_video
+fake gs_error success
+trace gs off
+state
+report
+# a required effect fails to load -> generic failure; every effect is still attempted (order shown)
+trace gs on
+fake effect_fail solid.effect
+reset_video
+trace gs off
+report
+state
+fake effect_fail_clear 1
+# each required effect, one at a time (default, opaque, solid, format_conversion, premultiplied_alpha)
+fake effect_fail default.effect
+reset_video
+fake effect_fail_clear 1
+fake effect_fail opaque.effect
+reset_video
+fake effect_fail_clear 1
+fake effect_fail format_conversion.effect
+reset_video
+fake effect_fail_clear 1
+fake effect_fail premultiplied_alpha.effect
+reset_video
+fake effect_fail_clear 1
+# the transparent 2x2 texture is the first texture created
+fake tex_fail_at 1
+reset_video
+fake tex_fail_at 0
+state
+# the data directory is not found at all: no effect can be loaded
+fake data_found 0
+reset_video
+fake data_found 1
+state
+report
+shutdown

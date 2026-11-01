@@ -1,0 +1,106 @@
+> events off
+> reset
+> ascii 5 8 0 8 384
+> font Sans Serif - 0 p/sans
+> load
+load -> 1
+registered id=text_ft2_source version=0
+registered id=text_ft2_source version=2
+> create s 2
+create s -> 1
+> setfont s Sans Serif - 20 0
+> set s from_file true
+> file a.txt hello
+world
+
+> sets s text_file @TMP@/a.txt
+> update s
+update done
+> state s
+state s font="Sans Serif" style="" size=20 flags=0 face=1 from_file=1 aa=1
+state s outline=0 shadow=0 outline_width=0 word_wrap=0 custom_width=0 log_mode=0 log_lines=6 color=ffffffff,ffffffff
+state s cx=30 cy=24 max_h=10 texbuf=560,0 tex=1 vbuf=1 effect=1
+state s file="/a.txt" load_failed=0 update_file=0 mtime=0 last_checked_ms=0
+state s text="hello\nworld\n"
+> echo --- bytes after the first NUL are dropped
+--- bytes after the first NUL are dropped
+> filehex nul.txt 6162630064
+> sets s text_file @TMP@/nul.txt
+> update s
+update done
+> state s
+state s font="Sans Serif" style="" size=20 flags=0 face=1 from_file=1 aa=1
+state s outline=0 shadow=0 outline_width=0 word_wrap=0 custom_width=0 log_mode=0 log_lines=6 color=ffffffff,ffffffff
+state s cx=18 cy=10 max_h=10 texbuf=560,0 tex=1 vbuf=1 effect=1
+state s file="/nul.txt" load_failed=0 update_file=0 mtime=0 last_checked_ms=0
+state s text="abc"
+> echo --- UTF-8 multi-byte
+--- UTF-8 multi-byte
+> file u.txt aé☃z
+> sets s text_file @TMP@/u.txt
+> update s
+update done
+> state s
+state s font="Sans Serif" style="" size=20 flags=0 face=1 from_file=1 aa=1
+state s outline=0 shadow=0 outline_width=0 word_wrap=0 custom_width=0 log_mode=0 log_lines=6 color=ffffffff,ffffffff
+state s cx=28 cy=10 max_h=10 texbuf=560,0 tex=1 vbuf=1 effect=1
+state s file="/u.txt" load_failed=0 update_file=0 mtime=0 last_checked_ms=0
+state s text="a\u{E9}\u{2603}z"
+> echo --- UTF-8 byte order mark is NOT stripped
+--- UTF-8 byte order mark is NOT stripped
+> filehex bom.txt efbbbf6162
+> sets s text_file @TMP@/bom.txt
+> update s
+update done
+> state s
+state s font="Sans Serif" style="" size=20 flags=0 face=1 from_file=1 aa=1
+state s outline=0 shadow=0 outline_width=0 word_wrap=0 custom_width=0 log_mode=0 log_lines=6 color=ffffffff,ffffffff
+state s cx=20 cy=10 max_h=10 texbuf=560,0 tex=1 vbuf=1 effect=1
+state s file="/bom.txt" load_failed=0 update_file=0 mtime=0 last_checked_ms=0
+state s text="\u{FEFF}ab"
+> echo --- empty file
+--- empty file
+> file e.txt 
+> sets s text_file @TMP@/e.txt
+> update s
+update done
+> state s
+state s font="Sans Serif" style="" size=20 flags=0 face=1 from_file=1 aa=1
+state s outline=0 shadow=0 outline_width=0 word_wrap=0 custom_width=0 log_mode=0 log_lines=6 color=ffffffff,ffffffff
+state s cx=0 cy=10 max_h=10 texbuf=560,0 tex=1 vbuf=0 effect=1
+state s file="/e.txt" load_failed=0 update_file=0 mtime=0 last_checked_ms=0
+state s text=""
+> echo --- invalid UTF-8
+--- invalid UTF-8
+> filehex bad.txt 61ff62c362
+> sets s text_file @TMP@/bad.txt
+> update s
+update done
+> state s
+state s font="Sans Serif" style="" size=20 flags=0 face=1 from_file=1 aa=1
+state s outline=0 shadow=0 outline_width=0 word_wrap=0 custom_width=0 log_mode=0 log_lines=6 color=ffffffff,ffffffff
+state s cx=0 cy=10 max_h=10 texbuf=560,0 tex=1 vbuf=0 effect=1
+state s file="/bad.txt" load_failed=0 update_file=0 mtime=0 last_checked_ms=0
+state s text=""
+> echo --- missing file and empty path: text becomes one space, warning logged, text_file name kept
+--- missing file and empty path: text becomes one space, warning logged, text_file name kept
+> sets s text_file @TMP@/nope.txt
+> update s
+log warning FT2-text: Failed to open $TMP/nope.txt for reading
+update done
+> state s
+state s font="Sans Serif" style="" size=20 flags=0 face=1 from_file=1 aa=1
+state s outline=0 shadow=0 outline_width=0 word_wrap=0 custom_width=0 log_mode=0 log_lines=6 color=ffffffff,ffffffff
+state s cx=6 cy=10 max_h=10 texbuf=560,0 tex=1 vbuf=1 effect=1
+state s file="/bad.txt" load_failed=0 update_file=0 mtime=0 last_checked_ms=0
+state s text=" "
+> sets s text_file 
+> update s
+log warning FT2-text: Failed to open  for reading
+update done
+> state s
+state s font="Sans Serif" style="" size=20 flags=0 face=1 from_file=1 aa=1
+state s outline=0 shadow=0 outline_width=0 word_wrap=0 custom_width=0 log_mode=0 log_lines=6 color=ffffffff,ffffffff
+state s cx=6 cy=10 max_h=10 texbuf=560,0 tex=1 vbuf=1 effect=1
+state s file="/bad.txt" load_failed=0 update_file=0 mtime=0 last_checked_ms=0
+state s text=" "

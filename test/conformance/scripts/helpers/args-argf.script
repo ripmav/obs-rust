@@ -1,0 +1,11 @@
+# os_process_args_add_argf: printf-style formatting appends ONE argument (CORE).
+args_create 0 prog
+args_addf_int 0 "--width=%d" 1920
+args_addf_int 0 "--height=%d" -1080
+args_addf_str 0 "--name=%s" "my stream"
+args_addf_int 0 "%05d" 42
+args_addf_int 0 "%x" 255
+args_addf_plain 0 "100%% literal is not applied to the argument"
+args_addf_int 0 "literal-only" 0
+args_dump 0
+args_destroy 0

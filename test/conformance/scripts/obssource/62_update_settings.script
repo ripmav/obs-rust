@@ -1,0 +1,28 @@
+# obs_source_update: the settings are merged into the source's settings; for VIDEO sources the plug-in update
+# callback is deferred to the next video tick (counted in defer_update_count); other sources update at once.
+# The "update" signals fire only when the callback ran.  reset_settings clears first.  Default values from
+# get_defaults are visible through get_setting.
+kind vid input video update,defaults
+kind aud input audio update,defaults
+create v vid V
+create a aud A
+watch v
+watch a
+get_setting v dflt
+update v x 1
+deferred v
+get_setting v x
+tick v 0.01
+deferred v
+update v x 2
+update v x 3
+deferred v
+tick v 0.01
+deferred v
+update a x 1
+deferred a
+get_setting a x
+reset_settings a
+get_setting a x
+get_setting a dflt
+update_props a

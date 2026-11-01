@@ -1,0 +1,47 @@
+# CORE. Pixel format -> x264 csp (NV12 4... see spec), colorspace -> VUI prim/transfer/matrix
+# indices (looked up by NAME in x264's tables), range -> fullrange flag.
+# The format comes from the encoder's preferred format when valid (NV12/I420/I444), else from
+# the video output format when valid, else NV12.
+data D
+x264_defaults D
+echo format-NV12
+x264_settings D
+echo format-I420
+video I420 709 partial 60 1 1920 1080
+x264_settings D
+echo format-I444
+video I444 709 partial 60 1 1920 1080
+x264_settings D
+echo format-other-falls-back-to-NV12
+video BGRA 709 partial 60 1 1920 1080
+x264_settings D
+echo colorspace-601
+video NV12 601 partial 60 1 1920 1080
+x264_settings D
+echo colorspace-srgb-and-full-range
+video NV12 srgb full 60 1 1920 1080
+x264_settings D
+echo colorspace-default
+video NV12 default partial 60 1 1920 1080
+x264_settings D
+echo colorspace-pq-and-hlg-keep-709-defaults
+video NV12 pq partial 60 1 1920 1080
+x264_settings D
+video NV12 hlg full 60 1 1920 1080
+x264_settings D
+echo preferred-format-overrides-output-format
+video NV12 709 partial 60 1 1920 1080
+pref_format I420
+x264_settings D
+pref_format P010
+x264_settings D
+echo video-info-callback
+pref_format none
+x264_video_info NV12
+x264_video_info I444
+x264_video_info I010
+x264_video_info BGRA
+pref_format I444
+x264_video_info NV12
+pref_format P010
+x264_video_info I420

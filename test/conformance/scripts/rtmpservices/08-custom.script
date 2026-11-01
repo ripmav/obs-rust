@@ -1,0 +1,83 @@
+# S-026 rtmp_custom service: settings copy, auth gating, protocol detection by URL scheme (prefix match,
+# case-sensitive), apply_encoder_settings (non-RTMP -> repeat_headers, SRT/RIST -> set_to_ADTS).
+settings S {"server":"rtmp://h/app","key":"k","use_auth":true,"username":"u","password":"p"}
+new C rtmp_custom S
+all C
+echo auth-off-hides-credentials
+set S use_auth bool 0
+update C S
+get C user pass connect:4 connect:6 url key
+echo empty-settings
+settings E {}
+update C E
+get C url key user pass protocol can_connect
+echo can-connect-only-needs-a-server
+settings S {"server":"x"}
+update C S
+get C can_connect protocol
+echo protocol-detection
+settings S {"server":"rtmps://h"}
+update C S
+get C protocol
+settings S {"server":"srt://h:1"}
+update C S
+get C protocol
+settings S {"server":"rist://h:1"}
+update C S
+get C protocol
+settings S {"server":"RTMPS://h"}
+update C S
+get C protocol
+settings S {"server":"rtmp://h"}
+update C S
+get C protocol
+settings S {"server":"http://h"}
+update C S
+get C protocol
+settings S {"server":"rtmps:/h"}
+update C S
+get C protocol
+echo passphrase-SRT-is-password-RIST-is-key
+settings S {"server":"srt://h:1","key":"streamid","use_auth":true,"password":"pw"}
+update C S
+get C connect:8 connect:2
+settings S {"server":"rist://h:1","key":"ristkey","use_auth":true,"password":"pw"}
+update C S
+get C connect:8
+settings S {"server":"srt://h:1","key":"streamid","use_auth":false,"password":"pw"}
+update C S
+get C connect:8
+settings S {"server":"rtmp://h","key":"k"}
+update C S
+get C connect:8 connect:10 connect:5
+echo apply-RTMP
+settings V {}
+settings AU {}
+apply C V AU
+echo apply-RTMPS
+settings S {"server":"rtmps://h"}
+update C S
+apply C V AU
+echo apply-SRT
+settings S {"server":"srt://h"}
+update C S
+apply C V AU
+echo apply-RIST-video-only-and-audio-only
+settings S {"server":"rist://h"}
+update C S
+settings V {}
+settings AU {}
+apply C V -
+apply C - AU
+echo unsupported-optional-callbacks-are-absent
+get C resolutions maxfps maxbitrate vcodecs acodecs
+echo properties-use_auth-toggles-username-password-visibility
+settings S {"server":"rtmp://h","use_auth":false}
+update C S
+props P C S
+set S use_auth bool 1
+modify P use_auth S
+props-show P
+set S use_auth bool 0
+modify P use_auth S
+props-show P

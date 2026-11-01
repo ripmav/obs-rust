@@ -1,0 +1,5 @@
+# S-050 nvenc: driver_ver "555.0" is the first non-broken one; "1000.1" works too (%d, no padding).
+ini "[general]\nnvenc_supported=true\nnvenc_devices=1\ndriver_ver=555.0\nnvenc_ver=12.2\ncuda_ver=12.0\n[h264]\ncodec_supported=true\n"
+supported
+vinfo
+brokensplit

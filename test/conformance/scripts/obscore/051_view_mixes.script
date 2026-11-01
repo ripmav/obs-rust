@@ -1,0 +1,22 @@
+# Attaching video to a view: obs_view_add copies the MAIN canvas mix settings (fails without main
+# video), obs_view_add2 takes explicit settings (no alignment, no fps override beyond the mix
+# creation rules), the new mix is appended to the core's mix list and owned by the core.
+# obs_view_remove only detaches the view from its mixes (the mixes stay; they render nothing).
+# obs_view_enum_video_info visits the mixes bound to one view in list order.
+startup en-US -
+view_create v
+view_add v
+reset_video fps=60/1 base=1280x720 out=1280x720 fmt=BGRA gpu=0
+view_add v
+view_add v base=640x360 out=320x180 fps=10/1 fmt=BGRA gpu=0
+view_add v base=100x100 out=0x0 fmt=BGRA gpu=0
+view_add2_null v
+mixes
+view_enum v
+view_enum v stop=1
+view_remove v
+mixes
+view_enum v
+view_add v base=1000x1000 out=500x500 fmt=I420 gpu=1
+mixes
+shutdown

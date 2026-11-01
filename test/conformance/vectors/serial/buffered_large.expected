@@ -1,0 +1,21 @@
+open buf ok
+write_pat 300000 0 -> 300000
+seek start 10 -> 10
+write_pat 5 0 -> 5
+seek end 0 -> 15
+log debug Final buffer capacity: 1024 KiB
+file bl-a size=300000 fnv=065e17077392a1ad
+open buf ok
+write_pat 40 0 -> 40
+seek start 38 -> 38
+write_pat 5 9 -> 5
+log debug Final buffer capacity: 1024 KiB
+file bl-b size=43 bytes=0726456483a2c1e0ff1e3d5c7b9ab9d8f71635547392b1d0ef0e2d4c6b8aa9c8e706254463821e3d5c7b9a
+open buf ok
+write_pat 100 0 -> 100
+write_pat 100 100 -> 100
+seek start 50 -> 50
+write_pat 20 7 -> 20
+log debug Final buffer capacity: 1024 KiB
+file bl-c size=200 fnv=280079e6811975c3
+file bl-c size=200 bytes=0726456483a2c1e0ff1e3d5c7b9ab9d8f71635547392b1d0ef0e2d4c6b8aa9c8e70625446382a1c0dffe1d3c5b7a99b8d7f6e0ff1e3d5c7b9ab9d8f71635547392b1d0ef0e2d81a0bfdefd1c3b5a7998b7d6f51433527190afceed0c2b4a6988a7c6e504234261809fbeddfc1b3a597897b6d5f4133251708faecdec0b2a496887a6c5e4032241607f9ebddcfb1a39587796b5d4f31231506f8eadcceb0a29486786a5c4e30221405f7e9dbcdbfa1938577695b4d3f211304f6e8daccbea0928476685a4c3e20120

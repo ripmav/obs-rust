@@ -1,0 +1,9 @@
+a len=11 cap=12 str="n=42 s=text"
+a len=20 cap=24 str="n=42 s=text | 7/more"
+a len=0 cap=0 str=@null
+a len=1 cap=5 str="0"
+a len=2 cap=5 str="-5"
+a len=7 cap=12 str="A-B-C-D"
+a len=4 cap=12 str="A-$2"
+a len=5 cap=12 str="X X Y"
+a len=5 cap=12 str="plain"

@@ -1,0 +1,53 @@
+prop file type=path desc="File" pathtype=0 filter="All formats (*.bmp *.tga *.png *.jpeg *.jpg *.gif *.psd *.webp);;BMP Files (*.bmp);;Targa Files (*.tga);;PNG Files (*.png);;JPEG Files (*.jpeg *.jpg);;GIF Files (*.gif);;PSD Files (*.psd);;WebP Files (*.webp);;All Files (*.*)" default=""
+prop unload type=bool desc="UnloadWhenNotShowing"
+prop linear_alpha type=bool desc="LinearAlpha"
+prop color type=color_alpha desc="ColorSource.Color"
+prop width type=int desc="ColorSource.Width" min=1 max=4096 step=1 suffix=""
+prop height type=int desc="ColorSource.Height" min=1 max=4096 step=1 suffix=""
+prop playback_behavior type=list desc="SlideShow.PlaybackBehavior" combo=2 format=3 count=3
+  item 0 name=SlideShow.PlaybackBehavior.AlwaysPlay value=always_play
+  item 1 name=SlideShow.PlaybackBehavior.StopRestart value=stop_restart
+  item 2 name=SlideShow.PlaybackBehavior.PauseUnpause value=pause_unpause
+prop slide_mode type=list desc="SlideShow.SlideMode" combo=2 format=3 count=2
+  item 0 name=SlideShow.SlideMode.Auto value=mode_auto
+  item 1 name=SlideShow.SlideMode.Manual value=mode_manual
+prop transition type=list desc="SlideShow.Transition" combo=2 format=3 count=4
+  item 0 name=SlideShow.Transition.Cut value=cut
+  item 1 name=SlideShow.Transition.Fade value=fade
+  item 2 name=SlideShow.Transition.Swipe value=swipe
+  item 3 name=SlideShow.Transition.Slide value=slide
+prop slide_time type=int desc="SlideShow.SlideTime" min=50 max=3600000 step=50 suffix=" ms"
+prop transition_speed type=int desc="SlideShow.TransitionSpeed" min=0 max=3600000 step=50 suffix=" ms"
+prop loop type=bool desc="SlideShow.Loop"
+prop hide type=bool desc="SlideShow.HideWhenDone"
+prop randomize type=bool desc="SlideShow.Randomize"
+prop use_custom_size type=list desc="SlideShow.CustomSize" combo=1 format=3 count=6
+  item 0 name=SlideShow.CustomSize.Auto value=SlideShow.CustomSize.Auto
+  item 1 name=16:9 value=16:9
+  item 2 name=16:10 value=16:10
+  item 3 name=4:3 value=4:3
+  item 4 name=1:1 value=1:1
+  item 5 name=1920x1080 value=1920x1080
+prop files type=editable_list desc="SlideShow.Files" listtype=1 filter="Image files (*.bmp *.tga *.png *.jpeg *.jpg *.gif *.webp)" default=""
+prop playback_behavior type=list desc="SlideShow.PlaybackBehavior" combo=2 format=3 count=3
+  item 0 name=SlideShow.PlaybackBehavior.AlwaysPlay value=always_play
+  item 1 name=SlideShow.PlaybackBehavior.StopRestart value=stop_restart
+  item 2 name=SlideShow.PlaybackBehavior.PauseUnpause value=pause_unpause
+prop slide_mode type=list desc="SlideShow.SlideMode" combo=2 format=3 count=2
+  item 0 name=SlideShow.SlideMode.Auto value=mode_auto
+  item 1 name=SlideShow.SlideMode.Manual value=mode_manual
+prop transition type=list desc="SlideShow.Transition" combo=2 format=3 count=4
+  item 0 name=SlideShow.Transition.Cut value=cut
+  item 1 name=SlideShow.Transition.Fade value=fade
+  item 2 name=SlideShow.Transition.Swipe value=swipe
+  item 3 name=SlideShow.Transition.Slide value=slide
+prop slide_time type=int desc="SlideShow.SlideTime" min=50 max=3600000 step=50 suffix=" ms"
+prop transition_speed type=int desc="SlideShow.TransitionSpeed" min=0 max=3600000 step=50 suffix=" ms"
+prop playback_mode type=list desc="SlideShow.PlaybackMode" combo=2 format=3 count=3
+  item 0 name=SlideShow.PlaybackMode.Once value=once
+  item 1 name=SlideShow.PlaybackMode.Loop value=loop
+  item 2 name=SlideShow.PlaybackMode.Random value=random
+prop hide type=bool desc="SlideShow.HideWhenDone"
+prop use_custom_size type=list desc="SlideShow.CustomSize" combo=1 format=3 count=1
+  item 0 name=1920x1080 value=1920x1080
+prop files type=editable_list desc="SlideShow.Files" listtype=1 filter="Image files (*.bmp *.tga *.png *.jpeg *.jpg *.gif *.webp)" default=""

@@ -1,0 +1,132 @@
+> fake-dir video0
+> dev /dev/video0
+> dev-cap Grabber pci-1 0x85200001 0x05200001
+> dev-input Composite 0x4
+> dev-input HDMI 0x2
+> dev-input Both 0x6
+> dev-std PAL-B 0x1
+> dev-std NTSC-M 0xb000
+> dev-dv 1920 1080 148500000 88 44 148 4 5 36 0 0 0 0
+> dev-dv 1920 1080 74250000 88 44 148 2 5 15 2 5 16 1
+> dev-dv 1280 720 74250000 110 40 220 5 5 20 0 0 0 0
+> dev-cur 0 640 480 YUYV 1280 1 30 0
+> src-defaults
+> set-str device_id /dev/video0
+> src-create
+log info v4l2-input: Start capture from /dev/video0
+log info v4l2-input: Input: 0
+log info v4l2-input: Resolution: 640x480
+log info v4l2-input: Pixelformat: YUYV
+log info v4l2-input: Linesize: 1280 Bytes
+log info v4l2-input: Framerate: 30.00 fps
+log info v4l2-input: Compiled without libudev, you can't reconnect devices
+src-create
+state device_id=/dev/video0 input=0 pixfmt=1448695129 standard=0 dv_timing=-1 resolution=2748779069920 framerate=4294967326 color_range=0 auto_reset=0 timeout_frames=5 dev=open width=640 height=480 linesize=1280 buffers=4 res_unch=0 fr_unch=0 thread=1
+> src-props
+log info v4l2-input: Found device 'Grabber' at /dev/video0
+> modified device_id
+log info v4l2-input: Found input 'Composite' (Index 0)
+log info v4l2-input: Found input 'HDMI' (Index 1)
+log info v4l2-input: Found input 'Both' (Index 2)
+modified -> 1
+> set-int input 0
+> modified pixelformat
+modified -> 1
+> props
+prop device_id type=list desc="Device" visible=1 enabled=1 format=string items=1
+  - "Grabber (pci-1)" = "/dev/video0" disabled=0
+prop input type=list desc="Input" visible=1 enabled=1 format=int items=3
+  - "Composite" = 0 disabled=0
+  - "HDMI" = 1 disabled=0
+  - "Both" = 2 disabled=0
+prop pixelformat type=list desc="VideoFormat" visible=1 enabled=1 format=int items=0
+prop standard type=list desc="VideoStandard" visible=1 enabled=1 format=int items=3
+  - "LeaveUnchanged" = -1 disabled=0
+  - "PAL-B" = 1 disabled=0
+  - "NTSC-M" = 45056 disabled=0
+prop dv_timing type=list desc="DVTiming" visible=0 enabled=1 format=int items=0
+prop resolution type=list desc="Resolution" visible=0 enabled=1 format=int items=0
+prop framerate type=list desc="FrameRate" visible=0 enabled=1 format=int items=0
+prop color_range type=list desc="ColorRange" visible=1 enabled=1 format=int items=3
+  - "ColorRange.Default" = 0 disabled=0
+  - "ColorRange.Partial" = 1 disabled=0
+  - "ColorRange.Full" = 2 disabled=0
+prop buffering type=bool desc="UseBuffering" visible=1 enabled=1
+prop auto_reset type=bool desc="AutoresetOnTimeout" visible=1 enabled=1
+prop timeout_frames type=int desc="FramesUntilTimeout" visible=1 enabled=1 min=2 max=120 step=1 slider=0
+prop controls type=group desc="CameraCtrls" visible=1 enabled=1
+> set-int input 1
+> modified pixelformat
+modified -> 1
+> props
+prop device_id type=list desc="Device" visible=1 enabled=1 format=string items=1
+  - "Grabber (pci-1)" = "/dev/video0" disabled=0
+prop input type=list desc="Input" visible=1 enabled=1 format=int items=3
+  - "Composite" = 0 disabled=0
+  - "HDMI" = 1 disabled=0
+  - "Both" = 2 disabled=0
+prop pixelformat type=list desc="VideoFormat" visible=1 enabled=1 format=int items=0
+prop standard type=list desc="VideoStandard" visible=0 enabled=1 format=int items=3
+  - "LeaveUnchanged" = -1 disabled=0
+  - "PAL-B" = 1 disabled=0
+  - "NTSC-M" = 45056 disabled=0
+prop dv_timing type=list desc="DVTiming" visible=1 enabled=1 format=int items=4
+  - "LeaveUnchanged" = -1 disabled=0
+  - "1920x1080p 60.00" = 0 disabled=0
+  - "1920x1080i 60.00" = 1 disabled=0
+  - "1280x720p 60.00" = 2 disabled=0
+prop resolution type=list desc="Resolution" visible=0 enabled=1 format=int items=0
+prop framerate type=list desc="FrameRate" visible=0 enabled=1 format=int items=0
+prop color_range type=list desc="ColorRange" visible=1 enabled=1 format=int items=3
+  - "ColorRange.Default" = 0 disabled=0
+  - "ColorRange.Partial" = 1 disabled=0
+  - "ColorRange.Full" = 2 disabled=0
+prop buffering type=bool desc="UseBuffering" visible=1 enabled=1
+prop auto_reset type=bool desc="AutoresetOnTimeout" visible=1 enabled=1
+prop timeout_frames type=int desc="FramesUntilTimeout" visible=1 enabled=1 min=2 max=120 step=1 slider=0
+prop controls type=group desc="CameraCtrls" visible=1 enabled=1
+> set-int input 2
+> modified pixelformat
+modified -> 1
+> props
+prop device_id type=list desc="Device" visible=1 enabled=1 format=string items=1
+  - "Grabber (pci-1)" = "/dev/video0" disabled=0
+prop input type=list desc="Input" visible=1 enabled=1 format=int items=3
+  - "Composite" = 0 disabled=0
+  - "HDMI" = 1 disabled=0
+  - "Both" = 2 disabled=0
+prop pixelformat type=list desc="VideoFormat" visible=1 enabled=1 format=int items=0
+prop standard type=list desc="VideoStandard" visible=1 enabled=1 format=int items=3
+  - "LeaveUnchanged" = -1 disabled=0
+  - "PAL-B" = 1 disabled=0
+  - "NTSC-M" = 45056 disabled=0
+prop dv_timing type=list desc="DVTiming" visible=1 enabled=1 format=int items=4
+  - "LeaveUnchanged" = -1 disabled=0
+  - "1920x1080p 60.00" = 0 disabled=0
+  - "1920x1080i 60.00" = 1 disabled=0
+  - "1280x720p 60.00" = 2 disabled=0
+prop resolution type=list desc="Resolution" visible=0 enabled=1 format=int items=0
+prop framerate type=list desc="FrameRate" visible=0 enabled=1 format=int items=0
+prop color_range type=list desc="ColorRange" visible=1 enabled=1 format=int items=3
+  - "ColorRange.Default" = 0 disabled=0
+  - "ColorRange.Partial" = 1 disabled=0
+  - "ColorRange.Full" = 2 disabled=0
+prop buffering type=bool desc="UseBuffering" visible=1 enabled=1
+prop auto_reset type=bool desc="AutoresetOnTimeout" visible=1 enabled=1
+prop timeout_frames type=int desc="FramesUntilTimeout" visible=1 enabled=1 min=2 max=120 step=1 slider=0
+prop controls type=group desc="CameraCtrls" visible=1 enabled=1
+> trace on
+> fail ENUMINPUT
+> modified pixelformat
+  | open /dev/video0 -> ok
+  | ioctl ENUMINPUT -> -1 (injected)
+modified -> 0
+> unfail
+> src-destroy
+  | thread join
+  | munmap len=4096
+  | munmap len=4096
+  | munmap len=4096
+  | munmap len=4096
+  | close fd0
+src-destroy

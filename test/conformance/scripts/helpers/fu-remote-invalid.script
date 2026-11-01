@@ -1,0 +1,18 @@
+# A remote package body that does not start with '{' (HTML error page, empty body) is rejected
+# with a warning before any parsing; invalid JSON starting with '{' is rejected after the ETag
+# was saved. A missing "url" field is NOT an error: obs_data_get_string() yields "" so file URLs
+# are formed against the empty base (here the request goes to the bare name "f") (QUIRK).
+# HTTP errors (>= 400) of the package request only log a warning.
+fu_put /L/package.json "{\"version\":1,\"files\":[]}"
+fu_http http://srv/u/package.json 200 "<html>oops</html>"
+fu_run /L /C1/ http://srv/u UA
+fu_http http://srv/u/package.json 200 ""
+fu_run /L /C2/ http://srv/u UA
+fu_http http://srv/u/package.json 200 "{not json" "ETag: \"bad\"\r\n"
+fu_run /L /C3/ http://srv/u UA
+fu_cat /C3/meta.json
+fu_http http://srv/u/package.json 200 "{\"version\":9,\"files\":[{\"name\":\"f\",\"version\":1}]}"
+fu_run /L /C4/ http://srv/u UA
+fu_ls
+fu_http http://srv/u/package.json 500 "server error"
+fu_run /L /C5/ http://srv/u UA

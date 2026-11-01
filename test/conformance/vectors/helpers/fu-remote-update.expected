@@ -1,0 +1,44 @@
+fu_run local=/L cache=/C temp=/C/.temp url=http://srv/updates/package.json
+fs read /L/package.json -> ok
+fs read /C/package.json -> missing
+fs read /C/meta.json -> missing
+fs copy /L/a.json -> /C/.temp/a.json : ok
+fs unlink /C/a.json : fail
+fs rename /C/.temp/a.json -> /C/a.json : ok
+fs copy /L/b.json -> /C/.temp/b.json : ok
+fs unlink /C/b.json : fail
+fs rename /C/.temp/b.json -> /C/b.json : ok
+fs copy /L/package.json -> /C/.temp/package.json : ok
+fs unlink /C/package.json : fail
+fs rename /C/.temp/package.json -> /C/package.json : ok
+http GET http://srv/updates/package.json "User-Agent: UA/1.0"
+fs write /C/.temp/package.json len=138
+http GET http://cdn/files/a.json "User-Agent: UA/1.0"
+confirm name="a.json" version=2 size=10
+fs write /C/.temp/a.json len=9
+fs unlink /C/a.json : ok
+fs rename /C/.temp/a.json -> /C/a.json : ok
+log info [fu] Successfully updated file 'a.json' (version 2)
+http GET http://cdn/files/c.json "User-Agent: UA/1.0"
+confirm name="c.json" version=1 size=10
+fs write /C/.temp/c.json len=9
+fs unlink /C/c.json : fail
+fs rename /C/.temp/c.json -> /C/c.json : ok
+log info [fu] Successfully updated file 'c.json' (version 1)
+fs unlink /C/package.json : ok
+fs rename /C/.temp/package.json -> /C/package.json : ok
+log info [fu] Successfully updated package (version 3)
+fs rmdir /C/.temp
+fu_run done
+fu_ls
+  /C/a.json (9 bytes)
+  /C/b.json (2 bytes)
+  /C/c.json (9 bytes)
+  /C/package.json (138 bytes)
+  /L/a.json (2 bytes)
+  /L/b.json (2 bytes)
+  /L/package.json (83 bytes)
+fu_cat /C/a.json "A2-remote"
+fu_cat /C/b.json "B1"
+fu_cat /C/c.json "C1-remote"
+fu_cat /C/package.json "{\"version\":3,\"url\":\"http://cdn/files\",\"files\":[{\"name\":\"a.json\",\"version\":2},{\"name\":\"b.json\",\"version\":1},{\"name\":\"c.json\",\"version\":1}]}"

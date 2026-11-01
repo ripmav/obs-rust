@@ -1,0 +1,28 @@
+# S-034 registration of frontend hotkeys: sequential ids from 0 (never reused), signals, enumeration
+# order (= registration order), early stop, getters/setters, unregister of known/unknown/invalid ids.
+reg frontend A "Rec.Start" "Start recording"
+reg frontend B "Rec.Stop" "-"
+reg frontend C "Scene.1" "Switch to 1"
+info A
+info B
+enum
+enum 2
+enum 1
+setname B "Rec.Halt"
+setdesc B "Halt recording"
+info B
+# unregister the middle one: ids are not reused
+unreg B
+info B
+reg frontend D "Late" "late"
+enum
+# unknown / invalid ids are ignored silently
+unreg id:999
+unreg INVALID
+unreg id:2
+unreg id:2
+enum
+# setters on unknown ids are no-ops
+setname id:77 "x"
+setdesc id:77 "x"
+echo done

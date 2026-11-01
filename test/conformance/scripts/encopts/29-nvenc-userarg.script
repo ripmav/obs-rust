@@ -1,0 +1,12 @@
+# CORE. get_user_arg_int(name): first option with that exact name wins, value via strtol.
+# Used by the encoder for the special options keyint and lookaheadDepth.
+data D
+set D opts str "keyint=2 keyint=5 lookaheadDepth=16 x=abc"
+nv_userarg D keyint
+nv_userarg D lookaheadDepth
+nv_userarg D x
+nv_userarg D missing
+nv_userarg D KEYINT
+echo no-opts-set
+data E
+nv_userarg E keyint

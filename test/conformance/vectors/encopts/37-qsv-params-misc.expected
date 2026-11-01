@@ -1,0 +1,260 @@
+echo target-usage
+log info [qsv encoder: 'enc'] settings: 	codec:          H.264 	rate_control:   CBR
+log info 	target_bitrate: 5000
+log info 	Lookahead Depth:60
+log info 	target_usage:   TU1 	profile:        high 	keyint:         0 	latency:        normal 	b-frames:       3 	fps_num:        60 	fps_den:        1 	width:          1920 	height:         1080
+log info [qsv encoder: 'enc'] debug info:
+qsv.encoder_open codec=0 tex=0
+log info 	major:          2 	minor:          9
+qsv_create X ok
+qsvparams usage=1 profile=100 rc=1 async=4 la=60
+qsvparams bitrate=5000 max=6000 qpi=23 qpp=23 qpb=23 icq=23 keyint_sec=0 bframes=3
+qsvparams size=1920x1080 fps=60/1 repeat_headers=0 fmt10=0
+qsvparams vui fmt=5 fullrange=0 prim=1 trc=1 matrix=1 chroma=0/0
+qsvparams hdr dispx=0,0,0 dispy=0,0,0 white=0,0 maxlum=0 minlum=0 cll=0 fall=0
+qsv.encoder_close
+log info [qsv encoder: 'enc'] settings: 	codec:          H.264 	rate_control:   CBR
+log info 	target_bitrate: 5000
+log info 	Lookahead Depth:60
+log info 	target_usage:   TU7 	profile:        high 	keyint:         0 	latency:        normal 	b-frames:       3 	fps_num:        60 	fps_den:        1 	width:          1920 	height:         1080
+log info [qsv encoder: 'enc'] debug info:
+qsv.encoder_open codec=0 tex=0
+log info 	major:          2 	minor:          9
+qsv_create X ok
+qsvparams usage=7 profile=100 rc=1 async=4 la=60
+qsvparams bitrate=5000 max=6000 qpi=23 qpp=23 qpb=23 icq=23 keyint_sec=0 bframes=3
+qsvparams size=1920x1080 fps=60/1 repeat_headers=0 fmt10=0
+qsvparams vui fmt=5 fullrange=0 prim=1 trc=1 matrix=1 chroma=0/0
+qsvparams hdr dispx=0,0,0 dispy=0,0,0 white=0,0 maxlum=0 minlum=0 cll=0 fall=0
+qsv.encoder_close
+log info [qsv encoder: 'enc'] settings: 	codec:          H.264 	rate_control:   CBR
+log info 	target_bitrate: 5000
+log info 	Lookahead Depth:60
+log info 	target_usage:   tu3 	profile:        high 	keyint:         0 	latency:        normal 	b-frames:       3 	fps_num:        60 	fps_den:        1 	width:          1920 	height:         1080
+log info [qsv encoder: 'enc'] debug info:
+qsv.encoder_open codec=0 tex=0
+log info 	major:          2 	minor:          9
+qsv_create X ok
+qsvparams usage=3 profile=100 rc=1 async=4 la=60
+qsvparams bitrate=5000 max=6000 qpi=23 qpp=23 qpb=23 icq=23 keyint_sec=0 bframes=3
+qsvparams size=1920x1080 fps=60/1 repeat_headers=0 fmt10=0
+qsvparams vui fmt=5 fullrange=0 prim=1 trc=1 matrix=1 chroma=0/0
+qsvparams hdr dispx=0,0,0 dispy=0,0,0 white=0,0 maxlum=0 minlum=0 cll=0 fall=0
+qsv.encoder_close
+log info [qsv encoder: 'enc'] settings: 	codec:          H.264 	rate_control:   CBR
+log info 	target_bitrate: 5000
+log info 	Lookahead Depth:60
+log info 	target_usage:   TU7 	profile:        high 	keyint:         0 	latency:        normal 	b-frames:       3 	fps_num:        60 	fps_den:        1 	width:          1920 	height:         1080
+log info [qsv encoder: 'enc'] debug info:
+qsv.encoder_open codec=0 tex=0
+log info 	major:          2 	minor:          9
+qsv_create X ok
+qsvparams usage=7 profile=100 rc=1 async=4 la=60
+qsvparams bitrate=5000 max=6000 qpi=23 qpp=23 qpb=23 icq=23 keyint_sec=0 bframes=3
+qsvparams size=1920x1080 fps=60/1 repeat_headers=0 fmt10=0
+qsvparams vui fmt=5 fullrange=0 prim=1 trc=1 matrix=1 chroma=0/0
+qsvparams hdr dispx=0,0,0 dispy=0,0,0 white=0,0 maxlum=0 minlum=0 cll=0 fall=0
+qsv.encoder_close
+log info [qsv encoder: 'enc'] settings: 	codec:          H.264 	rate_control:   CBR
+log info 	target_bitrate: 5000
+log info 	Lookahead Depth:60
+log info 	target_usage:   bogus 	profile:        high 	keyint:         0 	latency:        normal 	b-frames:       3 	fps_num:        60 	fps_den:        1 	width:          1920 	height:         1080
+log info [qsv encoder: 'enc'] debug info:
+qsv.encoder_open codec=0 tex=0
+log info 	major:          2 	minor:          9
+qsv_create X ok
+qsvparams usage=0 profile=100 rc=1 async=4 la=60
+qsvparams bitrate=5000 max=6000 qpi=23 qpp=23 qpb=23 icq=23 keyint_sec=0 bframes=3
+qsvparams size=1920x1080 fps=60/1 repeat_headers=0 fmt10=0
+qsvparams vui fmt=5 fullrange=0 prim=1 trc=1 matrix=1 chroma=0/0
+qsvparams hdr dispx=0,0,0 dispy=0,0,0 white=0,0 maxlum=0 minlum=0 cll=0 fall=0
+qsv.encoder_close
+echo bframes
+log info [qsv encoder: 'enc'] settings: 	codec:          H.264 	rate_control:   CBR
+log info 	target_bitrate: 5000
+log info 	Lookahead Depth:60
+log info 	target_usage:   TU4 	profile:        high 	keyint:         0 	latency:        normal 	b-frames:       2 	fps_num:        60 	fps_den:        1 	width:          1920 	height:         1080
+log info [qsv encoder: 'enc'] debug info:
+qsv.encoder_open codec=0 tex=0
+log info 	major:          2 	minor:          9
+qsv_create X ok
+qsvparams usage=4 profile=100 rc=1 async=4 la=60
+qsvparams bitrate=5000 max=6000 qpi=23 qpp=23 qpb=23 icq=23 keyint_sec=0 bframes=2
+qsvparams size=1920x1080 fps=60/1 repeat_headers=0 fmt10=0
+qsvparams vui fmt=5 fullrange=0 prim=1 trc=1 matrix=1 chroma=0/0
+qsvparams hdr dispx=0,0,0 dispy=0,0,0 white=0,0 maxlum=0 minlum=0 cll=0 fall=0
+qsv.encoder_close
+log info [qsv encoder: 'enc'] settings: 	codec:          H.264 	rate_control:   CBR
+log info 	target_bitrate: 5000
+log info 	Lookahead Depth:60
+log info 	target_usage:   TU4 	profile:        high 	keyint:         0 	latency:        normal 	b-frames:       1 	fps_num:        60 	fps_den:        1 	width:          1920 	height:         1080
+log info [qsv encoder: 'enc'] debug info:
+qsv.encoder_open codec=0 tex=0
+log info 	major:          2 	minor:          9
+qsv_create X ok
+qsvparams usage=4 profile=100 rc=1 async=4 la=60
+qsvparams bitrate=5000 max=6000 qpi=23 qpp=23 qpb=23 icq=23 keyint_sec=0 bframes=1
+qsvparams size=1920x1080 fps=60/1 repeat_headers=0 fmt10=0
+qsvparams vui fmt=5 fullrange=0 prim=1 trc=1 matrix=1 chroma=0/0
+qsvparams hdr dispx=0,0,0 dispy=0,0,0 white=0,0 maxlum=0 minlum=0 cll=0 fall=0
+qsv.encoder_close
+log info [qsv encoder: 'enc'] settings: 	codec:          H.264 	rate_control:   CBR
+log info 	target_bitrate: 5000
+log info 	Lookahead Depth:60
+log info 	target_usage:   TU4 	profile:        high 	keyint:         0 	latency:        normal 	b-frames:       0 	fps_num:        60 	fps_den:        1 	width:          1920 	height:         1080
+log info [qsv encoder: 'enc'] debug info:
+qsv.encoder_open codec=0 tex=0
+log info 	major:          2 	minor:          9
+qsv_create X ok
+qsvparams usage=4 profile=100 rc=1 async=4 la=60
+qsvparams bitrate=5000 max=6000 qpi=23 qpp=23 qpb=23 icq=23 keyint_sec=0 bframes=0
+qsvparams size=1920x1080 fps=60/1 repeat_headers=0 fmt10=0
+qsvparams vui fmt=5 fullrange=0 prim=1 trc=1 matrix=1 chroma=0/0
+qsvparams hdr dispx=0,0,0 dispy=0,0,0 white=0,0 maxlum=0 minlum=0 cll=0 fall=0
+qsv.encoder_close
+log info [qsv encoder: 'enc'] settings: 	codec:          H.264 	rate_control:   CBR
+log info 	target_bitrate: 5000
+log info 	Lookahead Depth:60
+log info 	target_usage:   TU4 	profile:        high 	keyint:         0 	latency:        normal 	b-frames:       0 	fps_num:        60 	fps_den:        1 	width:          1920 	height:         1080
+log info [qsv encoder: 'enc'] debug info:
+qsv.encoder_open codec=0 tex=0
+log info 	major:          2 	minor:          9
+qsv_create X ok
+qsvparams usage=4 profile=100 rc=1 async=4 la=60
+qsvparams bitrate=5000 max=6000 qpi=23 qpp=23 qpb=23 icq=23 keyint_sec=0 bframes=0
+qsvparams size=1920x1080 fps=60/1 repeat_headers=0 fmt10=0
+qsvparams vui fmt=5 fullrange=0 prim=1 trc=1 matrix=1 chroma=0/0
+qsvparams hdr dispx=0,0,0 dispy=0,0,0 white=0,0 maxlum=0 minlum=0 cll=0 fall=0
+qsv.encoder_close
+echo keyint-and-headers
+log info [qsv encoder: 'enc'] settings: 	codec:          H.264 	rate_control:   CBR
+log info 	target_bitrate: 5000
+log info 	Lookahead Depth:60
+log info 	target_usage:   TU4 	profile:        high 	keyint:         3 	latency:        normal 	b-frames:       1 	fps_num:        60 	fps_den:        1 	width:          1920 	height:         1080
+log info [qsv encoder: 'enc'] debug info:
+qsv.encoder_open codec=0 tex=0
+log info 	major:          2 	minor:          9
+qsv_create X ok
+qsvparams usage=4 profile=100 rc=1 async=4 la=60
+qsvparams bitrate=5000 max=6000 qpi=23 qpp=23 qpb=23 icq=23 keyint_sec=3 bframes=1
+qsvparams size=1920x1080 fps=60/1 repeat_headers=1 fmt10=0
+qsvparams vui fmt=5 fullrange=0 prim=1 trc=1 matrix=1 chroma=0/0
+qsvparams hdr dispx=0,0,0 dispy=0,0,0 white=0,0 maxlum=0 minlum=0 cll=0 fall=0
+qsv.encoder_close
+echo colour-601-full-range
+log info [qsv encoder: 'enc'] settings: 	codec:          H.264 	rate_control:   CBR
+log info 	target_bitrate: 5000
+log info 	Lookahead Depth:60
+log info 	target_usage:   TU4 	profile:        high 	keyint:         3 	latency:        normal 	b-frames:       1 	fps_num:        30 	fps_den:        1 	width:          1280 	height:         720
+log info [qsv encoder: 'enc'] debug info:
+qsv.encoder_open codec=0 tex=0
+log info 	major:          2 	minor:          9
+qsv_create X ok
+qsvparams usage=4 profile=100 rc=1 async=4 la=60
+qsvparams bitrate=5000 max=6000 qpi=23 qpp=23 qpb=23 icq=23 keyint_sec=3 bframes=1
+qsvparams size=1280x720 fps=30/1 repeat_headers=1 fmt10=0
+qsvparams vui fmt=5 fullrange=1 prim=6 trc=6 matrix=6 chroma=0/0
+qsvparams hdr dispx=0,0,0 dispy=0,0,0 white=0,0 maxlum=0 minlum=0 cll=0 fall=0
+qsv.encoder_close
+echo colour-srgb
+log info [qsv encoder: 'enc'] settings: 	codec:          H.264 	rate_control:   CBR
+log info 	target_bitrate: 5000
+log info 	Lookahead Depth:60
+log info 	target_usage:   TU4 	profile:        high 	keyint:         3 	latency:        normal 	b-frames:       1 	fps_num:        24 	fps_den:        1 	width:          1280 	height:         720
+log info [qsv encoder: 'enc'] debug info:
+qsv.encoder_open codec=0 tex=0
+log info 	major:          2 	minor:          9
+qsv_create X ok
+qsvparams usage=4 profile=100 rc=1 async=4 la=60
+qsvparams bitrate=5000 max=6000 qpi=23 qpp=23 qpb=23 icq=23 keyint_sec=3 bframes=1
+qsvparams size=1280x720 fps=24/1 repeat_headers=1 fmt10=0
+qsvparams vui fmt=5 fullrange=0 prim=1 trc=13 matrix=1 chroma=0/0
+qsvparams hdr dispx=0,0,0 dispy=0,0,0 white=0,0 maxlum=0 minlum=0 cll=0 fall=0
+qsv.encoder_close
+echo colour-default
+log info [qsv encoder: 'enc'] settings: 	codec:          H.264 	rate_control:   CBR
+log info 	target_bitrate: 5000
+log info 	Lookahead Depth:60
+log info 	target_usage:   TU4 	profile:        high 	keyint:         3 	latency:        normal 	b-frames:       1 	fps_num:        24 	fps_den:        1 	width:          1280 	height:         720
+log info [qsv encoder: 'enc'] debug info:
+qsv.encoder_open codec=0 tex=0
+log info 	major:          2 	minor:          9
+qsv_create X ok
+qsvparams usage=4 profile=100 rc=1 async=4 la=60
+qsvparams bitrate=5000 max=6000 qpi=23 qpp=23 qpb=23 icq=23 keyint_sec=3 bframes=1
+qsvparams size=1280x720 fps=24/1 repeat_headers=1 fmt10=0
+qsvparams vui fmt=5 fullrange=0 prim=1 trc=1 matrix=1 chroma=0/0
+qsvparams hdr dispx=0,0,0 dispy=0,0,0 white=0,0 maxlum=0 minlum=0 cll=0 fall=0
+qsv.encoder_close
+echo hdr-requires-a-10-bit-hevc-or-av1-encoder
+log info [qsv encoder: 'enc'] settings: 	codec:          HEVC 	rate_control:   CBR
+log info 	target_bitrate: 5000
+log info 	Lookahead Depth:60
+log info 	target_usage:   TU4 	profile:        main 	keyint:         0 	latency:        normal 	b-frames:       3 	fps_num:        60 	fps_den:        1 	width:          1920 	height:         1080
+log info [qsv encoder: 'enc'] debug info:
+qsv.encoder_open codec=2 tex=0
+log info 	major:          2 	minor:          9
+qsv_create X ok
+qsvparams usage=4 profile=1 rc=1 async=4 la=60
+qsvparams bitrate=5000 max=6000 qpi=23 qpp=23 qpb=23 icq=23 keyint_sec=0 bframes=3
+qsvparams size=1920x1080 fps=60/1 repeat_headers=0 fmt10=1
+qsvparams vui fmt=5 fullrange=0 prim=9 trc=16 matrix=9 chroma=2/2
+qsvparams hdr dispx=13250,7500,34000 dispy=34500,3000,16000 white=15635,16450 maxlum=10000000 minlum=0 cll=1000 fall=1000
+qsv.encoder_close
+log info [qsv encoder: 'enc'] settings: 	codec:          HEVC 	rate_control:   CBR
+log info 	target_bitrate: 5000
+log info 	Lookahead Depth:60
+log info 	target_usage:   TU4 	profile:        main 	keyint:         0 	latency:        normal 	b-frames:       3 	fps_num:        60 	fps_den:        1 	width:          1920 	height:         1080
+log info [qsv encoder: 'enc'] debug info:
+qsv.encoder_open codec=2 tex=0
+log info 	major:          2 	minor:          9
+qsv_create X ok
+qsvparams usage=4 profile=1 rc=1 async=4 la=60
+qsvparams bitrate=5000 max=6000 qpi=23 qpp=23 qpb=23 icq=23 keyint_sec=0 bframes=3
+qsvparams size=1920x1080 fps=60/1 repeat_headers=0 fmt10=1
+qsvparams vui fmt=5 fullrange=0 prim=9 trc=16 matrix=9 chroma=2/2
+qsvparams hdr dispx=13250,7500,34000 dispy=34500,3000,16000 white=15635,16450 maxlum=4000000 minlum=0 cll=400 fall=400
+qsv.encoder_close
+log info [qsv encoder: 'enc'] settings: 	codec:          HEVC 	rate_control:   CBR
+log info 	target_bitrate: 5000
+log info 	Lookahead Depth:60
+log info 	target_usage:   TU4 	profile:        main 	keyint:         0 	latency:        normal 	b-frames:       3 	fps_num:        60 	fps_den:        1 	width:          1920 	height:         1080
+log info [qsv encoder: 'enc'] debug info:
+qsv.encoder_open codec=2 tex=0
+log info 	major:          2 	minor:          9
+qsv_create X ok
+qsvparams usage=4 profile=1 rc=1 async=4 la=60
+qsvparams bitrate=5000 max=6000 qpi=23 qpp=23 qpb=23 icq=23 keyint_sec=0 bframes=3
+qsvparams size=1920x1080 fps=60/1 repeat_headers=0 fmt10=1
+qsvparams vui fmt=5 fullrange=0 prim=9 trc=18 matrix=9 chroma=2/2
+qsvparams hdr dispx=13250,7500,34000 dispy=34500,3000,16000 white=15635,16450 maxlum=10000000 minlum=0 cll=1000 fall=1000
+qsv.encoder_close
+echo size-and-fps-are-truncated-to-16-bit
+log info [qsv encoder: 'enc'] settings: 	codec:          H.264 	rate_control:   CBR
+log info 	target_bitrate: 5000
+log info 	Lookahead Depth:60
+log info 	target_usage:   TU4 	profile:        high 	keyint:         3 	latency:        normal 	b-frames:       1 	fps_num:        60000 	fps_den:        1001 	width:          3840 	height:         2160
+log info [qsv encoder: 'enc'] debug info:
+qsv.encoder_open codec=0 tex=0
+log info 	major:          2 	minor:          9
+qsv_create X ok
+qsvparams usage=4 profile=100 rc=1 async=4 la=60
+qsvparams bitrate=5000 max=6000 qpi=23 qpp=23 qpb=23 icq=23 keyint_sec=3 bframes=1
+qsvparams size=3840x2160 fps=60000/1001 repeat_headers=1 fmt10=0
+qsvparams vui fmt=5 fullrange=0 prim=1 trc=1 matrix=1 chroma=0/0
+qsvparams hdr dispx=0,0,0 dispy=0,0,0 white=0,0 maxlum=0 minlum=0 cll=0 fall=0
+qsv.encoder_close
+log info [qsv encoder: 'enc'] settings: 	codec:          H.264 	rate_control:   CBR
+log info 	target_bitrate: 5000
+log info 	Lookahead Depth:60
+log info 	target_usage:   TU4 	profile:        high 	keyint:         3 	latency:        normal 	b-frames:       1 	fps_num:        100000 	fps_den:        1 	width:          70000 	height:         2160
+log info [qsv encoder: 'enc'] debug info:
+qsv.encoder_open codec=0 tex=0
+log info 	major:          2 	minor:          9
+qsv_create X ok
+qsvparams usage=4 profile=100 rc=1 async=4 la=60
+qsvparams bitrate=5000 max=6000 qpi=23 qpp=23 qpb=23 icq=23 keyint_sec=3 bframes=1
+qsvparams size=4464x2160 fps=34464/1 repeat_headers=1 fmt10=0
+qsvparams vui fmt=5 fullrange=0 prim=1 trc=1 matrix=1 chroma=0/0
+qsvparams hdr dispx=0,0,0 dispy=0,0,0 white=0,0 maxlum=0 minlum=0 cll=0 fall=0
+qsv.encoder_close

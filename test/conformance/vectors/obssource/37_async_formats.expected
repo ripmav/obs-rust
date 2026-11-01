@@ -1,0 +1,10 @@
+  cb C create
+log debug source 'C' (cam) created
+create c ok
+astate c active=1 last_frame_ts=1 queue=[] cache=1 used=1 [1/0] cur=1 prev=- tex=4x4 fmt=bgra full_range=1 gpu=0 rotation=0 unbuffered=0
+astate c active=1 last_frame_ts=100000001 queue=[] cache=1 used=1 [1/0] cur=2 prev=- tex=4x4 fmt=i420 full_range=0 gpu=1 rotation=0 unbuffered=0
+astate c active=1 last_frame_ts=200000001 queue=[] cache=1 used=1 [1/0] cur=3 prev=- tex=4x4 fmt=nv12 full_range=0 gpu=1 rotation=0 unbuffered=0
+astate c active=1 last_frame_ts=300000001 queue=[] cache=1 used=1 [1/0] cur=4 prev=- tex=6x2 fmt=y800 full_range=1 gpu=1 rotation=0 unbuffered=0
+astate c active=1 last_frame_ts=400000001 queue=[] cache=1 used=1 [1/0] cur=5 prev=- tex=4x2 fmt=uyvy full_range=0 gpu=1 rotation=0 unbuffered=0
+astate c active=1 last_frame_ts=500000001 queue=[] cache=1 used=1 [1/0] cur=6 prev=- tex=4x2 fmt=i444 full_range=0 gpu=1 rotation=0 unbuffered=0
+astate c active=1 last_frame_ts=600000001 queue=[] cache=1 used=1 [1/0] cur=7 prev=- tex=4x2 fmt=bgrx full_range=1 gpu=0 rotation=0 unbuffered=0

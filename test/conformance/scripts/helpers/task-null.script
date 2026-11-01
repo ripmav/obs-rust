@@ -1,0 +1,3 @@
+# NULL handling: queue_task(NULL, ...) and wait(NULL) return false, destroy(NULL) is a no-op
+# (CORE). os_task_queue_inside(NULL) is outside the contract (the reference dereferences it).
+task_null

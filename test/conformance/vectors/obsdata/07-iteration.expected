@@ -1,0 +1,43 @@
+first a ok
+item_refs i 2
+item_name i "one"
+item_type i number
+item_numtype i int
+next i 1 two
+item_name i "two"
+item_type i string
+item_refs i 2
+item_numtype i invalid
+echo --- erasing an unvisited item
+names a one two
+next i 0
+echo --- erasing the item we hold: the walk continues from where it was
+first b ok
+next i2 1 q
+item_refs i2 1
+next i2 1 r
+names b p r
+echo --- erasing the first item while holding it
+first c ok
+item_refs i3 1
+next i3 1 q
+item_name i3 "q"
+echo --- an item added during the walk is visited
+first d ok
+next i4 1 b
+next i4 0
+echo --- first/byname on empty and NULL
+first empty null
+first @null null
+byname empty x null
+byname @null x null
+byname d nosuch null
+byname d a ok
+item_refs ib 2
+item_name ib "a"
+next_null 0
+next_nullptr 0
+echo --- iter helper
+iter a one:number two:string
+iter empty
+iter @null

@@ -1,0 +1,179 @@
+> trace 0
+> gs_create g
+ret 0 created
+> gs_enter_context g
+> trace 1
+> gs_texture_create 64 32 GS_RGBA 1 0 > t
+  dev device_texture_create w=64 h=32 fmt=3 levels=1 data=null flags=0
+ret #6
+> gs_texture_create 64 32 GS_RGBA 1 0 > rect
+  dev device_texture_create w=64 h=32 fmt=3 levels=1 data=null flags=0
+ret #7
+> ret gs_texture_is_rect 0
+== plain sprite: scale matrix, no index buffer, sprite vertex buffer, tristrip draw
+> gs_draw_sprite t 0 0 0
+  dev device_get_texture_type tex=#6
+  dev gs_texture_get_width tex=#6
+  dev gs_texture_get_height tex=#6
+  dev device_load_indexbuffer indexbuffer=null
+  dev gs_texture_is_rect tex=#6
+  dev device_load_vertexbuffer vertbuffer=#3
+  dev device_draw mode=4 start=0 num=0 world=64,0,0,0,0,32,0,0,0,0,1,0,0,0,0,1
+> gs_matrix_get
+matrix 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1
+== explicit size overrides the texture size; flip selects the flipped buffer
+> gs_draw_sprite t 0 10 20
+  dev device_get_texture_type tex=#6
+  dev device_load_indexbuffer indexbuffer=null
+  dev gs_texture_is_rect tex=#6
+  dev device_load_vertexbuffer vertbuffer=#3
+  dev device_draw mode=4 start=0 num=0 world=10,0,0,0,0,20,0,0,0,0,1,0,0,0,0,1
+> gs_draw_sprite t GS_FLIP_V 10 20
+  dev device_get_texture_type tex=#6
+  dev device_load_indexbuffer indexbuffer=null
+  dev gs_texture_is_rect tex=#6
+  dev device_load_vertexbuffer vertbuffer=#5
+  dev device_draw mode=4 start=0 num=0 world=10,0,0,0,0,20,0,0,0,0,1,0,0,0,0,1
+> gs_draw_sprite t GS_FLIP_U 0 0
+  dev device_get_texture_type tex=#6
+  dev gs_texture_get_width tex=#6
+  dev gs_texture_get_height tex=#6
+  dev device_load_indexbuffer indexbuffer=null
+  dev gs_texture_is_rect tex=#6
+  dev device_load_vertexbuffer vertbuffer=#5
+  dev device_draw mode=4 start=0 num=0 world=64,0,0,0,0,32,0,0,0,0,1,0,0,0,0,1
+> gs_draw_sprite t GS_FLIP_U|GS_FLIP_V 0 0
+  dev device_get_texture_type tex=#6
+  dev gs_texture_get_width tex=#6
+  dev gs_texture_get_height tex=#6
+  dev device_load_indexbuffer indexbuffer=null
+  dev gs_texture_is_rect tex=#6
+  dev device_load_vertexbuffer vertbuffer=#5
+  dev device_draw mode=4 start=0 num=0 world=64,0,0,0,0,32,0,0,0,0,1,0,0,0,0,1
+== quad without a texture needs both dimensions
+> gs_draw_quadf - 0 100 50
+  dev device_load_indexbuffer indexbuffer=null
+  dev device_load_vertexbuffer vertbuffer=#3
+  dev device_draw mode=4 start=0 num=0 world=100,0,0,0,0,50,0,0,0,0,1,0,0,0,0,1
+> gs_draw_quadf - 0 0 50
+log error A sprite cannot be drawn without a width/height
+> gs_draw_quadf - 0 100 0
+log error A sprite cannot be drawn without a width/height
+> gs_draw_quadf - 0 0 0
+log error A sprite cannot be drawn without a width/height
+== quad with float size and texture
+> gs_draw_quadf t 0 2.5 3.5
+  dev device_get_texture_type tex=#6
+  dev device_load_indexbuffer indexbuffer=null
+  dev gs_texture_is_rect tex=#6
+  dev device_load_vertexbuffer vertbuffer=#3
+  dev device_draw mode=4 start=0 num=0 world=2.5,0,0,0,0,3.5,0,0,0,0,1,0,0,0,0,1
+> gs_draw_quadf t 0 0 7
+  dev device_get_texture_type tex=#6
+  dev gs_texture_get_width tex=#6
+  dev device_load_indexbuffer indexbuffer=null
+  dev gs_texture_is_rect tex=#6
+  dev device_load_vertexbuffer vertbuffer=#3
+  dev device_draw mode=4 start=0 num=0 world=64,0,0,0,0,7,0,0,0,0,1,0,0,0,0,1
+== rectangle textures build UVs in texel units in the subregion buffer
+> ret gs_texture_is_rect 1
+> gs_draw_sprite rect 0 0 0
+  dev device_get_texture_type tex=#7
+  dev gs_texture_get_width tex=#7
+  dev gs_texture_get_height tex=#7
+  dev device_load_indexbuffer indexbuffer=null
+  dev gs_texture_is_rect tex=#7
+  dev gs_vertexbuffer_get_data vb=#4
+  dev gs_texture_get_width tex=#7
+  dev gs_texture_get_height tex=#7
+  dev gs_vertexbuffer_flush vb=#4
+    vb num=4 num_tex=1 points=(0,0,0) (1,0,0) (0,1,0) (1,1,0) normals=null tangents=null colors=null tex0[w=2]=(0,0) (64,0) (0,32) (64,32)
+  dev device_load_vertexbuffer vertbuffer=#4
+  dev device_draw mode=4 start=0 num=0 world=64,0,0,0,0,32,0,0,0,0,1,0,0,0,0,1
+> gs_draw_sprite rect GS_FLIP_U 0 0
+  dev device_get_texture_type tex=#7
+  dev gs_texture_get_width tex=#7
+  dev gs_texture_get_height tex=#7
+  dev device_load_indexbuffer indexbuffer=null
+  dev gs_texture_is_rect tex=#7
+  dev gs_vertexbuffer_get_data vb=#4
+  dev gs_texture_get_width tex=#7
+  dev gs_texture_get_height tex=#7
+  dev gs_vertexbuffer_flush vb=#4
+    vb num=4 num_tex=1 points=(0,0,0) (1,0,0) (0,1,0) (1,1,0) normals=null tangents=null colors=null tex0[w=2]=(64,0) (0,0) (64,32) (0,32)
+  dev device_load_vertexbuffer vertbuffer=#4
+  dev device_draw mode=4 start=0 num=0 world=64,0,0,0,0,32,0,0,0,0,1,0,0,0,0,1
+> gs_draw_sprite rect GS_FLIP_U|GS_FLIP_V 8 4
+  dev device_get_texture_type tex=#7
+  dev device_load_indexbuffer indexbuffer=null
+  dev gs_texture_is_rect tex=#7
+  dev gs_vertexbuffer_get_data vb=#4
+  dev gs_texture_get_width tex=#7
+  dev gs_texture_get_height tex=#7
+  dev gs_vertexbuffer_flush vb=#4
+    vb num=4 num_tex=1 points=(0,0,0) (1,0,0) (0,1,0) (1,1,0) normals=null tangents=null colors=null tex0[w=2]=(64,32) (0,32) (64,0) (0,0)
+  dev device_load_vertexbuffer vertbuffer=#4
+  dev device_draw mode=4 start=0 num=0 world=8,0,0,0,0,4,0,0,0,0,1,0,0,0,0,1
+> ret gs_texture_is_rect 0
+== non-2D textures are refused
+> gs_cubetexture_create 16 GS_RGBA 1 0 > cube
+  dev device_cubetexture_create size=16 fmt=3 levels=1 data=null flags=0
+ret #8
+> gs_draw_sprite cube 0 0 0
+  dev device_get_texture_type tex=#8
+log error A sprite must be a 2D texture
+> gs_draw_quadf cube 0 1 1
+  dev device_get_texture_type tex=#8
+log error A sprite must be a 2D texture
+== subregion covering the whole texture falls back to a plain sprite
+> gs_draw_sprite_subregion t 0 0 0 64 32
+  dev device_get_texture_type tex=#6
+  dev gs_texture_get_width tex=#6
+  dev gs_texture_get_height tex=#6
+  dev device_get_texture_type tex=#6
+  dev gs_texture_get_width tex=#6
+  dev gs_texture_get_height tex=#6
+  dev device_load_indexbuffer indexbuffer=null
+  dev gs_texture_is_rect tex=#6
+  dev device_load_vertexbuffer vertbuffer=#3
+  dev device_draw mode=4 start=0 num=0 world=64,0,0,0,0,32,0,0,0,0,1,0,0,0,0,1
+== subregion: UVs are the region divided by the texture size, flip swaps them
+> gs_draw_sprite_subregion t 0 16 8 32 16
+  dev device_get_texture_type tex=#6
+  dev gs_texture_get_width tex=#6
+  dev gs_texture_get_height tex=#6
+  dev gs_vertexbuffer_get_data vb=#4
+  dev gs_vertexbuffer_flush vb=#4
+    vb num=4 num_tex=1 points=(0,0,0) (32,0,0) (0,16,0) (32,16,0) normals=null tangents=null colors=null tex0[w=2]=(0.25,0.25) (0.75,0.25) (0.25,0.75) (0.75,0.75)
+  dev device_load_vertexbuffer vertbuffer=#4
+  dev device_load_indexbuffer indexbuffer=null
+  dev device_draw mode=4 start=0 num=0 world=I
+> gs_draw_sprite_subregion t GS_FLIP_U 16 8 32 16
+  dev device_get_texture_type tex=#6
+  dev gs_texture_get_width tex=#6
+  dev gs_texture_get_height tex=#6
+  dev gs_vertexbuffer_get_data vb=#4
+  dev gs_vertexbuffer_flush vb=#4
+    vb num=4 num_tex=1 points=(0,0,0) (32,0,0) (0,16,0) (32,16,0) normals=null tangents=null colors=null tex0[w=2]=(0.75,0.25) (0.25,0.25) (0.75,0.75) (0.25,0.75)
+  dev device_load_vertexbuffer vertbuffer=#4
+  dev device_load_indexbuffer indexbuffer=null
+  dev device_draw mode=4 start=0 num=0 world=I
+> gs_draw_sprite_subregion t GS_FLIP_V 16 8 32 16
+  dev device_get_texture_type tex=#6
+  dev gs_texture_get_width tex=#6
+  dev gs_texture_get_height tex=#6
+  dev gs_vertexbuffer_get_data vb=#4
+  dev gs_vertexbuffer_flush vb=#4
+    vb num=4 num_tex=1 points=(0,0,0) (32,0,0) (0,16,0) (32,16,0) normals=null tangents=null colors=null tex0[w=2]=(0.25,0.75) (0.75,0.75) (0.25,0.25) (0.75,0.25)
+  dev device_load_vertexbuffer vertbuffer=#4
+  dev device_load_indexbuffer indexbuffer=null
+  dev device_draw mode=4 start=0 num=0 world=I
+== subregion on a cube texture is refused
+> gs_draw_sprite_subregion cube 0 0 0 1 1
+  dev device_get_texture_type tex=#8
+log error A sprite must be a 2D texture
+== NULL texture for a subregion: size lookups return 0 (debug logs) so the sprite is refused
+> gs_draw_sprite_subregion - 0 0 0 0 0
+log debug gs_texture_get_width: Null 'tex' parameter
+log debug gs_texture_get_height: Null 'tex' parameter
+log error A sprite cannot be drawn without a width/height

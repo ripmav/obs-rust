@@ -1,0 +1,7 @@
+> maxver 0xC2
+> initnv
+host.set_last_error "OutdatedDriver"
+log error [obs-nvenc] Current driver version does not support this NVENC version, please upgrade your driver
+init_nvenc -> 0
+> initnv
+init_nvenc -> 0

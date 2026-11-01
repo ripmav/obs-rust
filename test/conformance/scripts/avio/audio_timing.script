@@ -1,0 +1,21 @@
+# S-044: audio thread timing, driven by the fake clock. start_time is the clock value when the thread starts;
+# tick k (1-based) is due at start + floor-ish(k*1024 * 1e9 / rate) computed from the absolute sample count (no drift
+# accumulation); start_ts passed to the input callback is the previous due time (start_time for tick 1).
+aclock 1000000000
+aopen main 48000 FLOAT_PLANAR STEREO
+atick 3
+aclose
+# a rate that does not divide 1e9 evenly: 44100
+aclock 0
+aopen main 44100 FLOAT_PLANAR STEREO
+atick 4
+aclose
+# exact formula: (n / rate) * 1e9 + ((n % rate) * 1e9) / rate with n = 1024 * k
+aclock 123456789012
+aopen main 8000 FLOAT_PLANAR MONO
+atick 2
+aclose
+aclock 0
+aopen main 3 FLOAT_PLANAR MONO
+atick 3
+aclose

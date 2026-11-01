@@ -1,0 +1,46 @@
+# S-026 locating and validating services.json: first <config dir>/services.json, then <data dir>/services.json;
+# a file that fails (unreadable, bad JSON incl. duplicate keys, wrong format_version, missing "services")
+# is skipped and the next candidate is tried. Valid-but-empty lists are accepted. A leading UTF-8 BOM is dropped.
+fs-put /mod/data/services.json "{\"format_version\":5,\"services\":[{\"name\":\"FromData\",\"common\":true,\"servers\":[{\"name\":\"d\",\"url\":\"rtmp://data/live\"}]}]}"
+settings S {"service":"FromData"}
+new A rtmp_common S
+props P A S
+echo config-file-wins
+fs-put /cfg/rtmp-services/services.json "{\"format_version\":5,\"services\":[{\"name\":\"FromConfig\",\"common\":true,\"servers\":[{\"name\":\"c\",\"url\":\"rtmp://cfg/live\"}]}]}"
+props P2 A S
+echo wrong-format-version-in-config-falls-back-to-data
+fs-put /cfg/rtmp-services/services.json "{\"format_version\":4,\"services\":[{\"name\":\"FromConfig\",\"common\":true,\"servers\":[{\"name\":\"c\",\"url\":\"rtmp://cfg/live\"}]}]}"
+props P3 A S
+echo bad-json-in-config-falls-back
+fs-put /cfg/rtmp-services/services.json "{\"format_version\":5,\"services\":["
+props P4 A S
+echo duplicate-key-in-config-falls-back
+fs-put /cfg/rtmp-services/services.json "{\"format_version\":5,\"services\":[],\"services\":[]}"
+props P5 A S
+echo format-version-as-string-or-float
+fs-put /cfg/rtmp-services/services.json "{\"format_version\":\"5\",\"services\":[]}"
+props P6 A S
+fs-put /cfg/rtmp-services/services.json "{\"format_version\":5.0,\"services\":[]}"
+props P7 A S
+echo missing-services-list-falls-back
+fs-put /cfg/rtmp-services/services.json "{\"format_version\":5}"
+props P8 A S
+echo empty-list-accepted-so-no-fallback
+fs-put /cfg/rtmp-services/services.json "{\"format_version\":5,\"services\":[]}"
+props P9 A S
+echo services-not-an-array-is-accepted-but-yields-no-list
+fs-put /cfg/rtmp-services/services.json "{\"format_version\":5,\"services\":{\"a\":1}}"
+props P10 A S
+echo empty-config-file-is-unreadable
+fs-put /cfg/rtmp-services/services.json ""
+props P11 A S
+echo BOM-is-stripped
+fs-put /cfg/rtmp-services/services.json "\xEF\xBB\xBF{\"format_version\":5,\"services\":[{\"name\":\"Bom\",\"common\":true,\"servers\":[{\"name\":\"b\",\"url\":\"rtmp://bom/live\"}]}]}"
+settings S2 {"service":"Bom"}
+props P12 A S2
+echo no-config-dir-uses-data
+dirs /mod/data -
+props P13 A S
+echo no-data-dir-no-config-dir-no-file
+dirs - -
+props P14 A S

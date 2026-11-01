@@ -1,0 +1,50 @@
+echo h264-10bit
+host.set_last_error "10bitUnsupportedAvc"
+log error [qsv encoder: 'enc'] 10bitUnsupportedAvc
+qsv_create X null
+host.set_last_error "10bitUnsupportedAvc"
+log error [qsv encoder: 'enc'] 10bitUnsupportedAvc
+qsv_create X null
+echo sixteen-bit
+host.set_last_error "16bitUnsupported"
+log error [qsv encoder: 'enc'] 16bitUnsupported
+qsv_create X null
+host.set_last_error "16bitUnsupported"
+log error [qsv encoder: 'enc'] 16bitUnsupported
+qsv_create X null
+echo hdr-with-8-bit
+host.set_last_error "8bitUnsupportedHdr"
+log error [qsv encoder: 'enc'] 8bitUnsupportedHdr
+qsv_create X null
+host.set_last_error "8bitUnsupportedHdr"
+log error [qsv encoder: 'enc'] 8bitUnsupportedHdr
+qsv_create X null
+echo ten-bit-hevc-and-av1
+log info [qsv encoder: 'enc'] settings: 	codec:          HEVC 	rate_control:   CBR
+log info 	target_bitrate: 5000
+log info 	Lookahead Depth:60
+log info 	target_usage:   TU4 	profile:        main 	keyint:         0 	latency:        normal 	b-frames:       3 	fps_num:        60 	fps_den:        1 	width:          1920 	height:         1080
+log info [qsv encoder: 'enc'] debug info:
+qsv.encoder_open codec=2 tex=0
+log info 	major:          2 	minor:          9
+qsv_create X ok
+qsvparams usage=4 profile=1 rc=1 async=4 la=60
+qsvparams bitrate=5000 max=6000 qpi=23 qpp=23 qpb=23 icq=23 keyint_sec=0 bframes=3
+qsvparams size=1920x1080 fps=60/1 repeat_headers=0 fmt10=1
+qsvparams vui fmt=5 fullrange=0 prim=1 trc=1 matrix=1 chroma=0/0
+qsvparams hdr dispx=0,0,0 dispy=0,0,0 white=0,0 maxlum=0 minlum=0 cll=0 fall=0
+qsv.encoder_close
+log info [qsv encoder: 'enc'] settings: 	codec:          AV1 	rate_control:   CBR
+log info 	target_bitrate: 5000
+log info 	Lookahead Depth:60
+log info 	target_usage:   TU4 	profile:        main 	keyint:         0 	latency:        normal 	b-frames:       3 	fps_num:        60 	fps_den:        1 	width:          1920 	height:         1080
+log info [qsv encoder: 'enc'] debug info:
+qsv.encoder_open codec=1 tex=0
+log info 	major:          2 	minor:          9
+qsv_create X ok
+qsvparams usage=4 profile=1 rc=1 async=4 la=60
+qsvparams bitrate=5000 max=6000 qpi=92 qpp=92 qpb=92 icq=23 keyint_sec=0 bframes=3
+qsvparams size=1920x1080 fps=60/1 repeat_headers=0 fmt10=1
+qsvparams vui fmt=5 fullrange=0 prim=1 trc=1 matrix=1 chroma=0/0
+qsvparams hdr dispx=0,0,0 dispy=0,0,0 white=0,0 maxlum=0 minlum=0 cll=0 fall=0
+qsv.encoder_close

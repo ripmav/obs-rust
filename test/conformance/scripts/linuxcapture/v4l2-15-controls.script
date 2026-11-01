@@ -1,0 +1,57 @@
+# S-049 v4l2: camera controls become properties in the "controls" group: INTEGER -> slider, BOOLEAN -> bool,
+# MENU/INTEGER_MENU -> list (dropped if no menu entry is valid); disabled/read-only/volatile skipped;
+# the default of each created control is stored as a setting default; the modified callback sends S_CTRL.
+# V4L2_CTRL_TYPE: 1 integer, 2 boolean, 3 menu, 4 button, 5 integer64, 6 ctrl_class, 7 string, 9 integer_menu.
+# flags: 0x1 disabled, 0x4 read_only, 0x80 volatile (0x2 grabbed is allowed).
+dev /dev/video0
+dev-cap "Cam" usb-1 0x85200001 0x05200001
+dev-ctrl 0x980900 1 "Brightness" 0 255 1 128 0
+dev-ctrl 0x980901 1 "Contrast" 0 200 5 100 0
+dev-ctrl 0x98090c 2 "White Balance, Automatic" 0 1 1 1 0
+dev-ctrl 0x980910 3 "Power Line Frequency" 0 3 1 2 0
+dev-ctrl 0x980911 3 "Empty Menu" 0 1 1 0 0
+dev-ctrl 0x980912 1 "Disabled One" 0 10 1 5 0x1
+dev-ctrl 0x980913 1 "Read Only" 0 10 1 5 0x4
+dev-ctrl 0x980914 2 "Volatile" 0 1 1 0 0x80
+dev-ctrl 0x980915 4 "Button" 0 0 0 0 0
+dev-ctrl 0x980916 5 "Int64" 0 100 1 0 0
+dev-ctrl 0x980917 1 "Grabbed" 0 10 2 3 0x2
+dev-menu 0x980910 0 "Disabled"
+dev-menu 0x980910 1 "50 Hz"
+dev-menu 0x980910 3 "Auto"
+h-open /dev/video0
+trace on
+h-controls
+get Brightness int
+get Contrast int
+get "White Balance, Automatic" bool
+get "Power Line Frequency" int
+get "Empty Menu" int
+get Grabbed int
+# --- through the source: the device_selected callback builds the "controls" group ---
+dev-input Camera 0
+dev-fmt YUYV "YUYV" 0
+dev-cur 0 640 480 YUYV 1280 1 30 0
+fake-dir video0
+src-defaults
+set-str device_id /dev/video0
+set-int pixelformat 0x56595559
+src-create
+src-props
+modified device_id
+props
+# modified callbacks send S_CTRL with the control id (user data) and the current setting value
+set-int Brightness 200
+modified-in controls Brightness
+set-bool "White Balance, Automatic" 0
+modified-in controls "White Balance, Automatic"
+set-int "Power Line Frequency" 3
+modified-in controls "Power Line Frequency"
+# QUIRK: the callback returns true only when S_CTRL FAILED (the test is inverted), false on success
+fail S_CTRL
+modified-in controls Brightness
+unfail
+# unopenable device: returns false, no ioctl
+set-str device_id /dev/gone
+modified-in controls Brightness
+src-destroy

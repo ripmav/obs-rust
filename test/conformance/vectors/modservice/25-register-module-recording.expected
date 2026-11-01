@@ -1,0 +1,37 @@
+mkmod host ok
+log debug ---------------------------------
+ev mod host ctor
+log debug Loading module: host.so
+ev mod host set_pointer
+open_module Host -> 0
+sources=1 input=1 filter=0 transition=0 [id=ok_src flags=0x2]
+log warning obs_register_source: Source 'ok_src' already exists!  Duplicate library?
+sources=1 input=1 filter=0 transition=0 [id=ok_src flags=0x2]
+log error Required value 'get_name' for 'bad_noname' not found.  obs_register_source failed.
+sources=1 input=1 filter=0 transition=0
+log warning obs_register_source: Tried to register unknown source type: 99
+sources=1 input=1 filter=0 transition=0
+log warning obs_register_source: Source 'bad_comp': Composite sources cannot be audio sources
+sources=1 input=1 filter=0 transition=0
+log error Required value 'get_width' for 'bad_vid' not found.  obs_register_source failed.
+sources=1 input=1 filter=0 transition=0
+outputs=1 protocols RTMP RTMPS
+log error Required value 'start' for 'bad_out' not found.  obs_register_output failed.
+outputs=1 protocols RTMP RTMPS
+encoders=1
+log error Required value 'encode' for 'bad_enc' not found.  obs_register_encoder failed.
+encoders=1
+register G size=full
+service_types=1
+register H size=full
+log error Required value 'get_protocol' for 'bad_svc' not found.  obs_register_service failed.
+service_types=1
+sources 4 ok_src bad_noname bad_comp bad_vid
+outputs 1 ok_out
+encoders 1 ok_enc
+services 1 ok_svc
+sources=2 input=2 filter=0 transition=0 [id=free_src flags=0x2]
+sources 4 ok_src bad_noname bad_comp bad_vid
+outputs 1 ok_out
+encoders 1 ok_enc
+services 1 ok_svc

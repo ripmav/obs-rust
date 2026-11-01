@@ -1,0 +1,43 @@
+# Header-inline helpers of graphics.h that plugins compile in: bits per pixel, compressed/sRGB
+# classification, generalisation of the *_UNORM formats, colour-space format choice, mip chain length.
+inline_format_info 0
+inline_format_info 1
+inline_format_info 2
+inline_format_info 3
+inline_format_info 4
+inline_format_info 5
+inline_format_info 6
+inline_format_info 7
+inline_format_info 8
+inline_format_info 9
+inline_format_info 10
+inline_format_info 11
+inline_format_info 12
+inline_format_info 13
+inline_format_info 14
+inline_format_info 15
+inline_format_info 16
+inline_format_info 17
+inline_format_info 18
+inline_format_info 19
+inline_format_info 20
+inline_format_info 21
+inline_format_info 22
+echo == out-of-range format values fall back to 0 / unchanged
+inline_format_info 99
+inline_format_from_space 0
+inline_format_from_space 1
+inline_format_from_space 2
+inline_format_from_space 3
+inline_total_levels 1 1 1
+inline_total_levels 2 1 1
+inline_total_levels 3 1 1
+inline_total_levels 4 4 1
+inline_total_levels 1024 1 1
+inline_total_levels 1023 1 1
+inline_total_levels 1 2048 1
+inline_total_levels 100 100 100
+inline_total_levels 0 0 0
+inline_total_levels 1920 1080 1
+inline_total_levels 5 5 5000
+inline_total_levels 4 4 0

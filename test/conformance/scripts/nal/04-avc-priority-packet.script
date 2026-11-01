@@ -1,0 +1,77 @@
+# S-012 CORE: obs_parse_avc_packet_priority and obs_parse_avc_packet.
+# Priority = max(packet priority, nal_ref_idc of every NAL) where nal_ref_idc is bits 6..5 of
+# the NAL header byte (the byte is shifted right by 5; see quirk script for bit 7).
+# avc_priority DATA [PRIORITY]            -> resulting priority
+# avc_packet DATA [PRIORITY [KEYFRAME]]   -> converted packet:
+#   data = 4-byte big-endian length prefix + NAL (start codes removed), keyframe set when an
+#   IDR (type 5) NAL is present (never cleared), priority = max(..), drop_priority = priority,
+#   other fields copied (fields=preserved), data is a fresh allocation (fresh=1) preceded by
+#   a reference counter initialised to 1 (refs=1).
+buf sps 6742c01ed900a047fe88
+buf pps 68ce3c80
+buf sei 06050a0102030405
+buf idr 6588840021ffe0
+buf nidr 419a24c1
+buf nidr0 0122
+buf aud 0910
+echo priority-by-nal-ref-idc
+avc_priority 0000000165aa
+avc_priority 0000000141aa
+avc_priority 0000000121aa
+avc_priority 0000000101aa
+avc_priority 00000001e5aa 
+echo priority-uses-max-over-all-nals
+cat au 00000001 @aud 00000001 @sps 00000001 @pps 00000001 @sei 00000001 @idr
+avc_priority @au
+cat au_p 00000001 @aud 00000001 @sei 00000001 @nidr0
+avc_priority @au_p
+cat au_p2 00000001 @nidr0 00000001 @nidr
+avc_priority @au_p2
+echo initial-priority-is-kept-when-higher
+avc_priority @au_p 0
+avc_priority @au_p 1
+avc_priority @au_p 3
+avc_priority @au 1
+avc_priority @au 3
+avc_priority @au_p 9
+echo empty-and-garbage
+avc_priority - 0
+avc_priority - 2
+avc_priority aabbcc 1
+avc_priority 000001 1
+echo packet-idr
+avc_packet @au
+avc_packet @au 1 0
+avc_packet @au 3 1
+echo packet-non-idr
+avc_packet @au_p
+avc_packet @au_p 2
+avc_packet @au_p 0 1
+avc_packet @au_p2 0 0
+echo keyframe-flag-is-sticky
+avc_packet 0000000141aa 0 1
+avc_packet 0000000141aa 0 0
+echo drop-priority-is-overwritten
+avc_packet 0000000121aa 0 0
+echo start-code-forms
+avc_packet 000001419a24
+avc_packet 00000001419a24
+avc_packet 00000001419a2400000001419a25
+avc_packet 000001419a24000001419a25
+echo empty-and-no-nal
+avc_packet - 
+avc_packet - 3 1
+avc_packet aabbcc
+avc_packet 000001
+avc_packet 0000
+echo trailing-zeros-and-start-code-at-end
+avc_packet 0000000165aa0000
+avc_packet 0000000165aa00000001
+avc_packet 0000000165aa000001
+echo single-byte-nal
+avc_packet 0000000165aa00000001419a
+avc_packet 000000016500000001419a
+echo large-nal
+rep big 150 abcd
+cat bignal 0000000165 @big
+avc_packet @bignal

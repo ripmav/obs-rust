@@ -1,0 +1,21 @@
+select ok interval=333333 caps_match=1 format_match=1
+select ok interval=166666 caps_match=1 format_match=1
+select ok interval=333333 caps_match=1 format_match=1
+select ok interval=333333 caps_match=0 format_match=1
+select ok interval=166666 caps_match=1 format_match=1
+select ok interval=166666 caps_match=0 format_match=1
+select ok interval=166666 caps_match=0 format_match=1
+select ok interval=333333 caps_match=0 format_match=1
+select ok interval=333333 caps_match=1 format_match=1
+select ok interval=166666 caps_match=1 format_match=1
+select ok interval=333333 caps_match=1 format_match=1
+select fail (video format match failed)
+select fail (video format match failed)
+select ok interval=333333 caps_match=1 format_match=1
+select ok interval=400000 caps_match=0 format_match=1
+select ok interval=333333 caps_match=1 format_match=1
+select ok interval=400000 caps_match=1 format_match=1
+select fail (video format match failed)
+select ok interval=333333 caps_match=1 format_match=1
+select ok interval=333333 caps_match=0 format_match=1
+select fail (video format match failed)

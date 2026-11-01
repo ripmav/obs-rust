@@ -1,0 +1,31 @@
+# Settings ownership and the update/save/get_properties dispatch.
+fake_define /s/p.lua load=ok props=3
+fake_define /s/q.lua load=ok
+fake_define /s/off.lua load=fail props=1
+load
+# initial settings passed to create are copied into the script's own settings object
+create S0 /s/p.lua k initial
+settings S0 k
+# the backend ran script_update(NULL-settings) after load and saw the initial value
+update S0 k changed
+settings S0 k
+# update with NULL settings still calls the backend (no merge)
+update S0 -
+# properties: backend returned 3 properties
+props S0
+# backend returns NULL -> core substitutes an empty property set
+create S1 /s/q.lua
+props S1
+# save runs the backend hook, then returns the script's settings (same object, extra reference)
+save S1
+settings S1 saved
+# a script that is not loaded: backend not asked, properties empty, update no-op, save still returns settings
+create S2 /s/off.lua
+props S2
+update S2 k x
+save S2
+settings S2 saved
+destroy S0
+destroy S1
+destroy S2
+unload

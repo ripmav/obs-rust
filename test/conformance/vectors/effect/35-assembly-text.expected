@@ -1,0 +1,119 @@
+--- whitespace and newlines in the body are preserved
+backend vertexshader_create location="ws.effect (Vertex shader, technique T, pass 0)" len=78 fnv=f370498a3b43aa52
+  text "float4 F()\n{\n\tfloat4 x = 1;\n\n\n    return x;\n}\n\nfloat4 main()\n{\n\treturn F();\n}\n"
+  result ok
+backend pixelshader_create location="ws.effect (Pixel shader, technique T, pass 0)" len=78 fnv=f370498a3b43aa52
+  text "float4 F()\n{\n\tfloat4 x = 1;\n\n\n    return x;\n}\n\nfloat4 main()\n{\n\treturn F();\n}\n"
+  result ok
+effect e1 result=ok
+  error_string=@null
+--- block and line comments
+backend vertexshader_create location="cmt.effect (Vertex shader, technique T, pass 0)" len=78 fnv=24a52cf7de23eff5
+  text "float4 F()\n{   float x = 1;  \n    return x; }\n\nfloat4 main()\n{\n\treturn F();\n}\n"
+  result ok
+backend pixelshader_create location="cmt.effect (Pixel shader, technique T, pass 0)" len=78 fnv=24a52cf7de23eff5
+  text "float4 F()\n{   float x = 1;  \n    return x; }\n\nfloat4 main()\n{\n\treturn F();\n}\n"
+  result ok
+effect e2 result=ok
+  error_string=@null
+--- macros are expanded in bodies; object-like and function-like
+backend vertexshader_create location="macro.effect (Vertex shader, technique T, pass 0)" len=76 fnv=1c1aaf1755e7e4fd
+  text "float4 F()\n{ return  ((  1.0 )+(  2.0 )); }\n\nfloat4 main()\n{\n\treturn F();\n}\n"
+  result ok
+backend pixelshader_create location="macro.effect (Pixel shader, technique T, pass 0)" len=76 fnv=1c1aaf1755e7e4fd
+  text "float4 F()\n{ return  ((  1.0 )+(  2.0 )); }\n\nfloat4 main()\n{\n\treturn F();\n}\n"
+  result ok
+effect e3 result=ok
+  error_string=@null
+--- a macro used in the technique call is expanded too
+backend vertexshader_create location="macrocall.effect (Vertex shader, technique T, pass 0)" len=57 fnv=21ed8fda857c22b8
+  text "float4 F()\n{ return 0; }\n\nfloat4 main()\n{\n\treturn F();\n}\n"
+  result ok
+backend pixelshader_create location="macrocall.effect (Pixel shader, technique T, pass 0)" len=57 fnv=21ed8fda857c22b8
+  text "float4 F()\n{ return 0; }\n\nfloat4 main()\n{\n\treturn F();\n}\n"
+  result ok
+effect e4 result=ok
+  error_string=@null
+--- a macro that expands to a declaration
+backend vertexshader_create location="macrodecl.effect (Vertex shader, technique T, pass 0)" len=95 fnv=55b74cd9e54d94af
+  text "uniform float a;\nuniform float b;\n\n\nfloat F()\n{ return a + b; }\n\nfloat main()\n{\n\treturn F();\n}\n"
+  sparam 0 name=a type=FLOAT array=0
+  sparam 1 name=b type=FLOAT array=0
+  result ok
+backend pixelshader_create location="macrodecl.effect (Pixel shader, technique T, pass 0)" len=95 fnv=55b74cd9e54d94af
+  text "uniform float a;\nuniform float b;\n\n\nfloat F()\n{ return a + b; }\n\nfloat main()\n{\n\treturn F();\n}\n"
+  sparam 0 name=a type=FLOAT array=0
+  sparam 1 name=b type=FLOAT array=0
+  result ok
+effect e5 result=ok
+  error_string=@null
+effect e5 params=2 techniques=1 viewproj=- world=-
+  param 0 name=a type=FLOAT annotations=0 default_size=0 default=-
+  param 1 name=b type=FLOAT annotations=0 default_size=0 default=-
+  technique 0 name=T passes=1
+    pass 0 name=@null vertex_params=[a,b] pixel_params=[a,b] vertex=yes pixel=yes
+--- backslash-newline splices are removed from the body
+backend vertexshader_create location="splice.effect (Vertex shader, technique T, pass 0)" len=60 fnv=f5c9f6d513b513e6
+  text "float F()\n{ return 1 +  2; }\n\nfloat main()\n{\n\treturn F();\n}\n"
+  result ok
+backend pixelshader_create location="splice.effect (Pixel shader, technique T, pass 0)" len=60 fnv=f5c9f6d513b513e6
+  text "float F()\n{ return 1 +  2; }\n\nfloat main()\n{\n\treturn F();\n}\n"
+  result ok
+effect e6 result=ok
+  error_string=@null
+--- string and character literals in a body are copied verbatim
+backend vertexshader_create location="str.effect (Vertex shader, technique T, pass 0)" len=75 fnv=ae024f683f67a497
+  text "float F()\n{ string s = \"a } b\"; return 1; }\n\nfloat main()\n{\n\treturn F();\n}\n"
+  result ok
+backend pixelshader_create location="str.effect (Pixel shader, technique T, pass 0)" len=75 fnv=ae024f683f67a497
+  text "float F()\n{ string s = \"a } b\"; return 1; }\n\nfloat main()\n{\n\treturn F();\n}\n"
+  result ok
+effect e7 result=ok
+  error_string=@null
+--- CRLF line endings are kept as they are inside bodies
+backend vertexshader_create location="crlf.effect (Vertex shader, technique T, pass 0)" len=58 fnv=9296f4143ec0819b
+  text "float F()\n{\r\n return 1;\r\n}\n\nfloat main()\n{\n\treturn F();\n}\n"
+  result ok
+backend pixelshader_create location="crlf.effect (Pixel shader, technique T, pass 0)" len=58 fnv=9296f4143ec0819b
+  text "float F()\n{\r\n return 1;\r\n}\n\nfloat main()\n{\n\treturn F();\n}\n"
+  result ok
+effect e8 result=ok
+  error_string=@null
+---
+backend vertexshader_create location="ifdef.effect (Vertex shader, technique T, pass 0)" len=58 fnv=f8c7f016cd16d543
+  text "float F()\n{\n\n return 1;\n\n}\n\nfloat main()\n{\n\treturn F();\n}\n"
+  result ok
+backend pixelshader_create location="ifdef.effect (Pixel shader, technique T, pass 0)" len=58 fnv=f8c7f016cd16d543
+  text "float F()\n{\n\n return 1;\n\n}\n\nfloat main()\n{\n\treturn F();\n}\n"
+  result ok
+effect e9 result=ok
+  error_string=@null
+--- tabs and trailing spaces in a body
+backend vertexshader_create location="tabs.effect (Vertex shader, technique T, pass 0)" len=59 fnv=d9af794ef7806cee
+  text "float F()\n{\t\treturn 1;   \t}\n\nfloat main()\n{\n\treturn F();\n}\n"
+  result ok
+backend pixelshader_create location="tabs.effect (Pixel shader, technique T, pass 0)" len=59 fnv=d9af794ef7806cee
+  text "float F()\n{\t\treturn 1;   \t}\n\nfloat main()\n{\n\treturn F();\n}\n"
+  result ok
+effect e10 result=ok
+  error_string=@null
+backend shader_destroy location="tabs.effect (Vertex shader, technique T, pass 0)"
+backend shader_destroy location="tabs.effect (Pixel shader, technique T, pass 0)"
+backend shader_destroy location="ifdef.effect (Vertex shader, technique T, pass 0)"
+backend shader_destroy location="ifdef.effect (Pixel shader, technique T, pass 0)"
+backend shader_destroy location="crlf.effect (Vertex shader, technique T, pass 0)"
+backend shader_destroy location="crlf.effect (Pixel shader, technique T, pass 0)"
+backend shader_destroy location="str.effect (Vertex shader, technique T, pass 0)"
+backend shader_destroy location="str.effect (Pixel shader, technique T, pass 0)"
+backend shader_destroy location="splice.effect (Vertex shader, technique T, pass 0)"
+backend shader_destroy location="splice.effect (Pixel shader, technique T, pass 0)"
+backend shader_destroy location="macrodecl.effect (Vertex shader, technique T, pass 0)"
+backend shader_destroy location="macrodecl.effect (Pixel shader, technique T, pass 0)"
+backend shader_destroy location="macrocall.effect (Vertex shader, technique T, pass 0)"
+backend shader_destroy location="macrocall.effect (Pixel shader, technique T, pass 0)"
+backend shader_destroy location="macro.effect (Vertex shader, technique T, pass 0)"
+backend shader_destroy location="macro.effect (Pixel shader, technique T, pass 0)"
+backend shader_destroy location="cmt.effect (Vertex shader, technique T, pass 0)"
+backend shader_destroy location="cmt.effect (Pixel shader, technique T, pass 0)"
+backend shader_destroy location="ws.effect (Vertex shader, technique T, pass 0)"
+backend shader_destroy location="ws.effect (Pixel shader, technique T, pass 0)"

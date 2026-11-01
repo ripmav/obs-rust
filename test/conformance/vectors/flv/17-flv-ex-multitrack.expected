@@ -1,0 +1,102 @@
+echo h264-tracks
+ex_start size=27 hex=0900000c0000000000000096006176633101658884000000000017
+  tag type=9 datasize=12 ts=0 streamid=0
+    video ex=1 frametype=1 ptype=6 multitrack=0 inner=0 fourcc="avc1" track=1 payload=6588840000
+  prevsize=23 expected=23
+ex_frames size=27 hex=0900000c0000000000000096036176633101658884000000000017
+  tag type=9 datasize=12 ts=0 streamid=0
+    video ex=1 frametype=1 ptype=6 multitrack=0 inner=3 fourcc="avc1" track=1 payload=6588840000
+  prevsize=23 expected=23
+ex_frames size=28 hex=0900000d00004300000000a60161766331010000210a0b0c00000018
+  tag type=9 datasize=13 ts=67 streamid=0
+    video ex=1 frametype=2 ptype=6 multitrack=0 inner=1 fourcc="avc1" track=1 cts=33 payload=0a0b0c
+  prevsize=24 expected=24
+ex_frames size=27 hex=0900000c00002100000000a6036176633101410102030400000017
+  tag type=9 datasize=12 ts=33 streamid=0
+    video ex=1 frametype=2 ptype=6 multitrack=0 inner=3 fourcc="avc1" track=1 payload=4101020304
+  prevsize=23 expected=23
+ex_end size=27 hex=0900000c0000000000000096026176633101658884000000000017
+  tag type=9 datasize=12 ts=0 streamid=0
+    video ex=1 frametype=1 ptype=6 multitrack=0 inner=2 fourcc="avc1" track=1 payload=6588840000
+  prevsize=23 expected=23
+ex_frames size=28 hex=0900000d00004300000000a60161766331020000210a0b0c00000018
+  tag type=9 datasize=13 ts=67 streamid=0
+    video ex=1 frametype=2 ptype=6 multitrack=0 inner=1 fourcc="avc1" track=2 cts=33 payload=0a0b0c
+  prevsize=24 expected=24
+ex_frames size=28 hex=0900000d00004300000000a60161766331070000210a0b0c00000018
+  tag type=9 datasize=13 ts=67 streamid=0
+    video ex=1 frametype=2 ptype=6 multitrack=0 inner=1 fourcc="avc1" track=7 cts=33 payload=0a0b0c
+  prevsize=24 expected=24
+echo hevc-and-av1
+ex_frames size=28 hex=0900000d00004300000000a60168766331030000210a0b0c00000018
+  tag type=9 datasize=13 ts=67 streamid=0
+    video ex=1 frametype=2 ptype=6 multitrack=0 inner=1 fourcc="hvc1" track=3 cts=33 payload=0a0b0c
+  prevsize=24 expected=24
+ex_frames size=27 hex=0900000c00002100000000a6036876633103410102030400000017
+  tag type=9 datasize=12 ts=33 streamid=0
+    video ex=1 frametype=2 ptype=6 multitrack=0 inner=3 fourcc="hvc1" track=3 payload=4101020304
+  prevsize=23 expected=23
+ex_frames size=25 hex=0900000a00004300000000a60161763031030a0b0c00000015
+  tag type=9 datasize=10 ts=67 streamid=0
+    video ex=1 frametype=2 ptype=6 multitrack=0 inner=1 fourcc="av01" track=3 payload=0a0b0c
+  prevsize=21 expected=21
+ex_start size=27 hex=0900000c0000000000000096006176303104658884000000000017
+  tag type=9 datasize=12 ts=0 streamid=0
+    video ex=1 frametype=1 ptype=6 multitrack=0 inner=0 fourcc="av01" track=4 payload=6588840000
+  prevsize=23 expected=23
+echo track-id-is-truncated-to-8-bits-but-multitrack-stays-on
+ex_frames size=27 hex=0900000c00002100000000a603617663317f410102030400000017
+  tag type=9 datasize=12 ts=33 streamid=0
+    video ex=1 frametype=2 ptype=6 multitrack=0 inner=3 fourcc="avc1" track=127 payload=4101020304
+  prevsize=23 expected=23
+ex_frames size=27 hex=0900000c00002100000000a6036176633180410102030400000017
+  tag type=9 datasize=12 ts=33 streamid=0
+    video ex=1 frametype=2 ptype=6 multitrack=0 inner=3 fourcc="avc1" track=128 payload=4101020304
+  prevsize=23 expected=23
+ex_frames size=27 hex=0900000c00002100000000a60361766331ff410102030400000017
+  tag type=9 datasize=12 ts=33 streamid=0
+    video ex=1 frametype=2 ptype=6 multitrack=0 inner=3 fourcc="avc1" track=255 payload=4101020304
+  prevsize=23 expected=23
+ex_frames size=27 hex=0900000c00002100000000a6036176633100410102030400000017
+  tag type=9 datasize=12 ts=33 streamid=0
+    video ex=1 frametype=2 ptype=6 multitrack=0 inner=3 fourcc="avc1" track=0 payload=4101020304
+  prevsize=23 expected=23
+ex_frames size=27 hex=0900000c00002100000000a6036176633101410102030400000017
+  tag type=9 datasize=12 ts=33 streamid=0
+    video ex=1 frametype=2 ptype=6 multitrack=0 inner=3 fourcc="avc1" track=1 payload=4101020304
+  prevsize=23 expected=23
+ex_frames size=28 hex=0900000d00004300000000a60161766331000000210a0b0c00000018
+  tag type=9 datasize=13 ts=67 streamid=0
+    video ex=1 frametype=2 ptype=6 multitrack=0 inner=1 fourcc="avc1" track=0 cts=33 payload=0a0b0c
+  prevsize=24 expected=24
+ex_frames size=27 hex=0900000c00002100000000a60161763031ff410102030400000017
+  tag type=9 datasize=12 ts=33 streamid=0
+    video ex=1 frametype=2 ptype=6 multitrack=0 inner=1 fourcc="av01" track=255 payload=4101020304
+  prevsize=23 expected=23
+echo ex_raw-multitrack-with-odd-packet-types
+ex_raw size=27 hex=0900000c0000000000000096046176633101658884000000000017
+  tag type=9 datasize=12 ts=0 streamid=0
+    video ex=1 frametype=1 ptype=6 multitrack=0 inner=4 fourcc="avc1" track=1 payload=6588840000
+    amf ret=-1
+  prevsize=23 expected=23
+ex_raw size=27 hex=0900000c0000000000000096066176633101658884000000000017
+  tag type=9 datasize=12 ts=0 streamid=0
+    video ex=1 frametype=1 ptype=6 multitrack=0 inner=6 fourcc="avc1" track=1 payload=6588840000
+  prevsize=23 expected=23
+ex_raw size=27 hex=0900000c0000000000000096056176633101658884000000000017
+  tag type=9 datasize=12 ts=0 streamid=0
+    video ex=1 frametype=1 ptype=6 multitrack=0 inner=5 fourcc="avc1" track=1 payload=6588840000
+  prevsize=23 expected=23
+ex_raw size=27 hex=0900000c00000000000000960f6176633101658884000000000017
+  tag type=9 datasize=12 ts=0 streamid=0
+    video ex=1 frametype=1 ptype=6 multitrack=0 inner=15 fourcc="avc1" track=1 payload=6588840000
+  prevsize=23 expected=23
+echo idx-0-vs-1-for-the-same-packet
+ex_frames size=26 hex=0900000b00004300000000a1617663310000210a0b0c00000016
+  tag type=9 datasize=11 ts=67 streamid=0
+    video ex=1 frametype=2 ptype=1 fourcc="avc1" cts=33 payload=0a0b0c
+  prevsize=22 expected=22
+ex_frames size=28 hex=0900000d00004300000000a60161766331010000210a0b0c00000018
+  tag type=9 datasize=13 ts=67 streamid=0
+    video ex=1 frametype=2 ptype=6 multitrack=0 inner=1 fourcc="avc1" track=1 cts=33 payload=0a0b0c
+  prevsize=24 expected=24

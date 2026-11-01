@@ -1,0 +1,16 @@
+# os_task_queue_inside(): true only when called on the queue's own worker thread (CORE).
+# Two queues have distinct worker threads: queue 0's thread is not "inside" queue 1.
+# (task_sync = wait() whose result is not printed because it depends on timing here.)
+task_create 0
+task_create 1
+task_main_inside 0
+task_main_inside 1
+task_inside_q 0 self 0
+task_inside_q 0 other 1
+task_sync 0
+task_inside_q 1 self 1
+task_inside_q 1 other 0
+task_sync 1
+task_log
+task_destroy 0
+task_destroy 1

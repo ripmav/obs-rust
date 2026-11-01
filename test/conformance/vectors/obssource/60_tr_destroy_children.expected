@@ -1,0 +1,22 @@
+  cb T create
+log debug source 'T' (tr) created
+create t ok
+  cb A create
+log debug source 'A' (in) created
+create a ok
+  cb B create
+log debug source 'B' (in) created
+create b ok
+  cb T transition_start
+tr_start t 1
+state a show_refs=1 activate_refs=1 showing=0 active=0 obs_showing=1 obs_active=1
+state b show_refs=1 activate_refs=1 showing=0 active=0 obs_showing=1 obs_active=1
+refs a 2
+state a show_refs=0 activate_refs=0 showing=0 active=0 obs_showing=0 obs_active=0
+state b show_refs=0 activate_refs=0 showing=0 active=0 obs_showing=0 obs_active=0
+refs a 1
+refs b 1
+  destroying t
+  cb T destroy
+log debug source 'T' destroyed
+drain ran=1

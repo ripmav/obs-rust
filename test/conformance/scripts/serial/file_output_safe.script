@@ -1,0 +1,36 @@
+# file_output_serializer_init_safe: data goes to <path>.<ext>; on free the target is
+# replaced by the temp file (CORE). An extension may be given with or without leading '.'.
+# Empty or missing extension -> init fails.
+funlink sf-a
+funlink sf-a.tmp
+fput sf-a abcd
+open fsafe sf-a tmp
+fget sf-a
+fget sf-a.tmp
+write 99
+pos
+close
+fget sf-a
+fget sf-a.tmp
+funlink sf-b
+funlink sf-b.new
+open fsafe sf-b .new
+fget sf-b
+fget sf-b.new
+write 5566
+close
+fget sf-b
+fget sf-b.new
+fput sf-c abcd
+open fsafe sf-c ""
+open fsafe sf-c @null
+fget sf-c
+open fsafe sf-nodir/c tmp
+fput sf-d abcd
+open fsafe sf-d x
+close
+fget sf-d
+funlink sf-a
+funlink sf-b
+funlink sf-c
+funlink sf-d

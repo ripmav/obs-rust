@@ -1,0 +1,57 @@
+# chroma_key_filter v1 and v2: key colour -> (cb, cr) chroma, ratio settings /1000, contrast/gamma branches, pixel_size.
+source T 1280 720 1280 720 SRGB video
+source P 1280 720 1280 720 SRGB video
+filter a chroma_key_filter 0 @null T P
+render a
+filter b chroma_key_filter 2 @null T P
+render b
+echo key presets: blue 0xFF9900 and magenta 0xFF00FF are packed integers whose low byte is red; unknown type keeps key_color
+data d
+dset d key_color_type str blue
+filter c chroma_key_filter 2 d T P
+render c
+dset d key_color_type str magenta
+filter e chroma_key_filter 2 d T P
+render e
+dset d key_color_type str custom
+dset d key_color int 0x123456
+filter f chroma_key_filter 2 d T P
+render f
+dset d key_color_type str mystery
+filter g chroma_key_filter 2 d T P
+render g
+echo v2 colour settings
+data d2
+dset d2 opacity dbl 0.5
+dset d2 contrast dbl -3
+dset d2 brightness dbl 0.2
+dset d2 gamma dbl -0.5
+dset d2 similarity int 123
+dset d2 smoothness int 7
+dset d2 spill int 999
+filter h chroma_key_filter 2 d2 T P
+render h
+echo v1 colour settings: opacity int percent (opacity*255/100)<<24 in an RGBA colour; brightness is halved
+data d3
+dset d3 opacity int 50
+dset d3 contrast dbl 0.5
+dset d3 brightness dbl 0.5
+dset d3 gamma dbl 0.5
+filter i chroma_key_filter 0 d3 T P
+render i
+echo v1 opacity 150 / -10 wrap (QUIRK): (opacity*255)/100 is shifted into the top byte of a u32
+dset d3 opacity int 150
+filter j chroma_key_filter 0 d3 T P
+render j
+dset d3 opacity int -10
+filter k chroma_key_filter 0 d3 T P
+render k
+echo base size 1280x720 vs 100x50: pixel_size is 1/base size
+resize T 100 50 100 50
+render b
+resize T 0 0 0 0
+render b
+echo extended colour space: v2 skips the filter
+srcspace T 709_EXTENDED
+render b
+cs b 3 SRGB SRGB_16F 709_EXTENDED

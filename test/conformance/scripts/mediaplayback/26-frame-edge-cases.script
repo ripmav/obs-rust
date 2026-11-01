@@ -1,0 +1,42 @@
+# Frame delivery edge cases: frame without size (logged, dropped); frame callbacks absent (frames consumed,
+# nothing delivered); unknown audio sample format (audio dropped silently, others delivered); non-key first frame
+# of a network source (dropped), key frame gating persists after the first key frame.
+media zero 0 0
+video 1 1000 0 0 yuv420p
+pkt 0 0 fdur=40
+pkt 0 40 fdur=40
+endmedia
+media dbl 0 0
+audio 1 48000 48000 2 dbl
+audio 1 48000 48000 2 s16
+pkt 0 0 samples=480
+pkt 0 480 samples=480
+endmedia
+media ok2 0 0
+video 1 1000 8 4 yuv420p
+pkt 0 0 fdur=40
+pkt 0 40 fdur=40
+endmedia
+clock 1000
+echo ---- zero-sized frame: error logged on every attempt, nothing delivered
+minit zero local=1
+mreset
+mplay 0
+mtickw 0 0
+mtick 3
+mfree
+echo ---- no video callback: frames are consumed silently, with preload callback still absent too
+minit ok2 local=1 cbs=stop
+mreset
+mplay 0
+mtickw 0 0
+mtick 4
+mstate
+mfree
+echo ---- unknown audio sample format (stream 0 = double): audio dropped; the s16 stream is not played at all
+minit dbl local=1
+mreset
+mplay 0
+mtickw 0 0
+mtick 4
+mfree

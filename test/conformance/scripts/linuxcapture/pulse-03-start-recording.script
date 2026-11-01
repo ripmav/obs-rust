@@ -1,0 +1,27 @@
+# S-049 pulse: creating a source connects a record stream. Observable: server info logging, default device
+# resolution (".monitor" appended for outputs), format/channel fallbacks (unsupported format -> float32le,
+# unsupported channel count -> 2), channel map handed to the stream, buffer attributes, stream flags
+# (DONT_MOVE for explicitly named devices), restart rules in update.
+pulse-server pulseaudio 16.1 alsa_input.mic alsa_output.speakers
+pulse-source alsa_input.mic "Mic" - s16le 48000 2
+pulse-source alsa_input.s24 "S24" - s24le 44100 6
+pulse-source alsa_input.ch7 "Seven" - s32le 96000 7
+pulse-source alsa_input.mono "Mono" - float32le 8000 1
+pulse-source alsa_output.speakers.monitor "Mon" 0 float32le 48000 8
+pulse-defaults
+source-name Mic1
+set-str device_id default
+pulse-create input
+pulse-destroy
+set-str device_id default
+pulse-create output
+pulse-destroy
+set-str device_id alsa_input.s24
+pulse-create input
+pulse-destroy
+set-str device_id alsa_input.ch7
+pulse-create input
+pulse-destroy
+set-str device_id alsa_input.mono
+pulse-create input
+pulse-destroy

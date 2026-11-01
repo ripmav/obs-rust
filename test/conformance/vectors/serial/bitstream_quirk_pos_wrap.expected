@@ -1,0 +1,10 @@
+bs_r8 -> 0xe8
+bs_state pos=0 sub=0x80 len=300
+bs_r8 -> 0x07
+bs_state pos=1 sub=0x80 len=300
+bs_state pos=45 sub=0x80 len=300
+bs_r8 -> 0x7a
+bs_state pos=0 sub=0x80 len=256
+bs_r8 -> 0x07
+bs_state pos=255 sub=0x80 len=255
+bs_r8 -> 0x00

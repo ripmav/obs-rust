@@ -1,0 +1,11 @@
+# opts-parser: words that are not "name=value" are collected as ignored words (CORE).
+# A word is ignored when it is empty-named ("=v"), has no '=' ("flag"), or has an empty
+# value ("key="). Ignored words keep their input order.
+opts_parse "flag"
+opts_parse "=value"
+opts_parse "key="
+opts_parse "="
+opts_parse "=="
+opts_parse "a=1 flag b=2 =x c= d=4"
+opts_parse "only ignored words here"
+opts_parse "a= =b c"

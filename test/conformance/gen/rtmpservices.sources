@@ -1,0 +1,35 @@
+# S-026 rtmp-services plugin: the real plugin sources + obs-data/obs-properties, libobs faked
+# in gen/rtmpservices_stubs.c (fs, curl, file-updater, clock, module paths, locale, protocols).
+# Run run.sh from test/conformance (the -I flags are relative to that directory).
+test/conformance/gen/rtmpservices_runner.c
+test/conformance/gen/rtmpservices_stubs.c
+plugins/rtmp-services/rtmp-common.c
+plugins/rtmp-services/rtmp-custom.c
+plugins/rtmp-services/rtmp-services-main.c
+plugins/rtmp-services/service-specific/amazon-ivs.c
+plugins/rtmp-services/service-specific/dacast.c
+plugins/rtmp-services/service-specific/nimotv.c
+plugins/rtmp-services/service-specific/service-ingest.c
+plugins/rtmp-services/service-specific/showroom.c
+plugins/rtmp-services/service-specific/twitch.c
+libobs/obs-properties.c
+libobs/obs-data.c
+libobs/callback/calldata.c
+libobs/graphics/vec2.c
+libobs/graphics/vec3.c
+libobs/graphics/vec4.c
+libobs/graphics/quat.c
+libobs/graphics/axisang.c
+libobs/graphics/matrix3.c
+libobs/graphics/matrix4.c
+libobs/graphics/plane.c
+libobs/graphics/math-extra.c
+-I../../shared/file-updater
+-I../../plugins/rtmp-services
+-DENABLE_SERVICE_UPDATES
+-DSERVICES_URL=\"https://obsproject.com/obs2_update/rtmp-services\"
+-ljansson
+-Wno-deprecated-declarations
+# gen/stubs.c defines host-file-system versions of os_file_exists/os_safe_replace; the in-memory
+# versions in rtmpservices_stubs.c (listed first on the command line) must win.
+-Wl,--allow-multiple-definition

@@ -1,0 +1,40 @@
+mkmod m ok
+log debug ---------------------------------
+ev mod m ctor
+log debug Loading module: m.so
+ev mod m set_pointer
+open_module Full -> 0
+mod_meta Full display_name=Full Name id=com.example.full version=1.2.3 os_arch=linux-x86_64 name=full desc=short long=long text repo=https://r web=https://w support=https://s banner=1 icon=1
+mod_info Full file=m.so name=Full Name author=CodeAuthor desc=CodeDesc bin=@TMP/m/m.so data=@TMP/d/full id=com.example.full ver=1.2.3 lib=set core=0 legacy=0 state=enabled loaded=0 mtype=0
+log debug ---------------------------------
+log debug Loading module: m.so
+ev mod m set_pointer
+open_module Partial -> 0
+mod_meta Partial display_name= id=com.example.partial version=0.1 os_arch= name= desc= long= repo= web= support= banner=0 icon=0
+mod_info Partial file=m.so name= author=CodeAuthor desc=CodeDesc bin=@TMP/m/m.so data=@TMP/d/partial/ id=com.example.partial ver=0.1 lib=set core=0 legacy=0 state=enabled loaded=0 mtype=0
+log debug ---------------------------------
+log debug Loading module: m.so
+log error obs-data.c: [obs_data_create_from_json] Failed reading json string (1): string or '}' expected near 'this'
+ev mod m set_pointer
+open_module Broken -> 0
+mod_meta Broken display_name= id= version= os_arch= name= desc= long= repo= web= support= banner=0 icon=0
+mod_info Broken file=m.so name= author=CodeAuthor desc=CodeDesc bin=@TMP/m/m.so data=@TMP/d/broken id= ver= lib=set core=0 legacy=0 state=enabled loaded=0 mtype=0
+log debug ---------------------------------
+log debug Loading module: m.so
+ev mod m set_pointer
+open_module Types -> 0
+mod_meta Types display_name= id= version= os_arch= name= desc= long= repo= web= support= banner=0 icon=0
+log debug ---------------------------------
+log debug Loading module: m.so
+ev mod m set_pointer
+open_module None -> 0
+mod_meta None none
+mod_info None file=m.so name=CodeName author=CodeAuthor desc=CodeDesc bin=@TMP/m/m.so data=@TMP/d/empty id=(null) ver=(null) lib=set core=0 legacy=0 state=enabled loaded=0 mtype=0
+log debug ---------------------------------
+log debug Loading module: m.so
+ev mod m set_pointer
+open_module NoDir -> 0
+mod_meta NoDir none
+create_disabled DisFull -> 1
+mod_meta DisFull display_name=Full Name id=com.example.full version=1.2.3 os_arch=linux-x86_64 name=full desc=short long=long text repo=https://r web=https://w support=https://s banner=1 icon=1
+mod_info DisFull file=dis-full.so name=Full Name author=(null) desc=(null) bin=@TMP/m/dis-full.so data=@TMP/d/full id=com.example.full ver=1.2.3 lib=null core=0 legacy=0 state=disabled loaded=0 mtype=0

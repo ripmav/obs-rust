@@ -1,0 +1,45 @@
+> load
+load -> 1
+registered id=text_ft2_source version=0
+registered id=text_ft2_source version=2
+> info 1
+info id=text_ft2_source version=0 type=0 flags=0x409 icon=10 name=TextFreetype2
+info callbacks create=1 destroy=1 update=1 get_width=1 get_height=1 video_render=1 video_tick=1 get_defaults=1 get_properties=1 missing_files=0
+> info 2
+info id=text_ft2_source version=2 type=0 flags=0x9 icon=10 name=TextFreetype2
+info callbacks create=1 destroy=1 update=1 get_width=1 get_height=1 video_render=1 video_tick=1 get_defaults=1 get_properties=1 missing_files=1
+> defaults 1
+defaults font.face="Sans Serif" font.size=32 font.flags=0 font.style=""
+defaults antialiasing=1 word_wrap=0 outline=0 drop_shadow=0 from_file=0 log_mode=0
+defaults log_lines=6 color1=0xffffffff color2=0xffffffff custom_width=0 text=""
+defaults has antialiasing=1
+defaults has word_wrap=1
+defaults has outline=1
+defaults has drop_shadow=1
+defaults has log_lines=1
+defaults has color1=1
+defaults has color2=1
+defaults has from_file=0
+defaults has log_mode=0
+defaults has custom_width=0
+defaults has text=0
+defaults has text_file=0
+defaults has font=1
+> defaults 2
+defaults font.face="Sans Serif" font.size=256 font.flags=0 font.style=""
+defaults antialiasing=1 word_wrap=0 outline=0 drop_shadow=0 from_file=0 log_mode=0
+defaults log_lines=6 color1=0xffffffff color2=0xffffffff custom_width=0 text=""
+defaults has antialiasing=1
+defaults has word_wrap=1
+defaults has outline=1
+defaults has drop_shadow=1
+defaults has log_lines=1
+defaults has color1=1
+defaults has color2=1
+defaults has from_file=0
+defaults has log_mode=0
+defaults has custom_width=0
+defaults has text=0
+defaults has text_file=0
+defaults has font=1
+> unload

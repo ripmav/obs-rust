@@ -1,0 +1,66 @@
+opts_parse "key=value"
+  count=1 ignored_count=0 ptrs options=1 ignored=1 input=1
+  opt 0 name="key" value="value"
+  input_words=1
+  word 0 "key=value"
+opts_parse "a=1 b=2 c=3"
+  count=3 ignored_count=0 ptrs options=1 ignored=1 input=1
+  opt 0 name="a" value="1"
+  opt 1 name="b" value="2"
+  opt 2 name="c" value="3"
+  input_words=3
+  word 0 "a=1"
+  word 1 "b=2"
+  word 2 "c=3"
+opts_parse "dup=1 dup=2 dup=3"
+  count=3 ignored_count=0 ptrs options=1 ignored=1 input=1
+  opt 0 name="dup" value="1"
+  opt 1 name="dup" value="2"
+  opt 2 name="dup" value="3"
+  input_words=3
+  word 0 "dup=1"
+  word 1 "dup=2"
+  word 2 "dup=3"
+opts_parse "eq=a=b==c"
+  count=1 ignored_count=0 ptrs options=1 ignored=1 input=1
+  opt 0 name="eq" value="a=b==c"
+  input_words=1
+  word 0 "eq=a=b==c"
+opts_parse "path=/tmp/some/file.txt url=http://x/y?z=1&w=2"
+  count=2 ignored_count=0 ptrs options=1 ignored=1 input=1
+  opt 0 name="path" value="/tmp/some/file.txt"
+  opt 1 name="url" value="http://x/y?z=1&w=2"
+  input_words=2
+  word 0 "path=/tmp/some/file.txt"
+  word 1 "url=http://x/y?z=1&w=2"
+opts_parse "k=v   spaced=out"
+  count=2 ignored_count=0 ptrs options=1 ignored=1 input=1
+  opt 0 name="k" value="v"
+  opt 1 name="spaced" value="out"
+  input_words=2
+  word 0 "k=v"
+  word 1 "spaced=out"
+opts_parse " lead=1 trail=2 "
+  count=2 ignored_count=0 ptrs options=1 ignored=1 input=1
+  opt 0 name="lead" value="1"
+  opt 1 name="trail" value="2"
+  input_words=2
+  word 0 "lead=1"
+  word 1 "trail=2"
+opts_parse "UPPER=Case lower=case"
+  count=2 ignored_count=0 ptrs options=1 ignored=1 input=1
+  opt 0 name="UPPER" value="Case"
+  opt 1 name="lower" value="case"
+  input_words=2
+  word 0 "UPPER=Case"
+  word 1 "lower=case"
+opts_parse "x=1"
+  count=1 ignored_count=0 ptrs options=1 ignored=1 input=1
+  opt 0 name="x" value="1"
+  input_words=1
+  word 0 "x=1"
+opts_parse "very_long_option_name_with_many_characters=very_long_option_value_with_many_characters"
+  count=1 ignored_count=0 ptrs options=1 ignored=1 input=1
+  opt 0 name="very_long_option_name_with_many_characters" value="very_long_option_value_with_many_characters"
+  input_words=1
+  word 0 "very_long_option_name_with_many_characters=very_long_option_value_with_many_characters"

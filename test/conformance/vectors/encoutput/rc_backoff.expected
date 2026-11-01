@@ -1,0 +1,57 @@
+log debug encoder 'v' (v) created
+encoder v created tb=1/30
+log debug encoder 'a' (a) created
+encoder a created tb=1/48000
+log debug output 'o' (o) created
+output o created flags=7 reconnect=20/2
+set_venc o idx=0 -> video_slots=01 audio_slots=00
+set_aenc o idx=0 -> video_slots=01 audio_slots=01
+plugin out o start
+plugin enc v create
+plugin enc a create
+log debug Maximum interleaver batch size for 'o' calculated to be 5 packets
+signal o activate
+signal o start
+plugin out o begin_data_capture -> 1
+signal o starting
+start o -> 1
+log info Output 'o': stopping
+log info Output 'o': Total frames output: 0
+log info Output 'o': Total drawn frames: 0
+log info Output 'o': Reconnecting in 2.00 seconds..
+signal o reconnect timeout_sec=2
+signal_stop o -5 done
+plugin enc v destroy
+plugin enc a destroy
+signal o deactivate
+state o active=0 data_active=0 delay_active=0 delay_capturing=0 reconnecting=1 stopping=0 stop_code=-5 total_frames=0 delay_ns=0 refs=0 queued=0 recv_v=00 recv_a=0 hi_a=0 hi_v0=-9223372036854775808 voff=0 aoff=0 batch=5 retries=1 cur_ms=2000
+plugin out o start
+log info Output 'o': Reconnecting in 3.00 seconds..
+signal o reconnect timeout_sec=3
+fire done
+state o active=0 data_active=0 delay_active=0 delay_capturing=0 reconnecting=1 stopping=0 stop_code=-5 total_frames=0 delay_ns=0 refs=0 queued=0 recv_v=00 recv_a=0 hi_a=0 hi_v0=-9223372036854775808 voff=0 aoff=0 batch=5 retries=2 cur_ms=3000
+plugin out o start
+log info Output 'o': Reconnecting in 4.50 seconds..
+signal o reconnect timeout_sec=4
+fire done
+state o active=0 data_active=0 delay_active=0 delay_capturing=0 reconnecting=1 stopping=0 stop_code=-5 total_frames=0 delay_ns=0 refs=0 queued=0 recv_v=00 recv_a=0 hi_a=0 hi_v0=-9223372036854775808 voff=0 aoff=0 batch=5 retries=3 cur_ms=4500
+plugin out o start
+log info Output 'o': Reconnecting in 6.75 seconds..
+signal o reconnect timeout_sec=6
+fire done
+state o active=0 data_active=0 delay_active=0 delay_capturing=0 reconnecting=1 stopping=0 stop_code=-5 total_frames=0 delay_ns=0 refs=0 queued=0 recv_v=00 recv_a=0 hi_a=0 hi_v0=-9223372036854775808 voff=0 aoff=0 batch=5 retries=4 cur_ms=6750
+plugin out o start
+log info Output 'o': Reconnecting in 10.12 seconds..
+signal o reconnect timeout_sec=10
+fire done
+state o active=0 data_active=0 delay_active=0 delay_capturing=0 reconnecting=1 stopping=0 stop_code=-5 total_frames=0 delay_ns=0 refs=0 queued=0 recv_v=00 recv_a=0 hi_a=0 hi_v0=-9223372036854775808 voff=0 aoff=0 batch=5 retries=5 cur_ms=10125
+plugin out o start
+log info Output 'o': Reconnecting in 15.19 seconds..
+signal o reconnect timeout_sec=15
+fire done
+state o active=0 data_active=0 delay_active=0 delay_capturing=0 reconnecting=1 stopping=0 stop_code=-5 total_frames=0 delay_ns=0 refs=0 queued=0 recv_v=00 recv_a=0 hi_a=0 hi_v0=-9223372036854775808 voff=0 aoff=0 batch=5 retries=6 cur_ms=15187
+--- sixth failure: retries exhausted
+plugin out o start
+signal o stop code=-5 last_error=-
+fire done
+state o active=0 data_active=0 delay_active=0 delay_capturing=0 reconnecting=0 stopping=0 stop_code=0 total_frames=0 delay_ns=0 refs=0 queued=0 recv_v=00 recv_a=0 hi_a=0 hi_v0=-9223372036854775808 voff=0 aoff=0 batch=5 retries=6 cur_ms=15187

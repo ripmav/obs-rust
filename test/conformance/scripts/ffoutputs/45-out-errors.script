@@ -1,0 +1,48 @@
+# ffmpeg_output error paths with the "null" muxer.
+# (1) capture refused after a successful libav init: CONNECT_FAILED, but the output stays "active" with the libav
+#     context still open (no cleanup until stop/destroy) - QUIRK.
+# (2) write error ENOSPC in the worker -> NO_SPACE; any other negative write result -> ERROR. The worker detaches
+#     itself, deactivates the output (libav context freed) and the output ends up inactive.
+reset
+output ff
+size 320 240
+video_info 30 1 709 P NV12
+set str url x.null
+set str format_name null
+capture 0
+fo_create
+fo_start
+fo_connect
+fo_state
+fo_destroy
+echo write_error_enospc
+reset
+output ff
+size 320 240
+video_info 30 1 709 P NV12
+set str url x.null
+set str format_name null
+fo_create
+fo_start
+fo_connect
+fo_write_ret -28
+fo_video 1000
+fo_video 2000
+fo_pump 5
+fo_state
+fo_destroy
+echo write_error_other
+reset
+output ff
+size 320 240
+video_info 30 1 709 P NV12
+set str url x.null
+set str format_name null
+fo_create
+fo_start
+fo_connect
+fo_write_ret -5
+fo_video 1000
+fo_pump 5
+fo_state
+fo_destroy

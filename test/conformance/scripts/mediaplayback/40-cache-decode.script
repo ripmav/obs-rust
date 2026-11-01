@@ -1,0 +1,33 @@
+# Cache mode (local file, full decode): the whole file is decoded up front into frame/segment arrays, with raw pts
+# timestamps (ns). final_v_duration / final_a_duration = duration of the LAST decoded frame (used to extend
+# the last frame), start_time = container start time in us (0 if unknown), media_duration = container duration.
+media cm 300000 0
+video 1 1000 8 4 yuv420p frames=3
+audio 1 48000 48000 2 fltp
+pkt 0 0 fdur=40
+pkt 1 0 samples=1920
+pkt 0 40 fdur=40
+pkt 1 1920 samples=1920
+pkt 0 80 fdur=50
+pkt 1 3840 samples=960
+endmedia
+media cm_start 300000 500000
+video 1 1000 8 4 yuv420p
+pkt 0 500 fdur=40
+pkt 0 540 fdur=40
+endmedia
+clock 1000000000
+pix off
+cinit cm
+cstate
+cdump
+cframes
+cduration
+echo ---- container start time is remembered
+cfree
+cinit cm_start
+cdump
+cstate
+cfree
+echo ---- decode failure: cannot open
+cinit nothere

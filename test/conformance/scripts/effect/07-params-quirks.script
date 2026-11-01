@@ -1,0 +1,31 @@
+# QUIRK: reference behaviours of the default-value parser that look accidental but are observable.
+#  Q-1  int defaults are parsed with strtol(base 10): "0x10" -> 0, "007" -> 7, "1.5" -> 1.
+#  Q-2  float defaults use C strtod semantics on the NUM token text, which includes hexadecimal floats ("0x10" -> 16).
+#  Q-3  Exponents with a sign ("1e-3", "2E+4") are split by the lexer into NUM "1e", "-", NUM "3": the declaration
+#       is dropped and the remaining tokens produce a follow-up error.
+#  Q-4  A string/texture default is produced by cf_literal_to_str (S-011 Q-10): escape sequences make the result
+#       read past the closing quote, so the stored text contains trailing source characters.
+#  Q-5  An array of length 0 (x[0]) is recorded with array_count 0, i.e. as a non-array.
+#  Q-6  Integer/bool defaults are stored as C "long": 8 bytes per component on LP64 (4 on Windows).
+backend text none
+echo --- Q-1
+effect q1 q1.effect "int a = 0x10; int b = 007; int c = 1.5; int d = 99; int e = -0;"
+dump q1
+echo --- Q-2
+effect q2 q2.effect "float a = 0x10; float b = 0x1p3; float c = 1e2; float d = 1E2;"
+dump q2
+echo --- Q-3
+ep q3a "float a = 1e-3;"
+ep q3b "float a = 2E+4; float b = 1;"
+echo --- Q-4
+effect q4a q4a.effect "string s = \"a\\nb\"; float z;"
+effect q4b q4b.effect "string s = \"say \\\"hi\\\"\"; float z;"
+effect q4c q4c.effect "string s = \"plain\"; float z;"
+dump q4a
+dump q4b
+dump q4c
+echo --- Q-5
+ep q5a "float z[0]; float y[1];"
+echo --- Q-6
+effect e q6.effect "uniform int i = 1; uniform int2 j = {1,2}; uniform bool b = true;"
+dump e

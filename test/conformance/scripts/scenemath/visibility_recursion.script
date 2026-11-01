@@ -1,0 +1,17 @@
+# set_visible(true) fails (returns false, user_visible left as it was) when the source cannot become an active
+# child of the scene (infinite recursion guard in the core). The fake core exposes this with `fail_child`.
+source s 100 100
+scene main
+add main s v
+visible v 0
+fail_child on
+visible v 1
+print v
+fail_child off
+visible v 1
+print v
+echo -- the add itself fails when the core refuses the child
+fail_child on
+add main s w
+fail_child off
+log

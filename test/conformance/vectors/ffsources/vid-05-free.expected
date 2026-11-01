@@ -1,0 +1,31 @@
+av.find_encoder fake_enc -> found
+log info ---------------------------------
+vid_init -> 1
+av.open2 codec=fake_enc bit_rate=1000000 sample_rate=0 channels=0 sample_fmt=-1 strict=0 flags=0 8x2 pix_fmt=8
+vid_init_codec -> 1 initialized=1 vframe=1
+  vframe fmt=8 8x2 range=1 pri=1 trc=1 cs=1 chroma=2
+av.send_frame NULL -> 0
+av.receive_packet -> 0 size=3 pts=0 dts=0 flags=1
+av.packet_unref
+av.receive_packet -> 0 size=3 pts=1 dts=1 flags=0
+av.packet_unref
+av.receive_packet -> eagain
+av.free_context
+echo ---- initialisation failed before the codec was created: free is still safe
+av.find_encoder nosuch_enc -> missing
+log info ---------------------------------
+host.set_last_error "Couldn't find encoder: nosuch_enc"
+log warning [Fake encoder: 'enc'] Couldn't find encoder: 'nosuch_enc'
+child: init -> 0
+child: last_error "Couldn't find encoder: nosuch_enc"
+av.free_context
+child: freed
+child exit 0
+echo ---- open failed (not initialised): no flush
+av.find_encoder fake_enc -> found
+log info ---------------------------------
+vid_init -> 1
+av.open2 codec=fake_enc bit_rate=1000000 sample_rate=0 channels=0 sample_fmt=-1 strict=0 flags=0 8x2 pix_fmt=8
+host.set_last_error "Failed to open Fake: Error number -1000 occurred<br><br>"
+vid_init_codec -> 0 initialized=0 vframe=0
+av.free_context

@@ -1,0 +1,27 @@
+# Nested scenes and custom scene sizes: a scene item whose source is a scene has the nested scene's size; scene
+# size is the canvas unless custom; item_canvas_scale does NOT rescale nested scenes.
+source cam 640 360
+scene main
+scene inner custom 800 600
+add inner cam ic
+add main inner n
+scene_size main
+scene_size inner
+pos n 50 50
+print n
+canvas 1280 720
+update main
+print n
+echo -- nested scene crop is rescaled when the nested size changes between updates
+crop n 80 80 60 60
+update main
+print n
+echo -- the nested scene doubles its size: crop (80,80,60,60) is multiplied by the size ratio (truncating)
+scene_resize inner 1600 1200
+update main
+print n
+echo -- and shrinks to 300x250: ratios 0.1875 and 0.2083 truncate
+scene_resize inner 300 250
+update main
+print n
+scene_size inner

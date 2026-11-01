@@ -1,0 +1,15 @@
+# Basic FIFO use and the exact ring-buffer state after each step. Bytes are given
+# as hex (0x41 = 'A').
+dump
+push_back 41424344
+dump
+push_back 45
+dump
+peek_front 2
+peek_back 2
+pop_front 3
+dump
+pop_front 2
+dump
+push_back 5a
+dump

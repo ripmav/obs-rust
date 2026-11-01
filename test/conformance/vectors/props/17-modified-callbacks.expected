@@ -1,0 +1,39 @@
+add bool deep ok
+add group inner ok
+add bool mid ok
+add group grp ok
+add bool flat ok
+echo no-callback
+modified -> 0
+modified -> 0
+echo v1-callback-true-false
+modified t prop=flat props=Top settings={x=3}
+modified -> 1
+modified f prop=flat props=Top settings={x=3}
+modified -> 0
+echo callback-on-nested-sees-top
+modified t prop=mid props=Top settings={x=3}
+modified -> 1
+modified t prop=deep props=Top settings={x=3}
+modified -> 1
+echo callback-changes-settings
+modified chg prop=flat props=Top settings={x=3}
+modified -> 1
+data S {count=5,name="hello",x=3}
+echo modified2-gets-priv
+modified2 t priv=tpriv prop=flat props=Top settings={count=5,name="hello",x=3}
+modified -> 1
+modified2 f priv=@null prop=flat props=Top settings={count=5,name="hello",x=3}
+modified -> 0
+echo v1-wins-over-v2
+modified t prop=flat props=Top settings={count=5,name="hello",x=3}
+modified -> 1
+echo clear-v1-then-v2-runs
+modified2 f priv=tpriv2 prop=flat props=Top settings={count=5,name="hello",x=3}
+modified -> 0
+echo clear-v2
+modified -> 0
+echo null-property-and-null-settings
+modified -> 0
+modified t prop=flat props=Top settings=@null
+modified -> 1

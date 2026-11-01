@@ -1,0 +1,72 @@
+echo audio-specific-config
+flv_mux size=19 hex=0800000400000000000000af0011900000000f
+  tag type=8 datasize=4 ts=0 streamid=0
+    audio ex=0 format=10 rate=3 size=1 type=1 aacptype=0 payload=1190
+  prevsize=15 expected=15
+echo raw-frames
+flv_mux size=21 hex=0800000600000000000000af012100491000000011
+  tag type=8 datasize=6 ts=0 streamid=0
+    audio ex=0 format=10 rate=3 size=1 type=1 aacptype=1 payload=21004910
+  prevsize=17 expected=17
+flv_mux size=21 hex=0800000600001500000000af012100491100000011
+  tag type=8 datasize=6 ts=21 streamid=0
+    audio ex=0 format=10 rate=3 size=1 type=1 aacptype=1 payload=21004911
+  prevsize=17 expected=17
+flv_mux size=21 hex=08000006004e2000000000af012100491200000011
+  tag type=8 datasize=6 ts=20000 streamid=0
+    audio ex=0 format=10 rate=3 size=1 type=1 aacptype=1 payload=21004912
+  prevsize=17 expected=17
+echo pts-is-ignored
+flv_mux size=19 hex=0800000400002a00000000af01aabb0000000f
+  tag type=8 datasize=4 ts=42 streamid=0
+    audio ex=0 format=10 rate=3 size=1 type=1 aacptype=1 payload=aabb
+  prevsize=15 expected=15
+echo keyframe-flag-is-ignored
+flv_mux size=19 hex=0800000400000000000000af01aabb0000000f
+  tag type=8 datasize=4 ts=0 streamid=0
+    audio ex=0 format=10 rate=3 size=1 type=1 aacptype=1 payload=aabb
+  prevsize=15 expected=15
+echo dts-offset
+flv_mux size=19 hex=0800000400000a00000000af01aabb0000000f
+  tag type=8 datasize=4 ts=10 streamid=0
+    audio ex=0 format=10 rate=3 size=1 type=1 aacptype=1 payload=aabb
+  prevsize=15 expected=15
+flv_mux size=19 hex=08000004fffc187f000000af01aabb0000000f
+  tag type=8 datasize=4 ts=2147482648 streamid=0
+    audio ex=0 format=10 rate=3 size=1 type=1 aacptype=1 payload=aabb
+  prevsize=15 expected=15
+echo timestamps-above-2-24-use-the-extension-byte
+flv_mux size=19 hex=08000004312d0001000000af01aabb0000000f
+  tag type=8 datasize=4 ts=20000000 streamid=0
+    audio ex=0 format=10 rate=3 size=1 type=1 aacptype=1 payload=aabb
+  prevsize=15 expected=15
+flv_mux size=19 hex=08000004ffffff7f000000af01aabb0000000f
+  tag type=8 datasize=4 ts=2147483647 streamid=0
+    audio ex=0 format=10 rate=3 size=1 type=1 aacptype=1 payload=aabb
+  prevsize=15 expected=15
+echo extended-timestamp-wraps-at-2-31-ms
+flv_mux size=19 hex=0800000400000000000000af01aabb0000000f
+  tag type=8 datasize=4 ts=0 streamid=0
+    audio ex=0 format=10 rate=3 size=1 type=1 aacptype=1 payload=aabb
+  prevsize=15 expected=15
+flv_mux size=19 hex=08000004ffffff7f000000af01aabb0000000f
+  tag type=8 datasize=4 ts=2147483647 streamid=0
+    audio ex=0 format=10 rate=3 size=1 type=1 aacptype=1 payload=aabb
+  prevsize=15 expected=15
+flv_mux size=19 hex=0800000400000000000000af01aabb0000000f
+  tag type=8 datasize=4 ts=0 streamid=0
+    audio ex=0 format=10 rate=3 size=1 type=1 aacptype=1 payload=aabb
+  prevsize=15 expected=15
+echo negative-time
+flv_mux size=19 hex=08000004fffffb7f000000af01aabb0000000f
+  tag type=8 datasize=4 ts=2147483643 streamid=0
+    audio ex=0 format=10 rate=3 size=1 type=1 aacptype=1 payload=aabb
+  prevsize=15 expected=15
+flv_mux size=19 hex=08000004ffff9c7f000000af01aabb0000000f
+  tag type=8 datasize=4 ts=2147483548 streamid=0
+    audio ex=0 format=10 rate=3 size=1 type=1 aacptype=1 payload=aabb
+  prevsize=15 expected=15
+flv_mux size=19 hex=080000040a1f647a000000af01aabb0000000f
+  tag type=8 datasize=4 ts=2047483748 streamid=0
+    audio ex=0 format=10 rate=3 size=1 type=1 aacptype=1 payload=aabb
+  prevsize=15 expected=15

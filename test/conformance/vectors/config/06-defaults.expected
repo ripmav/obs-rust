@@ -1,0 +1,35 @@
+create ok
+has_user S a 0
+has_default S a 0
+get_string S a @null
+has_user S a 1
+has_default S a 1
+get_string S a "dflt"
+default_string S a "dflt"
+get_string S a "user"
+default_string S a "dflt"
+get_string S a "user"
+default_string S a "other"
+sections 1 [S]
+save rc=0
+"[S]\na=user\n"
+remove S a 1
+has_user S a 0
+get_string S a "other"
+default_string S a "other"
+get_int S n 7
+get_uint S u 8
+get_bool S b 1
+get_double S d 2.5
+get_string S d "2.5"
+get_string S d2 "0.1"
+default_int S n 7
+default_uint S u 8
+default_bool S b 1
+default_double S d 2.5
+default_string S nothing @null
+default_int S nothing 0
+get_string S big "1.23457e+06"
+get_double S big 1234570
+get_string S big2 "1234567.8910000001"
+get_string S nul ""

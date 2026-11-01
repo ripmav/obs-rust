@@ -1,0 +1,10 @@
+# QUIRK: if cache/meta.json exists the If-None-Match header is ALWAYS sent, even when the file
+# has no "etag" key or is empty JSON: the missing string reads as "" (not as absent), so the
+# header value is empty. A meta.json that cannot be read at all (missing file) sends no header.
+fu_put /L/package.json "{\"version\":1,\"files\":[]}"
+fu_put /M1/meta.json "{}"
+fu_run /L /M1/ http://srv/u UA
+fu_put /M2/meta.json "{\"etag\":\"\"}"
+fu_run /L /M2/ http://srv/u UA
+fu_put /M3/meta.json "not json at all"
+fu_run /L /M3/ http://srv/u UA

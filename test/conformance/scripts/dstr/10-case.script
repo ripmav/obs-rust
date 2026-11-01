@@ -1,0 +1,9 @@
+# ASCII only (non-ASCII case mapping depends on the C library locale).
+copy "Hello, World 123"
+upper
+dump
+lower
+dump
+copy ""
+upper
+dump

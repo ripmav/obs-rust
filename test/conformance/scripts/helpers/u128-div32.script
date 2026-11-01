@@ -1,0 +1,14 @@
+# util_div128_32: 128-bit by 32-bit unsigned division, quotient truncated (CORE).
+# The remainder is not returned. Divisor 0 is outside the precondition (see u128-defect-div0).
+u128_div32 0 0 1
+u128_div32 10 0 3
+u128_div32 0xffffffffffffffff 0xffffffffffffffff 1
+u128_div32 0xffffffffffffffff 0xffffffffffffffff 0xffffffff
+u128_div32 0xffffffffffffffff 0xffffffffffffffff 2
+u128_div32 0 1 2
+u128_div32 0 1 3
+u128_div32 0x123456789abcdef0 0x0fedcba987654321 1000
+u128_div32 100 0 200
+u128_div32 0xffffffff 0 0xffffffff
+u128_div32 0 0x100000000 0x80000000
+u128_div32 0x0000000100000000 0x0000000200000000 0x00000004

@@ -1,0 +1,15 @@
+# clear keeps the allocation and discards all parameters.
+init
+set_int a 1
+set_string b hello
+capacity
+clear
+dump
+get_int a
+get_string b
+set_int c 3
+dump
+capacity
+free
+clear
+dump

@@ -1,0 +1,31 @@
+# S-022 fragment splitting. Keyframes at pts 3 and 6 (100 ms, 200 ms) set the split point; the
+# fragment is written when the NEXT packet arrives after every track has a packet at/after that
+# point. Audio packets that start at or after the split point stay queued, the last queued packet of
+# each track is held back to learn its duration. Three fragments (moof/mdat pairs) result.
+# 'pos' shows when bytes reach the file (positions are file sizes in bytes).
+enc v video codec h264 width 640 height 360 fps 30/1 extra 000000016742c01ed900a047fe880000000168ce3c80
+enc a audio codec aac rate 48000 extra 1190
+mux mp4
+pkt v 0 0 1 gen:20
+pkt a 0 0 1 gen:10
+pkt v 1 1 0 gen:12
+pkt v 2 2 0 gen:13
+pkt a 1024 1024 1 gen:10
+pkt v 3 3 1 gen:21
+pkt a 2048 2048 1 gen:10
+pkt a 3072 3072 1 gen:10
+pkt a 4096 4096 1 gen:10
+pkt a 5120 5120 1 gen:10
+pkt v 4 4 0 gen:14
+pkt a 6144 6144 1 gen:10
+pkt v 5 5 0 gen:14
+pkt v 6 6 1 gen:22
+pkt a 7168 7168 1 gen:10
+pkt a 8192 8192 1 gen:10
+pkt a 9216 9216 1 gen:10
+pkt a 10240 10240 1 gen:10
+pkt a 11264 11264 1 gen:10
+pkt v 7 7 0 gen:14
+pkt a 12288 12288 1 gen:10
+finalise
+dump

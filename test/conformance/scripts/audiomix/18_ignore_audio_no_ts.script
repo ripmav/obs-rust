@@ -1,0 +1,18 @@
+# Forced audio_ts values at max buffering (max_buffering=1 tick): a lagging source has samples dropped (ignore_audio), a source that cannot catch up is restarted (audio_ts=0, pending, timing_set cleared).
+init 48000 2 1 0
+clock 1000000000
+timeline 1000000000
+source a input
+video_mix 1
+channel 0 0 a
+set a active 1
+output a 48000 2 2048 1000000000 const 0.5
+set a audio_ts 1
+run 2 1
+state a
+set a audio_ts 1000000000
+output a 48000 2 2048 1100000000 const 0.5
+set a audio_ts 1090000000
+state a
+run 2 1
+state a

@@ -1,0 +1,30 @@
+> trace 0
+> gs_create g
+ret 0 created
+> gs_enter_context g
+> trace 1
+> gs_query_sync_capabilities
+  dev device_query_sync_capabilities
+ret false
+> ret device_query_sync_capabilities 1
+> gs_query_sync_capabilities
+  dev device_query_sync_capabilities
+ret true
+> gs_sync_create > sy
+  dev device_sync_create
+ret #6
+> gs_sync_wait sy
+  dev device_sync_wait sync=#6
+ret false
+> ret device_sync_wait 1
+> gs_sync_wait sy
+  dev device_sync_wait sync=#6
+ret true
+> gs_sync_signal_syncobj_timeline_point 9 42
+  dev device_sync_signal_syncobj_timeline_point syncobj_fd=9 timeline_point=42
+ret false
+> gs_sync_destroy sy
+  dev device_sync_destroy sync=#6
+> gs_texture_create_from_dmabuf 64 32 875713112 GS_RGBA
+  dev device_texture_create_from_dmabuf width=64 height=32 drm_format=875713112 color_format=3 n_planes=1 fds=ptr strides=ptr offsets=ptr modifiers=ptr
+ret #7

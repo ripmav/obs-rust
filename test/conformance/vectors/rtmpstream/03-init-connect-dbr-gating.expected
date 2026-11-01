@@ -1,0 +1,129 @@
+reset ok
+> reset
+reset ok
+> aenc 0 aac 160
+> aenc 1 aac 96
+> venc 0 h264 4000 4 enc0
+> service rtmp://h/a KEY - -
+> opt bool dyn_bitrate 1
+> init_connect
+log info [rtmp stream: 'out'] Dynamic bitrate using default interpolation
+log info [rtmp stream: 'out'] Dynamic bitrate enabled.  Dropped frames begone!
+init_connect -> 1
+conn path="rtmp://h/a" key="KEY" user="" pass="" bind_ip="default" addrlen_hint=0 max_shutdown=30 new_socket_loop=0 low_latency=0
+codecs v: 1 0 0 0 0 0 0 0 0 0 a: 1 1 0 0 0 0
+dbr enabled=1 cur=4000 orig=4000 prev=0 est=0 inc=400 audio=256 data_size=0 inc_timeout=0 frames=0
+table n=2
+  [0] 0 0 0 0 0 0 0 0 0 0
+  [1] 4000 0 0 0 0 0 0 0 0 0
+state packets=0 dropped=0 min_priority=0 congestion=0 last_dts_usec=0 drop_thr_usec=700000 pframe_thr_usec=900000 total_bytes=0 active=0 disconnected=0 encode_error=0 sent_headers=0 start_dts_offset=0 got_first=0
+> reset
+reset ok
+> venc 0 h264 4000 0 enc0
+> service rtmp://h/a KEY - -
+> opt bool dyn_bitrate 1
+> init_connect
+log info [rtmp stream: 'out'] Dynamic bitrate disabled. The encoder 'enc0' does not support on-the-fly bitrate reconfiguration.
+init_connect -> 1
+conn path="rtmp://h/a" key="KEY" user="" pass="" bind_ip="default" addrlen_hint=0 max_shutdown=30 new_socket_loop=0 low_latency=0
+codecs v: 1 0 0 0 0 0 0 0 0 0 a: 0 0 0 0 0 0
+dbr enabled=0 cur=4000 orig=4000 prev=0 est=0 inc=400 audio=0 data_size=0 inc_timeout=0 frames=0
+table n=2
+  [0] 0 0 0 0 0 0 0 0 0 0
+  [1] 4000 0 0 0 0 0 0 0 0 0
+state packets=0 dropped=0 min_priority=0 congestion=0 last_dts_usec=0 drop_thr_usec=700000 pframe_thr_usec=900000 total_bytes=0 active=0 disconnected=0 encode_error=0 sent_headers=0 start_dts_offset=0 got_first=0
+> reset
+reset ok
+> venc 0 h264 4000 4 enc0
+> service rtmp://h/a KEY - -
+> init_connect
+init_connect -> 1
+conn path="rtmp://h/a" key="KEY" user="" pass="" bind_ip="default" addrlen_hint=0 max_shutdown=30 new_socket_loop=0 low_latency=0
+codecs v: 1 0 0 0 0 0 0 0 0 0 a: 0 0 0 0 0 0
+dbr enabled=0 cur=4000 orig=4000 prev=0 est=0 inc=400 audio=0 data_size=0 inc_timeout=0 frames=0
+table n=2
+  [0] 0 0 0 0 0 0 0 0 0 0
+  [1] 4000 0 0 0 0 0 0 0 0 0
+state packets=0 dropped=0 min_priority=0 congestion=0 last_dts_usec=0 drop_thr_usec=700000 pframe_thr_usec=900000 total_bytes=0 active=0 disconnected=0 encode_error=0 sent_headers=0 start_dts_offset=0 got_first=0
+> reset
+reset ok
+> venc 0 h264 4000 4 enc0
+> service rtmp://h/a KEY - -
+> opt bool dyn_bitrate 1
+> delay 20
+> init_connect
+log info [rtmp stream: 'out'] Dynamic bitrate disabled. Stream delay and dynamic bitrate are incompatible.
+init_connect -> 1
+conn path="rtmp://h/a" key="KEY" user="" pass="" bind_ip="default" addrlen_hint=0 max_shutdown=30 new_socket_loop=0 low_latency=0
+codecs v: 1 0 0 0 0 0 0 0 0 0 a: 0 0 0 0 0 0
+dbr enabled=0 cur=4000 orig=4000 prev=0 est=0 inc=400 audio=0 data_size=0 inc_timeout=0 frames=0
+table n=2
+  [0] 0 0 0 0 0 0 0 0 0 0
+  [1] 4000 0 0 0 0 0 0 0 0 0
+state packets=0 dropped=0 min_priority=0 congestion=0 last_dts_usec=0 drop_thr_usec=700000 pframe_thr_usec=900000 total_bytes=0 active=0 disconnected=0 encode_error=0 sent_headers=0 start_dts_offset=0 got_first=0
+> reset
+reset ok
+> venc 0 h264 4000 4 big
+> venc 1 h264 2000 4 small
+> service rtmp://h/a KEY - -
+> opt bool dyn_bitrate 1
+> init_connect
+log info [rtmp stream: 'out'] Dynamic bitrate disabled. The encoder 'big' does not support on-the-fly multitrack bitrate reconfiguration.
+log info [rtmp stream: 'out'] Dynamic bitrate disabled. The encoder 'small' does not support on-the-fly multitrack bitrate reconfiguration.
+init_connect -> 1
+conn path="rtmp://h/a" key="KEY" user="" pass="" bind_ip="default" addrlen_hint=0 max_shutdown=30 new_socket_loop=0 low_latency=0
+codecs v: 1 1 0 0 0 0 0 0 0 0 a: 0 0 0 0 0 0
+dbr enabled=0 cur=6000 orig=6000 prev=0 est=0 inc=600 audio=0 data_size=0 inc_timeout=0 frames=0
+table n=2
+  [0] 0 0 0 0 0 0 0 0 0 0
+  [1] 4000 2000 0 0 0 0 0 0 0 0
+state packets=0 dropped=0 min_priority=0 congestion=0 last_dts_usec=0 drop_thr_usec=700000 pframe_thr_usec=900000 total_bytes=0 active=0 disconnected=0 encode_error=0 sent_headers=0 start_dts_offset=0 got_first=0
+> reset
+reset ok
+> venc 0 h264 4000 64 big
+> venc 1 h264 2000 64 small
+> service rtmp://h/a KEY - -
+> opt bool dyn_bitrate 1
+> init_connect
+log info [rtmp stream: 'out'] Dynamic bitrate using default interpolation
+log info [rtmp stream: 'out'] Dynamic bitrate enabled.  Dropped frames begone!
+init_connect -> 1
+conn path="rtmp://h/a" key="KEY" user="" pass="" bind_ip="default" addrlen_hint=0 max_shutdown=30 new_socket_loop=0 low_latency=0
+codecs v: 1 1 0 0 0 0 0 0 0 0 a: 0 0 0 0 0 0
+dbr enabled=1 cur=6000 orig=6000 prev=0 est=0 inc=600 audio=0 data_size=0 inc_timeout=0 frames=0
+table n=2
+  [0] 0 0 0 0 0 0 0 0 0 0
+  [1] 4000 2000 0 0 0 0 0 0 0 0
+state packets=0 dropped=0 min_priority=0 congestion=0 last_dts_usec=0 drop_thr_usec=700000 pframe_thr_usec=900000 total_bytes=0 active=0 disconnected=0 encode_error=0 sent_headers=0 start_dts_offset=0 got_first=0
+> reset
+reset ok
+> venc 0 h264 4000 64 big
+> venc 1 h264 2000 4 small
+> service rtmp://h/a KEY - -
+> opt bool dyn_bitrate 1
+> init_connect
+log info [rtmp stream: 'out'] Dynamic bitrate disabled. The encoder 'small' does not support on-the-fly multitrack bitrate reconfiguration.
+init_connect -> 1
+conn path="rtmp://h/a" key="KEY" user="" pass="" bind_ip="default" addrlen_hint=0 max_shutdown=30 new_socket_loop=0 low_latency=0
+codecs v: 1 1 0 0 0 0 0 0 0 0 a: 0 0 0 0 0 0
+dbr enabled=0 cur=6000 orig=6000 prev=0 est=0 inc=600 audio=0 data_size=0 inc_timeout=0 frames=0
+table n=2
+  [0] 0 0 0 0 0 0 0 0 0 0
+  [1] 4000 2000 0 0 0 0 0 0 0 0
+state packets=0 dropped=0 min_priority=0 congestion=0 last_dts_usec=0 drop_thr_usec=700000 pframe_thr_usec=900000 total_bytes=0 active=0 disconnected=0 encode_error=0 sent_headers=0 start_dts_offset=0 got_first=0
+> reset
+reset ok
+> venc 0 h264 4000 4 big
+> venc 1 h264 2000 64 small
+> service rtmp://h/a KEY - -
+> opt bool dyn_bitrate 1
+> init_connect
+log info [rtmp stream: 'out'] Dynamic bitrate disabled. The encoder 'big' does not support on-the-fly multitrack bitrate reconfiguration.
+init_connect -> 1
+conn path="rtmp://h/a" key="KEY" user="" pass="" bind_ip="default" addrlen_hint=0 max_shutdown=30 new_socket_loop=0 low_latency=0
+codecs v: 1 1 0 0 0 0 0 0 0 0 a: 0 0 0 0 0 0
+dbr enabled=0 cur=6000 orig=6000 prev=0 est=0 inc=600 audio=0 data_size=0 inc_timeout=0 frames=0
+table n=2
+  [0] 0 0 0 0 0 0 0 0 0 0
+  [1] 4000 2000 0 0 0 0 0 0 0 0
+state packets=0 dropped=0 min_priority=0 congestion=0 last_dts_usec=0 drop_thr_usec=700000 pframe_thr_usec=900000 total_bytes=0 active=0 disconnected=0 encode_error=0 sent_headers=0 start_dts_offset=0 got_first=0

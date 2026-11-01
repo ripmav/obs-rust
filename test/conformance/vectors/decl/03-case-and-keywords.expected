@@ -1,0 +1,39 @@
+decl "void f(Int a)"
+log warning Errors/warnings for 'void f(Int a)':  declaration (1, 8): Expected 'type' 
+parse fail
+decl "void f(INT a)"
+log warning Errors/warnings for 'void f(INT a)':  declaration (1, 8): Expected 'type' 
+parse fail
+decl "void f(IN int a)"
+log warning Errors/warnings for 'void f(IN int a)':  declaration (1, 8): Expected 'type' 
+parse fail
+decl "Void f()"
+log warning Errors/warnings for 'Void f()':  declaration (1, 1): Expected 'return type' 
+parse fail
+decl "void IN(int a)"
+parse ok name=IN params=1
+  param 0 name=a type=int in=1 out=0
+decl "void in(int a)"
+parse ok name=in params=1
+  param 0 name=a type=int in=1 out=0
+decl "void out(int a)"
+parse ok name=out params=1
+  param 0 name=a type=int in=1 out=0
+decl "void f(int in)"
+parse ok name=f params=1
+  param 0 name=in type=int in=1 out=0
+decl "void f(int out)"
+parse ok name=f params=1
+  param 0 name=out type=int in=1 out=0
+decl "void f(in int out)"
+parse ok name=f params=1
+  param 0 name=out type=int in=1 out=0
+decl "void Return(int a)"
+parse ok name=Return params=1
+  param 0 name=a type=int in=1 out=0
+decl "void f(int Return)"
+parse ok name=f params=1
+  param 0 name=Return type=int in=1 out=0
+decl "int return_value()"
+parse ok name=return_value params=1
+  param 0 name=return type=int in=0 out=1

@@ -1,0 +1,27 @@
+copy "  \t padded text \r\n"
+depad
+dump
+copy "   "
+depad
+dump
+copy "none"
+depad
+dump
+copy @null
+depad
+dump
+strdepad "  x  "
+strdepad ""
+strdepad "\n\t"
+strdepad "a b"
+b:copy "0123456789"
+left 4
+dump
+mid 2 5
+dump
+right 7
+dump
+mid 8 2
+dump
+left 0
+dump

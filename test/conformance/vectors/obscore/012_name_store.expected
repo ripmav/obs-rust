@@ -1,0 +1,22 @@
+log debug canvas 'Main' (<uuid>) created
+startup -> true
+name_store non_null=1 external=1
+state core=up locale=en-US modcfg=NULL name_store_owned=0
+  types source=3 input=1 filter=0 transition=0 output=0 encoder=0 service=0
+  graphics=no audio=no mixes=0 thread_initialized=0 valid=1
+  main_canvas name="Main" flags=0xf mix=none
+shutdown begin
+log info Freeing OBS context data
+log debug canvas 'Main' (<uuid>) destroyed
+shutdown end obs=NULL
+log debug canvas 'Main' (<uuid>) created
+startup -> true
+name_store non_null=1 external=0
+state core=up locale=en-US modcfg=NULL name_store_owned=1
+  types source=3 input=1 filter=0 transition=0 output=0 encoder=0 service=0
+  graphics=no audio=no mixes=0 thread_initialized=0 valid=1
+  main_canvas name="Main" flags=0xf mix=none
+shutdown begin
+log info Freeing OBS context data
+log debug canvas 'Main' (<uuid>) destroyed
+shutdown end obs=NULL

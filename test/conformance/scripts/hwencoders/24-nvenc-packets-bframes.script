@@ -1,0 +1,37 @@
+# S-050 nvenc: output dts = the OLDEST queued submission pts (FIFO of dts_list) minus
+# bf * packet.timebase_num for H.264/HEVC; unmodified for AV1. The packet pts is the SDK's output
+# timestamp. (timebase_num is the packet's timebase numerator, set by libobs.)
+# H.264, bf=2: buf_count 12, output_delay 11 -> first packet at the 11th submission.
+dump 0
+header 0000000167
+nvcap dyn_bitrate 1
+host timebase 1
+defaults h264
+set int bf 2
+create h264 soft
+state
+lockpic 3 0 10
+lockpic 1 2 10
+lockpic 1 1 10
+lockpic 0 4 10
+encodes 0 13
+destroy
+# HEVC, bf=1, timebase_num 1001 (30000/1001 style clocks): dts shifts by 1001
+host timebase 1001
+defaults hevc
+set int bf 1
+create hevc soft
+state
+lockpic 3 0 10
+lockpic 0 2002 10
+encodes 0 7
+destroy
+# AV1: no dts correction. bf=1 -> buf 8, delay 7
+defaults av1
+set int bf 1
+create av1 soft
+state
+lockpic 3 0 10
+lockpic 0 1 10
+encodes 0 7
+destroy

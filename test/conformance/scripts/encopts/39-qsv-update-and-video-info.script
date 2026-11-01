@@ -1,0 +1,43 @@
+# CORE/QUIRK. obs_qsv_update only changes the target bitrate (cast to 16 bit) and asks the
+# library to reconfigure; all other setting changes are ignored until the encoder is recreated.
+# get_video_info: preferred format NV12 only for H.264; AV1/HEVC also accept P010; the output size
+# is capped to 1920x1200 on Ivy Bridge or older integrated GPUs (not for discrete GPUs).
+data D
+qsv_defaults h264v2 D
+qsv_create h264v2 X D
+set D bitrate int 8000
+set D latency str low
+set D rate_control str VBR
+qsv_update X D
+echo bitrate-above-65535-wraps
+set D bitrate int 70000
+qsv_update X D
+qsv_destroy X
+echo video-info-formats
+pref_format none
+qsv_video_info h264v2 NV12
+qsv_video_info h264v2 P010
+qsv_video_info h264v2 I420
+qsv_video_info hevc P010
+qsv_video_info av1 I420
+pref_format P010
+qsv_video_info h264v2 NV12
+qsv_video_info hevc NV12
+echo resolution-cap
+pref_format none
+video NV12 709 partial 60 1 3840 2160
+cpu_platform 3
+qsv_video_info h264v2 NV12
+cpu_platform 2
+qsv_video_info hevc NV12
+cpu_platform 6
+qsv_video_info h264v2 NV12
+cpu_platform 3
+qsv_dgpu 1
+qsv_video_info h264v2 NV12
+qsv_dgpu 0
+video NV12 709 partial 60 1 1280 1440
+cpu_platform 3
+qsv_video_info h264v2 NV12
+cpu_platform 0
+qsv_video_info h264v2 NV12

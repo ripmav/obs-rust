@@ -1,0 +1,55 @@
+# Blend state is tracked in the frontend (so it can be pushed/popped/reset) and forwarded to the backend.
+# At creation the frontend programs separate SRCALPHA/INVSRCALPHA, ONE/INVSRCALPHA and op ADD, and
+# its mirror records blending as ENABLED without calling device_enable_blending.
+trace 0
+gs_create g
+gs_enter_context g
+trace 1
+echo == gs_blend_function sets color AND alpha factors identically; the backend gets the non-separate call
+gs_blend_function GS_BLEND_ONE GS_BLEND_ZERO
+echo == push saves the frontend mirror; pop re-applies enable, separate function and op
+gs_blend_state_push
+gs_blend_function_separate GS_BLEND_SRCCOLOR GS_BLEND_DSTCOLOR GS_BLEND_SRCALPHA GS_BLEND_DSTALPHA
+gs_blend_op GS_BLEND_OP_SUBTRACT
+gs_enable_blending 0
+gs_blend_state_pop
+echo == pop on an empty stack does nothing
+gs_blend_state_pop
+echo == pop restores a function set with gs_blend_function as the *separate* quadruple
+gs_blend_state_push
+gs_blend_function GS_BLEND_ZERO GS_BLEND_ONE
+gs_blend_state_pop
+echo == nested pushes are LIFO
+gs_blend_function GS_BLEND_ONE GS_BLEND_ONE
+gs_blend_state_push
+gs_blend_function GS_BLEND_ZERO GS_BLEND_ZERO
+gs_blend_state_push
+gs_blend_function GS_BLEND_SRCALPHA GS_BLEND_SRCALPHA
+gs_blend_state_pop
+gs_blend_state_pop
+gs_blend_state_pop
+echo == reset: re-enables blending if it was off
+gs_enable_blending 0
+gs_reset_blend_state
+echo == reset: restores the default function when any factor differs (and then also op ADD)
+gs_blend_op GS_BLEND_OP_MAX
+gs_blend_function GS_BLEND_ONE GS_BLEND_ONE
+gs_reset_blend_state
+echo == reset: nothing to do when function already default
+gs_reset_blend_state
+echo == QUIRK: reset does not restore the op when only the op differs
+gs_blend_op GS_BLEND_OP_MIN
+gs_reset_blend_state
+gs_blend_op GS_BLEND_OP_ADD
+echo == simple enable/disable calls
+gs_enable_depth_test 1
+gs_enable_stencil_test 1
+gs_enable_stencil_write 0
+gs_enable_color 1 0 1 0
+gs_depth_function GS_GREATER
+gs_stencil_function GS_STENCIL_FRONT GS_LESS
+gs_stencil_op GS_STENCIL_BACK GS_KEEP GS_ZERO GS_REPLACE
+gs_set_cull_mode GS_BACK
+gs_get_cull_mode
+gs_set_cull_mode GS_FRONT
+gs_get_cull_mode

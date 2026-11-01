@@ -1,0 +1,61 @@
+av.find_encoder aac -> found
+log info ---------------------------------
+log info [FFmpeg aac encoder: 'enc'] bitrate: 128, channels: 2, channel_layout: stereo, track: 1 
+av.open2 codec=aac bit_rate=128000 sample_rate=48000 channels=2 sample_fmt=8 strict=-2 flags=4194304 0x0 pix_fmt=0
+audio_create aac ok
+audio type=aac bit_rate=128000 sample_rate=48000 channels=2 sample_fmt=8 frame_size=1024 frame_size_bytes=4096 planes=2 audio_size=4 total_samples=0 time_base=1/48000
+av.free_context
+av.find_encoder libopus -> found
+log info ---------------------------------
+log info [FFmpeg libopus encoder: 'enc'] bitrate: 128, channels: 2, channel_layout: stereo, track: 1 
+av.open2 codec=libopus bit_rate=128000 sample_rate=48000 channels=2 sample_fmt=3 strict=-2 flags=4194304 0x0 pix_fmt=0
+audio_create opus ok
+audio type=libopus bit_rate=128000 sample_rate=48000 channels=2 sample_fmt=3 frame_size=1024 frame_size_bytes=8192 planes=1 audio_size=8 total_samples=0 time_base=1/48000
+av.free_context
+av.find_encoder alac -> found
+log info ---------------------------------
+log info [FFmpeg alac encoder: 'enc'] bitrate: 0, channels: 2, channel_layout: stereo, track: 1 
+av.open2 codec=alac bit_rate=0 sample_rate=48000 channels=2 sample_fmt=7 strict=-2 flags=4194304 0x0 pix_fmt=0
+audio_create alac ok
+audio type=alac bit_rate=0 sample_rate=48000 channels=2 sample_fmt=7 frame_size=1024 frame_size_bytes=4096 planes=2 audio_size=4 total_samples=0 time_base=1/48000
+av.free_context
+av.find_encoder pcm_s16le -> found
+log info ---------------------------------
+log info [FFmpeg pcm_s16le encoder: 'enc'] bitrate: 0, channels: 2, channel_layout: stereo, track: 1 
+av.open2 codec=pcm_s16le bit_rate=0 sample_rate=48000 channels=2 sample_fmt=1 strict=-2 flags=4194304 0x0 pix_fmt=0
+audio_create pcm ok
+audio type=pcm_s16le bit_rate=0 sample_rate=48000 channels=2 sample_fmt=1 frame_size=1024 frame_size_bytes=4096 planes=1 audio_size=4 total_samples=0 time_base=1/48000
+av.free_context
+av.find_encoder pcm_s16le -> found
+log info ---------------------------------
+log info [FFmpeg pcm_s16le encoder: 'enc'] bitrate: 0, channels: 6, channel_layout: 5.1, track: 1 
+av.open2 codec=pcm_s16le bit_rate=0 sample_rate=48000 channels=6 sample_fmt=5 strict=-2 flags=4194304 0x0 pix_fmt=0
+audio_create pcm ok
+audio type=pcm_s16le bit_rate=0 sample_rate=48000 channels=6 sample_fmt=5 frame_size=1024 frame_size_bytes=1024 planes=6 audio_size=1 total_samples=0 time_base=1/48000
+av.free_context
+av.find_encoder pcm_s16le -> found
+log info ---------------------------------
+log info [FFmpeg pcm_s16le encoder: 'enc'] bitrate: 0, channels: 6, channel_layout: 5.1, track: 1 
+av.open2 codec=pcm_s16le bit_rate=0 sample_rate=48000 channels=6 sample_fmt=4 strict=-2 flags=4194304 0x0 pix_fmt=0
+audio_create pcm ok
+audio type=pcm_s16le bit_rate=0 sample_rate=48000 channels=6 sample_fmt=4 frame_size=1024 frame_size_bytes=12288 planes=1 audio_size=12 total_samples=0 time_base=1/48000
+av.free_context
+av.find_encoder pcm_s16le -> found
+log info ---------------------------------
+log info [FFmpeg pcm_s16le encoder: 'enc'] bitrate: 0, channels: 8, channel_layout: 7.1, track: 1 
+av.open2 codec=pcm_s16le bit_rate=0 sample_rate=48000 channels=8 sample_fmt=2 strict=-2 flags=4194304 0x0 pix_fmt=0
+audio_create pcm ok
+audio type=pcm_s16le bit_rate=0 sample_rate=48000 channels=8 sample_fmt=2 frame_size=1024 frame_size_bytes=32768 planes=1 audio_size=32 total_samples=0 time_base=1/48000
+av.free_context
+av.find_encoder aac -> found
+log info ---------------------------------
+log info [FFmpeg aac encoder: 'enc'] bitrate: 128, channels: 8, channel_layout: 7.1, track: 1 
+av.open2 codec=aac bit_rate=128000 sample_rate=48000 channels=8 sample_fmt=2 strict=-2 flags=4194304 0x0 pix_fmt=0
+host.set_last_error "Failed to open AAC codec: Error number -1000 occurred"
+log warning [FFmpeg aac encoder: 'enc'] Failed to open AAC codec: Error number -1000 occurred
+av.free_context
+audio_create aac null
+av.find_encoder aac -> missing
+log info ---------------------------------
+log warning [FFmpeg aac encoder: 'enc'] Couldn't find encoder
+audio_create aac null

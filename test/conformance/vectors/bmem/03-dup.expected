@@ -1,0 +1,9 @@
+check 1 ok
+aligned 1 yes
+strdup 2 hello
+aligned 2 yes
+strdup 3 
+strdup 4 @null
+strdup_n 5 abc
+count 5
+count 0

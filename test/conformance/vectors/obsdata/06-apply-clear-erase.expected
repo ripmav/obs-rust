@@ -1,0 +1,36 @@
+a_push ar 0
+dump t {keep:number[user=num(I,1,1)],over:number[user=num(I,20,20)],s:string[user="target"],sub:object[user={new:number[user=num(I,1,1)]}],fresh:number[user=num(D,1,1.5)],arr:array[user=[{}]]}
+echo --- applying copies, it does not share
+get_obj t sub ok
+same got so 0
+refs so 2
+echo --- changing the source afterwards does not touch the target
+get_obj t sub ok
+get_int got2 new 1
+echo --- apply with NULL or self is a no-op
+dump t {keep:number[user=num(I,1,1)],over:number[user=num(I,20,20)],s:string[user="target"],sub:object[user={new:number[user=num(I,1,1)]}],fresh:number[user=num(D,1,1.5)],arr:array[user=[{}]]}
+echo --- apply an array of objects: elements are copied too
+a_item ar 0 ok
+dump t {keep:number[user=num(I,1,1)],over:number[user=num(I,20,20)],s:string[user="target"],sub:object[user={new:number[user=num(I,1,1)]}],fresh:number[user=num(D,1,1.5)],arr:array[user=[{}]]}
+echo --- erase
+has_user t keep 0
+names t over s sub fresh arr
+echo --- clear keeps items that have defaults, user values go
+refs co 2
+refs co 1
+dump c {a:number[default=num(I,2,2)],b:number[],s:string[default="dtext"],au:number[auto=num(I,4,4)],o:object[]}
+get_int c a 2
+get_int c b 0
+get_string c s "dtext"
+json c "{}"
+json_defaults c "{\"a\":2,\"b\":0.0,\"s\":\"dtext\",\"au\":4,\"o\":null}"
+names c a b s au o
+echo --- after clear the item can be set again
+dump c {a:number[default=num(I,2,2)],b:number[user=num(I,10,10)],s:string[default="dtext"],au:number[auto=num(I,4,4)],o:object[]}
+echo --- get_defaults
+a_push ga 0
+dump gd {s:string[user="x"],b:bool[user=true],i:number[user=num(I,1,1)],d:number[user=num(D,2,2.5)],nodefault:number[user=num(I,0,0)],o:object[user={inner:number[user=num(I,0,0)]}],arr:array[user=[{n:number[user=num(I,0,0)]}]]}
+json gd "{\"s\":\"x\",\"b\":true,\"i\":1,\"d\":2.5,\"nodefault\":0,\"o\":{\"inner\":0},\"arr\":[{\"n\":0}]}"
+echo --- the type of the USER value picks the number conversion
+dump gd2 {s:string[user="x"],b:bool[user=true],i:number[user=num(I,1,1)],d:number[user=num(I,2,2)],nodefault:number[user=num(I,0,0)],o:object[user={inner:number[user=num(I,0,0)]}],arr:array[user=[{n:number[user=num(I,0,0)]}]]}
+dump gd3 {}

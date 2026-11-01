@@ -1,0 +1,32 @@
+# gs_create / gs_destroy: loading the backend module, the mandatory/optional export rules and the
+# initialisation sequence (sprite and immediate vertex buffers, default blend state).
+echo == normal creation: observe the whole init sequence
+gs_create g0
+echo == adapter argument is forwarded to device_create
+gs_create g1 fake 3
+echo == module that cannot be opened
+gs_create gx nomodule
+echo == device_create fails with a backend error code
+ret device_create -3
+gs_create gx fake
+ret device_create 0
+echo == a mandatory export that is missing makes the import fail (logged), creation returns FAIL
+missing device_draw 1
+gs_create gx fake
+missing device_draw 0
+echo == optional exports may be absent
+missing gpu_get_renderer 1
+missing gs_texture_is_rect 1
+missing device_enum_adapters 1
+missing gs_get_adapter_count 1
+missing device_nv12_available 1
+gs_create g2 fake
+missing gpu_get_renderer 0
+missing gs_texture_is_rect 0
+missing device_enum_adapters 0
+missing gs_get_adapter_count 0
+missing device_nv12_available 0
+echo == destroy runs the backend teardown inside the context and releases the 4 vertex buffers
+gs_destroy g2
+gs_destroy g1
+gs_destroy g0

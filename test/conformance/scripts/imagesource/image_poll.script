@@ -1,0 +1,24 @@
+# image_source: file change polling once per second while showing (CORE).
+fs_file /i/a.png 100
+img /i/a.png 10 10
+create a image_source {"file":"/i/a.png"}
+refs a 1 0
+tick 0.4
+state a
+fs_file /i/a.png 200
+tick 0.4
+state a
+tick 0.4
+state a
+tick 0.4
+state a
+# not showing: no polling
+refs a 0 0
+fs_file /i/a.png 300
+tick 1.5 2
+state a
+# file deleted: timestamp -1 differs, load fails
+refs a 1 0
+fs_rm /i/a.png
+tick 1.0 2
+state a

@@ -1,0 +1,16 @@
+# S-044: the timestamp delivered to outputs is *new_ts as set by the input callback (initially 0); returning false
+# from the input callback skips clamping and all output callbacks for that tick.
+aopen main 48000 FLOAT_PLANAR STEREO
+aconnect a 1 0
+anewts none
+atick
+anewts delta -1000
+atick
+anewts abs 777
+atick
+ainret false
+atick
+ainret true
+anewts delta 5
+atick
+aclose

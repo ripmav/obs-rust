@@ -1,0 +1,69 @@
+# S-045 check_to_drop_frames with dynamic bitrate enabled: no frames are dropped; the bitrate is lowered instead.
+reset
+codec 0 h264
+set active 1
+venc 0 h264 6000 4 e0
+dbr_json "[[0,3000,6000]]"
+set drop_threshold_usec 700000
+set pframe_drop_threshold_usec 900000
+# build a queue 400 ms deep with DBR off
+pkt video 0 3 1
+pkt video 100000 0 0
+pkt video 200000 0 0
+pkt video 300000 0 0
+pkt video 400000 0 0
+pkt video 500000 0 0
+# turn DBR on; a measured estimate of 3000 kbit/s is available
+set dbr_enabled 1
+set dbr_cur_bitrate 6000
+set dbr_orig_bitrate 6000
+set dbr_est_bitrate 3000
+fake now 1000000000
+# P stage does nothing at all in DBR mode
+check_drop p
+dbr
+# B stage: queue deeper than 200 ms -> bitrate lowered to 3000, encoder reconfigured, nothing dropped
+check_drop b
+dbr
+queue
+# deeper than the B threshold would normally trigger dropping, but not in DBR mode
+pkt video 1300000 0 0
+pkt video 1400000 0 0
+queue
+# queue shallower than 200 ms: nothing lowered
+reset
+codec 0 h264
+set active 1
+venc 0 h264 6000 4 e0
+set dbr_enabled 1
+set dbr_cur_bitrate 6000
+set dbr_orig_bitrate 6000
+set dbr_est_bitrate 3000
+pkt video 0 3 1
+pkt video 20000 0 0
+pkt video 40000 0 0
+pkt video 60000 0 0
+pkt video 80000 0 0
+pkt video 100000 0 0
+check_drop b
+dbr
+# recovery timer: not yet due -> nothing; due -> one step up (+10% of original) and the encoder is told
+reset
+codec 0 h264
+set active 1
+venc 0 h264 3000 4 e0
+dbr_json "[[0,3000,6000]]"
+set dbr_enabled 1
+set dbr_orig_bitrate 6000
+set dbr_cur_bitrate 3000
+set dbr_inc_bitrate 600
+set dbr_inc_timeout 5000000000
+fake now 4000000000
+check_drop b
+dbr
+fake now 5000000000
+check_drop b
+dbr
+# fewer than 5 packets also resets congestion even with DBR; the timer check still ran first
+set congestion 0.9
+check_drop b

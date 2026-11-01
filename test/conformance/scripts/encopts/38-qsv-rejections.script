@@ -1,0 +1,30 @@
+# CORE. obs_qsv_create refuses some formats: 10-bit for H.264, 16-bit (P216/P416) for all,
+# HDR colourspaces with 8-bit formats; NULL result and last error key. 10-bit HEVC/AV1 sets
+# the video_fmt_10bit flag (fmt10=1).
+data D
+qsv_defaults h264v2 D
+echo h264-10bit
+video P010 709 partial 60 1 1920 1080
+qsv_create h264v2 X D
+video I010 709 partial 60 1 1920 1080
+qsv_create h264v2 X D
+echo sixteen-bit
+video P216 709 partial 60 1 1920 1080
+qsv_create h264v2 X D
+video P416 709 partial 60 1 1920 1080
+qsv_create hevc X D
+echo hdr-with-8-bit
+video NV12 pq partial 60 1 1920 1080
+qsv_create h264v2 X D
+video NV12 hlg partial 60 1 1920 1080
+qsv_create av1 X D
+echo ten-bit-hevc-and-av1
+data H
+qsv_defaults hevc H
+video P010 709 partial 60 1 1920 1080
+qsv_create hevc X H
+qsv_destroy X
+data A
+qsv_defaults av1 A
+qsv_create av1 X A
+qsv_destroy X

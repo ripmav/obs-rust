@@ -1,0 +1,15 @@
+# S-050 nvenc DEFECT D-1: init_encoder_base computes `bitrate * 1000` in signed int. The property
+# range allows 4294967 kbps, so values above 2147483 overflow (undefined behaviour in C; in practice
+# the product wraps modulo 2^32). Required behaviour: unsigned 32-bit modular arithmetic. This
+# script is excluded from the sanitizer run for that reason.
+dump 1
+nvcap dyn_bitrate 1
+defaults h264
+set int bitrate 2147484
+set int max_bitrate 4294967
+set str rate_control VBR
+create h264 soft
+destroy
+set int bitrate 4294967
+create h264 soft
+destroy

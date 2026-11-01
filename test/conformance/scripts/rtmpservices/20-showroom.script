@@ -1,0 +1,32 @@
+# S-026 SHOWROOM: url and key come from GET <server><access key>; results cached 10 s per access key;
+# on failure url "" and key "" (the shared invalid ingest).
+fs-load /mod/data/services.json data/services-ok.json
+settings S {"service":"SHOWROOM","server":"https://showroom.example/api/obs/streaming_info?obs_key=","key":"AK1"}
+new R rtmp_common S
+echo no-route
+get R url key
+curl-route "https://showroom.example/api/obs/streaming_info?obs_key=AK1" 200 "{\"streaming_url_rtmp\":\"rtmp://sr.example/live\",\"streaming_key\":\"real-key\"}"
+echo success-one-request-serves-url-and-key
+get R url key
+echo cached-9s
+advance 9000
+get R url key
+echo cache-expired-at-10s
+curl-route "https://showroom.example/api/obs/streaming_info?obs_key=AK1" 200 "{\"streaming_url_rtmp\":\"rtmp://sr2.example/live\",\"streaming_key\":\"key2\"}"
+advance 1000
+get R url key
+echo refresh-failure-after-expiry-returns-invalid-ingest
+curl-route "https://showroom.example/api/obs/streaming_info?obs_key=AK1" 500 "x"
+advance 10000
+get R url key
+echo different-access-key-new-request
+settings S {"service":"SHOWROOM","server":"https://showroom.example/api/obs/streaming_info?obs_key=","key":"AK2"}
+update R S
+curl-route "https://showroom.example/api/obs/streaming_info?obs_key=AK2" 200 "{\"streaming_url_rtmp\":\"rtmp://sr3.example/live\"}"
+get R url key
+echo can-connect-uses-the-fetched-key
+get R can_connect connect:0 connect:2 user pass
+echo empty-server-string-still-takes-the-showroom-path-and-hits-the-cache
+settings S {"service":"SHOWROOM","server":"","key":"AK2"}
+update R S
+get R url key

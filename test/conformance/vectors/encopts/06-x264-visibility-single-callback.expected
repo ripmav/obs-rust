@@ -1,0 +1,10 @@
+props_modify P use_bufsize -> 1
+vis P rate_control:11 bitrate:11 use_bufsize:11 buffer_size:11 crf:11 keyint_sec:11 preset:11 profile:11 tune:11 x264opts:11 repeat_headers:01
+props_modify P use_bufsize -> 1
+echo buffer_size-hidden-but-nothing-else-changed
+vis P rate_control:11 bitrate:11 use_bufsize:11 buffer_size:01 crf:11 keyint_sec:11 preset:11 profile:11 tune:11 x264opts:11 repeat_headers:01
+props_modify P rate_control -> 1
+vis P rate_control:11 bitrate:11 use_bufsize:11 buffer_size:11 crf:01 keyint_sec:11 preset:11 profile:11 tune:11 x264opts:11 repeat_headers:01
+echo properties-without-a-callback-are-not-touched
+props_modify P use_bufsize -> 1
+vis P rate_control:11 bitrate:11 use_bufsize:11 buffer_size:01 crf:01 keyint_sec:11 preset:11 profile:11 tune:11 x264opts:11 repeat_headers:01

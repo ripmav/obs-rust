@@ -1,0 +1,43 @@
+# S-050 nvenc: per-picture parameters. Texture encoders pass NV12 unless the P010 texture is
+# active (then YUV420_10BIT); soft encoders pass the surface format chosen by the backend (NV12 in
+# this fake). With a BT.2100 colour space and 10-bit input the HEVC / AV1 pictures carry the
+# content-light-level and mastering-display structures (H.264 never does). The luminance is
+# hdr_peak at create time (PQ) or 1000 (HLG): maxLuma = peak * 10000, minLuma 0.
+dump 0
+nvcap dyn_bitrate 1
+nvcap 10bit 1
+host tex_nv12 1
+defaults hevc
+set int bf 0
+create hevc tex
+encodes 0 0
+destroy
+host tex_nv12 0
+host tex_p010 1
+host format p010
+create hevc tex
+encodes 0 0
+destroy
+host colorspace pq
+host hdr_peak 600
+create hevc tex
+state
+encodes 0 0
+destroy
+host colorspace hlg
+host hdr_peak 600
+create hevc tex
+state
+encodes 0 0
+destroy
+defaults av1
+set int bf 0
+create av1 tex
+encodes 0 0
+destroy
+defaults h264
+set int bf 0
+create h264 tex
+state
+encodes 0 0
+destroy

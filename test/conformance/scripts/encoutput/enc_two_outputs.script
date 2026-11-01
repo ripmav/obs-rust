@@ -1,0 +1,26 @@
+# One encoder shared by two outputs: each registered callback has its own first-keyframe gate and callbacks are
+# invoked in reverse registration order. The second output joins mid-stream and only sees packets from the next
+# keyframe on.
+video 30 1 1280 720
+venc v kf=3
+out o1 video,encoded autobegin=1
+out o2 video,encoded autobegin=1
+set_venc o1 v
+set_venc o2 v
+start o1
+vframe 1000000000
+vframe 1033333333
+vframe 1066666666
+vframe 1100000000
+echo --- o2 joins after 4 frames (keyframes are frames 1, 4, 7, ...)
+start o2
+encstate v
+vframe 1133333333
+vframe 1166666666
+vframe 1200000000
+vframe 1233333333
+echo --- the encoder keeps running until the last output stops
+stop o1
+encstate v
+stop o2
+encstate v

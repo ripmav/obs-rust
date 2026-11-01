@@ -1,0 +1,41 @@
+# S-050 nvenc: rate-control string -> RC block. NOTE the comparisons: "CQVBR"/"VBR" are
+# case-insensitive (astrcmpi) but "CQP" and "lossless" are case-sensitive (strcmp), and the default
+# written by the defaults function is lowercase "cbr" (which is neither). Anything that is not
+# vbr/cqvbr/cqp/lossless is CBR.
+dump 2
+nvcap dyn_bitrate 1
+nvcap temporal_aq 1
+defaults h264
+set int bitrate 6000
+set int max_bitrate 9000
+set int cqp 23
+set int target_quality 30
+set str rate_control CBR
+create h264 soft
+state
+destroy
+set str rate_control VBR
+create h264 soft
+destroy
+set str rate_control vbr
+create h264 soft
+destroy
+set str rate_control CQVBR
+create h264 soft
+state
+destroy
+set str rate_control cqvbr
+create h264 soft
+destroy
+set str rate_control CQP
+create h264 soft
+state
+destroy
+# lowercase cqp is NOT cqp: falls into CBR (QUIRK)
+set str rate_control cqp
+create h264 soft
+destroy
+# anything unknown is CBR
+set str rate_control bogus
+create h264 soft
+destroy

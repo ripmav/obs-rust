@@ -1,0 +1,164 @@
+> ff_defaults h264
+> host format p010
+> ff_create h264
+host.set_last_error "NVENC.10bitUnsupported"
+log error [NVENC encoder] NVENC.10bitUnsupported
+ff_create -> NULL
+> host format i010
+> ff_create h264
+host.set_last_error "NVENC.10bitUnsupported"
+log error [NVENC encoder] NVENC.10bitUnsupported
+ff_create -> NULL
+> ff_create hevc
+host.set_last_error "NVENC.I010Unsupported"
+log error [NVENC encoder] NVENC.I010Unsupported
+ff_create -> NULL
+> host format p010
+> ff_create hevc
+ffve.init lib=hevc_nvenc lib2=nvenc_hevc name="NVIDIA NVENC HEVC (FFmpeg)"
+av.opt_set_int cbr=0
+av.opt_set profile=high
+av.opt_set preset=p5
+av.opt_set tune=hq
+av.opt_set multipass=qres
+av.opt_set_int cbr=1
+av.opt_set level=auto
+av.opt_set_int gpu=0
+av.opt_set_int no-scenecut=0
+av.opt_set_int spatial-aq=1
+av.opt_set_int temporal-aq=1
+ffve.update bitrate=5000 keyint_sec=0 fps=60/1 size=1920x1080 info.format=18 opts="" ctx{global_quality=0 rc_max_rate=5000000 rc_min_rate=5000000 max_b_frames=2}
+log info [FFmpeg NVENC encoder: 'enc'] settings: 	encoder:      NVIDIA NVENC HEVC (FFmpeg) 	rate_control: CBR 	bitrate:      5000 	cqp:          0 	keyint:       0 	preset:       p5 	tuning:       hq 	multipass:    qres 	profile:      high 	width:        1920 	height:       1080 	b-frames:     2 	psycho-aq:    1 	GPU:          0 
+ffve.init_codec #1 -> ok
+ff_create -> ok
+> ff_destroy
+ffve.free
+ff_destroyed
+> host format p216
+> ff_create h264
+host.set_last_error "NVENC.16bitUnsupported"
+log error [NVENC encoder] NVENC.16bitUnsupported
+ff_create -> NULL
+> ff_create hevc
+host.set_last_error "NVENC.16bitUnsupported"
+log error [NVENC encoder] NVENC.16bitUnsupported
+ff_create -> NULL
+> host format p416
+> ff_create hevc
+host.set_last_error "NVENC.16bitUnsupported"
+log error [NVENC encoder] NVENC.16bitUnsupported
+ff_create -> NULL
+> host format nv12
+> host colorspace pq
+> ff_create h264
+host.set_last_error "NVENC.8bitUnsupportedHdr"
+log error [NVENC encoder] NVENC.8bitUnsupportedHdr
+ff_create -> NULL
+> ff_create hevc
+host.set_last_error "NVENC.8bitUnsupportedHdr"
+log error [NVENC encoder] NVENC.8bitUnsupportedHdr
+ff_create -> NULL
+> host colorspace hlg
+> ff_create hevc
+host.set_last_error "NVENC.8bitUnsupportedHdr"
+log error [NVENC encoder] NVENC.8bitUnsupportedHdr
+ff_create -> NULL
+> host colorspace 709
+> set bool psycho_aq 1
+> ff_initfail 0 -542398533 1
+> ff_create h264
+ffve.init lib=h264_nvenc lib2=nvenc_h264 name="NVIDIA NVENC H.264 (FFmpeg)"
+av.opt_set_int cbr=0
+av.opt_set profile=high
+av.opt_set preset=p5
+av.opt_set tune=hq
+av.opt_set multipass=qres
+av.opt_set_int cbr=1
+av.opt_set level=auto
+av.opt_set_int gpu=0
+av.opt_set_int no-scenecut=0
+av.opt_set_int spatial-aq=1
+av.opt_set_int temporal-aq=1
+ffve.update bitrate=5000 keyint_sec=0 fps=60/1 size=1920x1080 info.format=2 opts="" ctx{global_quality=0 rc_max_rate=5000000 rc_min_rate=5000000 max_b_frames=2}
+log info [FFmpeg NVENC encoder: 'enc'] settings: 	encoder:      NVIDIA NVENC H.264 (FFmpeg) 	rate_control: CBR 	bitrate:      5000 	cqp:          0 	keyint:       0 	preset:       p5 	tuning:       hq 	multipass:    qres 	profile:      high 	width:        1920 	height:       1080 	b-frames:     2 	psycho-aq:    1 	GPU:          0 
+ffve.init_codec #1 -> fail
+host.set_last_error "NVENC.Error<br><br>NVENC.GenericError"
+ffve.free
+log warning [NVENC encoder] nvenc_create_internal failed, trying again without Psycho Visual Tuning
+ffve.init lib=h264_nvenc lib2=nvenc_h264 name="NVIDIA NVENC H.264 (FFmpeg)"
+av.opt_set_int cbr=0
+av.opt_set profile=high
+av.opt_set preset=p5
+av.opt_set tune=hq
+av.opt_set multipass=qres
+av.opt_set_int cbr=1
+av.opt_set level=auto
+av.opt_set_int gpu=0
+av.opt_set_int no-scenecut=0
+av.opt_set_int spatial-aq=0
+av.opt_set_int temporal-aq=0
+ffve.update bitrate=5000 keyint_sec=0 fps=60/1 size=1920x1080 info.format=2 opts="" ctx{global_quality=0 rc_max_rate=5000000 rc_min_rate=5000000 max_b_frames=2}
+log info [FFmpeg NVENC encoder: 'enc'] settings: 	encoder:      NVIDIA NVENC H.264 (FFmpeg) 	rate_control: CBR 	bitrate:      5000 	cqp:          0 	keyint:       0 	preset:       p5 	tuning:       hq 	multipass:    qres 	profile:      high 	width:        1920 	height:       1080 	b-frames:     2 	psycho-aq:    0 	GPU:          0 
+ffve.init_codec #2 -> ok
+ff_create -> ok
+> ff_destroy
+ffve.free
+ff_destroyed
+> ff_initfail 1 -542398533
+> ff_create h264
+ffve.init lib=h264_nvenc lib2=nvenc_h264 name="NVIDIA NVENC H.264 (FFmpeg)"
+av.opt_set_int cbr=0
+av.opt_set profile=high
+av.opt_set preset=p5
+av.opt_set tune=hq
+av.opt_set multipass=qres
+av.opt_set_int cbr=1
+av.opt_set level=auto
+av.opt_set_int gpu=0
+av.opt_set_int no-scenecut=0
+av.opt_set_int spatial-aq=1
+av.opt_set_int temporal-aq=1
+ffve.update bitrate=5000 keyint_sec=0 fps=60/1 size=1920x1080 info.format=2 opts="" ctx{global_quality=0 rc_max_rate=5000000 rc_min_rate=5000000 max_b_frames=2}
+log info [FFmpeg NVENC encoder: 'enc'] settings: 	encoder:      NVIDIA NVENC H.264 (FFmpeg) 	rate_control: CBR 	bitrate:      5000 	cqp:          0 	keyint:       0 	preset:       p5 	tuning:       hq 	multipass:    qres 	profile:      high 	width:        1920 	height:       1080 	b-frames:     2 	psycho-aq:    1 	GPU:          0 
+ffve.init_codec #1 -> fail
+host.set_last_error "NVENC.Error<br><br>NVENC.GenericError"
+ffve.free
+log warning [NVENC encoder] nvenc_create_internal failed, trying again without Psycho Visual Tuning
+ffve.init lib=h264_nvenc lib2=nvenc_h264 name="NVIDIA NVENC H.264 (FFmpeg)"
+av.opt_set_int cbr=0
+av.opt_set profile=high
+av.opt_set preset=p5
+av.opt_set tune=hq
+av.opt_set multipass=qres
+av.opt_set_int cbr=1
+av.opt_set level=auto
+av.opt_set_int gpu=0
+av.opt_set_int no-scenecut=0
+av.opt_set_int spatial-aq=0
+av.opt_set_int temporal-aq=0
+ffve.update bitrate=5000 keyint_sec=0 fps=60/1 size=1920x1080 info.format=2 opts="" ctx{global_quality=0 rc_max_rate=5000000 rc_min_rate=5000000 max_b_frames=2}
+log info [FFmpeg NVENC encoder: 'enc'] settings: 	encoder:      NVIDIA NVENC H.264 (FFmpeg) 	rate_control: CBR 	bitrate:      5000 	cqp:          0 	keyint:       0 	preset:       p5 	tuning:       hq 	multipass:    qres 	profile:      high 	width:        1920 	height:       1080 	b-frames:     2 	psycho-aq:    0 	GPU:          0 
+ffve.init_codec #2 -> fail
+host.set_last_error "NVENC.Error<br><br>NVENC.GenericError"
+ffve.free
+ff_create -> NULL
+> set bool psycho_aq 0
+> ff_create h264
+ffve.init lib=h264_nvenc lib2=nvenc_h264 name="NVIDIA NVENC H.264 (FFmpeg)"
+av.opt_set_int cbr=0
+av.opt_set profile=high
+av.opt_set preset=p5
+av.opt_set tune=hq
+av.opt_set multipass=qres
+av.opt_set_int cbr=1
+av.opt_set level=auto
+av.opt_set_int gpu=0
+av.opt_set_int no-scenecut=0
+av.opt_set_int spatial-aq=0
+av.opt_set_int temporal-aq=0
+ffve.update bitrate=5000 keyint_sec=0 fps=60/1 size=1920x1080 info.format=2 opts="" ctx{global_quality=0 rc_max_rate=5000000 rc_min_rate=5000000 max_b_frames=2}
+log info [FFmpeg NVENC encoder: 'enc'] settings: 	encoder:      NVIDIA NVENC H.264 (FFmpeg) 	rate_control: CBR 	bitrate:      5000 	cqp:          0 	keyint:       0 	preset:       p5 	tuning:       hq 	multipass:    qres 	profile:      high 	width:        1920 	height:       1080 	b-frames:     2 	psycho-aq:    0 	GPU:          0 
+ffve.init_codec #1 -> fail
+host.set_last_error "NVENC.Error<br><br>NVENC.GenericError"
+ffve.free
+ff_create -> NULL

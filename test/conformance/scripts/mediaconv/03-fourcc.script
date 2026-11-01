@@ -1,0 +1,38 @@
+# video_format_from_fourcc: the fourcc is the little-endian packing of its four characters
+# (first character in the lowest byte). Only UYVY/YUY2/YVYU/Y800 families map; everything else is NONE (0).
+# UYVY = 5, YUY2 = 4, YVYU = 3, Y800 = 9.
+fourcc UYVY
+fourcc HDYC
+fourcc UYNV
+fourcc UYNY
+fourcc uyv1
+fourcc 2vuy
+fourcc 2Vuy
+fourcc YUY2
+fourcc Y422
+fourcc V422
+fourcc VYUY
+fourcc YUNV
+fourcc yuv2
+fourcc yuvs
+fourcc YVYU
+fourcc Y800
+# not mapped (note: case matters, and planar/RGB codes are not recognised)
+fourcc "I420"
+fourcc "NV12"
+fourcc "YV12"
+fourcc "BGRA"
+fourcc "RGBA"
+fourcc "Y8  "
+fourcc "uyvy"
+fourcc "yuy2"
+fourcc "Y16 "
+fourcc "yvyu"
+fourcc "HDYc"
+fourcc "UYVz"
+# raw numeric values: 0, all ones, and the exact value for UYVY
+fourcc 0x0
+fourcc 0xffffffff
+fourcc 0x59565955
+fourcc 0x32595559
+fourcc 0x55595659

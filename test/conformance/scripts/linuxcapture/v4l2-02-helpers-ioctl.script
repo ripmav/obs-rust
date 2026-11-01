@@ -1,0 +1,38 @@
+# S-049 v4l2: the thin ioctl helpers (input, format, framerate, standard, dv timing) against a fake kernel.
+# "-1" means "leave unchanged / just read back".
+trace on
+dev /dev/video0
+dev-cap "Cam One" usb-1 0x85200001 0x05200001
+dev-input Camera 0
+dev-input Tuner 1
+dev-cur 0 640 480 YUYV 1280 1 30 0
+h-open /dev/video0
+h-input-caps 0
+h-input-caps 1
+h-input-caps -1
+h-input-caps 7
+# read current input (-1) vs set
+h-set-input -1
+h-set-input 1
+h-set-input -1
+# format: read back only, resolution only, pixel format only, both
+h-set-format -1 -1
+h-set-format 8246337209400 -1
+h-set-format -1 NV12
+h-set-format 2748779069760 MJPG
+# legacy-encoded resolution (1280x720 with 16-bit halves)
+h-set-format 83886800 -1
+# framerate
+h-set-framerate -1
+h-set-framerate 4294967356
+h-set-framerate 4294967321
+# standard
+h-set-standard -1
+h-set-standard 255
+# dv timing: -1 is a no-op success; enumeration index out of range fails
+dev-dv 1920 1080 148500000 88 44 148 4 5 36 0 0 0 0
+h-set-dv -1
+h-set-dv 0
+h-set-dv 3
+# NULL / zero-device handling
+h-null-args

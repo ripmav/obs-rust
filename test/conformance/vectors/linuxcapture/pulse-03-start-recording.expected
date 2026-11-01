@@ -1,0 +1,79 @@
+> pulse-server pulseaudio 16.1 alsa_input.mic alsa_output.speakers
+> pulse-source alsa_input.mic Mic - s16le 48000 2
+> pulse-source alsa_input.s24 S24 - s24le 44100 6
+> pulse-source alsa_input.ch7 Seven - s32le 96000 7
+> pulse-source alsa_input.mono Mono - float32le 8000 1
+> pulse-source alsa_output.speakers.monitor Mon 0 float32le 48000 8
+> pulse-defaults
+> source-name Mic1
+> set-str device_id default
+> pulse-create input
+log info pulse-input: Server name: 'pulseaudio 16.1'
+log debug pulse-input: Default input device: 'alsa_input.mic'
+log info pulse-input: Audio format: s16le, 48000 Hz, 2 channels
+event stream_new name="Mic1" format=s16le rate=48000 channels=2 map=front-left,front-right
+event connect_record dev="alsa_input.mic" fragsize=4800 maxlength=4294967295 flags=0x2000
+log info pulse-input: Started recording from 'alsa_input.mic' (default)
+state device=alsa_input.mic is_default=1 input=1 stream=1 speakers=STEREO format=s16le rate=48000 bytes_per_frame=4 channels=2 first_ts=0 packets=0 frames=0
+> pulse-destroy
+event stream_disconnect
+log info pulse-input: Stopped recording from 'alsa_input.mic'
+log info pulse-input: Got 0 packets with 0 frames
+pulse-destroy refs=0
+> set-str device_id default
+> pulse-create output
+event capture_device_changed default
+log info pulse-input: Server name: 'pulseaudio 16.1'
+log debug pulse-input: Default output device: 'alsa_output.speakers.monitor'
+log info pulse-input: Audio format: float32le, 48000 Hz, 8 channels
+event stream_new name="Mic1" format=float32le rate=48000 channels=8 map=front-left,front-right,front-center,lfe,rear-left,rear-right,side-left,side-right
+event connect_record dev="alsa_output.speakers.monitor" fragsize=38400 maxlength=4294967295 flags=0x2000
+log info pulse-input: Started recording from 'alsa_output.speakers.monitor' (default)
+state device=alsa_output.speakers.monitor is_default=1 input=0 stream=1 speakers=7.1 format=float32le rate=48000 bytes_per_frame=32 channels=8 first_ts=0 packets=0 frames=0
+> pulse-destroy
+event stream_disconnect
+log info pulse-input: Stopped recording from 'alsa_output.speakers.monitor'
+log info pulse-input: Got 0 packets with 0 frames
+event capture_device_changed (null)
+pulse-destroy refs=0
+> set-str device_id alsa_input.s24
+> pulse-create input
+log info pulse-input: Server name: 'pulseaudio 16.1'
+log info pulse-input: Audio format: s24le, 44100 Hz, 6 channels
+log info pulse-input: Sample format s24le not supported by OBS,using float32le instead for recording
+event stream_new name="Mic1" format=float32le rate=44100 channels=6 map=front-left,front-right,front-center,lfe,rear-left,rear-right
+event connect_record dev="alsa_input.s24" fragsize=26448 maxlength=4294967295 flags=0x2200
+log info pulse-input: Started recording from 'alsa_input.s24'
+state device=alsa_input.s24 is_default=0 input=1 stream=1 speakers=5.1 format=float32le rate=44100 bytes_per_frame=24 channels=6 first_ts=0 packets=0 frames=0
+> pulse-destroy
+event stream_disconnect
+log info pulse-input: Stopped recording from 'alsa_input.s24'
+log info pulse-input: Got 0 packets with 0 frames
+pulse-destroy refs=0
+> set-str device_id alsa_input.ch7
+> pulse-create input
+log info pulse-input: Server name: 'pulseaudio 16.1'
+log info pulse-input: Audio format: s32le, 96000 Hz, 7 channels
+log info pulse-input: 7 channels not supported by OBS, using 2 instead for recording
+event stream_new name="Mic1" format=s32le rate=96000 channels=2 map=front-left,front-right
+event connect_record dev="alsa_input.ch7" fragsize=19200 maxlength=4294967295 flags=0x2200
+log info pulse-input: Started recording from 'alsa_input.ch7'
+state device=alsa_input.ch7 is_default=0 input=1 stream=1 speakers=STEREO format=s32le rate=96000 bytes_per_frame=8 channels=2 first_ts=0 packets=0 frames=0
+> pulse-destroy
+event stream_disconnect
+log info pulse-input: Stopped recording from 'alsa_input.ch7'
+log info pulse-input: Got 0 packets with 0 frames
+pulse-destroy refs=0
+> set-str device_id alsa_input.mono
+> pulse-create input
+log info pulse-input: Server name: 'pulseaudio 16.1'
+log info pulse-input: Audio format: float32le, 8000 Hz, 1 channels
+event stream_new name="Mic1" format=float32le rate=8000 channels=1 map=mono
+event connect_record dev="alsa_input.mono" fragsize=800 maxlength=4294967295 flags=0x2200
+log info pulse-input: Started recording from 'alsa_input.mono'
+state device=alsa_input.mono is_default=0 input=1 stream=1 speakers=MONO format=float32le rate=8000 bytes_per_frame=4 channels=1 first_ts=0 packets=0 frames=0
+> pulse-destroy
+event stream_disconnect
+log info pulse-input: Stopped recording from 'alsa_input.mono'
+log info pulse-input: Got 0 packets with 0 frames
+pulse-destroy refs=0

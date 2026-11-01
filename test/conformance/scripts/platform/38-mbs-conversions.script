@@ -1,0 +1,38 @@
+# os_mbs_to_wcs / os_wcs_to_mbs / os_utf8_to_mbs_ptr / os_mbs_to_utf8_ptr use the C library's multibyte
+# conversion in the current locale (mbstowcs / wcstombs). The runner stays in the "C" locale and uses
+# ASCII text only; in a UTF-8 locale these are the identity on valid UTF-8. The LEN argument of the
+# two direct functions is ignored (the conversion always runs to the terminator).
+# os_mbs2wcs DSTSIZE|null TEXT    os_wcs2mbs DSTSIZE|null CPS    (DSTSIZE includes the terminator)
+os_mbs2wcs null hello
+os_mbs2wcs 6 hello
+os_mbs2wcs 10 hello
+os_mbs2wcs 1 hello
+os_mbs2wcs 0 hello
+os_mbs2wcs 10 ""
+os_mbs2wcs null ""
+os_mbs2wcs 10 @null
+os_mbs2wcs null @null
+os_wcs2mbs null 68,65,6c,6c,6f
+os_wcs2mbs 6 68,65,6c,6c,6f
+os_wcs2mbs 10 68,65,6c,6c,6f
+os_wcs2mbs 1 68,65,6c,6c,6f
+os_wcs2mbs 0 68,65,6c,6c,6f
+os_wcs2mbs 10 -
+os_wcs2mbs 10 @null
+os_wcs2mbs null @null
+# _ptr forms allocate exactly: NULL input -> NULL pointer and 0
+os_mbs2wcs_ptr hello
+os_mbs2wcs_ptr ""
+os_mbs2wcs_ptr @null
+os_wcs2mbs_ptr 68,69
+os_wcs2mbs_ptr -
+os_wcs2mbs_ptr @null
+# os_utf8_to_mbs_ptr / os_mbs_to_utf8_ptr LEN TEXT (LEN 0/auto: whole string; otherwise that many bytes)
+os_u2mbs_ptr auto hello
+os_u2mbs_ptr 3 hello
+os_u2mbs_ptr auto ""
+os_u2mbs_ptr auto @null
+os_mbs2u_ptr auto hello
+os_mbs2u_ptr 3 hello
+os_mbs2u_ptr auto ""
+os_mbs2u_ptr auto @null

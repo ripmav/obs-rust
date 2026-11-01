@@ -1,0 +1,19 @@
+# CORE. Every kind-specific getter returns a neutral default on the wrong kind (or NULL
+# handle); setters are no-ops. Defaults: ints 0, floats 0, int/float type = scroller,
+# text type = default, info type normal, word wrap TRUE, path type = directory,
+# list type/format = invalid, editable list type = strings, group type = 0 (invalid),
+# button type = default, button url = "" (not NULL), strings NULL.
+props P
+add bool P b "B" as b
+add int P i "I" 1 2 3 as i
+add list P l "L" list string as l
+add group P g "G" normal @null
+props G
+add group P g "G" normal G as g
+probe b
+probe i
+probe l
+probe g
+echo null-handle
+probe @null
+info @null

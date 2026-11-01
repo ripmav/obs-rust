@@ -1,0 +1,21 @@
+# CORE. nvenc_properties_read copies the settings (effective value: user value, else
+# default, else zero/empty string/false) into the encoder's property struct. The "opts"
+# text is parsed only if the user set it (a default does not count); the struct keeps a
+# reference to the settings object because it points into its strings.
+echo empty-settings-give-zero-and-empty
+data E
+nv_read E
+echo defaults
+nv_caps 2 3 2 0 0 0 1
+data D
+nv_defaults hevc D
+nv_read D
+echo user-values
+set D bitrate int 12345
+set D rate_control str VBR
+set D opts str "gopLength=120 bogus keyint=1"
+nv_read D
+echo opts-given-only-as-a-default-is-ignored
+data F
+setdef F opts str "gopLength=5"
+nv_read F

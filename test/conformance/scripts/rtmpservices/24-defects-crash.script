@@ -1,0 +1,67 @@
+# S-026 DEFECTS (each case in a forked guard; the reference crashes where "guard-end crash" is expected).
+# A conforming implementation MUST NOT crash: it must treat the malformed entry as "not matching /
+# not available" (see spec D-1..D-4). In the expected vectors "guard-end crash" matches "guard-end ok"
+# and everything between guard-begin and guard-end is ignored when comparing.
+echo D-1-server-entry-without-string-url-in-a-service-without-protocol-key
+guard-begin
+fs-put /mod/data/services.json "{\"format_version\":5,\"services\":[{\"name\":\"A\",\"servers\":[{\"name\":\"x\"}]}]}"
+settings S {"service":"A"}
+new V rtmp_common S
+guard-end
+echo D-1b-same-for-a-non-string-url
+guard-begin
+fs-put /mod/data/services.json "{\"format_version\":5,\"services\":[{\"name\":\"A\",\"servers\":[{\"name\":\"x\",\"url\":5}]}]}"
+settings S {"service":"A"}
+new V rtmp_common S
+guard-end
+echo D-1c-non-object-server-entry
+guard-begin
+fs-put /mod/data/services.json "{\"format_version\":5,\"services\":[{\"name\":\"A\",\"servers\":[\"rtmp://x\"]}]}"
+settings S {"service":"A"}
+new V rtmp_common S
+guard-end
+echo D-1d-reached-via-the-property-list-too
+guard-begin
+fs-put /mod/data/services.json "{\"format_version\":5,\"services\":[{\"name\":\"A\",\"servers\":[{\"name\":\"x\"}]}]}"
+settings S {"service":""}
+new V rtmp_common S
+props P V S
+guard-end
+echo D-2-service-without-name-but-with-usable-servers-is-reached-by-a-lookup-of-another-name
+guard-begin
+fs-put /mod/data/services.json "{\"format_version\":5,\"services\":[{\"servers\":[{\"name\":\"x\",\"url\":\"rtmp://x\"}]},{\"name\":\"B\",\"servers\":[{\"name\":\"y\",\"url\":\"rtmp://y\"}]}]}"
+settings S {"service":"B"}
+new V rtmp_common S
+guard-end
+echo D-2b-no-crash-when-the-wanted-service-comes-first
+guard-begin
+fs-put /mod/data/services.json "{\"format_version\":5,\"services\":[{\"name\":\"B\",\"servers\":[{\"name\":\"y\",\"url\":\"rtmp://y\"}]},{\"servers\":[{\"name\":\"x\",\"url\":\"rtmp://x\"}]}]}"
+settings S {"service":"B"}
+new V rtmp_common S
+get V url
+guard-end
+echo D-2c-nameless-entry-with-protocol-key
+guard-begin
+fs-put /mod/data/services.json "{\"format_version\":5,\"services\":[{\"protocol\":\"RTMP\",\"servers\":[]},{\"name\":\"B\",\"servers\":[{\"name\":\"y\",\"url\":\"rtmp://y\"}]}]}"
+settings S {"service":"B"}
+new V rtmp_common S
+guard-end
+echo D-2d-non-string-name
+guard-begin
+fs-put /mod/data/services.json "{\"format_version\":5,\"services\":[{\"name\":7,\"servers\":[{\"name\":\"x\",\"url\":\"rtmp://x\"}]},{\"name\":\"B\",\"servers\":[{\"name\":\"y\",\"url\":\"rtmp://y\"}]}]}"
+settings S {"service":"B"}
+new V rtmp_common S
+guard-end
+echo D-3-twitch-ingest-with-non-string-name
+guard-begin
+updater-route https://ingest.twitch.tv/ingests 0 "{\"ingests\":[{\"name\":5,\"url_template\":\"rtmp://a/{stream_key}\"},{\"name\":\"ok\",\"url_template\":\"rtmp://b/{stream_key}\"}]}"
+module-load
+proc-call twitch_ingests_refresh 3
+guard-end
+echo D-4-service-from-a-file-with-ok-entries-does-not-crash-control
+guard-begin
+fs-put /mod/data/services.json "{\"format_version\":5,\"services\":[{\"name\":\"A\",\"servers\":[{\"name\":\"x\",\"url\":\"rtmp://x\"}]}]}"
+settings S {"service":"A"}
+new V rtmp_common S
+get V url protocol
+guard-end

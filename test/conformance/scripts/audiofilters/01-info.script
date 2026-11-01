@@ -1,0 +1,12 @@
+# CORE. obs_source_info registration data of every filter.
+info gain
+info invert
+info compressor
+info limiter
+info expander
+info upward
+info gate
+info delay
+info eq
+info ns
+info ns2

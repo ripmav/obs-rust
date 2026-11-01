@@ -1,0 +1,81 @@
+> reset
+> output h service
+> venc h264 bitrate=2500 extra=0a0b keyint_sec=4
+> create hls
+create hls -> ok
+> start
+start -> 0
+> service https://ingest.example/live/{stream_key}/index.m3u8 k3y
+> start
+log info [ffmpeg muxer: 'h'] Using muxer settings: 	method=PUT 	http_persistent=1 	ignore_io_errors=1 	http_user_agent=libobs/33.0.1 	hls_time=4
+pipe create type=w
+  argv[0] "<bin>/obs-ffmpeg-mux"
+  argv[1] "https://ingest.example/live/k3y/index.m3u8"
+  argv[2] "1"
+  argv[3] "0"
+  argv[4] "h264"
+  argv[5] "2500"
+  argv[6] "1280"
+  argv[7] "720"
+  argv[8] "1"
+  argv[9] "1"
+  argv[10] "1"
+  argv[11] "1"
+  argv[12] "1"
+  argv[13] "0"
+  argv[14] "30"
+  argv[15] "1"
+  argv[16] "0"
+  argv[17] "k3y"
+  argv[18] "method=PUT http_persistent=1 ignore_io_errors=1 http_user_agent=libobs/33.0.1 hls_time=4"
+begin_data_capture
+log info [ffmpeg hls muxer: 'h'] Writing to path 'https://ingest.example/live/{stream_key}/index.m3u8'...
+start -> 1
+> state
+state active=1 capturing=1 stopping=0 sent_headers=0 total_bytes=0 stop_ts=0 pipe=1 refs=0
+  path="https://ingest.example/live/k3y/index.m3u8" is_network=0 is_hls=1
+> state_hls
+state_hls dropped=0 min_priority=0 last_dts_usec=0 keyint_sec=4 queued=0
+  muxer_settings="method=PUT http_persistent=1 ignore_io_errors=1 http_user_agent=libobs/33.0.1 hls_time=4" stream_key="k3y" printable="https://ingest.example/live/{stream_key}/index.m3u8"
+> destroy
+pipe destroy -> 0
+log info [ffmpeg muxer: 'h'] Output of file 'https://ingest.example/live/{stream_key}/index.m3u8' stopped
+> echo no_keyint_sec
+no_keyint_sec
+> reset
+> output h service
+> venc h264 bitrate=2500 extra=0a0b
+> service https://ingest.example/live/index.m3u8 k3y
+> create hls
+create hls -> ok
+> start
+log info [ffmpeg muxer: 'h'] Using muxer settings: 	method=PUT 	http_persistent=1 	ignore_io_errors=1 	http_user_agent=libobs/33.0.1
+pipe create type=w
+  argv[0] "<bin>/obs-ffmpeg-mux"
+  argv[1] "https://ingest.example/live/index.m3u8"
+  argv[2] "1"
+  argv[3] "0"
+  argv[4] "h264"
+  argv[5] "2500"
+  argv[6] "1280"
+  argv[7] "720"
+  argv[8] "1"
+  argv[9] "1"
+  argv[10] "1"
+  argv[11] "1"
+  argv[12] "1"
+  argv[13] "0"
+  argv[14] "30"
+  argv[15] "1"
+  argv[16] "0"
+  argv[17] "k3y"
+  argv[18] "method=PUT http_persistent=1 ignore_io_errors=1 http_user_agent=libobs/33.0.1"
+begin_data_capture
+log info [ffmpeg hls muxer: 'h'] Writing to path 'https://ingest.example/live/index.m3u8'...
+start -> 1
+> state_hls
+state_hls dropped=0 min_priority=0 last_dts_usec=0 keyint_sec=0 queued=0
+  muxer_settings="method=PUT http_persistent=1 ignore_io_errors=1 http_user_agent=libobs/33.0.1" stream_key="k3y" printable="https://ingest.example/live/index.m3u8"
+> destroy
+pipe destroy -> 0
+log info [ffmpeg muxer: 'h'] Output of file 'https://ingest.example/live/index.m3u8' stopped

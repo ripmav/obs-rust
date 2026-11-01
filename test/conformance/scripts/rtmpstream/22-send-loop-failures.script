@@ -1,0 +1,44 @@
+# S-045 send thread: a write failure while not stopping = unexpected disconnect.
+reset
+aenc 0 aac 160
+venc 0 h264 2500
+service rtmp://h/a KEY - -
+init_connect
+set active 1
+pkt audio 100000 0 0
+pkt video 200000 3 1
+pkt video 300000 2 0
+# writes: 1 audio header, 2 video header, 3 audio packet, 4 video keyframe(fails)
+fake write_fail_at 4
+run_send
+# the same, but the failure is the very first header write: nothing else is attempted
+reset
+aenc 0 aac 160
+venc 0 h264 2500
+service rtmp://h/a KEY - -
+init_connect
+set active 1
+pkt video 200000 3 1
+fake write_fail_at 1
+fake can_begin 1
+run_send
+# audio header cannot be obtained -> send_headers fails
+reset
+aenc 0 aac 160
+venc 0 h264 2500
+service rtmp://h/a KEY - -
+init_connect
+set active 1
+enc_flag a 0 no_extra 1
+pkt video 200000 3 1
+run_send
+# video encoder header unavailable
+reset
+aenc 0 aac 160
+venc 0 h264 2500
+service rtmp://h/a KEY - -
+init_connect
+set active 1
+enc_flag v 0 no_extra 1
+pkt video 200000 3 1
+run_send

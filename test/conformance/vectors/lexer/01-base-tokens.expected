@@ -1,0 +1,70 @@
+base 0 type=ALPHA off=0 len=2 text="ab" pws=0
+  offset=2
+base 1 type=OTHER off=2 len=1 text="_" pws=0
+  offset=3
+base 2 type=DIGIT off=3 len=1 text="1" pws=0
+  offset=4
+base 3 type=WHITESPACE off=4 len=1 text=" " pws=0
+  offset=5
+base 4 type=WHITESPACE off=5 len=1 text="\t" pws=0
+  offset=6
+base 5 type=WHITESPACE off=6 len=2 text="\r\n" pws=0
+  offset=8
+base 6 type=WHITESPACE off=8 len=2 text="\n\r" pws=0
+  offset=10
+base 7 type=WHITESPACE off=10 len=2 text="\r\n" pws=0
+  offset=12
+base 8 type=WHITESPACE off=12 len=1 text="\n" pws=0
+  offset=13
+base 9 type=WHITESPACE off=13 len=1 text="\n" pws=0
+  offset=14
+base 10 type=WHITESPACE off=14 len=1 text=" " pws=0
+  offset=15
+base 11 type=ALPHA off=15 len=1 text="x" pws=0
+  offset=16
+base 12 type=OTHER off=16 len=1 text="\xc3" pws=0
+  offset=17
+base 13 type=OTHER off=17 len=1 text="\xa9" pws=0
+  offset=18
+base none
+  offset=18
+base 0 type=ALPHA off=0 len=2 text="ab" pws=0
+  offset=2
+base 1 type=OTHER off=2 len=1 text="_" pws=0
+  offset=3
+base 2 type=DIGIT off=3 len=1 text="1" pws=0
+  offset=4
+base 3 type=ALPHA off=15 len=1 text="x" pws=0
+  offset=16
+base 4 type=OTHER off=16 len=1 text="\xc3" pws=0
+  offset=17
+base 5 type=OTHER off=17 len=1 text="\xa9" pws=0
+  offset=18
+base none
+  offset=18
+base none
+  offset=3
+base none
+  offset=0
+base none
+  offset=null
+base 0 type=ALPHA off=0 len=1 text="a" pws=0
+  offset=1
+base 1 type=OTHER off=1 len=1 text="\x01" pws=0
+  offset=2
+base 2 type=ALPHA off=2 len=1 text="b" pws=0
+  offset=3
+base none
+  offset=3
+base 0 type=ALPHA off=0 len=1 text="x" pws=0
+  offset=1
+base 0 type=WHITESPACE off=1 len=1 text=" " pws=0
+  offset=2
+base 0 type=ALPHA off=2 len=1 text="y" pws=0
+  offset=3
+base none
+  offset=3
+base 0 type=ALPHA off=0 len=1 text="x" pws=0
+  offset=1
+base none
+  offset=null

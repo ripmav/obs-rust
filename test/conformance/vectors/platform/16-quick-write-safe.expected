@@ -1,0 +1,36 @@
+quick_write_utf8_safe 1
+cat a.txt size=5 hex=6669727374
+exists a.txt.tmp 0
+exists a.txt.bak 0
+quick_write_utf8_safe 1
+cat a.txt size=6 hex=7365636f6e64
+cat a.txt.bak size=5 hex=6669727374
+quick_write_utf8_safe 1
+cat a.txt.bak size=6 hex=7365636f6e64
+quick_write_utf8_safe 1
+quick_write_utf8_safe 1
+cat b.txt size=3 hex=74776f
+cat b.txt.old size=3 hex=6f6e65
+exists b.txt.new 0
+quick_write_utf8_safe 1
+quick_write_utf8_safe 1
+cat c.txt size=3 hex=74776f
+exists c.txt.bak 0
+exists c.txt. 0
+quick_write_utf8_safe 1
+cat d.txt size=6 hex=efbbbf616263
+log error "os_quick_write_utf8_file_safe: invalid temporary extension specified"
+quick_write_utf8_safe 0
+log error "os_quick_write_utf8_file_safe: invalid temporary extension specified"
+quick_write_utf8_safe 0
+exists e.txt 0
+log error "os_quick_write_utf8_file_safe: failed to write to nodir/f.txt.tmp"
+quick_write_utf8_safe 0
+mkdir t 0
+quick_write_utf8_safe 0
+exists t.tmp 1
+info t dir
+mkdir g.txt.bakdir 0
+quick_write_utf8_safe 0
+cat g.txt size=3 hex=6f6c64
+exists g.txt.tmp 1

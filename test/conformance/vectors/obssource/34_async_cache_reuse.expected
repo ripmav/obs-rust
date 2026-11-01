@@ -1,0 +1,20 @@
+  cb C create
+log debug source 'C' (cam) created
+create c ok
+astate c active=1 last_frame_ts=0 queue=[1000000000,1010000000,1020000000] cache=3 used=3 [1/0,1/0,1/0] cur=- prev=- tex=0x0 fmt=none full_range=0 gpu=0 rotation=0 unbuffered=0
+astate c active=1 last_frame_ts=1100000000 queue=[] cache=3 used=1 [0/0,0/0,1/0] cur=1020000000 prev=- tex=2x2 fmt=bgra full_range=1 gpu=0 rotation=0 unbuffered=0
+astate c active=1 last_frame_ts=1100000000 queue=[] cache=3 used=0 [0/0,0/0,0/0] cur=- prev=- tex=2x2 fmt=bgra full_range=1 gpu=0 rotation=0 unbuffered=0
+echo ---
+astate c active=1 last_frame_ts=1200000000 queue=[] cache=3 used=1 [1/0,0/1,0/1] cur=1100000000 prev=- tex=2x2 fmt=bgra full_range=1 gpu=0 rotation=0 unbuffered=0
+astate c active=1 last_frame_ts=1300000000 queue=[] cache=3 used=1 [0/0,1/0,0/2] cur=1110000000 prev=- tex=2x2 fmt=bgra full_range=1 gpu=0 rotation=0 unbuffered=0
+astate c active=1 last_frame_ts=1400000000 queue=[] cache=3 used=1 [1/0,0/0,0/3] cur=1120000000 prev=- tex=2x2 fmt=bgra full_range=1 gpu=0 rotation=0 unbuffered=0
+astate c active=1 last_frame_ts=1500000000 queue=[] cache=3 used=1 [0/0,1/0,0/4] cur=1130000000 prev=- tex=2x2 fmt=bgra full_range=1 gpu=0 rotation=0 unbuffered=0
+astate c active=1 last_frame_ts=1600000000 queue=[] cache=2 used=1 [1/0,0/0] cur=1140000000 prev=- tex=2x2 fmt=bgra full_range=1 gpu=0 rotation=0 unbuffered=0
+echo ---
+astate c active=1 last_frame_ts=1600000000 queue=[1070000000] cache=1 used=1 [1/0] cur=- prev=- tex=2x2 fmt=bgra full_range=1 gpu=0 rotation=0 unbuffered=0
+echo ---
+astate c active=1 last_frame_ts=1600000000 queue=[1070000000,1080000000] cache=2 used=2 [1/0,1/0] cur=- prev=- tex=2x2 fmt=bgra full_range=1 gpu=0 rotation=0 unbuffered=0
+echo ---
+astate c active=1 last_frame_ts=1600000000 queue=[1090000000] cache=1 used=1 [1/0] cur=- prev=- tex=2x2 fmt=bgra full_range=1 gpu=0 rotation=0 unbuffered=0
+echo ---
+astate c active=0 last_frame_ts=0 queue=[] cache=0 used=0 [] cur=- prev=- tex=2x2 fmt=bgra full_range=1 gpu=0 rotation=0 unbuffered=0

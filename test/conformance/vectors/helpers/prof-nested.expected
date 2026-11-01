@@ -1,0 +1,15 @@
+p_snap roots=1
+p_dump roots=1
+  entry name="frame" count=2 min=7 max=16 expected=0 bcount=0 bmin=0 bmax=0 children=2
+    times 16:1 7:1
+    between
+    entry name="update" count=2 min=0 max=2 expected=0 bcount=0 bmin=0 bmax=0 children=0
+      times 2:1 0:1
+      between
+    entry name="render" count=2 min=7 max=12 expected=0 bcount=0 bmin=0 bmax=0 children=1
+      times 12:1 7:1
+      between
+      entry name="draw" count=2 min=4 max=5 expected=0 bcount=0 bmin=0 bmax=0 children=0
+        times 5:1 4:1
+        between
+p_free done

@@ -1,0 +1,10 @@
+# A connection made while emitting is appended and is reached by the same emit.
+handler h
+add h "void s()"
+callback adder connect:h:s:added
+callback added
+callback tail
+connect h s adder
+connect h s tail
+emit h s
+emit h s

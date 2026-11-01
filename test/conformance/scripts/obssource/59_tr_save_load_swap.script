@@ -1,0 +1,28 @@
+# save/load of the transition core state, enumeration, and "swap": swap_begin/end MOVES the children of the
+# second transition into the first (the second ends up empty); the textures are exchanged.
+kind in input video size
+kind tr transition video,audio size
+create t tr T
+create u tr U
+create a in A
+create b in B
+tr_set t a
+tr_scale t 2
+tr_align t 9
+tr_size t 800 600
+tr_save t
+tr_enum t
+echo --- load: source looked up by name, other values restored verbatim
+tr_load u B 3 1 1 300 200
+tr_state u
+tr_get u
+tr_load u missing 0 0 0 0 0
+tr_state u
+echo --- an empty name means no source
+tr_load u "" 0 0 0 0 0
+tr_state u
+echo --- swap
+tr_set u b
+tr_swap t u
+tr_enum t
+tr_enum u

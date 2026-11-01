@@ -1,0 +1,96 @@
+> trace 0
+> gs_create g
+ret 0 created
+> gs_enter_context g
+> trace 1
+== gs_blend_function sets color AND alpha factors identically; the backend gets the non-separate call
+> gs_blend_function GS_BLEND_ONE GS_BLEND_ZERO
+  dev device_blend_function src=1 dest=0
+== push saves the frontend mirror; pop re-applies enable, separate function and op
+> gs_blend_state_push
+> gs_blend_function_separate GS_BLEND_SRCCOLOR GS_BLEND_DSTCOLOR GS_BLEND_SRCALPHA GS_BLEND_DSTALPHA
+  dev device_blend_function_separate src_c=2 dest_c=6 src_a=4 dest_a=8
+> gs_blend_op GS_BLEND_OP_SUBTRACT
+  dev device_blend_op op=1
+> gs_enable_blending 0
+  dev device_enable_blending enable=false
+> gs_blend_state_pop
+  dev device_enable_blending enable=true
+  dev device_blend_function_separate src_c=1 dest_c=0 src_a=1 dest_a=0
+  dev device_blend_op op=0
+== pop on an empty stack does nothing
+> gs_blend_state_pop
+== pop restores a function set with gs_blend_function as the *separate* quadruple
+> gs_blend_state_push
+> gs_blend_function GS_BLEND_ZERO GS_BLEND_ONE
+  dev device_blend_function src=0 dest=1
+> gs_blend_state_pop
+  dev device_enable_blending enable=true
+  dev device_blend_function_separate src_c=1 dest_c=0 src_a=1 dest_a=0
+  dev device_blend_op op=0
+== nested pushes are LIFO
+> gs_blend_function GS_BLEND_ONE GS_BLEND_ONE
+  dev device_blend_function src=1 dest=1
+> gs_blend_state_push
+> gs_blend_function GS_BLEND_ZERO GS_BLEND_ZERO
+  dev device_blend_function src=0 dest=0
+> gs_blend_state_push
+> gs_blend_function GS_BLEND_SRCALPHA GS_BLEND_SRCALPHA
+  dev device_blend_function src=4 dest=4
+> gs_blend_state_pop
+  dev device_enable_blending enable=true
+  dev device_blend_function_separate src_c=0 dest_c=0 src_a=0 dest_a=0
+  dev device_blend_op op=0
+> gs_blend_state_pop
+  dev device_enable_blending enable=true
+  dev device_blend_function_separate src_c=1 dest_c=1 src_a=1 dest_a=1
+  dev device_blend_op op=0
+> gs_blend_state_pop
+== reset: re-enables blending if it was off
+> gs_enable_blending 0
+  dev device_enable_blending enable=false
+> gs_reset_blend_state
+  dev device_enable_blending enable=true
+  dev device_blend_function_separate src_c=4 dest_c=5 src_a=1 dest_a=5
+  dev device_blend_op op=0
+== reset: restores the default function when any factor differs (and then also op ADD)
+> gs_blend_op GS_BLEND_OP_MAX
+  dev device_blend_op op=4
+> gs_blend_function GS_BLEND_ONE GS_BLEND_ONE
+  dev device_blend_function src=1 dest=1
+> gs_reset_blend_state
+  dev device_blend_function_separate src_c=4 dest_c=5 src_a=1 dest_a=5
+  dev device_blend_op op=0
+== reset: nothing to do when function already default
+> gs_reset_blend_state
+== QUIRK: reset does not restore the op when only the op differs
+> gs_blend_op GS_BLEND_OP_MIN
+  dev device_blend_op op=3
+> gs_reset_blend_state
+> gs_blend_op GS_BLEND_OP_ADD
+  dev device_blend_op op=0
+== simple enable/disable calls
+> gs_enable_depth_test 1
+  dev device_enable_depth_test enable=true
+> gs_enable_stencil_test 1
+  dev device_enable_stencil_test enable=true
+> gs_enable_stencil_write 0
+  dev device_enable_stencil_write enable=false
+> gs_enable_color 1 0 1 0
+  dev device_enable_color red=true green=false blue=true alpha=false
+> gs_depth_function GS_GREATER
+  dev device_depth_function test=5
+> gs_stencil_function GS_STENCIL_FRONT GS_LESS
+  dev device_stencil_function side=1 test=1
+> gs_stencil_op GS_STENCIL_BACK GS_KEEP GS_ZERO GS_REPLACE
+  dev device_stencil_op side=2 fail=0 zfail=1 zpass=2
+> gs_set_cull_mode GS_BACK
+  dev device_set_cull_mode mode=0
+> gs_get_cull_mode
+  dev device_get_cull_mode
+ret 0
+> gs_set_cull_mode GS_FRONT
+  dev device_set_cull_mode mode=1
+> gs_get_cull_mode
+  dev device_get_cull_mode
+ret 1

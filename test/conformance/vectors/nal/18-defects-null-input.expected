@@ -1,0 +1,13 @@
+find 0
+avc_find 0
+avc_keyframe 0
+hevc_keyframe 0
+av1_keyframe 0
+avc_priority 2
+hevc_priority 2
+avc_packet size=0 keyframe=1 priority=1 drop_priority=1 refs=1 fields=preserved fresh=1 data=-
+hevc_packet size=0 keyframe=0 priority=0 drop_priority=0 refs=1 fields=preserved fresh=1 data=-
+avc_header ret=0 data=-
+avc_extract new=- header=- sei=-
+hevc_extract new=- header=- sei=-
+av1_extract new=- header=-

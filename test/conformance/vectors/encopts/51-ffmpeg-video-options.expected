@@ -1,0 +1,23 @@
+av.opt_set preset=fast flags=0 -> 0
+av.opt_set tune=zerolatency flags=0 -> 0
+av.opt_set x264-params=a=b:c=d flags=0 -> 0
+vid bit_rate=6000000 rc_buffer_size=6000000 size=1920x1080 time_base=1/60 framerate=60/1 pix_fmt=nv12
+vid color_range=1 primaries=1 trc=1 colorspace=1 chroma_loc=1 gop_size=120 height=1080
+echo duplicates-and-garbage
+av.opt_set crf=20 flags=0 -> 0
+av.opt_set crf=21 flags=0 -> 0
+av.opt_set nosuch=1 flags=0 -> notfound
+av.opt_set profile=high flags=0 -> 0
+vid bit_rate=6000000 rc_buffer_size=6000000 size=1920x1080 time_base=1/60 framerate=60/1 pix_fmt=nv12
+vid color_range=1 primaries=1 trc=1 colorspace=1 chroma_loc=1 gop_size=120 height=1080
+echo empty
+vid bit_rate=6000000 rc_buffer_size=6000000 size=1920x1080 time_base=1/60 framerate=60/1 pix_fmt=nv12
+vid color_range=1 primaries=1 trc=1 colorspace=1 chroma_loc=1 gop_size=120 height=1080
+echo null
+vid bit_rate=6000000 rc_buffer_size=6000000 size=1920x1080 time_base=1/60 framerate=60/1 pix_fmt=nv12
+vid color_range=1 primaries=1 trc=1 colorspace=1 chroma_loc=1 gop_size=120 height=1080
+echo values-may-contain-equals-but-not-spaces
+av.opt_set a=b=c flags=0 -> 0
+av.opt_set d=e flags=0 -> 0
+vid bit_rate=6000000 rc_buffer_size=6000000 size=1920x1080 time_base=1/60 framerate=60/1 pix_fmt=nv12
+vid color_range=1 primaries=1 trc=1 colorspace=1 chroma_loc=1 gop_size=120 height=1080

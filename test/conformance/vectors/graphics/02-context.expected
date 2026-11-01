@@ -1,0 +1,108 @@
+> gs_create a
+  dev device_create adapter=0
+  dev device_enter_context
+  dev device_vertexbuffer_create flags=2 num=512 num_tex=1 (large, contents not dumped)
+  dev device_vertexbuffer_create flags=16
+    vb num=4 num_tex=1 points=(0,0,0) (1,0,0) (0,1,0) (1,1,0) normals=null tangents=null colors=null tex0[w=2]=(0,0) (1,0) (0,1) (1,1)
+  dev device_vertexbuffer_create flags=18
+    vb num=4 num_tex=1 points=(0,0,0) (1,0,0) (0,1,0) (1,1,0) normals=null tangents=null colors=null tex0[w=2]=(0,0) (1,0) (0,1) (1,1)
+  dev device_vertexbuffer_create flags=0
+    vb num=4 num_tex=1 points=(0,0,0) (1,0,0) (0,1,0) (1,1,0) normals=null tangents=null colors=null tex0[w=2]=(0,1) (1,1) (0,0) (1,0)
+  dev device_blend_function_separate src_c=4 dest_c=5 src_a=1 dest_a=5
+  dev device_blend_op op=0
+  dev device_leave_context
+ret 0 created
+> gs_create b
+  dev device_create adapter=0
+  dev device_enter_context
+  dev device_vertexbuffer_create flags=2 num=512 num_tex=1 (large, contents not dumped)
+  dev device_vertexbuffer_create flags=16
+    vb num=4 num_tex=1 points=(0,0,0) (1,0,0) (0,1,0) (1,1,0) normals=null tangents=null colors=null tex0[w=2]=(0,0) (1,0) (0,1) (1,1)
+  dev device_vertexbuffer_create flags=18
+    vb num=4 num_tex=1 points=(0,0,0) (1,0,0) (0,1,0) (1,1,0) normals=null tangents=null colors=null tex0[w=2]=(0,0) (1,0) (0,1) (1,1)
+  dev device_vertexbuffer_create flags=0
+    vb num=4 num_tex=1 points=(0,0,0) (1,0,0) (0,1,0) (1,1,0) normals=null tangents=null colors=null tex0[w=2]=(0,1) (1,1) (0,0) (1,0)
+  dev device_blend_function_separate src_c=4 dest_c=5 src_a=1 dest_a=5
+  dev device_blend_op op=0
+  dev device_leave_context
+ret 0 created
+> trace 1
+== nothing current yet
+> gs_get_context
+ret none
+== enter: backend enter happens once, nesting only counts
+> gs_enter_context a
+  dev device_enter_context
+> gs_enter_context a
+> gs_get_context
+ret G
+ret is a
+> gs_leave_context
+(still inside: no backend leave yet)
+> gs_get_context
+ret G
+ret is a
+> gs_leave_context
+  dev device_leave_context
+(now left)
+> gs_get_context
+ret none
+== leave with no context current: debug log, nothing else
+> gs_leave_context
+log debug gs_leave_context: called while not in a graphics context
+== entering b while a is current leaves a completely first (even when nested)
+> gs_enter_context a
+  dev device_enter_context
+> gs_enter_context a
+> gs_enter_context b
+  dev device_leave_context
+  dev device_enter_context
+> gs_get_context
+ret G
+ret is b
+> gs_leave_context
+  dev device_leave_context
+> gs_get_context
+ret none
+== NULL graphics
+> gs_enter_context -
+log debug gs_enter_context: Null 'graphics' parameter
+> gs_get_context
+ret none
+== a function that needs a context does nothing and returns its default outside one
+> gs_get_width
+log debug gs_get_width: called while not in a graphics context
+ret 0
+> gs_get_device_name
+log debug gs_get_device_name: called while not in a graphics context
+ret null
+> gs_get_device_type
+log debug gs_get_device_type: called while not in a graphics context
+ret -1
+> gs_matrix_push
+log debug gs_matrix_push: called while not in a graphics context
+> gs_matrix_get
+log debug gs_matrix_get: called while not in a graphics context
+matrix 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+== destroy while a context is current: the context is left first
+> gs_enter_context a
+  dev device_enter_context
+> gs_destroy a
+  dev device_leave_context
+  dev device_enter_context
+  dev gs_vertexbuffer_destroy vb=#4
+  dev gs_vertexbuffer_destroy vb=#5
+  dev gs_vertexbuffer_destroy vb=#3
+  dev gs_vertexbuffer_destroy vb=#2
+  dev device_destroy device=#1
+  os_dlclose
+> gs_get_context
+ret none
+> gs_destroy b
+  dev device_enter_context
+  dev gs_vertexbuffer_destroy vb=#9
+  dev gs_vertexbuffer_destroy vb=#10
+  dev gs_vertexbuffer_destroy vb=#8
+  dev gs_vertexbuffer_destroy vb=#7
+  dev device_destroy device=#6
+  os_dlclose

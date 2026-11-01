@@ -1,0 +1,51 @@
+# ffmpeg_output start(): the settings -> ffmpeg_cfg mapping done by try_connect (printed by a hook the moment
+# ffmpeg_data_init starts). The format name does not exist, so initialisation fails after the print with the
+# documented message and the CONNECT_FAILED stop signal. "gop_size" gets the default 120 written into the settings.
+reset
+output ff
+size 1280 720
+video_info 30 1 709 P NV12
+mixers 5
+set str url out.zzz
+set str format_name nosuchfmt
+set str format_mime_type video/zzz
+set str muxer_settings "a=b c=d"
+set int video_bitrate 4500
+set int audio_bitrate 160
+set str video_encoder libx
+set int video_encoder_id 27
+set str audio_encoder aac
+set int audio_encoder_id 86018
+set str video_settings "crf=20 preset=slow"
+set str audio_settings "q=1"
+set int scale_width 640
+set int scale_height 360
+names n0 n1 n2 n3
+fo_create
+fo_start
+fo_connect
+fo_state
+settings
+fo_destroy
+echo empty_strings_become_NULL_and_no_audio_names_array
+reset
+output ff
+size 1920 1080
+video_info 60 1 709 F I420
+set str url out.zzz
+set str format_name ""
+set str video_encoder ""
+set int gop_size 30
+fo_create
+fo_start
+fo_connect
+echo mixers_1010_names_use_the_mix_index_not_the_position
+reset
+output ff
+video_info 30 1 709 P NV12
+mixers 10
+set str url out.zzz
+names first second - fourth
+fo_create
+fo_start
+fo_connect

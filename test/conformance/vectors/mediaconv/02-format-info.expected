@@ -1,0 +1,53 @@
+vinfo 0 name=None yuv=0 default_range=Full resolve(default)=2 resolve(partial)=1 resolve(full)=2
+vinfo 1 name=I420 yuv=1 default_range=Partial resolve(default)=1 resolve(partial)=1 resolve(full)=2
+vinfo 2 name=NV12 yuv=1 default_range=Partial resolve(default)=1 resolve(partial)=1 resolve(full)=2
+vinfo 3 name=YVYU yuv=1 default_range=Partial resolve(default)=1 resolve(partial)=1 resolve(full)=2
+vinfo 4 name=YUY2 yuv=1 default_range=Partial resolve(default)=1 resolve(partial)=1 resolve(full)=2
+vinfo 5 name=UYVY yuv=1 default_range=Partial resolve(default)=1 resolve(partial)=1 resolve(full)=2
+vinfo 6 name=RGBA yuv=0 default_range=Full resolve(default)=2 resolve(partial)=1 resolve(full)=2
+vinfo 7 name=BGRA yuv=0 default_range=Full resolve(default)=2 resolve(partial)=1 resolve(full)=2
+vinfo 8 name=BGRX yuv=0 default_range=Full resolve(default)=2 resolve(partial)=1 resolve(full)=2
+vinfo 9 name=Y800 yuv=0 default_range=Full resolve(default)=2 resolve(partial)=1 resolve(full)=2
+vinfo 10 name=I444 yuv=1 default_range=Partial resolve(default)=1 resolve(partial)=1 resolve(full)=2
+vinfo 11 name=BGR3 yuv=0 default_range=Full resolve(default)=2 resolve(partial)=1 resolve(full)=2
+vinfo 12 name=I422 yuv=1 default_range=Partial resolve(default)=1 resolve(partial)=1 resolve(full)=2
+vinfo 13 name=I40A yuv=1 default_range=Partial resolve(default)=1 resolve(partial)=1 resolve(full)=2
+vinfo 14 name=I42A yuv=1 default_range=Partial resolve(default)=1 resolve(partial)=1 resolve(full)=2
+vinfo 15 name=YUVA yuv=1 default_range=Partial resolve(default)=1 resolve(partial)=1 resolve(full)=2
+vinfo 16 name=AYUV yuv=1 default_range=Partial resolve(default)=1 resolve(partial)=1 resolve(full)=2
+vinfo 17 name=I010 yuv=1 default_range=Partial resolve(default)=1 resolve(partial)=1 resolve(full)=2
+vinfo 18 name=P010 yuv=1 default_range=Partial resolve(default)=1 resolve(partial)=1 resolve(full)=2
+vinfo 19 name=I210 yuv=1 default_range=Partial resolve(default)=1 resolve(partial)=1 resolve(full)=2
+vinfo 20 name=I412 yuv=1 default_range=Partial resolve(default)=1 resolve(partial)=1 resolve(full)=2
+vinfo 21 name=YA2L yuv=1 default_range=Partial resolve(default)=1 resolve(partial)=1 resolve(full)=2
+vinfo 22 name=P216 yuv=1 default_range=Partial resolve(default)=1 resolve(partial)=1 resolve(full)=2
+vinfo 23 name=P416 yuv=1 default_range=Partial resolve(default)=1 resolve(partial)=1 resolve(full)=2
+vinfo 24 name=v210 yuv=1 default_range=Partial resolve(default)=1 resolve(partial)=1 resolve(full)=2
+vinfo 25 name=R10l yuv=0 default_range=Full resolve(default)=2 resolve(partial)=1 resolve(full)=2
+vinfo 26 name=None yuv=0 default_range=Full resolve(default)=2 resolve(partial)=1 resolve(full)=2
+vinfo 99 name=None yuv=0 default_range=Full resolve(default)=2 resolve(partial)=1 resolve(full)=2
+csname 0=Rec. 709
+csname 1=Rec. 601
+csname 2=Rec. 709
+csname 3=sRGB
+csname 4=Rec. 2100 (PQ)
+csname 5=Rec. 2100 (HLG)
+csname 6=Unknown
+csname 99=Unknown
+rangename fmt=1 range=0: resolved=1 name=Partial
+rangename fmt=1 range=1: resolved=1 name=Partial
+rangename fmt=1 range=2: resolved=2 name=Full
+rangename fmt=18 range=0: resolved=1 name=Partial
+rangename fmt=18 range=1: resolved=1 name=Partial
+rangename fmt=18 range=2: resolved=2 name=Full
+rangename fmt=6 range=0: resolved=2 name=Full
+rangename fmt=6 range=1: resolved=1 name=Partial
+rangename fmt=6 range=2: resolved=2 name=Full
+rangename fmt=9 range=0: resolved=2 name=Full
+rangename fmt=9 range=1: resolved=1 name=Partial
+rangename fmt=9 range=2: resolved=2 name=Full
+rangename fmt=0 range=0: resolved=2 name=Full
+rangename fmt=0 range=1: resolved=1 name=Partial
+rangename fmt=0 range=2: resolved=2 name=Full
+rangename fmt=1 range=7: resolved=7 name=Partial
+rangename fmt=6 range=7: resolved=7 name=Partial

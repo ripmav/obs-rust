@@ -1,0 +1,24 @@
+# S-048 CLI: every flag, the effect variables, flags with values, unknown args, early exits.
+cli 1
+cli 1 --multi --verbose --safe-mode --only-bundled-plugins --always-on-top --unfiltered_log
+cli 1 -m -p
+cli 0 -m -p --portable
+cli 1 --startstreaming --startrecording --startreplaybuffer --startvirtualcam
+cli 1 --minimize-to-tray --studio-mode --allow-opengl --disable-updater --disable-missing-files-check --steam
+cli 1 --collection "My Coll" --profile Prof2 --scene "Scene A"
+# value flag as last argument: ignored, nothing consumed
+cli 1 --collection
+cli 1 --scene
+# value is taken verbatim even if it looks like a flag; the flag is NOT processed
+cli 1 --profile --verbose
+# later occurrence wins
+cli 1 --profile a --profile b
+# unknown arguments and prefixes are ignored; matching is exact and case sensitive
+cli 1 --Multi --multi= -M foo --verbos
+# --help / -h / --version / -V terminate parsing at that point (flags before them are discarded)
+cli 1 --verbose --help
+cli 1 -h --verbose
+cli 1 --verbose -V
+cli 1 --version
+# a value flag swallows a following --help
+cli 1 --scene --help

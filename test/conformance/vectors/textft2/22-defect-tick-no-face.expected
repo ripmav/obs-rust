@@ -1,0 +1,39 @@
+> events off
+> reset
+> ascii 5 8 0 8 384
+> font Sans Serif - 0 p/sans
+> load
+load -> 1
+registered id=text_ft2_source version=0
+registered id=text_ft2_source version=2
+> create s 2
+create s -> 1
+> setfont s Sans Serif - 20 0
+> set s from_file true
+> file a.txt x
+> touch a.txt 1
+> sets s text_file @TMP@/a.txt
+> clock 1000
+> update s
+update done
+> echo --- font change whose FT_New_Face fails: old face freed, face is NULL, text_file stays set
+--- font change whose FT_New_Face fails: old face freed, face is NULL, text_file stays set
+> fail_face on
+> setfont s Sans Serif - 33 0
+> update s
+log warning FT2-text: Failed to load font Sans Serif
+update done
+> state s
+state s font="Sans Serif" style="" size=33 flags=0 face=0 from_file=1 aa=1
+state s outline=0 shadow=0 outline_width=0 word_wrap=0 custom_width=0 log_mode=0 log_lines=6 color=ffffffff,ffffffff
+state s cx=6 cy=8 max_h=0 texbuf=553,0 tex=1 vbuf=1 effect=1
+state s file="/a.txt" load_failed=0 update_file=0 mtime=0 last_checked_ms=1000
+state s text="x"
+> echo --- the file changes; the tick reload runs cache/layout without a face
+--- the file changes; the tick reload runs cache/layout without a face
+> touch a.txt 2
+> clock 2000
+> tick s
+> clock 3000
+> try tick s
+crash signal=SIGSEGV

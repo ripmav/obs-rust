@@ -1,0 +1,37 @@
+--- 30 fps: frame n -> round(n*1000/30)
+exit 0
+probe: format=matroska,webm streams=1
+  stream 0: video h264 640x360 tb=1/1000 extradata=0164001fffe100046764001f01000468ce3c80
+  pkt stream=0 size=2 pts=0 dts=-9223372036854775808 key=0 first=a0a0
+  pkt stream=0 size=2 pts=33 dts=-9223372036854775808 key=0 first=a1a1
+  pkt stream=0 size=2 pts=67 dts=-9223372036854775808 key=0 first=a2a2
+  pkt stream=0 size=2 pts=100 dts=-9223372036854775808 key=0 first=a3a3
+  pkt stream=0 size=2 pts=133 dts=-9223372036854775808 key=0 first=a4a4
+  packets=5
+--- 30000/1001 fps: pts are multiples of 1001; frame 15 = 500.5 ms rounds up to 501
+exit 0
+probe: format=matroska,webm streams=1
+  stream 0: video h264 640x360 tb=1/1000 extradata=0164001fffe100046764001f01000468ce3c80
+  pkt stream=0 size=2 pts=0 dts=-9223372036854775808 key=0 first=a0a0
+  pkt stream=0 size=2 pts=33 dts=-9223372036854775808 key=0 first=a1a1
+  pkt stream=0 size=2 pts=67 dts=-9223372036854775808 key=0 first=a2a2
+  pkt stream=0 size=2 pts=501 dts=-9223372036854775808 key=0 first=a3a3
+  pkt stream=0 size=2 pts=500500 dts=-9223372036854775808 key=0 first=a4a4
+  packets=5
+--- values that are not multiples of the numerator are truncated first (1500/1001 = 1 frame)
+exit 0
+probe: format=matroska,webm streams=1
+  stream 0: video h264 640x360 tb=1/1000 extradata=0164001fffe100046764001f01000468ce3c80
+  pkt stream=0 size=2 pts=0 dts=-9223372036854775808 key=0 first=a0a0
+  pkt stream=0 size=2 pts=33 dts=-9223372036854775808 key=0 first=a1a1
+  pkt stream=0 size=2 pts=67 dts=-9223372036854775808 key=0 first=a2a2
+  packets=3
+--- audio: time base 1/sample_rate (numerator 1), pts in samples; 44100 Hz -> ms rounding
+exit 0
+probe: format=matroska,webm streams=1
+  stream 0: audio aac rate=44100 ch=2 title="A" tb=1/1000 extradata=1210
+  pkt stream=0 size=2 pts=0 dts=0 key=0 first=b0b0
+  pkt stream=0 size=2 pts=23 dts=23 key=0 first=b1b1
+  pkt stream=0 size=2 pts=46 dts=46 key=0 first=b2b2
+  pkt stream=0 size=2 pts=1000 dts=1000 key=0 first=b3b3
+  packets=4

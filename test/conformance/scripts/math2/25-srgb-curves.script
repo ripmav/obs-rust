@@ -1,0 +1,27 @@
+# sRGB transfer curves (S-009-R120). Tolerance: 1e-5 relative (powf).
+call c srgb_nonlinear_to_linear 0
+call c srgb_nonlinear_to_linear 1
+call c srgb_nonlinear_to_linear 0.5
+call c srgb_nonlinear_to_linear 0.04045
+call c srgb_nonlinear_to_linear 0.04046
+call c srgb_nonlinear_to_linear 0.02
+call c srgb_nonlinear_to_linear 0.2
+call c srgb_nonlinear_to_linear -0.1
+call c srgb_nonlinear_to_linear 1.5
+call c srgb_linear_to_nonlinear 0
+call c srgb_linear_to_nonlinear 1
+call c srgb_linear_to_nonlinear 0.5
+call c srgb_linear_to_nonlinear 0.0031308
+call c srgb_linear_to_nonlinear 0.0031309
+call c srgb_linear_to_nonlinear 0.001
+call c srgb_linear_to_nonlinear 0.2
+call c srgb_linear_to_nonlinear -0.1
+call c srgb_linear_to_nonlinear 2
+# NaN falls through to the powf branch (comparison false)
+call c srgb_nonlinear_to_linear nan
+call c srgb_linear_to_nonlinear nan
+# in-place float3 forms touch only the first three floats
+f4 px 0.5 0.25 1 0.5
+call a float3_srgb_nonlinear_to_linear px
+call a float3_srgb_linear_to_nonlinear px
+call a float3_srgb_linear_to_nonlinear a

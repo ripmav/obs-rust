@@ -1,0 +1,64 @@
+# Texture / cube / volume / stage surface accessors forward to the backend and return its answers.
+trace 0
+gs_create g
+gs_enter_context g
+trace 1
+gs_texture_create 64 32 GS_BGRA 1 0 > t
+gs_cubetexture_create 16 GS_RGBA16F 1 0 > c
+gs_voltexture_create 8 4 2 GS_R8 1 0 > v
+gs_stagesurface_create 7 5 GS_R16 > s
+echo == 2D
+gs_get_texture_type t
+gs_texture_get_width t
+gs_texture_get_height t
+gs_texture_get_color_format t
+gs_texture_get_obj t
+gs_texture_is_rect t
+echo == cube / volume types
+gs_get_texture_type c
+gs_cubetexture_get_size c
+gs_cubetexture_get_color_format c
+gs_get_texture_type v
+gs_voltexture_get_width v
+gs_voltexture_get_height v
+gs_voltexture_get_depth v
+gs_voltexture_get_color_format v
+echo == stage surface
+gs_stagesurface_get_width s
+gs_stagesurface_get_height s
+gs_stagesurface_get_color_format s
+echo == NULL objects: defaults (0 / GS_UNKNOWN=0 / false / NULL / GS_TEXTURE_2D=0)
+gs_get_texture_type -
+gs_texture_get_width -
+gs_texture_get_height -
+gs_texture_get_color_format -
+gs_texture_get_obj -
+gs_texture_is_rect -
+gs_cubetexture_get_size -
+gs_cubetexture_get_color_format -
+gs_voltexture_get_width -
+gs_voltexture_get_height -
+gs_voltexture_get_depth -
+gs_voltexture_get_color_format -
+gs_stagesurface_get_width -
+gs_stagesurface_get_height -
+gs_stagesurface_get_color_format -
+gs_texture_map - 
+gs_stagesurface_map -
+gs_texture_unmap -
+gs_stagesurface_unmap -
+echo == destroy
+gs_texture_destroy t
+gs_cubetexture_destroy c
+gs_voltexture_destroy v
+gs_stagesurface_destroy s
+gs_texture_destroy -
+gs_cubetexture_destroy -
+gs_voltexture_destroy -
+gs_stagesurface_destroy -
+gs_zstencil_destroy -
+gs_samplerstate_destroy -
+gs_vertexbuffer_destroy -
+gs_indexbuffer_destroy -
+gs_swapchain_destroy -
+gs_shader_destroy -

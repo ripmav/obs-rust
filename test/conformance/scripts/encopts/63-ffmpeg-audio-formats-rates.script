@@ -1,0 +1,45 @@
+# CORE. Sample format: the requested format (aac: none requested, opus: float, alac: s32 planar,
+# flac: s16, pcm*: none) is used if the codec lists it; otherwise the codec's FIRST listed
+# format; with no list at all, planar float. A request of "none" (AV_SAMPLE_FMT_NONE) never
+# matches, so the first listed format is used. Sample rate: if the codec lists rates, the one
+# closest to the output rate is used (ties keep the earlier candidate) - but the search starts
+# from "closest = 0", so an output rate that is nearer to 0 than to every listed rate (8000 vs
+# 44100/48000) is left unchanged (QUIRK Q-12); no list -> output rate. Sample format numbers:
+# u8 0, s16 1, s32 2, flt 3, dbl 4, u8p 5, s16p 6, s32p 7, fltp 8.
+data D
+aud_defaults D
+audio 2 2 48000
+aud_rates none
+echo no-list-gives-fltp
+aud_formats none
+aud_create aac D
+aud_create flac D
+echo list-without-request
+aud_formats s16,fltp
+aud_create aac D
+echo requested-format-present
+aud_formats s16,s16p,flt
+aud_create opus D
+aud_create flac D
+echo requested-format-missing-takes-first
+aud_formats s16p,fltp
+aud_create opus D
+aud_create flac D
+aud_create alac D
+echo sample-rates
+aud_formats fltp
+aud_rates 44100,48000
+aud_create aac D
+audio 2 2 44100
+aud_create aac D
+audio 2 2 96000
+aud_create aac D
+audio 2 2 8000
+aud_create aac D
+echo equal-distance-keeps-first
+aud_rates 40000,48000
+audio 2 2 44000
+aud_create aac D
+echo rate-list-with-one-entry
+aud_rates 24000
+aud_create aac D

@@ -1,0 +1,140 @@
+> trace on
+> x-screen 0 0 1920 1080 DP-1
+> x-screen 1920 0 0 0 Ghost
+> x-ext randr 1
+> xshm-defaults
+> xshm-create
+xshm-create
+state screen=-1 origin=0,0 size=0x0 cut=t0,l0,r0,b0 adj=0,0 0x0 cursor=1 advanced=0 randr=0 xinerama=0 server= texture=0 xcb=0 shm=0 cursorobj=0 get=0x0
+> xshm-destroy
+xshm-destroy textures=0
+> set-int screen 0
+> xshm-create
+  | xcb_connect (null) -> ok
+log info xshm-input: Missing Xinerama extension !
+log info xshm-input: Geometry 1920x1080 @ 0,0
+  | xshm_attach 1920x1080 -> ok
+  | cursor_init
+  | cursor_offset 0,0
+  | gs_texture_create 1920x1080 fmt=5
+xshm-create
+state screen=0 origin=0,0 size=1920x1080 cut=t0,l0,r0,b0 adj=0,0 1920x1080 cursor=1 advanced=0 randr=1 xinerama=0 server= texture=1 xcb=1 shm=1 cursorobj=1 get=1920x1080
+> xshm-destroy
+  | gs_texture_destroy
+  | cursor_destroy
+  | xshm_detach
+  | xcb_disconnect
+xshm-destroy textures=0
+> set-str server :7
+> xshm-create
+  | xcb_connect (null) -> ok
+log info xshm-input: Missing Xinerama extension !
+log info xshm-input: Geometry 1920x1080 @ 0,0
+  | xshm_attach 1920x1080 -> ok
+  | cursor_init
+  | cursor_offset 0,0
+  | gs_texture_create 1920x1080 fmt=5
+xshm-create
+state screen=0 origin=0,0 size=1920x1080 cut=t0,l0,r0,b0 adj=0,0 1920x1080 cursor=1 advanced=0 randr=1 xinerama=0 server=:7 texture=1 xcb=1 shm=1 cursorobj=1 get=1920x1080
+> xshm-last-server
+last connect server=(null)
+> xshm-destroy
+  | gs_texture_destroy
+  | cursor_destroy
+  | xshm_detach
+  | xcb_disconnect
+xshm-destroy textures=0
+> set-bool advanced 1
+> xshm-create
+  | xcb_connect :7 -> ok
+log info xshm-input: Missing Xinerama extension !
+log info xshm-input: Geometry 1920x1080 @ 0,0
+  | xshm_attach 1920x1080 -> ok
+  | cursor_init
+  | cursor_offset 0,0
+  | gs_texture_create 1920x1080 fmt=5
+xshm-create
+state screen=0 origin=0,0 size=1920x1080 cut=t0,l0,r0,b0 adj=0,0 1920x1080 cursor=1 advanced=1 randr=1 xinerama=0 server=:7 texture=1 xcb=1 shm=1 cursorobj=1 get=1920x1080
+> xshm-last-server
+last connect server=:7
+> xshm-destroy
+  | gs_texture_destroy
+  | cursor_destroy
+  | xshm_detach
+  | xcb_disconnect
+xshm-destroy textures=0
+> set-str server 
+> xshm-create
+  | xcb_connect (null) -> ok
+log info xshm-input: Missing Xinerama extension !
+log info xshm-input: Geometry 1920x1080 @ 0,0
+  | xshm_attach 1920x1080 -> ok
+  | cursor_init
+  | cursor_offset 0,0
+  | gs_texture_create 1920x1080 fmt=5
+xshm-create
+state screen=0 origin=0,0 size=1920x1080 cut=t0,l0,r0,b0 adj=0,0 1920x1080 cursor=1 advanced=1 randr=1 xinerama=0 server= texture=1 xcb=1 shm=1 cursorobj=1 get=1920x1080
+> xshm-last-server
+last connect server=(null)
+> xshm-destroy
+  | gs_texture_destroy
+  | cursor_destroy
+  | xshm_detach
+  | xcb_disconnect
+xshm-destroy textures=0
+> set-bool advanced 0
+> set-int screen 5
+> xshm-create
+  | xcb_connect (null) -> ok
+log info xshm-input: Missing Xinerama extension !
+log error xshm-input: failed to update geometry !
+  | xcb_disconnect
+xshm-create
+state screen=5 origin=0,0 size=0x0 cut=t0,l0,r0,b0 adj=0,0 0x0 cursor=1 advanced=0 randr=1 xinerama=0 server=(null) texture=0 xcb=0 shm=0 cursorobj=0 get=0x0
+> xshm-destroy
+xshm-destroy textures=0
+> set-int screen 1
+> xshm-create
+  | xcb_connect (null) -> ok
+log info xshm-input: Missing Xinerama extension !
+log error xshm-input: Failed to get geometry
+log error xshm-input: failed to update geometry !
+  | xcb_disconnect
+xshm-create
+state screen=1 origin=1920,0 size=0x0 cut=t0,l0,r0,b0 adj=0,0 0x0 cursor=1 advanced=0 randr=1 xinerama=0 server=(null) texture=0 xcb=0 shm=0 cursorobj=0 get=0x0
+> xshm-destroy
+xshm-destroy textures=0
+> set-int screen 0
+> fail attach
+> xshm-create
+  | xcb_connect (null) -> ok
+log info xshm-input: Missing Xinerama extension !
+log info xshm-input: Geometry 1920x1080 @ 0,0
+  | xshm_attach 1920x1080 -> fail
+log error xshm-input: failed to attach shm !
+  | xcb_disconnect
+xshm-create
+state screen=0 origin=0,0 size=1920x1080 cut=t0,l0,r0,b0 adj=0,0 1920x1080 cursor=1 advanced=0 randr=1 xinerama=0 server=(null) texture=0 xcb=0 shm=0 cursorobj=0 get=1920x1080
+> unfail
+> xshm-destroy
+xshm-destroy textures=0
+> x-ext shm 0
+> xshm-create
+  | xcb_connect (null) -> ok
+log error xshm-input: Missing SHM extension !
+log info xshm-input: Missing Xinerama extension !
+  | xcb_disconnect
+xshm-create
+state screen=0 origin=0,0 size=0x0 cut=t0,l0,r0,b0 adj=0,0 0x0 cursor=1 advanced=0 randr=0 xinerama=0 server=(null) texture=0 xcb=0 shm=0 cursorobj=0 get=0x0
+> xshm-destroy
+xshm-destroy textures=0
+> x-ext shm 1
+> x-connect-fail 1
+> xshm-create
+  | xcb_connect (null) -> error
+log error xshm-input: Unable to open X display !
+  | xcb_disconnect
+xshm-create
+state screen=0 origin=0,0 size=0x0 cut=t0,l0,r0,b0 adj=0,0 0x0 cursor=1 advanced=0 randr=0 xinerama=0 server=(null) texture=0 xcb=0 shm=0 cursorobj=0 get=0x0
+> xshm-destroy
+xshm-destroy textures=0

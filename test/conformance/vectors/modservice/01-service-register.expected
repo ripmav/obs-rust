@@ -1,0 +1,51 @@
+register A size=full
+service_types=1
+types svcA
+register A2 size=full
+log warning obs_register_service: Service id 'svcA' already exists!  Duplicate library?
+cb svcA free_type_data
+service_types=1
+types svcA
+register N1 size=full
+log error Required value 'get_name' for 'noname' not found.  obs_register_service failed.
+cb noname free_type_data
+service_types=1
+register N2 size=full
+log error Required value 'create' for 'nocreate' not found.  obs_register_service failed.
+cb nocreate free_type_data
+service_types=1
+register N3 size=full
+log error Required value 'destroy' for 'nodestroy' not found.  obs_register_service failed.
+service_types=1
+register N4 size=full
+log error Required value 'get_protocol' for 'noproto' not found.  obs_register_service failed.
+cb noproto free_type_data
+service_types=1
+types svcA
+register S1 size=upto:get_protocol
+service_types=2
+register S2 size=before:get_protocol
+log error Required value 'get_protocol' for 'shortB' not found.  obs_register_service failed.
+service_types=2
+register S3 size=before:destroy
+log error Required value 'destroy' for 'shortC' not found.  obs_register_service failed.
+service_types=2
+register S4 size=before:free_type_data
+log error Required value 'get_protocol' for 'shortD' not found.  obs_register_service failed.
+service_types=2
+register S5 size=upto:free_type_data
+log error Required value 'get_protocol' for 'shortE' not found.  obs_register_service failed.
+cb shortE free_type_data
+service_types=2
+types svcA shortA
+register S6 size=99999
+log error Tried to register obs_service_info with size 99999 which is more than libobs currently supports (216)
+cb bigA free_type_data
+service_types=2
+register S7 size=0
+log error Required value 'get_name' for 'zero' not found.  obs_register_service failed.
+service_types=2
+types svcA shortA
+register O size=full
+service_types=3
+types svcA shortA optional

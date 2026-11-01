@@ -1,0 +1,23 @@
+# The container is chosen from the file name; names starting with srt/udp/tcp/http/rist are network targets and
+# force MPEG-TS (http excepted) even when they are plain relative file names with another extension.
+chdirtmp
+reset
+rmfile ffmuxproto-plain.mkv
+rmfile udp_dump.mkv
+rmfile ffmuxproto-httpfoo.mkv
+echo --- ordinary relative name
+args ffmuxproto-plain.mkv 0 1 aac "A" 128 48000 1024 0 2 "" ""
+hdr audio 0 1190
+inspect
+echo --- a relative file name that merely starts with udp is treated as a network target
+args udp_dump.mkv 0 1 aac "A" 128 48000 1024 0 2 "" ""
+inspect
+echo --- http prefix: format still guessed from the name
+args httpfoo.mkv 0 1 aac "A" 128 48000 1024 0 2 "" ""
+inspect
+echo --- TCP prefix match is case sensitive and prefix only
+args Tcp_dump.mkv 0 1 aac "A" 128 48000 1024 0 2 "" ""
+inspect
+echo --- unknown extension
+args out.zzz 0 1 aac "A" 128 48000 1024 0 2 "" ""
+run

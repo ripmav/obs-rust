@@ -1,0 +1,36 @@
+# A source with no size yet (0x0, e.g. a capture before its first frame) combined with bounds produces
+# non-finite scale values (0/0, x/0) in the reference; nothing crashes, matrices contain nan/inf. Without bounds
+# the item just has a zero-sized box. Output sign of NaN is normalised by the runner ("nan").
+source z 0 0
+scene main
+add main z c
+pos c 10 10
+update main
+print c
+echo -- bounds inner on a zero-sized source
+bounds_type c 2
+bounds c 400 300
+update main
+print c
+echo -- stretch: x/0 -> inf
+bounds_type c 1
+update main
+print c
+echo -- to-width, to-height, outer, max-only
+bounds_type c 4
+update main
+print c
+bounds_type c 5
+update main
+print c
+bounds_type c 3
+update main
+print c
+bounds_type c 6
+update main
+print c
+echo -- the source gets its size later: everything becomes finite at the next update
+resize_source z 200 100
+bounds_type c 2
+update main
+print c

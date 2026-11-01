@@ -1,0 +1,168 @@
+> fake-dir video0
+> dev /dev/video0
+> dev-cap Cam usb-1 0x85200001 0x05200001
+> dev-input Camera 0
+> dev-fmt YUYV YUYV 0
+> dev-size-stepwise YUYV
+> dev-ival-stepwise
+> dev-cur 0 640 480 YUYV 1280 1 30 0
+> src-defaults
+> set-str device_id /dev/video0
+> set-int pixelformat 0x56595559
+> set-int resolution 2748779069920
+> src-create
+log info v4l2-input: Start capture from /dev/video0
+log info v4l2-input: Input: 0
+log info v4l2-input: Resolution: 640x480
+log info v4l2-input: Pixelformat: YUYV
+log info v4l2-input: Linesize: 1280 Bytes
+log info v4l2-input: Framerate: 30.00 fps
+log info v4l2-input: Compiled without libudev, you can't reconnect devices
+src-create
+state device_id=/dev/video0 input=0 pixfmt=1448695129 standard=-1 dv_timing=-1 resolution=2748779069920 framerate=4294967326 color_range=0 auto_reset=0 timeout_frames=5 dev=open width=640 height=480 linesize=1280 buffers=4 res_unch=0 fr_unch=0 thread=1
+> src-props
+log info v4l2-input: Found device 'Cam' at /dev/video0
+> modified device_id
+log info v4l2-input: Found input 'Camera' (Index 0)
+log info v4l2-input: Pixelformat: YUYV (available)
+log info v4l2-input: Stepwise and Continuous framesizes are currently hardcoded
+log info v4l2-input: Stepwise and Continuous framerates are currently hardcoded
+modified -> 1
+> modified pixelformat
+log info v4l2-input: Stepwise and Continuous framesizes are currently hardcoded
+log info v4l2-input: Stepwise and Continuous framerates are currently hardcoded
+modified -> 1
+> modified resolution
+log info v4l2-input: Stepwise and Continuous framerates are currently hardcoded
+modified -> 1
+> props
+prop device_id type=list desc="Device" visible=1 enabled=1 format=string items=1
+  - "Cam (usb-1)" = "/dev/video0" disabled=0
+prop input type=list desc="Input" visible=1 enabled=1 format=int items=1
+  - "Camera" = 0 disabled=0
+prop pixelformat type=list desc="VideoFormat" visible=1 enabled=1 format=int items=1
+  - "YUYV" = 1448695129 disabled=0
+prop standard type=list desc="VideoStandard" visible=0 enabled=1 format=int items=0
+prop dv_timing type=list desc="DVTiming" visible=0 enabled=1 format=int items=0
+prop resolution type=list desc="Resolution" visible=1 enabled=1 format=int items=31
+  - "LeaveUnchanged" = -1 disabled=0
+  - "160x120" = 687194767480 disabled=0
+  - "320x240" = 1374389534960 disabled=0
+  - "480x320" = 2061584302400 disabled=0
+  - "640x480" = 2748779069920 disabled=0
+  - "800x600" = 3435973837400 disabled=0
+  - "1024x768" = 4398046511872 disabled=0
+  - "1280x960" = 5497558139840 disabled=0
+  - "1440x1050" = 6184752907290 disabled=0
+  - "1440x1080" = 6184752907320 disabled=0
+  - "1600x1200" = 6871947674800 disabled=0
+  - "640x360" = 2748779069800 disabled=0
+  - "960x540" = 4123168604700 disabled=0
+  - "1280x720" = 5497558139600 disabled=0
+  - "1600x900" = 6871947674500 disabled=0
+  - "1920x1080" = 8246337209400 disabled=0
+  - "1920x1200" = 8246337209520 disabled=0
+  - "2560x1440" = 10995116279200 disabled=0
+  - "3840x2160" = 16492674418800 disabled=0
+  - "2560x1080" = 10995116278840 disabled=0
+  - "3440x1440" = 14774687499680 disabled=0
+  - "5120x2160" = 21990232557680 disabled=0
+  - "432x520" = 1855425872392 disabled=0
+  - "480x320" = 2061584302400 disabled=0
+  - "480x530" = 2061584302610 disabled=0
+  - "486x440" = 2087354106296 disabled=0
+  - "576x310" = 2473901162806 disabled=0
+  - "576x520" = 2473901163016 disabled=0
+  - "576x570" = 2473901163066 disabled=0
+  - "720x576" = 3092376453696 disabled=0
+  - "1024x576" = 4398046511680 disabled=0
+prop framerate type=list desc="FrameRate" visible=1 enabled=1 format=int items=9
+  - "LeaveUnchanged" = -1 disabled=0
+  - "60.00" = 4294967356 disabled=0
+  - "50.00" = 4294967346 disabled=0
+  - "30.00" = 4294967326 disabled=0
+  - "25.00" = 4294967321 disabled=0
+  - "20.00" = 4294967316 disabled=0
+  - "15.00" = 4294967311 disabled=0
+  - "10.00" = 4294967306 disabled=0
+  - "5.00" = 4294967301 disabled=0
+prop color_range type=list desc="ColorRange" visible=1 enabled=1 format=int items=3
+  - "ColorRange.Default" = 0 disabled=0
+  - "ColorRange.Partial" = 1 disabled=0
+  - "ColorRange.Full" = 2 disabled=0
+prop buffering type=bool desc="UseBuffering" visible=1 enabled=1
+prop auto_reset type=bool desc="AutoresetOnTimeout" visible=1 enabled=1
+prop timeout_frames type=int desc="FramesUntilTimeout" visible=1 enabled=1 min=2 max=120 step=1 slider=0
+prop controls type=group desc="CameraCtrls" visible=1 enabled=1
+> dev /dev/video1
+> dev-cap Cam2 usb-2 0x85200001 0x05200001
+> dev-input Camera 0
+> dev-fmt NV12 NV12 0
+> dev-cur 0 640 480 NV12 640 1 30 0
+> set-str device_id /dev/video1
+> set-int pixelformat 0x3231564e
+> modified pixelformat
+log info v4l2-input: Stepwise and Continuous framesizes are currently hardcoded
+log info v4l2-input: Stepwise and Continuous framerates are currently hardcoded
+modified -> 1
+> props
+prop device_id type=list desc="Device" visible=1 enabled=1 format=string items=1
+  - "Cam (usb-1)" = "/dev/video0" disabled=0
+prop input type=list desc="Input" visible=1 enabled=1 format=int items=1
+  - "Camera" = 0 disabled=0
+prop pixelformat type=list desc="VideoFormat" visible=1 enabled=1 format=int items=1
+  - "YUYV" = 1448695129 disabled=0
+prop standard type=list desc="VideoStandard" visible=0 enabled=1 format=int items=0
+prop dv_timing type=list desc="DVTiming" visible=0 enabled=1 format=int items=0
+prop resolution type=list desc="Resolution" visible=1 enabled=1 format=int items=31
+  - "LeaveUnchanged" = -1 disabled=0
+  - "160x120" = 687194767480 disabled=0
+  - "320x240" = 1374389534960 disabled=0
+  - "480x320" = 2061584302400 disabled=0
+  - "640x480" = 2748779069920 disabled=0
+  - "800x600" = 3435973837400 disabled=0
+  - "1024x768" = 4398046511872 disabled=0
+  - "1280x960" = 5497558139840 disabled=0
+  - "1440x1050" = 6184752907290 disabled=0
+  - "1440x1080" = 6184752907320 disabled=0
+  - "1600x1200" = 6871947674800 disabled=0
+  - "640x360" = 2748779069800 disabled=0
+  - "960x540" = 4123168604700 disabled=0
+  - "1280x720" = 5497558139600 disabled=0
+  - "1600x900" = 6871947674500 disabled=0
+  - "1920x1080" = 8246337209400 disabled=0
+  - "1920x1200" = 8246337209520 disabled=0
+  - "2560x1440" = 10995116279200 disabled=0
+  - "3840x2160" = 16492674418800 disabled=0
+  - "2560x1080" = 10995116278840 disabled=0
+  - "3440x1440" = 14774687499680 disabled=0
+  - "5120x2160" = 21990232557680 disabled=0
+  - "432x520" = 1855425872392 disabled=0
+  - "480x320" = 2061584302400 disabled=0
+  - "480x530" = 2061584302610 disabled=0
+  - "486x440" = 2087354106296 disabled=0
+  - "576x310" = 2473901162806 disabled=0
+  - "576x520" = 2473901163016 disabled=0
+  - "576x570" = 2473901163066 disabled=0
+  - "720x576" = 3092376453696 disabled=0
+  - "1024x576" = 4398046511680 disabled=0
+prop framerate type=list desc="FrameRate" visible=1 enabled=1 format=int items=9
+  - "LeaveUnchanged" = -1 disabled=0
+  - "60.00" = 4294967356 disabled=0
+  - "50.00" = 4294967346 disabled=0
+  - "30.00" = 4294967326 disabled=0
+  - "25.00" = 4294967321 disabled=0
+  - "20.00" = 4294967316 disabled=0
+  - "15.00" = 4294967311 disabled=0
+  - "10.00" = 4294967306 disabled=0
+  - "5.00" = 4294967301 disabled=0
+prop color_range type=list desc="ColorRange" visible=1 enabled=1 format=int items=3
+  - "ColorRange.Default" = 0 disabled=0
+  - "ColorRange.Partial" = 1 disabled=0
+  - "ColorRange.Full" = 2 disabled=0
+prop buffering type=bool desc="UseBuffering" visible=1 enabled=1
+prop auto_reset type=bool desc="AutoresetOnTimeout" visible=1 enabled=1
+prop timeout_frames type=int desc="FramesUntilTimeout" visible=1 enabled=1 min=2 max=120 step=1 slider=0
+prop controls type=group desc="CameraCtrls" visible=1 enabled=1
+> src-destroy
+src-destroy

@@ -1,0 +1,23 @@
+# start() failure paths: capture refused, encoders refused, unwritable path (last error text with the path
+# substituted for %1; the file system is virtual), helper pipe cannot be created. A failed start leaves the
+# stream inactive and sends nothing.
+reset
+output o
+venc h264 bitrate=2500
+set str path /v/a.mkv
+create ffmpeg_muxer
+capture 0
+start
+capture 1 0
+start
+capture 1 1
+fs deny /v/a.mkv
+start
+state
+fs clear
+knob pipe_fail 1
+start
+state
+knob pipe_fail 0
+start
+state

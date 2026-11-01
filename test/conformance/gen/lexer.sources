@@ -1,0 +1,5 @@
+# base lexer, C-like token layer + preprocessor, parser helpers (spec S-011)
+test/conformance/gen/lexer_runner.c
+libobs/util/lexer.c
+libobs/util/cf-lexer.c
+libobs/util/cf-parser.c

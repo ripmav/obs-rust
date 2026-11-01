@@ -1,0 +1,25 @@
+  cb T create
+log debug source 'T' (tr) created
+create t ok
+  cb A create
+log debug source 'A' (in) created
+create a ok
+  cb B create
+log debug source 'B' (in) created
+create b ok
+  cb T transition_start
+tr_start t 1
+echo ---
+tr_audio t ret=0 ts=0 mix0ch0[0]=0 [512]=0 [1023]=0 mix1ch0[0]=0 mix0ch1[0]=0
+echo ---
+tr_audio t ret=1 ts=100000000 mix0ch0[0]=1.10000002 [512]=1.11066675 [1023]=1.1213125 mix1ch0[0]=0 mix0ch1[0]=1.10000002
+echo ---
+tr_audio t ret=1 ts=100000000 mix0ch0[0]=1.10000002 [512]=1.11066675 [1023]=1.1213125 mix1ch0[0]=1.10000002 mix0ch1[0]=1.10000002
+tr_audio t ret=1 ts=100000000 mix0ch0[0]=0 [512]=0 [1023]=0 mix1ch0[0]=0 mix0ch1[0]=0
+echo ---
+tr_audio t ret=1 ts=100000000 mix0ch0[0]=0.899999976 [512]=0.889333367 [1023]=0.878687501 mix1ch0[0]=0 mix0ch1[0]=0.899999976
+tr_audio t ret=1 ts=100000000 mix0ch0[0]=0.200000003 [512]=0.221333325 [1023]=0.242624998 mix1ch0[0]=0 mix0ch1[0]=0.200000003
+echo ---
+tr_audio t ret=1 ts=100000000 mix0ch0[0]=0.899999976 [512]=1.11066675 [1023]=1.1213125 mix1ch0[0]=0 mix0ch1[0]=0.899999976
+echo ---
+tr_audio t ret=1 ts=100000000 mix0ch0[0]=0.899999976 [512]=0.889333367 [1023]=0.878687501 mix1ch0[0]=0 mix0ch1[0]=0.899999976

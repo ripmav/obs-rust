@@ -1,0 +1,43 @@
+# S-034 binding storage: obs_hotkey_load_bindings (combinations), obs_hotkey_load (obs_data array
+# of {shift,control,alt,command,key}), obs_hotkey_save, the global binding array order,
+# "hotkey_bindings_changed" signal rules, modifier bits that are not persisted (caps, mouse, ...).
+# Combination syntax in scripts: MODS:KEYNAME, MODS = shift 0x2, control 0x4, alt 0x8, command 0x80.
+reg frontend A "A" "a"
+reg frontend B "B" "b"
+echo load-combos
+loadbind A 0x2:OBS_KEY_A 0x6:OBS_KEY_F1
+loadbind B 0:OBS_KEY_B
+enumb
+save A
+save B
+echo replace-A-moves-to-end-of-array
+loadbind A 0x8:OBS_KEY_C
+enumb
+echo clear-with-combos-emits-signal-when-bindings-existed
+loadbind A
+enumb
+echo clear-when-nothing-to-remove-no-signal
+loadbind A
+echo non-persisted-modifier-bits-and-all-four-persisted
+loadbind A 0x1:OBS_KEY_D 0x10:OBS_KEY_E 0x8e:OBS_KEY_F 0xfff:OBS_KEY_G
+save A
+echo load-from-json
+load A [{"key":"OBS_KEY_H","shift":true},{"key":"OBS_KEY_I","control":true,"alt":true,"command":true}]
+enumb
+save A
+echo json-booleans-must-be-bool-false-ignored-unknown-key-name
+load A [{"key":"OBS_KEY_J","shift":false},{"key":"NOT_A_KEY","shift":true},{"shift":true},{"key":"OBS_KEY_K","control":1}]
+enumb
+save A
+echo load-empty-array-removes-but-emits-no-signal
+load A []
+enumb
+echo load-null-array-also-removes
+loadbind A 0:OBS_KEY_L
+load A -
+enumb
+echo load-on-unknown-id-ignored
+loadbind id:500 0:OBS_KEY_L
+load id:500 [{"key":"OBS_KEY_L"}]
+save id:500
+enumb

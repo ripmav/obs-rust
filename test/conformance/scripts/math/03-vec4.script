@@ -1,0 +1,20 @@
+vec4 a 1 2 3 4
+vec4 b 5 6 7 8
+call s vec4_add a b
+call d vec4_sub b a
+call m vec4_mul a b
+call q vec4_div b a
+call mf vec4_mulf a 0.5
+call n vec4_neg a
+call dot vec4_dot a b
+call len vec4_len a
+call nrm vec4_norm a
+vec4 z 0 0 0 0
+call nz vec4_norm z
+call c1 vec4_close a b 0.001
+call c2 vec4_close b a 0.001
+vec3 v3 7 8 9
+call f vec4_from_vec3 v3
+call back vec3_from_vec4 b
+vec4 color 1 0.5 0 1
+call rgba vec4_to_rgba color

@@ -1,0 +1,28 @@
+ks_to_layout mask=0x3 channels=2 -> 2
+ks_to_layout mask=0x4 channels=1 -> 1
+ks_to_layout mask=0x0 channels=1 -> 1
+ks_to_layout mask=0x0 channels=2 -> 2
+ks_to_layout mask=0xb channels=3 -> 3
+ks_to_layout mask=0x107 channels=4 -> 4
+ks_to_layout mask=0x10f channels=5 -> 5
+ks_to_layout mask=0x60f channels=6 -> 6
+ks_to_layout mask=0x63f channels=8 -> 8
+ks_to_layout mask=0x3f channels=6 -> 6
+ks_to_layout mask=0x33f channels=8 -> 8
+ks_to_layout mask=0x0 channels=3 -> 3
+ks_to_layout mask=0x0 channels=4 -> 4
+ks_to_layout mask=0x0 channels=5 -> 5
+ks_to_layout mask=0x0 channels=6 -> 6
+ks_to_layout mask=0x0 channels=7 -> 7
+ks_to_layout mask=0x0 channels=8 -> 8
+ks_to_layout mask=0x0 channels=12 -> 12
+ks_to_layout mask=0x607 channels=2 -> 2
+layout_to_ks 2 -> 0x3
+layout_to_ks 3 -> 0xb
+layout_to_ks 4 -> 0x107
+layout_to_ks 5 -> 0x10f
+layout_to_ks 6 -> 0x60f
+layout_to_ks 8 -> 0x63f
+layout_to_ks 1 -> 0x1
+layout_to_ks 0 -> 0x0
+layout_to_ks 7 -> 0x7

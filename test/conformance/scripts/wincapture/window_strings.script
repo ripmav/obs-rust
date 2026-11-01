@@ -1,0 +1,17 @@
+# Window identity string "title:class:exe" with '#' and ':' escaped as #22 and #3A in each part.
+build_strings "Untitled - Notepad:Notepad:notepad.exe"
+build_strings "a:b"
+build_strings "a:b:c:d"
+build_strings "::"
+build_strings ":b:"
+build_strings "t#3At:cls:exe.exe"
+build_strings "100#22 done:c#3Ac:e#3A.exe"
+build_strings "x#3Ay#22z:c:e"
+build_strings "#3A#22:#22:#3A"
+build_strings "t#2:c:e"
+build_strings ""
+build_strings -
+encode_decode "Main: window #1" "Cls:A" "game#.exe"
+encode_decode "plain" "plain" "plain.exe"
+encode_decode "#22" ":" "#3A"
+encode_decode "" "c" "e"

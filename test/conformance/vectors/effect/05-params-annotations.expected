@@ -1,0 +1,212 @@
+ep result=ok
+  errors count=0 has_errors=0
+  ep params=5 structs=0 funcs=0 samplers=0 techniques=0
+  ep_param 0 type=float name=x property=0 const=0 uniform=1 texture=0 array_count=0 annotations=6
+    ep_annotation 0 type=string name=label
+    ep_annotation 1 type=float name=min
+    ep_annotation 2 type=float name=max
+    ep_annotation 3 type=int name=steps
+    ep_annotation 4 type=bool name=flag
+    ep_annotation 5 type=float2 name=v
+  ep_param 1 type=float name=y property=0 const=0 uniform=1 texture=0 array_count=0 annotations=1
+    ep_annotation 0 type=float name=a
+  ep_param 2 type=float name=z property=0 const=0 uniform=1 texture=0 array_count=0 annotations=0
+  ep_param 3 type=float2 name=w property=0 const=0 uniform=1 texture=0 array_count=0 annotations=3
+    ep_annotation 0 type=float name=k
+    ep_annotation 1 type=float name=k
+    ep_annotation 2 type=int name=k
+  ep_param 4 type=float4 name=c property=0 const=0 uniform=1 texture=0 array_count=2 annotations=1
+    ep_annotation 0 type=string name=desc
+  error_string=@null
+effect (effect) params=5 techniques=0 viewproj=- world=-
+  param 0 name=x type=FLOAT annotations=6 default_size=4 default=0000c03f f=[1.5]
+    annotation 0 name=label type=STRING default_size=2 default="X"
+    annotation 1 name=min type=FLOAT default_size=4 default=00000000 f=[0]
+    annotation 2 name=max type=FLOAT default_size=4 default=00002041 f=[10]
+    annotation 3 name=steps type=INT default_size=8 default=fdffffffffffffff l=[-3]
+    annotation 4 name=flag type=BOOL default_size=8 default=0100000000000000 l=[1]
+    annotation 5 name=v type=VEC2 default_size=8 default=0000803f00000040 f=[1,2]
+  param 1 name=y type=FLOAT annotations=1 default_size=0 default=-
+    annotation 0 name=a type=FLOAT default_size=4 default=0000803f f=[1]
+  param 2 name=z type=FLOAT annotations=0 default_size=4 default=00004040 f=[3]
+  param 3 name=w type=VEC2 annotations=3 default_size=0 default=-
+    annotation 0 name=k type=FLOAT default_size=4 default=00004040 f=[3]
+    annotation 1 name=k type=FLOAT default_size=4 default=00008040 f=[4]
+    annotation 2 name=k type=INT default_size=0 default=-
+  param 4 name=c type=VEC4 annotations=1 default_size=16 default=0000803f000000400000404000008040 f=[1,2,3,4]
+    annotation 0 name=desc type=STRING default_size=7 default="colors"
+effect e result=ok
+  error_string=@null
+effect e params=5 techniques=0 viewproj=- world=-
+  param 0 name=x type=FLOAT annotations=6 default_size=4 default=0000c03f f=[1.5]
+    annotation 0 name=label type=STRING default_size=2 default="X"
+    annotation 1 name=min type=FLOAT default_size=4 default=00000000 f=[0]
+    annotation 2 name=max type=FLOAT default_size=4 default=00002041 f=[10]
+    annotation 3 name=steps type=INT default_size=8 default=fdffffffffffffff l=[-3]
+    annotation 4 name=flag type=BOOL default_size=8 default=0100000000000000 l=[1]
+    annotation 5 name=v type=VEC2 default_size=8 default=0000803f00000040 f=[1,2]
+  param 1 name=y type=FLOAT annotations=1 default_size=0 default=-
+    annotation 0 name=a type=FLOAT default_size=4 default=0000803f f=[1]
+  param 2 name=z type=FLOAT annotations=0 default_size=4 default=00004040 f=[3]
+  param 3 name=w type=VEC2 annotations=3 default_size=0 default=-
+    annotation 0 name=k type=FLOAT default_size=4 default=00004040 f=[3]
+    annotation 1 name=k type=FLOAT default_size=4 default=00008040 f=[4]
+    annotation 2 name=k type=INT default_size=0 default=-
+  param 4 name=c type=VEC4 annotations=1 default_size=16 default=0000803f000000400000404000008040 f=[1,2,3,4]
+    annotation 0 name=desc type=STRING default_size=7 default="colors"
+nannotations -> 6
+param e:x/label -> name=label type=STRING
+param e:x/steps -> name=steps type=INT
+param e:x/#4 -> name=flag type=BOOL
+param e:x/#9 -> null
+param e:x/none -> null
+param e:w/k -> name=k type=FLOAT
+param e:w/#1 -> name=k type=FLOAT
+param e:w/#2 -> name=k type=INT
+get_default_val size=2 hex=5800
+get_default_val size=4 hex=00002041
+get_default_val size=8 hex=fdffffffffffffff
+get_default_val size=8 hex=0100000000000000
+get_default_val size=8 hex=0000803f00000040
+get_default_val size=0 data=null
+get_val size=4 hex=00008040
+nannotations -> 1
+nannotations -> 0
+nannotations -> 0
+--- annotation syntax
+ep result=ok
+  errors count=0 has_errors=0
+  ep params=1 structs=0 funcs=0 samplers=0 techniques=0
+  ep_param 0 type=float name=x property=0 const=0 uniform=1 texture=0 array_count=0 annotations=2
+    ep_annotation 0 type=float name=a
+    ep_annotation 1 type=float name=b
+  error_string=@null
+effect (effect) params=1 techniques=0 viewproj=- world=-
+  param 0 name=x type=FLOAT annotations=2 default_size=0 default=-
+    annotation 0 name=a type=FLOAT default_size=0 default=-
+    annotation 1 name=b type=FLOAT default_size=4 default=00000040 f=[2]
+ep result=ok
+  errors count=0 has_errors=0
+  ep params=1 structs=0 funcs=0 samplers=0 techniques=0
+  ep_param 0 type=float name=x property=0 const=0 uniform=1 texture=0 array_count=0 annotations=1
+    ep_annotation 0 type=float name=a
+  error_string=@null
+effect (effect) params=1 techniques=0 viewproj=- world=-
+  param 0 name=x type=FLOAT annotations=1 default_size=0 default=-
+    annotation 0 name=a type=FLOAT default_size=4 default=0000803f f=[1]
+ep result=ok
+  errors count=0 has_errors=0
+  ep params=1 structs=0 funcs=0 samplers=0 techniques=0
+  ep_param 0 type=float name=x property=0 const=0 uniform=1 texture=0 array_count=3 annotations=1
+    ep_annotation 0 type=float name=a
+  error_string=@null
+effect (effect) params=1 techniques=0 viewproj=- world=-
+  param 0 name=x type=FLOAT annotations=1 default_size=4 default=00004040 f=[3]
+    annotation 0 name=a type=FLOAT default_size=4 default=0000803f f=[1]
+ep result=fail
+  errors count=2 has_errors=1
+    err 0 error file="a5" row=1 col=32 msg="Expected 'type'"
+    err 1 error file="a5" row=1 col=45 msg="Expected 'type'"
+  ep params=0 structs=0 funcs=0 samplers=0 techniques=0
+  error_string="a5 (1, 32): Expected 'type'\na5 (1, 45): Expected 'type'\n"
+--- annotation texture default is rejected
+ep result=fail
+  errors count=6 has_errors=1
+    err 0 error file="a6" row=1 col=31 msg="Invalid type 'texture2d' used for assignment"
+    err 1 error file="a6" row=1 col=31 msg="Expected 'assignment value'"
+    err 2 error file="a6" row=1 col=31 msg="Syntax error"
+    err 3 error file="a6" row=1 col=31 msg="Expected '>'"
+    err 4 error file="a6" row=1 col=31 msg="Expected 'type'"
+    err 5 error file="a6" row=1 col=59 msg="Expected 'type'"
+  ep params=1 structs=0 funcs=0 samplers=0 techniques=0
+  ep_param 0 type=float name=after property=0 const=0 uniform=0 texture=0 array_count=0 annotations=0
+  error_string="a6 (1, 31): Invalid type 'texture2d' used for assignment\na6 (1, 31): Expected 'assignment value'\na6 (1, 31): Syntax error\na6 (1, 31): Expected '>'\na6 (1, 31): Expected 'type'\na6 (1, 59): Expected 'type'\n"
+--- annotation with unknown type name
+ep result=fail
+  errors count=6 has_errors=1
+    err 0 error file="a7" row=1 col=25 msg="Invalid type 'foo' used for assignment"
+    err 1 error file="a7" row=1 col=25 msg="Expected 'assignment value'"
+    err 2 error file="a7" row=1 col=25 msg="Syntax error"
+    err 3 error file="a7" row=1 col=25 msg="Expected '>'"
+    err 4 error file="a7" row=1 col=25 msg="Expected 'type'"
+    err 5 error file="a7" row=1 col=30 msg="Expected 'type'"
+  ep params=0 structs=0 funcs=0 samplers=0 techniques=0
+  error_string="a7 (1, 25): Invalid type 'foo' used for assignment\na7 (1, 25): Expected 'assignment value'\na7 (1, 25): Syntax error\na7 (1, 25): Expected '>'\na7 (1, 25): Expected 'type'\na7 (1, 30): Expected 'type'\n"
+--- annotations errors
+ep result=fail
+  errors count=1 has_errors=1
+    err 0 error file="e1" row=1 col=33 msg="Unexpected EOF"
+  ep params=0 structs=0 funcs=0 samplers=0 techniques=0
+  error_string="e1 (1, 33): Unexpected EOF\n"
+ep result=fail
+  errors count=2 has_errors=1
+    err 0 error file="e2" row=1 col=24 msg="Expected 'variable name'"
+    err 1 error file="e2" row=1 col=24 msg="Syntax error"
+  ep params=1 structs=0 funcs=0 samplers=0 techniques=0
+  ep_param 0 type=float name=x property=0 const=0 uniform=1 texture=0 array_count=0 annotations=0
+  error_string="e2 (1, 24): Expected 'variable name'\ne2 (1, 24): Syntax error\n"
+ep result=fail
+  errors count=5 has_errors=1
+    err 0 error file="e3" row=1 col=27 msg="Expected '= or ;'"
+    err 1 error file="e3" row=1 col=27 msg="Syntax error"
+    err 2 error file="e3" row=1 col=27 msg="Expected '>'"
+    err 3 error file="e3" row=1 col=27 msg="Expected 'type'"
+    err 4 error file="e3" row=1 col=34 msg="Expected 'type'"
+  ep params=0 structs=0 funcs=0 samplers=0 techniques=0
+  error_string="e3 (1, 27): Expected '= or ;'\ne3 (1, 27): Syntax error\ne3 (1, 27): Expected '>'\ne3 (1, 27): Expected 'type'\ne3 (1, 34): Expected 'type'\n"
+ep result=fail
+  errors count=4 has_errors=1
+    err 0 error file="e4" row=1 col=29 msg="Expected 'numeric value'"
+    err 1 error file="e4" row=1 col=33 msg="Expected 'assignment value'"
+    err 2 error file="e4" row=1 col=33 msg="Syntax error"
+    err 3 error file="e4" row=1 col=33 msg="Expected '>'"
+  ep params=0 structs=0 funcs=0 samplers=0 techniques=0
+  error_string="e4 (1, 29): Expected 'numeric value'\ne4 (1, 33): Expected 'assignment value'\ne4 (1, 33): Syntax error\ne4 (1, 33): Expected '>'\n"
+ep result=fail
+  errors count=1 has_errors=1
+    err 0 error file="e5" row=1 col=30 msg="Unexpected EOF"
+  ep params=0 structs=0 funcs=0 samplers=0 techniques=0
+  error_string="e5 (1, 30): Unexpected EOF\n"
+ep result=fail
+  errors count=1 has_errors=1
+    err 0 error file="e6" row=1 col=37 msg="Unexpected EOF"
+  ep params=0 structs=0 funcs=0 samplers=0 techniques=0
+  error_string="e6 (1, 37): Unexpected EOF\n"
+ep result=fail
+  errors count=1 has_errors=1
+    err 0 error file="e7" row=1 col=32 msg="Expected 'type'"
+  ep params=0 structs=0 funcs=0 samplers=0 techniques=0
+  error_string="e7 (1, 32): Expected 'type'\n"
+ep result=fail
+  errors count=1 has_errors=1
+    err 0 error file="e8" row=1 col=19 msg="Unexpected EOF"
+  ep params=0 structs=0 funcs=0 samplers=0 techniques=0
+  error_string="e8 (1, 19): Unexpected EOF\n"
+ep result=fail
+  errors count=1 has_errors=1
+    err 0 error file="e9" row=1 col=19 msg="Expected 'type name'"
+  ep params=1 structs=0 funcs=0 samplers=0 techniques=0
+  ep_param 0 type=float name=x property=0 const=0 uniform=1 texture=0 array_count=0 annotations=0
+  error_string="e9 (1, 19): Expected 'type name'\n"
+ep result=fail
+  errors count=1 has_errors=1
+    err 0 error file="e10" row=1 col=25 msg="Expected 'variable name'"
+  ep params=1 structs=0 funcs=0 samplers=0 techniques=0
+  ep_param 0 type=float name=x property=0 const=0 uniform=1 texture=0 array_count=0 annotations=0
+  error_string="e10 (1, 25): Expected 'variable name'\n"
+ep result=ok
+  errors count=0 has_errors=0
+  ep params=1 structs=0 funcs=0 samplers=0 techniques=0
+  ep_param 0 type=float name=x property=0 const=0 uniform=1 texture=0 array_count=0 annotations=0
+  error_string=@null
+effect (effect) params=1 techniques=0 viewproj=- world=-
+  param 0 name=x type=FLOAT annotations=0 default_size=0 default=-
+ep result=fail
+  errors count=5 has_errors=1
+    err 0 error file="e12" row=1 col=29 msg="Expected 'numeric value'"
+    err 1 error file="e12" row=1 col=32 msg="Expected 'assignment value'"
+    err 2 error file="e12" row=1 col=32 msg="Syntax error"
+    err 3 error file="e12" row=1 col=32 msg="Expected '>'"
+    err 4 error file="e12" row=1 col=34 msg="Expected 'type'"
+  ep params=0 structs=0 funcs=0 samplers=0 techniques=0
+  error_string="e12 (1, 29): Expected 'numeric value'\ne12 (1, 32): Expected 'assignment value'\ne12 (1, 32): Syntax error\ne12 (1, 32): Expected '>'\ne12 (1, 34): Expected 'type'\n"

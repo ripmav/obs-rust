@@ -1,0 +1,13 @@
+task_create 0 ok
+task_gate 0 entered
+task_requeue 0 a queued
+task_queue 0 b -> 1
+task_wait_release 0 -> 1
+task_log
+  run gate-enter
+  run gate-exit
+  run a queues a-child
+  run a queue_task=1
+  run b
+  run a-child
+task_destroy 0 done

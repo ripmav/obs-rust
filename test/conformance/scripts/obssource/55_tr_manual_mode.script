@@ -1,0 +1,35 @@
+# Manual mode (mode 1): time comes from manual_val, which follows manual_target.  With torque 0 the value jumps
+# to the target at every video tick; with torque > 0 it eases toward the target (tick length 1/60 s here).
+# Setting the manual time to 0 in manual mode resets the transition to the first source.
+kind in input video size
+kind tr transition video,audio tstart,tstop,size
+create t tr T
+create a in A
+create b in B
+fksize a 10 10
+fksize b 10 10
+tr_set t a
+tr_start t 1 0 b
+tr_state t
+tr_manual t 0.5
+tr_time t
+tr_state t
+tick t 0.0166667
+tr_time t
+tr_manual t 1
+tick t 0.0166667
+tr_time t
+tr_torque t 10 1
+tr_manual t 0.25
+tick t 0.0166667
+tr_time t
+tick t 0.0166667
+tr_time t
+tr_torque t 0 0
+tr_manual t 0
+tr_state t
+echo --- restart in manual mode towards the same destination while active: no change
+tr_start t 1 0 b
+tr_manual t 0.5
+tr_start t 1 0 b
+tr_state t

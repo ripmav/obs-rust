@@ -1,0 +1,30 @@
+# CORE. Typical use: a modified callback changes the layout of the properties object it is
+# given (the top-most container) and returns true to ask the UI to rebuild. The callback may
+# add, remove, hide, disable and re-describe OTHER properties, and fill list items. Removing
+# is only valid from a callback that returns true; the callback must not touch the property
+# it is being called for after removing it (scripts here never remove the callee).
+behavior layout add_bool:extra remove:victim visible:keep:0 enabled:keep:0 desc:keep:Edited ret:1
+behavior fill list_clear:combo list_add:combo:First:1 list_add:combo:Second:2 ret:1
+behavior from_group parent add_bool:fromgroup ret:1
+props Top
+props G
+add bool Top trigger "Trigger" as trigger
+add bool Top victim "Victim"
+add bool Top keep "Keep"
+add list Top combo "Combo" list string as combo
+add group Top grp "Grp" normal G
+add bool G inner "Inner" as inner
+set trigger modified layout
+modified trigger @null
+dump Top
+echo list-refill
+add bool Top refill "Refill" as refill
+set refill modified fill
+modified refill @null
+modified refill @null
+info combo
+echo callback-of-property-inside-a-group-edits-the-top-container
+set inner modified from_group
+modified inner @null
+dump Top
+destroy Top

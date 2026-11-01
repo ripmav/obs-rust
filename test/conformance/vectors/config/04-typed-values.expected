@@ -1,0 +1,19 @@
+create ok
+save rc=0
+"[T]\ni=-42\nbig=9223372036854775807\nu=18446744073709551615\nbt=true\nbf=false\nd1=1.5\nd2=2.0\nd3=0.10000000000000001\nd4=1e211\nd5=-0.0\nd6=1.0000000000000001e-55\nd7=1.5000000000000001e3000\n"
+get_int T i -42
+get_uint T i 18446744073709551574
+get_int T u 9223372036854775807
+get_uint T u 18446744073709551615
+get_bool T bt 1
+get_bool T bf 0
+get_double T d1 1.5
+get_double T d2 2
+get_double T d3 0.10000000000000001
+get_double T d4 9.9999999999999996e+210
+get_string T d2 "2.0"
+get_string T d3 "0.10000000000000001"
+get_string T d4 "1e211"
+get_string T d6 "1.0000000000000001e-55"
+get_string T d7 "1.5000000000000001e3000"
+get_double T d6 1.0000000000000002e-55

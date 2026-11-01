@@ -1,0 +1,69 @@
+data D
+  bitrate int 5000 default
+  max_bitrate int 6000 default
+  profile string "high" default
+  __ver int 2 default
+  cqp int 23 default
+  qpi int 23 default
+  qpp int 23 default
+  qpb int 23 default
+  icq_quality int 23 default
+  keyint_sec int 0 default
+  latency string "normal" default
+  bframes int 3 default
+  repeat_headers bool 0 default
+  rate_control string "LA_VBR" user
+  target_usage string "balanced" user
+  la_depth int 8 user
+  async_depth int 2 user
+end data D
+props_apply P
+data D
+  bitrate int 5000 default
+  max_bitrate int 6000 default
+  profile string "high" default
+  __ver int 2 default
+  cqp int 23 default
+  qpi int 23 default
+  qpp int 23 default
+  qpb int 23 default
+  icq_quality int 23 default
+  keyint_sec int 0 default
+  bframes int 3 default
+  repeat_headers bool 0 default
+  rate_control string "VBR" user
+  target_usage string "TU4" user
+  latency string "low" user
+end data D
+echo create-also-migrates
+log info [qsv encoder: 'enc'] settings: 	codec:          H.264 	rate_control:   CBR
+log info 	target_bitrate: 5000
+log info 	Lookahead Depth:60
+log info 	target_usage:   TU7 	profile:        high 	keyint:         0 	latency:        normal 	b-frames:       3 	fps_num:        60 	fps_den:        1 	width:          1920 	height:         1080
+log info [qsv encoder: 'enc'] debug info:
+qsv.encoder_open codec=0 tex=0
+log info 	major:          2 	minor:          9
+qsv_create X ok
+qsvparams usage=7 profile=100 rc=1 async=4 la=60
+qsvparams bitrate=5000 max=6000 qpi=23 qpp=23 qpb=23 icq=23 keyint_sec=0 bframes=3
+qsvparams size=1920x1080 fps=60/1 repeat_headers=0 fmt10=0
+qsvparams vui fmt=5 fullrange=0 prim=1 trc=1 matrix=1 chroma=0/0
+qsvparams hdr dispx=0,0,0 dispy=0,0,0 white=0,0 maxlum=0 minlum=0 cll=0 fall=0
+qsv.encoder_close
+data E
+  bitrate int 5000 default
+  max_bitrate int 6000 default
+  profile string "high" default
+  __ver int 2 default
+  cqp int 23 default
+  qpi int 23 default
+  qpp int 23 default
+  qpb int 23 default
+  icq_quality int 23 default
+  keyint_sec int 0 default
+  bframes int 3 default
+  repeat_headers bool 0 default
+  rate_control string "CBR" user
+  target_usage string "TU7" user
+  latency string "normal" user
+end data E

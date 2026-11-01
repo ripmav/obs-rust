@@ -1,0 +1,65 @@
+# texture-render.c: gs_texrender_* helpers built on the gs_* API.  begin() creates (or re-creates when the
+# size changed) a render-target texture and optional zstencil, saves viewport/projection/matrix/targets,
+# and end() restores everything and marks the texrender as rendered until reset().
+trace 0
+gs_create g
+gs_enter_context g
+trace 1
+size 640 360
+gs_texrender_create GS_RGBA GS_ZS_NONE > tr
+gs_texrender_get_format tr
+gs_texrender_get_texture tr
+echo == begin allocates the target (levels=1, render target flag) and switches to it
+gs_set_viewport 5 6 7 8
+gs_matrix_translate3f 3 3 3
+gs_texrender_begin tr 128 64
+echo (inside: matrix is identity)
+gs_matrix_get
+gs_texrender_get_texture tr
+gs_texrender_end tr
+echo == after end the saved viewport, projection and matrix are back
+gs_matrix_get
+gs_get_viewport
+echo == a second begin after end but without reset is refused because 'rendered' is set
+gs_texrender_begin tr 128 64
+gs_texrender_reset tr
+echo == same size again: no reallocation
+gs_texrender_begin tr 128 64
+gs_texrender_end tr
+gs_texrender_reset tr
+echo == different size re-allocates: old texture destroyed, new one created
+gs_texrender_begin tr 32 16
+gs_texrender_end tr
+gs_texrender_reset tr
+echo == zero size is refused
+gs_texrender_begin tr 0 16
+gs_texrender_begin tr 16 0
+echo == with a colour space argument and depth buffer
+gs_texrender_create GS_RGBA16F GS_Z24_S8 > tz
+gs_texrender_get_format tz
+gs_texrender_begin_with_color_space tz 10 10 GS_CS_709_SCRGB
+gs_texrender_end tz
+echo == the previous render target and its colour space are restored
+gs_texrender_reset tz
+echo == target creation failure
+fail device_texture_create 1
+gs_texrender_begin tr 99 99
+fail device_texture_create 0
+echo == QUIRK: after a failed allocation the new size is remembered, so the same size is refused without retrying
+gs_texrender_begin tr 99 99
+gs_texrender_begin tr 98 99
+gs_texrender_end tr
+gs_texrender_reset tr
+echo == zstencil creation failure destroys the new target
+fail device_zstencil_create 1
+gs_texrender_begin tz 77 77
+fail device_zstencil_create 0
+echo == NULL texrender everywhere
+gs_texrender_begin - 1 1
+gs_texrender_end -
+gs_texrender_reset -
+gs_texrender_get_texture -
+gs_texrender_destroy -
+echo == destroy releases texture and zstencil
+gs_texrender_destroy tz
+gs_texrender_destroy tr

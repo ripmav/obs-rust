@@ -1,0 +1,27 @@
+names a x y z
+echo --- replacing with an equal-size value does not move
+names a x y z
+echo --- a longer string moves x to the end
+names a y z x
+json a "{\"y\":1,\"z\":2,\"x\":\"a much longer string value than before, more than thirty two bytes ok\"}"
+echo --- capacity is never reduced: shrink then grow back does not move again
+names a y z x
+names a y z x
+echo --- adding a default after a user value moves the item
+names b y x
+echo --- adding a user value after a default moves the item
+names c y x
+echo --- but a user value over a user value of the same type and size does not
+names c y x
+echo --- a user value after the default only; then same-size rewrite
+names d p s
+echo --- the length of the name never matters
+names e abcdefghijklmnopqrstuvwxyzabcd m k
+names e abcdefghijklmnopqrstuvwxyzabcd k m
+echo --- autoselect layer
+names f b a
+names f b a
+echo --- doubles and ints are the same size
+names g a b c
+echo --- bool then int on the same item grows it
+names h b a

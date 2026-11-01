@@ -1,0 +1,25 @@
+# Rotation: degrees around the aligned origin; positive angle follows the matrix4 rotate-about-Z convention
+# (S-008). draw = scale, then translate(-origin), then rotate, then translate(pos).
+source s 200 100
+scene main
+add main s c
+pos c 300 200
+align c 5
+rot c 90
+print c
+align c 0
+print c
+rot c 45
+print c
+rot c -30
+print c
+rot c 360
+print c
+rot c 0
+echo -- rotation with bounds
+bounds_type c 2
+bounds c 100 100
+rot c 90
+print c
+echo -- rotation does not change getters
+get c

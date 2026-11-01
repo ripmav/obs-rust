@@ -1,0 +1,12 @@
+sck_update decision=keep window=0
+sck_update decision=restart window=0
+sck_update decision=restart window=0
+sck_update decision=restart window=0
+sck_update decision=restart window=0
+sck_update decision=keep window=42
+sck_update decision=restart window=43
+sck_update decision=keep window=42
+sck_update decision=keep window=42
+sck_update decision=restart window=50
+sck_update decision=keep window=0
+sck_update decision=restart window=0

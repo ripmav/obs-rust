@@ -1,0 +1,23 @@
+vid bit_rate=6000000 rc_buffer_size=6000000 size=1920x1080 time_base=1/60 framerate=60/1 pix_fmt=nv12
+vid color_range=1 primaries=1 trc=1 colorspace=1 chroma_loc=1 gop_size=12345 height=1080
+vid bit_rate=2500000 rc_buffer_size=2500000 size=1920x1080 time_base=1/60 framerate=60/1 pix_fmt=nv12
+vid color_range=1 primaries=1 trc=1 colorspace=1 chroma_loc=1 gop_size=120 height=1080
+vid bit_rate=1000 rc_buffer_size=1000 size=1280x720 time_base=1001/30000 framerate=30000/1001 pix_fmt=yuv420p
+vid color_range=2 primaries=6 trc=6 colorspace=6 chroma_loc=1 gop_size=29 height=720
+vid bit_rate=100000 rc_buffer_size=100000 size=640x360 time_base=1/24 framerate=24/1 pix_fmt=yuv444p
+vid color_range=1 primaries=1 trc=13 colorspace=1 chroma_loc=2 gop_size=12345 height=360
+vid bit_rate=100000 rc_buffer_size=100000 size=3840x2160 time_base=1/60 framerate=60/1 pix_fmt=p010le
+vid color_range=1 primaries=9 trc=16 colorspace=9 chroma_loc=3 gop_size=12345 height=2160
+vid bit_rate=100000 rc_buffer_size=100000 size=3840x2160 time_base=1/60 framerate=60/1 pix_fmt=p010le
+vid color_range=2 primaries=9 trc=18 colorspace=9 chroma_loc=3 gop_size=12345 height=2160
+vid bit_rate=100000 rc_buffer_size=100000 size=3840x2160 time_base=1/60 framerate=60/1 pix_fmt=yuv420p
+vid color_range=1 primaries=9 trc=16 colorspace=9 chroma_loc=3 gop_size=12345 height=2160
+echo unknown-or-unmapped-pixel-format
+vid bit_rate=100000 rc_buffer_size=100000 size=640x360 time_base=1/60 framerate=60/1 pix_fmt=bgra
+vid color_range=1 primaries=1 trc=1 colorspace=1 chroma_loc=2 gop_size=12345 height=360
+vid bit_rate=100000 rc_buffer_size=100000 size=640x360 time_base=1/60 framerate=60/1 pix_fmt=yuv422p
+vid color_range=1 primaries=1 trc=1 colorspace=1 chroma_loc=1 gop_size=12345 height=360
+vid bit_rate=100000 rc_buffer_size=100000 size=640x360 time_base=1/60 framerate=60/1 pix_fmt=yuv420p10le
+vid color_range=1 primaries=1 trc=1 colorspace=1 chroma_loc=1 gop_size=12345 height=360
+vid bit_rate=100000 rc_buffer_size=100000 size=640x360 time_base=1/60 framerate=60/1 pix_fmt=none
+vid color_range=1 primaries=1 trc=1 colorspace=1 chroma_loc=0 gop_size=12345 height=360

@@ -1,0 +1,17 @@
+# Capacity doubles; if the doubled size is still too small it becomes exactly the
+# needed size. The reorder step keeps wrapped data valid after growth.
+push_back 01
+dump
+push_back 02
+dump
+push_back 0304
+dump
+push_back 05
+dump
+pop_front 3
+push_back 060708090a0b0c0d0e0f
+dump
+peek_front 8
+reserve 64
+dump
+peek_front 8

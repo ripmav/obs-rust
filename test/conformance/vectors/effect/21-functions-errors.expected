@@ -1,0 +1,198 @@
+ep result=fail
+  errors count=2 has_errors=1
+    err 0 error file="e1" row=1 col=10 msg="Expected 'type'"
+    err 1 error file="e1" row=1 col=23 msg="Unexpected EOF"
+  ep params=0 structs=0 funcs=0 samplers=0 techniques=0
+  error_string="e1 (1, 10): Expected 'type'\ne1 (1, 23): Unexpected EOF\n"
+ep result=fail
+  errors count=2 has_errors=1
+    err 0 error file="e2" row=1 col=14 msg="Expected 'name'"
+    err 1 error file="e2" row=1 col=29 msg="Unexpected EOF"
+  ep params=0 structs=0 funcs=0 samplers=0 techniques=0
+  error_string="e2 (1, 14): Expected 'name'\ne2 (1, 29): Unexpected EOF\n"
+ep result=fail
+  errors count=2 has_errors=1
+    err 0 error file="e3" row=1 col=18 msg="Expected 'type'"
+    err 1 error file="e3" row=1 col=33 msg="Unexpected EOF"
+  ep params=0 structs=0 funcs=0 samplers=0 techniques=0
+  error_string="e3 (1, 18): Expected 'type'\ne3 (1, 33): Unexpected EOF\n"
+ep result=fail
+  errors count=3 has_errors=1
+    err 0 error file="e4" row=1 col=17 msg="Syntax error"
+    err 1 error file="e4" row=1 col=24 msg="Expected 'name'"
+    err 2 error file="e4" row=1 col=39 msg="Unexpected EOF"
+  ep params=0 structs=0 funcs=0 samplers=0 techniques=0
+  error_string="e4 (1, 17): Syntax error\ne4 (1, 24): Expected 'name'\ne4 (1, 39): Unexpected EOF\n"
+ep result=fail
+  errors count=4 has_errors=1
+    err 0 error file="e5" row=1 col=18 msg="Expected '{'"
+    err 1 error file="e5" row=1 col=24 msg="Expected 'name'"
+    err 2 error file="e5" row=1 col=36 msg="Expected 'type'"
+    err 3 error file="e5" row=1 col=37 msg="Unexpected EOF"
+  ep params=0 structs=0 funcs=0 samplers=0 techniques=0
+  error_string="e5 (1, 18): Expected '{'\ne5 (1, 24): Expected 'name'\ne5 (1, 36): Expected 'type'\ne5 (1, 37): Unexpected EOF\n"
+ep result=fail
+  errors count=2 has_errors=1
+    err 0 error file="e6" row=1 col=20 msg="Expected 'mapping specifier'"
+    err 1 error file="e6" row=1 col=33 msg="Unexpected EOF"
+  ep params=0 structs=0 funcs=0 samplers=0 techniques=0
+  error_string="e6 (1, 20): Expected 'mapping specifier'\ne6 (1, 33): Unexpected EOF\n"
+ep result=fail
+  errors count=2 has_errors=1
+    err 0 error file="e7" row=1 col=26 msg="Expected '{'"
+    err 1 error file="e7" row=1 col=33 msg="Expected 'name'"
+  ep params=0 structs=0 funcs=0 samplers=0 techniques=0
+  error_string="e7 (1, 26): Expected '{'\ne7 (1, 33): Expected 'name'\n"
+ep result=fail
+  errors count=2 has_errors=1
+    err 0 error file="e8" row=1 col=18 msg="Expected 'mapping specifier'"
+    err 1 error file="e8" row=1 col=33 msg="Unexpected EOF"
+  ep params=0 structs=0 funcs=0 samplers=0 techniques=0
+  error_string="e8 (1, 18): Expected 'mapping specifier'\ne8 (1, 33): Unexpected EOF\n"
+ep result=fail
+  errors count=1 has_errors=1
+    err 0 error file="e9" row=1 col=19 msg="Expected 'mapping specifier'"
+  ep params=0 structs=0 funcs=1 samplers=0 techniques=0
+  ep_func 0 name=y ret=float mapping=@null params=0
+    struct_deps=[] func_deps=[] param_deps=[] sampler_deps=[]
+    contents="{ return 1; }"
+  error_string="e9 (1, 19): Expected 'mapping specifier'\n"
+ep result=fail
+  errors count=1 has_errors=1
+    err 0 error file="e10" row=1 col=18 msg="Expected '{'"
+  ep params=0 structs=0 funcs=0 samplers=0 techniques=0
+  error_string="e10 (1, 18): Expected '{'\n"
+ep result=fail
+  errors count=1 has_errors=1
+    err 0 error file="e11" row=1 col=17 msg="Unexpected EOF"
+  ep params=0 structs=0 funcs=0 samplers=0 techniques=0
+  error_string="e11 (1, 17): Unexpected EOF\n"
+ep result=fail
+  errors count=3 has_errors=1
+    err 0 error file="e12" row=1 col=8 msg="Unexpected EOF"
+    err 1 error file="e12" row=1 col=8 msg="Expected 'type'"
+    err 2 error file="e12" row=1 col=9 msg="Unexpected EOF"
+  ep params=0 structs=0 funcs=0 samplers=0 techniques=0
+  error_string="e12 (1, 8): Unexpected EOF\ne12 (1, 8): Expected 'type'\ne12 (1, 9): Unexpected EOF\n"
+ep result=fail
+  errors count=1 has_errors=1
+    err 0 error file="e13" row=1 col=14 msg="Unexpected EOF"
+  ep params=0 structs=0 funcs=0 samplers=0 techniques=0
+  error_string="e13 (1, 14): Unexpected EOF\n"
+ep result=fail
+  errors count=1 has_errors=1
+    err 0 error file="e14" row=1 col=16 msg="Unexpected EOF"
+  ep params=0 structs=0 funcs=0 samplers=0 techniques=0
+  error_string="e14 (1, 16): Unexpected EOF\n"
+ep result=fail
+  errors count=1 has_errors=1
+    err 0 error file="e15" row=1 col=17 msg="Unexpected EOF"
+  ep params=0 structs=0 funcs=0 samplers=0 techniques=0
+  error_string="e15 (1, 17): Unexpected EOF\n"
+ep result=fail
+  errors count=1 has_errors=1
+    err 0 error file="e16" row=1 col=9 msg="Expected 'type'"
+  ep params=0 structs=0 funcs=1 samplers=0 techniques=0
+  ep_func 0 name=y ret=float mapping=@null params=0
+    struct_deps=[] func_deps=[] param_deps=[] sampler_deps=[]
+    contents="{ return 1; }"
+  error_string="e16 (1, 9): Expected 'type'\n"
+ep result=fail
+  errors count=1 has_errors=1
+    err 0 error file="e17" row=1 col=15 msg="Expected 'name'"
+  ep params=0 structs=0 funcs=1 samplers=0 techniques=0
+  ep_func 0 name=y ret=float mapping=@null params=0
+    struct_deps=[] func_deps=[] param_deps=[] sampler_deps=[]
+    contents="{ return 1; }"
+  error_string="e17 (1, 15): Expected 'name'\n"
+ep result=fail
+  errors count=2 has_errors=1
+    err 0 error file="e18" row=1 col=27 msg="Expected 'type'"
+    err 1 error file="e18" row=1 col=42 msg="Unexpected EOF"
+  ep params=0 structs=0 funcs=0 samplers=0 techniques=0
+  error_string="e18 (1, 27): Expected 'type'\ne18 (1, 42): Unexpected EOF\n"
+ep result=fail
+  errors count=1 has_errors=1
+    err 0 error file="e19" row=1 col=9 msg="Expected 'type'"
+  ep params=0 structs=0 funcs=1 samplers=0 techniques=0
+  ep_func 0 name=y ret=float mapping=@null params=0
+    struct_deps=[] func_deps=[] param_deps=[] sampler_deps=[]
+    contents="{ return 1; }"
+  error_string="e19 (1, 9): Expected 'type'\n"
+ep result=fail
+  errors count=3 has_errors=1
+    err 0 error file="e20" row=1 col=26 msg="Expected '{'"
+    err 1 error file="e20" row=1 col=26 msg="Expected 'type'"
+    err 2 error file="e20" row=1 col=50 msg="Unexpected EOF"
+  ep params=0 structs=0 funcs=0 samplers=0 techniques=0
+  error_string="e20 (1, 26): Expected '{'\ne20 (1, 26): Expected 'type'\ne20 (1, 50): Unexpected EOF\n"
+ep result=fail
+  errors count=2 has_errors=1
+    err 0 error file="e21" row=1 col=17 msg="Syntax error"
+    err 1 error file="e21" row=1 col=19 msg="Expected 'type'"
+  ep params=0 structs=0 funcs=1 samplers=0 techniques=0
+  ep_func 0 name=y ret=float mapping=@null params=1
+    var type=float name=a mapping=@null var_type=IN
+    struct_deps=[] func_deps=[] param_deps=[] sampler_deps=[]
+    contents="{ return 1; }"
+  error_string="e21 (1, 17): Syntax error\ne21 (1, 19): Expected 'type'\n"
+ep result=fail
+  errors count=2 has_errors=1
+    err 0 error file="e22" row=1 col=16 msg="Syntax error"
+    err 1 error file="e22" row=1 col=17 msg="Expected 'type'"
+  ep params=0 structs=0 funcs=1 samplers=0 techniques=0
+  ep_func 0 name=y ret=float mapping=@null params=1
+    var type=float name=a mapping=@null var_type=IN
+    struct_deps=[] func_deps=[] param_deps=[] sampler_deps=[]
+    contents="{ return 1; }"
+  error_string="e22 (1, 16): Syntax error\ne22 (1, 17): Expected 'type'\n"
+ep result=fail
+  errors count=4 has_errors=1
+    err 0 error file="e23" row=1 col=11 msg="Expected '{'"
+    err 1 error file="e23" row=1 col=17 msg="Expected 'type'"
+    err 2 error file="e23" row=1 col=29 msg="Expected 'type'"
+    err 3 error file="e23" row=1 col=30 msg="Unexpected EOF"
+  ep params=0 structs=0 funcs=0 samplers=0 techniques=0
+  error_string="e23 (1, 11): Expected '{'\ne23 (1, 17): Expected 'type'\ne23 (1, 29): Expected 'type'\ne23 (1, 30): Unexpected EOF\n"
+ep result=fail
+  errors count=2 has_errors=1
+    err 0 error file="e24" row=1 col=13 msg="Expected 'name'"
+    err 1 error file="e24" row=1 col=28 msg="Unexpected EOF"
+  ep params=0 structs=0 funcs=0 samplers=0 techniques=0
+  error_string="e24 (1, 13): Expected 'name'\ne24 (1, 28): Unexpected EOF\n"
+ep result=fail
+  errors count=3 has_errors=1
+    err 0 error file="e25" row=1 col=10 msg="Expected '{'"
+    err 1 error file="e25" row=1 col=10 msg="Expected 'type'"
+    err 2 error file="e25" row=1 col=25 msg="Unexpected EOF"
+  ep params=0 structs=0 funcs=0 samplers=0 techniques=0
+  error_string="e25 (1, 10): Expected '{'\ne25 (1, 10): Expected 'type'\ne25 (1, 25): Unexpected EOF\n"
+ep result=fail
+  errors count=1 has_errors=1
+    err 0 error file="e26" row=1 col=9 msg="Expected 'type'"
+  ep params=0 structs=0 funcs=1 samplers=0 techniques=0
+  ep_func 0 name=y ret=float mapping=@null params=0
+    struct_deps=[] func_deps=[] param_deps=[] sampler_deps=[]
+    contents="{ return 1; }"
+  error_string="e26 (1, 9): Expected 'type'\n"
+ep result=fail
+  errors count=2 has_errors=1
+    err 0 error file="e27" row=1 col=7 msg="Expected 'name'"
+    err 1 error file="e27" row=1 col=14 msg="Unexpected EOF"
+  ep params=0 structs=0 funcs=0 samplers=0 techniques=0
+  error_string="e27 (1, 7): Expected 'name'\ne27 (1, 14): Unexpected EOF\n"
+ep result=fail
+  errors count=2 has_errors=1
+    err 0 error file="e28" row=1 col=7 msg="Expected 'name'"
+    err 1 error file="e28" row=1 col=13 msg="Unexpected EOF"
+  ep params=0 structs=0 funcs=0 samplers=0 techniques=0
+  error_string="e28 (1, 7): Expected 'name'\ne28 (1, 13): Unexpected EOF\n"
+ep result=ok
+  errors count=0 has_errors=0
+  ep params=0 structs=0 funcs=1 samplers=0 techniques=0
+  ep_func 0 name=y ret=float mapping="COLOR" params=1
+    var type=float name=a mapping=@null var_type=IN
+    struct_deps=[] func_deps=[] param_deps=[] sampler_deps=[]
+    contents="{ return 1; }"
+  error_string=@null
+effect (effect) params=0 techniques=0 viewproj=- world=-

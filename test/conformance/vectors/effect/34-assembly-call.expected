@@ -1,0 +1,163 @@
+--- aliases
+backend vertexshader_create location="alias.effect (Vertex shader, technique T, pass 0)" len=66 fnv=9768e103a0e2bad5
+  text "float4 F()\n{ return 0; }\n\nfloat4 main() : TARGET\n{\n\treturn F();\n}\n"
+  result ok
+backend pixelshader_create location="alias.effect (Pixel shader, technique T, pass 0)" len=66 fnv=9768e103a0e2bad5
+  text "float4 F()\n{ return 0; }\n\nfloat4 main() : TARGET\n{\n\treturn F();\n}\n"
+  result ok
+effect a1 result=ok
+  error_string=@null
+--- whitespace and newlines inside the call are dropped
+backend vertexshader_create location="ws.effect (Vertex shader, technique T, pass 0)" len=89 fnv=795b6fb74bd7a19d
+  text "float4 F(float a, float b)\n{ return 0; }\n\nfloat4 main() : TARGET\n{\n\treturn F(1.0,2.0);\n}\n"
+  result ok
+backend pixelshader_create location="ws.effect (Pixel shader, technique T, pass 0)" len=85 fnv=cf1e0c5f60c801a9
+  text "float4 F(float a, float b)\n{ return 0; }\n\nfloat4 main() : TARGET\n{\n\treturn F(3,4);\n}\n"
+  result ok
+effect a2 result=ok
+  error_string=@null
+--- arbitrary tokens in the argument list
+backend vertexshader_create location="args.effect (Vertex shader, technique T, pass 0)" len=82 fnv=675a95fc2d0f7546
+  text "float4 F(float a)\n{ return 0; }\n\nfloat4 main() : TARGET\n{\n\treturn F(a+1*(2-3));\n}\n"
+  result ok
+backend pixelshader_create location="args.effect (Pixel shader, technique T, pass 0)" len=82 fnv=7f95b2d0591375fc
+  text "float4 F(float a)\n{ return 0; }\n\nfloat4 main() : TARGET\n{\n\treturn F(\"str\",'c');\n}\n"
+  result ok
+effect a3 result=ok
+  error_string=@null
+--- comments inside the call
+backend vertexshader_create location="cmt.effect (Vertex shader, technique T, pass 0)" len=74 fnv=6e98937a8322cbd7
+  text "float4 F(float a)\n{ return 0; }\n\nfloat4 main() : TARGET\n{\n\treturn F(1);\n}\n"
+  result ok
+backend pixelshader_create location="cmt.effect (Pixel shader, technique T, pass 0)" len=74 fnv=ef79408c583101dc
+  text "float4 F(float a)\n{ return 0; }\n\nfloat4 main() : TARGET\n{\n\treturn F(2);\n}\n"
+  result ok
+effect a4 result=ok
+  error_string=@null
+--- the compile keyword
+backend vertexshader_create location="c1 (Vertex shader, technique T, pass 0)" len=66 fnv=9768e103a0e2bad5
+  text "float4 F()\n{ return 0; }\n\nfloat4 main() : TARGET\n{\n\treturn F();\n}\n"
+  result ok
+backend pixelshader_create location="c1 (Pixel shader, technique T, pass 0)" len=66 fnv=9768e103a0e2bad5
+  text "float4 F()\n{ return 0; }\n\nfloat4 main() : TARGET\n{\n\treturn F();\n}\n"
+  result ok
+ep result=ok
+  errors count=2 has_errors=0
+    err 0 warning file="c1" row=2 col=38 msg="compile keyword not necessary"
+    err 1 warning file="c1" row=2 col=66 msg="compile keyword not necessary"
+  ep params=0 structs=0 funcs=1 samplers=0 techniques=1
+  ep_func 0 name=F ret=float4 mapping="TARGET" params=0
+    struct_deps=[] func_deps=[] param_deps=[] sampler_deps=[]
+    contents="{ return 0; }"
+  ep_technique 0 name=T passes=1
+    ep_pass 0 name=@null
+      vertex=["F","(",")",";"]
+      fragment=["F","(",")",";"]
+  error_string="c1 (2, 38): compile keyword not necessary\nc1 (2, 66): compile keyword not necessary\n"
+effect (effect) params=0 techniques=1 viewproj=- world=-
+  technique 0 name=T passes=1
+    pass 0 name=@null vertex_params=[] pixel_params=[] vertex=yes pixel=yes
+backend shader_destroy location="c1 (Vertex shader, technique T, pass 0)"
+backend shader_destroy location="c1 (Pixel shader, technique T, pass 0)"
+--- compile with a profile name: the profile becomes the function name, which is unknown (empty text)
+log debug gs_vertexshader_create: Null 'shader' parameter
+log error Pass (0) <> missing vertex shader!
+backend pixelshader_create location="c2 (Pixel shader, technique T, pass 0)" len=66 fnv=9768e103a0e2bad5
+  text "float4 F()\n{ return 0; }\n\nfloat4 main() : TARGET\n{\n\treturn F();\n}\n"
+  result ok
+ep result=fail
+  errors count=1 has_errors=0
+    err 0 warning file="c2" row=2 col=38 msg="compile keyword not necessary"
+  ep params=0 structs=0 funcs=1 samplers=0 techniques=1
+  ep_func 0 name=F ret=float4 mapping="TARGET" params=0
+    struct_deps=[] func_deps=[] param_deps=[] sampler_deps=[]
+    contents="{ return 0; }"
+  ep_technique 0 name=T passes=1
+    ep_pass 0 name=@null
+      vertex=["vs_5_0","F","(",")",";"]
+      fragment=["F","(",")",";"]
+  error_string="c2 (2, 38): compile keyword not necessary\n"
+backend shader_destroy location="c2 (Pixel shader, technique T, pass 0)"
+--- a call that is not a function call at all
+backend vertexshader_create location="c3 (Vertex shader, technique T, pass 0)" len=64 fnv=a0c72061b3f3550e
+  text "float4 F()\n{ return 0; }\n\nfloat4 main() : TARGET\n{\n\treturn F;\n}\n"
+  result ok
+backend pixelshader_create location="c3 (Pixel shader, technique T, pass 0)" len=64 fnv=a0c72061b3f3550e
+  text "float4 F()\n{ return 0; }\n\nfloat4 main() : TARGET\n{\n\treturn F;\n}\n"
+  result ok
+ep result=ok
+  errors count=0 has_errors=0
+  ep params=0 structs=0 funcs=1 samplers=0 techniques=1
+  ep_func 0 name=F ret=float4 mapping="TARGET" params=0
+    struct_deps=[] func_deps=[] param_deps=[] sampler_deps=[]
+    contents="{ return 0; }"
+  ep_technique 0 name=T passes=1
+    ep_pass 0 name=@null
+      vertex=["F",";"]
+      fragment=["F",";"]
+  error_string=@null
+effect (effect) params=0 techniques=1 viewproj=- world=-
+  technique 0 name=T passes=1
+    pass 0 name=@null vertex_params=[] pixel_params=[] vertex=yes pixel=yes
+backend shader_destroy location="c3 (Vertex shader, technique T, pass 0)"
+backend shader_destroy location="c3 (Pixel shader, technique T, pass 0)"
+--- the entry name may be followed by anything up to the semicolon
+backend vertexshader_create location="trailing.effect (Vertex shader, technique T, pass 0)" len=77 fnv=5985511c14e18977
+  text "float4 F()\n{ return 0; }\n\nfloat4 main() : TARGET\n{\n\treturn Fgarbagetokens;\n}\n"
+  result ok
+backend pixelshader_create location="trailing.effect (Pixel shader, technique T, pass 0)" len=64 fnv=a0c72061b3f3550e
+  text "float4 F()\n{ return 0; }\n\nfloat4 main() : TARGET\n{\n\treturn F;\n}\n"
+  result ok
+effect c4 result=ok
+  error_string=@null
+--- entry name is case sensitive
+log debug gs_vertexshader_create: Null 'shader' parameter
+log error Pass (0) <> missing vertex shader!
+backend pixelshader_create location="c5 (Pixel shader, technique T, pass 0)" len=66 fnv=9768e103a0e2bad5
+  text "float4 F()\n{ return 0; }\n\nfloat4 main() : TARGET\n{\n\treturn F();\n}\n"
+  result ok
+ep result=fail
+  errors count=0 has_errors=0
+  ep params=0 structs=0 funcs=1 samplers=0 techniques=1
+  ep_func 0 name=F ret=float4 mapping="TARGET" params=0
+    struct_deps=[] func_deps=[] param_deps=[] sampler_deps=[]
+    contents="{ return 0; }"
+  ep_technique 0 name=T passes=1
+    ep_pass 0 name=@null
+      vertex=["f","(",")",";"]
+      fragment=["F","(",")",";"]
+  error_string=@null
+backend shader_destroy location="c5 (Pixel shader, technique T, pass 0)"
+--- the same command given twice: the second token list lands after the end marker of the first and is ignored
+backend vertexshader_create location="c6 (Vertex shader, technique T, pass 0)" len=66 fnv=9768e103a0e2bad5
+  text "float4 F()\n{ return 0; }\n\nfloat4 main() : TARGET\n{\n\treturn F();\n}\n"
+  result ok
+backend pixelshader_create location="c6 (Pixel shader, technique T, pass 0)" len=66 fnv=9768e103a0e2bad5
+  text "float4 F()\n{ return 0; }\n\nfloat4 main() : TARGET\n{\n\treturn F();\n}\n"
+  result ok
+ep result=ok
+  errors count=0 has_errors=0
+  ep params=0 structs=0 funcs=1 samplers=0 techniques=1
+  ep_func 0 name=F ret=float4 mapping="TARGET" params=0
+    struct_deps=[] func_deps=[] param_deps=[] sampler_deps=[]
+    contents="{ return 0; }"
+  ep_technique 0 name=T passes=1
+    ep_pass 0 name=@null
+      vertex=["F","(",")",";"]
+      fragment=["F","(",")",";"]
+  error_string=@null
+effect (effect) params=0 techniques=1 viewproj=- world=-
+  technique 0 name=T passes=1
+    pass 0 name=@null vertex_params=[] pixel_params=[] vertex=yes pixel=yes
+backend shader_destroy location="c6 (Vertex shader, technique T, pass 0)"
+backend shader_destroy location="c6 (Pixel shader, technique T, pass 0)"
+backend shader_destroy location="trailing.effect (Vertex shader, technique T, pass 0)"
+backend shader_destroy location="trailing.effect (Pixel shader, technique T, pass 0)"
+backend shader_destroy location="cmt.effect (Vertex shader, technique T, pass 0)"
+backend shader_destroy location="cmt.effect (Pixel shader, technique T, pass 0)"
+backend shader_destroy location="args.effect (Vertex shader, technique T, pass 0)"
+backend shader_destroy location="args.effect (Pixel shader, technique T, pass 0)"
+backend shader_destroy location="ws.effect (Vertex shader, technique T, pass 0)"
+backend shader_destroy location="ws.effect (Pixel shader, technique T, pass 0)"
+backend shader_destroy location="alias.effect (Vertex shader, technique T, pass 0)"
+backend shader_destroy location="alias.effect (Pixel shader, technique T, pass 0)"

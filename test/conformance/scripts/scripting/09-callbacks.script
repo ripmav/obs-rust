@@ -1,0 +1,32 @@
+# header-inline script_callback records: owner lists (LIFO insertion), removal, detaching, freeing.
+load
+cb_add L0 C0 0
+cb_add L0 C1 8
+cb_add L0 C2 0
+cb_add L1 C3 16
+lists
+# remove the middle element of L0: it moves to the front of the detached list, flag set
+cb_remove C1
+lists
+cb_links
+# removing the head and then the last remaining element
+cb_remove C2
+cb_remove C0
+lists
+cb_links
+# free from the detached list (middle), then head
+cb_free C1
+lists
+cb_links
+cb_free C2
+lists
+# C0 stays detached; C3 is still attached to L1
+cb_removed C0
+cb_removed C3
+# freeing a callback that was never removed unlinks it from its owner list
+cb_free C3
+lists
+cb_links
+cb_free C0
+lists
+unload

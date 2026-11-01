@@ -1,0 +1,29 @@
+# CORE: array parameters "type name[N]". N must be a decimal NUM token accepted by valid_int_str;
+# anything else drops the declaration. The array count is kept per parameter (0 = not an array)
+# and is repeated in the assembled shader text; defaults can follow ("= value" is parsed against the
+# element type only).
+backend text full
+text a
+uniform float w[4];
+uniform float2 p[2] = {1,2};
+uniform float4 q[10];
+uniform int k[1];
+uniform float z[0];
+uniform float big[100000];
+uniform float4x4 mats[3];
+float4 PS() : TARGET { return q[0] * w[1] + float4(p[0], 0, 0) + k[0] + z[0] + big[1] + mats[0][0]; }
+technique T { pass { vertex_shader = PS(); pixel_shader = PS(); } }
+@end
+effect e arr.effect @text:a
+dump e
+ep a2 "uniform float x[abc];"
+ep a3 "uniform float x[-1];"
+ep a4 "uniform float x[1.5];"
+ep a5 "uniform float x[ 3 ];"
+ep a6 "uniform float x[3;"
+ep a7 "uniform float x[3]];"
+ep a8 "uniform float x[];"
+ep a9 "uniform float x[3][4];"
+ep a10 "uniform float x[0x10];"
+ep a11 "uniform float x[3] y;"
+ep a12 "uniform float x[3] = 5;"

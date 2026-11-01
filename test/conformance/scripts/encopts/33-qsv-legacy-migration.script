@@ -1,0 +1,96 @@
+# QUIRK. Settings migrations run by the rate_control callback and by update_params:
+#  rate_control: VCM->CBR, AVBR->VBR (callback only); LA_CBR/LA_VBR/LA_ICQ -> CBR/VBR/ICQ.
+#  target_usage: quality|veryslow->TU1, slower->TU2, slow->TU3, medium|balanced->TU4,
+#                fast->TU5, faster->TU6, veryfast|speed->TU7 (case-insensitive).
+#  latency: derived ONLY if the legacy keys async_depth or la_depth are present (they are
+#           erased): lookahead rc: la_depth 0 or >=15 -> normal, else low; non-lookahead:
+#           async_depth != 1 -> normal, == 1 -> ultra-low. A missing sibling key uses 4 / 15.
+echo rate-control-names
+data D
+set D rate_control str VCM
+qsv_migrate D
+dump D
+set D rate_control str avbr
+qsv_migrate D
+dump D
+echo lookahead-rate-controls-need-no-legacy-keys-to-be-converted
+set D rate_control str LA_CBR
+qsv_migrate D
+dump D
+set D rate_control str la_vbr
+qsv_migrate D
+dump D
+set D rate_control str LA_ICQ
+qsv_migrate D
+dump D
+echo target-usage-names
+data T
+set T target_usage str veryslow
+qsv_migrate T
+dump T
+set T target_usage str Quality
+qsv_migrate T
+dump T
+set T target_usage str slower
+qsv_migrate T
+dump T
+set T target_usage str slow
+qsv_migrate T
+dump T
+set T target_usage str balanced
+qsv_migrate T
+dump T
+set T target_usage str MEDIUM
+qsv_migrate T
+dump T
+set T target_usage str fast
+qsv_migrate T
+dump T
+set T target_usage str faster
+qsv_migrate T
+dump T
+set T target_usage str speed
+qsv_migrate T
+dump T
+set T target_usage str veryfast
+qsv_migrate T
+dump T
+set T target_usage str TU9
+qsv_migrate T
+dump T
+echo latency-from-async_depth
+data L
+set L rate_control str CBR
+set L async_depth int 1
+qsv_migrate L
+dump L
+set L async_depth int 4
+qsv_migrate L
+dump L
+echo latency-from-la_depth-with-lookahead-rc
+data M
+set M rate_control str LA_CBR
+set M la_depth int 10
+qsv_migrate M
+dump M
+data N
+set N rate_control str LA_VBR
+set N la_depth int 15
+qsv_migrate N
+dump N
+data O
+set O rate_control str LA_ICQ
+set O la_depth int 0
+qsv_migrate O
+dump O
+echo la_depth-ignored-when-rc-is-not-lookahead-and-vice-versa
+data P
+set P rate_control str CBR
+set P la_depth int 3
+qsv_migrate P
+dump P
+data R
+set R rate_control str LA_CBR
+set R async_depth int 1
+qsv_migrate R
+dump R

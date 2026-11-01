@@ -1,0 +1,16 @@
+encoder aac id=ffmpeg_aac type=0 codec=aac name=FFmpegAAC priming=1 audio_info=plain extra_data=1 frame_size=1 create=1 destroy=1
+encoder opus id=ffmpeg_opus type=0 codec=opus name=FFmpegOpus priming=1 audio_info=plain extra_data=1 frame_size=1 create=1 destroy=1
+encoder pcm id=ffmpeg_pcm_s16le type=0 codec=pcm_s16le name=FFmpegPCM16Bit priming=0 audio_info=plain extra_data=1 frame_size=1 create=1 destroy=1
+encoder pcm24 id=ffmpeg_pcm_s24le type=0 codec=pcm_s24le name=FFmpegPCM24Bit priming=0 audio_info=plain extra_data=1 frame_size=1 create=1 destroy=1
+encoder pcm32 id=ffmpeg_pcm_f32le type=0 codec=pcm_f32le name=FFmpegPCM32BitFloat priming=0 audio_info=float extra_data=1 frame_size=1 create=1 destroy=1
+encoder alac id=ffmpeg_alac type=0 codec=alac name=FFmpegALAC priming=0 audio_info=plain extra_data=1 frame_size=1 create=1 destroy=1
+encoder flac id=ffmpeg_flac type=0 codec=flac name=FFmpegFLAC priming=0 audio_info=plain extra_data=1 frame_size=1 create=1 destroy=1
+data D
+  bitrate int 128 default
+end data D
+props P flags=0
+  bitrate int desc="Bitrate" visible=1 enabled=1 min=64 max=1024 step=32 numtype=0
+end props P
+data E
+  bitrate int 128 default
+end data E

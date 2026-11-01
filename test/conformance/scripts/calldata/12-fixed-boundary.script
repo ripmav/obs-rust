@@ -1,0 +1,12 @@
+# The capacity check is strict: a fixed stack accepts a new total size only if it
+# is *smaller* than the buffer. 34 bytes (after "a") + 30 bytes = exactly 64.
+init_fixed 64
+set_int a 1
+dump
+set_data x 000102030405060708090a0b
+dump
+get_data x 12
+set_data x 000102030405060708090a
+dump
+get_data x 11
+free

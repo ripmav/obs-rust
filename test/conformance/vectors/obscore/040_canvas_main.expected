@@ -1,0 +1,31 @@
+log debug canvas 'Main' (<uuid>) created
+startup -> true
+canvas main name="Main" flags=0xf private=0 removed=0 has_video=0 video_active=0 uuid=6c69626f-6273-4c00-9d88-c5136d61696e view_type=main
+get main_canvas - -> "Main" obj=main strong=1
+get canvas_by_name Main -> "Main" obj=main strong=1
+get canvas_by_uuid 6c69626f-6273-4c00-9d88-c5136d61696e -> "Main" obj=main strong=1
+get canvas_by_uuid 00000000-0000-0000-0000-000000000000 -> NULL
+enum canvases
+  visit Main
+  visited=1
+canvas_name main -> "Main"
+canvas_remove main removed=0
+canvas_reset_video main -> 0
+canvas_reset_video main -> 0
+canvas_save main -> name="Main" uuid=6c69626f-6273-4c00-9d88-c5136d61696e private=0 flags=15
+canvas_video_info main -> 0 video=NULL
+mix none
+log info ---------------------------------
+log info video settings reset:  base resolution:   1920x1080  output resolution: 1280x720  downscale filter:  Bicubic  fps:               30/1  format:            NV12  YUV mode:          Rec. 709/Partial
+log info NV12 texture support enabled
+log info P010 texture support not available
+reset_video -> success
+  after_call base=1920x1080 out=1280x720 fps=30/1 fmt=NV12 cs=2 range=1 scale=2 gpu=1 adapter=0
+canvas main name="Main" flags=0xf private=0 removed=0 has_video=1 video_active=0 uuid=6c69626f-6273-4c00-9d88-c5136d61696e view_type=main
+canvas_video_info main -> 1 video=set
+   base=1920x1080 out=1280x720 fps=30/1 fmt=NV12 cs=2 range=1 scale=2 gpu=1 adapter=0
+canvas_has_valid_video_info main -> 1
+shutdown begin
+log info Freeing OBS context data
+log debug canvas 'Main' (<uuid>) destroyed
+shutdown end obs=NULL

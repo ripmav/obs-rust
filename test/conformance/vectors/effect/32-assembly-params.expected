@@ -1,0 +1,147 @@
+backend vertexshader_create location="params.effect (Vertex shader, technique T, pass 0)" len=294 fnv=dbae3c7e90f942bf
+  text "uniform float u1;\nconst float c1;\nfloat p1;\nfloat pr1;\nconst float uc;\nconst float cu;\nuniform float arr[3];\nconst float carr[2];\nuniform float4x4 m;\nuniform float u1_dup;\n\n\nfloat F()\n{ return u1 + c1 + p1 + pr1 + uc + cu + arr[1] + carr[0] + m[0][0] + u1_dup; }\n\nfloat main()\n{\n\treturn F();\n}\n"
+  sparam 0 name=u1 type=FLOAT array=0
+  sparam 1 name=c1 type=FLOAT array=0
+  sparam 2 name=p1 type=FLOAT array=0
+  sparam 3 name=pr1 type=FLOAT array=0
+  sparam 4 name=uc type=FLOAT array=0
+  sparam 5 name=cu type=FLOAT array=0
+  sparam 6 name=arr type=FLOAT array=3
+  sparam 7 name=carr type=FLOAT array=2
+  sparam 8 name=m type=MATRIX4X4 array=0
+  sparam 9 name=u1_dup type=FLOAT array=0
+  result ok
+backend pixelshader_create location="params.effect (Pixel shader, technique T, pass 0)" len=294 fnv=dbae3c7e90f942bf
+  text "uniform float u1;\nconst float c1;\nfloat p1;\nfloat pr1;\nconst float uc;\nconst float cu;\nuniform float arr[3];\nconst float carr[2];\nuniform float4x4 m;\nuniform float u1_dup;\n\n\nfloat F()\n{ return u1 + c1 + p1 + pr1 + uc + cu + arr[1] + carr[0] + m[0][0] + u1_dup; }\n\nfloat main()\n{\n\treturn F();\n}\n"
+  sparam 0 name=u1 type=FLOAT array=0
+  sparam 1 name=c1 type=FLOAT array=0
+  sparam 2 name=p1 type=FLOAT array=0
+  sparam 3 name=pr1 type=FLOAT array=0
+  sparam 4 name=uc type=FLOAT array=0
+  sparam 5 name=cu type=FLOAT array=0
+  sparam 6 name=arr type=FLOAT array=3
+  sparam 7 name=carr type=FLOAT array=2
+  sparam 8 name=m type=MATRIX4X4 array=0
+  sparam 9 name=u1_dup type=FLOAT array=0
+  result ok
+effect e1 result=ok
+  error_string=@null
+effect e1 params=11 techniques=1 viewproj=- world=-
+  param 0 name=u1 type=FLOAT annotations=0 default_size=4 default=0000803f f=[1]
+  param 1 name=c1 type=FLOAT annotations=0 default_size=4 default=00000040 f=[2]
+  param 2 name=p1 type=FLOAT annotations=0 default_size=4 default=00004040 f=[3]
+  param 3 name=pr1 type=FLOAT annotations=0 default_size=4 default=00008040 f=[4]
+  param 4 name=uc type=FLOAT annotations=0 default_size=4 default=0000a040 f=[5]
+  param 5 name=cu type=FLOAT annotations=0 default_size=4 default=0000c040 f=[6]
+  param 6 name=arr type=FLOAT annotations=0 default_size=0 default=-
+  param 7 name=carr type=FLOAT annotations=0 default_size=0 default=-
+  param 8 name=m type=MATRIX4X4 annotations=0 default_size=0 default=-
+  param 9 name=tex type=TEXTURE annotations=0 default_size=0 default=-
+  param 10 name=u1_dup type=FLOAT annotations=0 default_size=0 default=-
+  technique 0 name=T passes=1
+    pass 0 name=@null vertex_params=[u1,arr,m,u1_dup] pixel_params=[u1,arr,m,u1_dup] vertex=yes pixel=yes
+--- parameters named in the call tokens are written first, before the function's own dependencies
+backend vertexshader_create location="callparams.effect (Vertex shader, technique T, pass 0)" len=135 fnv=d715c8256b8c501f
+  text "uniform float a;\nuniform float b;\nuniform float c;\n\n\nfloat F(float x, float y)\n{ return x + y + c; }\n\nfloat main()\n{\n\treturn F(a,b);\n}\n"
+  sparam 0 name=a type=FLOAT array=0
+  sparam 1 name=b type=FLOAT array=0
+  sparam 2 name=c type=FLOAT array=0
+  result ok
+backend pixelshader_create location="callparams.effect (Pixel shader, technique T, pass 0)" len=135 fnv=ab89bc96d2659939
+  text "uniform float b;\nuniform float a;\nuniform float c;\n\n\nfloat F(float x, float y)\n{ return x + y + c; }\n\nfloat main()\n{\n\treturn F(b,a);\n}\n"
+  sparam 0 name=b type=FLOAT array=0
+  sparam 1 name=a type=FLOAT array=0
+  sparam 2 name=c type=FLOAT array=0
+  result ok
+effect e2 result=ok
+  error_string=@null
+effect e2 params=3 techniques=1 viewproj=- world=-
+  param 0 name=a type=FLOAT annotations=0 default_size=0 default=-
+  param 1 name=b type=FLOAT annotations=0 default_size=0 default=-
+  param 2 name=c type=FLOAT annotations=0 default_size=0 default=-
+  technique 0 name=T passes=1
+    pass 0 name=@null vertex_params=[a,b,c] pixel_params=[b,a,c] vertex=yes pixel=yes
+--- a parameter that is only mentioned in the call and in the body is written once
+backend vertexshader_create location="once.effect (Vertex shader, technique T, pass 0)" len=86 fnv=f2aaa88636bb1807
+  text "uniform float a;\n\n\nfloat F(float x)\n{ return x + a; }\n\nfloat main()\n{\n\treturn F(a);\n}\n"
+  sparam 0 name=a type=FLOAT array=0
+  result ok
+backend pixelshader_create location="once.effect (Pixel shader, technique T, pass 0)" len=86 fnv=f2aaa88636bb1807
+  text "uniform float a;\n\n\nfloat F(float x)\n{ return x + a; }\n\nfloat main()\n{\n\treturn F(a);\n}\n"
+  sparam 0 name=a type=FLOAT array=0
+  result ok
+effect e3 result=ok
+  error_string=@null
+effect e3 params=1 techniques=1 viewproj=- world=-
+  param 0 name=a type=FLOAT annotations=0 default_size=0 default=-
+  technique 0 name=T passes=1
+    pass 0 name=@null vertex_params=[a] pixel_params=[a] vertex=yes pixel=yes
+--- a parameter declared after the technique text is still found by the call scan (the call is resolved at the end)
+backend vertexshader_create location="lateparam.effect (Vertex shader, technique T, pass 0)" len=86 fnv=6755cdf6b0ade533
+  text "uniform float late;\nfloat F(float x)\n{ return x; }\n\nfloat main()\n{\n\treturn F(late);\n}\n"
+  sparam 0 name=late type=FLOAT array=0
+  result ok
+backend pixelshader_create location="lateparam.effect (Pixel shader, technique T, pass 0)" len=86 fnv=6755cdf6b0ade533
+  text "uniform float late;\nfloat F(float x)\n{ return x; }\n\nfloat main()\n{\n\treturn F(late);\n}\n"
+  sparam 0 name=late type=FLOAT array=0
+  result ok
+effect e4 result=ok
+  error_string=@null
+effect e4 params=1 techniques=1 viewproj=- world=-
+  param 0 name=late type=FLOAT annotations=0 default_size=0 default=-
+  technique 0 name=T passes=1
+    pass 0 name=@null vertex_params=[late] pixel_params=[late] vertex=yes pixel=yes
+--- every pass resets what has been written
+backend vertexshader_create location="passes.effect (Vertex shader, technique T, pass 0)" len=74 fnv=286556375b8c1e5b
+  text "uniform float a;\n\n\nfloat F()\n{ return a; }\n\nfloat main()\n{\n\treturn F();\n}\n"
+  sparam 0 name=a type=FLOAT array=0
+  result ok
+backend pixelshader_create location="passes.effect (Pixel shader, technique T, pass 0)" len=74 fnv=bc136353a4b24607
+  text "uniform float b;\n\n\nfloat G()\n{ return b; }\n\nfloat main()\n{\n\treturn G();\n}\n"
+  sparam 0 name=b type=FLOAT array=0
+  result ok
+backend vertexshader_create location="passes.effect (Vertex shader, technique T, pass 1)" len=74 fnv=bc136353a4b24607
+  text "uniform float b;\n\n\nfloat G()\n{ return b; }\n\nfloat main()\n{\n\treturn G();\n}\n"
+  sparam 0 name=b type=FLOAT array=0
+  result ok
+backend pixelshader_create location="passes.effect (Pixel shader, technique T, pass 1)" len=74 fnv=286556375b8c1e5b
+  text "uniform float a;\n\n\nfloat F()\n{ return a; }\n\nfloat main()\n{\n\treturn F();\n}\n"
+  sparam 0 name=a type=FLOAT array=0
+  result ok
+effect e5 result=ok
+  error_string=@null
+effect e5 params=2 techniques=1 viewproj=- world=-
+  param 0 name=a type=FLOAT annotations=0 default_size=0 default=-
+  param 1 name=b type=FLOAT annotations=0 default_size=0 default=-
+  technique 0 name=T passes=2
+    pass 0 name=@null vertex_params=[a] pixel_params=[b] vertex=yes pixel=yes
+    pass 1 name=@null vertex_params=[b] pixel_params=[a] vertex=yes pixel=yes
+--- parameter whose name equals a keyword-like token inside the call
+backend vertexshader_create location="callkw.effect (Vertex shader, technique T, pass 0)" len=84 fnv=8d00177b4cae0007
+  text "uniform float a;\nfloat F(float x)\n{ return x; }\n\nfloat main()\n{\n\treturn F(1.0+a);\n}\n"
+  sparam 0 name=a type=FLOAT array=0
+  result ok
+backend pixelshader_create location="callkw.effect (Pixel shader, technique T, pass 0)" len=82 fnv=96e8cc02682559ea
+  text "uniform float a;\nfloat F(float x)\n{ return x; }\n\nfloat main()\n{\n\treturn F(a*a);\n}\n"
+  sparam 0 name=a type=FLOAT array=0
+  result ok
+effect e6 result=ok
+  error_string=@null
+effect e6 params=1 techniques=1 viewproj=- world=-
+  param 0 name=a type=FLOAT annotations=0 default_size=0 default=-
+  technique 0 name=T passes=1
+    pass 0 name=@null vertex_params=[a] pixel_params=[a] vertex=yes pixel=yes
+backend shader_destroy location="callkw.effect (Vertex shader, technique T, pass 0)"
+backend shader_destroy location="callkw.effect (Pixel shader, technique T, pass 0)"
+backend shader_destroy location="passes.effect (Vertex shader, technique T, pass 0)"
+backend shader_destroy location="passes.effect (Pixel shader, technique T, pass 0)"
+backend shader_destroy location="passes.effect (Vertex shader, technique T, pass 1)"
+backend shader_destroy location="passes.effect (Pixel shader, technique T, pass 1)"
+backend shader_destroy location="lateparam.effect (Vertex shader, technique T, pass 0)"
+backend shader_destroy location="lateparam.effect (Pixel shader, technique T, pass 0)"
+backend shader_destroy location="once.effect (Vertex shader, technique T, pass 0)"
+backend shader_destroy location="once.effect (Pixel shader, technique T, pass 0)"
+backend shader_destroy location="callparams.effect (Vertex shader, technique T, pass 0)"
+backend shader_destroy location="callparams.effect (Pixel shader, technique T, pass 0)"
+backend shader_destroy location="params.effect (Vertex shader, technique T, pass 0)"
+backend shader_destroy location="params.effect (Pixel shader, technique T, pass 0)"

@@ -1,0 +1,26 @@
+# S-039 scripting core: real shared/obs-scripting/{obs-scripting.c,obs-scripting-logging.c,cstrcache.cpp}
+# (+ header-inline obs-scripting-callback.h) with a FAKE "lua" language backend (scripting_stubs.c).
+# LUAJIT_FOUND is defined so the Lua dispatch paths are compiled; Python_FOUND is NOT, so the
+# built-in "no Python" fallbacks are the ones under test. No Lua/Python runtime is needed.
+test/conformance/gen/scripting_runner.c
+test/conformance/gen/scripting_stubs.c
+shared/obs-scripting/obs-scripting.c
+shared/obs-scripting/obs-scripting-logging.c
+shared/obs-scripting/cstrcache.cpp
+libobs/callback/calldata.c
+libobs/obs-data.c
+libobs/obs-properties.c
+libobs/graphics/vec2.c
+libobs/graphics/vec3.c
+libobs/graphics/vec4.c
+libobs/graphics/quat.c
+libobs/graphics/axisang.c
+libobs/graphics/matrix3.c
+libobs/graphics/matrix4.c
+libobs/graphics/plane.c
+libobs/graphics/math-extra.c
+-DLUAJIT_FOUND
+-I../../shared/obs-scripting
+-lstdc++
+-ljansson
+-Wno-deprecated-declarations

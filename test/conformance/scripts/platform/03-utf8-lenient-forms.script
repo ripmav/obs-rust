@@ -1,0 +1,25 @@
+# utf8_to_wchar accepts what a strict RFC 3629 decoder rejects, as long as the lead byte is not
+# C0 C1 F5 FF and the continuation bytes have the form 10xxxxxx (QUIRK Q-1..Q-3).
+# overlong encodings (lead C0/C1 rejected, others accepted)
+u2w 0 len e08080 1
+u2w 0 len e080af 1
+u2w 0 len f0808080 1
+u2w 0 len f08080af 1
+u2w 0 len e0818e 1
+# values above U+10FFFF with 4-byte leads F6 F7 (F5 is rejected)
+u2w 0 len f6808080 1
+u2w 0 len f7bfbfbf 1
+u2w 0 len f4908080 1
+# 5-byte and 6-byte forms (lead F8..FB and FC..FD)
+u2w 0 len f888808080 1
+u2w 0 len fbbfbfbfbf 1
+u2w 0 len fc8480808080 1
+u2w 0 len fdbfbfbfbfbf 1
+u2w 0 len fc80808080ff 1
+# a 6-byte lead with only five bytes available is truncated
+u2w 0 len fdbfbfbfbf 4
+# the BOM is an ordinary character unless UTF8_SKIP_BOM (2) is given
+u2w 0 len efbbbf61 4
+u2w 2 len efbbbf61 4
+u2w 2 len efbbbf 4
+u2w 2 len 61efbbbf62efbbbf 4

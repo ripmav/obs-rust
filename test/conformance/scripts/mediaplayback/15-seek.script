@@ -1,0 +1,56 @@
+# Seeking. media_playback_seek(ms) is ignored while inactive; while active it stores pos*1000 (microseconds),
+# the thread sets seek_next_ts and calls seek_to(): av_seek_frame on stream 0 with AVSEEK_FLAG_BACKWARD and the
+# target rescaled from microseconds into stream 0's time base (here 1/1000: 290 ms -> 290)
+# then both decoders are flushed. The next delivery re-synchronises the clock
+# (seek_next_ts: delta 0). Files without a duration use AVSEEK_FLAG_FRAME and an UNSCALED target.
+media sk 400000 0
+video 1 1000 16 16 yuv420p frames=10
+pkt 0 0 fdur=40
+pkt 0 40 fdur=40
+pkt 0 80 fdur=40
+pkt 0 120 fdur=40 key=0
+pkt 0 160 fdur=40 key=0
+pkt 0 200 fdur=40
+pkt 0 240 fdur=40
+pkt 0 280 fdur=40 key=0
+pkt 0 320 fdur=40
+pkt 0 360 fdur=40
+endmedia
+media sknodur none none
+video 1 1000 16 16 yuv420p frames=10
+pkt 0 0 fdur=40
+pkt 0 40 fdur=40
+pkt 0 80 fdur=40
+pkt 0 120 fdur=40
+endmedia
+clock 1000000000
+minit sk local=1
+mreset
+echo seek while inactive is ignored
+mseek 100
+mstate
+mplay 0
+mtickw 0 0
+mtick 2
+echo seek to 290 ms (backwards to key packet at 240)
+mseek 290
+mstate
+mtick 1
+mstate
+mtick 3
+echo seek after the end of the file is not rejected in the media path
+mseek 5000
+mtick 1
+mstate
+mtick 2
+mfree
+echo ---- file without duration: seek by frame number, target not rescaled
+clock 1000000000
+minit sknodur local=1
+mreset
+mplay 0
+mtickw 0 0
+mtick 1
+mseek 2
+mtick 1
+mtick 2

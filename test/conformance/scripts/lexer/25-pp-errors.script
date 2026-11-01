@@ -1,0 +1,4 @@
+# CORE: preprocessor/lexer error rows and columns, errstr formatting 'file (row, col): msg'.
+parse "#define\n#define 1\n#undef 2\n#ifdef\n#if\n#bogus x y\nok\n#define M(\n#define M(a b)\n#define M(a,)\n" demo.cf
+errors
+errstr

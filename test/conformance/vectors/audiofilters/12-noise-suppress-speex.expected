@@ -1,0 +1,110 @@
+host speex.init id=0 frame_size=480 rate=48000
+host rnnoise.create id=0
+host speex.init id=1 frame_size=480 rate=48000
+host rnnoise.create id=1
+create n -> ok
+state ns level=-30 latency=10000000 frames=480 channels=2 use_rnnoise=0 has_mono_src=0 last_ts=0 allocated=1,1 resamplers=0,0 in0=0 out0=0 info=0
+echo packet-smaller-than-segment-returns-null
+process n frames=240 ts=1000000000 pos=0 in-crc: 864e9f45 198ee8c5
+  ret null
+state ns level=-30 latency=10000000 frames=480 channels=2 use_rnnoise=0 has_mono_src=0 last_ts=1000000000 allocated=1,1 resamplers=0,0 in0=960 out0=0 info=16
+echo second-half-completes-segment-and-returns-first-packet
+process n frames=240 ts=1005000000 pos=240 in-crc: 864e9f45 198ee8c5
+host speex.ctl id=0 req=18 level=-30
+host speex.ctl id=1 req=18 level=-30
+host speex.run id=0 level=-30 in0=16383 in1=16383 in479=16383
+host speex.run id=1 level=-30 in0=8191 in1=8191 in479=8191
+  ret own frames=240 ts=990000000
+  out p0 [0] 0.249969482 0.249969482 0.249969482 0.249969482 0.249969482 0.249969482 0.249969482 0.249969482
+state ns level=-30 latency=10000000 frames=480 channels=2 use_rnnoise=0 has_mono_src=0 last_ts=1005000000 allocated=1,1 resamplers=0,0 in0=0 out0=960 info=16
+echo large-packet-then-small-packets
+process n frames=960 ts=1010000000 pos=480 in-crc: 7083a3c5 ef03a3c5
+host speex.ctl id=0 req=18 level=-30
+host speex.ctl id=1 req=18 level=-30
+host speex.run id=0 level=-30 in0=32767 in1=32767 in479=32767
+host speex.run id=1 level=-30 in0=-32767 in1=-32767 in479=-32767
+host speex.ctl id=0 req=18 level=-30
+host speex.ctl id=1 req=18 level=-30
+host speex.run id=0 level=-30 in0=32767 in1=32767 in479=32767
+host speex.run id=1 level=-30 in0=-32767 in1=-32767 in479=-32767
+  ret own frames=240 ts=995000000
+  out p0 stats n=240 nan=0 crc=4cc92825 min=0.249969482 max=0.249969482 sum=59.9926758 sumsq=14.9963381
+  out p1 stats n=240 nan=0 crc=f3a11385 min=0.124969482 max=0.124969482 sum=29.9926758 sumsq=3.74816917
+process n frames=480 ts=1030000000 pos=1440 in-crc: 734ca3c5 334ca3c5
+host speex.ctl id=0 req=18 level=-30
+host speex.ctl id=1 req=18 level=-30
+host speex.run id=0 level=-30 in0=32767 in1=32767 in479=32767
+host speex.run id=1 level=-30 in0=-32767 in1=-32767 in479=-32767
+  ret own frames=960 ts=1000000000
+  out p0 [0] 0.499969482 0.499969482 0.499969482 0.499969482
+process n frames=100 ts=1040000000 pos=1920 in-crc: 860a27aa 860a27aa
+  ret own frames=480 ts=1020000000
+  out p0 stats n=480 nan=0 crc=bb00ea85 min=0.499969482 max=0.499969482 sum=239.985352 sumsq=119.985352
+  out p1 stats n=480 nan=0 crc=f7012785 min=-0.499969482 max=-0.499969482 sum=-239.985352 sumsq=119.985352
+state ns level=-30 latency=10000000 frames=480 channels=2 use_rnnoise=0 has_mono_src=0 last_ts=1040000000 allocated=1,1 resamplers=0,0 in0=400 out0=0 info=16
+echo zero-frame-packet
+process n frames=0 ts=1041000000 pos=2020 in-crc: 811c9dc5 811c9dc5
+  ret null
+state ns level=-30 latency=10000000 frames=480 channels=2 use_rnnoise=0 has_mono_src=0 last_ts=1041000000 allocated=1,1 resamplers=0,0 in0=400 out0=0 info=32
+echo suppress-level-is-passed-on-every-segment
+process n frames=480 ts=1050000000 pos=2020 in-crc: 5e3b20c5 5e3b20c5
+host speex.ctl id=0 req=18 level=-45
+host speex.ctl id=1 req=18 level=-45
+host speex.run id=0 level=-45 in0=0 in1=1283 in479=16383
+host speex.run id=1 level=-45 in0=0 in1=1283 in479=16383
+  ret own frames=100 ts=1030000000
+  out p0 [0] 0 0.0195617676 0.0388183594 0.0573730469
+echo timestamp-jump-over-one-second-clears-buffers
+process n frames=100 ts=1060000000 pos=2500 in-crc: 2a9d4ead 2a9d4ead
+  ret own frames=0 ts=1031000000
+process n frames=100 ts=5000000000 pos=2600 in-crc: 2a9d4ead 2a9d4ead
+  ret null
+state ns level=-45 latency=10000000 frames=480 channels=2 use_rnnoise=0 has_mono_src=0 last_ts=5000000000 allocated=1,1 resamplers=0,0 in0=400 out0=0 info=16
+echo second-packet-with-the-same-timestamp-as-the-previous
+process n frames=480 ts=5000000000 pos=2700 in-crc: f794b205 f794b205
+host speex.ctl id=0 req=18 level=-45
+host speex.ctl id=1 req=18 level=-45
+host speex.run id=0 level=-45 in0=3276 in1=3276 in479=3276
+host speex.run id=1 level=-45 in0=3276 in1=3276 in479=3276
+  ret own frames=100 ts=4990000000
+  out p0 [0] 0.049987793 0.049987793
+echo method-switch-keeps-allocation
+state ns level=-45 latency=10000000 frames=480 channels=2 use_rnnoise=1 has_mono_src=0 last_ts=5000000000 allocated=1,1 resamplers=0,0 in0=400 out0=1520 info=16
+process n frames=480 ts=5100000000 pos=3180 in-crc: 5e3b20c5 5e3b20c5
+host rnnoise.process id=0 in0=3276.80005 in1=3276.80005 in479=16384
+host rnnoise.process id=1 in0=3276.80005 in1=3276.80005 in479=16384
+  ret own frames=480 ts=4990000000
+  out p0 [0] 0.049987793 0.049987793 0.049987793 0.049987793
+echo mono-parent-flag
+host speex.destroy id=0
+host rnnoise.destroy id=0
+host speex.destroy id=1
+host rnnoise.destroy id=1
+destroy n
+host speex.init id=2 frame_size=480 rate=48000
+host rnnoise.create id=2
+host speex.init id=3 frame_size=480 rate=48000
+host rnnoise.create id=3
+create mn -> ok
+process mn frames=480 ts=1000000000 pos=0 in-crc: f794b205 f794b205
+host speex.ctl id=2 req=18 level=-30
+host speex.ctl id=3 req=18 level=-30
+host speex.run id=2 level=-30 in0=3276 in1=3276 in479=3276
+host speex.run id=3 level=-30 in0=3276 in1=3276 in479=3276
+  ret own frames=480 ts=990000000
+  out p0 [0] 0.049987793 0.049987793
+state ns level=-30 latency=10000000 frames=480 channels=2 use_rnnoise=0 has_mono_src=1 last_ts=1000000000 allocated=1,1 resamplers=0,0 in0=0 out0=0 info=0
+echo missing-parent-is-undefined-layout
+host speex.init id=4 frame_size=480 rate=48000
+host rnnoise.create id=4
+host speex.init id=5 frame_size=480 rate=48000
+host rnnoise.create id=5
+create np -> ok
+process np frames=480 ts=1000000000 pos=0 in-crc: f794b205 f794b205
+host speex.ctl id=4 req=18 level=-30
+host speex.ctl id=5 req=18 level=-30
+host speex.run id=4 level=-30 in0=3276 in1=3276 in479=3276
+host speex.run id=5 level=-30 in0=3276 in1=3276 in479=3276
+  ret own frames=480 ts=990000000
+  out p0 [0] 0.049987793 0.049987793
+state ns level=-30 latency=10000000 frames=480 channels=2 use_rnnoise=0 has_mono_src=0 last_ts=1000000000 allocated=1,1 resamplers=0,0 in0=0 out0=0 info=0

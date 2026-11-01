@@ -1,0 +1,37 @@
+# A burst releases more than one packet per arrival: if, after sending one packet, more than
+# interleaver_max_batch_size packets are still eligible, one additional packet is sent.
+# Batch size here = 2*33333/33333 (video) + 2*33333/21333 (audio) = 2 + 3 = 5.
+video 30 1 1280 720
+audio 48000
+venc v
+aenc a frame_size=1024
+out o av,encoded autobegin=1
+set_venc o v
+set_aenc o a
+start o
+emit a 0 0 0 4
+emit v 0 0 1 4
+emit a 1024 1024 0 4
+emit a 2048 2048 0 4
+emit v 1 1 0 4
+state o
+echo --- pile up 10 video packets while audio stalls at 42666us
+emit v 2 2 0 4
+emit v 3 3 0 4
+emit v 4 4 0 4
+emit v 5 5 0 4
+emit v 6 6 0 4
+emit v 7 7 0 4
+emit v 8 8 0 4
+emit v 9 9 0 4
+emit v 10 10 0 4
+emit v 11 11 0 4
+queue o
+echo --- one very late audio packet (500000us) makes all of them eligible: each arrival now sends two
+emit a 24000 24000 0 4
+queue o
+emit a 25024 25024 0 4
+queue o
+emit a 26048 26048 0 4
+queue o
+stop o

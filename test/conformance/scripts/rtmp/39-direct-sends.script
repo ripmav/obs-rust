@@ -1,0 +1,32 @@
+# Directly callable senders: createStream, pause/seek, server/client bandwidth, buffer length and user-control messages with their
+# body sizes (R130..R136).
+new
+clock 1000
+seed 3
+seturl rtmp://h/a
+enablewrite
+set flashver FMLE
+addstream key
+feed 03
+feed_s1 0 1000 00000000
+feed_echo
+connect
+sendfn createstream
+sendfn pause 1 5000
+sendfn pause 0 6000
+sendfn seek 7000
+sendfn serverbw
+sendfn clientbw
+sendfn updatebuf
+ctrl 0 1 0
+ctrl 3 5 99
+ctrl 26 7 0
+ctrl 27 0 0
+ctrl 6 1234 0
+ctrl 7 1234 0
+ctrl -1 1 2
+set clientbw 999
+sendfn clientbw
+deletestream 0
+state
+gettime

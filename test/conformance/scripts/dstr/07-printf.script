@@ -1,0 +1,19 @@
+printf "n=%d s=%s" 42 text
+dump
+catf " | %d/%s" 7 more
+dump
+printf "" 1 x
+dump
+copy keep
+printf "%d" 0 ""
+dump
+printf "%d" -5 x
+dump
+safe_printf "$1-$2-$3-$4" A B C D
+dump
+safe_printf "$1-$2" A @null
+dump
+safe_printf "$1 $1 $2" X Y
+dump
+safe_printf "plain" A B
+dump

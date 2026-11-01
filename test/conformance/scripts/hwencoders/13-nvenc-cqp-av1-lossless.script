@@ -1,0 +1,27 @@
+# S-050 nvenc: AV1 multiplies cqp by 4; lossless forces tune LOSSLESS, multipass disabled, aq off,
+# cqp 0, and rewrites the rate_control property to "Lossless" (so the settings log shows it).
+dump 2
+nvcap dyn_bitrate 1
+defaults av1
+set str rate_control CQP
+set int cqp 20
+create av1 soft
+destroy
+defaults h264
+set str rate_control lossless
+set str profile main
+create h264 soft
+state
+destroy
+# upper-case spelling is not lossless
+set str rate_control LOSSLESS
+create h264 soft
+destroy
+defaults hevc
+set str rate_control lossless
+create hevc soft
+destroy
+defaults av1
+set str rate_control lossless
+create av1 soft
+destroy

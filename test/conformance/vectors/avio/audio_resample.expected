@@ -1,0 +1,47 @@
+> aopen main 48000 FLOAT_PLANAR STEREO
+= 0
+> afeed 0 0 0 2 0.5 set
+> afeed 0 1 0 1 -0.75 set
+> anewts delta 0
+> aprobe 0 1 2
+> aconnect a 1 0 24000 - - 0
+resampler create dst=(24000 8 2) src=(48000 8 2)
+= 1
+> aconnect b 2 0 - - - 0
+= 1
+> resamp offset 1000
+> atick
+in start=1000000000 end=1021333333 active=0x01 nonnull=[2,2,2,2,2,2] clean=yes
+out b param=2 mix=0 ts=1021333333 frames=1024 buf=clamped p0=[0.5 0.5 0] p1=[-0.75 0 0]
+out a param=1 mix=0 ts=1021332333 frames=512 buf=resampled p0=[0.25 0.25 0] p1=[-0.375 0 0]
+tick sleepto=1021333333
+> resamp offset 0
+> resamp resample fail
+> atick
+in start=1021333333 end=1042666666 active=0x01 nonnull=[2,2,2,2,2,2] clean=yes
+out b param=2 mix=0 ts=1042666666 frames=1024 buf=clamped p0=[0.5 0.5 0] p1=[-0.75 0 0]
+tick sleepto=1042666666
+> resamp resample ok
+> resamp frames 7
+> atick
+in start=1042666666 end=1064000000 active=0x01 nonnull=[2,2,2,2,2,2] clean=yes
+out b param=2 mix=0 ts=1064000000 frames=1024 buf=clamped p0=[0.5 0.5 0] p1=[-0.75 0 0]
+out a param=1 mix=0 ts=1064000000 frames=7 buf=resampled p0=[0.25 0.25 0] p1=[-0.375 0 0]
+tick sleepto=1064000000
+> resamp create fail
+> aconnect a 3 0 44100 FLOAT_PLANAR STEREO 0
+resampler create dst=(44100 8 2) src=(48000 8 2)
+log error audio_input_init: Failed to create resampler
+= 0
+> adump
+adump mix0=[(a 1 rate=24000 fmt=8 spk=2 clip=0 rs=1) (b 2 rate=48000 fmt=8 spk=2 clip=0 rs=0)] mix1=[] mix2=[] mix3=[] mix4=[] mix5=[]
+> resamp create ok
+> adisconnect a 1 0
+resampler destroy
+= void
+> aconnect a 4 1 96000 - - 0
+resampler create dst=(96000 8 2) src=(48000 8 2)
+= 1
+> aclose
+resampler destroy
+= closed

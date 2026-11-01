@@ -1,0 +1,46 @@
+log debug canvas 'Main' (<uuid>) created
+startup -> true
+log info ---------------------------------
+log info video settings reset:  base resolution:   1920x1080  output resolution: 1280x720  downscale filter:  Bicubic  fps:               30/1  format:            BGRA  YUV mode:          None
+reset_video -> success
+  after_call base=1920x1080 out=1280x720 fps=30/1 fmt=BGRA cs=2 range=1 scale=2 gpu=0 adapter=0
+log debug canvas 'Alpha' (<uuid>) created
+canvas_create a -> ok
+canvas a name="Alpha" flags=0x0 private=0 removed=0 has_video=1 video_active=0 uuid_len=36 view_type=aux
+log debug canvas 'Bravo' (<uuid>) created
+canvas_create b -> ok
+canvas b name="Bravo" flags=0x0 private=0 removed=0 has_video=0 video_active=0 uuid_len=36 view_type=aux
+log debug canvas 'Charlie' (<uuid>) created
+canvas_create c -> ok
+canvas c name="Charlie" flags=0x0 private=0 removed=0 has_video=0 video_active=0 uuid_len=36 view_type=aux
+canvas a name="Alpha" flags=0x0 private=0 removed=0 has_video=1 video_active=1 uuid_len=36 view_type=aux
+canvas_reset_video a -> 0
+canvas_video_info a -> 1 video=set
+   base=64x64 out=64x64 fps=30/1 fmt=BGRA cs=2 range=1 scale=2 gpu=0 adapter=0
+video_active -> 1
+reset_video -> currently_active
+  after_call base=1920x1080 out=1280x720 fps=30/1 fmt=BGRA cs=2 range=1 scale=2 gpu=0 adapter=0
+canvas a name="Alpha" flags=0x0 private=0 removed=0 has_video=1 video_active=1 uuid_len=36 view_type=aux
+canvas_reset_video a -> 0
+canvas_reset_video a -> 1
+canvas_video_info a -> 1 video=set
+   base=32x32 out=32x32 fps=30/1 fmt=BGRA cs=2 range=1 scale=2 gpu=0 adapter=0
+canvas b name="Bravo" flags=0x0 private=0 removed=0 has_video=0 video_active=0 uuid_len=36 view_type=aux
+enum canvases
+  visit Main
+  visit Alpha
+  visited=2
+enum canvases
+  visit Main
+  visit Alpha
+  visit Bravo
+  visit Charlie
+  visited=4
+shutdown begin
+log info Freeing OBS context data
+log debug canvas 'Main' (<uuid>) destroyed
+log debug canvas 'Alpha' (<uuid>) destroyed
+log debug canvas 'Bravo' (<uuid>) destroyed
+log debug canvas 'Charlie' (<uuid>) destroyed
+log info  3 canvas(s) were remaining
+shutdown end obs=NULL

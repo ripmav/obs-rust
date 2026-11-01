@@ -1,0 +1,39 @@
+register A size=full
+service_types=1
+register B size=full
+service_types=2
+register C size=full
+service_types=3
+cb svcA create d1 settings={}
+log debug service 'a' (svcA) created
+create a -> ok
+cb svcB create d2 settings={}
+log debug service 'b' (svcB) created
+create b -> ok
+cb svcC create d3 settings={}
+log debug service 'c' (svcC) created
+create c -> ok
+q a protocol -> proto-svcA
+q a outtype -> rtmp_output
+q a connect_info -> ci3
+q a can_connect -> 0
+q a fps -> 60
+q a bitrate -> 6000 160
+q a bitrate_null -> ok
+q a resolutions -> n=2 1920x1080 1280x720
+q a vcodecs -> h264 hevc
+q a acodecs -> aac
+q a typedata -> set
+q b protocol -> proto-svcB
+q b outtype -> (null)
+q b connect_info -> (null)
+q b can_connect -> 1
+q b fps -> 0
+q b bitrate -> 0 0
+q b resolutions -> n=0
+q b vcodecs -> null
+q b acodecs -> null
+q c can_connect -> 1
+cb svcA apply_encoder_settings d1 video={"bitrate":1000} audio=null
+cb svcA apply_encoder_settings d1 video=null audio={"bitrate":96}
+cb svcA apply_encoder_settings d1 video={"v":1} audio={"a":2}

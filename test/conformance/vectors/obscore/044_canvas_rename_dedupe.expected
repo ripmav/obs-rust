@@ -1,0 +1,46 @@
+log debug canvas 'Main' (<uuid>) created
+startup -> true
+log debug canvas 'One' (<uuid>) created
+canvas_create a -> ok
+canvas a name="One" flags=0x0 private=0 removed=0 has_video=0 video_active=0 uuid_len=36 view_type=aux
+log debug canvas 'Two' (<uuid>) created
+canvas_create b -> ok
+canvas b name="Two" flags=0x0 private=0 removed=0 has_video=0 video_active=0 uuid_len=36 view_type=aux
+log warning Attempted to rename context to duplicate name "Two"! New name has been changed to "One 2"
+signal canvas_rename canvas=b new_name="One 2" prev_name="Two"
+canvas_name b -> "One 2"
+log warning Attempted to rename context to duplicate name "One 2"! New name has been changed to "One 2"
+signal canvas_rename canvas=b new_name="One 2" prev_name="One 2"
+canvas_name b -> "One 2"
+signal canvas_rename canvas=b new_name="Three" prev_name="One 2"
+canvas_name b -> "Three"
+log warning Attempted to rename context to duplicate name "Three"! New name has been changed to "One 2"
+signal canvas_rename canvas=b new_name="One 2" prev_name="Three"
+canvas_name b -> "One 2"
+log warning Attempted to rename context to duplicate name "One"! New name has been changed to "One 2 2"
+signal canvas_rename canvas=a new_name="One 2 2" prev_name="One"
+canvas_name a -> "One 2 2"
+signal canvas_rename canvas=a new_name="One 3" prev_name="One 2 2"
+canvas_name a -> "One 3"
+log debug private canvas 'One' (<uuid>) created
+canvas_create_private p -> ok
+canvas p name="One" flags=0x0 private=1 removed=0 has_video=0 video_active=0 uuid_len=36 view_type=aux
+canvas_name p -> "One"
+canvas_name p -> "Three"
+canvas_name p -> "Zed"
+enum canvases
+  visit Main
+  visit One 2
+  visit One 3
+  visited=3
+get canvas_by_name Three -> NULL
+get canvas_by_name Zed -> NULL
+shutdown begin
+log info Freeing OBS context data
+log debug canvas 'Main' (<uuid>) destroyed
+log debug canvas 'One 2' (<uuid>) destroyed
+log debug canvas 'One 3' (<uuid>) destroyed
+log info  2 canvas(s) were remaining
+log debug private canvas 'Zed' (<uuid>) destroyed
+log info  1 canvas(s) were remaining
+shutdown end obs=NULL

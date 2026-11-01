@@ -1,0 +1,5 @@
+# Video stream/codec parameters derived from the command line (no HDR): what lands in the stream.
+reset
+args @s2.mkv 1 0 h264 6000 1920 1080 1 1 1 1 1 0 30000 1001 0 "" ""
+hdr video 0 0164001fffe100046764001f01000468ce3c80
+inspect

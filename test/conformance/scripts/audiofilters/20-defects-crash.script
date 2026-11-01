@@ -1,0 +1,50 @@
+# DEFECT. Inputs inside the host contract for which the reference dereferences NULL (or an invalid pointer).
+# The reference's `try-end crash` must be implemented as: no crash (any well-defined result, e.g. skip the NULL plane).
+# A host always supplies one plane per output channel; these cases show what happens when it does not.
+audio 2 48000
+create e expander
+create e0 expander
+echo D-expander-null-plane-in-process-expansion
+try process e 4 const:0.5 -
+echo D-expander-null-plane-0
+try process e0 4 - const:0.5
+echo D-expander-properties-with-null-data
+try props_null expander
+try props_null upward
+echo D-noise-gate-null-planes
+create g gate
+try process g 4 - const:0.5
+try process g 4 const:0.5 -
+echo D-eq-null-plane
+create q eq
+try process q 4 const:0.5 -
+echo D-noise-suppress-null-plane
+create n ns
+try process n 480 ts=1000000000 const:0.5 -
+echo D-compressor-sidechain-capture-with-null-plane
+source mic audio
+data d
+set d sidechain_source string mic
+create c compressor d
+advance 1
+tick c
+try sc_push mic 100 0 const:0.5 -
+echo D-channel-count-increase-after-create-compressor-sidechain
+audio 1 48000
+create c1 compressor d
+advance 3000000001
+tick c1
+audio 2 48000
+update c1 d
+try sc_push mic 100 0 const:0.5 const:0.5
+try process c1 100 const:0.5 const:0.5
+echo D-channel-count-increase-after-create-noise-suppress
+audio 1 48000
+create n1 ns
+audio 2 48000
+data m
+update n1 m
+try process n1 480 ts=1000000000 const:0.5 const:0.5
+echo ok-control-gain-null-plane-is-fine
+create gg gain
+try process gg 4 const:0.5 -

@@ -1,0 +1,90 @@
+echo mono
+av.find_encoder aac -> found
+log info ---------------------------------
+log info [FFmpeg aac encoder: 'enc'] bitrate: 128, channels: 1, channel_layout: layout-1-4, track: 1 
+av.open2 codec=aac bit_rate=128000 sample_rate=48000 channels=1 sample_fmt=8 strict=-2 flags=4194304
+av.samples_alloc channels=1 nb_samples=1024 fmt=8
+aud_create aac ok type=aac
+aud state bit_rate=128000 sample_rate=48000 channels=1 order=1 mask=0x4 sample_fmt=8
+aud state frame_size=1024 frame_size_bytes=4096 planes=1 audio_size=4 strict=-2 flags=4194304
+echo 2.1-is-treated-as-3.0
+av.find_encoder aac -> found
+log info ---------------------------------
+log info [FFmpeg aac encoder: 'enc'] bitrate: 128, channels: 3, channel_layout: layout-3-7, track: 1 
+av.open2 codec=aac bit_rate=128000 sample_rate=48000 channels=3 sample_fmt=8 strict=-2 flags=4194304
+av.samples_alloc channels=3 nb_samples=1024 fmt=8
+aud_create aac ok type=aac
+aud state bit_rate=128000 sample_rate=48000 channels=3 order=1 mask=0x7 sample_fmt=8
+aud state frame_size=1024 frame_size_bytes=4096 planes=3 audio_size=4 strict=-2 flags=4194304
+echo quad
+av.find_encoder aac -> found
+log info ---------------------------------
+log info [FFmpeg aac encoder: 'enc'] bitrate: 128, channels: 4, channel_layout: layout-4-107, track: 1 
+av.open2 codec=aac bit_rate=128000 sample_rate=48000 channels=4 sample_fmt=8 strict=-2 flags=4194304
+av.samples_alloc channels=4 nb_samples=1024 fmt=8
+aud_create aac ok type=aac
+aud state bit_rate=128000 sample_rate=48000 channels=4 order=1 mask=0x107 sample_fmt=8
+aud state frame_size=1024 frame_size_bytes=4096 planes=4 audio_size=4 strict=-2 flags=4194304
+echo 4.1-override
+av.find_encoder aac -> found
+log info ---------------------------------
+log info [FFmpeg aac encoder: 'enc'] bitrate: 128, channels: 5, channel_layout: layout-5-10f, track: 1 
+av.open2 codec=aac bit_rate=128000 sample_rate=48000 channels=5 sample_fmt=8 strict=-2 flags=4194304
+av.samples_alloc channels=5 nb_samples=1024 fmt=8
+aud_create aac ok type=aac
+aud state bit_rate=128000 sample_rate=48000 channels=5 order=1 mask=0x10f sample_fmt=8
+aud state frame_size=1024 frame_size_bytes=4096 planes=5 audio_size=4 strict=-2 flags=4194304
+echo 5.1
+av.find_encoder aac -> found
+log info ---------------------------------
+log info [FFmpeg aac encoder: 'enc'] bitrate: 128, channels: 6, channel_layout: layout-6-60f, track: 1 
+av.open2 codec=aac bit_rate=128000 sample_rate=48000 channels=6 sample_fmt=8 strict=-2 flags=4194304
+av.samples_alloc channels=6 nb_samples=1024 fmt=8
+aud_create aac ok type=aac
+aud state bit_rate=128000 sample_rate=48000 channels=6 order=1 mask=0x60f sample_fmt=8
+aud state frame_size=1024 frame_size_bytes=4096 planes=6 audio_size=4 strict=-2 flags=4194304
+echo 7.1
+av.find_encoder aac -> found
+log info ---------------------------------
+log info [FFmpeg aac encoder: 'enc'] bitrate: 128, channels: 8, channel_layout: layout-8-63f, track: 1 
+av.open2 codec=aac bit_rate=128000 sample_rate=48000 channels=8 sample_fmt=8 strict=-2 flags=4194304
+av.samples_alloc channels=8 nb_samples=1024 fmt=8
+aud_create aac ok type=aac
+aud state bit_rate=128000 sample_rate=48000 channels=8 order=1 mask=0x63f sample_fmt=8
+aud state frame_size=1024 frame_size_bytes=4096 planes=8 audio_size=4 strict=-2 flags=4194304
+echo 7.1-alac
+av.find_encoder alac -> found
+log info ---------------------------------
+log info [FFmpeg alac encoder: 'enc'] bitrate: 0, channels: 8, channel_layout: layout-8-ff, track: 1 
+av.open2 codec=alac bit_rate=0 sample_rate=48000 channels=8 sample_fmt=8 strict=-2 flags=4194304
+av.samples_alloc channels=8 nb_samples=1024 fmt=8
+aud_create alac ok type=alac
+aud state bit_rate=0 sample_rate=48000 channels=8 order=1 mask=0xff sample_fmt=8
+aud state frame_size=1024 frame_size_bytes=4096 planes=8 audio_size=4 strict=-2 flags=4194304
+echo 7.1-flac
+av.find_encoder flac -> found
+log info ---------------------------------
+log info [FFmpeg flac encoder: 'enc'] bitrate: 0, channels: 8, channel_layout: layout-8-63f, track: 1 
+av.open2 codec=flac bit_rate=0 sample_rate=48000 channels=8 sample_fmt=8 strict=-2 flags=4194304
+av.samples_alloc channels=8 nb_samples=1024 fmt=8
+aud_create flac ok type=flac
+aud state bit_rate=0 sample_rate=48000 channels=8 order=1 mask=0x63f sample_fmt=8
+aud state frame_size=1024 frame_size_bytes=4096 planes=8 audio_size=4 strict=-2 flags=4194304
+echo 5.1-alac-unchanged
+av.find_encoder alac -> found
+log info ---------------------------------
+log info [FFmpeg alac encoder: 'enc'] bitrate: 0, channels: 6, channel_layout: layout-6-60f, track: 1 
+av.open2 codec=alac bit_rate=0 sample_rate=48000 channels=6 sample_fmt=8 strict=-2 flags=4194304
+av.samples_alloc channels=6 nb_samples=1024 fmt=8
+aud_create alac ok type=alac
+aud state bit_rate=0 sample_rate=48000 channels=6 order=1 mask=0x60f sample_fmt=8
+aud state frame_size=1024 frame_size_bytes=4096 planes=6 audio_size=4 strict=-2 flags=4194304
+echo 4.1-count-with-wrong-speaker-layout
+av.find_encoder aac -> found
+log info ---------------------------------
+log info [FFmpeg aac encoder: 'enc'] bitrate: 128, channels: 5, channel_layout: layout-5-607, track: 1 
+av.open2 codec=aac bit_rate=128000 sample_rate=48000 channels=5 sample_fmt=8 strict=-2 flags=4194304
+av.samples_alloc channels=5 nb_samples=1024 fmt=8
+aud_create aac ok type=aac
+aud state bit_rate=128000 sample_rate=48000 channels=5 order=1 mask=0x607 sample_fmt=8
+aud state frame_size=1024 frame_size_bytes=4096 planes=1 audio_size=4 strict=-2 flags=4194304

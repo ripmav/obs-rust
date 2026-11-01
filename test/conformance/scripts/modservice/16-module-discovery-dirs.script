@@ -1,0 +1,18 @@
+# S-035 directory layout: BIN contains "%module%" -> every sub-directory of the part before it is a module.
+write @TMP/dl/alpha/bin/alpha.so "x"
+write @TMP/dl/beta/bin/libbeta.so "x"
+write @TMP/dl/gamma/bin/other.so "x"
+write @TMP/dl/delta.v2/bin/delta.so "x"
+write @TMP/dl/loose.so "x"
+mkdir @TMP/dl/epsilon/bin
+mkdir @TMP/dl/Zeta/bin
+write @TMP/dl/Zeta/bin/Zeta.so "x"
+# lib prefix: the data directory of 'libbeta'-style names falls back to the name without "lib" when the first does not exist
+mkdir @TMP/dd/beta
+mkdir @TMP/dd/alpha
+mkdir @TMP/dd/libgamma
+add_path @TMP/dl/%module%/bin @TMP/dd/%module%
+find
+# BIN pattern whose %module% is not the last component
+add_path @TMP/dl/%module%/bin/ @TMP/dd2/%module%/data/
+find

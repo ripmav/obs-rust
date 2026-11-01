@@ -1,0 +1,146 @@
+> trace 0
+> gs_create g
+ret 0 created
+> gs_enter_context g
+> trace 1
+> gs_texture_create 64 32 GS_BGRA 1 0 > t
+  dev device_texture_create w=64 h=32 fmt=5 levels=1 data=null flags=0
+ret #6
+> gs_cubetexture_create 16 GS_RGBA16F 1 0 > c
+  dev device_cubetexture_create size=16 fmt=9 levels=1 data=null flags=0
+ret #7
+> gs_voltexture_create 8 4 2 GS_R8 1 0 > v
+  dev device_voltexture_create w=8 h=4 d=2 fmt=2 levels=1 data=null flags=0
+ret #8
+> gs_stagesurface_create 7 5 GS_R16 > s
+  dev device_stagesurface_create w=7 h=5 fmt=8
+ret #9
+== 2D
+> gs_get_texture_type t
+  dev device_get_texture_type tex=#6
+ret 0
+> gs_texture_get_width t
+  dev gs_texture_get_width tex=#6
+ret 64
+> gs_texture_get_height t
+  dev gs_texture_get_height tex=#6
+ret 32
+> gs_texture_get_color_format t
+  dev gs_texture_get_color_format tex=#6
+ret 5
+> gs_texture_get_obj t
+  dev gs_texture_get_obj tex=#6
+ret #10
+> gs_texture_is_rect t
+  dev gs_texture_is_rect tex=#6
+ret false
+== cube / volume types
+> gs_get_texture_type c
+  dev device_get_texture_type tex=#7
+ret 2
+> gs_cubetexture_get_size c
+  dev gs_cubetexture_get_size tex=#7
+ret 16
+> gs_cubetexture_get_color_format c
+  dev gs_cubetexture_get_color_format tex=#7
+ret 9
+> gs_get_texture_type v
+  dev device_get_texture_type tex=#8
+ret 1
+> gs_voltexture_get_width v
+  dev gs_voltexture_get_width tex=#8
+ret 8
+> gs_voltexture_get_height v
+  dev gs_voltexture_get_height tex=#8
+ret 4
+> gs_voltexture_get_depth v
+  dev gs_voltexture_get_depth tex=#8
+ret 2
+> gs_voltexture_get_color_format v
+  dev gs_voltexture_get_color_format tex=#8
+ret 2
+== stage surface
+> gs_stagesurface_get_width s
+  dev gs_stagesurface_get_width surf=#9
+ret 7
+> gs_stagesurface_get_height s
+  dev gs_stagesurface_get_height surf=#9
+ret 5
+> gs_stagesurface_get_color_format s
+  dev gs_stagesurface_get_color_format surf=#9
+ret 8
+== NULL objects: defaults (0 / GS_UNKNOWN=0 / false / NULL / GS_TEXTURE_2D=0)
+> gs_get_texture_type -
+log debug gs_get_texture_type: Null 'texture' parameter
+ret 0
+> gs_texture_get_width -
+log debug gs_texture_get_width: Null 'tex' parameter
+ret 0
+> gs_texture_get_height -
+log debug gs_texture_get_height: Null 'tex' parameter
+ret 0
+> gs_texture_get_color_format -
+log debug gs_texture_get_color_format: Null 'tex' parameter
+ret 0
+> gs_texture_get_obj -
+log debug gs_texture_get_obj: Null 'tex' parameter
+ret null
+> gs_texture_is_rect -
+log debug gs_texture_is_rect: Null 'tex' parameter
+ret false
+> gs_cubetexture_get_size -
+log debug gs_cubetexture_get_size: Null 'cubetex' parameter
+ret 0
+> gs_cubetexture_get_color_format -
+log debug gs_cubetexture_get_color_format: Null 'cubetex' parameter
+ret 0
+> gs_voltexture_get_width -
+log debug gs_voltexture_get_width: Null 'voltex' parameter
+ret 0
+> gs_voltexture_get_height -
+log debug gs_voltexture_get_height: Null 'voltex' parameter
+ret 0
+> gs_voltexture_get_depth -
+log debug gs_voltexture_get_depth: Null 'voltex' parameter
+ret 0
+> gs_voltexture_get_color_format -
+log debug gs_voltexture_get_color_format: Null 'voltex' parameter
+ret 0
+> gs_stagesurface_get_width -
+log debug gs_stagesurface_get_width: Null 'stagesurf' parameter
+ret 0
+> gs_stagesurface_get_height -
+log debug gs_stagesurface_get_height: Null 'stagesurf' parameter
+ret 0
+> gs_stagesurface_get_color_format -
+log debug gs_stagesurface_get_color_format: Null 'stagesurf' parameter
+ret 0
+> gs_texture_map -
+log debug gs_texture_map: Null 'tex' parameter
+ret false linesize=0 null
+> gs_stagesurface_map -
+log debug gs_stagesurface_map: Null 'stagesurf' parameter
+ret false linesize=0 null
+> gs_texture_unmap -
+log debug gs_texture_unmap: Null 'tex' parameter
+> gs_stagesurface_unmap -
+log debug gs_stagesurface_unmap: Null 'stagesurf' parameter
+== destroy
+> gs_texture_destroy t
+  dev gs_texture_destroy tex=#6
+> gs_cubetexture_destroy c
+  dev gs_cubetexture_destroy cubetex=#7
+> gs_voltexture_destroy v
+  dev gs_voltexture_destroy voltex=#8
+> gs_stagesurface_destroy s
+  dev gs_stagesurface_destroy stagesurf=#9
+> gs_texture_destroy -
+> gs_cubetexture_destroy -
+> gs_voltexture_destroy -
+> gs_stagesurface_destroy -
+> gs_zstencil_destroy -
+> gs_samplerstate_destroy -
+> gs_vertexbuffer_destroy -
+> gs_indexbuffer_destroy -
+> gs_swapchain_destroy -
+> gs_shader_destroy -

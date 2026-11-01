@@ -1,0 +1,12 @@
+cstr 0 text="" same_ptr_as=-1 is_input=0
+cstr 1 text="" same_ptr_as=0 is_input=0
+cstr 2 text="hello" same_ptr_as=-1 is_input=0
+cstr 3 text="hello" same_ptr_as=2 is_input=0
+cstr 4 text="world" same_ptr_as=-1 is_input=0
+cstr 5 text="Hello" same_ptr_as=-1 is_input=0
+cstr_many 500 done
+cstr_check ok checked=506
+cstr 6 text="hello" same_ptr_as=2 is_input=0
+cstr 7 text="a b  c" same_ptr_as=-1 is_input=0
+cstr 8 text="a b  c" same_ptr_as=7 is_input=0
+cstr_check ok checked=509

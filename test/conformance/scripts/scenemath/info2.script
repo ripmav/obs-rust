@@ -1,0 +1,22 @@
+# obs_transform_info get/set: one-shot update of pos/rot/scale/alignment/bounds. A non-finite scale leaves the
+# stored scale untouched (other fields still apply). Values are converted exactly like the separate setters.
+source cam 1280 720
+scene main
+add main cam c
+set_info c 100 50 30 2 3 0 2 5 400 300 1
+get c
+print c
+echo -- NaN scale is ignored
+set_scale_nan c
+get c
+echo -- explicit info with infinite scale not possible via script; zero scale allowed
+set_info c 0 0 0 0 0 5 0 0 0 0 0
+get c
+print c
+echo -- absolute mode: set_info stores verbatim
+absolute on
+scene a
+add a cam d
+set_info d 100.4 50.6 0 1.25 1.25 5 2 5 400.5 300.5 0
+get d
+print d

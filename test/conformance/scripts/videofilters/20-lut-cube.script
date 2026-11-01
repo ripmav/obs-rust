@@ -1,0 +1,70 @@
+# clut_filter with .cube files: parsing of metadata, 1D / 3D selection, domain, half-float conversion (sRGB->linear).
+source T 1920 1080 1920 1080 SRGB video
+source P 1920 1080 1920 1080 SRGB video
+file id3.cube "TITLE x\n# comment\nLUT_3D_SIZE 2\n0 0 0\n1 0 0\n0 1 0\n1 1 0\n0 0 1\n1 0 1\n0 1 1\n1 1 1\n"
+data d
+dset d image_path str @TMP/id3.cube
+filter a clut_filter 0 d T P
+tick a 0.016
+render a
+echo mid-grey entries show the sRGB nonlinear->linear conversion stored as half floats
+file grey.cube "LUT_3D_SIZE 2\n0.5 0.5 0.5\n0.25 0.5 0.75\n0 0 0\n1 1 1\n0.1 0.2 0.3\n0.4 0.5 0.6\n0.7 0.8 0.9\n0.04 0.03 0.002\n"
+dset d image_path str @TMP/grey.cube
+filter b clut_filter 0 d T P
+tick b 0.016
+echo 1D LUT: technique Draw1D and texture clut_1d; scale = (N-1)/domain; offsets
+file one.cube "LUT_1D_SIZE 3\n0 0 0\n0.5 0.5 0.5\n1 1 1\n"
+dset d image_path str @TMP/one.cube
+filter c clut_filter 0 d T P
+tick c 0.016
+render c
+echo both sizes present: 1D wins
+file both.cube "LUT_3D_SIZE 2\nLUT_1D_SIZE 2\n0 0 0\n1 1 1\n"
+dset d image_path str @TMP/both.cube
+filter e clut_filter 0 d T P
+tick e 0.016
+render e
+echo domain not the unit cube -> DrawDomain3D, scale and offset from the domain
+file dom.cube "LUT_3D_SIZE 2\nDOMAIN_MIN 0.1 0.1 0.1\nDOMAIN_MAX 0.9 0.8 0.7\n0 0 0\n1 0 0\n0 1 0\n1 1 0\n0 0 1\n1 0 1\n0 1 1\n1 1 1\n"
+dset d image_path str @TMP/dom.cube
+filter f clut_filter 0 d T P
+tick f 0.016
+render f
+echo invalid domain (min >= max): warning, no data
+file baddom.cube "LUT_3D_SIZE 2\nDOMAIN_MIN 0.5 0 0\nDOMAIN_MAX 0.5 1 1\n0 0 0\n1 0 0\n0 1 0\n1 1 0\n0 0 1\n1 0 1\n0 1 1\n1 1 1\n"
+dset d image_path str @TMP/baddom.cube
+filter g clut_filter 0 d T P
+tick g 0.016
+render g
+echo short data / no size / no data -> no texture
+file short.cube "LUT_3D_SIZE 2\n0 0 0\n1 0 0\n"
+dset d image_path str @TMP/short.cube
+filter h clut_filter 0 d T P
+tick h 0.016
+render h
+file nosize.cube "0 0 0\n1 1 1\n"
+dset d image_path str @TMP/nosize.cube
+filter i clut_filter 0 d T P
+tick i 0.016
+file nodata.cube "LUT_3D_SIZE 2\n"
+dset d image_path str @TMP/nodata.cube
+filter j clut_filter 0 d T P
+tick j 0.016
+echo missing file and an uppercase extension
+dset d image_path str @TMP/does-not-exist.cube
+filter k clut_filter 0 d T P
+tick k 0.016
+file UP.CUBE "LUT_3D_SIZE 2\n0 0 0\n1 0 0\n0 1 0\n1 1 0\n0 0 1\n1 0 1\n0 1 1\n1 1 1\n"
+dset d image_path str @TMP/UP.CUBE
+filter l clut_filter 0 d T P
+tick l 0.016
+echo 1D size 1 and extra trailing entries
+file one1.cube "LUT_1D_SIZE 1\n0.5 0.5 0.5\n0.9 0.9 0.9\n"
+dset d image_path str @TMP/one1.cube
+filter m clut_filter 0 d T P
+tick m 0.016
+echo values with exponent notation and tab separators
+file exp.cube "LUT_3D_SIZE 2\n0 0 0\n1e0 0 0\n0\t1\t0\n1 1 0\n0 0 1\n1 0 1\n0 1 1\n1 1 1\n"
+dset d image_path str @TMP/exp.cube
+filter n clut_filter 0 d T P
+tick n 0.016

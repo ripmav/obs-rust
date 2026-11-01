@@ -1,0 +1,18 @@
+# Which canvas size is used: scenes of the alternative canvas (1280x720) vs main (1920x1080) vs no canvas;
+# the video-mix size and the canvas object size are separate fields in the reference (divergence quirk).
+source cam 100 100
+scene m
+scene a alt
+scene n none
+add m cam i1
+add a cam i2
+add n cam i3
+pos i1 960 540
+pos i2 960 540
+pos i3 960 540
+print i1
+print i2
+print i3
+get i1
+get i2
+get i3

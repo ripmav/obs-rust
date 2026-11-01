@@ -1,0 +1,30 @@
+signal hotkey_register id=0
+reg A -> 0
+signal hotkey_bindings_changed id=0
+direct-mode
+poll
+poll
+cb A id=0 same_ptr=1 pressed=1
+poll
+cb A id=0 same_ptr=1 pressed=0
+routed-call-with-rerouting-off-does-nothing
+rerouting-on-without-router-drops-events
+poll
+poll
+poll
+router-set
+poll
+route id=0 pressed=1
+poll
+poll
+route id=0 pressed=0
+inject-also-uses-router
+route id=0 pressed=1
+poll
+route id=0 pressed=0
+trigger-routed-calls-real-callback
+cb A id=0 same_ptr=1 pressed=1
+cb A id=0 same_ptr=1 pressed=0
+trigger-routed-after-rerouting-off
+router-removed
+poll

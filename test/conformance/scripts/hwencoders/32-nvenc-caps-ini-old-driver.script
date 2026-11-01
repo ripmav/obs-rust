@@ -1,0 +1,8 @@
+# S-050 nvenc: driver version parsing "%d.%d" and the split-encode gate: 554.99 -> broken,
+# 555.0 -> fine. Missing/blank keys read as 0/false/"".
+ini "[general]\nnvenc_supported=true\nnvenc_devices=1\ndriver_ver=554.99\nnvenc_ver=12.2\ncuda_ver=12.0\n[h264]\ncodec_supported=1\n"
+supported
+vinfo
+brokensplit
+caps h264
+caps hevc

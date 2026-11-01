@@ -1,0 +1,61 @@
+add list li ok
+add list lf ok
+add list lb ok
+list_add int -> 0
+list_add int -> 1
+list_add int -> 2
+info
+  prop li type=list desc="Int" long=@null enabled=1 visible=1
+    listtype=radio format=int count=4
+     item 0 name="a" disabled=0 value=10
+     item 1 name="ins" disabled=0 value=5
+     item 2 name="b" disabled=0 value=-9223372036854775808
+     item 3 name="c" disabled=0 value=9223372036854775807
+list_add float -> 0
+list_add float -> 1
+info
+  prop lf type=list desc="Float" long=@null enabled=1 visible=1
+    listtype=list format=float count=3
+     item 0 name="z" disabled=0 value=1.0000000000000001e+300
+     item 1 name="x" disabled=0 value=1.5
+     item 2 name="y" disabled=0 value=-0.10000000000000001
+list_add bool -> 0
+list_add bool -> 1
+list_add bool -> 2
+info
+  prop lb type=list desc="Bool" long=@null enabled=1 visible=1
+    listtype=list format=bool count=3
+     item 0 name="t" disabled=0 value=1
+     item 1 name="f" disabled=0 value=0
+     item 2 name="t2" disabled=0 value=1
+echo wrong-format-adds
+list_add string -> 0
+list_add float -> 0
+list_add bool -> 0
+list_add int -> 0
+list_add int -> 0
+list_add string -> 0
+info
+  prop li type=list desc="Int" long=@null enabled=1 visible=1
+    listtype=radio format=int count=4
+     item 0 name="a" disabled=0 value=10
+     item 1 name="ins" disabled=0 value=5
+     item 2 name="b" disabled=0 value=-9223372036854775808
+     item 3 name="c" disabled=0 value=9223372036854775807
+info
+  prop lf type=list desc="Float" long=@null enabled=1 visible=1
+    listtype=list format=float count=3
+     item 0 name="z" disabled=0 value=1.0000000000000001e+300
+     item 1 name="x" disabled=0 value=1.5
+     item 2 name="y" disabled=0 value=-0.10000000000000001
+info
+  prop lb type=list desc="Bool" long=@null enabled=1 visible=1
+    listtype=list format=bool count=3
+     item 0 name="t" disabled=0 value=1
+     item 1 name="f" disabled=0 value=0
+     item 2 name="t2" disabled=0 value=1
+echo item-access-with-every-getter
+list_item 0 name="a" disabled=0 str=@null int=10 float=0 bool=0
+list_item 0 name="z" disabled=0 str=@null int=0 float=1.0000000000000001e+300 bool=0
+list_item 0 name="t" disabled=0 str=@null int=0 float=0 bool=1
+list_item 1 name="f" disabled=0 str=@null int=0 float=0 bool=0

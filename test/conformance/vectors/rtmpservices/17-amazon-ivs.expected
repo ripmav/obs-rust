@@ -1,0 +1,49 @@
+fake proc_handler_add "void twitch_ingests_refresh(int seconds)"
+fake proc_handler_add "void amazon_ivs_ingests_refresh(int seconds)"
+fake update_info_create prefix="[rtmp-services plugin] " agent="rtmp-services plugin (libobs 99.0.0-test)" url=https://obsproject.com/obs2_update/rtmp-services/v5 local=/mod/data cache=/cfg/rtmp-services/ confirm=set
+fake obs_register_service id=rtmp_common
+fake obs_register_service id=rtmp_custom
+module-load -> 1 name="rtmp-services plugin (libobs 99.0.0-test)"
+props P
+  prop service type=list desc="Service" visible=1 enabled=1 combo=2 format=3 items=6
+    item 0 name="Alpha" value="Alpha" disabled=0
+    item 1 name="Golf" value="Golf" disabled=0
+    item 2 name="Facebook Live X" value="Facebook Live X" disabled=0
+    item 3 name="Kilo" value="Kilo" disabled=0
+    item 4 name="Twitch" value="Twitch" disabled=0
+    item 5 name="Amazon IVS" value="Amazon IVS" disabled=0
+  prop show_all type=bool desc="Show all services" visible=1 enabled=1
+  prop server type=list desc="Server" visible=1 enabled=1 combo=2 format=3 items=4
+    item 0 name="Auto (RTMPS, Recommended)" value="auto-rtmps" disabled=0
+    item 1 name="Auto (RTMP)" value="auto-rtmp" disabled=0
+    item 2 name="IVS static" value="rtmps://ivs.example:443/app/" disabled=0
+    item 3 name="IVS static plain" value="rtmp://ivs.example/app/" disabled=0
+  prop key type=text desc="Stream key" visible=1 enabled=1 text_type=1
+echo default-ingest-only
+fake update_info_create_single prefix="[amazon ivs ingest update] " agent="rtmp-services plugin (libobs 99.0.0-test)" url=https://ingest.contribute.live-video.net/ingests
+get url = @null
+get url = "rtmps://ingest.global-contribute.live-video.net:443/app/"
+get url = @null
+get url = @null
+get url = "AUTO-RTMP"
+get url = "rtmps://ivs.example:443/app/"
+get can_connect = 1
+clock 12000 ms
+echo no-RTMPS-registered
+modify service -> 1
+props P
+  prop service type=list desc="Service" visible=1 enabled=1 combo=2 format=3 items=6
+    item 0 name="Alpha" value="Alpha" disabled=0
+    item 1 name="Golf" value="Golf" disabled=0
+    item 2 name="Facebook Live X" value="Facebook Live X" disabled=0
+    item 3 name="Kilo" value="Kilo" disabled=0
+    item 4 name="Twitch" value="Twitch" disabled=0
+    item 5 name="Amazon IVS" value="Amazon IVS" disabled=0
+  prop show_all type=bool desc="Show all services" visible=1 enabled=1
+  prop server type=list desc="Server" visible=1 enabled=1 combo=2 format=3 items=2
+    item 0 name="Auto (RTMP)" value="auto-rtmp" disabled=0
+    item 1 name="IVS static plain" value="rtmp://ivs.example/app/" disabled=0
+  prop key type=text desc="Stream key" visible=1 enabled=1 text_type=1
+fake update_info_destroy url=https://obsproject.com/obs2_update/rtmp-services/v5 pending=0
+fake update_info_destroy url=https://ingest.contribute.live-video.net/ingests pending=0
+module-unload

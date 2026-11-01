@@ -1,0 +1,51 @@
+# S-050 nvenc: init_encoder input-format and HDR gates (run before any SDK call except the
+# capability queries). in_format = get_preferred_format(pref_format, or the video output's format
+# when the encoder has no preference): I010/P010 -> P010; RGBA/BGRA/BGRX/I444 -> I444; others NV12.
+dump 1
+nvcap dyn_bitrate 1
+defaults h264
+# 4:4:4 without capability
+host format i444
+create h264 soft
+# 4:4:4 with the capability
+nvcap 444 1
+create h264 soft
+state
+destroy
+# RGB sources are encoded as 4:4:4 too
+host format bgra
+create h264 soft
+state
+destroy
+# the encoder's preferred format wins over the output format
+host format i444
+host pref_format nv12
+create h264 soft
+state
+destroy
+host pref_format none
+# 10 bit without capability
+host format p010
+create h264 soft
+nvcap 10bit 1
+host format i010
+create h264 soft
+state
+destroy
+# HDR colour space with 8-bit output is refused
+host format nv12
+host colorspace pq
+create h264 soft
+host colorspace hlg
+create h264 soft
+# ... but allowed with a 10-bit output format
+host format p010
+create h264 soft
+state
+destroy
+# unknown formats fall to NV12
+host colorspace 709
+host format yuy2
+create h264 soft
+state
+destroy

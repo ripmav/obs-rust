@@ -1,0 +1,41 @@
+# network, buffering 0
+minit -> ok
+ff open path=o1 format=- nobuffer=1 interrupt=1 opts=[stimeout=30000000]
+minit2 -> ok has_v=1 has_a=0
+mfree
+# network, buffering 1000 + options
+minit -> ok
+ff open path=o1 format=- nobuffer=0 interrupt=1 opts=[buffer_size=1000;a=b;c=d;stimeout=30000000]
+minit2 -> ok has_v=1 has_a=0
+mfree
+# local file never gets buffer_size or the interrupt callback or stimeout
+minit -> ok
+ff open path=o1 format=- nobuffer=0 interrupt=0 opts=[a=b]
+minit2 -> ok has_v=1 has_a=0
+mfree
+# rist urls never get buffer_size
+minit -> ok
+ff open path=rist://x format=- nobuffer=0 interrupt=1 opts=[stimeout=30000000]
+minit2 -> ok has_v=1 has_a=0
+mfree
+# forced format that exists / does not exist
+minit -> ok
+ff open path=o1 format=mpegts nobuffer=1 interrupt=0 opts=[]
+minit2 -> ok has_v=1 has_a=0
+mfree
+minit -> ok
+log info MP: Unable to find input format for 'o1'
+ff open path=o1 format=- nobuffer=1 interrupt=0 opts=[]
+minit2 -> ok has_v=1 has_a=0
+mfree
+# empty format string means probe
+minit -> ok
+ff open path=o1 format=- nobuffer=1 interrupt=0 opts=[]
+minit2 -> ok has_v=1 has_a=0
+mfree
+# malformed options string
+minit -> ok
+log warning Failed to parse FFmpeg options: Invalid argument novalue
+ff open path=o1 format=- nobuffer=1 interrupt=0 opts=[]
+minit2 -> ok has_v=1 has_a=0
+mfree

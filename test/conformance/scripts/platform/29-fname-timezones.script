@@ -1,0 +1,30 @@
+# %hh etc. use localtime(): the zone comes from TZ. POSIX-style TZ strings are used so the vectors do not
+# depend on installed zone data. %Z is the zone abbreviation, %z the numeric offset.
+now 1700000000
+video 60 1 1920 1080 1280 720 NV12
+tz UTC0
+fname @null 1 "%CCYY-%MM-%DD %hh:%mm:%ss %z %Z"
+tz EST5
+fname @null 1 "%CCYY-%MM-%DD %hh:%mm:%ss %z %Z"
+tz IST-5:30
+fname @null 1 "%CCYY-%MM-%DD %hh:%mm:%ss %z %Z"
+tz <+0545>-5:45
+fname @null 1 "%CCYY-%MM-%DD %hh:%mm:%ss %z %Z"
+# daylight saving: summer 1720000000 = 2024-07-03 09:46:40 UTC, winter 1700000000
+tz CET-1CEST,M3.5.0,M10.5.0/3
+fname @null 1 "%hh:%mm %z %Z"
+now 1720000000
+fname @null 1 "%hh:%mm %z %Z"
+tz EST5EDT,M3.2.0,M11.1.0
+fname @null 1 "%hh:%mm %z %Z"
+# the date rolls over with the zone
+now 1704164645
+tz UTC0
+fname @null 1 "%CCYY-%MM-%DD %hh"
+tz EST5
+fname @null 1 "%CCYY-%MM-%DD %hh"
+tz <+14>-14
+fname @null 1 "%CCYY-%MM-%DD %hh"
+# %s is the epoch seconds, independent of the zone
+fname @null 1 "%s"
+tz UTC0

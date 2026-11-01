@@ -1,0 +1,18 @@
+# S-012 DEFECT D-5: a NULL data pointer with size 0 (an empty packet that carries no buffer).
+# The reference's start-code finder wraps its end pointer below zero when p is NULL and
+# dereferences address 0 (crash) in every function that scans the buffer. Required behaviour:
+# identical to an empty (zero-length) input. The runner passes a non-NULL empty buffer for
+# @null in the vectors; the C reference is NOT called with NULL.
+find @null
+avc_find @null
+avc_keyframe @null
+hevc_keyframe @null
+av1_keyframe @null
+avc_priority @null 2
+hevc_priority @null 2
+avc_packet @null 1 1
+hevc_packet @null
+avc_header @null
+avc_extract @null
+hevc_extract @null
+av1_extract @null

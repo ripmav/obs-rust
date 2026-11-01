@@ -1,0 +1,8 @@
+dump size=2 capacity=2 start=0 end=2 data=0a0b
+dump size=3 capacity=4 start=3 end=2 data=0a0b..0c
+dump size=8 capacity=8 start=2 end=2 data=0a0b0d0e0f10110c
+peek_front 0d0e0f10110c0a0b
+pop_back 0c0a0b
+dump size=5 capacity=8 start=2 end=7 data=....0d0e0f1011..
+dump size=6 capacity=8 start=1 end=7 data=..990d0e0f1011..
+dump size=8 capacity=8 start=7 end=7 data=00990d0e0f101100

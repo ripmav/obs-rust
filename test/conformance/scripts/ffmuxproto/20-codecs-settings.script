@@ -1,0 +1,27 @@
+# Unknown codecs and the muxer settings string ("key=value" pairs separated by single spaces).
+reset
+rmfile @m.mkv
+echo --- unknown video codec but a valid audio track: the video stream is simply absent
+args @m.mkv 1 1 nosuchcodec 6000 640 360 1 1 1 1 1 0 30 1 0 aac "A" 128 48000 1024 0 2 "" ""
+hdr video 0 0164001fffe100046764001f01000468ce3c80
+hdr audio 0 1190
+frame video 0 1 0 0 4 a1
+frame audio 0 0 0 0 4 b1
+run
+probe @m.mkv
+echo --- audio codec known to the library but without an encoder: no audio stream
+reset
+args @m.mkv 1 1 h264 6000 640 360 1 1 1 1 1 0 30 1 0 wmapro "A" 128 48000 1024 0 2 "" ""
+hdr video 0 0164001fffe100046764001f01000468ce3c80
+hdr audio 0 -
+inspect
+echo --- muxer settings are parsed as key=value pairs split at spaces and echoed on stdout
+reset
+args @m.mkv 0 1 aac "A" 128 48000 1024 0 2 "" "foo=bar live=0 x=1"
+hdr audio 0 1190
+inspect
+echo --- a pair without = is a parse error: reported on stderr, settings dropped, initialisation continues
+reset
+args @m.mkv 0 1 aac "A" 128 48000 1024 0 2 "" "novalue"
+hdr audio 0 1190
+inspect

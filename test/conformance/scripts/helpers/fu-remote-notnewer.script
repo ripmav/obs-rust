@@ -1,0 +1,10 @@
+# A remote package whose version is not greater than the current cache version changes
+# nothing (CORE). Version comparison is on the package "version" field only.
+fu_put /L/package.json "{\"version\":2,\"files\":[]}"
+fu_put /C/package.json "{\"version\":4,\"files\":[{\"name\":\"a.json\",\"version\":1}]}"
+fu_put /C/a.json "A-cache"
+fu_http http://srv/updates/package.json 200 "{\"version\":4,\"url\":\"http://cdn\",\"files\":[{\"name\":\"a.json\",\"version\":9}]}"
+fu_run /L /C http://srv/updates UA/1.0
+fu_cat /C/a.json
+fu_cat /C/package.json
+fu_run /L /C http://srv/updates UA/1.0

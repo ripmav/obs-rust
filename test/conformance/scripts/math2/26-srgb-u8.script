@@ -1,0 +1,36 @@
+# float <-> u8 conversions (S-009-R121, R122). float_to_u8 = (u8)(f*255 + 0.5), truncating,
+# NOT clamped: only inputs for which f*255+0.5 is in (-1, 256) are defined.
+call c u8_to_float 0
+call c u8_to_float 1
+call c u8_to_float 127
+call c u8_to_float 128
+call c u8_to_float 255
+call b float_to_u8 0
+call b float_to_u8 1
+call b float_to_u8 0.5
+call b float_to_u8 0.25
+call b float_to_u8 0.0019
+call b float_to_u8 0.002
+call b float_to_u8 0.999
+call b float_to_u8 0.998
+# slightly out of [0,1] but still defined: negative values just above -0.5/255 - 1/255 give 0
+call b float_to_u8 -0.001
+call b float_to_u8 -0.004
+call b float_to_u8 1.001
+call b float_to_u8 1.0019
+# round trip of every 17th byte
+call f u8_to_float 17
+call b float_to_u8 0.0666666701
+call f u8_to_float 34
+call b float_to_u8 0.133333340
+call f u8_to_float 200
+call b float_to_u8 0.784313738
+# vector forms
+px p 00ff80c0
+call f4 u8x4_to_float4 p
+call q float4_to_u8x4 f4
+f4 g 0.5 0.25 1 0.5
+call q float4_to_u8x4 g
+# float3_to_u8x3 writes three bytes only; the fourth keeps its previous contents
+px keep 11223344
+call keep float3_to_u8x3 g

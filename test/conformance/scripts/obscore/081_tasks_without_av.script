@@ -1,0 +1,8 @@
+# wait_for_destroy_queue returns false (and does not wait) unless both video and audio are running.
+startup en-US -
+wait_destroy
+reset_video fmt=BGRA gpu=0
+wait_destroy
+reset_audio
+wait_destroy
+shutdown

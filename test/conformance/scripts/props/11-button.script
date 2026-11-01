@@ -1,0 +1,35 @@
+# CORE. Buttons: the callback receives the TOP-most properties object, the button, and either
+# the priv given to add_button2, or (priv NULL) the context's data of the object passed to
+# obs_property_button_clicked. The return value is passed back. No callback: returns false.
+token tk_ctx
+token tk_priv
+obj O tk_ctx
+obj ONULL
+behavior yes ret:1
+behavior no ret:0
+props P
+add button P b1 "Btn1" yes as b1
+add button2 P b2 "Btn2" yes tk_priv as b2
+add button2 P b3 "Btn3" no @null as b3
+add button P b4 "Btn4" @null as b4
+add button2 P b5 "Btn5" @null tk_priv as b5
+info b1
+info b2
+echo v1-button-gets-context-data
+click b1 O
+click b1 ONULL
+click b1 @null
+echo button2-gets-priv-regardless-of-context
+click b2 O
+click b2 @null
+echo button2-with-null-priv-falls-back-to-context-data
+click b3 O
+click b3 @null
+echo no-callback
+click b4 O
+click b5 O
+echo clicking-a-non-button
+add bool P nb "x" as nb
+click nb O
+click @null O
+destroy P

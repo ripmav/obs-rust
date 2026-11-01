@@ -1,0 +1,226 @@
+ep result=ok
+  errors count=0 has_errors=0
+  ep params=3 structs=2 funcs=11 samplers=1 techniques=0
+  ep_param 0 type=float4 name=col property=0 const=0 uniform=1 texture=0 array_count=0 annotations=0
+  ep_param 1 type=texture2d name=img property=0 const=0 uniform=1 texture=1 array_count=0 annotations=0
+  ep_param 2 type=float name=later_param property=0 const=0 uniform=1 texture=0 array_count=0 annotations=0
+  ep_struct 0 name=V vars=2
+    var type=float4 name=pos mapping="POSITION" var_type=IN
+    var type=float2 name=uv mapping="TEXCOORD0" var_type=IN
+  ep_struct 1 name=W vars=1
+    var type=float4 name=pos mapping="POSITION" var_type=IN
+  ep_func 0 name=helper ret=float mapping=@null params=1
+    var type=float name=x mapping=@null var_type=IN
+    struct_deps=[] func_deps=[] param_deps=[] sampler_deps=[]
+    contents="{ return x + 1; }"
+  ep_func 1 name=f1 ret=float4 mapping="TARGET" params=2
+    var type=V name=v mapping=@null var_type=IN
+    var type=float name=t mapping=@null var_type=IN
+    struct_deps=["V"] func_deps=["helper"] param_deps=["img","col"] sampler_deps=["smp"]
+    contents="{ return img.Sample(smp, v.uv) * col * helper(t); }"
+  ep_func 2 name=f2 ret=V mapping=@null params=0
+    struct_deps=["V","V"] func_deps=[] param_deps=["col"] sampler_deps=[]
+    contents="{ V v; v.pos = col; return v; }"
+  ep_func 3 name=f3 ret=void mapping=@null params=4
+    var type=float name=a mapping=@null var_type=IN
+    var type=float name=b mapping=@null var_type=OUT
+    var type=float name=c mapping=@null var_type=INOUT
+    var type=float name=d mapping=@null var_type=UNIFORM
+    struct_deps=[] func_deps=[] param_deps=[] sampler_deps=[]
+    contents="{ b = a; c = d; }"
+  ep_func 4 name=f4 ret=float4 mapping="COLOR" params=2
+    var type=float4 name=a mapping="POSITION" var_type=IN
+    var type=W name=w mapping="FOO" var_type=IN
+    struct_deps=["W"] func_deps=[] param_deps=[] sampler_deps=[]
+    contents="{ return a + w.pos; }"
+  ep_func 5 name=f5 ret=float mapping=@null params=0
+    struct_deps=[] func_deps=[] param_deps=[] sampler_deps=[]
+    contents="{ return 1; }"
+  ep_func 6 name=f5 ret=float mapping=@null params=0
+    struct_deps=[] func_deps=[] param_deps=[] sampler_deps=[]
+    contents="{ return 2; }"
+  ep_func 7 name=later_user ret=float mapping=@null params=0
+    struct_deps=[] func_deps=[] param_deps=[] sampler_deps=[]
+    contents="{ return later_decl(1) + later_param + 1; }"
+  ep_func 8 name=later_decl ret=float mapping=@null params=1
+    var type=float name=x mapping=@null var_type=IN
+    struct_deps=[] func_deps=[] param_deps=[] sampler_deps=[]
+    contents="{ return x; }"
+  ep_func 9 name=noargs ret=float mapping=@null params=0
+    struct_deps=[] func_deps=[] param_deps=[] sampler_deps=[]
+    contents="{ { { nested } } return 1; }"
+  ep_func 10 name=f6 ret=float mapping=@null params=1
+    var type=float name=x mapping=@null var_type=IN
+    struct_deps=[] func_deps=[] param_deps=[] sampler_deps=[]
+    contents="{ return x   + 1;  \n}"
+  ep_sampler 0 name=smp states=1
+    state "Filter" = "Linear"
+  error_string=@null
+effect (effect) params=3 techniques=0 viewproj=- world=-
+  param 0 name=col type=VEC4 annotations=0 default_size=0 default=-
+  param 1 name=img type=TEXTURE annotations=0 default_size=0 default=-
+  param 2 name=later_param type=FLOAT annotations=0 default_size=0 default=-
+--- specifiers on functions are errors
+ep result=fail
+  errors count=1 has_errors=1
+    err 0 error file="s1" row=1 col=16 msg="'uniform' keyword cannot be used with a function"
+  ep params=0 structs=0 funcs=1 samplers=0 techniques=0
+  ep_func 0 name=f ret=float mapping=@null params=0
+    struct_deps=[] func_deps=[] param_deps=[] sampler_deps=[]
+    contents="{ return 1; }"
+  error_string="s1 (1, 16): 'uniform' keyword cannot be used with a function\n"
+ep result=fail
+  errors count=1 has_errors=1
+    err 0 error file="s2" row=1 col=14 msg="'const' keyword cannot be used with a function"
+  ep params=0 structs=0 funcs=1 samplers=0 techniques=0
+  ep_func 0 name=f ret=float mapping=@null params=0
+    struct_deps=[] func_deps=[] param_deps=[] sampler_deps=[]
+    contents="{ return 1; }"
+  error_string="s2 (1, 14): 'const' keyword cannot be used with a function\n"
+ep result=fail
+  errors count=1 has_errors=1
+    err 0 error file="s3" row=1 col=17 msg="'property' keyword cannot be used with a function"
+  ep params=0 structs=0 funcs=1 samplers=0 techniques=0
+  ep_func 0 name=f ret=float mapping=@null params=0
+    struct_deps=[] func_deps=[] param_deps=[] sampler_deps=[]
+    contents="{ return 1; }"
+  error_string="s3 (1, 17): 'property' keyword cannot be used with a function\n"
+ep result=fail
+  errors count=3 has_errors=1
+    err 0 error file="s4" row=1 col=31 msg="'property' keyword cannot be used with a function"
+    err 1 error file="s4" row=1 col=31 msg="'const' keyword cannot be used with a function"
+    err 2 error file="s4" row=1 col=31 msg="'uniform' keyword cannot be used with a function"
+  ep params=0 structs=0 funcs=1 samplers=0 techniques=0
+  ep_func 0 name=f ret=float mapping=@null params=0
+    struct_deps=[] func_deps=[] param_deps=[] sampler_deps=[]
+    contents="{ return 1; }"
+  error_string="s4 (1, 31): 'property' keyword cannot be used with a function\ns4 (1, 31): 'const' keyword cannot be used with a function\ns4 (1, 31): 'uniform' keyword cannot be used with a function\n"
+ep result=fail
+  errors count=2 has_errors=1
+    err 0 warning file="s5" row=1 col=17 msg="'uniform' keyword already specified"
+    err 1 error file="s5" row=1 col=24 msg="'uniform' keyword cannot be used with a function"
+  ep params=0 structs=0 funcs=1 samplers=0 techniques=0
+  ep_func 0 name=f ret=float mapping=@null params=0
+    struct_deps=[] func_deps=[] param_deps=[] sampler_deps=[]
+    contents="{ return 1; }"
+  error_string="s5 (1, 17): 'uniform' keyword already specified\ns5 (1, 24): 'uniform' keyword cannot be used with a function\n"
+--- parameter modifiers
+ep result=ok
+  errors count=0 has_errors=0
+  ep params=0 structs=0 funcs=1 samplers=0 techniques=0
+  ep_func 0 name=y ret=float mapping=@null params=4
+    var type=float name=a mapping=@null var_type=IN
+    var type=float name=b mapping=@null var_type=OUT
+    var type=float name=c mapping=@null var_type=INOUT
+    var type=float name=d mapping=@null var_type=UNIFORM
+    struct_deps=[] func_deps=[] param_deps=[] sampler_deps=[]
+    contents="{ return 1; }"
+  error_string=@null
+effect (effect) params=0 techniques=0 viewproj=- world=-
+ep result=fail
+  errors count=3 has_errors=1
+    err 0 error file="m2" row=1 col=21 msg="Syntax error"
+    err 1 error file="m2" row=1 col=22 msg="Expected 'type'"
+    err 2 error file="m2" row=1 col=37 msg="Unexpected EOF"
+  ep params=0 structs=0 funcs=0 samplers=0 techniques=0
+  error_string="m2 (1, 21): Syntax error\nm2 (1, 22): Expected 'type'\nm2 (1, 37): Unexpected EOF\n"
+ep result=fail
+  errors count=3 has_errors=1
+    err 0 error file="m3" row=1 col=22 msg="Syntax error"
+    err 1 error file="m3" row=1 col=23 msg="Expected 'type'"
+    err 2 error file="m3" row=1 col=38 msg="Unexpected EOF"
+  ep params=0 structs=0 funcs=0 samplers=0 techniques=0
+  error_string="m3 (1, 22): Syntax error\nm3 (1, 23): Expected 'type'\nm3 (1, 38): Unexpected EOF\n"
+ep result=fail
+  errors count=3 has_errors=1
+    err 0 error file="m4" row=1 col=26 msg="Syntax error"
+    err 1 error file="m4" row=1 col=27 msg="Expected 'type'"
+    err 2 error file="m4" row=1 col=42 msg="Unexpected EOF"
+  ep params=0 structs=0 funcs=0 samplers=0 techniques=0
+  error_string="m4 (1, 26): Syntax error\nm4 (1, 27): Expected 'type'\nm4 (1, 42): Unexpected EOF\n"
+ep result=fail
+  errors count=2 has_errors=1
+    err 0 error file="m5" row=1 col=11 msg="Expected 'type'"
+    err 1 error file="m5" row=1 col=26 msg="Unexpected EOF"
+  ep params=0 structs=0 funcs=0 samplers=0 techniques=0
+  error_string="m5 (1, 11): Expected 'type'\nm5 (1, 26): Unexpected EOF\n"
+ep result=fail
+  errors count=3 has_errors=1
+    err 0 error file="m6" row=1 col=18 msg="Syntax error"
+    err 1 error file="m6" row=1 col=19 msg="Expected 'type'"
+    err 2 error file="m6" row=1 col=34 msg="Unexpected EOF"
+  ep params=0 structs=0 funcs=0 samplers=0 techniques=0
+  error_string="m6 (1, 18): Syntax error\nm6 (1, 19): Expected 'type'\nm6 (1, 34): Unexpected EOF\n"
+--- semantics
+ep result=ok
+  errors count=0 has_errors=0
+  ep params=0 structs=0 funcs=1 samplers=0 techniques=0
+  ep_func 0 name=y ret=float mapping=@null params=1
+    var type=float name=a mapping="POS" var_type=IN
+    struct_deps=[] func_deps=[] param_deps=[] sampler_deps=[]
+    contents="{ return 1; }"
+  error_string=@null
+effect (effect) params=0 techniques=0 viewproj=- world=-
+ep result=ok
+  errors count=0 has_errors=0
+  ep params=0 structs=0 funcs=2 samplers=0 techniques=0
+  ep_func 0 name=y ret=float4 mapping="COLOR" params=0
+    struct_deps=[] func_deps=[] param_deps=[] sampler_deps=[]
+    contents="{ return 1; }"
+  ep_func 1 name=y ret=float mapping=@null params=0
+    struct_deps=[] func_deps=[] param_deps=[] sampler_deps=[]
+    contents="{ return 2; }"
+  error_string=@null
+effect (effect) params=0 techniques=0 viewproj=- world=-
+ep result=ok
+  errors count=0 has_errors=0
+  ep params=0 structs=0 funcs=1 samplers=0 techniques=0
+  ep_func 0 name=y ret=float4 mapping="COLOR" params=0
+    struct_deps=[] func_deps=[] param_deps=[] sampler_deps=[]
+    contents="{ return 1; }"
+  error_string=@null
+effect (effect) params=0 techniques=0 viewproj=- world=-
+--- body capture
+ep result=ok
+  errors count=0 has_errors=0
+  ep params=0 structs=0 funcs=1 samplers=0 techniques=0
+  ep_func 0 name=y ret=float mapping=@null params=0
+    struct_deps=[] func_deps=[] param_deps=[] sampler_deps=[]
+    contents="{ }"
+  error_string=@null
+effect (effect) params=0 techniques=0 viewproj=- world=-
+ep result=ok
+  errors count=0 has_errors=0
+  ep params=0 structs=0 funcs=1 samplers=0 techniques=0
+  ep_func 0 name=y ret=float mapping=@null params=0
+    struct_deps=[] func_deps=[] param_deps=[] sampler_deps=[]
+    contents="{ return \"}\"; }"
+  error_string=@null
+effect (effect) params=0 techniques=0 viewproj=- world=-
+ep result=ok
+  errors count=0 has_errors=0
+  ep params=0 structs=0 funcs=1 samplers=0 techniques=0
+  ep_func 0 name=y ret=float mapping=@null params=0
+    struct_deps=[] func_deps=[] param_deps=[] sampler_deps=[]
+    contents="{ if (1) { return 2; } return 1; }"
+  error_string=@null
+effect (effect) params=0 techniques=0 viewproj=- world=-
+ep result=ok
+  errors count=0 has_errors=0
+  ep params=0 structs=0 funcs=2 samplers=0 techniques=0
+  ep_func 0 name=y ret=float mapping=@null params=0
+    struct_deps=[] func_deps=[] param_deps=[] sampler_deps=[]
+    contents="{ return 1; }"
+  ep_func 1 name=z ret=float mapping=@null params=0
+    struct_deps=[] func_deps=["y"] param_deps=[] sampler_deps=[]
+    contents="{ return y(); }"
+  error_string=@null
+effect (effect) params=0 techniques=0 viewproj=- world=-
+ep result=ok
+  errors count=0 has_errors=0
+  ep params=0 structs=0 funcs=1 samplers=0 techniques=0
+  ep_func 0 name=y ret=float mapping=@null params=0
+    struct_deps=[] func_deps=[] param_deps=[] sampler_deps=[]
+    contents="{ return  1; }"
+  error_string=@null
+effect (effect) params=0 techniques=0 viewproj=- world=-

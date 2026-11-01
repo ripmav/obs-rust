@@ -1,0 +1,67 @@
+call effect_create file=sharpness.effect -> e1 uniforms=5 techniques=1
+call get_param e1:sharpness -> ok
+call get_param e1:texture_width -> ok
+call get_param e1:texture_height -> ok
+create a -> ok
+render a
+call filter_begin_cs a format=RGBA space=SRGB allow=ALLOW_DIRECT -> 1
+call set_float e1:sharpness 0.0799999982
+call set_float e1:texture_width 1000
+call set_float e1:texture_height 500
+call blend_push
+call blend_function ONE INVSRCALPHA
+call filter_end a e1 size=0x0
+call blend_pop
+call effect_create file=sharpness.effect -> e2 uniforms=5 techniques=1
+call get_param e2:sharpness -> ok
+call get_param e2:texture_width -> ok
+call get_param e2:texture_height -> ok
+create b -> ok
+render b
+call filter_begin_cs b format=RGBA space=SRGB allow=ALLOW_DIRECT -> 1
+call set_float e2:sharpness 0.0799999982
+call set_float e2:texture_width 1000
+call set_float e2:texture_height 500
+call blend_push
+call blend_function ONE INVSRCALPHA
+call filter_end b e2 size=0x0
+call blend_pop
+call effect_create file=sharpness.effect -> e3 uniforms=5 techniques=1
+call get_param e3:sharpness -> ok
+call get_param e3:texture_width -> ok
+call get_param e3:texture_height -> ok
+create c -> ok
+render c
+call filter_begin_cs c format=RGBA space=SRGB allow=ALLOW_DIRECT -> 1
+call set_float e3:sharpness 0.75
+call set_float e3:texture_width 1000
+call set_float e3:texture_height 500
+call blend_push
+call blend_function ONE INVSRCALPHA
+call filter_end c e3 size=0x0
+call blend_pop
+render c
+call filter_begin_cs c format=RGBA space=SRGB allow=ALLOW_DIRECT -> 1
+call set_float e3:sharpness 0.75
+call set_float e3:texture_width 3
+call set_float e3:texture_height 4
+call blend_push
+call blend_function ONE INVSRCALPHA
+call filter_end c e3 size=0x0
+call blend_pop
+render c
+call filter_begin_cs c format=RGBA16F space=SRGB_16F allow=ALLOW_DIRECT -> 1
+call set_float e3:sharpness 0.75
+call set_float e3:texture_width 3
+call set_float e3:texture_height 4
+call blend_push
+call blend_function ONE INVSRCALPHA
+call filter_end c e3 size=0x0
+call blend_pop
+render c
+call skip_video_filter c
+render a
+call skip_video_filter a
+echo effect load failure: create returns NULL
+call effect_create file=sharpness.effect -> null
+create z -> null

@@ -1,0 +1,45 @@
+> trace 0
+> gs_create g
+ret 0 created
+> gs_enter_context g
+> trace 1
+> file e.effect "uniform float4x4 ViewProj;\nstruct VI { float4 pos : POSITION; };\nstruct VO { float4 pos : POSITION; };\nVO VS(VI v) { VO o; o.pos = mul(float4(v.pos.xyz, 1.0), ViewProj); return o; }\nfloat4 PS(VO v) : TARGET { return float4(1.0, 1.0, 1.0, 1.0); }\ntechnique Draw { pass { vertex_shader = VS(v); pixel_shader = PS(v); } }\n"
+> gs_get_effect
+ret null
+> gs_effect_create_from_file e.effect > e1
+  dev device_preprocessor_name
+  dev device_vertexshader_create text_len=222 file="e.effect (Vertex shader, technique Draw, pass 0)"
+  dev gs_shader_get_param_by_name shader=#6 name="ViewProj"
+  dev device_pixelshader_create text_len=142 file="e.effect (Pixel shader, technique Draw, pass 0)"
+ret ptr
+== the second request is a cache hit: same object, no backend shader creation
+> gs_effect_create_from_file e.effect > e2
+ret ptr
+> same e1 e2
+same true
+== a different path with the same content is a separate effect
+> file f.effect "uniform float4x4 ViewProj;\nstruct VI { float4 pos : POSITION; };\nstruct VO { float4 pos : POSITION; };\nVO VS(VI v) { VO o; o.pos = mul(float4(v.pos.xyz, 1.0), ViewProj); return o; }\nfloat4 PS(VO v) : TARGET { return float4(1.0, 1.0, 1.0, 1.0); }\ntechnique Draw { pass { vertex_shader = VS(v); pixel_shader = PS(v); } }\n"
+> gs_effect_create_from_file f.effect > e3
+  dev device_preprocessor_name
+  dev device_vertexshader_create text_len=222 file="f.effect (Vertex shader, technique Draw, pass 0)"
+  dev gs_shader_get_param_by_name shader=#9 name="ViewProj"
+  dev device_pixelshader_create text_len=142 file="f.effect (Pixel shader, technique Draw, pass 0)"
+ret ptr
+> same e1 e3
+same false
+== destroying the graphics object destroys the cached effects inside the context
+> trace 1
+> gs_leave_context
+  dev device_leave_context
+> gs_destroy g
+  dev device_enter_context
+  dev gs_shader_destroy shader=#9
+  dev gs_shader_destroy shader=#11
+  dev gs_shader_destroy shader=#6
+  dev gs_shader_destroy shader=#8
+  dev gs_vertexbuffer_destroy vb=#4
+  dev gs_vertexbuffer_destroy vb=#5
+  dev gs_vertexbuffer_destroy vb=#3
+  dev gs_vertexbuffer_destroy vb=#2
+  dev device_destroy device=#1
+  os_dlclose

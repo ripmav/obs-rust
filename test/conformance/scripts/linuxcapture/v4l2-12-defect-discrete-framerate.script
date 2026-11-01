@@ -1,0 +1,31 @@
+# S-049 v4l2 DEFECT D-1: discrete frame intervals are listed with value (int)pack(num,den), i.e. only the
+# low 32 bits survive (the denominator). Selecting "30.00" stores 30, which unpacks (legacy encoding) as
+# numerator 0 / denominator 30 -- S_PARM then receives timeperframe 0/30. The hardcoded table (stepwise
+# devices) stores full 64-bit values and works. Required behaviour for a reimplementation: store the full
+# packed value (4294967326 for 1/30); the legacy decode must still accept 30 as "1/30"? NO - see spec.
+fake-dir video0
+dev /dev/video0
+dev-cap "Cam" usb-1 0x85200001 0x05200001
+dev-input Camera 0
+dev-fmt YUYV "YUYV" 0
+dev-size YUYV 640 480
+dev-ival YUYV 640 480 1 30
+dev-ival YUYV 640 480 2 25
+dev-cur 0 640 480 YUYV 1280 1 15 0
+src-defaults
+set-str device_id /dev/video0
+set-int pixelformat 0x56595559
+set-int resolution 2748779069920
+src-create
+src-props
+modified device_id
+props
+trace on
+# the user picks "30.00" from the list: value 30
+set-int framerate 30
+src-update
+src-thread-run
+# the second discrete entry 2/25 (12.5 fps) is stored as 25 too
+set-int framerate 25
+src-update
+src-destroy

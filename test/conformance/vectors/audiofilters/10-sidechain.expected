@@ -1,0 +1,106 @@
+create c -> ok
+state compressor channels=2 rate=48000 buf_len=480 ratio=10 threshold=-30 attack_gain=0.979382157 release_gain=0.979382157 output_gain=1 slope=0.899999976 envelope=0 sidechain_name=mic weak=0 max_sc_frames=0 sc_queue0=0 check_time=7000000000
+echo tick-at-same-clock-does-nothing
+state compressor channels=2 rate=48000 buf_len=480 ratio=10 threshold=-30 attack_gain=0.979382157 release_gain=0.979382157 output_gain=1 slope=0.899999976 envelope=0 sidechain_name=mic weak=0 max_sc_frames=0 sc_queue0=0 check_time=7000000000
+host get_source_by_name mic -> ok
+host add_audio_capture_callback mic
+host source_release mic
+state compressor channels=2 rate=48000 buf_len=480 ratio=10 threshold=-30 attack_gain=0.979382157 release_gain=0.979382157 output_gain=1 slope=0.899999976 envelope=0 sidechain_name=mic weak=1 max_sc_frames=0 sc_queue0=0 check_time=10000000001
+refs mic strong=0 callbacks=1 weak_live=1
+echo capture-then-process-uses-sidechain-envelope
+sc_push mic frames=480 muted=0 callbacks=1
+state compressor channels=2 rate=48000 buf_len=480 ratio=10 threshold=-30 attack_gain=0.979382157 release_gain=0.979382157 output_gain=1 slope=0.899999976 envelope=0 sidechain_name=mic weak=1 max_sc_frames=480 sc_queue0=1920 check_time=10000000001
+process c frames=480 ts=0 pos=0 in-crc: 5e3b20c5 5e3b20c5
+  ret same frames=480 ts=0
+  out p0 [0] 0.5 0.0705119297 0.0350511745 0.0441017151 0.0430089347 0.030997267 0.0410790332 0.0417088494 0.0307078343 0.0408501886 0.0416058041 0.0306843258
+state compressor channels=2 rate=48000 buf_len=480 ratio=10 threshold=-30 attack_gain=0.979382157 release_gain=0.979382157 output_gain=1 slope=0.899999976 envelope=0.522285998 sidechain_name=mic weak=1 max_sc_frames=480 sc_queue0=0 check_time=10000000001
+echo sidechain-underflow-gives-silence-envelope
+process c frames=480 ts=0 pos=480 in-crc: 5e3b20c5 5e3b20c5
+  ret same frames=480 ts=0
+  out p0 [0] 0.0408315212 0.125770077 0.387399584 0.5 0.5 0.5 0.5 0.5
+state compressor channels=2 rate=48000 buf_len=480 ratio=10 threshold=-30 attack_gain=0.979382157 release_gain=0.979382157 output_gain=1 slope=0.899999976 envelope=2.37114491e-05 sidechain_name=mic weak=1 max_sc_frames=480 sc_queue0=0 check_time=10000000001
+echo muted-capture-pushes-zeros
+sc_push mic frames=480 muted=1 callbacks=1
+state compressor channels=2 rate=48000 buf_len=480 ratio=10 threshold=-30 attack_gain=0.979382157 release_gain=0.979382157 output_gain=1 slope=0.899999976 envelope=2.37114491e-05 sidechain_name=mic weak=1 max_sc_frames=480 sc_queue0=1920 check_time=10000000001
+process c frames=480 ts=0 pos=960 in-crc: 5e3b20c5 5e3b20c5
+  ret same frames=480 ts=0
+  out p0 [470] 0.5 0.5 0.5 0.5 0.5
+echo capture-drops-oldest-when-queue-exceeds-twice-expected
+sc_push mic frames=100 muted=0 callbacks=1
+sc_push mic frames=100 muted=0 callbacks=1
+sc_push mic frames=100 muted=0 callbacks=1
+sc_push mic frames=100 muted=0 callbacks=1
+state compressor channels=2 rate=48000 buf_len=480 ratio=10 threshold=-30 attack_gain=0.979382157 release_gain=0.979382157 output_gain=1 slope=0.899999976 envelope=1.07648568e-09 sidechain_name=mic weak=1 max_sc_frames=480 sc_queue0=1600 check_time=10000000001
+echo smaller-block-pops-whole-buffer-length-quirk
+sc_push mic frames=480 muted=0 callbacks=1
+sc_push mic frames=480 muted=0 callbacks=1
+process c frames=16 ts=0 pos=1440 in-crc: d4e78445 d4e78445
+  ret same frames=16 ts=0
+  out p0 [0] 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5
+  out p1 [0] 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5
+state compressor channels=2 rate=48000 buf_len=480 ratio=10 threshold=-30 attack_gain=0.979382157 release_gain=0.979382157 output_gain=1 slope=0.899999976 envelope=0.0283468962 sidechain_name=mic weak=1 max_sc_frames=480 sc_queue0=3520 check_time=10000000001
+echo change-sidechain-removes-callback-and-rechecks-after-3s
+host weak_get_source mic -> ok
+host remove_audio_capture_callback mic
+host source_release mic
+host weak_release mic
+state compressor channels=2 rate=48000 buf_len=480 ratio=10 threshold=-30 attack_gain=0.979382157 release_gain=0.979382157 output_gain=1 slope=0.899999976 envelope=0.0283468962 sidechain_name=other weak=0 max_sc_frames=480 sc_queue0=3520 check_time=7000000001
+state compressor channels=2 rate=48000 buf_len=480 ratio=10 threshold=-30 attack_gain=0.979382157 release_gain=0.979382157 output_gain=1 slope=0.899999976 envelope=0.0283468962 sidechain_name=other weak=0 max_sc_frames=480 sc_queue0=3520 check_time=7000000001
+host get_source_by_name other -> ok
+host add_audio_capture_callback other
+host source_release other
+state compressor channels=2 rate=48000 buf_len=480 ratio=10 threshold=-30 attack_gain=0.979382157 release_gain=0.979382157 output_gain=1 slope=0.899999976 envelope=0.0283468962 sidechain_name=other weak=1 max_sc_frames=480 sc_queue0=3520 check_time=13000000001
+state compressor channels=2 rate=48000 buf_len=480 ratio=10 threshold=-30 attack_gain=0.979382157 release_gain=0.979382157 output_gain=1 slope=0.899999976 envelope=0.0283468962 sidechain_name=other weak=1 max_sc_frames=480 sc_queue0=3520 check_time=13000000001
+refs other strong=0 callbacks=1 weak_live=1
+refs mic strong=0 callbacks=0 weak_live=1
+echo missing-source-retries-every-3s
+host weak_get_source other -> ok
+host remove_audio_capture_callback other
+host source_release other
+host weak_release other
+host get_source_by_name nosuch -> null
+host get_source_by_name nosuch -> null
+state compressor channels=2 rate=48000 buf_len=480 ratio=10 threshold=-30 attack_gain=0.979382157 release_gain=0.979382157 output_gain=1 slope=0.899999976 envelope=0.0283468962 sidechain_name=nosuch weak=0 max_sc_frames=480 sc_queue0=3520 check_time=22000000004
+echo none-and-empty-and-same-name
+state compressor channels=2 rate=48000 buf_len=480 ratio=10 threshold=-30 attack_gain=0.979382157 release_gain=0.979382157 output_gain=1 slope=0.899999976 envelope=0.0283468962 sidechain_name=(null) weak=0 max_sc_frames=480 sc_queue0=3520 check_time=22000000004
+state compressor channels=2 rate=48000 buf_len=480 ratio=10 threshold=-30 attack_gain=0.979382157 release_gain=0.979382157 output_gain=1 slope=0.899999976 envelope=0.0283468962 sidechain_name=(null) weak=0 max_sc_frames=480 sc_queue0=3520 check_time=22000000004
+echo dead-source
+host get_source_by_name cam -> ok
+host add_audio_capture_callback cam
+host source_release cam
+host weak_get_source cam -> null
+host weak_release cam
+state compressor channels=2 rate=48000 buf_len=480 ratio=10 threshold=-30 attack_gain=0.979382157 release_gain=0.979382157 output_gain=1 slope=0.899999976 envelope=0.0283468962 sidechain_name=ghost weak=0 max_sc_frames=480 sc_queue0=3520 check_time=22000000005
+echo destroy-removes-callback
+host get_source_by_name mic -> ok
+host add_audio_capture_callback mic
+host source_release mic
+host weak_get_source mic -> ok
+host remove_audio_capture_callback mic
+host source_release mic
+host weak_release mic
+destroy c
+refs mic strong=0 callbacks=0 weak_live=0
+echo properties-list-audio-sources-except-parent
+create c2 -> ok
+props count=6
+  prop ratio type=float desc="Compressor.Ratio" enabled=1 visible=1 min=1 max=32 step=0.5 numtype=1 suffix=":1"
+  prop threshold type=float desc="Compressor.Threshold" enabled=1 visible=1 min=-60 max=0 step=0.1 numtype=1 suffix=" dB"
+  prop attack_time type=int desc="Compressor.AttackTime" enabled=1 visible=1 min=1 max=500 step=1 numtype=1 suffix=" ms"
+  prop release_time type=int desc="Compressor.ReleaseTime" enabled=1 visible=1 min=1 max=1000 step=1 numtype=1 suffix=" ms"
+  prop output_gain type=float desc="Compressor.OutputGain" enabled=1 visible=1 min=-32 max=32 step=0.1 numtype=1 suffix=" dB"
+  prop sidechain_source type=list desc="Compressor.SidechainSource" enabled=1 visible=1 listtype=2 format=3 items=3
+    item 0 name="None" value="none" disabled=0
+    item 1 name="ghost" value="ghost" disabled=0
+    item 2 name="other" value="other" disabled=0
+props count=6
+  prop ratio type=float desc="Compressor.Ratio" enabled=1 visible=1 min=1 max=32 step=0.5 numtype=1 suffix=":1"
+  prop threshold type=float desc="Compressor.Threshold" enabled=1 visible=1 min=-60 max=0 step=0.1 numtype=1 suffix=" dB"
+  prop attack_time type=int desc="Compressor.AttackTime" enabled=1 visible=1 min=1 max=500 step=1 numtype=1 suffix=" ms"
+  prop release_time type=int desc="Compressor.ReleaseTime" enabled=1 visible=1 min=1 max=1000 step=1 numtype=1 suffix=" ms"
+  prop output_gain type=float desc="Compressor.OutputGain" enabled=1 visible=1 min=-32 max=32 step=0.1 numtype=1 suffix=" dB"
+  prop sidechain_source type=list desc="Compressor.SidechainSource" enabled=1 visible=1 listtype=2 format=3 items=4
+    item 0 name="None" value="none" disabled=0
+    item 1 name="mic" value="mic" disabled=0
+    item 2 name="ghost" value="ghost" disabled=0
+    item 3 name="other" value="other" disabled=0

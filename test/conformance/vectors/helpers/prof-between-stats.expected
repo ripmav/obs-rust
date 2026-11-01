@@ -1,0 +1,14 @@
+p_snap roots=1
+p_dump roots=1
+  entry name="t" count=11 min=1 max=1 expected=10000 bcount=10 bmin=7001 bmax=11001 children=0
+    times 1:11
+    between 11001:1 10001:1 9101:1 9001:4 8851:1 8001:1 7001:1
+p_print_between
+text "== Profiler Time Between Calls =================="
+text "t: min=7.001\xc2\xa0ms, median=9.001\xc2\xa0ms, max=11.001\xc2\xa0ms, 10% within \xc2\xb12% of 10\xc2\xa0ms (80% lower, 10% higher)"
+text "================================================="
+p_print
+text "== Profiler Results ============================="
+text "t: 0.001\xc2\xa0ms"
+text "================================================="
+p_free done

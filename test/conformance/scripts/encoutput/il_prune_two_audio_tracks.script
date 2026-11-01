@@ -1,0 +1,45 @@
+# QUIRK: start-up pruning with several audio tracks decides on the audio-vs-video gap of the LAST audio
+# track examined (highest index), not on the largest gap. Run 1: track 0 is far from the video (100000us),
+# track 1 is close -> no pruning. Run 2: the other way round -> pruning.
+video 30 1 1280 720
+audio 48000
+venc v1
+venc v2
+aenc a0 frame_size=1024
+aenc a1 frame_size=1024
+aenc b0 frame_size=1024
+aenc b1 frame_size=1024
+out o1 av,encoded,multi_a autobegin=1
+set_venc o1 v1
+set_aenc o1 a0 0
+set_aenc o1 a1 1
+out o2 av,encoded,multi_a autobegin=1
+set_venc o2 v2
+set_aenc o2 b0 0
+set_aenc o2 b1 1
+echo --- run 1: audio track 0 starts 100000us after the video, track 1 at the same time as the video
+start o1
+enc_start_ts a0 100000000
+emit v1 0 0 1 4
+emit v1 1 1 1 4
+emit v1 2 2 1 4
+emit a0 0 0 0 4
+emit a1 0 0 0 4
+queue o1
+emit a1 1024 1024 0 4
+emit a0 1024 1024 0 4
+emit a1 2048 2048 0 4
+emit a0 2048 2048 0 4
+queue o1
+echo --- run 2: track 0 is close, track 1 is 100000us late
+start o2
+enc_start_ts b1 100000000
+emit v2 0 0 1 4
+emit v2 1 1 1 4
+emit v2 2 2 1 4
+emit b0 0 0 0 4
+emit b1 0 0 0 4
+queue o2
+emit b0 1024 1024 0 4
+emit b1 1024 1024 0 4
+queue o2

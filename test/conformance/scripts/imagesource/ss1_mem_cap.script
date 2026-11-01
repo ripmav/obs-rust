@@ -1,0 +1,10 @@
+# slideshow v1: image loading stops once the accounted memory reaches 400 MiB (400*1048576 bytes) (CORE).
+fs_file /s/a.png 1
+fs_file /s/b.png 1
+fs_file /s/c.png 1
+img /s/a.png 10000 10000
+img /s/b.png 10000 10000
+img /s/c.png 10 10
+create ss slideshow {"files":[{"value":"/s/a.png"},{"value":"/s/b.png"},{"value":"/s/c.png"}]}
+tick 0.016
+state ss

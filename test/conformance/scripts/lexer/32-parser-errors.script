@@ -1,0 +1,12 @@
+# CORE: cf_adderror formatting: $1..$3 substitution, literal text when all values NULL, positions from the current token.
+parse "ab\n  cd ef"
+setcur 0
+adderror "plain \$1" 0
+adderror "v=\$1 \$2 \$3 \$1" 1 A B C
+adderror "only2 \$1\$2\$3" 0 x @null z
+next
+next
+expecting "';'"
+eof_error
+syntax_error
+errstr

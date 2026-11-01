@@ -1,0 +1,23 @@
+# The main canvas: created by startup (before video exists), fixed name and UUID, flags
+# MAIN|ACTIVATE|MIX_AUDIO|SCENE_REF, main view type; it can not be renamed, removed, reset or
+# created by users, and it is reachable by name and UUID and through the enumeration.
+startup en-US -
+canvas_info main
+get main_canvas -
+get canvas_by_name Main
+get canvas_by_uuid 6c69626f-6273-4c00-9d88-c5136d61696e
+get canvas_by_uuid 00000000-0000-0000-0000-000000000000
+enum canvases
+canvas_name main Renamed
+canvas_remove main
+canvas_reset_video main
+canvas_reset_video main null
+canvas_save main
+canvas_video_info main
+mix_info main
+# after video is set the canvas has a mix
+reset_video
+canvas_info main
+canvas_video_info main
+canvas_valid_ovi main
+shutdown

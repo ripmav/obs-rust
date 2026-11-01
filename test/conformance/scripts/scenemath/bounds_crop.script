@@ -1,0 +1,48 @@
+# crop-to-bounds: with outer / to-width / to-height types the overflow is removed by cropping the source, split
+# according to the bounds alignment on that axis; the crop is a rounded integer and is stored in bounds_crop.
+source s 200 100
+scene main
+add main s c
+pos c 0 0
+align c 5
+bounds c 100 100
+bounds_crop c 1
+echo -- outer: scale 1 -> box 100x100, item 200x100 overflows horizontally by 100 px
+bounds_type c 3
+print c
+echo -- aligned left: all overdraw cropped on the right
+bounds_align c 1
+print c
+echo -- aligned right: cropped on the left
+bounds_align c 2
+print c
+echo -- to-height with no overflow (scale .5 -> 100x50): nothing cropped
+bounds_type c 5
+bounds c 100 50
+bounds_align c 0
+print c
+echo -- to-height into a tall box: scale 2 -> 400x200 in a 100x200 box, overflow 300 px horizontally
+bounds_type c 5
+bounds c 100 200
+bounds_align c 0
+print c
+bounds_align c 2
+print c
+echo -- vertical overflow: to-width into a short box, top / bottom / center
+bounds_type c 4
+bounds c 100 20
+bounds_align c 4
+print c
+bounds_align c 8
+print c
+bounds_align c 0
+print c
+echo -- types that never crop (inner, stretch, max-only) ignore the flag
+bounds_type c 2
+print c
+bounds_type c 1
+print c
+echo -- flag off clears the crop at the next recompute
+bounds_type c 3
+bounds_crop c 0
+print c

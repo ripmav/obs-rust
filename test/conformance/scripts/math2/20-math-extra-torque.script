@@ -1,0 +1,76 @@
+# calc_torquef / calc_torque / get_percentage (S-009-R93..R95).
+# calc_torquef(val1, val2, torque, min_adjust, t)
+call f calc_torquef 0 10 0.5 1 1
+call f calc_torquef 0 10 0.5 1 0.5
+call f calc_torquef 0 10 0.05 1 1
+call f calc_torquef 0 10 0.05 2 1
+call f calc_torquef 0 10 1 1 5
+call f calc_torquef 10 0 0.5 1 1
+call f calc_torquef 10 0 0.05 1 1
+call f calc_torquef 10 0 0.05 2 1
+call f calc_torquef 10 0 1 1 5
+# already close (|v1-v2| <= EPSILON): returns val2
+call f calc_torquef 5 5.0001 0.5 1 1
+call f calc_torquef 5 5.00011 0.5 1 1
+call f calc_torquef 5 4.9999 0.5 1 1
+# t = 0 leaves the value unchanged; negative t moves away but is clamped only on the far side
+call f calc_torquef 0 10 0.5 1 0
+call f calc_torquef 0 10 0.5 1 -1
+# calc_torque (vectors): moves v1 towards v2 along the line by torque_dist * t, where
+# torque_dist = max(dist * torque, min_adjust). Snaps to v2 when the step would reach it
+# (adjust > dist - LARGE_EPSILON). NOTE (Q-8): the first test, vec3_close, is SIGNED, so v1 must be
+# above v2 in at least one component by >= EPSILON for any movement to happen; all the
+# "moving" cases below therefore start at the larger coordinates.
+vec3 a 0 0 0
+vec3 b 10 0 0
+vec3 d 3 4 0
+vec3 far 30 40 0
+call v calc_torque b a 0.5 1 1
+call v calc_torque b a 0.5 1 0.5
+call v calc_torque b a 0.01 1 1
+call v calc_torque b a 0.01 2 1
+call v calc_torque b a 0.01 2 0.25
+call v calc_torque far a 0.1 1 1
+call v calc_torque far a 0.1 5 1
+call v calc_torque far a 0.1 5 0.5
+# overshoot threshold: step reaches dist - 0.01 or more => result is v2
+call v calc_torque b a 1 1 0.999
+call v calc_torque b a 1 1 0.9989
+call v calc_torque b a 1 1 1
+call v calc_torque b a 1 1 2
+# snapped result copies v2 completely (all lanes)
+vec3 w2 0 0 0 7
+call v calc_torque b w2 1 1 1
+# Q-8: v1 below v2 in every component (signed vec3_close): snaps to v2 at once, even with
+# tiny torque
+vec3 lo -5 -5 -5
+vec3 hi 5 5 5
+call v calc_torque lo hi 0.001 0.001 0.001
+call v calc_torque a b 0.001 0.001 0.001
+call v calc_torque a a 0.5 1 1
+# mixed: only one component above => real movement
+vec3 m1 0 10 0
+vec3 m2 10 0 0
+call v calc_torque m1 m2 0.1 1 0.1
+call v calc_torque m2 m1 0.1 1 0.1
+# Q-9: destination aliasing v1 corrupts the result (dir*adjust is written into v1 before the add)
+vec3 al 0 10 0
+vec3 target 0 0 0
+call al calc_torque al target 0.1 1 0.5
+# aliasing v2 is fine
+vec3 al2 0 0 0
+vec3 src 0 10 0
+call al2 calc_torque src al2 0.1 1 0.5
+# percentages
+call p get_percentage 0 10 5
+call p get_percentage 10 0 2
+call p get_percentage 5 5 5
+call p get_percentage 5 5 6
+call p get_percentage 0 1 -1
+call p get_percentage 2 4 8
+call p get_percentagei 0 10 5
+call p get_percentagei 10 20 12
+call p get_percentagei 3 3 3
+call p get_percentagei 3 3 4
+call p get_percentagei 0 3 1
+call p get_percentagei -10 10 5

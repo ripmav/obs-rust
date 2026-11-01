@@ -1,0 +1,29 @@
+# Bounds: reads past `len` return 0 bits and do not advance; len limits the read
+# even when the buffer is longer; len 0 reads nothing (CORE).
+bs_init 34ffe1239145 5
+bs_r8
+bs_r8
+bs_r8
+bs_r16
+bs_state
+bs_r8
+bs_bit
+bs_bits 5
+bs_state
+bs_init a5c3 1
+bs_bits 4
+bs_bits 8
+bs_state
+bs_bits 4
+bs_bits 4
+bs_state
+bs_init ff 0
+bs_r8
+bs_state
+bs_init -
+bs_r16
+bs_state
+bs_init abcd
+bs_r16
+bs_r16
+bs_state

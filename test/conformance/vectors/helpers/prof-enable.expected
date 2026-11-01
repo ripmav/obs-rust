@@ -1,0 +1,12 @@
+p_snap roots=0
+p_dump roots=0
+p_snap roots=0
+p_dump roots=0
+p_snap roots=0
+p_dump roots=0
+p_snap roots=1
+p_dump roots=1
+  entry name="r" count=1 min=5 max=5 expected=0 bcount=0 bmin=0 bmax=0 children=0
+    times 5:1
+    between
+p_free done

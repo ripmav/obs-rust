@@ -1,0 +1,31 @@
+# s_w8 / s_wl* / s_wb* integer helpers on an in-memory serializer (CORE).
+# Each helper truncates its argument to its width; 24-bit helpers take a 32-bit value
+# and emit only the low 3 bytes. l = little endian, b = big endian.
+open array
+w8 0x12
+w8 0x1ff
+dump
+array_reset
+wl16 0x1234
+wl16 0x11234
+wb16 0x1234
+dump
+array_reset
+wl24 0x123456
+wb24 0x123456
+wl24 0xaa123456
+wb24 0xaa123456
+dump
+array_reset
+wl32 0x01020304
+wb32 0x01020304
+wl32 0xfffffffe
+wb32 0
+dump
+array_reset
+wl64 0x0102030405060708
+wb64 0x0102030405060708
+wl64 0xfffffffffffffffe
+wb64 1
+dump
+close

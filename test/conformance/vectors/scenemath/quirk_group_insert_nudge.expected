@@ -1,0 +1,17 @@
+add a ok
+add b ok
+get a pos=100.5,51 rot=0 scale=1.33369994,1.33369994 align=5 btype=0 balign=0 bounds=0,0 bcrop=0 crop=0,0,0,0
+info a pos=100.5,51 rot=0 scale=1.33369994,1.33369994 align=5 btype=0 balign=0 bounds=0,0 crop_to_bounds=0
+ box_scale=266.73999,133.369995
+group g ok
+-- stored scale of a inside the group differs from 1.3337
+item a id=1 parent=g group=0 scene=0 abs=0 vis=1 user_vis=1 sel=0 lock=0 need_update=0
+  stored pos=-1.5916667,-0.905555546 rot=0 scale=1.33333337,1.33333337 scale_ref=1920,1080 align=5
+  bounds type=0 align=0 size=0,0 crop_to_bounds=0
+  crop l=0 r=0 t=0 b=0 bounds_crop l=0 r=0 t=0 b=0 last=200,100
+  output_scale=1.33333337,1.33333337 box_scale=266.666687,133.333344
+  draw [1.33333337,0,0,0] [0,1.33333337,0,0] [0,0,1,0] [100.5,51,0,1]
+  box [266.666687,0,0,0] [0,133.333344,0,0] [0,0,1,0] [100.5,51,0,1]
+get a pos=100.5,51 rot=0 scale=1.33333337,1.33333337 align=5 btype=0 balign=0 bounds=0,0 bcrop=0 crop=0,0,0,0
+info a pos=100.5,51 rot=0 scale=1.33333337,1.33333337 align=5 btype=0 balign=0 bounds=0,0 crop_to_bounds=0
+ box_scale=266.666687,133.333344

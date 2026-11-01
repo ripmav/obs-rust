@@ -1,0 +1,21 @@
+# QUIRK/DEFECT: texture-coordinate arrays of units that the finished buffer does not use are never freed
+# (immediate mode: units >= 1 are accepted but ignored and leak; retained mode: only the leading non-empty
+# units become part of the vertex buffer, later ones leak).  Observable only with a leak checker; the
+# vectors show the accepted behaviour.  A Rust implementation SHOULD simply drop them.
+trace 0
+gs_create g
+gs_enter_context g
+trace 1
+echo == immediate mode: only unit 0 is uploaded
+gs_render_start 0
+gs_vertex2f 1 1
+gs_texcoord 0.5 0.5 1
+gs_texcoord 0.25 0.25 0
+gs_render_stop GS_POINTS
+echo == retained mode: the number of leading non-empty units is num_tex (a gap ends the list)
+gs_render_start 1
+gs_vertex2f 0 0
+gs_texcoord 1 1 0
+gs_texcoord 2 2 2
+gs_render_save > vb2
+gs_vertexbuffer_destroy vb2

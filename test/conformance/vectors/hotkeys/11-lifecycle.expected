@@ -1,0 +1,34 @@
+signal hotkey_register id=0
+reg A -> 0
+signal hotkey_bindings_changed id=0
+atomic
+atomic ran
+reentrant-callback
+cb A id=0 same_ptr=1 pressed=1
+  reenter save count=1
+info A id=0 type=0 partner=INVALID registerer=none pressed_count=1
+  name="A"
+  desc="touched"
+exhaustion-near-the-end-of-the-id-space
+log warning obs-hotkey: Available hotkey ids exhausted
+signal hotkey_register id=18446744073709551614
+reg Z1 -> 18446744073709551614
+signal hotkey_register id=INVALID
+reg Z2 -> INVALID
+exhaustion-pair-ids
+log warning obs-hotkey: Available hotkey pair ids exhausted
+signal hotkey_register id=0
+signal hotkey_register id=1
+regp PZ -> pair=18446744073709551614 a=0 b=1
+signal hotkey_register id=2
+signal hotkey_register id=3
+regp PZ2 -> pair=INVALID
+free-releases-everything
+hkfree hotkeys=0 pairs=0 bindings=0 weak_live=0
+core-absent
+save A null
+savepair 0 null
+savepair 1 null
+enum done
+enumb done
+bgpress thread_disable_press=-1

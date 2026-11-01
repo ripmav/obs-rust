@@ -1,0 +1,76 @@
+> va_caps cbr 1
+> va_defaults h264
+va.open_device "/dev/dri/renderD128" by vaapi_defaults -> ok
+> get str vaapi_device
+vaapi_device = "/dev/dri/renderD128"
+> get int profile
+profile = 100
+> get int level
+level = -99
+> get int bitrate
+bitrate = 6000
+> get int qp
+qp = 20
+> get int bf
+bf = 0
+> get str rate_control
+rate_control = "CBR"
+> reset
+> va_caps cbr 0
+> va_caps vbr 1
+> va_defaults hevc
+va.open_device "/dev/dri/renderD129" by vaapi_defaults -> ok
+> get str vaapi_device
+vaapi_device = "/dev/dri/renderD129"
+> get int profile
+profile = 1
+> get str rate_control
+rate_control = "VBR"
+> reset
+> va_caps vbr 0
+> va_defaults av1
+va.open_device "/dev/dri/renderD130" by vaapi_defaults -> ok
+> get str vaapi_device
+vaapi_device = "/dev/dri/renderD130"
+> get int profile
+profile = 0
+> get str rate_control
+rate_control = "CQP"
+> reset
+> va_caps open 0
+> va_defaults h264
+va.open_device "/dev/dri/renderD128" by vaapi_defaults -> fail
+> get str rate_control
+rate_control = ""
+> has_user rate_control
+has_user_value(rate_control) = 0
+> va_caps open 1
+> reset
+> set int profile 100
+> va_caps h264 1
+> va_caps cbr 1
+> va_caps vbr 1
+> va_caps qvbr 0
+> va_caps cqp 1
+> va_caps bframe 1
+> va_device_modified
+va.open_device "" by vaapi_device_modified -> ok
+rate_control items: CBR VBR CQP
+bf visible=1
+> va_caps h264 0
+> va_device_modified
+va.open_device "" by vaapi_device_modified -> ok
+rate_control items:
+bf visible=1
+> va_caps open 0
+> va_device_modified
+va.open_device "" by vaapi_device_modified -> fail
+rate_control items:
+bf visible=1
+> va_caps open 1
+> va_caps h264 1
+> va_caps bframe 0
+> va_device_modified
+va.open_device "" by vaapi_device_modified -> ok
+rate_control items: CBR VBR CQP
+bf visible=0

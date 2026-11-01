@@ -1,0 +1,15 @@
+# Output protocol list: registered protocol names are kept in registration order; the query is an
+# exact, case-sensitive comparison; the enumerator stops at the end of the list.
+startup en-US -
+protocols
+protocol_registered RTMP
+protocol_add RTMP
+protocol_add SRT
+protocol_add "RTMP "
+protocols
+protocol_registered RTMP
+protocol_registered rtmp
+protocol_registered "RTMP "
+protocol_registered SRT
+protocol_registered ""
+shutdown

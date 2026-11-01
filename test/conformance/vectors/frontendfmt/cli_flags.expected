@@ -1,0 +1,73 @@
+cli 1
+multi=0 portable=0 verbose=0 safe_mode=0 only_bundled=0 always_on_top=0 unfiltered_log=0
+start_streaming=0 start_recording=0 start_replaybuffer=0 start_virtualcam=0
+minimize_tray=0 studio_mode=0 allow_opengl=0 disable_updater=0 disable_missing_files_check=0 steam=0
+collection="" profile="" scene=""
+cli 1
+multi=1 portable=0 verbose=1 safe_mode=1 only_bundled=1 always_on_top=1 unfiltered_log=1
+start_streaming=0 start_recording=0 start_replaybuffer=0 start_virtualcam=0
+minimize_tray=0 studio_mode=0 allow_opengl=0 disable_updater=0 disable_missing_files_check=0 steam=0
+collection="" profile="" scene=""
+cli 1
+multi=1 portable=1 verbose=0 safe_mode=0 only_bundled=0 always_on_top=0 unfiltered_log=0
+start_streaming=0 start_recording=0 start_replaybuffer=0 start_virtualcam=0
+minimize_tray=0 studio_mode=0 allow_opengl=0 disable_updater=0 disable_missing_files_check=0 steam=0
+collection="" profile="" scene=""
+cli 0
+multi=1 portable=0 verbose=0 safe_mode=0 only_bundled=0 always_on_top=0 unfiltered_log=0
+start_streaming=0 start_recording=0 start_replaybuffer=0 start_virtualcam=0
+minimize_tray=0 studio_mode=0 allow_opengl=0 disable_updater=0 disable_missing_files_check=0 steam=0
+collection="" profile="" scene=""
+cli 1
+multi=0 portable=0 verbose=0 safe_mode=0 only_bundled=0 always_on_top=0 unfiltered_log=0
+start_streaming=1 start_recording=1 start_replaybuffer=1 start_virtualcam=1
+minimize_tray=0 studio_mode=0 allow_opengl=0 disable_updater=0 disable_missing_files_check=0 steam=0
+collection="" profile="" scene=""
+cli 1
+multi=0 portable=0 verbose=0 safe_mode=0 only_bundled=0 always_on_top=0 unfiltered_log=0
+start_streaming=0 start_recording=0 start_replaybuffer=0 start_virtualcam=0
+minimize_tray=1 studio_mode=1 allow_opengl=1 disable_updater=1 disable_missing_files_check=1 steam=1
+collection="" profile="" scene=""
+cli 1
+multi=0 portable=0 verbose=0 safe_mode=0 only_bundled=0 always_on_top=0 unfiltered_log=0
+start_streaming=0 start_recording=0 start_replaybuffer=0 start_virtualcam=0
+minimize_tray=0 studio_mode=0 allow_opengl=0 disable_updater=0 disable_missing_files_check=0 steam=0
+collection="My Coll" profile="Prof2" scene="Scene A"
+cli 1
+multi=0 portable=0 verbose=0 safe_mode=0 only_bundled=0 always_on_top=0 unfiltered_log=0
+start_streaming=0 start_recording=0 start_replaybuffer=0 start_virtualcam=0
+minimize_tray=0 studio_mode=0 allow_opengl=0 disable_updater=0 disable_missing_files_check=0 steam=0
+collection="" profile="" scene=""
+cli 1
+multi=0 portable=0 verbose=0 safe_mode=0 only_bundled=0 always_on_top=0 unfiltered_log=0
+start_streaming=0 start_recording=0 start_replaybuffer=0 start_virtualcam=0
+minimize_tray=0 studio_mode=0 allow_opengl=0 disable_updater=0 disable_missing_files_check=0 steam=0
+collection="" profile="" scene=""
+cli 1
+multi=0 portable=0 verbose=0 safe_mode=0 only_bundled=0 always_on_top=0 unfiltered_log=0
+start_streaming=0 start_recording=0 start_replaybuffer=0 start_virtualcam=0
+minimize_tray=0 studio_mode=0 allow_opengl=0 disable_updater=0 disable_missing_files_check=0 steam=0
+collection="" profile="--verbose" scene=""
+cli 1
+multi=0 portable=0 verbose=0 safe_mode=0 only_bundled=0 always_on_top=0 unfiltered_log=0
+start_streaming=0 start_recording=0 start_replaybuffer=0 start_virtualcam=0
+minimize_tray=0 studio_mode=0 allow_opengl=0 disable_updater=0 disable_missing_files_check=0 steam=0
+collection="" profile="b" scene=""
+cli 1
+multi=0 portable=0 verbose=0 safe_mode=0 only_bundled=0 always_on_top=0 unfiltered_log=0
+start_streaming=0 start_recording=0 start_replaybuffer=0 start_virtualcam=0
+minimize_tray=0 studio_mode=0 allow_opengl=0 disable_updater=0 disable_missing_files_check=0 steam=0
+collection="" profile="" scene=""
+cli 1
+exit help
+cli 1
+exit help
+cli 1
+exit version
+cli 1
+exit version
+cli 1
+multi=0 portable=0 verbose=0 safe_mode=0 only_bundled=0 always_on_top=0 unfiltered_log=0
+start_streaming=0 start_recording=0 start_replaybuffer=0 start_virtualcam=0
+minimize_tray=0 studio_mode=0 allow_opengl=0 disable_updater=0 disable_missing_files_check=0 steam=0
+collection="" profile="" scene="--help"

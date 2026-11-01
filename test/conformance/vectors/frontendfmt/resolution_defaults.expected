@@ -1,0 +1,12 @@
+resdef base=1920x1080 out=1280x720
+resdef base=1280x720 out=1280x720
+resdef base=1920x1080 out=1280x720
+resdef base=2560x1440 out=1280x720
+resdef base=1920x1080 out=1280x720
+resdef base=3840x2160 out=1280x720
+resdef base=1366x768 out=1092x614
+resdef base=1600x900 out=1280x720
+resdef base=1920x1080 out=1280x720
+resdef base=1920x1080 out=1280x720
+resdef base=1024x768 out=1024x768
+resdef base=7680x4320 out=2560x1440

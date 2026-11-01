@@ -1,0 +1,20 @@
+# slideshow (v1): auto advance by elapsed time, loop, transition durations (CORE).
+fs_file /s/a.png 1
+fs_file /s/b.png 1
+fs_file /s/c.png 1
+img /s/a.png 10 10
+img /s/b.png 10 10
+img /s/c.png 10 10
+create ss slideshow {"files":[{"value":"/s/a.png"},{"value":"/s/b.png"},{"value":"/s/c.png"}],"slide_time":1000,"transition_speed":500}
+connect ss slide_changed
+tick 0.016
+refs ss 1 1
+# slide_time = (1000 + 500)/1000 = 1.5 s; the switch happens when elapsed > 1.5
+tick 0.5 3
+state ss
+tick 0.01
+state ss
+tick 0.5 3
+tick 0.5 3
+tick 0.5 3
+state ss

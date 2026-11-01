@@ -1,0 +1,19 @@
+> ini "[general]\nnvenc_supported=true\nnvenc_devices=2\nnvenc_ver=13.0\ncuda_ver=12.8\ndriver_ver=555.85\n[h264]\ncodec_supported=true\nbframes=4\nbref=3\nengines=2\nmax_width=4096\nmax_height=4096\ntemporal_filter=1\nlookahead_level=2\ndynamic_bitrate=true\nlookahead=true\nlossless=true\ntemporal_aq=true\n10bit=true\nyuv_444=true\nyuv_422=false\nuhq=true\n[hevc]\ncodec_supported=true\nbframes=2\nbref=1\nengines=1\nmax_width=8192\nmax_height=8192\ndynamic_bitrate=true\n10bit=true\n[av1]\ncodec_supported=false\nbframes=9\n"
+> supported
+os.dlopen "libnvidia-encode.so.1" -> ok
+log info [obs-nvenc] NVENC version: 13.0 (compiled) / 13.0 (driver), CUDA driver version: 12.8, AV1 supported: false
+nvenc_supported -> 1
+> caps h264
+caps[H264]: supported=1 bframes=4 bref=3 engines=2 max=4096x4096 tf=1 la_level=2 dyn_br=1 lookahead=1 lossless=1 taq=1 uhq=1 10bit=1 444=1 422=0
+> caps hevc
+caps[HEVC]: supported=1 bframes=2 bref=1 engines=1 max=8192x8192 tf=0 la_level=0 dyn_br=1 lookahead=0 lossless=0 taq=0 uhq=0 10bit=1 444=0 422=0
+> caps av1
+caps[AV1]: supported=0 bframes=0 bref=0 engines=0 max=0x0 tf=0 la_level=0 dyn_br=0 lookahead=0 lossless=0 taq=0 uhq=0 10bit=0 444=0 422=0
+> vinfo
+devices=2 driver=555.85
+> brokensplit
+has_broken_split_encoding -> 0
+> props h264
+ rate_control bitrate target_quality max_bitrate cqp keyint_sec preset tune multipass profile lookahead adaptive_quantization device bf opts repeat_headers force_cuda_tex disable_scenecut
+> props av1
+ rate_control bitrate target_quality max_bitrate cqp keyint_sec preset tune multipass profile lookahead adaptive_quantization device opts repeat_headers force_cuda_tex disable_scenecut

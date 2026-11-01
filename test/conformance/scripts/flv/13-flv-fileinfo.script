@@ -1,0 +1,17 @@
+# S-021 write_file_info: patches "duration" (seconds, double = duration_ms / 1000.0) and
+# "fileSize" (double) in a file that starts with the FLV header + onMetaData tag. The two
+# 19-byte name/value pairs are rewritten at the fixed file offset 58.
+# 'fileinfo DURATION_MS SIZE [WRITE_HEADER]' builds the file with flv_meta_data(write_header),
+# applies write_file_info and prints the whole resulting file.
+echo normal-file
+fileinfo 0 0
+fileinfo 1000 123456
+fileinfo 3723456 98765432101
+fileinfo 1 1
+fileinfo 999 1
+echo negative-and-huge
+fileinfo -1500 -1
+fileinfo 9007199254740993 9007199254740993
+fileinfo 9223372036854775807 9223372036854775807
+echo QUIRK-Q8-without-the-FLV-header-offset-58-lands-13-bytes-too-late
+fileinfo 1000 123456 0

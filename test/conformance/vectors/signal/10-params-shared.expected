@@ -1,0 +1,7 @@
+add h ok
+emit s
+call inc1 n=10
+call show n=11
+call inc2 n=11
+gcall g signal=s n=12
+emit-done n=13

@@ -1,0 +1,41 @@
+# S-034 obs_hotkey_inject_event: synthetic key events (used by the frontend for hotkeys that
+# arrive through other channels). Matching ignores the platform state. Strict/non-strict modifier
+# matching applies. An event with pressed=0 NEVER releases anything (Q-2): a bound hotkey that was
+# pressed by injection stays pressed until a poll finds its key up (or its bindings are removed).
+reg frontend A "A" "a"
+reg frontend B "B" "b"
+loadbind A 0x2:OBS_KEY_A
+loadbind B 0:OBS_KEY_B
+echo exact-match
+inject 0x2 OBS_KEY_A 1
+enumb
+echo repeated-press-does-nothing
+inject 0x2 OBS_KEY_A 1
+echo release-event-is-ignored
+inject 0x2 OBS_KEY_A 0
+enumb
+echo strict-extra-modifier-does-not-match
+inject 0xa OBS_KEY_B 1
+enumb
+echo strict-exact-modifiers-match
+inject 0x0 OBS_KEY_B 1
+enumb
+echo non-strict-extra-modifier-matches
+strict off
+inject 0xa OBS_KEY_B 1
+enumb
+echo wrong-key
+inject 0x2 OBS_KEY_C 1
+echo a-poll-with-key-up-releases-injected-presses
+upall
+poll
+enumb
+echo injection-ignores-bgpress-setting
+bgpress off
+inject 0x0 OBS_KEY_B 1
+poll
+enumb
+echo removing-bindings-releases-injected-press
+inject 0x0 OBS_KEY_B 1
+loadbind B
+enumb

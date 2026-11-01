@@ -1,0 +1,25 @@
+# obs_reset_video parameter validation. A size is valid when both dimensions are in [2, 32768].
+# Both base and output sizes are checked, before anything is torn down. Output sizes are then aligned
+# down: width &= ~3, height &= ~1 (the caller's struct is modified in place; "after_call" shows it).
+startup en-US -
+reset_video base=1x1080 out=1280x720
+reset_video base=1920x1 out=1280x720
+reset_video base=1920x1080 out=1x720
+reset_video base=1920x1080 out=1280x1
+reset_video base=0x0 out=0x0
+reset_video base=32769x1080 out=1280x720
+reset_video base=1920x32769 out=1280x720
+reset_video base=1920x1080 out=32769x720
+reset_video base=1920x1080 out=1280x32769
+# nothing above touched the state
+video_info
+state
+# smallest and largest valid sizes; boundaries 2 and 32768; widths are floored to a multiple of 4
+reset_video base=2x2 out=2x2
+reset_video base=32768x32768 out=32768x32768
+reset_video base=2x2 out=3x3
+reset_video base=100x100 out=7x7
+reset_video base=100x100 out=1281x721
+reset_video base=100x100 out=6x2
+video_info
+shutdown

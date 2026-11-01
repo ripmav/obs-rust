@@ -1,0 +1,63 @@
+# S-012 DEFECTS D-1, D-2, D-3 in the AV1 helpers. In the reference each case below reads
+# beyond the end of the input (crash / out-of-bounds read) or evaluates undefined behaviour.
+# The vector records the REQUIRED SAFE BEHAVIOUR (see the spec):
+#   * An OBU whose declared extent (header + extension + size field + payload) reaches past
+#     the end of the data is clamped to the data that is present, then parsing ends.
+#   * An OBU with extension flag whose extension byte is missing has start = 2 and size as
+#     computed; extraction clamps.
+#   * obs_av1_keyframe returns false when the first payload byte of the deciding OBU is
+#     not present.
+#   * LEB128 is decoded as a full unsigned 64-bit number (up to 8 bytes = 56 bits).
+echo D-1-declared-size-exceeds-the-data
+av1_extract 0a05010203
+av1_extract 0a0b0102
+
+cat tu 1200 0a05010203
+av1_extract @tu
+cat tu 1200 3205aabb
+av1_extract @tu
+echo D-1-extension-flag-without-size-field-reads-one-byte-too-many
+av1_extract 0c01aabb
+av1_extract 0c01
+av1_extract 0c
+cat tu 1200 0c01aabb
+av1_extract @tu
+echo D-1-extension-flag-alone
+av1_extract 0e
+av1_extract 36
+av1_obu 0e
+av1_obu 36
+cat tu 1200 0e
+av1_extract @tu
+echo D-1-size-field-claims-more-than-present
+av1_extract 328001aa
+av1_extract 32ff7faa
+echo D-2-frame-obu-without-its-first-payload-byte
+av1_keyframe 3205
+av1_keyframe 3201
+av1_keyframe 1a05
+cat tu 1200 3205
+av1_keyframe @tu
+av1_keyframe 3601
+av1_keyframe 36
+av1_keyframe 3a
+echo D-2-frame-obu-with-size-claim-but-first-payload-byte-present-is-fine
+av1_keyframe 320510
+av1_keyframe 32ff7f10
+av1_keyframe 320520
+echo D-3-leb128-more-than-five-bytes
+av1_leb128 808080808001
+av1_leb128 80808080808001
+av1_leb128 ffffffffffffff7f
+av1_leb128 ffffffff0f
+av1_leb128 8080808008
+av1_leb128 8080808010
+av1_leb128 ffffffffffffffffff
+echo D-3-leb128-size-bigger-than-the-data-is-clamped
+
+cat t 32808080808001 aabb
+av1_obu @t
+av1_extract @t
+av1_keyframe @t
+cat t2 1200 3280808080 08 aabbcc
+av1_extract @t2

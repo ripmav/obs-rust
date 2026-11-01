@@ -1,0 +1,61 @@
+props P
+  prop service type=list desc="Service" visible=1 enabled=1 combo=2 format=3 items=6
+    item 0 name="Alpha" value="Alpha" disabled=0
+    item 1 name="Golf" value="Golf" disabled=0
+    item 2 name="Facebook Live X" value="Facebook Live X" disabled=0
+    item 3 name="Kilo" value="Kilo" disabled=0
+    item 4 name="Twitch" value="Twitch" disabled=0
+    item 5 name="Nimo TV" value="Nimo TV" disabled=0
+  prop show_all type=bool desc="Show all services" visible=1 enabled=1
+  prop server type=list desc="Server" visible=1 enabled=1 combo=2 format=3 items=2
+    item 0 name="Auto (Recommended)" value="auto" disabled=0
+    item 1 name="Nimo A" value="rtmp://a.nimo.example/live/" disabled=0
+  prop key type=text desc="Stream key" visible=1 enabled=1 text_type=1
+echo no-route-fails-returns-null
+fake curl GET https://globalcdnweb.nimo.tv/api/ingests/nimo?id=my%20key%2F1 timeout=3 verifypeer=1 verifyhost=2
+fake curl -> no-route
+log warning nimotv_get_ingest: curl_easy_perform() failed: fake curl error
+get url = @null
+echo success
+fake curl GET https://globalcdnweb.nimo.tv/api/ingests/nimo?id=my%20key%2F1 timeout=3 verifypeer=1 verifyhost=2
+fake curl -> status=200 bytes=87
+log info nimotv_get_ingest: returning ingest: rtmp://nimo-a.example/live
+get url = "rtmp://nimo-a.example/live"
+echo cached-for-2s
+log info nimotv_get_ingest: returning ingest from cache: rtmp://nimo-a.example/live
+get url = "rtmp://nimo-a.example/live"
+echo expired
+fake curl GET https://globalcdnweb.nimo.tv/api/ingests/nimo?id=my%20key%2F1 timeout=3 verifypeer=1 verifyhost=2
+fake curl -> status=200 bytes=87
+log info nimotv_get_ingest: returning ingest: rtmp://nimo-a.example/live
+get url = "rtmp://nimo-a.example/live"
+echo cache-ignores-key-change
+log info nimotv_get_ingest: returning ingest from cache: rtmp://nimo-a.example/live
+get url = "rtmp://nimo-a.example/live"
+echo non-200-returns-NULL-keeps-old
+fake curl GET https://globalcdnweb.nimo.tv/api/ingests/nimo?id=other timeout=3 verifypeer=1 verifyhost=2
+fake curl -> status=503 bytes=2
+log warning nimotv_get_ingest: curl_easy_perform() returned code: 503
+get url = @null
+echo empty-body
+fake curl GET https://globalcdnweb.nimo.tv/api/ingests/nimo?id=other timeout=3 verifypeer=1 verifyhost=2
+fake curl -> status=200 bytes=0
+log warning nimotv_get_ingest: curl_easy_perform() returned empty response
+get url = @null
+echo bad-json-body-gives-NULL-url
+fake curl GET https://globalcdnweb.nimo.tv/api/ingests/nimo?id=other timeout=3 verifypeer=1 verifyhost=2
+fake curl -> status=200 bytes=2
+log info nimotv_get_ingest: returning ingest: (null)
+get url = @null
+echo a-NULL-result-is-not-cached-so-the-next-call-fetches-again
+fake curl GET https://globalcdnweb.nimo.tv/api/ingests/nimo?id=other timeout=3 verifypeer=1 verifyhost=2
+fake curl -> status=200 bytes=2
+log info nimotv_get_ingest: returning ingest: (null)
+get url = @null
+echo no-ingests-array
+fake curl GET https://globalcdnweb.nimo.tv/api/ingests/nimo?id=other timeout=3 verifypeer=1 verifyhost=2
+fake curl -> status=200 bytes=14
+log info nimotv_get_ingest: returning ingest: (null)
+get url = @null
+echo non-auto-server-no-request
+get url = "rtmp://a.nimo.example/live/"

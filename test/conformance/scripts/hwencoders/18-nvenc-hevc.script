@@ -1,0 +1,43 @@
+# S-050 nvenc: HEVC specifics (profile GUIDs, VUI for HDR, mastering display flags, SEI).
+dump 2
+nvcap dyn_bitrate 1
+nvcap 444 1
+nvcap 10bit 1
+defaults hevc
+create hevc soft
+destroy
+set str profile main10
+create hevc soft
+destroy
+# P010 input forces main10 (warning); bit depths follow the INPUT format and the PROFILE
+set str profile main
+host format p010
+create hevc soft
+destroy
+# BT.2100 PQ with 10 bit input: VUI, chroma location, mdi/cll flags; hdr_peak is read at create time
+host colorspace pq
+host hdr_peak 1000
+create hevc soft
+state
+destroy
+host hdr_peak 400
+create hevc soft
+state
+destroy
+host colorspace hlg
+create hevc soft
+state
+destroy
+# CBR spelled in any case sets outputBufferingPeriodSEI for HEVC (astrcmpi, unlike H.264)
+host format nv12
+host colorspace 709
+set str rate_control cbr
+create hevc soft
+destroy
+set str rate_control VBR
+create hevc soft
+destroy
+# I444
+host format i444
+create hevc soft
+destroy

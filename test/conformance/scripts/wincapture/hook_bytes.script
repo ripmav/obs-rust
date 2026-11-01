@@ -1,0 +1,31 @@
+# Byte image of struct hook_info (648 bytes, little endian). Bytes 0..143 are the header up to `reserved`;
+# offsets 68..143 hold graphics_offsets (76 bytes). hook_hex FROM COUNT prints COUNT bytes starting at FROM.
+hook_set ver_major 1
+hook_set ver_minor 8
+hook_set type 1
+hook_set window 0x12345678
+hook_set format 87
+hook_set cx 1920
+hook_set cy 1080
+hook_set pitch 7680
+hook_set map_id 7
+hook_set map_size 12
+hook_set flip 1
+hook_set frame_interval 0x0123456789ABCDEF
+hook_set force_shmem 1
+hook_set capture_overlay 1
+hook_set allow_srgb_alias 1
+hook_hex 0 68
+# graphics_offsets block: only set some members
+hook_set d3d9_present 0x1111
+hook_set dxgi_present 0x2222
+hook_set dxgi_resize 0x3333
+hook_set dxgi_present1 0x4444
+hook_set dxgi2_release 0x5555
+hook_set d3d12_ecl 0x6666
+hook_hex 68 76
+# reserved area is 126 u32 words at offset 144; the struct ends at 648
+hook_set reserved0 0xAABBCCDD
+hook_set reserved125 0x01020304
+hook_hex 144 4
+hook_hex 644 4

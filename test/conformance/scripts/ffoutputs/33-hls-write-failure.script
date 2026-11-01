@@ -1,0 +1,17 @@
+# A failed pipe write in the HLS worker thread ends the worker loop, signals OBS_OUTPUT_ERROR and deactivates.
+# DEFECT (reference): deactivate() joins the mux thread, and here it runs ON that thread (self join, which fails
+# with EDEADLK and is ignored). Required behaviour: no self join; the thread just ends. The pipe write is the one
+# of the first queued packet: header (writes 1,2) is written by the caller, packet info is write 3.
+reset
+output h service
+venc h264 bitrate=2500 extra=0a0b keyint_sec=1
+service https://i.example/live k
+create hls
+start
+knob write_fail_at 3
+knob err_text sink_gone
+pkt v dts=0 key=1 data=0000000165aa
+state
+pump 5
+state
+state_hls

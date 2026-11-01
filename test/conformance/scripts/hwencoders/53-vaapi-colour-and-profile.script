@@ -1,0 +1,29 @@
+# S-050 obs-ffmpeg-vaapi: output format / colour mapping and the HEVC profile forcing rule.
+# HEVC Main + P010 input -> Main10 (warning); H.264 only takes NV12 (P010 input is converted
+# by the pipeline via video_info, the pixel format is NV12).
+va_defaults hevc
+set str rate_control CBR
+host format p010
+va_create hevc
+va_destroy
+host format nv12
+va_create hevc
+va_destroy
+host colorspace 601
+va_create h264
+va_destroy
+host colorspace srgb
+host range full
+va_create h264
+va_destroy
+host colorspace pq
+host format p010
+va_create hevc
+va_destroy
+host colorspace hlg
+va_create av1
+va_destroy
+host colorspace default
+host format p010
+va_create h264
+va_destroy

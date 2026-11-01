@@ -1,0 +1,38 @@
+# S-035 optional-callback getters: present, absent, and defaults of out-parameters.
+svc_def A svcA resolutions max_fps max_bitrate vcodecs acodecs connect_info can_connect=0 output_type=rtmp_output apply
+svc_def B svcB
+svc_def C svcC can_connect=1
+svc_register A
+svc_register B
+svc_register C
+service_create a svcA a -
+service_create b svcB b -
+service_create c svcC c -
+q a protocol
+q a outtype
+q a connect_info 3
+q a can_connect
+q a fps
+q a bitrate
+q a bitrate_null
+q a resolutions
+q a vcodecs
+q a acodecs
+q a typedata
+# type with none of the optional callbacks
+q b protocol
+q b outtype
+q b connect_info 3
+q b can_connect
+q b fps
+q b bitrate
+q b resolutions
+q b vcodecs
+q b acodecs
+q c can_connect
+# apply_encoder_settings only calls the callback when at least one settings object is given
+apply_enc a - -
+apply_enc a {"bitrate":1000} -
+apply_enc a - {"bitrate":96}
+apply_enc a {"v":1} {"a":2}
+apply_enc b {"v":1} {"a":2}

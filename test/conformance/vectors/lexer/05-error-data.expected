@@ -1,0 +1,10 @@
+errors 0 (errors=0 warnings=0 has_errors=0)
+buildstring @null
+errors 3 (errors=1 warnings=1 has_errors=1)
+err 0 ERROR file="f.txt" row=1 col=2 msg="bad thing"
+err 1 WARNING file="g" row=10 col=20 msg="warn"
+err 2 LEVEL? file="f.txt" row=3 col=4 msg="level seven"
+buildstring "f.txt (1, 2): bad thing\ng (10, 20): warn\nf.txt (3, 4): level seven\n"
+ed_add_null done
+errors 0 (errors=0 warnings=0 has_errors=0)
+buildstring @null

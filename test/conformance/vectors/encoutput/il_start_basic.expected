@@ -1,0 +1,43 @@
+log debug encoder 'v' (v) created
+encoder v created tb=1/30
+log debug encoder 'a' (a) created
+encoder a created tb=1/48000
+log debug output 'o' (o) created
+output o created flags=7 reconnect=20/2
+set_venc o idx=0 -> video_slots=01 audio_slots=00
+set_aenc o idx=0 -> video_slots=01 audio_slots=01
+plugin out o start
+plugin enc v create
+plugin enc a create
+log debug Maximum interleaver batch size for 'o' calculated to be 5 packets
+signal o activate
+signal o start
+plugin out o begin_data_capture -> 1
+signal o starting
+start o -> 1
+--- audio first: nothing is sent yet
+queue o n=1 delayq=0: A0@0
+queue o n=2 delayq=0: A0@0 A0@21333
+--- first video keyframe arrives: audio does not yet reach past it
+plugin out o pkt V0 pts=0 dts=0 usec=0 kf=1 size=4 tb=1/30 b0=03
+queue o n=2 delayq=0: A0@0 A0@21333
+state o active=1 data_active=1 delay_active=0 delay_capturing=0 reconnecting=0 stopping=0 stop_code=0 total_frames=1 delay_ns=0 refs=0 queued=2 recv_v=10 recv_a=1 hi_a=21333 hi_v0=0 voff=0 aoff=0 batch=5 retries=0 cur_ms=0
+--- audio at 42.6ms passes video dts 0 -> start; everything is released one packet at a time
+queue o n=3 delayq=0: A0@0 A0@21333 A0@42666
+state o active=1 data_active=1 delay_active=0 delay_capturing=0 reconnecting=0 stopping=0 stop_code=0 total_frames=1 delay_ns=0 refs=0 queued=3 recv_v=10 recv_a=1 hi_a=42666 hi_v0=0 voff=0 aoff=0 batch=5 retries=0 cur_ms=0
+plugin out o pkt A0 pts=0 dts=0 usec=0 kf=0 size=4 tb=1/48000 b0=01
+queue o n=3 delayq=0: A0@21333 V0@33333 A0@42666
+plugin out o pkt A0 pts=1024 dts=1024 usec=21333 kf=0 size=4 tb=1/48000 b0=02
+queue o n=3 delayq=0: V0@33333 A0@42666 A0@64000
+plugin out o pkt V0 pts=1 dts=1 usec=33333 kf=0 size=4 tb=1/30 b0=05
+queue o n=3 delayq=0: A0@42666 A0@64000 A0@85333
+signal o stopping
+plugin out o stop ts=0
+log info Output 'o': stopping
+log info Output 'o': Total frames output: 2
+log info Output 'o': Total drawn frames: 0
+signal o stop code=0 last_error=-
+stop o done
+plugin enc v destroy
+plugin enc a destroy
+signal o deactivate

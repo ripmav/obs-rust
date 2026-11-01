@@ -1,0 +1,14 @@
+# util_add128: 128-bit addition modulo 2^128 (CORE). Operands are given as LOW HIGH pairs of
+# 64-bit words; the result is printed as high/low words in hex.
+u128_layout
+u128_add 0 0 0 0
+u128_add 1 0 2 0
+u128_add 0xffffffff 0 1 0
+u128_add 0xffffffffffffffff 0 1 0
+u128_add 0xffffffffffffffff 0 0xffffffffffffffff 0
+u128_add 0xffffffffffffffff 0xffffffffffffffff 1 0
+u128_add 0xffffffffffffffff 0xffffffffffffffff 0xffffffffffffffff 0xffffffffffffffff
+u128_add 0 0xffffffffffffffff 0 1
+u128_add 0x123456789abcdef0 0x0fedcba987654321 0x0fedcba987654321 0x123456789abcdef0
+u128_add 0x00000000ffffffff 0x00000000ffffffff 0x0000000000000001 0x0000000000000001
+u128_add 0x8000000000000000 0x8000000000000000 0x8000000000000000 0x8000000000000000

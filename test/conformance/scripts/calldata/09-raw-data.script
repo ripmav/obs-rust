@@ -1,0 +1,17 @@
+# Arbitrary byte payloads, including empty ones.
+init
+set_data blob 0102030405
+dump
+get_data blob 5
+get_data blob 4
+get_data blob 6
+get_data blob 0
+set_data blob -
+dump
+get_data blob 0
+get_data blob 5
+set_data blob ff00ff
+get_data blob 3
+get_string blob
+dump
+free

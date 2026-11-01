@@ -1,0 +1,9 @@
+# QUIRK. Only the space character separates words: a TAB or newline is part of the word.
+# "a=1<TAB>b=2" is ONE option named a with value "1<TAB>b=2". There is no quoting or
+# escaping: quote characters stay in names and values, so values cannot contain spaces.
+opts "a=1\tb=2"
+opts "a=1\nb=2"
+opts "a=\"x y\" b='z w'"
+opts "a==" 
+opts "=="
+opts "a=1 \\ b=2"

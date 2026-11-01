@@ -1,0 +1,20 @@
+# append keeps the relative order of the appended entries and may be repeated; the same
+# file may therefore appear several times in one list (each occurrence holds a reference).
+mf_list_new 0
+mf_list_new 1
+mf_file_new 0 "/p/x" source "X"
+mf_file_new 1 "/p/y" source "Y"
+mf_add 1 0
+mf_add 1 1
+mf_append 0 1
+mf_append 0 1
+mf_count 0
+mf_get 0 0
+mf_get 0 1
+mf_get 0 2
+mf_get 0 3
+mf_ref 0
+mf_ref 1
+mf_destroy 1
+mf_ref 0
+mf_destroy 0

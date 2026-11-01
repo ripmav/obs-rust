@@ -1,0 +1,134 @@
+data D
+  is_local_file bool 1 default
+  looping bool 0 default
+  clear_on_media_end bool 1 default
+  restart_on_activate bool 1 default
+  linear_alpha bool 0 default
+  reconnect_delay_sec int 10 default
+  buffering_mb int 2 default
+  speed_percent int 100 default
+  log_changes bool 1 default
+end data D
+props P0 flags=1
+  is_local_file bool desc="LocalFile" visible=1 enabled=1
+  local_file path desc="LocalFile" visible=1 enabled=1 pathtype=0 filter="MediaFileFilter.AllMediaFiles (*.mp4 *.m4v *.ts *.mov *.mxf *.flv *.mkv *.avi *.mp3 *.ogg *.aac *.wav *.gif *.webm);;MediaFileFilter.VideoFiles (*.mp4 *.m4v *.ts *.mov *.mxf *.flv *.mkv *.avi *.gif *.webm);;MediaFileFilter.AudioFiles (*.mp3 *.aac *.ogg *.wav);;MediaFileFilter.AllFiles (*.*)" default_path=@null
+  looping bool desc="Looping" visible=1 enabled=1
+  restart_on_activate bool desc="RestartWhenActivated" visible=1 enabled=1
+  buffering_mb int desc="BufferingMB" visible=1 enabled=1 min=0 max=16 step=1 numtype=1 suffix=" MB"
+  input text desc="Input" visible=1 enabled=1 texttype=0
+  input_format text desc="InputFormat" visible=1 enabled=1 texttype=0
+  reconnect_delay_sec int desc="ReconnectDelayTime" visible=1 enabled=1 min=1 max=60 step=1 numtype=1 suffix=" S"
+  hw_decode bool desc="HardwareDecode" visible=1 enabled=1
+  clear_on_media_end bool desc="ClearOnMediaEnd" visible=1 enabled=1
+  close_when_inactive bool desc="CloseFileWhenInactive" visible=1 enabled=1 long="CloseFileWhenInactive.ToolTip"
+  speed_percent int desc="SpeedPercentage" visible=1 enabled=1 min=1 max=200 step=1 numtype=1 suffix="%"
+  color_range list desc="ColorRange" visible=1 enabled=1 combo=2 format=1 count=3
+    item 0 "ColorRange.Auto" = 0
+    item 1 "ColorRange.Partial" = 1
+    item 2 "ColorRange.Full" = 2
+  linear_alpha bool desc="LinearAlpha" visible=1 enabled=1
+  seekable bool desc="Seekable" visible=1 enabled=1
+  ffmpeg_options text desc="FFmpegOpts" visible=1 enabled=1 long="FFmpegOpts.ToolTip.Source" texttype=0
+end props P0
+modified is_local_file -> 1
+props P0 flags=1
+  is_local_file bool desc="LocalFile" visible=1 enabled=1
+  local_file path desc="LocalFile" visible=1 enabled=1 pathtype=0 filter="MediaFileFilter.AllMediaFiles (*.mp4 *.m4v *.ts *.mov *.mxf *.flv *.mkv *.avi *.mp3 *.ogg *.aac *.wav *.gif *.webm);;MediaFileFilter.VideoFiles (*.mp4 *.m4v *.ts *.mov *.mxf *.flv *.mkv *.avi *.gif *.webm);;MediaFileFilter.AudioFiles (*.mp3 *.aac *.ogg *.wav);;MediaFileFilter.AllFiles (*.*)" default_path=@null
+  looping bool desc="Looping" visible=1 enabled=1
+  restart_on_activate bool desc="RestartWhenActivated" visible=1 enabled=1
+  buffering_mb int desc="BufferingMB" visible=0 enabled=1 min=0 max=16 step=1 numtype=1 suffix=" MB"
+  input text desc="Input" visible=0 enabled=1 texttype=0
+  input_format text desc="InputFormat" visible=0 enabled=1 texttype=0
+  reconnect_delay_sec int desc="ReconnectDelayTime" visible=0 enabled=1 min=1 max=60 step=1 numtype=1 suffix=" S"
+  hw_decode bool desc="HardwareDecode" visible=1 enabled=1
+  clear_on_media_end bool desc="ClearOnMediaEnd" visible=1 enabled=1
+  close_when_inactive bool desc="CloseFileWhenInactive" visible=1 enabled=1 long="CloseFileWhenInactive.ToolTip"
+  speed_percent int desc="SpeedPercentage" visible=1 enabled=1 min=1 max=200 step=1 numtype=1 suffix="%"
+  color_range list desc="ColorRange" visible=1 enabled=1 combo=2 format=1 count=3
+    item 0 "ColorRange.Auto" = 0
+    item 1 "ColorRange.Partial" = 1
+    item 2 "ColorRange.Full" = 2
+  linear_alpha bool desc="LinearAlpha" visible=1 enabled=1
+  seekable bool desc="Seekable" visible=0 enabled=1
+  ffmpeg_options text desc="FFmpegOpts" visible=1 enabled=1 long="FFmpegOpts.ToolTip.Source" texttype=0
+end props P0
+modified is_local_file -> 1
+props P0 flags=1
+  is_local_file bool desc="LocalFile" visible=1 enabled=1
+  local_file path desc="LocalFile" visible=0 enabled=1 pathtype=0 filter="MediaFileFilter.AllMediaFiles (*.mp4 *.m4v *.ts *.mov *.mxf *.flv *.mkv *.avi *.mp3 *.ogg *.aac *.wav *.gif *.webm);;MediaFileFilter.VideoFiles (*.mp4 *.m4v *.ts *.mov *.mxf *.flv *.mkv *.avi *.gif *.webm);;MediaFileFilter.AudioFiles (*.mp3 *.aac *.ogg *.wav);;MediaFileFilter.AllFiles (*.*)" default_path=@null
+  looping bool desc="Looping" visible=0 enabled=1
+  restart_on_activate bool desc="RestartWhenActivated" visible=1 enabled=1
+  buffering_mb int desc="BufferingMB" visible=1 enabled=1 min=0 max=16 step=1 numtype=1 suffix=" MB"
+  input text desc="Input" visible=1 enabled=1 texttype=0
+  input_format text desc="InputFormat" visible=1 enabled=1 texttype=0
+  reconnect_delay_sec int desc="ReconnectDelayTime" visible=1 enabled=1 min=1 max=60 step=1 numtype=1 suffix=" S"
+  hw_decode bool desc="HardwareDecode" visible=1 enabled=1
+  clear_on_media_end bool desc="ClearOnMediaEnd" visible=1 enabled=1
+  close_when_inactive bool desc="CloseFileWhenInactive" visible=1 enabled=1 long="CloseFileWhenInactive.ToolTip"
+  speed_percent int desc="SpeedPercentage" visible=0 enabled=1 min=1 max=200 step=1 numtype=1 suffix="%"
+  color_range list desc="ColorRange" visible=1 enabled=1 combo=2 format=1 count=3
+    item 0 "ColorRange.Auto" = 0
+    item 1 "ColorRange.Partial" = 1
+    item 2 "ColorRange.Full" = 2
+  linear_alpha bool desc="LinearAlpha" visible=1 enabled=1
+  seekable bool desc="Seekable" visible=1 enabled=1
+  ffmpeg_options text desc="FFmpegOpts" visible=1 enabled=1 long="FFmpegOpts.ToolTip.Source" texttype=0
+end props P0
+event.init manual
+host.hotkey_register MediaSource.Restart desc=RestartMedia id=100
+host.hotkey_pair_register MediaSource.Play/MediaSource.Pause desc=Play/Pause id=101
+host.hotkey_register MediaSource.Stop desc=Stop id=102
+host.proc_add "void restart()"
+host.proc_add "void preload_first_frame()"
+host.proc_add "void get_duration(out int duration)"
+host.proc_add "void get_nb_frames(out int num_frames)"
+mp.create path="C:\\videos\\clips\\a.mp4" format=@null options=""
+    buffering=2097152 speed=100 force_range=0 linear_alpha=0 hw=0 local=1 reconnecting=0 preload=0 full_decode=0 cbs=11111
+log info [Media Source 'src']: settings: 	input:                   C:\videos\clips\a.mp4 	input_format:            (null) 	speed:                   100 	is_looping:              no 	is_linear_alpha:         no 	is_hw_decoding:          no 	is_clear_on_media_end:   yes 	restart_on_activate:     yes 	close_when_inactive:     no 	full_decode:             no 	ffmpeg_options:          
+src_create ok
+props P1 flags=1
+  is_local_file bool desc="LocalFile" visible=1 enabled=1
+  local_file path desc="LocalFile" visible=1 enabled=1 pathtype=0 filter="MediaFileFilter.AllMediaFiles (*.mp4 *.m4v *.ts *.mov *.mxf *.flv *.mkv *.avi *.mp3 *.ogg *.aac *.wav *.gif *.webm);;MediaFileFilter.VideoFiles (*.mp4 *.m4v *.ts *.mov *.mxf *.flv *.mkv *.avi *.gif *.webm);;MediaFileFilter.AudioFiles (*.mp3 *.aac *.ogg *.wav);;MediaFileFilter.AllFiles (*.*)" default_path="C:/videos/clips/"
+  looping bool desc="Looping" visible=1 enabled=1
+  restart_on_activate bool desc="RestartWhenActivated" visible=1 enabled=1
+  buffering_mb int desc="BufferingMB" visible=1 enabled=1 min=0 max=16 step=1 numtype=1 suffix=" MB"
+  input text desc="Input" visible=1 enabled=1 texttype=0
+  input_format text desc="InputFormat" visible=1 enabled=1 texttype=0
+  reconnect_delay_sec int desc="ReconnectDelayTime" visible=1 enabled=1 min=1 max=60 step=1 numtype=1 suffix=" S"
+  hw_decode bool desc="HardwareDecode" visible=1 enabled=1
+  clear_on_media_end bool desc="ClearOnMediaEnd" visible=1 enabled=1
+  close_when_inactive bool desc="CloseFileWhenInactive" visible=1 enabled=1 long="CloseFileWhenInactive.ToolTip"
+  speed_percent int desc="SpeedPercentage" visible=1 enabled=1 min=1 max=200 step=1 numtype=1 suffix="%"
+  color_range list desc="ColorRange" visible=1 enabled=1 combo=2 format=1 count=3
+    item 0 "ColorRange.Auto" = 0
+    item 1 "ColorRange.Partial" = 1
+    item 2 "ColorRange.Full" = 2
+  linear_alpha bool desc="LinearAlpha" visible=1 enabled=1
+  seekable bool desc="Seekable" visible=1 enabled=1
+  ffmpeg_options text desc="FFmpegOpts" visible=1 enabled=1 long="FFmpegOpts.ToolTip.Source" texttype=0
+end props P1
+mp.destroy #1
+mp.create path="clip.mp4" format=@null options=""
+    buffering=2097152 speed=100 force_range=0 linear_alpha=0 hw=0 local=1 reconnecting=0 preload=0 full_decode=0 cbs=11111
+log info [Media Source 'src']: settings: 	input:                   clip.mp4 	input_format:            (null) 	speed:                   100 	is_looping:              no 	is_linear_alpha:         no 	is_hw_decoding:          no 	is_clear_on_media_end:   yes 	restart_on_activate:     yes 	close_when_inactive:     no 	full_decode:             no 	ffmpeg_options:          
+props P2 flags=1
+  is_local_file bool desc="LocalFile" visible=1 enabled=1
+  local_file path desc="LocalFile" visible=1 enabled=1 pathtype=0 filter="MediaFileFilter.AllMediaFiles (*.mp4 *.m4v *.ts *.mov *.mxf *.flv *.mkv *.avi *.mp3 *.ogg *.aac *.wav *.gif *.webm);;MediaFileFilter.VideoFiles (*.mp4 *.m4v *.ts *.mov *.mxf *.flv *.mkv *.avi *.gif *.webm);;MediaFileFilter.AudioFiles (*.mp3 *.aac *.ogg *.wav);;MediaFileFilter.AllFiles (*.*)" default_path="clip.mp4"
+  looping bool desc="Looping" visible=1 enabled=1
+  restart_on_activate bool desc="RestartWhenActivated" visible=1 enabled=1
+  buffering_mb int desc="BufferingMB" visible=1 enabled=1 min=0 max=16 step=1 numtype=1 suffix=" MB"
+  input text desc="Input" visible=1 enabled=1 texttype=0
+  input_format text desc="InputFormat" visible=1 enabled=1 texttype=0
+  reconnect_delay_sec int desc="ReconnectDelayTime" visible=1 enabled=1 min=1 max=60 step=1 numtype=1 suffix=" S"
+  hw_decode bool desc="HardwareDecode" visible=1 enabled=1
+  clear_on_media_end bool desc="ClearOnMediaEnd" visible=1 enabled=1
+  close_when_inactive bool desc="CloseFileWhenInactive" visible=1 enabled=1 long="CloseFileWhenInactive.ToolTip"
+  speed_percent int desc="SpeedPercentage" visible=1 enabled=1 min=1 max=200 step=1 numtype=1 suffix="%"
+  color_range list desc="ColorRange" visible=1 enabled=1 combo=2 format=1 count=3
+    item 0 "ColorRange.Auto" = 0
+    item 1 "ColorRange.Partial" = 1
+    item 2 "ColorRange.Full" = 2
+  linear_alpha bool desc="LinearAlpha" visible=1 enabled=1
+  seekable bool desc="Seekable" visible=1 enabled=1
+  ffmpeg_options text desc="FFmpegOpts" visible=1 enabled=1 long="FFmpegOpts.ToolTip.Source" texttype=0
+end props P2

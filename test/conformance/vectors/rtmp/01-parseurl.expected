@@ -1,0 +1,38 @@
+parseurl ret=1 protocol=0 port=0 host="live.example.com" app="app"
+parseurl ret=1 protocol=0 port=1936 host="live.example.com" app="app/inst"
+parseurl ret=1 protocol=4 port=0 host="h" app="a"
+parseurl ret=1 protocol=1 port=0 host="h" app="a"
+parseurl ret=1 protocol=2 port=0 host="h" app="a"
+parseurl ret=1 protocol=8 port=0 host="h" app="a"
+parseurl ret=1 protocol=3 port=0 host="h" app="a"
+parseurl ret=1 protocol=5 port=0 host="h" app="a"
+log warning Unknown protocol! 
+parseurl ret=1 protocol=0 port=0 host="h" app="a"
+log warning Unknown protocol! 
+parseurl ret=1 protocol=0 port=99 host="h" app="a"
+log error RTMP URL: No :// in url!
+parseurl ret=0 protocol=0 port=0 host=- app=-
+log warning No hostname in URL!
+parseurl ret=0 protocol=0 port=0 host=- app=-
+log warning No application or playpath in URL!
+parseurl ret=1 protocol=0 port=0 host="host" app=-
+log warning No application or playpath in URL!
+parseurl ret=1 protocol=0 port=80 host="host" app=-
+parseurl ret=1 protocol=0 port=0 host="host" app=""
+parseurl ret=1 protocol=0 port=0 host="host" app=""
+parseurl ret=1 protocol=0 port=0 host="host" app="app"
+parseurl ret=1 protocol=0 port=0 host="host" app="app/"
+parseurl ret=1 protocol=0 port=0 host="host" app="app?x=1&y=2"
+parseurl ret=1 protocol=0 port=65535 host="host" app="a"
+log warning Invalid port number!
+parseurl ret=1 protocol=0 port=0 host="host" app="a"
+parseurl ret=1 protocol=0 port=0 host="host" app="a"
+parseurl ret=1 protocol=0 port=0 host="host" app="a"
+log warning Invalid port number!
+parseurl ret=1 protocol=0 port=0 host="host" app="a"
+parseurl ret=1 protocol=0 port=12 host="host" app="a"
+parseurl ret=1 protocol=0 port=0 host="[::1]" app="live"
+parseurl ret=1 protocol=0 port=1936 host="[::1]" app="live"
+parseurl ret=1 protocol=0 port=0 host="[2001:db8::1]" app="live/x"
+parseurl ret=1 protocol=0 port=0 host="host" app="a:b"
+parseurl ret=1 protocol=0 port=0 host="a" app="x"

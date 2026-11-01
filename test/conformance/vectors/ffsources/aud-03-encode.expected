@@ -1,0 +1,79 @@
+av.find_encoder aac -> found
+log info ---------------------------------
+log info [FFmpeg aac encoder: 'enc'] bitrate: 128, channels: 2, channel_layout: stereo, track: 1 
+av.open2 codec=aac bit_rate=128000 sample_rate=48000 channels=2 sample_fmt=8 strict=-2 flags=4194304 0x0 pix_fmt=0
+audio_create aac ok
+av.fill_audio_frame channels=2 fmt=8 buf_size=8192 align=1 nb_samples=1024 -> 0
+av.send_frame audio pts=0 nb_samples=1024 fmt=8 channels=2 rate=48000 data=1011121314151617 -> 0
+av.receive_packet -> 0 size=5 pts=1000 dts=900 flags=0
+av.packet_unref
+encode -> 1 received=1 pts=1000 dts=900 size=5 type=0 keyframe=1 timebase=1/48000 data=a0a1a2a3a4
+audio type=aac bit_rate=128000 sample_rate=48000 channels=2 sample_fmt=8 frame_size=1024 frame_size_bytes=4096 planes=2 audio_size=4 total_samples=1024 time_base=1/48000
+av.fill_audio_frame channels=2 fmt=8 buf_size=8192 align=1 nb_samples=1024 -> 0
+av.send_frame audio pts=1024 nb_samples=1024 fmt=8 channels=2 rate=48000 data=2021222324252627 -> 0
+av.receive_packet -> eagain
+encode -> 1 received=0
+audio type=aac bit_rate=128000 sample_rate=48000 channels=2 sample_fmt=8 frame_size=1024 frame_size_bytes=4096 planes=2 audio_size=4 total_samples=2048 time_base=1/48000
+av.fill_audio_frame channels=2 fmt=8 buf_size=8192 align=1 nb_samples=1024 -> 0
+av.send_frame audio pts=2048 nb_samples=1024 fmt=8 channels=2 rate=48000 data=3031323334353637 -> 0
+av.receive_packet -> 0 size=3 pts=-9223372036854775808 dts=-9223372036854775808 flags=0
+av.packet_unref
+encode -> 1 received=1 pts=-9223372036854775808 dts=-9223372036854775808 size=3 type=0 keyframe=1 timebase=1/48000 data=a0a1a2
+av.fill_audio_frame channels=2 fmt=8 buf_size=8192 align=1 nb_samples=1024 -> 0
+av.send_frame audio pts=3072 nb_samples=1024 fmt=8 channels=2 rate=48000 data=4041424344454647 -> 0
+av.receive_packet -> 0 size=0 pts=7 dts=7 flags=0
+av.packet_unref
+encode -> 1 received=1 pts=7 dts=7 size=0 type=0 keyframe=1 timebase=1/48000 data=-
+av.fill_audio_frame channels=2 fmt=8 buf_size=8192 align=1 nb_samples=1024 -> 0
+av.send_frame audio pts=4096 nb_samples=1024 fmt=8 channels=2 rate=48000 data=5051525354555657 -> -11
+encode -> 1 received=0
+av.fill_audio_frame channels=2 fmt=8 buf_size=8192 align=1 nb_samples=1024 -> 0
+av.send_frame audio pts=5120 nb_samples=1024 fmt=8 channels=2 rate=48000 data=5051525354555657 -> -541478725
+encode -> 1 received=0
+av.fill_audio_frame channels=2 fmt=8 buf_size=8192 align=1 nb_samples=1024 -> 0
+av.send_frame audio pts=6144 nb_samples=1024 fmt=8 channels=2 rate=48000 data=6061626364656667 -> -1000
+log warning [FFmpeg aac encoder: 'enc'] avcodec_encode_audio2 failed: Error number -1000 occurred
+encode -> 0 received=0
+av.fill_audio_frame channels=2 fmt=8 buf_size=8192 align=1 nb_samples=1024 -> 0
+av.send_frame audio pts=7168 nb_samples=1024 fmt=8 channels=2 rate=48000 data=6061626364656667 -> 0
+av.receive_packet -> -1001 size=0 pts=0 dts=0 flags=0
+log warning [FFmpeg aac encoder: 'enc'] avcodec_encode_audio2 failed: Error number -1001 occurred
+encode -> 0 received=0
+av.fill_audio_frame channels=2 fmt=8 buf_size=8192 align=1 nb_samples=1024 -> -1002
+log warning [FFmpeg aac encoder: 'enc'] avcodec_fill_audio_frame failed: Error number -1002 occurred
+encode -> 0 received=0
+echo ---- codec time base 1/1000 with 48000 Hz: pts of the input frame and of the packet are rescaled with rounding to nearest
+av.free_context
+av.find_encoder aac -> found
+log info ---------------------------------
+log info [FFmpeg aac encoder: 'enc'] bitrate: 128, channels: 2, channel_layout: stereo, track: 1 
+av.open2 codec=aac bit_rate=128000 sample_rate=48000 channels=2 sample_fmt=8 strict=-2 flags=4194304 0x0 pix_fmt=0
+audio_create aac ok
+av.fill_audio_frame channels=2 fmt=8 buf_size=8192 align=1 nb_samples=1024 -> 0
+av.send_frame audio pts=0 nb_samples=1024 fmt=8 channels=2 rate=48000 data=0102030405060708 -> 0
+av.receive_packet -> 0 size=2 pts=50 dts=49 flags=0
+av.packet_unref
+encode -> 1 received=1 pts=2400 dts=2352 size=2 type=0 keyframe=1 timebase=1/48000 data=a0a1
+av.fill_audio_frame channels=2 fmt=8 buf_size=8192 align=1 nb_samples=1024 -> 0
+av.send_frame audio pts=21 nb_samples=1024 fmt=8 channels=2 rate=48000 data=0102030405060708 -> 0
+av.receive_packet -> eagain
+encode -> 1 received=0
+av.fill_audio_frame channels=2 fmt=8 buf_size=8192 align=1 nb_samples=1024 -> 0
+av.send_frame audio pts=43 nb_samples=1024 fmt=8 channels=2 rate=48000 data=0102030405060708 -> 0
+av.receive_packet -> 0 size=2 pts=51 dts=50 flags=0
+av.packet_unref
+encode -> 1 received=1 pts=2448 dts=2400 size=2 type=0 keyframe=1 timebase=1/48000 data=a0a1
+av.free_context
+echo ---- packed format: one plane holding all channels; fill_audio_frame is given frame_size_bytes * channels (over-count, Q-3)
+av.find_encoder libopus -> found
+log info ---------------------------------
+log info [FFmpeg libopus encoder: 'enc'] bitrate: 128, channels: 2, channel_layout: stereo, track: 1 
+av.open2 codec=libopus bit_rate=128000 sample_rate=48000 channels=2 sample_fmt=3 strict=-2 flags=4194304 0x0 pix_fmt=0
+audio_create opus ok
+av.fill_audio_frame channels=2 fmt=3 buf_size=16384 align=1 nb_samples=1024 -> 0
+av.send_frame audio pts=0 nb_samples=1024 fmt=3 channels=2 rate=48000 data=0708090a0b0c0d0e -> 0
+av.receive_packet -> 0 size=1 pts=5 dts=5 flags=0
+av.packet_unref
+encode -> 1 received=1 pts=5 dts=5 size=1 type=0 keyframe=1 timebase=1/48000 data=a0
+audio type=libopus bit_rate=128000 sample_rate=48000 channels=2 sample_fmt=3 frame_size=1024 frame_size_bytes=8192 planes=1 audio_size=8 total_samples=1024 time_base=1/48000
+av.free_context

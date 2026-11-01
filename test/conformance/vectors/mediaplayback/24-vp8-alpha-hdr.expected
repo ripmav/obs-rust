@@ -1,0 +1,52 @@
+minit -> ok
+ff open path=vp8a format=- nobuffer=1 interrupt=0 opts=[]
+ff find_decoder_by_name libvpx -> found
+minit2 -> ok has_v=1 has_a=0
+mfree
+minit -> ok
+ff open path=vp9a format=- nobuffer=1 interrupt=0 opts=[]
+ff find_decoder_by_name libvpx-vp9 -> found
+minit2 -> ok has_v=1 has_a=0
+mfree
+minit -> ok
+ff open path=h264a format=- nobuffer=1 interrupt=0 opts=[]
+minit2 -> ok has_v=1 has_a=0
+mfree
+minit -> ok
+ff open path=vp8n format=- nobuffer=1 interrupt=0 opts=[]
+minit2 -> ok has_v=1 has_a=0
+mfree
+# ---- libvpx not available: fall back
+minit -> ok
+ff open path=vp8a format=- nobuffer=1 interrupt=0 opts=[]
+ff find_decoder_by_name libvpx -> null
+minit2 -> ok has_v=1 has_a=0
+mfree
+# ---- HDR: mastering 4000.5 rounds to 4001; the last listed side data wins
+minit -> ok
+ff open path=hdr1 format=- nobuffer=1 interrupt=0 opts=[]
+minit2 -> ok has_v=1 has_a=0
+ff seek stream=0 target=0 flags=BACKWARD
+ff decoder flush
+ff read #0 stream=0 pts=0 size=4
+cb preload ts=0 fmt=I420 16x16 flip=0 full=0 trc=DEFAULT maxlum=1000 flags=0 ls0=16 d0=01 mat0=1.16438 min0=0.0627451 max0=0.921569
+mreset -> 1
+mfree
+minit -> ok
+ff open path=hdr2 format=- nobuffer=1 interrupt=0 opts=[]
+minit2 -> ok has_v=1 has_a=0
+ff seek stream=0 target=0 flags=BACKWARD
+ff decoder flush
+ff read #0 stream=0 pts=0 size=4
+cb preload ts=0 fmt=I420 16x16 flip=0 full=0 trc=DEFAULT maxlum=4001 flags=0 ls0=16 d0=01 mat0=1.16438 min0=0.0627451 max0=0.921569
+mreset -> 1
+mfree
+minit -> ok
+ff open path=hdr3 format=- nobuffer=1 interrupt=0 opts=[]
+minit2 -> ok has_v=1 has_a=0
+ff seek stream=0 target=0 flags=BACKWARD
+ff decoder flush
+ff read #0 stream=0 pts=0 size=4
+cb preload ts=0 fmt=I420 16x16 flip=0 full=0 trc=DEFAULT maxlum=4001 flags=0 ls0=16 d0=01 mat0=1.16438 min0=0.0627451 max0=0.921569
+mreset -> 1
+mfree

@@ -1,0 +1,18 @@
+# S-026 confirm callback given to the file-updater: services.json is accepted only when it parses
+# (plain JSON, duplicates allowed) and its integer "format_version" equals 5; other files always pass.
+module-load
+confirm services.json "{\"format_version\":5,\"services\":[]}"
+confirm services.json "{\"format_version\":4,\"services\":[]}"
+confirm services.json "{\"format_version\":6,\"services\":[]}"
+confirm services.json "{\"services\":[]}"
+confirm services.json "{\"format_version\":\"5\",\"services\":[]}"
+confirm services.json "{\"format_version\":5.9}"
+confirm services.json "{\"format_version\":5.0}"
+confirm services.json "{\"format_version\":5,\"format_version\":5}"
+confirm services.json "{\"format_version\":5"
+confirm services.json "not json"
+confirm services.json "[]"
+confirm services.json ""
+confirm SERVICES.JSON "{\"format_version\":1}"
+confirm package.json "{\"format_version\":1}"
+confirm other.json "garbage"

@@ -1,0 +1,19 @@
+add h ok
+emit s
+call early
+call killer
+call late
+emit-done
+emit s
+call early
+call killer
+call late
+emit-done
+add h2 ok
+emit s
+call first
+call killer2
+emit-done
+emit s
+call killer2
+emit-done

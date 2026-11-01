@@ -1,0 +1,68 @@
+# scroll_filter: speed/limit settings, tick offset arithmetic, loop wrap vs clamp, size reporting, sampler creation.
+source T 1000 500 1000 500 SRGB video
+source P 1000 500 1000 500 SRGB video
+filter a scroll_filter 0 @null T P
+size a
+tick a 0.5
+size a
+defaults scroll_filter 0
+echo after the first render size_i is set (1/base); without it ticks add nothing
+data d
+dset d speed_x dbl 100
+dset d speed_y dbl -50
+filter b scroll_filter 0 d T P
+tick b 0.1
+render b
+tick b 1
+render b
+tick b 1
+render b
+echo loop wraps by subtracting 1 at most once; negative offsets are never wrapped
+tick b 5
+render b
+echo non-loop clamps the offset to 1.0
+dset d loop bool 0
+dset d speed_x dbl 500
+dset d speed_y dbl 500
+filter c scroll_filter 0 d T P
+tick c 0.0
+render c
+tick c 10
+render c
+echo limited size: cx/cy replace the base size for output size and mul_val
+dset d loop bool 1
+dset d limit_cx bool 1
+dset d limit_cy bool 1
+dset d cx int 250
+dset d cy int 100
+filter e scroll_filter 0 d T P
+tick e 0.0
+size e
+render e
+echo only one axis limited
+dset d limit_cy bool 0
+filter f scroll_filter 0 d T P
+tick f 0.0
+size f
+render f
+echo speed 0 resets that axis offset at update; show() resets both
+data z
+dset z speed_x dbl 0
+dset z speed_y dbl 10
+filter g scroll_filter 0 z T P
+tick g 0.0
+render g
+tick g 1
+render g
+update g z
+tick g 0
+show g
+render g
+echo zero base size: size_i zeroed and the filter is skipped
+resize T 0 0 0 0
+render g
+size g
+echo no target
+filter h scroll_filter 0 d @null P
+size h
+render h

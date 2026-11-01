@@ -1,0 +1,18 @@
+  cb T create
+log debug source 'T' (tr) created
+create t ok
+  cb A create
+log debug source 'A' (in) created
+create a ok
+  cb B create
+log debug source 'B' (in) created
+create b ok
+tr_video_direct t 0
+  cb T transition_start
+tr_start t 1
+tr_video_direct t 1
+tr_video_direct t 1
+  cb T transition_stop
+tr_video_direct t 0
+tr t A=b(act=1) B=-(act=0) video=0 audio=0 mode=0 manual_val=0 target=0 size=0x0 actual=100x100 start=1000 dur=1000000000
+tr_video_direct t 0

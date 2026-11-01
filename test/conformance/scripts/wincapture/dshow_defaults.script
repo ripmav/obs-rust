@@ -1,0 +1,10 @@
+# Video capture device source (dshow_input) defaults. frame_interval -1 = FPS_MATCHING (use the OBS frame rate),
+# 0 = FPS_HIGHEST. res_type 0 = device preferred, 1 = custom. video_format default is VideoFormat::Any, whose
+# numeric value comes from libdshowcapture (not part of this repository snapshot): -1 here is a placeholder token.
+# audio_output_mode 0 = capture. Encoder (C985/C353) default bitrate is 1000.
+s_reset
+s_defaults dshow
+s_dump
+s_reset
+s_defaults dshow_encoder
+s_dump

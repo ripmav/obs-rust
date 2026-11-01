@@ -1,0 +1,15 @@
+# ETag header parsing forms (CORE): only a header line starting exactly with "ETag: " counts,
+# the value stops at the first CR or LF, an empty value is ignored (no meta.json written).
+fu_put /L/package.json "{\"version\":1,\"files\":[]}"
+fu_http http://srv/u/package.json 200 "{\"version\":1,\"files\":[]}" "etag: \"lower\"\r\n"
+fu_run /L /E1/ http://srv/u UA
+fu_cat /E1/meta.json
+fu_http http://srv/u/package.json 200 "{\"version\":1,\"files\":[]}" "ETag: "
+fu_run /L /E2/ http://srv/u UA
+fu_cat /E2/meta.json
+fu_http http://srv/u/package.json 200 "{\"version\":1,\"files\":[]}" "ETag: W/\"weak\"\nignored"
+fu_run /L /E3/ http://srv/u UA
+fu_json_get /E3/meta.json etag
+fu_http http://srv/u/package.json 200 "{\"version\":1,\"files\":[]}" "ETag: bare"
+fu_run /L /E4/ http://srv/u UA
+fu_json_get /E4/meta.json etag

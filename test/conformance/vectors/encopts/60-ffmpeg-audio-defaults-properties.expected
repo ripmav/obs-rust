@@ -1,0 +1,6 @@
+data D
+  bitrate int 128 default
+end data D
+props P
+  bitrate int desc="Bitrate" visible=1 enabled=1 min=64 max=1024 step=32 numtype=0
+end props P

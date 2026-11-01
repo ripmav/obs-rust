@@ -1,0 +1,53 @@
+# os_generate_formatted_filename: date/time tokens. Fixed time, TZ=UTC. Each token is expanded by the
+# C library's strftime in the "C" locale. The OBS tokens (%CCYY %YY %MM %DD %hh %mm %ss) are looked up
+# first, then the plain strftime ones (%a %A %b %B %d %H %I %m %M %p %S %y %Y %z %Z), then %% .
+# 1704164645 = 2024-01-02 03:04:05 UTC (a Tuesday)
+now 1704164645
+tz UTC0
+video 60 1 1920 1080 1280 720 NV12
+fname @null 1 "%CCYY"
+fname @null 1 "%YY"
+fname @null 1 "%MM"
+fname @null 1 "%DD"
+fname @null 1 "%hh"
+fname @null 1 "%mm"
+fname @null 1 "%ss"
+fname @null 1 "%Y"
+fname @null 1 "%y"
+fname @null 1 "%m"
+fname @null 1 "%d"
+fname @null 1 "%H"
+fname @null 1 "%M"
+fname @null 1 "%S"
+fname @null 1 "%I"
+fname @null 1 "%p"
+fname @null 1 "%a"
+fname @null 1 "%A"
+fname @null 1 "%b"
+fname @null 1 "%B"
+fname @null 1 "%z"
+fname @null 1 "%Z"
+fname @null 1 "%s"
+fname @null 1 "%%"
+fname @null 1 "%CCYY%MM%DD_%hh%mm%ss"
+fname @null 1 "%Y-%m-%d %H-%M-%S"
+fname @null 1 "%A, %d %B %Y %I:%M:%S %p"
+# 12 hour clock
+now 1699920300
+fname @null 1 "%H %I %p"
+now 1699963200
+fname @null 1 "%H %I %p"
+now 1699963260
+fname @null 1 "%H %I %p"
+now 1700000000
+fname @null 1 "%H %I %p %a %A %b %B"
+# year boundaries, leap day, epoch, century
+now 0
+fname @null 1 "%CCYY-%MM-%DD %hh:%mm:%ss %a"
+now 951782400
+fname @null 1 "%CCYY-%MM-%DD %a %y"
+now 4102444799
+fname @null 1 "%CCYY-%MM-%DD %hh:%mm:%ss %a"
+now 253402300799
+fname @null 1 "%CCYY-%MM-%DD %hh:%mm:%ss %a %s"
+now 1704164645

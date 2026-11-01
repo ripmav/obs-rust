@@ -1,0 +1,126 @@
+log debug canvas 'Main' (<uuid>) created
+startup -> true
+log info ---------------------------------
+log info video settings reset:  base resolution:   1920x1080  output resolution: 1280x720  downscale filter:  Bicubic  fps:               30/1  format:            NV12  YUV mode:          Rec. 709/Partial
+log info NV12 texture support enabled
+log info P010 texture support not available
+reset_video -> success
+  after_call base=1920x1080 out=1280x720 fps=30/1 fmt=NV12 cs=2 range=1 scale=2 gpu=1 adapter=0
+ev swapchain_create 800x600
+display_create d1 -> ok
+display_create d2 -> ok
+display_list: d2 d1
+display_info d1 enabled=1 size=800x600 next=800x600 bg=0xff102030 update_cs=0 callbacks=0 swap=yes in_list=1
+display_info d2 enabled=1 size=0x0 next=0x0 bg=0x0 update_cs=0 callbacks=0 swap=no in_list=1
+ev load_swapchain
+ev begin_scene
+ev clear flags=7 color=0.188235298,0.125490203,0.0627451017,1 depth=1 stencil=0
+ev depth_test 0
+ev cull_mode 2
+ev ortho 0 800 0 600 -100 100
+ev viewport 0 0 800 600
+  draw A 800x600
+  draw B 800x600
+ev end_scene
+ev present
+display_info d1 enabled=1 size=800x600 next=1024x768 bg=0xff102030 update_cs=0 callbacks=2 swap=yes in_list=1
+ev load_swapchain
+ev resize 1024x768
+ev begin_scene
+ev clear flags=7 color=0.188235298,0.125490203,0.0627451017,1 depth=1 stencil=0
+ev depth_test 0
+ev cull_mode 2
+ev ortho 0 1024 0 768 -100 100
+ev viewport 0 0 1024 768
+  draw A 1024x768
+  draw B 1024x768
+ev end_scene
+ev present
+display_info d1 enabled=1 size=1024x768 next=1024x768 bg=0xff102030 update_cs=0 callbacks=2 swap=yes in_list=1
+ev load_swapchain
+ev begin_scene
+ev clear flags=7 color=0.188235298,0.125490203,0.0627451017,1 depth=1 stencil=0
+ev depth_test 0
+ev cull_mode 2
+ev ortho 0 1024 0 768 -100 100
+ev viewport 0 0 1024 768
+  draw A 1024x768
+  draw B 1024x768
+ev end_scene
+ev present
+ev load_swapchain
+ev update_color_space
+ev begin_scene
+ev clear flags=7 color=0.188235298,0.125490203,0.0627451017,1 depth=1 stencil=0
+ev depth_test 0
+ev cull_mode 2
+ev ortho 0 1024 0 768 -100 100
+ev viewport 0 0 1024 768
+  draw A 1024x768
+  draw B 1024x768
+ev end_scene
+ev present
+ev load_swapchain
+ev begin_scene
+ev clear flags=7 color=0.188235298,0.125490203,0.0627451017,1 depth=1 stencil=0
+ev depth_test 0
+ev cull_mode 2
+ev ortho 0 1024 0 768 -100 100
+ev viewport 0 0 1024 768
+  draw A 1024x768
+  draw B 1024x768
+ev end_scene
+ev present
+display_info d1 enabled=0 size=1024x768 next=1024x768 bg=0xff102030 update_cs=0 callbacks=2 swap=yes in_list=1
+ev load_swapchain
+ev begin_scene
+ev clear flags=7 color=0,0.501960814,1,1 depth=1 stencil=0
+ev depth_test 0
+ev cull_mode 2
+ev ortho 0 1024 0 768 -100 100
+ev viewport 0 0 1024 768
+  draw A 1024x768
+  draw B 1024x768
+ev end_scene
+ev present
+ev load_swapchain
+ev resize 640x480
+ev begin_scene
+ev clear flags=7 color=0,0.501960814,1,1 depth=1 stencil=0
+ev depth_test 0
+ev cull_mode 2
+ev ortho 0 640 0 480 -100 100
+ev viewport 0 0 640 480
+  draw A 640x480
+  draw B 640x480
+ev end_scene
+ev present
+display_info d1 enabled=1 size=640x480 next=640x480 bg=0x80ff8000 update_cs=0 callbacks=2 swap=yes in_list=1
+ev load_swapchain
+ev begin_scene
+ev clear flags=7 color=0,0.501960814,1,1 depth=1 stencil=0
+ev depth_test 0
+ev cull_mode 2
+ev ortho 0 640 0 480 -100 100
+ev viewport 0 0 640 480
+  draw B 640x480
+ev end_scene
+ev present
+ev load_swapchain
+ev begin_scene
+ev clear flags=7 color=0,0.501960814,1,1 depth=1 stencil=0
+ev depth_test 0
+ev cull_mode 2
+ev ortho 0 640 0 480 -100 100
+ev viewport 0 0 640 480
+  draw B 640x480
+ev end_scene
+ev present
+ev load_swapchain
+display_list: d2
+display_list:
+display_null enabled=0 size=0x0
+shutdown begin
+log info Freeing OBS context data
+log debug canvas 'Main' (<uuid>) destroyed
+shutdown end obs=NULL

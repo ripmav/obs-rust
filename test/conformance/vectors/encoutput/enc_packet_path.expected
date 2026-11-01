@@ -1,0 +1,31 @@
+log debug encoder 'v' (v) created
+encoder v created tb=1/30
+log debug output 'vo' (vo) created
+output vo created flags=5 reconnect=20/2
+set_venc vo idx=0 -> video_slots=01 audio_slots=00
+plugin out vo start
+plugin enc v create
+log debug Maximum interleaver batch size for 'vo' calculated to be 2 packets
+signal vo activate
+signal vo start
+plugin out vo begin_data_capture -> 1
+signal vo starting
+start vo -> 1
+--- delta frames before the first keyframe are not delivered
+--- keyframe: delivered with SEI prefix (size grows by 2, data starts with aabb)
+plugin out vo pkt V0 pts=2 dts=2 usec=66666 kf=1 size=5 tb=1/30 b0=aa
+plugin out vo pkt V0 pts=3 dts=3 usec=100000 kf=0 size=3 tb=1/30 b0=04
+--- B-frame style dts < pts, timebase with num != 1: dts_us ignores the numerator
+plugin out vo pkt V0 pts=4 dts=2 usec=66666 kf=0 size=3 tb=5/30 b0=05
+plugin out vo pkt V0 pts=5 dts=3 usec=100000 kf=0 size=3 tb=7/30 b0=06
+--- start timestamp shifts dts_usec
+plugin out vo pkt V0 pts=6 dts=4 usec=2133333 kf=0 size=3 tb=1/30 b0=07
+signal vo stopping
+plugin out vo stop ts=0
+log info Output 'vo': stopping
+log info Output 'vo': Total frames output: 5
+log info Output 'vo': Total drawn frames: 0
+signal vo stop code=0 last_error=-
+stop vo done
+plugin enc v destroy
+signal vo deactivate

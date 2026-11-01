@@ -1,0 +1,35 @@
+echo metadata-and-other-obus
+av1_header ret=24 header=81080c000a0b00000042abbfc37709d0012a050123456789
+av1_header ret=24 header=81080c000a0b00000042abbfc37709d0012a050123456789
+av1_header ret=21 header=81080c000a0b00000042abbfc37709d0012a0202ab
+av1_header ret=24 header=81080c000a0b00000042abbfc37709d0012a050123456789
+av1_header ret=17 header=81080c000a0b00000042abbfc37709d001
+av1_header ret=18 header=81080c000e280b00000042abbfc37709d001
+av1_header ret=16 header=81080c000800000042abbfc37709d001
+av1_header ret=18 header=81080c000a8b0000000042abbfc37709d001
+av1_header ret=21 header=81080c000a0b00000042abbfc37709d0012c000102
+echo already-av1C
+av1_header ret=17 header=81080c000a0b00000042abbfc37709d001
+av1_header ret=4 header=81000000
+av1_header ret=0 header=unset
+av1_header ret=0 header=unset
+av1_header ret=0 header=unset
+av1_header ret=0 header=unset
+echo failures
+av1_header ret=0 header=unset
+av1_header ret=0 header=unset
+av1_header ret=0 header=unset
+av1_header ret=0 header=unset
+av1_header ret=0 header=unset
+av1_header ret=0 header=unset
+av1_header ret=0 header=unset
+av1_header ret=0 header=unset
+av1_header ret=0 header=unset
+av1_header ret=0 header=unset
+echo cut-off-inputs-that-fail-cleanly
+av1_header ret=0 header=unset
+av1_header ret=0 header=unset
+av1_header ret=0 header=unset
+av1_header ret=0 header=unset
+av1_header ret=17 header=81080c000a0b00000042abbfc37709d001
+av1_header ret=0 header=unset

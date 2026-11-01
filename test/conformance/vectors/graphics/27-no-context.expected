@@ -1,0 +1,471 @@
+> trace 1
+> gs_begin_frame - - - - - -
+log debug gs_begin_frame: called while not in a graphics context
+> gs_begin_scene - - - - - -
+log debug gs_begin_scene: called while not in a graphics context
+> gs_blend_function - - - - - -
+log debug gs_blend_function: called while not in a graphics context
+> gs_blend_function_separate - - - - - -
+log debug gs_blend_function_separate: called while not in a graphics context
+> gs_blend_op - - - - - -
+log debug gs_blend_op: called while not in a graphics context
+> gs_blend_state_pop - - - - - -
+log debug gs_blend_state_pop: called while not in a graphics context
+> gs_blend_state_push - - - - - -
+log debug gs_blend_state_push: called while not in a graphics context
+> gs_color - - - - - -
+log debug gs_color: called while not in a graphics context
+> gs_color4v - - - - - -
+> gs_copy_texture - - - - - -
+log debug gs_copy_texture: called while not in a graphics context
+> gs_cubetexture_create - - - - - -
+log debug gs_cubetexture_create: called while not in a graphics context
+ret null
+> gs_cubetexture_destroy - - - - - -
+log debug gs_cubetexture_destroy: called while not in a graphics context
+> gs_cubetexture_get_color_format - - - - - -
+log debug gs_cubetexture_get_color_format: called while not in a graphics context
+ret 0
+> gs_cubetexture_get_size - - - - - -
+log debug gs_cubetexture_get_size: called while not in a graphics context
+ret 0
+> gs_debug_marker_begin - - - - - -
+log debug gs_debug_marker_begin: called while not in a graphics context
+> gs_debug_marker_end - - - - - -
+log debug gs_debug_marker_end: called while not in a graphics context
+> gs_depth_function - - - - - -
+log debug gs_depth_function: called while not in a graphics context
+> gs_draw - - - - - -
+log debug gs_draw: called while not in a graphics context
+> gs_draw_cube_backdrop - - - - - -
+> gs_draw_quadf - - - - - -
+log error A sprite cannot be drawn without a width/height
+> gs_draw_sprite - - - - - -
+log error A sprite cannot be drawn without a width/height
+> gs_draw_sprite_subregion - - - - - -
+log debug gs_texture_get_width: called while not in a graphics context
+log debug gs_texture_get_height: called while not in a graphics context
+log error A sprite cannot be drawn without a width/height
+> gs_effect_create_from_file - - - - - -
+log debug gs_effect_create_from_file: called while not in a graphics context
+ret null
+> gs_enable_blending - - - - - -
+log debug gs_enable_blending: called while not in a graphics context
+> gs_enable_color - - - - - -
+log debug gs_enable_color: called while not in a graphics context
+> gs_enable_depth_test - - - - - -
+log debug gs_enable_depth_test: called while not in a graphics context
+> gs_enable_framebuffer_srgb - - - - - -
+log debug gs_enable_framebuffer_srgb: called while not in a graphics context
+> gs_enable_stencil_test - - - - - -
+log debug gs_enable_stencil_test: called while not in a graphics context
+> gs_enable_stencil_write - - - - - -
+log debug gs_enable_stencil_write: called while not in a graphics context
+> gs_end_scene - - - - - -
+log debug gs_end_scene: called while not in a graphics context
+> gs_enum_adapters - - - - - -
+log debug gs_enum_adapters: called while not in a graphics context
+> gs_flush - - - - - -
+log debug gs_flush: called while not in a graphics context
+> gs_framebuffer_srgb_enabled - - - - - -
+log debug gs_framebuffer_srgb_enabled: called while not in a graphics context
+ret false
+> gs_frustum - - - - - -
+log debug gs_frustum: called while not in a graphics context
+> gs_get_adapter_count - - - - - -
+log debug gs_get_adapter_count: called while not in a graphics context
+ret 0
+> gs_get_color_space - - - - - -
+log debug gs_get_color_space: called while not in a graphics context
+ret 0
+> gs_get_cull_mode - - - - - -
+log debug gs_get_cull_mode: called while not in a graphics context
+ret 2
+> gs_get_device_name - - - - - -
+log debug gs_get_device_name: called while not in a graphics context
+ret null
+> gs_get_device_obj - - - - - -
+log debug gs_get_device_obj: called while not in a graphics context
+ret null
+> gs_get_device_type - - - - - -
+log debug gs_get_device_type: called while not in a graphics context
+ret -1
+> gs_get_driver_version - - - - - -
+log debug gs_get_driver_version: called while not in a graphics context
+ret null
+> gs_get_effect - - - - - -
+log debug gs_get_effect: called while not in a graphics context
+ret null
+> gs_get_gpu_dmem - - - - - -
+log debug gs_get_gpu_dmem: called while not in a graphics context
+ret 0
+> gs_get_gpu_smem - - - - - -
+log debug gs_get_gpu_smem: called while not in a graphics context
+ret 0
+> gs_get_height - - - - - -
+log debug gs_get_height: called while not in a graphics context
+ret 0
+> gs_get_input - - - - - -
+ret null
+> gs_get_linear_srgb - - - - - -
+log debug gs_get_linear_srgb: called while not in a graphics context
+ret false
+> gs_get_pixel_shader - - - - - -
+log debug gs_get_pixel_shader: called while not in a graphics context
+ret null
+> gs_get_render_target - - - - - -
+log debug gs_get_render_target: called while not in a graphics context
+ret null
+> gs_get_renderer - - - - - -
+log debug gs_get_renderer: called while not in a graphics context
+ret null
+> gs_get_size - - - - - -
+log debug gs_get_size: called while not in a graphics context
+size 57005 48879
+> gs_get_texture_type - - - - - -
+log debug gs_get_texture_type: called while not in a graphics context
+ret 0
+> gs_get_vertex_shader - - - - - -
+log debug gs_get_vertex_shader: called while not in a graphics context
+ret null
+> gs_get_viewport - - - - - -
+log debug gs_get_viewport: called while not in a graphics context
+viewport -1 -1 -1 -1
+> gs_get_width - - - - - -
+log debug gs_get_width: called while not in a graphics context
+ret 0
+> gs_get_zstencil_target - - - - - -
+log debug gs_get_zstencil_target: called while not in a graphics context
+ret null
+> gs_indexbuffer_create - - - - - -
+log debug gs_indexbuffer_create: called while not in a graphics context
+ret null
+> gs_indexbuffer_destroy - - - - - -
+log debug gs_indexbuffer_destroy: called while not in a graphics context
+> gs_indexbuffer_flush - - - - - -
+log debug gs_indexbuffer_flush: called while not in a graphics context
+> gs_indexbuffer_flush_direct - - - - - -
+log debug gs_indexbuffer_flush_direct: called while not in a graphics context
+> gs_indexbuffer_get_data - - - - - -
+log debug gs_indexbuffer_get_data: called while not in a graphics context
+ret null
+> gs_indexbuffer_get_num_indices - - - - - -
+log debug gs_indexbuffer_get_num_indices: called while not in a graphics context
+ret 0
+> gs_indexbuffer_get_type - - - - - -
+log debug gs_indexbuffer_get_type: called while not in a graphics context
+ret 0
+> gs_is_monitor_hdr - - - - - -
+log debug gs_is_monitor_hdr: called while not in a graphics context
+ret false
+> gs_is_present_ready - - - - - -
+log debug gs_is_present_ready: called while not in a graphics context
+ret false
+> gs_load_default_samplerstate - - - - - -
+log debug gs_load_default_samplerstate: called while not in a graphics context
+> gs_load_indexbuffer - - - - - -
+log debug gs_load_indexbuffer: called while not in a graphics context
+> gs_load_pixelshader - - - - - -
+log debug gs_load_pixelshader: called while not in a graphics context
+> gs_load_samplerstate - - - - - -
+log debug gs_load_samplerstate: called while not in a graphics context
+> gs_load_swapchain - - - - - -
+log debug gs_load_swapchain: called while not in a graphics context
+> gs_load_texture - - - - - -
+log debug gs_load_texture: called while not in a graphics context
+> gs_load_vertexbuffer - - - - - -
+log debug gs_load_vertexbuffer: called while not in a graphics context
+> gs_load_vertexshader - - - - - -
+log debug gs_load_vertexshader: called while not in a graphics context
+> gs_matrix_get - - - - - -
+log debug gs_matrix_get: called while not in a graphics context
+matrix 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+> gs_matrix_identity - - - - - -
+log debug gs_matrix_identity: called while not in a graphics context
+> gs_matrix_pop - - - - - -
+log debug gs_matrix_pop: called while not in a graphics context
+> gs_matrix_push - - - - - -
+log debug gs_matrix_push: called while not in a graphics context
+> gs_matrix_rotaa - - - - - -
+log debug gs_matrix_rotaa: called while not in a graphics context
+> gs_matrix_rotaa4f - - - - - -
+log debug gs_matrix_rotaa4f: called while not in a graphics context
+> gs_matrix_rotquat - - - - - -
+log debug gs_matrix_rotquat: called while not in a graphics context
+> gs_matrix_scale - - - - - -
+log debug gs_matrix_scale: called while not in a graphics context
+> gs_matrix_translate - - - - - -
+log debug gs_matrix_translate: called while not in a graphics context
+> gs_matrix_translate3f - - - - - -
+log debug gs_matrix_translate3f: called while not in a graphics context
+> gs_matrix_transpose - - - - - -
+log debug gs_matrix_transpose: called while not in a graphics context
+> gs_normal3f - - - - - -
+log debug gs_normal3v: called while not in a graphics context
+> gs_normal3v - - - - - -
+log debug gs_normal3v: called while not in a graphics context
+> gs_nv12_available - - - - - -
+log debug gs_nv12_available: called while not in a graphics context
+ret false
+> gs_ortho - - - - - -
+log debug gs_ortho: called while not in a graphics context
+> gs_p010_available - - - - - -
+log debug gs_p010_available: called while not in a graphics context
+ret false
+> gs_perspective - - - - - -
+log debug gs_perspective: called while not in a graphics context
+> gs_pixelshader_create - - - - - -
+log debug gs_pixelshader_create: called while not in a graphics context
+ret null
+> gs_pixelshader_create_from_file - - - - - -
+log debug gs_pixelshader_create_from_file: called while not in a graphics context
+ret null
+> gs_preprocessor_name - - - - - -
+log debug gs_preprocessor_name: called while not in a graphics context
+ret null
+> gs_present - - - - - -
+log debug gs_present: called while not in a graphics context
+> gs_projection_pop - - - - - -
+log debug gs_projection_pop: called while not in a graphics context
+> gs_projection_push - - - - - -
+log debug gs_projection_push: called while not in a graphics context
+> gs_render_save - - - - - -
+log debug gs_render_save: called while not in a graphics context
+ret null
+> gs_reset_blend_state - - - - - -
+log debug gs_preprocessor_name: called while not in a graphics context
+> gs_reset_viewport - - - - - -
+log debug gs_reset_viewport: called while not in a graphics context
+> gs_resize - - - - - -
+log debug gs_resize: called while not in a graphics context
+> gs_samplerstate_create - - - - - -
+log debug gs_samplerstate_create: called while not in a graphics context
+ret null
+> gs_samplerstate_create_null - - - - - -
+log debug gs_samplerstate_create: called while not in a graphics context
+ret null
+> gs_samplerstate_destroy - - - - - -
+log debug gs_samplerstate_destroy: called while not in a graphics context
+> gs_set_2d_mode - - - - - -
+log debug gs_set_2d_mode: called while not in a graphics context
+> gs_set_3d_mode - - - - - -
+> gs_set_cube_render_target - - - - - -
+log debug gs_set_cube_render_target: called while not in a graphics context
+> gs_set_cull_mode - - - - - -
+log debug gs_set_cull_mode: called while not in a graphics context
+> gs_set_render_target - - - - - -
+log debug gs_set_render_target: called while not in a graphics context
+> gs_set_render_target_with_color_space - - - - - -
+log debug gs_set_render_target_with_color_space: called while not in a graphics context
+> gs_set_scissor_rect - - - - - -
+log debug gs_set_scissor_rect: called while not in a graphics context
+> gs_set_viewport - - - - - -
+log debug gs_set_viewport: called while not in a graphics context
+> gs_shader_destroy - - - - - -
+log debug gs_shader_destroy: called while not in a graphics context
+> gs_shader_get_num_params - - - - - -
+log debug gs_shader_get_num_params: called while not in a graphics context
+ret 0
+> gs_shader_get_param_by_idx - - - - - -
+log debug gs_shader_get_param_by_idx: called while not in a graphics context
+ret null
+> gs_shader_get_param_by_name - - - - - -
+log debug gs_shader_get_param_by_name: called while not in a graphics context
+ret null
+> gs_shader_get_param_info - - - - - -
+log debug gs_shader_get_param_info: called while not in a graphics context
+info type=0 name=null
+> gs_shader_get_viewproj_matrix - - - - - -
+log debug gs_shader_get_viewproj_matrix: called while not in a graphics context
+ret null
+> gs_shader_get_world_matrix - - - - - -
+log debug gs_shader_get_world_matrix: called while not in a graphics context
+ret null
+> gs_shader_set_bool - - - - - -
+log debug gs_shader_set_bool: called while not in a graphics context
+> gs_shader_set_default - - - - - -
+log debug gs_shader_set_default: called while not in a graphics context
+> gs_shader_set_float - - - - - -
+log debug gs_shader_set_float: called while not in a graphics context
+> gs_shader_set_int - - - - - -
+log debug gs_shader_set_int: called while not in a graphics context
+> gs_shader_set_matrix3 - - - - - -
+log debug gs_shader_set_matrix3: called while not in a graphics context
+> gs_shader_set_next_sampler - - - - - -
+log debug gs_shader_set_next_sampler: called while not in a graphics context
+> gs_shader_set_texture - - - - - -
+log debug gs_shader_set_texture: called while not in a graphics context
+> gs_shader_set_val - - - - - -
+log debug gs_shader_set_val: called while not in a graphics context
+> gs_shader_set_vec2 - - - - - -
+log debug gs_shader_set_vec2: called while not in a graphics context
+> gs_shader_set_vec2_null - - - - - -
+log debug gs_shader_set_vec2: called while not in a graphics context
+> gs_shader_set_vec3 - - - - - -
+log debug gs_shader_set_vec3: called while not in a graphics context
+> gs_shader_set_vec4 - - - - - -
+log debug gs_shader_set_vec4: called while not in a graphics context
+> gs_stage_texture - - - - - -
+log debug gs_stage_texture: called while not in a graphics context
+> gs_stagesurface_create - - - - - -
+log debug gs_stagesurface_create: called while not in a graphics context
+ret null
+> gs_stagesurface_destroy - - - - - -
+log debug gs_stagesurface_destroy: called while not in a graphics context
+> gs_stagesurface_get_color_format - - - - - -
+log debug gs_stagesurface_get_color_format: called while not in a graphics context
+ret 0
+> gs_stagesurface_get_height - - - - - -
+log debug gs_stagesurface_get_height: called while not in a graphics context
+ret 0
+> gs_stagesurface_get_width - - - - - -
+log debug gs_stagesurface_get_width: called while not in a graphics context
+ret 0
+> gs_stagesurface_map - - - - - -
+log debug gs_stagesurface_map: called while not in a graphics context
+ret false linesize=0 null
+> gs_stagesurface_unmap - - - - - -
+log debug gs_stagesurface_unmap: called while not in a graphics context
+> gs_stencil_function - - - - - -
+log debug gs_stencil_function: called while not in a graphics context
+> gs_stencil_op - - - - - -
+log debug gs_stencil_op: called while not in a graphics context
+> gs_swapchain_destroy - - - - - -
+log debug gs_swapchain_destroy: called while not in a graphics context
+> gs_texcoord - - - - - -
+log debug gs_texcoord2v: called while not in a graphics context
+> gs_texcoord2v - - - - - -
+log debug gs_texcoord2v: called while not in a graphics context
+> gs_texture_create - - - - - -
+log debug gs_texture_create: called while not in a graphics context
+ret null
+> gs_texture_create_from_file - - - - - -
+ret null
+> gs_texture_destroy - - - - - -
+log debug gs_texture_destroy: called while not in a graphics context
+> gs_texture_get_color_format - - - - - -
+log debug gs_texture_get_color_format: called while not in a graphics context
+ret 0
+> gs_texture_get_height - - - - - -
+log debug gs_texture_get_height: called while not in a graphics context
+ret 0
+> gs_texture_get_obj - - - - - -
+log debug gs_texture_get_obj: called while not in a graphics context
+ret null
+> gs_texture_get_width - - - - - -
+log debug gs_texture_get_width: called while not in a graphics context
+ret 0
+> gs_texture_is_rect - - - - - -
+log debug gs_texture_is_rect: called while not in a graphics context
+ret false
+> gs_texture_map - - - - - -
+log debug gs_texture_map: called while not in a graphics context
+ret false linesize=0 null
+> gs_texture_set_image - - - - - -
+log debug gs_texture_set_image: called while not in a graphics context
+> gs_texture_unmap - - - - - -
+log debug gs_texture_unmap: called while not in a graphics context
+> gs_timer_begin - - - - - -
+log debug gs_timer_begin: called while not in a graphics context
+> gs_timer_create - - - - - -
+log debug gs_timer_create: called while not in a graphics context
+ret null
+> gs_timer_destroy - - - - - -
+log debug gs_timer_destroy: called while not in a graphics context
+> gs_timer_end - - - - - -
+log debug gs_timer_end: called while not in a graphics context
+> gs_timer_get_data - - - - - -
+log debug gs_timer_get_data: called while not in a graphics context
+ret false ticks=7
+> gs_timer_range_begin - - - - - -
+log debug gs_timer_range_begin: called while not in a graphics context
+> gs_timer_range_create - - - - - -
+log debug gs_timer_range_create: called while not in a graphics context
+ret null
+> gs_timer_range_destroy - - - - - -
+log debug gs_timer_range_destroy: called while not in a graphics context
+> gs_timer_range_end - - - - - -
+log debug gs_timer_range_end: called while not in a graphics context
+> gs_timer_range_get_data - - - - - -
+log debug gs_timer_range_get_data: called while not in a graphics context
+ret false disjoint=1 freq=9
+> gs_update_color_space - - - - - -
+log debug gs_update_color_space: called while not in a graphics context
+> gs_vertex2f - - - - - -
+log debug gs_vertex3v: called while not in a graphics context
+> gs_vertex2v - - - - - -
+log debug gs_vertex3v: called while not in a graphics context
+> gs_vertex3f - - - - - -
+log debug gs_vertex3v: called while not in a graphics context
+> gs_vertex3v - - - - - -
+log debug gs_vertex3v: called while not in a graphics context
+> gs_vertexbuffer_create - - - - - -
+log debug gs_vertexbuffer_create: called while not in a graphics context
+ret null
+> gs_vertexbuffer_destroy - - - - - -
+log debug gs_vertexbuffer_destroy: called while not in a graphics context
+> gs_vertexbuffer_flush - - - - - -
+log debug gs_vertexbuffer_flush: called while not in a graphics context
+> gs_vertexbuffer_flush_direct - - - - - -
+log debug gs_vertexbuffer_flush_direct: called while not in a graphics context
+> gs_vertexbuffer_get_data - - - - - -
+log debug gs_vertexbuffer_get_data: called while not in a graphics context
+ret null num=0
+> gs_vertexshader_create - - - - - -
+log debug gs_vertexshader_create: called while not in a graphics context
+ret null
+> gs_vertexshader_create_from_file - - - - - -
+log debug gs_vertexshader_create_from_file: called while not in a graphics context
+ret null
+> gs_viewport_pop - - - - - -
+log debug gs_viewport_pop: called while not in a graphics context
+> gs_viewport_push - - - - - -
+log debug gs_viewport_push: called while not in a graphics context
+> gs_voltexture_create - - - - - -
+log debug gs_voltexture_create: called while not in a graphics context
+ret null
+> gs_voltexture_destroy - - - - - -
+log debug gs_voltexture_destroy: called while not in a graphics context
+> gs_voltexture_get_color_format - - - - - -
+log debug gs_voltexture_get_color_format: called while not in a graphics context
+ret 0
+> gs_voltexture_get_depth - - - - - -
+log debug gs_voltexture_get_depth: called while not in a graphics context
+ret 0
+> gs_voltexture_get_height - - - - - -
+log debug gs_voltexture_get_height: called while not in a graphics context
+ret 0
+> gs_voltexture_get_width - - - - - -
+log debug gs_voltexture_get_width: called while not in a graphics context
+ret 0
+> gs_zstencil_create - - - - - -
+log debug gs_zstencil_create: called while not in a graphics context
+ret null
+> gs_zstencil_destroy - - - - - -
+log debug gs_zstencil_destroy: called while not in a graphics context
+> gs_matrix_set 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16
+log debug gs_matrix_set: called while not in a graphics context
+> gs_matrix_mul 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16
+log debug gs_matrix_mul: called while not in a graphics context
+> gs_copy_texture_region - 0 0 - 0 0 0 0
+log debug gs_copy_texture_region: called while not in a graphics context
+> gs_clear 0 0 0 0 0 0 0
+log debug gs_clear: called while not in a graphics context
+> gs_shader_set_matrix4 - 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1
+log debug gs_shader_set_matrix4: called while not in a graphics context
+> gs_swapchain_create 1 1 1 0 0 0
+log debug gs_swapchain_create: called while not in a graphics context
+ret null
+> gs_texture_create_nv12 2 2 0
+log debug gs_texture_create_nv12: called while not in a graphics context
+ret false y=-2 uv=-2
+> gs_texture_create_p010 2 2 0
+log debug gs_texture_create_p010: called while not in a graphics context
+ret false y=-2 uv=-2
+> gs_render_start 0
+log debug gs_render_start: called while not in a graphics context
+> gs_render_stop 3
+log debug gs_render_stop: called while not in a graphics context
+> gs_set_linear_srgb 1
+log debug gs_set_linear_srgb: called while not in a graphics context
+ret false

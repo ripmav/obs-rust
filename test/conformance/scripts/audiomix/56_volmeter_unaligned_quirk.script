@@ -1,0 +1,8 @@
+# QUIRK/DEFECT: a plane whose address is not 16-byte aligned makes the reference print a diagnostic with the pointer to stdout (suppressed by the runner) and report peak 1.0 for that channel; magnitude is computed normally.
+init 48000 2
+clock 1000000000
+source a input
+meter_new 0 0
+meter_attach 0 a
+meter_cb 0 add
+meter_misaligned 0 a

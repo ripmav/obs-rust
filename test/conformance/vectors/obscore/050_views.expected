@@ -1,0 +1,34 @@
+log debug canvas 'Main' (<uuid>) created
+startup -> true
+mk_source s1 name="Source1" private=0 uuid=set
+mk_source s2 name="Source2" private=0 uuid=set
+mk_source s3 name="Source3" private=0 uuid=set
+view_create v type=aux
+ev activate Source1 type=aux
+ev activate Source2 type=aux
+ev activate Source3 type=aux
+view_channels v: 0=Source1 7=Source2 63=Source3
+refs s1 strong=1 weak=0
+view_get v 0 -> Source1
+view_get v 1 -> NULL
+view_get v 63 -> Source3
+ev activate Source2 type=aux
+ev deactivate Source1 type=aux
+refs s1 strong=0 weak=0
+refs s2 strong=2 weak=0
+view_channels v: 0=Source2 7=Source2 63=Source3
+ev render Source2
+ev render Source2
+ev render Source3
+ev render Source3
+view_channels v: 63=Source3
+refs s2 strong=0 weak=0
+ev deactivate Source3 type=aux
+view_channels v:
+refs s3 strong=0 weak=0
+view_get null 0 -> NULL
+shutdown begin
+log info Freeing OBS context data
+log debug canvas 'Main' (<uuid>) destroyed
+log info  3 source(s) were remaining
+shutdown end obs=NULL

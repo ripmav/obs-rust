@@ -1,0 +1,18 @@
+# Reference counting of a single record (CORE): create() starts at 1; add_file() does not
+# add a reference; append() adds one per file; release() decrements and destroys at 0;
+# release(NULL) is a no-op. The record dies with the last list that holds it.
+mf_list_new 0
+mf_list_new 1
+mf_file_new 0 "/r/file.bin" source "Src"
+mf_ref 0
+mf_add 0 0
+mf_append 1 0
+mf_ref 0
+mf_destroy 0
+mf_ref 0
+mf_get 1 0
+mf_release_null
+mf_file_new 1 "/r/other.bin" script
+mf_ref 1
+mf_release 1
+mf_destroy 1

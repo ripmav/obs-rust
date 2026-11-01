@@ -1,0 +1,34 @@
+# obs_key_to_name / obs_key_from_name edge cases in both modes (CORE).
+# Names are exact, case-sensitive and include the "OBS_KEY_" prefix; unknown names (and the
+# empty string) map to OBS_KEY_NONE (0); out-of-range ids map to "" and log an error.
+hk_mode null
+hk_name 0
+hk_name 1
+hk_name 2
+hk_name 65
+hk_name 97
+hk_name 200
+hk_name 100000
+hk_name -1
+hk_from OBS_KEY_NONE
+hk_from OBS_KEY_A
+hk_from OBS_KEY_RETURN
+hk_from OBS_KEY_MOUSE29
+hk_from OBS_KEY_0x07
+hk_from obs_key_a
+hk_from "OBS_KEY_A "
+hk_from A
+hk_from ""
+hk_from OBS_KEY_LAST_VALUE
+hk_mode core
+hk_name 0
+hk_name 65
+hk_name 100000
+hk_from OBS_KEY_A
+hk_from OBS_KEY_RETURN
+hk_from OBS_KEY_MOUSE29
+hk_from obs_key_a
+hk_from ""
+hk_from OBS_KEY_LAST_VALUE
+hk_from @null
+hk_free

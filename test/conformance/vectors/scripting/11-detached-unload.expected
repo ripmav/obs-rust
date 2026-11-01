@@ -1,0 +1,32 @@
+backend lua_load
+load -> 1
+cb_add L0 C0 zeroed=1 owner_ok=1 head=1
+cb_add L0 C1 zeroed=1 owner_ok=1 head=1
+cb_add L0 C2 zeroed=1 owner_ok=1 head=1
+cb_remove C0 removed=1 detached_head=1
+cb_remove C2 removed=1 detached_head=1
+list L0: C1
+list L1: -
+list L2: -
+list L3: -
+list detached: C2 C0
+backend lua_unload
+log info [Scripting] Total detached callbacks: 2
+info_detached_head_after_unload dangling
+unload done
+backend lua_load
+load -> 1
+cb_add L1 C3 zeroed=1 owner_ok=1 head=1
+cb_remove C3 removed=1 detached_head=1
+backend lua_unload
+log info [Scripting] Total detached callbacks: 1
+info_detached_head_after_unload dangling
+unload done
+backend lua_load
+load -> 1
+backend lua_unload
+log info [Scripting] Total detached callbacks: 0
+info_detached_head_after_unload null
+unload done
+info_detached_head_after_unload null
+unload done

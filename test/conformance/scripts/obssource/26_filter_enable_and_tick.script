@@ -1,0 +1,22 @@
+# Enable state of sources and filters: enable() stores the flag and signals; it has no other effect on the chain
+# (the render/filter paths skip disabled filters). hidden is a plain flag.
+kind in input video
+kind fl filter video
+create a in A
+create f fl F
+filter_add a f
+watch f
+watch a
+enable f 0
+info f
+enable f 1
+hidden a 1
+info a
+hidden a 0
+info a
+set_flags a 3
+set_flags a 3
+info a
+set_flags a 0
+set_default_flags a 7
+info a

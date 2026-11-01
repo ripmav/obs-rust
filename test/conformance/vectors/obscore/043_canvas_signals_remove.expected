@@ -1,0 +1,40 @@
+log debug canvas 'Main' (<uuid>) created
+startup -> true
+signal canvas_create canvas=?
+log debug canvas 'Alpha' (<uuid>) created
+canvas_create a -> ok
+canvas a name="Alpha" flags=0x0 private=0 removed=0 has_video=0 video_active=0 uuid_len=36 view_type=aux
+signal a:rename canvas=a new_name="Beta" prev_name="Alpha"
+signal canvas_rename canvas=a new_name="Beta" prev_name="Alpha"
+canvas_name a -> "Beta"
+canvas_name a -> "Beta"
+canvas_name a -> "Beta"
+canvas_name a -> "Beta"
+signal canvas_remove canvas=a
+signal a:remove canvas=a
+canvas_remove a removed=1
+canvas_remove a removed=1
+canvas a name="Beta" flags=0x80000000 private=0 removed=1 has_video=0 video_active=0 uuid_len=36 view_type=aux
+canvas_save a -> NULL
+enum canvases
+  visit Main
+  visit Beta
+  visited=2
+get canvas_by_name Beta -> "Beta" obj=a strong=1
+log debug private canvas 'Priv' (<uuid>) created
+canvas_create_private p -> ok
+canvas p name="Priv" flags=0x0 private=1 removed=0 has_video=0 video_active=0 uuid_len=36 view_type=aux
+signal p:rename canvas=p new_name="Priv2" prev_name="Priv"
+canvas_name p -> "Priv2"
+signal p:remove canvas=p
+canvas_remove p removed=1
+signal p:destroy canvas=p
+log debug private canvas 'Priv2' (<uuid>) destroyed
+signal canvas_destroy canvas=a
+signal a:destroy canvas=a
+log debug canvas 'Beta' (<uuid>) destroyed
+shutdown begin
+log info Freeing OBS context data
+signal canvas_destroy canvas=main
+log debug canvas 'Main' (<uuid>) destroyed
+shutdown end obs=NULL

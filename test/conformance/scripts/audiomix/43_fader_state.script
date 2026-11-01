@@ -1,0 +1,27 @@
+# Fader state: set via dB / deflection / mul with clamping to [min_db, max_db]; the return value is false when clamped.
+fader_new 0 0
+fader_get 0
+fader_set 0 db -6
+fader_get 0
+fader_set 0 db 3
+fader_get 0
+fader_set 0 def 0.5
+fader_get 0
+fader_set 0 mul 0.5
+fader_get 0
+fader_set 0 mul 0
+fader_get 0
+fader_set 0 db -inf
+fader_get 0
+fader_new 1 1
+fader_set 1 def 0.6
+fader_get 1
+fader_new 2 2
+fader_set 2 db -100
+fader_get 2
+fader_set 2 def 0.3
+fader_get 2
+fader_set 2 db -96
+fader_get 2
+fader_null
+fader_destroy 0

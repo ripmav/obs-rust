@@ -1,0 +1,33 @@
+# Per-item show/hide transitions: set_visible calls do_transition BEFORE changing the flag, with the item's source
+# size, centre alignment, aspect scale and 300 ms when the configured duration is 0. A hide transition animates
+# from the source to nothing, a show transition from nothing to the source. Group visibility cascades to the
+# visible children. The fake transition records the calls.
+source s 320 180
+scene main
+add main s v
+add main s w
+transition v show 0
+transition v hide 750
+visible v 0
+log
+visible v 1
+log
+echo -- an item without transitions records nothing
+visible w 0
+visible w 1
+log
+echo -- a running transition is force-stopped first (busy transition)
+transition w hide 100 busy
+visible w 0
+visible w 1
+visible w 0
+log
+echo -- group cascade
+add main s p
+add main s q
+group main g p q
+transition p hide 40
+transition g hide 500
+visible q 0
+visible g 0
+log

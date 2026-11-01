@@ -1,0 +1,52 @@
+title "Untitled - Notepad"
+class "Notepad"
+exe "notepad.exe"
+title (null)
+class (null)
+exe (null)
+title "a"
+class "b"
+exe "c"
+title (null)
+class (null)
+exe (null)
+title (null)
+class "b"
+exe (null)
+title "t:t"
+class "cls"
+exe "exe.exe"
+title "100# done"
+class "c:c"
+exe "e:.exe"
+title "x:y#z"
+class "c"
+exe "e"
+title ":#"
+class "#"
+exe ":"
+title "t#2"
+class "c"
+exe "e"
+title (null)
+class (null)
+exe (null)
+title (null)
+class (null)
+exe (null)
+encoded "Main#3A window #221:Cls#3AA:game#22.exe"
+title "Main: window #1"
+class "Cls:A"
+exe "game#.exe"
+encoded "plain:plain:plain.exe"
+title "plain"
+class "plain"
+exe "plain.exe"
+encoded "#2222:#3A:#223A"
+title "#22"
+class ":"
+exe "#3A"
+encoded ":c:e"
+title (null)
+class "c"
+exe "e"

@@ -1,0 +1,52 @@
+create dl -> ok
+state delay interval=100000000 samplerate=48000 queued=0 last_video_ts=0 reached=0 reset_video=1 reset_audio=1
+echo fill-phase-frames-held-until-interval-reached
+video dl ts=1000000000 tag=1 -> null
+video dl ts=1040000000 tag=2 -> null
+video dl ts=1080000000 tag=3 -> null
+video dl ts=1100000000 tag=4 -> tag=1 ts=1000000000
+video dl ts=1140000000 tag=5 -> tag=2 ts=1040000000
+video dl ts=1180000000 tag=6 -> tag=3 ts=1080000000
+state delay interval=100000000 samplerate=48000 queued=3 last_video_ts=1180000000 reached=1 reset_video=0 reset_audio=1
+echo timestamp-jump-backwards-resets-and-releases-queue
+host release_frame parent=parent tag=4 ts=1100000000
+host release_frame parent=parent tag=5 ts=1140000000
+host release_frame parent=parent tag=6 ts=1180000000
+video dl ts=500000000 tag=7 -> null
+state delay interval=100000000 samplerate=48000 queued=1 last_video_ts=500000000 reached=0 reset_video=0 reset_audio=1
+echo timestamp-jump-over-one-second-resets
+video dl ts=1000000000 tag=8 -> tag=7 ts=500000000
+video dl ts=1100000000 tag=9 -> tag=8 ts=1000000000
+host release_frame parent=parent tag=9 ts=1100000000
+video dl ts=2200000001 tag=10 -> null
+state delay interval=100000000 samplerate=48000 queued=1 last_video_ts=2200000001 reached=0 reset_video=0 reset_audio=1
+echo exactly-one-second-is-not-a-jump
+video dl ts=3200000001 tag=11 -> tag=10 ts=2200000001
+state delay interval=100000000 samplerate=48000 queued=1 last_video_ts=3200000001 reached=1 reset_video=0 reset_audio=1
+echo update-reset-flags
+host release_frame parent=parent tag=11 ts=3200000001
+state delay interval=50000000 samplerate=48000 queued=0 last_video_ts=3200000001 reached=0 reset_video=1 reset_audio=1
+video dl ts=3210000000 tag=12 -> null
+state delay interval=50000000 samplerate=48000 queued=1 last_video_ts=3210000000 reached=0 reset_video=0 reset_audio=1
+echo decreasing-interval-frees-queue-increasing-does-not
+video dl ts=3250000000 tag=13 -> null
+video dl ts=3270000000 tag=14 -> tag=12 ts=3210000000
+host release_frame parent=parent tag=13 ts=3250000000
+host release_frame parent=parent tag=14 ts=3270000000
+state delay interval=10000000 samplerate=48000 queued=0 last_video_ts=3270000000 reached=0 reset_video=1 reset_audio=1
+state delay interval=500000000 samplerate=48000 queued=0 last_video_ts=3270000000 reached=0 reset_video=1 reset_audio=1
+echo zero-delay-passes-frames-through
+video dl ts=4000000000 tag=15 -> tag=15 ts=4000000000
+video dl ts=4010000000 tag=16 -> tag=16 ts=4010000000
+echo remove-releases-all-queued
+video dl ts=4020000000 tag=17 -> null
+video dl ts=4030000000 tag=18 -> null
+host release_frame parent=parent tag=17 ts=4020000000
+host release_frame parent=parent tag=18 ts=4030000000
+state delay interval=100000000 samplerate=48000 queued=0 last_video_ts=4030000000 reached=0 reset_video=0 reset_audio=1
+echo equal-timestamps
+video dl ts=5000000000 tag=19 -> null
+video dl ts=5000000000 tag=20 -> null
+echo destroy-with-queued-frames-does-not-release
+video dl ts=5010000000 tag=21 -> null
+destroy dl

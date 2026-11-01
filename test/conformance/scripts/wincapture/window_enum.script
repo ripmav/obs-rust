@@ -1,0 +1,27 @@
+# ms_fill_window_list: which windows are listed, order, and the encoded value. Rules: invisible, tool-window and
+# child windows are skipped; with `exclude` also iconic, cloaked and zero-client-size windows; windows of the
+# current process (pid 4242) are skipped; internal Microsoft host exes are skipped; explorer.exe with an empty
+# title is skipped. Listing order is the front-to-back order of the fake window table.
+win_reset
+win_add 1 "Notepad" "Notepad" "\\Device\\HarddiskVolume3\\Windows\\notepad.exe" 100
+win_add 2 "hidden one" "HC" "\\Device\\X\\hid.exe" 101 hidden
+win_add 3 "Tool: tip" "TipClass" "\\Device\\X\\tip.exe" 102 tool
+win_add 4 "child" "ChildClass" "\\Device\\X\\child.exe" 103 child
+win_add 5 "Minimised" "MinClass" "\\Device\\X\\min.exe" 104 iconic
+win_add 6 "Cloaked" "CloakClass" "\\Device\\X\\cloak.exe" 105 cloaked
+win_add 7 "Zero" "ZeroClass" "\\Device\\X\\zero.exe" 106 empty
+win_add 8 "OBS itself" "Qt" "\\Device\\X\\obs64.exe" 4242
+win_add 9 "Start" "Windows.UI.Core.CoreWindow" "\\Device\\X\\StartMenuExperienceHost.exe" 107
+win_add 10 "WindowsInternal.ComposableShell" "Win" "\\Device\\X\\WindowsInternal.ComposableShell.Experiences.TextInput.InputApp.exe" 108
+win_add 11 - "Progman" "\\Device\\X\\explorer.exe" 109
+win_add 12 "C:\\Users" "CabinetWClass" "\\Device\\X\\explorer.exe" 109
+win_add 13 "Game: the #1 title" "UnrealWindow" "\\Device\\X\\Game.exe" 110
+win_add 14 "no access" "NA" "!noaccess" 111
+win_add 15 "no path" "NP" "!nopath" 112
+win_add 16 "TIME" "TimeCls" "\\Device\\X\\TIME.EXE" 113
+win_add 17 "nobackslash" "NB" "weird.exe" 114
+win_add 18 - "Shell_TrayWnd" "\\Device\\X\\Explorer.EXE" 115
+list include
+list exclude
+win_fallback 1
+list include

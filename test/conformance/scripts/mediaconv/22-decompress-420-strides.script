@@ -1,0 +1,11 @@
+# decompress_420 strides. Pixels per row = 2 * floor(ILS0 / 2); luma rows start at (2*yc)*ILS0 and (2*yc+1)*ILS0;
+# chroma row yc starts at yc*ILS1 (U) and yc*ILS2 (V). Output rows start at row*OUT_LS.
+# 1. luma stride 6 with only 4 meaningful pixels (padding pixels are decoded too: 6 pixels per output row)
+decompress 420 0 2 6 3 3 24 2 010203040506 0708090a0b0c aabb00 ccdd00
+decompress 420 0 2 6 3 3 24 2 010203040506 0708090a0b0c aabbee ccddff
+# 2. different U and V strides, chroma rows from a 4x4 image (U stride 3, V stride 4)
+decompress 420 0 4 4 3 4 16 4 0102030405060708090a0b0c0d0e0f10 aabb00 1122ee ccdd00ee 3344ee00
+# 3. odd luma stride 5: width_d2 = 2 so only 4 pixels per row are written; the 5th pixel keeps ee
+decompress 420 0 2 5 2 2 20 2 0102030405060708090a aabb ccdd
+# 4. wider output stride: the rest of each output row is untouched
+decompress 420 0 2 4 2 2 24 2 0102030405060708 aabb ccdd

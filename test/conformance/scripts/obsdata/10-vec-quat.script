@@ -1,0 +1,64 @@
+# CORE: vec2/vec3/vec4/quat helpers store an OBJECT with double members x,y[,z[,w]]
+# (floats widen exactly to doubles); getters read the members as doubles and narrow to
+# float. A missing/non-object item leaves the output untouched (sentinel 7).
+new a
+set_vec2 a v2 1.5 -2.25
+set_vec3 a v3 1 2 3
+set_vec4 a v4 1 2 3 4
+set_quat a q 0.5 0.5 0.5 0.5
+dump a
+json a
+get_vec2 a v2
+get_vec3 a v3
+get_vec4 a v4
+get_quat a q
+echo --- float rounding: values pass through float
+set_vec2 a r 0.1 16777217
+get_vec2 a r
+json a
+echo --- missing or wrong type leave the sentinel; missing members read as 0
+get_vec2 a nosuch
+get_vec3 a nosuch
+get_vec4 a nosuch
+get_quat a nosuch
+set_int a notobj 5
+get_vec2 a notobj
+get_vec2 @null x
+new part
+set_double part x 3
+set_obj a partial part
+get_vec3 a partial
+echo --- a vec read from an object saved with ints
+new ints
+set_int ints x 4
+set_int ints y 5
+set_obj a ivec ints
+get_vec2 a ivec
+echo --- default and autoselect variants
+set_default_vec2 a dv 9 8
+get_default_vec2 a dv
+get_vec2 a dv
+has_user a dv
+has_default a dv
+get_default_vec2 a nosuch
+set_vec2 a dv 1 2
+get_vec2 a dv
+get_default_vec2 a dv
+set_default_vec3 a dv3 1 2 3
+set_default_vec4 a dv4 1 2 3 4
+set_default_quat a dq 1 0 0 0
+get_default_vec3 a dv3
+get_default_vec4 a dv4
+get_default_quat a dq
+set_autoselect_vec2 a av 6 5
+get_autoselect_vec2 a av
+set_autoselect_vec3 a av3 1 2 3
+set_autoselect_vec4 a av4 1 2 3 4
+set_autoselect_quat a aq 1 2 3 4
+get_autoselect_vec3 a av3
+get_autoselect_vec4 a av4
+get_autoselect_quat a aq
+echo --- replacing a vec value
+set_vec2 a v2 7 8
+get_vec2 a v2
+json a

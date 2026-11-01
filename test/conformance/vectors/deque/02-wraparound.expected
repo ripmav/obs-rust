@@ -1,0 +1,11 @@
+dump size=8 capacity=8 start=0 end=8 data=0102030405060708
+pop_front 0102030405
+dump size=3 capacity=8 start=5 end=8 data=..........060708
+dump size=7 capacity=8 start=5 end=4 data=090a0b0c..060708
+peek_front 060708090a0b0c
+peek_back 08090a0b0c
+pop_front 06070809
+dump size=3 capacity=8 start=1 end=4 data=..0a0b0c........
+dump size=6 capacity=8 start=1 end=7 data=..0a0b0c0d0e0f..
+pop_back 0d0e0f
+dump size=3 capacity=8 start=1 end=4 data=..0a0b0c........

@@ -1,0 +1,13 @@
+# S-023 platform: real libobs/util/utf8.c + platform.c + platform-nix.c (Linux), UUID via libuuid
+test/conformance/gen/platform_runner.c
+test/conformance/gen/platform_stubs.c
+libobs/util/platform.c
+libobs/util/platform-nix.c
+libobs/util/utf8.c
+libobs/util/bmem.c
+libobs/util/base.c
+libobs/util/threading-posix.c
+libobs/util/dstr.c
+-luuid
+-ldl
+!nostubs

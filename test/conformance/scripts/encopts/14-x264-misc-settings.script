@@ -1,0 +1,24 @@
+# CORE. Remaining settings: bf (only applied when the user set it, even to 0), repeat_headers
+# (sets repeat headers + annexb + aud), the deprecated cbr override, vfr is always off,
+# frame size comes from the encoder (not from the output), fixed VUI SAR and log level.
+data D
+x264_defaults D
+echo bf-not-set-keeps-preset-value
+x264_settings D
+echo bf-user-value
+set D bf int 0
+x264_settings D
+set D bf int 5
+x264_settings D
+echo repeat-headers
+set D repeat_headers bool 1
+x264_settings D
+echo deprecated-cbr-flag-forces-CBR-over-rate_control
+set D repeat_headers bool 0
+set D rate_control str CRF
+set D cbr bool 1
+x264_settings D
+echo encoder-size-differs-from-output
+set D cbr bool 0
+video NV12 709 partial 60 1 3840 2160
+x264_settings D

@@ -1,0 +1,21 @@
+# Pacing: next_ns (wall-clock deadline, ns on the fake clock) advances by the pts delta between consecutive
+# deliveries; a delta of more than 3 s or a negative delta counts as 0 (jumps do not stall playback). The thread
+# sleeps until next_ns in chunks of at most 200 ms (a 'timeout' iteration does nothing else). A frame is
+# due when frame_pts <= next_pts_ns; see 30-can-play-frame.script for the 2 s rule.
+# Frames here have pts (ms): 0, 40, 2400 (2.36 s gap), 6000 (3.6 s gap), 5900 (backwards), 5940.
+media pace 0 0
+video 1 1000 8 4 yuv420p
+pkt 0 0 fdur=40
+pkt 0 40 fdur=40
+pkt 0 2400 fdur=40
+pkt 0 6000 fdur=40
+pkt 0 5900 fdur=40
+pkt 0 5940 fdur=40
+endmedia
+clock 1000000000
+minit pace local=1
+mreset
+mplay 0
+mtickw 0 0
+mtick 16
+mstate

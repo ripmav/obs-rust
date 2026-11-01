@@ -1,0 +1,18 @@
+# Unterminated quote: the string runs to end of line (CORE). A line holding only a lone
+# quote as a name/value before a newline is skipped.
+fputs tu-1 "A=\"1\"\nB=\"unterminated\nC=\"3\"\nD=\"abc\\\"\nE=\"5\"\n"
+tl_create 0 tu-1
+tl_get 0 A
+tl_get 0 B
+tl_get 0 C
+tl_get 0 D
+tl_get 0 E
+fputs tu-2 "A=\"1\"\nB=\"\nC=\"3\"\n"
+tl_create 1 tu-2
+tl_get 1 A
+tl_get 1 B
+tl_get 1 C
+tl_destroy 0
+tl_destroy 1
+funlink tu-1
+funlink tu-2

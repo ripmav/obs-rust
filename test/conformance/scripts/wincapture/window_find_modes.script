@@ -1,0 +1,47 @@
+# Search modes and the "generic class" and UWP special cases.
+# - exclude mode skips iconic, cloaked and zero-sized windows; include mode keeps them.
+# - generic class (class contains "Chrome" or "SDL_app", case-insensitive): class priority behaves like title priority.
+# - UWP class (Windows.UI.Core.CoreWindow / WinUIDesktopWin32WindowClass): rating ignores class; only title decides
+#   (exe priority additionally requires the exe to match).
+win_reset
+win_add 1 "Browser" "Chrome_WidgetWin_1" "\\Device\\X\\chrome.exe" 20
+win_add 2 "Game" "SDL_app" "\\Device\\X\\game.exe" 21 iconic
+win_add 3 "Minimised App" "AppClass" "\\Device\\X\\app.exe" 22 iconic
+win_add 4 "Cloaked App" "AppClass" "\\Device\\X\\app.exe" 23 cloaked
+win_add 5 "Zero App" "AppClass" "\\Device\\X\\app.exe" 24 empty
+find include title AppClass "Minimised App" app.exe
+find exclude title AppClass "Minimised App" app.exe
+find include title AppClass "Cloaked App" app.exe
+find exclude title AppClass "Cloaked App" app.exe
+find_top include title AppClass "Cloaked App" app.exe
+find include title AppClass "Zero App" app.exe
+find exclude title AppClass "Zero App" app.exe
+# generic classes
+rating 1 class Chrome_WidgetWin_1 "Browser" chrome.exe
+rating 1 class Chrome_WidgetWin_1 "Other title" chrome.exe
+rating 1 class chrome_widgetwin_0 "Browser" other.exe
+rating 2 class SDL_app "Game" game.exe
+rating 2 exe SDL_app "Game" game.exe
+find include class Chrome_WidgetWin_0 "Browser" chrome.exe
+find include class Chrome_WidgetWin_0 "Browser2" chrome.exe
+# UWP
+win_reset
+win_add 10 "Calculator" "ApplicationFrameWindow" "\\Device\\X\\ApplicationFrameHost.exe" 30
+win_add 11 "Calculator" "Windows.UI.Core.CoreWindow" "\\Device\\X\\CalculatorApp.exe" 31 parent=10
+win_add 12 "Settings" "ApplicationFrameWindow" "\\Device\\X\\ApplicationFrameHost.exe" 32
+win_add 13 "Settings" "Windows.UI.Core.CoreWindow" "\\Device\\X\\SystemSettings.exe" 33 parent=12
+win_add 14 "Lone UWP" "ApplicationFrameWindow" "\\Device\\X\\ApplicationFrameHost.exe" 34
+win_uwp 10
+win_uwp 11
+win_uwp 12
+win_uwp 14
+find include class Windows.UI.Core.CoreWindow "Calculator" CalculatorApp.exe
+find include class Windows.UI.Core.CoreWindow "Calculator" wrong.exe
+find include exe Windows.UI.Core.CoreWindow "Calculator" CalculatorApp.exe
+find include exe Windows.UI.Core.CoreWindow "Calculator" wrong.exe
+find include title Windows.UI.Core.CoreWindow "Settings" -
+find include class ApplicationFrameWindow "Lone UWP" ApplicationFrameHost.exe
+find_top include class Windows.UI.Core.CoreWindow "Calculator" CalculatorApp.exe
+rating 11 class Windows.UI.Core.CoreWindow "Calculator" x.exe
+rating 11 exe Windows.UI.Core.CoreWindow "Calculator" CalculatorApp.exe
+rating 11 exe Windows.UI.Core.CoreWindow "Calculator" x.exe

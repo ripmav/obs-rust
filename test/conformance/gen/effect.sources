@@ -1,0 +1,20 @@
+# effect language: effect parser, shader parser, effect runtime and graphics.c on a fake backend (spec S-020)
+test/conformance/gen/effect_runner.c
+test/conformance/gen/effect_stubs.c
+libobs/graphics/graphics.c
+libobs/graphics/effect.c
+libobs/graphics/effect-parser.c
+libobs/graphics/shader-parser.c
+libobs/graphics/vec2.c
+libobs/graphics/vec3.c
+libobs/graphics/vec4.c
+libobs/graphics/quat.c
+libobs/graphics/axisang.c
+libobs/graphics/matrix3.c
+libobs/graphics/matrix4.c
+libobs/graphics/plane.c
+libobs/graphics/math-extra.c
+libobs/util/lexer.c
+libobs/util/cf-lexer.c
+libobs/util/cf-parser.c
+-Wno-deprecated-declarations

@@ -1,0 +1,113 @@
+> x-screen 0 0 1920 1080 DP-1
+> x-screen 1920 0 2560 1440 HDMI-1
+> x-screen 0 0 0 0 Off
+> x-ext randr 1
+> xshm-defaults
+> xshm-create
+xshm-create
+state screen=-1 origin=0,0 size=0x0 cut=t0,l0,r0,b0 adj=0,0 0x0 cursor=1 advanced=0 randr=0 xinerama=0 server= texture=0 xcb=0 shm=0 cursorobj=0 get=0x0
+> xshm-props
+> props
+prop screen type=list desc="Display" visible=1 enabled=1 format=int items=3
+  - "SelectADisplay" = -1 disabled=1
+  - "DP-1 (1920x1080 @ 0,0)" = 0 disabled=0
+  - "HDMI-1 (2560x1440 @ 1920,0)" = 1 disabled=0
+prop show_cursor type=bool desc="CaptureCursor" visible=1 enabled=1
+prop advanced type=bool desc="AdvancedSettings" visible=1 enabled=1
+prop cut_top type=int desc="CropTop" visible=1 enabled=1 min=-4096 max=4096 step=1 slider=0
+prop cut_left type=int desc="CropLeft" visible=1 enabled=1 min=-4096 max=4096 step=1 slider=0
+prop cut_right type=int desc="CropRight" visible=1 enabled=1 min=0 max=4096 step=1 slider=0
+prop cut_bot type=int desc="CropBottom" visible=1 enabled=1 min=0 max=4096 step=1 slider=0
+prop server type=text desc="XServer" visible=1 enabled=1 texttype=0
+> set-int screen 1
+> xshm-update
+log info xshm-input: Missing Xinerama extension !
+log info xshm-input: Geometry 2560x1440 @ 1920,0
+state screen=1 origin=1920,0 size=2560x1440 cut=t0,l0,r0,b0 adj=1920,0 2560x1440 cursor=1 advanced=0 randr=1 xinerama=0 server= texture=1 xcb=1 shm=1 cursorobj=1 get=2560x1440
+> xshm-props
+> props
+prop screen type=list desc="Display" visible=1 enabled=1 format=int items=2
+  - "DP-1 (1920x1080 @ 0,0)" = 0 disabled=0
+  - "HDMI-1 (2560x1440 @ 1920,0)" = 1 disabled=0
+prop show_cursor type=bool desc="CaptureCursor" visible=1 enabled=1
+prop advanced type=bool desc="AdvancedSettings" visible=1 enabled=1
+prop cut_top type=int desc="CropTop" visible=1 enabled=1 min=-4096 max=4096 step=1 slider=0
+prop cut_left type=int desc="CropLeft" visible=1 enabled=1 min=-4096 max=4096 step=1 slider=0
+prop cut_right type=int desc="CropRight" visible=1 enabled=1 min=0 max=4096 step=1 slider=0
+prop cut_bot type=int desc="CropBottom" visible=1 enabled=1 min=0 max=4096 step=1 slider=0
+prop server type=text desc="XServer" visible=1 enabled=1 texttype=0
+> set-int screen 7
+> xshm-update
+log info xshm-input: Missing Xinerama extension !
+log error xshm-input: failed to update geometry !
+state screen=7 origin=0,0 size=0x0 cut=t0,l0,r0,b0 adj=1920,0 2560x1440 cursor=1 advanced=0 randr=1 xinerama=0 server=(null) texture=0 xcb=0 shm=0 cursorobj=0 get=2560x1440
+> xshm-props
+> props
+prop screen type=list desc="Display" visible=1 enabled=1 format=int items=3
+  - "DP-1 (1920x1080 @ 0,0)" = 0 disabled=0
+  - "HDMI-1 (2560x1440 @ 1920,0)" = 1 disabled=0
+  - "Display 7 (not found)" = 7 disabled=1
+prop show_cursor type=bool desc="CaptureCursor" visible=1 enabled=1
+prop advanced type=bool desc="AdvancedSettings" visible=1 enabled=1
+prop cut_top type=int desc="CropTop" visible=1 enabled=1 min=-4096 max=4096 step=1 slider=0
+prop cut_left type=int desc="CropLeft" visible=1 enabled=1 min=-4096 max=4096 step=1 slider=0
+prop cut_right type=int desc="CropRight" visible=1 enabled=1 min=0 max=4096 step=1 slider=0
+prop cut_bot type=int desc="CropBottom" visible=1 enabled=1 min=0 max=4096 step=1 slider=0
+prop server type=text desc="XServer" visible=1 enabled=1 texttype=0
+> set-int screen 0
+> x-ext randr 0
+> x-ext xinerama 1
+> xshm-update
+log info xshm-input: Missing Randr extension !
+log info xshm-input: Geometry 1920x1080 @ 0,0
+state screen=0 origin=0,0 size=1920x1080 cut=t0,l0,r0,b0 adj=0,0 1920x1080 cursor=1 advanced=0 randr=0 xinerama=1 server= texture=1 xcb=1 shm=1 cursorobj=1 get=1920x1080
+> xshm-props
+> props
+prop screen type=list desc="Display" visible=1 enabled=1 format=int items=2
+  - "0 (1920x1080 @ 0,0)" = 0 disabled=0
+  - "1 (2560x1440 @ 1920,0)" = 1 disabled=0
+prop show_cursor type=bool desc="CaptureCursor" visible=1 enabled=1
+prop advanced type=bool desc="AdvancedSettings" visible=1 enabled=1
+prop cut_top type=int desc="CropTop" visible=1 enabled=1 min=-4096 max=4096 step=1 slider=0
+prop cut_left type=int desc="CropLeft" visible=1 enabled=1 min=-4096 max=4096 step=1 slider=0
+prop cut_right type=int desc="CropRight" visible=1 enabled=1 min=0 max=4096 step=1 slider=0
+prop cut_bot type=int desc="CropBottom" visible=1 enabled=1 min=0 max=4096 step=1 slider=0
+prop server type=text desc="XServer" visible=1 enabled=1 texttype=0
+> x-ext xinerama 0
+> xshm-update
+log info xshm-input: Missing Xinerama extension !
+log info xshm-input: Missing Randr extension !
+log info xshm-input: Geometry 1920x1080 @ 0,0
+state screen=0 origin=0,0 size=1920x1080 cut=t0,l0,r0,b0 adj=0,0 1920x1080 cursor=1 advanced=0 randr=0 xinerama=0 server= texture=1 xcb=1 shm=1 cursorobj=1 get=1920x1080
+> xshm-props
+> props
+prop screen type=list desc="Display" visible=1 enabled=1 format=int items=2
+  - "0 (1920x1080 @ 0,0)" = 0 disabled=0
+  - "1 (2560x1440 @ 0,0)" = 1 disabled=0
+prop show_cursor type=bool desc="CaptureCursor" visible=1 enabled=1
+prop advanced type=bool desc="AdvancedSettings" visible=1 enabled=1
+prop cut_top type=int desc="CropTop" visible=1 enabled=1 min=-4096 max=4096 step=1 slider=0
+prop cut_left type=int desc="CropLeft" visible=1 enabled=1 min=-4096 max=4096 step=1 slider=0
+prop cut_right type=int desc="CropRight" visible=1 enabled=1 min=0 max=4096 step=1 slider=0
+prop cut_bot type=int desc="CropBottom" visible=1 enabled=1 min=0 max=4096 step=1 slider=0
+prop server type=text desc="XServer" visible=1 enabled=1 texttype=0
+> set-bool advanced 1
+> set-str server :9
+> modified advanced
+modified -> 1
+> modified server
+modified -> 1
+> x-connect-fail 1
+> modified server
+modified -> 1
+> props
+prop screen type=list desc="Display" visible=1 enabled=0 format=int items=0
+prop show_cursor type=bool desc="CaptureCursor" visible=1 enabled=1
+prop advanced type=bool desc="AdvancedSettings" visible=1 enabled=1
+prop cut_top type=int desc="CropTop" visible=1 enabled=1 min=-4096 max=4096 step=1 slider=0
+prop cut_left type=int desc="CropLeft" visible=1 enabled=1 min=-4096 max=4096 step=1 slider=0
+prop cut_right type=int desc="CropRight" visible=1 enabled=1 min=0 max=4096 step=1 slider=0
+prop cut_bot type=int desc="CropBottom" visible=1 enabled=1 min=0 max=4096 step=1 slider=0
+prop server type=text desc="XServer" visible=1 enabled=1 texttype=0
+> xshm-destroy
+xshm-destroy textures=0

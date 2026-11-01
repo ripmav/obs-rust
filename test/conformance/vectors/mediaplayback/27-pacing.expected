@@ -1,0 +1,51 @@
+minit -> ok
+ff open path=pace format=- nobuffer=1 interrupt=0 opts=[]
+minit2 -> ok has_v=1 has_a=0
+ff seek stream=0 target=0 flags=BACKWARD
+ff decoder flush
+ff read #0 stream=0 pts=0 size=4
+cb preload ts=0 fmt=I420 8x4 flip=0 full=0 trc=DEFAULT maxlum=0 flags=0 ls0=8 d0=01 mat0=1.16438 min0=0.0627451 max0=0.921569
+mreset -> 1
+tick -> idle
+cb video ts=0 fmt=I420 8x4 flip=0 full=0 trc=DEFAULT maxlum=0 flags=0 ls0=8 d0=01 mat0=1.16438 min0=0.0627451 max0=0.921569
+ff read #1 stream=0 pts=40 size=4
+tick -> played
+sleep 40
+cb video ts=40000000 fmt=I420 8x4 flip=0 full=0 trc=DEFAULT maxlum=0 flags=0 ls0=8 d0=11 mat0=1.16438 min0=0.0627451 max0=0.921569
+ff read #2 stream=0 pts=2400 size=4
+tick -> played
+sleep 200
+tick -> timeout
+sleep 200
+tick -> timeout
+sleep 200
+tick -> timeout
+sleep 200
+tick -> timeout
+sleep 200
+tick -> timeout
+sleep 200
+tick -> timeout
+sleep 200
+tick -> timeout
+sleep 200
+tick -> timeout
+sleep 200
+tick -> timeout
+sleep 200
+tick -> timeout
+sleep 200
+tick -> timeout
+sleep 160
+cb video ts=2400000000 fmt=I420 8x4 flip=0 full=0 trc=DEFAULT maxlum=0 flags=0 ls0=8 d0=21 mat0=1.16438 min0=0.0627451 max0=0.921569
+ff read #3 stream=0 pts=6000 size=4
+tick -> played
+cb video ts=6000000000 fmt=I420 8x4 flip=0 full=0 trc=DEFAULT maxlum=0 flags=0 ls0=8 d0=31 mat0=1.16438 min0=0.0627451 max0=0.921569
+ff read #4 stream=0 pts=5900 size=4
+tick -> played
+cb video ts=5900000000 fmt=I420 8x4 flip=0 full=0 trc=DEFAULT maxlum=0 flags=0 ls0=8 d0=41 mat0=1.16438 min0=0.0627451 max0=0.921569
+ff read #5 stream=0 pts=5940 size=4
+tick -> played
+mstate eof=0 active=1 stopping=0 looping=0 pause=0 reset=0 seek=0 seek_next_ts=0 reset_ts=0 preload_frame=0 has_v=1 has_a=0
+  base_ts=0 start_ts=0 play_sys_ts=1000000000 next_pts_ns=5940000000 next_ns=3440000000 seek_pos=0 speed=100 cur_space=DEFAULT cur_range=DEFAULT
+  v ready=1 pts=5940000000 next_pts=5980000000 last_dur=40000000 eof=0 key=0 pending=0 npkts=0

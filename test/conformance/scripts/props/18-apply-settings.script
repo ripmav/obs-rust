@@ -1,0 +1,45 @@
+# CORE. apply_settings gathers every property with a modified callback (depth first: a group's
+# nested properties are gathered BEFORE the group property itself, in insertion order) and then
+# runs them in REVERSE gathering order. Return values are ignored. The props argument is always
+# the container apply_settings was called on, even for properties inside groups. v1 beats v2.
+token tk
+behavior a  ret:1
+behavior b  ret:0
+behavior c  set_int:seen:1
+props Top
+props G1
+props G2
+add bool Top first "First" as first
+add bool G1 g1a "G1a" as g1a
+add bool G1 g1b "G1b" as g1b
+add bool G2 g2a "G2a" as g2a
+add group G1 sub "Sub" normal G2 as sub
+add group Top grp "Grp" normal G1 as grp
+add bool Top last "Last" as last
+add bool Top nocb "No callback" as nocb
+set first modified a
+set g1a modified b
+set g1b modified2 a tk
+set g2a modified c
+set sub modified a
+set grp modified2 b tk
+set last modified a
+data S
+echo apply-on-top
+apply Top S
+data_show S
+echo apply-on-a-group-content-uses-that-container
+apply G1 S
+echo apply-with-null-settings
+apply Top @null
+echo apply-null-props
+apply @null S
+echo property-with-both-callbacks-runs-only-v1
+set last modified2 b tk
+apply Top S
+echo callbacks-can-edit-visibility
+behavior hide visible:last:0 enabled:first:0 desc:nocb:Renamed
+set first modified hide
+apply Top S
+dump Top
+destroy Top

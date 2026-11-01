@@ -1,0 +1,39 @@
+# Per-format setup of the main canvas video mix: whether GPU colour conversion is used, the
+# conversion technique names, the 1/width and 1/height factors, the NV12/P010 texture decisions,
+# the render colour space and the RGB->YUV colour matrix (row-major as stored, floats printed %.9g).
+startup en-US -
+reset_video fmt=I420 gpu=1
+mix_info main
+reset_video fmt=NV12 gpu=1
+mix_info main
+reset_video fmt=I444 gpu=1
+mix_info main
+reset_video fmt=I010 gpu=1 cs=709
+mix_info main
+reset_video fmt=I010 gpu=1 cs=pq
+mix_info main
+reset_video fmt=I010 gpu=1 cs=hlg
+mix_info main
+reset_video fmt=P010 gpu=1 cs=709
+mix_info main
+reset_video fmt=P010 gpu=1 cs=pq
+mix_info main
+reset_video fmt=P216 gpu=1 cs=hlg
+mix_info main
+reset_video fmt=P416 gpu=1 cs=709
+mix_info main
+# formats without a GPU converter: the request for gpu_conversion is silently dropped
+reset_video fmt=BGRA gpu=1
+mix_info main
+reset_video fmt=RGBA gpu=1
+mix_info main
+reset_video fmt=YUY2 gpu=1
+mix_info main
+# gpu_conversion=0 for a convertible format: no conversion machinery at all
+reset_video fmt=NV12 gpu=0
+mix_info main
+reset_video fmt=I420 gpu=0 cs=601 range=full
+mix_info main
+reset_video fmt=BGRX gpu=0
+mix_info main
+shutdown

@@ -1,0 +1,33 @@
+log debug canvas 'Main' (<uuid>) created
+startup -> true
+mk_source a name="__unnamed0000" private=0 uuid=set
+mk_output b name="__unnamed0001" private=0 uuid=NULL
+mk_encoder c name="__unnamed0002" private=0 uuid=NULL
+mk_service d name="__unnamed0003" private=0 uuid=NULL
+log debug canvas '__unnamed0004' (<uuid>) created
+canvas_create e -> ok
+canvas e name="__unnamed0004" flags=0x0 private=0 removed=0 has_video=0 video_active=0 uuid_len=36 view_type=aux
+mk_source f name=NULL private=1 uuid=set
+mk_output g name=NULL private=1 uuid=NULL
+mk_encoder h name="__unnamed0005" private=1 uuid=NULL
+mk_source i name="Normal" private=0 uuid=set
+mk_output j name="__unnamed0006" private=0 uuid=NULL
+shutdown begin
+log info Freeing OBS context data
+log debug canvas 'Main' (<uuid>) destroyed
+log info  3 output(s) were remaining
+log info  2 encoder(s) were remaining
+log info  1 service(s) were remaining
+log info  2 source(s) were remaining
+log info  1 source(s) were remaining
+log debug canvas '__unnamed0004' (<uuid>) destroyed
+log info  1 canvas(s) were remaining
+shutdown end obs=NULL
+log debug canvas 'Main' (<uuid>) created
+startup -> true
+mk_output k name="__unnamed0000" private=0 uuid=NULL
+shutdown begin
+log info Freeing OBS context data
+log debug canvas 'Main' (<uuid>) destroyed
+log info  1 output(s) were remaining
+shutdown end obs=NULL

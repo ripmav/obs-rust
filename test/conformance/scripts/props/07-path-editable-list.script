@@ -1,0 +1,26 @@
+# CORE. path: filter is stored only for file / file_save; the default path is always stored.
+# editable_list stores type, filter and default path verbatim (any type).
+props P
+add path P pf "File" file "Text (*.txt);;All (*)" "/dflt" as pf
+add path P ps "Save" file_save "Img (*.png)" @null as ps
+add path P pd "Dir" directory "ignored filter" "/dir" as pd
+add path P pn "NoFilter" file @null @null as pn
+add path P pe "Empty" file "" "" as pe
+info pf
+info ps
+info pd
+info pn
+info pe
+echo editable-list
+add editable_list P e1 "E1" strings "ignored?" "/p" as e1
+add editable_list P e2 "E2" files "Img (*.png)" @null as e2
+add editable_list P e3 "E3" files_and_urls @null "x" as e3
+info e1
+info e2
+info e3
+echo out-of-range-types
+add path P px "X" 9 "f" "d" as px
+add editable_list P ex "X" 9 "f" "d" as ex
+info px
+info ex
+destroy P

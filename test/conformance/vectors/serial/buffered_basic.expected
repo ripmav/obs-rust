@@ -1,0 +1,16 @@
+open buf ok
+pos -> 0
+write 01020304 4 -> 4
+pos -> 4
+write_pat 3 10 -> 3
+pos -> 7
+log debug Final buffer capacity: 1024 KiB
+file bb-a size=7 bytes=010203043d5c7b
+open buf fail
+open buf ok
+read 2 -> 0 data=-
+serialize_r 2 -> 2 data=0000
+write @null 4 -> 0
+write 11 0 -> 0
+log debug Final buffer capacity: 1024 KiB
+file bb-b size=2 bytes=0000

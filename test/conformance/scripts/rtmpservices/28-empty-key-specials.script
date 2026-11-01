@@ -1,0 +1,11 @@
+# S-026 SHOWROOM / Dacast with empty server and key strings (a freshly created service): the request url is
+# empty (NULL in the reference), the fetch fails, and the shared invalid ingests are returned.
+fs-load /mod/data/services.json data/services-ok.json
+module-load
+settings S {"service":"SHOWROOM"}
+new R rtmp_common S
+get R url key can_connect
+settings S {"service":"Dacast"}
+update R S
+get R url key can_connect
+module-unload

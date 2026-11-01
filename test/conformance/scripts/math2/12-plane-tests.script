@@ -1,0 +1,56 @@
+# plane_tri_inside / plane_line_inside / plane_close / plane_coplanar (S-009-R56..R58).
+# Q-5: the "inside" functions return TRUE when ANY vertex is at least `precision` away from the
+# plane on EITHER side (nonzero side mask), false only when all are within precision.
+plane ground 0 1 0 0
+vec3 a 0 1 0
+vec3 b 1 2 0
+vec3 c 0 -1 0
+vec3 z1 0 0 0
+vec3 z2 1 0 0
+vec3 z3 0 0 1
+vec3 e 0 0.0004 0
+call t plane_tri_inside ground a b c 0.001
+call t plane_tri_inside ground z1 z2 z3 0.001
+call t plane_tri_inside ground z1 z2 e 0.001
+call t plane_tri_inside ground z1 z2 e 0.0004
+call t plane_tri_inside ground z1 z2 e 0.0005
+call t plane_tri_inside ground c c c 0.001
+call t plane_tri_inside ground z1 z1 z1 0
+call t plane_line_inside ground a c 0.001
+call t plane_line_inside ground z1 z2 0.001
+call t plane_line_inside ground z1 e 0.001
+call t plane_line_inside ground z1 e 0.0004
+call t plane_line_inside ground a a 5
+# plane_close: the direction uses the SIGNED vec3_close (Q-6), the distance an absolute test
+plane p1 0 1 0 1
+plane p2 0 1 0 1.00005
+plane p3 0 1 0 1.5
+plane p4 0 1.00005 0 1
+plane p5 0 0.9 0 1
+plane p6 1 1 0 1
+call c plane_close p1 p2 0.0001
+call c plane_close p1 p3 0.0001
+call c plane_close p1 p4 0.0001
+call c plane_close p4 p1 0.0001
+call c plane_close p1 p5 0.0001
+call c plane_close p5 p1 0.0001
+call c plane_close p1 p6 0.0001
+call c plane_close p6 p1 0.0001
+# plane_coplanar: |dot(n1,n2)| ~ 1 and matching distance (negated if the normals are opposite)
+plane q1 0 1 0 2
+plane q2 0 1 0 2.00005
+plane q3 0 -1 0 -2
+plane q4 0 -1 0 2
+plane q5 1 0 0 2
+plane q6 0 1 0 3
+call c plane_coplanar q1 q2 0.0001
+call c plane_coplanar q1 q3 0.0001
+call c plane_coplanar q1 q4 0.0001
+call c plane_coplanar q1 q5 0.0001
+call c plane_coplanar q1 q6 0.0001
+call c plane_coplanar q1 q1 0
+call c plane_coplanar q1 q3 0
+# non-unit normals: cos_angle = dot is not normalised
+plane q7 0 2 0 2
+call c plane_coplanar q1 q7 0.0001
+call c plane_coplanar q1 q7 1.5

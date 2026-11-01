@@ -1,0 +1,11 @@
+a len=0 cap=0 str=@null
+a len=3 cap=7 str="abc"
+a len=10 cap=14
+a terminated=1
+a len=0 cap=0 str=@null
+a len=0 cap=20
+a len=3 cap=20 str="abc"
+a len=3 cap=20 str="abc"
+a len=3 cap=20 str="abc"
+a len=3 cap=20 str="abc"
+a len=3 cap=100 str="abc"

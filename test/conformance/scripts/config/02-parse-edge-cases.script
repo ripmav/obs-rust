@@ -1,0 +1,36 @@
+# Grammar corner cases of the INI reader. Values are read back through the getters.
+open_string "junk before sections\n; ignored?\n[A]\n# comment line\nk1=v1\n  k2  =  v2  \nk3=\nk4=a=b=c\n#k5=hidden\n\n\n[B]\nx=1"
+sections
+get_string A k1
+get_string A "  k2  "
+get_string A k2
+get_string A k3
+get_string A k4
+get_string A "#k5"
+get_string A k5
+get_string B x
+open_string "[A]\r\nk=v\r\nz=1\r\n"
+get_string A k
+get_string A z
+open_string "[A]\nk=line1\\nline2\\r\\\\end\\x\n"
+get_string A k
+open_string "[A]\nk=1\n[A]\nk=2\n"
+sections
+get_string A k
+open_string "[A]\nk=1\nk=2\n"
+get_string A k
+open_string "[]\nk=1\n[B]\nj=2\n"
+sections
+open_string ""
+sections
+open_string "[NoItems]\n"
+sections
+get_string NoItems x
+open_string "[A\nk=1\n"
+sections
+open_string "[A]\nnoequals\nk=1\n"
+get_string A noequals
+get_string A k
+open_string "[ A ]\nk=1\n"
+sections
+get_string " A " k

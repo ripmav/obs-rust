@@ -1,0 +1,59 @@
+# S-012 CORE (with QUIRK Q-3): obs_extract_av1_headers.
+# Walks the OBUs. OBUs of type SEQUENCE_HEADER (1) and METADATA (5) are copied to `header`.
+# QUIRK Q-3: EVERY OBU, including those two types and the temporal delimiter, is also
+# copied to `new`; so `new` is always the whole input (up to the end of the last complete
+# OBU) and `header` is a subsequence of it.
+buf td 1200
+buf seq 0a0b00000024cf7f0d000c22c0
+buf key 320510aabbccdd
+buf inter 32052011223344
+buf meta 2a0301aabb
+buf meta_hdr 2a0402aabbcc
+buf tile 220200ff
+buf pad 7a03000000
+echo temporal-unit-with-sequence-header
+cat tu @td @seq @key
+av1_extract @tu
+echo temporal-unit-without-headers
+cat tu @td @inter
+av1_extract @tu
+echo metadata-obus-count-as-headers
+cat tu @td @meta @key @meta_hdr
+av1_extract @tu
+echo other-obus-are-not-headers
+cat tu @td @tile @pad @inter
+av1_extract @tu
+echo header-order-is-input-order
+cat tu @meta @seq @meta_hdr @seq
+av1_extract @tu
+echo obus-without-size-field
+av1_extract 08
+av1_extract 08aabbcc
+av1_extract 10aabbcc
+av1_extract 28aabb
+echo obu-without-size-field-swallows-the-rest
+cat tu @td 08aabb @inter
+av1_extract @tu
+echo empty-and-tiny-inputs
+av1_extract -
+av1_extract 12
+av1_extract 1200
+av1_extract 0a
+av1_extract 0a00
+echo extension-flag
+av1_extract 0e0102aa
+av1_extract 0e0100
+cat t2 0e0100 1200
+av1_extract @t2
+cat tu 0e0102aa @td
+av1_extract @tu
+echo multi-byte-obu-size
+rep p 200 77
+cat big 0ac801 @p
+cat tu @td @big @key
+av1_extract @tu
+echo trailing-zero-byte-is-a-padding-obu-of-type-0
+cat tu @td @inter 00
+av1_extract @tu
+cat tu @td 0000
+av1_extract @tu

@@ -1,0 +1,50 @@
+# get_audio_info / get_extra_data / get_frame_size / get_priming_samples.
+data D
+audio_defaults aac D
+host_int frame_size 960
+host_int initial_padding 312
+host_int extradata 5
+av_formats fltp
+audio_create A aac D
+audio_info A aac
+# the registration (kind) selects which info table is queried; the callbacks are shared functions.
+# opus and aac report priming, pcm does not (the function is not registered)
+audio_info A opus
+audio_info A pcm
+# pcm32 allows clipping
+audio_info A pcm32
+audio_destroy A
+echo ---- format and speakers follow the opened context
+av_formats s16
+audio_create A flac D
+audio_info A flac
+audio_destroy A
+host_int extradata 0
+host_audio 1 1 44100
+av_formats s32p
+av_rates 44100
+audio_create A alac D
+audio_info A alac
+audio_destroy A
+av_rates none
+echo ---- 4.1 and 2.1 host layouts keep their OBS speaker numbers (5 and 3 channels)
+host_audio 5 5 48000
+av_formats fltp
+audio_create A aac D
+audio_info A aac
+audio_destroy A
+host_audio 3 3 48000
+audio_create A aac D
+audio_info A aac
+audio_destroy A
+echo ---- a 7-channel context never yields a speaker layout (UNKNOWN); harness-only configuration
+host_audio 7 8 48000
+audio_create A aac D
+audio_info A aac
+audio_destroy A
+echo ---- rate list: the sample rate of the context follows the nearest supported rate
+host_audio 2 2 50000
+av_rates 44100,48000
+audio_create A aac D
+audio_info A aac
+audio_destroy A

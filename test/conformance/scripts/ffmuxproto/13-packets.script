@@ -1,0 +1,18 @@
+# Data packets after the headers: key flag, routing by type/index, silently dropped packets, end of input.
+reset
+rmfile @p.nut
+args @p.nut 1 2 h264 6000 640 360 1 1 1 1 1 0 25 1 0 aac "A" 128 48000 1024 0 2 "B" 128 48000 1024 0 2 "" ""
+hdr video 0 0164001fffe100046764001f01000468ce3c80
+hdr audio 0 1190
+hdr audio 1 1190
+echo --- audio index 2 does not exist: packet consumed and ignored
+frame audio 2 0 0 0 3 99
+echo --- video, audio 0, audio 1
+frame video 0 1 0 0 4 a1
+frame audio 0 0 0 0 4 b1
+frame audio 1 0 0 0 4 c1
+echo --- type values other than 0 are routed like audio (type 7 here, index 1)
+frame 7 1 0 1024 1024 4 d1
+frame video 0 0 1 1 4 a2
+run
+probe @p.nut

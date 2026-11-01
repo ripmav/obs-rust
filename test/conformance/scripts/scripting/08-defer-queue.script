@@ -1,0 +1,10 @@
+# defer_call_post: FIFO order on a single worker thread; barrier via a posted signal job.
+load
+defer_post a b c d
+defer_wait
+defer_dump
+defer_post e
+defer_post f
+defer_wait
+defer_dump
+unload

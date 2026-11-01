@@ -1,0 +1,26 @@
+# Default-device change notifications. A source following "default" reacts only to the matching (flow, role):
+# input = capture/communications, output = render/console. Flow: 0 render 1 capture. Role: 0 console 1 multimedia
+# 2 communications. The id is tracked; a repeated identical id does not restart; a null id clears.
+s_reset
+s_defaults wasapi_input
+m_wasapi_new input
+m_wasapi_default 1 2 devA
+m_wasapi_default 1 2 devA
+m_wasapi_default 1 2 devB
+m_wasapi_default 1 0 devC
+m_wasapi_default 0 2 devC
+m_wasapi_default 1 1 devC
+m_wasapi_default 1 2 -
+m_wasapi_default 1 2 -
+m_wasapi_default 1 2 devA
+s_reset
+s_defaults wasapi_output
+m_wasapi_new device
+m_wasapi_default 0 0 devA
+m_wasapi_default 1 2 devB
+m_wasapi_default 0 2 devB
+m_wasapi_default 0 0 devB
+# a source bound to a specific device ignores default changes
+s_set device_id str "{0.0.0.00000000}.{x}"
+m_wasapi_update
+m_wasapi_default 0 0 devZ

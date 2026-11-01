@@ -1,0 +1,3 @@
+# CORE: row/column of tokens in the original text for mixed newline styles.
+lex "a\r\nb\n\rc\rd\ne"
+tokens lex

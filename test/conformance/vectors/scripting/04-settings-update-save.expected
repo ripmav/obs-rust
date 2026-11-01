@@ -1,0 +1,39 @@
+backend lua_load
+load -> 1
+backend create /s/p.lua
+backend load p.lua -> 1 deferred_done=0
+backend update p.lua k="initial"
+create S0 -> ok
+settings S0 same=1 k="initial"
+backend update p.lua k="changed"
+settings S0 same=1 k="changed"
+backend update p.lua k="changed"
+backend get_properties p.lua -> 3
+props S0 count=3 p0 p1 p2
+backend create /s/q.lua
+backend load q.lua -> 1 deferred_done=0
+backend update q.lua k=""
+create S1 -> ok
+backend get_properties q.lua -> NULL
+props S1 count=0
+backend save q.lua
+save S1 same=1 saved="1"
+settings S1 same=1 saved="1"
+backend create /s/off.lua
+backend load off.lua -> 0 deferred_done=0
+create S2 -> ok
+props S2 count=0
+save S2 same=1 saved=""
+settings S2 same=1 saved=""
+backend unload p.lua
+backend destroy p.lua
+destroy S0 done
+backend unload q.lua
+backend destroy q.lua
+destroy S1 done
+backend destroy off.lua
+destroy S2 done
+backend lua_unload
+log info [Scripting] Total detached callbacks: 0
+info_detached_head_after_unload null
+unload done

@@ -1,0 +1,53 @@
+# CORE. limiter: shared per-block envelope (max over channels), attack coef from a fixed 0.001 "ms"/1000 s
+# time constant, release from release_time ms; gain = db_to_mul(min(0, threshold - env_db)) (slope 1).
+audio 2 48000
+create l limiter
+state l
+echo quiet-signal-below-threshold-passes-unchanged-up-to-envelope-lag
+process l 16 const:0.1 const:0.05
+echo loud-step
+process l 16 out=all const:1 const:0.5
+state l
+echo block-boundary-continuity-envelope-persists
+process l 16 const:1 const:0.5
+echo release-after-silence
+process l 16 const:0.4 const:0.4
+process l 2000 out=0:0:2000:250 const:0.4 const:0.4
+state l
+echo settings-change-resets-slope-not-envelope
+data d
+set d threshold double -20
+set d release_time int 1000
+update l d
+state l
+process l 8 sine:1:1000 sine:0.5:1000
+echo different-sample-rate
+audio 2 44100
+update l d
+state l
+audio 6 48000
+update l d
+state l
+process l 4 const:1 const:1 const:1 const:1 const:1 const:1
+echo null-planes-are-skipped
+process l 4 const:1 - const:1 - - -
+echo large-block-grows-buffers
+audio 2 48000
+update l d
+process l 600 out=stats noise:0.9:1 noise:0.9:2
+process l 600 out=0:590:600:3 noise:0.9:3 noise:0.9:4
+state l
+echo extreme-settings
+set d threshold double 10
+set d release_time int 0
+update l d
+state l
+process l 4 const:0.5 const:0.5
+echo zero-frames-and-nan
+process l 0 const:1 const:1
+set d threshold double -6
+set d release_time int 60
+update l d
+process l 3 const:nan const:1
+process l 3 const:0.5 const:0.5
+destroy l

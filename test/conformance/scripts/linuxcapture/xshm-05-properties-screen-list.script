@@ -1,0 +1,43 @@
+# S-049 xshm: properties and the screen list built by the server_changed callback ("name (WxH @ X,Y)").
+# RandR provides names; Xinerama / plain use the index as name; screens with zero width or height are
+# omitted; a configured screen that does not exist is appended disabled as "Display N (not found)";
+# screen == -1 prepends a disabled "SelectADisplay" entry. Connection errors disable the list.
+x-screen 0 0 1920 1080 DP-1
+x-screen 1920 0 2560 1440 HDMI-1
+x-screen 0 0 0 0 Off
+x-ext randr 1
+xshm-defaults
+xshm-create
+xshm-props
+props
+# a valid screen selected
+set-int screen 1
+xshm-update
+xshm-props
+props
+# non-existent screen
+set-int screen 7
+xshm-update
+xshm-props
+props
+# xinerama / plain naming
+set-int screen 0
+x-ext randr 0
+x-ext xinerama 1
+xshm-update
+xshm-props
+props
+x-ext xinerama 0
+xshm-update
+xshm-props
+props
+# advanced toggle: server field visibility and list refresh
+set-bool advanced 1
+set-str server :9
+modified advanced
+modified server
+# connection failure
+x-connect-fail 1
+modified server
+props
+xshm-destroy

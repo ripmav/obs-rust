@@ -1,0 +1,21 @@
+check 0
+  [0] name=[a.exe]: A value=A:cls:a.exe disabled=0
+  [1] name=[b.exe]: B value=B:cls:b.exe disabled=0
+check 1
+  [0] name=[gone.exe]: Gone value=Gone:Cls:gone.exe disabled=1
+  [1] name=[a.exe]: A value=A:cls:a.exe disabled=0
+  [2] name=[b.exe]: B value=B:cls:b.exe disabled=0
+check 1
+  [0] name= value= disabled=0
+  [1] name=[gone.exe]: Gone value=Gone:Cls:gone.exe disabled=1
+  [2] name=[a.exe]: A value=A:cls:a.exe disabled=0
+check 0
+  [0] name= value= disabled=0
+  [1] name=[gone.exe]: Gone value=Gone:Cls:gone.exe disabled=1
+  [2] name=[a.exe]: A value=A:cls:a.exe disabled=0
+check 0
+  [0] name= value= disabled=0
+  [1] name=[gone.exe]: Gone value=Gone:Cls:gone.exe disabled=1
+  [2] name=[a.exe]: A value=A:cls:a.exe disabled=0
+check 1
+  [0] name=[E:.exe]: T:x value=T#3Ax:C:E#3A.exe disabled=1

@@ -1,0 +1,69 @@
+# ---- zero-sized frame: error logged on every attempt, nothing delivered
+minit -> ok
+ff open path=zero format=- nobuffer=1 interrupt=0 opts=[]
+minit2 -> ok has_v=1 has_a=0
+ff seek stream=0 target=0 flags=BACKWARD
+ff decoder flush
+ff read #0 stream=0 pts=0 size=4
+log error MP: media frame width or height are zero ('zero': 0x0)
+mreset -> 1
+tick -> idle
+log error MP: media frame width or height are zero ('zero': 0x0)
+ff read #1 stream=0 pts=40 size=4
+tick -> played
+sleep 40
+log error MP: media frame width or height are zero ('zero': 0x0)
+ff decoder drain
+ff seek stream=0 target=0 flags=BACKWARD
+ff decoder flush
+ff read #0 stream=0 pts=0 size=4
+log error MP: media frame width or height are zero ('zero': 0x0)
+cb stop
+tick -> eof
+tick -> idle
+mfree
+# ---- no video callback: frames are consumed silently, with preload callback still absent too
+minit -> ok
+ff open path=ok2 format=- nobuffer=1 interrupt=0 opts=[]
+minit2 -> ok has_v=1 has_a=0
+ff seek stream=0 target=0 flags=BACKWARD
+ff decoder flush
+ff read #0 stream=0 pts=0 size=4
+mreset -> 1
+tick -> idle
+ff read #1 stream=0 pts=40 size=4
+tick -> played
+sleep 40
+ff decoder drain
+ff seek stream=0 target=0 flags=BACKWARD
+ff decoder flush
+ff read #0 stream=0 pts=0 size=4
+cb stop
+tick -> eof
+tick -> idle
+tick -> idle
+mstate eof=0 active=0 stopping=0 looping=0 pause=0 reset=0 seek=0 seek_next_ts=0 reset_ts=0 preload_frame=0 has_v=1 has_a=0
+  base_ts=80000000 start_ts=0 play_sys_ts=80001000 next_pts_ns=0 next_ns=0 seek_pos=0 speed=100 cur_space=DEFAULT cur_range=DEFAULT
+  v ready=1 pts=0 next_pts=40000000 last_dur=40000000 eof=0 key=0 pending=0 npkts=0
+mfree
+# ---- unknown audio sample format (stream 0 = double): audio dropped; the s16 stream is not played at all
+minit -> ok
+ff open path=dbl format=- nobuffer=1 interrupt=0 opts=[]
+minit2 -> ok has_v=0 has_a=1
+ff seek stream=0 target=0 flags=BACKWARD
+ff decoder flush
+ff read #0 stream=0 pts=0 size=4
+mreset -> 1
+tick -> idle
+ff read #1 stream=0 pts=480 size=4
+tick -> played
+sleep 10
+ff decoder drain
+ff seek stream=0 target=0 flags=BACKWARD
+ff decoder flush
+ff read #0 stream=0 pts=0 size=4
+cb stop
+tick -> eof
+tick -> idle
+tick -> idle
+mfree

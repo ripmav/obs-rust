@@ -1,0 +1,5 @@
+state a audio_ts=1000000000 pending=0 buf=1000 last_buf=0 pending_stop=0 timing_set=1 timing_adjust=0 next_ts_min=1020833333 next_sys_ts_min=1000000000 resample_offset=0 failed=0 vol=1 user_vol=1 muted=0 user_muted=0 actions=0
+state a audio_ts=1000000000 pending=0 buf=1100 last_buf=0 pending_stop=0 timing_set=1 timing_adjust=0 next_ts_min=1022916666 next_sys_ts_min=1022916666 resample_offset=0 failed=0 vol=1 user_vol=1 muted=0 user_muted=0 actions=0
+state a audio_ts=1000000000 pending=0 buf=1200 last_buf=0 pending_stop=0 timing_set=1 timing_adjust=0 next_ts_min=1024999999 next_sys_ts_min=1024999999 resample_offset=0 failed=0 vol=1 user_vol=1 muted=0 user_muted=0 actions=0
+log debug Audio timestamp for 'a' exceeded TS_SMOOTHING_THRESHOLD, diff=974000001 ns, expected 1024999999, input 1999000000
+state a audio_ts=1000000000 pending=0 buf=48052 last_buf=0 pending_stop=0 timing_set=1 timing_adjust=0 next_ts_min=2001083333 next_sys_ts_min=2001083333 resample_offset=0 failed=0 vol=1 user_vol=1 muted=0 user_muted=0 actions=0

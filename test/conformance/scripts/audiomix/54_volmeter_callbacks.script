@@ -1,0 +1,19 @@
+# Callback registration order (invoked newest first), removal, two meters on one source, detach, destroy, volume tracking via the "volume" signal.
+init 48000 2
+clock 1000000000
+source a input
+meter_new 0 0
+meter_new 1 0
+meter_attach 0 a
+meter_attach 1 a
+meter_cb 0 add first
+meter_cb 0 add second
+meter_cb 1 add other
+output a 48000 2 1024 1000000000 const 0.5
+set a volume 0.5
+output a 48000 2 1024 1021333333 const 0.5
+meter_cb 0 remove first
+meter_detach 1
+output a 48000 2 1024 1042666666 const 0.5
+meter_destroy 0
+output a 48000 2 1024 1064000000 const 0.5

@@ -1,0 +1,37 @@
+t_create th
+# the initial preload frame (event 1) means the thread has finished starting
+ff open path=th format=- nobuffer=1 interrupt=0 opts=[]
+ff seek stream=0 target=0 flags=BACKWARD
+ff decoder flush
+ff decoder flush
+ff read #0 stream=0 pts=0 size=4
+ff read #1 stream=1 pts=0 size=4
+cb preload ts=0 fmt=I420 16x16 flip=0 full=0 trc=DEFAULT maxlum=0 flags=0 mat0=1.16438 min0=0.0627451 max0=0.921569
+cb video ts=0 fmt=I420 16x16 flip=0 full=0 trc=DEFAULT maxlum=0 flags=0 mat0=1.16438 min0=0.0627451 max0=0.921569
+cb audio ts=0 fmt=U8BIT spk=MONO rate=1000 frames=40
+ff read #2 stream=0 pts=40 size=4
+ff read #3 stream=1 pts=40 size=4
+sleep 40
+cb video ts=40000000 fmt=I420 16x16 flip=0 full=0 trc=DEFAULT maxlum=0 flags=0 mat0=1.16438 min0=0.0627451 max0=0.921569
+cb audio ts=40000000 fmt=U8BIT spk=MONO rate=1000 frames=40
+ff read #4 stream=0 pts=80 size=4
+ff read #5 stream=1 pts=80 size=4
+sleep 40
+cb video ts=80000000 fmt=I420 16x16 flip=0 full=0 trc=DEFAULT maxlum=0 flags=0 mat0=1.16438 min0=0.0627451 max0=0.921569
+cb audio ts=80000000 fmt=U8BIT spk=MONO rate=1000 frames=40
+ff read #6 stream=0 pts=120 size=4
+ff read #7 stream=1 pts=120 size=4
+sleep 40
+cb video ts=120000000 fmt=I420 16x16 flip=0 full=0 trc=DEFAULT maxlum=0 flags=0 mat0=1.16438 min0=0.0627451 max0=0.921569
+cb audio ts=120000000 fmt=U8BIT spk=MONO rate=1000 frames=40
+ff decoder drain
+ff decoder drain
+ff seek stream=0 target=0 flags=BACKWARD
+ff decoder flush
+ff decoder flush
+ff read #0 stream=0 pts=0 size=4
+ff read #1 stream=1 pts=0 size=4
+cb preload ts=280000000 fmt=I420 16x16 flip=0 full=0 trc=DEFAULT maxlum=0 flags=0 mat0=1.16438 min0=0.0627451 max0=0.921569
+cb stop
+t_query time=40 frames=4 duration=160000 has_video=1 has_audio=1
+t_destroy

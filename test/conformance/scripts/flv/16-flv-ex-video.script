@@ -1,0 +1,83 @@
+# S-021 Enhanced-RTMP video tags (flv_packet_start / _frames / _end, track index 0).
+#   09 | datasize u24 | timestamp (24+8) | streamid 0 |
+#   byte0 = 0x80 (ExHeader) | frametype<<4 (1 key, 2 inter) | packet type
+#   | FourCC | [composition time s24: only H.264/HEVC packet type 1 (CodedFrames)] | payload | prevsize
+# Packet types: 0 SequenceStart, 1 CodedFrames, 2 SequenceEnd, 3 CodedFramesX (no composition time).
+# FourCC: avc1 / hvc1 / av01. CodedFramesX is chosen for H.264/HEVC when pts == dts (raw tick values).
+echo h264
+pkt cfg video 0 0 1 1000 1 0164001fffe1000f6742c01fda0a0fd8880000000003000001
+pkt idr video 0 0 1 1000 1 6588840000
+pkt p   video 33 33 1 1000 0 4101020304
+pkt b   video 100 67 1 1000 0 0a0b0c
+ex_start cfg h264 0
+ex_frames idr h264 0 0
+ex_frames p h264 0 0
+ex_frames b h264 0 0
+ex_end p h264 0
+echo hevc
+pkt hcfg video 0 0 1 1000 1 01010000
+pkt hidr video 0 0 1 1000 1 2601af
+pkt hp   video 40 40 1 1000 0 0201
+pkt hb   video 120 80 1 1000 0 0201aa
+ex_start hcfg hevc 0
+ex_frames hidr hevc 0 0
+ex_frames hp hevc 0 0
+ex_frames hb hevc 0 0
+ex_end hp hevc 0
+echo av1
+pkt acfg video 0 0 1 1000 1 81000c000a0b0000002cd6e4
+pkt aidr video 0 0 1 1000 1 12000a0b0000002cd6e4
+pkt ap   video 33 33 1 1000 0 3210aabb
+pkt ab   video 100 67 1 1000 0 3210ccdd
+ex_start acfg av1 0
+ex_frames aidr av1 0 0
+ex_frames ap av1 0 0
+ex_frames ab av1 0 0
+ex_end ap av1 0
+echo frame-type-bits-follow-the-packet-keyframe-flag-even-for-sequence-start-and-end
+pkt kcfg video 0 0 1 1000 0 0164
+ex_start kcfg h264 0
+ex_end idr h264 0
+ex_end kcfg av1 0
+echo frames-x-is-decided-by-raw-pts-equals-dts-not-by-milliseconds
+pkt x1 video 3000 3000 1 90000 0 aa
+pkt x2 video 3001 3000 1 90000 0 aa
+pkt x3 video 3000 3001 1 90000 0 aa
+flv_mux x1 0 0
+ex_frames x1 h264 0 0
+ex_frames x2 h264 0 0
+ex_frames x3 h264 0 0
+ex_frames x2 hevc 0 0
+ex_frames x2 av1 0 0
+echo av1-never-has-composition-time-and-never-uses-frames-x
+ex_frames x1 av1 0 0
+ex_frames x3 av1 0 0
+echo dts-offset-applies-to-frames-only
+ex_frames idr h264 -1000 0
+ex_frames idr h264 500 0
+ex_start cfg h264 0
+echo composition-time-and-timestamps-larger-than-24-bits
+pkt big video 20000100 20000000 1 1000 0 aa
+ex_frames big h264 0 0
+ex_frames big hevc 100 0
+ex_frames big av1 0 0
+pkt neg video 0 5000 1 1000 0 aa
+ex_frames neg h264 0 0
+echo ex_raw: any packet type value with any codec
+ex_raw idr h264 0 0 0
+ex_raw idr h264 0 1 0
+ex_raw idr h264 0 2 0
+ex_raw idr h264 0 3 0
+ex_raw idr h264 0 4 0
+ex_raw idr h264 0 5 0
+ex_raw idr h264 0 7 0
+ex_raw idr h264 0 15 0
+ex_raw idr av1 0 1 0
+ex_raw idr av1 0 3 0
+ex_raw idr hevc 0 1 0
+echo empty-payload-still-produces-a-tag
+pkt empty video 0 0 1 1000 1 -
+ex_start empty h264 0
+ex_frames empty h264 0 0
+ex_frames empty av1 0 0
+ex_end empty hevc 0

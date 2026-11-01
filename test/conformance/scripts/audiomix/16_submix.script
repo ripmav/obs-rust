@@ -1,0 +1,13 @@
+# audio_mix (submix) sources feed obs_source_output_audio each render then follow the normal path (mix 0 only).
+init 48000 2
+clock 1000000000
+timeline 1000000000
+source m submix
+video_mix 1
+channel 0 0 m
+set m active 1
+custom m 1 tick 0.25
+run 3 3
+state m
+custom m 0 tick 0.25
+run 1 1

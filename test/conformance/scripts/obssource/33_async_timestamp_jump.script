@@ -1,0 +1,20 @@
+# Timestamp discontinuities: if the next frame is more than 2 s away from last_frame_ts (either direction) the
+# clock is re-synchronised to the frame and the frame is shown at once.
+kind cam input asyncvideo
+create c cam C
+video c bgra 2 2 10000000000 1 1 0
+vtime 1000000
+tick c 0.016
+astate c
+video c bgra 2 2 20000000000 1 2 0
+vtime 2000000
+tick c 0.016
+astate c
+video c bgra 2 2 5000000000 1 3 0
+vtime 3000000
+tick c 0.016
+astate c
+video c bgra 2 2 5010000000 1 4 0
+vtime 4000000
+tick c 0.016
+astate c

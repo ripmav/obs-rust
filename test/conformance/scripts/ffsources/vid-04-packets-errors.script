@@ -1,0 +1,59 @@
+# Packet delivery, first-packet callback, error and timeout handling of ffmpeg_video_encode.
+av_codec fake_enc 1
+host_last_error @null
+host_video 8 2 Y800 709 partial 60 1
+vid_init V fake_enc @null "Fake" 0 1
+vid_update V 1000 0 @null
+vid_init_codec V
+host_int now_ns 1000
+echo ---- the first non-empty packet goes through the callback (which prefixes HDR), later ones are copied
+av_recv 0 5 0 0 1
+vid_encode V 0 8 0 0 0
+vid_dump V
+av_recv 0 3 1 1 0
+vid_encode V 1 8 0 0 0
+echo ---- send EAGAIN / EOF are not errors; an empty packet counts as no packet
+av_clear
+av_send -11
+vid_encode V 2 8 0 0 0
+av_clear
+av_send -541478725
+vid_encode V 3 8 0 0 0
+av_clear
+av_recv 0 0 4 4 0
+vid_encode V 4 8 0 0 0
+echo ---- receive EAGAIN: no packet
+av_clear
+vid_encode V 5 8 0 0 0
+echo ---- real errors fail the call
+av_clear
+av_send -1000
+vid_encode V 6 8 0 0 0
+av_clear
+av_recv -1001 0 0 0 0
+vid_encode V 7 8 0 0 0
+echo ---- timeout: the packet is still delivered, but the call fails when
+echo ----   now - (pts * 1e9 / fps_num + start_ts) - pause_offset > 5 s   (start_ts = 1000 here)
+av_clear
+host_last_error @null
+host_int now_ns 6000001000
+av_recv 0 2 60 60 0
+vid_encode V 8 8 0 0 0
+show_last_error
+host_int now_ns 6000001001
+av_recv 0 2 60 60 0
+vid_encode V 9 8 0 0 0
+show_last_error
+echo ---- pause offset is subtracted
+host_last_error @null
+host_int pause_offset 1
+av_recv 0 2 60 60 0
+vid_encode V 10 8 0 0 0
+show_last_error
+host_int pause_offset 0
+echo ---- pts 120 at 60 fps is two seconds after start_ts
+host_int now_ns 7000001001
+av_recv 0 2 120 120 0
+vid_encode V 11 8 0 0 0
+show_last_error
+vid_free V

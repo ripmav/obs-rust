@@ -1,0 +1,69 @@
+> va_defaults h264
+va.open_device "/dev/dri/renderD128" by vaapi_defaults -> ok
+> set str rate_control CBR
+> va_create h264
+av.find_encoder h264_vaapi
+log info ---------------------------------
+log info [FFmpeg VAAPI encoder: 'enc'] settings: 	device:       /dev/dri/renderD128 	rate_control: CBR 	profile:      100 	level:        -99 	qp:           0 	bitrate:      6000 	maxrate:      6000 	keyint:       120 	width:        1920 	height:       1080 	b-frames:     0 	ffmpeg opts:   
+av.hwdevice_ctx_create vaapi "/dev/dri/renderD128"
+av.hwframe_ctx_init format=44 sw_format=23 size=1920x1080
+av.frame_get_buffer format=23 size=1920x1080 colorspace=1 range=1 chroma_loc=1
+av.codec_open pix_fmt=44 profile=100 level=-99 bit_rate=6000000 rc_max_rate=6000000 rc_buf_occ=6000000 gq=0 bf=0 gop=120 size=1920x1080 tb=1/60 range=1 prim=1 trc=1 cs=1 chroma_loc=1
+va_create -> ok
+> va_video_info nv12 bgra
+video_info(pref=nv12, in=bgra) -> nv12
+> va_video_info p010 nv12
+video_info(pref=p010, in=nv12) -> nv12
+> va_video_info none p010
+video_info(pref=none, in=p010) -> nv12
+> va_video_info none nv12
+video_info(pref=none, in=nv12) -> nv12
+> va_video_info i420 p010
+video_info(pref=i420, in=p010) -> nv12
+> va_destroy
+va_destroyed
+> va_defaults hevc
+va.open_device "/dev/dri/renderD129" by vaapi_defaults -> ok
+> va_create hevc
+av.find_encoder hevc_vaapi
+log info ---------------------------------
+log info [FFmpeg VAAPI encoder: 'enc'] settings: 	device:       /dev/dri/renderD129 	rate_control: CBR 	profile:      1 	level:        -99 	qp:           0 	bitrate:      6000 	maxrate:      6000 	keyint:       120 	width:        1920 	height:       1080 	b-frames:     0 	ffmpeg opts:   
+av.hwdevice_ctx_create vaapi "/dev/dri/renderD129"
+av.hwframe_ctx_init format=44 sw_format=23 size=1920x1080
+av.frame_get_buffer format=23 size=1920x1080 colorspace=1 range=1 chroma_loc=1
+av.codec_open pix_fmt=44 profile=1 level=-99 bit_rate=6000000 rc_max_rate=6000000 rc_buf_occ=6000000 gq=0 bf=0 gop=120 size=1920x1080 tb=1/60 range=1 prim=1 trc=1 cs=1 chroma_loc=1
+va_create -> ok
+> va_video_info p010 nv12
+video_info(pref=p010, in=nv12) -> p010
+> va_video_info nv12 p010
+video_info(pref=nv12, in=p010) -> nv12
+> va_video_info none p010
+video_info(pref=none, in=p010) -> p010
+> va_video_info i444 i420
+video_info(pref=i444, in=i420) -> nv12
+> va_destroy
+va_destroyed
+> va_defaults av1
+va.open_device "/dev/dri/renderD130" by vaapi_defaults -> ok
+> va_create av1
+av.find_encoder av1_vaapi
+log info ---------------------------------
+log info [FFmpeg VAAPI encoder: 'enc'] settings: 	device:       /dev/dri/renderD130 	rate_control: CBR 	profile:      0 	level:        -99 	qp:           0 	bitrate:      6000 	maxrate:      6000 	keyint:       120 	width:        1920 	height:       1080 	b-frames:     0 	ffmpeg opts:   
+av.hwdevice_ctx_create vaapi "/dev/dri/renderD130"
+av.hwframe_ctx_init format=44 sw_format=23 size=1920x1080
+av.frame_get_buffer format=23 size=1920x1080 colorspace=1 range=1 chroma_loc=1
+av.codec_open pix_fmt=44 profile=0 level=-99 bit_rate=6000000 rc_max_rate=6000000 rc_buf_occ=6000000 gq=0 bf=0 gop=120 size=1920x1080 tb=1/60 range=1 prim=1 trc=1 cs=1 chroma_loc=1
+va_create -> ok
+> va_video_info p010 nv12
+video_info(pref=p010, in=nv12) -> p010
+> va_video_info none i010
+video_info(pref=none, in=i010) -> nv12
+> va_destroy
+va_destroyed
+> va_register
+encoder id=ffmpeg_vaapi codec=h264 type=video caps=[internal ] cb=[encode extra_data sei_data video_info defaults properties destroy create]
+encoder id=ffmpeg_vaapi_tex codec=h264 type=video caps=[pass_texture ] cb=[encode_texture2 extra_data sei_data video_info defaults properties destroy create]
+encoder id=av1_ffmpeg_vaapi codec=av1 type=video caps=[internal ] cb=[encode extra_data sei_data video_info defaults properties destroy create]
+encoder id=av1_ffmpeg_vaapi_tex codec=av1 type=video caps=[pass_texture ] cb=[encode_texture2 extra_data sei_data video_info defaults properties destroy create]
+encoder id=hevc_ffmpeg_vaapi codec=hevc type=video caps=[internal ] cb=[encode extra_data sei_data video_info defaults properties destroy create]
+encoder id=hevc_ffmpeg_vaapi_tex codec=hevc type=video caps=[pass_texture ] cb=[encode_texture2 extra_data sei_data video_info defaults properties destroy create]

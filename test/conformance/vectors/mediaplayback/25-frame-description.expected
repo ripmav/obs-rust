@@ -1,0 +1,319 @@
+# i420_709
+minit -> ok
+ff open path=i420_709 format=- nobuffer=1 interrupt=0 opts=[]
+minit2 -> ok has_v=1 has_a=0
+ff seek stream=0 target=0 flags=BACKWARD
+ff decoder flush
+ff read #0 stream=0 pts=0 size=4
+cb preload ts=0 fmt=I420 8x4 flip=0 full=0 trc=DEFAULT maxlum=0 flags=0 ls0=8 d0=01 mat0=1.16438 min0=0.0627451 max0=0.921569
+mreset -> 1
+mfree
+# i420_601
+minit -> ok
+ff open path=i420_601 format=- nobuffer=1 interrupt=0 opts=[]
+minit2 -> ok has_v=1 has_a=0
+ff seek stream=0 target=0 flags=BACKWARD
+ff decoder flush
+ff read #0 stream=0 pts=0 size=4
+cb preload ts=0 fmt=I420 8x4 flip=0 full=0 trc=DEFAULT maxlum=0 flags=0 ls0=8 d0=01 mat0=1.16438 min0=0.0627451 max0=0.921569
+mreset -> 1
+mfree
+# i420_unspec
+minit -> ok
+ff open path=i420_unspec format=- nobuffer=1 interrupt=0 opts=[]
+minit2 -> ok has_v=1 has_a=0
+ff seek stream=0 target=0 flags=BACKWARD
+ff decoder flush
+ff read #0 stream=0 pts=0 size=4
+cb preload ts=0 fmt=I420 8x4 flip=0 full=0 trc=DEFAULT maxlum=0 flags=0 ls0=8 d0=01 mat0=1.16438 min0=0.0627451 max0=0.921569
+mreset -> 1
+mfree
+# i420_full
+minit -> ok
+ff open path=i420_full format=- nobuffer=1 interrupt=0 opts=[]
+minit2 -> ok has_v=1 has_a=0
+ff seek stream=0 target=0 flags=BACKWARD
+ff decoder flush
+ff read #0 stream=0 pts=0 size=4
+cb preload ts=0 fmt=I420 8x4 flip=0 full=1 trc=DEFAULT maxlum=0 flags=0 ls0=8 d0=01 mat0=1 min0=0 max0=1
+mreset -> 1
+mfree
+# i420_srgb
+minit -> ok
+ff open path=i420_srgb format=- nobuffer=1 interrupt=0 opts=[]
+minit2 -> ok has_v=1 has_a=0
+ff seek stream=0 target=0 flags=BACKWARD
+ff decoder flush
+ff read #0 stream=0 pts=0 size=4
+cb preload ts=0 fmt=I420 8x4 flip=0 full=0 trc=SRGB maxlum=0 flags=0 ls0=8 d0=01 mat0=1.16438 min0=0.0627451 max0=0.921569
+mreset -> 1
+mfree
+# i420_2020pq
+minit -> ok
+ff open path=i420_2020pq format=- nobuffer=1 interrupt=0 opts=[]
+minit2 -> ok has_v=1 has_a=0
+ff seek stream=0 target=0 flags=BACKWARD
+ff decoder flush
+ff read #0 stream=0 pts=0 size=4
+cb preload ts=0 fmt=I010 8x4 flip=0 full=0 trc=PQ maxlum=0 flags=0 ls0=16 d0=01 mat0=1.16781 min0=0.0625611 max0=0.918866
+mreset -> 1
+mfree
+# i420_2020hlg
+minit -> ok
+ff open path=i420_2020hlg format=- nobuffer=1 interrupt=0 opts=[]
+minit2 -> ok has_v=1 has_a=0
+ff seek stream=0 target=0 flags=BACKWARD
+ff decoder flush
+ff read #0 stream=0 pts=0 size=4
+cb preload ts=0 fmt=I010 8x4 flip=0 full=0 trc=HLG maxlum=0 flags=0 ls0=16 d0=01 mat0=1.16781 min0=0.0625611 max0=0.918866
+mreset -> 1
+mfree
+# i420_trc709
+minit -> ok
+ff open path=i420_trc709 format=- nobuffer=1 interrupt=0 opts=[]
+minit2 -> ok has_v=1 has_a=0
+ff seek stream=0 target=0 flags=BACKWARD
+ff decoder flush
+ff read #0 stream=0 pts=0 size=4
+cb preload ts=0 fmt=I420 8x4 flip=0 full=0 trc=SRGB maxlum=0 flags=0 ls0=8 d0=01 mat0=1.16438 min0=0.0627451 max0=0.921569
+mreset -> 1
+mfree
+# i420_trc240
+minit -> ok
+ff open path=i420_trc240 format=- nobuffer=1 interrupt=0 opts=[]
+minit2 -> ok has_v=1 has_a=0
+ff seek stream=0 target=0 flags=BACKWARD
+ff decoder flush
+ff read #0 stream=0 pts=0 size=4
+cb preload ts=0 fmt=I420 8x4 flip=0 full=0 trc=SRGB maxlum=0 flags=0 ls0=8 d0=01 mat0=1.16438 min0=0.0627451 max0=0.921569
+mreset -> 1
+mfree
+# i420_g22
+minit -> ok
+ff open path=i420_g22 format=- nobuffer=1 interrupt=0 opts=[]
+minit2 -> ok has_v=1 has_a=0
+ff seek stream=0 target=0 flags=BACKWARD
+ff decoder flush
+ff read #0 stream=0 pts=0 size=4
+cb preload ts=0 fmt=I420 8x4 flip=0 full=0 trc=SRGB maxlum=0 flags=0 ls0=8 d0=01 mat0=1.16438 min0=0.0627451 max0=0.921569
+mreset -> 1
+mfree
+# i420_g28
+minit -> ok
+ff open path=i420_g28 format=- nobuffer=1 interrupt=0 opts=[]
+minit2 -> ok has_v=1 has_a=0
+ff seek stream=0 target=0 flags=BACKWARD
+ff decoder flush
+ff read #0 stream=0 pts=0 size=4
+cb preload ts=0 fmt=I420 8x4 flip=0 full=0 trc=SRGB maxlum=0 flags=0 ls0=8 d0=01 mat0=1.16438 min0=0.0627451 max0=0.921569
+mreset -> 1
+mfree
+# i420_170m
+minit -> ok
+ff open path=i420_170m format=- nobuffer=1 interrupt=0 opts=[]
+minit2 -> ok has_v=1 has_a=0
+ff seek stream=0 target=0 flags=BACKWARD
+ff decoder flush
+ff read #0 stream=0 pts=0 size=4
+cb preload ts=0 fmt=I420 8x4 flip=0 full=0 trc=SRGB maxlum=0 flags=0 ls0=8 d0=01 mat0=1.16438 min0=0.0627451 max0=0.921569
+mreset -> 1
+mfree
+# nv12
+minit -> ok
+ff open path=nv12 format=- nobuffer=1 interrupt=0 opts=[]
+minit2 -> ok has_v=1 has_a=0
+ff seek stream=0 target=0 flags=BACKWARD
+ff decoder flush
+ff read #0 stream=0 pts=0 size=4
+cb preload ts=0 fmt=NV12 8x4 flip=0 full=0 trc=DEFAULT maxlum=0 flags=0 ls0=8 d0=01 mat0=1.16438 min0=0.0627451 max0=0.921569
+mreset -> 1
+mfree
+# nv21_to_nv12
+minit -> ok
+ff open path=nv21_to_nv12 format=- nobuffer=1 interrupt=0 opts=[]
+minit2 -> ok has_v=1 has_a=0
+ff seek stream=0 target=0 flags=BACKWARD
+ff decoder flush
+ff read #0 stream=0 pts=0 size=4
+cb preload ts=0 fmt=NV12 8x4 flip=0 full=0 trc=DEFAULT maxlum=0 flags=0 mat0=1.16438 min0=0.0627451 max0=0.921569
+mreset -> 1
+mfree
+# i444
+minit -> ok
+ff open path=i444 format=- nobuffer=1 interrupt=0 opts=[]
+minit2 -> ok has_v=1 has_a=0
+ff seek stream=0 target=0 flags=BACKWARD
+ff decoder flush
+ff read #0 stream=0 pts=0 size=4
+cb preload ts=0 fmt=I444 8x4 flip=0 full=0 trc=DEFAULT maxlum=0 flags=0 ls0=8 d0=01 mat0=1.16438 min0=0.0627451 max0=0.921569
+mreset -> 1
+mfree
+# i422
+minit -> ok
+ff open path=i422 format=- nobuffer=1 interrupt=0 opts=[]
+minit2 -> ok has_v=1 has_a=0
+ff seek stream=0 target=0 flags=BACKWARD
+ff decoder flush
+ff read #0 stream=0 pts=0 size=4
+cb preload ts=0 fmt=I422 8x4 flip=0 full=0 trc=DEFAULT maxlum=0 flags=0 ls0=8 d0=01 mat0=1.16438 min0=0.0627451 max0=0.921569
+mreset -> 1
+mfree
+# yuy2
+minit -> ok
+ff open path=yuy2 format=- nobuffer=1 interrupt=0 opts=[]
+minit2 -> ok has_v=1 has_a=0
+ff seek stream=0 target=0 flags=BACKWARD
+ff decoder flush
+ff read #0 stream=0 pts=0 size=4
+cb preload ts=0 fmt=YUY2 8x4 flip=0 full=0 trc=DEFAULT maxlum=0 flags=0 ls0=16 d0=01 mat0=1.16438 min0=0.0627451 max0=0.921569
+mreset -> 1
+mfree
+# rgba
+minit -> ok
+ff open path=rgba format=- nobuffer=1 interrupt=0 opts=[]
+minit2 -> ok has_v=1 has_a=0
+ff seek stream=0 target=0 flags=BACKWARD
+ff decoder flush
+ff read #0 stream=0 pts=0 size=4
+cb preload ts=0 fmt=RGBA 8x4 flip=0 full=0 trc=DEFAULT maxlum=0 flags=0 ls0=32 d0=01 mat0=1.16438 min0=0.0627451 max0=0.921569
+mreset -> 1
+mfree
+# bgra
+minit -> ok
+ff open path=bgra format=- nobuffer=1 interrupt=0 opts=[]
+minit2 -> ok has_v=1 has_a=0
+ff seek stream=0 target=0 flags=BACKWARD
+ff decoder flush
+ff read #0 stream=0 pts=0 size=4
+cb preload ts=0 fmt=BGRA 8x4 flip=0 full=0 trc=DEFAULT maxlum=0 flags=0 ls0=32 d0=01 mat0=1.16438 min0=0.0627451 max0=0.921569
+mreset -> 1
+mfree
+# bgr0
+minit -> ok
+ff open path=bgr0 format=- nobuffer=1 interrupt=0 opts=[]
+minit2 -> ok has_v=1 has_a=0
+ff seek stream=0 target=0 flags=BACKWARD
+ff decoder flush
+ff read #0 stream=0 pts=0 size=4
+cb preload ts=0 fmt=BGRX 8x4 flip=0 full=0 trc=DEFAULT maxlum=0 flags=0 ls0=32 d0=01 mat0=1.16438 min0=0.0627451 max0=0.921569
+mreset -> 1
+mfree
+# p010
+minit -> ok
+ff open path=p010 format=- nobuffer=1 interrupt=0 opts=[]
+minit2 -> ok has_v=1 has_a=0
+ff seek stream=0 target=0 flags=BACKWARD
+ff decoder flush
+ff read #0 stream=0 pts=0 size=4
+cb preload ts=0 fmt=P010 8x4 flip=0 full=0 trc=PQ maxlum=0 flags=0 ls0=16 d0=01 mat0=1.16781 min0=0.0625611 max0=0.918866
+mreset -> 1
+mfree
+# i40a
+minit -> ok
+ff open path=i40a format=- nobuffer=1 interrupt=0 opts=[]
+minit2 -> ok has_v=1 has_a=0
+ff seek stream=0 target=0 flags=BACKWARD
+ff decoder flush
+ff read #0 stream=0 pts=0 size=4
+cb preload ts=0 fmt=I40A 8x4 flip=0 full=0 trc=DEFAULT maxlum=0 flags=0 ls0=8 d0=01 mat0=1.16438 min0=0.0627451 max0=0.921569
+mreset -> 1
+mfree
+# yuva
+minit -> ok
+ff open path=yuva format=- nobuffer=1 interrupt=0 opts=[]
+minit2 -> ok has_v=1 has_a=0
+ff seek stream=0 target=0 flags=BACKWARD
+ff decoder flush
+ff read #0 stream=0 pts=0 size=4
+cb preload ts=0 fmt=YUVA 8x4 flip=0 full=0 trc=DEFAULT maxlum=0 flags=0 ls0=8 d0=01 mat0=1.16438 min0=0.0627451 max0=0.921569
+mreset -> 1
+mfree
+# gray_to_bgra
+minit -> ok
+ff open path=gray_to_bgra format=- nobuffer=1 interrupt=0 opts=[]
+minit2 -> ok has_v=1 has_a=0
+ff seek stream=0 target=0 flags=BACKWARD
+ff decoder flush
+ff read #0 stream=0 pts=0 size=4
+cb preload ts=0 fmt=BGRA 8x4 flip=0 full=0 trc=DEFAULT maxlum=0 flags=0 mat0=1.16438 min0=0.0627451 max0=0.921569
+mreset -> 1
+mfree
+# rgb24_to_bgra
+minit -> ok
+ff open path=rgb24_to_bgra format=- nobuffer=1 interrupt=0 opts=[]
+minit2 -> ok has_v=1 has_a=0
+ff seek stream=0 target=0 flags=BACKWARD
+ff decoder flush
+ff read #0 stream=0 pts=0 size=4
+cb preload ts=0 fmt=BGRA 8x4 flip=0 full=0 trc=DEFAULT maxlum=0 flags=0 mat0=1.16438 min0=0.0627451 max0=0.921569
+mreset -> 1
+mfree
+# yuv420p16_to_i010
+minit -> ok
+ff open path=yuv420p16_to_i010 format=- nobuffer=1 interrupt=0 opts=[]
+minit2 -> ok has_v=1 has_a=0
+ff seek stream=0 target=0 flags=BACKWARD
+ff decoder flush
+ff read #0 stream=0 pts=0 size=4
+cb preload ts=0 fmt=I010 8x4 flip=0 full=0 trc=DEFAULT maxlum=0 flags=0 mat0=1.16781 min0=0.0625611 max0=0.918866
+mreset -> 1
+mfree
+# yuv444p10_to_i444
+minit -> ok
+ff open path=yuv444p10_to_i444 format=- nobuffer=1 interrupt=0 opts=[]
+minit2 -> ok has_v=1 has_a=0
+ff seek stream=0 target=0 flags=BACKWARD
+ff decoder flush
+ff read #0 stream=0 pts=0 size=4
+cb preload ts=0 fmt=I444 8x4 flip=0 full=0 trc=DEFAULT maxlum=0 flags=0 mat0=1.16438 min0=0.0627451 max0=0.921569
+mreset -> 1
+mfree
+# yuvj420p_to_i420
+minit -> ok
+ff open path=yuvj420p_to_i420 format=- nobuffer=1 interrupt=0 opts=[]
+minit2 -> ok has_v=1 has_a=0
+ff seek stream=0 target=0 flags=BACKWARD
+ff decoder flush
+ff read #0 stream=0 pts=0 size=4
+cb preload ts=0 fmt=I420 8x4 flip=0 full=1 trc=DEFAULT maxlum=0 flags=0 mat0=1 min0=0 max0=1
+mreset -> 1
+mfree
+# ---- forced range overrides the stream range
+minit -> ok
+ff open path=i420_709 format=- nobuffer=1 interrupt=0 opts=[]
+minit2 -> ok has_v=1 has_a=0
+ff seek stream=0 target=0 flags=BACKWARD
+ff decoder flush
+ff read #0 stream=0 pts=0 size=4
+cb preload ts=0 fmt=I420 8x4 flip=0 full=1 trc=DEFAULT maxlum=0 flags=0 ls0=8 d0=01 mat0=1 min0=0 max0=1
+mreset -> 1
+mfree
+minit -> ok
+ff open path=i420_full format=- nobuffer=1 interrupt=0 opts=[]
+minit2 -> ok has_v=1 has_a=0
+ff seek stream=0 target=0 flags=BACKWARD
+ff decoder flush
+ff read #0 stream=0 pts=0 size=4
+cb preload ts=0 fmt=I420 8x4 flip=0 full=0 trc=DEFAULT maxlum=0 flags=0 ls0=8 d0=01 mat0=1.16438 min0=0.0627451 max0=0.921569
+mreset -> 1
+mfree
+# ---- linear alpha flag
+minit -> ok
+ff open path=rgba format=- nobuffer=1 interrupt=0 opts=[]
+minit2 -> ok has_v=1 has_a=0
+ff seek stream=0 target=0 flags=BACKWARD
+ff decoder flush
+ff read #0 stream=0 pts=0 size=4
+cb preload ts=0 fmt=RGBA 8x4 flip=0 full=0 trc=DEFAULT maxlum=0 flags=1 ls0=32 d0=01 mat0=1.16438 min0=0.0627451 max0=0.921569
+mreset -> 1
+mfree
+# ---- bottom-up packed image (negative stride on plane 0): flip flag set, stride reported as absolute value
+minit -> ok
+ff open path=flipbgra format=- nobuffer=1 interrupt=0 opts=[]
+minit2 -> ok has_v=1 has_a=0
+ff seek stream=0 target=0 flags=BACKWARD
+ff decoder flush
+ff read #0 stream=0 pts=0 size=4
+cb preload ts=0 fmt=BGRA 8x4 flip=1 full=0 trc=DEFAULT maxlum=0 flags=0 ls0=32 d0=01 mat0=1.16438 min0=0.0627451 max0=0.921569
+mreset -> 1
+mfree

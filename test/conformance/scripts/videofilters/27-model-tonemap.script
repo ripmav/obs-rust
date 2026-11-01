@@ -1,0 +1,16 @@
+# MODEL (spec author's reference implementation, tolerance 1e-4): tone mapping shaders. Inputs: linear Rec.709 RGB,
+# multiplier, [input nits, output nits]. Multipliers as pushed by the filter (see 23-hdr-tonemap).
+echo reinhard: scene referred 1.0 = sdr white (multiplier = 300/300)
+model reinhard 1 1 1 1
+model reinhard 0.5 0.25 0.1 1
+model reinhard 4 4 4 1
+model reinhard 0 0 0 1
+echo maxRGB HDR to HDR (multiplier 80*0.0001 for scRGB): 1000 nits peak into 4000 nit mapping
+model maxrgb 12.5 12.5 12.5 0.008 4000 1000
+model maxrgb 1 0.5 0.25 0.008 4000 1000
+model maxrgb 50 25 5 0.008 4000 1000
+model maxrgb 0 0 0 0.008 4000 1000
+echo maxRGB SDR variant
+model maxrgb_sdr 1 1 1 0.03 1000 300
+model maxrgb_sdr 0.2 0.1 0.05 0.03 1000 300
+model maxrgb_sdr 3 3 3 0.03 1000 300

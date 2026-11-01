@@ -1,0 +1,39 @@
+# obs_reset_audio2: parameter validation by the audio output (speakers must be non-zero, the sample
+# rate non-zero), buffering defaults, and the values reported back by obs_get_audio_info(2).
+# max_buffering_ms == 0 selects the default of 45 ticks; the reported value is derived back from
+# the tick count (integer arithmetic), so it differs from the requested value after rounding up
+# to whole 1024-frame ticks.
+startup en-US -
+audio_info
+reset_audio sps=48000 speakers=stereo
+audio_info
+audio_state
+reset_audio sps=44100 speakers=5.1
+audio_info
+audio_state
+# speakers=unknown is rejected (returns false) and leaves NO audio output behind
+reset_audio sps=48000 speakers=unknown
+audio_info
+audio_state
+reset_audio sps=48000 speakers=mono max_ms=100 fixed=1
+audio_info
+audio_state
+reset_audio sps=48000 speakers=2.1 max_ms=1
+audio_info
+reset_audio sps=44100 speakers=4.0 max_ms=1000
+audio_info
+reset_audio sps=96000 speakers=7.1 max_ms=500 fixed=0
+audio_info
+reset_audio sps=8000 speakers=4.1 max_ms=3
+audio_info
+reset_audio sps=192000 speakers=stereo
+audio_info
+# the v1 entry point only carries rate and speakers: default buffering
+reset_audio_v1 sps=48000 speakers=stereo
+audio_info
+audio_state
+# NULL input: audio is torn down, nothing new is created, result true
+reset_audio_null
+audio_info
+audio_state
+shutdown

@@ -1,0 +1,85 @@
+> ff_defaults h264
+> set bool psycho_aq 0
+> ff_create h264
+ffve.init lib=h264_nvenc lib2=nvenc_h264 name="NVIDIA NVENC H.264 (FFmpeg)"
+av.opt_set_int cbr=0
+av.opt_set profile=high
+av.opt_set preset=p5
+av.opt_set tune=hq
+av.opt_set multipass=qres
+av.opt_set_int cbr=1
+av.opt_set level=auto
+av.opt_set_int gpu=0
+av.opt_set_int no-scenecut=0
+av.opt_set_int spatial-aq=0
+av.opt_set_int temporal-aq=0
+ffve.update bitrate=5000 keyint_sec=0 fps=60/1 size=1920x1080 info.format=2 opts="" ctx{global_quality=0 rc_max_rate=5000000 rc_min_rate=5000000 max_b_frames=2}
+log info [FFmpeg NVENC encoder: 'enc'] settings: 	encoder:      NVIDIA NVENC H.264 (FFmpeg) 	rate_control: CBR 	bitrate:      5000 	cqp:          0 	keyint:       0 	preset:       p5 	tuning:       hq 	multipass:    qres 	profile:      high 	width:        1920 	height:       1080 	b-frames:     2 	psycho-aq:    0 	GPU:          0 
+ffve.init_codec #1 -> ok
+ff_create -> ok
+> ff_ctx 2 1
+> ff_packet 00000001670102030000000168aabb000000016588ff 0
+> ff_encode
+log info [FFmpeg NVENC encoder: 'enc'] Applying DTS value corrections
+ff_encode -> 1 received=1 dts=-2 size=7 data=000000016588ff
+> ff_state
+state: hevc=0 gpu=0 dts_offset=-2 header=00000001670102030000000168aabb sei=- max_b_frames=2
+> ff_packet 000000014188 3
+> ff_encode
+ff_encode -> 1 received=1 dts=1 size=6 data=000000014188
+> ff_destroy
+ffve.free
+ff_destroyed
+> ff_create h264
+ffve.init lib=h264_nvenc lib2=nvenc_h264 name="NVIDIA NVENC H.264 (FFmpeg)"
+av.opt_set_int cbr=0
+av.opt_set profile=high
+av.opt_set preset=p5
+av.opt_set tune=hq
+av.opt_set multipass=qres
+av.opt_set_int cbr=1
+av.opt_set level=auto
+av.opt_set_int gpu=0
+av.opt_set_int no-scenecut=0
+av.opt_set_int spatial-aq=0
+av.opt_set_int temporal-aq=0
+ffve.update bitrate=5000 keyint_sec=0 fps=60/1 size=1920x1080 info.format=2 opts="" ctx{global_quality=0 rc_max_rate=5000000 rc_min_rate=5000000 max_b_frames=2}
+log info [FFmpeg NVENC encoder: 'enc'] settings: 	encoder:      NVIDIA NVENC H.264 (FFmpeg) 	rate_control: CBR 	bitrate:      5000 	cqp:          0 	keyint:       0 	preset:       p5 	tuning:       hq 	multipass:    qres 	profile:      high 	width:        1920 	height:       1080 	b-frames:     2 	psycho-aq:    0 	GPU:          0 
+ffve.init_codec #1 -> ok
+ff_create -> ok
+> ff_ctx 2 1
+> ff_packet 00000001670102030000000168aabb000000016588ff -2
+> ff_encode
+ff_encode -> 1 received=1 dts=-2 size=7 data=000000016588ff
+> ff_state
+state: hevc=0 gpu=0 dts_offset=0 header=00000001670102030000000168aabb sei=- max_b_frames=2
+> ff_destroy
+ffve.free
+ff_destroyed
+> set int bf 0
+> ff_create h264
+ffve.init lib=h264_nvenc lib2=nvenc_h264 name="NVIDIA NVENC H.264 (FFmpeg)"
+av.opt_set_int cbr=0
+av.opt_set profile=high
+av.opt_set preset=p5
+av.opt_set tune=hq
+av.opt_set multipass=qres
+av.opt_set_int cbr=1
+av.opt_set level=auto
+av.opt_set_int gpu=0
+av.opt_set_int no-scenecut=0
+av.opt_set_int spatial-aq=0
+av.opt_set_int temporal-aq=0
+ffve.update bitrate=5000 keyint_sec=0 fps=60/1 size=1920x1080 info.format=2 opts="" ctx{global_quality=0 rc_max_rate=5000000 rc_min_rate=5000000 max_b_frames=0}
+log info [FFmpeg NVENC encoder: 'enc'] settings: 	encoder:      NVIDIA NVENC H.264 (FFmpeg) 	rate_control: CBR 	bitrate:      5000 	cqp:          0 	keyint:       0 	preset:       p5 	tuning:       hq 	multipass:    qres 	profile:      high 	width:        1920 	height:       1080 	b-frames:     0 	psycho-aq:    0 	GPU:          0 
+ffve.init_codec #1 -> ok
+ff_create -> ok
+> ff_ctx 0 1
+> ff_packet 00000001670102030000000168aabb000000016588ff 5
+> ff_encode
+ff_encode -> 1 received=1 dts=5 size=7 data=000000016588ff
+> ff_state
+state: hevc=0 gpu=0 dts_offset=0 header=00000001670102030000000168aabb sei=- max_b_frames=0
+> ff_destroy
+ffve.free
+ff_destroyed

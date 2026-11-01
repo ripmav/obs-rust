@@ -1,0 +1,56 @@
+# S-052 mac-audio.c: format/layout tables, device-name sanitising, device filtering, channel map rules.
+ca_defaults
+ca_format 0x1 32
+ca_format 0x21 32
+ca_format 0x4 16
+ca_format 0x24 16
+ca_format 0x4 32
+ca_format 0x24 32
+ca_format 0x0 8
+ca_format 0x20 8
+ca_format 0x4 24
+ca_format 0x4 8
+ca_format 0x0 16
+ca_layout 1
+ca_layout 2
+ca_layout 3
+ca_layout 4
+ca_layout 5
+ca_layout 6
+ca_layout 7
+ca_layout 8
+ca_layout 0
+ca_layout 16
+ca_sanitize "BuiltInMicrophoneDevice"
+ca_sanitize "AppleUSBAudioEngine:Focusrite:Scarlett 2i2:14100000:1,2"
+ca_sanitize "a-b c_d:e!f"
+ca_sanitize "0123456789012345678901234567890123456789012345678901234567890123456789XYZ"
+ca_listed 1 "BlackHole 2ch"
+ca_listed 0 "BlackHole 2ch"
+ca_listed 0 "Loopback Audio"
+ca_listed 0 "MacBook Pro Microphone"
+ca_listed 1 "MacBook Pro Microphone"
+ca_listed 0 "VB-Cable"
+ca_listed 0 "VBCABLE_A"
+ca_listed 0 "Soundflower (2ch)"
+ca_resolve default 1 -
+ca_resolve DEFAULT 0 "BlackHole 2ch"
+ca_resolve default 0 -
+ca_resolve "AppleUSB:abc" 1 -
+ca_retry 1
+ca_retry 0
+ca_chmap "Dev:1" - - - - - - - -
+ca_chmap "Dev:1" 1 2 3 4 5 6 7 8
+ca_chmap "Dev:1" 0 -1 9 2 - - - -
+ca_chmap_clamp 2 2 0 1
+ca_chmap_clamp 2 2 5 -1
+ca_chmap_clamp 6 4 0 1 2 3 4 5
+ca_combo 0 2
+ca_combo 1 2
+ca_combo 3 2
+ca_combo 0 0
+ca_init_format 1 2 3
+ca_init_format 0 2 3
+ca_init_format 0 100 3
+ca_buffer 2
+ca_buffer 12

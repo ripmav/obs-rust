@@ -1,0 +1,11 @@
+crash bmalloc: Allocating 0 bytes is broken behavior, please fix your code!
+fatal alloc0 exit=77
+crash bmalloc: Allocating 0 bytes is broken behavior, please fix your code!
+fatal zalloc0 exit=77
+crash bmalloc: Allocating 0 bytes is broken behavior, please fix your code!
+fatal memdup0 exit=77
+crash brealloc: Allocating 0 bytes is broken behavior, please fix your code!
+fatal realloc0 exit=77
+crash brealloc: Allocating 0 bytes is broken behavior, please fix your code!
+fatal realloc_null0 exit=77
+count 0

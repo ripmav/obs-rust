@@ -1,0 +1,28 @@
+backend lua_load
+load -> 1
+backend create /s/u.lua
+backend load u.lua -> 1 deferred_done=0
+backend update u.lua k="v"
+create S0 -> ok
+info S0 desc="D" path="/s/u.lua" file="u.lua" lang=unknown loaded=1
+props S0 count=0
+save S0 same=1 saved=""
+settings S0 same=1 saved=""
+settings S0 same=1 k="v"
+reload S0 -> 1
+destroy S0 done
+info S0 desc="D" path="/s/u.lua" file="u.lua" lang=unknown loaded=1
+backend destroy u.lua
+backend create /s/u.lua
+backend load u.lua -> 1 deferred_done=0
+backend update u.lua k=""
+create S1 -> ok
+info S1 desc="D" path="/s/u.lua" file="u.lua" lang=python loaded=1
+props S1 count=0
+reload S1 -> 1
+destroy S1 done
+backend destroy u.lua
+backend lua_unload
+log info [Scripting] Total detached callbacks: 0
+info_detached_head_after_unload null
+unload done

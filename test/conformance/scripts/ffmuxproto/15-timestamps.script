@@ -1,0 +1,45 @@
+# Timestamp conversion. obs sends pts/dts as multiples of the video time base numerator (fps_den); the program
+# divides by that numerator (C integer division, truncating toward zero) and rescales from {fps_den,fps_num}
+# to the stream time base (1/1000 for matroska) rounding to nearest, halves away from zero.
+reset
+rmfile @ts.mkv
+echo --- 30 fps: frame n -> round(n*1000/30)
+args @ts.mkv 1 0 h264 6000 640 360 1 1 1 1 1 0 30 1 0 "" ""
+hdr video 0 0164001fffe100046764001f01000468ce3c80
+frame video 0 1 0 0 2 a0
+frame video 0 0 1 1 2 a1
+frame video 0 0 2 2 2 a2
+frame video 0 0 3 3 2 a3
+frame video 0 0 4 4 2 a4
+run
+probe @ts.mkv
+echo --- 30000/1001 fps: pts are multiples of 1001; frame 15 = 500.5 ms rounds up to 501
+reset
+args @ts.mkv 1 0 h264 6000 640 360 1 1 1 1 1 0 30000 1001 0 "" ""
+hdr video 0 0164001fffe100046764001f01000468ce3c80
+frame video 0 1 0 0 2 a0
+frame video 0 0 1001 1001 2 a1
+frame video 0 0 2002 2002 2 a2
+frame video 0 0 15015 15015 2 a3
+frame video 0 0 15015000 15015000 2 a4
+run
+probe @ts.mkv
+echo --- values that are not multiples of the numerator are truncated first (1500/1001 = 1 frame)
+reset
+args @ts.mkv 1 0 h264 6000 640 360 1 1 1 1 1 0 30000 1001 0 "" ""
+hdr video 0 0164001fffe100046764001f01000468ce3c80
+frame video 0 1 0 0 2 a0
+frame video 0 0 1500 1500 2 a1
+frame video 0 0 3002 3002 2 a2
+run
+probe @ts.mkv
+echo --- audio: time base 1/sample_rate (numerator 1), pts in samples; 44100 Hz -> ms rounding
+reset
+args @ts.mkv 0 1 aac "A" 128 44100 1024 0 2 "" ""
+hdr audio 0 1210
+frame audio 0 0 0 0 2 b0
+frame audio 0 0 1024 1024 2 b1
+frame audio 0 0 2048 2048 2 b2
+frame audio 0 0 44100 44100 2 b3
+run
+probe @ts.mkv

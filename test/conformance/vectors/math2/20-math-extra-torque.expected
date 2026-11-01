@@ -1,0 +1,46 @@
+f float 5
+f float 2.5
+f float 1
+f float 2
+f float 10
+f float 5
+f float 9
+f float 8
+f float 0
+f float 5.00010014
+f float 5.00011015
+f float 4.99989986
+f float 0
+f float -5
+v vec3 5 0 0 0
+v vec3 7.5 0 0 0
+v vec3 9 0 0 0
+v vec3 8 0 0 0
+v vec3 9.5 0 0 0
+v vec3 27 36 0 0
+v vec3 27 36 0 0
+v vec3 28.5 38 0 0
+v vec3 0.0100002289 0 0 0
+v vec3 0.0109996796 0 0 0
+v vec3 0 0 0 0
+v vec3 0 0 0 0
+v vec3 0 0 0 7
+v vec3 5 5 5 0
+v vec3 10 0 0 0
+v vec3 0 0 0 0
+v vec3 0.100000009 9.89999962 0 0
+v vec3 9.89999962 0.100000009 0 0
+al vec3 0 -1 0 0
+al2 vec3 0 9.5 0 0
+p float 0.5
+p float 0.800000012
+p float nan
+p float inf
+p float -1
+p float 3
+p float 0.5
+p float 0.200000003
+p float nan
+p float inf
+p float 0.333333343
+p float 0.75

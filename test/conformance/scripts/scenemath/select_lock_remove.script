@@ -1,0 +1,25 @@
+# select / lock / remove: select and lock are idempotent (return false / no signal on no-change); removing an
+# item deselects it, hides it, detaches it and signals item_remove; the handle stays readable but parent is gone.
+source s 100 100
+scene main
+add main s a
+add main s b
+select a 1
+select a 1
+select a 0
+select b 1
+print b
+lock a 1
+lock a 1
+lock a 0
+remove b
+print b
+order_of main
+remove b
+log
+echo -- ids are never reused; set_id overrides, next id continues from the counter
+add main s c
+set_id c 77
+add main s d
+print c
+print d

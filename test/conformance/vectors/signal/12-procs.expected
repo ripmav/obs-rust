@@ -1,0 +1,16 @@
+proc_add int add_one(int n)
+proc_add void note()
+log warning Procedure 'note' already exists
+proc_add void note()
+log warning Errors/warnings for 'bad decl':  declaration (1, 1): Expected 'return type' declaration (1, 9): Unexpected EOF 
+log error Function declaration invalid: bad decl
+proc_add bad decl
+pcall adder n=1
+proc_call add_one ok return=41
+pcall noter
+proc_call note ok
+pcall noter n=2
+proc_call note ok
+proc_call missing fail
+pcall adder
+proc_call add_one ok return=41

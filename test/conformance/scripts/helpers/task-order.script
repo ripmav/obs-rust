@@ -1,0 +1,12 @@
+# os_task_queue: tasks run on the queue's own thread in FIFO order (CORE).
+# The gate task keeps the worker busy so that the whole batch is queued before any of it
+# runs; wait() then returns true because tasks were processed after wait() was requested.
+task_create 0
+task_gate 0
+task_queue 0 t1
+task_queue 0 t2
+task_queue 0 t3
+task_queue 0 t4
+task_wait_release 0
+task_log
+task_destroy 0

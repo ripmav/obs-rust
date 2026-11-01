@@ -1,0 +1,36 @@
+# color_filter v2: contrast branch for negatives, sRGB colours, colour-space dependent render.
+source T 1920 1080 1920 1080 SRGB video
+source P 1920 1080 1920 1080 SRGB video
+filter a color_filter 2 @null T P
+render a
+data d1
+dset d1 gamma dbl 0.5
+dset d1 contrast dbl -1
+dset d1 brightness dbl 0.1
+dset d1 saturation dbl 0.5
+dset d1 hue_shift dbl 45
+dset d1 opacity dbl 0.75
+dset d1 color_multiply int 0xFF8040
+dset d1 color_add int 0x102030
+filter b color_filter 2 d1 T P
+render b
+echo contrast positive
+data d2
+dset d2 contrast dbl 2
+dset d2 gamma dbl -2
+filter c color_filter 2 d2 T P
+render c
+echo spaces: 16F uses RGBA16F, extended skips, scrgb is not in the preferred list but is passed through
+srcspace T SRGB_16F
+render b
+cs b 3 SRGB SRGB_16F 709_EXTENDED
+srcspace T 709_EXTENDED
+render b
+cs b 3 SRGB SRGB_16F 709_EXTENDED
+srcspace T 709_SCRGB
+render b
+cs b 1 SRGB
+echo no target: color space query falls back to SRGB; render still asks the host
+filter n color_filter 2 @null @null @null
+render n
+cs n 1 SRGB_16F

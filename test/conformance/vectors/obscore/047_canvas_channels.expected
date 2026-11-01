@@ -1,0 +1,56 @@
+log debug canvas 'Main' (<uuid>) created
+startup -> true
+mk_source s1 name="Source1" private=0 uuid=set
+mk_source s2 name="Source2" private=0 uuid=set
+mk_source s3 name="Source3" private=0 uuid=set
+log debug canvas 'Alpha' (<uuid>) created
+canvas_create a -> ok
+canvas a name="Alpha" flags=0xe private=0 removed=0 has_video=0 video_active=0 uuid_len=36 view_type=main
+log debug canvas 'Bravo' (<uuid>) created
+canvas_create b -> ok
+canvas b name="Bravo" flags=0x0 private=0 removed=0 has_video=0 video_active=0 uuid_len=36 view_type=aux
+refs s1 strong=0 weak=0
+signal a:channel_change canvas=a source=Source1 channel=0
+ev activate Source1 type=main
+refs s1 strong=1 weak=0
+refs s1 strong=1 weak=0
+signal a:channel_change canvas=a source=Source2 prev_source=Source1 channel=0
+ev activate Source2 type=main
+ev deactivate Source1 type=main
+refs s1 strong=0 weak=0
+refs s2 strong=1 weak=0
+canvas_get_channel a 0 -> Source2 strong=2
+refs s2 strong=1 weak=0
+signal a:channel_change canvas=a source=Source2 channel=63
+ev activate Source2 type=main
+refs s2 strong=2 weak=0
+signal a:channel_change canvas=a prev_source=Source2 channel=0
+ev deactivate Source2 type=main
+canvas_get_channel a 0 -> NULL
+signal b:channel_change canvas=b source=Source3 channel=5
+ev activate Source3 type=aux
+signal main:channel_change canvas=main source=Source3 channel=1
+signal channel_change canvas=main source=Source3 channel=1
+ev activate Source3 type=main
+refs s3 strong=2 weak=0
+signal main:channel_change canvas=main source=Source1 channel=2
+signal channel_change canvas=main source=Source1 channel=2
+ev activate Source1 type=main
+get_output_source 2 -> Source1
+get_output_source 3 -> NULL
+canvas_get_channel main 2 -> Source1 strong=2
+signal main:channel_change canvas=main prev_source=Source1 channel=2
+signal channel_change canvas=main prev_source=Source1 channel=2
+ev deactivate Source1 type=main
+log debug canvas 'Bravo' (<uuid>) destroyed
+ev deactivate Source3 type=aux
+refs s3 strong=1 weak=0
+log debug canvas 'Alpha' (<uuid>) destroyed
+ev deactivate Source2 type=main
+refs s2 strong=0 weak=0
+shutdown begin
+log info Freeing OBS context data
+log debug canvas 'Main' (<uuid>) destroyed
+ev deactivate Source3 type=main
+log info  3 source(s) were remaining
+shutdown end obs=NULL

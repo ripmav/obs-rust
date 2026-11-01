@@ -1,0 +1,13 @@
+# profiler: expected time between calls of a root (CORE). register_root() sets the expected
+# interval in nanoseconds (stored in microseconds as (ns+500)/1000); the time between calls is
+# the distance between the START of consecutive calls, recorded only for the root entry.
+p_name 0 tick
+p_begin
+p_root 0 16667000
+p_clock 0
+p_burst 0 3 1000000 0 15667000
+p_snap
+p_dump
+p_print_between snap
+p_print snap
+p_free

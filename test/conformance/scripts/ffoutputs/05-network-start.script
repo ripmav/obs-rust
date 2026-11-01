@@ -1,0 +1,15 @@
+# Network outputs (OBS_OUTPUT_SERVICE flag): the path is the service server URL, split_file is forced off whatever
+# the settings say, no writability probe happens, a missing service fails start() without an error message.
+reset
+output o service
+venc h264 bitrate=2500
+set bool split_file 1
+set int max_size_mb 1
+set str path /ignored/file.mkv
+create ffmpeg_mpegts_muxer
+start
+service srt://host:9000?x=1 KEY
+start
+state
+pkt v pts=0 key=1
+state

@@ -1,0 +1,32 @@
+# S-045 rtmp_stream_start / rtmp_stream_stop state machine (threads are fakes, see README).
+reset
+# preconditions of the output
+fake can_begin 0
+start
+fake can_begin 1
+fake init_enc_ok 0
+start
+fake init_enc_ok 1
+# QUIRK Q-9: if the connect thread cannot be created, start reports failure but 'connecting' stays set
+fake pthread_create_fail 1
+start
+set connecting 0
+fake pthread_create_fail 0
+start
+# stop while connecting joins the connect thread first; not active -> immediate success signal
+set max_shutdown_time_sec 30
+stop 5000000000
+# a second graceful stop with a timestamp is ignored once stopping (only if the stop event is set)
+set connecting 0
+set active 1
+stop 5000000000
+stop 6000000000
+# forced stop (ts 0) is always processed
+stop 0
+# not-active stop: no stop event, success signalled, timeout still computed
+reset
+set max_shutdown_time_sec 10
+stop 7000000000
+getters
+# stop(0) when idle
+stop 0

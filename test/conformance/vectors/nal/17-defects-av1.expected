@@ -1,0 +1,44 @@
+echo D-1-declared-size-exceeds-the-data
+av1_extract new=0a05010203 header=0a05010203
+av1_extract new=0a0b0102 header=0a0b0102
+av1_extract new=12000a05010203 header=0a05010203
+av1_extract new=12003205aabb header=-
+echo D-1-extension-flag-without-size-field-reads-one-byte-too-many
+av1_extract new=0c01aabb header=0c01aabb
+av1_extract new=0c01 header=0c01
+av1_extract new=0c header=0c
+av1_extract new=12000c01aabb header=0c01aabb
+echo D-1-extension-flag-alone
+av1_extract new=0e header=0e
+av1_extract new=36 header=-
+av1_obu start=2 size=0 type=1
+av1_obu start=2 size=0 type=6
+av1_extract new=12000e header=0e
+echo D-1-size-field-claims-more-than-present
+av1_extract new=328001aa header=-
+av1_extract new=32ff7faa header=-
+echo D-2-frame-obu-without-its-first-payload-byte
+av1_keyframe 0
+av1_keyframe 0
+av1_keyframe 0
+av1_keyframe 0
+av1_keyframe 0
+av1_keyframe 0
+av1_keyframe 0
+echo D-2-frame-obu-with-size-claim-but-first-payload-byte-present-is-fine
+av1_keyframe 1
+av1_keyframe 1
+av1_keyframe 0
+echo D-3-leb128-more-than-five-bytes
+av1_leb128 value=34359738368 len=6
+av1_leb128 value=4398046511104 len=7
+av1_leb128 value=72057594037927935 len=8
+av1_leb128 value=4294967295 len=5
+av1_leb128 value=2147483648 len=5
+av1_leb128 value=4294967296 len=5
+av1_leb128 value=72057594037927935 len=8
+echo D-3-leb128-size-bigger-than-the-data-is-clamped
+av1_obu start=7 size=34359738368 type=6
+av1_extract new=32808080808001aabb header=-
+av1_keyframe 0
+av1_extract new=1200328080808008aabbcc header=-

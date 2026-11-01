@@ -1,0 +1,39 @@
+# S-045 bind-to-IP selection and the IPv4/IPv6 family hint in try_connect().
+# m_bindIP.addrLen: 0 = unset, 16 = IPv4 (sockaddr_in), 28 = IPv6 (sockaddr_in6).
+reset
+set path "rtmp://h/a"
+set key k
+# unset and "default": cleared
+set bind_ip ""
+try_connect
+set bind_ip default
+try_connect
+set bind_ip "192.168.1.20"
+try_connect
+set bind_ip "fe80::1234:5678"
+try_connect
+set bind_ip "::"
+try_connect
+# the literal text "DEFAULT" is not special (case-sensitive compare)
+set bind_ip DEFAULT
+try_connect
+# QUIRK Q-7: unparsable text silently becomes an all-zero address of the guessed family (':' present -> IPv6)
+set bind_ip "not-an-ip"
+try_connect
+set bind_ip "zz::1"
+try_connect
+set bind_ip "300.1.1.1"
+try_connect
+# family hint applies only when no bind address was produced
+set bind_ip default
+set addrlen_hint 16
+try_connect
+set addrlen_hint 28
+try_connect
+set bind_ip "10.1.2.3"
+set addrlen_hint 28
+try_connect
+# a bind address of the other family wins over the hint
+set bind_ip "::1"
+set addrlen_hint 16
+try_connect

@@ -1,0 +1,82 @@
+# CORE: file helpers. Files are written WITHOUT a BOM, read with an optional UTF-8 BOM
+# stripped; a missing, empty or invalid file gives NULL. The *_safe save writes
+# <file>.<temp_ext>, moves an existing target to <file>.<backup_ext>, then renames the
+# temporary file over the target (a leading '.' in an extension is not doubled).
+# The _safe loader falls back to the backup file by RENAMING it over the target.
+new a
+set_string a s "text"
+set_int a i 1
+save_json a conf.json
+read_file conf.json
+from_json_file b conf.json
+json b
+echo --- pretty save
+save_json_pretty_safe a pretty.json tmp @null
+read_file pretty.json
+exists pretty.json.tmp
+echo --- safe save with backup
+set_int a i 2
+save_json_safe a conf.json tmp bak
+read_file conf.json
+read_file conf.json.bak
+exists conf.json.tmp
+set_int a i 3
+save_json_safe a conf.json .tmp .bak
+read_file conf.json
+read_file conf.json.bak
+echo --- invalid temp extension
+save_json_safe a conf.json @null bak
+save_json_safe a conf.json "" bak
+read_file conf.json
+echo --- empty data is written as {}
+new e
+save_json e empty.json
+read_file empty.json
+save_json @null nothing.json
+exists nothing.json
+echo --- unwritable path
+save_json a nodir/x/conf.json
+save_json_safe a nodir/x/conf.json tmp bak
+echo --- loading
+from_json_file c missing.json
+write_file empty.json ""
+from_json_file c empty.json
+write_file bad.json "{not json"
+from_json_file c bad.json
+write_file bom.json "\xef\xbb\xbf{\"k\":1}"
+from_json_file c bom.json
+json c
+write_file arr.json "[1]"
+from_json_file d arr.json
+dump d
+echo --- safe loader: good primary file ignores the backup
+write_file p.json "{\"from\":\"primary\"}"
+write_file p.json.bak "{\"from\":\"backup\"}"
+from_json_file_safe f p.json bak
+json f
+exists p.json.bak
+echo --- safe loader: corrupt primary uses the backup, and the backup file is consumed
+write_file p.json "{corrupt"
+from_json_file_safe g p.json bak
+json g
+exists p.json.bak
+read_file p.json
+echo --- safe loader: missing primary also falls back
+remove_file p.json
+write_file p.json.bak "{\"from\":\"backup2\"}"
+from_json_file_safe h p.json .bak
+json h
+exists p.json
+echo --- safe loader: corrupt backup too, or no backup, or no extension
+write_file q.json "{corrupt"
+write_file q.json.bak "{corrupt too"
+from_json_file_safe i q.json bak
+exists q.json.bak
+read_file q.json
+write_file r.json "{corrupt"
+from_json_file_safe j r.json bak
+write_file s.json "{corrupt"
+write_file s.json.bak "{\"from\":\"b\"}"
+from_json_file_safe k s.json @null
+from_json_file_safe k s.json ""
+exists s.json.bak

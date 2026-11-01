@@ -1,0 +1,18 @@
+# QUIRK (Q-7). obs-nvenc defaults rate_control to lowercase "cbr" but its callback compares
+# case-sensitively to "CQP"/"VBR"/"CQVBR"/"lossless". Lowercase variants of those leave every
+# field in the CBR layout; "lossless" (lowercase) is the only spelling for lossless.
+nv_caps 4 3 2 1 1 1 1
+nv_props h264 P
+data D
+set D rate_control str vbr
+props_apply P D
+props_vis P
+set D rate_control str CqVbr
+props_apply P D
+props_vis P
+set D rate_control str LOSSLESS
+props_apply P D
+props_vis P
+set D rate_control str lossless
+props_apply P D
+props_vis P

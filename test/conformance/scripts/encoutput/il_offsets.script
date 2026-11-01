@@ -1,0 +1,21 @@
+# Timestamp offsets: when the interleaver starts it subtracts the first VIDEO PTS from video dts/pts, and the first
+# AUDIO DTS (only if > 0) from audio dts/pts. B-frame style video (dts < pts) therefore gets a negative dts.
+video 30 1 1280 720
+audio 48000
+venc v
+aenc a frame_size=1024
+out o av,encoded autobegin=1
+set_venc o v
+set_aenc o a
+start o
+echo --- video starts at pts 10, dts 8 (2 frames reorder delay); audio dts 5000
+emit a 5000 5000 0 4
+emit a 6024 6024 0 4
+emit a 7048 7048 0 4
+emit v 10 8 1 4
+state o
+emit v 11 9 0 4
+emit a 8072 8072 0 4
+emit v 12 10 0 4
+emit a 9096 9096 0 4
+stop o

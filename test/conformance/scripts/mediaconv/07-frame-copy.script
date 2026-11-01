@@ -1,0 +1,59 @@
+# video_frame_copy copies plane by plane (the planes present for the format and height, see plane-heights).
+# Frames are numbered 0..7. frame_fill seq V: byte = V + plane*64 + index (mod 256). frame_dump prints every
+# plane as rows of linesize bytes, rows separated by spaces.
+# 1. same format and size: whole planes are copied with one block (linesize*height bytes); padding is not
+# distinguished from pixels because the frame has no padding (linesize = row bytes).
+frame_init 0 1 4 4
+frame_init 1 1 4 4
+frame_fill 0 1 4 seq 1
+frame_fill 1 1 4 const 238
+frame_copy 1 0 1 4
+frame_dump 1 1 4
+# 2. destination rows are wider than source rows (same format, different width): each row copies
+# min(src linesize, dst linesize) = src linesize bytes; the extra destination bytes keep their old content.
+frame_init 2 1 6 4
+frame_fill 2 1 4 const 238
+frame_copy 2 0 1 4
+frame_dump 2 1 4
+# 3. destination rows are narrower than source rows: min(...) = dst linesize, the source tail of each row is dropped.
+frame_init 3 1 2 4
+frame_fill 3 1 4 const 238
+frame_copy 3 0 1 4
+frame_dump 3 1 4
+# 4. odd height 3 of a 4:2:0 frame: the chroma planes hold HALF(3) = 2 rows
+frame_init 4 1 4 3
+frame_init 5 1 4 3
+frame_fill 4 1 3 seq 16
+frame_fill 5 1 3 const 238
+frame_copy 5 4 1 3
+frame_dump 5 1 3
+# 5. a copy with a smaller height than the frames: only that many rows (and chroma rows) are copied
+frame_fill 1 1 4 const 238
+frame_copy 1 0 1 2
+frame_dump 1 1 4
+# 6. NV12 and a 4-plane format (I40A: planes 0 and 3 full, 1 and 2 half)
+frame_init 6 2 4 2
+frame_init 7 2 4 2
+frame_fill 6 2 2 seq 32
+frame_fill 7 2 2 const 238
+frame_copy 7 6 2 2
+frame_dump 7 2 2
+frame_free 6
+frame_free 7
+frame_init 6 13 4 2
+frame_init 7 13 4 2
+frame_fill 6 13 2 seq 48
+frame_fill 7 13 2 const 238
+frame_copy 7 6 13 2
+frame_dump 7 13 2
+# 7. height 0: nothing is copied (every plane height is 0)
+frame_fill 7 13 2 const 238
+frame_copy 7 6 13 0
+frame_dump 7 13 2
+# 8. packed 4:2:2 with different widths; the format argument decides the plane set, not the frames
+frame_init 0 4 4 2
+frame_init 1 4 2 2
+frame_fill 0 4 2 seq 0
+frame_fill 1 4 2 const 238
+frame_copy 1 0 4 2
+frame_dump 1 4 2

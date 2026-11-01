@@ -1,0 +1,61 @@
+> fake-dir video0
+> dev /dev/video0
+> dev-cap Cam usb-1 0x85200001 0x05200001
+> dev-input Camera 0
+> dev-cur 0 640 480 YUYV 1280 1 30 0
+> src-defaults
+> set-str device_id /dev/video0
+> set-int pixelformat 0x56595559
+> src-create
+log info v4l2-input: Start capture from /dev/video0
+log info v4l2-input: Input: 0
+log info v4l2-input: Resolution: 640x480
+log info v4l2-input: Pixelformat: YUYV
+log info v4l2-input: Linesize: 1280 Bytes
+log info v4l2-input: Framerate: 30.00 fps
+log info v4l2-input: Compiled without libudev, you can't reconnect devices
+src-create
+state device_id=/dev/video0 input=0 pixfmt=1448695129 standard=-1 dv_timing=-1 resolution=2748779069920 framerate=4294967326 color_range=0 auto_reset=0 timeout_frames=5 dev=open width=640 height=480 linesize=1280 buffers=4 res_unch=0 fr_unch=0 thread=1
+> src-field width 640
+> src-field height 480
+> src-field linesize 1280
+> src-field pixfmt YUYV
+> src-prep-frame
+frame format=YUY2 640x480 flags=1 linesize=1280,0,0 offsets=0,0,0 range=0.0627451017..0.921568632
+> src-field linesize 640
+> src-field pixfmt NV12
+> src-prep-frame
+frame format=NV12 640x480 flags=1 linesize=640,640,0 offsets=0,307200,0 range=0.0627451017..0.921568632
+> src-field pixfmt YU12
+> src-prep-frame
+frame format=I420 640x480 flags=1 linesize=640,320,320 offsets=0,307200,384000 range=0.0627451017..0.921568632
+> src-field pixfmt YV12
+> src-prep-frame
+frame format=I420 640x480 flags=1 linesize=640,320,320 offsets=0,384000,307200 range=0.0627451017..0.921568632
+> src-field linesize 2560
+> src-field pixfmt XR24
+> src-prep-frame
+frame format=BGRX 640x480 flags=1 linesize=2560,0,0 offsets=0,0,0 range=0.0627451017..0.921568632
+> src-field linesize 1920
+> src-field pixfmt BGR3
+> src-prep-frame
+frame format=BGR3 640x480 flags=1 linesize=1920,0,0 offsets=0,0,0 range=0.0627451017..0.921568632
+> src-field pixfmt MJPG
+> src-prep-frame
+frame format=NONE 640x480 flags=1 linesize=1920,0,0 offsets=0,0,0 range=0.0627451017..0.921568632
+> src-field width 5
+> src-field height 3
+> src-field linesize 5
+> src-field pixfmt YU12
+> src-prep-frame
+frame format=I420 5x3 flags=1 linesize=5,2,2 offsets=0,15,18 range=0.0627451017..0.921568632
+> src-field pixfmt YV12
+> src-prep-frame
+frame format=I420 5x3 flags=1 linesize=5,2,2 offsets=0,18,15 range=0.0627451017..0.921568632
+> src-field color_range 2
+> src-field pixfmt NV12
+> src-prep-frame
+frame format=NV12 5x3 flags=1 linesize=5,5,0 offsets=0,15,0 range=0..1
+> src-field color_range 1
+> src-prep-frame
+frame format=NV12 5x3 flags=1 linesize=5,5,0 offsets=0,15,0 range=0.0627451017..0.921568632

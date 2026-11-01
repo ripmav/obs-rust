@@ -1,0 +1,38 @@
+add c ok
+item c id=1 parent=main group=0 scene=0 abs=0 vis=1 user_vis=1 sel=0 lock=0 need_update=0
+  stored pos=-1.42222226,-0.800000012 rot=0 scale=0.5,0.5 scale_ref=1920,1080 align=5
+  bounds type=0 align=0 size=0,0 crop_to_bounds=0
+  crop l=0 r=0 t=0 b=0 bounds_crop l=0 r=0 t=0 b=0 last=1280,720
+  output_scale=0.5,0.5 box_scale=640,360
+  draw [0.5,0,0,0] [0,0.5,0,0] [0,0,1,0] [192,108,0,1]
+  box [640,0,0,0] [0,360,0,0] [0,0,1,0] [192,108,0,1]
+-- canvas becomes 1280x720 (same aspect ratio, 2/3 height)
+get c pos=128,72 rot=0 scale=0.333333343,0.333333343 align=5 btype=0 balign=0 bounds=0,0 bcrop=0 crop=0,0,0,0
+info c pos=128,72 rot=0 scale=0.333333343,0.333333343 align=5 btype=0 balign=0 bounds=0,0 crop_to_bounds=0
+ box_scale=640,360
+item c id=1 parent=main group=0 scene=0 abs=0 vis=1 user_vis=1 sel=0 lock=0 need_update=0
+  stored pos=-1.42222226,-0.800000012 rot=0 scale=0.5,0.5 scale_ref=1920,1080 align=5
+  bounds type=0 align=0 size=0,0 crop_to_bounds=0
+  crop l=0 r=0 t=0 b=0 bounds_crop l=0 r=0 t=0 b=0 last=1280,720
+  output_scale=0.333333343,0.333333343 box_scale=426.666687,240
+  draw [0.333333343,0,0,0] [0,0.333333343,0,0] [0,0,1,0] [128,72,0,1]
+  box [426.666687,0,0,0] [0,240,0,0] [0,0,1,0] [128,72,0,1]
+-- canvas becomes ultrawide 2560x1080 (same height): x relative to height, so x does not move proportionally
+get c pos=512,108 rot=0 scale=0.5,0.5 align=5 btype=0 balign=0 bounds=0,0 bcrop=0 crop=0,0,0,0
+info c pos=512,108 rot=0 scale=0.5,0.5 align=5 btype=0 balign=0 bounds=0,0 crop_to_bounds=0
+ box_scale=426.666687,240
+item c id=1 parent=main group=0 scene=0 abs=0 vis=1 user_vis=1 sel=0 lock=0 need_update=0
+  stored pos=-1.42222226,-0.800000012 rot=0 scale=0.5,0.5 scale_ref=1920,1080 align=5
+  bounds type=0 align=0 size=0,0 crop_to_bounds=0
+  crop l=0 r=0 t=0 b=0 bounds_crop l=0 r=0 t=0 b=0 last=1280,720
+  output_scale=0.5,0.5 box_scale=640,360
+  draw [0.5,0,0,0] [0,0.5,0,0] [0,0,1,0] [512,108,0,1]
+  box [640,0,0,0] [0,360,0,0] [0,0,1,0] [512,108,0,1]
+-- scale_ref never changes after creation
+item c id=1 parent=main group=0 scene=0 abs=0 vis=1 user_vis=1 sel=0 lock=0 need_update=0
+  stored pos=-1.42222226,-0.800000012 rot=0 scale=0.5,0.5 scale_ref=1920,1080 align=5
+  bounds type=0 align=0 size=0,0 crop_to_bounds=0
+  crop l=0 r=0 t=0 b=0 bounds_crop l=0 r=0 t=0 b=0 last=1280,720
+  output_scale=0.5,0.5 box_scale=640,360
+  draw [0.5,0,0,0] [0,0.5,0,0] [0,0,1,0] [192,108,0,1]
+  box [640,0,0,0] [0,360,0,0] [0,0,1,0] [192,108,0,1]

@@ -1,0 +1,23 @@
+safe_replace 0
+cat t.txt size=4 hex=66726f6d
+cat bak.txt size=6 hex=746172676574
+exists f.txt 0
+safe_replace 0
+cat t.txt size=5 hex=66726f6d32
+cat bak.txt size=6 hex=746172676574
+safe_replace 0
+cat new.txt size=5 hex=66726f6d33
+exists bak2.txt 0
+safe_replace -1
+cat new.txt size=5 hex=66726f6d33
+safe_replace -1
+exists new.txt 0
+cat bak3.txt size=5 hex=66726f6d33
+safe_replace -1
+cat t2.txt size=7 hex=74617267657432
+cat f2.txt size=5 hex=66726f6d32
+safe_replace 0
+cat t3.txt size=5 hex=66726f6d32
+safe_replace 0
+cat b4.txt size=1 hex=61
+cat t4.txt size=1 hex=62

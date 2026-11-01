@@ -1,0 +1,37 @@
+# S-044: video_output_open parameter validation, info/getters, frame_time rounding, cache clamp.
+# Result codes: 0 success, -1 invalid parameter. A zero width/height/fps_num/fps_den is invalid; nothing else is checked
+# (format NONE, cache_size 0 are accepted).
+vopen z1 I420 30 1 0 8 3
+vopen z2 I420 30 1 16 0 3
+vopen z3 I420 0 1 16 8 3
+vopen z4 I420 30 0 16 8 3
+vopen n1 NONE 30 1 16 8 0
+vinfo n1
+vclose n1
+# frame_time = floor(1e9 * den / num) (128-bit exact, truncating)
+vopen a I420 30000 1001 16 8 2
+vinfo a
+vclose a
+vopen b NV12 60 1 16 8 2 FULL 709
+vinfo b
+vclose b
+vopen c BGRA 7 3 8 2 1
+vinfo c
+vclose c
+# cache_size above 16 is clamped to 16 in the stored info
+vopen d I420 30 1 16 8 100
+vinfo d
+vclose d
+vopen e I420 30 1 16 8 16
+vinfo e
+vclose e
+# a fresh output has no inputs, is not active and not stopped, counters are zero
+vopen f I420 30 1 16 8 3
+vstate f
+vdump f
+vinputs f
+vclose f
+# getters / lifecycle calls on a NULL video return neutral values
+vopen g I420 30 1 16 8 3
+vnull
+vclose g

@@ -1,0 +1,81 @@
+# CORE: the explicit technique/pass API: gs_technique_begin / begin_pass / begin_pass_by_name / end_pass / end /
+# gs_effect_update_params. Same rules as 62-runtime-loop plus:
+#   gs_technique_begin(t) returns the number of passes and makes the technique current (and the effect "active");
+#   begin_pass(t, i) is false for i >= passes (nothing loaded), otherwise loads the shaders and uploads ALL values;
+#   begin_pass_by_name(t, name) finds the first pass whose name equals NAME and begins it; unnamed passes are skipped
+#     only if an earlier pass matches (see 90-defects for the NULL name crash);
+#   gs_effect_update_params(effect) re-uploads only parameters flagged "changed" of the CURRENT pass (but pending
+#     next-samplers are always uploaded) and clears the flags; it does nothing when no pass is current.
+backend text none
+text a
+uniform float4 color = {1,0.5,0.25,1};
+uniform float amount = 2;
+uniform float other = 9;
+uniform texture2d image;
+sampler_state samp { Filter = Linear; };
+float4 VS() : POSITION { return color; }
+float4 PS1() : TARGET { return image.Sample(samp, float2(0,0)) * color * amount; }
+float4 PS2() : TARGET { return color + other; }
+technique One { pass first { vertex_shader = VS(); pixel_shader = PS1(); } pass second { vertex_shader = VS(); pixel_shader = PS2(); } }
+@end
+effect e a.effect @text:a
+echo --- begin / end and the pass counts
+tbegin e One
+current_technique e
+pbegin e One 0
+update e
+echo --- update sends only changed values
+set_float e:amount 3
+set_float e:other 4
+update e
+update e
+echo --- values set for a parameter that is not used by the current pass stay pending
+get_val e:other
+pend e One
+pbegin e One 1
+pend e One
+echo --- index out of range
+pbegin e One 2
+pbegin e One 100
+echo --- by name
+pbegin_name e One first
+pend e One
+pbegin_name e One second
+pend e One
+pbegin_name e One third
+pbegin_name e One First
+pbegin_name @null One first
+echo --- ending
+tend e One
+current_technique e
+update e
+echo --- begin_pass outside tbegin: the shaders are loaded all the same, "current technique" stays unset
+pbegin e One 0
+update e
+pend e One
+echo --- tbegin of a NULL technique; tend/pend of the same
+tbegin e Nothing
+tend e Nothing
+pend e Nothing
+pbegin e Nothing 0
+pbegin_name e Nothing first
+echo --- end_pass twice and without begin
+pend e One
+pend e One
+echo --- update with no current pass is silent
+update e
+update @null
+echo --- next sampler: uploaded on every pass begin / update until the technique ends
+tbegin e One
+set_next_sampler e:image 7
+flags e:image
+pbegin e One 0
+flags e:image
+update e
+pend e One
+pbegin e One 0
+tend e One
+flags e:image
+echo --- next sampler on a non-texture parameter is ignored
+set_next_sampler e:amount 5
+flags e:amount

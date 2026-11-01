@@ -1,0 +1,8 @@
+log warning Hostname exceeds 255 characters!
+parseurl ret=1 protocol=0 port=0 host=- app="app"
+log warning Hostname exceeds 255 characters!
+parseurl ret=1 protocol=0 port=80 host=- app="app"
+log warning No application or playpath in URL!
+parseurl ret=1 protocol=0 port=0 host="[" app=-
+log warning No application or playpath in URL!
+parseurl ret=1 protocol=0 port=0 host="[" app=-

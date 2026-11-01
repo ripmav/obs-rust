@@ -1,0 +1,81 @@
+--- the preprocessor name
+gfx preprocessor=_OPENGL
+effect a1 result=ok
+  error_string=@null
+effect a1 params=1 techniques=0 viewproj=- world=-
+  param 0 name=gl_only type=FLOAT annotations=0 default_size=0 default=-
+gfx preprocessor=_D3D11
+effect a2 result=ok
+  error_string=@null
+effect a2 params=1 techniques=0 viewproj=- world=-
+  param 0 name=d3d_only type=FLOAT annotations=0 default_size=0 default=-
+gfx preprocessor=@null
+effect a3 result=ok
+  error_string=@null
+effect a3 params=1 techniques=0 viewproj=- world=-
+  param 0 name=no_backend_name type=FLOAT annotations=0 default_size=0 default=-
+gfx preprocessor=_OPENGL
+--- #if defined(...) is not supported by the C-like preprocessor (S-011);
+effect a4 result=fail
+  error_string="pp4.effect (1, 5): Expected identifier or number\npp4.effect (3, 2): #endif outside of #if/#ifdef/#ifndef block\n"
+--- a user definition of the same name (see also 90-defects for using the name as an identifier)
+effect a6 result=ok
+  error_string=@null
+effect a6 params=1 techniques=0 viewproj=- world=-
+  param 0 name=redefined type=FLOAT annotations=0 default_size=0 default=-
+--- macros
+effect b1 result=ok
+  error_string=@null
+ep result=fail
+  errors count=1 has_errors=1
+    err 0 error file="b2" row=1 col=8 msg="Expected identifier"
+  ep params=1 structs=0 funcs=0 samplers=0 techniques=0
+  ep_param 0 type=float name=x property=0 const=0 uniform=0 texture=0 array_count=0 annotations=0
+  error_string="b2 (1, 8): Expected identifier\n"
+ep result=ok
+  errors count=0 has_errors=0
+  ep params=1 structs=0 funcs=0 samplers=0 techniques=0
+  ep_param 0 type=float name=f property=0 const=0 uniform=1 texture=0 array_count=0 annotations=0
+  error_string=@null
+effect (effect) params=1 techniques=0 viewproj=- world=-
+  param 0 name=f type=FLOAT annotations=0 default_size=4 default=0000803f f=[1]
+--- include relative to the effect file's directory
+backend vertexshader_create location="inc/main.effect (Vertex shader, technique T, pass 0)" len=144 fnv=9b997475bda868e8
+  sparam 0 name=from_common type=FLOAT array=0
+  result ok
+backend pixelshader_create location="inc/main.effect (Pixel shader, technique T, pass 0)" len=144 fnv=9b997475bda868e8
+  sparam 0 name=from_common type=FLOAT array=0
+  result ok
+effect c1 result=ok
+  error_string=@null
+effect c1 params=1 techniques=1 viewproj=- world=-
+  param 0 name=from_common type=FLOAT annotations=0 default_size=0 default=-
+  technique 0 name=T passes=1
+    pass 0 name=@null vertex_params=[from_common] pixel_params=[from_common] vertex=yes pixel=yes
+--- include with no directory part is relative to the working directory
+effect c2 result=ok
+  error_string=@null
+effect c2 params=2 techniques=0 viewproj=- world=-
+  param 0 name=from_top type=FLOAT annotations=0 default_size=0 default=-
+  param 1 name=after type=FLOAT annotations=0 default_size=0 default=-
+--- nested include, resolved against the MAIN file's directory
+effect c3 result=ok
+  error_string=@null
+effect c3 params=3 techniques=0 viewproj=- world=-
+  param 0 name=from_common type=FLOAT annotations=0 default_size=0 default=-
+  param 1 name=from_nested type=FLOAT annotations=0 default_size=0 default=-
+  param 2 name=after type=FLOAT annotations=0 default_size=0 default=-
+--- missing include file
+effect c5 result=fail
+  error_string="inc/main5.effect (1, 10): Could not open file '\"does_not_exist.effect\"\nuniform float after;'\n"
+--- an include inside a function body is spliced into the body
+backend vertexshader_create location="inc/main6.effect (Vertex shader, technique T, pass 0)" len=56 fnv=385253ebbb0e3f44
+  result ok
+backend pixelshader_create location="inc/main6.effect (Pixel shader, technique T, pass 0)" len=56 fnv=385253ebbb0e3f44
+  result ok
+effect c6 result=ok
+  error_string=@null
+backend shader_destroy location="inc/main6.effect (Vertex shader, technique T, pass 0)"
+backend shader_destroy location="inc/main6.effect (Pixel shader, technique T, pass 0)"
+backend shader_destroy location="inc/main.effect (Vertex shader, technique T, pass 0)"
+backend shader_destroy location="inc/main.effect (Pixel shader, technique T, pass 0)"

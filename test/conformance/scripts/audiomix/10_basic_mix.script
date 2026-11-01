@@ -1,0 +1,17 @@
+# Basic mix of one source over three 1024-frame ticks at 48 kHz stereo.
+# Source ts is aligned to the tick grid; data for ticks 0..2 is pushed up front (3072 frames).
+init 48000 2
+clock 1000000000
+source a input
+video_mix 1
+channel 0 0 a
+set a active 1
+timeline 1000000000
+output a 48000 2 1024 1000000000 sine 440 0.5 0
+output a 48000 2 1024 1021333333 sine 440 0.5 1024
+output a 48000 2 1024 1042666666 sine 440 0.5 2048
+state a
+run 3 1
+state a
+mixer_info a
+dump_mix 0 0 0 4

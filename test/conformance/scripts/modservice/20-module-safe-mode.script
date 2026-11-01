@@ -1,0 +1,19 @@
+# S-035 safe-mode list: if non-empty, only listed names load (applies to every type, core included).
+mkmod s1 @TMP/sf/bin/s1.so
+mkmod s2 @TMP/sf/bin/s2.so
+mkmod s3 @TMP/sf/bin/s3.so
+mkdir @TMP/sf/data
+add_safe s2
+add_safe -
+add_safe s3
+add_disabled s3
+# safe check comes first: s1 -> disabled_safe; s3 is safe but also user-disabled -> disabled; s2 loads
+load_plugins @TMP/sf/bin @TMP/sf/data/%module% 2
+lists
+mod_info s1
+mod_info s3
+mod_info s2
+# a core-type module not on the safe list is also refused
+mkmod c1 @TMP/sf2/bin/c1.so
+load_plugins @TMP/sf2/bin @TMP/sf2/data/%module% 1
+mod_info c1

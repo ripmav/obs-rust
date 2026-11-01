@@ -1,0 +1,71 @@
+reset ok
+> reset
+reset ok
+> fake now 10000000000
+> set dbr_cur_bitrate 6000
+> set dbr_orig_bitrate 6000
+> dbr_lower
+dbr_bitrate_lowered -> 0
+dbr enabled=0 cur=6000 orig=6000 prev=0 est=0 inc=0 audio=0 data_size=0 inc_timeout=0 frames=0
+> set dbr_est_bitrate 4567
+> set dbr_data_size 777
+> dbr_lower
+log info [rtmp stream: 'out'] bitrate decreased to: 4500
+dbr_bitrate_lowered -> 1
+dbr enabled=0 cur=4500 orig=6000 prev=0 est=4567 inc=0 audio=0 data_size=0 inc_timeout=14000000000 frames=0
+> dbr_lower
+dbr_bitrate_lowered -> 0
+dbr enabled=0 cur=4500 orig=6000 prev=0 est=4567 inc=0 audio=0 data_size=0 inc_timeout=14000000000 frames=0
+> set dbr_est_bitrate 9000
+> set dbr_prev_bitrate 5000
+> dbr_lower
+log info [rtmp stream: 'out'] going back to prev bitrate
+log info [rtmp stream: 'out'] bitrate decreased to: 5000
+dbr_bitrate_lowered -> 1
+dbr enabled=0 cur=5000 orig=6000 prev=0 est=9000 inc=0 audio=0 data_size=0 inc_timeout=14000000000 frames=0
+> set dbr_cur_bitrate 5000
+> set dbr_prev_bitrate 5000
+> set dbr_est_bitrate 0
+> dbr_lower
+log info [rtmp stream: 'out'] going back to prev bitrate
+dbr_bitrate_lowered -> 0
+dbr enabled=0 cur=5000 orig=6000 prev=5000 est=0 inc=0 audio=0 data_size=0 inc_timeout=14000000000 frames=0
+> set dbr_cur_bitrate 6000
+> set dbr_prev_bitrate 0
+> set dbr_est_bitrate 60
+> dbr_lower
+log info [rtmp stream: 'out'] bitrate decreased to: 50
+dbr_bitrate_lowered -> 1
+dbr enabled=0 cur=50 orig=6000 prev=0 est=60 inc=0 audio=0 data_size=0 inc_timeout=14000000000 frames=0
+> set dbr_cur_bitrate 6000
+> set dbr_est_bitrate 150
+> dbr_lower
+log info [rtmp stream: 'out'] bitrate decreased to: 100
+dbr_bitrate_lowered -> 1
+dbr enabled=0 cur=100 orig=6000 prev=0 est=150 inc=0 audio=0 data_size=0 inc_timeout=14000000000 frames=0
+> reset
+reset ok
+> fake now 20000000000
+> set dbr_orig_bitrate 6000
+> set dbr_cur_bitrate 4500
+> set dbr_inc_bitrate 600
+> dbr_inc
+log info [rtmp stream: 'out'] bitrate increased to: 5100, waiting
+dbr enabled=0 cur=5100 orig=6000 prev=4500 est=0 inc=600 audio=0 data_size=0 inc_timeout=24000000000 frames=0
+> dbr_inc
+log info [rtmp stream: 'out'] bitrate increased to: 5700, waiting
+dbr enabled=0 cur=5700 orig=6000 prev=5100 est=0 inc=600 audio=0 data_size=0 inc_timeout=24000000000 frames=0
+> dbr_inc
+log info [rtmp stream: 'out'] bitrate increased to: 6000, done
+dbr enabled=0 cur=6000 orig=6000 prev=5700 est=0 inc=600 audio=0 data_size=0 inc_timeout=24000000000 frames=0
+> dbr_inc
+log info [rtmp stream: 'out'] bitrate increased to: 6000, done
+dbr enabled=0 cur=6000 orig=6000 prev=6000 est=0 inc=600 audio=0 data_size=0 inc_timeout=24000000000 frames=0
+> fake advance 1000000000
+> set dbr_cur_bitrate 5700
+> dbr_inc
+log info [rtmp stream: 'out'] bitrate increased to: 6000, done
+dbr enabled=0 cur=6000 orig=6000 prev=5700 est=0 inc=600 audio=0 data_size=0 inc_timeout=24000000000 frames=0
+> dbr_inc
+log info [rtmp stream: 'out'] bitrate increased to: 6000, done
+dbr enabled=0 cur=6000 orig=6000 prev=6000 est=0 inc=600 audio=0 data_size=0 inc_timeout=24000000000 frames=0

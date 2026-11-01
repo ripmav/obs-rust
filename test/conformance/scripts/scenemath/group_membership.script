@@ -1,0 +1,37 @@
+# group_add_item / group_remove_item: items keep their visual place; groups resize to fit; removed items return
+# to the BOTTOM of the parent scene (not the previous slot). Order inside a group is the child list.
+source s 200 100
+scene main
+add main s a
+add main s b
+add main s c
+pos a 100 100
+pos b 300 300
+pos c 800 500
+group main g a
+print g
+echo -- add b
+group_add g b
+order_of main
+print g
+scene_size g
+print b
+echo -- add c (outside in the middle of the order)
+group_add g c
+order_of main
+print g
+echo -- remove b: goes to the bottom of main
+group_remove g b
+order_of main
+print g
+print b
+get b
+echo -- removing the last child leaves an empty group
+group_remove g a
+group_remove g c
+order_of main
+scene_size g
+echo -- QUIRK: the empty group keeps its stale matrices until the next update
+print g
+update main
+print g

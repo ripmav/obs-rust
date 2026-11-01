@@ -1,0 +1,32 @@
+# S-026 Amazon IVS: server list has Auto (RTMPS) [only if RTMPS is registered] and Auto (RTMP); with more
+# than one known ingest the list is the ingests (RTMPS variants first, then RTMP) instead of the JSON servers.
+# URL: server starting with "auto": exactly "auto-rtmp" -> RTMP url, anything else starting with "auto" -> RTMPS url.
+# The built-in Default ingest has url = an rtmps:// address and NO rtmps_url (QUIRK Q: auto-rtmps gives NULL).
+fs-load /mod/data/services.json data/services-ok.json
+module-load
+settings S {"service":"Amazon IVS","server":"auto-rtmps","key":"k"}
+new A rtmp_common S
+props P A S
+echo default-ingest-only
+get A url
+settings S {"service":"Amazon IVS","server":"auto-rtmp","key":"k"}
+update A S
+get A url
+settings S {"service":"Amazon IVS","server":"auto","key":"k"}
+update A S
+get A url
+settings S {"service":"Amazon IVS","server":"automatic","key":"k"}
+update A S
+get A url
+settings S {"service":"Amazon IVS","server":"AUTO-RTMP","key":"k"}
+update A S
+get A url
+settings S {"service":"Amazon IVS","server":"rtmps://ivs.example:443/app/","key":"k"}
+update A S
+get A url can_connect
+clock
+echo no-RTMPS-registered
+protocols RTMP
+modify P service S
+props-show P
+module-unload

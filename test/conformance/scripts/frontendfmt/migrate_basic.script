@@ -1,0 +1,106 @@
+# S-048 basic.ini (profile) migrations executed on every profile activation.
+echo ff_audio_track
+set prof AdvOut FFAudioTrack int 3
+basic_migrate
+show prof AdvOut FFAudioMixes
+show prof AdvOut Pre22.1Settings
+basic_migrate
+reset
+echo ff_audio_track_pre22_1_done
+set prof AdvOut FFAudioTrack int 3
+set prof AdvOut Pre22.1Settings bool true
+basic_migrate
+show prof AdvOut FFAudioMixes
+reset
+echo rec_track_index
+set prof AdvOut RecTrackIndex int 4
+basic_migrate
+show prof AdvOut RecTracks
+show prof AdvOut RecTrackIndex
+reset
+echo rec_track_index_with_rectracks
+set prof AdvOut RecTrackIndex int 4
+set prof AdvOut RecTracks uint 3
+basic_migrate
+show prof AdvOut RecTracks
+show prof AdvOut RecTrackIndex
+reset
+echo twitch_addon_choice
+set user General Pre24.1Defaults bool true
+basic_migrate
+show prof Twitch AddonChoice
+reset
+set user General Pre24.1Defaults bool true
+set prof Twitch AddonChoice int 1
+basic_migrate
+show prof Twitch AddonChoice
+reset
+echo enforce_bitrate
+set prof SimpleOutput EnforceBitrate bool true
+basic_migrate
+show prof Stream1 IgnoreRecommended
+show prof Stream1 MovedOldEnforce
+reset
+set prof SimpleOutput EnforceBitrate bool false
+basic_migrate
+show prof Stream1 IgnoreRecommended
+reset
+set prof SimpleOutput EnforceBitrate bool false
+set prof Stream1 IgnoreRecommended bool false
+basic_migrate
+show prof Stream1 MovedOldEnforce
+reset
+echo retry_delay
+set prof Output RetryDelay uint 0
+basic_migrate
+show prof Output RetryDelay
+reset
+set prof Output RetryDelay uint 5
+basic_migrate
+show prof Output RetryDelay
+reset
+basic_migrate
+show prof Output RetryDelay
+reset
+echo rec_format
+set prof AdvOut RecFormat string ts
+basic_migrate
+show prof AdvOut RecFormat2
+show prof AdvOut RecFormat
+reset
+set prof AdvOut RecFormat string m3u8
+set prof SimpleOutput RecFormat2 string fmp4
+basic_migrate
+show prof AdvOut RecFormat2
+show prof SimpleOutput RecFormat2
+reset
+set prof SimpleOutput RecFormat string fmov
+basic_migrate
+show prof SimpleOutput RecFormat2
+reset
+set prof SimpleOutput RecFormat string mkv
+basic_migrate
+show prof SimpleOutput RecFormat2
+reset
+set prof SimpleOutput RecFormat2 string mp4
+basic_migrate
+reset
+set prof SimpleOutput RecFormat string flv
+set prof SimpleOutput RecFormat2 string mkv
+basic_migrate
+show prof SimpleOutput RecFormat2
+reset
+echo rescale_filter
+set prof AdvOut Rescale bool true
+set prof AdvOut RecRescale bool true
+basic_migrate
+show prof AdvOut RescaleFilter
+show prof AdvOut RecRescaleFilter
+reset
+set prof AdvOut Rescale bool true
+set prof AdvOut RescaleFilter int 5
+basic_migrate
+show prof AdvOut RescaleFilter
+reset
+echo nothing_to_do
+basic_migrate

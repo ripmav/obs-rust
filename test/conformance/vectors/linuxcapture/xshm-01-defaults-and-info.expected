@@ -1,0 +1,39 @@
+> xshm-version 1
+> xshm-info
+info id=xshm_input name=X11SharedMemoryDisplayInput obsolete=1 srgb=1 custom_draw=1
+> xshm-defaults
+> get screen int
+screen = 0
+> get show_cursor bool
+show_cursor = 1
+> get advanced bool
+advanced = 0
+> get cut_top int
+cut_top = 0
+> get cut_left int
+cut_left = 0
+> get cut_right int
+cut_right = 0
+> get cut_bot int
+cut_bot = 0
+> get server str
+server = ""
+> settings-clear
+> xshm-version 2
+> xshm-info
+info id=xshm_input_v2 name=X11SharedMemoryDisplayInput obsolete=0 srgb=1 custom_draw=1
+> xshm-defaults
+> get screen int
+screen = -1
+> get show_cursor bool
+show_cursor = 1
+> get advanced bool
+advanced = 0
+> get cut_top int
+cut_top = 0
+> get cut_left int
+cut_left = 0
+> get cut_right int
+cut_right = 0
+> get cut_bot int
+cut_bot = 0

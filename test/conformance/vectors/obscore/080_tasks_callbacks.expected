@@ -1,0 +1,30 @@
+log debug canvas 'Main' (<uuid>) created
+startup -> true
+log info ---------------------------------
+log info video settings reset:  base resolution:   1920x1080  output resolution: 1280x720  downscale filter:  Bicubic  fps:               30/1  format:            BGRA  YUV mode:          None
+reset_video -> success
+  after_call base=1920x1080 out=1280x720 fps=30/1 fmt=BGRA cs=2 range=1 scale=2 gpu=0 adapter=0
+log info ---------------------------------
+log info audio settings reset:  samples per sec: 48000  speakers:        2  max buffering:   960 milliseconds  buffering type:  dynamically increasing
+reset_audio -> 1
+log error UI task could not be queued, there's no UI task handler!
+  ui_handler wait=0
+ui_handler on
+  ui_handler wait=0
+  task t1 thread=ui
+  ui_handler wait=1
+  task t2 thread=ui
+in_task_thread graphics=0 audio=0 ui=1
+  task g1 thread=graphics
+  task a1 thread=audio
+  task d1 thread=other
+  task g2 thread=graphics
+wait_destroy -> 0
+callbacks tick=[] draw=[] rendered=0
+callbacks tick=[a,b,a] draw=[second,first] rendered=2
+callbacks tick=[b,a] draw=[second] rendered=1
+callbacks tick=[b] draw=[second] rendered=1
+shutdown begin
+log info Freeing OBS context data
+log debug canvas 'Main' (<uuid>) destroyed
+shutdown end obs=NULL

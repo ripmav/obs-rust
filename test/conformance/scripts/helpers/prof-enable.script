@@ -1,0 +1,24 @@
+# profiler enable/disable state machine (CORE for the documented behaviour, QUIRK for the
+# per-thread latch). Calls recorded while the profiler is stopped are discarded at the end of
+# the ROOT call, and that discard permanently disables the calling thread until
+# profile_reenable_thread() is called while the profiler is running.
+p_name 0 r
+p_clock 0
+p_call 0 1000
+p_snap
+p_dump
+p_begin
+p_call 0 2000
+p_snap
+p_dump
+p_stop
+p_call 0 3000
+p_begin
+p_call 0 4000
+p_snap
+p_dump
+p_reenable
+p_call 0 5000
+p_snap
+p_dump
+p_free

@@ -1,0 +1,13 @@
+# QUIRK Q-6: '=' handling. A name without value is dropped; the first '=' after a name is
+# skipped; a second '=' becomes the value; an '=' only line stores nothing.
+fputs tq-1 "A==b\nB=\nC\nD=#c\nE=\"1\"\n=x\n==\nF=\"2\"\n"
+tl_create 0 tq-1
+tl_get 0 A
+tl_get 0 B
+tl_get 0 C
+tl_get 0 D
+tl_get 0 E
+tl_get 0 "="
+tl_get 0 F
+tl_destroy 0
+funlink tq-1

@@ -1,0 +1,15 @@
+# S-052 screen_stream_video_update size tracking and delegate dispatch.
+# window: type content_w content_h points_to_pixels scale_factor cur_w cur_h buf_w buf_h errored
+sck_window_frame 1 1600 900 2 2 0 0 3200 1800 0
+sck_window_frame 1 1600 900 2 2 1600 900 3200 1800 0
+sck_window_frame 1 1600 900 2 2 800 450 3200 1800 0
+sck_window_frame 1 1600 900 2 2 0 0 3200 1800 1
+sck_window_frame 0 0 0 1 1 0 0 3024 1964 0
+sck_window_frame 0 0 0 1 1 3024 1964 3024 1964 0
+# fractional: float arithmetic then truncation to size_t
+sck_window_frame 1 1001 563 1.5 1.5 0 0 0 0 0
+sck_dispatch video 0 1300 0
+sck_dispatch video 1 1300 0
+sck_dispatch audio 0 1300 0
+sck_dispatch audio 1 1205 0
+sck_dispatch audio 1 1300 1

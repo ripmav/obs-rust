@@ -1,0 +1,30 @@
+echo exact-fit-numbers
+enc_number len=9 hex=003ff0000000000000
+enc_number null
+enc_bool len=2 hex=0101
+enc_bool null
+enc_int16 len=2 hex=0005
+enc_int16 null
+enc_int24 len=3 hex=000005
+enc_int24 null
+enc_int32 len=4 hex=00000005
+enc_int32 null
+echo short-string-needs-len-plus-5
+enc_string len=6 hex=020003616263
+enc_string null
+enc_string null
+enc_string len=3 hex=020000
+enc_string null
+enc_string null
+echo named
+enc_named_number len=14 hex=0003616263003ff0000000000000
+enc_named_number null
+enc_named_bool len=7 hex=00036162630101
+enc_named_bool null
+enc_named_string len=7 hex=00026162020000
+enc_named_string null
+enc_named_string len=9 hex=000261620200026364
+enc_named_string null
+enc_named_number null
+enc_named_number len=11 hex=0000003ff0000000000000
+enc_named_number null

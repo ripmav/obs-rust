@@ -1,0 +1,50 @@
+# Settings -> derived state: outline width (0/4/6), custom width threshold (>=100), colours, size getters (S-038-R21..R27).
+reset
+ascii 5 8 0 8 384
+font "Sans Serif" - 0 p/sans
+events off
+events off
+load
+create s 2
+setfont s "Sans Serif" - 20 0
+set s text "ab"
+update s
+state s
+size s
+echo --- outline alone and drop shadow alone each add 4 to the reported size; both add 6
+set s outline true
+update s
+size s
+set s outline false
+set s drop_shadow true
+update s
+size s
+set s outline true
+update s
+size s
+state s
+echo --- custom_width below 100 is ignored (stored as 0), 100 and above is used as the width
+set s custom_width 99
+update s
+state s
+set s custom_width 100
+update s
+state s
+size s
+set s custom_width 4096
+update s
+size s
+set s custom_width 50
+update s
+state s
+echo --- colours are stored as 32-bit values (top and bottom colour per quad)
+set s color1 0xff112233
+set s color2 0x80aabbcc
+update s
+state s
+verts s
+echo --- negative / oversized ints are truncated to 32 bit
+set s color1 -1
+set s color2 0x1ffffffff
+update s
+state s

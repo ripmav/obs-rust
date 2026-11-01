@@ -1,0 +1,26 @@
+# QUIRK demonstrations (reference behaviour that looks accidental; see spec Q-n).
+# Q: duplicate names are only checked against the group's DIRECT children, so a name nested
+#    deeper in the group can duplicate a name in the target tree.
+# Q: a group may carry the same name as a property inside its own content.
+props Top
+props G
+props H
+add bool Top x "X top"
+add bool H x "X deep"
+add group G h "H" normal H
+echo nested-duplicate-accepted
+add group Top g "G" normal G
+dump Top
+get Top x
+echo only-first-x-removed
+remove Top x
+dump Top
+echo group-named-like-own-child
+props K
+props Top2
+add bool K same "child"
+add group Top2 same "group" normal K
+dump Top2
+get Top2 same
+destroy Top2
+destroy Top

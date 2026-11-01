@@ -1,0 +1,15 @@
+--- negative values: division truncates toward zero, rounding half away from zero (matroska then shifts the whole stream by +33 ms so the first timestamp is 0)
+exit 0
+probe: format=matroska,webm streams=1
+  stream 0: video h264 640x360 tb=1/1000 extradata=0164001fffe100046764001f01000468ce3c80
+  pkt stream=0 size=2 pts=0 dts=-9223372036854775808 key=0 first=a0a0
+  pkt stream=0 size=2 pts=33 dts=-9223372036854775808 key=0 first=a1a1
+  pkt stream=0 size=2 pts=100 dts=-9223372036854775808 key=0 first=a2a2
+  packets=3
+--- pts below dts: the muxer rejects the packet with EINVAL, which is skipped silently; later packets still go out
+exit 0
+probe: format=matroska,webm streams=1
+  stream 0: video h264 640x360 tb=1/1000 extradata=0164001fffe100046764001f01000468ce3c80
+  pkt stream=0 size=2 pts=0 dts=-9223372036854775808 key=0 first=a0a0
+  pkt stream=0 size=2 pts=67 dts=-9223372036854775808 key=0 first=a2a2
+  packets=2

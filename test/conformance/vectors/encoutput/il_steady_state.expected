@@ -1,0 +1,43 @@
+log debug encoder 'v' (v) created
+encoder v created tb=1/30
+log debug encoder 'a' (a) created
+encoder a created tb=1/48000
+log debug output 'o' (o) created
+output o created flags=7 reconnect=20/2
+set_venc o idx=0 -> video_slots=01 audio_slots=00
+set_aenc o idx=0 -> video_slots=01 audio_slots=01
+plugin out o start
+plugin enc v create
+plugin enc a create
+log debug Maximum interleaver batch size for 'o' calculated to be 5 packets
+signal o activate
+signal o start
+plugin out o begin_data_capture -> 1
+signal o starting
+start o -> 1
+plugin out o pkt V0 pts=0 dts=0 usec=0 kf=1 size=4 tb=1/30 b0=03
+state o active=1 data_active=1 delay_active=0 delay_capturing=0 reconnecting=0 stopping=0 stop_code=0 total_frames=1 delay_ns=0 refs=0 queued=3 recv_v=10 recv_a=1 hi_a=42666 hi_v0=0 voff=0 aoff=0 batch=5 retries=0 cur_ms=0
+--- audio far ahead (up to 128000us): video packets stream out one per arrival
+queue o n=7 delayq=0: A0@0 A0@21333 A0@42666 A0@64000 A0@85333 A0@106666 A0@128000
+plugin out o pkt A0 pts=0 dts=0 usec=0 kf=0 size=4 tb=1/48000 b0=01
+plugin out o pkt A0 pts=1024 dts=1024 usec=21333 kf=0 size=4 tb=1/48000 b0=02
+queue o n=7 delayq=0: V0@33333 A0@42666 A0@64000 V0@66666 A0@85333 A0@106666 A0@128000
+--- video far ahead: audio is held back until video passes it, then released one by one
+plugin out o pkt V0 pts=1 dts=1 usec=33333 kf=0 size=4 tb=1/30 b0=09
+plugin out o pkt A0 pts=2048 dts=2048 usec=42666 kf=0 size=4 tb=1/48000 b0=04
+plugin out o pkt A0 pts=3072 dts=3072 usec=64000 kf=0 size=4 tb=1/48000 b0=05
+plugin out o pkt V0 pts=2 dts=2 usec=66666 kf=0 size=4 tb=1/30 b0=0a
+queue o n=6 delayq=0: A0@85333 V0@100000 A0@106666 A0@128000 V0@133333 V0@166666
+plugin out o pkt A0 pts=4096 dts=4096 usec=85333 kf=0 size=4 tb=1/48000 b0=06
+queue o n=6 delayq=0: V0@100000 A0@106666 A0@128000 V0@133333 V0@166666 V0@200000
+signal o stopping
+plugin out o stop ts=0
+log info Output 'o': stopping
+log info Output 'o': Total frames output: 3
+log info Output 'o': Total drawn frames: 0
+signal o stop code=0 last_error=-
+stop o done
+plugin enc v destroy
+plugin enc a destroy
+signal o deactivate
+queue o n=6 delayq=0: V0@100000 A0@106666 A0@128000 V0@133333 V0@166666 V0@200000

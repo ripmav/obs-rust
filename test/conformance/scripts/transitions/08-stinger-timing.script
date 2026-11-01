@@ -1,0 +1,39 @@
+# CORE: stinger transition_start/stop: duration (+250 ms), transition point as fraction, clamping, fixed duration, restart rules.
+load quiet
+create st obs_stinger_transition str:path=/m/s.mov int:transition_point=500
+tick st
+# media: 2 s long, 120 frames
+src media#1 dur_ns=2000000000 frames=120
+start st
+fields st
+stop st
+# transition point in ms: 500 / 2250
+tick st
+# frame based: 60 of 120 frames
+settings st int:tp_type=1 int:transition_point=60
+tick st
+src media#2 dur_ns=2000000000 frames=120
+start st
+stop st
+# clamps
+settings st int:tp_type=0 int:transition_point=0
+tick st
+src media#3 dur_ns=2000000000 frames=120
+start st
+stop st
+settings st int:transition_point=999999
+tick st
+src media#4 dur_ns=2000000000 frames=120
+start st
+stop st
+# start while already transitioning, or media still playing: restart only
+settings st int:transition_point=1000
+tick st
+src media#5 dur_ns=1000000000 frames=60 state=1
+start st
+fields st
+src media#5 state=0
+start st
+fields st
+start st
+stop st

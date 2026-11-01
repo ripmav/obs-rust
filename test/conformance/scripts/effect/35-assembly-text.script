@@ -1,0 +1,28 @@
+# CORE: which source characters survive into the shader text. Function bodies are emitted from the token stream
+# of the lexer/preprocessor (S-011): the exact bytes of every token between the body's '{' and its matching '}'
+# (blanks and newlines included, a comment collapsed to the blank the lexer produces for it, line splices removed,
+# macros expanded). Text outside functions (parameters, structs, samplers) is regenerated with the fixed layout of
+# 30-assembly-basic and does not keep the original spacing. The function's header is regenerated as
+# "RET NAME(PARAMS)\n" and the body starts on the next line.
+backend text full
+echo --- whitespace and newlines in the body are preserved
+effect e1 ws.effect "float4 F()\n{\n\tfloat4 x = 1;\n\n\n    return x;\n}\ntechnique T { pass { vertex_shader = F(); pixel_shader = F(); } }"
+echo --- block and line comments
+effect e2 cmt.effect "float4 F()\n{ /* a */ float x = 1; // b\n  /* multi\nline */ return x; }\ntechnique T { pass { vertex_shader = F(); pixel_shader = F(); } }"
+echo --- macros are expanded in bodies; object-like and function-like
+effect e3 macro.effect "#define ONE 1.0\n#define ADD(a,b) ((a)+(b))\nfloat4 F() { return ADD(ONE, 2.0); }\ntechnique T { pass { vertex_shader = F(); pixel_shader = F(); } }"
+echo --- a macro used in the technique call is expanded too
+effect e4 macrocall.effect "#define ENTRY F\nfloat4 F() { return 0; }\ntechnique T { pass { vertex_shader = ENTRY(); pixel_shader = ENTRY(); } }"
+echo --- a macro that expands to a declaration
+effect e5 macrodecl.effect "#define DECL(n) uniform float n;\nDECL(a)\nDECL(b)\nfloat F() { return a + b; }\ntechnique T { pass { vertex_shader = F(); pixel_shader = F(); } }"
+dump e5
+echo --- backslash-newline splices are removed from the body
+effect e6 splice.effect "float F() { return 1 + \\\n 2; }\ntechnique T { pass { vertex_shader = F(); pixel_shader = F(); } }"
+echo --- string and character literals in a body are copied verbatim
+effect e7 str.effect "float F() { string s = \"a } b\"; return 1; }\ntechnique T { pass { vertex_shader = F(); pixel_shader = F(); } }"
+echo --- CRLF line endings are kept as they are inside bodies
+effect e8 crlf.effect "float F()\r\n{\r\n return 1;\r\n}\r\ntechnique T { pass { vertex_shader = F(); pixel_shader = F(); } }\r\n"
+echo --- #ifdef regions
+effect e9 ifdef.effect "#define FAST\nfloat F() {\n#ifdef FAST\n return 1;\n#else\n return 2;\n#endif\n}\ntechnique T { pass { vertex_shader = F(); pixel_shader = F(); } }"
+echo --- tabs and trailing spaces in a body
+effect e10 tabs.effect "float F() {\t\treturn 1;   \t}\ntechnique T { pass { vertex_shader = F(); pixel_shader = F(); } }"

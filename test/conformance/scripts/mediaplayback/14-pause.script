@@ -1,0 +1,36 @@
+# Pause / resume. play_pause only acts while active. Pausing sets 'pause'; the thread, on waking, rebases its
+# time (reset_ts: base_ts += end of the last delivered pts, play_sys_ts = now, next_ns = 0). Resuming sets
+# reset_ts which rebases again so that the wall time spent paused is not "caught up".
+media pclip 200000 0
+video 1 1000 16 16 yuv420p frames=5
+pkt 0 0 fdur=40
+pkt 0 40 fdur=40
+pkt 0 80 fdur=40
+pkt 0 120 fdur=40
+pkt 0 160 fdur=40
+endmedia
+clock 1000000000
+minit pclip local=1
+mreset
+echo pause while inactive is ignored
+mpause 1
+mstate
+mplay 0
+mtickw 0 0
+mtick 2
+mstate
+echo pause
+mpause 1
+mstate
+mtickw 1 1
+mstate
+clock 9000000000
+echo more wakes while paused (each one rebases again)
+mtickw 1 1
+mstate
+echo resume
+mpause 0
+mstate
+mtickw 1 0
+mstate
+mtick 3

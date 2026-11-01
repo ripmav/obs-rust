@@ -1,0 +1,66 @@
+# S-050 nvenc: buffer sizing and lookahead.
+#   buf_count = max(4, 2*2*frameIntervalP); with lookahead max(buf_count, P + depth + 5); cap 64
+#   output_delay = buf_count - 1
+#   lookahead is active iff cap(LOOKAHEAD) && (setting || preset enableLookahead); depth = 8 or the
+#   preset's depth (when the preset enables it) or user opt lookaheadDepth; bound = delay - P - 4;
+#   if bound < 0 lookahead is dropped from the log BUT the preset's own enableLookahead bit is left.
+#   disableIadapt is always overwritten with the disable_scenecut setting at the end.
+dump 2
+nvcap dyn_bitrate 1
+defaults h264
+# no lookahead: delay from b-frames only
+set int bf 2
+create h264 soft
+state
+destroy
+set int bf 4
+create h264 soft
+state
+destroy
+# capability absent -> lookahead setting ignored
+set bool lookahead 1
+create h264 soft
+state
+destroy
+nvcap lookahead 1
+create h264 soft
+state
+destroy
+# user depth
+set str opts "lookaheadDepth=20"
+create h264 soft
+state
+destroy
+# depth so large the buffer count is capped at 64 and the bound limits it
+set str opts "lookaheadDepth=100"
+create h264 soft
+state
+destroy
+# bound below zero: bf=4 gives P=5, delay 3 would be too small, but buffers grow; force a negative bound
+# by making the preset enable lookahead with a depth of 0 and capping the buffers via bf = 0
+set str opts ""
+set int bf 0
+nvpreset enableLookahead 1
+nvpreset lookaheadDepth 16
+set bool lookahead 0
+create h264 soft
+state
+destroy
+# disable_scenecut
+set bool disable_scenecut 1
+create h264 soft
+destroy
+# Negative bound (QUIRK): user depth -10 with bf=0 -> buf_count 4, delay 3, bound -2 -> the code
+# sets lookahead=false, so the settings log says "false (16 frames)" while the preset's own
+# enableLookahead / depth fields are left exactly as the preset returned them.
+set bool disable_scenecut 0
+set bool lookahead 1
+set str opts "lookaheadDepth=-10"
+create h264 soft
+state
+destroy
+# same without the preset enabling lookahead: stays off
+nvpreset enableLookahead 0
+nvpreset lookaheadDepth 0
+create h264 soft
+destroy

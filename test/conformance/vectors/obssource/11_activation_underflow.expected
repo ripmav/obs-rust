@@ -1,0 +1,9 @@
+  cb A create
+log debug source 'A' (in) created
+create a ok
+state a show_refs=0 activate_refs=0 showing=0 active=0 obs_showing=0 obs_active=0
+state a show_refs=0 activate_refs=0 showing=0 active=0 obs_showing=0 obs_active=0
+state a show_refs=2 activate_refs=2 showing=0 active=0 obs_showing=1 obs_active=1
+state a show_refs=1 activate_refs=2 showing=0 active=0 obs_showing=1 obs_active=1
+state a show_refs=0 activate_refs=2 showing=0 active=0 obs_showing=0 obs_active=1
+state a show_refs=0 activate_refs=1 showing=0 active=0 obs_showing=0 obs_active=1

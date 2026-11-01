@@ -1,0 +1,29 @@
+# While a save is still running (muxing=1) a second save request is deferred: the packet is queued but the save
+# does not start and save_ts stays armed; the next packet after the first save finished starts it. Deferred threads
+# make the overlap deterministic (run_pending = let the mux thread run to completion).
+reset
+output rb
+venc h264 bitrate=2500 extra=0a0b
+set str directory /rec
+set str format r%N
+set str extension mp4
+knob defer_threads 1
+knob now_ns 1000
+create replay_buffer
+start
+pkt v pts=0 key=1 size=4 sys=1
+proc save
+pkt v pts=1 key=0 size=4 sys=1
+state_rb
+proc get_last_replay
+echo second_save_requested_while_the_first_still_muxes
+proc save
+pkt v pts=2 key=0 size=4 sys=1
+state_rb
+run_pending
+state_rb
+pkt v pts=3 key=0 size=4 sys=1
+state_rb
+run_pending
+state_rb
+proc get_last_replay

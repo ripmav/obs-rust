@@ -1,0 +1,11 @@
+# S-035 reference defects in obs-module.c / obs-service.c that crash the reference. A conforming implementation MUST NOT
+# crash (see spec D-1, D-3); "try-end crash" in the expected file matches "try-end ok" for a conforming runner.
+core en-US @TMP/cfg
+try config_path_null
+try null_vcodecs
+try null_acodecs
+# D-2: the 'type' of a path added with obs_add_module_path is uninitialised in the reference; a conforming implementation
+# uses OBS_MODULE_TYPE_UNDEFINED (0). The reference value cannot be recorded, so only the paths are checked here.
+write @TMP/t/bin/t.so "x"
+add_path @TMP/t/bin @TMP/t/data/%module%
+find

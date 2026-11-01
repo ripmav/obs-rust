@@ -1,0 +1,25 @@
+# A NULL serializer pointer and a serializer with no callbacks: every helper is a
+# no-op returning 0 / -1 (CORE).
+open null
+write aa
+read 2
+serialize_w aa
+serialize_r 2
+seek start 3
+seek cur 0
+seek end 0
+pos
+w8 1
+wl16 1
+wb64 1
+wld 1.0
+open empty
+write aa
+read 2
+serialize_w aa
+serialize_r 2
+seek start 3
+pos
+w8 1
+wl32 1
+wbf 1.0

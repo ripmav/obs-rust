@@ -1,0 +1,18 @@
+# obs_missing_files: list of missing-file records (CORE).
+# add_file() appends at the end and TAKES OWNERSHIP (no reference is added); the list's
+# destroy() releases every file once. get_file(i) returns the i-th added file.
+mf_list_new 0
+mf_count 0
+mf_file_new 0 "/a/one.png" source "Image 1"
+mf_file_new 1 "/a/two.mp4" source "Video 2"
+mf_file_new 2 "/a/three.lua" script
+mf_ref 0
+mf_add 0 0
+mf_add 0 1
+mf_add 0 2
+mf_count 0
+mf_get 0 0
+mf_get 0 1
+mf_get 0 2
+mf_ref 1
+mf_destroy 0

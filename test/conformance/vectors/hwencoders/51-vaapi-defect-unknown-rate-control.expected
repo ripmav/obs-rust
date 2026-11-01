@@ -1,0 +1,15 @@
+> va_defaults h264
+va.open_device "/dev/dri/renderD128" by vaapi_defaults -> ok
+> set int bitrate 5000
+> set str rate_control bogus
+> fcall va_create h264
+> va_create h264
+av.find_encoder h264_vaapi
+log info ---------------------------------
+crash: signal 11
+> set str rate_control ""
+> fcall va_create h264
+> va_create h264
+av.find_encoder h264_vaapi
+log info ---------------------------------
+crash: signal 11

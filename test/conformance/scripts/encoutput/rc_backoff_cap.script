@@ -1,0 +1,18 @@
+# The back-off is capped at 900000 ms (15 minutes): retry_sec=400 gives 400000, 600000, 900000, 900000.
+video 30 1 1280 720
+audio 48000
+venc v
+aenc a
+out o av,encoded autobegin=1
+set_venc o v
+set_aenc o a
+reconnect_cfg o 5 400
+poke_exp o 1.5
+start o
+plugin o start_ok=0 fail_code=-5
+signal_stop o -5
+fire
+fire
+fire
+fire
+state o

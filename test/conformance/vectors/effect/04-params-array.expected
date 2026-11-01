@@ -1,0 +1,94 @@
+backend vertexshader_create location="arr.effect (Vertex shader, technique T, pass 0)" len=288 fnv=ddde8fb745040d9b
+  text "uniform float4 q[10];\nuniform float w[4];\nuniform float2 p[2];\nuniform int k[1];\nuniform float z;\nuniform float big[100000];\nuniform float4x4 mats[3];\n\n\nfloat4 PS()\n{ return q[0] * w[1] + float4(p[0], 0, 0) + k[0] + z[0] + big[1] + mats[0][0]; }\n\nfloat4 main() : TARGET\n{\n\treturn PS();\n}\n"
+  sparam 0 name=q type=VEC4 array=10
+  sparam 1 name=w type=FLOAT array=4
+  sparam 2 name=p type=VEC2 array=2
+  sparam 3 name=k type=INT array=1
+  sparam 4 name=z type=FLOAT array=0
+  sparam 5 name=big type=FLOAT array=100000
+  sparam 6 name=mats type=MATRIX4X4 array=3
+  result ok
+backend pixelshader_create location="arr.effect (Pixel shader, technique T, pass 0)" len=288 fnv=ddde8fb745040d9b
+  text "uniform float4 q[10];\nuniform float w[4];\nuniform float2 p[2];\nuniform int k[1];\nuniform float z;\nuniform float big[100000];\nuniform float4x4 mats[3];\n\n\nfloat4 PS()\n{ return q[0] * w[1] + float4(p[0], 0, 0) + k[0] + z[0] + big[1] + mats[0][0]; }\n\nfloat4 main() : TARGET\n{\n\treturn PS();\n}\n"
+  sparam 0 name=q type=VEC4 array=10
+  sparam 1 name=w type=FLOAT array=4
+  sparam 2 name=p type=VEC2 array=2
+  sparam 3 name=k type=INT array=1
+  sparam 4 name=z type=FLOAT array=0
+  sparam 5 name=big type=FLOAT array=100000
+  sparam 6 name=mats type=MATRIX4X4 array=3
+  result ok
+effect e result=ok
+  error_string=@null
+effect e params=7 techniques=1 viewproj=- world=-
+  param 0 name=w type=FLOAT annotations=0 default_size=0 default=-
+  param 1 name=p type=VEC2 annotations=0 default_size=8 default=0000803f00000040 f=[1,2]
+  param 2 name=q type=VEC4 annotations=0 default_size=0 default=-
+  param 3 name=k type=INT annotations=0 default_size=0 default=-
+  param 4 name=z type=FLOAT annotations=0 default_size=0 default=-
+  param 5 name=big type=FLOAT annotations=0 default_size=0 default=-
+  param 6 name=mats type=MATRIX4X4 annotations=0 default_size=0 default=-
+  technique 0 name=T passes=1
+    pass 0 name=@null vertex_params=[q,w,p,k,z,big,mats] pixel_params=[q,w,p,k,z,big,mats] vertex=yes pixel=yes
+ep result=fail
+  errors count=1 has_errors=1
+    err 0 error file="a2" row=1 col=20 msg="Expected 'name'"
+  ep params=0 structs=0 funcs=0 samplers=0 techniques=0
+  error_string="a2 (1, 20): Expected 'name'\n"
+ep result=fail
+  errors count=1 has_errors=1
+    err 0 error file="a3" row=1 col=17 msg="Expected 'type'"
+  ep params=0 structs=0 funcs=0 samplers=0 techniques=0
+  error_string="a3 (1, 17): Expected 'type'\n"
+ep result=fail
+  errors count=1 has_errors=1
+    err 0 error file="a4" row=1 col=17 msg="Expected 'type'"
+  ep params=0 structs=0 funcs=0 samplers=0 techniques=0
+  error_string="a4 (1, 17): Expected 'type'\n"
+ep result=ok
+  errors count=0 has_errors=0
+  ep params=1 structs=0 funcs=0 samplers=0 techniques=0
+  ep_param 0 type=float name=x property=0 const=0 uniform=1 texture=0 array_count=3 annotations=0
+  error_string=@null
+effect (effect) params=1 techniques=0 viewproj=- world=-
+  param 0 name=x type=FLOAT annotations=0 default_size=0 default=-
+ep result=ok
+  errors count=0 has_errors=0
+  ep params=0 structs=0 funcs=0 samplers=0 techniques=0
+  error_string=@null
+effect (effect) params=0 techniques=0 viewproj=- world=-
+ep result=fail
+  errors count=1 has_errors=1
+    err 0 error file="a7" row=1 col=19 msg="Expected 'type'"
+  ep params=0 structs=0 funcs=0 samplers=0 techniques=0
+  error_string="a7 (1, 19): Expected 'type'\n"
+ep result=fail
+  errors count=1 has_errors=1
+    err 0 error file="a8" row=1 col=17 msg="Expected 'type'"
+  ep params=0 structs=0 funcs=0 samplers=0 techniques=0
+  error_string="a8 (1, 17): Expected 'type'\n"
+ep result=fail
+  errors count=1 has_errors=1
+    err 0 error file="a9" row=1 col=19 msg="Expected 'type'"
+  ep params=0 structs=0 funcs=0 samplers=0 techniques=0
+  error_string="a9 (1, 19): Expected 'type'\n"
+ep result=fail
+  errors count=1 has_errors=1
+    err 0 error file="a10" row=1 col=17 msg="Expected 'type'"
+  ep params=0 structs=0 funcs=0 samplers=0 techniques=0
+  error_string="a10 (1, 17): Expected 'type'\n"
+ep result=fail
+  errors count=2 has_errors=1
+    err 0 error file="a11" row=1 col=21 msg="Expected 'name'"
+    err 1 error file="a11" row=1 col=22 msg="Unexpected EOF"
+  ep params=0 structs=0 funcs=0 samplers=0 techniques=0
+  error_string="a11 (1, 21): Expected 'name'\na11 (1, 22): Unexpected EOF\n"
+ep result=ok
+  errors count=0 has_errors=0
+  ep params=1 structs=0 funcs=0 samplers=0 techniques=0
+  ep_param 0 type=float name=x property=0 const=0 uniform=1 texture=0 array_count=3 annotations=0
+  error_string=@null
+effect (effect) params=1 techniques=0 viewproj=- world=-
+  param 0 name=x type=FLOAT annotations=0 default_size=4 default=0000a040 f=[5]
+backend shader_destroy location="arr.effect (Vertex shader, technique T, pass 0)"
+backend shader_destroy location="arr.effect (Pixel shader, technique T, pass 0)"

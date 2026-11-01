@@ -1,0 +1,170 @@
+# CORPUS (CORE): every shipped effect file of this group is parsed by the real effect parser against the fake
+# OpenGL backend (preprocessor name _OPENGL). For each file the runner prints, in order: the backend calls
+# (location string, exact assembled shader text, shader parameters), the creation result, the effect structure
+# (parameters with types and defaults, techniques, passes with the parameters bound to each shader) and the
+# parser-internal structure (counts, struct/function/sampler/technique tables, dependency lists). The files
+# are read from the repository; the file name given to the parser is the repository relative path (it also
+# decides where "#include" is resolved; the runner starts in the repository root).
+gfx _OPENGL
+echo === plugins/obs-filters/data/blend_add_filter.effect
+backend text full
+backend events off
+effect e plugins/obs-filters/data/blend_add_filter.effect @file:plugins/obs-filters/data/blend_add_filter.effect
+dump e
+backend text none
+backend ep brief
+ep plugins/obs-filters/data/blend_add_filter.effect @file:plugins/obs-filters/data/blend_add_filter.effect
+destroy e
+echo === plugins/obs-filters/data/blend_mul_filter.effect
+backend text full
+backend events off
+effect e plugins/obs-filters/data/blend_mul_filter.effect @file:plugins/obs-filters/data/blend_mul_filter.effect
+dump e
+backend text none
+backend ep brief
+ep plugins/obs-filters/data/blend_mul_filter.effect @file:plugins/obs-filters/data/blend_mul_filter.effect
+destroy e
+echo === plugins/obs-filters/data/blend_sub_filter.effect
+backend text full
+backend events off
+effect e plugins/obs-filters/data/blend_sub_filter.effect @file:plugins/obs-filters/data/blend_sub_filter.effect
+dump e
+backend text none
+backend ep brief
+ep plugins/obs-filters/data/blend_sub_filter.effect @file:plugins/obs-filters/data/blend_sub_filter.effect
+destroy e
+echo === plugins/obs-filters/data/chroma_key_filter.effect
+backend text full
+backend events off
+effect e plugins/obs-filters/data/chroma_key_filter.effect @file:plugins/obs-filters/data/chroma_key_filter.effect
+dump e
+backend text none
+backend ep brief
+ep plugins/obs-filters/data/chroma_key_filter.effect @file:plugins/obs-filters/data/chroma_key_filter.effect
+destroy e
+echo === plugins/obs-filters/data/chroma_key_filter_v2.effect
+backend text full
+backend events off
+effect e plugins/obs-filters/data/chroma_key_filter_v2.effect @file:plugins/obs-filters/data/chroma_key_filter_v2.effect
+dump e
+backend text none
+backend ep brief
+ep plugins/obs-filters/data/chroma_key_filter_v2.effect @file:plugins/obs-filters/data/chroma_key_filter_v2.effect
+destroy e
+echo === plugins/obs-filters/data/color.effect
+backend text full
+backend events off
+effect e plugins/obs-filters/data/color.effect @file:plugins/obs-filters/data/color.effect
+dump e
+backend text none
+backend ep brief
+ep plugins/obs-filters/data/color.effect @file:plugins/obs-filters/data/color.effect
+destroy e
+echo === plugins/obs-filters/data/color_correction_filter.effect
+backend text full
+backend events off
+effect e plugins/obs-filters/data/color_correction_filter.effect @file:plugins/obs-filters/data/color_correction_filter.effect
+dump e
+backend text none
+backend ep brief
+ep plugins/obs-filters/data/color_correction_filter.effect @file:plugins/obs-filters/data/color_correction_filter.effect
+destroy e
+echo === plugins/obs-filters/data/color_grade_filter.effect
+backend text full
+backend events off
+effect e plugins/obs-filters/data/color_grade_filter.effect @file:plugins/obs-filters/data/color_grade_filter.effect
+dump e
+backend text none
+backend ep brief
+ep plugins/obs-filters/data/color_grade_filter.effect @file:plugins/obs-filters/data/color_grade_filter.effect
+destroy e
+echo === plugins/obs-filters/data/color_key_filter.effect
+backend text full
+backend events off
+effect e plugins/obs-filters/data/color_key_filter.effect @file:plugins/obs-filters/data/color_key_filter.effect
+dump e
+backend text none
+backend ep brief
+ep plugins/obs-filters/data/color_key_filter.effect @file:plugins/obs-filters/data/color_key_filter.effect
+destroy e
+echo === plugins/obs-filters/data/color_key_filter_v2.effect
+backend text full
+backend events off
+effect e plugins/obs-filters/data/color_key_filter_v2.effect @file:plugins/obs-filters/data/color_key_filter_v2.effect
+dump e
+backend text none
+backend ep brief
+ep plugins/obs-filters/data/color_key_filter_v2.effect @file:plugins/obs-filters/data/color_key_filter_v2.effect
+destroy e
+echo === plugins/obs-filters/data/crop_filter.effect
+backend text full
+backend events off
+effect e plugins/obs-filters/data/crop_filter.effect @file:plugins/obs-filters/data/crop_filter.effect
+dump e
+backend text none
+backend ep brief
+ep plugins/obs-filters/data/crop_filter.effect @file:plugins/obs-filters/data/crop_filter.effect
+destroy e
+echo === plugins/obs-filters/data/hdr_tonemap_filter.effect
+backend text full
+backend events off
+effect e plugins/obs-filters/data/hdr_tonemap_filter.effect @file:plugins/obs-filters/data/hdr_tonemap_filter.effect
+dump e
+backend text none
+backend ep brief
+ep plugins/obs-filters/data/hdr_tonemap_filter.effect @file:plugins/obs-filters/data/hdr_tonemap_filter.effect
+destroy e
+echo === plugins/obs-filters/data/luma_key_filter.effect
+backend text full
+backend events off
+effect e plugins/obs-filters/data/luma_key_filter.effect @file:plugins/obs-filters/data/luma_key_filter.effect
+dump e
+backend text none
+backend ep brief
+ep plugins/obs-filters/data/luma_key_filter.effect @file:plugins/obs-filters/data/luma_key_filter.effect
+destroy e
+echo === plugins/obs-filters/data/luma_key_filter_v2.effect
+backend text full
+backend events off
+effect e plugins/obs-filters/data/luma_key_filter_v2.effect @file:plugins/obs-filters/data/luma_key_filter_v2.effect
+dump e
+backend text none
+backend ep brief
+ep plugins/obs-filters/data/luma_key_filter_v2.effect @file:plugins/obs-filters/data/luma_key_filter_v2.effect
+destroy e
+echo === plugins/obs-filters/data/mask_alpha_filter.effect
+backend text full
+backend events off
+effect e plugins/obs-filters/data/mask_alpha_filter.effect @file:plugins/obs-filters/data/mask_alpha_filter.effect
+dump e
+backend text none
+backend ep brief
+ep plugins/obs-filters/data/mask_alpha_filter.effect @file:plugins/obs-filters/data/mask_alpha_filter.effect
+destroy e
+echo === plugins/obs-filters/data/mask_color_filter.effect
+backend text full
+backend events off
+effect e plugins/obs-filters/data/mask_color_filter.effect @file:plugins/obs-filters/data/mask_color_filter.effect
+dump e
+backend text none
+backend ep brief
+ep plugins/obs-filters/data/mask_color_filter.effect @file:plugins/obs-filters/data/mask_color_filter.effect
+destroy e
+echo === plugins/obs-filters/data/sdr_on_hdr_filter.effect
+backend text full
+backend events off
+effect e plugins/obs-filters/data/sdr_on_hdr_filter.effect @file:plugins/obs-filters/data/sdr_on_hdr_filter.effect
+dump e
+backend text none
+backend ep brief
+ep plugins/obs-filters/data/sdr_on_hdr_filter.effect @file:plugins/obs-filters/data/sdr_on_hdr_filter.effect
+destroy e
+echo === plugins/obs-filters/data/sharpness.effect
+backend text full
+backend events off
+effect e plugins/obs-filters/data/sharpness.effect @file:plugins/obs-filters/data/sharpness.effect
+dump e
+backend text none
+backend ep brief
+ep plugins/obs-filters/data/sharpness.effect @file:plugins/obs-filters/data/sharpness.effect
+destroy e

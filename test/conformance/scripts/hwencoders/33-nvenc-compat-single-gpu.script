@@ -1,0 +1,7 @@
+# S-050 nvenc: with a single device, gpu is not migrated even when set.
+ini "[general]\nnvenc_supported=true\nnvenc_devices=1\ndriver_ver=560.1\nnvenc_ver=13.0\ncuda_ver=12.0\n"
+supported
+compat_register
+set int gpu 3
+invoke jim_nvenc create
+has_user device

@@ -1,0 +1,4 @@
+# Example of an area registration file (copy to gen/<area>.sources).
+test/conformance/gen/<area>_runner.c
+libobs/util/<file>.c
+-ljansson

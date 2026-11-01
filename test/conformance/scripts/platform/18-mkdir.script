@@ -1,0 +1,25 @@
+# os_mkdir(path): 0 = created (mode 0755 & umask), 1 = something already exists at that path
+# (file or directory: any EEXIST), -1 = any other failure (missing parent, not a directory...).
+# No path translation: a backslash is an ordinary name character.
+mkdir a
+mkdir a
+info a
+put file.txt x
+mkdir file.txt
+info file.txt
+mkdir missing/child
+exists missing
+mkdir file.txt/child
+mkdir a/b
+mkdir a/b/
+mkdir "name with space"
+mkdir "back\\slash"
+info "back\\slash"
+mkdir ""
+mkdir a/../c
+mkdir ./d
+mkdir ./d
+symlink a lnk
+mkdir lnk
+symlink nowhere dangling
+mkdir dangling

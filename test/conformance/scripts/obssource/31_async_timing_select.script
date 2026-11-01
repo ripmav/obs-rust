@@ -1,0 +1,26 @@
+# Frame selection by timing.  Each tick adds (vtime - previous tick's vtime) to the playback clock last_frame_ts
+# and shows the newest queued frame whose timestamp is <= that clock (older ones are dropped); if no frame is due
+# the previous frame stays (cur=-).  Timestamps in ns.
+kind cam input asyncvideo
+create c cam C
+video c bgra 2 2 1000000000 1 1 0
+video c bgra 2 2 1033333333 1 2 0
+video c bgra 2 2 1066666666 1 3 0
+vtime 5000000000
+tick c 0.016
+astate c
+vtime 5016666666
+tick c 0.016
+astate c
+vtime 5033333333
+tick c 0.016
+astate c
+vtime 5050000000
+tick c 0.016
+astate c
+vtime 5066666666
+tick c 0.016
+astate c
+vtime 5083333333
+tick c 0.016
+astate c

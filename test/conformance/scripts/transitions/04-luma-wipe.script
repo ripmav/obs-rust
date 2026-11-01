@@ -1,0 +1,29 @@
+# CORE: luma wipe: defaults, image selection from luma_wipes/, property list from wipes.json, rendering.
+load quiet
+create w wipe_transition
+fields w
+props w
+props w null
+render w
+# the update call (deferred) re-reads the image
+settings w str:luma_image=circles.png dbl:luma_softness=0.5 bool:luma_invert=1
+tick w
+view 0.3 1 2 1280 720
+render w
+settings w str:luma_image=does-not-exist.png
+tick w
+render w
+# empty name: path is the directory "luma_wipes/" itself
+settings w str:luma_image=
+tick w
+# not a png
+settings w str:luma_image=wipes.json
+tick w
+settings w str:luma_image=cloud.png dbl:luma_softness=-1
+tick w
+destroy w
+# creation with explicit settings, and effect failure
+create w2 wipe_transition str:luma_image=spiral.png dbl:luma_softness=0 bool:luma_invert=1
+destroy w2
+gfx effect_fail=1
+create w3 wipe_transition

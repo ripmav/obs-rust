@@ -1,0 +1,7 @@
+# Audio stream parameters: per-track name/bitrate/sample rate/frame size/padding/channels; codec is shared.
+reset
+args @s4.mkv 0 3 aac "Mix 1" 160 48000 1024 1024 2 "Mix 2" 320 44100 1024 2048 6 "Mix 3" 96 48000 1024 0 1 "" ""
+hdr audio 0 1190
+hdr audio 1 -
+hdr audio 2 1208
+inspect

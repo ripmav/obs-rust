@@ -1,0 +1,21 @@
+# S-045 netif_get_addrs: the bind-address choices (adapter name + address), built from the kernel interface list.
+# Loopback (names "lo" and "lo0" exactly), entries without an address, and non-IP families are skipped.
+reset
+netif_get
+ifa lo v4 127.0.0.1
+ifa lo0 v4 127.0.0.1
+ifa lo v6 ::1
+netif_get
+ifa eth0 v4 192.168.1.20
+ifa eth0 v6 fe80::1
+ifa eth0 other
+ifa eth1 null
+ifa wlan0 v4 10.0.0.5
+ifa lo1 v4 127.0.0.2
+ifa LO v4 127.0.0.3
+ifa "" v4 172.16.0.9
+ifa docker0 v6 2001:db8::5
+netif_get
+# getifaddrs fails: empty result (warning logged)
+ifa_fail
+netif_get

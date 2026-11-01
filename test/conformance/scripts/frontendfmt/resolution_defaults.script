@@ -1,0 +1,13 @@
+# S-048 default canvas / output resolution from monitor size; PRE19 = 1 means upgrade from < 19.0 (keep native size).
+resdef 1920 1080 0
+resdef 1280 720 0
+resdef 2560 1440 0
+resdef 2560 1440 1
+resdef 3840 2160 0
+resdef 3840 2160 1
+resdef 1366 768 0
+resdef 1600 900 0
+resdef 2560 1080 0
+resdef 5120 1440 0
+resdef 1024 768 0
+resdef 7680 4320 1

@@ -1,0 +1,19 @@
+# obs_scripting_unload frees every detached callback and logs how many there were.
+load
+cb_add L0 C0 0
+cb_add L0 C1 0
+cb_add L0 C2 0
+cb_remove C0
+cb_remove C2
+lists
+# C1 is still attached (not detached): not counted
+unload
+load
+cb_add L1 C3 0
+cb_remove C3
+unload
+# nothing detached
+load
+unload
+# unload when not loaded is a no-op
+unload

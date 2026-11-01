@@ -1,0 +1,43 @@
+ev create image_source#1[/g/a.gif] public
+ev image_init /g/a.gif alpha=2
+log debug [image_source: 'a'] loading texture '/g/a.gif'
+ev texture_create 1 2x2 dynamic=1
+ev show image_source#1[/g/a.gif]
+ev activate image_source#1[/g/a.gif]
+ev texture_set_image 1 frame=0
+tick 0 clock=1029999999
+tick 0 clock=1059999998
+ev texture_set_image 1 frame=1
+tick 1 clock=1089999997
+tick 2 clock=1119999996
+ev texture_set_image 1 frame=0
+tick 3 clock=1149999995
+tick 4 clock=1179999994
+ev texture_set_image 1 frame=1
+tick 5 clock=1209999993
+state image file="/g/a.gif" persistent=1 is_slide=0 linear_alpha=0 file_timestamp=1 update_time_elapsed=0.209999993 last_time=1209999993 active=1 restart_gif=0 file_decoded=1 texture_loaded=1
+state image.file loaded=1 cx=2 cy=2 animated=1 texture=1 cur_frame=1 cur_loop=1 cur_time=29999994 mem_usage=564 format=3 alpha_mode=0 space=0
+tick 0 clock=1709999993
+tick 1 clock=2209999993
+tick 2 clock=2709999993
+state image file="/g/a.gif" persistent=1 is_slide=0 linear_alpha=0 file_timestamp=1 update_time_elapsed=0.5 last_time=2709999993 active=1 restart_gif=0 file_decoded=1 texture_loaded=1
+state image.file loaded=1 cx=2 cy=2 animated=1 texture=1 cur_frame=1 cur_loop=2 cur_time=479999994 mem_usage=564 format=3 alpha_mode=0 space=0
+ev hide image_source#1[/g/a.gif]
+ev deactivate image_source#1[/g/a.gif]
+ev texture_set_image 1 frame=0
+tick 0 clock=2725999994
+state image file="/g/a.gif" persistent=1 is_slide=0 linear_alpha=0 file_timestamp=1 update_time_elapsed=0.515999973 last_time=2709999993 active=0 restart_gif=0 file_decoded=1 texture_loaded=1
+state image.file loaded=1 cx=2 cy=2 animated=1 texture=1 cur_frame=0 cur_loop=0 cur_time=0 mem_usage=564 format=3 alpha_mode=0 space=0
+ev show image_source#1[/g/a.gif]
+ev activate image_source#1[/g/a.gif]
+ev texture_set_image 1 frame=0
+tick 0 clock=2741999995
+state image file="/g/a.gif" persistent=1 is_slide=0 linear_alpha=0 file_timestamp=1 update_time_elapsed=0.531999946 last_time=2741999995 active=1 restart_gif=0 file_decoded=1 texture_loaded=1
+state image.file loaded=1 cx=2 cy=2 animated=1 texture=1 cur_frame=0 cur_loop=0 cur_time=0 mem_usage=564 format=3 alpha_mode=0 space=0
+ev texture_destroy 1
+ev image_init /g/b.gif alpha=2
+log debug [image_source: 'a'] loading texture '/g/b.gif'
+ev texture_create 2 2x2 dynamic=1
+tick 0 clock=2751999995
+state image file="/g/b.gif" persistent=1 is_slide=0 linear_alpha=0 file_timestamp=1 update_time_elapsed=0.00999999978 last_time=2751999995 active=1 restart_gif=0 file_decoded=1 texture_loaded=1
+state image.file loaded=1 cx=2 cy=2 animated=1 texture=1 cur_frame=0 cur_loop=0 cur_time=10000000 mem_usage=74 format=3 alpha_mode=0 space=0

@@ -1,0 +1,42 @@
+# vec2: component-wise arithmetic on two floats, no lane tricks (S-009-R10..R13).
+vec2 a 1 2
+vec2 b 4 -6
+call s vec2_add a b
+call s vec2_sub a b
+call s vec2_mul a b
+call s vec2_div b a
+call s vec2_addf a 0.5
+call s vec2_subf a 0.5
+call s vec2_mulf a 3
+call s vec2_divf b 2
+call s vec2_neg b
+call s vec2_abs b
+vec2 f 1.5 -1.5
+call s vec2_floor f
+call s vec2_ceil f
+vec2 g -0.25 2
+call s vec2_floor g
+call s vec2_ceil g
+call d vec2_dot a b
+call d vec2_len a
+vec2 p3 3 4
+call d vec2_len p3
+call d vec2_dist a p3
+call d vec2_dist p3 p3
+call s vec2_norm p3
+vec2 tiny 1e-30 0
+call s vec2_norm tiny
+# divide by zero follows IEEE
+vec2 z 0 0
+call s vec2_div a z
+call s vec2_divf a 0
+call s vec2_div z z
+# min / max (component-wise and scalar)
+call s vec2_min a b
+call s vec2_max a b
+call s vec2_minf a 1.5
+call s vec2_maxf a 1.5
+# in-place use: destination aliases source
+call a vec2_add a b
+call a vec2_mulf a 2
+call a vec2_neg a

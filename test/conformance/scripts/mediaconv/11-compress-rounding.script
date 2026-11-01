@@ -1,0 +1,7 @@
+# Chroma averaging: floor((p00 + p01 + p10 + p11) / 4), computed on sums up to 1020, so 255*4 -> 255 exactly.
+# U block 0: 1+0+1+0 = 2  -> 0 ;   V block 0: 2+1+1+1 = 5 -> 1  (truncation, never rounded to nearest)
+# U block 1: 255*4 = 1020 -> 255 ;  V block 1: 255+254+255+254 = 1018 -> 254 (1018/4 = 254.5 -> 254)
+# The X byte (ff / 00 / 80 / 01) never influences any output byte.
+compress i420 0 2 16 4 2 2 2 1 1 010a02ff000b01ffff0cffffff0dfe000114018000150180ff16ff80ff17fe01
+compress nv12 0 2 16 4 4 0 2 1 0 010a02ff000b01ffff0cffffff0dfe000114018000150180ff16ff80ff17fe01
+compress i444 0 2 16 4 4 4 2 2 2 010a02ff000b01ffff0cffffff0dfe000114018000150180ff16ff80ff17fe01

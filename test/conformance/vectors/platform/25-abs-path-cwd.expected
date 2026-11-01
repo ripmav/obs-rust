@@ -1,0 +1,42 @@
+mkdir sub 0
+mkdir sub/deeper 0
+abs_path . rc=nonzero str="<W>" rc_is_len=1
+abs_path sub rc=nonzero str="<W>/sub" rc_is_len=1
+abs_path sub/ rc=nonzero str="<W>/sub" rc_is_len=1
+abs_path ./sub/../sub/./deeper rc=nonzero str="<W>/sub/deeper" rc_is_len=1
+abs_path sub/file.txt rc=nonzero str="<W>/sub/file.txt" rc_is_len=1
+abs_path sub/deeper/../file.txt rc=nonzero str="<W>/sub/file.txt" rc_is_len=1
+abs_path nosuch rc=0
+abs_path sub/nosuch rc=0
+abs_path  rc=0
+abs_path @null rc=0
+abs_path sub size0 rel_rc=4
+abs_path nosuch size0 rc=0
+abs_path sub rc=0
+abs_path_ptr sub/file.txt "<W>/sub/file.txt"
+abs_path_ptr nosuch @null
+abs_path_ptr . "<W>"
+abs_path_ptr @null @null
+symlink 1
+symlink 1
+symlink 1
+abs_path link rc=nonzero str="<W>/sub/deeper" rc_is_len=1
+abs_path sub/flink rc=nonzero str="<W>/sub/file.txt" rc_is_len=1
+abs_path dead rc=0
+abs_path_ptr link "<W>/sub/deeper"
+abs_path sub truncated rel_rc=4 buflen=4
+abs_path sub truncated rel_rc=4 buflen=0
+getcwd size=4096 "<W>"
+chdir sub 0
+getcwd size=4096 "<W>/sub"
+abs_path . rc=nonzero str="<W>/sub" rc_is_len=1
+abs_path file.txt rc=nonzero str="<W>/sub/file.txt" rc_is_len=1
+chdir deeper 0
+getcwd size=4096 "<W>/sub/deeper"
+chdir ../.. 0
+getcwd size=4096 "<W>"
+chdir nosuch -1
+chdir sub/file.txt -1
+chdir @null -1
+getcwd size=4096 "<W>"
+getcwd size=1 @null

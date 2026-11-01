@@ -1,0 +1,20 @@
+# Edge cases of the timestamp path and of non-fatal write errors.
+reset
+rmfile @te.mkv
+echo --- negative values: division truncates toward zero, rounding half away from zero (matroska then shifts the whole stream by +33 ms so the first timestamp is 0)
+args @te.mkv 1 0 h264 6000 640 360 1 1 1 1 1 0 30000 1001 0 "" ""
+hdr video 0 0164001fffe100046764001f01000468ce3c80
+frame video 0 1 -1001 -1001 2 a0
+frame video 0 0 -1 -1 2 a1
+frame video 0 0 2002 2002 2 a2
+run
+probe @te.mkv
+echo --- pts below dts: the muxer rejects the packet with EINVAL, which is skipped silently; later packets still go out
+reset
+args @te.mkv 1 0 h264 6000 640 360 1 1 1 1 1 0 30 1 0 "" ""
+hdr video 0 0164001fffe100046764001f01000468ce3c80
+frame video 0 1 0 0 2 a0
+frame video 0 0 1 5 2 a1
+frame video 0 0 2 2 2 a2
+run
+probe @te.mkv

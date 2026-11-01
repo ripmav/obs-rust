@@ -1,0 +1,40 @@
+open fin ok
+pos -> 0
+read 4 -> 4 data=00010203
+pos -> 4
+seek cur 2 -> 6
+read 3 -> 3 data=060708
+pos -> 9
+seek end -2 -> 9
+read 10 -> 2 data=090a
+read 10 -> 0 data=-
+pos -> 11
+seek start 0 -> 0
+read 0 -> 0 data=-
+read @null 3 -> 0 data=-
+read 11 -> 11 data=000102030405060708090a
+read 1 -> 0 data=-
+seek start 3 -> 3
+pos -> 3
+seek cur -1 -> 2
+pos -> 2
+seek end 0 -> 11
+pos -> 11
+seek end 5 -> 16
+pos -> 16
+read 1 -> 0 data=-
+seek start 20 -> 20
+pos -> 20
+read 1 -> 0 data=-
+seek start -1 -> -1
+pos -> 20
+seek cur -100 -> -1
+pos -> 20
+write aa 1 -> 0
+serialize_w aa 1 -> 0
+serialize_r 2 -> 0 data=-
+open fin fail
+open fin ok
+read 4 -> 0 data=-
+pos -> 0
+seek end 0 -> 0

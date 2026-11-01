@@ -1,0 +1,22 @@
+# image_source: settings, create-time load, size, render (CORE).
+info image_source
+fs_file /i/a.png 100
+img /i/a.png 64 32
+create a image_source {"file":"/i/a.png"}
+state a
+size a
+render a
+colorspace a
+create b image_source {"file":"/i/a.png","linear_alpha":true}
+state b
+# missing file: load fails, warning, texture_loaded still set
+create c image_source {"file":"/i/none.png"}
+state c
+size c
+render c
+# empty file name: nothing loaded at all
+create d image_source
+state d
+defaults image_source
+destroy a
+destroy b

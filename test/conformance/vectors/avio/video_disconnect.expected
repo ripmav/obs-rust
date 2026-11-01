@@ -1,0 +1,65 @@
+> vopen v I420 30 1 16 8 2
+= 0
+> vconnect v a 1
+= 1
+> vconnect v a 2
+= 1
+> vconnect v b 3
+= 1
+> vdisconnect2 v a 2
+= 1
+> vdisconnect2 v a 2
+= 0
+> vdisconnect2 v b 99
+= 0
+> vdisconnect_nocb v
+= 0
+> vinputs v
+input0 cb=a param=1 div=1 ctr=0 scaler=0 conv=(1 16x8 r0 cs0) cur=0
+input1 cb=b param=3 div=1 ctr=0 scaler=0 conv=(1 16x8 r0 cs0) cur=0
+> vstate v
+active=1 stopped=0 skipped=0 total=0
+> vdisconnect2 v a 1
+= 1
+> vstate v
+active=1 stopped=0 skipped=0 total=0
+> vdisconnect v b 3
+= void
+> vstate v
+active=0 stopped=0 skipped=0 total=0
+> vinputs v
+no inputs
+> vconnect v a 1
+= 1
+> vgate on
+> vlock v 1 1 0x01
+= 1 slot=0
+> vunlock_async v
+= posted
+> venter
+vcb a param=1 ts=1 ls0=16 d0=015a src=cache0
+= entered
+> vlock v 1 2 0x02
+= 1 slot=1
+> vunlock_async v
+= posted
+> vlock v 1 3 0x03
+= 0 slot=-1
+> vlock v 1 4 0x04
+= 0 slot=-1
+> vgate off
+> vrelease 1
+> vwait 2
+vcb a param=1 ts=2 ls0=16 d0=025a src=cache1
+vcb a param=1 ts=33333335 ls0=16 d0=025a src=cache1
+vcb a param=1 ts=66666668 ls0=16 d0=025a src=cache1
+= done
+> vstate v
+active=1 stopped=0 skipped=2 total=4
+> vdisconnect2 v a 1
+log info Video stopped, number of skipped frames due to encoding lag: 2/4 (50.0%)
+= 1
+> vstate v
+active=0 stopped=0 skipped=2 total=4
+> vclose v
+= closed

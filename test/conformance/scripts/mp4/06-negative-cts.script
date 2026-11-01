@@ -1,0 +1,26 @@
+# S-022 MP4_USE_NEGATIVE_CTS: same stream as 05 but ctts/trun use version 1 with the first sample's
+# (pts - dts) subtracted (offsets 0 2 -1 -1 2 -1 -1), the edit list media_time is 0, and the
+# ftyp brands become iso4 (final) / iso6 (fragmented).
+enc v video codec h264 width 640 height 360 fps 30/1 extra 000000016742c01ed900a047fe880000000168ce3c80
+mux mp4 negcts
+pkt v 0 -2 1 gen:20
+pkt v 3 -1 0 gen:12
+pkt v 1 0 0 gen:13
+pkt v 2 1 0 gen:14
+pkt v 6 2 0 gen:15
+pkt v 4 3 0 gen:16
+pkt v 5 4 0 gen:17
+finalise
+dump
+echo --- the offset subtracted is the one of the very first sample and survives fragments
+mux mp4 negcts
+pkt v 0 -2 1 gen:20
+pkt v 3 -1 0 gen:12
+pkt v 1 0 0 gen:13
+pkt v 6 2 1 gen:15
+pkt v 4 3 0 gen:16
+pkt v 5 4 0 gen:17
+pkt v 9 5 0 gen:17
+pkt v 7 6 0 gen:17
+finalise
+dump

@@ -1,0 +1,39 @@
+ev create slideshow_v2#1 public
+ev hotkey_register slideshow_v2#1 id=1 name=SlideShow.PlayPause desc=SlideShow.PlayPause
+ev hotkey_register slideshow_v2#1 id=2 name=SlideShow.Restart desc=SlideShow.Restart
+ev hotkey_register slideshow_v2#1 id=3 name=SlideShow.Stop desc=SlideShow.Stop
+ev hotkey_register slideshow_v2#1 id=4 name=SlideShow.NextSlide desc=SlideShow.NextSlide
+ev hotkey_register slideshow_v2#1 id=5 name=SlideShow.PreviousSlide desc=SlideShow.PreviousSlide
+ev create fade_transition#2 private
+ev create image_source#3[/s/x/a.png] private
+ev task_queued
+ev create image_source#4[C:\pics\b.png] private
+ev task_queued
+ev tr_size fade_transition#2 1920x1080
+ev tr_align fade_transition#2 0
+ev tr_scale fade_transition#2 1
+ev tr_start fade_transition#2 mode=0 ms=700 dest=image_source#3[/s/x/a.png] -> started
+ev signal media_started slideshow_v2#1
+tick 0 clock=16000001
+prop playback_behavior type=list desc="SlideShow.PlaybackBehavior" combo=2 format=3 count=3
+  item 0 name=SlideShow.PlaybackBehavior.AlwaysPlay value=always_play
+  item 1 name=SlideShow.PlaybackBehavior.StopRestart value=stop_restart
+  item 2 name=SlideShow.PlaybackBehavior.PauseUnpause value=pause_unpause
+prop slide_mode type=list desc="SlideShow.SlideMode" combo=2 format=3 count=2
+  item 0 name=SlideShow.SlideMode.Auto value=mode_auto
+  item 1 name=SlideShow.SlideMode.Manual value=mode_manual
+prop transition type=list desc="SlideShow.Transition" combo=2 format=3 count=4
+  item 0 name=SlideShow.Transition.Cut value=cut
+  item 1 name=SlideShow.Transition.Fade value=fade
+  item 2 name=SlideShow.Transition.Swipe value=swipe
+  item 3 name=SlideShow.Transition.Slide value=slide
+prop slide_time type=int desc="SlideShow.SlideTime" min=50 max=3600000 step=50 suffix=" ms"
+prop transition_speed type=int desc="SlideShow.TransitionSpeed" min=0 max=3600000 step=50 suffix=" ms"
+prop playback_mode type=list desc="SlideShow.PlaybackMode" combo=2 format=3 count=3
+  item 0 name=SlideShow.PlaybackMode.Once value=once
+  item 1 name=SlideShow.PlaybackMode.Loop value=loop
+  item 2 name=SlideShow.PlaybackMode.Random value=random
+prop hide type=bool desc="SlideShow.HideWhenDone"
+prop use_custom_size type=list desc="SlideShow.CustomSize" combo=1 format=3 count=1
+  item 0 name=1280x720 value=1280x720
+prop files type=editable_list desc="SlideShow.Files" listtype=1 filter="Image files (*.bmp *.tga *.png *.jpeg *.jpg *.gif *.webp)" default="C:/pics/"

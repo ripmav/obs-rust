@@ -1,0 +1,23 @@
+fu_run local=/L cache=/C temp=/C/.temp url=http://srv/u/package.json
+fs read /L/package.json -> ok
+fs read /C/package.json -> missing
+fs read /C/meta.json -> missing
+fs copy /L/package.json -> /C/.temp/package.json : ok
+fs unlink /C/package.json : fail
+fs rename /C/.temp/package.json -> /C/package.json : ok
+http GET http://srv/u/package.json "User-Agent: UA"
+fs write /Cmeta.json len=17
+fs rmdir /C/.temp
+fu_run done
+fu_ls
+  /C/package.json (24 bytes)
+  /Cmeta.json (17 bytes)
+  /L/package.json (24 bytes)
+fu_run local=/L cache=/C temp=/C/.temp url=http://srv/u/package.json
+fs read /L/package.json -> ok
+fs read /C/package.json -> ok
+fs read /C/meta.json -> missing
+http GET http://srv/u/package.json "User-Agent: UA"
+fs write /Cmeta.json len=17
+fs rmdir /C/.temp
+fu_run done

@@ -1,0 +1,153 @@
+> trace 0
+> gs_create g
+ret 0 created
+> gs_enter_context g
+> trace 1
+> gs_vertexshader_create vs-text vs.hlsl > vs
+  dev device_vertexshader_create text_len=7 file="vs.hlsl"
+ret #6
+> gs_pixelshader_create ps-text ps.hlsl > ps
+  dev device_pixelshader_create text_len=7 file="ps.hlsl"
+ret #7
+== shader creation passes the text and file name; the error string pointer is forwarded
+> gs_vertexshader_create - x.hlsl
+log debug gs_vertexshader_create: Null 'shader' parameter
+ret null
+> ret shader_error "line 3: syntax error"
+> gs_vertexshader_create bad bad.hlsl
+  dev device_vertexshader_create text_len=3 file="bad.hlsl"
+ret #8
+error "line 3: syntax error"
+> ret shader_error -
+> fail device_vertexshader_create 1
+> gs_vertexshader_create bad bad.hlsl
+  dev device_vertexshader_create text_len=3 file="bad.hlsl"
+ret null
+> fail device_vertexshader_create 0
+== queries
+> gs_shader_get_num_params vs
+  dev gs_shader_get_num_params shader=#6
+ret 0
+> ret gs_shader_get_num_params 3
+> gs_shader_get_num_params vs
+  dev gs_shader_get_num_params shader=#6
+ret 3
+> gs_shader_get_param_by_idx vs 1 > p
+  dev gs_shader_get_param_by_idx shader=#6 param=1
+ret #9
+> gs_shader_get_param_by_name vs ViewProj > p2
+  dev gs_shader_get_param_by_name shader=#6 name="ViewProj"
+ret #10
+> gs_shader_get_param_by_name vs -
+log debug gs_shader_get_param_by_name: Null 'name' parameter
+ret null
+> gs_shader_get_param_by_name - x
+log debug gs_shader_get_param_by_name: Null 'shader' parameter
+ret null
+> gs_shader_get_viewproj_matrix vs
+  dev gs_shader_get_viewproj_matrix shader=#6
+ret #11
+> gs_shader_get_world_matrix vs
+  dev gs_shader_get_world_matrix shader=#6
+ret #12
+> gs_shader_get_viewproj_matrix -
+log debug gs_shader_get_viewproj_matrix: Null 'shader' parameter
+ret null
+> gs_shader_get_world_matrix -
+log debug gs_shader_get_world_matrix: Null 'shader' parameter
+ret null
+> gs_shader_get_num_params -
+log debug gs_shader_get_num_params: Null 'shader' parameter
+ret 0
+> gs_shader_get_param_by_idx - 0
+log debug gs_shader_get_param_by_idx: Null 'shader' parameter
+ret null
+> gs_shader_get_param_info p
+  dev gs_shader_get_param_info param=#9 info=ptr
+info type=0 name=null
+> gs_shader_get_param_info p null
+log debug gs_shader_get_param_info: Null 'info' parameter
+> gs_shader_get_param_info -
+log debug gs_shader_get_param_info: Null 'param' parameter
+info type=0 name=null
+== setters
+> gs_shader_set_bool p 1
+  dev gs_shader_set_bool param=#9 val=true
+> gs_shader_set_float p 1.5
+  dev gs_shader_set_float param=#9 val=1.5
+> gs_shader_set_int p -7
+  dev gs_shader_set_int param=#9 val=-7
+> gs_shader_set_vec2 p 1 2
+  dev gs_shader_set_vec2 param=#9 v=(1,2)
+> gs_shader_set_vec3 p 1 2 3
+  dev gs_shader_set_vec3 param=#9 v=(1,2,3)
+> gs_shader_set_vec4 p 1 2 3 4
+  dev gs_shader_set_vec4 param=#9 v=(1,2,3,4)
+> gs_shader_set_matrix3 p
+  dev gs_shader_set_matrix3 param=#9 m=0,0,0,0,0,0,0,0,0,0,0,0
+> gs_shader_set_matrix4 p 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1
+  dev gs_shader_set_matrix4 param=#9 m=1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1
+> gs_texture_create 4 4 GS_RGBA 1 0 > tex
+  dev device_texture_create w=4 h=4 fmt=3 levels=1 data=null flags=0
+ret #13
+> gs_shader_set_texture p tex
+  dev gs_shader_set_texture param=#9 val=#13
+> gs_shader_set_texture p -
+  dev gs_shader_set_texture param=#9 val=null
+> gs_shader_set_val p 0102ff
+  dev gs_shader_set_val param=#9 size=3 bytes=0102ff
+> gs_shader_set_default p
+  dev gs_shader_set_default param=#9
+> gs_samplerstate_create 0 0 0 0 1 0 > smp
+  dev device_samplerstate_create filter=0 u=0 v=0 w=0 aniso=1 border=0x00000000
+ret #14
+> gs_shader_set_next_sampler p smp
+  dev gs_shader_set_next_sampler param=#9 sampler=#14
+> gs_shader_set_next_sampler p -
+  dev gs_shader_set_next_sampler param=#9 sampler=null
+== NULL param: ignored with debug log
+> gs_shader_set_bool - 1
+log debug gs_shader_set_bool: Null 'param' parameter
+> gs_shader_set_float - 1
+log debug gs_shader_set_float: Null 'param' parameter
+> gs_shader_set_int - 1
+log debug gs_shader_set_int: Null 'param' parameter
+> gs_shader_set_vec2 - 1 2
+log debug gs_shader_set_vec2: Null 'param' parameter
+> gs_shader_set_vec3 - 1 2 3
+log debug gs_shader_set_vec3: Null 'param' parameter
+> gs_shader_set_vec4 - 1 2 3 4
+log debug gs_shader_set_vec4: Null 'param' parameter
+> gs_shader_set_matrix3 -
+log debug gs_shader_set_matrix3: Null 'param' parameter
+> gs_shader_set_matrix4 - 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1
+log debug gs_shader_set_matrix4: Null 'param' parameter
+> gs_shader_set_texture - tex
+log debug gs_shader_set_texture: Null 'param' parameter
+> gs_shader_set_val - 00
+log debug gs_shader_set_val: Null 'param' parameter
+> gs_shader_set_default -
+log debug gs_shader_set_default: Null 'param' parameter
+> gs_shader_set_next_sampler - smp
+log debug gs_shader_set_next_sampler: Null 'param' parameter
+== NULL value pointer for the by-pointer setters
+> gs_shader_set_vec2_null p
+log debug gs_shader_set_vec2: Null 'val' parameter
+== loading shaders
+> gs_load_vertexshader vs
+  dev device_load_vertexshader shader=#6
+> gs_load_pixelshader ps
+  dev device_load_pixelshader shader=#7
+> gs_get_vertex_shader
+  dev device_get_vertex_shader
+ret #6
+> gs_get_pixel_shader
+  dev device_get_pixel_shader
+ret #7
+> gs_load_vertexshader -
+  dev device_load_vertexshader shader=null
+> gs_get_vertex_shader
+  dev device_get_vertex_shader
+ret null
+> gs_shader_destroy vs
+  dev gs_shader_destroy shader=#6

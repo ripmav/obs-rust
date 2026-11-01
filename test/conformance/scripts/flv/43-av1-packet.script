@@ -1,0 +1,68 @@
+# S-021 obs_parse_av1_packet (rtmp-av1.c): converts an encoder packet's OBUs into the form sent
+# over RTMP/FLV. Temporal delimiter (2), redundant frame header (7) and tile list (8) OBUs are
+# dropped; all other OBUs are copied unchanged (with their headers). Frame (6) and frame header (3)
+# OBUs set keyframe/priority from the first payload byte:
+#   bit7 show_existing_frame -> nothing set (and a later frame OBU may still set it);
+#   bits6-5 frame_type: 0 KEY -> keyframe=true, priority 3; 1 INTER -> priority 1 (show_frame=1) or 2;
+#   2 INTRA_ONLY -> 3; 3 SWITCH -> 2.   bit4 = show_frame.
+# If the packet already has a non-zero priority nothing is computed. drop_priority := priority.
+# A damaged OBU ends the scan silently: the OBUs before it are kept. The output also reports
+# the reference count word stored in front of the data (refs=1) and whether the data is a fresh copy.
+# Command: av1_packet DATA [PRIORITY [KEYFRAME]]
+echo "frame-types"
+# KEY frame, show_frame=1 (0x10)
+av1_packet 1200320310aabb
+# KEY frame, show_frame=0 (0x00)
+av1_packet 320300aabb
+# INTER frame shown (0x30)
+av1_packet 320330aabb
+# INTER frame not shown (0x20)
+av1_packet 320320aabb
+# INTRA_ONLY (0x50)
+av1_packet 320350aabb
+# INTRA_ONLY not shown (0x40)
+av1_packet 320340aabb
+# SWITCH (0x70)
+av1_packet 320370aabb
+# show_existing_frame=1 (0x80+): nothing computed
+av1_packet 320390aabb
+# frame header OBU (3) is also inspected
+av1_packet 1a0110
+# show_existing frame header followed by a key frame OBU: the second one sets keyframe
+av1_packet 1a0190320310aabb
+# key frame first then inter: the first one wins
+av1_packet 320310aabb320330aabb
+# inter first then key frame: the first one wins (keyframe stays false)
+av1_packet 320330aabb320310aabb
+echo "existing-priority-and-keyframe-flag"
+# priority 2 given: nothing computed, keyframe stays as given (0)
+av1_packet 320310aabb 2
+# priority 2 and keyframe=1 given
+av1_packet 320330aabb 2 1
+# priority 0, keyframe=1 given with an inter frame: keyframe stays 1
+av1_packet 320330aabb 0 1
+echo "dropped-and-kept-obus"
+# TD, sequence header, metadata, key frame, padding: only the TD is dropped
+av1_packet 12000a0b00000042abbfc37709d0012a050123456789320310aabb7a0100
+# redundant frame header (7) and tile list (8) dropped
+av1_packet 320310aabb3a011042020102
+# tile group (4) kept
+av1_packet 320310aabb22020102
+# only dropped OBUs: empty output
+av1_packet 12003a0110
+# OBU with extension header kept as is
+av1_packet 36200210aa
+# OBU without size field (last OBU)
+av1_packet 12003010aabb
+echo "damaged-input-ends-the-scan"
+# key frame then an OBU with the forbidden bit: output keeps the frame
+av1_packet 320310aabb8a0101
+# key frame then an OBU with size beyond the data
+av1_packet 320310aabb327f01
+# first OBU damaged: empty output
+av1_packet 8a0101
+echo "D-9-frame-obu-with-empty-payload-reads-one-byte-past-the-end"
+# frame OBU of size 0 as the last OBU
+av1_packet 3200
+# empty input
+av1_packet -

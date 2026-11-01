@@ -1,0 +1,35 @@
+# Moving, scaling and rotating a group moves its children rigidly (children are stored relative to the group;
+# the group's draw transform is applied on top). Children's own getters report group-local values.
+source s 200 100
+scene main
+add main s a
+add main s b
+pos a 0 0
+pos b 400 200
+group main g a b
+update main
+print g
+get g
+echo -- move the group
+pos g 500 500
+update main
+print g
+get a
+print a
+echo -- scale the group 2x
+scale g 2 2
+update main
+print g
+print a
+echo -- rotate 90
+rot g 90
+update main
+print g
+print a
+print b
+echo -- flip
+scale g -2 2
+rot g 0
+update main
+print g
+print a

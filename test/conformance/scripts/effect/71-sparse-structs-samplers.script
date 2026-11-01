@@ -1,0 +1,46 @@
+# CORE: structs and sampler_state blocks in the shader parser (see 10-structs / 11-samplers for the effect-parser
+# versions). Differences: a sampler state value is exactly ONE token (the effect parser concatenates), followed by ';'.
+# shader_sampler_convert turns the textual states into a gs_sampler_info: states Filter, AddressU/V/W, MaxAnisotropy,
+# BorderColor are recognised case-insensitively; values go through get_sample_filter / get_address_mode.
+# BorderColor is parsed with strtol(value + 1, 16): the FIRST character of the single value token is skipped (see
+# 80-quirks for why this makes "#RRGGBB" values impossible). A sampler without Filter has filter POINT (the zeroed
+# default), CLAMP addressing and max_anisotropy 1.
+backend text none
+sparse s1 "struct A { float x; float2 y : TEXCOORD0; };"
+sparse s2 "struct A { };"
+sparse s3 "struct A { float x; }; struct B { A a; float y; };"
+sparse s4 "struct A { float x; float y };"
+sparse s5 "struct A { float ; float y; };"
+sparse s6 "struct { float x; };"
+sparse s7 "struct A { float x : 1; float y; };"
+sparse s8 "struct A { float x[2]; float z; };"
+echo --- samplers
+sparse m1 "sampler_state s { Filter = Linear; AddressU = Wrap; AddressV = Mirror; AddressW = Border; MaxAnisotropy = 8; BorderColor = xFF336699; };"
+sparse m2 "sampler_state s { };"
+sparse m3 "sampler_state s { Filter = Anisotropy; MaxAnisotropy = 16; };"
+sparse m4 "sampler_state s { filter = point; addressu = REPEAT; ADDRESSV = none; };"
+sparse m5 "sampler_state s { Filter = MIN_MAG_MIP_POINT; };"
+sparse m6 "sampler_state s { Filter = MIN_MAG_POINT_MIP_LINEAR; };"
+sparse m7 "sampler_state s { Filter = MIN_POINT_MAG_LINEAR_MIP_POINT; };"
+sparse m8 "sampler_state s { Filter = MIN_POINT_MAG_MIP_LINEAR; };"
+sparse m9 "sampler_state s { Filter = MIN_LINEAR_MAG_MIP_POINT; };"
+sparse m10 "sampler_state s { Filter = MIN_LINEAR_MAG_POINT_MIP_LINEAR; };"
+sparse m11 "sampler_state s { Filter = MIN_MAG_LINEAR_MIP_POINT; };"
+sparse m12 "sampler_state s { Filter = SomethingElse; AddressU = Bogus; };"
+sparse m13 "sampler_state s { MaxAnisotropy = abc; BorderColor = 0; };"
+sparse m14 "sampler_state s { AddressU = MirrorOnce; AddressV = Clamp; };"
+sparse m15 "sampler_state s { Filter = Linear; Filter = Point; };"
+sparse m16 "sampler_state s { BorderColor = x80FFFFFF; };"
+sparse m17 "sampler_state s { BorderColor = FF; };"
+sparse m18 "sampler_state s { MaxAnisotropy = -3; };"
+sparse m19 "sampler_state s { Unknown = 3; };"
+echo --- sampler errors
+sparse e1 "sampler_state"
+sparse e2 "sampler_state s { Filter = Linear }"
+sparse e3 "sampler_state s { Filter = a b; };"
+sparse e4 "sampler_state s { Filter = ; };"
+sparse e5 "sampler_state s { Filter Linear; };"
+sparse e6 "sampler_state s { Filter = Linear; "
+sparse e7 "sampler_state s { Filter = Linear; ; };"
+sparse e8 "sampler_state s { 3 = 3; };"
+sparse e9 "sampler_state s { Filter = Linear; }"

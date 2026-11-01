@@ -1,0 +1,57 @@
+# S-022 metadata: movie-level udta. MP4 flavor: udta/meta/(hdlr 'mdir' + ilst with '(c)too' data atom)
+# or, with the MDTA flag, hdlr 'mdta' + keys + ilst indexed by key number. MOV flavor: a single
+# '(c)swr' string atom in udta (no meta) unless the MDTA flag is set. Track-level udta carries 'name'
+# (encoder name), and with the ENCODER_INFO flag '(c)enc' (encoder id) and 'json' (settings with
+# defaults). All strings contain the version text OBS Studio (<version>).
+enc a audio codec aac rate 48000 extra 1190 name "Mic/Aux" id ffmpeg_aac bitrate 160
+version 31.0.0-beta1
+mux mp4 skipfin
+pkt a 0 0 1 gen:10
+finalise
+tree
+hex
+echo --- MDTA key/value
+mux mp4 skipfin mdta
+pkt a 0 0 1 gen:10
+finalise
+tree
+hex
+echo --- encoder info
+mux mp4 skipfin encinfo
+pkt a 0 0 1 gen:10
+finalise
+tree
+hex
+echo --- MOV flavor
+mux mov skipfin
+pkt a 0 0 1 gen:10
+finalise
+tree
+hex
+mux mov skipfin mdta
+pkt a 0 0 1 gen:10
+finalise
+tree
+hex
+echo --- NULL encoder name: no name atom; id NULL, settings without any key
+reset
+enc a audio codec aac rate 48000 extra 1190 name - id - settings empty
+mux mp4 skipfin encinfo
+pkt a 0 0 1 gen:10
+finalise
+tree
+hex
+echo --- empty name string gives an empty atom; two settings keep insertion order in json
+reset
+enc a audio codec aac rate 48000 extra 1190 name "" id enc1 bitrate 96 setting_str mode=cbr
+mux mp4 skipfin encinfo
+pkt a 0 0 1 gen:10
+finalise
+hex
+echo --- settings none: no json atom
+reset
+enc a audio codec aac rate 48000 extra 1190 settings none
+mux mp4 skipfin encinfo
+pkt a 0 0 1 gen:10
+finalise
+hex

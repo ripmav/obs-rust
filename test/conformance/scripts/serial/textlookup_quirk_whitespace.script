@@ -1,0 +1,14 @@
+# QUIRK Q-5: whitespace is a token. Spaces around '=' or in front of a name make the
+# value (or name) the single whitespace character instead of what the author meant.
+# `K = "v"` stores K -> " ". `  K="v"` stores " " -> "K". `H<TAB>=<TAB>"t"` stores H -> TAB.
+fputs tw-1 "K = \"v\"\n  L=\"w\"\nH\t=\t\"t\"\nM= \"x\"\nN =\"y\"\nO=\"ok\"\n"
+tl_create 0 tw-1
+tl_get 0 K
+tl_get 0 L
+tl_get 0 " "
+tl_get 0 H
+tl_get 0 M
+tl_get 0 N
+tl_get 0 O
+tl_destroy 0
+funlink tw-1

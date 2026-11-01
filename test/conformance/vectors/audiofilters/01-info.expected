@@ -1,0 +1,22 @@
+info gain id=gain_filter version=0 type=1 flags=0x2 name="Gain"
+  has create=1 destroy=1 update=1 filter_audio=1 filter_video=0 video_tick=0 filter_remove=0 get_defaults=1 get_properties=1
+info invert id=invert_polarity_filter version=0 type=1 flags=0x2 name="InvertPolarity"
+  has create=1 destroy=1 update=0 filter_audio=1 filter_video=0 video_tick=0 filter_remove=0 get_defaults=0 get_properties=0
+info compressor id=compressor_filter version=0 type=1 flags=0x2 name="Compressor"
+  has create=1 destroy=1 update=1 filter_audio=1 filter_video=0 video_tick=1 filter_remove=0 get_defaults=1 get_properties=1
+info limiter id=limiter_filter version=0 type=1 flags=0x2 name="Limiter"
+  has create=1 destroy=1 update=1 filter_audio=1 filter_video=0 video_tick=0 filter_remove=0 get_defaults=1 get_properties=1
+info expander id=expander_filter version=0 type=1 flags=0x2 name="Expander"
+  has create=1 destroy=1 update=1 filter_audio=1 filter_video=0 video_tick=0 filter_remove=0 get_defaults=1 get_properties=1
+info upward id=upward_compressor_filter version=0 type=1 flags=0x2 name="Upward.Compressor"
+  has create=1 destroy=1 update=1 filter_audio=1 filter_video=0 video_tick=0 filter_remove=0 get_defaults=1 get_properties=1
+info gate id=noise_gate_filter version=0 type=1 flags=0x2 name="NoiseGate"
+  has create=1 destroy=1 update=1 filter_audio=1 filter_video=0 video_tick=0 filter_remove=0 get_defaults=1 get_properties=1
+info delay id=async_delay_filter version=0 type=1 flags=0x5 name="AsyncDelayFilter"
+  has create=1 destroy=1 update=1 filter_audio=0 filter_video=1 video_tick=0 filter_remove=1 get_defaults=0 get_properties=1
+info eq id=basic_eq_filter version=0 type=1 flags=0x2 name="3BandEq"
+  has create=1 destroy=1 update=1 filter_audio=1 filter_video=0 video_tick=0 filter_remove=0 get_defaults=1 get_properties=1
+info ns id=noise_suppress_filter version=0 type=1 flags=0x402 name="NoiseSuppress"
+  has create=1 destroy=1 update=1 filter_audio=1 filter_video=0 video_tick=0 filter_remove=0 get_defaults=1 get_properties=1
+info ns2 id=noise_suppress_filter version=2 type=1 flags=0x2 name="NoiseSuppress"
+  has create=1 destroy=1 update=1 filter_audio=1 filter_video=0 video_tick=0 filter_remove=0 get_defaults=1 get_properties=1

@@ -1,0 +1,46 @@
+# Reading text from a file (non-log mode): UTF-8 -> wide chars, CR removed, truncation at NUL, UTF-8 BOM kept as
+# U+FEFF, empty file, invalid UTF-8; missing/empty path -> single space + warning (S-038-R83..R92).
+events off
+reset
+ascii 5 8 0 8 384
+font "Sans Serif" - 0 p/sans
+load
+create s 2
+setfont s "Sans Serif" - 20 0
+set s from_file true
+file a.txt "hello\r\nworld\r\n"
+sets s text_file @TMP@/a.txt
+update s
+state s
+echo --- bytes after the first NUL are dropped
+filehex nul.txt 6162630064
+sets s text_file @TMP@/nul.txt
+update s
+state s
+echo --- UTF-8 multi-byte
+file u.txt "a\xc3\xa9\xe2\x98\x83z"
+sets s text_file @TMP@/u.txt
+update s
+state s
+echo --- UTF-8 byte order mark is NOT stripped
+filehex bom.txt efbbbf6162
+sets s text_file @TMP@/bom.txt
+update s
+state s
+echo --- empty file
+file e.txt ""
+sets s text_file @TMP@/e.txt
+update s
+state s
+echo --- invalid UTF-8
+filehex bad.txt 61ff62c362
+sets s text_file @TMP@/bad.txt
+update s
+state s
+echo --- missing file and empty path: text becomes one space, warning logged, text_file name kept
+sets s text_file @TMP@/nope.txt
+update s
+state s
+sets s text_file ""
+update s
+state s

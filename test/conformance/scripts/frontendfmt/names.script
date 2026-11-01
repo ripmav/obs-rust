@@ -1,0 +1,26 @@
+# S-048 file-safe names (GetFileSafeName, ASCII), closest unused name, scene-collection / profile directory naming.
+safe_name "My Profile"
+safe_name "Untitled"
+safe_name "a/b\\c:d*e?f"
+safe_name "  spaces  "
+safe_name "tab\there"
+safe_name "under_score-and-dash.dot"
+safe_name "!!!"
+safe_name "()"
+safe_name "0123456789"
+# closest unused
+unused "/p/Untitled" json
+fs_add "/p/Untitled.json"
+unused "/p/Untitled" json
+fs_add "/p/Untitled2.json"
+unused "/p/Untitled" json
+fs_add "/p/Untitled3.json"
+unused "/p/Untitled" json
+# profile directory: no extension
+fs_add "/p/prof"
+unused "/p/prof" @null
+fs_add "/p/prof2"
+unused "/p/prof" @null
+# numbering appended to the stem that already ends in a digit
+fs_add "/p/x1.json"
+unused "/p/x1" json

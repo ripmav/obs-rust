@@ -1,0 +1,14 @@
+open array ok
+write 0102030405 5 -> 5
+seek start 2 -> 2
+dump array num=0 pos=0 bytes=-
+pos -> 0
+write aa 1 -> 1
+dump array num=1 pos=1 bytes=aa
+seek start 0 -> 0
+write bbcc 2 -> 2
+dump array num=2 pos=2 bytes=bbcc
+open array ok
+dump array num=0 pos=0 bytes=-
+pos -> 0
+write 11 1 -> 1

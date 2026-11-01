@@ -1,0 +1,9 @@
+# CORE: cf token classification: NAME (underscore counts as alpha), NUM, SPACETAB runs, NEWLINE, OTHER one char each.
+lex "a1b _x __ 1.5.3 .5 0x1F 1e+5 1_a a.5 1.. 1+2 ==  ->  x\ty \t z"
+tokens lex
+reset
+lex "a\tb \t c\r\nd\n\re\rf\x0bg\x0ch\n\n"
+tokens lex
+reset
+lex "\xc3\xa9 $ @ \\ `"
+tokens lex

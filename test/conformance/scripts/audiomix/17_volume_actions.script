@@ -1,0 +1,24 @@
+# Volume/mute changes are queued with the wall-clock time of the call and applied sample-accurately when the tick that contains that time is rendered (per-frame volume ramp = step at frame index).
+init 48000 2
+clock 1000000000
+timeline 1000000000
+source a input
+video_mix 1
+channel 0 0 a
+set a active 1
+output a 48000 2 1024 1000000000 const 1
+output a 48000 2 1024 1021333333 const 1
+output a 48000 2 1024 1042666666 const 1
+# 10 ms into the first tick: frame 480
+clock 1010000000
+set a volume 0.5
+# 5 ms into the second tick: frame 240
+clock 1026333333
+set a mute 1
+run 3 1
+dump_mix 0 0 0 1
+state a
+# disabled source is silent
+set a enabled 0
+output a 48000 2 1024 1064000000 const 1
+run 1 1

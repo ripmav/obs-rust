@@ -1,0 +1,23 @@
+# backup_filters / restore_filters.  backup saves each filter (array order) as data holding at least its name.
+# restore: all current filters are detached WITHOUT filter_remove callbacks/signals, the saved list is rebuilt:
+# a saved filter whose name matches a current filter reuses that filter, otherwise it is loaded anew; the new chain
+# keeps the backup order, parents/targets are rewired, no filter_add callbacks or signals fire; unused old filters
+# lose their chain reference.
+kind in input video
+kind fl filter video filteradd
+create a in A
+create f1 fl F1
+create f2 fl F2
+create f3 fl F3
+filter_add a f1
+filter_add a f2
+backup a
+filter_remove a f2
+filter_add a f3
+names a
+watch a
+restore a
+names a
+filters a
+refs f1
+refs f3

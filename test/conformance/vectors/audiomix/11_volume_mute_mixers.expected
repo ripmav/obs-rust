@@ -1,0 +1,12 @@
+render a pending=0 ts=1000000000
+out 0 0 sum=512 peak=0.5 s0=0.5
+out 0 1 sum=384 peak=0.375 s0=0.375
+render a pending=0 ts=1000000000
+out 0 0 sum=256 peak=0.25 s0=0.25
+out 0 1 sum=192 peak=0.1875 s0=0.1875
+render a pending=0 ts=1000000000
+render a pending=0 ts=1000000000
+out 0 0 sum=512 peak=0.5 s0=0.5
+out 0 1 sum=384 peak=0.375 s0=0.375
+render a pending=0 ts=1000000000
+state a audio_ts=1000000000 pending=0 buf=2048 last_buf=0 pending_stop=0 timing_set=1 timing_adjust=0 next_ts_min=1042666666 next_sys_ts_min=1042666666 resample_offset=0 failed=0 vol=4.99999987e-05 user_vol=4.99999987e-05 muted=0 user_muted=0 actions=0

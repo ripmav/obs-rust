@@ -1,0 +1,78 @@
+call source_update a deferred=1
+create a -> ok
+echo before the first tick: no frames, no valid target -> skip
+render a
+call skip_video_filter a
+cs a -> SRGB_16F
+call deferred_update a
+call texrender_create r1 format=RGBA zs=0
+call texrender_create r2 format=RGBA zs=0
+call texrender_create r3 format=RGBA zs=0
+tick a 0.016
+echo 50 ms at 60 fps: 3 frames (50000000 / 16666666)
+render a
+call texrender_reset r1
+call blend_push
+call blend_function ONE ZERO
+call texrender_begin r1 640x480 space=SRGB -> 1
+call clear flags=1 color=0,0,0,0 depth=0 stencil=0
+call ortho 0 640 0 480 -100 100
+call source_default_render S
+call texrender_end r1
+call blend_pop
+call texrender_get_texture r2 -> @null
+echo second render in the same tick only draws the queue head again
+render a
+call texrender_get_texture r2 -> @null
+tick a 0.016
+render a
+call texrender_reset r2
+call blend_push
+call blend_function ONE ZERO
+call texrender_begin r2 640x480 space=SRGB -> 1
+call clear flags=1 color=0,0,0,0 depth=0 stencil=0
+call ortho 0 640 0 480 -100 100
+call source_default_render S
+call texrender_end r2
+call blend_pop
+call texrender_get_texture r3 -> @null
+tick a 0.016
+render a
+call texrender_reset r3
+call blend_push
+call blend_function ONE ZERO
+call texrender_begin r3 640x480 space=SRGB -> 1
+call clear flags=1 color=0,0,0,0 depth=0 stencil=0
+call ortho 0 640 0 480 -100 100
+call source_default_render S
+call texrender_end r3
+call blend_pop
+call texrender_get_texture r1 -> t1
+call enable_framebuffer_srgb 1
+call get_param base:default:image -> ok
+call set_texture_srgb base:default:image t1
+call get_param base:default:multiplier -> ok
+call set_float base:default:multiplier 1
+call effect_loop base:default Draw technique_exists=1
+call draw_sprite t1 flip=0 size=640x480
+call enable_framebuffer_srgb 0
+tick a 0.016
+render a
+call texrender_reset r1
+call blend_push
+call blend_function ONE ZERO
+call texrender_begin r1 640x480 space=SRGB -> 1
+call clear flags=1 color=0,0,0,0 depth=0 stencil=0
+call ortho 0 640 0 480 -100 100
+call source_default_render S
+call texrender_end r1
+call blend_pop
+call texrender_get_texture r2 -> t2
+call enable_framebuffer_srgb 1
+call set_texture_srgb base:default:image t2
+call set_float base:default:multiplier 1
+call effect_loop base:default Draw technique_exists=1
+call draw_sprite t2 flip=0 size=640x480
+call enable_framebuffer_srgb 0
+cs a -> SRGB
+cs a -> SRGB

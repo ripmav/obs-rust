@@ -1,0 +1,80 @@
+log debug canvas 'Main' (<uuid>) created
+startup -> true
+log debug canvas 'Alpha' (<uuid>) created
+canvas_create a -> ok
+canvas a name="Alpha" flags=0x0 private=0 removed=0 has_video=0 video_active=0 uuid_len=36 view_type=aux
+log warning Attempted to insert context with duplicate name "Alpha"! Name has been changed to "Alpha 2"
+log debug canvas 'Alpha 2' (<uuid>) created
+canvas_create b -> ok
+canvas b name="Alpha 2" flags=0x0 private=0 removed=0 has_video=0 video_active=0 uuid_len=36 view_type=aux
+log warning Attempted to insert context with duplicate name "Alpha"! Name has been changed to "Alpha 3"
+log debug canvas 'Alpha 3' (<uuid>) created
+canvas_create c -> ok
+canvas c name="Alpha 3" flags=0x0 private=0 removed=0 has_video=0 video_active=0 uuid_len=36 view_type=aux
+log warning Attempted to insert context with duplicate name "Alpha 2"! Name has been changed to "Alpha 2 2"
+log debug canvas 'Alpha 2 2' (<uuid>) created
+canvas_create d -> ok
+canvas d name="Alpha 2 2" flags=0x0 private=0 removed=0 has_video=0 video_active=0 uuid_len=36 view_type=aux
+log debug canvas '__unnamed0000' (<uuid>) created
+canvas_create e -> ok
+canvas e name="__unnamed0000" flags=0x0 private=0 removed=0 has_video=0 video_active=0 uuid_len=36 view_type=aux
+log debug canvas '__unnamed0001' (<uuid>) created
+canvas_create f -> ok
+canvas f name="__unnamed0001" flags=0x0 private=0 removed=0 has_video=0 video_active=0 uuid_len=36 view_type=aux
+log debug canvas 'Gamma' (<uuid>) created
+canvas_create g -> ok
+canvas g name="Gamma" flags=0x0 private=0 removed=0 has_video=0 video_active=0 uuid_len=36 view_type=aux
+log debug canvas 'Hotel' (<uuid>) created
+canvas_create h -> ok
+canvas h name="Hotel" flags=0xe private=0 removed=0 has_video=0 video_active=0 uuid_len=36 view_type=main
+log debug canvas 'India' (<uuid>) created
+canvas_create i -> ok
+canvas i name="India" flags=0x12 private=0 removed=0 has_video=0 video_active=0 uuid_len=36 view_type=main
+log debug canvas 'Juliet' (<uuid>) created
+canvas_create j -> ok
+canvas j name="Juliet" flags=0x10 private=0 removed=0 has_video=0 video_active=0 uuid_len=36 view_type=aux
+log debug private canvas 'Priv' (<uuid>) created
+canvas_create_private p -> ok
+canvas p name="Priv" flags=0x0 private=1 removed=0 has_video=0 video_active=0 uuid_len=36 view_type=aux
+log debug private canvas '<null>' (<uuid>) created
+canvas_create_private q -> ok
+canvas q name=NULL flags=0x0 private=1 removed=0 has_video=0 video_active=0 uuid_len=36 view_type=aux
+enum canvases
+  visit Main
+  visit Alpha
+  visit Alpha 2
+  visit Alpha 3
+  visit Alpha 2 2
+  visit __unnamed0000
+  visit __unnamed0001
+  visit Gamma
+  visit Hotel
+  visit India
+  visit Juliet
+  visited=11
+get canvas_by_name Alpha -> "Alpha" obj=a strong=1
+get canvas_by_name Alpha 2 -> "Alpha 2" obj=b strong=1
+get canvas_by_name Alpha 3 -> "Alpha 3" obj=c strong=1
+get canvas_by_name Priv -> NULL
+get canvas_by_uuid uuid:p -> "Priv" obj=p strong=1
+get canvas_by_uuid uuid:a -> "Alpha" obj=a strong=1
+canvas p name="Priv" flags=0x0 private=1 removed=0 has_video=0 video_active=0 uuid_len=36 view_type=aux
+canvas q name=NULL flags=0x0 private=1 removed=0 has_video=0 video_active=0 uuid_len=36 view_type=aux
+shutdown begin
+log info Freeing OBS context data
+log debug canvas 'Main' (<uuid>) destroyed
+log debug canvas 'Alpha' (<uuid>) destroyed
+log debug canvas 'Alpha 2' (<uuid>) destroyed
+log debug canvas 'Alpha 3' (<uuid>) destroyed
+log debug canvas 'Alpha 2 2' (<uuid>) destroyed
+log debug canvas '__unnamed0000' (<uuid>) destroyed
+log debug canvas '__unnamed0001' (<uuid>) destroyed
+log debug canvas 'Gamma' (<uuid>) destroyed
+log debug canvas 'Hotel' (<uuid>) destroyed
+log debug canvas 'India' (<uuid>) destroyed
+log debug canvas 'Juliet' (<uuid>) destroyed
+log info  10 canvas(s) were remaining
+log debug private canvas 'Priv' (<uuid>) destroyed
+log debug private canvas '<null>' (<uuid>) destroyed
+log info  2 canvas(s) were remaining
+shutdown end obs=NULL

@@ -1,0 +1,24 @@
+# ungroup: children are re-added to the parent scene (new scene items, new ids) right where the group was,
+# with transforms converted back; the group item disappears.
+source s 200 100
+scene main
+add main s a
+add main s b
+add main s c
+pos a 100 100
+pos b 400 300
+pos c 900 600
+group main g a b
+pos g 700 400
+scale g 1.5 1.5
+rot g 20
+update main
+order_of main
+ungroup g
+order_of main
+update main
+print a
+print b
+get a
+get b
+get c

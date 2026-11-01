@@ -1,0 +1,37 @@
+minit -> ok
+ff open path=net format=- nobuffer=0 interrupt=1 opts=[buffer_size=4096;timeout=5;x=y;stimeout=30000000]
+minit2 -> ok has_v=1 has_a=0
+ff read #0 stream=0 pts=0 size=4
+mreset -> 1
+# speed forced to 100 for non-local sources
+mstate eof=0 active=0 stopping=0 looping=0 pause=0 reset=0 seek=0 seek_next_ts=0 reset_ts=0 preload_frame=0 has_v=1 has_a=0
+  base_ts=0 start_ts=0 play_sys_ts=1000000000 next_pts_ns=0 next_ns=0 seek_pos=0 speed=100 cur_space=DEFAULT cur_range=DEFAULT
+  v ready=1 pts=0 next_pts=40000000 last_dur=40000000 eof=0 key=0 pending=0 npkts=0
+tick -> idle
+ff read #1 stream=0 pts=40 size=4
+tick -> played
+sleep 40
+ff read #2 stream=0 pts=80 size=4
+tick -> played
+sleep 40
+cb video ts=80000000 fmt=I420 16x16 flip=0 full=0 trc=DEFAULT maxlum=0 flags=0 ls0=16 d0=21 mat0=1.16438 min0=0.0627451 max0=0.921569
+ff read #3 stream=0 pts=120 size=4
+tick -> played
+sleep 40
+cb video ts=120000000 fmt=I420 16x16 flip=0 full=0 trc=DEFAULT maxlum=0 flags=0 ls0=16 d0=31 mat0=1.16438 min0=0.0627451 max0=0.921569
+ff decoder drain
+cb stop
+tick -> eof
+tick -> idle
+mstate eof=0 active=0 stopping=0 looping=0 pause=0 reset=0 seek=0 seek_next_ts=0 reset_ts=0 preload_frame=0 has_v=1 has_a=0
+  base_ts=160000000 start_ts=9223372036854775807 play_sys_ts=1120000000 next_pts_ns=9223372036854775807 next_ns=0 seek_pos=0 speed=100 cur_space=DEFAULT cur_range=DEFAULT
+  v ready=0 pts=120000000 next_pts=160000000 last_dur=40000000 eof=1 key=1 pending=0 npkts=0
+# interrupt callback: the flags are polled at most every 20 ms of clock time
+mint -> 0
+mint -> 0
+mint -> 0
+mint -> 1
+mint -> 0
+mint -> 0
+mint -> 0
+mint -> 1

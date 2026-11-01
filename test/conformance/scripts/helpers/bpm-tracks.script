@@ -1,0 +1,17 @@
+# State is kept per (output, track): references of different outputs/tracks are independent;
+# bpm_destroy(output) forgets all tracks of that output so the next injection reports absolute
+# values again (CORE).
+bpm_set codec h264
+bpm_set rendered 100
+bpm_inject 0 0 1 1 1 1 00000001aa 1000000000 1010000000 1020000000 1030000000
+bpm_inject 0 1 1 1 1 1 00000001aa 1000000000 1010000000 1020000000 1030000000
+bpm_inject 1 0 1 1 1 1 00000001aa 1000000000 1010000000 1020000000 1030000000
+bpm_set rendered 130
+bpm_inject 0 0 31 31 1 1 00000001aa 2000000000 2010000000 2020000000 2030000000
+bpm_inject 0 1 31 31 1 1 00000001aa 2000000000 2010000000 2020000000 2030000000
+bpm_destroy 0
+bpm_inject 0 0 61 61 1 1 00000001aa 3000000000 3010000000 3020000000 3030000000
+bpm_inject 1 0 61 61 1 1 00000001aa 3000000000 3010000000 3020000000 3030000000
+bpm_destroy 0
+bpm_destroy 1
+bpm_destroy 2

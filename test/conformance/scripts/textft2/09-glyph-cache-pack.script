@@ -1,0 +1,17 @@
+# Glyph packing in a small texture: row wrap uses ">=", the row step is max_h+1 after a pre-placement wrap
+# and max_h after a post-placement wrap, and running out of space stops caching with a warning (S-038-R44..R47).
+events off
+reset
+ascii 5 8 0 8 384
+font "Sans Serif" - 0 p/sans
+load
+texdim 40 30
+create s 2
+setfont s "Sans Serif" - 20 0
+update s
+state s
+glyphs s 0x61 0x62 0x63 0x64 0x65 0x66 0x67 0x68 0x7e 0x21 0x30
+texsum s
+echo --- the full standard set does not fit: the loop stopped at the first glyph that does not fit
+cache s "~"
+state s

@@ -1,0 +1,47 @@
+# os_fseeki64 / os_ftelli64 / os_fgetsize / os_get_file_size
+# fseeki H OFFSET set|cur|end   (prints rc: 0 ok, -1 failed)
+put f.bin 0123456789
+fopen a f.bin rb
+ftelli a
+fgetsize a
+fseeki a 4 set
+ftelli a
+# os_fgetsize leaves the position where it was
+fgetsize a
+ftelli a
+fseeki a 2 cur
+ftelli a
+fseeki a -3 end
+ftelli a
+fread a 10
+ftelli a
+# seeking before the start fails and leaves the position alone
+fseeki a -1 set
+ftelli a
+fseeki a -20 end
+ftelli a
+# offsets above 32 bits are supported; seeking past the end is allowed on a read handle
+fseeki a 5000000000 set
+ftelli a
+fgetsize a
+ftelli a
+fseeki a 4294967295 set
+fseeki a 1 cur
+ftelli a
+fseeki a 0 end
+ftelli a
+fclose a
+# the size of a handle with unflushed writes includes them
+fopen a g.bin wb
+fgetsize a
+fwrite a abcde
+fgetsize a
+ftelli a
+fclose a
+# os_get_file_size(path)
+file_size f.bin
+file_size g.bin
+put empty.bin ""
+file_size empty.bin
+file_size missing.bin
+file_size @null

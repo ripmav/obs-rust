@@ -1,0 +1,85 @@
+decl "void _f(int _a)"
+parse ok name=_f params=1
+  param 0 name=_a type=int in=1 out=0
+decl "void f1(int a1b2)"
+parse ok name=f1 params=1
+  param 0 name=a1b2 type=int in=1 out=0
+decl "void f(int a)\n"
+parse ok name=f params=1
+  param 0 name=a type=int in=1 out=0
+decl "void f(/* c */int a)"
+parse ok name=f params=1
+  param 0 name=a type=int in=1 out=0
+decl "void f(int /* c */ a)"
+parse ok name=f params=1
+  param 0 name=a type=int in=1 out=0
+decl "void f(int a /* c */ , /* d */ int b)"
+parse ok name=f params=2
+  param 0 name=a type=int in=1 out=0
+  param 1 name=b type=int in=1 out=0
+decl "void f(int a // line\n, int b)"
+parse ok name=f params=2
+  param 0 name=a type=int in=1 out=0
+  param 1 name=b type=int in=1 out=0
+decl "void f(int\na)"
+parse ok name=f params=1
+  param 0 name=a type=int in=1 out=0
+decl "void f/* c */(int a)"
+parse ok name=f params=1
+  param 0 name=a type=int in=1 out=0
+decl "void /* c */ f(int a)"
+parse ok name=f params=1
+  param 0 name=a type=int in=1 out=0
+decl "void\tf(int a)"
+parse ok name=f params=1
+  param 0 name=a type=int in=1 out=0
+decl "void f (int a)"
+parse ok name=f params=1
+  param 0 name=a type=int in=1 out=0
+decl "voidf(int a)"
+log warning Errors/warnings for 'voidf(int a)':  declaration (1, 1): Expected 'return type' declaration (1, 6): Expected 'function name' declaration (1, 13): Unexpected EOF 
+parse fail
+decl "void f(inta)"
+log warning Errors/warnings for 'void f(inta)':  declaration (1, 8): Expected 'type' 
+parse fail
+decl "void f(int  a,int b)"
+parse ok name=f params=2
+  param 0 name=a type=int in=1 out=0
+  param 1 name=b type=int in=1 out=0
+decl "void f(in out int a)"
+parse ok name=f params=1
+  param 0 name=a type=int in=1 out=1
+decl "void f(in/**/int a)"
+parse ok name=f params=1
+  param 0 name=a type=int in=1 out=0
+decl "void f(ininta)"
+log warning Errors/warnings for 'void f(ininta)':  declaration (1, 8): Expected 'type' 
+parse fail
+decl "void f(int outa)"
+parse ok name=f params=1
+  param 0 name=outa type=int in=1 out=0
+decl "void f(out ptr p, in string s, bool b)"
+parse ok name=f params=3
+  param 0 name=p type=ptr in=0 out=1
+  param 1 name=s type=string in=1 out=0
+  param 2 name=b type=bool in=1 out=0
+decl "void f(int \xc3\xa9)"
+log warning Errors/warnings for 'void f(int é)':  declaration (1, 12): Expected 'parameter name' declaration (1, 15): Unexpected EOF 
+parse fail
+decl "void \xc3\xa9()"
+parse crash
+decl "void f(int a.b)"
+parse ok name=f params=1
+  param 0 name=a type=int in=1 out=0
+decl "void f(int a_)"
+parse ok name=f params=1
+  param 0 name=a_ type=int in=1 out=0
+decl "void f(int _)"
+parse ok name=f params=1
+  param 0 name=_ type=int in=1 out=0
+decl "void f(int __)"
+parse ok name=f params=1
+  param 0 name=__ type=int in=1 out=0
+decl "void f(int 0)"
+log warning Errors/warnings for 'void f(int 0)':  declaration (1, 12): Expected 'parameter name' declaration (1, 14): Unexpected EOF 
+parse fail

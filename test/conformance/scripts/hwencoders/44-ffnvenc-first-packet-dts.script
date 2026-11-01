@@ -1,0 +1,29 @@
+# S-050 obs-ffmpeg-nvenc: first packet: headers/SEI are extracted (Annex B) and stored; the returned
+# data has them stripped; when b-frames are on and the first dts is not -(max_b_frames * timebase_num)
+# (unpatched FFmpeg), a dts offset is computed and added to every packet's dts (including the first).
+ff_defaults h264
+set bool psycho_aq 0
+ff_create h264
+ff_ctx 2 1
+# SPS(67) PPS(68) IDR slice(65): header = SPS+PPS (as emitted), data = the slice
+ff_packet 00000001670102030000000168aabb000000016588ff 0
+ff_encode
+ff_state
+ff_packet 000000014188 3
+ff_encode
+ff_destroy
+# patched FFmpeg: first dts already -2 -> no offset
+ff_create h264
+ff_ctx 2 1
+ff_packet 00000001670102030000000168aabb000000016588ff -2
+ff_encode
+ff_state
+ff_destroy
+# no b-frames: never corrected
+set int bf 0
+ff_create h264
+ff_ctx 0 1
+ff_packet 00000001670102030000000168aabb000000016588ff 5
+ff_encode
+ff_state
+ff_destroy

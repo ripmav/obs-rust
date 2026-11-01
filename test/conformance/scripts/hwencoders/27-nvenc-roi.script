@@ -1,0 +1,44 @@
+# S-050 nvenc: region-of-interest QP delta map (add_roi / roi_cb). Macroblock size is fixed per
+# codec (H.264 16, HEVC 32, AV1 64); the map is ceil(w/mb) x ceil(h/mb) int8 values in row-major
+# order, zero where no ROI applies, later ROIs overwrite earlier ones; qp = (int8)(-51 * priority)
+# (-128 for AV1), truncating toward zero. The map is rebuilt only when the encoder's ROI increment
+# changes (QUIRK: edits that do not bump the increment are not seen).
+dump 0
+nvcap dyn_bitrate 1
+host size 96 80
+host has_roi 1
+host roi_increment 1
+roi 0 0 32 32 0.5
+roi 16 16 96 80 1.0
+defaults h264
+set int bf 0
+create h264 soft
+encodes 0 1
+destroy
+# the same ROIs on HEVC and AV1 grids
+defaults hevc
+set int bf 0
+create hevc soft
+encodes 0 1
+destroy
+defaults av1
+set int bf 0
+create av1 soft
+encodes 0 1
+destroy
+# negative priority raises QP; cache by increment
+defaults h264
+set int bf 0
+create h264 soft
+roi_clear
+roi 0 0 16 16 -0.5
+encodes 0 0
+roi_clear
+roi 16 0 32 16 1.0
+encodes 1 1
+host roi_increment 2
+encodes 2 2
+# ROI disabled: no map passed
+host has_roi 0
+encodes 3 3
+destroy

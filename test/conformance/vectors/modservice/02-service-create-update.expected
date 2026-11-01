@@ -1,0 +1,60 @@
+register A size=full
+service_types=1
+register B size=full
+service_types=2
+log error Service 'nosuch' not found
+create X -> null
+cb svcA create d1 settings={"url":"rtmp://x","key":"k"}
+log debug service 'first' (svcA) created
+create s1 -> ok
+info s1 name=first type=svcA id=svcA signals=1 procs=1
+settings s1 {"url":"rtmp://x","key":"k"}
+cb svcA create d2 settings={}
+log debug service '(null)' (svcA) created
+create s2 -> ok
+cb svcA create d3 settings={}
+log debug service '' (svcA) created
+create s3 -> ok
+cb svcB create d4 settings={}
+log debug service '(null)' (svcB) created
+create p1 -> ok
+cb svcB create d5 settings={"a":1}
+log debug service 'hidden' (svcB) created
+create p2 -> ok
+info s2 name=__unnamed0000 type=svcA id=svcA signals=1 procs=1
+info s3 name=__unnamed0001 type=svcA id=svcA signals=1 procs=1
+info p1 name=(null) type=svcB id=svcB signals=1 procs=1
+info p2 name=hidden type=svcB id=svcB signals=1 procs=1
+list hidden (null) __unnamed0001 __unnamed0000 first
+settings s2 {}
+cb svcA update d1 settings={"url":"rtmp://y","key":"k","extra":5}
+settings s1 {"url":"rtmp://y","key":"k","extra":5}
+cb svcA update d1 settings={"url":"rtmp://y","key":"k","extra":5}
+cb svcB create d6 settings={"q":1}
+log debug service 'b' (svcB) created
+create b1 -> ok
+settings b1 {"q":2,"r":3}
+cb svcA update d1 settings={"url":"rtmp://y","key":"k","extra":5}
+display_name svcA -> svcA
+display_name nosuch -> (null)
+cb get_defaults
+defaults svcA -> json={} url=rtmp://default n=7 url_default=1
+defaults svcB -> json={} url= n=0 url_default=0
+defaults nosuch -> null
+cb get_defaults
+cb get_properties class
+props_by_id svcA -> url:4 n:2
+props_by_id svcB -> null
+props_by_id nosuch -> null
+cb get_properties class
+props s1 -> url:4 n:2
+props b1 -> null
+cb svcA destroy d1
+log debug service 'first' destroyed
+list b hidden (null) __unnamed0001 __unnamed0000
+cb svcA destroy d2
+log debug service '__unnamed0000' destroyed
+list b hidden (null) __unnamed0001
+cb svcB destroy d5
+log debug service 'hidden' destroyed
+list b (null) __unnamed0001

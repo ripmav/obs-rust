@@ -1,0 +1,14 @@
+p_snap roots=1
+p_dump roots=1
+  entry name="tick" count=3 min=1000 max=1000 expected=16667 bcount=2 bmin=16667 bmax=16667 children=0
+    times 1000:3
+    between 16667:2
+p_print_between
+text "== Profiler Time Between Calls =================="
+text "tick: min=16.667\xc2\xa0ms, median=16.667\xc2\xa0ms, max=16.667\xc2\xa0ms, 100% within \xc2\xb12% of 16.667\xc2\xa0ms (0% lower, 0% higher)"
+text "================================================="
+p_print
+text "== Profiler Results ============================="
+text "tick: 1\xc2\xa0ms"
+text "================================================="
+p_free done

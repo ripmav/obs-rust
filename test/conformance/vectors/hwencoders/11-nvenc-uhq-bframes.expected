@@ -1,0 +1,62 @@
+> dump 1
+> nvcap dyn_bitrate 1
+> defaults h264
+> set str tune uhq
+> set int bf 0
+> create h264 soft
+log warning [obs-nvenc: 'enc'] Forcing number of b-frames to 4 for UHQ tune.
+log info [obs-nvenc: 'enc'] settings: 	codec:        H264 	rate_control: cbr 	bitrate:      10000 	keyint:       250 	preset:       p5 	tuning:       uhq 	multipass:    qres 	profile:      high 	width:        1920 	height:       1080 	b-frames:     4 	b-ref-mode:   0 	lookahead:    false (0 frames) 	aq:           true 
+nv.InitializeEncoder
+  compact: preset=NV_ENC_PRESET_P5_GUID tuning=ULTRA_HIGH_QUALITY profile=NV_ENC_H264_PROFILE_HIGH_GUID gop=250 P=5 rc=CBR avg=10000000 max=10000000 vbv=10000000 tq=0 qp=0 aq=1 la=0/0 iadapt_off=0 mp=QUARTER
+create -> ok
+> destroy
+nv.DestroyEncoder
+destroyed
+> set int bf 2
+> create h264 soft
+log warning [obs-nvenc: 'enc'] Forcing number of b-frames to 4 for UHQ tune.
+log info [obs-nvenc: 'enc'] settings: 	codec:        H264 	rate_control: cbr 	bitrate:      10000 	keyint:       250 	preset:       p5 	tuning:       uhq 	multipass:    qres 	profile:      high 	width:        1920 	height:       1080 	b-frames:     4 	b-ref-mode:   0 	lookahead:    false (0 frames) 	aq:           true 
+nv.InitializeEncoder
+  compact: preset=NV_ENC_PRESET_P5_GUID tuning=ULTRA_HIGH_QUALITY profile=NV_ENC_H264_PROFILE_HIGH_GUID gop=250 P=5 rc=CBR avg=10000000 max=10000000 vbv=10000000 tq=0 qp=0 aq=1 la=0/0 iadapt_off=0 mp=QUARTER
+create -> ok
+> destroy
+nv.DestroyEncoder
+destroyed
+> set int bf 4
+> create h264 soft
+log info [obs-nvenc: 'enc'] settings: 	codec:        H264 	rate_control: cbr 	bitrate:      10000 	keyint:       250 	preset:       p5 	tuning:       uhq 	multipass:    qres 	profile:      high 	width:        1920 	height:       1080 	b-frames:     4 	b-ref-mode:   0 	lookahead:    false (0 frames) 	aq:           true 
+nv.InitializeEncoder
+  compact: preset=NV_ENC_PRESET_P5_GUID tuning=ULTRA_HIGH_QUALITY profile=NV_ENC_H264_PROFILE_HIGH_GUID gop=250 P=5 rc=CBR avg=10000000 max=10000000 vbv=10000000 tq=0 qp=0 aq=1 la=0/0 iadapt_off=0 mp=QUARTER
+create -> ok
+> destroy
+nv.DestroyEncoder
+destroyed
+> set int bf 6
+> create h264 soft
+log info [obs-nvenc: 'enc'] settings: 	codec:        H264 	rate_control: cbr 	bitrate:      10000 	keyint:       250 	preset:       p5 	tuning:       uhq 	multipass:    qres 	profile:      high 	width:        1920 	height:       1080 	b-frames:     6 	b-ref-mode:   0 	lookahead:    false (0 frames) 	aq:           true 
+nv.InitializeEncoder
+  compact: preset=NV_ENC_PRESET_P5_GUID tuning=ULTRA_HIGH_QUALITY profile=NV_ENC_H264_PROFILE_HIGH_GUID gop=250 P=7 rc=CBR avg=10000000 max=10000000 vbv=10000000 tq=0 qp=0 aq=1 la=0/0 iadapt_off=0 mp=QUARTER
+create -> ok
+> destroy
+nv.DestroyEncoder
+destroyed
+> set str tune hq
+> set int bf 3
+> create h264 soft
+log info [obs-nvenc: 'enc'] settings: 	codec:        H264 	rate_control: cbr 	bitrate:      10000 	keyint:       250 	preset:       p5 	tuning:       hq 	multipass:    qres 	profile:      high 	width:        1920 	height:       1080 	b-frames:     3 	b-ref-mode:   0 	lookahead:    false (0 frames) 	aq:           true 
+nv.InitializeEncoder
+  compact: preset=NV_ENC_PRESET_P5_GUID tuning=HIGH_QUALITY profile=NV_ENC_H264_PROFILE_HIGH_GUID gop=250 P=4 rc=CBR avg=10000000 max=10000000 vbv=10000000 tq=0 qp=0 aq=1 la=0/0 iadapt_off=0 mp=QUARTER
+create -> ok
+> destroy
+nv.DestroyEncoder
+destroyed
+> host fps 1 1
+> set int keyint_sec 1
+> create h264 soft
+log info [obs-nvenc: 'enc'] settings: 	codec:        H264 	rate_control: cbr 	bitrate:      10000 	keyint:       1 	preset:       p5 	tuning:       hq 	multipass:    qres 	profile:      high 	width:        1920 	height:       1080 	b-frames:     3 	b-ref-mode:   0 	lookahead:    false (0 frames) 	aq:           true 
+nv.InitializeEncoder
+  compact: preset=NV_ENC_PRESET_P5_GUID tuning=HIGH_QUALITY profile=NV_ENC_H264_PROFILE_HIGH_GUID gop=1 P=0 rc=CBR avg=10000000 max=10000000 vbv=10000000 tq=0 qp=0 aq=1 la=0/0 iadapt_off=0 mp=QUARTER
+create -> ok
+> destroy
+nv.DestroyEncoder
+destroyed

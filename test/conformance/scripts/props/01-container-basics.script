@@ -1,0 +1,27 @@
+# CORE. A new container is empty: no flags, no param, no first property.
+# Properties keep insertion order; iteration is first/next. Flags are stored raw.
+props P
+get_flags P
+get_param P
+first P
+dump P
+add bool P zeta "Z"
+add int P alpha "A" 0 10 1
+add text P mid "M" default
+add bool P beta "B"
+dump P
+echo iterate-with-first-next
+first P as a
+next a
+next a
+next a
+next a
+echo next-at-end-stays-null
+next a
+flags P 1
+get_flags P
+flags P 0xdeadbeef
+get_flags P
+flags P 0
+get_flags P
+destroy P

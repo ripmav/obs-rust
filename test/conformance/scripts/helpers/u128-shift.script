@@ -1,0 +1,9 @@
+# util_lshift64_internal_32 / _64: a * 2^32 and a * 2^64 as 128-bit values (CORE).
+u128_shift32 0
+u128_shift32 1
+u128_shift32 0xffffffff
+u128_shift32 0x100000000
+u128_shift32 0xffffffffffffffff
+u128_shift64 0
+u128_shift64 1
+u128_shift64 0xffffffffffffffff

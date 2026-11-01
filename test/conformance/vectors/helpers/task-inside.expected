@@ -1,0 +1,17 @@
+task_create 0 ok
+task_create 1 ok
+task_main_inside 0 0
+task_main_inside 1 0
+task_inside_q 0 self queued
+task_inside_q 0 other queued
+task_sync 0
+task_inside_q 1 self queued
+task_inside_q 1 other queued
+task_sync 1
+task_log
+  run self inside(q0)=1
+  run other inside(q1)=0
+  run self inside(q1)=1
+  run other inside(q0)=0
+task_destroy 0 done
+task_destroy 1 done

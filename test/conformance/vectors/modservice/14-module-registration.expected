@@ -1,0 +1,54 @@
+mkmod r1 ok
+mkmod r2 ok
+mkmod r3 ok
+log debug ---------------------------------
+ev mod r1 ctor
+log debug Loading module: r1.so
+ev mod r1 set_pointer
+open_module R1 -> 0
+log debug ---------------------------------
+ev mod r2 ctor
+log debug Loading module: r2.so
+ev mod r2 set_pointer
+open_module R2 -> 0
+log debug ---------------------------------
+ev mod r3 ctor
+log debug Loading module: r3.so
+ev mod r3 set_pointer
+open_module R3 -> 0
+ev mod r1 load
+init_module R1 -> 1
+ev mod r2 load
+log warning obs_register_service: Service id 'svc_a' already exists!  Duplicate library?
+log warning obs_register_source: Source 'src_a' already exists!  Duplicate library?
+init_module R2 -> 1
+ev mod r3 load
+init_module R3 -> 1
+sources 1 src_a
+outputs 1 out_a
+encoders 1 enc_a
+services 2 svc_a svc_b
+sources 1 src_b
+outputs 0
+encoders 0
+services 1 svc_c
+sources 0
+outputs 0
+encoders 0
+services 0
+types svc_a svc_b svc_c
+service_module svc_a -> r1 state=enabled
+service_module svc_b -> r1 state=enabled
+service_module svc_c -> r2 state=enabled
+service_module nosuch -> null state=missing
+register Z size=full
+service_types=4
+service_module zsvc -> null state=missing
+sources 1 s1
+outputs 1 o1
+encoders 1 e1
+services 2 manual1 manual1
+service_module manual1 -> r3 state=enabled
+create_disabled D -> 1
+service_module dsvc -> d state=disabled
+service_module svc_a -> r1 state=enabled

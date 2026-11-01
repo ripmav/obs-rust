@@ -1,0 +1,53 @@
+# QUIRK demonstrations (reference behaviour that looks accidental; SHOULD be reproduced).
+# Q: '#elif' after a TRUE #ifdef block reports a spurious "expected newline" error.
+parse "#define A\n#ifdef A\nyes\n#elif B\nb\n#endif\n"
+tokens pp
+errors
+reset
+# Q: the first definition of a name wins; #define never replaces.
+parse "#define D 1\n#define D 2\nD\n"
+tokens pp
+reset
+# Q: the character after a line splice inside a // comment is not examined, so an empty line
+# after the splice does not end the comment and swallows the next line.
+lex "// a \\\n\nB\nC"
+tokens lex
+reset
+# Q: '\\' before the closing quote counts as an escape of the quote (string runs to end of line).
+lex "\"q\\\\\" z\nw"
+tokens lex
+reset
+# Q: string/include tokens report a source span one byte longer than the text they cover.
+lex "'c' \"d\"\n"
+tokens lex
+reset
+# Q: a macro name without '(' consumes the following token (here the newline).
+parse "#define F(a) a\nF\nnext\n"
+tokens pp
+errors
+reset
+# Q: '#define NAME (' with blanks before '(' is still a macro; a macro with zero parameters cannot be defined.
+parse "#define S (a) a\nS(1)\n#define Z() 0\nZ()\n"
+tokens pp
+errors
+reset
+# Q: an unknown directive is an error and its line is dropped.
+parse "#pragma once\nx\n"
+tokens pp
+errors
+reset
+# Q: goto skips the token right after a skipped {...} block when there is no blank between.
+parse "a {}x y"
+setcur 0
+goto x
+cur
+errors
+reset
+parse "a { } x y"
+setcur 0
+goto x
+# Q: the first token of the stream is skipped by the first cf_next_token.
+reset
+parse "abc def"
+next
+cur

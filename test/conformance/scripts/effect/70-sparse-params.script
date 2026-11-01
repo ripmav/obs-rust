@@ -1,0 +1,50 @@
+# CORE: the stand-alone shader parser (shader-parser.c) that backends run over the text produced by the effect
+# parser. It recognises, at top level: struct, sampler_state, global variables ("[const] [uniform] TYPE NAME
+# [[N]] [= value];") and functions. Differences from the effect parser: no "property" specifier, no annotations, no
+# texture/string/bool/int2-int4 defaults (only "int", "float" and float vectors/matrices in brace form), function
+# bodies are not stored as text but as a token range, and there is no technique parsing.
+# "sparse" prints the parser result (params, structs, samplers incl. converted sampler info, funcs).
+backend text none
+text a
+uniform float4x4 ViewProj;
+uniform float4 color;
+const float k = 2;
+float plain;
+uniform float arr[4];
+float f1 = 1.5;
+int i1 = -7;
+float2 v2 = {1, 2};
+float3 v3 = {1, 2, 3};
+float4 v4 = {1, 2, 3, 4};
+float4x4 m = {1,0,0,0, 0,1,0,0, 0,0,1,0, 0,0,0,1};
+float2x2 m22 = {1,2,3,4};
+uniform texture2d image;
+@end
+sparse a.shader @text:a
+echo --- value forms
+sparse v1 "float x = 1; int y = 2; float z = -3.5; int w = -4;"
+sparse v2 "float2 a = float2(1,2);"
+sparse v3 "float2 a = {1,2};"
+sparse v4 "bool b = true;"
+sparse v5 "int2 a = {1,2};"
+sparse v6 "string s = \"x\";"
+sparse v7 "texture2d t = \"x\";"
+sparse v8 "float x = 1e5;"
+echo --- specifiers
+sparse s1 "uniform float a; const float b; uniform const float c; const uniform float d; property float e;"
+sparse s2 "uniform uniform float a;"
+sparse s3 "const const float a;"
+echo --- arrays
+sparse a1 "float a[3]; float b[0]; float c[x];"
+sparse a2 "float a[3] = 2;"
+echo --- errors
+sparse e1 "float x ="
+sparse e2 "float x = ;"
+sparse e3 "float2 a = {1};"
+sparse e4 "float9 a = {1};"
+sparse e5 "float4x9 a = {1};"
+sparse e6 "half h = 1;"
+sparse e7 "float x"
+sparse e8 "3 x;"
+sparse e9 "float 3;"
+sparse e10 "{ float x; } float y;"

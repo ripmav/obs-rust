@@ -1,0 +1,278 @@
+# Delivered video frame description. One single-frame clip per configuration; 'pix off' hides pixel bytes/line
+# sizes when the frame went through the (library) pixel-format converter. Fields: fmt (OBS video format),
+# colour matrix element 0 / range min / max (from the colour-space+range+format parameter table: values to
+# 6 digits, tolerance 1e-5), full (full-range flag), trc, flip, flags (1 = linear alpha), maxlum.
+# Row naming:  <name> = <pix_fmt> cs=<colourspace> trc=<transfer> range=<jpeg|mpeg>
+media i420_709 0 0
+video 1 1000 8 4 yuv420p cs=709
+pkt 0 0 fdur=40
+endmedia
+media i420_601 0 0
+video 1 1000 8 4 yuv420p cs=170m
+pkt 0 0 fdur=40
+endmedia
+media i420_unspec 0 0
+video 1 1000 8 4 yuv420p 
+pkt 0 0 fdur=40
+endmedia
+media i420_full 0 0
+video 1 1000 8 4 yuv420p cs=709 range=1
+pkt 0 0 fdur=40
+endmedia
+media i420_srgb 0 0
+video 1 1000 8 4 yuv420p cs=709 trc=srgb
+pkt 0 0 fdur=40
+endmedia
+media i420_2020pq 0 0
+video 1 1000 8 4 yuv420p10le cs=2020 trc=pq
+pkt 0 0 fdur=40
+endmedia
+media i420_2020hlg 0 0
+video 1 1000 8 4 yuv420p10le cs=2020 trc=hlg
+pkt 0 0 fdur=40
+endmedia
+media i420_trc709 0 0
+video 1 1000 8 4 yuv420p cs=709 trc=709
+pkt 0 0 fdur=40
+endmedia
+media i420_trc240 0 0
+video 1 1000 8 4 yuv420p cs=709 trc=240m
+pkt 0 0 fdur=40
+endmedia
+media i420_g22 0 0
+video 1 1000 8 4 yuv420p trc=g22
+pkt 0 0 fdur=40
+endmedia
+media i420_g28 0 0
+video 1 1000 8 4 yuv420p trc=g28
+pkt 0 0 fdur=40
+endmedia
+media i420_170m 0 0
+video 1 1000 8 4 yuv420p trc=170m
+pkt 0 0 fdur=40
+endmedia
+media nv12 0 0
+video 1 1000 8 4 nv12 
+pkt 0 0 fdur=40
+endmedia
+media nv21_to_nv12 0 0
+video 1 1000 8 4 nv21 
+pkt 0 0 fdur=40
+endmedia
+media i444 0 0
+video 1 1000 8 4 yuv444p cs=709
+pkt 0 0 fdur=40
+endmedia
+media i422 0 0
+video 1 1000 8 4 yuv422p cs=709
+pkt 0 0 fdur=40
+endmedia
+media yuy2 0 0
+video 1 1000 8 4 yuyv422 
+pkt 0 0 fdur=40
+endmedia
+media rgba 0 0
+video 1 1000 8 4 rgba 
+pkt 0 0 fdur=40
+endmedia
+media bgra 0 0
+video 1 1000 8 4 bgra 
+pkt 0 0 fdur=40
+endmedia
+media bgr0 0 0
+video 1 1000 8 4 bgr0 
+pkt 0 0 fdur=40
+endmedia
+media p010 0 0
+video 1 1000 8 4 p010le cs=2020 trc=pq
+pkt 0 0 fdur=40
+endmedia
+media i40a 0 0
+video 1 1000 8 4 yuva420p 
+pkt 0 0 fdur=40
+endmedia
+media yuva 0 0
+video 1 1000 8 4 yuva444p 
+pkt 0 0 fdur=40
+endmedia
+media gray_to_bgra 0 0
+video 1 1000 8 4 gray 
+pkt 0 0 fdur=40
+endmedia
+media rgb24_to_bgra 0 0
+video 1 1000 8 4 rgb24 
+pkt 0 0 fdur=40
+endmedia
+media yuv420p16_to_i010 0 0
+video 1 1000 8 4 yuv420p16le 
+pkt 0 0 fdur=40
+endmedia
+media yuv444p10_to_i444 0 0
+video 1 1000 8 4 yuv444p10le 
+pkt 0 0 fdur=40
+endmedia
+media yuvj420p_to_i420 0 0
+video 1 1000 8 4 yuvj420p range=1
+pkt 0 0 fdur=40
+endmedia
+clock 1000
+echo i420_709
+pix on
+minit i420_709 local=1
+mreset
+mfree
+echo i420_601
+pix on
+minit i420_601 local=1
+mreset
+mfree
+echo i420_unspec
+pix on
+minit i420_unspec local=1
+mreset
+mfree
+echo i420_full
+pix on
+minit i420_full local=1
+mreset
+mfree
+echo i420_srgb
+pix on
+minit i420_srgb local=1
+mreset
+mfree
+echo i420_2020pq
+pix on
+minit i420_2020pq local=1
+mreset
+mfree
+echo i420_2020hlg
+pix on
+minit i420_2020hlg local=1
+mreset
+mfree
+echo i420_trc709
+pix on
+minit i420_trc709 local=1
+mreset
+mfree
+echo i420_trc240
+pix on
+minit i420_trc240 local=1
+mreset
+mfree
+echo i420_g22
+pix on
+minit i420_g22 local=1
+mreset
+mfree
+echo i420_g28
+pix on
+minit i420_g28 local=1
+mreset
+mfree
+echo i420_170m
+pix on
+minit i420_170m local=1
+mreset
+mfree
+echo nv12
+pix on
+minit nv12 local=1
+mreset
+mfree
+echo nv21_to_nv12
+pix off
+minit nv21_to_nv12 local=1
+mreset
+mfree
+echo i444
+pix on
+minit i444 local=1
+mreset
+mfree
+echo i422
+pix on
+minit i422 local=1
+mreset
+mfree
+echo yuy2
+pix on
+minit yuy2 local=1
+mreset
+mfree
+echo rgba
+pix on
+minit rgba local=1
+mreset
+mfree
+echo bgra
+pix on
+minit bgra local=1
+mreset
+mfree
+echo bgr0
+pix on
+minit bgr0 local=1
+mreset
+mfree
+echo p010
+pix on
+minit p010 local=1
+mreset
+mfree
+echo i40a
+pix on
+minit i40a local=1
+mreset
+mfree
+echo yuva
+pix on
+minit yuva local=1
+mreset
+mfree
+echo gray_to_bgra
+pix off
+minit gray_to_bgra local=1
+mreset
+mfree
+echo rgb24_to_bgra
+pix off
+minit rgb24_to_bgra local=1
+mreset
+mfree
+echo yuv420p16_to_i010
+pix off
+minit yuv420p16_to_i010 local=1
+mreset
+mfree
+echo yuv444p10_to_i444
+pix off
+minit yuv444p10_to_i444 local=1
+mreset
+mfree
+echo yuvj420p_to_i420
+pix off
+minit yuvj420p_to_i420 local=1
+mreset
+mfree
+echo ---- forced range overrides the stream range
+pix on
+minit i420_709 local=1 range=full
+mreset
+mfree
+minit i420_full local=1 range=partial
+mreset
+mfree
+echo ---- linear alpha flag
+minit rgba local=1 linear=1
+mreset
+mfree
+echo ---- bottom-up packed image (negative stride on plane 0): flip flag set, stride reported as absolute value
+media flipbgra 0 0
+video 1 1000 8 4 bgra flip=1
+pkt 0 0 fdur=40
+endmedia
+minit flipbgra local=1
+mreset
+mfree

@@ -1,0 +1,72 @@
+backend vertexshader_create location="a.effect (Vertex shader, technique T, pass 0)" len=91 fnv=563f82158d057e68
+  sparam 0 name=p1 type=FLOAT array=0
+  result ok
+backend pixelshader_create location="a.effect (Pixel shader, technique T, pass 0)" len=89 fnv=a498597ec0de5c76
+  sparam 0 name=p1 type=FLOAT array=0
+  result ok
+effect e result=ok
+  error_string=@null
+--- initially empty
+flags changed=0 cur_size=0 next_sampler=-1
+get_val size=0 data=null
+get_default_val size=4 hex=0000c03f
+--- scalars
+flags changed=1 cur_size=4 next_sampler=-1
+get_val size=4 hex=00002040
+get_val size=4 hex=feffffff
+get_val size=4 hex=01000000
+get_val size=4 hex=00000000
+--- vectors
+get_val size=8 hex=0000803f00000040
+get_val size=12 hex=0000803f0000004000004040
+get_val size=16 hex=0000a0400000c0400000e04000000041
+--- color: 0xAARRGGBB -> (r,g,b,a)
+get_val size=16 hex=cdcc4c3ecdcccc3e9a99193f0000803f
+get_val size=16 hex=00000000000000000000000000000000
+get_val size=16 hex=0000803f0000803f0000803f8180003f
+--- matrix
+get_val size=64 hex=0000803f0000004000004040000080400000a0400000c0400000e040000000410000104100002041000030410000404100005041000060410000704100008041
+--- raw bytes of any size
+get_val size=4 hex=0000803f
+get_val size=5 hex=0102030405
+get_val size=1 hex=01
+get_val size=18 hex=000102030405060708090a0b0c0d0e0f1011
+--- change tracking: uploading a pass clears the flag; equal bytes do not set it again
+flags changed=1 cur_size=4 next_sampler=-1
+tbegin -> 1
+pbegin -> 1
+flags changed=0 cur_size=4 next_sampler=-1
+flags changed=0 cur_size=4 next_sampler=-1
+flags changed=1 cur_size=4 next_sampler=-1
+flags changed=1 cur_size=3 next_sampler=-1
+pend
+tend
+flags changed=0 cur_size=0 next_sampler=-1
+--- the annotation handle of a missing annotation is NULL
+log error effect_setval_inline: invalid param
+--- defaults
+get_default_val size=4 hex=0000c03f
+get_default_val size=8 hex=0300000000000000
+get_default_val size=8 hex=0100000000000000
+get_default_val size=16 hex=0000803f000000400000404000008040
+get_default_val size=4 hex=73747200
+get_default_val size=0 data=null
+get_default_val size=0 data=null
+get_val size=16 hex=0000803f000000400000404000008040
+log error effect_setval_inline: invalid data
+get_val size=0 data=null
+--- set_default on a parameter that never had a value and has no default logs an error and does nothing
+log error effect_setval_inline: invalid data
+get_val size=0 data=null
+--- NULL param / NULL data
+log error effect_setval_inline: invalid param
+log error effect_setval_inline: invalid param
+log error effect_setval_inline: invalid data
+log error gs_effect_get_val: invalid param
+get_val size=0 data=null
+log error gs_effect_get_default_val: invalid param
+get_default_val size=0 data=null
+log error effect_setval_inline: invalid data
+get_val size=0 data=null
+--- zero-size set_val
+get_val size=0 data=null

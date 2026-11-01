@@ -1,0 +1,24 @@
+# image_source: finite loop count and hide/restart of animation (CORE).
+fs_file /g/a.gif 1
+img_anim /g/a.gif 2 2 2 500 5 5
+create a image_source {"file":"/g/a.gif"}
+refs a 1 1
+clock 1000000000
+tick 0.03
+tick 0.03 6
+state a
+tick 0.5 3
+state a
+# hide: animation restarts to frame 0
+refs a 0 0
+tick 0.016
+state a
+refs a 1 1
+tick 0.016
+state a
+# loop_max >= 65535 means infinite
+img_anim /g/b.gif 2 2 65535 10 1 1
+fs_file /g/b.gif 1
+update a {"file":"/g/b.gif"}
+tick 0.01
+state a

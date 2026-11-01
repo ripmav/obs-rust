@@ -1,0 +1,51 @@
+# S-050 obs-ffmpeg-vaapi: defaults (device per codec, fixed numbers, rate_control from the probe:
+# CBR if supported, else VBR, else CQP; none set if the device cannot be opened) and the device /
+# profile modified callback that rebuilds the rate-control list from the capabilities.
+va_caps cbr 1
+va_defaults h264
+get str vaapi_device
+get int profile
+get int level
+get int bitrate
+get int qp
+get int bf
+get str rate_control
+reset
+va_caps cbr 0
+va_caps vbr 1
+va_defaults hevc
+get str vaapi_device
+get int profile
+get str rate_control
+reset
+va_caps vbr 0
+va_defaults av1
+get str vaapi_device
+get int profile
+get str rate_control
+reset
+va_caps open 0
+va_defaults h264
+get str rate_control
+has_user rate_control
+va_caps open 1
+# device modified: list of modes per capability; unknown profile values keep the prior profile id
+reset
+set int profile 100
+va_caps h264 1
+va_caps cbr 1
+va_caps vbr 1
+va_caps qvbr 0
+va_caps cqp 1
+va_caps bframe 1
+va_device_modified
+# codec unsupported: the list is emptied and bf is untouched
+va_caps h264 0
+va_device_modified
+# device cannot be opened
+va_caps open 0
+va_device_modified
+va_caps open 1
+va_caps h264 1
+va_caps bframe 0
+va_device_modified

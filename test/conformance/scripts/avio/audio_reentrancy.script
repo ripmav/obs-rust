@@ -1,0 +1,16 @@
+# S-044 quirk Q: output callbacks run under a recursive lock, in reverse registration order. A callback may disconnect
+# itself (safe: every remaining input is still called once) or another input; removing an input with a LOWER index than
+# the running one shifts the array under the reverse iteration, so the running input is called a second time.
+aopen main 48000 FLOAT_PLANAR STEREO
+aconnect a 1 0
+aconnect a 2 0
+aconnect a 3 0
+ahook a 3 disconnect_self
+atick
+adump
+# removing an input that has not been visited yet (lower index) removes it from this pass too
+aconnect a 3 0
+ahook a 3 disconnect a 1
+atick
+adump
+aclose

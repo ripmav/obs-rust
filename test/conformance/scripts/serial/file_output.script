@@ -1,0 +1,30 @@
+# File output serializer: truncates on open, positions, seek then overwrite, hole filling,
+# data visible after close (CORE). The file is not inspected while open.
+fput fo-a ffffffffffffffffffff
+open fout fo-a
+pos
+write 01020304
+pos
+seek start 2
+pos
+write aa
+pos
+seek end 0
+pos
+seek end 2
+seek cur -1
+seek start -1
+pos
+seek start 8
+write bb
+pos
+read 2
+serialize_r 2
+serialize_w cc
+close
+fget fo-a
+open fout fo-a
+close
+fget fo-a
+open fout fo-nodir/x
+funlink fo-a

@@ -1,0 +1,36 @@
+# CORE: effect lifecycle (graphics.c gs_effect_create / gs_effect_create_from_file, effect.c gs_effect_destroy).
+#   - gs_effect_create keeps an effect that has a file name in the graphics context's effect list ("cached");
+#     gs_effect_destroy on a cached effect does nothing (it lives until the context is destroyed, when its shaders
+#     are destroyed). An effect created with a NULL file name is not cached and is freed by gs_effect_destroy.
+#   - gs_effect_create_from_file(path) returns the already created effect with the same path (no new parse, no
+#     backend call); otherwise it reads the file, creates the effect with the PATH as file name and caches it.
+#   - on failure nothing is cached and everything built so far is destroyed.
+backend text none
+text a
+uniform float f = 1;
+float4 PS() : TARGET { return f; }
+technique T { pass p { vertex_shader = PS(); pixel_shader = PS(); } }
+@end
+echo --- destroy of a cached effect is a no-op
+effect e1 life.effect @text:a
+destroy e1
+nparams e1
+echo --- destroy of an uncached effect frees it and its shaders
+effect e2 @null @text:a
+destroy e2
+echo --- failed creation leaves no effect behind
+effect e3 bad.effect "float x = ;"
+echo --- create_from_file caches by path
+cd @tmp
+mkdir fx
+writefile fx/a.effect @text:a
+effect_from_file f1 @tmp/fx/a.effect
+effect_from_file f2 @tmp/fx/a.effect
+dump f1
+echo --- a missing file fails (the ERROR log names the path; the runner prints the scratch directory as @tmp)
+effect_from_file f5 @tmp/fx/nope.effect
+echo --- effect text that fails to parse from a file
+writefile fx/bad.effect "float x = ;"
+effect_from_file f3 @tmp/fx/bad.effect
+effect_from_file f4 @tmp/fx/bad.effect
+cd @repo

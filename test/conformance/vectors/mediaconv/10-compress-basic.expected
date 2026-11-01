@@ -1,0 +1,11 @@
+compress i420
+  plane 0 ls=4 rows=2 guard=intact: 20212223 60616263
+  plane 1 ls=2 rows=1 guard=intact: 3032
+  plane 2 ls=2 rows=1 guard=intact: 5052
+compress nv12
+  plane 0 ls=4 rows=2 guard=intact: 20212223 60616263
+  plane 1 ls=4 rows=1 guard=intact: 30503252
+compress i444
+  plane 0 ls=4 rows=2 guard=intact: 20212223 60616263
+  plane 1 ls=4 rows=2 guard=intact: 10111213 50515253
+  plane 2 ls=4 rows=2 guard=intact: 30313233 70717273

@@ -1,0 +1,54 @@
+# os_dtostr(value, buf, size): "%.17g" with a guaranteed '.' or 'e', exponent normalised
+# ("e+21" -> "e21", "e-05" -> "e-5"). Returns the length of the text, -1 if it does not fit.
+# The printed str is the first rc bytes of the buffer. The reference leaves stale characters behind
+# them after an exponent was shortened (defect D-2); those show up on 'info_dtostr_raw' lines, which
+# are informational and not compared.
+# dtostr VALUE SIZE
+dtostr 0 32
+dtostr -0.0 32
+dtostr 1 32
+dtostr -1 32
+dtostr 2 32
+dtostr 0.5 32
+dtostr 0.1 32
+dtostr 0.30000000000000004 32
+dtostr 3.14159265358979 32
+dtostr 100 32
+dtostr 123456789012345678 32
+dtostr 1e16 32
+dtostr 1e17 32
+dtostr 1e21 32
+dtostr 1.5e300 32
+dtostr 1e-4 32
+dtostr 1e-5 32
+dtostr 1.5e-7 32
+dtostr 1.2345678901234567e-300 32
+dtostr 1e100 32
+dtostr 1e-100 32
+dtostr 5e-324 32
+dtostr 1.7976931348623157e308 32
+dtostr -2.5e-10 32
+dtostr 1e15 32
+dtostr 1e5 32
+dtostr 12345.678 32
+# special values get ".0" appended too (no '.' and no 'e' in "inf"/"nan"): QUIRK Q-7
+dtostr inf 32
+dtostr -inf 32
+dtostr nan 32
+# buffer size: the text must fit including the terminator -> rc -1 otherwise
+dtostr 0.5 4
+dtostr 0.5 3
+dtostr 0.5 0
+dtostr 0.1 20
+dtostr 0.1 19
+dtostr 1e21 5
+dtostr 1e21 4
+# a value without '.' needs 3 more bytes than its text ("5" -> "5.0"): the check is length+3 >= size (QUIRK Q-8)
+dtostr 5 5
+dtostr 5 4
+dtostr 5 3
+dtostr 1234 9
+dtostr 1234 8
+dtostr 1234 7
+# values with an exponent never get ".0"
+dtostr 1e21 6

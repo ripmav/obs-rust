@@ -1,0 +1,57 @@
+# S-049 v4l2: which setting changes restart the stream (v4l2_settings_changed) and the tri-state
+# handling of resolution/framerate = -1 ("leave unchanged"): the *first* -1 forces a restart, later -1s do not.
+fake-dir video0
+dev /dev/video0
+dev-cap "Cam" usb-1 0x85200001 0x05200001
+dev-input Camera 0
+dev-input Other 0
+dev-cur 0 640 480 YUYV 1280 1 30 0
+src-defaults
+set-str device_id /dev/video0
+set-int pixelformat 0x56595559
+trace on
+src-create
+# nothing changed except the first -1 of resolution/framerate => restart (one-shot flags set)
+src-changed
+src-changed
+# non-restart settings: buffering flag, auto_reset, timeout_frames are applied without restart
+set-bool buffering 0
+set-bool auto_reset 1
+set-int timeout_frames 8
+src-update
+src-changed
+# restart triggers, one at a time
+set-int input 1
+src-changed
+src-update
+set-int color_range 2
+src-changed
+src-update
+set-int standard 5
+src-changed
+src-update
+set-int dv_timing 2
+src-changed
+src-update
+set-int pixelformat 0x3231564e
+src-changed
+src-update
+# explicit resolution/framerate differing from current => restart; equal => no
+set-int resolution 5497558139600
+src-changed
+src-update
+set-int resolution 5497558139600
+src-changed
+set-int framerate 4294967356
+src-changed
+src-update
+# back to -1: restarts once, then not again
+set-int resolution -1
+src-changed
+src-update
+src-changed
+# a different device
+set-str device_id /dev/video7
+src-changed
+src-update
+src-destroy

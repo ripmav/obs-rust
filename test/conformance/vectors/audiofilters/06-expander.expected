@@ -1,0 +1,72 @@
+create e -> ok
+state expander channels=2 rate=48000 detector=0 is_gate=0 is_upwcomp=0 buf_len=480 ratio=2 threshold=-40 attack_gain=0.997918844 release_gain=0.999583423 output_gain=1 slope=-1 knee=0 ch0[ env=0 runave=0 gain_db=0 ] ch1[ env=0 runave=0 gain_db=0 ]
+echo rms-detector-block
+process e frames=480 ts=0 pos=0 in-crc: d232bbad e6345d49
+  ret same frames=480 ts=0
+  out p0 [0] 0 -0.431515306 -0.431634814 1.19084299e-15 0.431846082 0.431939214 -2.38323138e-15 -0.432103872 -0.432176441 2.6900534e-15 0.43230471 0.432361275
+state expander channels=2 rate=48000 detector=0 is_gate=0 is_upwcomp=0 buf_len=480 ratio=2 threshold=-40 attack_gain=0.997918844 release_gain=0.999583423 output_gain=1 slope=-1 knee=0 ch0[ env=0.250087321 runave=0.0625436679 gain_db=-0.0120560918 ] ch1[ env=0.000500174589 runave=2.50174594e-07 gain_db=-5.36153555 ]
+echo peak-detector
+state expander channels=2 rate=48000 detector=2 is_gate=0 is_upwcomp=0 buf_len=480 ratio=4 threshold=-20 attack_gain=0.979382157 release_gain=0.998958886 output_gain=1 slope=-3 knee=0 ch0[ env=0.250087321 runave=0.0625436679 gain_db=-0.0120560918 ] ch1[ env=0.000500174589 runave=2.50174594e-07 gain_db=-5.36153555 ]
+process e frames=240 ts=0 pos=480 in-crc: 7cca0d14 c787c4e7
+  ret same frames=240 ts=0
+  out p0 [0] -4.73655361e-15 -4.83222185e-16 -4.80773063e-15 3.11666599e-15 -1.43575822e-15 -2.39637506e-16 -5.01740347e-15 3.343231e-15 -1.67083009e-15 6.9225305e-15
+echo unknown-detector-keeps-previous-mode
+state expander channels=2 rate=48000 detector=2 is_gate=0 is_upwcomp=0 buf_len=480 ratio=4 threshold=-20 attack_gain=0.979382157 release_gain=0.998958886 output_gain=1 slope=-3 knee=0 ch0[ env=0.0652630925 runave=0.00425927108 gain_db=-0.164495915 ] ch1[ env=0.00130526198 runave=1.70370879e-06 gain_db=-17.4474106 ]
+echo detector-name-is-case-sensitive
+state expander channels=2 rate=48000 detector=2 is_gate=0 is_upwcomp=0 buf_len=480 ratio=4 threshold=-20 attack_gain=0.979382157 release_gain=0.998958886 output_gain=1 slope=-3 knee=0 ch0[ env=0.0652630925 runave=0.00425927108 gain_db=-0.164495915 ] ch1[ env=0.00130526198 runave=1.70370879e-06 gain_db=-17.4474106 ]
+state expander channels=2 rate=48000 detector=0 is_gate=0 is_upwcomp=0 buf_len=480 ratio=4 threshold=-20 attack_gain=0.979382157 release_gain=0.998958886 output_gain=1 slope=-3 knee=0 ch0[ env=0.0652630925 runave=0.00425927108 gain_db=-0.164495915 ] ch1[ env=0.00130526198 runave=1.70370879e-06 gain_db=-17.4474106 ]
+echo gain-floor-at-minus-60-db
+process e frames=480 ts=0 pos=720 in-crc: 98d16085 98d16085
+  ret same frames=480 ts=0
+  out p0 [0] 9.74227587e-05 6.96471034e-05 5.06120959e-05 3.73566363e-05 2.79842516e-05 2.12607247e-05 1.63705117e-05 1.27667645e-05 1.00777925e-05 8.04747106e-06
+echo output-gain
+process e frames=4 ts=0 pos=1200 in-crc: 8a97f865 8a97f865
+  ret same frames=4 ts=0
+  out p0 [0] 0.0325625539 0.0324213579 0.0322809145 0.032141231
+  out p1 [0] 0.00975279324 0.00972270314 0.00969273411 0.00966288894
+echo ratio-1-no-expansion
+state expander channels=2 rate=48000 detector=0 is_gate=0 is_upwcomp=0 buf_len=480 ratio=1 threshold=0 attack_gain=0.979382157 release_gain=0.998958886 output_gain=1 slope=0 knee=0 ch0[ env=0.0887523964 runave=0.00787698757 gain_db=-23.8587494 ] ch1[ env=0.0758978501 runave=0.00576048391 gain_db=-34.2978592 ]
+process e frames=64 ts=0 pos=1204 in-crc: 9c604b73 9c604b73
+  ret same frames=64 ts=0
+  out p0 [0] -0.000106167303 -0.000465658028 -0.00102880213 -0.00174279441 -0.00248183962 -0.00306804106 -0.00331186387 -0.00305956765
+echo cross-block-state-continuity
+create e2 -> ok
+process e2 frames=5 ts=0 pos=0 in-crc: 42f3c6c2 42f3c6c2
+  ret same frames=5 ts=0
+  out p0 [0] 0.199977115 0.19997716 0.199977204 0.199977264 0.199977309
+  out p1 [0] 0.199977115 0.19997716 0.199977204 0.199977264 0.199977309
+process e2 frames=5 ts=0 pos=5 in-crc: 42f3c6c2 42f3c6c2
+  ret same frames=5 ts=0
+  out p0 [0] 0.199977353 0.199977398 0.199977443 0.199977487 0.199977532
+  out p1 [0] 0.199977353 0.199977398 0.199977443 0.199977487 0.199977532
+create e3 -> ok
+process e3 frames=10 ts=0 pos=0 in-crc: 67e045b1 67e045b1
+  ret same frames=10 ts=0
+  out p0 [0] 0.199977115 0.19997716 0.199977204 0.199977264 0.199977309 0.199977353 0.199977398 0.199977443 0.199977487 0.199977532
+  out p1 [0] 0.199977115 0.19997716 0.199977204 0.199977264 0.199977309 0.199977353 0.199977398 0.199977443 0.199977487 0.199977532
+echo zero-frames-and-nan
+process e2 frames=0 ts=0 pos=10 in-crc: 811c9dc5 811c9dc5
+  ret same frames=0 ts=0
+process e2 frames=3 ts=0 pos=10 in-crc: a51f5f48 af02986b
+  ret same frames=3 ts=0
+  out p0 [0] nan nan nan
+  out p1 [0] 0.0999887884 0.0999888107 0.0999888405
+state expander channels=2 rate=48000 detector=0 is_gate=0 is_upwcomp=0 buf_len=480 ratio=2 threshold=-40 attack_gain=0.997918844 release_gain=0.999583423 output_gain=1 slope=-1 knee=0 ch0[ env=0 runave=nan gain_db=-0.0759271383 ] ch1[ env=0.024783602 runave=0.000614226912 gain_db=-0.000969675719 ]
+process e2 frames=3 ts=0 pos=13 in-crc: af02986b af02986b
+  ret same frames=3 ts=0
+  out p0 [0] 0.0988451764 0.0985616297 0.0982790068
+  out p1 [0] 0.0999888629 0.0999888852 0.0999889076
+echo stereo-constant-below-threshold-region
+create e4 -> ok
+process e4 frames=3 ts=0 pos=0 in-crc: af970b48 af970b48
+  ret same frames=3 ts=0
+  out p0 [0] 0.5 0.5 0.5
+  out p1 [0] 0.5 0.5 0.5
+echo 4ch
+create e5 -> ok
+process e5 frames=3 ts=0 pos=0 in-crc: bb49e97f bb49e97f bb49e97f bb49e97f
+  ret same frames=3 ts=0
+  out p0 [0] 0.300000012 0.300000012 0.300000012
+  out p1 [0] 0.300000012 0.300000012 0.300000012
+  out p2 [0] 0.300000012 0.300000012 0.300000012
+  out p3 [0] 0.300000012 0.300000012 0.300000012

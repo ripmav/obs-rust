@@ -1,0 +1,258 @@
+call source_update a deferred=1
+create a -> ok
+call deferred_update a
+call texrender_create r1 format=RGBA zs=0
+call texrender_create r2 format=RGBA zs=0
+call texrender_create r3 format=RGBA zs=0
+call texrender_create r4 format=RGBA zs=0
+call texrender_create r5 format=RGBA zs=0
+call texrender_create r6 format=RGBA zs=0
+tick a 0.016
+echo 100 ms -> 6 frames; target differs from parent -> source_video_render
+render a
+call texrender_reset r1
+call blend_push
+call blend_function ONE ZERO
+call texrender_begin r1 640x480 space=SRGB -> 1
+call clear flags=1 color=0,0,0,0 depth=0 stencil=0
+call ortho 0 640 0 480 -100 100
+call source_video_render S
+call texrender_end r1
+call blend_pop
+call texrender_get_texture r2 -> @null
+tick a 0.016
+echo shrink the delay to 20 ms through update: full reset, then re-created at the next tick
+call source_update a deferred=1
+call texrender_destroy r2
+call texrender_destroy r3
+call texrender_destroy r4
+call texrender_destroy r5
+call texrender_destroy r6
+call texrender_destroy r1
+call deferred_update a
+call texrender_create r7 format=RGBA zs=0
+tick a 0.016
+render a
+call texrender_reset r7
+call blend_push
+call blend_function ONE ZERO
+call texrender_begin r7 640x480 space=SRGB -> 1
+call clear flags=1 color=0,0,0,0 depth=0 stencil=0
+call ortho 0 640 0 480 -100 100
+call source_video_render S
+call texrender_end r7
+call blend_pop
+call texrender_get_texture r7 -> t2
+call enable_framebuffer_srgb 1
+call get_param base:default:image -> ok
+call set_texture_srgb base:default:image t2
+call get_param base:default:multiplier -> ok
+call set_float base:default:multiplier 1
+call effect_loop base:default Draw technique_exists=1
+call draw_sprite t2 flip=0 size=640x480
+call enable_framebuffer_srgb 0
+echo target resize: all textures are re-created
+call texrender_destroy r7
+call texrender_create r8 format=RGBA zs=0
+tick a 0.016
+render a
+call texrender_reset r8
+call blend_push
+call blend_function ONE ZERO
+call texrender_begin r8 320x240 space=SRGB -> 1
+call clear flags=1 color=0,0,0,0 depth=0 stencil=0
+call ortho 0 320 0 240 -100 100
+call source_video_render S
+call texrender_end r8
+call blend_pop
+call texrender_get_texture r8 -> t3
+call enable_framebuffer_srgb 1
+call set_texture_srgb base:default:image t3
+call set_float base:default:multiplier 1
+call effect_loop base:default Draw technique_exists=1
+call draw_sprite t3 flip=0 size=320x240
+call enable_framebuffer_srgb 0
+echo fps 30: interval doubles, frame count shrinks (the oldest frames are destroyed)
+call texrender_destroy r8
+tick a 0.016
+echo fps 24000/1001: interval 41708333 ns
+tick a 0.016
+echo delay 0: zero frames -> skip
+call source_update a deferred=1
+call deferred_update a
+tick a 0.016
+render a
+call skip_video_filter a
+echo zero-size target: textures are freed and the filter is skipped
+call source_update a deferred=1
+call deferred_update a
+tick a 0.016
+render a
+call skip_video_filter a
+call texrender_create r9 format=RGBA zs=0
+call texrender_create r10 format=RGBA zs=0
+tick a 0.016
+render a
+call texrender_reset r9
+call blend_push
+call blend_function ONE ZERO
+call texrender_begin r9 640x480 space=SRGB -> 1
+call clear flags=1 color=0,0,0,0 depth=0 stencil=0
+call ortho 0 640 0 480 -100 100
+call source_video_render S
+call texrender_end r9
+call blend_pop
+call texrender_get_texture r10 -> @null
+echo target is also the parent: default render; custom_draw or async targets use the video render
+call source_update b deferred=1
+create b -> ok
+call deferred_update b
+call texrender_create r11 format=RGBA zs=0
+call texrender_create r12 format=RGBA zs=0
+tick b 0.016
+render b
+call texrender_reset r11
+call blend_push
+call blend_function ONE ZERO
+call texrender_begin r11 640x480 space=SRGB -> 1
+call clear flags=1 color=0,0,0,0 depth=0 stencil=0
+call ortho 0 640 0 480 -100 100
+call source_default_render S
+call texrender_end r11
+call blend_pop
+call texrender_get_texture r12 -> @null
+render b
+call texrender_get_texture r12 -> @null
+tick b 0.016
+render b
+call texrender_reset r12
+call blend_push
+call blend_function ONE ZERO
+call texrender_begin r12 640x480 space=SRGB -> 1
+call clear flags=1 color=0,0,0,0 depth=0 stencil=0
+call ortho 0 640 0 480 -100 100
+call source_video_render S
+call texrender_end r12
+call blend_pop
+call texrender_get_texture r11 -> t5
+call enable_framebuffer_srgb 1
+call set_texture_srgb base:default:image t5
+call set_float base:default:multiplier 1
+call effect_loop base:default Draw technique_exists=1
+call draw_sprite t5 flip=0 size=640x480
+call enable_framebuffer_srgb 0
+tick b 0.016
+render b
+call texrender_reset r11
+call blend_push
+call blend_function ONE ZERO
+call texrender_begin r11 640x480 space=SRGB -> 1
+call clear flags=1 color=0,0,0,0 depth=0 stencil=0
+call ortho 0 640 0 480 -100 100
+call source_video_render S
+call texrender_end r11
+call blend_pop
+call texrender_get_texture r12 -> t6
+call enable_framebuffer_srgb 1
+call set_texture_srgb base:default:image t6
+call set_float base:default:multiplier 1
+call effect_loop base:default Draw technique_exists=1
+call draw_sprite t6 flip=0 size=640x480
+call enable_framebuffer_srgb 0
+echo non-SRGB target space: frames use RGBA16F; the cached texrender is replaced when its format differs
+tick b 0.016
+render b
+call texrender_destroy r12
+call texrender_create r13 format=RGBA16F zs=0
+call texrender_reset r13
+call blend_push
+call blend_function ONE ZERO
+call texrender_begin r13 640x480 space=709_EXTENDED -> 1
+call clear flags=1 color=0,0,0,0 depth=0 stencil=0
+call ortho 0 640 0 480 -100 100
+call source_default_render S
+call texrender_end r13
+call blend_pop
+call texrender_get_texture r11 -> t5
+call enable_framebuffer_srgb 1
+call set_texture_srgb base:default:image t5
+call set_float base:default:multiplier 1
+call effect_loop base:default Draw technique_exists=1
+call draw_sprite t5 flip=0 size=640x480
+call enable_framebuffer_srgb 0
+tick b 0.016
+render b
+call texrender_destroy r11
+call texrender_create r14 format=RGBA16F zs=0
+call texrender_reset r14
+call blend_push
+call blend_function ONE ZERO
+call texrender_begin r14 640x480 space=709_EXTENDED -> 1
+call clear flags=1 color=0,0,0,0 depth=0 stencil=0
+call ortho 0 640 0 480 -100 100
+call source_default_render S
+call texrender_end r14
+call blend_pop
+call texrender_get_texture r13 -> t7
+call enable_framebuffer_srgb 1
+call set_texture_srgb base:default:image t7
+call set_float base:default:multiplier 1
+call effect_loop base:default DrawTonemap technique_exists=1
+call draw_sprite t7 flip=0 size=640x480
+call enable_framebuffer_srgb 0
+cs b -> 709_EXTENDED
+cs b -> SRGB_16F
+tick b 0.016
+render b
+call texrender_destroy r13
+call texrender_create r15 format=RGBA zs=0
+call texrender_reset r15
+call blend_push
+call blend_function ONE ZERO
+call texrender_begin r15 640x480 space=SRGB -> 1
+call clear flags=1 color=0,0,0,0 depth=0 stencil=0
+call ortho 0 640 0 480 -100 100
+call source_default_render S
+call texrender_end r15
+call blend_pop
+call texrender_get_texture r14 -> t8
+call enable_framebuffer_srgb 1
+call set_texture_srgb base:default:image t8
+call set_float base:default:multiplier 1
+call effect_loop base:default DrawTonemap technique_exists=1
+call draw_sprite t8 flip=0 size=640x480
+call enable_framebuffer_srgb 0
+echo texture creation failure: begin fails, frame keeps its previous space, the queue still rotates
+call texrender_destroy r14
+call texrender_destroy r15
+call texrender_create r16 format=RGBA zs=0
+call texrender_create r17 format=RGBA zs=0
+tick b 0.016
+render b
+call texrender_reset r16
+call blend_push
+call blend_function ONE ZERO
+call texrender_begin r16 800x600 space=SRGB -> 0
+call blend_pop
+call texrender_get_texture r17 -> @null
+tick b 0.016
+render b
+call texrender_reset r17
+call blend_push
+call blend_function ONE ZERO
+call texrender_begin r17 800x600 space=SRGB -> 0
+call blend_pop
+call texrender_get_texture r16 -> @null
+echo no target
+call source_update c deferred=1
+create c -> ok
+call deferred_update c
+tick c 0.016
+render c
+call skip_video_filter c
+cs c -> 709_EXTENDED
+cs c -> SRGB
+echo destroy frees every texrender
+call texrender_destroy r16
+call texrender_destroy r17
+destroy b

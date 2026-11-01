@@ -1,0 +1,24 @@
+# slideshow v2: random order uses rejection sampling: draws r < (2^64 mod count) are rejected, then index = r mod count;
+# a draw equal to the current index is redrawn. count=3: 2^64 mod 3 = 1, so a draw of 0 is rejected (CORE).
+fs_file /s/a.png 1
+fs_file /s/b.png 1
+fs_file /s/c.png 1
+fs_file /s/d.png 1
+img /s/a.png 10 10
+img /s/b.png 20 20
+img /s/c.png 30 30
+img /s/d.png 40 40
+rand 0 3 5 1 4 2 1 2 1 2 1 2 1 2 1 2 1 2 1 2 1 2 1 2 1 2 1 2 1 2
+rand_add 1 2 1 2 1 2 1 2 1 2 1 2 1 2 1 2 1 2 1 2 1 2 1 2
+rand_add 1 2 1 2 1 2 1 2 1 2 1 2 1 2 1 2 1 2 1 2 1 2 1 2
+rand_add 1 2 1 2 1 2 1 2 1 2 1 2 1 2 1 2 1 2 1 2 1 2 1 2
+rand_add 1 2 1 2 1 2 1 2 1 2 1 2 1 2 1 2 1 2 1 2 1 2 1 2
+rand_add 1 2 1 2 1 2 1 2 1 2 1 2 1 2 1 2 1 2 1 2 1 2 1 2
+rand_add 1 2 1 2 1 2 1 2 1 2 1 2 1 2 1 2 1 2 1 2 1 2 1 2
+create ss slideshow_v2 {"files":[{"value":"/s/a.png"},{"value":"/s/b.png"},{"value":"/s/c.png"}],"playback_mode":"random","slide_time":100,"transition_speed":0,"transition":"cut"}
+tick 0.016
+state ss
+refs ss 1 1
+tick 0.2
+tick 0.016
+state ss

@@ -1,0 +1,44 @@
+# CORPUS (CORE): every shipped effect file of this group is parsed by the real effect parser against the fake
+# OpenGL backend (preprocessor name _OPENGL). For each file the runner prints, in order: the backend calls
+# (location string, exact assembled shader text, shader parameters), the creation result, the effect structure
+# (parameters with types and defaults, techniques, passes with the parameters bound to each shader) and the
+# parser-internal structure (counts, struct/function/sampler/technique tables, dependency lists). The files
+# are read from the repository; the file name given to the parser is the repository relative path (it also
+# decides where "#include" is resolved; the runner starts in the repository root).
+gfx _OPENGL
+echo === libobs/data/area.effect
+backend text full
+backend events off
+effect e libobs/data/area.effect @file:libobs/data/area.effect
+dump e
+backend text none
+backend ep brief
+ep libobs/data/area.effect @file:libobs/data/area.effect
+destroy e
+echo === libobs/data/bicubic_scale.effect
+backend text full
+backend events off
+effect e libobs/data/bicubic_scale.effect @file:libobs/data/bicubic_scale.effect
+dump e
+backend text none
+backend ep brief
+ep libobs/data/bicubic_scale.effect @file:libobs/data/bicubic_scale.effect
+destroy e
+echo === libobs/data/bilinear_lowres_scale.effect
+backend text full
+backend events off
+effect e libobs/data/bilinear_lowres_scale.effect @file:libobs/data/bilinear_lowres_scale.effect
+dump e
+backend text none
+backend ep brief
+ep libobs/data/bilinear_lowres_scale.effect @file:libobs/data/bilinear_lowres_scale.effect
+destroy e
+echo === libobs/data/lanczos_scale.effect
+backend text full
+backend events off
+effect e libobs/data/lanczos_scale.effect @file:libobs/data/lanczos_scale.effect
+dump e
+backend text none
+backend ep brief
+ep libobs/data/lanczos_scale.effect @file:libobs/data/lanczos_scale.effect
+destroy e

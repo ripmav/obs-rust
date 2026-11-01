@@ -1,0 +1,5 @@
+# util_mul_div64 0xffffffffffffffff 0xffffffffffffffff 0xfffffffffffffffe
+mul_div64 10000000000000 10000000000000 0x7fffffffffffffff
+mul_div64 5 0xffffffffffffffff 0xffffffffffffffff
+mul_div64 0xffffffffffffffff 3 4
+mul_div64 0xffffffffffffffff 0xffffffffffffffff 1

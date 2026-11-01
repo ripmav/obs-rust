@@ -1,0 +1,31 @@
+# Large messages are split into chunks of out_chunk size with type-3 continuation headers; extended timestamps
+# are repeated in every continuation (R57..R59).
+new
+clock 123450
+seed 7
+seturl rtmp://live.example.com/app
+enablewrite
+set flashver "FMLE/3.0 (compatible; FMSc/1.0)"
+set swfurl_is_tcurl 1
+addstream mystream
+set outchunk 4096
+set chunkinfo 1
+feed 03
+feed_s1 0 1000 00000000
+feed_echo
+feed 0300000000001414000000000200075f726573756c74003ff000000000000005
+feed 0300000000001d14000000000200075f726573756c7400401000000000000005003ff0000000000000
+feed 0300000000005a14000000000200086f6e537461747573000000000000000000050300056c6576656c0200067374617475730004636f64650200174e657453747265616d2e5075626c6973682e5374617274000b6465736372697074696f6e02000164000009
+connect
+connectstream
+writetag 9 0 10000 0
+writetag 9 40 4096 0
+writetag 9 20000000 5000 0
+writetag 9 20000040 4097 0
+sendfn pause 1 0
+set outchunk 128
+sendpacket 2 0 1 0 0 00000080 0
+writetag 9 20000080 300 0
+writetag 9 20000120 128 0
+writetag 9 20000160 129 0
+writetag 9 20000200 0 0

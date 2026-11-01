@@ -1,0 +1,7 @@
+# The synthesized "return" parameter: present iff the return type is not void; it
+# is OUT-only, always last, and its name is reserved.
+parse "int f()"
+parse "int f(out int x)"
+parse "string f(in string a, out string b)"
+parse "void f(out int x)"
+parse "int f(int return)"

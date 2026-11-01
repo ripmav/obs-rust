@@ -1,0 +1,31 @@
+# os_get_path_extension(path): pointer to the last '.' of the final path component (both '/' and '\'
+# separate components), NULL when there is none. The returned text is "." plus everything after it.
+# Prints the byte offset of the returned pointer and the text.
+ext file.txt
+ext file.tar.gz
+ext file
+ext file.
+ext .
+ext ..
+ext .hidden
+ext dir/.hidden
+ext dir.d/file
+ext dir.d/file.x
+ext dir.d/
+ext dir/file.
+ext a/b.c/d
+ext a\b.c\d
+ext a\b.c
+ext a/b\c.d
+ext C:\dir.x\file
+ext /
+ext /abs/path/file.JPG
+ext ""
+ext "file.ex t"
+ext "x.y.z."
+ext "x.y.z./"
+ext "a.b/c.d/e"
+ext ...
+ext a..b
+ext "é.txt"
+ext "dir\xc3\xa9/file"

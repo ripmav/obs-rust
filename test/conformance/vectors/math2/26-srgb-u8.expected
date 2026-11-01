@@ -1,0 +1,27 @@
+c float 0
+c float 0.00392156886
+c float 0.498039216
+c float 0.501960814
+c float 1
+b u8 0
+b u8 255
+b u8 128
+b u8 64
+b u8 0
+b u8 1
+b u8 255
+b u8 254
+b u8 0
+b u8 0
+b u8 255
+b u8 255
+f float 0.0666666701
+b u8 17
+f float 0.13333334
+b u8 34
+f float 0.784313738
+b u8 200
+f4 f4 0 1 0.501960814 0.752941191
+q px 00ff80c0
+q px 8040ff80
+keep px 8040ff44

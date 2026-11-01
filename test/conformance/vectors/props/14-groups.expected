@@ -1,0 +1,67 @@
+add bool a ok
+add bool b ok
+add bool c ok
+echo groups-added-in-order
+add group g1 ok
+add bool t ok
+add group g2 ok
+info
+  prop g1 type=group desc="Group 1" long=@null enabled=1 visible=1
+    grouptype=normal content=G1
+info
+  prop g2 type=group desc="Group 2" long=@null enabled=1 visible=1
+    grouptype=checkable content=G2
+dump Top flags=0 param=@null
+  prop g1 type=group desc="Group 1" long=@null enabled=1 visible=1
+    grouptype=normal content=G1
+      prop a type=bool desc="A" long=@null enabled=1 visible=1
+        -
+      prop b type=bool desc="B" long=@null enabled=1 visible=1
+        -
+  prop t type=bool desc="T" long=@null enabled=1 visible=1
+    -
+  prop g2 type=group desc="Group 2" long=@null enabled=1 visible=1
+    grouptype=checkable content=G2
+      prop c type=bool desc="C" long=@null enabled=1 visible=1
+        -
+echo lookup-through-groups
+get a found
+get c found
+get g2 found
+get nope null
+get a found
+get c null
+echo parent
+parent @null
+parent Top
+parent Top
+echo add-to-content-after-the-group-exists
+add bool late ok
+log warning Property 'a' exists
+add bool a null
+log warning Property 'b' exists
+add bool b null
+log warning Property 'a' exists
+add bool a null
+log warning Property 't' exists
+add bool t null
+dump Top flags=0 param=@null
+  prop g1 type=group desc="Group 1" long=@null enabled=1 visible=1
+    grouptype=normal content=G1
+      prop a type=bool desc="A" long=@null enabled=1 visible=1
+        -
+      prop b type=bool desc="B" long=@null enabled=1 visible=1
+        -
+      prop late type=bool desc="L" long=@null enabled=1 visible=1
+        -
+  prop t type=bool desc="T" long=@null enabled=1 visible=1
+    -
+  prop g2 type=group desc="Group 2" long=@null enabled=1 visible=1
+    grouptype=checkable content=G2
+      prop c type=bool desc="C" long=@null enabled=1 visible=1
+        -
+echo unique-names-are-global-also-for-group-names
+log warning Property 'g1' exists
+add bool g1 null
+log warning Property 'g2' exists
+add bool g2 null

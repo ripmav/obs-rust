@@ -1,0 +1,16 @@
+# Placement (not push_back) happens when the packet is >= 70 ms away from the expected position: data is written at
+# the computed offset, a gap is zero filled, and everything stored AFTER the written region is discarded.
+init 48000 2
+clock 1000000000
+source a input
+output a 48000 2 9600 1000000000 const 0.1
+state a
+# 100 ms into the 200 ms buffer, 100 ms before the expected end: overwrite + truncate to 4800+100 frames
+output a 48000 2 100 1100000000 const 0.5
+state a
+# 300 ms after the buffer start+... far ahead (gap zero filled): total = placement + 100
+output a 48000 2 100 1500000000 const 0.5
+state a
+# older than audio_ts: whole buffer is reset to the packet
+output a 48000 2 100 900000000 const 0.5
+state a

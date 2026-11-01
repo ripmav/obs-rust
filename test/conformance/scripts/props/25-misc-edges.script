@@ -1,0 +1,43 @@
+# CORE. Odd-but-legal inputs: UTF-8 / empty names, group type values, many list items,
+# properties inside groups that are toggled, and bool-list items.
+props P
+add bool P "" "empty name" as en
+add bool P "héllo wörld" "Ünïcode" as u
+add bool P "with space" "x"
+dump P
+get P ""
+get P "héllo wörld"
+echo group-type-values
+props G0
+props G1
+props G2
+props G3
+add group P g0 "g0" invalid G0
+add group P g1 "g1" normal G1
+add group P g2 "g2" checkable G2
+add group P g3 "g3" 7 G3
+info P:g0
+info P:g3
+echo many-list-items
+add list P big "big" list int as big
+list_add big int "i0" 0
+list_add big int "i1" 1
+list_add big int "i2" 2
+list_add big int "i3" 3
+list_add big int "i4" 4
+list_add big int "i5" 5
+list_add big int "i6" 6
+list_add big int "i7" 7
+list_add big int "i8" 8
+list_add big int "i9" 9
+list_remove big 4
+list_insert big int 4 "again" 44
+list_disable big 9 1
+list_item big 9
+list_item big 4
+echo toggling-group-children
+set P:g1 visible 0
+add bool G1 child "c" as ch
+set ch enabled 0
+dump P
+destroy P

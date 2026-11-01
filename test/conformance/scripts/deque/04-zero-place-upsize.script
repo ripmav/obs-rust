@@ -1,0 +1,13 @@
+push_back 01020304
+push_back_zero 4
+dump
+place 2 aabb
+dump
+place 6 ccddeeff
+dump
+upsize 12
+dump
+upsize 4
+dump
+free
+dump

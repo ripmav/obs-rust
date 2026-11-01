@@ -1,0 +1,38 @@
+# S-049 pulse: the stream read callback. Frames = bytes / bytes_per_frame; timestamp = now - frames/rate;
+# the first 500 ms after the first packet are dropped (not delivered) but still counted;
+# holes are logged, dropped, not counted.
+pulse-server pulseaudio 16.1 alsa_input.mic alsa_output.speakers
+pulse-source alsa_input.mic "Mic" - s16le 48000 2
+pulse-defaults
+set-str device_id alsa_input.mic
+clock 10000000000
+pulse-create input
+# first chunk: 480 frames (1920 bytes); sets first_ts = ts + 500ms and is NOT delivered (ts == first_ts - 500ms)
+pulse-chunk data 1920
+pulse-read
+# 100 ms later: still inside the startup window
+clock 10100000000
+pulse-chunk data 1920
+pulse-read
+# timestamp exactly equal to first_ts (clock - 10 ms == 10490000000 ... ): not delivered (strict >)
+clock 10500000000
+pulse-chunk data 1920
+pulse-read
+clock 10500010000
+pulse-chunk data 1920
+pulse-read
+clock 11000000000
+pulse-chunk data 4800
+pulse-read
+# empty peek: nothing happens
+pulse-chunk data 0
+pulse-read
+# hole
+pulse-chunk hole 3840
+pulse-read
+# a partial frame is truncated by integer division
+pulse-chunk data 1923
+pulse-read
+# a callback arriving after disconnect is ignored
+pulse-read-nostream
+pulse-destroy

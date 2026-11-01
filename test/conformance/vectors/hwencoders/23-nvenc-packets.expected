@@ -1,0 +1,96 @@
+> dump 0
+> nvcap dyn_bitrate 1
+> defaults h264
+> set int bf 0
+> create h264 soft
+log info [obs-nvenc: 'enc'] settings: 	codec:        H264 	rate_control: cbr 	bitrate:      10000 	keyint:       250 	preset:       p5 	tuning:       hq 	multipass:    qres 	profile:      high 	width:        1920 	height:       1080 	b-frames:     0 	b-ref-mode:   0 	lookahead:    false (0 frames) 	aq:           true 
+nv.InitializeEncoder
+create -> ok
+> header 000000016742c01e
+> encode 0
+nv.EncodePicture ts=0 frameIdx=0 in=1920x1080 pitch=1920 fmt=NV12
+encode -> 1 received=0
+> encode 1
+nv.EncodePicture ts=1 frameIdx=1 in=1920x1080 pitch=1920 fmt=NV12
+encode -> 1 received=0
+> encode 2
+nv.EncodePicture ts=2 frameIdx=2 in=1920x1080 pitch=1920 fmt=NV12
+fake: lockpic queue empty
+host.set_last_error "NVENC Error: get_encoded_packet: nv.nvEncLockBitstream(s, &lock) failed: 20 (NV_ENC_ERR_GENERIC)"
+log error [obs-nvenc] get_encoded_packet: nv.nvEncLockBitstream(s, &lock) failed: 20 (NV_ENC_ERR_GENERIC)
+encode -> 0 received=0
+> lockpic 3 0 40
+> encode 3
+nv.EncodePicture ts=3 frameIdx=3 in=1920x1080 pitch=1920 fmt=NV12
+nv.LockBitstream -> type=3 size=40 ts=0
+nv.GetSequenceParams bufsize=256
+encode -> 1 received=1 size=40 head=a0a1a2a3 pts=0 dts=0 keyframe=1 priority=3
+> extra
+extra_data -> 1 000000016742c01e
+sei_data -> 0
+> state
+state: codec=H264 cx=1920 cy=1080 in_format=2 buf_count=4 output_delay=3 can_change_bitrate=1 non_texture=1 queued=3 header_size=8 bitstreams=4 hdr_mdi=0 hdr_cll=0
+state: props rate_control=cbr preset=p5 tune=hq multipass=qres profile=high bf=0 aq=1
+> lockpic 0 1 20
+> encode 4
+nv.EncodePicture ts=4 frameIdx=4 in=1920x1080 pitch=1920 fmt=NV12
+nv.LockBitstream -> type=0 size=20 ts=1
+encode -> 1 received=1 size=20 head=a0a1a2a3 pts=1 dts=1 keyframe=0 priority=2
+> lockpic 1 2 10
+> encode 5
+nv.EncodePicture ts=5 frameIdx=5 in=1920x1080 pitch=1920 fmt=NV12
+nv.LockBitstream -> type=1 size=10 ts=2
+encode -> 1 received=1 size=10 head=a0a1a2a3 pts=2 dts=2 keyframe=0 priority=0
+> lockpic 7 3 8
+> encode 6
+nv.EncodePicture ts=6 frameIdx=6 in=1920x1080 pitch=1920 fmt=NV12
+nv.LockBitstream -> type=7 size=8 ts=3
+encode -> 1 received=1 size=8 head=a0a1a2a3 pts=3 dts=3 keyframe=0 priority=0
+> lockpic 2 4 9
+> encode 7
+nv.EncodePicture ts=7 frameIdx=7 in=1920x1080 pitch=1920 fmt=NV12
+nv.LockBitstream -> type=2 size=9 ts=4
+encode -> 1 received=1 size=9 head=a0a1a2a3 pts=4 dts=4 keyframe=0 priority=3
+> lockpic 4 5 6
+> encode 8
+nv.EncodePicture ts=8 frameIdx=8 in=1920x1080 pitch=1920 fmt=NV12
+nv.LockBitstream -> type=4 size=6 ts=5
+encode -> 1 received=1 size=6 head=a0a1a2a3 pts=5 dts=5 keyframe=0 priority=3
+> lockpic 8 6 5
+> encode 9
+nv.EncodePicture ts=9 frameIdx=9 in=1920x1080 pitch=1920 fmt=NV12
+nv.LockBitstream -> type=8 size=5 ts=6
+encode -> 1 received=1 size=5 head=a0a1a2a3 pts=6 dts=6 keyframe=0 priority=3
+> lockpic 255 7 4
+> encode 10
+nv.EncodePicture ts=10 frameIdx=10 in=1920x1080 pitch=1920 fmt=NV12
+nv.LockBitstream -> type=255 size=4 ts=7
+encode -> 1 received=1 size=4 head=a0a1a2a3 pts=7 dts=7 keyframe=0 priority=0
+> nvstatus encode NV_ENC_ERR_NEED_MORE_INPUT
+> lockpic 0 8 3
+> encode 11
+nv.EncodePicture ts=11 frameIdx=11 in=1920x1080 pitch=1920 fmt=NV12
+nv.LockBitstream -> type=0 size=3 ts=8
+encode -> 1 received=1 size=3 head=a0a1a2 pts=8 dts=8 keyframe=0 priority=2
+> nvstatus encode NV_ENC_SUCCESS
+> nvstatus encode NV_ENC_ERR_GENERIC
+> encode 12
+nv.EncodePicture ts=12 frameIdx=12 in=1920x1080 pitch=1920 fmt=NV12
+host.set_last_error "NVENC Error: nvenc_encode_base: nvEncEncodePicture failed: 20 (NV_ENC_ERR_GENERIC)"
+log error [obs-nvenc] nvenc_encode_base: nvEncEncodePicture failed: 20 (NV_ENC_ERR_GENERIC)
+encode -> 0 received=0
+> nvstatus encode NV_ENC_SUCCESS
+> state
+state: codec=H264 cx=1920 cy=1080 in_format=2 buf_count=4 output_delay=3 can_change_bitrate=1 non_texture=1 queued=3 header_size=8 bitstreams=4 hdr_mdi=0 hdr_cll=0
+state: props rate_control=cbr preset=p5 tune=hq multipass=qres profile=high bf=0 aq=1
+> lockpic 0 9 2
+> lockpic 0 10 2
+> lockpic 0 11 2
+> lockpic 0 12 2
+> destroy
+nv.EncodePicture EOS
+nv.LockBitstream -> type=0 size=2 ts=9
+nv.LockBitstream -> type=0 size=2 ts=10
+nv.LockBitstream -> type=0 size=2 ts=11
+nv.DestroyEncoder
+destroyed

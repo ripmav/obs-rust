@@ -1,0 +1,64 @@
+> aopen main 48000 FLOAT_PLANAR STEREO
+= 0
+> aconnect a 1 0
+= 1
+> aconnect a 1 0
+= 0
+> aconnect a 1 1
+= 1
+> aconnect a 2 0
+= 1
+> aconnect b 1 0
+= 1
+> aconnect a 1 6
+= 0
+> aconnect a 1 99
+= 0
+> aconnect_null
+= 0
+> ainfo
+info name=main rate=48000 fmt=8 spk=2 cb=1
+get block=4 planes=2 channels=2 rate=48000 active=1
+null info=0 active=0
+> adump
+adump mix0=[(a 1 rate=48000 fmt=8 spk=2 clip=0 rs=0) (a 2 rate=48000 fmt=8 spk=2 clip=0 rs=0) (b 1 rate=48000 fmt=8 spk=2 clip=0 rs=0)] mix1=[(a 1 rate=48000 fmt=8 spk=2 clip=0 rs=0)] mix2=[] mix3=[] mix4=[] mix5=[]
+> aconnect a 10 2 - - - 0
+= 1
+> aconnect a 11 2 44100 - - 0
+resampler create dst=(44100 8 2) src=(48000 8 2)
+= 1
+> aconnect a 12 2 - 16BIT_PLANAR - 1
+resampler create dst=(48000 6 2) src=(48000 8 2)
+= 1
+> aconnect a 13 2 - - MONO 0
+resampler create dst=(48000 8 1) src=(48000 8 2)
+= 1
+> aconnect a 14 2 48000 FLOAT_PLANAR STEREO 1
+= 1
+> adump
+adump mix0=[(a 1 rate=48000 fmt=8 spk=2 clip=0 rs=0) (a 2 rate=48000 fmt=8 spk=2 clip=0 rs=0) (b 1 rate=48000 fmt=8 spk=2 clip=0 rs=0)] mix1=[(a 1 rate=48000 fmt=8 spk=2 clip=0 rs=0)] mix2=[(a 10 rate=48000 fmt=8 spk=2 clip=0 rs=0) (a 11 rate=44100 fmt=8 spk=2 clip=0 rs=1) (a 12 rate=48000 fmt=6 spk=2 clip=1 rs=1) (a 13 rate=48000 fmt=8 spk=1 clip=0 rs=1) (a 14 rate=48000 fmt=8 spk=2 clip=1 rs=0)] mix3=[] mix4=[] mix5=[]
+> adisconnect a 99 0
+= void
+> adisconnect a 1 5
+= void
+> adisconnect a 1 6
+= void
+> adisconnect a 2 0
+= void
+> adump
+adump mix0=[(a 1 rate=48000 fmt=8 spk=2 clip=0 rs=0) (b 1 rate=48000 fmt=8 spk=2 clip=0 rs=0)] mix1=[(a 1 rate=48000 fmt=8 spk=2 clip=0 rs=0)] mix2=[(a 10 rate=48000 fmt=8 spk=2 clip=0 rs=0) (a 11 rate=44100 fmt=8 spk=2 clip=0 rs=1) (a 12 rate=48000 fmt=6 spk=2 clip=1 rs=1) (a 13 rate=48000 fmt=8 spk=1 clip=0 rs=1) (a 14 rate=48000 fmt=8 spk=2 clip=1 rs=0)] mix3=[] mix4=[] mix5=[]
+> adisconnect a 1 0
+= void
+> adisconnect a 1 1
+= void
+> adump
+adump mix0=[(b 1 rate=48000 fmt=8 spk=2 clip=0 rs=0)] mix1=[] mix2=[(a 10 rate=48000 fmt=8 spk=2 clip=0 rs=0) (a 11 rate=44100 fmt=8 spk=2 clip=0 rs=1) (a 12 rate=48000 fmt=6 spk=2 clip=1 rs=1) (a 13 rate=48000 fmt=8 spk=1 clip=0 rs=1) (a 14 rate=48000 fmt=8 spk=2 clip=1 rs=0)] mix3=[] mix4=[] mix5=[]
+> ainfo
+info name=main rate=48000 fmt=8 spk=2 cb=1
+get block=4 planes=2 channels=2 rate=48000 active=1
+null info=0 active=0
+> aclose
+resampler destroy
+resampler destroy
+resampler destroy
+= closed

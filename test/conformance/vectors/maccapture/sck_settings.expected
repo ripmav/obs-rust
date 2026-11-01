@@ -1,0 +1,11 @@
+sck_defaults application=(null) display_uuid=(null) type=0 window=0 show_cursor=true hide_obs=false show_empty_names=false show_hidden_windows=false
+sck_audio_defaults application=(null) type=0
+sck_visibility type=0 display_uuid=true window=false application=false show_empty_names=false show_hidden_windows=false hide_obs=true
+sck_visibility type=1 display_uuid=false window=true application=false show_empty_names=true show_hidden_windows=true hide_obs=false
+sck_visibility type=2 display_uuid=true window=false application=true show_empty_names=false show_hidden_windows=true hide_obs=false
+sck_visibility type=7 unchanged-from-default (no case)
+sck_content_flags exclude_desktop_windows=true on_screen_windows_only=false
+sck_content_flags exclude_desktop_windows=true on_screen_windows_only=true
+sck_content_flags exclude_desktop_windows=true on_screen_windows_only=false
+sck_audio_visibility type=0 application=false
+sck_audio_visibility type=1 application=true

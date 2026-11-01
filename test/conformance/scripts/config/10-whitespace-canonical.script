@@ -1,0 +1,10 @@
+# Whitespace inside names and values survives a read/save cycle exactly as stored.
+write_file "[ S ]\n  k1  =  v1  \n\tk2\t=\tv2\t\nk 3=v 3\n   =novalue\n= value without name\nk4 =\n"
+open_file existing
+sections
+save
+file
+get_string " S " "k1  "
+get_string " S " "k 3"
+get_string " S " "k4 "
+get_string " S " "k2\t"

@@ -1,0 +1,43 @@
+# os_safe_replace(target, from, backup) on POSIX: if BACKUP is not NULL and TARGET exists,
+# rename TARGET -> BACKUP; then rename FROM -> TARGET. Returns 0 or -1. There is no rollback.
+# safe_replace TARGET FROM BACKUP|@null
+put t.txt target
+put f.txt from
+safe_replace t.txt f.txt bak.txt
+cat t.txt
+cat bak.txt
+exists f.txt
+# without a backup: plain replace
+put f.txt from2
+safe_replace t.txt f.txt @null
+cat t.txt
+cat bak.txt
+# target does not exist: no backup is made
+put f.txt from3
+safe_replace new.txt f.txt bak2.txt
+cat new.txt
+exists bak2.txt
+# source missing: -1 ...
+safe_replace new.txt nosuch.txt @null
+cat new.txt
+# ... and with a backup name the target has already been moved away: data is "lost" from the
+# target name (QUIRK Q-9)
+safe_replace new.txt nosuch.txt bak3.txt
+exists new.txt
+cat bak3.txt
+# an empty (not NULL) backup name is an invalid path: the target exists -> -1, nothing changes
+put t2.txt target2
+put f2.txt from2
+safe_replace t2.txt f2.txt ""
+cat t2.txt
+cat f2.txt
+# an empty backup name is irrelevant when the target does not exist
+safe_replace t3.txt f2.txt ""
+cat t3.txt
+# rename over an existing backup replaces it
+put t4.txt a
+put b4.txt old-backup
+put f4.txt b
+safe_replace t4.txt f4.txt b4.txt
+cat b4.txt
+cat t4.txt

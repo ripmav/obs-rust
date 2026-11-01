@@ -1,0 +1,62 @@
+log debug canvas 'Main' (<uuid>) created
+startup -> true
+log debug canvas 'Alpha' (<uuid>) created
+canvas_create a -> ok
+canvas a name="Alpha" flags=0x8 private=0 removed=0 has_video=0 video_active=0 uuid_len=36 view_type=aux
+signal a:source_add canvas=a source=Scene1
+mk_source sc1 name="Scene1" private=0 uuid=set
+log warning Attempted to insert context with duplicate name "Scene1"! Name has been changed to "Scene1 2"
+signal a:source_add canvas=a source=Scene1 2
+mk_source sc2 name="Scene1 2" private=0 uuid=set
+signal a:source_add canvas=a source=Group1
+mk_source g1 name="Group1" private=0 uuid=set
+mk_source in1 name="Input1" private=0 uuid=set
+mk_source sm name="main_scene" private=0 uuid=set
+refs sc1 strong=1 weak=0
+get canvas_source_by_name Scene1 -> "Scene1" obj=sc1 strong=2
+get canvas_source_by_name Scene1 2 -> "Scene1 2" obj=sc2 strong=2
+get canvas_scene_by_name Scene1 -> scene(ok)
+get canvas_scene_by_name Group1 -> scene(ok)
+get canvas_scene_by_name Input1 -> NULL
+get source_by_name main_scene -> "main_scene" obj=sm strong=2
+get source_by_name Input1 -> "Input1" obj=in1 strong=1
+get source_by_name Scene1 -> NULL
+enum canvas_scenes
+  visit Scene1
+  visit Scene1 2
+  visit Group1
+  visited=3
+enum canvas_scenes
+  visit Scene1
+  visited=1
+enum scenes
+  visit main_scene
+  visited=1
+enum sources
+  visit Group1
+  visit Input1
+  visited=2
+signal a:source_rename source=Renamed new_name="Renamed" prev_name="Scene1"
+src_rename sc1 -> "Renamed"
+log warning Attempted to rename context to duplicate name "Renamed"! New name has been changed to "Group1 2"
+signal a:source_rename source=Group1 2 new_name="Group1 2" prev_name="Renamed"
+src_rename sc1 -> "Group1 2"
+signal source_rename source=main_renamed new_name="main_renamed" prev_name="main_scene"
+src_rename sm -> "main_renamed"
+signal a:source_remove canvas=a source=Scene1 2
+src_canvas_remove sc2 canvas=NULL
+refs sc2 strong=0 weak=0
+enum canvas_scenes
+  visit Group1
+  visit Group1 2
+  visited=2
+shutdown begin
+log info Freeing OBS context data
+log debug canvas 'Main' (<uuid>) destroyed
+log info  1 source(s) were remaining
+signal a:source_remove canvas=a source=Group1 2
+signal a:source_remove canvas=a source=Group1
+log info  4 source(s) were remaining
+log debug canvas 'Alpha' (<uuid>) destroyed
+log info  1 canvas(s) were remaining
+shutdown end obs=NULL

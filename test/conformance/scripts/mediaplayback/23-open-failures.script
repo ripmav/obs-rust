@@ -1,0 +1,62 @@
+# Initialisation failures (mp_media_init2 = open + stream info + decoder setup).
+# The log lines have the contract: level + the 'MP:' texts shown. 'reconnecting' suppresses the open warning.
+media okm 0 0
+video 1 1000 16 16 yuv420p
+pkt 0 0 fdur=40
+endmedia
+media noinfo 0 0
+video 1 1000 16 16 yuv420p
+pkt 0 0 fdur=40
+fail info
+endmedia
+media nostreams 0 0
+endmedia
+media nodec 0 0
+video 1 1000 16 16 yuv420p codec=none
+pkt 0 0 fdur=40
+endmedia
+media badopen 0 0
+video 1 1000 16 16 yuv420p openfail=1
+pkt 0 0 fdur=40
+endmedia
+media aonly 100000 0
+audio 1 48000 48000 2 s16
+pkt 0 0 samples=4800
+endmedia
+media vbad 0 0
+video 1 1000 16 16 yuv420p openfail=1
+audio 1 48000 48000 2 s16
+pkt 1 0 samples=4800
+endmedia
+clock 1000
+echo ---- unknown path
+minit missing local=1
+echo ---- reconnecting suppresses the warning; set by play() only, not by the info structure
+minit missing local=0 reconnecting=1
+mfree
+minit missing local=0 init2=0
+mplay 0 1
+minit2
+mfree
+echo ---- stream info failure
+minit noinfo local=1
+mfree
+echo ---- no streams at all
+minit nostreams local=1
+mfree
+echo ---- decoder not found
+minit nodec local=1
+mfree
+echo ---- decoder cannot be opened
+minit badopen local=1
+mfree
+echo ---- audio only is fine; video decoder failing while audio works is fine too
+minit aonly local=1
+mfree
+minit vbad local=1
+mfree
+echo ---- queries on a media whose open failed
+minit missing local=1
+mframes
+mduration
+mtime

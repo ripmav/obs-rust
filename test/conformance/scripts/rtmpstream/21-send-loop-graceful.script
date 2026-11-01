@@ -1,0 +1,19 @@
+# S-045 send thread: graceful stop. The loop sends headers before the first packet, packets in queue order, and
+# stops at the first packet whose system dts is at/after the stop time (that packet is released unsent).
+# stop(ts_ns) => cutoff = ts/1000 microseconds. Fake muxer sizes: every write is 10 bytes.
+reset
+aenc 0 aac 160
+venc 0 h264 2500
+service rtmp://h/a KEY - -
+init_connect
+set active 1
+pkt audio 100000 0 0
+pkt video 200000 3 1
+pkt video 300000 2 0
+pkt audio 400000 0 0
+pkt video 500000 2 0
+stop 450000000
+# one more packet whose time is past the cutoff terminates the drain
+run_send
+queue
+released

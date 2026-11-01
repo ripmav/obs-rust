@@ -1,0 +1,21 @@
+# NULL path arguments that the platform layer itself handles. For the functions that pass the path
+# straight to a POSIX call (os_file_exists, os_unlink, os_rmdir, os_rename, os_copyfile, os_chdir,
+# os_mkdir ...) a NULL path is outside the preconditions and is not tested.
+fopen a @null rb
+fopen a @null wb
+wfopen a @null rb
+file_size @null
+abs_path @null 100
+abs_path_ptr @null
+quick_read_utf8 @null
+quick_read_mbs @null
+quick_write_utf8 @null x len 0
+quick_write_mbs @null x len
+os_u2w 8 auto @null
+os_w2u 8 auto @null
+os_u2w_ptr auto @null
+os_w2u_ptr auto @null
+os_mbs2wcs_ptr @null
+os_wcs2mbs_ptr @null
+os_u2mbs_ptr auto @null
+os_mbs2u_ptr auto @null

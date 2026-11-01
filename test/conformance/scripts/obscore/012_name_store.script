@@ -1,0 +1,11 @@
+# Profiler name store: when startup is given a store the core uses it and does NOT free it at
+# shutdown (the caller owns it); without one the core creates and later frees its own.
+startup en-US - store
+name_store
+state
+shutdown
+free_ext_store
+startup en-US -
+name_store
+state
+shutdown

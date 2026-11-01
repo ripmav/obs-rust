@@ -1,0 +1,26 @@
+fu_run local=/L cache=/C temp=/C/.temp url=http://srv/u/package.json
+fs read /L/package.json -> ok
+fs read /C/package.json -> missing
+fs read /C/meta.json -> missing
+fs copy /L/package.json -> /C/.temp/package.json : ok
+fs unlink /C/package.json : fail
+fs rename /C/.temp/package.json -> /C/package.json : ok
+http GET http://srv/u/package.json "User-Agent: UA"
+fs write /C/.temp/package.json len=104
+http GET http://cdn/x.bin "User-Agent: UA"
+fs write /C/.temp/x.bin len=7
+fs unlink /C/x.bin : fail
+fs rename /C/.temp/x.bin -> /C/x.bin : ok
+log info [fu] Successfully updated file 'x.bin' (version 1)
+http GET http://cdn/empty.bin "User-Agent: UA"
+fs write /C/.temp/empty.bin len=0
+fs unlink /C/empty.bin : fail
+fs rename /C/.temp/empty.bin -> /C/empty.bin : ok
+log info [fu] Successfully updated file 'empty.bin' (version 1)
+fs unlink /C/package.json : ok
+fs rename /C/.temp/package.json -> /C/package.json : ok
+log info [fu] Successfully updated package (version 2)
+fs rmdir /C/.temp
+fu_run done
+fu_cat /C/x.bin "payload"
+fu_cat /C/empty.bin ""

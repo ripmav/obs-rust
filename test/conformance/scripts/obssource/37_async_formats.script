@@ -1,0 +1,31 @@
+# Texture/conversion state per format: bgra/rgba/bgrx upload directly, YUV formats need GPU conversion.
+kind cam input asyncvideo
+create c cam C
+video c bgra 4 4 1 1 1 0
+vtime 100000000
+tick c 0.01
+astate c
+video c i420 4 4 2 0 1 0
+vtime 200000000
+tick c 0.01
+astate c
+video c nv12 4 4 3 0 1 0
+vtime 300000000
+tick c 0.01
+astate c
+video c y800 6 2 4 1 1 0
+vtime 400000000
+tick c 0.01
+astate c
+video c uyvy 4 2 5 0 1 0
+vtime 500000000
+tick c 0.01
+astate c
+video c i444 4 2 6 0 1 0
+vtime 600000000
+tick c 0.01
+astate c
+video c bgrx 4 2 7 1 1 0
+vtime 700000000
+tick c 0.01
+astate c

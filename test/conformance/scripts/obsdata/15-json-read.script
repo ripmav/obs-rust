@@ -1,0 +1,54 @@
+# CORE: obs_data_create_from_json on valid input. Member order is the document order.
+# JSON integers become int items, anything with '.', 'e' or 'E' becomes a double item
+# (so "1.0" stays a double and is written back as 1.0), true/false are bools, null is an
+# OBJECT item holding a NULL object, objects become nested objects.
+from_json a "{\"s\":\"x\",\"i\":1,\"d\":1.0,\"e\":1e2,\"t\":true,\"f\":false,\"n\":null,\"o\":{\"k\":[]},\"neg\":-5,\"z\":-0,\"dz\":-0.0}"
+dump a
+json a
+echo --- numbers
+from_json n "{\"a\":9223372036854775807,\"b\":-9223372036854775808,\"c\":1E+2,\"d\":1e-400,\"e\":0.1e1,\"f\":123456789012345678901234567890.5,\"g\":12345678901234567890.0,\"h\":1.7976931348623157e308,\"i\":5e-324,\"j\":0.5,\"k\":-1.5E-3}"
+json n
+get_double n a
+get_int n c
+echo --- document order, no sorting
+from_json o "{\"b\":1,\"a\":2,\"c\":{\"z\":1,\"y\":2}}"
+names o
+json o
+echo --- empty and whitespace
+from_json e "{}"
+dump e
+from_json w " \t\r\n{ \"a\" : 1 }\n\n"
+json w
+echo --- top-level array parses but yields an EMPTY object (Q2)
+from_json arr "[1,2,{\"a\":1}]"
+dump arr
+from_json arr2 "[]"
+dump arr2
+echo --- strings and escapes
+from_json s "{\"a\":\"\\u00e9\\u20ac\",\"b\":\"\\/\",\"c\":\"\\ud83d\\ude00\",\"d\":\"\\b\\f\\n\\r\\t\\\"\\\\\",\"e\":\"\",\"f\":\"\\u001f\",\"g\":\"\\u007f\"}"
+dump s
+json s
+echo --- raw UTF-8 and the empty key
+from_json u "{\"\xc3\xa9\":\"\xe2\x82\xac\",\"\":1}"
+dump u
+json u
+echo --- arrays keep only object elements (Q3)
+from_json x "{\"a\":[1,{\"x\":1},\"s\",null,{},[2],[{\"deep\":1}],true,{\"y\":2}]}"
+dump x
+from_json y "{\"a\":[1,2,3],\"b\":[[1]],\"c\":[null],\"d\":[]}"
+dump y
+json y
+echo --- nested arrays of objects with objects
+from_json z "{\"a\":[{\"b\":[{\"c\":1}]}]}"
+dump z
+json z
+echo --- keys differing in case or by encoding are distinct
+from_json k "{\"A\":1,\"a\":2}"
+names k
+echo --- trailing whitespace is allowed
+from_json q "{\"a\":1}\n"
+json q
+echo --- nesting depth: 2047 levels are accepted
+from_json_deep deep obj 2047
+from_json_deep deeparr arr 2047
+dump deeparr

@@ -1,0 +1,27 @@
+# script_log: message prefix, language names, the optional log handler and truncation.
+fake_define /s/l.lua load=ok
+load
+create S0 /s/l.lua
+# the handler gets the bare message and the script; the base log gets "[Lang: file] message"
+logcb on
+slog S0 300 hello
+slog S0 100 oops
+slog S0 400 dbg
+slog_fmt S0 200
+# NULL script -> "[Unknown Script] " prefix; handler receives a NULL script
+slog - 300 anon
+# other languages
+forcetype S0 python
+slog S0 300 py
+forcetype S0 unknown
+slog S0 300 unk
+forcetype S0 lua
+# handler removed -> only the base log
+logcb off
+slog S0 300 nohandler
+# messages are truncated so that prefix + message fit in 2047 bytes
+logcb on
+slog_long S0 300 3000
+logcb off
+destroy S0
+unload

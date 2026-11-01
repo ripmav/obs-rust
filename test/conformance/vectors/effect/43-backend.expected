@@ -1,0 +1,297 @@
+--- normal creation (order of backend calls)
+backend vertexshader_create location="be1.effect (Vertex shader, technique T1, pass 0)" len=94 fnv=a1332bf24ad5caa8
+  sparam 0 name=col type=VEC4 array=0
+  result ok
+backend pixelshader_create location="be1.effect (Pixel shader, technique T1, pass 0)" len=92 fnv=0eb9fd3fd5b9ac06
+  sparam 0 name=col type=VEC4 array=0
+  result ok
+backend vertexshader_create location="be1.effect (Vertex shader, technique T1, pass 1)" len=94 fnv=a1332bf24ad5caa8
+  sparam 0 name=col type=VEC4 array=0
+  result ok
+backend pixelshader_create location="be1.effect (Pixel shader, technique T1, pass 1)" len=92 fnv=0eb9fd3fd5b9ac06
+  sparam 0 name=col type=VEC4 array=0
+  result ok
+backend vertexshader_create location="be1.effect (Vertex shader, technique T2, pass 0)" len=94 fnv=a1332bf24ad5caa8
+  sparam 0 name=col type=VEC4 array=0
+  result ok
+backend pixelshader_create location="be1.effect (Pixel shader, technique T2, pass 0)" len=92 fnv=0eb9fd3fd5b9ac06
+  sparam 0 name=col type=VEC4 array=0
+  result ok
+effect e1 result=ok
+  error_string=@null
+--- backend fails the vertex shader with a message: all remaining shaders are still requested
+backend vertexshader_create location="be2.effect (Vertex shader, technique T1, pass 0)" len=94 fnv=a1332bf24ad5caa8
+  result fail (forced)
+log error Pass (0) <x> missing vertex shader!
+backend pixelshader_create location="be2.effect (Pixel shader, technique T1, pass 0)" len=92 fnv=0eb9fd3fd5b9ac06
+  sparam 0 name=col type=VEC4 array=0
+  result ok
+backend vertexshader_create location="be2.effect (Vertex shader, technique T1, pass 1)" len=94 fnv=a1332bf24ad5caa8
+  result fail (forced)
+log error Pass (1) <y> missing vertex shader!
+backend pixelshader_create location="be2.effect (Pixel shader, technique T1, pass 1)" len=92 fnv=0eb9fd3fd5b9ac06
+  sparam 0 name=col type=VEC4 array=0
+  result ok
+backend vertexshader_create location="be2.effect (Vertex shader, technique T2, pass 0)" len=94 fnv=a1332bf24ad5caa8
+  result fail (forced)
+log error Pass (0) <> missing vertex shader!
+backend pixelshader_create location="be2.effect (Pixel shader, technique T2, pass 0)" len=92 fnv=0eb9fd3fd5b9ac06
+  sparam 0 name=col type=VEC4 array=0
+  result ok
+backend shader_destroy location="be2.effect (Pixel shader, technique T1, pass 0)"
+backend shader_destroy location="be2.effect (Pixel shader, technique T1, pass 1)"
+backend shader_destroy location="be2.effect (Pixel shader, technique T2, pass 0)"
+effect e2 result=fail
+  error_string="be2.effect (5, 69): Error creating shader: no vertex\nbe2.effect (5, 69): Error creating shader: no vertex\nbe2.effect (5, 69): Error creating shader: no vertex\n"
+--- backend fails the pixel shader
+backend vertexshader_create location="be3.effect (Vertex shader, technique T1, pass 0)" len=94 fnv=a1332bf24ad5caa8
+  sparam 0 name=col type=VEC4 array=0
+  result ok
+backend pixelshader_create location="be3.effect (Pixel shader, technique T1, pass 0)" len=92 fnv=0eb9fd3fd5b9ac06
+  result fail (forced)
+log error Pass (0) <x> missing pixel shader!
+backend vertexshader_create location="be3.effect (Vertex shader, technique T1, pass 1)" len=94 fnv=a1332bf24ad5caa8
+  sparam 0 name=col type=VEC4 array=0
+  result ok
+backend pixelshader_create location="be3.effect (Pixel shader, technique T1, pass 1)" len=92 fnv=0eb9fd3fd5b9ac06
+  result fail (forced)
+log error Pass (1) <y> missing pixel shader!
+backend vertexshader_create location="be3.effect (Vertex shader, technique T2, pass 0)" len=94 fnv=a1332bf24ad5caa8
+  sparam 0 name=col type=VEC4 array=0
+  result ok
+backend pixelshader_create location="be3.effect (Pixel shader, technique T2, pass 0)" len=92 fnv=0eb9fd3fd5b9ac06
+  result fail (forced)
+log error Pass (0) <> missing pixel shader!
+backend shader_destroy location="be3.effect (Vertex shader, technique T1, pass 0)"
+backend shader_destroy location="be3.effect (Vertex shader, technique T1, pass 1)"
+backend shader_destroy location="be3.effect (Vertex shader, technique T2, pass 0)"
+effect e3 result=fail
+  error_string="be3.effect (5, 69): Error creating shader: no pixel\nbe3.effect (5, 69): Error creating shader: no pixel\nbe3.effect (5, 69): Error creating shader: no pixel\n"
+--- backend fails both
+backend vertexshader_create location="be4.effect (Vertex shader, technique T1, pass 0)" len=94 fnv=a1332bf24ad5caa8
+  result fail (forced)
+log error Pass (0) <x> missing vertex shader!
+backend pixelshader_create location="be4.effect (Pixel shader, technique T1, pass 0)" len=92 fnv=0eb9fd3fd5b9ac06
+  result fail (forced)
+log error Pass (0) <x> missing pixel shader!
+backend vertexshader_create location="be4.effect (Vertex shader, technique T1, pass 1)" len=94 fnv=a1332bf24ad5caa8
+  result fail (forced)
+log error Pass (1) <y> missing vertex shader!
+backend pixelshader_create location="be4.effect (Pixel shader, technique T1, pass 1)" len=92 fnv=0eb9fd3fd5b9ac06
+  result fail (forced)
+log error Pass (1) <y> missing pixel shader!
+backend vertexshader_create location="be4.effect (Vertex shader, technique T2, pass 0)" len=94 fnv=a1332bf24ad5caa8
+  result fail (forced)
+log error Pass (0) <> missing vertex shader!
+backend pixelshader_create location="be4.effect (Pixel shader, technique T2, pass 0)" len=92 fnv=0eb9fd3fd5b9ac06
+  result fail (forced)
+log error Pass (0) <> missing pixel shader!
+effect e4 result=fail
+  error_string="be4.effect (5, 69): Error creating shader: VERR\nbe4.effect (5, 69): Error creating shader: PERR\nbe4.effect (5, 69): Error creating shader: VERR\nbe4.effect (5, 69): Error creating shader: PERR\nbe4.effect (5, 69): Error creating shader: VERR\nbe4.effect (5, 69): Error creating shader: PERR\n"
+--- backend returns a shader together with an error text (e.g. warnings): recorded, but the effect is created
+backend vertexshader_create location="be5.effect (Vertex shader, technique T1, pass 0)" len=94 fnv=a1332bf24ad5caa8
+  sparam 0 name=col type=VEC4 array=0
+  result ok
+backend pixelshader_create location="be5.effect (Pixel shader, technique T1, pass 0)" len=92 fnv=0eb9fd3fd5b9ac06
+  sparam 0 name=col type=VEC4 array=0
+  result ok (with error text)
+backend vertexshader_create location="be5.effect (Vertex shader, technique T1, pass 1)" len=94 fnv=a1332bf24ad5caa8
+  sparam 0 name=col type=VEC4 array=0
+  result ok
+backend pixelshader_create location="be5.effect (Pixel shader, technique T1, pass 1)" len=92 fnv=0eb9fd3fd5b9ac06
+  sparam 0 name=col type=VEC4 array=0
+  result ok (with error text)
+backend vertexshader_create location="be5.effect (Vertex shader, technique T2, pass 0)" len=94 fnv=a1332bf24ad5caa8
+  sparam 0 name=col type=VEC4 array=0
+  result ok
+backend pixelshader_create location="be5.effect (Pixel shader, technique T2, pass 0)" len=92 fnv=0eb9fd3fd5b9ac06
+  sparam 0 name=col type=VEC4 array=0
+  result ok (with error text)
+effect e5 result=ok
+  error_string=@null
+--- ... and it is visible in the error string only when the creation fails for another reason
+backend vertexshader_create location="be5b.effect (Vertex shader, technique T1, pass 0)" len=94 fnv=a1332bf24ad5caa8
+  result fail (forced)
+log error Pass (0) <x> missing vertex shader!
+backend pixelshader_create location="be5b.effect (Pixel shader, technique T1, pass 0)" len=92 fnv=0eb9fd3fd5b9ac06
+  sparam 0 name=col type=VEC4 array=0
+  result ok (with error text)
+backend vertexshader_create location="be5b.effect (Vertex shader, technique T1, pass 1)" len=94 fnv=a1332bf24ad5caa8
+  result fail (forced)
+log error Pass (1) <y> missing vertex shader!
+backend pixelshader_create location="be5b.effect (Pixel shader, technique T1, pass 1)" len=92 fnv=0eb9fd3fd5b9ac06
+  sparam 0 name=col type=VEC4 array=0
+  result ok (with error text)
+backend vertexshader_create location="be5b.effect (Vertex shader, technique T2, pass 0)" len=94 fnv=a1332bf24ad5caa8
+  result fail (forced)
+log error Pass (0) <> missing vertex shader!
+backend pixelshader_create location="be5b.effect (Pixel shader, technique T2, pass 0)" len=92 fnv=0eb9fd3fd5b9ac06
+  sparam 0 name=col type=VEC4 array=0
+  result ok (with error text)
+backend shader_destroy location="be5b.effect (Pixel shader, technique T1, pass 0)"
+backend shader_destroy location="be5b.effect (Pixel shader, technique T1, pass 1)"
+backend shader_destroy location="be5b.effect (Pixel shader, technique T2, pass 0)"
+effect e5b result=fail
+  error_string="be5b.effect (5, 69): Error creating shader: E: vertex failed\nbe5b.effect (5, 69): Error creating shader: W: just a warning\nbe5b.effect (5, 69): Error creating shader: E: vertex failed\nbe5b.effect (5, 69): Error creating shader: W: just a warning\nbe5b.effect (5, 69): Error creating shader: E: vertex failed\nbe5b.effect (5, 69): Error creating shader: W: just a warning\n"
+--- empty error text is ignored
+backend vertexshader_create location="be6.effect (Vertex shader, technique T1, pass 0)" len=94 fnv=a1332bf24ad5caa8
+  sparam 0 name=col type=VEC4 array=0
+  result ok
+backend pixelshader_create location="be6.effect (Pixel shader, technique T1, pass 0)" len=92 fnv=0eb9fd3fd5b9ac06
+  sparam 0 name=col type=VEC4 array=0
+  result ok (with error text)
+backend vertexshader_create location="be6.effect (Vertex shader, technique T1, pass 1)" len=94 fnv=a1332bf24ad5caa8
+  sparam 0 name=col type=VEC4 array=0
+  result ok
+backend pixelshader_create location="be6.effect (Pixel shader, technique T1, pass 1)" len=92 fnv=0eb9fd3fd5b9ac06
+  sparam 0 name=col type=VEC4 array=0
+  result ok (with error text)
+backend vertexshader_create location="be6.effect (Vertex shader, technique T2, pass 0)" len=94 fnv=a1332bf24ad5caa8
+  sparam 0 name=col type=VEC4 array=0
+  result ok
+backend pixelshader_create location="be6.effect (Pixel shader, technique T2, pass 0)" len=92 fnv=0eb9fd3fd5b9ac06
+  sparam 0 name=col type=VEC4 array=0
+  result ok (with error text)
+effect e6 result=ok
+  error_string=@null
+--- the NULL error_string argument is allowed
+backend vertexshader_create location="be7.effect (Vertex shader, technique T1, pass 0)" len=94 fnv=a1332bf24ad5caa8
+  result fail (forced)
+log error Pass (0) <x> missing vertex shader!
+backend pixelshader_create location="be7.effect (Pixel shader, technique T1, pass 0)" len=92 fnv=0eb9fd3fd5b9ac06
+  sparam 0 name=col type=VEC4 array=0
+  result ok
+backend vertexshader_create location="be7.effect (Vertex shader, technique T1, pass 1)" len=94 fnv=a1332bf24ad5caa8
+  result fail (forced)
+log error Pass (1) <y> missing vertex shader!
+backend pixelshader_create location="be7.effect (Pixel shader, technique T1, pass 1)" len=92 fnv=0eb9fd3fd5b9ac06
+  sparam 0 name=col type=VEC4 array=0
+  result ok
+backend vertexshader_create location="be7.effect (Vertex shader, technique T2, pass 0)" len=94 fnv=a1332bf24ad5caa8
+  result fail (forced)
+log error Pass (0) <> missing vertex shader!
+backend pixelshader_create location="be7.effect (Pixel shader, technique T2, pass 0)" len=92 fnv=0eb9fd3fd5b9ac06
+  sparam 0 name=col type=VEC4 array=0
+  result ok
+backend shader_destroy location="be7.effect (Pixel shader, technique T1, pass 0)"
+backend shader_destroy location="be7.effect (Pixel shader, technique T1, pass 1)"
+backend shader_destroy location="be7.effect (Pixel shader, technique T2, pass 0)"
+effect e7 result=fail
+--- backend does not know the uniform parameters (no shader_parse)
+backend vertexshader_create location="be8.effect (Vertex shader, technique T1, pass 0)" len=94 fnv=a1332bf24ad5caa8
+  result ok
+log error Effect shader parameter not found
+log error Pass (0) <x> missing vertex shader!
+backend pixelshader_create location="be8.effect (Pixel shader, technique T1, pass 0)" len=92 fnv=0eb9fd3fd5b9ac06
+  result ok
+log error Effect shader parameter not found
+log error Pass (0) <x> missing pixel shader!
+backend vertexshader_create location="be8.effect (Vertex shader, technique T1, pass 1)" len=94 fnv=a1332bf24ad5caa8
+  result ok
+log error Effect shader parameter not found
+log error Pass (1) <y> missing vertex shader!
+backend pixelshader_create location="be8.effect (Pixel shader, technique T1, pass 1)" len=92 fnv=0eb9fd3fd5b9ac06
+  result ok
+log error Effect shader parameter not found
+log error Pass (1) <y> missing pixel shader!
+backend vertexshader_create location="be8.effect (Vertex shader, technique T2, pass 0)" len=94 fnv=a1332bf24ad5caa8
+  result ok
+log error Effect shader parameter not found
+log error Pass (0) <> missing vertex shader!
+backend pixelshader_create location="be8.effect (Pixel shader, technique T2, pass 0)" len=92 fnv=0eb9fd3fd5b9ac06
+  result ok
+log error Effect shader parameter not found
+log error Pass (0) <> missing pixel shader!
+backend shader_destroy location="be8.effect (Vertex shader, technique T1, pass 0)"
+backend shader_destroy location="be8.effect (Pixel shader, technique T1, pass 0)"
+backend shader_destroy location="be8.effect (Vertex shader, technique T1, pass 1)"
+backend shader_destroy location="be8.effect (Pixel shader, technique T1, pass 1)"
+backend shader_destroy location="be8.effect (Vertex shader, technique T2, pass 0)"
+backend shader_destroy location="be8.effect (Pixel shader, technique T2, pass 0)"
+effect e8 result=fail
+  error_string=@null
+--- a plain (non-uniform) parameter is not looked up, so a backend that knows no variables is fine
+backend vertexshader_create location="be9.effect (Vertex shader, technique T, pass 0)" len=86 fnv=f59ced1b53ff0d8c
+  result ok
+backend pixelshader_create location="be9.effect (Pixel shader, technique T, pass 0)" len=84 fnv=a4aff490307efa9a
+  result ok
+effect e9 result=ok
+  error_string=@null
+--- error text with several lines is kept verbatim
+backend vertexshader_create location="be10.effect (Vertex shader, technique T1, pass 0)" len=94 fnv=a1332bf24ad5caa8
+  result fail (forced)
+log error Pass (0) <x> missing vertex shader!
+backend pixelshader_create location="be10.effect (Pixel shader, technique T1, pass 0)" len=92 fnv=0eb9fd3fd5b9ac06
+  sparam 0 name=col type=VEC4 array=0
+  result ok
+backend vertexshader_create location="be10.effect (Vertex shader, technique T1, pass 1)" len=94 fnv=a1332bf24ad5caa8
+  result fail (forced)
+log error Pass (1) <y> missing vertex shader!
+backend pixelshader_create location="be10.effect (Pixel shader, technique T1, pass 1)" len=92 fnv=0eb9fd3fd5b9ac06
+  sparam 0 name=col type=VEC4 array=0
+  result ok
+backend vertexshader_create location="be10.effect (Vertex shader, technique T2, pass 0)" len=94 fnv=a1332bf24ad5caa8
+  result fail (forced)
+log error Pass (0) <> missing vertex shader!
+backend pixelshader_create location="be10.effect (Pixel shader, technique T2, pass 0)" len=92 fnv=0eb9fd3fd5b9ac06
+  sparam 0 name=col type=VEC4 array=0
+  result ok
+backend shader_destroy location="be10.effect (Pixel shader, technique T1, pass 0)"
+backend shader_destroy location="be10.effect (Pixel shader, technique T1, pass 1)"
+backend shader_destroy location="be10.effect (Pixel shader, technique T2, pass 0)"
+effect e10 result=fail
+  error_string="be10.effect (5, 69): Error creating shader: line1\nline2\n\nbe10.effect (5, 69): Error creating shader: line1\nline2\n\nbe10.effect (5, 69): Error creating shader: line1\nline2\n\n"
+--- the failed effects left nothing behind
+backend vertexshader_create location="be11.effect (Vertex shader, technique T1, pass 0)" len=94 fnv=a1332bf24ad5caa8
+  sparam 0 name=col type=VEC4 array=0
+  result ok
+backend pixelshader_create location="be11.effect (Pixel shader, technique T1, pass 0)" len=92 fnv=0eb9fd3fd5b9ac06
+  sparam 0 name=col type=VEC4 array=0
+  result ok
+backend vertexshader_create location="be11.effect (Vertex shader, technique T1, pass 1)" len=94 fnv=a1332bf24ad5caa8
+  sparam 0 name=col type=VEC4 array=0
+  result ok
+backend pixelshader_create location="be11.effect (Pixel shader, technique T1, pass 1)" len=92 fnv=0eb9fd3fd5b9ac06
+  sparam 0 name=col type=VEC4 array=0
+  result ok
+backend vertexshader_create location="be11.effect (Vertex shader, technique T2, pass 0)" len=94 fnv=a1332bf24ad5caa8
+  sparam 0 name=col type=VEC4 array=0
+  result ok
+backend pixelshader_create location="be11.effect (Pixel shader, technique T2, pass 0)" len=92 fnv=0eb9fd3fd5b9ac06
+  sparam 0 name=col type=VEC4 array=0
+  result ok
+effect e11 result=ok
+  error_string=@null
+effect e11 params=1 techniques=2 viewproj=- world=-
+  param 0 name=col type=VEC4 annotations=0 default_size=16 default=0000803f0000803f0000803f0000803f f=[1,1,1,1]
+  technique 0 name=T1 passes=2
+    pass 0 name="x" vertex_params=[col] pixel_params=[col] vertex=yes pixel=yes
+    pass 1 name="y" vertex_params=[col] pixel_params=[col] vertex=yes pixel=yes
+  technique 1 name=T2 passes=1
+    pass 0 name=@null vertex_params=[col] pixel_params=[col] vertex=yes pixel=yes
+backend shader_destroy location="be11.effect (Vertex shader, technique T1, pass 0)"
+backend shader_destroy location="be11.effect (Pixel shader, technique T1, pass 0)"
+backend shader_destroy location="be11.effect (Vertex shader, technique T1, pass 1)"
+backend shader_destroy location="be11.effect (Pixel shader, technique T1, pass 1)"
+backend shader_destroy location="be11.effect (Vertex shader, technique T2, pass 0)"
+backend shader_destroy location="be11.effect (Pixel shader, technique T2, pass 0)"
+backend shader_destroy location="be9.effect (Vertex shader, technique T, pass 0)"
+backend shader_destroy location="be9.effect (Pixel shader, technique T, pass 0)"
+backend shader_destroy location="be6.effect (Vertex shader, technique T1, pass 0)"
+backend shader_destroy location="be6.effect (Pixel shader, technique T1, pass 0)"
+backend shader_destroy location="be6.effect (Vertex shader, technique T1, pass 1)"
+backend shader_destroy location="be6.effect (Pixel shader, technique T1, pass 1)"
+backend shader_destroy location="be6.effect (Vertex shader, technique T2, pass 0)"
+backend shader_destroy location="be6.effect (Pixel shader, technique T2, pass 0)"
+backend shader_destroy location="be5.effect (Vertex shader, technique T1, pass 0)"
+backend shader_destroy location="be5.effect (Pixel shader, technique T1, pass 0)"
+backend shader_destroy location="be5.effect (Vertex shader, technique T1, pass 1)"
+backend shader_destroy location="be5.effect (Pixel shader, technique T1, pass 1)"
+backend shader_destroy location="be5.effect (Vertex shader, technique T2, pass 0)"
+backend shader_destroy location="be5.effect (Pixel shader, technique T2, pass 0)"
+backend shader_destroy location="be1.effect (Vertex shader, technique T1, pass 0)"
+backend shader_destroy location="be1.effect (Pixel shader, technique T1, pass 0)"
+backend shader_destroy location="be1.effect (Vertex shader, technique T1, pass 1)"
+backend shader_destroy location="be1.effect (Pixel shader, technique T1, pass 1)"
+backend shader_destroy location="be1.effect (Vertex shader, technique T2, pass 0)"
+backend shader_destroy location="be1.effect (Pixel shader, technique T2, pass 0)"

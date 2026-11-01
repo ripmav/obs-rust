@@ -1,0 +1,28 @@
+find 2
+find 2
+find 1
+find none
+find 4
+find 4
+find 4
+find 6
+win 1 exe_ok=1
+  exe "a.exe"
+  title "First"
+  class "C1"
+win 3 exe_ok=0
+  exe (null)
+  title "Mine"
+  class "C3"
+win 4 exe_ok=1
+  exe "unknown"
+  title "NoAccess"
+  class "C4"
+win 5 exe_ok=1
+  exe "unknown"
+  title "NoPath"
+  class "C5"
+win 6 exe_ok=1
+  exe "unknown"
+  title "NoSlash"
+  class "C6"

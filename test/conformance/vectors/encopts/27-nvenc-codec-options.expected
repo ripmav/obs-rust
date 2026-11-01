@@ -1,0 +1,92 @@
+log debug [obs-nvenc] Applying custom level = 4.2 (42)
+log debug [obs-nvenc] Changing parameter: "idrPeriod": 0 -> 60 (uint32_t)
+log debug [obs-nvenc] Changing parameter: "useBFramesAsRef": 0 -> 2 (NV_ENC_BFRAME_REF_MODE)
+log debug [obs-nvenc] Changing parameter: "tfLevel": 0 -> 3 (NV_ENC_TEMPORAL_FILTER_LEVEL)
+log debug [obs-nvenc] Changing parameter: "enableFillerDataInsertion": 0 -> 1 (1 bit(s))
+nv_apply success=1
+nvconfig gopLength=0 frameIntervalP=0
+nvrc avg=0 max=0 vbvbuf=0 vbvdelay=0 tq=0 tqlsb=0 cb=0 cr=0 lookaheadLevel=0
+nvrc constQP=0/0/0 minQP=0/0/0 maxQP=0/0/0 initialRCQP=0/0/0
+nvrc bits minQP=0 maxQP=0 initialRCQP=0 aq=0 lookahead=0 disableIadapt=0 disableBadapt=0 temporalAQ=0 aqStrength=0
+nvcodec h264 level=42 idrPeriod=60 useBFramesAsRef=2 tfLevel=3 filler=1
+echo hevc
+log debug [obs-nvenc] Applying custom level = 5.1 (153)
+log debug [obs-nvenc] Changing parameter: "tier": 0 -> 1 (uint32_t)
+log debug [obs-nvenc] Changing parameter: "idrPeriod": 0 -> 61 (uint32_t)
+log debug [obs-nvenc] Changing parameter: "useBFramesAsRef": 0 -> 1 (NV_ENC_BFRAME_REF_MODE)
+log debug [obs-nvenc] Changing parameter: "tfLevel": 0 -> 4 (NV_ENC_TEMPORAL_FILTER_LEVEL)
+log debug [obs-nvenc] Changing parameter: "enableFillerDataInsertion": 0 -> 1 (1 bit(s))
+nv_apply success=1
+nvconfig gopLength=0 frameIntervalP=0
+nvrc avg=0 max=0 vbvbuf=0 vbvdelay=0 tq=0 tqlsb=0 cb=0 cr=0 lookaheadLevel=0
+nvrc constQP=0/0/0 minQP=0/0/0 maxQP=0/0/0 initialRCQP=0/0/0
+nvrc bits minQP=0 maxQP=0 initialRCQP=0 aq=0 lookahead=0 disableIadapt=0 disableBadapt=0 temporalAQ=0 aqStrength=0
+nvcodec hevc level=153 tier=1 idrPeriod=61 useBFramesAsRef=1 tfLevel=4 filler=1
+echo av1
+log debug [obs-nvenc] Changing parameter: "level": 0 -> 8 (uint32_t)
+log debug [obs-nvenc] Changing parameter: "tier": 0 -> 1 (uint32_t)
+log debug [obs-nvenc] Changing parameter: "numTileColumns": 0 -> 2 (uint32_t)
+log debug [obs-nvenc] Changing parameter: "numTileRows": 0 -> 3 (uint32_t)
+log debug [obs-nvenc] Changing parameter: "idrPeriod": 0 -> 62 (uint32_t)
+log debug [obs-nvenc] Changing parameter: "useBFramesAsRef": 0 -> 2 (NV_ENC_BFRAME_REF_MODE)
+log debug [obs-nvenc] Changing parameter: "tfLevel": 0 -> 1 (NV_ENC_TEMPORAL_FILTER_LEVEL)
+log debug [obs-nvenc] Changing parameter: "enableBitstreamPadding": 0 -> 1 (1 bit(s))
+nv_apply success=1
+nvconfig gopLength=0 frameIntervalP=0
+nvrc avg=0 max=0 vbvbuf=0 vbvdelay=0 tq=0 tqlsb=0 cb=0 cr=0 lookaheadLevel=0
+nvrc constQP=0/0/0 minQP=0/0/0 maxQP=0/0/0 initialRCQP=0/0/0
+nvrc bits minQP=0 maxQP=0 initialRCQP=0 aq=0 lookahead=0 disableIadapt=0 disableBadapt=0 temporalAQ=0 aqStrength=0
+nvcodec av1 level=8 tier=1 tiles=2x3 idrPeriod=62 useBFramesAsRef=2 tfLevel=1 padding=1
+echo tier-unknown-for-h264-others-still-applied
+log warning [obs-nvenc: 'enc'] Unknown custom option: "tier"
+log debug [obs-nvenc] Changing parameter: "idrPeriod": 0 -> 10 (uint32_t)
+log debug [obs-nvenc] Changing parameter: "gopLength": 0 -> 99 (uint32_t)
+nv_apply success=0
+nvconfig gopLength=99 frameIntervalP=0
+nvrc avg=0 max=0 vbvbuf=0 vbvdelay=0 tq=0 tqlsb=0 cb=0 cr=0 lookaheadLevel=0
+nvrc constQP=0/0/0 minQP=0/0/0 maxQP=0/0/0 initialRCQP=0/0/0
+nvrc bits minQP=0 maxQP=0 initialRCQP=0 aq=0 lookahead=0 disableIadapt=0 disableBadapt=0 temporalAQ=0 aqStrength=0
+nvcodec h264 level=0 idrPeriod=10 useBFramesAsRef=0 tfLevel=0 filler=0
+echo tiles-unknown-for-hevc
+log warning [obs-nvenc: 'enc'] Unknown custom option: "numTileColumns"
+log warning [obs-nvenc: 'enc'] Unknown custom option: "enableBitstreamPadding"
+log debug [obs-nvenc] Changing parameter: "idrPeriod": 0 -> 11 (uint32_t)
+nv_apply success=0
+nvconfig gopLength=0 frameIntervalP=0
+nvrc avg=0 max=0 vbvbuf=0 vbvdelay=0 tq=0 tqlsb=0 cb=0 cr=0 lookaheadLevel=0
+nvrc constQP=0/0/0 minQP=0/0/0 maxQP=0/0/0 initialRCQP=0/0/0
+nvrc bits minQP=0 maxQP=0 initialRCQP=0 aq=0 lookahead=0 disableIadapt=0 disableBadapt=0 temporalAQ=0 aqStrength=0
+nvcodec hevc level=0 tier=0 idrPeriod=11 useBFramesAsRef=0 tfLevel=0 filler=0
+echo filler-unknown-for-av1
+log warning [obs-nvenc: 'enc'] Unknown custom option: "enableFillerDataInsertion"
+log debug [obs-nvenc] Changing parameter: "enableBitstreamPadding": 0 -> 1 (1 bit(s))
+nv_apply success=0
+nvconfig gopLength=0 frameIntervalP=0
+nvrc avg=0 max=0 vbvbuf=0 vbvdelay=0 tq=0 tqlsb=0 cb=0 cr=0 lookaheadLevel=0
+nvrc constQP=0/0/0 minQP=0/0/0 maxQP=0/0/0 initialRCQP=0/0/0
+nvrc bits minQP=0 maxQP=0 initialRCQP=0 aq=0 lookahead=0 disableIadapt=0 disableBadapt=0 temporalAQ=0 aqStrength=0
+nvcodec av1 level=0 tier=0 tiles=0x0 idrPeriod=0 useBFramesAsRef=0 tfLevel=0 padding=1
+echo skipped-special-options
+log debug [obs-nvenc] Changing parameter: "gopLength": 0 -> 7 (uint32_t)
+nv_apply success=1
+nvconfig gopLength=7 frameIntervalP=0
+nvrc avg=0 max=0 vbvbuf=0 vbvdelay=0 tq=0 tqlsb=0 cb=0 cr=0 lookaheadLevel=0
+nvrc constQP=0/0/0 minQP=0/0/0 maxQP=0/0/0 initialRCQP=0/0/0
+nvrc bits minQP=0 maxQP=0 initialRCQP=0 aq=0 lookahead=0 disableIadapt=0 disableBadapt=0 temporalAQ=0 aqStrength=0
+nvcodec h264 level=0 idrPeriod=0 useBFramesAsRef=0 tfLevel=0 filler=0
+echo option-names-are-case-sensitive
+log warning [obs-nvenc: 'enc'] Unknown custom option: "GOPLENGTH"
+log debug [obs-nvenc] Changing parameter: "gopLength": 0 -> 8 (uint32_t)
+nv_apply success=0
+nvconfig gopLength=8 frameIntervalP=0
+nvrc avg=0 max=0 vbvbuf=0 vbvdelay=0 tq=0 tqlsb=0 cb=0 cr=0 lookaheadLevel=0
+nvrc constQP=0/0/0 minQP=0/0/0 maxQP=0/0/0 initialRCQP=0/0/0
+nvrc bits minQP=0 maxQP=0 initialRCQP=0 aq=0 lookahead=0 disableIadapt=0 disableBadapt=0 temporalAQ=0 aqStrength=0
+nvcodec h264 level=0 idrPeriod=0 useBFramesAsRef=0 tfLevel=0 filler=0
+echo no-options
+nv_apply success=1
+nvconfig gopLength=0 frameIntervalP=0
+nvrc avg=0 max=0 vbvbuf=0 vbvdelay=0 tq=0 tqlsb=0 cb=0 cr=0 lookaheadLevel=0
+nvrc constQP=0/0/0 minQP=0/0/0 maxQP=0/0/0 initialRCQP=0/0/0
+nvrc bits minQP=0 maxQP=0 initialRCQP=0 aq=0 lookahead=0 disableIadapt=0 disableBadapt=0 temporalAQ=0 aqStrength=0
+nvcodec h264 level=0 idrPeriod=0 useBFramesAsRef=0 tfLevel=0 filler=0

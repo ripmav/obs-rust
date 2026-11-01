@@ -1,0 +1,18 @@
+wasapi_new device_id=default timing=0 default=1 priority=0 class= title= exe=
+wasapi_update restart=1 capture_device_changed_signal=0 device_id={0.0.1.00000000}.{abc} default=0 timing=0
+wasapi_update restart=0 capture_device_changed_signal=0 device_id={0.0.1.00000000}.{abc} default=0 timing=0
+wasapi_update restart=0 capture_device_changed_signal=0 device_id={0.0.1.00000000}.{abc} default=0 timing=1
+wasapi_update restart=1 capture_device_changed_signal=0 device_id={0.0.1.00000000}.{ABC} default=0 timing=1
+wasapi_update restart=1 capture_device_changed_signal=0 device_id=DEFAULT default=1 timing=1
+wasapi_update restart=1 capture_device_changed_signal=0 device_id=default default=1 timing=1
+wasapi_new device_id=default timing=1 default=1 priority=2 class= title= exe=
+wasapi_new device_id= timing=0 default=0 priority=1 class=UnrealWindow title=Game: X exe=game.exe
+wasapi_update restart=0 capture_device_changed_signal=0 device_id= default=0 timing=0
+wasapi_update restart=1 capture_device_changed_signal=0 device_id= default=0 timing=0
+wasapi_update restart=0 capture_device_changed_signal=0 device_id= default=0 timing=0
+wasapi_update restart=1 capture_device_changed_signal=0 device_id= default=0 timing=0
+wasapi_update restart=1 capture_device_changed_signal=0 device_id= default=0 timing=0
+wasapi_update restart=0 capture_device_changed_signal=0 device_id= default=0 timing=0
+wasapi_new device_id=default timing=1 default=1 priority=0 class= title= exe=
+wasapi_update restart=1 capture_device_changed_signal=1 device_id={0.0.0.00000000}.{out1} default=0 timing=1
+wasapi_update restart=0 capture_device_changed_signal=0 device_id={0.0.0.00000000}.{out1} default=0 timing=1

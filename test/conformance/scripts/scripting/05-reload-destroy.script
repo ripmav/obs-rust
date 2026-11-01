@@ -1,0 +1,19 @@
+# obs_script_reload = unload, drain the deferred-call queue, load. Destroy = unload + destroy.
+fake_define /s/r.lua load=ok desc=Desc
+load
+create S0 /s/r.lua
+# deferred calls queued before the reload have all run by the time the backend loads again
+defer_post a b c
+reload S0
+defer_dump
+# reloading a script that failed to load tries again; the result is the loaded flag
+fake_define /s/bad.lua load=fail
+create S1 /s/bad.lua
+reload S1
+# destroy of a loaded script unloads it first
+destroy S0
+destroy S1
+# reload when the scripting subsystem is down: false, silent
+unload
+create S2 /s/r.lua
+reload -

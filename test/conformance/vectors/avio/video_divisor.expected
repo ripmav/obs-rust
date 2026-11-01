@@ -1,0 +1,83 @@
+> vopen v I420 30 1 16 8 4
+= 0
+> vconnect2 v a 1 1
+= 1
+> vconnect2 v a 2 2
+= 1
+> vconnect2 v b 3 3
+= 1
+> vconnect2 v b 4 2
+= 1
+> vinputs v
+input0 cb=a param=1 div=1 ctr=0 scaler=0 conv=(1 16x8 r0 cs0) cur=0
+input1 cb=a param=2 div=2 ctr=0 scaler=0 conv=(1 16x8 r0 cs0) cur=0
+input2 cb=b param=3 div=3 ctr=0 scaler=0 conv=(1 16x8 r0 cs0) cur=0
+input3 cb=b param=4 div=2 ctr=0 scaler=0 conv=(1 16x8 r0 cs0) cur=0
+> vlock v 1 1 0x01
+= 1 slot=0
+> vunlock v
+vcb a param=1 ts=1 ls0=16 d0=015a src=cache0
+vcb a param=2 ts=1 ls0=16 d0=015a src=cache0
+vcb b param=3 ts=1 ls0=16 d0=015a src=cache0
+vcb b param=4 ts=1 ls0=16 d0=015a src=cache0
+= done
+> vlock v 1 2 0x02
+= 1 slot=1
+> vunlock v
+vcb a param=1 ts=2 ls0=16 d0=025a src=cache1
+= done
+> vlock v 1 3 0x03
+= 1 slot=2
+> vunlock v
+vcb a param=1 ts=3 ls0=16 d0=035a src=cache2
+vcb a param=2 ts=3 ls0=16 d0=035a src=cache2
+vcb b param=4 ts=3 ls0=16 d0=035a src=cache2
+= done
+> vlock v 1 4 0x04
+= 1 slot=3
+> vunlock v
+vcb a param=1 ts=4 ls0=16 d0=045a src=cache3
+vcb b param=3 ts=4 ls0=16 d0=045a src=cache3
+= done
+> vinputs v
+input0 cb=a param=1 div=1 ctr=0 scaler=0 conv=(1 16x8 r0 cs0) cur=0
+input1 cb=a param=2 div=2 ctr=0 scaler=0 conv=(1 16x8 r0 cs0) cur=0
+input2 cb=b param=3 div=3 ctr=1 scaler=0 conv=(1 16x8 r0 cs0) cur=0
+input3 cb=b param=4 div=2 ctr=0 scaler=0 conv=(1 16x8 r0 cs0) cur=0
+> vconnect2 v a 5 2
+= 1
+> vlock v 1 5 0x05
+= 1 slot=0
+> vunlock v
+vcb a param=1 ts=5 ls0=16 d0=055a src=cache0
+vcb a param=2 ts=5 ls0=16 d0=055a src=cache0
+vcb b param=4 ts=5 ls0=16 d0=055a src=cache0
+vcb a param=5 ts=5 ls0=16 d0=055a src=cache0
+= done
+> vlock v 1 6 0x06
+= 1 slot=1
+> vunlock v
+vcb a param=1 ts=6 ls0=16 d0=065a src=cache1
+= done
+> vlock v 3 7 0x07
+= 1 slot=2
+> vunlock v
+vcb a param=1 ts=7 ls0=16 d0=075a src=cache2
+vcb a param=2 ts=7 ls0=16 d0=075a src=cache2
+vcb b param=3 ts=7 ls0=16 d0=075a src=cache2
+vcb b param=4 ts=7 ls0=16 d0=075a src=cache2
+vcb a param=5 ts=7 ls0=16 d0=075a src=cache2
+vcb a param=1 ts=33333340 ls0=16 d0=075a src=cache2
+vcb a param=1 ts=66666673 ls0=16 d0=075a src=cache2
+vcb a param=2 ts=66666673 ls0=16 d0=075a src=cache2
+vcb b param=4 ts=66666673 ls0=16 d0=075a src=cache2
+vcb a param=5 ts=66666673 ls0=16 d0=075a src=cache2
+= done
+> vinputs v
+input0 cb=a param=1 div=1 ctr=0 scaler=0 conv=(1 16x8 r0 cs0) cur=0
+input1 cb=a param=2 div=2 ctr=1 scaler=0 conv=(1 16x8 r0 cs0) cur=0
+input2 cb=b param=3 div=3 ctr=0 scaler=0 conv=(1 16x8 r0 cs0) cur=0
+input3 cb=b param=4 div=2 ctr=1 scaler=0 conv=(1 16x8 r0 cs0) cur=0
+input4 cb=a param=5 div=2 ctr=1 scaler=0 conv=(1 16x8 r0 cs0) cur=0
+> vclose v
+= closed

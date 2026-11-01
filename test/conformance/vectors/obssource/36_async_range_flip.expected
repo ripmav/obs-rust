@@ -1,0 +1,12 @@
+  cb C create
+log debug source 'C' (cam) created
+create c ok
+echo ---
+get_frame ts=100 2x2 fmt=bgra full_range=1 flip=1 fill=1 refs=2 prev_frame=0
+get_frame ts=200 2x2 fmt=i420 full_range=0 flip=0 fill=2 refs=2 prev_frame=0
+get_frame ts=300 2x2 fmt=i420 full_range=1 flip=0 fill=3 refs=2 prev_frame=0
+echo ---
+get_frame ts=400 2x2 fmt=i420 full_range=0 flip=0 fill=4 refs=2 prev_frame=0
+get_frame ts=500 2x2 fmt=i420 full_range=1 flip=0 fill=5 refs=2 prev_frame=0
+get_frame ts=600 2x2 fmt=bgra full_range=0 flip=0 fill=6 refs=2 prev_frame=0
+get_frame ts=700 2x2 fmt=bgra full_range=1 flip=0 fill=7 refs=2 prev_frame=0

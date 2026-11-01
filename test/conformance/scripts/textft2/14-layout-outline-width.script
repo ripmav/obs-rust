@@ -1,0 +1,29 @@
+# Outline shifts the origin by 2 (not the shadow); custom_width wraps by glyph advance and only from 100 on (S-038-R60,R67..R70).
+events off
+reset
+ascii 5 8 0 8 384
+glyph 0x67 0x67 5 12 0 8 384
+font "Sans Serif" - 0 p/sans
+load
+create s 2
+setfont s "Sans Serif" - 20 0
+set s text "ab"
+set s outline true
+update s
+verts s 6
+set s outline false
+set s drop_shadow true
+update s
+verts s 6
+set s drop_shadow false
+echo --- character wrapping at custom width: x + advance > width starts a new line
+set s custom_width 100
+set s text "aaaaaaaaaaaaaaaaaaaaa"
+update s
+verts s 21
+state s
+echo --- the wrapped line starts at the outline offset
+set s outline true
+set s text "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+update s
+verts s 56

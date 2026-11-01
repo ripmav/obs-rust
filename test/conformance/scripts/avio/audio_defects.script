@@ -1,0 +1,5 @@
+# S-044 defects D: the audio getters dereference their argument unconditionally (each probe runs in a forked child).
+crash audio_block_size_null
+crash audio_planes_null
+crash audio_channels_null
+crash audio_rate_null

@@ -1,0 +1,26 @@
+scw_list
+  " " = 0
+  "[Finder] Desktop" = 15
+  "[Safari] Apple" = 11
+  "[safari] apple pie" = 12
+scw_list
+  " " = 0
+  "[] No App" = 14
+  "[Finder] Desktop" = 15
+  "[Safari] Apple" = 11
+  "[safari] apple pie" = 12
+  "[Terminal] " = 13
+  "[Zed] " = 16
+sca_list
+  " " = (null)
+  "finder" = "com.apple.finder"
+  "Safari" = "com.apple.Safari"
+  "Zed" = "dev.zed"
+sck_display_name "Built-in Retina Display: 1512x982 @ 0,0"
+sck_display_name "LG: 2560x1440 @ -2560,120"
+sck_display_name "VeryLongNameButShort: 3840x2160 @ 1920,-1080"
+sck_display_migrate action=none result=0
+sck_display_migrate action=none result=lookup-by-uuid
+sck_display_migrate action=display_uuid<-uuid(legacy display), erase display result=lookup-by-uuid
+sck_display_migrate action=none result=0 (early return)
+sck_display_migrate action=erase display result=lookup-by-uuid

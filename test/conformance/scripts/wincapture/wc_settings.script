@@ -1,0 +1,54 @@
+# Window capture (source id window_capture): defaults, parsing of the settings into the capture state, and the
+# choice of the capture method. Method values: 0 auto, 1 bitblt, 2 wgc. MODEL (source-derived).
+s_reset
+s_defaults window_capture
+s_dump
+s_set window str "Untitled - Notepad:Notepad:notepad.exe"
+s_set priority int 2
+m_wgc_supported 1
+m_wc_update
+# an explicit method wins when WGC is supported; otherwise everything is BitBlt
+s_set method int 2
+m_wc_update
+m_wgc_supported 0
+m_wc_update
+s_set method int 0
+m_wc_update
+m_wgc_supported 1
+# auto chooses by class: partial (case-insensitive substring) Chrome/Mozilla, whole (case-insensitive) list
+m_wc_method 0 Chrome_WidgetWin_1
+m_wc_method 0 MozillaWindowClass
+m_wc_method 0 mozilla
+m_wc_method 0 MyChromeApp
+m_wc_method 0 ApplicationFrameWindow
+m_wc_method 0 applicationframewindow
+m_wc_method 0 Windows.UI.Core.CoreWindow
+m_wc_method 0 WinUIDesktopWin32WindowClass
+m_wc_method 0 GAMINGSERVICESUI_HOSTING_WINDOW_CLASS
+m_wc_method 0 XLMAIN
+m_wc_method 0 PPTFrameClass
+m_wc_method 0 screenClass
+m_wc_method 0 PodiumParent
+m_wc_method 0 OpusApp
+m_wc_method 0 OMain
+m_wc_method 0 Framework::CFrame
+m_wc_method 0 rctrl_renwnd32
+m_wc_method 0 MSWinPub
+m_wc_method 0 OfficeApp-Frame
+m_wc_method 0 WindowsWebview2Wrapper
+m_wc_method 0 SDL_app
+m_wc_method 0 SDL_app2
+m_wc_method 0 WINDOWSCLIENT
+m_wc_method 0 Notepad
+m_wc_method 0 -
+m_wc_method 1 Chrome_WidgetWin_1
+m_wc_method 2 Notepad
+m_wc_method 2 -
+# property visibility per chosen method (args: chosen method, wgc cursor-toggle supported)
+m_wc_visibility 1 0
+m_wc_visibility 2 0
+m_wc_visibility 2 1
+# no window string => class/title/exe all NULL, method auto => bitblt
+s_reset
+s_defaults window_capture
+m_wc_update

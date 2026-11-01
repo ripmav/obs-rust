@@ -1,0 +1,18 @@
+seturl ret=1 link protocol=0 port=1935 host="live.example.com" app="app" tcUrl="rtmp://live.example.com/app" lflags=0
+seturl ret=1 link protocol=0 port=1935 host="live.example.com" app="app" tcUrl="rtmp://live.example.com/app" lflags=0
+seturl ret=1 link protocol=0 port=1935 host="live.example.com" app="app/inst?x=1" tcUrl="rtmp://live.example.com/app/inst?x=1" lflags=0
+seturl ret=1 link protocol=4 port=443 host="live.example.com" app="app" tcUrl="rtmps://live.example.com/app" lflags=0
+seturl ret=1 link protocol=1 port=80 host="live.example.com" app="app" tcUrl="rtmpt://live.example.com/app" lflags=0
+seturl ret=1 link protocol=0 port=8000 host="live.example.com" app="app" tcUrl="rtmp://live.example.com:8000/app" lflags=0
+log warning No application or playpath in URL!
+seturl ret=1 link protocol=0 port=1935 host="live.example.com" app=- tcUrl="rtmp://live.example.com" lflags=0
+seturl ret=1 link protocol=0 port=1935 host="live.example.com" app="" tcUrl="rtmp://live.example.com/" lflags=0
+seturl ret=1 link protocol=0 port=1935 host="live.example.com" app="" tcUrl="rtmp://live.example.com//" lflags=0
+log error RTMP URL: No :// in url!
+seturl ret=0 link protocol=0 port=0 host=- app=- tcUrl=- lflags=0
+log warning No hostname in URL!
+seturl ret=0 link protocol=0 port=0 host=- app=- tcUrl=- lflags=0
+seturl ret=1 link protocol=0 port=1935 host="h" app="a" tcUrl="rtmp://h/a" lflags=0
+seturl ret=1 link protocol=0 port=1935 host="h" app="a" tcUrl="rtmp://h/a" lflags=0
+seturl ret=1 link protocol=0 port=1935 host="other" app="b" tcUrl="rtmp://h/a" lflags=0
+seturl ret=0 link protocol=0 port=0 host="h" app="a" tcUrl="rtmp://h/a" lflags=4

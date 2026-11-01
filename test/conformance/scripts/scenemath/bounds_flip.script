@@ -1,0 +1,28 @@
+# Negative scale (flip) with bounds: size is computed with |scale|; the origin is shifted so the flipped item stays
+# in place; stretch keeps the sign of the scale.
+source s 200 100
+scene main
+add main s c
+pos c 100 100
+align c 5
+bounds c 400 300
+bounds_type c 1
+scale c -1 1
+print c
+scale c 1 -1
+print c
+scale c -1 -1
+print c
+bounds_type c 2
+print c
+bounds_type c 3
+print c
+echo -- flipped plus crop-to-bounds
+bounds_crop c 1
+bounds c 100 100
+bounds_align c 1
+print c
+bounds_align c 2
+print c
+bounds_align c 0
+print c

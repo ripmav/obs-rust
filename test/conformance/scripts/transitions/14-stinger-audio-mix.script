@@ -1,0 +1,31 @@
+# CORE: stinger audio render: media audio is added to every enabled mixer/channel; timestamp and early-return rules.
+load quiet
+create st obs_stinger_transition str:path=/m/s.mov
+tick st
+# default: transition audio base 0.5, media audio 0.25 -> 0.75 on enabled mixers, 7 (untouched) elsewhere
+gfx base=0.5 ts_out=5000
+src media#1 fill=0.25 ats=1000
+mix st 0x5 2 48000 0.5
+# media timestamp later than the transition's: ts_out stays
+src media#1 ats=9000
+mix st 0x1 2 48000
+# transition timestamp 0 -> replaced by media timestamp
+gfx ts_out=0
+mix st 0x1 2 48000
+# media audio timestamp 0: the whole render is skipped and false returned
+src media#1 ats=0
+mix st 0x1 2 48000
+# audio still pending: only the transition audio is rendered
+src media#1 ats=1000 pending=1
+mix st 0x1 2 48000
+# transition render failed: the media audio is still added and true returned (QUIRK)
+src media#1 pending=0
+gfx audio_ret=0 ts_out=5000
+mix st 0x1 2 48000
+# no media source (before the first update): plain transition render
+create st2 obs_stinger_transition
+gfx audio_ret=1
+mix st2 0x1 2 48000 0.5
+# mono and 8 channels
+mix st 0x3f 1 44100
+mix st 0x2 8 44100

@@ -1,0 +1,14 @@
+# QUIRK (Q-8). Level "x.y" is parsed with sscanf %u.%u: leading '-' is accepted by %u (the
+# value wraps modulo 2^32), "10" minor digits are not limited, a leading '+' or blanks are
+# skipped by %u. HEVC multiplies the final value by 3 modulo 2^32.
+data D
+set D opts str "level=-1.5"
+nv_apply h264 D
+set D opts str "level=+4.2"
+nv_apply h264 D
+set D opts str "level=4.200"
+nv_apply h264 D
+set D opts str "level=1431655766.0"
+nv_apply hevc D
+set D opts str "level=4294967295.9"
+nv_apply h264 D

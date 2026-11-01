@@ -1,0 +1,12 @@
+# All callbacks and global callbacks of one emit receive the same calldata.
+handler h
+add h "void s(int n)"
+callback inc1 inc:n
+callback inc2 inc:n
+callback show
+gcallback g inc:n
+connect h s inc1
+connect h s show
+connect h s inc2
+connect_global h g
+emit h s n=10

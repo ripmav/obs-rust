@@ -1,0 +1,28 @@
+# Virtual camera shared-memory frame queue (OBSVirtualCamVideo). Real shared-memory-queue.c on a fake mapping.
+# vq_create SLOT CX CY INTERVAL ; vq_write SLOT YLINESIZE YBYTE UVBYTE TS ; vq_read SLOT DSTCX DSTCY
+# state: 0 invalid, 1 starting, 2 ready, 3 stopping. Frame size is cx*cy*3/2 (NV12); three slots rotate by write_idx%3.
+vq_create 0 4 2 333333
+vq_header 0
+vq_info 0
+vq_state 0
+# a second writer is refused while the mapping exists
+vq_create 1 4 2 1
+vq_open 2
+vq_state 2
+vq_info 2
+vq_write 0 4 0x10 0x80 1000
+vq_header 0
+vq_state 2
+vq_read 2 4 2
+vq_write 0 4 0x20 0x90 2000
+vq_write 0 4 0x30 0xa0 3000
+vq_write 0 4 0x40 0xb0 4000
+vq_header 0
+vq_read 2 4 2
+vq_close 2
+vq_close 0
+# after the writer closed the mapping is gone: open fails and a new writer may be created
+vq_open 2
+vq_create 0 8 2 500000
+vq_header 0
+vq_close 0

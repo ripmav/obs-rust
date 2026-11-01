@@ -1,0 +1,65 @@
+cv_sample u8 -> U8BIT
+cv_sample s16 -> 16BIT
+cv_sample s32 -> 32BIT
+cv_sample flt -> FLOAT
+cv_sample dbl -> UNKNOWN
+cv_sample s64 -> UNKNOWN
+cv_sample u8p -> U8BIT_PLANAR
+cv_sample s16p -> 16BIT_PLANAR
+cv_sample s32p -> 32BIT_PLANAR
+cv_sample fltp -> FLOAT_PLANAR
+cv_sample dblp -> UNKNOWN
+cv_sample s64p -> UNKNOWN
+cv_speakers 0 -> UNKNOWN
+cv_speakers 1 -> MONO
+cv_speakers 2 -> STEREO
+cv_speakers 3 -> 2POINT1
+cv_speakers 4 -> 4POINT0
+cv_speakers 5 -> 4POINT1
+cv_speakers 6 -> 5POINT1
+cv_speakers 7 -> UNKNOWN
+cv_speakers 8 -> 7POINT1
+cv_speakers 9 -> UNKNOWN
+cv_speakers 255 -> UNKNOWN
+cv_space 709 709 unspec -> 709
+cv_space 709 srgb unspec -> SRGB
+cv_space 709 pq unspec -> 709
+cv_space fcc 709 unspec -> 601
+cv_space 470bg 709 unspec -> 601
+cv_space 170m 709 unspec -> 601
+cv_space 240m 709 unspec -> 601
+cv_space 2020 hlg unspec -> 2100_HLG
+cv_space 2020 pq unspec -> 2100_PQ
+cv_space 2020 709 unspec -> 2100_PQ
+cv_space 2020 unspec unspec -> 2100_PQ
+cv_space unspec unspec unspec -> DEFAULT
+cv_space unspec hlg unspec -> DEFAULT
+cv_space unspec hlg 2020 -> 2100_HLG
+cv_space unspec pq 2020 -> 2100_PQ
+cv_space unspec 709 2020 -> 2100_PQ
+cv_space rgb unspec 2020 -> 2100_PQ
+cv_space rgb pq unspec -> DEFAULT
+cv_range jpeg -> FULL
+cv_range mpeg -> DEFAULT
+cv_pixfmt yuv420p -> I420
+cv_pixfmt yuyv422 -> YUY2
+cv_pixfmt yuv422p -> I422
+cv_pixfmt yuv422p10le -> I210
+cv_pixfmt yuv444p -> I444
+cv_pixfmt yuv444p12le -> I412
+cv_pixfmt uyvy422 -> UYVY
+cv_pixfmt yvyu422 -> YVYU
+cv_pixfmt nv12 -> NV12
+cv_pixfmt rgba -> RGBA
+cv_pixfmt bgra -> BGRA
+cv_pixfmt yuva420p -> I40A
+cv_pixfmt yuv420p10le -> I010
+cv_pixfmt yuva422p -> I42A
+cv_pixfmt yuva444p -> YUVA
+cv_pixfmt yuva444p12le -> YA2L
+cv_pixfmt bgr0 -> BGRX
+cv_pixfmt p010le -> P010
+cv_pixfmt nv21 -> NONE
+cv_pixfmt rgb24 -> NONE
+cv_pixfmt gray -> NONE
+cv_pixfmt none -> NONE

@@ -1,0 +1,20 @@
+# QUIRK Q-7: a quoted empty string "" is an empty token, which the reader treats as end of
+# input: the entry is not stored and NOTHING AFTER IT in the file is parsed.
+# Same for an empty quoted name. text_lookup_create still succeeds.
+fputs tz-1 "A=\"1\"\nB=\"\"\nC=\"3\"\n"
+tl_create 0 tz-1
+tl_get 0 A
+tl_get 0 B
+tl_get 0 C
+fputs tz-2 "\"\"=\"x\"\nA=\"1\"\n"
+tl_create 1 tz-2
+tl_get 1 A
+fputs tz-3 "\"\"\nA=\"1\"\n"
+tl_create 2 tz-3
+tl_get 2 A
+tl_destroy 0
+tl_destroy 1
+tl_destroy 2
+funlink tz-1
+funlink tz-2
+funlink tz-3

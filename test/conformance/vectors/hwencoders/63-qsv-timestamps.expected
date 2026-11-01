@@ -1,0 +1,57 @@
+> host fps 60 1
+> q_ts obs 0
+ts_obs_to_mfx(0) = 0
+> q_ts obs 1
+ts_obs_to_mfx(1) = 1500
+> q_ts obs 60
+ts_obs_to_mfx(60) = 90000
+> q_ts obs 123456789
+ts_obs_to_mfx(123456789) = 185185183500
+> q_ts mfx 0
+ts_mfx_to_obs(0) = 0
+> q_ts mfx 1500
+ts_mfx_to_obs(1500) = 1
+> q_ts mfx 750
+ts_mfx_to_obs(750) = 1
+> q_ts mfx 749
+ts_mfx_to_obs(749) = 0
+> q_ts mfx 2250
+ts_mfx_to_obs(2250) = 2
+> q_ts mfx -750
+ts_mfx_to_obs(-750) = -1
+> q_ts mfx -749
+ts_mfx_to_obs(-749) = 0
+> q_ts mfx -1500
+ts_mfx_to_obs(-1500) = -1
+> q_ts mfx -2250
+ts_mfx_to_obs(-2250) = -2
+> host fps 30000 1001
+> q_ts obs 1001
+ts_obs_to_mfx(1001) = 3003
+> q_ts obs 1
+ts_obs_to_mfx(1) = 3
+> q_ts obs 30
+ts_obs_to_mfx(30) = 90
+> q_ts mfx 3003
+ts_mfx_to_obs(3003) = 1001
+> q_ts mfx 1502
+ts_mfx_to_obs(1502) = 1001
+> q_ts mfx 1501
+ts_mfx_to_obs(1501) = 0
+> q_ts mfx -1501
+ts_mfx_to_obs(-1501) = 0
+> q_ts mfx -1502
+ts_mfx_to_obs(-1502) = -1001
+> q_ts mfx 90090
+ts_mfx_to_obs(90090) = 30030
+> host fps 24 1
+> q_ts obs 1
+ts_obs_to_mfx(1) = 3750
+> q_ts obs 25
+ts_obs_to_mfx(25) = 93750
+> q_ts mfx 1875
+ts_mfx_to_obs(1875) = 1
+> q_ts mfx 1874
+ts_mfx_to_obs(1874) = 0
+> q_ts mfx 5625
+ts_mfx_to_obs(5625) = 2

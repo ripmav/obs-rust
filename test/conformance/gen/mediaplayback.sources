@@ -1,0 +1,25 @@
+# S-036 media playback: shared/media-playback (media.c, cache.c are #included by the runner so that its
+# file-local helpers can be driven; decode.c and media-playback.c are linked) against a scripted FFmpeg
+# (mediaplayback_stubs.c) and a fake clock. Needs the system FFmpeg development libraries.
+# Run run.sh from test/conformance.
+test/conformance/gen/mediaplayback_runner.c
+test/conformance/gen/mediaplayback_stubs.c
+shared/media-playback/media-playback/decode.c
+shared/media-playback/media-playback/media-playback.c
+libobs/media-io/video-frame.c
+libobs/media-io/video-matrices.c
+libobs/graphics/vec3.c
+libobs/graphics/vec4.c
+libobs/graphics/quat.c
+libobs/graphics/matrix3.c
+libobs/graphics/matrix4.c
+libobs/graphics/axisang.c
+libobs/graphics/plane.c
+libobs/graphics/math-extra.c
+-Ishared/media-playback/media-playback
+-lavdevice
+-lavformat
+-lavcodec
+-lswscale
+-lavutil
+-Wno-deprecated-declarations

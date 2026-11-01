@@ -1,0 +1,28 @@
+# CORE. An editable combo must be of string format (else NULL + warning). Other combinations,
+# including invalid enum values, are accepted. Item operations on a non-list are no-ops.
+props P
+add list P e1 "E1" editable string
+add list P e2 "E2" editable int
+add list P e3 "E3" editable float
+add list P e4 "E4" editable bool
+add list P e5 "E5" editable invalid
+add list P r1 "R1" radio string
+add list P l1 "L1" list invalid as l1
+add list P l2 "L2" invalid int as l2
+add list P l3 "L3" 9 7 as l3
+dump P
+list_add l1 string "x" "y"
+list_add l1 int "x" 1
+list_add l2 int "x" 1
+list_add l2 string "x" "y"
+info l1
+info l2
+echo not-a-list
+add bool P notlist "x" as b
+list_add b string "x" "y"
+list_insert b string 0 "x" "y"
+list_remove b 0
+list_clear b
+list_disable b 0 1
+list_item b 0
+destroy P

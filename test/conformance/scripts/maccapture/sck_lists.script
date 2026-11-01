@@ -1,0 +1,23 @@
+# S-052 property list builders for windows, applications, displays (mac-sck-common.m).
+scw_reset
+scw_add 11 Safari "Apple"
+scw_add 12 safari "apple pie"
+scw_add 13 Terminal -
+scw_add 14 - "No App"
+scw_add 15 Finder Desktop
+scw_add 16 Zed ""
+scw_list 0
+scw_list 1
+sca_add Safari com.apple.Safari
+sca_add - com.noname
+sca_add finder com.apple.finder
+sca_add Zed dev.zed
+sca_list
+sck_display_name "Built-in Retina Display" 1512 982 0 0
+sck_display_name "LG" 2560 1440 -2560 120
+sck_display_name "VeryLongNameButShort" 3840 2160 1920 -1080
+sck_display_migrate 0 0 0 0
+sck_display_migrate 0 1 0 1
+sck_display_migrate 1 0 1 0
+sck_display_migrate 1 0 0 0
+sck_display_migrate 1 1 1 1

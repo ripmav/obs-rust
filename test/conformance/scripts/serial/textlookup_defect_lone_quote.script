@@ -1,0 +1,20 @@
+# DEFECT D-1: value token is a lone '"' that is the very last byte of the file
+# (`B="` + EOF). The reference computes a negative length (wraps), allocates 0 bytes and
+# corrupts memory. Required behaviour: same as `B=""` (empty token, parsing ends,
+# earlier entries kept, create succeeds). The reference runner loads the equivalent file
+# (EQUIV) instead and prints "ub"; see README (tl_defect).
+fputs td-1 "A=\"1\"\nB=\""
+fputs td-1eq "A=\"1\"\nB=\"\""
+tl_defect 0 td-1 td-1eq
+tl_get 0 A
+tl_get 0 B
+tl_destroy 0
+fputs td-2 "B=\""
+fputs td-2eq "B=\"\""
+tl_defect 0 td-2 td-2eq
+tl_get 0 B
+tl_destroy 0
+funlink td-1
+funlink td-1eq
+funlink td-2
+funlink td-2eq

@@ -1,0 +1,56 @@
+> ff_defaults h264
+> set bool psycho_aq 0
+> ff_create h264
+ffve.init lib=h264_nvenc lib2=nvenc_h264 name="NVIDIA NVENC H.264 (FFmpeg)"
+av.opt_set_int cbr=0
+av.opt_set profile=high
+av.opt_set preset=p5
+av.opt_set tune=hq
+av.opt_set multipass=qres
+av.opt_set_int cbr=1
+av.opt_set level=auto
+av.opt_set_int gpu=0
+av.opt_set_int no-scenecut=0
+av.opt_set_int spatial-aq=0
+av.opt_set_int temporal-aq=0
+ffve.update bitrate=5000 keyint_sec=0 fps=60/1 size=1920x1080 info.format=2 opts="" ctx{global_quality=0 rc_max_rate=5000000 rc_min_rate=5000000 max_b_frames=2}
+log info [FFmpeg NVENC encoder: 'enc'] settings: 	encoder:      NVIDIA NVENC H.264 (FFmpeg) 	rate_control: CBR 	bitrate:      5000 	cqp:          0 	keyint:       0 	preset:       p5 	tuning:       hq 	multipass:    qres 	profile:      high 	width:        1920 	height:       1080 	b-frames:     2 	psycho-aq:    0 	GPU:          0 
+ffve.init_codec #1 -> ok
+ff_create -> ok
+> set int bitrate 4000
+> set str rate_control CBR
+> ff_reconfigure
+reconfigure: bit_rate=4000000 rc_max_rate=4000000
+ff_reconfigure -> 1
+> set str rate_control vbr
+> set int bitrate 2000
+> ff_reconfigure
+reconfigure: bit_rate=2000000 rc_max_rate=2000000
+ff_reconfigure -> 1
+> set str rate_control CQP
+> set int bitrate 9000
+> ff_reconfigure
+reconfigure: bit_rate=2000000 rc_max_rate=2000000
+ff_reconfigure -> 1
+> ff_destroy
+ffve.free
+ff_destroyed
+> ff_video_info nv12 bgra
+video_info(pref=nv12, in=bgra) -> nv12
+> ff_video_info i420 p010
+video_info(pref=i420, in=p010) -> i420
+> ff_video_info i444 nv12
+video_info(pref=i444, in=nv12) -> i444
+> ff_video_info i010 nv12
+video_info(pref=i010, in=nv12) -> i010
+> ff_video_info bgra nv12
+video_info(pref=bgra, in=nv12) -> nv12
+> ff_video_info bgra bgra
+video_info(pref=bgra, in=bgra) -> nv12
+> ff_video_info none i420
+video_info(pref=none, in=i420) -> i420
+> ff_video_info none yuy2
+video_info(pref=none, in=yuy2) -> nv12
+> ff_register
+encoder id=ffmpeg_nvenc codec=h264 type=video caps=[dyn_bitrate ] cb=[encode extra_data sei_data video_info update defaults properties destroy create]
+encoder id=ffmpeg_hevc_nvenc codec=hevc type=video caps=[dyn_bitrate ] cb=[encode extra_data sei_data video_info update defaults properties destroy create]

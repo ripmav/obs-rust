@@ -1,0 +1,33 @@
+# obs_script_create: guard clauses and dispatch by file extension (S-039 R10..R16).
+# Before obs_scripting_load nothing can be created, and the refusal is silent.
+fake_define /s/a.lua load=ok desc=Hello
+create S0 /s/a.lua
+formats
+load
+# path NULL -> warning "path is null", no script
+create S0 @null
+# no '.' anywhere in the string -> NULL without any log line
+create S0 /s/noext
+create S0 plain
+# last '.' decides, even inside a directory name: ".d/file" is not a known type
+create S0 /s/dir.d/file
+# unknown / unsupported types warn and return NULL; matching is exact and case-sensitive
+create S0 /s/a.txt
+create S0 /s/a.LUA
+create S0 /s/a.Lua
+# python is not compiled into this build: ".py" is an unknown type here
+create S0 /s/a.py
+# a trailing dot gives the extension "." -> unknown
+create S0 /s/a.
+# multiple dots: only the last extension matters
+fake_define /s/a.b.lua load=ok
+create S1 /s/a.b.lua
+# supported
+create S0 /s/a.lua
+info S0
+info S1
+destroy S0
+destroy S1
+unload
+# after unload the subsystem is not loaded again
+create S0 /s/a.lua

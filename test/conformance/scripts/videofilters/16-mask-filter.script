@@ -1,0 +1,87 @@
+# mask_filter v1/v2: deferred update (image load, colour, effect choice), aspect-locked mask placement, skip rules.
+source T 1920 1080 1920 1080 SRGB video
+source P 1920 1080 1920 1080 SRGB video
+image mask.png 200 100 RGBA 1 0
+image tall.png 100 400 RGBA 1 0
+image broken.png 10 10 RGBA 0 0
+file mask.png x
+touch mask.png 1000
+data d
+dset d image_path str @TMP/mask.png
+dset d color int 0xFF8040
+dset d opacity int 50
+filter a mask_filter 0 d T P
+echo before the first tick nothing is loaded: skipped
+render a
+tick a 0.016
+render a
+echo v2: srgb colour conversion, double opacity, other effect types
+data d2
+dset d2 image_path str @TMP/mask.png
+dset d2 color int 0xFF8040
+dset d2 opacity dbl 0.25
+dset d2 type str blend_mul_filter.effect
+filter b mask_filter 2 d2 T P
+tick b 0.016
+render b
+echo stretch: mul_val 1,1 add_val 0,0
+dset d2 stretch bool 1
+dset d2 type str mask_alpha_filter.effect
+filter c mask_filter 2 d2 T P
+tick c 0.016
+render c
+echo mask taller than source aspect: sized to the source height
+data d3
+dset d3 image_path str @TMP/mask.png
+filter e mask_filter 2 d3 T P
+tick e 0.016
+resize T 400 400 400 400
+render e
+resize T 1920 1080 1920 1080
+echo mask image taller
+data d4
+dset d4 image_path str tall.png
+filter f mask_filter 2 d4 T P
+tick f 0.016
+render f
+echo image that fails to load, empty path
+data d5
+dset d5 image_path str broken.png
+filter g mask_filter 2 d5 T P
+tick g 0.016
+render g
+data d6
+filter h mask_filter 2 d6 T P
+tick h 0.016
+render h
+echo target missing / begin refused / extended colour space
+filter i mask_filter 2 d4 @null P
+tick i 0.016
+render i
+knob begin 0
+render f
+knob begin 1
+srcspace T 709_EXTENDED
+render f
+srcspace T SRGB_16F
+render f
+cs f 1 SRGB
+echo effect type that cannot load: render skipped
+knob effect_fail 1
+data d7
+dset d7 image_path str tall.png
+filter j mask_filter 2 d7 T P
+tick j 0.016
+knob effect_fail 0
+render j
+echo missing_files: a path that does not exist is reported once; the callback re-points the setting
+missing a
+data gone
+dset gone image_path str @TMP/gone.png
+filter k mask_filter 2 gone T P
+tick k 0.016
+missing k
+resolve @TMP/mask.png
+fdump k
+tick k 0.016
+render k

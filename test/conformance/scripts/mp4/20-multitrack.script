@@ -1,0 +1,31 @@
+# S-022 track layout: tracks are created from the output's encoders: video slots 0..N first, then
+# audio slots 0..5, skipping empty slots; track ids are 1,2,3...; next_track_ID in mvhd is count+1.
+# Two video encoders + three audio encoders (slot 0, 2 and 5); a packet from an encoder that is not
+# part of the output is refused (returns false, warning). trex entries (fragmented moov) are numbered
+# by track index + 1.
+enc v1 video codec h264 width 640 height 360 fps 30/1 name "Main" extra 000000016742c01ed900a047fe880000000168ce3c80
+enc v2 video codec h264 width 320 height 180 fps 15/1 name "Preview" extra 000000016742c01ed900a047fe880000000168ce3c80
+enc a1 audio codec aac rate 48000 name "Game" extra 1190 slot 0
+enc a2 audio codec aac rate 48000 name "Mic" extra 1190 slot 2
+enc a3 audio codec opus rate 48000 name "Voice" extra 4f707573486561640102380180bb0000000000 slot 5
+enc stray audio codec aac rate 48000 noslot 1
+mux mp4
+echo track-count-follows
+pkt v1 0 0 1 gen:10
+pkt v2 0 0 1 gen:10
+pkt a1 0 0 1 gen:10
+pkt a2 0 0 1 gen:10
+pkt a3 0 0 1 gen:10
+pkt stray 0 0 1 gen:10
+pkt v1 1 1 0 gen:10
+pkt v2 1 1 0 gen:10
+pkt a1 1024 1024 1 gen:10
+pkt a2 1024 1024 1 gen:10
+pkt a3 960 960 1 gen:10
+finalise
+dump
+echo --- refs: each track holds one reference
+refs v1
+refs stray
+destroy
+refs v1

@@ -1,0 +1,114 @@
+props P
+  prop service type=list desc="Service" visible=1 enabled=1 combo=2 format=3 items=5
+    item 0 name="Alpha" value="Alpha" disabled=0
+    item 1 name="Golf" value="Golf" disabled=0
+    item 2 name="Facebook Live X" value="Facebook Live X" disabled=0
+    item 3 name="Kilo" value="Kilo" disabled=0
+    item 4 name="Twitch" value="Twitch" disabled=0
+  prop show_all type=bool desc="Show all services" visible=1 enabled=1
+  prop server type=list desc="Server" visible=1 enabled=1 combo=2 format=3 items=2
+    item 0 name="Primary" value="rtmp://a.alpha.example/live" disabled=0
+    item 1 name="Secure" value="rtmps://b.alpha.example:443/live" disabled=0
+  prop key type=text desc="Stream key" visible=1 enabled=1 text_type=1
+settings S
+  key = "k1"
+  more_info_link = "https://alpha.example/info"
+  multitrack_video_configuration_url = "https://alpha.example/mt"
+  multitrack_video_disclaimer = "Alpha Boost automatically optimizes your stream settings, which may include encoding multiple video qualities and/or canvas orientations. Selecting this option will send Alpha information about your computer and software setup. <a href='https://alpha.example/learn'>Learn More</a>"
+  multitrack_video_name = "Alpha Boost"
+  protocol = "RTMP"
+  server = "rtmp://a.alpha.example/live"
+  service = "Alpha"
+  stream_key_link = "https://alpha.example/key"
+echo select-Bravo
+modify service -> 1
+props P
+  prop service type=list desc="Service" visible=1 enabled=1 combo=2 format=3 items=5
+    item 0 name="Alpha" value="Alpha" disabled=0
+    item 1 name="Golf" value="Golf" disabled=0
+    item 2 name="Facebook Live X" value="Facebook Live X" disabled=0
+    item 3 name="Kilo" value="Kilo" disabled=0
+    item 4 name="Twitch" value="Twitch" disabled=0
+  prop show_all type=bool desc="Show all services" visible=1 enabled=1
+  prop server type=list desc="Server" visible=1 enabled=1 combo=2 format=3 items=2
+    item 0 name="TLS only" value="rtmps://bravo.example/live" disabled=0
+    item 1 name="Plain" value="rtmp://bravo.example/live" disabled=0
+  prop key type=text desc="Stream key" visible=1 enabled=1 text_type=1
+settings S
+  key = "k1"
+  more_info_link = "https://alpha.example/info"
+  multitrack_video_configuration_url = "https://alpha.example/mt"
+  multitrack_video_disclaimer = "Alpha Boost automatically optimizes your stream settings, which may include encoding multiple video qualities and/or canvas orientations. Selecting this option will send Bravo information about your computer and software setup."
+  multitrack_video_name = "Alpha Boost"
+  protocol = "RTMPS"
+  server = "rtmp://a.alpha.example/live"
+  service = "Bravo"
+  stream_key_link = "https://alpha.example/key"
+echo select-by-alt-name-of-first-service
+get protocol = "RTMP"
+settings S2
+  more_info_link = "https://alpha.example/info"
+  multitrack_video_configuration_url = "https://alpha.example/mt"
+  multitrack_video_disclaimer = "Alpha Boost automatically optimizes your stream settings, which may include encoding multiple video qualities and/or canvas orientations. Selecting this option will send Alpha Old information about your computer and software setup. <a href='https://alpha.example/learn'>Learn More</a>"
+  multitrack_video_name = "Alpha Boost"
+  protocol = "RTMP"
+  service = "Alpha Old"
+  stream_key_link = "https://alpha.example/key"
+props P2
+  prop service type=list desc="Service" visible=1 enabled=1 combo=2 format=3 items=5
+    item 0 name="Alpha" value="Alpha" disabled=0
+    item 1 name="Golf" value="Golf" disabled=0
+    item 2 name="Facebook Live X" value="Facebook Live X" disabled=0
+    item 3 name="Kilo" value="Kilo" disabled=0
+    item 4 name="Twitch" value="Twitch" disabled=0
+  prop show_all type=bool desc="Show all services" visible=1 enabled=1
+  prop server type=list desc="Server" visible=1 enabled=1 combo=2 format=3 items=2
+    item 0 name="Primary" value="rtmp://a.alpha.example/live" disabled=0
+    item 1 name="Secure" value="rtmps://b.alpha.example:443/live" disabled=0
+  prop key type=text desc="Stream key" visible=1 enabled=1 text_type=1
+settings S2
+  more_info_link = "https://alpha.example/info"
+  multitrack_video_configuration_url = "https://alpha.example/mt"
+  multitrack_video_disclaimer = "Alpha Boost automatically optimizes your stream settings, which may include encoding multiple video qualities and/or canvas orientations. Selecting this option will send Alpha information about your computer and software setup. <a href='https://alpha.example/learn'>Learn More</a>"
+  multitrack_video_name = "Alpha Boost"
+  protocol = "RTMP"
+  service = "Alpha"
+  stream_key_link = "https://alpha.example/key"
+echo select-by-alt-name-of-later-service
+props P3
+  prop service type=list desc="Service" visible=1 enabled=1 combo=2 format=3 items=5
+    item 0 name="Alpha" value="Alpha" disabled=0
+    item 1 name="Golf" value="Golf" disabled=0
+    item 2 name="Facebook Live X" value="Facebook Live X" disabled=0
+    item 3 name="Kilo" value="Kilo" disabled=0
+    item 4 name="Twitch" value="Twitch" disabled=0
+  prop show_all type=bool desc="Show all services" visible=1 enabled=1
+  prop server type=list desc="Server" visible=1 enabled=1 combo=2 format=3 items=1
+    item 0 name="J" value="rtmp://juliet.example/live" disabled=0
+  prop key type=text desc="Stream key" visible=1 enabled=1 text_type=1
+settings S3
+  multitrack_video_disclaimer = "Multitrack Video automatically optimizes your stream settings, which may include encoding multiple video qualities and/or canvas orientations. Selecting this option will send Juliet information about your computer and software setup."
+  multitrack_video_name = "Multitrack Video"
+  protocol = "RTMP"
+  service = "Juliet"
+echo unknown-service
+props P4
+  prop service type=list desc="Service" visible=1 enabled=1 combo=2 format=3 items=7
+    item 0 name="Nope" value="Nope" disabled=1
+    item 1 name="Nope" value="Nope" disabled=1
+    item 2 name="Alpha" value="Alpha" disabled=0
+    item 3 name="Golf" value="Golf" disabled=0
+    item 4 name="Facebook Live X" value="Facebook Live X" disabled=0
+    item 5 name="Kilo" value="Kilo" disabled=0
+    item 6 name="Twitch" value="Twitch" disabled=0
+  prop show_all type=bool desc="Show all services" visible=1 enabled=1
+  prop server type=list desc="Server" visible=1 enabled=1 combo=2 format=3 items=1
+    item 0 name="rtmp://x/y" value="rtmp://x/y" disabled=1
+  prop key type=text desc="Stream key" visible=1 enabled=1 text_type=1
+settings S4
+  server = "rtmp://x/y"
+  service = "Nope"
+echo empty-service-name-returns-false
+modify service -> 0
+echo missing-service-key
+modify service -> 0

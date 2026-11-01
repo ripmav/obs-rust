@@ -1,0 +1,74 @@
+# CORE: gs_effect_loop and the technique/pass protocol. The fake backend prints every shader load and parameter upload:
+#   "backend load_vertexshader|load_pixelshader <location>|none"
+#   "backend set_val shader=vertex|pixel param=NAME size=N hex=..."  (textures: "texture=ID srgb=B")
+#   "backend set_next_sampler ..." / "backend set_texture ... texture=-1" (texture clearing at pass end)
+# Rules (effect.c):
+#   gs_effect_loop(effect, name): on the first call (not looping) fails with a warning when another effect is
+#     active ("already active") or the technique does not exist; otherwise begins the technique, then begins pass
+#     loop_pass (post-incremented). Later calls (looping) END the previous pass first and ignore "name". When the pass
+#     index is out of range the technique ends (loaded shaders cleared, values reset) and false is returned.
+#   begin_pass(i): selects pass i, loads its two shaders and uploads EVERY parameter of both shaders that has a
+#     value: the current value, else the default (which is then copied into cur_val). Parameters without current value
+#     and without default are skipped. A pending "next sampler" is uploaded first, for every parameter that has one,
+#     even if the value is unchanged. Afterwards the "changed" flag of all the pass's parameters is cleared.
+#   end_pass: for every TEXTURE shader parameter of the pass the shader texture is set to NULL; no pass current.
+#   technique_end: loads NULL shaders, clears effect state, and for every effect parameter: cur_val emptied,
+#     changed=0, next_sampler dropped. So values do not survive the technique.
+backend text none
+text a
+uniform float4x4 ViewProj;
+uniform float4 color = {1,0.5,0.25,1};
+uniform float amount = 2;
+uniform int count = 3;
+uniform bool flag = true;
+uniform float2 uv2;
+uniform texture2d image;
+sampler_state samp { Filter = Linear; };
+struct V { float4 pos : POSITION; float2 uv : TEXCOORD0; };
+V VS(V v) { v.pos = mul(v.pos, ViewProj); return v; }
+float4 PS1(V v) : TARGET { return image.Sample(samp, v.uv) * color * amount + uv2.x + count + (flag ? 1 : 0); }
+float4 PS2(V v) : TARGET { return color; }
+technique One { pass first { vertex_shader = VS(v); pixel_shader = PS1(v); } pass second { vertex_shader = VS(v); pixel_shader = PS2(v); } }
+technique Two { pass { vertex_shader = VS(v); pixel_shader = PS2(v); } }
+technique Empty { }
+@end
+effect e a.effect @text:a
+effect f b.effect "uniform float other = 1;\nfloat4 PS() : TARGET { return other; }\nfloat4 VS() : POSITION { return other; }\ntechnique X { pass { vertex_shader = VS(); pixel_shader = PS(); } }"
+echo --- defaults are uploaded; explicit values win; nothing without value or default
+set_float e:amount 7
+set_matrix4 e:ViewProj 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1
+loop e One
+get_val e:amount
+get_val e:color
+flags e:amount
+echo --- second iteration ends pass 0 (clears textures) and begins pass 1
+loop e One
+echo --- third iteration ends pass 1 and the technique
+loop e One
+get_val e:amount
+echo --- the technique name is ignored once looping (the second call asks for another technique and still gets pass 1 of the first)
+loop e One
+loop e Two
+loop e Nope
+echo --- unknown technique when not looping
+loop e Nope
+echo --- an active effect blocks other effects
+loop e One
+loop f X
+loop e One
+loop e One
+loop f X
+loop f X
+echo --- loop_all runs the whole protocol
+loop_all e One
+loop_all e Two
+loop_all e Empty
+loop_all e Nope
+loop_all f X
+echo --- limit protects against endless loops
+loop_all e One 1
+loop e One
+loop e One
+loop e One
+echo --- NULL effect
+loop @null One

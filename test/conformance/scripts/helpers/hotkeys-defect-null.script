@@ -1,0 +1,8 @@
+# DEFECT: obs_key_from_name(NULL) crashes in the fallback path (strcmp on NULL) but returns
+# OBS_KEY_NONE through the hash-map path. Required behaviour: return OBS_KEY_NONE in both.
+# The comparison treats `crash` in the expected file as equal to the printed `hk_from @null 0`.
+hk_mode null
+hk_from @null
+hk_mode core
+hk_from @null
+hk_free

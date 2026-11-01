@@ -1,0 +1,17 @@
+conv 2 def 0 -> -inf
+conv 2 def 0.001 -> -95.7114258
+conv 2 def 0.1 -> -70.8343277
+conv 2 def 0.5 -> -18.7386341
+conv 2 def 0.9 -> -1.96519041
+conv 2 def 1 -> 0
+conv 2 def 1.5 -> 0
+conv 2 db 0 -> 1
+conv 2 db -1 -> 0.945591629
+conv 2 db -6 -> 0.755349517
+conv 2 db -20 -> 0.482447356
+conv 2 db -60 -> 0.153648213
+conv 2 db -95 -> 0.00347750983
+conv 2 db -96 -> 0
+conv 2 db -100 -> 0
+conv 2 db 3 -> 1
+conv 2 db -inf -> 0

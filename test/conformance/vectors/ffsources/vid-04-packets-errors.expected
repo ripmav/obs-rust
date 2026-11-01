@@ -1,0 +1,96 @@
+av.find_encoder fake_enc -> found
+log info ---------------------------------
+vid_init -> 1
+av.open2 codec=fake_enc bit_rate=1000000 sample_rate=0 channels=0 sample_fmt=-1 strict=0 flags=0 8x2 pix_fmt=8
+vid_init_codec -> 1 initialized=1 vframe=1
+  vframe fmt=8 8x2 range=1 pri=1 trc=1 cs=1 chroma=2
+echo ---- the first non-empty packet goes through the callback (which prefixes HDR), later ones are copied
+av.send_frame video pts=0 8x2 fmt=8
+    plane 0 linesize=32 rows: 00010203:b36361fd 10111213:e2c9267d
+    send -> 0
+av.receive_packet -> 0 size=5 pts=0 dts=0 flags=1
+cb.first_packet size=5
+av.packet_unref
+encode -> 1 received=1 pts=0 dts=0 size=8 type=1 keyframe=1 data=484452a0a1a2a3a4
+vid initialized=1 first_packet=0 start_ts=1000 height=2 buffer=8 enc_name="Fake"
+av.send_frame video pts=1 8x2 fmt=8
+    plane 0 linesize=32 rows: 00010203:b36361fd 10111213:e2c9267d
+    send -> 0
+av.receive_packet -> 0 size=3 pts=1 dts=1 flags=0
+av.packet_unref
+encode -> 1 received=1 pts=1 dts=1 size=3 type=1 keyframe=0 data=a0a1a2
+echo ---- send EAGAIN / EOF are not errors; an empty packet counts as no packet
+av.send_frame video pts=2 8x2 fmt=8
+    plane 0 linesize=32 rows: 00010203:b36361fd 10111213:e2c9267d
+    send -> -11
+av.packet_unref
+encode -> 1 received=0
+av.send_frame video pts=3 8x2 fmt=8
+    plane 0 linesize=32 rows: 00010203:b36361fd 10111213:e2c9267d
+    send -> -541478725
+av.packet_unref
+encode -> 1 received=0
+av.send_frame video pts=4 8x2 fmt=8
+    plane 0 linesize=32 rows: 00010203:b36361fd 10111213:e2c9267d
+    send -> 0
+av.receive_packet -> 0 size=0 pts=4 dts=4 flags=0
+av.packet_unref
+encode -> 1 received=0
+echo ---- receive EAGAIN: no packet
+av.send_frame video pts=5 8x2 fmt=8
+    plane 0 linesize=32 rows: 00010203:b36361fd 10111213:e2c9267d
+    send -> 0
+av.receive_packet -> eagain
+av.packet_unref
+encode -> 1 received=0
+echo ---- real errors fail the call
+av.send_frame video pts=6 8x2 fmt=8
+    plane 0 linesize=32 rows: 00010203:b36361fd 10111213:e2c9267d
+    send -> -1000
+log warning [Fake encoder: 'enc'] ffmpeg_video_encode: Error encoding: Error number -1000 occurred
+encode -> 0 received=0
+av.send_frame video pts=7 8x2 fmt=8
+    plane 0 linesize=32 rows: 00010203:b36361fd 10111213:e2c9267d
+    send -> 0
+av.receive_packet -> -1001 size=0 pts=0 dts=0 flags=0
+log warning [Fake encoder: 'enc'] ffmpeg_video_encode: Error encoding: Error number -1001 occurred
+encode -> 0 received=0
+echo ---- timeout: the packet is still delivered, but the call fails when
+echo ---- now - (pts * 1e9 / fps_num + start_ts) - pause_offset > 5 s (start_ts = 1000 here)
+av.send_frame video pts=8 8x2 fmt=8
+    plane 0 linesize=32 rows: 00010203:b36361fd 10111213:e2c9267d
+    send -> 0
+av.receive_packet -> 0 size=2 pts=60 dts=60 flags=0
+av.packet_unref
+encode -> 1 received=1 pts=60 dts=60 size=2 type=1 keyframe=0 data=a0a1
+last_error @null
+av.send_frame video pts=9 8x2 fmt=8
+    plane 0 linesize=32 rows: 00010203:b36361fd 10111213:e2c9267d
+    send -> 0
+av.receive_packet -> 0 size=2 pts=60 dts=60 flags=0
+host.set_last_error "Encoder Fake is taking too long to encode (timeout: 5 seconds)"
+log error [Fake encoder: 'enc'] Encoding queue duration surpassed 5 seconds, terminating encoder
+av.packet_unref
+encode -> 0 received=1 pts=60 dts=60 size=2 type=1 keyframe=0 data=a0a1
+last_error "Encoder Fake is taking too long to encode (timeout: 5 seconds)"
+echo ---- pause offset is subtracted
+av.send_frame video pts=10 8x2 fmt=8
+    plane 0 linesize=32 rows: 00010203:b36361fd 10111213:e2c9267d
+    send -> 0
+av.receive_packet -> 0 size=2 pts=60 dts=60 flags=0
+av.packet_unref
+encode -> 1 received=1 pts=60 dts=60 size=2 type=1 keyframe=0 data=a0a1
+last_error @null
+echo ---- pts 120 at 60 fps is two seconds after start_ts
+av.send_frame video pts=11 8x2 fmt=8
+    plane 0 linesize=32 rows: 00010203:b36361fd 10111213:e2c9267d
+    send -> 0
+av.receive_packet -> 0 size=2 pts=120 dts=120 flags=0
+host.set_last_error "Encoder Fake is taking too long to encode (timeout: 5 seconds)"
+log error [Fake encoder: 'enc'] Encoding queue duration surpassed 5 seconds, terminating encoder
+av.packet_unref
+encode -> 0 received=1 pts=120 dts=120 size=2 type=1 keyframe=0 data=a0a1
+last_error "Encoder Fake is taking too long to encode (timeout: 5 seconds)"
+av.send_frame NULL -> 0
+av.receive_packet -> eagain
+av.free_context

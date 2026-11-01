@@ -1,0 +1,79 @@
+signal hotkey_register id=0
+reg A -> 0
+signal hotkey_register id=1
+reg M -> 1
+signal hotkey_bindings_changed id=0
+mods-first-then-key-strict
+poll
+poll
+cb A id=0 same_ptr=1 pressed=1
+poll
+cb A id=0 same_ptr=1 pressed=0
+key-first-then-mods-needs-one-extra-poll-and-fires-late
+poll
+poll
+poll
+poll
+cb A id=0 same_ptr=1 pressed=1
+b 0 hk=0 mods=0x2 key=OBS_KEY_A pressed=1 modmatch=1 hkptr_ok=1
+enumb done
+releasing-the-modifier-releases-the-hotkey
+poll
+cb A id=0 same_ptr=1 pressed=0
+b 0 hk=0 mods=0x2 key=OBS_KEY_A pressed=0 modmatch=0 hkptr_ok=1
+enumb done
+poll
+strict-extra-modifier-blocks-non-strict-allows
+poll
+poll
+poll
+poll
+cb A id=0 same_ptr=1 pressed=1
+poll
+cb A id=0 same_ptr=1 pressed=0
+poll
+poll
+cb A id=0 same_ptr=1 pressed=1
+poll
+poll
+cb A id=0 same_ptr=1 pressed=0
+meta-maps-to-command-bit
+signal hotkey_bindings_changed id=0
+poll
+poll
+cb A id=0 same_ptr=1 pressed=1
+poll
+cb A id=0 same_ptr=1 pressed=0
+modifier-only-binding-fires-when-all-its-modifiers-are-held
+signal hotkey_bindings_changed id=1
+poll
+poll
+cb M id=1 same_ptr=1 pressed=1
+poll
+cb M id=1 same_ptr=1 pressed=0
+modifier-only-strict-extra-modifier
+poll
+poll
+modifier-only-nonstrict-extra-modifier
+poll
+cb M id=1 same_ptr=1 pressed=1
+poll
+cb M id=1 same_ptr=1 pressed=0
+background-press-disabled-no-new-presses-but-release-still-happens
+signal hotkey_bindings_changed id=0
+signal hotkey_bindings_changed id=1
+poll
+poll
+cb A id=0 same_ptr=1 pressed=1
+bgpress thread_disable_press=1
+poll
+cb A id=0 same_ptr=1 pressed=0
+poll
+poll
+bgpress thread_disable_press=0
+poll
+cb A id=0 same_ptr=1 pressed=1
+poll
+bgpress thread_disable_press=1
+poll
+cb A id=0 same_ptr=1 pressed=0

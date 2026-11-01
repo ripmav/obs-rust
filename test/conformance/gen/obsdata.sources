@@ -1,0 +1,6 @@
+# obs_data settings objects (spec S-014)
+test/conformance/gen/obsdata_runner.c
+test/conformance/gen/obsdata_stubs.c
+libobs/obs-data.c
+-ljansson
+-Wno-deprecated-declarations

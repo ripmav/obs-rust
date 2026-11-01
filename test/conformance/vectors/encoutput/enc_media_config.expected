@@ -1,0 +1,32 @@
+log debug encoder 'v' (v) created
+encoder v created tb=0/0
+log debug encoder 'a' (a) created
+encoder a created tb=0/0
+enc_info v w=0 h=0 divisor=1 rate=0 frame_size=0 mixer=0 caps=0 codec=fakev last_error=-
+enc_set_video tb=1/30 media=1
+log warning obs_encoder_set_audio: encoder 'v' is not an audio encoder
+enc_set_audio tb=1/30 media=1
+enc_set_audio tb=1/48000 media=1
+log warning obs_encoder_set_video: encoder 'a' is not a video encoder
+enc_set_video tb=1/48000 media=1
+log warning encoder 'v': Cannot set frame rate divisor to 0
+enc_divisor -> 0
+enc_divisor -> 1
+log warning obs_encoder_set_frame_rate_divisor: encoder 'a' is not a video encoder
+enc_divisor -> 0
+enc_info v w=1280 h=720 divisor=2 rate=0 frame_size=0 mixer=0 caps=0 codec=fakev last_error=-
+--- scaled size: equal to the video size disables scaling
+log warning encoder 'v': Scaled resolution matches output resolution, scaling disabled
+enc_scaled 1280 x 720 enabled=0
+enc_scaled 640 x 360 enabled=1
+enc_info v w=640 h=360 divisor=2 rate=0 frame_size=0 mixer=0 caps=0 codec=fakev last_error=-
+--- after initialisation nothing can be changed
+plugin enc v create
+enc_init v -> 1
+log warning encoder 'v': Cannot set frame rate divisor after the encoder has been initialized
+enc_divisor -> 0
+log warning encoder 'v': Cannot set the scaled resolution after the encoder has been initialized
+enc_scaled 640 x 360 enabled=1
+log warning encoder 'v': Cannot apply a new video_t object after the encoder has been initialized
+enc_set_video tb=1/30 media=1
+enc_info v w=640 h=360 divisor=2 rate=0 frame_size=0 mixer=0 caps=0 codec=fakev last_error=-

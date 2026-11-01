@@ -1,0 +1,12 @@
+# wait() on an idle queue returns false: nothing was processed between the request and the
+# wait marker (CORE). After a wait that processed tasks, the next idle wait is false again.
+task_create 0
+task_wait 0
+task_gate 0
+task_queue 0 a
+task_wait_release 0
+task_wait 0
+task_gate 0
+task_wait_release 0
+task_log
+task_destroy 0

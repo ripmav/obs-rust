@@ -1,0 +1,31 @@
+# S-022 QUIRK Q-1 (tfhd default duration/size): the moof writer decides whether all samples of a
+# fragment share one duration/size by a loop that keeps only the result of the LAST comparison
+# (first sample versus last sample). Defaults are written to the tfhd when that last comparison
+# matches, even if middle samples differ, and the trun carries no per-sample durations at all.
+# Fragment durations below (the last sample reuses the previous duration): [1 2 1 1] -> default
+# duration 1 written although sample 2 lasts 2; [1 1 2 2] -> no default duration.
+# Sizes are checked the same way: 10 11 12 10 -> default size 10 written; 10 11 12 13 -> none.
+# The final moov (stts/stsz) is unaffected and correct.
+enc v video codec h264 width 320 height 240 fps 30/1 extra 000000016742c01ed900a047fe880000000168ce3c80
+mux mp4 skipfin
+pkt v 0 0 1 gen:10
+pkt v 1 1 0 gen:11
+pkt v 3 3 0 gen:12
+pkt v 4 4 0 gen:10
+finalise
+dump
+mux mp4 skipfin
+pkt v 0 0 1 gen:10
+pkt v 1 1 0 gen:11
+pkt v 2 2 0 gen:12
+pkt v 4 4 0 gen:13
+finalise
+dump
+mux mp4
+pkt v 0 0 1 gen:10
+pkt v 1 1 0 gen:11
+pkt v 3 3 0 gen:12
+pkt v 4 4 0 gen:10
+finalise
+tree
+hex

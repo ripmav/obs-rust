@@ -1,0 +1,26 @@
+# Absolute coordinate mode (private data AbsoluteCoordinates=true at scene creation): values are stored and returned
+# verbatim in pixels, no scale_ref, no nudge, canvas resizes do not move items.
+absolute on
+source cam 1280 720
+scene main
+add main cam c
+print c
+pos c 100.3 50.7
+scale c 2 0.5
+bounds_type c 2
+bounds c 640.25 360.75
+rot c 30
+get c
+update main
+print c
+echo -- canvas change leaves everything untouched
+canvas 800 600
+update main
+get c
+print c
+echo -- mode is per scene: a scene created later is relative again
+absolute off
+scene rel
+add rel cam r
+pos r 100.3 50.7
+get r

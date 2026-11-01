@@ -1,0 +1,43 @@
+# CORE. int/float: add stores min/max/step verbatim (no validation), scroller by default,
+# slider variant. set_limits and set_suffix are only effective on the matching kind.
+props P
+add int P i "Int" 1 100 5 as i
+add int_slider P is "Int slider" -10 10 2 as is
+add float P f "Float" 0.5 99.25 0.25 as f
+add float_slider P fs "Float slider" 0 1 0.001 as fs
+info i
+info is
+info f
+info fs
+echo no-validation-min-greater-than-max
+add int P weird "w" 10 -10 0 as w
+add float P weirdf "w" 1e300 -1e300 0 as wf
+info w
+info wf
+echo set-limits
+set i int_limits 7 8 9
+info i
+set f float_limits -1.5 2.5 0.125
+info f
+echo set-limits-on-wrong-kind-is-ignored
+set i float_limits 100 200 300
+set f int_limits 100 200 300
+set w float_limits 100 200 300
+info i
+info f
+echo suffix
+set i int_suffix " px"
+set f float_suffix "%"
+info i
+info f
+set i int_suffix "other"
+set i int_suffix @null
+set f float_suffix ""
+info i
+info f
+echo suffix-on-wrong-kind-ignored
+set i float_suffix "x"
+set f int_suffix "x"
+info i
+info f
+destroy P

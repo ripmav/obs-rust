@@ -1,0 +1,136 @@
+reset ok
+> reset
+reset ok
+> aenc 0 aac 160
+> venc 0 h264 2500
+> service rtmp://h/a KEY - -
+> connect_thread
+log info [rtmp stream: 'out'] Dynamic bitrate disabled. The encoder 'enc' does not support on-the-fly bitrate reconfiguration.
+log info [rtmp stream: 'out'] Connecting to RTMP URL rtmp://h/a...
+fake RTMP_Init
+fake RTMP_SetupURL "rtmp://h/a" -> 1
+fake RTMP_EnableWrite
+fake RTMP_AddStream "KEY"
+fake RTMP_Connect pubUser="" pubPasswd="" flashVer="FMLE/3.0 (compatible; FMSc/1.0)" swfUrl_is_tcUrl=1 outChunk=4096 sendChunkInfo=1 nagle=1 bindLen=0
+fake RTMP_ConnectStream seek=0 -> 1
+log info [rtmp stream: 'out'] Connection to rtmp://h/a (192.0.2.7) successful
+fake pthread_create #1
+fake RTMP_Write #1 kind=meta len=10 -> 10
+fake begin_data_capture
+fake pthread_detach
+connecting=0
+> reset
+reset ok
+> no_service
+> connect_thread
+fake signal_stop -1
+connecting=1
+> reset
+reset ok
+> aenc 0 aac 160
+> venc 0 h264 2500
+> service rtmp://h/a KEY - -
+> fake connect_ok 0
+> fake connect_err 113
+> connect_thread
+log info [rtmp stream: 'out'] Dynamic bitrate disabled. The encoder 'enc' does not support on-the-fly bitrate reconfiguration.
+log info [rtmp stream: 'out'] Connecting to RTMP URL rtmp://h/a...
+fake RTMP_Init
+fake RTMP_SetupURL "rtmp://h/a" -> 1
+fake RTMP_EnableWrite
+fake RTMP_AddStream "KEY"
+fake RTMP_Connect pubUser="" pubPasswd="" flashVer="FMLE/3.0 (compatible; FMSc/1.0)" swfUrl_is_tcUrl=1 outChunk=4096 sendChunkInfo=1 nagle=1 bindLen=0
+fake set_last_error "T:NoRoute"
+fake signal_stop -2
+log info [rtmp stream: 'out'] Connection to rtmp://h/a failed: -2
+fake pthread_detach
+connecting=0
+> reset
+reset ok
+> venc 0 h264 2500
+> service  KEY - -
+> connect_thread
+log info [rtmp stream: 'out'] Dynamic bitrate disabled. The encoder 'enc' does not support on-the-fly bitrate reconfiguration.
+log warning [rtmp stream: 'out'] URL is empty
+fake signal_stop -1
+log info [rtmp stream: 'out'] Connection to (null) failed: -1
+fake pthread_detach
+connecting=0
+> reset
+reset ok
+> aenc 0 aac 160
+> venc 0 av1 2500
+> service rtmp://h/a KEY - -
+> colorspace 4 18
+> connect_thread
+log info [rtmp stream: 'out'] Dynamic bitrate disabled. The encoder 'enc' does not support on-the-fly bitrate reconfiguration.
+fake signal_stop -9
+connecting=1
+> colorspace 5 18
+> connect_thread
+log info [rtmp stream: 'out'] Dynamic bitrate disabled. The encoder 'enc' does not support on-the-fly bitrate reconfiguration.
+fake signal_stop -9
+connecting=1
+> reset
+reset ok
+> aenc 0 aac 160
+> venc 0 hevc 2500
+> service rtmp://h/a KEY - -
+> colorspace 4 18
+> connect_thread
+log info [rtmp stream: 'out'] Dynamic bitrate disabled. The encoder 'enc' does not support on-the-fly bitrate reconfiguration.
+log info [rtmp stream: 'out'] Connecting to RTMP URL rtmp://h/a...
+fake RTMP_Init
+fake RTMP_SetupURL "rtmp://h/a" -> 1
+fake RTMP_EnableWrite
+fake RTMP_AddStream "KEY"
+fake RTMP_Connect pubUser="" pubPasswd="" flashVer="FMLE/3.0 (compatible; FMSc/1.0)" swfUrl_is_tcUrl=1 outChunk=4096 sendChunkInfo=1 nagle=1 bindLen=0
+fake RTMP_ConnectStream seek=0 -> 1
+log info [rtmp stream: 'out'] Connection to rtmp://h/a (192.0.2.7) successful
+fake pthread_create #1
+fake RTMP_Write #1 kind=meta len=10 -> 10
+fake begin_data_capture
+fake pthread_detach
+connecting=0
+> reset
+reset ok
+> aenc 0 aac 160
+> venc 0 h264 2500
+> service rtmp://h/a KEY - -
+> colorspace 5 18
+> connect_thread
+log info [rtmp stream: 'out'] Dynamic bitrate disabled. The encoder 'enc' does not support on-the-fly bitrate reconfiguration.
+log info [rtmp stream: 'out'] Connecting to RTMP URL rtmp://h/a...
+fake RTMP_Init
+fake RTMP_SetupURL "rtmp://h/a" -> 1
+fake RTMP_EnableWrite
+fake RTMP_AddStream "KEY"
+fake RTMP_Connect pubUser="" pubPasswd="" flashVer="FMLE/3.0 (compatible; FMSc/1.0)" swfUrl_is_tcUrl=1 outChunk=4096 sendChunkInfo=1 nagle=1 bindLen=0
+fake RTMP_ConnectStream seek=0 -> 1
+log info [rtmp stream: 'out'] Connection to rtmp://h/a (192.0.2.7) successful
+fake pthread_create #1
+fake RTMP_Write #1 kind=meta len=10 -> 10
+fake begin_data_capture
+fake pthread_detach
+connecting=0
+> reset
+reset ok
+> aenc 0 aac 160
+> venc 0 av1 2500
+> service rtmp://h/a KEY - -
+> colorspace 2 2
+> connect_thread
+log info [rtmp stream: 'out'] Dynamic bitrate disabled. The encoder 'enc' does not support on-the-fly bitrate reconfiguration.
+log info [rtmp stream: 'out'] Connecting to RTMP URL rtmp://h/a...
+fake RTMP_Init
+fake RTMP_SetupURL "rtmp://h/a" -> 1
+fake RTMP_EnableWrite
+fake RTMP_AddStream "KEY"
+fake RTMP_Connect pubUser="" pubPasswd="" flashVer="FMLE/3.0 (compatible; FMSc/1.0)" swfUrl_is_tcUrl=1 outChunk=4096 sendChunkInfo=1 nagle=1 bindLen=0
+fake RTMP_ConnectStream seek=0 -> 1
+log info [rtmp stream: 'out'] Connection to rtmp://h/a (192.0.2.7) successful
+fake pthread_create #1
+fake RTMP_Write #1 kind=meta len=10 -> 10
+fake begin_data_capture
+fake pthread_detach
+connecting=0

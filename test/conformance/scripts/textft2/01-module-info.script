@@ -1,0 +1,9 @@
+# Module registration, source-info tables and settings defaults of both versions (S-038-R01..R06).
+# A fresh module registers two sources with the same id: version 0 (flag OBSOLETE, 32 px default) and version 2.
+load
+info 1
+info 2
+defaults 1
+defaults 2
+# Unloading before any source was created does not touch FreeType (nothing was initialised).
+unload

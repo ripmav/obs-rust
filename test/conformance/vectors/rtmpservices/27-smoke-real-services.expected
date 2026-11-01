@@ -1,0 +1,17 @@
+smoke format_version=5
+smoke services>0=1
+smoke keys service: alt_names common more_info_link multitrack_video_configuration_url multitrack_video_learn_more_link multitrack_video_name name protocol recommended servers stream_key_link supported audio codecs supported video codecs
+smoke keys server: name url
+smoke keys recommended: bframes bitrate matrix keyint max audio bitrate max fps max video bitrate output profile supported resolutions x264opts
+smoke keys bitrate-matrix: fps max bitrate res
+smoke listed>0=1 crashes=0
+smoke all-have-servers=1
+smoke all-have-url=1
+echo same-with-only-RTMP-registered
+smoke format_version=5
+smoke services>0=1
+smoke keys service: alt_names common more_info_link multitrack_video_configuration_url multitrack_video_learn_more_link multitrack_video_name name protocol recommended servers stream_key_link supported audio codecs supported video codecs
+smoke keys server: name url
+smoke keys recommended: bframes bitrate matrix keyint max audio bitrate max fps max video bitrate output profile supported resolutions x264opts
+smoke keys bitrate-matrix: fps max bitrate res
+smoke listed>0=1 crashes=0

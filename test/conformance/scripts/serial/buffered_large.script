@@ -1,0 +1,26 @@
+# Large and chunked writes (CORE). Total in-flight data stays far below 1 MiB.
+# fsum prints file size and FNV-1a 64. write_pat N START writes byte i = (START+i)*31+7 mod 256.
+open buf bl-a
+write_pat 300000
+seek start 10
+write_pat 5
+seek end 0
+close
+fsum bl-a
+open buf bl-b 1 1
+write_pat 40
+seek start 38
+write_pat 5 9
+close
+fget bl-b
+open buf bl-c 64 8
+write_pat 100
+write_pat 100 100
+seek start 50
+write_pat 20 7
+close
+fsum bl-c
+fget bl-c
+funlink bl-a
+funlink bl-b
+funlink bl-c

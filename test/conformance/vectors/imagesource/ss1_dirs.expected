@@ -1,0 +1,61 @@
+ev create slideshow#1 public
+ev hotkey_register slideshow#1 id=1 name=SlideShow.PlayPause desc=SlideShow.PlayPause
+ev hotkey_register slideshow#1 id=2 name=SlideShow.Restart desc=SlideShow.Restart
+ev hotkey_register slideshow#1 id=3 name=SlideShow.Stop desc=SlideShow.Stop
+ev hotkey_register slideshow#1 id=4 name=SlideShow.NextSlide desc=SlideShow.NextSlide
+ev hotkey_register slideshow#1 id=5 name=SlideShow.PreviousSlide desc=SlideShow.PreviousSlide
+ev create fade_transition#2 private
+ev create image_source#3[/s/a.png] private
+ev image_init /s/a.png alpha=2
+log debug [image_source: ''] loading texture '/s/a.png'
+ev texture_create 1 10x10 dynamic=0
+ev create image_source#4[/s/b.png] private
+ev image_init /s/b.png alpha=2
+log debug [image_source: ''] loading texture '/s/b.png'
+ev texture_create 2 20x20 dynamic=0
+ev create image_source#5[/s/c.PNG] private
+ev image_init /s/c.PNG alpha=2
+log warning gs_image_file_ex_init_internal: Failed to load file '/s/c.PNG'
+log debug [image_source: ''] loading texture '/s/c.PNG'
+log warning [image_source: ''] failed to load texture '/s/c.PNG'
+ev create image_source#6[/s/x.webp] private
+ev image_init /s/x.webp alpha=2
+log warning gs_image_file_ex_init_internal: Failed to load file '/s/x.webp'
+log debug [image_source: ''] loading texture '/s/x.webp'
+log warning [image_source: ''] failed to load texture '/s/x.webp'
+ev create image_source#7[/s/d.jpeg] private
+ev image_init /s/d.jpeg alpha=2
+log warning gs_image_file_ex_init_internal: Failed to load file '/s/d.jpeg'
+log debug [image_source: ''] loading texture '/s/d.jpeg'
+log warning [image_source: ''] failed to load texture '/s/d.jpeg'
+ev create image_source#8[/s/e.GIF] private
+ev image_init /s/e.GIF alpha=2
+log debug [image_source: ''] loading texture '/s/e.GIF'
+ev texture_create 3 5x5 dynamic=0
+ev create image_source#9[/s/.png] private
+ev image_init /s/.png alpha=2
+log warning gs_image_file_ex_init_internal: Failed to load file '/s/.png'
+log debug [image_source: ''] loading texture '/s/.png'
+log warning [image_source: ''] failed to load texture '/s/.png'
+ev create image_source#10[/missing/z.png] private
+ev image_init /missing/z.png alpha=2
+log warning gs_image_file_ex_init_internal: Failed to load file '/missing/z.png'
+log debug [image_source: ''] loading texture '/missing/z.png'
+log warning [image_source: ''] failed to load texture '/missing/z.png'
+ev tr_size fade_transition#2 20x20
+ev tr_align fade_transition#2 0
+ev tr_scale fade_transition#2 1
+ev tr_start fade_transition#2 mode=0 ms=700 dest=image_source#3[/s/a.png] -> started
+ev signal media_started slideshow#1
+tick 0 clock=16000001
+state slideshow1 behavior=2 manual=0 randomize=0 loop=1 hide=0 use_cut=0 paused=0 stop=0 restart_on_activate=0 pause_on_deactivate=0 slide_time=8.69999981 tr_speed=700 tr_name=fade_transition cur_item=0 elapsed=0.0160000008 cx=20 cy=20 mem_usage=2500 state=1 transition=fade_transition#2
+state   file 0 /s/a.png image_source#3[/s/a.png]
+state   file 1 /s/b.png image_source#4[/s/b.png]
+state   file 2 /s/c.PNG image_source#5[/s/c.PNG]
+state   file 3 /s/x.webp image_source#6[/s/x.webp]
+state   file 4 /s/d.jpeg image_source#7[/s/d.jpeg]
+state   file 5 /s/e.GIF image_source#8[/s/e.GIF]
+state   file 6 /s/.png image_source#9[/s/.png]
+state   file 7 /missing/z.png image_source#10[/missing/z.png]
+state   file 8 /s/a.png image_source#3[/s/a.png]
+proc total_files ok 9

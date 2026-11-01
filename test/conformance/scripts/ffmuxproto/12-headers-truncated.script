@@ -1,0 +1,22 @@
+# Missing or truncated header data -> initialisation fails, exit status -1, nothing is written.
+reset
+rmfile @t.mkv
+args @t.mkv 1 1 h264 6000 640 360 1 1 1 1 1 0 30 1 0 aac "A" 128 48000 1024 0 2 "" ""
+echo --- empty stdin
+run
+exists @t.mkv
+echo --- stdin ends inside the first info structure
+raw 000000000000000000000000
+run
+echo --- info complete but payload short
+reset
+args @t.mkv 1 0 h264 6000 640 360 1 1 1 1 1 0 30 1 0 "" ""
+info video 0 0 0 0 5
+raw 01640
+run
+echo --- video header ok but the audio header is missing
+reset
+args @t.mkv 1 1 h264 6000 640 360 1 1 1 1 1 0 30 1 0 aac "A" 128 48000 1024 0 2 "" ""
+hdr video 0 0164001fffe100046764001f01000468ce3c80
+run
+exists @t.mkv

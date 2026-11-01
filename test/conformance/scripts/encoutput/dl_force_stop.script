@@ -1,0 +1,25 @@
+# force_stop on a delayed output discards the queue: delay is deactivated at once and the plugin stop callback
+# is called immediately with timestamp 0.
+video 30 1 1280 720
+audio 48000
+venc v
+aenc a frame_size=1024
+out o av,encoded autobegin=1
+set_venc o v
+set_aenc o a
+set_delay o 2
+clock 0
+start o
+clock 2000000001
+emit a 0 0 0 4
+emit v 0 0 1 4
+state o
+queue o
+force_stop o
+state o
+queue o
+echo --- not active any more: stop is a no-op, start works again
+stop o
+clock 10000000000
+start o
+state o

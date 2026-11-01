@@ -1,0 +1,34 @@
+# Steady state: after start, a packet is released only when the OPPOSING stream has already delivered a packet
+# with a higher dts_usec; one packet is sent per arriving packet. The queue is sorted by dts_usec and, for equal
+# dts_usec, a video packet is placed before audio packets already queued.
+video 30 1 1280 720
+audio 48000
+venc v
+aenc a frame_size=1024
+out o av,encoded autobegin=1
+set_venc o v
+set_aenc o a
+start o
+emit a 0 0 0 4
+emit a 1024 1024 0 4
+emit v 0 0 1 4
+emit a 2048 2048 0 4
+state o
+echo --- audio far ahead (up to 128000us): video packets stream out one per arrival
+emit a 3072 3072 0 4
+emit a 4096 4096 0 4
+emit a 5120 5120 0 4
+emit a 6144 6144 0 4
+queue o
+emit v 1 1 0 4
+emit v 2 2 0 4
+queue o
+echo --- video far ahead: audio is held back until video passes it, then released one by one
+emit v 3 3 0 4
+emit v 4 4 0 4
+emit v 5 5 0 4
+queue o
+emit v 6 6 0 4
+queue o
+stop o
+queue o

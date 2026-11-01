@@ -1,0 +1,4 @@
+tick 0 ret=1 out_ts=1000000000 wait=0 total=0 bufq=0
+order a* b scene e scene2 c | roots scene a a
+tick 0 ret=1 out_ts=1021333333 wait=0 total=0 bufq=0
+order a* b scene d e scene2 c | roots scene a d a

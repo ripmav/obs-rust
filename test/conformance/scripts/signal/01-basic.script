@@ -1,0 +1,18 @@
+# Callbacks run in connection order; undeclared signals are ignored.
+handler h
+add h "void ping(int n)"
+callback a
+callback b
+callback c
+connect h ping a
+connect h ping b
+connect h ping c
+emit h ping n=5
+emit h nosuchsignal n=1
+add h "void ping(int n)"
+add h "void pong()"
+emit h pong
+connect h pong a
+emit h pong
+emit h ping n=6
+destroy h

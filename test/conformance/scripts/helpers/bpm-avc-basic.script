@@ -1,0 +1,13 @@
+# BPM injection into an AVC (h264) keyframe packet (CORE). Appended after the unchanged
+# packet bytes: three SEI NAL units (timestamp, session metrics, rendition metrics), each
+# with a 4-byte start code. The packet size grows from 8 to 289 bytes.
+# Time model of the runner: nstime N ns is wall-clock N ns after 1970-01-01T00:00:00Z.
+bpm_set codec h264
+bpm_set rendered 100
+bpm_set lagged 3
+bpm_set out_total 90
+bpm_set out_dropped 1
+bpm_set v_total 100
+bpm_set v_skipped 2
+bpm_set enc_out 98
+bpm_inject 0 0 1 1 1 1 0000000165aabbcc 1000000000 1010000000 1020000000 1030000000

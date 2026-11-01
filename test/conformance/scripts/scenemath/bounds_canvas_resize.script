@@ -1,0 +1,24 @@
+# Relative bounds scale with the canvas height; scale_ref is taken at the moment the item is added, so an item
+# added after a canvas change has the new reference and does not rescale back.
+source s 200 100
+scene main
+add main s old
+pos old 192 108
+bounds_type old 2
+bounds old 384 216
+update main
+print old
+canvas 960 540
+update main
+print old
+get old
+echo -- item added at the new size
+add main s young
+pos young 192 108
+scale young 2 2
+update main
+print young
+canvas 1920 1080
+update main
+print young
+get young

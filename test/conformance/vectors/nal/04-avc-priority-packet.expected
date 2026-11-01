@@ -1,0 +1,56 @@
+echo priority-by-nal-ref-idc
+avc_priority 3
+avc_priority 2
+avc_priority 1
+avc_priority 0
+avc_priority 7
+echo priority-uses-max-over-all-nals
+avc_priority 3
+avc_priority 0
+avc_priority 2
+echo initial-priority-is-kept-when-higher
+avc_priority 0
+avc_priority 1
+avc_priority 3
+avc_priority 3
+avc_priority 3
+avc_priority 9
+echo empty-and-garbage
+avc_priority 0
+avc_priority 2
+avc_priority 1
+avc_priority 1
+echo packet-idr
+avc_packet size=51 keyframe=1 priority=3 drop_priority=3 refs=1 fields=preserved fresh=1 data=0000000209100000000a6742c01ed900a047fe880000000468ce3c800000000806050a0102030405000000076588840021ffe0
+avc_packet size=51 keyframe=1 priority=3 drop_priority=3 refs=1 fields=preserved fresh=1 data=0000000209100000000a6742c01ed900a047fe880000000468ce3c800000000806050a0102030405000000076588840021ffe0
+avc_packet size=51 keyframe=1 priority=3 drop_priority=3 refs=1 fields=preserved fresh=1 data=0000000209100000000a6742c01ed900a047fe880000000468ce3c800000000806050a0102030405000000076588840021ffe0
+echo packet-non-idr
+avc_packet size=24 keyframe=0 priority=0 drop_priority=0 refs=1 fields=preserved fresh=1 data=0000000209100000000806050a0102030405000000020122
+avc_packet size=24 keyframe=0 priority=2 drop_priority=2 refs=1 fields=preserved fresh=1 data=0000000209100000000806050a0102030405000000020122
+avc_packet size=24 keyframe=1 priority=0 drop_priority=0 refs=1 fields=preserved fresh=1 data=0000000209100000000806050a0102030405000000020122
+avc_packet size=14 keyframe=0 priority=2 drop_priority=2 refs=1 fields=preserved fresh=1 data=00000002012200000004419a24c1
+echo keyframe-flag-is-sticky
+avc_packet size=6 keyframe=1 priority=2 drop_priority=2 refs=1 fields=preserved fresh=1 data=0000000241aa
+avc_packet size=6 keyframe=0 priority=2 drop_priority=2 refs=1 fields=preserved fresh=1 data=0000000241aa
+echo drop-priority-is-overwritten
+avc_packet size=6 keyframe=0 priority=1 drop_priority=1 refs=1 fields=preserved fresh=1 data=0000000221aa
+echo start-code-forms
+avc_packet size=7 keyframe=0 priority=2 drop_priority=2 refs=1 fields=preserved fresh=1 data=00000003419a24
+avc_packet size=7 keyframe=0 priority=2 drop_priority=2 refs=1 fields=preserved fresh=1 data=00000003419a24
+avc_packet size=14 keyframe=0 priority=2 drop_priority=2 refs=1 fields=preserved fresh=1 data=00000003419a2400000003419a25
+avc_packet size=14 keyframe=0 priority=2 drop_priority=2 refs=1 fields=preserved fresh=1 data=00000003419a2400000003419a25
+echo empty-and-no-nal
+avc_packet size=0 keyframe=0 priority=0 drop_priority=0 refs=1 fields=preserved fresh=1 data=-
+avc_packet size=0 keyframe=1 priority=3 drop_priority=3 refs=1 fields=preserved fresh=1 data=-
+avc_packet size=0 keyframe=0 priority=0 drop_priority=0 refs=1 fields=preserved fresh=1 data=-
+avc_packet size=0 keyframe=0 priority=0 drop_priority=0 refs=1 fields=preserved fresh=1 data=-
+avc_packet size=0 keyframe=0 priority=0 drop_priority=0 refs=1 fields=preserved fresh=1 data=-
+echo trailing-zeros-and-start-code-at-end
+avc_packet size=8 keyframe=1 priority=3 drop_priority=3 refs=1 fields=preserved fresh=1 data=0000000465aa0000
+avc_packet size=10 keyframe=1 priority=3 drop_priority=3 refs=1 fields=preserved fresh=1 data=0000000665aa00000001
+avc_packet size=9 keyframe=1 priority=3 drop_priority=3 refs=1 fields=preserved fresh=1 data=0000000565aa000001
+echo single-byte-nal
+avc_packet size=12 keyframe=1 priority=3 drop_priority=3 refs=1 fields=preserved fresh=1 data=0000000265aa00000002419a
+avc_packet size=11 keyframe=1 priority=3 drop_priority=3 refs=1 fields=preserved fresh=1 data=000000016500000002419a
+echo large-nal
+avc_packet size=305 keyframe=1 priority=3 drop_priority=3 refs=1 fields=preserved fresh=1 data=0000012d65abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd

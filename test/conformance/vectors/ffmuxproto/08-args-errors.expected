@@ -1,0 +1,45 @@
+--- no arguments at all
+exit -1
+stdout|"Missing expected option: 'file name'"
+stderr|"Couldn't initialize muxer"
+--- file only
+exit -1
+stdout|"Missing expected option: 'video track count'"
+stderr|"Couldn't initialize muxer"
+--- has_video=2
+exit -1
+stdout|"Invalid number of video tracks"
+stdout|""
+stderr|"Couldn't initialize muxer"
+--- has_video=-1
+exit -1
+stdout|"Invalid number of video tracks"
+stdout|""
+stderr|"Couldn't initialize muxer"
+--- negative audio track count
+exit -1
+stdout|"Invalid number of audio tracks"
+stdout|""
+stderr|"Couldn't initialize muxer"
+--- no tracks at all
+exit -1
+stdout|"Must have at least 1 audio track or 1 video track"
+stdout|""
+stderr|"Couldn't initialize muxer"
+--- video announced but the arguments end early
+exit -1
+stdout|"Missing expected option: 'video color primaries'"
+stderr|"Couldn't initialize muxer"
+--- audio announced but no audio parameters
+exit -1
+stdout|"Missing expected option: 'audio track name'"
+stderr|"Couldn't initialize muxer"
+--- audio params cut after 3 of 6 values
+exit -1
+stdout|"Missing expected option: 'audio frame size'"
+stderr|"Couldn't initialize muxer"
+--- non numeric counts parse like atoi (garbage = 0, so no tracks at all)
+exit -1
+stdout|"Must have at least 1 audio track or 1 video track"
+stdout|""
+stderr|"Couldn't initialize muxer"

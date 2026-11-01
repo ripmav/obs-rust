@@ -1,0 +1,98 @@
+> trace 0
+> gs_create g
+ret 0 created
+> gs_enter_context g
+> trace 1
+== plain
+> gs_texture_create 64 32 GS_RGBA 1 0
+  dev device_texture_create w=64 h=32 fmt=3 levels=1 data=null flags=0
+ret #6
+== pow2 with BUILD_MIPMAPS flag: passed through unchanged
+> gs_texture_create 64 32 GS_RGBA 1 GS_BUILD_MIPMAPS
+  dev device_texture_create w=64 h=32 fmt=3 levels=1 data=null flags=1
+ret #7
+== pow2 with levels != 1 (0 = full chain, 5 = explicit): unchanged
+> gs_texture_create 64 32 GS_RGBA 0 0
+  dev device_texture_create w=64 h=32 fmt=3 levels=0 data=null flags=0
+ret #8
+> gs_texture_create 64 32 GS_RGBA 5 0
+  dev device_texture_create w=64 h=32 fmt=3 levels=5 data=null flags=0
+ret #9
+== non pow2: mipmaps disabled, levels forced to 1, flag removed (warning)
+> gs_texture_create 100 32 GS_RGBA 1 GS_BUILD_MIPMAPS
+log warning Cannot use mipmaps with a non-power-of-two texture.  Disabling mipmaps for this texture.
+  dev device_texture_create w=100 h=32 fmt=3 levels=1 data=null flags=0
+ret #10
+> gs_texture_create 64 33 GS_RGBA 0 0
+log warning Cannot use mipmaps with a non-power-of-two texture.  Disabling mipmaps for this texture.
+  dev device_texture_create w=64 h=33 fmt=3 levels=1 data=null flags=0
+ret #11
+> gs_texture_create 1 1 GS_RGBA 1 GS_BUILD_MIPMAPS
+log warning Cannot use mipmaps with a non-power-of-two texture.  Disabling mipmaps for this texture.
+  dev device_texture_create w=1 h=1 fmt=3 levels=1 data=null flags=0
+ret #12
+== 1 is not a power of two for this purpose (size >= 2 required)
+> gs_texture_create 1 64 GS_RGBA 3 0
+log warning Cannot use mipmaps with a non-power-of-two texture.  Disabling mipmaps for this texture.
+  dev device_texture_create w=1 h=64 fmt=3 levels=1 data=null flags=0
+ret #13
+== non-pow2 without any mipmap request: no warning
+> gs_texture_create 100 33 GS_RGBA 1 0
+  dev device_texture_create w=100 h=33 fmt=3 levels=1 data=null flags=0
+ret #14
+== render target + mipmaps: flag removed and levels forced to 1 but the data pointer is kept (warning)
+> gs_texture_create 64 64 GS_RGBA 1 GS_BUILD_MIPMAPS|GS_RENDER_TARGET data
+log warning Cannot use mipmaps with render targets.  Disabling mipmaps for this texture.
+  dev device_texture_create w=64 h=64 fmt=3 levels=1 data=ptr flags=4
+ret #15
+> gs_texture_create 64 64 GS_RGBA 4 GS_RENDER_TARGET data
+log warning Cannot use mipmaps with render targets.  Disabling mipmaps for this texture.
+  dev device_texture_create w=64 h=64 fmt=3 levels=1 data=ptr flags=4
+ret #16
+== render target without any mipmap request: untouched
+> gs_texture_create 64 64 GS_RGBA 1 GS_RENDER_TARGET data
+  dev device_texture_create w=64 h=64 fmt=3 levels=1 data=ptr flags=4
+ret #17
+== data pointer is forwarded
+> gs_texture_create 4 4 GS_RGBA 1 0 data
+  dev device_texture_create w=4 h=4 fmt=3 levels=1 data=ptr flags=0
+ret #18
+== other flags pass through
+> gs_texture_create 4 4 GS_BGRA 1 GS_DYNAMIC|GS_SHARED_TEX
+  dev device_texture_create w=4 h=4 fmt=5 levels=1 data=null flags=34
+ret #19
+== backend failure returns NULL
+> fail device_texture_create 1
+> gs_texture_create 4 4 GS_RGBA 1 0
+  dev device_texture_create w=4 h=4 fmt=3 levels=1 data=null flags=0
+ret null
+> fail device_texture_create 0
+== cube textures: same rules, but the render-target case also drops the data
+> gs_cubetexture_create 64 GS_RGBA 1 GS_BUILD_MIPMAPS
+  dev device_cubetexture_create size=64 fmt=3 levels=1 data=null flags=1
+ret #20
+> gs_cubetexture_create 100 GS_RGBA 1 GS_BUILD_MIPMAPS
+log warning Cannot use mipmaps with a non-power-of-two texture.  Disabling mipmaps for this texture.
+  dev device_cubetexture_create size=100 fmt=3 levels=1 data=null flags=0
+ret #21
+> gs_cubetexture_create 64 GS_RGBA 1 GS_BUILD_MIPMAPS|GS_RENDER_TARGET data
+log warning Cannot use mipmaps with render targets.  Disabling mipmaps for this texture.
+  dev device_cubetexture_create size=64 fmt=3 levels=1 data=null flags=4
+ret #22
+== volume textures are forwarded unchanged
+> gs_voltexture_create 8 8 8 GS_RGBA 0 GS_BUILD_MIPMAPS
+  dev device_voltexture_create w=8 h=8 d=8 fmt=3 levels=0 data=null flags=1
+ret #23
+== zstencil, stage surface, sampler state
+> gs_zstencil_create 32 32 GS_Z24_S8
+  dev device_zstencil_create width=32 height=32 format=2
+ret #24
+> gs_stagesurface_create 32 16 GS_BGRA
+  dev device_stagesurface_create w=32 h=16 fmt=5
+ret #25
+> gs_samplerstate_create GS_FILTER_LINEAR GS_ADDRESS_WRAP GS_ADDRESS_CLAMP GS_ADDRESS_MIRROR 4 0xff102030
+  dev device_samplerstate_create filter=1 u=1 v=0 w=2 aniso=4 border=0xff102030
+ret #26
+> gs_samplerstate_create_null
+log debug gs_samplerstate_create: Null 'info' parameter
+ret null

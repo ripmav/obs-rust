@@ -1,0 +1,16 @@
+tl_create 0 tt-1 -> ok
+tl_get 0 "A" -> "b"
+tl_get 0 "B" -> "c"
+tl_get 0 "C" -> "g"
+tl_get 0 "D" -> "x"
+tl_get 0 "E" -> "1"
+tl_get 0 "F" -> "v"
+tl_get 0 "G" -> false
+tl_get 0 "q r" -> "s t"
+tl_get 0 "H.I" -> "ok"
+tl_get 0 "J" -> "z"
+tl_get 0 "K" -> "w"
+tl_create 1 tt-2 -> ok
+tl_get 1 "K" -> "v"
+tl_create 2 tt-3 -> ok
+tl_get 2 "\xd0\x9a\xd0\xbb\xd1\x8e\xd1\x87" -> "\xd0\x97\xd0\xbd"

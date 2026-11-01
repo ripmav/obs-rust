@@ -1,0 +1,25 @@
+# S-035 which registrations are recorded in the module that is currently loading (loadingModule).
+# Sources record their id BEFORE the remaining validation (Q-9): a rejected source still appears in the module's
+# list. Outputs, encoders and services record only after being accepted.
+mkmod host @TMP/m/host.so
+open_module Host @TMP/m/host.so d
+loading Host
+src_register ok_src input A 0 wh=-
+src_register ok_src input A 0 wh=-
+src_register bad_noname input A 0 wh=- missing=get_name
+src_register bad_type bogus - 0 wh=-
+src_register bad_comp input AC 0 wh=wh
+src_register bad_vid input V 0 wh=-
+out_register ok_out SE
+out_register bad_out SE missing=start
+enc_register ok_enc video -
+enc_register bad_enc video - missing=encode
+svc_def G ok_svc
+svc_register G
+svc_def H bad_svc no_protocol
+svc_register H
+mod_lists Host
+loading -
+# nothing is recorded when no module is loading
+src_register free_src input A 0 wh=-
+mod_lists Host

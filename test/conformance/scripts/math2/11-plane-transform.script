@@ -1,0 +1,27 @@
+# plane_transform / plane_transform3x4 (S-009-R52, R53).
+# The normal is transformed WITH the translation (a point transform, w=1), then normalised;
+# the new distance is dist - dot(newdir, transform(origin)).  See Q-4.
+plane ground 0 1 0 2
+mat4 id 1 0 0 0  0 1 0 0  0 0 1 0  0 0 0 1
+call t plane_transform ground id
+mat4 tr 1 0 0 0  0 1 0 0  0 0 1 0  3 4 5 1
+call t plane_transform ground tr
+mat4 rot 0 1 0 0  -1 0 0 0  0 0 1 0  0 0 0 1
+call t plane_transform ground rot
+mat4 sc 2 0 0 0  0 3 0 0  0 0 4 0  0 0 0 1
+call t plane_transform ground sc
+plane diag 0.6 0.8 0 1
+call t plane_transform diag rot
+call t plane_transform diag tr
+# 3x4 version: d = normalize(transform3x4(dir)), dist = dist - dot(d, transform3x4(m.t))
+mat3 m3id 1 0 0 0  0 1 0 0  0 0 1 0  0 0 0 0
+call t plane_transform3x4 ground m3id
+mat3 m3t 1 0 0 0  0 1 0 0  0 0 1 0  3 4 5 0
+call t plane_transform3x4 ground m3t
+mat3 m3r 0 1 0 0  -1 0 0 0  0 0 1 0  1 0 0 0
+call t plane_transform3x4 diag m3r
+# zero matrix: normalised zero vector is the zero vector
+mat4 zero 0 0 0 0  0 0 0 0  0 0 0 0  0 0 0 0
+call t plane_transform ground zero
+# in place
+call ground plane_transform ground rot

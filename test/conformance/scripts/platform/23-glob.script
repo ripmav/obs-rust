@@ -1,0 +1,63 @@
+# os_glob(pattern, flags, &out): POSIX glob(3) with flags 0 (the flags argument is ignored; the runner
+# passes 0xff). Matches come back sorted bytewise (C locale) and as the pattern spelled them; every match
+# carries a directory flag from stat() (links followed). rc 0 = matches, 3 = no match; out is NULL then.
+# Wildcards: * ? [set] [!set] [^set] [a-z]; backslash escapes; a leading '.' must be matched explicitly;
+# wildcards never match '/'. No brace expansion, no tilde expansion.
+mkdir g
+put g/a.txt A
+put g/b.txt B
+put g/c.dat C
+put g/.hid H
+put g/A1 x
+put g/b1 x
+put g/b2 x
+put g/b10 x
+mkdir g/sub
+put g/sub/inner.txt I
+mkdir g/subdir
+put "g/sp ace.txt" S
+put "g/star*.txt" T
+glob g/*
+glob g/*.txt
+glob g/?.txt
+glob g/[ab].txt
+glob g/[!a].txt
+glob g/[^a].txt
+glob g/[a-b]*
+glob g/b?
+glob g/b*
+glob g/*/inner.txt
+glob g/sub*
+glob g/sub*/
+glob g/*/
+glob g/.*
+glob g/.h*
+glob g/.hid
+glob g/a.txt
+glob g/nothing
+glob g/*.nothing
+glob nodir/*
+glob "g/star\\*.txt"
+glob g/star[*].txt
+glob "g/sp*ce.txt"
+glob g/{a,b}.txt
+glob ~
+glob ""
+glob g/A*
+glob g/a*
+# directories and the flag
+glob g/s*
+# links
+symlink a.txt g/lnk
+symlink sub g/lnkdir
+symlink nowhere g/lnkdead
+glob g/ln*
+# a pattern that is a directory name without wildcard
+glob g
+glob g/
+glob .
+# several levels
+glob */*/*
+glob */*.txt
+glob g/../g/a.*
+globfree_null

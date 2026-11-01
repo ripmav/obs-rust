@@ -1,0 +1,143 @@
+echo no-video-info-matrix-ignored-max-video-bitrate-4000-applies
+apply A forwarded=1
+settings V
+  bf = int 2
+  bitrate = int 4000
+  buffer_size = int 4000
+  keyint_sec = int 3
+  rate_control = "CBR"
+  x264opts = "tune=zerolatency"
+settings AU
+  bitrate = int 128
+echo below-limit-untouched
+apply A forwarded=1
+settings V
+  bf = int 2
+  bitrate = int 2000
+  buffer_size = int 123
+  keyint_sec = int 3
+  profile = "high"
+  rate_control = "CBR"
+  x264opts = "ref=2 tune=zerolatency"
+settings AU
+  bitrate = int 96
+echo profile-only-replaced-when-existing-item-is-a-string
+apply A forwarded=1
+settings V
+  bf = int 2
+  keyint_sec = int 3
+  profile = int 5
+  rate_control = "CBR"
+  x264opts = "tune=zerolatency"
+apply A forwarded=1
+settings V
+  bf = int 2
+  keyint_sec = int 3
+  rate_control = "CBR"
+  x264opts = "tune=zerolatency"
+echo audio-only
+apply A forwarded=1
+settings AU
+  bitrate = int 96
+echo both-null-not-forwarded
+apply A forwarded=0
+echo bitrate-matrix-selects-by-output-size-and-fps
+apply A forwarded=1
+settings V
+  bf = int 2
+  bitrate = int 3000
+  buffer_size = int 3000
+  keyint_sec = int 3
+  rate_control = "CBR"
+  x264opts = "tune=zerolatency"
+apply A forwarded=1
+settings V
+  bf = int 2
+  bitrate = int 4500
+  buffer_size = int 4500
+  keyint_sec = int 3
+  rate_control = "CBR"
+  x264opts = "tune=zerolatency"
+apply A forwarded=1
+settings V
+  bf = int 2
+  bitrate = int 4500
+  buffer_size = int 4500
+  keyint_sec = int 3
+  rate_control = "CBR"
+  x264opts = "tune=zerolatency"
+echo fps-above-all-rows-for-size-falls-back-to-max-video-bitrate
+apply A forwarded=1
+settings V
+  bf = int 2
+  bitrate = int 4000
+  buffer_size = int 4000
+  keyint_sec = int 3
+  rate_control = "CBR"
+  x264opts = "tune=zerolatency"
+echo size-without-row-falls-back
+apply A forwarded=1
+settings V
+  bf = int 2
+  bitrate = int 4000
+  buffer_size = int 4000
+  keyint_sec = int 3
+  rate_control = "CBR"
+  x264opts = "tune=zerolatency"
+echo first-matching-row-wins
+apply A forwarded=1
+settings V
+  bf = int 2
+  bitrate = int 6000
+  buffer_size = int 6000
+  keyint_sec = int 3
+  rate_control = "CBR"
+  x264opts = "tune=zerolatency"
+echo Golf-matrix-beats-max-video-bitrate
+apply A forwarded=1
+settings V
+  bitrate = int 5000
+  buffer_size = int 5000
+  rate_control = "CBR"
+echo Golf-fps-60-has-no-matching-row-so-max-video-bitrate-9000-applies
+apply A forwarded=1
+settings V
+  bitrate = int 9000
+  buffer_size = int 9000
+  rate_control = "CBR"
+echo Bravo-has-keyint-and-bitrate-only
+apply A forwarded=1
+settings V
+  bitrate = int 2500
+  buffer_size = int 2500
+  keyint_sec = int 2
+  rate_control = "CBR"
+echo Charlie-no-recommended-object-nothing-changes
+apply A forwarded=1
+settings V
+  bitrate = int 9000
+echo Twitch-x264opts-appended-to-existing
+apply A forwarded=1
+settings V
+  bitrate = int 6000
+  buffer_size = int 6000
+  keyint_sec = int 2
+  rate_control = "CBR"
+  x264opts = "ref=2 scenecut=0"
+echo unknown-service-warns-and-leaves-settings
+log warning rtmp-common.c: [initialize_output] Could not find service 'Zulu'
+apply A forwarded=1
+settings V
+  bitrate = int 6000
+  buffer_size = int 6000
+  keyint_sec = int 2
+  rate_control = "CBR"
+  x264opts = "ref=2 scenecut=0"
+echo empty-service-name-no-warning
+apply A forwarded=1
+settings V
+  bitrate = int 6000
+  buffer_size = int 6000
+  keyint_sec = int 2
+  rate_control = "CBR"
+  x264opts = "ref=2 scenecut=0"

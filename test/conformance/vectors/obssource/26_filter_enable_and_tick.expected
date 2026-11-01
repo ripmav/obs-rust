@@ -1,0 +1,16 @@
+  cb A create
+log debug source 'A' (in) created
+create a ok
+  cb F create
+log debug private source 'F' (fl) created
+create f ok
+log debug - filter 'F' (fl) added to source 'A'
+  sig enable source=F enabled=0
+info f name=F id=fl type=1 enabled=0 hidden=0 flags=0 mixers=0 private=1
+  sig enable source=F enabled=1
+info a name=A id=in type=0 enabled=1 hidden=1 flags=0 mixers=0 private=0
+info a name=A id=in type=0 enabled=1 hidden=0 flags=0 mixers=0 private=0
+  sig update_flags source=A flags=3
+info a name=A id=in type=0 enabled=1 hidden=0 flags=3 mixers=0 private=0
+  sig update_flags source=A flags=0
+info a name=A id=in type=0 enabled=1 hidden=0 flags=0 mixers=0 private=0

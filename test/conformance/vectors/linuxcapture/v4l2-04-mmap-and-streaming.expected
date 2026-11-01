@@ -1,0 +1,133 @@
+> trace on
+> dev /dev/video0
+> dev-reqbufs 4
+> h-open /dev/video0
+  | open /dev/video0 -> ok
+h-open -> fd
+> h-create-mmap
+  | ioctl REQBUFS count=4 -> 4
+  | ioctl QUERYBUF index=0
+  | mmap len=4096 offset=0 -> ok
+  | ioctl QUERYBUF index=1
+  | mmap len=4096 offset=4096 -> ok
+  | ioctl QUERYBUF index=2
+  | mmap len=4096 offset=8192 -> ok
+  | ioctl QUERYBUF index=3
+  | mmap len=4096 offset=12288 -> ok
+create_mmap ret=0 count=4 len0=4096 len1=4096 len2=4096 len3=4096
+> h-start
+  | ioctl QBUF index=0
+  | ioctl QBUF index=1
+  | ioctl QBUF index=2
+  | ioctl QBUF index=3
+  | ioctl STREAMON
+start_capture ret=0
+> h-stop
+  | ioctl STREAMOFF
+stop_capture ret=0
+> h-reset
+log debug v4l2-helpers: attempting to reset capture
+  | ioctl STREAMOFF
+  | ioctl QBUF index=0
+  | ioctl QBUF index=1
+  | ioctl QBUF index=2
+  | ioctl QBUF index=3
+  | ioctl STREAMON
+reset_capture ret=0
+> h-destroy-mmap
+  | munmap len=4096
+  | munmap len=4096
+  | munmap len=4096
+  | munmap len=4096
+destroy_mmap ret=0
+count=0
+> h-destroy-mmap
+destroy_mmap ret=0
+count=0
+> dev-reqbufs 1
+> h-create-mmap
+  | ioctl REQBUFS count=4 -> 1
+log error v4l2-helpers: Device returned less than 2 buffers
+create_mmap ret=-1 count=0
+> dev-reqbufs 6
+> h-create-mmap
+  | ioctl REQBUFS count=4 -> 6
+  | ioctl QUERYBUF index=0
+  | mmap len=4096 offset=0 -> ok
+  | ioctl QUERYBUF index=1
+  | mmap len=4096 offset=4096 -> ok
+  | ioctl QUERYBUF index=2
+  | mmap len=4096 offset=8192 -> ok
+  | ioctl QUERYBUF index=3
+  | mmap len=4096 offset=12288 -> ok
+  | ioctl QUERYBUF index=4
+  | mmap len=4096 offset=16384 -> ok
+  | ioctl QUERYBUF index=5
+  | mmap len=4096 offset=20480 -> ok
+create_mmap ret=0 count=6 len0=4096 len1=4096 len2=4096 len3=4096 len4=4096 len5=4096
+> h-destroy-mmap
+  | munmap len=4096
+  | munmap len=4096
+  | munmap len=4096
+  | munmap len=4096
+  | munmap len=4096
+  | munmap len=4096
+destroy_mmap ret=0
+count=0
+> fail REQBUFS
+> h-create-mmap
+  | ioctl REQBUFS -> -1 (injected)
+log error v4l2-helpers: Request for buffers failed !
+create_mmap ret=-1 count=0
+> unfail
+> fail QUERYBUF
+> h-create-mmap
+  | ioctl REQBUFS count=4 -> 6
+  | ioctl QUERYBUF -> -1 (injected)
+log error v4l2-helpers: Failed to query buffer details
+create_mmap ret=-1 count=6
+> unfail
+> h-destroy-mmap
+destroy_mmap ret=0
+count=0
+> mmap-fail
+> h-create-mmap
+  | ioctl REQBUFS count=4 -> 6
+  | ioctl QUERYBUF index=0
+  | mmap len=4096 offset=0 -> MAP_FAILED
+log error v4l2-helpers: mmap for buffer failed
+create_mmap ret=-1 count=6
+> h-destroy-mmap
+destroy_mmap ret=0
+count=0
+> mmap-ok
+> fail QBUF
+> h-start
+  | ioctl STREAMON
+start_capture ret=0
+> unfail
+> fail STREAMON
+> h-start
+  | ioctl STREAMON -> -1 (injected)
+log error v4l2-helpers: unable to start stream
+start_capture ret=-1
+> unfail
+> fail STREAMOFF
+> h-stop
+  | ioctl STREAMOFF -> -1 (injected)
+log error v4l2-helpers: unable to stop stream
+stop_capture ret=-1
+> h-reset
+log debug v4l2-helpers: attempting to reset capture
+  | ioctl STREAMOFF -> -1 (injected)
+log error v4l2-helpers: unable to stop stream
+reset_capture ret=-1
+> unfail
+> fail STREAMON
+> h-reset
+log debug v4l2-helpers: attempting to reset capture
+  | ioctl STREAMOFF
+  | ioctl STREAMON -> -1 (injected)
+log error v4l2-helpers: unable to start stream
+reset_capture ret=-1
+> unfail

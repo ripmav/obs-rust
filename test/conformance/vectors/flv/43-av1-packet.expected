@@ -1,0 +1,31 @@
+echo frame-types
+av1_packet size=5 keyframe=1 priority=3 drop_priority=3 pts=11 dts=12 fresh=1 data=320310aabb
+av1_packet size=5 keyframe=1 priority=3 drop_priority=3 pts=11 dts=12 fresh=1 data=320300aabb
+av1_packet size=5 keyframe=0 priority=1 drop_priority=1 pts=11 dts=12 fresh=1 data=320330aabb
+av1_packet size=5 keyframe=0 priority=2 drop_priority=2 pts=11 dts=12 fresh=1 data=320320aabb
+av1_packet size=5 keyframe=0 priority=3 drop_priority=3 pts=11 dts=12 fresh=1 data=320350aabb
+av1_packet size=5 keyframe=0 priority=3 drop_priority=3 pts=11 dts=12 fresh=1 data=320340aabb
+av1_packet size=5 keyframe=0 priority=2 drop_priority=2 pts=11 dts=12 fresh=1 data=320370aabb
+av1_packet size=5 keyframe=0 priority=0 drop_priority=0 pts=11 dts=12 fresh=1 data=320390aabb
+av1_packet size=3 keyframe=1 priority=3 drop_priority=3 pts=11 dts=12 fresh=1 data=1a0110
+av1_packet size=8 keyframe=1 priority=3 drop_priority=3 pts=11 dts=12 fresh=1 data=1a0190320310aabb
+av1_packet size=10 keyframe=1 priority=3 drop_priority=3 pts=11 dts=12 fresh=1 data=320310aabb320330aabb
+av1_packet size=10 keyframe=0 priority=1 drop_priority=1 pts=11 dts=12 fresh=1 data=320330aabb320310aabb
+echo existing-priority-and-keyframe-flag
+av1_packet size=5 keyframe=0 priority=2 drop_priority=2 pts=11 dts=12 fresh=1 data=320310aabb
+av1_packet size=5 keyframe=1 priority=2 drop_priority=2 pts=11 dts=12 fresh=1 data=320330aabb
+av1_packet size=5 keyframe=1 priority=1 drop_priority=1 pts=11 dts=12 fresh=1 data=320330aabb
+echo dropped-and-kept-obus
+av1_packet size=28 keyframe=1 priority=3 drop_priority=3 pts=11 dts=12 fresh=1 data=0a0b00000042abbfc37709d0012a050123456789320310aabb7a0100
+av1_packet size=5 keyframe=1 priority=3 drop_priority=3 pts=11 dts=12 fresh=1 data=320310aabb
+av1_packet size=9 keyframe=1 priority=3 drop_priority=3 pts=11 dts=12 fresh=1 data=320310aabb22020102
+av1_packet size=0 keyframe=0 priority=0 drop_priority=0 pts=11 dts=12 fresh=1 data=-
+av1_packet size=5 keyframe=1 priority=3 drop_priority=3 pts=11 dts=12 fresh=1 data=36200210aa
+av1_packet size=4 keyframe=1 priority=3 drop_priority=3 pts=11 dts=12 fresh=1 data=3010aabb
+echo damaged-input-ends-the-scan
+av1_packet size=5 keyframe=1 priority=3 drop_priority=3 pts=11 dts=12 fresh=1 data=320310aabb
+av1_packet size=5 keyframe=1 priority=3 drop_priority=3 pts=11 dts=12 fresh=1 data=320310aabb
+av1_packet size=0 keyframe=0 priority=0 drop_priority=0 pts=11 dts=12 fresh=1 data=-
+echo D-9-frame-obu-with-empty-payload-reads-one-byte-past-the-end
+av1_packet crash
+av1_packet size=0 keyframe=0 priority=0 drop_priority=0 pts=11 dts=12 fresh=1 data=-

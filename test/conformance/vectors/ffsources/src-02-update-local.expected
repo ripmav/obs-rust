@@ -1,0 +1,82 @@
+event.init manual
+host.hotkey_register MediaSource.Restart desc=RestartMedia id=100
+host.hotkey_pair_register MediaSource.Play/MediaSource.Pause desc=Play/Pause id=101
+host.hotkey_register MediaSource.Stop desc=Stop id=102
+host.proc_add "void restart()"
+host.proc_add "void preload_first_frame()"
+host.proc_add "void get_duration(out int duration)"
+host.proc_add "void get_nb_frames(out int num_frames)"
+mp.create path="/m/a.mp4" format=@null options=""
+    buffering=2097152 speed=100 force_range=0 linear_alpha=0 hw=0 local=1 reconnecting=0 preload=0 full_decode=0 cbs=11111
+log info [Media Source 'src']: settings: 	input:                   /m/a.mp4 	input_format:            (null) 	speed:                   100 	is_looping:              no 	is_linear_alpha:         no 	is_hw_decoding:          no 	is_clear_on_media_end:   yes 	restart_on_activate:     yes 	close_when_inactive:     no 	full_decode:             no 	ffmpeg_options:          
+src_create ok
+mp.set_looping #1 0
+mp.set_linear_alpha #1 0
+log info [Media Source 'src']: settings: 	input:                   /m/a.mp4 	input_format:            (null) 	speed:                   100 	is_looping:              no 	is_linear_alpha:         no 	is_hw_decoding:          no 	is_clear_on_media_end:   yes 	restart_on_activate:     yes 	close_when_inactive:     no 	full_decode:             no 	ffmpeg_options:          
+mp.set_looping #1 1
+mp.set_linear_alpha #1 1
+log info [Media Source 'src']: settings: 	input:                   /m/a.mp4 	input_format:            (null) 	speed:                   100 	is_looping:              yes 	is_linear_alpha:         yes 	is_hw_decoding:          no 	is_clear_on_media_end:   yes 	restart_on_activate:     yes 	close_when_inactive:     no 	full_decode:             no 	ffmpeg_options:          
+mp.destroy #1
+mp.create path="/m/b.mp4" format=@null options=""
+    buffering=2097152 speed=100 force_range=0 linear_alpha=1 hw=0 local=1 reconnecting=0 preload=0 full_decode=0 cbs=11111
+log info [Media Source 'src']: settings: 	input:                   /m/b.mp4 	input_format:            (null) 	speed:                   100 	is_looping:              yes 	is_linear_alpha:         yes 	is_hw_decoding:          no 	is_clear_on_media_end:   yes 	restart_on_activate:     yes 	close_when_inactive:     no 	full_decode:             no 	ffmpeg_options:          
+mp.set_looping #2 1
+mp.set_linear_alpha #2 1
+log info [Media Source 'src']: settings: 	input:                   /m/b.mp4 	input_format:            (null) 	speed:                   100 	is_looping:              yes 	is_linear_alpha:         yes 	is_hw_decoding:          no 	is_clear_on_media_end:   yes 	restart_on_activate:     yes 	close_when_inactive:     no 	full_decode:             no 	ffmpeg_options:          
+source input="/m/b.mp4" input_format=@null ffmpeg_options=""
+  buffering_mb=2 speed_percent=100 range=0 reconnect_delay_sec=0 state=0
+  looping=1 local=1 hw=0 full_decode=0 clear_on_end=1 restart_on_activate=1 close_when_inactive=0
+  seekable=0 stinger=0 track_matte=0 log_changes=1 linear_alpha=1
+  media=1 destroy_media=0 reconnecting=0 reconnect_thread_valid=0
+mp.set_looping #2 1
+mp.set_linear_alpha #2 1
+log info [Media Source 'src']: settings: 	input:                   /m/b.mp4 	input_format:            (null) 	speed:                   100 	is_looping:              yes 	is_linear_alpha:         yes 	is_hw_decoding:          no 	is_clear_on_media_end:   yes 	restart_on_activate:     yes 	close_when_inactive:     no 	full_decode:             no 	ffmpeg_options:          
+mp.destroy #2
+mp.create path="/m/b.mp4" format=@null options=""
+    buffering=2097152 speed=200 force_range=0 linear_alpha=1 hw=0 local=1 reconnecting=0 preload=0 full_decode=0 cbs=11111
+log info [Media Source 'src']: settings: 	input:                   /m/b.mp4 	input_format:            (null) 	speed:                   200 	is_looping:              yes 	is_linear_alpha:         yes 	is_hw_decoding:          no 	is_clear_on_media_end:   yes 	restart_on_activate:     yes 	close_when_inactive:     no 	full_decode:             no 	ffmpeg_options:          
+source input="/m/b.mp4" input_format=@null ffmpeg_options=""
+  buffering_mb=2 speed_percent=200 range=0 reconnect_delay_sec=0 state=0
+  looping=1 local=1 hw=0 full_decode=0 clear_on_end=1 restart_on_activate=1 close_when_inactive=0
+  seekable=0 stinger=0 track_matte=0 log_changes=1 linear_alpha=1
+  media=1 destroy_media=0 reconnecting=0 reconnect_thread_valid=0
+mp.destroy #3
+mp.create path="/m/b.mp4" format=@null options=""
+    buffering=2097152 speed=200 force_range=0 linear_alpha=1 hw=1 local=1 reconnecting=0 preload=0 full_decode=0 cbs=11111
+log info [Media Source 'src']: settings: 	input:                   /m/b.mp4 	input_format:            (null) 	speed:                   200 	is_looping:              yes 	is_linear_alpha:         yes 	is_hw_decoding:          yes 	is_clear_on_media_end:   yes 	restart_on_activate:     yes 	close_when_inactive:     no 	full_decode:             no 	ffmpeg_options:          
+mp.destroy #4
+mp.create path="/m/b.mp4" format=@null options=""
+    buffering=2097152 speed=200 force_range=2 linear_alpha=1 hw=1 local=1 reconnecting=0 preload=0 full_decode=0 cbs=11111
+log info [Media Source 'src']: settings: 	input:                   /m/b.mp4 	input_format:            (null) 	speed:                   200 	is_looping:              yes 	is_linear_alpha:         yes 	is_hw_decoding:          yes 	is_clear_on_media_end:   yes 	restart_on_activate:     yes 	close_when_inactive:     no 	full_decode:             no 	ffmpeg_options:          
+mp.destroy #5
+mp.create path="/m/b.mp4" format=@null options="a=b"
+    buffering=2097152 speed=200 force_range=2 linear_alpha=1 hw=1 local=1 reconnecting=0 preload=0 full_decode=0 cbs=11111
+log info [Media Source 'src']: settings: 	input:                   /m/b.mp4 	input_format:            (null) 	speed:                   200 	is_looping:              yes 	is_linear_alpha:         yes 	is_hw_decoding:          yes 	is_clear_on_media_end:   yes 	restart_on_activate:     yes 	close_when_inactive:     no 	full_decode:             no 	ffmpeg_options:          a=b
+mp.destroy #6
+mp.create path="/m/b.mp4" format=@null options="a=c"
+    buffering=2097152 speed=200 force_range=2 linear_alpha=1 hw=1 local=1 reconnecting=0 preload=0 full_decode=0 cbs=11111
+log info [Media Source 'src']: settings: 	input:                   /m/b.mp4 	input_format:            (null) 	speed:                   200 	is_looping:              yes 	is_linear_alpha:         yes 	is_hw_decoding:          yes 	is_clear_on_media_end:   yes 	restart_on_activate:     yes 	close_when_inactive:     no 	full_decode:             no 	ffmpeg_options:          a=c
+source input="/m/b.mp4" input_format=@null ffmpeg_options="a=c"
+  buffering_mb=2 speed_percent=200 range=2 reconnect_delay_sec=0 state=0
+  looping=1 local=1 hw=1 full_decode=0 clear_on_end=1 restart_on_activate=1 close_when_inactive=0
+  seekable=0 stinger=0 track_matte=0 log_changes=1 linear_alpha=1
+  media=1 destroy_media=0 reconnecting=0 reconnect_thread_valid=0
+mp.destroy #7
+mp.create path="/m/b.mp4" format=@null options="a=c"
+    buffering=2097152 speed=200 force_range=2 linear_alpha=1 hw=1 local=1 reconnecting=0 preload=1 full_decode=0 cbs=11111
+log info [Media Source 'src']: settings: 	input:                   /m/b.mp4 	input_format:            (null) 	speed:                   200 	is_looping:              yes 	is_linear_alpha:         yes 	is_hw_decoding:          yes 	is_clear_on_media_end:   yes 	restart_on_activate:     yes 	close_when_inactive:     no 	full_decode:             no 	ffmpeg_options:          a=c
+mp.set_looping #8 1
+mp.set_linear_alpha #8 1
+log info [Media Source 'src']: settings: 	input:                   /m/b.mp4 	input_format:            (null) 	speed:                   200 	is_looping:              yes 	is_linear_alpha:         yes 	is_hw_decoding:          yes 	is_clear_on_media_end:   yes 	restart_on_activate:     yes 	close_when_inactive:     no 	full_decode:             no 	ffmpeg_options:          a=c
+source input="/m/b.mp4" input_format=@null ffmpeg_options="a=c"
+  buffering_mb=2 speed_percent=200 range=2 reconnect_delay_sec=0 state=0
+  looping=1 local=1 hw=1 full_decode=0 clear_on_end=1 restart_on_activate=1 close_when_inactive=0
+  seekable=0 stinger=1 track_matte=1 log_changes=1 linear_alpha=1
+  media=1 destroy_media=0 reconnecting=0 reconnect_thread_valid=0
+mp.set_looping #8 1
+mp.set_linear_alpha #8 1
+source input="/m/b.mp4" input_format=@null ffmpeg_options="a=c"
+  buffering_mb=16 speed_percent=200 range=2 reconnect_delay_sec=0 state=0
+  looping=1 local=1 hw=1 full_decode=1 clear_on_end=0 restart_on_activate=1 close_when_inactive=0
+  seekable=0 stinger=1 track_matte=1 log_changes=0 linear_alpha=1
+  media=1 destroy_media=0 reconnecting=0 reconnect_thread_valid=0

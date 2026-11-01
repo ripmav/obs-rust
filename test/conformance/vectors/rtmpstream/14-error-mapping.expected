@@ -1,0 +1,31 @@
+reset ok
+> reset
+reset ok
+> err 110
+fake set_last_error "T:ConnectionTimedOut"
+> err 13
+fake set_last_error "T:PermissionDenied"
+> err 103
+fake set_last_error "T:ConnectionAborted"
+> err 104
+fake set_last_error "T:ConnectionReset"
+> err 1
+fake set_last_error "T:HostNotFound"
+> err 4
+fake set_last_error "T:NoData"
+> err 99
+fake set_last_error "T:AddressNotAvailable"
+> err 22
+fake set_last_error "T:InvalidParameter"
+> err 113
+fake set_last_error "T:NoRoute"
+> err -9984
+fake set_last_error "T:SSLCertVerifyFailed"
+> err -30336
+fake set_last_error "Failed to load root certificates for a secure TLS connection. Check you have an up to date root certificate bundle in /etc/ssl/certs."
+> err 0
+> err 111
+> err 101
+> err 5
+> err -1
+> err 61

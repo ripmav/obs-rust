@@ -1,0 +1,97 @@
+echo track-0
+ax_start size=22 hex=0800000700000000000000906d703461119000000012
+  tag type=8 datasize=7 ts=0 streamid=0
+    audio ex=1 ptype=0 fourcc="mp4a" payload=1190
+  prevsize=18 expected=18
+ax_frames size=24 hex=0800000900001500000000916d7034612100491000000014
+  tag type=8 datasize=9 ts=21 streamid=0
+    audio ex=1 ptype=1 fourcc="mp4a" payload=21004910
+  prevsize=20 expected=20
+ax_frames size=24 hex=08000009004e2000000000916d7034612100491100000014
+  tag type=8 datasize=9 ts=20000 streamid=0
+    audio ex=1 ptype=1 fourcc="mp4a" payload=21004911
+  prevsize=20 expected=20
+ax_frames size=24 hex=0800000900000000000000916d7034612100491100000014
+  tag type=8 datasize=9 ts=0 streamid=0
+    audio ex=1 ptype=1 fourcc="mp4a" payload=21004911
+  prevsize=20 expected=20
+echo track-1-and-above
+ax_start size=24 hex=080000090000000000000095006d70346101119000000014
+  tag type=8 datasize=9 ts=0 streamid=0
+    audio ex=1 ptype=5 multitrack=0 inner=0 fourcc="mp4a" track=1 payload=1190
+  prevsize=20 expected=20
+ax_frames size=26 hex=0800000b0000150000000095016d703461012100491000000016
+  tag type=8 datasize=11 ts=21 streamid=0
+    audio ex=1 ptype=5 multitrack=0 inner=1 fourcc="mp4a" track=1 payload=21004910
+  prevsize=22 expected=22
+ax_frames size=26 hex=0800000b0000150000000095016d703461022100491000000016
+  tag type=8 datasize=11 ts=21 streamid=0
+    audio ex=1 ptype=5 multitrack=0 inner=1 fourcc="mp4a" track=2 payload=21004910
+  prevsize=22 expected=22
+ax_frames size=26 hex=0800000b0000150000000095016d703461ff2100491000000016
+  tag type=8 datasize=11 ts=21 streamid=0
+    audio ex=1 ptype=5 multitrack=0 inner=1 fourcc="mp4a" track=255 payload=21004910
+  prevsize=22 expected=22
+ax_frames size=26 hex=0800000b0000150000000095016d703461002100491000000016
+  tag type=8 datasize=11 ts=21 streamid=0
+    audio ex=1 ptype=5 multitrack=0 inner=1 fourcc="mp4a" track=0 payload=21004910
+  prevsize=22 expected=22
+ax_frames size=26 hex=0800000b0000150000000095016d703461012100491000000016
+  tag type=8 datasize=11 ts=21 streamid=0
+    audio ex=1 ptype=5 multitrack=0 inner=1 fourcc="mp4a" track=1 payload=21004910
+  prevsize=22 expected=22
+echo ax_raw:
+ax_raw size=24 hex=0800000900001500000000906d7034612100491000000014
+  tag type=8 datasize=9 ts=21 streamid=0
+    audio ex=1 ptype=0 fourcc="mp4a" payload=21004910
+  prevsize=20 expected=20
+ax_raw size=24 hex=0800000900001500000000916d7034612100491000000014
+  tag type=8 datasize=9 ts=21 streamid=0
+    audio ex=1 ptype=1 fourcc="mp4a" payload=21004910
+  prevsize=20 expected=20
+ax_raw size=24 hex=0800000900001500000000926d7034612100491000000014
+  tag type=8 datasize=9 ts=21 streamid=0
+    audio ex=1 ptype=2 fourcc="mp4a" payload=21004910
+  prevsize=20 expected=20
+ax_raw size=24 hex=0800000900001500000000946d7034612100491000000014
+  tag type=8 datasize=9 ts=21 streamid=0
+    audio ex=1 ptype=4 fourcc="mp4a" payload=21004910
+  prevsize=20 expected=20
+ax_raw size=24 hex=08000009000015000000009f6d7034612100491000000014
+  tag type=8 datasize=9 ts=21 streamid=0
+    audio ex=1 ptype=15 fourcc="mp4a" payload=21004910
+  prevsize=20 expected=20
+ax_raw size=26 hex=0800000b0000150000000095046d703461012100491000000016
+  tag type=8 datasize=11 ts=21 streamid=0
+    audio ex=1 ptype=5 multitrack=0 inner=4 fourcc="mp4a" track=1 payload=21004910
+  prevsize=22 expected=22
+ax_raw size=26 hex=0800000b0000150000000095056d703461012100491000000016
+  tag type=8 datasize=11 ts=21 streamid=0
+    audio ex=1 ptype=5 multitrack=0 inner=5 fourcc="mp4a" track=1 payload=21004910
+  prevsize=22 expected=22
+ax_raw size=26 hex=0800000b00001500000000950f6d703461012100491000000016
+  tag type=8 datasize=11 ts=21 streamid=0
+    audio ex=1 ptype=5 multitrack=0 inner=15 fourcc="mp4a" track=1 payload=21004910
+  prevsize=22 expected=22
+echo dts-offset-and-ms-conversion
+ax_frames size=21 hex=0800000600006400000000916d703461aa00000011
+  tag type=8 datasize=6 ts=100 streamid=0
+    audio ex=1 ptype=1 fourcc="mp4a" payload=aa
+  prevsize=17 expected=17
+ax_frames size=21 hex=0800000600003200000000916d703461aa00000011
+  tag type=8 datasize=6 ts=50 streamid=0
+    audio ex=1 ptype=1 fourcc="mp4a" payload=aa
+  prevsize=17 expected=17
+ax_frames size=21 hex=08000006ffff9c7f000000916d703461aa00000011
+  tag type=8 datasize=6 ts=2147483548 streamid=0
+    audio ex=1 ptype=1 fourcc="mp4a" payload=aa
+  prevsize=17 expected=17
+ax_frames size=21 hex=0800000600000000000000916d703461aa00000011
+  tag type=8 datasize=6 ts=0 streamid=0
+    audio ex=1 ptype=1 fourcc="mp4a" payload=aa
+  prevsize=17 expected=17
+echo pts-keyframe-ignored
+ax_frames size=21 hex=0800000600001400000000916d703461aa00000011
+  tag type=8 datasize=6 ts=20 streamid=0
+    audio ex=1 ptype=1 fourcc="mp4a" payload=aa
+  prevsize=17 expected=17

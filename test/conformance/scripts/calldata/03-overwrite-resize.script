@@ -1,0 +1,24 @@
+# Overwriting an existing name rewrites its payload in place; the records after
+# it keep their order and bytes whether the payload grows or shrinks.
+init
+set_string a abc
+set_int mid 7
+set_string tail end
+dump
+set_string a abcdefghijkl
+dump
+get_string a
+get_int mid
+get_string tail
+set_string a x
+dump
+get_string a
+get_int mid
+get_string tail
+set_string a x
+dump
+set_int a 9
+dump
+get_int a
+get_string tail
+free

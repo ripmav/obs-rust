@@ -1,0 +1,15 @@
+# S-044: allow_clipping inputs receive the unclamped copy; others receive the clamped buffer. NaN stays NaN in the
+# unclamped copy; the unclamped copy is only produced for mixes that have inputs.
+aopen main 48000 FLOAT_PLANAR STEREO
+aconnect a 1 0 - - - 0
+aconnect b 2 0 - - - 1
+aconnect a 3 1 48000 FLOAT_PLANAR STEREO 1
+afeed 0 0 0 1 4 set
+afeed 0 0 1 1 nan set
+afeed 0 0 2 1 -0.5 set
+afeed 1 1 0 1 -9 set
+anewts delta 0
+atick
+# callback order within a mix is reverse registration order (b2 before a1)
+adump
+aclose

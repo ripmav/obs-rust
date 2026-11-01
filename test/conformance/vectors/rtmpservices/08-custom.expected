@@ -1,0 +1,99 @@
+all C
+  get protocol = "RTMP"
+  get url = "rtmp://h/app"
+  get key = "k"
+  get user = "u"
+  get pass = "p"
+  get can_connect = 1
+  get connect:0 = "rtmp://h/app"
+  get connect:2 = "k"
+  get connect:4 = "u"
+  get connect:6 = "p"
+  get connect:8 = @null
+  get connect:10 = @null
+  get resolutions = []
+  get maxfps = 0
+  get maxbitrate = video=0 audio=0
+  get vcodecs = @null
+  get acodecs = @null
+echo auth-off-hides-credentials
+get user = @null
+get pass = @null
+get connect:4 = @null
+get connect:6 = @null
+get url = "rtmp://h/app"
+get key = "k"
+echo empty-settings
+get url = ""
+get key = ""
+get user = @null
+get pass = @null
+get protocol = "RTMP"
+get can_connect = 0
+echo can-connect-only-needs-a-server
+get can_connect = 1
+get protocol = "RTMP"
+echo protocol-detection
+get protocol = "RTMPS"
+get protocol = "SRT"
+get protocol = "RIST"
+get protocol = "RTMP"
+get protocol = "RTMP"
+get protocol = "RTMP"
+get protocol = "RTMP"
+echo passphrase-SRT-is-password-RIST-is-key
+get connect:8 = "pw"
+get connect:2 = "streamid"
+get connect:8 = "ristkey"
+get connect:8 = @null
+get connect:8 = @null
+get connect:10 = @null
+get connect:5 = @null
+echo apply-RTMP
+apply C forwarded=1
+settings V
+settings AU
+echo apply-RTMPS
+apply C forwarded=1
+settings V
+settings AU
+echo apply-SRT
+apply C forwarded=1
+settings V
+  repeat_headers = bool 1
+settings AU
+  set_to_ADTS = bool 1
+echo apply-RIST-video-only-and-audio-only
+apply C forwarded=1
+settings V
+  repeat_headers = bool 1
+apply C forwarded=1
+settings AU
+  set_to_ADTS = bool 1
+echo unsupported-optional-callbacks-are-absent
+get resolutions = []
+get maxfps = 0
+get maxbitrate = video=0 audio=0
+get vcodecs = @null
+get acodecs = @null
+echo properties-use_auth-toggles-username-password-visibility
+props P
+  prop server type=text desc="URL" visible=1 enabled=1 text_type=0
+  prop key type=text desc="Stream key" visible=1 enabled=1 text_type=1
+  prop use_auth type=bool desc="Use authentication" visible=1 enabled=1
+  prop username type=text desc="Username" visible=0 enabled=1 text_type=0
+  prop password type=text desc="Password" visible=0 enabled=1 text_type=1
+modify use_auth -> 1
+props P
+  prop server type=text desc="URL" visible=1 enabled=1 text_type=0
+  prop key type=text desc="Stream key" visible=1 enabled=1 text_type=1
+  prop use_auth type=bool desc="Use authentication" visible=1 enabled=1
+  prop username type=text desc="Username" visible=1 enabled=1 text_type=0
+  prop password type=text desc="Password" visible=1 enabled=1 text_type=1
+modify use_auth -> 1
+props P
+  prop server type=text desc="URL" visible=1 enabled=1 text_type=0
+  prop key type=text desc="Stream key" visible=1 enabled=1 text_type=1
+  prop use_auth type=bool desc="Use authentication" visible=1 enabled=1
+  prop username type=text desc="Username" visible=0 enabled=1 text_type=0
+  prop password type=text desc="Password" visible=0 enabled=1 text_type=1

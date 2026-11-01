@@ -1,0 +1,31 @@
+# Real frame flow through the encoder layer into a paired A/V output. Raw frames are delivered to the
+# connection callbacks; the video encoder waits for the audio encoder to see its first data; audio is
+# buffered and aligned to the first video frame; packets leave the encoder with dts_usec derived from the
+# encoder's start timestamp.
+video 30 1 1280 720
+audio 48000
+venc v kf=3
+aenc a frame_size=1024
+out o av,encoded autobegin=1
+set_venc o v
+set_aenc o a
+start o
+conns
+echo --- video frame before any audio: video waits (paired encoder has not seen audio)
+vframe 1000000000
+encstate v
+echo --- first audio block of 1024 frames at t=0.99s (before the first video frame): buffered, no start yet
+aframe 0 990000000 1024
+encstate a
+echo --- video frame now encodes (audio saw data earlier than the frame)
+vframe 1033333333
+encstate v
+echo --- audio block that spans the video start: truncated to the video start time and encoded
+aframe 0 1013333333 1024
+aframe 0 1034666666 1024
+aframe 0 1056000000 1024
+encstate a
+vframe 1066666666
+vframe 1100000000
+vframe 1133333333
+stop o

@@ -1,0 +1,34 @@
+# Draw call sequence: outline = 8 cumulative +/-2 offsets (a ring), shadow = one +4,+4 draw, then the main pass with
+# vertex colours; vertex count is 6 per character of the (possibly unfilled) buffer (S-038-R77..R82).
+events off
+reset
+ascii 5 8 0 8 384
+font "Sans Serif" - 0 p/sans
+load
+create s 2
+setfont s "Sans Serif" - 20 0
+events on
+set s text "ab"
+update s
+echo --- plain
+render s
+set s outline true
+update s
+echo --- outline
+render s
+set s outline false
+set s drop_shadow true
+update s
+echo --- shadow
+render s
+set s outline true
+update s
+echo --- both
+render s
+linear on
+echo --- linear sRGB selects the srgb texture setter
+render s
+set s text ""
+update s
+echo --- empty text: nothing is drawn
+render s

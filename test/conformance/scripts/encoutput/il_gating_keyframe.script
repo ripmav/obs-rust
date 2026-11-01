@@ -1,0 +1,42 @@
+# Keyframe gating. Two layers exist:
+#  (1) the ENCODER layer withholds every video packet until the first keyframe (per registered callback), so a
+#      leading delta frame never reaches the output at all;
+#  (2) the INTERLEAVER layer drops non-keyframe video packets while its per-track "received" flag is clear,
+#      and throws away queued audio that is older than the dropped packet. The flag is clear at start and is
+#      cleared again when start-up pruning removed every queued video packet.
+video 30 1 1280 720
+audio 48000
+venc v
+aenc a frame_size=1024
+out o av,encoded autobegin=1
+set_venc o v
+set_aenc o a
+start o
+echo --- (1) leading delta frame is swallowed by the encoder layer
+emit v 0 0 0 4
+queue o
+encstate v
+echo --- keyframes 1,2,3 pass; they are 33333us apart (first keyframe packet = encoder time 0)
+emit v 1 1 1 4
+emit v 2 2 1 4
+emit v 3 3 1 4
+queue o
+echo --- first audio is >1 frame after the first video: pruning removes all video AND that audio packet
+enc_start_ts a 200000000
+emit a 0 0 0 4
+queue o
+state o
+echo --- (2) video delta frame at 283333us (encoder start_ts 150000us + 133333us) with the flag clear: dropped, and audio older than it is discarded
+emit a 1024 1024 0 4
+emit a 2048 2048 0 4
+queue o
+enc_start_ts v 150000000
+emit v 4 4 0 4
+queue o
+echo --- a keyframe is accepted again
+emit a 3072 3072 0 4
+emit a 4096 4096 0 4
+emit v 5 5 1 4
+queue o
+state o
+stop o

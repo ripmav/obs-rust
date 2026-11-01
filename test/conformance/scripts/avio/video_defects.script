@@ -1,0 +1,10 @@
+# S-044 defects D: calls that dereference a NULL handle in the reference (each probe runs in a forked child).
+# Required behaviour of a conforming implementation is in the spec (neutral value / no-op).
+crash video_connect_null
+crash video_connect2_null
+crash video_skipped_null
+crash video_total_null
+crash video_inc_texture_frames_null
+crash video_inc_texture_skipped_null
+crash video_inc_encoders_null
+crash video_dec_encoders_null

@@ -1,0 +1,164 @@
+call effect_create file=hdr_tonemap_filter.effect -> e1 uniforms=5 techniques=3
+call get_param e1:multiplier -> ok
+call get_param e1:input_maximum_nits -> ok
+call get_param e1:output_maximum_nits -> ok
+call source_update a deferred=1
+create a -> ok
+echo update is deferred
+call deferred_update a
+tick a 0.016
+render a
+call filter_begin_cs a format=RGBA16F space=709_EXTENDED allow=NO_DIRECT -> 1
+call set_float e1:multiplier 1
+call set_float e1:input_maximum_nits 4000
+call set_float e1:output_maximum_nits 1000
+call blend_push
+call blend_function ONE INVSRCALPHA
+call filter_tech_end a e1 size=0x0 technique=Reinhard exists=1
+call blend_pop
+echo default transform 0 (Reinhard): multiplier = sdr_white / sdr_white_level_nits (extended) or 80 / level (scRGB)
+render a
+call filter_begin_cs a format=RGBA16F space=709_SCRGB allow=NO_DIRECT -> 1
+call set_float e1:multiplier 0.266666681
+call set_float e1:input_maximum_nits 4000
+call set_float e1:output_maximum_nits 1000
+call blend_push
+call blend_function ONE INVSRCALPHA
+call filter_tech_end a e1 size=0x0 technique=Reinhard exists=1
+call blend_pop
+echo transform 1 MaxRGB
+call effect_create file=hdr_tonemap_filter.effect -> e2 uniforms=5 techniques=3
+call get_param e2:multiplier -> ok
+call get_param e2:input_maximum_nits -> ok
+call get_param e2:output_maximum_nits -> ok
+call source_update b deferred=1
+create b -> ok
+call deferred_update b
+tick b 0.016
+render b
+call filter_begin_cs b format=RGBA16F space=709_SCRGB allow=NO_DIRECT -> 1
+call set_float e2:multiplier 0.00799999945
+call set_float e2:input_maximum_nits 4000
+call set_float e2:output_maximum_nits 1000
+call blend_push
+call blend_function ONE INVSRCALPHA
+call filter_tech_end b e2 size=0x0 technique=MaxRGB exists=1
+call blend_pop
+render b
+call filter_begin_cs b format=RGBA16F space=709_EXTENDED allow=NO_DIRECT -> 1
+call set_float e2:multiplier 0.0299999993
+call set_float e2:input_maximum_nits 4000
+call set_float e2:output_maximum_nits 1000
+call blend_push
+call blend_function ONE INVSRCALPHA
+call filter_tech_end b e2 size=0x0 technique=MaxRGB exists=1
+call blend_pop
+echo transform 2 MaxRGBSDR uses the sdr nit limits
+call effect_create file=hdr_tonemap_filter.effect -> e3 uniforms=5 techniques=3
+call get_param e3:multiplier -> ok
+call get_param e3:input_maximum_nits -> ok
+call get_param e3:output_maximum_nits -> ok
+call source_update c deferred=1
+create c -> ok
+call deferred_update c
+tick c 0.016
+render c
+call filter_begin_cs c format=RGBA16F space=709_EXTENDED allow=NO_DIRECT -> 1
+call set_float e3:multiplier 0.0299999993
+call set_float e3:input_maximum_nits 800
+call set_float e3:output_maximum_nits 250
+call blend_push
+call blend_function ONE INVSRCALPHA
+call filter_tech_end c e3 size=0x0 technique=MaxRGBSDR exists=1
+call blend_pop
+echo out-of-range transform values: not Reinhard, not SDR_MAXRGB -> hdr limits; technique MaxRGBSDR unless 1
+call effect_create file=hdr_tonemap_filter.effect -> e4 uniforms=5 techniques=3
+call get_param e4:multiplier -> ok
+call get_param e4:input_maximum_nits -> ok
+call get_param e4:output_maximum_nits -> ok
+call source_update e deferred=1
+create e -> ok
+call deferred_update e
+tick e 0.016
+render e
+call filter_begin_cs e format=RGBA16F space=709_EXTENDED allow=NO_DIRECT -> 1
+call set_float e4:multiplier 0.0299999993
+call set_float e4:input_maximum_nits 4000
+call set_float e4:output_maximum_nits 1000
+call blend_push
+call blend_function ONE INVSRCALPHA
+call filter_tech_end e e4 size=0x0 technique=MaxRGBSDR exists=1
+call blend_pop
+call effect_create file=hdr_tonemap_filter.effect -> e5 uniforms=5 techniques=3
+call get_param e5:multiplier -> ok
+call get_param e5:input_maximum_nits -> ok
+call get_param e5:output_maximum_nits -> ok
+call source_update f deferred=1
+create f -> ok
+call deferred_update f
+tick f 0.016
+render f
+call filter_begin_cs f format=RGBA16F space=709_EXTENDED allow=NO_DIRECT -> 1
+call set_float e5:multiplier 0.0299999993
+call set_float e5:input_maximum_nits 4000
+call set_float e5:output_maximum_nits 1000
+call blend_push
+call blend_function ONE INVSRCALPHA
+call filter_tech_end f e5 size=0x0 technique=MaxRGBSDR exists=1
+call blend_pop
+echo SDR sources are skipped (filter passes through)
+render a
+call skip_video_filter a
+render a
+call skip_video_filter a
+echo different SDR white level and nit values
+call effect_create file=hdr_tonemap_filter.effect -> e6 uniforms=5 techniques=3
+call get_param e6:multiplier -> ok
+call get_param e6:input_maximum_nits -> ok
+call get_param e6:output_maximum_nits -> ok
+call source_update g deferred=1
+create g -> ok
+call deferred_update g
+tick g 0.016
+render g
+call filter_begin_cs g format=RGBA16F space=709_EXTENDED allow=NO_DIRECT -> 1
+call set_float e6:multiplier 0.422916681
+call set_float e6:input_maximum_nits 10000
+call set_float e6:output_maximum_nits 5
+call blend_push
+call blend_function ONE INVSRCALPHA
+call filter_tech_end g e6 size=0x0 technique=Reinhard exists=1
+call blend_pop
+echo white level 0 divides by zero in float (inf multiplier)
+call effect_create file=hdr_tonemap_filter.effect -> e7 uniforms=5 techniques=3
+call get_param e7:multiplier -> ok
+call get_param e7:input_maximum_nits -> ok
+call get_param e7:output_maximum_nits -> ok
+call source_update h deferred=1
+create h -> ok
+call deferred_update h
+tick h 0.016
+render h
+call filter_begin_cs h format=RGBA16F space=709_EXTENDED allow=NO_DIRECT -> 1
+call set_float e7:multiplier inf
+call set_float e7:input_maximum_nits 4000
+call set_float e7:output_maximum_nits 1000
+call blend_push
+call blend_function ONE INVSRCALPHA
+call filter_tech_end h e7 size=0x0 technique=Reinhard exists=1
+call blend_pop
+echo colour space of the filter itself depends on transform and the target space
+cs a -> SRGB_16F
+cs a -> SRGB
+cs a -> SRGB_16F
+cs a -> SRGB
+cs b -> 709_EXTENDED
+cs c -> SRGB
+cs c -> SRGB_16F
+cs a -> SRGB
+cs b -> SRGB
+cs c -> SRGB_16F
+cs a -> SRGB_16F
+cs a -> 709_SCRGB
+render a
+call filter_begin_cs a format=RGBA16F space=709_EXTENDED allow=NO_DIRECT -> 0

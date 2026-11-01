@@ -1,0 +1,34 @@
+# image_source: unload-when-hidden, show/hide, deferred update (CORE).
+fs_file /i/a.png 100
+fs_file /i/b.png 100
+img /i/a.png 10 10
+img /i/b.png 20 30
+create a image_source {"file":"/i/a.png","unload":true}
+state a
+size a
+# becomes visible: the host calls show on the next tick
+refs a 1 0
+tick 0.016
+state a
+size a
+# update is deferred until the next tick
+update a {"file":"/i/b.png"}
+state a
+tick 0.016
+state a
+size a
+refs a 0 0
+tick 0.016
+state a
+size a
+# update while hidden and unload=1 unloads
+update a {"file":"/i/a.png"}
+tick 0.016
+state a
+# update with is_slide: nothing is loaded
+update a {"is_slide":true,"unload":false}
+tick 0.016
+state a
+refs a 1 0
+tick 0.016
+state a

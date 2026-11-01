@@ -1,0 +1,15 @@
+# Fixed buffering: the whole max_buffering (here 4 ticks) is added on the first tick regardless of source timestamps.
+init 48000 2 4 1
+clock 1000000000
+timeline 1000000000
+source a input
+video_mix 1
+channel 0 0 a
+set a active 1
+output a 48000 2 1024 1000000000 const 0.25
+output a 48000 2 1024 1021333333 const 0.25
+output a 48000 2 1024 1042666666 const 0.25
+output a 48000 2 1024 1064000000 const 0.25
+output a 48000 2 1024 1085333333 const 0.25
+output a 48000 2 1024 1106666666 const 0.25
+run 8 1

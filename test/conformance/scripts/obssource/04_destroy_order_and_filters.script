@@ -1,0 +1,16 @@
+# Destroying a source with filters: filters are removed (filter_remove callbacks and signals fire, in array order,
+# newest filter first), then deferred destruction runs.
+kind in input video create,destroy
+kind fl filter video create,destroy,filteradd
+create a in A
+create f1 fl F1
+create f2 fl F2
+filter_add a f1
+filter_add a f2
+release f1
+release f2
+watch a
+watch_global
+release a
+echo after-release
+drain

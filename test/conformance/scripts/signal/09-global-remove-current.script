@@ -1,0 +1,9 @@
+# signal_handler_remove_current inside a global callback removes that global callback.
+handler h
+add h "void s()"
+gcallback self_remove remove_current
+gcallback plain
+connect_global h self_remove
+connect_global h plain
+emit h s
+emit h s

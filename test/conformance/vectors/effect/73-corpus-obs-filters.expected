@@ -1,0 +1,1886 @@
+gfx preprocessor=_OPENGL
+=== plugins/obs-filters/data/blend_add_filter.effect
+backend vertexshader_create location="plugins/obs-filters/data/blend_add_filter.effect (Vertex shader, technique Draw, pass 0)" len=523 fnv=71f32d003ffc57d0
+  text "uniform float4x4 ViewProj;\nuniform float2 mul_val;\nuniform float2 add_val;\n\n\nstruct VertDataOut {\n\tfloat4 pos : POSITION;\n\tfloat2 uv : TEXCOORD0;\n\tfloat2 uv2 : TEXCOORD1;\n};\n\nstruct VertDataIn {\n\tfloat4 pos : POSITION;\n\tfloat2 uv : TEXCOORD0;\n};\n\nVertDataOut VSDefault(VertDataIn v_in)\n{\n\tVertDataOut vert_out;\n\tvert_out.pos = mul(float4(v_in.pos.xyz, 1.0), ViewProj);\n\tvert_out.uv  = v_in.uv;\n\tvert_out.uv2 = v_in.uv * mul_val + add_val;\n\treturn vert_out;\n}\n\nVertDataOut main(VertDataIn v_in)\n{\n\treturn VSDefault(v_in);\n}\n"
+  sparam 0 name=ViewProj type=MATRIX4X4 array=0
+  sparam 1 name=mul_val type=VEC2 array=0
+  sparam 2 name=add_val type=VEC2 array=0
+  result ok
+backend pixelshader_create location="plugins/obs-filters/data/blend_add_filter.effect (Pixel shader, technique Draw, pass 0)" len=650 fnv=26c05e7301949e58
+  text "uniform texture2d image;\nuniform float4 color;\nuniform texture2d target;\n\n\nsampler_state textureSampler {\n\tFilter = Linear;\n\n\tAddressU = Clamp;\n\n\tAddressV = Clamp;\n\n};\n\n\nstruct VertDataOut {\n\tfloat4 pos : POSITION;\n\tfloat2 uv : TEXCOORD0;\n\tfloat2 uv2 : TEXCOORD1;\n};\n\nfloat4 PSAddImageRGBA(VertDataOut v_in)\n{\n\tfloat4 rgba = image.Sample(textureSampler, v_in.uv);\n\trgba.rgb *= (rgba.a > 0.) ? (1. / rgba.a) : 0.;\n\trgba *= color;\n\n\tfloat3 targetRGB = target.Sample(textureSampler, v_in.uv2).rgb;\n\trgba.rgb = saturate(rgba.rgb + targetRGB);\n\trgba.rgb *= rgba.a;\n\treturn rgba;\n}\n\nfloat4 main(VertDataOut v_in) : TARGET\n{\n\treturn PSAddImageRGBA(v_in);\n}\n"
+  sparam 0 name=image type=TEXTURE array=0
+  sparam 1 name=color type=VEC4 array=0
+  sparam 2 name=target type=TEXTURE array=0
+  result ok
+effect e result=ok
+  error_string=@null
+effect e params=6 techniques=1 viewproj=ViewProj world=-
+  param 0 name=ViewProj type=MATRIX4X4 annotations=0 default_size=0 default=-
+  param 1 name=image type=TEXTURE annotations=0 default_size=0 default=-
+  param 2 name=target type=TEXTURE annotations=0 default_size=0 default=-
+  param 3 name=color type=VEC4 annotations=0 default_size=0 default=-
+  param 4 name=mul_val type=VEC2 annotations=0 default_size=0 default=-
+  param 5 name=add_val type=VEC2 annotations=0 default_size=0 default=-
+  technique 0 name=Draw passes=1
+    pass 0 name=@null vertex_params=[ViewProj,mul_val,add_val] pixel_params=[image,color,target] vertex=yes pixel=yes
+backend vertexshader_create location="plugins/obs-filters/data/blend_add_filter.effect (Vertex shader, technique Draw, pass 0)" len=523 fnv=71f32d003ffc57d0
+  sparam 0 name=ViewProj type=MATRIX4X4 array=0
+  sparam 1 name=mul_val type=VEC2 array=0
+  sparam 2 name=add_val type=VEC2 array=0
+  result ok
+backend pixelshader_create location="plugins/obs-filters/data/blend_add_filter.effect (Pixel shader, technique Draw, pass 0)" len=650 fnv=26c05e7301949e58
+  sparam 0 name=image type=TEXTURE array=0
+  sparam 1 name=color type=VEC4 array=0
+  sparam 2 name=target type=TEXTURE array=0
+  result ok
+ep result=ok
+  errors count=0 has_errors=0
+  ep params=6 structs=2 funcs=2 samplers=1 techniques=1
+  ep_param 0 type=float4x4 name=ViewProj property=0 const=0 uniform=1 texture=0 array_count=0 annotations=0
+  ep_param 1 type=texture2d name=image property=0 const=0 uniform=1 texture=1 array_count=0 annotations=0
+  ep_param 2 type=texture2d name=target property=0 const=0 uniform=1 texture=1 array_count=0 annotations=0
+  ep_param 3 type=float4 name=color property=0 const=0 uniform=1 texture=0 array_count=0 annotations=0
+  ep_param 4 type=float2 name=mul_val property=0 const=0 uniform=1 texture=0 array_count=0 annotations=0
+  ep_param 5 type=float2 name=add_val property=0 const=0 uniform=1 texture=0 array_count=0 annotations=0
+  ep_struct 0 name=VertDataIn vars=2
+    var type=float4 name=pos mapping="POSITION" var_type=IN
+    var type=float2 name=uv mapping="TEXCOORD0" var_type=IN
+  ep_struct 1 name=VertDataOut vars=3
+    var type=float4 name=pos mapping="POSITION" var_type=IN
+    var type=float2 name=uv mapping="TEXCOORD0" var_type=IN
+    var type=float2 name=uv2 mapping="TEXCOORD1" var_type=IN
+  ep_func 0 name=VSDefault ret=VertDataOut mapping=@null params=1
+    var type=VertDataIn name=v_in mapping=@null var_type=IN
+    struct_deps=["VertDataOut","VertDataIn","VertDataOut"] func_deps=[] param_deps=["ViewProj","mul_val","add_val"] sampler_deps=[] contents_len=172
+  ep_func 1 name=PSAddImageRGBA ret=float4 mapping="TARGET" params=1
+    var type=VertDataOut name=v_in mapping=@null var_type=IN
+    struct_deps=["VertDataOut"] func_deps=[] param_deps=["image","color","target"] sampler_deps=["textureSampler","textureSampler"] contents_len=267
+  ep_sampler 0 name=textureSampler states=3
+    state "Filter" = "Linear"
+    state "AddressU" = "Clamp"
+    state "AddressV" = "Clamp"
+  ep_technique 0 name=Draw passes=1
+    ep_pass 0 name=@null
+      vertex=["VSDefault","(","v_in",")",";"]
+      fragment=["PSAddImageRGBA","(","v_in",")",";"]
+  error_string=@null
+effect (effect) params=6 techniques=1 viewproj=ViewProj world=-
+  param 0 name=ViewProj type=MATRIX4X4 annotations=0 default_size=0 default=-
+  param 1 name=image type=TEXTURE annotations=0 default_size=0 default=-
+  param 2 name=target type=TEXTURE annotations=0 default_size=0 default=-
+  param 3 name=color type=VEC4 annotations=0 default_size=0 default=-
+  param 4 name=mul_val type=VEC2 annotations=0 default_size=0 default=-
+  param 5 name=add_val type=VEC2 annotations=0 default_size=0 default=-
+  technique 0 name=Draw passes=1
+    pass 0 name=@null vertex_params=[ViewProj,mul_val,add_val] pixel_params=[image,color,target] vertex=yes pixel=yes
+destroy e cached=1
+=== plugins/obs-filters/data/blend_mul_filter.effect
+backend vertexshader_create location="plugins/obs-filters/data/blend_mul_filter.effect (Vertex shader, technique Draw, pass 0)" len=523 fnv=71f32d003ffc57d0
+  text "uniform float4x4 ViewProj;\nuniform float2 mul_val;\nuniform float2 add_val;\n\n\nstruct VertDataOut {\n\tfloat4 pos : POSITION;\n\tfloat2 uv : TEXCOORD0;\n\tfloat2 uv2 : TEXCOORD1;\n};\n\nstruct VertDataIn {\n\tfloat4 pos : POSITION;\n\tfloat2 uv : TEXCOORD0;\n};\n\nVertDataOut VSDefault(VertDataIn v_in)\n{\n\tVertDataOut vert_out;\n\tvert_out.pos = mul(float4(v_in.pos.xyz, 1.0), ViewProj);\n\tvert_out.uv  = v_in.uv;\n\tvert_out.uv2 = v_in.uv * mul_val + add_val;\n\treturn vert_out;\n}\n\nVertDataOut main(VertDataIn v_in)\n{\n\treturn VSDefault(v_in);\n}\n"
+  sparam 0 name=ViewProj type=MATRIX4X4 array=0
+  sparam 1 name=mul_val type=VEC2 array=0
+  sparam 2 name=add_val type=VEC2 array=0
+  result ok
+backend pixelshader_create location="plugins/obs-filters/data/blend_mul_filter.effect (Pixel shader, technique Draw, pass 0)" len=658 fnv=073099eab2b8974d
+  text "uniform texture2d image;\nuniform float4 color;\nuniform texture2d target;\n\n\nsampler_state textureSampler {\n\tFilter = Linear;\n\n\tAddressU = Clamp;\n\n\tAddressV = Clamp;\n\n};\n\n\nstruct VertDataOut {\n\tfloat4 pos : POSITION;\n\tfloat2 uv : TEXCOORD0;\n\tfloat2 uv2 : TEXCOORD1;\n};\n\nfloat4 PSMuliplyImageRGBA(VertDataOut v_in)\n{\n\tfloat4 rgba = image.Sample(textureSampler, v_in.uv);\n\trgba.rgb *= (rgba.a > 0.) ? (1. / rgba.a) : 0.;\n\trgba *= color;\n\n\tfloat3 targetRGB = target.Sample(textureSampler, v_in.uv2).rgb;\n\trgba.rgb = saturate(rgba.rgb * targetRGB);\n\trgba.rgb *= rgba.a;\n\treturn rgba;\n}\n\nfloat4 main(VertDataOut v_in) : TARGET\n{\n\treturn PSMuliplyImageRGBA(v_in);\n}\n"
+  sparam 0 name=image type=TEXTURE array=0
+  sparam 1 name=color type=VEC4 array=0
+  sparam 2 name=target type=TEXTURE array=0
+  result ok
+effect e result=ok
+  error_string=@null
+effect e params=6 techniques=1 viewproj=ViewProj world=-
+  param 0 name=ViewProj type=MATRIX4X4 annotations=0 default_size=0 default=-
+  param 1 name=image type=TEXTURE annotations=0 default_size=0 default=-
+  param 2 name=target type=TEXTURE annotations=0 default_size=0 default=-
+  param 3 name=color type=VEC4 annotations=0 default_size=0 default=-
+  param 4 name=mul_val type=VEC2 annotations=0 default_size=0 default=-
+  param 5 name=add_val type=VEC2 annotations=0 default_size=0 default=-
+  technique 0 name=Draw passes=1
+    pass 0 name=@null vertex_params=[ViewProj,mul_val,add_val] pixel_params=[image,color,target] vertex=yes pixel=yes
+backend vertexshader_create location="plugins/obs-filters/data/blend_mul_filter.effect (Vertex shader, technique Draw, pass 0)" len=523 fnv=71f32d003ffc57d0
+  sparam 0 name=ViewProj type=MATRIX4X4 array=0
+  sparam 1 name=mul_val type=VEC2 array=0
+  sparam 2 name=add_val type=VEC2 array=0
+  result ok
+backend pixelshader_create location="plugins/obs-filters/data/blend_mul_filter.effect (Pixel shader, technique Draw, pass 0)" len=658 fnv=073099eab2b8974d
+  sparam 0 name=image type=TEXTURE array=0
+  sparam 1 name=color type=VEC4 array=0
+  sparam 2 name=target type=TEXTURE array=0
+  result ok
+ep result=ok
+  errors count=0 has_errors=0
+  ep params=6 structs=2 funcs=2 samplers=1 techniques=1
+  ep_param 0 type=float4x4 name=ViewProj property=0 const=0 uniform=1 texture=0 array_count=0 annotations=0
+  ep_param 1 type=texture2d name=image property=0 const=0 uniform=1 texture=1 array_count=0 annotations=0
+  ep_param 2 type=texture2d name=target property=0 const=0 uniform=1 texture=1 array_count=0 annotations=0
+  ep_param 3 type=float4 name=color property=0 const=0 uniform=1 texture=0 array_count=0 annotations=0
+  ep_param 4 type=float2 name=mul_val property=0 const=0 uniform=1 texture=0 array_count=0 annotations=0
+  ep_param 5 type=float2 name=add_val property=0 const=0 uniform=1 texture=0 array_count=0 annotations=0
+  ep_struct 0 name=VertDataIn vars=2
+    var type=float4 name=pos mapping="POSITION" var_type=IN
+    var type=float2 name=uv mapping="TEXCOORD0" var_type=IN
+  ep_struct 1 name=VertDataOut vars=3
+    var type=float4 name=pos mapping="POSITION" var_type=IN
+    var type=float2 name=uv mapping="TEXCOORD0" var_type=IN
+    var type=float2 name=uv2 mapping="TEXCOORD1" var_type=IN
+  ep_func 0 name=VSDefault ret=VertDataOut mapping=@null params=1
+    var type=VertDataIn name=v_in mapping=@null var_type=IN
+    struct_deps=["VertDataOut","VertDataIn","VertDataOut"] func_deps=[] param_deps=["ViewProj","mul_val","add_val"] sampler_deps=[] contents_len=172
+  ep_func 1 name=PSMuliplyImageRGBA ret=float4 mapping="TARGET" params=1
+    var type=VertDataOut name=v_in mapping=@null var_type=IN
+    struct_deps=["VertDataOut"] func_deps=[] param_deps=["image","color","target"] sampler_deps=["textureSampler","textureSampler"] contents_len=267
+  ep_sampler 0 name=textureSampler states=3
+    state "Filter" = "Linear"
+    state "AddressU" = "Clamp"
+    state "AddressV" = "Clamp"
+  ep_technique 0 name=Draw passes=1
+    ep_pass 0 name=@null
+      vertex=["VSDefault","(","v_in",")",";"]
+      fragment=["PSMuliplyImageRGBA","(","v_in",")",";"]
+  error_string=@null
+effect (effect) params=6 techniques=1 viewproj=ViewProj world=-
+  param 0 name=ViewProj type=MATRIX4X4 annotations=0 default_size=0 default=-
+  param 1 name=image type=TEXTURE annotations=0 default_size=0 default=-
+  param 2 name=target type=TEXTURE annotations=0 default_size=0 default=-
+  param 3 name=color type=VEC4 annotations=0 default_size=0 default=-
+  param 4 name=mul_val type=VEC2 annotations=0 default_size=0 default=-
+  param 5 name=add_val type=VEC2 annotations=0 default_size=0 default=-
+  technique 0 name=Draw passes=1
+    pass 0 name=@null vertex_params=[ViewProj,mul_val,add_val] pixel_params=[image,color,target] vertex=yes pixel=yes
+destroy e cached=1
+=== plugins/obs-filters/data/blend_sub_filter.effect
+backend vertexshader_create location="plugins/obs-filters/data/blend_sub_filter.effect (Vertex shader, technique Draw, pass 0)" len=523 fnv=71f32d003ffc57d0
+  text "uniform float4x4 ViewProj;\nuniform float2 mul_val;\nuniform float2 add_val;\n\n\nstruct VertDataOut {\n\tfloat4 pos : POSITION;\n\tfloat2 uv : TEXCOORD0;\n\tfloat2 uv2 : TEXCOORD1;\n};\n\nstruct VertDataIn {\n\tfloat4 pos : POSITION;\n\tfloat2 uv : TEXCOORD0;\n};\n\nVertDataOut VSDefault(VertDataIn v_in)\n{\n\tVertDataOut vert_out;\n\tvert_out.pos = mul(float4(v_in.pos.xyz, 1.0), ViewProj);\n\tvert_out.uv  = v_in.uv;\n\tvert_out.uv2 = v_in.uv * mul_val + add_val;\n\treturn vert_out;\n}\n\nVertDataOut main(VertDataIn v_in)\n{\n\treturn VSDefault(v_in);\n}\n"
+  sparam 0 name=ViewProj type=MATRIX4X4 array=0
+  sparam 1 name=mul_val type=VEC2 array=0
+  sparam 2 name=add_val type=VEC2 array=0
+  result ok
+backend pixelshader_create location="plugins/obs-filters/data/blend_sub_filter.effect (Pixel shader, technique Draw, pass 0)" len=660 fnv=a582cb6e2b466e2c
+  text "uniform texture2d image;\nuniform float4 color;\nuniform texture2d target;\n\n\nsampler_state textureSampler {\n\tFilter = Linear;\n\n\tAddressU = Clamp;\n\n\tAddressV = Clamp;\n\n};\n\n\nstruct VertDataOut {\n\tfloat4 pos : POSITION;\n\tfloat2 uv : TEXCOORD0;\n\tfloat2 uv2 : TEXCOORD1;\n};\n\nfloat4 PSSubtractImageRGBA(VertDataOut v_in)\n{\n\tfloat4 rgba = image.Sample(textureSampler, v_in.uv);\n\trgba.rgb *= (rgba.a > 0.) ? (1. / rgba.a) : 0.;\n\trgba *= color;\n\n\tfloat3 targetRGB = target.Sample(textureSampler, v_in.uv2).rgb;\n\trgba.rgb = saturate(rgba.rgb - targetRGB);\n\trgba.rgb *= rgba.a;\n\treturn rgba;\n}\n\nfloat4 main(VertDataOut v_in) : TARGET\n{\n\treturn PSSubtractImageRGBA(v_in);\n}\n"
+  sparam 0 name=image type=TEXTURE array=0
+  sparam 1 name=color type=VEC4 array=0
+  sparam 2 name=target type=TEXTURE array=0
+  result ok
+effect e result=ok
+  error_string=@null
+effect e params=6 techniques=1 viewproj=ViewProj world=-
+  param 0 name=ViewProj type=MATRIX4X4 annotations=0 default_size=0 default=-
+  param 1 name=image type=TEXTURE annotations=0 default_size=0 default=-
+  param 2 name=target type=TEXTURE annotations=0 default_size=0 default=-
+  param 3 name=color type=VEC4 annotations=0 default_size=0 default=-
+  param 4 name=mul_val type=VEC2 annotations=0 default_size=0 default=-
+  param 5 name=add_val type=VEC2 annotations=0 default_size=0 default=-
+  technique 0 name=Draw passes=1
+    pass 0 name=@null vertex_params=[ViewProj,mul_val,add_val] pixel_params=[image,color,target] vertex=yes pixel=yes
+backend vertexshader_create location="plugins/obs-filters/data/blend_sub_filter.effect (Vertex shader, technique Draw, pass 0)" len=523 fnv=71f32d003ffc57d0
+  sparam 0 name=ViewProj type=MATRIX4X4 array=0
+  sparam 1 name=mul_val type=VEC2 array=0
+  sparam 2 name=add_val type=VEC2 array=0
+  result ok
+backend pixelshader_create location="plugins/obs-filters/data/blend_sub_filter.effect (Pixel shader, technique Draw, pass 0)" len=660 fnv=a582cb6e2b466e2c
+  sparam 0 name=image type=TEXTURE array=0
+  sparam 1 name=color type=VEC4 array=0
+  sparam 2 name=target type=TEXTURE array=0
+  result ok
+ep result=ok
+  errors count=0 has_errors=0
+  ep params=6 structs=2 funcs=2 samplers=1 techniques=1
+  ep_param 0 type=float4x4 name=ViewProj property=0 const=0 uniform=1 texture=0 array_count=0 annotations=0
+  ep_param 1 type=texture2d name=image property=0 const=0 uniform=1 texture=1 array_count=0 annotations=0
+  ep_param 2 type=texture2d name=target property=0 const=0 uniform=1 texture=1 array_count=0 annotations=0
+  ep_param 3 type=float4 name=color property=0 const=0 uniform=1 texture=0 array_count=0 annotations=0
+  ep_param 4 type=float2 name=mul_val property=0 const=0 uniform=1 texture=0 array_count=0 annotations=0
+  ep_param 5 type=float2 name=add_val property=0 const=0 uniform=1 texture=0 array_count=0 annotations=0
+  ep_struct 0 name=VertDataIn vars=2
+    var type=float4 name=pos mapping="POSITION" var_type=IN
+    var type=float2 name=uv mapping="TEXCOORD0" var_type=IN
+  ep_struct 1 name=VertDataOut vars=3
+    var type=float4 name=pos mapping="POSITION" var_type=IN
+    var type=float2 name=uv mapping="TEXCOORD0" var_type=IN
+    var type=float2 name=uv2 mapping="TEXCOORD1" var_type=IN
+  ep_func 0 name=VSDefault ret=VertDataOut mapping=@null params=1
+    var type=VertDataIn name=v_in mapping=@null var_type=IN
+    struct_deps=["VertDataOut","VertDataIn","VertDataOut"] func_deps=[] param_deps=["ViewProj","mul_val","add_val"] sampler_deps=[] contents_len=172
+  ep_func 1 name=PSSubtractImageRGBA ret=float4 mapping="TARGET" params=1
+    var type=VertDataOut name=v_in mapping=@null var_type=IN
+    struct_deps=["VertDataOut"] func_deps=[] param_deps=["image","color","target"] sampler_deps=["textureSampler","textureSampler"] contents_len=267
+  ep_sampler 0 name=textureSampler states=3
+    state "Filter" = "Linear"
+    state "AddressU" = "Clamp"
+    state "AddressV" = "Clamp"
+  ep_technique 0 name=Draw passes=1
+    ep_pass 0 name=@null
+      vertex=["VSDefault","(","v_in",")",";"]
+      fragment=["PSSubtractImageRGBA","(","v_in",")",";"]
+  error_string=@null
+effect (effect) params=6 techniques=1 viewproj=ViewProj world=-
+  param 0 name=ViewProj type=MATRIX4X4 annotations=0 default_size=0 default=-
+  param 1 name=image type=TEXTURE annotations=0 default_size=0 default=-
+  param 2 name=target type=TEXTURE annotations=0 default_size=0 default=-
+  param 3 name=color type=VEC4 annotations=0 default_size=0 default=-
+  param 4 name=mul_val type=VEC2 annotations=0 default_size=0 default=-
+  param 5 name=add_val type=VEC2 annotations=0 default_size=0 default=-
+  technique 0 name=Draw passes=1
+    pass 0 name=@null vertex_params=[ViewProj,mul_val,add_val] pixel_params=[image,color,target] vertex=yes pixel=yes
+destroy e cached=1
+=== plugins/obs-filters/data/chroma_key_filter.effect
+backend vertexshader_create location="plugins/obs-filters/data/chroma_key_filter.effect (Vertex shader, technique Draw, pass 0)" len=317 fnv=b06d11de3e765c86
+  text "uniform float4x4 ViewProj;\n\n\nstruct VertData {\n\tfloat4 pos : POSITION;\n\tfloat2 uv : TEXCOORD0;\n};\n\nVertData VSDefault(VertData v_in)\n{\n\tVertData vert_out;\n\tvert_out.pos = mul(float4(v_in.pos.xyz, 1.0), ViewProj);\n\tvert_out.uv  = v_in.uv;\n\treturn vert_out;\n}\n\nVertData main(VertData v_in)\n{\n\treturn VSDefault(v_in);\n}\n"
+  sparam 0 name=ViewProj type=MATRIX4X4 array=0
+  result ok
+backend pixelshader_create location="plugins/obs-filters/data/chroma_key_filter.effect (Pixel shader, technique Draw, pass 0)" len=2107 fnv=0278471d8e183497
+  text "uniform texture2d image;\n\n\nsampler_state textureSampler {\n\tFilter = Linear;\n\n\tAddressU = Clamp;\n\n\tAddressV = Clamp;\n\n};\n\nstruct VertData {\n\tfloat4 pos : POSITION;\n\tfloat2 uv : TEXCOORD0;\n};\n\nuniform float similarity;\nuniform float smoothness;\nuniform float spill;\nuniform float4 color;\n\n\nuniform float2 pixel_size;\n\n\nuniform float4x4 yuv_mat;\nuniform float2 chroma_key;\n\n\nfloat GetChromaDist(float3 rgb)\n{\n\tfloat4 yuvx = mul(float4(rgb.rgb, 1.0), yuv_mat);\n\treturn distance(chroma_key, yuvx.yz);\n}\n\n\n\n\n\nfloat4 SampleTexture(float2 uv)\n{\n\treturn image.Sample(textureSampler, uv);\n}\n\n\nfloat GetBoxFilteredChromaDist(float3 rgb, float2 texCoord)\n{\n\tfloat2 h_pixel_size = pixel_size / 2.0;\n\tfloat2 point_0 = float2(pixel_size.x, h_pixel_size.y);\n\tfloat2 point_1 = float2(h_pixel_size.x, -pixel_size.y);\n\tfloat distVal = GetChromaDist(SampleTexture(texCoord-point_0).rgb);\n\tdistVal += GetChromaDist(SampleTexture(texCoord+point_0).rgb);\n\tdistVal += GetChromaDist(SampleTexture(texCoord-point_1).rgb);\n\tdistVal += GetChromaDist(SampleTexture(texCoord+point_1).rgb);\n\tdistVal *= 2.0;\n\tdistVal += GetChromaDist(rgb);\n\treturn distVal / 9.0;\n}\n\n\nuniform float gamma;\nuniform float contrast;\nuniform float brightness;\n\n\nfloat4 CalcColor(float4 rgba)\n{\n\treturn float4(pow(rgba.rgb, float3(gamma, gamma, gamma)) * contrast + brightness, rgba.a);\n}\n\n\nfloat4 ProcessChromaKey(float4 rgba, VertData v_in)\n{\n\tfloat chromaDist = GetBoxFilteredChromaDist(rgba.rgb, v_in.uv);\n\tfloat baseMask = chromaDist - similarity;\n\tfloat fullMask = pow(saturate(baseMask / smoothness), 1.5);\n\tfloat spillVal = pow(saturate(baseMask / spill), 1.5);\n\n\trgba.rgba *= color;\n\trgba.a *= fullMask;\n\n\tfloat desat = (rgba.r * 0.2126 + rgba.g * 0.7152 + rgba.b * 0.0722);\n\trgba.rgb = saturate(float3(desat, desat, desat)) * (1.0 - spillVal) + rgba.rgb * spillVal;\n\n\treturn CalcColor(rgba);\n}\n\n\nfloat4 PSChromaKeyRGBA(VertData v_in)\n{\n\tfloat4 rgba = image.Sample(textureSampler, v_in.uv);\n\trgba.rgb *= (rgba.a > 0.) ? (1. / rgba.a) : 0.;\n\treturn ProcessChromaKey(rgba, v_in);\n}\n\nfloat4 main(VertData v_in) : TARGET\n{\n\treturn PSChromaKeyRGBA(v_in);\n}\n"
+  sparam 0 name=image type=TEXTURE array=0
+  sparam 1 name=similarity type=FLOAT array=0
+  sparam 2 name=smoothness type=FLOAT array=0
+  sparam 3 name=spill type=FLOAT array=0
+  sparam 4 name=color type=VEC4 array=0
+  sparam 5 name=pixel_size type=VEC2 array=0
+  sparam 6 name=yuv_mat type=MATRIX4X4 array=0
+  sparam 7 name=chroma_key type=VEC2 array=0
+  sparam 8 name=gamma type=FLOAT array=0
+  sparam 9 name=contrast type=FLOAT array=0
+  sparam 10 name=brightness type=FLOAT array=0
+  result ok
+effect e result=ok
+  error_string=@null
+effect e params=12 techniques=1 viewproj=ViewProj world=-
+  param 0 name=ViewProj type=MATRIX4X4 annotations=0 default_size=0 default=-
+  param 1 name=image type=TEXTURE annotations=0 default_size=0 default=-
+  param 2 name=yuv_mat type=MATRIX4X4 annotations=0 default_size=64 default=d3f73a3e3e3e1d3f0dfb7d3d7380803d711ecebd4f59adbeebe0e03e8480003febe0e03e2042ccbe5af624bd8480003f0000000000000000000000000000803f f=[0.182585999,0.61423099,0.0620069988,0.0627449974,-0.100644,-0.338571995,0.439215988,0.501960993,0.439215988,-0.398941994,-0.0402740017,0.501960993,0,0,0,1]
+  param 3 name=color type=VEC4 annotations=0 default_size=0 default=-
+  param 4 name=contrast type=FLOAT annotations=0 default_size=0 default=-
+  param 5 name=brightness type=FLOAT annotations=0 default_size=0 default=-
+  param 6 name=gamma type=FLOAT annotations=0 default_size=0 default=-
+  param 7 name=chroma_key type=VEC2 annotations=0 default_size=0 default=-
+  param 8 name=pixel_size type=VEC2 annotations=0 default_size=0 default=-
+  param 9 name=similarity type=FLOAT annotations=0 default_size=0 default=-
+  param 10 name=smoothness type=FLOAT annotations=0 default_size=0 default=-
+  param 11 name=spill type=FLOAT annotations=0 default_size=0 default=-
+  technique 0 name=Draw passes=1
+    pass 0 name=@null vertex_params=[ViewProj] pixel_params=[image,similarity,smoothness,spill,color,pixel_size,yuv_mat,chroma_key,gamma,contrast,brightness] vertex=yes pixel=yes
+backend vertexshader_create location="plugins/obs-filters/data/chroma_key_filter.effect (Vertex shader, technique Draw, pass 0)" len=317 fnv=b06d11de3e765c86
+  sparam 0 name=ViewProj type=MATRIX4X4 array=0
+  result ok
+backend pixelshader_create location="plugins/obs-filters/data/chroma_key_filter.effect (Pixel shader, technique Draw, pass 0)" len=2107 fnv=0278471d8e183497
+  sparam 0 name=image type=TEXTURE array=0
+  sparam 1 name=similarity type=FLOAT array=0
+  sparam 2 name=smoothness type=FLOAT array=0
+  sparam 3 name=spill type=FLOAT array=0
+  sparam 4 name=color type=VEC4 array=0
+  sparam 5 name=pixel_size type=VEC2 array=0
+  sparam 6 name=yuv_mat type=MATRIX4X4 array=0
+  sparam 7 name=chroma_key type=VEC2 array=0
+  sparam 8 name=gamma type=FLOAT array=0
+  sparam 9 name=contrast type=FLOAT array=0
+  sparam 10 name=brightness type=FLOAT array=0
+  result ok
+ep result=ok
+  errors count=0 has_errors=0
+  ep params=12 structs=1 funcs=7 samplers=1 techniques=1
+  ep_param 0 type=float4x4 name=ViewProj property=0 const=0 uniform=1 texture=0 array_count=0 annotations=0
+  ep_param 1 type=texture2d name=image property=0 const=0 uniform=1 texture=1 array_count=0 annotations=0
+  ep_param 2 type=float4x4 name=yuv_mat property=0 const=0 uniform=1 texture=0 array_count=0 annotations=0
+  ep_param 3 type=float4 name=color property=0 const=0 uniform=1 texture=0 array_count=0 annotations=0
+  ep_param 4 type=float name=contrast property=0 const=0 uniform=1 texture=0 array_count=0 annotations=0
+  ep_param 5 type=float name=brightness property=0 const=0 uniform=1 texture=0 array_count=0 annotations=0
+  ep_param 6 type=float name=gamma property=0 const=0 uniform=1 texture=0 array_count=0 annotations=0
+  ep_param 7 type=float2 name=chroma_key property=0 const=0 uniform=1 texture=0 array_count=0 annotations=0
+  ep_param 8 type=float2 name=pixel_size property=0 const=0 uniform=1 texture=0 array_count=0 annotations=0
+  ep_param 9 type=float name=similarity property=0 const=0 uniform=1 texture=0 array_count=0 annotations=0
+  ep_param 10 type=float name=smoothness property=0 const=0 uniform=1 texture=0 array_count=0 annotations=0
+  ep_param 11 type=float name=spill property=0 const=0 uniform=1 texture=0 array_count=0 annotations=0
+  ep_struct 0 name=VertData vars=2
+    var type=float4 name=pos mapping="POSITION" var_type=IN
+    var type=float2 name=uv mapping="TEXCOORD0" var_type=IN
+  ep_func 0 name=VSDefault ret=VertData mapping=@null params=1
+    var type=VertData name=v_in mapping=@null var_type=IN
+    struct_deps=["VertData","VertData","VertData"] func_deps=[] param_deps=["ViewProj"] sampler_deps=[] contents_len=124
+  ep_func 1 name=CalcColor ret=float4 mapping=@null params=1
+    var type=float4 name=rgba mapping=@null var_type=IN
+    struct_deps=[] func_deps=[] param_deps=["gamma","gamma","gamma","contrast","brightness"] sampler_deps=[] contents_len=95
+  ep_func 2 name=GetChromaDist ret=float mapping=@null params=1
+    var type=float3 name=rgb mapping=@null var_type=IN
+    struct_deps=[] func_deps=[] param_deps=["yuv_mat","chroma_key"] sampler_deps=[] contents_len=93
+  ep_func 3 name=SampleTexture ret=float4 mapping=@null params=1
+    var type=float2 name=uv mapping=@null var_type=IN
+    struct_deps=[] func_deps=[] param_deps=["image"] sampler_deps=["textureSampler"] contents_len=45
+  ep_func 4 name=GetBoxFilteredChromaDist ret=float mapping=@null params=2
+    var type=float3 name=rgb mapping=@null var_type=IN
+    var type=float2 name=texCoord mapping=@null var_type=IN
+    struct_deps=[] func_deps=["GetChromaDist","SampleTexture","GetChromaDist","SampleTexture","GetChromaDist","SampleTexture","GetChromaDist","SampleTexture","GetChromaDist"] param_deps=["pixel_size","pixel_size","pixel_size"] sampler_deps=[] contents_len=490
+  ep_func 5 name=ProcessChromaKey ret=float4 mapping=@null params=2
+    var type=float4 name=rgba mapping=@null var_type=IN
+    var type=VertData name=v_in mapping=@null var_type=IN
+    struct_deps=["VertData"] func_deps=["GetBoxFilteredChromaDist","CalcColor"] param_deps=["similarity","smoothness","spill","color"] sampler_deps=[] contents_len=460
+  ep_func 6 name=PSChromaKeyRGBA ret=float4 mapping="TARGET" params=1
+    var type=VertData name=v_in mapping=@null var_type=IN
+    struct_deps=["VertData"] func_deps=["ProcessChromaKey"] param_deps=["image"] sampler_deps=["textureSampler"] contents_len=144
+  ep_sampler 0 name=textureSampler states=3
+    state "Filter" = "Linear"
+    state "AddressU" = "Clamp"
+    state "AddressV" = "Clamp"
+  ep_technique 0 name=Draw passes=1
+    ep_pass 0 name=@null
+      vertex=["VSDefault","(","v_in",")",";"]
+      fragment=["PSChromaKeyRGBA","(","v_in",")",";"]
+  error_string=@null
+effect (effect) params=12 techniques=1 viewproj=ViewProj world=-
+  param 0 name=ViewProj type=MATRIX4X4 annotations=0 default_size=0 default=-
+  param 1 name=image type=TEXTURE annotations=0 default_size=0 default=-
+  param 2 name=yuv_mat type=MATRIX4X4 annotations=0 default_size=64 default=d3f73a3e3e3e1d3f0dfb7d3d7380803d711ecebd4f59adbeebe0e03e8480003febe0e03e2042ccbe5af624bd8480003f0000000000000000000000000000803f f=[0.182585999,0.61423099,0.0620069988,0.0627449974,-0.100644,-0.338571995,0.439215988,0.501960993,0.439215988,-0.398941994,-0.0402740017,0.501960993,0,0,0,1]
+  param 3 name=color type=VEC4 annotations=0 default_size=0 default=-
+  param 4 name=contrast type=FLOAT annotations=0 default_size=0 default=-
+  param 5 name=brightness type=FLOAT annotations=0 default_size=0 default=-
+  param 6 name=gamma type=FLOAT annotations=0 default_size=0 default=-
+  param 7 name=chroma_key type=VEC2 annotations=0 default_size=0 default=-
+  param 8 name=pixel_size type=VEC2 annotations=0 default_size=0 default=-
+  param 9 name=similarity type=FLOAT annotations=0 default_size=0 default=-
+  param 10 name=smoothness type=FLOAT annotations=0 default_size=0 default=-
+  param 11 name=spill type=FLOAT annotations=0 default_size=0 default=-
+  technique 0 name=Draw passes=1
+    pass 0 name=@null vertex_params=[ViewProj] pixel_params=[image,similarity,smoothness,spill,color,pixel_size,yuv_mat,chroma_key,gamma,contrast,brightness] vertex=yes pixel=yes
+destroy e cached=1
+=== plugins/obs-filters/data/chroma_key_filter_v2.effect
+backend vertexshader_create location="plugins/obs-filters/data/chroma_key_filter_v2.effect (Vertex shader, technique Draw, pass 0)" len=317 fnv=b06d11de3e765c86
+  text "uniform float4x4 ViewProj;\n\n\nstruct VertData {\n\tfloat4 pos : POSITION;\n\tfloat2 uv : TEXCOORD0;\n};\n\nVertData VSDefault(VertData v_in)\n{\n\tVertData vert_out;\n\tvert_out.pos = mul(float4(v_in.pos.xyz, 1.0), ViewProj);\n\tvert_out.uv  = v_in.uv;\n\treturn vert_out;\n}\n\nVertData main(VertData v_in)\n{\n\treturn VSDefault(v_in);\n}\n"
+  sparam 0 name=ViewProj type=MATRIX4X4 array=0
+  result ok
+backend pixelshader_create location="plugins/obs-filters/data/chroma_key_filter_v2.effect (Pixel shader, technique Draw, pass 0)" len=2486 fnv=400aef010c6f46d8
+  text "uniform texture2d image;\n\n\nsampler_state textureSampler {\n\tFilter = Linear;\n\n\tAddressU = Clamp;\n\n\tAddressV = Clamp;\n\n};\n\nstruct VertData {\n\tfloat4 pos : POSITION;\n\tfloat2 uv : TEXCOORD0;\n};\n\nuniform float similarity;\nuniform float smoothness;\nuniform float spill;\nuniform float opacity;\n\n\nuniform float2 pixel_size;\n\n\nuniform float4 cb_v4;\nuniform float4 cr_v4;\nuniform float2 chroma_key;\n\n\nfloat GetChromaDist(float3 rgb)\n{\n\tfloat cb = dot(rgb.rgb, cb_v4.xyz) + cb_v4.w;\n\tfloat cr = dot(rgb.rgb, cr_v4.xyz) + cr_v4.w;\n\treturn distance(chroma_key, float2(cb, cr));\n}\n\n\n\n\n\nfloat GetNonlinearChannel(float u)\n{\n\treturn (u <= 0.0031308) ? (12.92 * u) : ((1.055 * pow(u, 1.0 / 2.4)) - 0.055);\n}\n\n\nfloat3 GetNonlinearColor(float3 rgb)\n{\n\treturn float3(GetNonlinearChannel(rgb.r), GetNonlinearChannel(rgb.g), GetNonlinearChannel(rgb.b));\n}\n\n\nfloat3 SampleTexture(float2 uv)\n{\n\tfloat3 rgb = image.Sample(textureSampler, uv).rgb;\n\treturn GetNonlinearColor(rgb);\n}\n\n\nfloat GetBoxFilteredChromaDist(float3 rgb, float2 texCoord)\n{\n\tfloat2 h_pixel_size = pixel_size / 2.0;\n\tfloat2 point_0 = float2(pixel_size.x, h_pixel_size.y);\n\tfloat2 point_1 = float2(h_pixel_size.x, -pixel_size.y);\n\tfloat distVal = GetChromaDist(SampleTexture(texCoord-point_0));\n\tdistVal += GetChromaDist(SampleTexture(texCoord+point_0));\n\tdistVal += GetChromaDist(SampleTexture(texCoord-point_1));\n\tdistVal += GetChromaDist(SampleTexture(texCoord+point_1));\n\tdistVal *= 2.0;\n\tdistVal += GetChromaDist(GetNonlinearColor(rgb));\n\treturn distVal / 9.0;\n}\n\n\nuniform float gamma;\nuniform float contrast;\nuniform float brightness;\n\n\nfloat4 CalcColor(float4 rgba)\n{\n\treturn float4(pow(rgba.rgb, float3(gamma, gamma, gamma)) * contrast + brightness, rgba.a);\n}\n\n\nfloat4 ProcessChromaKey(float4 rgba, VertData v_in)\n{\n\tfloat chromaDist = GetBoxFilteredChromaDist(rgba.rgb, v_in.uv);\n\tfloat baseMask = chromaDist - similarity;\n\tfloat fullMask = pow(saturate(baseMask / smoothness), 1.5);\n\tfloat spillVal = pow(saturate(baseMask / spill), 1.5);\n\n\trgba.a *= opacity;\n\trgba.a *= fullMask;\n\n\tfloat desat = dot(rgba.rgb, float3(0.2126, 0.7152, 0.0722));\n\trgba.rgb = lerp(float3(desat, desat, desat), rgba.rgb, spillVal);\n\n\treturn CalcColor(rgba);\n}\n\n\nfloat4 PSChromaKeyRGBA(VertData v_in)\n{\n\tfloat4 rgba = image.Sample(textureSampler, v_in.uv);\n\trgba.rgb *= (rgba.a > 0.) ? (1. / rgba.a) : 0.;\n\trgba = ProcessChromaKey(rgba, v_in);\n\trgba.rgb *= rgba.a;\n\treturn rgba;\n}\n\nfloat4 main(VertData v_in) : TARGET\n{\n\treturn PSChromaKeyRGBA(v_in);\n}\n"
+  sparam 0 name=image type=TEXTURE array=0
+  sparam 1 name=similarity type=FLOAT array=0
+  sparam 2 name=smoothness type=FLOAT array=0
+  sparam 3 name=spill type=FLOAT array=0
+  sparam 4 name=opacity type=FLOAT array=0
+  sparam 5 name=pixel_size type=VEC2 array=0
+  sparam 6 name=cb_v4 type=VEC4 array=0
+  sparam 7 name=cr_v4 type=VEC4 array=0
+  sparam 8 name=chroma_key type=VEC2 array=0
+  sparam 9 name=gamma type=FLOAT array=0
+  sparam 10 name=contrast type=FLOAT array=0
+  sparam 11 name=brightness type=FLOAT array=0
+  result ok
+effect e result=ok
+  error_string=@null
+effect e params=13 techniques=1 viewproj=ViewProj world=-
+  param 0 name=ViewProj type=MATRIX4X4 annotations=0 default_size=0 default=-
+  param 1 name=image type=TEXTURE annotations=0 default_size=0 default=-
+  param 2 name=cb_v4 type=VEC4 annotations=0 default_size=16 default=711ecebd4f59adbeebe0e03e8480003f f=[-0.100644,-0.338571995,0.439215988,0.501960993]
+  param 3 name=cr_v4 type=VEC4 annotations=0 default_size=16 default=ebe0e03e2042ccbe5af624bd8480003f f=[0.439215988,-0.398941994,-0.0402740017,0.501960993]
+  param 4 name=opacity type=FLOAT annotations=0 default_size=0 default=-
+  param 5 name=contrast type=FLOAT annotations=0 default_size=0 default=-
+  param 6 name=brightness type=FLOAT annotations=0 default_size=0 default=-
+  param 7 name=gamma type=FLOAT annotations=0 default_size=0 default=-
+  param 8 name=chroma_key type=VEC2 annotations=0 default_size=0 default=-
+  param 9 name=pixel_size type=VEC2 annotations=0 default_size=0 default=-
+  param 10 name=similarity type=FLOAT annotations=0 default_size=0 default=-
+  param 11 name=smoothness type=FLOAT annotations=0 default_size=0 default=-
+  param 12 name=spill type=FLOAT annotations=0 default_size=0 default=-
+  technique 0 name=Draw passes=1
+    pass 0 name=@null vertex_params=[ViewProj] pixel_params=[image,similarity,smoothness,spill,opacity,pixel_size,cb_v4,cr_v4,chroma_key,gamma,contrast,brightness] vertex=yes pixel=yes
+backend vertexshader_create location="plugins/obs-filters/data/chroma_key_filter_v2.effect (Vertex shader, technique Draw, pass 0)" len=317 fnv=b06d11de3e765c86
+  sparam 0 name=ViewProj type=MATRIX4X4 array=0
+  result ok
+backend pixelshader_create location="plugins/obs-filters/data/chroma_key_filter_v2.effect (Pixel shader, technique Draw, pass 0)" len=2486 fnv=400aef010c6f46d8
+  sparam 0 name=image type=TEXTURE array=0
+  sparam 1 name=similarity type=FLOAT array=0
+  sparam 2 name=smoothness type=FLOAT array=0
+  sparam 3 name=spill type=FLOAT array=0
+  sparam 4 name=opacity type=FLOAT array=0
+  sparam 5 name=pixel_size type=VEC2 array=0
+  sparam 6 name=cb_v4 type=VEC4 array=0
+  sparam 7 name=cr_v4 type=VEC4 array=0
+  sparam 8 name=chroma_key type=VEC2 array=0
+  sparam 9 name=gamma type=FLOAT array=0
+  sparam 10 name=contrast type=FLOAT array=0
+  sparam 11 name=brightness type=FLOAT array=0
+  result ok
+ep result=ok
+  errors count=0 has_errors=0
+  ep params=13 structs=1 funcs=9 samplers=1 techniques=1
+  ep_param 0 type=float4x4 name=ViewProj property=0 const=0 uniform=1 texture=0 array_count=0 annotations=0
+  ep_param 1 type=texture2d name=image property=0 const=0 uniform=1 texture=1 array_count=0 annotations=0
+  ep_param 2 type=float4 name=cb_v4 property=0 const=0 uniform=1 texture=0 array_count=0 annotations=0
+  ep_param 3 type=float4 name=cr_v4 property=0 const=0 uniform=1 texture=0 array_count=0 annotations=0
+  ep_param 4 type=float name=opacity property=0 const=0 uniform=1 texture=0 array_count=0 annotations=0
+  ep_param 5 type=float name=contrast property=0 const=0 uniform=1 texture=0 array_count=0 annotations=0
+  ep_param 6 type=float name=brightness property=0 const=0 uniform=1 texture=0 array_count=0 annotations=0
+  ep_param 7 type=float name=gamma property=0 const=0 uniform=1 texture=0 array_count=0 annotations=0
+  ep_param 8 type=float2 name=chroma_key property=0 const=0 uniform=1 texture=0 array_count=0 annotations=0
+  ep_param 9 type=float2 name=pixel_size property=0 const=0 uniform=1 texture=0 array_count=0 annotations=0
+  ep_param 10 type=float name=similarity property=0 const=0 uniform=1 texture=0 array_count=0 annotations=0
+  ep_param 11 type=float name=smoothness property=0 const=0 uniform=1 texture=0 array_count=0 annotations=0
+  ep_param 12 type=float name=spill property=0 const=0 uniform=1 texture=0 array_count=0 annotations=0
+  ep_struct 0 name=VertData vars=2
+    var type=float4 name=pos mapping="POSITION" var_type=IN
+    var type=float2 name=uv mapping="TEXCOORD0" var_type=IN
+  ep_func 0 name=VSDefault ret=VertData mapping=@null params=1
+    var type=VertData name=v_in mapping=@null var_type=IN
+    struct_deps=["VertData","VertData","VertData"] func_deps=[] param_deps=["ViewProj"] sampler_deps=[] contents_len=124
+  ep_func 1 name=CalcColor ret=float4 mapping=@null params=1
+    var type=float4 name=rgba mapping=@null var_type=IN
+    struct_deps=[] func_deps=[] param_deps=["gamma","gamma","gamma","contrast","brightness"] sampler_deps=[] contents_len=95
+  ep_func 2 name=GetChromaDist ret=float mapping=@null params=1
+    var type=float3 name=rgb mapping=@null var_type=IN
+    struct_deps=[] func_deps=[] param_deps=["cb_v4","cb_v4","cr_v4","cr_v4","chroma_key"] sampler_deps=[] contents_len=143
+  ep_func 3 name=GetNonlinearChannel ret=float mapping=@null params=1
+    var type=float name=u mapping=@null var_type=IN
+    struct_deps=[] func_deps=[] param_deps=[] sampler_deps=[] contents_len=83
+  ep_func 4 name=GetNonlinearColor ret=float3 mapping=@null params=1
+    var type=float3 name=rgb mapping=@null var_type=IN
+    struct_deps=[] func_deps=["GetNonlinearChannel","GetNonlinearChannel","GetNonlinearChannel"] param_deps=[] sampler_deps=[] contents_len=103
+  ep_func 5 name=SampleTexture ret=float3 mapping=@null params=1
+    var type=float2 name=uv mapping=@null var_type=IN
+    struct_deps=[] func_deps=["GetNonlinearColor"] param_deps=["image"] sampler_deps=["textureSampler"] contents_len=87
+  ep_func 6 name=GetBoxFilteredChromaDist ret=float mapping=@null params=2
+    var type=float3 name=rgb mapping=@null var_type=IN
+    var type=float2 name=texCoord mapping=@null var_type=IN
+    struct_deps=[] func_deps=["GetChromaDist","SampleTexture","GetChromaDist","SampleTexture","GetChromaDist","SampleTexture","GetChromaDist","SampleTexture","GetChromaDist","GetNonlinearColor"] param_deps=["pixel_size","pixel_size","pixel_size"] sampler_deps=[] contents_len=493
+  ep_func 7 name=ProcessChromaKey ret=float4 mapping=@null params=2
+    var type=float4 name=rgba mapping=@null var_type=IN
+    var type=VertData name=v_in mapping=@null var_type=IN
+    struct_deps=["VertData"] func_deps=["GetBoxFilteredChromaDist","CalcColor"] param_deps=["similarity","smoothness","spill","opacity"] sampler_deps=[] contents_len=426
+  ep_func 8 name=PSChromaKeyRGBA ret=float4 mapping="TARGET" params=1
+    var type=VertData name=v_in mapping=@null var_type=IN
+    struct_deps=["VertData"] func_deps=["ProcessChromaKey"] param_deps=["image"] sampler_deps=["textureSampler"] contents_len=179
+  ep_sampler 0 name=textureSampler states=3
+    state "Filter" = "Linear"
+    state "AddressU" = "Clamp"
+    state "AddressV" = "Clamp"
+  ep_technique 0 name=Draw passes=1
+    ep_pass 0 name=@null
+      vertex=["VSDefault","(","v_in",")",";"]
+      fragment=["PSChromaKeyRGBA","(","v_in",")",";"]
+  error_string=@null
+effect (effect) params=13 techniques=1 viewproj=ViewProj world=-
+  param 0 name=ViewProj type=MATRIX4X4 annotations=0 default_size=0 default=-
+  param 1 name=image type=TEXTURE annotations=0 default_size=0 default=-
+  param 2 name=cb_v4 type=VEC4 annotations=0 default_size=16 default=711ecebd4f59adbeebe0e03e8480003f f=[-0.100644,-0.338571995,0.439215988,0.501960993]
+  param 3 name=cr_v4 type=VEC4 annotations=0 default_size=16 default=ebe0e03e2042ccbe5af624bd8480003f f=[0.439215988,-0.398941994,-0.0402740017,0.501960993]
+  param 4 name=opacity type=FLOAT annotations=0 default_size=0 default=-
+  param 5 name=contrast type=FLOAT annotations=0 default_size=0 default=-
+  param 6 name=brightness type=FLOAT annotations=0 default_size=0 default=-
+  param 7 name=gamma type=FLOAT annotations=0 default_size=0 default=-
+  param 8 name=chroma_key type=VEC2 annotations=0 default_size=0 default=-
+  param 9 name=pixel_size type=VEC2 annotations=0 default_size=0 default=-
+  param 10 name=similarity type=FLOAT annotations=0 default_size=0 default=-
+  param 11 name=smoothness type=FLOAT annotations=0 default_size=0 default=-
+  param 12 name=spill type=FLOAT annotations=0 default_size=0 default=-
+  technique 0 name=Draw passes=1
+    pass 0 name=@null vertex_params=[ViewProj] pixel_params=[image,similarity,smoothness,spill,opacity,pixel_size,cb_v4,cr_v4,chroma_key,gamma,contrast,brightness] vertex=yes pixel=yes
+destroy e cached=1
+=== plugins/obs-filters/data/color.effect
+effect e result=ok
+  error_string=@null
+effect e params=0 techniques=0 viewproj=- world=-
+ep result=ok
+  errors count=0 has_errors=0
+  ep params=0 structs=0 funcs=12 samplers=0 techniques=0
+  ep_func 0 name=srgb_linear_to_nonlinear_channel ret=float mapping=@null params=1
+    var type=float name=u mapping=@null var_type=IN
+    struct_deps=[] func_deps=[] param_deps=[] sampler_deps=[] contents_len=82
+  ep_func 1 name=srgb_linear_to_nonlinear ret=float3 mapping=@null params=1
+    var type=float3 name=v mapping=@null var_type=IN
+    struct_deps=[] func_deps=["srgb_linear_to_nonlinear_channel","srgb_linear_to_nonlinear_channel","srgb_linear_to_nonlinear_channel"] param_deps=[] sampler_deps=[] contents_len=136
+  ep_func 2 name=srgb_nonlinear_to_linear_channel ret=float mapping=@null params=1
+    var type=float name=u mapping=@null var_type=IN
+    struct_deps=[] func_deps=[] param_deps=[] sampler_deps=[] contents_len=86
+  ep_func 3 name=srgb_nonlinear_to_linear ret=float3 mapping=@null params=1
+    var type=float3 name=v mapping=@null var_type=IN
+    struct_deps=[] func_deps=["srgb_nonlinear_to_linear_channel","srgb_nonlinear_to_linear_channel","srgb_nonlinear_to_linear_channel"] param_deps=[] sampler_deps=[] contents_len=136
+  ep_func 4 name=rec709_to_rec2020 ret=float3 mapping=@null params=1
+    var type=float3 name=v mapping=@null var_type=IN
+    struct_deps=[] func_deps=[] param_deps=[] sampler_deps=[] contents_len=303
+  ep_func 5 name=rec2020_to_rec709 ret=float3 mapping=@null params=1
+    var type=float3 name=v mapping=@null var_type=IN
+    struct_deps=[] func_deps=[] param_deps=[] sampler_deps=[] contents_len=305
+  ep_func 6 name=reinhard ret=float3 mapping=@null params=1
+    var type=float3 name=rgb mapping=@null var_type=IN
+    struct_deps=[] func_deps=["srgb_nonlinear_to_linear"] param_deps=[] sampler_deps=[] contents_len=165
+  ep_func 7 name=linear_to_st2084_channel ret=float mapping=@null params=1
+    var type=float name=x mapping=@null var_type=IN
+    struct_deps=[] func_deps=[] param_deps=[] sampler_deps=[] contents_len=115
+  ep_func 8 name=st2084_to_linear_channel ret=float mapping=@null params=1
+    var type=float name=u mapping=@null var_type=IN
+    struct_deps=[] func_deps=[] param_deps=[] sampler_deps=[] contents_len=132
+  ep_func 9 name=eetf_0_Lmax ret=float mapping=@null params=3
+    var type=float name=maxRGB1_pq mapping=@null var_type=IN
+    var type=float name=Lw mapping=@null var_type=IN
+    var type=float name=Lmax mapping=@null var_type=IN
+    struct_deps=[] func_deps=["linear_to_st2084_channel","linear_to_st2084_channel"] param_deps=[] sampler_deps=[] contents_len=528
+  ep_func 10 name=maxRGB_eetf_internal ret=float3 mapping=@null params=5
+    var type=float3 name=rgb_linear mapping=@null var_type=IN
+    var type=float name=maxRGB1_linear mapping=@null var_type=IN
+    var type=float name=maxRGB1_pq mapping=@null var_type=IN
+    var type=float name=Lw mapping=@null var_type=IN
+    var type=float name=Lmax mapping=@null var_type=IN
+    struct_deps=[] func_deps=["eetf_0_Lmax","st2084_to_linear_channel"] param_deps=[] sampler_deps=[] contents_len=244
+  ep_func 11 name=maxRGB_eetf_linear_to_linear ret=float3 mapping=@null params=3
+    var type=float3 name=rgb_linear mapping=@null var_type=IN
+    var type=float name=Lw mapping=@null var_type=IN
+    var type=float name=Lmax mapping=@null var_type=IN
+    struct_deps=[] func_deps=["linear_to_st2084_channel","maxRGB_eetf_internal"] param_deps=[] sampler_deps=[] contents_len=221
+  error_string=@null
+effect (effect) params=0 techniques=0 viewproj=- world=-
+destroy e cached=1
+=== plugins/obs-filters/data/color_correction_filter.effect
+backend vertexshader_create location="plugins/obs-filters/data/color_correction_filter.effect (Vertex shader, technique Draw, pass 0)" len=331 fnv=9907b49b07cf3519
+  text "uniform float4x4 ViewProj;\n\n\nstruct VertData {\n\tfloat4 pos : POSITION;\n\tfloat2 uv : TEXCOORD0;\n};\n\nVertData VSDefault(VertData vert_in)\n{\n\tVertData vert_out;\n\tvert_out.pos = mul(float4(vert_in.pos.xyz, 1.0), ViewProj);\n\tvert_out.uv = vert_in.uv;\n\treturn vert_out;\n}\n\nVertData main(VertData vert_in)\n{\n\treturn VSDefault(vert_in);\n}\n"
+  sparam 0 name=ViewProj type=MATRIX4X4 array=0
+  result ok
+backend pixelshader_create location="plugins/obs-filters/data/color_correction_filter.effect (Pixel shader, technique Draw, pass 0)" len=701 fnv=225a0f5b797fcfec
+  text "uniform texture2d image;\nuniform float gamma;\nuniform float4x4 color_matrix;\n\n\nsampler_state textureSampler {\n\tFilter = Linear;\n\n\tAddressU = Clamp;\n\n\tAddressV = Clamp;\n\n};\n\nstruct VertData {\n\tfloat4 pos : POSITION;\n\tfloat2 uv : TEXCOORD0;\n};\n\nfloat4 PSColorFilterRGBA(VertData vert_in)\n{\n\t \n\tfloat4 currentPixel = image.Sample(textureSampler, vert_in.uv);\n\tcurrentPixel.rgb *= (currentPixel.a > 0.) ? (1. / currentPixel.a) : 0.;\n\n\t \n\tcurrentPixel.rgb = pow(currentPixel.rgb, float3(gamma, gamma, gamma));\n\n\t \n\tcurrentPixel = mul(color_matrix, currentPixel);\n\n\tcurrentPixel.rgb *= currentPixel.a;\n\n\treturn currentPixel;\n}\n\nfloat4 main(VertData vert_in) : TARGET\n{\n\treturn PSColorFilterRGBA(vert_in);\n}\n"
+  sparam 0 name=image type=TEXTURE array=0
+  sparam 1 name=gamma type=FLOAT array=0
+  sparam 2 name=color_matrix type=MATRIX4X4 array=0
+  result ok
+effect e result=ok
+  error_string=@null
+effect e params=4 techniques=1 viewproj=ViewProj world=-
+  param 0 name=ViewProj type=MATRIX4X4 annotations=0 default_size=0 default=-
+  param 1 name=image type=TEXTURE annotations=0 default_size=0 default=-
+  param 2 name=gamma type=FLOAT annotations=0 default_size=0 default=-
+  param 3 name=color_matrix type=MATRIX4X4 annotations=0 default_size=0 default=-
+  technique 0 name=Draw passes=1
+    pass 0 name=@null vertex_params=[ViewProj] pixel_params=[image,gamma,color_matrix] vertex=yes pixel=yes
+backend vertexshader_create location="plugins/obs-filters/data/color_correction_filter.effect (Vertex shader, technique Draw, pass 0)" len=331 fnv=9907b49b07cf3519
+  sparam 0 name=ViewProj type=MATRIX4X4 array=0
+  result ok
+backend pixelshader_create location="plugins/obs-filters/data/color_correction_filter.effect (Pixel shader, technique Draw, pass 0)" len=701 fnv=225a0f5b797fcfec
+  sparam 0 name=image type=TEXTURE array=0
+  sparam 1 name=gamma type=FLOAT array=0
+  sparam 2 name=color_matrix type=MATRIX4X4 array=0
+  result ok
+ep result=ok
+  errors count=0 has_errors=0
+  ep params=4 structs=1 funcs=2 samplers=1 techniques=1
+  ep_param 0 type=float4x4 name=ViewProj property=0 const=0 uniform=1 texture=0 array_count=0 annotations=0
+  ep_param 1 type=texture2d name=image property=0 const=0 uniform=1 texture=1 array_count=0 annotations=0
+  ep_param 2 type=float name=gamma property=0 const=0 uniform=1 texture=0 array_count=0 annotations=0
+  ep_param 3 type=float4x4 name=color_matrix property=0 const=0 uniform=1 texture=0 array_count=0 annotations=0
+  ep_struct 0 name=VertData vars=2
+    var type=float4 name=pos mapping="POSITION" var_type=IN
+    var type=float2 name=uv mapping="TEXCOORD0" var_type=IN
+  ep_func 0 name=VSDefault ret=VertData mapping=@null params=1
+    var type=VertData name=vert_in mapping=@null var_type=IN
+    struct_deps=["VertData","VertData","VertData"] func_deps=[] param_deps=["ViewProj"] sampler_deps=[] contents_len=129
+  ep_func 1 name=PSColorFilterRGBA ret=float4 mapping="TARGET" params=1
+    var type=VertData name=vert_in mapping=@null var_type=IN
+    struct_deps=["VertData"] func_deps=[] param_deps=["image","gamma","gamma","gamma","color_matrix"] sampler_deps=["textureSampler"] contents_len=334
+  ep_sampler 0 name=textureSampler states=3
+    state "Filter" = "Linear"
+    state "AddressU" = "Clamp"
+    state "AddressV" = "Clamp"
+  ep_technique 0 name=Draw passes=1
+    ep_pass 0 name=@null
+      vertex=["VSDefault","(","vert_in",")",";"]
+      fragment=["PSColorFilterRGBA","(","vert_in",")",";"]
+  error_string=@null
+effect (effect) params=4 techniques=1 viewproj=ViewProj world=-
+  param 0 name=ViewProj type=MATRIX4X4 annotations=0 default_size=0 default=-
+  param 1 name=image type=TEXTURE annotations=0 default_size=0 default=-
+  param 2 name=gamma type=FLOAT annotations=0 default_size=0 default=-
+  param 3 name=color_matrix type=MATRIX4X4 annotations=0 default_size=0 default=-
+  technique 0 name=Draw passes=1
+    pass 0 name=@null vertex_params=[ViewProj] pixel_params=[image,gamma,color_matrix] vertex=yes pixel=yes
+destroy e cached=1
+=== plugins/obs-filters/data/color_grade_filter.effect
+backend vertexshader_create location="plugins/obs-filters/data/color_grade_filter.effect (Vertex shader, technique Draw1D, pass 0)" len=404 fnv=7a8ffe62052fcde8
+  text "uniform float4x4 ViewProj;\n\n\nstruct VertDataOut {\n\tfloat4 pos : POSITION;\n\tfloat2 uv : TEXCOORD0;\n};\n\nstruct VertDataIn {\n\tfloat4 pos : POSITION;\n\tfloat2 uv : TEXCOORD0;\n};\n\nVertDataOut VSDefault(VertDataIn v_in)\n{\n\tVertDataOut vert_out;\n\tvert_out.uv = v_in.uv;\n\tvert_out.pos = mul(float4(v_in.pos.xyz, 1.0), ViewProj);\n\treturn vert_out;\n}\n\nVertDataOut main(VertDataIn v_in)\n{\n\treturn VSDefault(v_in);\n}\n"
+  sparam 0 name=ViewProj type=MATRIX4X4 array=0
+  result ok
+backend pixelshader_create location="plugins/obs-filters/data/color_grade_filter.effect (Pixel shader, technique Draw1D, pass 0)" len=1791 fnv=395ec7e90299ca82
+  text "uniform texture2d image;\nuniform float3 domain_min;\nuniform float3 domain_max;\nuniform float3 clut_scale;\nuniform float3 clut_offset;\nuniform texture2d clut_1d;\nuniform float clut_amount;\n\n\nsampler_state textureSampler {\n\tFilter = Linear;\n\n\tAddressU = Clamp;\n\n\tAddressV = Clamp;\n\n\tAddressW = Clamp;\n\n};\n\n\n\n\nstruct VertDataOut {\n\tfloat4 pos : POSITION;\n\tfloat2 uv : TEXCOORD0;\n};\n\nfloat srgb_linear_to_nonlinear_channel(float u)\n{\n\treturn (u <= 0.0031308) ? (12.92 * u) : ((1.055 * pow(u, 1.0 / 2.4)) - 0.055);\n}\n\n\nfloat3 srgb_linear_to_nonlinear(float3 v)\n{\n\treturn float3(srgb_linear_to_nonlinear_channel(v.r), srgb_linear_to_nonlinear_channel(v.g), srgb_linear_to_nonlinear_channel(v.b));\n}\n\n\nfloat4 LUT1D(VertDataOut v_in)\n{\n\tfloat4 textureColor = image.Sample(textureSampler, v_in.uv);\n\ttextureColor.rgb *= (textureColor.a > 0.) ? (1. / textureColor.a) : 0.;\n\tfloat3 nonlinear = srgb_linear_to_nonlinear(textureColor.rgb);\n\n\tif (nonlinear.r >= domain_min.r && nonlinear.r <= domain_max.r) {\n\t\tfloat u = nonlinear.r * clut_scale.r + clut_offset.r;\n\t\tfloat channel = clut_1d.Sample(textureSampler, float2(u, 0.5)).r;\n\t\ttextureColor.r = lerp(textureColor.r, channel, clut_amount);\n\t}\n\n\tif (nonlinear.g >= domain_min.g && nonlinear.g <= domain_max.g) {\n\t\tfloat u = nonlinear.g * clut_scale.g + clut_offset.g;\n\t\tfloat channel = clut_1d.Sample(textureSampler, float2(u, 0.5)).g;\n\t\ttextureColor.g = lerp(textureColor.g, channel, clut_amount);\n\t}\n\n\tif (nonlinear.b >= domain_min.b && nonlinear.b <= domain_max.b) {\n\t\tfloat u = nonlinear.b * clut_scale.b + clut_offset.b;\n\t\tfloat channel = clut_1d.Sample(textureSampler, float2(u, 0.5)).b;\n\t\ttextureColor.b = lerp(textureColor.b, channel, clut_amount);\n\t}\n\n\treturn textureColor;\n}\n\nfloat4 main(VertDataOut v_in) : TARGET\n{\n\treturn LUT1D(v_in);\n}\n"
+  sparam 0 name=image type=TEXTURE array=0
+  sparam 1 name=domain_min type=VEC3 array=0
+  sparam 2 name=domain_max type=VEC3 array=0
+  sparam 3 name=clut_scale type=VEC3 array=0
+  sparam 4 name=clut_offset type=VEC3 array=0
+  sparam 5 name=clut_1d type=TEXTURE array=0
+  sparam 6 name=clut_amount type=FLOAT array=0
+  result ok
+backend vertexshader_create location="plugins/obs-filters/data/color_grade_filter.effect (Vertex shader, technique Draw3D, pass 0)" len=404 fnv=7a8ffe62052fcde8
+  text "uniform float4x4 ViewProj;\n\n\nstruct VertDataOut {\n\tfloat4 pos : POSITION;\n\tfloat2 uv : TEXCOORD0;\n};\n\nstruct VertDataIn {\n\tfloat4 pos : POSITION;\n\tfloat2 uv : TEXCOORD0;\n};\n\nVertDataOut VSDefault(VertDataIn v_in)\n{\n\tVertDataOut vert_out;\n\tvert_out.uv = v_in.uv;\n\tvert_out.pos = mul(float4(v_in.pos.xyz, 1.0), ViewProj);\n\treturn vert_out;\n}\n\nVertDataOut main(VertDataIn v_in)\n{\n\treturn VSDefault(v_in);\n}\n"
+  sparam 0 name=ViewProj type=MATRIX4X4 array=0
+  result ok
+backend pixelshader_create location="plugins/obs-filters/data/color_grade_filter.effect (Pixel shader, technique Draw3D, pass 0)" len=985 fnv=fa999b4cb5107a26
+  text "uniform texture2d image;\nuniform float3 clut_scale;\nuniform float3 clut_offset;\nuniform texture3d clut_3d;\n\n\nsampler_state textureSampler {\n\tFilter = Linear;\n\n\tAddressU = Clamp;\n\n\tAddressV = Clamp;\n\n\tAddressW = Clamp;\n\n};\n\n\nstruct VertDataOut {\n\tfloat4 pos : POSITION;\n\tfloat2 uv : TEXCOORD0;\n};\n\nfloat srgb_linear_to_nonlinear_channel(float u)\n{\n\treturn (u <= 0.0031308) ? (12.92 * u) : ((1.055 * pow(u, 1.0 / 2.4)) - 0.055);\n}\n\n\nfloat3 srgb_linear_to_nonlinear(float3 v)\n{\n\treturn float3(srgb_linear_to_nonlinear_channel(v.r), srgb_linear_to_nonlinear_channel(v.g), srgb_linear_to_nonlinear_channel(v.b));\n}\n\n\nfloat4 LUT3D(VertDataOut v_in)\n{\n\tfloat4 textureColor = image.Sample(textureSampler, v_in.uv);\n\tfloat3 nonlinear = srgb_linear_to_nonlinear(textureColor.rgb);\n\n\tfloat3 clut_uvw = nonlinear * clut_scale + clut_offset;\n\ttextureColor.rgb = clut_3d.Sample(textureSampler, clut_uvw).rgb;\n\n\treturn textureColor;\n}\n\nfloat4 main(VertDataOut v_in) : TARGET\n{\n\treturn LUT3D(v_in);\n}\n"
+  sparam 0 name=image type=TEXTURE array=0
+  sparam 1 name=clut_scale type=VEC3 array=0
+  sparam 2 name=clut_offset type=VEC3 array=0
+  sparam 3 name=clut_3d type=TEXTURE array=0
+  result ok
+backend vertexshader_create location="plugins/obs-filters/data/color_grade_filter.effect (Vertex shader, technique DrawAlpha3D, pass 0)" len=404 fnv=7a8ffe62052fcde8
+  text "uniform float4x4 ViewProj;\n\n\nstruct VertDataOut {\n\tfloat4 pos : POSITION;\n\tfloat2 uv : TEXCOORD0;\n};\n\nstruct VertDataIn {\n\tfloat4 pos : POSITION;\n\tfloat2 uv : TEXCOORD0;\n};\n\nVertDataOut VSDefault(VertDataIn v_in)\n{\n\tVertDataOut vert_out;\n\tvert_out.uv = v_in.uv;\n\tvert_out.pos = mul(float4(v_in.pos.xyz, 1.0), ViewProj);\n\treturn vert_out;\n}\n\nVertDataOut main(VertDataIn v_in)\n{\n\treturn VSDefault(v_in);\n}\n"
+  sparam 0 name=ViewProj type=MATRIX4X4 array=0
+  result ok
+backend pixelshader_create location="plugins/obs-filters/data/color_grade_filter.effect (Pixel shader, technique DrawAlpha3D, pass 0)" len=1105 fnv=da364cc299aeb390
+  text "uniform texture2d image;\nuniform float3 clut_scale;\nuniform float3 clut_offset;\nuniform texture3d clut_3d;\n\n\nsampler_state textureSampler {\n\tFilter = Linear;\n\n\tAddressU = Clamp;\n\n\tAddressV = Clamp;\n\n\tAddressW = Clamp;\n\n};\n\n\nstruct VertDataOut {\n\tfloat4 pos : POSITION;\n\tfloat2 uv : TEXCOORD0;\n};\n\nfloat srgb_linear_to_nonlinear_channel(float u)\n{\n\treturn (u <= 0.0031308) ? (12.92 * u) : ((1.055 * pow(u, 1.0 / 2.4)) - 0.055);\n}\n\n\nfloat3 srgb_linear_to_nonlinear(float3 v)\n{\n\treturn float3(srgb_linear_to_nonlinear_channel(v.r), srgb_linear_to_nonlinear_channel(v.g), srgb_linear_to_nonlinear_channel(v.b));\n}\n\n\nfloat4 LUTAlpha3D(VertDataOut v_in)\n{\n\tfloat4 textureColor = image.Sample(textureSampler, v_in.uv);\n\ttextureColor.rgb *= (textureColor.a > 0.) ? (1. / textureColor.a) : 0.;\n\tfloat3 nonlinear = srgb_linear_to_nonlinear(textureColor.rgb);\n\n\tfloat3 clut_uvw = nonlinear * clut_scale + clut_offset;\n\ttextureColor.rgb = clut_3d.Sample(textureSampler, clut_uvw).rgb;\n\n\ttextureColor.rgb *= textureColor.a;\n\treturn textureColor;\n}\n\nfloat4 main(VertDataOut v_in) : TARGET\n{\n\treturn LUTAlpha3D(v_in);\n}\n"
+  sparam 0 name=image type=TEXTURE array=0
+  sparam 1 name=clut_scale type=VEC3 array=0
+  sparam 2 name=clut_offset type=VEC3 array=0
+  sparam 3 name=clut_3d type=TEXTURE array=0
+  result ok
+backend vertexshader_create location="plugins/obs-filters/data/color_grade_filter.effect (Vertex shader, technique DrawAmount3D, pass 0)" len=404 fnv=7a8ffe62052fcde8
+  text "uniform float4x4 ViewProj;\n\n\nstruct VertDataOut {\n\tfloat4 pos : POSITION;\n\tfloat2 uv : TEXCOORD0;\n};\n\nstruct VertDataIn {\n\tfloat4 pos : POSITION;\n\tfloat2 uv : TEXCOORD0;\n};\n\nVertDataOut VSDefault(VertDataIn v_in)\n{\n\tVertDataOut vert_out;\n\tvert_out.uv = v_in.uv;\n\tvert_out.pos = mul(float4(v_in.pos.xyz, 1.0), ViewProj);\n\treturn vert_out;\n}\n\nVertDataOut main(VertDataIn v_in)\n{\n\treturn VSDefault(v_in);\n}\n"
+  sparam 0 name=ViewProj type=MATRIX4X4 array=0
+  result ok
+backend pixelshader_create location="plugins/obs-filters/data/color_grade_filter.effect (Pixel shader, technique DrawAmount3D, pass 0)" len=1206 fnv=197bb3a8b826c9e6
+  text "uniform texture2d image;\nuniform float3 clut_scale;\nuniform float3 clut_offset;\nuniform texture3d clut_3d;\nuniform float clut_amount;\n\n\nsampler_state textureSampler {\n\tFilter = Linear;\n\n\tAddressU = Clamp;\n\n\tAddressV = Clamp;\n\n\tAddressW = Clamp;\n\n};\n\n\nstruct VertDataOut {\n\tfloat4 pos : POSITION;\n\tfloat2 uv : TEXCOORD0;\n};\n\nfloat srgb_linear_to_nonlinear_channel(float u)\n{\n\treturn (u <= 0.0031308) ? (12.92 * u) : ((1.055 * pow(u, 1.0 / 2.4)) - 0.055);\n}\n\n\nfloat3 srgb_linear_to_nonlinear(float3 v)\n{\n\treturn float3(srgb_linear_to_nonlinear_channel(v.r), srgb_linear_to_nonlinear_channel(v.g), srgb_linear_to_nonlinear_channel(v.b));\n}\n\n\nfloat4 LUTAmount3D(VertDataOut v_in)\n{\n\tfloat4 textureColor = image.Sample(textureSampler, v_in.uv);\n\ttextureColor.rgb *= (textureColor.a > 0.) ? (1. / textureColor.a) : 0.;\n\tfloat3 nonlinear = srgb_linear_to_nonlinear(textureColor.rgb);\n\n\tfloat3 clut_uvw = nonlinear * clut_scale + clut_offset;\n\tfloat3 luttedColor = clut_3d.Sample(textureSampler, clut_uvw).rgb;\n\ttextureColor.rgb = lerp(textureColor.rgb, luttedColor, clut_amount);\n\n\ttextureColor.rgb *= textureColor.a;\n\treturn textureColor;\n}\n\nfloat4 main(VertDataOut v_in) : TARGET\n{\n\treturn LUTAmount3D(v_in);\n}\n"
+  sparam 0 name=image type=TEXTURE array=0
+  sparam 1 name=clut_scale type=VEC3 array=0
+  sparam 2 name=clut_offset type=VEC3 array=0
+  sparam 3 name=clut_3d type=TEXTURE array=0
+  sparam 4 name=clut_amount type=FLOAT array=0
+  result ok
+backend vertexshader_create location="plugins/obs-filters/data/color_grade_filter.effect (Vertex shader, technique DrawDomain3D, pass 0)" len=404 fnv=7a8ffe62052fcde8
+  text "uniform float4x4 ViewProj;\n\n\nstruct VertDataOut {\n\tfloat4 pos : POSITION;\n\tfloat2 uv : TEXCOORD0;\n};\n\nstruct VertDataIn {\n\tfloat4 pos : POSITION;\n\tfloat2 uv : TEXCOORD0;\n};\n\nVertDataOut VSDefault(VertDataIn v_in)\n{\n\tVertDataOut vert_out;\n\tvert_out.uv = v_in.uv;\n\tvert_out.pos = mul(float4(v_in.pos.xyz, 1.0), ViewProj);\n\treturn vert_out;\n}\n\nVertDataOut main(VertDataIn v_in)\n{\n\treturn VSDefault(v_in);\n}\n"
+  sparam 0 name=ViewProj type=MATRIX4X4 array=0
+  result ok
+backend pixelshader_create location="plugins/obs-filters/data/color_grade_filter.effect (Pixel shader, technique DrawDomain3D, pass 0)" len=1474 fnv=fb5ea30ad39722bf
+  text "uniform texture2d image;\nuniform float3 domain_min;\nuniform float3 domain_max;\nuniform float3 clut_scale;\nuniform float3 clut_offset;\nuniform texture3d clut_3d;\nuniform float clut_amount;\n\n\nsampler_state textureSampler {\n\tFilter = Linear;\n\n\tAddressU = Clamp;\n\n\tAddressV = Clamp;\n\n\tAddressW = Clamp;\n\n};\n\n\nstruct VertDataOut {\n\tfloat4 pos : POSITION;\n\tfloat2 uv : TEXCOORD0;\n};\n\nfloat srgb_linear_to_nonlinear_channel(float u)\n{\n\treturn (u <= 0.0031308) ? (12.92 * u) : ((1.055 * pow(u, 1.0 / 2.4)) - 0.055);\n}\n\n\nfloat3 srgb_linear_to_nonlinear(float3 v)\n{\n\treturn float3(srgb_linear_to_nonlinear_channel(v.r), srgb_linear_to_nonlinear_channel(v.g), srgb_linear_to_nonlinear_channel(v.b));\n}\n\n\nfloat4 LUTDomain3D(VertDataOut v_in)\n{\n\tfloat4 textureColor = image.Sample(textureSampler, v_in.uv);\n\ttextureColor.rgb *= (textureColor.a > 0.) ? (1. / textureColor.a) : 0.;\n\tfloat3 nonlinear = srgb_linear_to_nonlinear(textureColor.rgb);\n\n\tfloat r = nonlinear.r;\n\tfloat g = nonlinear.g;\n\tfloat b = nonlinear.b;\n\tif (r >= domain_min.r && r <= domain_max.r &&\n\t\tg >= domain_min.g && g <= domain_max.g &&\n\t\tb >= domain_min.b && b <= domain_max.b)\n\t{\n\t\tfloat3 clut_uvw = nonlinear * clut_scale + clut_offset;\n\t\tfloat3 luttedColor = clut_3d.Sample(textureSampler, clut_uvw).rgb;\n\t\ttextureColor.rgb = lerp(textureColor.rgb, luttedColor, clut_amount);\n\t}\n\n\ttextureColor.rgb *= textureColor.a;\n\treturn textureColor;\n}\n\nfloat4 main(VertDataOut v_in) : TARGET\n{\n\treturn LUTDomain3D(v_in);\n}\n"
+  sparam 0 name=image type=TEXTURE array=0
+  sparam 1 name=domain_min type=VEC3 array=0
+  sparam 2 name=domain_max type=VEC3 array=0
+  sparam 3 name=clut_scale type=VEC3 array=0
+  sparam 4 name=clut_offset type=VEC3 array=0
+  sparam 5 name=clut_3d type=TEXTURE array=0
+  sparam 6 name=clut_amount type=FLOAT array=0
+  result ok
+effect e result=ok
+  error_string=@null
+effect e params=9 techniques=5 viewproj=ViewProj world=-
+  param 0 name=ViewProj type=MATRIX4X4 annotations=0 default_size=0 default=-
+  param 1 name=image type=TEXTURE annotations=0 default_size=0 default=-
+  param 2 name=clut_1d type=TEXTURE annotations=0 default_size=0 default=-
+  param 3 name=clut_3d type=TEXTURE annotations=0 default_size=0 default=-
+  param 4 name=clut_amount type=FLOAT annotations=0 default_size=0 default=-
+  param 5 name=clut_scale type=VEC3 annotations=0 default_size=0 default=-
+  param 6 name=clut_offset type=VEC3 annotations=0 default_size=0 default=-
+  param 7 name=domain_min type=VEC3 annotations=0 default_size=0 default=-
+  param 8 name=domain_max type=VEC3 annotations=0 default_size=0 default=-
+  technique 0 name=Draw1D passes=1
+    pass 0 name=@null vertex_params=[ViewProj] pixel_params=[image,domain_min,domain_max,clut_scale,clut_offset,clut_1d,clut_amount] vertex=yes pixel=yes
+  technique 1 name=Draw3D passes=1
+    pass 0 name=@null vertex_params=[ViewProj] pixel_params=[image,clut_scale,clut_offset,clut_3d] vertex=yes pixel=yes
+  technique 2 name=DrawAlpha3D passes=1
+    pass 0 name=@null vertex_params=[ViewProj] pixel_params=[image,clut_scale,clut_offset,clut_3d] vertex=yes pixel=yes
+  technique 3 name=DrawAmount3D passes=1
+    pass 0 name=@null vertex_params=[ViewProj] pixel_params=[image,clut_scale,clut_offset,clut_3d,clut_amount] vertex=yes pixel=yes
+  technique 4 name=DrawDomain3D passes=1
+    pass 0 name=@null vertex_params=[ViewProj] pixel_params=[image,domain_min,domain_max,clut_scale,clut_offset,clut_3d,clut_amount] vertex=yes pixel=yes
+backend vertexshader_create location="plugins/obs-filters/data/color_grade_filter.effect (Vertex shader, technique Draw1D, pass 0)" len=404 fnv=7a8ffe62052fcde8
+  sparam 0 name=ViewProj type=MATRIX4X4 array=0
+  result ok
+backend pixelshader_create location="plugins/obs-filters/data/color_grade_filter.effect (Pixel shader, technique Draw1D, pass 0)" len=1791 fnv=395ec7e90299ca82
+  sparam 0 name=image type=TEXTURE array=0
+  sparam 1 name=domain_min type=VEC3 array=0
+  sparam 2 name=domain_max type=VEC3 array=0
+  sparam 3 name=clut_scale type=VEC3 array=0
+  sparam 4 name=clut_offset type=VEC3 array=0
+  sparam 5 name=clut_1d type=TEXTURE array=0
+  sparam 6 name=clut_amount type=FLOAT array=0
+  result ok
+backend vertexshader_create location="plugins/obs-filters/data/color_grade_filter.effect (Vertex shader, technique Draw3D, pass 0)" len=404 fnv=7a8ffe62052fcde8
+  sparam 0 name=ViewProj type=MATRIX4X4 array=0
+  result ok
+backend pixelshader_create location="plugins/obs-filters/data/color_grade_filter.effect (Pixel shader, technique Draw3D, pass 0)" len=985 fnv=fa999b4cb5107a26
+  sparam 0 name=image type=TEXTURE array=0
+  sparam 1 name=clut_scale type=VEC3 array=0
+  sparam 2 name=clut_offset type=VEC3 array=0
+  sparam 3 name=clut_3d type=TEXTURE array=0
+  result ok
+backend vertexshader_create location="plugins/obs-filters/data/color_grade_filter.effect (Vertex shader, technique DrawAlpha3D, pass 0)" len=404 fnv=7a8ffe62052fcde8
+  sparam 0 name=ViewProj type=MATRIX4X4 array=0
+  result ok
+backend pixelshader_create location="plugins/obs-filters/data/color_grade_filter.effect (Pixel shader, technique DrawAlpha3D, pass 0)" len=1105 fnv=da364cc299aeb390
+  sparam 0 name=image type=TEXTURE array=0
+  sparam 1 name=clut_scale type=VEC3 array=0
+  sparam 2 name=clut_offset type=VEC3 array=0
+  sparam 3 name=clut_3d type=TEXTURE array=0
+  result ok
+backend vertexshader_create location="plugins/obs-filters/data/color_grade_filter.effect (Vertex shader, technique DrawAmount3D, pass 0)" len=404 fnv=7a8ffe62052fcde8
+  sparam 0 name=ViewProj type=MATRIX4X4 array=0
+  result ok
+backend pixelshader_create location="plugins/obs-filters/data/color_grade_filter.effect (Pixel shader, technique DrawAmount3D, pass 0)" len=1206 fnv=197bb3a8b826c9e6
+  sparam 0 name=image type=TEXTURE array=0
+  sparam 1 name=clut_scale type=VEC3 array=0
+  sparam 2 name=clut_offset type=VEC3 array=0
+  sparam 3 name=clut_3d type=TEXTURE array=0
+  sparam 4 name=clut_amount type=FLOAT array=0
+  result ok
+backend vertexshader_create location="plugins/obs-filters/data/color_grade_filter.effect (Vertex shader, technique DrawDomain3D, pass 0)" len=404 fnv=7a8ffe62052fcde8
+  sparam 0 name=ViewProj type=MATRIX4X4 array=0
+  result ok
+backend pixelshader_create location="plugins/obs-filters/data/color_grade_filter.effect (Pixel shader, technique DrawDomain3D, pass 0)" len=1474 fnv=fb5ea30ad39722bf
+  sparam 0 name=image type=TEXTURE array=0
+  sparam 1 name=domain_min type=VEC3 array=0
+  sparam 2 name=domain_max type=VEC3 array=0
+  sparam 3 name=clut_scale type=VEC3 array=0
+  sparam 4 name=clut_offset type=VEC3 array=0
+  sparam 5 name=clut_3d type=TEXTURE array=0
+  sparam 6 name=clut_amount type=FLOAT array=0
+  result ok
+ep result=ok
+  errors count=0 has_errors=0
+  ep params=9 structs=2 funcs=8 samplers=1 techniques=5
+  ep_param 0 type=float4x4 name=ViewProj property=0 const=0 uniform=1 texture=0 array_count=0 annotations=0
+  ep_param 1 type=texture2d name=image property=0 const=0 uniform=1 texture=1 array_count=0 annotations=0
+  ep_param 2 type=texture2d name=clut_1d property=0 const=0 uniform=1 texture=1 array_count=0 annotations=0
+  ep_param 3 type=texture3d name=clut_3d property=0 const=0 uniform=1 texture=1 array_count=0 annotations=0
+  ep_param 4 type=float name=clut_amount property=0 const=0 uniform=1 texture=0 array_count=0 annotations=0
+  ep_param 5 type=float3 name=clut_scale property=0 const=0 uniform=1 texture=0 array_count=0 annotations=0
+  ep_param 6 type=float3 name=clut_offset property=0 const=0 uniform=1 texture=0 array_count=0 annotations=0
+  ep_param 7 type=float3 name=domain_min property=0 const=0 uniform=1 texture=0 array_count=0 annotations=0
+  ep_param 8 type=float3 name=domain_max property=0 const=0 uniform=1 texture=0 array_count=0 annotations=0
+  ep_struct 0 name=VertDataIn vars=2
+    var type=float4 name=pos mapping="POSITION" var_type=IN
+    var type=float2 name=uv mapping="TEXCOORD0" var_type=IN
+  ep_struct 1 name=VertDataOut vars=2
+    var type=float4 name=pos mapping="POSITION" var_type=IN
+    var type=float2 name=uv mapping="TEXCOORD0" var_type=IN
+  ep_func 0 name=VSDefault ret=VertDataOut mapping=@null params=1
+    var type=VertDataIn name=v_in mapping=@null var_type=IN
+    struct_deps=["VertDataOut","VertDataIn","VertDataOut"] func_deps=[] param_deps=["ViewProj"] sampler_deps=[] contents_len=126
+  ep_func 1 name=srgb_linear_to_nonlinear_channel ret=float mapping=@null params=1
+    var type=float name=u mapping=@null var_type=IN
+    struct_deps=[] func_deps=[] param_deps=[] sampler_deps=[] contents_len=83
+  ep_func 2 name=srgb_linear_to_nonlinear ret=float3 mapping=@null params=1
+    var type=float3 name=v mapping=@null var_type=IN
+    struct_deps=[] func_deps=["srgb_linear_to_nonlinear_channel","srgb_linear_to_nonlinear_channel","srgb_linear_to_nonlinear_channel"] param_deps=[] sampler_deps=[] contents_len=136
+  ep_func 3 name=LUT1D ret=float4 mapping="TARGET" params=1
+    var type=VertDataOut name=v_in mapping=@null var_type=IN
+    struct_deps=["VertDataOut"] func_deps=["srgb_linear_to_nonlinear"] param_deps=["image","domain_min","domain_max","clut_scale","clut_offset","clut_1d","clut_amount","domain_min","domain_max","clut_scale","clut_offset","clut_1d","clut_amount","domain_min","domain_max","clut_scale","clut_offset","clut_1d","clut_amount"] sampler_deps=["textureSampler","textureSampler","textureSampler","textureSampler"] contents_len=999
+  ep_func 4 name=LUT3D ret=float4 mapping="TARGET" params=1
+    var type=VertDataOut name=v_in mapping=@null var_type=IN
+    struct_deps=["VertDataOut"] func_deps=["srgb_linear_to_nonlinear"] param_deps=["image","clut_scale","clut_offset","clut_3d"] sampler_deps=["textureSampler","textureSampler"] contents_len=276
+  ep_func 5 name=LUTAlpha3D ret=float4 mapping="TARGET" params=1
+    var type=VertDataOut name=v_in mapping=@null var_type=IN
+    struct_deps=["VertDataOut"] func_deps=["srgb_linear_to_nonlinear"] param_deps=["image","clut_scale","clut_offset","clut_3d"] sampler_deps=["textureSampler","textureSampler"] contents_len=386
+  ep_func 6 name=LUTAmount3D ret=float4 mapping="TARGET" params=1
+    var type=VertDataOut name=v_in mapping=@null var_type=IN
+    struct_deps=["VertDataOut"] func_deps=["srgb_linear_to_nonlinear"] param_deps=["image","clut_scale","clut_offset","clut_3d","clut_amount"] sampler_deps=["textureSampler","textureSampler"] contents_len=458
+  ep_func 7 name=LUTDomain3D ret=float4 mapping="TARGET" params=1
+    var type=VertDataOut name=v_in mapping=@null var_type=IN
+    struct_deps=["VertDataOut"] func_deps=["srgb_linear_to_nonlinear"] param_deps=["image","domain_min","domain_max","domain_min","domain_max","domain_min","domain_max","clut_scale","clut_offset","clut_3d","clut_amount"] sampler_deps=["textureSampler","textureSampler"] contents_len=672
+  ep_sampler 0 name=textureSampler states=4
+    state "Filter" = "Linear"
+    state "AddressU" = "Clamp"
+    state "AddressV" = "Clamp"
+    state "AddressW" = "Clamp"
+  ep_technique 0 name=Draw1D passes=1
+    ep_pass 0 name=@null
+      vertex=["VSDefault","(","v_in",")",";"]
+      fragment=["LUT1D","(","v_in",")",";"]
+  ep_technique 1 name=Draw3D passes=1
+    ep_pass 0 name=@null
+      vertex=["VSDefault","(","v_in",")",";"]
+      fragment=["LUT3D","(","v_in",")",";"]
+  ep_technique 2 name=DrawAlpha3D passes=1
+    ep_pass 0 name=@null
+      vertex=["VSDefault","(","v_in",")",";"]
+      fragment=["LUTAlpha3D","(","v_in",")",";"]
+  ep_technique 3 name=DrawAmount3D passes=1
+    ep_pass 0 name=@null
+      vertex=["VSDefault","(","v_in",")",";"]
+      fragment=["LUTAmount3D","(","v_in",")",";"]
+  ep_technique 4 name=DrawDomain3D passes=1
+    ep_pass 0 name=@null
+      vertex=["VSDefault","(","v_in",")",";"]
+      fragment=["LUTDomain3D","(","v_in",")",";"]
+  error_string=@null
+effect (effect) params=9 techniques=5 viewproj=ViewProj world=-
+  param 0 name=ViewProj type=MATRIX4X4 annotations=0 default_size=0 default=-
+  param 1 name=image type=TEXTURE annotations=0 default_size=0 default=-
+  param 2 name=clut_1d type=TEXTURE annotations=0 default_size=0 default=-
+  param 3 name=clut_3d type=TEXTURE annotations=0 default_size=0 default=-
+  param 4 name=clut_amount type=FLOAT annotations=0 default_size=0 default=-
+  param 5 name=clut_scale type=VEC3 annotations=0 default_size=0 default=-
+  param 6 name=clut_offset type=VEC3 annotations=0 default_size=0 default=-
+  param 7 name=domain_min type=VEC3 annotations=0 default_size=0 default=-
+  param 8 name=domain_max type=VEC3 annotations=0 default_size=0 default=-
+  technique 0 name=Draw1D passes=1
+    pass 0 name=@null vertex_params=[ViewProj] pixel_params=[image,domain_min,domain_max,clut_scale,clut_offset,clut_1d,clut_amount] vertex=yes pixel=yes
+  technique 1 name=Draw3D passes=1
+    pass 0 name=@null vertex_params=[ViewProj] pixel_params=[image,clut_scale,clut_offset,clut_3d] vertex=yes pixel=yes
+  technique 2 name=DrawAlpha3D passes=1
+    pass 0 name=@null vertex_params=[ViewProj] pixel_params=[image,clut_scale,clut_offset,clut_3d] vertex=yes pixel=yes
+  technique 3 name=DrawAmount3D passes=1
+    pass 0 name=@null vertex_params=[ViewProj] pixel_params=[image,clut_scale,clut_offset,clut_3d,clut_amount] vertex=yes pixel=yes
+  technique 4 name=DrawDomain3D passes=1
+    pass 0 name=@null vertex_params=[ViewProj] pixel_params=[image,domain_min,domain_max,clut_scale,clut_offset,clut_3d,clut_amount] vertex=yes pixel=yes
+destroy e cached=1
+=== plugins/obs-filters/data/color_key_filter.effect
+backend vertexshader_create location="plugins/obs-filters/data/color_key_filter.effect (Vertex shader, technique Draw, pass 0)" len=317 fnv=b06d11de3e765c86
+  text "uniform float4x4 ViewProj;\n\n\nstruct VertData {\n\tfloat4 pos : POSITION;\n\tfloat2 uv : TEXCOORD0;\n};\n\nVertData VSDefault(VertData v_in)\n{\n\tVertData vert_out;\n\tvert_out.pos = mul(float4(v_in.pos.xyz, 1.0), ViewProj);\n\tvert_out.uv  = v_in.uv;\n\treturn vert_out;\n}\n\nVertData main(VertData v_in)\n{\n\treturn VSDefault(v_in);\n}\n"
+  sparam 0 name=ViewProj type=MATRIX4X4 array=0
+  result ok
+backend pixelshader_create location="plugins/obs-filters/data/color_key_filter.effect (Pixel shader, technique Draw, pass 0)" len=1033 fnv=6cd430d45fd0630c
+  text "uniform texture2d image;\nuniform float4 color;\n\n\nsampler_state textureSampler {\n\tFilter = Linear;\n\n\tAddressU = Clamp;\n\n\tAddressV = Clamp;\n\n};\n\nstruct VertData {\n\tfloat4 pos : POSITION;\n\tfloat2 uv : TEXCOORD0;\n};\n\nuniform float similarity;\nuniform float smoothness;\n\n\nuniform float4 key_color;\n\n\nfloat GetColorDist(float3 rgb)\n{\n\treturn distance(key_color.rgb, rgb);\n}\n\n\nuniform float gamma;\nuniform float contrast;\nuniform float brightness;\n\n\nfloat4 CalcColor(float4 rgba)\n{\n\treturn float4(pow(rgba.rgb, float3(gamma, gamma, gamma)) * contrast + brightness, rgba.a);\n}\n\n\nfloat4 ProcessColorKey(float4 rgba, VertData v_in)\n{\n\tfloat colorDist = GetColorDist(rgba.rgb);\n\trgba.a *= saturate(max(colorDist - similarity, 0.0) / smoothness);\n\n\treturn CalcColor(rgba);\n}\n\n\nfloat4 PSColorKeyRGBA(VertData v_in)\n{\n\tfloat4 rgba = image.Sample(textureSampler, v_in.uv);\n\trgba.rgb *= (rgba.a > 0.) ? (1. / rgba.a) : 0.;\n\trgba *= color;\n\treturn ProcessColorKey(rgba, v_in);\n}\n\nfloat4 main(VertData v_in) : TARGET\n{\n\treturn PSColorKeyRGBA(v_in);\n}\n"
+  sparam 0 name=image type=TEXTURE array=0
+  sparam 1 name=color type=VEC4 array=0
+  sparam 2 name=similarity type=FLOAT array=0
+  sparam 3 name=smoothness type=FLOAT array=0
+  sparam 4 name=key_color type=VEC4 array=0
+  sparam 5 name=gamma type=FLOAT array=0
+  sparam 6 name=contrast type=FLOAT array=0
+  sparam 7 name=brightness type=FLOAT array=0
+  result ok
+effect e result=ok
+  error_string=@null
+effect e params=9 techniques=1 viewproj=ViewProj world=-
+  param 0 name=ViewProj type=MATRIX4X4 annotations=0 default_size=0 default=-
+  param 1 name=image type=TEXTURE annotations=0 default_size=0 default=-
+  param 2 name=color type=VEC4 annotations=0 default_size=0 default=-
+  param 3 name=contrast type=FLOAT annotations=0 default_size=0 default=-
+  param 4 name=brightness type=FLOAT annotations=0 default_size=0 default=-
+  param 5 name=gamma type=FLOAT annotations=0 default_size=0 default=-
+  param 6 name=key_color type=VEC4 annotations=0 default_size=0 default=-
+  param 7 name=similarity type=FLOAT annotations=0 default_size=0 default=-
+  param 8 name=smoothness type=FLOAT annotations=0 default_size=0 default=-
+  technique 0 name=Draw passes=1
+    pass 0 name=@null vertex_params=[ViewProj] pixel_params=[image,color,similarity,smoothness,key_color,gamma,contrast,brightness] vertex=yes pixel=yes
+backend vertexshader_create location="plugins/obs-filters/data/color_key_filter.effect (Vertex shader, technique Draw, pass 0)" len=317 fnv=b06d11de3e765c86
+  sparam 0 name=ViewProj type=MATRIX4X4 array=0
+  result ok
+backend pixelshader_create location="plugins/obs-filters/data/color_key_filter.effect (Pixel shader, technique Draw, pass 0)" len=1033 fnv=6cd430d45fd0630c
+  sparam 0 name=image type=TEXTURE array=0
+  sparam 1 name=color type=VEC4 array=0
+  sparam 2 name=similarity type=FLOAT array=0
+  sparam 3 name=smoothness type=FLOAT array=0
+  sparam 4 name=key_color type=VEC4 array=0
+  sparam 5 name=gamma type=FLOAT array=0
+  sparam 6 name=contrast type=FLOAT array=0
+  sparam 7 name=brightness type=FLOAT array=0
+  result ok
+ep result=ok
+  errors count=0 has_errors=0
+  ep params=9 structs=1 funcs=5 samplers=1 techniques=1
+  ep_param 0 type=float4x4 name=ViewProj property=0 const=0 uniform=1 texture=0 array_count=0 annotations=0
+  ep_param 1 type=texture2d name=image property=0 const=0 uniform=1 texture=1 array_count=0 annotations=0
+  ep_param 2 type=float4 name=color property=0 const=0 uniform=1 texture=0 array_count=0 annotations=0
+  ep_param 3 type=float name=contrast property=0 const=0 uniform=1 texture=0 array_count=0 annotations=0
+  ep_param 4 type=float name=brightness property=0 const=0 uniform=1 texture=0 array_count=0 annotations=0
+  ep_param 5 type=float name=gamma property=0 const=0 uniform=1 texture=0 array_count=0 annotations=0
+  ep_param 6 type=float4 name=key_color property=0 const=0 uniform=1 texture=0 array_count=0 annotations=0
+  ep_param 7 type=float name=similarity property=0 const=0 uniform=1 texture=0 array_count=0 annotations=0
+  ep_param 8 type=float name=smoothness property=0 const=0 uniform=1 texture=0 array_count=0 annotations=0
+  ep_struct 0 name=VertData vars=2
+    var type=float4 name=pos mapping="POSITION" var_type=IN
+    var type=float2 name=uv mapping="TEXCOORD0" var_type=IN
+  ep_func 0 name=VSDefault ret=VertData mapping=@null params=1
+    var type=VertData name=v_in mapping=@null var_type=IN
+    struct_deps=["VertData","VertData","VertData"] func_deps=[] param_deps=["ViewProj"] sampler_deps=[] contents_len=124
+  ep_func 1 name=CalcColor ret=float4 mapping=@null params=1
+    var type=float4 name=rgba mapping=@null var_type=IN
+    struct_deps=[] func_deps=[] param_deps=["gamma","gamma","gamma","contrast","brightness"] sampler_deps=[] contents_len=95
+  ep_func 2 name=GetColorDist ret=float mapping=@null params=1
+    var type=float3 name=rgb mapping=@null var_type=IN
+    struct_deps=[] func_deps=[] param_deps=["key_color"] sampler_deps=[] contents_len=41
+  ep_func 3 name=ProcessColorKey ret=float4 mapping=@null params=2
+    var type=float4 name=rgba mapping=@null var_type=IN
+    var type=VertData name=v_in mapping=@null var_type=IN
+    struct_deps=["VertData"] func_deps=["GetColorDist","CalcColor"] param_deps=["similarity","smoothness"] sampler_deps=[] contents_len=140
+  ep_func 4 name=PSColorKeyRGBA ret=float4 mapping="TARGET" params=1
+    var type=VertData name=v_in mapping=@null var_type=IN
+    struct_deps=["VertData"] func_deps=["ProcessColorKey"] param_deps=["image","color"] sampler_deps=["textureSampler"] contents_len=159
+  ep_sampler 0 name=textureSampler states=3
+    state "Filter" = "Linear"
+    state "AddressU" = "Clamp"
+    state "AddressV" = "Clamp"
+  ep_technique 0 name=Draw passes=1
+    ep_pass 0 name=@null
+      vertex=["VSDefault","(","v_in",")",";"]
+      fragment=["PSColorKeyRGBA","(","v_in",")",";"]
+  error_string=@null
+effect (effect) params=9 techniques=1 viewproj=ViewProj world=-
+  param 0 name=ViewProj type=MATRIX4X4 annotations=0 default_size=0 default=-
+  param 1 name=image type=TEXTURE annotations=0 default_size=0 default=-
+  param 2 name=color type=VEC4 annotations=0 default_size=0 default=-
+  param 3 name=contrast type=FLOAT annotations=0 default_size=0 default=-
+  param 4 name=brightness type=FLOAT annotations=0 default_size=0 default=-
+  param 5 name=gamma type=FLOAT annotations=0 default_size=0 default=-
+  param 6 name=key_color type=VEC4 annotations=0 default_size=0 default=-
+  param 7 name=similarity type=FLOAT annotations=0 default_size=0 default=-
+  param 8 name=smoothness type=FLOAT annotations=0 default_size=0 default=-
+  technique 0 name=Draw passes=1
+    pass 0 name=@null vertex_params=[ViewProj] pixel_params=[image,color,similarity,smoothness,key_color,gamma,contrast,brightness] vertex=yes pixel=yes
+destroy e cached=1
+=== plugins/obs-filters/data/color_key_filter_v2.effect
+backend vertexshader_create location="plugins/obs-filters/data/color_key_filter_v2.effect (Vertex shader, technique Draw, pass 0)" len=317 fnv=b06d11de3e765c86
+  text "uniform float4x4 ViewProj;\n\n\nstruct VertData {\n\tfloat4 pos : POSITION;\n\tfloat2 uv : TEXCOORD0;\n};\n\nVertData VSDefault(VertData v_in)\n{\n\tVertData vert_out;\n\tvert_out.pos = mul(float4(v_in.pos.xyz, 1.0), ViewProj);\n\tvert_out.uv  = v_in.uv;\n\treturn vert_out;\n}\n\nVertData main(VertData v_in)\n{\n\treturn VSDefault(v_in);\n}\n"
+  sparam 0 name=ViewProj type=MATRIX4X4 array=0
+  result ok
+backend pixelshader_create location="plugins/obs-filters/data/color_key_filter_v2.effect (Pixel shader, technique Draw, pass 0)" len=1356 fnv=7b94464cc0790a20
+  text "uniform texture2d image;\nuniform float opacity;\n\n\nsampler_state textureSampler {\n\tFilter = Linear;\n\n\tAddressU = Clamp;\n\n\tAddressV = Clamp;\n\n};\n\nstruct VertData {\n\tfloat4 pos : POSITION;\n\tfloat2 uv : TEXCOORD0;\n};\n\nuniform float similarity;\nuniform float smoothness;\n\n\nuniform float4 key_color;\n\n\nfloat GetNonlinearChannel(float u)\n{\n\treturn (u <= 0.0031308) ? (12.92 * u) : ((1.055 * pow(u, 1.0 / 2.4)) - 0.055);\n}\n\n\nfloat3 GetNonlinearColor(float3 rgb)\n{\n\treturn float3(GetNonlinearChannel(rgb.r), GetNonlinearChannel(rgb.g), GetNonlinearChannel(rgb.b));\n}\n\n\nfloat GetColorDist(float3 rgb)\n{\n\treturn distance(key_color.rgb, GetNonlinearColor(rgb));\n}\n\n\nuniform float gamma;\nuniform float contrast;\nuniform float brightness;\n\n\nfloat4 CalcColor(float4 rgba)\n{\n\treturn float4(pow(rgba.rgb, float3(gamma, gamma, gamma)) * contrast + brightness, rgba.a);\n}\n\n\nfloat4 ProcessColorKey(float4 rgba, VertData v_in)\n{\n\tfloat colorDist = GetColorDist(rgba.rgb);\n\trgba.a *= saturate(max(colorDist - similarity, 0.0) / smoothness);\n\n\treturn CalcColor(rgba);\n}\n\n\nfloat4 PSColorKeyRGBA(VertData v_in)\n{\n\tfloat4 rgba = image.Sample(textureSampler, v_in.uv);\n\trgba.rgb *= (rgba.a > 0.) ? (1. / rgba.a) : 0.;\n\trgba.a *= opacity;\n\trgba = ProcessColorKey(rgba, v_in);\n\trgba.rgb *= rgba.a;\n\treturn rgba;\n}\n\nfloat4 main(VertData v_in) : TARGET\n{\n\treturn PSColorKeyRGBA(v_in);\n}\n"
+  sparam 0 name=image type=TEXTURE array=0
+  sparam 1 name=opacity type=FLOAT array=0
+  sparam 2 name=similarity type=FLOAT array=0
+  sparam 3 name=smoothness type=FLOAT array=0
+  sparam 4 name=key_color type=VEC4 array=0
+  sparam 5 name=gamma type=FLOAT array=0
+  sparam 6 name=contrast type=FLOAT array=0
+  sparam 7 name=brightness type=FLOAT array=0
+  result ok
+effect e result=ok
+  error_string=@null
+effect e params=9 techniques=1 viewproj=ViewProj world=-
+  param 0 name=ViewProj type=MATRIX4X4 annotations=0 default_size=0 default=-
+  param 1 name=image type=TEXTURE annotations=0 default_size=0 default=-
+  param 2 name=opacity type=FLOAT annotations=0 default_size=0 default=-
+  param 3 name=contrast type=FLOAT annotations=0 default_size=0 default=-
+  param 4 name=brightness type=FLOAT annotations=0 default_size=0 default=-
+  param 5 name=gamma type=FLOAT annotations=0 default_size=0 default=-
+  param 6 name=key_color type=VEC4 annotations=0 default_size=0 default=-
+  param 7 name=similarity type=FLOAT annotations=0 default_size=0 default=-
+  param 8 name=smoothness type=FLOAT annotations=0 default_size=0 default=-
+  technique 0 name=Draw passes=1
+    pass 0 name=@null vertex_params=[ViewProj] pixel_params=[image,opacity,similarity,smoothness,key_color,gamma,contrast,brightness] vertex=yes pixel=yes
+backend vertexshader_create location="plugins/obs-filters/data/color_key_filter_v2.effect (Vertex shader, technique Draw, pass 0)" len=317 fnv=b06d11de3e765c86
+  sparam 0 name=ViewProj type=MATRIX4X4 array=0
+  result ok
+backend pixelshader_create location="plugins/obs-filters/data/color_key_filter_v2.effect (Pixel shader, technique Draw, pass 0)" len=1356 fnv=7b94464cc0790a20
+  sparam 0 name=image type=TEXTURE array=0
+  sparam 1 name=opacity type=FLOAT array=0
+  sparam 2 name=similarity type=FLOAT array=0
+  sparam 3 name=smoothness type=FLOAT array=0
+  sparam 4 name=key_color type=VEC4 array=0
+  sparam 5 name=gamma type=FLOAT array=0
+  sparam 6 name=contrast type=FLOAT array=0
+  sparam 7 name=brightness type=FLOAT array=0
+  result ok
+ep result=ok
+  errors count=0 has_errors=0
+  ep params=9 structs=1 funcs=7 samplers=1 techniques=1
+  ep_param 0 type=float4x4 name=ViewProj property=0 const=0 uniform=1 texture=0 array_count=0 annotations=0
+  ep_param 1 type=texture2d name=image property=0 const=0 uniform=1 texture=1 array_count=0 annotations=0
+  ep_param 2 type=float name=opacity property=0 const=0 uniform=1 texture=0 array_count=0 annotations=0
+  ep_param 3 type=float name=contrast property=0 const=0 uniform=1 texture=0 array_count=0 annotations=0
+  ep_param 4 type=float name=brightness property=0 const=0 uniform=1 texture=0 array_count=0 annotations=0
+  ep_param 5 type=float name=gamma property=0 const=0 uniform=1 texture=0 array_count=0 annotations=0
+  ep_param 6 type=float4 name=key_color property=0 const=0 uniform=1 texture=0 array_count=0 annotations=0
+  ep_param 7 type=float name=similarity property=0 const=0 uniform=1 texture=0 array_count=0 annotations=0
+  ep_param 8 type=float name=smoothness property=0 const=0 uniform=1 texture=0 array_count=0 annotations=0
+  ep_struct 0 name=VertData vars=2
+    var type=float4 name=pos mapping="POSITION" var_type=IN
+    var type=float2 name=uv mapping="TEXCOORD0" var_type=IN
+  ep_func 0 name=VSDefault ret=VertData mapping=@null params=1
+    var type=VertData name=v_in mapping=@null var_type=IN
+    struct_deps=["VertData","VertData","VertData"] func_deps=[] param_deps=["ViewProj"] sampler_deps=[] contents_len=124
+  ep_func 1 name=CalcColor ret=float4 mapping=@null params=1
+    var type=float4 name=rgba mapping=@null var_type=IN
+    struct_deps=[] func_deps=[] param_deps=["gamma","gamma","gamma","contrast","brightness"] sampler_deps=[] contents_len=95
+  ep_func 2 name=GetNonlinearChannel ret=float mapping=@null params=1
+    var type=float name=u mapping=@null var_type=IN
+    struct_deps=[] func_deps=[] param_deps=[] sampler_deps=[] contents_len=83
+  ep_func 3 name=GetNonlinearColor ret=float3 mapping=@null params=1
+    var type=float3 name=rgb mapping=@null var_type=IN
+    struct_deps=[] func_deps=["GetNonlinearChannel","GetNonlinearChannel","GetNonlinearChannel"] param_deps=[] sampler_deps=[] contents_len=103
+  ep_func 4 name=GetColorDist ret=float mapping=@null params=1
+    var type=float3 name=rgb mapping=@null var_type=IN
+    struct_deps=[] func_deps=["GetNonlinearColor"] param_deps=["key_color"] sampler_deps=[] contents_len=60
+  ep_func 5 name=ProcessColorKey ret=float4 mapping=@null params=2
+    var type=float4 name=rgba mapping=@null var_type=IN
+    var type=VertData name=v_in mapping=@null var_type=IN
+    struct_deps=["VertData"] func_deps=["GetColorDist","CalcColor"] param_deps=["similarity","smoothness"] sampler_deps=[] contents_len=140
+  ep_func 6 name=PSColorKeyRGBA ret=float4 mapping="TARGET" params=1
+    var type=VertData name=v_in mapping=@null var_type=IN
+    struct_deps=["VertData"] func_deps=["ProcessColorKey"] param_deps=["image","opacity"] sampler_deps=["textureSampler"] contents_len=198
+  ep_sampler 0 name=textureSampler states=3
+    state "Filter" = "Linear"
+    state "AddressU" = "Clamp"
+    state "AddressV" = "Clamp"
+  ep_technique 0 name=Draw passes=1
+    ep_pass 0 name=@null
+      vertex=["VSDefault","(","v_in",")",";"]
+      fragment=["PSColorKeyRGBA","(","v_in",")",";"]
+  error_string=@null
+effect (effect) params=9 techniques=1 viewproj=ViewProj world=-
+  param 0 name=ViewProj type=MATRIX4X4 annotations=0 default_size=0 default=-
+  param 1 name=image type=TEXTURE annotations=0 default_size=0 default=-
+  param 2 name=opacity type=FLOAT annotations=0 default_size=0 default=-
+  param 3 name=contrast type=FLOAT annotations=0 default_size=0 default=-
+  param 4 name=brightness type=FLOAT annotations=0 default_size=0 default=-
+  param 5 name=gamma type=FLOAT annotations=0 default_size=0 default=-
+  param 6 name=key_color type=VEC4 annotations=0 default_size=0 default=-
+  param 7 name=similarity type=FLOAT annotations=0 default_size=0 default=-
+  param 8 name=smoothness type=FLOAT annotations=0 default_size=0 default=-
+  technique 0 name=Draw passes=1
+    pass 0 name=@null vertex_params=[ViewProj] pixel_params=[image,opacity,similarity,smoothness,key_color,gamma,contrast,brightness] vertex=yes pixel=yes
+destroy e cached=1
+=== plugins/obs-filters/data/crop_filter.effect
+backend vertexshader_create location="plugins/obs-filters/data/crop_filter.effect (Vertex shader, technique Draw, pass 0)" len=379 fnv=efd5cb22e48d06f5
+  text "uniform float4x4 ViewProj;\nuniform float2 mul_val;\nuniform float2 add_val;\n\n\nstruct VertData {\n\tfloat4 pos : POSITION;\n\tfloat2 uv : TEXCOORD0;\n};\n\nVertData VSCrop(VertData v_in)\n{\n\tVertData vert_out;\n\tvert_out.pos = mul(float4(v_in.pos.xyz, 1.0), ViewProj);\n\tvert_out.uv  = v_in.uv * mul_val + add_val;\n\treturn vert_out;\n}\n\nVertData main(VertData v_in)\n{\n\treturn VSCrop(v_in);\n}\n"
+  sparam 0 name=ViewProj type=MATRIX4X4 array=0
+  sparam 1 name=mul_val type=VEC2 array=0
+  sparam 2 name=add_val type=VEC2 array=0
+  result ok
+backend pixelshader_create location="plugins/obs-filters/data/crop_filter.effect (Pixel shader, technique Draw, pass 0)" len=362 fnv=a14cfe9d81758291
+  text "uniform texture2d image;\n\n\nsampler_state textureSampler {\n\tFilter = Linear;\n\n\tAddressU = Border;\n\n\tAddressV = Border;\n\n\tBorderColor = 00000000;\n\n};\n\nstruct VertData {\n\tfloat4 pos : POSITION;\n\tfloat2 uv : TEXCOORD0;\n};\n\nfloat4 PSCrop(VertData v_in)\n{\n\treturn image.Sample(textureSampler, v_in.uv);\n}\n\nfloat4 main(VertData v_in) : TARGET\n{\n\treturn PSCrop(v_in);\n}\n"
+  sparam 0 name=image type=TEXTURE array=0
+  result ok
+backend vertexshader_create location="plugins/obs-filters/data/crop_filter.effect (Vertex shader, technique DrawMultiply, pass 0)" len=379 fnv=efd5cb22e48d06f5
+  text "uniform float4x4 ViewProj;\nuniform float2 mul_val;\nuniform float2 add_val;\n\n\nstruct VertData {\n\tfloat4 pos : POSITION;\n\tfloat2 uv : TEXCOORD0;\n};\n\nVertData VSCrop(VertData v_in)\n{\n\tVertData vert_out;\n\tvert_out.pos = mul(float4(v_in.pos.xyz, 1.0), ViewProj);\n\tvert_out.uv  = v_in.uv * mul_val + add_val;\n\treturn vert_out;\n}\n\nVertData main(VertData v_in)\n{\n\treturn VSCrop(v_in);\n}\n"
+  sparam 0 name=ViewProj type=MATRIX4X4 array=0
+  sparam 1 name=mul_val type=VEC2 array=0
+  sparam 2 name=add_val type=VEC2 array=0
+  result ok
+backend pixelshader_create location="plugins/obs-filters/data/crop_filter.effect (Pixel shader, technique DrawMultiply, pass 0)" len=450 fnv=9eda6ce9dbe404d1
+  text "uniform texture2d image;\nuniform float multiplier;\n\n\nsampler_state textureSampler {\n\tFilter = Linear;\n\n\tAddressU = Border;\n\n\tAddressV = Border;\n\n\tBorderColor = 00000000;\n\n};\n\nstruct VertData {\n\tfloat4 pos : POSITION;\n\tfloat2 uv : TEXCOORD0;\n};\n\nfloat4 PSCropMultiply(VertData v_in)\n{\n\tfloat4 rgba = image.Sample(textureSampler, v_in.uv);\n\trgba.rgb *= multiplier;\n\treturn rgba;\n}\n\nfloat4 main(VertData v_in) : TARGET\n{\n\treturn PSCropMultiply(v_in);\n}\n"
+  sparam 0 name=image type=TEXTURE array=0
+  sparam 1 name=multiplier type=FLOAT array=0
+  result ok
+backend vertexshader_create location="plugins/obs-filters/data/crop_filter.effect (Vertex shader, technique DrawTonemap, pass 0)" len=379 fnv=efd5cb22e48d06f5
+  text "uniform float4x4 ViewProj;\nuniform float2 mul_val;\nuniform float2 add_val;\n\n\nstruct VertData {\n\tfloat4 pos : POSITION;\n\tfloat2 uv : TEXCOORD0;\n};\n\nVertData VSCrop(VertData v_in)\n{\n\tVertData vert_out;\n\tvert_out.pos = mul(float4(v_in.pos.xyz, 1.0), ViewProj);\n\tvert_out.uv  = v_in.uv * mul_val + add_val;\n\treturn vert_out;\n}\n\nVertData main(VertData v_in)\n{\n\treturn VSCrop(v_in);\n}\n"
+  sparam 0 name=ViewProj type=MATRIX4X4 array=0
+  sparam 1 name=mul_val type=VEC2 array=0
+  sparam 2 name=add_val type=VEC2 array=0
+  result ok
+backend pixelshader_create location="plugins/obs-filters/data/crop_filter.effect (Pixel shader, technique DrawTonemap, pass 0)" len=1709 fnv=63e1650102b14a15
+  text "uniform texture2d image;\n\n\nsampler_state textureSampler {\n\tFilter = Linear;\n\n\tAddressU = Border;\n\n\tAddressV = Border;\n\n\tBorderColor = 00000000;\n\n};\n\nstruct VertData {\n\tfloat4 pos : POSITION;\n\tfloat2 uv : TEXCOORD0;\n};\n\nfloat3 rec709_to_rec2020(float3 v)\n{\n\tfloat r = dot(v, float3(0.62740389593469903, 0.32928303837788370, 0.043313065687417225));\n\tfloat g = dot(v, float3(0.069097289358232075, 0.91954039507545871, 0.011362315566309178));\n\tfloat b = dot(v, float3(0.016391438875150280, 0.088013307877225749, 0.89559525324762401));\n\treturn float3(r, g, b);\n}\n\n\nfloat srgb_nonlinear_to_linear_channel(float u)\n{\n\treturn (u <= 0.04045) ? (u / 12.92) : pow(mad(u, 1. / 1.055, .055 / 1.055), 2.4);\n}\n\n\nfloat3 srgb_nonlinear_to_linear(float3 v)\n{\n\treturn float3(srgb_nonlinear_to_linear_channel(v.r), srgb_nonlinear_to_linear_channel(v.g), srgb_nonlinear_to_linear_channel(v.b));\n}\n\n\nfloat3 reinhard(float3 rgb)\n{\n\trgb /= rgb + float3(1., 1., 1.);\n\trgb = saturate(rgb);\n\trgb = pow(rgb, float3(1. / 2.4, 1. / 2.4, 1. / 2.4));\n\trgb = srgb_nonlinear_to_linear(rgb);\n\treturn rgb;\n}\n\n\nfloat3 rec2020_to_rec709(float3 v)\n{\n\tfloat r = dot(v, float3(1.6604910021084345, -0.58764113878854951, -0.072849863319884883));\n\tfloat g = dot(v, float3(-0.12455047452159074, 1.1328998971259603, -0.0083494226043694768));\n\tfloat b = dot(v, float3(-0.018150763354905303, -0.10057889800800739, 1.1187296613629127));\n\treturn float3(r, g, b);\n}\n\n\nfloat4 PSCropTonemap(VertData v_in)\n{\n\tfloat4 rgba = image.Sample(textureSampler, v_in.uv);\n\trgba.rgb = rec709_to_rec2020(rgba.rgb);\n\trgba.rgb = reinhard(rgba.rgb);\n\trgba.rgb = rec2020_to_rec709(rgba.rgb);\n\treturn rgba;\n}\n\nfloat4 main(VertData v_in) : TARGET\n{\n\treturn PSCropTonemap(v_in);\n}\n"
+  sparam 0 name=image type=TEXTURE array=0
+  result ok
+backend vertexshader_create location="plugins/obs-filters/data/crop_filter.effect (Vertex shader, technique DrawMultiplyTonemap, pass 0)" len=379 fnv=efd5cb22e48d06f5
+  text "uniform float4x4 ViewProj;\nuniform float2 mul_val;\nuniform float2 add_val;\n\n\nstruct VertData {\n\tfloat4 pos : POSITION;\n\tfloat2 uv : TEXCOORD0;\n};\n\nVertData VSCrop(VertData v_in)\n{\n\tVertData vert_out;\n\tvert_out.pos = mul(float4(v_in.pos.xyz, 1.0), ViewProj);\n\tvert_out.uv  = v_in.uv * mul_val + add_val;\n\treturn vert_out;\n}\n\nVertData main(VertData v_in)\n{\n\treturn VSCrop(v_in);\n}\n"
+  sparam 0 name=ViewProj type=MATRIX4X4 array=0
+  sparam 1 name=mul_val type=VEC2 array=0
+  sparam 2 name=add_val type=VEC2 array=0
+  result ok
+backend pixelshader_create location="plugins/obs-filters/data/crop_filter.effect (Pixel shader, technique DrawMultiplyTonemap, pass 0)" len=1776 fnv=8dec4e35f997ddea
+  text "uniform texture2d image;\nuniform float multiplier;\n\n\nsampler_state textureSampler {\n\tFilter = Linear;\n\n\tAddressU = Border;\n\n\tAddressV = Border;\n\n\tBorderColor = 00000000;\n\n};\n\nstruct VertData {\n\tfloat4 pos : POSITION;\n\tfloat2 uv : TEXCOORD0;\n};\n\nfloat3 rec709_to_rec2020(float3 v)\n{\n\tfloat r = dot(v, float3(0.62740389593469903, 0.32928303837788370, 0.043313065687417225));\n\tfloat g = dot(v, float3(0.069097289358232075, 0.91954039507545871, 0.011362315566309178));\n\tfloat b = dot(v, float3(0.016391438875150280, 0.088013307877225749, 0.89559525324762401));\n\treturn float3(r, g, b);\n}\n\n\nfloat srgb_nonlinear_to_linear_channel(float u)\n{\n\treturn (u <= 0.04045) ? (u / 12.92) : pow(mad(u, 1. / 1.055, .055 / 1.055), 2.4);\n}\n\n\nfloat3 srgb_nonlinear_to_linear(float3 v)\n{\n\treturn float3(srgb_nonlinear_to_linear_channel(v.r), srgb_nonlinear_to_linear_channel(v.g), srgb_nonlinear_to_linear_channel(v.b));\n}\n\n\nfloat3 reinhard(float3 rgb)\n{\n\trgb /= rgb + float3(1., 1., 1.);\n\trgb = saturate(rgb);\n\trgb = pow(rgb, float3(1. / 2.4, 1. / 2.4, 1. / 2.4));\n\trgb = srgb_nonlinear_to_linear(rgb);\n\treturn rgb;\n}\n\n\nfloat3 rec2020_to_rec709(float3 v)\n{\n\tfloat r = dot(v, float3(1.6604910021084345, -0.58764113878854951, -0.072849863319884883));\n\tfloat g = dot(v, float3(-0.12455047452159074, 1.1328998971259603, -0.0083494226043694768));\n\tfloat b = dot(v, float3(-0.018150763354905303, -0.10057889800800739, 1.1187296613629127));\n\treturn float3(r, g, b);\n}\n\n\nfloat4 PSCropMultiplyTonemap(VertData v_in)\n{\n\tfloat4 rgba = image.Sample(textureSampler, v_in.uv);\n\trgba.rgb *= multiplier;\n\trgba.rgb = rec709_to_rec2020(rgba.rgb);\n\trgba.rgb = reinhard(rgba.rgb);\n\trgba.rgb = rec2020_to_rec709(rgba.rgb);\n\treturn rgba;\n}\n\nfloat4 main(VertData v_in) : TARGET\n{\n\treturn PSCropMultiplyTonemap(v_in);\n}\n"
+  sparam 0 name=image type=TEXTURE array=0
+  sparam 1 name=multiplier type=FLOAT array=0
+  result ok
+effect e result=ok
+  error_string=@null
+effect e params=5 techniques=4 viewproj=ViewProj world=-
+  param 0 name=ViewProj type=MATRIX4X4 annotations=0 default_size=0 default=-
+  param 1 name=image type=TEXTURE annotations=0 default_size=0 default=-
+  param 2 name=mul_val type=VEC2 annotations=0 default_size=0 default=-
+  param 3 name=add_val type=VEC2 annotations=0 default_size=0 default=-
+  param 4 name=multiplier type=FLOAT annotations=0 default_size=0 default=-
+  technique 0 name=Draw passes=1
+    pass 0 name=@null vertex_params=[ViewProj,mul_val,add_val] pixel_params=[image] vertex=yes pixel=yes
+  technique 1 name=DrawMultiply passes=1
+    pass 0 name=@null vertex_params=[ViewProj,mul_val,add_val] pixel_params=[image,multiplier] vertex=yes pixel=yes
+  technique 2 name=DrawTonemap passes=1
+    pass 0 name=@null vertex_params=[ViewProj,mul_val,add_val] pixel_params=[image] vertex=yes pixel=yes
+  technique 3 name=DrawMultiplyTonemap passes=1
+    pass 0 name=@null vertex_params=[ViewProj,mul_val,add_val] pixel_params=[image,multiplier] vertex=yes pixel=yes
+backend vertexshader_create location="plugins/obs-filters/data/crop_filter.effect (Vertex shader, technique Draw, pass 0)" len=379 fnv=efd5cb22e48d06f5
+  sparam 0 name=ViewProj type=MATRIX4X4 array=0
+  sparam 1 name=mul_val type=VEC2 array=0
+  sparam 2 name=add_val type=VEC2 array=0
+  result ok
+backend pixelshader_create location="plugins/obs-filters/data/crop_filter.effect (Pixel shader, technique Draw, pass 0)" len=362 fnv=a14cfe9d81758291
+  sparam 0 name=image type=TEXTURE array=0
+  result ok
+backend vertexshader_create location="plugins/obs-filters/data/crop_filter.effect (Vertex shader, technique DrawMultiply, pass 0)" len=379 fnv=efd5cb22e48d06f5
+  sparam 0 name=ViewProj type=MATRIX4X4 array=0
+  sparam 1 name=mul_val type=VEC2 array=0
+  sparam 2 name=add_val type=VEC2 array=0
+  result ok
+backend pixelshader_create location="plugins/obs-filters/data/crop_filter.effect (Pixel shader, technique DrawMultiply, pass 0)" len=450 fnv=9eda6ce9dbe404d1
+  sparam 0 name=image type=TEXTURE array=0
+  sparam 1 name=multiplier type=FLOAT array=0
+  result ok
+backend vertexshader_create location="plugins/obs-filters/data/crop_filter.effect (Vertex shader, technique DrawTonemap, pass 0)" len=379 fnv=efd5cb22e48d06f5
+  sparam 0 name=ViewProj type=MATRIX4X4 array=0
+  sparam 1 name=mul_val type=VEC2 array=0
+  sparam 2 name=add_val type=VEC2 array=0
+  result ok
+backend pixelshader_create location="plugins/obs-filters/data/crop_filter.effect (Pixel shader, technique DrawTonemap, pass 0)" len=1709 fnv=63e1650102b14a15
+  sparam 0 name=image type=TEXTURE array=0
+  result ok
+backend vertexshader_create location="plugins/obs-filters/data/crop_filter.effect (Vertex shader, technique DrawMultiplyTonemap, pass 0)" len=379 fnv=efd5cb22e48d06f5
+  sparam 0 name=ViewProj type=MATRIX4X4 array=0
+  sparam 1 name=mul_val type=VEC2 array=0
+  sparam 2 name=add_val type=VEC2 array=0
+  result ok
+backend pixelshader_create location="plugins/obs-filters/data/crop_filter.effect (Pixel shader, technique DrawMultiplyTonemap, pass 0)" len=1776 fnv=8dec4e35f997ddea
+  sparam 0 name=image type=TEXTURE array=0
+  sparam 1 name=multiplier type=FLOAT array=0
+  result ok
+ep result=ok
+  errors count=0 has_errors=0
+  ep params=5 structs=1 funcs=17 samplers=1 techniques=4
+  ep_param 0 type=float4x4 name=ViewProj property=0 const=0 uniform=1 texture=0 array_count=0 annotations=0
+  ep_param 1 type=texture2d name=image property=0 const=0 uniform=1 texture=1 array_count=0 annotations=0
+  ep_param 2 type=float2 name=mul_val property=0 const=0 uniform=1 texture=0 array_count=0 annotations=0
+  ep_param 3 type=float2 name=add_val property=0 const=0 uniform=1 texture=0 array_count=0 annotations=0
+  ep_param 4 type=float name=multiplier property=0 const=0 uniform=1 texture=0 array_count=0 annotations=0
+  ep_struct 0 name=VertData vars=2
+    var type=float4 name=pos mapping="POSITION" var_type=IN
+    var type=float2 name=uv mapping="TEXCOORD0" var_type=IN
+  ep_func 0 name=srgb_linear_to_nonlinear_channel ret=float mapping=@null params=1
+    var type=float name=u mapping=@null var_type=IN
+    struct_deps=[] func_deps=[] param_deps=[] sampler_deps=[] contents_len=82
+  ep_func 1 name=srgb_linear_to_nonlinear ret=float3 mapping=@null params=1
+    var type=float3 name=v mapping=@null var_type=IN
+    struct_deps=[] func_deps=["srgb_linear_to_nonlinear_channel","srgb_linear_to_nonlinear_channel","srgb_linear_to_nonlinear_channel"] param_deps=[] sampler_deps=[] contents_len=136
+  ep_func 2 name=srgb_nonlinear_to_linear_channel ret=float mapping=@null params=1
+    var type=float name=u mapping=@null var_type=IN
+    struct_deps=[] func_deps=[] param_deps=[] sampler_deps=[] contents_len=86
+  ep_func 3 name=srgb_nonlinear_to_linear ret=float3 mapping=@null params=1
+    var type=float3 name=v mapping=@null var_type=IN
+    struct_deps=[] func_deps=["srgb_nonlinear_to_linear_channel","srgb_nonlinear_to_linear_channel","srgb_nonlinear_to_linear_channel"] param_deps=[] sampler_deps=[] contents_len=136
+  ep_func 4 name=rec709_to_rec2020 ret=float3 mapping=@null params=1
+    var type=float3 name=v mapping=@null var_type=IN
+    struct_deps=[] func_deps=[] param_deps=[] sampler_deps=[] contents_len=303
+  ep_func 5 name=rec2020_to_rec709 ret=float3 mapping=@null params=1
+    var type=float3 name=v mapping=@null var_type=IN
+    struct_deps=[] func_deps=[] param_deps=[] sampler_deps=[] contents_len=305
+  ep_func 6 name=reinhard ret=float3 mapping=@null params=1
+    var type=float3 name=rgb mapping=@null var_type=IN
+    struct_deps=[] func_deps=["srgb_nonlinear_to_linear"] param_deps=[] sampler_deps=[] contents_len=165
+  ep_func 7 name=linear_to_st2084_channel ret=float mapping=@null params=1
+    var type=float name=x mapping=@null var_type=IN
+    struct_deps=[] func_deps=[] param_deps=[] sampler_deps=[] contents_len=115
+  ep_func 8 name=st2084_to_linear_channel ret=float mapping=@null params=1
+    var type=float name=u mapping=@null var_type=IN
+    struct_deps=[] func_deps=[] param_deps=[] sampler_deps=[] contents_len=132
+  ep_func 9 name=eetf_0_Lmax ret=float mapping=@null params=3
+    var type=float name=maxRGB1_pq mapping=@null var_type=IN
+    var type=float name=Lw mapping=@null var_type=IN
+    var type=float name=Lmax mapping=@null var_type=IN
+    struct_deps=[] func_deps=["linear_to_st2084_channel","linear_to_st2084_channel"] param_deps=[] sampler_deps=[] contents_len=528
+  ep_func 10 name=maxRGB_eetf_internal ret=float3 mapping=@null params=5
+    var type=float3 name=rgb_linear mapping=@null var_type=IN
+    var type=float name=maxRGB1_linear mapping=@null var_type=IN
+    var type=float name=maxRGB1_pq mapping=@null var_type=IN
+    var type=float name=Lw mapping=@null var_type=IN
+    var type=float name=Lmax mapping=@null var_type=IN
+    struct_deps=[] func_deps=["eetf_0_Lmax","st2084_to_linear_channel"] param_deps=[] sampler_deps=[] contents_len=244
+  ep_func 11 name=maxRGB_eetf_linear_to_linear ret=float3 mapping=@null params=3
+    var type=float3 name=rgb_linear mapping=@null var_type=IN
+    var type=float name=Lw mapping=@null var_type=IN
+    var type=float name=Lmax mapping=@null var_type=IN
+    struct_deps=[] func_deps=["linear_to_st2084_channel","maxRGB_eetf_internal"] param_deps=[] sampler_deps=[] contents_len=221
+  ep_func 12 name=VSCrop ret=VertData mapping=@null params=1
+    var type=VertData name=v_in mapping=@null var_type=IN
+    struct_deps=["VertData","VertData","VertData"] func_deps=[] param_deps=["ViewProj","mul_val","add_val"] sampler_deps=[] contents_len=144
+  ep_func 13 name=PSCrop ret=float4 mapping="TARGET" params=1
+    var type=VertData name=v_in mapping=@null var_type=IN
+    struct_deps=["VertData"] func_deps=[] param_deps=["image"] sampler_deps=["textureSampler"] contents_len=50
+  ep_func 14 name=PSCropMultiply ret=float4 mapping="TARGET" params=1
+    var type=VertData name=v_in mapping=@null var_type=IN
+    struct_deps=["VertData"] func_deps=[] param_deps=["image","multiplier"] sampler_deps=["textureSampler"] contents_len=96
+  ep_func 15 name=PSCropTonemap ret=float4 mapping="TARGET" params=1
+    var type=VertData name=v_in mapping=@null var_type=IN
+    struct_deps=["VertData"] func_deps=["rec709_to_rec2020","reinhard","rec2020_to_rec709"] param_deps=["image"] sampler_deps=["textureSampler"] contents_len=185
+  ep_func 16 name=PSCropMultiplyTonemap ret=float4 mapping="TARGET" params=1
+    var type=VertData name=v_in mapping=@null var_type=IN
+    struct_deps=["VertData"] func_deps=["rec709_to_rec2020","reinhard","rec2020_to_rec709"] param_deps=["image","multiplier"] sampler_deps=["textureSampler"] contents_len=210
+  ep_sampler 0 name=textureSampler states=4
+    state "Filter" = "Linear"
+    state "AddressU" = "Border"
+    state "AddressV" = "Border"
+    state "BorderColor" = "00000000"
+  ep_technique 0 name=Draw passes=1
+    ep_pass 0 name=@null
+      vertex=["VSCrop","(","v_in",")",";"]
+      fragment=["PSCrop","(","v_in",")",";"]
+  ep_technique 1 name=DrawMultiply passes=1
+    ep_pass 0 name=@null
+      vertex=["VSCrop","(","v_in",")",";"]
+      fragment=["PSCropMultiply","(","v_in",")",";"]
+  ep_technique 2 name=DrawTonemap passes=1
+    ep_pass 0 name=@null
+      vertex=["VSCrop","(","v_in",")",";"]
+      fragment=["PSCropTonemap","(","v_in",")",";"]
+  ep_technique 3 name=DrawMultiplyTonemap passes=1
+    ep_pass 0 name=@null
+      vertex=["VSCrop","(","v_in",")",";"]
+      fragment=["PSCropMultiplyTonemap","(","v_in",")",";"]
+  error_string=@null
+effect (effect) params=5 techniques=4 viewproj=ViewProj world=-
+  param 0 name=ViewProj type=MATRIX4X4 annotations=0 default_size=0 default=-
+  param 1 name=image type=TEXTURE annotations=0 default_size=0 default=-
+  param 2 name=mul_val type=VEC2 annotations=0 default_size=0 default=-
+  param 3 name=add_val type=VEC2 annotations=0 default_size=0 default=-
+  param 4 name=multiplier type=FLOAT annotations=0 default_size=0 default=-
+  technique 0 name=Draw passes=1
+    pass 0 name=@null vertex_params=[ViewProj,mul_val,add_val] pixel_params=[image] vertex=yes pixel=yes
+  technique 1 name=DrawMultiply passes=1
+    pass 0 name=@null vertex_params=[ViewProj,mul_val,add_val] pixel_params=[image,multiplier] vertex=yes pixel=yes
+  technique 2 name=DrawTonemap passes=1
+    pass 0 name=@null vertex_params=[ViewProj,mul_val,add_val] pixel_params=[image] vertex=yes pixel=yes
+  technique 3 name=DrawMultiplyTonemap passes=1
+    pass 0 name=@null vertex_params=[ViewProj,mul_val,add_val] pixel_params=[image,multiplier] vertex=yes pixel=yes
+destroy e cached=1
+=== plugins/obs-filters/data/hdr_tonemap_filter.effect
+backend vertexshader_create location="plugins/obs-filters/data/hdr_tonemap_filter.effect (Vertex shader, technique Reinhard, pass 0)" len=389 fnv=c6e8d77e2136ebed
+  text "uniform float4x4 ViewProj;\n\n\nstruct VertOut {\n\tfloat2 uv : TEXCOORD0;\n\tfloat4 pos : POSITION;\n};\n\nstruct VertData {\n\tfloat4 pos : POSITION;\n\tfloat2 uv : TEXCOORD0;\n};\n\nVertOut VSHdrTonemap(VertData v_in)\n{\n\tVertOut vert_out;\n\tvert_out.pos = mul(float4(v_in.pos.xyz, 1.0), ViewProj);\n\tvert_out.uv  = v_in.uv;\n\treturn vert_out;\n}\n\nVertOut main(VertData v_in)\n{\n\treturn VSHdrTonemap(v_in);\n}\n"
+  sparam 0 name=ViewProj type=MATRIX4X4 array=0
+  result ok
+backend pixelshader_create location="plugins/obs-filters/data/hdr_tonemap_filter.effect (Pixel shader, technique Reinhard, pass 0)" len=1702 fnv=825a74a18367ac04
+  text "uniform texture2d image;\nuniform float multiplier;\n\n\nsampler_state textureSampler {\n\tFilter = Linear;\n\n\tAddressU = Clamp;\n\n\tAddressV = Clamp;\n\n};\n\nstruct FragData {\n\tfloat2 uv : TEXCOORD0;\n};\n\nfloat3 rec709_to_rec2020(float3 v)\n{\n\tfloat r = dot(v, float3(0.62740389593469903, 0.32928303837788370, 0.043313065687417225));\n\tfloat g = dot(v, float3(0.069097289358232075, 0.91954039507545871, 0.011362315566309178));\n\tfloat b = dot(v, float3(0.016391438875150280, 0.088013307877225749, 0.89559525324762401));\n\treturn float3(r, g, b);\n}\n\n\nfloat srgb_nonlinear_to_linear_channel(float u)\n{\n\treturn (u <= 0.04045) ? (u / 12.92) : pow(mad(u, 1. / 1.055, .055 / 1.055), 2.4);\n}\n\n\nfloat3 srgb_nonlinear_to_linear(float3 v)\n{\n\treturn float3(srgb_nonlinear_to_linear_channel(v.r), srgb_nonlinear_to_linear_channel(v.g), srgb_nonlinear_to_linear_channel(v.b));\n}\n\n\nfloat3 reinhard(float3 rgb)\n{\n\trgb /= rgb + float3(1., 1., 1.);\n\trgb = saturate(rgb);\n\trgb = pow(rgb, float3(1. / 2.4, 1. / 2.4, 1. / 2.4));\n\trgb = srgb_nonlinear_to_linear(rgb);\n\treturn rgb;\n}\n\n\nfloat3 rec2020_to_rec709(float3 v)\n{\n\tfloat r = dot(v, float3(1.6604910021084345, -0.58764113878854951, -0.072849863319884883));\n\tfloat g = dot(v, float3(-0.12455047452159074, 1.1328998971259603, -0.0083494226043694768));\n\tfloat b = dot(v, float3(-0.018150763354905303, -0.10057889800800739, 1.1187296613629127));\n\treturn float3(r, g, b);\n}\n\n\nfloat4 PSReinhard(FragData f_in)\n{\n\tfloat4 rgba = image.Sample(textureSampler, f_in.uv);\n\trgba.rgb *= multiplier;\n\trgba.rgb = rec709_to_rec2020(rgba.rgb);\n\trgba.rgb = reinhard(rgba.rgb);\n\trgba.rgb = rec2020_to_rec709(rgba.rgb);\n\treturn rgba;\n}\n\nfloat4 main(FragData f_in) : TARGET\n{\n\treturn PSReinhard(f_in);\n}\n"
+  sparam 0 name=image type=TEXTURE array=0
+  sparam 1 name=multiplier type=FLOAT array=0
+  result ok
+backend vertexshader_create location="plugins/obs-filters/data/hdr_tonemap_filter.effect (Vertex shader, technique MaxRGB, pass 0)" len=389 fnv=c6e8d77e2136ebed
+  text "uniform float4x4 ViewProj;\n\n\nstruct VertOut {\n\tfloat2 uv : TEXCOORD0;\n\tfloat4 pos : POSITION;\n};\n\nstruct VertData {\n\tfloat4 pos : POSITION;\n\tfloat2 uv : TEXCOORD0;\n};\n\nVertOut VSHdrTonemap(VertData v_in)\n{\n\tVertOut vert_out;\n\tvert_out.pos = mul(float4(v_in.pos.xyz, 1.0), ViewProj);\n\tvert_out.uv  = v_in.uv;\n\treturn vert_out;\n}\n\nVertOut main(VertData v_in)\n{\n\treturn VSHdrTonemap(v_in);\n}\n"
+  sparam 0 name=ViewProj type=MATRIX4X4 array=0
+  result ok
+backend pixelshader_create location="plugins/obs-filters/data/hdr_tonemap_filter.effect (Pixel shader, technique MaxRGB, pass 0)" len=2923 fnv=1ce232a28f83df89
+  text "uniform texture2d image;\nuniform float multiplier;\nuniform float input_maximum_nits;\nuniform float output_maximum_nits;\n\n\nsampler_state textureSampler {\n\tFilter = Linear;\n\n\tAddressU = Clamp;\n\n\tAddressV = Clamp;\n\n};\n\nstruct FragData {\n\tfloat2 uv : TEXCOORD0;\n};\n\nfloat3 rec709_to_rec2020(float3 v)\n{\n\tfloat r = dot(v, float3(0.62740389593469903, 0.32928303837788370, 0.043313065687417225));\n\tfloat g = dot(v, float3(0.069097289358232075, 0.91954039507545871, 0.011362315566309178));\n\tfloat b = dot(v, float3(0.016391438875150280, 0.088013307877225749, 0.89559525324762401));\n\treturn float3(r, g, b);\n}\n\n\nfloat linear_to_st2084_channel(float x)\n{\n\tfloat c = pow(abs(x), 0.1593017578);\n\treturn pow((0.8359375 + 18.8515625 * c) / (1. + 18.6875 * c), 78.84375);\n}\n\n\nfloat eetf_0_Lmax(float maxRGB1_pq, float Lw, float Lmax)\n{\n\tfloat Lw_pq = linear_to_st2084_channel(Lw / 10000.);\n\tfloat E1 = saturate(maxRGB1_pq / Lw_pq);  \n\tfloat maxLum = linear_to_st2084_channel(Lmax / 10000.) / Lw_pq;\n\tfloat KS = (1.5 * maxLum) - 0.5;\n\tfloat E2 = E1;\n\tif (E1 > KS)\n\t{\n\t\tfloat T = (E1 - KS) / (1. - KS);\n\t\tfloat Tsquared = T * T;\n\t\tfloat Tcubed = Tsquared * T;\n\t\tfloat P = (2. * Tcubed - 3. * Tsquared + 1.) * KS + (Tcubed - 2. * Tsquared + T) * (1. - KS) + (-2. * Tcubed + 3. * Tsquared) * maxLum;\n\t\tE2 = P;\n\t}\n\tfloat E3 = E2;\n\tfloat E4 = E3 * Lw_pq;\n\treturn E4;\n}\n\n\nfloat st2084_to_linear_channel(float u)\n{\n\tfloat c = pow(abs(u), 1. / 78.84375);\n\treturn pow(abs(max(c - 0.8359375, 0.) / (18.8515625 - 18.6875 * c)), 1. / 0.1593017578);\n}\n\n\nfloat3 maxRGB_eetf_internal(float3 rgb_linear, float maxRGB1_linear, float maxRGB1_pq, float Lw, float Lmax)\n{\n\tfloat maxRGB2_pq = eetf_0_Lmax(maxRGB1_pq, Lw, Lmax);\n\tfloat maxRGB2_linear = st2084_to_linear_channel(maxRGB2_pq);\n\n\t \n\tmaxRGB1_linear = max(6.10352e-5, maxRGB1_linear);\n\n\trgb_linear *= maxRGB2_linear / maxRGB1_linear;\n\treturn rgb_linear;\n}\n\n\nfloat3 maxRGB_eetf_linear_to_linear(float3 rgb_linear, float Lw, float Lmax)\n{\n\tfloat maxRGB1_linear = max(max(rgb_linear.r, rgb_linear.g), rgb_linear.b);\n\tfloat maxRGB1_pq = linear_to_st2084_channel(maxRGB1_linear);\n\treturn maxRGB_eetf_internal(rgb_linear, maxRGB1_linear, maxRGB1_pq, Lw, Lmax);\n}\n\n\nfloat3 rec2020_to_rec709(float3 v)\n{\n\tfloat r = dot(v, float3(1.6604910021084345, -0.58764113878854951, -0.072849863319884883));\n\tfloat g = dot(v, float3(-0.12455047452159074, 1.1328998971259603, -0.0083494226043694768));\n\tfloat b = dot(v, float3(-0.018150763354905303, -0.10057889800800739, 1.1187296613629127));\n\treturn float3(r, g, b);\n}\n\n\nfloat4 PSMaxrgb(FragData f_in)\n{\n\tfloat4 rgba = image.Sample(textureSampler, f_in.uv);\n\trgba.rgb *= multiplier;\n\trgba.rgb = rec709_to_rec2020(rgba.rgb);\n\trgba.rgb = maxRGB_eetf_linear_to_linear(rgba.rgb, input_maximum_nits, output_maximum_nits);\n\trgba.rgb = rec2020_to_rec709(rgba.rgb);\n\trgba.rgb *= 1. / multiplier;\n\treturn rgba;\n}\n\nfloat4 main(FragData f_in) : TARGET\n{\n\treturn PSMaxrgb(f_in);\n}\n"
+  sparam 0 name=image type=TEXTURE array=0
+  sparam 1 name=multiplier type=FLOAT array=0
+  sparam 2 name=input_maximum_nits type=FLOAT array=0
+  sparam 3 name=output_maximum_nits type=FLOAT array=0
+  result ok
+backend vertexshader_create location="plugins/obs-filters/data/hdr_tonemap_filter.effect (Vertex shader, technique MaxRGBSDR, pass 0)" len=389 fnv=c6e8d77e2136ebed
+  text "uniform float4x4 ViewProj;\n\n\nstruct VertOut {\n\tfloat2 uv : TEXCOORD0;\n\tfloat4 pos : POSITION;\n};\n\nstruct VertData {\n\tfloat4 pos : POSITION;\n\tfloat2 uv : TEXCOORD0;\n};\n\nVertOut VSHdrTonemap(VertData v_in)\n{\n\tVertOut vert_out;\n\tvert_out.pos = mul(float4(v_in.pos.xyz, 1.0), ViewProj);\n\tvert_out.uv  = v_in.uv;\n\treturn vert_out;\n}\n\nVertOut main(VertData v_in)\n{\n\treturn VSHdrTonemap(v_in);\n}\n"
+  sparam 0 name=ViewProj type=MATRIX4X4 array=0
+  result ok
+backend pixelshader_create location="plugins/obs-filters/data/hdr_tonemap_filter.effect (Pixel shader, technique MaxRGBSDR, pass 0)" len=3383 fnv=7f81d507ea5fa3f2
+  text "uniform texture2d image;\nuniform float multiplier;\nuniform float input_maximum_nits;\nuniform float output_maximum_nits;\n\n\nsampler_state textureSampler {\n\tFilter = Linear;\n\n\tAddressU = Clamp;\n\n\tAddressV = Clamp;\n\n};\n\nstruct FragData {\n\tfloat2 uv : TEXCOORD0;\n};\n\nfloat3 rec709_to_rec2020(float3 v)\n{\n\tfloat r = dot(v, float3(0.62740389593469903, 0.32928303837788370, 0.043313065687417225));\n\tfloat g = dot(v, float3(0.069097289358232075, 0.91954039507545871, 0.011362315566309178));\n\tfloat b = dot(v, float3(0.016391438875150280, 0.088013307877225749, 0.89559525324762401));\n\treturn float3(r, g, b);\n}\n\n\nfloat linear_to_st2084_channel(float x)\n{\n\tfloat c = pow(abs(x), 0.1593017578);\n\treturn pow((0.8359375 + 18.8515625 * c) / (1. + 18.6875 * c), 78.84375);\n}\n\n\nfloat eetf_0_Lmax(float maxRGB1_pq, float Lw, float Lmax)\n{\n\tfloat Lw_pq = linear_to_st2084_channel(Lw / 10000.);\n\tfloat E1 = saturate(maxRGB1_pq / Lw_pq);  \n\tfloat maxLum = linear_to_st2084_channel(Lmax / 10000.) / Lw_pq;\n\tfloat KS = (1.5 * maxLum) - 0.5;\n\tfloat E2 = E1;\n\tif (E1 > KS)\n\t{\n\t\tfloat T = (E1 - KS) / (1. - KS);\n\t\tfloat Tsquared = T * T;\n\t\tfloat Tcubed = Tsquared * T;\n\t\tfloat P = (2. * Tcubed - 3. * Tsquared + 1.) * KS + (Tcubed - 2. * Tsquared + T) * (1. - KS) + (-2. * Tcubed + 3. * Tsquared) * maxLum;\n\t\tE2 = P;\n\t}\n\tfloat E3 = E2;\n\tfloat E4 = E3 * Lw_pq;\n\treturn E4;\n}\n\n\nfloat st2084_to_linear_channel(float u)\n{\n\tfloat c = pow(abs(u), 1. / 78.84375);\n\treturn pow(abs(max(c - 0.8359375, 0.) / (18.8515625 - 18.6875 * c)), 1. / 0.1593017578);\n}\n\n\nfloat3 maxRGB_eetf_internal(float3 rgb_linear, float maxRGB1_linear, float maxRGB1_pq, float Lw, float Lmax)\n{\n\tfloat maxRGB2_pq = eetf_0_Lmax(maxRGB1_pq, Lw, Lmax);\n\tfloat maxRGB2_linear = st2084_to_linear_channel(maxRGB2_pq);\n\n\t \n\tmaxRGB1_linear = max(6.10352e-5, maxRGB1_linear);\n\n\trgb_linear *= maxRGB2_linear / maxRGB1_linear;\n\treturn rgb_linear;\n}\n\n\nfloat3 maxRGB_eetf_linear_to_linear(float3 rgb_linear, float Lw, float Lmax)\n{\n\tfloat maxRGB1_linear = max(max(rgb_linear.r, rgb_linear.g), rgb_linear.b);\n\tfloat maxRGB1_pq = linear_to_st2084_channel(maxRGB1_linear);\n\treturn maxRGB_eetf_internal(rgb_linear, maxRGB1_linear, maxRGB1_pq, Lw, Lmax);\n}\n\n\nfloat3 rec2020_to_rec709(float3 v)\n{\n\tfloat r = dot(v, float3(1.6604910021084345, -0.58764113878854951, -0.072849863319884883));\n\tfloat g = dot(v, float3(-0.12455047452159074, 1.1328998971259603, -0.0083494226043694768));\n\tfloat b = dot(v, float3(-0.018150763354905303, -0.10057889800800739, 1.1187296613629127));\n\treturn float3(r, g, b);\n}\n\n\nfloat srgb_nonlinear_to_linear_channel(float u)\n{\n\treturn (u <= 0.04045) ? (u / 12.92) : pow(mad(u, 1. / 1.055, .055 / 1.055), 2.4);\n}\n\n\nfloat3 srgb_nonlinear_to_linear(float3 v)\n{\n\treturn float3(srgb_nonlinear_to_linear_channel(v.r), srgb_nonlinear_to_linear_channel(v.g), srgb_nonlinear_to_linear_channel(v.b));\n}\n\n\nfloat4 PSMaxrgbSdr(FragData f_in)\n{\n\tfloat4 rgba = image.Sample(textureSampler, f_in.uv);\n\trgba.rgb *= multiplier;\n\trgba.rgb = rec709_to_rec2020(rgba.rgb);\n\trgba.rgb = maxRGB_eetf_linear_to_linear(rgba.rgb, input_maximum_nits, output_maximum_nits);\n\trgba.rgb = rec2020_to_rec709(rgba.rgb);\n\trgba.rgb *= 10000. / output_maximum_nits;\n\trgba.rgb = pow(saturate(rgba.rgb), float3(1. / 2.4, 1. / 2.4, 1. / 2.4));\n\trgba.rgb = srgb_nonlinear_to_linear(rgba.rgb);\n\treturn rgba;\n}\n\nfloat4 main(FragData f_in) : TARGET\n{\n\treturn PSMaxrgbSdr(f_in);\n}\n"
+  sparam 0 name=image type=TEXTURE array=0
+  sparam 1 name=multiplier type=FLOAT array=0
+  sparam 2 name=input_maximum_nits type=FLOAT array=0
+  sparam 3 name=output_maximum_nits type=FLOAT array=0
+  result ok
+effect e result=ok
+  error_string=@null
+effect e params=5 techniques=3 viewproj=ViewProj world=-
+  param 0 name=ViewProj type=MATRIX4X4 annotations=0 default_size=0 default=-
+  param 1 name=image type=TEXTURE annotations=0 default_size=0 default=-
+  param 2 name=multiplier type=FLOAT annotations=0 default_size=0 default=-
+  param 3 name=input_maximum_nits type=FLOAT annotations=0 default_size=0 default=-
+  param 4 name=output_maximum_nits type=FLOAT annotations=0 default_size=0 default=-
+  technique 0 name=Reinhard passes=1
+    pass 0 name=@null vertex_params=[ViewProj] pixel_params=[image,multiplier] vertex=yes pixel=yes
+  technique 1 name=MaxRGB passes=1
+    pass 0 name=@null vertex_params=[ViewProj] pixel_params=[image,multiplier,input_maximum_nits,output_maximum_nits] vertex=yes pixel=yes
+  technique 2 name=MaxRGBSDR passes=1
+    pass 0 name=@null vertex_params=[ViewProj] pixel_params=[image,multiplier,input_maximum_nits,output_maximum_nits] vertex=yes pixel=yes
+backend vertexshader_create location="plugins/obs-filters/data/hdr_tonemap_filter.effect (Vertex shader, technique Reinhard, pass 0)" len=389 fnv=c6e8d77e2136ebed
+  sparam 0 name=ViewProj type=MATRIX4X4 array=0
+  result ok
+backend pixelshader_create location="plugins/obs-filters/data/hdr_tonemap_filter.effect (Pixel shader, technique Reinhard, pass 0)" len=1702 fnv=825a74a18367ac04
+  sparam 0 name=image type=TEXTURE array=0
+  sparam 1 name=multiplier type=FLOAT array=0
+  result ok
+backend vertexshader_create location="plugins/obs-filters/data/hdr_tonemap_filter.effect (Vertex shader, technique MaxRGB, pass 0)" len=389 fnv=c6e8d77e2136ebed
+  sparam 0 name=ViewProj type=MATRIX4X4 array=0
+  result ok
+backend pixelshader_create location="plugins/obs-filters/data/hdr_tonemap_filter.effect (Pixel shader, technique MaxRGB, pass 0)" len=2923 fnv=1ce232a28f83df89
+  sparam 0 name=image type=TEXTURE array=0
+  sparam 1 name=multiplier type=FLOAT array=0
+  sparam 2 name=input_maximum_nits type=FLOAT array=0
+  sparam 3 name=output_maximum_nits type=FLOAT array=0
+  result ok
+backend vertexshader_create location="plugins/obs-filters/data/hdr_tonemap_filter.effect (Vertex shader, technique MaxRGBSDR, pass 0)" len=389 fnv=c6e8d77e2136ebed
+  sparam 0 name=ViewProj type=MATRIX4X4 array=0
+  result ok
+backend pixelshader_create location="plugins/obs-filters/data/hdr_tonemap_filter.effect (Pixel shader, technique MaxRGBSDR, pass 0)" len=3383 fnv=7f81d507ea5fa3f2
+  sparam 0 name=image type=TEXTURE array=0
+  sparam 1 name=multiplier type=FLOAT array=0
+  sparam 2 name=input_maximum_nits type=FLOAT array=0
+  sparam 3 name=output_maximum_nits type=FLOAT array=0
+  result ok
+ep result=ok
+  errors count=0 has_errors=0
+  ep params=5 structs=3 funcs=16 samplers=1 techniques=3
+  ep_param 0 type=float4x4 name=ViewProj property=0 const=0 uniform=1 texture=0 array_count=0 annotations=0
+  ep_param 1 type=texture2d name=image property=0 const=0 uniform=1 texture=1 array_count=0 annotations=0
+  ep_param 2 type=float name=multiplier property=0 const=0 uniform=1 texture=0 array_count=0 annotations=0
+  ep_param 3 type=float name=input_maximum_nits property=0 const=0 uniform=1 texture=0 array_count=0 annotations=0
+  ep_param 4 type=float name=output_maximum_nits property=0 const=0 uniform=1 texture=0 array_count=0 annotations=0
+  ep_struct 0 name=VertData vars=2
+    var type=float4 name=pos mapping="POSITION" var_type=IN
+    var type=float2 name=uv mapping="TEXCOORD0" var_type=IN
+  ep_struct 1 name=VertOut vars=2
+    var type=float2 name=uv mapping="TEXCOORD0" var_type=IN
+    var type=float4 name=pos mapping="POSITION" var_type=IN
+  ep_struct 2 name=FragData vars=1
+    var type=float2 name=uv mapping="TEXCOORD0" var_type=IN
+  ep_func 0 name=srgb_linear_to_nonlinear_channel ret=float mapping=@null params=1
+    var type=float name=u mapping=@null var_type=IN
+    struct_deps=[] func_deps=[] param_deps=[] sampler_deps=[] contents_len=82
+  ep_func 1 name=srgb_linear_to_nonlinear ret=float3 mapping=@null params=1
+    var type=float3 name=v mapping=@null var_type=IN
+    struct_deps=[] func_deps=["srgb_linear_to_nonlinear_channel","srgb_linear_to_nonlinear_channel","srgb_linear_to_nonlinear_channel"] param_deps=[] sampler_deps=[] contents_len=136
+  ep_func 2 name=srgb_nonlinear_to_linear_channel ret=float mapping=@null params=1
+    var type=float name=u mapping=@null var_type=IN
+    struct_deps=[] func_deps=[] param_deps=[] sampler_deps=[] contents_len=86
+  ep_func 3 name=srgb_nonlinear_to_linear ret=float3 mapping=@null params=1
+    var type=float3 name=v mapping=@null var_type=IN
+    struct_deps=[] func_deps=["srgb_nonlinear_to_linear_channel","srgb_nonlinear_to_linear_channel","srgb_nonlinear_to_linear_channel"] param_deps=[] sampler_deps=[] contents_len=136
+  ep_func 4 name=rec709_to_rec2020 ret=float3 mapping=@null params=1
+    var type=float3 name=v mapping=@null var_type=IN
+    struct_deps=[] func_deps=[] param_deps=[] sampler_deps=[] contents_len=303
+  ep_func 5 name=rec2020_to_rec709 ret=float3 mapping=@null params=1
+    var type=float3 name=v mapping=@null var_type=IN
+    struct_deps=[] func_deps=[] param_deps=[] sampler_deps=[] contents_len=305
+  ep_func 6 name=reinhard ret=float3 mapping=@null params=1
+    var type=float3 name=rgb mapping=@null var_type=IN
+    struct_deps=[] func_deps=["srgb_nonlinear_to_linear"] param_deps=[] sampler_deps=[] contents_len=165
+  ep_func 7 name=linear_to_st2084_channel ret=float mapping=@null params=1
+    var type=float name=x mapping=@null var_type=IN
+    struct_deps=[] func_deps=[] param_deps=[] sampler_deps=[] contents_len=115
+  ep_func 8 name=st2084_to_linear_channel ret=float mapping=@null params=1
+    var type=float name=u mapping=@null var_type=IN
+    struct_deps=[] func_deps=[] param_deps=[] sampler_deps=[] contents_len=132
+  ep_func 9 name=eetf_0_Lmax ret=float mapping=@null params=3
+    var type=float name=maxRGB1_pq mapping=@null var_type=IN
+    var type=float name=Lw mapping=@null var_type=IN
+    var type=float name=Lmax mapping=@null var_type=IN
+    struct_deps=[] func_deps=["linear_to_st2084_channel","linear_to_st2084_channel"] param_deps=[] sampler_deps=[] contents_len=528
+  ep_func 10 name=maxRGB_eetf_internal ret=float3 mapping=@null params=5
+    var type=float3 name=rgb_linear mapping=@null var_type=IN
+    var type=float name=maxRGB1_linear mapping=@null var_type=IN
+    var type=float name=maxRGB1_pq mapping=@null var_type=IN
+    var type=float name=Lw mapping=@null var_type=IN
+    var type=float name=Lmax mapping=@null var_type=IN
+    struct_deps=[] func_deps=["eetf_0_Lmax","st2084_to_linear_channel"] param_deps=[] sampler_deps=[] contents_len=244
+  ep_func 11 name=maxRGB_eetf_linear_to_linear ret=float3 mapping=@null params=3
+    var type=float3 name=rgb_linear mapping=@null var_type=IN
+    var type=float name=Lw mapping=@null var_type=IN
+    var type=float name=Lmax mapping=@null var_type=IN
+    struct_deps=[] func_deps=["linear_to_st2084_channel","maxRGB_eetf_internal"] param_deps=[] sampler_deps=[] contents_len=221
+  ep_func 12 name=VSHdrTonemap ret=VertOut mapping=@null params=1
+    var type=VertData name=v_in mapping=@null var_type=IN
+    struct_deps=["VertOut","VertData","VertOut"] func_deps=[] param_deps=["ViewProj"] sampler_deps=[] contents_len=123
+  ep_func 13 name=PSReinhard ret=float4 mapping="TARGET" params=1
+    var type=FragData name=f_in mapping=@null var_type=IN
+    struct_deps=["FragData"] func_deps=["rec709_to_rec2020","reinhard","rec2020_to_rec709"] param_deps=["image","multiplier"] sampler_deps=["textureSampler"] contents_len=210
+  ep_func 14 name=PSMaxrgb ret=float4 mapping="TARGET" params=1
+    var type=FragData name=f_in mapping=@null var_type=IN
+    struct_deps=["FragData"] func_deps=["rec709_to_rec2020","maxRGB_eetf_linear_to_linear","rec2020_to_rec709"] param_deps=["image","multiplier","input_maximum_nits","output_maximum_nits","multiplier"] sampler_deps=["textureSampler"] contents_len=301
+  ep_func 15 name=PSMaxrgbSdr ret=float4 mapping="TARGET" params=1
+    var type=FragData name=f_in mapping=@null var_type=IN
+    struct_deps=["FragData"] func_deps=["rec709_to_rec2020","maxRGB_eetf_linear_to_linear","rec2020_to_rec709","srgb_nonlinear_to_linear"] param_deps=["image","multiplier","input_maximum_nits","output_maximum_nits","output_maximum_nits"] sampler_deps=["textureSampler"] contents_len=437
+  ep_sampler 0 name=textureSampler states=3
+    state "Filter" = "Linear"
+    state "AddressU" = "Clamp"
+    state "AddressV" = "Clamp"
+  ep_technique 0 name=Reinhard passes=1
+    ep_pass 0 name=@null
+      vertex=["VSHdrTonemap","(","v_in",")",";"]
+      fragment=["PSReinhard","(","f_in",")",";"]
+  ep_technique 1 name=MaxRGB passes=1
+    ep_pass 0 name=@null
+      vertex=["VSHdrTonemap","(","v_in",")",";"]
+      fragment=["PSMaxrgb","(","f_in",")",";"]
+  ep_technique 2 name=MaxRGBSDR passes=1
+    ep_pass 0 name=@null
+      vertex=["VSHdrTonemap","(","v_in",")",";"]
+      fragment=["PSMaxrgbSdr","(","f_in",")",";"]
+  error_string=@null
+effect (effect) params=5 techniques=3 viewproj=ViewProj world=-
+  param 0 name=ViewProj type=MATRIX4X4 annotations=0 default_size=0 default=-
+  param 1 name=image type=TEXTURE annotations=0 default_size=0 default=-
+  param 2 name=multiplier type=FLOAT annotations=0 default_size=0 default=-
+  param 3 name=input_maximum_nits type=FLOAT annotations=0 default_size=0 default=-
+  param 4 name=output_maximum_nits type=FLOAT annotations=0 default_size=0 default=-
+  technique 0 name=Reinhard passes=1
+    pass 0 name=@null vertex_params=[ViewProj] pixel_params=[image,multiplier] vertex=yes pixel=yes
+  technique 1 name=MaxRGB passes=1
+    pass 0 name=@null vertex_params=[ViewProj] pixel_params=[image,multiplier,input_maximum_nits,output_maximum_nits] vertex=yes pixel=yes
+  technique 2 name=MaxRGBSDR passes=1
+    pass 0 name=@null vertex_params=[ViewProj] pixel_params=[image,multiplier,input_maximum_nits,output_maximum_nits] vertex=yes pixel=yes
+destroy e cached=1
+=== plugins/obs-filters/data/luma_key_filter.effect
+backend vertexshader_create location="plugins/obs-filters/data/luma_key_filter.effect (Vertex shader, technique Draw, pass 0)" len=317 fnv=b06d11de3e765c86
+  text "uniform float4x4 ViewProj;\n\n\nstruct VertData {\n\tfloat4 pos : POSITION;\n\tfloat2 uv : TEXCOORD0;\n};\n\nVertData VSDefault(VertData v_in)\n{\n\tVertData vert_out;\n\tvert_out.pos = mul(float4(v_in.pos.xyz, 1.0), ViewProj);\n\tvert_out.uv  = v_in.uv;\n\treturn vert_out;\n}\n\nVertData main(VertData v_in)\n{\n\treturn VSDefault(v_in);\n}\n"
+  sparam 0 name=ViewProj type=MATRIX4X4 array=0
+  result ok
+backend pixelshader_create location="plugins/obs-filters/data/luma_key_filter.effect (Pixel shader, technique Draw, pass 0)" len=815 fnv=b114f1cc6b98be63
+  text "uniform texture2d image;\nuniform float lumaMin;\nuniform float lumaMinSmooth;\nuniform float lumaMax;\nuniform float lumaMaxSmooth;\n\n\nsampler_state textureSampler {\n\tFilter = Linear;\n\n\tAddressU = Clamp;\n\n\tAddressV = Clamp;\n\n};\n\nstruct VertData {\n\tfloat4 pos : POSITION;\n\tfloat2 uv : TEXCOORD0;\n};\n\nfloat4 PSALumaKeyRGBA(VertData v_in)\n{\n\tfloat4 rgba = image.Sample(textureSampler, v_in.uv);\n\trgba.rgb *= (rgba.a > 0.) ? (1. / rgba.a) : 0.;\n\n\tfloat4 lumaCoef = float4(0.2989, 0.5870, 0.1140, 0.0);\n\n\tfloat luminance = dot(rgba, lumaCoef);\n\n\tfloat clo = smoothstep(lumaMin, lumaMin + lumaMinSmooth, luminance);\n\tfloat chi = 1. - smoothstep(lumaMax - lumaMaxSmooth, lumaMax, luminance);\n\n\tfloat amask = clo * chi;\n\n\treturn float4(rgba.rgb, amask);\n}\n\nfloat4 main(VertData v_in) : TARGET\n{\n\treturn PSALumaKeyRGBA(v_in);\n}\n"
+  sparam 0 name=image type=TEXTURE array=0
+  sparam 1 name=lumaMin type=FLOAT array=0
+  sparam 2 name=lumaMinSmooth type=FLOAT array=0
+  sparam 3 name=lumaMax type=FLOAT array=0
+  sparam 4 name=lumaMaxSmooth type=FLOAT array=0
+  result ok
+effect e result=ok
+  error_string=@null
+effect e params=6 techniques=1 viewproj=ViewProj world=-
+  param 0 name=ViewProj type=MATRIX4X4 annotations=0 default_size=0 default=-
+  param 1 name=image type=TEXTURE annotations=0 default_size=0 default=-
+  param 2 name=lumaMax type=FLOAT annotations=0 default_size=0 default=-
+  param 3 name=lumaMin type=FLOAT annotations=0 default_size=0 default=-
+  param 4 name=lumaMaxSmooth type=FLOAT annotations=0 default_size=0 default=-
+  param 5 name=lumaMinSmooth type=FLOAT annotations=0 default_size=0 default=-
+  technique 0 name=Draw passes=1
+    pass 0 name=@null vertex_params=[ViewProj] pixel_params=[image,lumaMin,lumaMinSmooth,lumaMax,lumaMaxSmooth] vertex=yes pixel=yes
+backend vertexshader_create location="plugins/obs-filters/data/luma_key_filter.effect (Vertex shader, technique Draw, pass 0)" len=317 fnv=b06d11de3e765c86
+  sparam 0 name=ViewProj type=MATRIX4X4 array=0
+  result ok
+backend pixelshader_create location="plugins/obs-filters/data/luma_key_filter.effect (Pixel shader, technique Draw, pass 0)" len=815 fnv=b114f1cc6b98be63
+  sparam 0 name=image type=TEXTURE array=0
+  sparam 1 name=lumaMin type=FLOAT array=0
+  sparam 2 name=lumaMinSmooth type=FLOAT array=0
+  sparam 3 name=lumaMax type=FLOAT array=0
+  sparam 4 name=lumaMaxSmooth type=FLOAT array=0
+  result ok
+ep result=ok
+  errors count=0 has_errors=0
+  ep params=6 structs=1 funcs=2 samplers=1 techniques=1
+  ep_param 0 type=float4x4 name=ViewProj property=0 const=0 uniform=1 texture=0 array_count=0 annotations=0
+  ep_param 1 type=texture2d name=image property=0 const=0 uniform=1 texture=1 array_count=0 annotations=0
+  ep_param 2 type=float name=lumaMax property=0 const=0 uniform=1 texture=0 array_count=0 annotations=0
+  ep_param 3 type=float name=lumaMin property=0 const=0 uniform=1 texture=0 array_count=0 annotations=0
+  ep_param 4 type=float name=lumaMaxSmooth property=0 const=0 uniform=1 texture=0 array_count=0 annotations=0
+  ep_param 5 type=float name=lumaMinSmooth property=0 const=0 uniform=1 texture=0 array_count=0 annotations=0
+  ep_struct 0 name=VertData vars=2
+    var type=float4 name=pos mapping="POSITION" var_type=IN
+    var type=float2 name=uv mapping="TEXCOORD0" var_type=IN
+  ep_func 0 name=VSDefault ret=VertData mapping=@null params=1
+    var type=VertData name=v_in mapping=@null var_type=IN
+    struct_deps=["VertData","VertData","VertData"] func_deps=[] param_deps=["ViewProj"] sampler_deps=[] contents_len=124
+  ep_func 1 name=PSALumaKeyRGBA ret=float4 mapping="TARGET" params=1
+    var type=VertData name=v_in mapping=@null var_type=IN
+    struct_deps=["VertData"] func_deps=[] param_deps=["image","lumaMin","lumaMin","lumaMinSmooth","lumaMax","lumaMaxSmooth","lumaMax"] sampler_deps=["textureSampler"] contents_len=411
+  ep_sampler 0 name=textureSampler states=3
+    state "Filter" = "Linear"
+    state "AddressU" = "Clamp"
+    state "AddressV" = "Clamp"
+  ep_technique 0 name=Draw passes=1
+    ep_pass 0 name=@null
+      vertex=["VSDefault","(","v_in",")",";"]
+      fragment=["PSALumaKeyRGBA","(","v_in",")",";"]
+  error_string=@null
+effect (effect) params=6 techniques=1 viewproj=ViewProj world=-
+  param 0 name=ViewProj type=MATRIX4X4 annotations=0 default_size=0 default=-
+  param 1 name=image type=TEXTURE annotations=0 default_size=0 default=-
+  param 2 name=lumaMax type=FLOAT annotations=0 default_size=0 default=-
+  param 3 name=lumaMin type=FLOAT annotations=0 default_size=0 default=-
+  param 4 name=lumaMaxSmooth type=FLOAT annotations=0 default_size=0 default=-
+  param 5 name=lumaMinSmooth type=FLOAT annotations=0 default_size=0 default=-
+  technique 0 name=Draw passes=1
+    pass 0 name=@null vertex_params=[ViewProj] pixel_params=[image,lumaMin,lumaMinSmooth,lumaMax,lumaMaxSmooth] vertex=yes pixel=yes
+destroy e cached=1
+=== plugins/obs-filters/data/luma_key_filter_v2.effect
+backend vertexshader_create location="plugins/obs-filters/data/luma_key_filter_v2.effect (Vertex shader, technique Draw, pass 0)" len=317 fnv=b06d11de3e765c86
+  text "uniform float4x4 ViewProj;\n\n\nstruct VertData {\n\tfloat4 pos : POSITION;\n\tfloat2 uv : TEXCOORD0;\n};\n\nVertData VSDefault(VertData v_in)\n{\n\tVertData vert_out;\n\tvert_out.pos = mul(float4(v_in.pos.xyz, 1.0), ViewProj);\n\tvert_out.uv  = v_in.uv;\n\treturn vert_out;\n}\n\nVertData main(VertData v_in)\n{\n\treturn VSDefault(v_in);\n}\n"
+  sparam 0 name=ViewProj type=MATRIX4X4 array=0
+  result ok
+backend pixelshader_create location="plugins/obs-filters/data/luma_key_filter_v2.effect (Pixel shader, technique Draw, pass 0)" len=834 fnv=48219fa894ebbd6c
+  text "uniform texture2d image;\nuniform float lumaMin;\nuniform float lumaMinSmooth;\nuniform float lumaMax;\nuniform float lumaMaxSmooth;\n\n\nsampler_state textureSampler {\n\tFilter = Linear;\n\n\tAddressU = Clamp;\n\n\tAddressV = Clamp;\n\n};\n\nstruct VertData {\n\tfloat4 pos : POSITION;\n\tfloat2 uv : TEXCOORD0;\n};\n\nfloat4 PSALumaKeyRGBA(VertData v_in)\n{\n\tfloat4 rgba = image.Sample(textureSampler, v_in.uv);\n\trgba.rgb *= (rgba.a > 0.) ? (1. / rgba.a) : 0.;\n\n\tfloat3 lumaCoef = float3(0.2126, 0.7152, 0.0722);\n\n\tfloat luminance = dot(rgba.rgb, lumaCoef);\n\n\tfloat clo = smoothstep(lumaMin, lumaMin + lumaMinSmooth, luminance);\n\tfloat chi = 1. - smoothstep(lumaMax - lumaMaxSmooth, lumaMax, luminance);\n\n\tfloat amask = clo * chi;\n\trgba.a *= amask;\n\trgba.rgb *= rgba.a;\n\n\treturn rgba;\n}\n\nfloat4 main(VertData v_in) : TARGET\n{\n\treturn PSALumaKeyRGBA(v_in);\n}\n"
+  sparam 0 name=image type=TEXTURE array=0
+  sparam 1 name=lumaMin type=FLOAT array=0
+  sparam 2 name=lumaMinSmooth type=FLOAT array=0
+  sparam 3 name=lumaMax type=FLOAT array=0
+  sparam 4 name=lumaMaxSmooth type=FLOAT array=0
+  result ok
+effect e result=ok
+  error_string=@null
+effect e params=6 techniques=1 viewproj=ViewProj world=-
+  param 0 name=ViewProj type=MATRIX4X4 annotations=0 default_size=0 default=-
+  param 1 name=image type=TEXTURE annotations=0 default_size=0 default=-
+  param 2 name=lumaMax type=FLOAT annotations=0 default_size=0 default=-
+  param 3 name=lumaMin type=FLOAT annotations=0 default_size=0 default=-
+  param 4 name=lumaMaxSmooth type=FLOAT annotations=0 default_size=0 default=-
+  param 5 name=lumaMinSmooth type=FLOAT annotations=0 default_size=0 default=-
+  technique 0 name=Draw passes=1
+    pass 0 name=@null vertex_params=[ViewProj] pixel_params=[image,lumaMin,lumaMinSmooth,lumaMax,lumaMaxSmooth] vertex=yes pixel=yes
+backend vertexshader_create location="plugins/obs-filters/data/luma_key_filter_v2.effect (Vertex shader, technique Draw, pass 0)" len=317 fnv=b06d11de3e765c86
+  sparam 0 name=ViewProj type=MATRIX4X4 array=0
+  result ok
+backend pixelshader_create location="plugins/obs-filters/data/luma_key_filter_v2.effect (Pixel shader, technique Draw, pass 0)" len=834 fnv=48219fa894ebbd6c
+  sparam 0 name=image type=TEXTURE array=0
+  sparam 1 name=lumaMin type=FLOAT array=0
+  sparam 2 name=lumaMinSmooth type=FLOAT array=0
+  sparam 3 name=lumaMax type=FLOAT array=0
+  sparam 4 name=lumaMaxSmooth type=FLOAT array=0
+  result ok
+ep result=ok
+  errors count=0 has_errors=0
+  ep params=6 structs=1 funcs=2 samplers=1 techniques=1
+  ep_param 0 type=float4x4 name=ViewProj property=0 const=0 uniform=1 texture=0 array_count=0 annotations=0
+  ep_param 1 type=texture2d name=image property=0 const=0 uniform=1 texture=1 array_count=0 annotations=0
+  ep_param 2 type=float name=lumaMax property=0 const=0 uniform=1 texture=0 array_count=0 annotations=0
+  ep_param 3 type=float name=lumaMin property=0 const=0 uniform=1 texture=0 array_count=0 annotations=0
+  ep_param 4 type=float name=lumaMaxSmooth property=0 const=0 uniform=1 texture=0 array_count=0 annotations=0
+  ep_param 5 type=float name=lumaMinSmooth property=0 const=0 uniform=1 texture=0 array_count=0 annotations=0
+  ep_struct 0 name=VertData vars=2
+    var type=float4 name=pos mapping="POSITION" var_type=IN
+    var type=float2 name=uv mapping="TEXCOORD0" var_type=IN
+  ep_func 0 name=VSDefault ret=VertData mapping=@null params=1
+    var type=VertData name=v_in mapping=@null var_type=IN
+    struct_deps=["VertData","VertData","VertData"] func_deps=[] param_deps=["ViewProj"] sampler_deps=[] contents_len=124
+  ep_func 1 name=PSALumaKeyRGBA ret=float4 mapping="TARGET" params=1
+    var type=VertData name=v_in mapping=@null var_type=IN
+    struct_deps=["VertData"] func_deps=[] param_deps=["image","lumaMin","lumaMin","lumaMinSmooth","lumaMax","lumaMaxSmooth","lumaMax"] sampler_deps=["textureSampler"] contents_len=430
+  ep_sampler 0 name=textureSampler states=3
+    state "Filter" = "Linear"
+    state "AddressU" = "Clamp"
+    state "AddressV" = "Clamp"
+  ep_technique 0 name=Draw passes=1
+    ep_pass 0 name=@null
+      vertex=["VSDefault","(","v_in",")",";"]
+      fragment=["PSALumaKeyRGBA","(","v_in",")",";"]
+  error_string=@null
+effect (effect) params=6 techniques=1 viewproj=ViewProj world=-
+  param 0 name=ViewProj type=MATRIX4X4 annotations=0 default_size=0 default=-
+  param 1 name=image type=TEXTURE annotations=0 default_size=0 default=-
+  param 2 name=lumaMax type=FLOAT annotations=0 default_size=0 default=-
+  param 3 name=lumaMin type=FLOAT annotations=0 default_size=0 default=-
+  param 4 name=lumaMaxSmooth type=FLOAT annotations=0 default_size=0 default=-
+  param 5 name=lumaMinSmooth type=FLOAT annotations=0 default_size=0 default=-
+  technique 0 name=Draw passes=1
+    pass 0 name=@null vertex_params=[ViewProj] pixel_params=[image,lumaMin,lumaMinSmooth,lumaMax,lumaMaxSmooth] vertex=yes pixel=yes
+destroy e cached=1
+=== plugins/obs-filters/data/mask_alpha_filter.effect
+backend vertexshader_create location="plugins/obs-filters/data/mask_alpha_filter.effect (Vertex shader, technique Draw, pass 0)" len=523 fnv=71f32d003ffc57d0
+  text "uniform float4x4 ViewProj;\nuniform float2 mul_val;\nuniform float2 add_val;\n\n\nstruct VertDataOut {\n\tfloat4 pos : POSITION;\n\tfloat2 uv : TEXCOORD0;\n\tfloat2 uv2 : TEXCOORD1;\n};\n\nstruct VertDataIn {\n\tfloat4 pos : POSITION;\n\tfloat2 uv : TEXCOORD0;\n};\n\nVertDataOut VSDefault(VertDataIn v_in)\n{\n\tVertDataOut vert_out;\n\tvert_out.pos = mul(float4(v_in.pos.xyz, 1.0), ViewProj);\n\tvert_out.uv  = v_in.uv;\n\tvert_out.uv2 = v_in.uv * mul_val + add_val;\n\treturn vert_out;\n}\n\nVertDataOut main(VertDataIn v_in)\n{\n\treturn VSDefault(v_in);\n}\n"
+  sparam 0 name=ViewProj type=MATRIX4X4 array=0
+  sparam 1 name=mul_val type=VEC2 array=0
+  sparam 2 name=add_val type=VEC2 array=0
+  result ok
+backend pixelshader_create location="plugins/obs-filters/data/mask_alpha_filter.effect (Pixel shader, technique Draw, pass 0)" len=628 fnv=83ad2747d96dd937
+  text "uniform texture2d image;\nuniform float4 color;\nuniform texture2d target;\n\n\nsampler_state textureSampler {\n\tFilter = Linear;\n\n\tAddressU = Clamp;\n\n\tAddressV = Clamp;\n\n};\n\n\nstruct VertDataOut {\n\tfloat4 pos : POSITION;\n\tfloat2 uv : TEXCOORD0;\n\tfloat2 uv2 : TEXCOORD1;\n};\n\nfloat4 PSAlphaMaskRGBA(VertDataOut v_in)\n{\n\tfloat4 rgba = image.Sample(textureSampler, v_in.uv);\n\trgba.rgb *= (rgba.a > 0.) ? (1. / rgba.a) : 0.;\n\trgba *= color;\n\n\tfloat4 targetRGB = target.Sample(textureSampler, v_in.uv2);\n\trgba.a *= targetRGB.a;\n\trgba.rgb *= rgba.a;\n\treturn rgba;\n}\n\nfloat4 main(VertDataOut v_in) : TARGET\n{\n\treturn PSAlphaMaskRGBA(v_in);\n}\n"
+  sparam 0 name=image type=TEXTURE array=0
+  sparam 1 name=color type=VEC4 array=0
+  sparam 2 name=target type=TEXTURE array=0
+  result ok
+effect e result=ok
+  error_string=@null
+effect e params=6 techniques=1 viewproj=ViewProj world=-
+  param 0 name=ViewProj type=MATRIX4X4 annotations=0 default_size=0 default=-
+  param 1 name=image type=TEXTURE annotations=0 default_size=0 default=-
+  param 2 name=target type=TEXTURE annotations=0 default_size=0 default=-
+  param 3 name=color type=VEC4 annotations=0 default_size=0 default=-
+  param 4 name=mul_val type=VEC2 annotations=0 default_size=0 default=-
+  param 5 name=add_val type=VEC2 annotations=0 default_size=0 default=-
+  technique 0 name=Draw passes=1
+    pass 0 name=@null vertex_params=[ViewProj,mul_val,add_val] pixel_params=[image,color,target] vertex=yes pixel=yes
+backend vertexshader_create location="plugins/obs-filters/data/mask_alpha_filter.effect (Vertex shader, technique Draw, pass 0)" len=523 fnv=71f32d003ffc57d0
+  sparam 0 name=ViewProj type=MATRIX4X4 array=0
+  sparam 1 name=mul_val type=VEC2 array=0
+  sparam 2 name=add_val type=VEC2 array=0
+  result ok
+backend pixelshader_create location="plugins/obs-filters/data/mask_alpha_filter.effect (Pixel shader, technique Draw, pass 0)" len=628 fnv=83ad2747d96dd937
+  sparam 0 name=image type=TEXTURE array=0
+  sparam 1 name=color type=VEC4 array=0
+  sparam 2 name=target type=TEXTURE array=0
+  result ok
+ep result=ok
+  errors count=0 has_errors=0
+  ep params=6 structs=2 funcs=2 samplers=1 techniques=1
+  ep_param 0 type=float4x4 name=ViewProj property=0 const=0 uniform=1 texture=0 array_count=0 annotations=0
+  ep_param 1 type=texture2d name=image property=0 const=0 uniform=1 texture=1 array_count=0 annotations=0
+  ep_param 2 type=texture2d name=target property=0 const=0 uniform=1 texture=1 array_count=0 annotations=0
+  ep_param 3 type=float4 name=color property=0 const=0 uniform=1 texture=0 array_count=0 annotations=0
+  ep_param 4 type=float2 name=mul_val property=0 const=0 uniform=1 texture=0 array_count=0 annotations=0
+  ep_param 5 type=float2 name=add_val property=0 const=0 uniform=1 texture=0 array_count=0 annotations=0
+  ep_struct 0 name=VertDataIn vars=2
+    var type=float4 name=pos mapping="POSITION" var_type=IN
+    var type=float2 name=uv mapping="TEXCOORD0" var_type=IN
+  ep_struct 1 name=VertDataOut vars=3
+    var type=float4 name=pos mapping="POSITION" var_type=IN
+    var type=float2 name=uv mapping="TEXCOORD0" var_type=IN
+    var type=float2 name=uv2 mapping="TEXCOORD1" var_type=IN
+  ep_func 0 name=VSDefault ret=VertDataOut mapping=@null params=1
+    var type=VertDataIn name=v_in mapping=@null var_type=IN
+    struct_deps=["VertDataOut","VertDataIn","VertDataOut"] func_deps=[] param_deps=["ViewProj","mul_val","add_val"] sampler_deps=[] contents_len=172
+  ep_func 1 name=PSAlphaMaskRGBA ret=float4 mapping="TARGET" params=1
+    var type=VertDataOut name=v_in mapping=@null var_type=IN
+    struct_deps=["VertDataOut"] func_deps=[] param_deps=["image","color","target"] sampler_deps=["textureSampler","textureSampler"] contents_len=243
+  ep_sampler 0 name=textureSampler states=3
+    state "Filter" = "Linear"
+    state "AddressU" = "Clamp"
+    state "AddressV" = "Clamp"
+  ep_technique 0 name=Draw passes=1
+    ep_pass 0 name=@null
+      vertex=["VSDefault","(","v_in",")",";"]
+      fragment=["PSAlphaMaskRGBA","(","v_in",")",";"]
+  error_string=@null
+effect (effect) params=6 techniques=1 viewproj=ViewProj world=-
+  param 0 name=ViewProj type=MATRIX4X4 annotations=0 default_size=0 default=-
+  param 1 name=image type=TEXTURE annotations=0 default_size=0 default=-
+  param 2 name=target type=TEXTURE annotations=0 default_size=0 default=-
+  param 3 name=color type=VEC4 annotations=0 default_size=0 default=-
+  param 4 name=mul_val type=VEC2 annotations=0 default_size=0 default=-
+  param 5 name=add_val type=VEC2 annotations=0 default_size=0 default=-
+  technique 0 name=Draw passes=1
+    pass 0 name=@null vertex_params=[ViewProj,mul_val,add_val] pixel_params=[image,color,target] vertex=yes pixel=yes
+destroy e cached=1
+=== plugins/obs-filters/data/mask_color_filter.effect
+backend vertexshader_create location="plugins/obs-filters/data/mask_color_filter.effect (Vertex shader, technique Draw, pass 0)" len=523 fnv=71f32d003ffc57d0
+  text "uniform float4x4 ViewProj;\nuniform float2 mul_val;\nuniform float2 add_val;\n\n\nstruct VertDataOut {\n\tfloat4 pos : POSITION;\n\tfloat2 uv : TEXCOORD0;\n\tfloat2 uv2 : TEXCOORD1;\n};\n\nstruct VertDataIn {\n\tfloat4 pos : POSITION;\n\tfloat2 uv : TEXCOORD0;\n};\n\nVertDataOut VSDefault(VertDataIn v_in)\n{\n\tVertDataOut vert_out;\n\tvert_out.pos = mul(float4(v_in.pos.xyz, 1.0), ViewProj);\n\tvert_out.uv  = v_in.uv;\n\tvert_out.uv2 = v_in.uv * mul_val + add_val;\n\treturn vert_out;\n}\n\nVertDataOut main(VertDataIn v_in)\n{\n\treturn VSDefault(v_in);\n}\n"
+  sparam 0 name=ViewProj type=MATRIX4X4 array=0
+  sparam 1 name=mul_val type=VEC2 array=0
+  sparam 2 name=add_val type=VEC2 array=0
+  result ok
+backend pixelshader_create location="plugins/obs-filters/data/mask_color_filter.effect (Pixel shader, technique Draw, pass 0)" len=664 fnv=bb0eb385323bea06
+  text "uniform texture2d image;\nuniform float4 color;\nuniform texture2d target;\n\n\nsampler_state textureSampler {\n\tFilter = Linear;\n\n\tAddressU = Clamp;\n\n\tAddressV = Clamp;\n\n};\n\n\nstruct VertDataOut {\n\tfloat4 pos : POSITION;\n\tfloat2 uv : TEXCOORD0;\n\tfloat2 uv2 : TEXCOORD1;\n};\n\nfloat4 PSColorMaskRGBA(VertDataOut v_in)\n{\n\tfloat4 rgba = image.Sample(textureSampler, v_in.uv);\n\trgba.rgb *= (rgba.a > 0.) ? (1. / rgba.a) : 0.;\n\trgba *= color;\n\n\tfloat4 targetRGB = target.Sample(textureSampler, v_in.uv2);\n\trgba.a *= (targetRGB.r + targetRGB.g + targetRGB.b) / 3.0;\n\trgba.rgb *= rgba.a;\n\treturn rgba;\n}\n\nfloat4 main(VertDataOut v_in) : TARGET\n{\n\treturn PSColorMaskRGBA(v_in);\n}\n"
+  sparam 0 name=image type=TEXTURE array=0
+  sparam 1 name=color type=VEC4 array=0
+  sparam 2 name=target type=TEXTURE array=0
+  result ok
+effect e result=ok
+  error_string=@null
+effect e params=6 techniques=1 viewproj=ViewProj world=-
+  param 0 name=ViewProj type=MATRIX4X4 annotations=0 default_size=0 default=-
+  param 1 name=image type=TEXTURE annotations=0 default_size=0 default=-
+  param 2 name=target type=TEXTURE annotations=0 default_size=0 default=-
+  param 3 name=color type=VEC4 annotations=0 default_size=0 default=-
+  param 4 name=mul_val type=VEC2 annotations=0 default_size=0 default=-
+  param 5 name=add_val type=VEC2 annotations=0 default_size=0 default=-
+  technique 0 name=Draw passes=1
+    pass 0 name=@null vertex_params=[ViewProj,mul_val,add_val] pixel_params=[image,color,target] vertex=yes pixel=yes
+backend vertexshader_create location="plugins/obs-filters/data/mask_color_filter.effect (Vertex shader, technique Draw, pass 0)" len=523 fnv=71f32d003ffc57d0
+  sparam 0 name=ViewProj type=MATRIX4X4 array=0
+  sparam 1 name=mul_val type=VEC2 array=0
+  sparam 2 name=add_val type=VEC2 array=0
+  result ok
+backend pixelshader_create location="plugins/obs-filters/data/mask_color_filter.effect (Pixel shader, technique Draw, pass 0)" len=664 fnv=bb0eb385323bea06
+  sparam 0 name=image type=TEXTURE array=0
+  sparam 1 name=color type=VEC4 array=0
+  sparam 2 name=target type=TEXTURE array=0
+  result ok
+ep result=ok
+  errors count=0 has_errors=0
+  ep params=6 structs=2 funcs=2 samplers=1 techniques=1
+  ep_param 0 type=float4x4 name=ViewProj property=0 const=0 uniform=1 texture=0 array_count=0 annotations=0
+  ep_param 1 type=texture2d name=image property=0 const=0 uniform=1 texture=1 array_count=0 annotations=0
+  ep_param 2 type=texture2d name=target property=0 const=0 uniform=1 texture=1 array_count=0 annotations=0
+  ep_param 3 type=float4 name=color property=0 const=0 uniform=1 texture=0 array_count=0 annotations=0
+  ep_param 4 type=float2 name=mul_val property=0 const=0 uniform=1 texture=0 array_count=0 annotations=0
+  ep_param 5 type=float2 name=add_val property=0 const=0 uniform=1 texture=0 array_count=0 annotations=0
+  ep_struct 0 name=VertDataIn vars=2
+    var type=float4 name=pos mapping="POSITION" var_type=IN
+    var type=float2 name=uv mapping="TEXCOORD0" var_type=IN
+  ep_struct 1 name=VertDataOut vars=3
+    var type=float4 name=pos mapping="POSITION" var_type=IN
+    var type=float2 name=uv mapping="TEXCOORD0" var_type=IN
+    var type=float2 name=uv2 mapping="TEXCOORD1" var_type=IN
+  ep_func 0 name=VSDefault ret=VertDataOut mapping=@null params=1
+    var type=VertDataIn name=v_in mapping=@null var_type=IN
+    struct_deps=["VertDataOut","VertDataIn","VertDataOut"] func_deps=[] param_deps=["ViewProj","mul_val","add_val"] sampler_deps=[] contents_len=172
+  ep_func 1 name=PSColorMaskRGBA ret=float4 mapping="TARGET" params=1
+    var type=VertDataOut name=v_in mapping=@null var_type=IN
+    struct_deps=["VertDataOut"] func_deps=[] param_deps=["image","color","target"] sampler_deps=["textureSampler","textureSampler"] contents_len=279
+  ep_sampler 0 name=textureSampler states=3
+    state "Filter" = "Linear"
+    state "AddressU" = "Clamp"
+    state "AddressV" = "Clamp"
+  ep_technique 0 name=Draw passes=1
+    ep_pass 0 name=@null
+      vertex=["VSDefault","(","v_in",")",";"]
+      fragment=["PSColorMaskRGBA","(","v_in",")",";"]
+  error_string=@null
+effect (effect) params=6 techniques=1 viewproj=ViewProj world=-
+  param 0 name=ViewProj type=MATRIX4X4 annotations=0 default_size=0 default=-
+  param 1 name=image type=TEXTURE annotations=0 default_size=0 default=-
+  param 2 name=target type=TEXTURE annotations=0 default_size=0 default=-
+  param 3 name=color type=VEC4 annotations=0 default_size=0 default=-
+  param 4 name=mul_val type=VEC2 annotations=0 default_size=0 default=-
+  param 5 name=add_val type=VEC2 annotations=0 default_size=0 default=-
+  technique 0 name=Draw passes=1
+    pass 0 name=@null vertex_params=[ViewProj,mul_val,add_val] pixel_params=[image,color,target] vertex=yes pixel=yes
+destroy e cached=1
+=== plugins/obs-filters/data/sdr_on_hdr_filter.effect
+backend vertexshader_create location="plugins/obs-filters/data/sdr_on_hdr_filter.effect (Vertex shader, technique GammaSrgb, pass 0)" len=385 fnv=015cf502cb9159cd
+  text "uniform float4x4 ViewProj;\n\n\nstruct VertOut {\n\tfloat2 uv : TEXCOORD0;\n\tfloat4 pos : POSITION;\n};\n\nstruct VertData {\n\tfloat4 pos : POSITION;\n\tfloat2 uv : TEXCOORD0;\n};\n\nVertOut VSSdrOnHdr(VertData v_in)\n{\n\tVertOut vert_out;\n\tvert_out.pos = mul(float4(v_in.pos.xyz, 1.0), ViewProj);\n\tvert_out.uv  = v_in.uv;\n\treturn vert_out;\n}\n\nVertOut main(VertData v_in)\n{\n\treturn VSSdrOnHdr(v_in);\n}\n"
+  sparam 0 name=ViewProj type=MATRIX4X4 array=0
+  result ok
+backend pixelshader_create location="plugins/obs-filters/data/sdr_on_hdr_filter.effect (Pixel shader, technique GammaSrgb, pass 0)" len=392 fnv=943517a4ccb7e3ff
+  text "uniform texture2d image;\nuniform float multiplier;\n\n\nsampler_state textureSampler {\n\tFilter = Linear;\n\n\tAddressU = Clamp;\n\n\tAddressV = Clamp;\n\n};\n\nstruct FragData {\n\tfloat2 uv : TEXCOORD0;\n};\n\nfloat4 PSGammaSrgb(FragData f_in)\n{\n\tfloat4 rgba = image.Sample(textureSampler, f_in.uv);\n\trgba.rgb *= multiplier;\n\treturn rgba;\n}\n\nfloat4 main(FragData f_in) : TARGET\n{\n\treturn PSGammaSrgb(f_in);\n}\n"
+  sparam 0 name=image type=TEXTURE array=0
+  sparam 1 name=multiplier type=FLOAT array=0
+  result ok
+backend vertexshader_create location="plugins/obs-filters/data/sdr_on_hdr_filter.effect (Vertex shader, technique GammaPower, pass 0)" len=385 fnv=015cf502cb9159cd
+  text "uniform float4x4 ViewProj;\n\n\nstruct VertOut {\n\tfloat2 uv : TEXCOORD0;\n\tfloat4 pos : POSITION;\n};\n\nstruct VertData {\n\tfloat4 pos : POSITION;\n\tfloat2 uv : TEXCOORD0;\n};\n\nVertOut VSSdrOnHdr(VertData v_in)\n{\n\tVertOut vert_out;\n\tvert_out.pos = mul(float4(v_in.pos.xyz, 1.0), ViewProj);\n\tvert_out.uv  = v_in.uv;\n\treturn vert_out;\n}\n\nVertOut main(VertData v_in)\n{\n\treturn VSSdrOnHdr(v_in);\n}\n"
+  sparam 0 name=ViewProj type=MATRIX4X4 array=0
+  result ok
+backend pixelshader_create location="plugins/obs-filters/data/sdr_on_hdr_filter.effect (Pixel shader, technique GammaPower, pass 0)" len=811 fnv=b0635173475da0c2
+  text "uniform texture2d image;\nuniform float power;\nuniform float multiplier;\n\n\nsampler_state textureSampler {\n\tFilter = Linear;\n\n\tAddressU = Clamp;\n\n\tAddressV = Clamp;\n\n};\n\nstruct FragData {\n\tfloat2 uv : TEXCOORD0;\n};\n\nfloat srgb_linear_to_nonlinear_channel(float u)\n{\n\treturn (u <= 0.0031308) ? (12.92 * u) : ((1.055 * pow(u, 1. / 2.4)) - 0.055);\n}\n\n\nfloat3 srgb_linear_to_nonlinear(float3 v)\n{\n\treturn float3(srgb_linear_to_nonlinear_channel(v.r), srgb_linear_to_nonlinear_channel(v.g), srgb_linear_to_nonlinear_channel(v.b));\n}\n\n\nfloat4 PSGammaPower(FragData f_in)\n{\n\tfloat4 rgba = image.Sample(textureSampler, f_in.uv);\n\trgba.rgb = srgb_linear_to_nonlinear(rgba.rgb);\n\trgba.rgb = pow(rgba.rgb, power);\n\trgba.rgb *= multiplier;\n\treturn rgba;\n}\n\nfloat4 main(FragData f_in) : TARGET\n{\n\treturn PSGammaPower(f_in);\n}\n"
+  sparam 0 name=image type=TEXTURE array=0
+  sparam 1 name=power type=FLOAT array=0
+  sparam 2 name=multiplier type=FLOAT array=0
+  result ok
+effect e result=ok
+  error_string=@null
+effect e params=4 techniques=2 viewproj=ViewProj world=-
+  param 0 name=ViewProj type=MATRIX4X4 annotations=0 default_size=0 default=-
+  param 1 name=image type=TEXTURE annotations=0 default_size=0 default=-
+  param 2 name=multiplier type=FLOAT annotations=0 default_size=0 default=-
+  param 3 name=power type=FLOAT annotations=0 default_size=0 default=-
+  technique 0 name=GammaSrgb passes=1
+    pass 0 name=@null vertex_params=[ViewProj] pixel_params=[image,multiplier] vertex=yes pixel=yes
+  technique 1 name=GammaPower passes=1
+    pass 0 name=@null vertex_params=[ViewProj] pixel_params=[image,power,multiplier] vertex=yes pixel=yes
+backend vertexshader_create location="plugins/obs-filters/data/sdr_on_hdr_filter.effect (Vertex shader, technique GammaSrgb, pass 0)" len=385 fnv=015cf502cb9159cd
+  sparam 0 name=ViewProj type=MATRIX4X4 array=0
+  result ok
+backend pixelshader_create location="plugins/obs-filters/data/sdr_on_hdr_filter.effect (Pixel shader, technique GammaSrgb, pass 0)" len=392 fnv=943517a4ccb7e3ff
+  sparam 0 name=image type=TEXTURE array=0
+  sparam 1 name=multiplier type=FLOAT array=0
+  result ok
+backend vertexshader_create location="plugins/obs-filters/data/sdr_on_hdr_filter.effect (Vertex shader, technique GammaPower, pass 0)" len=385 fnv=015cf502cb9159cd
+  sparam 0 name=ViewProj type=MATRIX4X4 array=0
+  result ok
+backend pixelshader_create location="plugins/obs-filters/data/sdr_on_hdr_filter.effect (Pixel shader, technique GammaPower, pass 0)" len=811 fnv=b0635173475da0c2
+  sparam 0 name=image type=TEXTURE array=0
+  sparam 1 name=power type=FLOAT array=0
+  sparam 2 name=multiplier type=FLOAT array=0
+  result ok
+ep result=ok
+  errors count=0 has_errors=0
+  ep params=4 structs=3 funcs=15 samplers=1 techniques=2
+  ep_param 0 type=float4x4 name=ViewProj property=0 const=0 uniform=1 texture=0 array_count=0 annotations=0
+  ep_param 1 type=texture2d name=image property=0 const=0 uniform=1 texture=1 array_count=0 annotations=0
+  ep_param 2 type=float name=multiplier property=0 const=0 uniform=1 texture=0 array_count=0 annotations=0
+  ep_param 3 type=float name=power property=0 const=0 uniform=1 texture=0 array_count=0 annotations=0
+  ep_struct 0 name=VertData vars=2
+    var type=float4 name=pos mapping="POSITION" var_type=IN
+    var type=float2 name=uv mapping="TEXCOORD0" var_type=IN
+  ep_struct 1 name=VertOut vars=2
+    var type=float2 name=uv mapping="TEXCOORD0" var_type=IN
+    var type=float4 name=pos mapping="POSITION" var_type=IN
+  ep_struct 2 name=FragData vars=1
+    var type=float2 name=uv mapping="TEXCOORD0" var_type=IN
+  ep_func 0 name=srgb_linear_to_nonlinear_channel ret=float mapping=@null params=1
+    var type=float name=u mapping=@null var_type=IN
+    struct_deps=[] func_deps=[] param_deps=[] sampler_deps=[] contents_len=82
+  ep_func 1 name=srgb_linear_to_nonlinear ret=float3 mapping=@null params=1
+    var type=float3 name=v mapping=@null var_type=IN
+    struct_deps=[] func_deps=["srgb_linear_to_nonlinear_channel","srgb_linear_to_nonlinear_channel","srgb_linear_to_nonlinear_channel"] param_deps=[] sampler_deps=[] contents_len=136
+  ep_func 2 name=srgb_nonlinear_to_linear_channel ret=float mapping=@null params=1
+    var type=float name=u mapping=@null var_type=IN
+    struct_deps=[] func_deps=[] param_deps=[] sampler_deps=[] contents_len=86
+  ep_func 3 name=srgb_nonlinear_to_linear ret=float3 mapping=@null params=1
+    var type=float3 name=v mapping=@null var_type=IN
+    struct_deps=[] func_deps=["srgb_nonlinear_to_linear_channel","srgb_nonlinear_to_linear_channel","srgb_nonlinear_to_linear_channel"] param_deps=[] sampler_deps=[] contents_len=136
+  ep_func 4 name=rec709_to_rec2020 ret=float3 mapping=@null params=1
+    var type=float3 name=v mapping=@null var_type=IN
+    struct_deps=[] func_deps=[] param_deps=[] sampler_deps=[] contents_len=303
+  ep_func 5 name=rec2020_to_rec709 ret=float3 mapping=@null params=1
+    var type=float3 name=v mapping=@null var_type=IN
+    struct_deps=[] func_deps=[] param_deps=[] sampler_deps=[] contents_len=305
+  ep_func 6 name=reinhard ret=float3 mapping=@null params=1
+    var type=float3 name=rgb mapping=@null var_type=IN
+    struct_deps=[] func_deps=["srgb_nonlinear_to_linear"] param_deps=[] sampler_deps=[] contents_len=165
+  ep_func 7 name=linear_to_st2084_channel ret=float mapping=@null params=1
+    var type=float name=x mapping=@null var_type=IN
+    struct_deps=[] func_deps=[] param_deps=[] sampler_deps=[] contents_len=115
+  ep_func 8 name=st2084_to_linear_channel ret=float mapping=@null params=1
+    var type=float name=u mapping=@null var_type=IN
+    struct_deps=[] func_deps=[] param_deps=[] sampler_deps=[] contents_len=132
+  ep_func 9 name=eetf_0_Lmax ret=float mapping=@null params=3
+    var type=float name=maxRGB1_pq mapping=@null var_type=IN
+    var type=float name=Lw mapping=@null var_type=IN
+    var type=float name=Lmax mapping=@null var_type=IN
+    struct_deps=[] func_deps=["linear_to_st2084_channel","linear_to_st2084_channel"] param_deps=[] sampler_deps=[] contents_len=528
+  ep_func 10 name=maxRGB_eetf_internal ret=float3 mapping=@null params=5
+    var type=float3 name=rgb_linear mapping=@null var_type=IN
+    var type=float name=maxRGB1_linear mapping=@null var_type=IN
+    var type=float name=maxRGB1_pq mapping=@null var_type=IN
+    var type=float name=Lw mapping=@null var_type=IN
+    var type=float name=Lmax mapping=@null var_type=IN
+    struct_deps=[] func_deps=["eetf_0_Lmax","st2084_to_linear_channel"] param_deps=[] sampler_deps=[] contents_len=244
+  ep_func 11 name=maxRGB_eetf_linear_to_linear ret=float3 mapping=@null params=3
+    var type=float3 name=rgb_linear mapping=@null var_type=IN
+    var type=float name=Lw mapping=@null var_type=IN
+    var type=float name=Lmax mapping=@null var_type=IN
+    struct_deps=[] func_deps=["linear_to_st2084_channel","maxRGB_eetf_internal"] param_deps=[] sampler_deps=[] contents_len=221
+  ep_func 12 name=VSSdrOnHdr ret=VertOut mapping=@null params=1
+    var type=VertData name=v_in mapping=@null var_type=IN
+    struct_deps=["VertOut","VertData","VertOut"] func_deps=[] param_deps=["ViewProj"] sampler_deps=[] contents_len=123
+  ep_func 13 name=PSGammaSrgb ret=float4 mapping="TARGET" params=1
+    var type=FragData name=f_in mapping=@null var_type=IN
+    struct_deps=["FragData"] func_deps=[] param_deps=["image","multiplier"] sampler_deps=["textureSampler"] contents_len=96
+  ep_func 14 name=PSGammaPower ret=float4 mapping="TARGET" params=1
+    var type=FragData name=f_in mapping=@null var_type=IN
+    struct_deps=["FragData"] func_deps=["srgb_linear_to_nonlinear"] param_deps=["image","power","multiplier"] sampler_deps=["textureSampler"] contents_len=178
+  ep_sampler 0 name=textureSampler states=3
+    state "Filter" = "Linear"
+    state "AddressU" = "Clamp"
+    state "AddressV" = "Clamp"
+  ep_technique 0 name=GammaSrgb passes=1
+    ep_pass 0 name=@null
+      vertex=["VSSdrOnHdr","(","v_in",")",";"]
+      fragment=["PSGammaSrgb","(","f_in",")",";"]
+  ep_technique 1 name=GammaPower passes=1
+    ep_pass 0 name=@null
+      vertex=["VSSdrOnHdr","(","v_in",")",";"]
+      fragment=["PSGammaPower","(","f_in",")",";"]
+  error_string=@null
+effect (effect) params=4 techniques=2 viewproj=ViewProj world=-
+  param 0 name=ViewProj type=MATRIX4X4 annotations=0 default_size=0 default=-
+  param 1 name=image type=TEXTURE annotations=0 default_size=0 default=-
+  param 2 name=multiplier type=FLOAT annotations=0 default_size=0 default=-
+  param 3 name=power type=FLOAT annotations=0 default_size=0 default=-
+  technique 0 name=GammaSrgb passes=1
+    pass 0 name=@null vertex_params=[ViewProj] pixel_params=[image,multiplier] vertex=yes pixel=yes
+  technique 1 name=GammaPower passes=1
+    pass 0 name=@null vertex_params=[ViewProj] pixel_params=[image,power,multiplier] vertex=yes pixel=yes
+destroy e cached=1
+=== plugins/obs-filters/data/sharpness.effect
+backend vertexshader_create location="plugins/obs-filters/data/sharpness.effect (Vertex shader, technique Draw, pass 0)" len=822 fnv=f4a1ddffd41b4720
+  text "uniform float4x4 ViewProj;\nuniform float texture_width;\nuniform float texture_height;\n\n\nstruct VertOut {\n\tfloat4 pos : POSITION;\n\tfloat2 uv : TEXCOORD0;\n\tfloat4 t1 : TEXCOORD1;\n\tfloat4 t2 : TEXCOORD2;\n\tfloat4 t3 : TEXCOORD3;\n};\n\nstruct VertInOut {\n\tfloat4 pos : POSITION;\n\tfloat2 uv : TEXCOORD0;\n};\n\nVertOut VSDefault(VertInOut vert_in)\n{\n\tVertOut vert_out;\n\tvert_out.pos = mul(float4(vert_in.pos.xyz, 1.0), ViewProj);\n\tvert_out.uv  = vert_in.uv;\n\n\tfloat2 ps = float2(1.0/texture_width, 1.0/texture_height);\n\tfloat dx = ps.x;\n\tfloat dy = ps.y;\n\n\tvert_out.t1 = vert_in.uv.xxxy + float4( -dx, 0, dx,    -dy);  \n\tvert_out.t2 = vert_in.uv.xxxy + float4( -dx, 0, dx,      0);  \n\tvert_out.t3 = vert_in.uv.xxxy + float4( -dx, 0, dx,     dy);  \n\treturn vert_out;\n}\n\nVertOut main(VertInOut vert_in)\n{\n\treturn VSDefault(vert_in);\n}\n"
+  sparam 0 name=ViewProj type=MATRIX4X4 array=0
+  sparam 1 name=texture_width type=FLOAT array=0
+  sparam 2 name=texture_height type=FLOAT array=0
+  result ok
+backend pixelshader_create location="plugins/obs-filters/data/sharpness.effect (Pixel shader, technique Draw, pass 0)" len=1119 fnv=f90c68eff3667e36
+  text "uniform texture2d image;\nuniform float sharpness;\n\n\nsampler_state def_sampler {\n\tFilter = Linear;\n\n\tAddressU = Clamp;\n\n\tAddressV = Clamp;\n\n};\n\n\n\n\n\n\n\n\n\nstruct VertOut {\n\tfloat4 pos : POSITION;\n\tfloat2 uv : TEXCOORD0;\n\tfloat4 t1 : TEXCOORD1;\n\tfloat4 t2 : TEXCOORD2;\n\tfloat4 t3 : TEXCOORD3;\n};\n\nfloat4 PSDrawBare(VertOut vert_in)\n{\n\tfloat4 E  = image.Sample(def_sampler, vert_in.uv);\n\n\tfloat4 color = 8*E;\n\tfloat4 B = image.Sample(def_sampler, vert_in.t1.yw);\n\tfloat4 D = image.Sample(def_sampler, vert_in.t2.xw);\n\tfloat4 F = image.Sample(def_sampler, vert_in.t2.zw);\n\tfloat4 H = image.Sample(def_sampler, vert_in.t3.yw);\n\tcolor -= image.Sample(def_sampler, vert_in.t1.xw);\n\tcolor -= B;\n\tcolor -= image.Sample(def_sampler, vert_in.t1.zw);\n\tcolor -= D;\n\tcolor -= F;\n\tcolor -= image.Sample(def_sampler, vert_in.t3.xw);\n\tcolor -= H;\n\tcolor -= image.Sample(def_sampler, vert_in.t3.zw);\n\n\tcolor = ( (distance(E,F) != 0.0 && distance(E,D) != 0.0) || (distance(E,B) != 0.0 && distance(E,H) != 0.0) ) ? saturate(E + color * sharpness) : E;\n\n\treturn color;\n}\n\nfloat4 main(VertOut vert_in) : TARGET\n{\n\treturn PSDrawBare(vert_in);\n}\n"
+  sparam 0 name=image type=TEXTURE array=0
+  sparam 1 name=sharpness type=FLOAT array=0
+  result ok
+effect e result=ok
+  error_string=@null
+effect e params=5 techniques=1 viewproj=ViewProj world=-
+  param 0 name=ViewProj type=MATRIX4X4 annotations=0 default_size=0 default=-
+  param 1 name=image type=TEXTURE annotations=0 default_size=0 default=-
+  param 2 name=sharpness type=FLOAT annotations=0 default_size=0 default=-
+  param 3 name=texture_width type=FLOAT annotations=0 default_size=0 default=-
+  param 4 name=texture_height type=FLOAT annotations=0 default_size=0 default=-
+  technique 0 name=Draw passes=1
+    pass 0 name=@null vertex_params=[ViewProj,texture_width,texture_height] pixel_params=[image,sharpness] vertex=yes pixel=yes
+backend vertexshader_create location="plugins/obs-filters/data/sharpness.effect (Vertex shader, technique Draw, pass 0)" len=822 fnv=f4a1ddffd41b4720
+  sparam 0 name=ViewProj type=MATRIX4X4 array=0
+  sparam 1 name=texture_width type=FLOAT array=0
+  sparam 2 name=texture_height type=FLOAT array=0
+  result ok
+backend pixelshader_create location="plugins/obs-filters/data/sharpness.effect (Pixel shader, technique Draw, pass 0)" len=1119 fnv=f90c68eff3667e36
+  sparam 0 name=image type=TEXTURE array=0
+  sparam 1 name=sharpness type=FLOAT array=0
+  result ok
+ep result=ok
+  errors count=0 has_errors=0
+  ep params=5 structs=2 funcs=2 samplers=1 techniques=1
+  ep_param 0 type=float4x4 name=ViewProj property=0 const=0 uniform=1 texture=0 array_count=0 annotations=0
+  ep_param 1 type=texture2d name=image property=0 const=0 uniform=1 texture=1 array_count=0 annotations=0
+  ep_param 2 type=float name=sharpness property=0 const=0 uniform=1 texture=0 array_count=0 annotations=0
+  ep_param 3 type=float name=texture_width property=0 const=0 uniform=1 texture=0 array_count=0 annotations=0
+  ep_param 4 type=float name=texture_height property=0 const=0 uniform=1 texture=0 array_count=0 annotations=0
+  ep_struct 0 name=VertInOut vars=2
+    var type=float4 name=pos mapping="POSITION" var_type=IN
+    var type=float2 name=uv mapping="TEXCOORD0" var_type=IN
+  ep_struct 1 name=VertOut vars=5
+    var type=float4 name=pos mapping="POSITION" var_type=IN
+    var type=float2 name=uv mapping="TEXCOORD0" var_type=IN
+    var type=float4 name=t1 mapping="TEXCOORD1" var_type=IN
+    var type=float4 name=t2 mapping="TEXCOORD2" var_type=IN
+    var type=float4 name=t3 mapping="TEXCOORD3" var_type=IN
+  ep_func 0 name=VSDefault ret=VertOut mapping=@null params=1
+    var type=VertInOut name=vert_in mapping=@null var_type=IN
+    struct_deps=["VertOut","VertInOut","VertOut"] func_deps=[] param_deps=["ViewProj","texture_width","texture_height"] sampler_deps=[] contents_len=419
+  ep_func 1 name=PSDrawBare ret=float4 mapping="TARGET" params=1
+    var type=VertOut name=vert_in mapping=@null var_type=IN
+    struct_deps=["VertOut"] func_deps=[] param_deps=["image","image","image","image","image","image","image","image","image","sharpness"] sampler_deps=["def_sampler","def_sampler","def_sampler","def_sampler","def_sampler","def_sampler","def_sampler","def_sampler","def_sampler"] contents_len=719
+  ep_sampler 0 name=def_sampler states=3
+    state "Filter" = "Linear"
+    state "AddressU" = "Clamp"
+    state "AddressV" = "Clamp"
+  ep_technique 0 name=Draw passes=1
+    ep_pass 0 name=@null
+      vertex=["VSDefault","(","vert_in",")",";"]
+      fragment=["PSDrawBare","(","vert_in",")",";"]
+  error_string=@null
+effect (effect) params=5 techniques=1 viewproj=ViewProj world=-
+  param 0 name=ViewProj type=MATRIX4X4 annotations=0 default_size=0 default=-
+  param 1 name=image type=TEXTURE annotations=0 default_size=0 default=-
+  param 2 name=sharpness type=FLOAT annotations=0 default_size=0 default=-
+  param 3 name=texture_width type=FLOAT annotations=0 default_size=0 default=-
+  param 4 name=texture_height type=FLOAT annotations=0 default_size=0 default=-
+  technique 0 name=Draw passes=1
+    pass 0 name=@null vertex_params=[ViewProj,texture_width,texture_height] pixel_params=[image,sharpness] vertex=yes pixel=yes
+destroy e cached=1

@@ -1,0 +1,27 @@
+# CORE. Names/descriptions are copied. Description setters store NULL for NULL or empty text
+# (add_* keeps an empty description as ""). The name can never change.
+props P
+add bool P a "Initial" as a
+info a
+set a description "New"
+info a
+set a description ""
+info a
+set a description @null
+info a
+set a description "Back"
+set a long_description "Long help"
+info a
+set a long_description ""
+info a
+set a long_description "Again"
+set a long_description @null
+info a
+echo setters-on-null
+set @null description "x"
+set @null long_description "x"
+set @null visible 1
+set @null enabled 1
+info @null
+probe @null
+destroy P

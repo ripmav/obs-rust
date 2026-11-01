@@ -1,0 +1,47 @@
+# S-021 DEFECTS and precondition violations of the muxer. Each case below ends the reference
+# (assert failure, SIGFPE, or a modelled corruption): the vector records "crash". A conforming
+# implementation MUST NOT crash and MUST report the failure as the single line "<cmd> error"
+# (see README: failure lines of the flv runner).
+pkt v video 0 0 1 1000 1 aa
+pkt a audio 0 0 1 1000 0 bb
+echo D-1-wrong-packet-type-asserts
+ex_start a h264 0
+ex_frames a h264 0 0
+ex_end a av1 0
+ex_start a h264 1
+ax_start v aac 0
+ax_frames v aac 0 0
+ax_start v aac 2
+echo D-2-codec-none-asserts
+ex_start v none 0
+ex_frames v none 0 0
+ex_end v none 1
+ex_metadata none 0 8 1 1 1 0 0
+ax_start a none 0
+ax_frames a none 0 1
+echo D-3-zero-time-base-denominator-divides-by-zero
+pkt z video 0 0 1 0 1 aa
+flv_mux z 0 0
+ex_frames z h264 0 0
+ms z 5
+pkt za audio 0 0 1 0 0 aa
+ax_frames za aac 0 0
+echo D-3-negative-denominator-is-defined
+pkt neg video 90000 90000 1 -90000 1 aa
+flv_mux neg 0 0
+echo D-6-tag-data-size-is-24-bit
+rep big 16777210 00
+pkt fits video 0 0 1 1000 1 @big
+flv_mux fits 0 0
+rep big2 16777211 00
+pkt wraps video 0 0 1 1000 1 @big2
+flv_mux wraps 0 0
+ex_frames wraps av1 0 0
+ex_frames wraps av1 0 1
+rep big3 16777214 00
+pkt wraps3 audio 0 0 1 1000 0 @big3
+flv_mux wraps3 0 0
+ax_frames wraps3 aac 0 0
+rep big4 16777213 00
+pkt wraps4 audio 0 0 1 1000 0 @big4
+ax_frames wraps4 aac 0 0

@@ -1,0 +1,31 @@
+create
+set_int T i -42
+set_int T big 9223372036854775807
+set_uint T u 18446744073709551615
+set_bool T bt 1
+set_bool T bf 0
+set_double T d1 1.5
+set_double T d2 2
+set_double T d3 0.1
+set_double T d4 1e21
+set_double T d5 -0.0
+set_double T d6 0.00001
+set_double T d7 1.5e300
+save
+file
+get_int T i
+get_uint T i
+get_int T u
+get_uint T u
+get_bool T bt
+get_bool T bf
+get_double T d1
+get_double T d2
+get_double T d3
+get_double T d4
+get_string T d2
+get_string T d3
+get_string T d4
+get_string T d6
+get_string T d7
+get_double T d6

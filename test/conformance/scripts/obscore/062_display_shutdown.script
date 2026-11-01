@@ -1,0 +1,11 @@
+# Displays still alive at shutdown are destroyed by the core in list order (newest first) and
+# counted in the shutdown log.
+startup en-US -
+reset_video
+display_create d1 10 10 0
+display_create d2 10 10 0
+display_create d3 10 10 0
+display_destroy d2
+display_list
+trace gs on
+shutdown

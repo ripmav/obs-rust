@@ -1,0 +1,35 @@
+# Render order and root nodes (a source reached twice through enumeration trees is flagged '*' = duplicated and becomes an extra root): channels in order; inactive/removed skipped; audio source outside any view still rendered but not a root; mix_audio=0 view contributes no roots; scene child shared with a direct channel is flagged duplicated and becomes a root.
+init 48000 2
+clock 1000000000
+timeline 1000000000
+source a input
+source b input
+source c input
+source d input
+source scene custom
+source e input
+source scene2 custom
+child scene2 a
+child scene a
+child scene b
+video_mix 1
+video_mix 0
+channel 0 0 scene
+channel 0 1 a
+channel 0 2 c
+channel 0 3 d
+channel 1 0 e
+channel 1 1 scene2
+set scene2 active 1
+custom scene2 1 tick 0
+set scene active 1
+set a active 1
+set b active 1
+set c active 0
+set d active 1
+set d removed 1
+set e active 1
+custom scene 1 tick 0
+run 1 1
+set d removed 0
+run 1 1

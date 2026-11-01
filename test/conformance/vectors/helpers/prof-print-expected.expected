@@ -1,0 +1,7 @@
+p_snap roots=2
+p_print
+text "== Profiler Results ============================="
+text "frame: min=0.1\xc2\xa0ms, median=2.5\xc2\xa0ms, max=9\xc2\xa0ms, 99th percentile=9\xc2\xa0ms, 50% below 2.5\xc2\xa0ms"
+text "other: min=1\xc2\xa0ms, median=0\xc2\xa0ms, max=2\xc2\xa0ms, 99th percentile=2\xc2\xa0ms"
+text "================================================="
+p_free done

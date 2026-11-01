@@ -1,0 +1,61 @@
+log debug canvas 'Main' (<uuid>) created
+startup -> true
+enum_types source
+  [0] scene
+  [1] group
+  [2] audio_line
+  past_end -> 0 out=UNTOUCHED
+enum_types source
+  [0] scene
+  [1] group
+  [2] audio_line
+  [3] image_source
+  [4] color_filter
+  [5] fade
+  [6] image_source_v2
+  [7] image_source_v3
+  [8] color_filter_v1
+  [9] other_scene
+  past_end -> 0 out=UNTOUCHED
+enum_types input
+  [0] audio_line
+  [1] image_source
+  [2] image_source_v2
+  [3] image_source_v3
+  past_end -> 0 out=UNTOUCHED
+enum_types filter
+  [0] color_filter
+  [1] color_filter_v1
+  past_end -> 0 out=UNTOUCHED
+enum_types transition
+  [0] fade
+  past_end -> 0 out=UNTOUCHED
+enum_types output
+  [0] rtmp_output
+  [1] ffmpeg_output
+  past_end -> 0 out=UNTOUCHED
+enum_types encoder
+  [0] x264
+  [1] aac
+  [2] nvenc
+  past_end -> 0 out=UNTOUCHED
+enum_types service
+  [0] rtmp_common
+  past_end -> 0 out=UNTOUCHED
+enum_input2 0 -> 1 id=audio_line unversioned=audio_line
+enum_input2 0 -> 1 id=UNTOUCHED unversioned=audio_line
+enum_input2 0 -> 1 id=audio_line unversioned=UNTOUCHED
+enum_input2 2 -> 1 id=image_source_v2 unversioned=image_source
+enum_input2 3 -> 1 id=image_source_v3 unversioned=image_source
+enum_input2 4 -> 0 id=UNTOUCHED unversioned=UNTOUCHED
+enum_input2 99 -> 0 id=UNTOUCHED unversioned=UNTOUCHED
+latest_input image_source -> image_source_v3
+latest_input color_filter -> color_filter_v1
+latest_input fade -> fade
+latest_input - -> NULL
+latest_input scene -> scene
+latest_input group -> group
+shutdown begin
+log info Freeing OBS context data
+log debug canvas 'Main' (<uuid>) destroyed
+shutdown end obs=NULL

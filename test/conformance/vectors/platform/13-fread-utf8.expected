@@ -1,0 +1,40 @@
+fopen a ok
+fread_utf8 a rc=0 str="hello"
+ftelli a 5
+fclose a 0
+fopen a ok
+fread_utf8 a rc=0 str="hello"
+ftelli a 8
+fclose a 0
+fopen a ok
+fread_utf8 a rc=0 str=@null
+ftelli a 3
+fclose a 0
+fopen a ok
+fread_utf8 a rc=0 str=@null
+fclose a 0
+fopen a ok
+fread_utf8 a rc=0 str="\xef\xbb\xbfa"
+fclose a 0
+fopen a ok
+fread_utf8 a rc=0 str="\xef\xbb"
+fclose a 0
+fopen a ok
+fseeki a rc=0
+fread_utf8 a rc=0 str="hello"
+fclose a 0
+quick_read_utf8 "hello"
+quick_read_utf8 "hello"
+quick_read_utf8 @null
+quick_read_utf8 @null
+quick_read_utf8 @null
+quick_read_utf8 "\xef\xbb\xbfa"
+quick_read_utf8 "a\xef\xbb\xbfb"
+quick_read_utf8 "\xef\xbb"
+quick_read_utf8 "\xef\xbba"
+quick_read_utf8 "a"
+quick_read_utf8 "a\r\nb\n"
+quick_read_utf8 "a\xff\x80\xc3"
+quick_read_utf8 "\xff\xfea"
+quick_read_utf8 "a"
+quick_read_utf8 @null

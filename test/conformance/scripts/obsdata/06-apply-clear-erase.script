@@ -1,0 +1,99 @@
+# CORE: obs_data_apply copies USER values only (deep copies of objects/arrays; NULL
+# objects are skipped; a same-named target value is replaced, never merged),
+# obs_data_clear drops user values but keeps items and their default layers,
+# obs_data_erase removes an item, obs_data_get_defaults builds an object of defaults.
+new t
+set_int t keep 1
+set_int t over 2
+set_string t s "target"
+new o
+set_int o old 1
+set_obj t sub o
+new src
+set_int src over 20
+set_double src fresh 1.5
+set_default_int src dflt 7
+set_default_int src over 99
+set_autoselect_int src au 3
+new so
+set_int so new 1
+set_obj src sub so
+set_obj src nul @null
+new e
+a_new ar
+a_push ar e
+set_array src arr ar
+apply t src
+dump t
+echo --- applying copies, it does not share
+get_obj t sub got
+same got so
+refs so
+echo --- changing the source afterwards does not touch the target
+set_int so new 2
+get_obj t sub got2
+get_int got2 new
+echo --- apply with NULL or self is a no-op
+apply t @null
+apply @null src
+apply t t
+dump t
+echo --- apply an array of objects: elements are copied too
+a_item ar 0 elem
+set_int elem z 5
+dump t
+echo --- erase
+erase t keep
+erase t nosuch
+has_user t keep
+names t
+echo --- clear keeps items that have defaults, user values go
+new c
+set_int c a 1
+set_default_int c a 2
+set_int c b 3
+set_string c s "text"
+set_default_string c s "dtext"
+set_autoselect_int c au 4
+set_int c au 5
+new co
+set_obj c o co
+refs co
+clear c
+refs co
+dump c
+get_int c a
+get_int c b
+get_string c s
+json c
+json_defaults c
+names c
+echo --- after clear the item can be set again
+set_int c b 10
+dump c
+echo --- get_defaults
+new g
+set_default_int g i 1
+set_default_double g d 2.5
+set_default_string g s "x"
+set_default_bool g b 1
+set_int g i 50
+set_double g d 0.5
+set_int g nodefault 5
+new go
+set_int go inner 1
+set_default_obj g o go
+a_new ga
+new ge
+set_int ge n 1
+a_push ga ge
+set_default_array g arr ga
+get_defaults g gd
+dump gd
+json gd
+echo --- the type of the USER value picks the number conversion
+set_int g d 8
+get_defaults g gd2
+dump gd2
+get_defaults @null gd3
+dump gd3

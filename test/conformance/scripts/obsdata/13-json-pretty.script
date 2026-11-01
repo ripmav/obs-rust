@@ -1,0 +1,35 @@
+# CORE: pretty JSON (obs_data_get_json_pretty): 4-space indent, "key": value, one
+# member per line, newline separators, no trailing newline, empty containers as {} and [].
+new a
+json_pretty a
+set_string a s "text"
+set_int a i 1
+set_double a d 2.0
+set_bool a b 1
+json_pretty a
+new o
+new inner
+set_int inner x 1
+set_obj o inner inner
+set_obj o nullobj @null
+set_obj a obj o
+new e
+set_obj a emptyobj e
+a_new ar
+set_array a emptyarr ar
+a_new ar2
+new item1
+set_int item1 n 1
+set_string item1 s "x"
+a_push ar2 item1
+new item2
+a_push ar2 item2
+set_array a items ar2
+json_pretty a
+echo --- compact and pretty differ only in whitespace
+json a
+echo --- the two forms keep separate buffers; last_json is whichever was produced last
+json_pretty a
+last_json a
+json a
+last_json a

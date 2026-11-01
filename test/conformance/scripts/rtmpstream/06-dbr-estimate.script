@@ -1,0 +1,35 @@
+# S-045 dbr_add_frame: sliding window of sent frames -> estimated sendable video bitrate (kbit/s).
+# Times are in ns; the window is trimmed once its span reaches 2000 ms; an estimate needs >= 1000 ms.
+reset
+set audio_bitrate 160
+# first frame: span 10 ms < 1000 ms -> estimate 0
+dbr_frame 0 10000000 50000
+dbr_frame 500000000 510000000 50000
+# span 1000 ms (0 -> 1000 ms) reached: 150000 B in 1000 ms = 1200 kbit/s, minus audio 160 = 1040
+dbr_frame 990000000 1000000000 50000
+# a zero-length frame at the same instant changes nothing in the estimate
+dbr_frame 1000000000 1000000000 0
+# the span (1990 -> 2000 ms plus 0) reaches 2000 ms: the span is measured BEFORE the oldest frame is evicted
+# (so the estimate is 150000 B over 2000 ms - 160 = 440) and exactly one frame is evicted per call
+dbr_frame 1990000000 2000000000 50000
+dbr_frame 2900000000 3000000000 50000
+# very low rate: estimate is clamped to 50 kbit/s once non-zero
+reset
+set audio_bitrate 160
+dbr_frame 0 1000000 1000
+dbr_frame 1000000000 1001000000 1000
+dbr_frame 1500000000 1500000000 1000
+# audio bitrate larger than the video estimate: still 50
+reset
+set audio_bitrate 5000
+dbr_frame 0 1 100000
+dbr_frame 1500000000 1500000001 100000
+# integer arithmetic: bytes*1000/dur truncated, then *8, then /1000 truncated
+reset
+set audio_bitrate 0
+dbr_frame 0 1 12345
+dbr_frame 1234567890 1234567891 6789
+# QUIRK Q-5: send_end - send_beg subtraction wraps (unsigned) if the clock goes backwards; dur is huge
+reset
+dbr_frame 5000000000 5000000001 100
+dbr_frame 10 11 100

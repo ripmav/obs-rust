@@ -1,0 +1,32 @@
+# S-022 fLaC (dfLa: one FLAC metadata block, STREAMINFO, marked last, length u24) and alac (the magic
+# cookie, i.e. the encoder extra data, is written raw inside the sample entry; no box wrapper). In an
+# MP4 file the samplesize field is 16 for FLAC and 24 for ALAC. 'extra -' makes both boxes absent
+# (the dfLa and alac entries return 0 and, for alac, even the entry itself is not written).
+enc a audio codec flac rate 48000 extra 1000100000000b000000150ac4400000000000000000000000000000000000
+mux mp4
+pkt a 0 0 1 gen:30
+pkt a 4096 4096 1 gen:31
+pkt a 8192 8192 1 gen:32
+finalise
+dump
+reset
+enc a audio codec alac rate 48000 extra 00000024616c616300000000000010001000fe0200000000000000000000ac44
+mux mp4
+pkt a 0 0 1 gen:30
+pkt a 4096 4096 1 gen:31
+finalise
+tree
+hex
+echo --- no extra data
+reset
+enc a audio codec flac rate 48000 extra -
+mux mp4 skipfin
+pkt a 0 0 1 gen:30
+finalise
+tree
+reset
+enc a audio codec alac rate 48000 extra -
+mux mp4 skipfin
+pkt a 0 0 1 gen:30
+finalise
+tree

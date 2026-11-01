@@ -1,0 +1,29 @@
+# Signals around video reset and the HDR/SDR level accessors. A successful obs_reset_video emits,
+# in order: per canvas that gets a mix (main first, then the others in table order) the core signal
+# canvas_video_reset (non-private canvases only) and the canvas' own video_reset, and finally the
+# core signal video_reset. Levels: without a graphics device the accessors return the defaults
+# 300 / 1000; once a device exists they return the stored values, which start at 0 (never
+# initialised by the core, QUIRK Q-8) until obs_set_video_levels is called.
+startup en-US -
+levels
+sig_obs video_reset canvas_video_reset
+canvas_create a Alpha video=1 base=64x64 out=64x64 fmt=BGRA gpu=0
+sig_canvas a video_reset
+canvas_create_private p Priv video=1 base=64x64 out=64x64 fmt=BGRA gpu=0
+sig_canvas p video_reset
+reset_video fmt=BGRA gpu=0
+levels
+# D-4: the reset skips PRIVATE canvases (their old mix is freed with the others but the canvas keeps
+# a stale 'has video' state and gets no new mix, no signal). The line below shows has_video=1 although
+# the private canvas is absent from the mix list.
+canvas_info p
+mixes
+set_levels 203 4000
+levels
+reset_video fmt=BGRA gpu=0
+levels
+# a failing reset: no video_reset signals, the device stays but levels are kept
+fake effect_fail_clear 1
+reset_video base=1x1
+levels
+shutdown

@@ -1,0 +1,20 @@
+# S-035 a core module that fails to open counts as a failure: load_core returns false and the flag stays unset,
+# so the next call walks the whole list again (re-opening the modules that succeeded: duplicates are allowed for CORE).
+write @TMP/cm2/bin/bad.so "text"
+mkmod g @TMP/cm2/bin/good.so
+mkmod h @TMP/cm2/bin/later.so
+mkdir @TMP/cm2/data
+core_modules @TMP/cm2/bin/%module% @TMP/cm2/data/%module% good bad later
+load_core
+lists
+load_core
+lists
+# a core module whose load() fails: no failure counted (module becomes disabled/failed_to_initialize)
+mkmod f @TMP/cm3/bin/failinit.so load=0
+core_modules @TMP/cm3/bin/%module% @TMP/cm3/data/%module% failinit
+load_core
+lists
+mod_info failinit
+# empty list: trivially loaded
+core_modules @TMP/cm3/bin/%module% @TMP/cm3/data/%module%
+load_core

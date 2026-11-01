@@ -1,0 +1,31 @@
+# CORE: how the effect parser assembles the text of one shader (what gs_vertexshader_create /
+# gs_pixelshader_create receive). The fake backend prints the location string, the exact text (escaped) and the
+# global variables it found in that text. Layout recap, in this order:
+#   1. every global parameter named in the call tokens of the pass command (in order of appearance);
+#   2. the entry function's dependencies (recursively, see 31-assembly-deps), the entry function itself
+#      "RET NAME(PARAMS)\n<body>\n";
+#   3. a generated wrapper "\nRET main(<mapped params>)[ : SEMANTIC]\n{\n\treturn <call text>\n}\n".
+# The location string is "<file> (Vertex|Pixel shader, technique <name>, pass <index>)".
+backend text full
+text a
+uniform float4x4 ViewProj;
+uniform texture2d image;
+sampler_state samp { Filter = Linear; AddressU = Clamp; AddressV = Clamp; };
+struct VIn { float4 pos : POSITION; float2 uv : TEXCOORD0; };
+struct VOut { float4 pos : POSITION; float2 uv : TEXCOORD0; };
+VOut VS(VIn v) { VOut o; o.pos = mul(float4(v.pos.xyz, 1.0), ViewProj); o.uv = v.uv; return o; }
+float4 PS(VOut v) : TARGET { return image.Sample(samp, v.uv); }
+technique Draw { pass { vertex_shader = VS(v); pixel_shader = PS(v); } }
+@end
+effect e1 basic.effect @text:a
+echo --- no parameters, no structs
+effect e2 plain.effect "float4 VS() : POSITION { return float4(0,0,0,1); }\nfloat4 PS() : TARGET { return float4(1,0,0,1); }\ntechnique T { pass { vertex_shader = VS(); pixel_shader = PS(); } }"
+echo --- void entry function
+effect e3 void.effect "void VS() { }\nvoid PS() { }\ntechnique T { pass { vertex_shader = VS(); pixel_shader = PS(); } }"
+echo --- two techniques and two passes: one shader per pass and stage
+effect e4 multi.effect "float4 A() : POSITION { return 0; }\nfloat4 B() : TARGET { return 1; }\ntechnique T1 { pass x { vertex_shader = A(); pixel_shader = B(); } pass y { vertex_shader = A(); pixel_shader = B(); } }\ntechnique T2 { pass { vertex_shader = A(); pixel_shader = B(); } }"
+echo --- a pass may use the same function for both stages
+effect e5 same.effect "float4 F() : TARGET { return 0; }\ntechnique T { pass { vertex_shader = F(); pixel_shader = F(); } }"
+echo --- the file name is copied into the location string verbatim
+effect e6 "dir/some file.effect" "float4 F() : TARGET { return 0; }\ntechnique T { pass { vertex_shader = F(); pixel_shader = F(); } }"
+effect e7 @null "float4 F() : TARGET { return 0; }\ntechnique T { pass { vertex_shader = F(); pixel_shader = F(); } }"

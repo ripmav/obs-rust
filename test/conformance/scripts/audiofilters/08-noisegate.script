@@ -1,0 +1,71 @@
+# CORE. noise gate: per-frame level = max |x| over all channels; hysteresis open/close thresholds; hold time;
+# linear attack/release ramps of a single attenuation applied to all channels. update() resets the state.
+audio 2 48000
+create n gate
+state n
+echo default-closed-gate-silences-quiet-input
+process n 16 const:0.01 const:0.01
+echo open-on-loud-input-ramps-up
+process n 100 out=0:0:100:10 const:0.5 const:0.1
+state n
+echo fast-settings
+data d
+set d open_threshold double -20
+set d close_threshold double -30
+set d attack_time int 1
+set d hold_time int 2
+set d release_time int 2
+update n d
+state n
+process n 200 out=0:0:200:10 sine:0.5:500 sine:0.5:500
+process n 500 out=0:0:500:25 const:0.0001 const:0.0001
+state n
+echo hold-time-defers-release
+set d hold_time int 10
+update n d
+process n 100 const:0.5 const:0.5
+process n 1000 out=0:0:1000:50 const:0 const:0
+state n
+echo update-resets-state
+update n d
+state n
+echo zero-ms-times-make-infinite-rates
+set d attack_time int 0
+set d release_time int 0
+set d hold_time int 0
+update n d
+state n
+process n 4 const:0.5 const:0.5
+process n 4 const:0 const:0
+echo close-above-open
+set d attack_time int 1
+set d release_time int 1
+set d open_threshold double -40
+set d close_threshold double -10
+update n d
+state n
+process n 10 out=all const:0.05 const:0.05
+echo negative-decay
+set d open_threshold double -10
+set d close_threshold double -40
+update n d
+state n
+echo 44100-and-mono
+audio 1 44100
+create m gate
+state m
+process m 4 const:0.5
+echo nan-level
+audio 2 48000
+create nn gate d
+process nn 3 const:nan const:0.5
+state nn
+echo only-first-channels-are-processed
+audio 1 48000
+create o gate
+data d2
+set d2 open_threshold double -60
+set d2 close_threshold double -70
+update o d2
+process o 3 const:0.5 const:0.5
+process o 3 const:0.5 const:0.5

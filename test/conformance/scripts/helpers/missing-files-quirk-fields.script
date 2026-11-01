@@ -1,0 +1,17 @@
+# QUIRKS of the record fields: the source name is copied at creation and only for SOURCE
+# records; SCRIPT records (or a source without name) report a NULL source name. The path is
+# copied, never normalised (no separator or case changes).
+mf_file_new 0 "C:\\dir\\File.PNG" source "Name"
+mf_file_new 1 "relative/../path" script
+mf_file_new 2 "" source "Empty path"
+mf_file_new 3 "/s/x" source
+mf_list_new 0
+mf_add 0 0
+mf_add 0 1
+mf_add 0 2
+mf_add 0 3
+mf_get 0 0
+mf_get 0 1
+mf_get 0 2
+mf_get 0 3
+mf_destroy 0

@@ -1,0 +1,37 @@
+# Media controls: play/pause, stop, restart, duration, time, seek, with and without a media object.
+data D
+src_defaults D
+set_str D local_file "/m/a.mp4"
+host_settings D
+src_create S D
+host_int showing 1
+host_int media_has_video 1
+host_int duration_us 123456789
+host_int time 4200
+src_duration S
+src_time S
+src_play_pause S 1
+src_state S
+src_play_pause S 0
+src_state S
+src_set_time S 1500
+src_stop S
+src_state S
+src_restart S
+src_state S
+echo ---- no media object (empty input, no file chosen)
+data E
+src_defaults E
+src_create T E
+src_duration T
+src_time T
+src_set_time T 100
+src_stop T
+src_state T
+src_play_pause T 0
+src_state T
+src_restart T
+src_state T
+echo ---- media creation fails: play/pause is a no-op
+host_int media_fail 1
+src_play_pause S 0

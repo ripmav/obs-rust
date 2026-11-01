@@ -1,0 +1,19 @@
+# S-026 Amazon IVS ingest download arrives after 200 ms: names get " (RTMPS)" / " (RTMP)" suffixes in the
+# server list; urls have "/{stream_key}" removed; a missing url_template_secure leaves rtmps_url NULL.
+fs-load /mod/data/services.json data/services-ok.json
+updater-route https://ingest.contribute.live-video.net/ingests 200 "{\"ingests\":[{\"name\":\"Virginia\",\"url_template\":\"rtmp://va.example:1935/app/{stream_key}\",\"url_template_secure\":\"rtmps://va.example:443/app/{stream_key}\"},{\"name\":\"Tokyo\",\"url_template\":\"rtmp://tk.example:1935/app/{stream_key}\"}]}"
+module-load
+settings S {"service":"Amazon IVS","server":"auto-rtmps","key":"k"}
+new A rtmp_common S
+get A url
+clock
+settings S {"service":"Amazon IVS","server":"auto-rtmp","key":"k"}
+update A S
+get A url
+props P A S
+fs-cat /cfg/rtmp-services/amazon_ivs_ingests.json
+echo only-RTMP-registered-lists-auto-rtmp-and-RTMP-entries
+protocols RTMP
+modify P service S
+props-show P
+module-unload

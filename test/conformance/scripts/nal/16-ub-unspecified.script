@@ -1,0 +1,13 @@
+# S-012 DEFECT D-4 (undefined behaviour in the reference, result UNSPECIFIED, no crash allowed):
+# for profile_idc 100/110/122/244 the SPS fields are read with an Exp-Golomb reader that
+# gives up after 32 zero bits (or when the data is exhausted: missing bits read as 0) and then
+# evaluates "1 << 32". The vectors below record what the x86-64 reference prints; an
+# implementation must not crash and need not match the profile/level/PPS parts of the
+# record (it must still produce the same layout and length).
+buf pps 68ce3c80
+echo sps-ends-before-the-first-exp-golomb-code
+cat au 00000001 6764001f 00000001 @pps
+avc_header @au
+echo sps-has-32-zero-bits-then-data
+cat au 00000001 6764001f 00000000 80 00000001 @pps
+avc_header @au

@@ -1,0 +1,17 @@
+# While any video mix is being consumed (raw output or GPU encoder), settings can not be changed:
+# obs_reset_video returns CURRENTLY_ACTIVE before looking at any parameter.
+startup en-US -
+reset_video
+video_active
+mix_active main raw=1
+video_active
+reset_video
+reset_video base=1x1 out=1x1
+mix_active main raw=0 gpu=1
+video_active
+reset_video
+mix_active main raw=0 gpu=0
+video_active
+reset_video base=800x600 out=800x600
+video_info
+shutdown

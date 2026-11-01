@@ -1,0 +1,8 @@
+open_file rc=0
+sections 1 [ S ]
+save rc=0
+"[ S ]\nk1  =  v1  \nk2\t=\tv2\t\nk 3=v 3\nk4 =\n"
+get_string  S  k1   "  v1  "
+get_string  S  k 3 "v 3"
+get_string  S  k4  ""
+get_string  S  k2	 "\tv2\t"

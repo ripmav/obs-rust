@@ -1,0 +1,23 @@
+# Core lifecycle: before startup nothing is initialised; startup creates the core with a persistent
+# main canvas; a second startup is refused; shutdown returns the process to the "not initialised" state
+# and the whole cycle can be repeated.
+initialized
+reset_video
+startup en-US /cfg
+initialized
+state
+locale_get
+# second call is refused and does not disturb the running core
+startup de-DE -
+locale_get
+name_store
+# the three core source types are registered by startup: scene, group and the internal audio line
+enum_types source
+enum_types input
+shutdown
+initialized
+# restart works and starts from a clean state; NULL locale and config path are accepted
+startup - -
+locale_get
+state
+shutdown

@@ -1,0 +1,45 @@
+opts_parse "title=\"hello world\""
+  count=1 ignored_count=1 ptrs options=1 ignored=1 input=1
+  opt 0 name="title" value="\"hello"
+  ignored 0 "world\""
+  input_words=2
+  word 0 "title=\"hello"
+  word 1 "world\""
+opts_parse "a='x y' b=2"
+  count=2 ignored_count=1 ptrs options=1 ignored=1 input=1
+  opt 0 name="a" value="'x"
+  opt 1 name="b" value="2"
+  ignored 0 "y'"
+  input_words=3
+  word 0 "a='x"
+  word 1 "y'"
+  word 2 "b=2"
+opts_parse "tab=a\tb"
+  count=1 ignored_count=0 ptrs options=1 ignored=1 input=1
+  opt 0 name="tab" value="a\tb"
+  input_words=1
+  word 0 "tab=a\tb"
+opts_parse "back=a\\b c=d"
+  count=2 ignored_count=0 ptrs options=1 ignored=1 input=1
+  opt 0 name="back" value="a\\b"
+  opt 1 name="c" value="d"
+  input_words=2
+  word 0 "back=a\\b"
+  word 1 "c=d"
+opts_parse "\"quoted=1\""
+  count=1 ignored_count=0 ptrs options=1 ignored=1 input=1
+  opt 0 name="\"quoted" value="1\""
+  input_words=1
+  word 0 "\"quoted=1\""
+opts_parse "utf8=\xc3\xa4\xc3\xb6 \xe2\x82\xac=euro"
+  count=2 ignored_count=0 ptrs options=1 ignored=1 input=1
+  opt 0 name="utf8" value="\xc3\xa4\xc3\xb6"
+  opt 1 name="\xe2\x82\xac" value="euro"
+  input_words=2
+  word 0 "utf8=\xc3\xa4\xc3\xb6"
+  word 1 "\xe2\x82\xac=euro"
+opts_parse "nl=a\nb"
+  count=1 ignored_count=0 ptrs options=1 ignored=1 input=1
+  opt 0 name="nl" value="a\nb"
+  input_words=1
+  word 0 "nl=a\nb"

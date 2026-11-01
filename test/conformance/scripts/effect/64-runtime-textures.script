@@ -1,0 +1,48 @@
+# CORE: texture parameters. gs_effect_set_texture stores a gs_shader_texture {texture pointer, srgb flag} as the
+# parameter's raw value (the fake backend decodes it: "texture=ID srgb=B", ID -1 = NULL texture). Textures are
+# uploaded with the other values at pass begin; at pass end every TEXTURE parameter of the pass is set to NULL
+# (so a texture must be set again for the next pass), and the technique end drops the value.
+# A texture parameter without a value and without default uploads nothing. The default of a texture parameter
+# is the path string from its declaration; it is uploaded as raw bytes when no texture was set (backend behaviour
+# for that case is up to the backend, here it is decoded as raw bytes since its size is not a gs_shader_texture).
+backend text none
+text a
+uniform texture2d image;
+uniform texture2d other = "default.png";
+uniform float4 color = {1,1,1,1};
+sampler_state samp { Filter = Point; };
+float4 VS() : POSITION { return color; }
+float4 PS() : TARGET { return image.Sample(samp, float2(0,0)) + other.Sample(samp, float2(0,0)); }
+technique T { pass { vertex_shader = VS(); pixel_shader = PS(); } pass { vertex_shader = VS(); pixel_shader = PS(); } }
+@end
+effect e a.effect @text:a
+echo --- value layout
+set_texture e:image 3
+get_val e:image
+set_texture_srgb e:image 4
+get_val e:image
+set_texture e:image -1
+get_val e:image
+echo --- upload at pass begin, clear at pass end
+set_texture e:image 5
+set_texture_srgb e:other 6
+tbegin e T
+pbegin e T 0
+echo (pass 0 is current)
+pend e T
+echo --- the value survives pass end but the backend texture was cleared; the second pass uploads it again
+pbegin e T 1
+pend e T
+tend e T
+get_val e:image
+echo --- texture parameter with a default and no value uploads the default bytes
+tbegin e T
+pbegin e T 0
+pend e T
+tend e T
+echo --- set_texture on a non-texture parameter just stores the 16-byte struct (no type check; the bytes hold a pointer, so only the size is shown)
+set_texture e:color 9
+flags e:color
+echo --- NULL param
+set_texture @null 1
+set_texture_srgb @null 1

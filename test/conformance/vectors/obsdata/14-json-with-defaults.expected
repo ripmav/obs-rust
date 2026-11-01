@@ -1,0 +1,18 @@
+json a "{\"ui\":1}"
+json_defaults a "{\"di\":5,\"dd\":0.5,\"ds\":\"dflt\",\"db\":true,\"ui\":1,\"as\":\"auto\",\"ai\":3}"
+json_pretty a "{\n    \"ui\": 1\n}"
+json_pretty_defaults a "{\n    \"di\": 5,\n    \"dd\": 0.5,\n    \"ds\": \"dflt\",\n    \"db\": true,\n    \"ui\": 1,\n    \"as\": \"auto\",\n    \"ai\": 3\n}"
+echo --- nested defaults
+json a "{\"ui\":1,\"uobj\":{}}"
+json_defaults a "{\"di\":5,\"dd\":0.5,\"ds\":\"dflt\",\"db\":true,\"ui\":1,\"as\":\"auto\",\"ai\":3,\"dobj\":{\"tag\":\"t\"},\"uobj\":{\"inner\":1}}"
+dump a {di:number[default=num(I,5,5)],dd:number[default=num(D,0,0.5)],ds:string[default="dflt"],db:bool[default=true],ui:number[user=num(I,1,1) default=num(?,100,100)],as:string[auto="auto"],ai:number[auto=num(I,3,3)],dobj:object[default={tag:string[default="t"]}],uobj:object[user={inner:number[default=num(I,1,1)]}]}
+echo --- shells
+json s "{}"
+json_defaults s "{\"str\":\"\",\"int\":0.0,\"dbl\":0.0,\"bool\":false,\"obj\":null,\"arr\":[]}"
+json_pretty_defaults s "{\n    \"str\": \"\",\n    \"int\": 0.0,\n    \"dbl\": 0.0,\n    \"bool\": false,\n    \"obj\": null,\n    \"arr\": []\n}"
+dump s {str:string[],int:number[],dbl:number[],bool:bool[],obj:object[],arr:array[]}
+echo --- defaults of different number types follow the layer in use
+json_defaults n "{\"x\":3}"
+json_defaults n "{\"x\":2.5}"
+echo --- default objects with NULL
+json_defaults nn "{\"p\":null}"

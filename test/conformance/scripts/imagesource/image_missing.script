@@ -1,0 +1,13 @@
+# image_source: missing-file reporting; replacing the path updates the settings (CORE).
+fs_file /i/a.png 1
+img /i/a.png 4 4
+create a image_source {"file":"/i/gone.png"}
+missing a
+missing a 0 /i/a.png
+tick 0.016
+state a
+missing a
+create b image_source {"file":"/i/a.png"}
+missing b
+create c image_source
+missing c

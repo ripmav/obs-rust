@@ -1,0 +1,6 @@
+open array ok
+dump array num=2 pos=2 bytes=12ff
+dump array num=6 pos=6 bytes=341234121234
+dump array num=12 pos=12 bytes=563412123456563412123456
+dump array num=16 pos=16 bytes=0403020101020304feffffff00000000
+dump array num=32 pos=32 bytes=08070605040302010102030405060708feffffffffffffff0000000000000001

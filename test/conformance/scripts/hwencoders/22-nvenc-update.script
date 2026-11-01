@@ -1,0 +1,53 @@
+# S-050 nvenc: nvenc_update (live reconfigure). Only when the dyn-bitrate capability was present at
+# create time and the rate control was not CQP/lossless. bitrate / max_bitrate are re-read; CQVBR
+# uses target_quality and zero average bitrate; maxBitRate follows max_bitrate only for VBR
+# (NOT for CQVBR) otherwise bitrate. resetEncoder and forceIDR are always set.
+dump 0
+nvcap dyn_bitrate 1
+defaults h264
+set int bitrate 4000
+set int max_bitrate 8000
+set str rate_control CBR
+create h264 soft
+set int bitrate 2500
+update
+update
+destroy
+set str rate_control VBR
+create h264 soft
+update
+destroy
+set str rate_control CQVBR
+set int target_quality 28
+create h264 soft
+set int target_quality 25
+update
+destroy
+# CQP: can_change_bitrate is false -> update succeeds without calling the SDK
+set str rate_control CQP
+create h264 soft
+update
+destroy
+# no capability -> same
+nvcap dyn_bitrate 0
+set str rate_control CBR
+create h264 soft
+update
+destroy
+# SDK failure
+nvcap dyn_bitrate 1
+create h264 soft
+nvstatus reconf NV_ENC_ERR_INVALID_PARAM
+update
+nvstatus reconf NV_ENC_SUCCESS
+# the property name is "rate_control"; a lowercase default "cbr" is CBR too. vbr is detected from
+# the configured mode: a rate_control that changed to VBR after create does not make max_bitrate apply
+set str rate_control VBR
+update
+destroy
+# u32 arithmetic: bitrate * 1000 wraps for bitrate > 4294967
+set str rate_control CBR
+create h264 soft
+set int bitrate 4294967
+update
+destroy

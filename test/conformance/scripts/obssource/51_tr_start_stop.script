@@ -1,0 +1,35 @@
+# Starting a transition: B becomes the destination (slot B), both slots get "active" child references, the
+# transition_start callback and "transition_start" signals fire AFTER the slots are set up.  Duration comes from the
+# argument unless the fixed-duration option is on.  Start time = os_gettime_ns at start.
+kind in input video size
+kind tr transition video,audio tstart,tstop,size
+create t tr T
+create a in A
+create b in B
+fksize a 1920 1080
+fksize b 1280 720
+watch t
+watch_global
+inc_active t
+tr_set t a
+clock 5000000000
+tr_start t 0 300 b
+tr_state t
+tr_get t
+tr_source t 0
+tr_source t 1
+tr_active_source t
+vtime 5000000000
+tr_time t
+vtime 5150000000
+tr_time t
+vtime 5300000000
+tr_time t
+vtime 9000000000
+tr_time t
+tr_fixed t 1 1000
+tr_fixed_get t
+create c in C
+clock 20000000000
+tr_start t 0 300 c
+tr_state t

@@ -1,0 +1,22 @@
+# S-021 obs_parse_hevc_header on data WITHOUT an Annex-B start code at offset 0 (or 1): the data is
+# assumed to be an hvcC record already and is returned as an exact copy of the input, whatever it
+# contains. A start code is "00 00 01" with size > 3 or "00 00 00 01" with size > 4 at offset 0.
+# Inputs of size 0 abort in the reference (bmalloc(0)): DEFECT D-8, required: ret=0, header unset.
+# hvcC bytes
+hevc_header 01016000000090000000000078f000fcfdf8f800000f0300
+# single byte
+hevc_header 01
+# three bytes 00 00 01 (size not > 3): copied
+hevc_header 000001
+# four bytes 00 00 00 01 (size not > 4): copied
+hevc_header 00000001
+# five bytes 00 00 00 01 40 -> start code, too short
+hevc_header 0000000140
+# 00 00 01 with size 4: start code form 1 -> NAL splitting, too short? (size < 6)
+hevc_header 00000140
+# leading zero byte before a 3-byte start code is not a start code
+hevc_header 0000010000
+# starts with a non-zero byte but contains start codes later
+hevc_header ff0000000140010c01ffff01600000030090000003000003007895d400000001420101016000000300900000030000030078a003c08010e5e5749249a9000000014401c0718180
+# D-8 empty input
+hevc_header -

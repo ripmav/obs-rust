@@ -1,0 +1,11 @@
+# S-034 hotkeys: the runner #includes libobs/obs-hotkey.c (to reach the file-local polling step);
+# real obs-data.c / calldata / name map are linked, the rest of the core is a recording fake.
+test/conformance/gen/hotkeys_runner.c
+test/conformance/gen/hotkeys_stubs.c
+test/conformance/gen/obsdata_stubs.c
+libobs/obs-hotkey-name-map.c
+libobs/obs-data.c
+libobs/callback/calldata.c
+-ljansson
+-Wno-deprecated-declarations
+-Ilibobs

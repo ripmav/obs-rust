@@ -1,0 +1,5 @@
+hk_mode null
+hk_from @null crash
+hk_mode core
+hk_from @null 0
+hk_free done

@@ -1,0 +1,25 @@
+# Edge cases of audio reset: before startup, with an active consumer, buffering arithmetic
+# overflow, and the zero sample rate (which crashes the reference: probed in a child process).
+reset_audio
+startup en-US -
+reset_audio sps=48000 speakers=stereo
+# an output with a connected consumer is active and can not be reconfigured: false, state unchanged
+audio_connect
+reset_audio sps=44100 speakers=mono
+audio_info
+reset_audio_null
+audio_info
+audio_disconnect
+reset_audio sps=44100 speakers=mono
+audio_info
+# QUIRK Q-5: max_buffering_ms * samples_per_sec is computed in 32 bits and wraps for large values,
+# so a large request can result in a SMALL buffer
+reset_audio sps=48000 speakers=stereo max_ms=100000
+audio_info
+# (requests above ~43 s at 48 kHz overflow the *signed* int used for the log / reported value, D-5; not vectored)
+# D-3: a zero sample rate divides by zero in the reference (SIGFPE) before the output validates it.
+# (probes fork the process, so no audio thread may exist at that point: remove the output first)
+reset_audio_null
+probe_reset_audio sps=0 speakers=stereo
+probe_reset_audio sps=0 speakers=stereo max_ms=10
+shutdown

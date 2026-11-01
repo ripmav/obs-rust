@@ -1,0 +1,17 @@
+# A source whose audio_ts lies inside the tick is placed at start_point = frames(audio_ts - start); one beyond the tick end is skipped.
+init 48000 2
+clock 1000000000
+timeline 1000000000
+source a input
+video_mix 1
+channel 0 0 a
+set a active 1
+output a 48000 2 1024 1010000000 const 0.25
+run 1 1
+state a
+source b input
+channel 0 1 b
+set b active 1
+output b 48000 2 1024 1030000000 const 0.25
+run 1 1
+state b

@@ -1,0 +1,33 @@
+# CORE: stinger settings: defaults, media source creation, transition point units, matte layout derived values.
+load quiet
+create st obs_stinger_transition
+fields st
+tick st
+settings st str:path=/media/stinger.mov int:transition_point=700
+tick st
+fields st
+# frame based transition point
+settings st int:tp_type=1 int:transition_point=30
+tick st
+# track matte: horizontal (default layout 0), texrenders are created on the change
+settings st bool:track_matte_enabled=1
+tick st
+settings st int:track_matte_layout=1 bool:invert_matte=1
+tick st
+settings st int:track_matte_layout=3
+tick st
+# separate file layout (not offered by the UI, reachable through settings)
+settings st int:track_matte_layout=2 str:track_matte_path=/media/matte.mov
+tick st
+# disabling again destroys the texrenders; matte source released
+settings st bool:track_matte_enabled=0
+tick st
+# audio options
+settings st bool:enable_monitoring=1 int:audio_fade_style=1 bool:hw_decode=0 bool:preload=1
+tick st
+settings st int:audio_fade_style=7 bool:enable_monitoring=0
+tick st
+# negative / huge transition points are converted with unsigned wrap-around
+settings st int:tp_type=0 int:transition_point=-1
+tick st
+destroy st

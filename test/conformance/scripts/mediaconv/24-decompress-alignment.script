@@ -1,0 +1,14 @@
+# Alignment independence: the decompressors use plain (unaligned-tolerant) loads, so planes placed at
+# an arbitrary byte offset inside their buffer give the same result as aligned planes.
+# The trailing argument is the offset of every input plane from a 32-byte aligned address (0 = aligned).
+decompress 420 0 2 4 2 2 16 2 0102030405060708 aabb ccdd 0
+decompress 420 0 2 4 2 2 16 2 0102030405060708 aabb ccdd 1
+decompress 420 0 2 4 2 2 16 2 0102030405060708 aabb ccdd 3
+decompress 420 0 2 4 2 2 16 2 0102030405060708 aabb ccdd 15
+decompress nv12 0 2 4 4 0 16 2 0102030405060708 aa11bb22 - 0
+decompress nv12 0 2 4 4 0 16 2 0102030405060708 aa11bb22 - 1
+decompress nv12 0 2 4 4 0 16 2 0102030405060708 aa11bb22 - 7
+decompress422 lead 0 1 4 16 1 aabbccdd11223344 0
+decompress422 lead 0 1 4 16 1 aabbccdd11223344 1
+decompress422 trail 0 1 4 16 1 aabbccdd11223344 0
+decompress422 trail 0 1 4 16 1 aabbccdd11223344 3

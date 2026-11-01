@@ -1,0 +1,140 @@
+> events off
+> reset
+> ascii 5 8 0 8 384
+> font Sans Serif - 0 p/sans
+> load
+load -> 1
+registered id=text_ft2_source version=0
+registered id=text_ft2_source version=2
+> create s 2
+create s -> 1
+> setfont s Sans Serif - 20 0
+> events on
+> set s text ab
+> update s
+ev gfx effect_create file=text_default.effect ok
+ev font_lookup face=Sans Serif size=20 style= flags=0
+ev ft new_face path=p/sans index=0 ok
+ev ft set_pixel_sizes 0 20
+ev ft select_charmap unicode=1
+ev gfx texture_create 2048x2048 a8=1
+ev gfx vertexbuffer_create verts=12 colors=1
+ev gfx vertexbuffer_flush
+update done
+> echo --- plain
+--- plain
+> render s
+ev gfx reset_blend
+ev gfx set_texture srgb=0
+ev gfx draw tris start=0 verts=12 use_color=1 offset=0,0
+render done
+> set s outline true
+> update s
+ev gfx vertexbuffer_destroy
+ev gfx vertexbuffer_create verts=12 colors=1
+ev gfx vertexbuffer_flush
+update done
+> echo --- outline
+--- outline
+> render s
+ev gfx reset_blend
+ev gfx set_texture srgb=0
+ev gfx draw tris start=0 verts=12 use_color=0 offset=-2,0
+ev gfx set_texture srgb=0
+ev gfx draw tris start=0 verts=12 use_color=0 offset=-2,-2
+ev gfx set_texture srgb=0
+ev gfx draw tris start=0 verts=12 use_color=0 offset=0,-2
+ev gfx set_texture srgb=0
+ev gfx draw tris start=0 verts=12 use_color=0 offset=2,-2
+ev gfx set_texture srgb=0
+ev gfx draw tris start=0 verts=12 use_color=0 offset=2,0
+ev gfx set_texture srgb=0
+ev gfx draw tris start=0 verts=12 use_color=0 offset=2,2
+ev gfx set_texture srgb=0
+ev gfx draw tris start=0 verts=12 use_color=0 offset=0,2
+ev gfx set_texture srgb=0
+ev gfx draw tris start=0 verts=12 use_color=0 offset=-2,2
+ev gfx set_texture srgb=0
+ev gfx draw tris start=0 verts=12 use_color=1 offset=0,0
+render done
+> set s outline false
+> set s drop_shadow true
+> update s
+ev gfx vertexbuffer_destroy
+ev gfx vertexbuffer_create verts=12 colors=1
+ev gfx vertexbuffer_flush
+update done
+> echo --- shadow
+--- shadow
+> render s
+ev gfx reset_blend
+ev gfx set_texture srgb=0
+ev gfx draw tris start=0 verts=12 use_color=0 offset=4,4
+ev gfx set_texture srgb=0
+ev gfx draw tris start=0 verts=12 use_color=1 offset=0,0
+render done
+> set s outline true
+> update s
+ev gfx vertexbuffer_destroy
+ev gfx vertexbuffer_create verts=12 colors=1
+ev gfx vertexbuffer_flush
+update done
+> echo --- both
+--- both
+> render s
+ev gfx reset_blend
+ev gfx set_texture srgb=0
+ev gfx draw tris start=0 verts=12 use_color=0 offset=-2,0
+ev gfx set_texture srgb=0
+ev gfx draw tris start=0 verts=12 use_color=0 offset=-2,-2
+ev gfx set_texture srgb=0
+ev gfx draw tris start=0 verts=12 use_color=0 offset=0,-2
+ev gfx set_texture srgb=0
+ev gfx draw tris start=0 verts=12 use_color=0 offset=2,-2
+ev gfx set_texture srgb=0
+ev gfx draw tris start=0 verts=12 use_color=0 offset=2,0
+ev gfx set_texture srgb=0
+ev gfx draw tris start=0 verts=12 use_color=0 offset=2,2
+ev gfx set_texture srgb=0
+ev gfx draw tris start=0 verts=12 use_color=0 offset=0,2
+ev gfx set_texture srgb=0
+ev gfx draw tris start=0 verts=12 use_color=0 offset=-2,2
+ev gfx set_texture srgb=0
+ev gfx draw tris start=0 verts=12 use_color=0 offset=4,4
+ev gfx set_texture srgb=0
+ev gfx draw tris start=0 verts=12 use_color=1 offset=0,0
+render done
+> linear on
+> echo --- linear sRGB selects the srgb texture setter
+--- linear sRGB selects the srgb texture setter
+> render s
+ev gfx reset_blend
+ev gfx set_texture srgb=1
+ev gfx draw tris start=0 verts=12 use_color=0 offset=-2,0
+ev gfx set_texture srgb=1
+ev gfx draw tris start=0 verts=12 use_color=0 offset=-2,-2
+ev gfx set_texture srgb=1
+ev gfx draw tris start=0 verts=12 use_color=0 offset=0,-2
+ev gfx set_texture srgb=1
+ev gfx draw tris start=0 verts=12 use_color=0 offset=2,-2
+ev gfx set_texture srgb=1
+ev gfx draw tris start=0 verts=12 use_color=0 offset=2,0
+ev gfx set_texture srgb=1
+ev gfx draw tris start=0 verts=12 use_color=0 offset=2,2
+ev gfx set_texture srgb=1
+ev gfx draw tris start=0 verts=12 use_color=0 offset=0,2
+ev gfx set_texture srgb=1
+ev gfx draw tris start=0 verts=12 use_color=0 offset=-2,2
+ev gfx set_texture srgb=1
+ev gfx draw tris start=0 verts=12 use_color=0 offset=4,4
+ev gfx set_texture srgb=1
+ev gfx draw tris start=0 verts=12 use_color=1 offset=0,0
+render done
+> set s text 
+> update s
+ev gfx vertexbuffer_destroy
+update done
+> echo --- empty text: nothing is drawn
+--- empty text: nothing is drawn
+> render s
+render done

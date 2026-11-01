@@ -1,0 +1,20 @@
+# S-045 statistics callbacks (total bytes, dropped frames, congestion, connect time) and the registration record.
+reset
+getters
+set total_bytes_sent 123456789012
+set dropped_frames 17
+set connect_time_ms 250
+set congestion 0.25
+getters
+# congestion is forced to 1.0 while frames are being dropped (min_priority > 0)
+set min_priority 2
+getters
+set min_priority 0
+# the "new socket loop" (Windows only, never enabled on this platform) reports buffer fill instead
+set congestion 0.5
+set new_socket_loop 1
+set write_buf_len 32768
+set write_buf_size 131072
+getters
+set min_priority 3
+getters

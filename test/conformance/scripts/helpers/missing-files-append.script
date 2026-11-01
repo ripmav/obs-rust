@@ -1,0 +1,27 @@
+# obs_missing_files_append(dst, src): appends every file of src to dst in order and adds a
+# reference to each file (CORE); src keeps its own entries. Files are freed only when the
+# last list releases them, so destroying src first leaves dst valid.
+mf_list_new 0
+mf_list_new 1
+mf_file_new 0 "/m/a" source "A"
+mf_file_new 1 "/m/b" source "B"
+mf_file_new 2 "/m/c" script
+mf_add 0 0
+mf_add 1 1
+mf_add 1 2
+mf_append 0 1
+mf_count 0
+mf_count 1
+mf_get 0 0
+mf_get 0 1
+mf_get 0 2
+mf_get 1 0
+mf_ref 0
+mf_ref 1
+mf_ref 2
+mf_destroy 1
+mf_ref 1
+mf_ref 2
+mf_get 0 1
+mf_get 0 2
+mf_destroy 0

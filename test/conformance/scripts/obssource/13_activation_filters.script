@@ -1,0 +1,13 @@
+# Filters of a source get show/hide and activate/deactivate callbacks together with the source, in REVERSE array
+# order of the filter array, i.e. OLDEST filter first (the array is newest-first), AFTER the source's own callback.
+kind in input video activate,show
+kind fl filter video activate,show
+create a in A
+create f1 fl F1
+create f2 fl F2
+filter_add a f1
+filter_add a f2
+inc_active a
+tick a 0.1
+dec_active a
+tick a 0.1

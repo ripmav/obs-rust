@@ -1,0 +1,57 @@
+# CORE. Per-codec translation: profile names (H.264 baseline/main/high; HEVC main/main10,
+# "main" is forced to main10 when a P010 GPU texture is active; AV1 always main), AV1 cqp is
+# multiplied by 4, v1 uses qpi/qpp/qpb as they are, an unknown profile leaves nCodecProfile 0.
+echo h264-profiles
+data D
+qsv_defaults h264v2 D
+set D profile str baseline
+qsv_create h264v2 X D
+qsv_destroy X
+set D profile str main
+qsv_create h264v2 X D
+qsv_destroy X
+set D profile str HIGH
+qsv_create h264v2 X D
+qsv_destroy X
+set D profile str bogus
+qsv_create h264v2 X D
+qsv_destroy X
+echo hevc
+data E
+qsv_defaults hevc E
+qsv_create hevc X E
+qsv_destroy X
+set E profile str main10
+qsv_create hevc X E
+qsv_destroy X
+set E profile str main
+tex_active p010 1
+qsv_create hevc X E
+qsv_destroy X
+tex_active p010 0
+echo av1-cqp-times-four
+data A
+qsv_defaults av1 A
+set A rate_control str CQP
+set A cqp int 20
+set A profile str whatever
+qsv_create av1 X A
+qsv_destroy X
+echo v1-uses-the-three-qp-settings
+data B
+qsv_defaults h264v1 B
+set B rate_control str CQP
+set B qpi int 10
+set B qpp int 11
+set B qpb int 12
+set B cqp int 40
+qsv_create h264v1 X B
+qsv_destroy X
+echo v2-ignores-qpi-qpp-qpb
+data C
+qsv_defaults h264v2 C
+set C rate_control str CQP
+set C qpi int 10
+set C cqp int 25
+qsv_create h264v2 X C
+qsv_destroy X

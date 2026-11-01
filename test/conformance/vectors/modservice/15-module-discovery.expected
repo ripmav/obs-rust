@@ -1,0 +1,31 @@
+module_paths=1
+found name=B bin=@TMP/flat/bin/B.so data=@TMP/flat/data/B
+found name=a bin=@TMP/flat/bin/a.so data=@TMP/flat/data/a
+found name=b bin=@TMP/flat/bin/b.so data=@TMP/flat/data/b
+found name=dotted.name bin=@TMP/flat/bin/dotted.name.so data=@TMP/flat/data/dotted.name
+found name=lib bin=@TMP/flat/bin/lib.so data=@TMP/flat/data
+found name=libbar bin=@TMP/flat/bin/libbar.so data=@TMP/flat/data/bar
+found name=libbaz bin=@TMP/flat/bin/libbaz.so data=@TMP/flat/data/baz
+found name=libfoo bin=@TMP/flat/bin/libfoo.so data=@TMP/flat/data/libfoo
+find done
+module_paths=1
+module_paths=1
+module_paths=1
+module_paths=2
+found name=B bin=@TMP/flat/bin/B.so data=@TMP/flat/data/B
+found name=a bin=@TMP/flat/bin/a.so data=@TMP/flat/data/a
+found name=b bin=@TMP/flat/bin/b.so data=@TMP/flat/data/b
+found name=dotted.name bin=@TMP/flat/bin/dotted.name.so data=@TMP/flat/data/dotted.name
+found name=lib bin=@TMP/flat/bin/lib.so data=@TMP/flat/data
+found name=libbar bin=@TMP/flat/bin/libbar.so data=@TMP/flat/data/bar
+found name=libbaz bin=@TMP/flat/bin/libbaz.so data=@TMP/flat/data/baz
+found name=libfoo bin=@TMP/flat/bin/libfoo.so data=@TMP/flat/data/libfoo
+found name=B bin=@TMP/flat/bin/B.so data=@TMP/flat/data/B
+found name=a bin=@TMP/flat/bin/a.so data=@TMP/flat/data/a
+found name=b bin=@TMP/flat/bin/b.so data=@TMP/flat/data/b
+found name=dotted.name bin=@TMP/flat/bin/dotted.name.so data=@TMP/flat/data/dotted.name
+found name=lib bin=@TMP/flat/bin/lib.so data=@TMP/flat/data/
+found name=libbar bin=@TMP/flat/bin/libbar.so data=@TMP/flat/data/bar
+found name=libbaz bin=@TMP/flat/bin/libbaz.so data=@TMP/flat/data/baz
+found name=libfoo bin=@TMP/flat/bin/libfoo.so data=@TMP/flat/data/libfoo
+find done

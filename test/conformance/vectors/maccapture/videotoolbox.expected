@@ -1,0 +1,126 @@
+vt_profile h264 baseline NV12 -> H264_Baseline_AutoLevel
+vt_profile h264 main NV12 -> H264_Main_AutoLevel
+vt_profile h264 high NV12 -> H264_High_AutoLevel
+vt_profile h264  NV12 -> H264_Main_AutoLevel
+vt_profile h264 other NV12 -> H264_Main_AutoLevel
+vt_profile hevc main NV12 -> HEVC_Main_AutoLevel
+vt_profile hevc main P010 -> HEVC_Main10_AutoLevel (warn: Forcing main10 for P010)
+vt_profile hevc main10 NV12 -> HEVC_Main10_AutoLevel
+vt_profile hevc main42210 P216 -> HEVC_Main42210_AutoLevel
+vt_profile hevc high NV12 -> HEVC_Main_AutoLevel
+vt_profile prores main NV12 -> H264_Baseline_AutoLevel
+vt_cs 601 matrix=ITU_R_601_4 primaries=SMPTE_C transfer=ITU_R_709_2
+vt_cs 709 matrix=ITU_R_709_2 primaries=ITU_R_709_2 transfer=ITU_R_709_2
+vt_cs SRGB matrix=ITU_R_709_2 primaries=ITU_R_709_2 transfer=sRGB
+vt_cs 2100_PQ matrix=ITU_R_2020 primaries=ITU_R_2020 transfer=SMPTE_ST_2084_PQ
+vt_cs 2100_HLG matrix=ITU_R_2020 primaries=ITU_R_2020 transfer=ITU_R_2100_HLG
+vt_cs DEFAULT matrix=ITU_R_709_2 primaries=ITU_R_709_2 transfer=ITU_R_709_2
+vt_hdr peak=1000 mdcv=33c286c41d4c0bb884d03e803d1340420098968000000000 clli=03e803e8
+vt_hdr peak=203 mdcv=33c286c41d4c0bb884d03e803d134042001ef9b000000000 clli=00cb00cb
+vt_hdr peak=10000 mdcv=33c286c41d4c0bb884d03e803d13404205f5e10000000000 clli=27102710
+vt_hdr peak=6600 mdcv=33c286c41d4c0bb884d03e803d13404203ef148000000000 clli=19c819c8
+vt_rc CBR as=1 macos=1300
+  set ConstantBitRate=6000000 bps
+  DataRateLimits not set
+vt_rc CBR as=0 macos=1300
+  warn: CBR requires Apple Silicon, using ABR
+  set AverageBitRate=6000000 bps
+  DataRateLimits not set
+vt_rc CBR as=1 macos=1200
+  warn: CBR requires macOS 13, using ABR
+  set AverageBitRate=6000000 bps
+  DataRateLimits not set
+vt_rc ABR as=1 macos=1400
+  set AverageBitRate=6000000 bps
+  DataRateLimits not set
+vt_rc ABR as=0 macos=1400
+  set AverageBitRate=6000000 bps
+  DataRateLimits intended_bytes=1500000 intended_window=1.5 reference_int_slot=0 reference_float_slot=0
+vt_rc CRF as=1 macos=1400
+  set Quality=0.75 (float32)
+  DataRateLimits not set
+vt_rc CRF as=1 macos=1400
+  set Quality=0.75 (float32)
+  DataRateLimits intended_bytes=2500000 intended_window=2 reference_int_slot=0 reference_float_slot=0
+vt_rc CRF as=0 macos=1400
+  warn: CRF requires Apple Silicon, using ABR
+  set AverageBitRate=6000000 bps
+  DataRateLimits not set
+vt_rc cbr as=1 macos=1400
+  error: unsupported rate control -> kVTParameterErr
+vt_rc VBR as=1 macos=1400
+  error: unsupported rate control -> kVTParameterErr
+vt_visibility rc=CBR limit=false limit_bitrate=false max_bitrate=false max_bitrate_window=false bitrate=true quality=false
+vt_visibility rc=CBR limit=true limit_bitrate=false max_bitrate=false max_bitrate_window=false bitrate=true quality=false
+vt_visibility rc=ABR limit=false limit_bitrate=true max_bitrate=false max_bitrate_window=false bitrate=true quality=false
+vt_visibility rc=ABR limit=true limit_bitrate=true max_bitrate=true max_bitrate_window=true bitrate=true quality=false
+vt_visibility rc=CRF limit=false limit_bitrate=true max_bitrate=false max_bitrate_window=false bitrate=false quality=true
+vt_visibility rc=CRF limit=true limit_bitrate=true max_bitrate=true max_bitrate_window=true bitrate=false quality=true
+vt_visibility rc=other limit=true limit_bitrate=true max_bitrate=true max_bitrate_window=true bitrate=true quality=false
+vt_pixfmt I420 full=0 codec=h264 -> 420YpCbCr8Planar
+vt_pixfmt I420 full=1 codec=h264 -> 420YpCbCr8PlanarFullRange
+vt_pixfmt NV12 full=0 codec=h264 -> 420YpCbCr8BiPlanarVideoRange
+vt_pixfmt NV12 full=1 codec=hevc -> 420YpCbCr8BiPlanarFullRange
+vt_pixfmt P010 full=0 codec=hevc -> 420YpCbCr10BiPlanarVideoRange
+vt_pixfmt P010 full=1 codec=hevc -> 420YpCbCr10BiPlanarFullRange
+vt_pixfmt P010 full=0 codec=h264 -> error ColorFormatUnsupported
+vt_pixfmt P216 full=0 codec=hevc -> 422YpCbCr16BiPlanarVideoRange
+vt_pixfmt P216 full=1 -> error FullRangeUnsupported
+vt_pixfmt P416 full=0 codec=hevc -> 444YpCbCr16BiPlanarVideoRange
+vt_pixfmt P416 full=1 -> error FullRangeUnsupported
+vt_pixfmt BGRA full=0 codec=h264 -> error ColorFormatUnsupported
+vt_pixfmt I444 full=0 codec=hevc -> error ColorFormatUnsupported
+vt_props codec=h264 hw=1 apple_silicon=1 macos=1400
+  rate_control: CBR ABR CRF
+  profile: baseline main high
+  spatial_aq_mode: absent
+vt_props codec=h264 hw=1 apple_silicon=0 macos=1400
+  rate_control: ABR
+  profile: baseline main high
+  spatial_aq_mode: absent
+vt_props codec=h264 hw=0 apple_silicon=1 macos=1400
+  rate_control: ABR
+  profile: baseline main high
+  spatial_aq_mode: absent
+vt_props codec=h264 hw=1 apple_silicon=1 macos=1205
+  rate_control: ABR CRF
+  profile: baseline main high
+  spatial_aq_mode: absent
+vt_props codec=hevc hw=1 apple_silicon=1 macos=1500
+  rate_control: CBR ABR CRF
+  profile: main main10 main42210
+  spatial_aq_mode: auto(1) disabled(2) enabled(3)
+vt_props codec=hevc hw=0 apple_silicon=0 macos=1203
+  rate_control: ABR
+  profile: main main10 main42210
+  spatial_aq_mode: absent
+vt_props codec=hevc hw=0 apple_silicon=0 macos=1202
+  rate_control: ABR
+  profile: main main10
+  spatial_aq_mode: absent
+vt_defaults codec=h264 rate_control=CBR bitrate=6000 quality=60 limit_bitrate=false max_bitrate=6000 max_bitrate_window=1.5 keyint_sec=2 profile=high codec_type=AppleProRes422 bframes=true spatial_aq_mode=1
+vt_defaults codec=h264 rate_control=ABR bitrate=6000 quality=60 limit_bitrate=false max_bitrate=6000 max_bitrate_window=1.5 keyint_sec=2 profile=high codec_type=AppleProRes422 bframes=true spatial_aq_mode=1
+vt_defaults codec=hevc rate_control=ABR bitrate=6000 quality=60 limit_bitrate=false max_bitrate=6000 max_bitrate_window=1.5 keyint_sec=2 profile=main codec_type=AppleProRes422 bframes=true spatial_aq_mode=1
+vt_defaults codec=hevc rate_control=ABR bitrate=6000 quality=60 limit_bitrate=false max_bitrate=6000 max_bitrate_window=1.5 keyint_sec=2 profile=main codec_type=AppleProRes422 bframes=true spatial_aq_mode=1
+vt_name "Apple H.264 (HW)" -> VTH264EncHW
+vt_name "Apple H.264 (SW)" -> VTH264EncSW
+vt_name "Apple HEVC (HW)" -> VTHEVCEncHW
+vt_name "Apple HEVC (AVE)" -> VTHEVCEncT2
+vt_name "Apple HEVC (SW)" -> VTHEVCEncSW
+vt_name "AppleProResHWEncoder" -> VTProResEncHW
+vt_name "Apple ProRes 422 Software" -> VTProResEncSW
+vt_name "Something Else" -> Something Else
+vt_params MaxKeyFrameIntervalDuration=2 MaxKeyFrameInterval=120 ExpectedFrameRate=60 quality=0.600000024 spatial_aq=true
+vt_params MaxKeyFrameIntervalDuration=2 MaxKeyFrameInterval=120 ExpectedFrameRate=60 quality=0.600000024 spatial_aq=false
+vt_params MaxKeyFrameIntervalDuration=2 MaxKeyFrameInterval=120 ExpectedFrameRate=60 quality=0.600000024 spatial_aq=true
+vt_params MaxKeyFrameIntervalDuration=2 MaxKeyFrameInterval=120 ExpectedFrameRate=60 quality=0.600000024 spatial_aq=false
+vt_params MaxKeyFrameIntervalDuration=2 MaxKeyFrameInterval=120 ExpectedFrameRate=60 quality=0.600000024 spatial_aq=false
+vt_params MaxKeyFrameIntervalDuration=2 MaxKeyFrameInterval=58 ExpectedFrameRate=29 quality=0.600000024 spatial_aq=false
+vt_params MaxKeyFrameIntervalDuration=0 MaxKeyFrameInterval=0 ExpectedFrameRate=60 quality=0.99000001 spatial_aq=false
+vt_update reapply_rate_control=false
+vt_update reapply_rate_control=true
+vt_update reapply_rate_control=true
+vt_register avc1 -> register id=h264 codec=h264 props=h26x
+vt_register hvc1 -> register codec=hevc props=h26x
+vt_register ap4h-422 -> register codec=prores props=prores (marker 422)
+vt_register prores-other -> record in prores list only, no registration

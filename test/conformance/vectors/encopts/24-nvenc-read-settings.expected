@@ -1,0 +1,24 @@
+echo empty-settings-give-zero-and-empty
+nvprops bitrate=0 max_bitrate=0 keyint_sec=0 cqp=0 device=0 bf=0
+nvprops bframe_ref_mode=0 split_encode=0 target_quality=0
+nvprops rate_control="" preset="" profile="" tune="" multipass="" opts_str=@null
+nvprops aq=0 lookahead=0 disable_scenecut=0 repeat_headers=0 force_cuda_tex=0
+nvprops opts count=0 ignored=0
+echo defaults
+nvprops bitrate=10000 max_bitrate=10000 keyint_sec=0 cqp=20 device=-1 bf=2
+nvprops bframe_ref_mode=0 split_encode=0 target_quality=20
+nvprops rate_control="cbr" preset="p5" profile="main" tune="hq" multipass="qres" opts_str=@null
+nvprops aq=1 lookahead=1 disable_scenecut=0 repeat_headers=0 force_cuda_tex=0
+nvprops opts count=0 ignored=0
+echo user-values
+nvprops bitrate=12345 max_bitrate=10000 keyint_sec=0 cqp=20 device=-1 bf=2
+nvprops bframe_ref_mode=0 split_encode=0 target_quality=20
+nvprops rate_control="VBR" preset="p5" profile="main" tune="hq" multipass="qres" opts_str="gopLength=120 bogus keyint=1"
+nvprops aq=1 lookahead=1 disable_scenecut=0 repeat_headers=0 force_cuda_tex=0
+nvprops opts count=2 ignored=1
+echo opts-given-only-as-a-default-is-ignored
+nvprops bitrate=0 max_bitrate=0 keyint_sec=0 cqp=0 device=0 bf=0
+nvprops bframe_ref_mode=0 split_encode=0 target_quality=0
+nvprops rate_control="" preset="" profile="" tune="" multipass="" opts_str=@null
+nvprops aq=0 lookahead=0 disable_scenecut=0 repeat_headers=0 force_cuda_tex=0
+nvprops opts count=0 ignored=0

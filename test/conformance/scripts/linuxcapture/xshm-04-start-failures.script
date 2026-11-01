@@ -1,0 +1,52 @@
+# S-049 xshm: capture_start paths: no display selected (-1), connect failure, missing SHM extension,
+# bad screen index, zero-size screen, attach failure, advanced/server selection. All failures end in
+# capture_stop (everything released, size 0).
+trace on
+x-screen 0 0 1920 1080 DP-1
+x-screen 1920 0 0 0 Ghost
+x-ext randr 1
+xshm-defaults
+# default v2: screen -1 => nothing connected, size 0
+xshm-create
+xshm-destroy
+# valid
+set-int screen 0
+xshm-create
+xshm-destroy
+# server only used when advanced
+set-str server :7
+xshm-create
+xshm-last-server
+xshm-destroy
+set-bool advanced 1
+xshm-create
+xshm-last-server
+xshm-destroy
+set-str server ""
+xshm-create
+xshm-last-server
+xshm-destroy
+# no such screen
+set-bool advanced 0
+set-int screen 5
+xshm-create
+xshm-destroy
+# zero-sized screen
+set-int screen 1
+xshm-create
+xshm-destroy
+# attach fails
+set-int screen 0
+fail attach
+xshm-create
+unfail
+xshm-destroy
+# SHM extension missing
+x-ext shm 0
+xshm-create
+xshm-destroy
+x-ext shm 1
+# connection error
+x-connect-fail 1
+xshm-create
+xshm-destroy

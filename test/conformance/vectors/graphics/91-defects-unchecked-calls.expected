@@ -1,0 +1,45 @@
+> crash gs_matrix_scale3f - - - - - -
+child signal=11
+> crash gs_query_sync_capabilities - - - - - -
+child signal=11
+> crash gs_sync_create - - - - - -
+child signal=11
+> crash gs_sync_destroy - - - - - -
+child signal=11
+> crash gs_sync_signal_syncobj_timeline_point - - - - - -
+child signal=11
+> crash gs_sync_wait - - - - - -
+child signal=11
+> crash gs_texture_create_from_dmabuf - - - - - -
+child signal=11
+== with a context: a NULL init-data pointer is dereferenced before the NULL check
+> gs_create g
+  dev device_create adapter=0
+  dev device_enter_context
+  dev device_vertexbuffer_create flags=2 num=512 num_tex=1 (large, contents not dumped)
+  dev device_vertexbuffer_create flags=16
+    vb num=4 num_tex=1 points=(0,0,0) (1,0,0) (0,1,0) (1,1,0) normals=null tangents=null colors=null tex0[w=2]=(0,0) (1,0) (0,1) (1,1)
+  dev device_vertexbuffer_create flags=18
+    vb num=4 num_tex=1 points=(0,0,0) (1,0,0) (0,1,0) (1,1,0) normals=null tangents=null colors=null tex0[w=2]=(0,0) (1,0) (0,1) (1,1)
+  dev device_vertexbuffer_create flags=0
+    vb num=4 num_tex=1 points=(0,0,0) (1,0,0) (0,1,0) (1,1,0) normals=null tangents=null colors=null tex0[w=2]=(0,1) (1,1) (0,0) (1,0)
+  dev device_blend_function_separate src_c=4 dest_c=5 src_a=1 dest_a=5
+  dev device_blend_op op=0
+  dev device_leave_context
+ret 0 created
+> gs_enter_context g
+  dev device_enter_context
+> crash gs_swapchain_create null
+child signal=11
+> crash gs_texrender_get_format -
+child signal=11
+== creation failing after the context was entered leaves the context behind; gs_destroy then never terminates
+> gs_leave_context
+  dev device_leave_context
+> fail device_vertexbuffer_create 1
+> crash gs_create gx fake
+  dev device_create adapter=0
+  dev device_enter_context
+  dev device_vertexbuffer_create flags=2 num=512 num_tex=1 (large, contents not dumped)
+child signal=14
+> fail device_vertexbuffer_create 0

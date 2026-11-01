@@ -1,0 +1,11 @@
+dw float 106
+mw vec3 1 2 3 100
+aw vec3 2 3 4 0
+cw vec3 -1 2 -1 0
+mfw vec3 2 4 6 20
+lenw float 10.6770782
+c1 bool 1
+c2 bool 0
+c3 bool 1
+c4 bool 1
+c5 bool 1

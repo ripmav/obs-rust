@@ -1,0 +1,26 @@
+# S-049 linuxcapture: wrappers that #include the real linux-v4l2 / linux-pulseaudio / linux-capture (xshm) sources + fakes.
+# Needs system headers/libs: linux/videodev2.h, libv4l2.h (headers only), libpulse, libxcb(+shm,randr,xinerama,xfixes), libavcodec headers.
+test/conformance/gen/linuxcapture_runner.c
+test/conformance/gen/linuxcapture_stubs.c
+test/conformance/gen/linuxcapture_w_v4l2.c
+test/conformance/gen/linuxcapture_w_pulse.c
+test/conformance/gen/linuxcapture_w_xshm.c
+libobs/obs-properties.c
+libobs/obs-data.c
+libobs/media-io/video-matrices.c
+libobs/graphics/vec2.c
+libobs/graphics/vec3.c
+libobs/graphics/vec4.c
+libobs/graphics/quat.c
+libobs/graphics/axisang.c
+libobs/graphics/matrix3.c
+libobs/graphics/matrix4.c
+libobs/graphics/plane.c
+libobs/graphics/math-extra.c
+-ljansson
+-lpulse
+-lxcb
+-lxcb-shm
+-lxcb-randr
+-lxcb-xinerama
+-Wno-deprecated-declarations

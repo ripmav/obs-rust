@@ -1,0 +1,44 @@
+# Callbacks from the player: frames, audio, preload, seek, stop/end handling.
+data D
+src_defaults D
+set_str D local_file "/m/a.mp4"
+host_settings D
+src_create S D
+media_cb video
+media_cb audio
+media_cb seek
+# preload: forwarded only if clear_on_media_end or looping (clear_on_media_end defaults to true)
+media_cb preload
+# stop callback on a local file: clear video, STATE ENDED + media_ended notification
+media_cb stop
+src_state S
+src_dump S
+echo ---- state STOPPED: the end of playback is not reported again
+src_stop S
+src_state S
+media_cb stop
+src_state S
+echo ---- clear_on_media_end off and not looping: no clear, preload ignored
+set_bool D clear_on_media_end 0
+src_update S D
+media_cb preload
+media_cb stop
+echo ---- looping makes preload pass even with clear_on_media_end off
+set_bool D looping 1
+src_update S D
+media_cb preload
+echo ---- close_when_inactive: preload ignored, stop schedules destruction of the media
+set_bool D close_when_inactive 1
+src_update S D
+media_cb preload
+media_cb stop
+src_dump S
+src_tick S
+src_dump S
+echo ---- track matte: stop does not clear the video
+data M
+src_defaults M
+set_str M local_file "/m/a.mp4"
+set_bool M is_track_matte 1
+src_create T M
+media_cb stop

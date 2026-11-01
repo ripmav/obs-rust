@@ -1,0 +1,121 @@
+--- struct parameter with mapped members
+backend vertexshader_create location="m1.effect (Vertex shader, technique T, pass 0)" len=112 fnv=c71f83be2ec6dec6
+  text "struct V {\n\tfloat4 p : POSITION;\n};\n\nfloat4 F(V v)\n{ return v.p; }\n\nfloat4 main(V v) : TARGET\n{\n\treturn F(v);\n}\n"
+  result ok
+backend pixelshader_create location="m1.effect (Pixel shader, technique T, pass 0)" len=112 fnv=c71f83be2ec6dec6
+  text "struct V {\n\tfloat4 p : POSITION;\n};\n\nfloat4 F(V v)\n{ return v.p; }\n\nfloat4 main(V v) : TARGET\n{\n\treturn F(v);\n}\n"
+  result ok
+effect e1 result=ok
+  error_string=@null
+--- struct parameter whose first member has no semantic: not mapped, main has no parameter
+backend vertexshader_create location="m2.effect (Vertex shader, technique T, pass 0)" len=119 fnv=63d6c78c2e8fe629
+  text "struct V {\n\tfloat a;\n\tfloat4 p : POSITION;\n};\n\nfloat4 F(V v)\n{ return v.p; }\n\nfloat4 main() : TARGET\n{\n\treturn F(v);\n}\n"
+  result ok
+backend pixelshader_create location="m2.effect (Pixel shader, technique T, pass 0)" len=119 fnv=63d6c78c2e8fe629
+  text "struct V {\n\tfloat a;\n\tfloat4 p : POSITION;\n};\n\nfloat4 F(V v)\n{ return v.p; }\n\nfloat4 main() : TARGET\n{\n\treturn F(v);\n}\n"
+  result ok
+effect e2 result=ok
+  error_string=@null
+--- scalar parameter with a semantic
+backend vertexshader_create location="m3.effect (Vertex shader, technique T, pass 0)" len=113 fnv=b75b3661a84e1da3
+  text "float4 F(float4 pos : POSITION)\n{ return pos; }\n\nfloat4 main(float4 pos : POSITION) : TARGET\n{\n\treturn F(pos);\n}\n"
+  result ok
+backend pixelshader_create location="m3.effect (Pixel shader, technique T, pass 0)" len=113 fnv=b75b3661a84e1da3
+  text "float4 F(float4 pos : POSITION)\n{ return pos; }\n\nfloat4 main(float4 pos : POSITION) : TARGET\n{\n\treturn F(pos);\n}\n"
+  result ok
+effect e3 result=ok
+  error_string=@null
+--- unmapped scalar parameter is dropped from main (the call text still passes it)
+backend vertexshader_create location="m4.effect (Vertex shader, technique T, pass 0)" len=76 fnv=1bca9964c19b4d12
+  text "float4 F(float k)\n{ return k; }\n\nfloat4 main() : TARGET\n{\n\treturn F(1.0);\n}\n"
+  result ok
+backend pixelshader_create location="m4.effect (Pixel shader, technique T, pass 0)" len=76 fnv=6052886626386d9d
+  text "float4 F(float k)\n{ return k; }\n\nfloat4 main() : TARGET\n{\n\treturn F(2.0);\n}\n"
+  result ok
+effect e4 result=ok
+  error_string=@null
+--- in/out/inout/uniform modifiers appear on the entry function but are not copied to main
+backend vertexshader_create location="m5.effect (Vertex shader, technique T, pass 0)" len=124 fnv=953a08b7a0244a37
+  text "float4 F(float4 a : POSITION, uniform float u)\n{ return a; }\n\nfloat4 main(float4 a : POSITION) : TARGET\n{\n\treturn F(a,1);\n}\n"
+  result ok
+backend pixelshader_create location="m5.effect (Pixel shader, technique T, pass 0)" len=124 fnv=953a08b7a0244a37
+  text "float4 F(float4 a : POSITION, uniform float u)\n{ return a; }\n\nfloat4 main(float4 a : POSITION) : TARGET\n{\n\treturn F(a,1);\n}\n"
+  result ok
+effect e5 result=ok
+  error_string=@null
+--- entry function without return semantic: main has none
+backend vertexshader_create location="m6.effect (Vertex shader, technique T, pass 0)" len=98 fnv=d521135789a12e6b
+  text "struct O {\n\tfloat4 p : POSITION;\n};\n\nO F()\n{ O o; o.p = 0; return o; }\n\nO main()\n{\n\treturn F();\n}\n"
+  result ok
+backend pixelshader_create location="m6.effect (Pixel shader, technique T, pass 0)" len=98 fnv=d521135789a12e6b
+  text "struct O {\n\tfloat4 p : POSITION;\n};\n\nO F()\n{ O o; o.p = 0; return o; }\n\nO main()\n{\n\treturn F();\n}\n"
+  result ok
+effect e6 result=ok
+  error_string=@null
+--- entry function with a struct return and a mapped parameter
+backend vertexshader_create location="m7.effect (Vertex shader, technique T, pass 0)" len=168 fnv=3a2d793b8f20c506
+  text "struct O {\n\tfloat4 p : POSITION;\n};\n\nstruct I {\n\tfloat4 p : POSITION;\n\tfloat2 uv : TEXCOORD0;\n};\n\nO F(I i)\n{ O o; o.p = i.p; return o; }\n\nO main(I i)\n{\n\treturn F(i);\n}\n"
+  result ok
+backend pixelshader_create location="m7.effect (Pixel shader, technique T, pass 0)" len=168 fnv=3a2d793b8f20c506
+  text "struct O {\n\tfloat4 p : POSITION;\n};\n\nstruct I {\n\tfloat4 p : POSITION;\n\tfloat2 uv : TEXCOORD0;\n};\n\nO F(I i)\n{ O o; o.p = i.p; return o; }\n\nO main(I i)\n{\n\treturn F(i);\n}\n"
+  result ok
+effect e7 result=ok
+  error_string=@null
+--- struct declared AFTER the function is not recognised as a struct parameter
+backend vertexshader_create location="m8.effect (Vertex shader, technique T, pass 0)" len=73 fnv=0dbd7711c27df6e5
+  text "float4 F(V v)\n{ return 0; }\n\nfloat4 main(V v) : TARGET\n{\n\treturn F(v);\n}\n"
+  result ok
+backend pixelshader_create location="m8.effect (Pixel shader, technique T, pass 0)" len=73 fnv=0dbd7711c27df6e5
+  text "float4 F(V v)\n{ return 0; }\n\nfloat4 main(V v) : TARGET\n{\n\treturn F(v);\n}\n"
+  result ok
+effect e8 result=ok
+  error_string=@null
+--- a function with no body parameters at all
+backend vertexshader_create location="m9.effect (Vertex shader, technique T, pass 0)" len=66 fnv=9768e103a0e2bad5
+  text "float4 F()\n{ return 0; }\n\nfloat4 main() : TARGET\n{\n\treturn F();\n}\n"
+  result ok
+backend pixelshader_create location="m9.effect (Pixel shader, technique T, pass 0)" len=66 fnv=9768e103a0e2bad5
+  text "float4 F()\n{ return 0; }\n\nfloat4 main() : TARGET\n{\n\treturn F();\n}\n"
+  result ok
+effect e9 result=ok
+  error_string=@null
+--- parameter whose type is a struct with zero members: not mapped
+backend vertexshader_create location="m10.effect (Vertex shader, technique T, pass 0)" len=85 fnv=12b1f81e563f4ff3
+  text "struct E {\n};\n\nfloat4 F(E e)\n{ return 0; }\n\nfloat4 main() : TARGET\n{\n\treturn F(e);\n}\n"
+  result ok
+backend pixelshader_create location="m10.effect (Pixel shader, technique T, pass 0)" len=85 fnv=12b1f81e563f4ff3
+  text "struct E {\n};\n\nfloat4 F(E e)\n{ return 0; }\n\nfloat4 main() : TARGET\n{\n\treturn F(e);\n}\n"
+  result ok
+effect e10 result=ok
+  error_string=@null
+--- mapped struct and a mapped scalar side by side. See 70-quirks for the missing comma between main's parameters.
+backend vertexshader_create location="m11.effect (Vertex shader, technique T, pass 0)" len=112 fnv=c71f83be2ec6dec6
+  text "struct V {\n\tfloat4 p : POSITION;\n};\n\nfloat4 F(V v)\n{ return v.p; }\n\nfloat4 main(V v) : TARGET\n{\n\treturn F(v);\n}\n"
+  result ok
+backend pixelshader_create location="m11.effect (Pixel shader, technique T, pass 0)" len=112 fnv=c71f83be2ec6dec6
+  text "struct V {\n\tfloat4 p : POSITION;\n};\n\nfloat4 F(V v)\n{ return v.p; }\n\nfloat4 main(V v) : TARGET\n{\n\treturn F(v);\n}\n"
+  result ok
+effect e11 result=ok
+  error_string=@null
+backend shader_destroy location="m11.effect (Vertex shader, technique T, pass 0)"
+backend shader_destroy location="m11.effect (Pixel shader, technique T, pass 0)"
+backend shader_destroy location="m10.effect (Vertex shader, technique T, pass 0)"
+backend shader_destroy location="m10.effect (Pixel shader, technique T, pass 0)"
+backend shader_destroy location="m9.effect (Vertex shader, technique T, pass 0)"
+backend shader_destroy location="m9.effect (Pixel shader, technique T, pass 0)"
+backend shader_destroy location="m8.effect (Vertex shader, technique T, pass 0)"
+backend shader_destroy location="m8.effect (Pixel shader, technique T, pass 0)"
+backend shader_destroy location="m7.effect (Vertex shader, technique T, pass 0)"
+backend shader_destroy location="m7.effect (Pixel shader, technique T, pass 0)"
+backend shader_destroy location="m6.effect (Vertex shader, technique T, pass 0)"
+backend shader_destroy location="m6.effect (Pixel shader, technique T, pass 0)"
+backend shader_destroy location="m5.effect (Vertex shader, technique T, pass 0)"
+backend shader_destroy location="m5.effect (Pixel shader, technique T, pass 0)"
+backend shader_destroy location="m4.effect (Vertex shader, technique T, pass 0)"
+backend shader_destroy location="m4.effect (Pixel shader, technique T, pass 0)"
+backend shader_destroy location="m3.effect (Vertex shader, technique T, pass 0)"
+backend shader_destroy location="m3.effect (Pixel shader, technique T, pass 0)"
+backend shader_destroy location="m2.effect (Vertex shader, technique T, pass 0)"
+backend shader_destroy location="m2.effect (Pixel shader, technique T, pass 0)"
+backend shader_destroy location="m1.effect (Vertex shader, technique T, pass 0)"
+backend shader_destroy location="m1.effect (Pixel shader, technique T, pass 0)"

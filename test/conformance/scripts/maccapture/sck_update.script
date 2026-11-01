@@ -1,0 +1,25 @@
+# S-052 sck_video_capture_update: keep-vs-restart decision. Args: cur(type display hide_cursor hide_obs window app)
+# new(type display show_cursor hide_obs window app). Quirk: "hide_cursor != show_cursor" means the cursor setting is unchanged.
+# Display, nothing changed -> keep
+sck_update 0 5 0 0 0 - 0 5 1 0 0 -
+# Display, cursor toggled -> restart (not a live update)
+sck_update 0 5 0 0 0 - 0 5 0 0 0 -
+# Display, hide_obs toggled -> restart
+sck_update 0 5 0 0 0 - 0 5 1 1 0 -
+# Display, other display -> restart
+sck_update 0 5 0 0 0 - 0 6 1 0 0 -
+# Type change -> restart
+sck_update 0 5 0 0 0 - 1 5 1 0 0 -
+# Window, same id -> keep
+sck_update 1 5 0 0 42 - 1 5 1 0 42 -
+# Window, new id -> restart and window id remembered
+sck_update 1 5 0 0 42 - 1 5 1 0 43 -
+# Window, new id 0 is ignored (window id only taken when >0): keep, id stays 42
+sck_update 1 5 0 0 42 - 1 5 1 0 0 -
+# Window: hide_obs change is irrelevant -> keep
+sck_update 1 5 0 0 42 - 1 9 1 1 42 -
+# Quirk: window id changes even if type differs: window remembered, restart
+sck_update 0 5 0 0 42 - 1 5 1 0 50 -
+# Application: same app keep, different app restart
+sck_update 2 5 0 0 0 com.a 2 5 1 0 0 com.a
+sck_update 2 5 0 0 0 com.a 2 5 1 0 0 com.b

@@ -1,0 +1,26 @@
+# S-050 nvenc: settings copied unchanged into the SDK structures: bframe_ref_mode ->
+# useBFramesAsRef (all codecs), split_encode -> splitEncodeMode (SDK >= 12.1, no validation here:
+# the property list restricts the values), device is not used by init at all. A setting that is
+# absent reads as 0 (NOT the property default).
+dump 2
+nvcap dyn_bitrate 1
+defaults hevc
+set int bframe_ref_mode 2
+set int split_encode 3
+set int bf 2
+create hevc soft
+destroy
+defaults h264
+set int bframe_ref_mode 1
+create h264 soft
+destroy
+defaults av1
+set int bframe_ref_mode 2
+set int split_encode 15
+create av1 soft
+destroy
+# absent settings (fresh object, no defaults): everything reads as 0 / ""; rate control "" -> CBR,
+# preset "" -> P5, bitrate 0
+reset
+create h264 soft
+destroy

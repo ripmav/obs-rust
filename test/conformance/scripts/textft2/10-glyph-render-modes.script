@@ -1,0 +1,25 @@
+# Rendering modes: anti-aliased copy honours the pitch (padding bytes are ignored); mono expands bits to 0/255;
+# toggling antialiasing clears the texture and rebuilds the standard set (S-038-R48..R52).
+events off
+reset
+ascii 5 8 0 8 384
+font "Sans Serif" - 0 p/sans
+load
+glyph 0x41 0x41 3 2 0 2 192
+create s 2
+setfont s "Sans Serif" - 20 0
+set s text "A"
+update s
+glyphs s 0x41
+texbuf s 0 0 12 3
+echo --- padding in the rendered bitmap rows (pitch > width) must not shift pixels
+pitch_pad 3
+set s antialiasing false
+update s
+echo --- mono: bit set -> ff, clear -> 00; glyph positions are unchanged
+texbuf s 0 0 12 3
+state s
+set s antialiasing true
+update s
+texbuf s 0 0 12 3
+texsum s

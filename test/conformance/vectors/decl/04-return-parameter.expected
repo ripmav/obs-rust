@@ -1,0 +1,18 @@
+decl "int f()"
+parse ok name=f params=1
+  param 0 name=return type=int in=0 out=1
+decl "int f(out int x)"
+parse ok name=f params=2
+  param 0 name=x type=int in=0 out=1
+  param 1 name=return type=int in=0 out=1
+decl "string f(in string a, out string b)"
+parse ok name=f params=3
+  param 0 name=a type=string in=1 out=0
+  param 1 name=b type=string in=0 out=1
+  param 2 name=return type=string in=0 out=1
+decl "void f(out int x)"
+parse ok name=f params=1
+  param 0 name=x type=int in=0 out=1
+decl "int f(int return)"
+log warning Errors/warnings for 'int f(int return)':  declaration (1, 11): 'return' is a reserved name 
+parse fail

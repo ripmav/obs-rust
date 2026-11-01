@@ -1,0 +1,30 @@
+log debug [obs-nvenc] Applying custom constQP = 20 / 20 / 20 (P / B / I)
+log debug [obs-nvenc] Applying custom minQP = 10 / 11 / 12 (P / B / I)
+log debug [obs-nvenc] Applying custom maxQP = 40 / 41 / 42 (P / B / I)
+log debug [obs-nvenc] Applying custom initialRCQP = 25 / 25 / 25 (P / B / I)
+nv_apply success=1
+nvconfig gopLength=0 frameIntervalP=0
+nvrc avg=0 max=0 vbvbuf=0 vbvdelay=0 tq=0 tqlsb=0 cb=0 cr=0 lookaheadLevel=0
+nvrc constQP=20/20/20 minQP=10/11/12 maxQP=40/41/42 initialRCQP=25/25/25
+nvrc bits minQP=0 maxQP=0 initialRCQP=0 aq=0 lookahead=0 disableIadapt=0 disableBadapt=0 temporalAQ=0 aqStrength=0
+nvcodec h264 level=0 idrPeriod=0 useBFramesAsRef=0 tfLevel=0 filler=0
+echo two-values-fall-back-to-atoi-of-first
+log debug [obs-nvenc] Applying custom constQP = 20 / 20 / 20 (P / B / I)
+log debug [obs-nvenc] Applying custom minQP = 7 / 8 / 9 (P / B / I)
+nv_apply success=1
+nvconfig gopLength=0 frameIntervalP=0
+nvrc avg=0 max=0 vbvbuf=0 vbvdelay=0 tq=0 tqlsb=0 cb=0 cr=0 lookaheadLevel=0
+nvrc constQP=20/20/20 minQP=7/8/9 maxQP=0/0/0 initialRCQP=0/0/0
+nvrc bits minQP=0 maxQP=0 initialRCQP=0 aq=0 lookahead=0 disableIadapt=0 disableBadapt=0 temporalAQ=0 aqStrength=0
+nvcodec h264 level=0 idrPeriod=0 useBFramesAsRef=0 tfLevel=0 filler=0
+echo garbage
+log debug [obs-nvenc] Applying custom constQP = 0 / 0 / 0 (P / B / I)
+log debug [obs-nvenc] Applying custom minQP = 1 / 1 / 1 (P / B / I)
+log debug [obs-nvenc] Applying custom maxQP = -5 / -5 / -5 (P / B / I)
+log debug [obs-nvenc] Applying custom initialRCQP = -1 / -2 / -3 (P / B / I)
+nv_apply success=1
+nvconfig gopLength=0 frameIntervalP=0
+nvrc avg=0 max=0 vbvbuf=0 vbvdelay=0 tq=0 tqlsb=0 cb=0 cr=0 lookaheadLevel=0
+nvrc constQP=0/0/0 minQP=1/1/1 maxQP=4294967291/4294967291/4294967291 initialRCQP=4294967295/4294967294/4294967293
+nvrc bits minQP=0 maxQP=0 initialRCQP=0 aq=0 lookahead=0 disableIadapt=0 disableBadapt=0 temporalAQ=0 aqStrength=0
+nvcodec h264 level=0 idrPeriod=0 useBFramesAsRef=0 tfLevel=0 filler=0

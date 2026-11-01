@@ -1,0 +1,8 @@
+fu_get_path "/cache/file.json"
+fu_get_path "/cache/file.json"
+fu_get_path "C:\\cache\\file.json"
+fu_get_path "C:\\cache/file.json"
+fu_get_path "file.json"
+fu_get_path "file.json"
+fu_get_path "/a/b/sub/file.json"
+fu_get_path "./../x"

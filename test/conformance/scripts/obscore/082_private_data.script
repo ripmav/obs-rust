@@ -1,0 +1,15 @@
+# Core private data (a settings object the application can use as scratch/global storage):
+# "set" REPLACES the whole content (previous keys disappear), "apply" MERGES the given values over
+# the stored ones; "get" returns the current value (empty string for a missing key).
+startup en-US -
+private_data get k
+private_data set k v1
+private_data get k
+private_data apply k2 v2
+private_data get k
+private_data get k2
+private_data set k3 v3
+private_data get k
+private_data get k2
+private_data get k3
+shutdown

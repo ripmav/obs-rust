@@ -1,0 +1,34 @@
+# CORE. use_bufsize: when false the VBV buffer equals the bitrate, otherwise buffer_size is
+# used; vbv_max_bitrate always equals the bitrate. CRF zeroes both.
+# keyint_sec: keyint_max = keyint_sec * fps_num / fps_den with 32-bit integer arithmetic
+# (truncating); keyint_sec 0 leaves whatever the x264 preset reset produced.
+data D
+x264_defaults D
+set D bitrate int 4500
+set D buffer_size int 9000
+echo bufsize-off
+x264_settings D
+echo bufsize-on
+set D use_bufsize bool 1
+x264_settings D
+echo buffer-size-zero
+set D buffer_size int 0
+x264_settings D
+echo keyint-2s-at-60fps
+set D keyint_sec int 2
+x264_settings D
+echo keyint-2s-at-ntsc-29.97
+video NV12 709 partial 30000 1001 1920 1080
+x264_settings D
+echo keyint-1s-at-59.94
+set D keyint_sec int 1
+video NV12 709 partial 60000 1001 1920 1080
+x264_settings D
+echo keyint-sec-20-at-1000fps
+set D keyint_sec int 20
+video NV12 709 partial 1000 1 1280 720
+x264_settings D
+echo negative-keyint-sec-is-used-as-is
+set D keyint_sec int -3
+video NV12 709 partial 60 1 1280 720
+x264_settings D

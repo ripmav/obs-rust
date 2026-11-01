@@ -1,0 +1,21 @@
+# RTMP_ReadPacket: header types 0..3 inheritance, timestamp accumulation (delta -> absolute at completion) and the
+# per-channel timestamp table (R70..R78). A type-3 chunk that starts a new message re-uses the stored header timestamp field.
+new
+clock 1000
+seturl rtmp://h/a
+enablewrite
+set flashver FMLE
+feed 03
+feed_s1 0 1000 00000000
+feed_echo
+connect
+feed 050003e800000a090100000041414141414141414141
+feed 4500002800000a0942424242424242424242
+feed 8500002843434343434343434343
+feed c544444444444444444444
+read
+read
+read
+read
+chts 5
+state

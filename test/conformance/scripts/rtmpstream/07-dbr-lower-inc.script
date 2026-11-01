@@ -1,0 +1,46 @@
+# S-045 dbr_bitrate_lowered / dbr_inc_bitrate: reaction to congestion and the stepwise recovery.
+reset
+fake now 10000000000
+# nothing known: no estimate, no previous bitrate -> no change
+set dbr_cur_bitrate 6000
+set dbr_orig_bitrate 6000
+dbr_lower
+# estimate below current: rounded DOWN to a multiple of 100, window cleared, recovery timer armed (now + 4 s)
+set dbr_est_bitrate 4567
+set dbr_data_size 777
+dbr_lower
+# the estimate itself is kept (only the window is cleared); lowering to the same value is a no-op
+dbr_lower
+# estimate >= current: ignored; falls back to prev_bitrate when set
+set dbr_est_bitrate 9000
+set dbr_prev_bitrate 5000
+dbr_lower
+# prev equal to current: no change, prev stays
+set dbr_cur_bitrate 5000
+set dbr_prev_bitrate 5000
+set dbr_est_bitrate 0
+dbr_lower
+# small estimates round down; below 50 -> 50 (an estimate of 60 rounds to 0 and then is raised to 50)
+set dbr_cur_bitrate 6000
+set dbr_prev_bitrate 0
+set dbr_est_bitrate 60
+dbr_lower
+set dbr_cur_bitrate 6000
+set dbr_est_bitrate 150
+dbr_lower
+# recovery: +10% of the original per step, timer re-armed until the original is reached
+reset
+fake now 20000000000
+set dbr_orig_bitrate 6000
+set dbr_cur_bitrate 4500
+set dbr_inc_bitrate 600
+dbr_inc
+dbr_inc
+dbr_inc
+# the step that reaches/overshoots the original clamps to it, does NOT re-arm the timer
+dbr_inc
+fake advance 1000000000
+set dbr_cur_bitrate 5700
+dbr_inc
+# beyond: stays clamped
+dbr_inc

@@ -1,0 +1,27 @@
+# Async video filter chain: on every tick the selected frame is passed through the ENABLED filters that have a
+# filter_video callback, in order of the filter array from the highest index down to 0 (oldest first).  If a filter
+# returns NULL the chain stops and the source has no current frame.  Disabled filters are skipped.
+kind cam input asyncvideo
+kind fa filter asyncvideo fvideo
+create c cam C
+create f1 fa F1
+create f2 fa F2
+filter_add c f1
+filter_add c f2
+video c bgra 2 2 1000000000 1 1 0
+vtime 100000000
+tick c 0.016
+astate c
+echo --- disable F1
+enable f1 0
+video c bgra 2 2 1050000000 1 1 0
+vtime 200000000
+tick c 0.016
+echo --- F1 drops frames
+enable f1 1
+fkdrop f1 1
+video c bgra 2 2 1150000000 1 1 0
+vtime 300000000
+tick c 0.016
+astate c
+echo --- F2 (applied second) is not reached

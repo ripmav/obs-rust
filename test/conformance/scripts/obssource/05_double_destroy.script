@@ -1,0 +1,12 @@
+# Releasing the handle of a source whose only other strong reference is a filter-parent link:
+# a filter on a source keeps its own reference (filter_add takes one).  Destroying the filter handle first does not
+# destroy the filter.
+kind in input video create,destroy
+kind fl filter video create,destroy
+create a in A
+create f fl F
+filter_add a f
+refs f
+release f
+pending
+filter_remove a f

@@ -1,0 +1,53 @@
+byname b p ok
+item_get_int ip 1
+item_get_string ip "hello world, this is long enough to force growth beyond capacity xxxxxxxxxxxxxxxxxxx"
+item_type ip string
+item_name ip "p"
+names b q r p
+item_dump ip p:string[user="hello world, this is long enough to force growth beyond capacity xxxxxxxxxxxxxxxxxxx"]
+item_dump ip p:number[user=num(I,3,3)]
+item_numtype ip double
+item_get_int ip 1
+item_get_double ip 1.25
+item_get_bool ip 1
+item_dump ip p:bool[user=true]
+echo --- layers through the item
+item_dump ip p:bool[user=true default=false auto=true]
+item_has_user ip 1
+item_has_default ip 1
+item_has_autoselect ip 1
+item_get_default_bool ip 0
+item_get_autoselect_bool ip 1
+item_get_bool ip 0
+item_get_bool ip 1
+item_has_autoselect ip 0
+item_dump ip p:bool[]
+dump b {q:number[user=num(I,2,2)],r:number[user=num(I,3,3)],p:bool[]}
+echo --- default of a different type on an item is ignored
+byname b q ok
+item_has_default iq 0
+item_has_default iq 1
+item_get_default_int iq 8
+echo --- getters on a mismatching item type
+item_get_string iq ""
+item_get_bool iq 0
+item_get_obj iq null
+item_get_array iq null
+echo --- items holding objects and arrays
+byname h obj ok
+item_get_obj io ok
+same o got 1
+refs o 3
+byname h arr ok
+item_get_array ia ok
+a_refs ar 3
+item_type ia array
+refs o 2
+item_dump io obj:object[user=null]
+item_dump ia arr:array[user=null]
+echo --- removing through the item
+byname h arr ok
+names h obj
+echo --- item_remove / release on a NULL handle slot
+next_null 0
+next_nullptr 0

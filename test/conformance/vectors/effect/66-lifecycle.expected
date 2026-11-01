@@ -1,0 +1,49 @@
+--- destroy of a cached effect is a no-op
+backend vertexshader_create location="life.effect (Vertex shader, technique T, pass 0)" len=87 fnv=657ac010302854a4
+  sparam 0 name=f type=FLOAT array=0
+  result ok
+backend pixelshader_create location="life.effect (Pixel shader, technique T, pass 0)" len=87 fnv=657ac010302854a4
+  sparam 0 name=f type=FLOAT array=0
+  result ok
+effect e1 result=ok
+  error_string=@null
+destroy e1 cached=1
+nparams -> 1
+--- destroy of an uncached effect frees it and its shaders
+backend vertexshader_create location=" (Vertex shader, technique T, pass 0)" len=87 fnv=657ac010302854a4
+  sparam 0 name=f type=FLOAT array=0
+  result ok
+backend pixelshader_create location=" (Pixel shader, technique T, pass 0)" len=87 fnv=657ac010302854a4
+  sparam 0 name=f type=FLOAT array=0
+  result ok
+effect e2 result=ok
+  error_string=@null
+backend shader_destroy location=" (Vertex shader, technique T, pass 0)"
+backend shader_destroy location=" (Pixel shader, technique T, pass 0)"
+destroy e2 cached=0
+--- failed creation leaves no effect behind
+effect e3 result=fail
+  error_string="bad.effect (1, 11): Expected 'numeric value'\nbad.effect (1, 12): Unexpected EOF\n"
+--- create_from_file caches by path
+backend vertexshader_create location="@tmp/fx/a.effect (Vertex shader, technique T, pass 0)" len=87 fnv=657ac010302854a4
+  sparam 0 name=f type=FLOAT array=0
+  result ok
+backend pixelshader_create location="@tmp/fx/a.effect (Pixel shader, technique T, pass 0)" len=87 fnv=657ac010302854a4
+  sparam 0 name=f type=FLOAT array=0
+  result ok
+effect_from_file f1 result=ok same_as=-
+effect_from_file f2 result=ok same_as=f1
+effect f1 params=1 techniques=1 viewproj=- world=-
+  param 0 name=f type=FLOAT annotations=0 default_size=4 default=0000803f f=[1]
+  technique 0 name=T passes=1
+    pass 0 name="p" vertex_params=[f] pixel_params=[f] vertex=yes pixel=yes
+--- a missing file fails (the ERROR log names the path; the runner prints the scratch directory as @tmp)
+log error Could not load effect file '@tmp/fx/nope.effect'
+effect_from_file f5 result=fail same_as=-
+--- effect text that fails to parse from a file
+effect_from_file f3 result=fail same_as=-
+effect_from_file f4 result=fail same_as=-
+backend shader_destroy location="@tmp/fx/a.effect (Vertex shader, technique T, pass 0)"
+backend shader_destroy location="@tmp/fx/a.effect (Pixel shader, technique T, pass 0)"
+backend shader_destroy location="life.effect (Vertex shader, technique T, pass 0)"
+backend shader_destroy location="life.effect (Pixel shader, technique T, pass 0)"

@@ -1,0 +1,22 @@
+# S-044: per-tick sequence: active mask, buffers cleared before the input callback, callback fills them, active mixes
+# are clamped (NaN -> 0, +-1 limits) with an unclamped copy, outputs are delivered with the callback-chosen timestamp.
+aopen main 48000 FLOAT_PLANAR STEREO
+# no inputs: callback still runs with mask 0 and every mix pointer table populated
+atick
+aconnect a 1 0
+aconnect b 2 3
+afeed 0 0 0 4 0.25 set
+afeed 3 0 0 2 -3 set
+afeed 3 1 0 1 nan set
+afeed 3 1 1 1 inf set
+afeed 3 1 2 1 -inf set
+anewts delta 0
+# mixes 0 and 3 active (mask 0x09); mix 3 is clamped: -3 -> -1, nan -> 0, +-inf -> +-1
+aprobe 0 1 2 3 1023
+atick
+# buffers are cleared every tick: 'add' mode shows a fresh zero start each time
+afeed_clear
+afeed 0 0 0 1 0.5 add
+atick 2
+adump
+aclose

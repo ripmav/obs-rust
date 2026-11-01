@@ -1,0 +1,48 @@
+# set_default_* records a default AND creates the user value when none exists.
+create
+has_user S a
+has_default S a
+get_string S a
+set_default_string S a dflt
+has_user S a
+has_default S a
+get_string S a
+default_string S a
+set_string S a user
+get_string S a
+default_string S a
+set_default_string S a other
+get_string S a
+default_string S a
+sections
+save
+file
+remove S a
+has_user S a
+get_string S a
+default_string S a
+set_default_int S n 7
+set_default_uint S u 8
+set_default_bool S b 1
+set_default_double S d 2.5
+set_default_double S d2 0.1
+get_int S n
+get_uint S u
+get_bool S b
+get_double S d
+get_string S d
+get_string S d2
+default_int S n
+default_uint S u
+default_bool S b
+default_double S d
+default_string S nothing
+default_int S nothing
+# set_default_double stores "%g" (6 significant digits) while set_double stores 17 digits.
+set_default_double S big 1234567.891
+get_string S big
+get_double S big
+set_double S big2 1234567.891
+get_string S big2
+set_default_string S nul @null
+get_string S nul

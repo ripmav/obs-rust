@@ -1,0 +1,97 @@
+data D
+  bitrate int 10000 default
+  max_bitrate int 10000 default
+  target_quality int 20 default
+  keyint_sec int 0 default
+  cqp int 20 default
+  device int -1 default
+  bf int 2 default
+  rate_control string "cbr" default
+  preset string "p5" default
+  multipass string "qres" default
+  tune string "hq" default
+  profile string "high" default
+  adaptive_quantization bool 1 default
+  lookahead bool 1 default
+  repeat_headers bool 0 default
+  force_cuda_tex bool 0 default
+  disable_scenecut bool 0 default
+end data D
+data H
+  bitrate int 10000 default
+  max_bitrate int 10000 default
+  target_quality int 20 default
+  keyint_sec int 0 default
+  cqp int 20 default
+  device int -1 default
+  bf int 2 default
+  rate_control string "cbr" default
+  preset string "p5" default
+  multipass string "qres" default
+  tune string "hq" default
+  profile string "main" default
+  adaptive_quantization bool 1 default
+  lookahead bool 1 default
+  repeat_headers bool 0 default
+  force_cuda_tex bool 0 default
+  disable_scenecut bool 0 default
+end data H
+data A
+  bitrate int 10000 default
+  max_bitrate int 10000 default
+  target_quality int 20 default
+  keyint_sec int 0 default
+  cqp int 20 default
+  device int -1 default
+  bf int 2 default
+  rate_control string "cbr" default
+  preset string "p5" default
+  multipass string "qres" default
+  tune string "hq" default
+  profile string "main" default
+  adaptive_quantization bool 1 default
+  lookahead bool 1 default
+  repeat_headers bool 0 default
+  force_cuda_tex bool 0 default
+  disable_scenecut bool 0 default
+end data A
+echo no-bframe-support-and-no-lookahead
+data E
+  bitrate int 10000 default
+  max_bitrate int 10000 default
+  target_quality int 20 default
+  keyint_sec int 0 default
+  cqp int 20 default
+  device int -1 default
+  bf int 0 default
+  rate_control string "cbr" default
+  preset string "p5" default
+  multipass string "qres" default
+  tune string "hq" default
+  profile string "high" default
+  adaptive_quantization bool 1 default
+  lookahead bool 0 default
+  repeat_headers bool 0 default
+  force_cuda_tex bool 0 default
+  disable_scenecut bool 0 default
+end data E
+echo explicit-user-values-win
+data E
+  bitrate int 10000 default
+  max_bitrate int 10000 default
+  target_quality int 20 default
+  keyint_sec int 0 default
+  cqp int 20 default
+  device int -1 default
+  preset string "p5" default
+  multipass string "qres" default
+  tune string "hq" default
+  profile string "high" default
+  adaptive_quantization bool 1 default
+  lookahead bool 0 default
+  repeat_headers bool 0 default
+  force_cuda_tex bool 0 default
+  disable_scenecut bool 0 default
+  bf int 3 user
+  rate_control string "VBR" user
+end data E

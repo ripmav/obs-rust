@@ -1,0 +1,32 @@
+# Re-reading rules in update: the same path is not re-read unless a layout-affecting setting changed; switching
+# from_file off keeps the old path for later ticks (S-038-R93..R96).
+events off
+reset
+ascii 5 8 0 8 384
+font "Sans Serif" - 0 p/sans
+load
+create s 2
+setfont s "Sans Serif" - 20 0
+set s from_file true
+file a.txt "one"
+sets s text_file @TMP@/a.txt
+update s
+state s
+file a.txt "two"
+echo --- same path, nothing changed: update leaves the old text
+update s
+state s
+echo --- a layout-affecting change (colour, wrap, size, log settings) forces a re-read
+set s color1 0xff0000ff
+update s
+state s
+echo --- different path always re-reads
+file b.txt "three"
+sets s text_file @TMP@/b.txt
+update s
+state s
+echo --- switching to manual text
+set s from_file false
+set s text "manual"
+update s
+state s

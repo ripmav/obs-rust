@@ -1,0 +1,42 @@
+# S-035 service registration (obs_register_service_s): required callbacks, duplicate ids, struct-size handling,
+# free_type_data on rejection, table order. Outside a module load (no loadingModule) nothing is recorded per module.
+svc_def A svcA
+svc_register A
+svc_types
+# duplicate id: rejected before the required-value checks; free_type_data (if present in the passed size) is called
+svc_def A2 svcA free_type_data
+svc_register A2
+svc_types
+# each required callback missing -> error log, not registered
+svc_def N1 noname no_name free_type_data
+svc_register N1
+svc_def N2 nocreate no_create free_type_data
+svc_register N2
+svc_def N3 nodestroy no_destroy
+svc_register N3
+svc_def N4 noproto no_protocol free_type_data
+svc_register N4
+svc_types
+# size smaller than the struct: fields beyond the size count as absent
+svc_def S1 shortA
+svc_register S1 upto:get_protocol
+svc_def S2 shortB
+svc_register S2 before:get_protocol
+svc_def S3 shortC
+svc_register S3 before:destroy
+svc_def S4 shortD free_type_data
+svc_register S4 before:free_type_data
+svc_def S5 shortE free_type_data
+svc_register S5 upto:free_type_data
+svc_types
+# size larger than the current struct is refused (free_type_data is called when it lies inside the known part)
+svc_def S6 bigA free_type_data
+svc_register S6 99999
+# size 0 = "outside obs_module_load": required-value check fails first, nothing is called
+svc_def S7 zero free_type_data
+svc_register S7 0
+svc_types
+# optional callbacks are not required
+svc_def O optional update activate deactivate initialize defaults props apply output_type resolutions max_fps max_bitrate vcodecs acodecs connect_info can_connect
+svc_register O
+svc_types

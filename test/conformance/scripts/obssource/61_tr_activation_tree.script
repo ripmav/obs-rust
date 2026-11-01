@@ -1,0 +1,24 @@
+# Activation through a transition: the transition's children (and their descendants) are part of the active tree,
+# so they get the transition's show/activate references; this also holds for a child added by "start" later.
+kind leaf input video activate,show
+kind grp input video enum,activate,show
+kind tr transition video,audio
+create t tr T
+create g grp G
+create l leaf L
+create m leaf M
+child g l
+tr_set t g
+inc_active t
+state g
+state l
+enum_active t
+enum_tree t
+tr_start t 0 100 m
+state m
+state l
+enum_tree t
+dec_active t
+state g
+state l
+state m

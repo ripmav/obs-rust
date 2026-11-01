@@ -1,0 +1,13 @@
+# happy-eyeballs address ordering (CORE). The resolver result is interleaved by address
+# family: whenever two consecutive entries have the same family (IPv4 'a' or IPv6 'b'), the
+# next entry of the other family further down the list is moved in front of the second
+# one. Nodes are labelled <position in resolver result><a|b|x> (a = IPv4, b = IPv6,
+# x = other family). bind length 0 = no bind address (family unspecified).
+he_order 0 example.com 443 6 6 4 4
+he_order 0 example.com 443 4 4 6 6
+he_order 0 example.com 443 6 6 6 4 4 4
+he_order 0 example.com 443 4 4 4 4 6
+he_order 0 example.com 443 6 4 6 4
+he_order 0 example.com 443 4
+he_order 0 example.com 443 6 6 6
+he_order 0 example.com 443 4 6 6 4 4 6

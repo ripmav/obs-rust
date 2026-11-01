@@ -1,0 +1,48 @@
+# alpha premultiplication on RGBA8 texels (S-009-R123..R125). rgb' = u8(rgb/255 * a/255 * 255 + 0.5),
+# alpha byte is copied unchanged. The _srgb variants convert rgb to linear first, multiply,
+# and convert back. srgb results may differ by 1 between libm implementations (tolerance +-1 per byte).
+px t1 ff8040ff
+px t2 ff804080
+px t3 ff804000
+px t4 ffffff01
+px t5 c8643280
+px t6 00000080
+px t7 ff00ff7f
+call a premultiply_xyza t1
+call a premultiply_xyza t2
+call a premultiply_xyza t3
+call a premultiply_xyza t4
+call a premultiply_xyza t5
+call a premultiply_xyza t6
+call a premultiply_xyza t7
+# restrict variant writes a separate destination
+call d premultiply_xyza_restrict t2
+call d premultiply_xyza_restrict t5
+# restrict forms: all four bytes of the destination texel are written (alpha is copied)
+px dprev 01020304
+call dprev premultiply_xyza_restrict t2
+# loops over N texels; bytes after N texels are untouched
+px img ff804080c8643280ff00ff7f11223344
+call l premultiply_xyza_loop img 1
+call l premultiply_xyza_loop img 3
+call l premultiply_xyza_loop img 4
+call l premultiply_xyza_loop img 0
+call r premultiply_xyza_loop_restrict img 3
+call r premultiply_xyza_loop_restrict img 0
+# the srgb variants
+call s premultiply_xyza_srgb t1
+call s premultiply_xyza_srgb t2
+call s premultiply_xyza_srgb t3
+call s premultiply_xyza_srgb t5
+call s premultiply_xyza_srgb t7
+call sd premultiply_xyza_srgb_restrict t2
+call sl premultiply_xyza_srgb_loop img 4
+call sr premultiply_xyza_srgb_loop_restrict img 3
+# float4 premultiply (alpha lane is not changed)
+f4 f 0.5 0.25 1 0.5
+call pf premultiply_float4 f
+f4 g 1 1 1 0
+call pf premultiply_float4 g
+# restrict loop with a count smaller than the buffer leaves the rest of the destination alone
+px dst4 aaaaaaaabbbbbbbbccccccccdddddddd
+call dst4 premultiply_xyza_loop_restrict img 2

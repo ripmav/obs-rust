@@ -1,0 +1,32 @@
+# CORE. update_params: rate control / bitrate / QP translation (H.264 v2, NV12 709 1920x1080
+# @ 60). Printed numbers: usage (mfx TargetUsage 1..7), rc (mfx rate control constants:
+# CBR 1, VBR 2, CQP 3, ICQ 9... see spec), la = lookahead depth, qp*, icq. Unknown rate
+# control names leave nRateControl at 0 (zero-initialised params, no mfx default).
+data D
+qsv_defaults h264v2 D
+echo CBR-default-latency-normal-gives-LA60
+qsv_create h264v2 X D
+qsv_destroy X
+echo VBR
+set D rate_control str VBR
+qsv_create h264v2 X D
+qsv_destroy X
+echo CQP-cqp-23-goes-to-all-three-QP
+set D rate_control str CQP
+set D cqp int 30
+qsv_create h264v2 X D
+qsv_destroy X
+echo ICQ
+set D rate_control str ICQ
+set D icq_quality int 17
+qsv_create h264v2 X D
+qsv_destroy X
+echo unknown-rate-control
+set D rate_control str bogus
+qsv_create h264v2 X D
+qsv_destroy X
+echo deprecated-cbr-flag
+set D rate_control str ICQ
+set D cbr bool 1
+qsv_create h264v2 X D
+qsv_destroy X

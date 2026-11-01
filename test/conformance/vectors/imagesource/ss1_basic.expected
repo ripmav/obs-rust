@@ -1,0 +1,43 @@
+info query=slideshow
+info id=slideshow version=0 type=0 flags=0x2449 icon=3
+info callbacks get_name create destroy update get_defaults get_properties get_width get_height video_tick video_render audio_render enum_active_sources activate deactivate missing_files media_play_pause media_restart media_stop media_next media_previous media_get_state video_get_color_space
+info media_extra
+defaults {"transition":"fade","slide_time":8000,"transition_speed":700,"use_custom_size":"SlideShow.CustomSize.Auto","playback_behavior":"always_play","slide_mode":"mode_auto","loop":true}
+ev create slideshow#1 public
+ev hotkey_register slideshow#1 id=1 name=SlideShow.PlayPause desc=SlideShow.PlayPause
+ev hotkey_register slideshow#1 id=2 name=SlideShow.Restart desc=SlideShow.Restart
+ev hotkey_register slideshow#1 id=3 name=SlideShow.Stop desc=SlideShow.Stop
+ev hotkey_register slideshow#1 id=4 name=SlideShow.NextSlide desc=SlideShow.NextSlide
+ev hotkey_register slideshow#1 id=5 name=SlideShow.PreviousSlide desc=SlideShow.PreviousSlide
+size 0 0
+proc total_files ok 0
+proc current_index ok 0
+state slideshow1 behavior=0 manual=0 randomize=0 loop=0 hide=0 use_cut=0 paused=0 stop=0 restart_on_activate=0 pause_on_deactivate=0 slide_time=0 tr_speed=0 tr_name=null cur_item=0 elapsed=0 cx=0 cy=0 mem_usage=0 state=0 transition=null
+ev create fade_transition#2 private
+ev create image_source#3[/s/a.png] private
+ev image_init /s/a.png alpha=2
+log debug [image_source: ''] loading texture '/s/a.png'
+ev texture_create 1 100x50 dynamic=0
+ev create image_source#4[/s/b.png] private
+ev image_init /s/b.png alpha=2
+log debug [image_source: ''] loading texture '/s/b.png'
+ev texture_create 2 200x40 dynamic=0
+ev create image_source#5[/s/c.png] private
+ev image_init /s/c.png alpha=2
+log debug [image_source: ''] loading texture '/s/c.png'
+ev texture_create 3 80x120 dynamic=0
+ev tr_size fade_transition#2 200x120
+ev tr_align fade_transition#2 0
+ev tr_scale fade_transition#2 1
+ev tr_start fade_transition#2 mode=0 ms=200 dest=image_source#3[/s/a.png] -> started
+ev signal slide_changed index=0 path=/s/a.png
+ev signal media_started slideshow#1
+tick 0 clock=16000001
+size 200 120
+state slideshow1 behavior=2 manual=0 randomize=0 loop=1 hide=0 use_cut=0 paused=0 stop=0 restart_on_activate=0 pause_on_deactivate=0 slide_time=1.20000005 tr_speed=200 tr_name=fade_transition cur_item=0 elapsed=0.0160000008 cx=200 cy=120 mem_usage=90400 state=1 transition=fade_transition#2
+state   file 0 /s/a.png image_source#3[/s/a.png]
+state   file 1 /s/b.png image_source#4[/s/b.png]
+state   file 2 /s/c.png image_source#5[/s/c.png]
+proc total_files ok 3
+proc current_index ok 0
+media_state 1

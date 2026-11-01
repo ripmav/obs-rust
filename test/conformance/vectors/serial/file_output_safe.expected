@@ -1,0 +1,19 @@
+open fsafe ok
+file sf-a size=2 bytes=abcd
+file sf-a.tmp size=0 bytes=-
+write 99 1 -> 1
+pos -> 1
+file sf-a size=1 bytes=99
+file sf-a.tmp missing
+open fsafe ok
+file sf-b missing
+file sf-b.new size=0 bytes=-
+write 5566 2 -> 2
+file sf-b size=2 bytes=5566
+file sf-b.new missing
+open fsafe fail
+open fsafe fail
+file sf-c size=2 bytes=abcd
+open fsafe fail
+open fsafe ok
+file sf-d size=0 bytes=-

@@ -1,0 +1,41 @@
+# CORE: dependency emission. For the entry function F the parser writes, in this order:
+#   (a) the global parameters F's body mentions (param_deps, in first-mention order, each once),
+#       followed by two blank lines when there was at least one;
+#   (b) the samplers named by F's sampler_deps ("sampler_state NAME {...};" each followed by a blank line);
+#   (c) the structs of F's struct_deps (return type first, then parameter types, then body mentions);
+#   (d) the functions of func_deps, each written recursively with the same rules, BEFORE F.
+# Everything is emitted at most once per shader. Only names declared BEFORE the function (in source order) count as
+# dependencies when the function is parsed. Unused declarations are never emitted.
+backend text full
+echo --- dependency chain c <- b <- a: written c, b, a
+effect e1 chain.effect "float c() { return 1; }\nfloat b() { return c(); }\nfloat a() { return b() + c(); }\ntechnique T { pass { vertex_shader = a(); pixel_shader = a(); } }"
+echo --- struct order: return type, then parameter types, then body
+effect e2 structs.effect "struct S1 { float a; };\nstruct S2 { float a; };\nstruct S3 { float a; };\nS3 F(S2 p) { S1 x; return (S3)0; }\ntechnique T { pass { vertex_shader = F(p); pixel_shader = F(p); } }"
+echo --- struct used by a callee and the caller
+effect e3 shared.effect "struct S { float a; };\nS mk() { S s; return s; }\nfloat use(S s) { S t = mk(); return s.a + t.a; }\ntechnique T { pass { vertex_shader = use(s); pixel_shader = use(s); } }"
+echo --- samplers are emitted when named by a function body, with every state on its own line
+effect e4 sampler.effect "sampler_state a { Filter = Linear; };\nsampler_state b { Filter = Point; AddressU = Wrap; };\nuniform texture2d t;\nfloat4 F() : TARGET { return t.Sample(b, float2(0,0)); }\ntechnique T { pass { vertex_shader = F(); pixel_shader = F(); } }"
+echo --- QUIRK: every MENTION of a sampler adds one blank line, even when the sampler was already written (struct and function dependencies do not)
+effect e4b samplerdup.effect "sampler_state s { Filter = Point; };\nsampler_state s2 { Filter = Linear; };\nuniform texture2d t;\nfloat4 F() : TARGET { return t.Sample(s, float2(0,0)) + t.Sample(s, float2(1,1)) + t.Sample(s2, float2(1,1)) + t.Sample(s, float2(0,0)); }\ntechnique T { pass { vertex_shader = F(); pixel_shader = F(); } }"
+echo --- sampler with no states
+effect e5 sampler0.effect "sampler_state a { };\nuniform texture2d t;\nfloat4 F() : TARGET { return t.Sample(a, float2(0,0)); }\ntechnique T { pass { vertex_shader = F(); pixel_shader = F(); } }"
+echo --- parameter order: first mention wins, written once even if mentioned twice
+effect e6 pord.effect "uniform float a;\nuniform float b;\nuniform float c;\nfloat F() { return c + a + c + b + a; }\ntechnique T { pass { vertex_shader = F(); pixel_shader = F(); } }"
+echo --- the caller's own parameters are written before its callees (each callee writes its own parameters when it is emitted)
+effect e7 pcall.effect "uniform float a;\nuniform float b;\nfloat G() { return b; }\nfloat F() { return G() + a; }\ntechnique T { pass { vertex_shader = F(); pixel_shader = F(); } }"
+echo --- declared-after names are not dependencies (the text is incomplete; this fake backend accepts it)
+effect e8 late.effect "float user() { return later(1) + lp; }\nfloat later(float x) { return x; }\nuniform float lp;\nstruct LS { float a; };\nfloat user2(LS s) { return s.a; }\ntechnique T { pass { vertex_shader = user(); pixel_shader = user(); } }"
+echo --- unused declarations never appear
+effect e9 unused.effect "uniform float unused_p;\nstruct Unused { float a; };\nsampler_state unused_s { Filter = Point; };\nfloat unused_f() { return 1; }\nfloat F() { return 2; }\ntechnique T { pass { vertex_shader = F(); pixel_shader = F(); } }"
+echo --- a body mention of a name inside a longer identifier does not count
+effect e10 prefix.effect "uniform float a;\nfloat F() { float ab = 1; float a2 = 2; return ab + a2; }\ntechnique T { pass { vertex_shader = F(); pixel_shader = F(); } }"
+echo --- a local variable that shadows a global parameter still counts as a mention
+effect e11 shadow.effect "uniform float a;\nfloat F() { float a = 3; return a; }\ntechnique T { pass { vertex_shader = F(); pixel_shader = F(); } }"
+echo --- mention of a function's own name inside its body (recursion) is not a dependency
+effect e12 recur.effect "float F(float x) { if (x > 0) return F(x - 1); return 0; }\ntechnique T { pass { vertex_shader = F(1); pixel_shader = F(1); } }"
+echo --- duplicate function names: a lookup finds the first one
+effect e13 dupf.effect "float F() { return 1; }\nfloat F() { return 2; }\ntechnique T { pass { vertex_shader = F(); pixel_shader = F(); } }"
+echo --- duplicate struct names: the first one is written
+effect e14 dups.effect "struct S { float a; };\nstruct S { float b; };\nS F() { S s; return s; }\ntechnique T { pass { vertex_shader = F(); pixel_shader = F(); } }"
+echo --- struct member type that is another struct is NOT a dependency
+effect e15 nested.effect "struct In { float a; };\nstruct Out { In i; float b; };\nOut F() { Out o; return o; }\ntechnique T { pass { vertex_shader = F(); pixel_shader = F(); } }"

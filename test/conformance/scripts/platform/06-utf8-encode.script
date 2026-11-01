@@ -1,0 +1,50 @@
+# wchar_to_utf8 (32-bit wchar_t on this platform): UCS-4 code points -> UTF-8 bytes.
+# w2u FLAGS INSIZE CPS OUT   (CPS: comma separated hex code points, "-" = none; INSIZE: number | auto | len)
+w2u 0 len 41 1
+w2u 0 len 41 null
+w2u 0 len 7f 1
+w2u 0 len 80 2
+w2u 0 len 7ff 2
+w2u 0 len 800 3
+w2u 0 len ffff 3
+w2u 0 len 10000 4
+w2u 0 len 10ffff 4
+w2u 0 len 48,e9,20ac,1f600 10
+w2u 0 len 48,e9,20ac,1f600 null
+# the encoder also produces the extended 4/5/6 byte forms for values above U+10FFFF (QUIRK Q-6)
+w2u 0 len 110000 4
+w2u 0 len 1fffff 4
+w2u 0 len 200000 5
+w2u 0 len 3ffffff 5
+w2u 0 len 4000000 6
+w2u 0 len 7fffffff 6
+# surrogate code points are errors (UTF-16 surrogates have no meaning in UCS-4)
+w2u 0 len d800 3
+w2u 0 len dfff 3
+w2u 0 len 61,d800,62 8
+w2u 0 len d7ff 3
+w2u 0 len e000 3
+w2u 0 len d800 null
+# negative wchar_t values are errors
+w2u 0 len ffffffff 6
+w2u 0 len 80000000 6
+w2u 0 len 61,ffffffff 6
+# NUL: terminator mode stops, explicit length encodes U+0000 as one byte 00
+w2u 0 auto 61,0,62 null
+w2u 0 len 61,0,62 3
+w2u 0 2 61,62,63 8
+w2u 0 len 0 1
+# empty / NULL
+w2u 0 len - 4
+w2u 0 len - null
+w2u 0 0 @null null
+# capacity: bytes are not NUL terminated; too small -> rc 0
+w2u 0 len 41,42 2
+w2u 0 len 41,42 1
+w2u 0 len 20ac 3
+w2u 0 len 20ac 2
+w2u 0 len 1f600 4
+w2u 0 len 1f600 3
+w2u 0 len 61,20ac 3
+w2u 0 len 61,20ac 4
+w2u 0 len 41 0

@@ -1,0 +1,41 @@
+> va_rc CBR
+rc_mode(CBR) -> CBR qp=0 bitrate=1 maxrate=0
+> va_rc cbr
+rc_mode(cbr) -> CBR qp=0 bitrate=1 maxrate=0
+> va_rc CQP
+rc_mode(CQP) -> CQP qp=1 bitrate=0 maxrate=0
+> va_rc VBR
+rc_mode(VBR) -> VBR qp=0 bitrate=1 maxrate=1
+> va_rc QVBR
+rc_mode(QVBR) -> QVBR qp=1 bitrate=1 maxrate=1
+> va_rc qvbr
+rc_mode(qvbr) -> QVBR qp=1 bitrate=1 maxrate=1
+> va_rc ""
+rc_mode() -> (null name) qp=0 bitrate=0 maxrate=0
+> va_rc bogus
+rc_mode(bogus) -> (null name) qp=0 bitrate=0 maxrate=0
+> set str rate_control CBR
+> va_rc_modified
+qp visible=0
+bitrate visible=1
+maxrate visible=0
+> set str rate_control CQP
+> va_rc_modified
+qp visible=1
+bitrate visible=0
+maxrate visible=0
+> set str rate_control VBR
+> va_rc_modified
+qp visible=0
+bitrate visible=1
+maxrate visible=1
+> set str rate_control QVBR
+> va_rc_modified
+qp visible=1
+bitrate visible=1
+maxrate visible=1
+> set str rate_control bogus
+> va_rc_modified
+qp visible=0
+bitrate visible=0
+maxrate visible=0

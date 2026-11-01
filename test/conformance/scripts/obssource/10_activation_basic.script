@@ -1,0 +1,24 @@
+# show/active reference counts.  inc_showing/dec_showing use the AUX view (show_refs only); inc_active/dec_active use
+# the MAIN view (show_refs AND activate_refs).  The callbacks (show/hide/activate/deactivate) and signals fire
+# NOT at the call but at the next video tick, when the count changed state (0 <-> non-zero).
+kind in input video activate,show,tick
+create a in A
+watch a
+watch_global
+inc_showing a
+state a
+tick a 0.5
+state a
+inc_active a
+state a
+tick a 0.5
+state a
+inc_active a
+dec_active a
+tick a 0.5
+dec_active a
+tick a 0.5
+state a
+dec_showing a
+tick a 0.5
+state a

@@ -1,0 +1,128 @@
+> ff_defaults h264
+> set int bitrate 6000
+> ff_create h264
+ffve.init lib=h264_nvenc lib2=nvenc_h264 name="NVIDIA NVENC H.264 (FFmpeg)"
+av.opt_set_int cbr=0
+av.opt_set profile=high
+av.opt_set preset=p5
+av.opt_set tune=hq
+av.opt_set multipass=qres
+av.opt_set_int cbr=1
+av.opt_set level=auto
+av.opt_set_int gpu=0
+av.opt_set_int no-scenecut=0
+av.opt_set_int spatial-aq=1
+av.opt_set_int temporal-aq=1
+ffve.update bitrate=6000 keyint_sec=0 fps=60/1 size=1920x1080 info.format=2 opts="" ctx{global_quality=0 rc_max_rate=6000000 rc_min_rate=6000000 max_b_frames=2}
+log info [FFmpeg NVENC encoder: 'enc'] settings: 	encoder:      NVIDIA NVENC H.264 (FFmpeg) 	rate_control: CBR 	bitrate:      6000 	cqp:          0 	keyint:       0 	preset:       p5 	tuning:       hq 	multipass:    qres 	profile:      high 	width:        1920 	height:       1080 	b-frames:     2 	psycho-aq:    1 	GPU:          0 
+ffve.init_codec #1 -> ok
+ff_create -> ok
+> ff_destroy
+ffve.free
+ff_destroyed
+> set str rate_control VBR
+> ff_create h264
+ffve.init lib=h264_nvenc lib2=nvenc_h264 name="NVIDIA NVENC H.264 (FFmpeg)"
+av.opt_set_int cbr=0
+av.opt_set profile=high
+av.opt_set preset=p5
+av.opt_set tune=hq
+av.opt_set multipass=qres
+av.opt_set level=auto
+av.opt_set_int gpu=0
+av.opt_set_int no-scenecut=0
+av.opt_set_int spatial-aq=1
+av.opt_set_int temporal-aq=1
+ffve.update bitrate=6000 keyint_sec=0 fps=60/1 size=1920x1080 info.format=2 opts="" ctx{global_quality=0 rc_max_rate=0 rc_min_rate=0 max_b_frames=2}
+log info [FFmpeg NVENC encoder: 'enc'] settings: 	encoder:      NVIDIA NVENC H.264 (FFmpeg) 	rate_control: VBR 	bitrate:      6000 	cqp:          20 	keyint:       0 	preset:       p5 	tuning:       hq 	multipass:    qres 	profile:      high 	width:        1920 	height:       1080 	b-frames:     2 	psycho-aq:    1 	GPU:          0 
+ffve.init_codec #1 -> ok
+ff_create -> ok
+> ff_destroy
+ffve.free
+ff_destroyed
+> set str rate_control CQP
+> set int cqp 25
+> ff_create h264
+ffve.init lib=h264_nvenc lib2=nvenc_h264 name="NVIDIA NVENC H.264 (FFmpeg)"
+av.opt_set_int cbr=0
+av.opt_set profile=high
+av.opt_set preset=p5
+av.opt_set tune=hq
+av.opt_set multipass=qres
+av.opt_set level=auto
+av.opt_set_int gpu=0
+av.opt_set_int no-scenecut=0
+av.opt_set_int spatial-aq=1
+av.opt_set_int temporal-aq=1
+ffve.update bitrate=0 keyint_sec=0 fps=60/1 size=1920x1080 info.format=2 opts="" ctx{global_quality=25 rc_max_rate=0 rc_min_rate=0 max_b_frames=2}
+log info [FFmpeg NVENC encoder: 'enc'] settings: 	encoder:      NVIDIA NVENC H.264 (FFmpeg) 	rate_control: CQP 	bitrate:      0 	cqp:          25 	keyint:       0 	preset:       p5 	tuning:       hq 	multipass:    qres 	profile:      high 	width:        1920 	height:       1080 	b-frames:     2 	psycho-aq:    1 	GPU:          0 
+ffve.init_codec #1 -> ok
+ff_create -> ok
+> ff_destroy
+ffve.free
+ff_destroyed
+> set str rate_control lossless
+> ff_create h264
+ffve.init lib=h264_nvenc lib2=nvenc_h264 name="NVIDIA NVENC H.264 (FFmpeg)"
+av.opt_set_int cbr=0
+av.opt_set profile=high
+av.opt_set preset=p5
+av.opt_set tune=hq
+av.opt_set multipass=qres
+av.opt_set tune=lossless
+av.opt_set multipass=disabled
+av.opt_set level=auto
+av.opt_set_int gpu=0
+av.opt_set_int no-scenecut=0
+av.opt_set_int spatial-aq=1
+av.opt_set_int temporal-aq=1
+ffve.update bitrate=0 keyint_sec=0 fps=60/1 size=1920x1080 info.format=2 opts="" ctx{global_quality=0 rc_max_rate=0 rc_min_rate=0 max_b_frames=2}
+log info [FFmpeg NVENC encoder: 'enc'] settings: 	encoder:      NVIDIA NVENC H.264 (FFmpeg) 	rate_control: lossless 	bitrate:      0 	cqp:          0 	keyint:       0 	preset:       p5 	tuning:       hq 	multipass:    qres 	profile:      high 	width:        1920 	height:       1080 	b-frames:     2 	psycho-aq:    1 	GPU:          0 
+ffve.init_codec #1 -> ok
+ff_create -> ok
+> ff_destroy
+ffve.free
+ff_destroyed
+> set str rate_control cqp
+> ff_create h264
+ffve.init lib=h264_nvenc lib2=nvenc_h264 name="NVIDIA NVENC H.264 (FFmpeg)"
+av.opt_set_int cbr=0
+av.opt_set profile=high
+av.opt_set preset=p5
+av.opt_set tune=hq
+av.opt_set multipass=qres
+av.opt_set level=auto
+av.opt_set_int gpu=0
+av.opt_set_int no-scenecut=0
+av.opt_set_int spatial-aq=1
+av.opt_set_int temporal-aq=1
+ffve.update bitrate=0 keyint_sec=0 fps=60/1 size=1920x1080 info.format=2 opts="" ctx{global_quality=25 rc_max_rate=0 rc_min_rate=0 max_b_frames=2}
+log info [FFmpeg NVENC encoder: 'enc'] settings: 	encoder:      NVIDIA NVENC H.264 (FFmpeg) 	rate_control: cqp 	bitrate:      0 	cqp:          25 	keyint:       0 	preset:       p5 	tuning:       hq 	multipass:    qres 	profile:      high 	width:        1920 	height:       1080 	b-frames:     2 	psycho-aq:    1 	GPU:          0 
+ffve.init_codec #1 -> ok
+ff_create -> ok
+> ff_destroy
+ffve.free
+ff_destroyed
+> set bool cbr 1
+> set str rate_control VBR
+> ff_create h264
+ffve.init lib=h264_nvenc lib2=nvenc_h264 name="NVIDIA NVENC H.264 (FFmpeg)"
+log warning [FFmpeg NVENC encoder: 'enc'] "cbr" setting has been deprecated for all encoders!  Please set "rate_control" to "CBR" instead.  Forcing CBR mode.  (Note to all: this is why you shouldn't use strings for common settings)
+av.opt_set_int cbr=0
+av.opt_set profile=high
+av.opt_set preset=p5
+av.opt_set tune=hq
+av.opt_set multipass=qres
+av.opt_set_int cbr=1
+av.opt_set level=auto
+av.opt_set_int gpu=0
+av.opt_set_int no-scenecut=0
+av.opt_set_int spatial-aq=1
+av.opt_set_int temporal-aq=1
+ffve.update bitrate=6000 keyint_sec=0 fps=60/1 size=1920x1080 info.format=2 opts="" ctx{global_quality=0 rc_max_rate=6000000 rc_min_rate=6000000 max_b_frames=2}
+log info [FFmpeg NVENC encoder: 'enc'] settings: 	encoder:      NVIDIA NVENC H.264 (FFmpeg) 	rate_control: CBR 	bitrate:      6000 	cqp:          0 	keyint:       0 	preset:       p5 	tuning:       hq 	multipass:    qres 	profile:      high 	width:        1920 	height:       1080 	b-frames:     2 	psycho-aq:    1 	GPU:          0 
+ffve.init_codec #1 -> ok
+ff_create -> ok
+> ff_destroy
+ffve.free
+ff_destroyed

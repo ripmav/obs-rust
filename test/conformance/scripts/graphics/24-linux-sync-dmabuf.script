@@ -1,0 +1,16 @@
+# Linux-only wrappers: forwarded unchanged and WITHOUT any context / NULL checks (see 91 for the crash
+# when no context is current).
+trace 0
+gs_create g
+gs_enter_context g
+trace 1
+gs_query_sync_capabilities
+ret device_query_sync_capabilities 1
+gs_query_sync_capabilities
+gs_sync_create > sy
+gs_sync_wait sy
+ret device_sync_wait 1
+gs_sync_wait sy
+gs_sync_signal_syncobj_timeline_point 9 42
+gs_sync_destroy sy
+gs_texture_create_from_dmabuf 64 32 875713112 GS_RGBA

@@ -1,0 +1,50 @@
+# os_rename (POSIX rename: replaces an existing file target atomically), os_unlink (files, links),
+# os_rmdir (empty directories only). All return 0 or -1.
+put a.txt A
+put b.txt B
+rename a.txt c.txt
+exists a.txt
+cat c.txt
+rename c.txt b.txt
+cat b.txt
+rename missing.txt x.txt
+rename b.txt nodir/b.txt
+# rename a directory, onto a file, file onto a directory, onto an empty dir, onto a non-empty dir
+mkdir d1
+put d1/in X
+mkdir d2
+rename d1 d3
+info d3/in
+rename d3 b.txt
+put f.txt F
+rename f.txt d2
+mkdir e1
+rename e1 d2
+mkdir e2
+put e2/x x
+mkdir e3
+rename e3 e2
+# rename onto itself
+put s.txt S
+rename s.txt s.txt
+cat s.txt
+# unlink
+unlink s.txt
+unlink s.txt
+mkdir ud
+unlink ud
+symlink d2 lnk
+unlink lnk
+info d2
+symlink nowhere dangle
+unlink dangle
+# rmdir
+mkdir r1
+rmdir r1
+rmdir r1
+rmdir e2
+put f2.txt F
+rmdir f2.txt
+symlink d2 lnk2
+rmdir lnk2
+unlink lnk2

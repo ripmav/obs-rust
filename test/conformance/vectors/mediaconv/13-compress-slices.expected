@@ -1,0 +1,38 @@
+compress i420
+  plane 0 ls=4 rows=4 guard=intact: 20212223 24252627 28292a2b 2c2d2e2f
+  plane 1 ls=2 rows=2 guard=intact: 080a 282a
+  plane 2 ls=2 rows=2 guard=intact: 8284 8a8c
+compress i420
+  plane 0 ls=4 rows=4 guard=intact: 20212223 24252627 eeeeeeee eeeeeeee
+  plane 1 ls=2 rows=2 guard=intact: 080a eeee
+  plane 2 ls=2 rows=2 guard=intact: 8284 eeee
+compress i420
+  plane 0 ls=4 rows=4 guard=intact: eeeeeeee eeeeeeee 28292a2b 2c2d2e2f
+  plane 1 ls=2 rows=2 guard=intact: eeee 282a
+  plane 2 ls=2 rows=2 guard=intact: eeee 8a8c
+compress i420
+  plane 0 ls=4 rows=4 guard=intact: eeeeeeee eeeeeeee eeeeeeee eeeeeeee
+  plane 1 ls=2 rows=2 guard=intact: eeee eeee
+  plane 2 ls=2 rows=2 guard=intact: eeee eeee
+compress i420
+  plane 0 ls=4 rows=4 guard=intact: eeeeeeee eeeeeeee eeeeeeee eeeeeeee
+  plane 1 ls=2 rows=2 guard=intact: eeee eeee
+  plane 2 ls=2 rows=2 guard=intact: eeee eeee
+compress i420
+  plane 0 ls=4 rows=4 guard=intact: eeeeeeee eeeeeeee eeeeeeee eeeeeeee
+  plane 1 ls=2 rows=2 guard=intact: eeee eeee
+  plane 2 ls=2 rows=2 guard=intact: eeee eeee
+compress nv12
+  plane 0 ls=4 rows=4 guard=intact: eeeeeeee eeeeeeee 28292a2b 2c2d2e2f
+  plane 1 ls=4 rows=2 guard=intact: eeeeeeee 288a2a8c
+compress i444
+  plane 0 ls=4 rows=4 guard=intact: eeeeeeee eeeeeeee 28292a2b 2c2d2e2f
+  plane 1 ls=4 rows=4 guard=intact: eeeeeeee eeeeeeee 20212223 30313233
+  plane 2 ls=4 rows=4 guard=intact: eeeeeeee eeeeeeee 88898a8b 8c8d8e8f
+compress i420
+  plane 0 ls=4 rows=4 guard=intact: 20212223 24252627 28292a2b 2c2d2e2f
+  plane 1 ls=6 rows=2 guard=intact: 080aeeeeeeee 282aeeeeeeee
+  plane 2 ls=6 rows=2 guard=intact: 8284eeeeeeee 8a8ceeeeeeee
+compress nv12
+  plane 0 ls=4 rows=4 guard=intact: 20212223 24252627 28292a2b 2c2d2e2f
+  plane 1 ls=8 rows=2 guard=intact: 08820a84eeeeeeee 288a2a8ceeeeeeee

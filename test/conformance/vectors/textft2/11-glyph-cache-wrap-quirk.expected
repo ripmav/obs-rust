@@ -1,0 +1,32 @@
+> events off
+> reset
+> ascii 5 8 0 8 384
+> glyph 0x67 0x67 5 12 0 8 384
+> font Sans Serif - 0 p/sans
+> load
+load -> 1
+registered id=text_ft2_source version=0
+registered id=text_ft2_source version=2
+> create s 2
+create s -> 1
+> setfont s Sans Serif - 20 0
+> texdim 36 40
+> update s
+log warning Out of space trying to render glyphs
+update done
+> state s
+state s font="Sans Serif" style="" size=20 flags=0 face=1 from_file=0 aa=1
+state s outline=0 shadow=0 outline_width=0 word_wrap=0 custom_width=0 log_mode=0 log_lines=6 color=ffffffff,ffffffff
+state s cx=0 cy=12 max_h=12 texbuf=0,32 tex=1 vbuf=0 effect=1
+state s file=NULL load_failed=0 update_file=0 mtime=0 last_checked_ms=0
+state s text=""
+> glyphs s 0x61 0x67 0x68 0x69 0x6a 0x6b 0x6c 0x6d
+glyph 97 u=0 v=0 u2=0.138888896 v2=0.200000003 w=5 h=8 xoff=0 yoff=8 xadv=6
+glyph 103 u=0 v=0.200000003 u2=0.138888896 v2=0.5 w=5 h=12 xoff=0 yoff=8 xadv=6
+glyph 104 u=0.166666672 v=0.200000003 u2=0.305555552 v2=0.400000006 w=5 h=8 xoff=0 yoff=8 xadv=6
+glyph 105 u=0.333333343 v=0.200000003 u2=0.472222209 v2=0.400000006 w=5 h=8 xoff=0 yoff=8 xadv=6
+glyph 106 u=0.5 v=0.200000003 u2=0.638888896 v2=0.400000006 w=5 h=8 xoff=0 yoff=8 xadv=6
+glyph 107 u=0.666666687 v=0.200000003 u2=0.805555582 v2=0.400000006 w=5 h=8 xoff=0 yoff=8 xadv=6
+glyph 108 u=0.833333313 v=0.200000003 u2=0.972222209 v2=0.400000006 w=5 h=8 xoff=0 yoff=8 xadv=6
+glyph 109 u=0 v=0.5 u2=0.138888896 v2=0.699999988 w=5 h=8 xoff=0 yoff=8 xadv=6
+glyphs cached=18

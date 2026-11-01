@@ -1,0 +1,17 @@
+sizeof(info)=32 pts@0 dts@8 size@16 index@20 type@24 keyframe@28
+stdin 35 bytes
+  0000  08 07 06 05 04 03 02 01 fe ff ff ff ff ff ff ff
+  0010  03 00 00 00 00 00 00 00 00 00 00 00 01 00 00 00
+  0020  aa aa aa
+--- header packet for video extradata, then a CHANGE_FILE packet (type 2, size = name length, name follows)
+stdin 76 bytes
+  0000  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+  0010  04 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+  0020  01 64 00 1f 00 00 00 00 00 00 00 00 00 00 00 00
+  0030  00 00 00 00 08 00 00 00 00 00 00 00 02 00 00 00
+  0040  00 00 00 00 6e 65 78 74 2e 6d 6b 76
+--- audio packet index 1, keyframe 0, pts 1024, dts 1000
+stdin 34 bytes
+  0000  00 04 00 00 00 00 00 00 e8 03 00 00 00 00 00 00
+  0010  02 00 00 00 01 00 00 00 01 00 00 00 00 00 00 00
+  0020  71 72

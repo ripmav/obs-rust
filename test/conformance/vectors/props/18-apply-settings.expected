@@ -1,0 +1,76 @@
+add bool first ok
+add bool g1a ok
+add bool g1b ok
+add bool g2a ok
+add group sub ok
+add group grp ok
+add bool last ok
+add bool nocb ok
+echo apply-on-top
+apply Top
+modified a prop=last props=Top settings={}
+modified2 b priv=tk prop=grp props=Top settings={}
+modified a prop=sub props=Top settings={}
+modified c prop=g2a props=Top settings={}
+modified2 a priv=tk prop=g1b props=Top settings={seen=1}
+modified b prop=g1a props=Top settings={seen=1}
+modified a prop=first props=Top settings={seen=1}
+apply-done
+data S {seen=1}
+echo apply-on-a-group-content-uses-that-container
+apply G1
+modified a prop=sub props=G1 settings={seen=1}
+modified c prop=g2a props=G1 settings={seen=1}
+modified2 a priv=tk prop=g1b props=G1 settings={seen=1}
+modified b prop=g1a props=G1 settings={seen=1}
+apply-done
+echo apply-with-null-settings
+apply Top
+modified a prop=last props=Top settings=@null
+modified2 b priv=tk prop=grp props=Top settings=@null
+modified a prop=sub props=Top settings=@null
+modified c prop=g2a props=Top settings=@null
+modified2 a priv=tk prop=g1b props=Top settings=@null
+modified b prop=g1a props=Top settings=@null
+modified a prop=first props=Top settings=@null
+apply-done
+echo apply-null-props
+apply @null
+apply-done
+echo property-with-both-callbacks-runs-only-v1
+apply Top
+modified a prop=last props=Top settings={seen=1}
+modified2 b priv=tk prop=grp props=Top settings={seen=1}
+modified a prop=sub props=Top settings={seen=1}
+modified c prop=g2a props=Top settings={seen=1}
+modified2 a priv=tk prop=g1b props=Top settings={seen=1}
+modified b prop=g1a props=Top settings={seen=1}
+modified a prop=first props=Top settings={seen=1}
+apply-done
+echo callbacks-can-edit-visibility
+apply Top
+modified a prop=last props=Top settings={seen=1}
+modified2 b priv=tk prop=grp props=Top settings={seen=1}
+modified a prop=sub props=Top settings={seen=1}
+modified c prop=g2a props=Top settings={seen=1}
+modified2 a priv=tk prop=g1b props=Top settings={seen=1}
+modified b prop=g1a props=Top settings={seen=1}
+modified hide prop=first props=Top settings={seen=1}
+apply-done
+dump Top flags=0 param=@null
+  prop first type=bool desc="First" long=@null enabled=0 visible=1
+    -
+  prop grp type=group desc="Grp" long=@null enabled=1 visible=1
+    grouptype=normal content=G1
+      prop g1a type=bool desc="G1a" long=@null enabled=1 visible=1
+        -
+      prop g1b type=bool desc="G1b" long=@null enabled=1 visible=1
+        -
+      prop sub type=group desc="Sub" long=@null enabled=1 visible=1
+        grouptype=normal content=G2
+          prop g2a type=bool desc="G2a" long=@null enabled=1 visible=1
+            -
+  prop last type=bool desc="Last" long=@null enabled=1 visible=0
+    -
+  prop nocb type=bool desc="Renamed" long=@null enabled=1 visible=1
+    -

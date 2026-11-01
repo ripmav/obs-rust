@@ -1,0 +1,32 @@
+# S-049 v4l2: stepwise (or failing) frame size/interval enumeration falls back to the hardcoded tables;
+# input capabilities STD / DV_TIMINGS switch the resolution/framerate pair for standard / dv_timing lists.
+fake-dir video0
+dev /dev/video0
+dev-cap "Cam" usb-1 0x85200001 0x05200001
+dev-input Camera 0
+dev-fmt YUYV "YUYV" 0
+dev-size-stepwise YUYV
+dev-ival-stepwise
+dev-cur 0 640 480 YUYV 1280 1 30 0
+src-defaults
+set-str device_id /dev/video0
+set-int pixelformat 0x56595559
+set-int resolution 2748779069920
+src-create
+src-props
+modified device_id
+modified pixelformat
+modified resolution
+props
+# a device with NO enumerable sizes (first ENUM_FRAMESIZES fails): the reference reads an uninitialised
+# type field there (defect D-2); the fake zeroes it => hardcoded table
+dev /dev/video1
+dev-cap "Cam2" usb-2 0x85200001 0x05200001
+dev-input Camera 0
+dev-fmt NV12 "NV12" 0
+dev-cur 0 640 480 NV12 640 1 30 0
+set-str device_id /dev/video1
+set-int pixelformat 0x3231564e
+modified pixelformat
+props
+src-destroy

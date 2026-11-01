@@ -1,0 +1,66 @@
+# S-021 flv_packet_mux for video (legacy FLV/AVC tags). Tag layout:
+#   09 | datasize u24 (= payload + 5) | timestamp low u24 | timestamp high u8 | streamid u24 = 0
+#   | 0x17 (key) / 0x27 (inter) | 00 (sequence header) / 01 (NALUs) | composition time s24
+#   | payload | PreviousTagSize u32 (= 11 + datasize)
+# time = ms(dts) - dts_offset, composition time = ms(pts) - ms(dts), ms(v) = v * 1000 / den.
+echo sequence-header-keyframe
+pkt hdr video 0 0 1 1000 1 0164001fffe1000f6742c01fda0a0fd8880000000003000001
+flv_mux hdr 0 1
+echo keyframe-then-inter-frames
+pkt k video 0 0 1 1000 1 6500888400
+pkt p video 33 33 1 1000 0 4101234567
+pkt b video 100 67 1 1000 0 0102030405
+flv_mux k 0 0
+flv_mux p 0 0
+flv_mux b 0 0
+echo header-flag-only-changes-byte-1
+flv_mux k 0 1
+flv_mux p 0 1
+echo inter-frame-flagged-as-header
+flv_mux p 0 1
+echo dts-offset-is-subtracted
+pkt k2 video 5000 4990 1 1000 1 aa
+flv_mux k2 4990 0
+flv_mux k2 4000 0
+flv_mux k2 0 0
+flv_mux k2 5000 0
+flv_mux k2 6000 0
+echo timebase-1-over-90000
+pkt a90 video 9000 3000 1 90000 1 bb
+flv_mux a90 0 0
+pkt b90 video 4500 4499 1 90000 0 bb
+flv_mux b90 0 0
+echo timebase-30000-over-1001-style
+pkt ntsc video 30 28 1001 30000 0 cc
+flv_mux ntsc 0 0
+pkt ntsc2 video 30030 30000 1 30000 0 cc
+flv_mux ntsc2 0 0
+echo "the numerator of the time base is ignored; only the denominator is used"
+pkt n1 video 1000 1000 1 1000 0 dd
+pkt n2 video 1000 1000 77 1000 0 dd
+flv_mux n1 0 0
+flv_mux n2 0 0
+echo negative-composition-time-is-24-bit-two-s-complement
+pkt neg video 0 40 1 1000 0 ee
+flv_mux neg 0 0
+pkt neg2 video 100 90000 1 1000 0 ee
+flv_mux neg2 0 0
+echo composition-time-wraps-at-24-bit
+pkt big video 20000000 0 1 1000 0 ee
+flv_mux big 0 0
+pkt big2 video 16777216 0 1 1000 0 ee
+flv_mux big2 0 0
+pkt big3 video 8388608 0 1 1000 0 ee
+flv_mux big3 0 0
+echo keyframe-flag-with-nonzero-value
+pkt kk video 0 0 1 1000 5 ff
+flv_mux kk 0 0
+echo payload-sizes
+pkt one video 0 0 1 1000 1 00
+flv_mux one 0 0
+rep p300 300 7a
+pkt long video 0 0 1 1000 0 @p300
+flv_mux long 0 0
+rep p70000 70000 7a
+pkt huge video 0 0 1 1000 0 @p70000
+flv_mux huge 0 0

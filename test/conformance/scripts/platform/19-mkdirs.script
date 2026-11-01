@@ -1,0 +1,46 @@
+# os_mkdirs(path): create all missing parents. Backslashes are first converted to '/'. Result: 0 when
+# the last component was created, 1 when it already existed (file or directory), -1 on failure.
+# Whether parents were created or existed is not reported.
+mkdirs x
+mkdirs x
+mkdirs p/q/r/s
+info p
+info p/q/r/s
+mkdirs p/q/r/s
+mkdirs p/q/r/t
+# a trailing slash does not matter, repeated slashes are tolerated
+mkdirs u/v/
+info u/v
+mkdirs w//x///y
+info w/x/y
+mkdirs ./z/./k
+info z/k
+# backslashes are separators here (but not in os_mkdir)
+mkdirs "b1\\b2\\b3"
+info b1/b2/b3
+mkdirs "m1/m2\\m3"
+info m1/m2/m3
+# a regular file in the way
+put f.txt x
+mkdirs f.txt
+mkdirs f.txt/sub
+mkdirs f.txt/sub/deeper
+mkdirs g/f2
+put g/file x
+mkdirs g/file/more
+info g/file/more
+# the existing parent is a file, created child fails, nothing is left behind
+exists f.txt/sub
+# "." and ".." (the empty path is a crash in the reference, see 31-platform-defects)
+mkdirs .
+mkdirs ..
+mkdirs ./
+# symlink to a directory counts as existing
+symlink p lnk
+mkdirs lnk
+mkdirs lnk/q/new
+info p/q/new
+# dangling link: mkdir sees EEXIST
+symlink nowhere dangling
+mkdirs dangling
+mkdirs dangling/child

@@ -1,0 +1,25 @@
+# A canvas is "video active" when its mix has a raw consumer or a GPU encoder; active canvases can
+# not be reset (false, nothing changes). Canvases without a mix are never active. Early stop of
+# the canvas enumeration.
+startup en-US -
+reset_video fmt=BGRA gpu=0
+canvas_create a Alpha video=1 base=64x64 out=64x64 fmt=BGRA gpu=0
+canvas_create b Bravo
+canvas_create c Charlie
+mix_active a raw=2
+canvas_info a
+canvas_reset_video a base=32x32 out=32x32 fmt=BGRA gpu=0
+canvas_video_info a
+# any active mix (also an auxiliary one) blocks obs_reset_video of the main video
+video_active
+reset_video fmt=BGRA gpu=0
+mix_active a raw=0 gpu=1
+canvas_info a
+canvas_reset_video a base=32x32 out=32x32 fmt=BGRA gpu=0
+mix_active a raw=0 gpu=0
+canvas_reset_video a base=32x32 out=32x32 fmt=BGRA gpu=0
+canvas_video_info a
+canvas_info b
+enum canvases stop=2
+enum canvases stop=100
+shutdown

@@ -1,0 +1,17 @@
+open array ok
+dump array num=0 pos=0 bytes=-
+write 01020304 4 -> 4
+dump array num=4 pos=4 bytes=01020304
+seek start 1 -> 1
+write ffee 2 -> 2
+dump array num=4 pos=3 bytes=01ffee04
+seek start 3 -> 3
+write 7172737475 5 -> 5
+dump array num=8 pos=8 bytes=01ffee7172737475
+seek end 0 -> 8
+write 99 1 -> 1
+dump array num=9 pos=9 bytes=01ffee717273747599
+write_pat 20 0 -> 20
+seek start 5 -> 5
+write_pat 30 9 -> 30
+dump array num=35 pos=35 bytes=01ffee71721e3d5c7b9ab9d8f71635547392b1d0ef0e2d4c6b8aa9c8e70625446382a1

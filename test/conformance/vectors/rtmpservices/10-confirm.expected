@@ -1,0 +1,25 @@
+fake proc_handler_add "void twitch_ingests_refresh(int seconds)"
+fake proc_handler_add "void amazon_ivs_ingests_refresh(int seconds)"
+fake update_info_create prefix="[rtmp-services plugin] " agent="rtmp-services plugin (libobs 99.0.0-test)" url=https://obsproject.com/obs2_update/rtmp-services/v5 local=/mod/data cache=/cfg/rtmp-services/ confirm=set
+fake obs_register_service id=rtmp_common
+fake obs_register_service id=rtmp_custom
+module-load -> 1 name="rtmp-services plugin (libobs 99.0.0-test)"
+confirm services.json -> 1
+confirm services.json -> 0
+confirm services.json -> 0
+confirm services.json -> 0
+confirm services.json -> 0
+confirm services.json -> 1
+confirm services.json -> 1
+log error obs-data.c: [obs_data_create_from_json] Failed reading json string (1): duplicate object key near '"format_version"'
+confirm services.json -> 0
+log error obs-data.c: [obs_data_create_from_json] Failed reading json string (1): '}' expected near end of file
+confirm services.json -> 0
+log error obs-data.c: [obs_data_create_from_json] Failed reading json string (1): '[' or '{' expected near 'not'
+confirm services.json -> 0
+confirm services.json -> 0
+log error obs-data.c: [obs_data_create_from_json] Failed reading json string (1): '[' or '{' expected near end of file
+confirm services.json -> 0
+confirm SERVICES.JSON -> 0
+confirm package.json -> 1
+confirm other.json -> 1

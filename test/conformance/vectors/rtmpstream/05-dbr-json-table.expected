@@ -1,0 +1,112 @@
+reset ok
+> reset
+reset ok
+> venc 0 h264 4000 64 e0
+> venc 1 h264 2000 64 e1
+> dbr_json [[0,3000,4000],[0,1500,2000]]
+build_dbr_interpolation_table -> 1
+table n=3
+  [0] 0 0 0 0 0 0 0 0 0 0
+  [1] 3000 1500 0 0 0 0 0 0 0 0
+  [2] 4000 2000 0 0 0 0 0 0 0 0
+> dbr_json [[0,3000,4000],[0,1500]]
+log warning [rtmp stream: 'out'] size 2 of bitrate interpolation data for encoder 'e1' does not match overall size 3
+build_dbr_interpolation_table -> 0
+table n=3
+  [0] 0 0 0 0 0 0 0 0 0 0
+  [1] 3000 1500 0 0 0 0 0 0 0 0
+  [2] 4000 2000 0 0 0 0 0 0 0 0
+> dbr_json [[0,3000,4000]]
+log warning [rtmp stream: 'out'] missing bitrate interpolation data for encoder 'e1'
+build_dbr_interpolation_table -> 0
+table n=3
+  [0] 0 0 0 0 0 0 0 0 0 0
+  [1] 3000 1500 0 0 0 0 0 0 0 0
+  [2] 4000 2000 0 0 0 0 0 0 0 0
+> dbr_json {}
+log warning [rtmp stream: 'out'] missing bitrate interpolation data for encoder 'e0'
+log warning [rtmp stream: 'out'] missing bitrate interpolation data for encoder 'e1'
+build_dbr_interpolation_table -> 0
+table n=3
+  [0] 0 0 0 0 0 0 0 0 0 0
+  [1] 3000 1500 0 0 0 0 0 0 0 0
+  [2] 4000 2000 0 0 0 0 0 0 0 0
+> dbr_json []
+log warning [rtmp stream: 'out'] missing bitrate interpolation data for encoder 'e0'
+log warning [rtmp stream: 'out'] missing bitrate interpolation data for encoder 'e1'
+build_dbr_interpolation_table -> 0
+table n=3
+  [0] 0 0 0 0 0 0 0 0 0 0
+  [1] 3000 1500 0 0 0 0 0 0 0 0
+  [2] 4000 2000 0 0 0 0 0 0 0 0
+> dbr_json not json
+log warning [rtmp stream: 'out'] loading dbr interpolation table failed: <json-error>
+build_dbr_interpolation_table -> 0
+table n=3
+  [0] 0 0 0 0 0 0 0 0 0 0
+  [1] 3000 1500 0 0 0 0 0 0 0 0
+  [2] 4000 2000 0 0 0 0 0 0 0 0
+> dbr_json [[0,1],[0,1]] x
+log warning [rtmp stream: 'out'] loading dbr interpolation table failed: <json-error>
+build_dbr_interpolation_table -> 0
+table n=3
+  [0] 0 0 0 0 0 0 0 0 0 0
+  [1] 3000 1500 0 0 0 0 0 0 0 0
+  [2] 4000 2000 0 0 0 0 0 0 0 0
+> dbr_json [[1,2],[3,4],[5,6]]
+build_dbr_interpolation_table -> 1
+table n=2
+  [0] 1 3 5 0 0 0 0 0 0 0
+  [1] 2 4 6 0 0 0 0 0 0 0
+> dbr_json [[-1,2147483648],[0,9000000000]]
+build_dbr_interpolation_table -> 1
+table n=2
+  [0] -1 0 0 0 0 0 0 0 0 0
+  [1] 2147483648 9000000000 0 0 0 0 0 0 0 0
+> dbr_json [[],[]]
+build_dbr_interpolation_table -> 1
+table n=0
+> probe dbr_json [[],[0,1,2]]
+> dbr_json [[],[0,1,2]]
+probe crash signal=SIGSEGV
+> probe dbr_json [[0,1,2],[]]
+> dbr_json [[0,1,2],[]]
+log warning [rtmp stream: 'out'] size 0 of bitrate interpolation data for encoder 'e1' does not match overall size 3
+build_dbr_interpolation_table -> 0
+table n=0
+probe exit=0
+> dbr_json [[0,1.5,3],[0,"x",null]]
+log warning [rtmp stream: 'out'] interpolation entry 1 for track 0 is not an integer (type: 4)
+log warning [rtmp stream: 'out'] interpolation entry 1 for track 1 is not an integer (type: 2)
+log warning [rtmp stream: 'out'] interpolation entry 2 for track 1 is not an integer (type: 7)
+build_dbr_interpolation_table -> 1
+table n=3
+  [0] 0 0 0 0 0 0 0 0 0 0
+  [1] 0 0 0 0 0 0 0 0 0 0
+  [2] 3 0 0 0 0 0 0 0 0 0
+> dbr_json [[true,2],[3,4]]
+log warning [rtmp stream: 'out'] interpolation entry 0 for track 0 is not an integer (type: 5)
+build_dbr_interpolation_table -> 1
+table n=2
+  [0] 0 3 0 0 0 0 0 0 0 0
+  [1] 2 4 0 0 0 0 0 0 0 0
+> reset
+reset ok
+> venc 0 h264 4000 64 e0
+> venc 2 h264 2000 64 e2
+> dbr_json [[1,2],[9,9],[3,4]]
+build_dbr_interpolation_table -> 1
+table n=2
+  [0] 1 9 3 0 0 0 0 0 0 0
+  [1] 2 9 4 0 0 0 0 0 0 0
+> dbr_json [[1,2],[3,4]]
+log warning [rtmp stream: 'out'] missing bitrate interpolation data for encoder 'e2'
+build_dbr_interpolation_table -> 0
+table n=2
+  [0] 1 9 3 0 0 0 0 0 0 0
+  [1] 2 9 4 0 0 0 0 0 0 0
+> reset
+reset ok
+> dbr_json [[1,2]]
+build_dbr_interpolation_table -> 1
+table n=0

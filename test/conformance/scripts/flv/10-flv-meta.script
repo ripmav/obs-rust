@@ -1,0 +1,45 @@
+# S-021 flv_meta_data: the FLV file header and the @setDataFrame/onMetaData script tag.
+# The fake encoders/audio/video objects return the values set with 'cfg' (spec 3.3).
+# 'meta 1' prepends the 13-byte FLV header (signature, version 1, flags 0x05 = audio+video,
+# data offset 9, PreviousTagSize0 = 0); 'meta 0' emits the tag only.
+echo defaults-with-header
+meta 1
+echo defaults-without-header
+meta 0
+echo hevc-1440p-59.94
+cfg vcodec hevc
+cfg width 2560
+cfg height 1440
+cfg fps 59.94
+cfg vbitrate 12000
+cfg abitrate 192
+cfg arate 44100
+meta 0
+echo av1
+cfg vcodec av1
+meta 0
+cfg fps 29.97002997002997
+meta 0
+echo unknown-codec-gives-videocodecid-0
+cfg vcodec vp9
+meta 0
+cfg vcodec ""
+meta 0
+cfg vcodec H264
+meta 0
+cfg vcodec h264
+echo zero-and-large-values
+cfg width 0
+cfg height 0
+cfg vbitrate 0
+cfg abitrate 0
+cfg arate 0
+cfg fps 0
+meta 0
+cfg width 4294967295
+cfg height 4294967295
+cfg vbitrate 1e300
+cfg abitrate -1.5
+cfg arate 4294967295
+cfg fps nan
+meta 0

@@ -1,0 +1,42 @@
+# ffmpeg_video_encode: plane copy rules, packet fields, first-packet callback, errors.
+# The destination frame is pre-filled with 0xEE; every row is shown as 'first 4 bytes:hash of the
+# whole row incl. padding', so copied and untouched regions are both visible.
+av_codec fake_enc 1
+host_last_error @null
+echo ---- NV12 8x4: luma 4 rows, interleaved chroma 2 rows
+host_video 8 4 NV12 709 partial 60 1
+vid_init V fake_enc @null "Fake" 0 0
+vid_update V 1000 0 @null
+vid_init_codec V
+av_recv 0 6 0 0 1
+vid_encode V 0 8 8 0 0
+av_recv 0 4 1 1 0
+vid_encode V 1 8 8 0 0
+vid_free V
+echo ---- source rows longer than the destination rows are cut; shorter rows are copied whole
+host_video 4 2 Y800 709 partial 60 1
+vid_init V fake_enc @null "Fake" 0 0
+vid_update V 1000 0 @null
+vid_init_codec V
+vid_encode V 0 64 0 0 0
+vid_free V
+echo ---- I420 6x5 (odd height): chroma planes get height>>1 = 2 rows, the third row stays untouched
+host_video 6 5 I420 709 partial 60 1
+vid_init V fake_enc @null "Fake" 0 0
+vid_update V 1000 0 @null
+vid_init_codec V
+vid_encode V 0 6 3 3 0
+vid_free V
+echo ---- planes whose source pointer is NULL are skipped
+vid_init V fake_enc @null "Fake" 0 0
+vid_update V 1000 0 @null
+vid_init_codec V
+vid_encode V 0 6 0 3 0
+vid_free V
+echo ---- YUVA420 8x4: the alpha plane (index 3) is also copied with the chroma height (2 of 4 rows)
+host_video 8 4 I40A 709 partial 60 1
+vid_init V fake_enc @null "Fake" 0 0
+vid_update V 1000 0 @null
+vid_init_codec V
+vid_encode V 0 8 4 4 8
+vid_free V

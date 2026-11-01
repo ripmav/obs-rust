@@ -1,0 +1,18 @@
+# S-026 D-6: non-string entries in "supported video codecs"/"supported audio codecs" are formatted with
+# "%s" of a NULL pointer by the reference (glibc prints "(null)"; undefined behaviour). Required: no crash;
+# the entry is skipped. The result lines are discarded here (quiet) because the reference value is UB.
+fs-put /mod/data/services.json "{\"format_version\":5,\"services\":[{\"name\":\"C\",\"servers\":[{\"name\":\"x\",\"url\":\"rtmp://x\"}],\"supported video codecs\":[\"h264\",5,\"av1\"],\"supported audio codecs\":[7]}]}"
+settings S {"service":"C"}
+new V rtmp_common S
+guard-begin quiet
+get V vcodecs acodecs
+guard-end
+echo codecs-are-split-on-semicolons-after-joining-so-a-codec-containing-a-semicolon-becomes-two
+fs-put /mod/data/services.json "{\"format_version\":5,\"services\":[{\"name\":\"C\",\"servers\":[{\"name\":\"x\",\"url\":\"rtmp://x\"}],\"supported video codecs\":[\"h264;hevc\",\"av1\"],\"supported audio codecs\":[]}]}"
+settings S {"service":"C"}
+update V S
+get V vcodecs acodecs
+echo codec-of-exactly-15-and-16-chars
+fs-put /mod/data/services.json "{\"format_version\":5,\"services\":[{\"name\":\"C\",\"servers\":[{\"name\":\"x\",\"url\":\"rtmp://x\"}],\"supported video codecs\":[\"123456789012345\",\"1234567890123456\",\"\"]}]}"
+update V S
+get V vcodecs

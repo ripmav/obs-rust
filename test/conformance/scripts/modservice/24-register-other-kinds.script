@@ -1,0 +1,57 @@
+# S-035 obs_register_{source,output,encoder}_s validation (the rest of obs-module.c's registration code).
+# --- outputs: required callbacks by flag combination; protocols are collected for service outputs
+out_register o_ok SE
+out_register o_noname SE missing=get_name
+out_register o_nocreate SE missing=create
+out_register o_nodestroy SE missing=destroy
+out_register o_nostart SE missing=start
+out_register o_nostop SE missing=stop
+out_register o_noproto SE missing=protocols
+out_register o_nopkt SE missing=encoded_packet
+out_register o_ok SE
+# not encoded: raw video / audio callbacks are required according to the flags
+out_register o_rv V
+out_register o_rv_missing V missing=raw_video
+out_register o_ra A
+out_register o_ra_missing A missing=raw_audio
+out_register o_ra2 AM
+out_register o_ra2_missing AM missing=raw_audio2
+out_register o_ra2_has_ra AM missing=raw_audio2,raw_audio
+out_register o_none -
+out_register o_trunc SE size=64
+out_register o_zero SE size=0
+# --- encoders
+enc_register e_ok video -
+enc_register e_ok video -
+enc_register e_noname video - missing=get_name
+enc_register e_noencode video - missing=encode
+enc_register e_audio_nofs audio - missing=get_frame_size
+enc_register e_audio audio -
+enc_register e_tex video P
+enc_register e_tex_noenc video P missing=encode_texture,encode_texture2
+enc_register e_tex_only2 video P missing=encode_texture
+enc_register e_tex_only1 video P missing=encode_texture2
+enc_register e_tex_scaling video PS
+enc_register e_scaling video S
+# --- sources: type, versioning, flags rewritten at registration, duplicates by (unversioned id, version)
+# (wh=w|h|wh|- selects which of get_width / get_height the fake source provides)
+src_register s_in input V 0 wh=wh
+src_register s_in input V 0 wh=wh
+src_register s_in input V 2 wh=wh
+src_register s_in input V 2 wh=wh
+src_register s_nowh input V 0 wh=h
+src_register s_nowh2 input V 0 wh=w
+src_register s_novideo_nowh input A 0 wh=-
+src_register s_async input VY 0 wh=-
+src_register s_aud input A 0 wh=-
+src_register s_filter_audio filter A 0 wh=-
+src_register s_filter_video filter V 0 wh=-
+src_register s_trans transition - 0 wh=-
+src_register s_trans_wh transition - 0 wh=wh
+src_register s_scene scene - 0 wh=-
+src_register s_bad bogus - 0 wh=-
+src_register s_noname input A 0 wh=- missing=get_name
+src_register s_comp input VC 0 wh=wh missing=audio_render
+src_register s_comp_ok input VC 0 wh=wh
+src_register s_comp_aud input AC 0 wh=wh
+src_register s_comp_async input CY 0 wh=wh

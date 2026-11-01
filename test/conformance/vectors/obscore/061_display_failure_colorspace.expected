@@ -1,0 +1,64 @@
+log debug canvas 'Main' (<uuid>) created
+startup -> true
+log info ---------------------------------
+log info video settings reset:  base resolution:   1920x1080  output resolution: 1280x720  downscale filter:  Bicubic  fps:               30/1  format:            NV12  YUV mode:          Rec. 709/Partial
+log info NV12 texture support enabled
+log info P010 texture support not available
+reset_video -> success
+  after_call base=1920x1080 out=1280x720 fps=30/1 fmt=NV12 cs=2 range=1 scale=2 gpu=1 adapter=0
+ev swapchain_create 100x100
+log error obs_display_init: Failed to create swap chain
+display_create bad -> NULL
+display_list:
+ev swapchain_create 100x100
+display_create d -> ok
+ev load_swapchain
+ev begin_scene
+ev clear flags=7 color=0.250980407,0.501960814,1,1 depth=1 stencil=0
+ev depth_test 0
+ev cull_mode 2
+ev ortho 0 100 0 100 -100 100
+ev viewport 0 0 100 100
+ev end_scene
+ev present
+ev load_swapchain
+ev begin_scene
+ev clear flags=7 color=0.0512694679,0.215860531,1,1 depth=1 stencil=0
+ev depth_test 0
+ev cull_mode 2
+ev ortho 0 100 0 100 -100 100
+ev viewport 0 0 100 100
+ev end_scene
+ev present
+ev load_swapchain
+ev begin_scene
+ev clear flags=7 color=0.0512694679,0.215860531,1,1 depth=1 stencil=0
+ev depth_test 0
+ev cull_mode 2
+ev ortho 0 100 0 100 -100 100
+ev viewport 0 0 100 100
+ev end_scene
+ev present
+ev load_swapchain
+ev begin_scene
+ev clear flags=7 color=1,1,1,1 depth=1 stencil=0
+ev depth_test 0
+ev cull_mode 2
+ev ortho 0 100 0 100 -100 100
+ev viewport 0 0 100 100
+ev end_scene
+ev present
+ev load_swapchain
+ev begin_scene
+ev clear flags=7 color=0,0,0,1 depth=1 stencil=0
+ev depth_test 0
+ev cull_mode 2
+ev ortho 0 100 0 100 -100 100
+ev viewport 0 0 100 100
+ev end_scene
+ev present
+shutdown begin
+log info Freeing OBS context data
+log debug canvas 'Main' (<uuid>) destroyed
+log info  1 display(s) were remaining
+shutdown end obs=NULL

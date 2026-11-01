@@ -1,0 +1,18 @@
+u2w rc=1 cp=0
+u2w rc=1 cp=2f
+u2w rc=1 cp=0
+u2w rc=1 cp=2f
+u2w rc=1 cp=4e
+u2w rc=1 cp=180000
+u2w rc=1 cp=1fffff
+u2w rc=1 cp=110000
+u2w rc=1 cp=200000
+u2w rc=1 cp=3ffffff
+u2w rc=1 cp=4000000
+u2w rc=1 cp=7fffffff
+u2w rc=0
+u2w rc=0
+u2w rc=2 cp=feff,61
+u2w rc=1 cp=61
+u2w rc=0
+u2w rc=2 cp=61,62

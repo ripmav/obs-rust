@@ -1,0 +1,39 @@
+log debug encoder 'v' (v) created
+encoder v created tb=1/30
+log debug encoder 'a' (a) created
+encoder a created tb=1/48000
+log debug output 'o' (o) created
+output o created flags=7 reconnect=20/2
+set_venc o idx=0 -> video_slots=01 audio_slots=00
+set_aenc o idx=0 -> video_slots=01 audio_slots=01
+plugin out o start
+plugin enc v create
+plugin enc a create
+log debug Maximum interleaver batch size for 'o' calculated to be 5 packets
+signal o activate
+signal o start
+plugin out o begin_data_capture -> 1
+signal o starting
+start o -> 1
+conns video=1 audio=1
+--- video frame before any audio: video waits (paired encoder has not seen audio)
+encstate v init=1 active=1 first_received=0 start_ts=0 offset_usec=0 cur_pts=0 frames=0 callbacks=1 paired=1 outputs=1
+--- first audio block of 1024 frames at t=0.99s (before the first video frame): buffered, no start yet
+encstate a init=1 active=1 first_received=1 start_ts=0 offset_usec=0 cur_pts=0 frames=0 callbacks=1 paired=1 outputs=1
+--- video frame now encodes (audio saw data earlier than the frame)
+encstate v init=1 active=1 first_received=1 start_ts=1033333333 offset_usec=0 cur_pts=1 frames=1 callbacks=1 paired=1 outputs=1
+--- audio block that spans the video start: truncated to the video start time and encoded
+plugin out o pkt V0 pts=0 dts=0 usec=0 kf=1 size=4 tb=1/30 b0=01
+encstate a init=1 active=1 first_received=1 start_ts=1033333333 offset_usec=0 cur_pts=2048 frames=0 callbacks=1 paired=1 outputs=1
+plugin out o pkt A0 pts=0 dts=0 usec=0 kf=0 size=4 tb=1/48000 b0=01
+plugin out o pkt A0 pts=1024 dts=1024 usec=21333 kf=0 size=4 tb=1/48000 b0=02
+signal o stopping
+plugin out o stop ts=0
+log info Output 'o': stopping
+log info Output 'o': Total frames output: 1
+log info Output 'o': Total drawn frames: 0
+signal o stop code=0 last_error=-
+stop o done
+plugin enc v destroy
+plugin enc a destroy
+signal o deactivate

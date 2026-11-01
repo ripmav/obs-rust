@@ -1,0 +1,10 @@
+# Names are compared byte-wise (case sensitive); string payloads may contain any
+# bytes except NUL.
+init
+set_int "a very long parameter name used for testing the name length handling 0123456789" 1
+get_int "a very long parameter name used for testing the name length handling 0123456789"
+get_int "a very long parameter name used for testing the name length handling 012345678"
+set_string s "tab\there\nnewline\x01\xfe"
+get_string s
+dump
+free

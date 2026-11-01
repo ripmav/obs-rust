@@ -1,0 +1,134 @@
+reset ok
+> reset
+reset ok
+> codec 0 h264
+> set active 1
+> venc 0 h264 6000 4 e0
+> dbr_json [[0,3000,6000]]
+build_dbr_interpolation_table -> 1
+table n=3
+  [0] 0 0 0 0 0 0 0 0 0 0
+  [1] 3000 0 0 0 0 0 0 0 0 0
+  [2] 6000 0 0 0 0 0 0 0 0 0
+> set drop_threshold_usec 700000
+> set pframe_drop_threshold_usec 900000
+> pkt video 0 3 1
+pkt queued=1 released=0
+state packets=1 dropped=0 min_priority=0 congestion=0 last_dts_usec=0 drop_thr_usec=700000 pframe_thr_usec=900000 total_bytes=0 active=1 disconnected=0 encode_error=0 sent_headers=0 start_dts_offset=0 got_first=1
+> pkt video 100000 0 0
+pkt queued=1 released=0
+state packets=2 dropped=0 min_priority=0 congestion=0 last_dts_usec=100000 drop_thr_usec=700000 pframe_thr_usec=900000 total_bytes=0 active=1 disconnected=0 encode_error=0 sent_headers=0 start_dts_offset=0 got_first=1
+> pkt video 200000 0 0
+pkt queued=1 released=0
+state packets=3 dropped=0 min_priority=0 congestion=0 last_dts_usec=200000 drop_thr_usec=700000 pframe_thr_usec=900000 total_bytes=0 active=1 disconnected=0 encode_error=0 sent_headers=0 start_dts_offset=0 got_first=1
+> pkt video 300000 0 0
+pkt queued=1 released=0
+state packets=4 dropped=0 min_priority=0 congestion=0 last_dts_usec=300000 drop_thr_usec=700000 pframe_thr_usec=900000 total_bytes=0 active=1 disconnected=0 encode_error=0 sent_headers=0 start_dts_offset=0 got_first=1
+> pkt video 400000 0 0
+pkt queued=1 released=0
+state packets=5 dropped=0 min_priority=0 congestion=0 last_dts_usec=400000 drop_thr_usec=700000 pframe_thr_usec=900000 total_bytes=0 active=1 disconnected=0 encode_error=0 sent_headers=0 start_dts_offset=0 got_first=1
+> pkt video 500000 0 0
+pkt queued=1 released=0
+state packets=6 dropped=0 min_priority=0 congestion=0.428571433 last_dts_usec=500000 drop_thr_usec=700000 pframe_thr_usec=900000 total_bytes=0 active=1 disconnected=0 encode_error=0 sent_headers=0 start_dts_offset=0 got_first=1
+> set dbr_enabled 1
+> set dbr_cur_bitrate 6000
+> set dbr_orig_bitrate 6000
+> set dbr_est_bitrate 3000
+> fake now 1000000000
+> check_drop p
+state packets=6 dropped=0 min_priority=0 congestion=0.428571433 last_dts_usec=500000 drop_thr_usec=700000 pframe_thr_usec=900000 total_bytes=0 active=1 disconnected=0 encode_error=0 sent_headers=0 start_dts_offset=0 got_first=1
+> dbr
+dbr enabled=1 cur=6000 orig=6000 prev=0 est=3000 inc=0 audio=0 data_size=0 inc_timeout=0 frames=0
+> check_drop b
+log info [rtmp stream: 'out'] bitrate decreased to: 3000
+log debug [rtmp stream: 'out'] buffer_duration_msec: 400
+fake encoder_update track=0 bitrate=3000
+state packets=6 dropped=0 min_priority=0 congestion=0.571428597 last_dts_usec=500000 drop_thr_usec=700000 pframe_thr_usec=900000 total_bytes=0 active=1 disconnected=0 encode_error=0 sent_headers=0 start_dts_offset=0 got_first=1
+> dbr
+dbr enabled=1 cur=3000 orig=6000 prev=0 est=3000 inc=0 audio=0 data_size=0 inc_timeout=5000000000 frames=0
+> queue
+queue n=6
+  [0] video dts_usec=0 prio=3 kf=1 track=0
+  [1] video dts_usec=100000 prio=0 kf=0 track=0
+  [2] video dts_usec=200000 prio=0 kf=0 track=0
+  [3] video dts_usec=300000 prio=0 kf=0 track=0
+  [4] video dts_usec=400000 prio=0 kf=0 track=0
+  [5] video dts_usec=500000 prio=0 kf=0 track=0
+> pkt video 1300000 0 0
+pkt queued=1 released=0
+state packets=7 dropped=0 min_priority=0 congestion=0.571428597 last_dts_usec=1300000 drop_thr_usec=700000 pframe_thr_usec=900000 total_bytes=0 active=1 disconnected=0 encode_error=0 sent_headers=0 start_dts_offset=0 got_first=1
+> pkt video 1400000 0 0
+pkt queued=1 released=0
+state packets=8 dropped=0 min_priority=0 congestion=1.71428573 last_dts_usec=1400000 drop_thr_usec=700000 pframe_thr_usec=900000 total_bytes=0 active=1 disconnected=0 encode_error=0 sent_headers=0 start_dts_offset=0 got_first=1
+> queue
+queue n=8
+  [0] video dts_usec=0 prio=3 kf=1 track=0
+  [1] video dts_usec=100000 prio=0 kf=0 track=0
+  [2] video dts_usec=200000 prio=0 kf=0 track=0
+  [3] video dts_usec=300000 prio=0 kf=0 track=0
+  [4] video dts_usec=400000 prio=0 kf=0 track=0
+  [5] video dts_usec=500000 prio=0 kf=0 track=0
+  [6] video dts_usec=1300000 prio=0 kf=0 track=0
+  [7] video dts_usec=1400000 prio=0 kf=0 track=0
+> reset
+reset ok
+> codec 0 h264
+> set active 1
+> venc 0 h264 6000 4 e0
+> set dbr_enabled 1
+> set dbr_cur_bitrate 6000
+> set dbr_orig_bitrate 6000
+> set dbr_est_bitrate 3000
+> pkt video 0 3 1
+pkt queued=1 released=0
+state packets=1 dropped=0 min_priority=0 congestion=0 last_dts_usec=0 drop_thr_usec=0 pframe_thr_usec=0 total_bytes=0 active=1 disconnected=0 encode_error=0 sent_headers=0 start_dts_offset=0 got_first=1
+> pkt video 20000 0 0
+pkt queued=1 released=0
+state packets=2 dropped=0 min_priority=0 congestion=0 last_dts_usec=20000 drop_thr_usec=0 pframe_thr_usec=0 total_bytes=0 active=1 disconnected=0 encode_error=0 sent_headers=0 start_dts_offset=0 got_first=1
+> pkt video 40000 0 0
+pkt queued=1 released=0
+state packets=3 dropped=0 min_priority=0 congestion=0 last_dts_usec=40000 drop_thr_usec=0 pframe_thr_usec=0 total_bytes=0 active=1 disconnected=0 encode_error=0 sent_headers=0 start_dts_offset=0 got_first=1
+> pkt video 60000 0 0
+pkt queued=1 released=0
+state packets=4 dropped=0 min_priority=0 congestion=0 last_dts_usec=60000 drop_thr_usec=0 pframe_thr_usec=0 total_bytes=0 active=1 disconnected=0 encode_error=0 sent_headers=0 start_dts_offset=0 got_first=1
+> pkt video 80000 0 0
+pkt queued=1 released=0
+state packets=5 dropped=0 min_priority=0 congestion=0 last_dts_usec=80000 drop_thr_usec=0 pframe_thr_usec=0 total_bytes=0 active=1 disconnected=0 encode_error=0 sent_headers=0 start_dts_offset=0 got_first=1
+> pkt video 100000 0 0
+pkt queued=1 released=0
+state packets=6 dropped=0 min_priority=0 congestion=inf last_dts_usec=100000 drop_thr_usec=0 pframe_thr_usec=0 total_bytes=0 active=1 disconnected=0 encode_error=0 sent_headers=0 start_dts_offset=0 got_first=1
+> check_drop b
+state packets=6 dropped=0 min_priority=0 congestion=inf last_dts_usec=100000 drop_thr_usec=0 pframe_thr_usec=0 total_bytes=0 active=1 disconnected=0 encode_error=0 sent_headers=0 start_dts_offset=0 got_first=1
+> dbr
+dbr enabled=1 cur=6000 orig=6000 prev=0 est=3000 inc=0 audio=0 data_size=0 inc_timeout=0 frames=0
+> reset
+reset ok
+> codec 0 h264
+> set active 1
+> venc 0 h264 3000 4 e0
+> dbr_json [[0,3000,6000]]
+build_dbr_interpolation_table -> 1
+table n=3
+  [0] 0 0 0 0 0 0 0 0 0 0
+  [1] 3000 0 0 0 0 0 0 0 0 0
+  [2] 6000 0 0 0 0 0 0 0 0 0
+> set dbr_enabled 1
+> set dbr_orig_bitrate 6000
+> set dbr_cur_bitrate 3000
+> set dbr_inc_bitrate 600
+> set dbr_inc_timeout 5000000000
+> fake now 4000000000
+> check_drop b
+state packets=0 dropped=0 min_priority=0 congestion=0 last_dts_usec=0 drop_thr_usec=0 pframe_thr_usec=0 total_bytes=0 active=1 disconnected=0 encode_error=0 sent_headers=0 start_dts_offset=0 got_first=0
+> dbr
+dbr enabled=1 cur=3000 orig=6000 prev=0 est=0 inc=600 audio=0 data_size=0 inc_timeout=5000000000 frames=0
+> fake now 5000000000
+> check_drop b
+log info [rtmp stream: 'out'] bitrate increased to: 3600, waiting
+fake encoder_update track=0 bitrate=3600
+state packets=0 dropped=0 min_priority=0 congestion=0 last_dts_usec=0 drop_thr_usec=0 pframe_thr_usec=0 total_bytes=0 active=1 disconnected=0 encode_error=0 sent_headers=0 start_dts_offset=0 got_first=0
+> dbr
+dbr enabled=1 cur=3600 orig=6000 prev=3000 est=0 inc=600 audio=0 data_size=0 inc_timeout=9000000000 frames=0
+> set congestion 0.9
+> check_drop b
+state packets=0 dropped=0 min_priority=0 congestion=0 last_dts_usec=0 drop_thr_usec=0 pframe_thr_usec=0 total_bytes=0 active=1 disconnected=0 encode_error=0 sent_headers=0 start_dts_offset=0 got_first=0

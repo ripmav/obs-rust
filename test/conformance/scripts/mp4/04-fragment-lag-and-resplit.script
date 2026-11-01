@@ -1,0 +1,35 @@
+# S-022 fragment trigger details.
+# (a) A keyframe with pts 0 never sets a split point. (b) A later keyframe moves the split point even
+# if the previous one was not yet flushed (video keyframes every frame, audio far behind: the split
+# point follows the newest keyframe, nothing is written until audio catches up).
+# (c) A track that never receives a packet keeps last_pts at 0, so no mid-stream fragment is written.
+enc v video codec h264 width 320 height 240 fps 30/1 extra 000000016742c01ed900a047fe880000000168ce3c80
+enc a audio codec aac rate 48000 extra 1190
+mux mp4
+pkt v 0 0 1 gen:10
+pkt v 1 1 1 gen:10
+pkt v 2 2 1 gen:10
+pkt v 3 3 1 gen:10
+echo after-4-keyframes-no-audio
+pos
+pkt a 0 0 1 gen:10
+pkt a 1024 1024 1 gen:10
+pkt a 2048 2048 1 gen:10
+pkt a 4096 4096 1 gen:10
+pkt a 8192 8192 1 gen:10
+echo audio-caught-up-split-is-written-on-next-packet
+pos
+pkt a 9216 9216 1 gen:10
+pos
+finalise
+tree
+echo --- empty audio track
+mux mp4
+pkt v 0 0 1 gen:10
+pkt v 3 3 1 gen:10
+pkt v 6 6 1 gen:10
+pkt v 9 9 1 gen:10
+echo no-fragment-yet
+pos
+finalise
+tree

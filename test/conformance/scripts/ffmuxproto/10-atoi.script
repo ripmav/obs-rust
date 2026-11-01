@@ -1,0 +1,15 @@
+# Numeric arguments are parsed with atoi semantics: leading blanks, optional sign, digits, stop at the first other byte;
+# no digits = 0. The sender never relies on this; documented so a re-implementation can accept the same input.
+reset
+args @a.mkv 0 1 aac "t" " 128abc" "+48000" 1024 "7" "2x" "" ""
+hdr audio 0 -
+inspect
+reset
+args @a.mkv 0 1 aac "t" "0x10" "48000" "" " \t12" "2" "" ""
+hdr audio 0 -
+inspect
+reset
+echo --- sample rate 0 is rejected by the muxer header: exit status -2 (unsupported)
+args @a.mkv 0 1 aac "t" "128" "x" 1024 "0" "2" "" ""
+hdr audio 0 -
+run

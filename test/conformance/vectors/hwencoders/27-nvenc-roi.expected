@@ -1,0 +1,97 @@
+> dump 0
+> nvcap dyn_bitrate 1
+> host size 96 80
+> host has_roi 1
+> host roi_increment 1
+> roi 0 0 32 32 0.5
+> roi 16 16 96 80 1.0
+> defaults h264
+> set int bf 0
+> create h264 soft
+log info [obs-nvenc: 'enc'] settings: 	codec:        H264 	rate_control: cbr 	bitrate:      10000 	keyint:       250 	preset:       p5 	tuning:       hq 	multipass:    qres 	profile:      high 	width:        96 	height:       80 	b-frames:     0 	b-ref-mode:   0 	lookahead:    false (0 frames) 	aq:           true 
+nv.InitializeEncoder
+create -> ok
+> encodes 0 1
+nv.EncodePicture ts=0 frameIdx=0 in=96x80 pitch=96 fmt=NV12 qpmap[30]=-25,-25,0,0,0,0,-25,-51,-51,-51,-51,-51,0,-51,-51,-51,-51,-51,0,-51,-51,-51,-51,-51,0,-51,-51,-51,-51,-51
+nv.EncodePicture ts=1 frameIdx=1 in=96x80 pitch=96 fmt=NV12 qpmap[30]=-25,-25,0,0,0,0,-25,-51,-51,-51,-51,-51,0,-51,-51,-51,-51,-51,0,-51,-51,-51,-51,-51,0,-51,-51,-51,-51,-51
+submitted 2 frames
+> destroy
+nv.EncodePicture EOS
+fake: lockpic queue empty
+host.set_last_error "NVENC Error: get_encoded_packet: nv.nvEncLockBitstream(s, &lock) failed: 20 (NV_ENC_ERR_GENERIC)"
+log error [obs-nvenc] get_encoded_packet: nv.nvEncLockBitstream(s, &lock) failed: 20 (NV_ENC_ERR_GENERIC)
+nv.DestroyEncoder
+destroyed
+> defaults hevc
+> set int bf 0
+> create hevc soft
+log info [obs-nvenc: 'enc'] settings: 	codec:        HEVC 	rate_control: cbr 	bitrate:      10000 	keyint:       250 	preset:       p5 	tuning:       hq 	multipass:    qres 	profile:      main 	width:        96 	height:       80 	b-frames:     0 	b-ref-mode:   0 	lookahead:    false (0 frames) 	aq:           true 
+nv.InitializeEncoder
+create -> ok
+> encodes 0 1
+nv.EncodePicture ts=0 frameIdx=0 in=96x80 pitch=96 fmt=NV12 qpmap[9]=-51,-51,-51,-51,-51,-51,-51,-51,-51
+nv.EncodePicture ts=1 frameIdx=1 in=96x80 pitch=96 fmt=NV12 qpmap[9]=-51,-51,-51,-51,-51,-51,-51,-51,-51
+submitted 2 frames
+> destroy
+nv.EncodePicture EOS
+fake: lockpic queue empty
+host.set_last_error "NVENC Error: get_encoded_packet: nv.nvEncLockBitstream(s, &lock) failed: 20 (NV_ENC_ERR_GENERIC)"
+log error [obs-nvenc] get_encoded_packet: nv.nvEncLockBitstream(s, &lock) failed: 20 (NV_ENC_ERR_GENERIC)
+nv.DestroyEncoder
+destroyed
+> defaults av1
+> set int bf 0
+> create av1 soft
+log info [obs-nvenc: 'enc'] settings: 	codec:        AV1 	rate_control: cbr 	bitrate:      10000 	keyint:       250 	preset:       p5 	tuning:       hq 	multipass:    qres 	profile:      main 	width:        96 	height:       80 	b-frames:     0 	b-ref-mode:   0 	lookahead:    false (0 frames) 	aq:           true 
+nv.InitializeEncoder
+create -> ok
+> encodes 0 1
+nv.EncodePicture ts=0 frameIdx=0 in=96x80 pitch=96 fmt=NV12 qpmap[4]=-128,-128,-128,-128
+nv.EncodePicture ts=1 frameIdx=1 in=96x80 pitch=96 fmt=NV12 qpmap[4]=-128,-128,-128,-128
+submitted 2 frames
+> destroy
+nv.EncodePicture EOS
+fake: lockpic queue empty
+host.set_last_error "NVENC Error: get_encoded_packet: nv.nvEncLockBitstream(s, &lock) failed: 20 (NV_ENC_ERR_GENERIC)"
+log error [obs-nvenc] get_encoded_packet: nv.nvEncLockBitstream(s, &lock) failed: 20 (NV_ENC_ERR_GENERIC)
+nv.DestroyEncoder
+destroyed
+> defaults h264
+> set int bf 0
+> create h264 soft
+log info [obs-nvenc: 'enc'] settings: 	codec:        H264 	rate_control: cbr 	bitrate:      10000 	keyint:       250 	preset:       p5 	tuning:       hq 	multipass:    qres 	profile:      high 	width:        96 	height:       80 	b-frames:     0 	b-ref-mode:   0 	lookahead:    false (0 frames) 	aq:           true 
+nv.InitializeEncoder
+create -> ok
+> roi_clear
+> roi 0 0 16 16 -0.5
+> encodes 0 0
+nv.EncodePicture ts=0 frameIdx=0 in=96x80 pitch=96 fmt=NV12 qpmap[30]=25,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+submitted 1 frames
+> roi_clear
+> roi 16 0 32 16 1.0
+> encodes 1 1
+nv.EncodePicture ts=1 frameIdx=1 in=96x80 pitch=96 fmt=NV12 qpmap[30]=25,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+submitted 1 frames
+> host roi_increment 2
+> encodes 2 2
+nv.EncodePicture ts=2 frameIdx=2 in=96x80 pitch=96 fmt=NV12 qpmap[30]=0,-51,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+fake: lockpic queue empty
+host.set_last_error "NVENC Error: get_encoded_packet: nv.nvEncLockBitstream(s, &lock) failed: 20 (NV_ENC_ERR_GENERIC)"
+log error [obs-nvenc] get_encoded_packet: nv.nvEncLockBitstream(s, &lock) failed: 20 (NV_ENC_ERR_GENERIC)
+encode pts=2 -> 0 received=0 size=0 out_pts=0 dts=0 keyframe=0 priority=0
+submitted 1 frames
+> host has_roi 0
+> encodes 3 3
+nv.EncodePicture ts=3 frameIdx=3 in=96x80 pitch=96 fmt=NV12
+fake: lockpic queue empty
+host.set_last_error "NVENC Error: get_encoded_packet: nv.nvEncLockBitstream(s, &lock) failed: 20 (NV_ENC_ERR_GENERIC)"
+log error [obs-nvenc] get_encoded_packet: nv.nvEncLockBitstream(s, &lock) failed: 20 (NV_ENC_ERR_GENERIC)
+encode pts=3 -> 0 received=0 size=0 out_pts=0 dts=0 keyframe=0 priority=0
+submitted 1 frames
+> destroy
+nv.EncodePicture EOS
+fake: lockpic queue empty
+host.set_last_error "NVENC Error: get_encoded_packet: nv.nvEncLockBitstream(s, &lock) failed: 20 (NV_ENC_ERR_GENERIC)"
+log error [obs-nvenc] get_encoded_packet: nv.nvEncLockBitstream(s, &lock) failed: 20 (NV_ENC_ERR_GENERIC)
+nv.DestroyEncoder
+destroyed

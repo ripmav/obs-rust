@@ -1,0 +1,21 @@
+# S-022 API misuse and lifecycle that stay inside the contract: submitting for an unknown encoder
+# (returns false, nothing stored), destroying without finalising (no file header rewrite, no leaks:
+# each track's encoder reference is dropped), finalising twice, tracks for an unknown video codec are
+# not created as data but audio ones are. Log lines show level and text.
+enc v video codec h264 width 320 height 240 fps 30/1 extra 000000016742c01ed900a047fe880000000168ce3c80
+enc a audio codec aac rate 48000 extra 1190
+enc other audio codec aac rate 48000 noslot 1
+mux mp4
+pkt other 0 0 1 gen:10
+pkt v 0 0 1 gen:10
+pkt v 1 1 0 gen:10
+echo refs-while-muxing
+refs v
+refs a
+refs other
+destroy
+echo refs-after-destroy
+refs v
+refs a
+echo size-of-file-written-before-destroy
+size

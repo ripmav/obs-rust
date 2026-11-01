@@ -1,0 +1,24 @@
+# slideshow v2 QUIRK: update rebuilds the whole state from zero (paused/stop/elapsed/state/signal data reset) and
+# never records tr_name, so a new transition source is created on every update.
+fs_file /s/a.png 1
+fs_file /s/b.png 1
+fs_file /s/c.png 1
+fs_file /s/d.png 1
+img /s/a.png 10 10
+img /s/b.png 20 20
+img /s/c.png 30 30
+img /s/d.png 40 40
+create ss slideshow_v2 {"files":[{"value":"/s/a.png"},{"value":"/s/b.png"}],"transition":"cut","transition_speed":0}
+tick 0.016
+refs ss 1 1
+media ss stop
+tick 0.016
+state ss
+update ss {"slide_mode":"mode_manual"}
+tick 0.016
+state ss
+mediastate ss
+update ss {"files":[]}
+tick 0.016
+state ss
+mediastate ss

@@ -1,0 +1,24 @@
+  cb P create
+log debug source 'P' (par) created
+create p ok
+  cb C1 create
+log debug source 'C1' (lf) created
+create c1 ok
+  cb C2 create
+log debug source 'C2' (par) created
+create c2 ok
+  cb G create
+log debug source 'G' (lf) created
+create g ok
+state p show_refs=1 activate_refs=1 showing=0 active=0 obs_showing=1 obs_active=1
+state c1 show_refs=1 activate_refs=1 showing=0 active=0 obs_showing=1 obs_active=1
+state c2 show_refs=1 activate_refs=1 showing=0 active=0 obs_showing=1 obs_active=1
+state g show_refs=1 activate_refs=1 showing=0 active=0 obs_showing=1 obs_active=1
+  cb G show
+  cb G activate
+  cb C2 show
+  cb C2 activate
+state c1 show_refs=2 activate_refs=1 showing=0 active=0 obs_showing=1 obs_active=1
+state g show_refs=2 activate_refs=1 showing=1 active=1 obs_showing=1 obs_active=1
+state c1 show_refs=0 activate_refs=0 showing=0 active=0 obs_showing=0 obs_active=0
+state g show_refs=0 activate_refs=0 showing=1 active=1 obs_showing=0 obs_active=0

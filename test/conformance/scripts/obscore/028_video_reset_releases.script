@@ -1,0 +1,19 @@
+# Repeating a successful reset releases the resources of the previous mix: the number of live
+# graphics objects (textures, staging surfaces) stays constant, with and without GPU conversion,
+# and after the main canvas video has been rebuilt many times.
+startup en-US -
+reset_video fmt=NV12 gpu=1
+live_mark
+reset_video fmt=NV12 gpu=1
+live_delta
+reset_video fmt=NV12 gpu=1
+live_delta
+reset_video fmt=BGRA gpu=0
+live_mark
+reset_video fmt=BGRA gpu=0
+live_delta
+# a canvas with its own mix is created and destroyed again (the main mix is untouched)
+canvas_create c1 Aux video=1 fmt=BGRA gpu=0
+canvas_info c1
+canvas_release c1
+shutdown

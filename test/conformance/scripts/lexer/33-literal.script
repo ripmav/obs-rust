@@ -1,0 +1,23 @@
+# CORE/QUIRK: cf_literal_to_str: quote stripping, simple escapes. Q-5: after an escape the closing quote leaks into the result;
+# octal escapes are mis-parsed. Strings with more than one escape-free char are exact.
+literal "\"abc\""
+literal "'abc'"
+literal "\"abc\"" 5
+literal "\"abc\"" 3
+literal "\"abc'"
+literal "abc"
+literal "\"\""
+literal "\"" 
+literal "\"a\\nb\\tc\\\\d\\\"e\\'f\\?g\""
+literal "\"\\a\\b\\f\\r\\v\\0z\""
+literal "\"\\101z\""
+literal "\"\\q\""
+literal "\"\\\"" 
+literal "\"ab\\\""
+literal "\"a\"" 2
+literal "'\\x41'"
+literal "\"\\n\\n\\n\\n\""
+literal "\"\\xzz\""
+literal "\"\\123\""
+literal "\"\\1\""
+literal "\"\\q\""

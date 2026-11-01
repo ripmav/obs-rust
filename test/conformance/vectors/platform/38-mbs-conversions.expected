@@ -1,0 +1,31 @@
+os_mbs2wcs rc=5
+os_mbs2wcs rc=5 cp=68,65,6c,6c,6f
+os_mbs2wcs rc=5 cp=68,65,6c,6c,6f
+os_mbs2wcs rc=0 cp=-
+os_mbs2wcs rc=0
+os_mbs2wcs rc=0 cp=-
+os_mbs2wcs rc=0
+os_mbs2wcs rc=0
+os_mbs2wcs rc=0
+os_wcs2mbs rc=5
+os_wcs2mbs rc=5 str="hello"
+os_wcs2mbs rc=5 str="hello"
+os_wcs2mbs rc=0 str=""
+os_wcs2mbs rc=0
+os_wcs2mbs rc=0 str=""
+os_wcs2mbs rc=0
+os_wcs2mbs rc=0
+os_mbs2wcs_ptr rc=5 cp=68,65,6c,6c,6f
+os_mbs2wcs_ptr rc=0 cp=-
+os_mbs2wcs_ptr rc=0 ptr=null
+os_wcs2mbs_ptr rc=2 str="hi"
+os_wcs2mbs_ptr rc=0 str=""
+os_wcs2mbs_ptr rc=0 str=@null
+os_u2mbs_ptr rc=5 str="hello"
+os_u2mbs_ptr rc=3 str="hel"
+os_u2mbs_ptr rc=0 str=""
+os_u2mbs_ptr rc=0 str=@null
+os_mbs2u_ptr rc=5 str="hello"
+os_mbs2u_ptr rc=5 str="hello"
+os_mbs2u_ptr rc=0 str=""
+os_mbs2u_ptr rc=0 str=@null

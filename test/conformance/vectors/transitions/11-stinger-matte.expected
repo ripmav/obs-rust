@@ -1,0 +1,368 @@
+create st obs_stinger_transition
+  ev enter_graphics
+  ev effect_create file=@data/stinger_matte_transition.effect
+  ev leave_graphics
+  ev transition_enable_fixed 1 duration_ms=0
+  ev source_update st deferred (count 1)
+  instance=1
+  fields tp_is_frame=0 tp_ns=0 tp_frame=0 tp=0 a_mul=0 b_mul=0
+  fields duration_ns=0 duration_frames=0 transitioning=0 monitoring=0 fade_style=0
+  fields matte_enabled=0 layout=0 wf=0 hf=0 invert=0 texrender=0 rendered=0 media=0 matte_src=0 mix_fn=fadeinout
+tick st
+  ev source_create_private media#1 id=ffmpeg_source name="st (Stinger)"
+  ev   setting local_file="/m/s.mov"
+  ev   setting hw_decode=1
+  ev   setting looping=0
+  ev   setting full_decode=0
+  ev   setting is_stinger=1
+  ev   setting is_track_matte=0
+  ev source_set_monitoring media#1 0
+  ev enter_graphics
+  ev texrender_create id=1 format=3 zs=0
+  ev texrender_create id=2 format=3 zs=0
+  ev leave_graphics
+  ev texrender_reset id=2
+  ev texrender_reset id=1
+  fields tp_is_frame=0 tp_ns=0 tp_frame=0 tp=0 a_mul=0 b_mul=0
+  fields duration_ns=0 duration_frames=0 transitioning=0 monitoring=0 fade_style=0
+  fields matte_enabled=1 layout=0 wf=2 hf=1 invert=0 texrender=1 rendered=0 media=1 matte_src=0 mix_fn=fadeinout
+settings st
+  ev source_update st deferred (count 1)
+tick st
+  ev source_release media#1 refs=0
+  ev source_create_private media#2 id=ffmpeg_source name="st (Stinger)"
+  ev   setting local_file="/m/s2.mov"
+  ev   setting hw_decode=1
+  ev   setting looping=0
+  ev   setting full_decode=0
+  ev   setting is_stinger=1
+  ev   setting is_track_matte=1
+  ev source_set_monitoring media#2 0
+  ev texrender_reset id=2
+  ev texrender_reset id=1
+  fields tp_is_frame=0 tp_ns=0 tp_frame=0 tp=0 a_mul=0 b_mul=0
+  fields duration_ns=0 duration_frames=0 transitioning=0 monitoring=0 fade_style=0
+  fields matte_enabled=1 layout=0 wf=2 hf=1 invert=0 texrender=1 rendered=0 media=1 matte_src=0 mix_fn=fadeinout
+start st
+  ev proc_call media#2 get_duration
+  ev proc_call media#2 get_nb_frames
+  ev transition_enable_fixed 1 duration_ms=1250
+  ev add_active_child st <- media#2
+  fields tp_is_frame=0 tp_ns=0 tp_frame=0 tp=0.00100000005 a_mul=999.999939 b_mul=1.001001
+  fields duration_ns=1250000000 duration_frames=60 transitioning=1 monitoring=0 fade_style=0
+  fields matte_enabled=1 layout=0 wf=2 hf=1 invert=0 texrender=1 rendered=0 media=1 matte_src=0 mix_fn=fadeinout
+  source media#1 name="st (Stinger)" id=ffmpeg_source refs=0 active_child_refs=0 muted=0 monitoring=0
+  source media#2 name="st (Stinger)" id=ffmpeg_source refs=1 active_child_refs=1 muted=0 monitoring=0
+render st
+  ev transition_video_render callback=yes placeholder=9000
+  ev   callback a=1 b=2 t=0.5 cx=1920 cy=1080
+  ev texrender_begin id=1 cx=1920 cy=1080 space=0 -> 1
+  ev matrix_scale3f 1 1 1
+  ev matrix_translate3f -1920 0 0
+  ev clear flags=1 color=0,0,0,0 depth=0 stencil=0
+  ev ortho l=0 r=1920 t=0 b=1080 near=-100 far=100
+  ev source_video_render media#2
+  ev texrender_end id=1
+  ev enable_framebuffer_srgb 1
+  ev set_texture a_tex tex=1 srgb=0
+  ev set_texture b_tex tex=2 srgb=0
+  ev set_texture matte_tex tex=101 srgb=0
+  ev set_bool invert_matte 0
+  ev effect_loop technique=StingerMatte pass=0
+  ev draw_sprite tex=null flip=0 w=1920 h=1080
+  ev enable_framebuffer_srgb 0
+  ev texrender_begin id=2 cx=1920 cy=1080 space=0 -> 1
+  ev ortho l=0 r=1920 t=0 b=1080 near=-100 far=100
+  ev blend_state_push
+  ev enable_blending 0
+  ev source_video_render media#2
+  ev blend_state_pop
+  ev texrender_end id=2
+  ev enable_framebuffer_srgb 1
+  ev get_base_effect 0
+  ev set_texture image tex=102 srgb=1
+  ev set_float multiplier 1
+  ev effect_loop technique=Draw pass=0
+  ev draw_sprite tex=null flip=0 w=1920 h=1080
+  ev enable_framebuffer_srgb 0
+  fields tp_is_frame=0 tp_ns=0 tp_frame=0 tp=0.00100000005 a_mul=999.999939 b_mul=1.001001
+  fields duration_ns=1250000000 duration_frames=60 transitioning=1 monitoring=0 fade_style=0
+  fields matte_enabled=1 layout=0 wf=2 hf=1 invert=0 texrender=1 rendered=1 media=1 matte_src=0 mix_fn=fadeinout
+  source media#1 name="st (Stinger)" id=ffmpeg_source refs=0 active_child_refs=0 muted=0 monitoring=0
+  source media#2 name="st (Stinger)" id=ffmpeg_source refs=1 active_child_refs=1 muted=0 monitoring=0
+stop st
+  ev remove_active_child st <- media#2
+  ev proc_call media#2 preload_first_frame
+  fields tp_is_frame=0 tp_ns=0 tp_frame=0 tp=0.00100000005 a_mul=999.999939 b_mul=1.001001
+  fields duration_ns=1250000000 duration_frames=60 transitioning=0 monitoring=0 fade_style=0
+  fields matte_enabled=1 layout=0 wf=2 hf=1 invert=0 texrender=1 rendered=1 media=1 matte_src=0 mix_fn=fadeinout
+  source media#1 name="st (Stinger)" id=ffmpeg_source refs=0 active_child_refs=0 muted=0 monitoring=0
+  source media#2 name="st (Stinger)" id=ffmpeg_source refs=1 active_child_refs=0 muted=0 monitoring=0
+settings st
+  ev source_update st deferred (count 1)
+tick st
+  ev source_release media#2 refs=0
+  ev source_create_private media#3 id=ffmpeg_source name="st (Stinger)"
+  ev   setting local_file="/m/s2.mov"
+  ev   setting hw_decode=1
+  ev   setting looping=0
+  ev   setting full_decode=0
+  ev   setting is_stinger=1
+  ev   setting is_track_matte=1
+  ev source_set_monitoring media#3 0
+  ev texrender_reset id=2
+  ev texrender_reset id=1
+  fields tp_is_frame=0 tp_ns=0 tp_frame=0 tp=0.00100000005 a_mul=999.999939 b_mul=1.001001
+  fields duration_ns=1250000000 duration_frames=60 transitioning=0 monitoring=0 fade_style=0
+  fields matte_enabled=1 layout=1 wf=1 hf=2 invert=1 texrender=1 rendered=1 media=1 matte_src=0 mix_fn=fadeinout
+start st
+  ev proc_call media#3 get_duration
+  ev proc_call media#3 get_nb_frames
+  ev transition_enable_fixed 1 duration_ms=1250
+  ev add_active_child st <- media#3
+  fields tp_is_frame=0 tp_ns=0 tp_frame=0 tp=0.00100000005 a_mul=999.999939 b_mul=1.001001
+  fields duration_ns=1250000000 duration_frames=60 transitioning=1 monitoring=0 fade_style=0
+  fields matte_enabled=1 layout=1 wf=1 hf=2 invert=1 texrender=1 rendered=0 media=1 matte_src=0 mix_fn=fadeinout
+  source media#1 name="st (Stinger)" id=ffmpeg_source refs=0 active_child_refs=0 muted=0 monitoring=0
+  source media#2 name="st (Stinger)" id=ffmpeg_source refs=0 active_child_refs=0 muted=0 monitoring=0
+  source media#3 name="st (Stinger)" id=ffmpeg_source refs=1 active_child_refs=1 muted=0 monitoring=0
+render st
+  ev transition_video_render callback=yes placeholder=9000
+  ev   callback a=1 b=2 t=0.5 cx=1920 cy=1080
+  ev texrender_begin id=1 cx=1920 cy=1080 space=0 -> 1
+  ev matrix_scale3f 1 1 1
+  ev matrix_translate3f 0 -1080 0
+  ev clear flags=1 color=0,0,0,0 depth=0 stencil=0
+  ev ortho l=0 r=1920 t=0 b=1080 near=-100 far=100
+  ev source_video_render media#3
+  ev texrender_end id=1
+  ev enable_framebuffer_srgb 1
+  ev set_texture a_tex tex=1 srgb=1
+  ev set_texture b_tex tex=2 srgb=1
+  ev set_texture matte_tex tex=101 srgb=0
+  ev set_bool invert_matte 1
+  ev effect_loop technique=StingerMatteLinear pass=0
+  ev draw_sprite tex=null flip=0 w=1920 h=1080
+  ev enable_framebuffer_srgb 0
+  ev texrender_begin id=2 cx=1920 cy=1080 space=0 -> 1
+  ev ortho l=0 r=1920 t=0 b=1080 near=-100 far=100
+  ev blend_state_push
+  ev enable_blending 0
+  ev source_video_render media#3
+  ev blend_state_pop
+  ev texrender_end id=2
+  ev enable_framebuffer_srgb 1
+  ev get_base_effect 0
+  ev set_texture image tex=102 srgb=1
+  ev set_float multiplier 1
+  ev effect_loop technique=Draw pass=0
+  ev draw_sprite tex=null flip=0 w=1920 h=1080
+  ev enable_framebuffer_srgb 0
+stop st
+  ev remove_active_child st <- media#3
+  ev proc_call media#3 preload_first_frame
+  fields tp_is_frame=0 tp_ns=0 tp_frame=0 tp=0.00100000005 a_mul=999.999939 b_mul=1.001001
+  fields duration_ns=1250000000 duration_frames=60 transitioning=0 monitoring=0 fade_style=0
+  fields matte_enabled=1 layout=1 wf=1 hf=2 invert=1 texrender=1 rendered=1 media=1 matte_src=0 mix_fn=fadeinout
+  source media#1 name="st (Stinger)" id=ffmpeg_source refs=0 active_child_refs=0 muted=0 monitoring=0
+  source media#2 name="st (Stinger)" id=ffmpeg_source refs=0 active_child_refs=0 muted=0 monitoring=0
+  source media#3 name="st (Stinger)" id=ffmpeg_source refs=1 active_child_refs=0 muted=0 monitoring=0
+settings st
+  ev source_update st deferred (count 1)
+tick st
+  ev source_release media#3 refs=0
+  ev source_create_private media#4 id=ffmpeg_source name="st (Stinger)"
+  ev   setting local_file="/m/s2.mov"
+  ev   setting hw_decode=1
+  ev   setting looping=0
+  ev   setting full_decode=0
+  ev   setting is_stinger=1
+  ev   setting is_track_matte=1
+  ev source_set_monitoring media#4 0
+  ev texrender_reset id=2
+  ev texrender_reset id=1
+  fields tp_is_frame=0 tp_ns=0 tp_frame=0 tp=0.00100000005 a_mul=999.999939 b_mul=1.001001
+  fields duration_ns=1250000000 duration_frames=60 transitioning=0 monitoring=0 fade_style=0
+  fields matte_enabled=1 layout=3 wf=1 hf=1 invert=1 texrender=0 rendered=1 media=1 matte_src=0 mix_fn=fadeinout
+render st
+  ev transition_video_render callback=yes placeholder=9000
+  ev   callback a=1 b=2 t=0.5 cx=1920 cy=1080
+  ev texrender_begin id=1 cx=1920 cy=1080 space=0 -> 1
+  ev matrix_scale3f 1 1 1
+  ev matrix_translate3f 0 0 0
+  ev clear flags=1 color=0,0,0,0 depth=0 stencil=0
+  ev ortho l=0 r=1920 t=0 b=1080 near=-100 far=100
+  ev source_video_render media#4
+  ev texrender_end id=1
+  ev enable_framebuffer_srgb 1
+  ev set_texture a_tex tex=1 srgb=1
+  ev set_texture b_tex tex=2 srgb=1
+  ev set_texture matte_tex tex=101 srgb=0
+  ev set_bool invert_matte 1
+  ev effect_loop technique=StingerMatteLinear pass=0
+  ev draw_sprite tex=null flip=0 w=1920 h=1080
+  ev enable_framebuffer_srgb 0
+stop st
+  ev remove_active_child st <- media#4
+  ev proc_call media#4 preload_first_frame
+  fields tp_is_frame=0 tp_ns=0 tp_frame=0 tp=0.00100000005 a_mul=999.999939 b_mul=1.001001
+  fields duration_ns=1250000000 duration_frames=60 transitioning=0 monitoring=0 fade_style=0
+  fields matte_enabled=1 layout=3 wf=1 hf=1 invert=1 texrender=0 rendered=1 media=1 matte_src=0 mix_fn=fadeinout
+  source media#1 name="st (Stinger)" id=ffmpeg_source refs=0 active_child_refs=0 muted=0 monitoring=0
+  source media#2 name="st (Stinger)" id=ffmpeg_source refs=0 active_child_refs=0 muted=0 monitoring=0
+  source media#3 name="st (Stinger)" id=ffmpeg_source refs=0 active_child_refs=0 muted=0 monitoring=0
+  source media#4 name="st (Stinger)" id=ffmpeg_source refs=1 active_child_refs=-1 muted=0 monitoring=0
+settings st
+  ev source_update st deferred (count 1)
+tick st
+  ev source_release media#4 refs=0
+  ev source_create_private media#5 id=ffmpeg_source name="st (Stinger)"
+  ev   setting local_file="/m/s2.mov"
+  ev   setting hw_decode=1
+  ev   setting looping=0
+  ev   setting full_decode=0
+  ev   setting is_stinger=1
+  ev   setting is_track_matte=1
+  ev source_set_monitoring media#5 0
+  ev texrender_reset id=2
+  ev texrender_reset id=1
+  fields tp_is_frame=0 tp_ns=0 tp_frame=0 tp=0.00100000005 a_mul=999.999939 b_mul=1.001001
+  fields duration_ns=1250000000 duration_frames=60 transitioning=0 monitoring=0 fade_style=0
+  fields matte_enabled=1 layout=0 wf=2 hf=1 invert=1 texrender=1 rendered=1 media=1 matte_src=0 mix_fn=fadeinout
+start st
+  ev proc_call media#5 get_duration
+  ev proc_call media#5 get_nb_frames
+  ev transition_enable_fixed 1 duration_ms=250
+  ev add_active_child st <- media#5
+  fields tp_is_frame=0 tp_ns=0 tp_frame=0 tp=0.00100000005 a_mul=999.999939 b_mul=1.001001
+  fields duration_ns=250000000 duration_frames=0 transitioning=1 monitoring=0 fade_style=0
+  fields matte_enabled=1 layout=0 wf=2 hf=1 invert=1 texrender=1 rendered=0 media=1 matte_src=0 mix_fn=fadeinout
+  source media#1 name="st (Stinger)" id=ffmpeg_source refs=0 active_child_refs=0 muted=0 monitoring=0
+  source media#2 name="st (Stinger)" id=ffmpeg_source refs=0 active_child_refs=0 muted=0 monitoring=0
+  source media#3 name="st (Stinger)" id=ffmpeg_source refs=0 active_child_refs=0 muted=0 monitoring=0
+  source media#4 name="st (Stinger)" id=ffmpeg_source refs=0 active_child_refs=-1 muted=0 monitoring=0
+  source media#5 name="st (Stinger)" id=ffmpeg_source refs=1 active_child_refs=1 muted=0 monitoring=0
+render st
+  ev transition_video_render_direct target=A -> 1
+  ev texrender_begin id=2 cx=1920 cy=1080 space=0 -> 1
+  ev ortho l=0 r=1920 t=0 b=1080 near=-100 far=100
+  ev blend_state_push
+  ev enable_blending 0
+  ev source_video_render media#5
+  ev blend_state_pop
+  ev texrender_end id=2
+  ev enable_framebuffer_srgb 1
+  ev get_base_effect 0
+  ev set_texture image tex=102 srgb=1
+  ev set_float multiplier 1
+  ev effect_loop technique=Draw pass=0
+  ev draw_sprite tex=null flip=0 w=1920 h=1080
+  ev enable_framebuffer_srgb 0
+render st
+  ev transition_video_render callback=yes placeholder=9000
+  ev   callback a=1 b=2 t=0.5 cx=1920 cy=1080
+  ev texrender_begin id=1 cx=1920 cy=1080 space=0 -> 1
+  ev matrix_scale3f 1 1 1
+  ev matrix_translate3f -1920 0 0
+  ev clear flags=1 color=0,0,0,0 depth=0 stencil=0
+  ev ortho l=0 r=1920 t=0 b=1080 near=-100 far=100
+  ev source_video_render media#5
+  ev texrender_end id=1
+  ev enable_framebuffer_srgb 1
+  ev set_texture a_tex tex=1 srgb=1
+  ev set_texture b_tex tex=2 srgb=1
+  ev set_texture matte_tex tex=101 srgb=0
+  ev set_bool invert_matte 1
+  ev effect_loop technique=StingerMatteLinear pass=0
+  ev draw_sprite tex=null flip=0 w=1920 h=1080
+  ev enable_framebuffer_srgb 0
+  ev texrender_begin id=2 cx=1920 cy=1080 space=0 -> 1
+  ev ortho l=0 r=1920 t=0 b=1080 near=-100 far=100
+  ev blend_state_push
+  ev enable_blending 0
+  ev source_video_render media#5
+  ev blend_state_pop
+  ev texrender_end id=2
+  ev enable_framebuffer_srgb 1
+  ev get_base_effect 0
+  ev set_texture image tex=102 srgb=1
+  ev set_float multiplier 1
+  ev effect_loop technique=Draw pass=0
+  ev draw_sprite tex=null flip=0 w=1920 h=1080
+  ev enable_framebuffer_srgb 0
+render st
+  ev transition_video_render_direct target=B -> 1
+  ev texrender_begin id=2 cx=1920 cy=1080 space=0 -> 1
+  ev ortho l=0 r=1920 t=0 b=1080 near=-100 far=100
+  ev blend_state_push
+  ev enable_blending 0
+  ev source_video_render media#5
+  ev blend_state_pop
+  ev texrender_end id=2
+  ev enable_framebuffer_srgb 1
+  ev get_base_effect 0
+  ev set_texture image tex=102 srgb=1
+  ev set_float multiplier 1
+  ev effect_loop technique=Draw pass=0
+  ev draw_sprite tex=null flip=0 w=1920 h=1080
+  ev enable_framebuffer_srgb 0
+stop st
+  ev remove_active_child st <- media#5
+  ev proc_call media#5 preload_first_frame
+  fields tp_is_frame=0 tp_ns=0 tp_frame=0 tp=0.00100000005 a_mul=999.999939 b_mul=1.001001
+  fields duration_ns=250000000 duration_frames=0 transitioning=0 monitoring=0 fade_style=0
+  fields matte_enabled=1 layout=0 wf=2 hf=1 invert=1 texrender=1 rendered=1 media=1 matte_src=0 mix_fn=fadeinout
+  source media#1 name="st (Stinger)" id=ffmpeg_source refs=0 active_child_refs=0 muted=0 monitoring=0
+  source media#2 name="st (Stinger)" id=ffmpeg_source refs=0 active_child_refs=0 muted=0 monitoring=0
+  source media#3 name="st (Stinger)" id=ffmpeg_source refs=0 active_child_refs=0 muted=0 monitoring=0
+  source media#4 name="st (Stinger)" id=ffmpeg_source refs=0 active_child_refs=-1 muted=0 monitoring=0
+  source media#5 name="st (Stinger)" id=ffmpeg_source refs=1 active_child_refs=0 muted=0 monitoring=0
+start st
+  ev proc_call media#5 get_duration
+  ev proc_call media#5 get_nb_frames
+  ev transition_enable_fixed 1 duration_ms=250
+  ev add_active_child st <- media#5
+  fields tp_is_frame=0 tp_ns=0 tp_frame=0 tp=0.00100000005 a_mul=999.999939 b_mul=1.001001
+  fields duration_ns=250000000 duration_frames=0 transitioning=1 monitoring=0 fade_style=0
+  fields matte_enabled=1 layout=0 wf=2 hf=1 invert=1 texrender=1 rendered=0 media=1 matte_src=0 mix_fn=fadeinout
+  source media#1 name="st (Stinger)" id=ffmpeg_source refs=0 active_child_refs=0 muted=0 monitoring=0
+  source media#2 name="st (Stinger)" id=ffmpeg_source refs=0 active_child_refs=0 muted=0 monitoring=0
+  source media#3 name="st (Stinger)" id=ffmpeg_source refs=0 active_child_refs=0 muted=0 monitoring=0
+  source media#4 name="st (Stinger)" id=ffmpeg_source refs=0 active_child_refs=-1 muted=0 monitoring=0
+  source media#5 name="st (Stinger)" id=ffmpeg_source refs=1 active_child_refs=1 muted=0 monitoring=0
+render st
+  ev transition_video_render_direct target=A -> 1
+  ev texrender_begin id=2 cx=1920 cy=1080 space=0 -> 1
+  ev ortho l=0 r=1920 t=0 b=1080 near=-100 far=100
+  ev blend_state_push
+  ev enable_blending 0
+  ev source_video_render media#5
+  ev blend_state_pop
+  ev texrender_end id=2
+  ev enable_framebuffer_srgb 1
+  ev get_base_effect 0
+  ev set_texture image tex=102 srgb=1
+  ev set_float multiplier 1
+  ev effect_loop technique=Draw pass=0
+  ev draw_sprite tex=null flip=0 w=1920 h=1080
+  ev enable_framebuffer_srgb 0
+render st
+  ev transition_video_render callback=yes placeholder=9000
+  ev   callback a=1 b=2 t=0.5 cx=1920 cy=1080
+  ev texrender_begin id=1 cx=1920 cy=1080 space=0 -> 0
+  ev enable_framebuffer_srgb 1
+  ev set_texture a_tex tex=1 srgb=1
+  ev set_texture b_tex tex=2 srgb=1
+  ev set_texture matte_tex tex=101 srgb=0
+  ev set_bool invert_matte 1
+  ev effect_loop technique=StingerMatteLinear pass=0
+  ev draw_sprite tex=null flip=0 w=1920 h=1080
+  ev enable_framebuffer_srgb 0
+  ev texrender_begin id=2 cx=1920 cy=1080 space=0 -> 0
+  ev enable_framebuffer_srgb 1
+  ev get_base_effect 0
+  ev set_texture image tex=102 srgb=1
+  ev set_float multiplier 1
+  ev effect_loop technique=Draw pass=0
+  ev draw_sprite tex=null flip=0 w=1920 h=1080
+  ev enable_framebuffer_srgb 0

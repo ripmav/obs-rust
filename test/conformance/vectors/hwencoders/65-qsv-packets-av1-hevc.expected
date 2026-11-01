@@ -1,0 +1,60 @@
+> q_set open_ok 1
+> q_headers 40aa 6742 68ee
+> q_set bs_present 1
+> q_create av1 soft
+log info [qsv encoder: 'enc'] settings: 	codec:          AV1 	rate_control:   
+log info 	target_bitrate: 0
+log info 	target_usage:    	profile:         	keyint:         0 	latency:         	b-frames:       0 	fps_num:        60 	fps_den:        1 	width:          1920 	height:         1080
+log info [qsv encoder: 'enc'] debug info:
+qsv.encoder_open codec=1 tex=0 -> ok
+log info 	major:          2 	minor:          9
+os.request_high_performance "qsv encoding"
+q_create -> ok
+> q_bs 12000a01aa 0x81 3000 1500
+> q_encode 0
+qsv.encode ts=0
+q_encode -> 1 received=1 size=5 data=12000a01aa pts=2 dts=1 keyframe=1 priority=3 type=1
+> q_bs 320100 0x02 4500 3000
+> q_encode 1
+qsv.encode ts=1500
+q_encode -> 1 received=1 size=3 data=320100 pts=3 dts=2 keyframe=0 priority=2 type=1
+> q_bs 320100 0x04 6000 4500
+> q_encode 2
+qsv.encode ts=3000
+q_encode -> 1 received=1 size=3 data=320100 pts=4 dts=3 keyframe=0 priority=0 type=1
+> q_destroy
+os.end_high_performance
+qsv.encoder_close
+q_destroyed
+> q_create hevc soft
+log info [qsv encoder: 'enc'] settings: 	codec:          HEVC 	rate_control:   
+log info 	target_bitrate: 0
+log info 	target_usage:    	profile:         	keyint:         0 	latency:         	b-frames:       0 	fps_num:        60 	fps_den:        1 	width:          1920 	height:         1080
+log info [qsv encoder: 'enc'] debug info:
+qsv.encoder_open codec=2 tex=0 -> ok
+log info 	major:          2 	minor:          9
+os.request_high_performance "qsv encoding"
+q_create -> ok
+> q_bs 0000000126010a 0x81 3000 1500
+> q_encode 0
+qsv.encode ts=0
+q_encode -> 1 received=1 size=7 data=0000000126010a pts=2 dts=1 keyframe=1 priority=3 type=1
+> q_bs 0000000102010b 0x42 4500 3000
+> q_encode 1
+qsv.encode ts=1500
+q_encode -> 1 received=1 size=7 data=0000000102010b pts=3 dts=2 keyframe=0 priority=2 type=1
+> q_bs 0000000102010c 0x04 6000 4500
+> q_encode 2
+qsv.encode ts=3000
+q_encode -> 1 received=1 size=7 data=0000000102010c pts=4 dts=3 keyframe=0 priority=0 type=1
+> q_encode 3 tex
+qsv.encode_tex ts=4500
+q_encode -> 1 received=0
+> q_encode 4 badtex
+log warning [qsv encoder: 'enc'] Encode failed: bad texture handle
+bad texture: next_key=77
+q_encode -> 0 received=0
+> q_destroy
+os.end_high_performance
+qsv.encoder_close
+q_destroyed

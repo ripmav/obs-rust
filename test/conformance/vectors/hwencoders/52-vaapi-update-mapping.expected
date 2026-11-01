@@ -1,0 +1,118 @@
+> va_defaults h264
+va.open_device "/dev/dri/renderD128" by vaapi_defaults -> ok
+> set str rate_control CBR
+> set int bitrate 6000
+> set int maxrate 9999
+> set int qp 30
+> va_create h264
+av.find_encoder h264_vaapi
+log info ---------------------------------
+log info [FFmpeg VAAPI encoder: 'enc'] settings: 	device:       /dev/dri/renderD128 	rate_control: CBR 	profile:      100 	level:        -99 	qp:           0 	bitrate:      6000 	maxrate:      6000 	keyint:       120 	width:        1920 	height:       1080 	b-frames:     0 	ffmpeg opts:   
+av.hwdevice_ctx_create vaapi "/dev/dri/renderD128"
+av.hwframe_ctx_init format=44 sw_format=23 size=1920x1080
+av.frame_get_buffer format=23 size=1920x1080 colorspace=1 range=1 chroma_loc=1
+av.codec_open pix_fmt=44 profile=100 level=-99 bit_rate=6000000 rc_max_rate=6000000 rc_buf_occ=6000000 gq=0 bf=0 gop=120 size=1920x1080 tb=1/60 range=1 prim=1 trc=1 cs=1 chroma_loc=1
+va_create -> ok
+> va_destroy
+va_destroyed
+> set str rate_control VBR
+> va_create h264
+av.find_encoder h264_vaapi
+log info ---------------------------------
+log info [FFmpeg VAAPI encoder: 'enc'] settings: 	device:       /dev/dri/renderD128 	rate_control: VBR 	profile:      100 	level:        -99 	qp:           0 	bitrate:      6000 	maxrate:      9999 	keyint:       120 	width:        1920 	height:       1080 	b-frames:     0 	ffmpeg opts:   
+av.hwdevice_ctx_create vaapi "/dev/dri/renderD128"
+av.hwframe_ctx_init format=44 sw_format=23 size=1920x1080
+av.frame_get_buffer format=23 size=1920x1080 colorspace=1 range=1 chroma_loc=1
+av.codec_open pix_fmt=44 profile=100 level=-99 bit_rate=6000000 rc_max_rate=9999000 rc_buf_occ=9999000 gq=0 bf=0 gop=120 size=1920x1080 tb=1/60 range=1 prim=1 trc=1 cs=1 chroma_loc=1
+va_create -> ok
+> va_destroy
+va_destroyed
+> set int maxrate 4000
+> va_create h264
+av.find_encoder h264_vaapi
+log info ---------------------------------
+log info [FFmpeg VAAPI encoder: 'enc'] settings: 	device:       /dev/dri/renderD128 	rate_control: VBR 	profile:      100 	level:        -99 	qp:           0 	bitrate:      6000 	maxrate:      0 	keyint:       120 	width:        1920 	height:       1080 	b-frames:     0 	ffmpeg opts:   
+av.hwdevice_ctx_create vaapi "/dev/dri/renderD128"
+av.hwframe_ctx_init format=44 sw_format=23 size=1920x1080
+av.frame_get_buffer format=23 size=1920x1080 colorspace=1 range=1 chroma_loc=1
+av.codec_open pix_fmt=44 profile=100 level=-99 bit_rate=6000000 rc_max_rate=0 rc_buf_occ=6000000 gq=0 bf=0 gop=120 size=1920x1080 tb=1/60 range=1 prim=1 trc=1 cs=1 chroma_loc=1
+va_create -> ok
+> va_destroy
+va_destroyed
+> set int maxrate 8000
+> va_create h264
+av.find_encoder h264_vaapi
+log info ---------------------------------
+log info [FFmpeg VAAPI encoder: 'enc'] settings: 	device:       /dev/dri/renderD128 	rate_control: VBR 	profile:      100 	level:        -99 	qp:           0 	bitrate:      6000 	maxrate:      8000 	keyint:       120 	width:        1920 	height:       1080 	b-frames:     0 	ffmpeg opts:   
+av.hwdevice_ctx_create vaapi "/dev/dri/renderD128"
+av.hwframe_ctx_init format=44 sw_format=23 size=1920x1080
+av.frame_get_buffer format=23 size=1920x1080 colorspace=1 range=1 chroma_loc=1
+av.codec_open pix_fmt=44 profile=100 level=-99 bit_rate=6000000 rc_max_rate=8000000 rc_buf_occ=8000000 gq=0 bf=0 gop=120 size=1920x1080 tb=1/60 range=1 prim=1 trc=1 cs=1 chroma_loc=1
+va_create -> ok
+> va_destroy
+va_destroyed
+> set str rate_control QVBR
+> va_create h264
+av.find_encoder h264_vaapi
+log info ---------------------------------
+log info [FFmpeg VAAPI encoder: 'enc'] settings: 	device:       /dev/dri/renderD128 	rate_control: QVBR 	profile:      100 	level:        -99 	qp:           30 	bitrate:      6000 	maxrate:      8000 	keyint:       120 	width:        1920 	height:       1080 	b-frames:     0 	ffmpeg opts:   
+av.hwdevice_ctx_create vaapi "/dev/dri/renderD128"
+av.hwframe_ctx_init format=44 sw_format=23 size=1920x1080
+av.frame_get_buffer format=23 size=1920x1080 colorspace=1 range=1 chroma_loc=1
+av.codec_open pix_fmt=44 profile=100 level=-99 bit_rate=6000000 rc_max_rate=8000000 rc_buf_occ=8000000 gq=30 bf=0 gop=120 size=1920x1080 tb=1/60 range=1 prim=1 trc=1 cs=1 chroma_loc=1
+va_create -> ok
+> va_destroy
+va_destroyed
+> set str rate_control CQP
+> va_create h264
+av.find_encoder h264_vaapi
+log info ---------------------------------
+log info [FFmpeg VAAPI encoder: 'enc'] settings: 	device:       /dev/dri/renderD128 	rate_control: CQP 	profile:      100 	level:        -99 	qp:           30 	bitrate:      0 	maxrate:      0 	keyint:       120 	width:        1920 	height:       1080 	b-frames:     0 	ffmpeg opts:   
+av.hwdevice_ctx_create vaapi "/dev/dri/renderD128"
+av.hwframe_ctx_init format=44 sw_format=23 size=1920x1080
+av.frame_get_buffer format=23 size=1920x1080 colorspace=1 range=1 chroma_loc=1
+av.codec_open pix_fmt=44 profile=100 level=-99 bit_rate=0 rc_max_rate=0 rc_buf_occ=0 gq=30 bf=0 gop=120 size=1920x1080 tb=1/60 range=1 prim=1 trc=1 cs=1 chroma_loc=1
+va_create -> ok
+> va_destroy
+va_destroyed
+> set str rate_control CQP
+> va_create av1
+av.find_encoder av1_vaapi
+log info ---------------------------------
+log info [FFmpeg VAAPI encoder: 'enc'] settings: 	device:       /dev/dri/renderD128 	rate_control: CQP 	profile:      100 	level:        -99 	qp:           30 	bitrate:      0 	maxrate:      0 	keyint:       120 	width:        1920 	height:       1080 	b-frames:     0 	ffmpeg opts:   
+av.hwdevice_ctx_create vaapi "/dev/dri/renderD128"
+av.hwframe_ctx_init format=44 sw_format=23 size=1920x1080
+av.frame_get_buffer format=23 size=1920x1080 colorspace=1 range=1 chroma_loc=1
+av.codec_open pix_fmt=44 profile=100 level=-99 bit_rate=0 rc_max_rate=0 rc_buf_occ=0 gq=150 bf=0 gop=120 size=1920x1080 tb=1/60 range=1 prim=1 trc=1 cs=1 chroma_loc=1
+va_create -> ok
+> va_destroy
+va_destroyed
+> set int keyint_sec 2
+> host fps 30000 1001
+> set str rate_control CBR
+> va_create h264
+av.find_encoder h264_vaapi
+log info ---------------------------------
+log info [FFmpeg VAAPI encoder: 'enc'] settings: 	device:       /dev/dri/renderD128 	rate_control: CBR 	profile:      100 	level:        -99 	qp:           0 	bitrate:      6000 	maxrate:      6000 	keyint:       59 	width:        1920 	height:       1080 	b-frames:     0 	ffmpeg opts:   
+av.hwdevice_ctx_create vaapi "/dev/dri/renderD128"
+av.hwframe_ctx_init format=44 sw_format=23 size=1920x1080
+av.frame_get_buffer format=23 size=1920x1080 colorspace=1 range=1 chroma_loc=1
+av.codec_open pix_fmt=44 profile=100 level=-99 bit_rate=6000000 rc_max_rate=6000000 rc_buf_occ=6000000 gq=0 bf=0 gop=59 size=1920x1080 tb=1001/30000 range=1 prim=1 trc=1 cs=1 chroma_loc=1
+va_create -> ok
+> va_destroy
+va_destroyed
+> host fps 60 1
+> set int bf 3
+> set int level 41
+> set int profile 77
+> va_create h264
+av.find_encoder h264_vaapi
+log info ---------------------------------
+log info [FFmpeg VAAPI encoder: 'enc'] settings: 	device:       /dev/dri/renderD128 	rate_control: CBR 	profile:      77 	level:        41 	qp:           0 	bitrate:      6000 	maxrate:      6000 	keyint:       120 	width:        1920 	height:       1080 	b-frames:     3 	ffmpeg opts:   
+av.hwdevice_ctx_create vaapi "/dev/dri/renderD128"
+av.hwframe_ctx_init format=44 sw_format=23 size=1920x1080
+av.frame_get_buffer format=23 size=1920x1080 colorspace=1 range=1 chroma_loc=1
+av.codec_open pix_fmt=44 profile=77 level=41 bit_rate=6000000 rc_max_rate=6000000 rc_buf_occ=6000000 gq=0 bf=3 gop=120 size=1920x1080 tb=1/60 range=1 prim=1 trc=1 cs=1 chroma_loc=1
+va_create -> ok
+> va_destroy
+va_destroyed

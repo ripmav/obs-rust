@@ -1,0 +1,23 @@
+json a "{}"
+json a "{\"s\":\"text\",\"i\":-17,\"d\":0.5,\"t\":true,\"f\":false}"
+last_json a "{\"s\":\"text\",\"i\":-17,\"d\":0.5,\"t\":true,\"f\":false}"
+echo --- integers
+json i "{\"zero\":0,\"max\":9223372036854775807,\"min\":-9223372036854775808,\"neg\":-1}"
+echo --- doubles: positional for decimal exponents -4 .. 15, scientific otherwise
+json d "{\"a\":1.0,\"b\":1.5,\"c\":100.0,\"d\":1000000000000000.0,\"e\":1e16,\"f\":1.2345678901234568e17,\"g\":0.1,\"h\":0.0001,\"i\":1e-5,\"j\":1e-7,\"k\":0.30000000000000004,\"l\":3.141592653589793,\"m\":-0.0,\"n\":0.0,\"o\":1.5e300,\"p\":5e-324,\"q\":1.7976931348623157e308,\"r\":1e21,\"s\":-2.5e-10,\"t\":9007199254740992.0,\"u\":0.00012345678,\"v\":0.00012,\"w\":1.2e-5,\"x\":1500000000000000.0,\"y\":9999999999999998.0}"
+echo --- more doubles
+json d2 "{\"a\":1.0000000000000002,\"b\":0.6666666666666666,\"c\":2.5e-5,\"d\":1.2345678901234568e17,\"e\":4.35,\"f\":1e23,\"g\":8.5e-5,\"h\":2.2250738585072014e-308,\"i\":5e-324,\"j\":-1e-300,\"k\":0.0001,\"l\":1000000000000000.0,\"m\":4503599627370496.0,\"n\":299792458.0,\"o\":0.0001,\"p\":12345678.9}"
+echo --- NaN and infinity cannot be written: the member is silently omitted
+names n before nan inf ninf after
+json n "{\"before\":1,\"after\":2}"
+echo --- strings: escapes
+json e "{\"quote\":\"a\\\"b\",\"backslash\":\"a\\\\b\",\"slash\":\"a/b\",\"nl\":\"line1\\nline2\\r\\n\\ttab\",\"ctl\":\"\\u0001\\u0002\\b\\u000B\\f\\u000E\\u001F\",\"del\":\"\x7f\",\"empty\":\"\"}"
+echo --- strings: non-ASCII is written as raw UTF-8
+json u "{\"two\":\"\xc3\xa9\",\"three\":\"\xe2\x82\xac\",\"four\":\"\xf0\x9f\x98\x80\",\"sep\":\"\xe2\x80\xa8\xe2\x80\xa9\",\"k\xc3\xa9y\":\"v\"}"
+echo --- invalid UTF-8 in a value or a key: the member is silently omitted
+dump bad {a:number[user=num(I,1,1)],badval:string[user="\xff"],trunc:string[user="\xe2\x82"],overlong:string[user="\xc0\x80"],surrogate:string[user="\xed\xa0\x80"],beyond:string[user="\xf4\x90\x80\x80"],"k\xff":string[user="v"],"k\xfe":number[user=num(I,1,1)],z:number[user=num(I,2,2)]}
+json bad "{\"a\":1,\"z\":2}"
+echo --- key escapes
+json k "{\"q\\\"k\":1,\"n\\nk\":2,\"tab\\tk\":3}"
+echo --- nested containers
+json top "{\"o\":{\"v\":1},\"arr\":[],\"nul\":null}"

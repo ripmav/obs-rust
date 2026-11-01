@@ -1,0 +1,5 @@
+# video_frame_free releases the single allocation and zeroes the whole struct; free/init on NULL are no-ops.
+frame_init 0 1 4 4
+frame_free 0
+frame_init 0 6 4 4
+frame_free 0

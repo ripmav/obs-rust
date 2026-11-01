@@ -1,0 +1,20 @@
+add h ok
+add h ok
+emit s
+call a n=3
+gcall g1 signal=s n=3
+gcall g2 signal=s n=3
+emit-done n=3
+emit t
+gcall g1 signal=t
+gcall g2 signal=t
+emit-done
+emit undeclared
+emit-done
+emit s
+call a n=4
+gcall g2 signal=s n=4
+emit-done n=4
+emit s
+call a n=5
+emit-done n=5

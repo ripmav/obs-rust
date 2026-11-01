@@ -1,0 +1,9 @@
+# CORE: error_data add/count/has_errors/buildstring; buildstring of an empty list is NULL; add to NULL is a no-op.
+ed_dump
+ed_add "f.txt" 1 2 0 "bad thing"
+ed_add "g" 10 20 1 "warn"
+ed_add "f.txt" 3 4 7 "level seven"
+ed_dump
+ed_add_null
+ed_free
+ed_dump

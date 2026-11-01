@@ -1,0 +1,9 @@
+# S-026 a cache with one entry cannot replace the built-in Default ingest (a replacement list needs
+# more than one entry once the list is non-empty), so "auto" still resolves to Default.
+fs-load /mod/data/services.json data/services-ok.json
+fs-put /cfg/rtmp-services/twitch_ingests.json "{\"ingests\":[{\"name\":\"Only\",\"url_template\":\"rtmp://only.example/app/{stream_key}\"}]}"
+module-load
+settings S {"service":"Twitch","server":"auto","key":"k"}
+new T rtmp_common S
+get T url
+module-unload

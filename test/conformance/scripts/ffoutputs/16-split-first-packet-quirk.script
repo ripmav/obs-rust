@@ -1,0 +1,18 @@
+# QUIRK: cur_time is only initialised after the first packet passed the split test, so a first keyframe whose dts
+# is already >= max_time splits immediately (an empty first file); the headers are then sent twice because
+# sent_headers is still false. Same for a first keyframe >= max_size.
+reset
+output o
+venc h264 bitrate=2500 extra=0a0b
+set str path /v/first.mkv
+set bool split_file 1
+set int max_time_sec 2
+set str directory /rec
+set str format q%N
+set str extension mkv
+create ffmpeg_muxer
+start
+pkt v pts=5000 dts=5000 key=1 size=4
+state_split
+pkt v pts=5100 dts=5100 key=0 size=4
+state_split

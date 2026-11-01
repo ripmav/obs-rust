@@ -1,0 +1,29 @@
+# S-044: input registration. Inputs are identified by (callback, param). conversion == NULL means "same as output".
+# A scaler is created only if width/height/format/range/colorspace differ (range: FULL vs not-FULL; colorspace:
+# DEFAULT matches anything, SRGB~709, HLG~PQ). The fake scaler logs its creation arguments.
+vopen v I420 30 1 16 8 3 PARTIAL 709
+vinputs v
+vconnect v a 1
+vinputs v
+vstate v
+# duplicate (same callback and param) is refused, different param or callback is a new input
+vconnect v a 1
+vconnect v a 2
+vconnect v b 1
+vinputs v
+# invalid arguments
+vconnect_nocb v
+vconnect2 v a 9 0
+vinputs v
+# conversion with width/height 0 -> output size; identical params -> no scaler
+vconnect v a 10 - I420 0 0 PARTIAL 709
+# colorspace/range matching rules
+vconnect v a 11 - I420 16 8 PARTIAL DEFAULT
+vconnect v a 12 - I420 16 8 PARTIAL SRGB
+vconnect v a 13 - I420 16 8 DEFAULT 709
+vconnect v a 14 - I420 16 8 FULL 709
+vconnect v a 15 - I420 16 8 PARTIAL 601
+vconnect v a 16 - I420 16 8 PARTIAL 2100_PQ
+vconnect v a 17 - NV12 16 8 PARTIAL 709
+vconnect v a 18 - I420 32 16 PARTIAL 709
+vinputs v

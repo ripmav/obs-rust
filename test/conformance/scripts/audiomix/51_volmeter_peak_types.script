@@ -1,0 +1,16 @@
+# Sample peak vs true peak (5x oversampling by 4-point sinc interpolation). An impulse pair straddling samples gives an inter-sample peak above the sample peak.
+init 48000 2
+clock 1000000000
+source a input
+meter_new 0 0
+meter_attach 0 a
+meter_cb 0 add
+output a 48000 2 16 1000000000 impulse 5 1
+meter_type 0 1
+output a 48000 2 16 1000333333 impulse 5 1
+meter_type 0 0
+meter_feed 0 a 0 2 16 const 0.5
+meter_type 0 1
+meter_feed 0 a 0 2 16 sine 11000 0.8 0
+meter_type 0 0
+meter_feed 0 a 0 2 16 sine 11000 0.8 0

@@ -1,0 +1,33 @@
+# obs_scene_reorder_items2: flat list with group membership (TOKEN = item or group/item; group entries are followed
+# by their children). Moves items between top level and groups, converting transforms; returns false only when the
+# list equals the current layout exactly (same items, same groups, same order).
+source s 200 100
+scene main
+add main s a
+add main s x
+add main s y
+add main s b
+pos a 100 100
+pos x 300 200
+pos y 600 300
+pos b 900 500
+group main g x y
+order_of main
+echo -- same layout: false (g first, then its children, then a, b)
+reorder2 main a g g/x g/y b
+order_of main
+echo -- move a into the group (appended after y), b first
+reorder2 main b g g/x g/y g/a
+order_of main
+get a
+print g
+echo -- take x out of the group again, put it on top
+reorder2 main b g g/y g/a x
+order_of main
+get x
+get y
+echo -- a group moved on top of the stack with its children, plus a flat reorder inside
+reorder2 main x b g g/a g/y
+order_of main
+get a
+get y

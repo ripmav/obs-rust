@@ -1,0 +1,28 @@
+# CORE: #ifdef/#ifndef/#else/#elif/#endif, nesting, unterminated blocks, stray directives, trailing junk.
+parse "#define A\n#ifdef A\nyes\n#else\nno\n#endif\nafter\n"
+tokens pp
+errors
+reset
+parse "#ifdef A\nyes\n#else\nno\n#endif\n#ifndef A\nn2\n#endif\n"
+tokens pp
+errors
+reset
+parse "#ifdef A\nyes\n"
+tokens pp
+errors
+reset
+parse "#else\n#endif\n#elif\nx"
+tokens pp
+errors
+reset
+parse "#ifdef A junk\nq\n#endif trailing\nz\n"
+tokens pp
+errors
+reset
+parse "#define A\n#ifdef A\n#ifdef B\nab\n#else\na-nob\n#endif\n#else\nnoa\n#endif\n#ifndef A\n#ifdef Q\n#endif\n#endif\nend\n"
+tokens pp
+errors
+reset
+parse "#ifdef\nx\n#endif\n#ifdef 5\n#endif\n#undef\n#define\n#define 1\n#pragma once\nw\n"
+tokens pp
+errors

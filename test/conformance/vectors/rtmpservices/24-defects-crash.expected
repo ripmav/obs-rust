@@ -1,0 +1,41 @@
+echo D-1-server-entry-without-string-url-in-a-service-without-protocol-key
+guard-begin
+guard-end crash
+echo D-1b-same-for-a-non-string-url
+guard-begin
+guard-end crash
+echo D-1c-non-object-server-entry
+guard-begin
+guard-end crash
+echo D-1d-reached-via-the-property-list-too
+guard-begin
+guard-end crash
+echo D-2-service-without-name-but-with-usable-servers-is-reached-by-a-lookup-of-another-name
+guard-begin
+guard-end crash
+echo D-2b-no-crash-when-the-wanted-service-comes-first
+guard-begin
+get url = ""
+guard-end ok
+echo D-2c-nameless-entry-with-protocol-key
+guard-begin
+guard-end crash
+echo D-2d-non-string-name
+guard-begin
+guard-end crash
+echo D-3-twitch-ingest-with-non-string-name
+guard-begin
+fake proc_handler_add "void twitch_ingests_refresh(int seconds)"
+fake proc_handler_add "void amazon_ivs_ingests_refresh(int seconds)"
+fake update_info_create prefix="[rtmp-services plugin] " agent="rtmp-services plugin (libobs 99.0.0-test)" url=https://obsproject.com/obs2_update/rtmp-services/v5 local=/mod/data cache=/cfg/rtmp-services/ confirm=set
+fake obs_register_service id=rtmp_common
+fake obs_register_service id=rtmp_custom
+module-load -> 1 name="rtmp-services plugin (libobs 99.0.0-test)"
+fake update_info_create_single prefix="[twitch ingest update] " agent="rtmp-services plugin (libobs 99.0.0-test)" url=https://ingest.twitch.tv/ingests
+fake updater-deliver https://ingest.twitch.tv/ingests len=116
+guard-end crash
+echo D-4-service-from-a-file-with-ok-entries-does-not-crash-control
+guard-begin
+get url = ""
+get protocol = "RTMP"
+guard-end ok

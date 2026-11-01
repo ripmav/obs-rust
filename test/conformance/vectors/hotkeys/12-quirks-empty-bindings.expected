@@ -1,0 +1,29 @@
+signal hotkey_register id=0
+reg A -> 0
+signal hotkey_bindings_changed id=0
+b 0 hk=0 mods=0x0 key=OBS_KEY_NONE pressed=0 modmatch=0 hkptr_ok=1
+b 1 hk=0 mods=0x0 key=OBS_KEY_NONE pressed=0 modmatch=0 hkptr_ok=1
+b 2 hk=0 mods=0x0 key=OBS_KEY_NONE pressed=0 modmatch=0 hkptr_ok=1
+b 3 hk=0 mods=0x2 key=OBS_KEY_NONE pressed=0 modmatch=0 hkptr_ok=1
+enumb done
+save A count=4
+  item {"key":"OBS_KEY_NONE"}
+  item {"key":"OBS_KEY_NONE"}
+  item {"key":"OBS_KEY_NONE"}
+  item {"shift":true,"key":"OBS_KEY_NONE"}
+polling-never-presses-key-none-without-modifiers
+poll
+poll
+poll
+b 0 hk=0 mods=0x0 key=OBS_KEY_NONE pressed=0 modmatch=1 hkptr_ok=1
+b 1 hk=0 mods=0x0 key=OBS_KEY_NONE pressed=0 modmatch=1 hkptr_ok=1
+b 2 hk=0 mods=0x0 key=OBS_KEY_NONE pressed=0 modmatch=1 hkptr_ok=1
+b 3 hk=0 mods=0x2 key=OBS_KEY_NONE pressed=0 modmatch=0 hkptr_ok=1
+enumb done
+strict-inject-with-no-modifiers-presses-the-empty-binding
+cb A id=0 same_ptr=1 pressed=1
+b 0 hk=0 mods=0x0 key=OBS_KEY_NONE pressed=1 modmatch=1 hkptr_ok=1
+b 1 hk=0 mods=0x0 key=OBS_KEY_NONE pressed=1 modmatch=1 hkptr_ok=1
+b 2 hk=0 mods=0x0 key=OBS_KEY_NONE pressed=1 modmatch=1 hkptr_ok=1
+b 3 hk=0 mods=0x2 key=OBS_KEY_NONE pressed=0 modmatch=0 hkptr_ok=1
+enumb done

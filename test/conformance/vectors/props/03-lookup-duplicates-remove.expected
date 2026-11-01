@@ -1,0 +1,57 @@
+add bool a ok
+add bool b ok
+add bool c ok
+log warning Property 'a' exists
+add bool a null
+log warning Property 'b' exists
+add int b null
+add bool A ok
+dump P flags=0 param=@null
+  prop a type=bool desc="A" long=@null enabled=1 visible=1
+    -
+  prop b type=bool desc="B" long=@null enabled=1 visible=1
+    -
+  prop c type=bool desc="C" long=@null enabled=1 visible=1
+    -
+  prop A type=bool desc="case differs" long=@null enabled=1 visible=1
+    -
+get b found
+get nope null
+get B null
+echo remove-middle
+dump P flags=0 param=@null
+  prop a type=bool desc="A" long=@null enabled=1 visible=1
+    -
+  prop c type=bool desc="C" long=@null enabled=1 visible=1
+    -
+  prop A type=bool desc="case differs" long=@null enabled=1 visible=1
+    -
+echo remove-missing-is-silent
+echo re-add-appends
+add bool b ok
+dump P flags=0 param=@null
+  prop a type=bool desc="A" long=@null enabled=1 visible=1
+    -
+  prop c type=bool desc="C" long=@null enabled=1 visible=1
+    -
+  prop A type=bool desc="case differs" long=@null enabled=1 visible=1
+    -
+  prop b type=bool desc="B2" long=@null enabled=1 visible=1
+    -
+echo remove-first-and-last
+dump P flags=0 param=@null
+  prop c type=bool desc="C" long=@null enabled=1 visible=1
+    -
+  prop A type=bool desc="case differs" long=@null enabled=1 visible=1
+    -
+echo remove-all
+dump P flags=0 param=@null
+first @null
+echo add-after-empty
+add bool x ok
+dump P flags=0 param=@null
+  prop x type=bool desc="X" long=@null enabled=1 visible=1
+    -
+echo null-container
+add bool x null
+get_flags 0

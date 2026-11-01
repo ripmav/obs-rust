@@ -1,0 +1,16 @@
+# Resampler hook (fake zero-order-hold resampler in the harness): a 44.1 kHz source is converted on arrival; the
+# resampler reports a ts offset that is subtracted from the stored timestamp; creation failure sets audio_failed and drops audio.
+init 48000 2
+clock 1000000000
+timeline 1000000000
+source a input
+resampler 2000000 0
+output a 44100 2 441 1000000000 const 0.1
+state a
+source b input
+output b 48000 1 480 1000000000 const 0.1
+state b
+source c input
+resampler 0 1
+output c 44100 2 441 1000000000 const 0.1
+state c

@@ -1,0 +1,4 @@
+# DEFECT (precondition): dividing by zero. util_mul_div64(_, _, 0) raises SIGFPE in the
+# reference. Required behaviour: not specified (precondition violation); a Rust port should
+# panic or return an error, and must not return a value.
+mul_div64_by_zero

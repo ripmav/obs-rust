@@ -1,0 +1,35 @@
+# S-022 32-bit overflow switches. The movie/track/media header version becomes 1 (64-bit times) when the
+# creation time (seconds since 1904) exceeds 32 bits: the reference clock value 2212122496 maps to
+# 4294967296. The header fields are then 64-bit EXCEPT mdhd's duration which is truncated through a
+# 32-bit cast (Q-6). MOV flavor clamps the creation time to 0 (with a warning) in that case.
+enc v video codec h264 width 320 height 240 fps 30/1 extra 000000016742c01ed900a047fe880000000168ce3c80
+enc a audio codec aac rate 48000 extra 1190
+clock 2212122496
+mux mp4
+pkt v 0 0 1 gen:10
+pkt v 1 1 0 gen:10
+pkt a 0 0 1 gen:10
+pkt a 1024 1024 1 gen:10
+finalise
+dump
+echo --- one second before the switch
+clock 2212122495
+mux mp4 skipfin
+pkt v 0 0 1 gen:10
+pkt v 1 1 0 gen:10
+finalise
+hex
+echo --- MOV: creation time 0 and warning
+clock 2212122496
+mux mov skipfin
+pkt v 0 0 1 gen:10
+pkt v 1 1 0 gen:10
+finalise
+hex
+echo --- far past: clock 0 is year 1970
+clock 0
+mux mp4 skipfin
+pkt v 0 0 1 gen:10
+pkt v 1 1 0 gen:10
+finalise
+hex

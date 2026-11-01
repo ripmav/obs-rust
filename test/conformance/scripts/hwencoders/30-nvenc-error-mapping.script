@@ -1,0 +1,26 @@
+# S-050 nvenc: nv_failed2 maps SDK status codes to the encoder's last-error string and a log line.
+# SUCCESS -> returns false and reports nothing. OUT_OF_MEMORY and INCOMPATIBLE_CLIENT_KEY ->
+# "TooManySessions"; NO_ENCODE_DEVICE and UNSUPPORTED_DEVICE -> "UnsupportedDevice"; INVALID_VERSION
+# -> "OutdatedDriver"; everything else -> "NVENC Error: ..." built from the SDK's own error text
+# (leading ':' stripped) when the session has one, else from function/call/code. The log line
+# always carries the code and name.
+initnv
+nvfail NV_ENC_SUCCESS
+nvfail NV_ENC_ERR_OUT_OF_MEMORY
+nvfail NV_ENC_ERR_INCOMPATIBLE_CLIENT_KEY
+nvfail NV_ENC_ERR_NO_ENCODE_DEVICE
+nvfail NV_ENC_ERR_UNSUPPORTED_DEVICE
+nvfail NV_ENC_ERR_INVALID_VERSION
+nvfail NV_ENC_ERR_GENERIC
+nvfail NV_ENC_ERR_GENERIC "driver says no"
+nvfail NV_ENC_ERR_GENERIC "::leading colons are stripped"
+nvfail NV_ENC_ERR_GENERIC ":::"
+nvfail NV_ENC_ERR_INVALID_PARAM "bad param"
+# the text of the session is ignored for the special codes
+nvfail NV_ENC_ERR_OUT_OF_MEMORY "ignored"
+nvfail 99
+errname 0
+errname 1
+errname 26
+errname 27
+errname 99

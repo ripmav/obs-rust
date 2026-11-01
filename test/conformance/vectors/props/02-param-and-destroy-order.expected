@@ -1,0 +1,34 @@
+echo plain-param-with-destroy
+get_param t1
+param-destroy t1
+echo param-without-destroy-callback
+get_param t2
+echo set_param-replaces-and-calls-old-destroy
+param-destroy t1
+get_param t2
+param-destroy t2
+get_param t3
+echo old-param-had-no-destroy-so-nothing-runs
+get_param t4
+echo set_param-null-param-keeps-destroy-but-never-calls-it
+param-destroy t4
+get_param @null
+echo order-with-groups
+add group inner ok
+add group first ok
+add group second ok
+dump T flags=0 param=top
+  prop first type=group desc="First" long=@null enabled=1 visible=1
+    grouptype=normal content=G1
+      prop inner type=group desc="Inner" long=@null enabled=1 visible=1
+        grouptype=normal content=G3
+  prop second type=group desc="Second" long=@null enabled=1 visible=1
+    grouptype=normal content=G2
+param-destroy top
+param-destroy g1p
+param-destroy nested
+param-destroy g2p
+echo null-container-is-ignored
+get_param @null
+get_flags 0
+first @null

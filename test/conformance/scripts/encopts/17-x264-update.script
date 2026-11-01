@@ -1,0 +1,25 @@
+# CORE. obs_x264_update on a live encoder (context exists): the preset reset, the
+# preset/profile/tune overrides and the profile application are all skipped; the computed
+# parameters (bitrate, buffer, rate control, ...) and user options ARE re-applied on top of
+# the previous params, then x264_encoder_reconfig is called. repeat_headers is applied on
+# update as well.
+data D
+x264_defaults D
+set D x264opts str "keyint=100"
+set D profile str high
+x264_create X D
+echo update-bitrate-and-options
+set D bitrate int 3000
+set D x264opts str "bframes=1"
+x264_update X D
+echo preset-and-profile-changes-are-ignored-on-update
+set D preset str slow
+set D profile str baseline
+set D x264opts str "preset=placebo"
+x264_update X D
+echo rate-control-change-on-update
+set D rate_control str CRF
+set D crf int 20
+x264_update X D
+echo keyint-from-earlier-user-option-persists
+x264_destroy X

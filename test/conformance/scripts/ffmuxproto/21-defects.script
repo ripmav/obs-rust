@@ -1,0 +1,14 @@
+# DEFECT D-1 (D-2 below): a header packet whose type/index does not fit the announced stream layout is not validated by the
+# reference. Here an audio-typed header arrives although no audio track was announced: the reference writes through a
+# NULL table and is killed by SIGSEGV. A conforming implementation must fail initialisation (exit status -1) instead.
+reset
+args @d.mkv 1 0 h264 6000 640 360 1 1 1 1 1 0 30 1 0 "" ""
+hdr audio 0 0102
+run
+echo --- DEFECT D-2: no stream could be created (unknown video codec, no audio) in a non-network output.
+echo --- The reference dereferences the not yet opened output and is killed by SIGSEGV; required behaviour: exit status -1
+echo --- and the message "Couldn't find codec" on stderr (as in the network case, see 19).
+reset
+args @d.mkv 1 0 nosuchcodec 6000 640 360 1 1 1 1 1 0 30 1 0 "" ""
+hdr video 0 -
+run

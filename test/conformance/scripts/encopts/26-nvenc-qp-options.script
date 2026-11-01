@@ -1,0 +1,12 @@
+# CORE. QP options (constQP minQP maxQP initialRCQP): "P:B:I" gives the three values,
+# anything else (including a partial "20:30") is parsed with atoi and applied to all
+# three. Negative values are stored as the uint32 two's complement pattern.
+data D
+set D opts str "constQP=20 minQP=10:11:12 maxQP=40:41:42 initialRCQP=25"
+nv_apply h264 D
+echo two-values-fall-back-to-atoi-of-first
+set D opts str "constQP=20:30 minQP=7:8:9:10"
+nv_apply h264 D
+echo garbage
+set D opts str "constQP=x minQP=1:2:z maxQP=-5 initialRCQP=-1:-2:-3"
+nv_apply h264 D

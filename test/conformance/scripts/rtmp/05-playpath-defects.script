@@ -1,0 +1,8 @@
+# Reference defects in RTMP_ParsePlaypath: read before the buffer when '?' is within the first
+# 4 bytes of a name of >= 4 bytes (D-1), uninitialised value for '%' + non-hex (D-2).
+# The expected file only records that the call completes or crashes; see spec D-1/D-2.
+ignore playpath_inner "ab?cdef"
+ignore playpath_inner "a%zzb"
+ignore playpath_inner "%"
+ignore playpath_inner "?other=1"
+ignore playpath_inner "100%"

@@ -1,0 +1,64 @@
+# ---- unknown path
+minit -> ok
+ff open path=missing format=- nobuffer=1 interrupt=0 opts=[]
+ff open -> fail
+log warning MP: Failed to open media: 'missing'
+minit2 -> fail has_v=0 has_a=0
+# ---- reconnecting suppresses the warning; set by play() only, not by the info structure
+minit -> ok
+ff open path=missing format=- nobuffer=1 interrupt=1 opts=[stimeout=30000000]
+ff open -> fail
+log warning MP: Failed to open media: 'missing'
+minit2 -> fail has_v=0 has_a=0
+mfree
+minit -> ok
+ff open path=missing format=- nobuffer=1 interrupt=1 opts=[stimeout=30000000]
+ff open -> fail
+minit2 -> fail has_v=0 has_a=0
+mfree
+# ---- stream info failure
+minit -> ok
+ff open path=noinfo format=- nobuffer=1 interrupt=0 opts=[]
+log warning MP: Failed to find stream info for 'noinfo'
+minit2 -> fail has_v=0 has_a=0
+mfree
+# ---- no streams at all
+minit -> ok
+ff open path=nostreams format=- nobuffer=1 interrupt=0 opts=[]
+log warning MP: Could not initialize audio or video: 'nostreams'
+minit2 -> fail has_v=0 has_a=0
+mfree
+# ---- decoder not found
+minit -> ok
+ff open path=nodec format=- nobuffer=1 interrupt=0 opts=[]
+ff find_decoder none -> null
+log warning MP: Failed to find video codec
+log warning MP: Could not initialize audio or video: 'nodec'
+minit2 -> fail has_v=0 has_a=0
+mfree
+# ---- decoder cannot be opened
+minit -> ok
+ff open path=badopen format=- nobuffer=1 interrupt=0 opts=[]
+log warning MP: Failed to open video decoder: Invalid data found when processing input
+log warning MP: Could not initialize audio or video: 'badopen'
+minit2 -> fail has_v=0 has_a=0
+mfree
+# ---- audio only is fine; video decoder failing while audio works is fine too
+minit -> ok
+ff open path=aonly format=- nobuffer=1 interrupt=0 opts=[]
+minit2 -> ok has_v=0 has_a=1
+mfree
+minit -> ok
+ff open path=vbad format=- nobuffer=1 interrupt=0 opts=[]
+log warning MP: Failed to open video decoder: Invalid data found when processing input
+minit2 -> ok has_v=0 has_a=1
+mfree
+# ---- queries on a media whose open failed
+minit -> ok
+ff open path=missing format=- nobuffer=1 interrupt=0 opts=[]
+ff open -> fail
+log warning MP: Failed to open media: 'missing'
+minit2 -> fail has_v=0 has_a=0
+mframes -> 0
+mduration -> 0
+mtime -> 0
