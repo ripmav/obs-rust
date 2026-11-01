@@ -1,0 +1,22 @@
+add group g ok
+add int n ok
+add list l ok
+list_add int -> 0
+dump Top flags=0 param=@null
+  prop g type=group desc="G" long=@null enabled=1 visible=1
+    grouptype=checkable content=G
+      prop n type=int desc="N" long=@null enabled=1 visible=1
+        min=0 max=5 step=1 numtype=scroller suffix=@null
+      prop l type=list desc="L" long=@null enabled=1 visible=1
+        listtype=list format=int count=1
+         item 0 name="one" disabled=0 value=1
+dump G flags=0 param=@null
+  prop n type=int desc="N" long=@null enabled=1 visible=1
+    min=0 max=5 step=1 numtype=scroller suffix=@null
+  prop l type=list desc="L" long=@null enabled=1 visible=1
+    listtype=list format=int count=1
+     item 0 name="one" disabled=0 value=1
+echo iterate-group-content-with-next
+first n
+next -> 1 l
+next -> 0 @null

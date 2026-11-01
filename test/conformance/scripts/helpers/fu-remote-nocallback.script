@@ -1,0 +1,9 @@
+# Without a confirm callback every downloaded file is accepted (CORE). Empty remote file bodies
+# are written as empty files.
+fu_put /L/package.json "{\"version\":1,\"files\":[]}"
+fu_http http://srv/u/package.json 200 "{\"version\":2,\"url\":\"http://cdn\",\"files\":[{\"name\":\"x.bin\",\"version\":1},{\"name\":\"empty.bin\",\"version\":1}]}"
+fu_http http://cdn/x.bin 200 "payload"
+fu_http http://cdn/empty.bin 200 ""
+fu_run /L /C http://srv/u UA nocb
+fu_cat /C/x.bin
+fu_cat /C/empty.bin

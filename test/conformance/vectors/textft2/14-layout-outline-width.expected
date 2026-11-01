@@ -1,0 +1,128 @@
+> events off
+> reset
+> ascii 5 8 0 8 384
+> glyph 0x67 0x67 5 12 0 8 384
+> font Sans Serif - 0 p/sans
+> load
+load -> 1
+registered id=text_ft2_source version=0
+registered id=text_ft2_source version=2
+> create s 2
+create s -> 1
+> setfont s Sans Serif - 20 0
+> set s text ab
+> set s outline true
+> update s
+update done
+> verts s 6
+verts num=12 quads=2
+quad 0 pos=2,4..7,12 uv=0,0..0.00244140625,0.00390625 col=ffffffff,ffffffff,ffffffff,ffffffff,ffffffff,ffffffff
+quad 1 pos=8,4..13,12 uv=0.0029296875,0..0.00537109375,0.00390625 col=ffffffff,ffffffff,ffffffff,ffffffff,ffffffff,ffffffff
+> set s outline false
+> set s drop_shadow true
+> update s
+update done
+> verts s 6
+verts num=12 quads=2
+quad 0 pos=0,4..5,12 uv=0,0..0.00244140625,0.00390625 col=ffffffff,ffffffff,ffffffff,ffffffff,ffffffff,ffffffff
+quad 1 pos=6,4..11,12 uv=0.0029296875,0..0.00537109375,0.00390625 col=ffffffff,ffffffff,ffffffff,ffffffff,ffffffff,ffffffff
+> set s drop_shadow false
+> echo --- character wrapping at custom width: x + advance > width starts a new line
+--- character wrapping at custom width: x + advance > width starts a new line
+> set s custom_width 100
+> set s text aaaaaaaaaaaaaaaaaaaaa
+> update s
+update done
+> verts s 21
+verts num=126 quads=21
+quad 0 pos=0,4..5,12 uv=0,0..0.00244140625,0.00390625 col=ffffffff,ffffffff,ffffffff,ffffffff,ffffffff,ffffffff
+quad 1 pos=6,4..11,12 uv=0,0..0.00244140625,0.00390625 col=ffffffff,ffffffff,ffffffff,ffffffff,ffffffff,ffffffff
+quad 2 pos=12,4..17,12 uv=0,0..0.00244140625,0.00390625 col=ffffffff,ffffffff,ffffffff,ffffffff,ffffffff,ffffffff
+quad 3 pos=18,4..23,12 uv=0,0..0.00244140625,0.00390625 col=ffffffff,ffffffff,ffffffff,ffffffff,ffffffff,ffffffff
+quad 4 pos=24,4..29,12 uv=0,0..0.00244140625,0.00390625 col=ffffffff,ffffffff,ffffffff,ffffffff,ffffffff,ffffffff
+quad 5 pos=30,4..35,12 uv=0,0..0.00244140625,0.00390625 col=ffffffff,ffffffff,ffffffff,ffffffff,ffffffff,ffffffff
+quad 6 pos=36,4..41,12 uv=0,0..0.00244140625,0.00390625 col=ffffffff,ffffffff,ffffffff,ffffffff,ffffffff,ffffffff
+quad 7 pos=42,4..47,12 uv=0,0..0.00244140625,0.00390625 col=ffffffff,ffffffff,ffffffff,ffffffff,ffffffff,ffffffff
+quad 8 pos=48,4..53,12 uv=0,0..0.00244140625,0.00390625 col=ffffffff,ffffffff,ffffffff,ffffffff,ffffffff,ffffffff
+quad 9 pos=54,4..59,12 uv=0,0..0.00244140625,0.00390625 col=ffffffff,ffffffff,ffffffff,ffffffff,ffffffff,ffffffff
+quad 10 pos=60,4..65,12 uv=0,0..0.00244140625,0.00390625 col=ffffffff,ffffffff,ffffffff,ffffffff,ffffffff,ffffffff
+quad 11 pos=66,4..71,12 uv=0,0..0.00244140625,0.00390625 col=ffffffff,ffffffff,ffffffff,ffffffff,ffffffff,ffffffff
+quad 12 pos=72,4..77,12 uv=0,0..0.00244140625,0.00390625 col=ffffffff,ffffffff,ffffffff,ffffffff,ffffffff,ffffffff
+quad 13 pos=78,4..83,12 uv=0,0..0.00244140625,0.00390625 col=ffffffff,ffffffff,ffffffff,ffffffff,ffffffff,ffffffff
+quad 14 pos=84,4..89,12 uv=0,0..0.00244140625,0.00390625 col=ffffffff,ffffffff,ffffffff,ffffffff,ffffffff,ffffffff
+quad 15 pos=90,4..95,12 uv=0,0..0.00244140625,0.00390625 col=ffffffff,ffffffff,ffffffff,ffffffff,ffffffff,ffffffff
+quad 16 pos=0,20..5,28 uv=0,0..0.00244140625,0.00390625 col=ffffffff,ffffffff,ffffffff,ffffffff,ffffffff,ffffffff
+quad 17 pos=6,20..11,28 uv=0,0..0.00244140625,0.00390625 col=ffffffff,ffffffff,ffffffff,ffffffff,ffffffff,ffffffff
+quad 18 pos=12,20..17,28 uv=0,0..0.00244140625,0.00390625 col=ffffffff,ffffffff,ffffffff,ffffffff,ffffffff,ffffffff
+quad 19 pos=18,20..23,28 uv=0,0..0.00244140625,0.00390625 col=ffffffff,ffffffff,ffffffff,ffffffff,ffffffff,ffffffff
+quad 20 pos=24,20..29,28 uv=0,0..0.00244140625,0.00390625 col=ffffffff,ffffffff,ffffffff,ffffffff,ffffffff,ffffffff
+> state s
+state s font="Sans Serif" style="" size=20 flags=0 face=1 from_file=0 aa=1
+state s outline=0 shadow=0 outline_width=0 word_wrap=0 custom_width=100 log_mode=0 log_lines=6 color=ffffffff,ffffffff
+state s cx=100 cy=28 max_h=12 texbuf=553,0 tex=1 vbuf=1 effect=1
+state s file=NULL load_failed=0 update_file=0 mtime=0 last_checked_ms=0
+state s text="aaaaaaaaaaaaaaaaaaaaa"
+> echo --- the wrapped line starts at the outline offset
+--- the wrapped line starts at the outline offset
+> set s outline true
+> set s text aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+> update s
+update done
+> verts s 56
+verts num=336 quads=56
+quad 0 pos=2,4..7,12 uv=0,0..0.00244140625,0.00390625 col=ffffffff,ffffffff,ffffffff,ffffffff,ffffffff,ffffffff
+quad 1 pos=8,4..13,12 uv=0,0..0.00244140625,0.00390625 col=ffffffff,ffffffff,ffffffff,ffffffff,ffffffff,ffffffff
+quad 2 pos=14,4..19,12 uv=0,0..0.00244140625,0.00390625 col=ffffffff,ffffffff,ffffffff,ffffffff,ffffffff,ffffffff
+quad 3 pos=20,4..25,12 uv=0,0..0.00244140625,0.00390625 col=ffffffff,ffffffff,ffffffff,ffffffff,ffffffff,ffffffff
+quad 4 pos=26,4..31,12 uv=0,0..0.00244140625,0.00390625 col=ffffffff,ffffffff,ffffffff,ffffffff,ffffffff,ffffffff
+quad 5 pos=32,4..37,12 uv=0,0..0.00244140625,0.00390625 col=ffffffff,ffffffff,ffffffff,ffffffff,ffffffff,ffffffff
+quad 6 pos=38,4..43,12 uv=0,0..0.00244140625,0.00390625 col=ffffffff,ffffffff,ffffffff,ffffffff,ffffffff,ffffffff
+quad 7 pos=44,4..49,12 uv=0,0..0.00244140625,0.00390625 col=ffffffff,ffffffff,ffffffff,ffffffff,ffffffff,ffffffff
+quad 8 pos=50,4..55,12 uv=0,0..0.00244140625,0.00390625 col=ffffffff,ffffffff,ffffffff,ffffffff,ffffffff,ffffffff
+quad 9 pos=56,4..61,12 uv=0,0..0.00244140625,0.00390625 col=ffffffff,ffffffff,ffffffff,ffffffff,ffffffff,ffffffff
+quad 10 pos=62,4..67,12 uv=0,0..0.00244140625,0.00390625 col=ffffffff,ffffffff,ffffffff,ffffffff,ffffffff,ffffffff
+quad 11 pos=68,4..73,12 uv=0,0..0.00244140625,0.00390625 col=ffffffff,ffffffff,ffffffff,ffffffff,ffffffff,ffffffff
+quad 12 pos=74,4..79,12 uv=0,0..0.00244140625,0.00390625 col=ffffffff,ffffffff,ffffffff,ffffffff,ffffffff,ffffffff
+quad 13 pos=80,4..85,12 uv=0,0..0.00244140625,0.00390625 col=ffffffff,ffffffff,ffffffff,ffffffff,ffffffff,ffffffff
+quad 14 pos=86,4..91,12 uv=0,0..0.00244140625,0.00390625 col=ffffffff,ffffffff,ffffffff,ffffffff,ffffffff,ffffffff
+quad 15 pos=92,4..97,12 uv=0,0..0.00244140625,0.00390625 col=ffffffff,ffffffff,ffffffff,ffffffff,ffffffff,ffffffff
+quad 16 pos=2,20..7,28 uv=0,0..0.00244140625,0.00390625 col=ffffffff,ffffffff,ffffffff,ffffffff,ffffffff,ffffffff
+quad 17 pos=8,20..13,28 uv=0,0..0.00244140625,0.00390625 col=ffffffff,ffffffff,ffffffff,ffffffff,ffffffff,ffffffff
+quad 18 pos=14,20..19,28 uv=0,0..0.00244140625,0.00390625 col=ffffffff,ffffffff,ffffffff,ffffffff,ffffffff,ffffffff
+quad 19 pos=20,20..25,28 uv=0,0..0.00244140625,0.00390625 col=ffffffff,ffffffff,ffffffff,ffffffff,ffffffff,ffffffff
+quad 20 pos=26,20..31,28 uv=0,0..0.00244140625,0.00390625 col=ffffffff,ffffffff,ffffffff,ffffffff,ffffffff,ffffffff
+quad 21 pos=32,20..37,28 uv=0,0..0.00244140625,0.00390625 col=ffffffff,ffffffff,ffffffff,ffffffff,ffffffff,ffffffff
+quad 22 pos=38,20..43,28 uv=0,0..0.00244140625,0.00390625 col=ffffffff,ffffffff,ffffffff,ffffffff,ffffffff,ffffffff
+quad 23 pos=44,20..49,28 uv=0,0..0.00244140625,0.00390625 col=ffffffff,ffffffff,ffffffff,ffffffff,ffffffff,ffffffff
+quad 24 pos=50,20..55,28 uv=0,0..0.00244140625,0.00390625 col=ffffffff,ffffffff,ffffffff,ffffffff,ffffffff,ffffffff
+quad 25 pos=56,20..61,28 uv=0,0..0.00244140625,0.00390625 col=ffffffff,ffffffff,ffffffff,ffffffff,ffffffff,ffffffff
+quad 26 pos=62,20..67,28 uv=0,0..0.00244140625,0.00390625 col=ffffffff,ffffffff,ffffffff,ffffffff,ffffffff,ffffffff
+quad 27 pos=68,20..73,28 uv=0,0..0.00244140625,0.00390625 col=ffffffff,ffffffff,ffffffff,ffffffff,ffffffff,ffffffff
+quad 28 pos=74,20..79,28 uv=0,0..0.00244140625,0.00390625 col=ffffffff,ffffffff,ffffffff,ffffffff,ffffffff,ffffffff
+quad 29 pos=80,20..85,28 uv=0,0..0.00244140625,0.00390625 col=ffffffff,ffffffff,ffffffff,ffffffff,ffffffff,ffffffff
+quad 30 pos=86,20..91,28 uv=0,0..0.00244140625,0.00390625 col=ffffffff,ffffffff,ffffffff,ffffffff,ffffffff,ffffffff
+quad 31 pos=92,20..97,28 uv=0,0..0.00244140625,0.00390625 col=ffffffff,ffffffff,ffffffff,ffffffff,ffffffff,ffffffff
+quad 32 pos=2,36..7,44 uv=0,0..0.00244140625,0.00390625 col=ffffffff,ffffffff,ffffffff,ffffffff,ffffffff,ffffffff
+quad 33 pos=8,36..13,44 uv=0,0..0.00244140625,0.00390625 col=ffffffff,ffffffff,ffffffff,ffffffff,ffffffff,ffffffff
+quad 34 pos=14,36..19,44 uv=0,0..0.00244140625,0.00390625 col=ffffffff,ffffffff,ffffffff,ffffffff,ffffffff,ffffffff
+quad 35 pos=20,36..25,44 uv=0,0..0.00244140625,0.00390625 col=ffffffff,ffffffff,ffffffff,ffffffff,ffffffff,ffffffff
+quad 36 pos=26,36..31,44 uv=0,0..0.00244140625,0.00390625 col=ffffffff,ffffffff,ffffffff,ffffffff,ffffffff,ffffffff
+quad 37 pos=32,36..37,44 uv=0,0..0.00244140625,0.00390625 col=ffffffff,ffffffff,ffffffff,ffffffff,ffffffff,ffffffff
+quad 38 pos=38,36..43,44 uv=0,0..0.00244140625,0.00390625 col=ffffffff,ffffffff,ffffffff,ffffffff,ffffffff,ffffffff
+quad 39 pos=44,36..49,44 uv=0,0..0.00244140625,0.00390625 col=ffffffff,ffffffff,ffffffff,ffffffff,ffffffff,ffffffff
+quad 40 pos=50,36..55,44 uv=0,0..0.00244140625,0.00390625 col=ffffffff,ffffffff,ffffffff,ffffffff,ffffffff,ffffffff
+quad 41 pos=56,36..61,44 uv=0,0..0.00244140625,0.00390625 col=ffffffff,ffffffff,ffffffff,ffffffff,ffffffff,ffffffff
+quad 42 pos=62,36..67,44 uv=0,0..0.00244140625,0.00390625 col=ffffffff,ffffffff,ffffffff,ffffffff,ffffffff,ffffffff
+quad 43 pos=68,36..73,44 uv=0,0..0.00244140625,0.00390625 col=ffffffff,ffffffff,ffffffff,ffffffff,ffffffff,ffffffff
+quad 44 pos=74,36..79,44 uv=0,0..0.00244140625,0.00390625 col=ffffffff,ffffffff,ffffffff,ffffffff,ffffffff,ffffffff
+quad 45 pos=80,36..85,44 uv=0,0..0.00244140625,0.00390625 col=ffffffff,ffffffff,ffffffff,ffffffff,ffffffff,ffffffff
+quad 46 pos=86,36..91,44 uv=0,0..0.00244140625,0.00390625 col=ffffffff,ffffffff,ffffffff,ffffffff,ffffffff,ffffffff
+quad 47 pos=92,36..97,44 uv=0,0..0.00244140625,0.00390625 col=ffffffff,ffffffff,ffffffff,ffffffff,ffffffff,ffffffff
+quad 48 pos=2,52..7,60 uv=0,0..0.00244140625,0.00390625 col=ffffffff,ffffffff,ffffffff,ffffffff,ffffffff,ffffffff
+quad 49 pos=8,52..13,60 uv=0,0..0.00244140625,0.00390625 col=ffffffff,ffffffff,ffffffff,ffffffff,ffffffff,ffffffff
+quad 50 pos=14,52..19,60 uv=0,0..0.00244140625,0.00390625 col=ffffffff,ffffffff,ffffffff,ffffffff,ffffffff,ffffffff
+quad 51 pos=20,52..25,60 uv=0,0..0.00244140625,0.00390625 col=ffffffff,ffffffff,ffffffff,ffffffff,ffffffff,ffffffff
+quad 52 pos=26,52..31,60 uv=0,0..0.00244140625,0.00390625 col=ffffffff,ffffffff,ffffffff,ffffffff,ffffffff,ffffffff
+quad 53 pos=32,52..37,60 uv=0,0..0.00244140625,0.00390625 col=ffffffff,ffffffff,ffffffff,ffffffff,ffffffff,ffffffff
+quad 54 pos=38,52..43,60 uv=0,0..0.00244140625,0.00390625 col=ffffffff,ffffffff,ffffffff,ffffffff,ffffffff,ffffffff
+quad 55 pos=44,52..49,60 uv=0,0..0.00244140625,0.00390625 col=ffffffff,ffffffff,ffffffff,ffffffff,ffffffff,ffffffff

@@ -1,0 +1,23 @@
+log debug canvas 'Main' (<uuid>) created
+startup -> true
+mk_source a name="A" private=0 uuid=set
+mk_source b name="B" private=1 uuid=set
+mk_source c name="C" private=0 uuid=set
+get source_by_uuid uuid:a -> "A" obj=a strong=1
+uuid_reset a changed=1 len=36
+uuid_reset b changed=1 len=36
+uuid_reset c changed=1 len=36
+  after: get by new uuid ok=1
+get source_by_name A -> "A" obj=a strong=1
+get source_by_name C -> "C" obj=c strong=1
+enum all_sources
+  visit A
+  visit B
+  visit C
+  visited=3
+shutdown begin
+log info Freeing OBS context data
+log debug canvas 'Main' (<uuid>) destroyed
+log info  2 source(s) were remaining
+log info  1 source(s) were remaining
+shutdown end obs=NULL

@@ -1,0 +1,68 @@
+> events off
+> reset
+> ascii 5 8 0 8 384
+> font Sans Serif - 0 p/sans
+> load
+load -> 1
+registered id=text_ft2_source version=0
+registered id=text_ft2_source version=2
+> glyph 0x57 0x57 11 9 1 9 800
+> glyph 0x67 0x67 5 12 0 8 384
+> glyph 0x69 0x69 2 8 -1 8 450
+> glyph 0x1000 0x61 5 8 0 8 384
+> glyph 0x71 0x71 4 6 0 6 400
+> notdef 6 10 1 10 512
+> create s 2
+create s -> 1
+> setfont s Sans Serif - 20 0
+> set s text Wgi
+> update s
+update done
+> state s
+state s font="Sans Serif" style="" size=20 flags=0 face=1 from_file=0 aa=1
+state s outline=0 shadow=0 outline_width=0 word_wrap=0 custom_width=0 log_mode=0 log_lines=6 color=ffffffff,ffffffff
+state s cx=25 cy=16 max_h=12 texbuf=555,0 tex=1 vbuf=1 effect=1
+state s file=NULL load_failed=0 update_file=0 mtime=0 last_checked_ms=0
+state s text="Wgi"
+> glyphs s 0x57 0x67 0x69 0x61 0x71 0x20 0
+glyph 32 u=0.264648438 v=0 u2=0.264648438 v2=0 w=0 h=0 xoff=0 yoff=0 xadv=6
+glyph 87 u=0.138671875 v=0 u2=0.144042969 v2=0.00439453125 w=11 h=9 xoff=1 yoff=9 xadv=12
+glyph 97 u=0 v=0 u2=0.00244140625 v2=0.00390625 w=5 h=8 xoff=0 yoff=8 xadv=6
+glyph 103 u=0.017578125 v=0 u2=0.0200195312 v2=0.005859375 w=5 h=12 xoff=0 yoff=8 xadv=6
+glyph 105 u=0.0234375 v=0 u2=0.0244140625 v2=0.00390625 w=2 h=8 xoff=-1 yoff=8 xadv=7
+glyph 113 u=0.0454101562 v=0 u2=0.0473632812 v2=0.0029296875 w=4 h=6 xoff=0 yoff=6 xadv=6
+glyphs cached=93
+> echo --- the code point that shares glyph 0x61 adds nothing; two unmapped code points share glyph 0
+--- the code point that shares glyph 0x61 adds nothing; two unmapped code points share glyph 0
+> cache s က
+cache done
+> cache s éè
+cache done
+> state s
+state s font="Sans Serif" style="" size=20 flags=0 face=1 from_file=0 aa=1
+state s outline=0 shadow=0 outline_width=0 word_wrap=0 custom_width=0 log_mode=0 log_lines=6 color=ffffffff,ffffffff
+state s cx=25 cy=16 max_h=12 texbuf=562,0 tex=1 vbuf=1 effect=1
+state s file=NULL load_failed=0 update_file=0 mtime=0 last_checked_ms=0
+state s text="Wgi"
+> glyphs s 0 0x61 0x300
+glyph 0 u=0.270996094 v=0 u2=0.273925781 v2=0.0048828125 w=6 h=10 xoff=1 yoff=10 xadv=8
+glyph 97 u=0 v=0 u2=0.00244140625 v2=0.00390625 w=5 h=8 xoff=0 yoff=8 xadv=6
+glyphs cached=94
+> echo --- caching more text continues where the last glyph ended
+--- caching more text continues where the last glyph ended
+> glyph 0x2603 0x300 7 7 0 7 512
+> cache s ☃
+cache done
+> glyphs s 0x300
+glyph 768 u=0.274414062 v=0 u2=0.277832031 v2=0.00341796875 w=7 h=7 xoff=0 yoff=7 xadv=8
+glyphs cached=95
+> state s
+state s font="Sans Serif" style="" size=20 flags=0 face=1 from_file=0 aa=1
+state s outline=0 shadow=0 outline_width=0 word_wrap=0 custom_width=0 log_mode=0 log_lines=6 color=ffffffff,ffffffff
+state s cx=25 cy=16 max_h=12 texbuf=570,0 tex=1 vbuf=1 effect=1
+state s file=NULL load_failed=0 update_file=0 mtime=0 last_checked_ms=0
+state s text="Wgi"
+> texbuf s 553 0 12 3
+texrow 0: 77 00 01 12 23 34 45 56 00 d7 e8 f9
+texrow 1: 94 00 1e 2f 40 51 62 73 00 f4 0a 1b
+texrow 2: b1 00 3b 4c 5d 6e 7f 90 00 16 27 38

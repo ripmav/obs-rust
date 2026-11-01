@@ -1,0 +1,29 @@
+# S-035 a successful open: constructor runs at dlopen, then set_pointer(module), then set_locale(core locale).
+# obs_module_load is NOT called by open. New modules are pushed at the HEAD of the enabled list.
+mkmod one @TMP/m/one.so setloc unload modname=ModOne desc=First author=Me
+mkmod two @TMP/m/two.so setloc
+mkmod pre @TMP/m/libpre-mod.so
+core en-US -
+open_module M1 @TMP/m/one.so @TMP/d/one
+mod_info M1
+open_module M2 @TMP/m/two.so @TMP/d/two/
+lists
+mod_info M2
+# the path may omit the ".so" (os_dlopen appends it when the path contains no ".so")
+open_module M3 @TMP/m/pre-extless @TMP/d/x
+open_module M3 @TMP/m/libpre-mod @TMP/d/x
+lists
+mod_info M3
+# a locale of NULL is passed through to set_locale
+core - -
+open_module M4 @TMP/m/one.so -
+lists
+mod_info M4
+# opening the same file again creates a second module object (same library handle, constructor not re-run)
+enum_modules
+log_loaded
+get_module one
+get_module two
+get_module nosuch
+get_module libpre-mod
+# file/name derivation: only the part after the last '/' is the file name; module name = file minus extension length

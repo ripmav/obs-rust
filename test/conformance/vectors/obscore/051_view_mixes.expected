@@ -1,0 +1,40 @@
+log debug canvas 'Main' (<uuid>) created
+startup -> true
+view_create v type=aux
+view_add v -> NULL mixes=0
+log info ---------------------------------
+log info video settings reset:  base resolution:   1280x720  output resolution: 1280x720  downscale filter:  Bicubic  fps:               60/1  format:            BGRA  YUV mode:          None
+reset_video -> success
+  after_call base=1280x720 out=1280x720 fps=60/1 fmt=BGRA cs=2 range=1 scale=2 gpu=0 adapter=0
+view_add v -> video mixes=2
+view_add v -> video mixes=3
+log error Invalid video parameters specified
+view_add v -> NULL mixes=3
+view_add2(NULL ovi) -> NULL
+mixes count=3
+  [0] owner=main out=1280x720 fps=60/1 view=set
+  [1] owner=view out=1280x720 fps=60/1 view=set
+  [2] owner=view out=320x180 fps=60/1 view=set
+  video_info out=1280x720 fps=60/1
+  video_info out=320x180 fps=60/1
+  visited=2
+  video_info out=1280x720 fps=60/1
+  visited=1
+mixes count=3
+  [0] owner=main out=1280x720 fps=60/1 view=set
+  [1] owner=view out=1280x720 fps=60/1 view=none
+  [2] owner=view out=320x180 fps=60/1 view=none
+  visited=0
+log info NV12 texture support not available
+log info P010 texture support not available
+view_add v -> video mixes=4
+mixes count=4
+  [0] owner=main out=1280x720 fps=60/1 view=set
+  [1] owner=view out=1280x720 fps=60/1 view=none
+  [2] owner=view out=320x180 fps=60/1 view=none
+  [3] owner=view out=500x500 fps=60/1 view=set
+shutdown begin
+log info Freeing OBS context data
+log debug canvas 'Main' (<uuid>) destroyed
+log warning Number of remaining views: 1
+shutdown end obs=NULL

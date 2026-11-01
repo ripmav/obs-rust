@@ -1,0 +1,17 @@
+# disconnect removes the first matching connection only.
+handler h
+add h "void s()"
+callback a
+callback b
+connect h s a
+connect h s b
+disconnect h s a
+emit h s
+disconnect h s a
+disconnect h nosuch a
+disconnect h s b
+emit h s
+connect h s b
+connect h s a
+emit h s
+destroy h

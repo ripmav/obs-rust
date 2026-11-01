@@ -1,0 +1,277 @@
+echo defaults-with-header
+meta size=442 hex=464c56010500000009000000001200019e0000000000000002000d40736574446174614672616d6502000a6f6e4d65746144617461080000001400086475726174696f6e000000000000000000000866696c6553697a650000000000000000000005776964746800409e0000000000000006686569676874004090e00000000000000c766964656f636f646563696400401c000000000000000d766964656f64617461726174650040a388000000000000096672616d657261746500404e000000000000000c617564696f636f6465636964004024000000000000000d617564696f6461746172617465004064000000000000000f617564696f73616d706c65726174650040e7700000000000000f617564696f73616d706c6573697a65004030000000000000000d617564696f6368616e6e656c73004000000000000000000673746572656f01010003322e3101000003332e3101000003342e3001000003342e3101000003352e3101000003372e3101000007656e636f6465720200346f62732d6f7574707574206d6f64756c6520286c69626f62732076657273696f6e20302e302e302d636f6e666f726d616e636529000009000001a9
+  flvheader sig=FLV version=1 flags=0x05 offset=9 prevsize0=0
+  tag type=18 datasize=414 ts=0 streamid=0
+    amf ret=414 num=3
+      [0] name=- type=STRING len=13 value="@setDataFrame"
+      [1] name=- type=STRING len=10 value="onMetaData"
+      [2] name=- type=ECMA_ARRAY num=20
+        [0] name="duration" type=NUMBER value=0 bits=0000000000000000
+        [1] name="fileSize" type=NUMBER value=0 bits=0000000000000000
+        [2] name="width" type=NUMBER value=1920 bits=409e000000000000
+        [3] name="height" type=NUMBER value=1080 bits=4090e00000000000
+        [4] name="videocodecid" type=NUMBER value=7 bits=401c000000000000
+        [5] name="videodatarate" type=NUMBER value=2500 bits=40a3880000000000
+        [6] name="framerate" type=NUMBER value=60 bits=404e000000000000
+        [7] name="audiocodecid" type=NUMBER value=10 bits=4024000000000000
+        [8] name="audiodatarate" type=NUMBER value=160 bits=4064000000000000
+        [9] name="audiosamplerate" type=NUMBER value=48000 bits=40e7700000000000
+        [10] name="audiosamplesize" type=NUMBER value=16 bits=4030000000000000
+        [11] name="audiochannels" type=NUMBER value=2 bits=4000000000000000
+        [12] name="stereo" type=BOOLEAN value=1
+        [13] name="2.1" type=BOOLEAN value=0
+        [14] name="3.1" type=BOOLEAN value=0
+        [15] name="4.0" type=BOOLEAN value=0
+        [16] name="4.1" type=BOOLEAN value=0
+        [17] name="5.1" type=BOOLEAN value=0
+        [18] name="7.1" type=BOOLEAN value=0
+        [19] name="encoder" type=STRING len=52 value="obs-output module (libobs version 0.0.0-conformance)"
+  prevsize=425 expected=425
+echo defaults-without-header
+meta size=429 hex=1200019e0000000000000002000d40736574446174614672616d6502000a6f6e4d65746144617461080000001400086475726174696f6e000000000000000000000866696c6553697a650000000000000000000005776964746800409e0000000000000006686569676874004090e00000000000000c766964656f636f646563696400401c000000000000000d766964656f64617461726174650040a388000000000000096672616d657261746500404e000000000000000c617564696f636f6465636964004024000000000000000d617564696f6461746172617465004064000000000000000f617564696f73616d706c65726174650040e7700000000000000f617564696f73616d706c6573697a65004030000000000000000d617564696f6368616e6e656c73004000000000000000000673746572656f01010003322e3101000003332e3101000003342e3001000003342e3101000003352e3101000003372e3101000007656e636f6465720200346f62732d6f7574707574206d6f64756c6520286c69626f62732076657273696f6e20302e302e302d636f6e666f726d616e636529000009000001a9
+  tag type=18 datasize=414 ts=0 streamid=0
+    amf ret=414 num=3
+      [0] name=- type=STRING len=13 value="@setDataFrame"
+      [1] name=- type=STRING len=10 value="onMetaData"
+      [2] name=- type=ECMA_ARRAY num=20
+        [0] name="duration" type=NUMBER value=0 bits=0000000000000000
+        [1] name="fileSize" type=NUMBER value=0 bits=0000000000000000
+        [2] name="width" type=NUMBER value=1920 bits=409e000000000000
+        [3] name="height" type=NUMBER value=1080 bits=4090e00000000000
+        [4] name="videocodecid" type=NUMBER value=7 bits=401c000000000000
+        [5] name="videodatarate" type=NUMBER value=2500 bits=40a3880000000000
+        [6] name="framerate" type=NUMBER value=60 bits=404e000000000000
+        [7] name="audiocodecid" type=NUMBER value=10 bits=4024000000000000
+        [8] name="audiodatarate" type=NUMBER value=160 bits=4064000000000000
+        [9] name="audiosamplerate" type=NUMBER value=48000 bits=40e7700000000000
+        [10] name="audiosamplesize" type=NUMBER value=16 bits=4030000000000000
+        [11] name="audiochannels" type=NUMBER value=2 bits=4000000000000000
+        [12] name="stereo" type=BOOLEAN value=1
+        [13] name="2.1" type=BOOLEAN value=0
+        [14] name="3.1" type=BOOLEAN value=0
+        [15] name="4.0" type=BOOLEAN value=0
+        [16] name="4.1" type=BOOLEAN value=0
+        [17] name="5.1" type=BOOLEAN value=0
+        [18] name="7.1" type=BOOLEAN value=0
+        [19] name="encoder" type=STRING len=52 value="obs-output module (libobs version 0.0.0-conformance)"
+  prevsize=425 expected=425
+echo hevc-1440p-59.94
+meta size=429 hex=1200019e0000000000000002000d40736574446174614672616d6502000a6f6e4d65746144617461080000001400086475726174696f6e000000000000000000000866696c6553697a65000000000000000000000577696474680040a40000000000000006686569676874004096800000000000000c766964656f636f64656369640041da1d98cc400000000d766964656f64617461726174650040c770000000000000096672616d657261746500404df851eb851eb8000c617564696f636f6465636964004024000000000000000d617564696f6461746172617465004068000000000000000f617564696f73616d706c65726174650040e5888000000000000f617564696f73616d706c6573697a65004030000000000000000d617564696f6368616e6e656c73004000000000000000000673746572656f01010003322e3101000003332e3101000003342e3001000003342e3101000003352e3101000003372e3101000007656e636f6465720200346f62732d6f7574707574206d6f64756c6520286c69626f62732076657273696f6e20302e302e302d636f6e666f726d616e636529000009000001a9
+  tag type=18 datasize=414 ts=0 streamid=0
+    amf ret=414 num=3
+      [0] name=- type=STRING len=13 value="@setDataFrame"
+      [1] name=- type=STRING len=10 value="onMetaData"
+      [2] name=- type=ECMA_ARRAY num=20
+        [0] name="duration" type=NUMBER value=0 bits=0000000000000000
+        [1] name="fileSize" type=NUMBER value=0 bits=0000000000000000
+        [2] name="width" type=NUMBER value=2560 bits=40a4000000000000
+        [3] name="height" type=NUMBER value=1440 bits=4096800000000000
+        [4] name="videocodecid" type=NUMBER value=1752589105 bits=41da1d98cc400000
+        [5] name="videodatarate" type=NUMBER value=12000 bits=40c7700000000000
+        [6] name="framerate" type=NUMBER value=59.939999999999998 bits=404df851eb851eb8
+        [7] name="audiocodecid" type=NUMBER value=10 bits=4024000000000000
+        [8] name="audiodatarate" type=NUMBER value=192 bits=4068000000000000
+        [9] name="audiosamplerate" type=NUMBER value=44100 bits=40e5888000000000
+        [10] name="audiosamplesize" type=NUMBER value=16 bits=4030000000000000
+        [11] name="audiochannels" type=NUMBER value=2 bits=4000000000000000
+        [12] name="stereo" type=BOOLEAN value=1
+        [13] name="2.1" type=BOOLEAN value=0
+        [14] name="3.1" type=BOOLEAN value=0
+        [15] name="4.0" type=BOOLEAN value=0
+        [16] name="4.1" type=BOOLEAN value=0
+        [17] name="5.1" type=BOOLEAN value=0
+        [18] name="7.1" type=BOOLEAN value=0
+        [19] name="encoder" type=STRING len=52 value="obs-output module (libobs version 0.0.0-conformance)"
+  prevsize=425 expected=425
+echo av1
+meta size=429 hex=1200019e0000000000000002000d40736574446174614672616d6502000a6f6e4d65746144617461080000001400086475726174696f6e000000000000000000000866696c6553697a65000000000000000000000577696474680040a40000000000000006686569676874004096800000000000000c766964656f636f64656369640041d85d8c0c400000000d766964656f64617461726174650040c770000000000000096672616d657261746500404df851eb851eb8000c617564696f636f6465636964004024000000000000000d617564696f6461746172617465004068000000000000000f617564696f73616d706c65726174650040e5888000000000000f617564696f73616d706c6573697a65004030000000000000000d617564696f6368616e6e656c73004000000000000000000673746572656f01010003322e3101000003332e3101000003342e3001000003342e3101000003352e3101000003372e3101000007656e636f6465720200346f62732d6f7574707574206d6f64756c6520286c69626f62732076657273696f6e20302e302e302d636f6e666f726d616e636529000009000001a9
+  tag type=18 datasize=414 ts=0 streamid=0
+    amf ret=414 num=3
+      [0] name=- type=STRING len=13 value="@setDataFrame"
+      [1] name=- type=STRING len=10 value="onMetaData"
+      [2] name=- type=ECMA_ARRAY num=20
+        [0] name="duration" type=NUMBER value=0 bits=0000000000000000
+        [1] name="fileSize" type=NUMBER value=0 bits=0000000000000000
+        [2] name="width" type=NUMBER value=2560 bits=40a4000000000000
+        [3] name="height" type=NUMBER value=1440 bits=4096800000000000
+        [4] name="videocodecid" type=NUMBER value=1635135537 bits=41d85d8c0c400000
+        [5] name="videodatarate" type=NUMBER value=12000 bits=40c7700000000000
+        [6] name="framerate" type=NUMBER value=59.939999999999998 bits=404df851eb851eb8
+        [7] name="audiocodecid" type=NUMBER value=10 bits=4024000000000000
+        [8] name="audiodatarate" type=NUMBER value=192 bits=4068000000000000
+        [9] name="audiosamplerate" type=NUMBER value=44100 bits=40e5888000000000
+        [10] name="audiosamplesize" type=NUMBER value=16 bits=4030000000000000
+        [11] name="audiochannels" type=NUMBER value=2 bits=4000000000000000
+        [12] name="stereo" type=BOOLEAN value=1
+        [13] name="2.1" type=BOOLEAN value=0
+        [14] name="3.1" type=BOOLEAN value=0
+        [15] name="4.0" type=BOOLEAN value=0
+        [16] name="4.1" type=BOOLEAN value=0
+        [17] name="5.1" type=BOOLEAN value=0
+        [18] name="7.1" type=BOOLEAN value=0
+        [19] name="encoder" type=STRING len=52 value="obs-output module (libobs version 0.0.0-conformance)"
+  prevsize=425 expected=425
+meta size=429 hex=1200019e0000000000000002000d40736574446174614672616d6502000a6f6e4d65746144617461080000001400086475726174696f6e000000000000000000000866696c6553697a65000000000000000000000577696474680040a40000000000000006686569676874004096800000000000000c766964656f636f64656369640041d85d8c0c400000000d766964656f64617461726174650040c770000000000000096672616d657261746500403df853e2556b28000c617564696f636f6465636964004024000000000000000d617564696f6461746172617465004068000000000000000f617564696f73616d706c65726174650040e5888000000000000f617564696f73616d706c6573697a65004030000000000000000d617564696f6368616e6e656c73004000000000000000000673746572656f01010003322e3101000003332e3101000003342e3001000003342e3101000003352e3101000003372e3101000007656e636f6465720200346f62732d6f7574707574206d6f64756c6520286c69626f62732076657273696f6e20302e302e302d636f6e666f726d616e636529000009000001a9
+  tag type=18 datasize=414 ts=0 streamid=0
+    amf ret=414 num=3
+      [0] name=- type=STRING len=13 value="@setDataFrame"
+      [1] name=- type=STRING len=10 value="onMetaData"
+      [2] name=- type=ECMA_ARRAY num=20
+        [0] name="duration" type=NUMBER value=0 bits=0000000000000000
+        [1] name="fileSize" type=NUMBER value=0 bits=0000000000000000
+        [2] name="width" type=NUMBER value=2560 bits=40a4000000000000
+        [3] name="height" type=NUMBER value=1440 bits=4096800000000000
+        [4] name="videocodecid" type=NUMBER value=1635135537 bits=41d85d8c0c400000
+        [5] name="videodatarate" type=NUMBER value=12000 bits=40c7700000000000
+        [6] name="framerate" type=NUMBER value=29.970029970029969 bits=403df853e2556b28
+        [7] name="audiocodecid" type=NUMBER value=10 bits=4024000000000000
+        [8] name="audiodatarate" type=NUMBER value=192 bits=4068000000000000
+        [9] name="audiosamplerate" type=NUMBER value=44100 bits=40e5888000000000
+        [10] name="audiosamplesize" type=NUMBER value=16 bits=4030000000000000
+        [11] name="audiochannels" type=NUMBER value=2 bits=4000000000000000
+        [12] name="stereo" type=BOOLEAN value=1
+        [13] name="2.1" type=BOOLEAN value=0
+        [14] name="3.1" type=BOOLEAN value=0
+        [15] name="4.0" type=BOOLEAN value=0
+        [16] name="4.1" type=BOOLEAN value=0
+        [17] name="5.1" type=BOOLEAN value=0
+        [18] name="7.1" type=BOOLEAN value=0
+        [19] name="encoder" type=STRING len=52 value="obs-output module (libobs version 0.0.0-conformance)"
+  prevsize=425 expected=425
+echo unknown-codec-gives-videocodecid-0
+meta size=429 hex=1200019e0000000000000002000d40736574446174614672616d6502000a6f6e4d65746144617461080000001400086475726174696f6e000000000000000000000866696c6553697a65000000000000000000000577696474680040a40000000000000006686569676874004096800000000000000c766964656f636f6465636964000000000000000000000d766964656f64617461726174650040c770000000000000096672616d657261746500403df853e2556b28000c617564696f636f6465636964004024000000000000000d617564696f6461746172617465004068000000000000000f617564696f73616d706c65726174650040e5888000000000000f617564696f73616d706c6573697a65004030000000000000000d617564696f6368616e6e656c73004000000000000000000673746572656f01010003322e3101000003332e3101000003342e3001000003342e3101000003352e3101000003372e3101000007656e636f6465720200346f62732d6f7574707574206d6f64756c6520286c69626f62732076657273696f6e20302e302e302d636f6e666f726d616e636529000009000001a9
+  tag type=18 datasize=414 ts=0 streamid=0
+    amf ret=414 num=3
+      [0] name=- type=STRING len=13 value="@setDataFrame"
+      [1] name=- type=STRING len=10 value="onMetaData"
+      [2] name=- type=ECMA_ARRAY num=20
+        [0] name="duration" type=NUMBER value=0 bits=0000000000000000
+        [1] name="fileSize" type=NUMBER value=0 bits=0000000000000000
+        [2] name="width" type=NUMBER value=2560 bits=40a4000000000000
+        [3] name="height" type=NUMBER value=1440 bits=4096800000000000
+        [4] name="videocodecid" type=NUMBER value=0 bits=0000000000000000
+        [5] name="videodatarate" type=NUMBER value=12000 bits=40c7700000000000
+        [6] name="framerate" type=NUMBER value=29.970029970029969 bits=403df853e2556b28
+        [7] name="audiocodecid" type=NUMBER value=10 bits=4024000000000000
+        [8] name="audiodatarate" type=NUMBER value=192 bits=4068000000000000
+        [9] name="audiosamplerate" type=NUMBER value=44100 bits=40e5888000000000
+        [10] name="audiosamplesize" type=NUMBER value=16 bits=4030000000000000
+        [11] name="audiochannels" type=NUMBER value=2 bits=4000000000000000
+        [12] name="stereo" type=BOOLEAN value=1
+        [13] name="2.1" type=BOOLEAN value=0
+        [14] name="3.1" type=BOOLEAN value=0
+        [15] name="4.0" type=BOOLEAN value=0
+        [16] name="4.1" type=BOOLEAN value=0
+        [17] name="5.1" type=BOOLEAN value=0
+        [18] name="7.1" type=BOOLEAN value=0
+        [19] name="encoder" type=STRING len=52 value="obs-output module (libobs version 0.0.0-conformance)"
+  prevsize=425 expected=425
+meta size=429 hex=1200019e0000000000000002000d40736574446174614672616d6502000a6f6e4d65746144617461080000001400086475726174696f6e000000000000000000000866696c6553697a65000000000000000000000577696474680040a40000000000000006686569676874004096800000000000000c766964656f636f6465636964000000000000000000000d766964656f64617461726174650040c770000000000000096672616d657261746500403df853e2556b28000c617564696f636f6465636964004024000000000000000d617564696f6461746172617465004068000000000000000f617564696f73616d706c65726174650040e5888000000000000f617564696f73616d706c6573697a65004030000000000000000d617564696f6368616e6e656c73004000000000000000000673746572656f01010003322e3101000003332e3101000003342e3001000003342e3101000003352e3101000003372e3101000007656e636f6465720200346f62732d6f7574707574206d6f64756c6520286c69626f62732076657273696f6e20302e302e302d636f6e666f726d616e636529000009000001a9
+  tag type=18 datasize=414 ts=0 streamid=0
+    amf ret=414 num=3
+      [0] name=- type=STRING len=13 value="@setDataFrame"
+      [1] name=- type=STRING len=10 value="onMetaData"
+      [2] name=- type=ECMA_ARRAY num=20
+        [0] name="duration" type=NUMBER value=0 bits=0000000000000000
+        [1] name="fileSize" type=NUMBER value=0 bits=0000000000000000
+        [2] name="width" type=NUMBER value=2560 bits=40a4000000000000
+        [3] name="height" type=NUMBER value=1440 bits=4096800000000000
+        [4] name="videocodecid" type=NUMBER value=0 bits=0000000000000000
+        [5] name="videodatarate" type=NUMBER value=12000 bits=40c7700000000000
+        [6] name="framerate" type=NUMBER value=29.970029970029969 bits=403df853e2556b28
+        [7] name="audiocodecid" type=NUMBER value=10 bits=4024000000000000
+        [8] name="audiodatarate" type=NUMBER value=192 bits=4068000000000000
+        [9] name="audiosamplerate" type=NUMBER value=44100 bits=40e5888000000000
+        [10] name="audiosamplesize" type=NUMBER value=16 bits=4030000000000000
+        [11] name="audiochannels" type=NUMBER value=2 bits=4000000000000000
+        [12] name="stereo" type=BOOLEAN value=1
+        [13] name="2.1" type=BOOLEAN value=0
+        [14] name="3.1" type=BOOLEAN value=0
+        [15] name="4.0" type=BOOLEAN value=0
+        [16] name="4.1" type=BOOLEAN value=0
+        [17] name="5.1" type=BOOLEAN value=0
+        [18] name="7.1" type=BOOLEAN value=0
+        [19] name="encoder" type=STRING len=52 value="obs-output module (libobs version 0.0.0-conformance)"
+  prevsize=425 expected=425
+meta size=429 hex=1200019e0000000000000002000d40736574446174614672616d6502000a6f6e4d65746144617461080000001400086475726174696f6e000000000000000000000866696c6553697a65000000000000000000000577696474680040a40000000000000006686569676874004096800000000000000c766964656f636f6465636964000000000000000000000d766964656f64617461726174650040c770000000000000096672616d657261746500403df853e2556b28000c617564696f636f6465636964004024000000000000000d617564696f6461746172617465004068000000000000000f617564696f73616d706c65726174650040e5888000000000000f617564696f73616d706c6573697a65004030000000000000000d617564696f6368616e6e656c73004000000000000000000673746572656f01010003322e3101000003332e3101000003342e3001000003342e3101000003352e3101000003372e3101000007656e636f6465720200346f62732d6f7574707574206d6f64756c6520286c69626f62732076657273696f6e20302e302e302d636f6e666f726d616e636529000009000001a9
+  tag type=18 datasize=414 ts=0 streamid=0
+    amf ret=414 num=3
+      [0] name=- type=STRING len=13 value="@setDataFrame"
+      [1] name=- type=STRING len=10 value="onMetaData"
+      [2] name=- type=ECMA_ARRAY num=20
+        [0] name="duration" type=NUMBER value=0 bits=0000000000000000
+        [1] name="fileSize" type=NUMBER value=0 bits=0000000000000000
+        [2] name="width" type=NUMBER value=2560 bits=40a4000000000000
+        [3] name="height" type=NUMBER value=1440 bits=4096800000000000
+        [4] name="videocodecid" type=NUMBER value=0 bits=0000000000000000
+        [5] name="videodatarate" type=NUMBER value=12000 bits=40c7700000000000
+        [6] name="framerate" type=NUMBER value=29.970029970029969 bits=403df853e2556b28
+        [7] name="audiocodecid" type=NUMBER value=10 bits=4024000000000000
+        [8] name="audiodatarate" type=NUMBER value=192 bits=4068000000000000
+        [9] name="audiosamplerate" type=NUMBER value=44100 bits=40e5888000000000
+        [10] name="audiosamplesize" type=NUMBER value=16 bits=4030000000000000
+        [11] name="audiochannels" type=NUMBER value=2 bits=4000000000000000
+        [12] name="stereo" type=BOOLEAN value=1
+        [13] name="2.1" type=BOOLEAN value=0
+        [14] name="3.1" type=BOOLEAN value=0
+        [15] name="4.0" type=BOOLEAN value=0
+        [16] name="4.1" type=BOOLEAN value=0
+        [17] name="5.1" type=BOOLEAN value=0
+        [18] name="7.1" type=BOOLEAN value=0
+        [19] name="encoder" type=STRING len=52 value="obs-output module (libobs version 0.0.0-conformance)"
+  prevsize=425 expected=425
+echo zero-and-large-values
+meta size=429 hex=1200019e0000000000000002000d40736574446174614672616d6502000a6f6e4d65746144617461080000001400086475726174696f6e000000000000000000000866696c6553697a65000000000000000000000577696474680000000000000000000006686569676874000000000000000000000c766964656f636f646563696400401c000000000000000d766964656f646174617261746500000000000000000000096672616d6572617465000000000000000000000c617564696f636f6465636964004024000000000000000d617564696f6461746172617465000000000000000000000f617564696f73616d706c6572617465000000000000000000000f617564696f73616d706c6573697a65004030000000000000000d617564696f6368616e6e656c73004000000000000000000673746572656f01010003322e3101000003332e3101000003342e3001000003342e3101000003352e3101000003372e3101000007656e636f6465720200346f62732d6f7574707574206d6f64756c6520286c69626f62732076657273696f6e20302e302e302d636f6e666f726d616e636529000009000001a9
+  tag type=18 datasize=414 ts=0 streamid=0
+    amf ret=414 num=3
+      [0] name=- type=STRING len=13 value="@setDataFrame"
+      [1] name=- type=STRING len=10 value="onMetaData"
+      [2] name=- type=ECMA_ARRAY num=20
+        [0] name="duration" type=NUMBER value=0 bits=0000000000000000
+        [1] name="fileSize" type=NUMBER value=0 bits=0000000000000000
+        [2] name="width" type=NUMBER value=0 bits=0000000000000000
+        [3] name="height" type=NUMBER value=0 bits=0000000000000000
+        [4] name="videocodecid" type=NUMBER value=7 bits=401c000000000000
+        [5] name="videodatarate" type=NUMBER value=0 bits=0000000000000000
+        [6] name="framerate" type=NUMBER value=0 bits=0000000000000000
+        [7] name="audiocodecid" type=NUMBER value=10 bits=4024000000000000
+        [8] name="audiodatarate" type=NUMBER value=0 bits=0000000000000000
+        [9] name="audiosamplerate" type=NUMBER value=0 bits=0000000000000000
+        [10] name="audiosamplesize" type=NUMBER value=16 bits=4030000000000000
+        [11] name="audiochannels" type=NUMBER value=2 bits=4000000000000000
+        [12] name="stereo" type=BOOLEAN value=1
+        [13] name="2.1" type=BOOLEAN value=0
+        [14] name="3.1" type=BOOLEAN value=0
+        [15] name="4.0" type=BOOLEAN value=0
+        [16] name="4.1" type=BOOLEAN value=0
+        [17] name="5.1" type=BOOLEAN value=0
+        [18] name="7.1" type=BOOLEAN value=0
+        [19] name="encoder" type=STRING len=52 value="obs-output module (libobs version 0.0.0-conformance)"
+  prevsize=425 expected=425
+meta size=429 hex=1200019e0000000000000002000d40736574446174614672616d6502000a6f6e4d65746144617461080000001400086475726174696f6e000000000000000000000866696c6553697a65000000000000000000000577696474680041efffffffe0000000066865696768740041efffffffe00000000c766964656f636f646563696400401c000000000000000d766964656f6461746172617465007e37e43c8800759c00096672616d6572617465007ff8000000000000000c617564696f636f6465636964004024000000000000000d617564696f646174617261746500bff8000000000000000f617564696f73616d706c65726174650041efffffffe00000000f617564696f73616d706c6573697a65004030000000000000000d617564696f6368616e6e656c73004000000000000000000673746572656f01010003322e3101000003332e3101000003342e3001000003342e3101000003352e3101000003372e3101000007656e636f6465720200346f62732d6f7574707574206d6f64756c6520286c69626f62732076657273696f6e20302e302e302d636f6e666f726d616e636529000009000001a9
+  tag type=18 datasize=414 ts=0 streamid=0
+    amf ret=414 num=3
+      [0] name=- type=STRING len=13 value="@setDataFrame"
+      [1] name=- type=STRING len=10 value="onMetaData"
+      [2] name=- type=ECMA_ARRAY num=20
+        [0] name="duration" type=NUMBER value=0 bits=0000000000000000
+        [1] name="fileSize" type=NUMBER value=0 bits=0000000000000000
+        [2] name="width" type=NUMBER value=4294967295 bits=41efffffffe00000
+        [3] name="height" type=NUMBER value=4294967295 bits=41efffffffe00000
+        [4] name="videocodecid" type=NUMBER value=7 bits=401c000000000000
+        [5] name="videodatarate" type=NUMBER value=1.0000000000000001e+300 bits=7e37e43c8800759c
+        [6] name="framerate" type=NUMBER value=nan bits=7ff8000000000000
+        [7] name="audiocodecid" type=NUMBER value=10 bits=4024000000000000
+        [8] name="audiodatarate" type=NUMBER value=-1.5 bits=bff8000000000000
+        [9] name="audiosamplerate" type=NUMBER value=4294967295 bits=41efffffffe00000
+        [10] name="audiosamplesize" type=NUMBER value=16 bits=4030000000000000
+        [11] name="audiochannels" type=NUMBER value=2 bits=4000000000000000
+        [12] name="stereo" type=BOOLEAN value=1
+        [13] name="2.1" type=BOOLEAN value=0
+        [14] name="3.1" type=BOOLEAN value=0
+        [15] name="4.0" type=BOOLEAN value=0
+        [16] name="4.1" type=BOOLEAN value=0
+        [17] name="5.1" type=BOOLEAN value=0
+        [18] name="7.1" type=BOOLEAN value=0
+        [19] name="encoder" type=STRING len=52 value="obs-output module (libobs version 0.0.0-conformance)"
+  prevsize=425 expected=425

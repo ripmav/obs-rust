@@ -1,0 +1,29 @@
+# CORE: the call text of a pass command. "vertex_shader = <tokens> ;" (aliases: vertex_program, pixel_shader,
+# pixel_program). The tokens are collected skipping blanks/newlines (comments are blanks), up to and including
+# the ';'. An optional leading "compile" is dropped with the warning "compile keyword not necessary". The FIRST
+# token of the remaining list names the entry function; the shader text is built only if that name is a declared
+# function. All tokens (including the function name) are re-joined WITHOUT whitespace into the body of main.
+# NOTE: when the first token is not a declared function the text consists only of the parameters mentioned
+# in the call; if there are none the text is empty, and gs_*shader_create is called with a NULL string (see
+# 43-backend).
+backend text full
+echo --- aliases
+effect a1 alias.effect "float4 F() : TARGET { return 0; }\ntechnique T { pass { vertex_program = F(); pixel_program = F(); } }"
+echo --- whitespace and newlines inside the call are dropped
+effect a2 ws.effect "float4 F(float a, float b) : TARGET { return 0; }\ntechnique T { pass { vertex_shader =\n   F(\n 1.0 ,\n 2.0\n )\n ;\n pixel_shader = F ( 3 , 4 ) ; } }"
+echo --- arbitrary tokens in the argument list
+effect a3 args.effect "float4 F(float a) : TARGET { return 0; }\ntechnique T { pass { vertex_shader = F(a + 1 * (2 - 3)); pixel_shader = F(\"str\" , 'c'); } }"
+echo --- comments inside the call
+effect a4 cmt.effect "float4 F(float a) : TARGET { return 0; }\ntechnique T { pass { vertex_shader = F(/* x */ 1 // y\n); pixel_shader = F(2); } }"
+echo --- the compile keyword
+ep c1 "float4 F() : TARGET { return 0; }\ntechnique T { pass { vertex_shader = compile F(); pixel_shader = compile F(); } }"
+echo --- compile with a profile name: the profile becomes the function name, which is unknown (empty text)
+ep c2 "float4 F() : TARGET { return 0; }\ntechnique T { pass { vertex_shader = compile vs_5_0 F(); pixel_shader = F(); } }"
+echo --- a call that is not a function call at all
+ep c3 "float4 F() : TARGET { return 0; }\ntechnique T { pass { vertex_shader = F; pixel_shader = F; } }"
+echo --- the entry name may be followed by anything up to the semicolon
+effect c4 trailing.effect "float4 F() : TARGET { return 0; }\ntechnique T { pass { vertex_shader = F garbage tokens ; pixel_shader = F; } }"
+echo --- entry name is case sensitive
+ep c5 "float4 F() : TARGET { return 0; }\ntechnique T { pass { vertex_shader = f(); pixel_shader = F(); } }"
+echo --- the same command given twice: the second token list lands after the end marker of the first and is ignored
+ep c6 "float4 F() : TARGET { return 0; }\ntechnique T { pass { vertex_shader = F(); vertex_shader = F(); pixel_shader = F(); } }"

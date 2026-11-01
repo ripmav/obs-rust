@@ -1,0 +1,328 @@
+echo sweep-object
+enc_obj null
+enc_obj null
+enc_obj null
+enc_obj null
+enc_obj null
+log error AMF_Encode - failed to encode property in index 0
+enc_obj len=4 hex=03000009
+log error AMF_Encode - failed to encode property in index 0
+enc_obj len=4 hex=03000009
+log error AMF_Encode - failed to encode property in index 0
+enc_obj len=4 hex=03000009
+log error AMF_Encode - failed to encode property in index 0
+enc_obj len=4 hex=03000009
+log error AMF_Encode - failed to encode property in index 0
+enc_obj len=4 hex=03000009
+log error AMF_Encode - failed to encode property in index 0
+enc_obj len=4 hex=03000009
+log error AMF_Encode - failed to encode property in index 0
+enc_obj len=4 hex=03000009
+log error AMF_Encode - failed to encode property in index 0
+enc_obj len=4 hex=03000009
+log error AMF_Encode - failed to encode property in index 0
+enc_obj len=4 hex=03000009
+log error AMF_Encode - failed to encode property in index 0
+enc_obj len=4 hex=03000009
+log error AMF_Encode - failed to encode property in index 0
+enc_obj len=4 hex=03000009
+log error AMF_Encode - failed to encode property in index 0
+enc_obj len=4 hex=03000009
+log error AMF_Encode - failed to encode property in index 1
+enc_obj null
+log error AMF_Encode - failed to encode property in index 1
+enc_obj null
+log error AMF_Encode - failed to encode property in index 1
+enc_obj null
+log error AMF_Encode - failed to encode property in index 1
+enc_obj null
+log error AMF_Encode - failed to encode property in index 1
+enc_obj len=20 hex=030005776964746800409e000000000000000009
+log error AMF_Encode - failed to encode property in index 1
+enc_obj len=20 hex=030005776964746800409e000000000000000009
+log error AMF_Encode - failed to encode property in index 1
+enc_obj len=20 hex=030005776964746800409e000000000000000009
+log error AMF_Encode - failed to encode property in index 1
+enc_obj len=20 hex=030005776964746800409e000000000000000009
+log error AMF_Encode - failed to encode property in index 1
+enc_obj len=20 hex=030005776964746800409e000000000000000009
+log error AMF_Encode - failed to encode property in index 1
+enc_obj len=20 hex=030005776964746800409e000000000000000009
+log error AMF_Encode - failed to encode property in index 2
+enc_obj null
+log error AMF_Encode - failed to encode property in index 2
+enc_obj null
+log error AMF_Encode - failed to encode property in index 2
+enc_obj null
+log error AMF_Encode - failed to encode property in index 2
+enc_obj null
+log error AMF_Encode - failed to encode property in index 2
+enc_obj len=30 hex=030005776964746800409e000000000000000673746572656f0101000009
+log error AMF_Encode - failed to encode property in index 2
+enc_obj len=30 hex=030005776964746800409e000000000000000673746572656f0101000009
+log error AMF_Encode - failed to encode property in index 2
+enc_obj len=30 hex=030005776964746800409e000000000000000673746572656f0101000009
+log error AMF_Encode - failed to encode property in index 2
+enc_obj len=30 hex=030005776964746800409e000000000000000673746572656f0101000009
+log error AMF_Encode - failed to encode property in index 2
+enc_obj len=30 hex=030005776964746800409e000000000000000673746572656f0101000009
+log error AMF_Encode - failed to encode property in index 2
+enc_obj len=30 hex=030005776964746800409e000000000000000673746572656f0101000009
+log error AMF_Encode - failed to encode property in index 2
+enc_obj len=30 hex=030005776964746800409e000000000000000673746572656f0101000009
+log error AMF_Encode - failed to encode property in index 2
+enc_obj len=30 hex=030005776964746800409e000000000000000673746572656f0101000009
+log error AMF_Encode - failed to encode property in index 2
+enc_obj len=30 hex=030005776964746800409e000000000000000673746572656f0101000009
+log error AMF_Encode - failed to encode property in index 2
+enc_obj len=30 hex=030005776964746800409e000000000000000673746572656f0101000009
+enc_obj null
+enc_obj null
+enc_obj len=42 hex=030005776964746800409e000000000000000673746572656f010100046e616d65020003616263000009
+enc_obj len=42 hex=030005776964746800409e000000000000000673746572656f010100046e616d65020003616263000009
+enc_obj len=42 hex=030005776964746800409e000000000000000673746572656f010100046e616d65020003616263000009
+enc_obj len=42 hex=030005776964746800409e000000000000000673746572656f010100046e616d65020003616263000009
+enc_obj len=42 hex=030005776964746800409e000000000000000673746572656f010100046e616d65020003616263000009
+echo sweep-ecma
+enc_obj null
+enc_obj null
+enc_obj null
+enc_obj null
+enc_obj null
+log error AMF_Encode - failed to encode property in index 0
+enc_obj null
+log error AMF_Encode - failed to encode property in index 0
+enc_obj null
+log error AMF_Encode - failed to encode property in index 0
+enc_obj null
+log error AMF_Encode - failed to encode property in index 0
+enc_obj null
+log error AMF_Encode - failed to encode property in index 0
+enc_obj len=8 hex=0800000003000009
+log error AMF_Encode - failed to encode property in index 0
+enc_obj len=8 hex=0800000003000009
+log error AMF_Encode - failed to encode property in index 0
+enc_obj len=8 hex=0800000003000009
+log error AMF_Encode - failed to encode property in index 0
+enc_obj len=8 hex=0800000003000009
+log error AMF_Encode - failed to encode property in index 0
+enc_obj len=8 hex=0800000003000009
+log error AMF_Encode - failed to encode property in index 0
+enc_obj len=8 hex=0800000003000009
+log error AMF_Encode - failed to encode property in index 0
+enc_obj len=8 hex=0800000003000009
+log error AMF_Encode - failed to encode property in index 0
+enc_obj len=8 hex=0800000003000009
+log error AMF_Encode - failed to encode property in index 0
+enc_obj len=8 hex=0800000003000009
+log error AMF_Encode - failed to encode property in index 0
+enc_obj len=8 hex=0800000003000009
+log error AMF_Encode - failed to encode property in index 0
+enc_obj len=8 hex=0800000003000009
+log error AMF_Encode - failed to encode property in index 0
+enc_obj len=8 hex=0800000003000009
+log error AMF_Encode - failed to encode property in index 1
+enc_obj null
+log error AMF_Encode - failed to encode property in index 1
+enc_obj null
+log error AMF_Encode - failed to encode property in index 1
+enc_obj null
+log error AMF_Encode - failed to encode property in index 1
+enc_obj null
+log error AMF_Encode - failed to encode property in index 1
+enc_obj len=24 hex=08000000030005776964746800409e000000000000000009
+log error AMF_Encode - failed to encode property in index 1
+enc_obj len=24 hex=08000000030005776964746800409e000000000000000009
+log error AMF_Encode - failed to encode property in index 1
+enc_obj len=24 hex=08000000030005776964746800409e000000000000000009
+log error AMF_Encode - failed to encode property in index 1
+enc_obj len=24 hex=08000000030005776964746800409e000000000000000009
+log error AMF_Encode - failed to encode property in index 1
+enc_obj len=24 hex=08000000030005776964746800409e000000000000000009
+log error AMF_Encode - failed to encode property in index 1
+enc_obj len=24 hex=08000000030005776964746800409e000000000000000009
+log error AMF_Encode - failed to encode property in index 2
+enc_obj null
+log error AMF_Encode - failed to encode property in index 2
+enc_obj null
+log error AMF_Encode - failed to encode property in index 2
+enc_obj null
+log error AMF_Encode - failed to encode property in index 2
+enc_obj null
+log error AMF_Encode - failed to encode property in index 2
+enc_obj len=34 hex=08000000030005776964746800409e000000000000000673746572656f0101000009
+log error AMF_Encode - failed to encode property in index 2
+enc_obj len=34 hex=08000000030005776964746800409e000000000000000673746572656f0101000009
+log error AMF_Encode - failed to encode property in index 2
+enc_obj len=34 hex=08000000030005776964746800409e000000000000000673746572656f0101000009
+log error AMF_Encode - failed to encode property in index 2
+enc_obj len=34 hex=08000000030005776964746800409e000000000000000673746572656f0101000009
+log error AMF_Encode - failed to encode property in index 2
+enc_obj len=34 hex=08000000030005776964746800409e000000000000000673746572656f0101000009
+log error AMF_Encode - failed to encode property in index 2
+enc_obj len=34 hex=08000000030005776964746800409e000000000000000673746572656f0101000009
+log error AMF_Encode - failed to encode property in index 2
+enc_obj len=34 hex=08000000030005776964746800409e000000000000000673746572656f0101000009
+log error AMF_Encode - failed to encode property in index 2
+enc_obj len=34 hex=08000000030005776964746800409e000000000000000673746572656f0101000009
+log error AMF_Encode - failed to encode property in index 2
+enc_obj len=34 hex=08000000030005776964746800409e000000000000000673746572656f0101000009
+log error AMF_Encode - failed to encode property in index 2
+enc_obj len=34 hex=08000000030005776964746800409e000000000000000673746572656f0101000009
+enc_obj null
+enc_obj null
+enc_obj len=46 hex=08000000030005776964746800409e000000000000000673746572656f010100046e616d65020003616263000009
+enc_obj len=46 hex=08000000030005776964746800409e000000000000000673746572656f010100046e616d65020003616263000009
+enc_obj len=46 hex=08000000030005776964746800409e000000000000000673746572656f010100046e616d65020003616263000009
+enc_obj len=46 hex=08000000030005776964746800409e000000000000000673746572656f010100046e616d65020003616263000009
+enc_obj len=46 hex=08000000030005776964746800409e000000000000000673746572656f010100046e616d65020003616263000009
+echo sweep-strict
+enc_obj null
+enc_obj null
+enc_obj null
+enc_obj null
+enc_obj null
+log error AMF_Encode - failed to encode property in index 0
+enc_obj len=5 hex=0a00000003
+log error AMF_Encode - failed to encode property in index 0
+enc_obj len=5 hex=0a00000003
+log error AMF_Encode - failed to encode property in index 0
+enc_obj len=5 hex=0a00000003
+log error AMF_Encode - failed to encode property in index 0
+enc_obj len=5 hex=0a00000003
+log error AMF_Encode - failed to encode property in index 0
+enc_obj len=5 hex=0a00000003
+log error AMF_Encode - failed to encode property in index 0
+enc_obj len=5 hex=0a00000003
+log error AMF_Encode - failed to encode property in index 0
+enc_obj len=5 hex=0a00000003
+log error AMF_Encode - failed to encode property in index 0
+enc_obj len=5 hex=0a00000003
+log error AMF_Encode - failed to encode property in index 0
+enc_obj len=5 hex=0a00000003
+log error AMF_Encode - failed to encode property in index 0
+enc_obj len=5 hex=0a00000003
+log error AMF_Encode - failed to encode property in index 0
+enc_obj len=5 hex=0a00000003
+log error AMF_Encode - failed to encode property in index 0
+enc_obj len=5 hex=0a00000003
+log error AMF_Encode - failed to encode property in index 0
+enc_obj len=5 hex=0a00000003
+log error AMF_Encode - failed to encode property in index 0
+enc_obj len=5 hex=0a00000003
+log error AMF_Encode - failed to encode property in index 0
+enc_obj len=5 hex=0a00000003
+log error AMF_Encode - failed to encode property in index 0
+enc_obj len=5 hex=0a00000003
+log error AMF_Encode - failed to encode property in index 1
+enc_obj len=21 hex=0a000000030005776964746800409e000000000000
+log error AMF_Encode - failed to encode property in index 1
+enc_obj len=21 hex=0a000000030005776964746800409e000000000000
+log error AMF_Encode - failed to encode property in index 1
+enc_obj len=21 hex=0a000000030005776964746800409e000000000000
+log error AMF_Encode - failed to encode property in index 1
+enc_obj len=21 hex=0a000000030005776964746800409e000000000000
+log error AMF_Encode - failed to encode property in index 1
+enc_obj len=21 hex=0a000000030005776964746800409e000000000000
+log error AMF_Encode - failed to encode property in index 1
+enc_obj len=21 hex=0a000000030005776964746800409e000000000000
+log error AMF_Encode - failed to encode property in index 1
+enc_obj len=21 hex=0a000000030005776964746800409e000000000000
+log error AMF_Encode - failed to encode property in index 1
+enc_obj len=21 hex=0a000000030005776964746800409e000000000000
+log error AMF_Encode - failed to encode property in index 1
+enc_obj len=21 hex=0a000000030005776964746800409e000000000000
+log error AMF_Encode - failed to encode property in index 1
+enc_obj len=21 hex=0a000000030005776964746800409e000000000000
+log error AMF_Encode - failed to encode property in index 2
+enc_obj len=31 hex=0a000000030005776964746800409e000000000000000673746572656f0101
+log error AMF_Encode - failed to encode property in index 2
+enc_obj len=31 hex=0a000000030005776964746800409e000000000000000673746572656f0101
+log error AMF_Encode - failed to encode property in index 2
+enc_obj len=31 hex=0a000000030005776964746800409e000000000000000673746572656f0101
+log error AMF_Encode - failed to encode property in index 2
+enc_obj len=31 hex=0a000000030005776964746800409e000000000000000673746572656f0101
+log error AMF_Encode - failed to encode property in index 2
+enc_obj len=31 hex=0a000000030005776964746800409e000000000000000673746572656f0101
+log error AMF_Encode - failed to encode property in index 2
+enc_obj len=31 hex=0a000000030005776964746800409e000000000000000673746572656f0101
+log error AMF_Encode - failed to encode property in index 2
+enc_obj len=31 hex=0a000000030005776964746800409e000000000000000673746572656f0101
+log error AMF_Encode - failed to encode property in index 2
+enc_obj len=31 hex=0a000000030005776964746800409e000000000000000673746572656f0101
+log error AMF_Encode - failed to encode property in index 2
+enc_obj len=31 hex=0a000000030005776964746800409e000000000000000673746572656f0101
+log error AMF_Encode - failed to encode property in index 2
+enc_obj len=31 hex=0a000000030005776964746800409e000000000000000673746572656f0101
+log error AMF_Encode - failed to encode property in index 2
+enc_obj len=31 hex=0a000000030005776964746800409e000000000000000673746572656f0101
+log error AMF_Encode - failed to encode property in index 2
+enc_obj len=31 hex=0a000000030005776964746800409e000000000000000673746572656f0101
+log error AMF_Encode - failed to encode property in index 2
+enc_obj len=31 hex=0a000000030005776964746800409e000000000000000673746572656f0101
+log error AMF_Encode - failed to encode property in index 2
+enc_obj len=31 hex=0a000000030005776964746800409e000000000000000673746572656f0101
+enc_obj len=43 hex=0a000000030005776964746800409e000000000000000673746572656f010100046e616d65020003616263
+enc_obj len=43 hex=0a000000030005776964746800409e000000000000000673746572656f010100046e616d65020003616263
+enc_obj len=43 hex=0a000000030005776964746800409e000000000000000673746572656f010100046e616d65020003616263
+echo sweep-prop-string-property
+enc_prop null
+enc_prop null
+enc_prop null
+enc_prop null
+enc_prop null
+enc_prop null
+enc_prop null
+enc_prop null
+enc_prop null
+enc_prop null
+enc_prop null
+enc_prop null
+enc_prop null
+enc_prop null
+enc_prop len=12 hex=00046e616d65020003616263
+enc_prop len=12 hex=00046e616d65020003616263
+enc_prop len=12 hex=00046e616d65020003616263
+echo sweep-prop-number-property
+enc_prop null
+enc_prop null
+enc_prop null
+enc_prop null
+enc_prop null
+enc_prop null
+enc_prop len=16 hex=0005776964746800409e000000000000
+enc_prop len=16 hex=0005776964746800409e000000000000
+enc_prop len=16 hex=0005776964746800409e000000000000
+enc_prop len=16 hex=0005776964746800409e000000000000
+enc_prop len=16 hex=0005776964746800409e000000000000
+enc_prop len=16 hex=0005776964746800409e000000000000
+echo sweep-null-property-and-empty-containers
+enc_prop null
+enc_prop null
+enc_prop len=1 hex=05
+enc_prop len=1 hex=05
+enc_prop len=1 hex=05
+enc_obj null
+enc_obj null
+enc_obj len=4 hex=03000009
+enc_obj len=4 hex=03000009
+enc_obj len=4 hex=03000009
+enc_obj len=4 hex=03000009
+enc_obj len=4 hex=03000009
+enc_obj len=4 hex=03000009
+enc_obj null
+enc_obj null
+enc_obj null
+enc_obj null
+enc_obj null
+enc_obj null
+enc_obj len=8 hex=0800000000000009
+enc_obj len=8 hex=0800000000000009
+enc_obj null
+enc_obj null
+enc_obj len=5 hex=0a00000000
+enc_obj len=5 hex=0a00000000
+enc_obj len=5 hex=0a00000000
+enc_obj len=5 hex=0a00000000
+enc_obj len=5 hex=0a00000000
+enc_obj len=5 hex=0a00000000

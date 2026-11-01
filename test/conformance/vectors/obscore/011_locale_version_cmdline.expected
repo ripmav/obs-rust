@@ -1,0 +1,13 @@
+version major=33 minor=0 patch=1 string_nonempty=1
+cmdline argc=0 argv=NULL terminator=n/a
+cmdline argc=3 argv=prog,--flag,value terminator=NULL
+cmdline argc=3 argv=prog,--flag,value terminator=NULL
+log debug canvas 'Main' (<uuid>) created
+startup -> true
+locale -> fr-FR
+locale -> NULL
+shutdown begin
+log info Freeing OBS context data
+log debug canvas 'Main' (<uuid>) destroyed
+shutdown end obs=NULL
+cmdline_argc -> 3

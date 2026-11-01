@@ -1,0 +1,15 @@
+# obs_source_output_audio timestamp handling: direct (near-clock) timestamps, contiguous push_back, small gap smoothing, 3 s jump.
+init 48000 2
+clock 1000000000
+timeline 1000000000
+source a input
+output a 48000 2 480 1000000000 const 0.1
+state a
+output a 48000 2 480 1010000000 const 0.1
+state a
+# 30 ms late: below the 70 ms smoothing threshold, so the stored ts is corrected to the expected one
+output a 48000 2 480 1050000000 const 0.1
+state a
+# 150 ms gap: above the threshold, data is placed at its own timestamp (zero filled gap)
+output a 48000 2 480 1180000000 const 0.1
+state a

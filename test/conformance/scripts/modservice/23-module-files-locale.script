@@ -1,0 +1,64 @@
+# S-035 module data files, config paths and locale lookup.
+mkmod plain @TMP/m/plain.so
+mkmod getstr @TMP/m/getstr.so getstr
+mkmod loc @TMP/m/loc.so loc
+write @TMP/data/loc/locale/en-US.ini "Hello=\"Hello\"\nBye=\"Goodbye\"\nOnlyEn=\"only english\"\n"
+write @TMP/data/loc/locale/de-DE.ini "Hello=\"Hallo\"\nBye=\"Tschuess\"\n"
+write @TMP/data/loc/locale/fr-FR.ini "Hello=\"Bonjour\"\n"
+write @TMP/data/loc/res/a.txt "a"
+mkdir @TMP/data/empty
+core de-DE @TMP/cfg
+# --- the module's default locale handler (OBS_MODULE_USE_DEFAULT_LOCALE) runs at open with the core locale
+open_module Loc @TMP/m/loc.so @TMP/data/loc
+locale_string Loc Hello
+locale_string Loc Bye
+locale_string Loc OnlyEn
+locale_string Loc Missing
+locale_text Loc Hello
+locale_text Loc Missing
+# --- modules without obs_module_get_string: never translated, text returned unchanged
+open_module Plain @TMP/m/plain.so @TMP/data/empty
+locale_string Plain Hello
+locale_text Plain Hello
+open_module Gs @TMP/m/getstr.so @TMP/data/empty
+locale_string Gs a
+locale_string Gs b
+locale_text Gs a
+locale_text Gs b
+# --- obs_find_module_file
+find_file Loc res/a.txt
+find_file Loc res/missing.txt
+find_file Loc locale
+find_file Loc -
+find_file Loc ""
+open_module Slash @TMP/m/plain.so @TMP/data/loc/
+find_file Slash res/a.txt
+find_file Slash -
+open_module NoData @TMP/m/plain.so -
+find_file NoData ms-no-such-file-here
+# --- obs_module_get_config_path: core config dir + "/" + module name + "/" + file (no existence check)
+config_path Loc settings.json
+config_path Loc ""
+core de-DE @TMP/cfg/
+config_path Loc a/b.json
+core de-DE ""
+config_path Loc c.json
+core de-DE -
+config_path Loc d.json
+# --- obs_module_load_locale directly: default locale file must exist; the requested locale is merged on top
+load_locale L1 Loc en-US de-DE
+lk L1 Hello
+lk L1 OnlyEn
+lk L1 Nope
+load_locale L2 Loc en-US EN-us
+lk L2 Hello
+load_locale L3 Loc en-US fr-FR
+lk L3 Hello
+lk L3 Bye
+load_locale L4 Loc en-US xx-XX
+lk L4 Hello
+load_locale L5 Loc xx-XX de-DE
+load_locale L6 Plain en-US de-DE
+load_locale L7 - en-US de-DE
+load_locale L8 Loc - de-DE
+load_locale L9 Loc en-US -

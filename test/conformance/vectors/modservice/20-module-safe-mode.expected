@@ -1,0 +1,24 @@
+mkmod s1 ok
+mkmod s2 ok
+mkmod s3 ok
+safe=1
+safe=1
+safe=2
+disabled=1
+log warning Skipping module 's1', not on safe list
+log debug ---------------------------------
+ev mod s2 ctor
+log debug Loading module: s2.so
+ev mod s2 set_pointer
+ev mod s2 load
+log warning Skipping module 's3', is disabled
+load_plugins -> count=0 failed
+enabled s2
+disabled s3 s1
+mod_info s1 file=s1.so name=(null) author=(null) desc=(null) bin=@TMP/sf/bin/s1.so data=@TMP/sf/data/s1 id=(null) ver=(null) lib=null core=0 legacy=0 state=disabled_safe loaded=0 mtype=0
+mod_info s3 file=s3.so name=(null) author=(null) desc=(null) bin=@TMP/sf/bin/s3.so data=@TMP/sf/data/s3 id=(null) ver=(null) lib=null core=0 legacy=0 state=disabled loaded=0 mtype=0
+mod_info s2 file=s2.so name=(null) author=(null) desc=(null) bin=@TMP/sf/bin/s2.so data=@TMP/sf/data/s2 id=(null) ver=(null) lib=set core=0 legacy=0 state=enabled loaded=1 mtype=2
+mkmod c1 ok
+log warning Skipping module 'c1', not on safe list
+load_plugins -> count=0 failed
+mod_info c1 file=c1.so name=(null) author=(null) desc=(null) bin=@TMP/sf2/bin/c1.so data=@TMP/sf2/data/c1 id=(null) ver=(null) lib=null core=0 legacy=0 state=disabled_safe loaded=0 mtype=0

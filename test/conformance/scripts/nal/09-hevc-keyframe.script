@@ -1,0 +1,56 @@
+# S-012 CORE: obs_hevc_keyframe on access units.
+buf vps 40010c01ffff0160000003009000000300
+buf sps 420101016000000300900000030000
+buf pps 4401c172b46240
+buf aud 460150
+buf sei_p 4e0105010203
+buf sei_s 5001050102
+buf idr 2601af0630
+buf idr_n 2801af
+buf cra 2a01af
+buf trail_r 0201d0aa
+buf trail_n 0001d0aa
+buf rasl 1001d0
+buf rsv24 3001aa
+echo idr-access-unit
+cat au 00000001 @aud 00000001 @vps 00000001 @sps 00000001 @pps 00000001 @sei_p 00000001 @idr
+hevc_keyframe @au
+echo non-idr
+cat au 00000001 @aud 00000001 @sei_p 00000001 @trail_r
+hevc_keyframe @au
+cat au 00000001 @trail_n 00000001 @idr
+hevc_keyframe @au
+cat au 00000001 @idr 00000001 @trail_n
+hevc_keyframe @au
+echo other-irap-types
+cat au 00000001 @cra
+hevc_keyframe @au
+cat au 000001 @idr_n
+hevc_keyframe @au
+echo reserved-vcl-24-and-up-are-skipped
+cat au 00000001 @rsv24 00000001 @idr
+hevc_keyframe @au
+cat au 00000001 @rsv24 00000001 @trail_r
+hevc_keyframe @au
+cat au 00000001 @rsv24
+hevc_keyframe @au
+echo suffix-sei-and-parameter-sets-are-skipped
+cat au 00000001 @sei_s 00000001 @vps 00000001 @sps 00000001 @pps
+hevc_keyframe @au
+echo second-header-byte-is-ignored
+hevc_keyframe 00000126ff
+hevc_keyframe 00000126ffaa
+hevc_keyframe 0000012600
+hevc_keyframe 000001260000
+echo forbidden-zero-bit-is-ignored
+hevc_keyframe 000001a601aa
+hevc_keyframe 0000018201aa
+echo one-byte-nal
+hevc_keyframe 0000000126aa
+hevc_keyframe 000000012600000001
+echo empty-and-garbage
+hevc_keyframe -
+hevc_keyframe 2601aa
+hevc_keyframe 000001
+hevc_keyframe 00000126
+hevc_keyframe ffff0000012601aa

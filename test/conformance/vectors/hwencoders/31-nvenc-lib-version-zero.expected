@@ -1,0 +1,4 @@
+> maxver 0
+> initnv
+host.set_last_error "Missing NvEncodeAPIGetMaxSupportedVersion, check your video card drivers are up to date."
+init_nvenc -> 0

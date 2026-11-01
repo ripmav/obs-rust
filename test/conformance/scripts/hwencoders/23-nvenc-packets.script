@@ -1,0 +1,50 @@
+# S-050 nvenc: nvenc_encode_base + get_encoded_packet. The runner pushes the pts into dts_list
+# exactly like the cuda/d3d11/opengl encode functions do, the fake SDK returns scripted pictures
+# (lockpic <type> <timestamp> <size>). Picture types: P=0 B=1 I=2 IDR=3 BI=4 NONREF_P=7 SWITCH=8.
+# A packet is fetched as soon as buffers_queued >= output_delay (3 with bf=0 -> buf_count 4), i.e.
+# at the 3rd submission; the first packet also captures the sequence header (extra data).
+dump 0
+nvcap dyn_bitrate 1
+defaults h264
+set int bf 0
+create h264 soft
+header 000000016742c01e
+# two submissions: nothing comes out
+encode 0
+encode 1
+# a lock failure (nothing scripted in the fake) is reported as failure; the buffer stays queued
+encode 2
+lockpic 3 0 40
+encode 3
+extra
+state
+lockpic 0 1 20
+encode 4
+lockpic 1 2 10
+encode 5
+lockpic 7 3 8
+encode 6
+lockpic 2 4 9
+encode 7
+lockpic 4 5 6
+encode 8
+lockpic 8 6 5
+encode 9
+lockpic 255 7 4
+encode 10
+# SDK says "need more input": counts as queued, not an error
+nvstatus encode NV_ENC_ERR_NEED_MORE_INPUT
+lockpic 0 8 3
+encode 11
+nvstatus encode NV_ENC_SUCCESS
+# a failing encode call
+nvstatus encode NV_ENC_ERR_GENERIC
+encode 12
+nvstatus encode NV_ENC_SUCCESS
+state
+# flush on destroy: EOS picture, then every queued buffer is locked
+lockpic 0 9 2
+lockpic 0 10 2
+lockpic 0 11 2
+lockpic 0 12 2
+destroy

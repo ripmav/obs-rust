@@ -1,0 +1,117 @@
+> dump 0
+> nvcap dyn_bitrate 1
+> nvcap 10bit 1
+> host tex_nv12 1
+> defaults hevc
+> set int bf 0
+> create hevc tex
+log info [obs-nvenc: 'enc'] settings: 	codec:        HEVC 	rate_control: cbr 	bitrate:      10000 	keyint:       250 	preset:       p5 	tuning:       hq 	multipass:    qres 	profile:      main 	width:        1920 	height:       1080 	b-frames:     0 	b-ref-mode:   0 	lookahead:    false (0 frames) 	aq:           true 
+nv.InitializeEncoder
+create -> ok
+> encodes 0 0
+nv.EncodePicture ts=0 frameIdx=0 in=1920x1080 pitch=1920 fmt=NV12
+submitted 1 frames
+> destroy
+nv.EncodePicture EOS
+fake: lockpic queue empty
+host.set_last_error "NVENC Error: get_encoded_packet: nv.nvEncLockBitstream(s, &lock) failed: 20 (NV_ENC_ERR_GENERIC)"
+log error [obs-nvenc] get_encoded_packet: nv.nvEncLockBitstream(s, &lock) failed: 20 (NV_ENC_ERR_GENERIC)
+nv.DestroyEncoder
+destroyed
+> host tex_nv12 0
+> host tex_p010 1
+> host format p010
+> create hevc tex
+log info [obs-nvenc: 'enc'] settings: 	codec:        HEVC 	rate_control: cbr 	bitrate:      10000 	keyint:       250 	preset:       p5 	tuning:       hq 	multipass:    qres 	profile:      main 	width:        1920 	height:       1080 	b-frames:     0 	b-ref-mode:   0 	lookahead:    false (0 frames) 	aq:           true 
+log warning [obs-nvenc: 'enc'] Forcing main10 for P010
+nv.InitializeEncoder
+create -> ok
+> encodes 0 0
+nv.EncodePicture ts=0 frameIdx=0 in=1920x1080 pitch=1920 fmt=YUV420_10BIT
+submitted 1 frames
+> destroy
+nv.EncodePicture EOS
+fake: lockpic queue empty
+host.set_last_error "NVENC Error: get_encoded_packet: nv.nvEncLockBitstream(s, &lock) failed: 20 (NV_ENC_ERR_GENERIC)"
+log error [obs-nvenc] get_encoded_packet: nv.nvEncLockBitstream(s, &lock) failed: 20 (NV_ENC_ERR_GENERIC)
+nv.DestroyEncoder
+destroyed
+> host colorspace pq
+> host hdr_peak 600
+> create hevc tex
+log info [obs-nvenc: 'enc'] settings: 	codec:        HEVC 	rate_control: cbr 	bitrate:      10000 	keyint:       250 	preset:       p5 	tuning:       hq 	multipass:    qres 	profile:      main 	width:        1920 	height:       1080 	b-frames:     0 	b-ref-mode:   0 	lookahead:    false (0 frames) 	aq:           true 
+log warning [obs-nvenc: 'enc'] Forcing main10 for P010
+nv.InitializeEncoder
+create -> ok
+> state
+state: codec=HEVC cx=1920 cy=1080 in_format=18 buf_count=4 output_delay=3 can_change_bitrate=1 non_texture=0 queued=0 header_size=0 bitstreams=4 hdr_mdi=1 hdr_cll=1
+state: mdi r=13250,34500 g=7500,3000 b=34000,16000 white=15635,16450 maxLuma=6000000 minLuma=0 cll=600/600
+state: props rate_control=cbr preset=p5 tune=hq multipass=qres profile=main bf=0 aq=1
+> encodes 0 0
+nv.EncodePicture ts=0 frameIdx=0 in=1920x1080 pitch=1920 fmt=YUV420_10BIT cll=600/600 mdi=r13250,34500 g7500,3000 b34000,16000 w15635,16450 luma6000000,0
+submitted 1 frames
+> destroy
+nv.EncodePicture EOS
+fake: lockpic queue empty
+host.set_last_error "NVENC Error: get_encoded_packet: nv.nvEncLockBitstream(s, &lock) failed: 20 (NV_ENC_ERR_GENERIC)"
+log error [obs-nvenc] get_encoded_packet: nv.nvEncLockBitstream(s, &lock) failed: 20 (NV_ENC_ERR_GENERIC)
+nv.DestroyEncoder
+destroyed
+> host colorspace hlg
+> host hdr_peak 600
+> create hevc tex
+log info [obs-nvenc: 'enc'] settings: 	codec:        HEVC 	rate_control: cbr 	bitrate:      10000 	keyint:       250 	preset:       p5 	tuning:       hq 	multipass:    qres 	profile:      main 	width:        1920 	height:       1080 	b-frames:     0 	b-ref-mode:   0 	lookahead:    false (0 frames) 	aq:           true 
+log warning [obs-nvenc: 'enc'] Forcing main10 for P010
+nv.InitializeEncoder
+create -> ok
+> state
+state: codec=HEVC cx=1920 cy=1080 in_format=18 buf_count=4 output_delay=3 can_change_bitrate=1 non_texture=0 queued=0 header_size=0 bitstreams=4 hdr_mdi=1 hdr_cll=1
+state: mdi r=13250,34500 g=7500,3000 b=34000,16000 white=15635,16450 maxLuma=10000000 minLuma=0 cll=1000/1000
+state: props rate_control=cbr preset=p5 tune=hq multipass=qres profile=main bf=0 aq=1
+> encodes 0 0
+nv.EncodePicture ts=0 frameIdx=0 in=1920x1080 pitch=1920 fmt=YUV420_10BIT cll=1000/1000 mdi=r13250,34500 g7500,3000 b34000,16000 w15635,16450 luma10000000,0
+submitted 1 frames
+> destroy
+nv.EncodePicture EOS
+fake: lockpic queue empty
+host.set_last_error "NVENC Error: get_encoded_packet: nv.nvEncLockBitstream(s, &lock) failed: 20 (NV_ENC_ERR_GENERIC)"
+log error [obs-nvenc] get_encoded_packet: nv.nvEncLockBitstream(s, &lock) failed: 20 (NV_ENC_ERR_GENERIC)
+nv.DestroyEncoder
+destroyed
+> defaults av1
+> set int bf 0
+> create av1 tex
+log info [obs-nvenc: 'enc'] settings: 	codec:        AV1 	rate_control: cbr 	bitrate:      10000 	keyint:       250 	preset:       p5 	tuning:       hq 	multipass:    qres 	profile:      main 	width:        1920 	height:       1080 	b-frames:     0 	b-ref-mode:   0 	lookahead:    false (0 frames) 	aq:           true 
+nv.InitializeEncoder
+create -> ok
+> encodes 0 0
+nv.EncodePicture ts=0 frameIdx=0 in=1920x1080 pitch=1920 fmt=YUV420_10BIT cll=1000/1000 mdi=r13250,34500 g7500,3000 b34000,16000 w15635,16450 luma10000000,0
+submitted 1 frames
+> destroy
+nv.EncodePicture EOS
+fake: lockpic queue empty
+host.set_last_error "NVENC Error: get_encoded_packet: nv.nvEncLockBitstream(s, &lock) failed: 20 (NV_ENC_ERR_GENERIC)"
+log error [obs-nvenc] get_encoded_packet: nv.nvEncLockBitstream(s, &lock) failed: 20 (NV_ENC_ERR_GENERIC)
+nv.DestroyEncoder
+destroyed
+> defaults h264
+> set int bf 0
+> create h264 tex
+log info [obs-nvenc: 'enc'] settings: 	codec:        H264 	rate_control: cbr 	bitrate:      10000 	keyint:       250 	preset:       p5 	tuning:       hq 	multipass:    qres 	profile:      high 	width:        1920 	height:       1080 	b-frames:     0 	b-ref-mode:   0 	lookahead:    false (0 frames) 	aq:           true 
+log warning [obs-nvenc: 'enc'] Forcing high10 for P010
+nv.InitializeEncoder
+create -> ok
+> state
+state: codec=H264 cx=1920 cy=1080 in_format=18 buf_count=4 output_delay=3 can_change_bitrate=1 non_texture=0 queued=0 header_size=0 bitstreams=4 hdr_mdi=1 hdr_cll=1
+state: mdi r=13250,34500 g=7500,3000 b=34000,16000 white=15635,16450 maxLuma=10000000 minLuma=0 cll=1000/1000
+state: props rate_control=cbr preset=p5 tune=hq multipass=qres profile=high bf=0 aq=1
+> encodes 0 0
+nv.EncodePicture ts=0 frameIdx=0 in=1920x1080 pitch=1920 fmt=YUV420_10BIT
+submitted 1 frames
+> destroy
+nv.EncodePicture EOS
+fake: lockpic queue empty
+host.set_last_error "NVENC Error: get_encoded_packet: nv.nvEncLockBitstream(s, &lock) failed: 20 (NV_ENC_ERR_GENERIC)"
+log error [obs-nvenc] get_encoded_packet: nv.nvEncLockBitstream(s, &lock) failed: 20 (NV_ENC_ERR_GENERIC)
+nv.DestroyEncoder
+destroyed

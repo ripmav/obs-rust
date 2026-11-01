@@ -1,0 +1,57 @@
+# get_frames / get_duration / get_current_time.
+#  frames: the stream's frame count when positive, else ceil(duration_seconds * avg_fps) (0/0 fps -> NaN cast:
+#  see spec), 0 when there is no video stream (logged), 0 when there is no format context.
+#  duration: the container duration in microseconds (AV_NOPTS_VALUE passes through).
+#  current_time: (largest of the decoders' next_pts) * speed / 1e8  (milliseconds at speed 100).
+media q1 2500000 0
+video 1 1000 8 4 yuv420p frames=60
+pkt 0 0 fdur=40
+endmedia
+media q2 2500000 0
+video 1 1000 8 4 yuv420p fps=30/1
+pkt 0 0 fdur=40
+endmedia
+media q3 2400000 0
+video 1 1000 8 4 yuv420p fps=30000/1001
+pkt 0 0 fdur=40
+endmedia
+media q4 1000000 0
+audio 1 48000 48000 2 s16
+pkt 0 0 samples=480
+endmedia
+media q5 none 0
+video 1 1000 8 4 yuv420p fps=25/1
+pkt 0 0 fdur=40
+endmedia
+clock 1000
+echo nb_frames known
+minit q1 local=1
+mframes
+mduration
+mfree
+echo estimate from duration and fps: 2.5 s * 30 = 75
+minit q2 local=1
+mframes
+mfree
+echo ceil(2.4 * 29.97) = 72
+minit q3 local=1
+mframes
+mfree
+echo audio only: no video stream
+minit q4 local=1
+mframes
+mduration
+mfree
+echo unknown duration: AV_NOPTS_VALUE passes through; frames use that raw value too
+minit q5 local=1
+mduration
+mframes
+mfree
+echo current time in ms after some playback (next_pts of the pending frame)
+minit q1 local=1 speed=100
+mreset
+mtime
+mplay 0
+mtickw 0 0
+mtick 1
+mtime

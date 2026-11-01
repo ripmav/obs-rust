@@ -1,0 +1,99 @@
+> events off
+> reset
+> ascii 5 8 0 8 384
+> glyph 0x67 0x67 5 12 0 8 384
+> font Sans Serif - 0 p/sans
+> load
+load -> 1
+registered id=text_ft2_source version=0
+registered id=text_ft2_source version=2
+> create s 2
+create s -> 1
+> setfont s Sans Serif - 20 0
+> set s text ab
+> update s
+update done
+> verts s
+verts num=12 quads=2
+quad 0 pos=0,4..5,12 uv=0,0..0.00244140625,0.00390625 col=ffffffff,ffffffff,ffffffff,ffffffff,ffffffff,ffffffff
+quad 1 pos=6,4..11,12 uv=0.0029296875,0..0.00537109375,0.00390625 col=ffffffff,ffffffff,ffffffff,ffffffff,ffffffff,ffffffff
+> size s
+size s 12x12
+> echo --- a tall glyph (g: h=12, top=8) enlarges cy below the baseline
+--- a tall glyph (g: h=12, top=8) enlarges cy below the baseline
+> set s text agb
+> update s
+update done
+> verts s
+verts num=18 quads=3
+quad 0 pos=0,4..5,12 uv=0,0..0.00244140625,0.00390625 col=ffffffff,ffffffff,ffffffff,ffffffff,ffffffff,ffffffff
+quad 1 pos=6,4..11,16 uv=0.017578125,0..0.0200195312,0.005859375 col=ffffffff,ffffffff,ffffffff,ffffffff,ffffffff,ffffffff
+quad 2 pos=12,4..17,12 uv=0.0029296875,0..0.00537109375,0.00390625 col=ffffffff,ffffffff,ffffffff,ffffffff,ffffffff,ffffffff
+> size s
+size s 18x16
+> echo --- newline: x back to 0, y + (max_h + 4)
+--- newline: x back to 0, y + (max_h + 4)
+> set s text ab
+cg
+> update s
+update done
+> verts s
+verts num=30 quads=5
+quad 0 pos=0,4..5,12 uv=0,0..0.00244140625,0.00390625 col=ffffffff,ffffffff,ffffffff,ffffffff,ffffffff,ffffffff
+quad 1 pos=6,4..11,12 uv=0.0029296875,0..0.00537109375,0.00390625 col=ffffffff,ffffffff,ffffffff,ffffffff,ffffffff,ffffffff
+quad 2 pos=0,20..5,28 uv=0.005859375,0..0.00830078125,0.00390625 col=ffffffff,ffffffff,ffffffff,ffffffff,ffffffff,ffffffff
+quad 3 pos=6,20..11,32 uv=0.017578125,0..0.0200195312,0.005859375 col=ffffffff,ffffffff,ffffffff,ffffffff,ffffffff,ffffffff
+quad 4 pos=0,0..0,0 uv=0,0..0,0 col=00000000,00000000,00000000,00000000,00000000,00000000
+> size s
+size s 12x32
+> echo --- CRLF: the CR produces no quad but is part of the allocated count
+--- CRLF: the CR produces no quad but is part of the allocated count
+> set s text a
+b
+> update s
+update done
+> verts s
+verts num=24 quads=4
+quad 0 pos=0,4..5,12 uv=0,0..0.00244140625,0.00390625 col=ffffffff,ffffffff,ffffffff,ffffffff,ffffffff,ffffffff
+quad 1 pos=0,20..5,28 uv=0.0029296875,0..0.00537109375,0.00390625 col=ffffffff,ffffffff,ffffffff,ffffffff,ffffffff,ffffffff
+quad 2 pos=0,0..0,0 uv=0,0..0,0 col=00000000,00000000,00000000,00000000,00000000,00000000
+quad 3 pos=0,0..0,0 uv=0,0..0,0 col=00000000,00000000,00000000,00000000,00000000,00000000
+> echo --- consecutive and leading newlines each add a line; a trailing newline adds none to cy
+--- consecutive and leading newlines each add a line; a trailing newline adds none to cy
+> set s text 
+
+a
+
+> update s
+update done
+> verts s
+verts num=24 quads=4
+quad 0 pos=0,36..5,44 uv=0,0..0.00244140625,0.00390625 col=ffffffff,ffffffff,ffffffff,ffffffff,ffffffff,ffffffff
+quad 1 pos=0,0..0,0 uv=0,0..0,0 col=00000000,00000000,00000000,00000000,00000000,00000000
+quad 2 pos=0,0..0,0 uv=0,0..0,0 col=00000000,00000000,00000000,00000000,00000000,00000000
+quad 3 pos=0,0..0,0 uv=0,0..0,0 col=00000000,00000000,00000000,00000000,00000000,00000000
+> size s
+size s 6x44
+> echo --- unmapped character draws glyph 0
+--- unmapped character draws glyph 0
+> set s text aéb
+> update s
+update done
+> verts s
+verts num=18 quads=3
+quad 0 pos=0,4..5,12 uv=0,0..0.00244140625,0.00390625 col=ffffffff,ffffffff,ffffffff,ffffffff,ffffffff,ffffffff
+quad 1 pos=7,2..13,12 uv=0.270019531,0..0.272949219,0.0048828125 col=ffffffff,ffffffff,ffffffff,ffffffff,ffffffff,ffffffff
+quad 2 pos=14,4..19,12 uv=0.0029296875,0..0.00537109375,0.00390625 col=ffffffff,ffffffff,ffffffff,ffffffff,ffffffff,ffffffff
+> echo --- text of only newlines
+--- text of only newlines
+> set s text 
+
+
+> update s
+update done
+> verts s
+verts num=12 quads=2
+quad 0 pos=0,0..0,0 uv=0,0..0,0 col=00000000,00000000,00000000,00000000,00000000,00000000
+quad 1 pos=0,0..0,0 uv=0,0..0,0 col=00000000,00000000,00000000,00000000,00000000,00000000
+> size s
+size s 0x12

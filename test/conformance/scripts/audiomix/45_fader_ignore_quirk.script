@@ -1,0 +1,19 @@
+# QUIRK: obs_fader_set_db arms ignore_next_signal even when no source is attached; after attaching, the first
+# external volume change is then ignored (fader keeps its old dB, callbacks do not fire).
+init 48000 2
+clock 1000000000
+source a input
+fader_new 0 0
+fader_cb 0 add
+fader_set 0 db -6
+fader_attach 0 a
+fader_get 0
+set a volume 0.25
+fader_get 0
+set a volume 0.25
+fader_get 0
+# a handler on the source can rewrite the volume in the calldata; the fader sees the value after earlier handlers
+sig_halve a
+set a volume 0.8
+state a
+fader_get 0

@@ -1,0 +1,20 @@
+# Encode failure: the encoder logs an error, force-stops every output using it (stop signal, plugin stop),
+# sends encoded_packet(NULL) to each output and removes the connection.
+video 30 1 1280 720
+audio 48000
+venc v kf=2 fail_at=3
+aenc a frame_size=1024
+out o av,encoded autobegin=1
+set_venc o v
+set_aenc o a
+start o
+aframe 0 0 1024
+vframe 0
+aframe 0 21333333 1024
+vframe 33333333
+encstate v
+echo --- third video frame: the encoder fails
+vframe 66666666
+encstate v
+state o
+conns

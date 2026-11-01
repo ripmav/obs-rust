@@ -1,0 +1,21 @@
+# Deferred updates: while defer_update is >0 transform recomputation is suppressed; the matching end triggers one
+# recompute. Group-resize deferral flags a pending resize. Setters still store values immediately.
+source cam 1280 720
+scene main
+add main cam c
+defer_begin c
+pos c 100 100
+scale c 2 2
+print c
+force_update c
+print c
+defer_end c
+print c
+echo -- nested counters
+defer_begin c
+defer_begin c
+pos c 10 10
+defer_end c
+print c
+defer_end c
+print c

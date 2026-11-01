@@ -1,0 +1,25 @@
+# CORE. User options of obs-nvenc (opts text): integer options are parsed with strtol (base 10,
+# trailing garbage ignored, unparsable -> 0) and cast to the field type; bit-field options are
+# truncated to the field width (aqStrength 4 bits, all others 1 bit: only the low bit survives).
+# nv_apply CODEC DATA runs apply_user_args on a zeroed NV_ENC_CONFIG.
+data D
+set D opts str "averageBitRate=5000000 maxBitRate=6000000 vbvBufferSize=7000000 vbvInitialDelay=100"
+nv_apply h264 D
+echo uint8-and-int8-fields-wrap
+set D opts str "targetQuality=300 targetQualityLSB=-1 cbQPIndexOffset=200 crQPIndexOffset=-129"
+nv_apply h264 D
+echo bit-fields-truncate-to-width
+set D opts str "enableMinQP=3 enableMaxQP=2 enableInitialRCQP=1 enableAQ=0 enableLookahead=255 aqStrength=21 disableIadapt=1 disableBadapt=2 enableTemporalAQ=1"
+nv_apply h264 D
+echo non-numeric-and-trailing-garbage
+set D opts str "gopLength=abc frameIntervalP=3x averageBitRate=12.9 maxBitRate=0x10"
+nv_apply h264 D
+echo uint32-wrap-and-negative
+set D opts str "gopLength=-1 averageBitRate=4294967297 maxBitRate=99999999999999"
+nv_apply h264 D
+echo gop-and-b-frame-interval
+set D opts str "gopLength=250 frameIntervalP=-2"
+nv_apply h264 D
+echo strtol-saturates-at-LONG_MAX-and-LONG_MIN-on-64-bit-long
+set D opts str "gopLength=99999999999999999999999 frameIntervalP=-99999999999999999999999 maxBitRate=-99999999999999999999999"
+nv_apply h264 D

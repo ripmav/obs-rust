@@ -1,0 +1,53 @@
+add bool b ok
+add int i ok
+add list l ok
+add group g null
+add group g ok
+probe int: 0 0 0 scroller @null
+probe float: 0 0 0 scroller @null
+probe text: default 0 normal 1
+probe path: directory @null @null
+probe list: invalid invalid count=0 name0=@null str0=@null int0=0 float0=0 bool0=0 disabled0=0
+probe editable_list: strings @null @null
+probe frame_rate: options=0 ranges=0 name0=@null desc0=@null min0=0/0 max0=0/0
+probe group: invalid content=@null
+probe button: default ""
+probe int: 1 2 3 scroller @null
+probe float: 0 0 0 scroller @null
+probe text: default 0 normal 1
+probe path: directory @null @null
+probe list: invalid invalid count=0 name0=@null str0=@null int0=0 float0=0 bool0=0 disabled0=0
+probe editable_list: strings @null @null
+probe frame_rate: options=0 ranges=0 name0=@null desc0=@null min0=0/0 max0=0/0
+probe group: invalid content=@null
+probe button: default ""
+probe int: 0 0 0 scroller @null
+probe float: 0 0 0 scroller @null
+probe text: default 0 normal 1
+probe path: directory @null @null
+probe list: list string count=0 name0=@null str0=@null int0=0 float0=0 bool0=0 disabled0=0
+probe editable_list: strings @null @null
+probe frame_rate: options=0 ranges=0 name0=@null desc0=@null min0=0/0 max0=0/0
+probe group: invalid content=@null
+probe button: default ""
+probe int: 0 0 0 scroller @null
+probe float: 0 0 0 scroller @null
+probe text: default 0 normal 1
+probe path: directory @null @null
+probe list: invalid invalid count=0 name0=@null str0=@null int0=0 float0=0 bool0=0 disabled0=0
+probe editable_list: strings @null @null
+probe frame_rate: options=0 ranges=0 name0=@null desc0=@null min0=0/0 max0=0/0
+probe group: normal content=G
+probe button: default ""
+echo null-handle
+probe int: 0 0 0 scroller @null
+probe float: 0 0 0 scroller @null
+probe text: default 0 normal 1
+probe path: directory @null @null
+probe list: invalid invalid count=0 name0=@null str0=@null int0=0 float0=0 bool0=0 disabled0=0
+probe editable_list: strings @null @null
+probe frame_rate: options=0 ranges=0 name0=@null desc0=@null min0=0/0 max0=0/0
+probe group: invalid content=@null
+probe button: default ""
+info
+  prop @null

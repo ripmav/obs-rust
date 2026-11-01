@@ -1,0 +1,31 @@
+# S-038 text-freetype2: the plugin's own sources are #included unchanged by the runner; FreeType (shim headers in
+# gen/textft2_inc), fontconfig lookup and graphics are faked with scripted metrics. Real obs-data/properties/
+# missing-files/platform/utf8 code.
+test/conformance/gen/textft2_runner.c
+test/conformance/gen/textft2_stubs.c
+libobs/obs-data.c
+libobs/obs-properties.c
+libobs/obs-missing-files.c
+libobs/util/platform.c
+libobs/util/platform-nix.c
+libobs/graphics/vec2.c
+libobs/graphics/vec3.c
+libobs/graphics/vec4.c
+libobs/graphics/quat.c
+libobs/graphics/axisang.c
+libobs/graphics/matrix3.c
+libobs/graphics/matrix4.c
+libobs/graphics/plane.c
+libobs/graphics/math-extra.c
+libobs/util/utf8.c
+libobs/util/bmem.c
+libobs/util/base.c
+libobs/util/threading-posix.c
+libobs/util/dstr.c
+-Igen/textft2_inc
+-Iplugins/text-freetype2
+-ljansson
+-luuid
+-ldl
+-Wno-deprecated-declarations
+!nostubs

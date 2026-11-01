@@ -1,0 +1,12 @@
+# HEVC (codec "hevc"): SEI NAL units use a 3-byte start code and a 2-byte NAL header: the
+# first header byte is (40 << 1) | (bit 0 of the first header byte of the packet's first NAL),
+# the second byte is copied from the packet (CORE). The packet must begin with an Annex-B start
+# code of 3 or 4 bytes; otherwise the packet is left unchanged (but the counters advance).
+bpm_set codec hevc
+bpm_set rendered 10
+bpm_inject 0 0 1 1 1 1 0000000140010c01 1000000000 1010000000 1020000000 1030000000
+bpm_inject 0 0 2 2 1 1 000001400101 2000000000 2010000000 2020000000 2030000000
+bpm_inject 0 0 3 3 1 1 00000001410201 3000000000 3010000000 3020000000 3030000000
+bpm_inject 0 0 4 4 1 1 aabbccdd0102 4000000000 4010000000 4020000000 4030000000
+bpm_set rendered 20
+bpm_inject 0 0 5 5 1 1 0000000140010c01 5000000000 5010000000 5020000000 5030000000

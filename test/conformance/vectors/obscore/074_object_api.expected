@@ -1,0 +1,29 @@
+log debug canvas 'Main' (<uuid>) created
+startup -> true
+mk_source s name="Src" private=0 uuid=set
+mk_source sp name="Priv" private=1 uuid=set
+mk_output o name="Out" private=0 uuid=NULL
+mk_encoder e name="Enc" private=0 uuid=NULL
+mk_service v name="Svc" private=0 uuid=NULL
+log debug canvas 'Canvas' (<uuid>) created
+canvas_create c -> ok
+canvas c name="Canvas" flags=0x0 private=0 removed=0 has_video=0 video_active=0 uuid_len=36 view_type=aux
+obj_api s type=source id=my_source invalid=0 data=set private=0
+obj_api sp type=source id=my_source invalid=0 data=set private=1
+obj_api o type=output id=my_output invalid=0 data=set private=0
+obj_api e type=encoder id=my_encoder invalid=1 data=NULL private=0
+obj_api v type=service id=my_service invalid=0 data=set private=0
+obj_api c type=canvas id=NULL invalid=1 data=NULL private=0
+obj_api main type=canvas id=NULL invalid=1 data=NULL private=0
+obj_api null type=invalid id=NULL invalid=1 data=NULL private=0
+shutdown begin
+log info Freeing OBS context data
+log debug canvas 'Main' (<uuid>) destroyed
+log info  1 output(s) were remaining
+log info  1 encoder(s) were remaining
+log info  1 service(s) were remaining
+log info  1 source(s) were remaining
+log info  1 source(s) were remaining
+log debug canvas 'Canvas' (<uuid>) destroyed
+log info  1 canvas(s) were remaining
+shutdown end obs=NULL

@@ -1,0 +1,28 @@
+--- clean EOF
+exit 0
+probe: format=nut streams=1
+  stream 0: video h264 640x360 tb=1/51200 extradata=0164001fffe100046764001f01000468ce3c80
+  pkt stream=0 size=4 pts=0 dts=-9223372036854775808 key=1 first=a1a1a1a1
+  pkt stream=0 size=4 pts=2048 dts=-9223372036854775808 key=0 first=a2a2a2a2
+  packets=2
+--- 5 bytes of a third info structure
+exit 0
+probe: format=nut streams=1
+  stream 0: video h264 640x360 tb=1/51200 extradata=0164001fffe100046764001f01000468ce3c80
+  pkt stream=0 size=4 pts=0 dts=-9223372036854775808 key=1 first=a1a1a1a1
+  pkt stream=0 size=4 pts=2048 dts=-9223372036854775808 key=0 first=a2a2a2a2
+  packets=2
+--- complete third info announcing 10 bytes, only 3 present
+exit 0
+probe: format=nut streams=1
+  stream 0: video h264 640x360 tb=1/51200 extradata=0164001fffe100046764001f01000468ce3c80
+  pkt stream=0 size=4 pts=0 dts=-9223372036854775808 key=1 first=a1a1a1a1
+  packets=1
+--- a packet with no payload (size 0)
+exit 0
+probe: format=nut streams=1
+  stream 0: video h264 640x360 tb=1/51200 extradata=0164001fffe100046764001f01000468ce3c80
+  pkt stream=0 size=4 pts=0 dts=-9223372036854775808 key=1 first=a1a1a1a1
+  pkt stream=0 size=0 pts=2048 dts=-9223372036854775808 key=0 first=-
+  pkt stream=0 size=4 pts=4096 dts=-9223372036854775808 key=0 first=a3a3a3a3
+  packets=3

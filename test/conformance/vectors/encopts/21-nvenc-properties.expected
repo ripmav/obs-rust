@@ -1,0 +1,143 @@
+echo ====h264
+props P
+  rate_control list desc="RateControl" visible=1 enabled=1 combo=2 format=3 count=5
+    item 0 "CBR" = "CBR"
+    item 1 "CQP" = "CQP"
+    item 2 "VBR" = "VBR"
+    item 3 "CQVBR" = "CQVBR"
+    item 4 "Lossless" = "lossless"
+  bitrate int desc="Bitrate" visible=1 enabled=1 min=50 max=4294967 step=50 numtype=0 suffix=" Kbps"
+  target_quality int desc="TargetQuality" visible=1 enabled=1 min=1 max=51 step=1 numtype=0
+  max_bitrate int desc="MaxBitrate" visible=1 enabled=1 min=0 max=4294967 step=50 numtype=0 suffix=" Kbps"
+  cqp int desc="CQP" visible=1 enabled=1 min=1 max=51 step=1 numtype=0
+  keyint_sec int desc="KeyframeIntervalSec" visible=1 enabled=1 min=0 max=10 step=1 numtype=0 suffix=" s"
+  preset list desc="Preset" visible=1 enabled=1 combo=2 format=3 count=7
+    item 0 "Preset.p1" = "p1"
+    item 1 "Preset.p2" = "p2"
+    item 2 "Preset.p3" = "p3"
+    item 3 "Preset.p4" = "p4"
+    item 4 "Preset.p5" = "p5"
+    item 5 "Preset.p6" = "p6"
+    item 6 "Preset.p7" = "p7"
+  tune list desc="Tuning" visible=1 enabled=1 combo=2 format=3 count=4
+    item 0 "Tuning.uhq" = "uhq"
+    item 1 "Tuning.hq" = "hq"
+    item 2 "Tuning.ll" = "ll"
+    item 3 "Tuning.ull" = "ull"
+  multipass list desc="Multipass" visible=1 enabled=1 combo=2 format=3 count=3
+    item 0 "Multipass.disabled" = "disabled"
+    item 1 "Multipass.qres" = "qres"
+    item 2 "Multipass.fullres" = "fullres"
+  profile list desc="Profile" visible=1 enabled=1 combo=2 format=3 count=4
+    item 0 "high10" = "high10"
+    item 1 "high" = "high"
+    item 2 "main" = "main"
+    item 3 "baseline" = "baseline"
+  lookahead bool desc="LookAhead" visible=1 enabled=1 long="LookAhead.ToolTip"
+  adaptive_quantization bool desc="AdaptiveQuantization" visible=1 enabled=1 long="AdaptiveQuantization.ToolTip"
+  device int desc="GPU" visible=1 enabled=1 min=-1 max=2 step=1 numtype=0
+  bf int desc="BFrames" visible=1 enabled=1 min=0 max=4 step=1 numtype=0
+  opts text desc="Opts" visible=1 enabled=1 long="Opts.TT" texttype=0
+  repeat_headers bool desc="repeat_headers" visible=0 enabled=1
+  force_cuda_tex bool desc="force_cuda_tex" visible=0 enabled=1
+  disable_scenecut bool desc="disable_scenecut" visible=0 enabled=1
+end props P
+echo ====hevc
+props H
+  rate_control list desc="RateControl" visible=1 enabled=1 combo=2 format=3 count=5
+    item 0 "CBR" = "CBR"
+    item 1 "CQP" = "CQP"
+    item 2 "VBR" = "VBR"
+    item 3 "CQVBR" = "CQVBR"
+    item 4 "Lossless" = "lossless"
+  bitrate int desc="Bitrate" visible=1 enabled=1 min=50 max=4294967 step=50 numtype=0 suffix=" Kbps"
+  target_quality int desc="TargetQuality" visible=1 enabled=1 min=1 max=51 step=1 numtype=0
+  max_bitrate int desc="MaxBitrate" visible=1 enabled=1 min=0 max=4294967 step=50 numtype=0 suffix=" Kbps"
+  cqp int desc="CQP" visible=1 enabled=1 min=1 max=51 step=1 numtype=0
+  keyint_sec int desc="KeyframeIntervalSec" visible=1 enabled=1 min=0 max=10 step=1 numtype=0 suffix=" s"
+  preset list desc="Preset" visible=1 enabled=1 combo=2 format=3 count=7
+    item 0 "Preset.p1" = "p1"
+    item 1 "Preset.p2" = "p2"
+    item 2 "Preset.p3" = "p3"
+    item 3 "Preset.p4" = "p4"
+    item 4 "Preset.p5" = "p5"
+    item 5 "Preset.p6" = "p6"
+    item 6 "Preset.p7" = "p7"
+  tune list desc="Tuning" visible=1 enabled=1 combo=2 format=3 count=4
+    item 0 "Tuning.uhq" = "uhq"
+    item 1 "Tuning.hq" = "hq"
+    item 2 "Tuning.ll" = "ll"
+    item 3 "Tuning.ull" = "ull"
+  multipass list desc="Multipass" visible=1 enabled=1 combo=2 format=3 count=3
+    item 0 "Multipass.disabled" = "disabled"
+    item 1 "Multipass.qres" = "qres"
+    item 2 "Multipass.fullres" = "fullres"
+  profile list desc="Profile" visible=1 enabled=1 combo=2 format=3 count=2
+    item 0 "main10" = "main10"
+    item 1 "main" = "main"
+  lookahead bool desc="LookAhead" visible=1 enabled=1 long="LookAhead.ToolTip"
+  adaptive_quantization bool desc="AdaptiveQuantization" visible=1 enabled=1 long="AdaptiveQuantization.ToolTip"
+  device int desc="GPU" visible=1 enabled=1 min=-1 max=2 step=1 numtype=0
+  bf int desc="BFrames" visible=1 enabled=1 min=0 max=4 step=1 numtype=0
+  bframe_ref_mode list desc="BFrameRefMode" visible=1 enabled=1 combo=2 format=1 count=3
+    item 0 "BframeRefMode.Disabled" = 0
+    item 1 "BframeRefMode.Each" = 1
+    item 2 "BframeRefMode.Middle" = 2
+  split_encode list desc="SplitEncode" visible=1 enabled=1 combo=2 format=1 count=3
+    item 0 "SplitEncode.Auto" = 0
+    item 1 "SplitEncode.Disabled" = 15
+    item 2 "SplitEncode.Enabled" = 2
+  opts text desc="Opts" visible=1 enabled=1 long="Opts.TT" texttype=0
+  repeat_headers bool desc="repeat_headers" visible=0 enabled=1
+  force_cuda_tex bool desc="force_cuda_tex" visible=0 enabled=1
+  disable_scenecut bool desc="disable_scenecut" visible=0 enabled=1
+end props H
+echo ====av1
+props A
+  rate_control list desc="RateControl" visible=1 enabled=1 combo=2 format=3 count=5
+    item 0 "CBR" = "CBR"
+    item 1 "CQP" = "CQP"
+    item 2 "VBR" = "VBR"
+    item 3 "CQVBR" = "CQVBR"
+    item 4 "Lossless" = "lossless"
+  bitrate int desc="Bitrate" visible=1 enabled=1 min=50 max=4294967 step=50 numtype=0 suffix=" Kbps"
+  target_quality int desc="TargetQuality" visible=1 enabled=1 min=1 max=63 step=1 numtype=0
+  max_bitrate int desc="MaxBitrate" visible=1 enabled=1 min=0 max=4294967 step=50 numtype=0 suffix=" Kbps"
+  cqp int desc="CQP" visible=1 enabled=1 min=1 max=63 step=1 numtype=0
+  keyint_sec int desc="KeyframeIntervalSec" visible=1 enabled=1 min=0 max=10 step=1 numtype=0 suffix=" s"
+  preset list desc="Preset" visible=1 enabled=1 combo=2 format=3 count=7
+    item 0 "Preset.p1" = "p1"
+    item 1 "Preset.p2" = "p2"
+    item 2 "Preset.p3" = "p3"
+    item 3 "Preset.p4" = "p4"
+    item 4 "Preset.p5" = "p5"
+    item 5 "Preset.p6" = "p6"
+    item 6 "Preset.p7" = "p7"
+  tune list desc="Tuning" visible=1 enabled=1 combo=2 format=3 count=4
+    item 0 "Tuning.uhq" = "uhq"
+    item 1 "Tuning.hq" = "hq"
+    item 2 "Tuning.ll" = "ll"
+    item 3 "Tuning.ull" = "ull"
+  multipass list desc="Multipass" visible=1 enabled=1 combo=2 format=3 count=3
+    item 0 "Multipass.disabled" = "disabled"
+    item 1 "Multipass.qres" = "qres"
+    item 2 "Multipass.fullres" = "fullres"
+  profile list desc="Profile" visible=1 enabled=1 combo=2 format=3 count=1
+    item 0 "main" = "main"
+  lookahead bool desc="LookAhead" visible=1 enabled=1 long="LookAhead.ToolTip"
+  adaptive_quantization bool desc="AdaptiveQuantization" visible=1 enabled=1 long="AdaptiveQuantization.ToolTip"
+  device int desc="GPU" visible=1 enabled=1 min=-1 max=2 step=1 numtype=0
+  bf int desc="BFrames" visible=1 enabled=1 min=0 max=4 step=1 numtype=0
+  bframe_ref_mode list desc="BFrameRefMode" visible=1 enabled=1 combo=2 format=1 count=3
+    item 0 "BframeRefMode.Disabled" = 0
+    item 1 "BframeRefMode.Each" = 1
+    item 2 "BframeRefMode.Middle" = 2
+  split_encode list desc="SplitEncode" visible=1 enabled=1 combo=2 format=1 count=3
+    item 0 "SplitEncode.Auto" = 0
+    item 1 "SplitEncode.Disabled" = 15
+    item 2 "SplitEncode.Enabled" = 2
+  opts text desc="Opts" visible=1 enabled=1 long="Opts.TT" texttype=0
+  repeat_headers bool desc="repeat_headers" visible=0 enabled=1
+  force_cuda_tex bool desc="force_cuda_tex" visible=0 enabled=1
+  disable_scenecut bool desc="disable_scenecut" visible=0 enabled=1
+end props A

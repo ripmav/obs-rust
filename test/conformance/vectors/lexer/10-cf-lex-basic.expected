@@ -1,0 +1,77 @@
+lex true tokens=39 unexpected_eof=0
+reformatted "a1b _x __ 1.5.3 .5 0x1F 1e+5 1_a a.5 1.. 1+2 ==  ->  x\ty \t z"
+tokens lex 39
+tok 0 type=NAME str="a1b" src=0+3 @1:1
+tok 1 type=SPACETAB str=" " src=3+1 @1:4
+tok 2 type=NAME str="_x" src=4+2 @1:5
+tok 3 type=SPACETAB str=" " src=6+1 @1:7
+tok 4 type=NAME str="__" src=7+2 @1:8
+tok 5 type=SPACETAB str=" " src=9+1 @1:10
+tok 6 type=NUM str="1.5.3" src=10+5 @1:11
+tok 7 type=SPACETAB str=" " src=15+1 @1:16
+tok 8 type=NUM str=".5" src=16+2 @1:17
+tok 9 type=SPACETAB str=" " src=18+1 @1:19
+tok 10 type=NUM str="0x1F" src=19+4 @1:20
+tok 11 type=SPACETAB str=" " src=23+1 @1:24
+tok 12 type=NUM str="1e" src=24+2 @1:25
+tok 13 type=OTHER str="+" src=26+1 @1:27
+tok 14 type=NUM str="5" src=27+1 @1:28
+tok 15 type=SPACETAB str=" " src=28+1 @1:29
+tok 16 type=NUM str="1_a" src=29+3 @1:30
+tok 17 type=SPACETAB str=" " src=32+1 @1:33
+tok 18 type=NAME str="a" src=33+1 @1:34
+tok 19 type=NUM str=".5" src=34+2 @1:35
+tok 20 type=SPACETAB str=" " src=36+1 @1:37
+tok 21 type=NUM str="1.." src=37+3 @1:38
+tok 22 type=SPACETAB str=" " src=40+1 @1:41
+tok 23 type=NUM str="1" src=41+1 @1:42
+tok 24 type=OTHER str="+" src=42+1 @1:43
+tok 25 type=NUM str="2" src=43+1 @1:44
+tok 26 type=SPACETAB str=" " src=44+1 @1:45
+tok 27 type=OTHER str="=" src=45+1 @1:46
+tok 28 type=OTHER str="=" src=46+1 @1:47
+tok 29 type=SPACETAB str="  " src=47+2 @1:48
+tok 30 type=OTHER str="-" src=49+1 @1:50
+tok 31 type=OTHER str=">" src=50+1 @1:51
+tok 32 type=SPACETAB str="  " src=51+2 @1:52
+tok 33 type=NAME str="x" src=53+1 @1:54
+tok 34 type=SPACETAB str="\t" src=54+1 @1:55
+tok 35 type=NAME str="y" src=55+1 @1:56
+tok 36 type=SPACETAB str=" \t " src=56+3 @1:57
+tok 37 type=NAME str="z" src=59+1 @1:60
+tok 38 type=NONE str="" src=60+0 @1:61
+lex true tokens=18 unexpected_eof=0
+reformatted "a\tb \t c\r\nd\n\re\rf\x0bg\x0ch\n\n"
+tokens lex 18
+tok 0 type=NAME str="a" src=0+1 @1:1
+tok 1 type=SPACETAB str="\t" src=1+1 @1:2
+tok 2 type=NAME str="b" src=2+1 @1:3
+tok 3 type=SPACETAB str=" \t " src=3+3 @1:4
+tok 4 type=NAME str="c" src=6+1 @1:7
+tok 5 type=NEWLINE str="\r\n" src=7+2 @1:8
+tok 6 type=NAME str="d" src=9+1 @2:1
+tok 7 type=NEWLINE str="\n\r" src=10+2 @2:2
+tok 8 type=NAME str="e" src=12+1 @3:1
+tok 9 type=NEWLINE str="\r" src=13+1 @3:2
+tok 10 type=NAME str="f" src=14+1 @4:1
+tok 11 type=OTHER str="\x0b" src=15+1 @4:2
+tok 12 type=NAME str="g" src=16+1 @4:3
+tok 13 type=OTHER str="\x0c" src=17+1 @4:4
+tok 14 type=NAME str="h" src=18+1 @4:5
+tok 15 type=NEWLINE str="\n" src=19+1 @4:6
+tok 16 type=NEWLINE str="\n" src=20+1 @5:1
+tok 17 type=NONE str="" src=21+0 @6:1
+lex true tokens=11 unexpected_eof=0
+reformatted "\xc3\xa9 $ @ \\ `"
+tokens lex 11
+tok 0 type=OTHER str="\xc3" src=0+1 @1:1
+tok 1 type=OTHER str="\xa9" src=1+1 @1:2
+tok 2 type=SPACETAB str=" " src=2+1 @1:3
+tok 3 type=OTHER str="$" src=3+1 @1:4
+tok 4 type=SPACETAB str=" " src=4+1 @1:5
+tok 5 type=OTHER str="@" src=5+1 @1:6
+tok 6 type=SPACETAB str=" " src=6+1 @1:7
+tok 7 type=OTHER str="\\" src=7+1 @1:8
+tok 8 type=SPACETAB str=" " src=8+1 @1:9
+tok 9 type=OTHER str="`" src=9+1 @1:10
+tok 10 type=NONE str="" src=10+0 @1:11

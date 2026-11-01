@@ -1,0 +1,19 @@
+# Size-limited ring: while cur_size + new packet size > max_size, groups are purged (same rules, same guard).
+# max_size_mb is whole megabytes, so use big packets: 1 MB limit, 300000-byte packets.
+reset
+output rb
+venc h264 bitrate=2500 extra=0a0b
+set int max_size_mb 1
+create replay_buffer
+start
+pkt v pts=0 key=1 size=300000
+pkt v pts=1 key=1 size=300000
+pkt v pts=2 key=1 size=300000
+state_rb
+echo fourth_packet_exceeds_1MB_with_3_keyframes_queued_so_the_oldest_group_is_purged
+pkt v pts=3 key=0 size=300000
+queue
+state_rb
+pkt v pts=4 key=1 size=300000
+queue
+state_rb

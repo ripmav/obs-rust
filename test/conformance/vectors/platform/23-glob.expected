@@ -1,0 +1,111 @@
+mkdir g 0
+mkdir g/sub 0
+mkdir g/subdir 0
+glob g/* rc=0 count=11
+  "g/A1" f
+  "g/a.txt" f
+  "g/b.txt" f
+  "g/b1" f
+  "g/b10" f
+  "g/b2" f
+  "g/c.dat" f
+  "g/sp ace.txt" f
+  "g/star*.txt" f
+  "g/sub" d
+  "g/subdir" d
+glob g/*.txt rc=0 count=4
+  "g/a.txt" f
+  "g/b.txt" f
+  "g/sp ace.txt" f
+  "g/star*.txt" f
+glob g/?.txt rc=0 count=2
+  "g/a.txt" f
+  "g/b.txt" f
+glob g/[ab].txt rc=0 count=2
+  "g/a.txt" f
+  "g/b.txt" f
+glob g/[!a].txt rc=0 count=1
+  "g/b.txt" f
+glob g/[^a].txt rc=0 count=1
+  "g/b.txt" f
+glob g/[a-b]* rc=0 count=5
+  "g/a.txt" f
+  "g/b.txt" f
+  "g/b1" f
+  "g/b10" f
+  "g/b2" f
+glob g/b? rc=0 count=2
+  "g/b1" f
+  "g/b2" f
+glob g/b* rc=0 count=4
+  "g/b.txt" f
+  "g/b1" f
+  "g/b10" f
+  "g/b2" f
+glob g/*/inner.txt rc=0 count=1
+  "g/sub/inner.txt" f
+glob g/sub* rc=0 count=2
+  "g/sub" d
+  "g/subdir" d
+glob g/sub*/ rc=0 count=2
+  "g/sub/" d
+  "g/subdir/" d
+glob g/*/ rc=0 count=2
+  "g/sub/" d
+  "g/subdir/" d
+glob g/.* rc=0 count=3
+  "g/." d
+  "g/.." d
+  "g/.hid" f
+glob g/.h* rc=0 count=1
+  "g/.hid" f
+glob g/.hid rc=0 count=1
+  "g/.hid" f
+glob g/a.txt rc=0 count=1
+  "g/a.txt" f
+glob g/nothing rc=3 ptr=null
+glob g/*.nothing rc=3 ptr=null
+glob nodir/* rc=3 ptr=null
+glob g/star\*.txt rc=0 count=1
+  "g/star*.txt" f
+glob g/star[*].txt rc=0 count=1
+  "g/star*.txt" f
+glob g/sp*ce.txt rc=0 count=1
+  "g/sp ace.txt" f
+glob g/{a,b}.txt rc=3 ptr=null
+glob ~ rc=3 ptr=null
+glob  rc=3 ptr=null
+glob g/A* rc=0 count=1
+  "g/A1" f
+glob g/a* rc=0 count=1
+  "g/a.txt" f
+glob g/s* rc=0 count=4
+  "g/sp ace.txt" f
+  "g/star*.txt" f
+  "g/sub" d
+  "g/subdir" d
+symlink 1
+symlink 1
+symlink 1
+log debug "is_dir: stat for g/lnkdead failed, errno: 2"
+glob g/ln* rc=0 count=3
+  "g/lnk" f
+  "g/lnkdead" f
+  "g/lnkdir" d
+glob g rc=0 count=1
+  "g" d
+glob g/ rc=0 count=1
+  "g/" d
+glob . rc=0 count=1
+  "." d
+glob */*/* rc=0 count=2
+  "g/lnkdir/inner.txt" f
+  "g/sub/inner.txt" f
+glob */*.txt rc=0 count=4
+  "g/a.txt" f
+  "g/b.txt" f
+  "g/sp ace.txt" f
+  "g/star*.txt" f
+glob g/../g/a.* rc=0 count=1
+  "g/../g/a.txt" f
+globfree_null ok

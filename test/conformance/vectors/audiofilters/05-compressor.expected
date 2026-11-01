@@ -1,0 +1,82 @@
+create c -> ok
+state compressor channels=2 rate=48000 buf_len=480 ratio=10 threshold=-18 attack_gain=0.996533811 release_gain=0.999652863 output_gain=1 slope=0.899999976 envelope=0 sidechain_name=(null) weak=0 max_sc_frames=0 sc_queue0=0 check_time=0
+process c frames=16 ts=0 pos=0 in-crc: d4e78445 232fa2c5
+  ret same frames=16 ts=0
+  out p0 [0] 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5
+  out p1 [0] 0.25 0.25 0.25 0.25 0.25 0.25 0.25 0.25 0.25 0.25 0.25 0.25 0.25 0.25 0.25 0.25
+process c frames=16 ts=0 pos=16 in-crc: d4e78445 232fa2c5
+  ret same frames=16 ts=0
+  out p0 [0] 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5
+  out p1 [0] 0.25 0.25 0.25 0.25 0.25 0.25 0.25 0.25 0.25 0.25 0.25 0.25 0.25 0.25 0.25 0.25
+state compressor channels=2 rate=48000 buf_len=480 ratio=10 threshold=-18 attack_gain=0.996533811 release_gain=0.999652863 output_gain=1 slope=0.899999976 envelope=0.0525801778 sidechain_name=(null) weak=0 max_sc_frames=0 sc_queue0=0 check_time=0
+echo longer-block-shows-attack-then-gain-reduction
+process c frames=960 ts=0 pos=32 in-crc: ac43a3c5 4d73c9c5
+  ret same frames=960 ts=0
+  out p0 [0] 0.5 0.5 0.361489832 0.291174144 0.250713974 0.22466369 0.206678718 0.193662927 0.18392162 0.176447496 0.17060332 0.165966019 0.162243307 0.159227043 0.156764746 0.154742345
+  out p0 [768] 0.153072938 0.151689276 0.150538459 0.149578646
+process c frames=480 ts=0 pos=992 in-crc: 5e3b20c5 5c6e33c5
+  ret same frames=480 ts=0
+  out p0 [0] 0.148776188 0.148103997 0.147539973 0.147066057 0.146667436 0.146331772 0.146048903 0.145810351 0.145609096 0.145439163
+state compressor channels=2 rate=48000 buf_len=960 ratio=10 threshold=-18 attack_gain=0.996533811 release_gain=0.999652863 output_gain=1 slope=0.899999976 envelope=0.496985227 sidechain_name=(null) weak=0 max_sc_frames=0 sc_queue0=0 check_time=0
+echo ratio-1-and-silence-yield-nan-which-fmin-discards
+state compressor channels=2 rate=48000 buf_len=960 ratio=1 threshold=-18 attack_gain=0.996533811 release_gain=0.999652863 output_gain=1 slope=0 envelope=0.496985227 sidechain_name=(null) weak=0 max_sc_frames=0 sc_queue0=0 check_time=0
+process c frames=4 ts=0 pos=1472 in-crc: 69691905 69691905
+  ret same frames=4 ts=0
+  out p0 [0] 0 0 0 0
+  out p1 [0] 0 0 0 0
+process c frames=4 ts=0 pos=1476 in-crc: 542e8f65 ca1d0705
+  ret same frames=4 ts=0
+  out p0 [0] 0.5 0.5 0.5 0.5
+  out p1 [0] 0.25 0.25 0.25 0.25
+echo high-ratio-output-gain
+state compressor channels=2 rate=48000 buf_len=960 ratio=32 threshold=-40 attack_gain=0.979382157 release_gain=0.999979138 output_gain=1.99526238 slope=0.96875 envelope=0.496346563 sidechain_name=(null) weak=0 max_sc_frames=0 sc_queue0=0 check_time=0
+process c frames=8 ts=0 pos=1480 in-crc: c03f6a05 c03f6a05
+  ret same frames=8 ts=0
+  out p0 [0] 0.0445140451 0.0436653346 0.0428653732 0.0421102606 0.0413964614 0.0407208279 0.040080484 0.0394728668
+  out p1 [0] 0.0445140451 0.0436653346 0.0428653732 0.0421102606 0.0413964614 0.0407208279 0.040080484 0.0394728668
+echo ratio-0-makes-slope-negative-infinity
+state compressor channels=2 rate=48000 buf_len=960 ratio=0 threshold=-40 attack_gain=0.979382157 release_gain=0.999979138 output_gain=1.99526238 slope=-inf envelope=0.573666692 sidechain_name=(null) weak=0 max_sc_frames=0 sc_queue0=0 check_time=0
+process c frames=4 ts=0 pos=1488 in-crc: 542e8f65 542e8f65
+  ret same frames=4 ts=0
+  out p0 [0] 0.997631192 0.997631192 0.997631192 0.997631192
+  out p1 [0] 0.997631192 0.997631192 0.997631192 0.997631192
+echo ratio-below-1
+state compressor channels=2 rate=48000 buf_len=960 ratio=0.5 threshold=-40 attack_gain=0.979382157 release_gain=0.999979138 output_gain=1.99526238 slope=-1 envelope=0.573660493 sidechain_name=(null) weak=0 max_sc_frames=0 sc_queue0=0 check_time=0
+process c frames=4 ts=0 pos=1492 in-crc: 542e8f65 542e8f65
+  ret same frames=4 ts=0
+  out p0 [0] 0.997631192 0.997631192 0.997631192 0.997631192
+  out p1 [0] 0.997631192 0.997631192 0.997631192 0.997631192
+echo envelope-silence-at-start
+create c2 -> ok
+process c2 frames=4 ts=0 pos=0 in-crc: 69691905 69691905
+  ret same frames=4 ts=0
+  out p0 [0] 0 0 0 0
+  out p1 [0] 0 0 0 0
+state compressor channels=2 rate=48000 buf_len=480 ratio=10 threshold=-18 attack_gain=0.996533811 release_gain=0.999652863 output_gain=1 slope=0.899999976 envelope=0 sidechain_name=(null) weak=0 max_sc_frames=0 sc_queue0=0 check_time=0
+echo 6ch-and-null-planes
+create c3 -> ok
+process c3 frames=4 ts=0 pos=0 in-crc: 1c83aad5 - 1c83aad5 301a136d - 7c0a57fd
+  ret same frames=4 ts=0
+  out p0 [0] 0.899999976 0.899999976 0.899999976 0.899999976
+  out p2 [0] 0.899999976 0.899999976 0.899999976 0.899999976
+  out p3 [0] 0.100000001 0.100000001 0.100000001 0.100000001
+  out p5 [0] 0.200000003 0.200000003 0.200000003 0.200000003
+echo rate-44100
+create c4 -> ok
+state compressor channels=2 rate=44100 buf_len=441 ratio=10 threshold=-18 attack_gain=0.99622786 release_gain=0.999622166 output_gain=1 slope=0.899999976 envelope=0 sidechain_name=(null) weak=0 max_sc_frames=0 sc_queue0=0 check_time=0
+process c4 frames=32 ts=0 pos=0 in-crc: 4bb54f33 4bb54f33
+  ret same frames=32 ts=0
+  out p0 [0] 0 0.198510274 0.38460362 0.5466398 0.674483418 0.760137677 0.798244953 0.786421537
+echo nan-input
+process c4 frames=3 ts=0 pos=32 in-crc: a51f5f48 af970b48
+  ret same frames=3 ts=0
+  out p0 [0] nan nan nan
+  out p1 [0] 0.5 0.5 0.5
+process c4 frames=3 ts=0 pos=35 in-crc: af970b48 af970b48
+  ret same frames=3 ts=0
+  out p0 [0] 0.5 0.5 0.5
+  out p1 [0] 0.5 0.5 0.5
+echo zero-frames
+process c4 frames=0 ts=0 pos=38 in-crc: 811c9dc5 811c9dc5
+  ret same frames=0 ts=0
+state compressor channels=2 rate=44100 buf_len=441 ratio=10 threshold=-18 attack_gain=0.99622786 release_gain=0.999622166 output_gain=1 slope=0.899999976 envelope=0.0739703774 sidechain_name=(null) weak=0 max_sc_frames=0 sc_queue0=0 check_time=0

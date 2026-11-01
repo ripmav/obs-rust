@@ -1,0 +1,37 @@
+# S-049 v4l2: capture cards whose input reports STD (analog) or DV_TIMINGS (HDMI/SDI) capabilities.
+# V4L2_IN_CAP_DV_TIMINGS = 0x2, V4L2_IN_CAP_STD = 0x4. Resolution/framerate lists are then untouched.
+fake-dir video0
+dev /dev/video0
+dev-cap "Grabber" pci-1 0x85200001 0x05200001
+dev-input Composite 0x4
+dev-input HDMI 0x2
+dev-input Both 0x6
+dev-std PAL-B 0x1
+dev-std NTSC-M 0xb000
+dev-dv 1920 1080 148500000 88 44 148 4 5 36 0 0 0 0
+dev-dv 1920 1080 74250000 88 44 148 2 5 15 2 5 16 1
+dev-dv 1280 720 74250000 110 40 220 5 5 20 0 0 0 0
+dev-cur 0 640 480 YUYV 1280 1 30 0
+src-defaults
+set-str device_id /dev/video0
+src-create
+src-props
+modified device_id
+# STD input
+set-int input 0
+modified pixelformat
+props
+# DV input
+set-int input 1
+modified pixelformat
+props
+# both bits set
+set-int input 2
+modified pixelformat
+props
+# failing input-caps query: callback returns false and changes nothing; the opened device is NOT closed (defect D-4)
+trace on
+fail ENUMINPUT
+modified pixelformat
+unfail
+src-destroy

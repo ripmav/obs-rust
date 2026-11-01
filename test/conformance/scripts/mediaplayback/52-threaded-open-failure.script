@@ -1,0 +1,13 @@
+# Threaded: the file cannot be opened on the media thread -> the thread gives up and calls the stop callback;
+# create itself still succeeds (opening is asynchronous). Calls on the dead player must not crash.
+clock 1000000000
+t_create nothere local=1
+t_wait_stop 1
+t_query
+t_play 0
+t_pause 1
+t_seek 100
+t_stop
+t_preload
+t_destroy
+t_null

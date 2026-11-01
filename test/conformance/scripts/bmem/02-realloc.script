@@ -1,0 +1,23 @@
+# brealloc(NULL, n) behaves like bmalloc (and is counted); resizing keeps the
+# content and the alignment; the counter does not change when a block is moved.
+count
+realloc 0 16
+count
+aligned 0
+fill 0 16 0x5a
+realloc 0 64
+check 0 16 0x5a
+aligned 0
+count
+realloc 0 8
+check 0 8 0x5a
+aligned 0
+count
+realloc 0 100000
+check 0 8 0x5a
+aligned 0
+count
+free 0
+count
+free 7
+count

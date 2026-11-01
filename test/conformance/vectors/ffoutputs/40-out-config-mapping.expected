@@ -1,0 +1,110 @@
+> reset
+> output ff
+> size 1280 720
+> video_info 30 1 709 P NV12
+> mixers 5
+> set str url out.zzz
+> set str format_name nosuchfmt
+> set str format_mime_type video/zzz
+> set str muxer_settings a=b c=d
+> set int video_bitrate 4500
+> set int audio_bitrate 160
+> set str video_encoder libx
+> set int video_encoder_id 27
+> set str audio_encoder aac
+> set int audio_encoder_id 86018
+> set str video_settings crf=20 preset=slow
+> set str audio_settings q=1
+> set int scale_width 640
+> set int scale_height 360
+> names n0 n1 n2 n3
+> fo_create
+fo_create -> ok
+> fo_start
+fo_start -> 1 connecting=1
+> fo_connect
+cfg url=out.zzz format_name=nosuchfmt mime=video/zzz muxer_settings="a=b c=d"
+  gop=120 vbitrate=4500 abitrate=160 venc=libx venc_id=27 aenc=aac aenc_id=86018
+  vsettings="crf=20 preset=slow" asettings="q=1" mix_count=2 tracks=0x5
+  pix_fmt=nv12 range=1 pri=1 trc=1 cs=1
+  size=1280x720 scale=640x360
+  audio_name[0]=n0
+  audio_name[1]=n2
+log warning Couldn't find matching output format with parameters: name=nosuchfmt, url=out.zzz, mime=video/zzz
+log warning ffmpeg_data_init failed
+last_error "Couldn't find matching output format with parameters: name=nosuchfmt, url=out.zzz, mime=video/zzz"
+signal_stop CONNECT_FAILED
+fo_connect done connecting=0 active=0
+> fo_state
+fo_state active=0 connecting=0 stopping=0 write_thread_active=0 total_bytes_without_video=0
+  video_start_ts=0 audio_start_ts=0 stop_ts=0 queued=0 writes=0
+  initialized=0 has_video=0 audio_streams=0 tracks=0x0 frame_size=0 total_frames=0 start_timestamp=0
+  audio_format=0 audio_planes=0 audio_size=0 samplerate=0 last_error=""
+> settings
+settings
+  url str "out.zzz"
+  format_name str "nosuchfmt"
+  format_mime_type str "video/zzz"
+  muxer_settings str "a=b c=d"
+  video_bitrate int 4500
+  audio_bitrate int 160
+  video_encoder str "libx"
+  video_encoder_id int 27
+  audio_encoder str "aac"
+  audio_encoder_id int 86018
+  video_settings str "crf=20 preset=slow"
+  audio_settings str "q=1"
+  scale_width int 640
+  scale_height int 360
+  gop_size default-int 120
+> fo_destroy
+> echo empty_strings_become_NULL_and_no_audio_names_array
+empty_strings_become_NULL_and_no_audio_names_array
+> reset
+> output ff
+> size 1920 1080
+> video_info 60 1 709 F I420
+> set str url out.zzz
+> set str format_name 
+> set str video_encoder 
+> set int gop_size 30
+> fo_create
+fo_create -> ok
+> fo_start
+fo_start -> 1 connecting=1
+> fo_connect
+cfg url=out.zzz format_name=(null) mime=(null) muxer_settings=""
+  gop=30 vbitrate=0 abitrate=0 venc=(null) venc_id=0 aenc=(null) aenc_id=0
+  vsettings="" asettings="" mix_count=0 tracks=0x0
+  pix_fmt=yuv420p range=2 pri=1 trc=1 cs=1
+  size=1920x1080 scale=1920x1080
+log warning Couldn't find matching output format with parameters: name=(NULL), url=out.zzz, mime=(NULL)
+log warning ffmpeg_data_init failed
+last_error "Couldn't find matching output format with parameters: name=(NULL), url=out.zzz, mime=(NULL)"
+signal_stop CONNECT_FAILED
+fo_connect done connecting=0 active=0
+> echo mixers_1010_names_use_the_mix_index_not_the_position
+mixers_1010_names_use_the_mix_index_not_the_position
+> reset
+> output ff
+> video_info 30 1 709 P NV12
+> mixers 10
+> set str url out.zzz
+> names first second - fourth
+> fo_create
+fo_create -> ok
+> fo_start
+fo_start -> 1 connecting=1
+> fo_connect
+cfg url=out.zzz format_name=(null) mime=(null) muxer_settings=""
+  gop=120 vbitrate=0 abitrate=0 venc=(null) venc_id=0 aenc=(null) aenc_id=0
+  vsettings="" asettings="" mix_count=2 tracks=0xa
+  pix_fmt=nv12 range=1 pri=1 trc=1 cs=1
+  size=1280x720 scale=1280x720
+  audio_name[0]=second
+  audio_name[1]=fourth
+log warning Couldn't find matching output format with parameters: name=(NULL), url=out.zzz, mime=(NULL)
+log warning ffmpeg_data_init failed
+last_error "Couldn't find matching output format with parameters: name=(NULL), url=out.zzz, mime=(NULL)"
+signal_stop CONNECT_FAILED
+fo_connect done connecting=0 active=0

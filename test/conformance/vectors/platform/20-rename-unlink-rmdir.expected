@@ -1,0 +1,37 @@
+rename a.txt c.txt 0
+exists a.txt 0
+cat c.txt size=1 hex=41
+rename c.txt b.txt 0
+cat b.txt size=1 hex=41
+rename missing.txt x.txt -1
+rename b.txt nodir/b.txt -1
+mkdir d1 0
+mkdir d2 0
+rename d1 d3 0
+info d3/in file size=1 fnv=dd0c1e27
+rename d3 b.txt -1
+rename f.txt d2 -1
+mkdir e1 0
+rename e1 d2 0
+mkdir e2 0
+mkdir e3 0
+rename e3 e2 -1
+rename s.txt s.txt 0
+cat s.txt size=1 hex=53
+unlink s.txt 0
+unlink s.txt -1
+mkdir ud 0
+unlink ud -1
+symlink 1
+unlink lnk 0
+info d2 dir
+symlink 1
+unlink dangle 0
+mkdir r1 0
+rmdir r1 0
+rmdir r1 -1
+rmdir e2 -1
+rmdir f2.txt -1
+symlink 1
+rmdir lnk2 -1
+unlink lnk2 0

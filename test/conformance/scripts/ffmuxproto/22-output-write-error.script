@@ -1,0 +1,10 @@
+# The output file cannot be written (/dev/full). Small outputs are buffered by stdio and the error only surfaces in fclose(),
+# whose result is ignored: the program reports nothing and exits 0 (QUIRK Q-11: a lost recording is not signalled).
+chdirtmp
+reset
+linkdev ffmuxproto-full.mkv /dev/full
+args ffmuxproto-full.mkv 0 1 aac "A" 128 48000 1024 0 2 "" ""
+hdr audio 0 1190
+frame audio 0 0 0 0 4 b1
+frame audio 0 0 1024 1024 4 b2
+run

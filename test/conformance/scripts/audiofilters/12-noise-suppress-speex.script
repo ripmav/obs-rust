@@ -1,0 +1,51 @@
+# CORE (plumbing only; the DSP library is a recording fake: speex_preprocess_run halves each int16 sample,
+# truncating toward zero). Input is cut into 10 ms segments (frames = rate/100), converted float->int16 with
+# clamp to +-1 and *32767, processed, converted back with /32768. Output is returned only when enough
+# processed audio is available for the oldest queued packet; timestamp is shifted back by 10 ms.
+audio 2 48000
+source mon audio
+source monomic audio mono
+events on
+create n ns - parent=mon
+state n
+echo packet-smaller-than-segment-returns-null
+process n 240 ts=1000000000 out=0:0:8:1 const:0.5 const:0.25
+state n
+echo second-half-completes-segment-and-returns-first-packet
+process n 240 ts=1005000000 out=0:0:8:1 const:0.5 const:0.25
+state n
+echo large-packet-then-small-packets
+process n 960 ts=1010000000 out=stats const:1 const:-1
+process n 480 ts=1030000000 out=0:0:4:1 const:3 const:-3
+process n 100 ts=1040000000 out=stats sine:0.3:1000 sine:0.3:1000
+state n
+echo zero-frame-packet
+process n 0 ts=1041000000 out=all const:0 const:0
+state n
+echo suppress-level-is-passed-on-every-segment
+events off
+data d
+set d suppress_level int -45
+update n d
+events on
+process n 480 ts=1050000000 out=0:0:4:1 const:0.5 const:0.5
+echo timestamp-jump-over-one-second-clears-buffers
+process n 100 ts=1060000000 out=0:0:2:1 const:0.1 const:0.1
+process n 100 ts=5000000000 out=0:0:2:1 const:0.1 const:0.1
+state n
+echo second-packet-with-the-same-timestamp-as-the-previous
+process n 480 ts=5000000000 out=0:0:2:1 const:0.1 const:0.1
+echo method-switch-keeps-allocation
+set d method string rnnoise
+update n d
+state n
+process n 480 ts=5100000000 out=0:0:4:1 const:0.5 const:0.5
+echo mono-parent-flag
+destroy n
+create mn ns - parent=monomic
+process mn 480 ts=1000000000 out=0:0:2:1 const:0.1 const:0.1
+state mn
+echo missing-parent-is-undefined-layout
+create np ns
+process np 480 ts=1000000000 out=0:0:2:1 const:0.1 const:0.1
+state np

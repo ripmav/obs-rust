@@ -1,0 +1,27 @@
+# Creating canvases: names (empty / NULL names become "__unnamedNNNN" counters, shared with every
+# other object kind), duplicate names get " 2", " 3" suffixes, the MAIN flag is always stripped,
+# private canvases are not listed or found by name but are found by UUID, and view type follows
+# the ACTIVATE flag.
+startup en-US -
+canvas_create a Alpha
+canvas_create b Alpha
+canvas_create c Alpha
+canvas_create d "Alpha 2"
+canvas_create e -
+canvas_create f ""
+canvas_create g Gamma flags=main
+canvas_create h Hotel flags=program
+canvas_create i India flags=device
+canvas_create j Juliet flags=preview
+canvas_create_private p Priv
+canvas_create_private q -
+enum canvases
+get canvas_by_name Alpha
+get canvas_by_name "Alpha 2"
+get canvas_by_name "Alpha 3"
+get canvas_by_name Priv
+get canvas_by_uuid uuid:p
+get canvas_by_uuid uuid:a
+canvas_info p
+canvas_info q
+shutdown

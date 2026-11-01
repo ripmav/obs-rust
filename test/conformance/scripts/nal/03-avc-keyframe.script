@@ -1,0 +1,59 @@
+# S-012 CORE: obs_avc_keyframe. The first slice NAL (type 1 or 5) decides:
+# IDR (5) -> true, non-IDR slice (1) -> false. Other NAL types are skipped.
+buf sps 6742c01ed900a047fe88
+buf pps 68ce3c80
+buf sei 06050a0102030405
+buf aud 0910
+buf idr 6588840021ffe0
+buf nidr 419a24c1
+buf idr_ref0 25aabb
+buf slice_dp 4300
+echo plain
+avc_keyframe -
+avc_keyframe 00000165aabb
+avc_keyframe 0000000165aabb
+avc_keyframe 00000141aabb
+avc_keyframe 0000000141aabb
+echo parameter-sets-and-sei-first
+cat au_idr 00000001 @aud 00000001 @sps 00000001 @pps 00000001 @sei 00000001 @idr
+avc_keyframe @au_idr
+cat au_p 00000001 @aud 00000001 @sei 00000001 @nidr
+avc_keyframe @au_p
+echo first-slice-wins
+cat two1 000001 @nidr 000001 @idr
+avc_keyframe @two1
+cat two2 000001 @idr 000001 @nidr
+avc_keyframe @two2
+echo nal-ref-idc-is-ignored
+avc_keyframe 00000125aabb
+avc_keyframe 00000105aabb
+avc_keyframe 00000165aabb
+avc_keyframe 000001e5aabb
+echo forbidden-bit-is-ignored
+avc_keyframe 000001c1aabb
+echo other-types-are-skipped
+cat skipme 000001 0910 000001 0a
+avc_keyframe @skipme
+avc_keyframe 0000010000010910
+cat au_dp 00000001 @slice_dp 00000001 @idr
+avc_keyframe @au_dp
+cat au_dp2 00000001 4222 00000001 4322 00000001 4422 00000001 6588
+avc_keyframe @au_dp2
+echo no-slice-at-all
+avc_keyframe @sps
+avc_keyframe 00000001674d00280000000168ee3c80
+echo garbage-before-start-code
+avc_keyframe ffee00000165aa
+avc_keyframe ffee6500
+echo no-start-code
+avc_keyframe 65aabb
+avc_keyframe 6588840021ffe0
+echo truncated
+avc_keyframe 000001
+avc_keyframe 00000165
+avc_keyframe 0000016500
+avc_keyframe 0000
+avc_keyframe 00
+avc_keyframe 0000000000
+avc_keyframe 000001000000000165
+avc_keyframe 0000010000000165aa

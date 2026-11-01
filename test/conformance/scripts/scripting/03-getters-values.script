@@ -1,0 +1,17 @@
+# Getter values for a created script: description is NULL until the script defines one, path is the
+# string passed to create, file is the part after the last '/'. A relative path has file == path.
+fake_define /s/with-desc.lua load=ok desc=Some_text
+fake_define nodir.lua load=ok
+fake_define /s/fails.lua load=fail desc=Never_shown
+load
+create S0 /s/with-desc.lua
+create S1 nodir.lua
+create S2 /s/fails.lua
+info S0
+info S1
+# a script whose load failed still exists: not loaded, description stays NULL
+info S2
+destroy S0
+destroy S1
+destroy S2
+unload

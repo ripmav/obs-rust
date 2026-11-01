@@ -1,0 +1,58 @@
+# CORE: parameter annotations "< type name [= value]; ... >" between the name (or array suffix) and the
+# default value. Annotation values use the same value syntax as defaults EXCEPT texture-typed annotations
+# (the annotation's own "is texture" flag is computed from an empty type, so texture2d defaults are rejected).
+# Annotations become child parameters (section ANNOTATION) of the effect parameter; they are never part of the
+# generated shader text. Annotation parameters may repeat names and are looked up by name or index.
+backend text none
+text a
+uniform float x < string label = "X"; float min = 0.0; float max = 10; int steps = -3; bool flag = true; float2 v = {1,2}; > = 1.5;
+uniform float y < float a = 1; > ;
+uniform float z < > = 3;
+uniform float2 w < float k = 3; float k = 4; int k; >;
+uniform float4 c[2] < string desc = "colors"; > = {1,2,3,4};
+@end
+ep a1.effect @text:a
+effect e a1.effect @text:a
+dump e
+nannotations e:x
+param e:x/label
+param e:x/steps
+param e:x/#4
+param e:x/#9
+param e:x/none
+param e:w/k
+param e:w/#1
+param e:w/#2
+get_default_val e:x/label
+get_default_val e:x/max
+get_default_val e:x/steps
+get_default_val e:x/flag
+get_default_val e:x/v
+get_default_val e:w/#2
+set_float e:x/min 4
+get_val e:x/min
+nannotations e:y
+nannotations e:z
+nannotations e:none
+echo --- annotation syntax
+ep a2 "uniform float x < float a; float b = 2; > ;"
+ep a3 "uniform float x < ; ; float a=1; > ;"
+ep a4 "uniform float x[3] < float a=1; > = 3;"
+ep a5 "uniform float x < float a=1; > < float b=2; >;"
+echo --- annotation texture default is rejected
+ep a6 "uniform float x < texture2d t = \"a.png\"; float after = 1; > ;"
+echo --- annotation with unknown type name
+ep a7 "uniform float x < foo a = 3; > ;"
+echo --- annotations errors
+ep e1 "uniform float x < float a = 1 >;"
+ep e2 "uniform float x < float; > ;"
+ep e3 "uniform float x < float a : FOO; > ;"
+ep e4 "uniform float x < float a = ; > ;"
+ep e5 "uniform float x < float a=1; "
+ep e6 "uniform float x < float a=1; > = 3 y"
+ep e7 "uniform float x < float a=1; > [3];"
+ep e8 "uniform float x <;"
+ep e9 "uniform float x < 3 a; > ;"
+ep e10 "uniform float x < float 3; > ;"
+ep e11 "uniform float x < float a = 1 float b = 2; > ;"
+ep e12 "uniform float x < float a = {1}; > ;"

@@ -1,0 +1,13 @@
+# S-044: count > 1 repeats a frame; timestamps advance by frame_time per pass; every pass counts in total_frames.
+vopen v I420 30 1 16 8 3
+vconnect v a 1
+vlock v 3 1000000 0x77
+vunlock v
+vstate v
+vdump v
+vlock v 2 0 0x78
+vunlock v
+vstate v
+# count 0: the frame is "complete" only after the first pass makes count -1 -> never; but a count of 0 is outside
+# the preconditions, so it is not tested here.
+vclose v

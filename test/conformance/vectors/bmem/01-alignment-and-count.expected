@@ -1,0 +1,14 @@
+alignment 32
+count 0
+aligned 0 yes
+aligned 1 yes
+aligned 2 yes
+aligned 3 yes
+aligned 4 yes
+count 5
+count 4
+count 4
+check 5 ok
+aligned 5 yes
+count 5
+count 0

@@ -1,0 +1,80 @@
+mkmod m1 ok
+mkmod m2 ok
+mkmod m3 ok
+mkmod m4 ok
+disabled=1
+disabled=1
+disabled=2
+log debug ---------------------------------
+ev mod m1 ctor
+log debug Loading module: m1.so
+ev mod m1 set_pointer
+ev mod m1 load
+log warning Skipping module 'm2', is disabled
+log debug ---------------------------------
+ev mod m3 ctor
+log debug Loading module: m3.so
+ev mod m3 set_pointer
+ev mod m3 load
+log warning Skipping module 'm4', is disabled
+load_plugins -> count=0 failed
+enabled m3 m1
+disabled m4 m2
+mod_info m2 file=m2.so name=(null) author=(null) desc=(null) bin=@TMP/pol/bin/m2.so data=@TMP/pol/data/m2 id=(null) ver=(null) lib=null core=0 legacy=0 state=disabled loaded=0 mtype=0
+mod_info m1 file=m1.so name=(null) author=(null) desc=(null) bin=@TMP/pol/bin/m1.so data=@TMP/pol/data/m1 id=(null) ver=(null) lib=set core=0 legacy=0 state=enabled loaded=1 mtype=2
+log debug ---------------------------------
+log debug Loading module: m1.so
+ev mod m1 set_pointer
+ev mod m1 load
+log debug ---------------------------------
+ev mod m2 ctor
+log debug Loading module: m2.so
+ev mod m2 set_pointer
+ev mod m2 load
+log debug ---------------------------------
+log debug Loading module: m3.so
+ev mod m3 set_pointer
+ev mod m3 load
+log debug ---------------------------------
+ev mod m4 ctor
+log debug Loading module: m4.so
+ev mod m4 set_pointer
+ev mod m4 load
+load_plugins -> count=0 failed
+enabled m4 m3 m2 m1 m3 m1
+disabled m4 m2
+mod_info m2 file=m2.so name=(null) author=(null) desc=(null) bin=@TMP/pol/bin/m2.so data=@TMP/pol/data/m2 id=(null) ver=(null) lib=set core=1 legacy=0 state=enabled loaded=1 mtype=1
+get_module m4 -> enabled=m4 disabled=m4 allow_disable=1
+mkmod l1 ok
+mkmod l2 ok
+mkmod l3 ok
+get_module m9 -> enabled=null disabled=null allow_disable=0
+log debug ---------------------------------
+ev mod l2 ctor
+log debug Loading module: l2.so
+ev mod l2 set_pointer
+ev mod l2 load
+log warning Skipping legacy plugin 'm3' at '@TMP/leg/bin/m3.so', already loaded from '@TMP/pol/bin/m3.so'
+log warning Skipping module 'm9', is a legacy core module
+load_plugins -> count=0 failed
+enabled l2 m4 m3 m2 m1 m3 m1
+disabled m4 m2
+mod_info l2 file=l2.so name=(null) author=(null) desc=(null) bin=@TMP/leg/bin/l2.so data=@TMP/leg/data/l2 id=(null) ver=(null) lib=set core=0 legacy=1 state=enabled loaded=1 mtype=3
+get_module l2 -> enabled=l2 disabled=null allow_disable=1
+mkmod p1 ok
+log debug ---------------------------------
+ev mod p1 ctor
+log debug Loading module: m9.so
+ev mod p1 set_pointer
+ev mod p1 load
+load_plugins -> count=0 failed
+enabled m9 l2 m4 m3 m2 m1 m3 m1
+disabled m4 m2
+mkmod u1 ok
+log debug ---------------------------------
+ev mod u1 ctor
+log debug Loading module: u1.so
+ev mod u1 set_pointer
+ev mod u1 load
+load_plugins -> count=0 failed
+mod_info u1 file=u1.so name=(null) author=(null) desc=(null) bin=@TMP/pu/bin/u1.so data=@TMP/pu/data/u1 id=(null) ver=(null) lib=set core=0 legacy=0 state=enabled loaded=1 mtype=0

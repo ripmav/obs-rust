@@ -1,0 +1,86 @@
+> reset
+> output h service
+> venc h264 bitrate=2500 extra=0a0b keyint_sec=1
+> service https://i.example/live k
+> create hls
+create hls -> ok
+> start
+log info [ffmpeg muxer: 'h'] Using muxer settings: 	method=PUT 	http_persistent=1 	ignore_io_errors=1 	http_user_agent=libobs/33.0.1 	hls_time=1
+pipe create type=w
+  argv[0] "<bin>/obs-ffmpeg-mux"
+  argv[1] "https://i.example/live"
+  argv[2] "1"
+  argv[3] "0"
+  argv[4] "h264"
+  argv[5] "2500"
+  argv[6] "1280"
+  argv[7] "720"
+  argv[8] "1"
+  argv[9] "1"
+  argv[10] "1"
+  argv[11] "1"
+  argv[12] "1"
+  argv[13] "0"
+  argv[14] "30"
+  argv[15] "1"
+  argv[16] "0"
+  argv[17] "k"
+  argv[18] "method=PUT http_persistent=1 ignore_io_errors=1 http_user_agent=libobs/33.0.1 hls_time=1"
+begin_data_capture
+log info [ffmpeg hls muxer: 'h'] Writing to path 'https://i.example/live'...
+start -> 1
+> pkt v dts=0 key=1 data=0000000165aa
+wire V idx=0 key=0 pts=0 dts=0 size=2 data=0a0b
+  parsed drop_priority=3
+> pkt a dts=0 data=0102
+> pkt v dts=500 key=0 data=0000000141aa
+  parsed drop_priority=2
+> pkt v dts=1000 key=0 data=0000000101aa
+  parsed drop_priority=0
+> pkt v dts=1500 key=0 data=0000000121aa
+  parsed drop_priority=1
+> state_hls
+state_hls dropped=0 min_priority=0 last_dts_usec=1500000 keyint_sec=1 queued=5
+  muxer_settings="method=PUT http_persistent=1 ignore_io_errors=1 http_user_agent=libobs/33.0.1 hls_time=1" stream_key="k" printable="https://i.example/live"
+> pkt v dts=2600 key=0 data=0000000101aa
+  parsed drop_priority=0
+> state_hls
+state_hls dropped=0 min_priority=0 last_dts_usec=2600000 keyint_sec=1 queued=6
+  muxer_settings="method=PUT http_persistent=1 ignore_io_errors=1 http_user_agent=libobs/33.0.1 hls_time=1" stream_key="k" printable="https://i.example/live"
+> echo this_packet_triggers_the_drop
+this_packet_triggers_the_drop
+> pkt v dts=2700 key=0 data=0000000141aa
+  parsed drop_priority=2
+> state_hls
+state_hls dropped=5 min_priority=3 last_dts_usec=2600000 keyint_sec=1 queued=2
+  muxer_settings="method=PUT http_persistent=1 ignore_io_errors=1 http_user_agent=libobs/33.0.1 hls_time=1" stream_key="k" printable="https://i.example/live"
+> queue
+queue 2
+  [0] V track=0 pts=0 dts=0 dts_usec=0 key=1 size=6 dprio=3
+  [1] A track=0 pts=0 dts=0 dts_usec=0 key=0 size=2 dprio=0
+mux_packets 0
+> pkt a dts=2800 data=0304
+> echo keyframe_with_priority_3_ends_the_dropping_phase
+keyframe_with_priority_3_ends_the_dropping_phase
+> pkt v dts=3000 key=1 data=0000000165aa
+  parsed drop_priority=3
+> state_hls
+state_hls dropped=5 min_priority=0 last_dts_usec=3000000 keyint_sec=1 queued=4
+  muxer_settings="method=PUT http_persistent=1 ignore_io_errors=1 http_user_agent=libobs/33.0.1 hls_time=1" stream_key="k" printable="https://i.example/live"
+> dropped
+dropped 5
+> queue
+queue 4
+  [0] V track=0 pts=0 dts=0 dts_usec=0 key=1 size=6 dprio=3
+  [1] A track=0 pts=0 dts=0 dts_usec=0 key=0 size=2 dprio=0
+  [2] A track=0 pts=0 dts=2800 dts_usec=2800000 key=0 size=2 dprio=0
+  [3] V track=0 pts=0 dts=3000 dts_usec=3000000 key=1 size=6 dprio=3
+mux_packets 0
+> pump 20
+wire V idx=0 key=1 pts=0 dts=0 size=6 data=0000000165aa
+wire A idx=0 key=0 pts=0 dts=0 size=2 data=0102
+wire A idx=0 key=0 pts=0 dts=2800 size=2 data=0304
+wire V idx=0 key=1 pts=0 dts=3000 size=6 data=0000000165aa
+> state
+state active=1 capturing=1 stopping=0 sent_headers=1 total_bytes=18 stop_ts=0 pipe=1 refs=0
+  path="https://i.example/live" is_network=0 is_hls=1

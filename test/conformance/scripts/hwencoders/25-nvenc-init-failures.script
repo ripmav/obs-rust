@@ -1,0 +1,28 @@
+# S-050 nvenc: failure paths while creating. Every failing SDK call yields NULL (the soft encoder
+# cannot reroute further) and a destroy that releases what was created. Error strings come from
+# nv_failed2 (see 30-nvenc-errors).
+dump 0
+nvcap dyn_bitrate 1
+defaults h264
+# preset config query fails
+nvstatus preset NV_ENC_ERR_INVALID_PARAM
+create h264 soft
+nvstatus preset NV_ENC_SUCCESS
+# InitializeEncoder fails
+nvstatus init NV_ENC_ERR_UNSUPPORTED_PARAM
+create h264 soft
+nvstatus init NV_ENC_SUCCESS
+# bitstream buffer creation fails
+nvstatus bitstream NV_ENC_ERR_OUT_OF_MEMORY
+create h264 soft
+nvstatus bitstream NV_ENC_SUCCESS
+# invalid user options: refused with the translated "Opts.Invalid" message, SDK not initialised
+set str opts "bogus=1"
+create h264 soft
+set str opts "bf=2"
+create h264 soft
+set str opts ""
+# user options still accepted and applied after the SDK defaults
+set str opts "gopLength=77 frameIntervalP=0"
+dump 2
+create h264 soft

@@ -1,0 +1,17 @@
+# os_process_args: independent argument lists, order of insertion is preserved (CORE),
+# and destroy(NULL) is a no-op.
+args_create 0 first
+args_create 1 second
+args_add 0 a
+args_add 1 x
+args_add 0 b
+args_add 1 y
+args_addf_int 0 "n=%d" 3
+args_dump 0
+args_dump 1
+args_destroy 0
+args_destroy 1
+args_destroy_null
+args_create 2 only
+args_dump 2
+args_destroy 2

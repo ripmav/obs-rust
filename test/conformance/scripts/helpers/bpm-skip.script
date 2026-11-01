@@ -1,0 +1,11 @@
+# Packets that are NOT modified (CORE): audio packets, non-key video frames, and key frames
+# without timing information; also NULL output/packet arguments are ignored. An unmodified
+# call does not touch the counter references.
+bpm_set codec h264
+bpm_set rendered 50
+bpm_inject 0 0 1 1 1 0 00000001aa 1000000000 1010000000 1020000000 1030000000
+bpm_inject 0 0 1 1 0 1 00000001aa 1000000000 1010000000 1020000000 1030000000
+bpm_inject 0 0 1 1 1 1 00000001aa @notime 0 0 0
+bpm_null
+bpm_set rendered 80
+bpm_inject 0 0 7 7 1 1 00000001aa 1000000000 1010000000 1020000000 1030000000

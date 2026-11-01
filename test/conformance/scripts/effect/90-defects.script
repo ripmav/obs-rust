@@ -1,0 +1,53 @@
+# DEFECT: inputs and calls on which the reference crashes, reads out of bounds or returns an invalid pointer.
+# A conforming implementation MUST NOT crash; the required behaviour is in the spec (section 8, D-1 .. D-9).
+# "try CMD" runs CMD in a forked child and prints "try-end crash" when the reference died (deterministic NULL
+# dereferences); a conforming runner prints "try-end ok" for these (the comparison treats the two as equal and
+# ignores everything printed between try-begin and try-end).
+# "ignore CMD" runs the command but records NOTHING (the reference reads uninitialised or foreign heap memory, so
+# even the crash is not deterministic); the expected behaviour is only given by the spec.
+backend text none
+text a
+uniform float f = 1;
+uniform float g < float k = 1; > = 2;
+float4 PS() : TARGET { return f; }
+technique T { pass named { vertex_shader = PS(); pixel_shader = PS(); } pass { vertex_shader = PS(); pixel_shader = PS(); } }
+@end
+effect e a.effect @text:a
+echo --- D-1 function body that is not closed before the end of the text: out-of-bounds token read
+ignore ep d1a "float y() {"
+ignore ep d1b "float y() { return 1; "
+ignore ep d1c "float y() { { return 1; }"
+ignore ep d1d "float a; float y(float x) {"
+ignore effect d1e d1e.effect "uniform float f;\nfloat4 PS() : TARGET { return f; }\ntechnique T { pass { vertex_shader = PS(); pixel_shader = PS(); } }\nfloat4 broken() {"
+echo --- D-2 the backend's preprocessor name used as an identifier (an empty macro with no token array)
+gfx _OPENGL
+try ep d2a "float _OPENGL;"
+try ep d2b "uniform float x = _OPENGL;"
+try effect d2c d2c.effect "float4 PS() : TARGET { return _OPENGL; }"
+gfx _D3D11
+try ep d2d "float _OPENGL; float _D3D11;"
+gfx @null
+ep d2e "float _OPENGL;"
+effect e a.effect @text:a
+echo --- D-3 NULL technique name
+try loop e @null
+echo --- D-4 pass lookup by name when an unnamed pass is reached before a match
+try pbegin_name e T missing
+try pass_by_name e T missing
+pbegin_name e T named
+pass_by_name e T named
+echo --- D-5 NULL parameter given to gs_effect_set_default
+try set_default @null
+echo --- D-6 NULL names for parameter and annotation lookup
+try param_null_name e
+try annotation_null_name e:g
+echo --- D-7 off-by-one bounds: lookups at index == count return a pointer past the end
+pass_by_idx e T 1
+pass_by_idx e T 2
+pass_by_idx e T 3
+echo --- D-8 tokens of an included file keep a pointer to a dead stack object; errors positioned in them are garbage
+cd @tmp
+mkdir inc
+writefile inc/bad.effect "uniform float ok_before;\nuniform float 3 bad;\nuniform float ok_after;\n"
+ignore effect d8 inc/main.effect "#include \"bad.effect\"\nuniform float after;"
+cd @repo

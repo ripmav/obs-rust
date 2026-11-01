@@ -1,0 +1,73 @@
+> trace on
+> dev /dev/video0
+> dev-cap Cam One usb-1 0x85200001 0x05200001
+> dev-input Camera 0
+> dev-input Tuner 1
+> dev-cur 0 640 480 YUYV 1280 1 30 0
+> h-open /dev/video0
+  | open /dev/video0 -> ok
+h-open -> fd
+> h-input-caps 0
+input_caps ret=0 caps=0x0
+> h-input-caps 1
+input_caps ret=0 caps=0x1
+> h-input-caps -1
+  | ioctl G_INPUT -> 0
+input_caps ret=0 caps=0x0
+> h-input-caps 7
+input_caps ret=-1 caps=0x0
+> h-set-input -1
+  | ioctl G_INPUT -> 0
+set_input ret=0 value=0
+> h-set-input 1
+  | ioctl S_INPUT 1
+set_input ret=0 value=1
+> h-set-input -1
+  | ioctl G_INPUT -> 1
+set_input ret=0 value=1
+> h-set-format -1 -1
+  | ioctl G_FMT -> 640x480 56595559 bpl=1280
+set_format ret=0 resolution=2748779069920 pixfmt=0x56595559 bytesperline=1280
+> h-set-format 8246337209400 -1
+  | ioctl G_FMT -> 640x480 56595559 bpl=1280
+  | ioctl S_FMT 1920x1080 56595559
+set_format ret=0 resolution=8246337209400 pixfmt=0x56595559 bytesperline=1280
+> h-set-format -1 NV12
+  | ioctl G_FMT -> 1920x1080 56595559 bpl=1280
+  | ioctl S_FMT 1920x1080 3231564e
+set_format ret=0 resolution=8246337209400 pixfmt=0x3231564e bytesperline=1280
+> h-set-format 2748779069760 MJPG
+  | ioctl G_FMT -> 1920x1080 3231564e bpl=1280
+  | ioctl S_FMT 640x320 47504a4d
+set_format ret=0 resolution=2748779069760 pixfmt=0x47504a4d bytesperline=1280
+> h-set-format 83886800 -1
+  | ioctl G_FMT -> 640x320 47504a4d bpl=1280
+  | ioctl S_FMT 1280x720 47504a4d
+set_format ret=0 resolution=5497558139600 pixfmt=0x47504a4d bytesperline=1280
+> h-set-framerate -1
+  | ioctl G_PARM -> 1/30
+set_framerate ret=0 framerate=4294967326
+> h-set-framerate 4294967356
+  | ioctl G_PARM -> 1/30
+  | ioctl S_PARM 1/60
+set_framerate ret=0 framerate=4294967356
+> h-set-framerate 4294967321
+  | ioctl G_PARM -> 1/60
+  | ioctl S_PARM 1/25
+set_framerate ret=0 framerate=4294967321
+> h-set-standard -1
+  | ioctl G_STD -> 0
+set_standard ret=0 value=0
+> h-set-standard 255
+  | ioctl S_STD 255
+set_standard ret=0 value=255
+> dev-dv 1920 1080 148500000 88 44 148 4 5 36 0 0 0 0
+> h-set-dv -1
+set_dv ret=0
+> h-set-dv 0
+  | ioctl S_DV_TIMINGS 1920x1080
+set_dv ret=0
+> h-set-dv 3
+set_dv ret=-1
+> h-null-args
+null set_input(dev=0)=-1 set_input(NULL)=-1 set_format(NULL)=-1 set_framerate(NULL)=-1 set_standard(NULL)=-1 set_dv(NULL)=-1 caps(NULL)=-1

@@ -1,0 +1,7 @@
+dl libm.so.6 open=1 sym=1
+dl libm.so.6 open=1 sym=0
+log error "os_dlopen(nosuchlibrary_xyz->nosuchlibrary_xyz.so):"
+dl nosuchlibrary_xyz open=0
+log error "os_dlopen(nosuchlibrary_xyz.so->nosuchlibrary_xyz.so):"
+dl nosuchlibrary_xyz.so open=0
+dl_null 1

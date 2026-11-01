@@ -1,0 +1,9 @@
+fu_run local=/L cache=/C temp=/C/.temp url=http://srv/updates/package.json
+fs read /L/package.json -> ok
+fs read /C/package.json -> ok
+fs read /C/meta.json -> missing
+http GET http://srv/updates/package.json "User-Agent: UA/1.0"
+log warning [fu] Remote update of URL "http://srv/updates/package.json" failed: transfer failed
+fs rmdir /C/.temp
+fu_run done
+fu_cat /C/a.json "A-cache"

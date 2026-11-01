@@ -1,0 +1,55 @@
+# Decoder selection for VP8/VP9 with the 'alpha_mode=1' stream tag (libvpx decoders are asked for by name and fall
+# back on the default decoder if absent), and HDR luminance metadata (content light level MaxCLL, or the mastering
+# display max luminance rounded to nearest) exported as max_luminance on delivered frames.
+media vp8a 0 0
+video 1 1000 16 16 yuv420p codec=vp8 alpha=1
+pkt 0 0 fdur=40
+endmedia
+media vp9a 0 0
+video 1 1000 16 16 yuv420p codec=vp9 alpha=1
+pkt 0 0 fdur=40
+endmedia
+media h264a 0 0
+video 1 1000 16 16 yuv420p codec=h264 alpha=1
+pkt 0 0 fdur=40
+endmedia
+media vp8n 0 0
+video 1 1000 16 16 yuv420p codec=vp8
+pkt 0 0 fdur=40
+endmedia
+media hdr1 0 0
+video 1 1000 16 16 yuv420p cll=1000
+pkt 0 0 fdur=40
+endmedia
+media hdr2 0 0
+video 1 1000 16 16 yuv420p mdcv=4000
+pkt 0 0 fdur=40
+endmedia
+media hdr3 0 0
+video 1 1000 16 16 yuv420p mdcv=4000 cll=1500
+pkt 0 0 fdur=40
+endmedia
+clock 1000
+libvpx 1
+minit vp8a local=1
+mfree
+minit vp9a local=1
+mfree
+minit h264a local=1
+mfree
+minit vp8n local=1
+mfree
+echo ---- libvpx not available: fall back
+libvpx 0
+minit vp8a local=1
+mfree
+echo ---- HDR: mastering 4000.5 rounds to 4001; the last listed side data wins
+minit hdr1 local=1
+mreset
+mfree
+minit hdr2 local=1
+mreset
+mfree
+minit hdr3 local=1
+mreset
+mfree

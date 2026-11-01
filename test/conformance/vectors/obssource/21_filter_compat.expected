@@ -1,0 +1,86 @@
+  cb SV create
+log debug source 'SV' (vid) created
+create sv ok
+  cb SV_FV create
+log debug private source 'SV_FV' (fv) created
+create sv_fv ok
+log debug - filter 'SV_FV' (fv) added to source 'SV'
+  cb SV_FA create
+log debug private source 'SV_FA' (fa) created
+create sv_fa ok
+  cb SV_FO create
+log debug private source 'SV_FO' (fo) created
+create sv_fo ok
+  cb SV_FAV create
+log debug private source 'SV_FAV' (fav) created
+create sv_fav ok
+  cb SV_FX create
+log debug private source 'SV_FX' (fx) created
+create sv_fx ok
+names sv: SV_FV
+  cb SA create
+log debug source 'SA' (avs) created
+create sa ok
+  cb SA_FV create
+log debug private source 'SA_FV' (fv) created
+create sa_fv ok
+log debug - filter 'SA_FV' (fv) added to source 'SA'
+  cb SA_FA create
+log debug private source 'SA_FA' (fa) created
+create sa_fa ok
+log debug - filter 'SA_FA' (fa) added to source 'SA'
+  cb SA_FO create
+log debug private source 'SA_FO' (fo) created
+create sa_fo ok
+  cb SA_FAV create
+log debug private source 'SA_FAV' (fav) created
+create sa_fav ok
+  cb SA_FX create
+log debug private source 'SA_FX' (fx) created
+create sa_fx ok
+names sa: SA_FA SA_FV
+  cb SO create
+log debug source 'SO' (aud) created
+create so ok
+  cb SO_FV create
+log debug private source 'SO_FV' (fv) created
+create so_fv ok
+  cb SO_FA create
+log debug private source 'SO_FA' (fa) created
+create so_fa ok
+  cb SO_FO create
+log debug private source 'SO_FO' (fo) created
+create so_fo ok
+log debug - filter 'SO_FO' (fo) added to source 'SO'
+  cb SO_FAV create
+log debug private source 'SO_FAV' (fav) created
+create so_fav ok
+  cb SO_FX create
+log debug private source 'SO_FX' (fx) created
+create so_fx ok
+log debug - filter 'SO_FX' (fx) added to source 'SO'
+names so: SO_FX SO_FO
+  cb SB create
+log debug source 'SB' (av) created
+create sb ok
+  cb SB_FV create
+log debug private source 'SB_FV' (fv) created
+create sb_fv ok
+log debug - filter 'SB_FV' (fv) added to source 'SB'
+  cb SB_FA create
+log debug private source 'SB_FA' (fa) created
+create sb_fa ok
+log debug - filter 'SB_FA' (fa) added to source 'SB'
+  cb SB_FO create
+log debug private source 'SB_FO' (fo) created
+create sb_fo ok
+log debug - filter 'SB_FO' (fo) added to source 'SB'
+  cb SB_FAV create
+log debug private source 'SB_FAV' (fav) created
+create sb_fav ok
+log debug - filter 'SB_FAV' (fav) added to source 'SB'
+  cb SB_FX create
+log debug private source 'SB_FX' (fx) created
+create sb_fx ok
+log debug - filter 'SB_FX' (fx) added to source 'SB'
+names sb: SB_FX SB_FAV SB_FO SB_FA SB_FV

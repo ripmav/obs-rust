@@ -1,0 +1,8 @@
+mf_count 0 0
+mf_ref 0 1
+mf_count 0 3
+mf_get 0 0 path="/a/one.png" source_name="Image 1" ref=1 same_as_file=0
+mf_get 0 1 path="/a/two.mp4" source_name="Video 2" ref=1 same_as_file=1
+mf_get 0 2 path="/a/three.lua" source_name=@null ref=1 same_as_file=2
+mf_ref 1 1
+mf_destroy 0

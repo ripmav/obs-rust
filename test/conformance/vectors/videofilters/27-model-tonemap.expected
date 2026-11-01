@@ -1,0 +1,14 @@
+echo reinhard: scene referred 1.0 = sdr white (multiplier = 300/300)
+model reinhard -> 0.521203995 0.521203995 0.521203995 0
+model reinhard -> 0.369123638 0.226102442 0.114727348 0
+model reinhard -> 0.809787691 0.809787691 0.80978775 0
+model reinhard -> 0 0 0 0
+echo maxRGB HDR to HDR (multiplier 80*0.0001 for scRGB): 1000 nits peak into 4000 nit mapping
+model maxrgb -> 10.183073 10.1830711 10.183073 0
+model maxrgb -> 0.999993324 0.499996662 0.249998331 0
+model maxrgb -> 15.6828117 7.84140491 1.56828129 0
+model maxrgb -> 0 0 0 0
+echo maxRGB SDR variant
+model maxrgb_sdr -> 0.841981649 0.841981649 0.841981649 0
+model maxrgb_sdr -> 0.224749804 0.12134441 0.0669740736 0
+model maxrgb_sdr -> 0.999888003 0.999887824 0.999887824 0

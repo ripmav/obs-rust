@@ -1,0 +1,25 @@
+# Activation propagates down the "active children" tree (sources that report children via enum_active_sources):
+# each activation of the parent adds one show/activate reference to every descendant.
+kind par input video enum,activate,show
+kind lf input video activate,show
+create p par P
+create c1 lf C1
+create c2 par C2
+create g lf G
+child p c1
+child p c2
+child c2 g
+inc_active p
+state p
+state c1
+state c2
+state g
+tick g 0.1
+tick c2 0.1
+inc_showing p
+state c1
+state g
+dec_active p
+dec_showing p
+state c1
+state g

@@ -1,0 +1,43 @@
+# S-012 CORE: obs_nal_find_startcode / obs_avc_find_startcode.
+# find DATA [START [END]] prints the offset (relative to the start of DATA) of the pointer
+# returned for the search range [START, END). The result is the first byte of the start code,
+# or one earlier when a zero byte precedes a 3-byte start code (4-byte start code), or END when
+# nothing is found.
+echo no-start-code
+find -
+find 00
+find aabbccdd
+find 0000
+echo three-byte-start-code
+find 0000010a
+find aa000001bb
+find aabb000001cc
+find aabbccddeeff000001aa
+echo four-byte-start-code
+find 00000001aabb
+find aa00000001bb
+find aabbccddeeff00000001aa
+echo more-than-one-leading-zero
+find 0000000001aa
+find 000000000001aabb
+echo first-start-code-wins
+find 0000010a0000010b
+find aa0000010a0000010b
+find aabbccddeeff0000010a0b0c000001dd
+echo start-offset
+find 0000010a0b0c 1
+find 0000010a0b0c 3
+find 0000010a000001bb 1
+find 0000010a00000001bb 4
+find aabb00000001cc 2
+find aabb00000001cc 3
+echo end-offset
+find 0000010a0b0c00000001dd 0 5
+find aabbccddeeff00000001dd 0 8
+echo start-code-then-start-code
+find 00000100000001aa 1
+find 0000010000010a 0
+echo avc-alias
+avc_find aa00000001bb
+avc_find 0000010a0b
+avc_find aabbccdd

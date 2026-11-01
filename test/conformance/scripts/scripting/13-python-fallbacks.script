@@ -1,0 +1,12 @@
+# Without a Python backend the core exports inert Python entry points, plus module bookkeeping.
+python
+# the "runtime linked" answer is true even though Python is absent (QUIRK Q-1)
+load
+python
+unload
+# obs_scripting_set_module / obs_current_module hold a single process-global value
+cur_module
+set_module 0x1234
+cur_module
+set_module -
+cur_module

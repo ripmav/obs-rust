@@ -1,0 +1,43 @@
+info query=image_source
+info id=image_source version=0 type=0 flags=0x8001 icon=1
+info callbacks get_name create destroy update get_defaults get_properties get_width get_height video_tick video_render show hide activate missing_files video_get_color_space
+info media_extra
+ev create image_source#1[/i/a.png] public
+ev image_init /i/a.png alpha=2
+log debug [image_source: 'a'] loading texture '/i/a.png'
+ev texture_create 1 64x32 dynamic=0
+state image file="/i/a.png" persistent=1 is_slide=0 linear_alpha=0 file_timestamp=100 update_time_elapsed=0 last_time=0 active=0 restart_gif=0 file_decoded=1 texture_loaded=1
+state image.file loaded=1 cx=64 cy=32 animated=0 texture=1 cur_frame=0 cur_loop=0 cur_time=0 mem_usage=8192 format=3 alpha_mode=0 space=0
+size 64 32
+ev render image_source#1[/i/a.png]
+gfx enable_framebuffer_srgb 1
+gfx blend_push
+gfx blend_function 1 5
+gfx set_texture_srgb image tex=1
+gfx draw_sprite tex=1 flip=0 64x32
+gfx blend_pop
+gfx enable_framebuffer_srgb 0
+colorspace 0
+ev create image_source#2[/i/a.png] public
+ev image_init /i/a.png alpha=1
+log debug [image_source: 'b'] loading texture '/i/a.png'
+ev texture_create 2 64x32 dynamic=0
+state image file="/i/a.png" persistent=1 is_slide=0 linear_alpha=1 file_timestamp=100 update_time_elapsed=0 last_time=0 active=0 restart_gif=0 file_decoded=1 texture_loaded=1
+state image.file loaded=1 cx=64 cy=32 animated=0 texture=1 cur_frame=0 cur_loop=0 cur_time=0 mem_usage=8192 format=3 alpha_mode=0 space=0
+ev create image_source#3[/i/none.png] public
+ev image_init /i/none.png alpha=2
+log warning gs_image_file_ex_init_internal: Failed to load file '/i/none.png'
+log debug [image_source: 'c'] loading texture '/i/none.png'
+log warning [image_source: 'c'] failed to load texture '/i/none.png'
+state image file="/i/none.png" persistent=1 is_slide=0 linear_alpha=0 file_timestamp=-1 update_time_elapsed=0 last_time=0 active=0 restart_gif=0 file_decoded=1 texture_loaded=1
+state image.file loaded=0 cx=0 cy=0 animated=0 texture=0 cur_frame=0 cur_loop=0 cur_time=0 mem_usage=0 format=0 alpha_mode=0 space=0
+size 0 0
+ev render image_source#3[/i/none.png]
+ev create image_source#4[] public
+state image file="" persistent=1 is_slide=0 linear_alpha=0 file_timestamp=0 update_time_elapsed=0 last_time=0 active=0 restart_gif=0 file_decoded=0 texture_loaded=0
+state image.file loaded=0 cx=0 cy=0 animated=0 texture=0 cur_frame=0 cur_loop=0 cur_time=0 mem_usage=0 format=0 alpha_mode=0 space=0
+defaults {"unload":false,"linear_alpha":false}
+ev destroy image_source#1[/i/a.png]
+ev texture_destroy 1
+ev destroy image_source#2[/i/a.png]
+ev texture_destroy 2

@@ -1,0 +1,27 @@
+log debug encoder 'v' (v) created
+encoder v created tb=1/30
+log debug output 'vo' (vo) created
+output vo created flags=5 reconnect=20/2
+set_venc vo idx=0 -> video_slots=01 audio_slots=00
+plugin out vo start
+plugin enc v create
+log debug Maximum interleaver batch size for 'vo' calculated to be 2 packets
+signal vo activate
+signal vo start
+plugin out vo begin_data_capture -> 1
+signal vo starting
+start vo -> 1
+encstate v init=1 active=1 first_received=0 start_ts=1000000000 offset_usec=0 cur_pts=2 frames=0 callbacks=1 paired=0 outputs=1
+plugin out vo pkt V0 pts=0 dts=-2 usec=1000000 kf=1 size=4 tb=1/30 b0=03
+plugin out vo pkt V0 pts=1 dts=-1 usec=1033333 kf=0 size=4 tb=1/30 b0=04
+plugin out vo pkt V0 pts=2 dts=0 usec=1066666 kf=0 size=4 tb=1/30 b0=05
+encstate v init=1 active=1 first_received=1 start_ts=1000000000 offset_usec=-66666 cur_pts=5 frames=3 callbacks=1 paired=0 outputs=1
+signal vo stopping
+plugin out vo stop ts=0
+log info Output 'vo': stopping
+log info Output 'vo': Total frames output: 3
+log info Output 'vo': Total drawn frames: 0
+signal vo stop code=0 last_error=-
+stop vo done
+plugin enc v destroy
+signal vo deactivate

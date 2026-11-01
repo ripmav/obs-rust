@@ -1,0 +1,28 @@
+# Failures while building a video mix: a texture that can not be created makes the whole reset fail
+# and releases what the mix had allocated so far; staging-surface failure behaves the same.
+# The first call after "fake tex_fail_at" has index 1.
+startup en-US -
+reset_video fmt=BGRA gpu=0
+fake tex_fail_at 1
+reset_video fmt=BGRA gpu=0
+fake tex_fail_at 2
+reset_video fmt=BGRA gpu=0
+fake tex_fail_at 0
+state
+report
+fake surface_fail_at 1
+reset_video fmt=BGRA gpu=0
+fake surface_fail_at 2
+reset_video fmt=BGRA gpu=0
+fake surface_fail_at 0
+state
+report
+# with GPU conversion the plane textures are created first (3 planes for I420)
+fake tex_fail_at 3
+reset_video fmt=I420 gpu=1
+fake tex_fail_at 0
+state
+reset_video fmt=I420 gpu=1
+state
+report
+shutdown

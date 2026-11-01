@@ -1,0 +1,26 @@
+# CORE: stinger properties, modified callbacks (labels and visibility) and missing-file reporting.
+load quiet
+create st obs_stinger_transition
+props st
+props st null
+modify st tp_type
+settings st int:tp_type=1
+modify st tp_type
+modify st track_matte_enabled
+settings st bool:track_matte_enabled=1
+modify st track_matte_enabled
+modify st track_matte_layout
+settings st int:track_matte_layout=2
+modify st track_matte_layout
+settings st int:track_matte_layout=0
+modify st track_matte_layout
+# missing files: only non-empty paths that do not exist are reported
+missing st
+settings st str:path=/nonexistent/stinger.mov str:track_matte_path=/nonexistent/matte.mov
+missing st
+settings st str:path=/ str:track_matte_path=/nonexistent/m.mov
+missing st
+settings st str:path=/nonexistent/stinger.mov
+missing st 0 /new/stinger.mov
+settings st str:path=/nonexistent/s.mov str:track_matte_path=/nonexistent/m.mov
+missing st 1 /new/matte.mov 0 /new/s2.mov

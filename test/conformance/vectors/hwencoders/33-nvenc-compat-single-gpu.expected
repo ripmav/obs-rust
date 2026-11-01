@@ -1,0 +1,16 @@
+> ini "[general]\nnvenc_supported=true\nnvenc_devices=1\ndriver_ver=560.1\nnvenc_ver=13.0\ncuda_ver=12.0\n"
+> supported
+os.dlopen "libnvidia-encode.so.1" -> ok
+log info [obs-nvenc] NVENC version: 13.0 (compiled) / 13.0 (driver), CUDA driver version: 12.0, AV1 supported: false
+nvenc_supported -> 1
+> compat_register
+encoder id=jim_nvenc codec=h264 type=video caps=[deprecated pass_texture dyn_bitrate roi mt_dyn_bitrate] cb=[encode_texture2 defaults properties destroy create]
+encoder id=obs_nvenc_h264_cuda codec=h264 type=video caps=[deprecated dyn_bitrate roi mt_dyn_bitrate] cb=[encode defaults properties destroy create]
+encoder id=jim_hevc_nvenc codec=hevc type=video caps=[deprecated pass_texture dyn_bitrate roi mt_dyn_bitrate] cb=[encode_texture2 defaults properties destroy create]
+encoder id=obs_nvenc_hevc_cuda codec=hevc type=video caps=[deprecated dyn_bitrate roi mt_dyn_bitrate] cb=[encode defaults properties destroy create]
+> set int gpu 3
+> invoke jim_nvenc create
+host.create_rerouted "obs_nvenc_h264_tex"
+invoke create -> non-null
+> has_user device
+has_user_value(device) = 0

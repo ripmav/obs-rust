@@ -1,0 +1,114 @@
+> reset
+> output o
+> venc h264 bitrate=2500 extra=0a0b
+> set str path /v/first.mkv
+> set str directory /rec
+> set str format m%N
+> set str extension mkv
+> create ffmpeg_muxer
+signal_add "void file_changed(string next_file)"
+proc_add "void split_file(out bool split_file_enabled)"
+create ffmpeg_muxer -> ok
+> start
+unlink "/v/first.mkv"
+pipe create type=w
+  argv[0] "<bin>/obs-ffmpeg-mux"
+  argv[1] "/v/first.mkv"
+  argv[2] "1"
+  argv[3] "0"
+  argv[4] "h264"
+  argv[5] "2500"
+  argv[6] "1280"
+  argv[7] "720"
+  argv[8] "1"
+  argv[9] "1"
+  argv[10] "1"
+  argv[11] "1"
+  argv[12] "1"
+  argv[13] "0"
+  argv[14] "30"
+  argv[15] "1"
+  argv[16] "0"
+  argv[17] ""
+  argv[18] ""
+begin_data_capture
+log info [ffmpeg muxer: 'o'] Writing file '/v/first.mkv'...
+start -> 1
+> proc split_file
+  out split_file_enabled=0
+> state_split
+state_split split_file=0 allow_overwrite=0 cur_size=0 cur_time=0 max_size=0 max_time=0 manual=0 ready=0 mux_packets=0
+  found_video=0 video_pts_offset=0 found_audio=00 audio_dts_offsets=0,0
+> stop 0
+> destroy
+pipe destroy -> 0
+> reset
+> output o
+> venc h264 bitrate=2500 extra=0a0b
+> set str path /v/first.mkv
+> set bool split_file 1
+> set str directory /rec
+> set str format m%N
+> set str extension mkv
+> create ffmpeg_muxer
+signal_add "void file_changed(string next_file)"
+proc_add "void split_file(out bool split_file_enabled)"
+create ffmpeg_muxer -> ok
+> proc split_file
+  out split_file_enabled=0
+> state_split
+state_split split_file=0 allow_overwrite=0 cur_size=0 cur_time=0 max_size=0 max_time=0 manual=0 ready=0 mux_packets=0
+  found_video=0 video_pts_offset=0 found_audio=00 audio_dts_offsets=0,0
+> start
+unlink "/v/first.mkv"
+pipe create type=w
+  argv[0] "<bin>/obs-ffmpeg-mux"
+  argv[1] "/v/first.mkv"
+  argv[2] "1"
+  argv[3] "0"
+  argv[4] "h264"
+  argv[5] "2500"
+  argv[6] "1280"
+  argv[7] "720"
+  argv[8] "1"
+  argv[9] "1"
+  argv[10] "1"
+  argv[11] "1"
+  argv[12] "1"
+  argv[13] "0"
+  argv[14] "30"
+  argv[15] "1"
+  argv[16] "0"
+  argv[17] ""
+  argv[18] ""
+begin_data_capture
+log info [ffmpeg muxer: 'o'] Writing file '/v/first.mkv'...
+start -> 1
+> proc split_file
+  out split_file_enabled=1
+> state_split
+state_split split_file=1 allow_overwrite=0 cur_size=0 cur_time=0 max_size=0 max_time=0 manual=1 ready=0 mux_packets=0
+  found_video=0 video_pts_offset=0 found_audio=00 audio_dts_offsets=0,0
+> pkt v pts=0 key=1 size=4
+mkdirs "/rec"
+log info [ffmpeg muxer: 'o'] Changing output file to '/rec/m1.mkv'
+wire CHANGE_FILE "/rec/m1.mkv"
+signal file_changed next_file="/rec/m1.mkv"
+wire V idx=0 key=0 pts=0 dts=0 size=2 data=0a0b
+wire V idx=0 key=0 pts=0 dts=0 size=2 data=0a0b
+wire V idx=0 key=1 pts=0 dts=0 size=4 data=00010203
+> state_split
+state_split split_file=1 allow_overwrite=0 cur_size=6 cur_time=0 max_size=0 max_time=0 manual=0 ready=0 mux_packets=0
+  found_video=1 video_pts_offset=0 found_audio=00 audio_dts_offsets=0,0
+> pkt v pts=10 key=0 size=4
+wire V idx=0 key=0 pts=10 dts=10 size=4 data=10111213
+> state_split
+state_split split_file=1 allow_overwrite=0 cur_size=10 cur_time=0 max_size=0 max_time=0 manual=0 ready=0 mux_packets=0
+  found_video=1 video_pts_offset=0 found_audio=00 audio_dts_offsets=0,0
+> pkt v pts=20 key=1 size=4
+wire V idx=0 key=1 pts=20 dts=20 size=4 data=20212223
+> state_split
+state_split split_file=1 allow_overwrite=0 cur_size=14 cur_time=0 max_size=0 max_time=0 manual=0 ready=0 mux_packets=0
+  found_video=1 video_pts_offset=0 found_audio=00 audio_dts_offsets=0,0
+> pkt v pts=30 key=1 size=4
+wire V idx=0 key=1 pts=30 dts=30 size=4 data=30313233

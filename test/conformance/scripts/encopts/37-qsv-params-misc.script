@@ -1,0 +1,74 @@
+# CORE. Remaining update_params rules: target usage mapping, B-frames ("bframes" default 3;
+# a user-set "bf" overrides it; forced 0 on Sandy/Ivy Bridge), keyint_sec, repeat_headers,
+# VUI/colour tables, HDR mastering data for Rec.2100 (hdr_peak = nominal peak level), size/fps.
+data D
+qsv_defaults h264v2 D
+echo target-usage
+set D target_usage str TU1
+qsv_create h264v2 X D
+qsv_destroy X
+set D target_usage str TU7
+qsv_create h264v2 X D
+qsv_destroy X
+set D target_usage str tu3
+qsv_create h264v2 X D
+qsv_destroy X
+set D target_usage str speed
+qsv_create h264v2 X D
+qsv_destroy X
+set D target_usage str bogus
+qsv_create h264v2 X D
+qsv_destroy X
+set D target_usage str TU4
+echo bframes
+set D bframes int 2
+qsv_create h264v2 X D
+qsv_destroy X
+set D bf int 1
+qsv_create h264v2 X D
+qsv_destroy X
+cpu_platform 3
+qsv_create h264v2 X D
+qsv_destroy X
+cpu_platform 2
+qsv_create h264v2 X D
+qsv_destroy X
+cpu_platform 6
+echo keyint-and-headers
+set D keyint_sec int 3
+set D repeat_headers bool 1
+qsv_create h264v2 X D
+qsv_destroy X
+echo colour-601-full-range
+video NV12 601 full 30 1 1280 720
+qsv_create h264v2 X D
+qsv_destroy X
+echo colour-srgb
+video NV12 srgb partial 24 1 1280 720
+qsv_create h264v2 X D
+qsv_destroy X
+echo colour-default
+video NV12 default partial 24 1 1280 720
+qsv_create h264v2 X D
+qsv_destroy X
+echo hdr-requires-a-10-bit-hevc-or-av1-encoder
+video P010 pq partial 60 1 1920 1080
+hdr_peak 1000
+data H
+qsv_defaults hevc H
+qsv_create hevc X H
+qsv_destroy X
+hdr_peak 400
+qsv_create hevc X H
+qsv_destroy X
+video P010 hlg partial 60 1 1920 1080
+hdr_peak 400
+qsv_create hevc X H
+qsv_destroy X
+echo size-and-fps-are-truncated-to-16-bit
+video NV12 709 partial 60000 1001 3840 2160
+qsv_create h264v2 X D
+qsv_destroy X
+video NV12 709 partial 100000 1 70000 2160
+qsv_create h264v2 X D
+qsv_destroy X

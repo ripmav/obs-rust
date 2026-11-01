@@ -1,0 +1,24 @@
+# luma_key_filter v1 (no blend change) and v2 (premultiplied blend): four floats passed straight through.
+source T 1920 1080 1920 1080 SRGB video
+source P 1920 1080 1920 1080 SRGB video
+filter a luma_key_filter 0 @null T P
+render a
+filter b luma_key_filter 2 @null T P
+render b
+data d
+dset d luma_max dbl 0.75
+dset d luma_min dbl 0.25
+dset d luma_max_smooth dbl 0.1
+dset d luma_min_smooth dbl 0.05
+filter c luma_key_filter 2 d T P
+render c
+update c d
+tick c 0.1
+echo update path shared by both versions; v1 still renders through the colour-space path
+filter e luma_key_filter 0 d T P
+render e
+srcspace T SRGB_16F
+render e
+srcspace T 709_EXTENDED
+render e
+render c

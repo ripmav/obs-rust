@@ -1,0 +1,88 @@
+create n -> ok
+state gate channels=2 is_open=0 sample_rate_i=2.08333331e-05 open_threshold=0.0501187295 close_threshold=0.0251188632 decay_rate=3.90622918e-05 attack_rate=0.000833333354 release_rate=0.000138888878 hold_time=0.200000003 attenuation=0 level=0 held_time=0
+echo default-closed-gate-silences-quiet-input
+process n frames=16 ts=0 pos=0 in-crc: cd0ee885 cd0ee885
+  ret same frames=16 ts=0
+  out p0 [0] 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+  out p1 [0] 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+echo open-on-loud-input-ramps-up
+process n frames=100 ts=0 pos=16 in-crc: 2d153665 2a9d4ead
+  ret same frames=100 ts=0
+  out p0 [0] 0 0.00416666688 0.00833333377 0.0124999965 0.0166666601 0.0208333228 0.0249999855 0.0291666482 0.0333333127 0.0374999754
+state gate channels=2 is_open=1 sample_rate_i=2.08333331e-05 open_threshold=0.0501187295 close_threshold=0.0251188632 decay_rate=3.90622918e-05 attack_rate=0.000833333354 release_rate=0.000138888878 hold_time=0.200000003 attenuation=0.0824999437 level=0.499960929 held_time=2.08333331e-05
+echo fast-settings
+state gate channels=2 is_open=0 sample_rate_i=2.08333331e-05 open_threshold=0.100000001 close_threshold=0.0316227749 decay_rate=0.000106839419 attack_rate=0.0208333321 release_rate=0.010416666 hold_time=0.00200000009 attenuation=0 level=0 held_time=0
+process n frames=200 ts=0 pos=116 in-crc: ba58b3f2 ba58b3f2
+  ret same frames=200 ts=0
+  out p0 [0] 0 0.0962374359 0.104166672 -0.0407894291 -0.294627726 -0.495722443 -0.433012694 -0.191341713 0.129409522 0.39667666 0.5 0.39667666 0.129409522 -0.191341713 -0.433012694 -0.495722443
+  out p0 [160] -0.353553385 -0.0652630925 0.25 0.461939752
+process n frames=500 ts=0 pos=316 in-crc: 514b12bd 514b12bd
+  ret same frames=500 ts=0
+  out p0 [0] 9.99999975e-05 9.99999975e-05 9.99999975e-05 9.99999975e-05 9.99999975e-05 9.99999975e-05 9.99999975e-05 9.99999975e-05 9.99999975e-05 9.99999975e-05 9.99999975e-05 9.99999975e-05 9.99999975e-05 9.99999975e-05 9.99999975e-05 9.99999975e-05
+  out p0 [400] 9.99999975e-05 9.99999975e-05 9.99999975e-05 9.99999975e-05
+state gate channels=2 is_open=1 sample_rate_i=2.08333331e-05 open_threshold=0.100000001 close_threshold=0.0316227749 decay_rate=0.000106839419 attack_rate=0.0208333321 release_rate=0.010416666 hold_time=0.00200000009 attenuation=1 level=0.446151972 held_time=2.08333331e-05
+echo hold-time-defers-release
+process n frames=100 ts=0 pos=816 in-crc: 2d153665 2d153665
+  ret same frames=100 ts=0
+  out p0 [0] 0 0.010416666 0.0208333321 0.0312499981 0.0416666642 0.0520833284 0.0624999925 0.0729166567 0.0833333209 0.0937499851 0.104166649 0.114583313 0.124999978 0.135416642 0.145833313 0.156249985
+  out p0 [16] 0.166666657 0.177083328 0.1875 0.197916672 0.208333343 0.218750015 0.229166687 0.239583358 0.25000003 0.260416687 0.270833343 0.28125 0.291666657 0.302083313 0.31249997 0.322916627
+  out p0 [32] 0.333333284 0.34374994 0.354166597 0.364583254 0.374999911 0.385416567 0.395833224 0.406249881 0.416666538 0.427083194 0.437499851 0.447916508 0.458333164 0.468749821 0.479166478 0.489583135
+  out p0 [48] 0.499999791 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5
+  out p0 [64] 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5
+  out p0 [80] 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5
+  out p0 [96] 0.5 0.5 0.5 0.5
+  out p1 [0] 0 0.010416666 0.0208333321 0.0312499981 0.0416666642 0.0520833284 0.0624999925 0.0729166567 0.0833333209 0.0937499851 0.104166649 0.114583313 0.124999978 0.135416642 0.145833313 0.156249985
+  out p1 [16] 0.166666657 0.177083328 0.1875 0.197916672 0.208333343 0.218750015 0.229166687 0.239583358 0.25000003 0.260416687 0.270833343 0.28125 0.291666657 0.302083313 0.31249997 0.322916627
+  out p1 [32] 0.333333284 0.34374994 0.354166597 0.364583254 0.374999911 0.385416567 0.395833224 0.406249881 0.416666538 0.427083194 0.437499851 0.447916508 0.458333164 0.468749821 0.479166478 0.489583135
+  out p1 [48] 0.499999791 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5
+  out p1 [64] 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5
+  out p1 [80] 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5
+  out p1 [96] 0.5 0.5 0.5 0.5
+process n frames=1000 ts=0 pos=916 in-crc: 94848a45 94848a45
+  ret same frames=1000 ts=0
+  out p0 [0] 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+  out p0 [800] 0 0 0 0
+state gate channels=2 is_open=1 sample_rate_i=2.08333331e-05 open_threshold=0.100000001 close_threshold=0.0316227749 decay_rate=0.000106839419 attack_rate=0.0208333321 release_rate=0.010416666 hold_time=0.00999999978 attenuation=1 level=0.393051833 held_time=2.08333331e-05
+echo update-resets-state
+state gate channels=2 is_open=0 sample_rate_i=2.08333331e-05 open_threshold=0.100000001 close_threshold=0.0316227749 decay_rate=0.000106839419 attack_rate=0.0208333321 release_rate=0.010416666 hold_time=0.00999999978 attenuation=0 level=0 held_time=0
+echo zero-ms-times-make-infinite-rates
+state gate channels=2 is_open=0 sample_rate_i=2.08333331e-05 open_threshold=0.100000001 close_threshold=0.0316227749 decay_rate=0.000106839419 attack_rate=inf release_rate=inf hold_time=0 attenuation=0 level=0 held_time=0
+process n frames=4 ts=0 pos=1916 in-crc: 542e8f65 542e8f65
+  ret same frames=4 ts=0
+  out p0 [0] 0 0.5 0.5 0.5
+  out p1 [0] 0 0.5 0.5 0.5
+process n frames=4 ts=0 pos=1920 in-crc: 69691905 69691905
+  ret same frames=4 ts=0
+  out p0 [0] 0 0 0 0
+  out p1 [0] 0 0 0 0
+echo close-above-open
+state gate channels=2 is_open=0 sample_rate_i=2.08333331e-05 open_threshold=0.00999999978 close_threshold=0.316227764 decay_rate=-0.000478480884 attack_rate=0.0208333321 release_rate=0.0208333321 hold_time=0 attenuation=0 level=0 held_time=0
+process n frames=10 ts=0 pos=1924 in-crc: c1e6ea69 c1e6ea69
+  ret same frames=10 ts=0
+  out p0 [0] 0 0 0 0 0 0 0 0 0 0
+  out p1 [0] 0 0 0 0 0 0 0 0 0 0
+echo negative-decay
+state gate channels=2 is_open=0 sample_rate_i=2.08333331e-05 open_threshold=0.316227764 close_threshold=0.00999999978 decay_rate=0.000478480884 attack_rate=0.0208333321 release_rate=0.0208333321 hold_time=0 attenuation=0 level=0 held_time=0
+echo 44100-and-mono
+create m -> ok
+state gate channels=1 is_open=0 sample_rate_i=2.26757365e-05 open_threshold=0.0501187295 close_threshold=0.0251188632 decay_rate=4.25167782e-05 attack_rate=0.000907029491 release_rate=0.000151171567 hold_time=0.200000003 attenuation=0 level=0 held_time=0
+process m frames=4 ts=0 pos=0 in-crc: 542e8f65
+  ret same frames=4 ts=0
+  out p0 [0] 0 0.000453514745 0.000907029491 0.00136054424
+echo nan-level
+create nn -> ok
+process nn frames=3 ts=0 pos=0 in-crc: a51f5f48 af970b48
+  ret same frames=3 ts=0
+  out p0 [0] nan nan nan
+  out p1 [0] 0 0.010416666 0.0208333321
+state gate channels=2 is_open=1 sample_rate_i=2.08333331e-05 open_threshold=0.316227764 close_threshold=0.00999999978 decay_rate=0.000478480884 attack_rate=0.0208333321 release_rate=0.0208333321 hold_time=0 attenuation=0.0416666642 level=0.499521524 held_time=2.08333331e-05
+echo only-first-channels-are-processed
+create o -> ok
+process o frames=3 ts=0 pos=0 in-crc: af970b48 af970b48
+  ret same frames=3 ts=0
+  out p0 [0] 0 0.000416666677 0.000833333354
+  out p1 [0] 0.5 0.5 0.5
+process o frames=3 ts=0 pos=3 in-crc: af970b48 af970b48
+  ret same frames=3 ts=0
+  out p0 [0] 0.00124999997 0.00166666671 0.00208333344
+  out p1 [0] 0.5 0.5 0.5

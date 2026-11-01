@@ -1,0 +1,39 @@
+# Texture / sampler / shader / swapchain loading and the timer objects forward unchanged.
+trace 0
+gs_create g
+gs_enter_context g
+trace 1
+gs_texture_create 4 4 GS_RGBA 1 0 > t
+gs_samplerstate_create 0 0 0 0 1 0 > s
+gs_load_texture t 0
+gs_load_texture t 7
+gs_load_texture - 3
+gs_load_samplerstate s 1
+gs_load_samplerstate - 1
+gs_load_default_samplerstate 1 2
+gs_load_default_samplerstate 0 0
+gs_swapchain_create 640 480 0 GS_BGRA GS_Z16 2 > sw
+gs_swapchain_create 640 480 3 GS_RGBA GS_ZS_NONE 0 > sw2
+gs_load_swapchain sw
+gs_load_swapchain -
+gs_swapchain_destroy sw
+gs_timer_create > tm
+gs_timer_range_create > tr
+gs_timer_begin tm
+gs_timer_end tm
+gs_timer_get_data tm
+ret gs_timer_get_data 0
+gs_timer_get_data tm
+gs_timer_range_begin tr
+gs_timer_range_end tr
+gs_timer_range_get_data tr
+gs_timer_begin -
+gs_timer_end -
+gs_timer_get_data -
+gs_timer_range_begin -
+gs_timer_range_end -
+gs_timer_range_get_data -
+gs_timer_destroy tm
+gs_timer_range_destroy tr
+gs_timer_destroy -
+gs_timer_range_destroy -

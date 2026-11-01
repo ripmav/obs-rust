@@ -1,0 +1,54 @@
+# Frame timestamp / duration derivation in mp_decode_next (observe via 'mdecode v' and 'mstate' fields
+# pts / next_pts / last_dur). pts = best_effort_timestamp rescaled to ns; when the decoder gives no timestamp
+# the previous 'next_pts' is used. Duration: the frame's own duration (rescaled), else (pts - previous pts) if the
+# previous pts is non-zero, else the previous duration, else decoder-time-base based estimate
+# (time_base.num * time_base in ns: with dectb=1/25 that is 40 ms; with dectb=2/25 it is 160 ms - a quirk).
+media ts 0 0
+video 1 1000 16 16 yuv420p
+pkt 0 0
+pkt 0 40
+pkt 0 nopts
+pkt 0 100 fdur=25
+pkt 0 130 bet=125 fdur=10
+pkt 0 200 bet=nopts
+endmedia
+media tsb 0 0
+video 1 1000 16 16 yuv420p dectb=2/25
+pkt 0 7
+pkt 0 9
+endmedia
+clock 1
+minit ts local=1
+echo no packet queued: nothing happens, frame_ready stays false
+mdecode v
+mnextpkt
+mdecode v
+mstate
+mnextpkt
+mdecode v
+mstate
+echo no timestamp: the previous next_pts is used
+mnextpkt
+mdecode v
+mstate
+echo own duration 25 ms
+mnextpkt
+mdecode v
+mstate
+echo best_effort 125 differs from pts 130, duration 10
+mnextpkt
+mdecode v
+mstate
+echo best effort missing again
+mnextpkt
+mdecode v
+mstate
+mfree
+echo ---- estimate from the decoder time base, first frame, pts != 0
+minit tsb local=1
+mnextpkt
+mdecode v
+mstate
+mnextpkt
+mdecode v
+mstate

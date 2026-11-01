@@ -1,0 +1,34 @@
+# Start failure paths: plugin start returning false, missing encoders, missing service, encoder init failure.
+video 30 1 1280 720
+audio 48000
+venc v
+aenc a
+venc vbad create_fail=1
+echo --- plugin start returns false: no "starting" signal, no activate
+out bad av,encoded start_ok=0
+set_venc bad v
+set_aenc bad a
+start bad
+info bad
+echo --- begin_data_capture without audio encoder fails (video+audio flags, no audio encoder)
+out noaud av,encoded autobegin=1
+set_venc noaud v
+start noaud
+can_begin noaud
+echo --- service flag without service
+out svc av,encoded,service autobegin=1
+set_venc svc v
+set_aenc svc a
+start svc
+set_service svc
+can_begin svc
+echo --- encoder whose create callback fails: initialize_encoders false, last error unset
+out ie av,encoded autobegin=1
+set_venc ie vbad
+set_aenc ie a
+start ie
+init_encoders ie
+lasterr ie ?
+echo --- no data (plugin context NULL) is not testable here; last error API
+lasterr ie boom
+lasterr ie -

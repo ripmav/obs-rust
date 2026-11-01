@@ -1,0 +1,26 @@
+# os_generate_formatted_filename(extension, allow_spaces, format): expands %-tokens of FORMAT using the
+# local time (the runner fixes time() and TZ) and the current video settings, replaces spaces with '_'
+# unless allowed, appends ".extension", and cuts the result to 255 bytes.
+# now EPOCH_SECONDS   tz POSIX_TZ   video FPSNUM FPSDEN BASEW BASEH OUTW OUTH FORMAT
+# fname EXT|@null SPACES FORMAT|@null
+# 1700000000 = 2023-11-14 22:13:20 UTC (Tuesday)
+now 1700000000
+tz UTC0
+video 60 1 1920 1080 1280 720 NV12
+fname @null 1 "%CCYY-%MM-%DD %hh-%mm-%ss"
+fname mkv 1 "%CCYY-%MM-%DD %hh-%mm-%ss"
+fname mkv 0 "%CCYY-%MM-%DD %hh-%mm-%ss"
+fname ".mkv" 1 "x"
+fname "" 1 "x"
+fname "tar.gz" 1 "x"
+fname "m kv" 0 "a b"
+fname "m kv" 1 "a b"
+# plain text is copied
+fname @null 1 "plain text"
+fname @null 0 "plain text"
+fname mp4 1 "no tokens at all"
+# empty / NULL format: the C result is NULL when nothing at all is produced
+fname @null 1 ""
+fname @null 1 @null
+fname mp4 1 ""
+fname mp4 1 @null

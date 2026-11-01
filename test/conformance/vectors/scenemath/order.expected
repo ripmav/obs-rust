@@ -1,0 +1,36 @@
+add a ok
+add b ok
+add c ok
+add d ok
+order main: a b c d
+-- up/down by one
+order main: b a c d
+order main: b c a d
+order main: b c d a
+-- no-ops at the ends
+order main: b c d a
+order main: b c d a
+order main: d b c a
+order main: d b c a
+-- ends
+order main: d c a b
+order main: b d c a
+signal item_add scene=main item#1
+signal item_add scene=main item#2
+signal item_add scene=main item#3
+signal item_add scene=main item#4
+signal reorder scene=main
+signal reorder scene=main
+signal reorder scene=main
+signal reorder scene=main
+signal reorder scene=main
+signal reorder scene=main
+signal reorder scene=main
+signal reorder scene=main
+signal reorder scene=main
+log end
+-- positions
+order_pos a 3
+order_pos b 0
+order_pos c 2
+order_pos d 1

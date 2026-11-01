@@ -1,0 +1,10 @@
+# color_source: render path selection (linear when alpha < 1 or host linear mode), framebuffer sRGB restore.
+create opaque color_source_v3 {"color":4281558681,"width":10,"height":20}
+create alpha color_source_v3 {"color":2152744345,"width":10,"height":20}
+render opaque
+core linear_srgb 1
+render opaque
+core linear_srgb 0
+core srgb_fb 1
+render opaque
+render alpha

@@ -1,0 +1,28 @@
+ext file.txt offset=4 ext=".txt"
+ext file.tar.gz offset=8 ext=".gz"
+ext file @null
+ext file. offset=4 ext="."
+ext . offset=0 ext="."
+ext .. offset=1 ext="."
+ext .hidden offset=0 ext=".hidden"
+ext dir/.hidden offset=4 ext=".hidden"
+ext dir.d/file @null
+ext dir.d/file.x offset=10 ext=".x"
+ext dir.d/ @null
+ext dir/file. offset=8 ext="."
+ext a/b.c/d @null
+ext a\b.c\d @null
+ext a\b.c offset=3 ext=".c"
+ext a/b\c.d offset=5 ext=".d"
+ext C:\dir.x\file @null
+ext / @null
+ext /abs/path/file.JPG offset=14 ext=".JPG"
+ext  @null
+ext file.ex t offset=4 ext=".ex t"
+ext x.y.z. offset=5 ext="."
+ext x.y.z./ @null
+ext a.b/c.d/e @null
+ext ... offset=2 ext="."
+ext a..b offset=2 ext=".b"
+ext é.txt offset=2 ext=".txt"
+ext diré/file @null

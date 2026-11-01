@@ -1,0 +1,55 @@
+log debug encoder 'v' (v) created
+encoder v created tb=1/30
+log debug output 'o1' (o1) created
+output o1 created flags=5 reconnect=20/2
+log debug output 'o2' (o2) created
+output o2 created flags=5 reconnect=20/2
+set_venc o1 idx=0 -> video_slots=01 audio_slots=00
+set_venc o2 idx=0 -> video_slots=01 audio_slots=00
+plugin out o1 start
+plugin enc v create
+log debug Maximum interleaver batch size for 'o1' calculated to be 2 packets
+signal o1 activate
+signal o1 start
+plugin out o1 begin_data_capture -> 1
+signal o1 starting
+start o1 -> 1
+plugin out o1 pkt V0 pts=0 dts=0 usec=1000000 kf=1 size=4 tb=1/30 b0=01
+plugin out o1 pkt V0 pts=1 dts=1 usec=1033333 kf=0 size=4 tb=1/30 b0=02
+plugin out o1 pkt V0 pts=2 dts=2 usec=1066666 kf=0 size=4 tb=1/30 b0=03
+plugin out o1 pkt V0 pts=3 dts=3 usec=1100000 kf=1 size=4 tb=1/30 b0=04
+--- o2 joins after 4 frames (keyframes are frames 1, 4, 7, ...)
+plugin out o2 start
+log debug Maximum interleaver batch size for 'o2' calculated to be 2 packets
+signal o2 activate
+signal o2 start
+plugin out o2 begin_data_capture -> 1
+signal o2 starting
+start o2 -> 1
+encstate v init=1 active=1 first_received=1 start_ts=1000000000 offset_usec=0 cur_pts=4 frames=4 callbacks=2 paired=0 outputs=2
+plugin out o1 pkt V0 pts=4 dts=4 usec=1133333 kf=0 size=4 tb=1/30 b0=05
+plugin out o1 pkt V0 pts=5 dts=5 usec=1166666 kf=0 size=4 tb=1/30 b0=06
+plugin out o2 pkt V0 pts=6 dts=6 usec=1200000 kf=1 size=4 tb=1/30 b0=07
+plugin out o1 pkt V0 pts=6 dts=6 usec=1200000 kf=1 size=4 tb=1/30 b0=07
+plugin out o2 pkt V0 pts=7 dts=7 usec=1233333 kf=0 size=4 tb=1/30 b0=08
+plugin out o1 pkt V0 pts=7 dts=7 usec=1233333 kf=0 size=4 tb=1/30 b0=08
+--- the encoder keeps running until the last output stops
+signal o1 stopping
+plugin out o1 stop ts=0
+log info Output 'o1': stopping
+log info Output 'o1': Total frames output: 8
+log info Output 'o1': Total drawn frames: 0
+signal o1 stop code=0 last_error=-
+stop o1 done
+signal o1 deactivate
+encstate v init=1 active=1 first_received=1 start_ts=1000000000 offset_usec=0 cur_pts=8 frames=8 callbacks=1 paired=0 outputs=2
+signal o2 stopping
+plugin out o2 stop ts=0
+log info Output 'o2': stopping
+log info Output 'o2': Total frames output: 2
+log info Output 'o2': Total drawn frames: 0
+signal o2 stop code=0 last_error=-
+stop o2 done
+plugin enc v destroy
+signal o2 deactivate
+encstate v init=0 active=0 first_received=0 start_ts=0 offset_usec=0 cur_pts=8 frames=8 callbacks=0 paired=0 outputs=2

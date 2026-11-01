@@ -1,0 +1,19 @@
+# Version helpers, locale handling and command-line argument capture.
+# - the API version is a packed major/minor/patch integer
+# - obs_set_locale replaces the stored locale (a copy is kept)
+# - the command line is copied once; a second call with a non-zero argc is ignored; it survives shutdown
+version
+cmdline_get
+cmdline_set prog --flag value
+cmdline_get
+cmdline_set other
+cmdline_get
+startup en-US -
+locale_set fr-FR
+locale_get
+locale_set -
+locale_get
+shutdown
+# QUIRK/DEFECT (D-1 in the spec): shutdown frees the copied argument vector but leaves the count set,
+# so a later set is still ignored and a later get would return a dangling pointer. Only the count is probed.
+cmdline_argc

@@ -1,0 +1,61 @@
+# S-034 hotkey pairs (e.g. start/stop): two hotkeys sharing a state machine. Callbacks return bool
+# ("accepted"); a pressed side blocks the other side until it is released; releasing a pressed side
+# does NOT call the user callback. Ids: pair ids are a separate counter; the two hotkeys get
+# consecutive hotkey ids and point at each other (pair_partner).
+regp frontend P "P.start" "Start" "P.stop" "Stop"
+regp frontend Q "Q.start" "-" "Q.stop" "-"
+info P.a
+info P.b
+reg frontend X "X" "x"
+loadbind P.a 0:OBS_KEY_F1
+loadbind P.b 0:OBS_KEY_F2
+loadbind Q.a 0:OBS_KEY_F3
+echo press-first
+down OBS_KEY_F1
+poll 2
+echo second-blocked-while-first-held
+down OBS_KEY_F2
+poll 2
+echo release-first-no-callback
+up OBS_KEY_F1
+poll
+echo the-blocked-binding-was-pressed-anyway-so-its-release-IS-delivered-to-the-callback-Q-4
+poll
+up OBS_KEY_F2
+poll
+echo callback-rejects-press-keeps-side-unpressed
+pairret P.a 0
+down OBS_KEY_F1
+poll 2
+up OBS_KEY_F1
+poll
+pairret P.a 1
+echo rejected-press-does-not-block-the-other
+down OBS_KEY_F2
+poll 2
+up OBS_KEY_F2
+poll
+echo pair-rename
+pairnames P "P.begin" "P.end"
+pairdescs P "d0" "d1"
+info P.a
+info P.b
+pairnames id:99 "n" "m"
+echo pair-save-and-load
+savepair P both
+savepair P 0
+savepair P none
+savepair id:99 both
+loadpair P [{"key":"OBS_KEY_F5"}] [{"key":"OBS_KEY_F6","shift":true}]
+savepair P both
+loadpair P - [{"key":"OBS_KEY_F7"}]
+savepair P both
+loadpair P - -
+savepair P both
+echo unregister-pair-removes-both-and-bindings
+unregp P
+enum
+enumb
+unregp P
+unregp id:77
+unregp INVALID

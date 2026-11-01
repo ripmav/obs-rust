@@ -1,0 +1,13 @@
+# bit depth x colour space grid (partial and full range) for the three distinct matrices.
+vparams 1 1 17
+vparams 1 2 17
+vparams 1 1 20
+vparams 1 2 20
+vparams 1 1 23
+vparams 1 2 23
+vparams 4 1 17
+vparams 4 2 17
+vparams 4 1 20
+vparams 4 2 20
+vparams 4 1 23
+vparams 4 2 23

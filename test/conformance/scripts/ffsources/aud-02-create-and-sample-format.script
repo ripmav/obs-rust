@@ -1,0 +1,49 @@
+# Creation: derived buffer sizes per negotiated sample format (create-time codec options
+# themselves are covered by the encopts area, spec S-025). frame_size is what the opened
+# codec reports; 0 means the plugin falls back to 1024.
+data D
+audio_defaults aac D
+host_int frame_size 1024
+# no format list: FLTP, planar float, 2 planes
+audio_create A aac D
+audio_dump A
+audio_destroy A
+# packed float requested by opus and offered
+av_formats flt,fltp
+audio_create A opus D
+audio_dump A
+audio_destroy A
+# planar 32-bit int requested by alac
+av_formats s16,s32p
+audio_create A alac D
+audio_dump A
+audio_destroy A
+# codec reports frame_size 0 (PCM): 1024 samples assumed; packed s16 -> one plane, 4 bytes per frame
+host_int frame_size 0
+av_formats s16
+audio_create A pcm D
+audio_dump A
+audio_destroy A
+# 8-bit unsigned planar, 5.1
+host_audio 6 6 48000
+av_formats u8p
+audio_create A pcm D
+audio_dump A
+audio_destroy A
+# double precision is not an OBS format: maps to 16-bit; size follows that mapping
+av_formats dbl
+audio_create A pcm D
+audio_dump A
+audio_destroy A
+# 7.1, packed s32
+host_audio 8 8 48000
+av_formats s32
+audio_create A pcm D
+audio_dump A
+audio_destroy A
+# failure paths return NULL and leave nothing behind
+host_int open_rc -1000
+audio_create A aac D
+host_int open_rc 0
+av_codec aac 0
+audio_create A aac D

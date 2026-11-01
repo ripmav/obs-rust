@@ -1,0 +1,59 @@
+> trace 0
+> gs_create g
+ret 0 created
+> gs_enter_context g
+> trace 1
+> gs_texture_create 2 3 GS_RGBA 1 GS_DYNAMIC > t
+  dev device_texture_create w=2 h=3 fmt=3 levels=1 data=null flags=2
+ret #6
+== equal linesizes -> one big copy
+> gs_texture_set_image t 8 0
+  dev gs_texture_map obj=#6
+  dev gs_texture_get_height tex=#6
+  dev gs_texture_unmap obj=#6 bytes=000102030405060708090a0b0c0d0e0f1011121314151617
+== flip: rows are copied bottom-up
+> gs_texture_set_image t 8 1
+  dev gs_texture_map obj=#6
+  dev gs_texture_get_height tex=#6
+  dev gs_texture_unmap obj=#6 bytes=101112131415161708090a0b0c0d0e0f0001020304050607
+== source stride smaller than the mapped one (backend pads rows to 12)
+> ret maplinesize 12
+> gs_texture_set_image t 8 0
+  dev gs_texture_map obj=#6
+  dev gs_texture_get_height tex=#6
+  dev gs_texture_unmap obj=#6 bytes=00010203040506070000000008090a0b0c0d0e0f00000000101112131415161700000000
+== source stride larger than the mapped stride: only mapped-stride bytes per row
+> ret maplinesize 6
+> gs_texture_set_image t 10 0
+  dev gs_texture_map obj=#6
+  dev gs_texture_get_height tex=#6
+  dev gs_texture_unmap obj=#6 bytes=0001020304050a0b0c0d0e0f141516171819
+== flip with differing strides
+> gs_texture_set_image t 10 1
+  dev gs_texture_map obj=#6
+  dev gs_texture_get_height tex=#6
+  dev gs_texture_unmap obj=#6 bytes=1415161718190a0b0c0d0e0f000102030405
+> ret maplinesize 0
+== map failure: nothing is unmapped
+> ret gs_texture_map 0
+> gs_texture_set_image t 8 0
+  dev gs_texture_map obj=#6
+> ret gs_texture_map 1
+== NULL arguments
+> gs_texture_set_image - 8 0
+log debug gs_texture_set_image: Null 'tex' parameter
+> gs_texture_set_image t 8 0 nulldata
+log debug gs_texture_set_image: Null 'data' parameter
+== stage surface map/unmap are straight forwards
+> gs_stagesurface_create 2 2 GS_RGBA > s
+  dev device_stagesurface_create w=2 h=2 fmt=3
+ret #7
+> gs_stagesurface_map s
+  dev gs_stagesurface_map obj=#7
+ret true linesize=8 mapped
+> gs_stagesurface_unmap s
+  dev gs_stagesurface_unmap obj=#7 bytes=00000000000000000000000000000000
+> ret gs_stagesurface_map 0
+> gs_stagesurface_map s
+  dev gs_stagesurface_map obj=#7
+ret false linesize=0 null

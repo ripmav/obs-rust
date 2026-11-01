@@ -1,0 +1,99 @@
+# CORE/QUIRK. compressor sidechain: name resolved by video_tick at most every 3 s of host time (first check
+# immediately only when the clock moved past the update time), audio captured through a callback on the
+# other source, popped by filter_audio. Host events are shown.
+audio 2 48000
+events on
+source mic audio
+source cam video
+source ghost audio
+source other audio
+clock 10000000000
+create c compressor
+data d
+set d sidechain_source string mic
+set d attack_time int 1
+set d release_time int 1
+set d threshold double -30
+set d ratio double 10
+update c d
+state c
+echo tick-at-same-clock-does-nothing
+tick c
+state c
+advance 1
+tick c
+state c
+refs mic
+echo capture-then-process-uses-sidechain-envelope
+sc_push mic 480 0 sine:0.9:200 sine:0.9:200
+state c
+process c 480 out=0:0:480:40 const:0.5 const:0.5
+state c
+echo sidechain-underflow-gives-silence-envelope
+process c 480 out=0:0:480:60 const:0.5 const:0.5
+state c
+echo muted-capture-pushes-zeros
+sc_push mic 480 1 sine:0.9:200 sine:0.9:200
+state c
+process c 480 out=0:470:480:2 const:0.5 const:0.5
+echo capture-drops-oldest-when-queue-exceeds-twice-expected
+sc_push mic 100 0 const:0.1 const:0.1
+sc_push mic 100 0 const:0.1 const:0.1
+sc_push mic 100 0 const:0.1 const:0.1
+sc_push mic 100 0 const:0.1 const:0.1
+state c
+echo smaller-block-pops-whole-buffer-length-quirk
+sc_push mic 480 0 sine:0.9:200 sine:0.9:200
+sc_push mic 480 0 sine:0.9:200 sine:0.9:200
+process c 16 out=all const:0.5 const:0.5
+state c
+echo change-sidechain-removes-callback-and-rechecks-after-3s
+set d sidechain_source string other
+update c d
+state c
+tick c
+state c
+advance 3000000000
+tick c
+state c
+advance 3000000001
+tick c
+state c
+refs other
+refs mic
+echo missing-source-retries-every-3s
+set d sidechain_source string nosuch
+update c d
+advance 3000000001
+tick c
+tick c
+advance 3000000001
+tick c
+state c
+echo none-and-empty-and-same-name
+set d sidechain_source string none
+update c d
+state c
+set d sidechain_source string ""
+update c d
+state c
+echo dead-source
+set d sidechain_source string cam
+update c d
+advance 3000000001
+tick c
+set d sidechain_source string ghost
+source_dead cam
+update c d
+state c
+echo destroy-removes-callback
+set d sidechain_source string mic
+update c d
+advance 3000000001
+tick c
+destroy c
+refs mic
+echo properties-list-audio-sources-except-parent
+create c2 compressor - parent=mic
+props c2
+props_null compressor

@@ -1,0 +1,16 @@
+fake proc_handler_add "void twitch_ingests_refresh(int seconds)"
+fake proc_handler_add "void amazon_ivs_ingests_refresh(int seconds)"
+fake update_info_create prefix="[rtmp-services plugin] " agent="rtmp-services plugin (libobs 99.0.0-test)" url=https://obsproject.com/obs2_update/rtmp-services/v5 local=/mod/data cache=/cfg/rtmp-services/ confirm=set
+fake obs_register_service id=rtmp_common
+fake obs_register_service id=rtmp_custom
+module-load -> 1 name="rtmp-services plugin (libobs 99.0.0-test)"
+echo module-name-and-registered
+fake update_info_create_single prefix="[twitch ingest update] " agent="rtmp-services plugin (libobs 99.0.0-test)" url=https://ingest.twitch.tv/ingests
+proc-call twitch_ingests_refresh seconds=4
+fake update_info_create_single prefix="[amazon ivs ingest update] " agent="rtmp-services plugin (libobs 99.0.0-test)" url=https://ingest.contribute.live-video.net/ingests
+proc-call amazon_ivs_ingests_refresh seconds=4
+echo unload-destroys-updater
+fake update_info_destroy url=https://obsproject.com/obs2_update/rtmp-services/v5 pending=0
+fake update_info_destroy url=https://ingest.twitch.tv/ingests pending=0
+fake update_info_destroy url=https://ingest.contribute.live-video.net/ingests pending=0
+module-unload

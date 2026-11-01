@@ -1,0 +1,16 @@
+# Creation: unknown id (placeholder source, error log, info id kept), private sources (no global create signal,
+# not in public registry), plugin create returning NULL (source still exists, error log), filters always private.
+kind in input video create
+kind fl filter video create
+kind bad input video nocreate
+watch_global
+create a in A
+create p in P private
+create f fl F
+create b bad B
+create u missing U
+info a
+info p
+info f
+info b
+info u

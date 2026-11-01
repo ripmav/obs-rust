@@ -1,0 +1,10 @@
+registered image_source version=0
+registered color_source version=0
+registered color_source_v2 version=2
+registered color_source_v3 version=3
+registered slideshow version=0
+registered slideshow_v2 version=2
+info query=slideshow_v2
+info id=slideshow version=2 type=0 flags=0x2049 icon=3
+info callbacks get_name create destroy update get_defaults get_properties get_width get_height video_tick video_render audio_render enum_active_sources activate deactivate missing_files media_play_pause media_restart media_stop media_next media_previous media_get_state video_get_color_space
+info media_extra

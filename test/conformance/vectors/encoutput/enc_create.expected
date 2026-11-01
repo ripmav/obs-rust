@@ -1,0 +1,32 @@
+log debug encoder 'v' (v) created
+encoder v created tb=1001/60000
+log debug encoder 'a' (a) created
+encoder a created tb=1/44100
+log debug encoder 'vcaps' (vcaps) created
+log warning Encoder ID 'vcaps' is deprecated and may be removed in a future version.
+encoder vcaps created tb=1001/60000
+log error Encoder ID 'nosuchcodec' not found
+log debug encoder 'ghost' (nosuchcodec) created
+enc_raw -> created
+enc_raw codec=- type=1
+enc_raw -> NULL
+log debug encoder 'dup' (v) created
+enc_raw -> created
+enc_raw codec=fakev type=1
+log debug encoder 'dup2' (a) created
+enc_raw -> created
+enc_raw codec=fakea type=0
+enc_info v w=1920 h=1080 divisor=1 rate=0 frame_size=0 mixer=0 caps=0 codec=fakev last_error=-
+enc_info a w=0 h=0 divisor=0 rate=44100 frame_size=0 mixer=2 caps=0 codec=fakea last_error=-
+enc_info vcaps w=1920 h=1080 divisor=1 rate=0 frame_size=0 mixer=0 caps=5 codec=fakev last_error=-
+--- not-yet-initialised encoder: media and counters
+encstate v init=0 active=0 first_received=0 start_ts=0 offset_usec=0 cur_pts=0 frames=0 callbacks=0 paired=0 outputs=0
+encstate a init=0 active=0 first_received=0 start_ts=0 offset_usec=0 cur_pts=0 frames=0 callbacks=0 paired=0 outputs=0
+--- audio frame size/sample rate are known only after initialization
+plugin enc a create
+enc_init a -> 1
+enc_info a w=0 h=0 divisor=0 rate=44100 frame_size=2048 mixer=2 caps=0 codec=fakea last_error=-
+plugin enc v create
+enc_init v -> 1
+encstate v init=1 active=0 first_received=0 start_ts=0 offset_usec=0 cur_pts=0 frames=0 callbacks=0 paired=0 outputs=0
+enc_init a -> 1

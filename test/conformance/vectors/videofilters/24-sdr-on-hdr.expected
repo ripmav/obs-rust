@@ -1,0 +1,86 @@
+call effect_create file=sdr_on_hdr_filter.effect -> e1 uniforms=4 techniques=2
+call get_param e1:multiplier -> ok
+call get_param e1:power -> ok
+call source_update a deferred=1
+create a -> ok
+cs a -> 709_EXTENDED
+cs a -> 709_EXTENDED
+call deferred_update a
+tick a 0.016
+render a
+call filter_begin_cs a format=RGBA space=SRGB allow=NO_DIRECT -> 1
+call set_float e1:multiplier 1
+call set_float e1:power 2.4000001
+call blend_push
+call blend_function ONE INVSRCALPHA
+call filter_tech_end a e1 size=0x0 technique=GammaSrgb exists=1
+call blend_pop
+render a
+call filter_begin_cs a format=RGBA16F space=SRGB_16F allow=NO_DIRECT -> 1
+call set_float e1:multiplier 1
+call set_float e1:power 2.4000001
+call blend_push
+call blend_function ONE INVSRCALPHA
+call filter_tech_end a e1 size=0x0 technique=GammaSrgb exists=1
+call blend_pop
+echo gamma power
+call effect_create file=sdr_on_hdr_filter.effect -> e2 uniforms=4 techniques=2
+call get_param e2:multiplier -> ok
+call get_param e2:power -> ok
+call source_update b deferred=1
+create b -> ok
+call deferred_update b
+tick b 0.016
+render b
+call filter_begin_cs b format=RGBA16F space=SRGB_16F allow=NO_DIRECT -> 1
+call set_float e2:multiplier 2
+call set_float e2:power 2.20000005
+call blend_push
+call blend_function ONE INVSRCALPHA
+call filter_tech_end b e2 size=0x0 technique=GammaPower exists=1
+call blend_pop
+echo gamma invalid (0) uses the power technique, an unknown value too
+call effect_create file=sdr_on_hdr_filter.effect -> e3 uniforms=4 techniques=2
+call get_param e3:multiplier -> ok
+call get_param e3:power -> ok
+call source_update c deferred=1
+create c -> ok
+call deferred_update c
+tick c 0.016
+render c
+call filter_begin_cs c format=RGBA16F space=SRGB_16F allow=NO_DIRECT -> 1
+call set_float e3:multiplier 1.5
+call set_float e3:power 2.4000001
+call blend_push
+call blend_function ONE INVSRCALPHA
+call filter_tech_end c e3 size=0x0 technique=GammaPower exists=1
+call blend_pop
+call effect_create file=sdr_on_hdr_filter.effect -> e4 uniforms=4 techniques=2
+call get_param e4:multiplier -> ok
+call get_param e4:power -> ok
+call source_update f deferred=1
+create f -> ok
+call deferred_update f
+tick f 0.016
+render f
+call filter_begin_cs f format=RGBA16F space=SRGB_16F allow=NO_DIRECT -> 1
+call set_float e4:multiplier 1.5
+call set_float e4:power 2.4000001
+call blend_push
+call blend_function ONE INVSRCALPHA
+call filter_tech_end f e4 size=0x0 technique=GammaPower exists=1
+call blend_pop
+echo HDR sources are skipped
+render a
+call skip_video_filter a
+render a
+call skip_video_filter a
+echo sdr white level 0 -> inf multiplier
+render a
+call filter_begin_cs a format=RGBA space=SRGB allow=NO_DIRECT -> 1
+call set_float e1:multiplier inf
+call set_float e1:power 2.4000001
+call blend_push
+call blend_function ONE INVSRCALPHA
+call filter_tech_end a e1 size=0x0 technique=GammaSrgb exists=1
+call blend_pop

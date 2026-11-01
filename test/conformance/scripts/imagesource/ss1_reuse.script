@@ -1,0 +1,22 @@
+# slideshow v1: update keeps image sources of paths that are still listed, creates the new ones, releases the others (CORE).
+fs_file /s/a.png 1
+fs_file /s/b.png 1
+fs_file /s/c.png 1
+fs_file /s/d.png 1
+img /s/a.png 10 10
+img /s/b.png 20 20
+img /s/c.png 30 30
+img /s/d.png 40 40
+create ss slideshow {"files":[{"value":"/s/a.png"},{"value":"/s/b.png"}],"transition":"cut"}
+tick 0.016
+update ss {"files":[{"value":"/s/b.png"},{"value":"/s/c.png"}]}
+tick 0.016
+state ss
+update ss {"files":[{"value":"/s/c.png"},{"value":"/s/c.png"}]}
+tick 0.016
+state ss
+update ss {"files":[]}
+tick 0.016
+state ss
+size ss
+destroy ss

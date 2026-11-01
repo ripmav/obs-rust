@@ -1,0 +1,8 @@
+# QUIRK: for an unknown codec no SEI/OBU is generated, but the packet buffer is still replaced
+# by an identical copy (callers see the same bytes) and the counters advance.
+bpm_set codec vp9
+bpm_set rendered 10
+bpm_inject 0 0 1 1 1 1 0102030405 1000000000 1010000000 1020000000 1030000000
+bpm_set rendered 25
+bpm_set codec h264
+bpm_inject 0 0 2 2 1 1 0102030405 2000000000 2010000000 2020000000 2030000000

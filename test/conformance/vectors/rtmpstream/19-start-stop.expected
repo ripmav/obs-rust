@@ -1,0 +1,44 @@
+reset ok
+> reset
+reset ok
+> fake can_begin 0
+> start
+start -> 0 connecting=0
+> fake can_begin 1
+> fake init_enc_ok 0
+> start
+start -> 0 connecting=0
+> fake init_enc_ok 1
+> fake pthread_create_fail 1
+> start
+fake pthread_create -> fail
+start -> 0 connecting=1
+> set connecting 0
+> fake pthread_create_fail 0
+> start
+fake pthread_create #1
+start -> 1 connecting=1
+> set max_shutdown_time_sec 30
+> stop 5000000000
+fake pthread_join
+fake signal_stop 0
+stop_ts=5000000 shutdown_timeout_ts=35000000000 stopping=0
+> set connecting 0
+> set active 1
+> stop 5000000000
+stop_ts=5000000 shutdown_timeout_ts=35000000000 stopping=1
+> stop 6000000000
+stop_ts=5000000 shutdown_timeout_ts=35000000000 stopping=1
+> stop 0
+stop_ts=0 shutdown_timeout_ts=35000000000 stopping=1
+> reset
+reset ok
+> set max_shutdown_time_sec 10
+> stop 7000000000
+fake signal_stop 0
+stop_ts=7000000 shutdown_timeout_ts=17000000000 stopping=0
+> getters
+getters bytes=0 dropped=0 congestion=0 connect_time=0
+> stop 0
+fake signal_stop 0
+stop_ts=0 shutdown_timeout_ts=17000000000 stopping=0

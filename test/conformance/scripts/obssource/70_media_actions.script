@@ -1,0 +1,24 @@
+# Media control: requests are only accepted for sources with the CONTROLLABLE_MEDIA flag whose plug-in implements
+# the callback; they are queued and executed in order at the next video tick, each followed by a signal
+# (set_time has none).  started/ended signal immediately.  Queries call the plug-in directly.
+kind med input video,controllable media
+kind plain input video media
+create m med M
+create p plain P
+watch m
+watch p
+media m play
+media m pause
+media m restart
+media m stop
+media m next
+media m prev
+media m settime 5000
+media m query
+tick m 0.01
+media m query
+media p play
+media p query
+media m started
+media m ended
+media p started

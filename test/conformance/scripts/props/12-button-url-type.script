@@ -1,0 +1,19 @@
+# CORE/QUIRK. Button type defaults to default; url defaults to NULL on a button, but the url
+# getter returns "" (empty string, not NULL) on a property that is not a button.
+props P
+add button P b "B" @null as b
+add bool P x "X" as x
+info b
+set b button_type url
+set b button_url "https://example.com/a"
+info b
+set b button_url "https://example.com/b"
+info b
+set b button_url @null
+info b
+set x button_type url
+set x button_url "ignored"
+probe x
+echo setters-on-null-handle
+set @null button_type url
+destroy P

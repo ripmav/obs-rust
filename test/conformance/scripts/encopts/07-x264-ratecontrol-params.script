@@ -1,0 +1,30 @@
+# CORE. Translation of rate control settings into x264 parameters (video: NV12, 709,
+# 1920x1080 @ 60/1). The fake x264 resets to sentinels (keyint_max=-1111, bframe=-2222,
+# rc_method=-3333, rf=-3.5) so only fields the plugin writes carry real numbers.
+# CBR: ABR method + filler (x264 build >= 139 -> b_filler); crf forced to 0 (rf stays sentinel).
+# ABR: ABR method without filler. VBR: CRF method with rf = crf and vbv limits (!).
+# CRF: bitrate and buffer size forced to 0.
+data D
+x264_defaults D
+echo CBR
+x264_settings D
+echo ABR
+set D rate_control str ABR
+x264_settings D
+echo VBR
+set D rate_control str VBR
+x264_settings D
+echo CRF
+set D rate_control str CRF
+set D crf int 18
+x264_settings D
+echo rate-control-name-is-case-insensitive
+set D rate_control str crf
+x264_settings D
+set D rate_control str abr
+x264_settings D
+echo unknown-name-means-CBR
+set D rate_control str bogus
+x264_settings D
+set D rate_control str ""
+x264_settings D

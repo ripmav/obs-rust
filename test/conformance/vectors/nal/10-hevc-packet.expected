@@ -1,0 +1,29 @@
+echo idr-access-unit
+hevc_packet size=60 keyframe=1 priority=3 drop_priority=3 refs=1 fields=preserved fresh=1 data=000000034601500000000840010c01ffff016000000009420101016000000300000000054401c172b4000000064e0105010203000000052601af0630
+hevc_priority 3
+hevc_priority 3
+echo cra
+hevc_packet size=7 keyframe=1 priority=3 drop_priority=3 refs=1 fields=preserved fresh=1 data=000000032a01af
+echo trail-r-is-priority-2
+hevc_packet size=15 keyframe=0 priority=2 drop_priority=2 refs=1 fields=preserved fresh=1 data=00000003460150000000040201d0aa
+hevc_priority 2
+hevc_priority 2
+hevc_priority 3
+echo trail-n-is-priority-0
+hevc_packet size=15 keyframe=0 priority=0 drop_priority=0 refs=1 fields=preserved fresh=1 data=00000003460150000000040001d0aa
+hevc_packet size=15 keyframe=0 priority=1 drop_priority=1 refs=1 fields=preserved fresh=1 data=00000003460150000000040001d0aa
+echo max-over-nals
+hevc_packet size=23 keyframe=0 priority=2 drop_priority=2 refs=1 fields=preserved fresh=1 data=000000040001d0aa000000030601d0000000040001d0aa
+echo keyframe-flag-of-the-source-is-kept
+hevc_packet size=8 keyframe=1 priority=0 drop_priority=0 refs=1 fields=preserved fresh=1 data=000000040001d0aa
+echo parameter-sets-and-sei-alone-have-priority-0
+hevc_packet size=44 keyframe=0 priority=0 drop_priority=0 refs=1 fields=preserved fresh=1 data=0000000840010c01ffff016000000009420101016000000300000000054401c172b4000000064e0105010203
+echo three-byte-start-codes-and-trailing-zeros
+hevc_packet size=18 keyframe=0 priority=2 drop_priority=2 refs=1 fields=preserved fresh=1 data=000000040201d0aa000000060001d0aa0000
+echo empty
+hevc_packet size=0 keyframe=0 priority=0 drop_priority=0 refs=1 fields=preserved fresh=1 data=-
+hevc_packet size=0 keyframe=1 priority=2 drop_priority=2 refs=1 fields=preserved fresh=1 data=-
+hevc_priority 1
+hevc_packet size=0 keyframe=0 priority=0 drop_priority=0 refs=1 fields=preserved fresh=1 data=-
+echo trailing-start-code-at-end-is-not-seen
+hevc_packet size=12 keyframe=0 priority=2 drop_priority=2 refs=1 fields=preserved fresh=1 data=000000080201d0aa00000001

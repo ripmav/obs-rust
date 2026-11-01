@@ -1,0 +1,98 @@
+> reset
+> output rb
+> venc h264 bitrate=2500 extra=0a0b
+> set str directory /rec
+> set str format r%N
+> set str extension mp4
+> knob defer_threads 1
+> knob now_ns 1000
+> create replay_buffer
+proc_add "void save()"
+proc_add "void get_last_replay(out string path)"
+signal_add "void saved()"
+signal_add "void saving(ptr output)"
+create replay_buffer -> ok
+> start
+begin_data_capture
+start -> 1
+> pkt v pts=0 key=1 size=4 sys=1
+> proc save
+> pkt v pts=1 key=0 size=4 sys=1
+signal saving
+mkdirs "/rec"
+> state_rb
+state_rb save_ts=0 keyframes=1 muxing=1 queued=2 mux_packets=2 cur_size=8 cur_time=0 max_size=0 max_time=0
+> proc get_last_replay
+> echo second_save_requested_while_the_first_still_muxes
+second_save_requested_while_the_first_still_muxes
+> proc save
+> pkt v pts=2 key=0 size=4 sys=1
+> state_rb
+state_rb save_ts=1 keyframes=1 muxing=1 queued=3 mux_packets=2 cur_size=12 cur_time=0 max_size=0 max_time=0
+> run_pending
+pipe create type=w
+  argv[0] "<bin>/obs-ffmpeg-mux"
+  argv[1] "/rec/r1.mp4"
+  argv[2] "1"
+  argv[3] "0"
+  argv[4] "h264"
+  argv[5] "2500"
+  argv[6] "1280"
+  argv[7] "720"
+  argv[8] "1"
+  argv[9] "1"
+  argv[10] "1"
+  argv[11] "1"
+  argv[12] "1"
+  argv[13] "0"
+  argv[14] "30"
+  argv[15] "1"
+  argv[16] "0"
+  argv[17] ""
+  argv[18] ""
+wire V idx=0 key=0 pts=0 dts=0 size=2 data=0a0b
+wire V idx=0 key=1 pts=0 dts=0 size=4 data=00010203
+wire V idx=0 key=0 pts=1 dts=1 size=4 data=10111213
+log info [ffmpeg muxer: 'rb'] Wrote replay buffer to '/rec/r1.mp4'
+pipe destroy -> 0
+signal saved
+> state_rb
+state_rb save_ts=1 keyframes=1 muxing=0 queued=3 mux_packets=0 cur_size=12 cur_time=0 max_size=0 max_time=0
+> pkt v pts=3 key=0 size=4 sys=1
+signal saving
+mkdirs "/rec"
+> state_rb
+state_rb save_ts=0 keyframes=1 muxing=1 queued=4 mux_packets=4 cur_size=16 cur_time=0 max_size=0 max_time=0
+> run_pending
+pipe create type=w
+  argv[0] "<bin>/obs-ffmpeg-mux"
+  argv[1] "/rec/r2.mp4"
+  argv[2] "1"
+  argv[3] "0"
+  argv[4] "h264"
+  argv[5] "2500"
+  argv[6] "1280"
+  argv[7] "720"
+  argv[8] "1"
+  argv[9] "1"
+  argv[10] "1"
+  argv[11] "1"
+  argv[12] "1"
+  argv[13] "0"
+  argv[14] "30"
+  argv[15] "1"
+  argv[16] "0"
+  argv[17] ""
+  argv[18] ""
+wire V idx=0 key=0 pts=0 dts=0 size=2 data=0a0b
+wire V idx=0 key=1 pts=0 dts=0 size=4 data=00010203
+wire V idx=0 key=0 pts=1 dts=1 size=4 data=10111213
+wire V idx=0 key=0 pts=2 dts=2 size=4 data=20212223
+wire V idx=0 key=0 pts=3 dts=3 size=4 data=30313233
+log info [ffmpeg muxer: 'rb'] Wrote replay buffer to '/rec/r2.mp4'
+pipe destroy -> 0
+signal saved
+> state_rb
+state_rb save_ts=0 keyframes=1 muxing=0 queued=4 mux_packets=0 cur_size=16 cur_time=0 max_size=0 max_time=0
+> proc get_last_replay
+  out path="/rec/r2.mp4"

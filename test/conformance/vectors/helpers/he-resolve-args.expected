@@ -1,0 +1,12 @@
+he_order bind_len=0 host=host.example port=1935: result=0 hint_family=unspec resolver_saw_host=host.example service=1935
+  order: 1a
+he_order bind_len=16 host=host.example port=1935: result=0 hint_family=inet resolver_saw_host=host.example service=1935
+  order: 1a
+he_order bind_len=28 host=host.example port=8080: result=0 hint_family=inet6 resolver_saw_host=host.example service=8080
+  order: 1b
+he_order bind_len=5 host=host.example port=0: result=0 hint_family=unspec resolver_saw_host=host.example service=0
+  order: 1a
+he_order bind_len=0 host=host.example port=65535: result=0 hint_family=unspec resolver_saw_host=host.example service=65535
+  order: 1a
+he_fail result=-1 addresses=null
+he_consts delay_ms=200 max_attempts=6 connection_timeout_ms=25000

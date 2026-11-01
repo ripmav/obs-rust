@@ -1,0 +1,38 @@
+# S-034 context-owned hotkeys: bindings are loaded at registration time from the context's
+# hotkey_data (object keyed by hotkey NAME, each value an array of binding objects), and
+# saved/loaded for a whole context (obs_hotkeys_save_* / obs_hotkeys_load_*).
+# Signal order at registration: hotkey_bindings_changed (only if the array was non-empty) comes
+# BEFORE hotkey_register.
+ctx source S1 {"Mute":[{"key":"OBS_KEY_M","control":true}],"Other":[{"key":"OBS_KEY_O"}],"Empty":[]}
+echo registration-loads-matching-name
+reg source S1 m "Mute" "mute it"
+reg source S1 e "Empty" "e"
+reg source S1 n "NoEntry" "n"
+enumb
+echo save-whole-context
+ctxsave S1
+echo unknown-names-in-data-are-ignored-Other-stays-unused
+ctxload S1 {"Mute":[{"key":"OBS_KEY_N"}],"NoEntry":[{"key":"OBS_KEY_Q","alt":true}],"Zzz":[]}
+echo load-APPENDS-for-names-present-existing-bindings-are-kept-Q-3
+enumb
+ctxsave S1
+echo ctxload-with-null-data-is-a-noop
+ctxload S1 -
+ctxsave S1
+echo context-without-hotkeys-saves-null
+ctx output O1
+ctxsave O1
+echo context-with-hotkeys-but-no-bindings-saves-empty-arrays
+ctx encoder E1
+reg encoder E1 x "x.key" "d"
+ctxsave E1
+echo pair-in-context-loads-both-halves
+ctx service V1 {"a.on":[{"key":"OBS_KEY_F1"}],"a.off":[{"key":"OBS_KEY_F2","shift":true}]}
+regp service V1 PP "a.on" "d" "a.off" "d"
+enumb
+ctxsave V1
+echo release-context-removes-hotkeys-pairs-and-their-bindings
+release V1
+enum
+enumb
+ctxsave V1

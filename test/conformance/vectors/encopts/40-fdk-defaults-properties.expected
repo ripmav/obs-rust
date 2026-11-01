@@ -1,0 +1,8 @@
+data D
+  bitrate int 128 default
+  afterburner bool 1 default
+end data D
+props P
+  bitrate int desc="Bitrate" visible=1 enabled=1 min=32 max=1024 step=32 numtype=0
+  afterburner bool desc="Afterburner" visible=1 enabled=1
+end props P

@@ -1,0 +1,15 @@
+# QUIRK: entries are matched by the POINTER of the name, not by its text. Two names with the
+# same text but created separately are different entries (profile_store_name returns a new
+# string every call). A Rust port must model a name as an interned identity (e.g. an id
+# handed out by a name store), where equal text does not imply equal identity.
+p_name 0 same
+p_name 1 same
+p_begin
+p_clock 0
+p_call 0 1000
+p_call 1 2000
+p_call 0 3000
+p_snap
+p_dump
+p_print snap
+p_free

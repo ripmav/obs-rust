@@ -1,0 +1,71 @@
+# The matrix stack lives in the frontend (no backend call is made).  Top-of-stack operations,
+# push duplicates the top, pop of the last entry is an error.  Values are printed with %.9g;
+# comparison tolerance 1e-6 relative for trigonometric results.
+trace 0
+gs_create g
+gs_enter_context g
+trace 1
+echo == initial top is identity
+gs_matrix_get
+echo == translate and scale post-multiply into the top (see S-008 for matrix4 math)
+gs_matrix_translate3f 1 2 3
+gs_matrix_get
+gs_matrix_scale3f 2 3 4
+gs_matrix_get
+echo == push copies the top, pop restores the one below
+gs_matrix_push
+gs_matrix_identity
+gs_matrix_get
+gs_matrix_pop
+gs_matrix_get
+echo == popping the bottom entry is refused and logged
+gs_matrix_pop
+gs_matrix_get
+echo == identity / transpose / set / mul
+gs_matrix_identity
+gs_matrix_set 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16
+gs_matrix_get
+gs_matrix_transpose
+gs_matrix_get
+gs_matrix_identity
+gs_matrix_mul 2 0 0 0 0 2 0 0 0 0 2 0 1 1 1 1
+gs_matrix_get
+echo == vec3 forms and rotations
+gs_matrix_identity
+gs_matrix_translate 4 5 6
+gs_matrix_scale 1 2 3
+gs_matrix_get
+gs_matrix_identity
+gs_matrix_rotaa4f 0 0 1 1.5707963
+gs_matrix_get
+gs_matrix_identity
+gs_matrix_rotaa 0 1 0 3.14159265
+gs_matrix_get
+gs_matrix_identity
+gs_matrix_rotquat 0 0 0.70710678 0.70710678
+gs_matrix_get
+echo == deep stack
+gs_matrix_identity
+gs_matrix_translate3f 1 0 0
+gs_matrix_push
+gs_matrix_translate3f 1 0 0
+gs_matrix_push
+gs_matrix_translate3f 1 0 0
+gs_matrix_get
+gs_matrix_pop
+gs_matrix_get
+gs_matrix_pop
+gs_matrix_get
+gs_matrix_pop
+gs_matrix_get
+echo == matrix stack is per graphics object: a second object starts with identity
+gs_leave_context
+trace 0
+gs_create h
+trace 1
+gs_enter_context h
+gs_matrix_get
+gs_matrix_translate3f 9 9 9
+gs_leave_context
+gs_enter_context g
+gs_matrix_get

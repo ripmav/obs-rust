@@ -1,0 +1,16 @@
+# CORE. Failure paths of obs_x264_create: a failed preset reset ("bad settings") or a
+# failed x264_encoder_open both yield NULL; in the first case x264_encoder_open is never
+# called. With open() failing the settings were still fully computed (params printed).
+data D
+x264_defaults D
+echo preset-reset-fails
+x264_fail preset
+x264_create X D
+x264_fail clear
+echo open-fails
+x264_fail open
+x264_create X D
+x264_fail clear
+echo success-loads-headers-and-has-a-context
+x264_create X D
+x264_destroy X

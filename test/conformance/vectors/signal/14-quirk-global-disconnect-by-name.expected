@@ -1,0 +1,12 @@
+add h ok
+emit s
+gcall by_name signal=s
+gcall plain signal=s
+emit-done
+emit s
+gcall by_name signal=s
+gcall plain signal=s
+emit-done
+emit s
+gcall plain signal=s
+emit-done

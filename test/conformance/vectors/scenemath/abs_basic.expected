@@ -1,0 +1,34 @@
+add c ok
+item c id=1 parent=main group=0 scene=0 abs=1 vis=1 user_vis=1 sel=0 lock=0 need_update=0
+  stored pos=0,0 rot=0 scale=1,1 scale_ref=1920,1080 align=5
+  bounds type=0 align=0 size=0,0 crop_to_bounds=0
+  crop l=0 r=0 t=0 b=0 bounds_crop l=0 r=0 t=0 b=0 last=0,0
+  output_scale=0,0 box_scale=0,0
+  draw [1,0,0,0] [0,1,0,0] [0,0,1,0] [0,0,0,1]
+  box [1,0,0,0] [0,1,0,0] [0,0,1,0] [0,0,0,1]
+get c pos=100.300003,50.7000008 rot=30 scale=2,0.5 align=5 btype=2 balign=0 bounds=640.25,360.75 bcrop=0 crop=0,0,0,0
+info c pos=100.300003,50.7000008 rot=30 scale=2,0.5 align=5 btype=2 balign=0 bounds=640.25,360.75 crop_to_bounds=0
+ box_scale=640.25,360.75
+item c id=1 parent=main group=0 scene=0 abs=1 vis=1 user_vis=1 sel=0 lock=0 need_update=0
+  stored pos=100.300003,50.7000008 rot=30 scale=2,0.5 scale_ref=1920,1080 align=5
+  bounds type=2 align=0 size=640.25,360.75 crop_to_bounds=0
+  crop l=0 r=0 t=0 b=0 bounds_crop l=0 r=0 t=0 b=0 last=1280,720
+  output_scale=0.500195324,0.125048831 box_scale=640.25,360.75
+  draw [0.433181852,0.250097692,0,0] [-0.062524423,0.108295463,0,0] [0,0,1,0] [32.7999954,167.613434,0,1]
+  box [554.472778,320.125031,0,0] [-180.375015,312.418671,0,0] [0,0,1,0] [100.300003,50.7000008,0,1]
+-- canvas change leaves everything untouched
+get c pos=100.300003,50.7000008 rot=30 scale=2,0.5 align=5 btype=2 balign=0 bounds=640.25,360.75 bcrop=0 crop=0,0,0,0
+info c pos=100.300003,50.7000008 rot=30 scale=2,0.5 align=5 btype=2 balign=0 bounds=640.25,360.75 crop_to_bounds=0
+ box_scale=640.25,360.75
+item c id=1 parent=main group=0 scene=0 abs=1 vis=1 user_vis=1 sel=0 lock=0 need_update=0
+  stored pos=100.300003,50.7000008 rot=30 scale=2,0.5 scale_ref=1920,1080 align=5
+  bounds type=2 align=0 size=640.25,360.75 crop_to_bounds=0
+  crop l=0 r=0 t=0 b=0 bounds_crop l=0 r=0 t=0 b=0 last=1280,720
+  output_scale=0.500195324,0.125048831 box_scale=640.25,360.75
+  draw [0.433181852,0.250097692,0,0] [-0.062524423,0.108295463,0,0] [0,0,1,0] [32.7999954,167.613434,0,1]
+  box [554.472778,320.125031,0,0] [-180.375015,312.418671,0,0] [0,0,1,0] [100.300003,50.7000008,0,1]
+-- mode is per scene: a scene created later is relative again
+add r ok
+get r pos=100.5,50.5 rot=0 scale=1,1 align=5 btype=0 balign=0 bounds=0,0 bcrop=0 crop=0,0,0,0
+info r pos=100.5,50.5 rot=0 scale=1,1 align=5 btype=0 balign=0 bounds=0,0 crop_to_bounds=0
+ box_scale=1280,720

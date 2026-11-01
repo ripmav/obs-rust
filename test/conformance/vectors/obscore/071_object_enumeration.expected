@@ -1,0 +1,75 @@
+log debug canvas 'Main' (<uuid>) created
+startup -> true
+mk_output o1 name="Out1" private=0 uuid=NULL
+mk_output o2 name="Out2" private=1 uuid=NULL
+mk_output o3 name="Out3" private=0 uuid=NULL
+mk_encoder e1 name="Enc1" private=0 uuid=NULL
+mk_encoder e2 name="Enc2" private=0 uuid=NULL
+mk_service s1 name="Svc1" private=0 uuid=NULL
+mk_service s2 name="Svc2" private=1 uuid=NULL
+enum outputs
+  visit Out3
+  visit Out2
+  visit Out1
+  visited=3
+enum outputs
+  visit Out3
+  visited=1
+enum outputs
+  visit Out3
+  visit Out2
+  visited=2
+enum encoders
+  visit Enc2
+  visit Enc1
+  visited=2
+enum services
+  visit Svc2
+  visit Svc1
+  visited=2
+mk_source i1 name="Input1" private=0 uuid=set
+mk_source i2 name="Input2" private=1 uuid=set
+mk_source sc1 name="Scene1" private=0 uuid=set
+mk_source f1 name="Filter1" private=0 uuid=set
+mk_source t1 name="Trans1" private=1 uuid=set
+mk_source g1 name="Group1" private=0 uuid=set
+mk_source i3 name="Input3" private=0 uuid=set
+enum sources
+  visit Input1
+  visit Group1
+  visit Input3
+  visited=3
+enum sources
+  visit Input1
+  visited=1
+enum sources
+  visit Input1
+  visit Group1
+  visited=2
+enum all_sources
+  visit Input1
+  visit Input2
+  visit Scene1
+  visit Filter1
+  visit Trans1
+  visit Group1
+  visit Input3
+  visited=7
+enum all_sources
+  visit Input1
+  visit Input2
+  visit Scene1
+  visited=3
+enum outputs
+  visit Out2
+  visit Out1
+  visited=2
+shutdown begin
+log info Freeing OBS context data
+log debug canvas 'Main' (<uuid>) destroyed
+log info  2 output(s) were remaining
+log info  2 encoder(s) were remaining
+log info  2 service(s) were remaining
+log info  5 source(s) were remaining
+log info  2 source(s) were remaining
+shutdown end obs=NULL

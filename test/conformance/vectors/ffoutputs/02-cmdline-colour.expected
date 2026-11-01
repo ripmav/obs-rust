@@ -1,0 +1,239 @@
+> reset
+> output o
+> venc h264 bitrate=6000
+> set str path /v/a.mkv
+> create ffmpeg_muxer
+signal_add "void file_changed(string next_file)"
+proc_add "void split_file(out bool split_file_enabled)"
+create ffmpeg_muxer -> ok
+> video_info 30 1 DEFAULT P NV12
+> start
+unlink "/v/a.mkv"
+pipe create type=w
+  argv[0] "<bin>/obs-ffmpeg-mux"
+  argv[1] "/v/a.mkv"
+  argv[2] "1"
+  argv[3] "0"
+  argv[4] "h264"
+  argv[5] "6000"
+  argv[6] "1280"
+  argv[7] "720"
+  argv[8] "1"
+  argv[9] "1"
+  argv[10] "1"
+  argv[11] "1"
+  argv[12] "1"
+  argv[13] "0"
+  argv[14] "30"
+  argv[15] "1"
+  argv[16] "0"
+  argv[17] ""
+  argv[18] ""
+begin_data_capture
+log info [ffmpeg muxer: 'o'] Writing file '/v/a.mkv'...
+start -> 1
+> reset
+> output o
+> venc h264 bitrate=6000
+> set str path /v/a.mkv
+> create ffmpeg_muxer
+signal_add "void file_changed(string next_file)"
+proc_add "void split_file(out bool split_file_enabled)"
+create ffmpeg_muxer -> ok
+> video_info 60 1 601 F I420
+> start
+unlink "/v/a.mkv"
+pipe create type=w
+  argv[0] "<bin>/obs-ffmpeg-mux"
+  argv[1] "/v/a.mkv"
+  argv[2] "1"
+  argv[3] "0"
+  argv[4] "h264"
+  argv[5] "6000"
+  argv[6] "1280"
+  argv[7] "720"
+  argv[8] "6"
+  argv[9] "6"
+  argv[10] "6"
+  argv[11] "2"
+  argv[12] "1"
+  argv[13] "0"
+  argv[14] "60"
+  argv[15] "1"
+  argv[16] "0"
+  argv[17] ""
+  argv[18] ""
+begin_data_capture
+log info [ffmpeg muxer: 'o'] Writing file '/v/a.mkv'...
+start -> 1
+> reset
+> output o
+> venc h264 bitrate=6000
+> set str path /v/a.mkv
+> create ffmpeg_muxer
+signal_add "void file_changed(string next_file)"
+proc_add "void split_file(out bool split_file_enabled)"
+create ffmpeg_muxer -> ok
+> video_info 60000 1001 SRGB P I444
+> start
+unlink "/v/a.mkv"
+pipe create type=w
+  argv[0] "<bin>/obs-ffmpeg-mux"
+  argv[1] "/v/a.mkv"
+  argv[2] "1"
+  argv[3] "0"
+  argv[4] "h264"
+  argv[5] "6000"
+  argv[6] "1280"
+  argv[7] "720"
+  argv[8] "1"
+  argv[9] "13"
+  argv[10] "1"
+  argv[11] "1"
+  argv[12] "2"
+  argv[13] "0"
+  argv[14] "60000"
+  argv[15] "1001"
+  argv[16] "0"
+  argv[17] ""
+  argv[18] ""
+begin_data_capture
+log info [ffmpeg muxer: 'o'] Writing file '/v/a.mkv'...
+start -> 1
+> reset
+> output o
+> venc hevc bitrate=6000 codec_type=1752589105
+> set str path /v/a.mkv
+> create ffmpeg_muxer
+signal_add "void file_changed(string next_file)"
+proc_add "void split_file(out bool split_file_enabled)"
+create ffmpeg_muxer -> ok
+> hdr_peak 600
+> video_info 30 1 PQ P P010
+> start
+unlink "/v/a.mkv"
+pipe create type=w
+  argv[0] "<bin>/obs-ffmpeg-mux"
+  argv[1] "/v/a.mkv"
+  argv[2] "1"
+  argv[3] "0"
+  argv[4] "hevc"
+  argv[5] "6000"
+  argv[6] "1280"
+  argv[7] "720"
+  argv[8] "9"
+  argv[9] "16"
+  argv[10] "9"
+  argv[11] "1"
+  argv[12] "3"
+  argv[13] "600"
+  argv[14] "30"
+  argv[15] "1"
+  argv[16] "828601960"
+  argv[17] ""
+  argv[18] ""
+begin_data_capture
+log info [ffmpeg muxer: 'o'] Writing file '/v/a.mkv'...
+start -> 1
+> reset
+> output o
+> venc hevc bitrate=6000
+> set str path /v/a.mkv
+> create ffmpeg_muxer
+signal_add "void file_changed(string next_file)"
+proc_add "void split_file(out bool split_file_enabled)"
+create ffmpeg_muxer -> ok
+> video_info 30 1 HLG P I010
+> start
+unlink "/v/a.mkv"
+pipe create type=w
+  argv[0] "<bin>/obs-ffmpeg-mux"
+  argv[1] "/v/a.mkv"
+  argv[2] "1"
+  argv[3] "0"
+  argv[4] "hevc"
+  argv[5] "6000"
+  argv[6] "1280"
+  argv[7] "720"
+  argv[8] "9"
+  argv[9] "18"
+  argv[10] "9"
+  argv[11] "1"
+  argv[12] "3"
+  argv[13] "1000"
+  argv[14] "30"
+  argv[15] "1"
+  argv[16] "0"
+  argv[17] ""
+  argv[18] ""
+begin_data_capture
+log info [ffmpeg muxer: 'o'] Writing file '/v/a.mkv'...
+start -> 1
+> reset
+> output o
+> venc h264 bitrate=6000
+> set str path /v/a.mkv
+> create ffmpeg_muxer
+signal_add "void file_changed(string next_file)"
+proc_add "void split_file(out bool split_file_enabled)"
+create ffmpeg_muxer -> ok
+> video_info 30 1 77 P YUY2
+> start
+unlink "/v/a.mkv"
+pipe create type=w
+  argv[0] "<bin>/obs-ffmpeg-mux"
+  argv[1] "/v/a.mkv"
+  argv[2] "1"
+  argv[3] "0"
+  argv[4] "h264"
+  argv[5] "6000"
+  argv[6] "1280"
+  argv[7] "720"
+  argv[8] "2"
+  argv[9] "2"
+  argv[10] "2"
+  argv[11] "1"
+  argv[12] "1"
+  argv[13] "0"
+  argv[14] "30"
+  argv[15] "1"
+  argv[16] "0"
+  argv[17] ""
+  argv[18] ""
+begin_data_capture
+log info [ffmpeg muxer: 'o'] Writing file '/v/a.mkv'...
+start -> 1
+> reset
+> output o
+> venc h264 bitrate=6000
+> set str path /v/a.mkv
+> create ffmpeg_muxer
+signal_add "void file_changed(string next_file)"
+proc_add "void split_file(out bool split_file_enabled)"
+create ffmpeg_muxer -> ok
+> video_info 30 1 709 P BGRA
+> start
+unlink "/v/a.mkv"
+pipe create type=w
+  argv[0] "<bin>/obs-ffmpeg-mux"
+  argv[1] "/v/a.mkv"
+  argv[2] "1"
+  argv[3] "0"
+  argv[4] "h264"
+  argv[5] "6000"
+  argv[6] "1280"
+  argv[7] "720"
+  argv[8] "1"
+  argv[9] "1"
+  argv[10] "1"
+  argv[11] "1"
+  argv[12] "2"
+  argv[13] "0"
+  argv[14] "30"
+  argv[15] "1"
+  argv[16] "0"
+  argv[17] ""
+  argv[18] ""
+begin_data_capture
+log info [ffmpeg muxer: 'o'] Writing file '/v/a.mkv'...
+start -> 1

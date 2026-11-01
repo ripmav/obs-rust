@@ -1,0 +1,45 @@
+add bool x ok
+echo null-group-and-self
+add group g null
+add group g null
+echo duplicate-between-content-and-top
+add bool x ok
+log warning Property 'x' exists
+add group g null
+echo group-name-duplicate
+log warning Property 'x' exists
+add group x null
+echo fix-and-retry
+add bool y ok
+add group g ok
+dump Top flags=0 param=@null
+  prop x type=bool desc="X" long=@null enabled=1 visible=1
+    -
+  prop g type=group desc="G" long=@null enabled=1 visible=1
+    grouptype=normal content=G
+      prop y type=bool desc="Y" long=@null enabled=1 visible=1
+        -
+echo recursion-cycle-through-nesting
+add group b ok
+add group c ok
+echo A-contains-B-contains-C
+add group a null
+add group a null
+add group a2 null
+add group b2 null
+echo not-a-cycle-sibling
+add group a ok
+dump Top flags=0 param=@null
+  prop x type=bool desc="X" long=@null enabled=1 visible=1
+    -
+  prop g type=group desc="G" long=@null enabled=1 visible=1
+    grouptype=normal content=G
+      prop y type=bool desc="Y" long=@null enabled=1 visible=1
+        -
+  prop a type=group desc="A" long=@null enabled=1 visible=1
+    grouptype=normal content=A
+      prop b type=group desc="B" long=@null enabled=1 visible=1
+        grouptype=normal content=B
+          prop c type=group desc="C" long=@null enabled=1 visible=1
+            grouptype=normal content=C
+echo rejected-containers-still-owned-by-script

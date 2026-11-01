@@ -1,0 +1,40 @@
+# Saving: the "save" procedure records "now" (os_gettime_ns / 1000) as save_ts; the first packet whose system dts is
+# >= save_ts triggers the save AFTER that packet was queued. The queue is re-sorted by dts_usec with per-stream
+# offsets (video: first video pts; each audio track: its first dts), then "saving" is signalled, a name is generated
+# (always overwrite semantics), the helper is started with that path, headers + packets are written, "saved" fires.
+# get_last_replay returns the path only when no save is running.
+reset
+output rb
+venc h264 bitrate=2500 extra=0a0b
+aenc t0 aac 48000 1024 0 extra=cc
+set str directory /rec
+set str format replay%N
+set str extension mp4
+create replay_buffer
+start
+proc get_last_replay
+proc save
+state_rb
+pkt v pts=100 dts=100 key=1 size=4 sys=1000
+pkt a pts=90 dts=90 size=4 sys=1000
+pkt v pts=133 dts=133 key=0 size=4 sys=1000
+state_rb
+knob now_ns 2000000
+proc save
+state_rb
+pkt a pts=160 dts=160 size=4 sys=1999
+state_rb
+pkt v pts=166 dts=166 key=0 size=4 sys=2000
+state_rb
+state
+proc get_last_replay
+echo paused_encoder_refuses_to_save
+venc_paused 1
+proc save
+state_rb
+venc_paused 0
+echo save_on_an_inactive_stream_is_ignored
+stop 0
+pkt v pts=200 key=1 sys=3000
+proc save
+state_rb

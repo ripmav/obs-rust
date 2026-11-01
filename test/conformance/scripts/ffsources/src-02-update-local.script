@@ -1,0 +1,47 @@
+# Settings update for a local file: when the media object is kept, restarted or re-opened.
+# Initial create applies the first update (media is opened; not started: source inactive).
+data D
+src_defaults D
+set_str D local_file "/m/a.mp4"
+host_settings D
+src_create S D
+# same settings again: nothing restarts, looping/linear alpha are applied directly to the live media
+src_update S D
+set_bool D looping 1
+set_bool D linear_alpha 1
+src_update S D
+# other path: restart (destroy + open)
+set_str D local_file "/m/b.mp4"
+src_update S D
+# speed outside 1..200 falls back to 100; a changed speed restarts
+set_int D speed_percent 250
+src_update S D
+src_dump S
+set_int D speed_percent 0
+src_update S D
+set_int D speed_percent 200
+src_update S D
+src_dump S
+# hardware decode / colour range / ffmpeg options changes restart
+set_bool D hw_decode 1
+src_update S D
+set_int D color_range 2
+src_update S D
+set_str D ffmpeg_options "a=b"
+src_update S D
+set_str D ffmpeg_options "a=c"
+src_update S D
+src_dump S
+# stinger / track matte: stinger change restarts and asks the player to preload; matte alone does not
+set_bool D is_stinger 1
+src_update S D
+set_bool D is_track_matte 1
+src_update S D
+src_dump S
+# other values: buffering, full decode, clear_on_media_end
+set_int D buffering_mb 16
+set_bool D full_decode 1
+set_bool D clear_on_media_end 0
+set_bool D log_changes 0
+src_update S D
+src_dump S

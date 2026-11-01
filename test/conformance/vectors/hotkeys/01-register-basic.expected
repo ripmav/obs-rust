@@ -1,0 +1,37 @@
+signal hotkey_register id=0
+reg A -> 0
+signal hotkey_register id=1
+reg B -> 1
+signal hotkey_register id=2
+reg C -> 2
+info A id=0 type=0 partner=INVALID registerer=none pressed_count=0
+  name="Rec.Start"
+  desc="Start recording"
+info B id=1 type=0 partner=INVALID registerer=none pressed_count=0
+  name="Rec.Stop"
+  desc=null
+h id=0 name="Rec.Start"
+h id=1 name="Rec.Stop"
+h id=2 name="Scene.1"
+enum done
+h id=0 name="Rec.Start"
+h id=1 name="Rec.Stop"
+enum done
+h id=0 name="Rec.Start"
+enum done
+info B id=1 type=0 partner=INVALID registerer=none pressed_count=0
+  name="Rec.Halt"
+  desc="Halt recording"
+signal hotkey_unregister id=1
+info B missing
+signal hotkey_register id=3
+reg D -> 3
+h id=0 name="Rec.Start"
+h id=2 name="Scene.1"
+h id=3 name="Late"
+enum done
+signal hotkey_unregister id=2
+h id=0 name="Rec.Start"
+h id=3 name="Late"
+enum done
+done

@@ -1,0 +1,22 @@
+add h ok
+emit s
+call a
+call b
+emit-done
+emit s
+call a
+call b
+call r
+call r
+emit-done
+emit s
+call a
+call b
+call r
+emit-done
+emit s
+call a
+call b
+emit-done
+log warning signal_handler_connect: signal 'nosuch' not found
+destroy h

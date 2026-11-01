@@ -1,0 +1,53 @@
+# Device information getters and adapter enumeration (optional backend exports have defaults).
+trace 0
+gs_create g
+gs_enter_context g
+trace 1
+gs_get_device_name
+gs_get_device_type
+gs_preprocessor_name
+gs_get_driver_version
+gs_get_renderer
+gs_get_gpu_dmem
+gs_get_gpu_smem
+ret gpu_get_dmem 4294967296
+ret gpu_get_smem 123
+gs_get_gpu_dmem
+gs_get_gpu_smem
+gs_get_device_obj
+gs_get_adapter_count
+ret gs_get_adapter_count 3
+gs_get_adapter_count
+echo == adapter enumeration: the backend callback loop, default fallback adapter
+gs_enum_adapters
+adapter "GPU A"
+adapter "GPU B"
+ret device_enum_adapters 1
+gs_enum_adapters
+echo == backend enumeration returning false falls back to the single "Default" adapter (after having called the callback itself)
+ret device_enum_adapters 0
+gs_enum_adapters
+echo == NULL callback
+gs_enum_adapters nullcb
+echo == is_monitor_hdr goes to the backend
+gs_is_monitor_hdr
+ret device_is_monitor_hdr 1
+gs_is_monitor_hdr
+echo == optional queries when the backend lacks them
+trace 0
+gs_leave_context
+missing gpu_get_driver_version 1
+missing gpu_get_renderer 1
+missing gpu_get_dmem 1
+missing gpu_get_smem 1
+missing device_enum_adapters 1
+missing gs_get_adapter_count 1
+gs_create h
+gs_enter_context h
+trace 1
+gs_get_driver_version
+gs_get_renderer
+gs_get_gpu_dmem
+gs_get_gpu_smem
+gs_get_adapter_count
+gs_enum_adapters

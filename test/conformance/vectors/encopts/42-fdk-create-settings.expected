@@ -1,0 +1,109 @@
+echo defaults
+fdk.aacEncOpen modules=0 channels=2
+fdk.SetParam AOT=2
+fdk.SetParam SAMPLERATE=48000
+fdk.SetParam CHANNELMODE=2
+fdk.SetParam CHANNELORDER=1
+fdk.SetParam BITRATEMODE=0
+fdk.SetParam BITRATE=128000
+fdk.SetParam TRANSMUX=0
+fdk.SetParam AFTERBURNER=1
+fdk.aacEncEncode (init)
+fdk.aacEncInfo
+log info libfdk_aac encoder created
+log info libfdk_aac bitrate: 128, channels: 2
+fdk_state channels=2 sample_rate=48000 frame_size_bytes=4096 packet_buffer_size=8192
+fdk.aacEncClose
+log info libfdk_aac encoder destroyed
+fdk_create ok
+echo custom
+fdk.aacEncOpen modules=0 channels=2
+fdk.SetParam AOT=2
+fdk.SetParam SAMPLERATE=48000
+fdk.SetParam CHANNELMODE=2
+fdk.SetParam CHANNELORDER=1
+fdk.SetParam BITRATEMODE=0
+fdk.SetParam BITRATE=192000
+fdk.SetParam TRANSMUX=2
+fdk.SetParam AFTERBURNER=0
+fdk.aacEncEncode (init)
+fdk.aacEncInfo
+log info libfdk_aac encoder created
+log info libfdk_aac bitrate: 192, channels: 2
+fdk_state channels=2 sample_rate=48000 frame_size_bytes=4096 packet_buffer_size=8192
+fdk.aacEncClose
+log info libfdk_aac encoder destroyed
+fdk_create ok
+echo zero-bitrate
+log error Invalid bitrate
+fdk_create fail
+echo negative-bitrate-passes-through-unchecked
+fdk.aacEncOpen modules=0 channels=2
+fdk.SetParam AOT=2
+fdk.SetParam SAMPLERATE=48000
+fdk.SetParam CHANNELMODE=2
+fdk.SetParam CHANNELORDER=1
+fdk.SetParam BITRATEMODE=0
+fdk.SetParam BITRATE=4294839296
+fdk.SetParam TRANSMUX=2
+fdk.SetParam AFTERBURNER=0
+fdk.aacEncEncode (init)
+fdk.aacEncInfo
+log info libfdk_aac encoder created
+log info libfdk_aac bitrate: -128, channels: 2
+fdk_state channels=2 sample_rate=48000 frame_size_bytes=4096 packet_buffer_size=8192
+fdk.aacEncClose
+log info libfdk_aac encoder destroyed
+fdk_create ok
+echo open-fails
+fdk.aacEncOpen modules=0 channels=2
+fdk.aacEncOpen -> INIT_ERROR
+log error aacEncOpen(&enc->fdkhandle, 0, enc->channels) failed: Initialization error
+log warning libfdk_aac encoder creation failed
+fdk_create fail
+echo setparam-fails-mid-way-closes-handle
+fdk.aacEncOpen modules=0 channels=2
+fdk.SetParam AOT=2
+fdk.SetParam SAMPLERATE=48000
+fdk.SetParam CHANNELMODE=2
+fdk.SetParam -> INIT_ERROR
+log error aacEncoder_SetParam(enc->fdkhandle, AACENC_CHANNELMODE, mode) failed: Initialization error
+fdk.aacEncClose
+log warning libfdk_aac encoder creation failed
+fdk_create fail
+echo init-encode-fails
+fdk.aacEncOpen modules=0 channels=2
+fdk.SetParam AOT=2
+fdk.SetParam SAMPLERATE=48000
+fdk.SetParam CHANNELMODE=2
+fdk.SetParam CHANNELORDER=1
+fdk.SetParam BITRATEMODE=0
+fdk.SetParam BITRATE=128000
+fdk.SetParam TRANSMUX=2
+fdk.SetParam AFTERBURNER=0
+fdk.aacEncEncode (init)
+fdk.aacEncEncode -> INIT_ERROR
+log error aacEncEncode(enc->fdkhandle, NULL, NULL, NULL, NULL) failed: Initialization error
+fdk.aacEncClose
+log warning libfdk_aac encoder creation failed
+fdk_create fail
+echo info-fails
+fdk.aacEncOpen modules=0 channels=2
+fdk.SetParam AOT=2
+fdk.SetParam SAMPLERATE=48000
+fdk.SetParam CHANNELMODE=2
+fdk.SetParam CHANNELORDER=1
+fdk.SetParam BITRATEMODE=0
+fdk.SetParam BITRATE=128000
+fdk.SetParam TRANSMUX=2
+fdk.SetParam AFTERBURNER=0
+fdk.aacEncEncode (init)
+fdk.aacEncInfo
+fdk.aacEncInfo -> INIT_ERROR
+log error aacEncInfo(enc->fdkhandle, &enc->info) failed: Initialization error
+fdk.aacEncClose
+log warning libfdk_aac encoder creation failed
+fdk_create fail
+echo missing-keys-use-zero-values
+log error Invalid bitrate
+fdk_create fail

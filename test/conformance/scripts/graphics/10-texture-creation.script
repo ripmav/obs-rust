@@ -1,0 +1,46 @@
+# gs_texture_create / cube / volume: the frontend sanitises mipmap requests before calling the backend.
+# Rules: mipmaps (flag or levels != 1) need power-of-two (>=2) width AND height, and are not allowed for
+# render targets.  The backend is called with the adjusted levels/flags.
+trace 0
+gs_create g
+gs_enter_context g
+trace 1
+echo == plain
+gs_texture_create 64 32 GS_RGBA 1 0
+echo == pow2 with BUILD_MIPMAPS flag: passed through unchanged
+gs_texture_create 64 32 GS_RGBA 1 GS_BUILD_MIPMAPS
+echo == pow2 with levels != 1 (0 = full chain, 5 = explicit): unchanged
+gs_texture_create 64 32 GS_RGBA 0 0
+gs_texture_create 64 32 GS_RGBA 5 0
+echo == non pow2: mipmaps disabled, levels forced to 1, flag removed (warning)
+gs_texture_create 100 32 GS_RGBA 1 GS_BUILD_MIPMAPS
+gs_texture_create 64 33 GS_RGBA 0 0
+gs_texture_create 1 1 GS_RGBA 1 GS_BUILD_MIPMAPS
+echo == 1 is not a power of two for this purpose (size >= 2 required)
+gs_texture_create 1 64 GS_RGBA 3 0
+echo == non-pow2 without any mipmap request: no warning
+gs_texture_create 100 33 GS_RGBA 1 0
+echo == render target + mipmaps: flag removed and levels forced to 1 but the data pointer is kept (warning)
+gs_texture_create 64 64 GS_RGBA 1 "GS_BUILD_MIPMAPS|GS_RENDER_TARGET" data
+gs_texture_create 64 64 GS_RGBA 4 GS_RENDER_TARGET data
+echo == render target without any mipmap request: untouched
+gs_texture_create 64 64 GS_RGBA 1 GS_RENDER_TARGET data
+echo == data pointer is forwarded
+gs_texture_create 4 4 GS_RGBA 1 0 data
+echo == other flags pass through
+gs_texture_create 4 4 GS_BGRA 1 "GS_DYNAMIC|GS_SHARED_TEX"
+echo == backend failure returns NULL
+fail device_texture_create 1
+gs_texture_create 4 4 GS_RGBA 1 0
+fail device_texture_create 0
+echo == cube textures: same rules, but the render-target case also drops the data
+gs_cubetexture_create 64 GS_RGBA 1 GS_BUILD_MIPMAPS
+gs_cubetexture_create 100 GS_RGBA 1 GS_BUILD_MIPMAPS
+gs_cubetexture_create 64 GS_RGBA 1 "GS_BUILD_MIPMAPS|GS_RENDER_TARGET" data
+echo == volume textures are forwarded unchanged
+gs_voltexture_create 8 8 8 GS_RGBA 0 GS_BUILD_MIPMAPS
+echo == zstencil, stage surface, sampler state
+gs_zstencil_create 32 32 GS_Z24_S8
+gs_stagesurface_create 32 16 GS_BGRA
+gs_samplerstate_create GS_FILTER_LINEAR GS_ADDRESS_WRAP GS_ADDRESS_CLAMP GS_ADDRESS_MIRROR 4 0xff102030
+gs_samplerstate_create_null

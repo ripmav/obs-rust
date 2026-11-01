@@ -1,0 +1,54 @@
+log debug canvas 'Main' (<uuid>) created
+startup -> true
+mk_source i1 name="Input" private=0 uuid=set
+log warning Attempted to insert context with duplicate name "Input"! Name has been changed to "Input 2"
+mk_source i2 name="Input 2" private=0 uuid=set
+log warning Attempted to insert context with duplicate name "Input"! Name has been changed to "Input 3"
+mk_source i3 name="Input 3" private=0 uuid=set
+mk_source p1 name="Hidden" private=1 uuid=set
+mk_source t1 name="Fade" private=1 uuid=set
+mk_source t2 name="Fade" private=0 uuid=set
+mk_source sc1 name="Scene" private=0 uuid=set
+get source_by_name Input -> "Input" obj=i1 strong=1
+get source_by_name Input 2 -> "Input 2" obj=i2 strong=1
+get source_by_name Input 3 -> "Input 3" obj=i3 strong=1
+get source_by_name Input 4 -> NULL
+get source_by_name Hidden -> NULL
+get source_by_name Fade -> "Fade" obj=t2 strong=1
+get source_by_name Scene -> "Scene" obj=sc1 strong=1
+get source_by_uuid uuid:p1 -> "Hidden" obj=p1 strong=1
+get source_by_uuid uuid:i2 -> "Input 2" obj=i2 strong=1
+get source_by_uuid 00000000-0000-0000-0000-000000000000 -> NULL
+get transition_by_name Fade -> "Fade" obj=t1 strong=1
+get transition_by_name Input -> NULL
+get transition_by_name Nope -> NULL
+get transition_by_uuid uuid:t1 -> "Fade" obj=t1 strong=1
+get transition_by_uuid uuid:i1 -> NULL
+get transition_by_uuid 00000000-0000-0000-0000-000000000000 -> NULL
+mk_output o1 name="Same" private=0 uuid=NULL
+mk_output o2 name="Same" private=0 uuid=NULL
+mk_output o3 name="Same" private=1 uuid=NULL
+mk_output o4 name="Other" private=0 uuid=NULL
+get output_by_name Same -> "Same" obj=o2 strong=1
+get output_by_name Other -> "Other" obj=o4 strong=1
+get output_by_name Nope -> NULL
+mk_encoder e1 name="Enc" private=0 uuid=NULL
+mk_service s1 name="Svc" private=0 uuid=NULL
+mk_service s2 name="Svc" private=1 uuid=NULL
+get encoder_by_name Enc -> "Enc" obj=e1 strong=1
+get service_by_name Svc -> "Svc" obj=s1 strong=1
+get encoder_by_name Svc -> NULL
+mk_source u1 name="UuidA" private=0 uuid=set
+log warning Attempted to insert context with duplicate UUID "<uuid>"!
+mk_source u2 name="UuidB" private=0 uuid=set
+get source_by_uuid aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa -> "UuidA" obj=u1 strong=1
+get source_by_uuid uuid:u2 -> "UuidB" obj=u2 strong=1
+shutdown begin
+log info Freeing OBS context data
+log debug canvas 'Main' (<uuid>) destroyed
+log info  4 output(s) were remaining
+log info  1 encoder(s) were remaining
+log info  2 service(s) were remaining
+log info  7 source(s) were remaining
+log info  2 source(s) were remaining
+shutdown end obs=NULL

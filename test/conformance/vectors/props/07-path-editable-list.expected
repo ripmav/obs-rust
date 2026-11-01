@@ -1,0 +1,42 @@
+add path pf ok
+add path ps ok
+add path pd ok
+add path pn ok
+add path pe ok
+info
+  prop pf type=path desc="File" long=@null enabled=1 visible=1
+    pathtype=file filter="Text (*.txt);;All (*)" default="/dflt"
+info
+  prop ps type=path desc="Save" long=@null enabled=1 visible=1
+    pathtype=file_save filter="Img (*.png)" default=@null
+info
+  prop pd type=path desc="Dir" long=@null enabled=1 visible=1
+    pathtype=directory filter=@null default="/dir"
+info
+  prop pn type=path desc="NoFilter" long=@null enabled=1 visible=1
+    pathtype=file filter=@null default=@null
+info
+  prop pe type=path desc="Empty" long=@null enabled=1 visible=1
+    pathtype=file filter="" default=""
+echo editable-list
+add editable_list e1 ok
+add editable_list e2 ok
+add editable_list e3 ok
+info
+  prop e1 type=editable_list desc="E1" long=@null enabled=1 visible=1
+    listtype=strings filter="ignored?" default="/p"
+info
+  prop e2 type=editable_list desc="E2" long=@null enabled=1 visible=1
+    listtype=files filter="Img (*.png)" default=@null
+info
+  prop e3 type=editable_list desc="E3" long=@null enabled=1 visible=1
+    listtype=files_and_urls filter=@null default="x"
+echo out-of-range-types
+add path px ok
+add editable_list ex ok
+info
+  prop px type=path desc="X" long=@null enabled=1 visible=1
+    pathtype=?9 filter=@null default="d"
+info
+  prop ex type=editable_list desc="X" long=@null enabled=1 visible=1
+    listtype=?9 filter="f" default="d"

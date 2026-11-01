@@ -1,0 +1,287 @@
+call effect_create file=chroma_key_filter.effect -> e1 uniforms=12 techniques=1
+call get_param e1:color -> ok
+call get_param e1:contrast -> ok
+call get_param e1:brightness -> ok
+call get_param e1:gamma -> ok
+call get_param e1:chroma_key -> ok
+call get_param e1:pixel_size -> ok
+call get_param e1:similarity -> ok
+call get_param e1:smoothness -> ok
+call get_param e1:spill -> ok
+create a -> ok
+render a
+call filter_begin a format=RGBA allow=ALLOW_DIRECT -> 1
+call set_vec4 e1:color 1 1 1 1
+call set_float e1:contrast 1
+call set_float e1:brightness 0
+call set_float e1:gamma 1
+call set_vec2 e1:chroma_key 0.163388997 0.103018999
+call set_vec2 e1:pixel_size 0.000781250012 0.00138888892
+call set_float e1:similarity 0.400000006
+call set_float e1:smoothness 0.0799999982
+call set_float e1:spill 0.100000001
+call filter_end a e1 size=0x0
+call effect_create file=chroma_key_filter_v2.effect -> e2 uniforms=13 techniques=1
+call get_param e2:opacity -> ok
+call get_param e2:contrast -> ok
+call get_param e2:brightness -> ok
+call get_param e2:gamma -> ok
+call get_param e2:chroma_key -> ok
+call get_param e2:pixel_size -> ok
+call get_param e2:similarity -> ok
+call get_param e2:smoothness -> ok
+call get_param e2:spill -> ok
+create b -> ok
+render b
+call filter_begin_cs b format=RGBA space=SRGB allow=ALLOW_DIRECT -> 1
+call set_float e2:opacity 1
+call set_float e2:contrast 1
+call set_float e2:brightness 0
+call set_float e2:gamma 1
+call set_vec2 e2:chroma_key 0.163388997 0.103018999
+call set_vec2 e2:pixel_size 0.000781250012 0.00138888892
+call set_float e2:similarity 0.400000006
+call set_float e2:smoothness 0.0799999982
+call set_float e2:spill 0.100000001
+call blend_push
+call blend_function ONE INVSRCALPHA
+call filter_end b e2 size=0x0
+call blend_pop
+echo key presets: blue 0xFF9900 and magenta 0xFF00FF are packed integers whose low byte is red; unknown type keeps key_color
+call effect_create file=chroma_key_filter_v2.effect -> e3 uniforms=13 techniques=1
+call get_param e3:opacity -> ok
+call get_param e3:contrast -> ok
+call get_param e3:brightness -> ok
+call get_param e3:gamma -> ok
+call get_param e3:chroma_key -> ok
+call get_param e3:pixel_size -> ok
+call get_param e3:similarity -> ok
+call get_param e3:smoothness -> ok
+call get_param e3:spill -> ok
+create c -> ok
+render c
+call filter_begin_cs c format=RGBA space=SRGB allow=ALLOW_DIRECT -> 1
+call set_float e3:opacity 1
+call set_float e3:contrast 1
+call set_float e3:brightness 0
+call set_float e3:gamma 1
+call set_vec2 e3:chroma_key 0.738033772 0.222321779
+call set_vec2 e3:pixel_size 0.000781250012 0.00138888892
+call set_float e3:similarity 0.400000006
+call set_float e3:smoothness 0.0799999982
+call set_float e3:spill 0.100000001
+call blend_push
+call blend_function ONE INVSRCALPHA
+call filter_end c e3 size=0x0
+call blend_pop
+call effect_create file=chroma_key_filter_v2.effect -> e4 uniforms=13 techniques=1
+call get_param e4:opacity -> ok
+call get_param e4:contrast -> ok
+call get_param e4:brightness -> ok
+call get_param e4:gamma -> ok
+call get_param e4:chroma_key -> ok
+call get_param e4:pixel_size -> ok
+call get_param e4:similarity -> ok
+call get_param e4:smoothness -> ok
+call get_param e4:spill -> ok
+create e -> ok
+render e
+call filter_begin_cs e format=RGBA space=SRGB allow=ALLOW_DIRECT -> 1
+call set_float e4:opacity 1
+call set_float e4:contrast 1
+call set_float e4:brightness 0
+call set_float e4:gamma 1
+call set_vec2 e4:chroma_key 0.840533018 0.900902987
+call set_vec2 e4:pixel_size 0.000781250012 0.00138888892
+call set_float e4:similarity 0.400000006
+call set_float e4:smoothness 0.0799999982
+call set_float e4:spill 0.100000001
+call blend_push
+call blend_function ONE INVSRCALPHA
+call filter_end e e4 size=0x0
+call blend_pop
+call effect_create file=chroma_key_filter_v2.effect -> e5 uniforms=13 techniques=1
+call get_param e5:opacity -> ok
+call get_param e5:contrast -> ok
+call get_param e5:brightness -> ok
+call get_param e5:gamma -> ok
+call get_param e5:chroma_key -> ok
+call get_param e5:pixel_size -> ok
+call get_param e5:similarity -> ok
+call get_param e5:smoothness -> ok
+call get_param e5:spill -> ok
+create f -> ok
+render f
+call filter_begin_cs f format=RGBA space=SRGB allow=ALLOW_DIRECT -> 1
+call set_float e5:opacity 1
+call set_float e5:contrast 1
+call set_float e5:brightness 0
+call set_float e5:gamma 1
+call set_vec2 e5:chroma_key 0.429979652 0.565892994
+call set_vec2 e5:pixel_size 0.000781250012 0.00138888892
+call set_float e5:similarity 0.400000006
+call set_float e5:smoothness 0.0799999982
+call set_float e5:spill 0.100000001
+call blend_push
+call blend_function ONE INVSRCALPHA
+call filter_end f e5 size=0x0
+call blend_pop
+call effect_create file=chroma_key_filter_v2.effect -> e6 uniforms=13 techniques=1
+call get_param e6:opacity -> ok
+call get_param e6:contrast -> ok
+call get_param e6:brightness -> ok
+call get_param e6:gamma -> ok
+call get_param e6:chroma_key -> ok
+call get_param e6:pixel_size -> ok
+call get_param e6:similarity -> ok
+call get_param e6:smoothness -> ok
+call get_param e6:spill -> ok
+create g -> ok
+render g
+call filter_begin_cs g format=RGBA space=SRGB allow=ALLOW_DIRECT -> 1
+call set_float e6:opacity 1
+call set_float e6:contrast 1
+call set_float e6:brightness 0
+call set_float e6:gamma 1
+call set_vec2 e6:chroma_key 0.429979652 0.565892994
+call set_vec2 e6:pixel_size 0.000781250012 0.00138888892
+call set_float e6:similarity 0.400000006
+call set_float e6:smoothness 0.0799999982
+call set_float e6:spill 0.100000001
+call blend_push
+call blend_function ONE INVSRCALPHA
+call filter_end g e6 size=0x0
+call blend_pop
+echo v2 colour settings
+call effect_create file=chroma_key_filter_v2.effect -> e7 uniforms=13 techniques=1
+call get_param e7:opacity -> ok
+call get_param e7:contrast -> ok
+call get_param e7:brightness -> ok
+call get_param e7:gamma -> ok
+call get_param e7:chroma_key -> ok
+call get_param e7:pixel_size -> ok
+call get_param e7:similarity -> ok
+call get_param e7:smoothness -> ok
+call get_param e7:spill -> ok
+create h -> ok
+render h
+call filter_begin_cs h format=RGBA space=SRGB allow=ALLOW_DIRECT -> 1
+call set_float e7:opacity 0.5
+call set_float e7:contrast 0.25
+call set_float e7:brightness 0.200000003
+call set_float e7:gamma 1.5
+call set_vec2 e7:chroma_key 0.163388997 0.103018999
+call set_vec2 e7:pixel_size 0.000781250012 0.00138888892
+call set_float e7:similarity 0.123000003
+call set_float e7:smoothness 0.00700000022
+call set_float e7:spill 0.999000013
+call blend_push
+call blend_function ONE INVSRCALPHA
+call filter_end h e7 size=0x0
+call blend_pop
+echo v1 colour settings: opacity int percent (opacity*255/100)<<24 in an RGBA colour; brightness is halved
+call effect_create file=chroma_key_filter.effect -> e8 uniforms=12 techniques=1
+call get_param e8:color -> ok
+call get_param e8:contrast -> ok
+call get_param e8:brightness -> ok
+call get_param e8:gamma -> ok
+call get_param e8:chroma_key -> ok
+call get_param e8:pixel_size -> ok
+call get_param e8:similarity -> ok
+call get_param e8:smoothness -> ok
+call get_param e8:spill -> ok
+create i -> ok
+render i
+call filter_begin i format=RGBA allow=ALLOW_DIRECT -> 1
+call set_vec4 e8:color 1 1 1 0.498039216
+call set_float e8:contrast 1.5
+call set_float e8:brightness 0.25
+call set_float e8:gamma 0.666666687
+call set_vec2 e8:chroma_key 0.163388997 0.103018999
+call set_vec2 e8:pixel_size 0.000781250012 0.00138888892
+call set_float e8:similarity 0.400000006
+call set_float e8:smoothness 0.0799999982
+call set_float e8:spill 0.100000001
+call filter_end i e8 size=0x0
+echo v1 opacity 150 / -10 wrap (QUIRK): (opacity*255)/100 is shifted into the top byte of a u32
+call effect_create file=chroma_key_filter.effect -> e9 uniforms=12 techniques=1
+call get_param e9:color -> ok
+call get_param e9:contrast -> ok
+call get_param e9:brightness -> ok
+call get_param e9:gamma -> ok
+call get_param e9:chroma_key -> ok
+call get_param e9:pixel_size -> ok
+call get_param e9:similarity -> ok
+call get_param e9:smoothness -> ok
+call get_param e9:spill -> ok
+create j -> ok
+render j
+call filter_begin j format=RGBA allow=ALLOW_DIRECT -> 1
+call set_vec4 e9:color 1 1 1 0.494117647
+call set_float e9:contrast 1.5
+call set_float e9:brightness 0.25
+call set_float e9:gamma 0.666666687
+call set_vec2 e9:chroma_key 0.163388997 0.103018999
+call set_vec2 e9:pixel_size 0.000781250012 0.00138888892
+call set_float e9:similarity 0.400000006
+call set_float e9:smoothness 0.0799999982
+call set_float e9:spill 0.100000001
+call filter_end j e9 size=0x0
+call effect_create file=chroma_key_filter.effect -> e10 uniforms=12 techniques=1
+call get_param e10:color -> ok
+call get_param e10:contrast -> ok
+call get_param e10:brightness -> ok
+call get_param e10:gamma -> ok
+call get_param e10:chroma_key -> ok
+call get_param e10:pixel_size -> ok
+call get_param e10:similarity -> ok
+call get_param e10:smoothness -> ok
+call get_param e10:spill -> ok
+create k -> ok
+render k
+call filter_begin k format=RGBA allow=ALLOW_DIRECT -> 1
+call set_vec4 e10:color 1 1 1 0.0588235296
+call set_float e10:contrast 1.5
+call set_float e10:brightness 0.25
+call set_float e10:gamma 0.666666687
+call set_vec2 e10:chroma_key 0.163388997 0.103018999
+call set_vec2 e10:pixel_size 0.000781250012 0.00138888892
+call set_float e10:similarity 0.400000006
+call set_float e10:smoothness 0.0799999982
+call set_float e10:spill 0.100000001
+call filter_end k e10 size=0x0
+echo base size 1280x720 vs 100x50: pixel_size is 1/base size
+render b
+call filter_begin_cs b format=RGBA space=SRGB allow=ALLOW_DIRECT -> 1
+call set_float e2:opacity 1
+call set_float e2:contrast 1
+call set_float e2:brightness 0
+call set_float e2:gamma 1
+call set_vec2 e2:chroma_key 0.163388997 0.103018999
+call set_vec2 e2:pixel_size 0.00999999978 0.0199999996
+call set_float e2:similarity 0.400000006
+call set_float e2:smoothness 0.0799999982
+call set_float e2:spill 0.100000001
+call blend_push
+call blend_function ONE INVSRCALPHA
+call filter_end b e2 size=0x0
+call blend_pop
+render b
+call filter_begin_cs b format=RGBA space=SRGB allow=ALLOW_DIRECT -> 1
+call set_float e2:opacity 1
+call set_float e2:contrast 1
+call set_float e2:brightness 0
+call set_float e2:gamma 1
+call set_vec2 e2:chroma_key 0.163388997 0.103018999
+call set_vec2 e2:pixel_size inf inf
+call set_float e2:similarity 0.400000006
+call set_float e2:smoothness 0.0799999982
+call set_float e2:spill 0.100000001
+call blend_push
+call blend_function ONE INVSRCALPHA
+call filter_end b e2 size=0x0
+call blend_pop
+echo extended colour space: v2 skips the filter
+render b
+call skip_video_filter b
+cs b -> 709_EXTENDED

@@ -1,0 +1,44 @@
+log info [qsv encoder: 'enc'] settings: 	codec:          H.264 	rate_control:   CBR
+log info 	target_bitrate: 5000
+log info 	Lookahead Depth:60
+log info 	target_usage:   TU4 	profile:        high 	keyint:         0 	latency:        normal 	b-frames:       3 	fps_num:        60 	fps_den:        1 	width:          1920 	height:         1080
+log info [qsv encoder: 'enc'] debug info:
+qsv.encoder_open codec=0 tex=0
+log info 	major:          2 	minor:          9
+qsv_create X ok
+qsvparams usage=4 profile=100 rc=1 async=4 la=60
+qsvparams bitrate=5000 max=6000 qpi=23 qpp=23 qpb=23 icq=23 keyint_sec=0 bframes=3
+qsvparams size=1920x1080 fps=60/1 repeat_headers=0 fmt10=0
+qsvparams vui fmt=5 fullrange=0 prim=1 trc=1 matrix=1 chroma=0/0
+qsvparams hdr dispx=0,0,0 dispy=0,0,0 white=0,0 maxlum=0 minlum=0 cll=0 fall=0
+qsv.encoder_reconfig target_bitrate=8000
+qsv_update X 1
+qsvparams usage=4 profile=100 rc=1 async=4 la=60
+qsvparams bitrate=8000 max=6000 qpi=23 qpp=23 qpb=23 icq=23 keyint_sec=0 bframes=3
+qsvparams size=1920x1080 fps=60/1 repeat_headers=0 fmt10=0
+qsvparams vui fmt=5 fullrange=0 prim=1 trc=1 matrix=1 chroma=0/0
+qsvparams hdr dispx=0,0,0 dispy=0,0,0 white=0,0 maxlum=0 minlum=0 cll=0 fall=0
+echo bitrate-above-65535-wraps
+qsv.encoder_reconfig target_bitrate=4464
+qsv_update X 1
+qsvparams usage=4 profile=100 rc=1 async=4 la=60
+qsvparams bitrate=4464 max=6000 qpi=23 qpp=23 qpb=23 icq=23 keyint_sec=0 bframes=3
+qsvparams size=1920x1080 fps=60/1 repeat_headers=0 fmt10=0
+qsvparams vui fmt=5 fullrange=0 prim=1 trc=1 matrix=1 chroma=0/0
+qsvparams hdr dispx=0,0,0 dispy=0,0,0 white=0,0 maxlum=0 minlum=0 cll=0 fall=0
+qsv.encoder_close
+echo video-info-formats
+qsv_video_info h264v2 NV12 -> NV12 1920x1080
+qsv_video_info h264v2 P010 -> NV12 1920x1080
+qsv_video_info h264v2 I420 -> NV12 1920x1080
+qsv_video_info hevc P010 -> P010 1920x1080
+qsv_video_info av1 I420 -> NV12 1920x1080
+qsv_video_info h264v2 NV12 -> NV12 1920x1080
+qsv_video_info hevc NV12 -> P010 1920x1080
+echo resolution-cap
+qsv_video_info h264v2 NV12 -> NV12 1920x1200
+qsv_video_info hevc NV12 -> NV12 1920x1200
+qsv_video_info h264v2 NV12 -> NV12 3840x2160
+qsv_video_info h264v2 NV12 -> NV12 3840x2160
+qsv_video_info h264v2 NV12 -> NV12 1280x1200
+qsv_video_info h264v2 NV12 -> NV12 1280x1440

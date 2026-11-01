@@ -1,0 +1,11 @@
+# S-050 obs-ffmpeg-nvenc: on_init_error builds the user message: "NVENC.Error" with %1 replaced by
+# the libav error text, "<br><br>", then ONE of: BadGPUIndex (gpu > 0, with %1 = index), GenericError
+# (AVERROR_EXTERNAL), CheckDrivers. (translation keys are shown; av_err2str is faked as averr(N).)
+ff_defaults h264
+set bool psycho_aq 0
+ff_initfail 1 -1
+ff_create h264
+ff_initfail 1 -542398533
+ff_create h264
+set int gpu 2
+ff_create h264

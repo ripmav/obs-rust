@@ -1,0 +1,90 @@
+> trace 0
+> gs_create g
+ret 0 created
+> gs_enter_context g
+> trace 1
+> size 800 600
+> gs_set_viewport 10 20 300 200
+  dev device_set_viewport x=10 y=20 w=300 h=200
+== viewport push records the current backend viewport; pop restores it via set_viewport
+> gs_viewport_push
+  dev device_get_viewport
+> gs_set_viewport 0 0 50 50
+  dev device_set_viewport x=0 y=0 w=50 h=50
+> gs_get_viewport
+  dev device_get_viewport
+viewport 0 0 50 50
+> gs_viewport_pop
+  dev device_set_viewport x=10 y=20 w=300 h=200
+> gs_get_viewport
+  dev device_get_viewport
+viewport 10 20 300 200
+== pop on an empty stack does nothing
+> gs_viewport_pop
+== stack is LIFO
+> gs_viewport_push
+  dev device_get_viewport
+> gs_set_viewport 1 1 1 1
+  dev device_set_viewport x=1 y=1 w=1 h=1
+> gs_viewport_push
+  dev device_get_viewport
+> gs_set_viewport 2 2 2 2
+  dev device_set_viewport x=2 y=2 w=2 h=2
+> gs_viewport_pop
+  dev device_set_viewport x=1 y=1 w=1 h=1
+> gs_get_viewport
+  dev device_get_viewport
+viewport 1 1 1 1
+> gs_viewport_pop
+  dev device_set_viewport x=10 y=20 w=300 h=200
+> gs_get_viewport
+  dev device_get_viewport
+viewport 10 20 300 200
+== reset viewport uses the device size
+> gs_reset_viewport
+  dev device_get_size
+  dev device_set_viewport x=0 y=0 w=800 h=600
+> gs_get_viewport
+  dev device_get_viewport
+viewport 0 0 800 600
+> gs_get_size
+  dev device_get_size
+size 800 600
+> gs_get_width
+  dev device_get_width
+ret 800
+> gs_get_height
+  dev device_get_height
+ret 600
+== 2d mode = ortho(0,w,0,h,-1,-1024) from device size
+> gs_set_2d_mode
+  dev device_get_size
+  dev device_ortho left=0 right=800 top=0 bottom=600 znear=-1 zfar=-1024
+== 3d mode is a no-op stub
+> gs_set_3d_mode
+== perspective derives the frustum (angle in degrees, aspect scales x)
+> gs_perspective 90 2 1 100
+  dev device_frustum left=-2 right=2 top=-1 bottom=1 znear=1 zfar=100
+> gs_perspective 60 1.5 0.5 50
+  dev device_frustum left=-0.433012694 right=0.433012694 top=-0.288675129 bottom=0.288675129 znear=0.5 zfar=50
+== frustum / ortho / projection stack are forwarded
+> gs_ortho 0 100 0 50 -1 1
+  dev device_ortho left=0 right=100 top=0 bottom=50 znear=-1 zfar=1
+> gs_frustum -1 1 -1 1 1 10
+  dev device_frustum left=-1 right=1 top=-1 bottom=1 znear=1 zfar=10
+> gs_projection_push
+  dev device_projection_push
+> gs_projection_pop
+  dev device_projection_pop
+== scissor, NULL means disable
+> gs_set_scissor_rect 1 2 3 4
+  dev device_set_scissor_rect x=1 y=2 cx=3 cy=4
+> gs_set_scissor_rect null
+  dev device_set_scissor_rect rect=null
+> gs_get_viewport null
+log debug gs_get_viewport: Null 'rect' parameter
+== resize and colour space
+> gs_resize 1024 768
+  dev device_resize x=1024 y=768
+> gs_update_color_space
+  dev device_update_color_space

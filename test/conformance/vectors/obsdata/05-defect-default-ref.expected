@@ -1,0 +1,18 @@
+refs q 2
+info_refs q 1
+info_refs r 1
+try set_default_obj ok
+echo --- correct behaviour when a user value exists
+refs o1 3
+refs o1 2
+refs o2 2
+echo --- correct behaviour on the first default (item created by the default)
+refs q 2
+echo --- same defect for arrays
+info_a_refs a1 2
+info_a_refs a1 1
+info_a_refs a2 1
+try set_default_array ok
+echo --- autoselect layer counts correctly
+refs q 2
+refs r 2

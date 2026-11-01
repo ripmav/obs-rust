@@ -1,0 +1,8 @@
+props_apply P
+vis P rate_control:11 bitrate:11 target_quality:01 max_bitrate:01 cqp:01 keyint_sec:11 preset:11 tune:11 multipass:11 profile:11 lookahead:11 adaptive_quantization:11 bf:11 opts:11 repeat_headers:01 force_cuda_tex:01 disable_scenecut:01
+props_apply P
+vis P rate_control:11 bitrate:11 target_quality:01 max_bitrate:01 cqp:01 keyint_sec:11 preset:11 tune:11 multipass:11 profile:11 lookahead:11 adaptive_quantization:11 bf:11 opts:11 repeat_headers:01 force_cuda_tex:01 disable_scenecut:01
+props_apply P
+vis P rate_control:11 bitrate:11 target_quality:01 max_bitrate:01 cqp:01 keyint_sec:11 preset:11 tune:11 multipass:11 profile:11 lookahead:11 adaptive_quantization:11 bf:11 opts:11 repeat_headers:01 force_cuda_tex:01 disable_scenecut:01
+props_apply P
+vis P rate_control:11 bitrate:01 target_quality:01 max_bitrate:01 cqp:01 keyint_sec:11 preset:01 tune:01 multipass:11 profile:11 lookahead:11 adaptive_quantization:01 bf:11 opts:11 repeat_headers:01 force_cuda_tex:01 disable_scenecut:01

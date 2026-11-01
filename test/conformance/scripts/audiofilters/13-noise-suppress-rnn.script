@@ -1,0 +1,33 @@
+# CORE (plumbing). RNNoise path: 48 kHz uses no resampler; other rates resample to 48 kHz before and back after.
+# The fake RNNoise multiplies by 0.5; samples are scaled by 32768 before and 1/32768 after. The fake resampler is
+# nearest-neighbour (out_frames = in*dst/src, or forced with resampler_frames).
+audio 2 48000
+source mon audio mono
+events on
+data d
+set d method string rnnoise
+create n ns2 d parent=mon
+state n
+process n 480 ts=1000000000 out=0:0:4:1 const:0.5 const:-0.5
+state n
+echo 44100-uses-resamplers-441-frames
+audio 2 44100
+create m ns2 d parent=mon
+state m
+process m 441 ts=1000000000 out=0:0:6:1 ramp:0:0.001 ramp:0:-0.001
+echo forced-short-resampler-output-zero-fills-front
+resampler_frames 400
+process m 441 ts=1010000000 out=0:0:6:1 const:0.5 const:0.5
+resampler_frames 300
+process m 441 ts=1020000000 out=0:0:6:1 const:0.5 const:0.5
+resampler_frames 0
+echo mono-source-in-stereo-filter-sets-flag
+state m
+audio 1 48000
+echo v1-default-is-speex-but-explicit-rnnoise-works
+create r ns d
+process r 480 ts=1000000000 out=0:0:3:1 const:0.1
+echo 6ch-48k
+audio 6 48000
+create s6 ns2 d
+process s6 480 ts=1000000000 out=0:0:2:1 const:0.1 const:0.2 const:0.3 const:0.4 const:0.5 const:0.6

@@ -1,0 +1,5 @@
+# S-050 nvenc: obs_nvenc_load() registers the v2 encoders (AV1 only if the probe reported AV1 as
+# supported) and then the compat encoders. Listing: id, codec, capability flags, callbacks.
+ini "[general]\nnvenc_supported=true\nnvenc_devices=1\ndriver_ver=560.1\nnvenc_ver=13.0\ncuda_ver=12.0\n[h264]\ncodec_supported=true\n[hevc]\ncodec_supported=true\n[av1]\ncodec_supported=true\n"
+supported
+load

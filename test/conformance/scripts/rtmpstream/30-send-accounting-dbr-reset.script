@@ -1,0 +1,32 @@
+# S-045 send thread bookkeeping: total_bytes counts legacy/enhanced video and legacy audio writes (headers included)
+# but NOT enhanced-audio (track != 0) writes (QUIRK Q-11); with DBR on, each sent packet adds a window frame;
+# on exit the original bitrate is restored if it had been lowered.
+reset
+aenc 0 aac 160
+aenc 1 aac 96
+venc 0 h264 4000 4 e0
+service rtmp://h/a KEY - -
+opt bool dyn_bitrate 1
+init_connect
+set active 1
+fake write_len 7
+pkt audio 100000 0 0 0
+pkt audio 110000 0 0 1
+pkt video 200000 3 1 0
+stop 300000000
+pkt audio 400000 0 0
+run_send
+# DBR on: frames recorded, bitrate restored at the end
+reset
+venc 0 h264 4000 4 e0
+service rtmp://h/a KEY - -
+opt bool dyn_bitrate 1
+init_connect
+set active 1
+pkt video 200000 3 1 0
+pkt video 210000 2 0 0
+set dbr_cur_bitrate 1500
+stop 300000000
+pkt video 400000 2 0 0
+run_send
+dbr

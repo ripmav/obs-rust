@@ -1,0 +1,23 @@
+# QUIRK (Q-9). rate_control_modified rewrites the settings object it is given: legacy
+# rate controls and target-usage names are normalised, legacy async_depth/la_depth keys are
+# erased and a latency value is derived. update_params does the latency/target-usage part
+# again on create. The settings object after the UI callback is therefore not what the user typed.
+data D
+qsv_defaults h264v2 D
+qsv_props h264v2 P
+set D rate_control str LA_VBR
+set D target_usage str balanced
+set D la_depth int 8
+set D async_depth int 2
+dump D
+props_apply P D
+dump D
+echo create-also-migrates
+data E
+qsv_defaults h264v2 E
+set E rate_control str LA_CBR
+set E target_usage str speed
+set E async_depth int 1
+qsv_create h264v2 X E
+qsv_destroy X
+dump E

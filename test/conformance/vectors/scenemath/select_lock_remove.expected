@@ -1,0 +1,47 @@
+add a ok
+add b ok
+item b id=2 parent=main group=0 scene=0 abs=0 vis=1 user_vis=1 sel=1 lock=0 need_update=0
+  stored pos=-1.77777779,-1 rot=0 scale=1,1 scale_ref=1920,1080 align=5
+  bounds type=0 align=0 size=0,0 crop_to_bounds=0
+  crop l=0 r=0 t=0 b=0 bounds_crop l=0 r=0 t=0 b=0 last=0,0
+  output_scale=0,0 box_scale=0,0
+  draw [1,0,0,0] [0,1,0,0] [0,0,1,0] [0,0,0,1]
+  box [1,0,0,0] [0,1,0,0] [0,0,1,0] [0,0,0,1]
+lock a -> 1
+lock a -> 0
+lock a -> 1
+item b id=2 parent=- group=0 scene=0 abs=0 vis=0 user_vis=0 sel=0 lock=0 need_update=0
+  stored pos=-1.77777779,-1 rot=0 scale=1,1 scale_ref=1920,1080 align=5
+  bounds type=0 align=0 size=0,0 crop_to_bounds=0
+  crop l=0 r=0 t=0 b=0 bounds_crop l=0 r=0 t=0 b=0 last=0,0
+  output_scale=0,0 box_scale=0,0
+  draw [1,0,0,0] [0,1,0,0] [0,0,1,0] [0,0,0,1]
+  box [1,0,0,0] [0,1,0,0] [0,0,1,0] [0,0,0,1]
+order main: a
+signal item_add scene=main item#1
+signal item_add scene=main item#2
+signal item_select scene=main item#1
+signal item_deselect scene=main item#1
+signal item_select scene=main item#2
+signal item_locked scene=main item#1 locked=1
+signal item_locked scene=main item#1 locked=0
+signal item_deselect scene=main item#2
+signal item_remove scene=main item#2
+log end
+-- ids are never reused; set_id overrides, next id continues from the counter
+add c ok
+add d ok
+item c id=77 parent=main group=0 scene=0 abs=0 vis=1 user_vis=1 sel=0 lock=0 need_update=0
+  stored pos=-1.77777779,-1 rot=0 scale=1,1 scale_ref=1920,1080 align=5
+  bounds type=0 align=0 size=0,0 crop_to_bounds=0
+  crop l=0 r=0 t=0 b=0 bounds_crop l=0 r=0 t=0 b=0 last=0,0
+  output_scale=0,0 box_scale=0,0
+  draw [1,0,0,0] [0,1,0,0] [0,0,1,0] [0,0,0,1]
+  box [1,0,0,0] [0,1,0,0] [0,0,1,0] [0,0,0,1]
+item d id=4 parent=main group=0 scene=0 abs=0 vis=1 user_vis=1 sel=0 lock=0 need_update=0
+  stored pos=-1.77777779,-1 rot=0 scale=1,1 scale_ref=1920,1080 align=5
+  bounds type=0 align=0 size=0,0 crop_to_bounds=0
+  crop l=0 r=0 t=0 b=0 bounds_crop l=0 r=0 t=0 b=0 last=0,0
+  output_scale=0,0 box_scale=0,0
+  draw [1,0,0,0] [0,1,0,0] [0,0,1,0] [0,0,0,1]
+  box [1,0,0,0] [0,1,0,0] [0,0,1,0] [0,0,0,1]

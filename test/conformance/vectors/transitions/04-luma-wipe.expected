@@ -1,0 +1,191 @@
+create w wipe_transition
+  ev enter_graphics
+  ev effect_create file=@data/luma_wipe_transition.effect
+  ev leave_graphics
+  ev enter_graphics
+  ev image_free loaded=0
+  ev leave_graphics
+  ev image_init file=@data/luma_wipes/linear-h.png alpha_mode=0
+  ev   -> loaded 720x576 depth=8 color_type=0
+  ev enter_graphics
+  ev image_init_texture -> texture 301
+  ev leave_graphics
+  instance=1
+  fields invert=0 softness=0.0299999993 luma_loaded=1 luma_size=720x576 luma_tex=1 wipes_list=1
+  fields invert=0 softness=0.0299999993 luma_loaded=1 luma_size=720x576 luma_tex=1 wipes_list=1
+props w
+  flags=0
+  prop luma_image type=list desc="LumaWipe.Image" visible=1 enabled=1
+    list type=2 format=3 count=34
+    item 0 name="LumaWipe.Type.BarndoorBottomLeft" value="barndoor-botleft.png"
+    item 1 name="LumaWipe.Type.BarndoorHorizontal" value="barndoor-h.png"
+    item 2 name="LumaWipe.Type.BarndoorTopLeft" value="barndoor-topleft.png"
+    item 3 name="LumaWipe.Type.BarndoorVertical" value="barndoor-v.png"
+    item 4 name="LumaWipe.Type.BlindsHorizontal" value="blinds-h.png"
+    item 5 name="LumaWipe.Type.BoxBottomLeft" value="box-botleft.png"
+    item 6 name="LumaWipe.Type.BoxBottomRight" value="box-botright.png"
+    item 7 name="LumaWipe.Type.BoxTopLeft" value="box-topleft.png"
+    item 8 name="LumaWipe.Type.BoxTopRight" value="box-topright.png"
+    item 9 name="LumaWipe.Type.Burst" value="burst.png"
+    item 10 name="LumaWipe.Type.CheckerboardSmall" value="checkerboard-small.png"
+    item 11 name="LumaWipe.Type.Circles" value="circles.png"
+    item 12 name="LumaWipe.Type.Clock" value="clock.png"
+    item 13 name="LumaWipe.Type.Cloud" value="cloud.png"
+    item 14 name="LumaWipe.Type.Curtain" value="curtain.png"
+    item 15 name="LumaWipe.Type.Fan" value="fan.png"
+    item 16 name="LumaWipe.Type.Fractal" value="fractal.png"
+    item 17 name="LumaWipe.Type.Iris" value="iris.png"
+    item 18 name="LumaWipe.Type.LinearHorizontal" value="linear-h.png"
+    item 19 name="LumaWipe.Type.LinearTopLeft" value="linear-topleft.png"
+    item 20 name="LumaWipe.Type.LinearTopRight" value="linear-topright.png"
+    item 21 name="LumaWipe.Type.LinearVertical" value="linear-v.png"
+    item 22 name="LumaWipe.Type.ParallelZigzagHorizontal" value="parallel-zigzag-h.png"
+    item 23 name="LumaWipe.Type.ParallelZigzagVertical" value="parallel-zigzag-v.png"
+    item 24 name="LumaWipe.Type.Sinus9" value="sinus9.png"
+    item 25 name="LumaWipe.Type.Spiral" value="spiral.png"
+    item 26 name="LumaWipe.Type.Square" value="square.png"
+    item 27 name="LumaWipe.Type.Squares" value="squares.png"
+    item 28 name="LumaWipe.Type.Stripes" value="stripes.png"
+    item 29 name="LumaWipe.Type.StripsHorizontal" value="strips-h.png"
+    item 30 name="LumaWipe.Type.StripsVertical" value="strips-v.png"
+    item 31 name="LumaWipe.Type.Watercolor" value="watercolor.png"
+    item 32 name="LumaWipe.Type.ZigzagHorizontal" value="zigzag-h.png"
+    item 33 name="LumaWipe.Type.ZigzagVertical" value="zigzag-v.png"
+  prop luma_softness type=float desc="LumaWipe.Softness" visible=1 enabled=1 min=0 max=1 step=0.05 numtype=0
+  prop luma_invert type=bool desc="LumaWipe.Invert" visible=1 enabled=1
+props w (data=NULL)
+  flags=0
+  prop luma_image type=list desc="LumaWipe.Image" visible=1 enabled=1
+    list type=2 format=3 count=0
+  prop luma_softness type=float desc="LumaWipe.Softness" visible=1 enabled=1 min=0 max=1 step=0.05 numtype=0
+  prop luma_invert type=bool desc="LumaWipe.Invert" visible=1 enabled=1
+render w
+  ev transition_video_render callback=yes placeholder=9000
+  ev   callback a=1 b=2 t=0.5 cx=1920 cy=1080
+  ev enable_framebuffer_srgb 1
+  ev set_texture a_tex tex=1 srgb=1
+  ev set_texture b_tex tex=2 srgb=1
+  ev set_texture l_tex tex=301 srgb=0
+  ev set_float progress 0.5
+  ev set_bool invert 0
+  ev set_float softness 0.0299999993
+  ev effect_loop technique=LumaWipe pass=0
+  ev draw_sprite tex=null flip=0 w=1920 h=1080
+  ev enable_framebuffer_srgb 0
+settings w
+  ev source_update w deferred (count 1)
+tick w
+  ev enter_graphics
+  ev image_free loaded=1
+  ev leave_graphics
+  ev image_init file=@data/luma_wipes/circles.png alpha_mode=0
+  ev   -> loaded 720x576 depth=8 color_type=0
+  ev enter_graphics
+  ev image_init_texture -> texture 302
+  ev leave_graphics
+  fields invert=1 softness=0.5 luma_loaded=1 luma_size=720x576 luma_tex=1 wipes_list=1
+render w
+  ev transition_video_render callback=yes placeholder=9000
+  ev   callback a=1 b=2 t=0.300000012 cx=1280 cy=720
+  ev enable_framebuffer_srgb 1
+  ev set_texture a_tex tex=1 srgb=1
+  ev set_texture b_tex tex=2 srgb=1
+  ev set_texture l_tex tex=302 srgb=0
+  ev set_float progress 0.300000012
+  ev set_bool invert 1
+  ev set_float softness 0.5
+  ev effect_loop technique=LumaWipe pass=0
+  ev draw_sprite tex=null flip=0 w=1280 h=720
+  ev enable_framebuffer_srgb 0
+settings w
+  ev source_update w deferred (count 1)
+tick w
+  ev enter_graphics
+  ev image_free loaded=1
+  ev leave_graphics
+  ev image_init file=(null) alpha_mode=0
+  ev enter_graphics
+  ev image_init_texture (not loaded)
+  ev leave_graphics
+  fields invert=1 softness=0.5 luma_loaded=0 luma_size=0x0 luma_tex=0 wipes_list=1
+render w
+  ev transition_video_render callback=yes placeholder=9000
+  ev   callback a=1 b=2 t=0.300000012 cx=1280 cy=720
+  ev enable_framebuffer_srgb 1
+  ev set_texture a_tex tex=1 srgb=1
+  ev set_texture b_tex tex=2 srgb=1
+  ev set_texture l_tex tex=null srgb=0
+  ev set_float progress 0.300000012
+  ev set_bool invert 1
+  ev set_float softness 0.5
+  ev effect_loop technique=LumaWipe pass=0
+  ev draw_sprite tex=null flip=0 w=1280 h=720
+  ev enable_framebuffer_srgb 0
+settings w
+  ev source_update w deferred (count 1)
+tick w
+  ev enter_graphics
+  ev image_free loaded=0
+  ev leave_graphics
+  ev image_init file=@data/luma_wipes/ alpha_mode=0
+log warning Failed to load file '@data/luma_wipes/'
+  ev   -> failed
+  ev enter_graphics
+  ev image_init_texture (not loaded)
+  ev leave_graphics
+  fields invert=1 softness=0.5 luma_loaded=0 luma_size=0x0 luma_tex=0 wipes_list=1
+settings w
+  ev source_update w deferred (count 1)
+tick w
+  ev enter_graphics
+  ev image_free loaded=0
+  ev leave_graphics
+  ev image_init file=@data/luma_wipes/wipes.json alpha_mode=0
+log warning Failed to load file '@data/luma_wipes/wipes.json'
+  ev   -> failed
+  ev enter_graphics
+  ev image_init_texture (not loaded)
+  ev leave_graphics
+  fields invert=1 softness=0.5 luma_loaded=0 luma_size=0x0 luma_tex=0 wipes_list=1
+settings w
+  ev source_update w deferred (count 1)
+tick w
+  ev enter_graphics
+  ev image_free loaded=0
+  ev leave_graphics
+  ev image_init file=@data/luma_wipes/cloud.png alpha_mode=0
+  ev   -> loaded 720x576 depth=8 color_type=0
+  ev enter_graphics
+  ev image_init_texture -> texture 303
+  ev leave_graphics
+  fields invert=1 softness=-1 luma_loaded=1 luma_size=720x576 luma_tex=1 wipes_list=1
+destroy w
+  ev enter_graphics
+  ev image_free loaded=1
+  ev leave_graphics
+create w2 wipe_transition
+  ev enter_graphics
+  ev effect_create file=@data/luma_wipe_transition.effect
+  ev leave_graphics
+  ev enter_graphics
+  ev image_free loaded=0
+  ev leave_graphics
+  ev image_init file=@data/luma_wipes/spiral.png alpha_mode=0
+  ev   -> loaded 720x576 depth=8 color_type=0
+  ev enter_graphics
+  ev image_init_texture -> texture 304
+  ev leave_graphics
+  instance=1
+  fields invert=1 softness=0 luma_loaded=1 luma_size=720x576 luma_tex=1 wipes_list=1
+destroy w2
+  ev enter_graphics
+  ev image_free loaded=1
+  ev leave_graphics
+create w3 wipe_transition
+  ev enter_graphics
+  ev effect_create file=@data/luma_wipe_transition.effect
+  ev   -> fail
+  ev leave_graphics
+log error Could not open luma_wipe_transition.effect
+  instance=0
+  fields (no instance)

@@ -1,0 +1,95 @@
+> trace 0
+> gs_create g
+ret 0 created
+> gs_enter_context g
+> trace 1
+== initial top is identity
+> gs_matrix_get
+matrix 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1
+== translate and scale post-multiply into the top (see S-008 for matrix4 math)
+> gs_matrix_translate3f 1 2 3
+> gs_matrix_get
+matrix 1 0 0 0 0 1 0 0 0 0 1 0 1 2 3 1
+> gs_matrix_scale3f 2 3 4
+> gs_matrix_get
+matrix 2 0 0 0 0 3 0 0 0 0 4 0 1 2 3 1
+== push copies the top, pop restores the one below
+> gs_matrix_push
+> gs_matrix_identity
+> gs_matrix_get
+matrix 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1
+> gs_matrix_pop
+> gs_matrix_get
+matrix 2 0 0 0 0 3 0 0 0 0 4 0 1 2 3 1
+== popping the bottom entry is refused and logged
+> gs_matrix_pop
+log error Tried to pop last matrix on stack
+> gs_matrix_get
+matrix 2 0 0 0 0 3 0 0 0 0 4 0 1 2 3 1
+== identity / transpose / set / mul
+> gs_matrix_identity
+> gs_matrix_set 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16
+> gs_matrix_get
+matrix 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16
+> gs_matrix_transpose
+> gs_matrix_get
+matrix 1 5 9 13 2 6 10 14 3 7 11 15 4 8 12 16
+> gs_matrix_identity
+> gs_matrix_mul 2 0 0 0 0 2 0 0 0 0 2 0 1 1 1 1
+> gs_matrix_get
+matrix 2 0 0 0 0 2 0 0 0 0 2 0 1 1 1 1
+== vec3 forms and rotations
+> gs_matrix_identity
+> gs_matrix_translate 4 5 6
+> gs_matrix_scale 1 2 3
+> gs_matrix_get
+matrix 1 0 0 0 0 2 0 0 0 0 3 0 4 5 6 1
+> gs_matrix_identity
+> gs_matrix_rotaa4f 0 0 1 1.5707963
+> gs_matrix_get
+matrix 5.96046448e-08 1 0 0 -1 5.96046448e-08 0 0 0 0 1 0 0 0 0 1
+> gs_matrix_identity
+> gs_matrix_rotaa 0 1 0 3.14159265
+> gs_matrix_get
+matrix -1 0 8.74227766e-08 0 0 1 0 0 -8.74227766e-08 0 -1 0 0 0 0 1
+> gs_matrix_identity
+> gs_matrix_rotquat 0 0 0.70710678 0.70710678
+> gs_matrix_get
+matrix 0 1 0 0 1 0 0 0 0 0 -1 0 0 0 0 1
+== deep stack
+> gs_matrix_identity
+> gs_matrix_translate3f 1 0 0
+> gs_matrix_push
+> gs_matrix_translate3f 1 0 0
+> gs_matrix_push
+> gs_matrix_translate3f 1 0 0
+> gs_matrix_get
+matrix 1 0 0 0 0 1 0 0 0 0 1 0 3 0 0 1
+> gs_matrix_pop
+> gs_matrix_get
+matrix 1 0 0 0 0 1 0 0 0 0 1 0 2 0 0 1
+> gs_matrix_pop
+> gs_matrix_get
+matrix 1 0 0 0 0 1 0 0 0 0 1 0 1 0 0 1
+> gs_matrix_pop
+log error Tried to pop last matrix on stack
+> gs_matrix_get
+matrix 1 0 0 0 0 1 0 0 0 0 1 0 1 0 0 1
+== matrix stack is per graphics object: a second object starts with identity
+> gs_leave_context
+  dev device_leave_context
+> trace 0
+> gs_create h
+ret 0 created
+> trace 1
+> gs_enter_context h
+  dev device_enter_context
+> gs_matrix_get
+matrix 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1
+> gs_matrix_translate3f 9 9 9
+> gs_leave_context
+  dev device_leave_context
+> gs_enter_context g
+  dev device_enter_context
+> gs_matrix_get
+matrix 1 0 0 0 0 1 0 0 0 0 1 0 1 0 0 1

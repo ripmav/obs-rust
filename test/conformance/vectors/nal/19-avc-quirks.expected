@@ -1,0 +1,16 @@
+echo forbidden-bit-raises-priority
+avc_priority 6
+avc_priority 7
+avc_priority 4
+avc_priority 7
+avc_packet size=6 keyframe=0 priority=7 drop_priority=7 refs=1 fields=preserved fresh=1 data=00000002e1aa
+echo priority-from-parameter-sets
+avc_priority 3
+avc_priority 0
+avc_priority 0
+echo empty-nal
+avc_packet size=10 keyframe=0 priority=2 drop_priority=2 refs=1 fields=preserved fresh=1 data=00000000000000024188
+avc_packet size=8 keyframe=0 priority=0 drop_priority=0 refs=1 fields=preserved fresh=1 data=0000000400000001
+avc_priority 0
+echo source-keyframe-flag-kept
+avc_packet size=6 keyframe=1 priority=2 drop_priority=2 refs=1 fields=preserved fresh=1 data=0000000241aa

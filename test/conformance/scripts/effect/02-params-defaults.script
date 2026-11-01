@@ -1,0 +1,42 @@
+# CORE: default values. float -> 4-byte IEEE single, int and bool -> a C "long" (8 bytes on LP64 Linux; 4 on
+# Windows) per component, vectors/matrices -> one float per component (row-major order of the source text),
+# string and texture -> the unquoted text plus NUL. Accepted syntaxes: scalar "= 1.5", brace list "= {1,2}",
+# constructor "= float2(1,2)" (the type name followed by parentheses). Components may be negative ("-" token).
+backend text none
+text a
+uniform float f1 = 1.5;
+uniform float f2 = -2;
+uniform float f3 = .25;
+uniform float f4 = 3.;
+uniform float f5 = 1.0e2;
+uniform float f6 = 0x10;
+uniform int i1 = 7;
+uniform int i2 = -7;
+uniform int i3 = 007;
+uniform int i4 = 0x10;
+uniform bool b1 = true;
+uniform bool b2 = false;
+uniform float2 v1 = {1,2};
+uniform float2 v2 = float2(3,4);
+uniform float2 v3 = { -1 , -2.5 };
+uniform float3 v4 = {1,2,3};
+uniform float4 v5 = {1,2,3,4};
+uniform float4 v6 = float4(0.1,0.2,0.3,0.4);
+uniform int2 j1 = {1,-2};
+uniform int3 j2 = int3(1,2,3);
+uniform int4 j3 = {1,2,3,4};
+uniform float4x4 m1 = {1,0,0,0, 0,1,0,0, 0,0,1,0, 0,0,0,1};
+uniform float4x4 m2 = float4x4(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16);
+uniform float3x3 m3 = {1,2,3,4,5,6,7,8,9};
+uniform float2x3 m4 = {1,2,3,4,5,6};
+uniform float1 one = {9};
+uniform float1x1 one2 = {8};
+uniform string s1 = "hello";
+uniform string s2 = "";
+uniform texture2d t1 = "images/a.png";
+uniform texture2d t2;
+uniform float nodefault;
+@end
+ep ok.effect @text:a
+effect e ok.effect @text:a
+dump e

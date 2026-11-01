@@ -1,0 +1,43 @@
+# S-021 flv_packet_mux for audio (legacy AAC tags):
+#   08 | datasize u24 (= payload + 2) | timestamp (24+8) | streamid | 0xaf | 00 (AudioSpecificConfig)
+#   / 01 (raw frame) | payload | PreviousTagSize
+# The audio byte 0xaf is fixed (AAC, 44 kHz, 16 bit, stereo) whatever the real format.
+# time = ms(dts) - dts_offset; the composition-time of video does not exist; pts is ignored.
+echo audio-specific-config
+pkt asc audio 0 0 1 1000 0 1190
+flv_mux asc 0 1
+echo raw-frames
+pkt f1 audio 0 0 1 48000 0 21004910
+pkt f2 audio 1024 1024 1 48000 0 21004911
+pkt f3 audio 960000 960000 1 48000 0 21004912
+flv_mux f1 0 0
+flv_mux f2 0 0
+flv_mux f3 0 0
+echo pts-is-ignored
+pkt fp audio 777777 2048 1 48000 0 aabb
+flv_mux fp 0 0
+echo keyframe-flag-is-ignored
+pkt fk audio 0 0 1 1000 1 aabb
+flv_mux fk 0 0
+echo dts-offset
+pkt fo audio 5000 5000 1 1000 0 aabb
+flv_mux fo 4990 0
+flv_mux fo 6000 0
+echo timestamps-above-2-24-use-the-extension-byte
+pkt fe audio 20000000 20000000 1 1000 0 aabb
+flv_mux fe 0 0
+pkt fe2 audio 2147483647 2147483647 1 1000 0 aabb
+flv_mux fe2 0 0
+echo extended-timestamp-wraps-at-2-31-ms
+pkt fe3 audio 2147483648 2147483648 1 1000 0 aabb
+flv_mux fe3 0 0
+pkt fe4 audio 4294967295 4294967295 1 1000 0 aabb
+flv_mux fe4 0 0
+pkt fe5 audio 4294967296 4294967296 1 1000 0 aabb
+flv_mux fe5 0 0
+echo negative-time
+pkt fn audio -5 -5 1 1000 0 aabb
+flv_mux fn 0 0
+pkt fn2 audio 100 100 1 1000 0 aabb
+flv_mux fn2 200 0
+flv_mux fn2 100000000 0

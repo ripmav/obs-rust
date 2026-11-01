@@ -1,0 +1,22 @@
+# Threaded: looping playback stopped from inside the video callback after the 7th frame (so the result is
+# deterministic); stop delivers the stop callback; queries; destroy.
+media th 120000 0
+video 1 1000 16 16 yuv420p frames=3
+pkt 0 0 fdur=40
+pkt 0 40 fdur=40
+pkt 0 80 fdur=40
+endmedia
+clock 1000000000
+pix off
+t_create th local=1
+t_wait 1
+t_stop_after 7
+t_play 1
+t_wait_stop 1
+t_query
+echo play again after the stop, no loop, with the linear-alpha flag set (flags=1 in the frames)
+t_linear 1
+t_stop_after 0
+t_play 0
+t_wait_stop 2
+t_destroy

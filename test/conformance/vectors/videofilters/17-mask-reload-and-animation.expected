@@ -1,0 +1,57 @@
+call source_update a deferred=1
+create a -> ok
+call image_free
+call image_init m.png
+call image_init_texture -> ok
+call effect_create file=mask_color_filter.effect -> e1 uniforms=6 techniques=1
+call deferred_update a
+tick a 0.1
+echo less than one second accumulated: no poll
+tick a 0.5
+tick a 0.39
+echo reaching 1.0 polls: changed -> reload
+call image_free
+call image_init m.png
+call image_init_texture -> ok
+tick a 0.2
+echo unchanged -> no reload at the next poll
+tick a 1.0
+echo existing file whose image cannot be loaded: stamp unchanged -> never reloaded
+call source_update b deferred=1
+create b -> ok
+call image_free
+call image_init n.png
+call image_init_texture -> none
+call effect_create file=mask_color_filter.effect -> e2 uniforms=6 techniques=1
+call deferred_update b
+tick b 0
+tick b 1
+tick b 1
+echo animated image: first tick uses elapsed 0, then the frame-time delta
+call source_update c deferred=1
+create c -> ok
+call image_free
+call image_init g.gif
+call image_init_texture -> ok
+call effect_create file=mask_color_filter.effect -> e3 uniforms=6 techniques=1
+call deferred_update c
+call image_tick elapsed_ns=0
+call image_update_texture
+tick c 0
+call image_tick elapsed_ns=5011000
+call image_update_texture
+tick c 0
+call image_tick elapsed_ns=24000
+call image_update_texture
+tick c 0
+echo empty path (QUIRK): the stored stamp stays 0 while the poll sees -1, so the image is reloaded at EVERY poll
+call source_update e1 deferred=1
+create e1 -> ok
+call image_free
+call effect_create file=mask_color_filter.effect -> e4 uniforms=6 techniques=1
+call deferred_update e1
+tick e1 0
+call image_free
+tick e1 1
+call image_free
+tick e1 1

@@ -1,0 +1,18 @@
+res_parse valid=1 cx=1920 cy=1080
+res_parse valid=1 cx=1280 cy=-720
+res_parse valid=0 cx=0 cy=0
+res_parse valid=0 cx=0 cy=0
+res_parse valid=0 cx=0 cy=0
+res_parse valid=1 cx=1920 cy=1080
+res_parse valid=1 cx=640 cy=480
+res_parse valid=0 cx=0 cy=0
+res_parse valid=0 cx=0 cy=0
+res_parse valid=1 cx=0 cy=0
+res_parse valid=1 cx=-5 cy=7
+res_parse valid=1 cx=0 cy=10
+(empty)
+640x480 1920x1080
+640x480 640x360 1280x720 1920x1080
+640x480 640x360 1280x720 1920x1080
+640x480 640x360 1280x720 1920x1080 1920x1200
+640x480 640x360 640x100 640x600 1280x720 1920x1080 1920x1200

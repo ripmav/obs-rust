@@ -1,0 +1,20 @@
+# stop(ts): while capturing, or with ts==0, the stop time (ns -> us) is stored and capturing drops. The recording ends
+# with the first packet whose system dts is >= the stop time: pipe closed, end_data_capture, state cleared.
+# A stop request with ts>0 on a stream that is not capturing is ignored.
+reset
+output o
+venc h264 bitrate=2500 extra=0a0b
+set str path /v/a.mkv
+create ffmpeg_muxer
+start
+pkt v pts=0 key=1 sys=1000
+stop 5000000
+state
+pkt v pts=10 key=0 sys=4999
+state
+pkt v pts=20 key=0 sys=5000
+state
+pkt v pts=30 key=0 sys=6000
+state
+stop 9000000
+state

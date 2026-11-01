@@ -1,0 +1,23 @@
+# copy / ncopy: exact-size allocation (len+1); empty input frees.
+dump
+copy hello
+dump
+copy hi
+dump
+copy ""
+dump
+copy @null
+dump
+copy hello
+ncopy abcdef 3
+dump
+ncopy abcdef 0
+dump
+ncopy "" 0
+dump
+b:copy source
+copy_other
+dump
+b:free
+copy_other
+dump

@@ -1,0 +1,127 @@
+fdk.aacEncOpen modules=0 channels=1
+fdk.SetParam AOT=2
+fdk.SetParam SAMPLERATE=48000
+fdk.SetParam CHANNELMODE=1
+fdk.SetParam CHANNELORDER=1
+fdk.SetParam BITRATEMODE=0
+fdk.SetParam BITRATE=128000
+fdk.SetParam TRANSMUX=0
+fdk.SetParam AFTERBURNER=1
+fdk.aacEncEncode (init)
+fdk.aacEncInfo
+log info libfdk_aac encoder created
+log info libfdk_aac bitrate: 128, channels: 1
+fdk_state channels=1 sample_rate=48000 frame_size_bytes=2048 packet_buffer_size=8192
+fdk.aacEncClose
+log info libfdk_aac encoder destroyed
+fdk_create ok
+fdk.aacEncOpen modules=0 channels=2
+fdk.SetParam AOT=2
+fdk.SetParam SAMPLERATE=44100
+fdk.SetParam CHANNELMODE=2
+fdk.SetParam CHANNELORDER=1
+fdk.SetParam BITRATEMODE=0
+fdk.SetParam BITRATE=128000
+fdk.SetParam TRANSMUX=0
+fdk.SetParam AFTERBURNER=1
+fdk.aacEncEncode (init)
+fdk.aacEncInfo
+log info libfdk_aac encoder created
+log info libfdk_aac bitrate: 128, channels: 2
+fdk_state channels=2 sample_rate=44100 frame_size_bytes=4096 packet_buffer_size=8192
+fdk.aacEncClose
+log info libfdk_aac encoder destroyed
+fdk_create ok
+fdk.aacEncOpen modules=0 channels=3
+fdk.SetParam AOT=2
+fdk.SetParam SAMPLERATE=48000
+fdk.SetParam CHANNELMODE=3
+fdk.SetParam CHANNELORDER=1
+fdk.SetParam BITRATEMODE=0
+fdk.SetParam BITRATE=128000
+fdk.SetParam TRANSMUX=0
+fdk.SetParam AFTERBURNER=1
+fdk.aacEncEncode (init)
+fdk.aacEncInfo
+log info libfdk_aac encoder created
+log info libfdk_aac bitrate: 128, channels: 3
+fdk_state channels=3 sample_rate=48000 frame_size_bytes=6144 packet_buffer_size=8192
+fdk.aacEncClose
+log info libfdk_aac encoder destroyed
+fdk_create ok
+fdk.aacEncOpen modules=0 channels=4
+fdk.SetParam AOT=2
+fdk.SetParam SAMPLERATE=48000
+fdk.SetParam CHANNELMODE=4
+fdk.SetParam CHANNELORDER=1
+fdk.SetParam BITRATEMODE=0
+fdk.SetParam BITRATE=128000
+fdk.SetParam TRANSMUX=0
+fdk.SetParam AFTERBURNER=1
+fdk.aacEncEncode (init)
+fdk.aacEncInfo
+log info libfdk_aac encoder created
+log info libfdk_aac bitrate: 128, channels: 4
+fdk_state channels=4 sample_rate=48000 frame_size_bytes=8192 packet_buffer_size=8192
+fdk.aacEncClose
+log info libfdk_aac encoder destroyed
+fdk_create ok
+fdk.aacEncOpen modules=0 channels=5
+fdk.SetParam AOT=2
+fdk.SetParam SAMPLERATE=48000
+fdk.SetParam CHANNELMODE=5
+fdk.SetParam CHANNELORDER=1
+fdk.SetParam BITRATEMODE=0
+fdk.SetParam BITRATE=128000
+fdk.SetParam TRANSMUX=0
+fdk.SetParam AFTERBURNER=1
+fdk.aacEncEncode (init)
+fdk.aacEncInfo
+log info libfdk_aac encoder created
+log info libfdk_aac bitrate: 128, channels: 5
+fdk_state channels=5 sample_rate=48000 frame_size_bytes=10240 packet_buffer_size=8192
+fdk.aacEncClose
+log info libfdk_aac encoder destroyed
+fdk_create ok
+fdk.aacEncOpen modules=0 channels=6
+fdk.SetParam AOT=2
+fdk.SetParam SAMPLERATE=48000
+fdk.SetParam CHANNELMODE=6
+fdk.SetParam CHANNELORDER=1
+fdk.SetParam BITRATEMODE=0
+fdk.SetParam BITRATE=128000
+fdk.SetParam TRANSMUX=0
+fdk.SetParam AFTERBURNER=1
+fdk.aacEncEncode (init)
+fdk.aacEncInfo
+log info libfdk_aac encoder created
+log info libfdk_aac bitrate: 128, channels: 6
+fdk_state channels=6 sample_rate=48000 frame_size_bytes=12288 packet_buffer_size=8192
+fdk.aacEncClose
+log info libfdk_aac encoder destroyed
+fdk_create ok
+echo seven-channels-invalid
+log error Invalid channel count
+log warning libfdk_aac encoder creation failed
+fdk_create fail
+fdk.aacEncOpen modules=0 channels=8
+fdk.SetParam AOT=2
+fdk.SetParam SAMPLERATE=48000
+fdk.SetParam CHANNELMODE=33
+fdk.SetParam CHANNELORDER=1
+fdk.SetParam BITRATEMODE=0
+fdk.SetParam BITRATE=128000
+fdk.SetParam TRANSMUX=0
+fdk.SetParam AFTERBURNER=1
+fdk.aacEncEncode (init)
+fdk.aacEncInfo
+log info libfdk_aac encoder created
+log info libfdk_aac bitrate: 128, channels: 8
+fdk_state channels=8 sample_rate=48000 frame_size_bytes=16384 packet_buffer_size=8192
+fdk.aacEncClose
+log info libfdk_aac encoder destroyed
+fdk_create ok
+echo nine-channels-invalid
+log error Invalid channel count
+log warning libfdk_aac encoder creation failed
+fdk_create fail

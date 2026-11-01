@@ -1,0 +1,30 @@
+# Items whose source was removed are dropped (and signalled) at the next render-time update; remaining items keep
+# order.
+source s 100 100
+source t 100 100
+scene main
+add main s a
+add main t b
+add main s c
+order_of main
+source_removed t
+echo -- adding a removed source is refused
+add main t d
+echo -- the next update pass prunes b (item_remove signalled, handle detached)
+update main
+order_of main
+print b
+log
+echo -- pruning inside a group re-sizes the group
+source u 300 100
+source v 100 400
+add main u e
+add main v f
+group main g e f
+update main
+scene_size g
+source_removed v
+update main
+order_of main
+scene_size g
+print g

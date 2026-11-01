@@ -1,0 +1,36 @@
+# RTMP_SetupURL: tcUrl derivation, default ports, protocol overwrite (R11..R16).
+new
+seturl rtmp://live.example.com/app
+new
+seturl rtmp://live.example.com/app/
+new
+seturl rtmp://live.example.com/app/inst?x=1
+new
+seturl rtmps://live.example.com/app
+new
+seturl rtmpt://live.example.com/app
+new
+seturl rtmp://live.example.com:8000/app
+new
+seturl rtmp://live.example.com
+new
+seturl rtmp://live.example.com/
+new
+seturl rtmp://live.example.com//
+new
+seturl nourl
+new
+seturl rtmp://
+# SetupURL overwrites Link.protocol, so EnableWrite must come after (Q-1)
+new
+enablewrite
+seturl rtmp://h/a
+# a pre-set tcUrl is kept
+new
+seturl rtmp://h/a
+seturl rtmp://other/b
+# SWF verification requested but no hashing support: fails
+new
+set swfurl http://x/y.swf
+set swfv 1
+seturl rtmp://h/a

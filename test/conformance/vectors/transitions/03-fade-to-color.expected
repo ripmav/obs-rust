@@ -1,0 +1,130 @@
+create x fade_to_color_transition
+  ev enter_graphics
+  ev effect_create file=@data/fade_to_color_transition.effect
+  ev leave_graphics
+  ev source_update x deferred (count 1)
+  instance=1
+  fields color=0,0,0,0 srgb=0,0,0,0 switch_point=0
+tick x
+  fields color=0,0,0,1 srgb=0,0,0,1 switch_point=0.5
+  fields color=0,0,0,1 srgb=0,0,0,1 switch_point=0.5
+settings x
+  ev source_update x deferred (count 1)
+tick x
+  fields color=0,0,1,1 srgb=0,0,1,1 switch_point=0.25
+settings x
+  ev source_update x deferred (count 1)
+tick x
+  fields color=1,0,0,1 srgb=1,0,0,1 switch_point=1
+settings x
+  ev source_update x deferred (count 1)
+tick x
+  fields color=1,0,0,1 srgb=1,0,0,1 switch_point=0
+settings x
+  ev source_update x deferred (count 1)
+tick x
+  fields color=0,0,0,1 srgb=0,0,0,1 switch_point=5
+settings x
+  ev source_update x deferred (count 1)
+tick x
+  fields color=0,0,0,1 srgb=0,0,0,1 switch_point=42949672
+settings x
+  ev source_update x deferred (count 1)
+tick x
+  fields color=0.533333361,0.533333361,1,1 srgb=0.246201396,0.246201396,1,1 switch_point=0.5
+smoothstep -> 0.5
+smoothstep -> 1
+smoothstep -> 1
+smoothstep -> 0
+render x
+  ev set_linear_srgb 1 (previous 0)
+  ev transition_video_render callback=yes placeholder=9000
+  ev   callback a=1 b=2 t=0 cx=100 cy=50
+  ev enable_framebuffer_srgb 0
+  ev set_texture tex tex=1 srgb=0
+  ev set_vec4 color 0.533333361 0.533333361 1 1
+  ev set_float swp 0
+  ev effect_loop technique=FadeToColor pass=0
+  ev draw_sprite tex=null flip=0 w=100 h=50
+  ev enable_framebuffer_srgb 0
+  ev set_linear_srgb 0 (previous 1)
+render x
+  ev set_linear_srgb 1 (previous 0)
+  ev transition_video_render callback=yes placeholder=9000
+  ev   callback a=1 b=2 t=0.25 cx=100 cy=50
+  ev enable_framebuffer_srgb 0
+  ev set_texture tex tex=1 srgb=0
+  ev set_vec4 color 0.533333361 0.533333361 1 1
+  ev set_float swp 0.5
+  ev effect_loop technique=FadeToColor pass=0
+  ev draw_sprite tex=null flip=0 w=100 h=50
+  ev enable_framebuffer_srgb 0
+  ev set_linear_srgb 0 (previous 1)
+render x
+  ev set_linear_srgb 1 (previous 0)
+  ev transition_video_render callback=yes placeholder=9000
+  ev   callback a=1 b=2 t=0.5 cx=100 cy=50
+  ev enable_framebuffer_srgb 0
+  ev set_texture tex tex=2 srgb=0
+  ev set_vec4 color 0.533333361 0.533333361 1 1
+  ev set_float swp 1
+  ev effect_loop technique=FadeToColor pass=0
+  ev draw_sprite tex=null flip=0 w=100 h=50
+  ev enable_framebuffer_srgb 0
+  ev set_linear_srgb 0 (previous 1)
+render x
+  ev set_linear_srgb 1 (previous 0)
+  ev transition_video_render callback=yes placeholder=9000
+  ev   callback a=1 b=2 t=0.75 cx=100 cy=50
+  ev enable_framebuffer_srgb 0
+  ev set_texture tex tex=2 srgb=0
+  ev set_vec4 color 0.533333361 0.533333361 1 1
+  ev set_float swp 0.5
+  ev effect_loop technique=FadeToColor pass=0
+  ev draw_sprite tex=null flip=0 w=100 h=50
+  ev enable_framebuffer_srgb 0
+  ev set_linear_srgb 0 (previous 1)
+render x
+  ev set_linear_srgb 1 (previous 0)
+  ev transition_video_render callback=yes placeholder=9000
+  ev   callback a=1 b=2 t=1 cx=100 cy=50
+  ev enable_framebuffer_srgb 0
+  ev set_texture tex tex=2 srgb=0
+  ev set_vec4 color 0.533333361 0.533333361 1 1
+  ev set_float swp 0
+  ev effect_loop technique=FadeToColor pass=0
+  ev draw_sprite tex=null flip=0 w=100 h=50
+  ev enable_framebuffer_srgb 0
+  ev set_linear_srgb 0 (previous 1)
+render x
+  ev set_linear_srgb 1 (previous 0)
+  ev transition_video_render callback=yes placeholder=9000
+  ev   callback a=1 b=2 t=0.25 cx=100 cy=50
+  ev enable_framebuffer_srgb 1
+  ev set_texture tex tex=1 srgb=1
+  ev set_vec4 color 0.246201396 0.246201396 1 1
+  ev set_float swp 0.5
+  ev effect_loop technique=FadeToColor pass=0
+  ev draw_sprite tex=null flip=0 w=100 h=50
+  ev enable_framebuffer_srgb 0
+  ev set_linear_srgb 0 (previous 1)
+render x
+  ev set_linear_srgb 1 (previous 0)
+  ev transition_video_render callback=yes placeholder=9000
+  ev   callback a=1 b=2 t=0.75 cx=100 cy=50
+  ev enable_framebuffer_srgb 1
+  ev set_texture tex tex=2 srgb=1
+  ev set_vec4 color 0.246201396 0.246201396 1 1
+  ev set_float swp 0.5
+  ev effect_loop technique=FadeToColor pass=0
+  ev draw_sprite tex=null flip=0 w=100 h=50
+  ev enable_framebuffer_srgb 0
+  ev set_linear_srgb 0 (previous 1)
+props x
+  flags=0
+  prop color type=color desc="Color" visible=1 enabled=1
+  prop switch_point type=int desc="SwitchPoint" visible=1 enabled=1 min=0 max=100 step=1 numtype=1 suffix="%"
+cspace 0 count=0 -> 0
+cspace 2 count=2 -> 2
+cspace 1 count=3 -> 1
+cspace 1 count=2 -> 3

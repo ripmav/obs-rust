@@ -1,0 +1,76 @@
+host speex.init id=0 frame_size=480 rate=48000
+host rnnoise.create id=0
+host speex.init id=1 frame_size=480 rate=48000
+host rnnoise.create id=1
+create n -> ok
+state ns level=-30 latency=10000000 frames=480 channels=2 use_rnnoise=1 has_mono_src=0 last_ts=0 allocated=1,1 resamplers=0,0 in0=0 out0=0 info=0
+process n frames=480 ts=1000000000 pos=0 in-crc: 5e3b20c5 543b20c5
+host rnnoise.process id=0 in0=16384 in1=16384 in479=16384
+host rnnoise.process id=1 in0=-16384 in1=-16384 in479=-16384
+  ret own frames=480 ts=990000000
+  out p0 [0] 0.25 0.25 0.25 0.25
+state ns level=-30 latency=10000000 frames=480 channels=2 use_rnnoise=1 has_mono_src=1 last_ts=1000000000 allocated=1,1 resamplers=0,0 in0=0 out0=0 info=0
+echo 44100-uses-resamplers-441-frames
+host speex.init id=2 frame_size=441 rate=44100
+host rnnoise.create id=2
+host speex.init id=3 frame_size=441 rate=44100
+host rnnoise.create id=3
+host resampler.create id=0 src=44100 dst=48000 channels=2
+host resampler.create id=1 src=48000 dst=44100 channels=2
+create m -> ok
+state ns level=-30 latency=10000000 frames=441 channels=2 use_rnnoise=1 has_mono_src=0 last_ts=0 allocated=1,1 resamplers=1,1 in0=0 out0=0 info=0
+process m frames=441 ts=1000000000 pos=0 in-crc: 572fa6b6 df0735b6
+host resampler.resample id=0 in=441 out=480
+host rnnoise.process id=2 in0=0 in1=0 in479=14417.9199
+host rnnoise.process id=3 in0=0 in1=0 in479=-14417.9199
+host resampler.resample id=1 in=480 out=441
+  ret own frames=441 ts=990000000
+  out p0 [0] 0 0 0.000500000024 0.00100000005 0.00150000001 0.00200000009
+echo forced-short-resampler-output-zero-fills-front
+process m frames=441 ts=1010000000 pos=441 in-crc: 79d3c9d8 79d3c9d8
+host resampler.resample id=0 in=441 out=400
+host rnnoise.process id=2 in0=0 in1=0 in479=16384
+host rnnoise.process id=3 in0=0 in1=0 in479=16384
+host resampler.resample id=1 in=480 out=400
+  ret own frames=441 ts=1000000000
+  out p0 [0] 0 0 0 0 0 0
+process m frames=441 ts=1020000000 pos=882 in-crc: 79d3c9d8 79d3c9d8
+host resampler.resample id=0 in=441 out=300
+host rnnoise.process id=2 in0=0 in1=0 in479=16384
+host rnnoise.process id=3 in0=0 in1=0 in479=16384
+host resampler.resample id=1 in=480 out=300
+  ret own frames=441 ts=1010000000
+  out p0 [0] 0 0 0 0 0 0
+echo mono-source-in-stereo-filter-sets-flag
+state ns level=-30 latency=10000000 frames=441 channels=2 use_rnnoise=1 has_mono_src=1 last_ts=1020000000 allocated=1,1 resamplers=1,1 in0=0 out0=0 info=0
+echo v1-default-is-speex-but-explicit-rnnoise-works
+host speex.init id=4 frame_size=480 rate=48000
+host rnnoise.create id=4
+create r -> ok
+process r frames=480 ts=1000000000 pos=0 in-crc: f794b205
+host rnnoise.process id=4 in0=3276.80005 in1=3276.80005 in479=3276.80005
+  ret own frames=480 ts=990000000
+  out p0 [0] 0.0500000007 0.0500000007 0.0500000007
+echo 6ch-48k
+host speex.init id=5 frame_size=480 rate=48000
+host rnnoise.create id=5
+host speex.init id=6 frame_size=480 rate=48000
+host rnnoise.create id=6
+host speex.init id=7 frame_size=480 rate=48000
+host rnnoise.create id=7
+host speex.init id=8 frame_size=480 rate=48000
+host rnnoise.create id=8
+host speex.init id=9 frame_size=480 rate=48000
+host rnnoise.create id=9
+host speex.init id=10 frame_size=480 rate=48000
+host rnnoise.create id=10
+create s6 -> ok
+process s6 frames=480 ts=1000000000 pos=0 in-crc: f794b205 9c24bf85 3e8a8e05 8db06e85 5e3b20c5 c3124b85
+host rnnoise.process id=5 in0=3276.80005 in1=3276.80005 in479=3276.80005
+host rnnoise.process id=6 in0=6553.6001 in1=6553.6001 in479=6553.6001
+host rnnoise.process id=7 in0=9830.40039 in1=9830.40039 in479=9830.40039
+host rnnoise.process id=8 in0=13107.2002 in1=13107.2002 in479=13107.2002
+host rnnoise.process id=9 in0=16384 in1=16384 in479=16384
+host rnnoise.process id=10 in0=19660.8008 in1=19660.8008 in479=19660.8008
+  ret own frames=480 ts=990000000
+  out p0 [0] 0.0500000007 0.0500000007

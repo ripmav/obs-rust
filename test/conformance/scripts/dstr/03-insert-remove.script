@@ -1,0 +1,23 @@
+copy world
+insert 0 "hello "
+dump
+insert 11 "!"
+dump
+insert 5 ,
+dump
+insert 3 ""
+insert 3 @null
+dump
+insert_ch 0 [
+insert_ch 13 ]
+dump
+b:copy XX
+insert_other 2
+dump
+remove 0 1
+dump
+remove 3 2
+dump
+remove 0 0
+remove 12 2
+dump

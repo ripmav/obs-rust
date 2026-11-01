@@ -1,0 +1,1498 @@
+echo sampling=point res=960x540 undistort=0
+call samplerstate_create s1 filter=POINT u=CLAMP v=CLAMP w=CLAMP aniso=0 border=0
+create f1 -> ok
+call get_param base:default:image -> ok
+call get_param base:default:multiplier -> ok
+tick f1 0.016
+size f1 width=960 height=540
+render f1
+call filter_begin_cs f1 format=RGBA space=SRGB allow=NO_DIRECT -> 1
+call set_float base:default:multiplier 1
+call set_next_sampler base:default:image s1
+call blend_push
+call blend_function ONE INVSRCALPHA
+call filter_tech_end f1 base:default size=960x540 technique=Draw exists=1
+call blend_pop
+echo sampling=point res=960x540 undistort=1
+call samplerstate_create s2 filter=POINT u=CLAMP v=CLAMP w=CLAMP aniso=0 border=0
+create f2 -> ok
+tick f2 0.016
+size f2 width=960 height=540
+render f2
+call filter_begin_cs f2 format=RGBA space=SRGB allow=NO_DIRECT -> 1
+call set_float base:default:multiplier 1
+call set_next_sampler base:default:image s2
+call blend_push
+call blend_function ONE INVSRCALPHA
+call filter_tech_end f2 base:default size=960x540 technique=Draw exists=1
+call blend_pop
+echo sampling=point res=1281x720 undistort=0
+call samplerstate_create s3 filter=POINT u=CLAMP v=CLAMP w=CLAMP aniso=0 border=0
+create f3 -> ok
+tick f3 0.016
+size f3 width=1281 height=720
+render f3
+call filter_begin_cs f3 format=RGBA space=SRGB allow=NO_DIRECT -> 1
+call set_float base:default:multiplier 1
+call set_next_sampler base:default:image s3
+call blend_push
+call blend_function ONE INVSRCALPHA
+call filter_tech_end f3 base:default size=1281x720 technique=Draw exists=1
+call blend_pop
+echo sampling=point res=1281x720 undistort=1
+call samplerstate_create s4 filter=POINT u=CLAMP v=CLAMP w=CLAMP aniso=0 border=0
+create f4 -> ok
+tick f4 0.016
+size f4 width=1281 height=720
+render f4
+call filter_begin_cs f4 format=RGBA space=SRGB allow=NO_DIRECT -> 1
+call set_float base:default:multiplier 1
+call set_next_sampler base:default:image s4
+call blend_push
+call blend_function ONE INVSRCALPHA
+call filter_tech_end f4 base:default size=1281x720 technique=Draw exists=1
+call blend_pop
+echo sampling=point res=3840x2160 undistort=0
+call samplerstate_create s5 filter=POINT u=CLAMP v=CLAMP w=CLAMP aniso=0 border=0
+create f5 -> ok
+tick f5 0.016
+size f5 width=3840 height=2160
+render f5
+call filter_begin_cs f5 format=RGBA space=SRGB allow=NO_DIRECT -> 1
+call set_float base:default:multiplier 1
+call set_next_sampler base:default:image s5
+call blend_push
+call blend_function ONE INVSRCALPHA
+call filter_tech_end f5 base:default size=3840x2160 technique=Draw exists=1
+call blend_pop
+echo sampling=point res=3840x2160 undistort=1
+call samplerstate_create s6 filter=POINT u=CLAMP v=CLAMP w=CLAMP aniso=0 border=0
+create f6 -> ok
+tick f6 0.016
+size f6 width=3840 height=2160
+render f6
+call filter_begin_cs f6 format=RGBA space=SRGB allow=NO_DIRECT -> 1
+call set_float base:default:multiplier 1
+call set_next_sampler base:default:image s6
+call blend_push
+call blend_function ONE INVSRCALPHA
+call filter_tech_end f6 base:default size=3840x2160 technique=Draw exists=1
+call blend_pop
+echo sampling=point res=1920x1080 undistort=0
+call samplerstate_create s7 filter=POINT u=CLAMP v=CLAMP w=CLAMP aniso=0 border=0
+create f7 -> ok
+tick f7 0.016
+size f7 width=1920 height=1080
+render f7
+call filter_begin_cs f7 format=RGBA space=SRGB allow=NO_DIRECT -> 1
+call set_float base:default:multiplier 1
+call set_next_sampler base:default:image s7
+call blend_push
+call blend_function ONE INVSRCALPHA
+call filter_tech_end f7 base:default size=1920x1080 technique=Draw exists=1
+call blend_pop
+echo sampling=point res=1920x1080 undistort=1
+call samplerstate_create s8 filter=POINT u=CLAMP v=CLAMP w=CLAMP aniso=0 border=0
+create f8 -> ok
+tick f8 0.016
+size f8 width=1920 height=1080
+render f8
+call filter_begin_cs f8 format=RGBA space=SRGB allow=NO_DIRECT -> 1
+call set_float base:default:multiplier 1
+call set_next_sampler base:default:image s8
+call blend_push
+call blend_function ONE INVSRCALPHA
+call filter_tech_end f8 base:default size=1920x1080 technique=Draw exists=1
+call blend_pop
+echo sampling=point res=1920x1000 undistort=0
+call samplerstate_create s9 filter=POINT u=CLAMP v=CLAMP w=CLAMP aniso=0 border=0
+create f9 -> ok
+tick f9 0.016
+size f9 width=1920 height=1000
+render f9
+call filter_begin_cs f9 format=RGBA space=SRGB allow=NO_DIRECT -> 1
+call set_float base:default:multiplier 1
+call set_next_sampler base:default:image s9
+call blend_push
+call blend_function ONE INVSRCALPHA
+call filter_tech_end f9 base:default size=1920x1000 technique=Draw exists=1
+call blend_pop
+echo sampling=point res=1920x1000 undistort=1
+call samplerstate_create s10 filter=POINT u=CLAMP v=CLAMP w=CLAMP aniso=0 border=0
+create f10 -> ok
+tick f10 0.016
+size f10 width=1920 height=1000
+render f10
+call filter_begin_cs f10 format=RGBA space=SRGB allow=NO_DIRECT -> 1
+call set_float base:default:multiplier 1
+call set_next_sampler base:default:image s10
+call blend_push
+call blend_function ONE INVSRCALPHA
+call filter_tech_end f10 base:default size=1920x1000 technique=Draw exists=1
+call blend_pop
+echo sampling=point res=4:3 undistort=0
+call samplerstate_create s11 filter=POINT u=CLAMP v=CLAMP w=CLAMP aniso=0 border=0
+create f11 -> ok
+tick f11 0.016
+size f11 width=1920 height=1440
+render f11
+call filter_begin_cs f11 format=RGBA space=SRGB allow=NO_DIRECT -> 1
+call set_float base:default:multiplier 1
+call set_next_sampler base:default:image s11
+call blend_push
+call blend_function ONE INVSRCALPHA
+call filter_tech_end f11 base:default size=1920x1440 technique=Draw exists=1
+call blend_pop
+echo sampling=point res=4:3 undistort=1
+call samplerstate_create s12 filter=POINT u=CLAMP v=CLAMP w=CLAMP aniso=0 border=0
+create f12 -> ok
+tick f12 0.016
+size f12 width=1920 height=1440
+render f12
+call filter_begin_cs f12 format=RGBA space=SRGB allow=NO_DIRECT -> 1
+call set_float base:default:multiplier 1
+call set_next_sampler base:default:image s12
+call blend_push
+call blend_function ONE INVSRCALPHA
+call filter_tech_end f12 base:default size=1920x1440 technique=Draw exists=1
+call blend_pop
+echo sampling=point res=16:9 undistort=0
+call samplerstate_create s13 filter=POINT u=CLAMP v=CLAMP w=CLAMP aniso=0 border=0
+create f13 -> ok
+tick f13 0.016
+size f13 width=1920 height=1080
+render f13
+call skip_video_filter f13
+echo sampling=point res=16:9 undistort=1
+call samplerstate_create s14 filter=POINT u=CLAMP v=CLAMP w=CLAMP aniso=0 border=0
+create f14 -> ok
+tick f14 0.016
+size f14 width=1920 height=1080
+render f14
+call skip_video_filter f14
+echo sampling=point res=959x1079 undistort=0
+call samplerstate_create s15 filter=POINT u=CLAMP v=CLAMP w=CLAMP aniso=0 border=0
+create f15 -> ok
+tick f15 0.016
+size f15 width=959 height=1079
+render f15
+call filter_begin_cs f15 format=RGBA space=SRGB allow=NO_DIRECT -> 1
+call set_float base:default:multiplier 1
+call set_next_sampler base:default:image s15
+call blend_push
+call blend_function ONE INVSRCALPHA
+call filter_tech_end f15 base:default size=959x1079 technique=Draw exists=1
+call blend_pop
+echo sampling=point res=959x1079 undistort=1
+call samplerstate_create s16 filter=POINT u=CLAMP v=CLAMP w=CLAMP aniso=0 border=0
+create f16 -> ok
+tick f16 0.016
+size f16 width=959 height=1079
+render f16
+call filter_begin_cs f16 format=RGBA space=SRGB allow=NO_DIRECT -> 1
+call set_float base:default:multiplier 1
+call set_next_sampler base:default:image s16
+call blend_push
+call blend_function ONE INVSRCALPHA
+call filter_tech_end f16 base:default size=959x1079 technique=Draw exists=1
+call blend_pop
+echo sampling=bilinear res=960x540 undistort=0
+call samplerstate_create s17 filter=POINT u=CLAMP v=CLAMP w=CLAMP aniso=0 border=0
+create f17 -> ok
+tick f17 0.016
+size f17 width=960 height=540
+render f17
+call filter_begin_cs f17 format=RGBA space=SRGB allow=NO_DIRECT -> 1
+call set_float base:default:multiplier 1
+call blend_push
+call blend_function ONE INVSRCALPHA
+call filter_tech_end f17 base:default size=960x540 technique=Draw exists=1
+call blend_pop
+echo sampling=bilinear res=960x540 undistort=1
+call samplerstate_create s18 filter=POINT u=CLAMP v=CLAMP w=CLAMP aniso=0 border=0
+create f18 -> ok
+tick f18 0.016
+size f18 width=960 height=540
+render f18
+call filter_begin_cs f18 format=RGBA space=SRGB allow=NO_DIRECT -> 1
+call set_float base:default:multiplier 1
+call blend_push
+call blend_function ONE INVSRCALPHA
+call filter_tech_end f18 base:default size=960x540 technique=Draw exists=1
+call blend_pop
+echo sampling=bilinear res=1281x720 undistort=0
+call samplerstate_create s19 filter=POINT u=CLAMP v=CLAMP w=CLAMP aniso=0 border=0
+create f19 -> ok
+tick f19 0.016
+size f19 width=1281 height=720
+render f19
+call filter_begin_cs f19 format=RGBA space=SRGB allow=NO_DIRECT -> 1
+call set_float base:default:multiplier 1
+call blend_push
+call blend_function ONE INVSRCALPHA
+call filter_tech_end f19 base:default size=1281x720 technique=Draw exists=1
+call blend_pop
+echo sampling=bilinear res=1281x720 undistort=1
+call samplerstate_create s20 filter=POINT u=CLAMP v=CLAMP w=CLAMP aniso=0 border=0
+create f20 -> ok
+tick f20 0.016
+size f20 width=1281 height=720
+render f20
+call filter_begin_cs f20 format=RGBA space=SRGB allow=NO_DIRECT -> 1
+call set_float base:default:multiplier 1
+call blend_push
+call blend_function ONE INVSRCALPHA
+call filter_tech_end f20 base:default size=1281x720 technique=Draw exists=1
+call blend_pop
+echo sampling=bilinear res=3840x2160 undistort=0
+call samplerstate_create s21 filter=POINT u=CLAMP v=CLAMP w=CLAMP aniso=0 border=0
+create f21 -> ok
+tick f21 0.016
+size f21 width=3840 height=2160
+render f21
+call filter_begin_cs f21 format=RGBA space=SRGB allow=NO_DIRECT -> 1
+call set_float base:default:multiplier 1
+call blend_push
+call blend_function ONE INVSRCALPHA
+call filter_tech_end f21 base:default size=3840x2160 technique=Draw exists=1
+call blend_pop
+echo sampling=bilinear res=3840x2160 undistort=1
+call samplerstate_create s22 filter=POINT u=CLAMP v=CLAMP w=CLAMP aniso=0 border=0
+create f22 -> ok
+tick f22 0.016
+size f22 width=3840 height=2160
+render f22
+call filter_begin_cs f22 format=RGBA space=SRGB allow=NO_DIRECT -> 1
+call set_float base:default:multiplier 1
+call blend_push
+call blend_function ONE INVSRCALPHA
+call filter_tech_end f22 base:default size=3840x2160 technique=Draw exists=1
+call blend_pop
+echo sampling=bilinear res=1920x1080 undistort=0
+call samplerstate_create s23 filter=POINT u=CLAMP v=CLAMP w=CLAMP aniso=0 border=0
+create f23 -> ok
+tick f23 0.016
+size f23 width=1920 height=1080
+render f23
+call filter_begin_cs f23 format=RGBA space=SRGB allow=NO_DIRECT -> 1
+call set_float base:default:multiplier 1
+call blend_push
+call blend_function ONE INVSRCALPHA
+call filter_tech_end f23 base:default size=1920x1080 technique=Draw exists=1
+call blend_pop
+echo sampling=bilinear res=1920x1080 undistort=1
+call samplerstate_create s24 filter=POINT u=CLAMP v=CLAMP w=CLAMP aniso=0 border=0
+create f24 -> ok
+tick f24 0.016
+size f24 width=1920 height=1080
+render f24
+call filter_begin_cs f24 format=RGBA space=SRGB allow=NO_DIRECT -> 1
+call set_float base:default:multiplier 1
+call blend_push
+call blend_function ONE INVSRCALPHA
+call filter_tech_end f24 base:default size=1920x1080 technique=Draw exists=1
+call blend_pop
+echo sampling=bilinear res=1920x1000 undistort=0
+call samplerstate_create s25 filter=POINT u=CLAMP v=CLAMP w=CLAMP aniso=0 border=0
+create f25 -> ok
+tick f25 0.016
+size f25 width=1920 height=1000
+render f25
+call filter_begin_cs f25 format=RGBA space=SRGB allow=NO_DIRECT -> 1
+call set_float base:default:multiplier 1
+call blend_push
+call blend_function ONE INVSRCALPHA
+call filter_tech_end f25 base:default size=1920x1000 technique=Draw exists=1
+call blend_pop
+echo sampling=bilinear res=1920x1000 undistort=1
+call samplerstate_create s26 filter=POINT u=CLAMP v=CLAMP w=CLAMP aniso=0 border=0
+create f26 -> ok
+tick f26 0.016
+size f26 width=1920 height=1000
+render f26
+call filter_begin_cs f26 format=RGBA space=SRGB allow=NO_DIRECT -> 1
+call set_float base:default:multiplier 1
+call blend_push
+call blend_function ONE INVSRCALPHA
+call filter_tech_end f26 base:default size=1920x1000 technique=Draw exists=1
+call blend_pop
+echo sampling=bilinear res=4:3 undistort=0
+call samplerstate_create s27 filter=POINT u=CLAMP v=CLAMP w=CLAMP aniso=0 border=0
+create f27 -> ok
+tick f27 0.016
+size f27 width=1920 height=1440
+render f27
+call filter_begin_cs f27 format=RGBA space=SRGB allow=NO_DIRECT -> 1
+call set_float base:default:multiplier 1
+call blend_push
+call blend_function ONE INVSRCALPHA
+call filter_tech_end f27 base:default size=1920x1440 technique=Draw exists=1
+call blend_pop
+echo sampling=bilinear res=4:3 undistort=1
+call samplerstate_create s28 filter=POINT u=CLAMP v=CLAMP w=CLAMP aniso=0 border=0
+create f28 -> ok
+tick f28 0.016
+size f28 width=1920 height=1440
+render f28
+call filter_begin_cs f28 format=RGBA space=SRGB allow=NO_DIRECT -> 1
+call set_float base:default:multiplier 1
+call blend_push
+call blend_function ONE INVSRCALPHA
+call filter_tech_end f28 base:default size=1920x1440 technique=Draw exists=1
+call blend_pop
+echo sampling=bilinear res=16:9 undistort=0
+call samplerstate_create s29 filter=POINT u=CLAMP v=CLAMP w=CLAMP aniso=0 border=0
+create f29 -> ok
+tick f29 0.016
+size f29 width=1920 height=1080
+render f29
+call skip_video_filter f29
+echo sampling=bilinear res=16:9 undistort=1
+call samplerstate_create s30 filter=POINT u=CLAMP v=CLAMP w=CLAMP aniso=0 border=0
+create f30 -> ok
+tick f30 0.016
+size f30 width=1920 height=1080
+render f30
+call skip_video_filter f30
+echo sampling=bilinear res=959x1079 undistort=0
+call samplerstate_create s31 filter=POINT u=CLAMP v=CLAMP w=CLAMP aniso=0 border=0
+create f31 -> ok
+call get_param base:bilinear_lowres_scale:image -> ok
+call get_param base:bilinear_lowres_scale:base_dimension -> null
+call get_param base:bilinear_lowres_scale:base_dimension_i -> null
+call get_param base:bilinear_lowres_scale:multiplier -> ok
+tick f31 0.016
+size f31 width=959 height=1079
+render f31
+call filter_begin_cs f31 format=RGBA space=SRGB allow=NO_DIRECT -> 1
+call set_float base:bilinear_lowres_scale:multiplier 1
+call blend_push
+call blend_function ONE INVSRCALPHA
+call filter_tech_end f31 base:bilinear_lowres_scale size=959x1079 technique=Draw exists=1
+call blend_pop
+echo sampling=bilinear res=959x1079 undistort=1
+call samplerstate_create s32 filter=POINT u=CLAMP v=CLAMP w=CLAMP aniso=0 border=0
+create f32 -> ok
+call get_param base:bilinear_lowres_scale:base_dimension -> null
+call get_param base:bilinear_lowres_scale:base_dimension_i -> null
+tick f32 0.016
+size f32 width=959 height=1079
+render f32
+call filter_begin_cs f32 format=RGBA space=SRGB allow=NO_DIRECT -> 1
+call set_float base:bilinear_lowres_scale:multiplier 1
+call blend_push
+call blend_function ONE INVSRCALPHA
+call filter_tech_end f32 base:bilinear_lowres_scale size=959x1079 technique=Draw exists=1
+call blend_pop
+echo sampling=bicubic res=960x540 undistort=0
+call samplerstate_create s33 filter=POINT u=CLAMP v=CLAMP w=CLAMP aniso=0 border=0
+create f33 -> ok
+call get_param base:bicubic_scale:image -> ok
+call get_param base:bicubic_scale:base_dimension -> ok
+call get_param base:bicubic_scale:base_dimension_i -> ok
+call get_param base:bicubic_scale:undistort_factor -> ok
+call get_param base:bicubic_scale:multiplier -> ok
+tick f33 0.016
+size f33 width=960 height=540
+render f33
+call filter_begin_cs f33 format=RGBA space=SRGB allow=NO_DIRECT -> 1
+call set_vec2 base:bicubic_scale:base_dimension 1920 1080
+call set_vec2 base:bicubic_scale:base_dimension_i 0.00052083336 0.00092592591
+call set_float base:bicubic_scale:undistort_factor 1
+call set_float base:bicubic_scale:multiplier 1
+call blend_push
+call blend_function ONE INVSRCALPHA
+call filter_tech_end f33 base:bicubic_scale size=960x540 technique=Draw exists=1
+call blend_pop
+echo sampling=bicubic res=960x540 undistort=1
+call samplerstate_create s34 filter=POINT u=CLAMP v=CLAMP w=CLAMP aniso=0 border=0
+create f34 -> ok
+tick f34 0.016
+size f34 width=960 height=540
+render f34
+call filter_begin_cs f34 format=RGBA space=SRGB allow=NO_DIRECT -> 1
+call set_vec2 base:bicubic_scale:base_dimension 1920 1080
+call set_vec2 base:bicubic_scale:base_dimension_i 0.00052083336 0.00092592591
+call set_float base:bicubic_scale:undistort_factor 1
+call set_float base:bicubic_scale:multiplier 1
+call blend_push
+call blend_function ONE INVSRCALPHA
+call filter_tech_end f34 base:bicubic_scale size=960x540 technique=DrawUndistort exists=1
+call blend_pop
+echo sampling=bicubic res=1281x720 undistort=0
+call samplerstate_create s35 filter=POINT u=CLAMP v=CLAMP w=CLAMP aniso=0 border=0
+create f35 -> ok
+tick f35 0.016
+size f35 width=1281 height=720
+render f35
+call filter_begin_cs f35 format=RGBA space=SRGB allow=NO_DIRECT -> 1
+call set_vec2 base:bicubic_scale:base_dimension 1920 1080
+call set_vec2 base:bicubic_scale:base_dimension_i 0.00052083336 0.00092592591
+call set_float base:bicubic_scale:undistort_factor 1
+call set_float base:bicubic_scale:multiplier 1
+call blend_push
+call blend_function ONE INVSRCALPHA
+call filter_tech_end f35 base:bicubic_scale size=1281x720 technique=Draw exists=1
+call blend_pop
+echo sampling=bicubic res=1281x720 undistort=1
+call samplerstate_create s36 filter=POINT u=CLAMP v=CLAMP w=CLAMP aniso=0 border=0
+create f36 -> ok
+tick f36 0.016
+size f36 width=1281 height=720
+render f36
+call filter_begin_cs f36 format=RGBA space=SRGB allow=NO_DIRECT -> 1
+call set_vec2 base:bicubic_scale:base_dimension 1920 1080
+call set_vec2 base:bicubic_scale:base_dimension_i 0.00052083336 0.00092592591
+call set_float base:bicubic_scale:undistort_factor 1.0007813
+call set_float base:bicubic_scale:multiplier 1
+call blend_push
+call blend_function ONE INVSRCALPHA
+call filter_tech_end f36 base:bicubic_scale size=1281x720 technique=DrawUndistort exists=1
+call blend_pop
+echo sampling=bicubic res=3840x2160 undistort=0
+call samplerstate_create s37 filter=POINT u=CLAMP v=CLAMP w=CLAMP aniso=0 border=0
+create f37 -> ok
+tick f37 0.016
+size f37 width=3840 height=2160
+render f37
+call filter_begin_cs f37 format=RGBA space=SRGB allow=NO_DIRECT -> 1
+call set_vec2 base:bicubic_scale:base_dimension 1920 1080
+call set_vec2 base:bicubic_scale:base_dimension_i 0.00052083336 0.00092592591
+call set_float base:bicubic_scale:undistort_factor 1
+call set_float base:bicubic_scale:multiplier 1
+call blend_push
+call blend_function ONE INVSRCALPHA
+call filter_tech_end f37 base:bicubic_scale size=3840x2160 technique=Draw exists=1
+call blend_pop
+echo sampling=bicubic res=3840x2160 undistort=1
+call samplerstate_create s38 filter=POINT u=CLAMP v=CLAMP w=CLAMP aniso=0 border=0
+create f38 -> ok
+tick f38 0.016
+size f38 width=3840 height=2160
+render f38
+call filter_begin_cs f38 format=RGBA space=SRGB allow=NO_DIRECT -> 1
+call set_vec2 base:bicubic_scale:base_dimension 1920 1080
+call set_vec2 base:bicubic_scale:base_dimension_i 0.00052083336 0.00092592591
+call set_float base:bicubic_scale:undistort_factor 1
+call set_float base:bicubic_scale:multiplier 1
+call blend_push
+call blend_function ONE INVSRCALPHA
+call filter_tech_end f38 base:bicubic_scale size=3840x2160 technique=DrawUndistort exists=1
+call blend_pop
+echo sampling=bicubic res=1920x1080 undistort=0
+call samplerstate_create s39 filter=POINT u=CLAMP v=CLAMP w=CLAMP aniso=0 border=0
+create f39 -> ok
+tick f39 0.016
+size f39 width=1920 height=1080
+render f39
+call filter_begin_cs f39 format=RGBA space=SRGB allow=NO_DIRECT -> 1
+call set_vec2 base:bicubic_scale:base_dimension 1920 1080
+call set_vec2 base:bicubic_scale:base_dimension_i 0.00052083336 0.00092592591
+call set_float base:bicubic_scale:undistort_factor 1
+call set_float base:bicubic_scale:multiplier 1
+call blend_push
+call blend_function ONE INVSRCALPHA
+call filter_tech_end f39 base:bicubic_scale size=1920x1080 technique=Draw exists=1
+call blend_pop
+echo sampling=bicubic res=1920x1080 undistort=1
+call samplerstate_create s40 filter=POINT u=CLAMP v=CLAMP w=CLAMP aniso=0 border=0
+create f40 -> ok
+tick f40 0.016
+size f40 width=1920 height=1080
+render f40
+call filter_begin_cs f40 format=RGBA space=SRGB allow=NO_DIRECT -> 1
+call set_vec2 base:bicubic_scale:base_dimension 1920 1080
+call set_vec2 base:bicubic_scale:base_dimension_i 0.00052083336 0.00092592591
+call set_float base:bicubic_scale:undistort_factor 1
+call set_float base:bicubic_scale:multiplier 1
+call blend_push
+call blend_function ONE INVSRCALPHA
+call filter_tech_end f40 base:bicubic_scale size=1920x1080 technique=DrawUndistort exists=1
+call blend_pop
+echo sampling=bicubic res=1920x1000 undistort=0
+call samplerstate_create s41 filter=POINT u=CLAMP v=CLAMP w=CLAMP aniso=0 border=0
+create f41 -> ok
+tick f41 0.016
+size f41 width=1920 height=1000
+render f41
+call filter_begin_cs f41 format=RGBA space=SRGB allow=NO_DIRECT -> 1
+call set_vec2 base:bicubic_scale:base_dimension 1920 1080
+call set_vec2 base:bicubic_scale:base_dimension_i 0.00052083336 0.00092592591
+call set_float base:bicubic_scale:undistort_factor 1
+call set_float base:bicubic_scale:multiplier 1
+call blend_push
+call blend_function ONE INVSRCALPHA
+call filter_tech_end f41 base:bicubic_scale size=1920x1000 technique=Draw exists=1
+call blend_pop
+echo sampling=bicubic res=1920x1000 undistort=1
+call samplerstate_create s42 filter=POINT u=CLAMP v=CLAMP w=CLAMP aniso=0 border=0
+create f42 -> ok
+tick f42 0.016
+size f42 width=1920 height=1000
+render f42
+call filter_begin_cs f42 format=RGBA space=SRGB allow=NO_DIRECT -> 1
+call set_vec2 base:bicubic_scale:base_dimension 1920 1080
+call set_vec2 base:bicubic_scale:base_dimension_i 0.00052083336 0.00092592591
+call set_float base:bicubic_scale:undistort_factor 1.08000004
+call set_float base:bicubic_scale:multiplier 1
+call blend_push
+call blend_function ONE INVSRCALPHA
+call filter_tech_end f42 base:bicubic_scale size=1920x1000 technique=DrawUndistort exists=1
+call blend_pop
+echo sampling=bicubic res=4:3 undistort=0
+call samplerstate_create s43 filter=POINT u=CLAMP v=CLAMP w=CLAMP aniso=0 border=0
+create f43 -> ok
+tick f43 0.016
+size f43 width=1920 height=1440
+render f43
+call filter_begin_cs f43 format=RGBA space=SRGB allow=NO_DIRECT -> 1
+call set_vec2 base:bicubic_scale:base_dimension 1920 1080
+call set_vec2 base:bicubic_scale:base_dimension_i 0.00052083336 0.00092592591
+call set_float base:bicubic_scale:undistort_factor 1
+call set_float base:bicubic_scale:multiplier 1
+call blend_push
+call blend_function ONE INVSRCALPHA
+call filter_tech_end f43 base:bicubic_scale size=1920x1440 technique=Draw exists=1
+call blend_pop
+echo sampling=bicubic res=4:3 undistort=1
+call samplerstate_create s44 filter=POINT u=CLAMP v=CLAMP w=CLAMP aniso=0 border=0
+create f44 -> ok
+tick f44 0.016
+size f44 width=1920 height=1440
+render f44
+call filter_begin_cs f44 format=RGBA space=SRGB allow=NO_DIRECT -> 1
+call set_vec2 base:bicubic_scale:base_dimension 1920 1080
+call set_vec2 base:bicubic_scale:base_dimension_i 0.00052083336 0.00092592591
+call set_float base:bicubic_scale:undistort_factor 0.75
+call set_float base:bicubic_scale:multiplier 1
+call blend_push
+call blend_function ONE INVSRCALPHA
+call filter_tech_end f44 base:bicubic_scale size=1920x1440 technique=DrawUndistort exists=1
+call blend_pop
+echo sampling=bicubic res=16:9 undistort=0
+call samplerstate_create s45 filter=POINT u=CLAMP v=CLAMP w=CLAMP aniso=0 border=0
+create f45 -> ok
+tick f45 0.016
+size f45 width=1920 height=1080
+render f45
+call skip_video_filter f45
+echo sampling=bicubic res=16:9 undistort=1
+call samplerstate_create s46 filter=POINT u=CLAMP v=CLAMP w=CLAMP aniso=0 border=0
+create f46 -> ok
+tick f46 0.016
+size f46 width=1920 height=1080
+render f46
+call skip_video_filter f46
+echo sampling=bicubic res=959x1079 undistort=0
+call samplerstate_create s47 filter=POINT u=CLAMP v=CLAMP w=CLAMP aniso=0 border=0
+create f47 -> ok
+call get_param base:bilinear_lowres_scale:base_dimension -> null
+call get_param base:bilinear_lowres_scale:base_dimension_i -> null
+tick f47 0.016
+size f47 width=959 height=1079
+render f47
+call filter_begin_cs f47 format=RGBA space=SRGB allow=NO_DIRECT -> 1
+call set_float base:bilinear_lowres_scale:multiplier 1
+call blend_push
+call blend_function ONE INVSRCALPHA
+call filter_tech_end f47 base:bilinear_lowres_scale size=959x1079 technique=Draw exists=1
+call blend_pop
+echo sampling=bicubic res=959x1079 undistort=1
+call samplerstate_create s48 filter=POINT u=CLAMP v=CLAMP w=CLAMP aniso=0 border=0
+create f48 -> ok
+call get_param base:bilinear_lowres_scale:base_dimension -> null
+call get_param base:bilinear_lowres_scale:base_dimension_i -> null
+tick f48 0.016
+size f48 width=959 height=1079
+render f48
+call filter_begin_cs f48 format=RGBA space=SRGB allow=NO_DIRECT -> 1
+call set_float base:bilinear_lowres_scale:multiplier 1
+call blend_push
+call blend_function ONE INVSRCALPHA
+call filter_tech_end f48 base:bilinear_lowres_scale size=959x1079 technique=Draw exists=1
+call blend_pop
+echo sampling=lanczos res=960x540 undistort=0
+call samplerstate_create s49 filter=POINT u=CLAMP v=CLAMP w=CLAMP aniso=0 border=0
+create f49 -> ok
+call get_param base:lanczos_scale:image -> ok
+call get_param base:lanczos_scale:base_dimension -> ok
+call get_param base:lanczos_scale:base_dimension_i -> ok
+call get_param base:lanczos_scale:undistort_factor -> ok
+call get_param base:lanczos_scale:multiplier -> ok
+tick f49 0.016
+size f49 width=960 height=540
+render f49
+call filter_begin_cs f49 format=RGBA space=SRGB allow=NO_DIRECT -> 1
+call set_vec2 base:lanczos_scale:base_dimension 1920 1080
+call set_vec2 base:lanczos_scale:base_dimension_i 0.00052083336 0.00092592591
+call set_float base:lanczos_scale:undistort_factor 1
+call set_float base:lanczos_scale:multiplier 1
+call blend_push
+call blend_function ONE INVSRCALPHA
+call filter_tech_end f49 base:lanczos_scale size=960x540 technique=Draw exists=1
+call blend_pop
+echo sampling=lanczos res=960x540 undistort=1
+call samplerstate_create s50 filter=POINT u=CLAMP v=CLAMP w=CLAMP aniso=0 border=0
+create f50 -> ok
+tick f50 0.016
+size f50 width=960 height=540
+render f50
+call filter_begin_cs f50 format=RGBA space=SRGB allow=NO_DIRECT -> 1
+call set_vec2 base:lanczos_scale:base_dimension 1920 1080
+call set_vec2 base:lanczos_scale:base_dimension_i 0.00052083336 0.00092592591
+call set_float base:lanczos_scale:undistort_factor 1
+call set_float base:lanczos_scale:multiplier 1
+call blend_push
+call blend_function ONE INVSRCALPHA
+call filter_tech_end f50 base:lanczos_scale size=960x540 technique=DrawUndistort exists=1
+call blend_pop
+echo sampling=lanczos res=1281x720 undistort=0
+call samplerstate_create s51 filter=POINT u=CLAMP v=CLAMP w=CLAMP aniso=0 border=0
+create f51 -> ok
+tick f51 0.016
+size f51 width=1281 height=720
+render f51
+call filter_begin_cs f51 format=RGBA space=SRGB allow=NO_DIRECT -> 1
+call set_vec2 base:lanczos_scale:base_dimension 1920 1080
+call set_vec2 base:lanczos_scale:base_dimension_i 0.00052083336 0.00092592591
+call set_float base:lanczos_scale:undistort_factor 1
+call set_float base:lanczos_scale:multiplier 1
+call blend_push
+call blend_function ONE INVSRCALPHA
+call filter_tech_end f51 base:lanczos_scale size=1281x720 technique=Draw exists=1
+call blend_pop
+echo sampling=lanczos res=1281x720 undistort=1
+call samplerstate_create s52 filter=POINT u=CLAMP v=CLAMP w=CLAMP aniso=0 border=0
+create f52 -> ok
+tick f52 0.016
+size f52 width=1281 height=720
+render f52
+call filter_begin_cs f52 format=RGBA space=SRGB allow=NO_DIRECT -> 1
+call set_vec2 base:lanczos_scale:base_dimension 1920 1080
+call set_vec2 base:lanczos_scale:base_dimension_i 0.00052083336 0.00092592591
+call set_float base:lanczos_scale:undistort_factor 1.0007813
+call set_float base:lanczos_scale:multiplier 1
+call blend_push
+call blend_function ONE INVSRCALPHA
+call filter_tech_end f52 base:lanczos_scale size=1281x720 technique=DrawUndistort exists=1
+call blend_pop
+echo sampling=lanczos res=3840x2160 undistort=0
+call samplerstate_create s53 filter=POINT u=CLAMP v=CLAMP w=CLAMP aniso=0 border=0
+create f53 -> ok
+tick f53 0.016
+size f53 width=3840 height=2160
+render f53
+call filter_begin_cs f53 format=RGBA space=SRGB allow=NO_DIRECT -> 1
+call set_vec2 base:lanczos_scale:base_dimension 1920 1080
+call set_vec2 base:lanczos_scale:base_dimension_i 0.00052083336 0.00092592591
+call set_float base:lanczos_scale:undistort_factor 1
+call set_float base:lanczos_scale:multiplier 1
+call blend_push
+call blend_function ONE INVSRCALPHA
+call filter_tech_end f53 base:lanczos_scale size=3840x2160 technique=Draw exists=1
+call blend_pop
+echo sampling=lanczos res=3840x2160 undistort=1
+call samplerstate_create s54 filter=POINT u=CLAMP v=CLAMP w=CLAMP aniso=0 border=0
+create f54 -> ok
+tick f54 0.016
+size f54 width=3840 height=2160
+render f54
+call filter_begin_cs f54 format=RGBA space=SRGB allow=NO_DIRECT -> 1
+call set_vec2 base:lanczos_scale:base_dimension 1920 1080
+call set_vec2 base:lanczos_scale:base_dimension_i 0.00052083336 0.00092592591
+call set_float base:lanczos_scale:undistort_factor 1
+call set_float base:lanczos_scale:multiplier 1
+call blend_push
+call blend_function ONE INVSRCALPHA
+call filter_tech_end f54 base:lanczos_scale size=3840x2160 technique=DrawUndistort exists=1
+call blend_pop
+echo sampling=lanczos res=1920x1080 undistort=0
+call samplerstate_create s55 filter=POINT u=CLAMP v=CLAMP w=CLAMP aniso=0 border=0
+create f55 -> ok
+tick f55 0.016
+size f55 width=1920 height=1080
+render f55
+call filter_begin_cs f55 format=RGBA space=SRGB allow=NO_DIRECT -> 1
+call set_vec2 base:lanczos_scale:base_dimension 1920 1080
+call set_vec2 base:lanczos_scale:base_dimension_i 0.00052083336 0.00092592591
+call set_float base:lanczos_scale:undistort_factor 1
+call set_float base:lanczos_scale:multiplier 1
+call blend_push
+call blend_function ONE INVSRCALPHA
+call filter_tech_end f55 base:lanczos_scale size=1920x1080 technique=Draw exists=1
+call blend_pop
+echo sampling=lanczos res=1920x1080 undistort=1
+call samplerstate_create s56 filter=POINT u=CLAMP v=CLAMP w=CLAMP aniso=0 border=0
+create f56 -> ok
+tick f56 0.016
+size f56 width=1920 height=1080
+render f56
+call filter_begin_cs f56 format=RGBA space=SRGB allow=NO_DIRECT -> 1
+call set_vec2 base:lanczos_scale:base_dimension 1920 1080
+call set_vec2 base:lanczos_scale:base_dimension_i 0.00052083336 0.00092592591
+call set_float base:lanczos_scale:undistort_factor 1
+call set_float base:lanczos_scale:multiplier 1
+call blend_push
+call blend_function ONE INVSRCALPHA
+call filter_tech_end f56 base:lanczos_scale size=1920x1080 technique=DrawUndistort exists=1
+call blend_pop
+echo sampling=lanczos res=1920x1000 undistort=0
+call samplerstate_create s57 filter=POINT u=CLAMP v=CLAMP w=CLAMP aniso=0 border=0
+create f57 -> ok
+tick f57 0.016
+size f57 width=1920 height=1000
+render f57
+call filter_begin_cs f57 format=RGBA space=SRGB allow=NO_DIRECT -> 1
+call set_vec2 base:lanczos_scale:base_dimension 1920 1080
+call set_vec2 base:lanczos_scale:base_dimension_i 0.00052083336 0.00092592591
+call set_float base:lanczos_scale:undistort_factor 1
+call set_float base:lanczos_scale:multiplier 1
+call blend_push
+call blend_function ONE INVSRCALPHA
+call filter_tech_end f57 base:lanczos_scale size=1920x1000 technique=Draw exists=1
+call blend_pop
+echo sampling=lanczos res=1920x1000 undistort=1
+call samplerstate_create s58 filter=POINT u=CLAMP v=CLAMP w=CLAMP aniso=0 border=0
+create f58 -> ok
+tick f58 0.016
+size f58 width=1920 height=1000
+render f58
+call filter_begin_cs f58 format=RGBA space=SRGB allow=NO_DIRECT -> 1
+call set_vec2 base:lanczos_scale:base_dimension 1920 1080
+call set_vec2 base:lanczos_scale:base_dimension_i 0.00052083336 0.00092592591
+call set_float base:lanczos_scale:undistort_factor 1.08000004
+call set_float base:lanczos_scale:multiplier 1
+call blend_push
+call blend_function ONE INVSRCALPHA
+call filter_tech_end f58 base:lanczos_scale size=1920x1000 technique=DrawUndistort exists=1
+call blend_pop
+echo sampling=lanczos res=4:3 undistort=0
+call samplerstate_create s59 filter=POINT u=CLAMP v=CLAMP w=CLAMP aniso=0 border=0
+create f59 -> ok
+tick f59 0.016
+size f59 width=1920 height=1440
+render f59
+call filter_begin_cs f59 format=RGBA space=SRGB allow=NO_DIRECT -> 1
+call set_vec2 base:lanczos_scale:base_dimension 1920 1080
+call set_vec2 base:lanczos_scale:base_dimension_i 0.00052083336 0.00092592591
+call set_float base:lanczos_scale:undistort_factor 1
+call set_float base:lanczos_scale:multiplier 1
+call blend_push
+call blend_function ONE INVSRCALPHA
+call filter_tech_end f59 base:lanczos_scale size=1920x1440 technique=Draw exists=1
+call blend_pop
+echo sampling=lanczos res=4:3 undistort=1
+call samplerstate_create s60 filter=POINT u=CLAMP v=CLAMP w=CLAMP aniso=0 border=0
+create f60 -> ok
+tick f60 0.016
+size f60 width=1920 height=1440
+render f60
+call filter_begin_cs f60 format=RGBA space=SRGB allow=NO_DIRECT -> 1
+call set_vec2 base:lanczos_scale:base_dimension 1920 1080
+call set_vec2 base:lanczos_scale:base_dimension_i 0.00052083336 0.00092592591
+call set_float base:lanczos_scale:undistort_factor 0.75
+call set_float base:lanczos_scale:multiplier 1
+call blend_push
+call blend_function ONE INVSRCALPHA
+call filter_tech_end f60 base:lanczos_scale size=1920x1440 technique=DrawUndistort exists=1
+call blend_pop
+echo sampling=lanczos res=16:9 undistort=0
+call samplerstate_create s61 filter=POINT u=CLAMP v=CLAMP w=CLAMP aniso=0 border=0
+create f61 -> ok
+tick f61 0.016
+size f61 width=1920 height=1080
+render f61
+call skip_video_filter f61
+echo sampling=lanczos res=16:9 undistort=1
+call samplerstate_create s62 filter=POINT u=CLAMP v=CLAMP w=CLAMP aniso=0 border=0
+create f62 -> ok
+tick f62 0.016
+size f62 width=1920 height=1080
+render f62
+call skip_video_filter f62
+echo sampling=lanczos res=959x1079 undistort=0
+call samplerstate_create s63 filter=POINT u=CLAMP v=CLAMP w=CLAMP aniso=0 border=0
+create f63 -> ok
+call get_param base:bilinear_lowres_scale:base_dimension -> null
+call get_param base:bilinear_lowres_scale:base_dimension_i -> null
+tick f63 0.016
+size f63 width=959 height=1079
+render f63
+call filter_begin_cs f63 format=RGBA space=SRGB allow=NO_DIRECT -> 1
+call set_float base:bilinear_lowres_scale:multiplier 1
+call blend_push
+call blend_function ONE INVSRCALPHA
+call filter_tech_end f63 base:bilinear_lowres_scale size=959x1079 technique=Draw exists=1
+call blend_pop
+echo sampling=lanczos res=959x1079 undistort=1
+call samplerstate_create s64 filter=POINT u=CLAMP v=CLAMP w=CLAMP aniso=0 border=0
+create f64 -> ok
+call get_param base:bilinear_lowres_scale:base_dimension -> null
+call get_param base:bilinear_lowres_scale:base_dimension_i -> null
+tick f64 0.016
+size f64 width=959 height=1079
+render f64
+call filter_begin_cs f64 format=RGBA space=SRGB allow=NO_DIRECT -> 1
+call set_float base:bilinear_lowres_scale:multiplier 1
+call blend_push
+call blend_function ONE INVSRCALPHA
+call filter_tech_end f64 base:bilinear_lowres_scale size=959x1079 technique=Draw exists=1
+call blend_pop
+echo sampling=area res=960x540 undistort=0
+call samplerstate_create s65 filter=POINT u=CLAMP v=CLAMP w=CLAMP aniso=0 border=0
+create f65 -> ok
+call get_param base:area:image -> ok
+call get_param base:area:base_dimension -> ok
+call get_param base:area:base_dimension_i -> ok
+call get_param base:area:multiplier -> ok
+tick f65 0.016
+size f65 width=960 height=540
+render f65
+call filter_begin_cs f65 format=RGBA space=SRGB allow=NO_DIRECT -> 1
+call set_vec2 base:area:base_dimension 1920 1080
+call set_vec2 base:area:base_dimension_i 0.00052083336 0.00092592591
+call set_float base:area:multiplier 1
+call blend_push
+call blend_function ONE INVSRCALPHA
+call filter_tech_end f65 base:area size=960x540 technique=Draw exists=1
+call blend_pop
+echo sampling=area res=960x540 undistort=1
+call samplerstate_create s66 filter=POINT u=CLAMP v=CLAMP w=CLAMP aniso=0 border=0
+create f66 -> ok
+tick f66 0.016
+size f66 width=960 height=540
+render f66
+call filter_begin_cs f66 format=RGBA space=SRGB allow=NO_DIRECT -> 1
+call set_vec2 base:area:base_dimension 1920 1080
+call set_vec2 base:area:base_dimension_i 0.00052083336 0.00092592591
+call set_float base:area:multiplier 1
+call blend_push
+call blend_function ONE INVSRCALPHA
+call filter_tech_end f66 base:area size=960x540 technique=Draw exists=1
+call blend_pop
+echo sampling=area res=1281x720 undistort=0
+call samplerstate_create s67 filter=POINT u=CLAMP v=CLAMP w=CLAMP aniso=0 border=0
+create f67 -> ok
+tick f67 0.016
+size f67 width=1281 height=720
+render f67
+call filter_begin_cs f67 format=RGBA space=SRGB allow=NO_DIRECT -> 1
+call set_vec2 base:area:base_dimension 1920 1080
+call set_vec2 base:area:base_dimension_i 0.00052083336 0.00092592591
+call set_float base:area:multiplier 1
+call blend_push
+call blend_function ONE INVSRCALPHA
+call filter_tech_end f67 base:area size=1281x720 technique=Draw exists=1
+call blend_pop
+echo sampling=area res=1281x720 undistort=1
+call samplerstate_create s68 filter=POINT u=CLAMP v=CLAMP w=CLAMP aniso=0 border=0
+create f68 -> ok
+tick f68 0.016
+size f68 width=1281 height=720
+render f68
+call filter_begin_cs f68 format=RGBA space=SRGB allow=NO_DIRECT -> 1
+call set_vec2 base:area:base_dimension 1920 1080
+call set_vec2 base:area:base_dimension_i 0.00052083336 0.00092592591
+call set_float base:area:multiplier 1
+call blend_push
+call blend_function ONE INVSRCALPHA
+call filter_tech_end f68 base:area size=1281x720 technique=Draw exists=1
+call blend_pop
+echo sampling=area res=3840x2160 undistort=0
+call samplerstate_create s69 filter=POINT u=CLAMP v=CLAMP w=CLAMP aniso=0 border=0
+create f69 -> ok
+tick f69 0.016
+size f69 width=3840 height=2160
+render f69
+call filter_begin_cs f69 format=RGBA space=SRGB allow=NO_DIRECT -> 1
+call set_vec2 base:area:base_dimension 1920 1080
+call set_vec2 base:area:base_dimension_i 0.00052083336 0.00092592591
+call set_float base:area:multiplier 1
+call blend_push
+call blend_function ONE INVSRCALPHA
+call filter_tech_end f69 base:area size=3840x2160 technique=DrawUpscale exists=1
+call blend_pop
+echo sampling=area res=3840x2160 undistort=1
+call samplerstate_create s70 filter=POINT u=CLAMP v=CLAMP w=CLAMP aniso=0 border=0
+create f70 -> ok
+tick f70 0.016
+size f70 width=3840 height=2160
+render f70
+call filter_begin_cs f70 format=RGBA space=SRGB allow=NO_DIRECT -> 1
+call set_vec2 base:area:base_dimension 1920 1080
+call set_vec2 base:area:base_dimension_i 0.00052083336 0.00092592591
+call set_float base:area:multiplier 1
+call blend_push
+call blend_function ONE INVSRCALPHA
+call filter_tech_end f70 base:area size=3840x2160 technique=DrawUpscale exists=1
+call blend_pop
+echo sampling=area res=1920x1080 undistort=0
+call samplerstate_create s71 filter=POINT u=CLAMP v=CLAMP w=CLAMP aniso=0 border=0
+create f71 -> ok
+tick f71 0.016
+size f71 width=1920 height=1080
+render f71
+call filter_begin_cs f71 format=RGBA space=SRGB allow=NO_DIRECT -> 1
+call set_vec2 base:area:base_dimension 1920 1080
+call set_vec2 base:area:base_dimension_i 0.00052083336 0.00092592591
+call set_float base:area:multiplier 1
+call blend_push
+call blend_function ONE INVSRCALPHA
+call filter_tech_end f71 base:area size=1920x1080 technique=DrawUpscale exists=1
+call blend_pop
+echo sampling=area res=1920x1080 undistort=1
+call samplerstate_create s72 filter=POINT u=CLAMP v=CLAMP w=CLAMP aniso=0 border=0
+create f72 -> ok
+tick f72 0.016
+size f72 width=1920 height=1080
+render f72
+call filter_begin_cs f72 format=RGBA space=SRGB allow=NO_DIRECT -> 1
+call set_vec2 base:area:base_dimension 1920 1080
+call set_vec2 base:area:base_dimension_i 0.00052083336 0.00092592591
+call set_float base:area:multiplier 1
+call blend_push
+call blend_function ONE INVSRCALPHA
+call filter_tech_end f72 base:area size=1920x1080 technique=DrawUpscale exists=1
+call blend_pop
+echo sampling=area res=1920x1000 undistort=0
+call samplerstate_create s73 filter=POINT u=CLAMP v=CLAMP w=CLAMP aniso=0 border=0
+create f73 -> ok
+tick f73 0.016
+size f73 width=1920 height=1000
+render f73
+call filter_begin_cs f73 format=RGBA space=SRGB allow=NO_DIRECT -> 1
+call set_vec2 base:area:base_dimension 1920 1080
+call set_vec2 base:area:base_dimension_i 0.00052083336 0.00092592591
+call set_float base:area:multiplier 1
+call blend_push
+call blend_function ONE INVSRCALPHA
+call filter_tech_end f73 base:area size=1920x1000 technique=Draw exists=1
+call blend_pop
+echo sampling=area res=1920x1000 undistort=1
+call samplerstate_create s74 filter=POINT u=CLAMP v=CLAMP w=CLAMP aniso=0 border=0
+create f74 -> ok
+tick f74 0.016
+size f74 width=1920 height=1000
+render f74
+call filter_begin_cs f74 format=RGBA space=SRGB allow=NO_DIRECT -> 1
+call set_vec2 base:area:base_dimension 1920 1080
+call set_vec2 base:area:base_dimension_i 0.00052083336 0.00092592591
+call set_float base:area:multiplier 1
+call blend_push
+call blend_function ONE INVSRCALPHA
+call filter_tech_end f74 base:area size=1920x1000 technique=Draw exists=1
+call blend_pop
+echo sampling=area res=4:3 undistort=0
+call samplerstate_create s75 filter=POINT u=CLAMP v=CLAMP w=CLAMP aniso=0 border=0
+create f75 -> ok
+tick f75 0.016
+size f75 width=1920 height=1440
+render f75
+call filter_begin_cs f75 format=RGBA space=SRGB allow=NO_DIRECT -> 1
+call set_vec2 base:area:base_dimension 1920 1080
+call set_vec2 base:area:base_dimension_i 0.00052083336 0.00092592591
+call set_float base:area:multiplier 1
+call blend_push
+call blend_function ONE INVSRCALPHA
+call filter_tech_end f75 base:area size=1920x1440 technique=DrawUpscale exists=1
+call blend_pop
+echo sampling=area res=4:3 undistort=1
+call samplerstate_create s76 filter=POINT u=CLAMP v=CLAMP w=CLAMP aniso=0 border=0
+create f76 -> ok
+tick f76 0.016
+size f76 width=1920 height=1440
+render f76
+call filter_begin_cs f76 format=RGBA space=SRGB allow=NO_DIRECT -> 1
+call set_vec2 base:area:base_dimension 1920 1080
+call set_vec2 base:area:base_dimension_i 0.00052083336 0.00092592591
+call set_float base:area:multiplier 1
+call blend_push
+call blend_function ONE INVSRCALPHA
+call filter_tech_end f76 base:area size=1920x1440 technique=DrawUpscale exists=1
+call blend_pop
+echo sampling=area res=16:9 undistort=0
+call samplerstate_create s77 filter=POINT u=CLAMP v=CLAMP w=CLAMP aniso=0 border=0
+create f77 -> ok
+tick f77 0.016
+size f77 width=1920 height=1080
+render f77
+call skip_video_filter f77
+echo sampling=area res=16:9 undistort=1
+call samplerstate_create s78 filter=POINT u=CLAMP v=CLAMP w=CLAMP aniso=0 border=0
+create f78 -> ok
+tick f78 0.016
+size f78 width=1920 height=1080
+render f78
+call skip_video_filter f78
+echo sampling=area res=959x1079 undistort=0
+call samplerstate_create s79 filter=POINT u=CLAMP v=CLAMP w=CLAMP aniso=0 border=0
+create f79 -> ok
+call get_param base:bilinear_lowres_scale:base_dimension -> null
+call get_param base:bilinear_lowres_scale:base_dimension_i -> null
+tick f79 0.016
+size f79 width=959 height=1079
+render f79
+call filter_begin_cs f79 format=RGBA space=SRGB allow=NO_DIRECT -> 1
+call set_float base:bilinear_lowres_scale:multiplier 1
+call blend_push
+call blend_function ONE INVSRCALPHA
+call filter_tech_end f79 base:bilinear_lowres_scale size=959x1079 technique=Draw exists=1
+call blend_pop
+echo sampling=area res=959x1079 undistort=1
+call samplerstate_create s80 filter=POINT u=CLAMP v=CLAMP w=CLAMP aniso=0 border=0
+create f80 -> ok
+call get_param base:bilinear_lowres_scale:base_dimension -> null
+call get_param base:bilinear_lowres_scale:base_dimension_i -> null
+tick f80 0.016
+size f80 width=959 height=1079
+render f80
+call filter_begin_cs f80 format=RGBA space=SRGB allow=NO_DIRECT -> 1
+call set_float base:bilinear_lowres_scale:multiplier 1
+call blend_push
+call blend_function ONE INVSRCALPHA
+call filter_tech_end f80 base:bilinear_lowres_scale size=959x1079 technique=Draw exists=1
+call blend_pop
+echo sampling=BICUBIC res=960x540 undistort=0
+call samplerstate_create s81 filter=POINT u=CLAMP v=CLAMP w=CLAMP aniso=0 border=0
+create f81 -> ok
+tick f81 0.016
+size f81 width=960 height=540
+render f81
+call filter_begin_cs f81 format=RGBA space=SRGB allow=NO_DIRECT -> 1
+call set_vec2 base:bicubic_scale:base_dimension 1920 1080
+call set_vec2 base:bicubic_scale:base_dimension_i 0.00052083336 0.00092592591
+call set_float base:bicubic_scale:undistort_factor 1
+call set_float base:bicubic_scale:multiplier 1
+call blend_push
+call blend_function ONE INVSRCALPHA
+call filter_tech_end f81 base:bicubic_scale size=960x540 technique=Draw exists=1
+call blend_pop
+echo sampling=BICUBIC res=960x540 undistort=1
+call samplerstate_create s82 filter=POINT u=CLAMP v=CLAMP w=CLAMP aniso=0 border=0
+create f82 -> ok
+tick f82 0.016
+size f82 width=960 height=540
+render f82
+call filter_begin_cs f82 format=RGBA space=SRGB allow=NO_DIRECT -> 1
+call set_vec2 base:bicubic_scale:base_dimension 1920 1080
+call set_vec2 base:bicubic_scale:base_dimension_i 0.00052083336 0.00092592591
+call set_float base:bicubic_scale:undistort_factor 1
+call set_float base:bicubic_scale:multiplier 1
+call blend_push
+call blend_function ONE INVSRCALPHA
+call filter_tech_end f82 base:bicubic_scale size=960x540 technique=DrawUndistort exists=1
+call blend_pop
+echo sampling=BICUBIC res=1281x720 undistort=0
+call samplerstate_create s83 filter=POINT u=CLAMP v=CLAMP w=CLAMP aniso=0 border=0
+create f83 -> ok
+tick f83 0.016
+size f83 width=1281 height=720
+render f83
+call filter_begin_cs f83 format=RGBA space=SRGB allow=NO_DIRECT -> 1
+call set_vec2 base:bicubic_scale:base_dimension 1920 1080
+call set_vec2 base:bicubic_scale:base_dimension_i 0.00052083336 0.00092592591
+call set_float base:bicubic_scale:undistort_factor 1
+call set_float base:bicubic_scale:multiplier 1
+call blend_push
+call blend_function ONE INVSRCALPHA
+call filter_tech_end f83 base:bicubic_scale size=1281x720 technique=Draw exists=1
+call blend_pop
+echo sampling=BICUBIC res=1281x720 undistort=1
+call samplerstate_create s84 filter=POINT u=CLAMP v=CLAMP w=CLAMP aniso=0 border=0
+create f84 -> ok
+tick f84 0.016
+size f84 width=1281 height=720
+render f84
+call filter_begin_cs f84 format=RGBA space=SRGB allow=NO_DIRECT -> 1
+call set_vec2 base:bicubic_scale:base_dimension 1920 1080
+call set_vec2 base:bicubic_scale:base_dimension_i 0.00052083336 0.00092592591
+call set_float base:bicubic_scale:undistort_factor 1.0007813
+call set_float base:bicubic_scale:multiplier 1
+call blend_push
+call blend_function ONE INVSRCALPHA
+call filter_tech_end f84 base:bicubic_scale size=1281x720 technique=DrawUndistort exists=1
+call blend_pop
+echo sampling=BICUBIC res=3840x2160 undistort=0
+call samplerstate_create s85 filter=POINT u=CLAMP v=CLAMP w=CLAMP aniso=0 border=0
+create f85 -> ok
+tick f85 0.016
+size f85 width=3840 height=2160
+render f85
+call filter_begin_cs f85 format=RGBA space=SRGB allow=NO_DIRECT -> 1
+call set_vec2 base:bicubic_scale:base_dimension 1920 1080
+call set_vec2 base:bicubic_scale:base_dimension_i 0.00052083336 0.00092592591
+call set_float base:bicubic_scale:undistort_factor 1
+call set_float base:bicubic_scale:multiplier 1
+call blend_push
+call blend_function ONE INVSRCALPHA
+call filter_tech_end f85 base:bicubic_scale size=3840x2160 technique=Draw exists=1
+call blend_pop
+echo sampling=BICUBIC res=3840x2160 undistort=1
+call samplerstate_create s86 filter=POINT u=CLAMP v=CLAMP w=CLAMP aniso=0 border=0
+create f86 -> ok
+tick f86 0.016
+size f86 width=3840 height=2160
+render f86
+call filter_begin_cs f86 format=RGBA space=SRGB allow=NO_DIRECT -> 1
+call set_vec2 base:bicubic_scale:base_dimension 1920 1080
+call set_vec2 base:bicubic_scale:base_dimension_i 0.00052083336 0.00092592591
+call set_float base:bicubic_scale:undistort_factor 1
+call set_float base:bicubic_scale:multiplier 1
+call blend_push
+call blend_function ONE INVSRCALPHA
+call filter_tech_end f86 base:bicubic_scale size=3840x2160 technique=DrawUndistort exists=1
+call blend_pop
+echo sampling=BICUBIC res=1920x1080 undistort=0
+call samplerstate_create s87 filter=POINT u=CLAMP v=CLAMP w=CLAMP aniso=0 border=0
+create f87 -> ok
+tick f87 0.016
+size f87 width=1920 height=1080
+render f87
+call filter_begin_cs f87 format=RGBA space=SRGB allow=NO_DIRECT -> 1
+call set_vec2 base:bicubic_scale:base_dimension 1920 1080
+call set_vec2 base:bicubic_scale:base_dimension_i 0.00052083336 0.00092592591
+call set_float base:bicubic_scale:undistort_factor 1
+call set_float base:bicubic_scale:multiplier 1
+call blend_push
+call blend_function ONE INVSRCALPHA
+call filter_tech_end f87 base:bicubic_scale size=1920x1080 technique=Draw exists=1
+call blend_pop
+echo sampling=BICUBIC res=1920x1080 undistort=1
+call samplerstate_create s88 filter=POINT u=CLAMP v=CLAMP w=CLAMP aniso=0 border=0
+create f88 -> ok
+tick f88 0.016
+size f88 width=1920 height=1080
+render f88
+call filter_begin_cs f88 format=RGBA space=SRGB allow=NO_DIRECT -> 1
+call set_vec2 base:bicubic_scale:base_dimension 1920 1080
+call set_vec2 base:bicubic_scale:base_dimension_i 0.00052083336 0.00092592591
+call set_float base:bicubic_scale:undistort_factor 1
+call set_float base:bicubic_scale:multiplier 1
+call blend_push
+call blend_function ONE INVSRCALPHA
+call filter_tech_end f88 base:bicubic_scale size=1920x1080 technique=DrawUndistort exists=1
+call blend_pop
+echo sampling=BICUBIC res=1920x1000 undistort=0
+call samplerstate_create s89 filter=POINT u=CLAMP v=CLAMP w=CLAMP aniso=0 border=0
+create f89 -> ok
+tick f89 0.016
+size f89 width=1920 height=1000
+render f89
+call filter_begin_cs f89 format=RGBA space=SRGB allow=NO_DIRECT -> 1
+call set_vec2 base:bicubic_scale:base_dimension 1920 1080
+call set_vec2 base:bicubic_scale:base_dimension_i 0.00052083336 0.00092592591
+call set_float base:bicubic_scale:undistort_factor 1
+call set_float base:bicubic_scale:multiplier 1
+call blend_push
+call blend_function ONE INVSRCALPHA
+call filter_tech_end f89 base:bicubic_scale size=1920x1000 technique=Draw exists=1
+call blend_pop
+echo sampling=BICUBIC res=1920x1000 undistort=1
+call samplerstate_create s90 filter=POINT u=CLAMP v=CLAMP w=CLAMP aniso=0 border=0
+create f90 -> ok
+tick f90 0.016
+size f90 width=1920 height=1000
+render f90
+call filter_begin_cs f90 format=RGBA space=SRGB allow=NO_DIRECT -> 1
+call set_vec2 base:bicubic_scale:base_dimension 1920 1080
+call set_vec2 base:bicubic_scale:base_dimension_i 0.00052083336 0.00092592591
+call set_float base:bicubic_scale:undistort_factor 1.08000004
+call set_float base:bicubic_scale:multiplier 1
+call blend_push
+call blend_function ONE INVSRCALPHA
+call filter_tech_end f90 base:bicubic_scale size=1920x1000 technique=DrawUndistort exists=1
+call blend_pop
+echo sampling=BICUBIC res=4:3 undistort=0
+call samplerstate_create s91 filter=POINT u=CLAMP v=CLAMP w=CLAMP aniso=0 border=0
+create f91 -> ok
+tick f91 0.016
+size f91 width=1920 height=1440
+render f91
+call filter_begin_cs f91 format=RGBA space=SRGB allow=NO_DIRECT -> 1
+call set_vec2 base:bicubic_scale:base_dimension 1920 1080
+call set_vec2 base:bicubic_scale:base_dimension_i 0.00052083336 0.00092592591
+call set_float base:bicubic_scale:undistort_factor 1
+call set_float base:bicubic_scale:multiplier 1
+call blend_push
+call blend_function ONE INVSRCALPHA
+call filter_tech_end f91 base:bicubic_scale size=1920x1440 technique=Draw exists=1
+call blend_pop
+echo sampling=BICUBIC res=4:3 undistort=1
+call samplerstate_create s92 filter=POINT u=CLAMP v=CLAMP w=CLAMP aniso=0 border=0
+create f92 -> ok
+tick f92 0.016
+size f92 width=1920 height=1440
+render f92
+call filter_begin_cs f92 format=RGBA space=SRGB allow=NO_DIRECT -> 1
+call set_vec2 base:bicubic_scale:base_dimension 1920 1080
+call set_vec2 base:bicubic_scale:base_dimension_i 0.00052083336 0.00092592591
+call set_float base:bicubic_scale:undistort_factor 0.75
+call set_float base:bicubic_scale:multiplier 1
+call blend_push
+call blend_function ONE INVSRCALPHA
+call filter_tech_end f92 base:bicubic_scale size=1920x1440 technique=DrawUndistort exists=1
+call blend_pop
+echo sampling=BICUBIC res=16:9 undistort=0
+call samplerstate_create s93 filter=POINT u=CLAMP v=CLAMP w=CLAMP aniso=0 border=0
+create f93 -> ok
+tick f93 0.016
+size f93 width=1920 height=1080
+render f93
+call skip_video_filter f93
+echo sampling=BICUBIC res=16:9 undistort=1
+call samplerstate_create s94 filter=POINT u=CLAMP v=CLAMP w=CLAMP aniso=0 border=0
+create f94 -> ok
+tick f94 0.016
+size f94 width=1920 height=1080
+render f94
+call skip_video_filter f94
+echo sampling=BICUBIC res=959x1079 undistort=0
+call samplerstate_create s95 filter=POINT u=CLAMP v=CLAMP w=CLAMP aniso=0 border=0
+create f95 -> ok
+call get_param base:bilinear_lowres_scale:base_dimension -> null
+call get_param base:bilinear_lowres_scale:base_dimension_i -> null
+tick f95 0.016
+size f95 width=959 height=1079
+render f95
+call filter_begin_cs f95 format=RGBA space=SRGB allow=NO_DIRECT -> 1
+call set_float base:bilinear_lowres_scale:multiplier 1
+call blend_push
+call blend_function ONE INVSRCALPHA
+call filter_tech_end f95 base:bilinear_lowres_scale size=959x1079 technique=Draw exists=1
+call blend_pop
+echo sampling=BICUBIC res=959x1079 undistort=1
+call samplerstate_create s96 filter=POINT u=CLAMP v=CLAMP w=CLAMP aniso=0 border=0
+create f96 -> ok
+call get_param base:bilinear_lowres_scale:base_dimension -> null
+call get_param base:bilinear_lowres_scale:base_dimension_i -> null
+tick f96 0.016
+size f96 width=959 height=1079
+render f96
+call filter_begin_cs f96 format=RGBA space=SRGB allow=NO_DIRECT -> 1
+call set_float base:bilinear_lowres_scale:multiplier 1
+call blend_push
+call blend_function ONE INVSRCALPHA
+call filter_tech_end f96 base:bilinear_lowres_scale size=959x1079 technique=Draw exists=1
+call blend_pop
+echo sampling=unknown res=960x540 undistort=0
+call samplerstate_create s97 filter=POINT u=CLAMP v=CLAMP w=CLAMP aniso=0 border=0
+create f97 -> ok
+tick f97 0.016
+size f97 width=960 height=540
+render f97
+call filter_begin_cs f97 format=RGBA space=SRGB allow=NO_DIRECT -> 1
+call set_vec2 base:bicubic_scale:base_dimension 1920 1080
+call set_vec2 base:bicubic_scale:base_dimension_i 0.00052083336 0.00092592591
+call set_float base:bicubic_scale:undistort_factor 1
+call set_float base:bicubic_scale:multiplier 1
+call blend_push
+call blend_function ONE INVSRCALPHA
+call filter_tech_end f97 base:bicubic_scale size=960x540 technique=Draw exists=1
+call blend_pop
+echo sampling=unknown res=960x540 undistort=1
+call samplerstate_create s98 filter=POINT u=CLAMP v=CLAMP w=CLAMP aniso=0 border=0
+create f98 -> ok
+tick f98 0.016
+size f98 width=960 height=540
+render f98
+call filter_begin_cs f98 format=RGBA space=SRGB allow=NO_DIRECT -> 1
+call set_vec2 base:bicubic_scale:base_dimension 1920 1080
+call set_vec2 base:bicubic_scale:base_dimension_i 0.00052083336 0.00092592591
+call set_float base:bicubic_scale:undistort_factor 1
+call set_float base:bicubic_scale:multiplier 1
+call blend_push
+call blend_function ONE INVSRCALPHA
+call filter_tech_end f98 base:bicubic_scale size=960x540 technique=DrawUndistort exists=1
+call blend_pop
+echo sampling=unknown res=1281x720 undistort=0
+call samplerstate_create s99 filter=POINT u=CLAMP v=CLAMP w=CLAMP aniso=0 border=0
+create f99 -> ok
+tick f99 0.016
+size f99 width=1281 height=720
+render f99
+call filter_begin_cs f99 format=RGBA space=SRGB allow=NO_DIRECT -> 1
+call set_vec2 base:bicubic_scale:base_dimension 1920 1080
+call set_vec2 base:bicubic_scale:base_dimension_i 0.00052083336 0.00092592591
+call set_float base:bicubic_scale:undistort_factor 1
+call set_float base:bicubic_scale:multiplier 1
+call blend_push
+call blend_function ONE INVSRCALPHA
+call filter_tech_end f99 base:bicubic_scale size=1281x720 technique=Draw exists=1
+call blend_pop
+echo sampling=unknown res=1281x720 undistort=1
+call samplerstate_create s100 filter=POINT u=CLAMP v=CLAMP w=CLAMP aniso=0 border=0
+create f100 -> ok
+tick f100 0.016
+size f100 width=1281 height=720
+render f100
+call filter_begin_cs f100 format=RGBA space=SRGB allow=NO_DIRECT -> 1
+call set_vec2 base:bicubic_scale:base_dimension 1920 1080
+call set_vec2 base:bicubic_scale:base_dimension_i 0.00052083336 0.00092592591
+call set_float base:bicubic_scale:undistort_factor 1.0007813
+call set_float base:bicubic_scale:multiplier 1
+call blend_push
+call blend_function ONE INVSRCALPHA
+call filter_tech_end f100 base:bicubic_scale size=1281x720 technique=DrawUndistort exists=1
+call blend_pop
+echo sampling=unknown res=3840x2160 undistort=0
+call samplerstate_create s101 filter=POINT u=CLAMP v=CLAMP w=CLAMP aniso=0 border=0
+create f101 -> ok
+tick f101 0.016
+size f101 width=3840 height=2160
+render f101
+call filter_begin_cs f101 format=RGBA space=SRGB allow=NO_DIRECT -> 1
+call set_vec2 base:bicubic_scale:base_dimension 1920 1080
+call set_vec2 base:bicubic_scale:base_dimension_i 0.00052083336 0.00092592591
+call set_float base:bicubic_scale:undistort_factor 1
+call set_float base:bicubic_scale:multiplier 1
+call blend_push
+call blend_function ONE INVSRCALPHA
+call filter_tech_end f101 base:bicubic_scale size=3840x2160 technique=Draw exists=1
+call blend_pop
+echo sampling=unknown res=3840x2160 undistort=1
+call samplerstate_create s102 filter=POINT u=CLAMP v=CLAMP w=CLAMP aniso=0 border=0
+create f102 -> ok
+tick f102 0.016
+size f102 width=3840 height=2160
+render f102
+call filter_begin_cs f102 format=RGBA space=SRGB allow=NO_DIRECT -> 1
+call set_vec2 base:bicubic_scale:base_dimension 1920 1080
+call set_vec2 base:bicubic_scale:base_dimension_i 0.00052083336 0.00092592591
+call set_float base:bicubic_scale:undistort_factor 1
+call set_float base:bicubic_scale:multiplier 1
+call blend_push
+call blend_function ONE INVSRCALPHA
+call filter_tech_end f102 base:bicubic_scale size=3840x2160 technique=DrawUndistort exists=1
+call blend_pop
+echo sampling=unknown res=1920x1080 undistort=0
+call samplerstate_create s103 filter=POINT u=CLAMP v=CLAMP w=CLAMP aniso=0 border=0
+create f103 -> ok
+tick f103 0.016
+size f103 width=1920 height=1080
+render f103
+call filter_begin_cs f103 format=RGBA space=SRGB allow=NO_DIRECT -> 1
+call set_vec2 base:bicubic_scale:base_dimension 1920 1080
+call set_vec2 base:bicubic_scale:base_dimension_i 0.00052083336 0.00092592591
+call set_float base:bicubic_scale:undistort_factor 1
+call set_float base:bicubic_scale:multiplier 1
+call blend_push
+call blend_function ONE INVSRCALPHA
+call filter_tech_end f103 base:bicubic_scale size=1920x1080 technique=Draw exists=1
+call blend_pop
+echo sampling=unknown res=1920x1080 undistort=1
+call samplerstate_create s104 filter=POINT u=CLAMP v=CLAMP w=CLAMP aniso=0 border=0
+create f104 -> ok
+tick f104 0.016
+size f104 width=1920 height=1080
+render f104
+call filter_begin_cs f104 format=RGBA space=SRGB allow=NO_DIRECT -> 1
+call set_vec2 base:bicubic_scale:base_dimension 1920 1080
+call set_vec2 base:bicubic_scale:base_dimension_i 0.00052083336 0.00092592591
+call set_float base:bicubic_scale:undistort_factor 1
+call set_float base:bicubic_scale:multiplier 1
+call blend_push
+call blend_function ONE INVSRCALPHA
+call filter_tech_end f104 base:bicubic_scale size=1920x1080 technique=DrawUndistort exists=1
+call blend_pop
+echo sampling=unknown res=1920x1000 undistort=0
+call samplerstate_create s105 filter=POINT u=CLAMP v=CLAMP w=CLAMP aniso=0 border=0
+create f105 -> ok
+tick f105 0.016
+size f105 width=1920 height=1000
+render f105
+call filter_begin_cs f105 format=RGBA space=SRGB allow=NO_DIRECT -> 1
+call set_vec2 base:bicubic_scale:base_dimension 1920 1080
+call set_vec2 base:bicubic_scale:base_dimension_i 0.00052083336 0.00092592591
+call set_float base:bicubic_scale:undistort_factor 1
+call set_float base:bicubic_scale:multiplier 1
+call blend_push
+call blend_function ONE INVSRCALPHA
+call filter_tech_end f105 base:bicubic_scale size=1920x1000 technique=Draw exists=1
+call blend_pop
+echo sampling=unknown res=1920x1000 undistort=1
+call samplerstate_create s106 filter=POINT u=CLAMP v=CLAMP w=CLAMP aniso=0 border=0
+create f106 -> ok
+tick f106 0.016
+size f106 width=1920 height=1000
+render f106
+call filter_begin_cs f106 format=RGBA space=SRGB allow=NO_DIRECT -> 1
+call set_vec2 base:bicubic_scale:base_dimension 1920 1080
+call set_vec2 base:bicubic_scale:base_dimension_i 0.00052083336 0.00092592591
+call set_float base:bicubic_scale:undistort_factor 1.08000004
+call set_float base:bicubic_scale:multiplier 1
+call blend_push
+call blend_function ONE INVSRCALPHA
+call filter_tech_end f106 base:bicubic_scale size=1920x1000 technique=DrawUndistort exists=1
+call blend_pop
+echo sampling=unknown res=4:3 undistort=0
+call samplerstate_create s107 filter=POINT u=CLAMP v=CLAMP w=CLAMP aniso=0 border=0
+create f107 -> ok
+tick f107 0.016
+size f107 width=1920 height=1440
+render f107
+call filter_begin_cs f107 format=RGBA space=SRGB allow=NO_DIRECT -> 1
+call set_vec2 base:bicubic_scale:base_dimension 1920 1080
+call set_vec2 base:bicubic_scale:base_dimension_i 0.00052083336 0.00092592591
+call set_float base:bicubic_scale:undistort_factor 1
+call set_float base:bicubic_scale:multiplier 1
+call blend_push
+call blend_function ONE INVSRCALPHA
+call filter_tech_end f107 base:bicubic_scale size=1920x1440 technique=Draw exists=1
+call blend_pop
+echo sampling=unknown res=4:3 undistort=1
+call samplerstate_create s108 filter=POINT u=CLAMP v=CLAMP w=CLAMP aniso=0 border=0
+create f108 -> ok
+tick f108 0.016
+size f108 width=1920 height=1440
+render f108
+call filter_begin_cs f108 format=RGBA space=SRGB allow=NO_DIRECT -> 1
+call set_vec2 base:bicubic_scale:base_dimension 1920 1080
+call set_vec2 base:bicubic_scale:base_dimension_i 0.00052083336 0.00092592591
+call set_float base:bicubic_scale:undistort_factor 0.75
+call set_float base:bicubic_scale:multiplier 1
+call blend_push
+call blend_function ONE INVSRCALPHA
+call filter_tech_end f108 base:bicubic_scale size=1920x1440 technique=DrawUndistort exists=1
+call blend_pop
+echo sampling=unknown res=16:9 undistort=0
+call samplerstate_create s109 filter=POINT u=CLAMP v=CLAMP w=CLAMP aniso=0 border=0
+create f109 -> ok
+tick f109 0.016
+size f109 width=1920 height=1080
+render f109
+call skip_video_filter f109
+echo sampling=unknown res=16:9 undistort=1
+call samplerstate_create s110 filter=POINT u=CLAMP v=CLAMP w=CLAMP aniso=0 border=0
+create f110 -> ok
+tick f110 0.016
+size f110 width=1920 height=1080
+render f110
+call skip_video_filter f110
+echo sampling=unknown res=959x1079 undistort=0
+call samplerstate_create s111 filter=POINT u=CLAMP v=CLAMP w=CLAMP aniso=0 border=0
+create f111 -> ok
+call get_param base:bilinear_lowres_scale:base_dimension -> null
+call get_param base:bilinear_lowres_scale:base_dimension_i -> null
+tick f111 0.016
+size f111 width=959 height=1079
+render f111
+call filter_begin_cs f111 format=RGBA space=SRGB allow=NO_DIRECT -> 1
+call set_float base:bilinear_lowres_scale:multiplier 1
+call blend_push
+call blend_function ONE INVSRCALPHA
+call filter_tech_end f111 base:bilinear_lowres_scale size=959x1079 technique=Draw exists=1
+call blend_pop
+echo sampling=unknown res=959x1079 undistort=1
+call samplerstate_create s112 filter=POINT u=CLAMP v=CLAMP w=CLAMP aniso=0 border=0
+create f112 -> ok
+call get_param base:bilinear_lowres_scale:base_dimension -> null
+call get_param base:bilinear_lowres_scale:base_dimension_i -> null
+tick f112 0.016
+size f112 width=959 height=1079
+render f112
+call filter_begin_cs f112 format=RGBA space=SRGB allow=NO_DIRECT -> 1
+call set_float base:bilinear_lowres_scale:multiplier 1
+call blend_push
+call blend_function ONE INVSRCALPHA
+call filter_tech_end f112 base:bilinear_lowres_scale size=959x1079 technique=Draw exists=1
+call blend_pop

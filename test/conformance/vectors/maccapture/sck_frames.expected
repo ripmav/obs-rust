@@ -1,0 +1,16 @@
+sck_window_frame update_config=true frame=1600x900
+  config_size=1600x900
+sck_window_frame update_config=false frame=1600x900
+sck_window_frame update_config=true frame=1600x900
+  config_size=1600x900
+sck_window_frame update_config=false frame=0x0
+sck_window_frame update_config=true frame=3024x1964
+  config_size=3024x1964
+sck_window_frame update_config=false frame=3024x1964
+sck_window_frame update_config=true frame=1001x563
+  config_size=1001x563
+sck_dispatch video_update
+sck_dispatch ignored
+sck_dispatch audio_update
+sck_dispatch ignored
+sck_dispatch ignored

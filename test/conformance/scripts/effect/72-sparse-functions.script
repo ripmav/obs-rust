@@ -1,0 +1,30 @@
+# CORE: functions in the shader parser. Parameters and the return semantic are stored like in the effect parser;
+# the body is only a token range (start = the '{', end = the token after the matching '}'), printed here as
+# the concatenated token text from '{' to just before `end`, which includes the closing brace and everything
+# up to the next non-blank token boundary. The parser does not look into bodies, so struct/param mentions
+# are not tracked.
+backend text none
+sparse f1 "float4 F(float4 a : POSITION, in float b, out float c, inout float d, uniform float e) : COLOR { return a; }"
+sparse f2 "void F() { }"
+sparse f3 "float F() { if (1) { return 1; } return 0; } float G() { return 2; }"
+sparse f4 "float F(float a) : COLOR\n{\n return a;\n}\nfloat G() { return 1; }"
+sparse f5 "float F() { return \"}\"; }"
+sparse f6 "float F() { /* } */ return 1; }"
+sparse f7 "uniform float F() { return 1; }"
+sparse f8 "const float F() { return 1; }"
+echo --- errors
+sparse e1 "float F( { return 1; }"
+sparse e2 "float F(float) { return 1; }"
+sparse e3 "float F(float a, ) { return 1; }"
+sparse e4 "float F(float a float b) { return 1; }"
+sparse e5 "float F(float a) float { return 1; }"
+sparse e6 "float F(float a) : { return 1; }"
+sparse e7 "float F(float a) : COLOR return 1;"
+sparse e8 "float F(float a) ;"
+sparse e9 "float F(float a) { return 1;"
+sparse e10 "float F("
+sparse e11 "float F(float a : POS) { return 1; }"
+sparse e12 "float F(in in float a) { return 1; }"
+sparse e13 "float F() { return 1; } }"
+sparse e14 "float F() : COLOR : POSITION { return 1; }"
+sparse e15 "float F() { { }"

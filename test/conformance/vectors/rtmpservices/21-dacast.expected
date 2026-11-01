@@ -1,0 +1,60 @@
+fake proc_handler_add "void twitch_ingests_refresh(int seconds)"
+fake proc_handler_add "void amazon_ivs_ingests_refresh(int seconds)"
+fake update_info_create prefix="[rtmp-services plugin] " agent="rtmp-services plugin (libobs 99.0.0-test)" url=https://obsproject.com/obs2_update/rtmp-services/v5 local=/mod/data cache=/cfg/rtmp-services/ confirm=set
+fake obs_register_service id=rtmp_common
+fake obs_register_service id=rtmp_custom
+module-load -> 1 name="rtmp-services plugin (libobs 99.0.0-test)"
+echo before-any-download-key-user-pass-read-the-invalid-ingest
+get key = "fake_key"
+get user = ""
+get pass = ""
+echo url-with-no-answer-waits-3s-and-gives-the-invalid-ingest
+fake update_info_create_single prefix="[dacast ingest load data] " agent="rtmp-services plugin (libobs 99.0.0-test)" url=https://dacast.example/v3/encoder-setup/DK1
+get url = "rtmp://dacast"
+clock 3000 ms
+get key = "fake_key"
+get user = ""
+get pass = ""
+echo answer
+fake update_info_destroy url=https://dacast.example/v3/encoder-setup/DK1 pending=0
+fake update_info_create_single prefix="[dacast ingest load data] " agent="rtmp-services plugin (libobs 99.0.0-test)" url=https://dacast.example/v3/encoder-setup/DK1
+fake updater-deliver https://dacast.example/v3/encoder-setup/DK1 len=96
+get url = "rtmp://dc.example/live"
+clock 3100 ms
+get key = "sk1"
+get user = "u1"
+get pass = "p1"
+echo can-connect-only-looks-at-the-key-for-dacast
+get can_connect = 1
+fake update_info_destroy url=https://dacast.example/v3/encoder-setup/DK1 pending=0
+fake update_info_create_single prefix="[dacast ingest load data] " agent="rtmp-services plugin (libobs 99.0.0-test)" url=https://dacast.example/v3/encoder-setup/DK1
+fake updater-deliver https://dacast.example/v3/encoder-setup/DK1 len=96
+get connect:0 = "rtmp://dc.example/live"
+get connect:2 = "sk1"
+get connect:4 = "u1"
+get connect:6 = "p1"
+get connect:8 = @null
+echo SRT-protocol-passphrase-is-the-password
+get protocol = "SRT"
+get connect:8 = "p1"
+get connect:2 = "sk1"
+echo second-key-incomplete-answer-leaves-null-fields-in-table
+fake update_info_destroy url=https://dacast.example/v3/encoder-setup/DK1 pending=0
+fake update_info_create_single prefix="[dacast ingest load data] " agent="rtmp-services plugin (libobs 99.0.0-test)" url=https://dacast.example/v3/encoder-setup/DK2
+fake updater-deliver https://dacast.example/v3/encoder-setup/DK2 len=34
+get url = @null
+get key = @null
+get user = @null
+get pass = @null
+echo malformed-answer
+fake update_info_destroy url=https://dacast.example/v3/encoder-setup/DK2 pending=0
+fake update_info_create_single prefix="[dacast ingest load data] " agent="rtmp-services plugin (libobs 99.0.0-test)" url=https://dacast.example/v3/encoder-setup/DK3
+fake updater-deliver https://dacast.example/v3/encoder-setup/DK3 len=7
+get url = @null
+get key = @null
+echo empty-key-service-never-finds-an-entry
+get key = "fake_key"
+get can_connect = 1
+fake update_info_destroy url=https://obsproject.com/obs2_update/rtmp-services/v5 pending=0
+fake update_info_destroy url=https://dacast.example/v3/encoder-setup/DK3 pending=0
+module-unload

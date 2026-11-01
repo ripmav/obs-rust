@@ -1,0 +1,31 @@
+# HLS queue overflow handling (worker thread held back so the queue grows). The video drop priority of an H.264
+# packet is the highest (nal_header >> 5) over its NAL units. keyint_sec=1 -> threshold 2 s between the last queued
+# video dts and the oldest queued NON-keyframe video packet. Overflow first drops packets of priority < 2 (HIGH),
+# then < 3 (HIGHEST); while min_priority is raised new video packets below it are dropped too, until one at or above
+# arrives. Audio is never dropped. Wire output of the worker appears at "pump".
+reset
+output h service
+venc h264 bitrate=2500 extra=0a0b keyint_sec=1
+service https://i.example/live k
+create hls
+start
+pkt v dts=0 key=1 data=0000000165aa
+pkt a dts=0 data=0102
+pkt v dts=500 key=0 data=0000000141aa
+pkt v dts=1000 key=0 data=0000000101aa
+pkt v dts=1500 key=0 data=0000000121aa
+state_hls
+pkt v dts=2600 key=0 data=0000000101aa
+state_hls
+echo this_packet_triggers_the_drop
+pkt v dts=2700 key=0 data=0000000141aa
+state_hls
+queue
+pkt a dts=2800 data=0304
+echo keyframe_with_priority_3_ends_the_dropping_phase
+pkt v dts=3000 key=1 data=0000000165aa
+state_hls
+dropped
+queue
+pump 20
+state

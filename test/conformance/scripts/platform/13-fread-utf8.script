@@ -1,0 +1,61 @@
+# os_fread_utf8(file, &str) / os_quick_read_utf8_file(path): whole file as a NUL terminated
+# buffer, one leading UTF-8 byte order mark removed. The reference returns 0 from os_fread_utf8
+# in every case (defect D-3); the output buffer is NULL for an empty file or a file that holds
+# only a BOM. Content is returned byte for byte (no validation, no line-ending changes).
+put_hex plain.txt 68656c6c6f
+put_hex bom.txt efbbbf68656c6c6f
+put_hex bomonly.txt efbbbf
+put_hex twoboms.txt efbbbfefbbbf61
+put_hex midbom.txt 61efbbbf62
+put_hex partial.txt efbb
+put_hex partial2.txt efbb61
+put_hex short.txt 61
+put_hex one.txt 61
+put_hex crlf.txt 610d0a620a
+put_hex invalid.txt 61ff80c3
+put_hex nul.txt 6100620063
+put_hex utf16.txt fffe6100
+put_hex empty.txt -
+fopen a plain.txt rb
+fread_utf8 a
+ftelli a
+fclose a
+fopen a bom.txt rb
+fread_utf8 a
+ftelli a
+fclose a
+fopen a bomonly.txt rb
+fread_utf8 a
+ftelli a
+fclose a
+fopen a empty.txt rb
+fread_utf8 a
+fclose a
+fopen a twoboms.txt rb
+fread_utf8 a
+fclose a
+fopen a partial.txt rb
+fread_utf8 a
+fclose a
+# a handle at a non-zero position is still read from the start
+fopen a plain.txt rb
+fseeki a 3 set
+fread_utf8 a
+fclose a
+# the same through the path based helper (NULL for missing / empty / BOM-only)
+quick_read_utf8 plain.txt
+quick_read_utf8 bom.txt
+quick_read_utf8 bomonly.txt
+quick_read_utf8 empty.txt
+quick_read_utf8 missing.txt
+quick_read_utf8 twoboms.txt
+quick_read_utf8 midbom.txt
+quick_read_utf8 partial.txt
+quick_read_utf8 partial2.txt
+quick_read_utf8 short.txt
+quick_read_utf8 crlf.txt
+quick_read_utf8 invalid.txt
+quick_read_utf8 utf16.txt
+# the buffer holds all bytes, but a C string stops at the first NUL
+quick_read_utf8 nul.txt
+quick_read_utf8 @null

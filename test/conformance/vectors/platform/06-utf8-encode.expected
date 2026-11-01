@@ -1,0 +1,42 @@
+w2u rc=1 hex=41
+w2u rc=1
+w2u rc=1 hex=7f
+w2u rc=2 hex=c280
+w2u rc=2 hex=dfbf
+w2u rc=3 hex=e0a080
+w2u rc=3 hex=efbfbf
+w2u rc=4 hex=f0908080
+w2u rc=4 hex=f48fbfbf
+w2u rc=10 hex=48c3a9e282acf09f9880
+w2u rc=10
+w2u rc=4 hex=f4908080
+w2u rc=4 hex=f7bfbfbf
+w2u rc=5 hex=f888808080
+w2u rc=5 hex=fbbfbfbfbf
+w2u rc=6 hex=fc8480808080
+w2u rc=6 hex=fdbfbfbfbfbf
+w2u rc=0
+w2u rc=0
+w2u rc=0
+w2u rc=3 hex=ed9fbf
+w2u rc=3 hex=ee8080
+w2u rc=0
+w2u rc=0
+w2u rc=0
+w2u rc=0
+w2u rc=1
+w2u rc=3 hex=610062
+w2u rc=2 hex=6162
+w2u rc=1 hex=00
+w2u rc=0
+w2u rc=0
+w2u rc=0
+w2u rc=2 hex=4142
+w2u rc=0
+w2u rc=3 hex=e282ac
+w2u rc=0
+w2u rc=4 hex=f09f9880
+w2u rc=0
+w2u rc=0
+w2u rc=4 hex=61e282ac
+w2u rc=0

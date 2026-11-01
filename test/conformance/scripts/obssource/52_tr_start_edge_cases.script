@@ -1,0 +1,28 @@
+# Start edge cases:
+#  * starting towards the current source while idle returns false;
+#  * starting a transition while one is active first COMMITS the running one (obs_transition_set with the current
+#    destination: B becomes A, no "stop" callback, only the stop signals), and only THEN is the request evaluated;
+#    so restarting towards the current destination finds "dest == A, idle" and returns false;
+#  * destination NULL is accepted (transition to "nothing").
+kind in input video size
+kind tr transition video,audio tstart,tstop
+create t tr T
+create a in A
+create b in B
+create c in C
+tr_set t a
+tr_start t 0 100 a
+clock 1000
+tr_start t 0 100 b
+tr_state t
+clock 2000
+tr_start t 0 500 b
+tr_state t
+clock 3000
+tr_start t 0 700 c
+tr_state t
+clock 4000
+tr_start t 0 100 -
+tr_state t
+tr_start t 0 100 -
+tr_state t

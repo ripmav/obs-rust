@@ -1,0 +1,23 @@
+# CORE. obs-nvenc defaults for each codec. Differences between codecs: profile
+# (high for H.264, main otherwise); bf and lookahead depend on the probed encoder
+# capabilities (bf = 2 if the GPU supports B-frames for this codec, else 0).
+# nv_caps BFRAMES BREF_MODES ENGINES LOSSLESS UHQ TEN_BIT LOOKAHEAD
+nv_caps 4 3 2 1 1 1 1
+data D
+nv_defaults h264 D
+dump D
+data H
+nv_defaults hevc H
+dump H
+data A
+nv_defaults av1 A
+dump A
+echo no-bframe-support-and-no-lookahead
+nv_caps 0 0 1 0 0 0 0
+data E
+nv_defaults h264 E
+dump E
+echo explicit-user-values-win
+set E bf int 3
+set E rate_control str VBR
+dump E

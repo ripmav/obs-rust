@@ -1,0 +1,132 @@
+> dump 2
+> defaults h264
+> set bool adaptive_quantization 1
+> create h264 soft
+cuda.ctx_init
+nv.OpenEncodeSessionEx deviceType=CUDA apiVersion=13.0
+nv.GetEncodePresetConfigEx codec=NV_ENC_CODEC_H264_GUID preset=NV_ENC_PRESET_P5_GUID tuning=HIGH_QUALITY
+log info [obs-nvenc: 'enc'] settings: 	codec:        H264 	rate_control: cbr 	bitrate:      10000 	keyint:       250 	preset:       p5 	tuning:       hq 	multipass:    qres 	profile:      high 	width:        1920 	height:       1080 	b-frames:     0 	b-ref-mode:   0 	lookahead:    false (0 frames) 	aq:           true 
+nv.InitializeEncoder
+  params: codec=NV_ENC_CODEC_H264_GUID preset=NV_ENC_PRESET_P5_GUID tuning=HIGH_QUALITY size=1920x1080 dar=1920x1080 fps=60/1 async=0 ptd=1 split=0
+  config: profile=NV_ENC_H264_PROFILE_HIGH_GUID gop=250 frameIntervalP=1
+  rc: mode=CBR avg=10000000 max=10000000 vbv=10000000 vbvInit=0 tq=0 cqP=0 cqB=0 cqI=0 aq=1 aqStrength=8 taq=0
+  rc: lookahead=0 depth=0 iadapt_off=0 badapt_off=0 multipass=QUARTER qpmap=2
+  h264: level=0 idr=250 bref=0 filler=1 repeatSPSPPS=0 disableSPSPPS=0 aud=0 bufSEI=0 timingSEI=1 lossless=0 slice=3/1 chroma=0 inDepth=8 outDepth=8
+  vui: signal=1 full=0 colour=1 prim=1 trc=1 matrix=1
+cuda.init_surfaces n=4
+create -> ok
+> state
+state: codec=H264 cx=1920 cy=1080 in_format=2 buf_count=4 output_delay=3 can_change_bitrate=0 non_texture=1 queued=0 header_size=0 bitstreams=4 hdr_mdi=0 hdr_cll=0
+state: props rate_control=cbr preset=p5 tune=hq multipass=qres profile=high bf=0 aq=1
+> destroy
+nv.DestroyBitstreamBuffer
+nv.DestroyBitstreamBuffer
+nv.DestroyBitstreamBuffer
+nv.DestroyBitstreamBuffer
+nv.DestroyEncoder
+cuda.ctx_free
+destroyed
+> nvcap temporal_aq 1
+> nvcap dyn_bitrate 1
+> create h264 soft
+cuda.ctx_init
+nv.OpenEncodeSessionEx deviceType=CUDA apiVersion=13.0
+nv.GetEncodePresetConfigEx codec=NV_ENC_CODEC_H264_GUID preset=NV_ENC_PRESET_P5_GUID tuning=HIGH_QUALITY
+log info [obs-nvenc: 'enc'] settings: 	codec:        H264 	rate_control: cbr 	bitrate:      10000 	keyint:       250 	preset:       p5 	tuning:       hq 	multipass:    qres 	profile:      high 	width:        1920 	height:       1080 	b-frames:     0 	b-ref-mode:   0 	lookahead:    false (0 frames) 	aq:           true 
+nv.InitializeEncoder
+  params: codec=NV_ENC_CODEC_H264_GUID preset=NV_ENC_PRESET_P5_GUID tuning=HIGH_QUALITY size=1920x1080 dar=1920x1080 fps=60/1 async=0 ptd=1 split=0
+  config: profile=NV_ENC_H264_PROFILE_HIGH_GUID gop=250 frameIntervalP=1
+  rc: mode=CBR avg=10000000 max=10000000 vbv=10000000 vbvInit=0 tq=0 cqP=0 cqB=0 cqI=0 aq=1 aqStrength=8 taq=1
+  rc: lookahead=0 depth=0 iadapt_off=0 badapt_off=0 multipass=QUARTER qpmap=2
+  h264: level=0 idr=250 bref=0 filler=1 repeatSPSPPS=0 disableSPSPPS=0 aud=0 bufSEI=0 timingSEI=1 lossless=0 slice=3/1 chroma=0 inDepth=8 outDepth=8
+  vui: signal=1 full=0 colour=1 prim=1 trc=1 matrix=1
+cuda.init_surfaces n=4
+create -> ok
+> state
+state: codec=H264 cx=1920 cy=1080 in_format=2 buf_count=4 output_delay=3 can_change_bitrate=1 non_texture=1 queued=0 header_size=0 bitstreams=4 hdr_mdi=0 hdr_cll=0
+state: props rate_control=cbr preset=p5 tune=hq multipass=qres profile=high bf=0 aq=1
+> destroy
+nv.DestroyBitstreamBuffer
+nv.DestroyBitstreamBuffer
+nv.DestroyBitstreamBuffer
+nv.DestroyBitstreamBuffer
+nv.DestroyEncoder
+cuda.ctx_free
+destroyed
+> set bool adaptive_quantization 0
+> create h264 soft
+cuda.ctx_init
+nv.OpenEncodeSessionEx deviceType=CUDA apiVersion=13.0
+nv.GetEncodePresetConfigEx codec=NV_ENC_CODEC_H264_GUID preset=NV_ENC_PRESET_P5_GUID tuning=HIGH_QUALITY
+log info [obs-nvenc: 'enc'] settings: 	codec:        H264 	rate_control: cbr 	bitrate:      10000 	keyint:       250 	preset:       p5 	tuning:       hq 	multipass:    qres 	profile:      high 	width:        1920 	height:       1080 	b-frames:     0 	b-ref-mode:   0 	lookahead:    false (0 frames) 	aq:           false 
+nv.InitializeEncoder
+  params: codec=NV_ENC_CODEC_H264_GUID preset=NV_ENC_PRESET_P5_GUID tuning=HIGH_QUALITY size=1920x1080 dar=1920x1080 fps=60/1 async=0 ptd=1 split=0
+  config: profile=NV_ENC_H264_PROFILE_HIGH_GUID gop=250 frameIntervalP=1
+  rc: mode=CBR avg=10000000 max=10000000 vbv=10000000 vbvInit=0 tq=0 cqP=0 cqB=0 cqI=0 aq=0 aqStrength=0 taq=0
+  rc: lookahead=0 depth=0 iadapt_off=0 badapt_off=0 multipass=QUARTER qpmap=2
+  h264: level=0 idr=250 bref=0 filler=1 repeatSPSPPS=0 disableSPSPPS=0 aud=0 bufSEI=0 timingSEI=1 lossless=0 slice=3/1 chroma=0 inDepth=8 outDepth=8
+  vui: signal=1 full=0 colour=1 prim=1 trc=1 matrix=1
+cuda.init_surfaces n=4
+create -> ok
+> state
+state: codec=H264 cx=1920 cy=1080 in_format=2 buf_count=4 output_delay=3 can_change_bitrate=1 non_texture=1 queued=0 header_size=0 bitstreams=4 hdr_mdi=0 hdr_cll=0
+state: props rate_control=cbr preset=p5 tune=hq multipass=qres profile=high bf=0 aq=0
+> destroy
+nv.DestroyBitstreamBuffer
+nv.DestroyBitstreamBuffer
+nv.DestroyBitstreamBuffer
+nv.DestroyBitstreamBuffer
+nv.DestroyEncoder
+cuda.ctx_free
+destroyed
+> nvpreset enableAQ 1
+> nvpreset aqStrength 5
+> create h264 soft
+cuda.ctx_init
+nv.OpenEncodeSessionEx deviceType=CUDA apiVersion=13.0
+nv.GetEncodePresetConfigEx codec=NV_ENC_CODEC_H264_GUID preset=NV_ENC_PRESET_P5_GUID tuning=HIGH_QUALITY
+log info [obs-nvenc: 'enc'] settings: 	codec:        H264 	rate_control: cbr 	bitrate:      10000 	keyint:       250 	preset:       p5 	tuning:       hq 	multipass:    qres 	profile:      high 	width:        1920 	height:       1080 	b-frames:     0 	b-ref-mode:   0 	lookahead:    false (0 frames) 	aq:           false 
+nv.InitializeEncoder
+  params: codec=NV_ENC_CODEC_H264_GUID preset=NV_ENC_PRESET_P5_GUID tuning=HIGH_QUALITY size=1920x1080 dar=1920x1080 fps=60/1 async=0 ptd=1 split=0
+  config: profile=NV_ENC_H264_PROFILE_HIGH_GUID gop=250 frameIntervalP=1
+  rc: mode=CBR avg=10000000 max=10000000 vbv=10000000 vbvInit=0 tq=0 cqP=0 cqB=0 cqI=0 aq=1 aqStrength=5 taq=0
+  rc: lookahead=0 depth=0 iadapt_off=0 badapt_off=0 multipass=QUARTER qpmap=2
+  h264: level=0 idr=250 bref=0 filler=1 repeatSPSPPS=0 disableSPSPPS=0 aud=0 bufSEI=0 timingSEI=1 lossless=0 slice=3/1 chroma=0 inDepth=8 outDepth=8
+  vui: signal=1 full=0 colour=1 prim=1 trc=1 matrix=1
+cuda.init_surfaces n=4
+create -> ok
+> destroy
+nv.DestroyBitstreamBuffer
+nv.DestroyBitstreamBuffer
+nv.DestroyBitstreamBuffer
+nv.DestroyBitstreamBuffer
+nv.DestroyEncoder
+cuda.ctx_free
+destroyed
+> set bool adaptive_quantization 1
+> set str rate_control CQP
+> create h264 soft
+cuda.ctx_init
+nv.OpenEncodeSessionEx deviceType=CUDA apiVersion=13.0
+nv.GetEncodePresetConfigEx codec=NV_ENC_CODEC_H264_GUID preset=NV_ENC_PRESET_P5_GUID tuning=HIGH_QUALITY
+log info [obs-nvenc: 'enc'] settings: 	codec:        H264 	rate_control: CQP 	cqp:          20 	keyint:       250 	preset:       p5 	tuning:       hq 	multipass:    qres 	profile:      high 	width:        1920 	height:       1080 	b-frames:     0 	b-ref-mode:   0 	lookahead:    false (0 frames) 	aq:           true 
+nv.InitializeEncoder
+  params: codec=NV_ENC_CODEC_H264_GUID preset=NV_ENC_PRESET_P5_GUID tuning=HIGH_QUALITY size=1920x1080 dar=1920x1080 fps=60/1 async=0 ptd=1 split=0
+  config: profile=NV_ENC_H264_PROFILE_HIGH_GUID gop=250 frameIntervalP=1
+  rc: mode=CONSTQP avg=10000000 max=10000000 vbv=10000000 vbvInit=0 tq=0 cqP=20 cqB=20 cqI=20 aq=1 aqStrength=8 taq=1
+  rc: lookahead=0 depth=0 iadapt_off=0 badapt_off=0 multipass=QUARTER qpmap=2
+  h264: level=0 idr=250 bref=0 filler=0 repeatSPSPPS=0 disableSPSPPS=0 aud=0 bufSEI=0 timingSEI=1 lossless=0 slice=3/1 chroma=0 inDepth=8 outDepth=8
+  vui: signal=1 full=0 colour=1 prim=1 trc=1 matrix=1
+cuda.init_surfaces n=4
+create -> ok
+> state
+state: codec=H264 cx=1920 cy=1080 in_format=2 buf_count=4 output_delay=3 can_change_bitrate=0 non_texture=1 queued=0 header_size=0 bitstreams=4 hdr_mdi=0 hdr_cll=0
+state: props rate_control=CQP preset=p5 tune=hq multipass=qres profile=high bf=0 aq=1
+> destroy
+nv.DestroyBitstreamBuffer
+nv.DestroyBitstreamBuffer
+nv.DestroyBitstreamBuffer
+nv.DestroyBitstreamBuffer
+nv.DestroyEncoder
+cuda.ctx_free
+destroyed

@@ -1,0 +1,15 @@
+# QUIRK Q-9: when graphics setup fails after the premultiplied-alpha effect was created, that effect
+# is never destroyed (the teardown forgets it): the number of live graphics objects does not return
+# to the value before the call. Informational: an implementation SHOULD free it; the vector records
+# the reference behaviour (+1).
+startup en-US -
+live_mark
+fake effect_fail solid.effect
+reset_video
+live_delta
+fake effect_fail_clear 1
+fake effect_fail default_rect.effect
+reset_video
+live_mark
+reset_video
+live_delta

@@ -1,0 +1,21 @@
+# profiler: one root call measured with the fake clock (CORE).
+# Durations are rounded to microseconds as (ns + 500) / 1000 and aggregated per distinct
+# microsecond value; the snapshot lists them sorted by descending duration.
+p_name 0 root
+p_begin
+p_clock 1000000
+p_start 0
+p_tick 1500
+p_end 0
+p_snap
+p_dump
+p_tick 100
+p_call 0 2499
+p_call 0 2500
+p_call 0 1499
+p_call 0 1500
+p_call 0 1500
+p_call 0 0
+p_snap
+p_dump
+p_free

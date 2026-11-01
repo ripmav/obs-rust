@@ -1,0 +1,36 @@
+# S-045 frame dropping when the send queue holds more than drop_threshold of video (B-frame stage, priority 2).
+# thresholds: 700 ms (b) and 900 ms (p). drop_priority: 3 keyframe/ref, 2 P, 1 B, 0 disposable. dts in microseconds.
+reset
+codec 0 h264
+set active 1
+set drop_threshold_usec 700000
+set pframe_drop_threshold_usec 900000
+# fewer than 5 queued packets: never drop, congestion forced to 0
+pkt video 0 3 1
+pkt video 100000 0 0
+pkt video 200000 1 0
+pkt video 300000 2 0
+state
+# 5th packet: now measured. last_dts (the 4th packet, 300000) - first non-keyframe (100000) = 200000 -> congestion 200/700
+pkt video 400000 0 0
+# the duration only counts up to the last QUEUED video packet; audio does not move last_dts
+pkt audio 900000 0 0
+pkt video 500000 3 0
+pkt video 600000 0 0
+# duration so far stays below 700000
+pkt video 700000 1 0
+pkt video 800000 2 0
+# the check runs BEFORE the new packet is added, so it sees the previous last_dts
+pkt video 900000 0 0
+queue
+# 1000000-... : the check sees last_dts 900000 - first non-key 100000 = 800000 > 700000.
+# The B-stage drops everything below priority 2 (disposable and B-frames), keeps audio, P and keyframes
+pkt video 1000000 0 0
+queue
+state
+# min_priority is now 2: later packets below it are dropped on arrival until one with priority >= 2 arrives
+pkt video 1100000 0 0
+pkt video 1200000 1 0
+pkt video 1300000 2 0
+pkt video 1400000 0 0
+state

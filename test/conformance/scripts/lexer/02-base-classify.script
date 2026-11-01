@@ -1,0 +1,12 @@
+# CORE: character classification helpers and newline_size.
+chars " \t\r\n\x0b\x0c_a0"
+is_newline_pair "\r" "\n"
+is_newline_pair "\n" "\r"
+is_newline_pair "\n" "\n"
+is_newline_pair "\r" "\r"
+newline_size "\r\nx"
+newline_size "\n\rx"
+newline_size "\n\nx"
+newline_size "\rx"
+newline_size "x"
+newline_size ""

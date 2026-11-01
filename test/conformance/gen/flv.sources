@@ -1,0 +1,17 @@
+# Spec S-021: FLV muxer (flv-mux.c), HEVC/AV1 config-record builders (rtmp-hevc.c, rtmp-av1.c)
+# and the AMF0 codec of the vendored librtmp (amf.c, log.c for RTMP_Log).
+# flv_stubs.c provides fake obs_output/obs_encoder/audio/video objects (scripted inputs).
+# -DSSL_CTX=void: rtmp.h (included by amf.c and rtmp-helpers.h) names a TLS context type; the
+# conformance build has no TLS library and never touches it.
+# -DENABLE_HEVC: the production build defines it; it enables the "hevc" codec in flv-mux.
+test/conformance/gen/flv_runner.c
+test/conformance/gen/flv_stubs.c
+plugins/obs-outputs/flv-mux.c
+plugins/obs-outputs/rtmp-hevc.c
+plugins/obs-outputs/rtmp-av1.c
+plugins/obs-outputs/librtmp/amf.c
+plugins/obs-outputs/librtmp/log.c
+libobs/obs-nal.c
+libobs/util/array-serializer.c
+-DSSL_CTX=void
+-DENABLE_HEVC

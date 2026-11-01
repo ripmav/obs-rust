@@ -1,0 +1,41 @@
+add text d ok
+add text pw ok
+add text ml ok
+add text inf ok
+info
+  prop d type=text desc="Default" long=@null enabled=1 visible=1
+    texttype=default monospace=0 infotype=normal wrap=1
+info
+  prop pw type=text desc="Password" long=@null enabled=1 visible=1
+    texttype=password monospace=0 infotype=normal wrap=1
+info
+  prop ml type=text desc="Multi" long=@null enabled=1 visible=1
+    texttype=multiline monospace=0 infotype=normal wrap=1
+info
+  prop inf type=text desc="Info" long=@null enabled=1 visible=1
+    texttype=info monospace=0 infotype=normal wrap=1
+info
+  prop inf type=text desc="Info" long=@null enabled=1 visible=1
+    texttype=info monospace=0 infotype=warning wrap=0
+info
+  prop d type=text desc="Default" long=@null enabled=1 visible=1
+    texttype=default monospace=1 infotype=error wrap=1
+echo out-of-range-numeric-type-is-stored
+add text weird ok
+info
+  prop weird type=text desc="w" long=@null enabled=1 visible=1
+    texttype=?9 monospace=0 infotype=normal wrap=1
+echo setters-on-other-kinds-are-ignored
+add bool b ok
+info
+  prop b type=bool desc="B" long=@null enabled=1 visible=1
+    -
+probe int: 0 0 0 scroller @null
+probe float: 0 0 0 scroller @null
+probe text: default 0 normal 1
+probe path: directory @null @null
+probe list: invalid invalid count=0 name0=@null str0=@null int0=0 float0=0 bool0=0 disabled0=0
+probe editable_list: strings @null @null
+probe frame_rate: options=0 ranges=0 name0=@null desc0=@null min0=0/0 max0=0/0
+probe group: invalid content=@null
+probe button: default ""

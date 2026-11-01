@@ -1,0 +1,159 @@
+# speed 50 (half speed: timestamps double)
+minit -> ok
+ff open path=sp format=- nobuffer=1 interrupt=0 opts=[]
+minit2 -> ok has_v=1 has_a=1
+ff seek stream=0 target=0 flags=BACKWARD
+ff decoder flush
+ff decoder flush
+ff read #0 stream=0 pts=0 size=4
+ff read #1 stream=1 pts=0 size=4
+cb preload ts=0 fmt=I420 16x16 flip=0 full=0 trc=DEFAULT maxlum=0 flags=0 ls0=16 d0=01 mat0=1.16438 min0=0.0627451 max0=0.921569
+mreset -> 1
+tick -> idle
+cb video ts=0 fmt=I420 16x16 flip=0 full=0 trc=DEFAULT maxlum=0 flags=0 ls0=16 d0=01 mat0=1.16438 min0=0.0627451 max0=0.921569
+cb audio ts=0 fmt=16BIT spk=STEREO rate=24000 frames=4800 d0=12
+ff read #2 stream=0 pts=100 size=4
+ff read #3 stream=1 pts=4800 size=4
+tick -> played
+sleep 200
+cb video ts=200000000 fmt=I420 16x16 flip=0 full=0 trc=DEFAULT maxlum=0 flags=0 ls0=16 d0=21 mat0=1.16438 min0=0.0627451 max0=0.921569
+cb audio ts=200000000 fmt=16BIT spk=STEREO rate=24000 frames=4800 d0=32
+ff decoder drain
+ff decoder drain
+ff seek stream=0 target=0 flags=BACKWARD
+ff decoder flush
+ff decoder flush
+ff read #0 stream=0 pts=0 size=4
+ff read #1 stream=1 pts=0 size=4
+cb preload ts=600000000 fmt=I420 16x16 flip=0 full=0 trc=DEFAULT maxlum=0 flags=0 ls0=16 d0=01 mat0=1.16438 min0=0.0627451 max0=0.921569
+cb stop
+tick -> eof
+tick -> idle
+mstate eof=0 active=0 stopping=0 looping=0 pause=0 reset=0 seek=0 seek_next_ts=0 reset_ts=0 preload_frame=0 has_v=1 has_a=1
+  base_ts=400000000 start_ts=0 play_sys_ts=1200000000 next_pts_ns=0 next_ns=0 seek_pos=0 speed=50 cur_space=DEFAULT cur_range=DEFAULT
+  v ready=1 pts=0 next_pts=200000000 last_dur=200000000 eof=0 key=0 pending=0 npkts=0
+  a ready=1 pts=0 next_pts=200000000 last_dur=200000000 eof=0 key=0 pending=0 npkts=0
+mtime -> 100
+mfree
+# speed 200
+minit -> ok
+ff open path=sp format=- nobuffer=1 interrupt=0 opts=[]
+minit2 -> ok has_v=1 has_a=1
+ff seek stream=0 target=0 flags=BACKWARD
+ff decoder flush
+ff decoder flush
+ff read #0 stream=0 pts=0 size=4
+ff read #1 stream=1 pts=0 size=4
+cb preload ts=200000000 fmt=I420 16x16 flip=0 full=0 trc=DEFAULT maxlum=0 flags=0 ls0=16 d0=01 mat0=1.16438 min0=0.0627451 max0=0.921569
+mreset -> 1
+tick -> idle
+cb video ts=200000000 fmt=I420 16x16 flip=0 full=0 trc=DEFAULT maxlum=0 flags=0 ls0=16 d0=01 mat0=1.16438 min0=0.0627451 max0=0.921569
+cb audio ts=200000000 fmt=16BIT spk=STEREO rate=96000 frames=4800 d0=12
+ff read #2 stream=0 pts=100 size=4
+ff read #3 stream=1 pts=4800 size=4
+tick -> played
+sleep 50
+cb video ts=250000000 fmt=I420 16x16 flip=0 full=0 trc=DEFAULT maxlum=0 flags=0 ls0=16 d0=21 mat0=1.16438 min0=0.0627451 max0=0.921569
+cb audio ts=250000000 fmt=16BIT spk=STEREO rate=96000 frames=4800 d0=32
+ff decoder drain
+ff decoder drain
+ff seek stream=0 target=0 flags=BACKWARD
+ff decoder flush
+ff decoder flush
+ff read #0 stream=0 pts=0 size=4
+ff read #1 stream=1 pts=0 size=4
+cb preload ts=350000000 fmt=I420 16x16 flip=0 full=0 trc=DEFAULT maxlum=0 flags=0 ls0=16 d0=01 mat0=1.16438 min0=0.0627451 max0=0.921569
+cb stop
+tick -> eof
+tick -> idle
+mtime -> 100
+mfree
+# out of range speeds become 100
+minit -> ok
+ff open path=sp format=- nobuffer=1 interrupt=0 opts=[]
+minit2 -> ok has_v=1 has_a=1
+mstate eof=0 active=0 stopping=0 looping=0 pause=0 reset=0 seek=0 seek_next_ts=0 reset_ts=0 preload_frame=0 has_v=1 has_a=1
+  base_ts=0 start_ts=0 play_sys_ts=0 next_pts_ns=0 next_ns=0 seek_pos=0 speed=100 cur_space=DEFAULT cur_range=DEFAULT
+  v ready=0 pts=0 next_pts=0 last_dur=0 eof=0 key=0 pending=0 npkts=0
+  a ready=0 pts=0 next_pts=0 last_dur=0 eof=0 key=0 pending=0 npkts=0
+mfree
+minit -> ok
+ff open path=sp format=- nobuffer=1 interrupt=0 opts=[]
+minit2 -> ok has_v=1 has_a=1
+mstate eof=0 active=0 stopping=0 looping=0 pause=0 reset=0 seek=0 seek_next_ts=0 reset_ts=0 preload_frame=0 has_v=1 has_a=1
+  base_ts=0 start_ts=0 play_sys_ts=0 next_pts_ns=0 next_ns=0 seek_pos=0 speed=100 cur_space=DEFAULT cur_range=DEFAULT
+  v ready=0 pts=0 next_pts=0 last_dur=0 eof=0 key=0 pending=0 npkts=0
+  a ready=0 pts=0 next_pts=0 last_dur=0 eof=0 key=0 pending=0 npkts=0
+mfree
+minit -> ok
+ff open path=sp format=- nobuffer=1 interrupt=0 opts=[]
+minit2 -> ok has_v=1 has_a=1
+mstate eof=0 active=0 stopping=0 looping=0 pause=0 reset=0 seek=0 seek_next_ts=0 reset_ts=0 preload_frame=0 has_v=1 has_a=1
+  base_ts=0 start_ts=0 play_sys_ts=0 next_pts_ns=0 next_ns=0 seek_pos=0 speed=100 cur_space=DEFAULT cur_range=DEFAULT
+  v ready=0 pts=0 next_pts=0 last_dur=0 eof=0 key=0 pending=0 npkts=0
+  a ready=0 pts=0 next_pts=0 last_dur=0 eof=0 key=0 pending=0 npkts=0
+mfree
+minit -> ok
+ff open path=sp format=- nobuffer=1 interrupt=0 opts=[]
+minit2 -> ok has_v=1 has_a=1
+mstate eof=0 active=0 stopping=0 looping=0 pause=0 reset=0 seek=0 seek_next_ts=0 reset_ts=0 preload_frame=0 has_v=1 has_a=1
+  base_ts=0 start_ts=0 play_sys_ts=0 next_pts_ns=0 next_ns=0 seek_pos=0 speed=1 cur_space=DEFAULT cur_range=DEFAULT
+  v ready=0 pts=0 next_pts=0 last_dur=0 eof=0 key=0 pending=0 npkts=0
+  a ready=0 pts=0 next_pts=0 last_dur=0 eof=0 key=0 pending=0 npkts=0
+mfree
+minit -> ok
+ff open path=sp format=- nobuffer=1 interrupt=0 opts=[]
+minit2 -> ok has_v=1 has_a=1
+mstate eof=0 active=0 stopping=0 looping=0 pause=0 reset=0 seek=0 seek_next_ts=0 reset_ts=0 preload_frame=0 has_v=1 has_a=1
+  base_ts=0 start_ts=0 play_sys_ts=0 next_pts_ns=0 next_ns=0 seek_pos=0 speed=200 cur_space=DEFAULT cur_range=DEFAULT
+  v ready=0 pts=0 next_pts=0 last_dur=0 eof=0 key=0 pending=0 npkts=0
+  a ready=0 pts=0 next_pts=0 last_dur=0 eof=0 key=0 pending=0 npkts=0
+mfree
+# ---- QUIRK: duration estimate from the pts difference mixes the scaled previous pts with the unscaled new one
+minit -> ok
+ff open path=sp2 format=- nobuffer=1 interrupt=0 opts=[]
+minit2 -> ok has_v=1 has_a=0
+ff read #0 stream=0 pts=0 size=4
+mnextpkt -> ok
+mdecode v -> 1
+mstate eof=0 active=0 stopping=0 looping=0 pause=0 reset=0 seek=0 seek_next_ts=0 reset_ts=0 preload_frame=0 has_v=1 has_a=0
+  base_ts=0 start_ts=0 play_sys_ts=0 next_pts_ns=0 next_ns=0 seek_pos=0 speed=50 cur_space=DEFAULT cur_range=DEFAULT
+  v ready=1 pts=0 next_pts=80000000 last_dur=80000000 eof=0 key=0 pending=0 npkts=0
+ff read #1 stream=0 pts=100 size=4
+mnextpkt -> ok
+mdecode v -> 1
+mstate eof=0 active=0 stopping=0 looping=0 pause=0 reset=0 seek=0 seek_next_ts=0 reset_ts=0 preload_frame=0 has_v=1 has_a=0
+  base_ts=0 start_ts=0 play_sys_ts=0 next_pts_ns=0 next_ns=0 seek_pos=0 speed=50 cur_space=DEFAULT cur_range=DEFAULT
+  v ready=1 pts=200000000 next_pts=360000000 last_dur=160000000 eof=0 key=0 pending=0 npkts=0
+ff read #2 stream=0 pts=200 size=4
+mnextpkt -> ok
+mdecode v -> 1
+mstate eof=0 active=0 stopping=0 looping=0 pause=0 reset=0 seek=0 seek_next_ts=0 reset_ts=0 preload_frame=0 has_v=1 has_a=0
+  base_ts=0 start_ts=0 play_sys_ts=0 next_pts_ns=0 next_ns=0 seek_pos=0 speed=50 cur_space=DEFAULT cur_range=DEFAULT
+  v ready=1 pts=400000000 next_pts=400000000 last_dur=0 eof=0 key=0 pending=0 npkts=0
+ff read #3 stream=0 pts=300 size=4
+mnextpkt -> ok
+mdecode v -> 1
+mstate eof=0 active=0 stopping=0 looping=0 pause=0 reset=0 seek=0 seek_next_ts=0 reset_ts=0 preload_frame=0 has_v=1 has_a=0
+  base_ts=0 start_ts=0 play_sys_ts=0 next_pts_ns=0 next_ns=0 seek_pos=0 speed=50 cur_space=DEFAULT cur_range=DEFAULT
+  v ready=1 pts=600000000 next_pts=400000000 last_dur=-200000000 eof=0 key=0 pending=0 npkts=0
+mfree
+# the same without scaling
+minit -> ok
+ff open path=sp2 format=- nobuffer=1 interrupt=0 opts=[]
+minit2 -> ok has_v=1 has_a=0
+ff read #0 stream=0 pts=0 size=4
+mnextpkt -> ok
+mdecode v -> 1
+ff read #1 stream=0 pts=100 size=4
+mnextpkt -> ok
+mdecode v -> 1
+ff read #2 stream=0 pts=200 size=4
+mnextpkt -> ok
+mdecode v -> 1
+ff read #3 stream=0 pts=300 size=4
+mnextpkt -> ok
+mdecode v -> 1
+mstate eof=0 active=0 stopping=0 looping=0 pause=0 reset=0 seek=0 seek_next_ts=0 reset_ts=0 preload_frame=0 has_v=1 has_a=0
+  base_ts=0 start_ts=0 play_sys_ts=0 next_pts_ns=0 next_ns=0 seek_pos=0 speed=100 cur_space=DEFAULT cur_range=DEFAULT
+  v ready=1 pts=300000000 next_pts=400000000 last_dur=100000000 eof=0 key=0 pending=0 npkts=0

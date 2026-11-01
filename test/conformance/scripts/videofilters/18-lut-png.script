@@ -1,0 +1,69 @@
+# clut_filter (colour grade) with PNG LUT images: tile layout -> 64^3 volume texture, scale/offset constants, technique.
+# Synthetic image pixel n has bytes (n, n>>8, n>>16, 255); the probe line prints "(x,y,z)=source pixel index".
+source T 1920 1080 1920 1080 SRGB video
+source P 1920 1080 1920 1080 SRGB video
+image lut512.png 512 512 RGBA 1 0
+file lut512.png x
+data d
+dset d image_path str @TMP/lut512.png
+filter a clut_filter 0 d T P
+echo update is deferred: nothing is loaded before the tick
+render a
+tick a 0.016
+render a
+echo amount < 1 -> DrawAmount3D, passthrough_alpha -> Draw3D
+dset d clut_amount dbl 0.5
+filter b clut_filter 0 d T P
+tick b 0.016
+render b
+dset d clut_amount dbl 1
+dset d passthrough_alpha bool 1
+filter c clut_filter 0 d T P
+tick c 0.016
+render c
+echo amount exactly 1.0 and alpha not passed through -> DrawAlpha3D
+dset d passthrough_alpha bool 0
+filter e clut_filter 0 d T P
+tick e 0.016
+render e
+echo wrong dimensions: not a 64^3 layout -> no texture, render skipped
+image bad1.png 500 500 RGBA 1 0
+image bad2.png 512 256 RGBA 1 0
+image bad3.png 64 64 RGBA 1 0
+image unl.png 512 512 RGBA 0 0
+dset d image_path str bad1.png
+filter f clut_filter 0 d T P
+tick f 0.016
+render f
+dset d image_path str bad2.png
+filter g clut_filter 0 d T P
+tick g 0.016
+render g
+dset d image_path str bad3.png
+filter h clut_filter 0 d T P
+tick h 0.016
+render h
+dset d image_path str unl.png
+filter i clut_filter 0 d T P
+tick i 0.016
+render i
+echo non-square tile layouts that are also 64^3 pixels (the row index uses the tile HEIGHT: QUIRK / DEFECT, see S-028)
+image lut128x2048.png 128 2048 RGBA 1 0
+image lut256x1024.png 256 1024 RGBA 1 0
+image lut64x4096.png 64 4096 RGBA 1 0
+dset d image_path str lut128x2048.png
+filter j clut_filter 0 d T P
+tick j 0.016
+dset d image_path str lut256x1024.png
+filter k clut_filter 0 d T P
+tick k 0.016
+dset d image_path str lut64x4096.png
+filter l clut_filter 0 d T P
+tick l 0.016
+echo texture creation failure
+knob tex_fail 1
+dset d image_path str lut512.png
+filter m clut_filter 0 d T P
+tick m 0.016
+knob tex_fail 0
+render m

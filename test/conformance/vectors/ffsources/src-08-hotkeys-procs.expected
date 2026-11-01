@@ -1,0 +1,68 @@
+event.init manual
+host.hotkey_register MediaSource.Restart desc=RestartMedia id=100
+host.hotkey_pair_register MediaSource.Play/MediaSource.Pause desc=Play/Pause id=101
+host.hotkey_register MediaSource.Stop desc=Stop id=102
+host.proc_add "void restart()"
+host.proc_add "void preload_first_frame()"
+host.proc_add "void get_duration(out int duration)"
+host.proc_add "void get_nb_frames(out int num_frames)"
+mp.create path="/m/a.mp4" format=@null options=""
+    buffering=2097152 speed=100 force_range=0 linear_alpha=0 hw=0 local=1 reconnecting=0 preload=0 full_decode=0 cbs=11111
+log info [Media Source 'src']: settings: 	input:                   /m/a.mp4 	input_format:            (null) 	speed:                   100 	is_looping:              no 	is_linear_alpha:         no 	is_hw_decoding:          no 	is_clear_on_media_end:   yes 	restart_on_activate:     yes 	close_when_inactive:     no 	full_decode:             no 	ffmpeg_options:          
+src_create ok
+echo ---- not showing: hotkeys do nothing
+hotkey restart pressed=1
+hotkey play pressed=1 -> 0
+hotkey pause pressed=1 -> 0
+hotkey stop pressed=1
+echo ---- showing, state STOPPED (0): play handled, pause not
+hotkey restart pressed=0
+host.media_restart
+hotkey restart pressed=1
+hotkey play pressed=0 -> 0
+host.media_play_pause pause=0
+hotkey play pressed=1 -> 1
+hotkey pause pressed=1 -> 0
+host.media_stop
+hotkey stop pressed=1
+echo ---- state PLAYING: play not handled, pause handled
+mp.play #1 looping=0 reconnecting=0
+host.show_preloaded_video
+host.media_started
+hotkey play pressed=1 -> 0
+hotkey pause pressed=0 -> 0
+host.media_play_pause pause=1
+hotkey pause pressed=1 -> 1
+echo ---- procs
+proc get_duration duration=5000000000
+proc get_nb_frames num_frames=150
+host.media_restart
+proc restart
+mp.preload_frame #1
+proc preload_first_frame
+echo ---- procs on a source without media (empty input): duration 0, frames 0 (player functions tolerate NULL)
+event.init manual
+host.hotkey_register MediaSource.Restart desc=RestartMedia id=103
+host.hotkey_pair_register MediaSource.Play/MediaSource.Pause desc=Play/Pause id=104
+host.hotkey_register MediaSource.Stop desc=Stop id=105
+host.proc_add "void restart()"
+host.proc_add "void preload_first_frame()"
+host.proc_add "void get_duration(out int duration)"
+host.proc_add "void get_nb_frames(out int num_frames)"
+log info [Media Source 'src']: settings: 	input:                    	input_format:            (null) 	speed:                   100 	is_looping:              no 	is_linear_alpha:         no 	is_hw_decoding:          no 	is_clear_on_media_end:   yes 	restart_on_activate:     yes 	close_when_inactive:     no 	full_decode:             no 	ffmpeg_options:          
+src_create ok
+proc get_duration duration=0
+proc get_nb_frames num_frames=0
+mp.preload_frame null
+proc preload_first_frame
+echo ---- track matte: preload also clears the video
+mp.set_looping #1 0
+mp.set_linear_alpha #1 0
+log info [Media Source 'src']: settings: 	input:                   /m/a.mp4 	input_format:            (null) 	speed:                   100 	is_looping:              no 	is_linear_alpha:         no 	is_hw_decoding:          no 	is_clear_on_media_end:   yes 	restart_on_activate:     yes 	close_when_inactive:     no 	full_decode:             no 	ffmpeg_options:          
+host.output_video null
+mp.preload_frame #1
+proc preload_first_frame
+echo ---- destroy unregisters only the restart hotkey
+host.hotkey_unregister id=100
+mp.destroy #1
+event.destroy

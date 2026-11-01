@@ -1,0 +1,13 @@
+# S-052 SCK audio: channel count negotiation and the planar sample-buffer to obs_source_audio mapping.
+sck_audio_cfg 1
+sck_audio_cfg 2
+sck_audio_cfg 6
+sck_audio_cfg 8
+sck_audio_cfg 0
+# bytes channels bytes_per_frame rate pts_seconds
+sck_audio_buf 4096 2 4 48000 1.5
+sck_audio_buf 4096 1 4 44100 0.001
+sck_audio_buf 0 2 4 48000 0
+sck_audio_buf 4096 0 4 48000 1
+# DEFECT D-1 shape: more than 8 channels indexes past audio.data[8]
+sck_audio_buf 9216 9 4 48000 1

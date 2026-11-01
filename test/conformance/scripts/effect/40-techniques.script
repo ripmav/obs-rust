@@ -1,0 +1,41 @@
+# CORE: techniques and passes. "technique NAME { pass [NAME] { vertex_shader|vertex_program = CALL; pixel_shader|
+# pixel_program = CALL; } ... }". A pass name is the single token after "pass" (any token, kept verbatim, no quote
+# stripping); an unnamed pass has name NULL. Techniques without passes are legal. Duplicate technique / pass names
+# are accepted (lookups find the first). Every pass produces exactly one vertex and one pixel shader through the
+# backend; if either cannot be created the whole effect creation fails (see 43-backend).
+backend text hash
+text t1
+float4 VS() : POSITION { return float4(0,0,0,1); }
+float4 PS() : TARGET { return float4(1,1,1,1); }
+technique A { pass { vertex_shader = VS(); pixel_shader = PS(); } }
+technique B { pass p1 { vertex_program = VS(); pixel_program = PS(); } pass p2 { pixel_shader = PS(); vertex_shader = VS(); } }
+technique Empty { }
+technique C { pass first { vertex_shader = VS(); pixel_shader = PS(); } pass first { vertex_shader = VS(); pixel_shader = PS(); } }
+technique A { pass { vertex_shader = VS(); pixel_shader = PS(); } pass { vertex_shader = VS(); pixel_shader = PS(); } }
+technique Tricky { pass 123 { vertex_shader = VS(); pixel_shader = PS(); } pass "quoted" { vertex_shader = VS(); pixel_shader = PS(); } }
+@end
+ep t1.effect @text:t1
+effect e1 t1.effect @text:t1
+dump e1
+technique e1 A
+technique e1 B
+technique e1 Empty
+technique e1 Missing
+technique e1 a
+echo --- passes by name and index
+pass_by_name e1 B p2
+pass_by_name e1 B P2
+pass_by_name e1 C first
+pass_by_idx e1 B 0
+pass_by_idx e1 B 1
+echo --- "pass" must be followed by the name or '{'; the token after the name is not checked to be '{'
+ep p1 "float4 VS() : POSITION { return 0; }\ntechnique T { pass a { vertex_shader = VS(); } pass { vertex_shader = VS(); } }"
+echo --- technique and pass keywords are case sensitive
+ep p2 "Technique T { }"
+ep p3 "float4 VS() : POSITION { return 0; }\ntechnique T { Pass { vertex_shader = VS(); } }"
+echo --- whitespace and comments between the parts
+ep p4 "technique /* c */ T // x\n {\n pass /* d */ { } }"
+echo --- several statements in one pass
+ep p5 "float4 VS() : POSITION { return 0; }\ntechnique T { pass { vertex_shader = VS(); pixel_shader = VS(); } }"
+echo --- technique names may be any NAME token, including keywords
+ep p6 "technique pass { } technique technique { } technique struct { }"

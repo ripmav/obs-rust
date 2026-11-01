@@ -1,0 +1,51 @@
+# S-048 recording/replay output file names: GetFormatString, GetFormatExt, GetOutputFilename (stem supplied by S-023).
+fmtstr "%CCYY-%MM-%DD %hh-%mm-%ss" @null @null
+fmtstr "%CCYY-%MM-%DD" Replay @null
+fmtstr "%CCYY-%MM-%DD" "Replay " @null
+fmtstr "%CCYY-%MM-%DD" @null "-tail"
+fmtstr "%CCYY-%MM-%DD" @null " tail"
+fmtstr "%CCYY-%MM-%DD" Replay "x"
+fmtstr "sub/dir/%CCYY" Replay @null
+fmtstr "sub\\dir\\%CCYY" Replay @null
+fmtstr "a/b\\c" Replay @null
+fmtstr "bad*?\"|:<>name" @null @null
+fmtstr "a\\b" @null @null
+fmtstr "" Replay @null
+ext mkv
+ext mp4
+ext fragmented_mp4
+ext hybrid_mp4
+ext fragmented_mov
+ext hybrid_mov
+ext hls
+ext mpegts
+ext flv
+ext ts
+ext fmp4
+ext MKV
+dir_add "/rec"
+fs_add "/rec/2024-01-02 03-04-05.mkv"
+outname "/rec" mkv 0 1 "2024-01-02 03-04-05"
+outname "/rec" mkv 0 0 "2024-01-02 03-04-05"
+fs_add "/rec/2024-01-02 03-04-05 (2).mkv"
+outname "/rec" mkv 0 0 "2024-01-02 03-04-05"
+outname "/rec/" mkv 0 1 "x"
+outname "/rec" hybrid_mp4 0 1 "x"
+fs_add "/rec/2024-01-02_03-04-05.mkv"
+outname "/rec" mkv 1 0 "2024-01-02_03-04-05"
+fs_add "/rec/2024-01-02_03-04-05_2.mkv"
+outname "/rec" mkv 1 0 "2024-01-02_03-04-05"
+outname "/rec" hls 0 1 "s"
+outname "/rec" mpegts 0 1 "s"
+# separators in the stem are normalised to '/'
+outname "/rec" mkv 0 1 "sub\\name"
+# directory missing or empty: failure
+outname "/nope" mkv 0 1 "x"
+outname "" mkv 0 1 "x"
+# collision test does not apply to stems without '.'? the extension is always appended so it always has one
+best "/rec/noext" 0
+fs_add "/rec/noext"
+best "/rec/noext" 0
+best "/rec/a.b.c" 0
+fs_add "/rec/a.b.c"
+best "/rec/a.b.c" 0

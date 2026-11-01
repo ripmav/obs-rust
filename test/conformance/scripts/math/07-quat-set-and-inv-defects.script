@@ -1,0 +1,15 @@
+# DEFECT-like behaviours of the reference.
+# quat_set() builds its register with the arguments in reversed order: after
+# quat_set(q, 1, 2, 3, 4) the fields are x=4, y=3, z=2, w=1.
+quat_set_fn s 1 2 3 4
+show s
+# quat_inv() writes only x, y, z of the destination; w keeps its previous value.
+quat a 0.1 0.2 0.3 0.9
+quat dst 7 7 7 7
+call dst quat_inv a
+show dst
+# vec3_mul / vec3_mulf / vec4 ops write all four lanes; vec3 add/sub zero w.
+vec3 p 1 2 3 5
+vec3 d 9 9 9 9
+call d vec3_add p p
+show d

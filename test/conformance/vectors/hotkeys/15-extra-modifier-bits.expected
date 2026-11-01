@@ -1,0 +1,22 @@
+signal hotkey_register id=0
+reg A -> 0
+signal hotkey_bindings_changed id=0
+poll
+poll
+poll
+b 0 hk=0 mods=0x1 key=OBS_KEY_A pressed=0 modmatch=0 hkptr_ok=1
+enumb done
+cb A id=0 same_ptr=1 pressed=1
+b 0 hk=0 mods=0x1 key=OBS_KEY_A pressed=1 modmatch=1 hkptr_ok=1
+enumb done
+save A count=1
+  item {"key":"OBS_KEY_A"}
+non-strict-polling-also-cannot-satisfy-it
+poll
+cb A id=0 same_ptr=1 pressed=0
+signal hotkey_bindings_changed id=0
+poll
+poll
+poll
+b 0 hk=0 mods=0x1 key=OBS_KEY_A pressed=0 modmatch=0 hkptr_ok=1
+enumb done

@@ -1,0 +1,16 @@
+log debug canvas 'Main' (<uuid>) created
+startup -> true
+wait_destroy -> 0
+log info ---------------------------------
+log info video settings reset:  base resolution:   1920x1080  output resolution: 1280x720  downscale filter:  Bicubic  fps:               30/1  format:            BGRA  YUV mode:          None
+reset_video -> success
+  after_call base=1920x1080 out=1280x720 fps=30/1 fmt=BGRA cs=2 range=1 scale=2 gpu=0 adapter=0
+wait_destroy -> 0
+log info ---------------------------------
+log info audio settings reset:  samples per sec: 48000  speakers:        2  max buffering:   960 milliseconds  buffering type:  dynamically increasing
+reset_audio -> 1
+wait_destroy -> 0
+shutdown begin
+log info Freeing OBS context data
+log debug canvas 'Main' (<uuid>) destroyed
+shutdown end obs=NULL

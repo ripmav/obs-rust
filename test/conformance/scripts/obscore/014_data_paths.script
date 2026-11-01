@@ -1,0 +1,23 @@
+# Core data-file lookup: data paths added by the application are searched (in insertion order)
+# when the built-in libobs data directory does not contain the file. Removing a path that was never
+# added returns false; removing an added one returns true. Paths persist across startup/shutdown.
+fake data_found 0
+touch found.effect
+find_data found.effect
+data_path_add TMP
+find_data found.effect
+find_data missing.effect
+data_path_remove nothere
+data_path_remove TMP
+find_data found.effect
+# the built-in lookup wins when it finds the file
+fake data_found 1
+data_path_add TMP
+find_data found.effect
+data_path_remove TMP
+# QUIRK: the file name is appended to the registered path verbatim, no separator is inserted, so a
+# path registered without a trailing slash never matches
+fake data_found 0
+data_path_add TMPNOSLASH
+find_data found.effect
+data_path_remove TMPNOSLASH

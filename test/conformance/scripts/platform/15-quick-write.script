@@ -1,0 +1,48 @@
+# os_quick_write_utf8_file(path, str, len, marker): create/truncate, optional BOM, then exactly
+# LEN raw bytes (no validation, a NUL in the middle is data). LEN 0 writes nothing even when STR is
+# not NULL (no strlen fallback). Returns false when the file cannot be created.
+# quick_write_utf8 PATH TEXT LEN MARKER     (LEN: number | auto = strlen | len = strlen too)
+quick_write_utf8 a.txt hello len 0
+cat a.txt
+quick_write_utf8 a.txt hello len 1
+cat a.txt
+quick_write_utf8 a.txt hello 3 0
+cat a.txt
+quick_write_utf8 a.txt hello 0 0
+cat a.txt
+quick_write_utf8 a.txt hello 0 1
+cat a.txt
+quick_write_utf8 a.txt @null 0 0
+cat a.txt
+quick_write_utf8 a.txt @null 0 1
+cat a.txt
+# raw bytes are written as they are, including invalid UTF-8 and an existing BOM
+quick_write_utf8 b.txt "a\xffb\x80" len 0
+cat b.txt
+quick_write_utf8 b.txt "\xef\xbb\xbfx" len 1
+cat b.txt
+# a longer length than the text is the caller's problem; a length shorter cuts the text
+quick_write_utf8 c.txt "a\nb\r\nc" len 0
+cat c.txt
+# failure: parent missing, path is a directory, NULL path
+quick_write_utf8 nodir/f.txt x len 0
+mkdir dir
+quick_write_utf8 dir x len 0
+quick_write_utf8 @null x len 0
+exists nodir/f.txt
+# existing content is truncated
+quick_write_utf8 d.txt longer-content len 0
+quick_write_utf8 d.txt short len 0
+cat d.txt
+# the multibyte-encoding writer (ASCII here): LEN 0 means strlen(!), the text is converted
+# char set -> bytes; an empty result still creates an empty file and returns true
+# quick_write_mbs PATH TEXT LEN
+quick_write_mbs m.txt hello len
+cat m.txt
+quick_write_mbs m.txt hello 3
+cat m.txt
+quick_write_mbs m.txt hello 0
+cat m.txt
+quick_write_mbs m.txt "" 0
+cat m.txt
+quick_write_mbs nodir/m.txt hello len

@@ -1,0 +1,136 @@
+ev create slideshow_v2#1 public
+ev hotkey_register slideshow_v2#1 id=1 name=SlideShow.PlayPause desc=SlideShow.PlayPause
+ev hotkey_register slideshow_v2#1 id=2 name=SlideShow.Restart desc=SlideShow.Restart
+ev hotkey_register slideshow_v2#1 id=3 name=SlideShow.Stop desc=SlideShow.Stop
+ev hotkey_register slideshow_v2#1 id=4 name=SlideShow.NextSlide desc=SlideShow.NextSlide
+ev hotkey_register slideshow_v2#1 id=5 name=SlideShow.PreviousSlide desc=SlideShow.PreviousSlide
+ev create fade_transition#2 private
+ev create image_source#3[/s/a.png] private
+ev task_queued
+ev tr_size fade_transition#2 1920x1080
+ev tr_align fade_transition#2 0
+ev tr_scale fade_transition#2 1
+ev tr_start fade_transition#2 mode=0 ms=700 dest=image_source#3[/s/a.png] -> started
+ev signal media_started slideshow_v2#1
+tick 0 clock=16000001
+state slideshow2 behavior=2 manual=0 randomize=0 loop=0 hide=0 use_cut=0 paused=0 stop=0 restart_on_activate=0 pause_on_deactivate=0 slide_time=2.70000005 tr_speed=700 tr_name=null elapsed=0.0160000008 cx=1920 cy=1080 state=1 transition=fade_transition#2 files=1
+state   file 0 /s/a.png
+state   cur 0 image_source#3[/s/a.png]
+state   prev 0:image_source#3[/s/a.png] 0:image_source#3[/s/a.png] 0:image_source#3[/s/a.png] 0:image_source#3[/s/a.png] 0:image_source#3[/s/a.png]
+state   next 0:image_source#3[/s/a.png] 0:image_source#3[/s/a.png] 0:image_source#3[/s/a.png] 0:image_source#3[/s/a.png] 0:image_source#3[/s/a.png]
+ev create slideshow_v2#4 public
+ev hotkey_register slideshow_v2#4 id=6 name=SlideShow.PlayPause desc=SlideShow.PlayPause
+ev hotkey_register slideshow_v2#4 id=7 name=SlideShow.Restart desc=SlideShow.Restart
+ev hotkey_register slideshow_v2#4 id=8 name=SlideShow.Stop desc=SlideShow.Stop
+ev hotkey_register slideshow_v2#4 id=9 name=SlideShow.NextSlide desc=SlideShow.NextSlide
+ev hotkey_register slideshow_v2#4 id=10 name=SlideShow.PreviousSlide desc=SlideShow.PreviousSlide
+ev create fade_transition#5 private
+ev create image_source#6[/s/a.png] private
+ev task_queued
+ev tr_size fade_transition#5 1920x1080
+ev tr_align fade_transition#5 0
+ev tr_scale fade_transition#5 1
+ev tr_start fade_transition#5 mode=0 ms=700 dest=image_source#6[/s/a.png] -> started
+ev signal media_started slideshow_v2#4
+tick 0 clock=32000002
+state slideshow2 behavior=2 manual=0 randomize=0 loop=1 hide=0 use_cut=0 paused=0 stop=0 restart_on_activate=0 pause_on_deactivate=0 slide_time=2.70000005 tr_speed=700 tr_name=null elapsed=0.0160000008 cx=1920 cy=1080 state=1 transition=fade_transition#5 files=1
+state   file 0 /s/a.png
+state   cur 0 image_source#6[/s/a.png]
+state   prev 0:image_source#6[/s/a.png] 0:image_source#6[/s/a.png] 0:image_source#6[/s/a.png] 0:image_source#6[/s/a.png] 0:image_source#6[/s/a.png]
+state   next 0:image_source#6[/s/a.png] 0:image_source#6[/s/a.png] 0:image_source#6[/s/a.png] 0:image_source#6[/s/a.png] 0:image_source#6[/s/a.png]
+ev create slideshow_v2#7 public
+ev hotkey_register slideshow_v2#7 id=11 name=SlideShow.PlayPause desc=SlideShow.PlayPause
+ev hotkey_register slideshow_v2#7 id=12 name=SlideShow.Restart desc=SlideShow.Restart
+ev hotkey_register slideshow_v2#7 id=13 name=SlideShow.Stop desc=SlideShow.Stop
+ev hotkey_register slideshow_v2#7 id=14 name=SlideShow.NextSlide desc=SlideShow.NextSlide
+ev hotkey_register slideshow_v2#7 id=15 name=SlideShow.PreviousSlide desc=SlideShow.PreviousSlide
+ev create fade_transition#8 private
+ev rand -> 1
+ev create image_source#9[/s/b.png] private
+ev task_queued
+ev rand -> 0
+ev create image_source#10[/s/a.png] private
+ev task_queued
+ev rand -> 1
+ev rand -> 0
+ev rand -> 1
+ev rand -> 0
+ev rand -> 1
+ev rand -> 0
+ev rand -> 1
+ev rand -> 0
+ev rand -> 1
+ev rand -> 0
+ev tr_size fade_transition#8 1920x1080
+ev tr_align fade_transition#8 0
+ev tr_scale fade_transition#8 1
+ev tr_start fade_transition#8 mode=0 ms=700 dest=image_source#9[/s/b.png] -> started
+ev signal media_started slideshow_v2#7
+tick 0 clock=48000003
+state slideshow2 behavior=2 manual=0 randomize=1 loop=0 hide=0 use_cut=0 paused=0 stop=0 restart_on_activate=0 pause_on_deactivate=0 slide_time=2.70000005 tr_speed=700 tr_name=null elapsed=0.0160000008 cx=1920 cy=1080 state=1 transition=fade_transition#8 files=2
+state   file 0 /s/a.png
+state   file 1 /s/b.png
+state   cur 1 image_source#9[/s/b.png]
+state   prev 0:image_source#10[/s/a.png] 1:image_source#9[/s/b.png] 0:image_source#10[/s/a.png] 1:image_source#9[/s/b.png] 0:image_source#10[/s/a.png]
+state   next 0:image_source#10[/s/a.png] 1:image_source#9[/s/b.png] 0:image_source#10[/s/a.png] 1:image_source#9[/s/b.png] 0:image_source#10[/s/a.png]
+ev create slideshow_v2#11 public
+ev hotkey_register slideshow_v2#11 id=16 name=SlideShow.PlayPause desc=SlideShow.PlayPause
+ev hotkey_register slideshow_v2#11 id=17 name=SlideShow.Restart desc=SlideShow.Restart
+ev hotkey_register slideshow_v2#11 id=18 name=SlideShow.Stop desc=SlideShow.Stop
+ev hotkey_register slideshow_v2#11 id=19 name=SlideShow.NextSlide desc=SlideShow.NextSlide
+ev hotkey_register slideshow_v2#11 id=20 name=SlideShow.PreviousSlide desc=SlideShow.PreviousSlide
+ev create fade_transition#12 private
+ev create image_source#13[/s/a.png] private
+ev task_queued
+ev tr_size fade_transition#12 1920x1080
+ev tr_align fade_transition#12 0
+ev tr_scale fade_transition#12 1
+ev tr_start fade_transition#12 mode=0 ms=700 dest=image_source#13[/s/a.png] -> started
+ev signal media_started slideshow_v2#11
+tick 0 clock=64000004
+state slideshow2 behavior=2 manual=0 randomize=0 loop=1 hide=0 use_cut=0 paused=0 stop=0 restart_on_activate=0 pause_on_deactivate=0 slide_time=2.70000005 tr_speed=700 tr_name=null elapsed=0.0160000008 cx=1920 cy=1080 state=1 transition=fade_transition#12 files=1
+state   file 0 /s/a.png
+state   cur 0 image_source#13[/s/a.png]
+state   prev 0:image_source#13[/s/a.png] 0:image_source#13[/s/a.png] 0:image_source#13[/s/a.png] 0:image_source#13[/s/a.png] 0:image_source#13[/s/a.png]
+state   next 0:image_source#13[/s/a.png] 0:image_source#13[/s/a.png] 0:image_source#13[/s/a.png] 0:image_source#13[/s/a.png] 0:image_source#13[/s/a.png]
+ev create slideshow_v2#14 public
+ev hotkey_register slideshow_v2#14 id=21 name=SlideShow.PlayPause desc=SlideShow.PlayPause
+ev hotkey_register slideshow_v2#14 id=22 name=SlideShow.Restart desc=SlideShow.Restart
+ev hotkey_register slideshow_v2#14 id=23 name=SlideShow.Stop desc=SlideShow.Stop
+ev hotkey_register slideshow_v2#14 id=24 name=SlideShow.NextSlide desc=SlideShow.NextSlide
+ev hotkey_register slideshow_v2#14 id=25 name=SlideShow.PreviousSlide desc=SlideShow.PreviousSlide
+ev create fade_transition#15 private
+ev create image_source#16[/s/a.png] private
+ev task_queued
+ev tr_size fade_transition#15 1920x1080
+ev tr_align fade_transition#15 0
+ev tr_scale fade_transition#15 1
+ev tr_start fade_transition#15 mode=0 ms=700 dest=image_source#16[/s/a.png] -> started
+ev signal media_started slideshow_v2#14
+tick 0 clock=80000005
+state slideshow2 behavior=2 manual=0 randomize=0 loop=0 hide=0 use_cut=0 paused=0 stop=0 restart_on_activate=0 pause_on_deactivate=0 slide_time=2.70000005 tr_speed=700 tr_name=null elapsed=0.0160000008 cx=1920 cy=1080 state=1 transition=fade_transition#15 files=1
+state   file 0 /s/a.png
+state   cur 0 image_source#16[/s/a.png]
+state   prev 0:image_source#16[/s/a.png] 0:image_source#16[/s/a.png] 0:image_source#16[/s/a.png] 0:image_source#16[/s/a.png] 0:image_source#16[/s/a.png]
+state   next 0:image_source#16[/s/a.png] 0:image_source#16[/s/a.png] 0:image_source#16[/s/a.png] 0:image_source#16[/s/a.png] 0:image_source#16[/s/a.png]
+ev create slideshow_v2#17 public
+ev hotkey_register slideshow_v2#17 id=26 name=SlideShow.PlayPause desc=SlideShow.PlayPause
+ev hotkey_register slideshow_v2#17 id=27 name=SlideShow.Restart desc=SlideShow.Restart
+ev hotkey_register slideshow_v2#17 id=28 name=SlideShow.Stop desc=SlideShow.Stop
+ev hotkey_register slideshow_v2#17 id=29 name=SlideShow.NextSlide desc=SlideShow.NextSlide
+ev hotkey_register slideshow_v2#17 id=30 name=SlideShow.PreviousSlide desc=SlideShow.PreviousSlide
+ev create fade_transition#18 private
+ev create image_source#19[/s/a.png] private
+ev task_queued
+ev tr_size fade_transition#18 1920x1080
+ev tr_align fade_transition#18 0
+ev tr_scale fade_transition#18 1
+ev tr_start fade_transition#18 mode=0 ms=700 dest=image_source#19[/s/a.png] -> started
+ev signal media_started slideshow_v2#17
+tick 0 clock=96000006
+state slideshow2 behavior=2 manual=0 randomize=0 loop=0 hide=0 use_cut=0 paused=0 stop=0 restart_on_activate=0 pause_on_deactivate=0 slide_time=2.70000005 tr_speed=700 tr_name=null elapsed=0.0160000008 cx=1920 cy=1080 state=1 transition=fade_transition#18 files=1
+state   file 0 /s/a.png
+state   cur 0 image_source#19[/s/a.png]
+state   prev 0:image_source#19[/s/a.png] 0:image_source#19[/s/a.png] 0:image_source#19[/s/a.png] 0:image_source#19[/s/a.png] 0:image_source#19[/s/a.png]
+state   next 0:image_source#19[/s/a.png] 0:image_source#19[/s/a.png] 0:image_source#19[/s/a.png] 0:image_source#19[/s/a.png] 0:image_source#19[/s/a.png]
+defaults {"transition":"fade","slide_time":2000,"transition_speed":700,"use_custom_size":"1920x1080","playback_behavior":"always_play","slide_mode":"mode_auto","playback_mode":"loop"}

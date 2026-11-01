@@ -1,0 +1,11 @@
+strlist "a" "b" "c"
+strlist "a" "b"
+strlist "a" "" "b"
+strlist "a"
+strlist "" "a" ""
+strlist
+strlist ""
+strlist "abc"
+strlist
+strlist "" ""
+strlist @null

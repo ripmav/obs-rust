@@ -1,0 +1,24 @@
+# S-021 DEFECTS D-9 of obs_parse_av1_header / obs_parse_av1_packet: the reference reads bytes
+# beyond the end of its input (1-2 bytes after the last OBU) when an OBU header, its size field
+# or the sequence header is cut off, when the sequence header does not end exactly at its
+# trailing one-bit, and obs_parse_av1_header reads data[0] of an empty input.
+# The runner places the input directly before an inaccessible page, so each such case is
+# recorded as "crash". REQUIRED behaviour: obs_parse_av1_header returns 0 and sets no header
+# (the output line "av1_header ret=0 header=unset").
+# The cut-off inputs that the reference rejects cleanly are in 41-av1-header-obus.
+# empty input
+av1_header -
+# one byte: OBU header with has_size=1 but no size field
+av1_header 0a
+# extension flag without the extension byte
+av1_header 0e
+# size field cut off (LEB128 continuation bit)
+av1_header 0a80
+# sequence header one bit too short: syntax needs one more bit than present
+av1_header 0a0a00000042abbfc37709d0
+# sequence header whose last bits are wrong
+av1_header 0a0b00000042abbfc37709d0e0
+# sequence header OBU then a lone OBU header byte with has_size=1
+av1_header 0a0b00000042abbfc37709d0010a
+# sequence header OBU then a lone OBU header with extension flag
+av1_header 0a0b00000042abbfc37709d0010e

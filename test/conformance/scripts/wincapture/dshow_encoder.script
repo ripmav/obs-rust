@@ -1,0 +1,24 @@
+# Hardware H.264 encoder devices (C985/C353): output size is forced to 1024x768 or 1280x720 by nearest aspect
+# ratio (4:3 = 1.3333, 16:9 = 1.7778); keyint_sec 0 means 2; keyframe interval in frames = keyint_sec*fps_num/fps_den
+# (unsigned arithmetic). frameInterval = fps_den*10^7/fps_num computed in 32-bit unsigned (DEFECT D-1: wraps when
+# fps_den > 429, e.g. 30000/1001, so the interval is wrong; a correct implementation would give 333666).
+m_denc_update 1920 1080 30 1 2
+m_denc_update 1280 720 60 1 0
+m_denc_update 1024 768 30 1 4
+m_denc_update 800 600 30 1 1
+m_denc_update 1600 1200 25 1 3
+m_denc_update 1400 900 30 1 2
+m_denc_update 1280 1024 30 1 2
+# fps_den small: no overflow
+m_denc_update 1920 1080 48 1 2
+m_denc_update 1920 1080 24000 1001 2
+m_denc_update 1920 1080 30000 1001 2
+m_denc_update 1920 1080 60000 1001 5
+# get_video_info: I420 at a valid resolution is accepted unchanged; anything else is forced to I420 at 1024x768 or 1280x720
+m_denc_videoinfo i420 1280 720
+m_denc_videoinfo i420 1024 768
+m_denc_videoinfo i420 1920 1080
+m_denc_videoinfo nv12 1280 720
+m_denc_videoinfo i420 1024 600
+m_denc_videoinfo i420 1366 768
+m_denc_videoinfo i420 1600 1200

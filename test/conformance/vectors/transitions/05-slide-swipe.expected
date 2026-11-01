@@ -1,0 +1,200 @@
+create s slide_transition
+  ev enter_graphics
+  ev effect_create file=@data/slide_transition.effect
+  ev leave_graphics
+  ev source_update s deferred (count 1)
+  instance=1
+  fields dir=0,0
+tick s
+  fields dir=1,0
+  fields dir=1,0
+props s
+  flags=0
+  prop direction type=list desc="Direction" visible=1 enabled=1
+    list type=2 format=3 count=4
+    item 0 name="Direction.Left" value="left"
+    item 1 name="Direction.Right" value="right"
+    item 2 name="Direction.Up" value="up"
+    item 3 name="Direction.Down" value="down"
+render s
+  ev transition_video_render callback=yes placeholder=9000
+  ev   callback a=1 b=2 t=0.25 cx=1920 cy=1080
+  ev enable_framebuffer_srgb 1
+  ev set_texture tex_a tex=1 srgb=1
+  ev set_texture tex_b tex=2 srgb=1
+  ev set_vec2 tex_a_dir 0.0625 0
+  ev set_vec2 tex_b_dir 0.9375 0
+  ev effect_loop technique=Slide pass=0
+  ev draw_sprite tex=null flip=0 w=1920 h=1080
+  ev enable_framebuffer_srgb 0
+render s
+  ev transition_video_render callback=yes placeholder=9000
+  ev   callback a=1 b=2 t=0 cx=1920 cy=1080
+  ev enable_framebuffer_srgb 1
+  ev set_texture tex_a tex=1 srgb=1
+  ev set_texture tex_b tex=2 srgb=1
+  ev set_vec2 tex_a_dir 0 0
+  ev set_vec2 tex_b_dir 1 0
+  ev effect_loop technique=Slide pass=0
+  ev draw_sprite tex=null flip=0 w=1920 h=1080
+  ev enable_framebuffer_srgb 0
+render s
+  ev transition_video_render callback=yes placeholder=9000
+  ev   callback a=1 b=2 t=1 cx=1920 cy=1080
+  ev enable_framebuffer_srgb 1
+  ev set_texture tex_a tex=1 srgb=1
+  ev set_texture tex_b tex=2 srgb=1
+  ev set_vec2 tex_a_dir 1 0
+  ev set_vec2 tex_b_dir 0 0
+  ev effect_loop technique=Slide pass=0
+  ev draw_sprite tex=null flip=0 w=1920 h=1080
+  ev enable_framebuffer_srgb 0
+settings s
+  ev source_update s deferred (count 1)
+tick s
+  fields dir=-1,0
+render s
+  ev transition_video_render callback=yes placeholder=9000
+  ev   callback a=1 b=2 t=0.75 cx=1920 cy=1080
+  ev enable_framebuffer_srgb 1
+  ev set_texture tex_a tex=1 srgb=1
+  ev set_texture tex_b tex=2 srgb=1
+  ev set_vec2 tex_a_dir -0.9375 0
+  ev set_vec2 tex_b_dir -0.0625 0
+  ev effect_loop technique=Slide pass=0
+  ev draw_sprite tex=null flip=0 w=1920 h=1080
+  ev enable_framebuffer_srgb 0
+settings s
+  ev source_update s deferred (count 1)
+tick s
+  fields dir=0,1
+render s
+  ev transition_video_render callback=yes placeholder=9000
+  ev   callback a=1 b=2 t=0.25 cx=1920 cy=1080
+  ev enable_framebuffer_srgb 1
+  ev set_texture tex_a tex=1 srgb=1
+  ev set_texture tex_b tex=2 srgb=1
+  ev set_vec2 tex_a_dir 0 0.0625
+  ev set_vec2 tex_b_dir 0 0.9375
+  ev effect_loop technique=Slide pass=0
+  ev draw_sprite tex=null flip=0 w=1920 h=1080
+  ev enable_framebuffer_srgb 0
+settings s
+  ev source_update s deferred (count 1)
+tick s
+  fields dir=0,-1
+render s
+  ev transition_video_render callback=yes placeholder=9000
+  ev   callback a=1 b=2 t=0.25 cx=1920 cy=1080
+  ev enable_framebuffer_srgb 1
+  ev set_texture tex_a tex=1 srgb=1
+  ev set_texture tex_b tex=2 srgb=1
+  ev set_vec2 tex_a_dir 0 -0.0625
+  ev set_vec2 tex_b_dir 0 -0.9375
+  ev effect_loop technique=Slide pass=0
+  ev draw_sprite tex=null flip=0 w=1920 h=1080
+  ev enable_framebuffer_srgb 0
+settings s
+  ev source_update s deferred (count 1)
+tick s
+  fields dir=1,0
+settings s
+  ev source_update s deferred (count 1)
+tick s
+  fields dir=1,0
+create w swipe_transition
+  ev enter_graphics
+  ev effect_create file=@data/swipe_transition.effect
+  ev leave_graphics
+  ev source_update w deferred (count 1)
+  instance=1
+  fields (uninitialised until the first update)
+tick w
+  fields dir=1,0 swipe_in=0
+props w
+  flags=0
+  prop direction type=list desc="Direction" visible=1 enabled=1
+    list type=2 format=3 count=4
+    item 0 name="Direction.Left" value="left"
+    item 1 name="Direction.Right" value="right"
+    item 2 name="Direction.Up" value="up"
+    item 3 name="Direction.Down" value="down"
+  prop swipe_in type=bool desc="SwipeIn" visible=1 enabled=1
+render w
+  ev transition_video_render callback=yes placeholder=9000
+  ev   callback a=1 b=2 t=0.25 cx=1920 cy=1080
+  ev enable_framebuffer_srgb 1
+  ev set_texture tex_a tex=1 srgb=1
+  ev set_texture tex_b tex=2 srgb=1
+  ev set_vec2 swipe_val 0.0625 0
+  ev effect_loop technique=Swipe pass=0
+  ev draw_sprite tex=null flip=0 w=1920 h=1080
+  ev enable_framebuffer_srgb 0
+settings w
+  ev source_update w deferred (count 1)
+tick w
+  fields dir=-1,0 swipe_in=1
+render w
+  ev transition_video_render callback=yes placeholder=9000
+  ev   callback a=1 b=2 t=0.25 cx=1920 cy=1080
+  ev enable_framebuffer_srgb 1
+  ev set_texture tex_a tex=2 srgb=1
+  ev set_texture tex_b tex=1 srgb=1
+  ev set_vec2 swipe_val 0.9375 -0
+  ev effect_loop technique=Swipe pass=0
+  ev draw_sprite tex=null flip=0 w=1920 h=1080
+  ev enable_framebuffer_srgb 0
+settings w
+  ev source_update w deferred (count 1)
+tick w
+  fields dir=0,1 swipe_in=1
+render w
+  ev transition_video_render callback=yes placeholder=9000
+  ev   callback a=1 b=2 t=0.25 cx=1920 cy=1080
+  ev enable_framebuffer_srgb 1
+  ev set_texture tex_a tex=2 srgb=1
+  ev set_texture tex_b tex=1 srgb=1
+  ev set_vec2 swipe_val -0 -0.9375
+  ev effect_loop technique=Swipe pass=0
+  ev draw_sprite tex=null flip=0 w=1920 h=1080
+  ev enable_framebuffer_srgb 0
+settings w
+  ev source_update w deferred (count 1)
+tick w
+  fields dir=0,-1 swipe_in=0
+render w
+  ev transition_video_render callback=yes placeholder=9000
+  ev   callback a=1 b=2 t=0.800000012 cx=1920 cy=1080
+  ev enable_framebuffer_srgb 1
+  ev set_texture tex_a tex=1 srgb=1
+  ev set_texture tex_b tex=2 srgb=1
+  ev set_vec2 swipe_val 0 -0.967999995
+  ev effect_loop technique=Swipe pass=0
+  ev draw_sprite tex=null flip=0 w=1920 h=1080
+  ev enable_framebuffer_srgb 0
+render w
+  ev transition_video_render callback=yes placeholder=9000
+  ev   callback a=1 b=2 t=1.5 cx=1920 cy=1080
+  ev enable_framebuffer_srgb 1
+  ev set_texture tex_a tex=1 srgb=1
+  ev set_texture tex_b tex=2 srgb=1
+  ev set_vec2 swipe_val 0 -1.5
+  ev effect_loop technique=Swipe pass=0
+  ev draw_sprite tex=null flip=0 w=1920 h=1080
+  ev enable_framebuffer_srgb 0
+create s2 slide_transition
+  ev enter_graphics
+  ev effect_create file=@data/slide_transition.effect
+  ev   -> fail
+  ev leave_graphics
+log error Could not find slide_transition.effect
+  instance=0
+  fields (no instance)
+create w2 swipe_transition
+  ev enter_graphics
+  ev effect_create file=@data/swipe_transition.effect
+  ev   -> fail
+  ev leave_graphics
+log error Could not find swipe_transition.effect
+  instance=0
+  fields (uninitialised until the first update)

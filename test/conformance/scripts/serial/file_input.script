@@ -1,0 +1,48 @@
+# File input serializer: read, short read at EOF, seek modes, position (CORE).
+funlink fi-missing
+fput fi-data 000102030405060708090a
+open fin fi-data
+pos
+read 4
+pos
+seek cur 2
+read 3
+pos
+seek end -2
+read 10
+read 10
+pos
+seek start 0
+read 0
+read @null 3
+read 11
+read 1
+seek start 3
+pos
+seek cur -1
+pos
+seek end 0
+pos
+seek end 5
+pos
+read 1
+seek start 20
+pos
+read 1
+seek start -1
+pos
+seek cur -100
+pos
+write aa
+serialize_w aa
+serialize_r 2
+close
+open fin fi-missing
+fput fi-empty -
+open fin fi-empty
+read 4
+pos
+seek end 0
+close
+funlink fi-data
+funlink fi-empty

@@ -1,0 +1,23 @@
+# Canvas size change: relative positions follow the canvas height (the unit is half the canvas height); item scale
+# follows y/scale_ref.y; the new matrices appear only when the scene is updated (render pass).
+source cam 1280 720
+scene main
+add main cam c
+pos c 192 108
+scale c 0.5 0.5
+update main
+print c
+echo -- canvas becomes 1280x720 (same aspect ratio, 2/3 height)
+canvas 1280 720
+get c
+update main
+print c
+echo -- canvas becomes ultrawide 2560x1080 (same height): x relative to height, so x does not move proportionally
+canvas 2560 1080
+get c
+update main
+print c
+echo -- scale_ref never changes after creation
+canvas 1920 1080
+update main
+print c

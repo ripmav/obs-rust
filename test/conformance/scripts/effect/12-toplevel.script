@@ -1,0 +1,38 @@
+# CORE: the top-level loop of the effect parser. Dispatch on the first non-blank token:
+#   ';' or whitespace -> skipped; "struct" -> struct; "technique" -> technique; "sampler_state" -> sampler;
+#   '{' -> error "Unexpected code segment" and the whole balanced {...} block is skipped;
+#   anything else -> specifiers, then a type name, a name, and then '(' (function) or a parameter.
+# An empty or comment-only effect text is a valid effect with nothing in it, except that text with zero
+# tokens at all (empty string) is rejected by the lexer layer without an error message.
+backend text none
+ep t1 ";;;"
+ep t2 "   \n\n  \t "
+ep t3 "// only a comment\n/* and another */"
+ep t4 "{ } ; { float x; } "
+ep t5 "float x; { float y; float z; } float w;"
+ep t6 "{ { nested } } float x;"
+ep t7 "{ unterminated"
+ep t8 "}"
+ep t9 "float x; ) float y;"
+ep t10 "float4 f() { return 1; } ;; float y;"
+ep t11 "struct"
+ep t12 "technique"
+ep t13 "sampler_state"
+ep t14 "x"
+ep t15 "x y"
+ep t16 "x y;"
+ep t17 "float x; struct A { float y; }; sampler_state s { Filter = Point; }; technique T { }; float z; float f() { return 1; }"
+ep t18 "STRUCT A { float y; };"
+ep t19 "Technique T { }"
+echo --- empty text
+effect e1 empty.effect ""
+effect e2 empty.effect ";"
+effect_noerr e3 empty.effect "float x"
+echo --- effect with only comments still produces an (empty) effect
+effect e4 comment.effect "// nothing\n"
+dump e4
+echo --- an unterminated block comment makes the lexer layer fail: no parse, no error text
+effect e5 unterm.effect "float x; /* never closed"
+ep t20 "float x; /* never closed"
+echo --- text consisting of whitespace only is fine
+effect e6 ws.effect "   \n\t\n"

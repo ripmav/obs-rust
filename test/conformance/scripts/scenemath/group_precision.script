@@ -1,0 +1,20 @@
+# Items inside groups (and groups themselves) are NOT snapped to half pixels: group resizing needs full precision.
+# Top-level items are. Same inputs, both cases.
+source s 200 100
+scene main
+add main s a
+add main s b
+add main s c
+pos a 100.26 50.76
+get a
+group main g b c
+pos b 100.26 50.76
+get b
+pos g 100.26 50.76
+get g
+bounds_type b 1
+bounds b 33.33 44.44
+get b
+echo -- group scale / bounds are also exact
+scale g 1.333 1.777
+get g

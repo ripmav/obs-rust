@@ -1,0 +1,70 @@
+fu_run local=/L cache=/C1/ temp=/C1/.temp url=http://srv/u/package.json
+fs read /L/package.json -> ok
+fs read /C1/package.json -> missing
+fs read /C1/meta.json -> missing
+fs copy /L/package.json -> /C1/.temp/package.json : ok
+fs unlink /C1/package.json : fail
+fs rename /C1/.temp/package.json -> /C1/package.json : ok
+http GET http://srv/u/package.json "User-Agent: UA"
+log warning [fu] Remote package does not exist or is not valid json
+fs rmdir /C1/.temp
+fu_run done
+fu_run local=/L cache=/C2/ temp=/C2/.temp url=http://srv/u/package.json
+fs read /L/package.json -> ok
+fs read /C2/package.json -> missing
+fs read /C2/meta.json -> missing
+fs copy /L/package.json -> /C2/.temp/package.json : ok
+fs unlink /C2/package.json : fail
+fs rename /C2/.temp/package.json -> /C2/package.json : ok
+http GET http://srv/u/package.json "User-Agent: UA"
+log warning [fu] Remote package does not exist or is not valid json
+fs rmdir /C2/.temp
+fu_run done
+fu_run local=/L cache=/C3/ temp=/C3/.temp url=http://srv/u/package.json
+fs read /L/package.json -> ok
+fs read /C3/package.json -> missing
+fs read /C3/meta.json -> missing
+fs copy /L/package.json -> /C3/.temp/package.json : ok
+fs unlink /C3/package.json : fail
+fs rename /C3/.temp/package.json -> /C3/package.json : ok
+http GET http://srv/u/package.json "User-Agent: UA"
+fs write /C3/meta.json len=18
+log error obs-data.c: [obs_data_create_from_json] Failed reading json string (1): string or '}' expected near 'not'
+log warning [fu] Failed to initialize remote package json
+fs rmdir /C3/.temp
+fu_run done
+fu_cat /C3/meta.json "{\"etag\":\"\\\"bad\\\"\"}"
+fu_run local=/L cache=/C4/ temp=/C4/.temp url=http://srv/u/package.json
+fs read /L/package.json -> ok
+fs read /C4/package.json -> missing
+fs read /C4/meta.json -> missing
+fs copy /L/package.json -> /C4/.temp/package.json : ok
+fs unlink /C4/package.json : fail
+fs rename /C4/.temp/package.json -> /C4/package.json : ok
+http GET http://srv/u/package.json "User-Agent: UA"
+fs write /C4/.temp/package.json len=48
+http GET f "User-Agent: UA"
+log warning [fu] Remote update of URL "f" failed: transfer failed
+fs unlink /C4/package.json : ok
+fs rename /C4/.temp/package.json -> /C4/package.json : ok
+log info [fu] Successfully updated package (version 9)
+fs rmdir /C4/.temp
+fu_run done
+fu_ls
+  /C1/package.json (24 bytes)
+  /C2/package.json (24 bytes)
+  /C3/meta.json (18 bytes)
+  /C3/package.json (24 bytes)
+  /C4/package.json (48 bytes)
+  /L/package.json (24 bytes)
+fu_run local=/L cache=/C5/ temp=/C5/.temp url=http://srv/u/package.json
+fs read /L/package.json -> ok
+fs read /C5/package.json -> missing
+fs read /C5/meta.json -> missing
+fs copy /L/package.json -> /C5/.temp/package.json : ok
+fs unlink /C5/package.json : fail
+fs rename /C5/.temp/package.json -> /C5/package.json : ok
+http GET http://srv/u/package.json "User-Agent: UA"
+log warning [fu] Remote update of URL "http://srv/u/package.json" failed: HTTP error
+fs rmdir /C5/.temp
+fu_run done

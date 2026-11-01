@@ -1,0 +1,66 @@
+# S-021 AMFObject encoding: object (03 ... 00 00 09), ECMA array (08 u32count ... 00 00 09),
+# strict array (0a u32count, elements, NO end marker). Properties are encoded by name
+# (u16 len + bytes, only when the name is non-empty) followed by the typed value.
+cap 4096
+obj empty
+enc_obj empty object
+enc_obj empty ecma
+enc_obj empty strict
+obj flat
+add flat width number 1920
+add flat stereo bool 1
+add flat name string abc
+enc_obj flat object
+enc_obj flat ecma
+enc_obj flat strict
+echo nested
+obj inner
+add inner x number 1
+add inner y number 2
+obj outer
+add outer pos object inner
+add outer list ecma inner
+add outer arr strict inner
+add outer s string z
+enc_obj outer object
+echo property-without-name-inside-object
+obj nn
+add nn - number 5
+add nn - string hi
+add nn - bool 0
+enc_obj nn object
+enc_obj nn strict
+echo QUIRK-null-property-never-writes-its-name
+obj nl
+add nl gone null
+add nl kept number 1
+enc_obj nl object
+enc_prop nl 0
+echo prop-types-that-cannot-be-encoded
+obj bad
+add bad d date 1000 60
+enc_obj bad object
+add bad ok number 1
+enc_obj bad ecma
+obj inv
+add inv i invalid
+enc_obj inv object
+obj mid
+add mid a number 1
+add mid i invalid
+add mid c number 3
+enc_obj mid object
+enc_obj mid ecma
+enc_obj mid strict
+obj ty
+add ty r type 7 0
+enc_obj ty object
+obj ty2
+add ty2 m type 4 0
+enc_obj ty2 object
+echo single-property
+enc_prop flat 0
+enc_prop flat 1
+enc_prop flat 2
+enc_prop outer 0
+enc_prop outer 3

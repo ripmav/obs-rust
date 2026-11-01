@@ -1,0 +1,40 @@
+log debug canvas 'Main' (<uuid>) created
+startup -> true
+log info ---------------------------------
+log info video settings reset:  base resolution:   1920x1080  output resolution: 1280x720  downscale filter:  Bicubic  fps:               30/1  format:            NV12  YUV mode:          Rec. 709/Partial
+log info NV12 texture support enabled
+log info P010 texture support not available
+reset_video -> success
+  after_call base=1920x1080 out=1280x720 fps=30/1 fmt=NV12 cs=2 range=1 scale=2 gpu=1 adapter=0
+log info ---------------------------------
+log info video settings reset:  base resolution:   1920x1080  output resolution: 1280x720  downscale filter:  Bicubic  fps:               30/1  format:            NV12  YUV mode:          Rec. 709/Partial
+log info NV12 texture support enabled
+log info P010 texture support not available
+reset_video -> success
+  after_call base=1920x1080 out=1280x720 fps=30/1 fmt=NV12 cs=2 range=1 scale=2 gpu=1 adapter=0
+live_delta 0
+log info ---------------------------------
+log info video settings reset:  base resolution:   1920x1080  output resolution: 1280x720  downscale filter:  Bicubic  fps:               30/1  format:            NV12  YUV mode:          Rec. 709/Partial
+log info NV12 texture support enabled
+log info P010 texture support not available
+reset_video -> success
+  after_call base=1920x1080 out=1280x720 fps=30/1 fmt=NV12 cs=2 range=1 scale=2 gpu=1 adapter=0
+live_delta 0
+log info ---------------------------------
+log info video settings reset:  base resolution:   1920x1080  output resolution: 1280x720  downscale filter:  Bicubic  fps:               30/1  format:            BGRA  YUV mode:          None
+reset_video -> success
+  after_call base=1920x1080 out=1280x720 fps=30/1 fmt=BGRA cs=2 range=1 scale=2 gpu=0 adapter=0
+log info ---------------------------------
+log info video settings reset:  base resolution:   1920x1080  output resolution: 1280x720  downscale filter:  Bicubic  fps:               30/1  format:            BGRA  YUV mode:          None
+reset_video -> success
+  after_call base=1920x1080 out=1280x720 fps=30/1 fmt=BGRA cs=2 range=1 scale=2 gpu=0 adapter=0
+live_delta 0
+log debug canvas 'Aux' (<uuid>) created
+canvas_create c1 -> ok
+canvas c1 name="Aux" flags=0x0 private=0 removed=0 has_video=1 video_active=0 uuid_len=36 view_type=aux
+canvas c1 name="Aux" flags=0x0 private=0 removed=0 has_video=1 video_active=0 uuid_len=36 view_type=aux
+log debug canvas 'Aux' (<uuid>) destroyed
+shutdown begin
+log info Freeing OBS context data
+log debug canvas 'Main' (<uuid>) destroyed
+shutdown end obs=NULL

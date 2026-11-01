@@ -1,0 +1,26 @@
+> pipefail 1
+> supported
+os.dlopen "libnvidia-encode.so.1" -> ok
+log warning [NVENC] Failed to launch the NVENC test process I guess
+nvenc_supported -> 0
+> pipefail 0
+> ini ""
+> supported
+os.dlopen "libnvidia-encode.so.1" -> ok
+log warning [NVENC] Seems the NVENC test subprocess crashed. Better there than here I guess. 
+nvenc_supported -> 0
+> ini "[general]\nnvenc_supported=false\nreason=No NVIDIA GPU found\n"
+> supported
+os.dlopen "libnvidia-encode.so.1" -> ok
+log warning [NVENC] Test process failed: No NVIDIA GPU found
+nvenc_supported -> 0
+> ini "[general]\nnvenc_supported=false\n"
+> supported
+os.dlopen "libnvidia-encode.so.1" -> ok
+log warning [NVENC] Test process failed: unknown
+nvenc_supported -> 0
+> ini "[h264]\ncodec_supported=true\n"
+> supported
+os.dlopen "libnvidia-encode.so.1" -> ok
+log warning [NVENC] Test process failed: unknown
+nvenc_supported -> 0

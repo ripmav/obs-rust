@@ -1,0 +1,55 @@
+echo gain-channel-change-via-update
+create g -> ok
+process g frames=2 ts=0 pos=0 in-crc: a86cc695 a86cc695 a86cc695 a86cc695
+  ret same frames=2 ts=0
+  out p0 [0] 1.99526238 1.99526238
+  out p1 [0] 1.99526238 1.99526238
+  out p2 [0] 1.99526238 1.99526238
+  out p3 [0] 1.99526238 1.99526238
+echo gate-rate-change
+create n -> ok
+state gate channels=2 is_open=0 sample_rate_i=1.04166666e-05 open_threshold=0.0501187295 close_threshold=0.0251188632 decay_rate=1.95311459e-05 attack_rate=0.000416666677 release_rate=6.94444389e-05 hold_time=0.200000003 attenuation=0 level=0 held_time=0
+echo limiter-extreme-rate
+create l -> ok
+state limiter channels=2 rate=8000 buf_len=80 threshold=-6 attack_gain=0 release_gain=0.997918844 output_gain=1 slope=1 envelope=0
+process l frames=8 ts=0 pos=0 in-crc: c03f6a05 c03f6a05
+  ret same frames=8 ts=0
+  out p0 [0] 0.501187205 0.501187205 0.501187205 0.501187205 0.501187205 0.501187205 0.501187205 0.501187205
+  out p1 [0] 0.501187205 0.501187205 0.501187205 0.501187205 0.501187205 0.501187205 0.501187205 0.501187205
+create l2 -> ok
+state limiter channels=2 rate=192000 buf_len=1920 threshold=-6 attack_gain=0.00547078298 release_gain=0.999913216 output_gain=1 slope=1 envelope=0
+echo compressor-big-block-1024
+create c -> ok
+process c frames=1024 ts=0 pos=0 in-crc: 8f185ed1 aa93ed57
+  ret same frames=1024 ts=0
+  out p0 [1000] 0.159696415 0.220538735 -0.0772775039 0.0939731821 0.107908569 0.110903762 0.0263600238 -0.174247667
+state compressor channels=2 rate=48000 buf_len=1024 ratio=10 threshold=-18 attack_gain=0.996533811 release_gain=0.999652863 output_gain=1 slope=0.899999976 envelope=0.631514013 sidechain_name=(null) weak=0 max_sc_frames=0 sc_queue0=0 check_time=0
+echo expander-block-sizes-1-and-1024
+create e -> ok
+process e frames=1 ts=0 pos=0 in-crc: 1c95ab18 1c95ab18
+  ret same frames=1 ts=0
+  out p0 [0] 0.5
+  out p1 [0] 0.5
+process e frames=1024 ts=0 pos=1 in-crc: 13132f6e 7a241bb0
+  ret same frames=1024 ts=0
+  out p0 [1010] -0.423129916 0.0360275283 -0.497527421 -0.137103185 0.54514724 -0.673448801 0.232848197
+echo eq-large-block
+create q -> ok
+process q frames=1024 ts=0 pos=0 in-crc: f979befc 275522e8
+  ret same frames=1024 ts=0
+  out p0 [0] 0 -0.306690216 0.116787791 -0.132244825 -0.483990908 -0.146039069 -0.163893521 0.114971578
+echo inf-input-eq
+process q frames=2 ts=0 pos=1024 in-crc: 123e5295 e3670195
+  ret same frames=2 ts=0
+  out p0 [0] nan nan
+  out p1 [0] nan nan
+process q frames=4 ts=0 pos=1026 in-crc: 301a136d 301a136d
+  ret same frames=4 ts=0
+  out p0 [0] nan nan nan nan
+  out p1 [0] nan nan nan nan
+echo denormal-input
+create g2 -> ok
+process g2 frames=2 ts=0 pos=0 in-crc: ada8d181 550cd881
+  ret same frames=2 ts=0
+  out p0 [0] 9.9999461e-41 9.9999461e-41
+  out p1 [0] -9.9999461e-41 -9.9999461e-41

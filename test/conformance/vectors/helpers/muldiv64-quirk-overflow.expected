@@ -1,0 +1,4 @@
+mul_div64 ref=1 exact=10842021
+mul_div64 ref=0 exact=5
+mul_div64 ref=13835058055282163711 exact=13835058055282163711
+mul_div64 ref=1 exact=overflow

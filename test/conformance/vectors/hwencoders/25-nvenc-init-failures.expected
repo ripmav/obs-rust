@@ -1,0 +1,66 @@
+> dump 0
+> nvcap dyn_bitrate 1
+> defaults h264
+> nvstatus preset NV_ENC_ERR_INVALID_PARAM
+> create h264 soft
+host.set_last_error "NVENC Error: init_encoder_base: nvEncGetEncodePresetConfig failed: 8 (NV_ENC_ERR_INVALID_PARAM)"
+log error [obs-nvenc] init_encoder_base: nvEncGetEncodePresetConfig failed: 8 (NV_ENC_ERR_INVALID_PARAM)
+nv.DestroyEncoder
+log error Already in non_texture encoder, can't fall back further!
+create -> NULL
+> nvstatus preset NV_ENC_SUCCESS
+> nvstatus init NV_ENC_ERR_UNSUPPORTED_PARAM
+> create h264 soft
+log info [obs-nvenc: 'enc'] settings: 	codec:        H264 	rate_control: cbr 	bitrate:      10000 	keyint:       250 	preset:       p5 	tuning:       hq 	multipass:    qres 	profile:      high 	width:        1920 	height:       1080 	b-frames:     0 	b-ref-mode:   0 	lookahead:    false (0 frames) 	aq:           true 
+nv.InitializeEncoder
+host.set_last_error "NVENC Error: init_encoder_h264: nv.nvEncInitializeEncoder(enc->session, &enc->params) failed: 12 (NV_ENC_ERR_UNSUPPORTED_PARAM)"
+log error [obs-nvenc] init_encoder_h264: nv.nvEncInitializeEncoder(enc->session, &enc->params) failed: 12 (NV_ENC_ERR_UNSUPPORTED_PARAM)
+nv.DestroyEncoder
+log error Already in non_texture encoder, can't fall back further!
+create -> NULL
+> nvstatus init NV_ENC_SUCCESS
+> nvstatus bitstream NV_ENC_ERR_OUT_OF_MEMORY
+> create h264 soft
+log info [obs-nvenc: 'enc'] settings: 	codec:        H264 	rate_control: cbr 	bitrate:      10000 	keyint:       250 	preset:       p5 	tuning:       hq 	multipass:    qres 	profile:      high 	width:        1920 	height:       1080 	b-frames:     0 	b-ref-mode:   0 	lookahead:    false (0 frames) 	aq:           true 
+nv.InitializeEncoder
+host.set_last_error "TooManySessions"
+log error [obs-nvenc] nv_bitstream_init: nv.nvEncCreateBitstreamBuffer(enc->session, &buf) failed: 10 (NV_ENC_ERR_OUT_OF_MEMORY)
+nv.DestroyEncoder
+log error Already in non_texture encoder, can't fall back further!
+create -> NULL
+> nvstatus bitstream NV_ENC_SUCCESS
+> set str opts bogus=1
+> create h264 soft
+log info [obs-nvenc: 'enc'] settings: 	codec:        H264 	rate_control: cbr 	bitrate:      10000 	keyint:       250 	preset:       p5 	tuning:       hq 	multipass:    qres 	profile:      high 	width:        1920 	height:       1080 	b-frames:     0 	b-ref-mode:   0 	lookahead:    false (0 frames) 	aq:           true 	user opts:    bogus=1 
+log warning [obs-nvenc: 'enc'] Unknown custom option: "bogus"
+host.set_last_error "Opts.Invalid"
+nv.DestroyEncoder
+log error Already in non_texture encoder, can't fall back further!
+create -> NULL
+> set str opts bf=2
+> create h264 soft
+log info [obs-nvenc: 'enc'] settings: 	codec:        H264 	rate_control: cbr 	bitrate:      10000 	keyint:       250 	preset:       p5 	tuning:       hq 	multipass:    qres 	profile:      high 	width:        1920 	height:       1080 	b-frames:     0 	b-ref-mode:   0 	lookahead:    false (0 frames) 	aq:           true 	user opts:    bf=2 
+log warning [obs-nvenc: 'enc'] Unknown custom option: "bf"
+host.set_last_error "Opts.Invalid"
+nv.DestroyEncoder
+log error Already in non_texture encoder, can't fall back further!
+create -> NULL
+> set str opts ""
+> set str opts "gopLength=77 frameIntervalP=0"
+> dump 2
+> create h264 soft
+cuda.ctx_init
+nv.OpenEncodeSessionEx deviceType=CUDA apiVersion=13.0
+nv.GetEncodePresetConfigEx codec=NV_ENC_CODEC_H264_GUID preset=NV_ENC_PRESET_P5_GUID tuning=HIGH_QUALITY
+log info [obs-nvenc: 'enc'] settings: 	codec:        H264 	rate_control: cbr 	bitrate:      10000 	keyint:       250 	preset:       p5 	tuning:       hq 	multipass:    qres 	profile:      high 	width:        1920 	height:       1080 	b-frames:     0 	b-ref-mode:   0 	lookahead:    false (0 frames) 	aq:           true 	user opts:    gopLength=77 frameIntervalP=0 
+log debug [obs-nvenc] Changing parameter: "gopLength": 250 -> 77 (uint32_t)
+log debug [obs-nvenc] Changing parameter: "frameIntervalP": 1 -> 0 (int32_t)
+nv.InitializeEncoder
+  params: codec=NV_ENC_CODEC_H264_GUID preset=NV_ENC_PRESET_P5_GUID tuning=HIGH_QUALITY size=1920x1080 dar=1920x1080 fps=60/1 async=0 ptd=1 split=0
+  config: profile=NV_ENC_H264_PROFILE_HIGH_GUID gop=77 frameIntervalP=0
+  rc: mode=CBR avg=10000000 max=10000000 vbv=10000000 vbvInit=0 tq=0 cqP=0 cqB=0 cqI=0 aq=1 aqStrength=8 taq=0
+  rc: lookahead=0 depth=0 iadapt_off=0 badapt_off=0 multipass=QUARTER qpmap=2
+  h264: level=0 idr=250 bref=0 filler=1 repeatSPSPPS=0 disableSPSPPS=0 aud=0 bufSEI=0 timingSEI=1 lossless=0 slice=3/1 chroma=0 inDepth=8 outDepth=8
+  vui: signal=1 full=0 colour=1 prim=1 trc=1 matrix=1
+cuda.init_surfaces n=4
+create -> ok

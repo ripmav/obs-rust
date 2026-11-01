@@ -1,0 +1,74 @@
+add v ok
+add w ok
+visible v -> 1
+signal item_add scene=main item#1
+signal item_add scene=main item#2
+transition v_hide size 320 180
+transition v_hide align 0
+transition v_hide scale_type 1
+transition v_hide set s
+transition v_hide start mode=0 ms=750 dest=-
+signal item_visible scene=main item#1 visible=0
+log end
+visible v -> 1
+transition v_show size 320 180
+transition v_show align 0
+transition v_show scale_type 1
+transition v_show set -
+transition v_show start mode=0 ms=300 dest=s
+signal item_visible scene=main item#1 visible=1
+log end
+-- an item without transitions records nothing
+visible w -> 1
+visible w -> 1
+signal item_visible scene=main item#2 visible=0
+signal item_visible scene=main item#2 visible=1
+log end
+-- a running transition is force-stopped first (busy transition)
+visible w -> 1
+visible w -> 1
+visible w -> 1
+transition w_hide size 320 180
+transition w_hide align 0
+transition w_hide scale_type 1
+transition w_hide set s
+transition w_hide start mode=0 ms=100 dest=-
+signal item_visible scene=main item#2 visible=0
+transition w_hide force_stop
+signal item_visible scene=main item#2 visible=1
+transition w_hide size 320 180
+transition w_hide align 0
+transition w_hide scale_type 1
+transition w_hide set s
+transition w_hide start mode=0 ms=100 dest=-
+signal item_visible scene=main item#2 visible=0
+log end
+-- group cascade
+add p ok
+add q ok
+group g ok
+visible q -> 1
+visible g -> 1
+signal item_add scene=main item#3
+signal item_add scene=main item#4
+signal item_transform scene=main item#4
+signal item_transform scene=main item#3
+signal item_transform scene=g item#3
+signal item_transform scene=g item#4
+signal item_transform scene=g item#3
+signal item_transform scene=g item#4
+signal item_transform scene=main item#5
+signal item_add scene=main item#5
+signal item_visible scene=g item#4 visible=0
+transition g_hide size 320 180
+transition g_hide align 0
+transition g_hide scale_type 1
+transition g_hide set g
+transition g_hide start mode=0 ms=500 dest=-
+transition p_hide size 320 180
+transition p_hide align 0
+transition p_hide scale_type 1
+transition p_hide set s
+transition p_hide start mode=0 ms=40 dest=-
+signal item_visible scene=main item#5 visible=0
+log end

@@ -1,0 +1,70 @@
+save_json 1
+file conf.json "{\"s\":\"text\",\"i\":1}"
+from_json_file b ok
+json b "{\"s\":\"text\",\"i\":1}"
+echo --- pretty save
+save_json_pretty_safe 1
+file pretty.json "{\n    \"s\": \"text\",\n    \"i\": 1\n}"
+exists pretty.json.tmp 0
+echo --- safe save with backup
+save_json_safe 1
+file conf.json "{\"s\":\"text\",\"i\":2}"
+file conf.json.bak "{\"s\":\"text\",\"i\":1}"
+exists conf.json.tmp 0
+save_json_safe 1
+file conf.json "{\"s\":\"text\",\"i\":3}"
+file conf.json.bak "{\"s\":\"text\",\"i\":2}"
+echo --- invalid temp extension
+log error os_quick_write_utf8_file_safe: invalid temporary extension specified
+save_json_safe 0
+log error os_quick_write_utf8_file_safe: invalid temporary extension specified
+save_json_safe 0
+file conf.json "{\"s\":\"text\",\"i\":3}"
+echo --- empty data is written as {}
+save_json 1
+file empty.json "{}"
+save_json 0
+exists nothing.json 0
+echo --- unwritable path
+save_json 0
+log error os_quick_write_utf8_file_safe: failed to write to obsdata-f-nodir/x/conf.json.tmp
+save_json_safe 0
+echo --- loading
+from_json_file c fail
+from_json_file c fail
+log error obs-data.c: [obs_data_create_from_json] Failed reading json string (1): string or '}' expected near 'not'
+from_json_file c fail
+from_json_file c ok
+json c "{\"k\":1}"
+from_json_file d ok
+dump d {}
+echo --- safe loader: good primary file ignores the backup
+from_json_file_safe f ok
+json f "{\"from\":\"primary\"}"
+exists p.json.bak 1
+echo --- safe loader: corrupt primary uses the backup, and the backup file is consumed
+log error obs-data.c: [obs_data_create_from_json] Failed reading json string (1): string or '}' expected near 'corrupt'
+log warning obs-data.c: [obs_data_create_from_json_file_safe] attempting backup file
+from_json_file_safe g ok
+json g "{\"from\":\"backup\"}"
+exists p.json.bak 0
+file p.json "{\"from\":\"backup\"}"
+echo --- safe loader: missing primary also falls back
+log warning obs-data.c: [obs_data_create_from_json_file_safe] attempting backup file
+from_json_file_safe h ok
+json h "{\"from\":\"backup2\"}"
+exists p.json 1
+echo --- safe loader: corrupt backup too, or no backup, or no extension
+log error obs-data.c: [obs_data_create_from_json] Failed reading json string (1): string or '}' expected near 'corrupt'
+log warning obs-data.c: [obs_data_create_from_json_file_safe] attempting backup file
+log error obs-data.c: [obs_data_create_from_json] Failed reading json string (1): string or '}' expected near 'corrupt'
+from_json_file_safe i fail
+exists q.json.bak 0
+file q.json "{corrupt too"
+log error obs-data.c: [obs_data_create_from_json] Failed reading json string (1): string or '}' expected near 'corrupt'
+from_json_file_safe j fail
+log error obs-data.c: [obs_data_create_from_json] Failed reading json string (1): string or '}' expected near 'corrupt'
+from_json_file_safe k fail
+log error obs-data.c: [obs_data_create_from_json] Failed reading json string (1): string or '}' expected near 'corrupt'
+from_json_file_safe k fail
+exists s.json.bak 1

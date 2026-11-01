@@ -1,0 +1,18 @@
+a dump num=0 capacity=0 items=-
+push idx=0
+a dump num=1 capacity=1 items=1
+push idx=1
+a dump num=2 capacity=2 items=1,2
+push idx=2
+a dump num=3 capacity=4 items=1,2,3
+push idx=3
+push idx=4
+a dump num=5 capacity=8 items=1,2,3,4,5
+a dump num=5 capacity=20 items=1,2,3,4,5
+a dump num=5 capacity=40 items=1,2,3,4,5
+a dump num=5 capacity=100 items=1,2,3,4,5
+a dump num=5 capacity=100 items=1,2,3,4,5
+a dump num=5 capacity=200 items=1,2,3,4,5
+a dump num=5 capacity=200 items=1,2,3,4,5
+a dump num=0 capacity=200 items=-
+a dump num=0 capacity=0 items=-

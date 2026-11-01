@@ -1,0 +1,35 @@
+# S-021 AMF_GetProp / AMF_CountProp / AMFProp_Get* on a decoded object.
+# 'getprop DATA SEL' decodes DATA with names, then looks up SEL: a decimal index (>= 0) or a
+# property name (the first property with that name wins; names are compared byte-wise and
+# the lengths must match). Out of range or unknown names give the shared INVALID property.
+buf d1 0001 61 00 3ff8000000000000  0001 62 01 01  0001 63 02 0002 6869
+buf d2 0001 61 05  0002 6f6f 03 0001 78 05 000009  0000 02 0000
+buf d3 0002 6565 08 00000001 0001 78 00 3ff0000000000000 000009
+buf d4 0002 7373 0a 00000001 05
+cat data @d1 @d2 @d3 @d4
+echo by-index
+getprop @data 0
+getprop @data 1
+getprop @data 2
+getprop @data 3
+getprop @data 4
+getprop @data 5
+getprop @data 5
+getprop @data 6
+getprop @data 6
+getprop @data 7
+getprop @data 99
+echo by-name
+getprop @data a
+getprop @data b
+getprop @data c
+getprop @data oo
+getprop @data ee
+getprop @data ss
+getprop @data zz
+getprop @data aa
+getprop @data ""
+getprop @data -1
+echo empty-input
+getprop - 0
+getprop - a

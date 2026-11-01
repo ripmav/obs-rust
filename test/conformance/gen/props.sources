@@ -1,0 +1,15 @@
+# S-015 obs-properties: real libobs/obs-properties.c + obs-data.c (needs jansson).
+test/conformance/gen/props_runner.c
+test/conformance/gen/props_stubs.c
+libobs/obs-properties.c
+libobs/obs-data.c
+libobs/graphics/vec2.c
+libobs/graphics/vec3.c
+libobs/graphics/vec4.c
+libobs/graphics/quat.c
+libobs/graphics/axisang.c
+libobs/graphics/matrix3.c
+libobs/graphics/matrix4.c
+libobs/graphics/plane.c
+libobs/graphics/math-extra.c
+-ljansson

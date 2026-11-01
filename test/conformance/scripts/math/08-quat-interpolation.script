@@ -1,0 +1,19 @@
+quat a 0 0 0 1
+quat b 0 0.7071068 0 0.7071068
+call i0 quat_interpolate a b 0
+call i1 quat_interpolate a b 1
+call ih quat_interpolate a b 0.5
+call same quat_interpolate a a 0.5
+call lg quat_log b
+call ex quat_exp lg
+quat c 0.1 0.2 0.3 0.9
+call tan quat_get_tangent a c b
+call cub quat_interpolate_cubic a b c a 0.25
+vec3 d 0 0 -1
+call look quat_set_look_dir d
+vec3 d2 1 0 0
+call look2 quat_set_look_dir d2
+vec3 d3 0 1 0
+call look3 quat_set_look_dir d3
+vec3 d4 1 1 1
+call look4 quat_set_look_dir d4

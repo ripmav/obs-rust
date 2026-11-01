@@ -1,0 +1,31 @@
+s vec2 5 -4
+s vec2 -3 8
+s vec2 4 -12
+s vec2 4 -3
+s vec2 1.5 2.5
+s vec2 0.5 1.5
+s vec2 3 6
+s vec2 2 -3
+s vec2 -4 6
+s vec2 4 6
+s vec2 1 -2
+s vec2 2 -1
+s vec2 -1 2
+s vec2 -0 2
+d float -8
+d float 2.23606801
+d float 5
+d float 2.82842708
+d float 0
+s vec2 0.600000024 0.800000012
+s vec2 0.600000024 0.800000012
+s vec2 inf inf
+s vec2 inf inf
+s vec2 nan nan
+s vec2 1 -6
+s vec2 4 2
+s vec2 1 1.5
+s vec2 1.5 2
+a vec2 5 -4
+a vec2 10 -8
+a vec2 -10 8

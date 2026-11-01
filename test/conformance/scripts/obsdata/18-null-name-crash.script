@@ -1,0 +1,25 @@
+# DEFECT D2: a NULL item name is outside the contract. The reference dereferences it
+# (strlen in the hash lookup) and crashes in every function that takes a name, even on
+# an empty object. A conforming implementation MUST NOT crash: reads return the
+# defaults of the type, writes and erases are no-ops. `try` runs in a child process;
+# "try X crash" in the expected file is equal to a conforming "try X ok" (README).
+new a
+set_int a x 1
+try_quiet get_int a @null
+try_quiet get_string a @null
+try_quiet get_bool a @null
+try_quiet get_double a @null
+try_quiet get_obj a @null o
+try_quiet get_array a @null ar
+try_quiet set_int a @null 1
+try_quiet set_string a @null "v"
+try_quiet set_default_int a @null 1
+try_quiet erase a @null
+try_quiet has_user a @null
+try_quiet has_default a @null
+try_quiet unset_user a @null
+try_quiet byname a @null i
+new e
+try_quiet get_int e @null
+try_quiet set_int e @null 1
+dump a

@@ -1,0 +1,35 @@
+# S-050 obs-qsv11: timestamp conversion between OBS video timestamps (integer ticks of the
+# encoder timebase fps_den/fps_num) and the 90 kHz MFX clock.
+#   obs->mfx: ts * 90000 / fps_num   (64-bit integer division truncating toward zero; fps_den unused)
+#   mfx->obs: round to the nearest multiple of fps_den, halves away from zero:
+#             (ts*fps_num + sign*div/2) / div * fps_den,  div = 90000 * fps_den
+host fps 60 1
+q_ts obs 0
+q_ts obs 1
+q_ts obs 60
+q_ts obs 123456789
+q_ts mfx 0
+q_ts mfx 1500
+q_ts mfx 750
+q_ts mfx 749
+q_ts mfx 2250
+q_ts mfx -750
+q_ts mfx -749
+q_ts mfx -1500
+q_ts mfx -2250
+host fps 30000 1001
+q_ts obs 1001
+q_ts obs 1
+q_ts obs 30
+q_ts mfx 3003
+q_ts mfx 1502
+q_ts mfx 1501
+q_ts mfx -1501
+q_ts mfx -1502
+q_ts mfx 90090
+host fps 24 1
+q_ts obs 1
+q_ts obs 25
+q_ts mfx 1875
+q_ts mfx 1874
+q_ts mfx 5625

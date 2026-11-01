@@ -1,0 +1,28 @@
+# CORE. text: type is stored; info type defaults to normal, word wrap defaults to true,
+# monospace defaults to false; the three setters work for every text type.
+props P
+add text P d "Default" default as d
+add text P pw "Password" password as pw
+add text P ml "Multi" multiline as ml
+add text P inf "Info" info as inf
+info d
+info pw
+info ml
+info inf
+set inf text_info_type warning
+set inf text_word_wrap 0
+set d text_monospace 1
+set d text_info_type error
+info inf
+info d
+echo out-of-range-numeric-type-is-stored
+add text P weird "w" 9 as w
+info w
+echo setters-on-other-kinds-are-ignored
+add bool P b "B" as b
+set b text_monospace 1
+set b text_word_wrap 0
+set b text_info_type 2
+info b
+probe b
+destroy P

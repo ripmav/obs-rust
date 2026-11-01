@@ -1,0 +1,11 @@
+# Nested emits of one signal combined with a disconnect: the entry disconnected at the deepest level is skipped by every outer level.
+handler h
+add h "void s()"
+callback a emit:h:s disconnect:h:s:b
+callback b
+callback c
+connect h s a
+connect h s b
+connect h s c
+emit h s
+emit h s

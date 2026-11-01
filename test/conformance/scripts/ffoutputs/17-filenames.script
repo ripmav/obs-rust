@@ -1,0 +1,108 @@
+# Split file names: directory + "/" + generated name; backslashes become slashes; a missing trailing slash is added;
+# the directory part of the final path is created (mkdirs); unless allow_overwrite an existing name gets " (N)"
+# (allow_spaces=1) or "_N" (allow_spaces=0) inserted before the last '.' of the whole path, N from 2 upwards.
+# Each case: first keyframe, manual split request, second keyframe (the split).
+reset
+output o
+venc h264 bitrate=2500 extra=0a0b
+set str path /v/first.mkv
+set bool split_file 1
+set str directory /rec
+set str format "a b"
+set str extension mkv
+set bool allow_spaces 1
+fs add "/rec/a b.mkv"
+fs add "/rec/a b (2).mkv"
+create ffmpeg_muxer
+start
+pkt v pts=0 key=1 size=4
+proc split_file
+pkt v pts=1 key=1 size=4
+echo no_spaces
+reset
+output o
+venc h264 bitrate=2500 extra=0a0b
+set str path /v/first.mkv
+set bool split_file 1
+set str directory /rec
+set str format "a b"
+set str extension mkv
+set bool allow_spaces 0
+fs add "/rec/a_b.mkv"
+create ffmpeg_muxer
+start
+pkt v pts=0 key=1 size=4
+proc split_file
+pkt v pts=1 key=1 size=4
+echo overwrite_allowed
+reset
+output o
+venc h264 bitrate=2500 extra=0a0b
+set str path /v/first.mkv
+set bool split_file 1
+set bool allow_overwrite 1
+set str directory /rec
+set str format a
+set str extension mkv
+fs add "/rec/a.mkv"
+create ffmpeg_muxer
+start
+pkt v pts=0 key=1 size=4
+proc split_file
+pkt v pts=1 key=1 size=4
+echo backslashes_and_trailing_slash
+reset
+output o
+venc h264 bitrate=2500 extra=0a0b
+set str path /v/first.mkv
+set bool split_file 1
+set str directory "C:\\rec\\sub\\"
+set str format a
+set str extension mkv
+create ffmpeg_muxer
+start
+pkt v pts=0 key=1 size=4
+proc split_file
+pkt v pts=1 key=1 size=4
+echo format_with_subdirectory_and_empty_directory
+reset
+output o
+venc h264 bitrate=2500 extra=0a0b
+set str path /v/first.mkv
+set bool split_file 1
+set str format sub/a
+set str extension mkv
+create ffmpeg_muxer
+start
+pkt v pts=0 key=1 size=4
+proc split_file
+pkt v pts=1 key=1 size=4
+echo no_extension_collision_uses_last_dot_of_whole_path
+reset
+output o
+venc h264 bitrate=2500 extra=0a0b
+set str path /v/first.mkv
+set bool split_file 1
+set str directory /v.dir
+set str format name
+set bool allow_spaces 0
+fs add /v.dir/name
+create ffmpeg_muxer
+start
+pkt v pts=0 key=1 size=4
+proc split_file
+pkt v pts=1 key=1 size=4
+echo no_extension_no_dot_anywhere_collision_kept
+reset
+output o
+venc h264 bitrate=2500 extra=0a0b
+set str path /v/first.mkv
+set bool split_file 1
+set str directory /vdir
+set str format name
+fs add /vdir/name
+create ffmpeg_muxer
+start
+pkt v pts=0 key=1 size=4
+proc split_file
+pkt v pts=1 key=1 size=4

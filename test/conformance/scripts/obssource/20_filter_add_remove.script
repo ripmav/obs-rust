@@ -1,0 +1,34 @@
+# Filter chain: new filters are inserted at index 0 (array order is newest first), each filter targets the next array
+# element, the last element targets the source.  add: signals "filter_add" (global then per-source) BEFORE the
+# filter's filter_add callback.  Adding the same filter twice only logs a warning.  The chain holds one strong
+# reference per filter.
+kind in input video
+kind fl filter video filteradd
+create a in A
+create f1 fl F1
+create f2 fl F2
+create f3 fl F3
+watch a
+watch_global
+filter_add a f1
+filters a
+filter_add a f2
+filters a
+filter_add a f1
+filter_add a f3
+filters a
+refs f1
+filter_index a f1
+filter_index a f3
+filter_count a
+filter_target f1
+filter_target f3
+filter_remove a f2
+filters a
+filter_remove a f3
+filters a
+filter_remove a f3
+filter_remove a f1
+filters a
+refs f1
+filter_target f1

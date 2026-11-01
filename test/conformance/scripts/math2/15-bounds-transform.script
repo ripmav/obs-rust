@@ -1,0 +1,29 @@
+# bounds_transform / bounds_transform3x4: transform the 8 corners, take the AABB (S-009-R73).
+bounds b -1 -1 -1 1 1 1
+mat4 id 1 0 0 0  0 1 0 0  0 0 1 0  0 0 0 1
+call t bounds_transform b id
+mat4 tr 1 0 0 0  0 1 0 0  0 0 1 0  10 20 30 1
+call t bounds_transform b tr
+mat4 sc 2 0 0 0  0 3 0 0  0 0 -4 0  0 0 0 1
+call t bounds_transform b sc
+# 45 degrees about z: the AABB grows
+mat4 rz 0.70710678 0.70710678 0 0  -0.70710678 0.70710678 0 0  0 0 1 0  0 0 0 1
+call t bounds_transform b rz
+# mirror about x flips min and max
+mat4 mx -1 0 0 0  0 1 0 0  0 0 1 0  0 0 0 1
+bounds asym 1 2 3 4 6 8
+call t bounds_transform asym mx
+# in place
+call asym bounds_transform asym tr
+# the 3x4 form: (corner - m.t) dotted with the three rows
+mat3 m3id 1 0 0 0  0 1 0 0  0 0 1 0  0 0 0 0
+bounds b2 -1 -1 -1 1 1 1
+call t bounds_transform3x4 b2 m3id
+mat3 m3t 1 0 0 0  0 1 0 0  0 0 1 0  10 20 30 0
+call t bounds_transform3x4 b2 m3t
+mat3 m3r 0.70710678 0.70710678 0 0  -0.70710678 0.70710678 0 0  0 0 1 0  0 0 0 0
+call t bounds_transform3x4 b2 m3r
+# zero-volume input
+bounds pt 2 2 2 2 2 2
+call t bounds_transform pt tr
+# the w lanes of the result are zero

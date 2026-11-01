@@ -1,0 +1,40 @@
+# S-021 Enhanced-RTMP audio tags (flv_packet_audio_start / _frames), FourCC "mp4a".
+#   08 | datasize u24 (= payload + 5) | timestamp (24+8) | streamid 0 |
+#   byte0 = 0x90 | audio packet type (0 SequenceStart, 1 CodedFrames, 4 MultichannelConfig, 5 Multitrack)
+#   | "mp4a" | payload | prevsize
+# Multitrack (idx > 0): byte0 = 0x95 ; byte1 = 0x00 (OneTrack) | real type ; "mp4a" ; trackId u8 ;
+# datasize = payload + 7.
+echo track-0
+pkt asc audio 0 0 1 1000 0 1190
+pkt f1 audio 1024 1024 1 48000 0 21004910
+pkt f2 audio 960000 960000 1 48000 0 21004911
+ax_start asc aac 0
+ax_frames f1 aac 0 0
+ax_frames f2 aac 0 0
+ax_frames f2 aac 20000 0
+echo track-1-and-above
+ax_start asc aac 1
+ax_frames f1 aac 0 1
+ax_frames f1 aac 0 2
+ax_frames f1 aac 0 255
+ax_frames f1 aac 0 256
+ax_frames f1 aac 0 257
+echo ax_raw: other audio packet types
+ax_raw f1 aac 0 0 0
+ax_raw f1 aac 0 1 0
+ax_raw f1 aac 0 2 0
+ax_raw f1 aac 0 4 0
+ax_raw f1 aac 0 15 0
+ax_raw f1 aac 0 4 1
+ax_raw f1 aac 0 5 1
+ax_raw f1 aac 0 15 1
+echo dts-offset-and-ms-conversion
+pkt f3 audio 4800 4800 1 48000 0 aa
+ax_frames f3 aac 0 0
+ax_frames f3 aac 50 0
+ax_frames f3 aac 200 0
+pkt f4 audio 47 47 1 48000 0 aa
+ax_frames f4 aac 0 0
+echo pts-keyframe-ignored
+pkt f5 audio 99999 960 1 48000 1 aa
+ax_frames f5 aac 0 0

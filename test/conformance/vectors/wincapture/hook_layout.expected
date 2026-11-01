@@ -1,0 +1,54 @@
+sizeof hook_info 648
+sizeof graphics_offsets 76
+sizeof d3d8_offsets 4
+sizeof d3d9_offsets 20
+sizeof dxgi_offsets 12
+sizeof ddraw_offsets 32
+sizeof dxgi_offsets2 4
+sizeof d3d12_offsets 4
+sizeof shmem_data 12
+sizeof shtex_data 4
+offset hook_info.hook_ver_major 0
+offset hook_info.hook_ver_minor 4
+offset hook_info.type 8
+offset hook_info.window 12
+offset hook_info.format 16
+offset hook_info.cx 20
+offset hook_info.cy 24
+offset hook_info.UNUSED_base_cx 28
+offset hook_info.UNUSED_base_cy 32
+offset hook_info.pitch 36
+offset hook_info.map_id 40
+offset hook_info.map_size 44
+offset hook_info.flip 48
+offset hook_info.frame_interval 56
+offset hook_info.UNUSED_use_scale 64
+offset hook_info.force_shmem 65
+offset hook_info.capture_overlay 66
+offset hook_info.allow_srgb_alias 67
+offset hook_info.offsets 68
+offset hook_info.reserved 144
+offset graphics_offsets.d3d8 0
+offset graphics_offsets.d3d9 4
+offset graphics_offsets.dxgi 24
+offset graphics_offsets.ddraw 36
+offset graphics_offsets.dxgi2 68
+offset graphics_offsets.d3d12 72
+offset shmem_data.last_tex 0
+offset shmem_data.tex1_offset 4
+offset shmem_data.tex2_offset 8
+CAPTURE_TYPE_MEMORY 0 CAPTURE_TYPE_TEXTURE 1
+EVENT_CAPTURE_RESTART CaptureHook_Restart
+EVENT_CAPTURE_STOP CaptureHook_Stop
+EVENT_HOOK_READY CaptureHook_HookReady
+EVENT_HOOK_EXIT CaptureHook_Exit
+EVENT_HOOK_INIT CaptureHook_Initialize
+WINDOW_HOOK_KEEPALIVE CaptureHook_KeepAlive
+MUTEX_TEXTURE1 CaptureHook_TextureMutex1
+MUTEX_TEXTURE2 CaptureHook_TextureMutex2
+SHMEM_HOOK_INFO CaptureHook_HookInfo
+SHMEM_TEXTURE CaptureHook_Texture
+PIPE_NAME CaptureHook_Pipe
+create_hook_info handle=1 name=CaptureHook_HookInfo1234 size=648
+create_hook_info handle=1 name=CaptureHook_HookInfo0 size=648
+create_hook_info handle=1 name=CaptureHook_HookInfo4294967295 size=648

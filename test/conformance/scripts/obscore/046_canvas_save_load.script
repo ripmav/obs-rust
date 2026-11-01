@@ -1,0 +1,24 @@
+# Canvas persistence: only name, uuid, private flag and flags are saved; ephemeral and removed
+# canvases save as nothing; loading creates a canvas WITHOUT video (video info is not persisted),
+# keeps the stored UUID when it is exactly 36 characters long (else generates a new one) and strips
+# the MAIN flag. A duplicated stored UUID is replaced by a fresh one.
+startup en-US -
+canvas_create a Alpha flags=program
+canvas_save a
+canvas_create b Beta flags=preview
+canvas_save b
+canvas_create c Gamma flags=device
+canvas_save c
+canvas_create_private p Priv flags=mix_audio
+canvas_save p
+canvas_remove a
+canvas_save a
+canvas_load l1 Loaded 11111111-2222-3333-4444-555555555555 0 0
+canvas_load l2 Again 11111111-2222-3333-4444-555555555555 0 0
+canvas_load l3 NoUuid - 0 0
+canvas_load l4 ShortUuid 1234 0 0
+canvas_load l5 MainTry - 0 1
+canvas_load l6 PrivLoad - 1 0x12
+get canvas_by_uuid 11111111-2222-3333-4444-555555555555
+enum canvases
+shutdown

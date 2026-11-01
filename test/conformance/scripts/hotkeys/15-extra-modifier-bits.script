@@ -1,0 +1,19 @@
+# S-034 modifier bits other than shift/control/alt/command (caps lock 0x1, mouse buttons, numlock...) can
+# be stored in a binding (loadbind) and matched by injected events, but polling only ever reports
+# the four keyboard modifiers, so such a binding can never be pressed by polling. They are not saved.
+reg frontend A "A" "a"
+loadbind A 0x1:OBS_KEY_A
+down OBS_KEY_A
+poll 3
+enumb
+inject 0x1 OBS_KEY_A 1
+enumb
+save A
+echo non-strict-polling-also-cannot-satisfy-it
+upall
+poll
+strict off
+loadbind A 0x1:OBS_KEY_A
+down OBS_KEY_A
+poll 3
+enumb

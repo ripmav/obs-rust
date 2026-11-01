@@ -1,0 +1,45 @@
+# S-022 reference defects, one fork per case (a crash is printed as "try <cmd> crash"; the reference
+# crashes, a conforming implementation MUST instead behave as the spec's D-n says and print "ok").
+# D-1: MP4_WRITE_ENCODER_INFO with an encoder that has a name but no id: NULL passed to strlen.
+enc a audio codec aac rate 48000 extra 1190 name "Mic" id -
+mux mp4 encinfo
+pkt a 0 0 1 gen:10
+pkt a 1024 1024 1 gen:10
+try finalise
+echo --- D-2: encoder reports no codec string (NULL): strcmp(NULL) while creating the tracks
+reset
+enc a audio codec - rate 48000
+try mux mp4
+echo --- D-3: PCM with unknown speaker layout in MOV: division by zero (channels = 0) in the v2 entry
+reset
+enc a audio codec pcm_s16le rate 48000 speakers unknown
+mux mov skipfin
+pkt a 0 0 1 gen:8
+try finalise
+echo --- D-4: OpusHead extra data shorter than 19 bytes is read past its end (outcome depends on heap contents:
+echo --- nothing is printed about it; a conforming implementation must fail cleanly)
+reset
+enc a audio codec opus rate 48000 extra 4f70757348
+mux mp4 skipfin
+pkt a 0 0 1 gen:10
+try finalise
+echo --- D-5: audio encoder without audio output (obs_encoder_audio NULL): channel count query on NULL
+reset
+enc a audio codec aac rate 48000 extra 1190 noaudio 1
+mux mp4 skipfin
+pkt a 0 0 1 gen:10
+try finalise
+echo --- D-6: video encoder without video output: colour/rate info query on NULL while creating the tracks
+reset
+enc v video codec h264 width 320 height 240 fps 30/1 extra 000000016742c01ed900a047fe880000000168ce3c80 novideo 1
+try mux mp4
+echo --- D-8: AV1 packets with a truncated OBU header or a frame OBU of size 0 make the reference read 1-2 bytes past the packet.
+echo --- Output of the packet itself is deterministic (the packet is stored without keyframe information from the garbage byte)
+reset
+enc v video codec av1 width 320 height 240 fps 30/1 extra 8100000000
+mux mp4 skipfin
+try pkt v 0 0 0 0a
+try pkt v 0 0 0 32
+try pkt v 0 0 0 3200
+try pkt v 0 0 0 1200
+try pkt v 0 0 0 8a

@@ -1,0 +1,20 @@
+# A NULL string is stored as a zero-length payload; "" is one byte (the NUL).
+init
+set_string n @null
+dump
+get_string n
+val_string n
+get_data n 0
+get_data n 1
+set_string e ""
+dump
+get_string e
+val_string e
+get_data e 1
+get_data e 0
+set_string n abc
+dump
+set_string n @null
+dump
+get_string n
+free

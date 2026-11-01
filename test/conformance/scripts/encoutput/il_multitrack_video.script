@@ -1,0 +1,29 @@
+# Two video tracks (OBS_OUTPUT_MULTI_TRACK_VIDEO): start-up needs a keyframe on every video track; video packets
+# with equal dts_usec are ordered by track index; the "received" flags are per track.
+video 30 1 1280 720
+audio 48000
+venc v0
+venc v1
+aenc a frame_size=1024
+out o av,encoded,multi_v autobegin=1
+set_venc o v0 0
+set_venc o v1 1
+set_aenc o a
+start o
+emit a 0 0 0 4
+emit a 1024 1024 0 4
+emit a 2048 2048 0 4
+emit v1 0 0 1 4
+echo --- only track 1 has a keyframe so far
+queue o
+state o
+emit v0 0 0 1 4
+queue o
+state o
+echo --- equal dts_usec: track 0 sorts before track 1
+emit v1 1 1 0 4
+emit v0 1 1 0 4
+emit a 3072 3072 0 4
+emit a 4096 4096 0 4
+queue o
+stop o

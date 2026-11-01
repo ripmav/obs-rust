@@ -1,0 +1,26 @@
+# ffmpeg_video_encoder_init: codec lookup (primary, alternative), failure reporting.
+host_last_error @null
+# neither name exists: encoder error text uses the PRIMARY name only. DEFECT D-1 of the
+# reference: the error text is built in a never-initialised string object, so this path
+# crashes or works depending on the stack contents (see the runner README); both are shown.
+vid_init_stack zero nosuch_enc nosuch_alt "Fake"
+vid_init_stack ones nosuch_enc nosuch_alt "Fake"
+# primary missing, alternative present: the alternative is used (and enc_name stays the label)
+av_codec alt_enc 1
+host_last_error @null
+vid_init V nosuch_enc alt_enc "Fake" 0 0
+show_last_error
+vid_dump V
+vid_free V
+# primary present: alternative is not even looked up
+av_codec prim_enc 1
+av_codec prim_gone 0
+vid_init V prim_enc alt_enc "Fake" 1 1
+vid_dump V
+vid_free V
+# no alternative given
+vid_init V prim_enc @null "Fake" 0 0
+vid_free V
+# alt present only as the alternative; the primary name is reported when neither exists
+av_codec alt_enc 0
+vid_init_stack zero prim_gone alt_enc "Fake"

@@ -1,0 +1,49 @@
+# CORE. create_param stores (param, destroy). destroy callback runs on obs_properties_destroy,
+# only when BOTH param and callback are non-NULL, BEFORE the properties are freed; a group's
+# content container is destroyed when the group property is destroyed, i.e. after the parent's
+# own param, in property order.
+token t1
+token t2
+token t3
+token t4
+echo plain-param-with-destroy
+props A t1
+get_param A
+destroy A
+echo param-without-destroy-callback
+props B t2 nodestroy
+get_param B
+destroy B
+echo set_param-replaces-and-calls-old-destroy
+props C t1
+set_param C t2 destroy
+get_param C
+set_param C t3 nodestroy
+get_param C
+echo old-param-had-no-destroy-so-nothing-runs
+set_param C t4 destroy
+get_param C
+echo set_param-null-param-keeps-destroy-but-never-calls-it
+set_param C @null destroy
+get_param C
+destroy C
+echo order-with-groups
+token top
+token g1p
+token g2p
+token nested
+props T top
+props G1 g1p
+props G2 g2p
+props G3 nested
+add group G1 inner "Inner" normal G3
+add group T first "First" normal G1
+add group T second "Second" normal G2
+dump T
+destroy T
+echo null-container-is-ignored
+set_param @null t1 destroy
+get_param @null
+get_flags @null
+flags @null 7
+first @null

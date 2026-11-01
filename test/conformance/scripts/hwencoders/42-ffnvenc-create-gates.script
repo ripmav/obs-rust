@@ -1,0 +1,35 @@
+# S-050 obs-ffmpeg-nvenc: create() refuses unsupported input formats before touching libav, with a
+# translated message; H.264 refuses all 10-bit, HEVC accepts P010 only; 16-bit and HDR-on-8-bit are
+# refused by both. On failure of the first attempt with psycho_aq on, create retries once with it off.
+ff_defaults h264
+host format p010
+ff_create h264
+host format i010
+ff_create h264
+ff_create hevc
+host format p010
+ff_create hevc
+ff_destroy
+host format p216
+ff_create h264
+ff_create hevc
+host format p416
+ff_create hevc
+host format nv12
+host colorspace pq
+ff_create h264
+ff_create hevc
+host colorspace hlg
+ff_create hevc
+host colorspace 709
+# retry without psycho aq when the first init fails
+set bool psycho_aq 1
+ff_initfail 0 -542398533 1
+ff_create h264
+ff_destroy
+# persistent failure: both attempts fail, NULL
+ff_initfail 1 -542398533
+ff_create h264
+# without psycho_aq there is no retry
+set bool psycho_aq 0
+ff_create h264

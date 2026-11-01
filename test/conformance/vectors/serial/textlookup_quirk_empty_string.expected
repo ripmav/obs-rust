@@ -1,0 +1,8 @@
+tl_create 0 tz-1 -> ok
+tl_get 0 "A" -> "1"
+tl_get 0 "B" -> false
+tl_get 0 "C" -> false
+tl_create 1 tz-2 -> ok
+tl_get 1 "A" -> false
+tl_create 2 tz-3 -> ok
+tl_get 2 "A" -> false

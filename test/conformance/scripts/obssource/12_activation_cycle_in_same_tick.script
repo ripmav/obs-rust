@@ -1,0 +1,13 @@
+# Activating and deactivating between two ticks produces no callbacks (only the net state at the tick matters).
+kind in input video activate,show
+create a in A
+inc_active a
+dec_active a
+tick a 0.1
+state a
+inc_active a
+tick a 0.1
+dec_active a
+inc_active a
+tick a 0.1
+state a

@@ -1,0 +1,6 @@
+signal 11
+--- DEFECT D-2: no stream could be created (unknown video codec, no audio) in a non-network output.
+--- The reference dereferences the not yet opened output and is killed by SIGSEGV; required behaviour: exit status -1
+--- and the message Couldn't find codec on stderr (as in the network case, see 19).
+signal 11
+stderr|"Couldn't find codec 'nosuchcodec'"

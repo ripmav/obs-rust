@@ -1,0 +1,33 @@
+# CORE. remove_by_name searches top-level first, then recursively in groups; removing a group
+# property destroys its content (and everything below). After removing a nested property the
+# group stays.
+token tp
+props Top
+props G1 tp
+props G2
+add bool G1 a "A"
+add bool G1 b "B"
+add bool G2 c "C"
+add group G1 inner "Inner" normal G2
+add group Top g "Group" normal G1
+add bool Top t "T"
+dump Top
+echo remove-nested-leaf
+remove Top b
+dump Top
+echo remove-deeply-nested-leaf
+remove Top c
+dump Top
+echo remove-inner-group-destroys-content
+remove Top inner
+dump Top
+get Top c
+echo add-after-remove
+add bool Top c "C again"
+add group Top inner "Inner" normal @null
+dump Top
+echo remove-group-destroys-its-content-and-param
+remove Top g
+dump Top
+get Top a
+destroy Top

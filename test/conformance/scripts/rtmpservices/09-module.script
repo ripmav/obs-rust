@@ -1,0 +1,8 @@
+# S-026 module load/unload: registers two service types, proc handlers, the file-updater for the
+# services package (update URL = base + /v + format version), loads cached ingest lists.
+module-load
+echo module-name-and-registered
+proc-call twitch_ingests_refresh 4
+proc-call amazon_ivs_ingests_refresh 4
+echo unload-destroys-updater
+module-unload

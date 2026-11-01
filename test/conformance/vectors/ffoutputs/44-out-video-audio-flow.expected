@@ -1,0 +1,75 @@
+> reset
+> output ff
+> size 320 240
+> video_info 30 1 709 P NV12
+> mixers 5
+> set str url x.null
+> set str format_name null
+> fo_create
+fo_create -> ok
+> fo_start
+fo_start -> 1 connecting=1
+> fo_connect
+cfg url=x.null format_name=null mime=(null) muxer_settings=""
+  gop=120 vbitrate=0 abitrate=0 venc=(null) venc_id=0 aenc=(null) aenc_id=0
+  vsettings="" asettings="" mix_count=2 tracks=0x5
+  pix_fmt=nv12 range=1 pri=1 trc=1 cs=1
+  size=320x240 scale=320x240
+  audio_name[0]=(null)
+  audio_name[1]=(null)
+set_video_conversion NULL
+set_audio_conversion format=2
+begin_data_capture
+fo_connect done connecting=0 active=1
+  video: 320x240 pix_fmt=nv12 tb=1/30 fps=30/1 gop=120 bit_rate=0 range=1 pri=1 trc=1 cs=1 chroma=1 swscale=0
+  audio[0]: codec=pcm_s16le rate=48000 channels=2 sample_fmt=s16 stream_index=1 title=(none)
+  audio[1]: codec=pcm_s16le rate=48000 channels=2 sample_fmt=s16 stream_index=2 title=(none)
+> fo_audio 0 1024 100
+> fo_state
+fo_state active=1 connecting=0 stopping=0 write_thread_active=1 total_bytes_without_video=0
+  video_start_ts=0 audio_start_ts=0 stop_ts=0 queued=0 writes=0
+  initialized=1 has_video=1 audio_streams=2 tracks=0x5 frame_size=1024 total_frames=0 start_timestamp=0
+  track[0] total_samples=0 excess_bytes=0
+  track[1] total_samples=0 excess_bytes=0
+  audio_format=2 audio_planes=1 audio_size=4 samplerate=48000 last_error=""
+> fo_video 0
+> fo_video 33333333
+> fo_state
+fo_state active=1 connecting=0 stopping=0 write_thread_active=1 total_bytes_without_video=0
+  video_start_ts=33333333 audio_start_ts=0 stop_ts=0 queued=2 writes=0
+  initialized=1 has_video=1 audio_streams=2 tracks=0x5 frame_size=1024 total_frames=2 start_timestamp=33333333
+  track[0] total_samples=0 excess_bytes=0
+  track[1] total_samples=0 excess_bytes=0
+  audio_format=2 audio_planes=1 audio_size=4 samplerate=48000 last_error=""
+> fo_audio 0 600 40000000
+> fo_audio 1 1024 40000000
+> fo_audio 0 600 40000000
+> fo_audio 2 1024 40000000
+> fo_state
+fo_state active=1 connecting=0 stopping=0 write_thread_active=1 total_bytes_without_video=0
+  video_start_ts=33333333 audio_start_ts=40000000 stop_ts=0 queued=4 writes=0
+  initialized=1 has_video=1 audio_streams=2 tracks=0x5 frame_size=1024 total_frames=2 start_timestamp=33333333
+  track[0] total_samples=1024 excess_bytes=704
+  track[1] total_samples=1024 excess_bytes=0
+  audio_format=2 audio_planes=1 audio_size=4 samplerate=48000 last_error=""
+> fo_audio 2 2048 40000000
+> fo_packets
+fo_packets 6
+  [0] stream=0 pts=0 dts=0 dur=0 size=(video)0
+  [1] stream=0 pts=1 dts=1 dur=0 size=(video)0
+  [2] stream=1 pts=0 dts=0 dur=1024 size=4096
+  [3] stream=2 pts=0 dts=0 dur=1024 size=4096
+  [4] stream=2 pts=1024 dts=1024 dur=1024 size=4096
+  [5] stream=2 pts=2048 dts=2048 dur=1024 size=4096
+> fo_pump 100
+fo_pump done queued=0 total_bytes_without_video=16384 active=1
+> fo_state
+fo_state active=1 connecting=0 stopping=0 write_thread_active=1 total_bytes_without_video=16384
+  video_start_ts=33333333 audio_start_ts=40000000 stop_ts=0 queued=0 writes=6
+  initialized=1 has_video=1 audio_streams=2 tracks=0x5 frame_size=1024 total_frames=2 start_timestamp=33333333
+  track[0] total_samples=1024 excess_bytes=704
+  track[1] total_samples=3072 excess_bytes=0
+  audio_format=2 audio_planes=1 audio_size=4 samplerate=48000 last_error=""
+> fo_stop 0
+end_data_capture
+> fo_destroy

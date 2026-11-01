@@ -1,0 +1,21 @@
+# item_transform is signalled by every recompute (setters on plain scenes, update pass) but NOT while deferred;
+# items of groups only flag a recompute instead of computing, so no signal until the update pass.
+source s 100 100
+scene main
+add main s a
+add main s b
+group main g a b
+log
+pos a 1 1
+log
+update main
+log
+pos g 5 5
+log
+update main
+log
+defer_begin g
+pos g 6 6
+log
+defer_end g
+log

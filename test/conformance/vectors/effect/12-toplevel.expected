@@ -1,0 +1,141 @@
+ep result=ok
+  errors count=0 has_errors=0
+  ep params=0 structs=0 funcs=0 samplers=0 techniques=0
+  error_string=@null
+effect (effect) params=0 techniques=0 viewproj=- world=-
+ep result=ok
+  errors count=0 has_errors=0
+  ep params=0 structs=0 funcs=0 samplers=0 techniques=0
+  error_string=@null
+effect (effect) params=0 techniques=0 viewproj=- world=-
+ep result=ok
+  errors count=0 has_errors=0
+  ep params=0 structs=0 funcs=0 samplers=0 techniques=0
+  error_string=@null
+effect (effect) params=0 techniques=0 viewproj=- world=-
+ep result=fail
+  errors count=2 has_errors=1
+    err 0 error file="t4" row=1 col=1 msg="Unexpected code segment"
+    err 1 error file="t4" row=1 col=7 msg="Unexpected code segment"
+  ep params=0 structs=0 funcs=0 samplers=0 techniques=0
+  error_string="t4 (1, 1): Unexpected code segment\nt4 (1, 7): Unexpected code segment\n"
+ep result=fail
+  errors count=1 has_errors=1
+    err 0 error file="t5" row=1 col=10 msg="Unexpected code segment"
+  ep params=2 structs=0 funcs=0 samplers=0 techniques=0
+  ep_param 0 type=float name=x property=0 const=0 uniform=0 texture=0 array_count=0 annotations=0
+  ep_param 1 type=float name=w property=0 const=0 uniform=0 texture=0 array_count=0 annotations=0
+  error_string="t5 (1, 10): Unexpected code segment\n"
+ep result=fail
+  errors count=1 has_errors=1
+    err 0 error file="t6" row=1 col=1 msg="Unexpected code segment"
+  ep params=1 structs=0 funcs=0 samplers=0 techniques=0
+  ep_param 0 type=float name=x property=0 const=0 uniform=0 texture=0 array_count=0 annotations=0
+  error_string="t6 (1, 1): Unexpected code segment\n"
+ep result=fail
+  errors count=1 has_errors=1
+    err 0 error file="t7" row=1 col=1 msg="Unexpected code segment"
+  ep params=0 structs=0 funcs=0 samplers=0 techniques=0
+  error_string="t7 (1, 1): Unexpected code segment\n"
+ep result=fail
+  errors count=2 has_errors=1
+    err 0 error file="t8" row=1 col=1 msg="Expected 'type'"
+    err 1 error file="t8" row=1 col=2 msg="Unexpected EOF"
+  ep params=0 structs=0 funcs=0 samplers=0 techniques=0
+  error_string="t8 (1, 1): Expected 'type'\nt8 (1, 2): Unexpected EOF\n"
+ep result=fail
+  errors count=1 has_errors=1
+    err 0 error file="t9" row=1 col=10 msg="Expected 'type'"
+  ep params=1 structs=0 funcs=0 samplers=0 techniques=0
+  ep_param 0 type=float name=x property=0 const=0 uniform=0 texture=0 array_count=0 annotations=0
+  error_string="t9 (1, 10): Expected 'type'\n"
+ep result=ok
+  errors count=0 has_errors=0
+  ep params=1 structs=0 funcs=1 samplers=0 techniques=0
+  ep_param 0 type=float name=y property=0 const=0 uniform=0 texture=0 array_count=0 annotations=0
+  ep_func 0 name=f ret=float4 mapping=@null params=0
+    struct_deps=[] func_deps=[] param_deps=[] sampler_deps=[]
+    contents="{ return 1; }"
+  error_string=@null
+effect (effect) params=1 techniques=0 viewproj=- world=-
+  param 0 name=y type=FLOAT annotations=0 default_size=0 default=-
+ep result=fail
+  errors count=1 has_errors=1
+    err 0 error file="t11" row=1 col=7 msg="Unexpected EOF"
+  ep params=0 structs=0 funcs=0 samplers=0 techniques=0
+  error_string="t11 (1, 7): Unexpected EOF\n"
+ep result=fail
+  errors count=1 has_errors=1
+    err 0 error file="t12" row=1 col=10 msg="Unexpected EOF"
+  ep params=0 structs=0 funcs=0 samplers=0 techniques=0
+  error_string="t12 (1, 10): Unexpected EOF\n"
+ep result=fail
+  errors count=1 has_errors=1
+    err 0 error file="t13" row=1 col=14 msg="Unexpected EOF"
+  ep params=0 structs=0 funcs=0 samplers=0 techniques=0
+  error_string="t13 (1, 14): Unexpected EOF\n"
+ep result=fail
+  errors count=1 has_errors=1
+    err 0 error file="t14" row=1 col=2 msg="Unexpected EOF"
+  ep params=0 structs=0 funcs=0 samplers=0 techniques=0
+  error_string="t14 (1, 2): Unexpected EOF\n"
+ep result=fail
+  errors count=1 has_errors=1
+    err 0 error file="t15" row=1 col=4 msg="Unexpected EOF"
+  ep params=0 structs=0 funcs=0 samplers=0 techniques=0
+  error_string="t15 (1, 4): Unexpected EOF\n"
+ep result=ok
+  errors count=0 has_errors=0
+  ep params=1 structs=0 funcs=0 samplers=0 techniques=0
+  ep_param 0 type=x name=y property=0 const=0 uniform=0 texture=0 array_count=0 annotations=0
+  error_string=@null
+effect (effect) params=1 techniques=0 viewproj=- world=-
+  param 0 name=y type=UNKNOWN annotations=0 default_size=0 default=-
+ep result=ok
+  errors count=0 has_errors=0
+  ep params=2 structs=1 funcs=1 samplers=1 techniques=1
+  ep_param 0 type=float name=x property=0 const=0 uniform=0 texture=0 array_count=0 annotations=0
+  ep_param 1 type=float name=z property=0 const=0 uniform=0 texture=0 array_count=0 annotations=0
+  ep_struct 0 name=A vars=1
+    var type=float name=y mapping=@null var_type=IN
+  ep_func 0 name=f ret=float mapping=@null params=0
+    struct_deps=[] func_deps=[] param_deps=[] sampler_deps=[]
+    contents="{ return 1; }"
+  ep_sampler 0 name=s states=1
+    state "Filter" = "Point"
+  ep_technique 0 name=T passes=0
+  error_string=@null
+effect (effect) params=2 techniques=1 viewproj=- world=-
+  param 0 name=x type=FLOAT annotations=0 default_size=0 default=-
+  param 1 name=z type=FLOAT annotations=0 default_size=0 default=-
+  technique 0 name=T passes=0
+ep result=fail
+  errors count=1 has_errors=1
+    err 0 error file="t18" row=1 col=10 msg="Unexpected code segment"
+  ep params=0 structs=0 funcs=0 samplers=0 techniques=0
+  error_string="t18 (1, 10): Unexpected code segment\n"
+ep result=fail
+  errors count=1 has_errors=1
+    err 0 error file="t19" row=1 col=13 msg="Unexpected code segment"
+  ep params=0 structs=0 funcs=0 samplers=0 techniques=0
+  error_string="t19 (1, 13): Unexpected code segment\n"
+--- empty text
+effect e1 result=fail
+  error_string=@null
+effect e2 result=ok
+  error_string=@null
+effect e3 result=fail
+--- effect with only comments still produces an (empty) effect
+effect e4 result=ok
+  error_string=@null
+effect e4 params=0 techniques=0 viewproj=- world=-
+--- an unterminated block comment makes the lexer layer fail: no parse, no error text
+effect e5 result=fail
+  error_string=@null
+ep result=fail
+  errors count=0 has_errors=0
+  ep params=0 structs=0 funcs=0 samplers=0 techniques=0
+  error_string=@null
+--- text consisting of whitespace only is fine
+effect e6 result=ok
+  error_string=@null

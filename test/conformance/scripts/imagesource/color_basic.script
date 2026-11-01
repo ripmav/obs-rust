@@ -1,0 +1,23 @@
+# color_source: version ids, defaults, colour/size conversion (CORE).
+registered
+info color_source
+info color_source_v2
+info color_source_v3
+defaults color_source
+defaults color_source_v2
+defaults color_source_v3
+create a color_source_v3 {"color":4281558681,"width":300,"height":200}
+state a
+size a
+# colour value is 0xAABBGGRR as a 32-bit integer: R is the low byte
+create b color_source_v3 {"color":4278190335}
+state b
+create c color_source_v3
+state c
+size c
+create d color_source {}
+size d
+create e color_source_v2 {}
+size e
+state e
+props a

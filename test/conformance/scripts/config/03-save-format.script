@@ -1,0 +1,18 @@
+# Saved format: sections and items in insertion order, a blank line between
+# sections, values escaped (backslash, CR, LF), no trailing blank line.
+create
+save
+file
+set_string S1 b second
+set_string S1 a first
+set_string S2 k "line1\nline2\r\\end"
+set_string S1 b changed
+save
+file
+set_string S3 empty ""
+set_string S3 nullvalue @null
+set_string S3 eq "a=b"
+set_string S3 sp "  padded  "
+save
+file
+sections

@@ -1,0 +1,144 @@
+log debug canvas 'Main' (<uuid>) created
+startup -> true
+log info ---------------------------------
+log info video settings reset:  base resolution:   1920x1080  output resolution: 1280x720  downscale filter:  Bicubic  fps:               30/1  format:            I420  YUV mode:          Rec. 709/Partial
+log info NV12 texture support not available
+log info P010 texture support not available
+reset_video -> success
+  after_call base=1920x1080 out=1280x720 fps=30/1 fmt=I420 cs=2 range=1 scale=2 gpu=1 adapter=0
+mix gpu_conversion=1 conversion_needed=1 techs=Planar_Y,Planar_U_Left,Planar_V_Left wi=0.000781250012 hi=0 nv12=0 p010=0 render_space=0 mix_audio=1 view=set
+mix matrix -0.100643739 -0.338571936 0.43921569 0.501960754 0.18258588 0.614230573 0.0620070584 0.0627451092 0.43921569 -0.398942143 -0.0402735248 0.501960814 -0 0 -0 1
+  ovi base=1920x1080 out=1280x720 fps=30/1 fmt=I420 cs=2 range=1 scale=2 gpu=1 adapter=0
+log info ---------------------------------
+log info video settings reset:  base resolution:   1920x1080  output resolution: 1280x720  downscale filter:  Bicubic  fps:               30/1  format:            NV12  YUV mode:          Rec. 709/Partial
+log info NV12 texture support enabled
+log info P010 texture support not available
+reset_video -> success
+  after_call base=1920x1080 out=1280x720 fps=30/1 fmt=NV12 cs=2 range=1 scale=2 gpu=1 adapter=0
+mix gpu_conversion=1 conversion_needed=1 techs=NV12_Y,NV12_UV,- wi=0.000781250012 hi=0 nv12=1 p010=0 render_space=0 mix_audio=1 view=set
+mix matrix -0.100643739 -0.338571936 0.43921569 0.501960754 0.18258588 0.614230573 0.0620070584 0.0627451092 0.43921569 -0.398942143 -0.0402735248 0.501960814 -0 0 -0 1
+  ovi base=1920x1080 out=1280x720 fps=30/1 fmt=NV12 cs=2 range=1 scale=2 gpu=1 adapter=0
+log info ---------------------------------
+log info video settings reset:  base resolution:   1920x1080  output resolution: 1280x720  downscale filter:  Bicubic  fps:               30/1  format:            I444  YUV mode:          Rec. 709/Partial
+log info NV12 texture support not available
+log info P010 texture support not available
+reset_video -> success
+  after_call base=1920x1080 out=1280x720 fps=30/1 fmt=I444 cs=2 range=1 scale=2 gpu=1 adapter=0
+mix gpu_conversion=1 conversion_needed=1 techs=Planar_Y,Planar_U,Planar_V wi=0 hi=0 nv12=0 p010=0 render_space=0 mix_audio=1 view=set
+mix matrix -0.100643739 -0.338571936 0.43921569 0.501960754 0.18258588 0.614230573 0.0620070584 0.0627451092 0.43921569 -0.398942143 -0.0402735248 0.501960814 -0 0 -0 1
+  ovi base=1920x1080 out=1280x720 fps=30/1 fmt=I444 cs=2 range=1 scale=2 gpu=1 adapter=0
+log info ---------------------------------
+log info video settings reset:  base resolution:   1920x1080  output resolution: 1280x720  downscale filter:  Bicubic  fps:               30/1  format:            I010  YUV mode:          Rec. 709/Partial
+log info NV12 texture support not available
+log info P010 texture support not available
+reset_video -> success
+  after_call base=1920x1080 out=1280x720 fps=30/1 fmt=I010 cs=2 range=1 scale=2 gpu=1 adapter=0
+mix gpu_conversion=1 conversion_needed=1 techs=I010_SRGB_Y,I010_SRGB_U,I010_SRGB_V wi=0.000781250012 hi=0.00138888892 nv12=0 p010=0 render_space=1 mix_audio=1 view=set
+mix matrix -0.100348592 -0.337579101 0.437927693 0.500488698 0.182050452 0.61242938 0.0618252233 0.0625611171 0.437927693 -0.397772253 -0.0401554219 0.500488758 -0 0 -0 1
+  ovi base=1920x1080 out=1280x720 fps=30/1 fmt=I010 cs=2 range=1 scale=2 gpu=1 adapter=0
+log info ---------------------------------
+log info video settings reset:  base resolution:   1920x1080  output resolution: 1280x720  downscale filter:  Bicubic  fps:               30/1  format:            I010  YUV mode:          Rec. 2100 (PQ)/Partial
+log info NV12 texture support not available
+log info P010 texture support not available
+reset_video -> success
+  after_call base=1920x1080 out=1280x720 fps=30/1 fmt=I010 cs=4 range=1 scale=2 gpu=1 adapter=0
+mix gpu_conversion=1 conversion_needed=1 techs=I010_PQ_Y,I010_PQ_U,I010_PQ_V wi=0.000781250012 hi=0.00138888892 nv12=0 p010=0 render_space=2 mix_audio=1 view=set
+mix matrix -0.122295745 -0.315631926 0.437927663 0.500488698 0.224951327 0.580574811 0.0507788882 0.0625611022 0.437927634 -0.402705729 -0.0352219045 0.500488758 -0 0 -0 1
+  ovi base=1920x1080 out=1280x720 fps=30/1 fmt=I010 cs=4 range=1 scale=2 gpu=1 adapter=0
+log info ---------------------------------
+log info video settings reset:  base resolution:   1920x1080  output resolution: 1280x720  downscale filter:  Bicubic  fps:               30/1  format:            I010  YUV mode:          Rec. 2100 (HLG)/Partial
+log info NV12 texture support not available
+log info P010 texture support not available
+reset_video -> success
+  after_call base=1920x1080 out=1280x720 fps=30/1 fmt=I010 cs=5 range=1 scale=2 gpu=1 adapter=0
+mix gpu_conversion=1 conversion_needed=1 techs=I010_HLG_Y,I010_HLG_U,I010_HLG_V wi=0.000781250012 hi=0.00138888892 nv12=0 p010=0 render_space=2 mix_audio=1 view=set
+mix matrix -0.122295745 -0.315631926 0.437927663 0.500488698 0.224951327 0.580574811 0.0507788882 0.0625611022 0.437927634 -0.402705729 -0.0352219045 0.500488758 -0 0 -0 1
+  ovi base=1920x1080 out=1280x720 fps=30/1 fmt=I010 cs=5 range=1 scale=2 gpu=1 adapter=0
+log info ---------------------------------
+log info video settings reset:  base resolution:   1920x1080  output resolution: 1280x720  downscale filter:  Bicubic  fps:               30/1  format:            P010  YUV mode:          Rec. 709/Partial
+log info NV12 texture support not available
+log info P010 texture support enabled
+reset_video -> success
+  after_call base=1920x1080 out=1280x720 fps=30/1 fmt=P010 cs=2 range=1 scale=2 gpu=1 adapter=0
+mix gpu_conversion=1 conversion_needed=1 techs=P010_SRGB_Y,P010_SRGB_UV,- wi=0.000781250012 hi=0.00138888892 nv12=0 p010=1 render_space=1 mix_audio=1 view=set
+mix matrix -0.100348592 -0.337579101 0.437927693 0.500488698 0.182050452 0.61242938 0.0618252233 0.0625611171 0.437927693 -0.397772253 -0.0401554219 0.500488758 -0 0 -0 1
+  ovi base=1920x1080 out=1280x720 fps=30/1 fmt=P010 cs=2 range=1 scale=2 gpu=1 adapter=0
+log info ---------------------------------
+log info video settings reset:  base resolution:   1920x1080  output resolution: 1280x720  downscale filter:  Bicubic  fps:               30/1  format:            P010  YUV mode:          Rec. 2100 (PQ)/Partial
+log info NV12 texture support not available
+log info P010 texture support enabled
+reset_video -> success
+  after_call base=1920x1080 out=1280x720 fps=30/1 fmt=P010 cs=4 range=1 scale=2 gpu=1 adapter=0
+mix gpu_conversion=1 conversion_needed=1 techs=P010_PQ_Y,P010_PQ_UV,- wi=0.000781250012 hi=0.00138888892 nv12=0 p010=1 render_space=2 mix_audio=1 view=set
+mix matrix -0.122295745 -0.315631926 0.437927663 0.500488698 0.224951327 0.580574811 0.0507788882 0.0625611022 0.437927634 -0.402705729 -0.0352219045 0.500488758 -0 0 -0 1
+  ovi base=1920x1080 out=1280x720 fps=30/1 fmt=P010 cs=4 range=1 scale=2 gpu=1 adapter=0
+log info ---------------------------------
+log info video settings reset:  base resolution:   1920x1080  output resolution: 1280x720  downscale filter:  Bicubic  fps:               30/1  format:            P216  YUV mode:          Rec. 2100 (HLG)/Partial
+log info NV12 texture support not available
+log info P010 texture support not available
+reset_video -> success
+  after_call base=1920x1080 out=1280x720 fps=30/1 fmt=P216 cs=5 range=1 scale=2 gpu=1 adapter=0
+mix gpu_conversion=1 conversion_needed=1 techs=P216_HLG_Y,P216_HLG_UV,- wi=0.000781250012 hi=0.00138888892 nv12=0 p010=0 render_space=2 mix_audio=1 view=set
+mix matrix -0.122178167 -0.315328479 0.437506676 0.50000757 0.224735051 0.580016613 0.050730072 0.0625009388 0.437506676 -0.402318597 -0.0351880454 0.500007629 -0 0 -0 1
+  ovi base=1920x1080 out=1280x720 fps=30/1 fmt=P216 cs=5 range=1 scale=2 gpu=1 adapter=0
+log info ---------------------------------
+log info video settings reset:  base resolution:   1920x1080  output resolution: 1280x720  downscale filter:  Bicubic  fps:               30/1  format:            P416  YUV mode:          Rec. 709/Partial
+log info NV12 texture support not available
+log info P010 texture support not available
+reset_video -> success
+  after_call base=1920x1080 out=1280x720 fps=30/1 fmt=P416 cs=2 range=1 scale=2 gpu=1 adapter=0
+mix gpu_conversion=1 conversion_needed=1 techs=P416_SRGB_Y,P416_SRGB_UV,- wi=0.000781250012 hi=0.00138888892 nv12=0 p010=0 render_space=1 mix_audio=1 view=set
+mix matrix -0.100252122 -0.337254554 0.437506676 0.500007629 0.181875437 0.611840606 0.0617657863 0.0625009462 0.437506676 -0.397389889 -0.0401168205 0.500007629 -0 0 -0 1
+  ovi base=1920x1080 out=1280x720 fps=30/1 fmt=P416 cs=2 range=1 scale=2 gpu=1 adapter=0
+log info ---------------------------------
+log info video settings reset:  base resolution:   1920x1080  output resolution: 1280x720  downscale filter:  Bicubic  fps:               30/1  format:            BGRA  YUV mode:          None
+log info GPU conversion not available for format: 7
+log info NV12 texture support not available
+reset_video -> success
+  after_call base=1920x1080 out=1280x720 fps=30/1 fmt=BGRA cs=2 range=1 scale=2 gpu=1 adapter=0
+mix gpu_conversion=0 conversion_needed=0 techs=-,-,- wi=0 hi=0 nv12=0 p010=0 render_space=0 mix_audio=1 view=set
+mix matrix 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1
+  ovi base=1920x1080 out=1280x720 fps=30/1 fmt=BGRA cs=2 range=1 scale=2 gpu=1 adapter=0
+log info ---------------------------------
+log info video settings reset:  base resolution:   1920x1080  output resolution: 1280x720  downscale filter:  Bicubic  fps:               30/1  format:            RGBA  YUV mode:          None
+log info GPU conversion not available for format: 6
+log info NV12 texture support not available
+reset_video -> success
+  after_call base=1920x1080 out=1280x720 fps=30/1 fmt=RGBA cs=2 range=1 scale=2 gpu=1 adapter=0
+mix gpu_conversion=0 conversion_needed=0 techs=-,-,- wi=0 hi=0 nv12=0 p010=0 render_space=0 mix_audio=1 view=set
+mix matrix 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1
+  ovi base=1920x1080 out=1280x720 fps=30/1 fmt=RGBA cs=2 range=1 scale=2 gpu=1 adapter=0
+log info ---------------------------------
+log info video settings reset:  base resolution:   1920x1080  output resolution: 1280x720  downscale filter:  Bicubic  fps:               30/1  format:            YUY2  YUV mode:          Rec. 709/Partial
+log info GPU conversion not available for format: 4
+log info NV12 texture support not available
+reset_video -> success
+  after_call base=1920x1080 out=1280x720 fps=30/1 fmt=YUY2 cs=2 range=1 scale=2 gpu=1 adapter=0
+mix gpu_conversion=0 conversion_needed=0 techs=-,-,- wi=0 hi=0 nv12=0 p010=0 render_space=0 mix_audio=1 view=set
+mix matrix -0.100643739 -0.338571936 0.43921569 0.501960754 0.18258588 0.614230573 0.0620070584 0.0627451092 0.43921569 -0.398942143 -0.0402735248 0.501960814 -0 0 -0 1
+  ovi base=1920x1080 out=1280x720 fps=30/1 fmt=YUY2 cs=2 range=1 scale=2 gpu=1 adapter=0
+log info ---------------------------------
+log info video settings reset:  base resolution:   1920x1080  output resolution: 1280x720  downscale filter:  Bicubic  fps:               30/1  format:            NV12  YUV mode:          Rec. 709/Partial
+reset_video -> success
+  after_call base=1920x1080 out=1280x720 fps=30/1 fmt=NV12 cs=2 range=1 scale=2 gpu=0 adapter=0
+mix gpu_conversion=0 conversion_needed=0 techs=-,-,- wi=0 hi=0 nv12=0 p010=0 render_space=0 mix_audio=1 view=set
+mix matrix -0.100643739 -0.338571936 0.43921569 0.501960754 0.18258588 0.614230573 0.0620070584 0.0627451092 0.43921569 -0.398942143 -0.0402735248 0.501960814 -0 0 -0 1
+  ovi base=1920x1080 out=1280x720 fps=30/1 fmt=NV12 cs=2 range=1 scale=2 gpu=0 adapter=0
+log info ---------------------------------
+log info video settings reset:  base resolution:   1920x1080  output resolution: 1280x720  downscale filter:  Bicubic  fps:               30/1  format:            I420  YUV mode:          Rec. 601/Full
+reset_video -> success
+  after_call base=1920x1080 out=1280x720 fps=30/1 fmt=I420 cs=1 range=2 scale=2 gpu=0 adapter=0
+mix gpu_conversion=0 conversion_needed=0 techs=-,-,- wi=0 hi=0 nv12=0 p010=0 render_space=0 mix_audio=1 view=set
+mix matrix -0.168735877 -0.331264079 0.49999994 0.501960754 0.298999965 0.586999953 0.113999993 1.40833665e-08 0.5 -0.418687582 -0.0813124031 0.501960814 -0 0 -0 1
+  ovi base=1920x1080 out=1280x720 fps=30/1 fmt=I420 cs=1 range=2 scale=2 gpu=0 adapter=0
+log info ---------------------------------
+log info video settings reset:  base resolution:   1920x1080  output resolution: 1280x720  downscale filter:  Bicubic  fps:               30/1  format:            BGRX  YUV mode:          None
+reset_video -> success
+  after_call base=1920x1080 out=1280x720 fps=30/1 fmt=BGRX cs=2 range=1 scale=2 gpu=0 adapter=0
+mix gpu_conversion=0 conversion_needed=0 techs=-,-,- wi=0 hi=0 nv12=0 p010=0 render_space=0 mix_audio=1 view=set
+mix matrix 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1
+  ovi base=1920x1080 out=1280x720 fps=30/1 fmt=BGRX cs=2 range=1 scale=2 gpu=0 adapter=0
+shutdown begin
+log info Freeing OBS context data
+log debug canvas 'Main' (<uuid>) destroyed
+shutdown end obs=NULL

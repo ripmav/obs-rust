@@ -1,0 +1,19 @@
+# Balance (stereo source only, sine law, skipped within 0.49..0.51) and force-mono downmix applied at ingestion.
+init 48000 2
+clock 1000000000
+timeline 1000000000
+source a input
+video_mix 1
+channel 0 0 a
+set a active 1
+set a balance 0.25
+output a 48000 2 1024 1000000000 const 0.5
+run 1 1
+source b input
+channel 0 1 b
+set b active 1
+set b balance 0.505
+set b force_mono 1
+output b 48000 2 1024 1021333333 const 0.5
+run 1 1
+mixer_info a

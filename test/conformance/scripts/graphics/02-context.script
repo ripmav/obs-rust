@@ -1,0 +1,40 @@
+# Context enter/leave: re-entrancy counting, thread-local current context, switching between two
+# graphics objects, behaviour with no context current.
+gs_create a
+gs_create b
+trace 1
+echo == nothing current yet
+gs_get_context
+echo == enter: backend enter happens once, nesting only counts
+gs_enter_context a
+gs_enter_context a
+gs_get_context
+gs_leave_context
+echo (still inside: no backend leave yet)
+gs_get_context
+gs_leave_context
+echo (now left)
+gs_get_context
+echo == leave with no context current: debug log, nothing else
+gs_leave_context
+echo == entering b while a is current leaves a completely first (even when nested)
+gs_enter_context a
+gs_enter_context a
+gs_enter_context b
+gs_get_context
+gs_leave_context
+gs_get_context
+echo == NULL graphics
+gs_enter_context -
+gs_get_context
+echo == a function that needs a context does nothing and returns its default outside one
+gs_get_width
+gs_get_device_name
+gs_get_device_type
+gs_matrix_push
+gs_matrix_get
+echo == destroy while a context is current: the context is left first
+gs_enter_context a
+gs_destroy a
+gs_get_context
+gs_destroy b

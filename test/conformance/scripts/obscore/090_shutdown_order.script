@@ -1,0 +1,22 @@
+# Full shutdown ordering with everything alive. Visible order (see the log / ev lines):
+# hotkey thread stopped and hotkey state freed -> context data freed (log "Freeing OBS context data":
+# main canvas, outputs, encoders, displays, services, public sources, all sources, public canvases,
+# remaining canvases; each non-empty group logs "N <kind>(s) were remaining") -> audio freed
+# -> video mixes freed (log of leftover views) -> hotkey strings / name map / platform freed ->
+# graphics device destroyed -> core pointer cleared.
+startup en-US -
+reset_video fmt=BGRA gpu=0
+reset_audio
+canvas_create c1 Alpha video=1 base=64x64 out=64x64 fmt=BGRA gpu=0
+view_create v
+view_add v
+mk_output o1 Out1
+mk_encoder e1 Enc1
+mk_service s1 Svc1
+mk_source i1 In1
+mk_source p1 Priv private=1
+display_create d1 10 10 0
+sig_obs canvas_destroy
+trace sub on
+trace gs on
+shutdown

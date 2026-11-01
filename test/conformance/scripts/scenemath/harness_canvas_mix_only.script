@@ -1,0 +1,14 @@
+# HARNESS-ONLY / non-normative: the reference reads the size of a scene's canvas from the canvas object, but the
+# size of canvas-less scenes (and of groups without canvas) from the main video mix. A real core keeps both equal;
+# the fake core can desynchronise them with canvas_mix_only. An implementation with a single "main canvas size"
+# does not need to reproduce this script.
+source cam 100 100
+scene m
+scene n none
+add m cam i1
+add n cam i3
+pos i1 960 540
+pos i3 960 540
+canvas_mix_only 800 600
+get i1
+get i3

@@ -1,0 +1,45 @@
+# S-022 (a) fixed-size PCM across several fragments: per-fragment trun without sample entries, sample
+# count = bytes / frame size, running data offsets, chunk 'samples' fixed up from the byte count,
+# tfdt in frames; (b) FLAVOR_CMAF behaves exactly like MP4 (also its log prefix is "mp4");
+# (c) PCM on an 'unknown' speaker layout has frame size 0 and is a variable-size track in MP4 (Q-12).
+enc v video codec h264 width 320 height 240 fps 30/1 extra 000000016742c01ed900a047fe880000000168ce3c80
+enc a audio codec pcm_s16le rate 8000 speakers mono
+mux cmaf
+pkt v 0 0 1 gen:10
+pkt a 0 0 1 gen:200
+pkt v 1 1 0 gen:10
+pkt v 2 2 0 gen:10
+pkt a 100 100 1 gen:200
+pkt v 3 3 1 gen:10
+pkt a 200 200 1 gen:200
+pkt a 300 300 1 gen:200
+pkt a 400 400 1 gen:200
+pkt a 500 500 1 gen:200
+pkt a 600 600 1 gen:200
+pkt a 700 700 1 gen:200
+pkt a 800 800 1 gen:200
+pkt a 900 900 1 gen:200
+pkt v 4 4 0 gen:10
+pkt v 5 5 0 gen:10
+pkt v 6 6 1 gen:10
+pkt a 1000 1000 1 gen:200
+pkt a 1100 1100 1 gen:200
+pkt a 1200 1200 1 gen:200
+pkt a 1300 1300 1 gen:200
+pkt a 1400 1400 1 gen:200
+pkt a 1500 1500 1 gen:200
+pkt a 1600 1600 1 gen:200
+pkt a 1700 1700 1 gen:200
+pkt v 7 7 0 gen:10
+pkt a 1800 1800 1 gen:200
+finalise
+dump
+echo --- PCM with unknown layout in MP4
+reset
+enc a audio codec pcm_s16le rate 48000 speakers unknown
+mux mp4
+pkt a 0 0 1 gen:8
+pkt a 2 2 1 gen:8
+pkt a 4 4 1 gen:8
+finalise
+dump

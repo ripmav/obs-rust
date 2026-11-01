@@ -1,0 +1,87 @@
+log info ---------------------------------
+log info [x264 encoder: 'enc'] preset: veryfast
+x264.param_default_preset preset=veryfast tune=
+x264.param_parse keyint=120 -> 0
+x264.param_parse bitrate=9999 -> 0
+x264.param_parse bframes=0 -> 0
+x264.param_parse vbv-maxrate=1 -> 0
+x264.param_parse vbv-bufsize=2 -> 0
+x264.param_parse crf=14 -> 0
+x264.param_parse custom=1 -> 0
+log info [x264 encoder: 'enc'] settings: 	rate_control: CBR 	bitrate:      1 	buffer size:  2 	crf:          14 	fps_num:      60 	fps_den:      1 	width:        1920 	height:       1080 	keyint:       120 
+log info [x264 encoder: 'enc'] custom settings:  	keyint = 120 	bitrate = 9999 	bframes = 0 	vbv-maxrate = 1 	vbv-bufsize = 2 	crf = 14 	custom = 1
+x264_settings ok
+params csp=4 size=1920x1080 fps=60/1 timebase=1/60 keyint_max=120 bframe=0 vfr=0
+params rc method=2 bitrate=9999 vbv_max=1 vbv_buf=2 rf=14 filler=1 nal_hrd=0
+params vui sar=1x1 fullrange=0 colorprim=1 transfer=1 colmatrix=1
+params headers repeat=0 annexb=0 aud=0 loglevel=1
+echo skipped-names
+log info ---------------------------------
+log info [x264 encoder: 'enc'] preset: veryfast
+x264.param_default_preset preset=veryfast tune=
+x264.param_parse keep=1 -> 0
+log info [x264 encoder: 'enc'] settings: 	rate_control: CBR 	bitrate:      6000 	buffer size:  6000 	crf:          -3 	fps_num:      60 	fps_den:      1 	width:        1920 	height:       1080 	keyint:       120 
+log info [x264 encoder: 'enc'] custom settings:  	fps = 30 	force-cfr = 1 	width = 1 	height = 2 	opencl = 1 	stats = a 	qpfile = b 	pass = 2 	keep = 1
+x264_settings ok
+params csp=4 size=1920x1080 fps=60/1 timebase=1/60 keyint_max=120 bframe=-2222 vfr=0
+params rc method=2 bitrate=6000 vbv_max=6000 vbv_buf=6000 rf=-3.5 filler=1 nal_hrd=0
+params vui sar=1x1 fullrange=0 colorprim=1 transfer=1 colmatrix=1
+params headers repeat=0 annexb=0 aud=0 loglevel=1
+echo opencl-alias
+log info ---------------------------------
+log info [x264 encoder: 'enc'] preset: veryfast
+x264.param_default_preset preset=veryfast tune=
+x264.param_parse opencl=1 -> 0
+log info [x264 encoder: 'enc'] settings: 	rate_control: CBR 	bitrate:      6000 	buffer size:  6000 	crf:          -3 	fps_num:      60 	fps_den:      1 	width:        1920 	height:       1080 	keyint:       120 
+log info [x264 encoder: 'enc'] custom settings:  	opencl_is_experimental_and_potentially_unstable = 1
+x264_settings ok
+params csp=4 size=1920x1080 fps=60/1 timebase=1/60 keyint_max=120 bframe=-2222 vfr=0
+params rc method=2 bitrate=6000 vbv_max=6000 vbv_buf=6000 rf=-3.5 filler=1 nal_hrd=0
+params vui sar=1x1 fullrange=0 colorprim=1 transfer=1 colmatrix=1
+params headers repeat=0 annexb=0 aud=0 loglevel=1
+echo skip-list-is-case-sensitive-so-FPS-is-forwarded
+log info ---------------------------------
+log info [x264 encoder: 'enc'] preset: veryfast
+x264.param_default_preset preset=veryfast tune=
+x264.param_parse FPS=30 -> 0
+x264.param_parse Width=3 -> 0
+x264.param_parse PASS=1 -> 0
+log info [x264 encoder: 'enc'] settings: 	rate_control: CBR 	bitrate:      6000 	buffer size:  6000 	crf:          -3 	fps_num:      60 	fps_den:      1 	width:        1920 	height:       1080 	keyint:       120 
+log info [x264 encoder: 'enc'] custom settings:  	FPS = 30 	Width = 3 	PASS = 1
+x264_settings ok
+params csp=4 size=1920x1080 fps=60/1 timebase=1/60 keyint_max=120 bframe=-2222 vfr=0
+params rc method=2 bitrate=6000 vbv_max=6000 vbv_buf=6000 rf=-3.5 filler=1 nal_hrd=0
+params vui sar=1x1 fullrange=0 colorprim=1 transfer=1 colmatrix=1
+params headers repeat=0 annexb=0 aud=0 loglevel=1
+echo failing-parameters-only-warn
+log info ---------------------------------
+log info [x264 encoder: 'enc'] preset: veryfast
+x264.param_default_preset preset=veryfast tune=
+x264.param_parse bframes=1 -> -1
+log warning [x264 encoder: 'enc'] x264 param: bframes=1 failed
+x264.param_parse nope=2 -> -1
+log warning [x264 encoder: 'enc'] x264 param: nope=2 failed
+x264.param_parse keyint=7 -> 0
+log info [x264 encoder: 'enc'] settings: 	rate_control: CBR 	bitrate:      6000 	buffer size:  6000 	crf:          -3 	fps_num:      60 	fps_den:      1 	width:        1920 	height:       1080 	keyint:       7 
+log info [x264 encoder: 'enc'] custom settings:  	bframes = 1 	nope = 2 	keyint = 7
+x264_settings ok
+params csp=4 size=1920x1080 fps=60/1 timebase=1/60 keyint_max=7 bframe=-2222 vfr=0
+params rc method=2 bitrate=6000 vbv_max=6000 vbv_buf=6000 rf=-3.5 filler=1 nal_hrd=0
+params vui sar=1x1 fullrange=0 colorprim=1 transfer=1 colmatrix=1
+params headers repeat=0 annexb=0 aud=0 loglevel=1
+echo words-without-value-are-ignored-with-a-warning
+log info ---------------------------------
+log info [x264 encoder: 'enc'] preset: veryfast
+x264.param_default_preset preset=veryfast tune=
+log warning [x264 encoder: 'enc'] ignoring invalid x264 option: cabac
+log warning [x264 encoder: 'enc'] ignoring invalid x264 option: no-cabac=
+log warning [x264 encoder: 'enc'] ignoring invalid x264 option: =1
+x264.param_parse keyint=33 -> 0
+x264.param_parse bframes=1 -> 0
+log info [x264 encoder: 'enc'] settings: 	rate_control: CBR 	bitrate:      6000 	buffer size:  6000 	crf:          -3 	fps_num:      60 	fps_den:      1 	width:        1920 	height:       1080 	keyint:       33 
+log info [x264 encoder: 'enc'] custom settings:  	keyint = 33 	bframes = 1
+x264_settings ok
+params csp=4 size=1920x1080 fps=60/1 timebase=1/60 keyint_max=33 bframe=1 vfr=0
+params rc method=2 bitrate=6000 vbv_max=6000 vbv_buf=6000 rf=-3.5 filler=1 nal_hrd=0
+params vui sar=1x1 fullrange=0 colorprim=1 transfer=1 colmatrix=1
+params headers repeat=0 annexb=0 aud=0 loglevel=1

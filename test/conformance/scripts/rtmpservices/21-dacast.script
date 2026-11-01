@@ -1,0 +1,41 @@
+# S-026 Dacast: url/username/password/stream key come from GET <server><key> via the file-updater single-file
+# downloader (3 s wait). get_url triggers a download EVERY time (the previous updater is destroyed first);
+# key/username/password only read the table. Failure -> shared invalid ingest {"rtmp://dacast","","","fake_key"}.
+fs-load /mod/data/services.json data/services-ok.json
+module-load
+settings S {"service":"Dacast","server":"https://dacast.example/v3/encoder-setup/","key":"DK1"}
+new D rtmp_common S
+echo before-any-download-key-user-pass-read-the-invalid-ingest
+get D key user pass
+echo url-with-no-answer-waits-3s-and-gives-the-invalid-ingest
+get D url
+clock
+get D key user pass
+updater-route https://dacast.example/v3/encoder-setup/DK1 100 "{\"stream\":{\"server\":\"rtmp://dc.example/live\",\"username\":\"u1\",\"password\":\"p1\",\"streamkey\":\"sk1\"}}"
+echo answer
+get D url
+clock
+get D key user pass
+echo can-connect-only-looks-at-the-key-for-dacast
+get D can_connect connect:0 connect:2 connect:4 connect:6 connect:8
+echo SRT-protocol-passphrase-is-the-password
+settings S {"service":"Dacast","server":"https://dacast.example/v3/encoder-setup/","key":"DK1","protocol":"SRT"}
+new D2 rtmp_common S
+get D2 protocol connect:8 connect:2
+echo second-key-incomplete-answer-leaves-null-fields-in-table
+settings S {"service":"Dacast","server":"https://dacast.example/v3/encoder-setup/","key":"DK2"}
+update D S
+updater-route https://dacast.example/v3/encoder-setup/DK2 0 "{\"stream\":{\"server\":\"rtmp://dc2\"}}"
+get D url
+get D key user pass
+echo malformed-answer
+settings S {"service":"Dacast","server":"https://dacast.example/v3/encoder-setup/","key":"DK3"}
+update D S
+updater-route https://dacast.example/v3/encoder-setup/DK3 0 "garbage"
+get D url
+get D key
+echo empty-key-service-never-finds-an-entry
+settings S {"service":"Dacast","server":"https://dacast.example/v3/encoder-setup/","key":""}
+update D S
+get D key can_connect
+module-unload

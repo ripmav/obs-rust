@@ -1,0 +1,12 @@
+Key1="Hello World"
+Key2=Plain
+Key3="a\nb\tc\"d"
+# comment
+Key4="x" # trailing
+Key1="Replaced"
+Key5 = "spaced"
+  Key6="indented"
+Key7
+Key8=
+Key9="unterminated
+Key10="after"

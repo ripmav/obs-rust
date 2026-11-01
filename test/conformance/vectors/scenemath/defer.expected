@@ -1,0 +1,37 @@
+add c ok
+item c id=1 parent=main group=0 scene=0 abs=0 vis=1 user_vis=1 sel=0 lock=0 need_update=0
+  stored pos=-1.5925926,-0.814814806 rot=0 scale=2,2 scale_ref=1920,1080 align=5
+  bounds type=0 align=0 size=0,0 crop_to_bounds=0
+  crop l=0 r=0 t=0 b=0 bounds_crop l=0 r=0 t=0 b=0 last=0,0
+  output_scale=0,0 box_scale=0,0
+  draw [1,0,0,0] [0,1,0,0] [0,0,1,0] [0,0,0,1]
+  box [1,0,0,0] [0,1,0,0] [0,0,1,0] [0,0,0,1]
+item c id=1 parent=main group=0 scene=0 abs=0 vis=1 user_vis=1 sel=0 lock=0 need_update=0
+  stored pos=-1.5925926,-0.814814806 rot=0 scale=2,2 scale_ref=1920,1080 align=5
+  bounds type=0 align=0 size=0,0 crop_to_bounds=0
+  crop l=0 r=0 t=0 b=0 bounds_crop l=0 r=0 t=0 b=0 last=0,0
+  output_scale=0,0 box_scale=0,0
+  draw [1,0,0,0] [0,1,0,0] [0,0,1,0] [0,0,0,1]
+  box [1,0,0,0] [0,1,0,0] [0,0,1,0] [0,0,0,1]
+item c id=1 parent=main group=0 scene=0 abs=0 vis=1 user_vis=1 sel=0 lock=0 need_update=0
+  stored pos=-1.5925926,-0.814814806 rot=0 scale=2,2 scale_ref=1920,1080 align=5
+  bounds type=0 align=0 size=0,0 crop_to_bounds=0
+  crop l=0 r=0 t=0 b=0 bounds_crop l=0 r=0 t=0 b=0 last=1280,720
+  output_scale=2,2 box_scale=2560,1440
+  draw [2,0,0,0] [0,2,0,0] [0,0,1,0] [100,100,0,1]
+  box [2560,0,0,0] [0,1440,0,0] [0,0,1,0] [100,100,0,1]
+-- nested counters
+item c id=1 parent=main group=0 scene=0 abs=0 vis=1 user_vis=1 sel=0 lock=0 need_update=0
+  stored pos=-1.75925922,-0.981481493 rot=0 scale=2,2 scale_ref=1920,1080 align=5
+  bounds type=0 align=0 size=0,0 crop_to_bounds=0
+  crop l=0 r=0 t=0 b=0 bounds_crop l=0 r=0 t=0 b=0 last=1280,720
+  output_scale=2,2 box_scale=2560,1440
+  draw [2,0,0,0] [0,2,0,0] [0,0,1,0] [100,100,0,1]
+  box [2560,0,0,0] [0,1440,0,0] [0,0,1,0] [100,100,0,1]
+item c id=1 parent=main group=0 scene=0 abs=0 vis=1 user_vis=1 sel=0 lock=0 need_update=0
+  stored pos=-1.75925922,-0.981481493 rot=0 scale=2,2 scale_ref=1920,1080 align=5
+  bounds type=0 align=0 size=0,0 crop_to_bounds=0
+  crop l=0 r=0 t=0 b=0 bounds_crop l=0 r=0 t=0 b=0 last=1280,720
+  output_scale=2,2 box_scale=2560,1440
+  draw [2,0,0,0] [0,2,0,0] [0,0,1,0] [10,10,0,1]
+  box [2560,0,0,0] [0,1440,0,0] [0,0,1,0] [10,10,0,1]

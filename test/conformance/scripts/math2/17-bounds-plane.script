@@ -1,0 +1,38 @@
+# bounds vs plane (S-009-R76, R77, R81).
+bounds b -1 -1 -1 1 1 1
+plane ground 0 1 0 0
+plane high 0 1 0 5
+plane low 0 1 0 -5
+plane edge 0 1 0 1
+plane edge2 0 1 0 -1
+plane diag 0.57735027 0.57735027 0.57735027 0
+plane negn 0 -1 0 3
+# D-2: bounds_plane_test is declared to return bool but computes BOUNDS_OUTSIDE(1)/INSIDE(2)/PARTIAL(3);
+# converted to bool every outcome is TRUE.  Required: always return true.
+call t bounds_plane_test b ground
+call t bounds_plane_test b high
+call t bounds_plane_test b low
+call t bounds_plane_test b edge
+call t bounds_plane_test b diag
+call t bounds_plane_test b negn
+# bounds_under_plane: the corner of the box that is most "negative" along the normal is not beyond dist
+call u bounds_under_plane b ground
+call u bounds_under_plane b high
+call u bounds_under_plane b low
+call u bounds_under_plane b edge
+call u bounds_under_plane b edge2
+call u bounds_under_plane b negn
+call u bounds_under_plane b diag
+# the zero normal component picks min for that axis (>= 0 selects min; < 0 selects max)
+plane zeron 0 0 0 0
+call u bounds_under_plane b zeron
+plane zeron2 0 0 0 -1
+call u bounds_under_plane b zeron2
+# bounds_min_dist: dist + plane_dist(center) - 0.5*dot(size, |dir|)
+call d bounds_min_dist b ground
+call d bounds_min_dist b high
+call d bounds_min_dist b low
+call d bounds_min_dist b diag
+call d bounds_min_dist b negn
+bounds off 10 0 0 12 2 4
+call d bounds_min_dist off diag

@@ -1,0 +1,22 @@
+# S-045 set_output_error: connection error code -> localized message key (Linux errno numbers).
+# Unmapped codes produce no message at all (the output keeps its previous last-error).
+reset
+err 110
+err 13
+err 103
+err 104
+err 1
+err 4
+err 99
+err 22
+err 113
+# TLS (mbedTLS) codes are the same on all platforms
+err -9984
+err -30336
+# not mapped: 0, generic errno values, ECONNREFUSED, ENETUNREACH, positive/negative random
+err 0
+err 111
+err 101
+err 5
+err -1
+err 61

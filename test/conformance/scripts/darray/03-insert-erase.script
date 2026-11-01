@@ -1,0 +1,20 @@
+push_array 10 20 30 40
+dump
+insert 0 5
+insert 3 25
+insert 6 99
+dump
+insert_array 2 -1 -2 -3
+dump
+erase 0
+erase 3
+dump
+erase_item 99
+erase_item 12345
+dump
+erase_range 1 4
+dump
+erase_range 0 1
+dump
+erase_range 0 2
+dump

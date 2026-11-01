@@ -1,0 +1,24 @@
+> reset
+> output o
+> venc h264 bitrate=2500
+> set str path /v/live.m3u8
+> capture 0
+> create ffmpeg_muxer
+signal_add "void file_changed(string next_file)"
+proc_add "void split_file(out bool split_file_enabled)"
+create ffmpeg_muxer -> ok
+> start
+encoder_update codec=h264 repeat_headers=1
+start -> 0
+> set str path /v/live.M3U8
+> start
+start -> 0
+> set str path /v/live.m3u8x
+> start
+start -> 0
+> set str path /v/noext
+> start
+start -> 0
+> set str path /v.dir/noext
+> start
+start -> 0

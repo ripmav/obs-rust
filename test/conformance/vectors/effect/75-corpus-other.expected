@@ -1,0 +1,845 @@
+gfx preprocessor=_OPENGL
+=== plugins/nv-filters/data/color.effect
+effect e result=ok
+  error_string=@null
+effect e params=0 techniques=0 viewproj=- world=-
+ep result=ok
+  errors count=0 has_errors=0
+  ep params=0 structs=0 funcs=12 samplers=0 techniques=0
+  ep_func 0 name=srgb_linear_to_nonlinear_channel ret=float mapping=@null params=1
+    var type=float name=u mapping=@null var_type=IN
+    struct_deps=[] func_deps=[] param_deps=[] sampler_deps=[] contents_len=82
+  ep_func 1 name=srgb_linear_to_nonlinear ret=float3 mapping=@null params=1
+    var type=float3 name=v mapping=@null var_type=IN
+    struct_deps=[] func_deps=["srgb_linear_to_nonlinear_channel","srgb_linear_to_nonlinear_channel","srgb_linear_to_nonlinear_channel"] param_deps=[] sampler_deps=[] contents_len=136
+  ep_func 2 name=srgb_nonlinear_to_linear_channel ret=float mapping=@null params=1
+    var type=float name=u mapping=@null var_type=IN
+    struct_deps=[] func_deps=[] param_deps=[] sampler_deps=[] contents_len=86
+  ep_func 3 name=srgb_nonlinear_to_linear ret=float3 mapping=@null params=1
+    var type=float3 name=v mapping=@null var_type=IN
+    struct_deps=[] func_deps=["srgb_nonlinear_to_linear_channel","srgb_nonlinear_to_linear_channel","srgb_nonlinear_to_linear_channel"] param_deps=[] sampler_deps=[] contents_len=136
+  ep_func 4 name=rec709_to_rec2020 ret=float3 mapping=@null params=1
+    var type=float3 name=v mapping=@null var_type=IN
+    struct_deps=[] func_deps=[] param_deps=[] sampler_deps=[] contents_len=303
+  ep_func 5 name=rec2020_to_rec709 ret=float3 mapping=@null params=1
+    var type=float3 name=v mapping=@null var_type=IN
+    struct_deps=[] func_deps=[] param_deps=[] sampler_deps=[] contents_len=305
+  ep_func 6 name=reinhard ret=float3 mapping=@null params=1
+    var type=float3 name=rgb mapping=@null var_type=IN
+    struct_deps=[] func_deps=["srgb_nonlinear_to_linear"] param_deps=[] sampler_deps=[] contents_len=165
+  ep_func 7 name=linear_to_st2084_channel ret=float mapping=@null params=1
+    var type=float name=x mapping=@null var_type=IN
+    struct_deps=[] func_deps=[] param_deps=[] sampler_deps=[] contents_len=115
+  ep_func 8 name=st2084_to_linear_channel ret=float mapping=@null params=1
+    var type=float name=u mapping=@null var_type=IN
+    struct_deps=[] func_deps=[] param_deps=[] sampler_deps=[] contents_len=132
+  ep_func 9 name=eetf_0_Lmax ret=float mapping=@null params=3
+    var type=float name=maxRGB1_pq mapping=@null var_type=IN
+    var type=float name=Lw mapping=@null var_type=IN
+    var type=float name=Lmax mapping=@null var_type=IN
+    struct_deps=[] func_deps=["linear_to_st2084_channel","linear_to_st2084_channel"] param_deps=[] sampler_deps=[] contents_len=528
+  ep_func 10 name=maxRGB_eetf_internal ret=float3 mapping=@null params=5
+    var type=float3 name=rgb_linear mapping=@null var_type=IN
+    var type=float name=maxRGB1_linear mapping=@null var_type=IN
+    var type=float name=maxRGB1_pq mapping=@null var_type=IN
+    var type=float name=Lw mapping=@null var_type=IN
+    var type=float name=Lmax mapping=@null var_type=IN
+    struct_deps=[] func_deps=["eetf_0_Lmax","st2084_to_linear_channel"] param_deps=[] sampler_deps=[] contents_len=244
+  ep_func 11 name=maxRGB_eetf_linear_to_linear ret=float3 mapping=@null params=3
+    var type=float3 name=rgb_linear mapping=@null var_type=IN
+    var type=float name=Lw mapping=@null var_type=IN
+    var type=float name=Lmax mapping=@null var_type=IN
+    struct_deps=[] func_deps=["linear_to_st2084_channel","maxRGB_eetf_internal"] param_deps=[] sampler_deps=[] contents_len=221
+  error_string=@null
+effect (effect) params=0 techniques=0 viewproj=- world=-
+destroy e cached=1
+=== plugins/nv-filters/data/rtx_blur.effect
+backend vertexshader_create location="plugins/nv-filters/data/rtx_blur.effect (Vertex shader, technique Draw, pass 0)" len=377 fnv=c74ac60ed6030231
+  text "uniform float4x4 ViewProj;\n\n\nstruct VertInOut {\n\tfloat2 uv : TEXCOORD0;\n\tfloat4 pos : POSITION;\n};\n\nstruct VertData {\n\tfloat4 pos : POSITION;\n\tfloat2 uv : TEXCOORD0;\n};\n\nVertInOut VSDefault(VertData v_in)\n{\n\tVertInOut v_out;\n\tv_out.uv = v_in.uv;\n\tv_out.pos = mul(float4(v_in.pos.xyz, 1.), ViewProj);\n\treturn v_out;\n}\n\nVertInOut main(VertData v_in)\n{\n\treturn VSDefault(v_in);\n}\n"
+  sparam 0 name=ViewProj type=MATRIX4X4 array=0
+  result ok
+backend pixelshader_create location="plugins/nv-filters/data/rtx_blur.effect (Pixel shader, technique Draw, pass 0)" len=965 fnv=17b34fa218cfa5c9
+  text "struct FragData {\n\tfloat2 uv : TEXCOORD0;\n};\n\nuniform texture2d image;\nuniform texture2d blurred;\nuniform texture2d mask;\n\n\nsampler_state texSampler {\n\tFilter = Linear;\n\n\tAddressU = Clamp;\n\n\tAddressV = Clamp;\n\n};\n\n\n\nfloat srgb_nonlinear_to_linear_channel(float u)\n{\n\treturn (u <= 0.04045) ? (u / 12.92) : pow(mad(u, 1. / 1.055, .055 / 1.055), 2.4);\n}\n\n\nfloat3 srgb_nonlinear_to_linear(float3 v)\n{\n\treturn float3(srgb_nonlinear_to_linear_channel(v.r), srgb_nonlinear_to_linear_channel(v.g), srgb_nonlinear_to_linear_channel(v.b));\n}\n\n\nfloat4 Mask(FragData f_in)\n{\n\tfloat4 rgba = image.Sample(texSampler, f_in.uv);\n\tfloat3 blur = srgb_nonlinear_to_linear(blurred.Sample(texSampler, f_in.uv).rgb);\n\t \n\tfloat m = smoothstep(0.85, 0.95, mask.Sample(texSampler, f_in.uv).a);\n\tfloat3 out_lin = lerp(blur, rgba.rgb, m);\n\treturn float4(out_lin, rgba.a);\n}\n\n\nfloat4 PSMask(FragData f_in)\n{\n\treturn Mask(f_in);\n}\n\nfloat4 main(FragData f_in) : TARGET\n{\n\treturn PSMask(f_in);\n}\n"
+  sparam 0 name=image type=TEXTURE array=0
+  sparam 1 name=blurred type=TEXTURE array=0
+  sparam 2 name=mask type=TEXTURE array=0
+  result ok
+backend vertexshader_create location="plugins/nv-filters/data/rtx_blur.effect (Vertex shader, technique DrawMultiply, pass 0)" len=377 fnv=c74ac60ed6030231
+  text "uniform float4x4 ViewProj;\n\n\nstruct VertInOut {\n\tfloat2 uv : TEXCOORD0;\n\tfloat4 pos : POSITION;\n};\n\nstruct VertData {\n\tfloat4 pos : POSITION;\n\tfloat2 uv : TEXCOORD0;\n};\n\nVertInOut VSDefault(VertData v_in)\n{\n\tVertInOut v_out;\n\tv_out.uv = v_in.uv;\n\tv_out.pos = mul(float4(v_in.pos.xyz, 1.), ViewProj);\n\treturn v_out;\n}\n\nVertInOut main(VertData v_in)\n{\n\treturn VSDefault(v_in);\n}\n"
+  sparam 0 name=ViewProj type=MATRIX4X4 array=0
+  result ok
+backend pixelshader_create location="plugins/nv-filters/data/rtx_blur.effect (Pixel shader, technique DrawMultiply, pass 0)" len=1055 fnv=96663dc3ef42e4a9
+  text "uniform float multiplier;\n\n\nstruct FragData {\n\tfloat2 uv : TEXCOORD0;\n};\n\nuniform texture2d image;\nuniform texture2d blurred;\nuniform texture2d mask;\n\n\nsampler_state texSampler {\n\tFilter = Linear;\n\n\tAddressU = Clamp;\n\n\tAddressV = Clamp;\n\n};\n\n\n\nfloat srgb_nonlinear_to_linear_channel(float u)\n{\n\treturn (u <= 0.04045) ? (u / 12.92) : pow(mad(u, 1. / 1.055, .055 / 1.055), 2.4);\n}\n\n\nfloat3 srgb_nonlinear_to_linear(float3 v)\n{\n\treturn float3(srgb_nonlinear_to_linear_channel(v.r), srgb_nonlinear_to_linear_channel(v.g), srgb_nonlinear_to_linear_channel(v.b));\n}\n\n\nfloat4 Mask(FragData f_in)\n{\n\tfloat4 rgba = image.Sample(texSampler, f_in.uv);\n\tfloat3 blur = srgb_nonlinear_to_linear(blurred.Sample(texSampler, f_in.uv).rgb);\n\t \n\tfloat m = smoothstep(0.85, 0.95, mask.Sample(texSampler, f_in.uv).a);\n\tfloat3 out_lin = lerp(blur, rgba.rgb, m);\n\treturn float4(out_lin, rgba.a);\n}\n\n\nfloat4 PSMaskMultiply(FragData f_in)\n{\n\tfloat4 rgba = Mask(f_in);\n\trgba.rgb *= multiplier;\n\treturn rgba;\n}\n\nfloat4 main(FragData f_in) : TARGET\n{\n\treturn PSMaskMultiply(f_in);\n}\n"
+  sparam 0 name=multiplier type=FLOAT array=0
+  sparam 1 name=image type=TEXTURE array=0
+  sparam 2 name=blurred type=TEXTURE array=0
+  sparam 3 name=mask type=TEXTURE array=0
+  result ok
+backend vertexshader_create location="plugins/nv-filters/data/rtx_blur.effect (Vertex shader, technique DrawTonemap, pass 0)" len=377 fnv=c74ac60ed6030231
+  text "uniform float4x4 ViewProj;\n\n\nstruct VertInOut {\n\tfloat2 uv : TEXCOORD0;\n\tfloat4 pos : POSITION;\n};\n\nstruct VertData {\n\tfloat4 pos : POSITION;\n\tfloat2 uv : TEXCOORD0;\n};\n\nVertInOut VSDefault(VertData v_in)\n{\n\tVertInOut v_out;\n\tv_out.uv = v_in.uv;\n\tv_out.pos = mul(float4(v_in.pos.xyz, 1.), ViewProj);\n\treturn v_out;\n}\n\nVertInOut main(VertData v_in)\n{\n\treturn VSDefault(v_in);\n}\n"
+  sparam 0 name=ViewProj type=MATRIX4X4 array=0
+  result ok
+backend pixelshader_create location="plugins/nv-filters/data/rtx_blur.effect (Pixel shader, technique DrawTonemap, pass 0)" len=1994 fnv=5a2e5ff5975028f7
+  text "struct FragData {\n\tfloat2 uv : TEXCOORD0;\n};\n\nuniform texture2d image;\nuniform texture2d blurred;\nuniform texture2d mask;\n\n\nsampler_state texSampler {\n\tFilter = Linear;\n\n\tAddressU = Clamp;\n\n\tAddressV = Clamp;\n\n};\n\n\n\nfloat srgb_nonlinear_to_linear_channel(float u)\n{\n\treturn (u <= 0.04045) ? (u / 12.92) : pow(mad(u, 1. / 1.055, .055 / 1.055), 2.4);\n}\n\n\nfloat3 srgb_nonlinear_to_linear(float3 v)\n{\n\treturn float3(srgb_nonlinear_to_linear_channel(v.r), srgb_nonlinear_to_linear_channel(v.g), srgb_nonlinear_to_linear_channel(v.b));\n}\n\n\nfloat4 Mask(FragData f_in)\n{\n\tfloat4 rgba = image.Sample(texSampler, f_in.uv);\n\tfloat3 blur = srgb_nonlinear_to_linear(blurred.Sample(texSampler, f_in.uv).rgb);\n\t \n\tfloat m = smoothstep(0.85, 0.95, mask.Sample(texSampler, f_in.uv).a);\n\tfloat3 out_lin = lerp(blur, rgba.rgb, m);\n\treturn float4(out_lin, rgba.a);\n}\n\n\nfloat3 rec709_to_rec2020(float3 v)\n{\n\tfloat r = dot(v, float3(0.62740389593469903, 0.32928303837788370, 0.043313065687417225));\n\tfloat g = dot(v, float3(0.069097289358232075, 0.91954039507545871, 0.011362315566309178));\n\tfloat b = dot(v, float3(0.016391438875150280, 0.088013307877225749, 0.89559525324762401));\n\treturn float3(r, g, b);\n}\n\n\nfloat3 reinhard(float3 rgb)\n{\n\trgb /= rgb + float3(1., 1., 1.);\n\trgb = saturate(rgb);\n\trgb = pow(rgb, float3(1. / 2.4, 1. / 2.4, 1. / 2.4));\n\trgb = srgb_nonlinear_to_linear(rgb);\n\treturn rgb;\n}\n\n\nfloat3 rec2020_to_rec709(float3 v)\n{\n\tfloat r = dot(v, float3(1.6604910021084345, -0.58764113878854951, -0.072849863319884883));\n\tfloat g = dot(v, float3(-0.12455047452159074, 1.1328998971259603, -0.0083494226043694768));\n\tfloat b = dot(v, float3(-0.018150763354905303, -0.10057889800800739, 1.1187296613629127));\n\treturn float3(r, g, b);\n}\n\n\nfloat4 PSMaskTonemap(FragData f_in)\n{\n\tfloat4 rgba = Mask(f_in);\n\trgba.rgb = rec709_to_rec2020(rgba.rgb);\n\trgba.rgb = reinhard(rgba.rgb);\n\trgba.rgb = rec2020_to_rec709(rgba.rgb);\n\treturn rgba;\n}\n\nfloat4 main(FragData f_in) : TARGET\n{\n\treturn PSMaskTonemap(f_in);\n}\n"
+  sparam 0 name=image type=TEXTURE array=0
+  sparam 1 name=blurred type=TEXTURE array=0
+  sparam 2 name=mask type=TEXTURE array=0
+  result ok
+backend vertexshader_create location="plugins/nv-filters/data/rtx_blur.effect (Vertex shader, technique DrawMultiplyTonemap, pass 0)" len=377 fnv=c74ac60ed6030231
+  text "uniform float4x4 ViewProj;\n\n\nstruct VertInOut {\n\tfloat2 uv : TEXCOORD0;\n\tfloat4 pos : POSITION;\n};\n\nstruct VertData {\n\tfloat4 pos : POSITION;\n\tfloat2 uv : TEXCOORD0;\n};\n\nVertInOut VSDefault(VertData v_in)\n{\n\tVertInOut v_out;\n\tv_out.uv = v_in.uv;\n\tv_out.pos = mul(float4(v_in.pos.xyz, 1.), ViewProj);\n\treturn v_out;\n}\n\nVertInOut main(VertData v_in)\n{\n\treturn VSDefault(v_in);\n}\n"
+  sparam 0 name=ViewProj type=MATRIX4X4 array=0
+  result ok
+backend pixelshader_create location="plugins/nv-filters/data/rtx_blur.effect (Pixel shader, technique DrawMultiplyTonemap, pass 0)" len=2063 fnv=a48bc0b51f6477fa
+  text "uniform float multiplier;\n\n\nstruct FragData {\n\tfloat2 uv : TEXCOORD0;\n};\n\nuniform texture2d image;\nuniform texture2d blurred;\nuniform texture2d mask;\n\n\nsampler_state texSampler {\n\tFilter = Linear;\n\n\tAddressU = Clamp;\n\n\tAddressV = Clamp;\n\n};\n\n\n\nfloat srgb_nonlinear_to_linear_channel(float u)\n{\n\treturn (u <= 0.04045) ? (u / 12.92) : pow(mad(u, 1. / 1.055, .055 / 1.055), 2.4);\n}\n\n\nfloat3 srgb_nonlinear_to_linear(float3 v)\n{\n\treturn float3(srgb_nonlinear_to_linear_channel(v.r), srgb_nonlinear_to_linear_channel(v.g), srgb_nonlinear_to_linear_channel(v.b));\n}\n\n\nfloat4 Mask(FragData f_in)\n{\n\tfloat4 rgba = image.Sample(texSampler, f_in.uv);\n\tfloat3 blur = srgb_nonlinear_to_linear(blurred.Sample(texSampler, f_in.uv).rgb);\n\t \n\tfloat m = smoothstep(0.85, 0.95, mask.Sample(texSampler, f_in.uv).a);\n\tfloat3 out_lin = lerp(blur, rgba.rgb, m);\n\treturn float4(out_lin, rgba.a);\n}\n\n\nfloat3 rec709_to_rec2020(float3 v)\n{\n\tfloat r = dot(v, float3(0.62740389593469903, 0.32928303837788370, 0.043313065687417225));\n\tfloat g = dot(v, float3(0.069097289358232075, 0.91954039507545871, 0.011362315566309178));\n\tfloat b = dot(v, float3(0.016391438875150280, 0.088013307877225749, 0.89559525324762401));\n\treturn float3(r, g, b);\n}\n\n\nfloat3 reinhard(float3 rgb)\n{\n\trgb /= rgb + float3(1., 1., 1.);\n\trgb = saturate(rgb);\n\trgb = pow(rgb, float3(1. / 2.4, 1. / 2.4, 1. / 2.4));\n\trgb = srgb_nonlinear_to_linear(rgb);\n\treturn rgb;\n}\n\n\nfloat3 rec2020_to_rec709(float3 v)\n{\n\tfloat r = dot(v, float3(1.6604910021084345, -0.58764113878854951, -0.072849863319884883));\n\tfloat g = dot(v, float3(-0.12455047452159074, 1.1328998971259603, -0.0083494226043694768));\n\tfloat b = dot(v, float3(-0.018150763354905303, -0.10057889800800739, 1.1187296613629127));\n\treturn float3(r, g, b);\n}\n\n\nfloat4 PSMaskMultiplyTonemap(FragData f_in)\n{\n\tfloat4 rgba = Mask(f_in);\n\trgba.rgb *= multiplier;\n\trgba.rgb = rec709_to_rec2020(rgba.rgb);\n\trgba.rgb = reinhard(rgba.rgb);\n\trgba.rgb = rec2020_to_rec709(rgba.rgb);\n\treturn rgba;\n}\n\nfloat4 main(FragData f_in) : TARGET\n{\n\treturn PSMaskMultiplyTonemap(f_in);\n}\n"
+  sparam 0 name=multiplier type=FLOAT array=0
+  sparam 1 name=image type=TEXTURE array=0
+  sparam 2 name=blurred type=TEXTURE array=0
+  sparam 3 name=mask type=TEXTURE array=0
+  result ok
+backend vertexshader_create location="plugins/nv-filters/data/rtx_blur.effect (Vertex shader, technique ConvertUnorm, pass 0)" len=366 fnv=e4e39487b5a6c331
+  text "struct FragPos {\n\tfloat4 pos : POSITION;\n};\n\nFragPos VSConvertUnorm(uint id : VERTEXID)\n{\n\tfloat idHigh = float(id >> 1);\n\tfloat idLow = float(id & uint(1));\n\n\tfloat x = idHigh * 4.0 - 1.0;\n\tfloat y = idLow * 4.0 - 1.0;\n\n\tFragPos vert_out;\n\tvert_out.pos = float4(x, y, 0.0, 1.0);\n\treturn vert_out;\n}\n\nFragPos main(uint id : VERTEXID)\n{\n\treturn VSConvertUnorm(id);\n}\n"
+  result ok
+backend pixelshader_create location="plugins/nv-filters/data/rtx_blur.effect (Pixel shader, technique ConvertUnorm, pass 0)" len=607 fnv=3833e38982048f53
+  text "uniform texture2d image;\n\n\nstruct FragPos {\n\tfloat4 pos : POSITION;\n};\n\nfloat srgb_linear_to_nonlinear_channel(float u)\n{\n\treturn (u <= 0.0031308) ? (12.92 * u) : ((1.055 * pow(u, 1. / 2.4)) - 0.055);\n}\n\n\nfloat3 srgb_linear_to_nonlinear(float3 v)\n{\n\treturn float3(srgb_linear_to_nonlinear_channel(v.r), srgb_linear_to_nonlinear_channel(v.g), srgb_linear_to_nonlinear_channel(v.b));\n}\n\n\nfloat4 PSConvertUnorm(FragPos f_in)\n{\n\tfloat4 rgba = image.Load(int3(f_in.pos.xy, 0));\n\trgba.rgb = srgb_linear_to_nonlinear(rgba.rgb);\n\treturn rgba;\n}\n\nfloat4 main(FragPos f_in) : TARGET\n{\n\treturn PSConvertUnorm(f_in);\n}\n"
+  sparam 0 name=image type=TEXTURE array=0
+  result ok
+backend vertexshader_create location="plugins/nv-filters/data/rtx_blur.effect (Vertex shader, technique ConvertUnormTonemap, pass 0)" len=366 fnv=e4e39487b5a6c331
+  text "struct FragPos {\n\tfloat4 pos : POSITION;\n};\n\nFragPos VSConvertUnorm(uint id : VERTEXID)\n{\n\tfloat idHigh = float(id >> 1);\n\tfloat idLow = float(id & uint(1));\n\n\tfloat x = idHigh * 4.0 - 1.0;\n\tfloat y = idLow * 4.0 - 1.0;\n\n\tFragPos vert_out;\n\tvert_out.pos = float4(x, y, 0.0, 1.0);\n\treturn vert_out;\n}\n\nFragPos main(uint id : VERTEXID)\n{\n\treturn VSConvertUnorm(id);\n}\n"
+  result ok
+backend pixelshader_create location="plugins/nv-filters/data/rtx_blur.effect (Pixel shader, technique ConvertUnormTonemap, pass 0)" len=1933 fnv=258ff63287b7a0b2
+  text "uniform texture2d image;\n\n\nstruct FragPos {\n\tfloat4 pos : POSITION;\n};\n\nfloat3 rec709_to_rec2020(float3 v)\n{\n\tfloat r = dot(v, float3(0.62740389593469903, 0.32928303837788370, 0.043313065687417225));\n\tfloat g = dot(v, float3(0.069097289358232075, 0.91954039507545871, 0.011362315566309178));\n\tfloat b = dot(v, float3(0.016391438875150280, 0.088013307877225749, 0.89559525324762401));\n\treturn float3(r, g, b);\n}\n\n\nfloat srgb_nonlinear_to_linear_channel(float u)\n{\n\treturn (u <= 0.04045) ? (u / 12.92) : pow(mad(u, 1. / 1.055, .055 / 1.055), 2.4);\n}\n\n\nfloat3 srgb_nonlinear_to_linear(float3 v)\n{\n\treturn float3(srgb_nonlinear_to_linear_channel(v.r), srgb_nonlinear_to_linear_channel(v.g), srgb_nonlinear_to_linear_channel(v.b));\n}\n\n\nfloat3 reinhard(float3 rgb)\n{\n\trgb /= rgb + float3(1., 1., 1.);\n\trgb = saturate(rgb);\n\trgb = pow(rgb, float3(1. / 2.4, 1. / 2.4, 1. / 2.4));\n\trgb = srgb_nonlinear_to_linear(rgb);\n\treturn rgb;\n}\n\n\nfloat3 rec2020_to_rec709(float3 v)\n{\n\tfloat r = dot(v, float3(1.6604910021084345, -0.58764113878854951, -0.072849863319884883));\n\tfloat g = dot(v, float3(-0.12455047452159074, 1.1328998971259603, -0.0083494226043694768));\n\tfloat b = dot(v, float3(-0.018150763354905303, -0.10057889800800739, 1.1187296613629127));\n\treturn float3(r, g, b);\n}\n\n\nfloat srgb_linear_to_nonlinear_channel(float u)\n{\n\treturn (u <= 0.0031308) ? (12.92 * u) : ((1.055 * pow(u, 1. / 2.4)) - 0.055);\n}\n\n\nfloat3 srgb_linear_to_nonlinear(float3 v)\n{\n\treturn float3(srgb_linear_to_nonlinear_channel(v.r), srgb_linear_to_nonlinear_channel(v.g), srgb_linear_to_nonlinear_channel(v.b));\n}\n\n\nfloat4 PSConvertUnormTonemap(FragPos f_in)\n{\n\tfloat4 rgba = image.Load(int3(f_in.pos.xy, 0));\n\trgba.rgb = rec709_to_rec2020(rgba.rgb);\n\trgba.rgb = reinhard(rgba.rgb);\n\trgba.rgb = rec2020_to_rec709(rgba.rgb);\n\trgba.rgb = srgb_linear_to_nonlinear(rgba.rgb);\n\treturn rgba;\n}\n\nfloat4 main(FragPos f_in) : TARGET\n{\n\treturn PSConvertUnormTonemap(f_in);\n}\n"
+  sparam 0 name=image type=TEXTURE array=0
+  result ok
+backend vertexshader_create location="plugins/nv-filters/data/rtx_blur.effect (Vertex shader, technique ConvertUnormMultiplyTonemap, pass 0)" len=366 fnv=e4e39487b5a6c331
+  text "struct FragPos {\n\tfloat4 pos : POSITION;\n};\n\nFragPos VSConvertUnorm(uint id : VERTEXID)\n{\n\tfloat idHigh = float(id >> 1);\n\tfloat idLow = float(id & uint(1));\n\n\tfloat x = idHigh * 4.0 - 1.0;\n\tfloat y = idLow * 4.0 - 1.0;\n\n\tFragPos vert_out;\n\tvert_out.pos = float4(x, y, 0.0, 1.0);\n\treturn vert_out;\n}\n\nFragPos main(uint id : VERTEXID)\n{\n\treturn VSConvertUnorm(id);\n}\n"
+  result ok
+backend pixelshader_create location="plugins/nv-filters/data/rtx_blur.effect (Pixel shader, technique ConvertUnormMultiplyTonemap, pass 0)" len=2000 fnv=fd9eb9c8b3e7b799
+  text "uniform texture2d image;\nuniform float multiplier;\n\n\nstruct FragPos {\n\tfloat4 pos : POSITION;\n};\n\nfloat3 rec709_to_rec2020(float3 v)\n{\n\tfloat r = dot(v, float3(0.62740389593469903, 0.32928303837788370, 0.043313065687417225));\n\tfloat g = dot(v, float3(0.069097289358232075, 0.91954039507545871, 0.011362315566309178));\n\tfloat b = dot(v, float3(0.016391438875150280, 0.088013307877225749, 0.89559525324762401));\n\treturn float3(r, g, b);\n}\n\n\nfloat srgb_nonlinear_to_linear_channel(float u)\n{\n\treturn (u <= 0.04045) ? (u / 12.92) : pow(mad(u, 1. / 1.055, .055 / 1.055), 2.4);\n}\n\n\nfloat3 srgb_nonlinear_to_linear(float3 v)\n{\n\treturn float3(srgb_nonlinear_to_linear_channel(v.r), srgb_nonlinear_to_linear_channel(v.g), srgb_nonlinear_to_linear_channel(v.b));\n}\n\n\nfloat3 reinhard(float3 rgb)\n{\n\trgb /= rgb + float3(1., 1., 1.);\n\trgb = saturate(rgb);\n\trgb = pow(rgb, float3(1. / 2.4, 1. / 2.4, 1. / 2.4));\n\trgb = srgb_nonlinear_to_linear(rgb);\n\treturn rgb;\n}\n\n\nfloat3 rec2020_to_rec709(float3 v)\n{\n\tfloat r = dot(v, float3(1.6604910021084345, -0.58764113878854951, -0.072849863319884883));\n\tfloat g = dot(v, float3(-0.12455047452159074, 1.1328998971259603, -0.0083494226043694768));\n\tfloat b = dot(v, float3(-0.018150763354905303, -0.10057889800800739, 1.1187296613629127));\n\treturn float3(r, g, b);\n}\n\n\nfloat srgb_linear_to_nonlinear_channel(float u)\n{\n\treturn (u <= 0.0031308) ? (12.92 * u) : ((1.055 * pow(u, 1. / 2.4)) - 0.055);\n}\n\n\nfloat3 srgb_linear_to_nonlinear(float3 v)\n{\n\treturn float3(srgb_linear_to_nonlinear_channel(v.r), srgb_linear_to_nonlinear_channel(v.g), srgb_linear_to_nonlinear_channel(v.b));\n}\n\n\nfloat4 PSConvertUnormMultiplyTonemap(FragPos f_in)\n{\n\tfloat4 rgba = image.Load(int3(f_in.pos.xy, 0));\n\trgba.rgb *= multiplier;\n\trgba.rgb = rec709_to_rec2020(rgba.rgb);\n\trgba.rgb = reinhard(rgba.rgb);\n\trgba.rgb = rec2020_to_rec709(rgba.rgb);\n\trgba.rgb = srgb_linear_to_nonlinear(rgba.rgb);\n\treturn rgba;\n}\n\nfloat4 main(FragPos f_in) : TARGET\n{\n\treturn PSConvertUnormMultiplyTonemap(f_in);\n}\n"
+  sparam 0 name=image type=TEXTURE array=0
+  sparam 1 name=multiplier type=FLOAT array=0
+  result ok
+effect e result=ok
+  error_string=@null
+effect e params=5 techniques=7 viewproj=ViewProj world=-
+  param 0 name=ViewProj type=MATRIX4X4 annotations=0 default_size=0 default=-
+  param 1 name=image type=TEXTURE annotations=0 default_size=0 default=-
+  param 2 name=multiplier type=FLOAT annotations=0 default_size=0 default=-
+  param 3 name=mask type=TEXTURE annotations=0 default_size=0 default=-
+  param 4 name=blurred type=TEXTURE annotations=0 default_size=0 default=-
+  technique 0 name=Draw passes=1
+    pass 0 name=@null vertex_params=[ViewProj] pixel_params=[image,blurred,mask] vertex=yes pixel=yes
+  technique 1 name=DrawMultiply passes=1
+    pass 0 name=@null vertex_params=[ViewProj] pixel_params=[multiplier,image,blurred,mask] vertex=yes pixel=yes
+  technique 2 name=DrawTonemap passes=1
+    pass 0 name=@null vertex_params=[ViewProj] pixel_params=[image,blurred,mask] vertex=yes pixel=yes
+  technique 3 name=DrawMultiplyTonemap passes=1
+    pass 0 name=@null vertex_params=[ViewProj] pixel_params=[multiplier,image,blurred,mask] vertex=yes pixel=yes
+  technique 4 name=ConvertUnorm passes=1
+    pass 0 name=@null vertex_params=[] pixel_params=[image] vertex=yes pixel=yes
+  technique 5 name=ConvertUnormTonemap passes=1
+    pass 0 name=@null vertex_params=[] pixel_params=[image] vertex=yes pixel=yes
+  technique 6 name=ConvertUnormMultiplyTonemap passes=1
+    pass 0 name=@null vertex_params=[] pixel_params=[image,multiplier] vertex=yes pixel=yes
+backend vertexshader_create location="plugins/nv-filters/data/rtx_blur.effect (Vertex shader, technique Draw, pass 0)" len=377 fnv=c74ac60ed6030231
+  sparam 0 name=ViewProj type=MATRIX4X4 array=0
+  result ok
+backend pixelshader_create location="plugins/nv-filters/data/rtx_blur.effect (Pixel shader, technique Draw, pass 0)" len=965 fnv=17b34fa218cfa5c9
+  sparam 0 name=image type=TEXTURE array=0
+  sparam 1 name=blurred type=TEXTURE array=0
+  sparam 2 name=mask type=TEXTURE array=0
+  result ok
+backend vertexshader_create location="plugins/nv-filters/data/rtx_blur.effect (Vertex shader, technique DrawMultiply, pass 0)" len=377 fnv=c74ac60ed6030231
+  sparam 0 name=ViewProj type=MATRIX4X4 array=0
+  result ok
+backend pixelshader_create location="plugins/nv-filters/data/rtx_blur.effect (Pixel shader, technique DrawMultiply, pass 0)" len=1055 fnv=96663dc3ef42e4a9
+  sparam 0 name=multiplier type=FLOAT array=0
+  sparam 1 name=image type=TEXTURE array=0
+  sparam 2 name=blurred type=TEXTURE array=0
+  sparam 3 name=mask type=TEXTURE array=0
+  result ok
+backend vertexshader_create location="plugins/nv-filters/data/rtx_blur.effect (Vertex shader, technique DrawTonemap, pass 0)" len=377 fnv=c74ac60ed6030231
+  sparam 0 name=ViewProj type=MATRIX4X4 array=0
+  result ok
+backend pixelshader_create location="plugins/nv-filters/data/rtx_blur.effect (Pixel shader, technique DrawTonemap, pass 0)" len=1994 fnv=5a2e5ff5975028f7
+  sparam 0 name=image type=TEXTURE array=0
+  sparam 1 name=blurred type=TEXTURE array=0
+  sparam 2 name=mask type=TEXTURE array=0
+  result ok
+backend vertexshader_create location="plugins/nv-filters/data/rtx_blur.effect (Vertex shader, technique DrawMultiplyTonemap, pass 0)" len=377 fnv=c74ac60ed6030231
+  sparam 0 name=ViewProj type=MATRIX4X4 array=0
+  result ok
+backend pixelshader_create location="plugins/nv-filters/data/rtx_blur.effect (Pixel shader, technique DrawMultiplyTonemap, pass 0)" len=2063 fnv=a48bc0b51f6477fa
+  sparam 0 name=multiplier type=FLOAT array=0
+  sparam 1 name=image type=TEXTURE array=0
+  sparam 2 name=blurred type=TEXTURE array=0
+  sparam 3 name=mask type=TEXTURE array=0
+  result ok
+backend vertexshader_create location="plugins/nv-filters/data/rtx_blur.effect (Vertex shader, technique ConvertUnorm, pass 0)" len=366 fnv=e4e39487b5a6c331
+  result ok
+backend pixelshader_create location="plugins/nv-filters/data/rtx_blur.effect (Pixel shader, technique ConvertUnorm, pass 0)" len=607 fnv=3833e38982048f53
+  sparam 0 name=image type=TEXTURE array=0
+  result ok
+backend vertexshader_create location="plugins/nv-filters/data/rtx_blur.effect (Vertex shader, technique ConvertUnormTonemap, pass 0)" len=366 fnv=e4e39487b5a6c331
+  result ok
+backend pixelshader_create location="plugins/nv-filters/data/rtx_blur.effect (Pixel shader, technique ConvertUnormTonemap, pass 0)" len=1933 fnv=258ff63287b7a0b2
+  sparam 0 name=image type=TEXTURE array=0
+  result ok
+backend vertexshader_create location="plugins/nv-filters/data/rtx_blur.effect (Vertex shader, technique ConvertUnormMultiplyTonemap, pass 0)" len=366 fnv=e4e39487b5a6c331
+  result ok
+backend pixelshader_create location="plugins/nv-filters/data/rtx_blur.effect (Pixel shader, technique ConvertUnormMultiplyTonemap, pass 0)" len=2000 fnv=fd9eb9c8b3e7b799
+  sparam 0 name=image type=TEXTURE array=0
+  sparam 1 name=multiplier type=FLOAT array=0
+  result ok
+ep result=ok
+  errors count=0 has_errors=0
+  ep params=5 structs=4 funcs=23 samplers=1 techniques=7
+  ep_param 0 type=float4x4 name=ViewProj property=0 const=0 uniform=1 texture=0 array_count=0 annotations=0
+  ep_param 1 type=texture2d name=image property=0 const=0 uniform=1 texture=1 array_count=0 annotations=0
+  ep_param 2 type=float name=multiplier property=0 const=0 uniform=1 texture=0 array_count=0 annotations=0
+  ep_param 3 type=texture2d name=mask property=0 const=0 uniform=1 texture=1 array_count=0 annotations=0
+  ep_param 4 type=texture2d name=blurred property=0 const=0 uniform=1 texture=1 array_count=0 annotations=0
+  ep_struct 0 name=VertData vars=2
+    var type=float4 name=pos mapping="POSITION" var_type=IN
+    var type=float2 name=uv mapping="TEXCOORD0" var_type=IN
+  ep_struct 1 name=VertInOut vars=2
+    var type=float2 name=uv mapping="TEXCOORD0" var_type=IN
+    var type=float4 name=pos mapping="POSITION" var_type=IN
+  ep_struct 2 name=FragData vars=1
+    var type=float2 name=uv mapping="TEXCOORD0" var_type=IN
+  ep_struct 3 name=FragPos vars=1
+    var type=float4 name=pos mapping="POSITION" var_type=IN
+  ep_func 0 name=srgb_linear_to_nonlinear_channel ret=float mapping=@null params=1
+    var type=float name=u mapping=@null var_type=IN
+    struct_deps=[] func_deps=[] param_deps=[] sampler_deps=[] contents_len=82
+  ep_func 1 name=srgb_linear_to_nonlinear ret=float3 mapping=@null params=1
+    var type=float3 name=v mapping=@null var_type=IN
+    struct_deps=[] func_deps=["srgb_linear_to_nonlinear_channel","srgb_linear_to_nonlinear_channel","srgb_linear_to_nonlinear_channel"] param_deps=[] sampler_deps=[] contents_len=136
+  ep_func 2 name=srgb_nonlinear_to_linear_channel ret=float mapping=@null params=1
+    var type=float name=u mapping=@null var_type=IN
+    struct_deps=[] func_deps=[] param_deps=[] sampler_deps=[] contents_len=86
+  ep_func 3 name=srgb_nonlinear_to_linear ret=float3 mapping=@null params=1
+    var type=float3 name=v mapping=@null var_type=IN
+    struct_deps=[] func_deps=["srgb_nonlinear_to_linear_channel","srgb_nonlinear_to_linear_channel","srgb_nonlinear_to_linear_channel"] param_deps=[] sampler_deps=[] contents_len=136
+  ep_func 4 name=rec709_to_rec2020 ret=float3 mapping=@null params=1
+    var type=float3 name=v mapping=@null var_type=IN
+    struct_deps=[] func_deps=[] param_deps=[] sampler_deps=[] contents_len=303
+  ep_func 5 name=rec2020_to_rec709 ret=float3 mapping=@null params=1
+    var type=float3 name=v mapping=@null var_type=IN
+    struct_deps=[] func_deps=[] param_deps=[] sampler_deps=[] contents_len=305
+  ep_func 6 name=reinhard ret=float3 mapping=@null params=1
+    var type=float3 name=rgb mapping=@null var_type=IN
+    struct_deps=[] func_deps=["srgb_nonlinear_to_linear"] param_deps=[] sampler_deps=[] contents_len=165
+  ep_func 7 name=linear_to_st2084_channel ret=float mapping=@null params=1
+    var type=float name=x mapping=@null var_type=IN
+    struct_deps=[] func_deps=[] param_deps=[] sampler_deps=[] contents_len=115
+  ep_func 8 name=st2084_to_linear_channel ret=float mapping=@null params=1
+    var type=float name=u mapping=@null var_type=IN
+    struct_deps=[] func_deps=[] param_deps=[] sampler_deps=[] contents_len=132
+  ep_func 9 name=eetf_0_Lmax ret=float mapping=@null params=3
+    var type=float name=maxRGB1_pq mapping=@null var_type=IN
+    var type=float name=Lw mapping=@null var_type=IN
+    var type=float name=Lmax mapping=@null var_type=IN
+    struct_deps=[] func_deps=["linear_to_st2084_channel","linear_to_st2084_channel"] param_deps=[] sampler_deps=[] contents_len=528
+  ep_func 10 name=maxRGB_eetf_internal ret=float3 mapping=@null params=5
+    var type=float3 name=rgb_linear mapping=@null var_type=IN
+    var type=float name=maxRGB1_linear mapping=@null var_type=IN
+    var type=float name=maxRGB1_pq mapping=@null var_type=IN
+    var type=float name=Lw mapping=@null var_type=IN
+    var type=float name=Lmax mapping=@null var_type=IN
+    struct_deps=[] func_deps=["eetf_0_Lmax","st2084_to_linear_channel"] param_deps=[] sampler_deps=[] contents_len=244
+  ep_func 11 name=maxRGB_eetf_linear_to_linear ret=float3 mapping=@null params=3
+    var type=float3 name=rgb_linear mapping=@null var_type=IN
+    var type=float name=Lw mapping=@null var_type=IN
+    var type=float name=Lmax mapping=@null var_type=IN
+    struct_deps=[] func_deps=["linear_to_st2084_channel","maxRGB_eetf_internal"] param_deps=[] sampler_deps=[] contents_len=221
+  ep_func 12 name=VSDefault ret=VertInOut mapping=@null params=1
+    var type=VertData name=v_in mapping=@null var_type=IN
+    struct_deps=["VertInOut","VertData","VertInOut"] func_deps=[] param_deps=["ViewProj"] sampler_deps=[] contents_len=111
+  ep_func 13 name=VSConvertUnorm ret=FragPos mapping=@null params=1
+    var type=uint name=id mapping="VERTEXID" var_type=IN
+    struct_deps=["FragPos","FragPos"] func_deps=[] param_deps=[] sampler_deps=[] contents_len=211
+  ep_func 14 name=Mask ret=float4 mapping=@null params=1
+    var type=FragData name=f_in mapping=@null var_type=IN
+    struct_deps=["FragData"] func_deps=["srgb_nonlinear_to_linear"] param_deps=["image","blurred","mask"] sampler_deps=["texSampler","texSampler","texSampler"] contents_len=285
+  ep_func 15 name=PSMaskMultiply ret=float4 mapping="TARGET" params=1
+    var type=FragData name=f_in mapping=@null var_type=IN
+    struct_deps=["FragData"] func_deps=["Mask"] param_deps=["multiplier"] sampler_deps=[] contents_len=69
+  ep_func 16 name=PSMaskTonemap ret=float4 mapping="TARGET" params=1
+    var type=FragData name=f_in mapping=@null var_type=IN
+    struct_deps=["FragData"] func_deps=["Mask","rec709_to_rec2020","reinhard","rec2020_to_rec709"] param_deps=[] sampler_deps=[] contents_len=158
+  ep_func 17 name=PSMaskMultiplyTonemap ret=float4 mapping="TARGET" params=1
+    var type=FragData name=f_in mapping=@null var_type=IN
+    struct_deps=["FragData"] func_deps=["Mask","rec709_to_rec2020","reinhard","rec2020_to_rec709"] param_deps=["multiplier"] sampler_deps=[] contents_len=183
+  ep_func 18 name=PSMask ret=float4 mapping="TARGET" params=1
+    var type=FragData name=f_in mapping=@null var_type=IN
+    struct_deps=["FragData"] func_deps=["Mask"] param_deps=[] sampler_deps=[] contents_len=23
+  ep_func 19 name=PSDefault ret=float4 mapping="TARGET" params=1
+    var type=FragPos name=f_in mapping=@null var_type=IN
+    struct_deps=["FragPos"] func_deps=[] param_deps=["image"] sampler_deps=[] contents_len=66
+  ep_func 20 name=PSConvertUnorm ret=float4 mapping="TARGET" params=1
+    var type=FragPos name=f_in mapping=@null var_type=IN
+    struct_deps=["FragPos"] func_deps=["srgb_linear_to_nonlinear"] param_deps=["image"] sampler_deps=[] contents_len=114
+  ep_func 21 name=PSConvertUnormTonemap ret=float4 mapping="TARGET" params=1
+    var type=FragPos name=f_in mapping=@null var_type=IN
+    struct_deps=["FragPos"] func_deps=["rec709_to_rec2020","reinhard","rec2020_to_rec709","srgb_linear_to_nonlinear"] param_deps=["image"] sampler_deps=[] contents_len=228
+  ep_func 22 name=PSConvertUnormMultiplyTonemap ret=float4 mapping="TARGET" params=1
+    var type=FragPos name=f_in mapping=@null var_type=IN
+    struct_deps=["FragPos"] func_deps=["rec709_to_rec2020","reinhard","rec2020_to_rec709","srgb_linear_to_nonlinear"] param_deps=["image","multiplier"] sampler_deps=[] contents_len=253
+  ep_sampler 0 name=texSampler states=3
+    state "Filter" = "Linear"
+    state "AddressU" = "Clamp"
+    state "AddressV" = "Clamp"
+  ep_technique 0 name=Draw passes=1
+    ep_pass 0 name=@null
+      vertex=["VSDefault","(","v_in",")",";"]
+      fragment=["PSMask","(","f_in",")",";"]
+  ep_technique 1 name=DrawMultiply passes=1
+    ep_pass 0 name=@null
+      vertex=["VSDefault","(","v_in",")",";"]
+      fragment=["PSMaskMultiply","(","f_in",")",";"]
+  ep_technique 2 name=DrawTonemap passes=1
+    ep_pass 0 name=@null
+      vertex=["VSDefault","(","v_in",")",";"]
+      fragment=["PSMaskTonemap","(","f_in",")",";"]
+  ep_technique 3 name=DrawMultiplyTonemap passes=1
+    ep_pass 0 name=@null
+      vertex=["VSDefault","(","v_in",")",";"]
+      fragment=["PSMaskMultiplyTonemap","(","f_in",")",";"]
+  ep_technique 4 name=ConvertUnorm passes=1
+    ep_pass 0 name=@null
+      vertex=["VSConvertUnorm","(","id",")",";"]
+      fragment=["PSConvertUnorm","(","f_in",")",";"]
+  ep_technique 5 name=ConvertUnormTonemap passes=1
+    ep_pass 0 name=@null
+      vertex=["VSConvertUnorm","(","id",")",";"]
+      fragment=["PSConvertUnormTonemap","(","f_in",")",";"]
+  ep_technique 6 name=ConvertUnormMultiplyTonemap passes=1
+    ep_pass 0 name=@null
+      vertex=["VSConvertUnorm","(","id",")",";"]
+      fragment=["PSConvertUnormMultiplyTonemap","(","f_in",")",";"]
+  error_string=@null
+effect (effect) params=5 techniques=7 viewproj=ViewProj world=-
+  param 0 name=ViewProj type=MATRIX4X4 annotations=0 default_size=0 default=-
+  param 1 name=image type=TEXTURE annotations=0 default_size=0 default=-
+  param 2 name=multiplier type=FLOAT annotations=0 default_size=0 default=-
+  param 3 name=mask type=TEXTURE annotations=0 default_size=0 default=-
+  param 4 name=blurred type=TEXTURE annotations=0 default_size=0 default=-
+  technique 0 name=Draw passes=1
+    pass 0 name=@null vertex_params=[ViewProj] pixel_params=[image,blurred,mask] vertex=yes pixel=yes
+  technique 1 name=DrawMultiply passes=1
+    pass 0 name=@null vertex_params=[ViewProj] pixel_params=[multiplier,image,blurred,mask] vertex=yes pixel=yes
+  technique 2 name=DrawTonemap passes=1
+    pass 0 name=@null vertex_params=[ViewProj] pixel_params=[image,blurred,mask] vertex=yes pixel=yes
+  technique 3 name=DrawMultiplyTonemap passes=1
+    pass 0 name=@null vertex_params=[ViewProj] pixel_params=[multiplier,image,blurred,mask] vertex=yes pixel=yes
+  technique 4 name=ConvertUnorm passes=1
+    pass 0 name=@null vertex_params=[] pixel_params=[image] vertex=yes pixel=yes
+  technique 5 name=ConvertUnormTonemap passes=1
+    pass 0 name=@null vertex_params=[] pixel_params=[image] vertex=yes pixel=yes
+  technique 6 name=ConvertUnormMultiplyTonemap passes=1
+    pass 0 name=@null vertex_params=[] pixel_params=[image,multiplier] vertex=yes pixel=yes
+destroy e cached=1
+=== plugins/nv-filters/data/rtx_greenscreen.effect
+backend vertexshader_create location="plugins/nv-filters/data/rtx_greenscreen.effect (Vertex shader, technique Draw, pass 0)" len=377 fnv=c74ac60ed6030231
+  text "uniform float4x4 ViewProj;\n\n\nstruct VertInOut {\n\tfloat2 uv : TEXCOORD0;\n\tfloat4 pos : POSITION;\n};\n\nstruct VertData {\n\tfloat4 pos : POSITION;\n\tfloat2 uv : TEXCOORD0;\n};\n\nVertInOut VSDefault(VertData v_in)\n{\n\tVertInOut v_out;\n\tv_out.uv = v_in.uv;\n\tv_out.pos = mul(float4(v_in.pos.xyz, 1.), ViewProj);\n\treturn v_out;\n}\n\nVertInOut main(VertData v_in)\n{\n\treturn VSDefault(v_in);\n}\n"
+  sparam 0 name=ViewProj type=MATRIX4X4 array=0
+  result ok
+backend pixelshader_create location="plugins/nv-filters/data/rtx_greenscreen.effect (Pixel shader, technique Draw, pass 0)" len=530 fnv=a3afd32827e7d011
+  text "struct FragData {\n\tfloat2 uv : TEXCOORD0;\n};\n\nuniform texture2d image;\nuniform float threshold;\nuniform texture2d mask;\n\n\nsampler_state texSampler {\n\tFilter = Linear;\n\n\tAddressU = Clamp;\n\n\tAddressV = Clamp;\n\n};\n\n\nfloat4 Mask(FragData f_in)\n{\n\tfloat4 rgba = image.Sample(texSampler, f_in.uv);\n\trgba *= smoothstep(threshold - 0.1,threshold,mask.Sample(texSampler, f_in.uv).a);\n\treturn rgba;\n}\n\n\nfloat4 PSMask(FragData f_in)\n{\n\tfloat4 rgba = Mask(f_in);\n\treturn rgba;\n}\n\nfloat4 main(FragData f_in) : TARGET\n{\n\treturn PSMask(f_in);\n}\n"
+  sparam 0 name=image type=TEXTURE array=0
+  sparam 1 name=threshold type=FLOAT array=0
+  sparam 2 name=mask type=TEXTURE array=0
+  result ok
+backend vertexshader_create location="plugins/nv-filters/data/rtx_greenscreen.effect (Vertex shader, technique DrawMultiply, pass 0)" len=377 fnv=c74ac60ed6030231
+  text "uniform float4x4 ViewProj;\n\n\nstruct VertInOut {\n\tfloat2 uv : TEXCOORD0;\n\tfloat4 pos : POSITION;\n};\n\nstruct VertData {\n\tfloat4 pos : POSITION;\n\tfloat2 uv : TEXCOORD0;\n};\n\nVertInOut VSDefault(VertData v_in)\n{\n\tVertInOut v_out;\n\tv_out.uv = v_in.uv;\n\tv_out.pos = mul(float4(v_in.pos.xyz, 1.), ViewProj);\n\treturn v_out;\n}\n\nVertInOut main(VertData v_in)\n{\n\treturn VSDefault(v_in);\n}\n"
+  sparam 0 name=ViewProj type=MATRIX4X4 array=0
+  result ok
+backend pixelshader_create location="plugins/nv-filters/data/rtx_greenscreen.effect (Pixel shader, technique DrawMultiply, pass 0)" len=599 fnv=da4b971838a7f45c
+  text "uniform float multiplier;\n\n\nstruct FragData {\n\tfloat2 uv : TEXCOORD0;\n};\n\nuniform texture2d image;\nuniform float threshold;\nuniform texture2d mask;\n\n\nsampler_state texSampler {\n\tFilter = Linear;\n\n\tAddressU = Clamp;\n\n\tAddressV = Clamp;\n\n};\n\n\nfloat4 Mask(FragData f_in)\n{\n\tfloat4 rgba = image.Sample(texSampler, f_in.uv);\n\trgba *= smoothstep(threshold - 0.1,threshold,mask.Sample(texSampler, f_in.uv).a);\n\treturn rgba;\n}\n\n\nfloat4 PSMaskMultiply(FragData f_in)\n{\n\tfloat4 rgba = Mask(f_in);\n\trgba.rgb *= multiplier;\n\treturn rgba;\n}\n\nfloat4 main(FragData f_in) : TARGET\n{\n\treturn PSMaskMultiply(f_in);\n}\n"
+  sparam 0 name=multiplier type=FLOAT array=0
+  sparam 1 name=image type=TEXTURE array=0
+  sparam 2 name=threshold type=FLOAT array=0
+  sparam 3 name=mask type=TEXTURE array=0
+  result ok
+backend vertexshader_create location="plugins/nv-filters/data/rtx_greenscreen.effect (Vertex shader, technique DrawTonemap, pass 0)" len=377 fnv=c74ac60ed6030231
+  text "uniform float4x4 ViewProj;\n\n\nstruct VertInOut {\n\tfloat2 uv : TEXCOORD0;\n\tfloat4 pos : POSITION;\n};\n\nstruct VertData {\n\tfloat4 pos : POSITION;\n\tfloat2 uv : TEXCOORD0;\n};\n\nVertInOut VSDefault(VertData v_in)\n{\n\tVertInOut v_out;\n\tv_out.uv = v_in.uv;\n\tv_out.pos = mul(float4(v_in.pos.xyz, 1.), ViewProj);\n\treturn v_out;\n}\n\nVertInOut main(VertData v_in)\n{\n\treturn VSDefault(v_in);\n}\n"
+  sparam 0 name=ViewProj type=MATRIX4X4 array=0
+  result ok
+backend pixelshader_create location="plugins/nv-filters/data/rtx_greenscreen.effect (Pixel shader, technique DrawTonemap, pass 0)" len=1856 fnv=7f79fea09fe400ae
+  text "struct FragData {\n\tfloat2 uv : TEXCOORD0;\n};\n\nuniform texture2d image;\nuniform float threshold;\nuniform texture2d mask;\n\n\nsampler_state texSampler {\n\tFilter = Linear;\n\n\tAddressU = Clamp;\n\n\tAddressV = Clamp;\n\n};\n\n\nfloat4 Mask(FragData f_in)\n{\n\tfloat4 rgba = image.Sample(texSampler, f_in.uv);\n\trgba *= smoothstep(threshold - 0.1,threshold,mask.Sample(texSampler, f_in.uv).a);\n\treturn rgba;\n}\n\n\nfloat3 rec709_to_rec2020(float3 v)\n{\n\tfloat r = dot(v, float3(0.62740389593469903, 0.32928303837788370, 0.043313065687417225));\n\tfloat g = dot(v, float3(0.069097289358232075, 0.91954039507545871, 0.011362315566309178));\n\tfloat b = dot(v, float3(0.016391438875150280, 0.088013307877225749, 0.89559525324762401));\n\treturn float3(r, g, b);\n}\n\n\nfloat srgb_nonlinear_to_linear_channel(float u)\n{\n\treturn (u <= 0.04045) ? (u / 12.92) : pow(mad(u, 1. / 1.055, .055 / 1.055), 2.4);\n}\n\n\nfloat3 srgb_nonlinear_to_linear(float3 v)\n{\n\treturn float3(srgb_nonlinear_to_linear_channel(v.r), srgb_nonlinear_to_linear_channel(v.g), srgb_nonlinear_to_linear_channel(v.b));\n}\n\n\nfloat3 reinhard(float3 rgb)\n{\n\trgb /= rgb + float3(1., 1., 1.);\n\trgb = saturate(rgb);\n\trgb = pow(rgb, float3(1. / 2.4, 1. / 2.4, 1. / 2.4));\n\trgb = srgb_nonlinear_to_linear(rgb);\n\treturn rgb;\n}\n\n\nfloat3 rec2020_to_rec709(float3 v)\n{\n\tfloat r = dot(v, float3(1.6604910021084345, -0.58764113878854951, -0.072849863319884883));\n\tfloat g = dot(v, float3(-0.12455047452159074, 1.1328998971259603, -0.0083494226043694768));\n\tfloat b = dot(v, float3(-0.018150763354905303, -0.10057889800800739, 1.1187296613629127));\n\treturn float3(r, g, b);\n}\n\n\nfloat4 PSMaskTonemap(FragData f_in)\n{\n\tfloat4 rgba = Mask(f_in);\n\trgba.rgb = rec709_to_rec2020(rgba.rgb);\n\trgba.rgb = reinhard(rgba.rgb);\n\trgba.rgb = rec2020_to_rec709(rgba.rgb);\n\treturn rgba;\n}\n\nfloat4 main(FragData f_in) : TARGET\n{\n\treturn PSMaskTonemap(f_in);\n}\n"
+  sparam 0 name=image type=TEXTURE array=0
+  sparam 1 name=threshold type=FLOAT array=0
+  sparam 2 name=mask type=TEXTURE array=0
+  result ok
+backend vertexshader_create location="plugins/nv-filters/data/rtx_greenscreen.effect (Vertex shader, technique DrawMultiplyTonemap, pass 0)" len=377 fnv=c74ac60ed6030231
+  text "uniform float4x4 ViewProj;\n\n\nstruct VertInOut {\n\tfloat2 uv : TEXCOORD0;\n\tfloat4 pos : POSITION;\n};\n\nstruct VertData {\n\tfloat4 pos : POSITION;\n\tfloat2 uv : TEXCOORD0;\n};\n\nVertInOut VSDefault(VertData v_in)\n{\n\tVertInOut v_out;\n\tv_out.uv = v_in.uv;\n\tv_out.pos = mul(float4(v_in.pos.xyz, 1.), ViewProj);\n\treturn v_out;\n}\n\nVertInOut main(VertData v_in)\n{\n\treturn VSDefault(v_in);\n}\n"
+  sparam 0 name=ViewProj type=MATRIX4X4 array=0
+  result ok
+backend pixelshader_create location="plugins/nv-filters/data/rtx_greenscreen.effect (Pixel shader, technique DrawMultiplyTonemap, pass 0)" len=1925 fnv=a37153ae9218d9b5
+  text "uniform float multiplier;\n\n\nstruct FragData {\n\tfloat2 uv : TEXCOORD0;\n};\n\nuniform texture2d image;\nuniform float threshold;\nuniform texture2d mask;\n\n\nsampler_state texSampler {\n\tFilter = Linear;\n\n\tAddressU = Clamp;\n\n\tAddressV = Clamp;\n\n};\n\n\nfloat4 Mask(FragData f_in)\n{\n\tfloat4 rgba = image.Sample(texSampler, f_in.uv);\n\trgba *= smoothstep(threshold - 0.1,threshold,mask.Sample(texSampler, f_in.uv).a);\n\treturn rgba;\n}\n\n\nfloat3 rec709_to_rec2020(float3 v)\n{\n\tfloat r = dot(v, float3(0.62740389593469903, 0.32928303837788370, 0.043313065687417225));\n\tfloat g = dot(v, float3(0.069097289358232075, 0.91954039507545871, 0.011362315566309178));\n\tfloat b = dot(v, float3(0.016391438875150280, 0.088013307877225749, 0.89559525324762401));\n\treturn float3(r, g, b);\n}\n\n\nfloat srgb_nonlinear_to_linear_channel(float u)\n{\n\treturn (u <= 0.04045) ? (u / 12.92) : pow(mad(u, 1. / 1.055, .055 / 1.055), 2.4);\n}\n\n\nfloat3 srgb_nonlinear_to_linear(float3 v)\n{\n\treturn float3(srgb_nonlinear_to_linear_channel(v.r), srgb_nonlinear_to_linear_channel(v.g), srgb_nonlinear_to_linear_channel(v.b));\n}\n\n\nfloat3 reinhard(float3 rgb)\n{\n\trgb /= rgb + float3(1., 1., 1.);\n\trgb = saturate(rgb);\n\trgb = pow(rgb, float3(1. / 2.4, 1. / 2.4, 1. / 2.4));\n\trgb = srgb_nonlinear_to_linear(rgb);\n\treturn rgb;\n}\n\n\nfloat3 rec2020_to_rec709(float3 v)\n{\n\tfloat r = dot(v, float3(1.6604910021084345, -0.58764113878854951, -0.072849863319884883));\n\tfloat g = dot(v, float3(-0.12455047452159074, 1.1328998971259603, -0.0083494226043694768));\n\tfloat b = dot(v, float3(-0.018150763354905303, -0.10057889800800739, 1.1187296613629127));\n\treturn float3(r, g, b);\n}\n\n\nfloat4 PSMaskMultiplyTonemap(FragData f_in)\n{\n\tfloat4 rgba = Mask(f_in);\n\trgba.rgb *= multiplier;\n\trgba.rgb = rec709_to_rec2020(rgba.rgb);\n\trgba.rgb = reinhard(rgba.rgb);\n\trgba.rgb = rec2020_to_rec709(rgba.rgb);\n\treturn rgba;\n}\n\nfloat4 main(FragData f_in) : TARGET\n{\n\treturn PSMaskMultiplyTonemap(f_in);\n}\n"
+  sparam 0 name=multiplier type=FLOAT array=0
+  sparam 1 name=image type=TEXTURE array=0
+  sparam 2 name=threshold type=FLOAT array=0
+  sparam 3 name=mask type=TEXTURE array=0
+  result ok
+backend vertexshader_create location="plugins/nv-filters/data/rtx_greenscreen.effect (Vertex shader, technique ConvertUnorm, pass 0)" len=366 fnv=e4e39487b5a6c331
+  text "struct FragPos {\n\tfloat4 pos : POSITION;\n};\n\nFragPos VSConvertUnorm(uint id : VERTEXID)\n{\n\tfloat idHigh = float(id >> 1);\n\tfloat idLow = float(id & uint(1));\n\n\tfloat x = idHigh * 4.0 - 1.0;\n\tfloat y = idLow * 4.0 - 1.0;\n\n\tFragPos vert_out;\n\tvert_out.pos = float4(x, y, 0.0, 1.0);\n\treturn vert_out;\n}\n\nFragPos main(uint id : VERTEXID)\n{\n\treturn VSConvertUnorm(id);\n}\n"
+  result ok
+backend pixelshader_create location="plugins/nv-filters/data/rtx_greenscreen.effect (Pixel shader, technique ConvertUnorm, pass 0)" len=607 fnv=3833e38982048f53
+  text "uniform texture2d image;\n\n\nstruct FragPos {\n\tfloat4 pos : POSITION;\n};\n\nfloat srgb_linear_to_nonlinear_channel(float u)\n{\n\treturn (u <= 0.0031308) ? (12.92 * u) : ((1.055 * pow(u, 1. / 2.4)) - 0.055);\n}\n\n\nfloat3 srgb_linear_to_nonlinear(float3 v)\n{\n\treturn float3(srgb_linear_to_nonlinear_channel(v.r), srgb_linear_to_nonlinear_channel(v.g), srgb_linear_to_nonlinear_channel(v.b));\n}\n\n\nfloat4 PSConvertUnorm(FragPos f_in)\n{\n\tfloat4 rgba = image.Load(int3(f_in.pos.xy, 0));\n\trgba.rgb = srgb_linear_to_nonlinear(rgba.rgb);\n\treturn rgba;\n}\n\nfloat4 main(FragPos f_in) : TARGET\n{\n\treturn PSConvertUnorm(f_in);\n}\n"
+  sparam 0 name=image type=TEXTURE array=0
+  result ok
+backend vertexshader_create location="plugins/nv-filters/data/rtx_greenscreen.effect (Vertex shader, technique ConvertUnormTonemap, pass 0)" len=366 fnv=e4e39487b5a6c331
+  text "struct FragPos {\n\tfloat4 pos : POSITION;\n};\n\nFragPos VSConvertUnorm(uint id : VERTEXID)\n{\n\tfloat idHigh = float(id >> 1);\n\tfloat idLow = float(id & uint(1));\n\n\tfloat x = idHigh * 4.0 - 1.0;\n\tfloat y = idLow * 4.0 - 1.0;\n\n\tFragPos vert_out;\n\tvert_out.pos = float4(x, y, 0.0, 1.0);\n\treturn vert_out;\n}\n\nFragPos main(uint id : VERTEXID)\n{\n\treturn VSConvertUnorm(id);\n}\n"
+  result ok
+backend pixelshader_create location="plugins/nv-filters/data/rtx_greenscreen.effect (Pixel shader, technique ConvertUnormTonemap, pass 0)" len=1933 fnv=258ff63287b7a0b2
+  text "uniform texture2d image;\n\n\nstruct FragPos {\n\tfloat4 pos : POSITION;\n};\n\nfloat3 rec709_to_rec2020(float3 v)\n{\n\tfloat r = dot(v, float3(0.62740389593469903, 0.32928303837788370, 0.043313065687417225));\n\tfloat g = dot(v, float3(0.069097289358232075, 0.91954039507545871, 0.011362315566309178));\n\tfloat b = dot(v, float3(0.016391438875150280, 0.088013307877225749, 0.89559525324762401));\n\treturn float3(r, g, b);\n}\n\n\nfloat srgb_nonlinear_to_linear_channel(float u)\n{\n\treturn (u <= 0.04045) ? (u / 12.92) : pow(mad(u, 1. / 1.055, .055 / 1.055), 2.4);\n}\n\n\nfloat3 srgb_nonlinear_to_linear(float3 v)\n{\n\treturn float3(srgb_nonlinear_to_linear_channel(v.r), srgb_nonlinear_to_linear_channel(v.g), srgb_nonlinear_to_linear_channel(v.b));\n}\n\n\nfloat3 reinhard(float3 rgb)\n{\n\trgb /= rgb + float3(1., 1., 1.);\n\trgb = saturate(rgb);\n\trgb = pow(rgb, float3(1. / 2.4, 1. / 2.4, 1. / 2.4));\n\trgb = srgb_nonlinear_to_linear(rgb);\n\treturn rgb;\n}\n\n\nfloat3 rec2020_to_rec709(float3 v)\n{\n\tfloat r = dot(v, float3(1.6604910021084345, -0.58764113878854951, -0.072849863319884883));\n\tfloat g = dot(v, float3(-0.12455047452159074, 1.1328998971259603, -0.0083494226043694768));\n\tfloat b = dot(v, float3(-0.018150763354905303, -0.10057889800800739, 1.1187296613629127));\n\treturn float3(r, g, b);\n}\n\n\nfloat srgb_linear_to_nonlinear_channel(float u)\n{\n\treturn (u <= 0.0031308) ? (12.92 * u) : ((1.055 * pow(u, 1. / 2.4)) - 0.055);\n}\n\n\nfloat3 srgb_linear_to_nonlinear(float3 v)\n{\n\treturn float3(srgb_linear_to_nonlinear_channel(v.r), srgb_linear_to_nonlinear_channel(v.g), srgb_linear_to_nonlinear_channel(v.b));\n}\n\n\nfloat4 PSConvertUnormTonemap(FragPos f_in)\n{\n\tfloat4 rgba = image.Load(int3(f_in.pos.xy, 0));\n\trgba.rgb = rec709_to_rec2020(rgba.rgb);\n\trgba.rgb = reinhard(rgba.rgb);\n\trgba.rgb = rec2020_to_rec709(rgba.rgb);\n\trgba.rgb = srgb_linear_to_nonlinear(rgba.rgb);\n\treturn rgba;\n}\n\nfloat4 main(FragPos f_in) : TARGET\n{\n\treturn PSConvertUnormTonemap(f_in);\n}\n"
+  sparam 0 name=image type=TEXTURE array=0
+  result ok
+backend vertexshader_create location="plugins/nv-filters/data/rtx_greenscreen.effect (Vertex shader, technique ConvertUnormMultiplyTonemap, pass 0)" len=366 fnv=e4e39487b5a6c331
+  text "struct FragPos {\n\tfloat4 pos : POSITION;\n};\n\nFragPos VSConvertUnorm(uint id : VERTEXID)\n{\n\tfloat idHigh = float(id >> 1);\n\tfloat idLow = float(id & uint(1));\n\n\tfloat x = idHigh * 4.0 - 1.0;\n\tfloat y = idLow * 4.0 - 1.0;\n\n\tFragPos vert_out;\n\tvert_out.pos = float4(x, y, 0.0, 1.0);\n\treturn vert_out;\n}\n\nFragPos main(uint id : VERTEXID)\n{\n\treturn VSConvertUnorm(id);\n}\n"
+  result ok
+backend pixelshader_create location="plugins/nv-filters/data/rtx_greenscreen.effect (Pixel shader, technique ConvertUnormMultiplyTonemap, pass 0)" len=2000 fnv=fd9eb9c8b3e7b799
+  text "uniform texture2d image;\nuniform float multiplier;\n\n\nstruct FragPos {\n\tfloat4 pos : POSITION;\n};\n\nfloat3 rec709_to_rec2020(float3 v)\n{\n\tfloat r = dot(v, float3(0.62740389593469903, 0.32928303837788370, 0.043313065687417225));\n\tfloat g = dot(v, float3(0.069097289358232075, 0.91954039507545871, 0.011362315566309178));\n\tfloat b = dot(v, float3(0.016391438875150280, 0.088013307877225749, 0.89559525324762401));\n\treturn float3(r, g, b);\n}\n\n\nfloat srgb_nonlinear_to_linear_channel(float u)\n{\n\treturn (u <= 0.04045) ? (u / 12.92) : pow(mad(u, 1. / 1.055, .055 / 1.055), 2.4);\n}\n\n\nfloat3 srgb_nonlinear_to_linear(float3 v)\n{\n\treturn float3(srgb_nonlinear_to_linear_channel(v.r), srgb_nonlinear_to_linear_channel(v.g), srgb_nonlinear_to_linear_channel(v.b));\n}\n\n\nfloat3 reinhard(float3 rgb)\n{\n\trgb /= rgb + float3(1., 1., 1.);\n\trgb = saturate(rgb);\n\trgb = pow(rgb, float3(1. / 2.4, 1. / 2.4, 1. / 2.4));\n\trgb = srgb_nonlinear_to_linear(rgb);\n\treturn rgb;\n}\n\n\nfloat3 rec2020_to_rec709(float3 v)\n{\n\tfloat r = dot(v, float3(1.6604910021084345, -0.58764113878854951, -0.072849863319884883));\n\tfloat g = dot(v, float3(-0.12455047452159074, 1.1328998971259603, -0.0083494226043694768));\n\tfloat b = dot(v, float3(-0.018150763354905303, -0.10057889800800739, 1.1187296613629127));\n\treturn float3(r, g, b);\n}\n\n\nfloat srgb_linear_to_nonlinear_channel(float u)\n{\n\treturn (u <= 0.0031308) ? (12.92 * u) : ((1.055 * pow(u, 1. / 2.4)) - 0.055);\n}\n\n\nfloat3 srgb_linear_to_nonlinear(float3 v)\n{\n\treturn float3(srgb_linear_to_nonlinear_channel(v.r), srgb_linear_to_nonlinear_channel(v.g), srgb_linear_to_nonlinear_channel(v.b));\n}\n\n\nfloat4 PSConvertUnormMultiplyTonemap(FragPos f_in)\n{\n\tfloat4 rgba = image.Load(int3(f_in.pos.xy, 0));\n\trgba.rgb *= multiplier;\n\trgba.rgb = rec709_to_rec2020(rgba.rgb);\n\trgba.rgb = reinhard(rgba.rgb);\n\trgba.rgb = rec2020_to_rec709(rgba.rgb);\n\trgba.rgb = srgb_linear_to_nonlinear(rgba.rgb);\n\treturn rgba;\n}\n\nfloat4 main(FragPos f_in) : TARGET\n{\n\treturn PSConvertUnormMultiplyTonemap(f_in);\n}\n"
+  sparam 0 name=image type=TEXTURE array=0
+  sparam 1 name=multiplier type=FLOAT array=0
+  result ok
+effect e result=ok
+  error_string=@null
+effect e params=5 techniques=7 viewproj=ViewProj world=-
+  param 0 name=ViewProj type=MATRIX4X4 annotations=0 default_size=0 default=-
+  param 1 name=image type=TEXTURE annotations=0 default_size=0 default=-
+  param 2 name=multiplier type=FLOAT annotations=0 default_size=0 default=-
+  param 3 name=mask type=TEXTURE annotations=0 default_size=0 default=-
+  param 4 name=threshold type=FLOAT annotations=0 default_size=0 default=-
+  technique 0 name=Draw passes=1
+    pass 0 name=@null vertex_params=[ViewProj] pixel_params=[image,threshold,mask] vertex=yes pixel=yes
+  technique 1 name=DrawMultiply passes=1
+    pass 0 name=@null vertex_params=[ViewProj] pixel_params=[multiplier,image,threshold,mask] vertex=yes pixel=yes
+  technique 2 name=DrawTonemap passes=1
+    pass 0 name=@null vertex_params=[ViewProj] pixel_params=[image,threshold,mask] vertex=yes pixel=yes
+  technique 3 name=DrawMultiplyTonemap passes=1
+    pass 0 name=@null vertex_params=[ViewProj] pixel_params=[multiplier,image,threshold,mask] vertex=yes pixel=yes
+  technique 4 name=ConvertUnorm passes=1
+    pass 0 name=@null vertex_params=[] pixel_params=[image] vertex=yes pixel=yes
+  technique 5 name=ConvertUnormTonemap passes=1
+    pass 0 name=@null vertex_params=[] pixel_params=[image] vertex=yes pixel=yes
+  technique 6 name=ConvertUnormMultiplyTonemap passes=1
+    pass 0 name=@null vertex_params=[] pixel_params=[image,multiplier] vertex=yes pixel=yes
+backend vertexshader_create location="plugins/nv-filters/data/rtx_greenscreen.effect (Vertex shader, technique Draw, pass 0)" len=377 fnv=c74ac60ed6030231
+  sparam 0 name=ViewProj type=MATRIX4X4 array=0
+  result ok
+backend pixelshader_create location="plugins/nv-filters/data/rtx_greenscreen.effect (Pixel shader, technique Draw, pass 0)" len=530 fnv=a3afd32827e7d011
+  sparam 0 name=image type=TEXTURE array=0
+  sparam 1 name=threshold type=FLOAT array=0
+  sparam 2 name=mask type=TEXTURE array=0
+  result ok
+backend vertexshader_create location="plugins/nv-filters/data/rtx_greenscreen.effect (Vertex shader, technique DrawMultiply, pass 0)" len=377 fnv=c74ac60ed6030231
+  sparam 0 name=ViewProj type=MATRIX4X4 array=0
+  result ok
+backend pixelshader_create location="plugins/nv-filters/data/rtx_greenscreen.effect (Pixel shader, technique DrawMultiply, pass 0)" len=599 fnv=da4b971838a7f45c
+  sparam 0 name=multiplier type=FLOAT array=0
+  sparam 1 name=image type=TEXTURE array=0
+  sparam 2 name=threshold type=FLOAT array=0
+  sparam 3 name=mask type=TEXTURE array=0
+  result ok
+backend vertexshader_create location="plugins/nv-filters/data/rtx_greenscreen.effect (Vertex shader, technique DrawTonemap, pass 0)" len=377 fnv=c74ac60ed6030231
+  sparam 0 name=ViewProj type=MATRIX4X4 array=0
+  result ok
+backend pixelshader_create location="plugins/nv-filters/data/rtx_greenscreen.effect (Pixel shader, technique DrawTonemap, pass 0)" len=1856 fnv=7f79fea09fe400ae
+  sparam 0 name=image type=TEXTURE array=0
+  sparam 1 name=threshold type=FLOAT array=0
+  sparam 2 name=mask type=TEXTURE array=0
+  result ok
+backend vertexshader_create location="plugins/nv-filters/data/rtx_greenscreen.effect (Vertex shader, technique DrawMultiplyTonemap, pass 0)" len=377 fnv=c74ac60ed6030231
+  sparam 0 name=ViewProj type=MATRIX4X4 array=0
+  result ok
+backend pixelshader_create location="plugins/nv-filters/data/rtx_greenscreen.effect (Pixel shader, technique DrawMultiplyTonemap, pass 0)" len=1925 fnv=a37153ae9218d9b5
+  sparam 0 name=multiplier type=FLOAT array=0
+  sparam 1 name=image type=TEXTURE array=0
+  sparam 2 name=threshold type=FLOAT array=0
+  sparam 3 name=mask type=TEXTURE array=0
+  result ok
+backend vertexshader_create location="plugins/nv-filters/data/rtx_greenscreen.effect (Vertex shader, technique ConvertUnorm, pass 0)" len=366 fnv=e4e39487b5a6c331
+  result ok
+backend pixelshader_create location="plugins/nv-filters/data/rtx_greenscreen.effect (Pixel shader, technique ConvertUnorm, pass 0)" len=607 fnv=3833e38982048f53
+  sparam 0 name=image type=TEXTURE array=0
+  result ok
+backend vertexshader_create location="plugins/nv-filters/data/rtx_greenscreen.effect (Vertex shader, technique ConvertUnormTonemap, pass 0)" len=366 fnv=e4e39487b5a6c331
+  result ok
+backend pixelshader_create location="plugins/nv-filters/data/rtx_greenscreen.effect (Pixel shader, technique ConvertUnormTonemap, pass 0)" len=1933 fnv=258ff63287b7a0b2
+  sparam 0 name=image type=TEXTURE array=0
+  result ok
+backend vertexshader_create location="plugins/nv-filters/data/rtx_greenscreen.effect (Vertex shader, technique ConvertUnormMultiplyTonemap, pass 0)" len=366 fnv=e4e39487b5a6c331
+  result ok
+backend pixelshader_create location="plugins/nv-filters/data/rtx_greenscreen.effect (Pixel shader, technique ConvertUnormMultiplyTonemap, pass 0)" len=2000 fnv=fd9eb9c8b3e7b799
+  sparam 0 name=image type=TEXTURE array=0
+  sparam 1 name=multiplier type=FLOAT array=0
+  result ok
+ep result=ok
+  errors count=0 has_errors=0
+  ep params=5 structs=4 funcs=22 samplers=1 techniques=7
+  ep_param 0 type=float4x4 name=ViewProj property=0 const=0 uniform=1 texture=0 array_count=0 annotations=0
+  ep_param 1 type=texture2d name=image property=0 const=0 uniform=1 texture=1 array_count=0 annotations=0
+  ep_param 2 type=float name=multiplier property=0 const=0 uniform=1 texture=0 array_count=0 annotations=0
+  ep_param 3 type=texture2d name=mask property=0 const=0 uniform=1 texture=1 array_count=0 annotations=0
+  ep_param 4 type=float name=threshold property=0 const=0 uniform=1 texture=0 array_count=0 annotations=0
+  ep_struct 0 name=VertData vars=2
+    var type=float4 name=pos mapping="POSITION" var_type=IN
+    var type=float2 name=uv mapping="TEXCOORD0" var_type=IN
+  ep_struct 1 name=VertInOut vars=2
+    var type=float2 name=uv mapping="TEXCOORD0" var_type=IN
+    var type=float4 name=pos mapping="POSITION" var_type=IN
+  ep_struct 2 name=FragData vars=1
+    var type=float2 name=uv mapping="TEXCOORD0" var_type=IN
+  ep_struct 3 name=FragPos vars=1
+    var type=float4 name=pos mapping="POSITION" var_type=IN
+  ep_func 0 name=srgb_linear_to_nonlinear_channel ret=float mapping=@null params=1
+    var type=float name=u mapping=@null var_type=IN
+    struct_deps=[] func_deps=[] param_deps=[] sampler_deps=[] contents_len=82
+  ep_func 1 name=srgb_linear_to_nonlinear ret=float3 mapping=@null params=1
+    var type=float3 name=v mapping=@null var_type=IN
+    struct_deps=[] func_deps=["srgb_linear_to_nonlinear_channel","srgb_linear_to_nonlinear_channel","srgb_linear_to_nonlinear_channel"] param_deps=[] sampler_deps=[] contents_len=136
+  ep_func 2 name=srgb_nonlinear_to_linear_channel ret=float mapping=@null params=1
+    var type=float name=u mapping=@null var_type=IN
+    struct_deps=[] func_deps=[] param_deps=[] sampler_deps=[] contents_len=86
+  ep_func 3 name=srgb_nonlinear_to_linear ret=float3 mapping=@null params=1
+    var type=float3 name=v mapping=@null var_type=IN
+    struct_deps=[] func_deps=["srgb_nonlinear_to_linear_channel","srgb_nonlinear_to_linear_channel","srgb_nonlinear_to_linear_channel"] param_deps=[] sampler_deps=[] contents_len=136
+  ep_func 4 name=rec709_to_rec2020 ret=float3 mapping=@null params=1
+    var type=float3 name=v mapping=@null var_type=IN
+    struct_deps=[] func_deps=[] param_deps=[] sampler_deps=[] contents_len=303
+  ep_func 5 name=rec2020_to_rec709 ret=float3 mapping=@null params=1
+    var type=float3 name=v mapping=@null var_type=IN
+    struct_deps=[] func_deps=[] param_deps=[] sampler_deps=[] contents_len=305
+  ep_func 6 name=reinhard ret=float3 mapping=@null params=1
+    var type=float3 name=rgb mapping=@null var_type=IN
+    struct_deps=[] func_deps=["srgb_nonlinear_to_linear"] param_deps=[] sampler_deps=[] contents_len=165
+  ep_func 7 name=linear_to_st2084_channel ret=float mapping=@null params=1
+    var type=float name=x mapping=@null var_type=IN
+    struct_deps=[] func_deps=[] param_deps=[] sampler_deps=[] contents_len=115
+  ep_func 8 name=st2084_to_linear_channel ret=float mapping=@null params=1
+    var type=float name=u mapping=@null var_type=IN
+    struct_deps=[] func_deps=[] param_deps=[] sampler_deps=[] contents_len=132
+  ep_func 9 name=eetf_0_Lmax ret=float mapping=@null params=3
+    var type=float name=maxRGB1_pq mapping=@null var_type=IN
+    var type=float name=Lw mapping=@null var_type=IN
+    var type=float name=Lmax mapping=@null var_type=IN
+    struct_deps=[] func_deps=["linear_to_st2084_channel","linear_to_st2084_channel"] param_deps=[] sampler_deps=[] contents_len=528
+  ep_func 10 name=maxRGB_eetf_internal ret=float3 mapping=@null params=5
+    var type=float3 name=rgb_linear mapping=@null var_type=IN
+    var type=float name=maxRGB1_linear mapping=@null var_type=IN
+    var type=float name=maxRGB1_pq mapping=@null var_type=IN
+    var type=float name=Lw mapping=@null var_type=IN
+    var type=float name=Lmax mapping=@null var_type=IN
+    struct_deps=[] func_deps=["eetf_0_Lmax","st2084_to_linear_channel"] param_deps=[] sampler_deps=[] contents_len=244
+  ep_func 11 name=maxRGB_eetf_linear_to_linear ret=float3 mapping=@null params=3
+    var type=float3 name=rgb_linear mapping=@null var_type=IN
+    var type=float name=Lw mapping=@null var_type=IN
+    var type=float name=Lmax mapping=@null var_type=IN
+    struct_deps=[] func_deps=["linear_to_st2084_channel","maxRGB_eetf_internal"] param_deps=[] sampler_deps=[] contents_len=221
+  ep_func 12 name=VSDefault ret=VertInOut mapping=@null params=1
+    var type=VertData name=v_in mapping=@null var_type=IN
+    struct_deps=["VertInOut","VertData","VertInOut"] func_deps=[] param_deps=["ViewProj"] sampler_deps=[] contents_len=111
+  ep_func 13 name=VSConvertUnorm ret=FragPos mapping=@null params=1
+    var type=uint name=id mapping="VERTEXID" var_type=IN
+    struct_deps=["FragPos","FragPos"] func_deps=[] param_deps=[] sampler_deps=[] contents_len=211
+  ep_func 14 name=Mask ret=float4 mapping=@null params=1
+    var type=FragData name=f_in mapping=@null var_type=IN
+    struct_deps=["FragData"] func_deps=[] param_deps=["image","threshold","threshold","mask"] sampler_deps=["texSampler","texSampler"] contents_len=150
+  ep_func 15 name=PSMask ret=float4 mapping="TARGET" params=1
+    var type=FragData name=f_in mapping=@null var_type=IN
+    struct_deps=["FragData"] func_deps=["Mask"] param_deps=[] sampler_deps=[] contents_len=44
+  ep_func 16 name=PSMaskMultiply ret=float4 mapping="TARGET" params=1
+    var type=FragData name=f_in mapping=@null var_type=IN
+    struct_deps=["FragData"] func_deps=["Mask"] param_deps=["multiplier"] sampler_deps=[] contents_len=69
+  ep_func 17 name=PSMaskTonemap ret=float4 mapping="TARGET" params=1
+    var type=FragData name=f_in mapping=@null var_type=IN
+    struct_deps=["FragData"] func_deps=["Mask","rec709_to_rec2020","reinhard","rec2020_to_rec709"] param_deps=[] sampler_deps=[] contents_len=158
+  ep_func 18 name=PSMaskMultiplyTonemap ret=float4 mapping="TARGET" params=1
+    var type=FragData name=f_in mapping=@null var_type=IN
+    struct_deps=["FragData"] func_deps=["Mask","rec709_to_rec2020","reinhard","rec2020_to_rec709"] param_deps=["multiplier"] sampler_deps=[] contents_len=183
+  ep_func 19 name=PSConvertUnorm ret=float4 mapping="TARGET" params=1
+    var type=FragPos name=f_in mapping=@null var_type=IN
+    struct_deps=["FragPos"] func_deps=["srgb_linear_to_nonlinear"] param_deps=["image"] sampler_deps=[] contents_len=114
+  ep_func 20 name=PSConvertUnormTonemap ret=float4 mapping="TARGET" params=1
+    var type=FragPos name=f_in mapping=@null var_type=IN
+    struct_deps=["FragPos"] func_deps=["rec709_to_rec2020","reinhard","rec2020_to_rec709","srgb_linear_to_nonlinear"] param_deps=["image"] sampler_deps=[] contents_len=228
+  ep_func 21 name=PSConvertUnormMultiplyTonemap ret=float4 mapping="TARGET" params=1
+    var type=FragPos name=f_in mapping=@null var_type=IN
+    struct_deps=["FragPos"] func_deps=["rec709_to_rec2020","reinhard","rec2020_to_rec709","srgb_linear_to_nonlinear"] param_deps=["image","multiplier"] sampler_deps=[] contents_len=253
+  ep_sampler 0 name=texSampler states=3
+    state "Filter" = "Linear"
+    state "AddressU" = "Clamp"
+    state "AddressV" = "Clamp"
+  ep_technique 0 name=Draw passes=1
+    ep_pass 0 name=@null
+      vertex=["VSDefault","(","v_in",")",";"]
+      fragment=["PSMask","(","f_in",")",";"]
+  ep_technique 1 name=DrawMultiply passes=1
+    ep_pass 0 name=@null
+      vertex=["VSDefault","(","v_in",")",";"]
+      fragment=["PSMaskMultiply","(","f_in",")",";"]
+  ep_technique 2 name=DrawTonemap passes=1
+    ep_pass 0 name=@null
+      vertex=["VSDefault","(","v_in",")",";"]
+      fragment=["PSMaskTonemap","(","f_in",")",";"]
+  ep_technique 3 name=DrawMultiplyTonemap passes=1
+    ep_pass 0 name=@null
+      vertex=["VSDefault","(","v_in",")",";"]
+      fragment=["PSMaskMultiplyTonemap","(","f_in",")",";"]
+  ep_technique 4 name=ConvertUnorm passes=1
+    ep_pass 0 name=@null
+      vertex=["VSConvertUnorm","(","id",")",";"]
+      fragment=["PSConvertUnorm","(","f_in",")",";"]
+  ep_technique 5 name=ConvertUnormTonemap passes=1
+    ep_pass 0 name=@null
+      vertex=["VSConvertUnorm","(","id",")",";"]
+      fragment=["PSConvertUnormTonemap","(","f_in",")",";"]
+  ep_technique 6 name=ConvertUnormMultiplyTonemap passes=1
+    ep_pass 0 name=@null
+      vertex=["VSConvertUnorm","(","id",")",";"]
+      fragment=["PSConvertUnormMultiplyTonemap","(","f_in",")",";"]
+  error_string=@null
+effect (effect) params=5 techniques=7 viewproj=ViewProj world=-
+  param 0 name=ViewProj type=MATRIX4X4 annotations=0 default_size=0 default=-
+  param 1 name=image type=TEXTURE annotations=0 default_size=0 default=-
+  param 2 name=multiplier type=FLOAT annotations=0 default_size=0 default=-
+  param 3 name=mask type=TEXTURE annotations=0 default_size=0 default=-
+  param 4 name=threshold type=FLOAT annotations=0 default_size=0 default=-
+  technique 0 name=Draw passes=1
+    pass 0 name=@null vertex_params=[ViewProj] pixel_params=[image,threshold,mask] vertex=yes pixel=yes
+  technique 1 name=DrawMultiply passes=1
+    pass 0 name=@null vertex_params=[ViewProj] pixel_params=[multiplier,image,threshold,mask] vertex=yes pixel=yes
+  technique 2 name=DrawTonemap passes=1
+    pass 0 name=@null vertex_params=[ViewProj] pixel_params=[image,threshold,mask] vertex=yes pixel=yes
+  technique 3 name=DrawMultiplyTonemap passes=1
+    pass 0 name=@null vertex_params=[ViewProj] pixel_params=[multiplier,image,threshold,mask] vertex=yes pixel=yes
+  technique 4 name=ConvertUnorm passes=1
+    pass 0 name=@null vertex_params=[] pixel_params=[image] vertex=yes pixel=yes
+  technique 5 name=ConvertUnormTonemap passes=1
+    pass 0 name=@null vertex_params=[] pixel_params=[image] vertex=yes pixel=yes
+  technique 6 name=ConvertUnormMultiplyTonemap passes=1
+    pass 0 name=@null vertex_params=[] pixel_params=[image,multiplier] vertex=yes pixel=yes
+destroy e cached=1
+=== plugins/text-freetype2/data/text_default.effect
+backend vertexshader_create location="plugins/text-freetype2/data/text_default.effect (Vertex shader, technique Draw, pass 0)" len=453 fnv=4b1f2054fa8895e6
+  text "uniform float4x4 ViewProj;\nuniform bool use_color;\n\n\nstruct VertInOut {\n\tfloat4 pos : POSITION;\n\tfloat2 uv : TEXCOORD0;\n\tfloat4 col : COLOR;\n};\n\nVertInOut VSDefault(VertInOut vert_in)\n{\n\tVertInOut vert_out;\n\tvert_out.pos = mul(float4(vert_in.pos.xyz, 1.0), ViewProj);\n\tvert_out.uv  = vert_in.uv;\n\tvert_out.col = use_color ? vert_in.col : float4(0.0, 0.0, 0.0, 1.0);\n\treturn vert_out;\n}\n\nVertInOut main(VertInOut vert_in)\n{\n\treturn VSDefault(vert_in);\n}\n"
+  sparam 0 name=ViewProj type=MATRIX4X4 array=0
+  sparam 1 name=use_color type=BOOL array=0
+  result ok
+backend pixelshader_create location="plugins/text-freetype2/data/text_default.effect (Pixel shader, technique Draw, pass 0)" len=405 fnv=7eb14f477b93a496
+  text "uniform texture2d image;\n\n\nsampler_state def_sampler {\n\tFilter = Linear;\n\n\tAddressU = Clamp;\n\n\tAddressV = Clamp;\n\n};\n\nstruct VertInOut {\n\tfloat4 pos : POSITION;\n\tfloat2 uv : TEXCOORD0;\n\tfloat4 col : COLOR;\n};\n\nfloat4 PSDrawBare(VertInOut vert_in)\n{\n\tvert_in.col.a *= image.Sample(def_sampler, vert_in.uv).a;\n\treturn vert_in.col;\n}\n\nfloat4 main(VertInOut vert_in) : TARGET\n{\n\treturn PSDrawBare(vert_in);\n}\n"
+  sparam 0 name=image type=TEXTURE array=0
+  result ok
+effect e result=ok
+  error_string=@null
+effect e params=3 techniques=1 viewproj=ViewProj world=-
+  param 0 name=ViewProj type=MATRIX4X4 annotations=0 default_size=0 default=-
+  param 1 name=image type=TEXTURE annotations=0 default_size=0 default=-
+  param 2 name=use_color type=BOOL annotations=0 default_size=0 default=-
+  technique 0 name=Draw passes=1
+    pass 0 name=@null vertex_params=[ViewProj,use_color] pixel_params=[image] vertex=yes pixel=yes
+backend vertexshader_create location="plugins/text-freetype2/data/text_default.effect (Vertex shader, technique Draw, pass 0)" len=453 fnv=4b1f2054fa8895e6
+  sparam 0 name=ViewProj type=MATRIX4X4 array=0
+  sparam 1 name=use_color type=BOOL array=0
+  result ok
+backend pixelshader_create location="plugins/text-freetype2/data/text_default.effect (Pixel shader, technique Draw, pass 0)" len=405 fnv=7eb14f477b93a496
+  sparam 0 name=image type=TEXTURE array=0
+  result ok
+ep result=ok
+  errors count=0 has_errors=0
+  ep params=3 structs=1 funcs=2 samplers=1 techniques=1
+  ep_param 0 type=float4x4 name=ViewProj property=0 const=0 uniform=1 texture=0 array_count=0 annotations=0
+  ep_param 1 type=texture2d name=image property=0 const=0 uniform=1 texture=1 array_count=0 annotations=0
+  ep_param 2 type=bool name=use_color property=0 const=0 uniform=1 texture=0 array_count=0 annotations=0
+  ep_struct 0 name=VertInOut vars=3
+    var type=float4 name=pos mapping="POSITION" var_type=IN
+    var type=float2 name=uv mapping="TEXCOORD0" var_type=IN
+    var type=float4 name=col mapping="COLOR" var_type=IN
+  ep_func 0 name=VSDefault ret=VertInOut mapping=@null params=1
+    var type=VertInOut name=vert_in mapping=@null var_type=IN
+    struct_deps=["VertInOut","VertInOut","VertInOut"] func_deps=[] param_deps=["ViewProj","use_color"] sampler_deps=[] contents_len=201
+  ep_func 1 name=PSDrawBare ret=float4 mapping="TARGET" params=1
+    var type=VertInOut name=vert_in mapping=@null var_type=IN
+    struct_deps=["VertInOut"] func_deps=[] param_deps=["image"] sampler_deps=["def_sampler"] contents_len=83
+  ep_sampler 0 name=def_sampler states=3
+    state "Filter" = "Linear"
+    state "AddressU" = "Clamp"
+    state "AddressV" = "Clamp"
+  ep_technique 0 name=Draw passes=1
+    ep_pass 0 name=@null
+      vertex=["VSDefault","(","vert_in",")",";"]
+      fragment=["PSDrawBare","(","vert_in",")",";"]
+  error_string=@null
+effect (effect) params=3 techniques=1 viewproj=ViewProj world=-
+  param 0 name=ViewProj type=MATRIX4X4 annotations=0 default_size=0 default=-
+  param 1 name=image type=TEXTURE annotations=0 default_size=0 default=-
+  param 2 name=use_color type=BOOL annotations=0 default_size=0 default=-
+  technique 0 name=Draw passes=1
+    pass 0 name=@null vertex_params=[ViewProj,use_color] pixel_params=[image] vertex=yes pixel=yes
+destroy e cached=1
+=== frontend/data/striped_line.effect
+backend vertexshader_create location="frontend/data/striped_line.effect (Vertex shader, technique StripedLine, pass 0)" len=345 fnv=71cabfd501fb8715
+  text "uniform float4x4 ViewProj;\n\n\nstruct VertInOut {\n\tfloat4 pos : POSITION;\n\tfloat2 uv : TEXCOORD0;\n};\n\nVertInOut VSStripedLine(VertInOut vert_in)\n{\n\tVertInOut vert_out;\n\tvert_out.pos = mul(float4(vert_in.pos.xyz, 1.0), ViewProj);\n\tvert_out.uv = vert_in.uv;\n\treturn vert_out;\n}\n\nVertInOut main(VertInOut vert_in)\n{\n\treturn VSStripedLine(vert_in);\n}\n"
+  sparam 0 name=ViewProj type=MATRIX4X4 array=0
+  result ok
+backend pixelshader_create location="frontend/data/striped_line.effect (Pixel shader, technique StripedLine, pass 0)" len=477 fnv=71d55859033f3039
+  text "uniform float2 size;\nuniform float2 count_inv;\nuniform float4 color;\n\n\nstruct VertInOut {\n\tfloat4 pos : POSITION;\n\tfloat2 uv : TEXCOORD0;\n};\n\nfloat4 PSStripedLine(VertInOut vert_in)\n{\n\tfloat2 multiplier = floor(fmod(vert_in.uv * size * count_inv, float2(2.0, 2.0)));\n\tif (size.x == 0.0) {\n\t\tmultiplier.x = 1.0;\n\t} else {\n\t\tmultiplier.y = 1.0;\n\t}\n\n\treturn color * multiplier.xxxx * multiplier.yyyy;\n}\n\nfloat4 main(VertInOut vert_in) : TARGET\n{\n\treturn PSStripedLine(vert_in);\n}\n"
+  sparam 0 name=size type=VEC2 array=0
+  sparam 1 name=count_inv type=VEC2 array=0
+  sparam 2 name=color type=VEC4 array=0
+  result ok
+effect e result=ok
+  error_string=@null
+effect e params=4 techniques=1 viewproj=ViewProj world=-
+  param 0 name=ViewProj type=MATRIX4X4 annotations=0 default_size=0 default=-
+  param 1 name=color type=VEC4 annotations=0 default_size=16 default=0000803f0000803f0000803f0000803f f=[1,1,1,1]
+  param 2 name=size type=VEC2 annotations=0 default_size=0 default=-
+  param 3 name=count_inv type=VEC2 annotations=0 default_size=0 default=-
+  technique 0 name=StripedLine passes=1
+    pass 0 name=@null vertex_params=[ViewProj] pixel_params=[size,count_inv,color] vertex=yes pixel=yes
+backend vertexshader_create location="frontend/data/striped_line.effect (Vertex shader, technique StripedLine, pass 0)" len=345 fnv=71cabfd501fb8715
+  sparam 0 name=ViewProj type=MATRIX4X4 array=0
+  result ok
+backend pixelshader_create location="frontend/data/striped_line.effect (Pixel shader, technique StripedLine, pass 0)" len=477 fnv=71d55859033f3039
+  sparam 0 name=size type=VEC2 array=0
+  sparam 1 name=count_inv type=VEC2 array=0
+  sparam 2 name=color type=VEC4 array=0
+  result ok
+ep result=ok
+  errors count=0 has_errors=0
+  ep params=4 structs=1 funcs=2 samplers=0 techniques=1
+  ep_param 0 type=float4x4 name=ViewProj property=0 const=0 uniform=1 texture=0 array_count=0 annotations=0
+  ep_param 1 type=float4 name=color property=0 const=0 uniform=1 texture=0 array_count=0 annotations=0
+  ep_param 2 type=float2 name=size property=0 const=0 uniform=1 texture=0 array_count=0 annotations=0
+  ep_param 3 type=float2 name=count_inv property=0 const=0 uniform=1 texture=0 array_count=0 annotations=0
+  ep_struct 0 name=VertInOut vars=2
+    var type=float4 name=pos mapping="POSITION" var_type=IN
+    var type=float2 name=uv mapping="TEXCOORD0" var_type=IN
+  ep_func 0 name=VSStripedLine ret=VertInOut mapping=@null params=1
+    var type=VertInOut name=vert_in mapping=@null var_type=IN
+    struct_deps=["VertInOut","VertInOut","VertInOut"] func_deps=[] param_deps=["ViewProj"] sampler_deps=[] contents_len=130
+  ep_func 1 name=PSStripedLine ret=float4 mapping="TARGET" params=1
+    var type=VertInOut name=vert_in mapping=@null var_type=IN
+    struct_deps=["VertInOut"] func_deps=[] param_deps=["size","count_inv","size","color"] sampler_deps=[] contents_len=217
+  ep_technique 0 name=StripedLine passes=1
+    ep_pass 0 name=@null
+      vertex=["VSStripedLine","(","vert_in",")",";"]
+      fragment=["PSStripedLine","(","vert_in",")",";"]
+  error_string=@null
+effect (effect) params=4 techniques=1 viewproj=ViewProj world=-
+  param 0 name=ViewProj type=MATRIX4X4 annotations=0 default_size=0 default=-
+  param 1 name=color type=VEC4 annotations=0 default_size=16 default=0000803f0000803f0000803f0000803f f=[1,1,1,1]
+  param 2 name=size type=VEC2 annotations=0 default_size=0 default=-
+  param 3 name=count_inv type=VEC2 annotations=0 default_size=0 default=-
+  technique 0 name=StripedLine passes=1
+    pass 0 name=@null vertex_params=[ViewProj] pixel_params=[size,count_inv,color] vertex=yes pixel=yes
+destroy e cached=1
+=== test/test-input/data/draw.effect
+backend vertexshader_create location="test/test-input/data/draw.effect (Vertex shader, technique Default, pass 0)" len=345 fnv=2b907eb2ea8cb375
+  text "uniform float4x4 ViewProj;\n\n\nstruct VertexInOut {\n\tfloat4 pos : POSITION;\n\tfloat2 uv : TEXCOORD0;\n};\n\nVertexInOut VShader(VertexInOut vert_in)\n{\n\tVertexInOut vert_out;\n\tvert_out.pos = mul(float4(vert_in.pos.xyz, 1.0), ViewProj);\n\tvert_out.uv = vert_in.uv;\n\treturn vert_out;\n}\n\nVertexInOut main(VertexInOut vert_in)\n{\n\treturn VShader(vert_in);\n}\n"
+  sparam 0 name=ViewProj type=MATRIX4X4 array=0
+  result ok
+backend pixelshader_create location="test/test-input/data/draw.effect (Pixel shader, technique Default, pass 0)" len=369 fnv=22f89b53df323853
+  text "uniform texture2d diffuse;\n\n\nsampler_state texSampler {\n\tAddressU = Clamp;\n\n\tAddressV = Clamp;\n\n\tFilter = Linear;\n\n};\n\nstruct VertexInOut {\n\tfloat4 pos : POSITION;\n\tfloat2 uv : TEXCOORD0;\n};\n\nfloat4 PShader(VertexInOut fragment_in)\n{\n\treturn diffuse.Sample(texSampler, fragment_in.uv);\n}\n\nfloat4 main(VertexInOut fragment_in) : TARGET\n{\n\treturn PShader(fragment_in);\n}\n"
+  sparam 0 name=diffuse type=TEXTURE array=0
+  result ok
+effect e result=ok
+  error_string=@null
+effect e params=2 techniques=1 viewproj=ViewProj world=-
+  param 0 name=ViewProj type=MATRIX4X4 annotations=0 default_size=0 default=-
+  param 1 name=diffuse type=TEXTURE annotations=0 default_size=0 default=-
+  technique 0 name=Default passes=1
+    pass 0 name=@null vertex_params=[ViewProj] pixel_params=[diffuse] vertex=yes pixel=yes
+backend vertexshader_create location="test/test-input/data/draw.effect (Vertex shader, technique Default, pass 0)" len=345 fnv=2b907eb2ea8cb375
+  sparam 0 name=ViewProj type=MATRIX4X4 array=0
+  result ok
+backend pixelshader_create location="test/test-input/data/draw.effect (Pixel shader, technique Default, pass 0)" len=369 fnv=22f89b53df323853
+  sparam 0 name=diffuse type=TEXTURE array=0
+  result ok
+ep result=ok
+  errors count=0 has_errors=0
+  ep params=2 structs=1 funcs=2 samplers=1 techniques=1
+  ep_param 0 type=float4x4 name=ViewProj property=0 const=0 uniform=1 texture=0 array_count=0 annotations=0
+  ep_param 1 type=texture2d name=diffuse property=0 const=0 uniform=1 texture=1 array_count=0 annotations=0
+  ep_struct 0 name=VertexInOut vars=2
+    var type=float4 name=pos mapping="POSITION" var_type=IN
+    var type=float2 name=uv mapping="TEXCOORD0" var_type=IN
+  ep_func 0 name=VShader ret=VertexInOut mapping=@null params=1
+    var type=VertexInOut name=vert_in mapping=@null var_type=IN
+    struct_deps=["VertexInOut","VertexInOut","VertexInOut"] func_deps=[] param_deps=["ViewProj"] sampler_deps=[] contents_len=132
+  ep_func 1 name=PShader ret=float4 mapping="TARGET" params=1
+    var type=VertexInOut name=fragment_in mapping=@null var_type=IN
+    struct_deps=["VertexInOut"] func_deps=[] param_deps=["diffuse"] sampler_deps=["texSampler"] contents_len=55
+  ep_sampler 0 name=texSampler states=3
+    state "AddressU" = "Clamp"
+    state "AddressV" = "Clamp"
+    state "Filter" = "Linear"
+  ep_technique 0 name=Default passes=1
+    ep_pass 0 name=@null
+      vertex=["VShader","(","vert_in",")",";"]
+      fragment=["PShader","(","fragment_in",")",";"]
+  error_string=@null
+effect (effect) params=2 techniques=1 viewproj=ViewProj world=-
+  param 0 name=ViewProj type=MATRIX4X4 annotations=0 default_size=0 default=-
+  param 1 name=diffuse type=TEXTURE annotations=0 default_size=0 default=-
+  technique 0 name=Default passes=1
+    pass 0 name=@null vertex_params=[ViewProj] pixel_params=[diffuse] vertex=yes pixel=yes
+destroy e cached=1
+=== test/test-input/data/test.effect
+backend vertexshader_create location="test/test-input/data/test.effect (Vertex shader, technique Draw, pass 0)" len=345 fnv=2b907eb2ea8cb375
+  text "uniform float4x4 ViewProj;\n\n\nstruct VertexInOut {\n\tfloat4 pos : POSITION;\n\tfloat2 uv : TEXCOORD0;\n};\n\nVertexInOut VShader(VertexInOut vert_in)\n{\n\tVertexInOut vert_out;\n\tvert_out.pos = mul(float4(vert_in.pos.xyz, 1.0), ViewProj);\n\tvert_out.uv = vert_in.uv;\n\treturn vert_out;\n}\n\nVertexInOut main(VertexInOut vert_in)\n{\n\treturn VShader(vert_in);\n}\n"
+  sparam 0 name=ViewProj type=MATRIX4X4 array=0
+  result ok
+backend pixelshader_create location="test/test-input/data/test.effect (Pixel shader, technique Draw, pass 0)" len=395 fnv=9c84b2d54c27e3d0
+  text "uniform texture2d image;\nuniform float4 color;\n\n\nsampler_state texSampler {\n\tAddressU = Clamp;\n\n\tAddressV = Clamp;\n\n\tFilter = Linear;\n\n};\n\nstruct VertexInOut {\n\tfloat4 pos : POSITION;\n\tfloat2 uv : TEXCOORD0;\n};\n\nfloat4 PShader(VertexInOut fragment_in)\n{\n\treturn image.Sample(texSampler, fragment_in.uv) * color;\n}\n\nfloat4 main(VertexInOut fragment_in) : TARGET\n{\n\treturn PShader(fragment_in);\n}\n"
+  sparam 0 name=image type=TEXTURE array=0
+  sparam 1 name=color type=VEC4 array=0
+  result ok
+effect e result=ok
+  error_string=@null
+effect e params=3 techniques=1 viewproj=ViewProj world=-
+  param 0 name=ViewProj type=MATRIX4X4 annotations=0 default_size=0 default=-
+  param 1 name=image type=TEXTURE annotations=0 default_size=0 default=-
+  param 2 name=color type=VEC4 annotations=0 default_size=16 default=0000003f0000803f0000003f0000803f f=[0.5,1,0.5,1]
+  technique 0 name=Draw passes=1
+    pass 0 name=@null vertex_params=[ViewProj] pixel_params=[image,color] vertex=yes pixel=yes
+backend vertexshader_create location="test/test-input/data/test.effect (Vertex shader, technique Draw, pass 0)" len=345 fnv=2b907eb2ea8cb375
+  sparam 0 name=ViewProj type=MATRIX4X4 array=0
+  result ok
+backend pixelshader_create location="test/test-input/data/test.effect (Pixel shader, technique Draw, pass 0)" len=395 fnv=9c84b2d54c27e3d0
+  sparam 0 name=image type=TEXTURE array=0
+  sparam 1 name=color type=VEC4 array=0
+  result ok
+ep result=ok
+  errors count=0 has_errors=0
+  ep params=3 structs=1 funcs=2 samplers=1 techniques=1
+  ep_param 0 type=float4x4 name=ViewProj property=0 const=0 uniform=1 texture=0 array_count=0 annotations=0
+  ep_param 1 type=texture2d name=image property=0 const=0 uniform=1 texture=1 array_count=0 annotations=0
+  ep_param 2 type=float4 name=color property=0 const=0 uniform=1 texture=0 array_count=0 annotations=0
+  ep_struct 0 name=VertexInOut vars=2
+    var type=float4 name=pos mapping="POSITION" var_type=IN
+    var type=float2 name=uv mapping="TEXCOORD0" var_type=IN
+  ep_func 0 name=VShader ret=VertexInOut mapping=@null params=1
+    var type=VertexInOut name=vert_in mapping=@null var_type=IN
+    struct_deps=["VertexInOut","VertexInOut","VertexInOut"] func_deps=[] param_deps=["ViewProj"] sampler_deps=[] contents_len=132
+  ep_func 1 name=PShader ret=float4 mapping="TARGET" params=1
+    var type=VertexInOut name=fragment_in mapping=@null var_type=IN
+    struct_deps=["VertexInOut"] func_deps=[] param_deps=["image","color"] sampler_deps=["texSampler"] contents_len=61
+  ep_sampler 0 name=texSampler states=3
+    state "AddressU" = "Clamp"
+    state "AddressV" = "Clamp"
+    state "Filter" = "Linear"
+  ep_technique 0 name=Draw passes=1
+    ep_pass 0 name=@null
+      vertex=["VShader","(","vert_in",")",";"]
+      fragment=["PShader","(","fragment_in",")",";"]
+  error_string=@null
+effect (effect) params=3 techniques=1 viewproj=ViewProj world=-
+  param 0 name=ViewProj type=MATRIX4X4 annotations=0 default_size=0 default=-
+  param 1 name=image type=TEXTURE annotations=0 default_size=0 default=-
+  param 2 name=color type=VEC4 annotations=0 default_size=16 default=0000003f0000803f0000003f0000803f f=[0.5,1,0.5,1]
+  technique 0 name=Draw passes=1
+    pass 0 name=@null vertex_params=[ViewProj] pixel_params=[image,color] vertex=yes pixel=yes
+destroy e cached=1

@@ -1,0 +1,49 @@
+# Lookup by name / UUID. Sources (hash tables): duplicate names are made unique (" 2", " 3"), private
+# sources are never found by name; lookups by UUID find private ones. Outputs/encoders/services are
+# plain lists: duplicate names are allowed, the newest match is returned, private entries are skipped.
+# Every successful lookup returns a new strong reference (the runner releases it after printing).
+# obs_get_transition_by_name finds transitions even when they are private (linear search over all
+# sources, first in creation order); the UUID variant only accepts transitions.
+startup en-US -
+mk_source i1 Input
+mk_source i2 Input
+mk_source i3 Input
+mk_source p1 Hidden private=1
+mk_source t1 Fade type=transition id=fade private=1
+mk_source t2 Fade type=transition id=fade
+mk_source sc1 Scene type=scene id=scene
+get source_by_name Input
+get source_by_name "Input 2"
+get source_by_name "Input 3"
+get source_by_name "Input 4"
+get source_by_name Hidden
+get source_by_name Fade
+get source_by_name Scene
+get source_by_uuid uuid:p1
+get source_by_uuid uuid:i2
+get source_by_uuid 00000000-0000-0000-0000-000000000000
+get transition_by_name Fade
+get transition_by_name Input
+get transition_by_name Nope
+get transition_by_uuid uuid:t1
+get transition_by_uuid uuid:i1
+get transition_by_uuid 00000000-0000-0000-0000-000000000000
+mk_output o1 Same
+mk_output o2 Same
+mk_output o3 Same private=1
+mk_output o4 Other
+get output_by_name Same
+get output_by_name Other
+get output_by_name Nope
+mk_encoder e1 Enc
+mk_service s1 Svc
+mk_service s2 Svc private=1
+get encoder_by_name Enc
+get service_by_name Svc
+get encoder_by_name Svc
+# a duplicate UUID given on creation is replaced, the first object keeps its UUID
+mk_source u1 UuidA uuid=aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa
+mk_source u2 UuidB uuid=aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa
+get source_by_uuid aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa
+get source_by_uuid uuid:u2
+shutdown

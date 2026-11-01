@@ -1,0 +1,36 @@
+# S-050 nvenc: keyint_sec * fps_num / fps_den (integer division, signed int) -> gopLength; 0 -> 250.
+# The user option "keyint" (opts string) overrides it and may be 0/negative (then 250).
+dump 1
+nvcap dyn_bitrate 1
+defaults h264
+set int keyint_sec 2
+create h264 soft
+destroy
+set int keyint_sec 0
+create h264 soft
+destroy
+# fractional frame rates truncate: 2 * 30000 / 1001 = 59
+host fps 30000 1001
+set int keyint_sec 2
+create h264 soft
+destroy
+host fps 60 1
+# keyint from opts replaces the computed value
+set int keyint_sec 2
+set str opts "keyint=30"
+create h264 soft
+destroy
+set str opts "keyint=0"
+create h264 soft
+destroy
+set str opts "keyint=-5"
+create h264 soft
+destroy
+set str opts "keyint=1"
+create h264 soft
+destroy
+# idrPeriod follows gopLength (full dump)
+dump 2
+set str opts "keyint=48"
+create h264 soft
+destroy

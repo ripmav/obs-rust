@@ -1,0 +1,89 @@
+# S-052 mac-videotoolbox: encoder property/profile/rate-control logic. Option parsers are S-025.
+vt_profile h264 baseline NV12
+vt_profile h264 main NV12
+vt_profile h264 high NV12
+vt_profile h264 "" NV12
+vt_profile h264 other NV12
+vt_profile hevc main NV12
+vt_profile hevc main P010
+vt_profile hevc main10 NV12
+vt_profile hevc main42210 P216
+vt_profile hevc high NV12
+vt_profile prores main NV12
+vt_cs 601
+vt_cs 709
+vt_cs SRGB
+vt_cs 2100_PQ
+vt_cs 2100_HLG
+vt_cs DEFAULT
+vt_hdr 1000
+vt_hdr 203
+vt_hdr 10000
+vt_hdr 6600
+# rate_control apple_silicon macos limit bitrate_kbps quality max_kbps window
+vt_rc CBR 1 1300 0 6000 60 6000 1.5
+vt_rc CBR 0 1300 0 6000 60 6000 1.5
+vt_rc CBR 1 1200 0 6000 60 6000 1.5
+vt_rc ABR 1 1400 0 6000 60 6000 1.5
+vt_rc ABR 0 1400 1 6000 60 8000 1.5
+vt_rc CRF 1 1400 0 6000 75 6000 1.5
+vt_rc CRF 1 1400 1 6000 75 10000 2
+vt_rc CRF 0 1400 0 6000 75 6000 1.5
+vt_rc cbr 1 1400 0 6000 75 6000 1.5
+vt_rc VBR 1 1400 0 6000 75 6000 1.5
+vt_visibility CBR 0
+vt_visibility CBR 1
+vt_visibility ABR 0
+vt_visibility ABR 1
+vt_visibility CRF 0
+vt_visibility CRF 1
+vt_visibility other 1
+vt_pixfmt I420 0 h264
+vt_pixfmt I420 1 h264
+vt_pixfmt NV12 0 h264
+vt_pixfmt NV12 1 hevc
+vt_pixfmt P010 0 hevc
+vt_pixfmt P010 1 hevc
+vt_pixfmt P010 0 h264
+vt_pixfmt P216 0 hevc
+vt_pixfmt P216 1 hevc
+vt_pixfmt P416 0 hevc
+vt_pixfmt P416 1 hevc
+vt_pixfmt BGRA 0 h264
+vt_pixfmt I444 0 hevc
+# codec hw apple_silicon macos
+vt_props h264 1 1 1400
+vt_props h264 1 0 1400
+vt_props h264 0 1 1400
+vt_props h264 1 1 1205
+vt_props hevc 1 1 1500
+vt_props hevc 0 0 1203
+vt_props hevc 0 0 1202
+vt_defaults h264 1 1 1400
+vt_defaults h264 1 1 1205
+vt_defaults hevc 0 1 1400
+vt_defaults hevc 1 0 1400
+vt_name "Apple H.264 (HW)"
+vt_name "Apple H.264 (SW)"
+vt_name "Apple HEVC (HW)"
+vt_name "Apple HEVC (AVE)"
+vt_name "Apple HEVC (SW)"
+vt_name "AppleProResHWEncoder"
+vt_name "Apple ProRes 422 Software"
+vt_name "Something Else"
+# rate_control keyint fps_num fps_den quality spatial_aq_mode (0 invalid, 1 auto, 2 disabled, 3 enabled)
+vt_params CRF 2 60 1 60 1
+vt_params ABR 2 60 1 60 1
+vt_params ABR 2 60 1 60 3
+vt_params CRF 2 60 1 60 2
+vt_params CRF 2 60 1 60 0
+vt_params ABR 2 30000 1001 60 1
+vt_params ABR 0 60 1 99 1
+# old_bitrate new_bitrate old_limit new_limit
+vt_update 6000 6000 0 0
+vt_update 6000 4000 0 0
+vt_update 6000 6000 0 1
+vt_register avc1
+vt_register hvc1
+vt_register ap4h-422
+vt_register prores-other

@@ -1,0 +1,6 @@
+# S-050 nvenc: the driver's maximum supported NVENC API version (major<<4 | minor, here compiled as
+# 0xD0 for SDK 13.0) must be >= the compiled one, else "OutdatedDriver". A reported version of 0
+# is indistinguishable from a missing symbol.
+maxver 0xC2
+initnv
+initnv

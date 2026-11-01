@@ -1,0 +1,40 @@
+add a ok
+add x ok
+add y ok
+add b ok
+group g ok
+order main: a g{x y} b
+-- same layout: false (g first, then its children, then a, b)
+reorder2 -> 0
+order main: a g{x y} b
+-- move a into the group (appended after y), b first
+reorder2 -> 1
+order main: b g{x y a}
+get a pos=6.10351562e-05,0 rot=0 scale=1,1 align=5 btype=0 balign=0 bounds=0,0 bcrop=0 crop=0,0,0,0
+info a pos=6.10351562e-05,0 rot=0 scale=1,1 align=5 btype=0 balign=0 bounds=0,0 crop_to_bounds=0
+ box_scale=200,100
+item g id=5 parent=main group=1 scene=0 abs=0 vis=0 user_vis=1 sel=0 lock=0 need_update=0
+  stored pos=-1.5925926,-0.814814806 rot=0 scale=1,1 scale_ref=1920,1080 align=5
+  bounds type=0 align=0 size=0,0 crop_to_bounds=0
+  crop l=0 r=0 t=0 b=0 bounds_crop l=0 r=0 t=0 b=0 last=700,300
+  output_scale=1,1 box_scale=700,300
+  draw [1,0,0,0] [0,1,0,0] [0,0,1,0] [100,100,0,1]
+  box [700,0,0,0] [0,300,0,0] [0,0,1,0] [100,100,0,1]
+-- take x out of the group again, put it on top
+reorder2 -> 1
+order main: b g{y a} x
+get x pos=300,200 rot=0 scale=1,1 align=5 btype=0 balign=0 bounds=0,0 bcrop=0 crop=0,0,0,0
+info x pos=300,200 rot=0 scale=1,1 align=5 btype=0 balign=0 bounds=0,0 crop_to_bounds=0
+ box_scale=200,100
+get y pos=499.999878,200 rot=0 scale=1,1 align=5 btype=0 balign=0 bounds=0,0 bcrop=0 crop=0,0,0,0
+info y pos=499.999878,200 rot=0 scale=1,1 align=5 btype=0 balign=0 bounds=0,0 crop_to_bounds=0
+ box_scale=200,100
+-- a group moved on top of the stack with its children, plus a flat reorder inside
+reorder2 -> 1
+order main: x b g{a y}
+get a pos=0,0 rot=0 scale=1,1 align=5 btype=0 balign=0 bounds=0,0 bcrop=0 crop=0,0,0,0
+info a pos=0,0 rot=0 scale=1,1 align=5 btype=0 balign=0 bounds=0,0 crop_to_bounds=0
+ box_scale=200,100
+get y pos=499.999878,200 rot=0 scale=1,1 align=5 btype=0 balign=0 bounds=0,0 bcrop=0 crop=0,0,0,0
+info y pos=499.999878,200 rot=0 scale=1,1 align=5 btype=0 balign=0 bounds=0,0 crop_to_bounds=0
+ box_scale=200,100

@@ -1,0 +1,50 @@
+# os_get_config_path / os_get_config_path_ptr / os_get_program_data_path(_ptr) (Linux).
+# config: $XDG_CONFIG_HOME[/name] when XDG_CONFIG_HOME is set (even empty), else $HOME/.config[/name];
+# HOME unset in that case is fatal. The buffer form returns the snprintf result (the length the full
+# text has), a NULL/empty name omits the "/name" part; the _ptr form always appends "/" (or "/.config/")
+# before the name, so a NULL or empty name leaves a trailing slash there (QUIRK Q-11).
+# config_path SIZE|null NAME|@null      config_path_ptr NAME|@null
+setenv XDG_CONFIG_HOME /xdg
+setenv HOME /hm/u
+config_path 100 obs
+config_path 100 obs/plugins
+config_path 100 @null
+config_path 100 ""
+config_path_ptr obs
+config_path_ptr @null
+config_path_ptr ""
+# truncation and sizing
+config_path 5 obs
+config_path 1 obs
+config_path null obs
+config_path 9 obs
+config_path 8 obs
+# XDG_CONFIG_HOME set but empty counts as set
+setenv XDG_CONFIG_HOME ""
+config_path 100 obs
+config_path 100 @null
+config_path_ptr obs
+# XDG_CONFIG_HOME unset: HOME/.config
+setenv XDG_CONFIG_HOME @unset
+config_path 100 obs
+config_path 100 @null
+config_path 100 ""
+config_path_ptr obs
+config_path_ptr @null
+config_path_ptr ""
+config_path 10 obs
+config_path null obs
+# neither: fatal error (crash in the child process; message "Could not get $HOME")
+setenv HOME @unset
+try config_path 100 obs
+try config_path_ptr obs
+# program data path
+program_data 100 obs
+program_data 100 obs/x
+program_data 100 @null
+program_data 100 ""
+program_data 10 obs
+program_data null obs
+program_data_ptr obs
+program_data_ptr @null
+program_data_ptr ""

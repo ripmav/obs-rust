@@ -1,0 +1,57 @@
+log debug canvas 'Main' (<uuid>) created
+startup -> true
+log info ---------------------------------
+log info video settings reset:  base resolution:   1920x1080  output resolution: 1280x720  downscale filter:  Bicubic  fps:               30/1  format:            BGRA  YUV mode:          None
+reset_video -> success
+  after_call base=1920x1080 out=1280x720 fps=30/1 fmt=BGRA cs=2 range=1 scale=2 gpu=0 adapter=0
+log info ---------------------------------
+log info video settings reset:  base resolution:   1920x1080  output resolution: 1280x720  downscale filter:  Bicubic  fps:               30/1  format:            BGRA  YUV mode:          None
+reset_video -> fail
+  after_call base=1920x1080 out=1280x720 fps=30/1 fmt=BGRA cs=2 range=1 scale=2 gpu=0 adapter=0
+log info ---------------------------------
+log info video settings reset:  base resolution:   1920x1080  output resolution: 1280x720  downscale filter:  Bicubic  fps:               30/1  format:            BGRA  YUV mode:          None
+reset_video -> fail
+  after_call base=1920x1080 out=1280x720 fps=30/1 fmt=BGRA cs=2 range=1 scale=2 gpu=0 adapter=0
+state core=up locale=en-US modcfg=NULL name_store_owned=1
+  types source=3 input=1 filter=0 transition=0 output=0 encoder=0 service=0
+  graphics=yes audio=no mixes=0 thread_initialized=0 valid=1
+  main_canvas name="Main" flags=0xf mix=none
+report ctx_depth=0 ctx_underflow=0
+log info ---------------------------------
+log info video settings reset:  base resolution:   1920x1080  output resolution: 1280x720  downscale filter:  Bicubic  fps:               30/1  format:            BGRA  YUV mode:          None
+reset_video -> fail
+  after_call base=1920x1080 out=1280x720 fps=30/1 fmt=BGRA cs=2 range=1 scale=2 gpu=0 adapter=0
+log info ---------------------------------
+log info video settings reset:  base resolution:   1920x1080  output resolution: 1280x720  downscale filter:  Bicubic  fps:               30/1  format:            BGRA  YUV mode:          None
+reset_video -> fail
+  after_call base=1920x1080 out=1280x720 fps=30/1 fmt=BGRA cs=2 range=1 scale=2 gpu=0 adapter=0
+state core=up locale=en-US modcfg=NULL name_store_owned=1
+  types source=3 input=1 filter=0 transition=0 output=0 encoder=0 service=0
+  graphics=yes audio=no mixes=0 thread_initialized=0 valid=1
+  main_canvas name="Main" flags=0xf mix=none
+report ctx_depth=0 ctx_underflow=0
+log info ---------------------------------
+log info video settings reset:  base resolution:   1920x1080  output resolution: 1280x720  downscale filter:  Bicubic  fps:               30/1  format:            I420  YUV mode:          Rec. 709/Partial
+log info NV12 texture support not available
+log info P010 texture support not available
+reset_video -> fail
+  after_call base=1920x1080 out=1280x720 fps=30/1 fmt=I420 cs=2 range=1 scale=2 gpu=1 adapter=0
+state core=up locale=en-US modcfg=NULL name_store_owned=1
+  types source=3 input=1 filter=0 transition=0 output=0 encoder=0 service=0
+  graphics=yes audio=no mixes=0 thread_initialized=0 valid=1
+  main_canvas name="Main" flags=0xf mix=none
+log info ---------------------------------
+log info video settings reset:  base resolution:   1920x1080  output resolution: 1280x720  downscale filter:  Bicubic  fps:               30/1  format:            I420  YUV mode:          Rec. 709/Partial
+log info NV12 texture support not available
+log info P010 texture support not available
+reset_video -> success
+  after_call base=1920x1080 out=1280x720 fps=30/1 fmt=I420 cs=2 range=1 scale=2 gpu=1 adapter=0
+state core=up locale=en-US modcfg=NULL name_store_owned=1
+  types source=3 input=1 filter=0 transition=0 output=0 encoder=0 service=0
+  graphics=yes audio=no mixes=1 thread_initialized=1 valid=1
+  main_canvas name="Main" flags=0xf mix=yes
+report ctx_depth=0 ctx_underflow=0
+shutdown begin
+log info Freeing OBS context data
+log debug canvas 'Main' (<uuid>) destroyed
+shutdown end obs=NULL

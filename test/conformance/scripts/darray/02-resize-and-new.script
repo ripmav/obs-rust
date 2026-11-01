@@ -1,0 +1,17 @@
+# resize zero-fills growth, shrinking keeps capacity, resize(0) just empties.
+push 7
+push 8
+resize 5
+dump
+resize 2
+dump
+resize 0
+dump
+push_new
+dump
+insert_new 0
+dump
+insert_new 1
+dump
+resize 3
+dump

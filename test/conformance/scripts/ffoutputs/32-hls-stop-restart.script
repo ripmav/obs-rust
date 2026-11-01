@@ -1,0 +1,28 @@
+# HLS stop and restart: stop(ts) arms the stop time; the first packet with sys_dts >= ts closes the worker (event +
+# semaphore, join), the pipe and drops everything still queued. Restart: dropped_frames / min_priority are reset but
+# keyint_sec and last_dts_usec are NOT (a restart without keyint_sec keeps the old value - QUIRK).
+reset
+output h service
+venc h264 bitrate=2500 extra=0a0b keyint_sec=3
+service https://i.example/live k
+create hls
+start
+pkt v dts=0 key=1 data=0000000165aa
+pkt v dts=1000 key=0 data=0000000141aa
+state_hls
+pump 5
+stop 5000000
+pkt v dts=2000 key=0 sys=4999 data=0000000141aa
+state_hls
+pkt v dts=3000 key=0 sys=5000 data=0000000141aa
+state
+state_hls
+echo restart_without_keyint
+venc_set keyint_sec 0
+start
+state_hls
+pkt v dts=100 key=1 data=0000000165aa
+state_hls
+echo encoder_failure_signals_encode_error
+pkt v null=1
+state

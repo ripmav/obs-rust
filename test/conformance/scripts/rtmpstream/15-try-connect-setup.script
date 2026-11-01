@@ -1,0 +1,23 @@
+# S-045 try_connect(): what is configured on the RTMP session, and the result codes.
+# result codes: 0 success, -1 bad path, -2 connect failed, -3 invalid stream, -4 error, -5 disconnected.
+reset
+aenc 0 aac 160
+venc 0 h264 2500
+# empty path
+try_connect
+# the path is rejected by the URL parser
+set path "bad://x"
+fake setup_ok 0
+try_connect
+# normal: credentials, user agent string, swf url = tc url, chunk size 4096, nagle on
+fake setup_ok 1
+set path "rtmp://live.example.invalid/app"
+set key "streamkey"
+set username "alice"
+set password "secret"
+try_connect
+# no credentials -> NULL/empty AVals; key is passed to AddStream
+set username ""
+set password ""
+set key ""
+try_connect

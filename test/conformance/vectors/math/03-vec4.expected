@@ -1,0 +1,15 @@
+s vec4 6 8 10 12
+d vec4 4 4 4 4
+m vec4 5 12 21 32
+q vec4 5 3 2.33333325 2
+mf vec4 0.5 1 1.5 2
+n vec4 -1 -2 -3 -4
+dot float 70
+len float 5.47722578
+nrm vec4 0.182574183 0.365148365 0.547722578 0.730296731
+nz vec4 0 0 0 0
+c1 bool 1
+c2 bool 0
+f vec4 7 8 9 1
+back vec3 5 6 7 0
+rgba rgba 0xff0080ff

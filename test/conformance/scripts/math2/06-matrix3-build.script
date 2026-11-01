@@ -1,0 +1,36 @@
+# matrix3 constructors and copies (S-009-R30..R34).
+call i matrix3_identity
+quat qz 0 0 0.70710678 0.70710678
+call m matrix3_from_quat qz
+quat qi 0 0 0 1
+call m matrix3_from_quat qi
+quat qzero 0 0 0 0
+call m matrix3_from_quat qzero
+quat qun 0 0 1 1
+call m matrix3_from_quat qun
+aa zaxis 0 0 1 1.57079633
+call m matrix3_from_axisang zaxis
+aa yaxis 0 1 0 3.14159265
+call m matrix3_from_axisang yaxis
+# the translation row of matrix3_from_quat is zero
+# from_matrix4 copies xyz of all four rows and zeroes every w lane
+mat4 m4 1 2 3 4  5 6 7 8  9 10 11 12  13 14 15 16
+call m matrix3_from_matrix4 m4
+# matrix4_from_matrix3 copies the rows INCLUDING their w lanes, then sets t.w = 1
+mat3 m3 1 2 3 0.5  4 5 6 0.25  7 8 9 0.125  10 11 12 99
+call m4 matrix4_from_matrix3 m3
+mat3 clean 1 0 0 0  0 1 0 0  0 0 1 0  3 4 5 0
+call m4 matrix4_from_matrix3 clean
+call c matrix3_copy m3
+# quat_from_matrix3 follows the same rules as quat_from_matrix4 on the first three rows
+call q quat_from_matrix3 i
+mat3 rz90 0 1 0 0  -1 0 0 0  0 0 1 0  0 0 0 0
+call q quat_from_matrix3 rz90
+mat3 ry180 -1 0 0 0  0 1 0 0  0 0 -1 0  0 0 0 0
+call q quat_from_matrix3 ry180
+mat3 rx180 1 0 0 0  0 -1 0 0  0 0 -1 0  0 0 0 0
+call q quat_from_matrix3 rx180
+mat3 rz180 -1 0 0 0  0 -1 0 0  0 0 1 0  0 0 0 0
+call q quat_from_matrix3 rz180
+call mb matrix3_from_quat qun
+call q quat_from_matrix3 mb

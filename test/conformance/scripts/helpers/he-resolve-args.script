@@ -1,0 +1,11 @@
+# How the resolver is invoked (CORE): the port is formatted as decimal text; the address family
+# hint follows the bind address length: 0 -> unspecified, sizeof(sockaddr_in)=16 -> IPv4 only,
+# sizeof(sockaddr_in6)=28 -> IPv6 only, any other length -> unspecified. A resolver error makes
+# the call fail and leaves the address list empty.
+he_order 0 host.example 1935 4
+he_order 16 host.example 1935 4
+he_order 28 host.example 8080 6
+he_order 5 host.example 0 4
+he_order 0 host.example 65535 4
+he_fail 1
+he_consts

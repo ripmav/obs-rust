@@ -1,0 +1,17 @@
+# FT_New_Face failing, and FreeType initialisation failing (S-038-R35..R37).
+reset
+ascii 5 8 0 8 384
+font "Sans Serif" - 0 p/sans
+load
+create s 2
+setfont s "Sans Serif" - 20 0
+set s text "ab"
+fail_face on
+update s
+state s
+echo --- face creation failure: no texture, no vertex buffer
+verts s
+fail_face off
+setfont s "Sans Serif" - 21 0
+update s
+state s

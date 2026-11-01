@@ -1,0 +1,19 @@
+# save_safe writes <file>.<temp> and replaces the target, optionally keeping <file>.<backup>.
+create
+set_string A k v1
+save
+set_string A k v2
+save_safe tmp @null
+file
+file .tmp
+set_string A k v3
+save_safe .tmp bak
+file
+file .bak
+file .tmp
+set_string A k v4
+save_safe tmp .bak
+file
+file .bak
+save_safe @null bak
+save_safe "" bak

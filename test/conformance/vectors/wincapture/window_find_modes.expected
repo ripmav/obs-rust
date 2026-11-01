@@ -1,0 +1,32 @@
+find 3
+find none
+find 4
+find none
+find_top none
+find 5
+find none
+rating 1 class = 0
+rating 1 class = 2147483647
+rating 1 class = 0
+rating 2 class = 0
+rating 2 exe = 0
+find 1
+find none
+is_uwp 10 1
+uwp_actual 11
+is_uwp 11 0
+uwp_actual none
+is_uwp 12 1
+uwp_actual 13
+is_uwp 14 1
+uwp_actual none
+find 11
+find 11
+find 11
+find none
+find 13
+find 14
+find_top 10
+rating 11 class = 0
+rating 11 exe = 0
+rating 11 exe = 2147483647

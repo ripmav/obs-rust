@@ -1,0 +1,36 @@
+# CORE. libfdk create: bitrate setting is in kbps (x1000 to the library), afterburner is 0/1,
+# the hidden set_to_ADTS flag selects TRANSMUX 2 (ADTS) instead of 0 (raw); bitrate 0 is
+# rejected up front; a library error aborts creation (the failing call is logged and the
+# encoder is closed again if it was opened). fdk_fail N makes the Nth library call fail.
+data D
+fdk_defaults D
+echo defaults
+fdk_create D
+echo custom
+set D bitrate int 192
+set D afterburner bool 0
+set D set_to_ADTS bool 1
+fdk_create D
+echo zero-bitrate
+set D bitrate int 0
+fdk_create D
+echo negative-bitrate-passes-through-unchecked
+set D bitrate int -128
+fdk_create D
+set D bitrate int 128
+echo open-fails
+fdk_fail 1
+fdk_create D
+echo setparam-fails-mid-way-closes-handle
+fdk_fail 4
+fdk_create D
+echo init-encode-fails
+fdk_fail 10
+fdk_create D
+echo info-fails
+fdk_fail 11
+fdk_create D
+fdk_fail 0
+echo missing-keys-use-zero-values
+data E
+fdk_create E

@@ -1,0 +1,40 @@
+# S-021 QUIRKS of the muxer: what happens with empty payloads. The three muxer families
+# behave differently (QUIRK Q-16):
+#   * legacy flv_packet_mux (video and audio): NO tag; *output = NULL, *size = 0.
+#   * flv_packet_audio_start/_frames: NO tag, and *output / *size are NOT written at all
+#     (the runner pre-fills them with sentinels and prints "untouched").
+#   * flv_packet_start/_frames/_end (video, Enhanced RTMP): a tag with an empty payload IS produced.
+# A NULL data pointer is treated like an empty payload by the legacy muxer and the audio-ex muxer.
+echo legacy-video-empty
+pkt ev video 0 0 1 1000 1 -
+flv_mux ev 0 0
+flv_mux ev 0 1
+echo legacy-audio-empty
+pkt ea audio 0 0 1 1000 0 -
+flv_mux ea 0 0
+echo legacy-null-data
+pkt nv video 0 0 1 1000 1 @null
+pkt na audio 0 0 1 1000 0 @null
+flv_mux nv 0 0
+flv_mux na 0 0
+echo audio-ex-empty-leaves-the-outputs-untouched
+ax_start ea aac 0
+ax_frames ea aac 0 0
+ax_frames ea aac 0 1
+ax_start na aac 0
+ax_frames na aac 0 3
+echo video-ex-empty-produces-a-tag
+ex_start ev h264 0
+ex_frames ev h264 0 0
+ex_frames ev hevc 0 5
+ex_end ev av1 0
+echo "one-byte payloads (the minimum that produces a tag everywhere)"
+pkt ov video 10 10 1 1000 1 00
+pkt oa audio 10 10 1 1000 0 00
+flv_mux ov 0 0
+flv_mux oa 0 0
+ex_frames ov h264 0 0
+ax_frames oa aac 0 0
+echo "Q-17 trackId 0 in the multitrack form is never produced for idx 0 but idx 256 gives trackId 0"
+ex_frames ov av1 0 256
+ax_frames oa aac 0 256

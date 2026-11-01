@@ -1,0 +1,43 @@
+# Buffered serializer seek semantics (CORE): START sets the write position, CURRENT adds,
+# END SUBTRACTS the offset from the CURRENT write position (not from the file size).
+# Writes are applied in call order; a hole is zero filled; a seek without a later write
+# changes nothing in the file.
+open buf bs-a
+write 0102030405060708
+seek start 2
+pos
+write aa
+pos
+seek end 1
+seek cur 3
+seek cur -4
+seek end 0
+write bb
+seek start 12
+write cc
+close
+fget bs-a
+open buf bs-b 64 4
+write_pat 10
+seek start 100
+write 77
+seek start 3
+write_pat 3 50
+seek cur 1000
+seek start 0
+close
+fget bs-b
+open buf bs-c
+seek start 5
+pos
+close
+fget bs-c
+open buf bs-d
+write 0102
+seek start -1
+pos
+close
+funlink bs-a
+funlink bs-b
+funlink bs-c
+funlink bs-d

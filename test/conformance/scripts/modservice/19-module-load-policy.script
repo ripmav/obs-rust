@@ -1,0 +1,37 @@
+# S-035 load policy in load_all_callback: user-disabled list, legacy plugins vs core names, duplicate names, types.
+mkmod m1 @TMP/pol/bin/m1.so
+mkmod m2 @TMP/pol/bin/m2.so
+mkmod m3 @TMP/pol/bin/m3.so
+mkmod m4 @TMP/pol/bin/m4.so
+mkdir @TMP/pol/data
+# --- disabled list (NULL ignored). Disabled modules become disabled(disabled) objects and are not opened.
+add_disabled m2
+add_disabled -
+add_disabled m4
+load_plugins @TMP/pol/bin @TMP/pol/data/%module% 2
+lists
+mod_info m2
+mod_info m1
+# --- the same files as CORE type: the disabled list is ignored, and duplicates by name are allowed
+load_plugins @TMP/pol/bin @TMP/pol/data/%module% 1
+lists
+mod_info m2
+get_module m4
+# --- legacy plugin with a core module's name is skipped; legacy duplicate of a loaded name is skipped
+core_modules @TMP/none/%module% @TMP/none/%module% m1 m9
+mkmod l1 @TMP/leg/bin/m9.so
+mkmod l2 @TMP/leg/bin/l2.so
+mkmod l3 @TMP/leg/bin/m3.so
+get_module m9
+load_plugins @TMP/leg/bin @TMP/leg/data/%module% 3
+lists
+mod_info l2
+get_module l2
+# plain PLUGIN type with a core name is NOT skipped (only the legacy type is)
+mkmod p1 @TMP/pl9/bin/m9.so
+load_plugins @TMP/pl9/bin @TMP/pl9/data/%module% 2
+lists
+# --- undefined type behaves like a plugin (not core, not legacy)
+mkmod u1 @TMP/pu/bin/u1.so
+load_plugins @TMP/pu/bin @TMP/pu/data/%module% 0
+mod_info u1

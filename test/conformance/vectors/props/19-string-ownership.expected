@@ -1,0 +1,34 @@
+add bool a ok
+info
+  prop a type=bool desc="Initial" long=@null enabled=1 visible=1
+    -
+info
+  prop a type=bool desc="New" long=@null enabled=1 visible=1
+    -
+info
+  prop a type=bool desc=@null long=@null enabled=1 visible=1
+    -
+info
+  prop a type=bool desc=@null long=@null enabled=1 visible=1
+    -
+info
+  prop a type=bool desc="Back" long="Long help" enabled=1 visible=1
+    -
+info
+  prop a type=bool desc="Back" long=@null enabled=1 visible=1
+    -
+info
+  prop a type=bool desc="Back" long=@null enabled=1 visible=1
+    -
+echo setters-on-null
+info
+  prop @null
+probe int: 0 0 0 scroller @null
+probe float: 0 0 0 scroller @null
+probe text: default 0 normal 1
+probe path: directory @null @null
+probe list: invalid invalid count=0 name0=@null str0=@null int0=0 float0=0 bool0=0 disabled0=0
+probe editable_list: strings @null @null
+probe frame_rate: options=0 ranges=0 name0=@null desc0=@null min0=0/0 max0=0/0
+probe group: invalid content=@null
+probe button: default ""

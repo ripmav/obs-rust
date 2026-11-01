@@ -1,0 +1,8 @@
+tl_create 0 tw-1 -> ok
+tl_get 0 "K" -> " "
+tl_get 0 "L" -> false
+tl_get 0 " " -> " "
+tl_get 0 "H" -> "\t"
+tl_get 0 "M" -> " "
+tl_get 0 "N" -> " "
+tl_get 0 "O" -> "ok"

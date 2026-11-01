@@ -1,0 +1,5 @@
+mf_get 0 0 path="C:\\dir\\File.PNG" source_name="Name" ref=1 same_as_file=0
+mf_get 0 1 path="relative/../path" source_name=@null ref=1 same_as_file=1
+mf_get 0 2 path="" source_name="Empty path" ref=1 same_as_file=2
+mf_get 0 3 path="/s/x" source_name=@null ref=1 same_as_file=3
+mf_destroy 0

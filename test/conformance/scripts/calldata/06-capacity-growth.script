@@ -1,0 +1,25 @@
+# Initial allocation is max(128, needed); afterwards capacity doubles (or jumps to
+# the needed size if that is larger).
+init
+capacity
+set_int a 1
+capacity
+dump
+set_int b 2
+set_int c 3
+set_int d 4
+capacity
+set_int e 5
+capacity
+set_int f 6
+set_int g 7
+set_int h 8
+set_int i 9
+set_int j 10
+capacity
+set_string big "0123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789"
+capacity
+get_string big
+get_int a
+get_int j
+free

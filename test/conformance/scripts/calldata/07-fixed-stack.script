@@ -1,0 +1,18 @@
+# A fixed calldata uses caller memory and never grows; going over the limit logs
+# an error and leaves the contents untouched.
+init_fixed 64
+dump
+capacity
+set_int a 1
+dump
+set_string s "this string will not fit in the remaining space"
+dump
+get_string s
+get_int a
+set_int a 2
+dump
+clear
+dump
+set_int z 3
+dump
+free

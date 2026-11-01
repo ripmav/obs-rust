@@ -1,0 +1,42 @@
+# S-026 Nimo TV: server list gets an "Auto" first entry plus the JSON servers; with server "auto" the URL is
+# fetched from https://globalcdnweb.nimo.tv/api/ingests/nimo?id=<percent-encoded key> (timeout 3 s, TLS verify),
+# cached 2 s regardless of the key (QUIRK), NULL on failure.
+fs-load /mod/data/services.json data/services-ok.json
+settings S {"service":"Nimo TV","server":"auto","key":"my key/1"}
+new N rtmp_common S
+props P N S
+echo no-route-fails-returns-null
+get N url
+curl-route "https://globalcdnweb.nimo.tv/api/ingests/nimo?id=my%20key%2F1" 200 "{\"ingests\":[{\"url\":\"rtmp://nimo-a.example/live\"},{\"url\":\"rtmp://nimo-b.example/live\"}]}"
+echo success
+get N url
+echo cached-for-2s
+advance 1999
+get N url
+echo expired
+advance 1
+get N url
+echo cache-ignores-key-change
+settings S {"service":"Nimo TV","server":"auto","key":"other"}
+update N S
+get N url
+echo non-200-returns-NULL-keeps-old
+curl-route "https://globalcdnweb.nimo.tv/api/ingests/nimo?id=other" 503 "{}"
+advance 2000
+get N url
+echo empty-body
+curl-route "https://globalcdnweb.nimo.tv/api/ingests/nimo?id=other" 200 ""
+get N url
+echo bad-json-body-gives-NULL-url
+curl-route "https://globalcdnweb.nimo.tv/api/ingests/nimo?id=other" 200 "xx"
+get N url
+echo a-NULL-result-is-not-cached-so-the-next-call-fetches-again
+get N url
+echo no-ingests-array
+curl-route "https://globalcdnweb.nimo.tv/api/ingests/nimo?id=other" 200 "{\"ingests\":[]}"
+advance 2000
+get N url
+echo non-auto-server-no-request
+settings S {"service":"Nimo TV","server":"rtmp://a.nimo.example/live/","key":"k"}
+update N S
+get N url

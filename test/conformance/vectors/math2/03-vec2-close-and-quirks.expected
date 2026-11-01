@@ -1,0 +1,17 @@
+c bool 1
+c bool 0
+c bool 0
+c bool 0
+c bool 1
+c bool 1
+c bool 0
+keep vec2 7 8
+fresh vec2 0 0
+keep2 vec2 9 9
+keep3 vec2 nan 0
+m vec2 5 nan
+m vec2 5 nan
+m vec2 3 1
+m vec2 3 3
+m vec2 2 nan
+m vec2 5 nan

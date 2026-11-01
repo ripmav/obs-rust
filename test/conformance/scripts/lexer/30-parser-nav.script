@@ -1,0 +1,43 @@
+# CORE: cf_next_token/peek/is/should_be/goto/pass_pair on a pre-processed stream. NOTE Q: next skips the first token
+# when the stream starts with a non-blank token.
+parse "void f(int a, 12) { x; { y } z } w"
+cur
+next
+next
+peek
+next
+is int
+is "in"
+is @null
+should_be "("
+should_be "int"
+should_be ")" ","
+should_be ")" "nothere"
+cur
+setcur 0
+next_should_be "f"
+next_should_be "x" ")"
+next_should_be "x" "{" "}"
+errors
+reset
+parse "  void  f(int a, 12) { x; { y } z } w"
+setcur 0
+next
+next_valid
+goto "{"
+pass_pair "{" "}"
+next
+pass_pair "(" ")"
+next_valid
+cur
+errors
+reset
+parse "f ( { [ ( ) ] } ) g"
+setcur 0
+next
+pass_pair "(" ")"
+goto "g"
+goto_type NAME
+setcur 0
+goto_type OTHER
+goto_type STRING

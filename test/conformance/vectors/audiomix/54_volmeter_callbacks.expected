@@ -1,0 +1,9 @@
+meter_attach ret=1
+meter_attach ret=1
+meter_cb other mag -6.02060032 -8.51937485 -inf -inf -inf -inf -inf -inf peak -6.02060032 -8.51937485 -inf -inf -inf -inf -inf -inf ip -6.02060032 -8.51937485 -inf -inf -inf -inf -inf -inf
+meter_cb second mag -6.02060032 -8.51937485 -inf -inf -inf -inf -inf -inf peak -6.02060032 -8.51937485 -inf -inf -inf -inf -inf -inf ip -6.02060032 -8.51937485 -inf -inf -inf -inf -inf -inf
+meter_cb first mag -6.02060032 -8.51937485 -inf -inf -inf -inf -inf -inf peak -6.02060032 -8.51937485 -inf -inf -inf -inf -inf -inf ip -6.02060032 -8.51937485 -inf -inf -inf -inf -inf -inf
+meter_cb other mag -12.0412006 -14.5399752 -inf -inf -inf -inf -inf -inf peak -12.0412006 -14.5399752 -inf -inf -inf -inf -inf -inf ip -6.02060032 -8.51937485 -inf -inf -inf -inf -inf -inf
+meter_cb second mag -12.0412006 -14.5399752 -inf -inf -inf -inf -inf -inf peak -12.0412006 -14.5399752 -inf -inf -inf -inf -inf -inf ip -6.02060032 -8.51937485 -inf -inf -inf -inf -inf -inf
+meter_cb first mag -12.0412006 -14.5399752 -inf -inf -inf -inf -inf -inf peak -12.0412006 -14.5399752 -inf -inf -inf -inf -inf -inf ip -6.02060032 -8.51937485 -inf -inf -inf -inf -inf -inf
+meter_cb second mag -12.0412006 -14.5399752 -inf -inf -inf -inf -inf -inf peak -12.0412006 -14.5399752 -inf -inf -inf -inf -inf -inf ip -6.02060032 -8.51937485 -inf -inf -inf -inf -inf -inf

@@ -1,0 +1,31 @@
+# S-049 pulse: failure paths of start_recording; none leaves a stream behind, all keep the object alive.
+pulse-server pulseaudio 16.1 alsa_input.mic alsa_output.speakers
+pulse-source alsa_input.mic "Mic" - s16le 48000 2
+pulse-defaults
+source-name Mic1
+# server info call fails
+fail server
+set-str device_id default
+pulse-create input
+pulse-destroy
+unfail
+# source info call fails
+fail source
+pulse-create input
+pulse-destroy
+unfail
+# unknown device => source info error callback => PA_SAMPLE_INVALID
+set-str device_id no.such.device
+pulse-create input
+pulse-destroy
+# stream creation fails
+set-str device_id alsa_input.mic
+fail stream
+pulse-create input
+pulse-destroy
+unfail
+# connect fails: stream is dropped again
+fail connect
+pulse-create input
+pulse-destroy
+unfail

@@ -1,0 +1,11 @@
+add h ok
+emit s
+call adder
+call tail
+call added
+emit-done
+emit s
+call adder
+call tail
+call added
+emit-done

@@ -1,0 +1,173 @@
+ep result=ok
+  errors count=0 has_errors=0
+  ep params=0 structs=0 funcs=0 samplers=1 techniques=0
+  ep_sampler 0 name=s states=4
+    state "Filter" = "Linear"
+    state "AddressU" = "Wrap"
+    state "MaxAnisotropy" = "8"
+    state "BorderColor" = "0xFF00FF"
+  error_string=@null
+effect (effect) params=0 techniques=0 viewproj=- world=-
+ep result=ok
+  errors count=0 has_errors=0
+  ep params=0 structs=0 funcs=0 samplers=1 techniques=0
+  ep_sampler 0 name=s states=0
+  error_string=@null
+effect (effect) params=0 techniques=0 viewproj=- world=-
+ep result=ok
+  errors count=0 has_errors=0
+  ep params=0 structs=0 funcs=0 samplers=1 techniques=0
+  ep_sampler 0 name=s states=2
+    state "Filter" = "MIN_MAG_MIP_POINT"
+    state "Filter" = "Point"
+  error_string=@null
+effect (effect) params=0 techniques=0 viewproj=- world=-
+ep result=ok
+  errors count=0 has_errors=0
+  ep params=0 structs=0 funcs=0 samplers=1 techniques=0
+  ep_sampler 0 name=s states=1
+    state "Filter" = "abc"
+  error_string=@null
+effect (effect) params=0 techniques=0 viewproj=- world=-
+ep result=ok
+  errors count=0 has_errors=0
+  ep params=0 structs=0 funcs=0 samplers=1 techniques=0
+  ep_sampler 0 name=s states=2
+    state "F" = "\"x y\""
+    state "G" = "1.5e3"
+  error_string=@null
+effect (effect) params=0 techniques=0 viewproj=- world=-
+ep result=ok
+  errors count=0 has_errors=0
+  ep params=0 structs=0 funcs=0 samplers=1 techniques=0
+  ep_sampler 0 name=s states=1
+    state "BorderColor" = "#FF0000FF"
+  error_string=@null
+effect (effect) params=0 techniques=0 viewproj=- world=-
+ep result=ok
+  errors count=0 has_errors=0
+  ep params=0 structs=0 funcs=0 samplers=2 techniques=0
+  ep_sampler 0 name=s states=1
+    state "Filter" = "Linear"
+  ep_sampler 1 name=s states=1
+    state "Filter" = "Point"
+  error_string=@null
+effect (effect) params=0 techniques=0 viewproj=- world=-
+ep result=ok
+  errors count=0 has_errors=0
+  ep params=0 structs=0 funcs=0 samplers=1 techniques=0
+  ep_sampler 0 name=s states=2
+    state "Filter" = "Linear"
+    state "AddressU" = "Clamp"
+  error_string=@null
+effect (effect) params=0 techniques=0 viewproj=- world=-
+ep result=ok
+  errors count=0 has_errors=0
+  ep params=0 structs=0 funcs=0 samplers=1 techniques=0
+  ep_sampler 0 name=s states=1
+    state "AddressU" = "Clamp"
+  error_string=@null
+effect (effect) params=0 techniques=0 viewproj=- world=-
+ep result=ok
+  errors count=0 has_errors=0
+  ep params=0 structs=0 funcs=0 samplers=1 techniques=0
+  ep_sampler 0 name=s states=1
+    state "Filter" = "Linear"
+  error_string=@null
+effect (effect) params=0 techniques=0 viewproj=- world=-
+ep result=ok
+  errors count=0 has_errors=0
+  ep params=0 structs=0 funcs=0 samplers=1 techniques=0
+  ep_sampler 0 name=s states=1
+    state "Filter" = "(1+2)*3"
+  error_string=@null
+effect (effect) params=0 techniques=0 viewproj=- world=-
+ep result=ok
+  errors count=0 has_errors=0
+  ep params=0 structs=0 funcs=0 samplers=1 techniques=0
+  ep_sampler 0 name=s states=1
+    state "Filter" = "{x"
+  error_string=@null
+effect (effect) params=0 techniques=0 viewproj=- world=-
+--- errors
+ep result=fail
+  errors count=1 has_errors=1
+    err 0 error file="e1" row=1 col=14 msg="Unexpected EOF"
+  ep params=0 structs=0 funcs=0 samplers=0 techniques=0
+  error_string="e1 (1, 14): Unexpected EOF\n"
+ep result=fail
+  errors count=1 has_errors=1
+    err 0 error file="e2" row=1 col=16 msg="Unexpected EOF"
+  ep params=0 structs=0 funcs=0 samplers=0 techniques=0
+  error_string="e2 (1, 16): Unexpected EOF\n"
+ep result=fail
+  errors count=2 has_errors=1
+    err 0 error file="e3" row=1 col=17 msg="Unexpected EOF"
+    err 1 error file="e3" row=1 col=17 msg="Unexpected code segment"
+  ep params=0 structs=0 funcs=0 samplers=0 techniques=0
+  error_string="e3 (1, 17): Unexpected EOF\ne3 (1, 17): Unexpected code segment\n"
+ep result=fail
+  errors count=1 has_errors=1
+    err 0 error file="e4" row=1 col=25 msg="Unexpected EOF"
+  ep params=0 structs=0 funcs=0 samplers=0 techniques=0
+  error_string="e4 (1, 25): Unexpected EOF\n"
+ep result=fail
+  errors count=1 has_errors=1
+    err 0 error file="e5" row=1 col=34 msg="Unexpected EOF"
+  ep params=0 structs=0 funcs=0 samplers=0 techniques=0
+  error_string="e5 (1, 34): Unexpected EOF\n"
+ep result=fail
+  errors count=1 has_errors=1
+    err 0 error file="e6" row=1 col=37 msg="Unexpected EOF"
+  ep params=0 structs=0 funcs=0 samplers=0 techniques=0
+  error_string="e6 (1, 37): Unexpected EOF\n"
+ep result=fail
+  errors count=1 has_errors=1
+    err 0 error file="e7" row=1 col=32 msg="Expected '='"
+  ep params=0 structs=0 funcs=0 samplers=1 techniques=0
+  ep_sampler 0 name=s states=0
+  error_string="e7 (1, 32): Expected '='\n"
+ep result=fail
+  errors count=2 has_errors=1
+    err 0 error file="e8" row=1 col=15 msg="Expected 'name'"
+    err 1 error file="e8" row=1 col=34 msg="Expected 'type'"
+  ep params=0 structs=0 funcs=0 samplers=0 techniques=0
+  error_string="e8 (1, 15): Expected 'name'\ne8 (1, 34): Expected 'type'\n"
+ep result=fail
+  errors count=1 has_errors=1
+    err 0 error file="e9" row=1 col=19 msg="Expected 'state name'"
+  ep params=0 structs=0 funcs=0 samplers=1 techniques=0
+  ep_sampler 0 name=s states=0
+  error_string="e9 (1, 19): Expected 'state name'\n"
+ep result=fail
+  errors count=2 has_errors=1
+    err 0 error file="e10" row=1 col=32 msg="Expected '{'"
+    err 1 error file="e10" row=1 col=34 msg="Expected 'type'"
+  ep params=0 structs=0 funcs=0 samplers=0 techniques=0
+  error_string="e10 (1, 32): Expected '{'\ne10 (1, 34): Expected 'type'\n"
+ep result=fail
+  errors count=3 has_errors=1
+    err 0 error file="e11" row=1 col=38 msg="Expected ';'"
+    err 1 error file="e11" row=1 col=39 msg="Expected 'name'"
+    err 2 error file="e11" row=1 col=40 msg="Unexpected EOF"
+  ep params=0 structs=0 funcs=0 samplers=0 techniques=0
+  error_string="e11 (1, 38): Expected ';'\ne11 (1, 39): Expected 'name'\ne11 (1, 40): Unexpected EOF\n"
+ep result=fail
+  errors count=2 has_errors=1
+    err 0 error file="e12" row=1 col=15 msg="Expected 'name'"
+    err 1 error file="e12" row=1 col=21 msg="Unexpected EOF"
+  ep params=0 structs=0 funcs=0 samplers=0 techniques=0
+  error_string="e12 (1, 15): Expected 'name'\ne12 (1, 21): Unexpected EOF\n"
+ep result=fail
+  errors count=2 has_errors=1
+    err 0 error file="e13" row=1 col=36 msg="Expected 'state name'"
+    err 1 error file="e13" row=1 col=39 msg="Unexpected EOF"
+  ep params=0 structs=0 funcs=0 samplers=0 techniques=0
+  error_string="e13 (1, 36): Expected 'state name'\ne13 (1, 39): Unexpected EOF\n"
+ep result=fail
+  errors count=1 has_errors=1
+    err 0 error file="e14" row=1 col=46 msg="Unexpected EOF"
+  ep params=0 structs=0 funcs=0 samplers=1 techniques=0
+  ep_sampler 0 name=s states=1
+    state "Filter" = "Linear"
+  error_string="e14 (1, 46): Unexpected EOF\n"

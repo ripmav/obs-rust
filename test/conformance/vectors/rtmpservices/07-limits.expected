@@ -1,0 +1,39 @@
+echo alpha-resolutions-skip-invalid-keep-duplicates-and-trailing-garbage
+get resolutions = [1920x1080,1280x720,1280x720,800x600]
+get maxfps = 30
+get vcodecs = ["h264","hevc","a-very-long-cod"]
+get acodecs = ["aac","opus"]
+echo max-bitrate-with-matrix-needs-video-info
+get maxbitrate = video=4000 audio=128
+get maxbitrate = video=3000 audio=128
+get maxbitrate = video=6000 audio=128
+get maxbitrate = video=4000 audio=128
+echo codecs-cached-after-first-call-even-if-file-changes
+get vcodecs = ["h264","hevc","a-very-long-cod"]
+echo Golf-all-resolutions-invalid-means-none
+get resolutions = []
+get maxfps = 0
+get maxbitrate = video=9000 audio=0
+get vcodecs = @null
+get acodecs = @null
+echo Bravo-no-codecs-key
+get vcodecs = @null
+get acodecs = @null
+get maxbitrate = video=2500 audio=0
+echo Charlie-no-recommended
+get resolutions = []
+get maxfps = 0
+get maxbitrate = video=0 audio=0
+get vcodecs = ["h264"]
+echo unknown-service
+get resolutions = []
+get maxfps = 0
+get maxbitrate = video=0 audio=0
+get vcodecs = @null
+get acodecs = @null
+echo no-file
+get resolutions = []
+get maxfps = 0
+get maxbitrate = video=0 audio=0
+get vcodecs = @null
+get acodecs = @null

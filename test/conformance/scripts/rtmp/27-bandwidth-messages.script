@@ -1,0 +1,18 @@
+# Window Ack Size / Set Peer Bandwidth with the minimal 4-byte body (R88, R89). The reference reads 4 bytes without checking
+# the body length (D-4); the short-body forms are in script 28.
+new
+clock 1000
+seturl rtmp://h/a
+enablewrite
+set flashver FMLE
+feed 03
+feed_s1 0 1000 00000000
+feed_echo
+connect
+feed 02000000000004060000000000003039
+feed 0200000000000506000000000000303901
+feed 02000000000004050000000000000309
+client
+client
+client
+state

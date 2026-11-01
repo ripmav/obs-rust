@@ -1,0 +1,39 @@
+# CORE. Modified-callback rules of obs-x264. props_apply runs the callback of every
+# property that has one (rate_control, use_bufsize) with the given settings.
+# crf visible unless rc is CBR/ABR; bitrate and use_bufsize hidden for CRF;
+# buffer_size visible only if use_bufsize and rc != CRF.
+data D
+x264_defaults D
+x264_props P
+echo defaults-CBR-bufsize-off
+props_apply P D
+props_vis P
+set D use_bufsize bool 1
+props_apply P D
+props_vis P
+echo ABR
+set D rate_control str ABR
+props_apply P D
+props_vis P
+echo VBR
+set D rate_control str VBR
+props_apply P D
+props_vis P
+echo CRF-hides-bitrate-use_bufsize-and-buffer_size
+set D rate_control str CRF
+props_apply P D
+props_vis P
+echo rate-control-comparison-is-case-insensitive
+set D rate_control str crf
+props_apply P D
+props_vis P
+set D rate_control str cbr
+props_apply P D
+props_vis P
+echo unknown-rate-control-behaves-like-neither-abr-nor-crf
+set D rate_control str bogus
+props_apply P D
+props_vis P
+set D rate_control str ""
+props_apply P D
+props_vis P

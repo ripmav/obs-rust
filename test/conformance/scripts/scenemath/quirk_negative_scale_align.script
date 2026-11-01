@@ -1,0 +1,21 @@
+# QUIRK: the pixel size used for alignment is the float product truncated toward zero and carried as a signed
+# integer, so flipped items (negative scale) get a NEGATIVE half-size shift (origin moves the opposite way), and
+# the halving truncates toward zero. 101x51 source, centre alignment.
+source odd 101 51
+scene main
+add main odd c
+align c 0
+pos c 500 500
+scale c -1.5 1
+print c
+scale c 1.5 -1
+print c
+scale c -1.5 -1.5
+print c
+echo -- same with right/bottom alignment: the full (negative) size is added
+align c 10
+print c
+echo -- scale below one pixel truncates to 0: no shift
+scale c 0.009 0.009
+align c 0
+print c

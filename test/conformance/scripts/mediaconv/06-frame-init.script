@@ -1,0 +1,53 @@
+# video_frame_init: linesizes per plane, and where each plane starts inside the single allocation.
+# Every plane occupies linesize*height bytes rounded UP to a multiple of 32 (the allocator alignment);
+# data[i] (i >= 1) = data[0] + sum of the rounded sizes of planes 0..i-1.
+# "offsets:" prints data[i]-data[0], "-" for unused planes. aligned32 shows data[0] is 32-aligned.
+# I420 6x5: planes 6*5=30 ->32, 3*3=9 ->32 ; offsets 0 32 64.
+frame_init 0 1 6 5
+# 4x2: 8 -> 32, 2*1 = 2 -> 32
+frame_init 0 1 4 2
+# NV12 6x5: luma 30 -> 32 ; chroma 6*3 = 18 -> 32
+frame_init 0 2 6 5
+# a plane that is exactly a multiple of 32 is not padded: 32x2 I420 = 64 | 16*1=16 -> 32
+frame_init 0 1 32 2
+frame_init 0 1 64 2
+frame_init 0 1 10 4
+frame_init 0 2 10 4
+frame_init 0 3 10 4
+frame_init 0 4 10 4
+frame_init 0 5 10 4
+frame_init 0 6 10 4
+frame_init 0 7 10 4
+frame_init 0 8 10 4
+frame_init 0 9 10 4
+frame_init 0 10 10 4
+frame_init 0 11 10 4
+frame_init 0 12 10 4
+frame_init 0 13 10 4
+frame_init 0 14 10 4
+frame_init 0 15 10 4
+frame_init 0 16 10 4
+frame_init 0 17 10 4
+frame_init 0 18 10 4
+frame_init 0 19 10 4
+frame_init 0 20 10 4
+frame_init 0 21 10 4
+frame_init 0 22 10 4
+frame_init 0 23 10 4
+frame_init 0 24 10 4
+frame_init 0 25 10 4
+# odd sizes
+frame_init 0 1 5 3
+frame_init 0 13 5 3
+frame_init 0 14 5 3
+frame_init 0 24 7 3
+frame_init 0 11 3 3
+# DEFECT D-1: when the total size is 0 (NONE, unknown format, width 0 or height 0) the reference
+# asks the allocator for 0 bytes, which terminates the process: "result crash" (the crash handler line is
+# dropped from the comparison). A conforming implementation must not allocate or abort: the safe-Rust API
+# returns an error and its runner prints "result crash"; the C-ABI wrapper leaves the frame zeroed. See spec D-1.
+forked frame_init 0 0 4 4
+forked frame_init 0 26 4 4
+forked frame_init 0 1 0 4
+forked frame_init 0 1 4 0
+forked frame_init 0 6 0 0

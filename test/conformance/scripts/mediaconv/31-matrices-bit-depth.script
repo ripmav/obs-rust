@@ -1,0 +1,31 @@
+# video_format_get_parameters_for_format: the bit depth comes from the format.
+#   10 bits: I010 P010 I210 V210 R10L ; 12 bits: I412 YA2L ; 16 bits: P216 P416 ; every other value (incl. NONE and
+#   unknown numbers) -> 8 bits. The matrix is scaled by (2^bpc - 1), the range minimum/maximum by 2^(bpc-8).
+# The range min/max values are  16/(2^bpc-1)... see the spec for the formulas.
+# Format numbers: I420=1 RGBA=6 I010=17 P010=18 I210=19 I412=20 YA2L=21 P216=22 P416=23 V210=24 R10L=25
+vparams 2 1 1
+vparams 2 2 1
+vparams 2 1 6
+vparams 2 2 6
+vparams 2 1 17
+vparams 2 2 17
+vparams 2 1 18
+vparams 2 2 18
+vparams 2 1 19
+vparams 2 2 19
+vparams 2 1 20
+vparams 2 2 20
+vparams 2 1 21
+vparams 2 2 21
+vparams 2 1 22
+vparams 2 2 22
+vparams 2 1 23
+vparams 2 2 23
+vparams 2 1 24
+vparams 2 2 24
+vparams 2 1 25
+vparams 2 2 25
+vparams 2 1 0
+vparams 2 2 0
+vparams 2 1 26
+vparams 2 2 26

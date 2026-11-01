@@ -1,0 +1,33 @@
+# End of input handling: a clean EOF, a truncated info and a truncated payload all end with exit 0 and a finished file;
+# the packets before the damage are kept.
+reset
+rmfile @q.nut
+args @q.nut 1 0 h264 6000 640 360 1 1 1 1 1 0 25 1 0 "" ""
+hdr video 0 0164001fffe100046764001f01000468ce3c80
+frame video 0 1 0 0 4 a1
+frame video 0 0 1 1 4 a2
+echo --- clean EOF
+run
+probe @q.nut
+echo --- 5 bytes of a third info structure
+raw 0200000000
+run
+probe @q.nut
+echo --- complete third info announcing 10 bytes, only 3 present
+reset
+args @q.nut 1 0 h264 6000 640 360 1 1 1 1 1 0 25 1 0 "" ""
+hdr video 0 0164001fffe100046764001f01000468ce3c80
+frame video 0 1 0 0 4 a1
+info video 0 0 2 2 10
+raw 010203
+run
+probe @q.nut
+echo --- a packet with no payload (size 0)
+reset
+args @q.nut 1 0 h264 6000 640 360 1 1 1 1 1 0 25 1 0 "" ""
+hdr video 0 0164001fffe100046764001f01000468ce3c80
+frame video 0 1 0 0 4 a1
+info video 0 0 1 1 0
+frame video 0 0 2 2 4 a3
+run
+probe @q.nut

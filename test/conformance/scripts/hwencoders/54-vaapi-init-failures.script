@@ -1,0 +1,22 @@
+# S-050 obs-ffmpeg-vaapi: failure of each libav step in the init chain -> create returns NULL (and
+# the partial state is released). Steps: 1 hw device, 2 frames-context alloc, 3 frames init,
+# 4 frame alloc, 5 frame buffer, 6 codec open, 100 encoder not found.
+va_defaults h264
+set str rate_control CBR
+va_fail 1
+va_create h264
+va_fail 2
+va_create h264
+va_fail 3
+va_create h264
+va_fail 4
+va_create h264
+va_fail 5
+va_create h264
+va_fail 6
+va_create h264
+va_fail 100
+va_create h264
+va_fail 0
+va_create h264
+va_destroy

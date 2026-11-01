@@ -1,0 +1,30 @@
+# text lookup: Key="Value" lines, unquoted values, comments, lookup misses (CORE).
+# Files are written with fputs (script escapes apply: \n is a newline in the file).
+fputs tb-1 "Key1=\"Hello World\"\nKey2=Plain\n# a comment line\nKey3=\"quoted\" # trailing comment\nBasic.Dotted-Name_1=\"dotted\"\nNum=-5.5\n"
+tl_create 0 tb-1
+tl_get 0 Key1
+tl_get 0 Key2
+tl_get 0 Key3
+tl_get 0 Basic.Dotted-Name_1
+tl_get 0 Num
+tl_get 0 key1
+tl_get 0 KEY1
+tl_get 0 Key
+tl_get 0 Key11
+tl_get 0 ""
+tl_get 0 "#"
+tl_get 0 "a comment"
+tl_destroy 0
+tl_get 0 Key1
+fputs tb-2 "\n\n\nA=\"1\"\n\n\nB=\"2\""
+tl_create 0 tb-2
+tl_get 0 A
+tl_get 0 B
+tl_destroy 0
+fputs tb-3 "\n"
+tl_create 0 tb-3
+tl_get 0 A
+tl_destroy 0
+funlink tb-1
+funlink tb-2
+funlink tb-3

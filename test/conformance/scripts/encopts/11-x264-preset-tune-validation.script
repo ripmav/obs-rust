@@ -1,0 +1,22 @@
+# CORE/QUIRK. x264_param_default_preset is called with validate_preset(preset): invalid
+# presets fall back to "veryfast" with a warning, but an EMPTY preset string is passed on as
+# "" (the validator returns empty strings unchanged). Tune: invalid -> NULL (no tune),
+# empty -> "" (passed as-is). x264 libraries treat "" like no tune.
+data D
+x264_defaults D
+echo empty-preset
+set D preset str ""
+x264_settings D
+echo invalid-preset-in-settings
+set D preset str Fast
+x264_settings D
+echo invalid-tune-in-settings
+set D preset str slow
+set D tune str bogus
+x264_settings D
+echo valid-tune
+set D tune str stillimage
+x264_settings D
+echo preset-failure-makes-update-fail-and-skips-params
+x264_fail preset
+x264_settings D

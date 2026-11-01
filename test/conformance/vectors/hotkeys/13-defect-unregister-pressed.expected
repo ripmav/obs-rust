@@ -1,0 +1,22 @@
+signal hotkey_register id=0
+reg A -> 0
+signal hotkey_register id=1
+reg B -> 1
+signal hotkey_bindings_changed id=0
+signal hotkey_bindings_changed id=1
+poll
+poll
+cb A pressed=1
+unregister-pressed
+signal hotkey_unregister id=0
+cb A pressed=0
+b 0 hk=1 mods=0x0 key=OBS_KEY_B pressed=0 modmatch=1 hkptr_ok=1
+b 1 hk=1 mods=0x0 key=OBS_KEY_C pressed=0 modmatch=1 hkptr_ok=1
+enumb done
+only-the-last-pressed-binding-causes-the-release
+poll
+cb B pressed=1
+poll
+signal hotkey_unregister id=1
+cb B pressed=0
+enumb done

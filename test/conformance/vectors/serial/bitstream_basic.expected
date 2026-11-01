@@ -1,0 +1,32 @@
+bs_state pos=0 sub=0x80 len=6
+bs_bits 8 -> 0x34
+bs_bits 1 -> 0x01
+bs_bits 3 -> 0x07
+bs_state pos=1 sub=0x08 len=6
+bs_bits 4 -> 0x0f
+bs_state pos=2 sub=0x80 len=6
+bs_r8 -> 0xe1
+bs_r16 -> 0x2391
+bs_state pos=5 sub=0x80 len=6
+bs_bit -> 1
+bs_bit -> 0
+bs_bit -> 1
+bs_bit -> 0
+bs_bits 4 -> 0x05
+bs_bits 8 -> 0xc3
+bs_bits 12 -> 0x5c
+bs_state pos=1 sub=0x08 len=2
+bs_bits 4 -> 0x03
+bs_state pos=2 sub=0x80 len=2
+bs_bits 3 -> 0x00
+bs_r16 -> 0x91a2
+bs_state pos=2 sub=0x10 len=3
+bs_bits 3 -> 0x05
+bs_state pos=2 sub=0x02 len=3
+bs_bits 1 -> 0x01
+bs_bits 7 -> 0x00
+bs_bits 0 -> 0x00
+bs_bits -3 -> 0x00
+bs_state pos=1 sub=0x80 len=1
+bs_bits 9 -> 0xfe
+bs_bits 8 -> 0x01

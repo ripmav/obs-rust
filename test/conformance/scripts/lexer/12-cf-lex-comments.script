@@ -1,0 +1,13 @@
+# CORE: comments become one space inside a SPACETAB token (merged with neighbouring blanks); '//' ends before newline;
+# unterminated /* sets unexpected_eof and makes cf_lexer_lex return false (tokens are still produced).
+lex "x /* y */* z / * q //* r\nu"
+tokens lex
+reset
+lex "a /* unterminated"
+tokens lex
+reset
+lex "a/**/b /***/ c /*/ d */ e //"
+tokens lex
+reset
+lex "1/*c*/2 ./*c*/ a//c\nb"
+tokens lex

@@ -1,0 +1,95 @@
+echo ---- NV12 8x4: luma 4 rows, interleaved chroma 2 rows
+av.find_encoder fake_enc -> found
+log info ---------------------------------
+vid_init -> 1
+av.open2 codec=fake_enc bit_rate=1000000 sample_rate=0 channels=0 sample_fmt=-1 strict=0 flags=0 8x4 pix_fmt=23
+vid_init_codec -> 1 initialized=1 vframe=1
+  vframe fmt=23 8x4 range=1 pri=1 trc=1 cs=1 chroma=1
+av.send_frame video pts=0 8x4 fmt=23
+    plane 0 linesize=32 rows: 00010203:b36361fd 10111213:e2c9267d 20212223:fc7f41fd 30313233:2be5067d
+    plane 1 linesize=32 rows: 40414243:7638247d 50515253:c11190fd
+    send -> 0
+av.receive_packet -> 0 size=6 pts=0 dts=0 flags=1
+av.packet_unref
+encode -> 1 received=1 pts=0 dts=0 size=6 type=1 keyframe=1 data=a0a1a2a3a4a5
+av.send_frame video pts=1 8x4 fmt=23
+    plane 0 linesize=32 rows: 00010203:b36361fd 10111213:e2c9267d 20212223:fc7f41fd 30313233:2be5067d
+    plane 1 linesize=32 rows: 40414243:7638247d 50515253:c11190fd
+    send -> 0
+av.receive_packet -> 0 size=4 pts=1 dts=1 flags=0
+av.packet_unref
+encode -> 1 received=1 pts=1 dts=1 size=4 type=1 keyframe=0 data=a0a1a2a3
+av.send_frame NULL -> 0
+av.receive_packet -> eagain
+av.free_context
+echo ---- source rows longer than the destination rows are cut; shorter rows are copied whole
+av.find_encoder fake_enc -> found
+log info ---------------------------------
+vid_init -> 1
+av.open2 codec=fake_enc bit_rate=1000000 sample_rate=0 channels=0 sample_fmt=-1 strict=0 flags=0 4x2 pix_fmt=8
+vid_init_codec -> 1 initialized=1 vframe=1
+  vframe fmt=8 4x2 range=1 pri=1 trc=1 cs=1 chroma=2
+av.send_frame video pts=0 4x2 fmt=8
+    plane 0 linesize=32 rows: 00010203:0913ad65 10111213:08d50f65
+    send -> 0
+av.receive_packet -> eagain
+av.packet_unref
+encode -> 1 received=0
+av.send_frame NULL -> 0
+av.receive_packet -> eagain
+av.free_context
+echo ---- I420 6x5 (odd height): chroma planes get height>>1 = 2 rows, the third row stays untouched
+av.find_encoder fake_enc -> found
+log info ---------------------------------
+vid_init -> 1
+av.open2 codec=fake_enc bit_rate=1000000 sample_rate=0 channels=0 sample_fmt=-1 strict=0 flags=0 6x5 pix_fmt=0
+vid_init_codec -> 1 initialized=1 vframe=1
+  vframe fmt=0 6x5 range=1 pri=1 trc=1 cs=1 chroma=1
+av.send_frame video pts=0 6x5 fmt=0
+    plane 0 linesize=32 rows: 00010203:02fc224a 10111213:cdee0e8a 20212223:8839138a 30313233:cf3079ca 40414243:1095b1ca
+    plane 1 linesize=32 rows: 404142ee:2137127a 505152ee:5e2e736a eeeeeeee:635b1845
+    plane 2 linesize=32 rows: 808182ee:5942fd3a 909192ee:b54f582a eeeeeeee:635b1845
+    send -> 0
+av.receive_packet -> eagain
+av.packet_unref
+encode -> 1 received=0
+av.send_frame NULL -> 0
+av.receive_packet -> eagain
+av.free_context
+echo ---- planes whose source pointer is NULL are skipped
+av.find_encoder fake_enc -> found
+log info ---------------------------------
+vid_init -> 1
+av.open2 codec=fake_enc bit_rate=1000000 sample_rate=0 channels=0 sample_fmt=-1 strict=0 flags=0 6x5 pix_fmt=0
+vid_init_codec -> 1 initialized=1 vframe=1
+  vframe fmt=0 6x5 range=1 pri=1 trc=1 cs=1 chroma=1
+av.send_frame video pts=0 6x5 fmt=0
+    plane 0 linesize=32 rows: 00010203:02fc224a 10111213:cdee0e8a 20212223:8839138a 30313233:cf3079ca 40414243:1095b1ca
+    plane 1 linesize=32 rows: eeeeeeee:635b1845 eeeeeeee:635b1845 eeeeeeee:635b1845
+    plane 2 linesize=32 rows: 808182ee:5942fd3a 909192ee:b54f582a eeeeeeee:635b1845
+    send -> 0
+av.receive_packet -> eagain
+av.packet_unref
+encode -> 1 received=0
+av.send_frame NULL -> 0
+av.receive_packet -> eagain
+av.free_context
+echo ---- YUVA420 8x4: the alpha plane (index 3) is also copied with the chroma height (2 of 4 rows)
+av.find_encoder fake_enc -> found
+log info ---------------------------------
+vid_init -> 1
+av.open2 codec=fake_enc bit_rate=1000000 sample_rate=0 channels=0 sample_fmt=-1 strict=0 flags=0 8x4 pix_fmt=33
+vid_init_codec -> 1 initialized=1 vframe=1
+  vframe fmt=33 8x4 range=1 pri=1 trc=1 cs=1 chroma=1
+av.send_frame video pts=0 8x4 fmt=33
+    plane 0 linesize=32 rows: 00010203:b36361fd 10111213:e2c9267d 20212223:fc7f41fd 30313233:2be5067d
+    plane 1 linesize=32 rows: 40414243:d41ccc81 50515253:63e0b381
+    plane 2 linesize=32 rows: 80818283:01340d01 90919293:7e55ba01
+    plane 3 linesize=32 rows: c0c1c2c3:c662b97d d0d1d2d3:84805efd eeeeeeee:635b1845 eeeeeeee:635b1845
+    send -> 0
+av.receive_packet -> eagain
+av.packet_unref
+encode -> 1 received=0
+av.send_frame NULL -> 0
+av.receive_packet -> eagain
+av.free_context

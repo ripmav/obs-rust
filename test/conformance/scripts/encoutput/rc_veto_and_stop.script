@@ -1,0 +1,27 @@
+# The reconnect callback can veto a reconnect; stopping while a reconnect is pending cancels it.
+video 30 1 1280 720
+audio 48000
+venc v
+aenc a
+out o av,encoded autobegin=1
+set_venc o v
+set_aenc o a
+reconnect_cfg o 5 10
+poke_exp o 1.5
+echo --- veto: the DISCONNECTED code is treated like any error -> stop signal
+reconnect_cb o veto
+start o
+signal_stop o -5
+state o
+echo --- allowed
+reconnect_cb o allow
+start o
+signal_stop o -5
+state o
+echo --- stop while waiting: stop() on a reconnecting output force-stops it
+stop o
+state o
+echo --- non-DISCONNECTED errors never reconnect (unless already reconnecting)
+start o
+signal_stop o -4
+state o

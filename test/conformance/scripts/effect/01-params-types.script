@@ -1,0 +1,50 @@
+# CORE: effect parameter declarations. Every type name is accepted verbatim (the parser does not
+# validate it); the runtime type is derived from the name: float/float2/float3/float4, int/int2/int3/int4,
+# float4x4, bool, string, any name starting with "texture"; everything else is UNKNOWN.
+# "ep" prints the parser's own view (type text, qualifiers), "dump" the resulting effect parameters.
+backend text none
+text a
+uniform float f;
+uniform float2 v2;
+uniform float3 v3;
+uniform float4 v4;
+uniform int i;
+uniform int2 i2;
+uniform int3 i3;
+uniform int4 i4;
+uniform bool b;
+uniform float4x4 m4;
+uniform float3x3 m3;
+uniform float2x2 m22;
+uniform string s;
+uniform texture2d t2;
+uniform texture3d t3;
+uniform texturecube tc;
+uniform texture_anything tx;
+uniform double d;
+uniform half h;
+uniform float5 f5;
+uniform Float F;
+uniform sampler smp;
+@end
+ep a.effect @text:a
+effect e a.effect @text:a
+dump e
+ptype float
+ptype float2
+ptype float3
+ptype float4
+ptype int
+ptype int2
+ptype int3
+ptype int4
+ptype bool
+ptype float4x4
+ptype string
+ptype texture2d
+ptype texture
+ptype textur
+ptype float3x3
+ptype Float
+ptype FLOAT4
+ptype ""

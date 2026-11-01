@@ -1,0 +1,39 @@
+# S-021 the channel-count flags of the onMetaData tag. audiochannels is the number of
+# channels; the booleans stereo, 2.1, 3.1, 4.0, 4.1, 5.1, 7.1 are each (channels == 2, 3, 4, 4, 5, 6, 8).
+# So 4 channels sets BOTH "3.1" and "4.0"; 1, 7 and >8 set none (QUIRK Q-13).
+cfg width 1280
+cfg height 720
+cfg fps 30
+echo channels-0
+cfg channels 0
+meta 0
+echo channels-1
+cfg channels 1
+meta 0
+echo channels-2
+cfg channels 2
+meta 0
+echo channels-3
+cfg channels 3
+meta 0
+echo channels-4
+cfg channels 4
+meta 0
+echo channels-5
+cfg channels 5
+meta 0
+echo channels-6
+cfg channels 6
+meta 0
+echo channels-7
+cfg channels 7
+meta 0
+echo channels-8
+cfg channels 8
+meta 0
+echo channels-9
+cfg channels 9
+meta 0
+echo channels-255
+cfg channels 255
+meta 0

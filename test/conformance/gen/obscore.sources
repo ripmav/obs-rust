@@ -1,0 +1,46 @@
+# S-042 obscore: the runner #includes libobs/obs.c, obs-canvas.c, obs-view.c, obs-display.c; real video-io.c /
+# audio-io.c / format-conversion.c / video-frame.c, obs-data.c, signal/proc/calldata/decl, task queue, profiler,
+# uuid and platform layer are linked. Graphics, graphics thread, hotkeys and the source/output/encoder/service
+# object layer are fakes in obscore_stubs.c. Unreached cross-file symbols (source save/load, audio monitoring,
+# GPU encoding...) are left unresolved on purpose.
+test/conformance/gen/obscore_runner.c
+test/conformance/gen/obscore_stubs.c
+libobs/media-io/video-io.c
+libobs/media-io/audio-io.c
+libobs/media-io/format-conversion.c
+libobs/media-io/video-matrices.c
+libobs/media-io/video-frame.c
+libobs/obs-data.c
+libobs/callback/signal.c
+libobs/callback/calldata.c
+libobs/callback/decl.c
+libobs/callback/proc.c
+libobs/util/cf-lexer.c
+libobs/util/cf-parser.c
+libobs/util/lexer.c
+libobs/util/profiler.c
+libobs/util/task.c
+libobs/util/platform.c
+libobs/util/platform-nix.c
+libobs/util/utf8.c
+libobs/util/bmem.c
+libobs/util/base.c
+libobs/util/threading-posix.c
+libobs/util/dstr.c
+libobs/graphics/vec2.c
+libobs/graphics/vec3.c
+libobs/graphics/vec4.c
+libobs/graphics/quat.c
+libobs/graphics/axisang.c
+libobs/graphics/matrix3.c
+libobs/graphics/matrix4.c
+libobs/graphics/plane.c
+libobs/graphics/math-extra.c
+-ljansson
+-luuid
+-ldl
+-lm
+-no-pie
+-Wno-deprecated-declarations
+-Wl,--unresolved-symbols=ignore-all
+!nostubs

@@ -1,0 +1,18 @@
+fopen a ok
+fread_mbs a rc=5 str="hello"
+ftelli a 5
+fclose a 0
+fopen a ok
+fread_mbs a rc=1 str="a"
+fclose a 0
+fopen a ok
+fread_mbs a rc=5 str="a\nb\r\n"
+fclose a 0
+fopen a ok
+fread_mbs a rc=0 str=@null
+fclose a 0
+quick_read_mbs "hello"
+quick_read_mbs "a\nb\r\n"
+quick_read_mbs @null
+quick_read_mbs @null
+quick_read_mbs @null

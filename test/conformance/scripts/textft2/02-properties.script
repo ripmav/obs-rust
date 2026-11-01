@@ -1,0 +1,8 @@
+# Property sheet of the text source (S-038-R07..R09): order, ranges, types, and the from_file visibility toggle.
+load
+props 2
+echo --- v1 has the same sheet
+props 1
+echo --- text vs text_file visibility
+props_modify 2 1
+props_modify 2 0

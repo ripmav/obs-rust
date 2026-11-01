@@ -1,0 +1,73 @@
+call effect_create file=luma_key_filter.effect -> e1 uniforms=6 techniques=1
+call get_param e1:lumaMax -> ok
+call get_param e1:lumaMin -> ok
+call get_param e1:lumaMaxSmooth -> ok
+call get_param e1:lumaMinSmooth -> ok
+create a -> ok
+render a
+call filter_begin_cs a format=RGBA space=SRGB allow=ALLOW_DIRECT -> 1
+call set_float e1:lumaMax 1
+call set_float e1:lumaMin 0
+call set_float e1:lumaMaxSmooth 0
+call set_float e1:lumaMinSmooth 0
+call filter_end a e1 size=0x0
+call effect_create file=luma_key_filter_v2.effect -> e2 uniforms=6 techniques=1
+call get_param e2:lumaMax -> ok
+call get_param e2:lumaMin -> ok
+call get_param e2:lumaMaxSmooth -> ok
+call get_param e2:lumaMinSmooth -> ok
+create b -> ok
+render b
+call filter_begin_cs b format=RGBA space=SRGB allow=ALLOW_DIRECT -> 1
+call set_float e2:lumaMax 1
+call set_float e2:lumaMin 0
+call set_float e2:lumaMaxSmooth 0
+call set_float e2:lumaMinSmooth 0
+call blend_push
+call blend_function ONE INVSRCALPHA
+call filter_end b e2 size=0x0
+call blend_pop
+call effect_create file=luma_key_filter_v2.effect -> e3 uniforms=6 techniques=1
+call get_param e3:lumaMax -> ok
+call get_param e3:lumaMin -> ok
+call get_param e3:lumaMaxSmooth -> ok
+call get_param e3:lumaMinSmooth -> ok
+create c -> ok
+render c
+call filter_begin_cs c format=RGBA space=SRGB allow=ALLOW_DIRECT -> 1
+call set_float e3:lumaMax 0.75
+call set_float e3:lumaMin 0.25
+call set_float e3:lumaMaxSmooth 0.100000001
+call set_float e3:lumaMinSmooth 0.0500000007
+call blend_push
+call blend_function ONE INVSRCALPHA
+call filter_end c e3 size=0x0
+call blend_pop
+call source_update c deferred=1
+call deferred_update c
+tick c 0.1
+echo update path shared by both versions; v1 still renders through the colour-space path
+call effect_create file=luma_key_filter.effect -> e4 uniforms=6 techniques=1
+call get_param e4:lumaMax -> ok
+call get_param e4:lumaMin -> ok
+call get_param e4:lumaMaxSmooth -> ok
+call get_param e4:lumaMinSmooth -> ok
+create e -> ok
+render e
+call filter_begin_cs e format=RGBA space=SRGB allow=ALLOW_DIRECT -> 1
+call set_float e4:lumaMax 0.75
+call set_float e4:lumaMin 0.25
+call set_float e4:lumaMaxSmooth 0.100000001
+call set_float e4:lumaMinSmooth 0.0500000007
+call filter_end e e4 size=0x0
+render e
+call filter_begin_cs e format=RGBA16F space=SRGB_16F allow=ALLOW_DIRECT -> 1
+call set_float e4:lumaMax 0.75
+call set_float e4:lumaMin 0.25
+call set_float e4:lumaMaxSmooth 0.100000001
+call set_float e4:lumaMinSmooth 0.0500000007
+call filter_end e e4 size=0x0
+render e
+call skip_video_filter e
+render c
+call skip_video_filter c

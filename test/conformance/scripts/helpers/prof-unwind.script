@@ -1,0 +1,18 @@
+# After a mismatched end that does NOT match any open call the open calls stay open; the
+# final correct ends then complete the tree (CORE).
+p_name 0 a
+p_name 1 b
+p_name 2 z
+p_begin
+p_clock 0
+p_start 0
+p_start 1
+p_tick 3000
+p_end 2
+p_tick 4000
+p_end 1
+p_tick 5000
+p_end 0
+p_snap
+p_dump
+p_free

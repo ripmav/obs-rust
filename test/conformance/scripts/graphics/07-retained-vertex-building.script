@@ -1,0 +1,52 @@
+# gs_render_start(true) / gs_render_save / gs_render_stop(true): vertex buffers built from scratch.
+trace 0
+gs_create g
+gs_enter_context g
+trace 1
+dump full
+echo == save returns a new vertex buffer; the backend receives exactly the collected arrays
+gs_render_start 1
+gs_vertex3f 0 0 0
+gs_vertex3f 1 0 0
+gs_vertex3f 0 1 0
+gs_normal3f 0 0 1
+gs_normal3f 0 0 1
+gs_normal3f 0 0 1
+gs_color 0x11223344
+gs_color 0x55667788
+gs_color 0x99aabbcc
+gs_texcoord 0 0 0
+gs_texcoord 1 0 0
+gs_texcoord 0 1 0
+gs_texcoord 0 0 1
+gs_texcoord 1 1 1
+gs_texcoord 2 2 1
+gs_render_save > vb
+gs_vertexbuffer_get_data vb
+echo == the buffer can be drawn and destroyed by the caller
+gs_load_vertexbuffer vb
+gs_draw GS_TRIS 0 3
+gs_vertexbuffer_destroy vb
+echo == save with no vertices returns NULL
+gs_render_start 1
+gs_render_save
+echo == stop with no vertices frees everything and draws nothing
+gs_render_start 1
+gs_render_stop GS_TRIS
+echo == stop draws the saved buffer with draw count 0 (= all) and destroys it
+gs_render_start 1
+gs_vertex2f 0 0
+gs_vertex2f 1 1
+gs_render_stop GS_LINES
+echo == gs_render_save in immediate mode returns NULL
+gs_render_start 0
+gs_vertex2f 1 1
+gs_render_save
+gs_render_stop GS_POINTS
+echo == mismatched counts in retained mode: error logged, the buffer still goes to the backend
+dump flags
+gs_render_start 1
+gs_vertex2f 0 0
+gs_vertex2f 1 0
+gs_color 5
+gs_render_stop GS_LINES

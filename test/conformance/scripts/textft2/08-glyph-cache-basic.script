@@ -1,0 +1,32 @@
+# Glyph cache: glyph_info fields (uv from placement, bearing, 26.6 advance >> 6), max_h, incremental caching,
+# glyph-index sharing and the .notdef glyph (S-038-R38..R50).
+events off
+reset
+ascii 5 8 0 8 384
+font "Sans Serif" - 0 p/sans
+load
+# 'W' wide, 'g' tall with descender, 'i' narrow, a code point 0x1000 sharing glyph index 0x61 with 'a',
+# a negative left bearing and a fractional advance (26.6: 400/64 = 6.25 -> 6, 450 -> 7)
+glyph 0x57 0x57 11 9 1 9 800
+glyph 0x67 0x67 5 12 0 8 384
+glyph 0x69 0x69 2 8 -1 8 450
+glyph 0x1000 0x61 5 8 0 8 384
+glyph 0x71 0x71 4 6 0 6 400
+notdef 6 10 1 10 512
+create s 2
+setfont s "Sans Serif" - 20 0
+set s text "Wgi"
+update s
+state s
+glyphs s 0x57 0x67 0x69 0x61 0x71 0x20 0
+echo --- the code point that shares glyph 0x61 adds nothing; two unmapped code points share glyph 0
+cache s "\xe1\x80\x80"
+cache s "\xc3\xa9\xc3\xa8"
+state s
+glyphs s 0 0x61 0x300
+echo --- caching more text continues where the last glyph ended
+glyph 0x2603 0x300 7 7 0 7 512
+cache s "\xe2\x98\x83"
+glyphs s 0x300
+state s
+texbuf s 553 0 12 3

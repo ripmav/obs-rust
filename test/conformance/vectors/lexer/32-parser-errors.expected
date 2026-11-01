@@ -1,0 +1,16 @@
+parse true
+  at #0 type=NAME str="ab" src=0+2 @1:1
+errors 1 (errors=1 warnings=0 has_errors=1)
+err 0 ERROR file=@null row=1 col=1 msg="plain $1"
+errors 2 (errors=1 warnings=1 has_errors=1)
+err 0 ERROR file=@null row=1 col=1 msg="plain $1"
+err 1 WARNING file=@null row=1 col=1 msg="v=A B C A"
+errors 3 (errors=2 warnings=1 has_errors=1)
+err 0 ERROR file=@null row=1 col=1 msg="plain $1"
+err 1 WARNING file=@null row=1 col=1 msg="v=A B C A"
+err 2 ERROR file=@null row=1 col=1 msg="only2 x$2z"
+next 1
+  at #3 type=NAME str="cd" src=5+2 @2:3
+next 1
+  at #5 type=NAME str="ef" src=8+2 @2:6
+errstr "(null) (1, 1): plain $1\n(null) (1, 1): v=A B C A\n(null) (1, 1): only2 x$2z\n(null) (2, 6): Expected '';''\n(null) (2, 6): Unexpected EOF\n(null) (2, 6): Syntax error\n"

@@ -1,0 +1,39 @@
+opts parse count=3 ignored=0
+  opt 0 "a" "1"
+  opt 1 "b" "2"
+  opt 2 "c" "3"
+opts parse count=2 ignored=0
+  opt 0 "keyint" "60"
+  opt 1 "bframes" "2"
+opts parse count=2 ignored=0
+  opt 0 "a" "b=c"
+  opt 1 "x" "y=z=w"
+opts parse count=1 ignored=1
+  opt 0 "k" "v="
+  ignored 0 "=w"
+echo words-that-are-not-options-are-ignored-in-order
+opts parse count=2 ignored=5
+  opt 0 "a" "1"
+  opt 1 "z" "1"
+  ignored 0 "novalue"
+  ignored 1 "empty="
+  ignored 2 "=noname"
+  ignored 3 "="
+  ignored 4 "=="
+echo runs-of-spaces-and-leading-trailing-spaces-are-skipped
+opts parse count=2 ignored=0
+  opt 0 "a" "1"
+  opt 1 "b" "2"
+opts parse count=0 ignored=0
+echo empty-and-null-input
+opts parse count=0 ignored=0
+opts parse count=0 ignored=0
+echo duplicates-are-kept-in-order
+opts parse count=3 ignored=0
+  opt 0 "a" "1"
+  opt 1 "a" "2"
+  opt 2 "a" "1"
+echo case-is-preserved
+opts parse count=2 ignored=0
+  opt 0 "Preset" "Slow"
+  opt 1 "PRESET" "fast"

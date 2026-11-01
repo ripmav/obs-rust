@@ -1,0 +1,15 @@
+# QUIRK (Q-5). An unknown/empty rate_control string is CBR for the parameters (else-branch)
+# but the property callback treats it as "neither ABR/CBR nor CRF" and shows both the
+# CRF field and the bitrate fields. VBR: parameters use x264's CRF method with a VBV cap
+# (rf = crf setting + vbv-maxrate = bitrate).
+data D
+x264_defaults D
+x264_props P
+set D rate_control str ""
+props_apply P D
+props_vis P
+x264_settings D
+set D rate_control str VBR
+props_apply P D
+props_vis P
+x264_settings D

@@ -1,0 +1,161 @@
+> reset
+> output o
+> venc h264 bitrate=2500 extra=0a0b
+> set str path /v/a.mkv
+> create ffmpeg_muxer
+signal_add "void file_changed(string next_file)"
+proc_add "void split_file(out bool split_file_enabled)"
+create ffmpeg_muxer -> ok
+> start
+unlink "/v/a.mkv"
+pipe create type=w
+  argv[0] "<bin>/obs-ffmpeg-mux"
+  argv[1] "/v/a.mkv"
+  argv[2] "1"
+  argv[3] "0"
+  argv[4] "h264"
+  argv[5] "2500"
+  argv[6] "1280"
+  argv[7] "720"
+  argv[8] "1"
+  argv[9] "1"
+  argv[10] "1"
+  argv[11] "1"
+  argv[12] "1"
+  argv[13] "0"
+  argv[14] "30"
+  argv[15] "1"
+  argv[16] "0"
+  argv[17] ""
+  argv[18] ""
+begin_data_capture
+log info [ffmpeg muxer: 'o'] Writing file '/v/a.mkv'...
+start -> 1
+> knob write_fail_at 1
+> knob err_text boom
+> pkt v pts=0 key=1
+pipe write #1 FAIL
+log warning [ffmpeg muxer: 'o'] os_process_pipe_write for info structure failed
+log warning [ffmpeg muxer: 'o'] ffmpeg-mux: boom
+last_error "boom"
+pipe destroy -> 0
+log info [ffmpeg muxer: 'o'] Output of file '/v/a.mkv' stopped
+signal_stop ENCODE_ERROR
+> state
+state active=0 capturing=0 stopping=0 sent_headers=0 total_bytes=0 stop_ts=0 pipe=0 refs=0
+  path="/v/a.mkv" is_network=0 is_hls=0
+> echo payload_write_fails_helper_unsupported
+payload_write_fails_helper_unsupported
+> start
+unlink "/v/a.mkv"
+pipe create type=w
+  argv[0] "<bin>/obs-ffmpeg-mux"
+  argv[1] "/v/a.mkv"
+  argv[2] "1"
+  argv[3] "0"
+  argv[4] "h264"
+  argv[5] "2500"
+  argv[6] "1280"
+  argv[7] "720"
+  argv[8] "1"
+  argv[9] "1"
+  argv[10] "1"
+  argv[11] "1"
+  argv[12] "1"
+  argv[13] "0"
+  argv[14] "30"
+  argv[15] "1"
+  argv[16] "0"
+  argv[17] ""
+  argv[18] ""
+begin_data_capture
+log info [ffmpeg muxer: 'o'] Writing file '/v/a.mkv'...
+start -> 1
+> knob write_fail_at 2
+> knob destroy_ret -2
+> pkt v pts=0 key=1
+pipe write #2 FAIL
+log warning [ffmpeg muxer: 'o'] os_process_pipe_write for packet data failed
+log warning [ffmpeg muxer: 'o'] ffmpeg-mux: boom
+last_error "boom"
+pipe destroy -> -2
+log info [ffmpeg muxer: 'o'] Output of file '/v/a.mkv' stopped
+signal_stop UNSUPPORTED
+> echo info_write_of_packet_fails_no_stderr
+info_write_of_packet_fails_no_stderr
+> knob destroy_ret 0
+> knob err_text -
+> start
+unlink "/v/a.mkv"
+pipe create type=w
+  argv[0] "<bin>/obs-ffmpeg-mux"
+  argv[1] "/v/a.mkv"
+  argv[2] "1"
+  argv[3] "0"
+  argv[4] "h264"
+  argv[5] "2500"
+  argv[6] "1280"
+  argv[7] "720"
+  argv[8] "1"
+  argv[9] "1"
+  argv[10] "1"
+  argv[11] "1"
+  argv[12] "1"
+  argv[13] "0"
+  argv[14] "30"
+  argv[15] "1"
+  argv[16] "0"
+  argv[17] ""
+  argv[18] ""
+begin_data_capture
+log info [ffmpeg muxer: 'o'] Writing file '/v/a.mkv'...
+start -> 1
+> knob write_fail_at 3
+> pkt v pts=0 key=1
+wire V idx=0 key=0 pts=0 dts=0 size=2 data=0a0b
+pipe write #3 FAIL
+log warning [ffmpeg muxer: 'o'] os_process_pipe_write for info structure failed
+pipe destroy -> 0
+log info [ffmpeg muxer: 'o'] Output of file '/v/a.mkv' stopped
+signal_stop ENCODE_ERROR
+> echo network_output
+network_output
+> reset
+> output n service
+> venc h264 bitrate=2500 extra=0a0b
+> service srt://h:1 K
+> create ffmpeg_mpegts_muxer
+signal_add "void file_changed(string next_file)"
+proc_add "void split_file(out bool split_file_enabled)"
+create ffmpeg_mpegts_muxer -> ok
+> start
+pipe create type=w
+  argv[0] "<bin>/obs-ffmpeg-mux"
+  argv[1] "srt://h:1"
+  argv[2] "1"
+  argv[3] "0"
+  argv[4] "h264"
+  argv[5] "2500"
+  argv[6] "1280"
+  argv[7] "720"
+  argv[8] "1"
+  argv[9] "1"
+  argv[10] "1"
+  argv[11] "1"
+  argv[12] "1"
+  argv[13] "0"
+  argv[14] "30"
+  argv[15] "1"
+  argv[16] "0"
+  argv[17] ""
+  argv[18] ""
+begin_data_capture
+log info [ffmpeg muxer: 'n'] Writing file 'srt://h:1'...
+start -> 1
+> knob write_fail_at 1
+> pkt v pts=0 key=1
+pipe write #1 FAIL
+log warning [ffmpeg muxer: 'n'] os_process_pipe_write for info structure failed
+pipe destroy -> 0
+log info [ffmpeg muxer: 'n'] Output of file 'srt://h:1' stopped
+signal_stop DISCONNECTED

@@ -1,0 +1,75 @@
+> reset
+> output o
+> venc h264 bitrate=2500 extra=0a0b
+> set str path /v/first.mkv
+> set bool split_file 1
+> set int max_time_sec 2
+> set str directory /rec
+> set str format clip%N
+> set str extension mkv
+> create ffmpeg_muxer
+signal_add "void file_changed(string next_file)"
+proc_add "void split_file(out bool split_file_enabled)"
+create ffmpeg_muxer -> ok
+> start
+unlink "/v/first.mkv"
+pipe create type=w
+  argv[0] "<bin>/obs-ffmpeg-mux"
+  argv[1] "/v/first.mkv"
+  argv[2] "1"
+  argv[3] "0"
+  argv[4] "h264"
+  argv[5] "2500"
+  argv[6] "1280"
+  argv[7] "720"
+  argv[8] "1"
+  argv[9] "1"
+  argv[10] "1"
+  argv[11] "1"
+  argv[12] "1"
+  argv[13] "0"
+  argv[14] "30"
+  argv[15] "1"
+  argv[16] "0"
+  argv[17] ""
+  argv[18] ""
+begin_data_capture
+log info [ffmpeg muxer: 'o'] Writing file '/v/first.mkv'...
+start -> 1
+> state_split
+state_split split_file=1 allow_overwrite=0 cur_size=0 cur_time=0 max_size=0 max_time=2000000 manual=0 ready=0 mux_packets=0
+  found_video=0 video_pts_offset=0 found_audio=00 audio_dts_offsets=0,0
+> pkt v pts=1000 dts=1000 key=1 size=4
+wire V idx=0 key=0 pts=0 dts=0 size=2 data=0a0b
+wire V idx=0 key=1 pts=0 dts=0 size=4 data=00010203
+> pkt v pts=1500 dts=1500 key=0 size=4
+wire V idx=0 key=0 pts=500 dts=500 size=4 data=10111213
+> state_split
+state_split split_file=1 allow_overwrite=0 cur_size=10 cur_time=1000000 max_size=0 max_time=2000000 manual=0 ready=0 mux_packets=0
+  found_video=1 video_pts_offset=1000 found_audio=00 audio_dts_offsets=0,0
+> pkt v pts=2999 dts=2999 key=1 size=4
+wire V idx=0 key=1 pts=1999 dts=1999 size=4 data=20212223
+> pkt v pts=3000 dts=3000 key=1 size=4
+mkdirs "/rec"
+log info [ffmpeg muxer: 'o'] Changing output file to '/rec/clip1.mkv'
+wire CHANGE_FILE "/rec/clip1.mkv"
+signal file_changed next_file="/rec/clip1.mkv"
+wire V idx=0 key=0 pts=-1000 dts=-1000 size=2 data=0a0b
+wire V idx=0 key=1 pts=0 dts=0 size=4 data=30313233
+> state_split
+state_split split_file=1 allow_overwrite=0 cur_size=4 cur_time=3000000 max_size=0 max_time=2000000 manual=0 ready=0 mux_packets=0
+  found_video=1 video_pts_offset=3000 found_audio=00 audio_dts_offsets=0,0
+> pkt v pts=3500 dts=3500 key=0 size=4
+wire V idx=0 key=0 pts=500 dts=500 size=4 data=40414243
+> pkt v pts=4999 dts=4999 key=1 size=4
+wire V idx=0 key=1 pts=1999 dts=1999 size=4 data=50515253
+> pkt v pts=5000 dts=5000 key=1 size=4
+mkdirs "/rec"
+log info [ffmpeg muxer: 'o'] Changing output file to '/rec/clip2.mkv'
+wire CHANGE_FILE "/rec/clip2.mkv"
+signal file_changed next_file="/rec/clip2.mkv"
+wire V idx=0 key=0 pts=-3000 dts=-3000 size=2 data=0a0b
+wire V idx=0 key=1 pts=0 dts=0 size=4 data=60616263
+> state
+state active=1 capturing=1 stopping=0 sent_headers=1 total_bytes=34 stop_ts=0 pipe=1 refs=0
+  path="/rec/clip2.mkv" is_network=0 is_hls=0

@@ -1,0 +1,54 @@
+# os_utf8_to_wcs / os_wcs_to_utf8 (+ _ptr forms): wrappers that add NUL termination and strict
+# (flags 0) conversion. DSTSIZE counts the terminator: an output needing n units needs DSTSIZE n+1.
+# (A DSTSIZE of exactly n makes the reference write the terminator one unit past the buffer: D-1,
+# not exercised here.)
+# os_u2w DSTSIZE|null LEN HEX      os_w2u DSTSIZE|null LEN CPS
+os_u2w null auto 48c3a9e282ac
+os_u2w 4 auto 48c3a9e282ac
+os_u2w 5 auto 48c3a9e282ac
+os_u2w 2 auto 48c3a9e282ac
+os_u2w 1 auto 48c3a9e282ac
+os_u2w 0 auto 48c3a9e282ac
+os_u2w 8 auto -
+os_u2w null auto -
+# LEN given: converted bytes only, NUL inside is data
+os_u2w 8 2 616263
+os_u2w 8 len 610062
+os_u2w null len 610062
+os_u2w 8 auto 610062
+# invalid input -> 0, destination becomes the empty string
+os_u2w 8 auto ff
+os_u2w null auto ff
+os_u2w 8 auto 61eda080
+os_u2w 8 auto e282
+# NULL source
+os_u2w 8 auto @null
+os_u2w null auto @null
+# os_wcs_to_utf8: note the buffer limit handed to the converter is DSTSIZE-1 bytes
+os_w2u null auto 48,e9,20ac
+os_w2u 7 auto 48,e9,20ac
+os_w2u 6 auto 48,e9,20ac
+os_w2u 5 auto 48,e9,20ac
+os_w2u 1 auto 48,e9,20ac
+os_w2u 0 auto 48,e9,20ac
+os_w2u 8 auto -
+os_w2u 8 2 48,e9,20ac
+os_w2u 8 len 61,0,62
+os_w2u null len 61,0,62
+os_w2u 8 auto 61,0,62
+os_w2u 8 auto d800
+os_w2u null auto d800
+os_w2u 8 auto @null
+os_w2u null auto @null
+# _ptr: allocates exactly the needed size; NULL input gives a NULL pointer and 0
+# os_u2w_ptr LEN HEX      os_w2u_ptr LEN CPS
+os_u2w_ptr auto 48c3a9e282ac
+os_u2w_ptr auto -
+os_u2w_ptr 1 48c3a9
+os_u2w_ptr auto ff
+os_u2w_ptr auto @null
+os_w2u_ptr auto 48,e9,20ac
+os_w2u_ptr 2 48,e9,20ac
+os_w2u_ptr auto -
+os_w2u_ptr auto d800
+os_w2u_ptr auto @null

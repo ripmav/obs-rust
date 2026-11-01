@@ -1,0 +1,18 @@
+# obs_source_add_active_child / remove_active_child: replay the parent's current show_refs onto the child
+# (the first activate_refs of them as MAIN, the rest AUX). A child that is (transitively) the parent, or the parent
+# itself, is rejected (self-parenting additionally logs a warning).
+kind par input video enum
+create p par P
+create c par C
+create d par D
+child p c
+child c d
+inc_active p
+inc_showing p
+state d
+add_active_child d p
+add_active_child p p
+add_active_child p d
+state d
+remove_active_child p d
+state d

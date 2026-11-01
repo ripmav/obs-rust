@@ -1,0 +1,62 @@
+dump a {s:string[user="hello"],i:number[user=num(I,42,42)],d:number[user=num(D,2,2.5)],b:bool[user=true]}
+get_string a s "hello"
+get_int a i 42
+get_double a d 2.5
+get_bool a b 1
+get_double a i 42
+get_int a d 2
+get_int a neg -2
+get_int a big 3000000000
+get_int a i64 9007199254740993
+get_double a i64 9007199254740992
+get_int a minll -9223372036854775808
+get_double a minll -9.2233720368547758e+18
+byname a five ok
+item_numtype it double
+json a "{\"s\":\"hello\",\"i\":42,\"d\":2.5,\"b\":true,\"neg\":-2.9,\"big\":3000000000.75,\"i64\":9007199254740993,\"minll\":-9223372036854775808,\"five\":5.0}"
+get_string a s ""
+get_int a s 7
+get_int a i 0
+get_string a i "x"
+byname a b ok
+item_type it bool
+item_numtype it invalid
+get_bool a b 0
+dump a {i:string[user="x"],d:number[user=num(D,2,2.5)],b:bool[user=false],neg:number[user=num(D,-2,-2.8999999999999999)],big:number[user=num(D,3000000000,3000000000.75)],i64:number[user=num(I,9007199254740993,9007199254740992)],minll:number[user=num(I,-9223372036854775808,-9.2233720368547758e+18)],five:number[user=num(D,5,5)],s:number[user=num(I,7,7)]}
+echo --- wrong types and missing names read as type default
+get_int a b 0
+get_double a b 0
+get_string a b ""
+get_bool a d 0
+get_bool a i 0
+get_bool a s 0
+get_obj a s null
+get_array a s null
+get_int a nosuch 0
+get_double a nosuch 0
+get_string a nosuch ""
+get_bool a nosuch 0
+get_obj a nosuch null
+get_array a nosuch null
+has_user a nosuch 0
+has_default a nosuch 0
+has_autoselect a nosuch 0
+echo --- NULL strings are stored as the empty string
+get_string a n ""
+has_user a n 1
+get_string a e ""
+echo --- NULL data object is tolerated by readers and writers
+get_int @null x 0
+get_string @null x ""
+get_bool @null x 0
+get_double @null x 0
+get_obj @null x null
+has_user @null x 0
+has_default @null x 0
+json @null @null
+echo --- names are byte strings compared exactly
+get_int a A 1
+get_int a a 2
+get_int a  3
+get_int a with space 4
+names a i d b neg big i64 minll five s n e A a  "with space"

@@ -1,0 +1,22 @@
+# HLS output start(): the helper URL is the service server URL with "{stream_key}" replaced by the key (the printable
+# path keeps the unreplaced URL); the muxer settings string is fixed plus " hls_time=N" when the video encoder has
+# keyint_sec != 0; stream key and settings travel on the command line. start() needs a service.
+reset
+output h service
+venc h264 bitrate=2500 extra=0a0b keyint_sec=4
+create hls
+start
+service https://ingest.example/live/{stream_key}/index.m3u8 k3y
+start
+state
+state_hls
+destroy
+echo no_keyint_sec
+reset
+output h service
+venc h264 bitrate=2500 extra=0a0b
+service https://ingest.example/live/index.m3u8 k3y
+create hls
+start
+state_hls
+destroy

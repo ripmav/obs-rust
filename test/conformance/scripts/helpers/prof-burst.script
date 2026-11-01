@@ -1,0 +1,13 @@
+# Many distinct durations exercise the internal hash table growth and incremental migration;
+# the observable result is still just the multiset of (microsecond value, count) pairs sorted
+# by descending value, plus min/max/count (CORE).
+p_name 0 work
+p_begin
+p_clock 0
+p_burst 0 200 1000 1000 0
+p_burst 0 150 1500 333 7
+p_burst 0 50 100000 0 0
+p_snap
+p_dump
+p_print snap
+p_free

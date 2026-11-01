@@ -1,0 +1,12 @@
+semver 0 0 0 = 0x00000000
+semver 33 0 1 = 0x21000001
+semver 1 2 3 = 0x01020003
+semver 27 2 4 = 0x1b020004
+semver 127 255 65535 = 0x7fffffff
+semver 100 0 0 = 0x64000000
+semver 0 255 0 = 0x00ff0000
+semver 0 0 65535 = 0x0000ffff
+semver 1 0 65536 = 0x01010000
+semver 1 0 131072 = 0x01020000
+semver 0 256 0 = 0x01000000
+semver 0 1 65536 = 0x00010000

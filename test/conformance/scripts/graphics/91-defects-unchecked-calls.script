@@ -1,0 +1,20 @@
+# DEFECTS: functions that dereference the current graphics object without the usual validity check.
+# Each is run in a forked child (see README); a clean implementation SHOULD instead log the same debug
+# message as the checked functions and return the neutral default (required behaviour D-1..D-6 in S-043).
+crash gs_matrix_scale3f - - - - - -
+crash gs_query_sync_capabilities - - - - - -
+crash gs_sync_create - - - - - -
+crash gs_sync_destroy - - - - - -
+crash gs_sync_signal_syncobj_timeline_point - - - - - -
+crash gs_sync_wait - - - - - -
+crash gs_texture_create_from_dmabuf - - - - - -
+echo == with a context: a NULL init-data pointer is dereferenced before the NULL check
+gs_create g
+gs_enter_context g
+crash gs_swapchain_create null
+crash gs_texrender_get_format -
+echo == creation failing after the context was entered leaves the context behind; gs_destroy then never terminates
+gs_leave_context
+fail device_vertexbuffer_create 1
+crash gs_create gx fake
+fail device_vertexbuffer_create 0

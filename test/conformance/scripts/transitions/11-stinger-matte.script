@@ -1,0 +1,49 @@
+# CORE: stinger track matte rendering (layouts horizontal, vertical, mask), color-space techniques and multipliers.
+load quiet
+mdef w=3840 h=1080
+create st obs_stinger_transition str:path=/m/s.mov bool:track_matte_enabled=1 int:track_matte_layout=0
+tick st
+src st w=1920 h=1080
+# horizontal matte: media is [stinger | matte] side by side
+settings st str:path=/m/s2.mov
+tick st
+src media#2 w=3840 h=1080 dur_ns=1000000000 frames=60
+start st
+src st time=0.5
+view 0.5 1 2 1920 1080
+render st
+fields st
+# vertical
+stop st
+settings st int:track_matte_layout=1 bool:invert_matte=1
+tick st
+src media#3 w=1920 h=2160 dur_ns=1000000000 frames=60
+start st
+gfx space=709_extended
+render st
+# mask layout: only the matte composite is drawn
+stop st
+settings st int:track_matte_layout=3
+tick st
+src media#4 w=1920 h=1080
+render st
+# media not ready (inactive): direct render of A before any matte render, B after one
+stop st
+settings st int:track_matte_layout=0
+tick st
+src media#5 w=3840 h=1080 active=0
+start st
+render st
+src media#5 active=1
+render st
+src media#5 active=0
+render st
+# the matte_rendered flag is cleared by the next start
+stop st
+start st
+render st
+# texrender cannot begin
+src media#5 active=1
+gfx begin_ok=0
+render st
+gfx begin_ok=1

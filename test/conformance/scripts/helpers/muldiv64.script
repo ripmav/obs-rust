@@ -1,0 +1,18 @@
+# util_mul_div64(num, mul, div) = floor(num * mul / div) (CORE while the exact result and
+# the intermediate products fit in 64 bits). Every line prints the reference result and the
+# exact mathematical result; for the inputs below they are equal.
+mul_div64 0 5 7
+mul_div64 1 1 1
+mul_div64 10 3 4
+mul_div64 1000000 48000 1000000
+mul_div64 90000 1000 90000
+mul_div64 12345678901 3 7
+mul_div64 0x7fffffff 0x7fffffff 0x7fffffff
+mul_div64 1000000000 1000000000 3
+mul_div64 0xffffffffffffffff 1 1
+mul_div64 0xffffffffffffffff 1 0xffffffffffffffff
+mul_div64 0xffffffffffffffff 1000 1000
+mul_div64 1000000000000 90000 1000000000
+mul_div64 5 4 2
+mul_div64 0xffffffff 0xffffffff 0xffffffff
+mul_div64 3 0x7fffffffffffffff 0x7fffffffffffffff

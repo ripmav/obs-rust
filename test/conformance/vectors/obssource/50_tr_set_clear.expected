@@ -1,0 +1,23 @@
+  cb T create
+log debug source 'T' (tr) created
+create t ok
+  cb A create
+log debug source 'A' (in) created
+create a ok
+  cb B create
+log debug source 'B' (in) created
+create b ok
+tr t A=-(act=1) B=-(act=0) video=0 audio=0 mode=0 manual_val=0 target=0 size=0x0 actual=0x0 start=0 dur=0
+tr_get t size=0x0 scale=0 align=5 active=0
+tr t A=a(act=1) B=-(act=0) video=0 audio=0 mode=0 manual_val=0 target=0 size=0x0 actual=0x0 start=0 dur=0
+state a show_refs=1 activate_refs=1 showing=0 active=0 obs_showing=1 obs_active=1
+tr t A=b(act=1) B=-(act=0) video=0 audio=0 mode=0 manual_val=0 target=0 size=0x0 actual=0x0 start=0 dur=0
+state a show_refs=0 activate_refs=0 showing=0 active=0 obs_showing=0 obs_active=0
+state b show_refs=1 activate_refs=1 showing=0 active=0 obs_showing=1 obs_active=1
+refs a 1
+refs b 2
+tr t A=-(act=1) B=-(act=0) video=0 audio=0 mode=0 manual_val=0 target=0 size=0x0 actual=0x0 start=0 dur=0
+state b show_refs=0 activate_refs=0 showing=0 active=0 obs_showing=0 obs_active=0
+tr t A=-(act=0) B=-(act=0) video=0 audio=0 mode=0 manual_val=0 target=0 size=0x0 actual=0x0 start=0 dur=0
+state a show_refs=0 activate_refs=0 showing=0 active=0 obs_showing=0 obs_active=0
+refs a 1

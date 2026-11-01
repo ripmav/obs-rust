@@ -1,0 +1,58 @@
+> pulse-server pulseaudio 16.1 alsa_input.mic alsa_output.speakers
+> pulse-source alsa_input.mic Mic - s16le 48000 2
+> pulse-defaults
+> set-str device_id alsa_input.mic
+> clock 10000000000
+> pulse-create input
+log info pulse-input: Server name: 'pulseaudio 16.1'
+log info pulse-input: Audio format: s16le, 48000 Hz, 2 channels
+event stream_new name="Src" format=s16le rate=48000 channels=2 map=front-left,front-right
+event connect_record dev="alsa_input.mic" fragsize=4800 maxlength=4294967295 flags=0x2200
+log info pulse-input: Started recording from 'alsa_input.mic'
+state device=alsa_input.mic is_default=0 input=1 stream=1 speakers=STEREO format=s16le rate=48000 bytes_per_frame=4 channels=2 first_ts=0 packets=0 frames=0
+> pulse-chunk data 1920
+> pulse-read
+event stream_drop
+state device=alsa_input.mic is_default=0 input=1 stream=1 speakers=STEREO format=s16le rate=48000 bytes_per_frame=4 channels=2 first_ts=10490000000 packets=1 frames=480
+> clock 10100000000
+> pulse-chunk data 1920
+> pulse-read
+event stream_drop
+state device=alsa_input.mic is_default=0 input=1 stream=1 speakers=STEREO format=s16le rate=48000 bytes_per_frame=4 channels=2 first_ts=10490000000 packets=2 frames=960
+> clock 10500000000
+> pulse-chunk data 1920
+> pulse-read
+event stream_drop
+state device=alsa_input.mic is_default=0 input=1 stream=1 speakers=STEREO format=s16le rate=48000 bytes_per_frame=4 channels=2 first_ts=10490000000 packets=3 frames=1440
+> clock 10500010000
+> pulse-chunk data 1920
+> pulse-read
+event output_audio speakers=2 rate=48000 format=2 frames=480 ts=10490010000
+event stream_drop
+state device=alsa_input.mic is_default=0 input=1 stream=1 speakers=STEREO format=s16le rate=48000 bytes_per_frame=4 channels=2 first_ts=10490000000 packets=4 frames=1920
+> clock 11000000000
+> pulse-chunk data 4800
+> pulse-read
+event output_audio speakers=2 rate=48000 format=2 frames=1200 ts=10975000000
+event stream_drop
+state device=alsa_input.mic is_default=0 input=1 stream=1 speakers=STEREO format=s16le rate=48000 bytes_per_frame=4 channels=2 first_ts=10490000000 packets=5 frames=3120
+> pulse-chunk data 0
+> pulse-read
+state device=alsa_input.mic is_default=0 input=1 stream=1 speakers=STEREO format=s16le rate=48000 bytes_per_frame=4 channels=2 first_ts=10490000000 packets=5 frames=3120
+> pulse-chunk hole 3840
+> pulse-read
+log error pulse-input: Got audio hole of 3840 bytes
+event stream_drop
+state device=alsa_input.mic is_default=0 input=1 stream=1 speakers=STEREO format=s16le rate=48000 bytes_per_frame=4 channels=2 first_ts=10490000000 packets=5 frames=3120
+> pulse-chunk data 1923
+> pulse-read
+event output_audio speakers=2 rate=48000 format=2 frames=480 ts=10990000000
+event stream_drop
+state device=alsa_input.mic is_default=0 input=1 stream=1 speakers=STEREO format=s16le rate=48000 bytes_per_frame=4 channels=2 first_ts=10490000000 packets=6 frames=3600
+> pulse-read-nostream
+read-nostream ok
+> pulse-destroy
+event stream_disconnect
+log info pulse-input: Stopped recording from 'alsa_input.mic'
+log info pulse-input: Got 6 packets with 3600 frames
+pulse-destroy refs=0

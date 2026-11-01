@@ -1,0 +1,28 @@
+# S-050 nvenc: the UHQ tune forces at least 4 b-frames (warning logged); frameIntervalP = bf + 1,
+# except gop == 1 (intra only) which gives 0.
+dump 1
+nvcap dyn_bitrate 1
+defaults h264
+set str tune uhq
+set int bf 0
+create h264 soft
+destroy
+set int bf 2
+create h264 soft
+destroy
+set int bf 4
+create h264 soft
+destroy
+set int bf 6
+create h264 soft
+destroy
+# non-uhq: bf is used as is
+set str tune hq
+set int bf 3
+create h264 soft
+destroy
+# intra only: keyint_sec 1 at 1 fps -> gop 1 -> frameIntervalP 0
+host fps 1 1
+set int keyint_sec 1
+create h264 soft
+destroy

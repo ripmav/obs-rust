@@ -1,0 +1,108 @@
+# ---- drops and decode errors
+minit -> ok
+ff open path=err format=- nobuffer=1 interrupt=0 opts=[]
+minit2 -> ok has_v=1 has_a=0
+ff seek stream=0 target=0 flags=BACKWARD
+ff decoder flush
+ff read #0 stream=0 pts=0 size=4
+cb preload ts=0 fmt=I420 16x16 flip=0 full=0 trc=DEFAULT maxlum=0 flags=0 ls0=16 d0=01 mat0=1.16438 min0=0.0627451 max0=0.921569
+mreset -> 1
+tick -> idle
+cb video ts=0 fmt=I420 16x16 flip=0 full=0 trc=DEFAULT maxlum=0 flags=0 ls0=16 d0=01 mat0=1.16438 min0=0.0627451 max0=0.921569
+ff read #1 stream=0 pts=40 size=0
+ff read #2 stream=0 pts=80 size=4
+ff decoder send #2 -> error
+ff read #3 stream=7 pts=90 size=4
+ff read #4 stream=0 pts=120 size=4
+tick -> played
+sleep 120
+cb video ts=120000000 fmt=I420 16x16 flip=0 full=0 trc=DEFAULT maxlum=0 flags=0 ls0=16 d0=41 mat0=1.16438 min0=0.0627451 max0=0.921569
+ff decoder drain
+ff seek stream=0 target=0 flags=BACKWARD
+ff decoder flush
+ff read #0 stream=0 pts=0 size=4
+cb preload ts=280000000 fmt=I420 16x16 flip=0 full=0 trc=DEFAULT maxlum=0 flags=0 ls0=16 d0=01 mat0=1.16438 min0=0.0627451 max0=0.921569
+cb stop
+tick -> eof
+tick -> idle
+tick -> idle
+tick -> idle
+tick -> idle
+mfree
+# ---- demuxer I/O error
+minit -> ok
+ff open path=rd format=- nobuffer=1 interrupt=0 opts=[]
+minit2 -> ok has_v=1 has_a=0
+ff seek stream=0 target=0 flags=BACKWARD
+ff decoder flush
+ff read #0 stream=0 pts=0 size=4
+cb preload ts=120000000 fmt=I420 16x16 flip=0 full=0 trc=DEFAULT maxlum=0 flags=0 ls0=16 d0=01 mat0=1.16438 min0=0.0627451 max0=0.921569
+mreset -> 1
+tick -> idle
+# the media thread ends here: it calls the stop callback and exits (no further ticks)
+cb video ts=120000000 fmt=I420 16x16 flip=0 full=0 trc=DEFAULT maxlum=0 flags=0 ls0=16 d0=01 mat0=1.16438 min0=0.0627451 max0=0.921569
+ff read #1 -> error -5
+log warning MP: av_read_frame failed: Input/output error (-5)
+cb stop
+tick -> thread-exit
+mfree
+# ---- AVERROR_EXIT ends the stream like EOF
+minit -> ok
+ff open path=ex format=- nobuffer=1 interrupt=0 opts=[]
+minit2 -> ok has_v=1 has_a=0
+ff seek stream=0 target=0 flags=BACKWARD
+ff decoder flush
+ff read #0 stream=0 pts=0 size=4
+cb preload ts=120000000 fmt=I420 16x16 flip=0 full=0 trc=DEFAULT maxlum=0 flags=0 ls0=16 d0=01 mat0=1.16438 min0=0.0627451 max0=0.921569
+mreset -> 1
+tick -> idle
+cb video ts=120000000 fmt=I420 16x16 flip=0 full=0 trc=DEFAULT maxlum=0 flags=0 ls0=16 d0=01 mat0=1.16438 min0=0.0627451 max0=0.921569
+ff read #1 -> error -1414092869
+ff decoder drain
+ff seek stream=0 target=0 flags=BACKWARD
+ff decoder flush
+ff read #0 stream=0 pts=0 size=4
+cb preload ts=160000000 fmt=I420 16x16 flip=0 full=0 trc=DEFAULT maxlum=0 flags=0 ls0=16 d0=01 mat0=1.16438 min0=0.0627451 max0=0.921569
+cb stop
+tick -> eof
+tick -> idle
+tick -> idle
+tick -> idle
+mfree
+# ---- decoder latency of 2 packets
+minit -> ok
+ff open path=lat format=- nobuffer=1 interrupt=0 opts=[]
+minit2 -> ok has_v=1 has_a=0
+ff seek stream=0 target=0 flags=BACKWARD
+ff decoder flush
+ff read #0 stream=0 pts=0 size=4
+ff read #1 stream=0 pts=40 size=4
+ff read #2 stream=0 pts=80 size=4
+cb preload ts=120000000 fmt=I420 16x16 flip=0 full=0 trc=DEFAULT maxlum=0 flags=0 ls0=16 d0=01 mat0=1.16438 min0=0.0627451 max0=0.921569
+mreset -> 1
+tick -> idle
+cb video ts=120000000 fmt=I420 16x16 flip=0 full=0 trc=DEFAULT maxlum=0 flags=0 ls0=16 d0=01 mat0=1.16438 min0=0.0627451 max0=0.921569
+ff read #3 stream=0 pts=120 size=4
+tick -> played
+sleep 40
+cb video ts=160000000 fmt=I420 16x16 flip=0 full=0 trc=DEFAULT maxlum=0 flags=0 ls0=16 d0=11 mat0=1.16438 min0=0.0627451 max0=0.921569
+ff decoder drain
+tick -> played
+sleep 40
+cb video ts=200000000 fmt=I420 16x16 flip=0 full=0 trc=DEFAULT maxlum=0 flags=0 ls0=16 d0=21 mat0=1.16438 min0=0.0627451 max0=0.921569
+tick -> played
+sleep 40
+cb video ts=240000000 fmt=I420 16x16 flip=0 full=0 trc=DEFAULT maxlum=0 flags=0 ls0=16 d0=31 mat0=1.16438 min0=0.0627451 max0=0.921569
+ff seek stream=0 target=0 flags=BACKWARD
+ff decoder flush
+ff read #0 stream=0 pts=0 size=4
+ff read #1 stream=0 pts=40 size=4
+ff read #2 stream=0 pts=80 size=4
+cb preload ts=400000000 fmt=I420 16x16 flip=0 full=0 trc=DEFAULT maxlum=0 flags=0 ls0=16 d0=01 mat0=1.16438 min0=0.0627451 max0=0.921569
+cb stop
+tick -> eof
+tick -> idle
+tick -> idle
+mstate eof=0 active=0 stopping=0 looping=0 pause=0 reset=0 seek=0 seek_next_ts=0 reset_ts=0 preload_frame=0 has_v=1 has_a=0
+  base_ts=160000000 start_ts=0 play_sys_ts=1240000000 next_pts_ns=0 next_ns=0 seek_pos=0 speed=100 cur_space=DEFAULT cur_range=DEFAULT
+  v ready=1 pts=0 next_pts=40000000 last_dur=40000000 eof=0 key=0 pending=0 npkts=0

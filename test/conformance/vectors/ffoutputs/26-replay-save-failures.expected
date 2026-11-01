@@ -1,0 +1,105 @@
+> reset
+> output rb
+> venc h264 bitrate=2500 extra=0a0b
+> set str directory /rec
+> set str format f%N
+> set str extension mp4
+> knob now_ns 1000
+> create replay_buffer
+proc_add "void save()"
+proc_add "void get_last_replay(out string path)"
+signal_add "void saved()"
+signal_add "void saving(ptr output)"
+create replay_buffer -> ok
+> start
+begin_data_capture
+start -> 1
+> pkt v pts=0 key=1 size=4 sys=1
+> knob pipe_fail 1
+> proc save
+> pkt v pts=1 key=0 size=4 sys=1
+signal saving
+mkdirs "/rec"
+pipe create FAIL
+log warning [ffmpeg muxer: 'rb'] Failed to create process pipe
+> state
+state active=1 capturing=1 stopping=0 sent_headers=0 total_bytes=0 stop_ts=0 pipe=0 refs=2
+  path="/rec/f1.mp4" is_network=0 is_hls=0
+> state_rb
+state_rb save_ts=0 keyframes=1 muxing=0 queued=2 mux_packets=0 cur_size=8 cur_time=0 max_size=0 max_time=0
+> knob pipe_fail 0
+> echo header_phase_fails
+header_phase_fails
+> venc_extra -
+> proc save
+> pkt v pts=2 key=0 size=4 sys=1
+signal saving
+mkdirs "/rec"
+pipe create type=w
+  argv[0] "<bin>/obs-ffmpeg-mux"
+  argv[1] "/rec/f2.mp4"
+  argv[2] "1"
+  argv[3] "0"
+  argv[4] "h264"
+  argv[5] "2500"
+  argv[6] "1280"
+  argv[7] "720"
+  argv[8] "1"
+  argv[9] "1"
+  argv[10] "1"
+  argv[11] "1"
+  argv[12] "1"
+  argv[13] "0"
+  argv[14] "30"
+  argv[15] "1"
+  argv[16] "0"
+  argv[17] ""
+  argv[18] ""
+log warning [ffmpeg muxer: 'rb'] Could not write headers for file '/rec/f2.mp4'
+pipe destroy -> 0
+> state
+state active=1 capturing=1 stopping=0 sent_headers=0 total_bytes=0 stop_ts=0 pipe=0 refs=3
+  path="/rec/f2.mp4" is_network=0 is_hls=0
+> venc_extra 0a0b
+> echo write_failure_during_save
+write_failure_during_save
+> knob write_fail_at 3
+> knob err_text broken
+> proc save
+> pkt v pts=3 key=0 size=4 sys=1
+signal saving
+mkdirs "/rec"
+pipe create type=w
+  argv[0] "<bin>/obs-ffmpeg-mux"
+  argv[1] "/rec/f3.mp4"
+  argv[2] "1"
+  argv[3] "0"
+  argv[4] "h264"
+  argv[5] "2500"
+  argv[6] "1280"
+  argv[7] "720"
+  argv[8] "1"
+  argv[9] "1"
+  argv[10] "1"
+  argv[11] "1"
+  argv[12] "1"
+  argv[13] "0"
+  argv[14] "30"
+  argv[15] "1"
+  argv[16] "0"
+  argv[17] ""
+  argv[18] ""
+wire V idx=0 key=0 pts=0 dts=0 size=2 data=0a0b
+pipe write #3 FAIL
+log warning [ffmpeg muxer: 'rb'] os_process_pipe_write for info structure failed
+log warning [ffmpeg muxer: 'rb'] ffmpeg-mux: broken
+last_error "broken"
+pipe destroy -> 0
+log info [ffmpeg muxer: 'rb'] Output of file '/rec/f3.mp4' stopped
+signal_stop ENCODE_ERROR
+log warning [ffmpeg muxer: 'rb'] Could not write packet for file '/rec/f3.mp4'
+> state
+state active=0 capturing=0 stopping=0 sent_headers=0 total_bytes=2 stop_ts=0 pipe=0 refs=4
+  path="/rec/f3.mp4" is_network=0 is_hls=0
+> state_rb
+state_rb save_ts=0 keyframes=1 muxing=0 queued=4 mux_packets=0 cur_size=16 cur_time=0 max_size=0 max_time=0

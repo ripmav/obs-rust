@@ -1,0 +1,10 @@
+# DEFECT: reference crashes. A conforming implementation must not crash (see spec section 8): output of try-blocks is not compared
+# when the expected file says 'try-end crash'.
+writefile emptyfile.h ""
+try parse "#include \"emptyfile.h\"\nx\n" @tmp/main.cf
+try parse ""; next
+try parse ""; peek
+try parse ""; adderror hi 0
+try def Q ; parse "Q"
+try parse "#define A A\nA\n"
+try parse "#define A B\n#define B A\nA\n"

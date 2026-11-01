@@ -1,0 +1,11 @@
+# WASAPI sources: defaults per source type. wasapi_input_capture / wasapi_output_capture default device "default";
+# device-output uses device timing by default, input does not; process output has no defaults.
+s_reset
+s_defaults wasapi_input
+s_dump
+s_reset
+s_defaults wasapi_output
+s_dump
+s_reset
+s_defaults wasapi_process
+s_dump

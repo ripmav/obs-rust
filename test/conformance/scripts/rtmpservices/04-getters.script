@@ -1,0 +1,25 @@
+# S-026 plain getters for rtmp_common: url/key are the stored settings, username/password are NULL,
+# connect-info ids (0 url, 2 stream id, 4 user, 6 password, 8 encrypt passphrase, 10 bearer), can_connect.
+fs-load /mod/data/services.json data/services-ok.json
+protocols RTMP RTMPS SRT RIST
+settings S {"service":"Alpha","server":"rtmp://a.alpha.example/live","key":"secret"}
+new A rtmp_common S
+all A
+echo no-key
+settings S {"service":"Alpha","server":"rtmp://a.alpha.example/live"}
+update A S
+get A key can_connect
+echo no-server
+settings S {"service":"Alpha","key":"secret"}
+update A S
+get A url can_connect
+echo SRT-passphrase-is-the-password-which-is-NULL-for-common
+settings S {"service":"Charlie","server":"srt://charlie.example:9000","key":"k"}
+update A S
+all A
+echo RIST-passphrase-is-the-key
+settings S {"service":"India","server":"rist://india.example:1234","key":"ristkey"}
+update A S
+get A protocol connect:8 connect:2
+echo unknown-connect-type
+get A connect:1 connect:3 connect:99

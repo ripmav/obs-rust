@@ -1,0 +1,16 @@
+# S-035 find_core_module (named lookup used for core modules): BIN is the path WITHOUT extension.
+mkmod core1 @TMP/core/bin/obs-core1.so
+mkdir @TMP/core/data/obs-core1
+find_core @TMP/core/bin/obs-core1 @TMP/core/data/%module% 1
+# data path template with %module%, the name is taken from the last component of BIN
+find_core @TMP/core/bin/obs-core1 @TMP/core/data/obs-core1/ 1
+# only core modules may be found this way
+find_core @TMP/core/bin/obs-core1 @TMP/core/data/%module% 2
+find_core @TMP/core/bin/obs-core1 @TMP/core/data/%module% 0
+# file missing -> false, callback not called; name still output
+find_core @TMP/core/bin/missing @TMP/core/data/%module% 1
+# a "lib" name whose data dir does not exist falls back to the name without lib; BIN has no slash
+mkmod q @TMP/core/bin/libqux.so
+mkdir @TMP/core/data/qux
+find_core @TMP/core/bin/libqux @TMP/core/data/%module% 1
+find_core libfoo @TMP/core/data/%module% 1

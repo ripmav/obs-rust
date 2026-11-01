@@ -1,0 +1,23 @@
+# monitor_capture (legacy), display_capture (duplicator/WGC) defaults and the display capture method choice.
+s_reset
+s_defaults monitor_capture
+s_dump
+s_reset
+s_defaults display_capture
+s_dump
+# m_dup_method METHOD WGC_SUPPORTED DXGI_INDEX BATTERY_FLAG ADAPTERS ; method 0 auto 1 dxgi 2 wgc
+# battery flag: >=128 means "no system battery"; -1 means GetSystemPowerStatus failed
+m_dup_method 0 1 0 128 1
+m_dup_method 0 1 -1 128 1
+m_dup_method 0 1 0 1 1
+m_dup_method 0 1 0 1 2
+m_dup_method 0 1 0 0 3
+m_dup_method 0 1 0 8 2
+m_dup_method 0 1 0 127 2
+m_dup_method 0 1 0 255 2
+m_dup_method 0 1 0 -1 2
+m_dup_method 0 0 -1 128 1
+m_dup_method 1 1 0 128 1
+m_dup_method 1 1 -1 128 1
+m_dup_method 2 1 0 128 1
+m_dup_method 2 0 0 128 1

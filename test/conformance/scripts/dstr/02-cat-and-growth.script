@@ -1,0 +1,28 @@
+# Growth: first allocation = needed, then doubling (or needed if larger).
+cat a
+dump
+cat b
+dump
+cat cdefgh
+dump
+cat ""
+cat @null
+dump
+cat_ch Z
+dump
+ncat 0123456789 4
+dump
+ncat 0123456789 0
+ncat "" 3
+dump
+b:copy XYZ
+ncat_other 2
+dump
+cat_other
+dump
+b:free
+cat_other
+dump
+free
+cat_ch Q
+dump

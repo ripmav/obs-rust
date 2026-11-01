@@ -1,0 +1,17 @@
+# slideshow v2: folder expansion in directory-listing order, extension filter (case-insensitive), skip sub-directories,
+# empty item skipped, non-existing plain file still added (CORE; list order = host readdir order, QUIRK).
+fs_file /s/a.png 1
+fs_file /s/b.png 1
+fs_file /s/c.png 1
+fs_file /s/d.png 1
+img /s/a.png 10 10
+img /s/b.png 20 20
+img /s/c.png 30 30
+img /s/d.png 40 40
+fs_file /s/e.GIF 1
+img /s/e.GIF 5 5
+fs_dir /s a.png notes.txt sub/ b.png noext c.PNG x.webp d.jpeg e.GIF .png
+create ss slideshow_v2 {"files":[{"value":"/s"},{"value":""},{"value":"/missing/z.png"},{"value":"/s/a.png"}]}
+tick 0.016
+state ss
+proc ss total_files

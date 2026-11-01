@@ -1,0 +1,10 @@
+fader_new 0 ok
+fader_set 0 db ret=1
+fader_attach ret=1
+fader_get 0 db=0 def=1 mul=1
+fader_get 0 db=0 def=1 mul=1
+fader_cb 0 -12.0412006
+fader_get 0 db=-12.0412006 def=0.629960537 mul=0.249999985
+fader_cb 0 -1.93820012
+state a audio_ts=0 pending=0 buf=0 last_buf=0 pending_stop=0 timing_set=0 timing_adjust=0 next_ts_min=0 next_sys_ts_min=0 resample_offset=0 failed=0 vol=1 user_vol=0.400000006 muted=0 user_muted=0 actions=3
+fader_get 0 db=-1.93820012 def=0.928317785 mul=0.800000012

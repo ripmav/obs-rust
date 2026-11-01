@@ -1,0 +1,17 @@
+> trace 0
+> gs_create g
+ret 0 created
+> gs_enter_context g
+> trace 1
+> gs_debug_marker_begin 1 0 0 1 Pass
+  dev device_debug_marker_begin name="Pass" color=(1,0,0,1)
+> gs_debug_marker_begin 0 1 0 1 -
+  dev device_debug_marker_begin name="(null)" color=(0,1,0,1)
+> gs_debug_marker_begin_format "frame %s" 42
+  dev device_debug_marker_begin name="frame 42" color=(0.5,0.5,0.5,1)
+> gs_debug_marker_begin_format 0123456789012345678901234567890123456789012345678901234567890123456789
+  dev device_debug_marker_begin name="012345678901234567890123456789012345678901234567890123456789012" color=(0.5,0.5,0.5,1)
+> gs_debug_marker_begin_format null
+  dev device_debug_marker_begin name="(null)" color=(0.5,0.5,0.5,1)
+> gs_debug_marker_end
+  dev device_debug_marker_end

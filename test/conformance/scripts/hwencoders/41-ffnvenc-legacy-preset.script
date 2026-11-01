@@ -1,0 +1,21 @@
+# S-050 obs-ffmpeg-nvenc: old "preset" key (hq/mq/default/...) only when preset has a user value
+# and preset2 has none; "mq" is rewritten to "hq". With both present, preset2 wins.
+reset
+set str preset mq
+set str rate_control CBR
+set int bitrate 3000
+ff_create h264
+ff_destroy
+reset
+set str preset slow
+ff_create h264
+ff_destroy
+reset
+set str preset mq
+set str preset2 p6
+ff_create h264
+ff_destroy
+# nothing set: preset2 = "" etc.
+reset
+ff_create hevc
+ff_destroy

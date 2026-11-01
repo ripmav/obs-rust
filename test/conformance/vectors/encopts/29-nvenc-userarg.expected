@@ -1,0 +1,7 @@
+nv_userarg keyint found=1 value=2
+nv_userarg lookaheadDepth found=1 value=16
+nv_userarg x found=1 value=0
+nv_userarg missing found=0 value=7777
+nv_userarg KEYINT found=0 value=7777
+echo no-opts-set
+nv_userarg keyint found=0 value=7777

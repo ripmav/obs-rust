@@ -1,0 +1,30 @@
+# CORE: cut and fade transitions: creation, rendering as recorded graphics calls, color-space selection.
+load quiet
+create c cut_transition
+render c
+create f fade_transition
+# nonlinear (sRGB) fade: texture setters are not "_srgb", technique Fade
+gfx space=srgb
+view 0.25 1 2 1920 1080
+render f
+# HDR / linear output: _srgb setters, technique FadeLinear
+gfx space=709_extended
+render f
+gfx space=srgb_16f
+render f
+# only one input present (render2 with NULL placeholder): FadeSingle
+gfx space=srgb
+view 0.25 1 - 1920 1080
+render f
+view 0.25 - 2 1920 1080
+render f
+view 0.25 - - 1920 1080
+render f
+view 0.75 1 - 1920 1080
+render f
+view 0.5 1 2 0 0
+render f
+# effect file missing
+gfx effect_fail=1
+create f2 fade_transition
+create c2 cut_transition

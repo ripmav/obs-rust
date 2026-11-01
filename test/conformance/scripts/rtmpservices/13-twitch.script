@@ -1,0 +1,25 @@
+# S-026 Twitch with no ingest list ever downloaded: server list is "Auto" + the JSON servers (only the
+# built-in "Default" ingest exists, count <= 1); server "auto" resolves to that Default ingest after
+# waiting seconds*1000 ms (3 s here) for a download that never arrives. Every lookup waits again.
+fs-load /mod/data/services.json data/services-ok.json
+module-load
+settings S {"service":"Twitch","server":"auto","key":"live_123"}
+new T rtmp_common S
+props P T S
+echo auto-url-waits-3s-then-returns-the-default-ingest
+get T url key
+clock
+echo repeated-lookups-wait-again
+get T url
+clock
+echo explicit-server-is-returned-as-is-without-waiting
+settings S {"service":"Twitch","server":"rtmp://a.twitch.example/app","key":"k"}
+update T S
+get T url
+clock
+echo connect-info-and-can-connect
+settings S {"service":"Twitch","server":"auto","key":"k"}
+update T S
+get T connect:0 can_connect
+clock
+module-unload

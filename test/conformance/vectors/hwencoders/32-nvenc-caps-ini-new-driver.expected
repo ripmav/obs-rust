@@ -1,0 +1,9 @@
+> ini "[general]\nnvenc_supported=true\nnvenc_devices=1\ndriver_ver=555.0\nnvenc_ver=12.2\ncuda_ver=12.0\n[h264]\ncodec_supported=true\n"
+> supported
+os.dlopen "libnvidia-encode.so.1" -> ok
+log info [obs-nvenc] NVENC version: 13.0 (compiled) / 12.2 (driver), CUDA driver version: 12.0, AV1 supported: false
+nvenc_supported -> 1
+> vinfo
+devices=1 driver=555.0
+> brokensplit
+has_broken_split_encoding -> 0

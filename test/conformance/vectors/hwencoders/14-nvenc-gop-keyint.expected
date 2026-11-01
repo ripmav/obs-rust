@@ -1,0 +1,93 @@
+> dump 1
+> nvcap dyn_bitrate 1
+> defaults h264
+> set int keyint_sec 2
+> create h264 soft
+log info [obs-nvenc: 'enc'] settings: 	codec:        H264 	rate_control: cbr 	bitrate:      10000 	keyint:       120 	preset:       p5 	tuning:       hq 	multipass:    qres 	profile:      high 	width:        1920 	height:       1080 	b-frames:     0 	b-ref-mode:   0 	lookahead:    false (0 frames) 	aq:           true 
+nv.InitializeEncoder
+  compact: preset=NV_ENC_PRESET_P5_GUID tuning=HIGH_QUALITY profile=NV_ENC_H264_PROFILE_HIGH_GUID gop=120 P=1 rc=CBR avg=10000000 max=10000000 vbv=10000000 tq=0 qp=0 aq=1 la=0/0 iadapt_off=0 mp=QUARTER
+create -> ok
+> destroy
+nv.DestroyEncoder
+destroyed
+> set int keyint_sec 0
+> create h264 soft
+log info [obs-nvenc: 'enc'] settings: 	codec:        H264 	rate_control: cbr 	bitrate:      10000 	keyint:       250 	preset:       p5 	tuning:       hq 	multipass:    qres 	profile:      high 	width:        1920 	height:       1080 	b-frames:     0 	b-ref-mode:   0 	lookahead:    false (0 frames) 	aq:           true 
+nv.InitializeEncoder
+  compact: preset=NV_ENC_PRESET_P5_GUID tuning=HIGH_QUALITY profile=NV_ENC_H264_PROFILE_HIGH_GUID gop=250 P=1 rc=CBR avg=10000000 max=10000000 vbv=10000000 tq=0 qp=0 aq=1 la=0/0 iadapt_off=0 mp=QUARTER
+create -> ok
+> destroy
+nv.DestroyEncoder
+destroyed
+> host fps 30000 1001
+> set int keyint_sec 2
+> create h264 soft
+log info [obs-nvenc: 'enc'] settings: 	codec:        H264 	rate_control: cbr 	bitrate:      10000 	keyint:       59 	preset:       p5 	tuning:       hq 	multipass:    qres 	profile:      high 	width:        1920 	height:       1080 	b-frames:     0 	b-ref-mode:   0 	lookahead:    false (0 frames) 	aq:           true 
+nv.InitializeEncoder
+  compact: preset=NV_ENC_PRESET_P5_GUID tuning=HIGH_QUALITY profile=NV_ENC_H264_PROFILE_HIGH_GUID gop=59 P=1 rc=CBR avg=10000000 max=10000000 vbv=10000000 tq=0 qp=0 aq=1 la=0/0 iadapt_off=0 mp=QUARTER
+create -> ok
+> destroy
+nv.DestroyEncoder
+destroyed
+> host fps 60 1
+> set int keyint_sec 2
+> set str opts keyint=30
+> create h264 soft
+log info [obs-nvenc: 'enc'] settings: 	codec:        H264 	rate_control: cbr 	bitrate:      10000 	keyint:       30 	preset:       p5 	tuning:       hq 	multipass:    qres 	profile:      high 	width:        1920 	height:       1080 	b-frames:     0 	b-ref-mode:   0 	lookahead:    false (0 frames) 	aq:           true 	user opts:    keyint=30 
+nv.InitializeEncoder
+  compact: preset=NV_ENC_PRESET_P5_GUID tuning=HIGH_QUALITY profile=NV_ENC_H264_PROFILE_HIGH_GUID gop=30 P=1 rc=CBR avg=10000000 max=10000000 vbv=10000000 tq=0 qp=0 aq=1 la=0/0 iadapt_off=0 mp=QUARTER
+create -> ok
+> destroy
+nv.DestroyEncoder
+destroyed
+> set str opts keyint=0
+> create h264 soft
+log info [obs-nvenc: 'enc'] settings: 	codec:        H264 	rate_control: cbr 	bitrate:      10000 	keyint:       250 	preset:       p5 	tuning:       hq 	multipass:    qres 	profile:      high 	width:        1920 	height:       1080 	b-frames:     0 	b-ref-mode:   0 	lookahead:    false (0 frames) 	aq:           true 	user opts:    keyint=0 
+nv.InitializeEncoder
+  compact: preset=NV_ENC_PRESET_P5_GUID tuning=HIGH_QUALITY profile=NV_ENC_H264_PROFILE_HIGH_GUID gop=250 P=1 rc=CBR avg=10000000 max=10000000 vbv=10000000 tq=0 qp=0 aq=1 la=0/0 iadapt_off=0 mp=QUARTER
+create -> ok
+> destroy
+nv.DestroyEncoder
+destroyed
+> set str opts keyint=-5
+> create h264 soft
+log info [obs-nvenc: 'enc'] settings: 	codec:        H264 	rate_control: cbr 	bitrate:      10000 	keyint:       250 	preset:       p5 	tuning:       hq 	multipass:    qres 	profile:      high 	width:        1920 	height:       1080 	b-frames:     0 	b-ref-mode:   0 	lookahead:    false (0 frames) 	aq:           true 	user opts:    keyint=-5 
+nv.InitializeEncoder
+  compact: preset=NV_ENC_PRESET_P5_GUID tuning=HIGH_QUALITY profile=NV_ENC_H264_PROFILE_HIGH_GUID gop=250 P=1 rc=CBR avg=10000000 max=10000000 vbv=10000000 tq=0 qp=0 aq=1 la=0/0 iadapt_off=0 mp=QUARTER
+create -> ok
+> destroy
+nv.DestroyEncoder
+destroyed
+> set str opts keyint=1
+> create h264 soft
+log info [obs-nvenc: 'enc'] settings: 	codec:        H264 	rate_control: cbr 	bitrate:      10000 	keyint:       1 	preset:       p5 	tuning:       hq 	multipass:    qres 	profile:      high 	width:        1920 	height:       1080 	b-frames:     0 	b-ref-mode:   0 	lookahead:    false (0 frames) 	aq:           true 	user opts:    keyint=1 
+nv.InitializeEncoder
+  compact: preset=NV_ENC_PRESET_P5_GUID tuning=HIGH_QUALITY profile=NV_ENC_H264_PROFILE_HIGH_GUID gop=1 P=0 rc=CBR avg=10000000 max=10000000 vbv=10000000 tq=0 qp=0 aq=1 la=0/0 iadapt_off=0 mp=QUARTER
+create -> ok
+> destroy
+nv.DestroyEncoder
+destroyed
+> dump 2
+> set str opts keyint=48
+> create h264 soft
+cuda.ctx_init
+nv.OpenEncodeSessionEx deviceType=CUDA apiVersion=13.0
+nv.GetEncodePresetConfigEx codec=NV_ENC_CODEC_H264_GUID preset=NV_ENC_PRESET_P5_GUID tuning=HIGH_QUALITY
+log info [obs-nvenc: 'enc'] settings: 	codec:        H264 	rate_control: cbr 	bitrate:      10000 	keyint:       48 	preset:       p5 	tuning:       hq 	multipass:    qres 	profile:      high 	width:        1920 	height:       1080 	b-frames:     0 	b-ref-mode:   0 	lookahead:    false (0 frames) 	aq:           true 	user opts:    keyint=48 
+nv.InitializeEncoder
+  params: codec=NV_ENC_CODEC_H264_GUID preset=NV_ENC_PRESET_P5_GUID tuning=HIGH_QUALITY size=1920x1080 dar=1920x1080 fps=60/1 async=0 ptd=1 split=0
+  config: profile=NV_ENC_H264_PROFILE_HIGH_GUID gop=48 frameIntervalP=1
+  rc: mode=CBR avg=10000000 max=10000000 vbv=10000000 vbvInit=0 tq=0 cqP=0 cqB=0 cqI=0 aq=1 aqStrength=8 taq=0
+  rc: lookahead=0 depth=0 iadapt_off=0 badapt_off=0 multipass=QUARTER qpmap=2
+  h264: level=0 idr=48 bref=0 filler=1 repeatSPSPPS=0 disableSPSPPS=0 aud=0 bufSEI=0 timingSEI=1 lossless=0 slice=3/1 chroma=0 inDepth=8 outDepth=8
+  vui: signal=1 full=0 colour=1 prim=1 trc=1 matrix=1
+cuda.init_surfaces n=4
+create -> ok
+> destroy
+nv.DestroyBitstreamBuffer
+nv.DestroyBitstreamBuffer
+nv.DestroyBitstreamBuffer
+nv.DestroyBitstreamBuffer
+nv.DestroyEncoder
+cuda.ctx_free
+destroyed

@@ -1,0 +1,16 @@
+# Force the data to wrap around the end of the buffer.
+reserve 8
+push_back 0102030405060708
+dump
+pop_front 5
+dump
+push_back 090a0b0c
+dump
+peek_front 7
+peek_back 5
+pop_front 4
+dump
+push_back 0d0e0f
+dump
+pop_back 3
+dump

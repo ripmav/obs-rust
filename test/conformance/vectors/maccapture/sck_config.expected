@@ -1,0 +1,46 @@
+sck_config type=0 macos=1400
+  size=3024x1964 (display: pixel size of current display mode; window: frame size in points)
+  queue_depth=8 shows_cursor=true color_space=DisplayP3 background=clear
+  min_frame_interval_seconds=0.015
+  pixel_format=32BGRA
+  captures_audio=true excludes_current_process_audio=true channel_count=2
+sck_config type=0 macos=1500
+  size=2560x1440 (display: pixel size of current display mode; window: frame size in points)
+  queue_depth=8 shows_cursor=false color_space=DisplayP3 background=clear
+  min_frame_interval_seconds=0.03003
+  pixel_format=64RGBAHalf
+  captures_audio=true excludes_current_process_audio=true channel_count=2
+sck_config type=0 macos=1300
+  size=1920x1080 (display: pixel size of current display mode; window: frame size in points)
+  queue_depth=8 shows_cursor=true color_space=DisplayP3 background=clear
+  min_frame_interval_seconds=0.015
+  pixel_format=32BGRA
+  captures_audio=true excludes_current_process_audio=true channel_count=2
+sck_config type=1 macos=1205
+  size=800x600 (display: pixel size of current display mode; window: frame size in points)
+  queue_depth=8 shows_cursor=true color_space=DisplayP3 background=clear
+  min_frame_interval_seconds=0.015
+  pixel_format=32BGRA
+sck_config type=1 macos=1402
+  size=800x600 (display: pixel size of current display mode; window: frame size in points)
+  queue_depth=8 shows_cursor=true color_space=DisplayP3 background=clear
+  min_frame_interval_seconds=0.015
+  pixel_format=32BGRA
+  captures_audio=true excludes_current_process_audio=true channel_count=2
+  include_child_windows=true
+sck_config type=0 macos=1205
+  stream=none (pre-13: only window capture creates a stream, returns success)
+sck_config type=2 macos=1205
+  stream=none (pre-13: only window capture creates a stream, returns success)
+sck_config type=2 macos=1402
+  size=1920x1080 (display: pixel size of current display mode; window: frame size in points)
+  queue_depth=8 shows_cursor=true color_space=DisplayP3 background=clear
+  min_frame_interval=unset (warning logged)
+  pixel_format=32BGRA
+  captures_audio=true excludes_current_process_audio=true channel_count=2
+  include_menu_bar=true
+sck_color_space SRGB
+sck_color_space 709_EXTENDED
+sck_color_space SRGB_16F
+sck_color_space SRGB_16F
+sck_color_space SRGB_16F

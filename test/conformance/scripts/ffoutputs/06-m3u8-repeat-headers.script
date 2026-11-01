@@ -1,0 +1,17 @@
+# A path ending in exactly ".m3u8" makes start() turn on "repeat_headers" in the video encoder settings and call
+# encoder update - even when start() then fails. Other extensions (and ".M3U8") do not.
+reset
+output o
+venc h264 bitrate=2500
+set str path /v/live.m3u8
+capture 0
+create ffmpeg_muxer
+start
+set str path /v/live.M3U8
+start
+set str path /v/live.m3u8x
+start
+set str path /v/noext
+start
+set str path /v.dir/noext
+start

@@ -1,0 +1,40 @@
+# os_strtod(str): strtod over a copy of at most 63 bytes, decimal point forced to the locale's
+# (C locale here: '.'). Prints %.17g.
+strtod 0
+strtod 1
+strtod -1.5
+strtod +2.25
+strtod 0.1
+strtod 1e3
+strtod 1E-3
+strtod .5
+strtod 5.
+strtod 1e400
+strtod -1e400
+strtod 1e-400
+# leading blanks are skipped, trailing garbage ignored, no digits -> 0
+strtod "  12.5"
+strtod "\t7"
+strtod 12abc
+strtod 1.5.5
+strtod abc
+strtod ""
+strtod -
+strtod .
+strtod e5
+strtod 1,5
+# strtod extras: hexadecimal floats, infinity, nan
+strtod 0x10
+strtod 0x1p4
+strtod 0x.8
+strtod -0x1.8p1
+strtod inf
+strtod -Infinity
+strtod INF
+strtod nan
+strtod NaN
+# only the first 63 bytes are examined
+strtod 12345678901234567890123456789012345678901234567890123456789012345678901234567890
+strtod 1000000000000000000000000000000000000000000000000000000000000000000000000000000
+strtod 0.00000000000000000000000000000000000000000000000000000000000000000000000000001
+strtod 1e100000000000000000000000000000000000000000000000000000000000000000000000001

@@ -1,0 +1,22 @@
+# QUIRK: removing an item directly (obs_sceneitem_remove) from a group does not resize the group, and the next
+# update pass does not notice either (only removal of a *source* is noticed); the group stays stale until another
+# child changes.
+source s 200 100
+scene main
+add main s a
+add main s b
+pos a 0 0
+pos b 400 200
+group main g a b
+update main
+scene_size g
+remove b
+scene_size g
+update main
+scene_size g
+print g
+echo -- a later change of the remaining child triggers the resize
+pos a 5 5
+update main
+scene_size g
+print g

@@ -1,0 +1,21 @@
+# Effect files are cached by path inside the graphics object (frontend rule; the language itself is S-020):
+# creating an effect from the same path again returns the same object without touching the backend.
+# gs_get_effect reports the effect set by effect begin (none here).  Effects are destroyed with the context.
+trace 0
+gs_create g
+gs_enter_context g
+trace 1
+file "e.effect" "uniform float4x4 ViewProj;\nstruct VI { float4 pos : POSITION; };\nstruct VO { float4 pos : POSITION; };\nVO VS(VI v) { VO o; o.pos = mul(float4(v.pos.xyz, 1.0), ViewProj); return o; }\nfloat4 PS(VO v) : TARGET { return float4(1.0, 1.0, 1.0, 1.0); }\ntechnique Draw { pass { vertex_shader = VS(v); pixel_shader = PS(v); } }\n"
+gs_get_effect
+gs_effect_create_from_file "e.effect" > e1
+echo == the second request is a cache hit: same object, no backend shader creation
+gs_effect_create_from_file "e.effect" > e2
+same e1 e2
+echo == a different path with the same content is a separate effect
+file "f.effect" "uniform float4x4 ViewProj;\nstruct VI { float4 pos : POSITION; };\nstruct VO { float4 pos : POSITION; };\nVO VS(VI v) { VO o; o.pos = mul(float4(v.pos.xyz, 1.0), ViewProj); return o; }\nfloat4 PS(VO v) : TARGET { return float4(1.0, 1.0, 1.0, 1.0); }\ntechnique Draw { pass { vertex_shader = VS(v); pixel_shader = PS(v); } }\n"
+gs_effect_create_from_file "f.effect" > e3
+same e1 e3
+echo == destroying the graphics object destroys the cached effects inside the context
+trace 1
+gs_leave_context
+gs_destroy g

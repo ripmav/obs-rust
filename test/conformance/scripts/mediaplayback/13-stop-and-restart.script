@@ -1,0 +1,31 @@
+# stop: active=0, stopping=1, reset requested; the next iteration resets and delivers the stop callback.
+# play while active: restarts from the beginning (reset flag).
+media sclip 120000 0
+video 1 1000 16 16 yuv420p frames=3
+pkt 0 0 fdur=40
+pkt 0 40 fdur=40
+pkt 0 80 fdur=40
+endmedia
+clock 1000000000
+minit sclip local=1
+mreset
+mplay 0
+mtickw 0 0
+mtick 2
+echo stop while playing
+mstop
+mstate
+mtickw 1 0
+mstate
+echo stop when inactive does nothing
+mstop
+mstate
+echo play again, then play again while active -> reset flag
+mplay 0
+mtickw 0 0
+mtick 2
+mplay 1
+mstate
+mtick 1
+mstate
+mtick 3

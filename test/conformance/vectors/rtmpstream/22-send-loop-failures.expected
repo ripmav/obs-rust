@@ -1,0 +1,125 @@
+reset ok
+> reset
+reset ok
+> aenc 0 aac 160
+> venc 0 h264 2500
+> service rtmp://h/a KEY - -
+> init_connect
+log info [rtmp stream: 'out'] Dynamic bitrate disabled. The encoder 'enc' does not support on-the-fly bitrate reconfiguration.
+init_connect -> 1
+conn path="rtmp://h/a" key="KEY" user="" pass="" bind_ip="default" addrlen_hint=0 max_shutdown=30 new_socket_loop=0 low_latency=0
+codecs v: 1 0 0 0 0 0 0 0 0 0 a: 1 0 0 0 0 0
+dbr enabled=0 cur=2500 orig=2500 prev=0 est=0 inc=250 audio=160 data_size=0 inc_timeout=0 frames=0
+table n=2
+  [0] 0 0 0 0 0 0 0 0 0 0
+  [1] 2500 0 0 0 0 0 0 0 0 0
+state packets=0 dropped=0 min_priority=0 congestion=0 last_dts_usec=0 drop_thr_usec=700000 pframe_thr_usec=900000 total_bytes=0 active=0 disconnected=0 encode_error=0 sent_headers=0 start_dts_offset=0 got_first=0
+> set active 1
+> pkt audio 100000 0 0
+pkt queued=1 released=0
+state packets=1 dropped=0 min_priority=0 congestion=0 last_dts_usec=0 drop_thr_usec=700000 pframe_thr_usec=900000 total_bytes=0 active=1 disconnected=0 encode_error=0 sent_headers=0 start_dts_offset=100 got_first=1
+> pkt video 200000 3 1
+pkt queued=1 released=0
+state packets=2 dropped=0 min_priority=0 congestion=0 last_dts_usec=200000 drop_thr_usec=700000 pframe_thr_usec=900000 total_bytes=0 active=1 disconnected=0 encode_error=0 sent_headers=0 start_dts_offset=100 got_first=1
+> pkt video 300000 2 0
+pkt queued=1 released=0
+state packets=3 dropped=0 min_priority=0 congestion=0 last_dts_usec=300000 drop_thr_usec=700000 pframe_thr_usec=900000 total_bytes=0 active=1 disconnected=0 encode_error=0 sent_headers=0 start_dts_offset=100 got_first=1
+> fake write_fail_at 4
+> run_send
+fake flv_packet_mux dts_offset=0 header=1
+fake RTMP_Write #1 kind=mux len=10 -> 10
+fake flv_packet_mux dts_offset=0 header=1
+fake RTMP_Write #2 kind=mux len=10 -> 10
+fake flv_packet_mux dts_offset=100 header=0
+fake RTMP_Write #3 kind=mux len=10 -> 10
+fake flv_packet_mux dts_offset=100 header=0
+fake RTMP_Write #4 kind=mux len=10 -> -1
+log info [rtmp stream: 'out'] Disconnected from rtmp://h/a
+fake RTMP_Close
+fake pthread_detach
+fake signal_stop -5
+log info [rtmp stream: 'out'] Freeing 1 remaining packets
+state packets=0 dropped=0 min_priority=0 congestion=0 last_dts_usec=300000 drop_thr_usec=700000 pframe_thr_usec=900000 total_bytes=40 active=0 disconnected=1 encode_error=0 sent_headers=0 start_dts_offset=100 got_first=1
+> reset
+reset ok
+> aenc 0 aac 160
+> venc 0 h264 2500
+> service rtmp://h/a KEY - -
+> init_connect
+log info [rtmp stream: 'out'] Dynamic bitrate disabled. The encoder 'enc' does not support on-the-fly bitrate reconfiguration.
+init_connect -> 1
+conn path="rtmp://h/a" key="KEY" user="" pass="" bind_ip="default" addrlen_hint=0 max_shutdown=30 new_socket_loop=0 low_latency=0
+codecs v: 1 0 0 0 0 0 0 0 0 0 a: 1 0 0 0 0 0
+dbr enabled=0 cur=2500 orig=2500 prev=0 est=0 inc=250 audio=160 data_size=0 inc_timeout=0 frames=0
+table n=2
+  [0] 0 0 0 0 0 0 0 0 0 0
+  [1] 2500 0 0 0 0 0 0 0 0 0
+state packets=0 dropped=0 min_priority=0 congestion=0 last_dts_usec=0 drop_thr_usec=700000 pframe_thr_usec=900000 total_bytes=0 active=0 disconnected=0 encode_error=0 sent_headers=0 start_dts_offset=0 got_first=0
+> set active 1
+> pkt video 200000 3 1
+pkt queued=1 released=0
+state packets=1 dropped=0 min_priority=0 congestion=0 last_dts_usec=200000 drop_thr_usec=700000 pframe_thr_usec=900000 total_bytes=0 active=1 disconnected=0 encode_error=0 sent_headers=0 start_dts_offset=200 got_first=1
+> fake write_fail_at 1
+> fake can_begin 1
+> run_send
+fake flv_packet_mux dts_offset=0 header=1
+fake RTMP_Write #1 kind=mux len=10 -> -1
+log info [rtmp stream: 'out'] Disconnected from rtmp://h/a
+fake RTMP_Close
+fake pthread_detach
+fake signal_stop -5
+state packets=0 dropped=0 min_priority=0 congestion=0 last_dts_usec=200000 drop_thr_usec=700000 pframe_thr_usec=900000 total_bytes=10 active=0 disconnected=1 encode_error=0 sent_headers=0 start_dts_offset=200 got_first=1
+> reset
+reset ok
+> aenc 0 aac 160
+> venc 0 h264 2500
+> service rtmp://h/a KEY - -
+> init_connect
+log info [rtmp stream: 'out'] Dynamic bitrate disabled. The encoder 'enc' does not support on-the-fly bitrate reconfiguration.
+init_connect -> 1
+conn path="rtmp://h/a" key="KEY" user="" pass="" bind_ip="default" addrlen_hint=0 max_shutdown=30 new_socket_loop=0 low_latency=0
+codecs v: 1 0 0 0 0 0 0 0 0 0 a: 1 0 0 0 0 0
+dbr enabled=0 cur=2500 orig=2500 prev=0 est=0 inc=250 audio=160 data_size=0 inc_timeout=0 frames=0
+table n=2
+  [0] 0 0 0 0 0 0 0 0 0 0
+  [1] 2500 0 0 0 0 0 0 0 0 0
+state packets=0 dropped=0 min_priority=0 congestion=0 last_dts_usec=0 drop_thr_usec=700000 pframe_thr_usec=900000 total_bytes=0 active=0 disconnected=0 encode_error=0 sent_headers=0 start_dts_offset=0 got_first=0
+> set active 1
+> enc_flag a 0 no_extra 1
+> pkt video 200000 3 1
+pkt queued=1 released=0
+state packets=1 dropped=0 min_priority=0 congestion=0 last_dts_usec=200000 drop_thr_usec=700000 pframe_thr_usec=900000 total_bytes=0 active=1 disconnected=0 encode_error=0 sent_headers=0 start_dts_offset=200 got_first=1
+> run_send
+log info [rtmp stream: 'out'] Disconnected from rtmp://h/a
+fake RTMP_Close
+fake pthread_detach
+fake signal_stop -5
+state packets=0 dropped=0 min_priority=0 congestion=0 last_dts_usec=200000 drop_thr_usec=700000 pframe_thr_usec=900000 total_bytes=0 active=0 disconnected=1 encode_error=0 sent_headers=0 start_dts_offset=200 got_first=1
+> reset
+reset ok
+> aenc 0 aac 160
+> venc 0 h264 2500
+> service rtmp://h/a KEY - -
+> init_connect
+log info [rtmp stream: 'out'] Dynamic bitrate disabled. The encoder 'enc' does not support on-the-fly bitrate reconfiguration.
+init_connect -> 1
+conn path="rtmp://h/a" key="KEY" user="" pass="" bind_ip="default" addrlen_hint=0 max_shutdown=30 new_socket_loop=0 low_latency=0
+codecs v: 1 0 0 0 0 0 0 0 0 0 a: 1 0 0 0 0 0
+dbr enabled=0 cur=2500 orig=2500 prev=0 est=0 inc=250 audio=160 data_size=0 inc_timeout=0 frames=0
+table n=2
+  [0] 0 0 0 0 0 0 0 0 0 0
+  [1] 2500 0 0 0 0 0 0 0 0 0
+state packets=0 dropped=0 min_priority=0 congestion=0 last_dts_usec=0 drop_thr_usec=700000 pframe_thr_usec=900000 total_bytes=0 active=0 disconnected=0 encode_error=0 sent_headers=0 start_dts_offset=0 got_first=0
+> set active 1
+> enc_flag v 0 no_extra 1
+> pkt video 200000 3 1
+pkt queued=1 released=0
+state packets=1 dropped=0 min_priority=0 congestion=0 last_dts_usec=200000 drop_thr_usec=700000 pframe_thr_usec=900000 total_bytes=0 active=1 disconnected=0 encode_error=0 sent_headers=0 start_dts_offset=200 got_first=1
+> run_send
+fake flv_packet_mux dts_offset=0 header=1
+fake RTMP_Write #1 kind=mux len=10 -> 10
+log info [rtmp stream: 'out'] Disconnected from rtmp://h/a
+fake RTMP_Close
+fake pthread_detach
+fake signal_stop -5
+state packets=0 dropped=0 min_priority=0 congestion=0 last_dts_usec=200000 drop_thr_usec=700000 pframe_thr_usec=900000 total_bytes=10 active=0 disconnected=1 encode_error=0 sent_headers=0 start_dts_offset=200 got_first=1

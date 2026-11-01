@@ -1,0 +1,40 @@
+# Bounds types: 0 none,1 stretch,2 scale-inner,3 scale-outer,4 to-width,5 to-height,6 max-only. Bounds 400x300 on a
+# 200x100 source (aspect 2.0 vs 1.333). bounds_align decides where the item sits inside the box (default 0 = center).
+source s 200 100
+scene main
+add main s c
+pos c 10 20
+align c 5
+bounds c 400 300
+echo -- stretch
+bounds_type c 1
+print c
+echo -- inner (fits entirely inside the box: limited by width)
+bounds_type c 2
+print c
+echo -- outer (covers the box: limited by height)
+bounds_type c 3
+print c
+echo -- to width
+bounds_type c 4
+print c
+echo -- to height
+bounds_type c 5
+print c
+echo -- max-only: source (200x100) fits in the box, stays at scale 1
+bounds_type c 6
+print c
+echo -- max-only with a bigger scale: shrinks like inner
+scale c 3 3
+print c
+echo -- bounds alignment inside the box with inner type
+scale c 1 1
+bounds_type c 2
+bounds_align c 5
+print c
+bounds_align c 10
+print c
+bounds_align c 0
+print c
+echo -- the box (selection rectangle) is always the bounds, whatever the item inside does
+print c

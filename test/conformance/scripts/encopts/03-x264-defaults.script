@@ -1,0 +1,9 @@
+# CORE. obs-x264 defaults table: every key, its type and value, in the order in which the
+# plugin registers them (the order is observable through iteration of the settings object).
+data D
+x264_defaults D
+dump D
+echo explicit-user-values-take-priority-over-defaults
+set D bitrate int 2500
+set D rate_control str VBR
+dump D

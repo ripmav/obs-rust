@@ -1,0 +1,62 @@
+> initnv
+init_nvenc -> 1
+> nvfail NV_ENC_SUCCESS
+nv_failed2(NV_ENC_SUCCESS) -> 0
+> nvfail NV_ENC_ERR_OUT_OF_MEMORY
+host.set_last_error "TooManySessions"
+log error [obs-nvenc] func: call failed: 10 (NV_ENC_ERR_OUT_OF_MEMORY)
+nv_failed2(NV_ENC_ERR_OUT_OF_MEMORY) -> 1
+> nvfail NV_ENC_ERR_INCOMPATIBLE_CLIENT_KEY
+host.set_last_error "TooManySessions"
+log error [obs-nvenc] func: call failed: 21 (NV_ENC_ERR_INCOMPATIBLE_CLIENT_KEY)
+nv_failed2(NV_ENC_ERR_INCOMPATIBLE_CLIENT_KEY) -> 1
+> nvfail NV_ENC_ERR_NO_ENCODE_DEVICE
+host.set_last_error "UnsupportedDevice"
+log error [obs-nvenc] func: call failed: 1 (NV_ENC_ERR_NO_ENCODE_DEVICE)
+nv_failed2(NV_ENC_ERR_NO_ENCODE_DEVICE) -> 1
+> nvfail NV_ENC_ERR_UNSUPPORTED_DEVICE
+host.set_last_error "UnsupportedDevice"
+log error [obs-nvenc] func: call failed: 2 (NV_ENC_ERR_UNSUPPORTED_DEVICE)
+nv_failed2(NV_ENC_ERR_UNSUPPORTED_DEVICE) -> 1
+> nvfail NV_ENC_ERR_INVALID_VERSION
+host.set_last_error "OutdatedDriver"
+log error [obs-nvenc] func: call failed: 15 (NV_ENC_ERR_INVALID_VERSION)
+nv_failed2(NV_ENC_ERR_INVALID_VERSION) -> 1
+> nvfail NV_ENC_ERR_GENERIC
+host.set_last_error "NVENC Error: func: call failed: 20 (NV_ENC_ERR_GENERIC)"
+log error [obs-nvenc] func: call failed: 20 (NV_ENC_ERR_GENERIC)
+nv_failed2(NV_ENC_ERR_GENERIC) -> 1
+> nvfail NV_ENC_ERR_GENERIC "driver says no"
+host.set_last_error "NVENC Error: driver says no (NV_ENC_ERR_GENERIC)"
+log error [obs-nvenc] func: call failed: 20 (NV_ENC_ERR_GENERIC): driver says no
+nv_failed2(NV_ENC_ERR_GENERIC) -> 1
+> nvfail NV_ENC_ERR_GENERIC "::leading colons are stripped"
+host.set_last_error "NVENC Error: leading colons are stripped (NV_ENC_ERR_GENERIC)"
+log error [obs-nvenc] func: call failed: 20 (NV_ENC_ERR_GENERIC): leading colons are stripped
+nv_failed2(NV_ENC_ERR_GENERIC) -> 1
+> nvfail NV_ENC_ERR_GENERIC :::
+host.set_last_error "NVENC Error: func: call failed: 20 (NV_ENC_ERR_GENERIC)"
+log error [obs-nvenc] func: call failed: 20 (NV_ENC_ERR_GENERIC)
+nv_failed2(NV_ENC_ERR_GENERIC) -> 1
+> nvfail NV_ENC_ERR_INVALID_PARAM "bad param"
+host.set_last_error "NVENC Error: bad param (NV_ENC_ERR_INVALID_PARAM)"
+log error [obs-nvenc] func: call failed: 8 (NV_ENC_ERR_INVALID_PARAM): bad param
+nv_failed2(NV_ENC_ERR_INVALID_PARAM) -> 1
+> nvfail NV_ENC_ERR_OUT_OF_MEMORY ignored
+host.set_last_error "TooManySessions"
+log error [obs-nvenc] func: call failed: 10 (NV_ENC_ERR_OUT_OF_MEMORY): ignored
+nv_failed2(NV_ENC_ERR_OUT_OF_MEMORY) -> 1
+> nvfail 99
+host.set_last_error "NVENC Error: func: call failed: 99 (Unknown Error)"
+log error [obs-nvenc] func: call failed: 99 (Unknown Error)
+nv_failed2(Unknown Error) -> 1
+> errname 0
+NV_ENC_SUCCESS
+> errname 1
+NV_ENC_ERR_NO_ENCODE_DEVICE
+> errname 26
+NV_ENC_ERR_NEED_MORE_OUTPUT
+> errname 27
+Unknown Error
+> errname 99
+Unknown Error

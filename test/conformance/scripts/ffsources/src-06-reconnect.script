@@ -1,0 +1,72 @@
+# Network stream reconnect handling (tick + reconnect thread). The harness runs the
+# 'thread' deterministically: it executes when joined (stop event already signalled, so
+# it exits at once) or on the 'thread_run' command (the wait times out).
+data D
+src_defaults D
+set_bool D is_local_file 0
+set_str D input "srt://x:1"
+set_int D reconnect_delay_sec 7
+host_settings D
+src_create S D
+# tick with nothing to destroy: nothing happens
+src_tick S
+# stream ends: media is scheduled for destruction, tick destroys it and starts the reconnect thread
+media_cb stop
+src_dump S
+src_tick S
+src_dump S
+# delay elapsed while the source is inactive and close_when_inactive is off:
+# the media is re-opened but (restart_on_activate, inactive) not started
+thread_run
+src_dump S
+# a frame/audio packet after reconnect clears the 'reconnecting' flag with an info log
+media_cb audio
+src_dump S
+echo ---- a pending thread is joined (it exits at once) before the next one is created
+host_int showing 1
+src_restart S
+media_cb stop
+src_tick S
+src_restart S
+media_cb stop
+src_tick S
+src_dump S
+echo ---- the thread finds a media object that was opened meanwhile: it does nothing
+src_restart S
+thread_run
+echo ---- an update cancels the pending reconnect and re-opens
+media_cb stop
+src_tick S
+src_update S D
+src_dump S
+echo ---- close_when_inactive and inactive: the thread does not re-open, nothing is started
+host_int active 1
+set_bool D close_when_inactive 1
+src_update S D
+host_int active 0
+media_cb stop
+src_tick S
+thread_run
+src_dump S
+echo ---- close_when_inactive but active again: open and start
+host_int active 1
+src_restart S
+media_cb stop
+src_tick S
+thread_run
+echo ---- restart_on_activate false and inactive: the thread re-opens AND starts (reconnecting=true goes to the player)
+set_bool D close_when_inactive 0
+set_bool D restart_on_activate 0
+host_int active 0
+src_update S D
+media_cb stop
+src_tick S
+thread_run
+echo ---- thread creation failure: the reconnecting flag stays set, no thread is recorded as valid
+host_int thread_create_fail 1
+src_restart S
+media_cb stop
+src_tick S
+src_dump S
+host_int thread_create_fail 0
+src_destroy S

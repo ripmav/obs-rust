@@ -1,0 +1,32 @@
+# Channel mask (KSAUDIO speaker mask) <-> OBS speaker layout. Layout numbers: 0 unknown 1 mono 2 stereo 3 2.1
+# 4 4.0 5 4.1 6 5.1 8 7.1. Unknown masks fall back to "the channel count is the layout number" (QUIRK Q-1:
+# 7 channels yields the invalid layout number 7; 9+ yields numbers that are not valid layouts).
+m_ks_to_layout 0x3 2
+m_ks_to_layout 0x4 1
+m_ks_to_layout 0 1
+m_ks_to_layout 0 2
+m_ks_to_layout 0x0B 3
+m_ks_to_layout 0x107 4
+m_ks_to_layout 0x10F 5
+m_ks_to_layout 0x60F 6
+m_ks_to_layout 0x63F 8
+m_ks_to_layout 0x3F 6
+m_ks_to_layout 0x33F 8
+m_ks_to_layout 0 3
+m_ks_to_layout 0 4
+m_ks_to_layout 0 5
+m_ks_to_layout 0 6
+m_ks_to_layout 0 7
+m_ks_to_layout 0 8
+m_ks_to_layout 0 12
+m_ks_to_layout 0x607 2
+# OBS layout -> mask used for the process-loopback client format (stereo..7.1 known; others pass the number through)
+m_layout_to_ks 2
+m_layout_to_ks 3
+m_layout_to_ks 4
+m_layout_to_ks 5
+m_layout_to_ks 6
+m_layout_to_ks 8
+m_layout_to_ks 1
+m_layout_to_ks 0
+m_layout_to_ks 7

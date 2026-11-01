@@ -1,0 +1,51 @@
+all A
+  get protocol = "RTMP"
+  get url = "rtmp://a.alpha.example/live"
+  get key = "secret"
+  get user = @null
+  get pass = @null
+  get can_connect = 1
+  get connect:0 = "rtmp://a.alpha.example/live"
+  get connect:2 = "secret"
+  get connect:4 = @null
+  get connect:6 = @null
+  get connect:8 = @null
+  get connect:10 = @null
+  get resolutions = [1920x1080,1280x720,1280x720,800x600]
+  get maxfps = 30
+  get maxbitrate = video=4000 audio=128
+  get vcodecs = ["h264","hevc","a-very-long-cod"]
+  get acodecs = ["aac","opus"]
+echo no-key
+get key = ""
+get can_connect = 0
+echo no-server
+get url = ""
+get can_connect = 0
+echo SRT-passphrase-is-the-password-which-is-NULL-for-common
+all A
+  get protocol = "SRT"
+  get url = "srt://charlie.example:9000"
+  get key = "k"
+  get user = @null
+  get pass = @null
+  get can_connect = 1
+  get connect:0 = "srt://charlie.example:9000"
+  get connect:2 = "k"
+  get connect:4 = @null
+  get connect:6 = @null
+  get connect:8 = @null
+  get connect:10 = @null
+  get resolutions = []
+  get maxfps = 0
+  get maxbitrate = video=0 audio=0
+  get vcodecs = ["h264"]
+  get acodecs = @null
+echo RIST-passphrase-is-the-key
+get protocol = "RIST"
+get connect:8 = "ristkey"
+get connect:2 = "ristkey"
+echo unknown-connect-type
+get connect:1 = @null
+get connect:3 = @null
+get connect:99 = @null

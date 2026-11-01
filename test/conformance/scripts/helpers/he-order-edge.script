@@ -1,0 +1,12 @@
+# Ordering edge cases (CORE): the loop stops as soon as no node of the wanted family is left
+# ("exit early"); entries of other address families (x) are never moved and never trigger a
+# swap, they only break a run; the algorithm is a single pass, so it does NOT produce a fully
+# alternating list in general.
+he_order 0 h 80 6 6 6 6 4
+he_order 0 h 80 4 4 x 6 6
+he_order 0 h 80 x x 4 4 6 6
+he_order 0 h 80 6 6 x 4
+he_order 0 h 80 4 4 6 6 6 4 4
+he_order 0 h 80 6 6 4 6 6 4 4 4 6
+he_order 0 h 80 x
+he_order 0 h 80 4 x 4 4 6

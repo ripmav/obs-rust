@@ -1,0 +1,229 @@
+ep result=ok
+  errors count=0 has_errors=0
+  ep params=0 structs=1 funcs=0 samplers=0 techniques=0
+  ep_struct 0 name=A vars=2
+    var type=float name=x mapping=@null var_type=IN
+    var type=float2 name=y mapping="TEXCOORD0" var_type=IN
+  error_string=@null
+effect (effect) params=0 techniques=0 viewproj=- world=-
+ep result=ok
+  errors count=0 has_errors=0
+  ep params=0 structs=1 funcs=0 samplers=0 techniques=0
+  ep_struct 0 name=A vars=0
+  error_string=@null
+effect (effect) params=0 techniques=0 viewproj=- world=-
+ep result=ok
+  errors count=0 has_errors=0
+  ep params=0 structs=1 funcs=0 samplers=0 techniques=0
+  ep_struct 0 name=A vars=4
+    var type=float4 name=pos mapping="POSITION" var_type=IN
+    var type=float4 name=col mapping="COLOR" var_type=IN
+    var type=float2 name=uv mapping="TEXCOORD0" var_type=IN
+    var type=float4 name=n mapping="NORMAL" var_type=IN
+  error_string=@null
+effect (effect) params=0 techniques=0 viewproj=- world=-
+ep result=ok
+  errors count=0 has_errors=0
+  ep params=0 structs=1 funcs=0 samplers=0 techniques=0
+  ep_struct 0 name=A vars=2
+    var type=float name=x mapping=@null var_type=IN
+    var type=float name=y mapping=@null var_type=IN
+  error_string=@null
+effect (effect) params=0 techniques=0 viewproj=- world=-
+ep result=ok
+  errors count=0 has_errors=0
+  ep params=0 structs=2 funcs=0 samplers=0 techniques=0
+  ep_struct 0 name=A vars=1
+    var type=float name=x mapping=@null var_type=IN
+  ep_struct 1 name=B vars=2
+    var type=A name=a mapping=@null var_type=IN
+    var type=float name=y mapping=@null var_type=IN
+  error_string=@null
+effect (effect) params=0 techniques=0 viewproj=- world=-
+ep result=ok
+  errors count=0 has_errors=0
+  ep params=0 structs=2 funcs=0 samplers=0 techniques=0
+  ep_struct 0 name=A vars=1
+    var type=float name=x mapping=@null var_type=IN
+  ep_struct 1 name=A vars=1
+    var type=float name=y mapping=@null var_type=IN
+  error_string=@null
+effect (effect) params=0 techniques=0 viewproj=- world=-
+ep result=ok
+  errors count=0 has_errors=0
+  ep params=0 structs=1 funcs=0 samplers=0 techniques=0
+  ep_struct 0 name=A vars=1
+    var type=float name=z mapping=@null var_type=IN
+  error_string=@null
+effect (effect) params=0 techniques=0 viewproj=- world=-
+ep result=ok
+  errors count=0 has_errors=0
+  ep params=0 structs=1 funcs=0 samplers=0 techniques=0
+  ep_struct 0 name=A vars=1
+    var type=float name=z mapping=@null var_type=IN
+  error_string=@null
+effect (effect) params=0 techniques=0 viewproj=- world=-
+ep result=ok
+  errors count=0 has_errors=0
+  ep params=0 structs=1 funcs=0 samplers=0 techniques=0
+  ep_struct 0 name=A vars=1
+    var type=float name=z mapping=@null var_type=IN
+  error_string=@null
+effect (effect) params=0 techniques=0 viewproj=- world=-
+ep result=ok
+  errors count=0 has_errors=0
+  ep params=0 structs=1 funcs=0 samplers=0 techniques=0
+  ep_struct 0 name=A vars=1
+    var type=float name=z mapping=@null var_type=IN
+  error_string=@null
+effect (effect) params=0 techniques=0 viewproj=- world=-
+ep result=fail
+  errors count=1 has_errors=1
+    err 0 error file="s11" row=1 col=32 msg="Unexpected EOF"
+  ep params=0 structs=0 funcs=0 samplers=0 techniques=0
+  error_string="s11 (1, 32): Unexpected EOF\n"
+ep result=fail
+  errors count=1 has_errors=1
+    err 0 error file="s12" row=1 col=23 msg="Expected ';'"
+  ep params=1 structs=0 funcs=0 samplers=0 techniques=0
+  ep_param 0 type=float name=y property=0 const=0 uniform=0 texture=0 array_count=0 annotations=0
+  error_string="s12 (1, 23): Expected ';'\n"
+ep result=ok
+  errors count=0 has_errors=0
+  ep params=1 structs=1 funcs=0 samplers=0 techniques=0
+  ep_param 0 type=float name=y property=0 const=0 uniform=0 texture=0 array_count=0 annotations=0
+  ep_struct 0 name=A vars=1
+    var type=float name=x mapping=@null var_type=IN
+  error_string=@null
+effect (effect) params=1 techniques=0 viewproj=- world=-
+  param 0 name=y type=FLOAT annotations=0 default_size=0 default=-
+ep result=ok
+  errors count=0 has_errors=0
+  ep params=1 structs=1 funcs=0 samplers=0 techniques=0
+  ep_param 0 type=float name=y property=0 const=0 uniform=0 texture=0 array_count=0 annotations=0
+  ep_struct 0 name=A vars=1
+    var type=float name=x mapping="POSITION" var_type=IN
+  error_string=@null
+effect (effect) params=1 techniques=0 viewproj=- world=-
+  param 0 name=y type=FLOAT annotations=0 default_size=0 default=-
+--- errors
+ep result=fail
+  errors count=1 has_errors=1
+    err 0 error file="e1" row=1 col=7 msg="Unexpected EOF"
+  ep params=0 structs=0 funcs=0 samplers=0 techniques=0
+  error_string="e1 (1, 7): Unexpected EOF\n"
+ep result=fail
+  errors count=1 has_errors=1
+    err 0 error file="e2" row=1 col=9 msg="Unexpected EOF"
+  ep params=0 structs=0 funcs=0 samplers=0 techniques=0
+  error_string="e2 (1, 9): Unexpected EOF\n"
+ep result=fail
+  errors count=1 has_errors=1
+    err 0 error file="e3" row=1 col=11 msg="Unexpected EOF"
+  ep params=0 structs=0 funcs=0 samplers=0 techniques=0
+  error_string="e3 (1, 11): Unexpected EOF\n"
+ep result=fail
+  errors count=1 has_errors=1
+    err 0 error file="e4" row=1 col=21 msg="Unexpected EOF"
+  ep params=0 structs=0 funcs=0 samplers=0 techniques=0
+  error_string="e4 (1, 21): Unexpected EOF\n"
+ep result=fail
+  errors count=1 has_errors=1
+    err 0 error file="e5" row=1 col=21 msg="Unexpected EOF"
+  ep params=0 structs=0 funcs=0 samplers=0 techniques=0
+  error_string="e5 (1, 21): Unexpected EOF\n"
+ep result=fail
+  errors count=1 has_errors=1
+    err 0 error file="e6" row=1 col=18 msg="Syntax error"
+  ep params=0 structs=1 funcs=0 samplers=0 techniques=0
+  ep_struct 0 name=A vars=1
+    var type=float name=y mapping=@null var_type=IN
+  error_string="e6 (1, 18): Syntax error\n"
+ep result=fail
+  errors count=1 has_errors=1
+    err 0 error file="e7" row=1 col=22 msg="Syntax error"
+  ep params=0 structs=1 funcs=0 samplers=0 techniques=0
+  ep_struct 0 name=A vars=1
+    var type=float name=y mapping=@null var_type=IN
+  error_string="e7 (1, 22): Syntax error\n"
+ep result=fail
+  errors count=1 has_errors=1
+    err 0 error file="e8" row=1 col=22 msg="Expected 'mapping name'"
+  ep params=0 structs=1 funcs=0 samplers=0 techniques=0
+  ep_struct 0 name=A vars=1
+    var type=float name=y mapping=@null var_type=IN
+  error_string="e8 (1, 22): Expected 'mapping name'\n"
+ep result=fail
+  errors count=1 has_errors=1
+    err 0 error file="e9" row=1 col=12 msg="Expected 'type name'"
+  ep params=0 structs=1 funcs=0 samplers=0 techniques=0
+  ep_struct 0 name=A vars=0
+  error_string="e9 (1, 12): Expected 'type name'\n"
+ep result=fail
+  errors count=2 has_errors=1
+    err 0 error file="e10" row=1 col=8 msg="Expected 'name'"
+    err 1 error file="e10" row=1 col=19 msg="Expected 'type'"
+  ep params=0 structs=0 funcs=0 samplers=0 techniques=0
+  error_string="e10 (1, 8): Expected 'name'\ne10 (1, 19): Expected 'type'\n"
+ep result=fail
+  errors count=2 has_errors=1
+    err 0 error file="e11" row=1 col=17 msg="Expected '{'"
+    err 1 error file="e11" row=1 col=19 msg="Expected 'type'"
+  ep params=0 structs=0 funcs=0 samplers=0 techniques=0
+  error_string="e11 (1, 17): Expected '{'\ne11 (1, 19): Expected 'type'\n"
+ep result=fail
+  errors count=2 has_errors=1
+    err 0 error file="e12" row=1 col=8 msg="Expected 'name'"
+    err 1 error file="e12" row=1 col=23 msg="Unexpected EOF"
+  ep params=0 structs=0 funcs=0 samplers=0 techniques=0
+  error_string="e12 (1, 8): Expected 'name'\ne12 (1, 23): Unexpected EOF\n"
+ep result=fail
+  errors count=1 has_errors=1
+    err 0 error file="e13" row=1 col=18 msg="Expected 'variable name'"
+  ep params=0 structs=1 funcs=0 samplers=0 techniques=0
+  ep_struct 0 name=A vars=0
+  error_string="e13 (1, 18): Expected 'variable name'\n"
+ep result=fail
+  errors count=1 has_errors=1
+    err 0 error file="e14" row=1 col=33 msg="Unexpected EOF"
+  ep params=0 structs=0 funcs=0 samplers=0 techniques=0
+  error_string="e14 (1, 33): Unexpected EOF\n"
+ep result=fail
+  errors count=1 has_errors=1
+    err 0 error file="e15" row=1 col=31 msg="Unexpected EOF"
+  ep params=0 structs=0 funcs=0 samplers=0 techniques=0
+  error_string="e15 (1, 31): Unexpected EOF\n"
+ep result=fail
+  errors count=1 has_errors=1
+    err 0 error file="e16" row=1 col=27 msg="Syntax error"
+  ep params=1 structs=1 funcs=0 samplers=0 techniques=0
+  ep_param 0 type=float name=y property=0 const=0 uniform=0 texture=0 array_count=0 annotations=0
+  ep_struct 0 name=A vars=1
+    var type=float name=x mapping=@null var_type=IN
+  error_string="e16 (1, 27): Syntax error\n"
+ep result=fail
+  errors count=1 has_errors=1
+    err 0 error file="e17" row=1 col=22 msg="Syntax error"
+  ep params=0 structs=1 funcs=0 samplers=0 techniques=0
+  ep_struct 0 name=A vars=0
+  error_string="e17 (1, 22): Syntax error\n"
+ep result=fail
+  errors count=1 has_errors=1
+    err 0 error file="e18" row=1 col=18 msg="Expected 'variable name'"
+  ep params=0 structs=1 funcs=0 samplers=0 techniques=0
+  ep_struct 0 name=A vars=0
+  error_string="e18 (1, 18): Expected 'variable name'\n"
+ep result=fail
+  errors count=2 has_errors=1
+    err 0 error file="e19" row=1 col=24 msg="Expected 'type'"
+    err 1 error file="e19" row=1 col=25 msg="Unexpected EOF"
+  ep params=0 structs=1 funcs=0 samplers=0 techniques=0
+  ep_struct 0 name=A vars=1
+    var type=float name=x mapping=@null var_type=IN
+  error_string="e19 (1, 24): Expected 'type'\ne19 (1, 25): Unexpected EOF\n"
+ep result=fail
+  errors count=2 has_errors=1
+    err 0 error file="e20" row=1 col=23 msg="Expected ';'"
+    err 1 error file="e20" row=1 col=23 msg="Expected 'type'"
+  ep params=0 structs=0 funcs=0 samplers=0 techniques=0
+  error_string="e20 (1, 23): Expected ';'\ne20 (1, 23): Expected 'type'\n"

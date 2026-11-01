@@ -1,0 +1,35 @@
+cmp a 0
+cmp a -1
+cmp a 1
+cmp a 1
+cmpi a 0
+cmpi a 0
+cmpi a -1
+ncmp a 0
+ncmp a -1
+ncmp a 0
+ncmpi a 0
+ncmpi a -1
+find a offset=1
+find_i a offset=1
+find a none
+find a offset=0
+is_empty a 0
+end a 111
+is_empty a 1
+end a 0
+cmp a 0
+cmp a 0
+astrcmpi -1
+astrcmpi 0
+astrcmpi 1
+astrcmpi 0
+astrcmp_n 0
+astrcmp_n -1
+astrcmp_n -1
+astrcmpi_n 0
+astrstri offset=6
+astrstri none
+astrstri offset=0
+astrstri none
+astrstri none

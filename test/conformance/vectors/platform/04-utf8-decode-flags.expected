@@ -1,0 +1,23 @@
+u2w rc=2 cp=61,62
+u2w rc=2 cp=61,0
+u2w rc=2 cp=61,62
+u2w rc=2 cp=61,62
+u2w rc=1 cp=140000
+u2w rc=1 cp=41
+u2w rc=1 cp=41
+u2w rc=1 cp=41
+u2w rc=1 cp=61
+u2w rc=1 cp=61
+u2w rc=0
+u2w rc=1 cp=61
+u2w rc=2 cp=61,62
+u2w rc=0
+u2w rc=2 cp=61,62
+u2w rc=2 cp=feff,61
+u2w rc=1 cp=61
+u2w rc=1 cp=61
+u2w rc=0
+u2w rc=0
+u2w rc=0
+u2w rc=2 cp=61,62
+u2w rc=0

@@ -1,0 +1,56 @@
+# os_generate_formatted_filename: token matching order, unknown tokens, '%' handling, truncation.
+# Matching at each '%': the first table entry that is a prefix wins (table order: %CCYY %YY %MM %DD %hh
+# %mm %ss %% %a %A %b %B %d %H %I %m %M %p %S %y %Y %z %Z, then %FPS %CRES %ORES %VF %s). The
+# replacement is not rescanned. A '%' that starts no known token is dropped (the following
+# characters stay).
+now 1704164645
+tz UTC0
+video 60 1 1920 1080 1280 720 NV12
+# unknown or incomplete tokens lose the '%' only
+fname @null 1 "%q"
+fname @null 1 "%"
+fname @null 1 "a%"
+fname @null 1 "%%%"
+fname @null 1 "%e %j %c %x %X %w %h %k %l %n %t %u %U %V %W %C %D %F %G %g %r %R %T"
+fname @null 1 "%CCY"
+fname @null 1 "%CC"
+fname @null 1 "%FP"
+fname @null 1 "%CRE"
+fname @null 1 "%-d %_d %#d %Ed %Od %5d"
+# longest/first match: %YY is two-digit year, %Y is four digit; %YYYY = %YY + "YY"
+fname @null 1 "%YYYY"
+fname @null 1 "%YYY"
+fname @null 1 "%MMM %mmm %DDD %ddd %hhh %sss %SSS"
+fname @null 1 "%mm|%MM|%m|%M"
+fname @null 1 "%ss|%s|%S"
+fname @null 1 "%hh|%HH|%H|%h"
+fname @null 1 "%DD|%dd|%d|%D"
+fname @null 1 "%CCYYYY"
+# %% yields a single '%' which is not part of a following token
+fname @null 1 "%%"
+fname @null 1 "%%%%"
+fname @null 1 "%%d"
+fname @null 1 "%%Y"
+fname @null 1 "%%FPS"
+fname @null 1 "100%% %Y"
+fname @null 1 "%%%Y"
+fname @null 1 "%%%%%Y"
+# tokens glued together and to text
+fname @null 1 "x%Yy%my%dy"
+fname @null 1 "%FPS%FPS%VF%CRES"
+fname @null 1 "%VF%VF%Vs"
+fname @null 1 "%FPSx %FPS fps"
+# case matters
+fname @null 1 "%yy %YY %Ccyy %CCyy %MM %Mm %hH %SS %ss"
+fname @null 1 "%fps %vf %cres"
+# spaces and extensions
+fname mkv 0 "a b  c"
+fname mkv 1 "a b  c"
+fname mkv 0 " lead and trail "
+fname "a b" 0 "x y"
+fname mkv 0 "tab\there"
+fname mkv 0 "%A %B"
+fname mkv 1 "%A %B"
+fname mkv 0 "%p %I"
+# characters that are not touched: path separators, non-ASCII, '.'
+fname mkv 1 "dir/%Y/sub\\x/é.%m"

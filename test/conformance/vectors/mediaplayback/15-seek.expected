@@ -1,0 +1,81 @@
+minit -> ok
+ff open path=sk format=- nobuffer=1 interrupt=0 opts=[]
+minit2 -> ok has_v=1 has_a=0
+ff seek stream=0 target=0 flags=BACKWARD
+ff decoder flush
+ff read #0 stream=0 pts=0 size=4
+cb preload ts=0 fmt=I420 16x16 flip=0 full=0 trc=DEFAULT maxlum=0 flags=0 ls0=16 d0=01 mat0=1.16438 min0=0.0627451 max0=0.921569
+mreset -> 1
+# seek while inactive is ignored
+mstate eof=0 active=0 stopping=0 looping=0 pause=0 reset=0 seek=0 seek_next_ts=0 reset_ts=0 preload_frame=0 has_v=1 has_a=0
+  base_ts=0 start_ts=0 play_sys_ts=1000000000 next_pts_ns=0 next_ns=0 seek_pos=0 speed=100 cur_space=DEFAULT cur_range=DEFAULT
+  v ready=1 pts=0 next_pts=40000000 last_dur=40000000 eof=0 key=0 pending=0 npkts=0
+tick -> idle
+cb video ts=0 fmt=I420 16x16 flip=0 full=0 trc=DEFAULT maxlum=0 flags=0 ls0=16 d0=01 mat0=1.16438 min0=0.0627451 max0=0.921569
+ff read #1 stream=0 pts=40 size=4
+tick -> played
+sleep 40
+cb video ts=40000000 fmt=I420 16x16 flip=0 full=0 trc=DEFAULT maxlum=0 flags=0 ls0=16 d0=11 mat0=1.16438 min0=0.0627451 max0=0.921569
+ff read #2 stream=0 pts=80 size=4
+tick -> played
+# seek to 290 ms (backwards to key packet at 240)
+mstate eof=0 active=1 stopping=0 looping=0 pause=0 reset=0 seek=1 seek_next_ts=0 reset_ts=0 preload_frame=0 has_v=1 has_a=0
+  base_ts=0 start_ts=0 play_sys_ts=1000000000 next_pts_ns=80000000 next_ns=1080000000 seek_pos=290000 speed=100 cur_space=DEFAULT cur_range=DEFAULT
+  v ready=1 pts=80000000 next_pts=120000000 last_dur=40000000 eof=0 key=0 pending=0 npkts=0
+sleep 40
+ff seek stream=0 target=290 flags=BACKWARD
+ff decoder flush
+tick -> seek
+mstate eof=0 active=1 stopping=0 looping=0 pause=0 reset=0 seek=0 seek_next_ts=1 reset_ts=0 preload_frame=0 has_v=1 has_a=0
+  base_ts=0 start_ts=0 play_sys_ts=1000000000 next_pts_ns=80000000 next_ns=1080000000 seek_pos=290000 speed=100 cur_space=DEFAULT cur_range=DEFAULT
+  v ready=0 pts=0 next_pts=0 last_dur=40000000 eof=0 key=0 pending=0 npkts=0
+ff read #6 stream=0 pts=240 size=4
+tick -> played
+cb video ts=240000000 fmt=I420 16x16 flip=0 full=0 trc=DEFAULT maxlum=0 flags=0 ls0=16 d0=61 mat0=1.16438 min0=0.0627451 max0=0.921569
+ff read #7 stream=0 pts=280 size=4
+tick -> played
+sleep 40
+cb video ts=280000000 fmt=I420 16x16 flip=0 full=0 trc=DEFAULT maxlum=0 flags=0 ls0=16 d0=71 mat0=1.16438 min0=0.0627451 max0=0.921569
+ff read #8 stream=0 pts=320 size=4
+tick -> played
+# seek after the end of the file is not rejected in the media path
+sleep 40
+ff seek stream=0 target=5000 flags=BACKWARD
+ff decoder flush
+tick -> seek
+mstate eof=0 active=1 stopping=0 looping=0 pause=0 reset=0 seek=0 seek_next_ts=1 reset_ts=0 preload_frame=0 has_v=1 has_a=0
+  base_ts=0 start_ts=0 play_sys_ts=1000000000 next_pts_ns=320000000 next_ns=1160000000 seek_pos=5000000 speed=100 cur_space=DEFAULT cur_range=DEFAULT
+  v ready=0 pts=0 next_pts=0 last_dur=40000000 eof=0 key=0 pending=0 npkts=0
+ff read #9 stream=0 pts=360 size=4
+tick -> played
+cb video ts=360000000 fmt=I420 16x16 flip=0 full=0 trc=DEFAULT maxlum=0 flags=0 ls0=16 d0=91 mat0=1.16438 min0=0.0627451 max0=0.921569
+ff decoder drain
+ff seek stream=0 target=0 flags=BACKWARD
+ff decoder flush
+ff read #0 stream=0 pts=0 size=4
+cb preload ts=560000000 fmt=I420 16x16 flip=0 full=0 trc=DEFAULT maxlum=0 flags=0 ls0=16 d0=01 mat0=1.16438 min0=0.0627451 max0=0.921569
+cb stop
+tick -> eof
+mfree
+# ---- file without duration: seek by frame number, target not rescaled
+minit -> ok
+ff open path=sknodur format=- nobuffer=1 interrupt=0 opts=[]
+minit2 -> ok has_v=1 has_a=0
+ff seek stream=0 target=0 flags=FRAME
+ff decoder flush
+ff read #0 stream=0 pts=0 size=4
+cb preload ts=0 fmt=I420 16x16 flip=0 full=0 trc=DEFAULT maxlum=0 flags=0 ls0=16 d0=01 mat0=1.16438 min0=0.0627451 max0=0.921569
+mreset -> 1
+tick -> idle
+cb video ts=0 fmt=I420 16x16 flip=0 full=0 trc=DEFAULT maxlum=0 flags=0 ls0=16 d0=01 mat0=1.16438 min0=0.0627451 max0=0.921569
+ff read #1 stream=0 pts=40 size=4
+tick -> played
+sleep 40
+ff seek stream=0 target=2000 flags=FRAME
+ff decoder flush
+tick -> seek
+ff read #0 stream=0 pts=0 size=4
+tick -> played
+cb video ts=0 fmt=I420 16x16 flip=0 full=0 trc=DEFAULT maxlum=0 flags=0 ls0=16 d0=01 mat0=1.16438 min0=0.0627451 max0=0.921569
+ff read #1 stream=0 pts=40 size=4
+tick -> played

@@ -1,0 +1,9 @@
+# S-051 wincapture: real window-helpers.c, hook headers, virtual-camera shared-memory queue and nv12 scaler compiled on Linux
+# against gen/wincapture_shim (fake Win32 window table and named file mappings); other logic is a MODEL in the runner.
+test/conformance/gen/wincapture_runner.c
+plugins/win-dshow/tiny-nv12-scale.c
+-Igen/wincapture_shim
+-I../../shared/obs-hook-config
+-Wno-deprecated-declarations
+-Wno-pointer-sign
+-ljansson

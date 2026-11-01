@@ -1,0 +1,71 @@
+load 1 registered=7
+  id=cut_transition type=2 flags=0x49 version=0 name="CutTransition"
+    callbacks: create destroy video_render audio_render color_space
+  id=fade_transition type=2 flags=0x49 version=0 name="FadeTransition"
+    callbacks: create destroy video_render audio_render color_space
+  id=swipe_transition type=2 flags=0x49 version=0 name="SwipeTransition"
+    callbacks: create destroy update get_properties video_render audio_render color_space
+  id=slide_transition type=2 flags=0x49 version=0 name="SlideTransition"
+    callbacks: create destroy update get_properties video_render audio_render color_space
+  id=obs_stinger_transition type=2 flags=0x49 version=0 name="StingerTransition"
+    callbacks: create destroy update get_defaults get_properties video_render video_tick audio_render color_space transition_start transition_stop enum_active enum_all missing_files
+  id=fade_to_color_transition type=2 flags=0x49 version=0 name="FadeToColorTransition"
+    callbacks: create destroy update get_defaults get_properties video_render audio_render color_space
+  id=wipe_transition type=2 flags=0x49 version=0 name="LumaWipeTransition"
+    callbacks: create destroy update get_defaults get_properties video_render audio_render color_space
+  description="OBS core transitions"
+  ver_matches=1
+effect fade_to_color_transition.effect len=989 fnv=819012e825b7af8d
+effect fade_transition.effect len=1768 fnv=2c736b1652fa818b
+effect luma_wipe_transition.effect len=1281 fnv=0d01a1d3c00a472d
+effect slide_transition.effect len=909 fnv=eef75ff9d0006cfe
+effect stinger_matte_transition.effect len=1845 fnv=1192965726f272e4
+effect swipe_transition.effect len=841 fnv=b2dd21af0818a190
+png files=34
+  barndoor-botleft.png ok=1 size=720x480 depth=8 ctype=0 len=2314 fnv=79c84676c739c836
+  barndoor-h.png ok=1 size=720x576 depth=8 ctype=0 len=1170 fnv=e34149e2dfda7af8
+  barndoor-topleft.png ok=1 size=720x480 depth=8 ctype=0 len=2658 fnv=4190ec39511510d9
+  barndoor-v.png ok=1 size=720x576 depth=8 ctype=0 len=1234 fnv=d49a2b959d19c0de
+  blinds-h.png ok=1 size=720x560 depth=8 ctype=0 len=1399 fnv=6ef6cf40b98f3e6b
+  box-botleft.png ok=1 size=720x480 depth=8 ctype=0 len=1420 fnv=a23eee18f37cda42
+  box-botright.png ok=1 size=720x480 depth=8 ctype=0 len=1050 fnv=6c4dd2be6eb658e5
+  box-topleft.png ok=1 size=720x480 depth=8 ctype=0 len=1402 fnv=23d3eb23993fa773
+  box-topright.png ok=1 size=720x480 depth=8 ctype=0 len=1374 fnv=f91decd9bea47df9
+  burst.png ok=1 size=720x560 depth=8 ctype=0 len=57059 fnv=e13033876132f420
+  checkerboard-small.png ok=1 size=720x560 depth=8 ctype=0 len=10784 fnv=eede46321253af59
+  circles.png ok=1 size=720x576 depth=8 ctype=0 len=58005 fnv=0d8b5966a48e898c
+  clock.png ok=1 size=720x576 depth=8 ctype=0 len=67674 fnv=3412d35091059b1e
+  cloud.png ok=1 size=720x576 depth=8 ctype=0 len=252534 fnv=a9d2e1fd6cd6d8dc
+  curtain.png ok=1 size=720x576 depth=8 ctype=0 len=55056 fnv=043a3a5a7d7e2864
+  fan.png ok=1 size=720x560 depth=8 ctype=0 len=28246 fnv=b2e14988d7a9fe80
+  fractal.png ok=1 size=720x576 depth=8 ctype=0 len=75756 fnv=bd63305f28d72171
+  iris.png ok=1 size=720x576 depth=8 ctype=0 len=18461 fnv=f157ef2099da08cf
+  linear-h.png ok=1 size=720x576 depth=8 ctype=0 len=1240 fnv=b590db904059ef53
+  linear-topleft.png ok=1 size=720x480 depth=8 ctype=0 len=1706 fnv=f125a27d05c024a0
+  linear-topright.png ok=1 size=720x480 depth=8 ctype=0 len=2495 fnv=d162c572362325fd
+  linear-v.png ok=1 size=720x576 depth=8 ctype=0 len=1228 fnv=445999d813ccfac3
+  parallel-zigzag-h.png ok=1 size=720x480 depth=8 ctype=0 len=1126 fnv=1918394834061c86
+  parallel-zigzag-v.png ok=1 size=720x480 depth=8 ctype=0 len=1578 fnv=e960aeec77cd356e
+  sinus9.png ok=1 size=720x576 depth=8 ctype=0 len=30689 fnv=07ddc2c1a9b938c2
+  spiral.png ok=1 size=720x576 depth=8 ctype=0 len=60523 fnv=8789703b0f9aa7fd
+  square.png ok=1 size=720x576 depth=8 ctype=0 len=2363 fnv=0670f0a847bf4d6d
+  squares.png ok=1 size=720x576 depth=8 ctype=0 len=2942 fnv=02fc26cacac5c741
+  stripes.png ok=1 size=720x576 depth=8 ctype=0 len=1261 fnv=38d9143dd3cb0678
+  strips-h.png ok=1 size=720x480 depth=8 ctype=0 len=1048 fnv=8ba454c3cfe01f78
+  strips-v.png ok=1 size=720x480 depth=8 ctype=0 len=1264 fnv=b3f8f755dfb6a780
+  watercolor.png ok=1 size=800x600 depth=8 ctype=0 len=56126 fnv=dba39befee87938b
+  zigzag-h.png ok=1 size=720x480 depth=8 ctype=0 len=1103 fnv=8f6c1ca85fd815b2
+  zigzag-v.png ok=1 size=720x480 depth=8 ctype=0 len=1317 fnv=44b4cc8bc4deba3a
+ease t=0 -> 0
+ease t=0.100000001 -> 0.00400000019
+ease t=0.25 -> 0.0625
+ease t=0.400000006 -> 0.256000012
+ease t=0.499989986 -> 0.499969959
+ease t=0.5 -> 0.5
+ease t=0.500010014 -> 0.500030041
+ease t=0.600000024 -> 0.744000077
+ease t=0.75 -> 0.9375
+ease t=0.899999976 -> 0.995999992
+ease t=1 -> 1
+ease t=-0.5 -> -0.5
+ease t=1.5 -> 1.5

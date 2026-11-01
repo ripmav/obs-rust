@@ -1,0 +1,81 @@
+# S-012 CORE: obs_av1_keyframe. Walk the OBUs; the first OBU of type FRAME (6) or FRAME_HEADER (3)
+# with a non-zero payload size decides: let v be its first payload byte;
+#   v bit 7 (show_existing_frame) = 1 -> false;
+#   otherwise frame_type = (v >> 5) & 3, keyframe iff frame_type == 0.
+# No such OBU -> false. OBUs are skipped by header + payload size.
+buf td 1200
+buf seq 0a0b00000024cf7f0d000c22c0
+buf key 320510aabbccdd
+buf inter 32052011223344
+buf intra 320440aabbcc
+buf switch 320360aabb
+buf show_existing 3201a0
+buf hdr_key 1a0110
+buf hdr_inter 1a0120
+buf meta 2a0301aabb
+buf tile 220200ff
+buf pad 7a03000000
+echo temporal-unit-with-key-frame
+cat tu @td @seq @key
+av1_keyframe @tu
+echo temporal-unit-with-inter-frame
+cat tu @td @inter
+av1_keyframe @tu
+echo frame-types
+av1_keyframe @key
+av1_keyframe @inter
+av1_keyframe @intra
+av1_keyframe @switch
+av1_keyframe @show_existing
+echo the-other-payload-bits-are-ignored
+av1_keyframe 32011f
+av1_keyframe 320100
+av1_keyframe 32011f
+av1_keyframe 3201e0
+av1_keyframe 32017f
+av1_keyframe 320180
+echo frame-header-obu
+av1_keyframe @hdr_key
+av1_keyframe @hdr_inter
+cat tu @td @hdr_key @tile
+av1_keyframe @tu
+echo first-frame-wins
+cat tu @td @inter @key
+av1_keyframe @tu
+cat tu @td @key @inter
+av1_keyframe @tu
+cat tu @show_existing @key
+av1_keyframe @tu
+echo other-obus-are-skipped
+cat tu @td @meta @pad @tile @seq @key
+av1_keyframe @tu
+cat tu @td @meta @seq @tile
+av1_keyframe @tu
+echo obu-without-size-field-extends-to-the-end
+av1_keyframe 1800
+av1_keyframe 1820
+av1_keyframe 18
+av1_keyframe 1810aabbcc
+cat tu @td 1810aabbcc
+av1_keyframe @tu
+echo frame-obu-with-zero-payload-is-skipped
+cat tu 3200 @key
+av1_keyframe @tu
+cat tu 1a00 @inter
+av1_keyframe @tu
+cat tu 3200
+av1_keyframe @tu
+echo extension-byte-is-skipped
+av1_keyframe 36010110
+av1_keyframe 36012001
+av1_keyframe 36010110
+av1_keyframe 3a0110
+echo large-obu-before-the-frame
+rep payload 200 5a
+cat big 2ac801 @payload
+cat tu @td @big @key
+av1_keyframe @tu
+echo empty
+av1_keyframe -
+av1_keyframe 00
+av1_keyframe 1200

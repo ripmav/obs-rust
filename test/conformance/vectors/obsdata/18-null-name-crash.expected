@@ -1,0 +1,17 @@
+try get_int crash
+try get_string crash
+try get_bool crash
+try get_double crash
+try get_obj crash
+try get_array crash
+try set_int crash
+try set_string crash
+try set_default_int crash
+try erase crash
+try has_user crash
+try has_default crash
+try unset_user crash
+try byname crash
+try get_int crash
+try set_int crash
+dump a {x:number[user=num(I,1,1)]}

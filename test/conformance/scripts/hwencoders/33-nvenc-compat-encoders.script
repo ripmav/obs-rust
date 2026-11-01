@@ -1,0 +1,33 @@
+# S-050 nvenc: pre-31.0 encoder ids ("jim_nvenc" ...) are deprecated shells. Their create() migrates
+# the settings to the v2 names (preset2 -> preset, psycho_aq -> adaptive_quantization, gpu -> device
+# only if gpu has a user value AND more than one NVENC device exists) and reroutes to the v2
+# encoder id (tex or soft). Their defaults / properties use the OLD names.
+ini "[general]\nnvenc_supported=true\nnvenc_devices=2\nnvenc_ver=13.0\ncuda_ver=12.0\ndriver_ver=560.1\n[h264]\ncodec_supported=true\n[av1]\ncodec_supported=true\n"
+supported
+compat_register
+invoke jim_nvenc defaults
+invoke jim_hevc_nvenc defaults
+invoke jim_av1_nvenc defaults
+invoke jim_nvenc properties
+invoke jim_av1_nvenc properties
+# migration with a user-set gpu and 2 devices
+set str preset2 p3
+set bool psycho_aq 0
+set int gpu 1
+invoke jim_nvenc create
+get str preset
+get bool adaptive_quantization
+get int device
+has_user device
+# every compat id and its target
+invoke obs_nvenc_h264_cuda create
+invoke jim_hevc_nvenc create
+invoke obs_nvenc_hevc_cuda create
+invoke jim_av1_nvenc create
+invoke obs_nvenc_av1_cuda create
+# missing source keys migrate to the empty string / false
+reset
+invoke jim_nvenc create
+get str preset
+get bool adaptive_quantization
+has_user device

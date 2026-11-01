@@ -1,0 +1,188 @@
+event.init manual
+host.hotkey_register MediaSource.Restart desc=RestartMedia id=100
+host.hotkey_pair_register MediaSource.Play/MediaSource.Pause desc=Play/Pause id=101
+host.hotkey_register MediaSource.Stop desc=Stop id=102
+host.proc_add "void restart()"
+host.proc_add "void preload_first_frame()"
+host.proc_add "void get_duration(out int duration)"
+host.proc_add "void get_nb_frames(out int num_frames)"
+mp.create path="srt://x:1" format="" options=""
+    buffering=2097152 speed=100 force_range=0 linear_alpha=0 hw=0 local=0 reconnecting=0 preload=0 full_decode=0 cbs=11111
+log info [Media Source 'src']: settings: 	input:                   srt://x:1 	input_format:             	speed:                   100 	is_looping:              no 	is_linear_alpha:         no 	is_hw_decoding:          no 	is_clear_on_media_end:   yes 	restart_on_activate:     yes 	close_when_inactive:     no 	full_decode:             no 	ffmpeg_options:          
+src_create ok
+host.output_video null
+host.media_ended
+source input="srt://x:1" input_format="" ffmpeg_options=""
+  buffering_mb=2 speed_percent=100 range=0 reconnect_delay_sec=7 state=6
+  looping=0 local=0 hw=0 full_decode=0 clear_on_end=1 restart_on_activate=1 close_when_inactive=0
+  seekable=0 stinger=0 track_matte=0 log_changes=1 linear_alpha=0
+  media=1 destroy_media=1 reconnecting=0 reconnect_thread_valid=0
+mp.destroy #1
+log warning [Media Source 'src']: Disconnected. Reconnecting...
+thread.create
+source input="srt://x:1" input_format="" ffmpeg_options=""
+  buffering_mb=2 speed_percent=100 range=0 reconnect_delay_sec=7 state=6
+  looping=0 local=0 hw=0 full_decode=0 clear_on_end=1 restart_on_activate=1 close_when_inactive=0
+  seekable=0 stinger=0 track_matte=0 log_changes=1 linear_alpha=0
+  media=0 destroy_media=0 reconnecting=1 reconnect_thread_valid=1
+thread.run
+event.timedwait ms=7000 -> timeout
+mp.create path="srt://x:1" format="" options=""
+    buffering=2097152 speed=100 force_range=0 linear_alpha=0 hw=0 local=0 reconnecting=1 preload=0 full_decode=0 cbs=11111
+thread.done
+source input="srt://x:1" input_format="" ffmpeg_options=""
+  buffering_mb=2 speed_percent=100 range=0 reconnect_delay_sec=7 state=6
+  looping=0 local=0 hw=0 full_decode=0 clear_on_end=1 restart_on_activate=1 close_when_inactive=0
+  seekable=0 stinger=0 track_matte=0 log_changes=1 linear_alpha=0
+  media=1 destroy_media=0 reconnecting=1 reconnect_thread_valid=1
+host.output_audio
+log info [Media Source 'src']: Reconnected.
+source input="srt://x:1" input_format="" ffmpeg_options=""
+  buffering_mb=2 speed_percent=100 range=0 reconnect_delay_sec=7 state=6
+  looping=0 local=0 hw=0 full_decode=0 clear_on_end=1 restart_on_activate=1 close_when_inactive=0
+  seekable=0 stinger=0 track_matte=0 log_changes=1 linear_alpha=0
+  media=1 destroy_media=0 reconnecting=0 reconnect_thread_valid=1
+echo ---- a pending thread is joined (it exits at once) before the next one is created
+mp.play #2 looping=0 reconnecting=0
+host.output_video null
+host.media_started
+host.output_video null
+host.media_ended
+mp.destroy #2
+log warning [Media Source 'src']: Disconnected. Reconnecting...
+event.signal
+thread.join pending=0
+event.reset
+thread.create
+mp.create path="srt://x:1" format="" options=""
+    buffering=2097152 speed=100 force_range=0 linear_alpha=0 hw=0 local=0 reconnecting=1 preload=0 full_decode=0 cbs=11111
+mp.play #3 looping=0 reconnecting=1
+host.output_video null
+host.media_started
+host.output_video null
+host.media_ended
+mp.destroy #3
+event.signal
+thread.join pending=1
+event.timedwait ms=7000 -> signaled
+event.reset
+thread.create
+source input="srt://x:1" input_format="" ffmpeg_options=""
+  buffering_mb=2 speed_percent=100 range=0 reconnect_delay_sec=7 state=6
+  looping=0 local=0 hw=0 full_decode=0 clear_on_end=1 restart_on_activate=1 close_when_inactive=0
+  seekable=0 stinger=0 track_matte=0 log_changes=1 linear_alpha=0
+  media=0 destroy_media=0 reconnecting=1 reconnect_thread_valid=1
+echo ---- the thread finds a media object that was opened meanwhile: it does nothing
+mp.create path="srt://x:1" format="" options=""
+    buffering=2097152 speed=100 force_range=0 linear_alpha=0 hw=0 local=0 reconnecting=1 preload=0 full_decode=0 cbs=11111
+mp.play #4 looping=0 reconnecting=1
+host.output_video null
+host.media_started
+thread.run
+event.timedwait ms=7000 -> timeout
+thread.done
+echo ---- an update cancels the pending reconnect and re-opens
+host.output_video null
+host.media_ended
+mp.destroy #4
+event.signal
+thread.join pending=0
+event.reset
+thread.create
+event.signal
+thread.join pending=1
+event.timedwait ms=7000 -> signaled
+event.reset
+mp.create path="srt://x:1" format="" options=""
+    buffering=2097152 speed=100 force_range=0 linear_alpha=0 hw=0 local=0 reconnecting=0 preload=0 full_decode=0 cbs=11111
+log info [Media Source 'src']: settings: 	input:                   srt://x:1 	input_format:             	speed:                   100 	is_looping:              no 	is_linear_alpha:         no 	is_hw_decoding:          no 	is_clear_on_media_end:   yes 	restart_on_activate:     yes 	close_when_inactive:     no 	full_decode:             no 	ffmpeg_options:          
+source input="srt://x:1" input_format="" ffmpeg_options=""
+  buffering_mb=2 speed_percent=100 range=0 reconnect_delay_sec=7 state=6
+  looping=0 local=0 hw=0 full_decode=0 clear_on_end=1 restart_on_activate=1 close_when_inactive=0
+  seekable=0 stinger=0 track_matte=0 log_changes=1 linear_alpha=0
+  media=1 destroy_media=0 reconnecting=0 reconnect_thread_valid=0
+echo ---- close_when_inactive and inactive: the thread does not re-open, nothing is started
+mp.destroy #5
+mp.create path="srt://x:1" format="" options=""
+    buffering=2097152 speed=100 force_range=0 linear_alpha=0 hw=0 local=0 reconnecting=0 preload=0 full_decode=0 cbs=11111
+log info [Media Source 'src']: settings: 	input:                   srt://x:1 	input_format:             	speed:                   100 	is_looping:              no 	is_linear_alpha:         no 	is_hw_decoding:          no 	is_clear_on_media_end:   yes 	restart_on_activate:     yes 	close_when_inactive:     yes 	full_decode:             no 	ffmpeg_options:          
+mp.play #6 looping=0 reconnecting=0
+host.output_video null
+host.media_started
+host.output_video null
+host.media_ended
+mp.destroy #6
+log warning [Media Source 'src']: Disconnected. Reconnecting...
+thread.create
+thread.run
+event.timedwait ms=7000 -> timeout
+thread.done
+source input="srt://x:1" input_format="" ffmpeg_options=""
+  buffering_mb=2 speed_percent=100 range=0 reconnect_delay_sec=7 state=6
+  looping=0 local=0 hw=0 full_decode=0 clear_on_end=1 restart_on_activate=1 close_when_inactive=1
+  seekable=0 stinger=0 track_matte=0 log_changes=1 linear_alpha=0
+  media=0 destroy_media=0 reconnecting=1 reconnect_thread_valid=1
+echo ---- close_when_inactive but active again: open and start
+mp.create path="srt://x:1" format="" options=""
+    buffering=2097152 speed=100 force_range=0 linear_alpha=0 hw=0 local=0 reconnecting=1 preload=0 full_decode=0 cbs=11111
+mp.play #7 looping=0 reconnecting=1
+host.output_video null
+host.media_started
+host.output_video null
+host.media_ended
+mp.destroy #7
+event.signal
+thread.join pending=0
+event.reset
+thread.create
+thread.run
+event.timedwait ms=7000 -> timeout
+mp.create path="srt://x:1" format="" options=""
+    buffering=2097152 speed=100 force_range=0 linear_alpha=0 hw=0 local=0 reconnecting=1 preload=0 full_decode=0 cbs=11111
+mp.play #8 looping=0 reconnecting=1
+host.output_video null
+host.media_started
+thread.done
+echo ---- restart_on_activate false and inactive: the thread re-opens AND starts (reconnecting=true goes to the player)
+event.signal
+thread.join pending=0
+event.reset
+mp.destroy #8
+mp.create path="srt://x:1" format="" options=""
+    buffering=2097152 speed=100 force_range=0 linear_alpha=0 hw=0 local=0 reconnecting=0 preload=0 full_decode=0 cbs=11111
+log info [Media Source 'src']: settings: 	input:                   srt://x:1 	input_format:             	speed:                   100 	is_looping:              no 	is_linear_alpha:         no 	is_hw_decoding:          no 	is_clear_on_media_end:   yes 	restart_on_activate:     no 	close_when_inactive:     no 	full_decode:             no 	ffmpeg_options:          
+mp.play #9 looping=0 reconnecting=0
+host.output_video null
+host.media_started
+host.output_video null
+host.media_ended
+mp.destroy #9
+log warning [Media Source 'src']: Disconnected. Reconnecting...
+thread.create
+thread.run
+event.timedwait ms=7000 -> timeout
+mp.create path="srt://x:1" format="" options=""
+    buffering=2097152 speed=100 force_range=0 linear_alpha=0 hw=0 local=0 reconnecting=1 preload=0 full_decode=0 cbs=11111
+mp.play #10 looping=0 reconnecting=1
+host.output_video null
+host.media_started
+thread.done
+echo ---- thread creation failure: the reconnecting flag stays set, no thread is recorded as valid
+mp.play #10 looping=0 reconnecting=1
+host.output_video null
+host.media_started
+host.output_video null
+host.media_ended
+mp.destroy #10
+event.signal
+thread.join pending=0
+event.reset
+thread.create fail
+log warning [Media Source 'src']: Could not create reconnect thread
+source input="srt://x:1" input_format="" ffmpeg_options=""
+  buffering_mb=2 speed_percent=100 range=0 reconnect_delay_sec=7 state=6
+  looping=0 local=0 hw=0 full_decode=0 clear_on_end=1 restart_on_activate=0 close_when_inactive=0
+  seekable=0 stinger=0 track_matte=0 log_changes=1 linear_alpha=0
+  media=0 destroy_media=0 reconnecting=1 reconnect_thread_valid=0
+host.hotkey_unregister id=100
+event.destroy

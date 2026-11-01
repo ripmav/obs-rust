@@ -1,0 +1,29 @@
+log debug canvas 'Main' (<uuid>) created
+startup -> true
+log debug canvas 'One' (<uuid>) created
+canvas_create a -> ok
+canvas a name="One" flags=0x0 private=0 removed=0 has_video=0 video_active=0 uuid_len=36 view_type=aux
+log debug canvas 'Two' (<uuid>) created
+canvas_create b -> ok
+canvas b name="Two" flags=0x0 private=0 removed=0 has_video=0 video_active=0 uuid_len=36 view_type=aux
+log warning Attempted to rename context to duplicate name "Two"! New name has been changed to "One 2"
+canvas_name b -> "One 2"
+mk_source s1 name="SrcA" private=0 uuid=set
+mk_source s2 name="SrcB" private=0 uuid=set
+log debug canvas 'Holder' (<uuid>) created
+canvas_create c -> ok
+canvas c name="Holder" flags=0x8 private=0 removed=0 has_video=0 video_active=0 uuid_len=36 view_type=aux
+mk_source sc1 name="Scene1" private=0 uuid=set
+mk_source sc2 name="Scene2" private=0 uuid=set
+log warning Attempted to rename context to duplicate name "Scene2"! New name has been changed to "Scene1 2"
+src_rename sc2 -> "Scene1 2"
+shutdown begin
+log info Freeing OBS context data
+log debug canvas 'Main' (<uuid>) destroyed
+log info  2 source(s) were remaining
+log info  2 source(s) were remaining
+log debug canvas 'One' (<uuid>) destroyed
+log debug canvas 'One 2' (<uuid>) destroyed
+log debug canvas 'Holder' (<uuid>) destroyed
+log info  3 canvas(s) were remaining
+shutdown end obs=NULL

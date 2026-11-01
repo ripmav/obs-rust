@@ -1,0 +1,29 @@
+# Audio render of an idle transition: the first source's mix buffers are copied as they are (all mixes and
+# channels, volume untouched).  With no usable child the call returns false.  A removed child is ignored.
+# Audio-only completion: when the video part is already finished (or never started) and audio render finds no
+# timestamped child, the transition completes.
+kind in input video,audio size
+kind tr transition video,audio tstart,tstop,size
+create t tr T
+create a in A
+create b in B
+tr_set t a
+audio_fill a 0.75
+tr_audio t 1 2 48000
+audio_ts a 1000 0 0
+tr_audio t 1 2 48000
+echo --- removed child is ignored
+remove a
+tr_audio t 1 2 48000
+echo --- audio part completes without any audio (video part already finished)
+create c in C
+fksize b 10 10
+fksize c 10 10
+tr_set t b
+clock 0
+tr_start t 0 1000 c
+vtime 2000000000
+tr_video t
+tr_state t
+tr_audio t 1 2 48000
+tr_state t

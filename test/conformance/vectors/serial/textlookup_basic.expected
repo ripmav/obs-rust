@@ -1,0 +1,19 @@
+tl_create 0 tb-1 -> ok
+tl_get 0 "Key1" -> "Hello World"
+tl_get 0 "Key2" -> "Plain"
+tl_get 0 "Key3" -> "quoted"
+tl_get 0 "Basic.Dotted-Name_1" -> "dotted"
+tl_get 0 "Num" -> "-5.5"
+tl_get 0 "key1" -> false
+tl_get 0 "KEY1" -> false
+tl_get 0 "Key" -> false
+tl_get 0 "Key11" -> false
+tl_get 0 "" -> false
+tl_get 0 "#" -> false
+tl_get 0 "a comment" -> false
+tl_get 0 "Key1" -> false
+tl_create 0 tb-2 -> ok
+tl_get 0 "A" -> "1"
+tl_get 0 "B" -> "2"
+tl_create 0 tb-3 -> ok
+tl_get 0 "A" -> false

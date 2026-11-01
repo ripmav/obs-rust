@@ -1,0 +1,51 @@
+  cb A create
+log debug source 'A' (in) created
+create a ok
+  cb F1 create
+log debug private source 'F1' (fl) created
+create f1 ok
+  cb F2 create
+log debug private source 'F2' (fl) created
+create f2 ok
+  cb F3 create
+log debug private source 'F3' (fl) created
+create f3 ok
+  gsig source_filter_add source=A filter=F1
+  sig filter_add source=A filter=F1
+log debug - filter 'F1' (fl) added to source 'A'
+  cb F1 filter_add parent=A
+filters a count=1 [0]=f1(target=a,parent=a)
+  gsig source_filter_add source=A filter=F2
+  sig filter_add source=A filter=F2
+log debug - filter 'F2' (fl) added to source 'A'
+  cb F2 filter_add parent=A
+filters a count=2 [0]=f2(target=f1,parent=a) [1]=f1(target=a,parent=a)
+log warning Tried to add a filter that was already present on the source
+  gsig source_filter_add source=A filter=F3
+  sig filter_add source=A filter=F3
+log debug - filter 'F3' (fl) added to source 'A'
+  cb F3 filter_add parent=A
+filters a count=3 [0]=f3(target=f2,parent=a) [1]=f2(target=f1,parent=a) [2]=f1(target=a,parent=a)
+refs f1 2
+filter_index a f1 2
+filter_index a f3 0
+filter_count a 3
+filter_target f1 a
+filter_target f3 f2
+  gsig source_filter_remove source=A filter=F2
+  sig filter_remove source=A filter=F2
+log debug - filter 'F2' (fl) removed from source 'A'
+  cb F2 filter_remove parent=A
+filters a count=2 [0]=f3(target=f1,parent=a) [1]=f1(target=a,parent=a)
+  gsig source_filter_remove source=A filter=F3
+  sig filter_remove source=A filter=F3
+log debug - filter 'F3' (fl) removed from source 'A'
+  cb F3 filter_remove parent=A
+filters a count=1 [0]=f1(target=a,parent=a)
+  gsig source_filter_remove source=A filter=F1
+  sig filter_remove source=A filter=F1
+log debug - filter 'F1' (fl) removed from source 'A'
+  cb F1 filter_remove parent=A
+filters a count=0
+refs f1 1
+filter_target f1 -

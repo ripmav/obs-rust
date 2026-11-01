@@ -1,0 +1,26 @@
+# With deinterlacing enabled each tick selects TWO frames: cur and prev (field pair); half duration is half the
+# distance between them; deinterlace_offset tracks vtime - frame time.
+kind cam input asyncvideo
+create c cam C
+deint_mode c 2
+video c bgra 2 2 1000000000 1 1 0
+video c bgra 2 2 1016666666 1 2 0
+video c bgra 2 2 1033333333 1 3 0
+video c bgra 2 2 1050000000 1 4 0
+vtime 2000000000
+half 8333333
+tick c 0.016
+astate c
+deint_get c
+vtime 2016666666
+tick c 0.016
+astate c
+deint_get c
+vtime 2033333333
+tick c 0.016
+astate c
+deint_get c
+vtime 2050000000
+tick c 0.016
+astate c
+deint_get c

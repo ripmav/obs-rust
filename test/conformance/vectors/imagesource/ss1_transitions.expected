@@ -1,0 +1,73 @@
+ev create slideshow#1 public
+ev hotkey_register slideshow#1 id=1 name=SlideShow.PlayPause desc=SlideShow.PlayPause
+ev hotkey_register slideshow#1 id=2 name=SlideShow.Restart desc=SlideShow.Restart
+ev hotkey_register slideshow#1 id=3 name=SlideShow.Stop desc=SlideShow.Stop
+ev hotkey_register slideshow#1 id=4 name=SlideShow.NextSlide desc=SlideShow.NextSlide
+ev hotkey_register slideshow#1 id=5 name=SlideShow.PreviousSlide desc=SlideShow.PreviousSlide
+ev create swipe_transition#2 private
+ev create image_source#3[/s/a.png] private
+ev image_init /s/a.png alpha=2
+log debug [image_source: ''] loading texture '/s/a.png'
+ev texture_create 1 10x10 dynamic=0
+ev tr_size swipe_transition#2 10x10
+ev tr_align swipe_transition#2 0
+ev tr_scale swipe_transition#2 1
+ev tr_start swipe_transition#2 mode=0 ms=10 dest=image_source#3[/s/a.png] -> started
+ev signal media_started slideshow#1
+tick 0 clock=16000001
+state slideshow1 behavior=2 manual=0 randomize=0 loop=1 hide=0 use_cut=0 paused=0 stop=0 restart_on_activate=0 pause_on_deactivate=0 slide_time=0.109999999 tr_speed=10 tr_name=swipe_transition cur_item=0 elapsed=0.0160000008 cx=10 cy=10 mem_usage=400 state=1 transition=swipe_transition#2
+state   file 0 /s/a.png image_source#3[/s/a.png]
+ev create slide_transition#4 private
+ev destroy swipe_transition#2
+ev tr_size slide_transition#4 10x10
+ev tr_align slide_transition#4 0
+ev tr_scale slide_transition#4 1
+ev tr_start slide_transition#4 mode=0 ms=10 dest=image_source#3[/s/a.png] -> started
+ev signal media_started slideshow#1
+tick 0 clock=32000002
+state slideshow1 behavior=2 manual=0 randomize=0 loop=1 hide=0 use_cut=0 paused=0 stop=0 restart_on_activate=0 pause_on_deactivate=0 slide_time=0.109999999 tr_speed=10 tr_name=slide_transition cur_item=0 elapsed=0.0160000008 cx=10 cy=10 mem_usage=400 state=1 transition=slide_transition#4
+state   file 0 /s/a.png image_source#3[/s/a.png]
+ev tr_size slide_transition#4 10x10
+ev tr_align slide_transition#4 0
+ev tr_scale slide_transition#4 1
+ev tr_start slide_transition#4 mode=0 ms=10 dest=image_source#3[/s/a.png] -> ignored
+ev signal media_started slideshow#1
+tick 0 clock=48000003
+state slideshow1 behavior=2 manual=0 randomize=0 loop=1 hide=0 use_cut=0 paused=0 stop=0 restart_on_activate=0 pause_on_deactivate=0 slide_time=3.00999999 tr_speed=10 tr_name=slide_transition cur_item=0 elapsed=0.0160000008 cx=10 cy=10 mem_usage=400 state=1 transition=slide_transition#4
+state   file 0 /s/a.png image_source#3[/s/a.png]
+ev create cut_transition#5 private
+ev destroy slide_transition#4
+ev tr_size cut_transition#5 10x10
+ev tr_align cut_transition#5 0
+ev tr_scale cut_transition#5 1
+ev tr_start cut_transition#5 mode=0 ms=10 dest=image_source#3[/s/a.png] -> started
+ev signal media_started slideshow#1
+tick 0 clock=64000004
+state slideshow1 behavior=2 manual=0 randomize=0 loop=1 hide=0 use_cut=0 paused=0 stop=0 restart_on_activate=0 pause_on_deactivate=0 slide_time=0.0500000007 tr_speed=10 tr_name=cut_transition cur_item=0 elapsed=0.0160000008 cx=10 cy=10 mem_usage=400 state=1 transition=cut_transition#5
+state   file 0 /s/a.png image_source#3[/s/a.png]
+ev tr_size cut_transition#5 10x10
+ev tr_align cut_transition#5 0
+ev tr_scale cut_transition#5 1
+ev tr_start cut_transition#5 mode=0 ms=10 dest=image_source#3[/s/a.png] -> ignored
+ev signal media_started slideshow#1
+tick 0 clock=80000005
+state slideshow1 behavior=2 manual=0 randomize=0 loop=1 hide=0 use_cut=0 paused=0 stop=0 restart_on_activate=0 pause_on_deactivate=0 slide_time=5 tr_speed=10 tr_name=cut_transition cur_item=0 elapsed=0.0160000008 cx=10 cy=10 mem_usage=400 state=1 transition=cut_transition#5
+state   file 0 /s/a.png image_source#3[/s/a.png]
+ev create fade_transition#6 private
+ev destroy cut_transition#5
+ev tr_size fade_transition#6 10x10
+ev tr_align fade_transition#6 0
+ev tr_scale fade_transition#6 1
+ev tr_start fade_transition#6 mode=0 ms=10 dest=image_source#3[/s/a.png] -> started
+ev signal media_started slideshow#1
+tick 0 clock=96000006
+state slideshow1 behavior=2 manual=0 randomize=0 loop=1 hide=0 use_cut=0 paused=0 stop=0 restart_on_activate=0 pause_on_deactivate=0 slide_time=5.01000023 tr_speed=10 tr_name=fade_transition cur_item=0 elapsed=0.0160000008 cx=10 cy=10 mem_usage=400 state=1 transition=fade_transition#6
+state   file 0 /s/a.png image_source#3[/s/a.png]
+ev tr_size fade_transition#6 10x10
+ev tr_align fade_transition#6 0
+ev tr_scale fade_transition#6 1
+ev tr_start fade_transition#6 mode=0 ms=0 dest=image_source#3[/s/a.png] -> ignored
+ev signal media_started slideshow#1
+tick 0 clock=112000007
+state slideshow1 behavior=2 manual=0 randomize=0 loop=1 hide=0 use_cut=0 paused=0 stop=0 restart_on_activate=0 pause_on_deactivate=0 slide_time=0.100000001 tr_speed=0 tr_name=fade_transition cur_item=0 elapsed=0.0160000008 cx=10 cy=10 mem_usage=400 state=1 transition=fade_transition#6
+state   file 0 /s/a.png image_source#3[/s/a.png]

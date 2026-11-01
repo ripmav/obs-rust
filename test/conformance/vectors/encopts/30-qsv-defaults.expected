@@ -1,0 +1,68 @@
+data A
+  target_usage string "TU4" default
+  bitrate int 5000 default
+  max_bitrate int 6000 default
+  profile string "high" default
+  rate_control string "CBR" default
+  __ver int 1 default
+  cqp int 23 default
+  qpi int 23 default
+  qpp int 23 default
+  qpb int 23 default
+  icq_quality int 23 default
+  keyint_sec int 0 default
+  latency string "normal" default
+  bframes int 3 default
+  repeat_headers bool 0 default
+end data A
+data B
+  target_usage string "TU4" default
+  bitrate int 5000 default
+  max_bitrate int 6000 default
+  profile string "high" default
+  rate_control string "CBR" default
+  __ver int 2 default
+  cqp int 23 default
+  qpi int 23 default
+  qpp int 23 default
+  qpb int 23 default
+  icq_quality int 23 default
+  keyint_sec int 0 default
+  latency string "normal" default
+  bframes int 3 default
+  repeat_headers bool 0 default
+end data B
+data C
+  target_usage string "TU4" default
+  bitrate int 5000 default
+  max_bitrate int 6000 default
+  profile string "main" default
+  rate_control string "CBR" default
+  __ver int 2 default
+  cqp int 23 default
+  qpi int 23 default
+  qpp int 23 default
+  qpb int 23 default
+  icq_quality int 23 default
+  keyint_sec int 0 default
+  latency string "normal" default
+  bframes int 3 default
+  repeat_headers bool 0 default
+end data C
+data E
+  target_usage string "TU4" default
+  bitrate int 5000 default
+  max_bitrate int 6000 default
+  profile string "main" default
+  rate_control string "CBR" default
+  __ver int 2 default
+  cqp int 23 default
+  qpi int 23 default
+  qpp int 23 default
+  qpb int 23 default
+  icq_quality int 23 default
+  keyint_sec int 0 default
+  latency string "normal" default
+  bframes int 3 default
+  repeat_headers bool 0 default
+end data E

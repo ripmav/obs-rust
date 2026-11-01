@@ -1,0 +1,84 @@
+# S-022 QuickTime (MOV) flavor audio. The sample description version is chosen per track in
+# mp4_write_mov_audio_tag: v2 when channels > 2 or output rate > 65535 or the codec is PCM (tag 'lpcm'),
+# else v1. v1 AAC/ALAC entries carry a 'wave' atom (frma + esds/cookie + terminator); every entry gets
+# a 'chan' atom when a layout/bitmap is known. The stsd FullBox version is always 0 in MOV.
+# Handler names are Pascal strings, hdlr has 'mhlr'/'dhlr' component type, free box is named 'wide'.
+enc a audio codec aac rate 48000 extra 1190 bitrate 160
+mux mov
+pkt a 0 0 1 gen:10
+pkt a 1024 1024 1 gen:10
+finalise
+dump
+echo --- 5.1 AAC -> v2, channel bitmap
+reset
+enc a audio codec aac rate 48000 speakers 5.1 extra 1190
+mux mov skipfin
+pkt a 0 0 1 gen:10
+finalise
+hex
+echo --- 2.1 AAC uses the DVD_4 layout tag, 2.1 ALAC the bitmap
+reset
+enc a audio codec aac rate 48000 speakers 2.1 extra 1190
+mux mov skipfin
+pkt a 0 0 1 gen:10
+finalise
+hex
+reset
+enc a audio codec alac rate 48000 speakers 2.1 extra 00000024616c616300000000000010001000fe0200000000000000000000ac44
+mux mov skipfin
+pkt a 0 0 1 gen:10
+finalise
+hex
+echo --- mono ALAC, stereo ALAC (wave with cookie)
+reset
+enc a audio codec alac rate 44100 speakers mono extra 00000024616c616300000000000010001000fe0200000000000000000000ac44
+mux mov skipfin
+pkt a 0 0 1 gen:10
+finalise
+hex
+echo --- PCM variants in MOV
+reset
+enc a audio codec pcm_s16le rate 48000
+mux mov skipfin
+pkt a 0 0 1 gen:40
+finalise
+hex
+reset
+enc a audio codec pcm_s24le rate 48000 speakers 7.1
+mux mov skipfin
+pkt a 0 0 1 gen:80
+finalise
+hex
+reset
+enc a audio codec pcm_f32le rate 96000 speakers stereo arate 96000
+mux mov skipfin
+pkt a 0 0 1 gen:80
+finalise
+hex
+echo --- encoded sample rate above 65535 forces v2 for AAC
+reset
+enc a audio codec aac rate 48000 arate 96000 extra 1190
+mux mov skipfin
+pkt a 0 0 1 gen:10
+finalise
+hex
+echo --- unknown speaker layout: no chan atom (warning)
+reset
+enc a audio codec aac rate 48000 speakers unknown extra 1190
+mux mov skipfin
+pkt a 0 0 1 gen:10
+finalise
+hex
+echo --- codecs MOV does not support (opus, flac) produce an empty stsd
+reset
+enc a audio codec opus rate 48000 extra 4f707573486561640102380180bb0000000000
+mux mov skipfin
+pkt a 0 0 1 gen:10
+finalise
+tree
+reset
+enc a audio codec flac rate 48000 extra 1000
+mux mov skipfin
+pkt a 0 0 1 gen:10
+finalise
+tree

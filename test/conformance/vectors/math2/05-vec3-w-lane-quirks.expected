@@ -1,0 +1,5 @@
+r vec3 6 4.5 23 0
+r vec3 1 2 3 0
+d float 9
+m vec3 0 -14 0 0
+m vec3 0 -24 0 0

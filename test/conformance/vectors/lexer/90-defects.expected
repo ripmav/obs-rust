@@ -1,0 +1,18 @@
+try-begin
+try-end crash
+try-begin
+parse false
+try-end crash
+try-begin
+parse false
+try-end crash
+try-begin
+parse false
+try-end crash
+try-begin
+def added defines=1
+try-end crash
+try-begin
+try-end crash
+try-begin
+try-end crash

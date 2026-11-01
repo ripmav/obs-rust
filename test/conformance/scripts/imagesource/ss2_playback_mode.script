@@ -1,0 +1,36 @@
+# slideshow v2: legacy "loop"/"randomize" settings migrate to "playback_mode" only when playback_mode has no user value;
+# the migration writes into the source settings (CORE/QUIRK).
+fs_file /s/a.png 1
+fs_file /s/b.png 1
+fs_file /s/c.png 1
+fs_file /s/d.png 1
+img /s/a.png 10 10
+img /s/b.png 20 20
+img /s/c.png 30 30
+img /s/d.png 40 40
+create a slideshow_v2 {"files":[{"value":"/s/a.png"}],"loop":false}
+tick 0.016
+state a
+create b slideshow_v2 {"files":[{"value":"/s/a.png"}],"loop":true}
+tick 0.016
+state b
+create c slideshow_v2 {"files":[{"value":"/s/a.png"},{"value":"/s/b.png"}],"randomize":true,"loop":false}
+rand 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0
+rand_add 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0
+rand_add 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0
+rand_add 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0
+rand_add 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0
+rand_add 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0
+rand_add 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0
+tick 0.016
+state c
+create d slideshow_v2 {"files":[{"value":"/s/a.png"}],"randomize":false}
+tick 0.016
+state d
+create e slideshow_v2 {"files":[{"value":"/s/a.png"}],"playback_mode":"once","loop":true}
+tick 0.016
+state e
+create f slideshow_v2 {"files":[{"value":"/s/a.png"}],"playback_mode":"bogus"}
+tick 0.016
+state f
+defaults slideshow_v2

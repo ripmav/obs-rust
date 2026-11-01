@@ -1,0 +1,11 @@
+# S-033 scenemath: real obs-scene.c (#included by the runner) with a fake core / sources / canvases / signal log.
+test/conformance/gen/scenemath_runner.c
+libobs/callback/calldata.c
+libobs/graphics/vec2.c
+libobs/graphics/vec3.c
+libobs/graphics/vec4.c
+libobs/graphics/quat.c
+libobs/graphics/matrix4.c
+libobs/graphics/axisang.c
+-Wl,--unresolved-symbols=ignore-all
+-no-pie

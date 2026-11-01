@@ -1,0 +1,15 @@
+log warning Max audio buffering reached!
+log info adding 21 milliseconds of audio buffering, total audio buffering is now 21 milliseconds (source: a) 
+tick 0 ret=0 out_ts=978666667 wait=0 total=1 bufq=1
+order a | roots a
+log debug [src: a] ts lag after ignoring: 957333333
+log warning Source a audio is lagging (over by 957.33 ms) at max audio buffering. Restarting source audio.
+tick 1 ret=1 out_ts=1000000000 wait=0 total=1 bufq=1
+order a | roots a
+state a audio_ts=0 pending=1 buf=0 last_buf=0 pending_stop=0 timing_set=0 timing_adjust=0 next_ts_min=1042666666 next_sys_ts_min=1000000000 resample_offset=0 failed=0 vol=1 user_vol=1 muted=0 user_muted=0 actions=0
+state a audio_ts=1090000000 pending=1 buf=2048 last_buf=0 pending_stop=0 timing_set=1 timing_adjust=0 next_ts_min=1085333332 next_sys_ts_min=1085333332 resample_offset=0 failed=0 vol=1 user_vol=1 muted=0 user_muted=0 actions=0
+tick 0 ret=1 out_ts=1021333333 wait=0 total=1 bufq=1
+order a | roots a
+tick 1 ret=1 out_ts=1042666666 wait=0 total=1 bufq=1
+order a | roots a
+state a audio_ts=1090000000 pending=0 buf=2048 last_buf=0 pending_stop=0 timing_set=1 timing_adjust=0 next_ts_min=1085333332 next_sys_ts_min=1085333332 resample_offset=0 failed=0 vol=1 user_vol=1 muted=0 user_muted=0 actions=0

@@ -1,0 +1,23 @@
+echo idr-access-unit
+hevc_extract new=00000001460150000000012601af0630 header=0000000140010c01ffff016000000001420101016000000300000000014401c172b4 sei=000000014e0105010203000000015001050102
+echo three-byte-start-codes
+hevc_extract new=0000010201d0aa header=00000140010c01ffff01600000014201010160000003000000014401c172b4 sei=-
+echo eos-eob-filler-aud-stay-in-new
+hevc_extract new=000000014801000000014c01ffff00000001460150 header=- sei=-
+echo avc-parameter-set-types-are-not-hevc-ones
+hevc_extract new=000000016742c01e0000000168ce3c80 header=- sei=-
+echo only-first-header-byte-matters
+hevc_extract new=- header=0000000140 sei=-
+hevc_extract new=- header=000000014000 sei=-
+hevc_extract new=- header=00000001c001 sei=-
+echo order-is-kept
+hevc_extract new=000000010201d0aa header=000000014401c172b4000000014201010160000003000000000140010c01ffff0160 sei=000000015001050102000000014e0105010203
+echo no-start-code-garbage-and-empty
+hevc_extract new=- header=- sei=-
+hevc_extract new=- header=- sei=-
+hevc_extract new=0000012601 header=- sei=-
+hevc_extract new=000001260100 header=- sei=-
+echo trailing-zeros-belong-to-the-last-nal
+hevc_extract new=- header=000000014001aa0000 sei=-
+echo trailing-start-code-at-end-is-not-seen
+hevc_extract new=- header=000000014001aa00000001 sei=-

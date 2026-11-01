@@ -1,0 +1,35 @@
+add button b1 ok
+add button2 b2 ok
+add button2 b3 ok
+add button b4 ok
+add button2 b5 ok
+info
+  prop b1 type=button desc="Btn1" long=@null enabled=1 visible=1
+    buttontype=default url=@null
+info
+  prop b2 type=button desc="Btn2" long=@null enabled=1 visible=1
+    buttontype=default url=@null
+echo v1-button-gets-context-data
+click yes prop=b1 props=P data=tk_ctx
+click -> 1
+click yes prop=b1 props=P data=@null
+click -> 1
+click yes prop=b1 props=P data=@null
+click -> 1
+echo button2-gets-priv-regardless-of-context
+click yes prop=b2 props=P data=tk_priv
+click -> 1
+click yes prop=b2 props=P data=tk_priv
+click -> 1
+echo button2-with-null-priv-falls-back-to-context-data
+click no prop=b3 props=P data=tk_ctx
+click -> 0
+click no prop=b3 props=P data=@null
+click -> 0
+echo no-callback
+click -> 0
+click -> 0
+echo clicking-a-non-button
+add bool nb ok
+click -> 0
+click -> 0

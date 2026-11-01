@@ -1,0 +1,27 @@
+# S-050 nvenc: adaptive quantization block and the dynamic-bitrate capability.
+dump 2
+defaults h264
+set bool adaptive_quantization 1
+create h264 soft
+state
+destroy
+nvcap temporal_aq 1
+nvcap dyn_bitrate 1
+create h264 soft
+state
+destroy
+set bool adaptive_quantization 0
+create h264 soft
+state
+destroy
+# preset already enables AQ: setting off does not clear the preset's bit
+nvpreset enableAQ 1
+nvpreset aqStrength 5
+create h264 soft
+destroy
+# cqp disables dynamic bitrate even when the cap is present
+set bool adaptive_quantization 1
+set str rate_control CQP
+create h264 soft
+state
+destroy

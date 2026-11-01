@@ -1,0 +1,17 @@
+# Rotation: the reported size swaps width/height when async_rotation % 180 != 0.
+kind cam input asyncvideo
+create c cam C
+video c bgra 6 2 1 1 1 0
+vtime 100000000
+tick c 0.01
+size c
+rotation c 90
+size c
+rotation c 180
+size c
+rotation c 270
+size c
+rotation c -90
+size c
+rotation c 0
+size c

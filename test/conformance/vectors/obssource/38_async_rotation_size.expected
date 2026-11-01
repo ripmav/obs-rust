@@ -1,0 +1,9 @@
+  cb C create
+log debug source 'C' (cam) created
+create c ok
+size c 6x2
+size c 2x6
+size c 6x2
+size c 2x6
+size c 2x6
+size c 6x2

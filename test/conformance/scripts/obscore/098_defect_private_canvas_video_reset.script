@@ -1,0 +1,17 @@
+# D-4: obs_reset_video walks the canvas list with the wrong hash handle and therefore skips private
+# canvases: they are not cleared, not restored and receive no video_reset signal, yet their mix is
+# freed together with the others (the canvas keeps a stale mix pointer). Observable: has_video stays
+# 1 while the canvas is missing from the mix list, and the core logs "remaining views: 1".
+# A conforming implementation MUST treat private canvases like public ones (clear, restore, signal).
+startup en-US -
+reset_video fmt=BGRA gpu=0
+canvas_create a Public video=1 base=64x64 out=64x64 fmt=BGRA gpu=0
+canvas_create_private p Private video=1 base=64x64 out=64x64 fmt=BGRA gpu=0
+mixes
+sig_canvas a video_reset
+sig_canvas p video_reset
+reset_video fmt=BGRA gpu=0
+mixes
+canvas_info a
+canvas_info p
+shutdown

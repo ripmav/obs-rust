@@ -1,0 +1,6 @@
+# Same dump through the hash-map path (obs core exists, the map is built lazily on the first
+# lookup). Output must be identical to the fallback path except for the mode line (CORE).
+hk_mode core
+hk_count
+hk_dump
+hk_free

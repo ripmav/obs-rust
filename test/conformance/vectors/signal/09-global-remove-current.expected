@@ -1,0 +1,8 @@
+add h ok
+emit s
+gcall self_remove signal=s
+gcall plain signal=s
+emit-done
+emit s
+gcall plain signal=s
+emit-done

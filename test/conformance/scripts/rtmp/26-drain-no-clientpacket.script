@@ -1,0 +1,15 @@
+# OBS reads streaming-time server traffic with RTMP_ReadPacket only (rtmp-stream.c): pings and invokes are NOT answered
+# and not interpreted; only acknowledgements (from ReadN) are produced (R93).
+new
+clock 1000
+seturl rtmp://h/a
+enablewrite
+set flashver FMLE
+feed 03
+feed_s1 0 1000 00000000
+feed_echo
+connect
+feed 020000000000060400000000000600000063
+feed 0300000000001514000000000200086f6e4257446f6e6500000000000000000005
+drain
+state

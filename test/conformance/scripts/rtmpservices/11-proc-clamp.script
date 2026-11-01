@@ -1,0 +1,19 @@
+# S-026 refresh procs clamp "seconds": <=0 -> 3, >10 -> 10. Observable through the fake clock because
+# a refresh with no answer waits seconds*1000 ms (10 ms steps). The first call also creates the updater.
+module-load
+clock
+proc-call twitch_ingests_refresh 0
+clock
+proc-call twitch_ingests_refresh -7
+clock
+proc-call twitch_ingests_refresh 5
+clock
+proc-call twitch_ingests_refresh 99
+clock
+proc-call twitch_ingests_refresh 10
+clock
+echo amazon
+proc-call amazon_ivs_ingests_refresh 0
+clock
+proc-call amazon_ivs_ingests_refresh 11
+clock

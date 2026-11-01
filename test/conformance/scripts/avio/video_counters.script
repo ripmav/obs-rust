@@ -1,0 +1,47 @@
+# S-044: total/skipped counters. They reset when the first raw input connects while no texture encoder is
+# registered (gpu_refs == 0), or when the first texture encoder registers while no raw input is connected.
+# The "stopped" summary is logged when the last raw input / last texture encoder leaves (only if skipped > 0).
+vopen v I420 30 1 16 8 2
+vtex v frames
+vtex v frames
+vtex v skipped
+vstate v
+# first texture encoder, no raw input -> reset
+vtex v inc_enc
+vstate v
+vtex v frames
+vtex v skipped
+vtex v frames
+vstate v
+# a second encoder does not reset
+vtex v inc_enc
+vstate v
+vtex v dec_enc
+vstate v
+# raw input connects while an encoder is registered -> no reset
+vconnect v a 1
+vstate v
+vlock v 1 1 0x01
+vunlock v
+vstate v
+# raw leaves while an encoder is still registered -> no log
+vdisconnect v a 1
+vstate v
+# last encoder leaves with raw inactive and skipped > 0 -> log
+vtex v dec_enc
+vstate v
+# no encoder: raw connect resets the counters
+vconnect v a 1
+vstate v
+vdisconnect v a 1
+# encoder registered first (reset), counters accumulate, raw connects (no reset), encoder leaves while raw is
+# still connected: no log, counters kept; raw leaves with gpu_refs == 0 -> summary logged
+vtex v inc_enc
+vtex v frames
+vtex v skipped
+vconnect v a 1
+vtex v dec_enc
+vstate v
+vdisconnect v a 1
+vstate v
+vclose v

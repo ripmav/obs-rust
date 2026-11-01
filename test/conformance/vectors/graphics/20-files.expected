@@ -1,0 +1,44 @@
+> trace 0
+> gs_create g
+ret 0 created
+> gs_enter_context g
+> trace 1
+> file a.vs VS-CONTENT
+> file a.ps PS-CONTENT
+> gs_vertexshader_create_from_file a.vs > v
+  dev device_vertexshader_create text_len=10 file="a.vs"
+ret #6
+> gs_pixelshader_create_from_file a.ps > p
+  dev device_pixelshader_create text_len=10 file="a.ps"
+ret #7
+== missing file -> error log, NULL, backend not called
+> gs_vertexshader_create_from_file none.vs
+log error Could not load vertex shader file 'none.vs'
+ret null
+> gs_pixelshader_create_from_file none.ps
+log error Could not load pixel shader file 'none.ps'
+ret null
+> gs_effect_create_from_file none.effect
+log error Could not load effect file 'none.effect'
+ret null
+== NULL file name
+> gs_vertexshader_create_from_file -
+log debug gs_vertexshader_create_from_file: Null 'file' parameter
+ret null
+> gs_pixelshader_create_from_file -
+log debug gs_pixelshader_create_from_file: Null 'file' parameter
+ret null
+> gs_effect_create_from_file -
+log debug gs_effect_create_from_file: Null 'file' parameter
+ret null
+== textures from file: decoded image data goes to a 1-level texture with flags 0; failures give NULL
+> gs_texture_create_from_file 3x2
+  dev device_texture_create w=3 h=2 fmt=3 levels=1 data=ptr flags=0
+ret #8
+> gs_texture_create_from_file bogus
+ret null
+== image decoder only produces RGBA here; creation failure at the backend
+> fail device_texture_create 1
+> gs_texture_create_from_file 3x2
+  dev device_texture_create w=3 h=2 fmt=3 levels=1 data=ptr flags=0
+ret null

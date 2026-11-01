@@ -1,0 +1,172 @@
+call source_update a deferred=1
+create a -> ok
+call image_free
+call voltexture_create t1 2x2x2 format=RGBA16F bytes=64 fnv=1b77fa1688c44c23 data=000000000000003c003c00000000003c0000003c0000003c003c003c0000003c00000000003c003c003c0000003c003c0000003c003c003c003c003c003c003c
+call effect_create file=color_grade_filter.effect -> e1 uniforms=9 techniques=5
+call deferred_update a
+tick a 0.016
+render a
+call filter_begin_cs a format=RGBA space=SRGB allow=ALLOW_DIRECT -> 1
+call get_param e1:clut_3d -> ok
+call set_texture_srgb e1:clut_3d t1
+call get_param e1:clut_amount -> ok
+call set_float e1:clut_amount 1
+call get_param e1:clut_scale -> ok
+call set_vec3 e1:clut_scale 0.5 0.5 0.5
+call get_param e1:clut_offset -> ok
+call set_vec3 e1:clut_offset 0.25 0.25 0.25
+call get_param e1:domain_min -> ok
+call set_vec3 e1:domain_min 0 0 0
+call get_param e1:domain_max -> ok
+call set_vec3 e1:domain_max 1 1 1
+call blend_push
+call blend_function ONE INVSRCALPHA
+call filter_tech_end a e1 size=0x0 technique=DrawAlpha3D exists=1
+call blend_pop
+echo mid-grey entries show the sRGB nonlinear->linear conversion stored as half floats
+call source_update b deferred=1
+create b -> ok
+call image_free
+call voltexture_create t2 2x2x2 format=RGBA16F bytes=64 fnv=bb278db3deeff6cd data=d932d932d932003c832ad9322e38003c000000000000003c003c003c003c003c22213d28b02c003c4030d9321935003c2b37d5384d3a003c571ac1181309003c
+call effect_create file=color_grade_filter.effect -> e2 uniforms=9 techniques=5
+call deferred_update b
+tick b 0.016
+echo 1D LUT: technique Draw1D and texture clut_1d; scale = (N-1)/domain; offsets
+call source_update c deferred=1
+create c -> ok
+call image_free
+call texture_create t3 3x1x1 format=RGBA16F bytes=24 fnv=1956c89ec95ec1e0 data=000000000000003cd932d932d932003c003c003c003c003c
+call effect_create file=color_grade_filter.effect -> e3 uniforms=9 techniques=5
+call deferred_update c
+tick c 0.016
+render c
+call filter_begin_cs c format=RGBA space=SRGB allow=ALLOW_DIRECT -> 1
+call get_param e3:clut_1d -> ok
+call set_texture_srgb e3:clut_1d t3
+call get_param e3:clut_amount -> ok
+call set_float e3:clut_amount 1
+call get_param e3:clut_scale -> ok
+call set_vec3 e3:clut_scale 0.666666687 0.666666687 0.666666687
+call get_param e3:clut_offset -> ok
+call set_vec3 e3:clut_offset 0.166666672 0.166666672 0.166666672
+call get_param e3:domain_min -> ok
+call set_vec3 e3:domain_min 0 0 0
+call get_param e3:domain_max -> ok
+call set_vec3 e3:domain_max 1 1 1
+call blend_push
+call blend_function ONE INVSRCALPHA
+call filter_tech_end c e3 size=0x0 technique=Draw1D exists=1
+call blend_pop
+echo both sizes present: 1D wins
+call source_update e deferred=1
+create e -> ok
+call image_free
+call texture_create t4 2x1x1 format=RGBA16F bytes=16 fnv=bd38079d0970f7b7 data=000000000000003c003c003c003c003c
+call effect_create file=color_grade_filter.effect -> e4 uniforms=9 techniques=5
+call deferred_update e
+tick e 0.016
+render e
+call filter_begin_cs e format=RGBA space=SRGB allow=ALLOW_DIRECT -> 1
+call get_param e4:clut_1d -> ok
+call set_texture_srgb e4:clut_1d t4
+call get_param e4:clut_amount -> ok
+call set_float e4:clut_amount 1
+call get_param e4:clut_scale -> ok
+call set_vec3 e4:clut_scale 0.5 0.5 0.5
+call get_param e4:clut_offset -> ok
+call set_vec3 e4:clut_offset 0.25 0.25 0.25
+call get_param e4:domain_min -> ok
+call set_vec3 e4:domain_min 0 0 0
+call get_param e4:domain_max -> ok
+call set_vec3 e4:domain_max 1 1 1
+call blend_push
+call blend_function ONE INVSRCALPHA
+call filter_tech_end e e4 size=0x0 technique=Draw1D exists=1
+call blend_pop
+echo domain not the unit cube -> DrawDomain3D, scale and offset from the domain
+call source_update f deferred=1
+create f -> ok
+call image_free
+call voltexture_create t5 2x2x2 format=RGBA16F bytes=64 fnv=1b77fa1688c44c23 data=000000000000003c003c00000000003c0000003c0000003c003c003c0000003c00000000003c003c003c0000003c003c0000003c003c003c003c003c003c003c
+call effect_create file=color_grade_filter.effect -> e5 uniforms=9 techniques=5
+call deferred_update f
+tick f 0.016
+render f
+call filter_begin_cs f format=RGBA space=SRGB allow=ALLOW_DIRECT -> 1
+call get_param e5:clut_3d -> ok
+call set_texture_srgb e5:clut_3d t5
+call get_param e5:clut_amount -> ok
+call set_float e5:clut_amount 1
+call get_param e5:clut_scale -> ok
+call set_vec3 e5:clut_scale 0.62500006 0.714285731 0.833333373
+call get_param e5:clut_offset -> ok
+call set_vec3 e5:clut_offset 0.1875 0.178571433 0.166666657
+call get_param e5:domain_min -> ok
+call set_vec3 e5:domain_min 0.100000001 0.100000001 0.100000001
+call get_param e5:domain_max -> ok
+call set_vec3 e5:domain_max 0.899999976 0.800000012 0.699999988
+call blend_push
+call blend_function ONE INVSRCALPHA
+call filter_tech_end f e5 size=0x0 technique=DrawDomain3D exists=1
+call blend_pop
+echo invalid domain (min >= max): warning, no data
+call source_update g deferred=1
+create g -> ok
+call image_free
+log warning Invalid CUBE LUT domain: [0.500000, 0.500000], [0.000000, 1.000000], [0.000000, 1.000000]
+call effect_create file=color_grade_filter.effect -> e6 uniforms=9 techniques=5
+call deferred_update g
+tick g 0.016
+render g
+call skip_video_filter g
+echo short data / no size / no data -> no texture
+call source_update h deferred=1
+create h -> ok
+call image_free
+call effect_create file=color_grade_filter.effect -> e7 uniforms=9 techniques=5
+call deferred_update h
+tick h 0.016
+render h
+call skip_video_filter h
+call source_update i deferred=1
+create i -> ok
+call image_free
+call effect_create file=color_grade_filter.effect -> e8 uniforms=9 techniques=5
+call deferred_update i
+tick i 0.016
+call source_update j deferred=1
+create j -> ok
+call image_free
+call effect_create file=color_grade_filter.effect -> e9 uniforms=9 techniques=5
+call deferred_update j
+tick j 0.016
+echo missing file and an uppercase extension
+call source_update k deferred=1
+create k -> ok
+call image_free
+call effect_create file=color_grade_filter.effect -> e10 uniforms=9 techniques=5
+call deferred_update k
+tick k 0.016
+call source_update l deferred=1
+create l -> ok
+call image_free
+call voltexture_create t6 2x2x2 format=RGBA16F bytes=64 fnv=1b77fa1688c44c23 data=000000000000003c003c00000000003c0000003c0000003c003c003c0000003c00000000003c003c003c0000003c003c0000003c003c003c003c003c003c003c
+call effect_create file=color_grade_filter.effect -> e11 uniforms=9 techniques=5
+call deferred_update l
+tick l 0.016
+echo 1D size 1 and extra trailing entries
+call source_update m deferred=1
+create m -> ok
+call image_free
+call texture_create t7 1x1x1 format=RGBA16F bytes=8 fnv=5e1a68fc08e12bf4 data=d932d932d932003c
+call effect_create file=color_grade_filter.effect -> e12 uniforms=9 techniques=5
+call deferred_update m
+tick m 0.016
+echo values with exponent notation and tab separators
+call source_update n deferred=1
+create n -> ok
+call image_free
+call voltexture_create t8 2x2x2 format=RGBA16F bytes=64 fnv=1b77fa1688c44c23 data=000000000000003c003c00000000003c0000003c0000003c003c003c0000003c00000000003c003c003c0000003c003c0000003c003c003c003c003c003c003c
+call effect_create file=color_grade_filter.effect -> e13 uniforms=9 techniques=5
+call deferred_update n
+tick n 0.016

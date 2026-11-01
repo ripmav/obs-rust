@@ -1,0 +1,82 @@
+# half_from_float rounding: ties go to even, carries propagate into the exponent (S-009-R111, R113).
+# 1 + k * 2^-10 are the halves above 1.0: 0x3c00, 0x3c01, ...
+float a0 0x1p0
+float a1 0x1.002p0
+float a2 0x1.001p0
+float a3 0x1.002002p0
+float a8 0x1.006p0
+float a9 0x1.006002p0
+float a4 0x1.003p0
+float a5 0x1.004p0
+float a6 0x1.005p0
+float a7 0x1.007p0
+call h half_from_float_var a0
+call h half_from_float_var a1
+call h half_from_float_var a2
+call h half_from_float_var a3
+call h half_from_float_var a4
+call h half_from_float_var a5
+call h half_from_float_var a6
+call h half_from_float_var a7
+call h half_from_float_var a8
+call h half_from_float_var a9
+# carry into the exponent: just below 2.0
+float c1 0x1.ffep0
+float c2 0x1.ffdp0
+float c3 0x1.fffp0
+call h half_from_float_var c1
+call h half_from_float_var c2
+call h half_from_float_var c3
+# subnormal rounding: halves are k*2^-24; ties to even
+float s1 0x1.8p-24
+float s2 0x1.4p-24
+float s3 0x1.cp-24
+float s4 0x1p-25
+float s5 0x1.000002p-25
+float s6 0x1.fffffep-25
+float s7 0x1.8p-23
+float s8 0x1.4p-23
+call h half_from_float_var s1
+call h half_from_float_var s2
+call h half_from_float_var s3
+call h half_from_float_var s4
+call h half_from_float_var s5
+call h half_from_float_var s6
+call h half_from_float_var s7
+call h half_from_float_var s8
+# Q-11: in the subnormal range the bits shifted out are DISCARDED before rounding (no sticky bit).
+# A value just above a tie therefore rounds like the tie when the excess is below the kept
+# precision: 2^-25 * (1 + 2^-12) rounds up to 1 but 2^-25 * (1 + 2^-13) still gives 0.
+float q1 0x1.002p-25
+float q2 0x1.0008p-25
+float q3 0x1.0010p-25
+float q4 0x1.0018p-25
+float q5 0x1.8008p-24
+float q6 0x1.0008p-24
+call h half_from_float_var q1
+call h half_from_float_var q2
+call h half_from_float_var q3
+call h half_from_float_var q4
+call h half_from_float_var q5
+call h half_from_float_var q6
+# subnormal carrying into the smallest normal
+float s9 0x1.ffcp-15
+float s10 0x1.ffep-15
+call h half_from_float_var s9
+call h half_from_float_var s10
+# the smallest float above 2^-25 rounds up to 1; 2^-25 itself ties to 0 (even)
+float t1 0x1.000002p-25
+call h half_from_float_var t1
+# well-defined small values (exponent >= 2^-45): flush to zero
+float u1 0x1p-26
+float u2 0x1p-30
+float u3 0x1p-40
+float u4 0x1p-44
+float u5 -0x1p-30
+call h half_from_float_var u1
+call h half_from_float_var u2
+call h half_from_float_var u3
+call h half_from_float_var u4
+call h half_from_float_var u5
+# (float32 subnormal inputs and magnitudes below 2^-45 are undefined behaviour in the reference
+# (shift count >= 32); the specification requires a signed zero, but there is no vector for them.)

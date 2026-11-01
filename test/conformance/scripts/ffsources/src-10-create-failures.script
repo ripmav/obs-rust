@@ -1,0 +1,26 @@
+# Creation failure paths: event or mutex cannot be created.
+data D
+src_defaults D
+set_str D local_file "/m/a.mp4"
+host_settings D
+host_int event_init_fail 1
+src_create S D
+host_int event_init_fail 0
+host_int mutex_init_fail 1
+src_create S D
+host_int mutex_init_fail 0
+echo ---- looping enabled after the media ended restarts it (only when active and ENDED)
+src_create S D
+host_int active 1
+media_cb stop
+src_state S
+set_bool D looping 1
+src_update S D
+src_state S
+echo ---- STOPPED (user stopped) does not restart when looping is enabled
+src_stop S
+set_bool D looping 0
+src_update S D
+set_bool D looping 1
+src_update S D
+src_state S

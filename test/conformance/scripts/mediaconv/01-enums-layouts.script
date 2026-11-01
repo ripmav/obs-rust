@@ -1,0 +1,5 @@
+# Numeric value of every enumerator and constant of video-io.h / audio-io.h / media-io-defs.h,
+# and the layout (sizes, offsets) of the plain structs plugins build against (LP64).
+# VIDEO_FORMAT_R10L is 25 (the last one); SPEAKERS_7POINT1 is 8, not 7.
+enums
+layouts

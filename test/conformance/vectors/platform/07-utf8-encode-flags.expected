@@ -1,0 +1,16 @@
+w2u rc=2 hex=6162
+w2u rc=2
+w2u rc=2 hex=6162
+w2u rc=0
+w2u rc=0
+w2u rc=4 hex=efbbbf61
+w2u rc=1 hex=61
+w2u rc=1
+w2u rc=2 hex=6162
+w2u rc=0
+w2u rc=1 hex=61
+w2u rc=3 hex=efbbbf
+w2u rc=0
+w2u rc=1 hex=61
+w2u rc=1
+w2u rc=1 hex=61

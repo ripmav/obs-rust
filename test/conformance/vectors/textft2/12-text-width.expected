@@ -1,0 +1,45 @@
+> events off
+> reset
+> ascii 5 8 0 8 384
+> glyph 0x67 0x67 5 12 0 8 384
+> font Sans Serif - 0 p/sans
+> load
+load -> 1
+registered id=text_ft2_source version=0
+registered id=text_ft2_source version=2
+> create s 2
+create s -> 1
+> setfont s Sans Serif - 20 0
+> glyph 0x57 0x57 11 9 1 9 800
+> glyph 0x69 0x69 2 8 -1 8 450
+> notdef 6 10 1 10 512
+> update s
+update done
+> width s 
+width 0
+> width s a
+width 6
+> width s ab
+width 12
+> width s WWi
+width 31
+> width s ab
+WWWW
+c
+width 48
+> width s ab
+c
+width 20
+> echo --- uncached glyph: not in cache, advance of the loaded glyph shifted right by 6; unmapped -> glyph 0
+--- uncached glyph: not in cache, advance of the loaded glyph shifted right by 6; unmapped -> glyph 0
+> glyph 0x3b1 0x500 7 7 0 7 1000
+> width s α
+width 15
+> width s ααa
+width 36
+> width s é
+width 8
+> echo --- the width query does not cache anything
+--- the width query does not cache anything
+> glyphs s 0x500 0
+glyphs cached=93

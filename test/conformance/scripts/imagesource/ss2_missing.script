@@ -1,0 +1,18 @@
+# slideshow v2: missing-file reporting and replacement through the callback (CORE).
+fs_file /s/a.png 1
+fs_file /s/b.png 1
+fs_file /s/c.png 1
+fs_file /s/d.png 1
+img /s/a.png 10 10
+img /s/b.png 20 20
+img /s/c.png 30 30
+img /s/d.png 40 40
+create ss slideshow_v2 {"files":[{"value":"/s/a.png"},{"value":"/gone/q.png"},{"value":""},{"value":"/gone/r.png"}]}
+tick 0.016
+missing ss
+missing ss 0 /s/b.png
+tick 0.016
+state ss
+missing ss 0 @null
+tick 0.016
+state ss

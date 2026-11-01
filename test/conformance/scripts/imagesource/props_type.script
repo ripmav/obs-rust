@@ -1,0 +1,6 @@
+# get_properties(NULL): the type-level property list must work without an instance (CORE).
+core base_size 1920 1080
+props_type image_source
+props_type color_source_v3
+props_type slideshow
+props_type slideshow_v2

@@ -1,0 +1,30 @@
+# CORE. The x264opts text is parsed with the shared parser and each option is forwarded to
+# x264_param_parse AFTER all computed parameters, in order, so a user option overrides the
+# plugin's own value (keyint, bitrate, ...). Failures only log a warning and do not abort.
+# The names preset/profile/tune/fps/force-cfr/width/height/opencl/stats/qpfile/pass are never
+# forwarded; the long alias opencl_is_experimental_and_potentially_unstable is rewritten to
+# "opencl" - but "opencl" itself is in the skip list and checked BEFORE the rewrite, so the
+# alias IS forwarded as "opencl" (Q-4 in the spec).
+data D
+x264_defaults D
+set D keyint_sec int 2
+set D x264opts str "keyint=120 bitrate=9999 bframes=0 vbv-maxrate=1 vbv-bufsize=2 crf=14 custom=1"
+x264_settings D
+echo skipped-names
+set D x264opts str "fps=30 force-cfr=1 width=1 height=2 opencl=1 stats=a qpfile=b pass=2 keep=1"
+x264_settings D
+echo opencl-alias
+set D x264opts str "opencl_is_experimental_and_potentially_unstable=1"
+x264_settings D
+echo skip-list-is-case-sensitive-so-FPS-is-forwarded
+set D x264opts str "FPS=30 Width=3 PASS=1"
+x264_settings D
+echo failing-parameters-only-warn
+x264_fail param bframes
+x264_fail param nope
+set D x264opts str "bframes=1 nope=2 keyint=7"
+x264_settings D
+x264_fail clear
+echo words-without-value-are-ignored-with-a-warning
+set D x264opts str "keyint=33 cabac no-cabac= =1 bframes=1"
+x264_settings D

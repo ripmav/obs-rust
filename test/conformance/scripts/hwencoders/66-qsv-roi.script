@@ -1,0 +1,28 @@
+# S-050 obs-qsv11: ROI forwarding. When the encoder has ROIs, before each encode the ROI list is
+# re-sent only if the ROI increment changed since the last encode: clear, then ROIs in REVERSE
+# order. The initial cached increment is 0, so an increment of 0 never sends anything (QUIRK).
+q_set open_ok 1
+q_headers 40aa 6742 68ee
+q_set bs_present 1
+q_create h264 soft
+q_bs 0000000165aa 0x21 0 0
+host has_roi 1
+host roi_increment 0
+roi 0 0 16 16 0.5
+roi 16 16 32 32 1.0
+q_encode 0
+host roi_increment 1
+q_encode 1
+q_encode 2
+host roi_increment 2
+roi_clear
+roi 8 8 24 24 -0.25
+q_encode 3
+# increment changed but no ROIs left: clear only
+host roi_increment 3
+roi_clear
+q_encode 4
+host has_roi 0
+host roi_increment 4
+q_encode 5
+q_destroy

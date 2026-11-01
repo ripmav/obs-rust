@@ -1,0 +1,24 @@
+sck_audio_cfg speakers=MONO channels=1 sck_channel_count=1
+sck_audio_cfg speakers=STEREO channels=2 sck_channel_count=2
+sck_audio_cfg speakers=5POINT1 channels=6 sck_channel_count=2
+sck_audio_cfg speakers=7POINT1 channels=8 sck_channel_count=2
+sck_audio_cfg speakers=UNKNOWN channels=0 sck_channel_count=0
+sck_audio_buf speakers=2 frames=512 rate=48000 ts_ns=1500000000 format=FLOAT_PLANAR
+  plane[0]=+0
+  plane[1]=+2048
+sck_audio_buf speakers=1 frames=1024 rate=44100 ts_ns=1000000 format=FLOAT_PLANAR
+  plane[0]=+0
+sck_audio_buf speakers=2 frames=0 rate=48000 ts_ns=0 format=FLOAT_PLANAR
+  plane[0]=+0
+  plane[1]=+0
+sck_audio_buf rejected: error log, buffer dropped
+sck_audio_buf speakers=9 frames=256 rate=48000 ts_ns=1000000000 format=FLOAT_PLANAR
+  plane[0]=+0
+  plane[1]=+1024
+  plane[2]=+2048
+  plane[3]=+3072
+  plane[4]=+4096
+  plane[5]=+5120
+  plane[6]=+6144
+  plane[7]=+7168
+  plane[8]=+8192 OUT-OF-BOUNDS(data[8])

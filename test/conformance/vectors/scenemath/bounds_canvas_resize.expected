@@ -1,0 +1,37 @@
+add old ok
+item old id=1 parent=main group=0 scene=0 abs=0 vis=1 user_vis=1 sel=0 lock=0 need_update=0
+  stored pos=-1.42222226,-0.800000012 rot=0 scale=1,1 scale_ref=1920,1080 align=5
+  bounds type=2 align=0 size=0.711111128,0.400000006 crop_to_bounds=0
+  crop l=0 r=0 t=0 b=0 bounds_crop l=0 r=0 t=0 b=0 last=200,100
+  output_scale=1.91999996,1.91999996 box_scale=384,216
+  draw [1.91999996,0,0,0] [0,1.91999996,0,0] [0,0,1,0] [192,120,0,1]
+  box [384,0,0,0] [0,216,0,0] [0,0,1,0] [192,108,0,1]
+item old id=1 parent=main group=0 scene=0 abs=0 vis=1 user_vis=1 sel=0 lock=0 need_update=0
+  stored pos=-1.42222226,-0.800000012 rot=0 scale=1,1 scale_ref=1920,1080 align=5
+  bounds type=2 align=0 size=0.711111128,0.400000006 crop_to_bounds=0
+  crop l=0 r=0 t=0 b=0 bounds_crop l=0 r=0 t=0 b=0 last=200,100
+  output_scale=0.959999979,0.959999979 box_scale=192,108
+  draw [0.959999979,0,0,0] [0,0.959999979,0,0] [0,0,1,0] [96,60,0,1]
+  box [192,0,0,0] [0,108,0,0] [0,0,1,0] [96,54,0,1]
+get old pos=96,54 rot=0 scale=0.5,0.5 align=5 btype=2 balign=0 bounds=192,108 bcrop=0 crop=0,0,0,0
+info old pos=96,54 rot=0 scale=0.5,0.5 align=5 btype=2 balign=0 bounds=192,108 crop_to_bounds=0
+ box_scale=192,108
+-- item added at the new size
+add young ok
+item young id=2 parent=main group=0 scene=0 abs=0 vis=1 user_vis=1 sel=0 lock=0 need_update=0
+  stored pos=-1.06666672,-0.600000024 rot=0 scale=2,2 scale_ref=960,540 align=5
+  bounds type=0 align=0 size=0,0 crop_to_bounds=0
+  crop l=0 r=0 t=0 b=0 bounds_crop l=0 r=0 t=0 b=0 last=200,100
+  output_scale=2,2 box_scale=400,200
+  draw [2,0,0,0] [0,2,0,0] [0,0,1,0] [192,108,0,1]
+  box [400,0,0,0] [0,200,0,0] [0,0,1,0] [192,108,0,1]
+item young id=2 parent=main group=0 scene=0 abs=0 vis=1 user_vis=1 sel=0 lock=0 need_update=0
+  stored pos=-1.06666672,-0.600000024 rot=0 scale=2,2 scale_ref=960,540 align=5
+  bounds type=0 align=0 size=0,0 crop_to_bounds=0
+  crop l=0 r=0 t=0 b=0 bounds_crop l=0 r=0 t=0 b=0 last=200,100
+  output_scale=4,4 box_scale=800,400
+  draw [4,0,0,0] [0,4,0,0] [0,0,1,0] [384,216,0,1]
+  box [800,0,0,0] [0,400,0,0] [0,0,1,0] [384,216,0,1]
+get young pos=384,216 rot=0 scale=4,4 align=5 btype=0 balign=0 bounds=0,0 bcrop=0 crop=0,0,0,0
+info young pos=384,216 rot=0 scale=4,4 align=5 btype=0 balign=0 bounds=0,0 crop_to_bounds=0
+ box_scale=800,400

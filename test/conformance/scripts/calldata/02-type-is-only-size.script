@@ -1,0 +1,21 @@
+# calldata stores no type tag: a read succeeds whenever the stored byte count
+# equals the size of the requested type.
+init
+set_int i 4611686018427387904
+get_float i
+get_ptr i
+get_bool i
+set_bool flag 1
+get_int flag
+get_bool flag
+set_float d 2.0
+get_int d
+get_ptr d
+set_string str abc
+get_int str
+get_string i
+get_string flag
+get_data i 8
+get_data i 7
+get_data i 9
+free

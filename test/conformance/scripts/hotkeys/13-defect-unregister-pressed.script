@@ -1,0 +1,23 @@
+# S-034 D-1: unregistering (or releasing the context of) a hotkey whose binding is currently pressed.
+# The reference frees the hotkey record first and then releases the pressed binding through the dangling
+# pointer (use after free). Required behaviour (what the vector records): the callback receives exactly
+# one release (pressed=0) for that hotkey, and the binding disappears. The callback is "quiet" because
+# the id argument is not defined in the reference at that point.
+# NOT run under sanitizers (the reference run is the UB itself).
+reg frontend A "A" "a"
+reg frontend B "B" "b"
+quiet A on
+quiet B on
+loadbind A 0:OBS_KEY_A
+loadbind B 0:OBS_KEY_B 0:OBS_KEY_C
+down OBS_KEY_A
+poll 2
+echo unregister-pressed
+unreg A
+enumb
+echo only-the-last-pressed-binding-causes-the-release
+down OBS_KEY_B
+down OBS_KEY_C
+poll 2
+unreg B
+enumb

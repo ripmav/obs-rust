@@ -1,0 +1,41 @@
+cmp 0
+cmp -1
+cmp 1
+cmp 0
+cmp -1
+cmp 0
+cmp -1
+cmp 0
+cmp 0
+cmp -1
+cmp 1
+cmp 1
+cmp -1
+cmpi 0
+cmpi -1
+cmpi 1
+cmp -1
+cmp 1
+cmpi -1
+cmp_strref 0
+cmp_strref -1
+cmp_strref -1
+cmp_strref 1
+cmp_strref -1
+cmp_strref -1
+cmp_strref 0
+cmp_strref -1
+cmp_strref 1
+cmp_strref -1
+cmpi_strref 0
+cmpi_strref -1
+cmpi_strref -1
+cmpi_strref 0
+is_empty 0
+is_empty 1
+is_empty 1
+is_empty 1
+is_empty_null 1
+ref_add off=0 len=10
+ref_add off=6 len=5
+ref_add off=6 len=7

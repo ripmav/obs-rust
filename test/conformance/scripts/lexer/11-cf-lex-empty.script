@@ -1,0 +1,9 @@
+# CORE: cf_lexer_lex on empty / whitespace-only text; return value false for empty (no tokens at all).
+lex ""
+tokens lex
+reset
+lex "   "
+tokens lex
+reset
+lex "\n"
+tokens lex

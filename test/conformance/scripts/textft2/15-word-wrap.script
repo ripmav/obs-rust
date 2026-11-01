@@ -1,0 +1,46 @@
+# Word wrap rewrites spaces in the stored text to newlines (S-038-R71..R76). Every glyph advances 6, space 6;
+# the delimiter's own advance is added to the NEXT word's width.
+events off
+reset
+ascii 5 8 0 8 384
+font "Sans Serif" - 0 p/sans
+load
+create s 2
+setfont s "Sans Serif" - 20 0
+set s custom_width 101
+set s word_wrap true
+set s text "aaaa bbbb cccc dddd eeee ffff"
+update s
+state s
+echo --- word wider than the width stays on its own line, nothing to break
+set s text "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa bb"
+update s
+state s
+echo --- existing newlines reset the running width
+set s text "aaaa bbbb\ncccc dddd eeee ffff gggg"
+update s
+state s
+echo --- a space at index 0 is never replaced (space_pos 0 means none)
+set s text " aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa b"
+update s
+state s
+echo --- QUIRK Q2: width exactly 100 does not word-wrap (test is <= 100) but still char-wraps in layout
+set s custom_width 100
+set s text "aaaa bbbb cccc dddd eeee ffff"
+update s
+state s
+verts s 0
+echo --- wrap disabled or width below 100: text untouched
+set s custom_width 101
+set s word_wrap false
+update s
+state s
+set s word_wrap true
+set s custom_width 60
+update s
+state s
+echo --- consecutive spaces
+set s custom_width 101
+set s text "aaaa  bbbb  cccc  dddd  eeee"
+update s
+state s

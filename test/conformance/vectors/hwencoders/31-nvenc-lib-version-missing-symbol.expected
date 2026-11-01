@@ -1,0 +1,8 @@
+> sym maxver 0
+> initnv
+log error [obs-nvenc] Could not load function: NvEncodeAPIGetMaxSupportedVersion
+host.set_last_error "Missing NvEncodeAPIGetMaxSupportedVersion, check your video card drivers are up to date."
+init_nvenc -> 0
+> sym maxver 1
+> initnv
+init_nvenc -> 0

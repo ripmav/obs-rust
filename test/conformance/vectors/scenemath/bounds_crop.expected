@@ -1,0 +1,93 @@
+add c ok
+-- outer: scale 1 -> box 100x100, item 200x100 overflows horizontally by 100 px
+item c id=1 parent=main group=0 scene=0 abs=0 vis=1 user_vis=1 sel=0 lock=0 need_update=0
+  stored pos=-1.77777779,-1 rot=0 scale=1,1 scale_ref=1920,1080 align=5
+  bounds type=3 align=0 size=0.185185179,0.185185179 crop_to_bounds=1
+  crop l=0 r=0 t=0 b=0 bounds_crop l=50 r=50 t=0 b=0 last=200,100
+  output_scale=1,1 box_scale=100,100
+  draw [1,0,0,0] [0,1,0,0] [0,0,1,0] [0,0,0,1]
+  box [100,0,0,0] [0,100,0,0] [0,0,1,0] [0,0,0,1]
+-- aligned left: all overdraw cropped on the right
+item c id=1 parent=main group=0 scene=0 abs=0 vis=1 user_vis=1 sel=0 lock=0 need_update=0
+  stored pos=-1.77777779,-1 rot=0 scale=1,1 scale_ref=1920,1080 align=5
+  bounds type=3 align=1 size=0.185185179,0.185185179 crop_to_bounds=1
+  crop l=0 r=0 t=0 b=0 bounds_crop l=0 r=100 t=0 b=0 last=200,100
+  output_scale=1,1 box_scale=100,100
+  draw [1,0,0,0] [0,1,0,0] [0,0,1,0] [0,0,0,1]
+  box [100,0,0,0] [0,100,0,0] [0,0,1,0] [0,0,0,1]
+-- aligned right: cropped on the left
+item c id=1 parent=main group=0 scene=0 abs=0 vis=1 user_vis=1 sel=0 lock=0 need_update=0
+  stored pos=-1.77777779,-1 rot=0 scale=1,1 scale_ref=1920,1080 align=5
+  bounds type=3 align=2 size=0.185185179,0.185185179 crop_to_bounds=1
+  crop l=0 r=0 t=0 b=0 bounds_crop l=100 r=0 t=0 b=0 last=200,100
+  output_scale=1,1 box_scale=100,100
+  draw [1,0,0,0] [0,1,0,0] [0,0,1,0] [0,0,0,1]
+  box [100,0,0,0] [0,100,0,0] [0,0,1,0] [0,0,0,1]
+-- to-height with no overflow (scale .5 -> 100x50): nothing cropped
+item c id=1 parent=main group=0 scene=0 abs=0 vis=1 user_vis=1 sel=0 lock=0 need_update=0
+  stored pos=-1.77777779,-1 rot=0 scale=1,1 scale_ref=1920,1080 align=5
+  bounds type=5 align=0 size=0.185185179,0.0925925896 crop_to_bounds=1
+  crop l=0 r=0 t=0 b=0 bounds_crop l=0 r=0 t=0 b=0 last=200,100
+  output_scale=0.5,0.5 box_scale=100,50
+  draw [0.5,0,0,0] [0,0.5,0,0] [0,0,1,0] [0,0,0,1]
+  box [100,0,0,0] [0,50,0,0] [0,0,1,0] [0,0,0,1]
+-- to-height into a tall box: scale 2 -> 400x200 in a 100x200 box, overflow 300 px horizontally
+item c id=1 parent=main group=0 scene=0 abs=0 vis=1 user_vis=1 sel=0 lock=0 need_update=0
+  stored pos=-1.77777779,-1 rot=0 scale=1,1 scale_ref=1920,1080 align=5
+  bounds type=5 align=0 size=0.185185179,0.370370358 crop_to_bounds=1
+  crop l=0 r=0 t=0 b=0 bounds_crop l=75 r=75 t=0 b=0 last=200,100
+  output_scale=2,2 box_scale=100,200
+  draw [2,0,0,0] [0,2,0,0] [0,0,1,0] [0,0,0,1]
+  box [100,0,0,0] [0,200,0,0] [0,0,1,0] [0,0,0,1]
+item c id=1 parent=main group=0 scene=0 abs=0 vis=1 user_vis=1 sel=0 lock=0 need_update=0
+  stored pos=-1.77777779,-1 rot=0 scale=1,1 scale_ref=1920,1080 align=5
+  bounds type=5 align=2 size=0.185185179,0.370370358 crop_to_bounds=1
+  crop l=0 r=0 t=0 b=0 bounds_crop l=150 r=0 t=0 b=0 last=200,100
+  output_scale=2,2 box_scale=100,200
+  draw [2,0,0,0] [0,2,0,0] [0,0,1,0] [0,0,0,1]
+  box [100,0,0,0] [0,200,0,0] [0,0,1,0] [0,0,0,1]
+-- vertical overflow: to-width into a short box, top / bottom / center
+item c id=1 parent=main group=0 scene=0 abs=0 vis=1 user_vis=1 sel=0 lock=0 need_update=0
+  stored pos=-1.77777779,-1 rot=0 scale=1,1 scale_ref=1920,1080 align=5
+  bounds type=4 align=4 size=0.185185179,0.0370370373 crop_to_bounds=1
+  crop l=0 r=0 t=0 b=0 bounds_crop l=0 r=0 t=0 b=60 last=200,100
+  output_scale=0.5,0.5 box_scale=100,20
+  draw [0.5,0,0,0] [0,0.5,0,0] [0,0,1,0] [0,0,0,1]
+  box [100,0,0,0] [0,20,0,0] [0,0,1,0] [0,0,0,1]
+item c id=1 parent=main group=0 scene=0 abs=0 vis=1 user_vis=1 sel=0 lock=0 need_update=0
+  stored pos=-1.77777779,-1 rot=0 scale=1,1 scale_ref=1920,1080 align=5
+  bounds type=4 align=8 size=0.185185179,0.0370370373 crop_to_bounds=1
+  crop l=0 r=0 t=0 b=0 bounds_crop l=0 r=0 t=60 b=0 last=200,100
+  output_scale=0.5,0.5 box_scale=100,20
+  draw [0.5,0,0,0] [0,0.5,0,0] [0,0,1,0] [0,0,0,1]
+  box [100,0,0,0] [0,20,0,0] [0,0,1,0] [0,0,0,1]
+item c id=1 parent=main group=0 scene=0 abs=0 vis=1 user_vis=1 sel=0 lock=0 need_update=0
+  stored pos=-1.77777779,-1 rot=0 scale=1,1 scale_ref=1920,1080 align=5
+  bounds type=4 align=0 size=0.185185179,0.0370370373 crop_to_bounds=1
+  crop l=0 r=0 t=0 b=0 bounds_crop l=0 r=0 t=30 b=30 last=200,100
+  output_scale=0.5,0.5 box_scale=100,20
+  draw [0.5,0,0,0] [0,0.5,0,0] [0,0,1,0] [0,0,0,1]
+  box [100,0,0,0] [0,20,0,0] [0,0,1,0] [0,0,0,1]
+-- types that never crop (inner, stretch, max-only) ignore the flag
+item c id=1 parent=main group=0 scene=0 abs=0 vis=1 user_vis=1 sel=0 lock=0 need_update=0
+  stored pos=-1.77777779,-1 rot=0 scale=1,1 scale_ref=1920,1080 align=5
+  bounds type=2 align=0 size=0.185185179,0.0370370373 crop_to_bounds=1
+  crop l=0 r=0 t=0 b=0 bounds_crop l=0 r=0 t=0 b=0 last=200,100
+  output_scale=0.200000003,0.200000003 box_scale=100,20
+  draw [0.200000003,0,0,0] [0,0.200000003,0,0] [0,0,1,0] [30,0,0,1]
+  box [100,0,0,0] [0,20,0,0] [0,0,1,0] [0,0,0,1]
+item c id=1 parent=main group=0 scene=0 abs=0 vis=1 user_vis=1 sel=0 lock=0 need_update=0
+  stored pos=-1.77777779,-1 rot=0 scale=1,1 scale_ref=1920,1080 align=5
+  bounds type=1 align=0 size=0.185185179,0.0370370373 crop_to_bounds=1
+  crop l=0 r=0 t=0 b=0 bounds_crop l=0 r=0 t=0 b=0 last=200,100
+  output_scale=0.5,0.200000003 box_scale=100,20
+  draw [0.5,0,0,0] [0,0.200000003,0,0] [0,0,1,0] [0,0,0,1]
+  box [100,0,0,0] [0,20,0,0] [0,0,1,0] [0,0,0,1]
+-- flag off clears the crop at the next recompute
+item c id=1 parent=main group=0 scene=0 abs=0 vis=1 user_vis=1 sel=0 lock=0 need_update=0
+  stored pos=-1.77777779,-1 rot=0 scale=1,1 scale_ref=1920,1080 align=5
+  bounds type=3 align=0 size=0.185185179,0.0370370373 crop_to_bounds=0
+  crop l=0 r=0 t=0 b=0 bounds_crop l=0 r=0 t=0 b=0 last=200,100
+  output_scale=0.5,0.5 box_scale=100,20
+  draw [0.5,0,0,0] [0,0.5,0,0] [0,0,1,0] [0,-15,0,1]
+  box [100,0,0,0] [0,20,0,0] [0,0,1,0] [0,0,0,1]

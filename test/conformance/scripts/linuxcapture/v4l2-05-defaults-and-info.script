@@ -1,0 +1,23 @@
+# S-049 v4l2: source registration data and settings defaults. Defaults are only applied when a key is
+# unset; explicit values win. Types: input/pixelformat/standard/dv_timing/resolution/framerate = int -1,
+# color_range = int 0 (VIDEO_RANGE_DEFAULT), buffering = true, auto_reset = false, timeout_frames = 5.
+src-name
+src-defaults
+get input int
+get pixelformat int
+get standard int
+get dv_timing int
+get resolution int
+get framerate int
+get color_range int
+get buffering bool
+get auto_reset bool
+get timeout_frames int
+# device_id has no default
+get device_id str
+# explicit values survive a second get_defaults call
+set-int timeout_frames 9
+set-bool buffering 0
+src-defaults
+get timeout_frames int
+get buffering bool

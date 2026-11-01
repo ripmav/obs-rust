@@ -1,0 +1,22 @@
+> vopen v I420 30 1 16 8 2
+= 0
+> vconnect v a 1
+= 1
+> vtex v skipped
+= void
+> vtex v skipped
+= void
+> vtex v frames
+= void
+> vdisconnect v a 1
+log info Video stopped, number of skipped frames due to encoding lag: 2/1 (200.0%)
+= void
+> vconnect v a 1
+= 1
+> vtex v skipped
+= void
+> vdisconnect v a 1
+log info Video stopped, number of skipped frames due to encoding lag: 1/0 (inf%)
+= void
+> vclose v
+= closed

@@ -1,0 +1,20 @@
+# CORE. The use_bufsize checkbox callback only recomputes buffer_size; it does not touch
+# crf/bitrate. props_modify runs the callback of ONE property (what the UI does on a
+# change) and prints its return value (always true: "refresh the UI").
+data D
+x264_defaults D
+x264_props P
+set D use_bufsize bool 1
+props_modify P use_bufsize D
+props_vis P
+set D rate_control str CRF
+props_modify P use_bufsize D
+echo buffer_size-hidden-but-nothing-else-changed
+props_vis P
+set D rate_control str ABR
+props_modify P rate_control D
+props_vis P
+echo properties-without-a-callback-are-not-touched
+set D use_bufsize bool 0
+props_modify P use_bufsize D
+props_vis P

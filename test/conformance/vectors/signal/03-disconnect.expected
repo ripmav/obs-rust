@@ -1,0 +1,11 @@
+add h ok
+emit s
+call b
+emit-done
+emit s
+emit-done
+emit s
+call b
+call a
+emit-done
+destroy h

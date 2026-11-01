@@ -1,0 +1,32 @@
+# CORE. Codec specific options and the "unknown option" result. apply_user_args returns
+# false if any option is unknown for the codec but still applies all the others (it does not
+# stop). tier exists for HEVC/AV1 only, tile options for AV1 only; "level" accepts "4.2"
+# (-> 42, x3 for HEVC) or a raw integer; lookaheadDepth and keyint are skipped silently
+# (handled elsewhere: not an error).
+data D
+set D opts str "level=4.2 idrPeriod=60 useBFramesAsRef=2 tfLevel=3 enableFillerDataInsertion=1"
+nv_apply h264 D
+echo hevc
+set D opts str "level=5.1 tier=1 idrPeriod=61 useBFramesAsRef=1 tfLevel=4 enableFillerDataInsertion=1"
+nv_apply hevc D
+echo av1
+set D opts str "level=8 tier=1 numTileColumns=2 numTileRows=3 idrPeriod=62 useBFramesAsRef=2 tfLevel=1 enableBitstreamPadding=1"
+nv_apply av1 D
+echo tier-unknown-for-h264-others-still-applied
+set D opts str "tier=1 idrPeriod=10 gopLength=99"
+nv_apply h264 D
+echo tiles-unknown-for-hevc
+set D opts str "numTileColumns=2 enableBitstreamPadding=1 idrPeriod=11"
+nv_apply hevc D
+echo filler-unknown-for-av1
+set D opts str "enableFillerDataInsertion=1 enableBitstreamPadding=1"
+nv_apply av1 D
+echo skipped-special-options
+set D opts str "lookaheadDepth=16 keyint=2 gopLength=7"
+nv_apply h264 D
+echo option-names-are-case-sensitive
+set D opts str "GOPLENGTH=7 gopLength=8"
+nv_apply h264 D
+echo no-options
+set D opts str ""
+nv_apply h264 D

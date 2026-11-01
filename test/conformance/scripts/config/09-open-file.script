@@ -1,0 +1,24 @@
+open_file existing
+write_file ""
+open_file existing
+sections
+write_file "\xef\xbb\xbf[A]\nk=bom\n"
+open_file existing
+get_string A k
+write_file "[A]\nk=v\n"
+open_file existing
+save
+file
+write_file "[X]\na=1\n"
+open_file always
+get_string X a
+open_defaults
+has_default X a
+default_string X a
+get_string X a
+write_file "[X]\na=2\nb=3\n"
+open_defaults
+default_string X a
+get_string X a
+get_string X b
+has_user X b

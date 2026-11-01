@@ -1,0 +1,62 @@
+# CORPUS (CORE): every shipped effect file of this group is parsed by the real effect parser against the fake
+# OpenGL backend (preprocessor name _OPENGL). For each file the runner prints, in order: the backend calls
+# (location string, exact assembled shader text, shader parameters), the creation result, the effect structure
+# (parameters with types and defaults, techniques, passes with the parameters bound to each shader) and the
+# parser-internal structure (counts, struct/function/sampler/technique tables, dependency lists). The files
+# are read from the repository; the file name given to the parser is the repository relative path (it also
+# decides where "#include" is resolved; the runner starts in the repository root).
+gfx _OPENGL
+echo === plugins/obs-transitions/data/fade_to_color_transition.effect
+backend text full
+backend events off
+effect e plugins/obs-transitions/data/fade_to_color_transition.effect @file:plugins/obs-transitions/data/fade_to_color_transition.effect
+dump e
+backend text none
+backend ep brief
+ep plugins/obs-transitions/data/fade_to_color_transition.effect @file:plugins/obs-transitions/data/fade_to_color_transition.effect
+destroy e
+echo === plugins/obs-transitions/data/fade_transition.effect
+backend text full
+backend events off
+effect e plugins/obs-transitions/data/fade_transition.effect @file:plugins/obs-transitions/data/fade_transition.effect
+dump e
+backend text none
+backend ep brief
+ep plugins/obs-transitions/data/fade_transition.effect @file:plugins/obs-transitions/data/fade_transition.effect
+destroy e
+echo === plugins/obs-transitions/data/luma_wipe_transition.effect
+backend text full
+backend events off
+effect e plugins/obs-transitions/data/luma_wipe_transition.effect @file:plugins/obs-transitions/data/luma_wipe_transition.effect
+dump e
+backend text none
+backend ep brief
+ep plugins/obs-transitions/data/luma_wipe_transition.effect @file:plugins/obs-transitions/data/luma_wipe_transition.effect
+destroy e
+echo === plugins/obs-transitions/data/slide_transition.effect
+backend text full
+backend events off
+effect e plugins/obs-transitions/data/slide_transition.effect @file:plugins/obs-transitions/data/slide_transition.effect
+dump e
+backend text none
+backend ep brief
+ep plugins/obs-transitions/data/slide_transition.effect @file:plugins/obs-transitions/data/slide_transition.effect
+destroy e
+echo === plugins/obs-transitions/data/stinger_matte_transition.effect
+backend text full
+backend events off
+effect e plugins/obs-transitions/data/stinger_matte_transition.effect @file:plugins/obs-transitions/data/stinger_matte_transition.effect
+dump e
+backend text none
+backend ep brief
+ep plugins/obs-transitions/data/stinger_matte_transition.effect @file:plugins/obs-transitions/data/stinger_matte_transition.effect
+destroy e
+echo === plugins/obs-transitions/data/swipe_transition.effect
+backend text full
+backend events off
+effect e plugins/obs-transitions/data/swipe_transition.effect @file:plugins/obs-transitions/data/swipe_transition.effect
+dump e
+backend text none
+backend ep brief
+ep plugins/obs-transitions/data/swipe_transition.effect @file:plugins/obs-transitions/data/swipe_transition.effect
+destroy e

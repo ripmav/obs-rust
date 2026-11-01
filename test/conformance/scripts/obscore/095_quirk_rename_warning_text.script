@@ -1,0 +1,13 @@
+# QUIRK Q-3: the duplicate-name warning of a RENAME prints the object's OLD name where the requested
+# name belongs (insertion warnings print the right one). The resulting names are what matters.
+startup en-US -
+canvas_create a One
+canvas_create b Two
+canvas_name b One
+mk_source s1 SrcA
+mk_source s2 SrcB
+canvas_create c Holder flags=scene_ref
+mk_source sc1 Scene1 type=scene id=scene canvas=c
+mk_source sc2 Scene2 type=scene id=scene canvas=c
+src_rename sc2 Scene1
+shutdown

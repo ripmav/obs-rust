@@ -1,0 +1,23 @@
+# Disconnecting while the signal is being emitted only marks the entry; entries
+# marked before their turn are skipped, entries already run are removed afterwards.
+handler h
+add h "void s()"
+callback victim
+callback killer disconnect:h:s:victim
+callback early
+callback late
+connect h s early
+connect h s killer
+connect h s victim
+connect h s late
+emit h s
+emit h s
+# killer disconnecting an entry that has already run
+handler h2
+add h2 "void s()"
+callback first
+callback killer2 disconnect:h2:s:first
+connect h2 s first
+connect h2 s killer2
+emit h2 s
+emit h2 s

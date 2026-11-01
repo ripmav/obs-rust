@@ -1,0 +1,9 @@
+dump size=1 capacity=1 start=0 end=1 data=01
+dump size=2 capacity=2 start=0 end=2 data=0102
+dump size=4 capacity=4 start=0 end=4 data=01020304
+dump size=5 capacity=8 start=0 end=5 data=0102030405......
+pop_front 010203
+dump size=12 capacity=16 start=3 end=15 data=......0405060708090a0b0c0d0e0f..
+peek_front 0405060708090a0b
+dump size=12 capacity=64 start=3 end=15 data=......0405060708090a0b0c0d0e0f..................................................................................................
+peek_front 0405060708090a0b

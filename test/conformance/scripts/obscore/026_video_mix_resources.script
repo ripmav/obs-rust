@@ -1,0 +1,16 @@
+# Texture/surface creation per mix (traced): render target at base size, output target at output
+# size, a ring of staging surfaces (2 sets, one surface per plane) and, with GPU conversion, one plane texture per plane.
+# The NV12/P010 texture-sharing paths are chosen from the device capabilities.
+startup en-US -
+trace gs on
+reset_video base=1920x1080 out=1280x720 fmt=I420 gpu=1
+reset_video base=1920x1080 out=1280x720 fmt=BGRA gpu=0
+reset_video base=640x360 out=640x360 fmt=I010 gpu=0
+reset_video base=640x360 out=640x360 fmt=P010 gpu=1
+fake nv12 0
+fake p010 0
+reset_video base=640x360 out=640x360 fmt=NV12 gpu=1
+reset_video base=640x360 out=640x360 fmt=P010 gpu=1
+trace gs off
+mix_info main
+shutdown

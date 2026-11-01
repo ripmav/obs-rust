@@ -1,0 +1,4 @@
+# S-048 default tables (Linux build): global.ini, user.ini, basic.ini; plus defaulted resolutions.
+defaults app
+defaults user
+defaults basic 1920 1080

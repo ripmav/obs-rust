@@ -1,0 +1,18 @@
+# Escape processing of values: \n \t \r \" are replaced (in that order) after the string
+# token is cut; other backslash sequences are kept (CORE). Quoted values may contain
+# spaces, '=' and '#'. A backslash protects the next char from ending the quoted token.
+fputs te-1 "A=\"line1\\nline2\"\nB=\"tab\\there\"\nC=\"cr\\rx\"\nD=\"say \\\"hi\\\"\"\nE=\"keep \\x \\\\ end\"\nF=\"has = and # inside\"\nG=\"\\n\\n\"\nH=\"back\\\\nslash\"\nI=\"a\\\\\"\nJ=\"\\\\\"\nK=\"x\"\n"
+tl_create 0 te-1
+tl_get 0 A
+tl_get 0 B
+tl_get 0 C
+tl_get 0 D
+tl_get 0 E
+tl_get 0 F
+tl_get 0 G
+tl_get 0 H
+tl_get 0 I
+tl_get 0 J
+tl_get 0 K
+tl_destroy 0
+funlink te-1

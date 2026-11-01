@@ -1,0 +1,12 @@
+# S-009 math2: vec2, matrix3, plane, bounds, math-extra, half, srgb, math-defs (+ vec3/quat/matrix4 parts)
+test/conformance/gen/math2_runner.c
+libobs/graphics/vec2.c
+libobs/graphics/vec3.c
+libobs/graphics/vec4.c
+libobs/graphics/quat.c
+libobs/graphics/matrix3.c
+libobs/graphics/matrix4.c
+libobs/graphics/axisang.c
+libobs/graphics/plane.c
+libobs/graphics/bounds.c
+libobs/graphics/math-extra.c

@@ -1,0 +1,9 @@
+# Spec S-012: NAL / AVC / HEVC / AV1 bitstream helpers.
+# obs-av1.c is #included by the runner (it needs the file-local helpers leb128 and
+# parse_obu_header), so it is not listed here.
+test/conformance/gen/nal_runner.c
+libobs/obs-nal.c
+libobs/obs-avc.c
+libobs/obs-hevc.c
+libobs/util/array-serializer.c
+libobs/util/bitstream.c

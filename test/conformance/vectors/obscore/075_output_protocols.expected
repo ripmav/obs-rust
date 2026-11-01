@@ -1,0 +1,17 @@
+log debug canvas 'Main' (<uuid>) created
+startup -> true
+  past_end -> 0
+protocol_registered RTMP -> 0
+  protocol[0] RTMP
+  protocol[1] SRT
+  protocol[2] RTMP 
+  past_end -> 0
+protocol_registered RTMP -> 1
+protocol_registered rtmp -> 0
+protocol_registered RTMP  -> 1
+protocol_registered SRT -> 1
+protocol_registered  -> 0
+shutdown begin
+log info Freeing OBS context data
+log debug canvas 'Main' (<uuid>) destroyed
+shutdown end obs=NULL

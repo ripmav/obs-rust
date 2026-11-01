@@ -1,0 +1,5 @@
+# AV1 (codec "av1"): each message is wrapped as a metadata OBU of type METADATA_TYPE_USER_PRIVATE_6
+# (see S-012) around the raw (un-escaped) BPM payload, appended after the packet (CORE).
+bpm_set codec av1
+bpm_set rendered 10
+bpm_inject 0 0 1 1 1 1 1200 1000000000 1010000000 1020000000 1030000000

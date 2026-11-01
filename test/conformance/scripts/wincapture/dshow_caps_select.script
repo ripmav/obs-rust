@@ -1,0 +1,45 @@
+# Custom resolution/format/frame-rate selection (UpdateVideoConfig, res_type = custom).
+# m_dshow_cap FMT MINCX MINCY MAXCX MAXCY MININTERVAL MAXINTERVAL  (intervals in 100 ns units; "any" = VideoFormat::Any)
+# m_dshow_select CX CY INTERVAL FMT OBS_INTERVAL ; INTERVAL -1 = match OBS fps (OBS_INTERVAL), 0 = highest.
+# Result: failure when no cap fully matched (caps_match = false) AND no cap whose resolution matched also matched the format
+# (format_match = false). Otherwise success even if the requested rate is outside every range (it is clamped).
+# Frame rate tolerance: interval in [min-20, max+20]. Chosen interval = requested clamped into [min,max] of the
+# capability closest (by |requested - clamped|) among caps whose resolution and format matched.
+m_dshow_caps_reset
+m_dshow_cap 1 640 480 640 480 333333 333333
+m_dshow_cap 1 1280 720 1280 720 166666 333333
+m_dshow_cap 2 1920 1080 1920 1080 333333 1000000
+m_dshow_cap 3 640 480 1920 1080 400000 400000
+# exact fps available
+m_dshow_select 1280 720 333333 1 0
+m_dshow_select 1280 720 166666 1 0
+# within tolerance of the range ends
+m_dshow_select 1280 720 333353 1 0
+m_dshow_select 1280 720 333354 1 0
+m_dshow_select 1280 720 166646 1 0
+m_dshow_select 1280 720 166645 1 0
+# requested rate outside the range: still ok when format matched, interval clamped
+m_dshow_select 1280 720 100000 1 0
+m_dshow_select 1280 720 900000 1 0
+# FPS_MATCHING uses the OBS rate; FPS_HIGHEST (0) passes the matcher and clamps to the minimum interval
+m_dshow_select 1280 720 -1 1 333333
+m_dshow_select 1280 720 0 1 0
+m_dshow_select 1920 1080 0 2 0
+# unsupported resolution => fail (no cap matched resolution so format never matched)
+m_dshow_select 800 600 333333 1 0
+# format mismatch => fail ; Any matches everything
+m_dshow_select 1280 720 333333 9 0
+m_dshow_select 1280 720 333333 any 0
+m_dshow_select 640 480 333333 3 0
+m_dshow_select 640 480 333333 any 0
+# resolution inside a cap's min..max range counts (cap 4 covers 640x480..1920x1080)
+m_dshow_select 1000 700 400000 3 0
+m_dshow_select 1000 700 400000 1 0
+# a cap with format Any matches every requested format
+m_dshow_caps_reset
+m_dshow_cap any 320 240 320 240 333333 333333
+m_dshow_select 320 240 333333 5 0
+m_dshow_select 320 240 666666 5 0
+# no caps at all
+m_dshow_caps_reset
+m_dshow_select 320 240 333333 any 0

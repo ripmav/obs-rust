@@ -1,0 +1,12 @@
+lex false tokens=0 unexpected_eof=0
+tokens lex 0
+lex true tokens=2 unexpected_eof=0
+reformatted "   "
+tokens lex 2
+tok 0 type=SPACETAB str="   " src=0+3 @1:1
+tok 1 type=NONE str="" src=3+0 @1:4
+lex true tokens=2 unexpected_eof=0
+reformatted "\n"
+tokens lex 2
+tok 0 type=NEWLINE str="\n" src=0+1 @1:1
+tok 1 type=NONE str="" src=1+0 @2:1

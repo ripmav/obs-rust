@@ -1,0 +1,13 @@
+# obs_reset_source_uuids gives every source a new UUID and re-keys the UUID table (so lookup by
+# the new UUID works); names, references and the iteration order (creation order) are unchanged.
+# The new UUIDs are random, only "changed" and the length are printed.
+startup en-US -
+mk_source a A
+mk_source b B private=1
+mk_source c C type=scene id=scene
+get source_by_uuid uuid:a
+uuid_reset a b c
+get source_by_name A
+get source_by_name C
+enum all_sources
+shutdown

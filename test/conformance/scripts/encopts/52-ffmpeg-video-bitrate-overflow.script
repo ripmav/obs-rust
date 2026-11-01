@@ -1,0 +1,12 @@
+# DEFECT (D-1). bitrate (kbps) * 1000 is computed in a signed 32-bit int. For bitrate > 2147483
+# kbps the multiplication overflows (undefined behaviour; on every supported target the
+# result wraps). The properties of the real encoders cap the bitrate far below that, so only a
+# hand-edited settings file can trigger it. Required behaviour for a reimplementation: do not
+# panic/abort; wrapping 32-bit multiplication reproduces the reference. The line printed for
+# an overflowing value carries the prefix "info_" and is NOT compared.
+video NV12 709 partial 60 1 1920 1080
+echo largest-safe-bitrate
+vid_update 2147483 0 @null
+echo overflowing-bitrate
+vid_update 2147484 0 @null
+vid_update 4294967 0 @null

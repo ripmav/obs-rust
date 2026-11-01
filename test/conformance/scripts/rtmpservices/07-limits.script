@@ -1,0 +1,39 @@
+# S-026 getters derived from "recommended": supported resolutions, max fps, max bitrate, codecs.
+fs-load /mod/data/services.json data/services-ok.json
+settings S {"service":"Alpha"}
+new A rtmp_common S
+echo alpha-resolutions-skip-invalid-keep-duplicates-and-trailing-garbage
+get A resolutions maxfps vcodecs acodecs
+echo max-bitrate-with-matrix-needs-video-info
+video-info -
+get A maxbitrate
+video-info 1280 720 30 1
+get A maxbitrate
+video-info 1920 1080 60 1
+get A maxbitrate
+video-info 1920 1080 61 1
+get A maxbitrate
+echo codecs-cached-after-first-call-even-if-file-changes
+fs-del /mod/data/services.json
+get A vcodecs
+fs-load /mod/data/services.json data/services-ok.json
+echo Golf-all-resolutions-invalid-means-none
+settings S {"service":"Golf"}
+update A S
+get A resolutions maxfps maxbitrate vcodecs acodecs
+echo Bravo-no-codecs-key
+settings S {"service":"Bravo"}
+update A S
+get A vcodecs acodecs maxbitrate
+echo Charlie-no-recommended
+settings S {"service":"Charlie"}
+protocols RTMP RTMPS SRT
+update A S
+get A resolutions maxfps maxbitrate vcodecs
+echo unknown-service
+settings S {"service":"Zulu"}
+update A S
+get A resolutions maxfps maxbitrate vcodecs acodecs
+echo no-file
+fs-del /mod/data/services.json
+get A resolutions maxfps maxbitrate vcodecs acodecs

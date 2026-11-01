@@ -1,0 +1,38 @@
+# audio_frames_to_ns(rate, frames) = util_mul_div64(frames, 1e9, rate)  ;  ns_to_audio_frames(rate, ns) = util_mul_div64(ns, rate, 1e9)
+# with util_mul_div64(num, mul, div) = (num / div) * mul + ((num % div) * mul) / div   (unsigned 64-bit, wrapping).
+# Both truncate toward zero; the split avoids overflow of num*mul but the result can still wrap.
+frames_to_ns 48000 0
+frames_to_ns 48000 1
+frames_to_ns 48000 48000
+frames_to_ns 48000 1024
+frames_to_ns 44100 1
+frames_to_ns 44100 44100
+frames_to_ns 44100 1000
+frames_to_ns 1000000000 7
+frames_to_ns 3 1
+frames_to_ns 3 2
+frames_to_ns 96000 123456789
+ns_to_frames 48000 0
+ns_to_frames 48000 1000000000
+ns_to_frames 48000 20833
+ns_to_frames 48000 20834
+ns_to_frames 48000 999999999
+ns_to_frames 44100 1000000000
+ns_to_frames 44100 22675
+ns_to_frames 44100 22676
+ns_to_frames 1000000000 5
+ns_to_frames 3 999999999
+# large values: the (num / div) * mul term is exact; (rem * mul) is below 2^64 for these
+frames_to_ns 48000 0x0000ffffffffffff
+ns_to_frames 48000 0x0000ffffffffffff
+frames_to_ns 48000 18446744073709551615
+ns_to_frames 48000 18446744073709551615
+# wrap-around: 1e9 * frames overflows 2^64 in the first term when frames/rate is huge
+frames_to_ns 1 18446744073709551615
+frames_to_ns 1 100000000000
+# rate 0: frames_to_ns divides by the rate and traps in the reference (SIGFPE on x86): "result crash". Not a supported
+# input; a Rust API returns None / Err there and its runner prints "result crash". ns_to_frames never divides by the
+# rate (it multiplies), so it returns 0.
+forked frames_to_ns 0 5
+ns_to_frames 0 5
+ns_to_frames 48000 0x7fffffffffffffff

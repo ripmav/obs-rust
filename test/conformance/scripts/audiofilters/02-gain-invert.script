@@ -1,0 +1,47 @@
+# CORE. gain: multiple = db_to_mul(db) (powf(10, db/20)); multiplies every plane < channels that is non-NULL.
+# invert: negates every plane until the first NULL plane (-0 results print as 0).
+audio 2 48000
+create g1 gain
+state g1
+process g1 8 ts=0 list:1,0.5,-0.25,0,2,-2,0.125,1 const:0.5
+data d
+set d db double 6
+update g1 d
+state g1
+process g1 4 ts=0 const:0.5 const:-0.5
+set d db double -30
+update g1 d
+state g1
+set d db double 30.5
+update g1 d
+state g1
+echo non-finite-db-gives-zero-gain
+set d db double inf
+update g1 d
+state g1
+process g1 3 const:1 const:1
+set d db double nan
+update g1 d
+state g1
+echo null-planes-and-extra-planes
+set d db double 6
+update g1 d
+process g1 3 const:1 - const:3
+echo channels-fewer-than-planes
+audio 1 48000
+update g1 d
+process g1 3 const:1 const:1
+audio 2 48000
+echo zero-frames
+update g1 d
+process g1 0 const:1 const:1
+echo nan-input
+process g1 3 const:nan const:inf
+destroy g1
+create i1 invert
+process i1 5 list:1,-2,0,0.5,nan const:0.25
+echo null-first-plane-stops-the-loop
+process i1 3 - const:1 const:1
+echo planes-beyond-channel-count-are-inverted
+process i1 2 const:1 const:2 const:3 const:4 const:5 const:6 const:7 const:8
+destroy i1

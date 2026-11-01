@@ -1,0 +1,120 @@
+props P
+  prop service type=list desc="Service" visible=1 enabled=1 combo=2 format=3 items=1
+    item 0 name="FromData" value="FromData" disabled=0
+  prop show_all type=bool desc="Show all services" visible=1 enabled=1
+  prop server type=list desc="Server" visible=1 enabled=1 combo=2 format=3 items=1
+    item 0 name="d" value="rtmp://data/live" disabled=0
+  prop key type=text desc="Stream key" visible=1 enabled=1 text_type=1
+echo config-file-wins
+props P2
+  prop service type=list desc="Service" visible=1 enabled=1 combo=2 format=3 items=3
+    item 0 name="FromData" value="FromData" disabled=1
+    item 1 name="FromData" value="FromData" disabled=1
+    item 2 name="FromConfig" value="FromConfig" disabled=0
+  prop show_all type=bool desc="Show all services" visible=1 enabled=1
+  prop server type=list desc="Server" visible=1 enabled=1 combo=2 format=3 items=1
+    item 0 name="" value="" disabled=1
+  prop key type=text desc="Stream key" visible=1 enabled=1 text_type=1
+echo wrong-format-version-in-config-falls-back-to-data
+log debug rtmp-common.c: [open_json_file] Wrong format version (4), expected 5
+props P3
+  prop service type=list desc="Service" visible=1 enabled=1 combo=2 format=3 items=1
+    item 0 name="FromData" value="FromData" disabled=0
+  prop show_all type=bool desc="Show all services" visible=1 enabled=1
+  prop server type=list desc="Server" visible=1 enabled=1 combo=2 format=3 items=1
+    item 0 name="d" value="rtmp://data/live" disabled=0
+  prop key type=text desc="Stream key" visible=1 enabled=1 text_type=1
+echo bad-json-in-config-falls-back
+log warning rtmp-common.c: [open_json_file] Error reading JSON file (1): ']' expected near end of file
+props P4
+  prop service type=list desc="Service" visible=1 enabled=1 combo=2 format=3 items=1
+    item 0 name="FromData" value="FromData" disabled=0
+  prop show_all type=bool desc="Show all services" visible=1 enabled=1
+  prop server type=list desc="Server" visible=1 enabled=1 combo=2 format=3 items=1
+    item 0 name="d" value="rtmp://data/live" disabled=0
+  prop key type=text desc="Stream key" visible=1 enabled=1 text_type=1
+echo duplicate-key-in-config-falls-back
+log warning rtmp-common.c: [open_json_file] Error reading JSON file (1): duplicate object key near '"services"'
+props P5
+  prop service type=list desc="Service" visible=1 enabled=1 combo=2 format=3 items=1
+    item 0 name="FromData" value="FromData" disabled=0
+  prop show_all type=bool desc="Show all services" visible=1 enabled=1
+  prop server type=list desc="Server" visible=1 enabled=1 combo=2 format=3 items=1
+    item 0 name="d" value="rtmp://data/live" disabled=0
+  prop key type=text desc="Stream key" visible=1 enabled=1 text_type=1
+echo format-version-as-string-or-float
+log debug rtmp-common.c: [open_json_file] Wrong format version (0), expected 5
+props P6
+  prop service type=list desc="Service" visible=1 enabled=1 combo=2 format=3 items=1
+    item 0 name="FromData" value="FromData" disabled=0
+  prop show_all type=bool desc="Show all services" visible=1 enabled=1
+  prop server type=list desc="Server" visible=1 enabled=1 combo=2 format=3 items=1
+    item 0 name="d" value="rtmp://data/live" disabled=0
+  prop key type=text desc="Stream key" visible=1 enabled=1 text_type=1
+log debug rtmp-common.c: [open_json_file] Wrong format version (0), expected 5
+props P7
+  prop service type=list desc="Service" visible=1 enabled=1 combo=2 format=3 items=1
+    item 0 name="FromData" value="FromData" disabled=0
+  prop show_all type=bool desc="Show all services" visible=1 enabled=1
+  prop server type=list desc="Server" visible=1 enabled=1 combo=2 format=3 items=1
+    item 0 name="d" value="rtmp://data/live" disabled=0
+  prop key type=text desc="Stream key" visible=1 enabled=1 text_type=1
+echo missing-services-list-falls-back
+log warning rtmp-common.c: [open_json_file] No services list
+props P8
+  prop service type=list desc="Service" visible=1 enabled=1 combo=2 format=3 items=1
+    item 0 name="FromData" value="FromData" disabled=0
+  prop show_all type=bool desc="Show all services" visible=1 enabled=1
+  prop server type=list desc="Server" visible=1 enabled=1 combo=2 format=3 items=1
+    item 0 name="d" value="rtmp://data/live" disabled=0
+  prop key type=text desc="Stream key" visible=1 enabled=1 text_type=1
+echo empty-list-accepted-so-no-fallback
+props P9
+  prop service type=list desc="Service" visible=1 enabled=1 combo=2 format=3 items=2
+    item 0 name="FromData" value="FromData" disabled=1
+    item 1 name="FromData" value="FromData" disabled=1
+  prop show_all type=bool desc="Show all services" visible=1 enabled=1
+  prop server type=list desc="Server" visible=1 enabled=1 combo=2 format=3 items=1
+    item 0 name="" value="" disabled=1
+  prop key type=text desc="Stream key" visible=1 enabled=1 text_type=1
+echo services-not-an-array-is-accepted-but-yields-no-list
+log warning rtmp-common.c: [add_services] JSON file root is not an array
+props P10
+  prop service type=list desc="Service" visible=1 enabled=1 combo=2 format=3 items=1
+    item 0 name="FromData" value="FromData" disabled=1
+  prop show_all type=bool desc="Show all services" visible=1 enabled=1
+  prop server type=list desc="Server" visible=1 enabled=1 combo=2 format=3 items=1
+    item 0 name="" value="" disabled=1
+  prop key type=text desc="Stream key" visible=1 enabled=1 text_type=1
+echo empty-config-file-is-unreadable
+props P11
+  prop service type=list desc="Service" visible=1 enabled=1 combo=2 format=3 items=1
+    item 0 name="FromData" value="FromData" disabled=0
+  prop show_all type=bool desc="Show all services" visible=1 enabled=1
+  prop server type=list desc="Server" visible=1 enabled=1 combo=2 format=3 items=1
+    item 0 name="d" value="rtmp://data/live" disabled=0
+  prop key type=text desc="Stream key" visible=1 enabled=1 text_type=1
+echo BOM-is-stripped
+props P12
+  prop service type=list desc="Service" visible=1 enabled=1 combo=2 format=3 items=1
+    item 0 name="Bom" value="Bom" disabled=0
+  prop show_all type=bool desc="Show all services" visible=1 enabled=1
+  prop server type=list desc="Server" visible=1 enabled=1 combo=2 format=3 items=1
+    item 0 name="b" value="rtmp://bom/live" disabled=0
+  prop key type=text desc="Stream key" visible=1 enabled=1 text_type=1
+echo no-config-dir-uses-data
+props P13
+  prop service type=list desc="Service" visible=1 enabled=1 combo=2 format=3 items=1
+    item 0 name="FromData" value="FromData" disabled=0
+  prop show_all type=bool desc="Show all services" visible=1 enabled=1
+  prop server type=list desc="Server" visible=1 enabled=1 combo=2 format=3 items=1
+    item 0 name="d" value="rtmp://data/live" disabled=0
+  prop key type=text desc="Stream key" visible=1 enabled=1 text_type=1
+echo no-data-dir-no-config-dir-no-file
+props P14
+  prop service type=list desc="Service" visible=1 enabled=1 combo=2 format=3 items=1
+    item 0 name="FromData" value="FromData" disabled=1
+  prop show_all type=bool desc="Show all services" visible=1 enabled=1
+  prop server type=list desc="Server" visible=1 enabled=1 combo=2 format=3 items=1
+    item 0 name="" value="" disabled=1
+  prop key type=text desc="Stream key" visible=1 enabled=1 text_type=1

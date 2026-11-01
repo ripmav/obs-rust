@@ -1,0 +1,61 @@
+add c ok
+item c id=1 parent=main group=0 scene=0 abs=0 vis=1 user_vis=1 sel=0 lock=0 need_update=0
+  stored pos=-1.75925922,-0.981481493 rot=0 scale=1,1 scale_ref=1920,1080 align=5
+  bounds type=0 align=0 size=0,0 crop_to_bounds=0
+  crop l=0 r=0 t=0 b=0 bounds_crop l=0 r=0 t=0 b=0 last=0,0
+  output_scale=1,1 box_scale=0,0
+  draw [1,0,0,0] [0,1,0,0] [0,0,1,0] [10,10,0,1]
+  box [0,0,0,0] [0,0,0,0] [0,0,1,0] [10,10,0,1]
+-- bounds inner on a zero-sized source
+item c id=1 parent=main group=0 scene=0 abs=0 vis=1 user_vis=1 sel=0 lock=0 need_update=0
+  stored pos=-1.75925922,-0.981481493 rot=0 scale=1,1 scale_ref=1920,1080 align=5
+  bounds type=2 align=0 size=0.740740716,0.555555582 crop_to_bounds=0
+  crop l=0 r=0 t=0 b=0 bounds_crop l=0 r=0 t=0 b=0 last=0,0
+  output_scale=inf,inf box_scale=400,300
+  draw [nan,nan,nan,nan] [nan,nan,nan,nan] [nan,nan,nan,nan] [nan,nan,nan,nan]
+  box [400,0,0,0] [0,300,0,0] [0,0,1,0] [10,10,0,1]
+-- stretch: x/0 -> inf
+item c id=1 parent=main group=0 scene=0 abs=0 vis=1 user_vis=1 sel=0 lock=0 need_update=0
+  stored pos=-1.75925922,-0.981481493 rot=0 scale=1,1 scale_ref=1920,1080 align=5
+  bounds type=1 align=0 size=0.740740716,0.555555582 crop_to_bounds=0
+  crop l=0 r=0 t=0 b=0 bounds_crop l=0 r=0 t=0 b=0 last=0,0
+  output_scale=inf,inf box_scale=400,300
+  draw [nan,nan,nan,nan] [nan,nan,nan,nan] [nan,nan,nan,nan] [nan,nan,nan,nan]
+  box [400,0,0,0] [0,300,0,0] [0,0,1,0] [10,10,0,1]
+-- to-width, to-height, outer, max-only
+item c id=1 parent=main group=0 scene=0 abs=0 vis=1 user_vis=1 sel=0 lock=0 need_update=0
+  stored pos=-1.75925922,-0.981481493 rot=0 scale=1,1 scale_ref=1920,1080 align=5
+  bounds type=4 align=0 size=0.740740716,0.555555582 crop_to_bounds=0
+  crop l=0 r=0 t=0 b=0 bounds_crop l=0 r=0 t=0 b=0 last=0,0
+  output_scale=inf,inf box_scale=400,300
+  draw [nan,nan,nan,nan] [nan,nan,nan,nan] [nan,nan,nan,nan] [nan,nan,nan,nan]
+  box [400,0,0,0] [0,300,0,0] [0,0,1,0] [10,10,0,1]
+item c id=1 parent=main group=0 scene=0 abs=0 vis=1 user_vis=1 sel=0 lock=0 need_update=0
+  stored pos=-1.75925922,-0.981481493 rot=0 scale=1,1 scale_ref=1920,1080 align=5
+  bounds type=5 align=0 size=0.740740716,0.555555582 crop_to_bounds=0
+  crop l=0 r=0 t=0 b=0 bounds_crop l=0 r=0 t=0 b=0 last=0,0
+  output_scale=inf,inf box_scale=400,300
+  draw [nan,nan,nan,nan] [nan,nan,nan,nan] [nan,nan,nan,nan] [nan,nan,nan,nan]
+  box [400,0,0,0] [0,300,0,0] [0,0,1,0] [10,10,0,1]
+item c id=1 parent=main group=0 scene=0 abs=0 vis=1 user_vis=1 sel=0 lock=0 need_update=0
+  stored pos=-1.75925922,-0.981481493 rot=0 scale=1,1 scale_ref=1920,1080 align=5
+  bounds type=3 align=0 size=0.740740716,0.555555582 crop_to_bounds=0
+  crop l=0 r=0 t=0 b=0 bounds_crop l=0 r=0 t=0 b=0 last=0,0
+  output_scale=inf,inf box_scale=400,300
+  draw [nan,nan,nan,nan] [nan,nan,nan,nan] [nan,nan,nan,nan] [nan,nan,nan,nan]
+  box [400,0,0,0] [0,300,0,0] [0,0,1,0] [10,10,0,1]
+item c id=1 parent=main group=0 scene=0 abs=0 vis=1 user_vis=1 sel=0 lock=0 need_update=0
+  stored pos=-1.75925922,-0.981481493 rot=0 scale=1,1 scale_ref=1920,1080 align=5
+  bounds type=6 align=0 size=0.740740716,0.555555582 crop_to_bounds=0
+  crop l=0 r=0 t=0 b=0 bounds_crop l=0 r=0 t=0 b=0 last=0,0
+  output_scale=1,1 box_scale=400,300
+  draw [1,0,0,0] [0,1,0,0] [0,0,1,0] [210,160,0,1]
+  box [400,0,0,0] [0,300,0,0] [0,0,1,0] [10,10,0,1]
+-- the source gets its size later: everything becomes finite at the next update
+item c id=1 parent=main group=0 scene=0 abs=0 vis=1 user_vis=1 sel=0 lock=0 need_update=0
+  stored pos=-1.75925922,-0.981481493 rot=0 scale=1,1 scale_ref=1920,1080 align=5
+  bounds type=2 align=0 size=0.740740716,0.555555582 crop_to_bounds=0
+  crop l=0 r=0 t=0 b=0 bounds_crop l=0 r=0 t=0 b=0 last=200,100
+  output_scale=2,2 box_scale=400,300
+  draw [2,0,0,0] [0,2,0,0] [0,0,1,0] [10,60,0,1]
+  box [400,0,0,0] [0,300,0,0] [0,0,1,0] [10,10,0,1]

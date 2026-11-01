@@ -1,0 +1,22 @@
+# gpu_delay (render delay): frame count = delay / frame interval, texrender FIFO, reuse order, render-once-per-tick.
+video 1920 1080 60 1
+source S 640 480 640 480 SRGB video
+data d
+dset d delay_ms int 50
+filter a gpu_delay 0 d S S
+echo before the first tick: no frames, no valid target -> skip
+render a
+cs a 2 SRGB_16F SRGB
+tick a 0.016
+echo 50 ms at 60 fps: 3 frames (50000000 / 16666666)
+render a
+echo second render in the same tick only draws the queue head again
+render a
+tick a 0.016
+render a
+tick a 0.016
+render a
+tick a 0.016
+render a
+cs a 2 SRGB_16F SRGB
+cs a 0

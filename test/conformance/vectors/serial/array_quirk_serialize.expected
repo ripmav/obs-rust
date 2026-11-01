@@ -1,0 +1,6 @@
+open array ok
+write 0102 2 -> 2
+read 2 -> 0 data=-
+serialize_r 3 -> 3 data=000000
+serialize_w 05 1 -> 1
+dump array num=6 pos=6 bytes=010200000005

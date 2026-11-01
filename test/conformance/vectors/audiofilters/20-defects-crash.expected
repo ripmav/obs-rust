@@ -1,0 +1,58 @@
+create e -> ok
+create e0 -> ok
+echo D-expander-null-plane-in-process-expansion
+try-begin
+process e frames=4 ts=0 pos=0 in-crc: 542e8f65 -
+try-end crash
+echo D-expander-null-plane-0
+try-begin
+process e0 frames=4 ts=0 pos=0 in-crc: - 542e8f65
+try-end crash
+echo D-expander-properties-with-null-data
+try-begin
+try-end crash
+try-begin
+try-end crash
+echo D-noise-gate-null-planes
+create g -> ok
+try-begin
+process g frames=4 ts=0 pos=0 in-crc: - 542e8f65
+try-end crash
+try-begin
+process g frames=4 ts=0 pos=0 in-crc: 542e8f65 -
+try-end crash
+echo D-eq-null-plane
+create q -> ok
+try-begin
+process q frames=4 ts=0 pos=0 in-crc: 542e8f65 -
+try-end crash
+echo D-noise-suppress-null-plane
+create n -> ok
+try-begin
+process n frames=480 ts=1000000000 pos=0 in-crc: 5e3b20c5 -
+try-end crash
+echo D-compressor-sidechain-capture-with-null-plane
+create c -> ok
+try-begin
+sc_push mic frames=100 muted=0 callbacks=1
+try-end crash
+echo D-channel-count-increase-after-create-compressor-sidechain
+create c1 -> ok
+try-begin
+sc_push mic frames=100 muted=0 callbacks=2
+try-end ok
+try-begin
+process c1 frames=100 ts=0 pos=0 in-crc: 2d153665 2d153665
+try-end crash
+echo D-channel-count-increase-after-create-noise-suppress
+create n1 -> ok
+try-begin
+process n1 frames=480 ts=1000000000 pos=0 in-crc: 5e3b20c5 5e3b20c5
+try-end crash
+echo ok-control-gain-null-plane-is-fine
+create gg -> ok
+try-begin
+process gg frames=4 ts=0 pos=0 in-crc: 542e8f65 -
+  ret same frames=4 ts=0
+  out p0 [0] 0.5 0.5 0.5 0.5
+try-end ok

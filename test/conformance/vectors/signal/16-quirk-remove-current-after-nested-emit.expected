@@ -1,0 +1,14 @@
+add h ok
+add h ok
+emit outer
+call victim
+nested-emit inner
+call in_cb
+call other
+emit-done
+emit outer
+call victim
+nested-emit inner
+call in_cb
+call other
+emit-done

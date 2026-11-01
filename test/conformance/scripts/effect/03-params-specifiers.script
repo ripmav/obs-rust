@@ -1,0 +1,21 @@
+# CORE: variable specifiers in front of the type: uniform, const, property (any order, any count).
+# A repeated specifier is only a warning ("'X' keyword already specified"); warnings do not fail the parse.
+# "uniform" parameters become shader parameters; the assembled text keeps only "uniform"/"const"
+# (see 32-assembly-params). Specifiers on functions are errors.
+backend text none
+ep s1 "uniform float a; const float b; property float c; float d;"
+ep s2 "uniform const float a;"
+ep s3 "const uniform property float a;"
+ep s4 "property property float a;"
+ep s5 "uniform uniform uniform float a;"
+ep s6 "const const float a; uniform uniform float b;"
+ep s7 "uniform float2 a = {1,2}; property float3 b = float3(1,2,3);"
+ep s8 "uniform"
+ep s9 "uniform uniform"
+ep s10 "uniform float"
+ep s11 "const 5;"
+ep f1 "uniform float f() { return 1; }"
+ep f2 "const float f() { return 1; }"
+ep f3 "property float f() { return 1; }"
+ep f4 "uniform const property float f() { return 1; }"
+ep f5 "uniform uniform float f() { return 1; }"

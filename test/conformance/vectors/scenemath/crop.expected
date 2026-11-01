@@ -1,0 +1,64 @@
+add c ok
+item c id=1 parent=main group=0 scene=0 abs=0 vis=1 user_vis=1 sel=0 lock=0 need_update=0
+  stored pos=-1.77777779,-1 rot=0 scale=1,1 scale_ref=1920,1080 align=5
+  bounds type=0 align=0 size=0,0 crop_to_bounds=0
+  crop l=0 r=0 t=0 b=0 bounds_crop l=0 r=0 t=0 b=0 last=200,100
+  output_scale=1,1 box_scale=200,100
+  draw [1,0,0,0] [0,1,0,0] [0,0,1,0] [0,0,0,1]
+  box [200,0,0,0] [0,100,0,0] [0,0,1,0] [0,0,0,1]
+item c id=1 parent=main group=0 scene=0 abs=0 vis=1 user_vis=1 sel=0 lock=0 need_update=1
+  stored pos=-1.77777779,-1 rot=0 scale=1,1 scale_ref=1920,1080 align=5
+  bounds type=0 align=0 size=0,0 crop_to_bounds=0
+  crop l=10 r=20 t=5 b=15 bounds_crop l=0 r=0 t=0 b=0 last=200,100
+  output_scale=1,1 box_scale=200,100
+  draw [1,0,0,0] [0,1,0,0] [0,0,1,0] [0,0,0,1]
+  box [200,0,0,0] [0,100,0,0] [0,0,1,0] [0,0,0,1]
+item c id=1 parent=main group=0 scene=0 abs=0 vis=1 user_vis=1 sel=0 lock=0 need_update=0
+  stored pos=-1.77777779,-1 rot=0 scale=1,1 scale_ref=1920,1080 align=5
+  bounds type=0 align=0 size=0,0 crop_to_bounds=0
+  crop l=10 r=20 t=5 b=15 bounds_crop l=0 r=0 t=0 b=0 last=200,100
+  output_scale=1,1 box_scale=170,80
+  draw [1,0,0,0] [0,1,0,0] [0,0,1,0] [0,0,0,1]
+  box [170,0,0,0] [0,80,0,0] [0,0,1,0] [0,0,0,1]
+-- negative values become 0
+get c pos=0,0 rot=0 scale=1,1 align=5 btype=0 balign=0 bounds=0,0 bcrop=0 crop=0,20,0,15
+info c pos=0,0 rot=0 scale=1,1 align=5 btype=0 balign=0 bounds=0,0 crop_to_bounds=0
+ box_scale=170,80
+item c id=1 parent=main group=0 scene=0 abs=0 vis=1 user_vis=1 sel=0 lock=0 need_update=0
+  stored pos=-1.77777779,-1 rot=0 scale=1,1 scale_ref=1920,1080 align=5
+  bounds type=0 align=0 size=0,0 crop_to_bounds=0
+  crop l=0 r=20 t=0 b=15 bounds_crop l=0 r=0 t=0 b=0 last=200,100
+  output_scale=1,1 box_scale=180,85
+  draw [1,0,0,0] [0,1,0,0] [0,0,1,0] [0,0,0,1]
+  box [180,0,0,0] [0,85,0,0] [0,0,1,0] [0,0,0,1]
+-- crop larger than the source: size collapses to 2 pixels
+item c id=1 parent=main group=0 scene=0 abs=0 vis=1 user_vis=1 sel=0 lock=0 need_update=0
+  stored pos=-1.77777779,-1 rot=0 scale=1,1 scale_ref=1920,1080 align=5
+  bounds type=0 align=0 size=0,0 crop_to_bounds=0
+  crop l=150 r=150 t=0 b=0 bounds_crop l=0 r=0 t=0 b=0 last=200,100
+  output_scale=1,1 box_scale=2,100
+  draw [1,0,0,0] [0,1,0,0] [0,0,1,0] [0,0,0,1]
+  box [2,0,0,0] [0,100,0,0] [0,0,1,0] [0,0,0,1]
+item c id=1 parent=main group=0 scene=0 abs=0 vis=1 user_vis=1 sel=0 lock=0 need_update=0
+  stored pos=-1.77777779,-1 rot=0 scale=1,1 scale_ref=1920,1080 align=5
+  bounds type=0 align=0 size=0,0 crop_to_bounds=0
+  crop l=0 r=0 t=200 b=200 bounds_crop l=0 r=0 t=0 b=0 last=200,100
+  output_scale=1,1 box_scale=200,2
+  draw [1,0,0,0] [0,1,0,0] [0,0,1,0] [0,0,0,1]
+  box [200,0,0,0] [0,2,0,0] [0,0,1,0] [0,0,0,1]
+-- crop on both axes exactly equal to the size
+item c id=1 parent=main group=0 scene=0 abs=0 vis=1 user_vis=1 sel=0 lock=0 need_update=0
+  stored pos=-1.77777779,-1 rot=0 scale=1,1 scale_ref=1920,1080 align=5
+  bounds type=0 align=0 size=0,0 crop_to_bounds=0
+  crop l=100 r=100 t=50 b=50 bounds_crop l=0 r=0 t=0 b=0 last=200,100
+  output_scale=1,1 box_scale=0,0
+  draw [1,0,0,0] [0,1,0,0] [0,0,1,0] [0,0,0,1]
+  box [0,0,0,0] [0,0,0,0] [0,0,1,0] [0,0,0,1]
+-- crop interacts with bounds: cropped size is what is scaled
+item c id=1 parent=main group=0 scene=0 abs=0 vis=1 user_vis=1 sel=0 lock=0 need_update=0
+  stored pos=-1.77777779,-1 rot=0 scale=1,1 scale_ref=1920,1080 align=5
+  bounds type=2 align=0 size=0.370370358,0.370370358 crop_to_bounds=0
+  crop l=50 r=50 t=0 b=0 bounds_crop l=0 r=0 t=0 b=0 last=200,100
+  output_scale=2,2 box_scale=200,200
+  draw [2,0,0,0] [0,2,0,0] [0,0,1,0] [0,0,0,1]
+  box [200,0,0,0] [0,200,0,0] [0,0,1,0] [0,0,0,1]

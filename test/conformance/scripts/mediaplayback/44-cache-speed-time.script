@@ -1,0 +1,26 @@
+# Cache: info->speed is stored UNCLAMPED (the streaming path clamps to 1..200 else 100): current_time scales by it.
+# DEFECT D-3 (speed 0 -> time always 0; speed 500 -> time x5). current_time = max(next_v_ts, next_a_ts) * speed / 1e8.
+media cs2 120000 0
+video 1 1000 8 4 yuv420p
+pkt 0 0 fdur=40
+pkt 0 40 fdur=40
+pkt 0 80 fdur=40
+endmedia
+clock 1000000000
+pix off
+cinit cs2 speed=100
+creset
+ctime
+cset next_v_ts 80000000
+ctime
+cfree
+cinit cs2 speed=0
+creset
+cset next_v_ts 80000000
+ctime
+cfree
+cinit cs2 speed=500
+creset
+cset next_v_ts 80000000
+ctime
+cfree

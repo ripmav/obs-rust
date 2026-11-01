@@ -1,0 +1,21 @@
+t_create tc
+ff open path=tc format=- nobuffer=1 interrupt=0 opts=[]
+ff seek stream=0 target=0 flags=BACKWARD
+ff decoder flush
+ff read #0 stream=0 pts=0 size=4
+ff read #1 stream=0 pts=40 size=4
+ff read #2 stream=0 pts=80 size=4
+ff decoder drain
+ff seek stream=0 target=0 flags=BACKWARD
+ff decoder flush
+ff read #0 stream=0 pts=0 size=4
+cb video ts=-1000000000 fmt=I420 16x16 flip=0 full=0 trc=DEFAULT maxlum=0 flags=0 mat0=1.16438 min0=0.0627451 max0=0.921569
+sleep 40
+cb video ts=-960000000 fmt=I420 16x16 flip=0 full=0 trc=DEFAULT maxlum=0 flags=0 mat0=1.16438 min0=0.0627451 max0=0.921569
+sleep 40
+cb video ts=-920000000 fmt=I420 16x16 flip=0 full=0 trc=DEFAULT maxlum=0 flags=0 mat0=1.16438 min0=0.0627451 max0=0.921569
+sleep 40
+cb preload ts=200000000 fmt=I420 16x16 flip=0 full=0 trc=DEFAULT maxlum=0 flags=0 mat0=1.16438 min0=0.0627451 max0=0.921569
+cb stop
+t_query time=100 frames=3 duration=120000 has_video=1 has_audio=0
+t_destroy

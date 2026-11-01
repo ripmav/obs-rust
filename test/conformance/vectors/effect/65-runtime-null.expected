@@ -1,0 +1,46 @@
+backend vertexshader_create location="a.effect (Vertex shader, technique T, pass 0)" len=87 fnv=657ac010302854a4
+  sparam 0 name=f type=FLOAT array=0
+  result ok
+backend pixelshader_create location="a.effect (Pixel shader, technique T, pass 0)" len=87 fnv=657ac010302854a4
+  sparam 0 name=f type=FLOAT array=0
+  result ok
+effect e result=ok
+  error_string=@null
+--- NULL effect
+nparams -> 0
+param @null -> null
+technique T -> null
+current_technique -> null
+viewproj -> null
+world -> null
+tbegin -> 0
+tend
+pbegin -> 0
+pend
+update
+loop -> 0
+destroy @null cached=0
+--- NULL param
+nannotations -> 0
+annotation_idx 0 -> null
+log error effect_setval_inline: invalid param
+log error effect_setval_inline: invalid param
+log error effect_setval_inline: invalid param
+log error effect_setval_inline: invalid param
+log error effect_setval_inline: invalid param
+log error effect_setval_inline: invalid param
+log error effect_setval_inline: invalid param
+log error effect_setval_inline: invalid param
+log error effect_setval_inline: invalid param
+log error effect_setval_inline: invalid param
+log error gs_effect_set_next_sampler: invalid param
+log error effect_setval_inline: invalid param
+log error gs_effect_get_val: invalid param
+get_val size=0 data=null
+log error gs_effect_get_default_val: invalid param
+get_default_val size=0 data=null
+flags changed=-1 cur_size=0 next_sampler=-2
+--- the effect still works
+get_val size=4 hex=0000a040
+backend shader_destroy location="a.effect (Vertex shader, technique T, pass 0)"
+backend shader_destroy location="a.effect (Pixel shader, technique T, pass 0)"

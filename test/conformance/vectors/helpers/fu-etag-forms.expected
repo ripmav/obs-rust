@@ -1,0 +1,46 @@
+fu_run local=/L cache=/E1/ temp=/E1/.temp url=http://srv/u/package.json
+fs read /L/package.json -> ok
+fs read /E1/package.json -> missing
+fs read /E1/meta.json -> missing
+fs copy /L/package.json -> /E1/.temp/package.json : ok
+fs unlink /E1/package.json : fail
+fs rename /E1/.temp/package.json -> /E1/package.json : ok
+http GET http://srv/u/package.json "User-Agent: UA"
+fs rmdir /E1/.temp
+fu_run done
+fu_cat /E1/meta.json @missing
+fu_run local=/L cache=/E2/ temp=/E2/.temp url=http://srv/u/package.json
+fs read /L/package.json -> ok
+fs read /E2/package.json -> missing
+fs read /E2/meta.json -> missing
+fs copy /L/package.json -> /E2/.temp/package.json : ok
+fs unlink /E2/package.json : fail
+fs rename /E2/.temp/package.json -> /E2/package.json : ok
+http GET http://srv/u/package.json "User-Agent: UA"
+fs rmdir /E2/.temp
+fu_run done
+fu_cat /E2/meta.json @missing
+fu_run local=/L cache=/E3/ temp=/E3/.temp url=http://srv/u/package.json
+fs read /L/package.json -> ok
+fs read /E3/package.json -> missing
+fs read /E3/meta.json -> missing
+fs copy /L/package.json -> /E3/.temp/package.json : ok
+fs unlink /E3/package.json : fail
+fs rename /E3/.temp/package.json -> /E3/package.json : ok
+http GET http://srv/u/package.json "User-Agent: UA"
+fs write /E3/meta.json len=21
+fs rmdir /E3/.temp
+fu_run done
+fu_json_get /E3/meta.json etag "W/\"weak\""
+fu_run local=/L cache=/E4/ temp=/E4/.temp url=http://srv/u/package.json
+fs read /L/package.json -> ok
+fs read /E4/package.json -> missing
+fs read /E4/meta.json -> missing
+fs copy /L/package.json -> /E4/.temp/package.json : ok
+fs unlink /E4/package.json : fail
+fs rename /E4/.temp/package.json -> /E4/package.json : ok
+http GET http://srv/u/package.json "User-Agent: UA"
+fs write /E4/meta.json len=15
+fs rmdir /E4/.temp
+fu_run done
+fu_json_get /E4/meta.json etag "bare"

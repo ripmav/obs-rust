@@ -1,0 +1,70 @@
+add bool a ok
+add bool b ok
+add bool c ok
+add group inner ok
+add group g ok
+add bool t ok
+dump Top flags=0 param=@null
+  prop g type=group desc="Group" long=@null enabled=1 visible=1
+    grouptype=normal content=G1
+      prop a type=bool desc="A" long=@null enabled=1 visible=1
+        -
+      prop b type=bool desc="B" long=@null enabled=1 visible=1
+        -
+      prop inner type=group desc="Inner" long=@null enabled=1 visible=1
+        grouptype=normal content=G2
+          prop c type=bool desc="C" long=@null enabled=1 visible=1
+            -
+  prop t type=bool desc="T" long=@null enabled=1 visible=1
+    -
+echo remove-nested-leaf
+dump Top flags=0 param=@null
+  prop g type=group desc="Group" long=@null enabled=1 visible=1
+    grouptype=normal content=G1
+      prop a type=bool desc="A" long=@null enabled=1 visible=1
+        -
+      prop inner type=group desc="Inner" long=@null enabled=1 visible=1
+        grouptype=normal content=G2
+          prop c type=bool desc="C" long=@null enabled=1 visible=1
+            -
+  prop t type=bool desc="T" long=@null enabled=1 visible=1
+    -
+echo remove-deeply-nested-leaf
+dump Top flags=0 param=@null
+  prop g type=group desc="Group" long=@null enabled=1 visible=1
+    grouptype=normal content=G1
+      prop a type=bool desc="A" long=@null enabled=1 visible=1
+        -
+      prop inner type=group desc="Inner" long=@null enabled=1 visible=1
+        grouptype=normal content=G2
+  prop t type=bool desc="T" long=@null enabled=1 visible=1
+    -
+echo remove-inner-group-destroys-content
+dump Top flags=0 param=@null
+  prop g type=group desc="Group" long=@null enabled=1 visible=1
+    grouptype=normal content=G1
+      prop a type=bool desc="A" long=@null enabled=1 visible=1
+        -
+  prop t type=bool desc="T" long=@null enabled=1 visible=1
+    -
+get c null
+echo add-after-remove
+add bool c ok
+add group inner null
+dump Top flags=0 param=@null
+  prop g type=group desc="Group" long=@null enabled=1 visible=1
+    grouptype=normal content=G1
+      prop a type=bool desc="A" long=@null enabled=1 visible=1
+        -
+  prop t type=bool desc="T" long=@null enabled=1 visible=1
+    -
+  prop c type=bool desc="C again" long=@null enabled=1 visible=1
+    -
+echo remove-group-destroys-its-content-and-param
+param-destroy tp
+dump Top flags=0 param=@null
+  prop t type=bool desc="T" long=@null enabled=1 visible=1
+    -
+  prop c type=bool desc="C again" long=@null enabled=1 visible=1
+    -
+get a null

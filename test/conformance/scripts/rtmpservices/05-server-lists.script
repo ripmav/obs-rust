@@ -1,0 +1,25 @@
+# S-026 server list (property "server") for plain services and RTMPS filtering.
+# Entries lacking a name or a string url are skipped; rtmps:// entries are dropped when RTMPS is not registered.
+fs-load /mod/data/services.json data/services-ok.json
+settings S {"service":"Alpha"}
+new A rtmp_common S
+props P A S
+echo no-RTMPS-protocol-hides-rtmps-servers
+protocols RTMP
+modify P service S
+props-show P
+echo Alpha-has-nameless-server-skipped-above-all-servers-are-listed-below-with-RTMPS
+protocols RTMP RTMPS
+modify P service S
+props-show P
+echo service-with-only-rtmps-servers-and-no-RTMPS
+settings S {"service":"Bravo"}
+protocols RTMP RTMPS
+props P2 A S
+protocols RTMP
+modify P2 service S
+props-show P2
+echo bad-server-entries-only-when-protocol-key-present-else-see-defect-scripts
+settings S {"service":"Kilo"}
+props P3 A S
+show S

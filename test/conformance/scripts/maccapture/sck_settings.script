@@ -1,0 +1,12 @@
+# S-052 screen_capture (ScreenCaptureKit video): defaults, property visibility per capture type, content query flags.
+sck_defaults
+sck_audio_defaults
+sck_visibility 0
+sck_visibility 1
+sck_visibility 2
+sck_visibility 7
+sck_content_flags display 0
+sck_content_flags window 0
+sck_content_flags window 1
+sck_audio_visibility 0
+sck_audio_visibility 1

@@ -1,0 +1,10 @@
+log error Called profile end with mismatching name: start("b"[0xPTR]) <-> end("z"[0xPTR])
+p_snap roots=1
+p_dump roots=1
+  entry name="a" count=1 min=12 max=12 expected=0 bcount=0 bmin=0 bmax=0 children=1
+    times 12:1
+    between
+    entry name="b" count=1 min=7 max=7 expected=0 bcount=0 bmin=0 bmax=0 children=0
+      times 7:1
+      between
+p_free done

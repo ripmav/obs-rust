@@ -1,0 +1,49 @@
+reset ok
+> reset
+reset ok
+> info
+info id=rtmp_output flags=0x5f protocols=RTMP;RTMPS video=h264;hevc;av1 audio=aac
+> defaults
+default drop_threshold_ms int 700
+default pframe_drop_threshold_ms int 900
+default max_shutdown_time_sec int 30
+default bind_ip string "default"
+> ifa lo v4 127.0.0.1
+> ifa eth0 v4 192.168.1.20
+> ifa eth0 v6 fe80::1
+> ifa wlan0 v4 10.0.0.5
+> ifa weird other
+> ifa noaddr null
+> props
+prop int drop_threshold_ms label=T:RTMPStream.DropThreshold min=200 max=10000 step=100
+prop suffix " ms"
+prop list ip_family label=T:IPFamily type=2 format=3
+prop item name="T:IPFamily.Both" value="IPv4+IPv6"
+prop item name="T:IPFamily.V4Only" value="IPv4"
+prop item name="T:IPFamily.V6Only" value="IPv6"
+prop list bind_ip label=T:RTMPStream.BindIP type=2 format=3
+prop item name="T:Default" value="default"
+prop item name="[eth0] 192.168.1.20" value="192.168.1.20"
+prop item name="[eth0] fe80::1" value="fe80::1"
+prop item name="[wlan0] 10.0.0.5" value="10.0.0.5"
+> ifa_clear
+> props
+prop int drop_threshold_ms label=T:RTMPStream.DropThreshold min=200 max=10000 step=100
+prop suffix " ms"
+prop list ip_family label=T:IPFamily type=2 format=3
+prop item name="T:IPFamily.Both" value="IPv4+IPv6"
+prop item name="T:IPFamily.V4Only" value="IPv4"
+prop item name="T:IPFamily.V6Only" value="IPv6"
+prop list bind_ip label=T:RTMPStream.BindIP type=2 format=3
+prop item name="T:Default" value="default"
+> ifa_fail
+> props
+prop int drop_threshold_ms label=T:RTMPStream.DropThreshold min=200 max=10000 step=100
+prop suffix " ms"
+prop list ip_family label=T:IPFamily type=2 format=3
+prop item name="T:IPFamily.Both" value="IPv4+IPv6"
+prop item name="T:IPFamily.V4Only" value="IPv4"
+prop item name="T:IPFamily.V6Only" value="IPv6"
+prop list bind_ip label=T:RTMPStream.BindIP type=2 format=3
+prop item name="T:Default" value="default"
+log warning [net if] getifaddrs() failed

@@ -1,0 +1,77 @@
+log debug [obs-nvenc] Changing parameter: "averageBitRate": 0 -> 5000000 (uint32_t)
+log debug [obs-nvenc] Changing parameter: "maxBitRate": 0 -> 6000000 (uint32_t)
+log debug [obs-nvenc] Changing parameter: "vbvBufferSize": 0 -> 7000000 (uint32_t)
+log debug [obs-nvenc] Changing parameter: "vbvInitialDelay": 0 -> 100 (uint32_t)
+nv_apply success=1
+nvconfig gopLength=0 frameIntervalP=0
+nvrc avg=5000000 max=6000000 vbvbuf=7000000 vbvdelay=100 tq=0 tqlsb=0 cb=0 cr=0 lookaheadLevel=0
+nvrc constQP=0/0/0 minQP=0/0/0 maxQP=0/0/0 initialRCQP=0/0/0
+nvrc bits minQP=0 maxQP=0 initialRCQP=0 aq=0 lookahead=0 disableIadapt=0 disableBadapt=0 temporalAQ=0 aqStrength=0
+nvcodec h264 level=0 idrPeriod=0 useBFramesAsRef=0 tfLevel=0 filler=0
+echo uint8-and-int8-fields-wrap
+log debug [obs-nvenc] Changing parameter: "targetQuality": 0 -> 44 (uint8_t)
+log debug [obs-nvenc] Changing parameter: "targetQualityLSB": 0 -> 255 (uint8_t)
+log debug [obs-nvenc] Changing parameter: "cbQPIndexOffset": 0 -> -56 (int8_t)
+log debug [obs-nvenc] Changing parameter: "crQPIndexOffset": 0 -> 127 (int8_t)
+nv_apply success=1
+nvconfig gopLength=0 frameIntervalP=0
+nvrc avg=0 max=0 vbvbuf=0 vbvdelay=0 tq=44 tqlsb=255 cb=-56 cr=127 lookaheadLevel=0
+nvrc constQP=0/0/0 minQP=0/0/0 maxQP=0/0/0 initialRCQP=0/0/0
+nvrc bits minQP=0 maxQP=0 initialRCQP=0 aq=0 lookahead=0 disableIadapt=0 disableBadapt=0 temporalAQ=0 aqStrength=0
+nvcodec h264 level=0 idrPeriod=0 useBFramesAsRef=0 tfLevel=0 filler=0
+echo bit-fields-truncate-to-width
+log debug [obs-nvenc] Changing parameter: "enableMinQP": 0 -> 1 (1 bit(s))
+log debug [obs-nvenc] Changing parameter: "enableMaxQP": 0 -> 0 (1 bit(s))
+log debug [obs-nvenc] Changing parameter: "enableInitialRCQP": 0 -> 1 (1 bit(s))
+log debug [obs-nvenc] Changing parameter: "enableAQ": 0 -> 0 (1 bit(s))
+log debug [obs-nvenc] Changing parameter: "enableLookahead": 0 -> 1 (1 bit(s))
+log debug [obs-nvenc] Changing parameter: "aqStrength": 0 -> 5 (4 bit(s))
+log debug [obs-nvenc] Changing parameter: "disableIadapt": 0 -> 1 (1 bit(s))
+log debug [obs-nvenc] Changing parameter: "disableBadapt": 0 -> 0 (1 bit(s))
+log debug [obs-nvenc] Changing parameter: "enableTemporalAQ": 0 -> 1 (1 bit(s))
+nv_apply success=1
+nvconfig gopLength=0 frameIntervalP=0
+nvrc avg=0 max=0 vbvbuf=0 vbvdelay=0 tq=0 tqlsb=0 cb=0 cr=0 lookaheadLevel=0
+nvrc constQP=0/0/0 minQP=0/0/0 maxQP=0/0/0 initialRCQP=0/0/0
+nvrc bits minQP=1 maxQP=0 initialRCQP=1 aq=0 lookahead=1 disableIadapt=1 disableBadapt=0 temporalAQ=1 aqStrength=5
+nvcodec h264 level=0 idrPeriod=0 useBFramesAsRef=0 tfLevel=0 filler=0
+echo non-numeric-and-trailing-garbage
+log debug [obs-nvenc] Changing parameter: "gopLength": 0 -> 0 (uint32_t)
+log debug [obs-nvenc] Changing parameter: "frameIntervalP": 0 -> 3 (int32_t)
+log debug [obs-nvenc] Changing parameter: "averageBitRate": 0 -> 12 (uint32_t)
+log debug [obs-nvenc] Changing parameter: "maxBitRate": 0 -> 0 (uint32_t)
+nv_apply success=1
+nvconfig gopLength=0 frameIntervalP=3
+nvrc avg=12 max=0 vbvbuf=0 vbvdelay=0 tq=0 tqlsb=0 cb=0 cr=0 lookaheadLevel=0
+nvrc constQP=0/0/0 minQP=0/0/0 maxQP=0/0/0 initialRCQP=0/0/0
+nvrc bits minQP=0 maxQP=0 initialRCQP=0 aq=0 lookahead=0 disableIadapt=0 disableBadapt=0 temporalAQ=0 aqStrength=0
+nvcodec h264 level=0 idrPeriod=0 useBFramesAsRef=0 tfLevel=0 filler=0
+echo uint32-wrap-and-negative
+log debug [obs-nvenc] Changing parameter: "gopLength": 0 -> 4294967295 (uint32_t)
+log debug [obs-nvenc] Changing parameter: "averageBitRate": 0 -> 1 (uint32_t)
+log debug [obs-nvenc] Changing parameter: "maxBitRate": 0 -> 276447231 (uint32_t)
+nv_apply success=1
+nvconfig gopLength=4294967295 frameIntervalP=0
+nvrc avg=1 max=276447231 vbvbuf=0 vbvdelay=0 tq=0 tqlsb=0 cb=0 cr=0 lookaheadLevel=0
+nvrc constQP=0/0/0 minQP=0/0/0 maxQP=0/0/0 initialRCQP=0/0/0
+nvrc bits minQP=0 maxQP=0 initialRCQP=0 aq=0 lookahead=0 disableIadapt=0 disableBadapt=0 temporalAQ=0 aqStrength=0
+nvcodec h264 level=0 idrPeriod=0 useBFramesAsRef=0 tfLevel=0 filler=0
+echo gop-and-b-frame-interval
+log debug [obs-nvenc] Changing parameter: "gopLength": 0 -> 250 (uint32_t)
+log debug [obs-nvenc] Changing parameter: "frameIntervalP": 0 -> -2 (int32_t)
+nv_apply success=1
+nvconfig gopLength=250 frameIntervalP=-2
+nvrc avg=0 max=0 vbvbuf=0 vbvdelay=0 tq=0 tqlsb=0 cb=0 cr=0 lookaheadLevel=0
+nvrc constQP=0/0/0 minQP=0/0/0 maxQP=0/0/0 initialRCQP=0/0/0
+nvrc bits minQP=0 maxQP=0 initialRCQP=0 aq=0 lookahead=0 disableIadapt=0 disableBadapt=0 temporalAQ=0 aqStrength=0
+nvcodec h264 level=0 idrPeriod=0 useBFramesAsRef=0 tfLevel=0 filler=0
+echo strtol-saturates-at-LONG_MAX-and-LONG_MIN-on-64-bit-long
+log debug [obs-nvenc] Changing parameter: "gopLength": 0 -> 4294967295 (uint32_t)
+log debug [obs-nvenc] Changing parameter: "frameIntervalP": 0 -> 0 (int32_t)
+log debug [obs-nvenc] Changing parameter: "maxBitRate": 0 -> 0 (uint32_t)
+nv_apply success=1
+nvconfig gopLength=4294967295 frameIntervalP=0
+nvrc avg=0 max=0 vbvbuf=0 vbvdelay=0 tq=0 tqlsb=0 cb=0 cr=0 lookaheadLevel=0
+nvrc constQP=0/0/0 minQP=0/0/0 maxQP=0/0/0 initialRCQP=0/0/0
+nvrc bits minQP=0 maxQP=0 initialRCQP=0 aq=0 lookahead=0 disableIadapt=0 disableBadapt=0 temporalAQ=0 aqStrength=0
+nvcodec h264 level=0 idrPeriod=0 useBFramesAsRef=0 tfLevel=0 filler=0

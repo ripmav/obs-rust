@@ -1,0 +1,155 @@
+sparse result=ok
+  errors count=0 has_errors=0
+  error_string=@null
+  sp params=0 structs=0 samplers=0 funcs=1
+  func 0 name=F return_type=float4 mapping="COLOR" params=5
+    param 0 type=float4 name=a mapping="POSITION" var_type=IN array_count=0 default_size=0 default=-
+    param 1 type=float name=b mapping=@null var_type=IN array_count=0 default_size=0 default=-
+    param 2 type=float name=c mapping=@null var_type=OUT array_count=0 default_size=0 default=-
+    param 3 type=float name=d mapping=@null var_type=INOUT array_count=0 default_size=0 default=-
+    param 4 type=float name=e mapping=@null var_type=UNIFORM array_count=0 default_size=0 default=-
+    body_tokens=8 body="{ return a; }"
+sparse result=ok
+  errors count=0 has_errors=0
+  error_string=@null
+  sp params=0 structs=0 samplers=0 funcs=1
+  func 0 name=F return_type=void mapping=@null params=0
+    body_tokens=3 body="{ }"
+sparse result=ok
+  errors count=0 has_errors=0
+  error_string=@null
+  sp params=0 structs=0 samplers=0 funcs=2
+  func 0 name=F return_type=float mapping=@null params=0
+    body_tokens=24 body="{ if (1) { return 1; } return 0; } "
+  func 1 name=G return_type=float mapping=@null params=0
+    body_tokens=8 body="{ return 2; }"
+sparse result=ok
+  errors count=0 has_errors=0
+  error_string=@null
+  sp params=0 structs=0 samplers=0 funcs=2
+  func 0 name=F return_type=float mapping="COLOR" params=1
+    param 0 type=float name=a mapping=@null var_type=IN array_count=0 default_size=0 default=-
+    body_tokens=10 body="{\n return a;\n}\n"
+  func 1 name=G return_type=float mapping=@null params=0
+    body_tokens=8 body="{ return 1; }"
+sparse result=ok
+  errors count=0 has_errors=0
+  error_string=@null
+  sp params=0 structs=0 samplers=0 funcs=1
+  func 0 name=F return_type=float mapping=@null params=0
+    body_tokens=8 body="{ return \"}\"; }"
+sparse result=ok
+  errors count=0 has_errors=0
+  error_string=@null
+  sp params=0 structs=0 samplers=0 funcs=1
+  func 0 name=F return_type=float mapping=@null params=0
+    body_tokens=8 body="{   return 1; }"
+sparse result=fail
+  errors count=1 has_errors=1
+    err 0 error file="f7" row=1 col=16 msg="'uniform' keyword cannot be used with a function"
+  error_string="f7 (1, 16): 'uniform' keyword cannot be used with a function\n"
+  sp params=0 structs=0 samplers=0 funcs=1
+  func 0 name=F return_type=float mapping=@null params=0
+    body_tokens=8 body="{ return 1; }"
+sparse result=fail
+  errors count=1 has_errors=1
+    err 0 error file="f8" row=1 col=14 msg="'const' keyword cannot be used with a function"
+  error_string="f8 (1, 14): 'const' keyword cannot be used with a function\n"
+  sp params=0 structs=0 samplers=0 funcs=1
+  func 0 name=F return_type=float mapping=@null params=0
+    body_tokens=8 body="{ return 1; }"
+--- errors
+sparse result=fail
+  errors count=2 has_errors=1
+    err 0 error file="e1" row=1 col=10 msg="Expected 'type'"
+    err 1 error file="e1" row=1 col=23 msg="Unexpected EOF"
+  error_string="e1 (1, 10): Expected 'type'\ne1 (1, 23): Unexpected EOF\n"
+  sp params=0 structs=0 samplers=0 funcs=0
+sparse result=fail
+  errors count=2 has_errors=1
+    err 0 error file="e2" row=1 col=14 msg="Expected 'name'"
+    err 1 error file="e2" row=1 col=29 msg="Unexpected EOF"
+  error_string="e2 (1, 14): Expected 'name'\ne2 (1, 29): Unexpected EOF\n"
+  sp params=0 structs=0 samplers=0 funcs=0
+sparse result=fail
+  errors count=2 has_errors=1
+    err 0 error file="e3" row=1 col=18 msg="Expected 'type'"
+    err 1 error file="e3" row=1 col=33 msg="Unexpected EOF"
+  error_string="e3 (1, 18): Expected 'type'\ne3 (1, 33): Unexpected EOF\n"
+  sp params=0 structs=0 samplers=0 funcs=0
+sparse result=fail
+  errors count=3 has_errors=1
+    err 0 error file="e4" row=1 col=17 msg="Syntax error"
+    err 1 error file="e4" row=1 col=24 msg="Expected 'name'"
+    err 2 error file="e4" row=1 col=39 msg="Unexpected EOF"
+  error_string="e4 (1, 17): Syntax error\ne4 (1, 24): Expected 'name'\ne4 (1, 39): Unexpected EOF\n"
+  sp params=0 structs=0 samplers=0 funcs=0
+sparse result=fail
+  errors count=4 has_errors=1
+    err 0 error file="e5" row=1 col=18 msg="Expected '{'"
+    err 1 error file="e5" row=1 col=24 msg="Expected 'name'"
+    err 2 error file="e5" row=1 col=36 msg="Expected 'type'"
+    err 3 error file="e5" row=1 col=37 msg="Unexpected EOF"
+  error_string="e5 (1, 18): Expected '{'\ne5 (1, 24): Expected 'name'\ne5 (1, 36): Expected 'type'\ne5 (1, 37): Unexpected EOF\n"
+  sp params=0 structs=0 samplers=0 funcs=0
+sparse result=fail
+  errors count=2 has_errors=1
+    err 0 error file="e6" row=1 col=20 msg="Expected 'mapping'"
+    err 1 error file="e6" row=1 col=33 msg="Unexpected EOF"
+  error_string="e6 (1, 20): Expected 'mapping'\ne6 (1, 33): Unexpected EOF\n"
+  sp params=0 structs=0 samplers=0 funcs=0
+sparse result=fail
+  errors count=2 has_errors=1
+    err 0 error file="e7" row=1 col=26 msg="Expected '{'"
+    err 1 error file="e7" row=1 col=33 msg="Expected 'name'"
+  error_string="e7 (1, 26): Expected '{'\ne7 (1, 33): Expected 'name'\n"
+  sp params=0 structs=0 samplers=0 funcs=0
+sparse result=fail
+  errors count=1 has_errors=1
+    err 0 error file="e8" row=1 col=18 msg="Expected '{'"
+  error_string="e8 (1, 18): Expected '{'\n"
+  sp params=0 structs=0 samplers=0 funcs=0
+sparse result=ok
+  errors count=0 has_errors=0
+  error_string=@null
+  sp params=0 structs=0 samplers=0 funcs=0
+sparse result=fail
+  errors count=3 has_errors=1
+    err 0 error file="e10" row=1 col=8 msg="Unexpected EOF"
+    err 1 error file="e10" row=1 col=8 msg="Expected 'type'"
+    err 2 error file="e10" row=1 col=9 msg="Unexpected EOF"
+  error_string="e10 (1, 8): Unexpected EOF\ne10 (1, 8): Expected 'type'\ne10 (1, 9): Unexpected EOF\n"
+  sp params=0 structs=0 samplers=0 funcs=0
+sparse result=ok
+  errors count=0 has_errors=0
+  error_string=@null
+  sp params=0 structs=0 samplers=0 funcs=1
+  func 0 name=F return_type=float mapping=@null params=1
+    param 0 type=float name=a mapping="POS" var_type=IN array_count=0 default_size=0 default=-
+    body_tokens=8 body="{ return 1; }"
+sparse result=fail
+  errors count=3 has_errors=1
+    err 0 error file="e12" row=1 col=21 msg="Syntax error"
+    err 1 error file="e12" row=1 col=22 msg="Expected 'type'"
+    err 2 error file="e12" row=1 col=37 msg="Unexpected EOF"
+  error_string="e12 (1, 21): Syntax error\ne12 (1, 22): Expected 'type'\ne12 (1, 37): Unexpected EOF\n"
+  sp params=0 structs=0 samplers=0 funcs=0
+sparse result=fail
+  errors count=2 has_errors=1
+    err 0 error file="e13" row=1 col=25 msg="Expected 'type'"
+    err 1 error file="e13" row=1 col=26 msg="Unexpected EOF"
+  error_string="e13 (1, 25): Expected 'type'\ne13 (1, 26): Unexpected EOF\n"
+  sp params=0 structs=0 samplers=0 funcs=1
+  func 0 name=F return_type=float mapping=@null params=0
+    body_tokens=9 body="{ return 1; } "
+sparse result=fail
+  errors count=3 has_errors=1
+    err 0 error file="e14" row=1 col=19 msg="Expected '{'"
+    err 1 error file="e14" row=1 col=19 msg="Expected 'type'"
+    err 2 error file="e14" row=1 col=43 msg="Unexpected EOF"
+  error_string="e14 (1, 19): Expected '{'\ne14 (1, 19): Expected 'type'\ne14 (1, 43): Unexpected EOF\n"
+  sp params=0 structs=0 samplers=0 funcs=0
+sparse result=ok
+  errors count=0 has_errors=0
+  error_string=@null
+  sp params=0 structs=0 samplers=0 funcs=0

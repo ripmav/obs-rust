@@ -1,0 +1,20 @@
+add a ok
+add b ok
+add c ok
+get a pos=100.5,51 rot=0 scale=1,1 align=5 btype=0 balign=0 bounds=0,0 bcrop=0 crop=0,0,0,0
+info a pos=100.5,51 rot=0 scale=1,1 align=5 btype=0 balign=0 bounds=0,0 crop_to_bounds=0
+ box_scale=200,100
+group g ok
+get b pos=100.26001,50.7599792 rot=0 scale=1,1 align=5 btype=0 balign=0 bounds=0,0 bcrop=0 crop=0,0,0,0
+info b pos=100.26001,50.7599792 rot=0 scale=1,1 align=5 btype=0 balign=0 bounds=0,0 crop_to_bounds=0
+ box_scale=200,100
+get g pos=100.26001,50.7599792 rot=0 scale=1,1 align=5 btype=0 balign=0 bounds=0,0 bcrop=0 crop=0,0,0,0
+info g pos=100.26001,50.7599792 rot=0 scale=1,1 align=5 btype=0 balign=0 bounds=0,0 crop_to_bounds=0
+ box_scale=200,100
+get b pos=100.26001,50.7599792 rot=0 scale=1,1 align=5 btype=1 balign=0 bounds=33.3300018,44.4399986 bcrop=0 crop=0,0,0,0
+info b pos=100.26001,50.7599792 rot=0 scale=1,1 align=5 btype=1 balign=0 bounds=33.3300018,44.4399986 crop_to_bounds=0
+ box_scale=200,100
+-- group scale / bounds are also exact
+get g pos=100.26001,50.7599792 rot=0 scale=1.33299994,1.77699995 align=5 btype=0 balign=0 bounds=0,0 bcrop=0 crop=0,0,0,0
+info g pos=100.26001,50.7599792 rot=0 scale=1.33299994,1.77699995 align=5 btype=0 balign=0 bounds=0,0 crop_to_bounds=0
+ box_scale=266.599976,177.699997

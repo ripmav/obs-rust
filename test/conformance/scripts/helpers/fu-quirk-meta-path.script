@@ -1,0 +1,8 @@
+# QUIRK: the ETag file path is built without a separator when saving. With the cache directory
+# "/C" the metadata is saved as "/Cmeta.json" while the next run looks for "/C/meta.json" and
+# therefore never sends If-None-Match.
+fu_put /L/package.json "{\"version\":1,\"files\":[]}"
+fu_http http://srv/u/package.json 200 "{\"version\":1,\"files\":[]}" "ETag: \"e1\"\r\n"
+fu_run /L /C http://srv/u UA
+fu_ls
+fu_run /L /C http://srv/u UA

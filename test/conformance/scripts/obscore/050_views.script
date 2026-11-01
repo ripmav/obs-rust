@@ -1,0 +1,38 @@
+# Standalone views (auxiliary channel sets): set/get hold references, activation uses the
+# aux view type, replacing a source deactivates and releases the previous one, NULL clears, render
+# visits channels in index order and drops (and releases) sources marked removed, destroying a
+# view deactivates everything. Out-of-range channels are a precondition violation (assert) and not tested.
+startup en-US -
+trace src on
+mk_source s1 Source1
+mk_source s2 Source2
+mk_source s3 Source3
+view_create v
+view_set v 0 s1
+view_set v 7 s2
+view_set v 63 s3
+view_channels v
+refs s1
+view_get v 0
+view_get v 1
+view_get v 63
+view_set v 0 s2
+refs s1
+refs s2
+view_channels v
+view_render v
+src_removed s2
+view_render v
+view_channels v
+refs s2
+view_set v 63 -
+view_channels v
+view_destroy v
+refs s3
+# NULL view is tolerated everywhere
+view_set null 0 s1
+view_get null 0
+view_render null
+view_remove null
+view_destroy null
+shutdown

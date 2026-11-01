@@ -1,0 +1,69 @@
+# S-049 v4l2: every exit of the capture initialisation (open, input, caps, standard, dv timing, format,
+# framerate, buffers, decoder, thread) and the cleanup that follows a failure. Each case re-creates the source.
+trace on
+fake-dir video0
+dev /dev/video0
+dev-cap "Cam" usb-1 0x85200001 0x05200001
+dev-input Camera 0
+dev-cur 0 640 480 YUYV 1280 1 30 0
+src-defaults
+set-str device_id /dev/video0
+set-int pixelformat 0x56595559
+# success: format, mmap, thread started (thread body not run here)
+src-create
+src-destroy
+# open fails
+fail open
+src-create
+src-destroy
+unfail
+# reading the current input fails (input setting -1)
+fail G_INPUT
+src-create
+src-destroy
+unfail
+# setting an explicit input fails
+set-int input 0
+fail S_INPUT
+src-create
+src-destroy
+unfail
+set-int input -1
+# capabilities fail
+fail ENUMINPUT
+src-create
+src-destroy
+unfail
+# format unsupported by OBS (RGB3), not MJPEG/H264
+set-int pixelformat 0x33424752
+src-create
+src-destroy
+# G_FMT fails
+set-int pixelformat 0x56595559
+fail G_FMT
+src-create
+src-destroy
+unfail
+# driver reports timeperframe 0/0: fallback to 1/30
+dev-cur 0 640 480 YUYV 1280 0 0 0
+src-create
+src-destroy
+dev-cur 0 640 480 YUYV 1280 1 30 0
+# S_PARM fails
+fail S_PARM
+src-create
+src-destroy
+unfail
+# buffers
+dev-reqbufs 1
+src-create
+src-destroy
+dev-reqbufs 4
+# MJPEG goes through the decoder
+set-int pixelformat 0x47504a4d
+src-create
+src-destroy
+# decoder init fails
+decoder-fail
+src-create
+src-destroy

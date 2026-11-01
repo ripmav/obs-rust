@@ -1,0 +1,41 @@
+log debug encoder 'v' (v) created
+encoder v created tb=1/30
+log debug encoder 'a0' (a0) created
+encoder a0 created tb=1/48000
+log debug encoder 'a1' (a1) created
+encoder a1 created tb=1/48000
+log debug output 'o' (o) created
+output o created flags=23 reconnect=20/2
+set_venc o idx=0 -> video_slots=01 audio_slots=00
+set_aenc o idx=0 -> video_slots=01 audio_slots=01
+set_aenc o idx=1 -> video_slots=01 audio_slots=03
+plugin out o start
+plugin enc v create
+plugin enc a0 create
+plugin enc a1 create
+log debug Maximum interleaver batch size for 'o' calculated to be 8 packets
+signal o activate
+signal o start
+plugin out o begin_data_capture -> 1
+signal o starting
+start o -> 1
+--- track 1 has not delivered anything yet: no start
+queue o n=4 delayq=0: V0@0 A0@0 A0@21333 A0@42666
+state o active=1 data_active=1 delay_active=0 delay_capturing=0 reconnecting=0 stopping=0 stop_code=0 total_frames=0 delay_ns=0 refs=0 queued=4 recv_v=10 recv_a=0 hi_a=0 hi_v0=-9223372036854775808 voff=0 aoff=0 batch=8 retries=0 cur_ms=0
+plugin out o pkt V0 pts=0 dts=0 usec=0 kf=1 size=4 tb=1/30 b0=03
+queue o n=4 delayq=0: A0@0 A1@0 A0@21333 A0@42666
+queue o n=5 delayq=0: A0@0 A1@0 A0@21333 A1@21333 A0@42666
+queue o n=6 delayq=0: A0@0 A1@0 A0@21333 A1@21333 A0@42666 A1@42666
+--- started: ordering by dts_usec, ties keep arrival order for audio
+queue o n=10 delayq=0: A0@0 A1@0 A0@21333 A1@21333 A0@42666 A1@42666 A0@64000 A1@64000 A0@85333 A1@85333
+signal o stopping
+plugin out o stop ts=0
+log info Output 'o': stopping
+log info Output 'o': Total frames output: 1
+log info Output 'o': Total drawn frames: 0
+signal o stop code=0 last_error=-
+stop o done
+plugin enc v destroy
+plugin enc a0 destroy
+plugin enc a1 destroy
+signal o deactivate

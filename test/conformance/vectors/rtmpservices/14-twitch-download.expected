@@ -1,0 +1,36 @@
+fake proc_handler_add "void twitch_ingests_refresh(int seconds)"
+fake proc_handler_add "void amazon_ivs_ingests_refresh(int seconds)"
+fake update_info_create prefix="[rtmp-services plugin] " agent="rtmp-services plugin (libobs 99.0.0-test)" url=https://obsproject.com/obs2_update/rtmp-services/v5 local=/mod/data cache=/cfg/rtmp-services/ confirm=set
+fake obs_register_service id=rtmp_common
+fake obs_register_service id=rtmp_custom
+module-load -> 1 name="rtmp-services plugin (libobs 99.0.0-test)"
+fake update_info_create_single prefix="[twitch ingest update] " agent="rtmp-services plugin (libobs 99.0.0-test)" url=https://ingest.twitch.tv/ingests
+fake updater-deliver https://ingest.twitch.tv/ingests len=429
+fake write /cfg/rtmp-services/twitch_ingests.new.json len=429
+fake replace /cfg/rtmp-services/twitch_ingests.json
+get url = "rtmp://fra.example/app"
+clock 400 ms
+fs /cfg/rtmp-services/twitch_ingests.json len=429
+fs /mod/data/services.json len=4515
+echo flag-set-so-no-more-waiting-first-ingest-is-used
+get url = "rtmp://fra.example/app"
+clock 400 ms
+echo server-list-is-Auto-plus-ingests-without-the-json-servers
+props P
+  prop service type=list desc="Service" visible=1 enabled=1 combo=2 format=3 items=5
+    item 0 name="Alpha" value="Alpha" disabled=0
+    item 1 name="Golf" value="Golf" disabled=0
+    item 2 name="Facebook Live X" value="Facebook Live X" disabled=0
+    item 3 name="Kilo" value="Kilo" disabled=0
+    item 4 name="Twitch" value="Twitch" disabled=0
+  prop show_all type=bool desc="Show all services" visible=1 enabled=1
+  prop server type=list desc="Server" visible=1 enabled=1 combo=2 format=3 items=3
+    item 0 name="Auto (Recommended)" value="auto" disabled=0
+    item 1 name="Frankfurt" value="rtmp://fra.example/app" disabled=0
+    item 2 name="Paris" value="rtmp://par.example/app" disabled=0
+  prop key type=text desc="Stream key" visible=1 enabled=1 text_type=1
+echo ingest-names-containing-deprecated-anywhere-are-dropped-cached-file-content
+fs-cat /cfg/rtmp-services/twitch_ingests.json "{\"ingests\":[{\"name\":\"Frankfurt\",\"url_template\":\"rtmp://fra.example/app/{stream_key}\"},{\"name\":\"Old (deprecated)\",\"url_template\":\"rtmp://x/app/{stream_key}\"},{\"name\":\"Old2 (depracated)\",\"url_template\":\"rtmp://y/app/{stream_key}\"},{\"url_template\":\"rtmp://noname/app/{stream_key}\"},{\"name\":\"No url\"},{\"name\":\"Paris\",\"url_template\":\"rtmp://par.example/app/{stream_key}\",\"url_template_secure\":\"rtmps://par.example/app/{stream_key}\"}]}"
+fake update_info_destroy url=https://obsproject.com/obs2_update/rtmp-services/v5 pending=0
+fake update_info_destroy url=https://ingest.twitch.tv/ingests pending=0
+module-unload

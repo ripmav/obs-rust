@@ -1,0 +1,16 @@
+# color_source: zero sizes clamp to 1, large/negative ints truncate to 32 bits, alpha < 1 (CORE/QUIRK).
+create a color_source_v3 {"width":0,"height":0}
+size a
+create b color_source_v3 {"width":-1,"height":4294967297}
+size b
+state b
+create c color_source_v3 {"color":-1}
+state c
+create d color_source_v3 {"color":8589934591}
+state d
+create e color_source_v3 {"color":2147483648}
+state e
+update a {"width":50,"height":60,"color":16777215}
+tick 0.016
+state a
+size a

@@ -1,0 +1,43 @@
+# S-026 protocol rules: explicit "protocol" key wins; otherwise RTMPS iff the FIRST server URL starts with rtmps://;
+# the derived value is written to settings["protocol"] by update/selection. A stored protocol is kept by update.
+fs-load /mod/data/services.json data/services-ok.json
+protocols RTMP RTMPS SRT RIST
+echo bravo-first-server-is-rtmps
+settings S {"service":"Bravo"}
+new A rtmp_common S
+get A protocol
+show S
+echo golf-first-rtmps
+settings S {"service":"Golf"}
+update A S
+get A protocol
+echo alpha-first-rtmp
+settings S {"service":"Alpha"}
+update A S
+get A protocol
+show S
+echo charlie-explicit-SRT
+settings S {"service":"Charlie"}
+update A S
+get A protocol
+show S
+echo stored-protocol-wins-in-object-but-selection-overwrites
+settings S {"service":"Alpha","protocol":"RTMPS"}
+update A S
+get A protocol
+show S
+echo india-RIST
+settings S {"service":"India"}
+update A S
+get A protocol
+echo unknown-service-no-protocol-stored
+settings S {"service":"Nope"}
+update A S
+get A protocol
+show S
+echo no-file
+fs-del /mod/data/services.json
+settings S {"service":"Alpha"}
+update A S
+get A protocol
+show S

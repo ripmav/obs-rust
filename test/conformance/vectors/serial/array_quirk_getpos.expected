@@ -1,0 +1,12 @@
+open array ok
+write 0102030405 5 -> 5
+pos -> 5
+seek start 2 -> 2
+pos -> 5
+write ff 1 -> 1
+pos -> 5
+dump array num=5 pos=3 bytes=0102ff0405
+seek start 0 -> 0
+pos -> 5
+seek cur 3 -> 3
+pos -> 5

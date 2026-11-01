@@ -1,0 +1,57 @@
+# nb_frames known
+minit -> ok
+ff open path=q1 format=- nobuffer=1 interrupt=0 opts=[]
+minit2 -> ok has_v=1 has_a=0
+mframes -> 60
+mduration -> 2500000
+mfree
+# estimate from duration and fps: 2.5 s * 30 = 75
+minit -> ok
+ff open path=q2 format=- nobuffer=1 interrupt=0 opts=[]
+minit2 -> ok has_v=1 has_a=0
+log debug MP: nb_frames not set, estimating using frame rate and duration
+mframes -> 75
+mfree
+# ceil(2.4 * 29.97) = 72
+minit -> ok
+ff open path=q3 format=- nobuffer=1 interrupt=0 opts=[]
+minit2 -> ok has_v=1 has_a=0
+log debug MP: nb_frames not set, estimating using frame rate and duration
+mframes -> 72
+mfree
+# audio only: no video stream
+minit -> ok
+ff open path=q4 format=- nobuffer=1 interrupt=0 opts=[]
+minit2 -> ok has_v=0 has_a=1
+log warning MP: Getting number of frames failed: No video stream in media file!
+mframes -> 0
+mduration -> 1000000
+mfree
+# unknown duration: AV_NOPTS_VALUE passes through; frames use that raw value too
+minit -> ok
+ff open path=q5 format=- nobuffer=1 interrupt=0 opts=[]
+minit2 -> ok has_v=1 has_a=0
+mduration -> -9223372036854775808
+log debug MP: nb_frames not set, estimating using frame rate and duration
+mframes -> -230584300921369
+mfree
+# current time in ms after some playback (next_pts of the pending frame)
+minit -> ok
+ff open path=q1 format=- nobuffer=1 interrupt=0 opts=[]
+minit2 -> ok has_v=1 has_a=0
+ff seek stream=0 target=0 flags=BACKWARD
+ff decoder flush
+ff read #0 stream=0 pts=0 size=4
+cb preload ts=0 fmt=I420 8x4 flip=0 full=0 trc=DEFAULT maxlum=0 flags=0 ls0=8 d0=01 mat0=1.16438 min0=0.0627451 max0=0.921569
+mreset -> 1
+mtime -> 40
+tick -> idle
+cb video ts=0 fmt=I420 8x4 flip=0 full=0 trc=DEFAULT maxlum=0 flags=0 ls0=8 d0=01 mat0=1.16438 min0=0.0627451 max0=0.921569
+ff decoder drain
+ff seek stream=0 target=0 flags=BACKWARD
+ff decoder flush
+ff read #0 stream=0 pts=0 size=4
+cb preload ts=40000000 fmt=I420 8x4 flip=0 full=0 trc=DEFAULT maxlum=0 flags=0 ls0=8 d0=01 mat0=1.16438 min0=0.0627451 max0=0.921569
+cb stop
+tick -> eof
+mtime -> 40

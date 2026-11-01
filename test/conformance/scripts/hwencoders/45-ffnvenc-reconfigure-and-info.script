@@ -1,0 +1,24 @@
+# S-050 obs-ffmpeg-nvenc: reconfigure only touches bit_rate / rc_max_rate and only for CBR or VBR
+# (case-insensitive); the encoder's video_info picks the preferred format when valid.
+ff_defaults h264
+set bool psycho_aq 0
+ff_create h264
+set int bitrate 4000
+set str rate_control CBR
+ff_reconfigure
+set str rate_control vbr
+set int bitrate 2000
+ff_reconfigure
+set str rate_control CQP
+set int bitrate 9000
+ff_reconfigure
+ff_destroy
+ff_video_info nv12 bgra
+ff_video_info i420 p010
+ff_video_info i444 nv12
+ff_video_info i010 nv12
+ff_video_info bgra nv12
+ff_video_info bgra bgra
+ff_video_info none i420
+ff_video_info none yuy2
+ff_register

@@ -1,0 +1,14 @@
+# S-044: scaler creation failures make connect fail and leave the input list and the active flag unchanged.
+vopen v I420 30 1 16 8 3
+scaler create bad
+vconnect v a 1 - NV12 16 8 PARTIAL 709
+vstate v
+scaler create fail
+vconnect v a 1 - NV12 16 8 PARTIAL 709
+vstate v
+vinputs v
+scaler create ok
+vconnect v a 1 - NV12 16 8 PARTIAL 709
+vstate v
+vinputs v
+vclose v

@@ -1,0 +1,41 @@
+enc_obj len=4 hex=03000009
+enc_obj len=8 hex=0800000000000009
+enc_obj len=5 hex=0a00000000
+enc_obj len=42 hex=030005776964746800409e000000000000000673746572656f010100046e616d65020003616263000009
+enc_obj len=46 hex=08000000030005776964746800409e000000000000000673746572656f010100046e616d65020003616263000009
+enc_obj len=43 hex=0a000000030005776964746800409e000000000000000673746572656f010100046e616d65020003616263
+echo nested
+enc_obj len=116 hex=030003706f7303000178003ff000000000000000017900400000000000000000000900046c6973740800000002000178003ff000000000000000017900400000000000000000000900036172720a00000002000178003ff00000000000000001790040000000000000000001730200017a000009
+echo property-without-name-inside-object
+enc_obj len=20 hex=0300401400000000000002000268690100000009
+enc_obj len=21 hex=0a0000000300401400000000000002000268690100
+echo QUIRK-null-property-never-writes-its-name
+enc_obj len=20 hex=030500046b657074003ff0000000000000000009
+enc_prop len=1 hex=05
+echo prop-types-that-cannot-be-encoded
+log error AMFProp_Encode, invalid type. 11
+log error AMF_Encode - failed to encode property in index 0
+enc_obj len=4 hex=03000009
+log error AMFProp_Encode, invalid type. 11
+log error AMF_Encode - failed to encode property in index 0
+enc_obj len=8 hex=0800000002000009
+log error AMF_Encode - failed to encode property in index 0
+enc_obj len=4 hex=03000009
+log error AMF_Encode - failed to encode property in index 1
+enc_obj len=16 hex=03000161003ff0000000000000000009
+log error AMF_Encode - failed to encode property in index 1
+enc_obj len=20 hex=0800000003000161003ff0000000000000000009
+log error AMF_Encode - failed to encode property in index 1
+enc_obj len=17 hex=0a00000003000161003ff0000000000000
+log error AMFProp_Encode, invalid type. 7
+log error AMF_Encode - failed to encode property in index 0
+enc_obj len=4 hex=03000009
+log error AMFProp_Encode, invalid type. 4
+log error AMF_Encode - failed to encode property in index 0
+enc_obj len=4 hex=03000009
+echo single-property
+enc_prop len=16 hex=0005776964746800409e000000000000
+enc_prop len=10 hex=000673746572656f0101
+enc_prop len=12 hex=00046e616d65020003616263
+enc_prop len=33 hex=0003706f7303000178003ff0000000000000000179004000000000000000000009
+enc_prop len=7 hex=0001730200017a

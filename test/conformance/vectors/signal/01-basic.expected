@@ -1,0 +1,22 @@
+add h ok
+emit ping
+call a n=5
+call b n=5
+call c n=5
+emit-done n=5
+emit nosuchsignal
+emit-done n=1
+log warning Signal declaration 'ping' exists
+add h fail
+add h ok
+emit pong
+emit-done
+emit pong
+call a
+emit-done
+emit ping
+call a n=6
+call b n=6
+call c n=6
+emit-done n=6
+destroy h

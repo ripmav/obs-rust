@@ -1,0 +1,37 @@
+# vec2_close is |a-b| <= eps per component (absolute, unlike vec3_close which is signed) (S-009-R14).
+# vec2_norm leaves the destination UNCHANGED when the length is not > 0 (S-009-R15, Q-1).
+vec2 a 1 1
+vec2 b 1.00005 0.99995
+vec2 far 5 1
+call c vec2_close a b 0.0001
+call c vec2_close a b 0.00001
+call c vec2_close a far 0.0001
+call c vec2_close far a 0.0001
+call c vec2_close a a 0
+# contrast with vec3_close (signed): vec3_close(a, far) is true because a - far is negative
+vec3 a3 1 1 1
+vec3 far3 5 1 1
+call c vec3_close a3 far3 0.0001
+call c vec3_close far3 a3 0.0001
+# Q-1: zero vector: dst keeps whatever it held before
+vec2 keep 7 8
+vec2 z 0 0
+call keep vec2_norm z
+vec2 fresh 0 0
+call fresh vec2_norm z
+vec2 nn nan nan
+vec2 keep2 9 9
+call keep2 vec2_norm nn
+vec2 inf2 inf 0
+vec2 keep3 9 9
+call keep3 vec2_norm inf2
+# NaN handling of min/max: the second operand is returned when the comparison is false
+vec2 n1 nan 1
+vec2 n2 5 nan
+call m vec2_min n1 n2
+call m vec2_max n1 n2
+call m vec2_minf n1 3
+call m vec2_maxf n1 3
+vec2 num 2 2
+call m vec2_min num n2
+call m vec2_max num n2

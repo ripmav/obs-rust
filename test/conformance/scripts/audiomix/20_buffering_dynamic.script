@@ -1,0 +1,18 @@
+# Dynamic audio buffering: a source whose audio_ts lags the tick start by 30 ms makes the mixer add 2 ticks of buffering.
+# While buffering_wait_ticks > 0 nothing is mixed and audio_callback returns false (ret=0).
+init 48000 2
+clock 1000000000
+timeline 1000000000
+source a input
+video_mix 1
+channel 0 0 a
+set a active 1
+output a 48000 2 1024 970000000 const 0.25
+output a 48000 2 1024 991333333 const 0.25
+output a 48000 2 1024 1012666666 const 0.25
+output a 48000 2 1024 1034000000 const 0.25
+output a 48000 2 1024 1055333333 const 0.25
+output a 48000 2 1024 1076666666 const 0.25
+state a
+run 6 1
+state a

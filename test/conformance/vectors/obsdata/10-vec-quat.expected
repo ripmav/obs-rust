@@ -1,0 +1,37 @@
+dump a {v2:object[user={x:number[user=num(D,1,1.5)],y:number[user=num(D,-2,-2.25)]}],v3:object[user={x:number[user=num(D,1,1)],y:number[user=num(D,2,2)],z:number[user=num(D,3,3)]}],v4:object[user={x:number[user=num(D,1,1)],y:number[user=num(D,2,2)],z:number[user=num(D,3,3)],w:number[user=num(D,4,4)]}],q:object[user={x:number[user=num(D,0,0.5)],y:number[user=num(D,0,0.5)],z:number[user=num(D,0,0.5)],w:number[user=num(D,0,0.5)]}]}
+json a "{\"v2\":{\"x\":1.5,\"y\":-2.25},\"v3\":{\"x\":1.0,\"y\":2.0,\"z\":3.0},\"v4\":{\"x\":1.0,\"y\":2.0,\"z\":3.0,\"w\":4.0},\"q\":{\"x\":0.5,\"y\":0.5,\"z\":0.5,\"w\":0.5}}"
+get_vec2 a v2 1.5 -2.25
+get_vec3 a v3 1 2 3
+get_vec4 a v4 1 2 3 4
+get_quat a q 0.5 0.5 0.5 0.5
+echo --- float rounding: values pass through float
+get_vec2 a r 0.100000001 16777216
+json a "{\"v2\":{\"x\":1.5,\"y\":-2.25},\"v3\":{\"x\":1.0,\"y\":2.0,\"z\":3.0},\"v4\":{\"x\":1.0,\"y\":2.0,\"z\":3.0,\"w\":4.0},\"q\":{\"x\":0.5,\"y\":0.5,\"z\":0.5,\"w\":0.5},\"r\":{\"x\":0.10000000149011612,\"y\":16777216.0}}"
+echo --- missing or wrong type leave the sentinel; missing members read as 0
+get_vec2 a nosuch 7 7
+get_vec3 a nosuch 7 7 7
+get_vec4 a nosuch 7 7 7 7
+get_quat a nosuch 7 7 7 7
+get_vec2 a notobj 7 7
+get_vec2 @null x 7 7
+get_vec3 a partial 3 0 0
+echo --- a vec read from an object saved with ints
+get_vec2 a ivec 4 5
+echo --- default and autoselect variants
+get_default_vec2 a dv 9 8
+get_vec2 a dv 9 8
+has_user a dv 0
+has_default a dv 1
+get_default_vec2 a nosuch 7 7
+get_vec2 a dv 1 2
+get_default_vec2 a dv 9 8
+get_default_vec3 a dv3 1 2 3
+get_default_vec4 a dv4 1 2 3 4
+get_default_quat a dq 1 0 0 0
+get_autoselect_vec2 a av 6 5
+get_autoselect_vec3 a av3 1 2 3
+get_autoselect_vec4 a av4 1 2 3 4
+get_autoselect_quat a aq 1 2 3 4
+echo --- replacing a vec value
+get_vec2 a v2 7 8
+json a "{\"v2\":{\"x\":7.0,\"y\":8.0},\"v3\":{\"x\":1.0,\"y\":2.0,\"z\":3.0},\"v4\":{\"x\":1.0,\"y\":2.0,\"z\":3.0,\"w\":4.0},\"q\":{\"x\":0.5,\"y\":0.5,\"z\":0.5,\"w\":0.5},\"r\":{\"x\":0.10000000149011612,\"y\":16777216.0},\"notobj\":5,\"partial\":{\"x\":3.0},\"ivec\":{\"x\":4,\"y\":5},\"dv\":{\"x\":1.0,\"y\":2.0}}"

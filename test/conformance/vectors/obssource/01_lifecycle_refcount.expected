@@ -1,0 +1,18 @@
+  cb A create
+log debug source 'A' (in) created
+  gsig source_create source=A
+create a ok
+info a name=A id=in type=0 enabled=1 hidden=0 flags=0 mixers=0 private=0
+setting a dflt 7
+refs a 1
+refs a 2
+refs a 1
+pending 1
+echo before-drain
+  destroying a
+  gsig source_destroy source=A
+  sig destroy source=A
+  cb A destroy
+log debug source 'A' destroyed
+drain ran=1
+pending 0

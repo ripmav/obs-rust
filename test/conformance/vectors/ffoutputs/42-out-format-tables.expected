@@ -1,0 +1,54 @@
+> fo_formats
+fo_format NONE -> none chroma709=0 chroma2020=0
+fo_format I420 -> yuv420p chroma709=1 chroma2020=3
+fo_format NV12 -> nv12 chroma709=1 chroma2020=3
+fo_format YVYU -> yvyu422 chroma709=1 chroma2020=1
+fo_format YUY2 -> yuyv422 chroma709=1 chroma2020=1
+fo_format UYVY -> uyvy422 chroma709=1 chroma2020=1
+fo_format RGBA -> rgba chroma709=2 chroma2020=2
+fo_format BGRA -> bgra chroma709=2 chroma2020=2
+fo_format BGRX -> bgra chroma709=2 chroma2020=2
+fo_format Y800 -> gray chroma709=2 chroma2020=2
+fo_format I444 -> yuv444p chroma709=2 chroma2020=2
+fo_format BGR3 -> bgr24 chroma709=2 chroma2020=2
+fo_format I422 -> yuv422p chroma709=1 chroma2020=1
+fo_format I40A -> yuva420p chroma709=1 chroma2020=3
+fo_format I42A -> yuva422p chroma709=1 chroma2020=1
+fo_format YUVA -> yuva444p chroma709=2 chroma2020=2
+fo_format AYUV -> none chroma709=0 chroma2020=0
+fo_format I010 -> yuv420p10le chroma709=1 chroma2020=3
+fo_format P010 -> p010le chroma709=1 chroma2020=3
+fo_format I210 -> yuv422p10le chroma709=1 chroma2020=1
+fo_format I412 -> yuv444p12le chroma709=2 chroma2020=2
+fo_format YA2L -> yuva444p12le chroma709=2 chroma2020=2
+fo_format P216 -> p216le chroma709=1 chroma2020=1
+fo_format P416 -> p416le chroma709=2 chroma2020=2
+> fo_sample_formats
+fo_sample_format -1 -> audio_format 2
+fo_sample_format 0 -> audio_format 1
+fo_sample_format 1 -> audio_format 2
+fo_sample_format 2 -> audio_format 3
+fo_sample_format 3 -> audio_format 4
+fo_sample_format 4 -> audio_format 2
+fo_sample_format 5 -> audio_format 5
+fo_sample_format 6 -> audio_format 6
+fo_sample_format 7 -> audio_format 7
+fo_sample_format 8 -> audio_format 8
+fo_sample_format 9 -> audio_format 2
+fo_sample_format 10 -> audio_format 2
+fo_sample_format 11 -> audio_format 2
+fo_sample_format 12 -> audio_format 2
+> fo_rescale 100 1 30 1 1000
+fo_rescale -> 3333
+> fo_rescale 1 1 30 1 1000
+fo_rescale -> 33
+> fo_rescale -1 1 30 1 1000
+fo_rescale -> -33
+> fo_rescale 3 1 2 1 1
+fo_rescale -> 2
+> fo_rescale -3 1 2 1 1
+fo_rescale -> -2
+> fo_rescale -9223372036854775808 1 30 1 1000
+fo_rescale -> -9223372036854775808
+> fo_rescale 9223372036854775807 1 30 1 1000
+fo_rescale -> 9223372036854775807

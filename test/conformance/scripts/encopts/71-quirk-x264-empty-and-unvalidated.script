@@ -1,0 +1,15 @@
+# QUIRK (Q-2, Q-3). An EMPTY preset in the settings is not replaced by "veryfast" (the
+# validator passes empty strings through, the fallback only triggers for non-empty invalid
+# names). The settings-level profile is never validated (only a profile coming from x264opts
+# is checked against x264's list, which contains high10/high422/high444 that the UI list lacks).
+data D
+x264_defaults D
+set D preset str ""
+set D profile str "no-such-profile"
+x264_settings D
+echo profile-from-x264opts-is-validated
+set D profile str main
+set D x264opts str "profile=no-such-profile"
+x264_settings D
+set D x264opts str "profile=high422"
+x264_settings D

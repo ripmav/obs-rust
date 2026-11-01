@@ -1,0 +1,16 @@
+# D-4: Window Ack Size / Peer Bandwidth bodies shorter than 4 bytes make the reference read beyond the allocation.
+# The outputs are not recorded. A conforming implementation ignores such messages (no state change).
+new
+clock 1000
+seturl rtmp://h/a
+enablewrite
+set flashver FMLE
+feed 03
+feed_s1 0 1000 00000000
+feed_echo
+connect
+feed 0200000000000405000000005c783031
+feed 0200000000000806000000005c7830315c783032
+ignore client
+ignore client
+state

@@ -1,0 +1,51 @@
+# os_quick_write_utf8_file_safe(path, str, len, marker, temp_ext, backup_ext):
+# writes PATH.<temp_ext>, optionally moves the old PATH to PATH.<backup_ext>, then renames the
+# temporary file over PATH. A leading '.' of an extension is not doubled.
+# quick_write_utf8_safe PATH TEXT LEN MARKER TMPEXT BAKEXT   (extensions may be @null or "")
+quick_write_utf8_safe a.txt first len 0 tmp bak
+cat a.txt
+exists a.txt.tmp
+exists a.txt.bak
+# second write: the old contents become the backup
+quick_write_utf8_safe a.txt second len 0 tmp bak
+cat a.txt
+cat a.txt.bak
+# a third write replaces the backup with the second contents
+quick_write_utf8_safe a.txt third len 0 tmp bak
+cat a.txt.bak
+# extensions given with a dot
+quick_write_utf8_safe b.txt one len 0 .new .old
+quick_write_utf8_safe b.txt two len 0 .new .old
+cat b.txt
+cat b.txt.old
+exists b.txt.new
+# no backup requested (NULL or empty)
+quick_write_utf8_safe c.txt one len 0 tmp @null
+quick_write_utf8_safe c.txt two len 0 tmp ""
+cat c.txt
+exists c.txt.bak
+exists c.txt.
+# marker and LEN
+quick_write_utf8_safe d.txt abcdef 3 1 tmp @null
+cat d.txt
+# temporary extension missing: error, nothing is written
+quick_write_utf8_safe e.txt x len 0 @null bak
+quick_write_utf8_safe e.txt x len 0 "" bak
+exists e.txt
+# temporary file cannot be written (directory missing): error log, false
+quick_write_utf8_safe nodir/f.txt x len 0 tmp bak
+# the target is a non-empty directory: the temporary file is written, the rename fails, false;
+# the temporary file stays behind
+mkdir t
+put t/inner x
+quick_write_utf8_safe t x len 0 tmp @null
+exists t.tmp
+info t
+# the backup rename fails (the backup path is an existing non-empty directory): the call returns
+# false before the target is replaced; the temporary file stays behind
+put g.txt old
+mkdir g.txt.bakdir
+put g.txt.bakdir/x y
+quick_write_utf8_safe g.txt new len 0 tmp bakdir
+cat g.txt
+exists g.txt.tmp

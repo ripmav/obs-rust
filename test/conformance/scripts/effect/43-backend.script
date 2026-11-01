@@ -1,0 +1,71 @@
+# CORE: interaction with the graphics backend during effect creation. For every pass, the vertex shader is created
+# first and then the pixel shader, always both, passes in order, techniques in order, even after a failure.
+# A shader creation can fail in three ways:
+#   - the backend returns NULL (with or without an error text);
+#   - the backend returns a shader AND a non-empty error text: the text is recorded in the error list but does NOT
+#     make the creation fail (the success flag is only affected by missing shaders / parameters);
+#   - a uniform parameter that the parser wrote into the shader text is not known to the created shader
+#     ("Effect shader parameter not found" is logged at ERROR level, not added to the error list).
+# If the backend error text is non-empty it is added to the error list as "Error creating shader: <text>" (position:
+# the parser cursor at the end of the input). A pass without a shader fails with a logged error. The effect
+# creation result is false when a shader is missing or a parameter lookup failed; the error_string returned by
+# gs_effect_create is the error list at that point, so it only appears for failed creations. Shaders created so far
+# are destroyed with the half-built effect.
+# The backend's fake behaviour is selected with "backend ..." (see README).
+backend text hash
+text a
+uniform float4 col = {1,1,1,1};
+float4 VS() : POSITION { return col; }
+float4 PS() : TARGET { return col; }
+technique T1 { pass x { vertex_shader = VS(); pixel_shader = PS(); } pass y { vertex_shader = VS(); pixel_shader = PS(); } }
+technique T2 { pass { vertex_shader = VS(); pixel_shader = PS(); } }
+@end
+echo --- normal creation (order of backend calls)
+effect e1 be1.effect @text:a
+echo --- backend fails the vertex shader with a message: all remaining shaders are still requested
+backend fail vertex "no vertex"
+effect e2 be2.effect @text:a
+backend fail vertex off
+echo --- backend fails the pixel shader
+backend fail pixel "no pixel"
+effect e3 be3.effect @text:a
+backend fail pixel off
+echo --- backend fails both
+backend fail vertex "VERR"
+backend fail pixel "PERR"
+effect e4 be4.effect @text:a
+backend fail vertex off
+backend fail pixel off
+echo --- backend returns a shader together with an error text (e.g. warnings): recorded, but the effect is created
+backend warn pixel "just a warning"
+effect e5 be5.effect @text:a
+backend warn pixel off
+echo --- ... and it is visible in the error string only when the creation fails for another reason
+backend warn pixel "W: just a warning"
+backend fail vertex "E: vertex failed"
+effect e5b be5b.effect @text:a
+backend warn pixel off
+backend fail vertex off
+echo --- empty error text is ignored
+backend warn pixel ""
+effect e6 be6.effect @text:a
+backend warn pixel off
+echo --- the NULL error_string argument is allowed
+backend fail vertex "ignored"
+effect_noerr e7 be7.effect @text:a
+backend fail vertex off
+echo --- backend does not know the uniform parameters (no shader_parse)
+backend parse off
+effect e8 be8.effect @text:a
+backend parse on
+echo --- a plain (non-uniform) parameter is not looked up, so a backend that knows no variables is fine
+backend parse off
+effect e9 be9.effect "float4 col = {1,1,1,1};\nfloat4 VS() : POSITION { return col; }\nfloat4 PS() : TARGET { return col; }\ntechnique T { pass { vertex_shader = VS(); pixel_shader = PS(); } }"
+backend parse on
+echo --- error text with several lines is kept verbatim
+backend fail vertex "line1\nline2\n"
+effect e10 be10.effect @text:a
+backend fail vertex off
+echo --- the failed effects left nothing behind
+effect e11 be11.effect @text:a
+dump e11

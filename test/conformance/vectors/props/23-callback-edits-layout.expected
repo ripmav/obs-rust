@@ -1,0 +1,58 @@
+add bool trigger ok
+add bool victim ok
+add bool keep ok
+add list combo ok
+add group grp ok
+add bool inner ok
+modified layout prop=trigger props=Top settings=@null
+  action add_bool extra ok
+  action remove victim
+modified -> 1
+dump Top flags=0 param=@null
+  prop trigger type=bool desc="Trigger" long=@null enabled=1 visible=1
+    -
+  prop keep type=bool desc="Edited" long=@null enabled=0 visible=0
+    -
+  prop combo type=list desc="Combo" long=@null enabled=1 visible=1
+    listtype=list format=string count=0
+  prop grp type=group desc="Grp" long=@null enabled=1 visible=1
+    grouptype=normal content=G
+      prop inner type=bool desc="Inner" long=@null enabled=1 visible=1
+        -
+  prop extra type=bool desc="extra" long=@null enabled=1 visible=1
+    -
+echo list-refill
+add bool refill ok
+modified fill prop=refill props=Top settings=@null
+modified -> 1
+modified fill prop=refill props=Top settings=@null
+modified -> 1
+info
+  prop combo type=list desc="Combo" long=@null enabled=1 visible=1
+    listtype=list format=string count=2
+     item 0 name="First" disabled=0 value="1"
+     item 1 name="Second" disabled=0 value="2"
+echo callback-of-property-inside-a-group-edits-the-top-container
+modified from_group prop=inner props=Top settings=@null
+  action parent @null
+  action add_bool fromgroup ok
+modified -> 1
+dump Top flags=0 param=@null
+  prop trigger type=bool desc="Trigger" long=@null enabled=1 visible=1
+    -
+  prop keep type=bool desc="Edited" long=@null enabled=0 visible=0
+    -
+  prop combo type=list desc="Combo" long=@null enabled=1 visible=1
+    listtype=list format=string count=2
+     item 0 name="First" disabled=0 value="1"
+     item 1 name="Second" disabled=0 value="2"
+  prop grp type=group desc="Grp" long=@null enabled=1 visible=1
+    grouptype=normal content=G
+      prop inner type=bool desc="Inner" long=@null enabled=1 visible=1
+        -
+  prop extra type=bool desc="extra" long=@null enabled=1 visible=1
+    -
+  prop refill type=bool desc="Refill" long=@null enabled=1 visible=1
+    -
+  prop fromgroup type=bool desc="fromgroup" long=@null enabled=1 visible=1
+    -

@@ -1,0 +1,43 @@
+# Audio-only file; and a file whose video stream ends before the audio (the finished stream is skipped; the
+# end of playback is when BOTH have no pending frame). Seeking on a non-local source is accepted but performs
+# no demuxer seek and no decoder flush.
+media ao 100000 0
+audio 1 1000 1000 2 s16p
+pkt 0 0 samples=40
+pkt 0 40 samples=40
+pkt 0 80 samples=20
+endmedia
+media uneven 120000 0
+video 1 1000 8 4 yuv420p
+audio 1 1000 1000 1 u8
+pkt 0 0 fdur=40
+pkt 1 0 samples=40
+pkt 1 40 samples=40
+pkt 1 80 samples=40
+endmedia
+clock 1000000000
+pix off
+echo ---- audio only
+minit ao local=1
+mreset
+mplay 0
+mtickw 0 0
+mtick 5
+mstate
+mfree
+echo ---- video ends early
+minit uneven local=1
+mreset
+mplay 0
+mtickw 0 0
+mtick 6
+mfree
+echo ---- seek on a network source
+minit uneven local=0
+mreset
+mplay 0
+mtickw 0 0
+mtick 1
+mseek 50
+mtick 2
+mstate

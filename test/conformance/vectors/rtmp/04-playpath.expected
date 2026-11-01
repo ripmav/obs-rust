@@ -1,0 +1,25 @@
+playpath out="live_12345" len=10
+playpath out="live_12345?token=abc" len=20
+playpath out="stream" len=6
+playpath out="stream?x=1" len=10
+playpath out="mp4:stream" len=10
+playpath out="mp4:stream.mp4" len=14
+playpath out="mp4:stream" len=10
+playpath out="mp3:stream" len=10
+playpath out="mp3:stream.mp3" len=14
+playpath out="foo.FLV" len=7
+playpath out="mp4:a.flv" len=9
+playpath out="mp4:ab" len=6
+playpath out="mp4:" len=4
+playpath out="" len=0
+playpath out="mp4:x?a=b.mp4" len=13
+playpath out="a b" len=3
+playpath out="a/bA" len=4
+playpath out="A" len=1
+playpath out="foo.flv" len=7
+playpath out="mp4:bar" len=7
+playpath out="baz" len=3
+playpath out="baz" len=3
+playpath out="abc" len=3
+playpath out="ab" len=2
+playpath out="" len=0

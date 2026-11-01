@@ -1,0 +1,28 @@
+# S-035 module path templates and obs_find_modules2: flat directories, "%module%" directory layouts, naming rules.
+# (the 'type' field of the callback info is not printed: obs_add_module_path leaves it uninitialised, see D-2)
+# --- flat layout (data dir of libbar.so: "bar" because "libbar" is missing; libbaz: falls back to "baz" even though neither exists)
+# --- flat layout: BIN is a directory of *.so files, DATA contains "%module%"
+write @TMP/flat/bin/b.so "x"
+write @TMP/flat/bin/a.so "x"
+write @TMP/flat/bin/B.so "x"
+write @TMP/flat/bin/libfoo.so "x"
+write @TMP/flat/bin/dotted.name.so "x"
+write @TMP/flat/bin/readme.txt "x"
+write @TMP/flat/bin/.hidden.so "x"
+mkdir @TMP/flat/bin/dir.so
+write @TMP/flat/bin/libbar.so "x"
+write @TMP/flat/bin/libbaz.so "x"
+write @TMP/flat/bin/lib.so "x"
+mkdir @TMP/flat/data/libfoo
+mkdir @TMP/flat/data/bar
+mkdir @TMP/flat/data/foo
+mkdir @TMP/flat/data/a
+add_path @TMP/flat/bin @TMP/flat/data/%module%
+find
+# --- unusable arguments are ignored
+add_path - @TMP/x
+add_path @TMP/x -
+add_path - -
+# a trailing slash on BIN is fine; a trailing slash produced by the data template is removed (only one)
+add_path @TMP/flat/bin/ @TMP/flat/data/%module%/
+find

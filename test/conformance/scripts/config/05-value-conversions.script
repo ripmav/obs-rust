@@ -1,0 +1,27 @@
+# How text is converted by the typed getters.
+open_string "[C]\ni1=123\ni2=-5\ni3=0x1F\ni4=0X1F\ni5=12abc\ni6=abc\ni7=\ni8= 7\nb1=true\nb2=TRUE\nb3=True\nb4=1\nb5=2\nb6=0\nb7=false\nb8=yes\nb9=0x0\nb10=0x1\nd1=3.25\nd2=1e3\nd3=abc\nd4=.5\nd5=5.\nd6=0x10\n"
+get_int C i1
+get_int C i2
+get_int C i3
+get_int C i4
+get_int C i5
+get_int C i6
+get_int C i7
+get_int C i8
+get_uint C i2
+get_bool C b1
+get_bool C b2
+get_bool C b3
+get_bool C b4
+get_bool C b5
+get_bool C b6
+get_bool C b7
+get_bool C b8
+get_bool C b9
+get_bool C b10
+get_double C d1
+get_double C d2
+get_double C d3
+get_double C d4
+get_double C d5
+get_double C d6

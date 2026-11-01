@@ -1,0 +1,96 @@
+> trace on
+> x-screen 0 0 1920 1080 DP-1
+> x-screen 1920 -200 2560 1440 HDMI-1
+> x-screen 4480 100 1280 1024 -
+> xshm-defaults
+> set-int screen 0
+> xshm-create
+  | xcb_connect (null) -> ok
+log info xshm-input: Missing Xinerama extension !
+log info xshm-input: Missing Randr extension !
+log info xshm-input: Geometry 1920x1080 @ 0,0
+  | xshm_attach 1920x1080 -> ok
+  | cursor_init
+  | cursor_offset 0,0
+  | gs_texture_create 1920x1080 fmt=5
+xshm-create
+state screen=0 origin=0,0 size=1920x1080 cut=t0,l0,r0,b0 adj=0,0 1920x1080 cursor=1 advanced=0 randr=0 xinerama=0 server= texture=1 xcb=1 shm=1 cursorobj=1 get=1920x1080
+> xshm-destroy
+  | gs_texture_destroy
+  | cursor_destroy
+  | xshm_detach
+  | xcb_disconnect
+xshm-destroy textures=0
+> settings-clear
+> xshm-defaults
+> set-int screen 1
+> x-ext randr 1
+> xshm-create
+  | xcb_connect (null) -> ok
+log info xshm-input: Missing Xinerama extension !
+log info xshm-input: Geometry 2560x1440 @ 1920,-200
+  | xshm_attach 2560x1440 -> ok
+  | cursor_init
+  | cursor_offset 1920,-200
+  | gs_texture_create 2560x1440 fmt=5
+xshm-create
+state screen=1 origin=1920,-200 size=2560x1440 cut=t0,l0,r0,b0 adj=1920,-200 2560x1440 cursor=1 advanced=0 randr=1 xinerama=0 server= texture=1 xcb=1 shm=1 cursorobj=1 get=2560x1440
+> xshm-destroy
+  | gs_texture_destroy
+  | cursor_destroy
+  | xshm_detach
+  | xcb_disconnect
+xshm-destroy textures=0
+> x-ext randr 0
+> x-ext xinerama 1
+> xshm-create
+  | xcb_connect (null) -> ok
+log info xshm-input: Missing Randr extension !
+log info xshm-input: Geometry 2560x1440 @ 1920,-200
+  | xshm_attach 2560x1440 -> ok
+  | cursor_init
+  | cursor_offset 1920,-200
+  | gs_texture_create 2560x1440 fmt=5
+xshm-create
+state screen=1 origin=1920,-200 size=2560x1440 cut=t0,l0,r0,b0 adj=1920,-200 2560x1440 cursor=1 advanced=0 randr=0 xinerama=1 server= texture=1 xcb=1 shm=1 cursorobj=1 get=2560x1440
+> xshm-destroy
+  | gs_texture_destroy
+  | cursor_destroy
+  | xshm_detach
+  | xcb_disconnect
+xshm-destroy textures=0
+> x-ext xinerama 0
+> xshm-create
+  | xcb_connect (null) -> ok
+log info xshm-input: Missing Xinerama extension !
+log info xshm-input: Missing Randr extension !
+log info xshm-input: Geometry 2560x1440 @ 0,0
+  | xshm_attach 2560x1440 -> ok
+  | cursor_init
+  | cursor_offset 0,0
+  | gs_texture_create 2560x1440 fmt=5
+xshm-create
+state screen=1 origin=0,0 size=2560x1440 cut=t0,l0,r0,b0 adj=0,0 2560x1440 cursor=1 advanced=0 randr=0 xinerama=0 server= texture=1 xcb=1 shm=1 cursorobj=1 get=2560x1440
+> xshm-destroy
+  | gs_texture_destroy
+  | cursor_destroy
+  | xshm_detach
+  | xcb_disconnect
+xshm-destroy textures=0
+> x-ext randr 1
+> x-ext xinerama 1
+> xshm-create
+  | xcb_connect (null) -> ok
+log info xshm-input: Geometry 2560x1440 @ 1920,-200
+  | xshm_attach 2560x1440 -> ok
+  | cursor_init
+  | cursor_offset 1920,-200
+  | gs_texture_create 2560x1440 fmt=5
+xshm-create
+state screen=1 origin=1920,-200 size=2560x1440 cut=t0,l0,r0,b0 adj=1920,-200 2560x1440 cursor=1 advanced=0 randr=1 xinerama=1 server= texture=1 xcb=1 shm=1 cursorobj=1 get=2560x1440
+> xshm-destroy
+  | gs_texture_destroy
+  | cursor_destroy
+  | xshm_detach
+  | xcb_disconnect
+xshm-destroy textures=0

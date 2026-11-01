@@ -1,0 +1,110 @@
+# S-021 obs_parse_av1_header: a temporal unit (OBUs) containing one Sequence Header OBU in,
+# AV1CodecConfigurationRecord ("av1C") + the sequence header OBU (+ the last metadata OBU) out:
+#   81 | profile<<5 | seq_level_idx[0] | tier<<7 | high_bitdepth<<6 | twelve_bit<<5 | monochrome<<4 |
+#   chroma_subsampling_x<<3 | chroma_subsampling_y<<2 | chroma_sample_position | 00 |
+#   sequence header OBU (complete, with its OBU header and size field, as in the input) |
+#   [last metadata OBU, complete]
+# The sequence header payload is parsed in full (see spec section 6.5): it must be consumed exactly
+# up to its trailing one-bit, otherwise the whole call fails (return 0, *header untouched).
+echo "profile-0-8-bit-4:2:0"
+# profile 0, level idx 8, 8 bit, no color description (cp=tc=mc=2 are not output)
+av1_header 12000a0b00000042abbfc37709d001
+# same without the temporal delimiter
+av1_header 0a0b00000042abbfc37709d001
+# 10 bit
+av1_header 0a0b00000042abbfc37709d101
+# monochrome
+av1_header 0a0b00000042abbfc37709d088
+# chroma_sample_position 1 (vertical) and 2 (colocated) and 3
+av1_header 0a0b00000042abbfc37709d009
+av1_header 0a0b00000042abbfc37709d011
+av1_header 0a0b00000042abbfc37709d019
+# color_range = 1 (not output)
+av1_header 0a0b00000042abbfc37709d021
+echo "profiles"
+# profile 1 (4:4:4), 8 bit: subsampling 0,0, monochrome forced 0
+av1_header 0a0b20000042abbfc37709d008
+# profile 1, 10 bit
+av1_header 0a0b20000042abbfc37709d108
+# profile 2, 8 bit: subsampling x=1,y=0 (4:2:2)
+av1_header 0a0b40000042abbfc37709d004
+# profile 2, 10 bit: still 4:2:2
+av1_header 0a0b40000042abbfc37709d102
+# profile 2, 12 bit, 4:2:0 (subsampling_x=1, subsampling_y=1)
+av1_header 0a0c40000042abbfc37709d18d20
+# profile 2, 12 bit, 4:2:2 (x=1,y=0)
+av1_header 0a0c40000042abbfc37709d18880
+# profile 2, 12 bit, 4:4:4 (x=0)
+av1_header 0a0b40000042abbfc37709d181
+# profile 2, 12 bit monochrome
+av1_header 0a0b40000042abbfc37709d1c4
+# profile 3 (reserved): treated like profile 2 for the colour config? (not 0, not 1, not 2)
+av1_header 0a0b60000042abbfc37709d004
+echo "colour-description"
+# BT.709 (1,1,1)
+av1_header 0a0e00000042abbfc37709d040404041
+# BT.2020 PQ (9,16,9), 10 bit
+av1_header 0a0e00000042abbfc37709d142440241
+# sRGB / identity (1,13,0): 4:4:4 without color_range bit
+av1_header 0a0e00000042abbfc37709d040434008
+# sRGB with profile 1
+av1_header 0a0e20000042abbfc37709d080868010
+# sRGB with profile 2 12 bit
+av1_header 0a0e40000042abbfc37709d1a021a004
+# colour description with monochrome
+av1_header 0a0e00000042abbfc37709d0c2440248
+echo "level-and-tier"
+# seq_level_idx 0
+av1_header 0a0b00000005577f86ee13a002
+# seq_level_idx 7 (no tier bit)
+av1_header 0a0b0000003d577f86ee13a002
+# seq_level_idx 8 with tier 1
+av1_header 0a0b00000046abbfc37709d001
+# seq_level_idx 31 with tier 1
+av1_header 0a0b000000feabbfc37709d001
+# three operating points: the first one is used
+av1_header 0a1000200048001900015577f86ee13a0020
+# 32 operating points
+av1_header 0a5001f00000000400040003000200014000c000700040001300050001700060001b00070001f000800023000900027000a0002b000b0002f000c00033000d00037000e0003b000f0003faaeff0ddc274004
+echo "reduced-still-picture-header"
+# still_picture + reduced_still_picture_header, level 5 (tier 0)
+av1_header 0a07196abbfc37e002
+# reduced header, level 31
+av1_header 0a071feabbfc37e002
+# reduced header, 10 bit mono
+av1_header 0a07192abbfc37e310
+echo "optional-syntax-before-the-colour-config"
+# timing_info with equal_picture_interval + uvlc
+av1_header 0a140400000fa40003a98240000085577f86ee13a002
+# timing_info without equal_picture_interval
+av1_header 0a140400000fa40003a980000010aaeff0ddc2740040
+# timing_info with a large uvlc
+av1_header 0a180400000fa40003a982000186a10000085577f86ee13a0020
+# decoder_model_info (delay length 5) with one operating point, per-op decoder model present
+av1_header 0a1b0400000fa40003a98120000000000000002100155dfe1bb84e8008
+# decoder_model_info (delay length 20), 2 ops: first with, second without
+av1_header 0a210400000fa40003a983cc00000000000400108000000000000125577f86ee13a002
+# initial_display_delay_present, op 0 with delay, op 1 without
+av1_header 0a0e02100042600092abbfc37709d001
+# timing + decoder model + initial display delay
+av1_header 0a1d0400000fa40003a982a70000000000200005200009d577f86ee13a0020
+# frame_id_numbers_present
+av1_header 0a0c00000042abbfc3795e13a002
+# width/height bits 16
+av1_header 0a0d00000043fc1dfc10ddc2740040
+# width/height bits 1
+av1_header 0a090000004000709d0010
+# enable_order_hint = 0
+av1_header 0a0b00000042abbfc377060020
+# seq_choose_screen_content_tools = 0, force = 0
+av1_header 0a0b00000042abbfc377085001
+# seq_choose_screen_content_tools = 0, force = 1, choose_integer_mv = 0 + force_integer_mv
+av1_header 0a0c00000042abbfc37708b40040
+# screen content tools choose=1 with choose_integer_mv = 0
+av1_header 0a0c00000042abbfc37709280080
+# film_grain_params_present = 1
+av1_header 0a0b00000042abbfc37709d003
+# separate_uv_delta_q = 1
+av1_header 0a0b00000042abbfc37709d005
+# use_128x128_superblock 0, filter_intra 0, intra_edge 0
+av1_header 0a0b00000042abbfc37009d001

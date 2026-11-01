@@ -1,0 +1,22 @@
+# Row layout: x,y,z,t are rows; vectors are row vectors (v' = v * M).
+mat4 i 1 0 0 0  0 1 0 0  0 0 1 0  0 0 0 1
+mat4 a 1 2 3 4  5 6 7 8  9 10 11 12  13 14 15 16
+mat4 b 2 0 0 1  0 3 0 2  0 0 4 3  0 0 0 1
+call id matrix4_identity
+call t matrix4_transpose a
+call ai matrix4_mul a i
+call ab matrix4_mul a b
+call ba matrix4_mul b a
+call det_i matrix4_determinant i
+call det_a matrix4_determinant a
+call det_b matrix4_determinant b
+call inv_b matrix4_inv b
+call chk matrix4_mul b inv_b
+call inv_a matrix4_inv a
+vec3 p 1 2 3
+call tp vec3_transform p b
+vec4 p4 1 2 3 1
+call tp4 vec4_transform p4 b
+mat4 single 1 0 0 0  0 1 0 0  0 0 1 0  0 0 0 0.0003
+call inv_small matrix4_inv single
+call det_small matrix4_determinant single

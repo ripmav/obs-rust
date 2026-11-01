@@ -1,0 +1,15 @@
+fname "2023-11-14 22-13-20" len=19
+fname "2023-11-14 22-13-20.mkv" len=23
+fname "2023-11-14_22-13-20.mkv" len=23
+fname "x..mkv" len=6
+fname "x" len=1
+fname "x.tar.gz" len=8
+fname "a_b.m kv" len=8
+fname "a b.m kv" len=8
+fname "plain text" len=10
+fname "plain_text" len=10
+fname "no tokens at all.mp4" len=20
+fname @null
+fname @null
+fname ".mp4" len=4
+fname ".mp4" len=4

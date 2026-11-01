@@ -1,0 +1,23 @@
+  cb A create
+log debug source 'A' (in) created
+create a ok
+size a 640x480
+  cb F1 create
+log debug private source 'F1' (plainfl) created
+create f1 ok
+log debug - filter 'F1' (plainfl) added to source 'A'
+size a 640x480
+  cb F2 create
+log debug private source 'F2' (sizefl) created
+create f2 ok
+log debug - filter 'F2' (sizefl) added to source 'A'
+size a 100x50
+size a 640x480
+  cb F3 create
+log debug private source 'F3' (plainfl) created
+create f3 ok
+log debug - filter 'F3' (plainfl) added to source 'A'
+size a 100x50
+filter_target f3 f2
+size f3 100x50
+size f2 100x50

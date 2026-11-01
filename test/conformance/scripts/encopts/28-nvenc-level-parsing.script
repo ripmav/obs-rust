@@ -1,0 +1,29 @@
+# CORE/QUIRK. The "level" option for H.264/HEVC: with a '.' it is parsed as "%u.%u" and
+# computed as high*10+low (so "4.2" -> 42, "5.10" -> 60, "4.x" is not parsed -> unchanged);
+# otherwise strtol. A zero result (including unparsable input) leaves the level untouched.
+# For HEVC the value is multiplied by 3. AV1 uses plain integer parsing ("level=4.2" -> 4).
+data D
+set D opts str "level=4.2"
+nv_apply h264 D
+set D opts str "level=5.10"
+nv_apply h264 D
+set D opts str "level=4.x"
+nv_apply h264 D
+set D opts str "level=41"
+nv_apply h264 D
+set D opts str "level=0"
+nv_apply h264 D
+set D opts str "level=abc"
+nv_apply h264 D
+set D opts str "level=.5"
+nv_apply h264 D
+set D opts str "level=-1.5"
+nv_apply h264 D
+set D opts str "level=3.1"
+nv_apply hevc D
+set D opts str "level=93"
+nv_apply hevc D
+set D opts str "level=4.2"
+nv_apply av1 D
+set D opts str "level=4"
+nv_apply av1 D

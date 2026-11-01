@@ -1,0 +1,44 @@
+# S-035 init (obs_module_load), post-load, unload, free_module and list maintenance.
+mkmod a @TMP/m/a.so unload postload freeloc
+mkmod b @TMP/m/b.so unload postload freeloc load=0
+mkmod c @TMP/m/c.so unload postload freeloc
+open_module A @TMP/m/a.so d
+open_module B @TMP/m/b.so d
+open_module C @TMP/m/c.so d
+lists
+# init: loaded flag, failure logs a warning but leaves the module in the list
+init_module A
+init_module A
+init_module B
+init_module C
+init_module -
+mod_info A
+mod_info B
+core_null 1
+init_module A
+core_null 0
+# post_load goes through the enabled list head to tail (reverse of the open order), skipping nothing, even
+# modules whose load failed
+post_load
+# free: free_locale is called for every module with a library handle; unload only if loaded
+free_module B
+lists
+free_module C
+lists
+# freeing the head
+free_module A
+lists
+# disabled modules
+create_disabled D1 @TMP/m/x.so @TMP/d/x 3
+create_disabled D2 @TMP/m/lib-y.so @TMP/d/y 5
+lists
+mod_info D1
+mod_info D2
+get_module x
+get_module lib-y
+free_module D1
+lists
+free_module D2
+lists
+# free_module(NULL) is a no-op
+free_module -

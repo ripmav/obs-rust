@@ -1,0 +1,429 @@
+# S-021 exhaustive capacity sweeps for AMF container encoding (the boundary behaviour of the
+# "outend" checks is part of the contract: see rules S-021-R12..R15). The object has three
+# properties (width number, stereo bool, name string "abc"): 42 bytes as object, 46 as ECMA array,
+# 43 as strict array when everything fits.
+obj flat
+add flat width number 1920
+add flat stereo bool 1
+add flat name string abc
+echo sweep-object
+cap 0
+enc_obj flat object
+cap 1
+enc_obj flat object
+cap 2
+enc_obj flat object
+cap 3
+enc_obj flat object
+cap 4
+enc_obj flat object
+cap 5
+enc_obj flat object
+cap 6
+enc_obj flat object
+cap 7
+enc_obj flat object
+cap 8
+enc_obj flat object
+cap 9
+enc_obj flat object
+cap 10
+enc_obj flat object
+cap 11
+enc_obj flat object
+cap 12
+enc_obj flat object
+cap 13
+enc_obj flat object
+cap 14
+enc_obj flat object
+cap 15
+enc_obj flat object
+cap 16
+enc_obj flat object
+cap 17
+enc_obj flat object
+cap 18
+enc_obj flat object
+cap 19
+enc_obj flat object
+cap 20
+enc_obj flat object
+cap 21
+enc_obj flat object
+cap 22
+enc_obj flat object
+cap 23
+enc_obj flat object
+cap 24
+enc_obj flat object
+cap 25
+enc_obj flat object
+cap 26
+enc_obj flat object
+cap 27
+enc_obj flat object
+cap 28
+enc_obj flat object
+cap 29
+enc_obj flat object
+cap 30
+enc_obj flat object
+cap 31
+enc_obj flat object
+cap 32
+enc_obj flat object
+cap 33
+enc_obj flat object
+cap 34
+enc_obj flat object
+cap 35
+enc_obj flat object
+cap 36
+enc_obj flat object
+cap 37
+enc_obj flat object
+cap 38
+enc_obj flat object
+cap 39
+enc_obj flat object
+cap 40
+enc_obj flat object
+cap 41
+enc_obj flat object
+cap 42
+enc_obj flat object
+cap 43
+enc_obj flat object
+cap 44
+enc_obj flat object
+cap 45
+enc_obj flat object
+cap 46
+enc_obj flat object
+cap 47
+enc_obj flat object
+echo sweep-ecma
+cap 0
+enc_obj flat ecma
+cap 1
+enc_obj flat ecma
+cap 2
+enc_obj flat ecma
+cap 3
+enc_obj flat ecma
+cap 4
+enc_obj flat ecma
+cap 5
+enc_obj flat ecma
+cap 6
+enc_obj flat ecma
+cap 7
+enc_obj flat ecma
+cap 8
+enc_obj flat ecma
+cap 9
+enc_obj flat ecma
+cap 10
+enc_obj flat ecma
+cap 11
+enc_obj flat ecma
+cap 12
+enc_obj flat ecma
+cap 13
+enc_obj flat ecma
+cap 14
+enc_obj flat ecma
+cap 15
+enc_obj flat ecma
+cap 16
+enc_obj flat ecma
+cap 17
+enc_obj flat ecma
+cap 18
+enc_obj flat ecma
+cap 19
+enc_obj flat ecma
+cap 20
+enc_obj flat ecma
+cap 21
+enc_obj flat ecma
+cap 22
+enc_obj flat ecma
+cap 23
+enc_obj flat ecma
+cap 24
+enc_obj flat ecma
+cap 25
+enc_obj flat ecma
+cap 26
+enc_obj flat ecma
+cap 27
+enc_obj flat ecma
+cap 28
+enc_obj flat ecma
+cap 29
+enc_obj flat ecma
+cap 30
+enc_obj flat ecma
+cap 31
+enc_obj flat ecma
+cap 32
+enc_obj flat ecma
+cap 33
+enc_obj flat ecma
+cap 34
+enc_obj flat ecma
+cap 35
+enc_obj flat ecma
+cap 36
+enc_obj flat ecma
+cap 37
+enc_obj flat ecma
+cap 38
+enc_obj flat ecma
+cap 39
+enc_obj flat ecma
+cap 40
+enc_obj flat ecma
+cap 41
+enc_obj flat ecma
+cap 42
+enc_obj flat ecma
+cap 43
+enc_obj flat ecma
+cap 44
+enc_obj flat ecma
+cap 45
+enc_obj flat ecma
+cap 46
+enc_obj flat ecma
+cap 47
+enc_obj flat ecma
+cap 48
+enc_obj flat ecma
+cap 49
+enc_obj flat ecma
+cap 50
+enc_obj flat ecma
+cap 51
+enc_obj flat ecma
+echo sweep-strict
+cap 0
+enc_obj flat strict
+cap 1
+enc_obj flat strict
+cap 2
+enc_obj flat strict
+cap 3
+enc_obj flat strict
+cap 4
+enc_obj flat strict
+cap 5
+enc_obj flat strict
+cap 6
+enc_obj flat strict
+cap 7
+enc_obj flat strict
+cap 8
+enc_obj flat strict
+cap 9
+enc_obj flat strict
+cap 10
+enc_obj flat strict
+cap 11
+enc_obj flat strict
+cap 12
+enc_obj flat strict
+cap 13
+enc_obj flat strict
+cap 14
+enc_obj flat strict
+cap 15
+enc_obj flat strict
+cap 16
+enc_obj flat strict
+cap 17
+enc_obj flat strict
+cap 18
+enc_obj flat strict
+cap 19
+enc_obj flat strict
+cap 20
+enc_obj flat strict
+cap 21
+enc_obj flat strict
+cap 22
+enc_obj flat strict
+cap 23
+enc_obj flat strict
+cap 24
+enc_obj flat strict
+cap 25
+enc_obj flat strict
+cap 26
+enc_obj flat strict
+cap 27
+enc_obj flat strict
+cap 28
+enc_obj flat strict
+cap 29
+enc_obj flat strict
+cap 30
+enc_obj flat strict
+cap 31
+enc_obj flat strict
+cap 32
+enc_obj flat strict
+cap 33
+enc_obj flat strict
+cap 34
+enc_obj flat strict
+cap 35
+enc_obj flat strict
+cap 36
+enc_obj flat strict
+cap 37
+enc_obj flat strict
+cap 38
+enc_obj flat strict
+cap 39
+enc_obj flat strict
+cap 40
+enc_obj flat strict
+cap 41
+enc_obj flat strict
+cap 42
+enc_obj flat strict
+cap 43
+enc_obj flat strict
+cap 44
+enc_obj flat strict
+cap 45
+enc_obj flat strict
+cap 46
+enc_obj flat strict
+cap 47
+enc_obj flat strict
+echo sweep-prop-string-property
+cap 0
+enc_prop flat 2
+cap 1
+enc_prop flat 2
+cap 2
+enc_prop flat 2
+cap 3
+enc_prop flat 2
+cap 4
+enc_prop flat 2
+cap 5
+enc_prop flat 2
+cap 6
+enc_prop flat 2
+cap 7
+enc_prop flat 2
+cap 8
+enc_prop flat 2
+cap 9
+enc_prop flat 2
+cap 10
+enc_prop flat 2
+cap 11
+enc_prop flat 2
+cap 12
+enc_prop flat 2
+cap 13
+enc_prop flat 2
+cap 14
+enc_prop flat 2
+cap 15
+enc_prop flat 2
+cap 16
+enc_prop flat 2
+echo sweep-prop-number-property
+cap 10
+enc_prop flat 0
+cap 11
+enc_prop flat 0
+cap 12
+enc_prop flat 0
+cap 13
+enc_prop flat 0
+cap 14
+enc_prop flat 0
+cap 15
+enc_prop flat 0
+cap 16
+enc_prop flat 0
+cap 17
+enc_prop flat 0
+cap 18
+enc_prop flat 0
+cap 19
+enc_prop flat 0
+cap 20
+enc_prop flat 0
+cap 21
+enc_prop flat 0
+echo sweep-null-property-and-empty-containers
+obj empty
+obj nl
+add nl x null
+cap 0
+enc_prop nl 0
+cap 1
+enc_prop nl 0
+cap 2
+enc_prop nl 0
+cap 3
+enc_prop nl 0
+cap 4
+enc_prop nl 0
+cap 3
+enc_obj empty object
+cap 4
+enc_obj empty object
+cap 5
+enc_obj empty object
+cap 6
+enc_obj empty object
+cap 7
+enc_obj empty object
+cap 8
+enc_obj empty object
+cap 9
+enc_obj empty object
+cap 10
+enc_obj empty object
+cap 3
+enc_obj empty ecma
+cap 4
+enc_obj empty ecma
+cap 5
+enc_obj empty ecma
+cap 6
+enc_obj empty ecma
+cap 7
+enc_obj empty ecma
+cap 8
+enc_obj empty ecma
+cap 9
+enc_obj empty ecma
+cap 10
+enc_obj empty ecma
+cap 3
+enc_obj empty strict
+cap 4
+enc_obj empty strict
+cap 5
+enc_obj empty strict
+cap 6
+enc_obj empty strict
+cap 7
+enc_obj empty strict
+cap 8
+enc_obj empty strict
+cap 9
+enc_obj empty strict
+cap 10
+enc_obj empty strict

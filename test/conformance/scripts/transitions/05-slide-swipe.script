@@ -1,0 +1,47 @@
+# CORE: slide and swipe: direction maths, easing, swipe-in, property lists.
+load quiet
+create s slide_transition
+tick s
+fields s
+props s
+view 0.25 1 2 1920 1080
+render s
+view 0 1 2 1920 1080
+render s
+view 1 1 2 1920 1080
+render s
+settings s str:direction=right
+tick s
+view 0.75 1 2 1920 1080
+render s
+settings s str:direction=up
+tick s
+view 0.25 1 2 1920 1080
+render s
+settings s str:direction=down
+tick s
+render s
+settings s str:direction=Left
+tick s
+settings s str:direction=bogus
+tick s
+create w swipe_transition
+tick w
+props w
+view 0.25 1 2 1920 1080
+render w
+settings w str:direction=right bool:swipe_in=1
+tick w
+render w
+settings w str:direction=up
+tick w
+render w
+settings w str:direction=down bool:swipe_in=0
+tick w
+view 0.8 1 2 1920 1080
+render w
+view 1.5 1 2 1920 1080
+render w
+gfx effect_fail=1
+create s2 slide_transition
+create w2 swipe_transition

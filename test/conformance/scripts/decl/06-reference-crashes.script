@@ -1,0 +1,11 @@
+# INPUTS THAT CRASH THE REFERENCE (NULL function name reaches strcmp). A
+# conforming implementation MUST return failure for each and MUST NOT crash.
+# The expected file records "parse crash"; the conformance rule maps that to
+# "parse fail" (see test/conformance/README.md).
+parse "void 1f()"
+parse "void 123()"
+parse "void +()"
+parse "void \"s\"()"
+parse "void ()"
+parse "void f("
+parse "int 1f(int a)"

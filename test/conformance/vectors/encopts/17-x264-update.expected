@@ -1,0 +1,39 @@
+log info ---------------------------------
+log info [x264 encoder: 'enc'] preset: veryfast
+log info [x264 encoder: 'enc'] profile: high
+x264.param_default_preset preset=veryfast tune=
+x264.param_parse keyint=100 -> 0
+log info [x264 encoder: 'enc'] settings: 	rate_control: CBR 	bitrate:      6000 	buffer size:  6000 	crf:          -3 	fps_num:      60 	fps_den:      1 	width:        1920 	height:       1080 	keyint:       100 
+log info [x264 encoder: 'enc'] custom settings:  	keyint = 100
+x264.param_apply_profile high -> 0
+x264.encoder_open -> ok
+x264.encoder_headers
+x264_create X ok
+params csp=4 size=1920x1080 fps=60/1 timebase=1/60 keyint_max=100 bframe=-2222 vfr=0
+params rc method=2 bitrate=6000 vbv_max=6000 vbv_buf=6000 rf=-3.5 filler=1 nal_hrd=0
+params vui sar=1x1 fullrange=0 colorprim=1 transfer=1 colmatrix=1
+params headers repeat=0 annexb=0 aud=0 loglevel=1
+echo update-bitrate-and-options
+x264.param_parse bframes=1 -> 0
+x264.encoder_reconfig
+x264_update X 1
+params csp=4 size=1920x1080 fps=60/1 timebase=1/60 keyint_max=100 bframe=1 vfr=0
+params rc method=2 bitrate=3000 vbv_max=3000 vbv_buf=3000 rf=-3.5 filler=1 nal_hrd=0
+params vui sar=1x1 fullrange=0 colorprim=1 transfer=1 colmatrix=1
+params headers repeat=0 annexb=0 aud=0 loglevel=1
+echo preset-and-profile-changes-are-ignored-on-update
+x264.encoder_reconfig
+x264_update X 1
+params csp=4 size=1920x1080 fps=60/1 timebase=1/60 keyint_max=100 bframe=1 vfr=0
+params rc method=2 bitrate=3000 vbv_max=3000 vbv_buf=3000 rf=-3.5 filler=1 nal_hrd=0
+params vui sar=1x1 fullrange=0 colorprim=1 transfer=1 colmatrix=1
+params headers repeat=0 annexb=0 aud=0 loglevel=1
+echo rate-control-change-on-update
+x264.encoder_reconfig
+x264_update X 1
+params csp=4 size=1920x1080 fps=60/1 timebase=1/60 keyint_max=100 bframe=1 vfr=0
+params rc method=1 bitrate=0 vbv_max=0 vbv_buf=0 rf=20 filler=1 nal_hrd=0
+params vui sar=1x1 fullrange=0 colorprim=1 transfer=1 colmatrix=1
+params headers repeat=0 annexb=0 aud=0 loglevel=1
+echo keyint-from-earlier-user-option-persists
+x264.encoder_close

@@ -1,0 +1,445 @@
+> trace 0
+> gs_create g
+ret 0 created
+> gs_enter_context g
+> trace 1
+> gs_begin_frame - - - - - -
+  dev device_begin_frame
+> gs_begin_scene - - - - - -
+  dev device_begin_scene
+> gs_blend_function - - - - - -
+  dev device_blend_function src=0 dest=0
+> gs_blend_function_separate - - - - - -
+  dev device_blend_function_separate src_c=0 dest_c=0 src_a=0 dest_a=0
+> gs_blend_op - - - - - -
+  dev device_blend_op op=0
+> gs_blend_state_pop - - - - - -
+> gs_blend_state_push - - - - - -
+> gs_color - - - - - -
+> gs_color4v - - - - - -
+> gs_copy_texture - - - - - -
+log debug gs_copy_texture: Null 'dst' parameter
+> gs_cubetexture_create - - - - - -
+log warning Cannot use mipmaps with a non-power-of-two texture.  Disabling mipmaps for this texture.
+  dev device_cubetexture_create size=0 fmt=0 levels=1 data=null flags=0
+ret #6
+> gs_cubetexture_destroy - - - - - -
+> gs_cubetexture_get_color_format - - - - - -
+log debug gs_cubetexture_get_color_format: Null 'cubetex' parameter
+ret 0
+> gs_cubetexture_get_size - - - - - -
+log debug gs_cubetexture_get_size: Null 'cubetex' parameter
+ret 0
+> gs_debug_marker_begin - - - - - -
+  dev device_debug_marker_begin name="(null)" color=(0,0,0,0)
+> gs_debug_marker_end - - - - - -
+  dev device_debug_marker_end
+> gs_depth_function - - - - - -
+  dev device_depth_function test=0
+> gs_draw - - - - - -
+  dev device_draw mode=0 start=0 num=0 world=I
+> gs_draw_cube_backdrop - - - - - -
+> gs_draw_quadf - - - - - -
+log error A sprite cannot be drawn without a width/height
+> gs_draw_sprite - - - - - -
+log error A sprite cannot be drawn without a width/height
+> gs_draw_sprite_subregion - - - - - -
+log debug gs_texture_get_width: Null 'tex' parameter
+log debug gs_texture_get_height: Null 'tex' parameter
+log error A sprite cannot be drawn without a width/height
+> gs_effect_create_from_file - - - - - -
+log debug gs_effect_create_from_file: Null 'file' parameter
+ret null
+> gs_enable_blending - - - - - -
+  dev device_enable_blending enable=false
+> gs_enable_color - - - - - -
+  dev device_enable_color red=false green=false blue=false alpha=false
+> gs_enable_depth_test - - - - - -
+  dev device_enable_depth_test enable=false
+> gs_enable_framebuffer_srgb - - - - - -
+  dev device_enable_framebuffer_srgb enable=false
+> gs_enable_stencil_test - - - - - -
+  dev device_enable_stencil_test enable=false
+> gs_enable_stencil_write - - - - - -
+  dev device_enable_stencil_write enable=false
+> gs_end_scene - - - - - -
+  dev device_end_scene
+> gs_enum_adapters - - - - - -
+  dev device_enum_adapters
+  adapter 0 "Default"
+> gs_flush - - - - - -
+  dev device_flush
+> gs_framebuffer_srgb_enabled - - - - - -
+  dev device_framebuffer_srgb_enabled
+ret false
+> gs_frustum - - - - - -
+  dev device_frustum left=0 right=0 top=0 bottom=0 znear=0 zfar=0
+> gs_get_adapter_count - - - - - -
+  dev gs_get_adapter_count
+ret 0
+> gs_get_color_space - - - - - -
+  dev device_get_color_space
+ret 0
+> gs_get_cull_mode - - - - - -
+  dev device_get_cull_mode
+ret 0
+> gs_get_device_name - - - - - -
+  dev device_get_name
+ret "FakeGL"
+> gs_get_device_obj - - - - - -
+  dev device_get_device_obj
+ret #7
+> gs_get_device_type - - - - - -
+  dev device_get_type
+ret 1
+> gs_get_driver_version - - - - - -
+  dev gpu_get_driver_version
+ret "1.2.3"
+> gs_get_effect - - - - - -
+ret null
+> gs_get_gpu_dmem - - - - - -
+  dev gpu_get_dmem
+ret 0
+> gs_get_gpu_smem - - - - - -
+  dev gpu_get_smem
+ret 0
+> gs_get_height - - - - - -
+  dev device_get_height
+ret 1080
+> gs_get_input - - - - - -
+ret null
+> gs_get_linear_srgb - - - - - -
+ret false
+> gs_get_pixel_shader - - - - - -
+  dev device_get_pixel_shader
+ret null
+> gs_get_render_target - - - - - -
+  dev device_get_render_target
+ret null
+> gs_get_renderer - - - - - -
+  dev gpu_get_renderer
+ret "Fake Renderer"
+> gs_get_size - - - - - -
+  dev device_get_size
+size 1920 1080
+> gs_get_texture_type - - - - - -
+log debug gs_get_texture_type: Null 'texture' parameter
+ret 0
+> gs_get_vertex_shader - - - - - -
+  dev device_get_vertex_shader
+ret null
+> gs_get_viewport - - - - - -
+  dev device_get_viewport
+viewport 0 0 0 0
+> gs_get_width - - - - - -
+  dev device_get_width
+ret 1920
+> gs_get_zstencil_target - - - - - -
+  dev device_get_zstencil_target
+ret null
+> gs_indexbuffer_create - - - - - -
+  dev device_indexbuffer_create type=0 num=0 flags=0 indices=
+ret #8
+> gs_indexbuffer_destroy - - - - - -
+> gs_indexbuffer_flush - - - - - -
+log debug gs_indexbuffer_flush: Null 'indexbuffer' parameter
+> gs_indexbuffer_flush_direct - - - - - -
+log debug gs_indexbuffer_flush_direct: Null 'indexbuffer' parameter
+> gs_indexbuffer_get_data - - - - - -
+log debug gs_indexbuffer_get_data: Null 'indexbuffer' parameter
+ret null
+> gs_indexbuffer_get_num_indices - - - - - -
+log debug gs_indexbuffer_get_num_indices: Null 'indexbuffer' parameter
+ret 0
+> gs_indexbuffer_get_type - - - - - -
+log debug gs_indexbuffer_get_type: Null 'indexbuffer' parameter
+ret 0
+> gs_is_monitor_hdr - - - - - -
+  dev device_is_monitor_hdr monitor=null
+ret false
+> gs_is_present_ready - - - - - -
+  dev device_is_present_ready
+ret false
+> gs_load_default_samplerstate - - - - - -
+  dev device_load_default_samplerstate b_3d=false unit=0
+> gs_load_indexbuffer - - - - - -
+  dev device_load_indexbuffer indexbuffer=null
+> gs_load_pixelshader - - - - - -
+  dev device_load_pixelshader shader=null
+> gs_load_samplerstate - - - - - -
+  dev device_load_samplerstate samplerstate=null unit=0
+> gs_load_swapchain - - - - - -
+  dev device_load_swapchain swaphchain=null
+> gs_load_texture - - - - - -
+  dev device_load_texture tex=null unit=0
+> gs_load_vertexbuffer - - - - - -
+  dev device_load_vertexbuffer vertbuffer=null
+> gs_load_vertexshader - - - - - -
+  dev device_load_vertexshader shader=null
+> gs_matrix_get - - - - - -
+matrix 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1
+> gs_matrix_identity - - - - - -
+> gs_matrix_pop - - - - - -
+log error Tried to pop last matrix on stack
+> gs_matrix_push - - - - - -
+> gs_matrix_rotaa - - - - - -
+> gs_matrix_rotaa4f - - - - - -
+> gs_matrix_rotquat - - - - - -
+> gs_matrix_scale - - - - - -
+> gs_matrix_scale3f - - - - - -
+> gs_matrix_translate - - - - - -
+> gs_matrix_translate3f - - - - - -
+> gs_matrix_transpose - - - - - -
+> gs_normal3f - - - - - -
+> gs_normal3v - - - - - -
+> gs_nv12_available - - - - - -
+  dev device_nv12_available
+ret false
+> gs_ortho - - - - - -
+  dev device_ortho left=0 right=0 top=0 bottom=0 znear=0 zfar=0
+> gs_p010_available - - - - - -
+  dev device_p010_available
+ret false
+> gs_perspective - - - - - -
+  dev device_frustum left=-0 right=0 top=-0 bottom=0 znear=0 zfar=0
+> gs_pixelshader_create - - - - - -
+log debug gs_pixelshader_create: Null 'shader' parameter
+ret null
+> gs_pixelshader_create_from_file - - - - - -
+log debug gs_pixelshader_create_from_file: Null 'file' parameter
+ret null
+> gs_preprocessor_name - - - - - -
+  dev device_preprocessor_name
+ret "_FAKE"
+> gs_present - - - - - -
+  dev device_present
+> gs_projection_pop - - - - - -
+  dev device_projection_pop
+> gs_projection_push - - - - - -
+  dev device_projection_push
+> gs_query_sync_capabilities - - - - - -
+  dev device_query_sync_capabilities
+ret false
+> gs_render_save - - - - - -
+ret null
+> gs_reset_blend_state - - - - - -
+  dev device_enable_blending enable=true
+  dev device_blend_function_separate src_c=4 dest_c=5 src_a=1 dest_a=5
+  dev device_blend_op op=0
+> gs_reset_viewport - - - - - -
+  dev device_get_size
+  dev device_set_viewport x=0 y=0 w=1920 h=1080
+> gs_resize - - - - - -
+  dev device_resize x=0 y=0
+> gs_samplerstate_create - - - - - -
+  dev device_samplerstate_create filter=0 u=0 v=0 w=0 aniso=0 border=0x00000000
+ret #9
+> gs_samplerstate_create_null - - - - - -
+log debug gs_samplerstate_create: Null 'info' parameter
+ret null
+> gs_samplerstate_destroy - - - - - -
+> gs_set_2d_mode - - - - - -
+  dev device_get_size
+  dev device_ortho left=0 right=1920 top=0 bottom=1080 znear=-1 zfar=-1024
+> gs_set_3d_mode - - - - - -
+> gs_set_cube_render_target - - - - - -
+  dev device_set_cube_render_target cubetex=null side=0 zstencil=null
+> gs_set_cull_mode - - - - - -
+  dev device_set_cull_mode mode=0
+> gs_set_render_target - - - - - -
+  dev device_set_render_target tex=null zs=null
+> gs_set_render_target_with_color_space - - - - - -
+  dev device_set_render_target_with_color_space tex=null zs=null space=0
+> gs_set_scissor_rect - - - - - -
+  dev device_set_scissor_rect x=0 y=0 cx=0 cy=0
+> gs_set_viewport - - - - - -
+  dev device_set_viewport x=0 y=0 w=0 h=0
+> gs_shader_destroy - - - - - -
+> gs_shader_get_num_params - - - - - -
+log debug gs_shader_get_num_params: Null 'shader' parameter
+ret 0
+> gs_shader_get_param_by_idx - - - - - -
+log debug gs_shader_get_param_by_idx: Null 'shader' parameter
+ret null
+> gs_shader_get_param_by_name - - - - - -
+log debug gs_shader_get_param_by_name: Null 'shader' parameter
+ret null
+> gs_shader_get_param_info - - - - - -
+log debug gs_shader_get_param_info: Null 'param' parameter
+info type=0 name=null
+> gs_shader_get_viewproj_matrix - - - - - -
+log debug gs_shader_get_viewproj_matrix: Null 'shader' parameter
+ret null
+> gs_shader_get_world_matrix - - - - - -
+log debug gs_shader_get_world_matrix: Null 'shader' parameter
+ret null
+> gs_shader_set_bool - - - - - -
+log debug gs_shader_set_bool: Null 'param' parameter
+> gs_shader_set_default - - - - - -
+log debug gs_shader_set_default: Null 'param' parameter
+> gs_shader_set_float - - - - - -
+log debug gs_shader_set_float: Null 'param' parameter
+> gs_shader_set_int - - - - - -
+log debug gs_shader_set_int: Null 'param' parameter
+> gs_shader_set_matrix3 - - - - - -
+log debug gs_shader_set_matrix3: Null 'param' parameter
+> gs_shader_set_next_sampler - - - - - -
+log debug gs_shader_set_next_sampler: Null 'param' parameter
+> gs_shader_set_texture - - - - - -
+log debug gs_shader_set_texture: Null 'param' parameter
+> gs_shader_set_val - - - - - -
+log debug gs_shader_set_val: Null 'param' parameter
+> gs_shader_set_vec2 - - - - - -
+log debug gs_shader_set_vec2: Null 'param' parameter
+> gs_shader_set_vec2_null - - - - - -
+log debug gs_shader_set_vec2: Null 'param' parameter
+> gs_shader_set_vec3 - - - - - -
+log debug gs_shader_set_vec3: Null 'param' parameter
+> gs_shader_set_vec4 - - - - - -
+log debug gs_shader_set_vec4: Null 'param' parameter
+> gs_stage_texture - - - - - -
+  dev device_stage_texture dst=null src=null
+> gs_stagesurface_create - - - - - -
+  dev device_stagesurface_create w=0 h=0 fmt=0
+ret #10
+> gs_stagesurface_destroy - - - - - -
+> gs_stagesurface_get_color_format - - - - - -
+log debug gs_stagesurface_get_color_format: Null 'stagesurf' parameter
+ret 0
+> gs_stagesurface_get_height - - - - - -
+log debug gs_stagesurface_get_height: Null 'stagesurf' parameter
+ret 0
+> gs_stagesurface_get_width - - - - - -
+log debug gs_stagesurface_get_width: Null 'stagesurf' parameter
+ret 0
+> gs_stagesurface_map - - - - - -
+log debug gs_stagesurface_map: Null 'stagesurf' parameter
+ret false linesize=0 null
+> gs_stagesurface_unmap - - - - - -
+log debug gs_stagesurface_unmap: Null 'stagesurf' parameter
+> gs_stencil_function - - - - - -
+  dev device_stencil_function side=0 test=0
+> gs_stencil_op - - - - - -
+  dev device_stencil_op side=0 fail=0 zfail=0 zpass=0
+> gs_swapchain_destroy - - - - - -
+> gs_sync_create - - - - - -
+  dev device_sync_create
+ret #11
+> gs_sync_destroy - - - - - -
+  dev device_sync_destroy sync=null
+> gs_sync_signal_syncobj_timeline_point - - - - - -
+  dev device_sync_signal_syncobj_timeline_point syncobj_fd=0 timeline_point=0
+ret false
+> gs_sync_wait - - - - - -
+  dev device_sync_wait sync=null
+ret false
+> gs_texcoord - - - - - -
+> gs_texcoord2v - - - - - -
+> gs_texrender_begin - - - - - -
+ret false
+> gs_texrender_begin_with_color_space - - - - - -
+ret false
+> gs_texrender_create - - - - - -
+ret ptr
+> gs_texrender_destroy - - - - - -
+> gs_texrender_end - - - - - -
+> gs_texrender_get_texture - - - - - -
+ret null
+> gs_texrender_reset - - - - - -
+> gs_texture_create - - - - - -
+log warning Cannot use mipmaps with a non-power-of-two texture.  Disabling mipmaps for this texture.
+  dev device_texture_create w=0 h=0 fmt=0 levels=1 data=null flags=0
+ret #12
+> gs_texture_create_from_dmabuf - - - - - -
+  dev device_texture_create_from_dmabuf width=0 height=0 drm_format=0 color_format=0 n_planes=1 fds=ptr strides=ptr offsets=ptr modifiers=ptr
+ret #13
+> gs_texture_create_from_file - - - - - -
+ret null
+> gs_texture_destroy - - - - - -
+> gs_texture_get_color_format - - - - - -
+log debug gs_texture_get_color_format: Null 'tex' parameter
+ret 0
+> gs_texture_get_height - - - - - -
+log debug gs_texture_get_height: Null 'tex' parameter
+ret 0
+> gs_texture_get_obj - - - - - -
+log debug gs_texture_get_obj: Null 'tex' parameter
+ret null
+> gs_texture_get_width - - - - - -
+log debug gs_texture_get_width: Null 'tex' parameter
+ret 0
+> gs_texture_is_rect - - - - - -
+log debug gs_texture_is_rect: Null 'tex' parameter
+ret false
+> gs_texture_map - - - - - -
+log debug gs_texture_map: Null 'tex' parameter
+ret false linesize=0 null
+> gs_texture_set_image - - - - - -
+log debug gs_texture_set_image: Null 'tex' parameter
+> gs_texture_unmap - - - - - -
+log debug gs_texture_unmap: Null 'tex' parameter
+> gs_timer_begin - - - - - -
+> gs_timer_create - - - - - -
+  dev device_timer_create
+ret #14
+> gs_timer_destroy - - - - - -
+> gs_timer_end - - - - - -
+> gs_timer_get_data - - - - - -
+log debug gs_timer_get_data: Null 'timer' parameter
+ret false ticks=7
+> gs_timer_range_begin - - - - - -
+> gs_timer_range_create - - - - - -
+  dev device_timer_range_create
+ret #15
+> gs_timer_range_destroy - - - - - -
+> gs_timer_range_end - - - - - -
+> gs_timer_range_get_data - - - - - -
+  dev gs_timer_range_get_data range=null disjoint=ptr frequency=ptr
+ret false disjoint=1 freq=9
+> gs_update_color_space - - - - - -
+  dev device_update_color_space
+> gs_vertex2f - - - - - -
+> gs_vertex2v - - - - - -
+> gs_vertex3f - - - - - -
+> gs_vertex3v - - - - - -
+> gs_vertexbuffer_create - - - - - -
+  dev device_vertexbuffer_create flags=0
+    vb num=0 num_tex=0 points=- normals=null tangents=null colors=null
+ret #16
+> gs_vertexbuffer_destroy - - - - - -
+> gs_vertexbuffer_flush - - - - - -
+log debug gs_vertexbuffer_flush: Null 'vertbuffer' parameter
+> gs_vertexbuffer_flush_direct - - - - - -
+log debug gs_vertexbuffer_flush_direct: Null 'vertbuffer' parameter
+> gs_vertexbuffer_get_data - - - - - -
+log debug gs_vertexbuffer_get_data: Null 'vertbuffer' parameter
+ret null num=0
+> gs_vertexshader_create - - - - - -
+log debug gs_vertexshader_create: Null 'shader' parameter
+ret null
+> gs_vertexshader_create_from_file - - - - - -
+log debug gs_vertexshader_create_from_file: Null 'file' parameter
+ret null
+> gs_viewport_pop - - - - - -
+> gs_viewport_push - - - - - -
+  dev device_get_viewport
+> gs_voltexture_create - - - - - -
+  dev device_voltexture_create w=0 h=0 d=0 fmt=0 levels=0 data=null flags=0
+ret #17
+> gs_voltexture_destroy - - - - - -
+> gs_voltexture_get_color_format - - - - - -
+log debug gs_voltexture_get_color_format: Null 'voltex' parameter
+ret 0
+> gs_voltexture_get_depth - - - - - -
+log debug gs_voltexture_get_depth: Null 'voltex' parameter
+ret 0
+> gs_voltexture_get_height - - - - - -
+log debug gs_voltexture_get_height: Null 'voltex' parameter
+ret 0
+> gs_voltexture_get_width - - - - - -
+log debug gs_voltexture_get_width: Null 'voltex' parameter
+ret 0
+> gs_zstencil_create - - - - - -
+  dev device_zstencil_create width=0 height=0 format=0
+ret #18
+> gs_zstencil_destroy - - - - - -

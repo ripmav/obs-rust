@@ -1,0 +1,15 @@
+# CORE. obs-qsv11 defaults for the four encoder variants. The "__ver" default (1 or 2)
+# selects the QP layout (v1: qpi/qpp/qpb, v2: single cqp); profile default is "high" for
+# H.264 and "main" otherwise. All variants set every key (qpi/qpp/qpb/cqp defaults too).
+data A
+qsv_defaults h264v1 A
+dump A
+data B
+qsv_defaults h264v2 B
+dump B
+data C
+qsv_defaults av1 C
+dump C
+data E
+qsv_defaults hevc E
+dump E

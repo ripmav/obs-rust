@@ -1,0 +1,33 @@
+# Enumeration of live objects. Outputs, encoders and services form insertion-at-head lists: the
+# NEWEST object is visited first, and private objects ARE visited. Sources: obs_enum_sources shows
+# only public inputs and groups (UUID-table order = creation order; no scenes, filters,
+# transitions or private sources); obs_enum_all_sources shows every source in UUID-table order.
+# A callback returning false stops the walk.
+startup en-US -
+mk_output o1 Out1
+mk_output o2 Out2 private=1
+mk_output o3 Out3
+mk_encoder e1 Enc1
+mk_encoder e2 Enc2
+mk_service s1 Svc1
+mk_service s2 Svc2 private=1
+enum outputs
+enum outputs stop=1
+enum outputs stop=2
+enum encoders
+enum services
+mk_source i1 Input1
+mk_source i2 Input2 private=1
+mk_source sc1 Scene1 type=scene id=scene
+mk_source f1 Filter1 type=filter id=color
+mk_source t1 Trans1 type=transition id=fade private=1
+mk_source g1 Group1 type=scene id=group
+mk_source i3 Input3
+enum sources
+enum sources stop=1
+enum sources stop=2
+enum all_sources
+enum all_sources stop=3
+rel o3
+enum outputs
+shutdown

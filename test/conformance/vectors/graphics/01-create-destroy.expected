@@ -1,0 +1,97 @@
+== normal creation: observe the whole init sequence
+> gs_create g0
+  dev device_create adapter=0
+  dev device_enter_context
+  dev device_vertexbuffer_create flags=2 num=512 num_tex=1 (large, contents not dumped)
+  dev device_vertexbuffer_create flags=16
+    vb num=4 num_tex=1 points=(0,0,0) (1,0,0) (0,1,0) (1,1,0) normals=null tangents=null colors=null tex0[w=2]=(0,0) (1,0) (0,1) (1,1)
+  dev device_vertexbuffer_create flags=18
+    vb num=4 num_tex=1 points=(0,0,0) (1,0,0) (0,1,0) (1,1,0) normals=null tangents=null colors=null tex0[w=2]=(0,0) (1,0) (0,1) (1,1)
+  dev device_vertexbuffer_create flags=0
+    vb num=4 num_tex=1 points=(0,0,0) (1,0,0) (0,1,0) (1,1,0) normals=null tangents=null colors=null tex0[w=2]=(0,1) (1,1) (0,0) (1,0)
+  dev device_blend_function_separate src_c=4 dest_c=5 src_a=1 dest_a=5
+  dev device_blend_op op=0
+  dev device_leave_context
+ret 0 created
+== adapter argument is forwarded to device_create
+> gs_create g1 fake 3
+  dev device_create adapter=3
+  dev device_enter_context
+  dev device_vertexbuffer_create flags=2 num=512 num_tex=1 (large, contents not dumped)
+  dev device_vertexbuffer_create flags=16
+    vb num=4 num_tex=1 points=(0,0,0) (1,0,0) (0,1,0) (1,1,0) normals=null tangents=null colors=null tex0[w=2]=(0,0) (1,0) (0,1) (1,1)
+  dev device_vertexbuffer_create flags=18
+    vb num=4 num_tex=1 points=(0,0,0) (1,0,0) (0,1,0) (1,1,0) normals=null tangents=null colors=null tex0[w=2]=(0,0) (1,0) (0,1) (1,1)
+  dev device_vertexbuffer_create flags=0
+    vb num=4 num_tex=1 points=(0,0,0) (1,0,0) (0,1,0) (1,1,0) normals=null tangents=null colors=null tex0[w=2]=(0,1) (1,1) (0,0) (1,0)
+  dev device_blend_function_separate src_c=4 dest_c=5 src_a=1 dest_a=5
+  dev device_blend_op op=0
+  dev device_leave_context
+ret 0 created
+== module that cannot be opened
+> gs_create gx nomodule
+ret -2 null
+== device_create fails with a backend error code
+> ret device_create -3
+> gs_create gx fake
+  dev device_create adapter=0
+  os_dlclose
+ret -3 null
+> ret device_create 0
+== a mandatory export that is missing makes the import fail (logged), creation returns FAIL
+> missing device_draw 1
+> gs_create gx fake
+log error Could not load function 'device_draw' from module 'fake'
+  os_dlclose
+ret -1 null
+> missing device_draw 0
+== optional exports may be absent
+> missing gpu_get_renderer 1
+> missing gs_texture_is_rect 1
+> missing device_enum_adapters 1
+> missing gs_get_adapter_count 1
+> missing device_nv12_available 1
+> gs_create g2 fake
+  dev device_create adapter=0
+  dev device_enter_context
+  dev device_vertexbuffer_create flags=2 num=512 num_tex=1 (large, contents not dumped)
+  dev device_vertexbuffer_create flags=16
+    vb num=4 num_tex=1 points=(0,0,0) (1,0,0) (0,1,0) (1,1,0) normals=null tangents=null colors=null tex0[w=2]=(0,0) (1,0) (0,1) (1,1)
+  dev device_vertexbuffer_create flags=18
+    vb num=4 num_tex=1 points=(0,0,0) (1,0,0) (0,1,0) (1,1,0) normals=null tangents=null colors=null tex0[w=2]=(0,0) (1,0) (0,1) (1,1)
+  dev device_vertexbuffer_create flags=0
+    vb num=4 num_tex=1 points=(0,0,0) (1,0,0) (0,1,0) (1,1,0) normals=null tangents=null colors=null tex0[w=2]=(0,1) (1,1) (0,0) (1,0)
+  dev device_blend_function_separate src_c=4 dest_c=5 src_a=1 dest_a=5
+  dev device_blend_op op=0
+  dev device_leave_context
+ret 0 created
+> missing gpu_get_renderer 0
+> missing gs_texture_is_rect 0
+> missing device_enum_adapters 0
+> missing gs_get_adapter_count 0
+> missing device_nv12_available 0
+== destroy runs the backend teardown inside the context and releases the 4 vertex buffers
+> gs_destroy g2
+  dev device_enter_context
+  dev gs_vertexbuffer_destroy vb=#14
+  dev gs_vertexbuffer_destroy vb=#15
+  dev gs_vertexbuffer_destroy vb=#13
+  dev gs_vertexbuffer_destroy vb=#12
+  dev device_destroy device=#11
+  os_dlclose
+> gs_destroy g1
+  dev device_enter_context
+  dev gs_vertexbuffer_destroy vb=#9
+  dev gs_vertexbuffer_destroy vb=#10
+  dev gs_vertexbuffer_destroy vb=#8
+  dev gs_vertexbuffer_destroy vb=#7
+  dev device_destroy device=#6
+  os_dlclose
+> gs_destroy g0
+  dev device_enter_context
+  dev gs_vertexbuffer_destroy vb=#4
+  dev gs_vertexbuffer_destroy vb=#5
+  dev gs_vertexbuffer_destroy vb=#3
+  dev gs_vertexbuffer_destroy vb=#2
+  dev device_destroy device=#1
+  os_dlclose

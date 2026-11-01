@@ -1,0 +1,19 @@
+# Lifecycle: creation defaults, reference counting, deferred destruction.
+# A source is destroyed when its LAST strong reference is released, but the destroy callback, the "destroy"
+# signal and the memory release are deferred to a task queue ("drain").  Names are not freed until then.
+kind in input video create,destroy,update,defaults
+watch_global
+create a in A
+watch a
+info a
+get_setting a dflt
+refs a
+addref a
+refs a
+release a
+refs a
+release a
+pending
+echo before-drain
+drain
+pending

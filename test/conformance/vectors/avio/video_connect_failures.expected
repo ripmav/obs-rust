@@ -1,0 +1,29 @@
+> vopen v I420 30 1 16 8 3
+= 0
+> scaler create bad
+> vconnect v a 1 - NV12 16 8 PARTIAL 709
+scaler create dst=(2 16x8 r1 cs709) src=(1 16x8 r0 cs0) type=2
+log error video_input_init: Bad scale conversion type
+= 0
+> vstate v
+active=0 stopped=0 skipped=0 total=0
+> scaler create fail
+> vconnect v a 1 - NV12 16 8 PARTIAL 709
+scaler create dst=(2 16x8 r1 cs709) src=(1 16x8 r0 cs0) type=2
+log error video_input_init: Failed to create scaler
+= 0
+> vstate v
+active=0 stopped=0 skipped=0 total=0
+> vinputs v
+no inputs
+> scaler create ok
+> vconnect v a 1 - NV12 16 8 PARTIAL 709
+scaler create dst=(2 16x8 r1 cs709) src=(1 16x8 r0 cs0) type=2
+= 1
+> vstate v
+active=1 stopped=0 skipped=0 total=0
+> vinputs v
+input0 cb=a param=1 div=1 ctr=0 scaler=1 conv=(2 16x8 r1 cs709) cur=0
+> vclose v
+scaler destroy scales=0
+= closed

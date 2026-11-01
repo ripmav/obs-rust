@@ -1,0 +1,75 @@
+# CORE: invalid JSON text makes obs_data_create_from_json return NULL (the script prints
+# "fail") and log one error line. Nothing is partially created. Accepted/rejected sets
+# below are the contract; message text is not compared.
+from_json a @null
+from_json a ""
+from_json a "   "
+from_json a "5"
+from_json a "\"str\""
+from_json a "true"
+from_json a "null"
+from_json a "{"
+from_json a "{\"a\":1"
+from_json a "{\"a\":1,}"
+from_json a "{,}"
+from_json a "{\"a\" 1}"
+from_json a "{\"a\":}"
+from_json a "{a:1}"
+from_json a "{'a':1}"
+from_json a "[1,]"
+from_json a "[1 2]"
+from_json a "{\"a\":1} x"
+from_json a "{\"a\":1}{\"b\":2}"
+from_json a "{\"a\":1}\x0b"
+from_json a "// c\n{}"
+from_json a "{\"a\":1 /* c */}"
+echo --- duplicate keys are an error, also in nested objects, even with different values
+from_json a "{\"a\":1,\"a\":2}"
+from_json a "{\"a\":{\"b\":1,\"b\":1}}"
+from_json a "{\"a\":[{\"b\":1,\"b\":1}]}"
+echo --- numbers
+from_json a "{\"a\":01}"
+from_json a "{\"a\":+1}"
+from_json a "{\"a\":.5}"
+from_json a "{\"a\":1.}"
+from_json a "{\"a\":-}"
+from_json a "{\"a\":1e}"
+from_json a "{\"a\":0x10}"
+from_json a "{\"a\":NaN}"
+from_json a "{\"a\":Infinity}"
+from_json a "{\"a\":99999999999999999999}"
+from_json a "{\"a\":9223372036854775808}"
+from_json a "{\"a\":-9223372036854775809}"
+from_json a "{\"a\":1e400}"
+from_json a "{\"a\":-1e400}"
+echo --- literals
+from_json a "{\"a\":nul}"
+from_json a "{\"a\":True}"
+from_json a "{\"a\":tru}"
+echo --- strings
+from_json a "{\"a\":\"x}"
+from_json a "{\"a\":\"\\x\"}"
+from_json a "{\"a\":\"\\u12\"}"
+from_json a "{\"a\":\"\\uzzzz\"}"
+from_json a "{\"a\":\"\\u0000\"}"
+from_json a "{\"a\\u0000\":1}"
+from_json a "{\"a\":\"\\ud800\"}"
+from_json a "{\"a\":\"\\ud800x\"}"
+from_json a "{\"a\":\"\\udc00\"}"
+from_json a "{\"a\":\"\\ud800\\u0041\"}"
+from_json a "{\"a\":\"line\nbreak\"}"
+from_json a "{\"a\":\"tab\there\"}"
+from_json a "{\"a\":\"\x01\"}"
+from_json a "{\"a\":\"\xff\"}"
+from_json a "{\"a\":\"\xc3\"}"
+from_json a "{\"a\":\"\xc0\xaf\"}"
+from_json a "{\"a\":\"\xed\xa0\x80\"}"
+from_json a "{\"\xff\":1}"
+from_json a "\xef\xbb\xbf{}"
+echo --- nesting depth: 2048 levels are rejected
+from_json_deep d obj 2048
+from_json_deep d arr 2048
+from_json_deep d obj 3000
+echo --- failure leaves no handle: the same name can be created afterwards
+from_json a "{\"ok\":1}"
+dump a

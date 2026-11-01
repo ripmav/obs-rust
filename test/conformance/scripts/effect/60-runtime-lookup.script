@@ -1,0 +1,77 @@
+# CORE: lookup functions of a created effect (effect.c): parameters by index/name, annotations by index/name,
+# techniques by name, passes by index/name, the cached ViewProj/World parameters, parameter info.
+# Names are matched case-sensitively and exactly. Parameter order is declaration order. The special parameters
+# are the ones named exactly "ViewProj" and "World" (any type), the LAST declaration with that name wins.
+# Handles in the script: E:PARAM (E:#I for an index, E:NAME for a name), E:PARAM/ANNOT (same syntax for the
+# annotation), @null for a NULL handle.
+backend text none
+backend events off
+text a
+uniform float4x4 ViewProj;
+uniform float4x4 World;
+uniform float4 color = {1,0.5,0.25,1};
+uniform float amount < string label = "Amount"; float min = 0; float max = 1; > = 0.5;
+uniform int count = 3;
+uniform texture2d image;
+uniform float weights[4];
+float4 VS() : POSITION { return mul(float4(0,0,0,1), mul(World, ViewProj)); }
+float4 PS() : TARGET { return image.Sample(image, float2(0,0)) * color * amount + count + weights[0]; }
+technique Draw { pass first { vertex_shader = VS(); pixel_shader = PS(); } pass second { vertex_shader = VS(); pixel_shader = PS(); } }
+technique Other { pass { vertex_shader = VS(); pixel_shader = PS(); } }
+@end
+effect e a.effect @text:a
+echo --- parameters
+nparams e
+nparams @null
+param e:#0
+param e:#6
+param e:#7
+param e:#100
+param e:color
+param e:Color
+param e:nothing
+param e:@null
+param @null
+echo --- special parameters
+viewproj e
+world e
+viewproj @null
+world @null
+echo --- annotations
+nannotations e:amount
+nannotations e:color
+nannotations @null
+param e:amount/label
+param e:amount/#2
+param e:amount/MIN
+annotation_idx e:amount 2
+annotation_idx e:amount 3
+annotation_idx e:amount 4
+annotation_idx e:color 0
+annotation_idx @null 0
+echo --- annotation values are plain parameters: defaults only
+get_default_val e:amount/label
+get_default_val e:amount/max
+echo --- techniques and passes
+technique e Draw
+technique e Other
+technique e draw
+technique e ""
+technique @null Draw
+pass_by_idx e Draw 0
+pass_by_idx e Draw 1
+pass_by_idx e Draw 2
+pass_by_idx e Draw 3
+pass_by_name e Draw first
+pass_by_name e Draw second
+pass_by_name e Draw third
+current_technique e
+current_technique @null
+echo --- duplicate declarations: the LAST parameter named ViewProj / World is the special one, lookups by name find the FIRST
+effect d dup.effect "uniform float ViewProj;\nuniform float4x4 ViewProj;\nuniform float World;\nuniform float4x4 World;\nuniform int other;\nuniform float other;"
+nparams d
+viewproj d
+world d
+param d:ViewProj
+param d:other
+param d:#1

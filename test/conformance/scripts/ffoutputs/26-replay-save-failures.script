@@ -1,0 +1,32 @@
+# Failures inside the save thread: the helper cannot start (no "saved" signal, queue of this save dropped, buffer keeps
+# running); the header phase fails (missing extradata); a pipe write fails mid-save - QUIRK: the shared failure
+# path deactivates the whole replay buffer (active=0) and signals a stop with ENCODE_ERROR from the save thread.
+reset
+output rb
+venc h264 bitrate=2500 extra=0a0b
+set str directory /rec
+set str format f%N
+set str extension mp4
+knob now_ns 1000
+create replay_buffer
+start
+pkt v pts=0 key=1 size=4 sys=1
+knob pipe_fail 1
+proc save
+pkt v pts=1 key=0 size=4 sys=1
+state
+state_rb
+knob pipe_fail 0
+echo header_phase_fails
+venc_extra -
+proc save
+pkt v pts=2 key=0 size=4 sys=1
+state
+venc_extra 0a0b
+echo write_failure_during_save
+knob write_fail_at 3
+knob err_text broken
+proc save
+pkt v pts=3 key=0 size=4 sys=1
+state
+state_rb

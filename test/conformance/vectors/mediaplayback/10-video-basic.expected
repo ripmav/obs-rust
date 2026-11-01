@@ -1,0 +1,66 @@
+minit -> ok
+ff open path=clip format=- nobuffer=1 interrupt=0 opts=[]
+minit2 -> ok has_v=1 has_a=0
+mstate eof=0 active=0 stopping=0 looping=0 pause=0 reset=0 seek=0 seek_next_ts=0 reset_ts=0 preload_frame=0 has_v=1 has_a=0
+  base_ts=0 start_ts=0 play_sys_ts=0 next_pts_ns=0 next_ns=0 seek_pos=0 speed=100 cur_space=DEFAULT cur_range=DEFAULT
+  v ready=0 pts=0 next_pts=0 last_dur=0 eof=0 key=0 pending=0 npkts=0
+ff seek stream=0 target=0 flags=BACKWARD
+ff decoder flush
+ff read #0 stream=0 pts=0 size=4
+cb preload ts=0 fmt=I420 64x48 flip=0 full=0 trc=DEFAULT maxlum=0 flags=0 ls0=64 d0=01 mat0=1.16438 min0=0.0627451 max0=0.921569
+mreset -> 1
+mstate eof=0 active=0 stopping=0 looping=0 pause=0 reset=0 seek=0 seek_next_ts=0 reset_ts=0 preload_frame=0 has_v=1 has_a=0
+  base_ts=0 start_ts=0 play_sys_ts=1000000000 next_pts_ns=0 next_ns=0 seek_pos=0 speed=100 cur_space=DEFAULT cur_range=DEFAULT
+  v ready=1 pts=0 next_pts=40000000 last_dur=40000000 eof=0 key=0 pending=0 npkts=0
+mstate eof=0 active=1 stopping=0 looping=0 pause=0 reset=0 seek=0 seek_next_ts=0 reset_ts=0 preload_frame=0 has_v=1 has_a=0
+  base_ts=0 start_ts=0 play_sys_ts=1000000000 next_pts_ns=0 next_ns=0 seek_pos=0 speed=100 cur_space=DEFAULT cur_range=DEFAULT
+  v ready=1 pts=0 next_pts=40000000 last_dur=40000000 eof=0 key=0 pending=0 npkts=0
+tick -> idle
+mstate eof=0 active=1 stopping=0 looping=0 pause=0 reset=0 seek=0 seek_next_ts=0 reset_ts=0 preload_frame=0 has_v=1 has_a=0
+  base_ts=0 start_ts=0 play_sys_ts=1000000000 next_pts_ns=0 next_ns=0 seek_pos=0 speed=100 cur_space=DEFAULT cur_range=DEFAULT
+  v ready=1 pts=0 next_pts=40000000 last_dur=40000000 eof=0 key=0 pending=0 npkts=0
+cb video ts=0 fmt=I420 64x48 flip=0 full=0 trc=DEFAULT maxlum=0 flags=0 ls0=64 d0=01 mat0=1.16438 min0=0.0627451 max0=0.921569
+ff read #1 stream=0 pts=40 size=4
+tick -> played
+mstate eof=0 active=1 stopping=0 looping=0 pause=0 reset=0 seek=0 seek_next_ts=0 reset_ts=0 preload_frame=0 has_v=1 has_a=0
+  base_ts=0 start_ts=0 play_sys_ts=1000000000 next_pts_ns=40000000 next_ns=1040000000 seek_pos=0 speed=100 cur_space=DEFAULT cur_range=DEFAULT
+  v ready=1 pts=40000000 next_pts=80000000 last_dur=40000000 eof=0 key=0 pending=0 npkts=0
+sleep 40
+cb video ts=40000000 fmt=I420 64x48 flip=0 full=0 trc=DEFAULT maxlum=0 flags=0 ls0=64 d0=11 mat0=1.16438 min0=0.0627451 max0=0.921569
+ff read #2 stream=0 pts=80 size=4
+tick -> played
+mstate eof=0 active=1 stopping=0 looping=0 pause=0 reset=0 seek=0 seek_next_ts=0 reset_ts=0 preload_frame=0 has_v=1 has_a=0
+  base_ts=0 start_ts=0 play_sys_ts=1000000000 next_pts_ns=80000000 next_ns=1080000000 seek_pos=0 speed=100 cur_space=DEFAULT cur_range=DEFAULT
+  v ready=1 pts=80000000 next_pts=120000000 last_dur=40000000 eof=0 key=0 pending=0 npkts=0
+sleep 40
+cb video ts=80000000 fmt=I420 64x48 flip=0 full=0 trc=DEFAULT maxlum=0 flags=0 ls0=64 d0=21 mat0=1.16438 min0=0.0627451 max0=0.921569
+ff read #3 stream=0 pts=120 size=4
+tick -> played
+mstate eof=0 active=1 stopping=0 looping=0 pause=0 reset=0 seek=0 seek_next_ts=0 reset_ts=0 preload_frame=0 has_v=1 has_a=0
+  base_ts=0 start_ts=0 play_sys_ts=1000000000 next_pts_ns=120000000 next_ns=1120000000 seek_pos=0 speed=100 cur_space=DEFAULT cur_range=DEFAULT
+  v ready=1 pts=120000000 next_pts=160000000 last_dur=40000000 eof=0 key=0 pending=0 npkts=0
+sleep 40
+cb video ts=120000000 fmt=I420 64x48 flip=0 full=0 trc=DEFAULT maxlum=0 flags=0 ls0=64 d0=31 mat0=1.16438 min0=0.0627451 max0=0.921569
+ff decoder drain
+ff seek stream=0 target=0 flags=BACKWARD
+ff decoder flush
+ff read #0 stream=0 pts=0 size=4
+cb preload ts=280000000 fmt=I420 64x48 flip=0 full=0 trc=DEFAULT maxlum=0 flags=0 ls0=64 d0=01 mat0=1.16438 min0=0.0627451 max0=0.921569
+cb stop
+tick -> eof
+mstate eof=0 active=0 stopping=0 looping=0 pause=0 reset=0 seek=0 seek_next_ts=0 reset_ts=0 preload_frame=0 has_v=1 has_a=0
+  base_ts=160000000 start_ts=0 play_sys_ts=1120000000 next_pts_ns=0 next_ns=0 seek_pos=0 speed=100 cur_space=DEFAULT cur_range=DEFAULT
+  v ready=1 pts=0 next_pts=40000000 last_dur=40000000 eof=0 key=0 pending=0 npkts=0
+tick -> idle
+mstate eof=0 active=0 stopping=0 looping=0 pause=0 reset=0 seek=0 seek_next_ts=0 reset_ts=0 preload_frame=0 has_v=1 has_a=0
+  base_ts=160000000 start_ts=0 play_sys_ts=1120000000 next_pts_ns=0 next_ns=0 seek_pos=0 speed=100 cur_space=DEFAULT cur_range=DEFAULT
+  v ready=1 pts=0 next_pts=40000000 last_dur=40000000 eof=0 key=0 pending=0 npkts=0
+tick -> idle
+tick -> idle
+tick -> idle
+mstate eof=0 active=0 stopping=0 looping=0 pause=0 reset=0 seek=0 seek_next_ts=0 reset_ts=0 preload_frame=0 has_v=1 has_a=0
+  base_ts=160000000 start_ts=0 play_sys_ts=1120000000 next_pts_ns=0 next_ns=0 seek_pos=0 speed=100 cur_space=DEFAULT cur_range=DEFAULT
+  v ready=1 pts=0 next_pts=40000000 last_dur=40000000 eof=0 key=0 pending=0 npkts=0
+mtime -> 40
+mframes -> 4
+mduration -> 160000

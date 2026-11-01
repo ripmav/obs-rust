@@ -1,0 +1,61 @@
+method int 0 default
+cursor bool true default
+force_sdr bool false default
+compatibility bool false default
+client_area bool true default
+method_selected auto method_chosen bitblt priority 2
+cursor 1 capture_audio 0 force_sdr 0 compatibility 0 client_area 1
+title "Untitled - Notepad"
+class "Notepad"
+exe "notepad.exe"
+method_selected wgc method_chosen wgc priority 2
+cursor 1 capture_audio 0 force_sdr 0 compatibility 0 client_area 1
+title "Untitled - Notepad"
+class "Notepad"
+exe "notepad.exe"
+method_selected wgc method_chosen bitblt priority 2
+cursor 1 capture_audio 0 force_sdr 0 compatibility 0 client_area 1
+title "Untitled - Notepad"
+class "Notepad"
+exe "notepad.exe"
+method_selected auto method_chosen bitblt priority 2
+cursor 1 capture_audio 0 force_sdr 0 compatibility 0 client_area 1
+title "Untitled - Notepad"
+class "Notepad"
+exe "notepad.exe"
+wc_method auto class=Chrome_WidgetWin_1 -> wgc
+wc_method auto class=MozillaWindowClass -> wgc
+wc_method auto class=mozilla -> wgc
+wc_method auto class=MyChromeApp -> wgc
+wc_method auto class=ApplicationFrameWindow -> wgc
+wc_method auto class=applicationframewindow -> wgc
+wc_method auto class=Windows.UI.Core.CoreWindow -> wgc
+wc_method auto class=WinUIDesktopWin32WindowClass -> wgc
+wc_method auto class=GAMINGSERVICESUI_HOSTING_WINDOW_CLASS -> wgc
+wc_method auto class=XLMAIN -> wgc
+wc_method auto class=PPTFrameClass -> wgc
+wc_method auto class=screenClass -> wgc
+wc_method auto class=PodiumParent -> wgc
+wc_method auto class=OpusApp -> wgc
+wc_method auto class=OMain -> wgc
+wc_method auto class=Framework::CFrame -> wgc
+wc_method auto class=rctrl_renwnd32 -> wgc
+wc_method auto class=MSWinPub -> wgc
+wc_method auto class=OfficeApp-Frame -> wgc
+wc_method auto class=WindowsWebview2Wrapper -> wgc
+wc_method auto class=SDL_app -> wgc
+wc_method auto class=SDL_app2 -> bitblt
+wc_method auto class=WINDOWSCLIENT -> wgc
+wc_method auto class=Notepad -> bitblt
+wc_method auto class=(null) -> bitblt
+wc_method bitblt class=Chrome_WidgetWin_1 -> bitblt
+wc_method wgc class=Notepad -> wgc
+wc_method wgc class=(null) -> wgc
+visible cursor=1 compatibility=1 client_area=0 force_sdr=0
+visible cursor=0 compatibility=0 client_area=1 force_sdr=1
+visible cursor=1 compatibility=0 client_area=1 force_sdr=1
+method_selected auto method_chosen bitblt priority 0
+cursor 1 capture_audio 0 force_sdr 0 compatibility 0 client_area 1
+title (null)
+class (null)
+exe (null)

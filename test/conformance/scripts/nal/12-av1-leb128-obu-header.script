@@ -1,0 +1,83 @@
+# S-012 CORE: the OBU header / LEB128 rules shared by obs_av1_keyframe and
+# obs_extract_av1_headers. Test-only commands:
+#   av1_leb128 DATA          -> value (unsigned 64 bit) and number of bytes consumed
+#   av1_obu DATA             -> parse of the OBU header at the start of DATA:
+#                               start = offset of the payload, size = payload size, type
+# Header byte: forbidden(1) type(4) extension_flag(1) has_size_field(1) reserved(1).
+# LEB128: little-endian 7-bit groups, at most 8 bytes, stops after the first byte < 0x80 or
+# after 8 bytes, or at the end of the data.
+echo leb128-one-byte
+av1_leb128 00
+av1_leb128 01
+av1_leb128 7f
+echo leb128-two-bytes
+av1_leb128 8001
+av1_leb128 ff7f
+av1_leb128 e58e26
+echo leb128-three-and-four-bytes
+av1_leb128 808001
+av1_leb128 ffff7f
+av1_leb128 80808001
+av1_leb128 ffffff7f
+echo leb128-five-bytes-below-2-pow-31
+av1_leb128 8080808001
+av1_leb128 ffffffff07
+echo leb128-stops-after-first-byte-without-continuation
+av1_leb128 0180
+av1_leb128 7fffff
+echo leb128-truncated-input
+av1_leb128 -
+av1_leb128 80
+av1_leb128 8080
+av1_leb128 ff
+echo leb128-redundant-zero-groups
+av1_leb128 8000
+av1_leb128 808000
+av1_leb128 ffff00
+echo obu-no-size-field
+av1_obu 08
+av1_obu 08aabbcc
+av1_obu 0c
+av1_obu 0caabbcc
+av1_obu 7840
+echo obu-with-size-field
+av1_obu 0a00
+av1_obu 0a03aabbcc
+av1_obu 12
+av1_obu 1200
+av1_obu 320110
+av1_obu 2a0102
+av1_obu 7a00
+echo obu-size-leb128-multi-byte
+av1_obu 328001
+av1_obu 32ff7f
+av1_obu 32e58e26
+av1_obu 3280808001
+echo obu-header-only-with-size-field-and-no-room-for-the-size
+av1_obu 0a
+av1_obu 32
+echo obu-extension-flag-adds-one-byte
+av1_obu 0e0102aa
+av1_obu 0e0100
+av1_obu 0e0000
+av1_obu 0e01
+av1_obu 0e02aabbcc
+echo obu-extension-without-size-field-counts-whole-rest
+av1_obu 0c01aabb
+av1_obu 0c01
+echo forbidden-and-reserved-bits-are-ignored
+av1_obu 8a00
+av1_obu 0b00
+av1_obu 8b0100
+echo obu-types
+av1_obu 0a00
+av1_obu 1200
+av1_obu 1a00
+av1_obu 2200
+av1_obu 2a00
+av1_obu 3200
+av1_obu 3a00
+av1_obu 4200
+av1_obu 7a00
+av1_obu 0200
+av1_obu 6a00

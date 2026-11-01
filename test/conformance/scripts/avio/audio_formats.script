@@ -1,0 +1,25 @@
+# S-044 quirk Q: the mix buffers are float, but the region that is copied/clamped is 1024 * block_size bytes, where
+# block_size depends on the *output format*. For FLOAT_PLANAR it is 1024 floats per plane; for 16-bit planar only 512
+# floats per plane are clamped (the rest stays unclamped); for interleaved float stereo one plane of 2048 floats.
+afeed_clear
+aopen main 48000 16BIT_PLANAR STEREO
+aconnect a 1 0
+afeed 0 0 0 1024 3 set
+aprobe 0 511 512 1023
+atick
+aclose
+aopen main 48000 FLOAT STEREO
+aconnect a 1 0
+afeed_clear
+afeed 0 0 0 2100 3 set
+aprobe 0 1023 1024 2047 2048
+atick
+ainfo
+aclose
+aopen main 48000 U8BIT_PLANAR STEREO
+aconnect a 1 0
+afeed_clear
+afeed 0 0 0 1024 3 set
+aprobe 0 255 256 1023
+atick
+aclose

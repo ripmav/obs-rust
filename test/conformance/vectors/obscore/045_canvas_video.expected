@@ -1,0 +1,90 @@
+log debug canvas 'Main' (<uuid>) created
+startup -> true
+log info ---------------------------------
+log info video settings reset:  base resolution:   1920x1080  output resolution: 1280x720  downscale filter:  Bicubic  fps:               60/1  format:            BGRA  YUV mode:          None
+reset_video -> success
+  after_call base=1920x1080 out=1280x720 fps=60/1 fmt=BGRA cs=2 range=1 scale=2 gpu=0 adapter=0
+log debug canvas 'Alpha' (<uuid>) created
+canvas_create a -> ok
+canvas a name="Alpha" flags=0x0 private=0 removed=0 has_video=1 video_active=0 uuid_len=36 view_type=aux
+log info NV12 texture support enabled
+log info P010 texture support not available
+log debug canvas 'Bravo' (<uuid>) created
+canvas_create b -> ok
+canvas b name="Bravo" flags=0x4 private=0 removed=0 has_video=1 video_active=0 uuid_len=36 view_type=aux
+log debug canvas 'Charlie' (<uuid>) created
+canvas_create c -> ok
+canvas c name="Charlie" flags=0x0 private=0 removed=0 has_video=0 video_active=0 uuid_len=36 view_type=aux
+mixes count=3
+  [0] owner=main out=1280x720 fps=60/1 view=set
+  [1] owner=a out=400x300 fps=60/1 view=set
+  [2] owner=b out=640x480 fps=60/1 view=set
+canvas a name="Alpha" flags=0x0 private=0 removed=0 has_video=1 video_active=0 uuid_len=36 view_type=aux
+canvas_video_info a -> 1 video=set
+   base=800x600 out=400x300 fps=60/1 fmt=BGRA cs=2 range=1 scale=2 gpu=0 adapter=0
+canvas_video_info c -> 0 video=NULL
+canvas_has_valid_video_info a -> 1
+canvas_has_valid_video_info c -> 0
+mix gpu_conversion=0 conversion_needed=0 techs=-,-,- wi=0 hi=0 nv12=0 p010=0 render_space=0 mix_audio=0 view=set
+mix matrix 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1
+  ovi base=800x600 out=400x300 fps=60/1 fmt=BGRA cs=2 range=1 scale=2 gpu=0 adapter=0
+mix gpu_conversion=1 conversion_needed=1 techs=NV12_Y,NV12_UV,- wi=0.00156250002 hi=0 nv12=1 p010=0 render_space=0 mix_audio=1 view=set
+mix matrix -0.100643739 -0.338571936 0.43921569 0.501960754 0.18258588 0.614230573 0.0620070584 0.0627451092 0.43921569 -0.398942143 -0.0402735248 0.501960814 -0 0 -0 1
+  ovi base=640x480 out=640x480 fps=60/1 fmt=NV12 cs=2 range=1 scale=2 gpu=1 adapter=0
+canvas_reset_video c -> 1
+mixes count=4
+  [0] owner=main out=1280x720 fps=60/1 view=set
+  [1] owner=a out=400x300 fps=60/1 view=set
+  [2] owner=b out=640x480 fps=60/1 view=set
+  [3] owner=c out=100x100 fps=60/1 view=set
+canvas_reset_video c -> 0
+canvas_reset_video a -> 1
+mixes count=4
+  [0] owner=main out=1280x720 fps=60/1 view=set
+  [1] owner=b out=640x480 fps=60/1 view=set
+  [2] owner=c out=100x100 fps=60/1 view=set
+  [3] owner=a out=160x120 fps=60/1 view=set
+canvas_video_info a -> 1 video=set
+   base=320x240 out=160x120 fps=60/1 fmt=BGRA cs=2 range=1 scale=2 gpu=0 adapter=0
+log info ---------------------------------
+log info video settings reset:  base resolution:   1280x720  output resolution: 1280x720  downscale filter:  Bicubic  fps:               30/1  format:            BGRA  YUV mode:          None
+log info NV12 texture support enabled
+log info P010 texture support not available
+reset_video -> success
+  after_call base=1280x720 out=1280x720 fps=30/1 fmt=BGRA cs=2 range=1 scale=2 gpu=0 adapter=0
+mixes count=4
+  [0] owner=main out=1280x720 fps=30/1 view=set
+  [1] owner=a out=160x120 fps=30/1 view=set
+  [2] owner=b out=640x480 fps=30/1 view=set
+  [3] owner=c out=100x100 fps=30/1 view=set
+canvas_video_info b -> 1 video=set
+   base=640x480 out=640x480 fps=30/1 fmt=NV12 cs=2 range=1 scale=2 gpu=1 adapter=0
+canvas_reset_video c -> 1
+canvas_video_info c -> 1 video=set
+   base=33x33 out=7x7 fps=30/1 fmt=BGRA cs=2 range=1 scale=2 gpu=0 adapter=0
+log error Invalid video parameters specified
+canvas_reset_video a -> 0
+canvas a name="Alpha" flags=0x0 private=0 removed=0 has_video=0 video_active=0 uuid_len=36 view_type=aux
+mixes count=3
+  [0] owner=main out=1280x720 fps=30/1 view=set
+  [1] owner=b out=640x480 fps=30/1 view=set
+  [2] owner=c out=7x7 fps=30/1 view=set
+canvas_has_valid_video_info a -> 0
+log info ---------------------------------
+log info video settings reset:  base resolution:   1280x720  output resolution: 1280x720  downscale filter:  Bicubic  fps:               30/1  format:            BGRA  YUV mode:          None
+log info NV12 texture support enabled
+log info P010 texture support not available
+reset_video -> success
+  after_call base=1280x720 out=1280x720 fps=30/1 fmt=BGRA cs=2 range=1 scale=2 gpu=0 adapter=0
+mixes count=3
+  [0] owner=main out=1280x720 fps=30/1 view=set
+  [1] owner=b out=640x480 fps=30/1 view=set
+  [2] owner=c out=7x7 fps=30/1 view=set
+shutdown begin
+log info Freeing OBS context data
+log debug canvas 'Main' (<uuid>) destroyed
+log debug canvas 'Alpha' (<uuid>) destroyed
+log debug canvas 'Bravo' (<uuid>) destroyed
+log debug canvas 'Charlie' (<uuid>) destroyed
+log info  3 canvas(s) were remaining
+shutdown end obs=NULL

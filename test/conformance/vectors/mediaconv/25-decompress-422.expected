@@ -1,0 +1,9 @@
+decompress422 lead ols=16 rows=1 guard=intact: aabbccddccbbccdd1122334433223344
+decompress422 trail ols=16 rows=1 guard=intact: aabbccddaaddccdd1122334411443344
+decompress422 lead ols=32 rows=1 guard=intact: 0001020302010203040506070605060708090a0b0a090a0b0c0d0e0f0e0d0e0f
+decompress422 trail ols=32 rows=1 guard=intact: 0001020300030203040506070407060708090a0b080b0a0b0c0d0e0f0c0f0e0f
+decompress422 lead ols=16 rows=1 guard=intact: 80ff7f007fff7f00ff00ff80ff00ff80
+decompress422 trail ols=16 rows=1 guard=intact: 80ff7f0080007f00ff00ff80ff80ff80
+decompress422 lead ols=16 rows=2 guard=intact: aabbccddccbbccdd1122334433223344 11223344332233445566778877667788
+decompress422 trail ols=16 rows=2 guard=intact: eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee 11223344114433445566778855887788
+decompress422 lead ols=16 rows=1 guard=intact: eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee

@@ -1,0 +1,19 @@
+char 20 ws=1 nl=0 st=1
+char 09 ws=1 nl=0 st=1
+char 0d ws=1 nl=1 st=0
+char 0a ws=1 nl=1 st=0
+char 0b ws=0 nl=0 st=0
+char 0c ws=0 nl=0 st=0
+char 5f ws=0 nl=0 st=0
+char 61 ws=0 nl=0 st=0
+char 30 ws=0 nl=0 st=0
+is_newline_pair 1
+is_newline_pair 1
+is_newline_pair 0
+is_newline_pair 0
+newline_size 2
+newline_size 2
+newline_size 1
+newline_size 1
+newline_size 0
+newline_size 0

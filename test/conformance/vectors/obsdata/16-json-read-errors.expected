@@ -1,0 +1,136 @@
+log error obs-data.c: [obs_data_create_from_json] Failed reading json string (-1): wrong arguments
+from_json a fail
+log error obs-data.c: [obs_data_create_from_json] Failed reading json string (1): '[' or '{' expected near end of file
+from_json a fail
+log error obs-data.c: [obs_data_create_from_json] Failed reading json string (1): '[' or '{' expected near end of file
+from_json a fail
+log error obs-data.c: [obs_data_create_from_json] Failed reading json string (1): '[' or '{' expected near '5'
+from_json a fail
+log error obs-data.c: [obs_data_create_from_json] Failed reading json string (1): '[' or '{' expected near '"str"'
+from_json a fail
+log error obs-data.c: [obs_data_create_from_json] Failed reading json string (1): '[' or '{' expected near 'true'
+from_json a fail
+log error obs-data.c: [obs_data_create_from_json] Failed reading json string (1): '[' or '{' expected near 'null'
+from_json a fail
+log error obs-data.c: [obs_data_create_from_json] Failed reading json string (1): string or '}' expected near end of file
+from_json a fail
+log error obs-data.c: [obs_data_create_from_json] Failed reading json string (1): '}' expected near end of file
+from_json a fail
+log error obs-data.c: [obs_data_create_from_json] Failed reading json string (1): string or '}' expected near '}'
+from_json a fail
+log error obs-data.c: [obs_data_create_from_json] Failed reading json string (1): string or '}' expected near ','
+from_json a fail
+log error obs-data.c: [obs_data_create_from_json] Failed reading json string (1): ':' expected near '1'
+from_json a fail
+log error obs-data.c: [obs_data_create_from_json] Failed reading json string (1): unexpected token near '}'
+from_json a fail
+log error obs-data.c: [obs_data_create_from_json] Failed reading json string (1): string or '}' expected near 'a'
+from_json a fail
+log error obs-data.c: [obs_data_create_from_json] Failed reading json string (1): string or '}' expected near '''
+from_json a fail
+log error obs-data.c: [obs_data_create_from_json] Failed reading json string (1): unexpected token near ']'
+from_json a fail
+log error obs-data.c: [obs_data_create_from_json] Failed reading json string (1): ']' expected near '2'
+from_json a fail
+log error obs-data.c: [obs_data_create_from_json] Failed reading json string (1): end of file expected near 'x'
+from_json a fail
+log error obs-data.c: [obs_data_create_from_json] Failed reading json string (1): end of file expected near '{'
+from_json a fail
+log error obs-data.c: [obs_data_create_from_json] Failed reading json string (1): end of file expected near ''
+from_json a fail
+log error obs-data.c: [obs_data_create_from_json] Failed reading json string (1): '[' or '{' expected near '/'
+from_json a fail
+log error obs-data.c: [obs_data_create_from_json] Failed reading json string (1): '}' expected near '/'
+from_json a fail
+echo --- duplicate keys are an error, also in nested objects, even with different values
+log error obs-data.c: [obs_data_create_from_json] Failed reading json string (1): duplicate object key near '"a"'
+from_json a fail
+log error obs-data.c: [obs_data_create_from_json] Failed reading json string (1): duplicate object key near '"b"'
+from_json a fail
+log error obs-data.c: [obs_data_create_from_json] Failed reading json string (1): duplicate object key near '"b"'
+from_json a fail
+echo --- numbers
+log error obs-data.c: [obs_data_create_from_json] Failed reading json string (1): invalid token near '0'
+from_json a fail
+log error obs-data.c: [obs_data_create_from_json] Failed reading json string (1): invalid token near '+'
+from_json a fail
+log error obs-data.c: [obs_data_create_from_json] Failed reading json string (1): invalid token near '.'
+from_json a fail
+log error obs-data.c: [obs_data_create_from_json] Failed reading json string (1): invalid token near '1.'
+from_json a fail
+log error obs-data.c: [obs_data_create_from_json] Failed reading json string (1): invalid token near '-'
+from_json a fail
+log error obs-data.c: [obs_data_create_from_json] Failed reading json string (1): invalid token near '1e'
+from_json a fail
+log error obs-data.c: [obs_data_create_from_json] Failed reading json string (1): '}' expected near 'x'
+from_json a fail
+log error obs-data.c: [obs_data_create_from_json] Failed reading json string (1): invalid token near 'NaN'
+from_json a fail
+log error obs-data.c: [obs_data_create_from_json] Failed reading json string (1): invalid token near 'Infinity'
+from_json a fail
+log error obs-data.c: [obs_data_create_from_json] Failed reading json string (1): too big integer near '99999999999999999999'
+from_json a fail
+log error obs-data.c: [obs_data_create_from_json] Failed reading json string (1): too big integer near '9223372036854775808'
+from_json a fail
+log error obs-data.c: [obs_data_create_from_json] Failed reading json string (1): too big negative integer near '-9223372036854775809'
+from_json a fail
+log error obs-data.c: [obs_data_create_from_json] Failed reading json string (1): real number overflow near '1e400'
+from_json a fail
+log error obs-data.c: [obs_data_create_from_json] Failed reading json string (1): real number overflow near '-1e400'
+from_json a fail
+echo --- literals
+log error obs-data.c: [obs_data_create_from_json] Failed reading json string (1): invalid token near 'nul'
+from_json a fail
+log error obs-data.c: [obs_data_create_from_json] Failed reading json string (1): invalid token near 'True'
+from_json a fail
+log error obs-data.c: [obs_data_create_from_json] Failed reading json string (1): invalid token near 'tru'
+from_json a fail
+echo --- strings
+log error obs-data.c: [obs_data_create_from_json] Failed reading json string (1): premature end of input near '"x}'
+from_json a fail
+log error obs-data.c: [obs_data_create_from_json] Failed reading json string (1): invalid escape near '"\x'
+from_json a fail
+log error obs-data.c: [obs_data_create_from_json] Failed reading json string (1): invalid escape near '"\u12"'
+from_json a fail
+log error obs-data.c: [obs_data_create_from_json] Failed reading json string (1): invalid escape near '"\uz'
+from_json a fail
+log error obs-data.c: [obs_data_create_from_json] Failed reading json string (1): \u0000 is not allowed without JSON_ALLOW_NUL near '"\u0000"'
+from_json a fail
+log error obs-data.c: [obs_data_create_from_json] Failed reading json string (1): NUL byte in object key not supported near '"a\u0000"'
+from_json a fail
+log error obs-data.c: [obs_data_create_from_json] Failed reading json string (1): invalid Unicode '\uD800' near '"\ud800"'
+from_json a fail
+log error obs-data.c: [obs_data_create_from_json] Failed reading json string (1): invalid Unicode '\uD800' near '"\ud800x"'
+from_json a fail
+log error obs-data.c: [obs_data_create_from_json] Failed reading json string (1): invalid Unicode '\uDC00' near '"\udc00"'
+from_json a fail
+log error obs-data.c: [obs_data_create_from_json] Failed reading json string (1): invalid Unicode '\uD800\u0041' near '"\ud800\u0041"'
+from_json a fail
+log error obs-data.c: [obs_data_create_from_json] Failed reading json string (1): unexpected newline near '"line'
+from_json a fail
+log error obs-data.c: [obs_data_create_from_json] Failed reading json string (1): control character 0x9 near '"tab'
+from_json a fail
+log error obs-data.c: [obs_data_create_from_json] Failed reading json string (1): control character 0x1 near '"'
+from_json a fail
+log error obs-data.c: [obs_data_create_from_json] Failed reading json string (1): unable to decode byte 0xff near '"'
+from_json a fail
+log error obs-data.c: [obs_data_create_from_json] Failed reading json string (1): unable to decode byte 0xc3 near '"'
+from_json a fail
+log error obs-data.c: [obs_data_create_from_json] Failed reading json string (1): unable to decode byte 0xc0 near '"'
+from_json a fail
+log error obs-data.c: [obs_data_create_from_json] Failed reading json string (1): unable to decode byte 0xed near '"'
+from_json a fail
+log error obs-data.c: [obs_data_create_from_json] Failed reading json string (1): unable to decode byte 0xff near '"'
+from_json a fail
+log error obs-data.c: [obs_data_create_from_json] Failed reading json string (1): '[' or '{' expected near '﻿'
+from_json a fail
+echo --- nesting depth: 2048 levels are rejected
+log error obs-data.c: [obs_data_create_from_json] Failed reading json string (1): maximum parsing depth reached near '1'
+from_json_deep d fail
+log error obs-data.c: [obs_data_create_from_json] Failed reading json string (1): maximum parsing depth reached near '1'
+from_json_deep d fail
+log error obs-data.c: [obs_data_create_from_json] Failed reading json string (1): maximum parsing depth reached near '{'
+from_json_deep d fail
+echo --- failure leaves no handle: the same name can be created afterwards
+from_json a ok
+dump a {ok:number[user=num(I,1,1)]}

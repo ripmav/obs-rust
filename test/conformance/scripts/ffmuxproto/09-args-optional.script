@@ -1,0 +1,26 @@
+# Optional trailing arguments: stream key, muxer settings and video codec tag may be missing.
+reset
+echo --- all optional arguments missing (a message each, init still succeeds)
+args @o.mkv 0 1 aac "t" 128 48000 1024 0 2
+hdr audio 0 1190
+inspect
+reset
+echo --- codec tag missing for video: tag 0 (then the arguments are exhausted)
+args @o.mkv 1 0 h264 6000 640 360 1 1 1 1 1 0 30 1
+hdr video 0 0164001fffe100046764001f01000468ce3c80
+inspect
+reset
+echo --- codec tag given: numeric value stored verbatim (little endian fourcc computed by the sender)
+args @o.mkv 1 0 h264 6000 640 360 1 1 1 1 1 0 30 1 875967080 "" ""
+hdr video 0 0164001fffe100046764001f01000468ce3c80
+inspect
+reset
+echo --- stream key replaced in the printable name (every occurrence)
+args @o.mkv 0 1 aac "t" 128 48000 1024 0 2 "o.mkv" ""
+hdr audio 0 1190
+inspect
+reset
+echo --- extra trailing arguments are ignored
+args @o.mkv 0 1 aac "t" 128 48000 1024 0 2 "" "" extra more
+hdr audio 0 1190
+inspect

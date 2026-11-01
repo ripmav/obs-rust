@@ -1,0 +1,46 @@
+event.init manual
+host.hotkey_register MediaSource.Restart desc=RestartMedia id=100
+host.hotkey_pair_register MediaSource.Play/MediaSource.Pause desc=Play/Pause id=101
+host.hotkey_register MediaSource.Stop desc=Stop id=102
+host.proc_add "void restart()"
+host.proc_add "void preload_first_frame()"
+host.proc_add "void get_duration(out int duration)"
+host.proc_add "void get_nb_frames(out int num_frames)"
+mp.create path="/m/a.mp4" format=@null options=""
+    buffering=2097152 speed=100 force_range=0 linear_alpha=0 hw=0 local=1 reconnecting=0 preload=0 full_decode=0 cbs=11111
+log info [Media Source 'src']: settings: 	input:                   /m/a.mp4 	input_format:            (null) 	speed:                   100 	is_looping:              no 	is_linear_alpha:         no 	is_hw_decoding:          no 	is_clear_on_media_end:   yes 	restart_on_activate:     yes 	close_when_inactive:     no 	full_decode:             no 	ffmpeg_options:          
+src_create ok
+duration_ms 123456
+time_ms 4200
+mp.play_pause #1 pause=1
+state 4
+mp.play_pause #1 pause=0
+host.media_started
+state 1
+mp.seek #1 1500
+mp.stop #1
+host.output_video null
+state 5
+mp.play #1 looping=0 reconnecting=0
+host.show_preloaded_video
+host.media_started
+state 1
+echo ---- no media object (empty input, no file chosen)
+event.init manual
+host.hotkey_register MediaSource.Restart desc=RestartMedia id=103
+host.hotkey_pair_register MediaSource.Play/MediaSource.Pause desc=Play/Pause id=104
+host.hotkey_register MediaSource.Stop desc=Stop id=105
+host.proc_add "void restart()"
+host.proc_add "void preload_first_frame()"
+host.proc_add "void get_duration(out int duration)"
+host.proc_add "void get_nb_frames(out int num_frames)"
+log info [Media Source 'src']: settings: 	input:                    	input_format:            (null) 	speed:                   100 	is_looping:              no 	is_linear_alpha:         no 	is_hw_decoding:          no 	is_clear_on_media_end:   yes 	restart_on_activate:     yes 	close_when_inactive:     no 	full_decode:             no 	ffmpeg_options:          
+src_create ok
+duration_ms 0
+time_ms 0
+state 0
+state 0
+state 1
+echo ---- media creation fails: play/pause is a no-op
+mp.play_pause #1 pause=0
+host.media_started

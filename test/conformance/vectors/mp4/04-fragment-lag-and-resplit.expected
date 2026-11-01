@@ -1,0 +1,271 @@
+mux mp4 tracks=2
+pkt v pts=0 dts=0 key=1 size=10 -> 1 pos=0
+pkt v pts=1 dts=1 key=1 size=10 -> 1 pos=0
+pkt v pts=2 dts=2 key=1 size=10 -> 1 pos=0
+pkt v pts=3 dts=3 key=1 size=10 -> 1 pos=0
+echo after-4-keyframes-no-audio
+pos 0
+pkt a pts=0 dts=0 key=1 size=10 -> 1 pos=0
+pkt a pts=1024 dts=1024 key=1 size=10 -> 1 pos=0
+pkt a pts=2048 dts=2048 key=1 size=10 -> 1 pos=0
+pkt a pts=4096 dts=4096 key=1 size=10 -> 1 pos=0
+pkt a pts=8192 dts=8192 key=1 size=10 -> 1 pos=0
+echo audio-caught-up-split-is-written-on-next-packet
+pos 0
+pkt a pts=9216 dts=9216 key=1 size=10 -> 1 pos=1711
+pos 1711
+log info [mp4 muxer: 'conformance'] Flushing final fragment...
+log info [mp4 muxer: 'conformance'] Number of fragments: 2
+log info [mp4 muxer: 'conformance'] Full moov size: 1 KiB
+log info [mp4 muxer: 'conformance'] Final mdat size: 1 KiB
+finalise -> 1
+tree
+  ftyp @0 size=36
+  mdat @36 size=1819
+    moov @52 size=1349
+      mvhd @60 size=108
+      trak @168 size=564
+        tkhd @176 size=92
+        edts @268 size=36
+          elst @276 size=28
+        mdia @304 size=400
+          mdhd @312 size=32
+          hdlr @344 size=50
+          minf @394 size=310
+            vmhd @402 size=20
+            dinf @422 size=36
+              dref @430 size=28
+                url  @446 size=12
+            stbl @458 size=246
+              stsd @466 size=170
+                avc1 @482 size=154
+                  avcC @568 size=33
+                  colr @601 size=19
+                  pasp @620 size=16
+              stts @636 size=16
+              stsc @652 size=16
+              stsz @668 size=20
+              stco @688 size=16
+        udta @704 size=28
+          name @712 size=20
+      trak @732 size=493
+        tkhd @740 size=92
+        edts @832 size=36
+          elst @840 size=28
+        mdia @868 size=329
+          mdhd @876 size=32
+          hdlr @908 size=50
+          minf @958 size=239
+            smhd @966 size=16
+            dinf @982 size=36
+              dref @990 size=28
+                url  @1006 size=12
+            stbl @1018 size=179
+              stsd @1026 size=103
+                mp4a @1042 size=87
+                  esds @1078 size=51
+              stts @1129 size=16
+              stsc @1145 size=16
+              stsz @1161 size=20
+              stco @1181 size=16
+        udta @1197 size=28
+          name @1205 size=20
+      mvex @1225 size=72
+        trex @1233 size=32
+        trex @1265 size=32
+      udta @1297 size=104
+        meta @1305 size=96
+          hdlr @1317 size=33
+          ilst @1350 size=51
+            \xa9too @1358 size=43
+              data @1366 size=35
+    moof @1401 size=232
+      mfhd @1409 size=16
+      traf @1425 size=112
+        tfhd @1433 size=36
+        tfdt @1469 size=20
+        trun @1489 size=48
+      traf @1537 size=96
+        tfhd @1545 size=32
+        tfdt @1577 size=20
+        trun @1597 size=36
+    mdat @1633 size=78
+    moof @1711 size=116
+      mfhd @1719 size=16
+      traf @1735 size=92
+        tfhd @1743 size=36
+        tfdt @1779 size=20
+        trun @1799 size=28
+    mdat @1827 size=28
+  moov @1855 size=1483
+    mvhd @1863 size=108
+    trak @1971 size=628
+      tkhd @1979 size=92
+      edts @2071 size=36
+        elst @2079 size=28
+      mdia @2107 size=464
+        mdhd @2115 size=32
+        hdlr @2147 size=50
+        minf @2197 size=374
+          vmhd @2205 size=20
+          dinf @2225 size=36
+            dref @2233 size=28
+              url  @2249 size=12
+          stbl @2261 size=310
+            stsd @2269 size=170
+              avc1 @2285 size=154
+                avcC @2371 size=33
+                colr @2404 size=19
+                pasp @2423 size=16
+            stts @2439 size=24
+            stss @2463 size=28
+            stsc @2491 size=28
+            stsz @2519 size=32
+            stco @2551 size=20
+      udta @2571 size=28
+        name @2579 size=20
+    trak @2599 size=635
+      tkhd @2607 size=92
+      edts @2699 size=36
+        elst @2707 size=28
+      mdia @2735 size=471
+        mdhd @2743 size=32
+        hdlr @2775 size=50
+        minf @2825 size=381
+          smhd @2833 size=16
+          dinf @2849 size=36
+            dref @2857 size=28
+              url  @2873 size=12
+          stbl @2885 size=321
+            stsd @2893 size=103
+              mp4a @2909 size=87
+                esds @2945 size=51
+            stts @2996 size=48
+            stsc @3044 size=40
+            stsz @3084 size=44
+            stco @3128 size=24
+            sgpd @3152 size=26
+            sbgp @3178 size=28
+      udta @3206 size=28
+        name @3214 size=20
+    udta @3234 size=104
+      meta @3242 size=96
+        hdlr @3254 size=33
+        ilst @3287 size=51
+          \xa9too @3295 size=43
+            data @3303 size=35
+tree end
+echo --- empty audio track
+mux mp4 tracks=2
+pkt v pts=0 dts=0 key=1 size=10 -> 1 pos=0
+pkt v pts=3 dts=3 key=1 size=10 -> 1 pos=0
+pkt v pts=6 dts=6 key=1 size=10 -> 1 pos=0
+pkt v pts=9 dts=9 key=1 size=10 -> 1 pos=0
+echo no-fragment-yet
+pos 0
+log info [mp4 muxer: 'conformance'] Flushing final fragment...
+log info [mp4 muxer: 'conformance'] Number of fragments: 1
+log info [mp4 muxer: 'conformance'] Full moov size: 0 KiB
+log info [mp4 muxer: 'conformance'] Final mdat size: 1 KiB
+finalise -> 1
+tree
+  ftyp @0 size=36
+  mdat @36 size=1557
+    moov @52 size=1349
+      mvhd @60 size=108
+      trak @168 size=564
+        tkhd @176 size=92
+        edts @268 size=36
+          elst @276 size=28
+        mdia @304 size=400
+          mdhd @312 size=32
+          hdlr @344 size=50
+          minf @394 size=310
+            vmhd @402 size=20
+            dinf @422 size=36
+              dref @430 size=28
+                url  @446 size=12
+            stbl @458 size=246
+              stsd @466 size=170
+                avc1 @482 size=154
+                  avcC @568 size=33
+                  colr @601 size=19
+                  pasp @620 size=16
+              stts @636 size=16
+              stsc @652 size=16
+              stsz @668 size=20
+              stco @688 size=16
+        udta @704 size=28
+          name @712 size=20
+      trak @732 size=493
+        tkhd @740 size=92
+        edts @832 size=36
+          elst @840 size=28
+        mdia @868 size=329
+          mdhd @876 size=32
+          hdlr @908 size=50
+          minf @958 size=239
+            smhd @966 size=16
+            dinf @982 size=36
+              dref @990 size=28
+                url  @1006 size=12
+            stbl @1018 size=179
+              stsd @1026 size=103
+                mp4a @1042 size=87
+                  esds @1078 size=51
+              stts @1129 size=16
+              stsc @1145 size=16
+              stsz @1161 size=20
+              stco @1181 size=16
+        udta @1197 size=28
+          name @1205 size=20
+      mvex @1225 size=72
+        trex @1233 size=32
+        trex @1265 size=32
+      udta @1297 size=104
+        meta @1305 size=96
+          hdlr @1317 size=33
+          ilst @1350 size=51
+            \xa9too @1358 size=43
+              data @1366 size=35
+    moof @1401 size=144
+      mfhd @1409 size=16
+      traf @1425 size=120
+        tfhd @1433 size=36
+        tfdt @1469 size=20
+        trun @1489 size=56
+    mdat @1545 size=48
+  moov @1593 size=856
+    mvhd @1601 size=108
+    trak @1709 size=636
+      tkhd @1717 size=92
+      edts @1809 size=36
+        elst @1817 size=28
+      mdia @1845 size=472
+        mdhd @1853 size=32
+        hdlr @1885 size=50
+        minf @1935 size=382
+          vmhd @1943 size=20
+          dinf @1963 size=36
+            dref @1971 size=28
+              url  @1987 size=12
+          stbl @1999 size=318
+            stsd @2007 size=170
+              avc1 @2023 size=154
+                avcC @2109 size=33
+                colr @2142 size=19
+                pasp @2161 size=16
+            stts @2177 size=24
+            stss @2201 size=32
+            stsc @2233 size=28
+            stsz @2261 size=36
+            stco @2297 size=20
+      udta @2317 size=28
+        name @2325 size=20
+    udta @2345 size=104
+      meta @2353 size=96
+        hdlr @2365 size=33
+        ilst @2398 size=51
+          \xa9too @2406 size=43
+            data @2414 size=35
+tree end

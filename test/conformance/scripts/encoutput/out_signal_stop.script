@@ -1,0 +1,29 @@
+# obs_output_signal_stop: stop code and last_error are reported by the "stop" signal; with reconnect disabled
+# (retry_count 0) every code ends the output. Error codes: 0 success, -1 bad path, -2 connect failed,
+# -3 invalid stream, -4 error, -5 disconnected, -6 unsupported, -7 no space, -8 encode error, -9 hdr disabled.
+video 30 1 1280 720
+audio 48000
+venc v
+aenc a
+out o av,encoded autobegin=1
+set_venc o v
+set_aenc o a
+reconnect_cfg o 0 2
+start o
+lasterr o "disk full"
+signal_stop o -7
+state o
+lasterr o ?
+echo --- last_error persists until the next actual_start; a restart clears it
+start o
+lasterr o ?
+signal_stop o -4
+echo --- success code also ends it
+start o
+signal_stop o 0
+echo --- disconnected with retry_count 0: no reconnect
+start o
+signal_stop o -5
+state o
+echo --- signal_stop on a never started output still emits stop
+signal_stop o -2

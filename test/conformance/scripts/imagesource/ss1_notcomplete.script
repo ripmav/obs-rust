@@ -1,0 +1,18 @@
+# slideshow v1: with a fading transition next/previous are ignored until the transition time reaches 1 (CORE).
+fs_file /s/a.png 1
+fs_file /s/b.png 1
+fs_file /s/c.png 1
+fs_file /s/d.png 1
+img /s/a.png 10 10
+img /s/b.png 20 20
+img /s/c.png 30 30
+img /s/d.png 40 40
+create ss slideshow {"files":[{"value":"/s/a.png"},{"value":"/s/b.png"}],"slide_mode":"mode_manual","transition":"fade","transition_speed":1000}
+tick 0.016
+media ss next
+tick 0.5
+state ss
+tick 0.6
+media ss next
+tick 0.016
+state ss

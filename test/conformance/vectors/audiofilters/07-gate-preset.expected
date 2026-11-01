@@ -1,0 +1,78 @@
+create g -> ok
+data @g (sorted by key)
+  attack_time user=0 default=1 int 10 def=10
+  detector user=0 default=1 string "RMS" def="RMS"
+  output_gain user=0 default=1 double 0 def=0
+  presets user=1 default=1 string "gate" def="gate"
+  ratio user=0 default=1 double 10 def=10
+  release_time user=0 default=1 int 125 def=125
+  threshold user=0 default=1 double -40 def=-40
+state expander channels=2 rate=48000 detector=0 is_gate=1 is_upwcomp=0 buf_len=480 ratio=10 threshold=-40 attack_gain=0.997918844 release_gain=0.999833345 output_gain=1 slope=-9 knee=0 ch0[ env=0 runave=0 gain_db=0 ] ch1[ env=0 runave=0 gain_db=0 ]
+echo update-with-user-values-in-gate-mode
+data @g (sorted by key)
+  attack_time user=0 default=1 int 10 def=10
+  detector user=0 default=1 string "RMS" def="RMS"
+  output_gain user=0 default=1 double 0 def=0
+  presets user=1 default=1 string "gate" def="gate"
+  ratio user=1 default=1 double 3 def=10
+  release_time user=0 default=1 int 125 def=125
+  threshold user=0 default=1 double -40 def=-40
+state expander channels=2 rate=48000 detector=0 is_gate=1 is_upwcomp=0 buf_len=480 ratio=3 threshold=-40 attack_gain=0.997918844 release_gain=0.999833345 output_gain=1 slope=-2 knee=0 ch0[ env=0 runave=0 gain_db=0 ] ch1[ env=0 runave=0 gain_db=0 ]
+echo switch-back-to-expander
+data @g (sorted by key)
+  attack_time user=0 default=1 int 10 def=10
+  detector user=0 default=1 string "RMS" def="RMS"
+  output_gain user=0 default=1 double 0 def=0
+  presets user=1 default=1 string "expander" def="expander"
+  ratio user=0 default=1 double 2 def=2
+  release_time user=0 default=1 int 50 def=50
+  threshold user=0 default=1 double -40 def=-40
+state expander channels=2 rate=48000 detector=0 is_gate=0 is_upwcomp=0 buf_len=480 ratio=2 threshold=-40 attack_gain=0.997918844 release_gain=0.999583423 output_gain=1 slope=-1 knee=0 ch0[ env=0 runave=0 gain_db=0 ] ch1[ env=0 runave=0 gain_db=0 ]
+echo user-values-set-with-same-preset-are-kept
+data @g (sorted by key)
+  attack_time user=0 default=1 int 10 def=10
+  detector user=0 default=1 string "RMS" def="RMS"
+  output_gain user=0 default=1 double 0 def=0
+  presets user=1 default=1 string "expander" def="expander"
+  ratio user=0 default=1 double 2 def=2
+  release_time user=1 default=1 int 77 def=50
+  threshold user=0 default=1 double -40 def=-40
+state expander channels=2 rate=48000 detector=0 is_gate=0 is_upwcomp=0 buf_len=480 ratio=2 threshold=-40 attack_gain=0.997918844 release_gain=0.999729455 output_gain=1 slope=-1 knee=0 ch0[ env=0 runave=0 gain_db=0 ] ch1[ env=0 runave=0 gain_db=0 ]
+echo reset-settings-then-update
+data @g (sorted by key)
+  attack_time user=0 default=1 int 10 def=10
+  detector user=0 default=1 string "RMS" def="RMS"
+  output_gain user=0 default=1 double 0 def=0
+  presets user=0 default=1 string "expander" def="expander"
+  ratio user=0 default=1 double 2 def=2
+  release_time user=0 default=1 int 50 def=50
+  threshold user=0 default=1 double -40 def=-40
+echo upward-compressor-ignores-presets
+create up -> ok
+data @up (sorted by key)
+  attack_time user=0 default=1 int 10 def=10
+  detector user=0 default=1 string "RMS" def="RMS"
+  knee_width user=0 default=1 int 10 def=10
+  output_gain user=0 default=1 double 0 def=0
+  presets user=1 default=0 string "gate" def=""
+  ratio user=0 default=1 double 0.5 def=0.5
+  release_time user=0 default=1 int 50 def=50
+  threshold user=0 default=1 double -20 def=-20
+state expander channels=2 rate=48000 detector=0 is_gate=0 is_upwcomp=1 buf_len=480 ratio=0.5 threshold=-20 attack_gain=0.997918844 release_gain=0.999583423 output_gain=1 slope=0.5 knee=10 ch0[ env=0 runave=0 gain_db=0 ] ch1[ env=0 runave=0 gain_db=0 ]
+echo upward-knee-region
+process up frames=8 ts=0 pos=0 in-crc: e40ad275 bcb8ec25
+  ret same frames=8 ts=0
+  out p0 [0] 0.0503317676 0.0508399494 0.0514498539 0.052131325 0.0528680757 0.053649921 0.0544699132 0.0553230047
+  out p1 [0] 0.00999999978 0.00999999978 0.00999999978 0.00999999978 0.00999999978 0.00999999978 0.010000295 0.0100074336
+process up frames=8 ts=0 pos=8 in-crc: e40ad275 bcb8ec25
+  ret same frames=8 ts=0
+  out p0 [0] 0.0562053584 0.0571139567 0.0580463521 0.0590005107 0.0599747188 0.0609674826 0.0619775169 0.0630036667
+  out p1 [0] 0.010020474 0.0100386757 0.0100614382 0.0100882668 0.010118749 0.0101525309 0.0101893116 0.0102288257
+process up frames=200 ts=0 pos=16 in-crc: c8fd36f5 c8fd36f5
+  ret same frames=200 ts=0
+  out p0 [190] 0.151939318 0.151725873 0.151513681 0.15130274 0.151093036 0.150884584 0.150677368 0.150471374 0.150266618 0.150063083
+echo upward-very-quiet-signal-branch
+process up frames=100 ts=0 pos=216 in-crc: 7d371015 7d371015
+  ret same frames=100 ts=0
+  out p0 [90] 1.44693672e-07 1.44709375e-07 1.44725831e-07 1.44743041e-07 1.44760975e-07 1.44779605e-07 1.44798918e-07 1.44818941e-07 1.44839618e-07 1.44860962e-07
+state expander channels=2 rate=48000 detector=0 is_gate=0 is_upwcomp=1 buf_len=480 ratio=0.5 threshold=-20 attack_gain=0.979382157 release_gain=0.979382157 output_gain=1 slope=0.5 knee=10 ch0[ env=0.0469915867 runave=0.00220820913 gain_db=3.2190268 ] ch1[ env=0.0466118678 runave=0.00217266637 gain_db=3.25289106 ]

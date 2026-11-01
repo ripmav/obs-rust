@@ -1,0 +1,9 @@
+try-begin
+try-end crash
+try-begin
+try-end crash
+try-begin
+try-end crash
+module_paths=1
+found name=t bin=@TMP/t/bin/t.so data=@TMP/t/data/t
+find done

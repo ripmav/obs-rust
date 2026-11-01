@@ -1,0 +1,21 @@
+# signal_handler_remove_current disconnects the callback that is currently running.
+handler h
+add h "void s()"
+callback once remove_current
+callback always
+connect h s once
+connect h s always
+emit h s
+emit h s
+remove_current
+# also: remove_current must not affect later entries
+handler h2
+add h2 "void s()"
+callback one remove_current
+callback two remove_current
+callback three
+connect h2 s one
+connect h2 s two
+connect h2 s three
+emit h2 s
+emit h2 s

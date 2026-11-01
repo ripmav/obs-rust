@@ -1,0 +1,62 @@
+--- Q-1
+effect q1 result=ok
+  error_string=@null
+effect q1 params=5 techniques=0 viewproj=- world=-
+  param 0 name=a type=INT annotations=0 default_size=8 default=0000000000000000 l=[0]
+  param 1 name=b type=INT annotations=0 default_size=8 default=0700000000000000 l=[7]
+  param 2 name=c type=INT annotations=0 default_size=8 default=0100000000000000 l=[1]
+  param 3 name=d type=INT annotations=0 default_size=8 default=6300000000000000 l=[99]
+  param 4 name=e type=INT annotations=0 default_size=8 default=0000000000000000 l=[0]
+--- Q-2
+effect q2 result=ok
+  error_string=@null
+effect q2 params=4 techniques=0 viewproj=- world=-
+  param 0 name=a type=FLOAT annotations=0 default_size=4 default=00008041 f=[16]
+  param 1 name=b type=FLOAT annotations=0 default_size=4 default=00000041 f=[8]
+  param 2 name=c type=FLOAT annotations=0 default_size=4 default=0000c842 f=[100]
+  param 3 name=d type=FLOAT annotations=0 default_size=4 default=0000c842 f=[100]
+--- Q-3
+ep result=fail
+  errors count=1 has_errors=1
+    err 0 error file="q3a" row=1 col=13 msg="Expected 'type'"
+  ep params=0 structs=0 funcs=0 samplers=0 techniques=0
+  error_string="q3a (1, 13): Expected 'type'\n"
+ep result=fail
+  errors count=1 has_errors=1
+    err 0 error file="q3b" row=1 col=13 msg="Expected 'type'"
+  ep params=1 structs=0 funcs=0 samplers=0 techniques=0
+  ep_param 0 type=float name=b property=0 const=0 uniform=0 texture=0 array_count=0 annotations=0
+  error_string="q3b (1, 13): Expected 'type'\n"
+--- Q-4
+effect q4a result=ok
+  error_string=@null
+effect q4b result=ok
+  error_string=@null
+effect q4c result=ok
+  error_string=@null
+effect q4a params=2 techniques=0 viewproj=- world=-
+  param 0 name=s type=STRING annotations=0 default_size=5 default="a\nb\""
+  param 1 name=z type=FLOAT annotations=0 default_size=0 default=-
+effect q4b params=2 techniques=0 viewproj=- world=-
+  param 0 name=s type=STRING annotations=0 default_size=11 default="say \"hi\"\";"
+  param 1 name=z type=FLOAT annotations=0 default_size=0 default=-
+effect q4c params=2 techniques=0 viewproj=- world=-
+  param 0 name=s type=STRING annotations=0 default_size=6 default="plain"
+  param 1 name=z type=FLOAT annotations=0 default_size=0 default=-
+--- Q-5
+ep result=ok
+  errors count=0 has_errors=0
+  ep params=2 structs=0 funcs=0 samplers=0 techniques=0
+  ep_param 0 type=float name=z property=0 const=0 uniform=0 texture=0 array_count=0 annotations=0
+  ep_param 1 type=float name=y property=0 const=0 uniform=0 texture=0 array_count=1 annotations=0
+  error_string=@null
+effect (effect) params=2 techniques=0 viewproj=- world=-
+  param 0 name=z type=FLOAT annotations=0 default_size=0 default=-
+  param 1 name=y type=FLOAT annotations=0 default_size=0 default=-
+--- Q-6
+effect e result=ok
+  error_string=@null
+effect e params=3 techniques=0 viewproj=- world=-
+  param 0 name=i type=INT annotations=0 default_size=8 default=0100000000000000 l=[1]
+  param 1 name=j type=INT2 annotations=0 default_size=16 default=01000000000000000200000000000000 l=[1,2]
+  param 2 name=b type=BOOL annotations=0 default_size=8 default=0100000000000000 l=[1]

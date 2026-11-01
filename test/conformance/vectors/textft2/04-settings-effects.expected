@@ -1,0 +1,111 @@
+> reset
+> ascii 5 8 0 8 384
+> font Sans Serif - 0 p/sans
+> events off
+> events off
+> load
+load -> 1
+registered id=text_ft2_source version=0
+registered id=text_ft2_source version=2
+> create s 2
+create s -> 1
+> setfont s Sans Serif - 20 0
+> set s text ab
+> update s
+update done
+> state s
+state s font="Sans Serif" style="" size=20 flags=0 face=1 from_file=0 aa=1
+state s outline=0 shadow=0 outline_width=0 word_wrap=0 custom_width=0 log_mode=0 log_lines=6 color=ffffffff,ffffffff
+state s cx=12 cy=8 max_h=8 texbuf=553,0 tex=1 vbuf=1 effect=1
+state s file=NULL load_failed=0 update_file=0 mtime=0 last_checked_ms=0
+state s text="ab"
+> size s
+size s 12x8
+> echo --- outline alone and drop shadow alone each add 4 to the reported size; both add 6
+--- outline alone and drop shadow alone each add 4 to the reported size; both add 6
+> set s outline true
+> update s
+update done
+> size s
+size s 16x12
+> set s outline false
+> set s drop_shadow true
+> update s
+update done
+> size s
+size s 16x12
+> set s outline true
+> update s
+update done
+> size s
+size s 18x14
+> state s
+state s font="Sans Serif" style="" size=20 flags=0 face=1 from_file=0 aa=1
+state s outline=1 shadow=1 outline_width=6 word_wrap=0 custom_width=0 log_mode=0 log_lines=6 color=ffffffff,ffffffff
+state s cx=12 cy=8 max_h=8 texbuf=553,0 tex=1 vbuf=1 effect=1
+state s file=NULL load_failed=0 update_file=0 mtime=0 last_checked_ms=0
+state s text="ab"
+> echo --- custom_width below 100 is ignored (stored as 0), 100 and above is used as the width
+--- custom_width below 100 is ignored (stored as 0), 100 and above is used as the width
+> set s custom_width 99
+> update s
+update done
+> state s
+state s font="Sans Serif" style="" size=20 flags=0 face=1 from_file=0 aa=1
+state s outline=1 shadow=1 outline_width=6 word_wrap=0 custom_width=0 log_mode=0 log_lines=6 color=ffffffff,ffffffff
+state s cx=12 cy=8 max_h=8 texbuf=553,0 tex=1 vbuf=1 effect=1
+state s file=NULL load_failed=0 update_file=0 mtime=0 last_checked_ms=0
+state s text="ab"
+> set s custom_width 100
+> update s
+update done
+> state s
+state s font="Sans Serif" style="" size=20 flags=0 face=1 from_file=0 aa=1
+state s outline=1 shadow=1 outline_width=6 word_wrap=0 custom_width=100 log_mode=0 log_lines=6 color=ffffffff,ffffffff
+state s cx=100 cy=8 max_h=8 texbuf=553,0 tex=1 vbuf=1 effect=1
+state s file=NULL load_failed=0 update_file=0 mtime=0 last_checked_ms=0
+state s text="ab"
+> size s
+size s 106x14
+> set s custom_width 4096
+> update s
+update done
+> size s
+size s 4102x14
+> set s custom_width 50
+> update s
+update done
+> state s
+state s font="Sans Serif" style="" size=20 flags=0 face=1 from_file=0 aa=1
+state s outline=1 shadow=1 outline_width=6 word_wrap=0 custom_width=0 log_mode=0 log_lines=6 color=ffffffff,ffffffff
+state s cx=12 cy=8 max_h=8 texbuf=553,0 tex=1 vbuf=1 effect=1
+state s file=NULL load_failed=0 update_file=0 mtime=0 last_checked_ms=0
+state s text="ab"
+> echo --- colours are stored as 32-bit values (top and bottom colour per quad)
+--- colours are stored as 32-bit values (top and bottom colour per quad)
+> set s color1 0xff112233
+> set s color2 0x80aabbcc
+> update s
+update done
+> state s
+state s font="Sans Serif" style="" size=20 flags=0 face=1 from_file=0 aa=1
+state s outline=1 shadow=1 outline_width=6 word_wrap=0 custom_width=0 log_mode=0 log_lines=6 color=ff112233,80aabbcc
+state s cx=12 cy=8 max_h=8 texbuf=553,0 tex=1 vbuf=1 effect=1
+state s file=NULL load_failed=0 update_file=0 mtime=0 last_checked_ms=0
+state s text="ab"
+> verts s
+verts num=12 quads=2
+quad 0 pos=2,0..7,8 uv=0,0..0.00244140625,0.00390625 col=ff112233,ff112233,80aabbcc,80aabbcc,ff112233,80aabbcc
+quad 1 pos=8,0..13,8 uv=0.0029296875,0..0.00537109375,0.00390625 col=ff112233,ff112233,80aabbcc,80aabbcc,ff112233,80aabbcc
+> echo --- negative / oversized ints are truncated to 32 bit
+--- negative / oversized ints are truncated to 32 bit
+> set s color1 -1
+> set s color2 0x1ffffffff
+> update s
+update done
+> state s
+state s font="Sans Serif" style="" size=20 flags=0 face=1 from_file=0 aa=1
+state s outline=1 shadow=1 outline_width=6 word_wrap=0 custom_width=0 log_mode=0 log_lines=6 color=ffffffff,ffffffff
+state s cx=12 cy=8 max_h=8 texbuf=553,0 tex=1 vbuf=1 effect=1
+state s file=NULL load_failed=0 update_file=0 mtime=0 last_checked_ms=0
+state s text="ab"

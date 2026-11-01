@@ -1,0 +1,85 @@
+> trace 0
+> gs_create g
+ret 0 created
+> gs_enter_context g
+> trace 1
+== odd dimensions are rejected before anything reaches the backend
+> gs_texture_create_nv12 15 16 0
+log error NV12 textures must have dimensions divisible by 2.
+ret false y=-2 uv=-2
+> gs_texture_create_nv12 16 15 0
+log error NV12 textures must have dimensions divisible by 2.
+ret false y=-2 uv=-2
+> gs_texture_create_p010 15 16 0
+log error P010 textures must have dimensions divisible by 2.
+ret false y=-2 uv=-2
+== backend returns false (default) -> fallback planes R8 + R8G8 at half size
+> gs_texture_create_nv12 16 8 GS_RENDER_TARGET
+  dev device_texture_create_nv12 w=16 h=8 flags=4
+  dev device_texture_create w=16 h=8 fmt=2 levels=1 data=null flags=4
+  dev device_texture_create w=8 h=4 fmt=18 levels=1 data=null flags=4
+ret true y=6 uv=7
+== P010 fallback planes R16 + RG16
+> gs_texture_create_p010 16 8 GS_RENDER_TARGET
+  dev device_texture_create_p010 w=16 h=8 flags=4
+  dev device_texture_create w=16 h=8 fmt=8 levels=1 data=null flags=4
+  dev device_texture_create w=8 h=4 fmt=22 levels=1 data=null flags=4
+ret true y=8 uv=9
+== native creation succeeds
+> ret device_texture_create_nv12 1
+> gs_texture_create_nv12 16 8 0
+  dev device_texture_create_nv12 w=16 h=8 flags=0
+ret true y=10 uv=11
+> ret device_texture_create_nv12 0
+== fallback: first plane fails
+> fail device_texture_create 1
+> gs_texture_create_nv12 16 8 0
+  dev device_texture_create_nv12 w=16 h=8 flags=0
+  dev device_texture_create w=16 h=8 fmt=2 levels=1 data=null flags=0
+  dev device_texture_create w=8 h=4 fmt=18 levels=1 data=null flags=0
+ret false y=-1 uv=-1
+> fail device_texture_create 0
+== fallback: second plane fails, the first is destroyed and both outputs are NULL
+> failnth device_texture_create 2
+> gs_texture_create_nv12 16 8 0
+  dev device_texture_create_nv12 w=16 h=8 flags=0
+  dev device_texture_create w=16 h=8 fmt=2 levels=1 data=null flags=0
+  dev device_texture_create w=8 h=4 fmt=18 levels=1 data=null flags=0
+  dev gs_texture_destroy tex=#12
+ret false y=-1 uv=-1
+> failnth device_texture_create 0
+== availability queries (optional exports)
+> gs_nv12_available
+  dev device_nv12_available
+ret false
+> ret device_nv12_available 1
+> gs_nv12_available
+  dev device_nv12_available
+ret true
+> ret device_p010_available 1
+> gs_p010_available
+  dev device_p010_available
+ret true
+== backend without the optional exports at all: create goes straight to the fallback
+> trace 0
+> gs_leave_context
+> missing device_nv12_available 1
+> missing device_p010_available 1
+> missing device_texture_create_nv12 1
+> missing device_texture_create_p010 1
+> gs_create g2
+ret 0 created
+> gs_enter_context g2
+> trace 1
+> gs_nv12_available
+ret false
+> gs_p010_available
+ret false
+> gs_texture_create_nv12 16 8 0
+  dev device_texture_create w=16 h=8 fmt=2 levels=1 data=null flags=0
+  dev device_texture_create w=8 h=4 fmt=18 levels=1 data=null flags=0
+ret true y=18 uv=19
+> gs_texture_create_p010 16 8 0
+  dev device_texture_create w=16 h=8 fmt=8 levels=1 data=null flags=0
+  dev device_texture_create w=8 h=4 fmt=22 levels=1 data=null flags=0
+ret true y=20 uv=21

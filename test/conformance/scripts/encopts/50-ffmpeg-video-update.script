@@ -1,0 +1,28 @@
+# CORE. ffmpeg_video_encoder_update (shared by the ffmpeg-based video encoders): bitrate
+# kbps -> bit_rate bits/s, rc_buffer_size equals the bit rate, size/time base/pixel format/
+# colour tags from the output and the encoder, gop_size = keyint_sec * fps_num / fps_den if
+# keyint_sec != 0 (otherwise untouched: sentinel 12345 shows), chroma location derived from
+# pix_fmt subsampling and colorspace. User options (shared parser) go to av_opt_set on the
+# codec's private data, in order, with search flags 0; failures are ignored silently.
+video NV12 709 partial 60 1 1920 1080
+vid_update 6000 0 @null
+vid_update 2500 2 @null
+video I420 601 full 30000 1001 1280 720
+vid_update 1 1 @null
+video I444 srgb partial 24 1 640 360
+vid_update 100 0 @null
+video P010 pq partial 60 1 3840 2160
+vid_update 100 0 @null
+video P010 hlg full 60 1 3840 2160
+vid_update 100 0 @null
+video I420 pq partial 60 1 3840 2160
+vid_update 100 0 @null
+echo unknown-or-unmapped-pixel-format
+video BGRA 709 partial 60 1 640 360
+vid_update 100 0 @null
+video I422 709 partial 60 1 640 360
+vid_update 100 0 @null
+video I010 709 partial 60 1 640 360
+vid_update 100 0 @null
+video none 709 partial 60 1 640 360
+vid_update 100 0 @null

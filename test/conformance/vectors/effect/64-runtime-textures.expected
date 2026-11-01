@@ -1,0 +1,68 @@
+backend vertexshader_create location="a.effect (Vertex shader, technique T, pass 0)" len=98 fnv=06f7a0a4238c5864
+  sparam 0 name=color type=VEC4 array=0
+  result ok
+backend pixelshader_create location="a.effect (Pixel shader, technique T, pass 0)" len=228 fnv=3431b8144940bcbb
+  sparam 0 name=image type=TEXTURE array=0
+  sparam 1 name=other type=TEXTURE array=0
+  result ok
+backend vertexshader_create location="a.effect (Vertex shader, technique T, pass 1)" len=98 fnv=06f7a0a4238c5864
+  sparam 0 name=color type=VEC4 array=0
+  result ok
+backend pixelshader_create location="a.effect (Pixel shader, technique T, pass 1)" len=228 fnv=3431b8144940bcbb
+  sparam 0 name=image type=TEXTURE array=0
+  sparam 1 name=other type=TEXTURE array=0
+  result ok
+effect e result=ok
+  error_string=@null
+--- value layout
+get_val size=16 texture=3 srgb=0
+get_val size=16 texture=4 srgb=1
+get_val size=16 texture=-1 srgb=0
+--- upload at pass begin, clear at pass end
+tbegin -> 2
+backend load_vertexshader "a.effect (Vertex shader, technique T, pass 0)"
+backend load_pixelshader "a.effect (Pixel shader, technique T, pass 0)"
+backend set_val shader=vertex param=color size=16 hex=0000803f0000803f0000803f0000803f
+backend set_val shader=pixel param=image texture=5 srgb=0
+backend set_val shader=pixel param=other texture=6 srgb=1
+pbegin -> 1
+(pass 0 is current)
+backend set_texture shader=pixel param=image texture=-1
+backend set_texture shader=pixel param=other texture=-1
+pend
+--- the value survives pass end but the backend texture was cleared; the second pass uploads it again
+backend load_vertexshader "a.effect (Vertex shader, technique T, pass 1)"
+backend load_pixelshader "a.effect (Pixel shader, technique T, pass 1)"
+backend set_val shader=vertex param=color size=16 hex=0000803f0000803f0000803f0000803f
+backend set_val shader=pixel param=image texture=5 srgb=0
+backend set_val shader=pixel param=other texture=6 srgb=1
+pbegin -> 1
+backend set_texture shader=pixel param=image texture=-1
+backend set_texture shader=pixel param=other texture=-1
+pend
+backend load_vertexshader "none"
+backend load_pixelshader "none"
+tend
+get_val size=0 data=null
+--- texture parameter with a default and no value uploads the default bytes
+tbegin -> 2
+backend load_vertexshader "a.effect (Vertex shader, technique T, pass 0)"
+backend load_pixelshader "a.effect (Pixel shader, technique T, pass 0)"
+backend set_val shader=vertex param=color size=16 hex=0000803f0000803f0000803f0000803f
+backend set_val shader=pixel param=other size=12 hex=64656661756c742e706e6700
+pbegin -> 1
+backend set_texture shader=pixel param=image texture=-1
+backend set_texture shader=pixel param=other texture=-1
+pend
+backend load_vertexshader "none"
+backend load_pixelshader "none"
+tend
+--- set_texture on a non-texture parameter just stores the 16-byte struct (no type check; the bytes hold a pointer, so only the size is shown)
+flags changed=1 cur_size=16 next_sampler=-1
+--- NULL param
+log error effect_setval_inline: invalid param
+log error effect_setval_inline: invalid param
+backend shader_destroy location="a.effect (Vertex shader, technique T, pass 0)"
+backend shader_destroy location="a.effect (Pixel shader, technique T, pass 0)"
+backend shader_destroy location="a.effect (Vertex shader, technique T, pass 1)"
+backend shader_destroy location="a.effect (Pixel shader, technique T, pass 1)"

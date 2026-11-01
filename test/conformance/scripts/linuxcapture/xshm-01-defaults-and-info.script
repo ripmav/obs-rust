@@ -1,0 +1,24 @@
+# S-049 xshm: the two registered versions. xshm_input (v1, obsolete) defaults screen=0; xshm_input_v2
+# defaults screen=-1 ("select a display"). Everything else is identical.
+xshm-version 1
+xshm-info
+xshm-defaults
+get screen int
+get show_cursor bool
+get advanced bool
+get cut_top int
+get cut_left int
+get cut_right int
+get cut_bot int
+get server str
+settings-clear
+xshm-version 2
+xshm-info
+xshm-defaults
+get screen int
+get show_cursor bool
+get advanced bool
+get cut_top int
+get cut_left int
+get cut_right int
+get cut_bot int

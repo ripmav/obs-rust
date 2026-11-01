@@ -1,0 +1,23 @@
+# Snapshot CSV dump (CORE). The file contains one header line, then per entry (depth first)
+# one line per distinct duration (time_between_calls column 0) followed by one line per
+# between-call value (that column holds the expected interval). The four leading id columns
+# are pointers in the reference; the runner replaces them by first-appearance ordinals
+# (#0, #1, ...) and `nil` for a NULL parent.
+p_name 0 root
+p_name 1 child
+p_begin
+p_root 0 2000000
+p_clock 0
+p_start 0
+p_tick 1000000
+p_start 1
+p_tick 2000000
+p_end 1
+p_end 0
+p_tick 1000000
+p_start 0
+p_tick 3000000
+p_end 0
+p_snap
+p_csv
+p_free

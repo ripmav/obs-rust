@@ -1,0 +1,35 @@
+open_string rc=0
+sections 2 [A] [B]
+get_string A k1 "v1"
+get_string A   k2   @null
+get_string A k2 @null
+get_string A k3 ""
+get_string A k4 "a=b=c"
+get_string A #k5 @null
+get_string A k5 @null
+get_string B x "1"
+open_string rc=0
+get_string A k "v"
+get_string A z "1"
+open_string rc=0
+get_string A k "line1\nline2\r\\end\\x"
+open_string rc=0
+sections 2 [A] [A]
+get_string A k "2"
+open_string rc=0
+get_string A k "2"
+open_string rc=0
+sections 0
+open_string rc=0
+sections 0
+open_string rc=0
+sections 1 [NoItems]
+get_string NoItems x @null
+open_string rc=0
+sections 1 [A]
+open_string rc=0
+get_string A noequals @null
+get_string A k "1"
+open_string rc=0
+sections 1 [ A ]
+get_string  A  k "1"

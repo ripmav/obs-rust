@@ -1,0 +1,32 @@
+dump a {fps:object[user={numerator:number[user=num(D,30,30)],denominator:number[user=num(D,1,1)]}],ntsc:object[user={numerator:number[user=num(D,30000,30000)],denominator:number[user=num(D,1001,1001)]}],auto:object[user={option:string[user="auto"]}]}
+json a "{\"fps\":{\"numerator\":30.0,\"denominator\":1.0},\"ntsc\":{\"numerator\":30000.0,\"denominator\":1001.0},\"auto\":{\"option\":\"auto\"}}"
+get_frames_per_second a fps 1 30 1 -
+get_frames_per_second a ntsc 1 30000 1001 -
+get_frames_per_second a fps 1 30 1 "<unset>"
+get_frames_per_second a auto 0 7 7 -
+get_frames_per_second a auto 1 7 7 "auto"
+echo --- invalid rates
+get_frames_per_second a zero 0 0 1 -
+get_frames_per_second a zero2 0 30 0 -
+get_frames_per_second a nosuch 0 7 7 -
+get_frames_per_second a nosuch 0 7 7 "<unset>"
+get_frames_per_second @null nosuch 0 7 7 -
+echo --- clamping of large and negative stored values
+get_frames_per_second a big 0 4294967295 0 -
+get_frames_per_second a big2 1 29 1 -
+echo --- an object without the members, or a non-object
+get_frames_per_second a empty 0 7 7 -
+get_frames_per_second a empty 0 7 7 "<unset>"
+get_frames_per_second a notobj 0 7 7 -
+echo --- default and autoselect
+get_default_frames_per_second a d 1 60 1 -
+get_frames_per_second a d 1 60 1 -
+get_default_frames_per_second a d2 1 7 7 "none"
+get_autoselect_frames_per_second a au 1 24 1 -
+echo --- item forms
+byname a fps ok
+item_get_frames_per_second ifps 1 30 1 -
+item_get_frames_per_second ifps 1 25 1 -
+dump a {fps:object[user={numerator:number[user=num(D,25,25)],denominator:number[user=num(D,1,1)]}],ntsc:object[user={numerator:number[user=num(D,30000,30000)],denominator:number[user=num(D,1001,1001)]}],auto:object[user={option:string[user="auto"]}],zero:object[user={numerator:number[user=num(D,0,0)],denominator:number[user=num(D,1,1)]}],zero2:object[user={numerator:number[user=num(D,30,30)],denominator:number[user=num(D,0,0)]}],big:object[user={numerator:number[user=num(I,9999999999,9999999999)],denominator:number[user=num(I,-5,-5)]}],big2:object[user={numerator:number[user=num(D,29,29.969999999999999)],denominator:number[user=num(D,1,1.8999999999999999)]}],empty:object[user={}],notobj:number[user=num(I,3,3)],d:object[default={numerator:number[user=num(D,60,60)],denominator:number[user=num(D,1,1)]}],d2:object[default={option:string[user="none"]}],au:object[auto={numerator:number[user=num(D,24,24)],denominator:number[user=num(D,1,1)]}]}
+item_get_default_frames_per_second ifps 1 50 1 -
+item_get_autoselect_frames_per_second ifps 1 7 7 "x"

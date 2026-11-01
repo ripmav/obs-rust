@@ -1,0 +1,12 @@
+# S-044: the "Video stopped" summary computes the percentage as skipped / total * 100 in floating point; with total 0
+# the quotient is infinite and the line prints "inf%". The counters are plain 32-bit-visible values read as C long.
+vopen v I420 30 1 16 8 2
+vconnect v a 1
+vtex v skipped
+vtex v skipped
+vtex v frames
+vdisconnect v a 1
+vconnect v a 1
+vtex v skipped
+vdisconnect v a 1
+vclose v

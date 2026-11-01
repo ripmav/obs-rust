@@ -1,0 +1,73 @@
+call effect_create file=color_correction_filter.effect -> e1 uniforms=4 techniques=1
+call get_param e1:gamma -> ok
+call get_param e1:color_matrix -> ok
+create a -> ok
+render a
+call filter_begin_cs a format=RGBA space=SRGB allow=ALLOW_DIRECT -> 1
+call set_float e1:gamma 1
+call set_matrix4 e1:color_matrix 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1
+call blend_push
+call blend_function ONE INVSRCALPHA
+call filter_end a e1 size=0x0
+call blend_pop
+call effect_create file=color_correction_filter.effect -> e2 uniforms=4 techniques=1
+call get_param e2:gamma -> ok
+call get_param e2:color_matrix -> ok
+create b -> ok
+render b
+call filter_begin_cs b format=RGBA space=SRGB allow=ALLOW_DIRECT -> 1
+call set_float e2:gamma 0.666666687
+call set_matrix4 e2:color_matrix 0.0271114763 -0.0664230585 0.304659337 0 0.0119283209 0.0986058488 -0.37971285 0 -0.0134050604 0.075747475 0.575053513 0 0.0272945724 0.0324189365 0.103886127 0.75
+call blend_push
+call blend_function ONE INVSRCALPHA
+call filter_end b e2 size=0x0
+call blend_pop
+echo contrast positive
+call effect_create file=color_correction_filter.effect -> e3 uniforms=4 techniques=1
+call get_param e3:gamma -> ok
+call get_param e3:color_matrix -> ok
+create c -> ok
+render c
+call filter_begin_cs c format=RGBA space=SRGB allow=ALLOW_DIRECT -> 1
+call set_float e3:gamma 3
+call set_matrix4 e3:color_matrix 3 0 0 0 0 3 0 0 0 0 3 0 0 0 0 1
+call blend_push
+call blend_function ONE INVSRCALPHA
+call filter_end c e3 size=0x0
+call blend_pop
+echo spaces: 16F uses RGBA16F, extended skips, scrgb is not in the preferred list but is passed through
+render b
+call filter_begin_cs b format=RGBA16F space=SRGB_16F allow=ALLOW_DIRECT -> 1
+call set_float e2:gamma 0.666666687
+call set_matrix4 e2:color_matrix 0.0271114763 -0.0664230585 0.304659337 0 0.0119283209 0.0986058488 -0.37971285 0 -0.0134050604 0.075747475 0.575053513 0 0.0272945724 0.0324189365 0.103886127 0.75
+call blend_push
+call blend_function ONE INVSRCALPHA
+call filter_end b e2 size=0x0
+call blend_pop
+cs b -> SRGB_16F
+render b
+call skip_video_filter b
+cs b -> 709_EXTENDED
+render b
+call filter_begin_cs b format=RGBA16F space=709_SCRGB allow=ALLOW_DIRECT -> 1
+call set_float e2:gamma 0.666666687
+call set_matrix4 e2:color_matrix 0.0271114763 -0.0664230585 0.304659337 0 0.0119283209 0.0986058488 -0.37971285 0 -0.0134050604 0.075747475 0.575053513 0 0.0272945724 0.0324189365 0.103886127 0.75
+call blend_push
+call blend_function ONE INVSRCALPHA
+call filter_end b e2 size=0x0
+call blend_pop
+cs b -> 709_SCRGB
+echo no target: color space query falls back to SRGB; render still asks the host
+call effect_create file=color_correction_filter.effect -> e4 uniforms=4 techniques=1
+call get_param e4:gamma -> ok
+call get_param e4:color_matrix -> ok
+create n -> ok
+render n
+call filter_begin_cs n format=RGBA space=SRGB allow=ALLOW_DIRECT -> 1
+call set_float e4:gamma 1
+call set_matrix4 e4:color_matrix 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1
+call blend_push
+call blend_function ONE INVSRCALPHA
+call filter_end n e4 size=0x0
+call blend_pop
+cs n -> SRGB

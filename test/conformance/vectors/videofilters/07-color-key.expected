@@ -1,0 +1,161 @@
+call effect_create file=color_key_filter.effect -> e1 uniforms=9 techniques=1
+call get_param e1:color -> ok
+call get_param e1:contrast -> ok
+call get_param e1:brightness -> ok
+call get_param e1:gamma -> ok
+call get_param e1:key_color -> ok
+call get_param e1:similarity -> ok
+call get_param e1:smoothness -> ok
+create a -> ok
+render a
+call filter_begin a format=RGBA allow=ALLOW_DIRECT -> 1
+call set_vec4 e1:color 1 1 1 1
+call set_float e1:contrast 1
+call set_float e1:brightness 0
+call set_float e1:gamma 1
+call set_vec4 e1:key_color 0 1 0 1
+call set_float e1:similarity 0.0799999982
+call set_float e1:smoothness 0.0500000007
+call filter_end a e1 size=0x0
+call effect_create file=color_key_filter_v2.effect -> e2 uniforms=9 techniques=1
+call get_param e2:opacity -> ok
+call get_param e2:contrast -> ok
+call get_param e2:brightness -> ok
+call get_param e2:gamma -> ok
+call get_param e2:key_color -> ok
+call get_param e2:similarity -> ok
+call get_param e2:smoothness -> ok
+create b -> ok
+render b
+call filter_begin_cs b format=RGBA space=SRGB allow=ALLOW_DIRECT -> 1
+call set_float e2:opacity 1
+call set_float e2:contrast 1
+call set_float e2:brightness 0
+call set_float e2:gamma 1
+call set_vec4 e2:key_color 0 1 0 1
+call set_float e2:similarity 0.0799999982
+call set_float e2:smoothness 0.0500000007
+call blend_push
+call blend_function ONE INVSRCALPHA
+call filter_end b e2 size=0x0
+call blend_pop
+call effect_create file=color_key_filter_v2.effect -> e3 uniforms=9 techniques=1
+call get_param e3:opacity -> ok
+call get_param e3:contrast -> ok
+call get_param e3:brightness -> ok
+call get_param e3:gamma -> ok
+call get_param e3:key_color -> ok
+call get_param e3:similarity -> ok
+call get_param e3:smoothness -> ok
+create c -> ok
+render c
+call filter_begin_cs c format=RGBA space=SRGB allow=ALLOW_DIRECT -> 1
+call set_float e3:opacity 1
+call set_float e3:contrast 1
+call set_float e3:brightness 0
+call set_float e3:gamma 1
+call set_vec4 e3:key_color 0 0 1 1
+call set_float e3:similarity 0.0799999982
+call set_float e3:smoothness 0.0500000007
+call blend_push
+call blend_function ONE INVSRCALPHA
+call filter_end c e3 size=0x0
+call blend_pop
+call effect_create file=color_key_filter_v2.effect -> e4 uniforms=9 techniques=1
+call get_param e4:opacity -> ok
+call get_param e4:contrast -> ok
+call get_param e4:brightness -> ok
+call get_param e4:gamma -> ok
+call get_param e4:key_color -> ok
+call get_param e4:similarity -> ok
+call get_param e4:smoothness -> ok
+create e -> ok
+render e
+call filter_begin_cs e format=RGBA space=SRGB allow=ALLOW_DIRECT -> 1
+call set_float e4:opacity 1
+call set_float e4:contrast 1
+call set_float e4:brightness 0
+call set_float e4:gamma 1
+call set_vec4 e4:key_color 1 0 0 1
+call set_float e4:similarity 0.0799999982
+call set_float e4:smoothness 0.0500000007
+call blend_push
+call blend_function ONE INVSRCALPHA
+call filter_end e e4 size=0x0
+call blend_pop
+call effect_create file=color_key_filter_v2.effect -> e5 uniforms=9 techniques=1
+call get_param e5:opacity -> ok
+call get_param e5:contrast -> ok
+call get_param e5:brightness -> ok
+call get_param e5:gamma -> ok
+call get_param e5:key_color -> ok
+call get_param e5:similarity -> ok
+call get_param e5:smoothness -> ok
+create f -> ok
+render f
+call filter_begin_cs f format=RGBA space=SRGB allow=ALLOW_DIRECT -> 1
+call set_float e5:opacity 1
+call set_float e5:contrast 1
+call set_float e5:brightness 0
+call set_float e5:gamma 1
+call set_vec4 e5:key_color 1 0 1 1
+call set_float e5:similarity 0.0799999982
+call set_float e5:smoothness 0.0500000007
+call blend_push
+call blend_function ONE INVSRCALPHA
+call filter_end f e5 size=0x0
+call blend_pop
+call effect_create file=color_key_filter_v2.effect -> e6 uniforms=9 techniques=1
+call get_param e6:opacity -> ok
+call get_param e6:contrast -> ok
+call get_param e6:brightness -> ok
+call get_param e6:gamma -> ok
+call get_param e6:key_color -> ok
+call get_param e6:similarity -> ok
+call get_param e6:smoothness -> ok
+create g -> ok
+render g
+call filter_begin_cs g format=RGBA space=SRGB allow=ALLOW_DIRECT -> 1
+call set_float e6:opacity 0.25
+call set_float e6:contrast 0.5
+call set_float e6:brightness -0.5
+call set_float e6:gamma 0.5
+call set_vec4 e6:key_color 0.600000024 0.400000006 0.200000003 1
+call set_float e6:similarity 1
+call set_float e6:smoothness 0.00100000005
+call blend_push
+call blend_function ONE INVSRCALPHA
+call filter_end g e6 size=0x0
+call blend_pop
+echo v1: srgb-unaware vec4_from_rgba; opacity percent, contrast branch, brightness halved
+call effect_create file=color_key_filter.effect -> e7 uniforms=9 techniques=1
+call get_param e7:color -> ok
+call get_param e7:contrast -> ok
+call get_param e7:brightness -> ok
+call get_param e7:gamma -> ok
+call get_param e7:key_color -> ok
+call get_param e7:similarity -> ok
+call get_param e7:smoothness -> ok
+create h -> ok
+render h
+call filter_begin h format=RGBA allow=ALLOW_DIRECT -> 1
+call set_vec4 e7:color 1 1 1 0.200000003
+call set_float e7:contrast 0.5
+call set_float e7:brightness 0.200000003
+call set_float e7:gamma 1
+call set_vec4 e7:key_color 0.600000024 0.400000006 0.200000003 1
+call set_float e7:similarity 0.0799999982
+call set_float e7:smoothness 0.0500000007
+call filter_end h e7 size=0x0
+render b
+call skip_video_filter b
+render h
+call filter_begin h format=RGBA allow=ALLOW_DIRECT -> 1
+call set_vec4 e7:color 1 1 1 0.200000003
+call set_float e7:contrast 0.5
+call set_float e7:brightness 0.200000003
+call set_float e7:gamma 1
+call set_vec4 e7:key_color 0.600000024 0.400000006 0.200000003 1
+call set_float e7:similarity 0.0799999982
+call set_float e7:smoothness 0.0500000007
+call filter_end h e7 size=0x0

@@ -1,0 +1,27 @@
+backend lua_load
+load -> 1
+backend create /s/r.lua
+backend load r.lua -> 1 deferred_done=0
+backend update r.lua k=""
+create S0 -> ok
+backend unload r.lua
+backend load r.lua -> 1 deferred_done=3
+backend update r.lua k=""
+reload S0 -> 1
+deferred (3): a b c
+backend create /s/bad.lua
+backend load bad.lua -> 0 deferred_done=3
+create S1 -> ok
+backend load bad.lua -> 0 deferred_done=3
+reload S1 -> 0
+backend unload r.lua
+backend destroy r.lua
+destroy S0 done
+backend destroy bad.lua
+destroy S1 done
+backend lua_unload
+log info [Scripting] Total detached callbacks: 0
+info_detached_head_after_unload null
+unload done
+create S2 -> null
+reload - -> 0

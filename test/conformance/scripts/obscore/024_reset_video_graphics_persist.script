@@ -1,0 +1,40 @@
+# The graphics context (device + built-in effects) is created by the first successful
+# obs_reset_video and then kept: later resets only rebuild the video mixes. Effects that are
+# loaded but not required (repeat, bicubic, lanczos, area, bilinear_lowres) may be missing without
+# failing; default_rect.effect is only required (and only loaded) for OpenGL devices.
+startup en-US -
+fake effect_fail repeat.effect
+fake effect_fail bicubic_scale.effect
+fake effect_fail lanczos_scale.effect
+fake effect_fail area.effect
+fake effect_fail bilinear_lowres_scale.effect
+trace gs on
+reset_video
+trace gs off
+base_effect
+report
+# the device is created only once: a second reset does not touch the (now failing) factory
+fake gs_error fail
+fake effect_fail solid.effect
+reset_video
+state
+fake gs_error success
+fake effect_fail_clear 1
+# D3D11 never loads default_rect.effect
+shutdown
+startup en-US -
+fake effect_fail default_rect.effect
+reset_video
+base_effect
+shutdown
+# OpenGL requires it
+startup en-US -
+fake device opengl
+fake effect_fail default_rect.effect
+reset_video
+state
+fake effect_fail_clear 1
+reset_video
+base_effect
+shutdown
+report

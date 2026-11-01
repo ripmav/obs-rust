@@ -1,0 +1,25 @@
+# S-035 NULL arguments. Everything except the D-lines is documented behaviour (silent debug log, neutral return).
+service_null_calls
+# DEFECTS in the reference: these dereference a NULL service (crash). A conforming implementation MUST NOT crash and
+# must return "no codecs" (NULL); the expected file records the reference crash, which matches try-end ok.
+try null_vcodecs
+try null_acodecs
+svc_def A svcA vcodecs acodecs
+svc_register A
+service_create a svcA a -
+service_state a
+# create callback that fails: the service object still exists, with NULL plugin data
+svc_def F svcF create_fail update activate deactivate
+svc_register F
+service_create f svcF f {"k":1}
+service_info f
+service_update f {"k":2}
+service_settings f
+q f typedata
+service_destroy f
+service_list
+# get_properties returning NULL for an instance
+svc_def G svcG props_null
+svc_register G
+service_create g svcG g -
+props g

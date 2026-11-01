@@ -1,0 +1,354 @@
+--- truncated
+ep result=fail
+  errors count=1 has_errors=1
+    err 0 error file="c1" row=1 col=8 msg="Unexpected EOF"
+  ep params=0 structs=0 funcs=0 samplers=0 techniques=0
+  error_string="c1 (1, 8): Unexpected EOF\n"
+ep result=fail
+  errors count=1 has_errors=1
+    err 0 error file="c2" row=1 col=6 msg="Unexpected EOF"
+  ep params=0 structs=0 funcs=0 samplers=0 techniques=0
+  error_string="c2 (1, 6): Unexpected EOF\n"
+ep result=fail
+  errors count=1 has_errors=1
+    err 0 error file="c3" row=1 col=8 msg="Unexpected EOF"
+  ep params=0 structs=0 funcs=0 samplers=0 techniques=0
+  error_string="c3 (1, 8): Unexpected EOF\n"
+--- type / name
+ep result=fail
+  errors count=1 has_errors=1
+    err 0 error file="c4" row=1 col=7 msg="Expected 'name'"
+  ep params=0 structs=0 funcs=0 samplers=0 techniques=0
+  error_string="c4 (1, 7): Expected 'name'\n"
+ep result=fail
+  errors count=2 has_errors=1
+    err 0 error file="c5" row=1 col=10 msg="Expected 'name'"
+    err 1 error file="c5" row=1 col=11 msg="Unexpected EOF"
+  ep params=0 structs=0 funcs=0 samplers=0 techniques=0
+  error_string="c5 (1, 10): Expected 'name'\nc5 (1, 11): Unexpected EOF\n"
+ep result=fail
+  errors count=1 has_errors=1
+    err 0 error file="c6" row=1 col=1 msg="Expected 'type'"
+  ep params=0 structs=0 funcs=0 samplers=0 techniques=0
+  error_string="c6 (1, 1): Expected 'type'\n"
+ep result=ok
+  errors count=0 has_errors=0
+  ep params=1 structs=0 funcs=0 samplers=0 techniques=0
+  ep_param 0 type=float name=y property=0 const=0 uniform=0 texture=0 array_count=0 annotations=0
+  error_string=@null
+effect (effect) params=1 techniques=0 viewproj=- world=-
+  param 0 name=y type=FLOAT annotations=0 default_size=0 default=-
+--- default values
+ep result=fail
+  errors count=2 has_errors=1
+    err 0 error file="d1" row=1 col=11 msg="Expected 'numeric value'"
+    err 1 error file="d1" row=1 col=12 msg="Unexpected EOF"
+  ep params=0 structs=0 funcs=0 samplers=0 techniques=0
+  error_string="d1 (1, 11): Expected 'numeric value'\nd1 (1, 12): Unexpected EOF\n"
+ep result=fail
+  errors count=1 has_errors=1
+    err 0 error file="d2" row=1 col=12 msg="Unexpected EOF"
+  ep params=0 structs=0 funcs=0 samplers=0 techniques=0
+  error_string="d2 (1, 12): Unexpected EOF\n"
+ep result=fail
+  errors count=1 has_errors=1
+    err 0 error file="d3" row=1 col=11 msg="Expected 'numeric value'"
+  ep params=0 structs=0 funcs=0 samplers=0 techniques=0
+  error_string="d3 (1, 11): Expected 'numeric value'\n"
+ep result=fail
+  errors count=1 has_errors=1
+    err 0 error file="d4" row=1 col=13 msg="Expected 'type'"
+  ep params=0 structs=0 funcs=0 samplers=0 techniques=0
+  error_string="d4 (1, 13): Expected 'type'\n"
+ep result=ok
+  errors count=0 has_errors=0
+  ep params=1 structs=0 funcs=0 samplers=0 techniques=0
+  ep_param 0 type=int name=x property=0 const=0 uniform=0 texture=0 array_count=0 annotations=0
+  error_string=@null
+effect (effect) params=1 techniques=0 viewproj=- world=-
+  param 0 name=x type=INT annotations=0 default_size=8 default=0100000000000000 l=[1]
+ep result=fail
+  errors count=1 has_errors=1
+    err 0 error file="d6" row=1 col=9 msg="Expected 'numeric value'"
+  ep params=0 structs=0 funcs=0 samplers=0 techniques=0
+  error_string="d6 (1, 9): Expected 'numeric value'\n"
+ep result=fail
+  errors count=3 has_errors=1
+    err 0 error file="d7" row=1 col=10 msg="Expected 'true or false'"
+    err 1 error file="d7" row=1 col=15 msg="Expected 'name'"
+    err 2 error file="d7" row=1 col=16 msg="Unexpected EOF"
+  ep params=0 structs=0 funcs=0 samplers=0 techniques=0
+  error_string="d7 (1, 10): Expected 'true or false'\nd7 (1, 15): Expected 'name'\nd7 (1, 16): Unexpected EOF\n"
+ep result=fail
+  errors count=2 has_errors=1
+    err 0 error file="d8" row=1 col=10 msg="Expected 'true or false'"
+    err 1 error file="d8" row=1 col=10 msg="Expected 'type'"
+  ep params=0 structs=0 funcs=0 samplers=0 techniques=0
+  error_string="d8 (1, 10): Expected 'true or false'\nd8 (1, 10): Expected 'type'\n"
+ep result=fail
+  errors count=3 has_errors=1
+    err 0 error file="d9" row=1 col=10 msg="Expected 'true or false'"
+    err 1 error file="d9" row=1 col=14 msg="Expected 'name'"
+    err 2 error file="d9" row=1 col=15 msg="Unexpected EOF"
+  ep params=0 structs=0 funcs=0 samplers=0 techniques=0
+  error_string="d9 (1, 10): Expected 'true or false'\nd9 (1, 14): Expected 'name'\nd9 (1, 15): Unexpected EOF\n"
+ep result=fail
+  errors count=1 has_errors=1
+    err 0 error file="d10" row=1 col=15 msg="Expected ','"
+  ep params=0 structs=0 funcs=0 samplers=0 techniques=0
+  error_string="d10 (1, 15): Expected ','\n"
+ep result=fail
+  errors count=1 has_errors=1
+    err 0 error file="d11" row=1 col=19 msg="Expected '}'"
+  ep params=0 structs=0 funcs=0 samplers=0 techniques=0
+  error_string="d11 (1, 19): Expected '}'\n"
+ep result=fail
+  errors count=1 has_errors=1
+    err 0 error file="d12" row=1 col=15 msg="Expected '{'"
+  ep params=0 structs=0 funcs=0 samplers=0 techniques=0
+  error_string="d12 (1, 15): Expected '{'\n"
+ep result=ok
+  errors count=0 has_errors=0
+  ep params=1 structs=0 funcs=0 samplers=0 techniques=0
+  ep_param 0 type=float2 name=x property=0 const=0 uniform=0 texture=0 array_count=0 annotations=0
+  error_string=@null
+effect (effect) params=1 techniques=0 viewproj=- world=-
+  param 0 name=x type=VEC2 annotations=0 default_size=8 default=0000803f00000040 f=[1,2]
+ep result=fail
+  errors count=1 has_errors=1
+    err 0 error file="d14" row=1 col=23 msg="Expected '{'"
+  ep params=0 structs=0 funcs=0 samplers=0 techniques=0
+  error_string="d14 (1, 23): Expected '{'\n"
+ep result=fail
+  errors count=1 has_errors=1
+    err 0 error file="d15" row=1 col=17 msg="Expected ','"
+  ep params=0 structs=0 funcs=0 samplers=0 techniques=0
+  error_string="d15 (1, 17): Expected ','\n"
+ep result=fail
+  errors count=1 has_errors=1
+    err 0 error file="d16" row=1 col=20 msg="Expected '{'"
+  ep params=0 structs=0 funcs=0 samplers=0 techniques=0
+  error_string="d16 (1, 20): Expected '{'\n"
+ep result=fail
+  errors count=2 has_errors=1
+    err 0 error file="d17" row=1 col=19 msg="Expected 'name'"
+    err 1 error file="d17" row=1 col=20 msg="Unexpected EOF"
+  ep params=0 structs=0 funcs=0 samplers=0 techniques=0
+  error_string="d17 (1, 19): Expected 'name'\nd17 (1, 20): Unexpected EOF\n"
+ep result=fail
+  errors count=1 has_errors=1
+    err 0 error file="d18" row=1 col=14 msg="Expected 'numeric value'"
+  ep params=0 structs=0 funcs=0 samplers=0 techniques=0
+  error_string="d18 (1, 14): Expected 'numeric value'\n"
+ep result=ok
+  errors count=0 has_errors=0
+  ep params=1 structs=0 funcs=0 samplers=0 techniques=0
+  ep_param 0 type=float2 name=x property=0 const=0 uniform=0 texture=0 array_count=0 annotations=0
+  error_string=@null
+effect (effect) params=1 techniques=0 viewproj=- world=-
+  param 0 name=x type=VEC2 annotations=0 default_size=8 default=000080bf00000040 f=[-1,2]
+ep result=fail
+  errors count=1 has_errors=1
+    err 0 error file="d20" row=1 col=14 msg="Expected 'numeric value'"
+  ep params=0 structs=0 funcs=0 samplers=0 techniques=0
+  error_string="d20 (1, 14): Expected 'numeric value'\n"
+ep result=ok
+  errors count=0 has_errors=0
+  ep params=1 structs=0 funcs=0 samplers=0 techniques=0
+  ep_param 0 type=float name=x property=0 const=0 uniform=0 texture=0 array_count=0 annotations=0
+  error_string=@null
+effect (effect) params=1 techniques=0 viewproj=- world=-
+  param 0 name=x type=FLOAT annotations=0 default_size=4 default=000080bf f=[-1]
+ep result=fail
+  errors count=1 has_errors=1
+    err 0 error file="d22" row=1 col=11 msg="Expected 'numeric value'"
+  ep params=0 structs=0 funcs=0 samplers=0 techniques=0
+  error_string="d22 (1, 11): Expected 'numeric value'\n"
+ep result=ok
+  errors count=0 has_errors=0
+  ep params=1 structs=0 funcs=0 samplers=0 techniques=0
+  ep_param 0 type=float name=x property=0 const=0 uniform=0 texture=0 array_count=0 annotations=0
+  error_string=@null
+effect (effect) params=1 techniques=0 viewproj=- world=-
+  param 0 name=x type=FLOAT annotations=0 default_size=4 default=0000803f f=[1]
+ep result=ok
+  errors count=0 has_errors=0
+  ep params=1 structs=0 funcs=0 samplers=0 techniques=0
+  ep_param 0 type=int name=x property=0 const=0 uniform=0 texture=0 array_count=0 annotations=0
+  error_string=@null
+effect (effect) params=1 techniques=0 viewproj=- world=-
+  param 0 name=x type=INT annotations=0 default_size=8 default=0000000000000000 l=[0]
+ep result=ok
+  errors count=0 has_errors=0
+  ep params=1 structs=0 funcs=0 samplers=0 techniques=0
+  ep_param 0 type=int name=x property=0 const=0 uniform=0 texture=0 array_count=0 annotations=0
+  error_string=@null
+effect (effect) params=1 techniques=0 viewproj=- world=-
+  param 0 name=x type=INT annotations=0 default_size=8 default=ffffffffffffff7f l=[9223372036854775807]
+ep result=ok
+  errors count=0 has_errors=0
+  ep params=1 structs=0 funcs=0 samplers=0 techniques=0
+  ep_param 0 type=float name=x property=0 const=0 uniform=0 texture=0 array_count=0 annotations=0
+  error_string=@null
+effect (effect) params=1 techniques=0 viewproj=- world=-
+  param 0 name=x type=FLOAT annotations=0 default_size=4 default=0050c347 f=[100000]
+ep result=fail
+  errors count=1 has_errors=1
+    err 0 error file="d27" row=1 col=15 msg="Expected 'type'"
+  ep params=0 structs=0 funcs=0 samplers=0 techniques=0
+  error_string="d27 (1, 15): Expected 'type'\n"
+ep result=fail
+  errors count=1 has_errors=1
+    err 0 error file="d28" row=1 col=11 msg="Expected 'numeric value'"
+  ep params=0 structs=0 funcs=0 samplers=0 techniques=0
+  error_string="d28 (1, 11): Expected 'numeric value'\n"
+--- matrix sizes
+ep result=fail
+  errors count=2 has_errors=1
+    err 0 error file="m1" row=1 col=10 msg="Invalid row count"
+    err 1 error file="m1" row=1 col=15 msg="Expected ','"
+  ep params=0 structs=0 funcs=0 samplers=0 techniques=0
+  error_string="m1 (1, 10): Invalid row count\nm1 (1, 15): Expected ','\n"
+ep result=fail
+  errors count=2 has_errors=1
+    err 0 error file="m2" row=1 col=10 msg="Invalid row count"
+    err 1 error file="m2" row=1 col=13 msg="Expected 'type'"
+  ep params=0 structs=0 funcs=0 samplers=0 techniques=0
+  error_string="m2 (1, 10): Invalid row count\nm2 (1, 13): Expected 'type'\n"
+ep result=fail
+  errors count=2 has_errors=1
+    err 0 error file="m3" row=1 col=12 msg="Invalid column count"
+    err 1 error file="m3" row=1 col=17 msg="Expected ','"
+  ep params=0 structs=0 funcs=0 samplers=0 techniques=0
+  error_string="m3 (1, 12): Invalid column count\nm3 (1, 17): Expected ','\n"
+ep result=fail
+  errors count=2 has_errors=1
+    err 0 error file="m4" row=1 col=12 msg="Invalid column count"
+    err 1 error file="m4" row=1 col=15 msg="Expected 'type'"
+  ep params=0 structs=0 funcs=0 samplers=0 techniques=0
+  error_string="m4 (1, 12): Invalid column count\nm4 (1, 15): Expected 'type'\n"
+ep result=fail
+  errors count=1 has_errors=1
+    err 0 error file="m5" row=1 col=21 msg="Expected ','"
+  ep params=0 structs=0 funcs=0 samplers=0 techniques=0
+  error_string="m5 (1, 21): Expected ','\n"
+ep result=fail
+  errors count=1 has_errors=1
+    err 0 error file="m6" row=1 col=25 msg="Expected '}'"
+  ep params=0 structs=0 funcs=0 samplers=0 techniques=0
+  error_string="m6 (1, 25): Expected '}'\n"
+ep result=fail
+  errors count=1 has_errors=1
+    err 0 error file="m7" row=1 col=12 msg="Expected 'numeric value'"
+  ep params=0 structs=0 funcs=0 samplers=0 techniques=0
+  error_string="m7 (1, 12): Expected 'numeric value'\n"
+ep result=fail
+  errors count=2 has_errors=1
+    err 0 error file="m8" row=1 col=8 msg="Invalid row count"
+    err 1 error file="m8" row=1 col=13 msg="Expected ','"
+  ep params=0 structs=0 funcs=0 samplers=0 techniques=0
+  error_string="m8 (1, 8): Invalid row count\nm8 (1, 13): Expected ','\n"
+ep result=ok
+  errors count=0 has_errors=0
+  ep params=1 structs=0 funcs=0 samplers=0 techniques=0
+  ep_param 0 type=int2x2 name=x property=0 const=0 uniform=0 texture=0 array_count=0 annotations=0
+  error_string=@null
+effect (effect) params=1 techniques=0 viewproj=- world=-
+  param 0 name=x type=UNKNOWN annotations=0 default_size=32 default=0100000000000000020000000000000003000000000000000400000000000000 f=[1.40129846e-45,0,2.80259693e-45,0,4.20389539e-45,0,5.60519386e-45,0]
+ep result=ok
+  errors count=0 has_errors=0
+  ep params=1 structs=0 funcs=0 samplers=0 techniques=0
+  ep_param 0 type=float4x4 name=x property=0 const=0 uniform=0 texture=0 array_count=0 annotations=0
+  error_string=@null
+effect (effect) params=1 techniques=0 viewproj=- world=-
+  param 0 name=x type=MATRIX4X4 annotations=0 default_size=64 default=0000803f0000004000004040000080400000a0400000c0400000e040000000410000104100002041000030410000404100005041000060410000704100008041 f=[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16]
+ep result=fail
+  errors count=1 has_errors=1
+    err 0 error file="m11" row=1 col=26 msg="Expected ','"
+  ep params=0 structs=0 funcs=0 samplers=0 techniques=0
+  error_string="m11 (1, 26): Expected ','\n"
+--- unsupported assignment types
+ep result=fail
+  errors count=2 has_errors=1
+    err 0 error file="u1" row=1 col=8 msg="Invalid type 'half' used for assignment"
+    err 1 error file="u1" row=1 col=8 msg="Expected 'type'"
+  ep params=0 structs=0 funcs=0 samplers=0 techniques=0
+  error_string="u1 (1, 8): Invalid type 'half' used for assignment\nu1 (1, 8): Expected 'type'\n"
+ep result=fail
+  errors count=2 has_errors=1
+    err 0 error file="u2" row=1 col=10 msg="Invalid type 'double' used for assignment"
+    err 1 error file="u2" row=1 col=10 msg="Expected 'type'"
+  ep params=0 structs=0 funcs=0 samplers=0 techniques=0
+  error_string="u2 (1, 10): Invalid type 'double' used for assignment\nu2 (1, 10): Expected 'type'\n"
+ep result=fail
+  errors count=2 has_errors=1
+    err 0 error file="u3" row=1 col=11 msg="Invalid type 'sampler' used for assignment"
+    err 1 error file="u3" row=1 col=11 msg="Expected 'type'"
+  ep params=0 structs=0 funcs=0 samplers=0 techniques=0
+  error_string="u3 (1, 11): Invalid type 'sampler' used for assignment\nu3 (1, 11): Expected 'type'\n"
+ep result=fail
+  errors count=1 has_errors=1
+    err 0 error file="u4" row=1 col=15 msg="Expected 'texture path string'"
+  ep params=0 structs=0 funcs=0 samplers=0 techniques=0
+  error_string="u4 (1, 15): Expected 'texture path string'\n"
+ep result=fail
+  errors count=1 has_errors=1
+    err 0 error file="u5" row=1 col=19 msg="Unexpected EOF"
+  ep params=0 structs=0 funcs=0 samplers=0 techniques=0
+  error_string="u5 (1, 19): Unexpected EOF\n"
+ep result=fail
+  errors count=1 has_errors=1
+    err 0 error file="u6" row=1 col=12 msg="Expected 'string'"
+  ep params=0 structs=0 funcs=0 samplers=0 techniques=0
+  error_string="u6 (1, 12): Expected 'string'\n"
+ep result=ok
+  errors count=0 has_errors=0
+  ep params=1 structs=0 funcs=0 samplers=0 techniques=0
+  ep_param 0 type=string name=s property=0 const=0 uniform=0 texture=0 array_count=0 annotations=0
+  error_string=@null
+effect (effect) params=1 techniques=0 viewproj=- world=-
+  param 0 name=s type=STRING annotations=0 default_size=2 default="x"
+ep result=ok
+  errors count=0 has_errors=0
+  ep params=1 structs=0 funcs=0 samplers=0 techniques=0
+  ep_param 0 type=string name=s property=0 const=0 uniform=0 texture=0 array_count=0 annotations=0
+  error_string=@null
+effect (effect) params=1 techniques=0 viewproj=- world=-
+  param 0 name=s type=STRING annotations=0 default_size=1 default=""
+--- brace and stray tokens at top level
+ep result=fail
+  errors count=1 has_errors=1
+    err 0 error file="s1" row=1 col=1 msg="Unexpected code segment"
+  ep params=1 structs=0 funcs=0 samplers=0 techniques=0
+  ep_param 0 type=float name=y property=0 const=0 uniform=0 texture=0 array_count=0 annotations=0
+  error_string="s1 (1, 1): Unexpected code segment\n"
+ep result=fail
+  errors count=1 has_errors=1
+    err 0 error file="s2" row=1 col=10 msg="Expected 'type'"
+  ep params=1 structs=0 funcs=0 samplers=0 techniques=0
+  ep_param 0 type=float name=y property=0 const=0 uniform=0 texture=0 array_count=0 annotations=0
+  error_string="s2 (1, 10): Expected 'type'\n"
+ep result=fail
+  errors count=1 has_errors=1
+    err 0 error file="s3" row=1 col=10 msg="Expected 'type'"
+  ep params=1 structs=0 funcs=0 samplers=0 techniques=0
+  ep_param 0 type=float name=y property=0 const=0 uniform=0 texture=0 array_count=0 annotations=0
+  error_string="s3 (1, 10): Expected 'type'\n"
+ep result=fail
+  errors count=1 has_errors=1
+    err 0 error file="s4" row=1 col=10 msg="Expected 'type'"
+  ep params=1 structs=0 funcs=0 samplers=0 techniques=0
+  ep_param 0 type=float name=y property=0 const=0 uniform=0 texture=0 array_count=0 annotations=0
+  error_string="s4 (1, 10): Expected 'type'\n"
+ep result=fail
+  errors count=1 has_errors=1
+    err 0 error file="s5" row=1 col=1 msg="Expected 'type'"
+  ep params=1 structs=0 funcs=0 samplers=0 techniques=0
+  ep_param 0 type=float name=z property=0 const=0 uniform=0 texture=0 array_count=0 annotations=0
+  error_string="s5 (1, 1): Expected 'type'\n"
+ep result=fail
+  errors count=1 has_errors=1
+    err 0 error file="s6" row=1 col=1 msg="Expected 'type'"
+  ep params=1 structs=0 funcs=0 samplers=0 techniques=0
+  ep_param 0 type=float name=z property=0 const=0 uniform=0 texture=0 array_count=0 annotations=0
+  error_string="s6 (1, 1): Expected 'type'\n"

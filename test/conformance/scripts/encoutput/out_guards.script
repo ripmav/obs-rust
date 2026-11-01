@@ -1,0 +1,40 @@
+# Encoder attachment rules and capability guards.
+video 30 1 1280 720
+audio 48000
+venc v0
+venc v1
+aenc a0
+aenc a1
+out single av,encoded
+out multi av,encoded,multi_a,multi_v
+out vonly video,encoded
+out raw video
+echo --- single track outputs accept index 0 only
+set_venc single v0 0
+set_venc single v1 1
+set_aenc single a0 0
+set_aenc single a1 1
+echo --- multi track outputs accept indices below the maximum
+set_venc multi v0 0
+set_venc multi v1 1
+set_aenc multi a0 0
+set_aenc multi a1 5
+set_aenc multi a1 6
+set_venc multi v1 9
+set_venc multi v0 10
+echo --- wrong flags: audio encoder on a video-only output, encoders on a raw output
+set_aenc vonly a0 0
+set_venc raw v0 0
+echo --- wrong encoder type
+set_venc vonly a0 0
+echo --- replace and clear
+set_venc single v1 0
+set_venc single - 0
+encstate v0
+encstate v1
+echo --- delay only on encoded outputs
+set_delay single 5 1
+set_delay raw 5 1
+info raw
+echo --- unknown output id
+out_unknown nosuchoutput

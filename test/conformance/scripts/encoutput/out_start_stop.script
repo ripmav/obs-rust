@@ -1,0 +1,28 @@
+# Output start / stop / force-stop: return values, signal order and what is observable in between.
+video 30 1 1280 720
+audio 48000
+venc v
+aenc a
+out o av,encoded autobegin=1
+set_venc o v
+set_aenc o a
+echo --- stop and force_stop on an idle output do nothing visible except force_stop's signal
+stop o
+info o
+force_stop o
+echo --- plugin start succeeds and begins capture synchronously
+start o
+info o
+echo --- start while active: the plugin start callback is called again (no guard in obs_output_start)
+start o
+echo --- stop: stopping, plugin stop (ts = clock), then the plugin ends capture
+clock 777
+stop o
+info o
+state o
+echo --- stop again: nothing
+stop o
+echo --- second run works
+start o
+force_stop o
+state o

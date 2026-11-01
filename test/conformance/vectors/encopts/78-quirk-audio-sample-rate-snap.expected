@@ -1,0 +1,48 @@
+av.find_encoder aac -> found
+log info ---------------------------------
+log info [FFmpeg aac encoder: 'enc'] bitrate: 128, channels: 2, channel_layout: layout-2-3, track: 1 
+av.open2 codec=aac bit_rate=128000 sample_rate=8000 channels=2 sample_fmt=8 strict=-2 flags=4194304
+av.samples_alloc channels=2 nb_samples=1024 fmt=8
+aud_create aac ok type=aac
+aud state bit_rate=128000 sample_rate=8000 channels=2 order=1 mask=0x3 sample_fmt=8
+aud state frame_size=1024 frame_size_bytes=4096 planes=2 audio_size=4 strict=-2 flags=4194304
+av.find_encoder aac -> found
+log info ---------------------------------
+log info [FFmpeg aac encoder: 'enc'] bitrate: 128, channels: 2, channel_layout: layout-2-3, track: 1 
+av.open2 codec=aac bit_rate=128000 sample_rate=22000 channels=2 sample_fmt=8 strict=-2 flags=4194304
+av.samples_alloc channels=2 nb_samples=1024 fmt=8
+aud_create aac ok type=aac
+aud state bit_rate=128000 sample_rate=22000 channels=2 order=1 mask=0x3 sample_fmt=8
+aud state frame_size=1024 frame_size_bytes=4096 planes=2 audio_size=4 strict=-2 flags=4194304
+av.find_encoder aac -> found
+log info ---------------------------------
+log info [FFmpeg aac encoder: 'enc'] bitrate: 128, channels: 2, channel_layout: layout-2-3, track: 1 
+av.open2 codec=aac bit_rate=128000 sample_rate=22050 channels=2 sample_fmt=8 strict=-2 flags=4194304
+av.samples_alloc channels=2 nb_samples=1024 fmt=8
+aud_create aac ok type=aac
+aud state bit_rate=128000 sample_rate=22050 channels=2 order=1 mask=0x3 sample_fmt=8
+aud state frame_size=1024 frame_size_bytes=4096 planes=2 audio_size=4 strict=-2 flags=4194304
+av.find_encoder aac -> found
+log info ---------------------------------
+log info [FFmpeg aac encoder: 'enc'] bitrate: 128, channels: 2, channel_layout: layout-2-3, track: 1 
+av.open2 codec=aac bit_rate=128000 sample_rate=44100 channels=2 sample_fmt=8 strict=-2 flags=4194304
+av.samples_alloc channels=2 nb_samples=1024 fmt=8
+aud_create aac ok type=aac
+aud state bit_rate=128000 sample_rate=44100 channels=2 order=1 mask=0x3 sample_fmt=8
+aud state frame_size=1024 frame_size_bytes=4096 planes=2 audio_size=4 strict=-2 flags=4194304
+av.find_encoder aac -> found
+log info ---------------------------------
+log info [FFmpeg aac encoder: 'enc'] bitrate: 128, channels: 2, channel_layout: layout-2-3, track: 1 
+av.open2 codec=aac bit_rate=128000 sample_rate=44100 channels=2 sample_fmt=8 strict=-2 flags=4194304
+av.samples_alloc channels=2 nb_samples=1024 fmt=8
+aud_create aac ok type=aac
+aud state bit_rate=128000 sample_rate=44100 channels=2 order=1 mask=0x3 sample_fmt=8
+aud state frame_size=1024 frame_size_bytes=4096 planes=2 audio_size=4 strict=-2 flags=4194304
+av.find_encoder aac -> found
+log info ---------------------------------
+log info [FFmpeg aac encoder: 'enc'] bitrate: 128, channels: 2, channel_layout: layout-2-3, track: 1 
+av.open2 codec=aac bit_rate=128000 sample_rate=44100 channels=2 sample_fmt=8 strict=-2 flags=4194304
+av.samples_alloc channels=2 nb_samples=1024 fmt=8
+aud_create aac ok type=aac
+aud state bit_rate=128000 sample_rate=44100 channels=2 order=1 mask=0x3 sample_fmt=8
+aud state frame_size=1024 frame_size_bytes=4096 planes=2 audio_size=4 strict=-2 flags=4194304

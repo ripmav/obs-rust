@@ -1,0 +1,12 @@
+# Debug markers: NULL name becomes "(null)"; the formatted variant truncates to 63 characters and a
+# NULL format behaves like a NULL name.
+trace 0
+gs_create g
+gs_enter_context g
+trace 1
+gs_debug_marker_begin 1 0 0 1 "Pass"
+gs_debug_marker_begin 0 1 0 1 -
+gs_debug_marker_begin_format "frame %s" 42
+gs_debug_marker_begin_format "0123456789012345678901234567890123456789012345678901234567890123456789"
+gs_debug_marker_begin_format null
+gs_debug_marker_end

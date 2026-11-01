@@ -1,0 +1,34 @@
+# S-025 encoder options: wrappers that #include the real plugin sources + recording fakes.
+test/conformance/gen/encopts_runner.c
+test/conformance/gen/encopts_stubs.c
+test/conformance/gen/encopts_x264.c
+test/conformance/gen/encopts_qsv.c
+test/conformance/gen/encopts_fdk.c
+test/conformance/gen/encopts_nvenc.c
+test/conformance/gen/encopts_vid.c
+test/conformance/gen/encopts_aud.c
+plugins/obs-nvenc/nvenc-opts-parser.c
+plugins/obs-nvenc/nvenc-properties.c
+plugins/obs-ffmpeg/obs-ffmpeg-video-encoders.c
+libobs/obs-properties.c
+libobs/graphics/vec2.c
+libobs/graphics/vec3.c
+libobs/graphics/vec4.c
+libobs/graphics/quat.c
+libobs/graphics/axisang.c
+libobs/graphics/matrix3.c
+libobs/graphics/matrix4.c
+libobs/graphics/plane.c
+libobs/graphics/math-extra.c
+libobs/obs-data.c
+shared/opts-parser/opts-parser.c
+-ljansson
+# include paths are relative to test/conformance (run.sh must be started there), like the libcaption area
+-Igen/encopts_inc
+-I../../shared/opts-parser
+-I../../deps/glad/include
+-Wno-deprecated-declarations
+-DENABLE_HEVC
+-ffunction-sections
+-fdata-sections
+-Wl,--gc-sections

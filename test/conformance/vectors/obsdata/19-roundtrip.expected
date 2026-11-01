@@ -1,0 +1,22 @@
+a_push ar 0
+a_push ar 1
+json a "{\"s\":\"caf\xc3\xa9 \\\"quoted\\\" \\\\ back\\nslash\",\"i\":123456789012,\"d\":1.0,\"e\":0.1,\"f\":1e22,\"b\":true,\"o\":{\"x\":1,\"y\":2.0,\"oo\":{\"deep\":\"d\"}},\"list\":[{\"id\":1},{\"id\":\"two\"}],\"nothing\":null}"
+json_pretty a "{\n    \"s\": \"caf\xc3\xa9 \\\"quoted\\\" \\\\ back\\nslash\",\n    \"i\": 123456789012,\n    \"d\": 1.0,\n    \"e\": 0.1,\n    \"f\": 1e22,\n    \"b\": true,\n    \"o\": {\n        \"x\": 1,\n        \"y\": 2.0,\n        \"oo\": {\n            \"deep\": \"d\"\n        }\n    },\n    \"list\": [\n        {\n            \"id\": 1\n        },\n        {\n            \"id\": \"two\"\n        }\n    ],\n    \"nothing\": null\n}"
+json_defaults a "{\"s\":\"caf\xc3\xa9 \\\"quoted\\\" \\\\ back\\nslash\",\"i\":123456789012,\"d\":1.0,\"e\":0.1,\"f\":1e22,\"b\":true,\"o\":{\"x\":1,\"y\":2.0,\"oo\":{\"deep\":\"d\"}},\"list\":[{\"id\":1},{\"id\":\"two\"}],\"nothing\":null,\"dflt\":5,\"auto\":6}"
+echo --- read the compact text back
+json a "{\"s\":\"caf\xc3\xa9 \\\"quoted\\\" \\\\ back\\nslash\",\"i\":123456789012,\"d\":1.0,\"e\":0.1,\"f\":1e22,\"b\":true,\"o\":{\"x\":1,\"y\":2.0,\"oo\":{\"deep\":\"d\"}},\"list\":[{\"id\":1},{\"id\":\"two\"}],\"nothing\":null}"
+from_json b ok
+json b "{\"s\":\"caf\xc3\xa9 \\\"quoted\\\" \\\\ back\\nslash\",\"i\":123456789012,\"d\":1.0,\"e\":0.1,\"f\":1e22,\"b\":true,\"o\":{\"x\":1,\"y\":2.0,\"oo\":{\"deep\":\"d\"}},\"list\":[{\"id\":1},{\"id\":\"two\"}],\"nothing\":null}"
+dump b {s:string[user="caf\xc3\xa9 \"quoted\" \\ back\nslash"],i:number[user=num(I,123456789012,123456789012)],d:number[user=num(D,1,1)],e:number[user=num(D,0,0.10000000000000001)],f:number[user=num(D,~,1e+22)],b:bool[user=true],o:object[user={x:number[user=num(I,1,1)],y:number[user=num(D,2,2)],oo:object[user={deep:string[user="d"]}]}],list:array[user=[{id:number[user=num(I,1,1)]},{id:string[user="two"]}]],nothing:object[user=null]}
+get_double b d 1
+get_int b i 123456789012
+echo --- an int stays an int, a double stays a double, through two rounds
+from_json c2 ok
+dump c2 {i:number[user=num(I,2,2)],d:number[user=num(D,2,2)]}
+json c2 "{\"i\":2,\"d\":2.0}"
+echo --- apply copy of a parsed object is independent
+json t "{\"s\":\"caf\xc3\xa9 \\\"quoted\\\" \\\\ back\\nslash\",\"i\":123456789012,\"d\":1.0,\"e\":0.1,\"f\":1e22,\"b\":true,\"o\":{\"x\":1,\"y\":2.0,\"oo\":{\"deep\":\"d\"}},\"list\":[{\"id\":1},{\"id\":\"two\"}]}"
+echo --- pretty text reads back the same
+from_json p ok
+json p "{\"k\":[{\"a\":1}],\"m\":{}}"
+json_pretty p "{\n    \"k\": [\n        {\n            \"a\": 1\n        }\n    ],\n    \"m\": {}\n}"

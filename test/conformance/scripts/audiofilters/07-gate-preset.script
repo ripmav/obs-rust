@@ -1,0 +1,51 @@
+# CORE/QUIRK. expander_update with presets=gate on an expander instance created as expander (and vice versa)
+# clears the settings and re-applies the preset's defaults; the switch happens only on a change of preset.
+# NOTE: under AddressSanitizer the gate->expander switch reports a heap-use-after-free inside the reference (spec D-2); plain builds behave as shown.
+audio 2 48000
+data u
+set u presets string gate
+create g expander u
+dump @g
+state g
+echo update-with-user-values-in-gate-mode
+data v
+set v ratio double 3
+update g v
+dump @g
+state g
+echo switch-back-to-expander
+data w
+set w presets string expander
+update g w
+dump @g
+state g
+echo user-values-set-with-same-preset-are-kept
+data x
+set x release_time int 77
+update g x
+dump @g
+state g
+echo reset-settings-then-update
+reset_settings g -
+dump @g
+echo upward-compressor-ignores-presets
+create up upward
+data y
+set y presets string gate
+update up y
+dump @up
+state up
+echo upward-knee-region
+data k
+set k ratio double 0.5
+set k threshold double -20
+set k knee_width int 10
+set k attack_time int 1
+set k release_time int 1
+update up k
+process up 8 const:0.05 const:0.01
+process up 8 out=all const:0.05 const:0.01
+process up 200 out=0:190:200:1 const:0.1 const:0.1
+echo upward-very-quiet-signal-branch
+process up 100 out=0:90:100:1 const:0.0000001 const:0.0000001
+state up

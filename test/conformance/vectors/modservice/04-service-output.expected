@@ -1,0 +1,60 @@
+register A size=full
+service_types=1
+register B size=full
+service_types=2
+register C size=full
+service_types=3
+cb svcA create d1 settings={"u":1}
+log debug service 's' (svcA) created
+create s -> ok
+log warning obs_service_deactivate: service 's' is not assigned to an output
+state s active=0 destroy=0 output=null listed=1
+log warning obs_service_deactivate: service 's' is not assigned to an output
+q s initialize out ->cb svcA initialize d1 output=set
+ 1
+cb svcB create d2 settings={}
+log debug service 'b' (svcB) created
+create b -> ok
+q b initialize out ->cb svcB initialize d2 output=set
+ 0
+cb svcC create d3 settings={}
+log debug service 'c' (svcC) created
+create c -> ok
+q c initialize out -> 1
+q c initialize null ->log debug obs_service_initialize: Null 'output' parameter
+ 0
+cb svcA activate d1 settings={"u":1}
+state s active=1 destroy=0 output=set listed=1
+cb svcA deactivate d1
+state s active=0 destroy=0 output=set listed=1
+cb svcA activate d1 settings={"u":1}
+cb svcA deactivate d1
+state s active=0 destroy=0 output=null listed=1
+out_service o1 -> set
+cb svcA activate d1 settings={"u":1}
+state s active=1 destroy=1 output=set listed=0
+list c b
+out_service o2 -> set
+cb svcA deactivate d1
+cb svcA destroy d1
+log debug service 's' destroyed
+out_service o2 -> null
+cb svcA create d4 settings={}
+log debug service 'r' (svcA) created
+create r -> ok
+cb svcA activate d4 settings={}
+state r active=1 destroy=1 output=set listed=0
+cb svcA deactivate d4
+cb svcA destroy d4
+log debug service 'r' destroyed
+cb svcA create d5 settings={}
+log debug service 't' (svcA) created
+create t -> ok
+cb svcA destroy d5
+log debug service 't' destroyed
+out_service o2 -> null
+cb svcC create d6 settings={}
+log debug service 'u' (svcC) created
+create u -> ok
+state u active=0 destroy=0 output=set listed=1
+state u active=1 destroy=0 output=set listed=1

@@ -1,0 +1,3 @@
+state a audio_ts=1005000000 pending=0 buf=480 last_buf=0 pending_stop=0 timing_set=1 timing_adjust=0 next_ts_min=1010000000 next_sys_ts_min=1005000000 resample_offset=0 failed=0 vol=1 user_vol=1 muted=0 user_muted=0 actions=0
+state a audio_ts=1005000000 pending=0 buf=720 last_buf=0 pending_stop=0 timing_set=1 timing_adjust=0 next_ts_min=1020000000 next_sys_ts_min=1020000000 resample_offset=0 failed=0 vol=1 user_vol=1 muted=0 user_muted=0 actions=0
+info a pending=0 ts=1005000000 mixers=255 balance=0.5 sync=0

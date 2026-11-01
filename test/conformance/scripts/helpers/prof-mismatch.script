@@ -1,0 +1,30 @@
+# profile_end() with the wrong name (error recovery, CORE for the unwinding; log text is
+# informational). The reference logs an error. If an enclosing call has the given name the
+# open inner calls are closed first (innermost first, all with the same end time);
+# otherwise the end is ignored. profile_end() with no open call logs an error and does
+# nothing.
+p_name 0 outer
+p_name 1 mid
+p_name 2 inner
+p_name 3 stranger
+p_begin
+p_clock 0
+p_end 0
+p_start 0
+p_tick 1000
+p_start 1
+p_tick 1000
+p_start 2
+p_tick 1000
+p_end 3
+p_tick 1000
+p_end 0
+p_snap
+p_dump
+p_start 0
+p_start 1
+p_tick 5000
+p_end 0
+p_snap
+p_dump
+p_free

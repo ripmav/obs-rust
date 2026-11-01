@@ -1,0 +1,104 @@
+ep result=ok
+  errors count=0 has_errors=0
+  ep params=32 structs=0 funcs=0 samplers=0 techniques=0
+  ep_param 0 type=float name=f1 property=0 const=0 uniform=1 texture=0 array_count=0 annotations=0
+  ep_param 1 type=float name=f2 property=0 const=0 uniform=1 texture=0 array_count=0 annotations=0
+  ep_param 2 type=float name=f3 property=0 const=0 uniform=1 texture=0 array_count=0 annotations=0
+  ep_param 3 type=float name=f4 property=0 const=0 uniform=1 texture=0 array_count=0 annotations=0
+  ep_param 4 type=float name=f5 property=0 const=0 uniform=1 texture=0 array_count=0 annotations=0
+  ep_param 5 type=float name=f6 property=0 const=0 uniform=1 texture=0 array_count=0 annotations=0
+  ep_param 6 type=int name=i1 property=0 const=0 uniform=1 texture=0 array_count=0 annotations=0
+  ep_param 7 type=int name=i2 property=0 const=0 uniform=1 texture=0 array_count=0 annotations=0
+  ep_param 8 type=int name=i3 property=0 const=0 uniform=1 texture=0 array_count=0 annotations=0
+  ep_param 9 type=int name=i4 property=0 const=0 uniform=1 texture=0 array_count=0 annotations=0
+  ep_param 10 type=bool name=b1 property=0 const=0 uniform=1 texture=0 array_count=0 annotations=0
+  ep_param 11 type=bool name=b2 property=0 const=0 uniform=1 texture=0 array_count=0 annotations=0
+  ep_param 12 type=float2 name=v1 property=0 const=0 uniform=1 texture=0 array_count=0 annotations=0
+  ep_param 13 type=float2 name=v2 property=0 const=0 uniform=1 texture=0 array_count=0 annotations=0
+  ep_param 14 type=float2 name=v3 property=0 const=0 uniform=1 texture=0 array_count=0 annotations=0
+  ep_param 15 type=float3 name=v4 property=0 const=0 uniform=1 texture=0 array_count=0 annotations=0
+  ep_param 16 type=float4 name=v5 property=0 const=0 uniform=1 texture=0 array_count=0 annotations=0
+  ep_param 17 type=float4 name=v6 property=0 const=0 uniform=1 texture=0 array_count=0 annotations=0
+  ep_param 18 type=int2 name=j1 property=0 const=0 uniform=1 texture=0 array_count=0 annotations=0
+  ep_param 19 type=int3 name=j2 property=0 const=0 uniform=1 texture=0 array_count=0 annotations=0
+  ep_param 20 type=int4 name=j3 property=0 const=0 uniform=1 texture=0 array_count=0 annotations=0
+  ep_param 21 type=float4x4 name=m1 property=0 const=0 uniform=1 texture=0 array_count=0 annotations=0
+  ep_param 22 type=float4x4 name=m2 property=0 const=0 uniform=1 texture=0 array_count=0 annotations=0
+  ep_param 23 type=float3x3 name=m3 property=0 const=0 uniform=1 texture=0 array_count=0 annotations=0
+  ep_param 24 type=float2x3 name=m4 property=0 const=0 uniform=1 texture=0 array_count=0 annotations=0
+  ep_param 25 type=float1 name=one property=0 const=0 uniform=1 texture=0 array_count=0 annotations=0
+  ep_param 26 type=float1x1 name=one2 property=0 const=0 uniform=1 texture=0 array_count=0 annotations=0
+  ep_param 27 type=string name=s1 property=0 const=0 uniform=1 texture=0 array_count=0 annotations=0
+  ep_param 28 type=string name=s2 property=0 const=0 uniform=1 texture=0 array_count=0 annotations=0
+  ep_param 29 type=texture2d name=t1 property=0 const=0 uniform=1 texture=1 array_count=0 annotations=0
+  ep_param 30 type=texture2d name=t2 property=0 const=0 uniform=1 texture=1 array_count=0 annotations=0
+  ep_param 31 type=float name=nodefault property=0 const=0 uniform=1 texture=0 array_count=0 annotations=0
+  error_string=@null
+effect (effect) params=32 techniques=0 viewproj=- world=-
+  param 0 name=f1 type=FLOAT annotations=0 default_size=4 default=0000c03f f=[1.5]
+  param 1 name=f2 type=FLOAT annotations=0 default_size=4 default=000000c0 f=[-2]
+  param 2 name=f3 type=FLOAT annotations=0 default_size=4 default=0000803e f=[0.25]
+  param 3 name=f4 type=FLOAT annotations=0 default_size=4 default=00004040 f=[3]
+  param 4 name=f5 type=FLOAT annotations=0 default_size=4 default=0000c842 f=[100]
+  param 5 name=f6 type=FLOAT annotations=0 default_size=4 default=00008041 f=[16]
+  param 6 name=i1 type=INT annotations=0 default_size=8 default=0700000000000000 l=[7]
+  param 7 name=i2 type=INT annotations=0 default_size=8 default=f9ffffffffffffff l=[-7]
+  param 8 name=i3 type=INT annotations=0 default_size=8 default=0700000000000000 l=[7]
+  param 9 name=i4 type=INT annotations=0 default_size=8 default=0000000000000000 l=[0]
+  param 10 name=b1 type=BOOL annotations=0 default_size=8 default=0100000000000000 l=[1]
+  param 11 name=b2 type=BOOL annotations=0 default_size=8 default=0000000000000000 l=[0]
+  param 12 name=v1 type=VEC2 annotations=0 default_size=8 default=0000803f00000040 f=[1,2]
+  param 13 name=v2 type=VEC2 annotations=0 default_size=8 default=0000404000008040 f=[3,4]
+  param 14 name=v3 type=VEC2 annotations=0 default_size=8 default=000080bf000020c0 f=[-1,-2.5]
+  param 15 name=v4 type=VEC3 annotations=0 default_size=12 default=0000803f0000004000004040 f=[1,2,3]
+  param 16 name=v5 type=VEC4 annotations=0 default_size=16 default=0000803f000000400000404000008040 f=[1,2,3,4]
+  param 17 name=v6 type=VEC4 annotations=0 default_size=16 default=cdcccc3dcdcc4c3e9a99993ecdcccc3e f=[0.100000001,0.200000003,0.300000012,0.400000006]
+  param 18 name=j1 type=INT2 annotations=0 default_size=16 default=0100000000000000feffffffffffffff l=[1,-2]
+  param 19 name=j2 type=INT3 annotations=0 default_size=24 default=010000000000000002000000000000000300000000000000 l=[1,2,3]
+  param 20 name=j3 type=INT4 annotations=0 default_size=32 default=0100000000000000020000000000000003000000000000000400000000000000 l=[1,2,3,4]
+  param 21 name=m1 type=MATRIX4X4 annotations=0 default_size=64 default=0000803f000000000000000000000000000000000000803f000000000000000000000000000000000000803f000000000000000000000000000000000000803f f=[1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1]
+  param 22 name=m2 type=MATRIX4X4 annotations=0 default_size=64 default=0000803f0000004000004040000080400000a0400000c0400000e040000000410000104100002041000030410000404100005041000060410000704100008041 f=[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16]
+  param 23 name=m3 type=UNKNOWN annotations=0 default_size=36 default=0000803f0000004000004040000080400000a0400000c0400000e0400000004100001041 f=[1,2,3,4,5,6,7,8,9]
+  param 24 name=m4 type=UNKNOWN annotations=0 default_size=24 default=0000803f0000004000004040000080400000a0400000c040 f=[1,2,3,4,5,6]
+  param 25 name=one type=UNKNOWN annotations=0 default_size=4 default=00001041 f=[9]
+  param 26 name=one2 type=UNKNOWN annotations=0 default_size=4 default=00000041 f=[8]
+  param 27 name=s1 type=STRING annotations=0 default_size=6 default="hello"
+  param 28 name=s2 type=STRING annotations=0 default_size=1 default=""
+  param 29 name=t1 type=TEXTURE annotations=0 default_size=13 default="images/a.png"
+  param 30 name=t2 type=TEXTURE annotations=0 default_size=0 default=-
+  param 31 name=nodefault type=FLOAT annotations=0 default_size=0 default=-
+effect e result=ok
+  error_string=@null
+effect e params=32 techniques=0 viewproj=- world=-
+  param 0 name=f1 type=FLOAT annotations=0 default_size=4 default=0000c03f f=[1.5]
+  param 1 name=f2 type=FLOAT annotations=0 default_size=4 default=000000c0 f=[-2]
+  param 2 name=f3 type=FLOAT annotations=0 default_size=4 default=0000803e f=[0.25]
+  param 3 name=f4 type=FLOAT annotations=0 default_size=4 default=00004040 f=[3]
+  param 4 name=f5 type=FLOAT annotations=0 default_size=4 default=0000c842 f=[100]
+  param 5 name=f6 type=FLOAT annotations=0 default_size=4 default=00008041 f=[16]
+  param 6 name=i1 type=INT annotations=0 default_size=8 default=0700000000000000 l=[7]
+  param 7 name=i2 type=INT annotations=0 default_size=8 default=f9ffffffffffffff l=[-7]
+  param 8 name=i3 type=INT annotations=0 default_size=8 default=0700000000000000 l=[7]
+  param 9 name=i4 type=INT annotations=0 default_size=8 default=0000000000000000 l=[0]
+  param 10 name=b1 type=BOOL annotations=0 default_size=8 default=0100000000000000 l=[1]
+  param 11 name=b2 type=BOOL annotations=0 default_size=8 default=0000000000000000 l=[0]
+  param 12 name=v1 type=VEC2 annotations=0 default_size=8 default=0000803f00000040 f=[1,2]
+  param 13 name=v2 type=VEC2 annotations=0 default_size=8 default=0000404000008040 f=[3,4]
+  param 14 name=v3 type=VEC2 annotations=0 default_size=8 default=000080bf000020c0 f=[-1,-2.5]
+  param 15 name=v4 type=VEC3 annotations=0 default_size=12 default=0000803f0000004000004040 f=[1,2,3]
+  param 16 name=v5 type=VEC4 annotations=0 default_size=16 default=0000803f000000400000404000008040 f=[1,2,3,4]
+  param 17 name=v6 type=VEC4 annotations=0 default_size=16 default=cdcccc3dcdcc4c3e9a99993ecdcccc3e f=[0.100000001,0.200000003,0.300000012,0.400000006]
+  param 18 name=j1 type=INT2 annotations=0 default_size=16 default=0100000000000000feffffffffffffff l=[1,-2]
+  param 19 name=j2 type=INT3 annotations=0 default_size=24 default=010000000000000002000000000000000300000000000000 l=[1,2,3]
+  param 20 name=j3 type=INT4 annotations=0 default_size=32 default=0100000000000000020000000000000003000000000000000400000000000000 l=[1,2,3,4]
+  param 21 name=m1 type=MATRIX4X4 annotations=0 default_size=64 default=0000803f000000000000000000000000000000000000803f000000000000000000000000000000000000803f000000000000000000000000000000000000803f f=[1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1]
+  param 22 name=m2 type=MATRIX4X4 annotations=0 default_size=64 default=0000803f0000004000004040000080400000a0400000c0400000e040000000410000104100002041000030410000404100005041000060410000704100008041 f=[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16]
+  param 23 name=m3 type=UNKNOWN annotations=0 default_size=36 default=0000803f0000004000004040000080400000a0400000c0400000e0400000004100001041 f=[1,2,3,4,5,6,7,8,9]
+  param 24 name=m4 type=UNKNOWN annotations=0 default_size=24 default=0000803f0000004000004040000080400000a0400000c040 f=[1,2,3,4,5,6]
+  param 25 name=one type=UNKNOWN annotations=0 default_size=4 default=00001041 f=[9]
+  param 26 name=one2 type=UNKNOWN annotations=0 default_size=4 default=00000041 f=[8]
+  param 27 name=s1 type=STRING annotations=0 default_size=6 default="hello"
+  param 28 name=s2 type=STRING annotations=0 default_size=1 default=""
+  param 29 name=t1 type=TEXTURE annotations=0 default_size=13 default="images/a.png"
+  param 30 name=t2 type=TEXTURE annotations=0 default_size=0 default=-
+  param 31 name=nodefault type=FLOAT annotations=0 default_size=0 default=-

@@ -1,0 +1,46 @@
+# The "is this frame due" rule: due when frame_pts <= next_pts_ns, or when the frame is MORE than 2 s ahead
+# of next_pts_ns (timestamp discontinuity protection). Exactly 2 s ahead is not enough. Single frame at 3000 ms;
+# 'mset next_pts_ns N' puts the reference clock at N ns before a delivery attempt ('mnextv').
+media due 0 0
+video 1 1000 8 4 yuv420p
+pkt 0 3000 fdur=40
+endmedia
+clock 1000000000
+pix off
+echo next_pts_ns = 3000000000 (equal): delivered
+minit due local=1 cbs=v
+mreset
+mset next_pts_ns 3000000000
+mnextv
+mfree
+echo next_pts_ns = 2999999999: not delivered
+minit due local=1 cbs=v
+mreset
+mset next_pts_ns 2999999999
+mnextv
+mstate
+mfree
+echo next_pts_ns = 1000000000 (exactly 2 s behind): not delivered
+minit due local=1 cbs=v
+mreset
+mset next_pts_ns 1000000000
+mnextv
+mfree
+echo next_pts_ns = 999999999 (2.000000001 s behind): delivered
+minit due local=1 cbs=v
+mreset
+mset next_pts_ns 999999999
+mnextv
+mfree
+echo next_pts_ns = 0: delivered
+minit due local=1 cbs=v
+mreset
+mset next_pts_ns 0
+mnextv
+mfree
+echo next_pts_ns above the frame: delivered
+minit due local=1 cbs=v
+mreset
+mset next_pts_ns 9000000000
+mnextv
+mfree

@@ -1,0 +1,60 @@
+decl "void source_create(ptr source)"
+parse ok name=source_create params=1
+  param 0 name=source type=ptr in=1 out=0
+decl "void f()"
+parse ok name=f params=0
+decl "void f( )"
+parse ok name=f params=0
+decl "int get_count()"
+parse ok name=get_count params=1
+  param 0 name=return type=int in=0 out=1
+decl "float ratio(in int a, in int b)"
+parse ok name=ratio params=3
+  param 0 name=a type=int in=1 out=0
+  param 1 name=b type=int in=1 out=0
+  param 2 name=return type=float in=0 out=1
+decl "bool enabled(ptr source, out bool value)"
+parse ok name=enabled params=3
+  param 0 name=source type=ptr in=1 out=0
+  param 1 name=value type=bool in=0 out=1
+  param 2 name=return type=bool in=0 out=1
+decl "string name(ptr source)"
+parse ok name=name params=2
+  param 0 name=source type=ptr in=1 out=0
+  param 1 name=return type=string in=0 out=1
+decl "ptr find(string name, out ptr found)"
+parse ok name=find params=3
+  param 0 name=name type=string in=1 out=0
+  param 1 name=found type=ptr in=0 out=1
+  param 2 name=return type=ptr in=0 out=1
+decl "void multi(int a, float b, bool c, ptr d, string e)"
+parse ok name=multi params=5
+  param 0 name=a type=int in=1 out=0
+  param 1 name=b type=float in=1 out=0
+  param 2 name=c type=bool in=1 out=0
+  param 3 name=d type=ptr in=1 out=0
+  param 4 name=e type=string in=1 out=0
+decl "void inout(in out int both)"
+parse ok name=inout params=1
+  param 0 name=both type=int in=1 out=1
+decl "void outin(out in int both)"
+parse ok name=outin params=1
+  param 0 name=both type=int in=1 out=1
+decl "void outonly(out string text)"
+parse ok name=outonly params=1
+  param 0 name=text type=string in=0 out=1
+decl "void under_score_1(int _x1, int X2)"
+parse ok name=under_score_1 params=2
+  param 0 name=_x1 type=int in=1 out=0
+  param 1 name=X2 type=int in=1 out=0
+decl "void\nnewlines(\nint a,\nint b\n)"
+parse ok name=newlines params=2
+  param 0 name=a type=int in=1 out=0
+  param 1 name=b type=int in=1 out=0
+decl "void tabs(\tint\ta)"
+parse ok name=tabs params=1
+  param 0 name=a type=int in=1 out=0
+decl "void with_comment(int a /* inline */, int b) // trailing"
+parse ok name=with_comment params=2
+  param 0 name=a type=int in=1 out=0
+  param 1 name=b type=int in=1 out=0

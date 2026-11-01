@@ -1,0 +1,16 @@
+# An encoder may return no packet for the first frames (look-ahead / B-frames): received=false produces no
+# callback; later packets carry earlier pts. dts_usec is relative to the first packet that WAS delivered.
+video 30 1 1280 720
+audio 48000
+venc v hold=2 dts_delay=2 kf=0
+out vo video,encoded autobegin=1
+set_venc vo v
+start vo
+vframe 1000000000
+vframe 1033333333
+encstate v
+vframe 1066666666
+vframe 1100000000
+vframe 1133333333
+encstate v
+stop vo

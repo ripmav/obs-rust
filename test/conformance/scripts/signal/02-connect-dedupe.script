@@ -1,0 +1,20 @@
+# connect ignores a second identical (callback, data) pair; connect_ref does not.
+handler h
+add h "void s()"
+callback a
+callback b
+connect h s a
+connect h s a
+connect h s b
+emit h s
+callback r
+connect_ref h s r
+connect_ref h s r
+connect h s r
+emit h s
+disconnect h s r
+emit h s
+disconnect h s r
+emit h s
+connect h nosuch a
+destroy h

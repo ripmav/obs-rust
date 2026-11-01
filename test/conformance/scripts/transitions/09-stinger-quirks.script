@@ -1,0 +1,33 @@
+# QUIRK: stinger edge cases: zero frame count (division by zero), zero duration, no media source, stop without start.
+load quiet
+create st obs_stinger_transition str:path=/m/s.mov int:tp_type=1 int:transition_point=30
+tick st
+# num_frames = 0: 30/0 = +inf -> clamped to 0.999
+src media#1 dur_ns=0 frames=0
+start st
+stop st
+# 0/0 = NaN: transition_point stays NaN (comparisons are false), multipliers NaN
+settings st int:transition_point=0
+tick st
+src media#2 dur_ns=0 frames=0
+start st
+fields st
+stop st
+# media duration zero in ms mode: duration is still 250 ms
+settings st int:tp_type=0 int:transition_point=250
+tick st
+src media#3 dur_ns=0 frames=0
+start st
+stop st
+# start on an instance whose media source does not exist yet: only the flag is set
+create st2 obs_stinger_transition
+start st2
+fields st2
+stop st2
+# track matte with a separate file: the longer duration wins
+create st3 obs_stinger_transition str:path=/m/s.mov bool:track_matte_enabled=1 int:track_matte_layout=2 str:track_matte_path=/m/m.mov
+tick st3
+src media#4 dur_ns=1000000000 frames=30
+src media#5 dur_ns=3000000000 frames=90
+start st3
+stop st3

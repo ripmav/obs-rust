@@ -1,0 +1,33 @@
+decl "void p16(int a1, int a2, int a3, int a4, int a5, int a6, int a7, int a8, int a9, int a10, int a11, int a12, int a13, int a14, int a15, int a16)"
+parse ok name=p16 params=16
+  param 0 name=a1 type=int in=1 out=0
+  param 1 name=a2 type=int in=1 out=0
+  param 2 name=a3 type=int in=1 out=0
+  param 3 name=a4 type=int in=1 out=0
+  param 4 name=a5 type=int in=1 out=0
+  param 5 name=a6 type=int in=1 out=0
+  param 6 name=a7 type=int in=1 out=0
+  param 7 name=a8 type=int in=1 out=0
+  param 8 name=a9 type=int in=1 out=0
+  param 9 name=a10 type=int in=1 out=0
+  param 10 name=a11 type=int in=1 out=0
+  param 11 name=a12 type=int in=1 out=0
+  param 12 name=a13 type=int in=1 out=0
+  param 13 name=a14 type=int in=1 out=0
+  param 14 name=a15 type=int in=1 out=0
+  param 15 name=a16 type=int in=1 out=0
+decl "void a_function_name_that_is_considerably_longer_than_any_name_used_in_the_code_base_0123456789(ptr a_parameter_name_that_is_also_very_long_0123456789_0123456789)"
+parse ok name=a_function_name_that_is_considerably_longer_than_any_name_used_in_the_code_base_0123456789 params=1
+  param 0 name=a_parameter_name_that_is_also_very_long_0123456789_0123456789 type=ptr in=1 out=0
+decl "void f(int a, int A)"
+parse ok name=f params=2
+  param 0 name=a type=int in=1 out=0
+  param 1 name=A type=int in=1 out=0
+decl "void f(string s, ptr s2, bool s_3)"
+parse ok name=f params=3
+  param 0 name=s type=string in=1 out=0
+  param 1 name=s2 type=ptr in=1 out=0
+  param 2 name=s_3 type=bool in=1 out=0
+decl "void f(int f)"
+parse ok name=f params=1
+  param 0 name=f type=int in=1 out=0

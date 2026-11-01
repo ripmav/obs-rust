@@ -1,0 +1,17 @@
+# Async video ingest: output_video copies the frame into a cache entry and appends it to the pending queue.
+# The first frame after a (re)start is selected by the next video tick regardless of its timestamp;
+# async_active becomes true on ingest; the source's size comes from the async frame (after the first tick).
+kind cam input asyncvideo
+create c cam C
+astate c
+size c
+video c bgra 4 2 1000 1 171 0
+astate c
+size c
+vtime 100
+tick c 0.016
+astate c
+size c
+get_frame c
+release_frame c
+astate c

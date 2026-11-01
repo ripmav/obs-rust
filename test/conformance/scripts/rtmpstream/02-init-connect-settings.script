@@ -1,0 +1,44 @@
+# S-045 init_connect(): reading the service and the output settings.
+reset
+venc 0 h264 2500
+aenc 0 aac 160
+service "  rtmp://host/app  " "  streamkey  " user pw
+# the registered defaults are in effect after reset (700 / 900 / 30)
+init_connect
+# settings object without defaults: unset ints read as 0, so thresholds are 0 and drop_p is raised to drop_b+200
+no_defaults
+init_connect
+# explicit thresholds; pframe < drop+200 is raised to drop+200 (the stored value is not what the user typed)
+opt int drop_threshold_ms 700
+opt int pframe_drop_threshold_ms 900
+opt int max_shutdown_time_sec 30
+init_connect
+opt int pframe_drop_threshold_ms 800
+init_connect
+opt int pframe_drop_threshold_ms 1100
+init_connect
+opt int drop_threshold_ms 200
+opt int pframe_drop_threshold_ms 100
+init_connect
+# ip family hint: only a 4-character value is examined
+opt str ip_family IPv4
+init_connect
+opt str ip_family IPv6
+init_connect
+opt str ip_family IPv4+IPv6
+init_connect
+opt str ip_family IPv5
+init_connect
+opt str ip_family "IPv4 "
+init_connect
+opt str ip_family ""
+init_connect
+# bind ip is copied verbatim
+opt str bind_ip 192.168.1.20
+init_connect
+# NULL credentials from the service are tolerated (empty strings)
+service rtmp://h/a - - -
+init_connect
+# no service: init_connect fails before touching state
+no_service
+init_connect

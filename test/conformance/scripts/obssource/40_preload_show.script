@@ -1,0 +1,17 @@
+# preload_video stores a frame for later display without queueing it: last_frame_ts is set to the frame time but
+# nothing enters the queue/cache and async_active does not change.  show_preloaded_video sets async_active
+# and resets the audio timing.  set_video_frame stores the frame AND uploads it immediately.
+kind cam input asyncvideo
+create c cam C
+preload c bgra 2 2 5000 1 9 0
+astate c
+size c
+show_preloaded c
+astate c
+size c
+create d cam D
+set_video_frame d bgra 4 4 7000 1 9 0
+astate d
+size d
+preload c bgra 2 2 6000 1 9 0
+astate c

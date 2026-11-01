@@ -1,0 +1,27 @@
+# Visibility: user_visible flips immediately (what the UI shows); `visible` (what the renderer/audio uses) follows
+# at once for pure-video sources but only when the queued action is applied for sources with audio and for
+# scenes/groups (COMPOSITE). set_visible returns false when nothing changed. Signals "item_visible" carry the value.
+source vid 100 100
+source aud 100 100 audio
+scene main
+add main vid v
+add main aud a
+print v
+print a
+echo -- hide the video-only item
+visible v 0
+visible v 0
+print v
+echo -- hide the audio item: user_vis=0 but vis stays 1 until the audio thread applies the action
+visible a 0
+print a
+audio_flush a
+print a
+echo -- show again
+visible a 1
+print a
+audio_flush a
+print a
+visible v 1
+print v
+log

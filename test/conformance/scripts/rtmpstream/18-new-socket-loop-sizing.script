@@ -1,0 +1,42 @@
+# S-045 init_send with new_socket_loop forced on (Windows feature; on Linux init_send still sizes the buffer
+# and then fails with "not supported"). Demonstrates the buffer sizing rule and QUIRK Q-8: the audio loop runs
+# MAX_OUTPUT_AUDIO_ENCODERS (6) times and always asks for audio encoder 0, so encoder 0's bitrate is counted six times.
+# buffer bytes = (sum of video kbit/s + 6 * audio-encoder-0 kbit/s) * 128, at least 131072.
+reset
+set path "rtmp://h/a"
+set key k
+set new_socket_loop 1
+venc 0 h264 2500
+aenc 0 aac 160
+try_connect
+# larger video bitrate
+venc 0 h264 6000
+try_connect
+# zero video bitrate: warns, low latency disabled, 10000 assumed
+set low_latency_mode 0
+venc 0 h264 0
+try_connect
+# Q-8: encoder 1 (900) is ignored, encoder 0 (100) counts 6 times: 10000 + 600
+reset
+set path "rtmp://h/a"
+set key k
+set new_socket_loop 1
+venc 0 h264 10000
+aenc 0 aac 100
+aenc 1 aac 900
+try_connect
+# no audio encoder 0 but others present: nothing counted for audio
+reset
+set path "rtmp://h/a"
+set key k
+set new_socket_loop 1
+venc 0 h264 10000
+aenc 1 aac 900
+try_connect
+# minimum size
+reset
+set path "rtmp://h/a"
+set key k
+set new_socket_loop 1
+venc 0 h264 100
+try_connect

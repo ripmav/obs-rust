@@ -1,0 +1,10 @@
+mf_count 0 4
+mf_get 0 0 path="/p/x" source_name="X" ref=3 same_as_file=0
+mf_get 0 1 path="/p/y" source_name="Y" ref=3 same_as_file=1
+mf_get 0 2 path="/p/x" source_name="X" ref=3 same_as_file=0
+mf_get 0 3 path="/p/y" source_name="Y" ref=3 same_as_file=1
+mf_ref 0 3
+mf_ref 1 3
+mf_destroy 1
+mf_ref 0 2
+mf_destroy 0

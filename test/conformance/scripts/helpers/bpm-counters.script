@@ -1,0 +1,29 @@
+# BPM counters are reported as the DIFFERENCE since the previous injection on the same
+# (output, track), in unsigned 32-bit arithmetic (CORE). The first injection reports the
+# absolute value (the reference starts at 0). A pts of 0 reports all-zero diffs but still
+# records the current values as the new reference. Counters that go backwards wrap.
+bpm_set codec h264
+bpm_set rendered 100
+bpm_set lagged 3
+bpm_set out_total 90
+bpm_set out_dropped 1
+bpm_set v_total 100
+bpm_set v_skipped 2
+bpm_set enc_out 98
+bpm_inject 0 0 1 1 1 1 0000000165 1000000000 1010000000 1020000000 1030000000
+bpm_set rendered 160
+bpm_set lagged 5
+bpm_set out_total 150
+bpm_set out_dropped 4
+bpm_set v_total 160
+bpm_set v_skipped 3
+bpm_set enc_out 156
+bpm_inject 0 0 61 61 1 1 0000000165 2000000000 2010000000 2020000000 2030000000
+bpm_set rendered 200
+bpm_set v_total 200
+bpm_inject 0 0 0 0 1 1 0000000165 3000000000 3010000000 3020000000 3030000000
+bpm_set rendered 230
+bpm_set v_total 230
+bpm_inject 0 0 121 121 1 1 0000000165 4000000000 4010000000 4020000000 4030000000
+bpm_set rendered 10
+bpm_inject 0 0 181 181 1 1 0000000165 5000000000 5010000000 5020000000 5030000000

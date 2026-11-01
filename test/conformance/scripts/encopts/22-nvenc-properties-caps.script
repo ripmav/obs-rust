@@ -1,0 +1,42 @@
+# CORE. Capability-dependent parts of the obs-nvenc property list, one capability at a time
+# (compare with 21). nv_caps BFRAMES BREF_MODES ENGINES LOSSLESS UHQ TEN_BIT LOOKAHEAD.
+echo minimal-gpu-single-device
+nv_devices 1
+nv_caps 0 0 1 0 0 0 0
+nv_props h264 P
+props_vis P
+nv_props hevc H
+props_dump H
+echo bref-modes-bit0-only-each
+nv_caps 2 1 2 0 0 0 0
+nv_props hevc H
+props_dump H
+echo bref-modes-bit1-only-middle
+nv_caps 2 2 2 0 0 0 0
+nv_props av1 A
+props_dump A
+echo three-and-four-engines
+nv_caps 2 0 3 0 0 0 0
+nv_props hevc H
+props_dump H
+nv_caps 2 0 4 0 0 0 0
+nv_props av1 A
+props_dump A
+echo split-encode-needs-av1-support-and-no-broken-driver
+nv_caps 2 0 2 0 0 0 0
+nv_av1_support 0
+nv_props hevc H
+props_vis H
+nv_av1_support 1
+nv_split_broken 1
+nv_props hevc H
+props_vis H
+nv_split_broken 0
+echo ten-bit-profiles
+nv_caps 2 0 1 0 0 1 0
+nv_props h264 P
+props_dump P
+nv_props hevc H
+props_dump H
+nv_props av1 A
+props_dump A

@@ -1,0 +1,22 @@
+# One parameter of each fixed-size type, then reads.
+dump
+init
+dump
+get_int a
+set_int a 1
+dump
+set_float f 1.5
+set_bool b 1
+set_ptr p 0x1234
+set_string s hello
+dump
+get_int a
+get_float f
+get_bool b
+get_ptr p
+get_string s
+val_int a
+val_int missing
+val_string s
+val_string missing
+free

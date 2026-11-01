@@ -1,0 +1,25 @@
+# Bytes-received accounting: m_nBytesIn counts every byte read (handshake included); an acknowledgement (type 3, channel 2,
+# fmt 1) is sent from inside the read when bytes_in > bytes_in_sent + client_bw/10. client_bw is set by the Set Peer
+# Bandwidth message (type 6), the Window Ack Size message (type 5) sets server_bw only (R79..R83).
+new
+clock 1000
+seturl rtmp://h/a
+enablewrite
+set flashver FMLE
+feed 03
+feed_s1 0 1000 00000000
+feed_echo
+connect
+feed 0200000000000506000000000000001e02
+feed 0500000100003209010000004949494949494949494949494949494949494949494949494949494949494949494949494949494949494949494949494949
+feed 45000001000032094a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a
+feed 020000000000040500000000004c4b40
+client
+client
+client
+client
+state
+set sendcounter 0
+feed 45000001000032094b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b
+read
+state

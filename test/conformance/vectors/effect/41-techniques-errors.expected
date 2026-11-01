@@ -1,0 +1,232 @@
+ep result=fail
+  errors count=2 has_errors=1
+    err 0 error file="t1" row=1 col=11 msg="Expected 'name'"
+    err 1 error file="t1" row=1 col=23 msg="Unexpected EOF"
+  ep params=0 structs=0 funcs=0 samplers=0 techniques=0
+  error_string="t1 (1, 11): Expected 'name'\nt1 (1, 23): Unexpected EOF\n"
+ep result=fail
+  errors count=1 has_errors=1
+    err 0 error file="t2" row=1 col=13 msg="Expected ';'"
+  ep params=0 structs=0 funcs=0 samplers=0 techniques=0
+  error_string="t2 (1, 13): Expected ';'\n"
+ep result=fail
+  errors count=1 has_errors=1
+    err 0 error file="t3" row=1 col=12 msg="Unexpected EOF"
+  ep params=0 structs=0 funcs=0 samplers=0 techniques=0
+  error_string="t3 (1, 12): Unexpected EOF\n"
+ep result=fail
+  errors count=1 has_errors=1
+    err 0 error file="t4" row=1 col=14 msg="Unexpected EOF"
+  ep params=0 structs=0 funcs=0 samplers=0 techniques=0
+  error_string="t4 (1, 14): Unexpected EOF\n"
+ep result=fail
+  errors count=1 has_errors=1
+    err 0 error file="t5" row=1 col=19 msg="Unexpected EOF"
+  ep params=0 structs=0 funcs=0 samplers=0 techniques=0
+  error_string="t5 (1, 19): Unexpected EOF\n"
+ep result=fail
+  errors count=1 has_errors=1
+    err 0 error file="t6" row=1 col=20 msg="Unexpected EOF"
+  ep params=0 structs=0 funcs=0 samplers=0 techniques=0
+  error_string="t6 (1, 20): Unexpected EOF\n"
+ep result=ok
+  errors count=0 has_errors=0
+  ep params=0 structs=0 funcs=0 samplers=0 techniques=1
+  ep_technique 0 name=C passes=0
+  error_string=@null
+effect (effect) params=0 techniques=1 viewproj=- world=-
+  technique 0 name=C passes=0
+ep result=ok
+  errors count=0 has_errors=0
+  ep params=0 structs=0 funcs=0 samplers=0 techniques=1
+  ep_technique 0 name=C passes=0
+  error_string=@null
+effect (effect) params=0 techniques=1 viewproj=- world=-
+  technique 0 name=C passes=0
+ep result=fail
+  errors count=1 has_errors=1
+    err 0 error file="t9" row=1 col=22 msg="Syntax error"
+  ep params=0 structs=0 funcs=0 samplers=0 techniques=1
+  ep_technique 0 name=C passes=1
+    ep_pass 0 name=@null
+      vertex=[]
+      fragment=[]
+  error_string="t9 (1, 22): Syntax error\n"
+ep result=fail
+  errors count=1 has_errors=1
+    err 0 error file="t10" row=1 col=40 msg="Expected '='"
+  ep params=0 structs=0 funcs=0 samplers=0 techniques=1
+  ep_technique 0 name=C passes=1
+    ep_pass 0 name=@null
+      vertex=[]
+      fragment=[]
+  error_string="t10 (1, 40): Expected '='\n"
+ep result=fail
+  errors count=2 has_errors=1
+    err 0 error file="t11" row=1 col=43 msg="Expected ';'"
+    err 1 error file="t11" row=1 col=46 msg="Unexpected EOF"
+  ep params=0 structs=0 funcs=0 samplers=0 techniques=0
+  error_string="t11 (1, 43): Expected ';'\nt11 (1, 46): Unexpected EOF\n"
+ep result=fail
+  errors count=1 has_errors=1
+    err 0 error file="t12" row=1 col=42 msg="Unexpected EOF"
+  ep params=0 structs=0 funcs=0 samplers=0 techniques=0
+  error_string="t12 (1, 42): Unexpected EOF\n"
+ep result=fail
+  errors count=1 has_errors=1
+    err 0 error file="t13" row=1 col=24 msg="Syntax error"
+  ep params=0 structs=0 funcs=0 samplers=0 techniques=1
+  ep_technique 0 name=C passes=1
+    ep_pass 0 name="x"
+      vertex=[]
+      fragment=[]
+  error_string="t13 (1, 24): Syntax error\n"
+log debug gs_vertexshader_create: Null 'shader' parameter
+log error Pass (0) <> missing vertex shader!
+log debug gs_pixelshader_create: Null 'shader' parameter
+log error Pass (0) <> missing pixel shader!
+ep result=fail
+  errors count=0 has_errors=0
+  ep params=0 structs=0 funcs=0 samplers=0 techniques=1
+  ep_technique 0 name=C passes=1
+    ep_pass 0 name=@null
+      vertex=[";"]
+      fragment=[]
+  error_string=@null
+ep result=fail
+  errors count=2 has_errors=1
+    err 0 error file="t15" row=1 col=11 msg="Expected 'name'"
+    err 1 error file="t15" row=1 col=25 msg="Unexpected EOF"
+  ep params=0 structs=0 funcs=0 samplers=0 techniques=0
+  error_string="t15 (1, 11): Expected 'name'\nt15 (1, 25): Unexpected EOF\n"
+ep result=fail
+  errors count=2 has_errors=1
+    err 0 error file="t16" row=1 col=48 msg="Expected 'type'"
+    err 1 error file="t16" row=1 col=49 msg="Unexpected EOF"
+  ep params=0 structs=0 funcs=0 samplers=0 techniques=1
+  ep_technique 0 name=C passes=1
+    ep_pass 0 name=@null
+      vertex=["VS","(",")",";"]
+      fragment=[]
+  error_string="t16 (1, 48): Expected 'type'\nt16 (1, 49): Unexpected EOF\n"
+log debug gs_vertexshader_create: Null 'shader' parameter
+log error Pass (0) <> missing vertex shader!
+log debug gs_pixelshader_create: Null 'shader' parameter
+log error Pass (0) <> missing pixel shader!
+log debug gs_vertexshader_create: Null 'shader' parameter
+log error Pass (1) <> missing vertex shader!
+log debug gs_pixelshader_create: Null 'shader' parameter
+log error Pass (1) <> missing pixel shader!
+log debug gs_vertexshader_create: Null 'shader' parameter
+log error Pass (2) <> missing vertex shader!
+log debug gs_pixelshader_create: Null 'shader' parameter
+log error Pass (2) <> missing pixel shader!
+ep result=fail
+  errors count=0 has_errors=0
+  ep params=0 structs=0 funcs=0 samplers=0 techniques=1
+  ep_technique 0 name=C passes=3
+    ep_pass 0 name=@null
+      vertex=[]
+      fragment=[]
+    ep_pass 1 name=@null
+      vertex=[]
+      fragment=[]
+    ep_pass 2 name=@null
+      vertex=[]
+      fragment=[]
+  error_string=@null
+ep result=fail
+  errors count=1 has_errors=1
+    err 0 error file="t18" row=1 col=21 msg="Expected ';'"
+  ep params=0 structs=0 funcs=0 samplers=0 techniques=0
+  error_string="t18 (1, 21): Expected ';'\n"
+ep result=fail
+  errors count=1 has_errors=1
+    err 0 error file="t19" row=1 col=14 msg="Expected '{'"
+  ep params=0 structs=0 funcs=0 samplers=0 techniques=1
+  ep_technique 0 name=D passes=0
+  error_string="t19 (1, 14): Expected '{'\n"
+ep result=fail
+  errors count=2 has_errors=1
+    err 0 error file="t20" row=1 col=36 msg="Expected '='"
+    err 1 error file="t20" row=1 col=39 msg="Unexpected EOF"
+  ep params=0 structs=0 funcs=0 samplers=0 techniques=0
+  error_string="t20 (1, 36): Expected '='\nt20 (1, 39): Unexpected EOF\n"
+ep result=fail
+  errors count=1 has_errors=1
+    err 0 error file="t21" row=1 col=24 msg="Unexpected EOF"
+  ep params=0 structs=0 funcs=0 samplers=0 techniques=0
+  error_string="t21 (1, 24): Unexpected EOF\n"
+ep result=fail
+  errors count=1 has_errors=1
+    err 0 error file="t22" row=1 col=29 msg="Unexpected EOF"
+  ep params=0 structs=0 funcs=0 samplers=0 techniques=0
+  error_string="t22 (1, 29): Unexpected EOF\n"
+log debug gs_vertexshader_create: Null 'shader' parameter
+log error Pass (0) <> missing vertex shader!
+log debug gs_pixelshader_create: Null 'shader' parameter
+log error Pass (0) <> missing pixel shader!
+ep result=fail
+  errors count=0 has_errors=0
+  ep params=0 structs=0 funcs=0 samplers=0 techniques=1
+  ep_technique 0 name=C passes=1
+    ep_pass 0 name=@null
+      vertex=["(","a",";"]
+      fragment=[]
+  error_string=@null
+log debug gs_vertexshader_create: Null 'shader' parameter
+log error Pass (0) <> missing vertex shader!
+log debug gs_pixelshader_create: Null 'shader' parameter
+log error Pass (0) <> missing pixel shader!
+ep result=fail
+  errors count=0 has_errors=0
+  ep params=0 structs=0 funcs=0 samplers=0 techniques=1
+  ep_technique 0 name=C passes=1
+    ep_pass 0 name=@null
+      vertex=[]
+      fragment=[]
+  error_string=@null
+ep result=fail
+  errors count=2 has_errors=1
+    err 0 error file="t25" row=1 col=38 msg="Syntax error"
+    err 1 error file="t25" row=1 col=45 msg="Unexpected EOF"
+  ep params=0 structs=0 funcs=0 samplers=0 techniques=1
+  ep_technique 0 name=C passes=0
+  error_string="t25 (1, 38): Syntax error\nt25 (1, 45): Unexpected EOF\n"
+ep result=fail
+  errors count=2 has_errors=1
+    err 0 error file="t26" row=1 col=44 msg="Syntax error"
+    err 1 error file="t26" row=1 col=51 msg="Unexpected EOF"
+  ep params=0 structs=0 funcs=0 samplers=0 techniques=0
+  error_string="t26 (1, 44): Syntax error\nt26 (1, 51): Unexpected EOF\n"
+ep result=fail
+  errors count=2 has_errors=1
+    err 0 error file="t27" row=1 col=22 msg="Syntax error"
+    err 1 error file="t27" row=1 col=27 msg="Unexpected EOF"
+  ep params=0 structs=0 funcs=0 samplers=0 techniques=0
+  error_string="t27 (1, 22): Syntax error\nt27 (1, 27): Unexpected EOF\n"
+ep result=fail
+  errors count=1 has_errors=1
+    err 0 error file="t28" row=1 col=52 msg="Unexpected EOF"
+  ep params=0 structs=0 funcs=0 samplers=0 techniques=0
+  error_string="t28 (1, 52): Unexpected EOF\n"
+ep result=fail
+  errors count=3 has_errors=1
+    err 0 warning file="t29" row=1 col=38 msg="compile keyword not necessary"
+    err 1 error file="t29" row=1 col=46 msg="Expected ';'"
+    err 2 error file="t29" row=1 col=49 msg="Unexpected EOF"
+  ep params=0 structs=0 funcs=0 samplers=0 techniques=0
+  error_string="t29 (1, 38): compile keyword not necessary\nt29 (1, 46): Expected ';'\nt29 (1, 49): Unexpected EOF\n"
+log debug gs_vertexshader_create: Null 'shader' parameter
+log error Pass (0) <> missing vertex shader!
+log debug gs_pixelshader_create: Null 'shader' parameter
+log error Pass (0) <> missing pixel shader!
+ep result=fail
+  errors count=1 has_errors=0
+    err 0 warning file="t30" row=1 col=38 msg="compile keyword not necessary"
+  ep params=0 structs=0 funcs=0 samplers=0 techniques=1
+  ep_technique 0 name=C passes=1
+    ep_pass 0 name=@null
+      vertex=["compile","VS","(",")",";"]
+      fragment=[]
+  error_string="t30 (1, 38): compile keyword not necessary\n"

@@ -1,0 +1,40 @@
+# utf8_to_wchar on well-formed input: 1..4-byte sequences, lengths, sizing call (out = null),
+# explicit lengths vs. NUL-terminated mode, output capacity.
+# u2w FLAGS INSIZE HEX OUT   (INSIZE: number | auto (=0, stop at NUL) | len; OUT: capacity | null)
+u2w 0 auto 41 null
+u2w 0 auto 41 1
+u2w 0 auto 48656c6c6f 5
+u2w 0 auto c3a9 null
+u2w 0 auto c3a9 1
+u2w 0 auto e282ac 1
+u2w 0 auto f09f9880 1
+# every encoded length boundary: U+7F, U+80, U+7FF, U+800, U+FFFF, U+10000, U+10FFFF
+u2w 0 len 7f 1
+u2w 0 len c280 1
+u2w 0 len dfbf 1
+u2w 0 len e0a080 1
+u2w 0 len efbfbf 1
+u2w 0 len f0908080 1
+u2w 0 len f48fbfbf 1
+# mixed text
+u2w 0 len 48c3a9e282acf09f9880 4
+u2w 0 len 48c3a9e282acf09f9880 null
+# capacity: exactly enough vs one too few (failure, rc=0) vs larger
+u2w 0 len 616263 3
+u2w 0 len 616263 2
+u2w 0 len 616263 10
+# a real buffer of capacity 0 is an error (rc 0)
+u2w 0 len 616263 0
+# a prefix of the buffer by INSIZE
+u2w 0 2 616263 3
+# NUL handling: terminator mode stops, explicit length converts NUL as U+0000
+u2w 0 auto 6100620063 null
+u2w 0 len 6100620063 5
+u2w 0 3 6100620063 3
+u2w 0 len 00 1
+# empty input: rc 0 in every mode
+u2w 0 auto - null
+u2w 0 len - null
+u2w 0 len - 1
+# NULL input pointer
+u2w 0 0 @null null

@@ -1,0 +1,25 @@
+# S-050 obs-ffmpeg-vaapi: accepted pixel formats (H.264: NV12 only; HEVC and AV1: NV12 and P010);
+# the preferred format wins when valid, else the input format when valid, else NV12. Also the
+# registered encoder ids and flags (CPU-copy "internal" encoder and the texture encoder per codec).
+va_defaults h264
+set str rate_control CBR
+va_create h264
+va_video_info nv12 bgra
+va_video_info p010 nv12
+va_video_info none p010
+va_video_info none nv12
+va_video_info i420 p010
+va_destroy
+va_defaults hevc
+va_create hevc
+va_video_info p010 nv12
+va_video_info nv12 p010
+va_video_info none p010
+va_video_info i444 i420
+va_destroy
+va_defaults av1
+va_create av1
+va_video_info p010 nv12
+va_video_info none i010
+va_destroy
+va_register

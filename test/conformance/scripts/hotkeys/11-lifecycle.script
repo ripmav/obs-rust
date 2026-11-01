@@ -1,0 +1,34 @@
+# S-034 lifecycle: id exhaustion warning, atomic update under the lock, callbacks re-entering the
+# API (the lock is recursive), obs_hotkeys_free, and the "core absent" behaviour of every entry point.
+reg frontend A "A" "a"
+loadbind A 0:OBS_KEY_A
+echo atomic
+atomic
+echo reentrant-callback
+reenter A on
+inject 0x0 OBS_KEY_A 1
+info A
+reenter A off
+echo exhaustion-near-the-end-of-the-id-space
+setnext id:18446744073709551614
+reg frontend Z1 "Z1" "z"
+reg frontend Z2 "Z2" "z"
+echo exhaustion-pair-ids
+setnextpair id:18446744073709551614
+regp frontend PZ "pz.a" "d" "pz.b" "d"
+regp frontend PZ2 "pz2.a" "d" "pz2.b" "d"
+echo free-releases-everything
+hkfree
+echo core-absent
+core off
+atomic
+loadbind A 0:OBS_KEY_A
+load A [{"key":"OBS_KEY_A"}]
+save A
+savepair PZ both
+enum
+enumb
+inject 0x0 OBS_KEY_A 1
+bgpress on
+reroute on
+routed A 1

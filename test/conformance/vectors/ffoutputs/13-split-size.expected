@@ -1,0 +1,66 @@
+> reset
+> output o
+> venc h264 bitrate=2500 extra=0a0b
+> set str path /v/first.mkv
+> set bool split_file 1
+> set int max_size_mb 1
+> set str directory /rec
+> set str format part%N
+> set str extension mp4
+> create ffmpeg_muxer
+signal_add "void file_changed(string next_file)"
+proc_add "void split_file(out bool split_file_enabled)"
+create ffmpeg_muxer -> ok
+> start
+unlink "/v/first.mkv"
+pipe create type=w
+  argv[0] "<bin>/obs-ffmpeg-mux"
+  argv[1] "/v/first.mkv"
+  argv[2] "1"
+  argv[3] "0"
+  argv[4] "h264"
+  argv[5] "2500"
+  argv[6] "1280"
+  argv[7] "720"
+  argv[8] "1"
+  argv[9] "1"
+  argv[10] "1"
+  argv[11] "1"
+  argv[12] "1"
+  argv[13] "0"
+  argv[14] "30"
+  argv[15] "1"
+  argv[16] "0"
+  argv[17] ""
+  argv[18] ""
+begin_data_capture
+log info [ffmpeg muxer: 'o'] Writing file '/v/first.mkv'...
+start -> 1
+> pkt v pts=0 key=1 size=400000
+wire V idx=0 key=0 pts=0 dts=0 size=2 data=0a0b
+wire V idx=0 key=1 pts=0 dts=0 size=400000 data=000102030405
+> pkt v pts=1 key=0 size=400000
+wire V idx=0 key=0 pts=1 dts=1 size=400000 data=101112131415
+> state_split
+state_split split_file=1 allow_overwrite=0 cur_size=800002 cur_time=0 max_size=1048576 max_time=0 manual=0 ready=0 mux_packets=0
+  found_video=1 video_pts_offset=0 found_audio=00 audio_dts_offsets=0,0
+> pkt v pts=2 key=0 size=400000
+wire V idx=0 key=0 pts=2 dts=2 size=400000 data=202122232425
+> state_split
+state_split split_file=1 allow_overwrite=0 cur_size=1200002 cur_time=0 max_size=1048576 max_time=0 manual=0 ready=0 mux_packets=0
+  found_video=1 video_pts_offset=0 found_audio=00 audio_dts_offsets=0,0
+> pkt v pts=3 key=1 size=100
+mkdirs "/rec"
+log info [ffmpeg muxer: 'o'] Changing output file to '/rec/part1.mp4'
+wire CHANGE_FILE "/rec/part1.mp4"
+signal file_changed next_file="/rec/part1.mp4"
+wire V idx=0 key=0 pts=0 dts=0 size=2 data=0a0b
+wire V idx=0 key=1 pts=0 dts=0 size=100 data=303132333435
+> state_split
+state_split split_file=1 allow_overwrite=0 cur_size=100 cur_time=3000 max_size=1048576 max_time=0 manual=0 ready=0 mux_packets=0
+  found_video=1 video_pts_offset=3 found_audio=00 audio_dts_offsets=0,0
+> pkt v pts=4 key=1 size=100
+wire V idx=0 key=1 pts=1 dts=1 size=100 data=404142434445
+> state_split
+state_split split_file=1 allow_overwrite=0 cur_size=200 cur_time=3000 max_size=1048576 max_time=0 manual=0 ready=0 mux_packets=0
+  found_video=1 video_pts_offset=3 found_audio=00 audio_dts_offsets=0,0

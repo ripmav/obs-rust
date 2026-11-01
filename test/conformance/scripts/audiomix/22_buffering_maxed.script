@@ -1,0 +1,12 @@
+# Dynamic buffering capped at max_buffering_ticks=2: "Max audio buffering reached" warning, then the lagging source is handled by ignore_audio (drop lagging samples / restart).
+init 48000 2 2 0
+clock 1000000000
+timeline 1000000000
+source a input
+video_mix 1
+channel 0 0 a
+set a active 1
+output a 48000 2 4096 900000000 const 0.25
+state a
+run 6 1
+state a

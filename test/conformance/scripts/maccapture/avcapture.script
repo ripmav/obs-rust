@@ -1,0 +1,65 @@
+# S-052 mac-avcapture: defaults, preset labels (quirk: 960x540 labelled 960x460), aspect ratio text, fps text,
+# pixel-format tables, update decision.
+av_defaults 0
+av_defaults 1
+av_preset Low
+av_preset High
+av_preset 960x540
+av_preset 1920x1080
+av_preset 3840x2160
+av_preset foo
+av_aspect 1920 1080
+av_aspect 1280 800
+av_aspect 1024 768
+av_aspect 720 480
+av_aspect 1080 1920
+av_aspect 3840 2160
+av_aspect 0 10
+av_aspect 3000 2000
+av_aspect 1000 1
+av_aspect 1100 100
+av_fps_desc 30:30
+av_fps_desc 29.97:29.97
+av_fps_desc 1:30 1:60
+av_fps_desc 15:15 30:30 60:60
+av_fps_desc 23.976:23.976 25:25 29.97:29.97 30:30 50:50 59.94:59.94 60:60 100:100 119.88:119.88 120:120 144:144
+av_fps_desc 5:10.5
+av_fps_desc
+# fallback fps: output fps, then min:max:minDurValue:minDurTimescale:maxDurValue:maxDurTimescale
+av_fallback_fps 60 15:30:1:30:1:15
+av_fallback_fps 30 15:60:1:60:1:15 15:25:1:25:1:15
+av_fallback_fps 10 15:30:1:30:1:15 20:25:1:25:1:20
+av_fallback_fps 60
+av_subtype 422YpCbCr8
+av_subtype 422YpCbCr8_yuvs
+av_subtype 420YpCbCr8BiPlanarFullRange
+av_subtype 420YpCbCr8BiPlanarVideoRange
+av_subtype 420YpCbCr10BiPlanarFullRange
+av_subtype 420YpCbCr8PlanarFullRange
+av_subtype 422YpCbCr8FullRange
+av_subtype 32BGRA
+av_subtype 32ARGB
+av_fourcc UYVY 0
+av_fourcc YUY2 1
+av_fourcc NV12 0
+av_fourcc NV12 1
+av_fourcc P010 1
+av_fourcc BGRA 1
+av_fourcc I420 0
+av_cs 0
+av_cs 1
+av_cs 2
+av_cs 3
+av_cs 4
+av_cs 5
+av_cs 9
+av_range 0
+av_range 1
+av_range 2
+av_fourcc_str "2vuy"
+av_fourcc_str "420v"
+av_update uuidA uuidB 1 1 High High
+av_update uuidA uuidA 1 1 High High
+av_update uuidA uuidA 1 1 High Medium
+av_update uuidA uuidA 0 1 High High
+av_update uuidA uuidA 1 0 High High

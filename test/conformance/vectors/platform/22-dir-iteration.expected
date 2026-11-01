@@ -1,0 +1,69 @@
+mkdir empty 0
+ls empty 2 end_repeat=1
+  "." d
+  ".." d
+mkdir full 0
+mkdir full/sub 0
+mkdir full/.hdir 0
+ls full 9 end_repeat=1
+  "." d
+  ".." d
+  ".hdir" d
+  ".hidden" f
+  "B.txt" f
+  "a.txt" f
+  "sp ace" f
+  "sub" d
+  "\xc3\xa9.txt" f
+ls full/ 9 end_repeat=1
+  "." d
+  ".." d
+  ".hdir" d
+  ".hidden" f
+  "B.txt" f
+  "a.txt" f
+  "sp ace" f
+  "sub" d
+  "\xc3\xa9.txt" f
+ls ./full/sub 2 end_repeat=1
+  "." d
+  ".." d
+symlink 1
+symlink 1
+symlink 1
+log debug "is_dir: stat for full/lnkdead failed, errno: 2"
+ls full 12 end_repeat=1
+  "." d
+  ".." d
+  ".hdir" d
+  ".hidden" f
+  "B.txt" f
+  "a.txt" f
+  "lnkdead" f
+  "lnkdir" d
+  "lnkfile" f
+  "sp ace" f
+  "sub" d
+  "\xc3\xa9.txt" f
+ls nosuch null
+ls full/a.txt null
+dir_nulls readdir=1 closedir_ok=1
+mkdir long 0
+ls long 3 end_repeat=1
+  "." d
+  ".." d
+  "nnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn" f
+unlink full/lnkdead 0
+unlink full/a.txt 0
+log debug "is_dir: stat for full/lnkfile failed, errno: 2"
+ls full 10 end_repeat=1
+  "." d
+  ".." d
+  ".hdir" d
+  ".hidden" f
+  "B.txt" f
+  "lnkdir" d
+  "lnkfile" f
+  "sp ace" f
+  "sub" d
+  "\xc3\xa9.txt" f

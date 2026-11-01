@@ -1,0 +1,32 @@
+# set_order moves a filter within the chain.  UP/DOWN skip over neighbours of a different kind (async-video vs
+# other: a filter only swaps with the next filter whose ASYNC flag equals its own); TOP = end of array, BOTTOM =
+# index 0.  Moving beyond the end is a no-op and does not signal.  Targets are recomputed after each move.
+kind in input asyncvideo,audio
+kind va filter asyncvideo
+kind vb filter video
+create a in A
+create f1 va F1
+create f2 va F2
+create f3 va F3
+filter_add a f1
+filter_add a f2
+filter_add a f3
+watch a
+names a
+filter_order a f3 up
+names a
+filter_order a f3 up
+names a
+filter_order a f3 down
+filter_order a f3 down
+filter_order a f3 down
+names a
+filter_order a f1 top
+names a
+filter_order a f1 top
+filter_order a f1 bottom
+names a
+filter_order a f1 bottom
+filters a
+filter_order a f2 down
+names a

@@ -1,0 +1,42 @@
+# CORE: fade to color: settings, switch point, smoothstep curve, color-space dependent calls.
+load quiet
+create x fade_to_color_transition
+tick x
+fields x
+settings x int:color=16711680 int:switch_point=25
+tick x
+settings x int:color=255 int:switch_point=100
+tick x
+settings x int:color=4278190335 int:switch_point=0
+tick x
+settings x int:color=1711276032 int:switch_point=500
+tick x
+settings x int:switch_point=-10
+tick x
+settings x int:color=16746632 int:switch_point=50
+tick x
+smoothstep 0 0.5 0.25
+smoothstep 0 0.5 0.5
+smoothstep 0 0 0.5
+smoothstep 0.5 1 0.25
+gfx space=srgb
+view 0.0 1 2 100 50
+render x
+view 0.25 1 2 100 50
+render x
+view 0.5 1 2 100 50
+render x
+view 0.75 1 2 100 50
+render x
+view 1.0 1 2 100 50
+render x
+gfx space=709_extended
+view 0.25 1 2 100 50
+render x
+view 0.75 1 2 100 50
+render x
+props x
+cspace x 0 0
+cspace x 2 2 1 2
+cspace x 1 3 0 1 2
+cspace x 1 2 0 3

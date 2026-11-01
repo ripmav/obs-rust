@@ -1,0 +1,62 @@
+> ff_defaults h264
+> set bool psycho_aq 0
+> ff_initfail 1 -1
+> ff_create h264
+ffve.init lib=h264_nvenc lib2=nvenc_h264 name="NVIDIA NVENC H.264 (FFmpeg)"
+av.opt_set_int cbr=0
+av.opt_set profile=high
+av.opt_set preset=p5
+av.opt_set tune=hq
+av.opt_set multipass=qres
+av.opt_set_int cbr=1
+av.opt_set level=auto
+av.opt_set_int gpu=0
+av.opt_set_int no-scenecut=0
+av.opt_set_int spatial-aq=0
+av.opt_set_int temporal-aq=0
+ffve.update bitrate=5000 keyint_sec=0 fps=60/1 size=1920x1080 info.format=2 opts="" ctx{global_quality=0 rc_max_rate=5000000 rc_min_rate=5000000 max_b_frames=2}
+log info [FFmpeg NVENC encoder: 'enc'] settings: 	encoder:      NVIDIA NVENC H.264 (FFmpeg) 	rate_control: CBR 	bitrate:      5000 	cqp:          0 	keyint:       0 	preset:       p5 	tuning:       hq 	multipass:    qres 	profile:      high 	width:        1920 	height:       1080 	b-frames:     2 	psycho-aq:    0 	GPU:          0 
+ffve.init_codec #1 -> fail
+host.set_last_error "NVENC.Error<br><br>NVENC.CheckDrivers"
+ffve.free
+ff_create -> NULL
+> ff_initfail 1 -542398533
+> ff_create h264
+ffve.init lib=h264_nvenc lib2=nvenc_h264 name="NVIDIA NVENC H.264 (FFmpeg)"
+av.opt_set_int cbr=0
+av.opt_set profile=high
+av.opt_set preset=p5
+av.opt_set tune=hq
+av.opt_set multipass=qres
+av.opt_set_int cbr=1
+av.opt_set level=auto
+av.opt_set_int gpu=0
+av.opt_set_int no-scenecut=0
+av.opt_set_int spatial-aq=0
+av.opt_set_int temporal-aq=0
+ffve.update bitrate=5000 keyint_sec=0 fps=60/1 size=1920x1080 info.format=2 opts="" ctx{global_quality=0 rc_max_rate=5000000 rc_min_rate=5000000 max_b_frames=2}
+log info [FFmpeg NVENC encoder: 'enc'] settings: 	encoder:      NVIDIA NVENC H.264 (FFmpeg) 	rate_control: CBR 	bitrate:      5000 	cqp:          0 	keyint:       0 	preset:       p5 	tuning:       hq 	multipass:    qres 	profile:      high 	width:        1920 	height:       1080 	b-frames:     2 	psycho-aq:    0 	GPU:          0 
+ffve.init_codec #1 -> fail
+host.set_last_error "NVENC.Error<br><br>NVENC.GenericError"
+ffve.free
+ff_create -> NULL
+> set int gpu 2
+> ff_create h264
+ffve.init lib=h264_nvenc lib2=nvenc_h264 name="NVIDIA NVENC H.264 (FFmpeg)"
+av.opt_set_int cbr=0
+av.opt_set profile=high
+av.opt_set preset=p5
+av.opt_set tune=hq
+av.opt_set multipass=qres
+av.opt_set_int cbr=1
+av.opt_set level=auto
+av.opt_set_int gpu=2
+av.opt_set_int no-scenecut=0
+av.opt_set_int spatial-aq=0
+av.opt_set_int temporal-aq=0
+ffve.update bitrate=5000 keyint_sec=0 fps=60/1 size=1920x1080 info.format=2 opts="" ctx{global_quality=0 rc_max_rate=5000000 rc_min_rate=5000000 max_b_frames=2}
+log info [FFmpeg NVENC encoder: 'enc'] settings: 	encoder:      NVIDIA NVENC H.264 (FFmpeg) 	rate_control: CBR 	bitrate:      5000 	cqp:          0 	keyint:       0 	preset:       p5 	tuning:       hq 	multipass:    qres 	profile:      high 	width:        1920 	height:       1080 	b-frames:     2 	psycho-aq:    0 	GPU:          2 
+ffve.init_codec #1 -> fail
+host.set_last_error "NVENC.Error<br><br>NVENC.BadGPUIndex"
+ffve.free
+ff_create -> NULL

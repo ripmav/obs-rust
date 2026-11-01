@@ -1,0 +1,26 @@
+echo baseline
+avc_header ret=25 data=0142c01effe1000a6742c01ed900a047fe8801000468ce3c80
+echo main-and-three-byte-start-codes
+avc_header ret=23 data=014d4028ffe10008674d4028a680804401000468ce3c80
+echo pps-first
+avc_header ret=25 data=0142c01effe1000a6742c01ed900a047fe8801000468ce3c80
+echo other-nals-are-ignored
+avc_header ret=25 data=0142c01effe1000a6742c01ed900a047fe8801000468ce3c80
+echo high-profile-with-emulation-prevention-bytes-in-sps
+avc_header ret=47 data=0164001fffe1001c6764001facd9405005bb016a020202800000030080000019078c18cb01000468ce3c80fdf8f800
+echo high10
+avc_header ret=25 data=016e001effe10006676e001ea6c001000468ce3c80fdfafa00
+echo high422
+avc_header ret=25 data=017a001effe10006677a001ebc0001000468ce3c80fef8f800
+echo high444
+avc_header ret=25 data=01f40028ffe1000667f4002890d801000468ce3c80fffafa00
+echo last-sps-and-last-pps-win
+avc_header ret=20 data=014d0029ffe10006674d0029a68001000368aabb
+echo minimal-sps-of-4-bytes-and-1-byte-pps
+avc_header ret=16 data=01420020ffe100046742002001000168
+echo emulation-prevention-byte-inside-the-profile-level-bytes
+avc_header ret=26 data=01640000ffe100076764000003acd901000468ce3c80fdf8f800
+echo emulation-prevention-is-only-removed-for-000003
+avc_header ret=27 data=0164001fffe100086764001f0300acd901000468ce3c80fdf8f800
+echo trailing-zero-bytes-are-part-of-the-nal
+avc_header ret=21 data=0142c01effe100046742c01e01000668ce3c800000

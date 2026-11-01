@@ -1,0 +1,49 @@
+# CORE. get_defaults values and get_properties definitions (identity locale: text keys are shown).
+data dg
+defaults gain dg
+dump dg
+data dl
+defaults limiter dl
+dump dl
+data dc
+defaults compressor dc
+dump dc
+data de
+defaults expander de
+dump de
+data du
+defaults upward du
+dump du
+data dn
+defaults gate dn
+dump dn
+data dq
+defaults eq dq
+dump dq
+data dns1
+defaults ns dns1
+dump dns1
+data dns2
+defaults ns2 dns2
+dump dns2
+echo invert-and-delay-have-no-defaults
+info invert
+audio 2 48000
+create g gain
+props g
+create l limiter
+props l
+create q eq
+props q
+create n gate
+props n
+create dly delay
+props dly
+create e expander
+props e
+create u upward
+props u
+create ns1 ns
+props ns1
+create ns2 ns2
+props ns2

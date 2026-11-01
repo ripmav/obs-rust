@@ -1,0 +1,22 @@
+backend lua_load
+load -> 1
+log warning obs-scripting: [obs_script_get_description] script is null
+log warning obs-scripting: [obs_script_get_path] script is null
+log warning obs-scripting: [obs_script_get_file] script is null
+log warning obs-scripting: [obs_script_get_lang] script is null
+log warning obs-scripting: [obs_script_loaded] script is null
+info - desc=@null path="" file="" lang=unknown loaded=0
+log warning obs-scripting: [obs_script_get_settings] script is null
+settings - null
+log warning obs-scripting: [obs_script_save] script is null
+save - null
+log warning obs-scripting: [obs_script_get_properties] script is null
+props - null
+log warning obs-scripting: [obs_script_update] script is null
+log warning obs-scripting: [obs_script_reload] script is null
+reload - -> 0
+destroy - done
+backend lua_unload
+log info [Scripting] Total detached callbacks: 0
+info_detached_head_after_unload null
+unload done

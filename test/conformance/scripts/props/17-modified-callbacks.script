@@ -1,0 +1,56 @@
+# CORE. obs_property_modified calls the modified callback (v1) if set, otherwise modified2
+# (with its priv); returns the callback's result, or false when none is set. The properties
+# argument is the TOP-most container even for properties inside (nested) groups.
+token tpriv
+token tpriv2
+behavior t   ret:1
+behavior f   ret:0
+behavior chg set_int:count:5 set_str:name:hello ret:1
+props Top
+props G
+props H
+add bool H deep "Deep" as deep
+add group G inner "Inner" normal H
+add bool G mid "Mid" as mid
+add group Top grp "Grp" normal G
+add bool Top flat "Flat" as flat
+data S
+data_set S x int 3
+echo no-callback
+modified flat S
+modified deep S
+echo v1-callback-true-false
+set flat modified t
+modified flat S
+set flat modified f
+modified flat S
+echo callback-on-nested-sees-top
+set mid modified t
+set deep modified t
+modified mid S
+modified deep S
+echo callback-changes-settings
+set flat modified chg
+modified flat S
+data_show S
+echo modified2-gets-priv
+set flat modified @null
+set flat modified2 t tpriv
+modified flat S
+set flat modified2 f @null
+modified flat S
+echo v1-wins-over-v2
+set flat modified t
+set flat modified2 f tpriv2
+modified flat S
+echo clear-v1-then-v2-runs
+set flat modified @null
+modified flat S
+echo clear-v2
+set flat modified2 @null @null
+modified flat S
+echo null-property-and-null-settings
+modified @null S
+set flat modified t
+modified flat @null
+destroy Top

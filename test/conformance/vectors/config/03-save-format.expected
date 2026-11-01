@@ -1,0 +1,8 @@
+create ok
+save rc=-2
+""
+save rc=0
+"[S1]\nb=changed\na=first\n\n[S2]\nk=line1\\nline2\\r\\\\end\n"
+save rc=0
+"[S1]\nb=changed\na=first\n\n[S2]\nk=line1\\nline2\\r\\\\end\n\n[S3]\nempty=\nnullvalue=\neq=a=b\nsp=  padded  \n"
+sections 3 [S1] [S2] [S3]

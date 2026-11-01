@@ -1,0 +1,4 @@
+log error something value=42
+log warning careful value=42
+log info hello value=42
+log debug details value=42

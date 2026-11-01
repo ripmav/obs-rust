@@ -1,0 +1,44 @@
+# Canvas channels (64 slots) and the main-canvas output-source API. Setting a channel takes a
+# reference on the new source, activates it (view type of the canvas: main for ACTIVATE canvases,
+# aux otherwise), deactivates and releases the previous source, and emits channel_change with
+# {canvas, channel, prev_source, source} first on the canvas then (MAIN canvas only) on the core.
+# Setting the same source again is a no-op without signal. NULL clears the channel.
+startup en-US -
+trace src on
+mk_source s1 Source1
+mk_source s2 Source2
+mk_source s3 Source3
+canvas_create a Alpha flags=program
+canvas_create b Bravo
+sig_obs channel_change
+sig_canvas a channel_change
+sig_canvas b channel_change
+sig_canvas main channel_change
+refs s1
+canvas_set_channel a 0 s1
+refs s1
+canvas_set_channel a 0 s1
+refs s1
+canvas_set_channel a 0 s2
+refs s1
+refs s2
+canvas_get_channel a 0
+refs s2
+canvas_set_channel a 63 s2
+refs s2
+canvas_set_channel a 0 -
+canvas_get_channel a 0
+canvas_set_channel b 5 s3
+canvas_set_channel main 1 s3
+refs s3
+set_output_source 2 s1
+get_output_source 2
+get_output_source 3
+canvas_get_channel main 2
+set_output_source 2 -
+# destroying a canvas deactivates and releases what its channels hold
+canvas_release b
+refs s3
+canvas_release a
+refs s2
+shutdown

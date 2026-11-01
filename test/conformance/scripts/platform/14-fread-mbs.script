@@ -1,0 +1,27 @@
+# os_fread_mbs / os_quick_read_mbs_file: whole file converted from the multibyte encoding of the
+# C locale to UTF-8 (identity for ASCII; the runner stays in the "C" locale and uses ASCII only).
+# Unlike os_fread_utf8 the length is returned, there is no BOM handling and the conversion stops at
+# the first NUL byte.
+put_hex a.txt 68656c6c6f
+put_hex bom.txt efbbbf68
+put_hex nul.txt 6100620063
+put_hex nl.txt 610a620d0a
+put_hex empty.txt -
+fopen a a.txt rb
+fread_mbs a
+ftelli a
+fclose a
+fopen a nul.txt rb
+fread_mbs a
+fclose a
+fopen a nl.txt rb
+fread_mbs a
+fclose a
+fopen a empty.txt rb
+fread_mbs a
+fclose a
+quick_read_mbs a.txt
+quick_read_mbs nl.txt
+quick_read_mbs empty.txt
+quick_read_mbs missing.txt
+quick_read_mbs @null

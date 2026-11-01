@@ -1,0 +1,17 @@
+# Signal declarations are validated by the declaration parser; names are unique
+# and case sensitive.
+handler h
+add h "void a()"
+add h "void A()"
+add h "void a(int x)"
+add h "not a declaration"
+add h "int returns_value(int x)"
+add h "void"
+add h ""
+callback c
+connect h a c
+connect h A c
+connect h returns_value c
+emit h a
+emit h A
+emit h returns_value

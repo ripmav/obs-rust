@@ -1,0 +1,34 @@
+# S-026 service_selected callback (fires from props/apply_settings): fills the server list, copies links
+# and the multitrack fields into the settings, derives the protocol. Unknown current service is added
+# as a disabled first entry (and so is the stored server).
+fs-load /mod/data/services.json data/services-ok.json
+settings S {"service":"Alpha","server":"rtmp://a.alpha.example/live","key":"k1"}
+new A rtmp_common S
+props P A S
+show S
+echo select-Bravo
+set S service str Bravo
+modify P service S
+props-show P
+show S
+echo select-by-alt-name-of-first-service
+settings S2 {"service":"Alpha Old"}
+new B rtmp_common S2
+get B protocol
+show S2
+props P2 B S2
+show S2
+echo select-by-alt-name-of-later-service
+settings S3 {"service":"Juliet Old"}
+props P3 A S3
+show S3
+echo unknown-service
+settings S4 {"service":"Nope","server":"rtmp://x/y"}
+props P4 A S4
+show S4
+echo empty-service-name-returns-false
+settings S5 {"service":""}
+modify P4 service S5
+echo missing-service-key
+settings S6 {}
+modify P4 service S6

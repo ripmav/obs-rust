@@ -1,0 +1,28 @@
+# Precondition: video_queue_read must only be called after video_queue_state returned READY once (otherwise the
+# frame pointers are unset: reference crash, outside the contract).
+# Reader behaviour: after 10 consecutive reads of the same read_idx the read returns false (stale); a writer that
+# closed (state STOPPING) makes read return false immediately; the NV12 scaler is applied (identical size = copy).
+vq_create 0 4 2 333333
+vq_open 1
+vq_state 1
+vq_write 0 4 0x11 0x22 111
+# the reader must poll the state once it is READY (this maps the frame pointers) before reading
+vq_state 1
+vq_read 1 4 2
+vq_read 1 4 2
+vq_read 1 4 2
+vq_read 1 4 2
+vq_read 1 4 2
+vq_read 1 4 2
+vq_read 1 4 2
+vq_read 1 4 2
+vq_read 1 4 2
+vq_read 1 4 2
+vq_read 1 4 2
+vq_write 0 4 0x12 0x23 222
+vq_read 1 4 2
+vq_read 1 4 2
+vq_close 0
+vq_state 1
+vq_read 1 4 2
+vq_close 1

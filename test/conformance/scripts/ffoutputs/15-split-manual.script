@@ -1,0 +1,36 @@
+# Manual split via the "split_file" procedure: it reports whether split mode is enabled and, if so, flags a split
+# that happens at the next video keyframe (flag cleared after the flush). With split_file off the flag is never set.
+reset
+output o
+venc h264 bitrate=2500 extra=0a0b
+set str path /v/first.mkv
+set str directory /rec
+set str format m%N
+set str extension mkv
+create ffmpeg_muxer
+start
+proc split_file
+state_split
+stop 0
+destroy
+reset
+output o
+venc h264 bitrate=2500 extra=0a0b
+set str path /v/first.mkv
+set bool split_file 1
+set str directory /rec
+set str format m%N
+set str extension mkv
+create ffmpeg_muxer
+proc split_file
+state_split
+start
+proc split_file
+state_split
+pkt v pts=0 key=1 size=4
+state_split
+pkt v pts=10 key=0 size=4
+state_split
+pkt v pts=20 key=1 size=4
+state_split
+pkt v pts=30 key=1 size=4

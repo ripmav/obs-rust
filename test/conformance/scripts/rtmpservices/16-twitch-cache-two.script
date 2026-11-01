@@ -1,0 +1,11 @@
+# S-026 a cache with two or more entries replaces the built-in Default ingest at module load.
+# A malformed amazon cache is ignored (Default stays).
+fs-load /mod/data/services.json data/services-ok.json
+fs-put /cfg/rtmp-services/twitch_ingests.json "{\"ingests\":[{\"name\":\"One\",\"url_template\":\"rtmp://one.example/app/{stream_key}\"},{\"name\":\"Two\",\"url_template\":\"rtmp://two.example/app/{stream_key}\"}]}"
+fs-put /cfg/rtmp-services/amazon_ivs_ingests.json "not json"
+module-load
+settings S {"service":"Twitch","server":"auto","key":"k"}
+new T rtmp_common S
+get T url
+clock
+props P T S

@@ -1,0 +1,47 @@
+# S-022 Opus: timescale is always 48000 whatever the encoder reports; sample entry 'Opus' with dOps
+# built from the OpusHead extra data (little-endian fields byte-swapped to big-endian, channel mapping
+# table copied when the mapping family is non-zero); roll sample group (sgpd/sbgp) with a roll distance
+# of -N where N = number of leading packets whose durations sum to at least 3840 ticks.
+enc a audio codec opus rate 44100 extra 4f707573486561640102380180bb0000000000 bitrate 96
+mux mp4
+pkt a 0 0 1 gen:20
+pkt a 960 960 1 gen:20
+pkt a 1920 1920 1 gen:20
+pkt a 2880 2880 1 gen:20
+pkt a 3840 3840 1 gen:20
+pkt a 4800 4800 1 gen:20
+finalise
+dump
+echo --- shorter packets: roll distance counts packets, not time
+reset
+enc a audio codec opus rate 48000 extra 4f707573486561640102380180bb0000000000
+mux mp4
+pkt a 0 0 1 gen:20
+pkt a 480 480 1 gen:20
+pkt a 960 960 1 gen:20
+pkt a 1440 1440 1 gen:20
+pkt a 1920 1920 1 gen:20
+pkt a 2400 2400 1 gen:20
+pkt a 2880 2880 1 gen:20
+pkt a 3360 3360 1 gen:20
+pkt a 3840 3840 1 gen:20
+pkt a 4320 4320 1 gen:20
+finalise
+hex
+echo --- fewer samples than the pre-roll: roll count equals sample count and the second sbgp entry has count 0
+reset
+enc a audio codec opus rate 48000 extra 4f707573486561640102380180bb0000000000
+mux mp4
+pkt a 0 0 1 gen:20
+pkt a 960 960 1 gen:20
+pkt a 1920 1920 1 gen:20
+finalise
+hex
+echo --- 6 channel, mapping family 1 (stream count 4, coupled 2, mapping 0 4 1 5 2 3)
+reset
+enc a audio codec opus rate 48000 speakers 5.1 extra 4f707573486561640106380180bb00000000010402000401050203
+mux mp4 skipfin
+pkt a 0 0 1 gen:20
+finalise
+tree
+hex

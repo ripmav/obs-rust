@@ -1,0 +1,13 @@
+push_front 0a0b
+dump
+push_front 0c
+dump
+push_front 0d0e0f1011
+dump
+peek_front 8
+pop_back 3
+dump
+push_front 99
+dump
+push_front_zero 2
+dump

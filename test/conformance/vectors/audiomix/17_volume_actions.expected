@@ -1,0 +1,14 @@
+tick 0 ret=1 out_ts=1000000000 wait=0 total=0 bufq=0
+order a | roots a
+mix 0 0 first=0 last=1023 sum=752 peak=1
+mix 0 1 first=0 last=1023 sum=564 peak=0.75
+tick 1 ret=1 out_ts=1021333333 wait=0 total=0 bufq=0
+order a | roots a
+mix 0 0 first=0 last=239 sum=120 peak=0.5
+mix 0 1 first=0 last=239 sum=90 peak=0.375
+tick 2 ret=1 out_ts=1042666666 wait=0 total=0 bufq=0
+order a | roots a
+dump 0 0 0: 0
+state a audio_ts=1064000000 pending=0 buf=0 last_buf=0 pending_stop=0 timing_set=1 timing_adjust=0 next_ts_min=1063999999 next_sys_ts_min=1063999999 resample_offset=0 failed=0 vol=0.5 user_vol=0.5 muted=1 user_muted=1 actions=0
+tick 0 ret=1 out_ts=1064000000 wait=0 total=0 bufq=0
+order a | roots a

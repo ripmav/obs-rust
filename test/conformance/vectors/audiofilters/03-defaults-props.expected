@@ -1,0 +1,102 @@
+data dg (sorted by key)
+  db user=0 default=1 double 0 def=0
+data dl (sorted by key)
+  release_time user=0 default=1 int 60 def=60
+  threshold user=0 default=1 double -6 def=-6
+data dc (sorted by key)
+  attack_time user=0 default=1 int 6 def=6
+  output_gain user=0 default=1 double 0 def=0
+  ratio user=0 default=1 double 10 def=10
+  release_time user=0 default=1 int 60 def=60
+  sidechain_source user=0 default=1 string "none" def="none"
+  threshold user=0 default=1 double -18 def=-18
+data de (sorted by key)
+  attack_time user=0 default=1 int 10 def=10
+  detector user=0 default=1 string "RMS" def="RMS"
+  output_gain user=0 default=1 double 0 def=0
+  presets user=0 default=1 string "expander" def="expander"
+  ratio user=0 default=1 double 2 def=2
+  release_time user=0 default=1 int 50 def=50
+  threshold user=0 default=1 double -40 def=-40
+data du (sorted by key)
+  attack_time user=0 default=1 int 10 def=10
+  detector user=0 default=1 string "RMS" def="RMS"
+  knee_width user=0 default=1 int 10 def=10
+  output_gain user=0 default=1 double 0 def=0
+  ratio user=0 default=1 double 0.5 def=0.5
+  release_time user=0 default=1 int 50 def=50
+  threshold user=0 default=1 double -20 def=-20
+data dn (sorted by key)
+  attack_time user=0 default=1 int 25 def=25
+  close_threshold user=0 default=1 double -32 def=-32
+  hold_time user=0 default=1 int 200 def=200
+  open_threshold user=0 default=1 double -26 def=-26
+  release_time user=0 default=1 int 150 def=150
+data dq (sorted by key)
+  high user=0 default=1 double 0 def=0
+  low user=0 default=1 double 0 def=0
+  mid user=0 default=1 double 0 def=0
+data dns1 (sorted by key)
+  method user=0 default=1 string "speex" def="speex"
+  suppress_level user=0 default=1 int -30 def=-30
+data dns2 (sorted by key)
+  method user=0 default=1 string "rnnoise" def="rnnoise"
+  suppress_level user=0 default=1 int -30 def=-30
+echo invert-and-delay-have-no-defaults
+info invert id=invert_polarity_filter version=0 type=1 flags=0x2 name="InvertPolarity"
+  has create=1 destroy=1 update=0 filter_audio=1 filter_video=0 video_tick=0 filter_remove=0 get_defaults=0 get_properties=0
+create g -> ok
+props count=1
+  prop db type=float desc="Gain.GainDB" enabled=1 visible=1 min=-30 max=30 step=0.1 numtype=1 suffix=" dB"
+create l -> ok
+props count=2
+  prop threshold type=float desc="Limiter.Threshold" enabled=1 visible=1 min=-60 max=0 step=0.1 numtype=1 suffix=" dB"
+  prop release_time type=int desc="Limiter.ReleaseTime" enabled=1 visible=1 min=1 max=1000 step=1 numtype=1 suffix=" ms"
+create q -> ok
+props count=3
+  prop high type=float desc="3BandEq.high" enabled=1 visible=1 min=-20 max=20 step=0.1 numtype=1 suffix=" dB"
+  prop mid type=float desc="3BandEq.mid" enabled=1 visible=1 min=-20 max=20 step=0.1 numtype=1 suffix=" dB"
+  prop low type=float desc="3BandEq.low" enabled=1 visible=1 min=-20 max=20 step=0.1 numtype=1 suffix=" dB"
+create n -> ok
+props count=5
+  prop close_threshold type=float desc="NoiseGate.CloseThreshold" enabled=1 visible=1 min=-96 max=0 step=1 numtype=1 suffix=" dB"
+  prop open_threshold type=float desc="NoiseGate.OpenThreshold" enabled=1 visible=1 min=-96 max=0 step=1 numtype=1 suffix=" dB"
+  prop attack_time type=int desc="NoiseGate.AttackTime" enabled=1 visible=1 min=0 max=10000 step=1 numtype=0 suffix=" ms"
+  prop hold_time type=int desc="NoiseGate.HoldTime" enabled=1 visible=1 min=0 max=10000 step=1 numtype=0 suffix=" ms"
+  prop release_time type=int desc="NoiseGate.ReleaseTime" enabled=1 visible=1 min=0 max=10000 step=1 numtype=0 suffix=" ms"
+create dly -> ok
+props count=1
+  prop delay_ms type=int desc="DelayMs" enabled=1 visible=1 min=0 max=20000 step=1 numtype=0 suffix=" ms"
+create e -> ok
+props count=7
+  prop presets type=list desc="Expander.Presets" enabled=1 visible=1 listtype=2 format=3 items=2
+    item 0 name="Expander.Presets.Expander" value="expander" disabled=0
+    item 1 name="Expander.Presets.Gate" value="gate" disabled=0
+  prop ratio type=float desc="Expander.Ratio" enabled=1 visible=1 min=1 max=20 step=0.1 numtype=1 suffix=":1"
+  prop threshold type=float desc="Expander.Threshold" enabled=1 visible=1 min=-60 max=0 step=0.1 numtype=1 suffix=" dB"
+  prop attack_time type=int desc="Expander.AttackTime" enabled=1 visible=1 min=1 max=100 step=1 numtype=1 suffix=" ms"
+  prop release_time type=int desc="Expander.ReleaseTime" enabled=1 visible=1 min=1 max=1000 step=1 numtype=1 suffix=" ms"
+  prop output_gain type=float desc="Expander.OutputGain" enabled=1 visible=1 min=-32 max=32 step=0.1 numtype=1 suffix=" dB"
+  prop detector type=list desc="Expander.Detector" enabled=1 visible=1 listtype=2 format=3 items=2
+    item 0 name="Expander.RMS" value="RMS" disabled=0
+    item 1 name="Expander.Peak" value="peak" disabled=0
+create u -> ok
+props count=6
+  prop ratio type=float desc="Expander.Ratio" enabled=1 visible=1 min=0 max=1 step=0.1 numtype=1 suffix=":1"
+  prop threshold type=float desc="Expander.Threshold" enabled=1 visible=1 min=-60 max=0 step=0.1 numtype=1 suffix=" dB"
+  prop attack_time type=int desc="Expander.AttackTime" enabled=1 visible=1 min=1 max=100 step=1 numtype=1 suffix=" ms"
+  prop release_time type=int desc="Expander.ReleaseTime" enabled=1 visible=1 min=1 max=1000 step=1 numtype=1 suffix=" ms"
+  prop output_gain type=float desc="Expander.OutputGain" enabled=1 visible=1 min=-32 max=32 step=0.1 numtype=1 suffix=" dB"
+  prop knee_width type=int desc="Expander.Knee.Width" enabled=1 visible=1 min=0 max=20 step=1 numtype=1 suffix="(null)"
+create ns1 -> ok
+props count=2
+  prop method type=list desc="NoiseSuppress.Method" enabled=1 visible=1 listtype=2 format=3 items=2
+    item 0 name="NoiseSuppress.Method.Speex" value="speex" disabled=0
+    item 1 name="NoiseSuppress.Method.RNNoise" value="rnnoise" disabled=0
+  prop suppress_level type=int desc="NoiseSuppress.SuppressLevel" enabled=1 visible=1 min=-60 max=0 step=1 numtype=1 suffix=" dB"
+create ns2 -> ok
+props count=2
+  prop method type=list desc="NoiseSuppress.Method" enabled=1 visible=1 listtype=2 format=3 items=2
+    item 0 name="NoiseSuppress.Method.Speex" value="speex" disabled=0
+    item 1 name="NoiseSuppress.Method.RNNoise" value="rnnoise" disabled=0
+  prop suppress_level type=int desc="NoiseSuppress.SuppressLevel" enabled=1 visible=1 min=-60 max=0 step=1 numtype=1 suffix=" dB"

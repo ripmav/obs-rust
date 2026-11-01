@@ -1,0 +1,206 @@
+create st obs_stinger_transition
+  ev enter_graphics
+  ev effect_create file=@data/stinger_matte_transition.effect
+  ev leave_graphics
+  ev transition_enable_fixed 1 duration_ms=0
+  ev source_update st deferred (count 1)
+  instance=1
+  fields tp_is_frame=0 tp_ns=0 tp_frame=0 tp=0 a_mul=0 b_mul=0
+  fields duration_ns=0 duration_frames=0 transitioning=0 monitoring=0 fade_style=0
+  fields matte_enabled=0 layout=0 wf=0 hf=0 invert=0 texrender=0 rendered=0 media=0 matte_src=0 mix_fn=fadeinout
+  fields tp_is_frame=0 tp_ns=0 tp_frame=0 tp=0 a_mul=0 b_mul=0
+  fields duration_ns=0 duration_frames=0 transitioning=0 monitoring=0 fade_style=0
+  fields matte_enabled=0 layout=0 wf=0 hf=0 invert=0 texrender=0 rendered=0 media=0 matte_src=0 mix_fn=fadeinout
+tick st
+  ev source_create_private media#1 id=ffmpeg_source name="st (Stinger)"
+  ev   setting local_file=""
+  ev   setting hw_decode=1
+  ev   setting looping=0
+  ev   setting full_decode=0
+  ev   setting is_stinger=1
+  ev   setting is_track_matte=0
+  ev source_set_monitoring media#1 0
+  fields tp_is_frame=0 tp_ns=0 tp_frame=0 tp=0 a_mul=0 b_mul=0
+  fields duration_ns=0 duration_frames=0 transitioning=0 monitoring=0 fade_style=0
+  fields matte_enabled=0 layout=0 wf=2 hf=1 invert=0 texrender=0 rendered=0 media=1 matte_src=0 mix_fn=fadeinout
+settings st
+  ev source_update st deferred (count 1)
+tick st
+  ev source_release media#1 refs=0
+  ev source_create_private media#2 id=ffmpeg_source name="st (Stinger)"
+  ev   setting local_file="/media/stinger.mov"
+  ev   setting hw_decode=1
+  ev   setting looping=0
+  ev   setting full_decode=0
+  ev   setting is_stinger=1
+  ev   setting is_track_matte=0
+  ev source_set_monitoring media#2 0
+  fields tp_is_frame=0 tp_ns=700000000 tp_frame=0 tp=0 a_mul=0 b_mul=0
+  fields duration_ns=0 duration_frames=0 transitioning=0 monitoring=0 fade_style=0
+  fields matte_enabled=0 layout=0 wf=2 hf=1 invert=0 texrender=0 rendered=0 media=1 matte_src=0 mix_fn=fadeinout
+  fields tp_is_frame=0 tp_ns=700000000 tp_frame=0 tp=0 a_mul=0 b_mul=0
+  fields duration_ns=0 duration_frames=0 transitioning=0 monitoring=0 fade_style=0
+  fields matte_enabled=0 layout=0 wf=2 hf=1 invert=0 texrender=0 rendered=0 media=1 matte_src=0 mix_fn=fadeinout
+  source media#1 name="st (Stinger)" id=ffmpeg_source refs=0 active_child_refs=0 muted=0 monitoring=0
+  source media#2 name="st (Stinger)" id=ffmpeg_source refs=1 active_child_refs=0 muted=0 monitoring=0
+settings st
+  ev source_update st deferred (count 1)
+tick st
+  ev source_release media#2 refs=0
+  ev source_create_private media#3 id=ffmpeg_source name="st (Stinger)"
+  ev   setting local_file="/media/stinger.mov"
+  ev   setting hw_decode=1
+  ev   setting looping=0
+  ev   setting full_decode=0
+  ev   setting is_stinger=1
+  ev   setting is_track_matte=0
+  ev source_set_monitoring media#3 0
+  fields tp_is_frame=1 tp_ns=700000000 tp_frame=30 tp=0 a_mul=0 b_mul=0
+  fields duration_ns=0 duration_frames=0 transitioning=0 monitoring=0 fade_style=0
+  fields matte_enabled=0 layout=0 wf=2 hf=1 invert=0 texrender=0 rendered=0 media=1 matte_src=0 mix_fn=fadeinout
+settings st
+  ev source_update st deferred (count 1)
+tick st
+  ev source_release media#3 refs=0
+  ev source_create_private media#4 id=ffmpeg_source name="st (Stinger)"
+  ev   setting local_file="/media/stinger.mov"
+  ev   setting hw_decode=1
+  ev   setting looping=0
+  ev   setting full_decode=0
+  ev   setting is_stinger=1
+  ev   setting is_track_matte=0
+  ev source_set_monitoring media#4 0
+  ev enter_graphics
+  ev texrender_create id=1 format=3 zs=0
+  ev texrender_create id=2 format=3 zs=0
+  ev leave_graphics
+  ev texrender_reset id=2
+  ev texrender_reset id=1
+  fields tp_is_frame=1 tp_ns=700000000 tp_frame=30 tp=0 a_mul=0 b_mul=0
+  fields duration_ns=0 duration_frames=0 transitioning=0 monitoring=0 fade_style=0
+  fields matte_enabled=1 layout=0 wf=2 hf=1 invert=0 texrender=1 rendered=0 media=1 matte_src=0 mix_fn=fadeinout
+settings st
+  ev source_update st deferred (count 1)
+tick st
+  ev source_release media#4 refs=0
+  ev source_create_private media#5 id=ffmpeg_source name="st (Stinger)"
+  ev   setting local_file="/media/stinger.mov"
+  ev   setting hw_decode=1
+  ev   setting looping=0
+  ev   setting full_decode=0
+  ev   setting is_stinger=1
+  ev   setting is_track_matte=1
+  ev source_set_monitoring media#5 0
+  ev texrender_reset id=2
+  ev texrender_reset id=1
+  fields tp_is_frame=1 tp_ns=700000000 tp_frame=30 tp=0 a_mul=0 b_mul=0
+  fields duration_ns=0 duration_frames=0 transitioning=0 monitoring=0 fade_style=0
+  fields matte_enabled=1 layout=1 wf=1 hf=2 invert=1 texrender=1 rendered=0 media=1 matte_src=0 mix_fn=fadeinout
+settings st
+  ev source_update st deferred (count 1)
+tick st
+  ev source_release media#5 refs=0
+  ev source_create_private media#6 id=ffmpeg_source name="st (Stinger)"
+  ev   setting local_file="/media/stinger.mov"
+  ev   setting hw_decode=1
+  ev   setting looping=0
+  ev   setting full_decode=0
+  ev   setting is_stinger=1
+  ev   setting is_track_matte=1
+  ev source_set_monitoring media#6 0
+  ev texrender_reset id=2
+  ev texrender_reset id=1
+  fields tp_is_frame=1 tp_ns=700000000 tp_frame=30 tp=0 a_mul=0 b_mul=0
+  fields duration_ns=0 duration_frames=0 transitioning=0 monitoring=0 fade_style=0
+  fields matte_enabled=1 layout=3 wf=1 hf=1 invert=1 texrender=0 rendered=0 media=1 matte_src=0 mix_fn=fadeinout
+settings st
+  ev source_update st deferred (count 1)
+tick st
+  ev source_release media#6 refs=0
+  ev source_create_private media#7 id=ffmpeg_source name="st (Stinger)"
+  ev   setting local_file="/media/stinger.mov"
+  ev   setting hw_decode=1
+  ev   setting looping=0
+  ev   setting full_decode=0
+  ev   setting is_stinger=1
+  ev   setting is_track_matte=1
+  ev source_create_private media#8 id=ffmpeg_source name=(null)
+  ev   setting local_file="/media/matte.mov"
+  ev   setting looping=0
+  ev source_set_muted media#8 1
+  ev source_set_monitoring media#7 0
+  ev texrender_reset id=2
+  ev texrender_reset id=1
+  fields tp_is_frame=1 tp_ns=700000000 tp_frame=30 tp=0 a_mul=0 b_mul=0
+  fields duration_ns=0 duration_frames=0 transitioning=0 monitoring=0 fade_style=0
+  fields matte_enabled=1 layout=2 wf=1 hf=1 invert=1 texrender=0 rendered=0 media=1 matte_src=1 mix_fn=fadeinout
+settings st
+  ev source_update st deferred (count 1)
+tick st
+  ev source_release media#7 refs=0
+  ev source_create_private media#9 id=ffmpeg_source name="st (Stinger)"
+  ev   setting local_file="/media/stinger.mov"
+  ev   setting hw_decode=1
+  ev   setting looping=0
+  ev   setting full_decode=0
+  ev   setting is_stinger=1
+  ev   setting is_track_matte=1
+  ev source_release media#8 refs=0
+  ev source_set_monitoring media#9 0
+  ev enter_graphics
+  ev texrender_destroy id=1
+  ev texrender_destroy id=2
+  ev leave_graphics
+  fields tp_is_frame=1 tp_ns=700000000 tp_frame=30 tp=0 a_mul=0 b_mul=0
+  fields duration_ns=0 duration_frames=0 transitioning=0 monitoring=0 fade_style=0
+  fields matte_enabled=0 layout=2 wf=1 hf=1 invert=1 texrender=0 rendered=0 media=1 matte_src=0 mix_fn=fadeinout
+settings st
+  ev source_update st deferred (count 1)
+tick st
+  ev source_release media#9 refs=0
+  ev source_create_private media#10 id=ffmpeg_source name="st (Stinger)"
+  ev   setting local_file="/media/stinger.mov"
+  ev   setting hw_decode=0
+  ev   setting looping=0
+  ev   setting full_decode=1
+  ev   setting is_stinger=1
+  ev   setting is_track_matte=0
+  ev source_set_monitoring media#10 1
+  fields tp_is_frame=1 tp_ns=700000000 tp_frame=30 tp=0 a_mul=0 b_mul=0
+  fields duration_ns=0 duration_frames=0 transitioning=0 monitoring=1 fade_style=1
+  fields matte_enabled=0 layout=2 wf=1 hf=1 invert=1 texrender=0 rendered=0 media=1 matte_src=0 mix_fn=cross
+settings st
+  ev source_update st deferred (count 1)
+tick st
+  ev source_release media#10 refs=0
+  ev source_create_private media#11 id=ffmpeg_source name="st (Stinger)"
+  ev   setting local_file="/media/stinger.mov"
+  ev   setting hw_decode=0
+  ev   setting looping=0
+  ev   setting full_decode=1
+  ev   setting is_stinger=1
+  ev   setting is_track_matte=0
+  ev source_set_monitoring media#11 0
+  fields tp_is_frame=1 tp_ns=700000000 tp_frame=30 tp=0 a_mul=0 b_mul=0
+  fields duration_ns=0 duration_frames=0 transitioning=0 monitoring=0 fade_style=7
+  fields matte_enabled=0 layout=2 wf=1 hf=1 invert=1 texrender=0 rendered=0 media=1 matte_src=0 mix_fn=fadeinout
+settings st
+  ev source_update st deferred (count 1)
+tick st
+  ev source_release media#11 refs=0
+  ev source_create_private media#12 id=ffmpeg_source name="st (Stinger)"
+  ev   setting local_file="/media/stinger.mov"
+  ev   setting hw_decode=0
+  ev   setting looping=0
+  ev   setting full_decode=1
+  ev   setting is_stinger=1
+  ev   setting is_track_matte=0
+  ev source_set_monitoring media#12 0
+  fields tp_is_frame=0 tp_ns=18446744073708551616 tp_frame=30 tp=0 a_mul=0 b_mul=0
+  fields duration_ns=0 duration_frames=0 transitioning=0 monitoring=0 fade_style=7
+  fields matte_enabled=0 layout=2 wf=1 hf=1 invert=1 texrender=0 rendered=0 media=1 matte_src=0 mix_fn=fadeinout
+destroy st
+  ev source_release media#12 refs=0
+  ev enter_graphics
+  ev effect_destroy file=@data/stinger_matte_transition.effect
+  ev leave_graphics

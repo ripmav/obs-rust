@@ -1,0 +1,89 @@
+log debug canvas 'Main' (<uuid>) created
+startup -> true
+audio_info -> 0
+audio_info2 -> 0
+audio_info(NULL) -> 0
+log info ---------------------------------
+log info audio settings reset:  samples per sec: 48000  speakers:        2  max buffering:   960 milliseconds  buffering type:  dynamically increasing
+reset_audio -> 1
+audio_info -> 1 sps=48000 speakers=2
+audio_info2 -> 1 sps=48000 speakers=2 max_ms=960 fixed=0
+audio_info(NULL) -> 0
+audio_state ticks=45 fixed=0 mon_name=Default mon_id=default audio=yes
+log info ---------------------------------
+log info audio settings reset:  samples per sec: 44100  speakers:        6  max buffering:   1044 milliseconds  buffering type:  dynamically increasing
+log warning Signal declaration 'deduplication_changed' exists
+reset_audio -> 1
+audio_info -> 1 sps=44100 speakers=6
+audio_info2 -> 1 sps=44100 speakers=6 max_ms=1044 fixed=0
+audio_info(NULL) -> 0
+audio_state ticks=45 fixed=0 mon_name=Default mon_id=default audio=yes
+log info ---------------------------------
+log info audio settings reset:  samples per sec: 48000  speakers:        0  max buffering:   960 milliseconds  buffering type:  dynamically increasing
+log warning Signal declaration 'deduplication_changed' exists
+log error Invalid audio parameters specified
+reset_audio -> 0
+audio_info -> 0
+audio_info2 -> 0
+audio_info(NULL) -> 0
+audio_state ticks=45 fixed=0 mon_name=Default mon_id=default audio=no
+log info ---------------------------------
+log info audio settings reset:  samples per sec: 48000  speakers:        1  max buffering:   106 milliseconds  buffering type:  fixed
+log warning Signal declaration 'deduplication_changed' exists
+reset_audio -> 1
+audio_info -> 1 sps=48000 speakers=1
+audio_info2 -> 1 sps=48000 speakers=1 max_ms=106 fixed=1
+audio_info(NULL) -> 0
+audio_state ticks=5 fixed=1 mon_name=Default mon_id=default audio=yes
+log info ---------------------------------
+log info audio settings reset:  samples per sec: 48000  speakers:        3  max buffering:   21 milliseconds  buffering type:  dynamically increasing
+log warning Signal declaration 'deduplication_changed' exists
+reset_audio -> 1
+audio_info -> 1 sps=48000 speakers=3
+audio_info2 -> 1 sps=48000 speakers=3 max_ms=21 fixed=0
+audio_info(NULL) -> 0
+log info ---------------------------------
+log info audio settings reset:  samples per sec: 44100  speakers:        4  max buffering:   1021 milliseconds  buffering type:  dynamically increasing
+log warning Signal declaration 'deduplication_changed' exists
+reset_audio -> 1
+audio_info -> 1 sps=44100 speakers=4
+audio_info2 -> 1 sps=44100 speakers=4 max_ms=1021 fixed=0
+audio_info(NULL) -> 0
+log info ---------------------------------
+log info audio settings reset:  samples per sec: 96000  speakers:        8  max buffering:   501 milliseconds  buffering type:  dynamically increasing
+log warning Signal declaration 'deduplication_changed' exists
+reset_audio -> 1
+audio_info -> 1 sps=96000 speakers=8
+audio_info2 -> 1 sps=96000 speakers=8 max_ms=501 fixed=0
+audio_info(NULL) -> 0
+log info ---------------------------------
+log info audio settings reset:  samples per sec: 8000  speakers:        5  max buffering:   128 milliseconds  buffering type:  dynamically increasing
+log warning Signal declaration 'deduplication_changed' exists
+reset_audio -> 1
+audio_info -> 1 sps=8000 speakers=5
+audio_info2 -> 1 sps=8000 speakers=5 max_ms=128 fixed=0
+audio_info(NULL) -> 0
+log info ---------------------------------
+log info audio settings reset:  samples per sec: 192000  speakers:        2  max buffering:   240 milliseconds  buffering type:  dynamically increasing
+log warning Signal declaration 'deduplication_changed' exists
+reset_audio -> 1
+audio_info -> 1 sps=192000 speakers=2
+audio_info2 -> 1 sps=192000 speakers=2 max_ms=240 fixed=0
+audio_info(NULL) -> 0
+log info ---------------------------------
+log info audio settings reset:  samples per sec: 48000  speakers:        2  max buffering:   960 milliseconds  buffering type:  dynamically increasing
+log warning Signal declaration 'deduplication_changed' exists
+reset_audio_v1 -> 1
+audio_info -> 1 sps=48000 speakers=2
+audio_info2 -> 1 sps=48000 speakers=2 max_ms=960 fixed=0
+audio_info(NULL) -> 0
+audio_state ticks=45 fixed=0 mon_name=Default mon_id=default audio=yes
+reset_audio2(NULL) -> 1
+audio_info -> 0
+audio_info2 -> 0
+audio_info(NULL) -> 0
+audio_state ticks=0 fixed=0 mon_name=NULL mon_id=NULL audio=no
+shutdown begin
+log info Freeing OBS context data
+log debug canvas 'Main' (<uuid>) destroyed
+shutdown end obs=NULL

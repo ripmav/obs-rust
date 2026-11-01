@@ -1,0 +1,9 @@
+p_print
+text "== Profiler Results ============================="
+text "draw: 0.1\xc2\xa0ms"
+text "frame: min=0.25\xc2\xa0ms, median=0\xc2\xa0ms, max=1.4\xc2\xa0ms, 99th percentile=1.4\xc2\xa0ms"
+text " \xe2\x94\xa3update: min=0.2\xc2\xa0ms, median=0\xc2\xa0ms, max=0.25\xc2\xa0ms, 99th percentile=0.25\xc2\xa0ms"
+text " \xe2\x94\x97render: 1.2\xc2\xa0ms, 0.5 calls per parent call"
+text "   \xe2\x94\x97draw: min=0.3\xc2\xa0ms, median=0.4\xc2\xa0ms, max=0.5\xc2\xa0ms, 99th percentile=0.5\xc2\xa0ms, 3 calls per parent call"
+text "================================================="
+p_free done

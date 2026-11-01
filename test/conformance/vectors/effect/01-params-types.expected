@@ -1,0 +1,92 @@
+ep result=ok
+  errors count=0 has_errors=0
+  ep params=22 structs=0 funcs=0 samplers=0 techniques=0
+  ep_param 0 type=float name=f property=0 const=0 uniform=1 texture=0 array_count=0 annotations=0
+  ep_param 1 type=float2 name=v2 property=0 const=0 uniform=1 texture=0 array_count=0 annotations=0
+  ep_param 2 type=float3 name=v3 property=0 const=0 uniform=1 texture=0 array_count=0 annotations=0
+  ep_param 3 type=float4 name=v4 property=0 const=0 uniform=1 texture=0 array_count=0 annotations=0
+  ep_param 4 type=int name=i property=0 const=0 uniform=1 texture=0 array_count=0 annotations=0
+  ep_param 5 type=int2 name=i2 property=0 const=0 uniform=1 texture=0 array_count=0 annotations=0
+  ep_param 6 type=int3 name=i3 property=0 const=0 uniform=1 texture=0 array_count=0 annotations=0
+  ep_param 7 type=int4 name=i4 property=0 const=0 uniform=1 texture=0 array_count=0 annotations=0
+  ep_param 8 type=bool name=b property=0 const=0 uniform=1 texture=0 array_count=0 annotations=0
+  ep_param 9 type=float4x4 name=m4 property=0 const=0 uniform=1 texture=0 array_count=0 annotations=0
+  ep_param 10 type=float3x3 name=m3 property=0 const=0 uniform=1 texture=0 array_count=0 annotations=0
+  ep_param 11 type=float2x2 name=m22 property=0 const=0 uniform=1 texture=0 array_count=0 annotations=0
+  ep_param 12 type=string name=s property=0 const=0 uniform=1 texture=0 array_count=0 annotations=0
+  ep_param 13 type=texture2d name=t2 property=0 const=0 uniform=1 texture=1 array_count=0 annotations=0
+  ep_param 14 type=texture3d name=t3 property=0 const=0 uniform=1 texture=1 array_count=0 annotations=0
+  ep_param 15 type=texturecube name=tc property=0 const=0 uniform=1 texture=1 array_count=0 annotations=0
+  ep_param 16 type=texture_anything name=tx property=0 const=0 uniform=1 texture=1 array_count=0 annotations=0
+  ep_param 17 type=double name=d property=0 const=0 uniform=1 texture=0 array_count=0 annotations=0
+  ep_param 18 type=half name=h property=0 const=0 uniform=1 texture=0 array_count=0 annotations=0
+  ep_param 19 type=float5 name=f5 property=0 const=0 uniform=1 texture=0 array_count=0 annotations=0
+  ep_param 20 type=Float name=F property=0 const=0 uniform=1 texture=0 array_count=0 annotations=0
+  ep_param 21 type=sampler name=smp property=0 const=0 uniform=1 texture=0 array_count=0 annotations=0
+  error_string=@null
+effect (effect) params=22 techniques=0 viewproj=- world=-
+  param 0 name=f type=FLOAT annotations=0 default_size=0 default=-
+  param 1 name=v2 type=VEC2 annotations=0 default_size=0 default=-
+  param 2 name=v3 type=VEC3 annotations=0 default_size=0 default=-
+  param 3 name=v4 type=VEC4 annotations=0 default_size=0 default=-
+  param 4 name=i type=INT annotations=0 default_size=0 default=-
+  param 5 name=i2 type=INT2 annotations=0 default_size=0 default=-
+  param 6 name=i3 type=INT3 annotations=0 default_size=0 default=-
+  param 7 name=i4 type=INT4 annotations=0 default_size=0 default=-
+  param 8 name=b type=BOOL annotations=0 default_size=0 default=-
+  param 9 name=m4 type=MATRIX4X4 annotations=0 default_size=0 default=-
+  param 10 name=m3 type=UNKNOWN annotations=0 default_size=0 default=-
+  param 11 name=m22 type=UNKNOWN annotations=0 default_size=0 default=-
+  param 12 name=s type=STRING annotations=0 default_size=0 default=-
+  param 13 name=t2 type=TEXTURE annotations=0 default_size=0 default=-
+  param 14 name=t3 type=TEXTURE annotations=0 default_size=0 default=-
+  param 15 name=tc type=TEXTURE annotations=0 default_size=0 default=-
+  param 16 name=tx type=TEXTURE annotations=0 default_size=0 default=-
+  param 17 name=d type=UNKNOWN annotations=0 default_size=0 default=-
+  param 18 name=h type=UNKNOWN annotations=0 default_size=0 default=-
+  param 19 name=f5 type=UNKNOWN annotations=0 default_size=0 default=-
+  param 20 name=F type=UNKNOWN annotations=0 default_size=0 default=-
+  param 21 name=smp type=UNKNOWN annotations=0 default_size=0 default=-
+effect e result=ok
+  error_string=@null
+effect e params=22 techniques=0 viewproj=- world=-
+  param 0 name=f type=FLOAT annotations=0 default_size=0 default=-
+  param 1 name=v2 type=VEC2 annotations=0 default_size=0 default=-
+  param 2 name=v3 type=VEC3 annotations=0 default_size=0 default=-
+  param 3 name=v4 type=VEC4 annotations=0 default_size=0 default=-
+  param 4 name=i type=INT annotations=0 default_size=0 default=-
+  param 5 name=i2 type=INT2 annotations=0 default_size=0 default=-
+  param 6 name=i3 type=INT3 annotations=0 default_size=0 default=-
+  param 7 name=i4 type=INT4 annotations=0 default_size=0 default=-
+  param 8 name=b type=BOOL annotations=0 default_size=0 default=-
+  param 9 name=m4 type=MATRIX4X4 annotations=0 default_size=0 default=-
+  param 10 name=m3 type=UNKNOWN annotations=0 default_size=0 default=-
+  param 11 name=m22 type=UNKNOWN annotations=0 default_size=0 default=-
+  param 12 name=s type=STRING annotations=0 default_size=0 default=-
+  param 13 name=t2 type=TEXTURE annotations=0 default_size=0 default=-
+  param 14 name=t3 type=TEXTURE annotations=0 default_size=0 default=-
+  param 15 name=tc type=TEXTURE annotations=0 default_size=0 default=-
+  param 16 name=tx type=TEXTURE annotations=0 default_size=0 default=-
+  param 17 name=d type=UNKNOWN annotations=0 default_size=0 default=-
+  param 18 name=h type=UNKNOWN annotations=0 default_size=0 default=-
+  param 19 name=f5 type=UNKNOWN annotations=0 default_size=0 default=-
+  param 20 name=F type=UNKNOWN annotations=0 default_size=0 default=-
+  param 21 name=smp type=UNKNOWN annotations=0 default_size=0 default=-
+ptype float -> FLOAT
+ptype float2 -> VEC2
+ptype float3 -> VEC3
+ptype float4 -> VEC4
+ptype int -> INT
+ptype int2 -> INT2
+ptype int3 -> INT3
+ptype int4 -> INT4
+ptype bool -> BOOL
+ptype float4x4 -> MATRIX4X4
+ptype string -> STRING
+ptype texture2d -> TEXTURE
+ptype texture -> TEXTURE
+ptype textur -> UNKNOWN
+ptype float3x3 -> UNKNOWN
+ptype Float -> UNKNOWN
+ptype FLOAT4 -> UNKNOWN
+ptype  -> UNKNOWN

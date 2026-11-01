@@ -1,0 +1,13 @@
+# CORE: lexer_getstroffset: 1-based row/col; CRLF/LFCR are one line break; NULL pointer leaves outputs untouched (999 marks untouched).
+# A pointer inside a CRLF pair reports the next line.
+stroffset "ab\r\ncd\n\ref" 0
+stroffset "ab\r\ncd\n\ref" 3
+stroffset "ab\r\ncd\n\ref" 4
+stroffset "ab\r\ncd\n\ref" 7
+stroffset "ab\r\ncd\n\ref" 8
+stroffset "ab\r\ncd\n\ref" 9
+stroffset "ab" @null
+stroffset "ab" 2
+stroffset "\n\n" 2
+stroffset "\r\n" 1
+stroffset "a\tb" 2

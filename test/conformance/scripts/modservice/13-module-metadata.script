@@ -1,0 +1,31 @@
+# S-035 manifest.json next to the module data: parsed at open/create time (obs_module_load_metadata).
+mkmod m @TMP/m/m.so modname=CodeName desc=CodeDesc author=CodeAuthor
+write @TMP/d/full/manifest.json "{\"display_name\":\"Full Name\",\"id\":\"com.example.full\",\"version\":\"1.2.3\",\"os_arch\":\"linux-x86_64\",\"name\":\"full\",\"description\":\"short\",\"long_description\":\"long text\",\"urls\":{\"repository\":\"https://r\",\"website\":\"https://w\",\"support\":\"https://s\"},\"has_banner\":true,\"has_icon\":true}"
+write @TMP/d/partial/manifest.json "{\"id\":\"com.example.partial\",\"version\":\"0.1\"}"
+write @TMP/d/broken/manifest.json "{ this is not json"
+write @TMP/d/types/manifest.json "{\"display_name\":5,\"id\":true,\"has_icon\":\"yes\",\"urls\":\"nope\"}"
+mkdir @TMP/d/empty
+open_module Full @TMP/m/m.so @TMP/d/full
+mod_meta Full
+mod_info Full
+# an optional manifest field missing yields an EMPTY string (not NULL); a present display_name overrides obs_module_name()
+open_module Partial @TMP/m/m.so @TMP/d/partial/
+mod_meta Partial
+mod_info Partial
+# unparsable JSON: metadata exists with all-empty fields
+open_module Broken @TMP/m/m.so @TMP/d/broken
+mod_meta Broken
+mod_info Broken
+# wrongly typed values read as the type default
+open_module Types @TMP/m/m.so @TMP/d/types
+mod_meta Types
+# no manifest: metadata pointer is NULL, name/author/description fall back to the module's own exports
+open_module None @TMP/m/m.so @TMP/d/empty
+mod_meta None
+mod_info None
+open_module NoDir @TMP/m/m.so @TMP/d/does-not-exist
+mod_meta NoDir
+# disabled modules read the manifest too
+create_disabled DisFull @TMP/m/dis-full.so @TMP/d/full 3
+mod_meta DisFull
+mod_info DisFull

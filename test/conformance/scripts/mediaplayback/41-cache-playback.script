@@ -1,0 +1,27 @@
+# Cache playback driven by hand. Cache construction does NOT run the initial reset (unlike the streaming path): the
+# first play() on a fresh cache starts with play_sys_ts == 0 and start_ts == 0, so delivered timestamps are
+# (pts - base_sys_ts): negative offsets from the process clock base (QUIRK Q-5 in the spec). A reset (here 'creset',
+# as at the end of a stream or on a stop) repairs that for later passes.
+media cp 120000 0
+video 1 1000 8 4 yuv420p
+audio 1 1000 1000 1 u8
+pkt 0 0 fdur=40
+pkt 1 0 samples=40
+pkt 0 40 fdur=40
+pkt 1 40 samples=40
+pkt 0 80 fdur=40
+pkt 1 80 samples=40
+endmedia
+clock 1000000000
+pix off
+cinit cp
+cplay 0
+cstate
+ctickw 0 0
+ctick 8
+cstate
+echo ---- second pass after the end (reset ran at eof)
+cplay 0
+ctickw 0 0
+ctick 8
+cstate

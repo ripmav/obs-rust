@@ -1,0 +1,34 @@
+# utf8_to_wchar flags: UTF8_IGNORE_ERROR = 1 (skip bad input), UTF8_SKIP_BOM = 2 (drop U+FEFF).
+# Skipping works one byte at a time: a bad lead byte is dropped alone and the bytes that
+# followed it are looked at again. With flag 1 the lead bytes C0 C1 F5 are NOT rejected
+# any more (the check is part of the error handling): they are decoded like any lead byte (Q-2).
+u2w 1 len 61ff62 4
+u2w 1 len 61c080 4
+u2w 1 len 6180bf62 4
+u2w 1 len 61fe62 4
+u2w 1 len f5808080 4
+# a lead byte whose continuation bytes are wrong is dropped alone; stray continuation bytes after it are dropped too
+u2w 1 len c341 4
+u2w 1 len e28241 4
+u2w 1 len e241ac 4
+# truncated at the end: the last bytes are dropped one at a time
+u2w 1 len 61e282 4
+u2w 1 len 61c3 4
+u2w 1 len e282 4
+u2w 1 auto 61e282 4
+# surrogates are dropped with the whole sequence
+u2w 1 len 61eda08062 4
+u2w 1 len eda080 4
+u2w 3 len 61efbbbf62eda080 4
+# BOM only dropped when flag 2; flag 1 alone keeps it
+u2w 1 len efbbbf61 4
+u2w 2 len efbbbf61 4
+u2w 3 len efbbbf61 4
+# everything skipped: rc 0 (also what an error returns)
+u2w 1 len ffff 4
+u2w 1 len 80 4
+u2w 3 len efbbbf 4
+# capacity is checked against the characters actually kept, but an invalid character is first
+# counted and needs room (see 05-utf8-sizing-quirks)
+u2w 1 len 61ff62 2
+u2w 1 len 61ff62 1

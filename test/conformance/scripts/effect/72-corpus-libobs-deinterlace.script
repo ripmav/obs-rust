@@ -1,0 +1,89 @@
+# CORPUS (CORE): every shipped effect file of this group is parsed by the real effect parser against the fake
+# OpenGL backend (preprocessor name _OPENGL). For each file the runner prints, in order: the backend calls
+# (location string, exact assembled shader text, shader parameters), the creation result, the effect structure
+# (parameters with types and defaults, techniques, passes with the parameters bound to each shader) and the
+# parser-internal structure (counts, struct/function/sampler/technique tables, dependency lists). The files
+# are read from the repository; the file name given to the parser is the repository relative path (it also
+# decides where "#include" is resolved; the runner starts in the repository root).
+gfx _OPENGL
+echo === libobs/data/deinterlace_base.effect
+backend text full
+backend events off
+effect e libobs/data/deinterlace_base.effect @file:libobs/data/deinterlace_base.effect
+dump e
+backend text none
+backend ep brief
+ep libobs/data/deinterlace_base.effect @file:libobs/data/deinterlace_base.effect
+destroy e
+echo === libobs/data/deinterlace_blend.effect
+backend text full
+backend events off
+effect e libobs/data/deinterlace_blend.effect @file:libobs/data/deinterlace_blend.effect
+dump e
+backend text none
+backend ep brief
+ep libobs/data/deinterlace_blend.effect @file:libobs/data/deinterlace_blend.effect
+destroy e
+echo === libobs/data/deinterlace_blend_2x.effect
+backend text full
+backend events off
+effect e libobs/data/deinterlace_blend_2x.effect @file:libobs/data/deinterlace_blend_2x.effect
+dump e
+backend text none
+backend ep brief
+ep libobs/data/deinterlace_blend_2x.effect @file:libobs/data/deinterlace_blend_2x.effect
+destroy e
+echo === libobs/data/deinterlace_discard.effect
+backend text full
+backend events off
+effect e libobs/data/deinterlace_discard.effect @file:libobs/data/deinterlace_discard.effect
+dump e
+backend text none
+backend ep brief
+ep libobs/data/deinterlace_discard.effect @file:libobs/data/deinterlace_discard.effect
+destroy e
+echo === libobs/data/deinterlace_discard_2x.effect
+backend text full
+backend events off
+effect e libobs/data/deinterlace_discard_2x.effect @file:libobs/data/deinterlace_discard_2x.effect
+dump e
+backend text none
+backend ep brief
+ep libobs/data/deinterlace_discard_2x.effect @file:libobs/data/deinterlace_discard_2x.effect
+destroy e
+echo === libobs/data/deinterlace_linear.effect
+backend text full
+backend events off
+effect e libobs/data/deinterlace_linear.effect @file:libobs/data/deinterlace_linear.effect
+dump e
+backend text none
+backend ep brief
+ep libobs/data/deinterlace_linear.effect @file:libobs/data/deinterlace_linear.effect
+destroy e
+echo === libobs/data/deinterlace_linear_2x.effect
+backend text full
+backend events off
+effect e libobs/data/deinterlace_linear_2x.effect @file:libobs/data/deinterlace_linear_2x.effect
+dump e
+backend text none
+backend ep brief
+ep libobs/data/deinterlace_linear_2x.effect @file:libobs/data/deinterlace_linear_2x.effect
+destroy e
+echo === libobs/data/deinterlace_yadif.effect
+backend text full
+backend events off
+effect e libobs/data/deinterlace_yadif.effect @file:libobs/data/deinterlace_yadif.effect
+dump e
+backend text none
+backend ep brief
+ep libobs/data/deinterlace_yadif.effect @file:libobs/data/deinterlace_yadif.effect
+destroy e
+echo === libobs/data/deinterlace_yadif_2x.effect
+backend text full
+backend events off
+effect e libobs/data/deinterlace_yadif_2x.effect @file:libobs/data/deinterlace_yadif_2x.effect
+dump e
+backend text none
+backend ep brief
+ep libobs/data/deinterlace_yadif_2x.effect @file:libobs/data/deinterlace_yadif_2x.effect
+destroy e

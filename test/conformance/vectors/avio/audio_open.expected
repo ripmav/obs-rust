@@ -1,0 +1,56 @@
+> aopen - 48000 FLOAT_PLANAR STEREO
+= -1
+> aopen x 48000 UNKNOWN STEREO
+= -1
+> aopen x 0 FLOAT_PLANAR STEREO
+= -1
+> aopen x 48000 FLOAT_PLANAR UNKNOWN
+= -1
+> aopen main 48000 FLOAT_PLANAR STEREO
+= 0
+> ainfo
+info name=main rate=48000 fmt=8 spk=2 cb=1
+get block=4 planes=2 channels=2 rate=48000 active=0
+null info=0 active=0
+> aclose
+= closed
+> aopen main 44100 FLOAT 5POINT1
+= 0
+> ainfo
+info name=main rate=44100 fmt=4 spk=6 cb=1
+get block=24 planes=1 channels=6 rate=44100 active=0
+null info=0 active=0
+> aclose
+= closed
+> aopen main 96000 16BIT_PLANAR 7POINT1
+= 0
+> ainfo
+info name=main rate=96000 fmt=6 spk=8 cb=1
+get block=2 planes=8 channels=8 rate=96000 active=0
+null info=0 active=0
+> aclose
+= closed
+> aopen main 8000 U8BIT MONO
+= 0
+> ainfo
+info name=main rate=8000 fmt=1 spk=1 cb=1
+get block=1 planes=1 channels=1 rate=8000 active=0
+null info=0 active=0
+> aclose
+= closed
+> aopen main 48000 32BIT 2POINT1
+= 0
+> ainfo
+info name=main rate=48000 fmt=3 spk=3 cb=1
+get block=12 planes=1 channels=3 rate=48000 active=0
+null info=0 active=0
+> aclose
+= closed
+> aopen main 48000 FLOAT_PLANAR 7
+= 0
+> ainfo
+info name=main rate=48000 fmt=8 spk=7 cb=1
+get block=4 planes=0 channels=0 rate=48000 active=0
+null info=0 active=0
+> aclose
+= closed

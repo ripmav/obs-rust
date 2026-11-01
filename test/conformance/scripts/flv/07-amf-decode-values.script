@@ -1,0 +1,129 @@
+# S-021 AMF0 decoding of every value type with AMF_Decode / AMF_DecodeArray / AMFProp_Decode.
+# 'decode DATA [bDecodeName]': decode a sequence of properties until the data is used up or an
+# end marker (00 00 09) is met. With bDecodeName=1 (default) each property starts with a u16
+# name; with 0 the values are anonymous (script tag bodies are decoded that way).
+buf n1      00 3ff0000000000000
+buf bt      01 01
+buf bf      01 00
+buf str     02 0003 616263
+buf nul     05
+buf und     06
+buf uns     0d
+buf date    0b 4000000000000000 003c
+buf lstr    0c 00000003 616263
+buf xml     0f 00000002 3c3e
+echo anonymous-values
+decode @n1 0
+decode @bt 0
+decode @bf 0
+decode @str 0
+decode @nul 0
+decode @und 0
+decode @uns 0
+decode @date 0
+decode @lstr 0
+decode @xml 0
+echo several-anonymous-values
+cat seq @n1 @bt @str @nul
+decode @seq 0
+echo named-values
+buf nm_a    0001 61
+cat t1 @nm_a @n1
+decode @t1
+cat t2 @nm_a @bt @nm_a @str
+decode @t2
+cat t3 @nm_a @date
+decode @t3
+echo object-and-ecma-array-and-strict-array
+buf endm 000009
+buf obj1 03 0001 78 00 3ff0000000000000 000009
+decode @obj1 0
+buf ecma1 08 00000001 0001 78 00 3ff0000000000000 000009
+decode @ecma1 0
+buf ecma_cnt 08 00000063 0001 78 00 3ff0000000000000 000009
+decode @ecma_cnt 0
+buf sa1 0a 00000002 00 3ff0000000000000 02 0001 61
+decode @sa1 0
+buf sa0 0a 00000000
+decode @sa0 0
+buf obj0 03 000009
+decode @obj0 0
+echo nested-object-in-named-property
+cat t4 @nm_a @obj1
+decode @t4
+cat t5 @nm_a @ecma1 @nm_a @sa1
+decode @t5
+echo end-marker-stops-decoding
+cat t6 @n1 @endm @n1
+decode @t6 0
+decode 000009
+decode 0000
+decode 00
+echo trailing-bytes-after-the-end-marker-are-not-consumed
+cat t7 @nm_a @n1 @endm ffff
+decode @t7
+echo "decode_array COUNT anonymous values"
+decode_array @seq 4
+decode_array @seq 2
+decode_array @seq 0
+decode_array @seq 5
+decode_array - 0
+decode -
+prop_decode -
+echo "decode_array with names"
+cat t8 @nm_a @n1 @nm_a @bt
+decode_array @t8 2 1
+echo prop_decode
+prop_decode @n1
+prop_decode @str
+prop_decode @t1 1
+prop_decode @obj1
+prop_decode @date
+prop_decode @nul
+prop_decode @und
+prop_decode @uns
+echo type-codes-that-become-other-types
+echo "(undefined 06 and unsupported 0d are reported as NULL; long string 0c as STRING; xml 0f stays XML_DOC)"
+prop_decode 06
+prop_decode 0d
+prop_decode 0c0000000141
+prop_decode 0f0000000141
+echo string-edge-cases
+decode 020000 0
+decode 0200024142 0
+decode 0c00000000 0
+decode 0c0000000241 0
+decode 02000341 0
+echo double-edge-values
+decode 007ff8000000000000 0
+decode 008000000000000000 0
+decode 00fff0000000000000 0
+decode 01ff 0
+decode 0100 0
+echo "reserved-and-unsupported-type-codes (logged as errors where the reference logs them)"
+prop_decode 04
+prop_decode 0400
+prop_decode 07
+prop_decode 070000
+prop_decode 09
+prop_decode 0e
+prop_decode 10
+prop_decode 100001
+prop_decode 12
+prop_decode 13
+prop_decode 7f
+prop_decode ff
+prop_decode 0501
+prop_decode 0601
+prop_decode 0d01
+echo "QUIRK-Q7-strict-array-counts-of-2^31-and-more-are-negative-ints-and-decode-as-empty"
+decode 0affffffff 0
+decode 0a80000000 0
+decode 0a80000000003ff0000000000000 0
+decode 0a7fffffff 0
+decode 0a7fffffff003ff0000000000000 0
+decode 0a00000001 0
+echo "date-with-negative-utc-offset"
+decode 0b0000000000000000ffc4 0
+decode 0b00000000000000008000 0
+decode 0b00000000000000007fff 0

@@ -1,0 +1,46 @@
+mkmod g ok
+mkmod h ok
+log debug ---------------------------------
+ev mod g ctor
+log debug Loading module: good.so
+ev mod g set_pointer
+ev mod g load
+log debug ---------------------------------
+log error os_dlopen(@TMP/cm2/bin/bad.so->@TMP/cm2/bin/bad.so)
+log warning Module '@TMP/cm2/bin/bad.so' not loaded
+log debug Failed to load module file '@TMP/cm2/bin/bad.so', module failed to open
+log debug ---------------------------------
+ev mod h ctor
+log debug Loading module: later.so
+ev mod h set_pointer
+ev mod h load
+load_core -> 0 core_modules_loaded=0
+enabled later good
+disabled bad
+log debug ---------------------------------
+log debug Loading module: good.so
+ev mod g set_pointer
+ev mod g load
+log debug ---------------------------------
+log error os_dlopen(@TMP/cm2/bin/bad.so->@TMP/cm2/bin/bad.so)
+log warning Module '@TMP/cm2/bin/bad.so' not loaded
+log debug Failed to load module file '@TMP/cm2/bin/bad.so', module failed to open
+log debug ---------------------------------
+log debug Loading module: later.so
+ev mod h set_pointer
+ev mod h load
+load_core -> 0 core_modules_loaded=0
+enabled later good later good
+disabled bad bad
+mkmod f ok
+log debug ---------------------------------
+ev mod f ctor
+log debug Loading module: failinit.so
+ev mod f set_pointer
+ev mod f load
+log warning Failed to initialize module 'failinit.so'
+load_core -> 1 core_modules_loaded=1
+enabled later good later good
+disabled failinit bad bad
+mod_info failinit file=failinit.so name=(null) author=(null) desc=(null) bin=@TMP/cm3/bin/failinit.so data=@TMP/cm3/data/failinit id=(null) ver=(null) lib=null core=1 legacy=0 state=failed_to_initialize loaded=0 mtype=1
+load_core -> 1 core_modules_loaded=1

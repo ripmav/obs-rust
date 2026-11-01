@@ -1,0 +1,56 @@
+get_int a n 5
+has_user a n 0
+has_default a n 1
+has_autoselect a n 0
+dump a {n:number[default=num(I,5,5)]}
+json a "{}"
+json_defaults a "{\"n\":5}"
+get_int a n 7
+get_default_int a n 5
+has_user a n 1
+dump a {n:number[user=num(I,7,7) default=num(?,5,5)]}
+get_int a n 5
+has_user a n 0
+dump a {n:number[default=num(I,5,5)]}
+echo --- autoselect only
+get_int a m 9
+get_default_int a m 0
+get_autoselect_int a m 9
+has_autoselect a m 1
+dump a {n:number[default=num(I,5,5)],m:number[auto=num(I,9,9)]}
+echo --- all three layers
+get_int a m 3
+get_int a m 1
+get_default_int a m 3
+get_autoselect_int a m 9
+dump a {n:number[default=num(I,5,5)],m:number[user=num(I,1,1) default=num(?,3,3) auto=num(?,9,9)]}
+get_int a m 1
+get_default_int a m 0
+get_int a m 9
+get_int a m 0
+dump a {n:number[default=num(I,5,5)],m:number[]}
+names a n m
+json_defaults a "{\"n\":5,\"m\":0.0}"
+echo --- defaults ignore a different layer's type only when numbers
+get_int a x 2
+get_double a x 2
+get_default_int a x 1
+get_default_double a x 1.5
+dump a {n:number[default=num(I,5,5)],m:number[],x:number[user=num(I,2,2) default=num(?,1,1.5)]}
+echo --- default with the wrong type for an existing item is ignored
+has_default a str 0
+get_default_string a str ""
+get_string a str "user"
+echo --- default / autoselect for each type
+get_string a ds "dflt"
+get_bool a db 1
+get_double a dd 0.25
+get_string a as "auto"
+get_bool a ab 1
+get_double a ad 0.75
+get_autoselect_string a as "auto"
+get_autoselect_bool a ab 1
+get_autoselect_double a ad 0.75
+get_default_string a as ""
+echo --- the unsetters on missing names or missing layers do nothing
+dump a {n:number[default=num(I,5,5)],m:number[],x:number[user=num(I,2,2) default=num(?,1,1.5)],str:string[user="user"],ds:string[default="dflt"],db:bool[default=true],dd:number[default=num(D,0,0.25)],as:string[auto="auto"],ab:bool[auto=true],ad:number[auto=num(D,0,0.75)]}

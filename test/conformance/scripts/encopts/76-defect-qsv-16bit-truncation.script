@@ -1,0 +1,24 @@
+# DEFECT (D-3). QSV parameters are 16-bit (mfxU16): bitrate/max_bitrate above 65535 kbps,
+# width/height above 65535 and fps numerator/denominator above 65535 wrap modulo 65536
+# silently (the property allows bitrates up to 10000000). Required behaviour: reproduce
+# the wrap (it is deterministic; do not saturate) - or document the deviation.
+data D
+qsv_defaults h264v2 D
+set D bitrate int 70000
+set D max_bitrate int 200000
+set D rate_control str VBR
+qsv_create h264v2 X D
+qsv_destroy X
+set D bitrate int 65535
+set D max_bitrate int 65536
+qsv_create h264v2 X D
+qsv_destroy X
+set D bitrate int -1
+qsv_create h264v2 X D
+qsv_destroy X
+echo keyint-icq-and-bframes-wrap-too
+set D keyint_sec int 65537
+set D icq_quality int 70000
+set D bframes int 65540
+qsv_create h264v2 X D
+qsv_destroy X

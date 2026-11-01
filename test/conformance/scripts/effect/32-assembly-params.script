@@ -1,0 +1,48 @@
+# CORE: how a global parameter is written into shader text: [const |uniform ]TYPE NAME[[N]];
+#   - uniform parameters are written with the prefix "uniform " and become shader parameters of the pass
+#     (pass parameter list, in the order they were written);
+#   - const parameters are written with the prefix "const " and WITHOUT their value; they are NOT shader parameters;
+#   - plain and property parameters are written without any prefix and are not shader parameters either;
+#   - "const" wins over "uniform" when both are given;
+#   - array parameters carry "[N]"; defaults, annotations and 'property' never appear in the text.
+# The "dump" shows, per pass, the parameters that were looked up in the shader (vertex_params / pixel_params).
+backend text full
+text a
+uniform float u1 = 1;
+const float c1 = 2;
+float p1 = 3;
+property float pr1 = 4;
+uniform const float uc = 5;
+const uniform float cu = 6;
+uniform float arr[3];
+const float carr[2];
+uniform float4x4 m;
+uniform texture2d tex;
+uniform float u1_dup;
+float F() { return u1 + c1 + p1 + pr1 + uc + cu + arr[1] + carr[0] + m[0][0] + u1_dup; }
+technique T { pass { vertex_shader = F(); pixel_shader = F(); } }
+@end
+effect e1 params.effect @text:a
+dump e1
+echo --- parameters named in the call tokens are written first, before the function's own dependencies
+text b
+uniform float a;
+uniform float b;
+uniform float c;
+float F(float x, float y) { return x + y + c; }
+technique T { pass { vertex_shader = F(a, b); pixel_shader = F(b, a); } }
+@end
+effect e2 callparams.effect @text:b
+dump e2
+echo --- a parameter that is only mentioned in the call and in the body is written once
+effect e3 once.effect "uniform float a;\nfloat F(float x) { return x + a; }\ntechnique T { pass { vertex_shader = F(a); pixel_shader = F(a); } }"
+dump e3
+echo --- a parameter declared after the technique text is still found by the call scan (the call is resolved at the end)
+effect e4 lateparam.effect "float F(float x) { return x; }\ntechnique T { pass { vertex_shader = F(late); pixel_shader = F(late); } }\nuniform float late;"
+dump e4
+echo --- every pass resets what has been written
+effect e5 passes.effect "uniform float a;\nuniform float b;\nfloat F() { return a; }\nfloat G() { return b; }\ntechnique T { pass { vertex_shader = F(); pixel_shader = G(); } pass { vertex_shader = G(); pixel_shader = F(); } }"
+dump e5
+echo --- parameter whose name equals a keyword-like token inside the call
+effect e6 callkw.effect "uniform float a;\nfloat F(float x) { return x; }\ntechnique T { pass { vertex_shader = F(1.0 + a); pixel_shader = F(a * a); } }"
+dump e6

@@ -1,0 +1,38 @@
+# Settings update for a network stream (is_local_file = false).
+data D
+src_defaults D
+set_bool D is_local_file 0
+set_str D input "rtmp://host/app"
+set_str D input_format "flv"
+set_bool D looping 1
+host_settings D
+src_create S D
+# reconnect delay: 10 default, explicit value kept, 0 becomes 10
+src_dump S
+set_int D reconnect_delay_sec 25
+src_update S D
+src_dump S
+set_int D reconnect_delay_sec 0
+src_update S D
+src_dump S
+# looping is ignored for streams; network updates always restart the media
+src_update S D
+# 'seekable' makes the player treat the stream as a local file; the source itself is still not local
+set_bool D seekable 1
+set_int D buffering_mb 0
+src_update S D
+# rist inputs never restart on activation (case-insensitive prefix check), other inputs keep the setting
+set_str D input "RIST://1.2.3.4:5000"
+src_update S D
+src_dump S
+set_str D input "ristretto://x"
+src_update S D
+src_dump S
+set_str D input "ris"
+src_update S D
+src_dump S
+# switching back to a local file restarts
+set_bool D is_local_file 1
+set_str D local_file "/m/a.mp4"
+src_update S D
+src_dump S

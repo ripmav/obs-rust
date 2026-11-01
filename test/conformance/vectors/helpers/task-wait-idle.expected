@@ -1,0 +1,15 @@
+task_create 0 ok
+task_wait 0 -> 0
+task_gate 0 entered
+task_queue 0 a -> 1
+task_wait_release 0 -> 1
+task_wait 0 -> 0
+task_gate 0 entered
+task_wait_release 0 -> 0
+task_log
+  run gate-enter
+  run gate-exit
+  run a
+  run gate-enter
+  run gate-exit
+task_destroy 0 done

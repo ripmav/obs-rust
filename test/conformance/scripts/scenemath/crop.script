@@ -1,0 +1,35 @@
+# Source crop (pixels cut from each side before scaling). Negative values clamp to 0; setting an identical crop is
+# a no-op (does not flag an update); the cropped size falls back to 2 when the crop exceeds the source; set_crop does
+# not recompute matrices by itself (only flags them) so the result shows after the render-time update.
+source s 200 100
+scene main
+add main s c
+pos c 0 0
+update main
+print c
+crop c 10 20 5 15
+print c
+update main
+print c
+echo -- negative values become 0
+crop c -5 20 -1 15
+get c
+update main
+print c
+echo -- crop larger than the source: size collapses to 2 pixels
+crop c 150 150 0 0
+update main
+print c
+crop c 0 0 200 200
+update main
+print c
+echo -- crop on both axes exactly equal to the size
+crop c 100 100 50 50
+update main
+print c
+echo -- crop interacts with bounds: cropped size is what is scaled
+crop c 50 50 0 0
+bounds_type c 2
+bounds c 200 200
+update main
+print c

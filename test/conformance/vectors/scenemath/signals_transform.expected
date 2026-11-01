@@ -1,0 +1,28 @@
+add a ok
+add b ok
+group g ok
+signal item_add scene=main item#1
+signal item_add scene=main item#2
+signal item_transform scene=main item#2
+signal item_transform scene=main item#1
+signal item_transform scene=g item#1
+signal item_transform scene=g item#2
+signal item_transform scene=g item#1
+signal item_transform scene=g item#2
+signal item_transform scene=main item#3
+signal item_add scene=main item#3
+log end
+log end
+signal item_transform scene=g item#1
+signal item_transform scene=g item#2
+signal item_transform scene=g item#1
+signal item_transform scene=g item#2
+signal item_transform scene=main item#3
+signal item_transform scene=main item#3
+log end
+signal item_transform scene=main item#3
+log end
+log end
+log end
+signal item_transform scene=main item#3
+log end

@@ -1,0 +1,35 @@
+add bool b ok
+add color c ok
+add color_alpha ca ok
+add font f ok
+info
+  prop b type=bool desc="Bool desc" long=@null enabled=1 visible=1
+    -
+info
+  prop c type=color desc="Color" long=@null enabled=1 visible=1
+    -
+info
+  prop ca type=color_alpha desc="Color alpha" long=@null enabled=1 visible=1
+    -
+info
+  prop f type=font desc="Font" long=@null enabled=1 visible=1
+    -
+echo description-null-and-empty
+add bool n ok
+add bool e ok
+info
+  prop n type=bool desc=@null long=@null enabled=1 visible=1
+    -
+info
+  prop e type=bool desc="" long=@null enabled=1 visible=1
+    -
+echo setters-visible-enabled
+info
+  prop b type=bool desc="Bool desc" long=@null enabled=0 visible=0
+    -
+info
+  prop b type=bool desc="Bool desc" long=@null enabled=0 visible=1
+    -
+info
+  prop b type=bool desc="Bool desc" long=@null enabled=1 visible=1
+    -

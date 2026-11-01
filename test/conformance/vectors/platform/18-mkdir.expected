@@ -1,0 +1,21 @@
+mkdir a 0
+mkdir a 1
+info a dir
+mkdir file.txt 1
+info file.txt file size=1 fnv=fd0c5087
+mkdir missing/child -1
+exists missing 0
+mkdir file.txt/child -1
+mkdir a/b 0
+mkdir a/b/ 1
+mkdir name with space 0
+mkdir back\slash 0
+info back\slash dir
+mkdir  -1
+mkdir a/../c 0
+mkdir ./d 0
+mkdir ./d 1
+symlink 1
+mkdir lnk 1
+symlink 1
+mkdir dangling 1

@@ -1,0 +1,6 @@
+# S-026 without a module config path (obs_module_config_path returns NULL) no updater is created
+# (update checks need a cache dir); the services are still registered. The reference does not support
+# load -> unload -> load in one process (stale update_info pointers), so this is a separate script.
+dirs /mod/data -
+module-load
+module-unload

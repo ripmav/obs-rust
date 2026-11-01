@@ -1,0 +1,20 @@
+# Push-to-mute / push-to-talk with release delay, evaluated per audio_ts when rendering.
+init 48000 2
+clock 1000000000
+timeline 1000000000
+source a input
+set a ptm 1
+set a ptm_delay 10
+output a 48000 2 1024 1000000000 const 0.5
+render a 1
+hotkey a ptm 1
+render a 1
+hotkey a ptm 0
+output a 48000 2 1024 1021333333 const 0.5
+render a 1
+set a ptm 0
+set a ptt 1
+render a 1
+hotkey a ptt 1
+render a 1
+state a

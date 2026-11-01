@@ -1,0 +1,266 @@
+call effect_create file=chroma_key_filter_v2.effect -> e1 uniforms=13 techniques=1
+call get_param e1:opacity -> ok
+call get_param e1:contrast -> ok
+call get_param e1:brightness -> ok
+call get_param e1:gamma -> ok
+call get_param e1:chroma_key -> ok
+call get_param e1:pixel_size -> ok
+call get_param e1:similarity -> ok
+call get_param e1:smoothness -> ok
+call get_param e1:spill -> ok
+create ck -> ok
+props ck
+  sdr_only_info text desc="SdrOnlyInfo" visible=1 enabled=1 texttype=3
+  key_color_type list desc="KeyColorType" visible=1 enabled=1 combo=2 format=3 count=4
+    item 0 "Green" = "green"
+    item 1 "Blue" = "blue"
+    item 2 "Magenta" = "magenta"
+    item 3 "CustomColor" = "custom"
+  key_color color desc="KeyColor" visible=1 enabled=1
+  similarity int desc="Similarity" visible=1 enabled=1 min=1 max=1000 step=1 numtype=1
+  smoothness int desc="Smoothness" visible=1 enabled=1 min=1 max=1000 step=1 numtype=1
+  spill int desc="ColorSpillReduction" visible=1 enabled=1 min=1 max=1000 step=1 numtype=1
+  opacity float desc="Opacity" visible=1 enabled=1 min=0 max=1 step=0.0001 numtype=1
+  contrast float desc="Contrast" visible=1 enabled=1 min=-4 max=4 step=0.01 numtype=1
+  brightness float desc="Brightness" visible=1 enabled=1 min=-1 max=1 step=0.0001 numtype=1
+  gamma float desc="Gamma" visible=1 enabled=1 min=-1 max=1 step=0.01 numtype=1
+end props ck
+props ck
+  sdr_only_info text desc="SdrOnlyInfo" visible=1 enabled=1 texttype=3
+  key_color_type list desc="KeyColorType" visible=1 enabled=1 combo=2 format=3 count=4
+    item 0 "Green" = "green"
+    item 1 "Blue" = "blue"
+    item 2 "Magenta" = "magenta"
+    item 3 "CustomColor" = "custom"
+  key_color color desc="KeyColor" visible=1 enabled=1
+  similarity int desc="Similarity" visible=1 enabled=1 min=1 max=1000 step=1 numtype=1
+  smoothness int desc="Smoothness" visible=1 enabled=1 min=1 max=1000 step=1 numtype=1
+  spill int desc="ColorSpillReduction" visible=1 enabled=1 min=1 max=1000 step=1 numtype=1
+  opacity float desc="Opacity" visible=1 enabled=1 min=0 max=1 step=0.0001 numtype=1
+  contrast float desc="Contrast" visible=1 enabled=1 min=-4 max=4 step=0.01 numtype=1
+  brightness float desc="Brightness" visible=1 enabled=1 min=-1 max=1 step=0.0001 numtype=1
+  gamma float desc="Gamma" visible=1 enabled=1 min=-1 max=1 step=0.01 numtype=1
+end props ck
+pmod ck key_color_type -> 1
+vis ck sdr_only_info:1 key_color_type:1 key_color:1 similarity:1 smoothness:1 spill:1 opacity:1 contrast:1 brightness:1 gamma:1
+pmod ck key_color_type -> 1
+vis ck sdr_only_info:1 key_color_type:1 key_color:0 similarity:1 smoothness:1 spill:1 opacity:1 contrast:1 brightness:1 gamma:1
+pmod ck key_color_type -> 1
+vis ck sdr_only_info:1 key_color_type:1 key_color:0 similarity:1 smoothness:1 spill:1 opacity:1 contrast:1 brightness:1 gamma:1
+call effect_create file=color_key_filter_v2.effect -> e2 uniforms=9 techniques=1
+call get_param e2:opacity -> ok
+call get_param e2:contrast -> ok
+call get_param e2:brightness -> ok
+call get_param e2:gamma -> ok
+call get_param e2:key_color -> ok
+call get_param e2:similarity -> ok
+call get_param e2:smoothness -> ok
+create kk -> ok
+props kk
+  sdr_only_info text desc="SdrOnlyInfo" visible=1 enabled=1 texttype=3
+  key_color_type list desc="KeyColorType" visible=1 enabled=1 combo=2 format=3 count=5
+    item 0 "Green" = "green"
+    item 1 "Blue" = "blue"
+    item 2 "Red" = "red"
+    item 3 "Magenta" = "magenta"
+    item 4 "CustomColor" = "custom"
+  key_color color desc="KeyColor" visible=1 enabled=1
+  similarity int desc="Similarity" visible=1 enabled=1 min=1 max=1000 step=1 numtype=1
+  smoothness int desc="Smoothness" visible=1 enabled=1 min=1 max=1000 step=1 numtype=1
+  opacity float desc="Opacity" visible=1 enabled=1 min=0 max=1 step=0.0001 numtype=1
+  contrast float desc="Contrast" visible=1 enabled=1 min=-4 max=4 step=0.01 numtype=1
+  brightness float desc="Brightness" visible=1 enabled=1 min=-1 max=1 step=0.0001 numtype=1
+  gamma float desc="Gamma" visible=1 enabled=1 min=-1 max=1 step=0.01 numtype=1
+end props kk
+pmod kk key_color_type -> 1
+vis kk sdr_only_info:1 key_color_type:1 key_color:1 similarity:1 smoothness:1 opacity:1 contrast:1 brightness:1 gamma:1
+call effect_create file=crop_filter.effect -> e3 uniforms=5 techniques=4
+call get_param e3:mul_val -> ok
+call get_param e3:add_val -> ok
+call get_param e3:multiplier -> ok
+call source_update cr deferred=1
+create cr -> ok
+props cr
+  relative bool desc="Crop.Relative" visible=1 enabled=1
+  left int desc="Crop.Left" visible=1 enabled=1 min=-8192 max=8192 step=1 numtype=0
+  top int desc="Crop.Top" visible=1 enabled=1 min=-8192 max=8192 step=1 numtype=0
+  right int desc="Crop.Right" visible=1 enabled=1 min=-8192 max=8192 step=1 numtype=0
+  bottom int desc="Crop.Bottom" visible=1 enabled=1 min=-8192 max=8192 step=1 numtype=0
+  cx int desc="Crop.Width" visible=1 enabled=1 min=0 max=8192 step=1 numtype=0
+  cy int desc="Crop.Height" visible=1 enabled=1 min=0 max=8192 step=1 numtype=0
+end props cr
+props cr
+  relative bool desc="Crop.Relative" visible=1 enabled=1
+  left int desc="Crop.Left" visible=1 enabled=1 min=-8192 max=8192 step=1 numtype=0
+  top int desc="Crop.Top" visible=1 enabled=1 min=-8192 max=8192 step=1 numtype=0
+  right int desc="Crop.Right" visible=1 enabled=1 min=-8192 max=8192 step=1 numtype=0
+  bottom int desc="Crop.Bottom" visible=1 enabled=1 min=-8192 max=8192 step=1 numtype=0
+  cx int desc="Crop.Width" visible=1 enabled=1 min=0 max=8192 step=1 numtype=0
+  cy int desc="Crop.Height" visible=1 enabled=1 min=0 max=8192 step=1 numtype=0
+end props cr
+pmod cr relative -> 1
+props cr
+  relative bool desc="Crop.Relative" visible=1 enabled=1
+  left int desc="Crop.Left" visible=1 enabled=1 min=-8192 max=8192 step=1 numtype=0
+  top int desc="Crop.Top" visible=1 enabled=1 min=-8192 max=8192 step=1 numtype=0
+  right int desc="Crop.Right" visible=1 enabled=1 min=-8192 max=8192 step=1 numtype=0
+  bottom int desc="Crop.Bottom" visible=1 enabled=1 min=-8192 max=8192 step=1 numtype=0
+  cx int desc="Crop.Width" visible=1 enabled=1 min=0 max=8192 step=1 numtype=0
+  cy int desc="Crop.Height" visible=1 enabled=1 min=0 max=8192 step=1 numtype=0
+end props cr
+vis cr relative:1 left:1 top:1 right:1 bottom:1 cx:1 cy:1
+pmod cr relative -> 1
+vis cr relative:1 left:1 top:1 right:1 bottom:1 cx:0 cy:0
+call effect_create file=crop_filter.effect -> e4 uniforms=5 techniques=4
+call get_param e4:add_val -> ok
+call get_param e4:mul_val -> ok
+call get_param e4:image -> ok
+call get_param e4:multiplier -> ok
+call source_update sc deferred=1
+create sc -> ok
+props sc
+  speed_x float desc="ScrollFilter.SpeedX" visible=1 enabled=1 min=-500 max=500 step=1 numtype=1
+  speed_y float desc="ScrollFilter.SpeedY" visible=1 enabled=1 min=-500 max=500 step=1 numtype=1
+  limit_cx bool desc="ScrollFilter.LimitWidth" visible=1 enabled=1
+  cx int desc="Crop.Width" visible=1 enabled=1 min=1 max=8192 step=1 numtype=0
+  limit_cy bool desc="ScrollFilter.LimitHeight" visible=1 enabled=1
+  cy int desc="Crop.Height" visible=1 enabled=1 min=1 max=8192 step=1 numtype=0
+  loop bool desc="ScrollFilter.Loop" visible=1 enabled=1
+end props sc
+pmod sc limit_cx -> 1
+vis sc speed_x:1 speed_y:1 limit_cx:1 cx:1 limit_cy:1 cy:1 loop:1
+pmod sc limit_cy -> 1
+vis sc speed_x:1 speed_y:1 limit_cx:1 cx:1 limit_cy:1 cy:1 loop:1
+pmod sc limit_cx -> 1
+vis sc speed_x:1 speed_y:1 limit_cx:1 cx:0 limit_cy:1 cy:1 loop:1
+call samplerstate_create s1 filter=POINT u=CLAMP v=CLAMP w=CLAMP aniso=0 border=0
+create sl -> ok
+props sl
+  sampling list desc="ScaleFiltering" visible=1 enabled=1 combo=2 format=3 count=5
+    item 0 "ScaleFiltering.Point" = "point"
+    item 1 "ScaleFiltering.Bilinear" = "bilinear"
+    item 2 "ScaleFiltering.Bicubic" = "bicubic"
+    item 3 "ScaleFiltering.Lanczos" = "lanczos"
+    item 4 "ScaleFiltering.Area" = "area"
+  resolution list desc="Resolution" visible=1 enabled=1 combo=1 format=3 count=17
+    item 0 "None" = "None"
+    item 1 "Base.Canvas" = "Base.Canvas"
+    item 2 "16:9" = "16:9"
+    item 3 "16:10" = "16:10"
+    item 4 "4:3" = "4:3"
+    item 5 "1:1" = "1:1"
+    item 6 "1920x1080" = "1920x1080"
+    item 7 "1536x864" = "1536x864"
+    item 8 "1440x810" = "1440x810"
+    item 9 "1280x720" = "1280x720"
+    item 10 "1152x648" = "1152x648"
+    item 11 "1097x617" = "1097x617"
+    item 12 "960x540" = "960x540"
+    item 13 "853x480" = "853x480"
+    item 14 "768x432" = "768x432"
+    item 15 "698x392" = "698x392"
+    item 16 "640x360" = "640x360"
+  undistort bool desc="UndistortCenter" visible=1 enabled=1
+end props sl
+props sl
+  sampling list desc="ScaleFiltering" visible=1 enabled=1 combo=2 format=3 count=5
+    item 0 "ScaleFiltering.Point" = "point"
+    item 1 "ScaleFiltering.Bilinear" = "bilinear"
+    item 2 "ScaleFiltering.Bicubic" = "bicubic"
+    item 3 "ScaleFiltering.Lanczos" = "lanczos"
+    item 4 "ScaleFiltering.Area" = "area"
+  resolution list desc="Resolution" visible=1 enabled=1 combo=1 format=3 count=17
+    item 0 "None" = "None"
+    item 1 "Base.Canvas" = "Base.Canvas"
+    item 2 "16:9" = "16:9"
+    item 3 "16:10" = "16:10"
+    item 4 "4:3" = "4:3"
+    item 5 "1:1" = "1:1"
+    item 6 "1920x1080" = "1920x1080"
+    item 7 "1536x864" = "1536x864"
+    item 8 "1440x810" = "1440x810"
+    item 9 "1280x720" = "1280x720"
+    item 10 "1152x648" = "1152x648"
+    item 11 "1097x617" = "1097x617"
+    item 12 "960x540" = "960x540"
+    item 13 "853x480" = "853x480"
+    item 14 "768x432" = "768x432"
+    item 15 "698x392" = "698x392"
+    item 16 "640x360" = "640x360"
+  undistort bool desc="UndistortCenter" visible=1 enabled=1
+end props sl
+pmod sl sampling -> 1
+vis sl sampling:1 resolution:1 undistort:0
+pmod sl sampling -> 1
+vis sl sampling:1 resolution:1 undistort:1
+pmod sl sampling -> 1
+vis sl sampling:1 resolution:1 undistort:0
+pmod sl sampling -> 1
+vis sl sampling:1 resolution:1 undistort:1
+call effect_create file=hdr_tonemap_filter.effect -> e5 uniforms=5 techniques=3
+call get_param e5:multiplier -> ok
+call get_param e5:input_maximum_nits -> ok
+call get_param e5:output_maximum_nits -> ok
+call source_update ht deferred=1
+create ht -> ok
+props ht
+  override_info text desc="HdrTonemap.Description" visible=1 enabled=1 texttype=3
+  transform list desc="HdrTonemap.ToneTransform" visible=1 enabled=1 combo=2 format=1 count=3
+    item 0 "HdrTonemap.SdrReinhard" = 0
+    item 1 "HdrTonemap.HdrMaxrgb" = 1
+    item 2 "HdrTonemap.SdrMaxrgb" = 2
+  sdr_white_level_nits int desc="HdrTonemap.SdrWhiteLevel" visible=1 enabled=1 min=80 max=480 step=1 numtype=0 suffix=" nits"
+  hdr_input_maximum_nits int desc="HdrTonemap.HdrInputMaximum" visible=1 enabled=1 min=5 max=10000 step=1 numtype=0 suffix=" nits"
+  hdr_output_maximum_nits int desc="HdrTonemap.HdrOutputMaximum" visible=1 enabled=1 min=5 max=10000 step=1 numtype=0 suffix=" nits"
+  sdr_input_maximum_nits int desc="HdrTonemap.SdrInputMaximum" visible=1 enabled=1 min=5 max=10000 step=1 numtype=0 suffix=" nits"
+  sdr_output_maximum_nits int desc="HdrTonemap.SdrOutputMaximum" visible=1 enabled=1 min=5 max=10000 step=1 numtype=0 suffix=" nits"
+end props ht
+props ht
+  override_info text desc="HdrTonemap.Description" visible=1 enabled=1 texttype=3
+  transform list desc="HdrTonemap.ToneTransform" visible=1 enabled=1 combo=2 format=1 count=3
+    item 0 "HdrTonemap.SdrReinhard" = 0
+    item 1 "HdrTonemap.HdrMaxrgb" = 1
+    item 2 "HdrTonemap.SdrMaxrgb" = 2
+  sdr_white_level_nits int desc="HdrTonemap.SdrWhiteLevel" visible=1 enabled=1 min=80 max=480 step=1 numtype=0 suffix=" nits"
+  hdr_input_maximum_nits int desc="HdrTonemap.HdrInputMaximum" visible=1 enabled=1 min=5 max=10000 step=1 numtype=0 suffix=" nits"
+  hdr_output_maximum_nits int desc="HdrTonemap.HdrOutputMaximum" visible=1 enabled=1 min=5 max=10000 step=1 numtype=0 suffix=" nits"
+  sdr_input_maximum_nits int desc="HdrTonemap.SdrInputMaximum" visible=1 enabled=1 min=5 max=10000 step=1 numtype=0 suffix=" nits"
+  sdr_output_maximum_nits int desc="HdrTonemap.SdrOutputMaximum" visible=1 enabled=1 min=5 max=10000 step=1 numtype=0 suffix=" nits"
+end props ht
+pmod ht transform -> 1
+vis ht override_info:1 transform:1 sdr_white_level_nits:0 hdr_input_maximum_nits:1 hdr_output_maximum_nits:1 sdr_input_maximum_nits:0 sdr_output_maximum_nits:0
+pmod ht transform -> 1
+vis ht override_info:1 transform:1 sdr_white_level_nits:0 hdr_input_maximum_nits:0 hdr_output_maximum_nits:0 sdr_input_maximum_nits:1 sdr_output_maximum_nits:1
+pmod ht transform -> 1
+vis ht override_info:1 transform:1 sdr_white_level_nits:0 hdr_input_maximum_nits:0 hdr_output_maximum_nits:0 sdr_input_maximum_nits:0 sdr_output_maximum_nits:0
+pmod ht transform -> 1
+vis ht override_info:1 transform:1 sdr_white_level_nits:1 hdr_input_maximum_nits:0 hdr_output_maximum_nits:0 sdr_input_maximum_nits:0 sdr_output_maximum_nits:0
+call effect_create file=sdr_on_hdr_filter.effect -> e6 uniforms=4 techniques=2
+call get_param e6:multiplier -> ok
+call get_param e6:power -> ok
+call source_update sh deferred=1
+create sh -> ok
+props sh
+  override_info text desc="SdrOnHdr.Description" visible=1 enabled=1 texttype=3
+  gamma list desc="SdrOnHdr.Gamma" visible=1 enabled=1 combo=2 format=1 count=2
+    item 0 "SdrOnHdr.GammaSrgb" = 1
+    item 1 "SdrOnHdr.GammaPower" = 2
+  sdr_white_level_nits int desc="SdrOnHdr.SdrWhiteLevel" visible=1 enabled=1 min=80 max=480 step=1 numtype=0 suffix=" nits"
+  power float desc="SdrOnHdr.Power" visible=1 enabled=1 min=1.8 max=2.6 step=0.1 numtype=0
+end props sh
+props sh
+  override_info text desc="SdrOnHdr.Description" visible=1 enabled=1 texttype=3
+  gamma list desc="SdrOnHdr.Gamma" visible=1 enabled=1 combo=2 format=1 count=2
+    item 0 "SdrOnHdr.GammaSrgb" = 1
+    item 1 "SdrOnHdr.GammaPower" = 2
+  sdr_white_level_nits int desc="SdrOnHdr.SdrWhiteLevel" visible=1 enabled=1 min=80 max=480 step=1 numtype=0 suffix=" nits"
+  power float desc="SdrOnHdr.Power" visible=1 enabled=1 min=1.8 max=2.6 step=0.1 numtype=0
+end props sh
+pmod sh gamma -> 1
+vis sh override_info:1 gamma:1 sdr_white_level_nits:1 power:1
+pmod sh gamma -> 1
+vis sh override_info:1 gamma:1 sdr_white_level_nits:1 power:0
+pmod sh gamma -> 1
+vis sh override_info:1 gamma:1 sdr_white_level_nits:1 power:0
+papply sh
+vis sh override_info:1 gamma:1 sdr_white_level_nits:1 power:1

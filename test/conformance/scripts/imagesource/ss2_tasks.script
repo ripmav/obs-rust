@@ -1,0 +1,19 @@
+# slideshow v2: slide images are decoded by a task queue (fake: manual run via "tasks", or immediately with core task_auto);
+# destroying the slideshow runs pending tasks first. Decoded slides load their texture on their next tick (CORE).
+fs_file /s/a.png 1
+fs_file /s/b.png 1
+fs_file /s/c.png 1
+fs_file /s/d.png 1
+img /s/a.png 10 10
+img /s/b.png 20 20
+img /s/c.png 30 30
+img /s/d.png 40 40
+create ss slideshow_v2 {"files":[{"value":"/s/a.png"},{"value":"/s/b.png"}],"transition":"cut","transition_speed":0}
+tick 0.016
+tasks
+tick 0.016
+core task_auto 1
+update ss {"files":[{"value":"/s/c.png"}]}
+tick 0.016
+tick 0.016
+destroy ss

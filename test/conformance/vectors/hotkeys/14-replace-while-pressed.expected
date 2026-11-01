@@ -1,0 +1,31 @@
+signal hotkey_register id=0
+reg A -> 0
+signal hotkey_bindings_changed id=0
+poll
+poll
+cb A id=0 same_ptr=1 pressed=1
+info A id=0 type=0 partner=INVALID registerer=none pressed_count=2
+  name="A"
+  desc="a"
+replace-bindings-while-both-pressed
+cb A id=0 same_ptr=1 pressed=0
+signal hotkey_bindings_changed id=0
+info A id=0 type=0 partner=INVALID registerer=none pressed_count=0
+  name="A"
+  desc="a"
+poll
+the-new-binding-is-fresh-and-can-press-while-C-is-down
+poll
+cb A id=0 same_ptr=1 pressed=1
+poll
+load-from-json-replaces-too
+cb A id=0 same_ptr=1 pressed=0
+signal hotkey_bindings_changed id=0
+b 0 hk=0 mods=0x0 key=OBS_KEY_D pressed=0 modmatch=0 hkptr_ok=1
+enumb done
+clear-with-empty-json-releases-but-emits-no-signal
+poll
+poll
+cb A id=0 same_ptr=1 pressed=1
+cb A id=0 same_ptr=1 pressed=0
+enumb done

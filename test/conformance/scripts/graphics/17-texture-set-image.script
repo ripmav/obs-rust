@@ -1,0 +1,34 @@
+# gs_texture_set_image: maps the texture, copies min(linesize, mapped linesize) bytes per row (optionally
+# bottom-up) and unmaps.  Source bytes are the sequence i%251.  The mapped buffer is zero-initialised
+# and printed at unmap.
+trace 0
+gs_create g
+gs_enter_context g
+trace 1
+gs_texture_create 2 3 GS_RGBA 1 GS_DYNAMIC > t
+echo == equal linesizes -> one big copy
+gs_texture_set_image t 8 0
+echo == flip: rows are copied bottom-up
+gs_texture_set_image t 8 1
+echo == source stride smaller than the mapped one (backend pads rows to 12)
+ret maplinesize 12
+gs_texture_set_image t 8 0
+echo == source stride larger than the mapped stride: only mapped-stride bytes per row
+ret maplinesize 6
+gs_texture_set_image t 10 0
+echo == flip with differing strides
+gs_texture_set_image t 10 1
+ret maplinesize 0
+echo == map failure: nothing is unmapped
+ret gs_texture_map 0
+gs_texture_set_image t 8 0
+ret gs_texture_map 1
+echo == NULL arguments
+gs_texture_set_image - 8 0
+gs_texture_set_image t 8 0 nulldata
+echo == stage surface map/unmap are straight forwards
+gs_stagesurface_create 2 2 GS_RGBA > s
+gs_stagesurface_map s
+gs_stagesurface_unmap s
+ret gs_stagesurface_map 0
+gs_stagesurface_map s

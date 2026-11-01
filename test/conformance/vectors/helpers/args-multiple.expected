@@ -1,0 +1,15 @@
+args_dump argc=4
+  argv[0]="first"
+  argv[1]="a"
+  argv[2]="b"
+  argv[3]="n=3"
+  argv[4]=@null
+args_dump argc=3
+  argv[0]="second"
+  argv[1]="x"
+  argv[2]="y"
+  argv[3]=@null
+args_destroy_null ok
+args_dump argc=1
+  argv[0]="only"
+  argv[1]=@null

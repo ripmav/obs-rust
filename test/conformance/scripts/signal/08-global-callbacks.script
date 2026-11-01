@@ -1,0 +1,19 @@
+# Global callbacks run after the signal's own callbacks, only for declared signals.
+handler h
+add h "void s(int n)"
+add h "void t()"
+callback a
+gcallback g1
+gcallback g2
+connect h s a
+connect_global h g1
+connect_global h g2
+connect_global h g1
+emit h s n=3
+emit h t
+emit h undeclared
+disconnect_global h g1
+emit h s n=4
+disconnect_global h g1
+disconnect_global h g2
+emit h s n=5

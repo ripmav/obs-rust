@@ -1,0 +1,38 @@
+# CORE. int/float/bool lists store their typed value; the add/insert for another format is a
+# silent no-op (add returns 0, which is indistinguishable from "index 0").
+props P
+add list P li "Int" radio int as li
+add list P lf "Float" list float as lf
+add list P lb "Bool" list bool as lb
+list_add li int "a" 10
+list_add li int "b" -9223372036854775808
+list_add li int "c" 9223372036854775807
+list_insert li int 1 "ins" 5
+info li
+list_add lf float "x" 1.5
+list_add lf float "y" -0.1
+list_insert lf float 0 "z" 1e300
+info lf
+list_add lb bool "t" 1
+list_add lb bool "f" 0
+list_add lb bool "t2" 7
+info lb
+echo wrong-format-adds
+list_add li string "bad" "s"
+list_add li float "bad" 1.0
+list_add li bool "bad" 1
+list_add lf int "bad" 1
+list_add lb int "bad" 1
+list_add lb string "bad" "x"
+list_insert li string 0 "bad" "s"
+list_insert lf int 0 "bad" 1
+list_insert lb float 0 "bad" 1
+info li
+info lf
+info lb
+echo item-access-with-every-getter
+list_item li 0
+list_item lf 0
+list_item lb 0
+list_item lb 1
+destroy P

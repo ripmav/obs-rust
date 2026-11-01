@@ -1,0 +1,28 @@
+# ffmpeg_output with the libav "null" muxer (no file I/O): start() runs the connect work on a thread (second start
+# while connecting is refused), the muxer gets one video and one audio stream per selected mix, audio streams carry
+# the configured titles, the output asks for raw video (no conversion) and for audio in the codec's sample format,
+# a write thread is created. The video encoder is whatever libav picks for the muxer default (not asserted).
+reset
+output ff
+size 320 240
+video_info 30 1 709 P NV12
+mixers 3
+set str url x.null
+set str format_name null
+set int video_bitrate 800
+set int audio_bitrate 128
+names left right
+fo_create
+fo_info
+fo_start
+fo_start
+fo_state
+fo_connect
+fo_state
+fo_stop 0
+fo_state
+fo_destroy
+echo not_connected_start_then_destroy_joins_the_pending_thread
+fo_create
+fo_start
+fo_destroy

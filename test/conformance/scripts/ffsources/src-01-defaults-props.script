@@ -1,0 +1,31 @@
+# Source defaults and properties (settings keys, visibility callback, path default).
+# get_defaults only sets nine keys; every other key (hw_decode, seekable, close_when_inactive,
+# full_decode, color_range, input, input_format, ffmpeg_options, local_file) has no default.
+data D
+src_defaults D
+dump_data D
+# properties of a source that has no input yet (S == NULL path: default_path is NULL)
+src_props P0 @null
+dump_props P0
+# visibility callback: is_local_file=true shows local-file controls, hides network ones
+set_bool D is_local_file 1
+props_modified P0 is_local_file D
+dump_props P0
+set_bool D is_local_file 0
+props_modified P0 is_local_file D
+dump_props P0
+# default_path derives from the source's current input: backslashes become '/', cut after last '/'
+data W
+src_defaults W
+set_str W local_file "C:\\videos\\clips\\a.mp4"
+host_settings W
+src_create S W
+src_props P1 S
+dump_props P1
+# an input without any slash gives an empty default path (not NULL)
+data X
+src_defaults X
+set_str X local_file "clip.mp4"
+src_update S X
+src_props P2 S
+dump_props P2

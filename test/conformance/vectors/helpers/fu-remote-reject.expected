@@ -1,0 +1,59 @@
+fu_run local=/L cache=/C temp=/C/.temp url=http://srv/u/package.json
+fs read /L/package.json -> ok
+fs read /C/package.json -> ok
+fs read /C/meta.json -> missing
+http GET http://srv/u/package.json "User-Agent: UA"
+fs write /C/.temp/package.json len=211
+http GET http://cdn/ok.json "User-Agent: UA"
+confirm name="ok.json" version=1 size=8
+log info [fu] Update file 'ok.json' (version 1) rejected
+http GET http://cdn/rej.json "User-Agent: UA"
+confirm name="rej.json" version=1 size=12
+log info [fu] Update file 'rej.json' (version 1) rejected
+http GET http://cdn/gone.json "User-Agent: UA"
+log warning [fu] Remote update of URL "http://cdn/gone.json" failed: HTTP error
+http GET http://cdn/err.json "User-Agent: UA"
+log warning [fu] Remote update of URL "http://cdn/err.json" failed: transfer failed
+http GET http://cdn/unregistered.json "User-Agent: UA"
+log warning [fu] Remote update of URL "http://cdn/unregistered.json" failed: transfer failed
+fs unlink /C/package.json : ok
+fs rename /C/.temp/package.json -> /C/package.json : ok
+log info [fu] Successfully updated package (version 2)
+fs rmdir /C/.temp
+fu_run done
+fu_ls
+  /C/package.json (211 bytes)
+  /L/package.json (24 bytes)
+fu_run local=/L cache=/C temp=/C/.temp url=http://srv/u/package.json
+fs read /L/package.json -> ok
+fs read /C/package.json -> ok
+fs read /C/meta.json -> missing
+http GET http://srv/u/package.json "User-Agent: UA"
+fs write /C/.temp/package.json len=211
+http GET http://cdn/ok.json "User-Agent: UA"
+confirm name="ok.json" version=1 size=8
+fs write /C/.temp/ok.json len=8
+fs unlink /C/ok.json : fail
+fs rename /C/.temp/ok.json -> /C/ok.json : ok
+log info [fu] Successfully updated file 'ok.json' (version 1)
+http GET http://cdn/rej.json "User-Agent: UA"
+confirm name="rej.json" version=1 size=12
+fs write /C/.temp/rej.json len=8
+fs unlink /C/rej.json : fail
+fs rename /C/.temp/rej.json -> /C/rej.json : ok
+log info [fu] Successfully updated file 'rej.json' (version 1)
+http GET http://cdn/gone.json "User-Agent: UA"
+log warning [fu] Remote update of URL "http://cdn/gone.json" failed: HTTP error
+http GET http://cdn/err.json "User-Agent: UA"
+log warning [fu] Remote update of URL "http://cdn/err.json" failed: transfer failed
+http GET http://cdn/unregistered.json "User-Agent: UA"
+log warning [fu] Remote update of URL "http://cdn/unregistered.json" failed: transfer failed
+fs unlink /C/package.json : ok
+fs rename /C/.temp/package.json -> /C/package.json : ok
+log info [fu] Successfully updated package (version 2)
+fs rmdir /C/.temp
+fu_run done
+fu_cat /C/ok.json "REPLACED"
+fu_cat /C/rej.json "REPLACED"
+fu_cat /C/ok.json "REPLACED"
+fu_cat /C/package.json "{\"version\":2,\"url\":\"http://cdn\",\"files\":[{\"name\":\"ok.json\",\"version\":1},{\"name\":\"rej.json\",\"version\":1},{\"name\":\"gone.json\",\"version\":1},{\"name\":\"err.json\",\"version\":1},{\"name\":\"unregistered.json\",\"version\":1}]}"

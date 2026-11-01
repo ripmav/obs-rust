@@ -1,0 +1,8 @@
+# If the encoder has no video output, the rendition counters are reported as 0 and an error is
+# logged; the session counters and the injection itself proceed (CORE).
+bpm_set codec h264
+bpm_set has_video 0
+bpm_set rendered 40
+bpm_set out_total 30
+bpm_inject 0 0 1 1 1 1 00000001aa 1000000000 1010000000 1020000000 1030000000
+bpm_destroy 0

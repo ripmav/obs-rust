@@ -1,0 +1,43 @@
+# CORE: stinger media composite: technique and multiplier for every (media space, output space) pair.
+load quiet
+mdef w=3840 h=1080
+create st obs_stinger_transition str:path=/m/s.mov bool:track_matte_enabled=1 int:track_matte_layout=0
+tick st
+src st w=1920 h=1080
+settings st str:path=/m/s2.mov
+tick st
+src media#2 w=3840 h=1080 dur_ns=1000000000 frames=60
+start st
+view 0.5 1 2 1920 1080
+gfx white=300 space=srgb
+src media#2 space=srgb
+render st
+gfx space=709_scrgb
+render st
+gfx space=709_extended
+render st
+gfx space=srgb_16f
+render st
+src media#2 space=srgb_16f
+gfx space=709_scrgb
+render st
+src media#2 space=709_extended
+gfx space=srgb
+render st
+gfx space=srgb_16f
+render st
+gfx space=709_scrgb
+render st
+gfx space=709_extended
+render st
+src media#2 space=709_scrgb
+gfx space=srgb
+render st
+gfx space=srgb_16f
+render st
+gfx space=709_extended
+render st
+gfx space=709_scrgb
+render st
+gfx white=203 space=srgb
+render st

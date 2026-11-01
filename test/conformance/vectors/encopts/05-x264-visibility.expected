@@ -1,0 +1,24 @@
+echo defaults-CBR-bufsize-off
+props_apply P
+vis P rate_control:11 bitrate:11 use_bufsize:11 buffer_size:01 crf:01 keyint_sec:11 preset:11 profile:11 tune:11 x264opts:11 repeat_headers:01
+props_apply P
+vis P rate_control:11 bitrate:11 use_bufsize:11 buffer_size:11 crf:01 keyint_sec:11 preset:11 profile:11 tune:11 x264opts:11 repeat_headers:01
+echo ABR
+props_apply P
+vis P rate_control:11 bitrate:11 use_bufsize:11 buffer_size:11 crf:01 keyint_sec:11 preset:11 profile:11 tune:11 x264opts:11 repeat_headers:01
+echo VBR
+props_apply P
+vis P rate_control:11 bitrate:11 use_bufsize:11 buffer_size:11 crf:11 keyint_sec:11 preset:11 profile:11 tune:11 x264opts:11 repeat_headers:01
+echo CRF-hides-bitrate-use_bufsize-and-buffer_size
+props_apply P
+vis P rate_control:11 bitrate:01 use_bufsize:01 buffer_size:01 crf:11 keyint_sec:11 preset:11 profile:11 tune:11 x264opts:11 repeat_headers:01
+echo rate-control-comparison-is-case-insensitive
+props_apply P
+vis P rate_control:11 bitrate:01 use_bufsize:01 buffer_size:01 crf:11 keyint_sec:11 preset:11 profile:11 tune:11 x264opts:11 repeat_headers:01
+props_apply P
+vis P rate_control:11 bitrate:11 use_bufsize:11 buffer_size:11 crf:01 keyint_sec:11 preset:11 profile:11 tune:11 x264opts:11 repeat_headers:01
+echo unknown-rate-control-behaves-like-neither-abr-nor-crf
+props_apply P
+vis P rate_control:11 bitrate:11 use_bufsize:11 buffer_size:11 crf:11 keyint_sec:11 preset:11 profile:11 tune:11 x264opts:11 repeat_headers:01
+props_apply P
+vis P rate_control:11 bitrate:11 use_bufsize:11 buffer_size:11 crf:11 keyint_sec:11 preset:11 profile:11 tune:11 x264opts:11 repeat_headers:01

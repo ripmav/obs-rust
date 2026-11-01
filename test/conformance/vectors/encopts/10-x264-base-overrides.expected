@@ -1,0 +1,115 @@
+echo no-overrides
+log info ---------------------------------
+log info [x264 encoder: 'enc'] preset: medium
+log info [x264 encoder: 'enc'] profile: main
+log info [x264 encoder: 'enc'] tune: film
+x264.param_default_preset preset=medium tune=film
+log info [x264 encoder: 'enc'] settings: 	rate_control: CBR 	bitrate:      6000 	buffer size:  6000 	crf:          -3 	fps_num:      60 	fps_den:      1 	width:        1920 	height:       1080 	keyint:       -1111 
+x264.param_apply_profile main -> 0
+x264_settings ok
+params csp=4 size=1920x1080 fps=60/1 timebase=1/60 keyint_max=-1111 bframe=-2222 vfr=0
+params rc method=2 bitrate=6000 vbv_max=6000 vbv_buf=6000 rf=-3.5 filler=1 nal_hrd=0
+params vui sar=1x1 fullrange=0 colorprim=1 transfer=1 colmatrix=1
+params headers repeat=0 annexb=0 aud=0 loglevel=1
+echo override-all-three
+log info ---------------------------------
+log info [x264 encoder: 'enc'] preset: slow
+log info [x264 encoder: 'enc'] profile: high
+log info [x264 encoder: 'enc'] tune: zerolatency
+x264.param_default_preset preset=slow tune=zerolatency
+log info [x264 encoder: 'enc'] settings: 	rate_control: CBR 	bitrate:      6000 	buffer size:  6000 	crf:          -3 	fps_num:      60 	fps_den:      1 	width:        1920 	height:       1080 	keyint:       -1111 
+log info [x264 encoder: 'enc'] custom settings:  	preset = slow 	tune = zerolatency 	profile = high
+x264.param_apply_profile high -> 0
+x264_settings ok
+params csp=4 size=1920x1080 fps=60/1 timebase=1/60 keyint_max=-1111 bframe=-2222 vfr=0
+params rc method=2 bitrate=6000 vbv_max=6000 vbv_buf=6000 rf=-3.5 filler=1 nal_hrd=0
+params vui sar=1x1 fullrange=0 colorprim=1 transfer=1 colmatrix=1
+params headers repeat=0 annexb=0 aud=0 loglevel=1
+echo last-valid-occurrence-wins
+log info ---------------------------------
+log warning [x264 encoder: 'enc'] Invalid preset: bogus
+log info [x264 encoder: 'enc'] preset: fast
+log info [x264 encoder: 'enc'] profile: main
+log info [x264 encoder: 'enc'] tune: film
+x264.param_default_preset preset=fast tune=film
+log info [x264 encoder: 'enc'] settings: 	rate_control: CBR 	bitrate:      6000 	buffer size:  6000 	crf:          -3 	fps_num:      60 	fps_den:      1 	width:        1920 	height:       1080 	keyint:       -1111 
+log info [x264 encoder: 'enc'] custom settings:  	preset = slow 	preset = fast 	preset = bogus
+x264.param_apply_profile main -> 0
+x264_settings ok
+params csp=4 size=1920x1080 fps=60/1 timebase=1/60 keyint_max=-1111 bframe=-2222 vfr=0
+params rc method=2 bitrate=6000 vbv_max=6000 vbv_buf=6000 rf=-3.5 filler=1 nal_hrd=0
+params vui sar=1x1 fullrange=0 colorprim=1 transfer=1 colmatrix=1
+params headers repeat=0 annexb=0 aud=0 loglevel=1
+echo value-validation-is-case-sensitive
+log info ---------------------------------
+log warning [x264 encoder: 'enc'] Invalid preset: SLOW
+log warning [x264 encoder: 'enc'] Invalid tune: Film
+log warning [x264 encoder: 'enc'] Invalid profile: HIGH
+log info [x264 encoder: 'enc'] preset: medium
+log info [x264 encoder: 'enc'] profile: main
+log info [x264 encoder: 'enc'] tune: film
+x264.param_default_preset preset=medium tune=film
+log info [x264 encoder: 'enc'] settings: 	rate_control: CBR 	bitrate:      6000 	buffer size:  6000 	crf:          -3 	fps_num:      60 	fps_den:      1 	width:        1920 	height:       1080 	keyint:       -1111 
+log info [x264 encoder: 'enc'] custom settings:  	preset = SLOW 	tune = Film 	profile = HIGH
+x264.param_apply_profile main -> 0
+x264_settings ok
+params csp=4 size=1920x1080 fps=60/1 timebase=1/60 keyint_max=-1111 bframe=-2222 vfr=0
+params rc method=2 bitrate=6000 vbv_max=6000 vbv_buf=6000 rf=-3.5 filler=1 nal_hrd=0
+params vui sar=1x1 fullrange=0 colorprim=1 transfer=1 colmatrix=1
+params headers repeat=0 annexb=0 aud=0 loglevel=1
+echo option-name-case-insensitive-but-also-forwarded
+log info ---------------------------------
+log info [x264 encoder: 'enc'] preset: slower
+log info [x264 encoder: 'enc'] profile: main
+log info [x264 encoder: 'enc'] tune: grain
+x264.param_default_preset preset=slower tune=grain
+x264.param_parse PRESET=slower -> 0
+x264.param_parse Tune=grain -> 0
+log info [x264 encoder: 'enc'] settings: 	rate_control: CBR 	bitrate:      6000 	buffer size:  6000 	crf:          -3 	fps_num:      60 	fps_den:      1 	width:        1920 	height:       1080 	keyint:       -1111 
+log info [x264 encoder: 'enc'] custom settings:  	PRESET = slower 	Tune = grain
+x264.param_apply_profile main -> 0
+x264_settings ok
+params csp=4 size=1920x1080 fps=60/1 timebase=1/60 keyint_max=-1111 bframe=-2222 vfr=0
+params rc method=2 bitrate=6000 vbv_max=6000 vbv_buf=6000 rf=-3.5 filler=1 nal_hrd=0
+params vui sar=1x1 fullrange=0 colorprim=1 transfer=1 colmatrix=1
+params headers repeat=0 annexb=0 aud=0 loglevel=1
+echo profile-list-in-x264opts-includes-high10-high422-high444
+log info ---------------------------------
+log info [x264 encoder: 'enc'] preset: medium
+log info [x264 encoder: 'enc'] profile: high444
+log info [x264 encoder: 'enc'] tune: film
+x264.param_default_preset preset=medium tune=film
+log info [x264 encoder: 'enc'] settings: 	rate_control: CBR 	bitrate:      6000 	buffer size:  6000 	crf:          -3 	fps_num:      60 	fps_den:      1 	width:        1920 	height:       1080 	keyint:       -1111 
+log info [x264 encoder: 'enc'] custom settings:  	profile = high444
+x264.param_apply_profile high444 -> 0
+x264_settings ok
+params csp=4 size=1920x1080 fps=60/1 timebase=1/60 keyint_max=-1111 bframe=-2222 vfr=0
+params rc method=2 bitrate=6000 vbv_max=6000 vbv_buf=6000 rf=-3.5 filler=1 nal_hrd=0
+params vui sar=1x1 fullrange=0 colorprim=1 transfer=1 colmatrix=1
+params headers repeat=0 annexb=0 aud=0 loglevel=1
+echo profile-from-the-settings-field-is-NOT-validated
+log info ---------------------------------
+log info [x264 encoder: 'enc'] preset: medium
+log info [x264 encoder: 'enc'] profile: anything-goes
+log info [x264 encoder: 'enc'] tune: film
+x264.param_default_preset preset=medium tune=film
+log info [x264 encoder: 'enc'] settings: 	rate_control: CBR 	bitrate:      6000 	buffer size:  6000 	crf:          -3 	fps_num:      60 	fps_den:      1 	width:        1920 	height:       1080 	keyint:       -1111 
+x264.param_apply_profile anything-goes -> 0
+x264_settings ok
+params csp=4 size=1920x1080 fps=60/1 timebase=1/60 keyint_max=-1111 bframe=-2222 vfr=0
+params rc method=2 bitrate=6000 vbv_max=6000 vbv_buf=6000 rf=-3.5 filler=1 nal_hrd=0
+params vui sar=1x1 fullrange=0 colorprim=1 transfer=1 colmatrix=1
+params headers repeat=0 annexb=0 aud=0 loglevel=1
+echo empty-values-are-not-options
+log info ---------------------------------
+log info [x264 encoder: 'enc'] preset: medium
+log info [x264 encoder: 'enc'] tune: film
+x264.param_default_preset preset=medium tune=film
+log warning [x264 encoder: 'enc'] ignoring invalid x264 option: preset=
+log warning [x264 encoder: 'enc'] ignoring invalid x264 option: tune=
+log info [x264 encoder: 'enc'] settings: 	rate_control: CBR 	bitrate:      6000 	buffer size:  6000 	crf:          -3 	fps_num:      60 	fps_den:      1 	width:        1920 	height:       1080 	keyint:       -1111 
+x264_settings ok
+params csp=4 size=1920x1080 fps=60/1 timebase=1/60 keyint_max=-1111 bframe=-2222 vfr=0
+params rc method=2 bitrate=6000 vbv_max=6000 vbv_buf=6000 rf=-3.5 filler=1 nal_hrd=0
+params vui sar=1x1 fullrange=0 colorprim=1 transfer=1 colmatrix=1
+params headers repeat=0 annexb=0 aud=0 loglevel=1

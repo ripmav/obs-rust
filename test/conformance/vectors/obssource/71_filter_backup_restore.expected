@@ -1,0 +1,29 @@
+  cb A create
+log debug source 'A' (in) created
+create a ok
+  cb F1 create
+log debug private source 'F1' (fl) created
+create f1 ok
+  cb F2 create
+log debug private source 'F2' (fl) created
+create f2 ok
+  cb F3 create
+log debug private source 'F3' (fl) created
+create f3 ok
+log debug - filter 'F1' (fl) added to source 'A'
+  cb F1 filter_add parent=A
+log debug - filter 'F2' (fl) added to source 'A'
+  cb F2 filter_add parent=A
+backup a count=2
+log debug - filter 'F2' (fl) removed from source 'A'
+  cb F2 filter_remove parent=A
+log debug - filter 'F3' (fl) added to source 'A'
+  cb F3 filter_add parent=A
+names a: F3 F1
+  load_source id=fl name=F2
+  cb F2 create
+log debug private source 'F2' (fl) created
+names a: F2 F1
+filters a count=2 [0]=?(target=f1,parent=a) [1]=f1(target=a,parent=a)
+refs f1 2
+refs f3 1

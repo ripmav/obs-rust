@@ -1,0 +1,22 @@
+# sharpness_filter v1/v2: uses obs_source_get_width/height (not base size) for texture_width/height at render time.
+source T 1920 1080 1000 500 SRGB video
+source P 1920 1080 1920 1080 SRGB video
+filter a sharpness_filter 0 @null T P
+render a
+filter b sharpness_filter 2 @null T P
+render b
+data d
+dset d sharpness dbl 0.75
+filter c sharpness_filter 2 d T P
+render c
+resize T 640 360 3 4
+render c
+srcspace T SRGB_16F
+render c
+srcspace T 709_EXTENDED
+render c
+render a
+echo effect load failure: create returns NULL
+knob effect_fail 1
+filter z sharpness_filter 2 @null T P
+knob effect_fail 0

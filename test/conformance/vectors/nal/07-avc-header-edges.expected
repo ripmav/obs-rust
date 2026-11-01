@@ -1,0 +1,27 @@
+echo short-input
+avc_header ret=0 data=-
+avc_header ret=0 data=-
+avc_header ret=0 data=-
+avc_header ret=0 data=-
+echo seven-bytes-with-start-code-but-no-pps
+avc_header ret=0 data=-
+echo already-a-record-is-copied
+avc_header ret=19 data=014d0028ffe10004674d002801000468ee3c80
+avc_header ret=7 data=aabbccddeeff00
+avc_header ret=8 data=0001020304050607
+echo start-code-must-be-at-offset-zero
+avc_header ret=23 data=aa000000016742c01ed900a047fe880000000168ce3c80
+echo five-byte-start-code-is-not-a-start-code
+avc_header ret=23 data=00000000016742c01ed900a047fe880000000168ce3c80
+echo missing-pps
+avc_header ret=0 data=-
+echo missing-sps
+avc_header ret=0 data=-
+echo sps-too-short
+avc_header ret=0 data=-
+echo sps-exactly-four
+avc_header ret=19 data=014d0028ffe10004674d002801000468ce3c80
+echo nal-type-decides-not-ref-idc
+avc_header ret=20 data=014d0028ffe10005274d0028a601000448ce3c80
+echo high-profile-sps-with-exactly-the-fields-it-needs
+avc_header ret=22 data=0164001fffe100056764001fac01000268cefdf8f800

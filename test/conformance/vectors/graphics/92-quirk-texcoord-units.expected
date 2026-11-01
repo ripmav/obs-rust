@@ -1,0 +1,28 @@
+> trace 0
+> gs_create g
+ret 0 created
+> gs_enter_context g
+> trace 1
+== immediate mode: only unit 0 is uploaded
+> gs_render_start 0
+  dev gs_vertexbuffer_get_data vb=#2
+> gs_vertex2f 1 1
+> gs_texcoord 0.5 0.5 1
+> gs_texcoord 0.25 0.25 0
+> gs_render_stop GS_POINTS
+  dev gs_vertexbuffer_flush vb=#2
+    vb num=512 num_tex=1 points=(1,1,0) normals=- tangents=null colors=ffffffff tex0[w=2]=(0.25,0.25)
+  dev device_load_vertexbuffer vertbuffer=#2
+  dev device_load_indexbuffer indexbuffer=null
+  dev device_draw mode=0 start=0 num=1 world=I
+== retained mode: the number of leading non-empty units is num_tex (a gap ends the list)
+> gs_render_start 1
+> gs_vertex2f 0 0
+> gs_texcoord 1 1 0
+> gs_texcoord 2 2 2
+> gs_render_save > vb2
+  dev device_vertexbuffer_create flags=0
+    vb num=1 num_tex=1 points=(0,0,0) normals=null tangents=null colors=null tex0[w=2]=(1,1)
+ret #6
+> gs_vertexbuffer_destroy vb2
+  dev gs_vertexbuffer_destroy vb=#6

@@ -1,0 +1,17 @@
+# MODEL (source-derived): shared-memory capture layout computed by the hook, the frame interval written by the
+# plugin, and the hook-version acceptance rule. base_mod32 is the mapping base address modulo 32 (normally 0).
+m_shmem_layout 1080 7680 0
+m_shmem_layout 720 5120 0
+m_shmem_layout 1 4 0
+m_shmem_layout 1 4 8
+m_shmem_layout 1 4 24
+m_shmem_layout 1 4 21
+m_shmem_layout 1 4 20
+m_frame_interval 60 1 0
+m_frame_interval 60 1 1
+m_frame_interval 60000 1001 0
+m_frame_interval 30 1 1
+m_frame_interval 144 1 0
+m_hook_ver_ok 1
+m_hook_ver_ok 0
+m_hook_ver_ok 2

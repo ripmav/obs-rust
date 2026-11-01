@@ -1,0 +1,14 @@
+# If an encoder has no extradata the header phase aborts: nothing is written for the packet, sent_headers stays
+# false and the next packet retries. Headers already written (video) are written again on the retry.
+reset
+output o
+venc h264 bitrate=2500 extra=0a0b
+aenc t0 aac 48000 1024 0
+set str path /v/a.mkv
+create ffmpeg_muxer
+start
+pkt v pts=0 key=1
+state
+aenc_extra 0 cc
+pkt v pts=1 key=1
+state

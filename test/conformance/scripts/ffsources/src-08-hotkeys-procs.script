@@ -1,0 +1,44 @@
+# Hotkeys and procedure-handler procs of the source.
+data D
+src_defaults D
+set_str D local_file "/m/a.mp4"
+host_settings D
+src_create S D
+echo ---- not showing: hotkeys do nothing
+hotkey S restart 1
+hotkey S play 1
+hotkey S pause 1
+hotkey S stop 1
+echo ---- showing, state STOPPED (0): play handled, pause not
+host_int showing 1
+hotkey S restart 0
+hotkey S restart 1
+hotkey S play 0
+hotkey S play 1
+hotkey S pause 1
+hotkey S stop 1
+echo ---- state PLAYING: play not handled, pause handled
+src_restart S
+hotkey S play 1
+hotkey S pause 0
+hotkey S pause 1
+echo ---- procs
+host_int duration_us 5000000
+host_int frames 150
+proc S get_duration
+proc S get_nb_frames
+proc S restart
+proc S preload_first_frame
+echo ---- procs on a source without media (empty input): duration 0, frames 0 (player functions tolerate NULL)
+data E
+src_defaults E
+src_create T E
+proc T get_duration
+proc T get_nb_frames
+proc T preload_first_frame
+echo ---- track matte: preload also clears the video
+set_bool D is_track_matte 1
+src_update S D
+proc S preload_first_frame
+echo ---- destroy unregisters only the restart hotkey
+src_destroy S

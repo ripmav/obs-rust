@@ -1,0 +1,24 @@
+# Canvas reference counting: creation returns one strong reference; get_ref adds one; the canvas is
+# destroyed (and unlisted) when the last strong reference goes; weak references only observe.
+# Releasing after the last reference is a precondition violation and not tested.
+startup en-US -
+sig_obs canvas_create canvas_remove canvas_destroy
+canvas_create a Alpha
+refs a
+canvas_ref a
+refs a
+canvas_release a
+refs a
+enum canvases
+canvas_weak w a
+refs a
+weak_get w
+refs a
+canvas_release a
+enum canvases
+weak_get w
+weak_release w
+# the null forms do nothing
+canvas_ref null
+canvas_release null
+shutdown

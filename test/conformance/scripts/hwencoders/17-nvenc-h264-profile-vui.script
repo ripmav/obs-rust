@@ -1,0 +1,47 @@
+# S-050 nvenc: H.264 profile choice, VUI colour description, SEI / header flags.
+dump 2
+nvcap dyn_bitrate 1
+nvcap 444 1
+nvcap 10bit 1
+defaults h264
+set str profile baseline
+create h264 soft
+destroy
+set str profile main
+create h264 soft
+destroy
+set str profile HIGH
+create h264 soft
+destroy
+# high10 explicit, with 8-bit input (SDK >= 13.0 path)
+set str profile high10
+create h264 soft
+destroy
+# P010 input forces high10 (warning) regardless of the profile string
+set str profile high
+host format p010
+create h264 soft
+destroy
+host format nv12
+# I444 input: High 4:4:4 profile and chroma 3
+host format i444
+create h264 soft
+destroy
+host format nv12
+# repeat_headers
+set bool repeat_headers 1
+create h264 soft
+destroy
+set bool repeat_headers 0
+# colour spaces
+host colorspace 601
+host range full
+create h264 soft
+destroy
+host colorspace srgb
+create h264 soft
+destroy
+host colorspace default
+create h264 soft
+destroy
+# BT.2100 with 8 bit input is refused before init_encoder_h264 runs, see 20-nvenc-format-gates

@@ -1,0 +1,14 @@
+ev create color_source_v3#1 public
+size 1 1
+ev create color_source_v3#2 public
+size 4294967295 1
+state color color=0.819607854,0.819607854,0.819607854,1 color_srgb=0.637596965,0.637596965,0.637596965,1 width=4294967295 height=1
+ev create color_source_v3#3 public
+state color color=1,1,1,1 color_srgb=1,1,1,1 width=1920 height=1080
+ev create color_source_v3#4 public
+state color color=1,1,1,1 color_srgb=1,1,1,1 width=1920 height=1080
+ev create color_source_v3#5 public
+state color color=0,0,0,0.501960814 color_srgb=0,0,0,0.501960814 width=1920 height=1080
+tick 0 clock=16000001
+state color color=1,1,1,0 color_srgb=1,1,1,0 width=50 height=60
+size 50 60

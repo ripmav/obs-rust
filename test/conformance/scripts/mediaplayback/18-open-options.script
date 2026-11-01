@@ -1,0 +1,37 @@
+# What is passed to avformat_open_input for different configurations (see the 'ff open' trace line):
+# buffer_size is only added when buffering != 0 on a non-local source whose path does not start with 'rist';
+# a bad option string only logs a warning (here 'novalue' has no '=' separator: parsed as key with the
+# separators of av_dict_parse_string -> it fails); unknown forced format names log an info message and
+# fall back on probing.
+media o1 0 0
+video 1 1000 16 16 yuv420p
+pkt 0 0 fdur=40
+endmedia
+media rist://x 0 0
+video 1 1000 16 16 yuv420p
+pkt 0 0 fdur=40
+endmedia
+clock 1000000000
+echo network, buffering 0
+minit o1 local=0
+mfree
+echo network, buffering 1000 + options
+minit o1 local=0 buffering=1000 options=a=b_c=d
+mfree
+echo local file never gets buffer_size or the interrupt callback or stimeout
+minit o1 local=1 buffering=1000 options=a=b
+mfree
+echo rist urls never get buffer_size
+minit rist://x local=0 buffering=1000
+mfree
+echo forced format that exists / does not exist
+minit o1 local=1 format=mpegts
+mfree
+minit o1 local=1 format=bogus
+mfree
+echo empty format string means probe
+minit o1 local=1 format=
+mfree
+echo malformed options string
+minit o1 local=1 options=novalue
+mfree

@@ -1,0 +1,22 @@
+# QUIRK. A property has ONE priv slot, shared by button2 and set_modified_callback2: calling
+# set_modified_callback2 on a button replaces the priv that clicks then receive; setting
+# set_modified_callback2 with priv NULL makes the button fall back to the context data.
+token tbtn
+token tmod
+token tctx
+obj O tctx
+behavior click_b ret:1
+behavior mod ret:1
+props P
+add button2 P b "B" click_b tbtn as b
+click b O
+set b modified2 mod tmod
+click b O
+echo priv-cleared-by-null-priv
+set b modified2 mod @null
+click b O
+echo modified-callback-sees-same-slot
+set b modified2 mod tmod
+modified b @null
+click b @null
+destroy P

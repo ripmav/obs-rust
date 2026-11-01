@@ -1,0 +1,57 @@
+# CORE. compressor without sidechain: same envelope follower as the limiter but attack_time ms too;
+# slope = 1 - 1/ratio; gain = db_to_mul(min(0, slope*(threshold - env_db))) * output_gain.
+audio 2 48000
+create c compressor
+state c
+process c 16 const:0.5 const:0.25
+process c 16 const:0.5 const:0.25
+state c
+echo longer-block-shows-attack-then-gain-reduction
+process c 960 out=0:0:960:48 const:0.5 const:0.25
+process c 480 out=0:0:480:48 const:0.5 const:0.25
+state c
+echo ratio-1-and-silence-yield-nan-which-fmin-discards
+data d
+set d ratio double 1
+update c d
+state c
+process c 4 const:0 const:0
+process c 4 const:0.5 const:0.25
+echo high-ratio-output-gain
+set d ratio double 32
+set d output_gain double 6
+set d attack_time int 1
+set d release_time int 1000
+set d threshold double -40
+update c d
+state c
+process c 8 const:1 const:1
+echo ratio-0-makes-slope-negative-infinity
+set d ratio double 0
+update c d
+state c
+process c 4 const:0.5 const:0.5
+echo ratio-below-1
+set d ratio double 0.5
+update c d
+state c
+process c 4 const:0.5 const:0.5
+echo envelope-silence-at-start
+create c2 compressor
+process c2 4 const:0 const:0
+state c2
+echo 6ch-and-null-planes
+audio 6 48000
+create c3 compressor
+process c3 4 const:0.9 - const:0.9 const:0.1 - const:0.2
+echo rate-44100
+audio 2 44100
+create c4 compressor
+state c4
+process c4 32 out=0:0:32:4 sine:0.8:440 sine:0.8:440
+echo nan-input
+process c4 3 const:nan const:0.5
+process c4 3 const:0.5 const:0.5
+echo zero-frames
+process c4 0 const:0.5 const:0.5
+state c4

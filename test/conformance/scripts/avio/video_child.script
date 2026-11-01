@@ -1,0 +1,28 @@
+# S-044: frame-rate-divisor sub-outputs. create_with_frame_rate_divisor copies the output descriptor and multiplies
+# fps_den by the divisor; divisor 0 or 1 or a NULL parent gives NULL. Registration, locking, counters, active and the
+# format/size/frame-rate getters all act on the root; get_info and get_frame_time act on the copy itself.
+vopen v I420 60 1 16 8 3
+vdivider x v 0
+vdivider x v 1
+vdivider c v 2
+vinfo c
+vinfo v
+# connections made on the child land on the root
+vconnect c a 1
+vinputs v
+vstate c
+vstate v
+vlock c 1 10 0x0c
+vunlock c
+vstate v
+vtex c frames
+vstate c
+vdump c
+vdisconnect2 c a 1
+vstate v
+vstop c
+vstate v
+# freeing a root through the child-free call is a no-op
+vfree_divider_root v
+vfree_divider c
+vclose v

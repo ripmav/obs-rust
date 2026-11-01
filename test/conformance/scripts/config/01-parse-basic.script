@@ -1,0 +1,17 @@
+open_string "[General]\nName=OBS\nCount=42\n\n[Video]\nFPS=60\nBase=1920x1080\n"
+sections
+section 0
+section 1
+section 2
+get_string General Name
+get_string General Count
+get_int General Count
+get_string Video Base
+get_string General Missing
+get_string Missing Name
+get_int General Missing
+get_bool General Missing
+get_double General Missing
+has_user General Name
+has_user General Missing
+has_default General Name

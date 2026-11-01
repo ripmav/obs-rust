@@ -1,0 +1,37 @@
+registered image_source version=0
+registered color_source version=0
+registered color_source_v2 version=2
+registered color_source_v3 version=3
+registered slideshow version=0
+registered slideshow_v2 version=2
+info query=color_source
+info id=color_source version=0 type=0 flags=0x409 icon=2
+info callbacks get_name create destroy update get_defaults get_properties get_width get_height video_render
+info media_extra
+info query=color_source_v2
+info id=color_source version=2 type=0 flags=0x409 icon=2
+info callbacks get_name create destroy update get_defaults get_properties get_width get_height video_render
+info media_extra
+info query=color_source_v3
+info id=color_source version=3 type=0 flags=0x8009 icon=2
+info callbacks get_name create destroy update get_defaults get_properties get_width get_height video_render
+info media_extra
+defaults {"color":4294967295,"width":400,"height":400}
+defaults {"color":4294967295,"width":1920,"height":1080}
+defaults {"color":4291940817,"width":1920,"height":1080}
+ev create color_source_v3#1 public
+state color color=0.600000024,0.400000006,0.200000003,1 color_srgb=0.318546832,0.132868335,0.0331047624,1 width=300 height=200
+size 300 200
+ev create color_source_v3#2 public
+state color color=1,0,0,1 color_srgb=1,0,0,1 width=1920 height=1080
+ev create color_source_v3#3 public
+state color color=0.819607854,0.819607854,0.819607854,1 color_srgb=0.637596965,0.637596965,0.637596965,1 width=1920 height=1080
+size 1920 1080
+ev create color_source#4 public
+size 400 400
+ev create color_source_v2#5 public
+size 1920 1080
+state color color=1,1,1,1 color_srgb=1,1,1,1 width=1920 height=1080
+prop color type=color_alpha desc="ColorSource.Color"
+prop width type=int desc="ColorSource.Width" min=1 max=4096 step=1 suffix=""
+prop height type=int desc="ColorSource.Height" min=1 max=4096 step=1 suffix=""

@@ -1,0 +1,6 @@
+# S-048 frontendfmt: transcribed pure frontend logic (C) driving the real libobs config-file.
+test/conformance/gen/frontendfmt_runner.c
+libobs/util/config-file.c
+libobs/util/lexer.c
+libobs/util/cf-lexer.c
+libobs/util/cf-parser.c

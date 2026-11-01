@@ -1,0 +1,53 @@
+log debug encoder 'v0' (v0) created
+encoder v0 created tb=1/30
+log debug encoder 'v1' (v1) created
+encoder v1 created tb=1/30
+log debug encoder 'a0' (a0) created
+encoder a0 created tb=1/48000
+log debug encoder 'a1' (a1) created
+encoder a1 created tb=1/48000
+log debug output 'single' (single) created
+output single created flags=7 reconnect=20/2
+log debug output 'multi' (multi) created
+output multi created flags=87 reconnect=20/2
+log debug output 'vonly' (vonly) created
+output vonly created flags=5 reconnect=20/2
+log debug output 'raw' (raw) created
+output raw created flags=1 reconnect=20/2
+--- single track outputs accept index 0 only
+set_venc single idx=0 -> video_slots=01 audio_slots=00
+set_venc single idx=1 -> video_slots=01 audio_slots=00
+set_aenc single idx=0 -> video_slots=01 audio_slots=01
+set_aenc single idx=1 -> video_slots=01 audio_slots=01
+--- multi track outputs accept indices below the maximum
+set_venc multi idx=0 -> video_slots=01 audio_slots=00
+set_venc multi idx=1 -> video_slots=03 audio_slots=00
+set_aenc multi idx=0 -> video_slots=03 audio_slots=01
+set_aenc multi idx=5 -> video_slots=03 audio_slots=21
+set_aenc multi idx=6 -> video_slots=03 audio_slots=21
+set_venc multi idx=9 -> video_slots=203 audio_slots=21
+set_venc multi idx=10 -> video_slots=203 audio_slots=21
+--- wrong flags: audio encoder on a video-only output, encoders on a raw output
+log warning Output 'vonly': Tried to use obs_output_set_audio_encoder on a non-audio output
+set_aenc vonly idx=0 -> video_slots=00 audio_slots=00
+log warning Output 'raw': Tried to use obs_output_set_video_encoder2 on a raw output
+set_venc raw idx=0 -> video_slots=00 audio_slots=00
+--- wrong encoder type
+log warning obs_output_set_video_encoder: encoder passed is not a video encoder
+set_venc vonly idx=0 -> video_slots=00 audio_slots=00
+--- replace and clear
+set_venc single idx=0 -> video_slots=01 audio_slots=01
+set_venc single idx=0 -> video_slots=00 audio_slots=01
+encstate v0 init=0 active=0 first_received=0 start_ts=0 offset_usec=0 cur_pts=0 frames=0 callbacks=0 paired=0 outputs=1
+encstate v1 init=0 active=0 first_received=0 start_ts=0 offset_usec=0 cur_pts=0 frames=0 callbacks=0 paired=0 outputs=2
+--- delay only on encoded outputs
+delay single sec=5 flags=1 active=0
+log warning Output 'raw': Tried to use obs_output_set_delay on a raw output
+delay raw sec=0 flags=0 active=0
+info raw flags=1 active=0 reconnecting=0 delay=0 active_delay=0
+--- unknown output id
+log error Output ID 'nosuchoutput' not found
+log error Failed to create output 'unknown'!
+log debug output 'unknown' (nosuchoutput) created
+out_unknown -> created data=0 start=0 flags=0
+log debug output 'unknown' destroyed

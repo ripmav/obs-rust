@@ -1,0 +1,27 @@
+# Root entries (CORE): roots appear in the snapshot in order of creation, whether created by
+# register_root() or by the first completed call; a registered root without calls has no
+# samples (QUIRK: min = 2^64-1, max = 0, count = 0 and the printer shows those values);
+# registering again overwrites the expected interval; a root name used inside another root is
+# an ordinary child there and still its own root when called at top level.
+p_name 0 late
+p_name 1 early
+p_name 2 never
+p_name 3 inner
+p_begin
+p_root 2 1000000
+p_clock 0
+p_call 0 1000
+p_start 1
+p_call 3 500
+p_end 1
+p_call 3 2000
+p_root 0 2000000
+p_root 0 4000000
+p_call 0 1000
+p_tick 5000000
+p_call 0 1000
+p_snap
+p_dump
+p_print snap
+p_print_between snap
+p_free

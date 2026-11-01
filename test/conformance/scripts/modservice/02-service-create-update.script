@@ -1,0 +1,51 @@
+# S-035 service create / settings / update / destroy / release, by-id queries, defaults, properties.
+svc_def A svcA update defaults props activate deactivate
+svc_register A
+svc_def B svcB
+svc_register B
+# unknown id -> error log, NULL
+service_create X nosuch n1 -
+# settings passed in are referenced (not merged with defaults); create callback sees them
+service_create s1 svcA first {"url":"rtmp://x","key":"k"}
+service_info s1
+service_settings s1
+# NULL / empty name -> generated "__unnamedNNNN" (counter lives in the core); private + NULL name stays NULL
+service_create s2 svcA - -
+service_create s3 svcA "" -
+service_create_private p1 svcB - -
+service_create_private p2 svcB hidden {"a":1}
+service_info s2
+service_info s3
+service_info p1
+service_info p2
+service_list
+# create callback is called with the object's own settings
+service_settings s2
+# update merges keys into the existing settings (obs_data_apply) then calls update(data, merged)
+service_update s1 {"url":"rtmp://y","extra":5}
+service_settings s1
+service_update s1 {}
+# type without an update callback: settings still merged
+service_create b1 svcB b {"q":1}
+service_update b1 {"q":2,"r":3}
+service_settings b1
+# update with NULL settings: obs_data_apply(NULL) is a no-op but update() still runs
+service_update s1 -
+# by-id queries
+display_name svcA
+display_name nosuch
+defaults_by_id svcA
+defaults_by_id svcB
+defaults_by_id nosuch
+props_by_id svcA
+props_by_id svcB
+props_by_id nosuch
+props s1
+props b1
+# destroy: removed from the list immediately, destroy callback runs when not active
+service_destroy s1
+service_list
+service_release s2
+service_list
+service_destroy p2
+service_list

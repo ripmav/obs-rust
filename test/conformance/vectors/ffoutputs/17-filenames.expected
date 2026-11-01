@@ -1,0 +1,362 @@
+> reset
+> output o
+> venc h264 bitrate=2500 extra=0a0b
+> set str path /v/first.mkv
+> set bool split_file 1
+> set str directory /rec
+> set str format a b
+> set str extension mkv
+> set bool allow_spaces 1
+> fs add /rec/a b.mkv
+> fs add /rec/a b (2).mkv
+> create ffmpeg_muxer
+signal_add "void file_changed(string next_file)"
+proc_add "void split_file(out bool split_file_enabled)"
+create ffmpeg_muxer -> ok
+> start
+unlink "/v/first.mkv"
+pipe create type=w
+  argv[0] "<bin>/obs-ffmpeg-mux"
+  argv[1] "/v/first.mkv"
+  argv[2] "1"
+  argv[3] "0"
+  argv[4] "h264"
+  argv[5] "2500"
+  argv[6] "1280"
+  argv[7] "720"
+  argv[8] "1"
+  argv[9] "1"
+  argv[10] "1"
+  argv[11] "1"
+  argv[12] "1"
+  argv[13] "0"
+  argv[14] "30"
+  argv[15] "1"
+  argv[16] "0"
+  argv[17] ""
+  argv[18] ""
+begin_data_capture
+log info [ffmpeg muxer: 'o'] Writing file '/v/first.mkv'...
+start -> 1
+> pkt v pts=0 key=1 size=4
+wire V idx=0 key=0 pts=0 dts=0 size=2 data=0a0b
+wire V idx=0 key=1 pts=0 dts=0 size=4 data=00010203
+> proc split_file
+  out split_file_enabled=1
+> pkt v pts=1 key=1 size=4
+mkdirs "/rec"
+log info [ffmpeg muxer: 'o'] Changing output file to '/rec/a b (3).mkv'
+wire CHANGE_FILE "/rec/a b (3).mkv"
+signal file_changed next_file="/rec/a b (3).mkv"
+wire V idx=0 key=0 pts=0 dts=0 size=2 data=0a0b
+wire V idx=0 key=1 pts=0 dts=0 size=4 data=10111213
+> echo no_spaces
+no_spaces
+> reset
+> output o
+> venc h264 bitrate=2500 extra=0a0b
+> set str path /v/first.mkv
+> set bool split_file 1
+> set str directory /rec
+> set str format a b
+> set str extension mkv
+> set bool allow_spaces 0
+> fs add /rec/a_b.mkv
+> create ffmpeg_muxer
+signal_add "void file_changed(string next_file)"
+proc_add "void split_file(out bool split_file_enabled)"
+create ffmpeg_muxer -> ok
+> start
+unlink "/v/first.mkv"
+pipe create type=w
+  argv[0] "<bin>/obs-ffmpeg-mux"
+  argv[1] "/v/first.mkv"
+  argv[2] "1"
+  argv[3] "0"
+  argv[4] "h264"
+  argv[5] "2500"
+  argv[6] "1280"
+  argv[7] "720"
+  argv[8] "1"
+  argv[9] "1"
+  argv[10] "1"
+  argv[11] "1"
+  argv[12] "1"
+  argv[13] "0"
+  argv[14] "30"
+  argv[15] "1"
+  argv[16] "0"
+  argv[17] ""
+  argv[18] ""
+begin_data_capture
+log info [ffmpeg muxer: 'o'] Writing file '/v/first.mkv'...
+start -> 1
+> pkt v pts=0 key=1 size=4
+wire V idx=0 key=0 pts=0 dts=0 size=2 data=0a0b
+wire V idx=0 key=1 pts=0 dts=0 size=4 data=00010203
+> proc split_file
+  out split_file_enabled=1
+> pkt v pts=1 key=1 size=4
+mkdirs "/rec"
+log info [ffmpeg muxer: 'o'] Changing output file to '/rec/a_b_2.mkv'
+wire CHANGE_FILE "/rec/a_b_2.mkv"
+signal file_changed next_file="/rec/a_b_2.mkv"
+wire V idx=0 key=0 pts=0 dts=0 size=2 data=0a0b
+wire V idx=0 key=1 pts=0 dts=0 size=4 data=10111213
+> echo overwrite_allowed
+overwrite_allowed
+> reset
+> output o
+> venc h264 bitrate=2500 extra=0a0b
+> set str path /v/first.mkv
+> set bool split_file 1
+> set bool allow_overwrite 1
+> set str directory /rec
+> set str format a
+> set str extension mkv
+> fs add /rec/a.mkv
+> create ffmpeg_muxer
+signal_add "void file_changed(string next_file)"
+proc_add "void split_file(out bool split_file_enabled)"
+create ffmpeg_muxer -> ok
+> start
+unlink "/v/first.mkv"
+pipe create type=w
+  argv[0] "<bin>/obs-ffmpeg-mux"
+  argv[1] "/v/first.mkv"
+  argv[2] "1"
+  argv[3] "0"
+  argv[4] "h264"
+  argv[5] "2500"
+  argv[6] "1280"
+  argv[7] "720"
+  argv[8] "1"
+  argv[9] "1"
+  argv[10] "1"
+  argv[11] "1"
+  argv[12] "1"
+  argv[13] "0"
+  argv[14] "30"
+  argv[15] "1"
+  argv[16] "0"
+  argv[17] ""
+  argv[18] ""
+begin_data_capture
+log info [ffmpeg muxer: 'o'] Writing file '/v/first.mkv'...
+start -> 1
+> pkt v pts=0 key=1 size=4
+wire V idx=0 key=0 pts=0 dts=0 size=2 data=0a0b
+wire V idx=0 key=1 pts=0 dts=0 size=4 data=00010203
+> proc split_file
+  out split_file_enabled=1
+> pkt v pts=1 key=1 size=4
+mkdirs "/rec"
+log info [ffmpeg muxer: 'o'] Changing output file to '/rec/a.mkv'
+wire CHANGE_FILE "/rec/a.mkv"
+signal file_changed next_file="/rec/a.mkv"
+wire V idx=0 key=0 pts=0 dts=0 size=2 data=0a0b
+wire V idx=0 key=1 pts=0 dts=0 size=4 data=10111213
+> echo backslashes_and_trailing_slash
+backslashes_and_trailing_slash
+> reset
+> output o
+> venc h264 bitrate=2500 extra=0a0b
+> set str path /v/first.mkv
+> set bool split_file 1
+> set str directory C:\rec\sub\
+> set str format a
+> set str extension mkv
+> create ffmpeg_muxer
+signal_add "void file_changed(string next_file)"
+proc_add "void split_file(out bool split_file_enabled)"
+create ffmpeg_muxer -> ok
+> start
+unlink "/v/first.mkv"
+pipe create type=w
+  argv[0] "<bin>/obs-ffmpeg-mux"
+  argv[1] "/v/first.mkv"
+  argv[2] "1"
+  argv[3] "0"
+  argv[4] "h264"
+  argv[5] "2500"
+  argv[6] "1280"
+  argv[7] "720"
+  argv[8] "1"
+  argv[9] "1"
+  argv[10] "1"
+  argv[11] "1"
+  argv[12] "1"
+  argv[13] "0"
+  argv[14] "30"
+  argv[15] "1"
+  argv[16] "0"
+  argv[17] ""
+  argv[18] ""
+begin_data_capture
+log info [ffmpeg muxer: 'o'] Writing file '/v/first.mkv'...
+start -> 1
+> pkt v pts=0 key=1 size=4
+wire V idx=0 key=0 pts=0 dts=0 size=2 data=0a0b
+wire V idx=0 key=1 pts=0 dts=0 size=4 data=00010203
+> proc split_file
+  out split_file_enabled=1
+> pkt v pts=1 key=1 size=4
+mkdirs "C:/rec/sub"
+log info [ffmpeg muxer: 'o'] Changing output file to 'C:/rec/sub/a.mkv'
+wire CHANGE_FILE "C:/rec/sub/a.mkv"
+signal file_changed next_file="C:/rec/sub/a.mkv"
+wire V idx=0 key=0 pts=0 dts=0 size=2 data=0a0b
+wire V idx=0 key=1 pts=0 dts=0 size=4 data=10111213
+> echo format_with_subdirectory_and_empty_directory
+format_with_subdirectory_and_empty_directory
+> reset
+> output o
+> venc h264 bitrate=2500 extra=0a0b
+> set str path /v/first.mkv
+> set bool split_file 1
+> set str format sub/a
+> set str extension mkv
+> create ffmpeg_muxer
+signal_add "void file_changed(string next_file)"
+proc_add "void split_file(out bool split_file_enabled)"
+create ffmpeg_muxer -> ok
+> start
+unlink "/v/first.mkv"
+pipe create type=w
+  argv[0] "<bin>/obs-ffmpeg-mux"
+  argv[1] "/v/first.mkv"
+  argv[2] "1"
+  argv[3] "0"
+  argv[4] "h264"
+  argv[5] "2500"
+  argv[6] "1280"
+  argv[7] "720"
+  argv[8] "1"
+  argv[9] "1"
+  argv[10] "1"
+  argv[11] "1"
+  argv[12] "1"
+  argv[13] "0"
+  argv[14] "30"
+  argv[15] "1"
+  argv[16] "0"
+  argv[17] ""
+  argv[18] ""
+begin_data_capture
+log info [ffmpeg muxer: 'o'] Writing file '/v/first.mkv'...
+start -> 1
+> pkt v pts=0 key=1 size=4
+wire V idx=0 key=0 pts=0 dts=0 size=2 data=0a0b
+wire V idx=0 key=1 pts=0 dts=0 size=4 data=00010203
+> proc split_file
+  out split_file_enabled=1
+> pkt v pts=1 key=1 size=4
+mkdirs "/sub"
+log info [ffmpeg muxer: 'o'] Changing output file to '/sub/a.mkv'
+wire CHANGE_FILE "/sub/a.mkv"
+signal file_changed next_file="/sub/a.mkv"
+wire V idx=0 key=0 pts=0 dts=0 size=2 data=0a0b
+wire V idx=0 key=1 pts=0 dts=0 size=4 data=10111213
+> echo no_extension_collision_uses_last_dot_of_whole_path
+no_extension_collision_uses_last_dot_of_whole_path
+> reset
+> output o
+> venc h264 bitrate=2500 extra=0a0b
+> set str path /v/first.mkv
+> set bool split_file 1
+> set str directory /v.dir
+> set str format name
+> set bool allow_spaces 0
+> fs add /v.dir/name
+> create ffmpeg_muxer
+signal_add "void file_changed(string next_file)"
+proc_add "void split_file(out bool split_file_enabled)"
+create ffmpeg_muxer -> ok
+> start
+unlink "/v/first.mkv"
+pipe create type=w
+  argv[0] "<bin>/obs-ffmpeg-mux"
+  argv[1] "/v/first.mkv"
+  argv[2] "1"
+  argv[3] "0"
+  argv[4] "h264"
+  argv[5] "2500"
+  argv[6] "1280"
+  argv[7] "720"
+  argv[8] "1"
+  argv[9] "1"
+  argv[10] "1"
+  argv[11] "1"
+  argv[12] "1"
+  argv[13] "0"
+  argv[14] "30"
+  argv[15] "1"
+  argv[16] "0"
+  argv[17] ""
+  argv[18] ""
+begin_data_capture
+log info [ffmpeg muxer: 'o'] Writing file '/v/first.mkv'...
+start -> 1
+> pkt v pts=0 key=1 size=4
+wire V idx=0 key=0 pts=0 dts=0 size=2 data=0a0b
+wire V idx=0 key=1 pts=0 dts=0 size=4 data=00010203
+> proc split_file
+  out split_file_enabled=1
+> pkt v pts=1 key=1 size=4
+mkdirs "/v.dir"
+log info [ffmpeg muxer: 'o'] Changing output file to '/v_2.dir/name'
+wire CHANGE_FILE "/v_2.dir/name"
+signal file_changed next_file="/v_2.dir/name"
+wire V idx=0 key=0 pts=0 dts=0 size=2 data=0a0b
+wire V idx=0 key=1 pts=0 dts=0 size=4 data=10111213
+> echo no_extension_no_dot_anywhere_collision_kept
+no_extension_no_dot_anywhere_collision_kept
+> reset
+> output o
+> venc h264 bitrate=2500 extra=0a0b
+> set str path /v/first.mkv
+> set bool split_file 1
+> set str directory /vdir
+> set str format name
+> fs add /vdir/name
+> create ffmpeg_muxer
+signal_add "void file_changed(string next_file)"
+proc_add "void split_file(out bool split_file_enabled)"
+create ffmpeg_muxer -> ok
+> start
+unlink "/v/first.mkv"
+pipe create type=w
+  argv[0] "<bin>/obs-ffmpeg-mux"
+  argv[1] "/v/first.mkv"
+  argv[2] "1"
+  argv[3] "0"
+  argv[4] "h264"
+  argv[5] "2500"
+  argv[6] "1280"
+  argv[7] "720"
+  argv[8] "1"
+  argv[9] "1"
+  argv[10] "1"
+  argv[11] "1"
+  argv[12] "1"
+  argv[13] "0"
+  argv[14] "30"
+  argv[15] "1"
+  argv[16] "0"
+  argv[17] ""
+  argv[18] ""
+begin_data_capture
+log info [ffmpeg muxer: 'o'] Writing file '/v/first.mkv'...
+start -> 1
+> pkt v pts=0 key=1 size=4
+wire V idx=0 key=0 pts=0 dts=0 size=2 data=0a0b
+wire V idx=0 key=1 pts=0 dts=0 size=4 data=00010203
+> proc split_file
+  out split_file_enabled=1
+> pkt v pts=1 key=1 size=4
+mkdirs "/vdir"
+log info [ffmpeg muxer: 'o'] Changing output file to '/vdir/name'
+wire CHANGE_FILE "/vdir/name"
+signal file_changed next_file="/vdir/name"
+wire V idx=0 key=0 pts=0 dts=0 size=2 data=0a0b
+wire V idx=0 key=1 pts=0 dts=0 size=4 data=10111213

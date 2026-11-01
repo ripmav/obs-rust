@@ -1,0 +1,20 @@
+# Parameters keep first-insertion order; a name appears at most once.
+init
+set_int b 2
+set_int a 1
+set_int c 3
+dump
+set_int a 100
+dump
+set_int b 200
+dump
+set_string c now-a-string
+dump
+get_int a
+get_int b
+get_int c
+get_string c
+set_int A 5
+get_int A
+get_int a
+free

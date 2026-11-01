@@ -1,0 +1,123 @@
+{
+  "format_version": 5,
+  "services": [
+    {
+      "name": "Alpha",
+      "common": true,
+      "alt_names": ["Alpha Old", "Alpha Legacy", 7],
+      "more_info_link": "https://alpha.example/info",
+      "stream_key_link": "https://alpha.example/key",
+      "multitrack_video_configuration_url": "https://alpha.example/mt",
+      "multitrack_video_name": "Alpha Boost",
+      "multitrack_video_learn_more_link": "https://alpha.example/learn",
+      "supports_additional_audio_track": true,
+      "servers": [
+        {"name": "Primary", "url": "rtmp://a.alpha.example/live"},
+        {"name": "Secure", "url": "rtmps://b.alpha.example:443/live"},
+        {"url": "rtmp://c.alpha.example/live"}
+      ],
+      "recommended": {
+        "keyint": 3,
+        "profile": "high",
+        "max video bitrate": 4000,
+        "max audio bitrate": 128,
+        "bframes": 2,
+        "x264opts": "tune=zerolatency",
+        "max fps": 30,
+        "supported resolutions": ["1920x1080", "1280x720", "abc", "0x720", "-5x5", "1280x720x9", 42, "800x600"],
+        "bitrate matrix": [
+          {"res": "1280x720", "fps": 30, "max bitrate": 3000},
+          {"res": "1280x720", "fps": 60, "max bitrate": 4500},
+          {"res": "1920x1080", "fps": 60, "max bitrate": 6000},
+          {"res": "bogus", "fps": 60, "max bitrate": 1},
+          {"fps": 60, "max bitrate": 2},
+          "junk"
+        ]
+      },
+      "supported video codecs": ["h264", "hevc", "a-very-long-codec-name-over-15-chars"],
+      "supported audio codecs": ["aac", "opus"]
+    },
+    {
+      "name": "Bravo",
+      "servers": [
+        {"name": "TLS only", "url": "rtmps://bravo.example/live"},
+        {"name": "Plain", "url": "rtmp://bravo.example/live"}
+      ],
+      "recommended": {"keyint": 2, "max video bitrate": 2500}
+    },
+    {
+      "name": "Charlie",
+      "common": true,
+      "protocol": "SRT",
+      "servers": [{"name": "SRT ingest", "url": "srt://charlie.example:9000"}],
+      "supported video codecs": ["h264"]
+    },
+    {"name": "Delta", "common": true},
+    {"name": "Echo", "common": true, "servers": {"name": "x", "url": "rtmp://echo.example/live"}},
+    {"name": "Foxtrot", "common": true, "servers": []},
+    {
+      "name": "Golf",
+      "common": true,
+      "servers": [{"name": "TLS first", "url": "rtmps://golf.example/live"}, {"name": "Plain", "url": "rtmp://golf.example/live"}],
+      "recommended": {
+        "max video bitrate": 9000,
+        "bitrate matrix": [{"res": "1920x1080", "fps": 30, "max bitrate": 5000}],
+        "supported resolutions": ["bad", "bad2"]
+      }
+    },
+    {"name": "Hotel", "common": true, "servers": [{"name": "HTTP", "url": "http://hotel.example/ingest"}]},
+    {
+      "name": "India",
+      "common": true,
+      "protocol": "RIST",
+      "servers": [{"name": "RIST", "url": "rist://india.example:1234"}]
+    },
+    {
+      "name": "Facebook Live X",
+      "common": true,
+      "servers": [{"name": "FB1", "url": "rtmps://fb1.example/rtmp/"}, {"name": "FB2", "url": "rtmps://fb2.example/rtmp/"}]
+    },
+    {
+      "name": "Juliet",
+      "alt_names": ["Alpha", "Juliet Old"],
+      "servers": [{"name": "J", "url": "rtmp://juliet.example/live"}]
+    },
+    {
+      "name": "Kilo",
+      "common": true,
+      "protocol": "RTMP",
+      "servers": [
+        {"name": "No URL"},
+        {"url": "rtmp://nameless.kilo.example/live"},
+        {"name": "Bad URL type", "url": 5},
+        "not-an-object",
+        {"name": "Good", "url": "rtmp://kilo.example/live"},
+        {"name": "Good TLS", "url": "rtmps://kilo.example/live"}
+      ]
+    },
+    {
+      "name": "Twitch",
+      "common": true,
+      "servers": [{"name": "Static A", "url": "rtmp://a.twitch.example/app"}, {"name": "Static B", "url": "rtmp://b.twitch.example/app"}],
+      "recommended": {"keyint": 2, "max video bitrate": 6000, "max audio bitrate": 320, "x264opts": "scenecut=0"}
+    },
+    {
+      "name": "Amazon IVS",
+      "servers": [{"name": "IVS static", "url": "rtmps://ivs.example:443/app/"}, {"name": "IVS static plain", "url": "rtmp://ivs.example/app/"}]
+    },
+    {
+      "name": "Nimo TV",
+      "servers": [{"name": "Nimo A", "url": "rtmp://a.nimo.example/live/"}]
+    },
+    {
+      "name": "SHOWROOM",
+      "protocol": "RTMP",
+      "servers": [{"name": "Default", "url": "https://showroom.example/api/obs/streaming_info?obs_key="}]
+    },
+    {
+      "name": "Dacast",
+      "protocol": "RTMP",
+      "servers": [{"name": "Default", "url": "https://dacast.example/v3/encoder-setup/"}]
+    }
+  ]
+}

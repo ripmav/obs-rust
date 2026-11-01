@@ -1,0 +1,26 @@
+# Unbuffered deinterlacing keeps the current frame until its duration has elapsed (small clock steps), but
+# a clock jump >= 70 ms past the expected end processes new frames.
+kind cam input asyncvideo
+create c cam C
+deint_mode c 2
+unbuffered c 1
+video c bgra 2 2 1000000000 1 1 0
+video c bgra 2 2 1016666666 1 2 0
+video c bgra 2 2 1033333333 1 3 0
+video c bgra 2 2 1050000000 1 4 0
+video c bgra 2 2 1066666666 1 5 0
+vtime 2000000000
+tick c 0.016
+astate c
+deint_get c
+vtime 2008000000
+tick c 0.016
+astate c
+vtime 2016666666
+tick c 0.016
+astate c
+deint_get c
+vtime 2200000000
+tick c 0.016
+astate c
+deint_get c

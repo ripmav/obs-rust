@@ -1,0 +1,90 @@
+reset ok
+> reset
+reset ok
+> str_to_addr 192.168.1.20
+netif_str_to_addr -> 1
+out len=16 family=2 bytes=c0a80114
+> str_to_addr 0.0.0.0
+netif_str_to_addr -> 1
+out len=16 family=2 bytes=00000000
+> str_to_addr 255.255.255.255
+netif_str_to_addr -> 1
+out len=16 family=2 bytes=ffffffff
+> str_to_addr 10.1.2
+netif_str_to_addr -> 0
+out len=16 family=2 bytes=00000000
+> str_to_addr 256.1.1.1
+netif_str_to_addr -> 0
+out len=16 family=2 bytes=00000000
+> str_to_addr  1.2.3.4
+netif_str_to_addr -> 0
+out len=16 family=2 bytes=00000000
+> str_to_addr 
+netif_str_to_addr -> 0
+out len=16 family=2 bytes=00000000
+> str_to_addr -
+netif_str_to_addr -> 0
+out len=0 family=0
+> str_to_addr ::1
+netif_str_to_addr -> 1
+out len=28 family=10 bytes=00000000000000000000000000000001
+> str_to_addr ::
+netif_str_to_addr -> 1
+out len=28 family=10 bytes=00000000000000000000000000000000
+> str_to_addr fe80::1
+netif_str_to_addr -> 1
+out len=28 family=10 bytes=fe800000000000000000000000000001
+> str_to_addr 2001:db8:0:0:0:0:0:1
+netif_str_to_addr -> 1
+out len=28 family=10 bytes=20010db8000000000000000000000001
+> str_to_addr ::ffff:1.2.3.4
+netif_str_to_addr -> 1
+out len=28 family=10 bytes=00000000000000000000ffff01020304
+> str_to_addr 1.2.3.4:80
+netif_str_to_addr -> 0
+out len=28 family=10 bytes=00000000000000000000000000000000
+> str_to_addr [::1]
+netif_str_to_addr -> 0
+out len=28 family=10 bytes=00000000000000000000000000000000
+> str_to_addr fe80::1%eth0
+netif_str_to_addr -> 0
+out len=28 family=10 bytes=00000000000000000000000000000000
+> str_to_addr 12345::
+netif_str_to_addr -> 0
+out len=28 family=10 bytes=00000000000000000000000000000000
+> addr_to_str v4 c0a80114 16
+netif_addr_to_str -> 1 "192.168.1.20" rest_zeroed=1
+null_in -> 0 null_out -> 0
+> addr_to_str v4 c0a80114 15
+netif_addr_to_str -> 0
+null_in -> 0 null_out -> 0
+> addr_to_str v4 ffffffff 16
+netif_addr_to_str -> 1 "255.255.255.255" rest_zeroed=1
+null_in -> 0 null_out -> 0
+> addr_to_str v4 00000000 64
+netif_addr_to_str -> 1 "0.0.0.0" rest_zeroed=1
+null_in -> 0 null_out -> 0
+> addr_to_str v6 00000000000000000000000000000001 46
+netif_addr_to_str -> 1 "::1" rest_zeroed=1
+null_in -> 0 null_out -> 0
+> addr_to_str v6 00000000000000000000000000000001 45
+netif_addr_to_str -> 0
+null_in -> 0 null_out -> 0
+> addr_to_str v6 00000000000000000000ffffc0a80114 46
+netif_addr_to_str -> 1 "::ffff:192.168.1.20" rest_zeroed=1
+null_in -> 0 null_out -> 0
+> addr_to_str v6 fe800000000000000000000012345678 46
+netif_addr_to_str -> 1 "fe80::1234:5678" rest_zeroed=1
+null_in -> 0 null_out -> 0
+> addr_to_str v6 20010db8000000000000000000000001 80
+netif_addr_to_str -> 1 "2001:db8::1" rest_zeroed=1
+null_in -> 0 null_out -> 0
+> addr_to_str v6 00000000000000000000000000000000 46
+netif_addr_to_str -> 1 "::" rest_zeroed=1
+null_in -> 0 null_out -> 0
+> addr_to_str v6 20010db80000000100000000000000ff 46
+netif_addr_to_str -> 1 "2001:db8:0:1::ff" rest_zeroed=1
+null_in -> 0 null_out -> 0
+> addr_to_str other 00 64
+netif_addr_to_str -> 0
+null_in -> 0 null_out -> 0

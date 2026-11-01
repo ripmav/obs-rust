@@ -1,0 +1,19 @@
+# Names are never blank: an empty or missing name becomes "__unnamedNNNN" using ONE counter shared
+# by sources, outputs, encoders, services and canvases (the counter lives in the core and restarts
+# with it). Private objects keep a NULL name when none is given, but get a generated name when the
+# name is the empty string.
+startup en-US -
+mk_source a -
+mk_output b -
+mk_encoder c ""
+mk_service d -
+canvas_create e -
+mk_source f - private=1
+mk_output g - private=1
+mk_encoder h "" private=1
+mk_source i Normal
+mk_output j -
+shutdown
+startup en-US -
+mk_output k -
+shutdown

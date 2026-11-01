@@ -1,0 +1,49 @@
+# Chat log mode: only the last log_lines lines (the scan counts log_lines+1 newlines from the end, a trailing
+# newline counts as one) are read (S-038-R97..R103).
+events off
+reset
+ascii 5 8 0 8 384
+font "Sans Serif" - 0 p/sans
+load
+create s 2
+setfont s "Sans Serif" - 20 0
+set s from_file true
+set s log_mode true
+set s log_lines 2
+file log.txt "l1\nl2\nl3\nl4\n"
+sets s text_file @TMP@/log.txt
+update s
+state s
+echo --- no trailing newline: log_lines lines are shown
+file log.txt "l1\nl2\nl3\nl4"
+set s log_lines 2
+set s color2 0xff000001
+update s
+state s
+echo --- fewer lines than requested: whole file
+set s log_lines 10
+set s color2 0xff000002
+update s
+state s
+echo --- QUIRK Q3: when the scan reaches offset 0 on a newline, that leading newline is kept
+file log.txt "\nl1\nl2"
+set s log_lines 2
+set s color2 0xff000003
+update s
+state s
+echo --- CRs removed; single-line file
+file log.txt "x\r\ny\r\n"
+set s log_lines 1
+set s color2 0xff000004
+update s
+state s
+file log.txt "only"
+set s log_lines 1
+set s color2 0xff000005
+update s
+state s
+echo --- empty file
+file log.txt ""
+set s color2 0xff000006
+update s
+state s

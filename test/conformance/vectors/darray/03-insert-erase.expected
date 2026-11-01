@@ -1,0 +1,9 @@
+push_array idx=0
+a dump num=4 capacity=4 items=10,20,30,40
+a dump num=7 capacity=8 items=5,10,20,25,30,40,99
+a dump num=10 capacity=16 items=5,10,-1,-2,-3,20,25,30,40,99
+a dump num=8 capacity=16 items=10,-1,-2,20,25,30,40,99
+a dump num=7 capacity=16 items=10,-1,-2,20,25,30,40
+a dump num=4 capacity=16 items=10,25,30,40
+a dump num=3 capacity=16 items=25,30,40
+a dump num=1 capacity=16 items=40

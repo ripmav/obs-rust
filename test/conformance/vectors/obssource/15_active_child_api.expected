@@ -1,0 +1,16 @@
+  cb P create
+log debug source 'P' (par) created
+create p ok
+  cb C create
+log debug source 'C' (par) created
+create c ok
+  cb D create
+log debug source 'D' (par) created
+create d ok
+state d show_refs=2 activate_refs=1 showing=0 active=0 obs_showing=1 obs_active=1
+add_active_child d p 0
+log warning obs_source_add_active_child: parent == child
+add_active_child p p 0
+add_active_child p d 1
+state d show_refs=4 activate_refs=2 showing=0 active=0 obs_showing=1 obs_active=1
+state d show_refs=2 activate_refs=1 showing=0 active=0 obs_showing=1 obs_active=1

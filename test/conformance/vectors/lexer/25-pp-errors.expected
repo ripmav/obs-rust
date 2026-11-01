@@ -1,0 +1,12 @@
+parse true
+errors 9 (errors=9 warnings=0 has_errors=1)
+err 0 ERROR file="demo.cf" row=1 col=8 msg="Expected identifier"
+err 1 ERROR file="demo.cf" row=2 col=9 msg="Expected identifier"
+err 2 ERROR file="demo.cf" row=3 col=8 msg="Expected identifier"
+err 3 ERROR file="demo.cf" row=4 col=7 msg="Expected identifier"
+err 4 ERROR file="demo.cf" row=5 col=4 msg="Expected identifier or number"
+err 5 ERROR file="demo.cf" row=6 col=8 msg="Unexpected token after preprocessor, expected newline"
+err 6 ERROR file="demo.cf" row=8 col=11 msg="Expected identifier"
+err 7 ERROR file="demo.cf" row=9 col=13 msg="Expected ',' or ')'"
+err 8 ERROR file="demo.cf" row=10 col=13 msg="Expected identifier"
+errstr "demo.cf (1, 8): Expected identifier\ndemo.cf (2, 9): Expected identifier\ndemo.cf (3, 8): Expected identifier\ndemo.cf (4, 7): Expected identifier\ndemo.cf (5, 4): Expected identifier or number\ndemo.cf (6, 8): Unexpected token after preprocessor, expected newline\ndemo.cf (8, 11): Expected identifier\ndemo.cf (9, 13): Expected ',' or ')'\ndemo.cf (10, 13): Expected identifier\n"

@@ -1,0 +1,14 @@
+log error Failed to find file 'found.effect' in libobs data directory
+find_data found.effect -> NULL
+find_data found.effect -> in_TMP
+log error Failed to find file 'missing.effect' in libobs data directory
+find_data missing.effect -> NULL
+data_path_remove -> 0
+data_path_remove -> 1
+log error Failed to find file 'found.effect' in libobs data directory
+find_data found.effect -> NULL
+find_data found.effect -> elsewhere
+data_path_remove -> 1
+log error Failed to find file 'found.effect' in libobs data directory
+find_data found.effect -> NULL
+data_path_remove -> 1

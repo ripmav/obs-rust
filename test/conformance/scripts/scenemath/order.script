@@ -1,0 +1,36 @@
+# Z-order: first_item is the BOTTOM of the stack; new items are appended on top. set_order moves one step or to
+# the ends; at the ends it is a no-op. Every successful move signals "reorder" on the scene.
+source s 10 10
+scene main
+add main s a
+add main s b
+add main s c
+add main s d
+order_of main
+echo -- up/down by one
+order a up
+order_of main
+order a up
+order_of main
+order d down
+order_of main
+echo -- no-ops at the ends
+order a top
+order_of main
+order a up
+order_of main
+order d bottom
+order_of main
+order d down
+order_of main
+echo -- ends
+order b top
+order_of main
+order b bottom
+order_of main
+log
+echo -- positions
+get_order_pos a
+get_order_pos b
+get_order_pos c
+get_order_pos d

@@ -1,0 +1,65 @@
+# CORE: item iteration with first/next. Items come in list order (insertion order,
+# see Q1). `next` releases the current item reference and acquires the next one;
+# an iterator holds a reference, so the item stays valid even if it is erased.
+# Entries added during a walk are visited; erasing the held item does not stop the walk.
+new a
+set_int a one 1
+set_string a two "2"
+set_bool a three 1
+first a i
+item_refs i
+item_name i
+item_type i
+item_numtype i
+next i
+item_name i
+item_type i
+item_refs i
+item_numtype i
+echo --- erasing an unvisited item
+erase a three
+names a
+next i
+echo --- erasing the item we hold: the walk continues from where it was
+new b
+set_int b p 1
+set_int b q 2
+set_int b r 3
+first b i2
+next i2
+erase b q
+item_refs i2
+next i2
+names b
+echo --- erasing the first item while holding it
+new c
+set_int c p 1
+set_int c q 2
+first c i3
+erase c p
+item_refs i3
+next i3
+item_name i3
+echo --- an item added during the walk is visited
+new d
+set_int d a 1
+first d i4
+set_int d b 2
+next i4
+next i4
+echo --- first/byname on empty and NULL
+new empty
+first empty ie
+first @null ie
+byname empty x ie
+byname @null x ie
+byname d nosuch ie
+byname d a ib
+item_refs ib
+item_name ib
+item_release ib
+next_null
+echo --- iter helper
+iter a
+iter empty
+iter @null

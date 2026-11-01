@@ -1,0 +1,16 @@
+# The current context is per thread.  A context entered on one thread is not visible on another;
+# a second thread can take the context over once the first has left it (the context mutex).
+gs_create g
+gs_enter_context g
+echo == main thread is inside
+gs_get_width
+echo == another thread sees no context
+thread gs_get_context ; gs_get_width ; gs_matrix_push
+gs_leave_context
+echo == once released, another thread can enter, use and leave
+thread gs_enter_context g ; gs_get_context ; gs_get_height ; gs_leave_context ; gs_get_context
+echo == and the main thread can enter again afterwards
+gs_enter_context g
+gs_get_context
+gs_leave_context
+gs_destroy g

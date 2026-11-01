@@ -1,0 +1,9 @@
+# serializers, bit reader, text lookup (spec S-010)
+test/conformance/gen/serial_runner.c
+test/conformance/gen/serial_stubs.c
+libobs/util/array-serializer.c
+libobs/util/file-serializer.c
+libobs/util/buffered-file-serializer.c
+libobs/util/bitstream.c
+libobs/util/text-lookup.c
+libobs/util/lexer.c

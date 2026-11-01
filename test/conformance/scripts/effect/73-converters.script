@@ -1,0 +1,75 @@
+# CORE: the three small converters exported by shader-parser.c.
+#   get_shader_param_type(typeName): exact (case-sensitive) names float float2 float3 float4 int int2 int3 int4 bool
+#       float4x4 string, and any name starting with "texture"; everything else is UNKNOWN. The effect parser has
+#       an identical private copy used for effect parameters.
+#   get_sample_filter(text): Anisotropy / Point / Linear (case-INsensitive) and the nine-name D3D style list
+#       (case-sensitive); anything unknown is LINEAR.
+#   get_address_mode(text): Wrap|Repeat, Clamp|None, Mirror, Border, MirrorOnce (case-insensitive); unknown -> CLAMP.
+backend text none
+ptype float
+ptype float2
+ptype float3
+ptype float4
+ptype int
+ptype int2
+ptype int3
+ptype int4
+ptype bool
+ptype float4x4
+ptype string
+ptype texture2d
+ptype texture
+ptype texture_anything
+ptype textur
+ptype float3x3
+ptype float2x2
+ptype float1
+ptype Float
+ptype FLOAT4
+ptype double
+ptype half
+ptype ""
+ptype sampler
+ptype uint
+echo --- filters
+filter Anisotropy
+filter ANISOTROPY
+filter Point
+filter point
+filter POINT
+filter MIN_MAG_MIP_POINT
+filter min_mag_mip_point
+filter Linear
+filter LINEAR
+filter MIN_MAG_MIP_LINEAR
+filter MIN_MAG_POINT_MIP_LINEAR
+filter MIN_POINT_MAG_LINEAR_MIP_POINT
+filter MIN_POINT_MAG_MIP_LINEAR
+filter MIN_LINEAR_MAG_MIP_POINT
+filter MIN_LINEAR_MAG_POINT_MIP_LINEAR
+filter MIN_MAG_LINEAR_MIP_POINT
+filter min_mag_linear_mip_point
+filter Bilinear
+filter ""
+filter Points
+filter Anisotropic
+echo --- address modes
+addr Wrap
+addr WRAP
+addr wrap
+addr Repeat
+addr repeat
+addr Clamp
+addr clamp
+addr None
+addr none
+addr Mirror
+addr MIRROR
+addr Border
+addr border
+addr MirrorOnce
+addr mirroronce
+addr Mirror_Once
+addr ""
+addr Bogus
+addr Wraps

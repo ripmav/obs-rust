@@ -1,0 +1,30 @@
+rating 1 class = 0
+rating 2 class = 1
+rating 3 class = 2147483647
+rating 4 class = 4096
+rating 5 class = 0
+rating 1 title = 0
+rating 2 title = 2147483647
+rating 3 title = 0
+rating 1 exe = 0
+rating 2 exe = 1
+rating 3 exe = 2147483647
+rating 4 exe = 2147483647
+find 1
+find 1
+find 1
+find 1
+find none
+find 1
+find 3
+find none
+find none
+find none
+find 1
+find_top 1
+find_top 1
+find_top 2
+find_top none
+find none
+find 5
+rating 5 exe = 0

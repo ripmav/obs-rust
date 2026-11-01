@@ -1,0 +1,26 @@
+# S-045 rtmp_stream_data: intake rules (state gating, first-packet offset, encoder failure).
+reset
+codec 0 h264
+# not active: packets are ignored entirely (not queued, not released)
+pkt video 0 3 1
+set active 1
+# first packet defines the dts offset in ms (value / timebase); it may be audio or video
+pkt audio 1500000 0 0
+pkt video 1600000 3 1
+pkt video 1700000 0 0
+queue
+# disconnected: ignored again
+set disconnected 1
+pkt video 1800000 0 0
+queue
+set disconnected 0
+# a NULL packet is the encoder-failure signal: flag + wake the send thread
+pkt_null
+# video codec NONE for the track: logged as an error and the packet is dropped without being queued
+codec 1 nonexistent
+pkt video 1900000 0 0 1
+queue
+# track 2 with H264 is fine
+codec 2 h264
+pkt video 2000000 0 0 2
+queue

@@ -1,0 +1,27 @@
+# "WxH" parsing (ConvertRes uses sscanf "%dx%d"; ResolutionValid additionally rejects the empty string).
+# A negative height means "flip vertically": cy_abs = |cy|, cy_flip = cy < 0.
+m_dshow_res_parse 1920x1080
+m_dshow_res_parse 1280x-720
+m_dshow_res_parse 1920X1080
+m_dshow_res_parse 1920x
+m_dshow_res_parse x1080
+m_dshow_res_parse 1920x1080junk
+m_dshow_res_parse " 640x480"
+m_dshow_res_parse "640 x 480"
+m_dshow_res_parse ""
+m_dshow_res_parse 0x0
+m_dshow_res_parse -5x7
+m_dshow_res_parse 0x10x10
+# Resolution list built for the property (InsertResolution): ordered by cx then by cy, duplicates dropped.
+m_dshow_res_reset
+m_dshow_res_dump
+m_dshow_res_addcap 640 480 1920 1080
+m_dshow_res_dump
+m_dshow_res_addcap 640 360 1280 720
+m_dshow_res_dump
+m_dshow_res_addcap 1280 720 1280 720
+m_dshow_res_dump
+m_dshow_res_addcap 1920 1200 640 480
+m_dshow_res_dump
+m_dshow_res_addcap 640 600 640 100
+m_dshow_res_dump

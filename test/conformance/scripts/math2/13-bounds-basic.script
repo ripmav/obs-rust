@@ -1,0 +1,34 @@
+# bounds: AABB utilities (S-009-R70, R72, R78).
+bounds b 1 2 3 5 6 9
+vec3 v 10 20 30
+call z bounds_zero
+call c bounds_copy b
+call m bounds_move b v
+call s bounds_scale b v
+vec3 neg -1 2 1
+# scaling by a negative factor swaps nothing: min may end up greater than max
+call s bounds_scale b neg
+bounds b2 0 4 -2 3 8 4
+call mg bounds_merge b b2
+call mg bounds_merge b2 b
+vec3 p 2 9 0
+call mp bounds_merge_point b p
+vec3 inside 3 3 4
+call mp bounds_merge_point b inside
+call ce bounds_get_center b
+bounds neg2 -4 -4 -4 4 4 4
+call ce bounds_get_center neg2
+# bounds_inside / bounds_vec3_inside (the point test has an EPSILON=1e-4 margin)
+bounds small 2 3 4 4 5 8
+call i bounds_inside b small
+call i bounds_inside small b
+call i bounds_inside b b
+vec3 on_edge 1 2 3
+vec3 just_out 0.99995 2 3
+vec3 further_out 0.9998 2 3
+vec3 far 100 0 0
+call i bounds_vec3_inside b on_edge
+call i bounds_vec3_inside b just_out
+call i bounds_vec3_inside b further_out
+call i bounds_vec3_inside b far
+call i bounds_vec3_inside b inside

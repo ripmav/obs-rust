@@ -1,0 +1,59 @@
+# S-050 nvenc: preset / tune / multipass strings -> SDK selectors (get_nv_preset, get_nv_tuning,
+# get_nv_multipass). Matching is case-insensitive; unknown strings fall back to p5 / HIGH_QUALITY /
+# DISABLED. "uhq" is only known with SDK >= 12.2 (the shim declares 13.0) and forces bf >= 4.
+dump 1
+nvcap dyn_bitrate 1
+defaults h264
+set str preset p1
+set str preset P2
+create h264 soft
+destroy
+set str preset p3
+create h264 soft
+destroy
+set str preset p4
+create h264 soft
+destroy
+set str preset p6
+create h264 soft
+destroy
+set str preset p7
+create h264 soft
+destroy
+# p5 and every unknown value map to P5
+set str preset p5
+create h264 soft
+destroy
+set str preset bogus
+create h264 soft
+destroy
+set str preset p8
+create h264 soft
+destroy
+# tuning
+set str preset p5
+set str tune ll
+create h264 soft
+destroy
+set str tune ULL
+create h264 soft
+destroy
+set str tune hq
+create h264 soft
+destroy
+set str tune weird
+create h264 soft
+destroy
+# multipass
+set str multipass fullres
+create h264 soft
+destroy
+set str multipass disabled
+create h264 soft
+destroy
+set str multipass QRES
+create h264 soft
+destroy
+set str multipass nonsense
+create h264 soft
+destroy

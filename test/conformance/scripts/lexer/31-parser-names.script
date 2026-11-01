@@ -1,0 +1,33 @@
+# CORE: cf_get_name/next_name/(_ref)/copy helpers and their PARSE_* codes + error messages.
+parse " int foo 12 \"s\" ; bar"
+setcur 0
+next_name "type" ";"
+next_name "name" ";"
+next_name "name" ";"
+errors
+reset
+parse " a 5 b ;"
+setcur 0
+next_name_ref "n"
+next_name_ref "n" ";"
+get_name_ref "n"
+next_name_ref "n"
+next_name_ref "n"
+next_name_ref "n"
+errors
+reset
+parse " a 5"
+setcur 0
+next_copy
+copy
+next_copy
+next_copy
+next_copy
+errors
+reset
+parse " a 5"
+setcur 0
+next
+is_type NAME "name"
+is_type NUM "number" "zzz"
+errors

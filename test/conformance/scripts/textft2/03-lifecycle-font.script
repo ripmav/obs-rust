@@ -1,0 +1,16 @@
+# Creating a source and applying settings: font lookup, face creation, texture and vertex buffer (S-038-R10..R20).
+reset
+ascii 5 8 0 8 384
+font "Sans Serif" - 0 p/sans
+load
+create s 2
+echo --- create alone does not load a font
+state s
+echo --- default update: text is empty, font 256 px loaded and standard glyphs cached
+update s
+state s
+echo --- same font settings again: no reload of the face
+update s
+echo --- unloading after a source existed shuts FreeType down
+destroy s
+unload

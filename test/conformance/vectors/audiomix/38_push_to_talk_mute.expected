@@ -1,0 +1,13 @@
+log info source 'a' enabled push-to-mute
+render a pending=0 ts=1000000000
+out 0 0 sum=512 peak=0.5 s0=0.5
+out 0 1 sum=384 peak=0.375 s0=0.375
+render a pending=0 ts=1000000000
+render a pending=0 ts=1000000000
+log info source 'a' disabled push-to-mute
+log info source 'a' enabled push-to-talk
+render a pending=0 ts=1000000000
+render a pending=0 ts=1000000000
+out 0 0 sum=512 peak=0.5 s0=0.5
+out 0 1 sum=384 peak=0.375 s0=0.375
+state a audio_ts=1000000000 pending=0 buf=2048 last_buf=0 pending_stop=0 timing_set=1 timing_adjust=0 next_ts_min=1042666666 next_sys_ts_min=1042666666 resample_offset=0 failed=0 vol=1 user_vol=1 muted=0 user_muted=0 actions=0

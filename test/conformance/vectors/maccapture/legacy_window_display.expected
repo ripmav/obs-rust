@@ -1,0 +1,50 @@
+cw_init found window=100 pid=500
+cw_init found window=100 pid=500
+cw_init not found
+cw_init found window=200 pid=600
+cw_init found window=200 pid=600
+cw_init invalid_name -> no window
+cw_find found window=200 pid=600
+cw_find not found
+cw_find invalid_name -> false
+cw_list
+  "[Safari] Home" = 100
+  "[Terminal] zsh" = 200
+  "[Terminal] zsh" = 201
+cw_list
+  "[Safari] Gone" = 999 disabled
+  "[Safari] Home" = 100
+  "[Terminal] zsh" = 200
+  "[Terminal] zsh" = 201
+cw_list
+  "[Aaa] Gone" = 999 disabled
+  "[Safari] Home" = 100
+  "[Terminal] zsh" = 200
+  "[Terminal] zsh" = 201
+cw_list
+  "[Safari] " = 101
+  "[Safari] Home" = 100
+  "[Terminal] zsh" = 200
+  "[Terminal] zsh" = 201
+cw_list
+  "[Safari] " = 101
+  "[Safari] Home" = 100
+  "[Terminal] zsh" = 200
+  "[Terminal] zsh" = 201
+dc_crop_mode 0 -> 0
+dc_crop_mode 3 -> 3
+dc_crop_mode 4 -> 0
+dc_crop_mode -1 -> 0
+dc_visibility mode=0 manual.*=false window.*=false window,show_empty_names=false
+dc_visibility mode=1 manual.*=true window.*=false window,show_empty_names=false
+dc_visibility mode=2 manual.*=false window.*=false window,show_empty_names=true
+dc_visibility mode=3 manual.*=false window.*=true window,show_empty_names=true
+dc_visibility mode=0 manual.*=false window.*=false window,show_empty_names=false
+dc_size mode=0 -> 2560x1440
+dc_size mode=1 -> 2520x1380
+dc_size mode=2 -> 800x600
+dc_size mode=3 -> 760x540
+dc_rect mode=0 origin=(0,0) end=(2560,1440)
+dc_rect mode=1 origin=(10,20) end=(2530,1400)
+dc_rect mode=2 origin=(100,50) end=(900,650)
+dc_rect mode=3 origin=(110,70) end=(870,610)

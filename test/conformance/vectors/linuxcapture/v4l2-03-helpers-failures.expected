@@ -1,0 +1,62 @@
+> trace on
+> dev /dev/video0
+> dev-cur 0 640 480 YUYV 1280 1 30 0
+> h-open /dev/video0
+  | open /dev/video0 -> ok
+h-open -> fd
+> fail G_FMT
+> h-set-format 8246337209400 NV12
+  | ioctl G_FMT -> -1 (injected)
+set_format ret=-1 resolution=8246337209400 pixfmt=0x3231564e bytesperline=0
+> unfail
+> fail S_FMT
+> h-set-format 8246337209400 NV12
+  | ioctl G_FMT -> 640x480 56595559 bpl=1280
+  | ioctl S_FMT -> -1 (injected)
+set_format ret=-1 resolution=8246337209400 pixfmt=0x3231564e bytesperline=0
+> unfail
+> fail S_FMT
+> h-set-format -1 -1
+  | ioctl G_FMT -> 640x480 56595559 bpl=1280
+set_format ret=0 resolution=2748779069920 pixfmt=0x56595559 bytesperline=1280
+> unfail
+> fail S_PARM
+> h-set-framerate 4294967326
+  | ioctl G_PARM -> 1/30
+  | ioctl S_PARM -> -1 (injected)
+set_framerate ret=-1 framerate=4294967326
+> unfail
+> fail G_PARM
+> h-set-framerate -1
+  | ioctl G_PARM -> -1 (injected)
+set_framerate ret=-1 framerate=-1
+> unfail
+> fail G_INPUT
+> h-set-input -1
+  | ioctl G_INPUT -> -1 (injected)
+set_input ret=-1 value=-1
+> h-input-caps -1
+  | ioctl G_INPUT -> -1 (injected)
+input_caps ret=-1 caps=0x0
+> unfail
+> fail ENUMINPUT
+> h-input-caps 0
+  | ioctl ENUMINPUT -> -1 (injected)
+input_caps ret=-1 caps=0x0
+> unfail
+> fail S_STD
+> h-set-standard 5
+  | ioctl S_STD -> -1 (injected)
+set_standard ret=-1 value=5
+> unfail
+> fail G_STD
+> h-set-standard -1
+  | ioctl G_STD -> -1 (injected)
+set_standard ret=-1 value=-1
+> unfail
+> dev-dv 1280 720 74250000 110 40 220 5 5 20 0 0 0 0
+> fail S_DV_TIMINGS
+> h-set-dv 0
+  | ioctl S_DV_TIMINGS -> -1 (injected)
+set_dv ret=-1
+> unfail

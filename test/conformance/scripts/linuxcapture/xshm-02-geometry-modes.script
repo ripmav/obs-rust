@@ -1,0 +1,31 @@
+# S-049 xshm: capture geometry from the three screen sources: RandR (monitor list), Xinerama, plain X screens.
+# Plain X ignores the screen origin (always 0,0) and the screen list index selects the X *screen*.
+trace on
+x-screen 0 0 1920 1080 DP-1
+x-screen 1920 -200 2560 1440 HDMI-1
+x-screen 4480 100 1280 1024 -
+xshm-defaults
+set-int screen 0
+xshm-create
+xshm-destroy
+settings-clear
+xshm-defaults
+set-int screen 1
+# RandR
+x-ext randr 1
+xshm-create
+xshm-destroy
+# Xinerama only
+x-ext randr 0
+x-ext xinerama 1
+xshm-create
+xshm-destroy
+# plain: origin forced to 0,0
+x-ext xinerama 0
+xshm-create
+xshm-destroy
+# both present: RandR wins
+x-ext randr 1
+x-ext xinerama 1
+xshm-create
+xshm-destroy

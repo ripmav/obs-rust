@@ -1,0 +1,16 @@
+# S-034 Q-1: loading a binding object with no modifiers and no (known) key does NOT skip it -- the
+# reference intended to, but its test compares a pointer, so an empty binding {key NONE, mods 0} is
+# stored, saved back as {"key":"OBS_KEY_NONE"}, and (because key NONE counts as "modifier-only")
+# is pressed by ANY injected event whose modifiers satisfy the (empty) modifier set -- but never by polling.
+reg frontend A "A" "a"
+load A [{},{"key":"NOT_A_KEY"},{"key":"OBS_KEY_NONE"},{"key":"OBS_KEY_NONE","shift":true}]
+enumb
+save A
+echo polling-never-presses-key-none-without-modifiers
+down OBS_KEY_A
+poll 3
+enumb
+echo strict-inject-with-no-modifiers-presses-the-empty-binding
+upall
+inject 0x0 OBS_KEY_Z 0
+enumb

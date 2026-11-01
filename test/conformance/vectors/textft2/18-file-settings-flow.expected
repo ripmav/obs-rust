@@ -1,0 +1,68 @@
+> events off
+> reset
+> ascii 5 8 0 8 384
+> font Sans Serif - 0 p/sans
+> load
+load -> 1
+registered id=text_ft2_source version=0
+registered id=text_ft2_source version=2
+> create s 2
+create s -> 1
+> setfont s Sans Serif - 20 0
+> set s from_file true
+> file a.txt one
+> sets s text_file @TMP@/a.txt
+> update s
+update done
+> state s
+state s font="Sans Serif" style="" size=20 flags=0 face=1 from_file=1 aa=1
+state s outline=0 shadow=0 outline_width=0 word_wrap=0 custom_width=0 log_mode=0 log_lines=6 color=ffffffff,ffffffff
+state s cx=18 cy=8 max_h=8 texbuf=553,0 tex=1 vbuf=1 effect=1
+state s file="/a.txt" load_failed=0 update_file=0 mtime=0 last_checked_ms=0
+state s text="one"
+> file a.txt two
+> echo --- same path, nothing changed: update leaves the old text
+--- same path, nothing changed: update leaves the old text
+> update s
+update done
+> state s
+state s font="Sans Serif" style="" size=20 flags=0 face=1 from_file=1 aa=1
+state s outline=0 shadow=0 outline_width=0 word_wrap=0 custom_width=0 log_mode=0 log_lines=6 color=ffffffff,ffffffff
+state s cx=18 cy=8 max_h=8 texbuf=553,0 tex=1 vbuf=1 effect=1
+state s file="/a.txt" load_failed=0 update_file=0 mtime=0 last_checked_ms=0
+state s text="one"
+> echo --- a layout-affecting change (colour, wrap, size, log settings) forces a re-read
+--- a layout-affecting change (colour, wrap, size, log settings) forces a re-read
+> set s color1 0xff0000ff
+> update s
+update done
+> state s
+state s font="Sans Serif" style="" size=20 flags=0 face=1 from_file=1 aa=1
+state s outline=0 shadow=0 outline_width=0 word_wrap=0 custom_width=0 log_mode=0 log_lines=6 color=ff0000ff,ffffffff
+state s cx=18 cy=8 max_h=8 texbuf=553,0 tex=1 vbuf=1 effect=1
+state s file="/a.txt" load_failed=0 update_file=0 mtime=0 last_checked_ms=0
+state s text="two"
+> echo --- different path always re-reads
+--- different path always re-reads
+> file b.txt three
+> sets s text_file @TMP@/b.txt
+> update s
+update done
+> state s
+state s font="Sans Serif" style="" size=20 flags=0 face=1 from_file=1 aa=1
+state s outline=0 shadow=0 outline_width=0 word_wrap=0 custom_width=0 log_mode=0 log_lines=6 color=ff0000ff,ffffffff
+state s cx=30 cy=8 max_h=8 texbuf=553,0 tex=1 vbuf=1 effect=1
+state s file="/b.txt" load_failed=0 update_file=0 mtime=0 last_checked_ms=0
+state s text="three"
+> echo --- switching to manual text
+--- switching to manual text
+> set s from_file false
+> set s text manual
+> update s
+update done
+> state s
+state s font="Sans Serif" style="" size=20 flags=0 face=1 from_file=0 aa=1
+state s outline=0 shadow=0 outline_width=0 word_wrap=0 custom_width=0 log_mode=0 log_lines=6 color=ff0000ff,ffffffff
+state s cx=36 cy=8 max_h=8 texbuf=553,0 tex=1 vbuf=1 effect=1
+state s file="/b.txt" load_failed=0 update_file=0 mtime=0 last_checked_ms=0
+state s text="manual"

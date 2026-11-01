@@ -1,0 +1,274 @@
+echo prefixes-of-num
+decode ret=0 num=0
+decode ret=-1
+decode ret=-1
+decode ret=-1
+decode ret=-1
+decode ret=-1
+decode ret=-1
+decode ret=-1
+decode ret=-1
+decode ret=9 num=1
+  [0] name=- type=NUMBER value=1 bits=3ff0000000000000
+echo prefixes-of-bool
+decode ret=0 num=0
+decode ret=-1
+decode ret=2 num=1
+  [0] name=- type=BOOLEAN value=1
+echo prefixes-of-str
+decode ret=0 num=0
+decode crash
+decode crash
+decode ret=-1
+decode ret=-1
+decode ret=-1
+decode ret=6 num=1
+  [0] name=- type=STRING len=3 value="abc"
+echo prefixes-of-lstr
+decode ret=0 num=0
+decode crash
+decode crash
+decode crash
+decode crash
+decode ret=-1
+decode ret=-1
+decode ret=-1
+decode ret=8 num=1
+  [0] name=- type=STRING len=3 value="abc"
+echo prefixes-of-xml
+decode ret=0 num=0
+decode crash
+decode crash
+decode crash
+decode crash
+decode ret=-1
+decode ret=-1
+decode ret=7 num=1
+  [0] name=- type=XML_DOC len=2 value="<>"
+echo prefixes-of-date
+decode ret=0 num=0
+decode ret=-1
+decode ret=-1
+decode ret=-1
+decode ret=-1
+decode ret=-1
+decode ret=-1
+decode ret=-1
+decode ret=-1
+decode ret=-1
+decode ret=-1
+decode ret=11 num=1
+  [0] name=- type=DATE value=2 bits=4000000000000000 utc=60
+echo prefixes-of-obj
+decode ret=0 num=0
+decode ret=1 num=1
+  [0] name=- type=OBJECT num=0
+decode ret=-1
+decode ret=-1
+decode ret=-1
+decode ret=-1
+decode ret=-1
+decode ret=-1
+decode ret=-1
+decode ret=-1
+decode ret=-1
+decode ret=-1
+decode ret=-1
+decode ret=13 num=1
+  [0] name=- type=OBJECT num=1
+    [0] name="x" type=NUMBER value=1 bits=3ff0000000000000
+decode ret=-1
+decode ret=-1
+decode ret=16 num=1
+  [0] name=- type=OBJECT num=1
+    [0] name="x" type=NUMBER value=1 bits=3ff0000000000000
+echo prefixes-of-objnum
+decode ret=0 num=0
+decode ret=1 num=1
+  [0] name=- type=OBJECT num=0
+decode ret=-1
+decode ret=-1
+decode ret=-1
+decode ret=-1
+decode ret=-1
+decode ret=-1
+decode ret=-1
+decode ret=-1
+decode ret=-1
+decode ret=-1
+decode ret=-1
+decode ret=13 num=1
+  [0] name=- type=OBJECT num=1
+    [0] name="x" type=NUMBER value=1 bits=3ff0000000000000
+decode ret=-1
+decode ret=-1
+decode ret=16 num=1
+  [0] name=- type=OBJECT num=1
+    [0] name="x" type=NUMBER value=1 bits=3ff0000000000000
+echo prefixes-of-ecma
+decode ret=0 num=0
+decode ret=-1
+decode ret=-1
+decode ret=-1
+decode ret=-1
+decode ret=5 num=1
+  [0] name=- type=ECMA_ARRAY num=0
+decode ret=-1
+decode ret=-1
+decode ret=-1
+decode ret=-1
+decode ret=-1
+decode ret=-1
+decode ret=-1
+decode ret=-1
+decode ret=-1
+decode ret=-1
+decode ret=-1
+decode ret=17 num=1
+  [0] name=- type=ECMA_ARRAY num=1
+    [0] name="x" type=NUMBER value=1 bits=3ff0000000000000
+decode ret=-1
+decode ret=-1
+decode ret=20 num=1
+  [0] name=- type=ECMA_ARRAY num=1
+    [0] name="x" type=NUMBER value=1 bits=3ff0000000000000
+echo prefixes-of-strict
+decode ret=0 num=0
+decode crash
+decode crash
+decode crash
+decode crash
+decode ret=-1
+decode ret=-1
+decode ret=-1
+decode ret=-1
+decode ret=-1
+decode ret=-1
+decode ret=-1
+decode ret=-1
+decode ret=-1
+decode ret=-1
+decode crash
+decode crash
+decode ret=-1
+decode ret=18 num=1
+  [0] name=- type=STRICT_ARRAY num=2
+    [0] name=- type=NUMBER value=1 bits=3ff0000000000000
+    [1] name=- type=STRING len=1 value="a"
+echo prefixes-of-named-num
+decode ret=0 num=0
+decode ret=-1
+decode ret=-1
+decode ret=-1
+decode ret=-1
+decode ret=-1
+decode ret=-1
+decode ret=-1
+decode ret=-1
+decode ret=-1
+decode ret=-1
+decode ret=-1
+decode ret=12 num=1
+  [0] name="a" type=NUMBER value=1 bits=3ff0000000000000
+echo prefixes-of-named-str
+decode ret=0 num=0
+decode ret=-1
+decode ret=-1
+decode ret=-1
+decode crash
+decode crash
+decode ret=-1
+decode ret=-1
+decode ret=-1
+decode ret=9 num=1
+  [0] name="a" type=STRING len=3 value="abc"
+echo prefixes-of-named-obj
+decode ret=0 num=0
+decode ret=-1
+decode ret=-1
+decode ret=-1
+decode ret=4 num=1
+  [0] name="a" type=OBJECT num=0
+decode ret=-1
+decode ret=-1
+decode ret=-1
+decode ret=-1
+decode ret=-1
+decode ret=-1
+decode ret=-1
+decode ret=-1
+decode ret=-1
+decode ret=-1
+decode ret=-1
+decode ret=16 num=1
+  [0] name="a" type=OBJECT num=1
+    [0] name="x" type=NUMBER value=1 bits=3ff0000000000000
+decode ret=-1
+decode ret=-1
+decode ret=19 num=1
+  [0] name="a" type=OBJECT num=1
+    [0] name="x" type=NUMBER value=1 bits=3ff0000000000000
+echo prefixes-of-named-ecma-in-obj
+decode ret=0 num=0
+decode ret=-1
+decode ret=-1
+decode ret=-1
+decode ret=4 num=1
+  [0] name="a" type=OBJECT num=0
+decode ret=-1
+decode ret=-1
+decode ret=-1
+decode ret=-1
+decode ret=-1
+decode ret=-1
+decode ret=-1
+decode ret=12 num=1
+  [0] name="a" type=OBJECT num=1
+    [0] name="b" type=ECMA_ARRAY num=0
+decode ret=-1
+decode ret=-1
+decode ret=-1
+decode ret=16 num=1
+  [0] name="a" type=OBJECT num=1
+    [0] name="b" type=ECMA_ARRAY num=1
+      [0] name="x" type=NULL
+decode ret=-1
+decode ret=-1
+decode ret=19 num=1
+  [0] name="a" type=OBJECT num=1
+    [0] name="b" type=ECMA_ARRAY num=1
+      [0] name="x" type=NULL
+decode ret=-1
+decode ret=-1
+decode ret=22 num=1
+  [0] name="a" type=OBJECT num=1
+    [0] name="b" type=ECMA_ARRAY num=1
+      [0] name="x" type=NULL
+echo QUIRK-Q4-prop_decode-of-an-ECMA-array-marker-with-less-than-4-bytes-behind-it-consumes-more-than-supplied
+prop_decode ret=5
+  [0] name=- type=ECMA_ARRAY num=0
+prop_decode ret=5
+  [0] name=- type=ECMA_ARRAY num=0
+prop_decode ret=5
+  [0] name=- type=ECMA_ARRAY num=0
+prop_decode ret=5
+  [0] name=- type=ECMA_ARRAY num=0
+prop_decode ret=-1
+prop_decode ret=-1
+prop_decode ret=8
+  [0] name=- type=ECMA_ARRAY num=0
+echo QUIRK-Q5-containers-without-end-marker-are-accepted-when-the-data-ends
+decode ret=1 num=1
+  [0] name=- type=OBJECT num=0
+decode ret=-1
+decode ret=13 num=1
+  [0] name=- type=OBJECT num=1
+    [0] name="x" type=NUMBER value=1 bits=3ff0000000000000
+prop_decode ret=1
+  [0] name=- type=OBJECT num=0
+prop_decode ret=-1
+prop_decode ret=-1
+echo QUIRK-Q6-no-error-recovery-after-a-bad-property
+decode ret=-1
+decode ret=-1
+decode ret=-1

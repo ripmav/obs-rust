@@ -1,0 +1,12 @@
+tl_create 0 te-1 -> ok
+tl_get 0 "A" -> "line1\nline2"
+tl_get 0 "B" -> "tab\there"
+tl_get 0 "C" -> "cr\rx"
+tl_get 0 "D" -> "say \"hi\""
+tl_get 0 "E" -> "keep \\x \\\\ end"
+tl_get 0 "F" -> "has = and # inside"
+tl_get 0 "G" -> "\n\n"
+tl_get 0 "H" -> "back\\\nslash"
+tl_get 0 "I" -> "a\\\\"
+tl_get 0 "J" -> "\\\\"
+tl_get 0 "K" -> "x"

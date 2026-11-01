@@ -1,0 +1,20 @@
+# Growable in-memory serializer: append, overwrite in place, extend while overwriting (CORE).
+# dump shows num (length), pos (internal cur_pos) and the bytes.
+open array
+dump
+write 01020304
+dump
+seek start 1
+write ffee
+dump
+seek start 3
+write 7172737475
+dump
+seek end 0
+write 99
+dump
+write_pat 20
+seek start 5
+write_pat 30 9
+dump
+close

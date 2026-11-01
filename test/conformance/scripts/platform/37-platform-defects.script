@@ -1,0 +1,7 @@
+# Reference defects (D-n) and quirks demonstrated with a child process.
+# try_defect lines: the reference crashes; a conforming implementation must NOT crash and prints
+# "try_defect ... ok" (the checker treats crash and ok as equal on these lines).
+# D-4: os_mkdirs("") dereferences a NULL pointer. Required: return -1 (MKDIR_ERROR).
+try_defect quiet mkdirs ""
+try quiet mkdirs a/b
+exists a/b

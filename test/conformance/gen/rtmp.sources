@@ -1,0 +1,21 @@
+# Spec S-031: RTMP protocol engine of the vendored librtmp (rtmp.c, parseurl.c, amf.c, log.c).
+# Production configuration: -DUSE_MBEDTLS -DCRYPTO with MbedTLS 3.x (build requirement:
+# /usr/include/mbedtls3 and /usr/lib/mbedtls3, the same major version OBS pins). The transport
+# (send/recv), clock (times), random (rand), connector (happy-eyeballs) and the CA loader are
+# replaced by gen/rtmp_stubs.c. Run run.sh from test/conformance (the -I flags are relative).
+test/conformance/gen/rtmp_runner.c
+test/conformance/gen/rtmp_stubs.c
+plugins/obs-outputs/librtmp/rtmp.c
+plugins/obs-outputs/librtmp/parseurl.c
+plugins/obs-outputs/librtmp/amf.c
+plugins/obs-outputs/librtmp/log.c
+-DUSE_MBEDTLS
+-DCRYPTO
+-I../../shared/happy-eyeballs
+-I/usr/include/mbedtls3
+-Wl,--no-as-needed
+-L/usr/lib/mbedtls3
+-Wl,-rpath,/usr/lib/mbedtls3
+-lmbedtls
+-lmbedx509
+-lmbedcrypto

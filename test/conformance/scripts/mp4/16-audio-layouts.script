@@ -1,0 +1,82 @@
+# S-022 audio sample entry and stsd version in MP4 flavor.
+# stsd version (FullBox) = 1 when the audio output has more than 2 channels, else 0; entry_version
+# is the same value. With version 1 every codec entry gets a 'chnl' box: layouts with an ISO
+# definedLayout (mono 1, stereo 2, 4.0 4, 7.1 12) write it plus an 8-byte omitted-channel map;
+# 2.1, 4.1, 5.1 have none and write definedLayout 0 followed by one speaker position per channel
+# (with a warning). 'unknown' speakers behave like stereo in chnl but have 0 channels in the entry.
+# Sample rates above 65535 are written as 0 (with a warning).
+enc a audio codec aac rate 48000 speakers 5.1 extra 1190
+mux mp4 skipfin
+pkt a 0 0 1 gen:10
+finalise
+tree
+hex
+echo --- layout mono
+reset
+enc a audio codec aac rate 48000 speakers mono extra 1190
+mux mp4 skipfin
+pkt a 0 0 1 gen:10
+finalise
+hex
+echo --- layout stereo
+reset
+enc a audio codec aac rate 48000 speakers stereo extra 1190
+mux mp4 skipfin
+pkt a 0 0 1 gen:10
+finalise
+hex
+echo --- layout 2.1
+reset
+enc a audio codec aac rate 48000 speakers 2.1 extra 1190
+mux mp4 skipfin
+pkt a 0 0 1 gen:10
+finalise
+hex
+echo --- layout 4.0
+reset
+enc a audio codec aac rate 48000 speakers 4.0 extra 1190
+mux mp4 skipfin
+pkt a 0 0 1 gen:10
+finalise
+hex
+echo --- layout 4.1
+reset
+enc a audio codec aac rate 48000 speakers 4.1 extra 1190
+mux mp4 skipfin
+pkt a 0 0 1 gen:10
+finalise
+hex
+echo --- layout 7.1
+reset
+enc a audio codec aac rate 48000 speakers 7.1 extra 1190
+mux mp4 skipfin
+pkt a 0 0 1 gen:10
+finalise
+hex
+echo --- layout unknown
+reset
+enc a audio codec aac rate 48000 speakers unknown extra 1190
+mux mp4 skipfin
+pkt a 0 0 1 gen:10
+finalise
+hex
+echo --- sample rate 96000 is fine, 192000 does not fit the 16.16 field
+reset
+enc a audio codec aac rate 96000 extra 1190
+mux mp4 skipfin
+pkt a 0 0 1 gen:10
+finalise
+hex
+reset
+enc a audio codec aac rate 192000 extra 1190
+mux mp4 skipfin
+pkt a 0 0 1 gen:10
+finalise
+hex
+echo --- flac and opus in 5.1 get chnl too; mono pcm gets definedLayout 1
+reset
+enc a audio codec flac rate 48000 speakers 5.1 extra 1000100000000b000000150ac4400000000000000000000000000000000000
+mux mp4 skipfin
+pkt a 0 0 1 gen:10
+finalise
+tree

@@ -1,0 +1,29 @@
+  cb A create
+log debug source 'A' (in) created
+create a ok
+  cb F1 create
+log debug private source 'F1' (va) created
+create f1 ok
+  cb F2 create
+log debug private source 'F2' (va) created
+create f2 ok
+  cb F3 create
+log debug private source 'F3' (va) created
+create f3 ok
+log debug - filter 'F1' (va) added to source 'A'
+log debug - filter 'F2' (va) added to source 'A'
+log debug - filter 'F3' (va) added to source 'A'
+names a: F3 F2 F1
+  sig reorder_filters source=A
+names a: F2 F3 F1
+  sig reorder_filters source=A
+names a: F2 F1 F3
+  sig reorder_filters source=A
+  sig reorder_filters source=A
+names a: F3 F2 F1
+names a: F3 F2 F1
+  sig reorder_filters source=A
+names a: F1 F3 F2
+filters a count=3 [0]=f1(target=f3,parent=a) [1]=f3(target=f2,parent=a) [2]=f2(target=a,parent=a)
+  sig reorder_filters source=A
+names a: F1 F2 F3

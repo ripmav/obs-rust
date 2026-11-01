@@ -1,0 +1,8 @@
+backend lua_load
+load -> 1
+deferred (4): a b c d
+deferred (6): a b c d e f
+backend lua_unload
+log info [Scripting] Total detached callbacks: 0
+info_detached_head_after_unload null
+unload done

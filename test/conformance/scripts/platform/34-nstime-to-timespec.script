@@ -1,0 +1,17 @@
+# os_nstime_to_timespec(ts_ns, storage): converts a monotonic timestamp (os_gettime_ns time base) to
+# wall clock, anchored at the first call (one wall clock sample paired with one monotonic sample).
+# Timestamps are given relative to the start of the runner: "+N" / "-N" nanoseconds. Only
+# differences are printed, since the absolute value is the machine's wall clock.
+# nstime A B prints B - A of the two results in nanoseconds.
+nstime_null
+nstime +0 +1000000000
+nstime +0 +1
+nstime +0 +999999999
+nstime +1500000000 +3250000000
+nstime -1000000000 -2000000000
+nstime -5000000000 +5000000000
+nstime +5000000000 -5000000000
+nstime -3 -3
+nstime -999999999 -1
+nstime +123456789012 +3
+nstime -7000000000 -123

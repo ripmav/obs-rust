@@ -1,0 +1,42 @@
+echo idr-access-unit
+avc_extract new=000000010910000000016588840021ffe0 header=000000016742c01ed900a047fe880000000168ce3c80 sei=0000000106050a0102030405
+echo p-access-unit
+avc_extract new=00000001091000000001419a24c1 header=- sei=0000000106050a0102030405
+echo three-byte-start-codes
+avc_extract new=0000016588840021ffe0 header=0000016742c01ed900a047fe8800000168ce3c80 sei=00000106050a0102030405
+echo mixed-start-code-lengths
+avc_extract new=000000016588840021ffe0 header=000000016742c01ed900a047fe8800000168ce3c80 sei=00000106050a0102030405
+echo order-is-preserved-inside-each-output
+avc_extract new=00000001419a24c1000000016588840021ffe0 header=0000000168ce3c80000000016742c01ed900a047fe880000000168ce3c80 sei=0000000106050a01020304050000000106050a0102030405
+echo other-types-stay-in-new
+avc_extract new=000000010cffff000000010910000000016588840021ffe0 header=- sei=-
+echo nal-ref-idc-and-forbidden-bit-do-not-matter-for-the-type
+avc_extract new=00000001e5 header=000000012700000000016800 sei=000000010600
+avc_extract new=- header=0000000167aa0000000147bb sei=-
+echo only-header-nals
+avc_extract new=- header=000000016742c01ed900a047fe880000000168ce3c80 sei=-
+echo garbage-before-the-first-start-code-is-dropped
+avc_extract new=00000165aa header=- sei=-
+avc_extract new=000000016588840021ffe0 header=000000016742c01ed900a047fe88 sei=-
+echo no-start-code
+avc_extract new=- header=- sei=-
+avc_extract new=- header=- sei=-
+echo empty
+avc_extract new=- header=- sei=-
+echo extra-zero-bytes-before-the-start-code
+avc_extract new=000000016588 header=- sei=-
+avc_extract new=0000000165aa0000000000000141bb header=- sei=-
+echo trailing-zero-bytes-belong-to-the-last-nal
+avc_extract new=0000000165aa0000 header=- sei=-
+avc_extract new=0000000165aa00 header=- sei=-
+echo trailing-start-code-at-the-end-is-not-seen
+avc_extract new=0000000165aa00000001 header=- sei=-
+avc_extract new=0000000165aa000001 header=- sei=-
+avc_extract new=0000000165aa0000000141 header=- sei=-
+echo empty-nal-between-start-codes
+avc_extract new=00000001000000014188 header=- sei=-
+avc_extract new=0000000100000001 header=- sei=-
+echo header-only-bytes
+avc_extract new=- header=- sei=-
+avc_extract new=- header=00000167 sei=-
+avc_extract new=- header=0000016700 sei=-

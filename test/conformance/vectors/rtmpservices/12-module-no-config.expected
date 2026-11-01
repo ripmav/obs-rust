@@ -1,0 +1,6 @@
+fake proc_handler_add "void twitch_ingests_refresh(int seconds)"
+fake proc_handler_add "void amazon_ivs_ingests_refresh(int seconds)"
+fake obs_register_service id=rtmp_common
+fake obs_register_service id=rtmp_custom
+module-load -> 1 name="rtmp-services plugin (libobs 99.0.0-test)"
+module-unload

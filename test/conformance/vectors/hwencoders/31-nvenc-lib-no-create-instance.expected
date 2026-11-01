@@ -1,0 +1,5 @@
+> sym create 0
+> initnv
+log error [obs-nvenc] Could not load function: NvEncodeAPICreateInstance
+host.set_last_error "Missing NvEncodeAPICreateInstance, check your video card drivers are up to date."
+init_nvenc -> 0

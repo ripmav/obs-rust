@@ -1,0 +1,67 @@
+add list l ok
+info
+  prop l type=list desc="List" long=@null enabled=1 visible=1
+    listtype=list format=string count=0
+list_add string -> 0
+list_add string -> 1
+list_add string -> 2
+info
+  prop l type=list desc="List" long=@null enabled=1 visible=1
+    listtype=list format=string count=3
+     item 0 name="One" disabled=0 value="1"
+     item 1 name="Two" disabled=0 value="2"
+     item 2 name="Three" disabled=0 value="3"
+info
+  prop l type=list desc="List" long=@null enabled=1 visible=1
+    listtype=list format=string count=6
+     item 0 name="Zero" disabled=0 value="0"
+     item 1 name="One" disabled=0 value="1"
+     item 2 name="Mid" disabled=0 value="m"
+     item 3 name="Two" disabled=0 value="2"
+     item 4 name="Three" disabled=0 value="3"
+     item 5 name="End" disabled=0 value="e"
+echo remove
+info
+  prop l type=list desc="List" long=@null enabled=1 visible=1
+    listtype=list format=string count=4
+     item 0 name="One" disabled=0 value="1"
+     item 1 name="Mid" disabled=0 value="m"
+     item 2 name="Two" disabled=0 value="2"
+     item 3 name="End" disabled=0 value="e"
+echo disable
+info
+  prop l type=list desc="List" long=@null enabled=1 visible=1
+    listtype=list format=string count=4
+     item 0 name="One" disabled=0 value="1"
+     item 1 name="Mid" disabled=1 value="m"
+     item 2 name="Two" disabled=0 value="2"
+     item 3 name="End" disabled=0 value="e"
+info
+  prop l type=list desc="List" long=@null enabled=1 visible=1
+    listtype=list format=string count=4
+     item 0 name="One" disabled=0 value="1"
+     item 1 name="Mid" disabled=0 value="m"
+     item 2 name="Two" disabled=0 value="2"
+     item 3 name="End" disabled=0 value="e"
+echo clear-keeps-the-list-kind
+info
+  prop l type=list desc="List" long=@null enabled=1 visible=1
+    listtype=list format=string count=0
+list_add string -> 0
+info
+  prop l type=list desc="List" long=@null enabled=1 visible=1
+    listtype=list format=string count=1
+     item 0 name="After" disabled=0 value="a"
+echo item-access-out-of-range
+list_item 0 name="After" disabled=0 str="a" int=0 float=0 bool=0
+list_item 1 name=@null disabled=0 str=@null int=0 float=0 bool=0
+list_item 100 name=@null disabled=0 str=@null int=0 float=0 bool=0
+echo null-name-and-null-value
+list_add string -> 1
+list_add string -> 2
+info
+  prop l type=list desc="List" long=@null enabled=1 visible=1
+    listtype=list format=string count=3
+     item 0 name="After" disabled=0 value="a"
+     item 1 name=@null disabled=0 value="v"
+     item 2 name="n" disabled=0 value=@null

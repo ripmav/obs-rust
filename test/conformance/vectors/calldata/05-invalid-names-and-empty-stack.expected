@@ -1,0 +1,11 @@
+dump size=0 bytes=-
+capacity 0
+get_int x fail
+get_string x fail
+dump size=0 bytes=-
+get_int x fail
+dump size=0 bytes=-
+get_int  fail
+dump size=34 bytes=02000000000000007800080000000000000005000000000000000000000000000000
+get_int  fail
+get_int x ok 5

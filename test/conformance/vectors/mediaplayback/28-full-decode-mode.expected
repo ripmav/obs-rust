@@ -1,0 +1,30 @@
+minit -> ok
+ff open path=fd format=- nobuffer=1 interrupt=0 opts=[]
+minit2 -> ok has_v=1 has_a=1
+ff seek stream=0 target=0 flags=BACKWARD
+ff decoder flush
+ff decoder flush
+ff read #0 stream=0 pts=0 size=4
+ff read #1 stream=1 pts=0 size=4
+cb preload ts=0 fmt=I420 8x4 flip=0 full=0 trc=DEFAULT maxlum=0 flags=0 ls0=8 d0=01 mat0=1.16438 min0=0.0627451 max0=0.921569
+mreset -> 1
+# drive by hand: deliver whatever is decoded, prepare more
+cb video ts=0 fmt=I420 8x4 flip=0 full=0 trc=DEFAULT maxlum=0 flags=0 ls0=8 d0=01 mat0=1.16438 min0=0.0627451 max0=0.921569
+cb audio ts=0 fmt=U8BIT_PLANAR spk=MONO rate=48000 frames=480 d0=12
+ff read #2 stream=0 pts=40 size=4
+ff read #3 stream=1 pts=480 size=4
+mprepare -> 1
+cb video ts=40000000 fmt=I420 8x4 flip=0 full=0 trc=DEFAULT maxlum=0 flags=0 ls0=8 d0=21 mat0=1.16438 min0=0.0627451 max0=0.921569
+cb audio ts=10000000 fmt=U8BIT_PLANAR spk=MONO rate=48000 frames=480 d0=32
+ff decoder drain
+ff decoder drain
+mprepare -> 1
+mprepare -> 1
+ff seek stream=0 target=0 flags=BACKWARD
+ff decoder flush
+ff decoder flush
+ff read #0 stream=0 pts=0 size=4
+ff read #1 stream=1 pts=0 size=4
+cb preload ts=0 fmt=I420 8x4 flip=0 full=0 trc=DEFAULT maxlum=0 flags=0 ls0=8 d0=01 mat0=1.16438 min0=0.0627451 max0=0.921569
+cb stop
+meof -> 1

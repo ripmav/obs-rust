@@ -1,0 +1,14 @@
+open_string rc=0
+sections 1 [A]
+get_string A k "v"
+get_string A z "1"
+open_string rc=0
+sections 2 [A] [B]
+get_string B k "1"
+open_string rc=0
+get_string A k "end\\"
+get_string A z "2"
+open_string rc=0
+get_string A k "tail\\"
+open_string rc=0
+get_string A k "\\q\\\n"

@@ -1,0 +1,59 @@
+> reset
+> output rb
+> venc h264 bitrate=2500 extra=0a0b
+> create replay_buffer
+proc_add "void save()"
+proc_add "void get_last_replay(out string path)"
+signal_add "void saved()"
+signal_add "void saving(ptr output)"
+create replay_buffer -> ok
+> defaults
+> capture 0
+> start
+start -> 0
+> capture 1 0
+> start
+start -> 0
+> capture 1 1
+> start
+begin_data_capture
+start -> 1
+> state
+state active=1 capturing=1 stopping=0 sent_headers=0 total_bytes=0 stop_ts=0 pipe=0 refs=0
+  path="" is_network=0 is_hls=0
+> state_rb
+state_rb save_ts=0 keyframes=0 muxing=0 queued=0 mux_packets=0 cur_size=0 cur_time=0 max_size=524288000 max_time=15000000
+> total_bytes
+total_bytes 0
+> reset
+> output rb
+> venc h264 bitrate=2500 extra=0a0b
+> set int max_time_sec 7
+> set int max_size_mb 3
+> create replay_buffer
+proc_add "void save()"
+proc_add "void get_last_replay(out string path)"
+signal_add "void saved()"
+signal_add "void saving(ptr output)"
+create replay_buffer -> ok
+> start
+begin_data_capture
+start -> 1
+> state_rb
+state_rb save_ts=0 keyframes=0 muxing=0 queued=0 mux_packets=0 cur_size=0 cur_time=0 max_size=3145728 max_time=7000000
+> echo unset_limits_without_defaults_mean_unlimited
+unset_limits_without_defaults_mean_unlimited
+> reset
+> output rb
+> venc h264 bitrate=2500 extra=0a0b
+> create replay_buffer
+proc_add "void save()"
+proc_add "void get_last_replay(out string path)"
+signal_add "void saved()"
+signal_add "void saving(ptr output)"
+create replay_buffer -> ok
+> start
+begin_data_capture
+start -> 1
+> state_rb
+state_rb save_ts=0 keyframes=0 muxing=0 queued=0 mux_packets=0 cur_size=0 cur_time=0 max_size=0 max_time=0

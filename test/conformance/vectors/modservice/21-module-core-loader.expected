@@ -1,0 +1,22 @@
+mkmod ca ok
+mkmod cb ok
+mkmod cc ok
+log debug ---------------------------------
+ev mod ca ctor
+log debug Loading module: ca.so
+ev mod ca set_pointer
+ev mod ca load
+log debug ---------------------------------
+ev mod cb ctor
+log debug Loading module: cb.so
+ev mod cb set_pointer
+ev mod cb load
+log error Failed to load core module missing
+load_core -> 1 core_modules_loaded=1
+enabled cb ca
+disabled
+mod_info ca file=ca.so name=(null) author=(null) desc=(null) bin=@TMP/cm/bin/ca.so data=@TMP/cm/data/ca id=(null) ver=(null) lib=set core=1 legacy=0 state=enabled loaded=1 mtype=1
+get_module cc -> enabled=null disabled=null allow_disable=0
+load_core -> 1 core_modules_loaded=1
+enabled cb ca
+disabled

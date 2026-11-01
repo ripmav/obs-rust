@@ -1,0 +1,38 @@
+# S-035 registration by modules: ids recorded in the module that is being loaded (loadingModule), per kind.
+mkmod r1 @TMP/m/r1.so svc=svc_a,svc_b out=out_a enc=enc_a src=src_a
+mkmod r2 @TMP/m/r2.so svc=svc_a,svc_c src=src_a,src_b
+mkmod r3 @TMP/m/r3.so
+open_module R1 @TMP/m/r1.so d
+open_module R2 @TMP/m/r2.so d
+open_module R3 @TMP/m/r3.so d
+init_module R1
+# a duplicate id from a later module is rejected and NOT recorded for that module
+init_module R2
+init_module R3
+mod_lists R1
+mod_lists R2
+mod_lists R3
+svc_types
+service_module svc_a
+service_module svc_b
+service_module svc_c
+service_module nosuch
+# a service type registered while no module is loading belongs to no module
+svc_def Z zsvc
+svc_register Z
+service_module zsvc
+# manual per-module lists (obs_module_add_*): NULL module is ignored; ids are copied
+mod_add R3 service manual1
+mod_add R3 source s1
+mod_add R3 output o1
+mod_add R3 encoder e1
+mod_add R3 service manual1
+mod_add - service ignored
+mod_lists R3
+service_module manual1
+# disabled modules are searched after the enabled ones
+create_disabled D @TMP/m/d.so d 3
+mod_add D service dsvc
+mod_add D service svc_a
+service_module dsvc
+service_module svc_a

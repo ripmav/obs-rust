@@ -1,0 +1,62 @@
+# CORE. async_delay filter (video side; the audio path is compiled out of the shipped build, so filter_audio
+# is absent): queue frames until the newest timestamp is `interval` ahead of the oldest, then release one frame
+# per incoming frame. Timestamps in ns; delay_ms property * 1e6.
+audio 2 48000
+source parent video
+events on
+data d
+set d delay_ms int 100
+create dl delay d parent=parent
+state dl
+echo fill-phase-frames-held-until-interval-reached
+video dl 1000000000
+video dl 1040000000
+video dl 1080000000
+video dl 1100000000
+video dl 1140000000
+video dl 1180000000
+state dl
+echo timestamp-jump-backwards-resets-and-releases-queue
+video dl 500000000
+state dl
+echo timestamp-jump-over-one-second-resets
+video dl 1000000000
+video dl 1100000000
+video dl 2200000001
+state dl
+echo exactly-one-second-is-not-a-jump
+video dl 3200000001
+state dl
+echo update-reset-flags
+set d delay_ms int 50
+update dl d
+state dl
+video dl 3210000000
+state dl
+echo decreasing-interval-frees-queue-increasing-does-not
+video dl 3250000000
+video dl 3270000000
+set d delay_ms int 10
+update dl d
+state dl
+set d delay_ms int 500
+update dl d
+state dl
+echo zero-delay-passes-frames-through
+set d delay_ms int 0
+update dl d
+video dl 4000000000
+video dl 4010000000
+echo remove-releases-all-queued
+set d delay_ms int 100
+update dl d
+video dl 4020000000
+video dl 4030000000
+remove dl
+state dl
+echo equal-timestamps
+video dl 5000000000
+video dl 5000000000
+echo destroy-with-queued-frames-does-not-release
+video dl 5010000000
+destroy dl

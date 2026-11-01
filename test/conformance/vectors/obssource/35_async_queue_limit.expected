@@ -1,0 +1,6 @@
+  cb C create
+log debug source 'C' (cam) created
+create c ok
+astate c active=1 last_frame_ts=0 queue=[100,101,102,103,104,105,106,107,108,109,110,111,112,113,114,115,116,117,118,119,120,121,122,123,124,125,126,127,128,129] cache=30 used=30 [1/0,1/0,1/0,1/0,1/0,1/0,1/0,1/0,1/0,1/0,1/0,1/0,1/0,1/0,1/0,1/0,1/0,1/0,1/0,1/0,1/0,1/0,1/0,1/0,1/0,1/0,1/0,1/0,1/0,1/0] cur=- prev=- tex=0x0 fmt=none full_range=0 gpu=0 rotation=0 unbuffered=0
+astate c active=1 last_frame_ts=0 queue=[] cache=0 used=0 [] cur=- prev=- tex=0x0 fmt=none full_range=0 gpu=0 rotation=0 unbuffered=0
+astate c active=1 last_frame_ts=0 queue=[131] cache=1 used=1 [1/0] cur=- prev=- tex=0x0 fmt=none full_range=0 gpu=0 rotation=0 unbuffered=0

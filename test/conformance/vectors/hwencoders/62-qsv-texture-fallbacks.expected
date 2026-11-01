@@ -1,0 +1,123 @@
+> q_headers 40aa 6742 68ee
+> q_adapter 0 1 0 1 1
+> q_adapter 1 0 0 0 0
+> q_set ovi_adapter 0
+> q_create h264 tex
+log info >>> new qsv encoder
+log info [qsv encoder: 'enc'] settings: 	codec:          H.264 	rate_control:   
+log info 	target_bitrate: 0
+log info 	target_usage:    	profile:         	keyint:         0 	latency:         	b-frames:       0 	fps_num:        60 	fps_den:        1 	width:          1920 	height:         1080
+log info [qsv encoder: 'enc'] debug info:
+qsv.encoder_open codec=0 tex=1 -> ok
+log info 	major:          2 	minor:          9
+os.request_high_performance "qsv encoding"
+q_create -> ok
+> q_destroy
+os.end_high_performance
+qsv.encoder_close
+q_destroyed
+> q_create av1 tex
+log info >>> new qsv encoder
+log info [qsv encoder: 'enc'] settings: 	codec:          AV1 	rate_control:   
+log info 	target_bitrate: 0
+log info 	target_usage:    	profile:         	keyint:         0 	latency:         	b-frames:       0 	fps_num:        60 	fps_den:        1 	width:          1920 	height:         1080
+log info [qsv encoder: 'enc'] debug info:
+qsv.encoder_open codec=1 tex=1 -> ok
+log info 	major:          2 	minor:          9
+os.request_high_performance "qsv encoding"
+q_create -> ok
+> q_destroy
+os.end_high_performance
+qsv.encoder_close
+q_destroyed
+> q_create hevc tex
+log info >>> new qsv encoder
+log info [qsv encoder: 'enc'] settings: 	codec:          HEVC 	rate_control:   
+log info 	target_bitrate: 0
+log info 	target_usage:    	profile:         	keyint:         0 	latency:         	b-frames:       0 	fps_num:        60 	fps_den:        1 	width:          1920 	height:         1080
+log info [qsv encoder: 'enc'] debug info:
+qsv.encoder_open codec=2 tex=1 -> ok
+log info 	major:          2 	minor:          9
+os.request_high_performance "qsv encoding"
+q_create -> ok
+> q_destroy
+os.end_high_performance
+qsv.encoder_close
+q_destroyed
+> q_set ovi_adapter 1
+> q_create h264 tex
+log info >>> app not on intel GPU, fall back to old qsv encoder
+host.create_rerouted "obs_qsv11_soft_v2"
+q_create -> rerouted
+> q_create av1 tex
+log info >>> app not on intel GPU, fall back to old qsv encoder
+host.create_rerouted "obs_qsv11_av1_soft"
+q_create -> rerouted
+> q_set ovi_adapter 0
+> q_adapter 0 1 0 0 0
+> q_create av1 tex
+log info >>> cap on different device, fall back to non-texture sharing AV1 qsv encoder
+host.create_rerouted "obs_qsv11_av1_soft"
+q_create -> rerouted
+> q_create hevc tex
+log info >>> new qsv encoder
+log info [qsv encoder: 'enc'] settings: 	codec:          HEVC 	rate_control:   
+log info 	target_bitrate: 0
+log info 	target_usage:    	profile:         	keyint:         0 	latency:         	b-frames:       0 	fps_num:        60 	fps_den:        1 	width:          1920 	height:         1080
+log info [qsv encoder: 'enc'] debug info:
+qsv.encoder_open codec=2 tex=1 -> ok
+log info 	major:          2 	minor:          9
+os.request_high_performance "qsv encoding"
+q_create -> ok
+> q_destroy
+os.end_high_performance
+qsv.encoder_close
+q_destroyed
+> q_adapter 0 1 0 1 1
+> host tex_nv12 0
+> q_create h264 tex
+log info >>> gpu tex not active, fall back to old qsv encoder
+host.create_rerouted "obs_qsv11_soft_v2"
+q_create -> rerouted
+> host tex_p010 1
+> q_create h264 tex
+log info >>> gpu tex not active, fall back to old qsv encoder
+host.create_rerouted "obs_qsv11_soft_v2"
+q_create -> rerouted
+> q_create hevc tex
+log info >>> new qsv encoder
+log info [qsv encoder: 'enc'] settings: 	codec:          HEVC 	rate_control:   
+log info 	target_bitrate: 0
+log info 	target_usage:    	profile:         	keyint:         0 	latency:         	b-frames:       0 	fps_num:        60 	fps_den:        1 	width:          1920 	height:         1080
+log info [qsv encoder: 'enc'] debug info:
+qsv.encoder_open codec=2 tex=1 -> ok
+log info 	major:          2 	minor:          9
+os.request_high_performance "qsv encoding"
+q_create -> ok
+> q_destroy
+os.end_high_performance
+qsv.encoder_close
+q_destroyed
+> host tex_nv12 1
+> host tex_p010 0
+> host scaling 1
+> q_create h264 tex
+log info >>> encoder CPU scaling active, fall back to old qsv encoder
+host.create_rerouted "obs_qsv11_soft_v2"
+q_create -> rerouted
+> host gpu_scaling 1
+> q_create h264 tex
+log info >>> encoder GPU scaling active
+log info >>> new qsv encoder
+log info [qsv encoder: 'enc'] settings: 	codec:          H.264 	rate_control:   
+log info 	target_bitrate: 0
+log info 	target_usage:    	profile:         	keyint:         0 	latency:         	b-frames:       0 	fps_num:        60 	fps_den:        1 	width:          1920 	height:         1080
+log info [qsv encoder: 'enc'] debug info:
+qsv.encoder_open codec=0 tex=1 -> ok
+log info 	major:          2 	minor:          9
+os.request_high_performance "qsv encoding"
+q_create -> ok
+> q_destroy
+os.end_high_performance
+qsv.encoder_close
+q_destroyed

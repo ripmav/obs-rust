@@ -1,0 +1,9 @@
+# S-044 avio: the runner #includes the real libobs/media-io/video-io.c and audio-io.c (real threads, real loops);
+# the clock, the sleep primitive, the profiler hooks, the video scaler and the audio resampler are fakes
+# (gen/avio_stubs.c) that make both thread loops lock-step deterministic.
+test/conformance/gen/avio_runner.c
+test/conformance/gen/avio_stubs.c
+libobs/media-io/video-frame.c
+-Wl,--unresolved-symbols=ignore-all
+-no-pie
+-lm

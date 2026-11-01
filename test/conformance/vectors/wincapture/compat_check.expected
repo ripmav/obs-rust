@@ -1,0 +1,25 @@
+compat severity=1
+  message "Translated Alpha notice<br>\x0a<a href=\"https://example.org/a#b\">example.org/a#b</a>"
+compat none
+compat none
+compat none
+compat severity=2
+  message "Beta Beta msg"
+compat severity=2
+  message "Beta Beta msg"
+compat none
+compat none
+compat severity=0
+  message "no placeholder"
+compat none
+compat none
+compat none
+compat none
+log debug compat-helpers.c: [open_json_file] Wrong format version (2), expected 1
+compat none
+log warning compat-helpers.c: [open_json_file] Error reading JSON file (1): duplicate object key near '"format_version"'
+compat none
+log warning compat-helpers.c: [open_json_file] No compatibility list
+compat none
+compat none
+compat none

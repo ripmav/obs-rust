@@ -1,0 +1,15 @@
+# QUIRK/DEFECT: reorder_items2 does not validate that the list contains every item. A list that is merely
+# different (shorter, or missing items) is applied as given: unlisted items are silently dropped from the scene's
+# chain (still alive, but no longer enumerable). Callers must pass a complete list. Only identical layouts return
+# false. (An implementation may reject incomplete lists; a faithful port reproduces this result.)
+source s 100 100
+scene main
+add main s a
+add main s b
+add main s c
+reorder2 main c a
+order_of main
+get_order_pos c
+get_order_pos a
+echo -- the dropped item b still exists as a handle; its parent link is untouched
+print b

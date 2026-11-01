@@ -1,0 +1,16 @@
+# QUIRK: while items are moved INTO a group by insert_group (and out of a group by reorder2 / group_remove /
+# ungroup) the conversion to/from pixels uses the item's own parent for the "nudge to .5 px" rule. In
+# insert_group the item still belongs to the top-level scene when its transform is removed, so scale and
+# position snap to half pixels once; afterwards inside the group nothing snaps. A scale that is not a
+# multiple of 1/540 therefore changes slightly when the item is grouped.
+source s 200 100
+scene main
+add main s a
+add main s b
+scale a 1.3337 1.3337
+pos a 100.26 50.76
+get a
+group main g a b
+echo -- stored scale of a inside the group differs from 1.3337
+print a
+get a

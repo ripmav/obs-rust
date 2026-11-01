@@ -1,0 +1,18 @@
+create
+set_string A x 1
+set_string A y 2
+set_string B z 3
+remove A x
+remove A x
+remove A nosuch
+remove NoSection x
+has_user A x
+has_user A y
+sections
+section 1
+section 2
+section 99
+remove A y
+sections
+save
+file

@@ -1,0 +1,5 @@
+# S-050 nvenc: nvenc_supported() = load_nvenc_lib() && nvenc_check(). A missing library short-
+# circuits: the capability probe is not run (no pipe is opened).
+dll 0
+ini "[general]\nnvenc_supported=true\n"
+supported

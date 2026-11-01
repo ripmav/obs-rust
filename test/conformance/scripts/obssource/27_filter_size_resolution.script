@@ -1,0 +1,25 @@
+# Reported size of a source with filters: the size comes from the filter at array index 0 (the newest filter).
+# A filter reports its own size (size callback) when it has one and is ENABLED; otherwise it asks its target (next
+# element, finally the source itself).  For a source without a size callback the async frame size is used.
+kind in input video size
+kind plainfl filter video
+kind sizefl filter video size
+create a in A
+fksize a 640 480
+size a
+create f1 plainfl F1
+filter_add a f1
+size a
+create f2 sizefl F2
+fksize f2 100 50
+filter_add a f2
+size a
+enable f2 0
+size a
+enable f2 1
+create f3 plainfl F3
+filter_add a f3
+size a
+filter_target f3
+size f3
+size f2

@@ -1,0 +1,58 @@
+add c ok
+item c id=1 parent=main group=0 scene=0 abs=0 vis=1 user_vis=1 sel=0 lock=0 need_update=0
+  stored pos=-1.5925926,-0.814814806 rot=0 scale=-1,1 scale_ref=1920,1080 align=5
+  bounds type=1 align=0 size=0.740740716,0.555555582 crop_to_bounds=0
+  crop l=0 r=0 t=0 b=0 bounds_crop l=0 r=0 t=0 b=0 last=200,100
+  output_scale=-2,3 box_scale=400,300
+  draw [-2,0,0,0] [0,3,0,0] [0,0,1,0] [500,100,0,1]
+  box [400,0,0,0] [0,300,0,0] [0,0,1,0] [100,100,0,1]
+item c id=1 parent=main group=0 scene=0 abs=0 vis=1 user_vis=1 sel=0 lock=0 need_update=0
+  stored pos=-1.5925926,-0.814814806 rot=0 scale=1,-1 scale_ref=1920,1080 align=5
+  bounds type=1 align=0 size=0.740740716,0.555555582 crop_to_bounds=0
+  crop l=0 r=0 t=0 b=0 bounds_crop l=0 r=0 t=0 b=0 last=200,100
+  output_scale=2,-3 box_scale=400,300
+  draw [2,0,0,0] [0,-3,0,0] [0,0,1,0] [100,400,0,1]
+  box [400,0,0,0] [0,300,0,0] [0,0,1,0] [100,100,0,1]
+item c id=1 parent=main group=0 scene=0 abs=0 vis=1 user_vis=1 sel=0 lock=0 need_update=0
+  stored pos=-1.5925926,-0.814814806 rot=0 scale=-1,-1 scale_ref=1920,1080 align=5
+  bounds type=1 align=0 size=0.740740716,0.555555582 crop_to_bounds=0
+  crop l=0 r=0 t=0 b=0 bounds_crop l=0 r=0 t=0 b=0 last=200,100
+  output_scale=-2,-3 box_scale=400,300
+  draw [-2,0,0,0] [0,-3,0,0] [0,0,1,0] [500,400,0,1]
+  box [400,0,0,0] [0,300,0,0] [0,0,1,0] [100,100,0,1]
+item c id=1 parent=main group=0 scene=0 abs=0 vis=1 user_vis=1 sel=0 lock=0 need_update=0
+  stored pos=-1.5925926,-0.814814806 rot=0 scale=-1,-1 scale_ref=1920,1080 align=5
+  bounds type=2 align=0 size=0.740740716,0.555555582 crop_to_bounds=0
+  crop l=0 r=0 t=0 b=0 bounds_crop l=0 r=0 t=0 b=0 last=200,100
+  output_scale=-2,-2 box_scale=400,300
+  draw [-2,0,0,0] [0,-2,0,0] [0,0,1,0] [500,350,0,1]
+  box [400,0,0,0] [0,300,0,0] [0,0,1,0] [100,100,0,1]
+item c id=1 parent=main group=0 scene=0 abs=0 vis=1 user_vis=1 sel=0 lock=0 need_update=0
+  stored pos=-1.5925926,-0.814814806 rot=0 scale=-1,-1 scale_ref=1920,1080 align=5
+  bounds type=3 align=0 size=0.740740716,0.555555582 crop_to_bounds=0
+  crop l=0 r=0 t=0 b=0 bounds_crop l=0 r=0 t=0 b=0 last=200,100
+  output_scale=-3,-3 box_scale=400,300
+  draw [-3,0,0,0] [0,-3,0,0] [0,0,1,0] [600,400,0,1]
+  box [400,0,0,0] [0,300,0,0] [0,0,1,0] [100,100,0,1]
+-- flipped plus crop-to-bounds
+item c id=1 parent=main group=0 scene=0 abs=0 vis=1 user_vis=1 sel=0 lock=0 need_update=0
+  stored pos=-1.5925926,-0.814814806 rot=0 scale=-1,-1 scale_ref=1920,1080 align=5
+  bounds type=3 align=1 size=0.185185179,0.185185179 crop_to_bounds=1
+  crop l=0 r=0 t=0 b=0 bounds_crop l=100 r=0 t=0 b=0 last=200,100
+  output_scale=-1,-1 box_scale=100,100
+  draw [-1,0,0,0] [0,-1,0,0] [0,0,1,0] [200,200,0,1]
+  box [100,0,0,0] [0,100,0,0] [0,0,1,0] [100,100,0,1]
+item c id=1 parent=main group=0 scene=0 abs=0 vis=1 user_vis=1 sel=0 lock=0 need_update=0
+  stored pos=-1.5925926,-0.814814806 rot=0 scale=-1,-1 scale_ref=1920,1080 align=5
+  bounds type=3 align=2 size=0.185185179,0.185185179 crop_to_bounds=1
+  crop l=0 r=0 t=0 b=0 bounds_crop l=0 r=100 t=0 b=0 last=200,100
+  output_scale=-1,-1 box_scale=100,100
+  draw [-1,0,0,0] [0,-1,0,0] [0,0,1,0] [200,200,0,1]
+  box [100,0,0,0] [0,100,0,0] [0,0,1,0] [100,100,0,1]
+item c id=1 parent=main group=0 scene=0 abs=0 vis=1 user_vis=1 sel=0 lock=0 need_update=0
+  stored pos=-1.5925926,-0.814814806 rot=0 scale=-1,-1 scale_ref=1920,1080 align=5
+  bounds type=3 align=0 size=0.185185179,0.185185179 crop_to_bounds=1
+  crop l=0 r=0 t=0 b=0 bounds_crop l=50 r=50 t=0 b=0 last=200,100
+  output_scale=-1,-1 box_scale=100,100
+  draw [-1,0,0,0] [0,-1,0,0] [0,0,1,0] [200,200,0,1]
+  box [100,0,0,0] [0,100,0,0] [0,0,1,0] [100,100,0,1]

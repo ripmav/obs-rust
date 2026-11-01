@@ -1,0 +1,44 @@
+> reset
+> output o service
+> venc h264 bitrate=2500
+> set bool split_file 1
+> set int max_size_mb 1
+> set str path /ignored/file.mkv
+> create ffmpeg_mpegts_muxer
+signal_add "void file_changed(string next_file)"
+proc_add "void split_file(out bool split_file_enabled)"
+create ffmpeg_mpegts_muxer -> ok
+> start
+start -> 0
+> service srt://host:9000?x=1 KEY
+> start
+pipe create type=w
+  argv[0] "<bin>/obs-ffmpeg-mux"
+  argv[1] "srt://host:9000?x=1"
+  argv[2] "1"
+  argv[3] "0"
+  argv[4] "h264"
+  argv[5] "2500"
+  argv[6] "1280"
+  argv[7] "720"
+  argv[8] "1"
+  argv[9] "1"
+  argv[10] "1"
+  argv[11] "1"
+  argv[12] "1"
+  argv[13] "0"
+  argv[14] "30"
+  argv[15] "1"
+  argv[16] "0"
+  argv[17] ""
+  argv[18] ""
+begin_data_capture
+log info [ffmpeg muxer: 'o'] Writing file 'srt://host:9000?x=1'...
+start -> 1
+> state
+state active=1 capturing=1 stopping=0 sent_headers=0 total_bytes=0 stop_ts=0 pipe=1 refs=0
+  path="srt://host:9000?x=1" is_network=1 is_hls=0
+> pkt v pts=0 key=1
+> state
+state active=1 capturing=1 stopping=0 sent_headers=0 total_bytes=0 stop_ts=0 pipe=1 refs=0
+  path="srt://host:9000?x=1" is_network=1 is_hls=0

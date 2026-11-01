@@ -1,0 +1,17 @@
+# Layout of the 32-byte packet header and a first successful session (video 1 track + 1 audio).
+sizeof
+reset
+info video 0 1 0x0102030405060708 -2 3 
+fill 3 aa
+dump
+echo --- header packet for video extradata, then a CHANGE_FILE packet (type 2, size = name length, name follows)
+reset
+hdr video 0 0164001f
+chdirtmp
+change next.mkv
+dump
+echo --- audio packet index 1, keyframe 0, pts 1024, dts 1000
+reset
+info audio 1 0 1024 1000 2
+raw 7172
+dump

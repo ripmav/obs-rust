@@ -1,0 +1,61 @@
+# next_pts_ns = 3000000000 (equal): delivered
+minit -> ok
+ff open path=due format=- nobuffer=1 interrupt=0 opts=[]
+minit2 -> ok has_v=1 has_a=0
+ff seek stream=0 target=0 flags=BACKWARD
+ff decoder flush
+ff read #0 stream=0 pts=3000 size=4
+mreset -> 1
+cb video ts=0 fmt=I420 8x4 flip=0 full=0 trc=DEFAULT maxlum=0 flags=0 mat0=1.16438 min0=0.0627451 max0=0.921569
+mfree
+# next_pts_ns = 2999999999: not delivered
+minit -> ok
+ff open path=due format=- nobuffer=1 interrupt=0 opts=[]
+minit2 -> ok has_v=1 has_a=0
+ff seek stream=0 target=0 flags=BACKWARD
+ff decoder flush
+ff read #0 stream=0 pts=3000 size=4
+mreset -> 1
+mstate eof=0 active=0 stopping=0 looping=0 pause=0 reset=0 seek=0 seek_next_ts=0 reset_ts=0 preload_frame=0 has_v=1 has_a=0
+  base_ts=0 start_ts=3000000000 play_sys_ts=1000000000 next_pts_ns=2999999999 next_ns=0 seek_pos=0 speed=100 cur_space=DEFAULT cur_range=DEFAULT
+  v ready=1 pts=3000000000 next_pts=3040000000 last_dur=40000000 eof=0 key=0 pending=0 npkts=0
+mfree
+# next_pts_ns = 1000000000 (exactly 2 s behind): not delivered
+minit -> ok
+ff open path=due format=- nobuffer=1 interrupt=0 opts=[]
+minit2 -> ok has_v=1 has_a=0
+ff seek stream=0 target=0 flags=BACKWARD
+ff decoder flush
+ff read #0 stream=0 pts=3000 size=4
+mreset -> 1
+mfree
+# next_pts_ns = 999999999 (2.000000001 s behind): delivered
+minit -> ok
+ff open path=due format=- nobuffer=1 interrupt=0 opts=[]
+minit2 -> ok has_v=1 has_a=0
+ff seek stream=0 target=0 flags=BACKWARD
+ff decoder flush
+ff read #0 stream=0 pts=3000 size=4
+mreset -> 1
+cb video ts=0 fmt=I420 8x4 flip=0 full=0 trc=DEFAULT maxlum=0 flags=0 mat0=1.16438 min0=0.0627451 max0=0.921569
+mfree
+# next_pts_ns = 0: delivered
+minit -> ok
+ff open path=due format=- nobuffer=1 interrupt=0 opts=[]
+minit2 -> ok has_v=1 has_a=0
+ff seek stream=0 target=0 flags=BACKWARD
+ff decoder flush
+ff read #0 stream=0 pts=3000 size=4
+mreset -> 1
+cb video ts=0 fmt=I420 8x4 flip=0 full=0 trc=DEFAULT maxlum=0 flags=0 mat0=1.16438 min0=0.0627451 max0=0.921569
+mfree
+# next_pts_ns above the frame: delivered
+minit -> ok
+ff open path=due format=- nobuffer=1 interrupt=0 opts=[]
+minit2 -> ok has_v=1 has_a=0
+ff seek stream=0 target=0 flags=BACKWARD
+ff decoder flush
+ff read #0 stream=0 pts=3000 size=4
+mreset -> 1
+cb video ts=0 fmt=I420 8x4 flip=0 full=0 trc=DEFAULT maxlum=0 flags=0 mat0=1.16438 min0=0.0627451 max0=0.921569
+mfree

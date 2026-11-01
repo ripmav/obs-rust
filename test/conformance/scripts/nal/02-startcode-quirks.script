@@ -1,0 +1,38 @@
+# S-012 QUIRK Q-1: a start code that occupies the LAST THREE bytes of the search range is not
+# recognised (the search needs at least one byte after the 00 00 01). The result is END.
+# The trailing 4-byte form "00 00 00 01" at the very end is likewise not recognised.
+echo start-code-at-very-end
+find 000001
+find aabb000001
+find aabbccddeeff000001
+find aabbccddeeff00000001
+find aabbccddeeff0000000000010a
+echo one-byte-after-is-enough
+find aabbccddeeff0000010a
+find aabbccddeeff00000001aa
+echo end-limits-the-search
+find aabbccddeeff000001aa 0 9
+find aabbccddeeff000001aa 0 10
+find aabbccddeeff000001aa 0 11
+# The result does not depend on the address alignment of the input
+echo alignment-independence
+trail 0
+find 0000000000000000000000000000000000010a
+trail 1
+find 0000000000000000000000000000000000010a
+trail 2
+find 0000000000000000000000000000000000010a
+trail 3
+find 0000000000000000000000000000000000010a
+trail 0
+echo long-buffers
+rep z 40 00
+cat longzero @z 010a
+find @longzero
+rep filler 100 aa
+cat late @filler 000001bb @filler
+find @late
+cat late4 @filler 00000001bb @filler
+find @late4
+cat nostart @filler
+find @nostart

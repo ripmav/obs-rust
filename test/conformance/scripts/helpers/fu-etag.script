@@ -1,0 +1,16 @@
+# ETag handling of the package request (CORE). The ETag response header (prefix "ETag: ",
+# case-sensitive) of the main package.json request is cut at the first CR or LF and stored as
+# {"etag": ...} in <cache>/meta.json; the next run sends "If-None-Match: <etag>" together
+# with the User-Agent. An empty ETag value is ignored. A 304 response ends the run without
+# touching anything. QUIRK (see fu-quirk-meta-path): meta.json is written to
+# `cache + "meta.json"` WITHOUT inserting a path separator, but read back from
+# `cache + "/" + "meta.json"`, so with a cache directory given without trailing slash the
+# stored ETag is never found again.
+fu_put /L/package.json "{\"version\":1,\"files\":[]}"
+fu_http http://srv/u/package.json 200 "{\"version\":2,\"url\":\"http://cdn\",\"files\":[]}" "ETag: \"abc123\"\r\n"
+fu_run /L /D/ http://srv/u UA/2
+fu_json_get /D/meta.json etag
+fu_run /L /D/ http://srv/u UA/2
+fu_http http://srv/u/package.json 304 ""
+fu_run /L /D/ http://srv/u UA/2
+fu_cat /D/package.json

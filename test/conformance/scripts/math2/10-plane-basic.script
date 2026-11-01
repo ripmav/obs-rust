@@ -1,0 +1,52 @@
+# plane construction and queries (S-009-R50, R51, R54, R55). A plane is (dir, dist): points with dot(p,dir)=dist.
+vec3 a 0 0 2
+vec3 b 1 0 2
+vec3 c 0 1 2
+call pl plane_from_tri a b c
+# reversed winding flips the normal and the distance
+call pl plane_from_tri a c b
+# non-unit triangle edges are normalised
+vec3 b2 5 0 2
+vec3 c2 0 3 2
+call pl plane_from_tri a b2 c2
+# degenerate (collinear) triangle: cross product is zero, norm gives zero, dist = 0
+vec3 col1 0 0 0
+vec3 col2 1 1 1
+vec3 col3 2 2 2
+call pl plane_from_tri col1 col2 col3
+# set / setf / copy
+call p plane_setf 0 1 0 -3
+vec3 up 0 0 1
+call p2 plane_set up 4
+call p3 plane_copy p
+# plane_intersection_ray: false (t=0) if |dir.n| < EPSILON, else t = (dist - orig.n)/dir.n
+plane ground 0 1 0 0
+vec3 o 0 5 0
+vec3 down 0 -1 0
+vec3 up1 0 1 0
+vec3 side 1 0 0
+vec3 dn2 0 -2 0
+call h plane_intersection_ray ground o down
+call h plane_intersection_ray ground o up1
+call h plane_intersection_ray ground o side
+call h plane_intersection_ray ground o dn2
+vec3 almost 1 0.00009 0
+vec3 almost2 1 0.0001 0
+vec3 almost3 1 0.00011 0
+call h plane_intersection_ray ground o almost
+call h plane_intersection_ray ground o almost2
+call h plane_intersection_ray ground o almost3
+# plane_intersection_line: parameter t along v1->v2 in [0,1]
+vec3 above 0 3 0
+vec3 below 0 -1 0
+vec3 below0 0 -3 0
+vec3 on 0 0 0
+vec3 near 0 0.00005 0
+call h plane_intersection_line ground above below
+call h plane_intersection_line ground above above
+call h plane_intersection_line ground above below0
+call h plane_intersection_line ground on above
+call h plane_intersection_line ground above on
+call h plane_intersection_line ground on on
+call h plane_intersection_line ground near above
+call h plane_intersection_line ground below0 below

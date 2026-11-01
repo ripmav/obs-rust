@@ -1,0 +1,20 @@
+# QUIRK: insertion into the save list scans from the back and stops at the first element with a strictly smaller
+# dts_usec, so a packet whose dts_usec equals queued ones is placed BEFORE them (ties come out in reverse arrival
+# order). Audio is rebased to its own first dts, video to the first video pts, so after rebasing times can tie.
+reset
+output rb
+venc h264 bitrate=2500 extra=0a0b
+aenc t0 aac 48000 1024 0 extra=cc
+set str directory /rec
+set str format ties
+set str extension mp4
+create replay_buffer
+start
+pkt v pts=1000 dts=1000 key=1 size=1 sys=1
+pkt a pts=700 dts=700 size=1 sys=1
+pkt v pts=1040 dts=1040 key=0 size=1 sys=1
+pkt a pts=740 dts=740 size=1 sys=1
+pkt a pts=741 dts=741 size=1 sys=1
+knob now_ns 1000
+proc save
+pkt v pts=1080 dts=1080 key=0 size=1 sys=1

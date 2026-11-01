@@ -1,0 +1,18 @@
+# Generic object accessors: type, id (sources, outputs, encoders, services only), data validity,
+# private flag. NULL objects are tolerated and give INVALID/NULL/true(invalid)/false.
+startup en-US -
+mk_source s Src id=my_source
+mk_source sp Priv id=my_source private=1
+mk_output o Out id=my_output
+mk_encoder e Enc id=my_encoder nodata=1
+mk_service v Svc id=my_service
+canvas_create c Canvas
+obj_api s
+obj_api sp
+obj_api o
+obj_api e
+obj_api v
+obj_api c
+obj_api main
+obj_api null
+shutdown

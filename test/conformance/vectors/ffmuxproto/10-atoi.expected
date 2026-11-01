@@ -1,0 +1,21 @@
+exit 0
+stdout|"init=0"
+stdout|"params: has_video=0 tracks=1 num_audio_streams=1 nb_streams=1"
+stdout|"format=matroska"
+stdout|"stream_key=\"\" printable_file=\"@a.mkv\""
+stdout|"audio0: stream_id=0 type=audio codec=aac tag=0x00000000 bit_rate=128000"
+stdout|"  sample_rate=48000 frame_size=1024 channels=2 layout=stereo initial_padding=7"
+stdout|"  ctx_time_base=1/48000 global_header=1 title=\"t\""
+stdout|"  extradata=-"
+exit 0
+stdout|"init=0"
+stdout|"params: has_video=0 tracks=1 num_audio_streams=1 nb_streams=1"
+stdout|"format=matroska"
+stdout|"stream_key=\"\" printable_file=\"@a.mkv\""
+stdout|"audio0: stream_id=0 type=audio codec=aac tag=0x00000000 bit_rate=0"
+stdout|"  sample_rate=48000 frame_size=0 channels=2 layout=stereo initial_padding=12"
+stdout|"  ctx_time_base=1/48000 global_header=1 title=\"t\""
+stdout|"  extradata=-"
+--- sample rate 0 is rejected by the muxer header: exit status -2 (unsupported)
+exit -2
+stderr|"Error opening '@a.mkv': Invalid argumentCouldn't initialize muxer"

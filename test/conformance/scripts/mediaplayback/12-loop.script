@@ -1,0 +1,15 @@
+# Looping: at the end of the stream (both decoders drained) the player resets (seek to start) and keeps the
+# timestamps monotonic by accumulating the end position into base_ts. looping=1: no stop callback, active stays.
+media loopclip 120000 0
+video 1 1000 16 16 yuv420p frames=3
+pkt 0 0 fdur=40
+pkt 0 40 fdur=40
+pkt 0 80 fdur=40
+endmedia
+clock 2000000000
+minit loopclip local=1
+mreset
+mplay 1
+mtickw 0 0
+mtick 9
+mstate

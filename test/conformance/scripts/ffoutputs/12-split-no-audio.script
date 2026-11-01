@@ -1,0 +1,26 @@
+# Split-file recording without audio: a keyframe that reaches max_size_mb (cur_size + packet >= max) or
+# max_time_sec (dts_usec - cur_time >= max) starts a new file right at that packet: CHANGE_FILE, "file_changed"
+# signal, headers, offsets reset so the new file starts at 0. Names come from directory/format/extension (the
+# name generator is a fake that expands %N to a counter).
+reset
+output o
+venc h264 bitrate=2500 extra=0a0b
+set str path /v/first.mkv
+set bool split_file 1
+set int max_time_sec 2
+set str directory /rec
+set str format clip%N
+set str extension mkv
+create ffmpeg_muxer
+start
+state_split
+pkt v pts=1000 dts=1000 key=1 size=4
+pkt v pts=1500 dts=1500 key=0 size=4
+state_split
+pkt v pts=2999 dts=2999 key=1 size=4
+pkt v pts=3000 dts=3000 key=1 size=4
+state_split
+pkt v pts=3500 dts=3500 key=0 size=4
+pkt v pts=4999 dts=4999 key=1 size=4
+pkt v pts=5000 dts=5000 key=1 size=4
+state

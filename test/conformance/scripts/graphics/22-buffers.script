@@ -1,0 +1,47 @@
+# Vertex and index buffer creation: GS_DUP_BUFFER makes the frontend copy the caller's arrays so the
+# caller keeps ownership; without it the backend takes ownership of the caller's vb_data / indices.
+trace 0
+gs_create g
+gs_enter_context g
+trace 1
+dump full
+echo == without DUP the backend receives the caller's own arrays (ownership passes to the backend)
+gs_vertexbuffer_create 3 0 1 1 1 > vb
+gs_vertexbuffer_get_data vb
+echo == with DUP the backend receives a deep copy (points, normals, colors, texcoords, but no tangents)
+gs_vertexbuffer_create 2 GS_DUP_BUFFER 1 1 2 > vb2
+echo == DUP with an empty buffer is NOT copied: the very same pointer is passed through
+gs_vertexbuffer_create 0 GS_DUP_BUFFER 0 0 0 > vb3
+echo == NULL data
+gs_vertexbuffer_create null 0
+gs_vertexbuffer_create null GS_DUP_BUFFER
+echo == flush / queries
+gs_vertexbuffer_flush vb
+gs_vertexbuffer_flush_direct vb
+gs_vertexbuffer_flush -
+gs_vertexbuffer_flush_direct -
+gs_vertexbuffer_get_data -
+echo == index buffers: 16- and 32-bit, DUP copy
+gs_indexbuffer_create GS_UNSIGNED_SHORT 4 0 > ib
+gs_indexbuffer_create GS_UNSIGNED_LONG 3 GS_DUP_BUFFER > ib2
+gs_indexbuffer_get_num_indices ib
+gs_indexbuffer_get_type ib
+gs_indexbuffer_get_type ib2
+gs_indexbuffer_get_data ib
+gs_indexbuffer_flush ib
+gs_indexbuffer_flush_direct ib
+gs_indexbuffer_get_num_indices -
+gs_indexbuffer_get_type -
+gs_indexbuffer_get_data -
+gs_indexbuffer_flush -
+gs_indexbuffer_flush_direct -
+echo == loading
+gs_load_vertexbuffer vb
+gs_load_vertexbuffer -
+gs_load_indexbuffer ib
+gs_load_indexbuffer -
+gs_vertexbuffer_destroy vb
+gs_vertexbuffer_destroy vb2
+gs_vertexbuffer_destroy vb3
+gs_indexbuffer_destroy ib
+gs_indexbuffer_destroy ib2

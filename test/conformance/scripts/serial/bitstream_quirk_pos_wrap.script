@@ -1,0 +1,20 @@
+# QUIRK Q-3: the byte position `pos` is an 8-bit field. For buffers longer than 256 bytes
+# it wraps to 0 after byte 255 and the reader re-reads the start of the buffer; the
+# end of such a buffer is never reached. bs_init_gen N: byte i = i*31+7 mod 256.
+bs_init_gen 300
+bs_skip 255
+bs_r8
+bs_state
+bs_r8
+bs_state
+bs_skip 44
+bs_state
+bs_r8
+bs_init_gen 256
+bs_skip 256
+bs_state
+bs_r8
+bs_init_gen 255
+bs_skip 255
+bs_state
+bs_r8

@@ -1,0 +1,29 @@
+# MODEL (spec author's reference implementation of the shader pseudo-code, NOT produced by the C code; compare with
+# tolerance 1e-5). Chroma key v2: texel RGBA(premultiplied), key cb cr, similarity smoothness spill, opacity contrast brightness gamma.
+# key cb/cr for green = 0.163388997 0.103018999 (filter output of 06-chroma-key); similarity .4 smoothness .08 spill .1
+echo pure green texel is fully keyed out
+model chroma2 0 1 0 1  0.163388997 0.103018999  0.4 0.08 0.1  1 1 0 1
+echo pure red texel is kept
+model chroma2 1 0 0 1  0.163388997 0.103018999  0.4 0.08 0.1  1 1 0 1
+echo half transparent grey, opacity 0.5
+model chroma2 0.25 0.25 0.25 0.5  0.163388997 0.103018999  0.4 0.08 0.1  0.5 1 0 1
+echo spill reduction region: slightly green pixel
+model chroma2 0.3 0.5 0.3 1  0.163388997 0.103018999  0.2 0.5 0.9  1 1.2 0.05 0.8
+echo transparent texel (alpha 0 -> rgb scale 0)
+model chroma2 0 0 0 0  0.163388997 0.103018999  0.4 0.08 0.1  1 1 0 1
+echo colour key v2 (key r g b, similarity smoothness, opacity contrast brightness gamma)
+model colorkey_v2 0 1 0 1  0 1 0  0.08 0.05  1 1 0 1
+model colorkey_v2 0.5 0.5 0.5 1  0 1 0  0.08 0.05  1 1 0 1
+model colorkey_v2 0.2 0.8 0.1 0.5  0 1 0  0.5 0.5  0.8 1.5 0.1 0.9
+echo colour key v1 (multiplies by colour rgba, no srgb conversion; output NOT premultiplied)
+model colorkey_v1 0 1 0 1  0 1 0  0.08 0.05  1 1 1 1 0  1 0 1
+model colorkey_v1 0.5 0.5 0.5 1  0 1 0  0.08 0.05  1 1 1 0.5 0  1.2 0.1 0.8
+echo luma key v2 (premultiplied texel, lumaMax lumaMin maxSmooth minSmooth)
+model luma_v2 0.5 0.5 0.5 1  1 0 0 0
+model luma_v2 0.1 0.1 0.1 1  1 0.2 0 0.2
+model luma_v2 0.9 0.9 0.9 1  0.8 0 0.2 0
+model luma_v2 0.45 0.45 0.45 0.5  1 0.3 0.1 0.3
+echo luma key v1 (bt601-like weights, alpha = mask only, rgb unchanged)
+model luma_v1 0.5 0.5 0.5 1  1 0 0 0
+model luma_v1 0.1 0.1 0.1 1  1 0.2 0 0.2
+model luma_v1 0.9 0.8 0.1 1  0.8 0.1 0.2 0.1

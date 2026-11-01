@@ -1,0 +1,20 @@
+# S-045 incoming data on the socket is drained before every write (FIONREAD > 0 -> read one RTMP packet).
+# A read failure counts as a write failure (-1). The new socket loop (Windows) skips this.
+reset
+aenc 0 aac 160
+venc 0 h264 2500
+service rtmp://h/a KEY - -
+init_connect
+set active 1
+# nothing pending: no reads
+fake pending 0
+send_headers
+# data pending: one read per write
+fake pending 12
+send_headers
+# the read fails: the write is skipped and the call reports failure
+fake readpacket_ok 0
+send_headers
+# the new socket loop does not read here
+set new_socket_loop 1
+send_headers

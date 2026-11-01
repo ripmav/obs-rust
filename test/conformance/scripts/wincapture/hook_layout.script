@@ -1,0 +1,7 @@
+# hook_info and offset struct sizes/offsets (#pragma pack(8), x86-64 and x86 identical), enum values, kernel object names
+# and the hook-info mapping name derived from the target process id.
+hook_layout
+hook_names
+hook_mapping 1234
+hook_mapping 0
+hook_mapping 4294967295

@@ -1,0 +1,87 @@
+capture_mode str any_fullscreen default
+priority int 2 default
+sli_compatibility bool false default
+capture_cursor bool true default
+allow_transparency bool false default
+premultiplied_alpha bool false default
+limit_framerate bool false default
+capture_overlays bool false default
+anti_cheat_hook bool true default
+hook_rate int 1 default
+rgb10a2_space str srgb default
+older_format 0 mode any priority 2
+force_shmem 0 cursor 1 transparency 0 premultiplied 0 limit_fps 0 overlays 0 anticheat 1
+hook_rate 1 is_10a2_2100pq 0 capture_audio 0
+title (null)
+class (null)
+exe (null)
+window_and_priority_visible 0
+older_format 0 mode window priority 1
+force_shmem 0 cursor 1 transparency 0 premultiplied 0 limit_fps 0 overlays 0 anticheat 1
+hook_rate 1 is_10a2_2100pq 0 capture_audio 0
+title "Game: Main"
+class "UnrealWindow"
+exe "Game-Win64.exe"
+window_and_priority_visible 1
+older_format 0 mode hotkey priority 1
+force_shmem 0 cursor 1 transparency 0 premultiplied 0 limit_fps 0 overlays 0 anticheat 1
+hook_rate 1 is_10a2_2100pq 0 capture_audio 0
+title "Game: Main"
+class "UnrealWindow"
+exe "Game-Win64.exe"
+window_and_priority_visible 0
+older_format 0 mode any priority 1
+force_shmem 0 cursor 1 transparency 0 premultiplied 0 limit_fps 0 overlays 0 anticheat 1
+hook_rate 1 is_10a2_2100pq 0 capture_audio 0
+title "Game: Main"
+class "UnrealWindow"
+exe "Game-Win64.exe"
+window_and_priority_visible 0
+older_format 0 mode any priority 1
+force_shmem 0 cursor 1 transparency 0 premultiplied 0 limit_fps 0 overlays 0 anticheat 1
+hook_rate 1 is_10a2_2100pq 0 capture_audio 0
+title "Game: Main"
+class "UnrealWindow"
+exe "Game-Win64.exe"
+window_and_priority_visible 0
+older_format 0 mode any priority 1
+force_shmem 1 cursor 0 transparency 1 premultiplied 1 limit_fps 1 overlays 1 anticheat 0
+hook_rate 3 is_10a2_2100pq 1 capture_audio 1
+title "Game: Main"
+class "UnrealWindow"
+exe "Game-Win64.exe"
+window_and_priority_visible 0
+older_format 1 mode any priority 2
+force_shmem 0 cursor 1 transparency 0 premultiplied 0 limit_fps 0 overlays 0 anticheat 1
+hook_rate 1 is_10a2_2100pq 0 capture_audio 0
+title (null)
+class (null)
+exe (null)
+window_and_priority_visible 0
+older_format 1 mode window priority 2
+force_shmem 0 cursor 1 transparency 0 premultiplied 0 limit_fps 0 overlays 0 anticheat 1
+hook_rate 1 is_10a2_2100pq 0 capture_audio 0
+title (null)
+class (null)
+exe (null)
+window_and_priority_visible 1
+older_format 0 mode any priority 2
+force_shmem 0 cursor 1 transparency 0 premultiplied 0 limit_fps 0 overlays 0 anticheat 1
+hook_rate 1 is_10a2_2100pq 0 capture_audio 0
+title (null)
+class (null)
+exe (null)
+window_and_priority_visible 0
+older_format 0 mode any priority 2
+force_shmem 0 cursor 1 transparency 0 premultiplied 0 limit_fps 0 overlays 0 anticheat 1
+hook_rate 1 is_10a2_2100pq 0 capture_audio 0
+title (null)
+class (null)
+exe (null)
+window_and_priority_visible 0
+hook_rate 0 -> 2
+hook_rate 1 -> 1
+hook_rate 2 -> 0.5
+hook_rate 3 -> 0.100000001
+hook_rate 4 -> 1
+hook_rate -1 -> 1

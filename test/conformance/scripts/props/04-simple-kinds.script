@@ -1,0 +1,25 @@
+# CORE. bool, color, color_alpha and font properties have no extra data.
+# New properties are enabled and visible; type reports the kind.
+props P
+add bool P b "Bool desc" as b
+add color P c "Color" as c
+add color_alpha P ca "Color alpha" as ca
+add font P f "Font" as f
+info b
+info c
+info ca
+info f
+echo description-null-and-empty
+add bool P n @null as n
+add bool P e "" as e
+info n
+info e
+echo setters-visible-enabled
+set b visible 0
+set b enabled 0
+info b
+set b visible 1
+info b
+set b enabled 1
+info b
+destroy P

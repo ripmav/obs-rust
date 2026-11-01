@@ -1,0 +1,36 @@
+# S-045 dbr_set_bitrate: map the aggregate target onto per-encoder bitrates by linear interpolation in the table.
+reset
+venc 0 h264 4000 64 e0
+venc 1 h264 2000 64 e1
+dbr_json "[[0,3000,4000],[0,1500,2000]]"
+# exactly on level 1
+set dbr_cur_bitrate 4500
+dbr_set
+# between level 1 (4500) and level 2 (6000): halfway
+set dbr_cur_bitrate 5250
+dbr_set
+# truncating fractional results: (long)(delta * scale)
+set dbr_cur_bitrate 5001
+dbr_set
+# below level 1: interpolates between level 0 and level 1
+set dbr_cur_bitrate 1000
+dbr_set
+# at / above the top level: base = last column, bitrates = top level
+set dbr_cur_bitrate 6000
+dbr_set
+set dbr_cur_bitrate 99999
+dbr_set
+# unchanged bitrates are not pushed to the encoder (no encoder_update line)
+dbr_set
+# QUIRK Q-6: if the target is below the FIRST level's sum (first level non-zero), the base column is the LAST one
+dbr_json "[[1000,4000],[500,2000]]"
+set dbr_cur_bitrate 3000
+dbr_set
+set dbr_cur_bitrate 100
+dbr_set
+set dbr_cur_bitrate 1500
+dbr_set
+# empty table: nothing happens
+dbr_json "[[],[]]"
+set dbr_cur_bitrate 3000
+dbr_set

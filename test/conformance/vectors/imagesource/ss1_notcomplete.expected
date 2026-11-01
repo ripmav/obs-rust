@@ -1,0 +1,33 @@
+ev create slideshow#1 public
+ev hotkey_register slideshow#1 id=1 name=SlideShow.PlayPause desc=SlideShow.PlayPause
+ev hotkey_register slideshow#1 id=2 name=SlideShow.Restart desc=SlideShow.Restart
+ev hotkey_register slideshow#1 id=3 name=SlideShow.Stop desc=SlideShow.Stop
+ev hotkey_register slideshow#1 id=4 name=SlideShow.NextSlide desc=SlideShow.NextSlide
+ev hotkey_register slideshow#1 id=5 name=SlideShow.PreviousSlide desc=SlideShow.PreviousSlide
+ev create fade_transition#2 private
+ev create image_source#3[/s/a.png] private
+ev image_init /s/a.png alpha=2
+log debug [image_source: ''] loading texture '/s/a.png'
+ev texture_create 1 10x10 dynamic=0
+ev create image_source#4[/s/b.png] private
+ev image_init /s/b.png alpha=2
+log debug [image_source: ''] loading texture '/s/b.png'
+ev texture_create 2 20x20 dynamic=0
+ev tr_size fade_transition#2 20x20
+ev tr_align fade_transition#2 0
+ev tr_scale fade_transition#2 1
+ev tr_start fade_transition#2 mode=0 ms=1000 dest=image_source#3[/s/a.png] -> started
+ev signal media_started slideshow#1
+tick 0 clock=16000001
+ev signal media_next slideshow#1
+tick 0 clock=516000001
+state slideshow1 behavior=2 manual=1 randomize=0 loop=1 hide=0 use_cut=0 paused=0 stop=0 restart_on_activate=0 pause_on_deactivate=0 slide_time=9 tr_speed=1000 tr_name=fade_transition cur_item=0 elapsed=0 cx=20 cy=20 mem_usage=2000 state=4 transition=fade_transition#2
+state   file 0 /s/a.png image_source#3[/s/a.png]
+state   file 1 /s/b.png image_source#4[/s/b.png]
+tick 0 clock=1116000025
+ev tr_start fade_transition#2 mode=0 ms=1000 dest=image_source#4[/s/b.png] -> started
+ev signal media_next slideshow#1
+tick 0 clock=1132000026
+state slideshow1 behavior=2 manual=1 randomize=0 loop=1 hide=0 use_cut=0 paused=0 stop=0 restart_on_activate=0 pause_on_deactivate=0 slide_time=9 tr_speed=1000 tr_name=fade_transition cur_item=1 elapsed=0 cx=20 cy=20 mem_usage=2000 state=4 transition=fade_transition#2
+state   file 0 /s/a.png image_source#3[/s/a.png]
+state   file 1 /s/b.png image_source#4[/s/b.png]

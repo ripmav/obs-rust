@@ -1,0 +1,45 @@
+# slideshow v2: media controls via the host media queue (processed at the start of the next tick), manual stepping,
+# previous wrap-around, next ignored while the transition is running (CORE).
+fs_file /s/a.png 1
+fs_file /s/b.png 1
+fs_file /s/c.png 1
+fs_file /s/d.png 1
+img /s/a.png 10 10
+img /s/b.png 20 20
+img /s/c.png 30 30
+img /s/d.png 40 40
+create ss slideshow_v2 {"files":[{"value":"/s/a.png"},{"value":"/s/b.png"},{"value":"/s/c.png"}],"slide_mode":"mode_manual","transition":"cut","transition_speed":0}
+connect ss slide_changed
+tick 0.016
+refs ss 1 1
+tick 0.016
+mediastate ss
+state ss
+media ss next
+tick 0.016
+state ss
+media ss previous
+media ss previous
+tick 0.016
+state ss
+media ss pause
+tick 0.016
+mediastate ss
+media ss play
+tick 0.016
+mediastate ss
+state ss
+media ss stop
+tick 0.016
+mediastate ss
+state ss
+media ss next
+tick 0.016
+state ss
+media ss play
+tick 0.016
+mediastate ss
+state ss
+media ss restart
+tick 0.016
+state ss

@@ -1,0 +1,40 @@
+# A non-local (network) source: no seek on reset/seek (the stream just continues), speed forced to 100,
+# the first delivered video frame must be a key frame (earlier frames are decoded and dropped silently), and the
+# open options are built as: 'buffer_size' (when buffering != 0 and not a rist:// URL) then the user's options,
+# then 'stimeout=30000000'; with buffering == 0 the AVFMT_FLAG_NOBUFFER flag is set; an interrupt callback is
+# installed. 'mint' invokes the installed interrupt callback (rate limited to one poll per 20 ms of clock).
+media net 0 0
+video 1 1000 16 16 yuv420p frames=0
+pkt 0 0 fdur=40 key=0
+pkt 0 40 fdur=40 key=0
+pkt 0 80 fdur=40
+pkt 0 120 fdur=40 key=0
+endmedia
+clock 1000000000
+minit net local=0 speed=50 buffering=4096 options=timeout=5_x=y
+mreset
+echo speed forced to 100 for non-local sources
+mstate
+mplay 0
+mtickw 0 0
+mtick 5
+mstate
+echo interrupt callback: the flags are polled at most every 20 ms of clock time
+clock 2000000000
+mint
+mset stopping 1
+mint
+clock 2005000000
+mint
+clock 2030000000
+mint
+mset stopping 0
+clock 2040000000
+mint
+clock 2065000000
+mint
+mset kill 1
+clock 2070000000
+mint
+clock 2100000000
+mint

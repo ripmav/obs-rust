@@ -1,0 +1,43 @@
+# Header-inline helpers on custom serializers: callback pass-through, short reads,
+# which callback `serialize` prefers, missing callbacks (CORE).
+# custom flags: r=read w=write s=seek p=get_pos. Custom read returns at most 3 bytes
+# (01 02 03 ...), seek returns offset*10+mode (start=0 cur=1 end=2), get_pos returns 777.
+open custom rwsp
+write 010203
+write - 
+write @null 2
+write 0102 0
+serialize_w 0405
+serialize_r 5
+read 5
+read 2
+read 0
+read @null 2
+seek start 7
+seek cur 5
+seek end -3
+pos
+wl16 0x0102
+wb32 0x0a0b0c0d
+dump
+open custom r
+write aa
+serialize_w aa
+serialize_r 4
+read 1
+seek start 0
+pos
+open custom w
+read 3
+serialize_r 4
+serialize_w 77
+seek cur 1
+pos
+dump
+open custom sp
+write aa
+read 1
+serialize_w aa
+seek end 4
+pos
+close

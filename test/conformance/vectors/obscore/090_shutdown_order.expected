@@ -1,0 +1,40 @@
+log debug canvas 'Main' (<uuid>) created
+startup -> true
+log info ---------------------------------
+log info video settings reset:  base resolution:   1920x1080  output resolution: 1280x720  downscale filter:  Bicubic  fps:               30/1  format:            BGRA  YUV mode:          None
+reset_video -> success
+  after_call base=1920x1080 out=1280x720 fps=30/1 fmt=BGRA cs=2 range=1 scale=2 gpu=0 adapter=0
+log info ---------------------------------
+log info audio settings reset:  samples per sec: 48000  speakers:        2  max buffering:   960 milliseconds  buffering type:  dynamically increasing
+reset_audio -> 1
+log debug canvas 'Alpha' (<uuid>) created
+canvas_create c1 -> ok
+canvas c1 name="Alpha" flags=0x0 private=0 removed=0 has_video=1 video_active=0 uuid_len=36 view_type=aux
+view_create v type=aux
+view_add v -> video mixes=3
+mk_output o1 name="Out1" private=0 uuid=NULL
+mk_encoder e1 name="Enc1" private=0 uuid=NULL
+mk_service s1 name="Svc1" private=0 uuid=NULL
+mk_source i1 name="In1" private=0 uuid=set
+mk_source p1 name="Priv" private=1 uuid=set
+display_create d1 -> ok
+shutdown begin
+ev hotkeys_free
+log info Freeing OBS context data
+signal canvas_destroy canvas=main
+log debug canvas 'Main' (<uuid>) destroyed
+log info  1 output(s) were remaining
+log info  1 encoder(s) were remaining
+ev swapchain_destroy
+log info  1 display(s) were remaining
+log info  1 service(s) were remaining
+log info  1 source(s) were remaining
+log info  1 source(s) were remaining
+signal canvas_destroy canvas=c1
+log debug canvas 'Alpha' (<uuid>) destroyed
+log info  1 canvas(s) were remaining
+log warning Number of remaining views: 1
+ev hotkey_name_map_free
+ev hotkeys_platform_free
+ev gs_destroy
+shutdown end obs=NULL

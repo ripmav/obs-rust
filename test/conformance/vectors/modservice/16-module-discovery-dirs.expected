@@ -1,0 +1,13 @@
+module_paths=1
+found name=Zeta bin=@TMP/dl/Zeta/bin/Zeta.so data=@TMP/dd/Zeta
+found name=alpha bin=@TMP/dl/alpha/bin/alpha.so data=@TMP/dd/alpha
+found name=beta bin=@TMP/dl/beta/bin/libbeta.so data=@TMP/dd/beta
+find done
+module_paths=2
+found name=Zeta bin=@TMP/dl/Zeta/bin/Zeta.so data=@TMP/dd/Zeta
+found name=alpha bin=@TMP/dl/alpha/bin/alpha.so data=@TMP/dd/alpha
+found name=beta bin=@TMP/dl/beta/bin/libbeta.so data=@TMP/dd/beta
+found name=Zeta bin=@TMP/dl/Zeta/bin/Zeta.so data=@TMP/dd2/Zeta/data
+found name=alpha bin=@TMP/dl/alpha/bin/alpha.so data=@TMP/dd2/alpha/data
+found name=beta bin=@TMP/dl/beta/bin/libbeta.so data=@TMP/dd2/beta/data
+find done

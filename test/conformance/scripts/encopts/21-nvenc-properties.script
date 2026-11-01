@@ -1,0 +1,14 @@
+# CORE. obs-nvenc property list for a high-end GPU (B-frames up to 4, B-ref modes each+
+# middle, 2 NVENC engines, lossless, UHQ tune, 10-bit, lookahead, two devices).
+# H.264 hides the B-frame reference mode list; split_encode appears only for HEVC/AV1.
+nv_caps 4 3 2 1 1 1 1
+nv_devices 2
+echo ====h264
+nv_props h264 P
+props_dump P
+echo ====hevc
+nv_props hevc H
+props_dump H
+echo ====av1
+nv_props av1 A
+props_dump A

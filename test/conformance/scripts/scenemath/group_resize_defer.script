@@ -1,0 +1,28 @@
+# Group resizing is recomputed from the children when a child changes (on the next update) unless deferred;
+# defer_group_begin/end postpone it. Group with bounds type none re-anchors its position to its alignment.
+source s 200 100
+scene main
+add main s a
+add main s b
+pos a 0 0
+pos b 400 200
+group main g a b
+update main
+scene_size g
+print g
+echo -- move a child: group size changes after update
+pos a -100 -50
+update main
+scene_size g
+print g
+echo -- deferred: change two children, resize only at end
+defer_group_begin g
+pos a 0 0
+pos b 1000 800
+update main
+scene_size g
+print g
+defer_group_end g
+update main
+scene_size g
+print g

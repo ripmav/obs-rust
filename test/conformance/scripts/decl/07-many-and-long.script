@@ -1,0 +1,6 @@
+# No limit on parameter count or name length is enforced by the parser.
+parse "void p16(int a1, int a2, int a3, int a4, int a5, int a6, int a7, int a8, int a9, int a10, int a11, int a12, int a13, int a14, int a15, int a16)"
+parse "void a_function_name_that_is_considerably_longer_than_any_name_used_in_the_code_base_0123456789(ptr a_parameter_name_that_is_also_very_long_0123456789_0123456789)"
+parse "void f(int a, int A)"
+parse "void f(string s, ptr s2, bool s_3)"
+parse "void f(int f)"

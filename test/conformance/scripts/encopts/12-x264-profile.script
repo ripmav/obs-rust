@@ -1,0 +1,14 @@
+# CORE. The profile is applied by x264_param_apply_profile AFTER all other parameters
+# (including user options); only when a profile string is non-empty. A failing profile only
+# logs a warning (the call still reports success).
+data D
+x264_defaults D
+set D profile str high
+x264_settings D
+echo failing-profile
+x264_fail profile
+x264_settings D
+x264_fail clear
+echo empty-profile-is-not-applied
+set D profile str ""
+x264_settings D

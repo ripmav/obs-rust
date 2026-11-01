@@ -1,0 +1,8 @@
+# QUIRK Q-4: every audio (re)initialisation re-declares the "deduplication_changed" signal and
+# connects the handler again; the second and later calls log a warning that the declaration exists
+# and accumulate duplicate connections. Functionally invisible except for the warning.
+startup en-US -
+reset_audio
+reset_audio
+reset_audio sps=44100
+shutdown

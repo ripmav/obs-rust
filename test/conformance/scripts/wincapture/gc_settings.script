@@ -1,0 +1,46 @@
+# Game capture (source id game_capture): defaults, mode parsing incl. the deprecated capture_any_fullscreen
+# format, and derived configuration. MODEL (source-derived).
+s_reset
+s_defaults game_capture
+s_dump
+m_gc_config
+s_set capture_mode str window
+s_set window str "Game#3A Main:UnrealWindow:Game-Win64.exe"
+s_set priority int 1
+m_gc_config
+s_set capture_mode str hotkey
+m_gc_config
+s_set capture_mode str garbage
+m_gc_config
+s_set capture_mode str ""
+m_gc_config
+s_set rgb10a2_space str 2100pq
+s_set hook_rate int 3
+s_set sli_compatibility bool true
+s_set allow_transparency bool true
+s_set premultiplied_alpha bool true
+s_set limit_framerate bool true
+s_set capture_overlays bool true
+s_set anti_cheat_hook bool false
+s_set capture_cursor bool false
+s_set capture_audio bool true
+m_gc_config
+# deprecated format: only used when capture_any_fullscreen has a user value AND capture_mode has none
+s_reset
+s_defaults game_capture
+s_set capture_any_fullscreen bool true
+m_gc_config
+s_set capture_any_fullscreen bool false
+m_gc_config
+s_set capture_mode str any_fullscreen
+m_gc_config
+# rgb10a2_space: anything but exactly "2100pq" means sRGB
+s_set rgb10a2_space str 2100PQ
+m_gc_config
+# hook rate multipliers (seconds between hook attempts); unknown values behave as normal
+m_hook_rate 0
+m_hook_rate 1
+m_hook_rate 2
+m_hook_rate 3
+m_hook_rate 4
+m_hook_rate -1

@@ -1,0 +1,79 @@
+# hdr_tonemap_filter: update derives 1/white level and nit limits; render selects technique, multiplier and limits.
+sdr_white 300
+source T 1920 1080 1920 1080 709_EXTENDED video
+source P 1920 1080 1920 1080 709_EXTENDED video
+filter a hdr_tonemap_filter 0 @null T P
+echo update is deferred
+tick a 0.016
+render a
+echo default transform 0 (Reinhard): multiplier = sdr_white / sdr_white_level_nits (extended) or 80 / level (scRGB)
+srcspace T 709_SCRGB
+render a
+echo transform 1 MaxRGB
+data d1
+dset d1 transform int 1
+filter b hdr_tonemap_filter 0 d1 T P
+tick b 0.016
+render b
+srcspace T 709_EXTENDED
+render b
+echo transform 2 MaxRGBSDR uses the sdr nit limits
+data d2
+dset d2 transform int 2
+dset d2 sdr_input_maximum_nits int 800
+dset d2 sdr_output_maximum_nits int 250
+filter c hdr_tonemap_filter 0 d2 T P
+tick c 0.016
+render c
+echo out-of-range transform values: not Reinhard, not SDR_MAXRGB -> hdr limits; technique MaxRGBSDR unless 1
+data d3
+dset d3 transform int 7
+filter e hdr_tonemap_filter 0 d3 T P
+tick e 0.016
+render e
+data d4
+dset d4 transform int -1
+filter f hdr_tonemap_filter 0 d4 T P
+tick f 0.016
+render f
+echo SDR sources are skipped (filter passes through)
+srcspace T SRGB
+render a
+srcspace T SRGB_16F
+render a
+echo different SDR white level and nit values
+sdr_white 203
+srcspace T 709_EXTENDED
+data d5
+dset d5 sdr_white_level_nits int 480
+dset d5 hdr_input_maximum_nits int 10000
+dset d5 hdr_output_maximum_nits int 5
+filter g hdr_tonemap_filter 0 d5 T P
+tick g 0.016
+render g
+echo white level 0 divides by zero in float (inf multiplier)
+data d6
+dset d6 sdr_white_level_nits int 0
+filter h hdr_tonemap_filter 0 d6 T P
+tick h 0.016
+render h
+echo colour space of the filter itself depends on transform and the target space
+srcspace T 709_EXTENDED
+cs a 3 SRGB SRGB_16F 709_EXTENDED
+cs a 1 SRGB
+cs a 1 SRGB_16F
+cs a 0
+cs b 3 SRGB SRGB_16F 709_EXTENDED
+cs c 1 SRGB
+cs c 2 SRGB 709_EXTENDED
+srcspace T SRGB
+cs a 1 SRGB
+cs b 1 SRGB
+cs c 1 SRGB_16F
+srcspace T SRGB_16F
+cs a 1 SRGB
+srcspace T 709_SCRGB
+cs a 1 SRGB
+knob begin 0
+srcspace T 709_EXTENDED
+render a

@@ -1,0 +1,141 @@
+> fake-dir video0
+> dev /dev/video0
+> dev-cap Cam usb-1 0x85200001 0x05200001
+> dev-input Camera 0
+> dev-fmt YUYV YUYV 0
+> dev-size YUYV 640 480
+> dev-ival YUYV 640 480 1 30
+> dev-ival YUYV 640 480 2 25
+> dev-cur 0 640 480 YUYV 1280 1 15 0
+> src-defaults
+> set-str device_id /dev/video0
+> set-int pixelformat 0x56595559
+> set-int resolution 2748779069920
+> src-create
+log info v4l2-input: Start capture from /dev/video0
+log info v4l2-input: Input: 0
+log info v4l2-input: Resolution: 640x480
+log info v4l2-input: Pixelformat: YUYV
+log info v4l2-input: Linesize: 1280 Bytes
+log info v4l2-input: Framerate: 15.00 fps
+log info v4l2-input: Compiled without libudev, you can't reconnect devices
+src-create
+state device_id=/dev/video0 input=0 pixfmt=1448695129 standard=-1 dv_timing=-1 resolution=2748779069920 framerate=4294967311 color_range=0 auto_reset=0 timeout_frames=5 dev=open width=640 height=480 linesize=1280 buffers=4 res_unch=0 fr_unch=0 thread=1
+> src-props
+log info v4l2-input: Found device 'Cam' at /dev/video0
+> modified device_id
+log info v4l2-input: Found input 'Camera' (Index 0)
+log info v4l2-input: Pixelformat: YUYV (available)
+modified -> 1
+> props
+prop device_id type=list desc="Device" visible=1 enabled=1 format=string items=1
+  - "Cam (usb-1)" = "/dev/video0" disabled=0
+prop input type=list desc="Input" visible=1 enabled=1 format=int items=1
+  - "Camera" = 0 disabled=0
+prop pixelformat type=list desc="VideoFormat" visible=1 enabled=1 format=int items=1
+  - "YUYV" = 1448695129 disabled=0
+prop standard type=list desc="VideoStandard" visible=0 enabled=1 format=int items=0
+prop dv_timing type=list desc="DVTiming" visible=0 enabled=1 format=int items=0
+prop resolution type=list desc="Resolution" visible=1 enabled=1 format=int items=2
+  - "LeaveUnchanged" = -1 disabled=0
+  - "640x480" = 2748779069920 disabled=0
+prop framerate type=list desc="FrameRate" visible=1 enabled=1 format=int items=3
+  - "LeaveUnchanged" = -1 disabled=0
+  - "30.00" = 30 disabled=0
+  - "12.50" = 25 disabled=0
+prop color_range type=list desc="ColorRange" visible=1 enabled=1 format=int items=3
+  - "ColorRange.Default" = 0 disabled=0
+  - "ColorRange.Partial" = 1 disabled=0
+  - "ColorRange.Full" = 2 disabled=0
+prop buffering type=bool desc="UseBuffering" visible=1 enabled=1
+prop auto_reset type=bool desc="AutoresetOnTimeout" visible=1 enabled=1
+prop timeout_frames type=int desc="FramesUntilTimeout" visible=1 enabled=1 min=2 max=120 step=1 slider=0
+prop controls type=group desc="CameraCtrls" visible=1 enabled=1
+> trace on
+> set-int framerate 30
+> src-update
+  | thread join
+  | munmap len=4096
+  | munmap len=4096
+  | munmap len=4096
+  | munmap len=4096
+  | close fd0
+  | set_async_unbuffered 0
+log info v4l2-input: Start capture from /dev/video0
+  | open /dev/video0 -> ok
+  | ioctl G_INPUT -> 0
+log info v4l2-input: Input: 0
+  | ioctl G_INPUT -> 0
+  | ioctl G_FMT -> 640x480 56595559 bpl=1280
+  | ioctl S_FMT 640x480 56595559
+log info v4l2-input: Resolution: 640x480
+log info v4l2-input: Pixelformat: YUYV
+log info v4l2-input: Linesize: 1280 Bytes
+  | ioctl G_PARM -> 1/15
+  | ioctl S_PARM 0/30
+log info v4l2-input: Framerate: inf fps
+  | ioctl REQBUFS count=4 -> 4
+  | ioctl QUERYBUF index=0
+  | mmap len=4096 offset=0 -> ok
+  | ioctl QUERYBUF index=1
+  | mmap len=4096 offset=4096 -> ok
+  | ioctl QUERYBUF index=2
+  | mmap len=4096 offset=8192 -> ok
+  | ioctl QUERYBUF index=3
+  | mmap len=4096 offset=12288 -> ok
+  | thread start
+state device_id=/dev/video0 input=0 pixfmt=1448695129 standard=-1 dv_timing=-1 resolution=2748779069920 framerate=30 color_range=0 auto_reset=0 timeout_frames=5 dev=open width=640 height=480 linesize=1280 buffers=4 res_unch=0 fr_unch=0 thread=1
+> src-thread-run
+log debug v4l2-input: /dev/video0: new capture thread
+log debug v4l2-input: /dev/video0: framerate: inf fps
+log info v4l2-input: /dev/video0: select timeout set to 0 (5x frame periods)
+  | ioctl QBUF index=0
+  | ioctl QBUF index=1
+  | ioctl QBUF index=2
+  | ioctl QBUF index=3
+  | ioctl STREAMON
+log debug v4l2-input: /dev/video0: new capture started
+log debug v4l2-input: /dev/video0: obs frame prepared
+log info v4l2-input: /dev/video0: Stopped capture after 0 frames
+  | ioctl STREAMOFF
+> set-int framerate 25
+> src-update
+  | thread join
+  | munmap len=4096
+  | munmap len=4096
+  | munmap len=4096
+  | munmap len=4096
+  | close fd0
+  | set_async_unbuffered 0
+log info v4l2-input: Start capture from /dev/video0
+  | open /dev/video0 -> ok
+  | ioctl G_INPUT -> 0
+log info v4l2-input: Input: 0
+  | ioctl G_INPUT -> 0
+  | ioctl G_FMT -> 640x480 56595559 bpl=1280
+  | ioctl S_FMT 640x480 56595559
+log info v4l2-input: Resolution: 640x480
+log info v4l2-input: Pixelformat: YUYV
+log info v4l2-input: Linesize: 1280 Bytes
+  | ioctl G_PARM -> 0/30
+  | ioctl S_PARM 0/25
+log info v4l2-input: Framerate: inf fps
+  | ioctl REQBUFS count=4 -> 4
+  | ioctl QUERYBUF index=0
+  | mmap len=4096 offset=0 -> ok
+  | ioctl QUERYBUF index=1
+  | mmap len=4096 offset=4096 -> ok
+  | ioctl QUERYBUF index=2
+  | mmap len=4096 offset=8192 -> ok
+  | ioctl QUERYBUF index=3
+  | mmap len=4096 offset=12288 -> ok
+  | thread start
+state device_id=/dev/video0 input=0 pixfmt=1448695129 standard=-1 dv_timing=-1 resolution=2748779069920 framerate=25 color_range=0 auto_reset=0 timeout_frames=5 dev=open width=640 height=480 linesize=1280 buffers=4 res_unch=0 fr_unch=0 thread=1
+> src-destroy
+  | thread join
+  | munmap len=4096
+  | munmap len=4096
+  | munmap len=4096
+  | munmap len=4096
+  | close fd0
+src-destroy

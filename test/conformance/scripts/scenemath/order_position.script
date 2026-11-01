@@ -1,0 +1,28 @@
+# set_order_position(n): detach the item, then insert it after the n-th remaining item (position 0 = bottom);
+# positions beyond the end clamp to the top (index = position, clamped).
+source s 10 10
+scene main
+add main s a
+add main s b
+add main s c
+add main s d
+add main s e
+order_pos e 0
+order_of main
+order_pos e 2
+order_of main
+order_pos e 4
+order_of main
+order_pos e 100
+order_of main
+order_pos a 1
+order_of main
+order_pos a 3
+order_of main
+order_pos c 0
+order_of main
+get_order_pos c
+get_order_pos e
+echo -- note: moving an item to its own current index keeps it in place
+order_pos c 0
+order_of main

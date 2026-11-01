@@ -1,0 +1,37 @@
+# S-050 obs-qsv11: packet post-processing (parse_packet*). Empty or missing bitstream -> no packet.
+# pts = mfx->obs(TimeStamp), dts = mfx->obs(DecodeTimeStamp), keyframe = (FrameType & IDR) stored in a
+# bool, priority: I -> 3, else P or REF -> 2, else 0. For AVC only, the nal_ref_idc bits (5-6) of every
+# slice NAL (types 1 and 5) are rewritten to the priority. oneVPL FrameType: I=0x01 P=0x02 B=0x04
+# S=0x08 REF=0x40 IDR=0x80.
+q_set open_ok 1
+q_headers 40aa 6742 68ee
+q_create h264 soft
+# no bitstream at all, then an empty one
+q_set bs_present 0
+q_encode 0
+q_set bs_present 1
+q_bs - 0x01 0 0
+q_encode 1
+# IDR + I frame: slice NAL 25 (ref_idc 1) is rewritten to ref_idc 3 -> 65
+q_bs 0000000127aabb0000000125cc 0x81 3000 -1500
+q_encode 2
+# P frame (type 1, ref_idc 0 -> 2): 0x01 -> 0x41
+q_bs 000000010111 0x02 4500 3000
+q_encode 3
+# P + REF: still HIGH
+q_bs 000000010111 0x42 4500 3000
+q_encode 4
+# B frame: priority 0 clears ref_idc bits of the slice: 0x61 -> 0x01
+q_bs 000000016122 0x04 6000 4500
+q_encode 5
+# non-slice NAL (SEI 06 / SPS 67) untouched; 3-byte start code works
+q_bs 000001672300000001062a000000016133 0x04 7500 6000
+q_encode 6
+# unknown frame type bits only: priority 0
+q_bs 0000000141ff 0x00 9000 7500
+q_encode 7
+# the library returning an error
+q_set enc_ret -1
+q_encode 8
+q_set enc_ret 0
+q_destroy

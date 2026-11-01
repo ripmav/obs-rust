@@ -1,0 +1,29 @@
+log debug canvas 'Main' (<uuid>) created
+startup -> true
+signal canvas_create canvas=?
+log debug canvas 'Alpha' (<uuid>) created
+canvas_create a -> ok
+canvas a name="Alpha" flags=0x0 private=0 removed=0 has_video=0 video_active=0 uuid_len=36 view_type=aux
+refs a strong=0 weak=0
+canvas_ref a -> ok
+refs a strong=1 weak=0
+refs a strong=0 weak=0
+enum canvases
+  visit Main
+  visit Alpha
+  visited=2
+refs a strong=0 weak=1
+weak_get w -> Alpha
+refs a strong=0 weak=1
+signal canvas_destroy canvas=a
+log debug canvas 'Alpha' (<uuid>) destroyed
+enum canvases
+  visit Main
+  visited=1
+weak_get w -> NULL
+canvas_ref null -> NULL
+shutdown begin
+log info Freeing OBS context data
+signal canvas_destroy canvas=main
+log debug canvas 'Main' (<uuid>) destroyed
+shutdown end obs=NULL

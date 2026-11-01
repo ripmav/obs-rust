@@ -1,0 +1,44 @@
+# Reference defects / undefined behaviour (spec S-028 section 8). "try" runs the command in a child: a conforming
+# implementation MUST NOT crash (expected "try-end crash" matches "try-end ok"). "ignore" discards output and outcome
+# (the reference result is undefined; the spec states the required behaviour).
+video 1920 1080 60 1
+source T 1920 1080 1920 1080 SRGB video
+source P 1920 1080 1920 1080 SRGB video
+echo D-1: zero or NaN aspect ratio A:B reaches an (int) cast of inf/NaN
+data z1
+dset z1 resolution str 0:1
+filter s1 scale_filter 0 z1 T P
+data z2
+dset z2 resolution str 1:0
+filter s2 scale_filter 0 z2 T P
+data z3
+dset z3 resolution str 0:0
+filter s3 scale_filter 0 z3 T P
+ignore tick s1 0.016
+ignore tick s2 0.016
+ignore tick s3 0.016
+echo D-3: %d overflow in sscanf
+data z4
+dset z4 resolution str 99999999999x5
+ignore filter s4 scale_filter 0 z4 T P
+echo D-4: crop width = base - left - right overflows int
+data c1
+dset c1 left int -2147483648
+filter c1 crop_filter 0 c1 T P
+ignore tick c1 0.016
+echo D-5: gpu_delay with a zero frame-rate numerator divides by zero (denominator 0 is harmless: interval 0 equals the initial interval, no frames)
+video 1920 1080 0 1
+data g
+dset g delay_ms int 100
+filter g1 gpu_delay 0 g T T
+try tick g1 0.016
+video 1920 1080 60 0
+filter g2 gpu_delay 0 g T T
+try tick g2 0.016
+video 1920 1080 60 1
+echo D-6: oversized LUT_3D_SIZE makes the u32 allocation size wrap
+file huge.cube "LUT_3D_SIZE 2048\n0 0 0\n1 0 0\n0 1 0\n1 1 0\n0 0 1\n1 0 1\n0 1 1\n1 1 1\n0 0 0\n0 0 0\n0 0 0\n"
+data h
+dset h image_path str @TMP/huge.cube
+filter h1 clut_filter 0 h T P
+ignore tick h1 0.016

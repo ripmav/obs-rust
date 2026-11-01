@@ -1,0 +1,82 @@
+# video_frame_get_linesizes for every format and a few widths (8 entries; unused planes are 0).
+# Width 6 (even) and 5 (odd) show HALF(w) = (w+1)/2 for subsampled chroma planes.
+# Unknown format values (26, 99) and NONE give all zeros.
+linesizes 0 6
+linesizes 1 6
+linesizes 2 6
+linesizes 3 6
+linesizes 4 6
+linesizes 5 6
+linesizes 6 6
+linesizes 7 6
+linesizes 8 6
+linesizes 9 6
+linesizes 10 6
+linesizes 11 6
+linesizes 12 6
+linesizes 13 6
+linesizes 14 6
+linesizes 15 6
+linesizes 16 6
+linesizes 17 6
+linesizes 18 6
+linesizes 19 6
+linesizes 20 6
+linesizes 21 6
+linesizes 22 6
+linesizes 23 6
+linesizes 24 6
+linesizes 25 6
+linesizes 26 6
+linesizes 99 6
+linesizes 0 5
+linesizes 1 5
+linesizes 2 5
+linesizes 3 5
+linesizes 4 5
+linesizes 5 5
+linesizes 6 5
+linesizes 7 5
+linesizes 8 5
+linesizes 9 5
+linesizes 10 5
+linesizes 11 5
+linesizes 12 5
+linesizes 13 5
+linesizes 14 5
+linesizes 15 5
+linesizes 16 5
+linesizes 17 5
+linesizes 18 5
+linesizes 19 5
+linesizes 20 5
+linesizes 21 5
+linesizes 22 5
+linesizes 23 5
+linesizes 24 5
+linesizes 25 5
+linesizes 26 5
+linesizes 99 5
+# QUIRK Q-2: V210. The reference first "aligns" the width with the expression
+#   a = (w + 47) & ~47        (32-bit, ~47 = 0xFFFFFFD0: bits 0-3 and bit 5 are cleared)
+# which is NOT a round-up to a multiple of 48 (48 is not a power of two); then linesize = ((a+5)/6)*16.
+# e.g. w=1 -> a=16 -> 48 ; w=48 -> a=80 -> 224 ; w=49 -> a=64 -> 176 (a real 49-pixel V210 row would need 256,
+# so the result is too small) ; w=1920 -> a=1920 -> 5120. Implementations MUST reproduce the formula.
+linesizes 24 0
+linesizes 24 1
+linesizes 24 6
+linesizes 24 47
+linesizes 24 48
+linesizes 24 49
+linesizes 24 96
+linesizes 24 97
+linesizes 24 1920
+# width 0 gives zero linesizes for every format
+linesizes 1 0
+linesizes 2 0
+linesizes 4 0
+linesizes 10 0
+linesizes 24 0
+# large width, 32-bit arithmetic is used (no 64-bit widening): 0x40000000*4 wraps to 0
+linesizes 6 0x40000000
+linesizes 6 0x3fffffff

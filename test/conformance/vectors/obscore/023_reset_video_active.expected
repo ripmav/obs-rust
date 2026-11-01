@@ -1,0 +1,30 @@
+log debug canvas 'Main' (<uuid>) created
+startup -> true
+log info ---------------------------------
+log info video settings reset:  base resolution:   1920x1080  output resolution: 1280x720  downscale filter:  Bicubic  fps:               30/1  format:            NV12  YUV mode:          Rec. 709/Partial
+log info NV12 texture support enabled
+log info P010 texture support not available
+reset_video -> success
+  after_call base=1920x1080 out=1280x720 fps=30/1 fmt=NV12 cs=2 range=1 scale=2 gpu=1 adapter=0
+video_active -> 0
+video_active -> 1
+reset_video -> currently_active
+  after_call base=1920x1080 out=1280x720 fps=30/1 fmt=NV12 cs=2 range=1 scale=2 gpu=1 adapter=0
+reset_video -> currently_active
+  after_call base=1x1 out=1x1 fps=30/1 fmt=NV12 cs=2 range=1 scale=2 gpu=1 adapter=0
+video_active -> 1
+reset_video -> currently_active
+  after_call base=1920x1080 out=1280x720 fps=30/1 fmt=NV12 cs=2 range=1 scale=2 gpu=1 adapter=0
+video_active -> 0
+log info ---------------------------------
+log info video settings reset:  base resolution:   800x600  output resolution: 800x600  downscale filter:  Bicubic  fps:               30/1  format:            NV12  YUV mode:          Rec. 709/Partial
+log info NV12 texture support enabled
+log info P010 texture support not available
+reset_video -> success
+  after_call base=800x600 out=800x600 fps=30/1 fmt=NV12 cs=2 range=1 scale=2 gpu=1 adapter=0
+video_info -> 1
+   base=800x600 out=800x600 fps=30/1 fmt=NV12 cs=2 range=1 scale=2 gpu=1 adapter=0
+shutdown begin
+log info Freeing OBS context data
+log debug canvas 'Main' (<uuid>) destroyed
+shutdown end obs=NULL

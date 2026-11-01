@@ -1,0 +1,21 @@
+# The confirm callback may reject a file (that file is not written; others continue) or replace
+# the downloaded bytes (the replaced buffer is what gets written) (CORE). Download failures of a
+# single file (HTTP >= 400, transfer error, missing URL) skip that file only. The package.json
+# is still installed at the end.
+fu_put /C/package.json "{\"version\":1,\"files\":[]}"
+fu_put /L/package.json "{\"version\":1,\"files\":[]}"
+fu_http http://srv/u/package.json 200 "{\"version\":2,\"url\":\"http://cdn\",\"files\":[{\"name\":\"ok.json\",\"version\":1},{\"name\":\"rej.json\",\"version\":1},{\"name\":\"gone.json\",\"version\":1},{\"name\":\"err.json\",\"version\":1},{\"name\":\"unregistered.json\",\"version\":1}]}"
+fu_http http://cdn/ok.json 200 "OK-body"
+fu_http http://cdn/rej.json 200 "REJECT-body"
+fu_http http://cdn/gone.json 404 "not found"
+fu_http http://cdn/err.json -1 "x"
+fu_confirm reject
+fu_run /L /C http://srv/u UA
+fu_ls
+fu_put /C/package.json "{\"version\":1,\"files\":[]}"
+fu_confirm replace "REPLACED"
+fu_run /L /C http://srv/u UA
+fu_cat /C/ok.json
+fu_cat /C/rej.json
+fu_cat /C/ok.json
+fu_cat /C/package.json

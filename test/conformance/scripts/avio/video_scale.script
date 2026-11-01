@@ -1,0 +1,26 @@
+# S-044: conversion on delivery. A scaled input gets one of three rotating output buffers per frame; the callback
+# receives the converted buffer (the cache frame is untouched). Fake scaler output: first two bytes of every plane are
+# (input plane0 byte0 xor 0xff, number of scale calls on that scaler).
+vopen v I420 30 1 16 8 3
+vconnect v a 1 - NV12 16 8 DEFAULT DEFAULT
+vconnect v b 2
+vlock v 1 1 0x10
+vunlock v
+vlock v 1 2 0x20
+vunlock v
+vlock v 1 3 0x30
+vunlock v
+vlock v 1 4 0x40
+vunlock v
+vinputs v
+# scale failure: warning logged, that input is skipped for this frame, other inputs still run
+scaler scale fail
+vlock v 1 5 0x50
+vunlock v
+scaler scale ok
+vlock v 1 6 0x60
+vunlock v
+vinputs v
+# disconnect destroys the scaler
+vdisconnect v a 1
+vclose v

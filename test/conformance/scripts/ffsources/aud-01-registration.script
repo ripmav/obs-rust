@@ -1,0 +1,12 @@
+# Registration tables of the seven audio encoders, their defaults and properties.
+# priming: only aac and opus report encoder delay; audio_info: only pcm32 allows clipping.
+audio_table
+data D
+audio_defaults aac D
+dump_data D
+audio_props aac P
+dump_props P
+# every encoder uses the same default and property functions
+data E
+audio_defaults flac E
+dump_data E

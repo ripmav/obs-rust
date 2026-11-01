@@ -1,0 +1,15 @@
+# CORE. Properties added to a group's content container are visible from the top and are subject
+# to the tree-wide uniqueness check; callbacks added there get the top container.
+props Top
+props G
+add group Top g "G" checkable G
+add int G n "N" 0 5 1 as n
+add list G l "L" list int as l
+list_add l int "one" 1
+dump Top
+dump G
+echo iterate-group-content-with-next
+first G as it
+next it
+next it
+destroy Top

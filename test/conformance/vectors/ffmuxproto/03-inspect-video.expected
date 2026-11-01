@@ -1,0 +1,9 @@
+exit 0
+stdout|"init=0"
+stdout|"params: has_video=1 tracks=0 num_audio_streams=0 nb_streams=1"
+stdout|"format=matroska"
+stdout|"stream_key=\"\" printable_file=\"@s2.mkv\""
+stdout|"video: stream_id=0 type=video codec=h264 tag=0x00000000 bit_rate=6000000"
+stdout|"  size=1920x1080 coded=1920x1080 primaries=1 trc=1 space=1 range=1 chroma_loc=1"
+stdout|"  ctx_time_base=1001/30000 avg_frame_rate=30000/1001 global_header=1"
+stdout|"  extradata=0164001fffe100046764001f01000468ce3c80"

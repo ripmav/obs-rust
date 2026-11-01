@@ -1,0 +1,64 @@
+# CORE: obs_data_array. An array holds references to objects (never NULL).
+new a1
+set_int a1 n 1
+new a2
+set_int a2 n 2
+new a3
+set_int a3 n 3
+a_new ar
+a_count ar
+a_count @null
+a_push ar a1
+a_push ar a2
+a_push ar a3
+a_count ar
+a_dump ar
+echo --- insert
+new a0
+set_int a0 n 0
+a_insert ar 0 a0
+a_insert ar 2 a0
+a_insert ar 5 a0
+a_dump ar
+refs a0
+echo --- indexing: out of range gives NULL
+a_item ar 0 x0
+a_item ar 99 x99
+a_item @null 0 xn
+echo --- erase
+a_erase ar 0
+a_erase ar 4
+a_erase ar 1
+a_dump ar
+refs a0
+echo --- NULL objects are refused
+a_push ar @null
+a_insert ar 0 @null
+a_push @null a1
+a_insert @null 0 a1
+a_count ar
+echo --- push_back_array adds references to the same objects
+a_new b
+a_push b a1
+a_push_array b ar
+a_push_array b @null
+a_push_array @null ar
+a_dump b
+refs a1
+echo --- enum visits in order; NULL callback and NULL array are no-ops
+a_enum ar
+a_enum_nullcb ar
+a_enum @null
+echo --- objects in an array are shared, not copied
+a_item ar 0 first
+set_int first n 100
+a_dump ar
+echo --- an array of an array item set on an object and read back through json
+new top
+set_array top list ar
+json top
+json_pretty top
+a_new empty
+set_array top none empty
+json top
+dump top

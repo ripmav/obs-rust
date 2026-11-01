@@ -1,0 +1,94 @@
+reset ok
+> reset
+reset ok
+> aenc 0 aac 160
+> venc 0 h264 4000 4 e0
+> service rtmp://h/a KEY - -
+> opt bool dyn_bitrate 1
+> init_connect
+log info [rtmp stream: 'out'] Dynamic bitrate using default interpolation
+log info [rtmp stream: 'out'] Dynamic bitrate enabled.  Dropped frames begone!
+init_connect -> 1
+conn path="rtmp://h/a" key="KEY" user="" pass="" bind_ip="default" addrlen_hint=0 max_shutdown=30 new_socket_loop=0 low_latency=0
+codecs v: 1 0 0 0 0 0 0 0 0 0 a: 1 0 0 0 0 0
+dbr enabled=1 cur=4000 orig=4000 prev=0 est=0 inc=400 audio=160 data_size=0 inc_timeout=0 frames=0
+table n=2
+  [0] 0 0 0 0 0 0 0 0 0 0
+  [1] 4000 0 0 0 0 0 0 0 0 0
+state packets=0 dropped=0 min_priority=0 congestion=0 last_dts_usec=0 drop_thr_usec=700000 pframe_thr_usec=900000 total_bytes=0 active=0 disconnected=0 encode_error=0 sent_headers=0 start_dts_offset=0 got_first=0
+> init_connect
+log info [rtmp stream: 'out'] Dynamic bitrate using default interpolation
+log info [rtmp stream: 'out'] Dynamic bitrate enabled.  Dropped frames begone!
+init_connect -> 1
+conn path="rtmp://h/a" key="KEY" user="" pass="" bind_ip="default" addrlen_hint=0 max_shutdown=30 new_socket_loop=0 low_latency=0
+codecs v: 1 0 0 0 0 0 0 0 0 0 a: 1 0 0 0 0 0
+dbr enabled=1 cur=4000 orig=4000 prev=0 est=0 inc=400 audio=160 data_size=0 inc_timeout=0 frames=0
+table n=4
+  [0] 0 0 0 0 0 0 0 0 0 0
+  [1] 4000 0 0 0 0 0 0 0 0 0
+  [2] 0 0 0 0 0 0 0 0 0 0
+  [3] 4000 0 0 0 0 0 0 0 0 0
+state packets=0 dropped=0 min_priority=0 congestion=0 last_dts_usec=0 drop_thr_usec=700000 pframe_thr_usec=900000 total_bytes=0 active=0 disconnected=0 encode_error=0 sent_headers=0 start_dts_offset=0 got_first=0
+> init_connect
+log info [rtmp stream: 'out'] Dynamic bitrate using default interpolation
+log info [rtmp stream: 'out'] Dynamic bitrate enabled.  Dropped frames begone!
+init_connect -> 1
+conn path="rtmp://h/a" key="KEY" user="" pass="" bind_ip="default" addrlen_hint=0 max_shutdown=30 new_socket_loop=0 low_latency=0
+codecs v: 1 0 0 0 0 0 0 0 0 0 a: 1 0 0 0 0 0
+dbr enabled=1 cur=4000 orig=4000 prev=0 est=0 inc=400 audio=160 data_size=0 inc_timeout=0 frames=0
+table n=6
+  [0] 0 0 0 0 0 0 0 0 0 0
+  [1] 4000 0 0 0 0 0 0 0 0 0
+  [2] 0 0 0 0 0 0 0 0 0 0
+  [3] 4000 0 0 0 0 0 0 0 0 0
+  [4] 0 0 0 0 0 0 0 0 0 0
+  [5] 4000 0 0 0 0 0 0 0 0 0
+state packets=0 dropped=0 min_priority=0 congestion=0 last_dts_usec=0 drop_thr_usec=700000 pframe_thr_usec=900000 total_bytes=0 active=0 disconnected=0 encode_error=0 sent_headers=0 start_dts_offset=0 got_first=0
+> reset
+reset ok
+> venc 0 h264 4000 4 e0
+> venc 1 h264 2000 64 e1
+> service rtmp://h/a KEY - -
+> opt str interpolation_table_data [[0,3000,4000],[0,1500,2000]]
+> init_connect
+log info [rtmp stream: 'out'] Dynamic bitrate disabled. The encoder 'e0' does not support on-the-fly multitrack bitrate reconfiguration.
+log info [rtmp stream: 'out'] Successfully loaded dynamic bitrate interpolation settings
+init_connect -> 1
+conn path="rtmp://h/a" key="KEY" user="" pass="" bind_ip="default" addrlen_hint=0 max_shutdown=30 new_socket_loop=0 low_latency=0
+codecs v: 1 1 0 0 0 0 0 0 0 0 a: 0 0 0 0 0 0
+dbr enabled=0 cur=6000 orig=6000 prev=0 est=0 inc=600 audio=0 data_size=0 inc_timeout=0 frames=0
+table n=3
+  [0] 0 0 0 0 0 0 0 0 0 0
+  [1] 3000 1500 0 0 0 0 0 0 0 0
+  [2] 4000 2000 0 0 0 0 0 0 0 0
+state packets=0 dropped=0 min_priority=0 congestion=0 last_dts_usec=0 drop_thr_usec=700000 pframe_thr_usec=900000 total_bytes=0 active=0 disconnected=0 encode_error=0 sent_headers=0 start_dts_offset=0 got_first=0
+> opt bool dyn_bitrate 0
+> init_connect
+log info [rtmp stream: 'out'] Dynamic bitrate disabled. The encoder 'e0' does not support on-the-fly multitrack bitrate reconfiguration.
+log info [rtmp stream: 'out'] Successfully loaded dynamic bitrate interpolation settings
+init_connect -> 1
+conn path="rtmp://h/a" key="KEY" user="" pass="" bind_ip="default" addrlen_hint=0 max_shutdown=30 new_socket_loop=0 low_latency=0
+codecs v: 1 1 0 0 0 0 0 0 0 0 a: 0 0 0 0 0 0
+dbr enabled=0 cur=6000 orig=6000 prev=0 est=0 inc=600 audio=0 data_size=0 inc_timeout=0 frames=0
+table n=3
+  [0] 0 0 0 0 0 0 0 0 0 0
+  [1] 3000 1500 0 0 0 0 0 0 0 0
+  [2] 4000 2000 0 0 0 0 0 0 0 0
+state packets=0 dropped=0 min_priority=0 congestion=0 last_dts_usec=0 drop_thr_usec=700000 pframe_thr_usec=900000 total_bytes=0 active=0 disconnected=0 encode_error=0 sent_headers=0 start_dts_offset=0 got_first=0
+> reset
+reset ok
+> venc 0 h264 4000 4 e0
+> service rtmp://h/a KEY - -
+> opt bool dyn_bitrate 1
+> opt str interpolation_table_data [[0,3000,
+> init_connect
+log warning [rtmp stream: 'out'] loading dbr interpolation table failed: <json-error>
+log warning [rtmp stream: 'out'] Loading interpolation settings failed, disabling dynamic bitrate
+init_connect -> 1
+conn path="rtmp://h/a" key="KEY" user="" pass="" bind_ip="default" addrlen_hint=0 max_shutdown=30 new_socket_loop=0 low_latency=0
+codecs v: 1 0 0 0 0 0 0 0 0 0 a: 0 0 0 0 0 0
+dbr enabled=0 cur=4000 orig=4000 prev=0 est=0 inc=400 audio=0 data_size=0 inc_timeout=0 frames=0
+table n=2
+  [0] 0 0 0 0 0 0 0 0 0 0
+  [1] 4000 0 0 0 0 0 0 0 0 0
+state packets=0 dropped=0 min_priority=0 congestion=0 last_dts_usec=0 drop_thr_usec=700000 pframe_thr_usec=900000 total_bytes=0 active=0 disconnected=0 encode_error=0 sent_headers=0 start_dts_offset=0 got_first=0

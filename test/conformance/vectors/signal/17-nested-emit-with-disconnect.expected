@@ -1,0 +1,45 @@
+add h ok
+emit s
+call a
+nested-emit s
+call a
+nested-emit s
+call a
+nested-emit s
+call a
+nested-emit s
+call a
+nested-emit s
+call a
+nested-emit s
+call a
+call c
+call c
+call c
+call c
+call c
+call c
+call c
+emit-done
+emit s
+call a
+nested-emit s
+call a
+nested-emit s
+call a
+nested-emit s
+call a
+nested-emit s
+call a
+nested-emit s
+call a
+nested-emit s
+call a
+call c
+call c
+call c
+call c
+call c
+call c
+call c
+emit-done

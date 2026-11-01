@@ -1,0 +1,11 @@
+# The reader scales the NV12 frame to the destination size requested by the consumer (here uniform frames, so only
+# the destination geometry and fill are observable).
+vq_create 0 8 4 333333
+vq_open 1
+vq_write 0 8 0x55 0x66 7
+vq_state 1
+vq_read 1 8 4
+vq_read 1 16 8
+vq_read 1 4 2
+vq_close 1
+vq_close 0

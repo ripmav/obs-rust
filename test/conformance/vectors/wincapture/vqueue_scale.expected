@@ -1,0 +1,9 @@
+vq_create[0] ok
+vq_open[1] ok
+vq_write write_idx=1 read_idx=1 state=2
+vq_state[1] 2
+vq_read[1] true ts=7 y0=55 yLast=55 uv0=66 uvLast=66
+vq_read[1] true ts=7 y0=55 yLast=55 uv0=66 uvLast=66
+vq_read[1] true ts=7 y0=55 yLast=55 uv0=66 uvLast=66
+vq_close[1]
+vq_close[0]

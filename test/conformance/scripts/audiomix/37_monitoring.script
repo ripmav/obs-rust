@@ -1,0 +1,28 @@
+# Monitor-only sources keep no audio for the mixer (but callbacks still fire); an unmuted audio-output-capture source
+# (dup_source) silences monitored sources that share its mixers.
+init 48000 2
+clock 1000000000
+timeline 1000000000
+source a input
+source cap input
+video_mix 1
+channel 0 0 a
+channel 0 1 cap
+set a active 1
+set cap active 1
+output a 48000 2 1024 1000000000 const 0.25
+output cap 48000 2 1024 1000000000 const 0.5
+set a monitoring_enabled 1
+dup_source cap
+run 1 1
+# QUIRK: the mute is only applied to cap->muted when cap itself is rendered (after a in render order), so the
+# first tick after muting still silences a; the second tick lets a through.
+set cap mute 1
+output a 48000 2 1024 1021333333 const 0.25
+output cap 48000 2 1024 1021333333 const 0.5
+output a 48000 2 1024 1042666666 const 0.25
+output cap 48000 2 1024 1042666666 const 0.5
+run 2 1
+set a monitoring_type 1
+output a 48000 2 1024 1064000000 const 0.25
+state a

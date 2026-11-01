@@ -1,0 +1,33 @@
+# Sources attached to a canvas (scenes and groups live in the canvas' own name table, not in the
+# global public source table): insert/remove, name deduplication within the canvas, rename with
+# signals, SCENE_REF canvases hold a strong reference for scenes, lookup by name through the
+# canvas and through obs_get_source_by_name (main canvas fallback), enumeration of scenes.
+startup en-US -
+canvas_create a Alpha flags=scene_ref
+sig_canvas a source_add source_remove source_rename
+sig_obs source_rename
+mk_source sc1 Scene1 type=scene id=scene canvas=a
+mk_source sc2 Scene1 type=scene id=scene canvas=a
+mk_source g1 Group1 type=scene id=group canvas=a
+mk_source in1 Input1
+mk_source sm main_scene type=scene id=scene canvas=main
+refs sc1
+get canvas_source_by_name Scene1 a
+get canvas_source_by_name "Scene1 2" a
+get canvas_scene_by_name Scene1 a
+get canvas_scene_by_name Group1 a
+get canvas_scene_by_name Input1 a
+get source_by_name main_scene
+get source_by_name Input1
+get source_by_name Scene1
+enum canvas_scenes a
+enum canvas_scenes a stop=1
+enum scenes
+enum sources
+src_rename sc1 Renamed
+src_rename sc1 Group1
+src_rename sm main_renamed
+src_canvas_remove sc2
+refs sc2
+enum canvas_scenes a
+shutdown

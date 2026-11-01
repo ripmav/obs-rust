@@ -1,0 +1,41 @@
+# utf8_to_wchar, strict mode (flags 0): every malformed or unusual sequence makes the call return 0.
+# The decoder only checks the lead byte class and that continuation bytes look like 10xxxxxx,
+# so it accepts overlong forms, 5/6-byte forms and values beyond U+10FFFF (see 03-utf8-lenient-forms).
+# stray continuation byte
+u2w 0 len 80 4
+u2w 0 len 61bf62 4
+u2w 0 len bf 4
+# lead bytes that are always rejected: C0 C1 F5 FF
+u2w 0 len c080 4
+u2w 0 len c1bf 4
+u2w 0 len f5808080 4
+u2w 0 len ff 4
+u2w 0 len 61ff62 4
+# FE is not a lead byte either
+u2w 0 len fe 4
+# truncated sequences (explicit length ends inside a sequence)
+u2w 0 len e282 4
+u2w 0 len c3 4
+u2w 0 len f09f98 4
+u2w 0 len 61e282 4
+# truncated in NUL-terminated mode: the NUL is not a continuation byte
+u2w 0 auto e282 4
+u2w 0 auto c3 4
+# lead byte followed by a non-continuation byte
+u2w 0 len c341 4
+u2w 0 len e28241 4
+u2w 0 len e241ac 4
+u2w 0 len f09f9841 4
+# surrogate code points encoded in UTF-8 (CESU style) are rejected
+u2w 0 len eda080 4
+u2w 0 len edbfbf 4
+u2w 0 len eda080edb080 4
+# the code points right next to the surrogate range are fine
+u2w 0 len ed9fbf 1
+u2w 0 len ee8080 1
+# the same inputs in sizing mode (out = null): the surrogate check is skipped there (see quirk script)
+u2w 0 len 80 null
+u2w 0 len c080 null
+u2w 0 len e282 null
+u2w 0 len c341 null
+u2w 0 len ff null

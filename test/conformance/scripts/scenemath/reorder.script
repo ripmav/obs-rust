@@ -1,0 +1,25 @@
+# obs_scene_reorder_items: replace the whole order. Fails (false, nothing changes) if the list is not exactly a
+# permutation of the scene's items, if sizes differ, or if the order already matches. Index 0 is the bottom.
+source s 10 10
+scene main
+add main s a
+add main s b
+add main s c
+reorder main c a b
+order_of main
+echo -- same order again: false
+reorder main c a b
+echo -- subset: false
+reorder main a b
+echo -- duplicate entries: size matches but an item is missing
+reorder main a a b
+order_of main
+echo -- unknown item from another scene
+scene other
+add other s z
+reorder main c a z
+order_of main
+echo -- a real permutation succeeds
+reorder main b a c
+order_of main
+log

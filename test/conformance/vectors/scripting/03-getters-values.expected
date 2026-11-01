@@ -1,0 +1,28 @@
+backend lua_load
+load -> 1
+backend create /s/with-desc.lua
+backend load with-desc.lua -> 1 deferred_done=0
+backend update with-desc.lua k=""
+create S0 -> ok
+backend create nodir.lua
+backend load nodir.lua -> 1 deferred_done=0
+backend update nodir.lua k=""
+create S1 -> ok
+backend create /s/fails.lua
+backend load fails.lua -> 0 deferred_done=0
+create S2 -> ok
+info S0 desc="Some_text" path="/s/with-desc.lua" file="with-desc.lua" lang=lua loaded=1
+info S1 desc=@null path="nodir.lua" file="nodir.lua" lang=lua loaded=1
+info S2 desc=@null path="/s/fails.lua" file="fails.lua" lang=lua loaded=0
+backend unload with-desc.lua
+backend destroy with-desc.lua
+destroy S0 done
+backend unload nodir.lua
+backend destroy nodir.lua
+destroy S1 done
+backend destroy fails.lua
+destroy S2 done
+backend lua_unload
+log info [Scripting] Total detached callbacks: 0
+info_detached_head_after_unload null
+unload done

@@ -1,0 +1,64 @@
+> reset
+> output rb
+> venc h264 bitrate=2500 extra=0a0b
+> aenc t0 aac 48000 1024 0 extra=cc
+> set str directory /rec
+> set str format ties
+> set str extension mp4
+> create replay_buffer
+proc_add "void save()"
+proc_add "void get_last_replay(out string path)"
+signal_add "void saved()"
+signal_add "void saving(ptr output)"
+create replay_buffer -> ok
+> start
+begin_data_capture
+start -> 1
+> pkt v pts=1000 dts=1000 key=1 size=1 sys=1
+> pkt a pts=700 dts=700 size=1 sys=1
+> pkt v pts=1040 dts=1040 key=0 size=1 sys=1
+> pkt a pts=740 dts=740 size=1 sys=1
+> pkt a pts=741 dts=741 size=1 sys=1
+> knob now_ns 1000
+> proc save
+> pkt v pts=1080 dts=1080 key=0 size=1 sys=1
+signal saving
+mkdirs "/rec"
+pipe create type=w
+  argv[0] "<bin>/obs-ffmpeg-mux"
+  argv[1] "/rec/ties.mp4"
+  argv[2] "1"
+  argv[3] "1"
+  argv[4] "h264"
+  argv[5] "2500"
+  argv[6] "1280"
+  argv[7] "720"
+  argv[8] "1"
+  argv[9] "1"
+  argv[10] "1"
+  argv[11] "1"
+  argv[12] "1"
+  argv[13] "0"
+  argv[14] "30"
+  argv[15] "1"
+  argv[16] "0"
+  argv[17] "aac"
+  argv[18] "t0"
+  argv[19] "0"
+  argv[20] "48000"
+  argv[21] "1024"
+  argv[22] "0"
+  argv[23] "2"
+  argv[24] ""
+  argv[25] ""
+wire V idx=0 key=0 pts=0 dts=0 size=2 data=0a0b
+wire A idx=0 key=0 pts=0 dts=0 size=1 data=cc
+wire A idx=0 key=0 pts=0 dts=0 size=1 data=10
+wire V idx=0 key=1 pts=0 dts=0 size=1 data=00
+wire A idx=0 key=0 pts=40 dts=40 size=1 data=30
+wire V idx=0 key=0 pts=40 dts=40 size=1 data=20
+wire A idx=0 key=0 pts=41 dts=41 size=1 data=40
+wire V idx=0 key=0 pts=80 dts=80 size=1 data=50
+log info [ffmpeg muxer: 'rb'] Wrote replay buffer to '/rec/ties.mp4'
+pipe destroy -> 0
+signal saved

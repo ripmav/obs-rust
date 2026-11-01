@@ -1,0 +1,22 @@
+# wchar_to_utf8 flags: UTF8_IGNORE_ERROR = 1 skips surrogates and negative values;
+# UTF8_SKIP_BOM = 2 skips U+FEFF. Unlike the decoder, sizing mode (out = null) applies the same
+# rules, so the sizing result equals the real result.
+w2u 1 len 61,d800,62 8
+w2u 1 len 61,d800,62 null
+w2u 1 len 61,ffffffff,62 8
+w2u 1 len d800,dc00 8
+w2u 1 len d800 8
+w2u 0 len feff,61 8
+w2u 2 len feff,61 8
+w2u 2 len feff,61 null
+w2u 2 len 61,feff,62,feff 8
+w2u 2 len feff 8
+w2u 3 len feff,d800,61 8
+# 1 without 2 keeps U+FEFF (3 bytes EF BB BF)
+w2u 1 len feff 8
+# an error with flag 2 only is still an error
+w2u 2 len 61,d800 8
+# capacity counts only the bytes actually written
+w2u 1 len 61,d800 1
+w2u 1 len 61,d800 null
+w2u 2 len feff,61 1

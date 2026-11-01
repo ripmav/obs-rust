@@ -1,0 +1,51 @@
+# CORE: the *_with_defaults forms write EVERY item: the effective value (user, else
+# default, else autoselect, else the zero value of the type). Shells (items whose layers
+# were all removed) are written with the zero value; a number shell is written as 0.0.
+new a
+set_default_int a di 5
+set_default_double a dd 0.5
+set_default_string a ds "dflt"
+set_default_bool a db 1
+set_int a ui 1
+set_default_int a ui 100
+set_autoselect_string a as "auto"
+set_autoselect_int a ai 3
+json a
+json_defaults a
+json_pretty a
+json_pretty_defaults a
+echo --- nested defaults
+new o
+set_default_int o inner 1
+new d
+set_default_string d tag "t"
+set_default_obj a dobj d
+set_obj a uobj o
+json a
+json_defaults a
+dump a
+echo --- shells
+new s
+set_string s str "x"
+set_int s int 1
+set_double s dbl 1.5
+set_bool s bool 1
+set_obj s obj o
+a_new ar
+set_array s arr ar
+clear s
+json s
+json_defaults s
+json_pretty_defaults s
+dump s
+echo --- defaults of different number types follow the layer in use
+new n
+set_default_double n x 2.5
+set_int n x 3
+json_defaults n
+unset_user n x
+json_defaults n
+echo --- default objects with NULL
+new nn
+set_default_obj nn p @null
+json_defaults nn

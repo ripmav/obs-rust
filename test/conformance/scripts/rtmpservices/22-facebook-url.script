@@ -1,0 +1,24 @@
+# S-026 ensure_valid_url (applies only to service names containing "Facebook", case-insensitive):
+# if the stored server is not (case-insensitively) in the server list, it is replaced by the first
+# list entry and written back to settings["server"]. Other services keep unknown servers.
+fs-load /mod/data/services.json data/services-ok.json
+settings S {"service":"Facebook Live X","server":"rtmps://old.example/rtmp/","key":"k"}
+new F rtmp_common S
+get F url
+show S
+echo known-server-kept-case-insensitive
+settings S {"service":"Facebook Live X","server":"RTMPS://FB2.EXAMPLE/rtmp/","key":"k"}
+update F S
+get F url
+echo empty-server-string-is-replaced-too
+settings S {"service":"Facebook Live X","server":"","key":"k"}
+update F S
+get F url
+echo other-service-keeps-unknown-server
+settings S {"service":"Alpha","server":"rtmp://elsewhere/x","key":"k"}
+update F S
+get F url
+echo alt-name-with-facebook-keeps-original-name-check
+settings S {"service":"my FACEBOOK thing","server":"rtmp://x","key":"k"}
+update F S
+get F url

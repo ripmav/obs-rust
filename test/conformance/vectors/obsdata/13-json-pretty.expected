@@ -1,0 +1,12 @@
+json_pretty a "{}"
+json_pretty a "{\n    \"s\": \"text\",\n    \"i\": 1,\n    \"d\": 2.0,\n    \"b\": true\n}"
+a_push ar2 0
+a_push ar2 1
+json_pretty a "{\n    \"s\": \"text\",\n    \"i\": 1,\n    \"d\": 2.0,\n    \"b\": true,\n    \"obj\": {\n        \"inner\": {\n            \"x\": 1\n        },\n        \"nullobj\": null\n    },\n    \"emptyobj\": {},\n    \"emptyarr\": [],\n    \"items\": [\n        {\n            \"n\": 1,\n            \"s\": \"x\"\n        },\n        {}\n    ]\n}"
+echo --- compact and pretty differ only in whitespace
+json a "{\"s\":\"text\",\"i\":1,\"d\":2.0,\"b\":true,\"obj\":{\"inner\":{\"x\":1},\"nullobj\":null},\"emptyobj\":{},\"emptyarr\":[],\"items\":[{\"n\":1,\"s\":\"x\"},{}]}"
+echo --- the two forms keep separate buffers; last_json is whichever was produced last
+json_pretty a "{\n    \"s\": \"text\",\n    \"i\": 1,\n    \"d\": 2.0,\n    \"b\": true,\n    \"obj\": {\n        \"inner\": {\n            \"x\": 1\n        },\n        \"nullobj\": null\n    },\n    \"emptyobj\": {},\n    \"emptyarr\": [],\n    \"items\": [\n        {\n            \"n\": 1,\n            \"s\": \"x\"\n        },\n        {}\n    ]\n}"
+last_json a "{\n    \"s\": \"text\",\n    \"i\": 1,\n    \"d\": 2.0,\n    \"b\": true,\n    \"obj\": {\n        \"inner\": {\n            \"x\": 1\n        },\n        \"nullobj\": null\n    },\n    \"emptyobj\": {},\n    \"emptyarr\": [],\n    \"items\": [\n        {\n            \"n\": 1,\n            \"s\": \"x\"\n        },\n        {}\n    ]\n}"
+json a "{\"s\":\"text\",\"i\":1,\"d\":2.0,\"b\":true,\"obj\":{\"inner\":{\"x\":1},\"nullobj\":null},\"emptyobj\":{},\"emptyarr\":[],\"items\":[{\"n\":1,\"s\":\"x\"},{}]}"
+last_json a "{\"s\":\"text\",\"i\":1,\"d\":2.0,\"b\":true,\"obj\":{\"inner\":{\"x\":1},\"nullobj\":null},\"emptyobj\":{},\"emptyarr\":[],\"items\":[{\"n\":1,\"s\":\"x\"},{}]}"

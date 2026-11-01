@@ -1,0 +1,203 @@
+> fake-dir video0
+> dev /dev/video0
+> dev-cap Cam usb-1 0x85200001 0x05200001
+> dev-input Camera 0
+> dev-input Tuner 0x4
+> dev-fmt YUYV YUYV 4:2:2 0
+> dev-fmt MJPG Motion-JPEG 0
+> dev-fmt NV12 Y/CbCr 4:2:0 1
+> dev-fmt RGB3 24-bit RGB 8-8-8 0
+> dev-fmt H264 H.264 0
+> dev-size YUYV 640 480
+> dev-size YUYV 1280 720
+> dev-size NV12 1920 1080
+> dev-ival YUYV 640 480 1 30
+> dev-ival YUYV 640 480 1 15
+> dev-ival YUYV 1280 720 1 10
+> dev-cur 0 640 480 YUYV 1280 1 30 0
+> src-defaults
+> set-str device_id /dev/video0
+> set-int pixelformat 0x56595559
+> set-int resolution 2748779069920
+> src-create
+log info v4l2-input: Start capture from /dev/video0
+log info v4l2-input: Input: 0
+log info v4l2-input: Resolution: 640x480
+log info v4l2-input: Pixelformat: YUYV
+log info v4l2-input: Linesize: 1280 Bytes
+log info v4l2-input: Framerate: 30.00 fps
+log info v4l2-input: Compiled without libudev, you can't reconnect devices
+src-create
+state device_id=/dev/video0 input=0 pixfmt=1448695129 standard=-1 dv_timing=-1 resolution=2748779069920 framerate=4294967326 color_range=0 auto_reset=0 timeout_frames=5 dev=open width=640 height=480 linesize=1280 buffers=4 res_unch=0 fr_unch=0 thread=1
+> src-props
+log info v4l2-input: Found device 'Cam' at /dev/video0
+> modified device_id
+log info v4l2-input: Found input 'Camera' (Index 0)
+log info v4l2-input: Found input 'Tuner' (Index 1)
+log info v4l2-input: Pixelformat: YUYV 4:2:2 (available)
+log info v4l2-input: Pixelformat: Motion-JPEG (available)
+log info v4l2-input: Pixelformat: Y/CbCr 4:2:0 (available)
+log info v4l2-input: Pixelformat: 24-bit RGB 8-8-8 (unavailable)
+log info v4l2-input: Pixelformat: H.264 (available)
+modified -> 1
+> props
+prop device_id type=list desc="Device" visible=1 enabled=1 format=string items=1
+  - "Cam (usb-1)" = "/dev/video0" disabled=0
+prop input type=list desc="Input" visible=1 enabled=1 format=int items=2
+  - "Camera" = 0 disabled=0
+  - "Tuner" = 1 disabled=0
+prop pixelformat type=list desc="VideoFormat" visible=1 enabled=1 format=int items=4
+  - "YUYV 4:2:2" = 1448695129 disabled=0
+  - "Motion-JPEG" = 1196444237 disabled=0
+  - "Y/CbCr 4:2:0" = 842094158 disabled=0
+  - "H.264" = 875967048 disabled=0
+prop standard type=list desc="VideoStandard" visible=0 enabled=1 format=int items=0
+prop dv_timing type=list desc="DVTiming" visible=0 enabled=1 format=int items=0
+prop resolution type=list desc="Resolution" visible=1 enabled=1 format=int items=3
+  - "LeaveUnchanged" = -1 disabled=0
+  - "640x480" = 2748779069920 disabled=0
+  - "1280x720" = 5497558139600 disabled=0
+prop framerate type=list desc="FrameRate" visible=1 enabled=1 format=int items=3
+  - "LeaveUnchanged" = -1 disabled=0
+  - "30.00" = 30 disabled=0
+  - "15.00" = 15 disabled=0
+prop color_range type=list desc="ColorRange" visible=1 enabled=1 format=int items=3
+  - "ColorRange.Default" = 0 disabled=0
+  - "ColorRange.Partial" = 1 disabled=0
+  - "ColorRange.Full" = 2 disabled=0
+prop buffering type=bool desc="UseBuffering" visible=1 enabled=1
+prop auto_reset type=bool desc="AutoresetOnTimeout" visible=1 enabled=1
+prop timeout_frames type=int desc="FramesUntilTimeout" visible=1 enabled=1 min=2 max=120 step=1 slider=0
+prop controls type=group desc="CameraCtrls" visible=1 enabled=1
+> modified input
+log info v4l2-input: Pixelformat: YUYV 4:2:2 (available)
+log info v4l2-input: Pixelformat: Motion-JPEG (available)
+log info v4l2-input: Pixelformat: Y/CbCr 4:2:0 (available)
+log info v4l2-input: Pixelformat: 24-bit RGB 8-8-8 (unavailable)
+log info v4l2-input: Pixelformat: H.264 (available)
+modified -> 1
+> props
+prop device_id type=list desc="Device" visible=1 enabled=1 format=string items=1
+  - "Cam (usb-1)" = "/dev/video0" disabled=0
+prop input type=list desc="Input" visible=1 enabled=1 format=int items=2
+  - "Camera" = 0 disabled=0
+  - "Tuner" = 1 disabled=0
+prop pixelformat type=list desc="VideoFormat" visible=1 enabled=1 format=int items=4
+  - "YUYV 4:2:2" = 1448695129 disabled=0
+  - "Motion-JPEG" = 1196444237 disabled=0
+  - "Y/CbCr 4:2:0" = 842094158 disabled=0
+  - "H.264" = 875967048 disabled=0
+prop standard type=list desc="VideoStandard" visible=0 enabled=1 format=int items=0
+prop dv_timing type=list desc="DVTiming" visible=0 enabled=1 format=int items=0
+prop resolution type=list desc="Resolution" visible=1 enabled=1 format=int items=3
+  - "LeaveUnchanged" = -1 disabled=0
+  - "640x480" = 2748779069920 disabled=0
+  - "1280x720" = 5497558139600 disabled=0
+prop framerate type=list desc="FrameRate" visible=1 enabled=1 format=int items=3
+  - "LeaveUnchanged" = -1 disabled=0
+  - "30.00" = 30 disabled=0
+  - "15.00" = 15 disabled=0
+prop color_range type=list desc="ColorRange" visible=1 enabled=1 format=int items=3
+  - "ColorRange.Default" = 0 disabled=0
+  - "ColorRange.Partial" = 1 disabled=0
+  - "ColorRange.Full" = 2 disabled=0
+prop buffering type=bool desc="UseBuffering" visible=1 enabled=1
+prop auto_reset type=bool desc="AutoresetOnTimeout" visible=1 enabled=1
+prop timeout_frames type=int desc="FramesUntilTimeout" visible=1 enabled=1 min=2 max=120 step=1 slider=0
+prop controls type=group desc="CameraCtrls" visible=1 enabled=1
+> modified pixelformat
+modified -> 1
+> props
+prop device_id type=list desc="Device" visible=1 enabled=1 format=string items=1
+  - "Cam (usb-1)" = "/dev/video0" disabled=0
+prop input type=list desc="Input" visible=1 enabled=1 format=int items=2
+  - "Camera" = 0 disabled=0
+  - "Tuner" = 1 disabled=0
+prop pixelformat type=list desc="VideoFormat" visible=1 enabled=1 format=int items=4
+  - "YUYV 4:2:2" = 1448695129 disabled=0
+  - "Motion-JPEG" = 1196444237 disabled=0
+  - "Y/CbCr 4:2:0" = 842094158 disabled=0
+  - "H.264" = 875967048 disabled=0
+prop standard type=list desc="VideoStandard" visible=0 enabled=1 format=int items=0
+prop dv_timing type=list desc="DVTiming" visible=0 enabled=1 format=int items=0
+prop resolution type=list desc="Resolution" visible=1 enabled=1 format=int items=3
+  - "LeaveUnchanged" = -1 disabled=0
+  - "640x480" = 2748779069920 disabled=0
+  - "1280x720" = 5497558139600 disabled=0
+prop framerate type=list desc="FrameRate" visible=1 enabled=1 format=int items=3
+  - "LeaveUnchanged" = -1 disabled=0
+  - "30.00" = 30 disabled=0
+  - "15.00" = 15 disabled=0
+prop color_range type=list desc="ColorRange" visible=1 enabled=1 format=int items=3
+  - "ColorRange.Default" = 0 disabled=0
+  - "ColorRange.Partial" = 1 disabled=0
+  - "ColorRange.Full" = 2 disabled=0
+prop buffering type=bool desc="UseBuffering" visible=1 enabled=1
+prop auto_reset type=bool desc="AutoresetOnTimeout" visible=1 enabled=1
+prop timeout_frames type=int desc="FramesUntilTimeout" visible=1 enabled=1 min=2 max=120 step=1 slider=0
+prop controls type=group desc="CameraCtrls" visible=1 enabled=1
+> modified resolution
+modified -> 1
+> props
+prop device_id type=list desc="Device" visible=1 enabled=1 format=string items=1
+  - "Cam (usb-1)" = "/dev/video0" disabled=0
+prop input type=list desc="Input" visible=1 enabled=1 format=int items=2
+  - "Camera" = 0 disabled=0
+  - "Tuner" = 1 disabled=0
+prop pixelformat type=list desc="VideoFormat" visible=1 enabled=1 format=int items=4
+  - "YUYV 4:2:2" = 1448695129 disabled=0
+  - "Motion-JPEG" = 1196444237 disabled=0
+  - "Y/CbCr 4:2:0" = 842094158 disabled=0
+  - "H.264" = 875967048 disabled=0
+prop standard type=list desc="VideoStandard" visible=0 enabled=1 format=int items=0
+prop dv_timing type=list desc="DVTiming" visible=0 enabled=1 format=int items=0
+prop resolution type=list desc="Resolution" visible=1 enabled=1 format=int items=3
+  - "LeaveUnchanged" = -1 disabled=0
+  - "640x480" = 2748779069920 disabled=0
+  - "1280x720" = 5497558139600 disabled=0
+prop framerate type=list desc="FrameRate" visible=1 enabled=1 format=int items=3
+  - "LeaveUnchanged" = -1 disabled=0
+  - "30.00" = 30 disabled=0
+  - "15.00" = 15 disabled=0
+prop color_range type=list desc="ColorRange" visible=1 enabled=1 format=int items=3
+  - "ColorRange.Default" = 0 disabled=0
+  - "ColorRange.Partial" = 1 disabled=0
+  - "ColorRange.Full" = 2 disabled=0
+prop buffering type=bool desc="UseBuffering" visible=1 enabled=1
+prop auto_reset type=bool desc="AutoresetOnTimeout" visible=1 enabled=1
+prop timeout_frames type=int desc="FramesUntilTimeout" visible=1 enabled=1 min=2 max=120 step=1 slider=0
+prop controls type=group desc="CameraCtrls" visible=1 enabled=1
+> set-str device_id /dev/nothing
+> modified device_id
+modified -> 0
+> props
+prop device_id type=list desc="Device" visible=1 enabled=1 format=string items=1
+  - "Cam (usb-1)" = "/dev/video0" disabled=0
+prop input type=list desc="Input" visible=1 enabled=0 format=int items=2
+  - "Camera" = 0 disabled=0
+  - "Tuner" = 1 disabled=0
+prop pixelformat type=list desc="VideoFormat" visible=1 enabled=0 format=int items=4
+  - "YUYV 4:2:2" = 1448695129 disabled=0
+  - "Motion-JPEG" = 1196444237 disabled=0
+  - "Y/CbCr 4:2:0" = 842094158 disabled=0
+  - "H.264" = 875967048 disabled=0
+prop standard type=list desc="VideoStandard" visible=0 enabled=0 format=int items=0
+prop dv_timing type=list desc="DVTiming" visible=0 enabled=0 format=int items=0
+prop resolution type=list desc="Resolution" visible=1 enabled=0 format=int items=3
+  - "LeaveUnchanged" = -1 disabled=0
+  - "640x480" = 2748779069920 disabled=0
+  - "1280x720" = 5497558139600 disabled=0
+prop framerate type=list desc="FrameRate" visible=1 enabled=0 format=int items=3
+  - "LeaveUnchanged" = -1 disabled=0
+  - "30.00" = 30 disabled=0
+  - "15.00" = 15 disabled=0
+prop color_range type=list desc="ColorRange" visible=1 enabled=0 format=int items=3
+  - "ColorRange.Default" = 0 disabled=0
+  - "ColorRange.Partial" = 1 disabled=0
+  - "ColorRange.Full" = 2 disabled=0
+prop buffering type=bool desc="UseBuffering" visible=1 enabled=0
+prop auto_reset type=bool desc="AutoresetOnTimeout" visible=1 enabled=0
+prop timeout_frames type=int desc="FramesUntilTimeout" visible=1 enabled=0 min=2 max=120 step=1 slider=0
+prop controls type=group desc="CameraCtrls" visible=1 enabled=0
+> src-destroy
+src-destroy

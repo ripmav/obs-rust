@@ -1,0 +1,24 @@
+# Display creation failure (swap chain refused) leaves the registry untouched; the clear colour
+# depends on the device colour space: sRGB devices use the colour as-is, others convert it from
+# sRGB to linear first; alpha is always forced to 1. Display without graphics data never renders a swap.
+startup en-US -
+reset_video
+trace gs on
+fake swap_fail 1
+display_create bad 100 100 0xff0000ff
+display_list
+fake swap_fail 0
+display_create d 100 100 0x80ff8040
+fake color_space srgb
+display_render d
+fake color_space 709ext
+display_render d
+fake color_space srgb16f
+display_render d
+display_bg d 0xffffffff
+fake color_space 709ext
+display_render d
+display_bg d 0
+display_render d
+trace gs off
+shutdown

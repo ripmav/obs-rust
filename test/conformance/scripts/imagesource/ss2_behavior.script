@@ -1,0 +1,46 @@
+# slideshow v2: playback behaviour on activate/deactivate (CORE).
+fs_file /s/a.png 1
+fs_file /s/b.png 1
+fs_file /s/c.png 1
+fs_file /s/d.png 1
+img /s/a.png 10 10
+img /s/b.png 20 20
+img /s/c.png 30 30
+img /s/d.png 40 40
+create ss1 slideshow_v2 {"files":[{"value":"/s/a.png"},{"value":"/s/b.png"}],"playback_behavior":"pause_unpause","slide_time":100,"transition_speed":0,"transition":"cut"}
+tick 0.016
+refs ss1 1 1
+tick 0.2
+state ss1
+refs ss1 1 0
+tick 0.016
+mediastate ss1
+state ss1
+tick 1
+state ss1
+refs ss1 1 1
+tick 0.016
+mediastate ss1
+state ss1
+create ss2 slideshow_v2 {"files":[{"value":"/s/a.png"},{"value":"/s/b.png"},{"value":"/s/c.png"}],"playback_behavior":"stop_restart","slide_time":100,"transition_speed":0,"transition":"cut"}
+tick 0.016
+refs ss2 1 1
+tick 0.016
+state ss2
+tick 0.2 3
+state ss2
+refs ss2 1 0
+tick 0.016
+refs ss2 1 1
+tick 0.016
+mediastate ss2
+state ss2
+create ss3 slideshow_v2 {"files":[{"value":"/s/a.png"},{"value":"/s/b.png"}],"playback_behavior":"always_play","slide_time":100,"transition_speed":0,"transition":"cut"}
+tick 0.016
+refs ss3 1 1
+refs ss3 1 0
+tick 0.2 3
+state ss3
+create ss4 slideshow_v2 {"files":[{"value":"/s/a.png"}],"playback_behavior":"BOGUS"}
+tick 0.016
+state ss4

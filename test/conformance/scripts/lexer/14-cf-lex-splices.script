@@ -1,0 +1,13 @@
+# CORE: backslash-newline splices are removed from the token text (str) but kept in the source span (unmerged);
+# they work inside names, comments and strings. Positions refer to the original text.
+lex "ab\\\ncd /\\\n* x *\\\n/ e"
+tokens lex
+reset
+lex "/\\\n/ hi\\\n there\nnext"
+tokens lex
+reset
+lex "\"a\\\nb\" x\\\r\ny z\\\n\r1"
+tokens lex
+reset
+lex "a \\ b \\x"
+tokens lex

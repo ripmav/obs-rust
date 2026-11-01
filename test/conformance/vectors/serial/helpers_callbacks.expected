@@ -1,0 +1,36 @@
+open custom ok
+write 010203 3 -> 3
+write - 0 -> 0
+write @null 2 -> 0
+write 0102 0 -> 0
+serialize_w 0405 2 -> 2
+serialize_r 5 -> 5 data=0000000000
+read 5 -> 3 data=010203
+read 2 -> 2 data=0405
+read 0 -> 0 data=-
+read @null 2 -> 0 data=-
+seek start 7 -> 70
+seek cur 5 -> 51
+seek end -3 -> -28
+pos -> 777
+dump custom log=0102030405000000000002010a0b0c0d
+open custom ok
+write aa 1 -> 0
+serialize_w aa 1 -> 1
+serialize_r 4 -> 3 data=020304
+read 1 -> 1 data=05
+seek start 0 -> -1
+pos -> -1
+open custom ok
+read 3 -> 0 data=-
+serialize_r 4 -> 4 data=00000000
+serialize_w 77 1 -> 1
+seek cur 1 -> -1
+pos -> -1
+dump custom log=0000000077
+open custom ok
+write aa 1 -> 0
+read 1 -> 0 data=-
+serialize_w aa 1 -> 0
+seek end 4 -> 42
+pos -> 777

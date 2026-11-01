@@ -1,0 +1,121 @@
+# CORE: compact JSON text of an object (obs_data_get_json). Keys in list order; only
+# USER values are written. Integers print as integers, doubles print in their shortest
+# round-trip form (never as an integer: 5.0 stays "5.0"), see the spec for the layout rules.
+new a
+json a
+set_string a s "text"
+set_int a i -17
+set_double a d 0.5
+set_bool a t 1
+set_bool a f 0
+json a
+last_json a
+echo --- integers
+new i
+set_int i zero 0
+set_int i max 9223372036854775807
+set_int i min -9223372036854775808
+set_int i neg -1
+json i
+echo --- doubles: positional for decimal exponents -4 .. 15, scientific otherwise
+new d
+set_double d a 1
+set_double d b 1.5
+set_double d c 100
+set_double d d 1e15
+set_double d e 1e16
+set_double d f 123456789012345678
+set_double d g 0.1
+set_double d h 0.0001
+set_double d i 0.00001
+set_double d j 1e-7
+set_double d k 0.30000000000000004
+set_double d l 3.141592653589793
+set_double d m -0.0
+set_double d n 0
+set_double d o 1.5e300
+set_double d p 5e-324
+set_double d q 1.7976931348623157e308
+set_double d r 1e21
+set_double d s -2.5e-10
+set_double d t 9007199254740993
+set_double d u 12345.678e-8
+set_double d v 0.00012
+set_double d w 0.000012
+set_double d x 1.5e15
+set_double d y 9999999999999998
+json d
+echo --- more doubles
+new d2
+set_double d2 a 1.0000000000000002
+set_double d2 b 0.6666666666666666
+set_double d2 c 2.5e-5
+set_double d2 d 123456789012345680
+set_double d2 e 4.35
+set_double d2 f 1e23
+set_double d2 g 8.5e-5
+set_double d2 h 2.2250738585072014e-308
+set_double d2 i 4.9406564584124654e-324
+set_double d2 j -1e-300
+set_double d2 k 0.1e-3
+set_double d2 l 1e15
+set_double d2 m 4503599627370496.5
+set_double d2 n 299792458
+set_double d2 o 1e-4
+set_double d2 p 12345678.9
+json d2
+echo --- NaN and infinity cannot be written: the member is silently omitted
+new n
+set_int n before 1
+set_double n nan nan
+set_double n inf inf
+set_double n ninf -inf
+set_int n after 2
+names n
+json n
+echo --- strings: escapes
+new e
+set_string e quote "a\"b"
+set_string e backslash "a\\b"
+set_string e slash "a/b"
+set_string e nl "line1\nline2\r\n\ttab"
+set_string e ctl "\x01\x02\x08\x0b\x0c\x0e\x1f"
+set_string e del "\x7f"
+set_string e empty ""
+json e
+echo --- strings: non-ASCII is written as raw UTF-8
+new u
+set_string u two "\xc3\xa9"
+set_string u three "\xe2\x82\xac"
+set_string u four "\xf0\x9f\x98\x80"
+set_string u sep "\xe2\x80\xa8\xe2\x80\xa9"
+set_string "u" "k\xc3\xa9y" "v"
+json u
+echo --- invalid UTF-8 in a value or a key: the member is silently omitted
+new bad
+set_int bad a 1
+set_string bad badval "\xff"
+set_string bad trunc "\xe2\x82"
+set_string bad overlong "\xc0\x80"
+set_string bad surrogate "\xed\xa0\x80"
+set_string bad beyond "\xf4\x90\x80\x80"
+set_string bad "k\xff" "v"
+set_int bad "k\xfe" 1
+set_int bad z 2
+dump bad
+json bad
+echo --- key escapes
+new k
+set_int k "q\"k" 1
+set_int k "n\nk" 2
+set_int k "tab\tk" 3
+json k
+echo --- nested containers
+new top
+new in
+set_int in v 1
+set_obj top o in
+a_new ar
+set_array top arr ar
+set_obj top nul @null
+json top

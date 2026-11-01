@@ -1,0 +1,15 @@
+# Volmeter fed through a real source: magnitude = RMS, peak = sample peak over frames/4*4 samples (+ previous 4), all scaled by the source volume and converted to dB; input_peak is not scaled by volume.
+init 48000 2
+clock 1000000000
+source a input
+meter_new 0 0
+meter_attach 0 a
+meter_cb 0 add
+meter_channels 0
+output a 48000 2 1024 1000000000 sine 1000 0.5 0
+set a volume 0.5
+output a 48000 2 1024 1021333333 sine 1000 0.5 1024
+set a mute 1
+output a 48000 2 1024 1042666666 sine 1000 0.5 2048
+set a mute 0
+output a 48000 2 1024 1064000000 const 0

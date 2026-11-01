@@ -1,0 +1,36 @@
+# color_filter v1 (obsolete): update() derivations (create calls update immediately) and render sequence.
+source T 1920 1080 1920 1080 SRGB video
+source P 1920 1080 1920 1080 SRGB video
+# defaults: identity-like matrix, opacity 100 -> 1.0
+filter a color_filter 0 @null T P
+render a
+# negative gamma branch (-g+1), contrast/brightness/saturation, hue shift 90 deg, opacity 50, ARGB color 0x80FF8040
+data d1
+dset d1 gamma dbl -0.5
+dset d1 contrast dbl 0.5
+dset d1 brightness dbl 0.25
+dset d1 saturation dbl 1.5
+dset d1 hue_shift dbl 90
+dset d1 opacity int 50
+dset d1 color int 0x80FF8040
+filter b color_filter 0 d1 T P
+render b
+# positive gamma branch 1/(g+1); hue -180; saturation -1 (greyscale)
+data d2
+dset d2 gamma dbl 1
+dset d2 hue_shift dbl -180
+dset d2 saturation dbl -1
+dset d2 contrast dbl -1
+filter c color_filter 0 d2 T P
+render c
+# filter_begin returning false: nothing is set, no blend change
+knob begin 0
+render c
+knob begin 1
+# an update through the host is deferred until the next tick, then re-derives everything
+data d3
+dset d3 brightness dbl -0.5
+update c d3
+render c
+tick c 0.016
+render c

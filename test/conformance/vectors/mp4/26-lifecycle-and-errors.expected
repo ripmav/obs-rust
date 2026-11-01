@@ -1,0 +1,15 @@
+mux mp4 tracks=2
+log warning [mp4 muxer: 'conformance'] Could not find track for packet of type audio with track id 0!
+pkt other pts=0 dts=0 key=1 size=10 -> 0 pos=0
+pkt v pts=0 dts=0 key=1 size=10 -> 1 pos=0
+pkt v pts=1 dts=1 key=0 size=10 -> 1 pos=0
+echo refs-while-muxing
+refs v 2
+refs a 2
+refs other 1
+destroy
+echo refs-after-destroy
+refs v 1
+refs a 1
+echo size-of-file-written-before-destroy
+size 0

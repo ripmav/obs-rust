@@ -1,0 +1,23 @@
+# video_format_get_parameters (no format argument => 8 bits per component, except 10 for the two Rec. 2100 spaces)
+# prints the 3x4 YUV->RGB matrix (rows R,G,B; columns Y,U,V,offset; row 3 is 0 0 0 1), then the float range min/max.
+# Command: vparams COLORSPACE RANGE FORMAT|-  [nomin] [nomax]
+# Colour spaces: 0 DEFAULT,3 SRGB -> treated as 709 ; 5 HLG -> treated as 2100_PQ ; ranges: 1 PARTIAL, 2 FULL,
+# 0 DEFAULT (treated as PARTIAL, NOT resolved by format).  All values are 32-bit floats: compare with relative
+# tolerance 1e-5 (or absolute 1e-6).
+# Output sentinel 7 means "the function did not write this value".
+vparams 1 1 -
+vparams 1 2 -
+vparams 2 1 -
+vparams 2 2 -
+vparams 4 1 -
+vparams 4 2 -
+# aliases: DEFAULT and SRGB give the same matrix as 709 ; HLG as PQ (10 bit)
+vparams 0 1 -
+vparams 0 2 -
+vparams 3 1 -
+vparams 3 2 -
+vparams 5 1 -
+vparams 5 2 -
+# range DEFAULT (0) is partial range; an out-of-range value is also partial (only RANGE_FULL selects full)
+vparams 2 0 -
+vparams 2 7 -

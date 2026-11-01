@@ -1,0 +1,12 @@
+python load_python=0 loaded=0 linked=1 version=""
+backend lua_load
+load -> 1
+python load_python=0 loaded=0 linked=1 version=""
+backend lua_unload
+log info [Scripting] Total detached callbacks: 0
+info_detached_head_after_unload null
+unload done
+cur_module null
+cur_module set
+cur_module value=0x1234
+cur_module null

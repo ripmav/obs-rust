@@ -1,0 +1,20 @@
+# obs_transition_video_render_direct: returns whether a transition is in progress; stops the video part at t>=1
+# (and finishes completely if the transition is not active).
+kind in input video size
+kind tr transition video,audio tstart,tstop,size
+create t tr T
+create a in A
+create b in B
+fksize a 100 100
+fksize b 100 100
+tr_set t a
+tr_video_direct t 0
+clock 1000
+tr_start t 0 1000 b
+vtime 500001000
+tr_video_direct t 0
+tr_video_direct t 1
+vtime 2000000000
+tr_video_direct t 1
+tr_state t
+tr_video_direct t 1

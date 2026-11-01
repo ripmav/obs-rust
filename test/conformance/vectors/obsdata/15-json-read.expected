@@ -1,0 +1,50 @@
+from_json a ok
+dump a {s:string[user="x"],i:number[user=num(I,1,1)],d:number[user=num(D,1,1)],e:number[user=num(D,100,100)],t:bool[user=true],f:bool[user=false],n:object[user=null],o:object[user={k:array[user=[]]}],neg:number[user=num(I,-5,-5)],z:number[user=num(I,0,0)],dz:number[user=num(D,0,-0)]}
+json a "{\"s\":\"x\",\"i\":1,\"d\":1.0,\"e\":100.0,\"t\":true,\"f\":false,\"n\":null,\"o\":{\"k\":[]},\"neg\":-5,\"z\":0,\"dz\":-0.0}"
+echo --- numbers
+from_json n ok
+json n "{\"a\":9223372036854775807,\"b\":-9223372036854775808,\"c\":100.0,\"d\":0.0,\"e\":1.0,\"f\":1.2345678901234568e29,\"g\":1.2345678901234567e19,\"h\":1.7976931348623157e308,\"i\":5e-324,\"j\":0.5,\"k\":-0.0015}"
+get_double n a 9.2233720368547758e+18
+get_int n c 100
+echo --- document order, no sorting
+from_json o ok
+names o b a c
+json o "{\"b\":1,\"a\":2,\"c\":{\"z\":1,\"y\":2}}"
+echo --- empty and whitespace
+from_json e ok
+dump e {}
+from_json w ok
+json w "{\"a\":1}"
+echo --- top-level array parses but yields an EMPTY object (Q2)
+from_json arr ok
+dump arr {}
+from_json arr2 ok
+dump arr2 {}
+echo --- strings and escapes
+from_json s ok
+dump s {a:string[user="\xc3\xa9\xe2\x82\xac"],b:string[user="/"],c:string[user="\xf0\x9f\x98\x80"],d:string[user="\x08\x0c\n\r\t\"\\"],e:string[user=""],f:string[user="\x1f"],g:string[user="\x7f"]}
+json s "{\"a\":\"\xc3\xa9\xe2\x82\xac\",\"b\":\"/\",\"c\":\"\xf0\x9f\x98\x80\",\"d\":\"\\b\\f\\n\\r\\t\\\"\\\\\",\"e\":\"\",\"f\":\"\\u001F\",\"g\":\"\x7f\"}"
+echo --- raw UTF-8 and the empty key
+from_json u ok
+dump u {"\xc3\xa9":string[user="\xe2\x82\xac"],:number[user=num(I,1,1)]}
+json u "{\"\xc3\xa9\":\"\xe2\x82\xac\",\"\":1}"
+echo --- arrays keep only object elements (Q3)
+from_json x ok
+dump x {a:array[user=[{x:number[user=num(I,1,1)]},{},{y:number[user=num(I,2,2)]}]]}
+from_json y ok
+dump y {a:array[user=[]],b:array[user=[]],c:array[user=[]],d:array[user=[]]}
+json y "{\"a\":[],\"b\":[],\"c\":[],\"d\":[]}"
+echo --- nested arrays of objects with objects
+from_json z ok
+dump z {a:array[user=[{b:array[user=[{c:number[user=num(I,1,1)]}]]}]]}
+json z "{\"a\":[{\"b\":[{\"c\":1}]}]}"
+echo --- keys differing in case or by encoding are distinct
+from_json k ok
+names k A a
+echo --- trailing whitespace is allowed
+from_json q ok
+json q "{\"a\":1}"
+echo --- nesting depth: 2047 levels are accepted
+from_json_deep deep ok
+from_json_deep deeparr ok
+dump deeparr {}

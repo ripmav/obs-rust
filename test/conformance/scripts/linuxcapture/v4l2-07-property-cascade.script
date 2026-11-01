@@ -1,0 +1,44 @@
+# S-049 v4l2: the modified-callback chain device -> input -> pixelformat -> resolution -> framerate.
+# Each callback re-reads the device ("device_id") and refills the next list.
+fake-dir video0
+dev /dev/video0
+dev-cap "Cam" usb-1 0x85200001 0x05200001
+dev-input Camera 0
+dev-input Tuner 0x4
+dev-fmt YUYV "YUYV 4:2:2" 0
+dev-fmt MJPG "Motion-JPEG" 0
+dev-fmt NV12 "Y/CbCr 4:2:0" 1
+dev-fmt RGB3 "24-bit RGB 8-8-8" 0
+dev-fmt H264 "H.264" 0
+dev-size YUYV 640 480
+dev-size YUYV 1280 720
+dev-size NV12 1920 1080
+dev-ival YUYV 640 480 1 30
+dev-ival YUYV 640 480 1 15
+dev-ival YUYV 1280 720 1 10
+dev-cur 0 640 480 YUYV 1280 1 30 0
+src-defaults
+set-str device_id /dev/video0
+set-int pixelformat 0x56595559
+set-int resolution 2748779069920
+src-create
+src-props
+# NOTE modified callbacks cascade: modifying "device_id" ends by modifying "input", then "pixelformat", then
+# "resolution" (obs_property_modified is called recursively inside the callbacks), using the settings as they are now.
+# 1. device selected: every other property enabled, inputs listed, "controls" group rebuilt
+modified device_id
+props
+# 2. input selected: format list (RGB3 unavailable, NV12 flagged emulated)
+modified input
+props
+# 3. format selected on a plain input: resolution visible/filled, standard & dv hidden
+modified pixelformat
+props
+# 4. resolution selected: framerate list (packed 1/30 stored as int!)
+modified resolution
+props
+# unknown device: all properties except the device list are disabled, callback returns false
+set-str device_id /dev/nothing
+modified device_id
+props
+src-destroy

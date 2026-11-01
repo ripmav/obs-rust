@@ -1,0 +1,40 @@
+# S-050 obs-qsv11: the texture encoders fall back (obs_encoder_create_rerouted to the "soft" id) when:
+# the encoder's adapter (obs_get_video_info().adapter) is not Intel; AV1 and that adapter lacks AV1
+# (note: HEVC support is NOT checked); no NV12 texture (H.264) / neither NV12 nor P010 texture
+# (AV1, HEVC); CPU scaling is on. GPU scaling or no scaling creates the texture encoder.
+q_headers 40aa 6742 68ee
+q_adapter 0 1 0 1 1
+q_adapter 1 0 0 0 0
+q_set ovi_adapter 0
+q_create h264 tex
+q_destroy
+q_create av1 tex
+q_destroy
+q_create hevc tex
+q_destroy
+# non-Intel adapter
+q_set ovi_adapter 1
+q_create h264 tex
+q_create av1 tex
+q_set ovi_adapter 0
+# AV1 unsupported on the Intel adapter, HEVC still goes through
+q_adapter 0 1 0 0 0
+q_create av1 tex
+q_create hevc tex
+q_destroy
+q_adapter 0 1 0 1 1
+# texture availability
+host tex_nv12 0
+q_create h264 tex
+host tex_p010 1
+q_create h264 tex
+q_create hevc tex
+q_destroy
+host tex_nv12 1
+host tex_p010 0
+# scaling
+host scaling 1
+q_create h264 tex
+host gpu_scaling 1
+q_create h264 tex
+q_destroy

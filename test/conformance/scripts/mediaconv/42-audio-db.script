@@ -1,0 +1,30 @@
+# mul_to_db(m) = (m == 0) ? -inf : 20*log10f(m) ;   db_to_mul(db) = isfinite(db) ? powf(10, db/20) : 0
+# 32-bit float math: compare with relative tolerance 1e-6 (absolute 1e-6 near zero). Non-finite results print as
+# nan / inf / -inf. Note db_to_mul(+inf) and db_to_mul(nan) are 0, db_to_mul(-inf) is 0.
+mul_to_db 1
+mul_to_db 0
+mul_to_db -0
+mul_to_db 0.5
+mul_to_db 2
+mul_to_db 10
+mul_to_db 0.1
+mul_to_db 0.001
+mul_to_db 1e-30
+mul_to_db 100
+mul_to_db -1
+mul_to_db inf
+mul_to_db nan
+db_to_mul 0
+db_to_mul -6
+db_to_mul 6
+db_to_mul 20
+db_to_mul -20
+db_to_mul -60
+db_to_mul 3.0103
+db_to_mul -96
+db_to_mul 40
+db_to_mul 1000
+db_to_mul -1000
+db_to_mul inf
+db_to_mul -inf
+db_to_mul nan

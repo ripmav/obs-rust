@@ -1,0 +1,36 @@
+reset_audio -> 0
+log debug canvas 'Main' (<uuid>) created
+startup -> true
+log info ---------------------------------
+log info audio settings reset:  samples per sec: 48000  speakers:        2  max buffering:   960 milliseconds  buffering type:  dynamically increasing
+reset_audio -> 1
+audio_connect -> 1
+reset_audio -> 0
+audio_info -> 1 sps=48000 speakers=2
+audio_info2 -> 1 sps=48000 speakers=2 max_ms=960 fixed=0
+audio_info(NULL) -> 0
+reset_audio2(NULL) -> 0
+audio_info -> 1 sps=48000 speakers=2
+audio_info2 -> 1 sps=48000 speakers=2 max_ms=960 fixed=0
+audio_info(NULL) -> 0
+log info ---------------------------------
+log info audio settings reset:  samples per sec: 44100  speakers:        1  max buffering:   1044 milliseconds  buffering type:  dynamically increasing
+log warning Signal declaration 'deduplication_changed' exists
+reset_audio -> 1
+audio_info -> 1 sps=44100 speakers=1
+audio_info2 -> 1 sps=44100 speakers=1 max_ms=1044 fixed=0
+audio_info(NULL) -> 0
+log info ---------------------------------
+log info audio settings reset:  samples per sec: 48000  speakers:        2  max buffering:   10538 milliseconds  buffering type:  dynamically increasing
+log warning Signal declaration 'deduplication_changed' exists
+reset_audio -> 1
+audio_info -> 1 sps=48000 speakers=2
+audio_info2 -> 1 sps=48000 speakers=2 max_ms=10538 fixed=0
+audio_info(NULL) -> 0
+reset_audio2(NULL) -> 1
+probe_reset_audio -> crash signal=SIGFPE
+probe_reset_audio -> crash signal=SIGFPE
+shutdown begin
+log info Freeing OBS context data
+log debug canvas 'Main' (<uuid>) destroyed
+shutdown end obs=NULL

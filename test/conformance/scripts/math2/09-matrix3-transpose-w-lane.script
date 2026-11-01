@@ -1,0 +1,7 @@
+# Q-3: matrix3_transpose writes z.w of the SOURCE into the w lane of all three result rows.
+# With w lanes all zero (the normal case) this is invisible.
+mat3 a 1 2 3 0.1  4 5 6 0.2  7 8 9 0.3  1 1 1 0.9
+call t matrix3_transpose a
+# vec3_neg zeroes the w lane of the translation row
+mat3 b 1 0 0 0  0 1 0 0  0 0 1 7  2 3 4 5
+call t matrix3_transpose b

@@ -1,0 +1,18 @@
+call source_update a deferred=1
+create a -> ok
+call source_update b deferred=1
+create b -> ok
+call source_update c deferred=1
+create c -> ok
+try-begin
+call image_free
+call image_init lut4096x64.png
+try-end crash
+try-begin
+call image_free
+call image_init lut2048x128.png
+try-end crash
+try-begin
+call image_free
+call image_init lut1024x256.png
+try-end crash

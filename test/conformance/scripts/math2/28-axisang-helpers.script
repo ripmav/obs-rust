@@ -1,0 +1,25 @@
+# axisang inline helpers and conversions not covered by S-008 (S-009-R34).
+aa a 1 2 3 0.5
+call z axisang_zero
+call c axisang_copy a
+aa s 0 1 0 -2.5
+show s
+quat q 0 0 0 1
+call back axisang_from_quat q
+quat q2 0 0 0.70710678 0.70710678
+call back axisang_from_quat q2
+quat q3 1 0 0 0
+call back axisang_from_quat q3
+# |x^2+y^2+z^2| <= EPSILON gives the zero axis-angle
+quat q4 0.005 0 0 1
+call back axisang_from_quat q4
+quat q5 0.0101 0 0 0.99994
+call back axisang_from_quat q5
+# matrix3 from the axis-angle: a rotation of 90 degrees about +y
+aa y90 0 1 0 1.57079633
+call m matrix3_from_axisang y90
+# the axis is NOT normalised before the quaternion is built (quat_from_axisang), so an axis of
+# length 2 does not give a 90 degree rotation: q = (0,0,2*sin(pi/4), cos(pi/4)) normalises to a
+# rotation by 2*atan2(1.414, 0.707) = 126.87 degrees
+aa big 0 0 2 1.57079633
+call m matrix3_from_axisang big

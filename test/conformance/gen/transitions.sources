@@ -1,0 +1,18 @@
+# S-029 transitions: real plugin sources #included by the runner + recording fake core/graphics.
+test/conformance/gen/transitions_runner.c
+test/conformance/gen/transitions_stubs.c
+libobs/obs-data.c
+libobs/obs-properties.c
+libobs/obs-missing-files.c
+libobs/callback/calldata.c
+libobs/graphics/vec2.c
+libobs/graphics/vec3.c
+libobs/graphics/vec4.c
+libobs/graphics/quat.c
+libobs/graphics/axisang.c
+libobs/graphics/matrix3.c
+libobs/graphics/matrix4.c
+libobs/graphics/plane.c
+libobs/graphics/math-extra.c
+-ljansson
+-Wno-deprecated-declarations

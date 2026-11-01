@@ -1,0 +1,9 @@
+# Lossless codecs get bit_rate 0 regardless of the bitrate argument; variable-frame-size encoders get frame_size 0.
+reset
+args @s6.mkv 0 1 pcm_s16le "pcm" 160 48000 1024 0 2 "" ""
+hdr audio 0 -
+inspect
+reset
+args @s6.mkv 0 1 aac "aac" 160 48000 1024 0 2 "" ""
+hdr audio 0 1190
+inspect

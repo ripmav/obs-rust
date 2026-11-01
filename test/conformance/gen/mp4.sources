@@ -1,0 +1,14 @@
+# S-022 MP4/MOV muxer (plugins/obs-outputs/mp4-mux.c is #included by the runner so that it can set the creation time)
+test/conformance/gen/mp4_runner.c
+test/conformance/gen/mp4_stubs.c
+plugins/obs-outputs/rtmp-hevc.c
+plugins/obs-outputs/rtmp-av1.c
+libobs/obs-nal.c
+libobs/obs-avc.c
+libobs/obs-hevc.c
+libobs/obs-data.c
+libobs/util/array-serializer.c
+libobs/util/file-serializer.c
+libobs/util/bitstream.c
+-ljansson
+-Wno-deprecated-declarations

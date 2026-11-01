@@ -1,0 +1,24 @@
+  cb T create
+log debug source 'T' (tr) created
+create t ok
+  cb A create
+log debug source 'A' (in) created
+create a ok
+  cb B create
+log debug source 'B' (in) created
+create b ok
+  cb T transition_start
+tr_start t 1
+tr t A=a(act=1) B=b(act=1) video=1 audio=1 mode=1 manual_val=0 target=0 size=0x0 actual=10x10 start=0 dur=0
+tr_time t 0
+tr t A=a(act=1) B=b(act=1) video=1 audio=1 mode=1 manual_val=0 target=0.5 size=0x0 actual=10x10 start=0 dur=0
+tr_time t 0.5
+tr_time t 1
+tr_time t 0.874999762
+tr_time t 0.770832956
+tr t A=a(act=1) B=-(act=0) video=0 audio=0 mode=1 manual_val=0 target=0 size=0x0 actual=10x10 start=0 dur=0
+echo ---
+  cb T transition_start
+tr_start t 1
+tr_start t 0
+tr t A=b(act=1) B=-(act=0) video=0 audio=0 mode=1 manual_val=0 target=0 size=0x0 actual=10x10 start=0 dur=0

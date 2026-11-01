@@ -1,0 +1,33 @@
+# compatibility.json lookup (win-capture compat-helpers.c, real code). match_flags: 1 exe, 2 title, 4 class.
+# exe compare case-insensitive; title is a case-insensitive PREFIX match (entry title is the prefix); class exact
+# and case-sensitive. A source-type flag per entry selects game_capture / window_capture (bitblt) /
+# window_capture_wgc. First matching entry wins. Message: translation_key lookup replaces "message"; "%name%" is
+# substituted only when the message contains '%'; an https:// url appends a rich-text link without the scheme.
+# format_version must be 1; JSON with duplicate keys is rejected.
+compat_tr TR.Key "Translated %name% notice"
+compat_json "{\"format_version\":1,\"entries\":[{\"name\":\"Alpha\",\"translation_key\":\"TR.Key\",\"severity\":1,\"executable\":\"Alpha.exe\",\"window_class\":\"\",\"window_title\":\"\",\"match_flags\":1,\"game_capture\":true,\"window_capture\":false,\"window_capture_wgc\":false,\"message\":\"raw alpha\",\"url\":\"https://example.org/a#b\"},{\"name\":\"Beta\",\"severity\":2,\"executable\":\"\",\"window_class\":\"\",\"window_title\":\"Minecraft\",\"match_flags\":2,\"game_capture\":true,\"window_capture\":true,\"window_capture_wgc\":false,\"message\":\"Beta %name% msg\",\"url\":\"http://insecure\"},{\"name\":\"Gamma\",\"severity\":0,\"executable\":\"g.exe\",\"window_class\":\"GClass\",\"window_title\":\"\",\"match_flags\":5,\"game_capture\":false,\"window_capture\":false,\"window_capture_wgc\":true,\"message\":\"no placeholder\"}]}"
+compat_check game "Anything" "Cls" "alpha.EXE"
+compat_check bitblt "Anything" "Cls" "alpha.exe"
+compat_check wgc "Anything" "Cls" "alpha.exe"
+compat_check game - - -
+compat_check game "Minecraft 1.18" "X" "java.exe"
+compat_check bitblt "minecraft" "X" "java.exe"
+compat_check bitblt "Mine" "X" "java.exe"
+compat_check wgc "Minecraft" "X" "java.exe"
+compat_check wgc "t" "GClass" "G.EXE"
+compat_check wgc "t" "gclass" "g.exe"
+compat_check wgc "t" "GClass" "other.exe"
+compat_check wgc "t" - "g.exe"
+compat_check game "t" "GClass" "g.exe"
+# wrong format version / duplicate keys / missing list / missing file => no result
+compat_json "{\"format_version\":2,\"entries\":[]}"
+compat_check game "Minecraft" "X" "alpha.exe"
+compat_json "{\"format_version\":1,\"format_version\":1,\"entries\":[]}"
+compat_check game "Minecraft" "X" "alpha.exe"
+compat_json "{\"format_version\":1}"
+compat_check game "Minecraft" "X" "alpha.exe"
+compat_json -
+compat_check game "Minecraft" "X" "alpha.exe"
+# empty entry list
+compat_json "{\"format_version\":1,\"entries\":[]}"
+compat_check game "Minecraft" "X" "alpha.exe"

@@ -1,0 +1,37 @@
+add a ok
+add b ok
+add c ok
+order main: a b c
+-- adding a removed source is refused
+log warning Tried to add a removed source to a scene
+add d fail
+-- the next update pass prunes b (item_remove signalled, handle detached)
+order main: a c
+item b id=2 parent=- group=0 scene=0 abs=0 vis=0 user_vis=0 sel=0 lock=0 need_update=0
+  stored pos=-1.77777779,-1 rot=0 scale=1,1 scale_ref=1920,1080 align=5
+  bounds type=0 align=0 size=0,0 crop_to_bounds=0
+  crop l=0 r=0 t=0 b=0 bounds_crop l=0 r=0 t=0 b=0 last=0,0
+  output_scale=0,0 box_scale=0,0
+  draw [1,0,0,0] [0,1,0,0] [0,0,1,0] [0,0,0,1]
+  box [1,0,0,0] [0,1,0,0] [0,0,1,0] [0,0,0,1]
+signal item_add scene=main item#1
+signal item_add scene=main item#2
+signal item_add scene=main item#3
+signal item_transform scene=main item#1
+signal item_remove scene=main item#2
+signal item_transform scene=main item#3
+log end
+-- pruning inside a group re-sizes the group
+add e ok
+add f ok
+group g ok
+scene_size g 300 400 (cx=300 cy=400 custom=1 last=0,0)
+order main: a c g{e}
+scene_size g 300 100 (cx=300 cy=100 custom=1 last=0,0)
+item g id=6 parent=main group=1 scene=0 abs=0 vis=0 user_vis=1 sel=0 lock=0 need_update=0
+  stored pos=-1.77777779,-1 rot=0 scale=1,1 scale_ref=1920,1080 align=5
+  bounds type=0 align=0 size=0,0 crop_to_bounds=0
+  crop l=0 r=0 t=0 b=0 bounds_crop l=0 r=0 t=0 b=0 last=300,100
+  output_scale=1,1 box_scale=300,100
+  draw [1,0,0,0] [0,1,0,0] [0,0,1,0] [0,0,0,1]
+  box [300,0,0,0] [0,100,0,0] [0,0,1,0] [0,0,0,1]

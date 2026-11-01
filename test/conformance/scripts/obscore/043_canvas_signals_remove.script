@@ -1,0 +1,25 @@
+# Canvas removal request, rename and destroy signals. obs_canvas_remove only flags the canvas and
+# announces it; it does not drop any reference. Removing twice, or removing the main canvas, is a
+# no-op. Private canvases do not emit the core-level create/remove/rename/destroy signals, but still
+# emit the per-canvas ones.
+startup en-US -
+sig_obs canvas_create canvas_remove canvas_destroy canvas_rename canvas_video_reset
+canvas_create a Alpha
+sig_canvas a destroy remove rename video_reset
+canvas_name a Beta
+canvas_name a Beta
+canvas_name a -
+canvas_name a ""
+canvas_remove a
+canvas_remove a
+canvas_info a
+canvas_save a
+enum canvases
+get canvas_by_name Beta
+canvas_create_private p Priv
+sig_canvas p destroy remove rename
+canvas_name p Priv2
+canvas_remove p
+canvas_release p
+canvas_release a
+shutdown

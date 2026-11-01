@@ -1,0 +1,27 @@
+# filter_set_index moves a filter to an array index (array order is newest first) and recomputes the targets; a
+# filter that is not on the source is ignored silently.  (An index >= count corrupts memory in the reference: not
+# scripted, see spec D-1.)
+kind in input video
+kind fl filter video
+create a in A
+create f1 fl F1
+create f2 fl F2
+create f3 fl F3
+create x fl X
+filter_add a f1
+filter_add a f2
+filter_add a f3
+watch a
+names a
+filter_set_index a f1 0
+names a
+filter_set_index a f3 2
+names a
+filter_set_index a f3 1
+names a
+filter_set_index a x 0
+filter_index a x
+filter_set_index a f3 0
+names a
+filters a
+enum_filters a

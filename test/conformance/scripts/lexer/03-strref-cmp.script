@@ -1,0 +1,43 @@
+# CORE: strref_cmp/cmpi/cmp_strref/cmpi_strref (sign only), is_empty, strref_add.
+# Includes the Q-1 asymmetry of the strref-vs-strref functions (non-empty vs empty returns -1).
+cmp "abc" 3 "abc"
+cmp "abc" 3 "abd"
+cmp "abc" 3 "ab"
+cmp "abc" 2 "ab"
+cmp "abc" 2 "abc"
+cmp "abc" 0 ""
+cmp "abc" 0 "x"
+cmp "abc" 0 @null
+cmp @null 0 @null
+cmp @null 0 "a"
+cmp "abc" 3 @null
+cmp "abc" 3 ""
+cmp "Abc" 3 "abc"
+cmpi "Abc" 3 "aBC"
+cmpi "abc" 3 "ABD"
+cmpi "a_" 2 "A^"
+cmp "\xe9" 1 "a"
+cmp "a" 1 "\xe9"
+cmpi "\xe9" 1 "a"
+cmp_strref "abc" 3 "abc" 3
+cmp_strref "abc" 3 "abd" 3
+cmp_strref "abc" 2 "abc" 3
+cmp_strref "abc" 3 "abc" 2
+cmp_strref "abc" 3 "" 0
+cmp_strref "" 0 "abc" 3
+cmp_strref "" 0 "" 0
+cmp_strref @null 0 "x" 1
+cmp_strref "b" 1 "a" 1
+cmp_strref "a" 1 "b" 1
+cmpi_strref "ABC" 3 "abc" 3
+cmpi_strref "abc" 3 "abd" 3
+cmpi_strref "abc" 3 "" 0
+cmpi_strref "xbc" 1 "XYZ" 1
+is_empty "abc" 3
+is_empty "abc" 0
+is_empty "" 0
+is_empty @null 0
+is_empty_null
+ref_add "hello world" 0 5 6 5
+ref_add "hello world" @null 0 6 5
+ref_add "hello world" 6 5 0 2

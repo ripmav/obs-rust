@@ -1,0 +1,45 @@
+# CORE: NULL handling of the effect API. Functions that return a handle or a count return NULL / 0 for a NULL
+# argument; setters and getters log an ERROR ("effect_setval_inline: invalid param" etc.) and do nothing;
+# begin/end calls are silent no-ops. (NULL technique NAMES and gs_effect_set_default(NULL) are DEFECT cases, see 90.)
+backend text none
+text a
+uniform float f = 1;
+float4 PS() : TARGET { return f; }
+technique T { pass p { vertex_shader = PS(); pixel_shader = PS(); } }
+@end
+effect e a.effect @text:a
+echo --- NULL effect
+nparams @null
+param @null
+technique @null T
+current_technique @null
+viewproj @null
+world @null
+tbegin @null T
+tend @null T
+pbegin @null T 0
+pend @null T
+update @null
+loop @null T
+destroy @null
+echo --- NULL param
+nannotations @null
+annotation_idx @null 0
+set_bool @null 1
+set_float @null 1
+set_int @null 1
+set_vec2 @null 1 2
+set_vec3 @null 1 2 3
+set_vec4 @null 1 2 3 4
+set_color @null 0xFF000000
+set_matrix4 @null 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1
+set_texture @null 1
+set_texture_srgb @null 1
+set_next_sampler @null 1
+set_val @null 00
+get_val @null
+get_default_val @null
+flags @null
+echo --- the effect still works
+set_float e:f 5
+get_val e:f

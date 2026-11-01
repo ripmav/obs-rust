@@ -1,0 +1,61 @@
+# Name, "is YUV" flag and default range of every video_format value, including the value just past
+# the last enumerator (26) and a wild value (99): unknown values behave like VIDEO_FORMAT_NONE
+# (name "None", not YUV, default range FULL because the default range of non-YUV is full).
+# V210 prints "v210" and R10L prints "R10l" (mixed case). Y800 is NOT YUV.
+vinfo 0
+vinfo 1
+vinfo 2
+vinfo 3
+vinfo 4
+vinfo 5
+vinfo 6
+vinfo 7
+vinfo 8
+vinfo 9
+vinfo 10
+vinfo 11
+vinfo 12
+vinfo 13
+vinfo 14
+vinfo 15
+vinfo 16
+vinfo 17
+vinfo 18
+vinfo 19
+vinfo 20
+vinfo 21
+vinfo 22
+vinfo 23
+vinfo 24
+vinfo 25
+vinfo 26
+vinfo 99
+# colour space names. DEFAULT shares the name of 709; values 6 and 99 are "Unknown".
+csname 0
+csname 1
+csname 2
+csname 3
+csname 4
+csname 5
+csname 6
+csname 99
+# resolve_video_range / get_video_range_name: DEFAULT resolves to PARTIAL (2 => 1) for YUV formats
+# (I420=1, P010=18) and to FULL for non-YUV ones (RGBA=6, Y800=9, NONE=0); explicit values are kept.
+rangename 1 0
+rangename 1 1
+rangename 1 2
+rangename 18 0
+rangename 18 1
+rangename 18 2
+rangename 6 0
+rangename 6 1
+rangename 6 2
+rangename 9 0
+rangename 9 1
+rangename 9 2
+rangename 0 0
+rangename 0 1
+rangename 0 2
+# an unknown range value is not resolved and is named "Partial" (anything but FULL)
+rangename 1 7
+rangename 6 7

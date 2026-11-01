@@ -1,0 +1,55 @@
+registration-loads-matching-name
+signal hotkey_bindings_changed id=0
+signal hotkey_register id=0
+reg m -> 0
+signal hotkey_register id=1
+reg e -> 1
+signal hotkey_register id=2
+reg n -> 2
+b 0 hk=0 mods=0x4 key=OBS_KEY_M pressed=0 modmatch=0 hkptr_ok=1
+enumb done
+save-whole-context
+ctxsave S1 {"Mute":[{"control":true,"key":"OBS_KEY_M"}],"Empty":[],"NoEntry":[]}
+unknown-names-in-data-are-ignored-Other-stays-unused
+signal hotkey_bindings_changed id=0
+signal hotkey_bindings_changed id=2
+load-APPENDS-for-names-present-existing-bindings-are-kept-Q-3
+b 0 hk=0 mods=0x4 key=OBS_KEY_M pressed=0 modmatch=0 hkptr_ok=1
+b 1 hk=0 mods=0x0 key=OBS_KEY_N pressed=0 modmatch=0 hkptr_ok=1
+b 2 hk=2 mods=0x8 key=OBS_KEY_Q pressed=0 modmatch=0 hkptr_ok=1
+enumb done
+ctxsave S1 {"Mute":[{"control":true,"key":"OBS_KEY_M"},{"key":"OBS_KEY_N"}],"Empty":[],"NoEntry":[{"alt":true,"key":"OBS_KEY_Q"}]}
+ctxload-with-null-data-is-a-noop
+ctxsave S1 {"Mute":[{"control":true,"key":"OBS_KEY_M"},{"key":"OBS_KEY_N"}],"Empty":[],"NoEntry":[{"alt":true,"key":"OBS_KEY_Q"}]}
+context-without-hotkeys-saves-null
+ctxsave O1 null
+context-with-hotkeys-but-no-bindings-saves-empty-arrays
+signal hotkey_register id=3
+reg x -> 3
+ctxsave E1 {"x.key":[]}
+pair-in-context-loads-both-halves
+signal hotkey_bindings_changed id=4
+signal hotkey_register id=4
+signal hotkey_bindings_changed id=5
+signal hotkey_register id=5
+regp PP -> pair=0 a=4 b=5
+b 0 hk=0 mods=0x4 key=OBS_KEY_M pressed=0 modmatch=0 hkptr_ok=1
+b 1 hk=0 mods=0x0 key=OBS_KEY_N pressed=0 modmatch=0 hkptr_ok=1
+b 2 hk=2 mods=0x8 key=OBS_KEY_Q pressed=0 modmatch=0 hkptr_ok=1
+b 3 hk=4 mods=0x0 key=OBS_KEY_F1 pressed=0 modmatch=0 hkptr_ok=1
+b 4 hk=5 mods=0x2 key=OBS_KEY_F2 pressed=0 modmatch=0 hkptr_ok=1
+enumb done
+ctxsave V1 {"a.on":[{"key":"OBS_KEY_F1"}],"a.off":[{"shift":true,"key":"OBS_KEY_F2"}]}
+release-context-removes-hotkeys-pairs-and-their-bindings
+signal hotkey_unregister id=4
+signal hotkey_unregister id=5
+h id=0 name="Mute"
+h id=1 name="Empty"
+h id=2 name="NoEntry"
+h id=3 name="x.key"
+enum done
+b 0 hk=0 mods=0x4 key=OBS_KEY_M pressed=0 modmatch=0 hkptr_ok=1
+b 1 hk=0 mods=0x0 key=OBS_KEY_N pressed=0 modmatch=0 hkptr_ok=1
+b 2 hk=2 mods=0x8 key=OBS_KEY_Q pressed=0 modmatch=0 hkptr_ok=1
+enumb done
+ctxsave V1 null

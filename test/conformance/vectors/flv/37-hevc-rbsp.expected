@@ -1,0 +1,30 @@
+echo basic
+rbsp len=5 data=4201010160 tail64zero=1
+rbsp len=8 data=4201010000000100 tail64zero=1
+rbsp len=4 data=42010000 tail64zero=1
+rbsp len=6 data=420100000000 tail64zero=1
+rbsp len=4 data=00000000 tail64zero=1
+rbsp len=5 data=0000030000 tail64zero=1
+rbsp len=2 data=0000 tail64zero=1
+echo 03 is kept when not preceded by two zeros
+rbsp len=5 data=4201000300 tail64zero=1
+rbsp len=4 data=42010003 tail64zero=1
+rbsp len=5 data=4201aa0003 tail64zero=1
+echo 00 00 03 spanning the header boundary
+rbsp len=4 data=42000001 tail64zero=1
+rbsp len=5 data=4200000301 tail64zero=1
+rbsp len=5 data=4200000301 tail64zero=1
+echo 00 00 00 03: the first two zeros pair with the 03
+rbsp len=5 data=4201000000 tail64zero=1
+rbsp len=7 data=42010000000001 tail64zero=1
+echo overlapping patterns are consumed left to right
+rbsp len=8 data=4201000000000000 tail64zero=1
+rbsp len=6 data=420100000000 tail64zero=1
+echo header_len-larger-than-the-data
+rbsp len=2 data=4201 tail64zero=1
+rbsp len=1 data=42 tail64zero=1
+rbsp len=2 data=4201 tail64zero=1
+rbsp len=2 data=4201 tail64zero=1
+echo empty
+rbsp len=0 data=- tail64zero=1
+rbsp len=0 data=- tail64zero=1

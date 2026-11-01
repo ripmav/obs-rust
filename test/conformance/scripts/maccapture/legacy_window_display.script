@@ -1,0 +1,39 @@
+# S-052 legacy window_capture / display_capture (window-utils.m, mac-display-capture.m, mac-window-capture.m).
+cw_reset
+cw_add 100 500 Safari "Home"
+cw_add 101 500 Safari ""
+cw_add 200 600 Terminal "zsh"
+cw_add 201 601 Terminal "zsh"
+cw_init Safari Home 0 0
+cw_init Safari Other 500 100
+cw_init Safari Other 999 100
+cw_init Terminal zsh 601 201
+cw_init Terminal zsh 0 0
+cw_init - - 0 0
+cw_find Terminal zsh
+cw_find Terminal nope
+cw_find - -
+cw_list 100 Safari Home 0
+cw_list 999 Safari Gone 0
+cw_list 999 Aaa Gone 0
+cw_list 101 Safari - 0
+cw_list 100 Safari Home 1
+dc_crop_mode 0
+dc_crop_mode 3
+dc_crop_mode 4
+dc_crop_mode -1
+dc_visibility 0
+dc_visibility 1
+dc_visibility 2
+dc_visibility 3
+dc_visibility 9
+# mode frame_w frame_h crop_x crop_y crop_w crop_h win_w win_h
+dc_size 0 2560 1440 10 20 30 40 800 600
+dc_size 1 2560 1440 10 20 30 40 800 600
+dc_size 2 2560 1440 10 20 30 40 800 600
+dc_size 3 2560 1440 10 20 30 40 800 600
+# mode fx fy fw fh cx cy cw ch wx wy ww wh
+dc_rect 0 0 0 2560 1440 10 20 30 40 100 50 800 600
+dc_rect 1 0 0 2560 1440 10 20 30 40 100 50 800 600
+dc_rect 2 0 0 2560 1440 10 20 30 40 100 50 800 600
+dc_rect 3 0 0 2560 1440 10 20 30 40 100 50 800 600

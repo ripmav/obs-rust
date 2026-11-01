@@ -1,0 +1,23 @@
+# S-050 obs-ffmpeg-vaapi: rate-control table (which of qp / bitrate / maxrate each mode allows) and
+# the visibility callback. Matching is case-insensitive. An unknown mode makes get_rc_mode return
+# the table's NUL sentinel (name == NULL): the lookup helper itself does not crash, but the callers
+# use rc_mode->name; see 51 for the crash DEFECT D-3.
+va_rc CBR
+va_rc cbr
+va_rc CQP
+va_rc VBR
+va_rc QVBR
+va_rc qvbr
+va_rc ""
+va_rc bogus
+set str rate_control CBR
+va_rc_modified
+set str rate_control CQP
+va_rc_modified
+set str rate_control VBR
+va_rc_modified
+set str rate_control QVBR
+va_rc_modified
+# unknown: sentinel with all three flags false -> everything hidden
+set str rate_control bogus
+va_rc_modified

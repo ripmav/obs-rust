@@ -1,0 +1,77 @@
+> trace 0
+> gs_create g
+ret 0 created
+> gs_enter_context g
+> trace 1
+> gs_texture_create 4 4 GS_RGBA 1 0 > t
+  dev device_texture_create w=4 h=4 fmt=3 levels=1 data=null flags=0
+ret #6
+> gs_samplerstate_create 0 0 0 0 1 0 > s
+  dev device_samplerstate_create filter=0 u=0 v=0 w=0 aniso=1 border=0x00000000
+ret #7
+> gs_load_texture t 0
+  dev device_load_texture tex=#6 unit=0
+> gs_load_texture t 7
+  dev device_load_texture tex=#6 unit=7
+> gs_load_texture - 3
+  dev device_load_texture tex=null unit=3
+> gs_load_samplerstate s 1
+  dev device_load_samplerstate samplerstate=#7 unit=1
+> gs_load_samplerstate - 1
+  dev device_load_samplerstate samplerstate=null unit=1
+> gs_load_default_samplerstate 1 2
+  dev device_load_default_samplerstate b_3d=true unit=2
+> gs_load_default_samplerstate 0 0
+  dev device_load_default_samplerstate b_3d=false unit=0
+> gs_swapchain_create 640 480 0 GS_BGRA GS_Z16 2 > sw
+  dev device_swapchain_create cx=640 cy=480 num_backbuffers=1 format=5 zsformat=1 adapter=2
+ret #8
+> gs_swapchain_create 640 480 3 GS_RGBA GS_ZS_NONE 0 > sw2
+  dev device_swapchain_create cx=640 cy=480 num_backbuffers=3 format=3 zsformat=0 adapter=0
+ret #9
+> gs_load_swapchain sw
+  dev device_load_swapchain swaphchain=#8
+> gs_load_swapchain -
+  dev device_load_swapchain swaphchain=null
+> gs_swapchain_destroy sw
+  dev gs_swapchain_destroy swapchain=#8
+> gs_timer_create > tm
+  dev device_timer_create
+ret #10
+> gs_timer_range_create > tr
+  dev device_timer_range_create
+ret #11
+> gs_timer_begin tm
+  dev gs_timer_begin timer=#10
+> gs_timer_end tm
+  dev gs_timer_end timer=#10
+> gs_timer_get_data tm
+  dev gs_timer_get_data timer=#10 ticks=ptr
+ret true ticks=7
+> ret gs_timer_get_data 0
+> gs_timer_get_data tm
+  dev gs_timer_get_data timer=#10 ticks=ptr
+ret false ticks=7
+> gs_timer_range_begin tr
+  dev gs_timer_range_begin range=#11
+> gs_timer_range_end tr
+  dev gs_timer_range_end range=#11
+> gs_timer_range_get_data tr
+  dev gs_timer_range_get_data range=#11 disjoint=ptr frequency=ptr
+ret false disjoint=1 freq=9
+> gs_timer_begin -
+> gs_timer_end -
+> gs_timer_get_data -
+log debug gs_timer_get_data: Null 'timer' parameter
+ret false ticks=7
+> gs_timer_range_begin -
+> gs_timer_range_end -
+> gs_timer_range_get_data -
+  dev gs_timer_range_get_data range=null disjoint=ptr frequency=ptr
+ret false disjoint=1 freq=9
+> gs_timer_destroy tm
+  dev gs_timer_destroy timer=#10
+> gs_timer_range_destroy tr
+  dev gs_timer_range_destroy range=#11
+> gs_timer_destroy -
+> gs_timer_range_destroy -

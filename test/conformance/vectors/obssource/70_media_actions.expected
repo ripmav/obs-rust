@@ -1,0 +1,24 @@
+  cb M create
+log debug source 'M' (med) created
+create m ok
+  cb P create
+log debug source 'P' (plain) created
+create p ok
+media m duration=60000 time=1234 state=4 queued=7
+  cb M media_play
+  sig media_play source=M
+  cb M media_pause
+  sig media_pause source=M
+  cb M media_restart
+  sig media_restart source=M
+  cb M media_stop
+  sig media_stopped source=M
+  cb M media_next
+  sig media_next source=M
+  cb M media_previous
+  sig media_previous source=M
+  cb M media_set_time 5000
+media m duration=60000 time=1234 state=4 queued=0
+media p duration=0 time=0 state=0 queued=0
+  sig media_started source=M
+  sig media_ended source=M

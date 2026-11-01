@@ -1,0 +1,180 @@
+# scale_filter: resolution string parsing (WxH, A:B, Base.Canvas, invalid), aspect handling and output size.
+# 'Base.Canvas' and 'None' are the (identity) translations of Base.Canvas / None; video info base is 2560x1440.
+video 2560 1440 60 1
+source T 1920 1080 1920 1080 SRGB video
+source P 1920 1080 1920 1080 SRGB video
+echo case 1 resolution=[None]
+data d1
+dset d1 resolution str "None"
+filter f1 scale_filter 0 d1 T P
+tick f1 0.016
+size f1
+render f1
+echo case 2 resolution=[Base.Canvas]
+data d2
+dset d2 resolution str "Base.Canvas"
+filter f2 scale_filter 0 d2 T P
+tick f2 0.016
+size f2
+render f2
+echo case 3 resolution=[1280x720]
+data d3
+dset d3 resolution str "1280x720"
+filter f3 scale_filter 0 d3 T P
+tick f3 0.016
+size f3
+render f3
+echo case 4 resolution=[3840x2160]
+data d4
+dset d4 resolution str "3840x2160"
+filter f4 scale_filter 0 d4 T P
+tick f4 0.016
+size f4
+render f4
+echo case 5 resolution=[1280x]
+data d5
+dset d5 resolution str "1280x"
+filter f5 scale_filter 0 d5 T P
+tick f5 0.016
+size f5
+render f5
+echo case 6 resolution=[x720]
+data d6
+dset d6 resolution str "x720"
+filter f6 scale_filter 0 d6 T P
+tick f6 0.016
+size f6
+render f6
+echo case 7 resolution=[16:9]
+data d7
+dset d7 resolution str "16:9"
+filter f7 scale_filter 0 d7 T P
+tick f7 0.016
+size f7
+render f7
+echo case 8 resolution=[16:10]
+data d8
+dset d8 resolution str "16:10"
+filter f8 scale_filter 0 d8 T P
+tick f8 0.016
+size f8
+render f8
+echo case 9 resolution=[4:3]
+data d9
+dset d9 resolution str "4:3"
+filter f9 scale_filter 0 d9 T P
+tick f9 0.016
+size f9
+render f9
+echo case 10 resolution=[1:1]
+data d10
+dset d10 resolution str "1:1"
+filter f10 scale_filter 0 d10 T P
+tick f10 0.016
+size f10
+render f10
+echo case 11 resolution=[21:9]
+data d11
+dset d11 resolution str "21:9"
+filter f11 scale_filter 0 d11 T P
+tick f11 0.016
+size f11
+render f11
+echo case 12 resolution=[1280:720]
+data d12
+dset d12 resolution str "1280:720"
+filter f12 scale_filter 0 d12 T P
+tick f12 0.016
+size f12
+render f12
+echo case 13 resolution=[garbage]
+data d13
+dset d13 resolution str "garbage"
+filter f13 scale_filter 0 d13 T P
+tick f13 0.016
+size f13
+render f13
+echo case 14 resolution=[]
+data d14
+dset d14 resolution str ""
+filter f14 scale_filter 0 d14 T P
+tick f14 0.016
+size f14
+render f14
+echo case 15 resolution=[ 640x360]
+data d15
+dset d15 resolution str " 640x360"
+filter f15 scale_filter 0 d15 T P
+tick f15 0.016
+size f15
+render f15
+echo case 16 resolution=[640x360junk]
+data d16
+dset d16 resolution str "640x360junk"
+filter f16 scale_filter 0 d16 T P
+tick f16 0.016
+size f16
+render f16
+echo case 17 resolution=[1920x1080]
+data d17
+dset d17 resolution str "1920x1080"
+filter f17 scale_filter 0 d17 T P
+tick f17 0.016
+size f17
+render f17
+echo case 18 resolution=[0x0]
+data d18
+dset d18 resolution str "0x0"
+filter f18 scale_filter 0 d18 T P
+tick f18 0.016
+size f18
+render f18
+echo case 19 resolution=[100x0]
+data d19
+dset d19 resolution str "100x0"
+filter f19 scale_filter 0 d19 T P
+tick f19 0.016
+size f19
+render f19
+echo case 20 resolution=[-5x300]
+data d20
+dset d20 resolution str "-5x300"
+filter f20 scale_filter 0 d20 T P
+tick f20 0.016
+size f20
+render f20
+echo case 21 resolution=[-4:3]
+data d21
+dset d21 resolution str "-4:3"
+filter f21 scale_filter 0 d21 T P
+tick f21 0.016
+size f21
+render f21
+echo case 22 resolution=[1920:1080]
+data d22
+dset d22 resolution str "1920:1080"
+filter f22 scale_filter 0 d22 T P
+tick f22 0.016
+size f22
+render f22
+echo case 23 resolution=[1000:1]
+data d23
+dset d23 resolution str "1000:1"
+filter f23 scale_filter 0 d23 T P
+tick f23 0.016
+size f23
+render f23
+echo case 24 resolution=[1:1000]
+data d24
+dset d24 resolution str "1:1000"
+filter f24 scale_filter 0 d24 T P
+tick f24 0.016
+size f24
+render f24
+echo case 25 resolution=[1920:1081]
+data d25
+dset d25 resolution str "1920:1081"
+filter f25 scale_filter 0 d25 T P
+tick f25 0.016
+size f25
+render f25

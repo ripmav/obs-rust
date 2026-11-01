@@ -1,0 +1,22 @@
+# Buffered file serializer: asynchronous writer; observable result is the file after
+# free (CORE). Opening truncates. get_pos is the logical write position (not the file size).
+# Debug log "Final buffer capacity ..." appears once per free (level debug).
+fput bb-a ffffffffffffffffffff
+open buf bb-a
+pos
+write 01020304
+pos
+write_pat 3 10
+pos
+close
+fget bb-a
+open buf bb-nodir/x
+funlink bb-a
+open buf bb-b
+read 2
+serialize_r 2
+write @null 4
+write 11 0
+close
+fget bb-b
+funlink bb-b

@@ -1,0 +1,16 @@
+state a audio_ts=1000000000 pending=0 buf=3072 last_buf=0 pending_stop=0 timing_set=1 timing_adjust=0 next_ts_min=1063999999 next_sys_ts_min=1063999999 resample_offset=0 failed=0 vol=1 user_vol=1 muted=0 user_muted=0 actions=0
+tick 0 ret=1 out_ts=1000000000 wait=0 total=0 bufq=0
+order a | roots a
+mix 0 0 first=1 last=1023 sum=15.0852089 peak=0.5
+mix 0 1 first=1 last=1023 sum=11.3139124 peak=0.375
+tick 1 ret=1 out_ts=1021333333 wait=0 total=0 bufq=0
+order a | roots a
+mix 0 0 first=0 last=1023 sum=-7.42694044 peak=0.5
+mix 0 1 first=0 last=1023 sum=-5.57020426 peak=0.375
+tick 2 ret=1 out_ts=1042666666 wait=0 total=0 bufq=0
+order a | roots a
+mix 0 0 first=0 last=1023 sum=-3.84090161 peak=0.5
+mix 0 1 first=0 last=1023 sum=-2.88067484 peak=0.375
+state a audio_ts=1064000000 pending=0 buf=0 last_buf=0 pending_stop=0 timing_set=1 timing_adjust=0 next_ts_min=1063999999 next_sys_ts_min=1063999999 resample_offset=0 failed=0 vol=1 user_vol=1 muted=0 user_muted=0 actions=0
+info a pending=0 ts=1064000000 mixers=255 balance=0.5 sync=0
+dump 0 0 0: -0.494636178 -0.489611417 -0.482962906 -0.474712729

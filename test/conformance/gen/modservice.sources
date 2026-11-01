@@ -1,0 +1,40 @@
+# S-035 modservice: real libobs/obs-service.c + obs-module.c + platform-nix.c (dlopen/glob), obs-data.c, obs-properties.c,
+# text-lookup.c; fake core/context layer in modservice_stubs.c. Fake plugin modules are compiled at run time with $CC.
+# -rdynamic: the dlopen'ed fake modules resolve obs_register_* / blog / modservice_* from the runner executable.
+test/conformance/gen/modservice_runner.c
+test/conformance/gen/modservice_stubs.c
+libobs/obs-service.c
+libobs/obs-module.c
+libobs/obs-data.c
+libobs/obs-properties.c
+libobs/util/text-lookup.c
+libobs/util/platform.c
+libobs/util/platform-nix.c
+libobs/util/utf8.c
+libobs/util/bmem.c
+libobs/util/base.c
+libobs/util/threading-posix.c
+libobs/util/dstr.c
+libobs/util/lexer.c
+libobs/callback/signal.c
+libobs/callback/calldata.c
+libobs/callback/decl.c
+libobs/callback/proc.c
+libobs/util/cf-lexer.c
+libobs/util/cf-parser.c
+libobs/graphics/vec2.c
+libobs/graphics/vec3.c
+libobs/graphics/vec4.c
+libobs/graphics/quat.c
+libobs/graphics/axisang.c
+libobs/graphics/matrix3.c
+libobs/graphics/matrix4.c
+libobs/graphics/plane.c
+libobs/graphics/math-extra.c
+-ljansson
+-luuid
+-ldl
+-rdynamic
+-no-pie
+-Wno-deprecated-declarations
+!nostubs

@@ -1,0 +1,19 @@
+# file-updater, step 2: remote update (CORE). The remote package.json (version greater than
+# the cache version) is fetched from <url>/package.json, written to temp, and every remote
+# file that is newer than (or missing from) the cache package is fetched from "<url field of the
+# package>/<name>", offered to the confirm callback, written to temp and moved into the cache;
+# finally package.json is moved into the cache. Files with an equal/lower remote version are
+# skipped.
+fu_put /L/package.json "{\"version\":1,\"files\":[{\"name\":\"a.json\",\"version\":1},{\"name\":\"b.json\",\"version\":1}]}"
+fu_put /L/a.json "A1"
+fu_put /L/b.json "B1"
+fu_http http://srv/updates/package.json 200 "{\"version\":3,\"url\":\"http://cdn/files\",\"files\":[{\"name\":\"a.json\",\"version\":2},{\"name\":\"b.json\",\"version\":1},{\"name\":\"c.json\",\"version\":1}]}"
+fu_http http://cdn/files/a.json 200 "A2-remote"
+fu_http http://cdn/files/b.json 200 "B-should-not-be-fetched"
+fu_http http://cdn/files/c.json 200 "C1-remote"
+fu_run /L /C http://srv/updates UA/1.0
+fu_ls
+fu_cat /C/a.json
+fu_cat /C/b.json
+fu_cat /C/c.json
+fu_cat /C/package.json

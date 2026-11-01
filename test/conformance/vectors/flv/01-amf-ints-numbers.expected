@@ -1,0 +1,53 @@
+enc_int16 len=2 hex=0000
+enc_int16 len=2 hex=0001
+enc_int16 len=2 hex=1234
+enc_int16 len=2 hex=ffff
+enc_int16 len=2 hex=2345
+enc_int24 len=3 hex=123456
+enc_int24 len=3 hex=ffffff
+enc_int24 len=3 hex=ffffff
+enc_int32 len=4 hex=12345678
+enc_int32 len=4 hex=fffffffe
+enc_int32 len=4 hex=7fffffff
+enc_int32 len=4 hex=80000000
+dec_int16 0
+dec_int16 65535
+dec_int16 32769
+dec_int24 66051
+dec_int24 16777215
+dec_int32 16909060
+dec_int32 4294967295
+dec_int32 2147483648
+enc_number len=9 hex=000000000000000000
+enc_number len=9 hex=003ff0000000000000
+enc_number len=9 hex=00bff0000000000000
+enc_number len=9 hex=003ff8000000000000
+enc_number len=9 hex=00400921fb54442d11
+enc_number len=9 hex=00409e000000000000
+enc_number len=9 hex=007fe1ccf385ebc8a0
+enc_number len=9 hex=000000000000000001
+enc_number len=9 hex=008000000000000000
+enc_number len=9 hex=007ff0000000000000
+enc_number len=9 hex=00fff0000000000000
+enc_number len=9 hex=007ff8000000000000
+enc_number len=9 hex=007ff8000000000001
+enc_number len=9 hex=00fff8000000000000
+enc_number len=9 hex=003fb999999999999a
+dec_number 1 bits=3ff0000000000000
+dec_number -1 bits=bff0000000000000
+dec_number 0 bits=0000000000000000
+dec_number -0 bits=8000000000000000
+dec_number inf bits=7ff0000000000000
+dec_number -inf bits=fff0000000000000
+dec_number nan bits=7ff8000000000000
+dec_number nan bits=7ff0000000000001
+dec_number 0.10000000000000001 bits=3fb999999999999a
+dec_number 4.9406564584124654e-324 bits=0000000000000001
+enc_bool len=2 hex=0100
+enc_bool len=2 hex=0101
+enc_bool len=2 hex=0101
+enc_bool len=2 hex=0101
+dec_bool 0
+dec_bool 1
+dec_bool 1
+dec_bool 1

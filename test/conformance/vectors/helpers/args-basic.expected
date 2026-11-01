@@ -1,0 +1,12 @@
+args_dump argc=1
+  argv[0]="/usr/bin/tool"
+  argv[1]=@null
+args_dump argc=7
+  argv[0]="/usr/bin/tool"
+  argv[1]="--flag"
+  argv[2]="value"
+  argv[3]="with space"
+  argv[4]=""
+  argv[5]="--key=val ue"
+  argv[6]="quote\"d \\ back"
+  argv[7]=@null

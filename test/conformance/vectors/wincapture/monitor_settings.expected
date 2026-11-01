@@ -1,0 +1,22 @@
+monitor int 0 default
+capture_cursor bool true default
+compatibility bool false default
+method int 0 default
+monitor_id str DUMMY default
+monitor_wgc int 0 default
+capture_cursor bool true default
+force_sdr bool false default
+dup_method dxgi
+dup_method wgc
+dup_method dxgi
+dup_method wgc
+dup_method wgc
+dup_method wgc
+dup_method wgc
+dup_method dxgi
+dup_method dxgi
+dup_method dxgi
+dup_method dxgi
+dup_method dxgi
+dup_method wgc
+dup_method dxgi

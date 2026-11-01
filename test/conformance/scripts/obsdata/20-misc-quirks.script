@@ -1,0 +1,50 @@
+# Assorted behaviours that do not fit elsewhere (apply semantics, NULL object over default, newref).
+echo --- apply drops NULL objects and nested defaults, replaces (not merges) sub-objects
+new t
+new tsub
+set_int tsub keep 1
+set_obj t sub tsub
+new s
+new ssub
+set_int ssub other 2
+set_default_int ssub dflt 3
+set_obj s sub ssub
+set_obj s nul @null
+apply t s
+dump t
+echo --- a user NULL object hides the default object (get_obj gives NULL); the default getter still sees it
+new a
+new d
+set_int d v 1
+set_default_obj a o d
+get_obj a o x
+set_obj a o @null
+get_obj a o y
+get_default_obj a o z
+json_defaults a
+echo --- erasing then re-adding puts the name at the end
+new b
+set_int b one 1
+set_int b two 2
+erase b one
+set_int b one 11
+names b
+echo --- get_defaults uses the user value's number type for the conversion
+new g
+set_default_double g x 2.9
+set_int g x 1
+get_defaults g gd
+dump gd
+echo --- set_default on an item holding a user value of another kind is ignored
+new h
+set_string h k "s"
+set_default_bool h k 1
+has_default h k
+dump h
+echo --- obs_data_newref
+new n
+newref n n2
+refs n
+newref @null fresh
+dump fresh
+refs fresh

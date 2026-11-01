@@ -1,0 +1,12 @@
+# DEFECT: when the (re)created resampler fails, obs_source_output_audio returns from process_audio early but still
+# pushes source->audio_data (the PREVIOUS successfully processed packet, or an empty one) into the buffer.
+# Here a good packet is followed by a packet whose format needs a resampler that cannot be created:
+# the old packet is stored again at the new timestamp.
+init 48000 2
+clock 1000000000
+source a input
+output a 48000 2 480 1000000000 const 0.5
+state a
+resampler 0 1
+output a 44100 2 441 1010000000 const 0.9
+state a

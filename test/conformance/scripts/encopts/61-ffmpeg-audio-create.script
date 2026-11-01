@@ -1,0 +1,47 @@
+# CORE. enc_create: codec lookup (alternative name "opus" if "libopus" is missing), bitrate
+# validation (0 is invalid unless the codec descriptor is lossless), bit rate = kbps*1000
+# (0 for lossless codecs: "set by encoder on init"), channel layout by speaker layout,
+# sample format selection against the codec's list, sample rate snapping, flags, strict
+# compliance, frame size fallback (0 -> 1024) and per-frame sizes.
+# The fake codec table: aac libopus opus pcm_s16le pcm_s24le pcm_f32le alac flac, all present;
+# alac/flac/pcm are lossless. aud_formats/aud_rates set the supported lists ("none" = NULL list).
+data D
+aud_defaults D
+audio 2 2 48000
+aud_formats fltp
+aud_rates none
+echo aac-stereo
+aud_create aac D
+echo opus-uses-libopus-first
+aud_formats flt,s16
+aud_create opus D
+echo opus-falls-back-to-opus-name
+aud_codec libopus 0
+aud_create opus D
+aud_codec libopus 1
+echo missing-codec
+aud_codec aac 0
+aud_create aac D
+aud_codec aac 1
+echo zero-bitrate-invalid-for-lossy
+set D bitrate int 0
+aud_create aac D
+echo zero-bitrate-allowed-for-lossless
+aud_create flac D
+aud_create alac D
+aud_create pcm D
+aud_create pcm24 D
+aud_create pcm32 D
+echo bitrate-of-lossless-codec-ignored
+set D bitrate int 320
+aud_create flac D
+echo lossy-bitrate
+aud_create aac D
+echo negative-bitrate-is-accepted-and-negated
+set D bitrate int -64
+aud_create aac D
+set D bitrate int 128
+echo open-failure
+aud_open_fail 1
+aud_create aac D
+aud_open_fail 0

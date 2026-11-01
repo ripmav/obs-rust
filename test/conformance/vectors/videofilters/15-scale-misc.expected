@@ -1,0 +1,165 @@
+call samplerstate_create s1 filter=POINT u=CLAMP v=CLAMP w=CLAMP aniso=0 border=0
+create a -> ok
+call get_param base:area:image -> ok
+call get_param base:area:base_dimension -> ok
+call get_param base:area:base_dimension_i -> ok
+call get_param base:area:multiplier -> ok
+tick a 0.016
+size a width=1280 height=720
+render a
+call filter_begin_cs a format=RGBA space=SRGB allow=NO_DIRECT -> 1
+call set_vec2 base:area:base_dimension 1920 1080
+call set_vec2 base:area:base_dimension_i 0.00052083336 0.00092592591
+call set_float base:area:multiplier 1
+call blend_push
+call blend_function ONE INVSRCALPHA
+call filter_tech_end a base:area size=1280x720 technique=Draw exists=1
+call blend_pop
+echo video info changes: base canvas is re-read each tick
+call get_param base:bilinear_lowres_scale:image -> ok
+call get_param base:bilinear_lowres_scale:base_dimension -> null
+call get_param base:bilinear_lowres_scale:base_dimension_i -> null
+call get_param base:bilinear_lowres_scale:multiplier -> ok
+tick a 0.016
+size a width=640 height=480
+render a
+call filter_begin_cs a format=RGBA space=SRGB allow=NO_DIRECT -> 1
+call set_float base:bilinear_lowres_scale:multiplier 1
+call blend_push
+call blend_function ONE INVSRCALPHA
+call filter_tech_end a base:bilinear_lowres_scale size=640x480 technique=Draw exists=1
+call blend_pop
+echo zero-size target: output size 0 and filter skipped
+tick a 0.016
+size a width=0 height=0
+render a
+call skip_video_filter a
+echo no target: tick marks target invalid
+call samplerstate_create s2 filter=POINT u=CLAMP v=CLAMP w=CLAMP aniso=0 border=0
+create n -> ok
+tick n 0.016
+size n width=0 height=0
+render n
+call skip_video_filter n
+echo before the first tick the filter is not valid for render (target_valid false)
+call samplerstate_create s3 filter=POINT u=CLAMP v=CLAMP w=CLAMP aniso=0 border=0
+create m -> ok
+render m
+call skip_video_filter m
+echo colour space combinations (area sampling, upscaling target)
+call samplerstate_create s4 filter=POINT u=CLAMP v=CLAMP w=CLAMP aniso=0 border=0
+create s -> ok
+tick s 0.016
+render s
+call filter_begin_cs s format=RGBA space=SRGB allow=NO_DIRECT -> 1
+call set_vec2 base:area:base_dimension 1920 1080
+call set_vec2 base:area:base_dimension_i 0.00052083336 0.00092592591
+call set_float base:area:multiplier 5
+call blend_push
+call blend_function ONE INVSRCALPHA
+call filter_tech_end s base:area size=3840x2160 technique=DrawUpscaleMultiply exists=1
+call blend_pop
+render s
+call filter_begin_cs s format=RGBA16F space=709_EXTENDED allow=NO_DIRECT -> 1
+call set_vec2 base:area:base_dimension 1920 1080
+call set_vec2 base:area:base_dimension_i 0.00052083336 0.00092592591
+call set_float base:area:multiplier 1
+call blend_push
+call blend_function ONE INVSRCALPHA
+call filter_tech_end s base:area size=3840x2160 technique=DrawUpscaleTonemap exists=1
+call blend_pop
+render s
+call filter_begin_cs s format=RGBA16F space=709_EXTENDED allow=NO_DIRECT -> 1
+call set_vec2 base:area:base_dimension 1920 1080
+call set_vec2 base:area:base_dimension_i 0.00052083336 0.00092592591
+call set_float base:area:multiplier 5
+call blend_push
+call blend_function ONE INVSRCALPHA
+call filter_tech_end s base:area size=3840x2160 technique=DrawUpscaleMultiply exists=1
+call blend_pop
+render s
+call filter_begin_cs s format=RGBA16F space=709_SCRGB allow=NO_DIRECT -> 1
+call set_vec2 base:area:base_dimension 1920 1080
+call set_vec2 base:area:base_dimension_i 0.00052083336 0.00092592591
+call set_float base:area:multiplier 0.200000003
+call blend_push
+call blend_function ONE INVSRCALPHA
+call filter_tech_end s base:area size=3840x2160 technique=DrawUpscaleMultiplyTonemap exists=1
+call blend_pop
+render s
+call filter_begin_cs s format=RGBA16F space=709_SCRGB allow=NO_DIRECT -> 1
+call set_vec2 base:area:base_dimension 1920 1080
+call set_vec2 base:area:base_dimension_i 0.00052083336 0.00092592591
+call set_float base:area:multiplier 0.200000003
+call blend_push
+call blend_function ONE INVSRCALPHA
+call filter_tech_end s base:area size=3840x2160 technique=DrawUpscaleMultiply exists=1
+call blend_pop
+render s
+call filter_begin_cs s format=RGBA16F space=709_SCRGB allow=NO_DIRECT -> 1
+call set_vec2 base:area:base_dimension 1920 1080
+call set_vec2 base:area:base_dimension_i 0.00052083336 0.00092592591
+call set_float base:area:multiplier 1
+call blend_push
+call blend_function ONE INVSRCALPHA
+call filter_tech_end s base:area size=3840x2160 technique=DrawUpscale exists=1
+call blend_pop
+echo point sampling sets the point sampler on image; created at filter creation
+call samplerstate_create s5 filter=POINT u=CLAMP v=CLAMP w=CLAMP aniso=0 border=0
+create q -> ok
+call get_param base:default:image -> ok
+call get_param base:default:multiplier -> ok
+tick q 0.016
+render q
+call filter_begin_cs q format=RGBA space=SRGB allow=NO_DIRECT -> 1
+call set_float base:default:multiplier 1
+call set_next_sampler base:default:image s5
+call blend_push
+call blend_function ONE INVSRCALPHA
+call filter_tech_end q base:default size=800x600 technique=Draw exists=1
+call blend_pop
+echo undistort techniques per colour space (bicubic)
+call samplerstate_create s6 filter=POINT u=CLAMP v=CLAMP w=CLAMP aniso=0 border=0
+create r -> ok
+call get_param base:bilinear_lowres_scale:base_dimension -> null
+call get_param base:bilinear_lowres_scale:base_dimension_i -> null
+tick r 0.016
+render r
+call filter_begin_cs r format=RGBA space=SRGB allow=NO_DIRECT -> 1
+call set_float base:bilinear_lowres_scale:multiplier 5
+call blend_push
+call blend_function ONE INVSRCALPHA
+call filter_tech_end r base:bilinear_lowres_scale size=800x600 technique=DrawMultiply exists=1
+call blend_pop
+render r
+call filter_begin_cs r format=RGBA16F space=709_EXTENDED allow=NO_DIRECT -> 1
+call set_float base:bilinear_lowres_scale:multiplier 1
+call blend_push
+call blend_function ONE INVSRCALPHA
+call filter_tech_end r base:bilinear_lowres_scale size=800x600 technique=DrawTonemap exists=1
+call blend_pop
+render r
+call filter_begin_cs r format=RGBA16F space=709_EXTENDED allow=NO_DIRECT -> 1
+call set_float base:bilinear_lowres_scale:multiplier 5
+call blend_push
+call blend_function ONE INVSRCALPHA
+call filter_tech_end r base:bilinear_lowres_scale size=800x600 technique=DrawMultiply exists=1
+call blend_pop
+render r
+call filter_begin_cs r format=RGBA16F space=709_SCRGB allow=NO_DIRECT -> 1
+call set_float base:bilinear_lowres_scale:multiplier 0.200000003
+call blend_push
+call blend_function ONE INVSRCALPHA
+call filter_tech_end r base:bilinear_lowres_scale size=800x600 technique=DrawMultiplyTonemap exists=1
+call blend_pop
+render r
+call filter_begin_cs r format=RGBA16F space=709_SCRGB allow=NO_DIRECT -> 1
+call set_float base:bilinear_lowres_scale:multiplier 0.200000003
+call blend_push
+call blend_function ONE INVSRCALPHA
+call filter_tech_end r base:bilinear_lowres_scale size=800x600 technique=DrawMultiply exists=1
+call blend_pop
+echo begin refused: nothing is set
+render r
+call filter_begin_cs r format=RGBA16F space=709_SCRGB allow=NO_DIRECT -> 0
+cs r -> SRGB

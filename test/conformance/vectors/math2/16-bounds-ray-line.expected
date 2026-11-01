@@ -1,0 +1,25 @@
+h hit 1 4
+h hit 1 2
+h hit 0 -7777
+h hit 1 1
+h hit 1 1
+h hit 0 -7777
+h hit 1 4
+h hit 0 -7777
+h hit 1 4
+h hit 0 -7777
+h hit 1 4
+h hit 1 2
+h hit 1 3.39999995e+38
+h hit 0 -7777
+h hit 1 0.400000006
+h hit 1 2
+h hit 1 0.400000006
+h hit 0 -7777
+h hit 0 -7777
+h hit 1 50000
+h hit 0 -7777
+r bool 1
+r bool 0
+r bool 1
+r bool 0

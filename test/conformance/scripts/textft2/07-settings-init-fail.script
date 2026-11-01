@@ -1,0 +1,17 @@
+# FreeType library initialisation failing: sources are created but update does nothing but settings bookkeeping (S-038-R37).
+reset
+ascii 5 8 0 8 384
+font "Sans Serif" - 0 p/sans
+fail_init on
+load
+create s 2
+setfont s "Sans Serif" - 20 0
+set s text "ab"
+set s outline true
+update s
+state s
+size s
+render s
+echo --- unload with an uninitialised plugin does not call FT_Done_FreeType
+destroy s
+unload

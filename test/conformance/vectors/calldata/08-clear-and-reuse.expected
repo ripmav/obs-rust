@@ -1,0 +1,7 @@
+capacity 128
+dump size=8 bytes=0000000000000000
+get_int a fail
+get_string b fail
+dump size=34 bytes=02000000000000006300080000000000000003000000000000000000000000000000
+capacity 128
+dump size=0 bytes=-

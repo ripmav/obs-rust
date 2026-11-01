@@ -1,0 +1,9 @@
+# Emitting the same signal from inside a callback is allowed (recursive lock).
+# The script limits the depth to 6; "inc:n" modifies the shared parameters.
+handler h
+add h "void s(int n)"
+callback rec inc:n emit:h:s
+callback watcher
+connect h s rec
+connect h s watcher
+emit h s n=0

@@ -1,0 +1,20 @@
+  cb C create
+log debug source 'C' (cam) created
+create c ok
+  cb F1 create
+log debug private source 'F1' (fa) created
+create f1 ok
+  cb F2 create
+log debug private source 'F2' (fa) created
+create f2 ok
+log debug - filter 'F1' (fa) added to source 'C'
+log debug - filter 'F2' (fa) added to source 'C'
+  cb F1 filter_video ts=1000000000 2x2
+  cb F2 filter_video ts=1000000000 2x2
+astate c active=1 last_frame_ts=1000000000 queue=[] cache=1 used=1 [1/0] cur=1000000000 prev=- tex=2x2 fmt=bgra full_range=1 gpu=0 rotation=0 unbuffered=0
+echo ---
+  cb F2 filter_video ts=1050000000 2x2
+echo ---
+  cb F1 filter_video ts=1150000000 2x2
+astate c active=1 last_frame_ts=1200000000 queue=[] cache=2 used=1 [1/0,0/0] cur=- prev=- tex=2x2 fmt=bgra full_range=1 gpu=0 rotation=0 unbuffered=0
+echo ---

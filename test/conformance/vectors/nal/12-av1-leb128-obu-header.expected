@@ -1,0 +1,75 @@
+echo leb128-one-byte
+av1_leb128 value=0 len=1
+av1_leb128 value=1 len=1
+av1_leb128 value=127 len=1
+echo leb128-two-bytes
+av1_leb128 value=128 len=2
+av1_leb128 value=16383 len=2
+av1_leb128 value=624485 len=3
+echo leb128-three-and-four-bytes
+av1_leb128 value=16384 len=3
+av1_leb128 value=2097151 len=3
+av1_leb128 value=2097152 len=4
+av1_leb128 value=268435455 len=4
+echo leb128-five-bytes-below-2-pow-31
+av1_leb128 value=268435456 len=5
+av1_leb128 value=2147483647 len=5
+echo leb128-stops-after-first-byte-without-continuation
+av1_leb128 value=1 len=1
+av1_leb128 value=127 len=1
+echo leb128-truncated-input
+av1_leb128 value=0 len=0
+av1_leb128 value=0 len=1
+av1_leb128 value=0 len=2
+av1_leb128 value=127 len=1
+echo leb128-redundant-zero-groups
+av1_leb128 value=0 len=2
+av1_leb128 value=0 len=3
+av1_leb128 value=16383 len=3
+echo obu-no-size-field
+av1_obu start=1 size=0 type=1
+av1_obu start=1 size=3 type=1
+av1_obu start=2 size=0 type=1
+av1_obu start=2 size=3 type=1
+av1_obu start=1 size=1 type=15
+echo obu-with-size-field
+av1_obu start=2 size=0 type=1
+av1_obu start=2 size=3 type=1
+av1_obu start=1 size=0 type=2
+av1_obu start=2 size=0 type=2
+av1_obu start=2 size=1 type=6
+av1_obu start=2 size=1 type=5
+av1_obu start=2 size=0 type=15
+echo obu-size-leb128-multi-byte
+av1_obu start=3 size=128 type=6
+av1_obu start=3 size=16383 type=6
+av1_obu start=4 size=624485 type=6
+av1_obu start=5 size=2097152 type=6
+echo obu-header-only-with-size-field-and-no-room-for-the-size
+av1_obu start=1 size=0 type=1
+av1_obu start=1 size=0 type=6
+echo obu-extension-flag-adds-one-byte
+av1_obu start=3 size=2 type=1
+av1_obu start=3 size=0 type=1
+av1_obu start=3 size=0 type=1
+av1_obu start=2 size=0 type=1
+av1_obu start=5 size=1252778 type=1
+echo obu-extension-without-size-field-counts-whole-rest
+av1_obu start=2 size=3 type=1
+av1_obu start=2 size=1 type=1
+echo forbidden-and-reserved-bits-are-ignored
+av1_obu start=2 size=0 type=1
+av1_obu start=2 size=0 type=1
+av1_obu start=2 size=1 type=1
+echo obu-types
+av1_obu start=2 size=0 type=1
+av1_obu start=2 size=0 type=2
+av1_obu start=2 size=0 type=3
+av1_obu start=2 size=0 type=4
+av1_obu start=2 size=0 type=5
+av1_obu start=2 size=0 type=6
+av1_obu start=2 size=0 type=7
+av1_obu start=2 size=0 type=8
+av1_obu start=2 size=0 type=15
+av1_obu start=2 size=0 type=0
+av1_obu start=2 size=0 type=13

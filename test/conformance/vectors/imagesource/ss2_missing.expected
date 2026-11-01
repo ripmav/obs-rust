@@ -1,0 +1,74 @@
+ev create slideshow_v2#1 public
+ev hotkey_register slideshow_v2#1 id=1 name=SlideShow.PlayPause desc=SlideShow.PlayPause
+ev hotkey_register slideshow_v2#1 id=2 name=SlideShow.Restart desc=SlideShow.Restart
+ev hotkey_register slideshow_v2#1 id=3 name=SlideShow.Stop desc=SlideShow.Stop
+ev hotkey_register slideshow_v2#1 id=4 name=SlideShow.NextSlide desc=SlideShow.NextSlide
+ev hotkey_register slideshow_v2#1 id=5 name=SlideShow.PreviousSlide desc=SlideShow.PreviousSlide
+ev create fade_transition#2 private
+ev create image_source#3[/s/a.png] private
+ev task_queued
+ev create image_source#4[/gone/q.png] private
+ev task_queued
+ev create image_source#5[/gone/r.png] private
+ev task_queued
+ev tr_size fade_transition#2 1920x1080
+ev tr_align fade_transition#2 0
+ev tr_scale fade_transition#2 1
+ev tr_start fade_transition#2 mode=0 ms=700 dest=image_source#3[/s/a.png] -> started
+ev signal media_started slideshow_v2#1
+tick 0 clock=16000001
+missing count=2
+missing 0 path="/gone/q.png"
+missing 1 path="/gone/r.png"
+missing count=2
+missing 0 path="/gone/q.png"
+missing 1 path="/gone/r.png"
+ev missing_file_replace slideshow_v2#1 new=/s/b.png
+ev create fade_transition#6 private
+ev destroy fade_transition#2
+ev destroy image_source#4[/gone/q.png]
+ev destroy image_source#5[/gone/r.png]
+ev destroy image_source#3[/s/a.png]
+ev create image_source#7[/s/a.png] private
+ev task_queued
+ev create image_source#8[/s/b.png] private
+ev task_queued
+ev create image_source#9[/gone/r.png] private
+ev task_queued
+ev tr_size fade_transition#6 1920x1080
+ev tr_align fade_transition#6 0
+ev tr_scale fade_transition#6 1
+ev tr_start fade_transition#6 mode=0 ms=700 dest=image_source#7[/s/a.png] -> started
+ev signal media_started slideshow_v2#1
+tick 0 clock=32000002
+state slideshow2 behavior=2 manual=0 randomize=0 loop=1 hide=0 use_cut=0 paused=0 stop=0 restart_on_activate=0 pause_on_deactivate=0 slide_time=2.70000005 tr_speed=700 tr_name=null elapsed=0.0160000008 cx=1920 cy=1080 state=1 transition=fade_transition#6 files=3
+state   file 0 /s/a.png
+state   file 1 /s/b.png
+state   file 2 /gone/r.png
+state   cur 0 image_source#7[/s/a.png]
+state   prev 1:image_source#8[/s/b.png] 2:image_source#9[/gone/r.png] 0:image_source#7[/s/a.png] 1:image_source#8[/s/b.png] 2:image_source#9[/gone/r.png]
+state   next 1:image_source#8[/s/b.png] 2:image_source#9[/gone/r.png] 0:image_source#7[/s/a.png] 1:image_source#8[/s/b.png] 2:image_source#9[/gone/r.png]
+missing count=1
+missing 0 path="/gone/r.png"
+ev missing_file_replace slideshow_v2#1 new=@null
+ev create fade_transition#10 private
+ev destroy fade_transition#6
+ev destroy image_source#8[/s/b.png]
+ev destroy image_source#9[/gone/r.png]
+ev destroy image_source#7[/s/a.png]
+ev create image_source#11[/s/a.png] private
+ev task_queued
+ev create image_source#12[/s/b.png] private
+ev task_queued
+ev tr_size fade_transition#10 1920x1080
+ev tr_align fade_transition#10 0
+ev tr_scale fade_transition#10 1
+ev tr_start fade_transition#10 mode=0 ms=700 dest=image_source#11[/s/a.png] -> started
+ev signal media_started slideshow_v2#1
+tick 0 clock=48000003
+state slideshow2 behavior=2 manual=0 randomize=0 loop=1 hide=0 use_cut=0 paused=0 stop=0 restart_on_activate=0 pause_on_deactivate=0 slide_time=2.70000005 tr_speed=700 tr_name=null elapsed=0.0160000008 cx=1920 cy=1080 state=1 transition=fade_transition#10 files=2
+state   file 0 /s/a.png
+state   file 1 /s/b.png
+state   cur 0 image_source#11[/s/a.png]
+state   prev 1:image_source#12[/s/b.png] 0:image_source#11[/s/a.png] 1:image_source#12[/s/b.png] 0:image_source#11[/s/a.png] 1:image_source#12[/s/b.png]
+state   next 1:image_source#12[/s/b.png] 0:image_source#11[/s/a.png] 1:image_source#12[/s/b.png] 0:image_source#11[/s/a.png] 1:image_source#12[/s/b.png]

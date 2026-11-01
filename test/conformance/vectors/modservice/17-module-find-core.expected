@@ -1,0 +1,14 @@
+mkmod core1 ok
+found name=obs-core1 bin=@TMP/core/bin/obs-core1.so data=@TMP/core/data/obs-core1 type=1
+find_core -> 1 name=obs-core1
+found name=obs-core1 bin=@TMP/core/bin/obs-core1.so data=@TMP/core/data/obs-core1 type=1
+find_core -> 1 name=obs-core1
+log warning Module obs-core1 is not a core module, and must be loaded with the plugin loader.
+find_core -> 0 name=obs-core1
+log warning Module obs-core1 is not a core module, and must be loaded with the plugin loader.
+find_core -> 0 name=obs-core1
+find_core -> 0 name=missing
+mkmod q ok
+found name=libqux bin=@TMP/core/bin/libqux.so data=@TMP/core/data/qux type=1
+find_core -> 1 name=libqux
+find_core -> 0 name=libfoo

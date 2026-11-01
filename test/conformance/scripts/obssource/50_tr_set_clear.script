@@ -1,0 +1,28 @@
+# Transition basics: a fresh transition has no children, alignment LEFT|TOP (5), scale type MAX_ONLY (0) and is
+# idle.  obs_transition_set makes the given source the only child (slot A, "active"): the transition adds itself
+# as active-child parent (the child gets the transition's current show/activate references).  clear removes them.
+kind in input video enum,activate,show,size
+kind tr transition video,audio tstart,tstop
+create t tr T
+create a in A
+create b in B
+tr_state t
+tr_get t
+inc_active t
+tr_set t a
+tr_state t
+state a
+tr_set t b
+tr_state t
+state a
+state b
+refs a
+refs b
+tr_set t -
+tr_state t
+state b
+tr_set t a
+tr_clear t
+tr_state t
+state a
+refs a

@@ -1,0 +1,123 @@
+reset ok
+> reset
+reset ok
+> set path rtmp://h/a
+> set key k
+> set new_socket_loop 1
+> venc 0 h264 2500
+> aenc 0 aac 160
+> try_connect
+log info [rtmp stream: 'out'] Connecting to RTMP URL rtmp://h/a...
+fake RTMP_Init
+fake RTMP_SetupURL "rtmp://h/a" -> 1
+fake RTMP_EnableWrite
+fake RTMP_AddStream "k"
+fake RTMP_Connect pubUser="" pubPasswd="" flashVer="FMLE/3.0 (compatible; FMSc/1.0)" swfUrl_is_tcUrl=1 outChunk=4096 sendChunkInfo=1 nagle=1 bindLen=0
+fake RTMP_ConnectStream seek=0 -> 1
+log info [rtmp stream: 'out'] Connection to rtmp://h/a (192.0.2.7) successful
+fake pthread_create #1
+log info [rtmp stream: 'out'] New socket loop enabled by user
+log warning [rtmp stream: 'out'] New socket loop not supported on this platform
+try_connect -> -4 wbuf_size=442880 new_socket_loop=1 low_latency=0
+bind len=0 family=0
+after active=0 disconnected=0 total_bytes=0
+> venc 0 h264 6000
+> try_connect
+log info [rtmp stream: 'out'] Connecting to RTMP URL rtmp://h/a...
+fake RTMP_Init
+fake RTMP_SetupURL "rtmp://h/a" -> 1
+fake RTMP_EnableWrite
+fake RTMP_AddStream "k"
+fake RTMP_Connect pubUser="" pubPasswd="" flashVer="FMLE/3.0 (compatible; FMSc/1.0)" swfUrl_is_tcUrl=1 outChunk=4096 sendChunkInfo=1 nagle=1 bindLen=0
+fake RTMP_ConnectStream seek=0 -> 1
+log info [rtmp stream: 'out'] Connection to rtmp://h/a (192.0.2.7) successful
+fake pthread_create #2
+log info [rtmp stream: 'out'] New socket loop enabled by user
+log warning [rtmp stream: 'out'] New socket loop not supported on this platform
+try_connect -> -4 wbuf_size=890880 new_socket_loop=1 low_latency=0
+bind len=0 family=0
+after active=0 disconnected=0 total_bytes=0
+> set low_latency_mode 0
+> venc 0 h264 0
+> try_connect
+log info [rtmp stream: 'out'] Connecting to RTMP URL rtmp://h/a...
+fake RTMP_Init
+fake RTMP_SetupURL "rtmp://h/a" -> 1
+fake RTMP_EnableWrite
+fake RTMP_AddStream "k"
+fake RTMP_Connect pubUser="" pubPasswd="" flashVer="FMLE/3.0 (compatible; FMSc/1.0)" swfUrl_is_tcUrl=1 outChunk=4096 sendChunkInfo=1 nagle=1 bindLen=0
+fake RTMP_ConnectStream seek=0 -> 1
+log info [rtmp stream: 'out'] Connection to rtmp://h/a (192.0.2.7) successful
+fake pthread_create #3
+log info [rtmp stream: 'out'] New socket loop enabled by user
+log warning [rtmp stream: 'out'] Video encoder didn't return a valid bitrate, new network code may function poorly. Low latency mode disabled.
+log warning [rtmp stream: 'out'] New socket loop not supported on this platform
+try_connect -> -4 wbuf_size=1402880 new_socket_loop=1 low_latency=0
+bind len=0 family=0
+after active=0 disconnected=0 total_bytes=0
+> reset
+reset ok
+> set path rtmp://h/a
+> set key k
+> set new_socket_loop 1
+> venc 0 h264 10000
+> aenc 0 aac 100
+> aenc 1 aac 900
+> try_connect
+log info [rtmp stream: 'out'] Connecting to RTMP URL rtmp://h/a...
+fake RTMP_Init
+fake RTMP_SetupURL "rtmp://h/a" -> 1
+fake RTMP_EnableWrite
+fake RTMP_AddStream "k"
+fake RTMP_Connect pubUser="" pubPasswd="" flashVer="FMLE/3.0 (compatible; FMSc/1.0)" swfUrl_is_tcUrl=1 outChunk=4096 sendChunkInfo=1 nagle=1 bindLen=0
+fake RTMP_ConnectStream seek=0 -> 1
+log info [rtmp stream: 'out'] Connection to rtmp://h/a (192.0.2.7) successful
+fake pthread_create #1
+log info [rtmp stream: 'out'] New socket loop enabled by user
+log warning [rtmp stream: 'out'] New socket loop not supported on this platform
+try_connect -> -4 wbuf_size=1356800 new_socket_loop=1 low_latency=0
+bind len=0 family=0
+after active=0 disconnected=0 total_bytes=0
+> reset
+reset ok
+> set path rtmp://h/a
+> set key k
+> set new_socket_loop 1
+> venc 0 h264 10000
+> aenc 1 aac 900
+> try_connect
+log info [rtmp stream: 'out'] Connecting to RTMP URL rtmp://h/a...
+fake RTMP_Init
+fake RTMP_SetupURL "rtmp://h/a" -> 1
+fake RTMP_EnableWrite
+fake RTMP_AddStream "k"
+fake RTMP_Connect pubUser="" pubPasswd="" flashVer="FMLE/3.0 (compatible; FMSc/1.0)" swfUrl_is_tcUrl=1 outChunk=4096 sendChunkInfo=1 nagle=1 bindLen=0
+fake RTMP_ConnectStream seek=0 -> 1
+log info [rtmp stream: 'out'] Connection to rtmp://h/a (192.0.2.7) successful
+fake pthread_create #1
+log info [rtmp stream: 'out'] New socket loop enabled by user
+log warning [rtmp stream: 'out'] New socket loop not supported on this platform
+try_connect -> -4 wbuf_size=1280000 new_socket_loop=1 low_latency=0
+bind len=0 family=0
+after active=0 disconnected=0 total_bytes=0
+> reset
+reset ok
+> set path rtmp://h/a
+> set key k
+> set new_socket_loop 1
+> venc 0 h264 100
+> try_connect
+log info [rtmp stream: 'out'] Connecting to RTMP URL rtmp://h/a...
+fake RTMP_Init
+fake RTMP_SetupURL "rtmp://h/a" -> 1
+fake RTMP_EnableWrite
+fake RTMP_AddStream "k"
+fake RTMP_Connect pubUser="" pubPasswd="" flashVer="FMLE/3.0 (compatible; FMSc/1.0)" swfUrl_is_tcUrl=1 outChunk=4096 sendChunkInfo=1 nagle=1 bindLen=0
+fake RTMP_ConnectStream seek=0 -> 1
+log info [rtmp stream: 'out'] Connection to rtmp://h/a (192.0.2.7) successful
+fake pthread_create #1
+log info [rtmp stream: 'out'] New socket loop enabled by user
+log warning [rtmp stream: 'out'] New socket loop not supported on this platform
+try_connect -> -4 wbuf_size=131072 new_socket_loop=1 low_latency=0
+bind len=0 family=0
+after active=0 disconnected=0 total_bytes=0

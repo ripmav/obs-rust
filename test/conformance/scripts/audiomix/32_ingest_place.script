@@ -1,0 +1,13 @@
+# Placement into the input buffer: data older than audio_ts resets the buffer; overlapping data overwrites; data more than 1000 ticks ahead is dropped.
+init 48000 2
+clock 1000000000
+timeline 1000000000
+source a input
+output a 48000 2 1000 1000000000 const 0.1
+state a
+output a 48000 2 100 1005000000 const 0.5
+state a
+output a 48000 2 100 990000000 const 0.5
+state a
+output a 48000 2 100 1999000000 const 0.5
+state a

@@ -1,0 +1,63 @@
+# Encode path: frame copy, timestamps, receive/send error handling.
+data D
+audio_defaults aac D
+host_int frame_size 1024
+av_formats fltp
+audio_create A aac D
+# one packet comes back immediately; pts/dts are converted from the codec time base (1/48000)
+av_recv 0 5 1000 900 0
+audio_encode A 16
+audio_dump A
+# the encoder needs more input (EAGAIN from receive): ok, no packet; total_samples still advances
+audio_encode A 32
+audio_dump A
+# negative / no-pts values: AV_NOPTS_VALUE (INT64_MIN) is passed through untouched
+av_recv 0 3 -9223372036854775808 -9223372036854775808 0
+audio_encode A 48
+# zero-length packet is still a received packet
+av_recv 0 0 7 7 0
+audio_encode A 64
+# send returns EAGAIN (-11): receive is not attempted, not an error, no packet
+av_clear
+av_send -11
+av_recv 0 4 1 1 0
+audio_encode A 80
+# send returns EOF: also treated as 'no packet'
+av_clear
+av_send -541478725
+audio_encode A 80
+# real errors fail the call (the received flag stays false)
+av_clear
+av_send -1000
+audio_encode A 96
+# receive error
+av_clear
+av_recv -1001 0 0 0 0
+audio_encode A 96
+# frame fill failure
+av_clear
+host_int fill_rc -1002
+audio_encode A 112
+host_int fill_rc 0
+echo ---- codec time base 1/1000 with 48000 Hz: pts of the input frame and of the packet are rescaled with rounding to nearest
+audio_destroy A
+host_int tb_num 1
+host_int tb_den 1000
+av_clear
+audio_create A aac D
+av_recv 0 2 50 49 0
+audio_encode A 1
+audio_encode A 1
+av_recv 0 2 51 50 0
+audio_encode A 1
+audio_destroy A
+echo ---- packed format: one plane holding all channels; fill_audio_frame is given frame_size_bytes * channels (over-count, Q-3)
+host_int tb_den 0
+host_int tb_num 0
+av_formats flt
+audio_create A opus D
+av_clear
+av_recv 0 1 5 5 0
+audio_encode A 7
+audio_dump A
+audio_destroy A

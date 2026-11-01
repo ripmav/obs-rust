@@ -1,0 +1,36 @@
+echo D-1-wrong-packet-type-asserts
+ex_start crash
+ex_frames crash
+ex_end crash
+ex_start crash
+ax_start crash
+ax_frames crash
+ax_start crash
+echo D-2-codec-none-asserts
+ex_start crash
+ex_frames crash
+ex_end crash
+ex_metadata crash
+ax_start crash
+ax_frames crash
+echo D-3-zero-time-base-denominator-divides-by-zero
+flv_mux crash
+ex_frames crash
+ms crash
+ax_frames crash
+echo D-3-negative-denominator-is-defined
+flv_mux size=21 hex=09000006fffc187f0000001701000000aa00000011
+  tag type=9 datasize=6 ts=2147482648 streamid=0
+    video ex=0 frametype=1 codec=7 avcptype=1 cts=0 payload=aa
+  prevsize=17 expected=17
+echo D-6-tag-data-size-is-24-bit
+flv_mux size=16777230 hex=09ffffff000000000000001701000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000...0000000000000000000000000100000a(16777230)
+  tag type=9 datasize=16777215 ts=0 streamid=0
+    video ex=0 frametype=1 codec=7 avcptype=1 cts=0 payload=000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000...00000000000000000000000000000000(16777210)
+  prevsize=16777226 expected=16777226
+flv_mux crash
+ex_frames crash
+ex_frames crash
+flv_mux crash
+ax_frames crash
+ax_frames crash

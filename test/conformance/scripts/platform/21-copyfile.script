@@ -1,0 +1,53 @@
+# os_copyfile(in, out): refuses to overwrite (returns -1 if OUT exists), copies in 4096 byte
+# chunks, 0 on success. A source that cannot be read to its end gives -1.
+# put_pattern PATH N writes N bytes (i*7+3 mod 256); info prints size and an FNV-1a checksum.
+put_pattern s0 0
+put_pattern s1 1
+put_pattern s4095 4095
+put_pattern s4096 4096
+put_pattern s4097 4097
+put_pattern s8192 8192
+put_pattern s10000 10000
+copyfile s0 d0
+info d0
+copyfile s1 d1
+copyfile s4095 d4095
+copyfile s4096 d4096
+copyfile s4097 d4097
+copyfile s8192 d8192
+copyfile s10000 d10000
+info s1
+info d1
+info s4095
+info d4095
+info s4096
+info d4096
+info s4097
+info d4097
+info s8192
+info d8192
+info s10000
+info d10000
+# destination exists (even empty): -1, untouched
+put keep.txt precious
+copyfile s1 keep.txt
+cat keep.txt
+copyfile s1 d0
+info d0
+# source missing: -1, no destination created
+copyfile nosuch.bin out.bin
+exists out.bin
+# destination directory missing
+copyfile s1 nodir/out
+# destination is an existing directory
+mkdir dd
+copyfile s1 dd
+# source is a directory: fopen succeeds but reading fails -> -1; the empty destination was
+# created before the failure and stays (QUIRK Q-10)
+mkdir srcdir
+copyfile srcdir fromdir
+info fromdir
+# a symbolic link as source is followed
+symlink s1 lnk
+copyfile lnk viaLink
+info viaLink

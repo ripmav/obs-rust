@@ -1,0 +1,13 @@
+log debug canvas 'Main' (<uuid>) created
+startup -> true
+private_data k -> ""
+private_data k -> "v1"
+private_data k -> "v1"
+private_data k2 -> "v2"
+private_data k -> ""
+private_data k2 -> ""
+private_data k3 -> "v3"
+shutdown begin
+log info Freeing OBS context data
+log debug canvas 'Main' (<uuid>) destroyed
+shutdown end obs=NULL

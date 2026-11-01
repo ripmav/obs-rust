@@ -1,0 +1,24 @@
+fake proc_handler_add "void twitch_ingests_refresh(int seconds)"
+fake proc_handler_add "void amazon_ivs_ingests_refresh(int seconds)"
+fake update_info_create prefix="[rtmp-services plugin] " agent="rtmp-services plugin (libobs 99.0.0-test)" url=https://obsproject.com/obs2_update/rtmp-services/v5 local=/mod/data cache=/cfg/rtmp-services/ confirm=set
+fake obs_register_service id=rtmp_common
+fake obs_register_service id=rtmp_custom
+module-load -> 1 name="rtmp-services plugin (libobs 99.0.0-test)"
+fake curl GET @null -> url-malformat
+log warning showroom_get_ingest: curl_easy_perform() failed: fake curl error
+get url = ""
+fake curl GET @null -> url-malformat
+log warning showroom_get_ingest: curl_easy_perform() failed: fake curl error
+get key = ""
+fake curl GET @null -> url-malformat
+log warning showroom_get_ingest: curl_easy_perform() failed: fake curl error
+fake curl GET @null -> url-malformat
+log warning showroom_get_ingest: curl_easy_perform() failed: fake curl error
+get can_connect = 0
+fake update_info_create_single prefix="[dacast ingest load data] " agent="rtmp-services plugin (libobs 99.0.0-test)" url=@null
+get url = "rtmp://dacast"
+get key = "fake_key"
+get can_connect = 1
+fake update_info_destroy url=https://obsproject.com/obs2_update/rtmp-services/v5 pending=0
+fake update_info_destroy url= pending=0
+module-unload

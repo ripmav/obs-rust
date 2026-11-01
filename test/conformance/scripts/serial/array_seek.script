@@ -1,0 +1,29 @@
+# Array serializer seek rules (CORE): START target=offset, CURRENT target=cur_pos+offset,
+# END target=length-offset (offset counts BACK from the end). A target outside [0,length]
+# returns -1 and leaves the position unchanged. Return value is the new position.
+open array
+write 000102030405060708090a0b
+seek start 4
+dump
+seek start 12
+seek start 13
+seek start -1
+seek cur 0
+seek cur -2
+seek cur 5
+seek cur 100
+seek cur -100
+dump
+seek end 0
+seek end 12
+seek end 1
+seek end 13
+seek end -1
+dump
+seek start 0
+seek cur 0
+seek cur -1
+seek end 12
+seek end 13
+dump
+close

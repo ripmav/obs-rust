@@ -1,0 +1,60 @@
+# S-021 AMF0 encoders and the end-of-buffer limit ("outend"). Each encoder returns NULL
+# when the value does not fit. The checks are conservative in places (QUIRK Q-1: a short
+# string needs len+5 bytes of room, not len+3).
+echo exact-fit-numbers
+cap 9
+enc_number 1
+cap 8
+enc_number 1
+cap 2
+enc_bool 1
+cap 1
+enc_bool 1
+cap 2
+enc_int16 5
+cap 1
+enc_int16 5
+cap 3
+enc_int24 5
+cap 2
+enc_int24 5
+cap 4
+enc_int32 5
+cap 3
+enc_int32 5
+echo short-string-needs-len-plus-5
+cap 8
+enc_string abc
+cap 7
+enc_string abc
+cap 6
+enc_string abc
+cap 5
+enc_string ""
+cap 4
+enc_string ""
+cap 3
+enc_string ""
+echo named
+cap 14
+enc_named_number abc 1
+cap 13
+enc_named_number abc 1
+cap 7
+enc_named_bool abc 1
+cap 6
+enc_named_bool abc 1
+cap 9
+enc_named_string ab ""
+cap 8
+enc_named_string ab ""
+cap 11
+enc_named_string ab cd
+cap 10
+enc_named_string ab cd
+cap 4
+enc_named_number "" 1
+cap 11
+enc_named_number "" 1
+cap 10
+enc_named_number "" 1

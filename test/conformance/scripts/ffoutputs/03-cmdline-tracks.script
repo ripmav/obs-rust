@@ -1,0 +1,35 @@
+# Track layout of the command line: video only, audio only, three tracks (codec taken from track 0), a gap in the
+# encoder list ends the track count, stream key and muxer_settings sources (stream value wins over the output setting).
+reset
+output o
+venc h264 bitrate=2500
+aenc t0 aac 48000 1024 2048 bitrate=160
+aenc t1 opus 44100 960 312 bitrate=96
+aenc t2 aac 48000 1024 0 bitrate=64
+channels 6
+set str path /v/a.mkv
+set str muxer_settings movflags=faststart
+create ffmpeg_muxer
+start
+reset
+output o
+aenc t0 aac 48000 1024 2048 bitrate=160
+set str path /v/audio.m4a
+create ffmpeg_muxer
+start
+reset
+output o
+venc h264 bitrate=2500
+set str path /v/video.mkv
+create ffmpeg_muxer
+start
+echo stream_value_wins_over_setting
+reset
+output o
+venc h264 bitrate=2500
+set str path /v/video.mkv
+set str muxer_settings a=1
+create ffmpeg_muxer
+set_field muxer_settings b=2 c=3
+set_field stream_key KEY
+start

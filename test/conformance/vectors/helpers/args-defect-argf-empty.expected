@@ -1,0 +1,7 @@
+args_dump argc=5
+  argv[0]="prog"
+  argv[1]=@null
+  argv[2]=""
+  argv[3]=@null
+  argv[4]="tail"
+  argv[5]=@null

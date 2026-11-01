@@ -1,0 +1,62 @@
+# S-034 key-name translations (obs_hotkeys_set_translations_s, obs_get_hotkey_translation) and the
+# audio / scene-item hotkey description templates.
+echo defaults
+tget OBS_KEY_INSERT fallback
+tget OBS_KEY_NUM1 fallback
+tget OBS_KEY_NONE fallback
+tget OBS_KEY_A -
+showtrans
+echo simple-fields
+trans insert=Einfg del=Entf home=Pos1 escape=Esc shift=Umschalt left=Links
+tget OBS_KEY_INSERT fb
+tget OBS_KEY_DELETE fb
+tget OBS_KEY_HOME fb
+tget OBS_KEY_ESCAPE fb
+tget OBS_KEY_SHIFT fb
+echo left-right-up-down-fields-are-never-applied-Q-6
+tget OBS_KEY_LEFT fb
+echo numpad-template-with-and-without-placeholder
+trans "numpad_num=Block"
+tget OBS_KEY_NUM0 fb
+tget OBS_KEY_NUM9 fb
+trans "numpad_num=  Pad  "
+tget OBS_KEY_NUM5 fb
+trans "numpad_num=%1 (Pad) %1"
+tget OBS_KEY_NUM7 fb
+echo numpad-operators
+trans numpad_divide=Div numpad_multiply=Mul numpad_minus=Min numpad_plus=Plus numpad_decimal=Dec
+tget OBS_KEY_NUMSLASH fb
+tget OBS_KEY_NUMASTERISK fb
+tget OBS_KEY_NUMMINUS fb
+tget OBS_KEY_NUMPLUS fb
+tget OBS_KEY_NUMPERIOD fb
+tget OBS_KEY_NUMEQUAL fb
+echo mouse-template
+trans "mouse_num=Maus %1"
+tget OBS_KEY_MOUSE1 fb
+tget OBS_KEY_MOUSE29 fb
+trans mouse_num=Btn
+tget OBS_KEY_MOUSE2 fb
+echo fields-not-set-keep-previous-values
+trans tab=Tabulator
+tget OBS_KEY_INSERT fb
+tget OBS_KEY_TAB fb
+tget OBS_KEY_MOUSE2 fb
+echo empty-string-is-a-translation
+trans space=
+tget OBS_KEY_SPACE fb
+echo smaller-struct-size-copies-only-the-prefix
+trans size=16 insert=XX del=YY home=ZZ
+tget OBS_KEY_INSERT fb
+tget OBS_KEY_DELETE fb
+tget OBS_KEY_HOME fb
+echo null-argument-ignored
+transnull
+tget OBS_KEY_INSERT fb
+echo audio-and-sceneitem-templates
+audiotrans m u ptm ptt mon moff
+sitrans "Zeige %1" "Verberge %1"
+showtrans
+echo free-clears-key-translations
+hkfree
+tget OBS_KEY_INSERT fb

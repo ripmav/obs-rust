@@ -1,0 +1,13 @@
+# QUIRK: a source placed directly in channels of two video mixes with mix_audio set is a root node twice and is therefore mixed twice (doubled amplitude); the same source twice in one view likewise.
+init 48000 2
+clock 1000000000
+timeline 1000000000
+source a input
+video_mix 1
+video_mix 1
+channel 0 0 a
+channel 1 0 a
+channel 1 5 a
+set a active 1
+output a 48000 2 1024 1000000000 const 0.25
+run 1 1

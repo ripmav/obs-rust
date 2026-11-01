@@ -1,0 +1,32 @@
+# Command-line validation. Failures print a message on stdout and exit with status -1 (255 as an unsigned byte).
+reset
+echo --- no arguments at all
+args
+run
+echo --- file only
+args @e.mkv
+run
+echo --- has_video=2
+args @e.mkv 2 0
+run
+echo --- has_video=-1
+args @e.mkv -1 0
+run
+echo --- negative audio track count
+args @e.mkv 0 -1
+run
+echo --- no tracks at all
+args @e.mkv 0 0
+run
+echo --- video announced but the arguments end early
+args @e.mkv 1 0 h264 6000 1920 1080
+run
+echo --- audio announced but no audio parameters
+args @e.mkv 0 1 aac
+run
+echo --- audio params cut after 3 of 6 values
+args @e.mkv 0 1 aac "t" 128 48000
+run
+echo --- non numeric counts parse like atoi (garbage = 0, so no tracks at all)
+args @e.mkv abc xyz
+run

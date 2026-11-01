@@ -1,0 +1,10 @@
+a len=7 cap=8 str="a+b+c+d"
+a len=10 cap=16 str="a--b--c--d"
+a len=4 cap=16 str="abcd"
+a len=2 cap=16 str="bb"
+a len=6 cap=16 str="aaaaaa"
+a len=0 cap=16 str=""
+a len=3 cap=16 str="xyz"
+a len=6 cap=16 str="end..."
+a len=0 cap=0 str=@null
+a len=15 cap=20 str="value and value"

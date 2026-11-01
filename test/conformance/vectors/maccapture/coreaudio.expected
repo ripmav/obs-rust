@@ -1,0 +1,79 @@
+ca_defaults device_id=default enable_downmix=true
+ca_format flags=0x1 bits=32 -> FLOAT
+ca_format flags=0x21 bits=32 -> FLOAT_PLANAR
+ca_format flags=0x4 bits=16 -> 16BIT
+ca_format flags=0x24 bits=16 -> 16BIT_PLANAR
+ca_format flags=0x4 bits=32 -> 32BIT
+ca_format flags=0x24 bits=32 -> 32BIT_PLANAR
+ca_format flags=0x0 bits=8 -> U8BIT
+ca_format flags=0x20 bits=8 -> U8BIT_PLANAR
+ca_format flags=0x4 bits=24 -> UNKNOWN
+ca_format flags=0x4 bits=8 -> UNKNOWN
+ca_format flags=0x0 bits=16 -> UNKNOWN
+ca_layout 1 -> MONO
+ca_layout 2 -> STEREO
+ca_layout 3 -> 2POINT1
+ca_layout 4 -> 4POINT0
+ca_layout 5 -> 4POINT1
+ca_layout 6 -> 5POINT1
+ca_layout 7 -> UNKNOWN
+ca_layout 8 -> 7POINT1
+ca_layout 0 -> UNKNOWN
+ca_layout 16 -> UNKNOWN
+ca_sanitize "BuiltInMicrophoneDevice"
+ca_sanitize "AppleUSBAudioEngine_Focusrite_Scarlett_2i2_14100000_12"
+ca_sanitize "a_b_c_d_ef"
+ca_sanitize "9012345678901234567890123456789012345678901234567890123456789XYZ"
+ca_listed input=1 "BlackHole 2ch" -> true
+ca_listed input=0 "BlackHole 2ch" -> true
+ca_listed input=0 "Loopback Audio" -> true
+ca_listed input=0 "MacBook Pro Microphone" -> false
+ca_listed input=1 "MacBook Pro Microphone" -> true
+ca_listed input=0 "VB-Cable" -> false
+ca_listed input=0 "VBCABLE_A" -> true
+ca_listed input=0 "Soundflower (2ch)" -> true
+ca_resolve default input -> follow system default input device (default_device=true)
+ca_resolve default output -> uid replaced by first listed output device "BlackHole 2ch"
+ca_resolve default output -> no_devices=true, init fails
+ca_resolve "AppleUSB:abc" -> lookup by uid
+ca_retry_ms 300
+ca_retry_ms 2000
+ca_chmap uid="Dev:1"
+  output-Dev_1-1 -> map[0]=-1
+  output-Dev_1-2 -> map[1]=-1
+  output-Dev_1-3 -> map[2]=-1
+  output-Dev_1-4 -> map[3]=-1
+  output-Dev_1-5 -> map[4]=-1
+  output-Dev_1-6 -> map[5]=-1
+  output-Dev_1-7 -> map[6]=-1
+  output-Dev_1-8 -> map[7]=-1
+ca_chmap uid="Dev:1"
+  output-Dev_1-1 -> map[0]=0
+  output-Dev_1-2 -> map[1]=1
+  output-Dev_1-3 -> map[2]=2
+  output-Dev_1-4 -> map[3]=3
+  output-Dev_1-5 -> map[4]=4
+  output-Dev_1-6 -> map[5]=5
+  output-Dev_1-7 -> map[6]=6
+  output-Dev_1-8 -> map[7]=7
+ca_chmap uid="Dev:1"
+  output-Dev_1-1 -> map[0]=-1
+  output-Dev_1-2 -> map[1]=-1
+  output-Dev_1-3 -> map[2]=8
+  output-Dev_1-4 -> map[3]=1
+  output-Dev_1-5 -> map[4]=-1
+  output-Dev_1-6 -> map[5]=-1
+  output-Dev_1-7 -> map[6]=-1
+  output-Dev_1-8 -> map[7]=-1
+ca_chmap_clamp [0,1] (2 channels available)
+ca_chmap_clamp [-1,-1] (2 channels available)
+ca_chmap_clamp [0,1,2,3,-1,-1] (4 channels available)
+ca_combo out=0 avail=2: [ch1=1] [ch2=2] [None=-1]
+ca_combo out=1 avail=2: [ch2=2] [ch1=1] [None=-1]
+ca_combo out=3 avail=2: [None=-1] [ch1=1] [ch2=2]
+ca_combo out=0 avail=0: [None=-1]
+ca_init_format available=2 output_channels=2 mode=downmix (libobs mixes)
+ca_init_format available=2 output_channels=3 mode=channel map
+ca_init_format available=64 output_channels=3 mode=channel map
+ca_callback speakers=2 buffers=2
+ca_callback speakers=8 buffers=12

@@ -1,0 +1,8 @@
+tl_create 0 tq-1 -> ok
+tl_get 0 "A" -> "="
+tl_get 0 "B" -> false
+tl_get 0 "C" -> false
+tl_get 0 "D" -> false
+tl_get 0 "E" -> "1"
+tl_get 0 "=" -> "x"
+tl_get 0 "F" -> "2"

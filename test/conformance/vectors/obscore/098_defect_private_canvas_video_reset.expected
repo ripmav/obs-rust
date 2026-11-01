@@ -1,0 +1,35 @@
+log debug canvas 'Main' (<uuid>) created
+startup -> true
+log info ---------------------------------
+log info video settings reset:  base resolution:   1920x1080  output resolution: 1280x720  downscale filter:  Bicubic  fps:               30/1  format:            BGRA  YUV mode:          None
+reset_video -> success
+  after_call base=1920x1080 out=1280x720 fps=30/1 fmt=BGRA cs=2 range=1 scale=2 gpu=0 adapter=0
+log debug canvas 'Public' (<uuid>) created
+canvas_create a -> ok
+canvas a name="Public" flags=0x0 private=0 removed=0 has_video=1 video_active=0 uuid_len=36 view_type=aux
+log debug private canvas 'Private' (<uuid>) created
+canvas_create_private p -> ok
+canvas p name="Private" flags=0x0 private=1 removed=0 has_video=1 video_active=0 uuid_len=36 view_type=aux
+mixes count=3
+  [0] owner=main out=1280x720 fps=30/1 view=set
+  [1] owner=a out=64x64 fps=30/1 view=set
+  [2] owner=p out=64x64 fps=30/1 view=set
+log warning Number of remaining views: 1
+log info ---------------------------------
+log info video settings reset:  base resolution:   1920x1080  output resolution: 1280x720  downscale filter:  Bicubic  fps:               30/1  format:            BGRA  YUV mode:          None
+signal a:video_reset canvas=a
+reset_video -> success
+  after_call base=1920x1080 out=1280x720 fps=30/1 fmt=BGRA cs=2 range=1 scale=2 gpu=0 adapter=0
+mixes count=2
+  [0] owner=main out=1280x720 fps=30/1 view=set
+  [1] owner=a out=64x64 fps=30/1 view=set
+canvas a name="Public" flags=0x0 private=0 removed=0 has_video=1 video_active=0 uuid_len=36 view_type=aux
+canvas p name="Private" flags=0x0 private=1 removed=0 has_video=1 video_active=0 uuid_len=36 view_type=aux
+shutdown begin
+log info Freeing OBS context data
+log debug canvas 'Main' (<uuid>) destroyed
+log debug canvas 'Public' (<uuid>) destroyed
+log info  1 canvas(s) were remaining
+log debug private canvas 'Private' (<uuid>) destroyed
+log info  1 canvas(s) were remaining
+shutdown end obs=NULL

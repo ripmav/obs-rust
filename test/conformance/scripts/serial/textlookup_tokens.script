@@ -1,0 +1,28 @@
+# Tokenisation details (CORE): unquoted values stop at whitespace, '=' or '#'; text after
+# the value on the same line is ignored; quoted names are allowed; CRLF files work;
+# UTF-8 bytes are ordinary word characters; the file BOM is skipped.
+fputs tt-1 "A=b c\nB=c=d\nC=g#h\nD=\"x\"y\nE=1 2\nF=\"v\" G=\"ignored\"\n\"q r\"=\"s t\"\nH.I=ok\nJ=\"z\"\r\nK=\"w\"\r\n"
+tl_create 0 tt-1
+tl_get 0 A
+tl_get 0 B
+tl_get 0 C
+tl_get 0 D
+tl_get 0 E
+tl_get 0 F
+tl_get 0 G
+tl_get 0 "q r"
+tl_get 0 H.I
+tl_get 0 J
+tl_get 0 K
+fput tt-2 efbbbf4b3d2276220a
+tl_create 1 tt-2
+tl_get 1 K
+fput tt-3 d09ad0bbd18ed1873d22d097d0bd220a
+tl_create 2 tt-3
+tl_get 2 "\xd0\x9a\xd0\xbb\xd1\x8e\xd1\x87"
+tl_destroy 0
+tl_destroy 1
+tl_destroy 2
+funlink tt-1
+funlink tt-2
+funlink tt-3

@@ -1,0 +1,57 @@
+# Activation, deactivation, restart and the 'start' rule of update/create.
+# A freshly created source is inactive: the media is opened but not started unless
+# restart_on_activate is false (then it starts at once).
+data D
+src_defaults D
+set_str D local_file "/m/a.mp4"
+host_settings D
+set_bool D restart_on_activate 0
+src_create S D
+# activate with restart_on_activate=false does nothing
+src_activate S
+src_deactivate S
+echo ---- restart_on_activate = true
+data E
+src_defaults E
+set_str E local_file "/m/a.mp4"
+src_create T E
+# activate asks the host to restart the media (the host calls back media_restart)
+src_activate T
+# the restart callback only starts the media while the source is showing, but always sets PLAYING
+src_restart T
+src_state T
+host_int showing 1
+src_restart T
+src_state T
+# deactivate: stops the media and clears the video (clear_on_media_end is on by default)
+src_deactivate T
+set_bool E clear_on_media_end 0
+src_update T E
+src_deactivate T
+echo ---- active source starts immediately on update
+host_int active 1
+set_str E local_file "/m/other.mp4"
+src_update T E
+echo ---- close_when_inactive: inactive source does not open the media on update
+host_int active 0
+set_bool E close_when_inactive 1
+set_str E local_file "/m/third.mp4"
+src_update T E
+src_dump T
+host_int active 1
+set_str E local_file "/m/fourth.mp4"
+src_update T E
+echo ---- local file with video and clear_on_media_end: the preloaded frame is shown
+set_bool E clear_on_media_end 1
+src_update T E
+src_restart T
+echo ---- media without video outputs a null frame instead
+host_int media_has_video 0
+src_restart T
+host_int media_has_video 1
+echo ---- open failure: no media object, start is a no-op
+host_int media_fail 1
+set_str E local_file "/m/fifth.mp4"
+src_update T E
+src_restart T
+src_dump T

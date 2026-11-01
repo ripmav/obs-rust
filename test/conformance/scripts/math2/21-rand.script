@@ -1,0 +1,8 @@
+# rand_float / vec3_rand (S-009-R25, R96): only the contract is specified; the sequence is
+# whatever the C library rand() produces.
+rand_check 1 2000
+rand_check 0 2000
+rand_check 5 2000
+rand_check -1 2000
+vec3_rand_check 1 1000
+vec3_rand_check 0 1000

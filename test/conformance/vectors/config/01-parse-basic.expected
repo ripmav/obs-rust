@@ -1,0 +1,17 @@
+open_string rc=0
+sections 2 [General] [Video]
+section 0 General
+section 1 Video
+section 2 @null
+get_string General Name "OBS"
+get_string General Count "42"
+get_int General Count 42
+get_string Video Base "1920x1080"
+get_string General Missing @null
+get_string Missing Name @null
+get_int General Missing 0
+get_bool General Missing 0
+get_double General Missing 0
+has_user General Name 1
+has_user General Missing 0
+has_default General Name 0

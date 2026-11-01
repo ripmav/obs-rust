@@ -1,0 +1,44 @@
+# S-022 hvc1 sample entry (hvcC is the encoder extra data, copied verbatim when it does not start
+# with an Annex-B start code; building an hvcC from VPS/SPS/PPS is outside this spec), colr, and the
+# HDR boxes clli/mdcv which exist only for PQ/HLG colour spaces. Values derive from the global
+# nominal peak level: clli = (u16)peak twice, mdcv max luminance = (u32)peak * 10000.
+# HEVC packets are converted from Annex-B to length-prefixed; IRAP NAL types (16..23) are keyframes.
+enc v video codec hevc width 3840 height 2160 fps 60/1 id obs_nvenc cs pq range partial extra 0101600000009000000000005df000fcfdf8f800000f03a00001000440010c01
+peak 1000
+mux mp4 skipfin
+pkt v 0 0 1 gen:12
+pkt v 1 1 0 gen:12
+finalise
+dump
+echo --- HLG with fractional peak 203.7 and 10000.5
+reset
+enc v video codec hevc width 1920 height 1080 fps 30/1 cs hlg range full extra 0101600000009000000000005df000fcfdf8f800000f03a00001000440010c01
+peak 203.7
+mux mp4 skipfin
+pkt v 0 0 1 gen:12
+finalise
+tree
+hex
+reset
+enc v video codec hevc width 1920 height 1080 fps 30/1 cs 709 range full extra 0101600000009000000000005df000fcfdf8f800000f03a00001000440010c01
+mux mp4 skipfin
+pkt v 0 0 1 gen:12
+finalise
+tree
+echo --- peak above 65535 truncates to 16 bits in clli but not mdcv
+reset
+enc v video codec hevc width 1920 height 1080 fps 30/1 cs pq range full extra 0101600000009000000000005df000fcfdf8f800000f03a00001000440010c01
+peak 70000
+mux mp4 skipfin
+pkt v 0 0 1 gen:12
+finalise
+hex
+echo --- hevc keyframe detection comes from the NAL (IDR_W_RADL 0x26 0x01), pkt key flag ignored when NAL says IDR
+reset
+enc v video codec hevc width 1920 height 1080 fps 30/1 extra 0101600000009000000000005df000fcfdf8f800000f03a00001000440010c01
+mux mp4
+pkt v 0 0 0 000000012601aa
+pkt v 1 1 1 000000010201bb
+pkt v 2 2 0 000000010201cc
+finalise
+tree

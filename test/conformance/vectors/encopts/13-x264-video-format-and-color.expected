@@ -1,0 +1,115 @@
+echo format-NV12
+log info ---------------------------------
+log info [x264 encoder: 'enc'] preset: veryfast
+x264.param_default_preset preset=veryfast tune=
+log info [x264 encoder: 'enc'] settings: 	rate_control: CBR 	bitrate:      6000 	buffer size:  6000 	crf:          -3 	fps_num:      60 	fps_den:      1 	width:        1920 	height:       1080 	keyint:       -1111 
+x264_settings ok
+params csp=4 size=1920x1080 fps=60/1 timebase=1/60 keyint_max=-1111 bframe=-2222 vfr=0
+params rc method=2 bitrate=6000 vbv_max=6000 vbv_buf=6000 rf=-3.5 filler=1 nal_hrd=0
+params vui sar=1x1 fullrange=0 colorprim=1 transfer=1 colmatrix=1
+params headers repeat=0 annexb=0 aud=0 loglevel=1
+echo format-I420
+log info ---------------------------------
+log info [x264 encoder: 'enc'] preset: veryfast
+x264.param_default_preset preset=veryfast tune=
+log info [x264 encoder: 'enc'] settings: 	rate_control: CBR 	bitrate:      6000 	buffer size:  6000 	crf:          -3 	fps_num:      60 	fps_den:      1 	width:        1920 	height:       1080 	keyint:       -1111 
+x264_settings ok
+params csp=2 size=1920x1080 fps=60/1 timebase=1/60 keyint_max=-1111 bframe=-2222 vfr=0
+params rc method=2 bitrate=6000 vbv_max=6000 vbv_buf=6000 rf=-3.5 filler=1 nal_hrd=0
+params vui sar=1x1 fullrange=0 colorprim=1 transfer=1 colmatrix=1
+params headers repeat=0 annexb=0 aud=0 loglevel=1
+echo format-I444
+log info ---------------------------------
+log info [x264 encoder: 'enc'] preset: veryfast
+x264.param_default_preset preset=veryfast tune=
+log info [x264 encoder: 'enc'] settings: 	rate_control: CBR 	bitrate:      6000 	buffer size:  6000 	crf:          -3 	fps_num:      60 	fps_den:      1 	width:        1920 	height:       1080 	keyint:       -1111 
+x264_settings ok
+params csp=12 size=1920x1080 fps=60/1 timebase=1/60 keyint_max=-1111 bframe=-2222 vfr=0
+params rc method=2 bitrate=6000 vbv_max=6000 vbv_buf=6000 rf=-3.5 filler=1 nal_hrd=0
+params vui sar=1x1 fullrange=0 colorprim=1 transfer=1 colmatrix=1
+params headers repeat=0 annexb=0 aud=0 loglevel=1
+echo format-other-falls-back-to-NV12
+log info ---------------------------------
+log info [x264 encoder: 'enc'] preset: veryfast
+x264.param_default_preset preset=veryfast tune=
+log info [x264 encoder: 'enc'] settings: 	rate_control: CBR 	bitrate:      6000 	buffer size:  6000 	crf:          -3 	fps_num:      60 	fps_den:      1 	width:        1920 	height:       1080 	keyint:       -1111 
+x264_settings ok
+params csp=4 size=1920x1080 fps=60/1 timebase=1/60 keyint_max=-1111 bframe=-2222 vfr=0
+params rc method=2 bitrate=6000 vbv_max=6000 vbv_buf=6000 rf=-3.5 filler=1 nal_hrd=0
+params vui sar=1x1 fullrange=0 colorprim=1 transfer=1 colmatrix=1
+params headers repeat=0 annexb=0 aud=0 loglevel=1
+echo colorspace-601
+log info ---------------------------------
+log info [x264 encoder: 'enc'] preset: veryfast
+x264.param_default_preset preset=veryfast tune=
+log info [x264 encoder: 'enc'] settings: 	rate_control: CBR 	bitrate:      6000 	buffer size:  6000 	crf:          -3 	fps_num:      60 	fps_den:      1 	width:        1920 	height:       1080 	keyint:       -1111 
+x264_settings ok
+params csp=4 size=1920x1080 fps=60/1 timebase=1/60 keyint_max=-1111 bframe=-2222 vfr=0
+params rc method=2 bitrate=6000 vbv_max=6000 vbv_buf=6000 rf=-3.5 filler=1 nal_hrd=0
+params vui sar=1x1 fullrange=0 colorprim=6 transfer=6 colmatrix=6
+params headers repeat=0 annexb=0 aud=0 loglevel=1
+echo colorspace-srgb-and-full-range
+log info ---------------------------------
+log info [x264 encoder: 'enc'] preset: veryfast
+x264.param_default_preset preset=veryfast tune=
+log info [x264 encoder: 'enc'] settings: 	rate_control: CBR 	bitrate:      6000 	buffer size:  6000 	crf:          -3 	fps_num:      60 	fps_den:      1 	width:        1920 	height:       1080 	keyint:       -1111 
+x264_settings ok
+params csp=4 size=1920x1080 fps=60/1 timebase=1/60 keyint_max=-1111 bframe=-2222 vfr=0
+params rc method=2 bitrate=6000 vbv_max=6000 vbv_buf=6000 rf=-3.5 filler=1 nal_hrd=0
+params vui sar=1x1 fullrange=1 colorprim=1 transfer=13 colmatrix=1
+params headers repeat=0 annexb=0 aud=0 loglevel=1
+echo colorspace-default
+log info ---------------------------------
+log info [x264 encoder: 'enc'] preset: veryfast
+x264.param_default_preset preset=veryfast tune=
+log info [x264 encoder: 'enc'] settings: 	rate_control: CBR 	bitrate:      6000 	buffer size:  6000 	crf:          -3 	fps_num:      60 	fps_den:      1 	width:        1920 	height:       1080 	keyint:       -1111 
+x264_settings ok
+params csp=4 size=1920x1080 fps=60/1 timebase=1/60 keyint_max=-1111 bframe=-2222 vfr=0
+params rc method=2 bitrate=6000 vbv_max=6000 vbv_buf=6000 rf=-3.5 filler=1 nal_hrd=0
+params vui sar=1x1 fullrange=0 colorprim=1 transfer=1 colmatrix=1
+params headers repeat=0 annexb=0 aud=0 loglevel=1
+echo colorspace-pq-and-hlg-keep-709-defaults
+log info ---------------------------------
+log info [x264 encoder: 'enc'] preset: veryfast
+x264.param_default_preset preset=veryfast tune=
+log info [x264 encoder: 'enc'] settings: 	rate_control: CBR 	bitrate:      6000 	buffer size:  6000 	crf:          -3 	fps_num:      60 	fps_den:      1 	width:        1920 	height:       1080 	keyint:       -1111 
+x264_settings ok
+params csp=4 size=1920x1080 fps=60/1 timebase=1/60 keyint_max=-1111 bframe=-2222 vfr=0
+params rc method=2 bitrate=6000 vbv_max=6000 vbv_buf=6000 rf=-3.5 filler=1 nal_hrd=0
+params vui sar=1x1 fullrange=0 colorprim=1 transfer=1 colmatrix=1
+params headers repeat=0 annexb=0 aud=0 loglevel=1
+log info ---------------------------------
+log info [x264 encoder: 'enc'] preset: veryfast
+x264.param_default_preset preset=veryfast tune=
+log info [x264 encoder: 'enc'] settings: 	rate_control: CBR 	bitrate:      6000 	buffer size:  6000 	crf:          -3 	fps_num:      60 	fps_den:      1 	width:        1920 	height:       1080 	keyint:       -1111 
+x264_settings ok
+params csp=4 size=1920x1080 fps=60/1 timebase=1/60 keyint_max=-1111 bframe=-2222 vfr=0
+params rc method=2 bitrate=6000 vbv_max=6000 vbv_buf=6000 rf=-3.5 filler=1 nal_hrd=0
+params vui sar=1x1 fullrange=1 colorprim=1 transfer=1 colmatrix=1
+params headers repeat=0 annexb=0 aud=0 loglevel=1
+echo preferred-format-overrides-output-format
+log info ---------------------------------
+log info [x264 encoder: 'enc'] preset: veryfast
+x264.param_default_preset preset=veryfast tune=
+log info [x264 encoder: 'enc'] settings: 	rate_control: CBR 	bitrate:      6000 	buffer size:  6000 	crf:          -3 	fps_num:      60 	fps_den:      1 	width:        1920 	height:       1080 	keyint:       -1111 
+x264_settings ok
+params csp=2 size=1920x1080 fps=60/1 timebase=1/60 keyint_max=-1111 bframe=-2222 vfr=0
+params rc method=2 bitrate=6000 vbv_max=6000 vbv_buf=6000 rf=-3.5 filler=1 nal_hrd=0
+params vui sar=1x1 fullrange=0 colorprim=1 transfer=1 colmatrix=1
+params headers repeat=0 annexb=0 aud=0 loglevel=1
+log info ---------------------------------
+log info [x264 encoder: 'enc'] preset: veryfast
+x264.param_default_preset preset=veryfast tune=
+log info [x264 encoder: 'enc'] settings: 	rate_control: CBR 	bitrate:      6000 	buffer size:  6000 	crf:          -3 	fps_num:      60 	fps_den:      1 	width:        1920 	height:       1080 	keyint:       -1111 
+x264_settings ok
+params csp=4 size=1920x1080 fps=60/1 timebase=1/60 keyint_max=-1111 bframe=-2222 vfr=0
+params rc method=2 bitrate=6000 vbv_max=6000 vbv_buf=6000 rf=-3.5 filler=1 nal_hrd=0
+params vui sar=1x1 fullrange=0 colorprim=1 transfer=1 colmatrix=1
+params headers repeat=0 annexb=0 aud=0 loglevel=1
+echo video-info-callback
+x264_video_info NV12 -> NV12
+x264_video_info I444 -> I444
+x264_video_info I010 -> NV12
+x264_video_info BGRA -> NV12
+x264_video_info NV12 -> I444
+x264_video_info I420 -> I420

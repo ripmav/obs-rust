@@ -1,0 +1,12 @@
+# connect_ref keeps the handler alive: after signal_handler_destroy the handler
+# remains usable until the last referenced connection is disconnected.
+handler h
+add h "void s()"
+callback a
+connect_ref h s a
+destroy h
+emit h s
+callback b
+connect h s b
+emit h s
+disconnect h s a

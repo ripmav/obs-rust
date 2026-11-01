@@ -1,0 +1,23 @@
+# DEFECT (reference): when a packet write fails after some packets were already written, the save thread releases
+# the packets written so far twice (once in the write loop, once in its error cleanup). "refs" in the state line is
+# the balance of encoder-packet references held (queue entries = 1 each); it goes below the queued count.
+# A correct implementation releases every reference exactly once.
+reset
+output rb
+venc h264 bitrate=2500 extra=0a0b
+set str directory /rec
+set str format d%N
+set str extension mp4
+knob now_ns 1000
+create replay_buffer
+start
+pkt v pts=0 key=1 size=4 sys=0
+pkt v pts=1 key=0 size=4 sys=0
+pkt v pts=2 key=0 size=4 sys=0
+state
+state_rb
+proc save
+knob write_fail_at 7
+pkt v pts=3 key=0 size=4 sys=1
+state
+state_rb

@@ -1,0 +1,26 @@
+# DEFECT D1: a reload on tick with a source whose face never loaded dereferences a NULL face (reference crashes).
+# Required behaviour: skip the reload (treat like update without a font). The vector records the crash.
+events off
+reset
+ascii 5 8 0 8 384
+font "Sans Serif" - 0 p/sans
+load
+create s 2
+setfont s "Sans Serif" - 20 0
+set s from_file true
+file a.txt "x"
+touch a.txt 1
+sets s text_file @TMP@/a.txt
+clock 1000
+update s
+echo --- font change whose FT_New_Face fails: old face freed, face is NULL, text_file stays set
+fail_face on
+setfont s "Sans Serif" - 33 0
+update s
+state s
+echo --- the file changes; the tick reload runs cache/layout without a face
+touch a.txt 2
+clock 2000
+tick s
+clock 3000
+try tick s

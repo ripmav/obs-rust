@@ -1,0 +1,123 @@
+> dump 2
+> nvcap dyn_bitrate 1
+> defaults hevc
+> set int bframe_ref_mode 2
+> set int split_encode 3
+> set int bf 2
+> create hevc soft
+cuda.ctx_init
+nv.OpenEncodeSessionEx deviceType=CUDA apiVersion=13.0
+nv.GetEncodePresetConfigEx codec=NV_ENC_CODEC_HEVC_GUID preset=NV_ENC_PRESET_P5_GUID tuning=HIGH_QUALITY
+log info [obs-nvenc: 'enc'] settings: 	codec:        HEVC 	rate_control: cbr 	bitrate:      10000 	keyint:       250 	preset:       p5 	tuning:       hq 	multipass:    qres 	profile:      main 	width:        1920 	height:       1080 	b-frames:     2 	b-ref-mode:   2 	lookahead:    false (0 frames) 	aq:           true 	split encode: 3 
+nv.InitializeEncoder
+  params: codec=NV_ENC_CODEC_HEVC_GUID preset=NV_ENC_PRESET_P5_GUID tuning=HIGH_QUALITY size=1920x1080 dar=1920x1080 fps=60/1 async=0 ptd=1 split=3
+  config: profile=NV_ENC_HEVC_PROFILE_MAIN_GUID gop=250 frameIntervalP=3
+  rc: mode=CBR avg=10000000 max=10000000 vbv=10000000 vbvInit=0 tq=0 cqP=0 cqB=0 cqI=0 aq=1 aqStrength=8 taq=0
+  rc: lookahead=0 depth=0 iadapt_off=0 badapt_off=0 multipass=QUARTER qpmap=2
+  hevc: level=0 tier=0 idr=250 bref=2 filler=1 repeatSPSPPS=0 disableSPSPPS=0 aud=0 bufSEI=1 timingSEI=1 mdi=0 cll=0 slice=3/1 chroma=0 inDepth=8 outDepth=8
+  vui: signal=1 full=0 colour=1 prim=1 trc=1 matrix=1 chromaLoc=0/0/0
+cuda.init_surfaces n=12
+create -> ok
+> destroy
+nv.DestroyBitstreamBuffer
+nv.DestroyBitstreamBuffer
+nv.DestroyBitstreamBuffer
+nv.DestroyBitstreamBuffer
+nv.DestroyBitstreamBuffer
+nv.DestroyBitstreamBuffer
+nv.DestroyBitstreamBuffer
+nv.DestroyBitstreamBuffer
+nv.DestroyBitstreamBuffer
+nv.DestroyBitstreamBuffer
+nv.DestroyBitstreamBuffer
+nv.DestroyBitstreamBuffer
+nv.DestroyEncoder
+cuda.ctx_free
+destroyed
+> defaults h264
+> set int bframe_ref_mode 1
+> create h264 soft
+cuda.ctx_init
+nv.OpenEncodeSessionEx deviceType=CUDA apiVersion=13.0
+nv.GetEncodePresetConfigEx codec=NV_ENC_CODEC_H264_GUID preset=NV_ENC_PRESET_P5_GUID tuning=HIGH_QUALITY
+log info [obs-nvenc: 'enc'] settings: 	codec:        H264 	rate_control: cbr 	bitrate:      10000 	keyint:       250 	preset:       p5 	tuning:       hq 	multipass:    qres 	profile:      high 	width:        1920 	height:       1080 	b-frames:     2 	b-ref-mode:   1 	lookahead:    false (0 frames) 	aq:           true 	split encode: 3 
+nv.InitializeEncoder
+  params: codec=NV_ENC_CODEC_H264_GUID preset=NV_ENC_PRESET_P5_GUID tuning=HIGH_QUALITY size=1920x1080 dar=1920x1080 fps=60/1 async=0 ptd=1 split=3
+  config: profile=NV_ENC_H264_PROFILE_HIGH_GUID gop=250 frameIntervalP=3
+  rc: mode=CBR avg=10000000 max=10000000 vbv=10000000 vbvInit=0 tq=0 cqP=0 cqB=0 cqI=0 aq=1 aqStrength=8 taq=0
+  rc: lookahead=0 depth=0 iadapt_off=0 badapt_off=0 multipass=QUARTER qpmap=2
+  h264: level=0 idr=250 bref=1 filler=1 repeatSPSPPS=0 disableSPSPPS=0 aud=0 bufSEI=0 timingSEI=1 lossless=0 slice=3/1 chroma=0 inDepth=8 outDepth=8
+  vui: signal=1 full=0 colour=1 prim=1 trc=1 matrix=1
+cuda.init_surfaces n=12
+create -> ok
+> destroy
+nv.DestroyBitstreamBuffer
+nv.DestroyBitstreamBuffer
+nv.DestroyBitstreamBuffer
+nv.DestroyBitstreamBuffer
+nv.DestroyBitstreamBuffer
+nv.DestroyBitstreamBuffer
+nv.DestroyBitstreamBuffer
+nv.DestroyBitstreamBuffer
+nv.DestroyBitstreamBuffer
+nv.DestroyBitstreamBuffer
+nv.DestroyBitstreamBuffer
+nv.DestroyBitstreamBuffer
+nv.DestroyEncoder
+cuda.ctx_free
+destroyed
+> defaults av1
+> set int bframe_ref_mode 2
+> set int split_encode 15
+> create av1 soft
+cuda.ctx_init
+nv.OpenEncodeSessionEx deviceType=CUDA apiVersion=13.0
+nv.GetEncodePresetConfigEx codec=NV_ENC_CODEC_AV1_GUID preset=NV_ENC_PRESET_P5_GUID tuning=HIGH_QUALITY
+log info [obs-nvenc: 'enc'] settings: 	codec:        AV1 	rate_control: cbr 	bitrate:      10000 	keyint:       250 	preset:       p5 	tuning:       hq 	multipass:    qres 	profile:      main 	width:        1920 	height:       1080 	b-frames:     2 	b-ref-mode:   2 	lookahead:    false (0 frames) 	aq:           true 	split encode: 15 
+nv.InitializeEncoder
+  params: codec=NV_ENC_CODEC_AV1_GUID preset=NV_ENC_PRESET_P5_GUID tuning=HIGH_QUALITY size=1920x1080 dar=1920x1080 fps=60/1 async=0 ptd=1 split=15
+  config: profile=NV_ENC_AV1_PROFILE_MAIN_GUID gop=250 frameIntervalP=3
+  rc: mode=CBR avg=10000000 max=10000000 vbv=10000000 vbvInit=0 tq=0 cqP=0 cqB=0 cqI=0 aq=1 aqStrength=8 taq=0
+  rc: lookahead=0 depth=0 iadapt_off=0 badapt_off=0 multipass=QUARTER qpmap=2
+  av1: level=0 tier=0 tiles=0x0 idr=250 bref=2 padding=1 repeatSeqHdr=1 mdi=0 cll=0 range=0 prim=1 trc=1 matrix=1 chroma=1 inDepth=8 outDepth=8 refs=1/1
+cuda.init_surfaces n=12
+create -> ok
+> destroy
+nv.DestroyBitstreamBuffer
+nv.DestroyBitstreamBuffer
+nv.DestroyBitstreamBuffer
+nv.DestroyBitstreamBuffer
+nv.DestroyBitstreamBuffer
+nv.DestroyBitstreamBuffer
+nv.DestroyBitstreamBuffer
+nv.DestroyBitstreamBuffer
+nv.DestroyBitstreamBuffer
+nv.DestroyBitstreamBuffer
+nv.DestroyBitstreamBuffer
+nv.DestroyBitstreamBuffer
+nv.DestroyEncoder
+cuda.ctx_free
+destroyed
+> reset
+> create h264 soft
+cuda.ctx_init
+nv.OpenEncodeSessionEx deviceType=CUDA apiVersion=13.0
+nv.GetEncodePresetConfigEx codec=NV_ENC_CODEC_H264_GUID preset=NV_ENC_PRESET_P5_GUID tuning=HIGH_QUALITY
+log info [obs-nvenc: 'enc'] settings: 	codec:        H264 	rate_control:  	keyint:       250 	preset:        	tuning:        	multipass:     	profile:       	width:        1920 	height:       1080 	b-frames:     0 	b-ref-mode:   0 	lookahead:    false (0 frames) 	aq:           false 
+nv.InitializeEncoder
+  params: codec=NV_ENC_CODEC_H264_GUID preset=NV_ENC_PRESET_P5_GUID tuning=HIGH_QUALITY size=1920x1080 dar=1920x1080 fps=60/1 async=0 ptd=1 split=0
+  config: profile=NV_ENC_H264_PROFILE_HIGH_GUID gop=250 frameIntervalP=1
+  rc: mode=CBR avg=0 max=0 vbv=0 vbvInit=0 tq=0 cqP=0 cqB=0 cqI=0 aq=0 aqStrength=0 taq=0
+  rc: lookahead=0 depth=0 iadapt_off=0 badapt_off=0 multipass=DISABLED qpmap=2
+  h264: level=0 idr=250 bref=0 filler=1 repeatSPSPPS=0 disableSPSPPS=0 aud=0 bufSEI=0 timingSEI=1 lossless=0 slice=3/1 chroma=0 inDepth=8 outDepth=8
+  vui: signal=1 full=0 colour=1 prim=1 trc=1 matrix=1
+cuda.init_surfaces n=4
+create -> ok
+> destroy
+nv.DestroyBitstreamBuffer
+nv.DestroyBitstreamBuffer
+nv.DestroyBitstreamBuffer
+nv.DestroyBitstreamBuffer
+nv.DestroyEncoder
+cuda.ctx_free
+destroyed

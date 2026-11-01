@@ -1,0 +1,30 @@
+# S-050 obs-ffmpeg-nvenc: settings -> libavcodec private options (h264_nvenc / hevc_nvenc), as a
+# call trace of av_opt_set / av_opt_set_int, then the shared update call. Legacy semantics:
+# "preset" (old names) is used only if it has a user value and "preset2" does not; otherwise
+# preset2 + tune + multipass are set. "cbr" is a deprecated override that forces CBR.
+ff_defaults h264
+set int bitrate 6000
+ff_create h264
+ff_destroy
+# VBR: no cbr option, no rc_min/max rate
+set str rate_control VBR
+ff_create h264
+ff_destroy
+# CQP: bitrate becomes 0 (passed to the shared layer), global_quality = cqp
+set str rate_control CQP
+set int cqp 25
+ff_create h264
+ff_destroy
+# lossless: tune/multipass overwritten after preset2; bitrate 0
+set str rate_control lossless
+ff_create h264
+ff_destroy
+# the rate-control comparisons are all case-insensitive here (unlike obs-nvenc)
+set str rate_control cqp
+ff_create h264
+ff_destroy
+# legacy "cbr" bool forces CBR (warning)
+set bool cbr 1
+set str rate_control VBR
+ff_create h264
+ff_destroy

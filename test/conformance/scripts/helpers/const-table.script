@@ -1,0 +1,6 @@
+# Constants that plugins compile against (CORE): obs-defs.h defines, obs-config.h version
+# numbers, and the enumerators of the public enums in obs.h, obs-source.h, obs-encoder.h,
+# obs-output.h, obs-properties.h, obs-data.h, obs-interaction.h, obs-audio-controls.h
+# (in header order). One line per name: `NAME value`. This table is normative: a port must
+# expose identical numeric values.
+const

@@ -1,0 +1,16 @@
+# S-050 nvenc: the failure paths of the probe (all log at warning level and make the plugin
+# unavailable): launching the helper fails; empty output (helper crashed); unparsable INI; helper
+# reports nvenc_supported=false with / without a reason. Each case is a separate nvenc_supported()
+# call; the library load is faked successful.
+pipefail 1
+supported
+pipefail 0
+ini ""
+supported
+ini "[general]\nnvenc_supported=false\nreason=No NVIDIA GPU found\n"
+supported
+ini "[general]\nnvenc_supported=false\n"
+supported
+# no [general] section at all -> nvenc_supported reads false
+ini "[h264]\ncodec_supported=true\n"
+supported

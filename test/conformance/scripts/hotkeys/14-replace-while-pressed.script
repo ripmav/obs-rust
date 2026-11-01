@@ -1,0 +1,24 @@
+# S-034 replacing or clearing bindings while one of them is pressed: removal releases the pressed
+# binding (callback(false) when it was the last pressed one of that hotkey) BEFORE the new bindings
+# are created, and before the "hotkey_bindings_changed" signal.
+reg frontend A "A" "a"
+loadbind A 0:OBS_KEY_A 0:OBS_KEY_B
+down OBS_KEY_A
+down OBS_KEY_B
+poll 2
+info A
+echo replace-bindings-while-both-pressed
+loadbind A 0:OBS_KEY_C
+info A
+poll
+echo the-new-binding-is-fresh-and-can-press-while-C-is-down
+down OBS_KEY_C
+poll 2
+echo load-from-json-replaces-too
+load A [{"key":"OBS_KEY_D"}]
+enumb
+echo clear-with-empty-json-releases-but-emits-no-signal
+down OBS_KEY_D
+poll 2
+load A []
+enumb

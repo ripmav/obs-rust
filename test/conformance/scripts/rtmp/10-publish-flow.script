@@ -1,0 +1,22 @@
+# Production call sequence of OBS (rtmp-stream.c): Init, SetupURL, EnableWrite, AddStream, outChunk 4096,
+# Connect, ConnectStream. Plain handshake (S1 echoed as C2, S2 echoes C1). Deterministic clock/rand inputs.
+new
+clock 123450
+seed 7
+seturl rtmp://live.example.com/app
+enablewrite
+set flashver "FMLE/3.0 (compatible; FMSc/1.0)"
+set swfurl_is_tcurl 1
+addstream mystream
+set outchunk 4096
+set chunkinfo 1
+feed 03
+feed_s1 0 1000 00000000
+feed_echo
+feed 0300000000001414000000000200075f726573756c74003ff000000000000005
+feed 0300000000001d14000000000200075f726573756c7400401000000000000005003ff0000000000000
+feed 0300000000005a14000000000200086f6e537461747573000000000000000000050300056c6576656c0200067374617475730004636f64650200174e657453747265616d2e5075626c6973682e5374617274000b6465736372697074696f6e02000164000009
+connect
+state
+connectstream
+state

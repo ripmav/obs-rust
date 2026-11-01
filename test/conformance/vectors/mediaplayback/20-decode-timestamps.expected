@@ -1,0 +1,62 @@
+minit -> ok
+ff open path=ts format=- nobuffer=1 interrupt=0 opts=[]
+minit2 -> ok has_v=1 has_a=0
+# no packet queued: nothing happens, frame_ready stays false
+mdecode v -> 1
+ff read #0 stream=0 pts=0 size=4
+mnextpkt -> ok
+mdecode v -> 1
+mstate eof=0 active=0 stopping=0 looping=0 pause=0 reset=0 seek=0 seek_next_ts=0 reset_ts=0 preload_frame=0 has_v=1 has_a=0
+  base_ts=0 start_ts=0 play_sys_ts=0 next_pts_ns=0 next_ns=0 seek_pos=0 speed=100 cur_space=DEFAULT cur_range=DEFAULT
+  v ready=1 pts=0 next_pts=40000000 last_dur=40000000 eof=0 key=0 pending=0 npkts=0
+ff read #1 stream=0 pts=40 size=4
+mnextpkt -> ok
+mdecode v -> 1
+mstate eof=0 active=0 stopping=0 looping=0 pause=0 reset=0 seek=0 seek_next_ts=0 reset_ts=0 preload_frame=0 has_v=1 has_a=0
+  base_ts=0 start_ts=0 play_sys_ts=0 next_pts_ns=0 next_ns=0 seek_pos=0 speed=100 cur_space=DEFAULT cur_range=DEFAULT
+  v ready=1 pts=40000000 next_pts=80000000 last_dur=40000000 eof=0 key=0 pending=0 npkts=0
+# no timestamp: the previous next_pts is used
+ff read #2 stream=0 pts=-9223372036854775808 size=4
+mnextpkt -> ok
+mdecode v -> 1
+mstate eof=0 active=0 stopping=0 looping=0 pause=0 reset=0 seek=0 seek_next_ts=0 reset_ts=0 preload_frame=0 has_v=1 has_a=0
+  base_ts=0 start_ts=0 play_sys_ts=0 next_pts_ns=0 next_ns=0 seek_pos=0 speed=100 cur_space=DEFAULT cur_range=DEFAULT
+  v ready=1 pts=80000000 next_pts=120000000 last_dur=40000000 eof=0 key=0 pending=0 npkts=0
+# own duration 25 ms
+ff read #3 stream=0 pts=100 size=4
+mnextpkt -> ok
+mdecode v -> 1
+mstate eof=0 active=0 stopping=0 looping=0 pause=0 reset=0 seek=0 seek_next_ts=0 reset_ts=0 preload_frame=0 has_v=1 has_a=0
+  base_ts=0 start_ts=0 play_sys_ts=0 next_pts_ns=0 next_ns=0 seek_pos=0 speed=100 cur_space=DEFAULT cur_range=DEFAULT
+  v ready=1 pts=100000000 next_pts=125000000 last_dur=25000000 eof=0 key=0 pending=0 npkts=0
+# best_effort 125 differs from pts 130, duration 10
+ff read #4 stream=0 pts=130 size=4
+mnextpkt -> ok
+mdecode v -> 1
+mstate eof=0 active=0 stopping=0 looping=0 pause=0 reset=0 seek=0 seek_next_ts=0 reset_ts=0 preload_frame=0 has_v=1 has_a=0
+  base_ts=0 start_ts=0 play_sys_ts=0 next_pts_ns=0 next_ns=0 seek_pos=0 speed=100 cur_space=DEFAULT cur_range=DEFAULT
+  v ready=1 pts=125000000 next_pts=135000000 last_dur=10000000 eof=0 key=0 pending=0 npkts=0
+# best effort missing again
+ff read #5 stream=0 pts=200 size=4
+mnextpkt -> ok
+mdecode v -> 1
+mstate eof=0 active=0 stopping=0 looping=0 pause=0 reset=0 seek=0 seek_next_ts=0 reset_ts=0 preload_frame=0 has_v=1 has_a=0
+  base_ts=0 start_ts=0 play_sys_ts=0 next_pts_ns=0 next_ns=0 seek_pos=0 speed=100 cur_space=DEFAULT cur_range=DEFAULT
+  v ready=1 pts=135000000 next_pts=145000000 last_dur=10000000 eof=0 key=0 pending=0 npkts=0
+mfree
+# ---- estimate from the decoder time base, first frame, pts != 0
+minit -> ok
+ff open path=tsb format=- nobuffer=1 interrupt=0 opts=[]
+minit2 -> ok has_v=1 has_a=0
+ff read #0 stream=0 pts=7 size=4
+mnextpkt -> ok
+mdecode v -> 1
+mstate eof=0 active=0 stopping=0 looping=0 pause=0 reset=0 seek=0 seek_next_ts=0 reset_ts=0 preload_frame=0 has_v=1 has_a=0
+  base_ts=0 start_ts=0 play_sys_ts=0 next_pts_ns=0 next_ns=0 seek_pos=0 speed=100 cur_space=DEFAULT cur_range=DEFAULT
+  v ready=1 pts=7000000 next_pts=167000000 last_dur=160000000 eof=0 key=0 pending=0 npkts=0
+ff read #1 stream=0 pts=9 size=4
+mnextpkt -> ok
+mdecode v -> 1
+mstate eof=0 active=0 stopping=0 looping=0 pause=0 reset=0 seek=0 seek_next_ts=0 reset_ts=0 preload_frame=0 has_v=1 has_a=0
+  base_ts=0 start_ts=0 play_sys_ts=0 next_pts_ns=0 next_ns=0 seek_pos=0 speed=100 cur_space=DEFAULT cur_range=DEFAULT
+  v ready=1 pts=9000000 next_pts=11000000 last_dur=2000000 eof=0 key=0 pending=0 npkts=0

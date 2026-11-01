@@ -1,0 +1,5 @@
+tl_defect 0 td-1 -> ub
+tl_get 0 "A" -> "1"
+tl_get 0 "B" -> false
+tl_defect 0 td-2 -> ub
+tl_get 0 "B" -> false

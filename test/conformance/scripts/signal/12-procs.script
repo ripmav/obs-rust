@@ -1,0 +1,11 @@
+# Procedure handlers: named, unique, called synchronously.
+procs p
+proc_add p "int add_one(int n)" adder inc:n ret:41
+proc_add p "void note()" noter
+proc_add p "void note()" noter_again
+proc_add p "bad decl" never
+proc_call p add_one n=1
+proc_call p note
+proc_call p note n=2
+proc_call p missing
+proc_call p add_one

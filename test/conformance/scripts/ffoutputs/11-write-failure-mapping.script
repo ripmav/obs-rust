@@ -1,0 +1,33 @@
+# A failed pipe write reads the helper's stderr (last error), closes the pipe (exit status of the helper decides) and
+# maps to a stop code: helper exit -2 -> UNSUPPORTED, otherwise ENCODE_ERROR for files and DISCONNECTED for network.
+# Header writes are writes #1 (info) and #2 (payload) of the pipe; write #3 is the first packet's info.
+reset
+output o
+venc h264 bitrate=2500 extra=0a0b
+set str path /v/a.mkv
+create ffmpeg_muxer
+start
+knob write_fail_at 1
+knob err_text boom
+pkt v pts=0 key=1
+state
+echo payload_write_fails_helper_unsupported
+start
+knob write_fail_at 2
+knob destroy_ret -2
+pkt v pts=0 key=1
+echo info_write_of_packet_fails_no_stderr
+knob destroy_ret 0
+knob err_text -
+start
+knob write_fail_at 3
+pkt v pts=0 key=1
+echo network_output
+reset
+output n service
+venc h264 bitrate=2500 extra=0a0b
+service srt://h:1 K
+create ffmpeg_mpegts_muxer
+start
+knob write_fail_at 1
+pkt v pts=0 key=1

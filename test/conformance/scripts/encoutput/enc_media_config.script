@@ -1,0 +1,25 @@
+# Encoder media binding and configuration guards: divisor, scaled size, set_video/audio on the wrong type,
+# changes refused after initialisation.
+video 30 1 1280 720
+audio 48000
+venc v nomedia=1
+aenc a nomedia=1
+enc_info v
+enc_set_video v
+enc_set_audio v
+enc_set_audio a
+enc_set_video a
+enc_divisor v 0
+enc_divisor v 2
+enc_divisor a 2
+enc_info v
+echo --- scaled size: equal to the video size disables scaling
+enc_scaled v 1280 720
+enc_scaled v 640 360
+enc_info v
+echo --- after initialisation nothing can be changed
+enc_init v
+enc_divisor v 3
+enc_scaled v 320 180
+enc_set_video v
+enc_info v

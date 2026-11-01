@@ -1,0 +1,78 @@
+ev create slideshow#1 public
+ev hotkey_register slideshow#1 id=1 name=SlideShow.PlayPause desc=SlideShow.PlayPause
+ev hotkey_register slideshow#1 id=2 name=SlideShow.Restart desc=SlideShow.Restart
+ev hotkey_register slideshow#1 id=3 name=SlideShow.Stop desc=SlideShow.Stop
+ev hotkey_register slideshow#1 id=4 name=SlideShow.NextSlide desc=SlideShow.NextSlide
+ev hotkey_register slideshow#1 id=5 name=SlideShow.PreviousSlide desc=SlideShow.PreviousSlide
+ev create fade_transition#2 private
+ev create image_source#3[/s/a.png] private
+ev image_init /s/a.png alpha=2
+log debug [image_source: ''] loading texture '/s/a.png'
+ev texture_create 1 10x10 dynamic=0
+ev create image_source#4[/s/b.png] private
+ev image_init /s/b.png alpha=2
+log debug [image_source: ''] loading texture '/s/b.png'
+ev texture_create 2 20x20 dynamic=0
+ev tr_size fade_transition#2 20x20
+ev tr_align fade_transition#2 0
+ev tr_scale fade_transition#2 1
+ev tr_start fade_transition#2 mode=0 ms=700 dest=image_source#3[/s/a.png] -> started
+ev signal media_started slideshow#1
+tick 0 clock=16000001
+size 20 20
+ev tr_size fade_transition#2 1280x720
+ev tr_align fade_transition#2 0
+ev tr_scale fade_transition#2 1
+ev tr_start fade_transition#2 mode=0 ms=700 dest=image_source#3[/s/a.png] -> ignored
+ev signal media_started slideshow#1
+tick 0 clock=32000002
+size 1280 720
+ev tr_size fade_transition#2 640x480
+ev tr_align fade_transition#2 0
+ev tr_scale fade_transition#2 1
+ev tr_start fade_transition#2 mode=0 ms=700 dest=image_source#3[/s/a.png] -> ignored
+ev signal media_started slideshow#1
+tick 0 clock=48000003
+size 640 480
+ev tr_size fade_transition#2 35x20
+ev tr_align fade_transition#2 0
+ev tr_scale fade_transition#2 1
+ev tr_start fade_transition#2 mode=0 ms=700 dest=image_source#3[/s/a.png] -> ignored
+ev signal media_started slideshow#1
+tick 0 clock=64000004
+size 35 20
+ev tr_size fade_transition#2 20x20
+ev tr_align fade_transition#2 0
+ev tr_scale fade_transition#2 1
+ev tr_start fade_transition#2 mode=0 ms=700 dest=image_source#3[/s/a.png] -> ignored
+ev signal media_started slideshow#1
+tick 0 clock=80000005
+size 20 20
+ev tr_size fade_transition#2 20x20
+ev tr_align fade_transition#2 0
+ev tr_scale fade_transition#2 1
+ev tr_start fade_transition#2 mode=0 ms=700 dest=image_source#3[/s/a.png] -> ignored
+ev signal media_started slideshow#1
+tick 0 clock=96000006
+size 20 20
+ev tr_size fade_transition#2 4294967291x7
+ev tr_align fade_transition#2 0
+ev tr_scale fade_transition#2 1
+ev tr_start fade_transition#2 mode=0 ms=700 dest=image_source#3[/s/a.png] -> ignored
+ev signal media_started slideshow#1
+tick 0 clock=112000007
+size 4294967291 7
+ev tr_size fade_transition#2 0x0
+ev tr_align fade_transition#2 0
+ev tr_scale fade_transition#2 1
+ev tr_start fade_transition#2 mode=0 ms=700 dest=image_source#3[/s/a.png] -> ignored
+ev signal media_started slideshow#1
+tick 0 clock=128000008
+size 0 0
+ev tr_size fade_transition#2 20x20
+ev tr_align fade_transition#2 0
+ev tr_scale fade_transition#2 1
+ev tr_start fade_transition#2 mode=0 ms=700 dest=image_source#3[/s/a.png] -> ignored
+ev signal media_started slideshow#1
+tick 0 clock=144000009
+size 20 20

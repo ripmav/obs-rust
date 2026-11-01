@@ -1,0 +1,34 @@
+# S-021 ff_nal_unit_extract_rbsp (rtmp-hevc.c, exported): copies a NAL unit while removing
+# emulation_prevention_three_byte (00 00 03 -> 00 00). The first HEADER_LEN bytes are copied as they
+# are (never unescaped); after the data 64 zero bytes are appended (not counted in len).
+# Command: rbsp DATA HEADER_LEN  -> prints len, bytes and whether the 64 bytes after them are zero.
+echo basic
+rbsp 4201010160 2
+rbsp 420101000003000100 2
+rbsp 4201000003 2
+rbsp 4201000003000003 2
+rbsp 0000030000 0
+rbsp 0000030000 2
+rbsp 000003 0
+echo "03 is kept when not preceded by two zeros"
+rbsp 4201000300 2
+rbsp 42010003 2
+rbsp 4201aa0003 2
+echo "00 00 03 spanning the header boundary"
+rbsp 4200000301 1
+rbsp 4200000301 2
+rbsp 4200000301 3
+echo "00 00 00 03: the first two zeros pair with the 03"
+rbsp 420100000003 2
+rbsp 4201000000030001 2
+echo "overlapping patterns are consumed left to right"
+rbsp 42010000030000030000 2
+rbsp 4201000003000003 2
+echo header_len-larger-than-the-data
+rbsp 4201 5
+rbsp 42 2
+rbsp 4201 0
+rbsp 4201 2
+echo "empty"
+rbsp - 2
+rbsp - 0

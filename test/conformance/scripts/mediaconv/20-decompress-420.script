@@ -1,0 +1,13 @@
+# decompress_420: planar 4:2:0 -> packed 32-bit pixels. Each output pixel is the little-endian word
+# (Y << 16) | (U << 8) | V, i.e. the BYTES in memory are  V U Y 0  (note: not U Y V X as the compressors read).
+# Chroma sample (x, y/2) is shared by the 2x2 luma block. One iteration of the loop handles one chroma row
+# (two luma rows) and IN_LINESIZE[0]/2 chroma samples (= IN_LINESIZE[0] pixels per row, padding included).
+# Command: decompress 420 START END ILS0 ILS1 ILS2 OUT_LS OUT_ROWS PLANE0 PLANE1 PLANE2 [OFFSET]
+# 4x2: Y=01..04 / 05..08, U=aa bb, V=cc dd
+decompress 420 0 2 4 2 2 16 2 0102030405060708 aabb ccdd
+# the output of 4x4 (two chroma rows): rows 0-1 use chroma row 0, rows 2-3 chroma row 1
+decompress 420 0 4 4 2 2 16 4 0102030405060708090a0b0c0d0e0f10 aabb1122 ccdd3344
+# extreme values: no sign extension or overflow
+decompress 420 0 2 4 2 2 16 2 ff00ff00ff00ff00 ff00 00ff
+# 8 luma columns, output stride exactly 4*pixels
+decompress 420 0 2 8 4 4 32 2 000102030405060708090a0b0c0d0e0f 01020304 f1f2f3f4

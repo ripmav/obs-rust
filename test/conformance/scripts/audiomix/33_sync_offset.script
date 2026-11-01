@@ -1,0 +1,12 @@
+# sync_offset shifts stored timestamps; changing it from non-zero disables push_back for that call.
+init 48000 2
+clock 1000000000
+timeline 1000000000
+source a input
+set a sync_offset 5000000
+output a 48000 2 480 1000000000 const 0.1
+state a
+set a sync_offset 0
+output a 48000 2 480 1010000000 const 0.1
+state a
+mixer_info a

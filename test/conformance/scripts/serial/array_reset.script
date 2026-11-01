@@ -1,0 +1,19 @@
+# array_output_serializer_reset empties the data and rewinds; the serializer stays usable.
+# free releases the buffer (a second init starts clean).
+open array
+write 0102030405
+seek start 2
+array_reset
+dump
+pos
+write aa
+dump
+seek start 0
+write bbcc
+dump
+close
+open array
+dump
+pos
+write 11
+close

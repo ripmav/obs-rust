@@ -1,0 +1,36 @@
+config_path rc=8 str="/xdg/obs"
+config_path rc=16 str="/xdg/obs/plugins"
+config_path rc=4 str="/xdg"
+config_path rc=4 str="/xdg"
+config_path_ptr "/xdg/obs"
+config_path_ptr "/xdg/"
+config_path_ptr "/xdg/"
+config_path rc=8 str="/xdg"
+config_path rc=8 str=""
+config_path rc=8
+config_path rc=8 str="/xdg/obs"
+config_path rc=8 str="/xdg/ob"
+config_path rc=4 str="/obs"
+config_path rc=0 str=""
+config_path_ptr "/obs"
+config_path rc=17 str="/hm/u/.config/obs"
+config_path rc=13 str="/hm/u/.config"
+config_path rc=13 str="/hm/u/.config"
+config_path_ptr "/hm/u/.config/obs"
+config_path_ptr "/hm/u/.config/"
+config_path_ptr "/hm/u/.config/"
+config_path rc=17 str="/hm/u/.co"
+config_path rc=17
+crash Could not get $HOME 
+try config_path exit-77
+crash Could not get $HOME 
+try config_path_ptr exit-77
+program_data rc=20 str="/usr/local/share/obs"
+program_data rc=22 str="/usr/local/share/obs/x"
+program_data rc=17 str="/usr/local/share/"
+program_data rc=17 str="/usr/local/share/"
+program_data rc=20 str="/usr/loca"
+program_data rc=20
+program_data_ptr "/usr/local/share/obs"
+program_data_ptr "/usr/local/share/"
+program_data_ptr "/usr/local/share/"

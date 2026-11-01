@@ -1,0 +1,11 @@
+# get_path(dir, file): joins dir and file inserting '/' unless dir is empty/NULL or already
+# ends with '/' or '\\'. No normalisation of the parts (CORE). An empty or NULL dir yields just
+# the file name (no leading separator).
+fu_get_path /cache file.json
+fu_get_path /cache/ file.json
+fu_get_path "C:\\cache\\" file.json
+fu_get_path "C:\\cache" file.json
+fu_get_path "" file.json
+fu_get_path @null file.json
+fu_get_path /a/b sub/file.json
+fu_get_path . ../x

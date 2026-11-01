@@ -1,0 +1,82 @@
+echo rate-control-names
+data D
+  rate_control string "CBR" user
+end data D
+data D
+  rate_control string "VBR" user
+end data D
+echo lookahead-rate-controls-need-no-legacy-keys-to-be-converted
+data D
+  rate_control string "CBR" user
+end data D
+data D
+  rate_control string "VBR" user
+end data D
+data D
+  rate_control string "ICQ" user
+end data D
+echo target-usage-names
+data T
+  target_usage string "TU1" user
+end data T
+data T
+  target_usage string "TU1" user
+end data T
+data T
+  target_usage string "TU2" user
+end data T
+data T
+  target_usage string "TU3" user
+end data T
+data T
+  target_usage string "TU4" user
+end data T
+data T
+  target_usage string "TU4" user
+end data T
+data T
+  target_usage string "TU5" user
+end data T
+data T
+  target_usage string "TU6" user
+end data T
+data T
+  target_usage string "TU7" user
+end data T
+data T
+  target_usage string "TU7" user
+end data T
+data T
+  target_usage string "TU9" user
+end data T
+echo latency-from-async_depth
+data L
+  rate_control string "CBR" user
+  latency string "ultra-low" user
+end data L
+data L
+  rate_control string "CBR" user
+  latency string "normal" user
+end data L
+echo latency-from-la_depth-with-lookahead-rc
+data M
+  rate_control string "CBR" user
+  latency string "low" user
+end data M
+data N
+  rate_control string "VBR" user
+  latency string "normal" user
+end data N
+data O
+  rate_control string "ICQ" user
+  latency string "normal" user
+end data O
+echo la_depth-ignored-when-rc-is-not-lookahead-and-vice-versa
+data P
+  rate_control string "CBR" user
+  latency string "normal" user
+end data P
+data R
+  rate_control string "CBR" user
+  latency string "normal" user
+end data R

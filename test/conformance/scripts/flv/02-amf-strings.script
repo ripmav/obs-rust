@@ -1,0 +1,42 @@
+# S-021 AMF0 strings. AMF_EncodeString emits a short string (type 02, u16 length) when
+# len < 65536, otherwise a long string (type 0c, u32 length). Named variants write
+# the property name as u16 length + bytes (no type byte) first.
+cap 4096
+enc_string ""
+enc_string a
+enc_string onMetaData
+enc_string "@setDataFrame"
+enc_string "h\xc3\xa9llo"
+buf nulin 6e756c00696e
+enc_string buf:nulin
+
+enc_named_string duration abc
+enc_named_string "" abc
+enc_named_string name ""
+enc_named_number duration 1.5
+enc_named_number "" 0
+enc_named_bool stereo 1
+enc_named_bool stereo 0
+# lengths around the 16-bit boundary
+rep s65534 65534 61
+rep s65535 65535 61
+rep s65536 65536 61
+rep s65537 65537 61
+cap 70000
+enc_string buf:s65534
+enc_string buf:s65535
+enc_string buf:s65536
+enc_string buf:s65537
+enc_named_string n buf:s65535
+enc_named_string n buf:s65536
+# decoding: av_val is NULL when the length is 0
+dec_string 0000
+dec_string 0003616263
+dec_string 0001ff
+dec_string 0000ff
+dec_longstring 00000000
+dec_longstring 00000003616263
+dec_longstring 0000000141
+# a 32-bit length with the top bit set decodes as a negative av_len (QUIRK Q-19): av_val becomes NULL
+dec_longstring ffffffff
+dec_longstring 80000000

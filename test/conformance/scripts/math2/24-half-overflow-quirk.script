@@ -1,0 +1,32 @@
+# S-009-R112, Q-10: the overflow test is `|f| > 65504` (strictly greater than the largest half), NOT the
+# IEEE rounding boundary 65520. Everything above 65504 becomes infinity, although
+# 65504 < f < 65520 would round to 65504 in IEEE round-to-nearest.
+float m 65504
+float m1 65504.004
+float m2 65505
+float m3 65519
+float m4 65519.996
+float m5 65520
+float m6 70000
+float m7 1e30
+float m8 3.4028235e38
+float n1 -65505
+float n2 -65520
+call h half_from_float_var m
+call h half_from_float_var m1
+call h half_from_float_var m2
+call h half_from_float_var m3
+call h half_from_float_var m4
+call h half_from_float_var m5
+call h half_from_float_var m6
+call h half_from_float_var m7
+call h half_from_float_var m8
+call h half_from_float_var n1
+call h half_from_float_var n2
+# half_from_bits stores the bits unchanged
+half_bits hb 0x3c00
+show hb
+half_bits hb 0xffff
+show hb
+half_bits hb 0
+show hb

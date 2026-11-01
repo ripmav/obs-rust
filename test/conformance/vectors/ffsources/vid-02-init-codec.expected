@@ -1,0 +1,55 @@
+av.find_encoder fake_enc -> found
+log info ---------------------------------
+vid_init -> 1
+av.open2 codec=fake_enc bit_rate=2500000 sample_rate=0 channels=0 sample_fmt=-1 strict=0 flags=0 1920x1080 pix_fmt=23
+vid_init_codec -> 1 initialized=1 vframe=1
+  vframe fmt=23 1920x1080 range=1 pri=1 trc=1 cs=1 chroma=1
+vid initialized=1 first_packet=1 start_ts=0 height=1080 buffer=0 enc_name="Fake"
+av.send_frame NULL -> 0
+av.receive_packet -> eagain
+av.free_context
+echo ---- HDR PQ full range 4:4:4 10-bit-class format: colour properties are copied to the frame
+av.find_encoder fake_enc -> found
+log info ---------------------------------
+vid_init -> 1
+av.open2 codec=fake_enc bit_rate=5000000 sample_rate=0 channels=0 sample_fmt=-1 strict=0 flags=0 64x32 pix_fmt=5
+vid_init_codec -> 1 initialized=1 vframe=1
+  vframe fmt=5 64x32 range=2 pri=9 trc=16 cs=9 chroma=2
+av.send_frame NULL -> 0
+av.receive_packet -> eagain
+av.free_context
+echo ---- open failure without callback: the error text is built from the locale template
+av.find_encoder fake_enc -> found
+log info ---------------------------------
+vid_init -> 1
+av.open2 codec=fake_enc bit_rate=5000000 sample_rate=0 channels=0 sample_fmt=-1 strict=0 flags=0 64x32 pix_fmt=23
+host.set_last_error "Failed to open Fake: Error number -1000 occurred<br><br>"
+vid_init_codec -> 0 initialized=0 vframe=0
+vid initialized=0 first_packet=1 start_ts=0 height=32 buffer=0 enc_name="Fake"
+av.free_context
+echo ---- open failure with callback: callback receives the code, no error text is set
+av.find_encoder fake_enc -> found
+log info ---------------------------------
+vid_init -> 1
+av.open2 codec=fake_enc bit_rate=5000000 sample_rate=0 channels=0 sample_fmt=-1 strict=0 flags=0 64x32 pix_fmt=23
+cb.init_error ret=-1000
+vid_init_codec -> 0 initialized=0 vframe=0
+av.free_context
+echo ---- open failure when a last-error already exists: neither is called
+av.find_encoder fake_enc -> found
+log info ---------------------------------
+vid_init -> 1
+av.open2 codec=fake_enc bit_rate=5000000 sample_rate=0 channels=0 sample_fmt=-1 strict=0 flags=0 64x32 pix_fmt=23
+vid_init_codec -> 0 initialized=0 vframe=0
+last_error "earlier problem"
+av.free_context
+echo ---- frame buffer allocation fails (zero size): returns false after the codec opened
+av.find_encoder fake_enc -> found
+log info ---------------------------------
+vid_init -> 1
+av.open2 codec=fake_enc bit_rate=5000000 sample_rate=0 channels=0 sample_fmt=-1 strict=0 flags=0 0x0 pix_fmt=23
+log warning [Fake encoder: 'enc'] Failed to allocate vframe: Invalid argument
+vid_init_codec -> 0 initialized=0 vframe=1
+  vframe fmt=23 0x0 range=1 pri=1 trc=1 cs=1 chroma=1
+vid initialized=0 first_packet=1 start_ts=0 height=0 buffer=0 enc_name="Fake"
+av.free_context

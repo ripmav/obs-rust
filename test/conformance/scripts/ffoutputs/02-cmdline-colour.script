@@ -1,0 +1,52 @@
+# The helper command line (S-037 section 4 layout) built by start(): colour tags from the OBS colour space,
+# range, chroma location from the pixel format and the HDR luminance. Every case starts a fresh world.
+reset
+output o
+venc h264 bitrate=6000
+set str path /v/a.mkv
+create ffmpeg_muxer
+video_info 30 1 DEFAULT P NV12
+start
+reset
+output o
+venc h264 bitrate=6000
+set str path /v/a.mkv
+create ffmpeg_muxer
+video_info 60 1 601 F I420
+start
+reset
+output o
+venc h264 bitrate=6000
+set str path /v/a.mkv
+create ffmpeg_muxer
+video_info 60000 1001 SRGB P I444
+start
+reset
+output o
+venc hevc bitrate=6000 codec_type=1752589105
+set str path /v/a.mkv
+create ffmpeg_muxer
+hdr_peak 600
+video_info 30 1 PQ P P010
+start
+reset
+output o
+venc hevc bitrate=6000
+set str path /v/a.mkv
+create ffmpeg_muxer
+video_info 30 1 HLG P I010
+start
+reset
+output o
+venc h264 bitrate=6000
+set str path /v/a.mkv
+create ffmpeg_muxer
+video_info 30 1 77 P YUY2
+start
+reset
+output o
+venc h264 bitrate=6000
+set str path /v/a.mkv
+create ffmpeg_muxer
+video_info 30 1 709 P BGRA
+start

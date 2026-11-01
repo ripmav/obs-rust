@@ -1,0 +1,36 @@
+# S-022 PCM audio: codecs pcm_s16le / pcm_s24le / pcm_f32le. Sample size is fixed (channels x bytes);
+# the track has no per-sample size table (stsz sample_size != 0), stts counts frames (delta 1), and
+# a packet may hold many frames. Sample entry: ipcm (integer) or fpcm (float) with chnl + pcmC boxes.
+# trun has no per-sample entries, only count and data offset; tfhd carries defaults of duration 1 and
+# size = frame size.
+enc a audio codec pcm_s16le rate 48000
+mux mp4
+pkt a 0 0 1 gen:960
+pkt a 240 240 1 gen:960
+pkt a 480 480 1 gen:960
+finalise
+dump
+echo --- 24 bit mono, float 5.1
+reset
+enc a audio codec pcm_s24le rate 44100 speakers mono
+mux mp4 skipfin
+pkt a 0 0 1 gen:30
+pkt a 10 10 1 gen:30
+finalise
+hex
+reset
+enc a audio codec pcm_f32le rate 48000 speakers 5.1
+mux mp4
+pkt a 0 0 1 gen:240
+pkt a 10 10 1 gen:240
+finalise
+tree
+hex
+echo --- a packet whose size is not a multiple of the frame size: frame count rounds down, bytes are still written
+reset
+enc a audio codec pcm_s16le rate 48000
+mux mp4
+pkt a 0 0 1 gen:10
+pkt a 2 2 1 gen:10
+finalise
+hex

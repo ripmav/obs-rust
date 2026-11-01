@@ -1,0 +1,44 @@
+# CORE. frame_rate holds two independent ordered arrays: named options (name, description) and
+# fps ranges (min, max as numerator/denominator). add returns the new index, insert shifts.
+# Getters beyond the end return NULL / {0,0}. Clear variants empty one or both arrays.
+props P
+add frame_rate P fr "FPS" as fr
+info fr
+fr_option_add fr "Auto" "Automatic"
+fr_option_add fr "Pal" @null
+fr_option_add fr @null "x"
+fr_option_insert fr 0 "First" "first desc"
+fr_option_insert fr 4 "Last" "last desc"
+fr_range_add fr 30 1 60 1
+fr_range_add fr 24000 1001 30000 1001
+fr_range_insert fr 0 1 1 10 1
+fr_range_insert fr 3 0 0 5 0
+info fr
+echo clear-options-only
+fr_options_clear fr
+info fr
+echo clear-ranges-only
+fr_option_add fr "Again" "again"
+fr_ranges_clear fr
+info fr
+echo clear-all
+fr_range_add fr 25 1 25 1
+fr_clear fr
+info fr
+fr_clear fr
+echo reuse-after-clear
+fr_option_add fr "n" "d"
+fr_range_add fr 1 1 2 1
+info fr
+echo wrong-kind
+add bool P b "x" as b
+fr_option_add b "n" "d"
+fr_range_add b 1 1 2 1
+fr_option_insert b 0 "n" "d"
+fr_range_insert b 0 1 1 2 1
+fr_clear b
+fr_options_clear b
+fr_ranges_clear b
+probe b
+probe fr
+destroy P

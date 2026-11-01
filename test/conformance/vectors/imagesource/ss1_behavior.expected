@@ -1,0 +1,214 @@
+ev create slideshow#1 public
+ev hotkey_register slideshow#1 id=1 name=SlideShow.PlayPause desc=SlideShow.PlayPause
+ev hotkey_register slideshow#1 id=2 name=SlideShow.Restart desc=SlideShow.Restart
+ev hotkey_register slideshow#1 id=3 name=SlideShow.Stop desc=SlideShow.Stop
+ev hotkey_register slideshow#1 id=4 name=SlideShow.NextSlide desc=SlideShow.NextSlide
+ev hotkey_register slideshow#1 id=5 name=SlideShow.PreviousSlide desc=SlideShow.PreviousSlide
+ev create cut_transition#2 private
+ev create image_source#3[/s/a.png] private
+ev image_init /s/a.png alpha=2
+log debug [image_source: ''] loading texture '/s/a.png'
+ev texture_create 1 10x10 dynamic=0
+ev create image_source#4[/s/b.png] private
+ev image_init /s/b.png alpha=2
+log debug [image_source: ''] loading texture '/s/b.png'
+ev texture_create 2 20x20 dynamic=0
+ev tr_size cut_transition#2 20x20
+ev tr_align cut_transition#2 0
+ev tr_scale cut_transition#2 1
+ev tr_start cut_transition#2 mode=0 ms=0 dest=image_source#3[/s/a.png] -> started
+ev signal media_started slideshow#1
+tick 0 clock=16000001
+ev show slideshow#1
+ev activate slideshow#1
+ev show image_source#3[/s/a.png]
+ev activate image_source#3[/s/a.png]
+tick 0 clock=216000004
+state slideshow1 behavior=1 manual=0 randomize=0 loop=1 hide=0 use_cut=0 paused=0 stop=0 restart_on_activate=0 pause_on_deactivate=0 slide_time=0.100000001 tr_speed=0 tr_name=cut_transition cur_item=0 elapsed=0.116000004 cx=20 cy=20 mem_usage=2000 state=1 transition=cut_transition#2
+state   file 0 /s/a.png image_source#3[/s/a.png]
+state   file 1 /s/b.png image_source#4[/s/b.png]
+ev tr_start cut_transition#2 mode=0 ms=0 dest=image_source#4[/s/b.png] -> started
+ev signal media_next slideshow#1
+ev deactivate slideshow#1
+ev deactivate image_source#3[/s/a.png]
+ev show image_source#4[/s/b.png]
+tick 0 clock=232000005
+media_state 4
+state slideshow1 behavior=1 manual=0 randomize=0 loop=1 hide=0 use_cut=0 paused=0 stop=0 restart_on_activate=0 pause_on_deactivate=1 slide_time=0.100000001 tr_speed=0 tr_name=cut_transition cur_item=1 elapsed=0.116000004 cx=20 cy=20 mem_usage=2000 state=4 transition=cut_transition#2
+state   file 0 /s/a.png image_source#3[/s/a.png]
+state   file 1 /s/b.png image_source#4[/s/b.png]
+tick 0 clock=1232000005
+state slideshow1 behavior=1 manual=0 randomize=0 loop=1 hide=0 use_cut=0 paused=0 stop=0 restart_on_activate=0 pause_on_deactivate=1 slide_time=0.100000001 tr_speed=0 tr_name=cut_transition cur_item=1 elapsed=0.116000004 cx=20 cy=20 mem_usage=2000 state=4 transition=cut_transition#2
+state   file 0 /s/a.png image_source#3[/s/a.png]
+state   file 1 /s/b.png image_source#4[/s/b.png]
+ev activate slideshow#1
+ev activate image_source#3[/s/a.png]
+ev activate image_source#4[/s/b.png]
+tick 0 clock=1248000006
+media_state 1
+state slideshow1 behavior=1 manual=0 randomize=0 loop=1 hide=0 use_cut=0 paused=0 stop=0 restart_on_activate=0 pause_on_deactivate=0 slide_time=0.100000001 tr_speed=0 tr_name=cut_transition cur_item=1 elapsed=0.0319999978 cx=20 cy=20 mem_usage=2000 state=1 transition=cut_transition#2
+state   file 0 /s/a.png image_source#3[/s/a.png]
+state   file 1 /s/b.png image_source#4[/s/b.png]
+ev create slideshow#5 public
+ev hotkey_register slideshow#5 id=6 name=SlideShow.PlayPause desc=SlideShow.PlayPause
+ev hotkey_register slideshow#5 id=7 name=SlideShow.Restart desc=SlideShow.Restart
+ev hotkey_register slideshow#5 id=8 name=SlideShow.Stop desc=SlideShow.Stop
+ev hotkey_register slideshow#5 id=9 name=SlideShow.NextSlide desc=SlideShow.NextSlide
+ev hotkey_register slideshow#5 id=10 name=SlideShow.PreviousSlide desc=SlideShow.PreviousSlide
+ev tr_start cut_transition#2 mode=0 ms=0 dest=image_source#3[/s/a.png] -> started
+ev signal media_next slideshow#1
+ev create cut_transition#6 private
+ev create image_source#7[/s/a.png] private
+ev image_init /s/a.png alpha=2
+log debug [image_source: ''] loading texture '/s/a.png'
+ev texture_create 3 10x10 dynamic=0
+ev create image_source#8[/s/b.png] private
+ev image_init /s/b.png alpha=2
+log debug [image_source: ''] loading texture '/s/b.png'
+ev texture_create 4 20x20 dynamic=0
+ev create image_source#9[/s/c.png] private
+ev image_init /s/c.png alpha=2
+log debug [image_source: ''] loading texture '/s/c.png'
+ev texture_create 5 30x30 dynamic=0
+ev tr_size cut_transition#6 30x30
+ev tr_align cut_transition#6 0
+ev tr_scale cut_transition#6 1
+ev tr_start cut_transition#6 mode=0 ms=0 dest=image_source#7[/s/a.png] -> started
+ev signal media_started slideshow#5
+tick 0 clock=1264000007
+ev show slideshow#5
+ev activate slideshow#5
+ev tr_set cut_transition#6 image_source#7[/s/a.png]
+ev show image_source#7[/s/a.png]
+ev activate image_source#7[/s/a.png]
+tick 0 clock=1280000008
+state slideshow1 behavior=0 manual=0 randomize=0 loop=1 hide=0 use_cut=0 paused=0 stop=0 restart_on_activate=0 pause_on_deactivate=0 slide_time=0.100000001 tr_speed=0 tr_name=cut_transition cur_item=0 elapsed=0 cx=30 cy=30 mem_usage=5600 state=1 transition=cut_transition#6
+state   file 0 /s/a.png image_source#7[/s/a.png]
+state   file 1 /s/b.png image_source#8[/s/b.png]
+state   file 2 /s/c.png image_source#9[/s/c.png]
+tick 0 clock=1480000011
+ev tr_start cut_transition#2 mode=0 ms=0 dest=image_source#4[/s/b.png] -> started
+ev signal media_next slideshow#1
+ev tr_start cut_transition#6 mode=0 ms=0 dest=image_source#8[/s/b.png] -> started
+ev signal media_next slideshow#5
+ev show image_source#8[/s/b.png]
+ev activate image_source#8[/s/b.png]
+tick 1 clock=1680000014
+ev tr_start cut_transition#2 mode=0 ms=0 dest=image_source#3[/s/a.png] -> started
+ev signal media_next slideshow#1
+ev tr_start cut_transition#6 mode=0 ms=0 dest=image_source#9[/s/c.png] -> started
+ev signal media_next slideshow#5
+ev hide image_source#7[/s/a.png]
+ev deactivate image_source#7[/s/a.png]
+ev show image_source#9[/s/c.png]
+ev activate image_source#9[/s/c.png]
+tick 2 clock=1880000017
+state slideshow1 behavior=0 manual=0 randomize=0 loop=1 hide=0 use_cut=0 paused=0 stop=0 restart_on_activate=0 pause_on_deactivate=0 slide_time=0.100000001 tr_speed=0 tr_name=cut_transition cur_item=2 elapsed=0.300000042 cx=30 cy=30 mem_usage=5600 state=1 transition=cut_transition#6
+state   file 0 /s/a.png image_source#7[/s/a.png]
+state   file 1 /s/b.png image_source#8[/s/b.png]
+state   file 2 /s/c.png image_source#9[/s/c.png]
+ev tr_start cut_transition#2 mode=0 ms=0 dest=image_source#4[/s/b.png] -> started
+ev signal media_next slideshow#1
+ev tr_start cut_transition#6 mode=0 ms=0 dest=image_source#7[/s/a.png] -> started
+ev signal media_next slideshow#5
+ev deactivate slideshow#5
+ev show image_source#7[/s/a.png]
+ev hide image_source#8[/s/b.png]
+ev deactivate image_source#8[/s/b.png]
+ev deactivate image_source#9[/s/c.png]
+tick 0 clock=1896000018
+ev tr_start cut_transition#2 mode=0 ms=0 dest=image_source#3[/s/a.png] -> started
+ev signal media_next slideshow#1
+ev tr_start cut_transition#6 mode=0 ms=0 dest=image_source#8[/s/b.png] -> started
+ev signal media_next slideshow#5
+ev activate slideshow#5
+ev tr_set cut_transition#6 image_source#7[/s/a.png]
+ev activate image_source#7[/s/a.png]
+ev hide image_source#9[/s/c.png]
+tick 0 clock=1912000019
+media_state 1
+state slideshow1 behavior=0 manual=0 randomize=0 loop=1 hide=0 use_cut=0 paused=0 stop=0 restart_on_activate=0 pause_on_deactivate=0 slide_time=0.100000001 tr_speed=0 tr_name=cut_transition cur_item=0 elapsed=0 cx=30 cy=30 mem_usage=5600 state=1 transition=cut_transition#6
+state   file 0 /s/a.png image_source#7[/s/a.png]
+state   file 1 /s/b.png image_source#8[/s/b.png]
+state   file 2 /s/c.png image_source#9[/s/c.png]
+ev create slideshow#10 public
+ev hotkey_register slideshow#10 id=11 name=SlideShow.PlayPause desc=SlideShow.PlayPause
+ev hotkey_register slideshow#10 id=12 name=SlideShow.Restart desc=SlideShow.Restart
+ev hotkey_register slideshow#10 id=13 name=SlideShow.Stop desc=SlideShow.Stop
+ev hotkey_register slideshow#10 id=14 name=SlideShow.NextSlide desc=SlideShow.NextSlide
+ev hotkey_register slideshow#10 id=15 name=SlideShow.PreviousSlide desc=SlideShow.PreviousSlide
+ev tr_start cut_transition#2 mode=0 ms=0 dest=image_source#4[/s/b.png] -> started
+ev signal media_next slideshow#1
+ev create cut_transition#11 private
+ev create image_source#12[/s/a.png] private
+ev image_init /s/a.png alpha=2
+log debug [image_source: ''] loading texture '/s/a.png'
+ev texture_create 6 10x10 dynamic=0
+ev create image_source#13[/s/b.png] private
+ev image_init /s/b.png alpha=2
+log debug [image_source: ''] loading texture '/s/b.png'
+ev texture_create 7 20x20 dynamic=0
+ev tr_size cut_transition#11 20x20
+ev tr_align cut_transition#11 0
+ev tr_scale cut_transition#11 1
+ev tr_start cut_transition#11 mode=0 ms=0 dest=image_source#12[/s/a.png] -> started
+ev signal media_started slideshow#10
+tick 0 clock=1928000020
+ev tr_start cut_transition#2 mode=0 ms=0 dest=image_source#3[/s/a.png] -> started
+ev signal media_next slideshow#1
+ev show slideshow#10
+ev show image_source#12[/s/a.png]
+tick 0 clock=2128000023
+ev tr_start cut_transition#2 mode=0 ms=0 dest=image_source#4[/s/b.png] -> started
+ev signal media_next slideshow#1
+ev tr_start cut_transition#6 mode=0 ms=0 dest=image_source#8[/s/b.png] -> started
+ev signal media_next slideshow#5
+ev show image_source#8[/s/b.png]
+ev activate image_source#8[/s/b.png]
+ev tr_start cut_transition#11 mode=0 ms=0 dest=image_source#13[/s/b.png] -> started
+ev signal media_next slideshow#10
+ev show image_source#13[/s/b.png]
+tick 1 clock=2328000026
+ev tr_start cut_transition#2 mode=0 ms=0 dest=image_source#3[/s/a.png] -> started
+ev signal media_next slideshow#1
+ev tr_start cut_transition#6 mode=0 ms=0 dest=image_source#9[/s/c.png] -> started
+ev signal media_next slideshow#5
+ev hide image_source#7[/s/a.png]
+ev deactivate image_source#7[/s/a.png]
+ev show image_source#9[/s/c.png]
+ev activate image_source#9[/s/c.png]
+ev tr_start cut_transition#11 mode=0 ms=0 dest=image_source#12[/s/a.png] -> started
+ev signal media_next slideshow#10
+tick 2 clock=2528000029
+state slideshow1 behavior=2 manual=0 randomize=0 loop=1 hide=0 use_cut=0 paused=0 stop=0 restart_on_activate=0 pause_on_deactivate=0 slide_time=0.100000001 tr_speed=0 tr_name=cut_transition cur_item=0 elapsed=0.316000015 cx=20 cy=20 mem_usage=2000 state=1 transition=cut_transition#11
+state   file 0 /s/a.png image_source#12[/s/a.png]
+state   file 1 /s/b.png image_source#13[/s/b.png]
+ev create slideshow#14 public
+ev hotkey_register slideshow#14 id=16 name=SlideShow.PlayPause desc=SlideShow.PlayPause
+ev hotkey_register slideshow#14 id=17 name=SlideShow.Restart desc=SlideShow.Restart
+ev hotkey_register slideshow#14 id=18 name=SlideShow.Stop desc=SlideShow.Stop
+ev hotkey_register slideshow#14 id=19 name=SlideShow.NextSlide desc=SlideShow.NextSlide
+ev hotkey_register slideshow#14 id=20 name=SlideShow.PreviousSlide desc=SlideShow.PreviousSlide
+ev tr_start cut_transition#2 mode=0 ms=0 dest=image_source#4[/s/b.png] -> started
+ev signal media_next slideshow#1
+ev tr_start cut_transition#6 mode=0 ms=0 dest=image_source#7[/s/a.png] -> started
+ev signal media_next slideshow#5
+ev show image_source#7[/s/a.png]
+ev activate image_source#7[/s/a.png]
+ev hide image_source#8[/s/b.png]
+ev deactivate image_source#8[/s/b.png]
+ev tr_start cut_transition#11 mode=0 ms=0 dest=image_source#13[/s/b.png] -> started
+ev signal media_next slideshow#10
+ev create fade_transition#15 private
+ev create image_source#16[/s/a.png] private
+ev image_init /s/a.png alpha=2
+log debug [image_source: ''] loading texture '/s/a.png'
+ev texture_create 8 10x10 dynamic=0
+ev tr_size fade_transition#15 10x10
+ev tr_align fade_transition#15 0
+ev tr_scale fade_transition#15 1
+ev tr_start fade_transition#15 mode=0 ms=700 dest=image_source#16[/s/a.png] -> started
+ev signal media_started slideshow#14
+tick 0 clock=2544000030
+state slideshow1 behavior=0 manual=0 randomize=0 loop=1 hide=0 use_cut=0 paused=0 stop=0 restart_on_activate=0 pause_on_deactivate=0 slide_time=8.69999981 tr_speed=700 tr_name=fade_transition cur_item=0 elapsed=0.0160000008 cx=10 cy=10 mem_usage=400 state=1 transition=fade_transition#15
+state   file 0 /s/a.png image_source#16[/s/a.png]

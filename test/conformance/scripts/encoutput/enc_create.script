@@ -1,0 +1,23 @@
+# Encoder creation: unknown ids still create an (inert) encoder, a type mismatch returns NULL.
+# Initial timebase comes from the media: video 1/fps_num*fps_den, audio 1/sample_rate.
+video 60000 1001 1920 1080
+audio 44100
+venc v
+aenc a frame_size=2048 mixer=2
+venc vcaps caps=5
+enc_raw video nosuchcodec ghost
+enc_raw audio v mismatch
+enc_raw video v dup
+enc_raw audio a dup2
+enc_info v
+enc_info a
+enc_info vcaps
+echo --- not-yet-initialised encoder: media and counters
+encstate v
+encstate a
+echo --- audio frame size/sample rate are known only after initialization
+enc_init a
+enc_info a
+enc_init v
+encstate v
+enc_init a

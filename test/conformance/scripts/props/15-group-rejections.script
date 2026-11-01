@@ -1,0 +1,38 @@
+# CORE. add_group returns NULL for: NULL group, the container itself, a group whose
+# (transitive) content already contains the target, duplicate names between the group's direct
+# children and the target tree, and a duplicate group name. A rejected group is not adopted:
+# the caller still owns it and may destroy it. (Duplicates are logged as warnings.)
+props Top
+add bool Top x "X"
+props G
+echo null-group-and-self
+add group Top g "G" normal @null
+add group Top g "self" normal Top
+echo duplicate-between-content-and-top
+add bool G x "x"
+add group Top g "G" normal G
+echo group-name-duplicate
+props G2
+add group Top x "dup name" normal G2
+echo fix-and-retry
+remove G x
+add bool G y "Y"
+add group Top g "G" normal G
+dump Top
+echo recursion-cycle-through-nesting
+props A
+props B
+props C
+add group A b "B" normal B
+add group B c "C" normal C
+echo A-contains-B-contains-C
+add group C a "A" normal A
+add group B a "A" normal A
+add group A a2 "A2" normal A
+add group C b2 "B2" normal B
+echo not-a-cycle-sibling
+add group Top a "A" normal A
+dump Top
+echo rejected-containers-still-owned-by-script
+destroy G2
+destroy Top

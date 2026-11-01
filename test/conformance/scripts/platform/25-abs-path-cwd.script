@@ -1,0 +1,52 @@
+# os_get_abs_path(path, buf, size): realpath(3) of an existing path (symlinks resolved, "." and ".."
+# removed) copied with snprintf semantics. Returns the length of the full result (may exceed size-1 when the
+# buffer is too small) and 0 when the path does not exist or buf is NULL. os_get_abs_path_ptr uses a 512
+# byte buffer and returns NULL when the path does not exist. The runner prints the work directory as <W>.
+# os_getcwd / os_chdir are getcwd(3) / chdir(2).
+mkdir sub
+mkdir sub/deeper
+put sub/file.txt F
+abs_path . 4096
+abs_path sub 4096
+abs_path sub/ 4096
+abs_path ./sub/../sub/./deeper 4096
+abs_path sub/file.txt 4096
+abs_path sub/deeper/../file.txt 4096
+abs_path nosuch 4096
+abs_path sub/nosuch 4096
+abs_path "" 4096
+abs_path @null 4096
+abs_path sub 0
+abs_path nosuch 0
+abs_path sub null
+abs_path_ptr sub/file.txt
+abs_path_ptr nosuch
+abs_path_ptr .
+abs_path_ptr @null
+# symbolic links are resolved
+symlink sub/deeper link
+symlink file.txt sub/flink
+symlink nowhere dead
+abs_path link 4096
+abs_path sub/flink 4096
+abs_path dead 4096
+abs_path_ptr link
+# a small buffer truncates (snprintf style): only the lengths are printed because the absolute
+# prefix depends on the machine
+abs_path sub 5
+abs_path sub 1
+# cwd
+getcwd 4096
+chdir sub
+getcwd 4096
+abs_path . 4096
+abs_path file.txt 4096
+chdir deeper
+getcwd 4096
+chdir ../..
+getcwd 4096
+chdir nosuch
+chdir sub/file.txt
+chdir @null
+getcwd 4096
+getcwd 1

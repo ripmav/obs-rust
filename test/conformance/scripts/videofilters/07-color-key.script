@@ -1,0 +1,39 @@
+# color_key_filter v1 and v2: key colour presets (blue = 0xFF0000 and red = 0x0000FF as packed integers whose low byte is red), vec4 conversion.
+source T 1920 1080 1920 1080 SRGB video
+source P 1920 1080 1920 1080 SRGB video
+filter a color_key_filter 0 @null T P
+render a
+filter b color_key_filter 2 @null T P
+render b
+data d
+dset d key_color_type str blue
+filter c color_key_filter 2 d T P
+render c
+dset d key_color_type str red
+filter e color_key_filter 2 d T P
+render e
+dset d key_color_type str magenta
+filter f color_key_filter 2 d T P
+render f
+dset d key_color_type str custom
+dset d key_color int 0xFF336699
+dset d similarity int 1000
+dset d smoothness int 1
+dset d opacity dbl 0.25
+dset d contrast dbl -1
+dset d gamma dbl 1
+dset d brightness dbl -0.5
+filter g color_key_filter 2 d T P
+render g
+echo v1: srgb-unaware vec4_from_rgba; opacity percent, contrast branch, brightness halved
+data d1
+dset d1 key_color_type str custom
+dset d1 key_color int 0xFF336699
+dset d1 opacity int 20
+dset d1 contrast dbl -1
+dset d1 brightness dbl 0.4
+filter h color_key_filter 0 d1 T P
+render h
+srcspace T 709_EXTENDED
+render b
+render h

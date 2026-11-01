@@ -1,0 +1,3 @@
+try_defect mkdirs crash
+try mkdirs ok
+exists a/b 1

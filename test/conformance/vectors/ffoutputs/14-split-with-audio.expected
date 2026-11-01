@@ -1,0 +1,85 @@
+> reset
+> output o
+> venc h264 bitrate=2500 extra=0a0b
+> aenc t0 aac 48000 1024 0 extra=cc
+> set str path /v/first.mkv
+> set bool split_file 1
+> set int max_time_sec 1
+> set str directory /rec
+> set str format seg%N
+> set str extension mkv
+> create ffmpeg_muxer
+signal_add "void file_changed(string next_file)"
+proc_add "void split_file(out bool split_file_enabled)"
+create ffmpeg_muxer -> ok
+> start
+unlink "/v/first.mkv"
+pipe create type=w
+  argv[0] "<bin>/obs-ffmpeg-mux"
+  argv[1] "/v/first.mkv"
+  argv[2] "1"
+  argv[3] "1"
+  argv[4] "h264"
+  argv[5] "2500"
+  argv[6] "1280"
+  argv[7] "720"
+  argv[8] "1"
+  argv[9] "1"
+  argv[10] "1"
+  argv[11] "1"
+  argv[12] "1"
+  argv[13] "0"
+  argv[14] "30"
+  argv[15] "1"
+  argv[16] "0"
+  argv[17] "aac"
+  argv[18] "t0"
+  argv[19] "0"
+  argv[20] "48000"
+  argv[21] "1024"
+  argv[22] "0"
+  argv[23] "2"
+  argv[24] ""
+  argv[25] ""
+begin_data_capture
+log info [ffmpeg muxer: 'o'] Writing file '/v/first.mkv'...
+start -> 1
+> pkt v pts=0 dts=0 key=1 size=4
+wire V idx=0 key=0 pts=0 dts=0 size=2 data=0a0b
+wire A idx=0 key=0 pts=0 dts=0 size=1 data=cc
+wire V idx=0 key=1 pts=0 dts=0 size=4 data=00010203
+> pkt a pts=0 dts=0 size=4
+wire A idx=0 key=0 pts=0 dts=0 size=4 data=10111213
+> pkt v pts=1000 dts=1000 key=1 size=4
+> state_split
+state_split split_file=1 allow_overwrite=0 cur_size=11 cur_time=0 max_size=0 max_time=1000000 manual=0 ready=0 mux_packets=1
+  found_video=1 video_pts_offset=0 found_audio=10 audio_dts_offsets=0,0
+> queue
+queue 0
+mux_packets 1
+  [0] V track=0 pts=1000 dts=1000 dts_usec=1000000 key=1 size=4
+> pkt v pts=1033 dts=1033 key=0 size=4
+> pkt a pts=990 dts=990 size=4
+wire A idx=0 key=0 pts=990 dts=990 size=4 data=40414243
+> echo audio_before_keyframe_goes_to_old_file
+audio_before_keyframe_goes_to_old_file
+> pkt a pts=1000 dts=1000 size=4
+mkdirs "/rec"
+log info [ffmpeg muxer: 'o'] Changing output file to '/rec/seg1.mkv'
+wire CHANGE_FILE "/rec/seg1.mkv"
+signal file_changed next_file="/rec/seg1.mkv"
+wire V idx=0 key=0 pts=0 dts=0 size=2 data=0a0b
+wire A idx=0 key=0 pts=0 dts=0 size=1 data=cc
+wire V idx=0 key=1 pts=0 dts=0 size=4 data=20212223
+wire V idx=0 key=0 pts=33 dts=33 size=4 data=30313233
+wire A idx=0 key=0 pts=0 dts=0 size=4 data=50515253
+> state_split
+state_split split_file=1 allow_overwrite=0 cur_size=12 cur_time=1000000 max_size=0 max_time=1000000 manual=0 ready=0 mux_packets=0
+  found_video=1 video_pts_offset=1000 found_audio=10 audio_dts_offsets=1000,0
+> pkt a pts=1021 dts=1021 size=4
+wire A idx=0 key=0 pts=21 dts=21 size=4 data=60616263
+> pkt v pts=1066 dts=1066 key=0 size=4
+wire V idx=0 key=0 pts=66 dts=66 size=4 data=70717273
+> state_split
+state_split split_file=1 allow_overwrite=0 cur_size=20 cur_time=1000000 max_size=0 max_time=1000000 manual=0 ready=0 mux_packets=0
+  found_video=1 video_pts_offset=1000 found_audio=10 audio_dts_offsets=1000,0

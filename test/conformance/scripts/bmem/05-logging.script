@@ -1,0 +1,5 @@
+# blog formats its arguments printf-style and hands the result to the log handler.
+log error something failed
+log warning careful
+log info hello
+log debug details

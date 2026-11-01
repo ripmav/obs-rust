@@ -1,0 +1,57 @@
+> reset
+> output ff
+> size 320 240
+> video_info 30 1 709 P NV12
+> set str url x.null
+> set str format_name null
+> set int scale_width 160
+> set int scale_height 120
+> fo_create
+fo_create -> ok
+> fo_start
+fo_start -> 1 connecting=1
+> fo_connect
+cfg url=x.null format_name=null mime=(null) muxer_settings=""
+  gop=120 vbitrate=0 abitrate=0 venc=(null) venc_id=0 aenc=(null) aenc_id=0
+  vsettings="" asettings="" mix_count=0 tracks=0x0
+  pix_fmt=nv12 range=1 pri=1 trc=1 cs=1
+  size=320x240 scale=160x120
+set_video_conversion NULL
+set_audio_conversion format=0
+begin_data_capture
+fo_connect done connecting=0 active=1
+  video: 160x120 pix_fmt=nv12 tb=1/30 fps=30/1 gop=120 bit_rate=0 range=1 pri=1 trc=1 cs=1 chroma=1 swscale=1
+> fo_video 1000
+> fo_packets
+fo_packets 1
+  [0] stream=0 pts=0 dts=0 dur=0 size=(video)0
+> fo_destroy
+end_data_capture
+> echo only_one_dimension_scaled
+only_one_dimension_scaled
+> reset
+> output ff
+> size 320 240
+> video_info 30 1 709 P I420
+> set str url x.null
+> set str format_name null
+> set int scale_width 320
+> set int scale_height 100
+> fo_create
+fo_create -> ok
+> fo_start
+fo_start -> 1 connecting=1
+> fo_connect
+cfg url=x.null format_name=null mime=(null) muxer_settings=""
+  gop=120 vbitrate=0 abitrate=0 venc=(null) venc_id=0 aenc=(null) aenc_id=0
+  vsettings="" asettings="" mix_count=0 tracks=0x0
+  pix_fmt=yuv420p range=1 pri=1 trc=1 cs=1
+  size=320x240 scale=320x100
+set_video_conversion NULL
+set_audio_conversion format=0
+begin_data_capture
+fo_connect done connecting=0 active=1
+  video: 320x100 pix_fmt=yuv420p tb=1/30 fps=30/1 gop=120 bit_rate=0 range=1 pri=1 trc=1 cs=1 chroma=1 swscale=1
+> fo_video 1000
+> fo_destroy
+end_data_capture

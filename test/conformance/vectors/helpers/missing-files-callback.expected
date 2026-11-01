@@ -1,0 +1,9 @@
+mf_issue 0
+  callback src=Source A new_path="/new/location.png" data=userdata
+mf_issue 0
+  callback src=Source A new_path="" data=userdata
+mf_issue 0
+  callback src=Source A new_path=@null data=userdata
+mf_issue 1
+mf_destroy_file 0
+mf_destroy_file 1

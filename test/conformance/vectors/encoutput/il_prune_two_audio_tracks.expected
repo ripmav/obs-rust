@@ -1,0 +1,53 @@
+log debug encoder 'v1' (v1) created
+encoder v1 created tb=1/30
+log debug encoder 'v2' (v2) created
+encoder v2 created tb=1/30
+log debug encoder 'a0' (a0) created
+encoder a0 created tb=1/48000
+log debug encoder 'a1' (a1) created
+encoder a1 created tb=1/48000
+log debug encoder 'b0' (b0) created
+encoder b0 created tb=1/48000
+log debug encoder 'b1' (b1) created
+encoder b1 created tb=1/48000
+log debug output 'o1' (o1) created
+output o1 created flags=23 reconnect=20/2
+set_venc o1 idx=0 -> video_slots=01 audio_slots=00
+set_aenc o1 idx=0 -> video_slots=01 audio_slots=01
+set_aenc o1 idx=1 -> video_slots=01 audio_slots=03
+log debug output 'o2' (o2) created
+output o2 created flags=23 reconnect=20/2
+set_venc o2 idx=0 -> video_slots=01 audio_slots=00
+set_aenc o2 idx=0 -> video_slots=01 audio_slots=01
+set_aenc o2 idx=1 -> video_slots=01 audio_slots=03
+--- run 1: audio track 0 starts 100000us after the video, track 1 at the same time as the video
+plugin out o1 start
+plugin enc v1 create
+plugin enc a0 create
+plugin enc a1 create
+log debug Maximum interleaver batch size for 'o1' calculated to be 8 packets
+signal o1 activate
+signal o1 start
+plugin out o1 begin_data_capture -> 1
+signal o1 starting
+start o1 -> 1
+plugin out o1 pkt V0 pts=0 dts=0 usec=0 kf=1 size=4 tb=1/30 b0=01
+queue o1 n=4 delayq=0: A1@0 A0@0 V0@33333 V0@66666
+plugin out o1 pkt A1 pts=0 dts=0 usec=0 kf=0 size=4 tb=1/48000 b0=05
+plugin out o1 pkt A0 pts=0 dts=0 usec=0 kf=0 size=4 tb=1/48000 b0=04
+plugin out o1 pkt A1 pts=1024 dts=1024 usec=21333 kf=0 size=4 tb=1/48000 b0=06
+plugin out o1 pkt A0 pts=1024 dts=1024 usec=21333 kf=0 size=4 tb=1/48000 b0=07
+queue o1 n=4 delayq=0: V0@33333 A1@42666 A0@42666 V0@66666
+--- run 2: track 0 is close, track 1 is 100000us late
+plugin out o2 start
+plugin enc v2 create
+plugin enc b0 create
+plugin enc b1 create
+log debug Maximum interleaver batch size for 'o2' calculated to be 8 packets
+signal o2 activate
+signal o2 start
+plugin out o2 begin_data_capture -> 1
+signal o2 starting
+start o2 -> 1
+queue o2 n=0 delayq=0:
+queue o2 n=2 delayq=0: A0@21333 A1@121333

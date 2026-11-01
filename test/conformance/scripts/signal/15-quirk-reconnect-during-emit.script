@@ -1,0 +1,11 @@
+# QUIRK: inside an emit, "disconnect X" only marks X for removal; a following
+# "connect X" finds the still-present entry and does not add a new one, so after the
+# emit X is gone even though the last operation was a connect.
+handler h
+add h "void s()"
+callback x
+callback swapper disconnect:h:s:x connect:h:s:x
+connect h s x
+connect h s swapper
+emit h s
+emit h s

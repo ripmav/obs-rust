@@ -1,0 +1,42 @@
+echo D-1: zero or NaN aspect ratio A:B reaches an (int) cast of inf/NaN
+call samplerstate_create s1 filter=POINT u=CLAMP v=CLAMP w=CLAMP aniso=0 border=0
+create s1 -> ok
+call samplerstate_create s2 filter=POINT u=CLAMP v=CLAMP w=CLAMP aniso=0 border=0
+create s2 -> ok
+call samplerstate_create s3 filter=POINT u=CLAMP v=CLAMP w=CLAMP aniso=0 border=0
+create s3 -> ok
+ignore-begin
+ignore-end
+ignore-begin
+ignore-end
+ignore-begin
+ignore-end
+echo D-3: %d overflow in sscanf
+ignore-begin
+ignore-end
+echo D-4: crop width = base - left - right overflows int
+call effect_create file=crop_filter.effect -> e1 uniforms=5 techniques=4
+call get_param e1:mul_val -> ok
+call get_param e1:add_val -> ok
+call get_param e1:multiplier -> ok
+call source_update c1 deferred=1
+create c1 -> ok
+ignore-begin
+ignore-end
+echo D-5: gpu_delay with a zero frame-rate numerator divides by zero (denominator 0 is harmless: interval 0 equals the initial interval, no frames)
+call source_update g1 deferred=1
+create g1 -> ok
+try-begin
+call deferred_update g1
+try-end crash
+call source_update g2 deferred=1
+create g2 -> ok
+try-begin
+call deferred_update g2
+tick g2 0.016
+try-end ok
+echo D-6: oversized LUT_3D_SIZE makes the u32 allocation size wrap
+call source_update h1 deferred=1
+create h1 -> ok
+ignore-begin
+ignore-end

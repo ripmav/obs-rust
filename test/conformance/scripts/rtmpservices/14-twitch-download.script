@@ -1,0 +1,19 @@
+# S-026 Twitch ingest download (file-updater single file https://ingest.twitch.tv/ingests): answer arrives
+# 400 ms after the request. Entries named "*deprecated*"/"*depracated*" or lacking name/url_template are
+# dropped; "/{stream_key}" is removed from the urls; the list is cached in config dir twitch_ingests.json.
+fs-load /mod/data/services.json data/services-ok.json
+updater-route https://ingest.twitch.tv/ingests 400 "{\"ingests\":[{\"name\":\"Frankfurt\",\"url_template\":\"rtmp://fra.example/app/{stream_key}\"},{\"name\":\"Old (deprecated)\",\"url_template\":\"rtmp://x/app/{stream_key}\"},{\"name\":\"Old2 (depracated)\",\"url_template\":\"rtmp://y/app/{stream_key}\"},{\"url_template\":\"rtmp://noname/app/{stream_key}\"},{\"name\":\"No url\"},{\"name\":\"Paris\",\"url_template\":\"rtmp://par.example/app/{stream_key}\",\"url_template_secure\":\"rtmps://par.example/app/{stream_key}\"}]}"
+module-load
+settings S {"service":"Twitch","server":"auto","key":"k"}
+new T rtmp_common S
+get T url
+clock
+fs-ls
+echo flag-set-so-no-more-waiting-first-ingest-is-used
+get T url
+clock
+echo server-list-is-Auto-plus-ingests-without-the-json-servers
+props P T S
+echo ingest-names-containing-deprecated-anywhere-are-dropped-cached-file-content
+fs-cat /cfg/rtmp-services/twitch_ingests.json
+module-unload

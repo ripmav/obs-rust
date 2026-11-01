@@ -1,0 +1,47 @@
+> vopen v I420 30 1 16 8 2
+= 0
+> vconnect v a 1
+= 1
+> vgate on
+> vlock v 1 100 0x01
+= 1 slot=0
+> vunlock_async v
+= posted
+> venter
+vcb a param=1 ts=100 ls0=16 d0=015a src=cache0
+= entered
+> vdump v
+vdump first=0 last=0 avail=1 skipped=0 total=0 inputs=1 raw=1 gpu=0 stop=0
+  slot0 count=1 skipped=0 ts=100
+  slot1 count=0 skipped=0 ts=0
+> vlock v 1 200 0x02
+= 1 slot=1
+> vunlock_async v
+= posted
+> vdump v
+vdump first=0 last=1 avail=0 skipped=0 total=0 inputs=1 raw=1 gpu=0 stop=0
+  slot0 count=1 skipped=0 ts=100
+  slot1 count=1 skipped=0 ts=200
+> vlock v 1 300 0x03
+= 0 slot=-1
+> vlock v 1 400 0x04
+= 0 slot=-1
+> vdump v
+vdump first=0 last=1 avail=0 skipped=0 total=0 inputs=1 raw=1 gpu=0 stop=0
+  slot0 count=1 skipped=0 ts=100
+  slot1 count=3 skipped=2 ts=200
+> vgate off
+> vrelease 1
+> vwait 2
+vcb a param=1 ts=200 ls0=16 d0=025a src=cache1
+vcb a param=1 ts=33333533 ls0=16 d0=025a src=cache1
+vcb a param=1 ts=66666866 ls0=16 d0=025a src=cache1
+= done
+> vstate v
+active=1 stopped=0 skipped=2 total=4
+> vdump v
+vdump first=0 last=0 avail=2 skipped=2 total=4 inputs=1 raw=1 gpu=0 stop=0
+  slot0 count=0 skipped=0 ts=33333433
+  slot1 count=0 skipped=0 ts=100000199
+> vclose v
+= closed

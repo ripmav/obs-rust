@@ -1,0 +1,13 @@
+# NULL range_min / range_max pointers are allowed (the corresponding output is simply not written).
+vparams 2 1 - nomin
+vparams 2 1 - nomax
+vparams 2 1 - nomin nomax
+vparams 2 2 17 nomin nomax
+# unknown colour spaces (6, 99, -1) return false and write NOTHING (matrix/min/max keep the sentinel 7)
+vparams 6 1 -
+vparams 99 2 17
+vparams -1 1 -
+# the default colour space also works for the format variant, and 2100 spaces with an 8-bit format use 8 bits there
+vparams 4 1 1
+vparams 5 1 1
+vparams 0 1 17

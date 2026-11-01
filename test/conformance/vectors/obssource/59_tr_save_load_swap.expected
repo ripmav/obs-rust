@@ -1,0 +1,25 @@
+  cb T create
+log debug source 'T' (tr) created
+create t ok
+  cb U create
+log debug source 'U' (tr) created
+create u ok
+  cb A create
+log debug source 'A' (in) created
+create a ok
+  cb B create
+log debug source 'B' (in) created
+create b ok
+tr_save t source_a="A" align=9 mode=0 scale=2 cx=800 cy=600
+tr_enum t: a
+echo ---
+tr u A=b(act=1) B=-(act=0) video=0 audio=0 mode=1 manual_val=0 target=0 size=300x200 actual=0x0 start=0 dur=0
+tr_get u size=300x200 scale=1 align=3 active=0
+log warning Failed to find source 'missing' for transition 'U'
+tr u A=-(act=1) B=-(act=0) video=0 audio=0 mode=0 manual_val=0 target=0 size=0x0 actual=0x0 start=0 dur=0
+echo ---
+log warning Failed to find source '' for transition 'U'
+tr u A=-(act=1) B=-(act=0) video=0 audio=0 mode=0 manual_val=0 target=0 size=0x0 actual=0x0 start=0 dur=0
+echo ---
+tr_enum t: b
+tr_enum u:

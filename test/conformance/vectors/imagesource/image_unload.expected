@@ -1,0 +1,38 @@
+ev create image_source#1[/i/a.png] public
+state image file="/i/a.png" persistent=0 is_slide=0 linear_alpha=0 file_timestamp=0 update_time_elapsed=0 last_time=0 active=0 restart_gif=0 file_decoded=0 texture_loaded=0
+state image.file loaded=0 cx=0 cy=0 animated=0 texture=0 cur_frame=0 cur_loop=0 cur_time=0 mem_usage=0 format=0 alpha_mode=0 space=0
+size 0 0
+ev image_init /i/a.png alpha=2
+log debug [image_source: 'a'] loading texture '/i/a.png'
+ev texture_create 1 10x10 dynamic=0
+ev show image_source#1[/i/a.png]
+tick 0 clock=16000001
+state image file="/i/a.png" persistent=0 is_slide=0 linear_alpha=0 file_timestamp=100 update_time_elapsed=0.0160000008 last_time=16000001 active=1 restart_gif=0 file_decoded=1 texture_loaded=1
+state image.file loaded=1 cx=10 cy=10 animated=0 texture=1 cur_frame=0 cur_loop=0 cur_time=0 mem_usage=400 format=3 alpha_mode=0 space=0
+size 10 10
+state image file="/i/a.png" persistent=0 is_slide=0 linear_alpha=0 file_timestamp=100 update_time_elapsed=0.0160000008 last_time=16000001 active=1 restart_gif=0 file_decoded=1 texture_loaded=1
+state image.file loaded=1 cx=10 cy=10 animated=0 texture=1 cur_frame=0 cur_loop=0 cur_time=0 mem_usage=400 format=3 alpha_mode=0 space=0
+ev texture_destroy 1
+ev image_init /i/b.png alpha=2
+log debug [image_source: 'a'] loading texture '/i/b.png'
+ev texture_create 2 20x30 dynamic=0
+tick 0 clock=32000002
+state image file="/i/b.png" persistent=0 is_slide=0 linear_alpha=0 file_timestamp=100 update_time_elapsed=0.0160000008 last_time=32000002 active=1 restart_gif=0 file_decoded=1 texture_loaded=1
+state image.file loaded=1 cx=20 cy=30 animated=0 texture=1 cur_frame=0 cur_loop=0 cur_time=0 mem_usage=2400 format=3 alpha_mode=0 space=0
+size 20 30
+ev texture_destroy 2
+ev hide image_source#1[/i/b.png]
+tick 0 clock=48000003
+state image file="/i/b.png" persistent=0 is_slide=0 linear_alpha=0 file_timestamp=100 update_time_elapsed=0.0160000008 last_time=32000002 active=1 restart_gif=0 file_decoded=0 texture_loaded=0
+state image.file loaded=0 cx=0 cy=0 animated=0 texture=0 cur_frame=0 cur_loop=0 cur_time=0 mem_usage=0 format=0 alpha_mode=0 space=0
+size 0 0
+tick 0 clock=64000004
+state image file="/i/a.png" persistent=0 is_slide=0 linear_alpha=0 file_timestamp=100 update_time_elapsed=0.0160000008 last_time=32000002 active=1 restart_gif=0 file_decoded=0 texture_loaded=0
+state image.file loaded=0 cx=0 cy=0 animated=0 texture=0 cur_frame=0 cur_loop=0 cur_time=0 mem_usage=0 format=0 alpha_mode=0 space=0
+tick 0 clock=80000005
+state image file="/i/a.png" persistent=1 is_slide=1 linear_alpha=0 file_timestamp=100 update_time_elapsed=0.0160000008 last_time=32000002 active=1 restart_gif=0 file_decoded=0 texture_loaded=0
+state image.file loaded=0 cx=0 cy=0 animated=0 texture=0 cur_frame=0 cur_loop=0 cur_time=0 mem_usage=0 format=0 alpha_mode=0 space=0
+ev show image_source#1[/i/a.png]
+tick 0 clock=96000006
+state image file="/i/a.png" persistent=1 is_slide=1 linear_alpha=0 file_timestamp=100 update_time_elapsed=0.0160000008 last_time=32000002 active=1 restart_gif=0 file_decoded=0 texture_loaded=0
+state image.file loaded=0 cx=0 cy=0 animated=0 texture=0 cur_frame=0 cur_loop=0 cur_time=0 mem_usage=0 format=0 alpha_mode=0 space=0

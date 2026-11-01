@@ -1,0 +1,57 @@
+echo legacy-video-empty
+flv_mux empty
+flv_mux empty
+echo legacy-audio-empty
+flv_mux empty
+echo legacy-null-data
+flv_mux empty
+flv_mux empty
+echo audio-ex-empty-leaves-the-outputs-untouched
+ax_start untouched
+ax_frames untouched
+ax_frames untouched
+ax_start untouched
+ax_frames untouched
+echo video-ex-empty-produces-a-tag
+ex_start size=20 hex=0900000500000000000000906176633100000010
+  tag type=9 datasize=5 ts=0 streamid=0
+    video ex=1 frametype=1 ptype=0 fourcc="avc1" payload=-
+  prevsize=16 expected=16
+ex_frames size=20 hex=0900000500000000000000936176633100000010
+  tag type=9 datasize=5 ts=0 streamid=0
+    video ex=1 frametype=1 ptype=3 fourcc="avc1" payload=-
+  prevsize=16 expected=16
+ex_frames size=22 hex=09000007000000000000009603687663310500000012
+  tag type=9 datasize=7 ts=0 streamid=0
+    video ex=1 frametype=1 ptype=6 multitrack=0 inner=3 fourcc="hvc1" track=5 payload=-
+  prevsize=18 expected=18
+ex_end size=20 hex=0900000500000000000000926176303100000010
+  tag type=9 datasize=5 ts=0 streamid=0
+    video ex=1 frametype=1 ptype=2 fourcc="av01" payload=-
+  prevsize=16 expected=16
+echo one-byte payloads (the minimum that produces a tag everywhere)
+flv_mux size=21 hex=0900000600000a0000000017010000000000000011
+  tag type=9 datasize=6 ts=10 streamid=0
+    video ex=0 frametype=1 codec=7 avcptype=1 cts=0 payload=00
+  prevsize=17 expected=17
+flv_mux size=18 hex=0800000300000a00000000af01000000000e
+  tag type=8 datasize=3 ts=10 streamid=0
+    audio ex=0 format=10 rate=3 size=1 type=1 aacptype=1 payload=00
+  prevsize=14 expected=14
+ex_frames size=21 hex=0900000600000a0000000093617663310000000011
+  tag type=9 datasize=6 ts=10 streamid=0
+    video ex=1 frametype=1 ptype=3 fourcc="avc1" payload=00
+  prevsize=17 expected=17
+ax_frames size=21 hex=0800000600000a00000000916d7034610000000011
+  tag type=8 datasize=6 ts=10 streamid=0
+    audio ex=1 ptype=1 fourcc="mp4a" payload=00
+  prevsize=17 expected=17
+echo Q-17 trackId 0 in the multitrack form is never produced for idx 0 but idx 256 gives trackId 0
+ex_frames size=23 hex=0900000800000a00000000960161763031000000000013
+  tag type=9 datasize=8 ts=10 streamid=0
+    video ex=1 frametype=1 ptype=6 multitrack=0 inner=1 fourcc="av01" track=0 payload=00
+  prevsize=19 expected=19
+ax_frames size=23 hex=0800000800000a0000000095016d703461000000000013
+  tag type=8 datasize=8 ts=10 streamid=0
+    audio ex=1 ptype=5 multitrack=0 inner=1 fourcc="mp4a" track=0 payload=00
+  prevsize=19 expected=19

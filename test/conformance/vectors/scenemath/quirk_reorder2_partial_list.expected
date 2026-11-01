@@ -1,0 +1,15 @@
+add a ok
+add b ok
+add c ok
+reorder2 -> 1
+order main: c a
+order_pos c 0
+order_pos a 1
+-- the dropped item b still exists as a handle; its parent link is untouched
+item b id=2 parent=main group=0 scene=0 abs=0 vis=1 user_vis=1 sel=0 lock=0 need_update=0
+  stored pos=-1.77777779,-1 rot=0 scale=1,1 scale_ref=1920,1080 align=5
+  bounds type=0 align=0 size=0,0 crop_to_bounds=0
+  crop l=0 r=0 t=0 b=0 bounds_crop l=0 r=0 t=0 b=0 last=0,0
+  output_scale=0,0 box_scale=0,0
+  draw [1,0,0,0] [0,1,0,0] [0,0,1,0] [0,0,0,1]
+  box [1,0,0,0] [0,1,0,0] [0,0,1,0] [0,0,0,1]

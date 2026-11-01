@@ -1,0 +1,33 @@
+> aopen main 48000 FLOAT_PLANAR STEREO
+= 0
+> aconnect a 1 0
+= 1
+> aconnect a 2 0
+= 1
+> aconnect a 3 0
+= 1
+> ahook a 3 disconnect_self
+> atick
+in start=1000000000 end=1021333333 active=0x01 nonnull=[2,2,2,2,2,2] clean=yes
+out a param=3 mix=0 ts=0 frames=1024 buf=clamped p0=[0 0 0 0] p1=[0 0 0 0]
+hook disconnect_self
+out a param=2 mix=0 ts=0 frames=1024 buf=clamped p0=[0 0 0 0] p1=[0 0 0 0]
+out a param=1 mix=0 ts=0 frames=1024 buf=clamped p0=[0 0 0 0] p1=[0 0 0 0]
+tick sleepto=1021333333
+> adump
+adump mix0=[(a 1 rate=48000 fmt=8 spk=2 clip=0 rs=0) (a 2 rate=48000 fmt=8 spk=2 clip=0 rs=0)] mix1=[] mix2=[] mix3=[] mix4=[] mix5=[]
+> aconnect a 3 0
+= 1
+> ahook a 3 disconnect a 1
+> atick
+in start=1021333333 end=1042666666 active=0x01 nonnull=[2,2,2,2,2,2] clean=yes
+out a param=3 mix=0 ts=0 frames=1024 buf=clamped p0=[0 0 0 0] p1=[0 0 0 0]
+hook disconnect_other
+out a param=3 mix=0 ts=0 frames=1024 buf=clamped p0=[0 0 0 0] p1=[0 0 0 0]
+hook disconnect_other
+out a param=2 mix=0 ts=0 frames=1024 buf=clamped p0=[0 0 0 0] p1=[0 0 0 0]
+tick sleepto=1042666666
+> adump
+adump mix0=[(a 2 rate=48000 fmt=8 spk=2 clip=0 rs=0) (a 3 rate=48000 fmt=8 spk=2 clip=0 rs=0)] mix1=[] mix2=[] mix3=[] mix4=[] mix5=[]
+> aclose
+= closed

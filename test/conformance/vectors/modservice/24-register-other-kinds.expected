@@ -1,0 +1,82 @@
+outputs=1 protocols RTMP RTMPS
+log error Required value 'get_name' for 'o_noname' not found.  obs_register_output failed.
+outputs=1 protocols RTMP RTMPS
+log error Required value 'create' for 'o_nocreate' not found.  obs_register_output failed.
+outputs=1 protocols RTMP RTMPS
+log error Required value 'destroy' for 'o_nodestroy' not found.  obs_register_output failed.
+outputs=1 protocols RTMP RTMPS
+log error Required value 'start' for 'o_nostart' not found.  obs_register_output failed.
+outputs=1 protocols RTMP RTMPS
+log error Required value 'stop' for 'o_nostop' not found.  obs_register_output failed.
+outputs=1 protocols RTMP RTMPS
+log error Required value 'protocols' for 'o_noproto' not found.  obs_register_output failed.
+outputs=1 protocols RTMP RTMPS
+log error Required value 'encoded_packet' for 'o_nopkt' not found.  obs_register_output failed.
+outputs=1 protocols RTMP RTMPS
+log warning obs_register_output: Output id 'o_ok' already exists!  Duplicate library?
+outputs=1 protocols RTMP RTMPS
+outputs=2 protocols RTMP RTMPS
+log error Required value 'raw_video' for 'o_rv_missing' not found.  obs_register_output failed.
+outputs=2 protocols RTMP RTMPS
+outputs=3 protocols RTMP RTMPS
+log error Required value 'raw_audio' for 'o_ra_missing' not found.  obs_register_output failed.
+outputs=3 protocols RTMP RTMPS
+outputs=4 protocols RTMP RTMPS
+log error Required value 'raw_audio2' for 'o_ra2_missing' not found.  obs_register_output failed.
+outputs=4 protocols RTMP RTMPS
+log error Required value 'raw_audio2' for 'o_ra2_has_ra' not found.  obs_register_output failed.
+outputs=4 protocols RTMP RTMPS
+outputs=5 protocols RTMP RTMPS
+log error Required value 'protocols' for 'o_trunc' not found.  obs_register_output failed.
+outputs=5 protocols RTMP RTMPS
+log error Required value 'get_name' for 'o_zero' not found.  obs_register_output failed.
+outputs=5 protocols RTMP RTMPS
+encoders=1
+log warning obs_register_encoder: Encoder id 'e_ok' already exists!  Duplicate library?
+encoders=1
+log error Required value 'get_name' for 'e_noname' not found.  obs_register_encoder failed.
+encoders=1
+log error Required value 'encode' for 'e_noencode' not found.  obs_register_encoder failed.
+encoders=1
+log error Required value 'get_frame_size' for 'e_audio_nofs' not found.  obs_register_encoder failed.
+encoders=1
+encoders=2
+encoders=3
+log error Neither 'encode_texture' nor 'encode_texture2' for 'e_tex_noenc' found.  obs_register_encoder failed.
+encoders=3
+encoders=4
+encoders=5
+log warning obs_register_encoder: Texture encoders cannot self-scale. Encoder id 'e_tex_scaling' not registered.
+encoders=5
+encoders=6
+sources=1 input=1 filter=0 transition=0 [id=s_in flags=0x1]
+log warning obs_register_source: Source 's_in' already exists!  Duplicate library?
+sources=1 input=1 filter=0 transition=0 [id=s_in flags=0x1]
+sources=2 input=2 filter=0 transition=0 [id=s_in flags=0x1] [id=s_in_v2 flags=0x1]
+log warning obs_register_source: Source 's_in' already exists!  Duplicate library?
+sources=2 input=2 filter=0 transition=0 [id=s_in flags=0x1] [id=s_in_v2 flags=0x1]
+log error Required value 'get_width' for 's_nowh' not found.  obs_register_source failed.
+sources=2 input=2 filter=0 transition=0
+log error Required value 'get_height' for 's_nowh2' not found.  obs_register_source failed.
+sources=2 input=2 filter=0 transition=0
+sources=3 input=3 filter=0 transition=0 [id=s_novideo_nowh flags=0x2]
+sources=4 input=4 filter=0 transition=0 [id=s_async flags=0x5]
+sources=5 input=5 filter=0 transition=0 [id=s_aud flags=0x2]
+sources=6 input=5 filter=1 transition=0 [id=s_filter_audio flags=0x6]
+sources=7 input=5 filter=2 transition=0 [id=s_filter_video flags=0x1]
+sources=8 input=5 filter=2 transition=1 [id=s_trans flags=0x49]
+log warning obs_register_source: get_width ignored registering transition 's_trans_wh'
+log warning obs_register_source: get_height ignored registering transition 's_trans_wh'
+sources=9 input=5 filter=2 transition=2 [id=s_trans_wh flags=0x49]
+sources=10 input=5 filter=2 transition=2 [id=s_scene flags=0x0]
+log warning obs_register_source: Tried to register unknown source type: 99
+sources=10 input=5 filter=2 transition=2
+log error Required value 'get_name' for 's_noname' not found.  obs_register_source failed.
+sources=10 input=5 filter=2 transition=2
+log error Required value 'audio_render' for 's_comp' not found.  obs_register_source failed.
+sources=10 input=5 filter=2 transition=2
+sources=11 input=6 filter=2 transition=2 [id=s_comp_ok flags=0x41]
+log warning obs_register_source: Source 's_comp_aud': Composite sources cannot be audio sources
+sources=11 input=6 filter=2 transition=2
+log warning obs_register_source: Source 's_comp_async': Composite sources cannot be async sources
+sources=11 input=6 filter=2 transition=2

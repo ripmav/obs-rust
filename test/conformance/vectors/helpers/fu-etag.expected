@@ -1,0 +1,32 @@
+fu_run local=/L cache=/D/ temp=/D/.temp url=http://srv/u/package.json
+fs read /L/package.json -> ok
+fs read /D/package.json -> missing
+fs read /D/meta.json -> missing
+fs copy /L/package.json -> /D/.temp/package.json : ok
+fs unlink /D/package.json : fail
+fs rename /D/.temp/package.json -> /D/package.json : ok
+http GET http://srv/u/package.json "User-Agent: UA/2"
+fs write /D/meta.json len=21
+fs write /D/.temp/package.json len=43
+fs unlink /D/package.json : ok
+fs rename /D/.temp/package.json -> /D/package.json : ok
+log info [fu] Successfully updated package (version 2)
+fs rmdir /D/.temp
+fu_run done
+fu_json_get /D/meta.json etag "\"abc123\""
+fu_run local=/L cache=/D/ temp=/D/.temp url=http://srv/u/package.json
+fs read /L/package.json -> ok
+fs read /D/package.json -> ok
+fs read /D/meta.json -> ok
+http GET http://srv/u/package.json "If-None-Match: \"abc123\"" "User-Agent: UA/2"
+fs write /D/meta.json len=21
+fs rmdir /D/.temp
+fu_run done
+fu_run local=/L cache=/D/ temp=/D/.temp url=http://srv/u/package.json
+fs read /L/package.json -> ok
+fs read /D/package.json -> ok
+fs read /D/meta.json -> ok
+http GET http://srv/u/package.json "If-None-Match: \"abc123\"" "User-Agent: UA/2"
+fs rmdir /D/.temp
+fu_run done
+fu_cat /D/package.json "{\"version\":2,\"url\":\"http://cdn\",\"files\":[]}"

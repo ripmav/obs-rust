@@ -1,0 +1,64 @@
+# S-035 output wiring: activate/deactivate, deferred destroy while active, output back pointer.
+svc_def A svcA activate deactivate initialize=1
+svc_def B svcB initialize=0
+svc_def C svcC
+svc_register A
+svc_register B
+svc_register C
+out_new o1
+out_new o2
+# not attached to an output: activate/deactivate only warn
+service_create s svcA s {"u":1}
+activate s
+service_state s
+deactivate s 1
+# initialize passes the output through; a failing initialize returns false
+q s initialize o1
+service_create b svcB b -
+q b initialize o1
+service_create c svcC c -
+q c initialize o1
+q c initialize
+# attach (what obs_output_set_service does on the service side), then activate: callback sees settings
+attach s o1
+activate s
+service_state s
+# second activate is ignored
+activate s
+# deactivate with remove=0 keeps the output pointer, remove=1 clears it
+deactivate s 0
+service_state s
+deactivate s 0
+activate s
+deactivate s 1
+service_state s
+out_service o1
+# destroy while active is deferred until deactivate; the output back pointer is cleared at the real destroy
+attach s o2
+activate s
+service_destroy s
+service_state s
+service_list
+out_service o2
+deactivate s 0
+out_service o2
+# release (strong count) while active: same deferral
+service_create r svcA r -
+attach r o1
+activate r
+service_release r
+service_state r
+deactivate r 1
+# destroy of an inactive attached service: output pointer is cleared
+service_create t svcA t -
+attach t o2
+service_destroy t
+out_service o2
+# deactivate when the service has no deactivate callback / is not active
+service_create u svcC u -
+attach u o1
+deactivate u 1
+service_state u
+activate u
+service_state u
+deactivate u 1

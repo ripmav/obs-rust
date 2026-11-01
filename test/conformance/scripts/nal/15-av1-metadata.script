@@ -1,0 +1,31 @@
+# S-012 CORE: metadata_obu(source, type) and metadata_obu_itu_t35(source).
+# Builds a METADATA OBU: header byte 0x2a (type 5, has_size_field, no extension), LEB128 size
+# of (1 + len + 1), the metadata_type byte, the payload, and the trailing-bits byte 0x80.
+# The returned buffer is bmalloc'd (size = 1 + sizeof(leb) + 1 + len + 1).
+echo itu-t35-payload
+av1_metadata_t35 b5003c00
+av1_metadata_t35 b5003c0001aabb
+av1_metadata_t35 -
+echo explicit-types
+av1_metadata aabbcc 1
+av1_metadata aabbcc 2
+av1_metadata aabbcc 3
+av1_metadata aabbcc 4
+av1_metadata aabbcc 5
+av1_metadata aabbcc 6
+av1_metadata aabbcc 0
+av1_metadata aabbcc 255
+echo empty-payload
+av1_metadata - 4
+echo hdr-cll-payload
+av1_metadata 03e801 1
+av1_metadata 03e80190 1
+echo size-field-lengths
+rep p 125 11
+av1_metadata @p 6
+rep p 126 11
+av1_metadata @p 6
+rep p 127 11
+av1_metadata @p 6
+rep p 16382 11
+av1_metadata @p 6

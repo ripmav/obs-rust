@@ -1,0 +1,32 @@
+add bool x ok
+add bool x ok
+add group h ok
+echo nested-duplicate-accepted
+add group g ok
+dump Top flags=0 param=@null
+  prop x type=bool desc="X top" long=@null enabled=1 visible=1
+    -
+  prop g type=group desc="G" long=@null enabled=1 visible=1
+    grouptype=normal content=G
+      prop h type=group desc="H" long=@null enabled=1 visible=1
+        grouptype=normal content=H
+          prop x type=bool desc="X deep" long=@null enabled=1 visible=1
+            -
+get x found
+echo only-first-x-removed
+dump Top flags=0 param=@null
+  prop g type=group desc="G" long=@null enabled=1 visible=1
+    grouptype=normal content=G
+      prop h type=group desc="H" long=@null enabled=1 visible=1
+        grouptype=normal content=H
+          prop x type=bool desc="X deep" long=@null enabled=1 visible=1
+            -
+echo group-named-like-own-child
+add bool same ok
+add group same ok
+dump Top2 flags=0 param=@null
+  prop same type=group desc="group" long=@null enabled=1 visible=1
+    grouptype=normal content=K
+      prop same type=bool desc="child" long=@null enabled=1 visible=1
+        -
+get same found

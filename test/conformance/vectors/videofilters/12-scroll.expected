@@ -1,0 +1,212 @@
+call effect_create file=crop_filter.effect -> e1 uniforms=5 techniques=4
+call get_param e1:add_val -> ok
+call get_param e1:mul_val -> ok
+call get_param e1:image -> ok
+call get_param e1:multiplier -> ok
+call source_update a deferred=1
+create a -> ok
+size a width=1000 height=500
+call samplerstate_create s1 filter=LINEAR u=WRAP v=WRAP w=CLAMP aniso=0 border=0
+call deferred_update a
+tick a 0.5
+size a width=1000 height=500
+data scroll_filter.v0
+  limit_size bool 0 default
+  cx int 100 default
+  cy int 100 default
+  loop bool 1 default
+end data scroll_filter.v0
+echo after the first render size_i is set (1/base); without it ticks add nothing
+call effect_create file=crop_filter.effect -> e2 uniforms=5 techniques=4
+call get_param e2:add_val -> ok
+call get_param e2:mul_val -> ok
+call get_param e2:image -> ok
+call get_param e2:multiplier -> ok
+call source_update b deferred=1
+create b -> ok
+call samplerstate_create s2 filter=LINEAR u=WRAP v=WRAP w=CLAMP aniso=0 border=0
+call deferred_update b
+tick b 0.1
+render b
+call filter_begin_cs b format=RGBA space=SRGB allow=NO_DIRECT -> 1
+call set_vec2 e2:add_val 0 0
+call set_vec2 e2:mul_val 1 1
+call set_float e2:multiplier 1
+call set_next_sampler e2:image s2
+call blend_push
+call blend_function ONE INVSRCALPHA
+call filter_tech_end b e2 size=1000x500 technique=Draw exists=1
+call blend_pop
+tick b 1
+render b
+call filter_begin_cs b format=RGBA space=SRGB allow=NO_DIRECT -> 1
+call set_vec2 e2:add_val 0.100000001 -0.100000001
+call set_vec2 e2:mul_val 1 1
+call set_float e2:multiplier 1
+call set_next_sampler e2:image s2
+call blend_push
+call blend_function ONE INVSRCALPHA
+call filter_tech_end b e2 size=1000x500 technique=Draw exists=1
+call blend_pop
+tick b 1
+render b
+call filter_begin_cs b format=RGBA space=SRGB allow=NO_DIRECT -> 1
+call set_vec2 e2:add_val 0.200000003 -0.200000003
+call set_vec2 e2:mul_val 1 1
+call set_float e2:multiplier 1
+call set_next_sampler e2:image s2
+call blend_push
+call blend_function ONE INVSRCALPHA
+call filter_tech_end b e2 size=1000x500 technique=Draw exists=1
+call blend_pop
+echo loop wraps by subtracting 1 at most once; negative offsets are never wrapped
+tick b 5
+render b
+call filter_begin_cs b format=RGBA space=SRGB allow=NO_DIRECT -> 1
+call set_vec2 e2:add_val 0.699999988 -0.699999988
+call set_vec2 e2:mul_val 1 1
+call set_float e2:multiplier 1
+call set_next_sampler e2:image s2
+call blend_push
+call blend_function ONE INVSRCALPHA
+call filter_tech_end b e2 size=1000x500 technique=Draw exists=1
+call blend_pop
+echo non-loop clamps the offset to 1.0
+call effect_create file=crop_filter.effect -> e3 uniforms=5 techniques=4
+call get_param e3:add_val -> ok
+call get_param e3:mul_val -> ok
+call get_param e3:image -> ok
+call get_param e3:multiplier -> ok
+call source_update c deferred=1
+create c -> ok
+call samplerstate_create s3 filter=LINEAR u=BORDER v=BORDER w=CLAMP aniso=0 border=0
+call deferred_update c
+tick c 0.0
+render c
+call filter_begin_cs c format=RGBA space=SRGB allow=NO_DIRECT -> 1
+call set_vec2 e3:add_val 0 0
+call set_vec2 e3:mul_val 1 1
+call set_float e3:multiplier 1
+call set_next_sampler e3:image s3
+call blend_push
+call blend_function ONE INVSRCALPHA
+call filter_tech_end c e3 size=1000x500 technique=Draw exists=1
+call blend_pop
+tick c 10
+render c
+call filter_begin_cs c format=RGBA space=SRGB allow=NO_DIRECT -> 1
+call set_vec2 e3:add_val 1 1
+call set_vec2 e3:mul_val 1 1
+call set_float e3:multiplier 1
+call set_next_sampler e3:image s3
+call blend_push
+call blend_function ONE INVSRCALPHA
+call filter_tech_end c e3 size=1000x500 technique=Draw exists=1
+call blend_pop
+echo limited size: cx/cy replace the base size for output size and mul_val
+call effect_create file=crop_filter.effect -> e4 uniforms=5 techniques=4
+call get_param e4:add_val -> ok
+call get_param e4:mul_val -> ok
+call get_param e4:image -> ok
+call get_param e4:multiplier -> ok
+call source_update e deferred=1
+create e -> ok
+call samplerstate_create s4 filter=LINEAR u=WRAP v=WRAP w=CLAMP aniso=0 border=0
+call deferred_update e
+tick e 0.0
+size e width=250 height=100
+render e
+call filter_begin_cs e format=RGBA space=SRGB allow=NO_DIRECT -> 1
+call set_vec2 e4:add_val 0 0
+call set_vec2 e4:mul_val 0.25 0.200000003
+call set_float e4:multiplier 1
+call set_next_sampler e4:image s4
+call blend_push
+call blend_function ONE INVSRCALPHA
+call filter_tech_end e e4 size=250x100 technique=Draw exists=1
+call blend_pop
+echo only one axis limited
+call effect_create file=crop_filter.effect -> e5 uniforms=5 techniques=4
+call get_param e5:add_val -> ok
+call get_param e5:mul_val -> ok
+call get_param e5:image -> ok
+call get_param e5:multiplier -> ok
+call source_update f deferred=1
+create f -> ok
+call samplerstate_create s5 filter=LINEAR u=WRAP v=WRAP w=CLAMP aniso=0 border=0
+call deferred_update f
+tick f 0.0
+size f width=250 height=500
+render f
+call filter_begin_cs f format=RGBA space=SRGB allow=NO_DIRECT -> 1
+call set_vec2 e5:add_val 0 0
+call set_vec2 e5:mul_val 0.25 1
+call set_float e5:multiplier 1
+call set_next_sampler e5:image s5
+call blend_push
+call blend_function ONE INVSRCALPHA
+call filter_tech_end f e5 size=250x500 technique=Draw exists=1
+call blend_pop
+echo speed 0 resets that axis offset at update; show() resets both
+call effect_create file=crop_filter.effect -> e6 uniforms=5 techniques=4
+call get_param e6:add_val -> ok
+call get_param e6:mul_val -> ok
+call get_param e6:image -> ok
+call get_param e6:multiplier -> ok
+call source_update g deferred=1
+create g -> ok
+call samplerstate_create s6 filter=LINEAR u=WRAP v=WRAP w=CLAMP aniso=0 border=0
+call deferred_update g
+tick g 0.0
+render g
+call filter_begin_cs g format=RGBA space=SRGB allow=NO_DIRECT -> 1
+call set_vec2 e6:add_val 0 0
+call set_vec2 e6:mul_val 1 1
+call set_float e6:multiplier 1
+call set_next_sampler e6:image s6
+call blend_push
+call blend_function ONE INVSRCALPHA
+call filter_tech_end g e6 size=1000x500 technique=Draw exists=1
+call blend_pop
+tick g 1
+render g
+call filter_begin_cs g format=RGBA space=SRGB allow=NO_DIRECT -> 1
+call set_vec2 e6:add_val 0 0.0200000014
+call set_vec2 e6:mul_val 1 1
+call set_float e6:multiplier 1
+call set_next_sampler e6:image s6
+call blend_push
+call blend_function ONE INVSRCALPHA
+call filter_tech_end g e6 size=1000x500 technique=Draw exists=1
+call blend_pop
+call source_update g deferred=1
+call samplerstate_destroy s6
+call samplerstate_create s7 filter=LINEAR u=WRAP v=WRAP w=CLAMP aniso=0 border=0
+call deferred_update g
+tick g 0
+show g
+render g
+call filter_begin_cs g format=RGBA space=SRGB allow=NO_DIRECT -> 1
+call set_vec2 e6:add_val 0 0
+call set_vec2 e6:mul_val 1 1
+call set_float e6:multiplier 1
+call set_next_sampler e6:image s7
+call blend_push
+call blend_function ONE INVSRCALPHA
+call filter_tech_end g e6 size=1000x500 technique=Draw exists=1
+call blend_pop
+echo zero base size: size_i zeroed and the filter is skipped
+render g
+call skip_video_filter g
+size g width=0 height=0
+echo no target
+call effect_create file=crop_filter.effect -> e7 uniforms=5 techniques=4
+call get_param e7:add_val -> ok
+call get_param e7:mul_val -> ok
+call get_param e7:image -> ok
+call get_param e7:multiplier -> ok
+call source_update h deferred=1
+create h -> ok
+size h width=0 height=0
+render h
+call skip_video_filter h

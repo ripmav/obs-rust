@@ -1,0 +1,8 @@
+# os_dlopen(name): appends ".so" unless the name already contains ".so" anywhere; NULL name -> NULL;
+# failure logs an error (text of the dlerror part is not compared). os_dlsym / os_dlclose (NULL ok).
+# dl NAME SYMBOL
+dl libm.so.6 cos
+dl libm.so.6 no_such_symbol_in_libm
+dl nosuchlibrary_xyz any
+dl nosuchlibrary_xyz.so any
+dl_null

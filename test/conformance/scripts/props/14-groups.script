@@ -1,0 +1,38 @@
+# CORE. A group property wraps another obs_properties (its content). Names are unique across the
+# whole tree; lookups through the top container search nested groups (top-level first, then
+# groups in order, depth first). The group content knows its parent group property.
+props Top
+props G1
+props G2
+add bool G1 a "A" as a
+add bool G1 b "B" as b
+add bool G2 c "C" as c
+echo groups-added-in-order
+add group Top g1 "Group 1" normal G1 as g1
+add bool Top t "T"
+add group Top g2 "Group 2" checkable G2 as g2
+info g1
+info g2
+dump Top
+echo lookup-through-groups
+get Top a
+get Top c
+get Top g2
+get Top nope
+get G1 a
+get G1 c
+echo parent
+parent Top
+parent G1
+parent G2
+echo add-to-content-after-the-group-exists
+add bool G1 late "L"
+add bool G1 a "dup of nested"
+add bool Top b "dup of nested from top"
+add bool G2 a "dup from sibling group"
+add bool G2 t "dup of top-level from group"
+dump Top
+echo unique-names-are-global-also-for-group-names
+add bool Top g1 "same as group name"
+add bool G1 g2 "group name of sibling"
+destroy Top

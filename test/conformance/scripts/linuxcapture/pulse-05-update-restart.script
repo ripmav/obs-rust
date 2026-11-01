@@ -1,0 +1,25 @@
+# S-049 pulse: update only restarts when the device string changes; output sources announce the new
+# capture device to the audio-monitoring deduplication ("capture_device_changed"), also on destroy (NULL).
+pulse-server pulseaudio 16.1 alsa_input.mic alsa_output.speakers
+pulse-source alsa_input.mic "Mic" - s16le 48000 2
+pulse-source alsa_input.usb "USB" - s16le 48000 2
+pulse-source alsa_output.speakers.monitor "Mon" 0 s16le 48000 2
+pulse-defaults
+set-str device_id alsa_input.mic
+pulse-create input
+# same device: nothing happens
+pulse-update
+# different device: stop + start
+set-str device_id alsa_input.usb
+pulse-update
+# switching to "default" resolves to the server default source
+set-str device_id default
+pulse-update
+pulse-destroy
+# output source
+set-str device_id alsa_output.speakers.monitor
+pulse-create output
+set-str device_id default
+pulse-update
+pulse-update
+pulse-destroy

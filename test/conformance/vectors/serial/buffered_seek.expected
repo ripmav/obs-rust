@@ -1,0 +1,35 @@
+open buf ok
+write 0102030405060708 8 -> 8
+seek start 2 -> 2
+pos -> 2
+write aa 1 -> 1
+pos -> 3
+seek end 1 -> 2
+seek cur 3 -> 5
+seek cur -4 -> 1
+seek end 0 -> 1
+write bb 1 -> 1
+seek start 12 -> 12
+write cc 1 -> 1
+log debug Final buffer capacity: 1024 KiB
+file bs-a size=13 bytes=01bbaa040506070800000000cc
+open buf ok
+write_pat 10 0 -> 10
+seek start 100 -> 100
+write 77 1 -> 1
+seek start 3 -> 3
+write_pat 3 50 -> 3
+seek cur 1000 -> 1006
+seek start 0 -> 0
+log debug Final buffer capacity: 1024 KiB
+file bs-b size=101 bytes=072645153453c1e0ff1e00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000077
+open buf ok
+seek start 5 -> 5
+pos -> 5
+log debug Final buffer capacity: 1024 KiB
+file bs-c size=0 bytes=-
+open buf ok
+write 0102 2 -> 2
+seek start -1 -> -1
+pos -> -1
+log debug Final buffer capacity: 1024 KiB

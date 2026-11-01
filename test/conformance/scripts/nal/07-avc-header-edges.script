@@ -1,0 +1,41 @@
+# S-012: obs_parse_avc_header edge cases.
+# - size <= 6 -> 0.
+# - data that does not begin with 00 00 01 or 00 00 00 01 is assumed to be a finished record
+#   and returned as an exact copy (QUIRK Q-5).
+# - SPS or PPS missing, or SPS shorter than 4 bytes -> 0 and no output.
+buf sps 6742c01ed900a047fe88
+buf pps 68ce3c80
+echo short-input
+avc_header -
+avc_header 00
+avc_header 000001674d
+avc_header 00000001674d
+echo seven-bytes-with-start-code-but-no-pps
+avc_header 00000167420020
+echo already-a-record-is-copied
+avc_header 014d0028ffe10004674d002801000468ee3c80
+avc_header aabbccddeeff00
+avc_header 0001020304050607
+echo start-code-must-be-at-offset-zero
+cat au aa 00000001 @sps 00000001 @pps
+avc_header @au
+echo five-byte-start-code-is-not-a-start-code
+cat au 0000000001 @sps 00000001 @pps
+avc_header @au
+echo missing-pps
+cat au 00000001 @sps 00000001 6588840021
+avc_header @au
+echo missing-sps
+cat au 00000001 @pps 00000001 6588840021
+avc_header @au
+echo sps-too-short
+cat au 00000001 674d00 00000001 @pps
+avc_header @au
+echo sps-exactly-four
+cat au 00000001 674d0028 00000001 @pps
+avc_header @au
+echo nal-type-decides-not-ref-idc
+cat au 00000001 27 4d0028a6 00000001 48ce3c80
+avc_header @au
+echo high-profile-sps-with-exactly-the-fields-it-needs
+avc_header 000000016764001fac0000000168ce

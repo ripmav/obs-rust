@@ -1,0 +1,71 @@
+# seek_to for the cache: picks the FIRST stored frame/segment whose timestamp >= pos; if none qualifies the LAST one;
+# next_*_ts = timestamp of the following element, or last timestamp + final duration. pos > media_duration logs
+# 'Invalid seek position' and changes nothing. DEFECT D-2: stored timestamps are nanoseconds, but 'pos'
+# (media_playback_seek(ms) * 1000, and the container start time) is MICROSECONDS and the two are compared
+# unconverted; the container duration it is checked against is microseconds. 'cseekraw N' calls seek_to(N)
+# directly, so N below is compared with ns timestamps as-is. Container duration here: 100 s = 100000000 us.
+media cs 100000000 0
+video 1 1000 8 4 yuv420p
+audio 1 1000 1000 1 u8
+pkt 0 0 fdur=40
+pkt 1 0 samples=25
+pkt 0 40 fdur=40
+pkt 1 25 samples=25
+pkt 0 80 fdur=30
+pkt 1 50 samples=25
+pkt 0 110 fdur=30
+pkt 1 75 samples=25
+endmedia
+media csv 100000000 0
+video 1 1000 8 4 yuv420p
+pkt 0 0 fdur=40
+pkt 0 40 fdur=40
+pkt 0 80 fdur=30
+endmedia
+media csa 100000000 0
+audio 1 1000 1000 1 u8
+pkt 0 0 samples=25
+pkt 0 25 samples=25
+endmedia
+clock 1000000000
+pix off
+cinit cs
+cdump
+cstate
+echo exact match on frame 2 (80 ms in ns)
+cseekraw 80000000
+cstate
+echo between frames: next one at or after
+cseekraw 41000000
+cstate
+echo before the first
+cseekraw 0
+cstate
+cseekraw -5
+cstate
+echo after the last stored frame but inside the media duration: last element, next ts = last + final duration
+cseekraw 99999999
+cstate
+echo positions above the container duration (in the same raw unit) are rejected
+cseekraw 100000000
+cstate
+cseekraw 100000001
+cstate
+cfree
+echo ---- video only and audio only
+cinit csv
+cseekraw 41000000
+cstate
+cfree
+cinit csa
+cseekraw 26000000
+cstate
+cfree
+echo ---- end to end: media_playback_seek(80 ms) stores 80000 us, which is compared with ns timestamps: lands on frame 1
+cinit cs
+cplay 0
+ctickw 0 0
+ctick 1
+cseek 80
+ctick 1
+cstate

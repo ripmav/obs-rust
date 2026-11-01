@@ -1,0 +1,42 @@
+# Per-canvas video: a canvas can be created with or without a video mix; resetting a canvas video
+# replaces its mix (the old one is freed), validates nothing about sizes (only the video output's
+# own checks) and refuses MAIN canvases and NULL info. FPS of auxiliary mixes is forced to the main
+# mix's FPS while the main canvas has a mix. Canvases that already have valid video info get their
+# mixes rebuilt after the main canvas is reset (restore), the main mix always staying first.
+startup en-US -
+reset_video fps=60/1 fmt=BGRA gpu=0
+canvas_create a Alpha video=1 base=800x600 out=400x300 fps=15/1 fmt=BGRA gpu=0
+canvas_create b Bravo video=1 base=640x480 out=640x480 fps=24/1 fmt=NV12 gpu=1 flags=mix_audio
+canvas_create c Charlie
+mixes
+canvas_info a
+canvas_video_info a
+canvas_video_info c
+canvas_valid_ovi a
+canvas_valid_ovi c
+mix_info a
+mix_info b
+# reset c: gets its first mix, appended after the others
+canvas_reset_video c base=100x100 out=100x100 fmt=BGRA gpu=0
+mixes
+canvas_reset_video c null
+# reset a: its old mix is replaced and moves to the end of the mix list
+canvas_reset_video a base=320x240 out=160x120 fmt=BGRA gpu=0
+mixes
+canvas_video_info a
+# resetting main video rebuilds the main mix first, then every other canvas with the stored info
+reset_video fps=30/1 base=1280x720 out=1280x720 fmt=BGRA gpu=0
+mixes
+canvas_video_info b
+# canvas video is NOT aligned the way the main video is: odd sizes are kept as given
+canvas_reset_video c base=33x33 out=7x7 fmt=BGRA gpu=0
+canvas_video_info c
+# QUIRK Q-6: no size validation at canvas level, a bad video output makes the call fail but the old mix is already gone
+canvas_reset_video a base=100x100 out=0x0 fmt=BGRA gpu=0
+canvas_info a
+mixes
+canvas_valid_ovi a
+# a canvas whose stored info is invalid is skipped by the restore
+reset_video fps=30/1 base=1280x720 out=1280x720 fmt=BGRA gpu=0
+mixes
+shutdown

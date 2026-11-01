@@ -1,0 +1,65 @@
+ev create slideshow_v2#1 public
+ev hotkey_register slideshow_v2#1 id=1 name=SlideShow.PlayPause desc=SlideShow.PlayPause
+ev hotkey_register slideshow_v2#1 id=2 name=SlideShow.Restart desc=SlideShow.Restart
+ev hotkey_register slideshow_v2#1 id=3 name=SlideShow.Stop desc=SlideShow.Stop
+ev hotkey_register slideshow_v2#1 id=4 name=SlideShow.NextSlide desc=SlideShow.NextSlide
+ev hotkey_register slideshow_v2#1 id=5 name=SlideShow.PreviousSlide desc=SlideShow.PreviousSlide
+ev create cut_transition#2 private
+ev create image_source#3[/s/a.png] private
+ev task_queued
+ev create image_source#4[/s/b.png] private
+ev task_queued
+ev tr_size cut_transition#2 1920x1080
+ev tr_align cut_transition#2 0
+ev tr_scale cut_transition#2 1
+ev tr_start cut_transition#2 mode=0 ms=0 dest=image_source#3[/s/a.png] -> started
+ev signal media_started slideshow_v2#1
+tick 0 clock=16000001
+ev tr_start cut_transition#2 mode=0 ms=0 dest=null -> started
+ev signal media_ended slideshow_v2#1
+ev signal media_stopped slideshow_v2#1
+ev show slideshow_v2#1
+ev activate slideshow_v2#1
+ev show image_source#3[/s/a.png]
+ev activate image_source#3[/s/a.png]
+tick 0 clock=32000002
+state slideshow2 behavior=2 manual=0 randomize=0 loop=1 hide=0 use_cut=0 paused=0 stop=1 restart_on_activate=0 pause_on_deactivate=0 slide_time=2 tr_speed=0 tr_name=null elapsed=0 cx=1920 cy=1080 state=5 transition=cut_transition#2 files=2
+state   file 0 /s/a.png
+state   file 1 /s/b.png
+state   cur 0 image_source#3[/s/a.png]
+state   prev 1:image_source#4[/s/b.png] 0:image_source#3[/s/a.png] 1:image_source#4[/s/b.png] 0:image_source#3[/s/a.png] 1:image_source#4[/s/b.png]
+state   next 1:image_source#4[/s/b.png] 0:image_source#3[/s/a.png] 1:image_source#4[/s/b.png] 0:image_source#3[/s/a.png] 1:image_source#4[/s/b.png]
+ev create cut_transition#5 private
+ev destroy cut_transition#2
+ev destroy image_source#4[/s/b.png]
+ev destroy image_source#3[/s/a.png]
+ev create image_source#6[/s/a.png] private
+ev task_queued
+ev create image_source#7[/s/b.png] private
+ev task_queued
+ev tr_size cut_transition#5 1920x1080
+ev tr_align cut_transition#5 0
+ev tr_scale cut_transition#5 1
+ev tr_start cut_transition#5 mode=0 ms=0 dest=image_source#6[/s/a.png] -> started
+ev signal media_started slideshow_v2#1
+tick 0 clock=48000003
+state slideshow2 behavior=2 manual=1 randomize=0 loop=1 hide=0 use_cut=0 paused=0 stop=0 restart_on_activate=0 pause_on_deactivate=0 slide_time=2 tr_speed=0 tr_name=null elapsed=0 cx=1920 cy=1080 state=4 transition=cut_transition#5 files=2
+state   file 0 /s/a.png
+state   file 1 /s/b.png
+state   cur 0 image_source#6[/s/a.png]
+state   prev 1:image_source#7[/s/b.png] 0:image_source#6[/s/a.png] 1:image_source#7[/s/b.png] 0:image_source#6[/s/a.png] 1:image_source#7[/s/b.png]
+state   next 1:image_source#7[/s/b.png] 0:image_source#6[/s/a.png] 1:image_source#7[/s/b.png] 0:image_source#6[/s/a.png] 1:image_source#7[/s/b.png]
+media_state 4
+ev create cut_transition#8 private
+ev destroy cut_transition#5
+ev destroy image_source#7[/s/b.png]
+ev destroy image_source#6[/s/a.png]
+ev tr_size cut_transition#8 1920x1080
+ev tr_align cut_transition#8 0
+ev tr_scale cut_transition#8 1
+tick 0 clock=64000004
+state slideshow2 behavior=2 manual=1 randomize=0 loop=1 hide=0 use_cut=0 paused=0 stop=0 restart_on_activate=0 pause_on_deactivate=0 slide_time=2 tr_speed=0 tr_name=null elapsed=0 cx=1920 cy=1080 state=0 transition=cut_transition#8 files=0
+state   cur none
+state   prev
+state   next
+media_state 0

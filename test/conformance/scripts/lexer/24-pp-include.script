@@ -1,0 +1,11 @@
+# CORE: #include "file" (relative to the including file's directory), repeated include, <sys> includes ignored, errors.
+# Files are created under $CONFORMANCE_TMPDIR (printed as @tmp). Q: 'Could not open file' message embeds the rest of the buffer.
+writefile inc.h "#define INC 5\nincval INC\n"
+parse "a\n#include \"inc.h\"\nb INC\n#include \"inc.h\"\n#include \"nofile.h\"\n#include <sys.h>\n#include foo\n#include \"x\" y\n" @tmp/main.cf
+tokens pp
+errors
+reset
+writefile bom.h "\xef\xbb\xbfbomtext\n"
+parse "#include \"bom.h\"\n" @tmp/m2.cf
+tokens pp
+errors

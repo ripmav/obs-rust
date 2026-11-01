@@ -1,0 +1,18 @@
+echo CBR
+props_apply P
+vis P rate_control:11 bitrate:11 max_bitrate:01 cqp:01 icq_quality:01 target_usage:11 profile:11 keyint_sec:11 latency:11 bframes:11
+props_apply P
+vis P rate_control:11 bitrate:11 max_bitrate:11 cqp:01 icq_quality:01 target_usage:11 profile:11 keyint_sec:11 latency:11 bframes:11
+props_apply P
+vis P rate_control:11 bitrate:01 max_bitrate:01 cqp:11 icq_quality:01 target_usage:11 profile:11 keyint_sec:11 latency:11 bframes:11
+props_apply P
+vis P rate_control:11 bitrate:01 max_bitrate:01 cqp:01 icq_quality:11 target_usage:11 profile:11 keyint_sec:11 latency:11 bframes:11
+echo case-insensitive
+props_apply P
+vis P rate_control:11 bitrate:01 max_bitrate:01 cqp:01 icq_quality:11 target_usage:11 profile:11 keyint_sec:11 latency:11 bframes:11
+echo v1-variant-has-qpi-qpb-qpp-instead-of-cqp
+props_apply Q
+vis Q rate_control:11 bitrate:01 max_bitrate:01 qpi:11 qpp:11 qpb:11 icq_quality:01 target_usage:11 profile:11 keyint_sec:11 latency:11 bframes:11
+echo unknown-rate-control-shows-bitrate-only
+props_apply P
+vis P rate_control:11 bitrate:11 max_bitrate:01 cqp:01 icq_quality:01 target_usage:11 profile:11 keyint_sec:11 latency:11 bframes:11

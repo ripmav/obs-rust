@@ -1,0 +1,18 @@
+add h ok
+emit s
+call once
+call always
+emit-done
+emit s
+call always
+emit-done
+remove_current outside-callback done
+add h2 ok
+emit s
+call one
+call two
+call three
+emit-done
+emit s
+call three
+emit-done

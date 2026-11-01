@@ -1,0 +1,32 @@
+# Two audio tracks (OBS_OUTPUT_MULTI_TRACK_AUDIO): start-up needs a first packet from EVERY track, audio must
+# extend past the first video packet on every track, and packets carry the track index of their encoder.
+video 30 1 1280 720
+audio 48000
+venc v
+aenc a0 frame_size=1024
+aenc a1 frame_size=1024
+out o av,encoded,multi_a autobegin=1
+set_venc o v
+set_aenc o a0 0
+set_aenc o a1 1
+start o
+emit a0 0 0 0 4
+emit a0 1024 1024 0 4
+emit v 0 0 1 4
+emit a0 2048 2048 0 4
+echo --- track 1 has not delivered anything yet: no start
+queue o
+state o
+emit a1 0 0 0 4
+queue o
+emit a1 1024 1024 0 4
+queue o
+emit a1 2048 2048 0 4
+queue o
+echo --- started: ordering by dts_usec, ties keep arrival order for audio
+emit a0 3072 3072 0 4
+emit a1 3072 3072 0 4
+emit a0 4096 4096 0 4
+emit a1 4096 4096 0 4
+queue o
+stop o

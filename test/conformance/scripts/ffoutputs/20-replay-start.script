@@ -1,0 +1,31 @@
+# replay_buffer start(): limits come from the settings (seconds -> microseconds, megabytes -> bytes), the stream becomes
+# active+capturing, nothing is written to a pipe until a save. Refused capture / encoder init fail the start.
+reset
+output rb
+venc h264 bitrate=2500 extra=0a0b
+create replay_buffer
+defaults
+capture 0
+start
+capture 1 0
+start
+capture 1 1
+start
+state
+state_rb
+total_bytes
+reset
+output rb
+venc h264 bitrate=2500 extra=0a0b
+set int max_time_sec 7
+set int max_size_mb 3
+create replay_buffer
+start
+state_rb
+echo unset_limits_without_defaults_mean_unlimited
+reset
+output rb
+venc h264 bitrate=2500 extra=0a0b
+create replay_buffer
+start
+state_rb

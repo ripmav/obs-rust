@@ -1,0 +1,86 @@
+echo default-protocols-RTMP-RTMPS
+props P
+  prop service type=list desc="Service" visible=1 enabled=1 combo=2 format=3 items=5
+    item 0 name="Alpha" value="Alpha" disabled=0
+    item 1 name="Golf" value="Golf" disabled=0
+    item 2 name="Facebook Live X" value="Facebook Live X" disabled=0
+    item 3 name="Kilo" value="Kilo" disabled=0
+    item 4 name="Twitch" value="Twitch" disabled=0
+  prop show_all type=bool desc="Show all services" visible=1 enabled=1
+  prop server type=list desc="Server" visible=1 enabled=1 combo=2 format=3 items=2
+    item 0 name="Primary" value="rtmp://a.alpha.example/live" disabled=0
+    item 1 name="Secure" value="rtmps://b.alpha.example:443/live" disabled=0
+  prop key type=text desc="Stream key" visible=1 enabled=1 text_type=1
+echo toggle-show_all
+modify show_all -> 1
+props P
+  prop service type=list desc="Service" visible=1 enabled=1 combo=2 format=3 items=11
+    item 0 name="Alpha" value="Alpha" disabled=0
+    item 1 name="Bravo" value="Bravo" disabled=0
+    item 2 name="Golf" value="Golf" disabled=0
+    item 3 name="Facebook Live X" value="Facebook Live X" disabled=0
+    item 4 name="Juliet" value="Juliet" disabled=0
+    item 5 name="Kilo" value="Kilo" disabled=0
+    item 6 name="Twitch" value="Twitch" disabled=0
+    item 7 name="Amazon IVS" value="Amazon IVS" disabled=0
+    item 8 name="Nimo TV" value="Nimo TV" disabled=0
+    item 9 name="SHOWROOM" value="SHOWROOM" disabled=0
+    item 10 name="Dacast" value="Dacast" disabled=0
+  prop show_all type=bool desc="Show all services" visible=1 enabled=1
+  prop server type=list desc="Server" visible=1 enabled=1 combo=2 format=3 items=2
+    item 0 name="Primary" value="rtmp://a.alpha.example/live" disabled=0
+    item 1 name="Secure" value="rtmps://b.alpha.example:443/live" disabled=0
+  prop key type=text desc="Stream key" visible=1 enabled=1 text_type=1
+echo untoggle
+modify show_all -> 1
+props P
+  prop service type=list desc="Service" visible=1 enabled=1 combo=2 format=3 items=5
+    item 0 name="Alpha" value="Alpha" disabled=0
+    item 1 name="Golf" value="Golf" disabled=0
+    item 2 name="Facebook Live X" value="Facebook Live X" disabled=0
+    item 3 name="Kilo" value="Kilo" disabled=0
+    item 4 name="Twitch" value="Twitch" disabled=0
+  prop show_all type=bool desc="Show all services" visible=1 enabled=1
+  prop server type=list desc="Server" visible=1 enabled=1 combo=2 format=3 items=2
+    item 0 name="Primary" value="rtmp://a.alpha.example/live" disabled=0
+    item 1 name="Secure" value="rtmps://b.alpha.example:443/live" disabled=0
+  prop key type=text desc="Stream key" visible=1 enabled=1 text_type=1
+echo register-SRT-and-RIST
+modify show_all -> 1
+props P
+  prop service type=list desc="Service" visible=1 enabled=1 combo=2 format=3 items=7
+    item 0 name="Alpha" value="Alpha" disabled=0
+    item 1 name="Charlie" value="Charlie" disabled=0
+    item 2 name="Golf" value="Golf" disabled=0
+    item 3 name="India" value="India" disabled=0
+    item 4 name="Facebook Live X" value="Facebook Live X" disabled=0
+    item 5 name="Kilo" value="Kilo" disabled=0
+    item 6 name="Twitch" value="Twitch" disabled=0
+  prop show_all type=bool desc="Show all services" visible=1 enabled=1
+  prop server type=list desc="Server" visible=1 enabled=1 combo=2 format=3 items=2
+    item 0 name="Primary" value="rtmp://a.alpha.example/live" disabled=0
+    item 1 name="Secure" value="rtmps://b.alpha.example:443/live" disabled=0
+  prop key type=text desc="Stream key" visible=1 enabled=1 text_type=1
+echo only-RTMP
+modify show_all -> 1
+props P
+  prop service type=list desc="Service" visible=1 enabled=1 combo=2 format=3 items=4
+    item 0 name="Alpha" value="Alpha" disabled=0
+    item 1 name="Golf" value="Golf" disabled=0
+    item 2 name="Kilo" value="Kilo" disabled=0
+    item 3 name="Twitch" value="Twitch" disabled=0
+  prop show_all type=bool desc="Show all services" visible=1 enabled=1
+  prop server type=list desc="Server" visible=1 enabled=1 combo=2 format=3 items=2
+    item 0 name="Primary" value="rtmp://a.alpha.example/live" disabled=0
+    item 1 name="Secure" value="rtmps://b.alpha.example:443/live" disabled=0
+  prop key type=text desc="Stream key" visible=1 enabled=1 text_type=1
+echo no-protocols
+modify show_all -> 1
+props P
+  prop service type=list desc="Service" visible=1 enabled=1 combo=2 format=3 items=1
+    item 0 name="Alpha" value="Alpha" disabled=1
+  prop show_all type=bool desc="Show all services" visible=1 enabled=1
+  prop server type=list desc="Server" visible=1 enabled=1 combo=2 format=3 items=2
+    item 0 name="Primary" value="rtmp://a.alpha.example/live" disabled=0
+    item 1 name="Secure" value="rtmps://b.alpha.example:443/live" disabled=0
+  prop key type=text desc="Stream key" visible=1 enabled=1 text_type=1

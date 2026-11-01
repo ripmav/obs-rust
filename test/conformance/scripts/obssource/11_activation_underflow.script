@@ -1,0 +1,19 @@
+# Decrementing below zero is ignored (the count is only decremented if it is > 0), and the MAIN view decrement of
+# activate_refs is independent of the show_refs one.
+kind in input video activate,show
+create a in A
+dec_showing a
+dec_active a
+state a
+deactivate a main
+deactivate a aux
+state a
+activate a main
+activate a main
+state a
+deactivate a aux
+state a
+deactivate a aux
+state a
+deactivate a main
+state a

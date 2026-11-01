@@ -1,0 +1,10 @@
+# QUIRK Q-2: `serialize` prefers the write callback when both exist. The array serializer
+# has no read callback, so serialize_r on it WRITES the (zero filled) buffer of the caller
+# and returns its length; read (s_read) returns 0.
+open array
+write 0102
+read 2
+serialize_r 3
+serialize_w 05
+dump
+close

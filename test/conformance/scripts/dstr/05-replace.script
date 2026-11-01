@@ -1,0 +1,29 @@
+# replace: shorter, equal, longer replacement; overlapping and empty cases.
+copy "a-b-c-d"
+replace - +
+dump
+replace + --
+dump
+replace -- ""
+dump
+copy "aaaa"
+replace aa b
+dump
+copy "aaaa"
+replace aa aaa
+dump
+copy "abcabc"
+replace abc @null
+dump
+copy "xyz"
+replace q r
+dump
+copy "end."
+replace . "..."
+dump
+copy ""
+replace a b
+dump
+copy "$1 and $1"
+replace $1 value
+dump

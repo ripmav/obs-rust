@@ -1,0 +1,71 @@
+> va_defaults h264
+va.open_device "/dev/dri/renderD128" by vaapi_defaults -> ok
+> set str rate_control CBR
+> va_create h264
+av.find_encoder h264_vaapi
+log info ---------------------------------
+log info [FFmpeg VAAPI encoder: 'enc'] settings: 	device:       /dev/dri/renderD128 	rate_control: CBR 	profile:      100 	level:        -99 	qp:           0 	bitrate:      6000 	maxrate:      6000 	keyint:       120 	width:        1920 	height:       1080 	b-frames:     0 	ffmpeg opts:   
+av.hwdevice_ctx_create vaapi "/dev/dri/renderD128"
+av.hwframe_ctx_init format=44 sw_format=23 size=1920x1080
+av.frame_get_buffer format=23 size=1920x1080 colorspace=1 range=1 chroma_loc=1
+av.codec_open pix_fmt=44 profile=100 level=-99 bit_rate=6000000 rc_max_rate=6000000 rc_buf_occ=6000000 gq=0 bf=0 gop=120 size=1920x1080 tb=1/60 range=1 prim=1 trc=1 cs=1 chroma_loc=1
+va_create -> ok
+> va_encode 00 0 0 -11 -11
+state: header=- sei=- first_packet=1
+va_encode -> 1 received=0
+> va_encode 00 0 0 0 -541478725
+state: header=- sei=- first_packet=1
+va_encode -> 1 received=0
+> va_encode 00 0 0 0 -22
+log warning [FFmpeg VAAPI encoder: 'enc'] vaapi_encode: Error encoding: averr(-22)
+state: header=- sei=- first_packet=1
+va_encode -> 0 received=0
+> va_encode - 0 0 0 0
+state: header=- sei=- first_packet=1
+va_encode -> 1 received=0
+> va_encode 00000001670102030000000106aabb0000000168cc000000016588ff 10 8 0 0
+state: header=00000001670102030000000168cc sei=0000000106aabb first_packet=0
+va_encode -> 1 received=1 size=7 data=000000016588ff pts=10 dts=8 keyframe=1
+> va_encode 000000014188 11 9 0 0
+state: header=00000001670102030000000168cc sei=0000000106aabb first_packet=0
+va_encode -> 1 received=1 size=6 data=000000014188 pts=11 dts=9 keyframe=0
+> va_destroy
+va_destroyed
+> va_defaults hevc
+va.open_device "/dev/dri/renderD129" by vaapi_defaults -> ok
+> va_create hevc
+av.find_encoder hevc_vaapi
+log info ---------------------------------
+log info [FFmpeg VAAPI encoder: 'enc'] settings: 	device:       /dev/dri/renderD129 	rate_control: CBR 	profile:      1 	level:        -99 	qp:           0 	bitrate:      6000 	maxrate:      6000 	keyint:       120 	width:        1920 	height:       1080 	b-frames:     0 	ffmpeg opts:   
+av.hwdevice_ctx_create vaapi "/dev/dri/renderD129"
+av.hwframe_ctx_init format=44 sw_format=23 size=1920x1080
+av.frame_get_buffer format=23 size=1920x1080 colorspace=1 range=1 chroma_loc=1
+av.codec_open pix_fmt=44 profile=1 level=-99 bit_rate=6000000 rc_max_rate=6000000 rc_buf_occ=6000000 gq=0 bf=0 gop=120 size=1920x1080 tb=1/60 range=1 prim=1 trc=1 cs=1 chroma_loc=1
+va_create -> ok
+> va_encode 00000001400101aa00000001420101bb00000001440101cc000000012601eeff 20 18 0 0
+state: header=00000001400101aa00000001420101bb00000001440101cc sei=- first_packet=0
+va_encode -> 1 received=1 size=8 data=000000012601eeff pts=20 dts=18 keyframe=1
+> va_encode 0000000102010099 21 19 0 0
+state: header=00000001400101aa00000001420101bb00000001440101cc sei=- first_packet=0
+va_encode -> 1 received=1 size=8 data=0000000102010099 pts=21 dts=19 keyframe=0
+> va_destroy
+va_destroyed
+> va_defaults av1
+va.open_device "/dev/dri/renderD130" by vaapi_defaults -> ok
+> va_create av1
+av.find_encoder av1_vaapi
+log info ---------------------------------
+log info [FFmpeg VAAPI encoder: 'enc'] settings: 	device:       /dev/dri/renderD130 	rate_control: CBR 	profile:      0 	level:        -99 	qp:           0 	bitrate:      6000 	maxrate:      6000 	keyint:       120 	width:        1920 	height:       1080 	b-frames:     0 	ffmpeg opts:   
+av.hwdevice_ctx_create vaapi "/dev/dri/renderD130"
+av.hwframe_ctx_init format=44 sw_format=23 size=1920x1080
+av.frame_get_buffer format=23 size=1920x1080 colorspace=1 range=1 chroma_loc=1
+av.codec_open pix_fmt=44 profile=0 level=-99 bit_rate=6000000 rc_max_rate=6000000 rc_buf_occ=6000000 gq=0 bf=0 gop=120 size=1920x1080 tb=1/60 range=1 prim=1 trc=1 cs=1 chroma_loc=1
+va_create -> ok
+> va_encode 12000a02aabb32021000 30 28 0 0
+state: header=0a02aabb sei=- first_packet=0
+va_encode -> 1 received=1 size=10 data=12000a02aabb32021000 pts=30 dts=28 keyframe=1
+> va_encode 120032021000 31 29 0 0
+state: header=0a02aabb sei=- first_packet=0
+va_encode -> 1 received=1 size=6 data=120032021000 pts=31 dts=29 keyframe=1
+> va_destroy
+va_destroyed

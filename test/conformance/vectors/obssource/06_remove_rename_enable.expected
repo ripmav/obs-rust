@@ -1,0 +1,19 @@
+  cb A create
+log debug source 'A' (in) created
+  gsig source_create source=A
+create a ok
+  cb P create
+log debug private source 'P' (in) created
+create p ok
+  gsig source_remove source=A
+  sig remove source=A
+removed a 1
+  gsig source_rename source=B new_name=B prev_name=A
+  sig rename source=B new_name=B prev_name=A
+  sig rename source=Q new_name=Q prev_name=P
+info a name=B id=in type=0 enabled=1 hidden=0 flags=0 mixers=0 private=0
+info p name=Q id=in type=0 enabled=1 hidden=0 flags=0 mixers=0 private=1
+  sig enable source=B enabled=0
+  sig enable source=B enabled=0
+  sig enable source=B enabled=1
+info a name=B id=in type=0 enabled=1 hidden=0 flags=0 mixers=0 private=0

@@ -1,0 +1,51 @@
+# S-012 CORE: obs_parse_hevc_packet (same output format as avc_packet; see 04) and its priority rule.
+# The keyframe flag is set when any IRAP NAL (type 16..23) is present; priority is the
+# maximum over all NALs of the per-type value (see 08) and the packet's initial priority.
+buf vps 40010c01ffff0160
+buf sps 420101016000000300
+buf pps 4401c172b4
+buf aud 460150
+buf sei 4e0105010203
+buf idr 2601af0630
+buf cra 2a01af
+buf trail_r 0201d0aa
+buf trail_n 0001d0aa
+buf tsa_r 0601d0
+echo idr-access-unit
+cat au 00000001 @aud 00000001 @vps 00000001 @sps 00000001 @pps 00000001 @sei 00000001 @idr
+hevc_packet @au
+hevc_priority @au
+hevc_priority @au 3
+echo cra
+cat au 00000001 @cra
+hevc_packet @au
+echo trail-r-is-priority-2
+cat au 00000001 @aud 00000001 @trail_r
+hevc_packet @au
+hevc_priority @au 0
+hevc_priority @au 1
+hevc_priority @au 3
+echo trail-n-is-priority-0
+cat au 00000001 @aud 00000001 @trail_n
+hevc_packet @au
+hevc_packet @au 1
+echo max-over-nals
+cat au 00000001 @trail_n 00000001 @tsa_r 00000001 @trail_n
+hevc_packet @au
+echo keyframe-flag-of-the-source-is-kept
+cat au 00000001 @trail_n
+hevc_packet @au 0 1
+echo parameter-sets-and-sei-alone-have-priority-0
+cat au 00000001 @vps 00000001 @sps 00000001 @pps 00000001 @sei
+hevc_packet @au
+echo three-byte-start-codes-and-trailing-zeros
+cat au 000001 @trail_r 000001 @trail_n 0000
+hevc_packet @au
+echo empty
+hevc_packet -
+hevc_packet - 2 1
+hevc_priority - 1
+hevc_packet aabbcc
+echo trailing-start-code-at-end-is-not-seen
+cat au 00000001 @trail_r 00000001
+hevc_packet @au

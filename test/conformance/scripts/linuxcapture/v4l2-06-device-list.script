@@ -1,0 +1,46 @@
+# S-049 v4l2: device enumeration for the "device_id" list. Walks /sys/class/video4linux (faked),
+# opens /dev/<name>, queries capabilities, keeps only capture-capable nodes, labels them "card (bus)".
+trace on
+fake-dir video0 video1 video2 d:subdir video3 video4
+dev /dev/video0
+dev-cap "Webcam A" usb-0000:00:14.0-1 0x85200001 0x04200001
+dev-input Camera 0
+dev-fmt YUYV "YUYV" 0
+dev-cur 0 640 480 YUYV 1280 1 30 0
+dev /dev/video1
+# metadata node of the same camera: device_caps lack VIDEO_CAPTURE although capabilities has it
+dev-cap "Webcam A" usb-0000:00:14.0-1 0x85200001 0x04a00000
+dev /dev/video2
+# no DEVICE_CAPS bit: falls back to capabilities
+dev-cap "Old Grabber" pci-1 0x00000001 0x00000000
+dev /dev/video4
+dev-cap "No Capture" pci-2 0x04000000 0x04000000
+# video3 is not defined: open fails
+source-name Cam
+src-defaults
+set-str device_id /dev/video0
+src-create
+src-props
+props
+# a currently selected device that is not present is appended and disabled
+set-str device_id /dev/video9
+src-props
+props
+# empty current device: nothing appended
+set-str device_id ""
+src-props
+props
+# the first matching name is not duplicated when it is the selected one
+set-str device_id /dev/video2
+src-props
+props
+# QUERYCAP failing skips the node
+fail QUERYCAP
+src-props
+props
+unfail
+# directory missing: property list stays empty (no clear, no items)
+fake-dir-missing
+src-props
+props
+src-destroy

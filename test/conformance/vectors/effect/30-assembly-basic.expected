@@ -1,0 +1,93 @@
+backend vertexshader_create location="basic.effect (Vertex shader, technique Draw, pass 0)" len=294 fnv=449fcdd65dad02a1
+  text "uniform float4x4 ViewProj;\n\n\nstruct VOut {\n\tfloat4 pos : POSITION;\n\tfloat2 uv : TEXCOORD0;\n};\n\nstruct VIn {\n\tfloat4 pos : POSITION;\n\tfloat2 uv : TEXCOORD0;\n};\n\nVOut VS(VIn v)\n{ VOut o; o.pos = mul(float4(v.pos.xyz, 1.0), ViewProj); o.uv = v.uv; return o; }\n\nVOut main(VIn v)\n{\n\treturn VS(v);\n}\n"
+  sparam 0 name=ViewProj type=MATRIX4X4 array=0
+  result ok
+backend pixelshader_create location="basic.effect (Pixel shader, technique Draw, pass 0)" len=281 fnv=4d2edafbcedd2425
+  text "uniform texture2d image;\n\n\nsampler_state samp {\n\tFilter = Linear;\n\n\tAddressU = Clamp;\n\n\tAddressV = Clamp;\n\n};\n\nstruct VOut {\n\tfloat4 pos : POSITION;\n\tfloat2 uv : TEXCOORD0;\n};\n\nfloat4 PS(VOut v)\n{ return image.Sample(samp, v.uv); }\n\nfloat4 main(VOut v) : TARGET\n{\n\treturn PS(v);\n}\n"
+  sparam 0 name=image type=TEXTURE array=0
+  result ok
+effect e1 result=ok
+  error_string=@null
+--- no parameters, no structs
+backend vertexshader_create location="plain.effect (Vertex shader, technique T, pass 0)" len=84 fnv=f084d8dad56eaab7
+  text "float4 VS()\n{ return float4(0,0,0,1); }\n\nfloat4 main() : POSITION\n{\n\treturn VS();\n}\n"
+  result ok
+backend pixelshader_create location="plain.effect (Pixel shader, technique T, pass 0)" len=82 fnv=b573d48e3612b8fc
+  text "float4 PS()\n{ return float4(1,0,0,1); }\n\nfloat4 main() : TARGET\n{\n\treturn PS();\n}\n"
+  result ok
+effect e2 result=ok
+  error_string=@null
+--- void entry function
+backend vertexshader_create location="void.effect (Vertex shader, technique T, pass 0)" len=45 fnv=e0ea101d534b74db
+  text "void VS()\n{ }\n\nvoid main()\n{\n\treturn VS();\n}\n"
+  result ok
+backend pixelshader_create location="void.effect (Pixel shader, technique T, pass 0)" len=45 fnv=5523bf8c9378eef7
+  text "void PS()\n{ }\n\nvoid main()\n{\n\treturn PS();\n}\n"
+  result ok
+effect e3 result=ok
+  error_string=@null
+--- two techniques and two passes: one shader per pass and stage
+backend vertexshader_create location="multi.effect (Vertex shader, technique T1, pass 0)" len=68 fnv=e35f1ec78b436a3b
+  text "float4 A()\n{ return 0; }\n\nfloat4 main() : POSITION\n{\n\treturn A();\n}\n"
+  result ok
+backend pixelshader_create location="multi.effect (Pixel shader, technique T1, pass 0)" len=66 fnv=08191811342df91c
+  text "float4 B()\n{ return 1; }\n\nfloat4 main() : TARGET\n{\n\treturn B();\n}\n"
+  result ok
+backend vertexshader_create location="multi.effect (Vertex shader, technique T1, pass 1)" len=68 fnv=e35f1ec78b436a3b
+  text "float4 A()\n{ return 0; }\n\nfloat4 main() : POSITION\n{\n\treturn A();\n}\n"
+  result ok
+backend pixelshader_create location="multi.effect (Pixel shader, technique T1, pass 1)" len=66 fnv=08191811342df91c
+  text "float4 B()\n{ return 1; }\n\nfloat4 main() : TARGET\n{\n\treturn B();\n}\n"
+  result ok
+backend vertexshader_create location="multi.effect (Vertex shader, technique T2, pass 0)" len=68 fnv=e35f1ec78b436a3b
+  text "float4 A()\n{ return 0; }\n\nfloat4 main() : POSITION\n{\n\treturn A();\n}\n"
+  result ok
+backend pixelshader_create location="multi.effect (Pixel shader, technique T2, pass 0)" len=66 fnv=08191811342df91c
+  text "float4 B()\n{ return 1; }\n\nfloat4 main() : TARGET\n{\n\treturn B();\n}\n"
+  result ok
+effect e4 result=ok
+  error_string=@null
+--- a pass may use the same function for both stages
+backend vertexshader_create location="same.effect (Vertex shader, technique T, pass 0)" len=66 fnv=9768e103a0e2bad5
+  text "float4 F()\n{ return 0; }\n\nfloat4 main() : TARGET\n{\n\treturn F();\n}\n"
+  result ok
+backend pixelshader_create location="same.effect (Pixel shader, technique T, pass 0)" len=66 fnv=9768e103a0e2bad5
+  text "float4 F()\n{ return 0; }\n\nfloat4 main() : TARGET\n{\n\treturn F();\n}\n"
+  result ok
+effect e5 result=ok
+  error_string=@null
+--- the file name is copied into the location string verbatim
+backend vertexshader_create location="dir/some file.effect (Vertex shader, technique T, pass 0)" len=66 fnv=9768e103a0e2bad5
+  text "float4 F()\n{ return 0; }\n\nfloat4 main() : TARGET\n{\n\treturn F();\n}\n"
+  result ok
+backend pixelshader_create location="dir/some file.effect (Pixel shader, technique T, pass 0)" len=66 fnv=9768e103a0e2bad5
+  text "float4 F()\n{ return 0; }\n\nfloat4 main() : TARGET\n{\n\treturn F();\n}\n"
+  result ok
+effect e6 result=ok
+  error_string=@null
+backend vertexshader_create location=" (Vertex shader, technique T, pass 0)" len=66 fnv=9768e103a0e2bad5
+  text "float4 F()\n{ return 0; }\n\nfloat4 main() : TARGET\n{\n\treturn F();\n}\n"
+  result ok
+backend pixelshader_create location=" (Pixel shader, technique T, pass 0)" len=66 fnv=9768e103a0e2bad5
+  text "float4 F()\n{ return 0; }\n\nfloat4 main() : TARGET\n{\n\treturn F();\n}\n"
+  result ok
+effect e7 result=ok
+  error_string=@null
+backend shader_destroy location=" (Vertex shader, technique T, pass 0)"
+backend shader_destroy location=" (Pixel shader, technique T, pass 0)"
+backend shader_destroy location="dir/some file.effect (Vertex shader, technique T, pass 0)"
+backend shader_destroy location="dir/some file.effect (Pixel shader, technique T, pass 0)"
+backend shader_destroy location="same.effect (Vertex shader, technique T, pass 0)"
+backend shader_destroy location="same.effect (Pixel shader, technique T, pass 0)"
+backend shader_destroy location="multi.effect (Vertex shader, technique T1, pass 0)"
+backend shader_destroy location="multi.effect (Pixel shader, technique T1, pass 0)"
+backend shader_destroy location="multi.effect (Vertex shader, technique T1, pass 1)"
+backend shader_destroy location="multi.effect (Pixel shader, technique T1, pass 1)"
+backend shader_destroy location="multi.effect (Vertex shader, technique T2, pass 0)"
+backend shader_destroy location="multi.effect (Pixel shader, technique T2, pass 0)"
+backend shader_destroy location="void.effect (Vertex shader, technique T, pass 0)"
+backend shader_destroy location="void.effect (Pixel shader, technique T, pass 0)"
+backend shader_destroy location="plain.effect (Vertex shader, technique T, pass 0)"
+backend shader_destroy location="plain.effect (Pixel shader, technique T, pass 0)"
+backend shader_destroy location="basic.effect (Vertex shader, technique Draw, pass 0)"
+backend shader_destroy location="basic.effect (Pixel shader, technique Draw, pass 0)"

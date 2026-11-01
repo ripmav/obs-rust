@@ -1,0 +1,46 @@
+echo bravo-first-server-is-rtmps
+get protocol = "RTMPS"
+settings S
+  multitrack_video_disclaimer = "Multitrack Video automatically optimizes your stream settings, which may include encoding multiple video qualities and/or canvas orientations. Selecting this option will send Bravo information about your computer and software setup."
+  multitrack_video_name = "Multitrack Video"
+  protocol = "RTMPS"
+  service = "Bravo"
+echo golf-first-rtmps
+get protocol = "RTMPS"
+echo alpha-first-rtmp
+get protocol = "RTMP"
+settings S
+  more_info_link = "https://alpha.example/info"
+  multitrack_video_configuration_url = "https://alpha.example/mt"
+  multitrack_video_disclaimer = "Alpha Boost automatically optimizes your stream settings, which may include encoding multiple video qualities and/or canvas orientations. Selecting this option will send Alpha information about your computer and software setup. <a href='https://alpha.example/learn'>Learn More</a>"
+  multitrack_video_name = "Alpha Boost"
+  protocol = "RTMP"
+  service = "Alpha"
+  stream_key_link = "https://alpha.example/key"
+echo charlie-explicit-SRT
+get protocol = "SRT"
+settings S
+  multitrack_video_disclaimer = "Multitrack Video automatically optimizes your stream settings, which may include encoding multiple video qualities and/or canvas orientations. Selecting this option will send Charlie information about your computer and software setup."
+  multitrack_video_name = "Multitrack Video"
+  protocol = "SRT"
+  service = "Charlie"
+echo stored-protocol-wins-in-object-but-selection-overwrites
+get protocol = "RTMPS"
+settings S
+  more_info_link = "https://alpha.example/info"
+  multitrack_video_configuration_url = "https://alpha.example/mt"
+  multitrack_video_disclaimer = "Alpha Boost automatically optimizes your stream settings, which may include encoding multiple video qualities and/or canvas orientations. Selecting this option will send Alpha information about your computer and software setup. <a href='https://alpha.example/learn'>Learn More</a>"
+  multitrack_video_name = "Alpha Boost"
+  protocol = "RTMP"
+  service = "Alpha"
+  stream_key_link = "https://alpha.example/key"
+echo india-RIST
+get protocol = "RIST"
+echo unknown-service-no-protocol-stored
+get protocol = "RTMP"
+settings S
+  service = "Nope"
+echo no-file
+get protocol = ""
+settings S
+  service = "Alpha"

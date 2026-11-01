@@ -1,0 +1,52 @@
+mkmod one ok
+mkmod two ok
+mkmod pre ok
+log debug ---------------------------------
+ev mod one ctor
+log debug Loading module: one.so
+ev mod one set_pointer
+ev mod one set_locale en-US
+open_module M1 -> 0
+mod_info M1 file=one.so name=ModOne author=Me desc=First bin=@TMP/m/one.so data=@TMP/d/one id=(null) ver=(null) lib=set core=0 legacy=0 state=enabled loaded=0 mtype=0
+log debug ---------------------------------
+ev mod two ctor
+log debug Loading module: two.so
+ev mod two set_pointer
+ev mod two set_locale en-US
+open_module M2 -> 0
+enabled two one
+disabled
+mod_info M2 file=two.so name=(null) author=(null) desc=(null) bin=@TMP/m/two.so data=@TMP/d/two/ id=(null) ver=(null) lib=set core=0 legacy=0 state=enabled loaded=0 mtype=0
+log debug ---------------------------------
+log error os_dlopen(@TMP/m/pre-extless->@TMP/m/pre-extless.so)
+log warning Module '@TMP/m/pre-extless' not loaded
+open_module M3 -> -2
+log debug ---------------------------------
+ev mod pre ctor
+log debug Loading module: libpre-mod
+ev mod pre set_pointer
+open_module M3 -> 0
+enabled libpre- two one
+disabled
+mod_info M3 file=libpre-mod name=(null) author=(null) desc=(null) bin=@TMP/m/libpre-mod data=@TMP/d/x id=(null) ver=(null) lib=set core=0 legacy=0 state=enabled loaded=0 mtype=0
+log debug ---------------------------------
+log debug Loading module: one.so
+ev mod one set_pointer
+ev mod one set_locale (null)
+open_module M4 -> 0
+enabled one libpre- two one
+disabled
+mod_info M4 file=one.so name=ModOne author=Me desc=First bin=@TMP/m/one.so data=(null) id=(null) ver=(null) lib=set core=0 legacy=0 state=enabled loaded=0 mtype=0
+enum one.so
+enum libpre-mod
+enum two.so
+enum one.so
+log info   Loaded Modules:
+log info     one.so
+log info     libpre-mod
+log info     two.so
+log info     one.so
+get_module one -> enabled=one disabled=null allow_disable=1
+get_module two -> enabled=two disabled=null allow_disable=1
+get_module nosuch -> enabled=null disabled=null allow_disable=1
+get_module libpre-mod -> enabled=null disabled=null allow_disable=1

@@ -1,0 +1,182 @@
+call source_update a deferred=1
+create a -> ok
+echo update is deferred: nothing is loaded before the tick
+render a
+call skip_video_filter a
+call image_free
+call image_init lut512.png
+call voltexture_create t1 64x64x64 format=RGBA bytes=1048576 fnv=82b2e4682b7a7383 probe (0,0,0)=0 (1,0,0)=1 (0,1,0)=512 (0,0,1)=64 (63,0,0)=63 (0,63,0)=32256 (0,0,63)=229824 (5,7,9)=36421 (63,63,63)=262143
+call effect_create file=color_grade_filter.effect -> e1 uniforms=9 techniques=5
+call deferred_update a
+tick a 0.016
+render a
+call filter_begin_cs a format=RGBA space=SRGB allow=ALLOW_DIRECT -> 1
+call get_param e1:clut_3d -> ok
+call set_texture_srgb e1:clut_3d t1
+call get_param e1:clut_amount -> ok
+call set_float e1:clut_amount 1
+call get_param e1:clut_scale -> ok
+call set_vec3 e1:clut_scale 0.984375 0.984375 0.984375
+call get_param e1:clut_offset -> ok
+call set_vec3 e1:clut_offset 0.0078125 0.0078125 0.0078125
+call get_param e1:domain_min -> ok
+call set_vec3 e1:domain_min 0 0 0
+call get_param e1:domain_max -> ok
+call set_vec3 e1:domain_max 1 1 1
+call blend_push
+call blend_function ONE INVSRCALPHA
+call filter_tech_end a e1 size=0x0 technique=DrawAlpha3D exists=1
+call blend_pop
+echo amount < 1 -> DrawAmount3D, passthrough_alpha -> Draw3D
+call source_update b deferred=1
+create b -> ok
+call image_free
+call image_init lut512.png
+call voltexture_create t2 64x64x64 format=RGBA bytes=1048576 fnv=82b2e4682b7a7383 probe (0,0,0)=0 (1,0,0)=1 (0,1,0)=512 (0,0,1)=64 (63,0,0)=63 (0,63,0)=32256 (0,0,63)=229824 (5,7,9)=36421 (63,63,63)=262143
+call effect_create file=color_grade_filter.effect -> e2 uniforms=9 techniques=5
+call deferred_update b
+tick b 0.016
+render b
+call filter_begin_cs b format=RGBA space=SRGB allow=ALLOW_DIRECT -> 1
+call get_param e2:clut_3d -> ok
+call set_texture_srgb e2:clut_3d t2
+call get_param e2:clut_amount -> ok
+call set_float e2:clut_amount 0.5
+call get_param e2:clut_scale -> ok
+call set_vec3 e2:clut_scale 0.984375 0.984375 0.984375
+call get_param e2:clut_offset -> ok
+call set_vec3 e2:clut_offset 0.0078125 0.0078125 0.0078125
+call get_param e2:domain_min -> ok
+call set_vec3 e2:domain_min 0 0 0
+call get_param e2:domain_max -> ok
+call set_vec3 e2:domain_max 1 1 1
+call blend_push
+call blend_function ONE INVSRCALPHA
+call filter_tech_end b e2 size=0x0 technique=DrawAmount3D exists=1
+call blend_pop
+call source_update c deferred=1
+create c -> ok
+call image_free
+call image_init lut512.png
+call voltexture_create t3 64x64x64 format=RGBA bytes=1048576 fnv=82b2e4682b7a7383 probe (0,0,0)=0 (1,0,0)=1 (0,1,0)=512 (0,0,1)=64 (63,0,0)=63 (0,63,0)=32256 (0,0,63)=229824 (5,7,9)=36421 (63,63,63)=262143
+call effect_create file=color_grade_filter.effect -> e3 uniforms=9 techniques=5
+call deferred_update c
+tick c 0.016
+render c
+call filter_begin_cs c format=RGBA space=SRGB allow=ALLOW_DIRECT -> 1
+call get_param e3:clut_3d -> ok
+call set_texture_srgb e3:clut_3d t3
+call get_param e3:clut_amount -> ok
+call set_float e3:clut_amount 1
+call get_param e3:clut_scale -> ok
+call set_vec3 e3:clut_scale 0.984375 0.984375 0.984375
+call get_param e3:clut_offset -> ok
+call set_vec3 e3:clut_offset 0.0078125 0.0078125 0.0078125
+call get_param e3:domain_min -> ok
+call set_vec3 e3:domain_min 0 0 0
+call get_param e3:domain_max -> ok
+call set_vec3 e3:domain_max 1 1 1
+call blend_push
+call blend_function ONE INVSRCALPHA
+call filter_tech_end c e3 size=0x0 technique=Draw3D exists=1
+call blend_pop
+echo amount exactly 1.0 and alpha not passed through -> DrawAlpha3D
+call source_update e deferred=1
+create e -> ok
+call image_free
+call image_init lut512.png
+call voltexture_create t4 64x64x64 format=RGBA bytes=1048576 fnv=82b2e4682b7a7383 probe (0,0,0)=0 (1,0,0)=1 (0,1,0)=512 (0,0,1)=64 (63,0,0)=63 (0,63,0)=32256 (0,0,63)=229824 (5,7,9)=36421 (63,63,63)=262143
+call effect_create file=color_grade_filter.effect -> e4 uniforms=9 techniques=5
+call deferred_update e
+tick e 0.016
+render e
+call filter_begin_cs e format=RGBA space=SRGB allow=ALLOW_DIRECT -> 1
+call get_param e4:clut_3d -> ok
+call set_texture_srgb e4:clut_3d t4
+call get_param e4:clut_amount -> ok
+call set_float e4:clut_amount 1
+call get_param e4:clut_scale -> ok
+call set_vec3 e4:clut_scale 0.984375 0.984375 0.984375
+call get_param e4:clut_offset -> ok
+call set_vec3 e4:clut_offset 0.0078125 0.0078125 0.0078125
+call get_param e4:domain_min -> ok
+call set_vec3 e4:domain_min 0 0 0
+call get_param e4:domain_max -> ok
+call set_vec3 e4:domain_max 1 1 1
+call blend_push
+call blend_function ONE INVSRCALPHA
+call filter_tech_end e e4 size=0x0 technique=DrawAlpha3D exists=1
+call blend_pop
+echo wrong dimensions: not a 64^3 layout -> no texture, render skipped
+call source_update f deferred=1
+create f -> ok
+call image_free
+call image_init bad1.png
+call effect_create file=color_grade_filter.effect -> e5 uniforms=9 techniques=5
+call deferred_update f
+tick f 0.016
+render f
+call skip_video_filter f
+call source_update g deferred=1
+create g -> ok
+call image_free
+call image_init bad2.png
+call effect_create file=color_grade_filter.effect -> e6 uniforms=9 techniques=5
+call deferred_update g
+tick g 0.016
+render g
+call skip_video_filter g
+call source_update h deferred=1
+create h -> ok
+call image_free
+call image_init bad3.png
+call effect_create file=color_grade_filter.effect -> e7 uniforms=9 techniques=5
+call deferred_update h
+tick h 0.016
+render h
+call skip_video_filter h
+call source_update i deferred=1
+create i -> ok
+call image_free
+call image_init unl.png
+call effect_create file=color_grade_filter.effect -> e8 uniforms=9 techniques=5
+call deferred_update i
+tick i 0.016
+render i
+call skip_video_filter i
+echo non-square tile layouts that are also 64^3 pixels (the row index uses the tile HEIGHT: QUIRK / DEFECT, see S-028)
+call source_update j deferred=1
+create j -> ok
+call image_free
+call image_init lut128x2048.png
+call voltexture_create t5 64x64x64 format=RGBA bytes=1048576 fnv=4d9a6d1069078383 probe (0,0,0)=0 (1,0,0)=1 (0,1,0)=128 (0,0,1)=64 (63,0,0)=63 (0,63,0)=8064 (0,0,63)=8256 (5,7,9)=965 (63,63,63)=16383
+call effect_create file=color_grade_filter.effect -> e9 uniforms=9 techniques=5
+call deferred_update j
+tick j 0.016
+call source_update k deferred=1
+create k -> ok
+call image_free
+call image_init lut256x1024.png
+call voltexture_create t6 64x64x64 format=RGBA bytes=1048576 fnv=1efd46481d7dc383 probe (0,0,0)=0 (1,0,0)=1 (0,1,0)=256 (0,0,1)=64 (63,0,0)=63 (0,63,0)=16128 (0,0,63)=49344 (5,7,9)=1861 (63,63,63)=65535
+call effect_create file=color_grade_filter.effect -> e10 uniforms=9 techniques=5
+call deferred_update k
+tick k 0.016
+call source_update l deferred=1
+create l -> ok
+call image_free
+call image_init lut64x4096.png
+call voltexture_create t7 64x64x64 format=RGBA bytes=1048576 fnv=a13a786177418383 probe (0,0,0)=0 (1,0,0)=1 (0,1,0)=64 (0,0,1)=0 (63,0,0)=63 (0,63,0)=4032 (0,0,63)=0 (5,7,9)=453 (63,63,63)=4095
+call effect_create file=color_grade_filter.effect -> e11 uniforms=9 techniques=5
+call deferred_update l
+tick l 0.016
+echo texture creation failure
+call source_update m deferred=1
+create m -> ok
+call image_free
+call image_init lut512.png
+call voltexture_create 64x64x64 format=RGBA -> null
+call effect_create file=color_grade_filter.effect -> e12 uniforms=9 techniques=5
+call deferred_update m
+tick m 0.016
+render m
+call skip_video_filter m

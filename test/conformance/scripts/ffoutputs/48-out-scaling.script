@@ -1,0 +1,31 @@
+# A scale size different from the output size (or a pixel format the encoder cannot take) makes the output create a
+# software scaler; the encoder then runs at the scaled size. Without scale settings (0) the output size is used and
+# no scaler exists. One frame goes through the scaler path.
+reset
+output ff
+size 320 240
+video_info 30 1 709 P NV12
+set str url x.null
+set str format_name null
+set int scale_width 160
+set int scale_height 120
+fo_create
+fo_start
+fo_connect
+fo_video 1000
+fo_packets
+fo_destroy
+echo only_one_dimension_scaled
+reset
+output ff
+size 320 240
+video_info 30 1 709 P I420
+set str url x.null
+set str format_name null
+set int scale_width 320
+set int scale_height 100
+fo_create
+fo_start
+fo_connect
+fo_video 1000
+fo_destroy

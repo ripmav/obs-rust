@@ -1,0 +1,73 @@
+mkmod plain ok
+mkmod getstr ok
+mkmod loc ok
+log debug ---------------------------------
+ev mod loc ctor
+log debug Loading module: loc.so
+ev mod loc set_pointer
+open_module Loc -> 0
+locale_string Hello -> 1 Hallo
+locale_string Bye -> 1 Tschuess
+locale_string OnlyEn -> 1 only english
+locale_string Missing -> 0 unchanged
+locale_text Hello -> Hallo
+locale_text Missing -> Missing
+log debug ---------------------------------
+ev mod plain ctor
+log debug Loading module: plain.so
+ev mod plain set_pointer
+open_module Plain -> 0
+locale_string Hello -> 0 unchanged
+locale_text Hello -> Hello
+log debug ---------------------------------
+ev mod getstr ctor
+log debug Loading module: getstr.so
+ev mod getstr set_pointer
+open_module Gs -> 0
+locale_string a -> 1 A!
+locale_string b -> 0 unchanged
+locale_text a -> A!
+locale_text b -> b
+find_file Loc res/a.txt -> @TMP/data/loc/res/a.txt
+find_file Loc res/missing.txt -> (null)
+find_file Loc locale -> @TMP/data/loc/locale
+find_file Loc - -> @TMP/data/loc
+find_file Loc  -> @TMP/data/loc
+log debug ---------------------------------
+log debug Loading module: plain.so
+ev mod plain set_pointer
+open_module Slash -> 0
+find_file Slash res/a.txt -> @TMP/data/loc/res/a.txt
+find_file Slash - -> @TMP/data/loc/
+log debug ---------------------------------
+log debug Loading module: plain.so
+ev mod plain set_pointer
+open_module NoData -> 0
+find_file NoData ms-no-such-file-here -> (null)
+config_path Loc settings.json -> @TMP/cfg/loc/settings.json
+config_path Loc  -> @TMP/cfg/loc/
+config_path Loc a/b.json -> @TMP/cfg/loc/a/b.json
+config_path Loc c.json -> loc/c.json
+config_path Loc d.json -> loc/d.json
+load_locale L1 -> ok
+lk Hello -> 1 Hallo
+lk OnlyEn -> 1 only english
+lk Nope -> 0 
+load_locale L2 -> ok
+lk Hello -> 1 Hello
+load_locale L3 -> ok
+lk Hello -> 1 Bonjour
+lk Bye -> 1 Goodbye
+log warning Failed to load 'xx-XX' text for module: 'loc.so'
+load_locale L4 -> ok
+lk Hello -> 1 Hello
+log warning Failed to load 'xx-XX' text for module: 'loc.so'
+load_locale L5 -> null
+log warning Failed to load 'en-US' text for module: 'plain.so'
+load_locale L6 -> null
+log warning obs_module_load_locale: Invalid parameters
+load_locale L7 -> null
+log warning obs_module_load_locale: Invalid parameters
+load_locale L8 -> null
+log warning obs_module_load_locale: Invalid parameters
+load_locale L9 -> null

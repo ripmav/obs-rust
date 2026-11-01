@@ -1,0 +1,17 @@
+# S-022 ProRes (QuickTime visual sample entry): the sample entry type is the encoder setting
+# codec_type (a big-endian FourCC held in an int, here 'apch'); no stss, no avcC. Packets pass through
+# unmodified. Includes MOV flavor (where this track type is normally used).
+enc v video codec prores width 1920 height 1080 fps 30/1 id prores_ks codec_type 0x61706368 extra -
+mux mov
+pkt v 0 0 1 gen:30
+pkt v 1 1 0 gen:31
+pkt v 2 2 0 gen:32
+finalise
+dump
+echo --- same in an MP4 file; codec_type 0 gives an entry named with four NUL bytes
+reset
+enc v video codec prores width 640 height 480 fps 30/1 codec_type 0
+mux mp4 skipfin
+pkt v 0 0 1 gen:30
+finalise
+tree

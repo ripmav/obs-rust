@@ -1,0 +1,3 @@
+# S-050 nvenc: NvEncodeAPICreateInstance missing.
+sym create 0
+initnv

@@ -1,0 +1,16 @@
+create ok
+save rc=0
+save_safe rc=0
+"[A]\nk=v2\n"
+nofile
+save_safe rc=0
+"[A]\nk=v3\n"
+"[A]\nk=v2\n"
+nofile
+save_safe rc=0
+"[A]\nk=v4\n"
+"[A]\nk=v3\n"
+log error config_save_safe: invalid temporary extension specified
+save_safe rc=-2
+log error config_save_safe: invalid temporary extension specified
+save_safe rc=-2

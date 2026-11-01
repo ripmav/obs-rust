@@ -1,0 +1,6 @@
+# S-050 nvenc DEFECT D-2: nvenc_check() passes config_get_string(..., "driver_ver") straight to
+# sscanf. A document that is "supported" but lacks driver_ver crashes the reference (NULL
+# dereference in sscanf). Required behaviour: treat as driver version 0.0 (split encoding then
+# counts as broken). The reference result is recorded as a crash in a forked child.
+ini "[general]\nnvenc_supported=true\nnvenc_devices=1\nnvenc_ver=13.0\ncuda_ver=12.0\n"
+fsupported

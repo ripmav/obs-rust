@@ -1,0 +1,18 @@
+denc_update 1280x720 keyint=60 frameInterval=333333
+denc_update 1280x720 keyint=120 frameInterval=166666
+denc_update 1024x768 keyint=120 frameInterval=333333
+denc_update 1024x768 keyint=30 frameInterval=333333
+denc_update 1024x768 keyint=75 frameInterval=400000
+denc_update 1280x720 keyint=60 frameInterval=333333
+denc_update 1024x768 keyint=60 frameInterval=333333
+denc_update 1280x720 keyint=96 frameInterval=208333
+denc_update 1280x720 keyint=47 frameInterval=59169
+denc_update 1280x720 keyint=59 frameInterval=47335
+denc_update 1280x720 keyint=299 frameInterval=23667
+videoinfo unchanged i420 1280x720
+videoinfo unchanged i420 1024x768
+videoinfo forced i420 1280x720 range=default colorspace=default
+videoinfo forced i420 1280x720 range=default colorspace=default
+videoinfo forced i420 1280x720 range=default colorspace=default
+videoinfo forced i420 1280x720 range=default colorspace=default
+videoinfo forced i420 1024x768 range=default colorspace=default

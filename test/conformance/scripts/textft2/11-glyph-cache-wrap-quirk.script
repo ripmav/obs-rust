@@ -1,0 +1,14 @@
+# QUIRK Q1: after a glyph is placed, a row that is exactly full wraps with step max_h (no gap row), whereas a wrap
+# before placement steps max_h+1 (S-038-R45).
+events off
+reset
+ascii 5 8 0 8 384
+glyph 0x67 0x67 5 12 0 8 384
+font "Sans Serif" - 0 p/sans
+load
+create s 2
+setfont s "Sans Serif" - 20 0
+texdim 36 40
+update s
+state s
+glyphs s 0x61 0x67 0x68 0x69 0x6a 0x6b 0x6c 0x6d

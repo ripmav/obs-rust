@@ -1,0 +1,58 @@
+mkmod a ok
+mkmod b ok
+mkmod c ok
+log debug ---------------------------------
+ev mod a ctor
+log debug Loading module: a.so
+ev mod a set_pointer
+open_module A -> 0
+log debug ---------------------------------
+ev mod b ctor
+log debug Loading module: b.so
+ev mod b set_pointer
+open_module B -> 0
+log debug ---------------------------------
+ev mod c ctor
+log debug Loading module: c.so
+ev mod c set_pointer
+open_module C -> 0
+enabled c b a
+disabled
+ev mod a load
+init_module A -> 1
+init_module A -> 1
+ev mod b load
+log warning Failed to initialize module 'b.so'
+init_module B -> 0
+ev mod c load
+init_module C -> 1
+init_module - -> 0
+mod_info A file=a.so name=(null) author=(null) desc=(null) bin=@TMP/m/a.so data=d id=(null) ver=(null) lib=set core=0 legacy=0 state=enabled loaded=1 mtype=0
+mod_info B file=b.so name=(null) author=(null) desc=(null) bin=@TMP/m/b.so data=d id=(null) ver=(null) lib=set core=0 legacy=0 state=enabled loaded=0 mtype=0
+init_module A -> 0
+ev mod c post_load
+ev mod b post_load
+ev mod a post_load
+ev mod b free_locale
+enabled c a
+disabled
+ev mod c free_locale
+ev mod c unload
+enabled a
+disabled
+ev mod a free_locale
+ev mod a unload
+enabled
+disabled
+create_disabled D1 -> 1
+create_disabled D2 -> 1
+enabled
+disabled lib-y x
+mod_info D1 file=x.so name=(null) author=(null) desc=(null) bin=@TMP/m/x.so data=@TMP/d/x id=(null) ver=(null) lib=null core=0 legacy=0 state=disabled loaded=0 mtype=0
+mod_info D2 file=lib-y.so name=(null) author=(null) desc=(null) bin=@TMP/m/lib-y.so data=@TMP/d/y id=(null) ver=(null) lib=null core=0 legacy=0 state=failed_to_open loaded=0 mtype=0
+get_module x -> enabled=null disabled=x allow_disable=1
+get_module lib-y -> enabled=null disabled=lib-y allow_disable=1
+enabled
+disabled lib-y
+enabled
+disabled

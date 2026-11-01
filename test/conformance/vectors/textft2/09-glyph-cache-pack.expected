@@ -1,0 +1,44 @@
+> events off
+> reset
+> ascii 5 8 0 8 384
+> font Sans Serif - 0 p/sans
+> load
+load -> 1
+registered id=text_ft2_source version=0
+registered id=text_ft2_source version=2
+> texdim 40 30
+> create s 2
+create s -> 1
+> setfont s Sans Serif - 20 0
+> update s
+log warning Out of space trying to render glyphs
+update done
+> state s
+state s font="Sans Serif" style="" size=20 flags=0 face=1 from_file=0 aa=1
+state s outline=0 shadow=0 outline_width=0 word_wrap=0 custom_width=0 log_mode=0 log_lines=6 color=ffffffff,ffffffff
+state s cx=0 cy=8 max_h=8 texbuf=0,27 tex=1 vbuf=0 effect=1
+state s file=NULL load_failed=0 update_file=0 mtime=0 last_checked_ms=0
+state s text=""
+> glyphs s 0x61 0x62 0x63 0x64 0x65 0x66 0x67 0x68 0x7e 0x21 0x30
+glyph 97 u=0 v=0 u2=0.125 v2=0.266666681 w=5 h=8 xoff=0 yoff=8 xadv=6
+glyph 98 u=0.150000006 v=0 u2=0.275000006 v2=0.266666681 w=5 h=8 xoff=0 yoff=8 xadv=6
+glyph 99 u=0.300000012 v=0 u2=0.425000012 v2=0.266666681 w=5 h=8 xoff=0 yoff=8 xadv=6
+glyph 100 u=0.449999988 v=0 u2=0.574999988 v2=0.266666681 w=5 h=8 xoff=0 yoff=8 xadv=6
+glyph 101 u=0.600000024 v=0 u2=0.725000024 v2=0.266666681 w=5 h=8 xoff=0 yoff=8 xadv=6
+glyph 102 u=0.75 v=0 u2=0.875 v2=0.266666681 w=5 h=8 xoff=0 yoff=8 xadv=6
+glyph 103 u=0 v=0.300000012 u2=0.125 v2=0.566666663 w=5 h=8 xoff=0 yoff=8 xadv=6
+glyph 104 u=0.150000006 v=0.300000012 u2=0.275000006 v2=0.566666663 w=5 h=8 xoff=0 yoff=8 xadv=6
+glyphs cached=18
+> texsum s
+texsum nonzero=720 sum=91381
+> echo --- the full standard set does not fit: the loop stopped at the first glyph that does not fit
+--- the full standard set does not fit: the loop stopped at the first glyph that does not fit
+> cache s ~
+log warning Out of space trying to render glyphs
+cache done
+> state s
+state s font="Sans Serif" style="" size=20 flags=0 face=1 from_file=0 aa=1
+state s outline=0 shadow=0 outline_width=0 word_wrap=0 custom_width=0 log_mode=0 log_lines=6 color=ffffffff,ffffffff
+state s cx=0 cy=8 max_h=8 texbuf=0,27 tex=1 vbuf=0 effect=1
+state s file=NULL load_failed=0 update_file=0 mtime=0 last_checked_ms=0
+state s text=""

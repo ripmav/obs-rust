@@ -1,0 +1,1011 @@
+# scale_filter sampling selection: base effect, parameters, technique, undistort/upscale; 2x lower-resolution rule.
+source T 1920 1080 1920 1080 SRGB video
+source P 1920 1080 1920 1080 SRGB video
+echo sampling=point res=960x540 undistort=0
+data d1
+dset d1 resolution str "960x540"
+dset d1 sampling str point
+dset d1 undistort bool 0
+filter f1 scale_filter 0 d1 T P
+tick f1 0.016
+size f1
+render f1
+echo sampling=point res=960x540 undistort=1
+data d2
+dset d2 resolution str "960x540"
+dset d2 sampling str point
+dset d2 undistort bool 1
+filter f2 scale_filter 0 d2 T P
+tick f2 0.016
+size f2
+render f2
+echo sampling=point res=1281x720 undistort=0
+data d3
+dset d3 resolution str "1281x720"
+dset d3 sampling str point
+dset d3 undistort bool 0
+filter f3 scale_filter 0 d3 T P
+tick f3 0.016
+size f3
+render f3
+echo sampling=point res=1281x720 undistort=1
+data d4
+dset d4 resolution str "1281x720"
+dset d4 sampling str point
+dset d4 undistort bool 1
+filter f4 scale_filter 0 d4 T P
+tick f4 0.016
+size f4
+render f4
+echo sampling=point res=3840x2160 undistort=0
+data d5
+dset d5 resolution str "3840x2160"
+dset d5 sampling str point
+dset d5 undistort bool 0
+filter f5 scale_filter 0 d5 T P
+tick f5 0.016
+size f5
+render f5
+echo sampling=point res=3840x2160 undistort=1
+data d6
+dset d6 resolution str "3840x2160"
+dset d6 sampling str point
+dset d6 undistort bool 1
+filter f6 scale_filter 0 d6 T P
+tick f6 0.016
+size f6
+render f6
+echo sampling=point res=1920x1080 undistort=0
+data d7
+dset d7 resolution str "1920x1080"
+dset d7 sampling str point
+dset d7 undistort bool 0
+filter f7 scale_filter 0 d7 T P
+tick f7 0.016
+size f7
+render f7
+echo sampling=point res=1920x1080 undistort=1
+data d8
+dset d8 resolution str "1920x1080"
+dset d8 sampling str point
+dset d8 undistort bool 1
+filter f8 scale_filter 0 d8 T P
+tick f8 0.016
+size f8
+render f8
+echo sampling=point res=1920x1000 undistort=0
+data d9
+dset d9 resolution str "1920x1000"
+dset d9 sampling str point
+dset d9 undistort bool 0
+filter f9 scale_filter 0 d9 T P
+tick f9 0.016
+size f9
+render f9
+echo sampling=point res=1920x1000 undistort=1
+data d10
+dset d10 resolution str "1920x1000"
+dset d10 sampling str point
+dset d10 undistort bool 1
+filter f10 scale_filter 0 d10 T P
+tick f10 0.016
+size f10
+render f10
+echo sampling=point res=4:3 undistort=0
+data d11
+dset d11 resolution str "4:3"
+dset d11 sampling str point
+dset d11 undistort bool 0
+filter f11 scale_filter 0 d11 T P
+tick f11 0.016
+size f11
+render f11
+echo sampling=point res=4:3 undistort=1
+data d12
+dset d12 resolution str "4:3"
+dset d12 sampling str point
+dset d12 undistort bool 1
+filter f12 scale_filter 0 d12 T P
+tick f12 0.016
+size f12
+render f12
+echo sampling=point res=16:9 undistort=0
+data d13
+dset d13 resolution str "16:9"
+dset d13 sampling str point
+dset d13 undistort bool 0
+filter f13 scale_filter 0 d13 T P
+tick f13 0.016
+size f13
+render f13
+echo sampling=point res=16:9 undistort=1
+data d14
+dset d14 resolution str "16:9"
+dset d14 sampling str point
+dset d14 undistort bool 1
+filter f14 scale_filter 0 d14 T P
+tick f14 0.016
+size f14
+render f14
+echo sampling=point res=959x1079 undistort=0
+data d15
+dset d15 resolution str "959x1079"
+dset d15 sampling str point
+dset d15 undistort bool 0
+filter f15 scale_filter 0 d15 T P
+tick f15 0.016
+size f15
+render f15
+echo sampling=point res=959x1079 undistort=1
+data d16
+dset d16 resolution str "959x1079"
+dset d16 sampling str point
+dset d16 undistort bool 1
+filter f16 scale_filter 0 d16 T P
+tick f16 0.016
+size f16
+render f16
+echo sampling=bilinear res=960x540 undistort=0
+data d17
+dset d17 resolution str "960x540"
+dset d17 sampling str bilinear
+dset d17 undistort bool 0
+filter f17 scale_filter 0 d17 T P
+tick f17 0.016
+size f17
+render f17
+echo sampling=bilinear res=960x540 undistort=1
+data d18
+dset d18 resolution str "960x540"
+dset d18 sampling str bilinear
+dset d18 undistort bool 1
+filter f18 scale_filter 0 d18 T P
+tick f18 0.016
+size f18
+render f18
+echo sampling=bilinear res=1281x720 undistort=0
+data d19
+dset d19 resolution str "1281x720"
+dset d19 sampling str bilinear
+dset d19 undistort bool 0
+filter f19 scale_filter 0 d19 T P
+tick f19 0.016
+size f19
+render f19
+echo sampling=bilinear res=1281x720 undistort=1
+data d20
+dset d20 resolution str "1281x720"
+dset d20 sampling str bilinear
+dset d20 undistort bool 1
+filter f20 scale_filter 0 d20 T P
+tick f20 0.016
+size f20
+render f20
+echo sampling=bilinear res=3840x2160 undistort=0
+data d21
+dset d21 resolution str "3840x2160"
+dset d21 sampling str bilinear
+dset d21 undistort bool 0
+filter f21 scale_filter 0 d21 T P
+tick f21 0.016
+size f21
+render f21
+echo sampling=bilinear res=3840x2160 undistort=1
+data d22
+dset d22 resolution str "3840x2160"
+dset d22 sampling str bilinear
+dset d22 undistort bool 1
+filter f22 scale_filter 0 d22 T P
+tick f22 0.016
+size f22
+render f22
+echo sampling=bilinear res=1920x1080 undistort=0
+data d23
+dset d23 resolution str "1920x1080"
+dset d23 sampling str bilinear
+dset d23 undistort bool 0
+filter f23 scale_filter 0 d23 T P
+tick f23 0.016
+size f23
+render f23
+echo sampling=bilinear res=1920x1080 undistort=1
+data d24
+dset d24 resolution str "1920x1080"
+dset d24 sampling str bilinear
+dset d24 undistort bool 1
+filter f24 scale_filter 0 d24 T P
+tick f24 0.016
+size f24
+render f24
+echo sampling=bilinear res=1920x1000 undistort=0
+data d25
+dset d25 resolution str "1920x1000"
+dset d25 sampling str bilinear
+dset d25 undistort bool 0
+filter f25 scale_filter 0 d25 T P
+tick f25 0.016
+size f25
+render f25
+echo sampling=bilinear res=1920x1000 undistort=1
+data d26
+dset d26 resolution str "1920x1000"
+dset d26 sampling str bilinear
+dset d26 undistort bool 1
+filter f26 scale_filter 0 d26 T P
+tick f26 0.016
+size f26
+render f26
+echo sampling=bilinear res=4:3 undistort=0
+data d27
+dset d27 resolution str "4:3"
+dset d27 sampling str bilinear
+dset d27 undistort bool 0
+filter f27 scale_filter 0 d27 T P
+tick f27 0.016
+size f27
+render f27
+echo sampling=bilinear res=4:3 undistort=1
+data d28
+dset d28 resolution str "4:3"
+dset d28 sampling str bilinear
+dset d28 undistort bool 1
+filter f28 scale_filter 0 d28 T P
+tick f28 0.016
+size f28
+render f28
+echo sampling=bilinear res=16:9 undistort=0
+data d29
+dset d29 resolution str "16:9"
+dset d29 sampling str bilinear
+dset d29 undistort bool 0
+filter f29 scale_filter 0 d29 T P
+tick f29 0.016
+size f29
+render f29
+echo sampling=bilinear res=16:9 undistort=1
+data d30
+dset d30 resolution str "16:9"
+dset d30 sampling str bilinear
+dset d30 undistort bool 1
+filter f30 scale_filter 0 d30 T P
+tick f30 0.016
+size f30
+render f30
+echo sampling=bilinear res=959x1079 undistort=0
+data d31
+dset d31 resolution str "959x1079"
+dset d31 sampling str bilinear
+dset d31 undistort bool 0
+filter f31 scale_filter 0 d31 T P
+tick f31 0.016
+size f31
+render f31
+echo sampling=bilinear res=959x1079 undistort=1
+data d32
+dset d32 resolution str "959x1079"
+dset d32 sampling str bilinear
+dset d32 undistort bool 1
+filter f32 scale_filter 0 d32 T P
+tick f32 0.016
+size f32
+render f32
+echo sampling=bicubic res=960x540 undistort=0
+data d33
+dset d33 resolution str "960x540"
+dset d33 sampling str bicubic
+dset d33 undistort bool 0
+filter f33 scale_filter 0 d33 T P
+tick f33 0.016
+size f33
+render f33
+echo sampling=bicubic res=960x540 undistort=1
+data d34
+dset d34 resolution str "960x540"
+dset d34 sampling str bicubic
+dset d34 undistort bool 1
+filter f34 scale_filter 0 d34 T P
+tick f34 0.016
+size f34
+render f34
+echo sampling=bicubic res=1281x720 undistort=0
+data d35
+dset d35 resolution str "1281x720"
+dset d35 sampling str bicubic
+dset d35 undistort bool 0
+filter f35 scale_filter 0 d35 T P
+tick f35 0.016
+size f35
+render f35
+echo sampling=bicubic res=1281x720 undistort=1
+data d36
+dset d36 resolution str "1281x720"
+dset d36 sampling str bicubic
+dset d36 undistort bool 1
+filter f36 scale_filter 0 d36 T P
+tick f36 0.016
+size f36
+render f36
+echo sampling=bicubic res=3840x2160 undistort=0
+data d37
+dset d37 resolution str "3840x2160"
+dset d37 sampling str bicubic
+dset d37 undistort bool 0
+filter f37 scale_filter 0 d37 T P
+tick f37 0.016
+size f37
+render f37
+echo sampling=bicubic res=3840x2160 undistort=1
+data d38
+dset d38 resolution str "3840x2160"
+dset d38 sampling str bicubic
+dset d38 undistort bool 1
+filter f38 scale_filter 0 d38 T P
+tick f38 0.016
+size f38
+render f38
+echo sampling=bicubic res=1920x1080 undistort=0
+data d39
+dset d39 resolution str "1920x1080"
+dset d39 sampling str bicubic
+dset d39 undistort bool 0
+filter f39 scale_filter 0 d39 T P
+tick f39 0.016
+size f39
+render f39
+echo sampling=bicubic res=1920x1080 undistort=1
+data d40
+dset d40 resolution str "1920x1080"
+dset d40 sampling str bicubic
+dset d40 undistort bool 1
+filter f40 scale_filter 0 d40 T P
+tick f40 0.016
+size f40
+render f40
+echo sampling=bicubic res=1920x1000 undistort=0
+data d41
+dset d41 resolution str "1920x1000"
+dset d41 sampling str bicubic
+dset d41 undistort bool 0
+filter f41 scale_filter 0 d41 T P
+tick f41 0.016
+size f41
+render f41
+echo sampling=bicubic res=1920x1000 undistort=1
+data d42
+dset d42 resolution str "1920x1000"
+dset d42 sampling str bicubic
+dset d42 undistort bool 1
+filter f42 scale_filter 0 d42 T P
+tick f42 0.016
+size f42
+render f42
+echo sampling=bicubic res=4:3 undistort=0
+data d43
+dset d43 resolution str "4:3"
+dset d43 sampling str bicubic
+dset d43 undistort bool 0
+filter f43 scale_filter 0 d43 T P
+tick f43 0.016
+size f43
+render f43
+echo sampling=bicubic res=4:3 undistort=1
+data d44
+dset d44 resolution str "4:3"
+dset d44 sampling str bicubic
+dset d44 undistort bool 1
+filter f44 scale_filter 0 d44 T P
+tick f44 0.016
+size f44
+render f44
+echo sampling=bicubic res=16:9 undistort=0
+data d45
+dset d45 resolution str "16:9"
+dset d45 sampling str bicubic
+dset d45 undistort bool 0
+filter f45 scale_filter 0 d45 T P
+tick f45 0.016
+size f45
+render f45
+echo sampling=bicubic res=16:9 undistort=1
+data d46
+dset d46 resolution str "16:9"
+dset d46 sampling str bicubic
+dset d46 undistort bool 1
+filter f46 scale_filter 0 d46 T P
+tick f46 0.016
+size f46
+render f46
+echo sampling=bicubic res=959x1079 undistort=0
+data d47
+dset d47 resolution str "959x1079"
+dset d47 sampling str bicubic
+dset d47 undistort bool 0
+filter f47 scale_filter 0 d47 T P
+tick f47 0.016
+size f47
+render f47
+echo sampling=bicubic res=959x1079 undistort=1
+data d48
+dset d48 resolution str "959x1079"
+dset d48 sampling str bicubic
+dset d48 undistort bool 1
+filter f48 scale_filter 0 d48 T P
+tick f48 0.016
+size f48
+render f48
+echo sampling=lanczos res=960x540 undistort=0
+data d49
+dset d49 resolution str "960x540"
+dset d49 sampling str lanczos
+dset d49 undistort bool 0
+filter f49 scale_filter 0 d49 T P
+tick f49 0.016
+size f49
+render f49
+echo sampling=lanczos res=960x540 undistort=1
+data d50
+dset d50 resolution str "960x540"
+dset d50 sampling str lanczos
+dset d50 undistort bool 1
+filter f50 scale_filter 0 d50 T P
+tick f50 0.016
+size f50
+render f50
+echo sampling=lanczos res=1281x720 undistort=0
+data d51
+dset d51 resolution str "1281x720"
+dset d51 sampling str lanczos
+dset d51 undistort bool 0
+filter f51 scale_filter 0 d51 T P
+tick f51 0.016
+size f51
+render f51
+echo sampling=lanczos res=1281x720 undistort=1
+data d52
+dset d52 resolution str "1281x720"
+dset d52 sampling str lanczos
+dset d52 undistort bool 1
+filter f52 scale_filter 0 d52 T P
+tick f52 0.016
+size f52
+render f52
+echo sampling=lanczos res=3840x2160 undistort=0
+data d53
+dset d53 resolution str "3840x2160"
+dset d53 sampling str lanczos
+dset d53 undistort bool 0
+filter f53 scale_filter 0 d53 T P
+tick f53 0.016
+size f53
+render f53
+echo sampling=lanczos res=3840x2160 undistort=1
+data d54
+dset d54 resolution str "3840x2160"
+dset d54 sampling str lanczos
+dset d54 undistort bool 1
+filter f54 scale_filter 0 d54 T P
+tick f54 0.016
+size f54
+render f54
+echo sampling=lanczos res=1920x1080 undistort=0
+data d55
+dset d55 resolution str "1920x1080"
+dset d55 sampling str lanczos
+dset d55 undistort bool 0
+filter f55 scale_filter 0 d55 T P
+tick f55 0.016
+size f55
+render f55
+echo sampling=lanczos res=1920x1080 undistort=1
+data d56
+dset d56 resolution str "1920x1080"
+dset d56 sampling str lanczos
+dset d56 undistort bool 1
+filter f56 scale_filter 0 d56 T P
+tick f56 0.016
+size f56
+render f56
+echo sampling=lanczos res=1920x1000 undistort=0
+data d57
+dset d57 resolution str "1920x1000"
+dset d57 sampling str lanczos
+dset d57 undistort bool 0
+filter f57 scale_filter 0 d57 T P
+tick f57 0.016
+size f57
+render f57
+echo sampling=lanczos res=1920x1000 undistort=1
+data d58
+dset d58 resolution str "1920x1000"
+dset d58 sampling str lanczos
+dset d58 undistort bool 1
+filter f58 scale_filter 0 d58 T P
+tick f58 0.016
+size f58
+render f58
+echo sampling=lanczos res=4:3 undistort=0
+data d59
+dset d59 resolution str "4:3"
+dset d59 sampling str lanczos
+dset d59 undistort bool 0
+filter f59 scale_filter 0 d59 T P
+tick f59 0.016
+size f59
+render f59
+echo sampling=lanczos res=4:3 undistort=1
+data d60
+dset d60 resolution str "4:3"
+dset d60 sampling str lanczos
+dset d60 undistort bool 1
+filter f60 scale_filter 0 d60 T P
+tick f60 0.016
+size f60
+render f60
+echo sampling=lanczos res=16:9 undistort=0
+data d61
+dset d61 resolution str "16:9"
+dset d61 sampling str lanczos
+dset d61 undistort bool 0
+filter f61 scale_filter 0 d61 T P
+tick f61 0.016
+size f61
+render f61
+echo sampling=lanczos res=16:9 undistort=1
+data d62
+dset d62 resolution str "16:9"
+dset d62 sampling str lanczos
+dset d62 undistort bool 1
+filter f62 scale_filter 0 d62 T P
+tick f62 0.016
+size f62
+render f62
+echo sampling=lanczos res=959x1079 undistort=0
+data d63
+dset d63 resolution str "959x1079"
+dset d63 sampling str lanczos
+dset d63 undistort bool 0
+filter f63 scale_filter 0 d63 T P
+tick f63 0.016
+size f63
+render f63
+echo sampling=lanczos res=959x1079 undistort=1
+data d64
+dset d64 resolution str "959x1079"
+dset d64 sampling str lanczos
+dset d64 undistort bool 1
+filter f64 scale_filter 0 d64 T P
+tick f64 0.016
+size f64
+render f64
+echo sampling=area res=960x540 undistort=0
+data d65
+dset d65 resolution str "960x540"
+dset d65 sampling str area
+dset d65 undistort bool 0
+filter f65 scale_filter 0 d65 T P
+tick f65 0.016
+size f65
+render f65
+echo sampling=area res=960x540 undistort=1
+data d66
+dset d66 resolution str "960x540"
+dset d66 sampling str area
+dset d66 undistort bool 1
+filter f66 scale_filter 0 d66 T P
+tick f66 0.016
+size f66
+render f66
+echo sampling=area res=1281x720 undistort=0
+data d67
+dset d67 resolution str "1281x720"
+dset d67 sampling str area
+dset d67 undistort bool 0
+filter f67 scale_filter 0 d67 T P
+tick f67 0.016
+size f67
+render f67
+echo sampling=area res=1281x720 undistort=1
+data d68
+dset d68 resolution str "1281x720"
+dset d68 sampling str area
+dset d68 undistort bool 1
+filter f68 scale_filter 0 d68 T P
+tick f68 0.016
+size f68
+render f68
+echo sampling=area res=3840x2160 undistort=0
+data d69
+dset d69 resolution str "3840x2160"
+dset d69 sampling str area
+dset d69 undistort bool 0
+filter f69 scale_filter 0 d69 T P
+tick f69 0.016
+size f69
+render f69
+echo sampling=area res=3840x2160 undistort=1
+data d70
+dset d70 resolution str "3840x2160"
+dset d70 sampling str area
+dset d70 undistort bool 1
+filter f70 scale_filter 0 d70 T P
+tick f70 0.016
+size f70
+render f70
+echo sampling=area res=1920x1080 undistort=0
+data d71
+dset d71 resolution str "1920x1080"
+dset d71 sampling str area
+dset d71 undistort bool 0
+filter f71 scale_filter 0 d71 T P
+tick f71 0.016
+size f71
+render f71
+echo sampling=area res=1920x1080 undistort=1
+data d72
+dset d72 resolution str "1920x1080"
+dset d72 sampling str area
+dset d72 undistort bool 1
+filter f72 scale_filter 0 d72 T P
+tick f72 0.016
+size f72
+render f72
+echo sampling=area res=1920x1000 undistort=0
+data d73
+dset d73 resolution str "1920x1000"
+dset d73 sampling str area
+dset d73 undistort bool 0
+filter f73 scale_filter 0 d73 T P
+tick f73 0.016
+size f73
+render f73
+echo sampling=area res=1920x1000 undistort=1
+data d74
+dset d74 resolution str "1920x1000"
+dset d74 sampling str area
+dset d74 undistort bool 1
+filter f74 scale_filter 0 d74 T P
+tick f74 0.016
+size f74
+render f74
+echo sampling=area res=4:3 undistort=0
+data d75
+dset d75 resolution str "4:3"
+dset d75 sampling str area
+dset d75 undistort bool 0
+filter f75 scale_filter 0 d75 T P
+tick f75 0.016
+size f75
+render f75
+echo sampling=area res=4:3 undistort=1
+data d76
+dset d76 resolution str "4:3"
+dset d76 sampling str area
+dset d76 undistort bool 1
+filter f76 scale_filter 0 d76 T P
+tick f76 0.016
+size f76
+render f76
+echo sampling=area res=16:9 undistort=0
+data d77
+dset d77 resolution str "16:9"
+dset d77 sampling str area
+dset d77 undistort bool 0
+filter f77 scale_filter 0 d77 T P
+tick f77 0.016
+size f77
+render f77
+echo sampling=area res=16:9 undistort=1
+data d78
+dset d78 resolution str "16:9"
+dset d78 sampling str area
+dset d78 undistort bool 1
+filter f78 scale_filter 0 d78 T P
+tick f78 0.016
+size f78
+render f78
+echo sampling=area res=959x1079 undistort=0
+data d79
+dset d79 resolution str "959x1079"
+dset d79 sampling str area
+dset d79 undistort bool 0
+filter f79 scale_filter 0 d79 T P
+tick f79 0.016
+size f79
+render f79
+echo sampling=area res=959x1079 undistort=1
+data d80
+dset d80 resolution str "959x1079"
+dset d80 sampling str area
+dset d80 undistort bool 1
+filter f80 scale_filter 0 d80 T P
+tick f80 0.016
+size f80
+render f80
+echo sampling=BICUBIC res=960x540 undistort=0
+data d81
+dset d81 resolution str "960x540"
+dset d81 sampling str BICUBIC
+dset d81 undistort bool 0
+filter f81 scale_filter 0 d81 T P
+tick f81 0.016
+size f81
+render f81
+echo sampling=BICUBIC res=960x540 undistort=1
+data d82
+dset d82 resolution str "960x540"
+dset d82 sampling str BICUBIC
+dset d82 undistort bool 1
+filter f82 scale_filter 0 d82 T P
+tick f82 0.016
+size f82
+render f82
+echo sampling=BICUBIC res=1281x720 undistort=0
+data d83
+dset d83 resolution str "1281x720"
+dset d83 sampling str BICUBIC
+dset d83 undistort bool 0
+filter f83 scale_filter 0 d83 T P
+tick f83 0.016
+size f83
+render f83
+echo sampling=BICUBIC res=1281x720 undistort=1
+data d84
+dset d84 resolution str "1281x720"
+dset d84 sampling str BICUBIC
+dset d84 undistort bool 1
+filter f84 scale_filter 0 d84 T P
+tick f84 0.016
+size f84
+render f84
+echo sampling=BICUBIC res=3840x2160 undistort=0
+data d85
+dset d85 resolution str "3840x2160"
+dset d85 sampling str BICUBIC
+dset d85 undistort bool 0
+filter f85 scale_filter 0 d85 T P
+tick f85 0.016
+size f85
+render f85
+echo sampling=BICUBIC res=3840x2160 undistort=1
+data d86
+dset d86 resolution str "3840x2160"
+dset d86 sampling str BICUBIC
+dset d86 undistort bool 1
+filter f86 scale_filter 0 d86 T P
+tick f86 0.016
+size f86
+render f86
+echo sampling=BICUBIC res=1920x1080 undistort=0
+data d87
+dset d87 resolution str "1920x1080"
+dset d87 sampling str BICUBIC
+dset d87 undistort bool 0
+filter f87 scale_filter 0 d87 T P
+tick f87 0.016
+size f87
+render f87
+echo sampling=BICUBIC res=1920x1080 undistort=1
+data d88
+dset d88 resolution str "1920x1080"
+dset d88 sampling str BICUBIC
+dset d88 undistort bool 1
+filter f88 scale_filter 0 d88 T P
+tick f88 0.016
+size f88
+render f88
+echo sampling=BICUBIC res=1920x1000 undistort=0
+data d89
+dset d89 resolution str "1920x1000"
+dset d89 sampling str BICUBIC
+dset d89 undistort bool 0
+filter f89 scale_filter 0 d89 T P
+tick f89 0.016
+size f89
+render f89
+echo sampling=BICUBIC res=1920x1000 undistort=1
+data d90
+dset d90 resolution str "1920x1000"
+dset d90 sampling str BICUBIC
+dset d90 undistort bool 1
+filter f90 scale_filter 0 d90 T P
+tick f90 0.016
+size f90
+render f90
+echo sampling=BICUBIC res=4:3 undistort=0
+data d91
+dset d91 resolution str "4:3"
+dset d91 sampling str BICUBIC
+dset d91 undistort bool 0
+filter f91 scale_filter 0 d91 T P
+tick f91 0.016
+size f91
+render f91
+echo sampling=BICUBIC res=4:3 undistort=1
+data d92
+dset d92 resolution str "4:3"
+dset d92 sampling str BICUBIC
+dset d92 undistort bool 1
+filter f92 scale_filter 0 d92 T P
+tick f92 0.016
+size f92
+render f92
+echo sampling=BICUBIC res=16:9 undistort=0
+data d93
+dset d93 resolution str "16:9"
+dset d93 sampling str BICUBIC
+dset d93 undistort bool 0
+filter f93 scale_filter 0 d93 T P
+tick f93 0.016
+size f93
+render f93
+echo sampling=BICUBIC res=16:9 undistort=1
+data d94
+dset d94 resolution str "16:9"
+dset d94 sampling str BICUBIC
+dset d94 undistort bool 1
+filter f94 scale_filter 0 d94 T P
+tick f94 0.016
+size f94
+render f94
+echo sampling=BICUBIC res=959x1079 undistort=0
+data d95
+dset d95 resolution str "959x1079"
+dset d95 sampling str BICUBIC
+dset d95 undistort bool 0
+filter f95 scale_filter 0 d95 T P
+tick f95 0.016
+size f95
+render f95
+echo sampling=BICUBIC res=959x1079 undistort=1
+data d96
+dset d96 resolution str "959x1079"
+dset d96 sampling str BICUBIC
+dset d96 undistort bool 1
+filter f96 scale_filter 0 d96 T P
+tick f96 0.016
+size f96
+render f96
+echo sampling=unknown res=960x540 undistort=0
+data d97
+dset d97 resolution str "960x540"
+dset d97 sampling str unknown
+dset d97 undistort bool 0
+filter f97 scale_filter 0 d97 T P
+tick f97 0.016
+size f97
+render f97
+echo sampling=unknown res=960x540 undistort=1
+data d98
+dset d98 resolution str "960x540"
+dset d98 sampling str unknown
+dset d98 undistort bool 1
+filter f98 scale_filter 0 d98 T P
+tick f98 0.016
+size f98
+render f98
+echo sampling=unknown res=1281x720 undistort=0
+data d99
+dset d99 resolution str "1281x720"
+dset d99 sampling str unknown
+dset d99 undistort bool 0
+filter f99 scale_filter 0 d99 T P
+tick f99 0.016
+size f99
+render f99
+echo sampling=unknown res=1281x720 undistort=1
+data d100
+dset d100 resolution str "1281x720"
+dset d100 sampling str unknown
+dset d100 undistort bool 1
+filter f100 scale_filter 0 d100 T P
+tick f100 0.016
+size f100
+render f100
+echo sampling=unknown res=3840x2160 undistort=0
+data d101
+dset d101 resolution str "3840x2160"
+dset d101 sampling str unknown
+dset d101 undistort bool 0
+filter f101 scale_filter 0 d101 T P
+tick f101 0.016
+size f101
+render f101
+echo sampling=unknown res=3840x2160 undistort=1
+data d102
+dset d102 resolution str "3840x2160"
+dset d102 sampling str unknown
+dset d102 undistort bool 1
+filter f102 scale_filter 0 d102 T P
+tick f102 0.016
+size f102
+render f102
+echo sampling=unknown res=1920x1080 undistort=0
+data d103
+dset d103 resolution str "1920x1080"
+dset d103 sampling str unknown
+dset d103 undistort bool 0
+filter f103 scale_filter 0 d103 T P
+tick f103 0.016
+size f103
+render f103
+echo sampling=unknown res=1920x1080 undistort=1
+data d104
+dset d104 resolution str "1920x1080"
+dset d104 sampling str unknown
+dset d104 undistort bool 1
+filter f104 scale_filter 0 d104 T P
+tick f104 0.016
+size f104
+render f104
+echo sampling=unknown res=1920x1000 undistort=0
+data d105
+dset d105 resolution str "1920x1000"
+dset d105 sampling str unknown
+dset d105 undistort bool 0
+filter f105 scale_filter 0 d105 T P
+tick f105 0.016
+size f105
+render f105
+echo sampling=unknown res=1920x1000 undistort=1
+data d106
+dset d106 resolution str "1920x1000"
+dset d106 sampling str unknown
+dset d106 undistort bool 1
+filter f106 scale_filter 0 d106 T P
+tick f106 0.016
+size f106
+render f106
+echo sampling=unknown res=4:3 undistort=0
+data d107
+dset d107 resolution str "4:3"
+dset d107 sampling str unknown
+dset d107 undistort bool 0
+filter f107 scale_filter 0 d107 T P
+tick f107 0.016
+size f107
+render f107
+echo sampling=unknown res=4:3 undistort=1
+data d108
+dset d108 resolution str "4:3"
+dset d108 sampling str unknown
+dset d108 undistort bool 1
+filter f108 scale_filter 0 d108 T P
+tick f108 0.016
+size f108
+render f108
+echo sampling=unknown res=16:9 undistort=0
+data d109
+dset d109 resolution str "16:9"
+dset d109 sampling str unknown
+dset d109 undistort bool 0
+filter f109 scale_filter 0 d109 T P
+tick f109 0.016
+size f109
+render f109
+echo sampling=unknown res=16:9 undistort=1
+data d110
+dset d110 resolution str "16:9"
+dset d110 sampling str unknown
+dset d110 undistort bool 1
+filter f110 scale_filter 0 d110 T P
+tick f110 0.016
+size f110
+render f110
+echo sampling=unknown res=959x1079 undistort=0
+data d111
+dset d111 resolution str "959x1079"
+dset d111 sampling str unknown
+dset d111 undistort bool 0
+filter f111 scale_filter 0 d111 T P
+tick f111 0.016
+size f111
+render f111
+echo sampling=unknown res=959x1079 undistort=1
+data d112
+dset d112 resolution str "959x1079"
+dset d112 sampling str unknown
+dset d112 undistort bool 1
+filter f112 scale_filter 0 d112 T P
+tick f112 0.016
+size f112
+render f112

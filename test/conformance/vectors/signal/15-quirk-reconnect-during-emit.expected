@@ -1,0 +1,9 @@
+add h ok
+emit s
+call x
+call swapper
+emit-done
+emit s
+call swapper
+call x
+emit-done

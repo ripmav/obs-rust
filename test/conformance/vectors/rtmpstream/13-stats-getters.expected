@@ -1,0 +1,24 @@
+reset ok
+> reset
+reset ok
+> getters
+getters bytes=0 dropped=0 congestion=0 connect_time=0
+> set total_bytes_sent 123456789012
+> set dropped_frames 17
+> set connect_time_ms 250
+> set congestion 0.25
+> getters
+getters bytes=123456789012 dropped=17 congestion=0.25 connect_time=250
+> set min_priority 2
+> getters
+getters bytes=123456789012 dropped=17 congestion=1 connect_time=250
+> set min_priority 0
+> set congestion 0.5
+> set new_socket_loop 1
+> set write_buf_len 32768
+> set write_buf_size 131072
+> getters
+getters bytes=123456789012 dropped=17 congestion=0.25 connect_time=250
+> set min_priority 3
+> getters
+getters bytes=123456789012 dropped=17 congestion=0.25 connect_time=250

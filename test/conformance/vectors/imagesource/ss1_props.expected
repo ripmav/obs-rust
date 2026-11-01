@@ -1,0 +1,48 @@
+ev create slideshow#1 public
+ev hotkey_register slideshow#1 id=1 name=SlideShow.PlayPause desc=SlideShow.PlayPause
+ev hotkey_register slideshow#1 id=2 name=SlideShow.Restart desc=SlideShow.Restart
+ev hotkey_register slideshow#1 id=3 name=SlideShow.Stop desc=SlideShow.Stop
+ev hotkey_register slideshow#1 id=4 name=SlideShow.NextSlide desc=SlideShow.NextSlide
+ev hotkey_register slideshow#1 id=5 name=SlideShow.PreviousSlide desc=SlideShow.PreviousSlide
+ev create fade_transition#2 private
+ev create image_source#3[/s/x/a.png] private
+ev image_init /s/x/a.png alpha=2
+log warning gs_image_file_ex_init_internal: Failed to load file '/s/x/a.png'
+log debug [image_source: ''] loading texture '/s/x/a.png'
+log warning [image_source: ''] failed to load texture '/s/x/a.png'
+ev create image_source#4[C:\pics\b.png] private
+ev image_init C:\pics\b.png alpha=2
+log warning gs_image_file_ex_init_internal: Failed to load file 'C:\pics\b.png'
+log debug [image_source: ''] loading texture 'C:\pics\b.png'
+log warning [image_source: ''] failed to load texture 'C:\pics\b.png'
+ev tr_size fade_transition#2 0x0
+ev tr_align fade_transition#2 0
+ev tr_scale fade_transition#2 1
+ev tr_start fade_transition#2 mode=0 ms=700 dest=image_source#3[/s/x/a.png] -> started
+ev signal media_started slideshow#1
+tick 0 clock=16000001
+prop playback_behavior type=list desc="SlideShow.PlaybackBehavior" combo=2 format=3 count=3
+  item 0 name=SlideShow.PlaybackBehavior.AlwaysPlay value=always_play
+  item 1 name=SlideShow.PlaybackBehavior.StopRestart value=stop_restart
+  item 2 name=SlideShow.PlaybackBehavior.PauseUnpause value=pause_unpause
+prop slide_mode type=list desc="SlideShow.SlideMode" combo=2 format=3 count=2
+  item 0 name=SlideShow.SlideMode.Auto value=mode_auto
+  item 1 name=SlideShow.SlideMode.Manual value=mode_manual
+prop transition type=list desc="SlideShow.Transition" combo=2 format=3 count=4
+  item 0 name=SlideShow.Transition.Cut value=cut
+  item 1 name=SlideShow.Transition.Fade value=fade
+  item 2 name=SlideShow.Transition.Swipe value=swipe
+  item 3 name=SlideShow.Transition.Slide value=slide
+prop slide_time type=int desc="SlideShow.SlideTime" min=50 max=3600000 step=50 suffix=" ms"
+prop transition_speed type=int desc="SlideShow.TransitionSpeed" min=0 max=3600000 step=50 suffix=" ms"
+prop loop type=bool desc="SlideShow.Loop"
+prop hide type=bool desc="SlideShow.HideWhenDone"
+prop randomize type=bool desc="SlideShow.Randomize"
+prop use_custom_size type=list desc="SlideShow.CustomSize" combo=1 format=3 count=6
+  item 0 name=SlideShow.CustomSize.Auto value=SlideShow.CustomSize.Auto
+  item 1 name=16:9 value=16:9
+  item 2 name=16:10 value=16:10
+  item 3 name=4:3 value=4:3
+  item 4 name=1:1 value=1:1
+  item 5 name=1280x720 value=1280x720
+prop files type=editable_list desc="SlideShow.Files" listtype=1 filter="Image files (*.bmp *.tga *.png *.jpeg *.jpg *.gif *.webp)" default="C:/pics/"

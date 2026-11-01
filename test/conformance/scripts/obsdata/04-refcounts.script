@@ -1,0 +1,90 @@
+# CORE: reference counting visible through the API. Every getter that returns an object
+# or array returns a NEW reference; set_obj/set_array take their own reference (the
+# caller keeps theirs). `refs H` prints the reference count of the object behind H.
+new a
+new o
+set_int o x 1
+refs o
+set_obj a sub o
+refs o
+get_obj a sub o2
+refs o
+same o o2
+release o2
+refs o
+echo --- the caller may drop its handle; the container keeps the object alive
+release o
+get_obj a sub o3
+refs o3
+dump a
+echo --- replacing a value releases the old object
+new p
+set_obj a sub p
+refs o3
+refs p
+set_obj a sub p
+refs p
+echo --- replacing with NULL releases too, and stores a NULL object
+set_obj a sub @null
+refs p
+dump a
+get_obj a sub nul
+has_user a sub
+echo --- addref/newref
+addref p p2
+refs p
+newref p p3
+refs p
+newref @null fresh
+refs fresh
+release p2
+release p3
+release fresh
+refs p
+echo --- erase and clear release the references
+set_obj a again p
+refs p
+erase a again
+refs p
+set_obj a again p
+clear a
+refs p
+echo --- destroying the container releases its children
+release a
+refs p
+echo --- arrays are counted the same way
+new b
+a_new ar
+a_new ar2
+set_array b list ar
+a_refs ar
+get_array b list got
+a_refs ar
+a_release got
+a_addref ar ar3
+a_refs ar
+a_release ar3
+echo --- pushing into an array takes a reference
+new e1
+a_push ar e1
+refs e1
+a_item ar 0 e1b
+refs e1
+same e1 e1b
+release e1b
+release e1
+a_item ar 0 e1c
+refs e1c
+release e1c
+a_erase ar 0
+a_count ar
+echo --- destroying a container destroys children (no leak under a sanitizer)
+new deep
+new l1
+new l2
+set_int l2 v 1
+set_obj l1 child l2
+set_obj deep child l1
+release l1
+release l2
+dump deep

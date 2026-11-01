@@ -1,0 +1,15 @@
+# QUIRK Q-1: output sizes of 2 or 3 pass the [2, 32768] check and are then aligned down (width to a
+# multiple of 4) to 0; the video output rejects that only AFTER the previous video state was torn
+# down, so a "valid" request leaves the core without video. Heights 2..3 align to 2, so only
+# the width can reach zero. The caller's struct is modified in place in all cases.
+startup en-US -
+reset_video
+video_info
+reset_video out=3x100
+video_info
+state
+reset_video out=4x100
+video_info
+reset_video out=100x3
+video_info
+shutdown

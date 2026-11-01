@@ -1,0 +1,80 @@
+signal hotkey_register id=0
+signal hotkey_register id=1
+regp P -> pair=0 a=0 b=1
+signal hotkey_register id=2
+signal hotkey_register id=3
+regp Q -> pair=1 a=2 b=3
+info P.a id=0 type=0 partner=1 registerer=none pressed_count=0
+  name="P.start"
+  desc="Start"
+info P.b id=1 type=0 partner=0 registerer=none pressed_count=0
+  name="P.stop"
+  desc="Stop"
+signal hotkey_register id=4
+reg X -> 4
+signal hotkey_bindings_changed id=0
+signal hotkey_bindings_changed id=1
+signal hotkey_bindings_changed id=2
+press-first
+poll
+poll
+pcb P.a pair=0 hk=0 pressed=1 -> 1
+second-blocked-while-first-held
+poll
+poll
+release-first-no-callback
+poll
+the-blocked-binding-was-pressed-anyway-so-its-release-IS-delivered-to-the-callback-Q-4
+poll
+poll
+pcb P.b pair=0 hk=1 pressed=0 -> 1
+callback-rejects-press-keeps-side-unpressed
+poll
+pcb P.a pair=0 hk=0 pressed=1 -> 0
+poll
+poll
+pcb P.a pair=0 hk=0 pressed=0 -> 0
+rejected-press-does-not-block-the-other
+poll
+pcb P.b pair=0 hk=1 pressed=1 -> 1
+poll
+poll
+pair-rename
+info P.a id=0 type=0 partner=1 registerer=none pressed_count=0
+  name="P.begin"
+  desc="d0"
+info P.b id=1 type=0 partner=0 registerer=none pressed_count=0
+  name="P.end"
+  desc="d1"
+pair-save-and-load
+savepair 0 count=1
+  item {"key":"OBS_KEY_F1"}
+savepair 1 count=1
+  item {"key":"OBS_KEY_F2"}
+savepair 0 count=1
+  item {"key":"OBS_KEY_F1"}
+savepair none
+savepair 0 null
+savepair 1 null
+signal hotkey_bindings_changed id=0
+signal hotkey_bindings_changed id=1
+savepair 0 count=1
+  item {"key":"OBS_KEY_F5"}
+savepair 1 count=1
+  item {"shift":true,"key":"OBS_KEY_F6"}
+signal hotkey_bindings_changed id=1
+savepair 0 count=0
+savepair 1 count=1
+  item {"key":"OBS_KEY_F7"}
+savepair 0 count=0
+savepair 1 count=1
+  item {"key":"OBS_KEY_F7"}
+unregister-pair-removes-both-and-bindings
+signal hotkey_unregister id=0
+signal hotkey_unregister id=1
+h id=2 name="Q.start"
+h id=3 name="Q.stop"
+h id=4 name="X"
+enum done
+b 0 hk=2 mods=0x0 key=OBS_KEY_F3 pressed=0 modmatch=1 hkptr_ok=1
+enumb done

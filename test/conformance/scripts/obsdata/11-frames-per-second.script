@@ -1,0 +1,60 @@
+# CORE: frames-per-second helpers store an OBJECT {numerator, denominator} of doubles,
+# or {option: "..."} when an option string is given. Reading returns whether a valid
+# rate (both non-zero after clamping to the uint32 range) or an option was found.
+# get_frames_per_second prints: <result> <num> <den> <option|->  (sentinel 7/7 preset)
+# the word "opt" asks for the option string (the C call passes a non-NULL option pointer)
+new a
+set_frames_per_second a fps 30 1 @null
+set_frames_per_second a ntsc 30000 1001 @null
+set_frames_per_second a auto 30 1 "auto"
+dump a
+json a
+get_frames_per_second a fps
+get_frames_per_second a ntsc
+get_frames_per_second a fps opt
+get_frames_per_second a auto
+get_frames_per_second a auto opt
+echo --- invalid rates
+set_frames_per_second a zero 0 1 @null
+set_frames_per_second a zero2 30 0 @null
+get_frames_per_second a zero
+get_frames_per_second a zero2
+get_frames_per_second a nosuch
+get_frames_per_second a nosuch opt
+get_frames_per_second @null nosuch
+echo --- clamping of large and negative stored values
+new big
+set_int big numerator 9999999999
+set_int big denominator -5
+set_obj a big big
+get_frames_per_second a big
+new big2
+set_double big2 numerator 29.97
+set_double big2 denominator 1.9
+set_obj a big2 big2
+get_frames_per_second a big2
+echo --- an object without the members, or a non-object
+new empty
+set_obj a empty empty
+get_frames_per_second a empty
+get_frames_per_second a empty opt
+set_int a notobj 3
+get_frames_per_second a notobj
+echo --- default and autoselect
+set_default_frames_per_second a d 60 1 @null
+get_default_frames_per_second a d
+get_frames_per_second a d
+set_default_frames_per_second a d2 0 0 "none"
+get_default_frames_per_second a d2 opt
+set_autoselect_frames_per_second a au 24 1 @null
+get_autoselect_frames_per_second a au
+echo --- item forms
+byname a fps ifps
+item_get_frames_per_second ifps
+item_set_frames_per_second ifps 25 1 @null
+item_get_frames_per_second ifps
+dump a
+item_set_default_frames_per_second ifps 50 1 @null
+item_get_default_frames_per_second ifps
+item_set_autoselect_frames_per_second ifps 1 1 "x"
+item_get_autoselect_frames_per_second ifps opt

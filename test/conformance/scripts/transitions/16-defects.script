@@ -1,0 +1,31 @@
+# DEFECT probes (each case in a child process): inputs that are outside the normal preconditions.
+load quiet
+# module data file missing: the wipes list cannot be read
+missing_file luma_wipes/wipes.json
+fork create w wipe_transition
+reset
+load quiet
+# stop without any media source
+create st obs_stinger_transition
+fork stop st
+fork start st
+# properties before any instance
+reset
+load quiet
+create w wipe_transition
+fork props w null
+# DEFECT (UB in the reference): transition_point (ms) * 1000000 overflows a signed 64-bit integer.
+# Required behaviour: the product wraps modulo 2^64 (as an unsigned value), nothing else happens.
+reset
+load quiet
+create st obs_stinger_transition str:path=/m/s.mov int:transition_point=9223372036854775807
+fork tick st
+settings st int:transition_point=-9223372036854775807
+fork tick st
+# DEFECT-adjacent: duration larger than 2^32 ms is truncated to 32 bits
+reset
+load quiet
+create st obs_stinger_transition str:path=/m/s.mov int:transition_point=1
+tick st
+src media#1 dur_ns=5000000000000000 frames=1
+start st

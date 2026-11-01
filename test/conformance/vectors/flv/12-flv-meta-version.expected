@@ -1,0 +1,139 @@
+meta size=412 hex=1200018d0000000000000002000d40736574446174614672616d6502000a6f6e4d65746144617461080000001400086475726174696f6e000000000000000000000866696c6553697a650000000000000000000005776964746800409e0000000000000006686569676874004090e00000000000000c766964656f636f646563696400401c000000000000000d766964656f64617461726174650040a388000000000000096672616d657261746500404e000000000000000c617564696f636f6465636964004024000000000000000d617564696f6461746172617465004064000000000000000f617564696f73616d706c65726174650040e7700000000000000f617564696f73616d706c6573697a65004030000000000000000d617564696f6368616e6e656c73004000000000000000000673746572656f01010003322e3101000003332e3101000003342e3001000003342e3101000003352e3101000003372e3101000007656e636f6465720200236f62732d6f7574707574206d6f64756c6520286c69626f62732076657273696f6e202900000900000198
+  tag type=18 datasize=397 ts=0 streamid=0
+    amf ret=397 num=3
+      [0] name=- type=STRING len=13 value="@setDataFrame"
+      [1] name=- type=STRING len=10 value="onMetaData"
+      [2] name=- type=ECMA_ARRAY num=20
+        [0] name="duration" type=NUMBER value=0 bits=0000000000000000
+        [1] name="fileSize" type=NUMBER value=0 bits=0000000000000000
+        [2] name="width" type=NUMBER value=1920 bits=409e000000000000
+        [3] name="height" type=NUMBER value=1080 bits=4090e00000000000
+        [4] name="videocodecid" type=NUMBER value=7 bits=401c000000000000
+        [5] name="videodatarate" type=NUMBER value=2500 bits=40a3880000000000
+        [6] name="framerate" type=NUMBER value=60 bits=404e000000000000
+        [7] name="audiocodecid" type=NUMBER value=10 bits=4024000000000000
+        [8] name="audiodatarate" type=NUMBER value=160 bits=4064000000000000
+        [9] name="audiosamplerate" type=NUMBER value=48000 bits=40e7700000000000
+        [10] name="audiosamplesize" type=NUMBER value=16 bits=4030000000000000
+        [11] name="audiochannels" type=NUMBER value=2 bits=4000000000000000
+        [12] name="stereo" type=BOOLEAN value=1
+        [13] name="2.1" type=BOOLEAN value=0
+        [14] name="3.1" type=BOOLEAN value=0
+        [15] name="4.0" type=BOOLEAN value=0
+        [16] name="4.1" type=BOOLEAN value=0
+        [17] name="5.1" type=BOOLEAN value=0
+        [18] name="7.1" type=BOOLEAN value=0
+        [19] name="encoder" type=STRING len=35 value="obs-output module (libobs version )"
+  prevsize=408 expected=408
+meta size=418 hex=120001930000000000000002000d40736574446174614672616d6502000a6f6e4d65746144617461080000001400086475726174696f6e000000000000000000000866696c6553697a650000000000000000000005776964746800409e0000000000000006686569676874004090e00000000000000c766964656f636f646563696400401c000000000000000d766964656f64617461726174650040a388000000000000096672616d657261746500404e000000000000000c617564696f636f6465636964004024000000000000000d617564696f6461746172617465004064000000000000000f617564696f73616d706c65726174650040e7700000000000000f617564696f73616d706c6573697a65004030000000000000000d617564696f6368616e6e656c73004000000000000000000673746572656f01010003322e3101000003332e3101000003342e3001000003342e3101000003352e3101000003372e3101000007656e636f6465720200296f62732d6f7574707574206d6f64756c6520286c69626f62732076657273696f6e2033332e302e31290000090000019e
+  tag type=18 datasize=403 ts=0 streamid=0
+    amf ret=403 num=3
+      [0] name=- type=STRING len=13 value="@setDataFrame"
+      [1] name=- type=STRING len=10 value="onMetaData"
+      [2] name=- type=ECMA_ARRAY num=20
+        [0] name="duration" type=NUMBER value=0 bits=0000000000000000
+        [1] name="fileSize" type=NUMBER value=0 bits=0000000000000000
+        [2] name="width" type=NUMBER value=1920 bits=409e000000000000
+        [3] name="height" type=NUMBER value=1080 bits=4090e00000000000
+        [4] name="videocodecid" type=NUMBER value=7 bits=401c000000000000
+        [5] name="videodatarate" type=NUMBER value=2500 bits=40a3880000000000
+        [6] name="framerate" type=NUMBER value=60 bits=404e000000000000
+        [7] name="audiocodecid" type=NUMBER value=10 bits=4024000000000000
+        [8] name="audiodatarate" type=NUMBER value=160 bits=4064000000000000
+        [9] name="audiosamplerate" type=NUMBER value=48000 bits=40e7700000000000
+        [10] name="audiosamplesize" type=NUMBER value=16 bits=4030000000000000
+        [11] name="audiochannels" type=NUMBER value=2 bits=4000000000000000
+        [12] name="stereo" type=BOOLEAN value=1
+        [13] name="2.1" type=BOOLEAN value=0
+        [14] name="3.1" type=BOOLEAN value=0
+        [15] name="4.0" type=BOOLEAN value=0
+        [16] name="4.1" type=BOOLEAN value=0
+        [17] name="5.1" type=BOOLEAN value=0
+        [18] name="7.1" type=BOOLEAN value=0
+        [19] name="encoder" type=STRING len=41 value="obs-output module (libobs version 33.0.1)"
+  prevsize=414 expected=414
+meta size=436 hex=120001a50000000000000002000d40736574446174614672616d6502000a6f6e4d65746144617461080000001400086475726174696f6e000000000000000000000866696c6553697a650000000000000000000005776964746800409e0000000000000006686569676874004090e00000000000000c766964656f636f646563696400401c000000000000000d766964656f64617461726174650040a388000000000000096672616d657261746500404e000000000000000c617564696f636f6465636964004024000000000000000d617564696f6461746172617465004064000000000000000f617564696f73616d706c65726174650040e7700000000000000f617564696f73616d706c6573697a65004030000000000000000d617564696f6368616e6e656c73004000000000000000000673746572656f01010003322e3101000003332e3101000003342e3001000003342e3101000003352e3101000003372e3101000007656e636f64657202003b6f62732d6f7574707574206d6f64756c6520286c69626f62732076657273696f6e2033322e312e302d72633220282271756f7465642220c3a92929000009000001b0
+  tag type=18 datasize=421 ts=0 streamid=0
+    amf ret=421 num=3
+      [0] name=- type=STRING len=13 value="@setDataFrame"
+      [1] name=- type=STRING len=10 value="onMetaData"
+      [2] name=- type=ECMA_ARRAY num=20
+        [0] name="duration" type=NUMBER value=0 bits=0000000000000000
+        [1] name="fileSize" type=NUMBER value=0 bits=0000000000000000
+        [2] name="width" type=NUMBER value=1920 bits=409e000000000000
+        [3] name="height" type=NUMBER value=1080 bits=4090e00000000000
+        [4] name="videocodecid" type=NUMBER value=7 bits=401c000000000000
+        [5] name="videodatarate" type=NUMBER value=2500 bits=40a3880000000000
+        [6] name="framerate" type=NUMBER value=60 bits=404e000000000000
+        [7] name="audiocodecid" type=NUMBER value=10 bits=4024000000000000
+        [8] name="audiodatarate" type=NUMBER value=160 bits=4064000000000000
+        [9] name="audiosamplerate" type=NUMBER value=48000 bits=40e7700000000000
+        [10] name="audiosamplesize" type=NUMBER value=16 bits=4030000000000000
+        [11] name="audiochannels" type=NUMBER value=2 bits=4000000000000000
+        [12] name="stereo" type=BOOLEAN value=1
+        [13] name="2.1" type=BOOLEAN value=0
+        [14] name="3.1" type=BOOLEAN value=0
+        [15] name="4.0" type=BOOLEAN value=0
+        [16] name="4.1" type=BOOLEAN value=0
+        [17] name="5.1" type=BOOLEAN value=0
+        [18] name="7.1" type=BOOLEAN value=0
+        [19] name="encoder" type=STRING len=59 value="obs-output module (libobs version 32.1.0-rc2 (\"quoted\" \xc3\xa9))"
+  prevsize=432 expected=432
+meta size=3412 hex=12000d450000000000000002000d40736574446174614672616d6502000a6f6e4d65746144617461080000001400086475726174696f6e000000000000000000000866696c6553697a650000000000000000000005776964746800409e0000000000000006686569676874004090e00000000000000c766964656f636f646563696400401c000000000000000d766964656f64617461726174650040a3880000...76767676767676762900000900000d50(3412)
+  tag type=18 datasize=3397 ts=0 streamid=0
+    amf ret=3397 num=3
+      [0] name=- type=STRING len=13 value="@setDataFrame"
+      [1] name=- type=STRING len=10 value="onMetaData"
+      [2] name=- type=ECMA_ARRAY num=20
+        [0] name="duration" type=NUMBER value=0 bits=0000000000000000
+        [1] name="fileSize" type=NUMBER value=0 bits=0000000000000000
+        [2] name="width" type=NUMBER value=1920 bits=409e000000000000
+        [3] name="height" type=NUMBER value=1080 bits=4090e00000000000
+        [4] name="videocodecid" type=NUMBER value=7 bits=401c000000000000
+        [5] name="videodatarate" type=NUMBER value=2500 bits=40a3880000000000
+        [6] name="framerate" type=NUMBER value=60 bits=404e000000000000
+        [7] name="audiocodecid" type=NUMBER value=10 bits=4024000000000000
+        [8] name="audiodatarate" type=NUMBER value=160 bits=4064000000000000
+        [9] name="audiosamplerate" type=NUMBER value=48000 bits=40e7700000000000
+        [10] name="audiosamplesize" type=NUMBER value=16 bits=4030000000000000
+        [11] name="audiochannels" type=NUMBER value=2 bits=4000000000000000
+        [12] name="stereo" type=BOOLEAN value=1
+        [13] name="2.1" type=BOOLEAN value=0
+        [14] name="3.1" type=BOOLEAN value=0
+        [15] name="4.0" type=BOOLEAN value=0
+        [16] name="4.1" type=BOOLEAN value=0
+        [17] name="5.1" type=BOOLEAN value=0
+        [18] name="7.1" type=BOOLEAN value=0
+        [19] name="encoder" type=STRING len=3035 value="obs-output module (libobs version vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv)"
+  prevsize=3408 expected=3408
+meta size=4111 hex=120010000000000000000002000d40736574446174614672616d6502000a6f6e4d65746144617461080000001400086475726174696f6e000000000000000000000866696c6553697a650000000000000000000005776964746800409e0000000000000006686569676874004090e00000000000000c766964656f636f646563696400401c000000000000000d766964656f64617461726174650040a3880000...7676767676767676290000090000100b(4111)
+  tag type=18 datasize=4096 ts=0 streamid=0
+    amf ret=4096 num=3
+      [0] name=- type=STRING len=13 value="@setDataFrame"
+      [1] name=- type=STRING len=10 value="onMetaData"
+      [2] name=- type=ECMA_ARRAY num=20
+        [0] name="duration" type=NUMBER value=0 bits=0000000000000000
+        [1] name="fileSize" type=NUMBER value=0 bits=0000000000000000
+        [2] name="width" type=NUMBER value=1920 bits=409e000000000000
+        [3] name="height" type=NUMBER value=1080 bits=4090e00000000000
+        [4] name="videocodecid" type=NUMBER value=7 bits=401c000000000000
+        [5] name="videodatarate" type=NUMBER value=2500 bits=40a3880000000000
+        [6] name="framerate" type=NUMBER value=60 bits=404e000000000000
+        [7] name="audiocodecid" type=NUMBER value=10 bits=4024000000000000
+        [8] name="audiodatarate" type=NUMBER value=160 bits=4064000000000000
+        [9] name="audiosamplerate" type=NUMBER value=48000 bits=40e7700000000000
+        [10] name="audiosamplesize" type=NUMBER value=16 bits=4030000000000000
+        [11] name="audiochannels" type=NUMBER value=2 bits=4000000000000000
+        [12] name="stereo" type=BOOLEAN value=1
+        [13] name="2.1" type=BOOLEAN value=0
+        [14] name="3.1" type=BOOLEAN value=0
+        [15] name="4.0" type=BOOLEAN value=0
+        [16] name="4.1" type=BOOLEAN value=0
+        [17] name="5.1" type=BOOLEAN value=0
+        [18] name="7.1" type=BOOLEAN value=0
+        [19] name="encoder" type=STRING len=3734 value="obs-output module (libobs version vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv)"
+  prevsize=4107 expected=4107
+echo D-5-version-too-long
+meta crash
+meta crash
+meta crash

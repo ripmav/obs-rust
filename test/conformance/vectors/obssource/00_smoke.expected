@@ -1,0 +1,9 @@
+  cb A create
+log debug source 'A' (in) created
+create a ok
+info a name=A id=in type=0 enabled=1 hidden=0 flags=0 mixers=255 private=0
+pending 1
+  destroying a
+  cb A destroy
+log debug source 'A' destroyed
+drain ran=1

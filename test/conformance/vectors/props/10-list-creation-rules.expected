@@ -1,0 +1,39 @@
+add list e1 ok
+log warning List 'e2', error: Editable combo boxes must be of the 'string' type
+add list e2 null
+log warning List 'e3', error: Editable combo boxes must be of the 'string' type
+add list e3 null
+log warning List 'e4', error: Editable combo boxes must be of the 'string' type
+add list e4 null
+log warning List 'e5', error: Editable combo boxes must be of the 'string' type
+add list e5 null
+add list r1 ok
+add list l1 ok
+add list l2 ok
+add list l3 ok
+dump P flags=0 param=@null
+  prop e1 type=list desc="E1" long=@null enabled=1 visible=1
+    listtype=editable format=string count=0
+  prop r1 type=list desc="R1" long=@null enabled=1 visible=1
+    listtype=radio format=string count=0
+  prop l1 type=list desc="L1" long=@null enabled=1 visible=1
+    listtype=list format=invalid count=0
+  prop l2 type=list desc="L2" long=@null enabled=1 visible=1
+    listtype=invalid format=int count=0
+  prop l3 type=list desc="L3" long=@null enabled=1 visible=1
+    listtype=?9 format=?7 count=0
+list_add string -> 0
+list_add int -> 0
+list_add int -> 0
+list_add string -> 0
+info
+  prop l1 type=list desc="L1" long=@null enabled=1 visible=1
+    listtype=list format=invalid count=0
+info
+  prop l2 type=list desc="L2" long=@null enabled=1 visible=1
+    listtype=invalid format=int count=1
+     item 0 name="x" disabled=0 value=1
+echo not-a-list
+add bool notlist ok
+list_add string -> 0
+list_item 0 name=@null disabled=0 str=@null int=0 float=0 bool=0

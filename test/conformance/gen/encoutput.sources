@@ -1,0 +1,19 @@
+# S-041 encoutput: real obs-encoder.c + obs-output.c (via encoutput_out.c) + obs-output-delay.c with a fake core,
+# scripted fake encoder / output plugins, a fake clock, fake raw video/audio connections.
+test/conformance/gen/encoutput_runner.c
+test/conformance/gen/encoutput_out.c
+test/conformance/gen/encoutput_stubs.c
+libobs/obs-encoder.c
+libobs/obs-output-delay.c
+libobs/callback/signal.c
+libobs/callback/calldata.c
+libobs/callback/decl.c
+libobs/callback/proc.c
+libobs/util/lexer.c
+libobs/util/cf-lexer.c
+libobs/util/cf-parser.c
+-I../../deps/libcaption
+-Wl,--unresolved-symbols=ignore-all
+-no-pie
+-pthread
+-lm

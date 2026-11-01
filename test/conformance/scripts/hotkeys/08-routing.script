@@ -1,0 +1,42 @@
+# S-034 callback rerouting (used by the frontend so that hotkey callbacks run on the UI thread).
+# With rerouting enabled, a press/release does not call the hotkey callback; it calls the router
+# function (if one is set; otherwise the event is dropped). obs_hotkey_trigger_routed_callback(id, pressed)
+# then calls the real callback, but only while rerouting is enabled.
+reg frontend A "A" "a"
+loadbind A 0:OBS_KEY_A
+echo direct-mode
+down OBS_KEY_A
+poll 2
+up OBS_KEY_A
+poll
+echo routed-call-with-rerouting-off-does-nothing
+routed A 1
+echo rerouting-on-without-router-drops-events
+reroute on
+down OBS_KEY_A
+poll 2
+up OBS_KEY_A
+poll
+echo router-set
+router on
+down OBS_KEY_A
+poll 2
+up OBS_KEY_A
+poll
+echo inject-also-uses-router
+inject 0x0 OBS_KEY_A 1
+upall
+poll
+echo trigger-routed-calls-real-callback
+routed A 1
+routed A 0
+routed id:123 1
+echo trigger-routed-after-rerouting-off
+reroute off
+routed A 1
+echo router-removed
+reroute on
+router off
+inject 0x0 OBS_KEY_A 1
+upall
+poll

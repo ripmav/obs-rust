@@ -1,0 +1,23 @@
+  cb A create
+log debug source 'A' (in) created
+create a ok
+  cb F create
+log debug private source 'F' (fl) created
+create f1 ok
+  cb F create
+log debug private source 'F' (fl) created
+create f2 ok
+  cb G create
+log debug private source 'G' (fl) created
+create f3 ok
+log debug - filter 'F' (fl) added to source 'A'
+log debug - filter 'F' (fl) added to source 'A'
+log debug - filter 'G' (fl) added to source 'A'
+filter_by_name a F found
+filter_by_name a G found
+filter_by_name a H null
+refs f1 2
+refs f2 3
+refs r1 3
+enum_filters a: f1 f2 f3
+names a: G F F

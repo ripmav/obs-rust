@@ -1,0 +1,19 @@
+# Destroying a transition clears it: both children lose the transition's strong reference and its active-child
+# references (deferred destruction applies to the transition itself).
+kind in input video enum,activate,show,size
+kind tr transition video,audio tstart,tstop,size,activate
+create t tr T
+create a in A
+create b in B
+inc_active t
+tr_set t a
+tr_start t 0 100 b
+state a
+state b
+refs a
+release t
+state a
+state b
+refs a
+refs b
+drain

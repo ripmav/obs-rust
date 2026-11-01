@@ -1,0 +1,30 @@
+# Reconnect back-off: first wait = retry_sec * 1000 ms; each further attempt multiplies by the exponent
+# (1.5 + random 0..0.05 in the reference; pinned to 1.5 here), truncated to an integer number of ms, capped at
+# 900000 ms. After retry_count failed attempts the output stops with code DISCONNECTED and "stop" is emitted.
+# Every restart attempt fails: the plugin's start callback reports DISCONNECTED through signal_stop.
+video 30 1 1280 720
+audio 48000
+venc v
+aenc a
+out o av,encoded autobegin=1
+set_venc o v
+set_aenc o a
+reconnect_cfg o 6 2
+poke_exp o 1.5
+start o
+plugin o start_ok=0 fail_code=-5
+signal_stop o -5
+state o
+fire
+state o
+fire
+state o
+fire
+state o
+fire
+state o
+fire
+state o
+echo --- sixth failure: retries exhausted
+fire
+state o

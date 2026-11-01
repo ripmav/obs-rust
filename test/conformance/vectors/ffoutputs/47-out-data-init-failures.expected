@@ -1,0 +1,20 @@
+> fo_data_init - - -
+fo_data_init -> 0 last_error=""
+> fo_data_init  - -
+fo_data_init -> 0 last_error=""
+> fo_data_init u nosuchfmt -
+log warning Couldn't find matching output format with parameters: name=nosuchfmt, url=u, mime=(NULL)
+log warning ffmpeg_data_init failed
+fo_data_init -> 0 last_error="Couldn't find matching output format with parameters: name=nosuchfmt, url=u, mime=(NULL)"
+> fo_data_init u nosuchfmt video/x-nosuch
+log warning Couldn't find matching output format with parameters: name=nosuchfmt, url=u, mime=video/x-nosuch
+log warning ffmpeg_data_init failed
+fo_data_init -> 0 last_error="Couldn't find matching output format with parameters: name=nosuchfmt, url=u, mime=video/x-nosuch"
+> fo_data_init file.nosuchext - -
+log warning Couldn't find matching output format with parameters: name=(NULL), url=file.nosuchext, mime=(NULL)
+log warning ffmpeg_data_init failed
+fo_data_init -> 0 last_error="Couldn't find matching output format with parameters: name=(NULL), url=file.nosuchext, mime=(NULL)"
+> fo_data_init u - video/x-nosuch
+log warning Couldn't find matching output format with parameters: name=(NULL), url=u, mime=video/x-nosuch
+log warning ffmpeg_data_init failed
+fo_data_init -> 0 last_error="Couldn't find matching output format with parameters: name=(NULL), url=u, mime=video/x-nosuch"

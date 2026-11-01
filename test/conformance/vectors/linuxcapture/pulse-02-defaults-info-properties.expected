@@ -1,0 +1,32 @@
+> pulse-info input
+info id=pulse_input_capture name=PulseInput audio=1 do_not_duplicate=1 no_self_monitor=0
+> pulse-info output
+info id=pulse_output_capture name=PulseOutput audio=1 do_not_duplicate=1 no_self_monitor=1
+> pulse-defaults
+> get device_id str
+device_id = "default"
+> pulse-props input
+> props
+prop device_id type=list desc="Device" visible=1 enabled=1 format=string items=0
+> pulse-props output
+> props
+prop device_id type=list desc="Device" visible=1 enabled=1 format=string items=0
+> pulse-source alsa_input.mic Built-in Microphone - s16le 48000 2
+> pulse-source alsa_output.speakers.monitor Monitor of Speakers 0 s16le 48000 2
+> pulse-source alsa_input.usb USB "Mic" - float32le 44100 1
+> pulse-sink alsa_output.speakers Speakers 1 alsa_output.speakers.monitor
+> pulse-sink bad.sink Sink without monitor - 
+> pulse-sink hdmi HDMI 5 hdmi.monitor
+> pulse-props input
+> props
+prop device_id type=list desc="Device" visible=1 enabled=1 format=string items=3
+  - "Default" = "default" disabled=0
+  - "Built-in Microphone" = "alsa_input.mic" disabled=0
+  - "USB \"Mic\"" = "alsa_input.usb" disabled=0
+> pulse-props output
+> props
+prop device_id type=list desc="Device" visible=1 enabled=1 format=string items=3
+  - "Default" = "default" disabled=0
+  - "Speakers" = "alsa_output.speakers.monitor" disabled=0
+  - "HDMI" = "hdmi.monitor" disabled=0
+> pulse-defaults

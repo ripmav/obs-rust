@@ -1,0 +1,20 @@
+# remove(): flag + "remove" signals once; rename(): signals only if the name changes (private sources do not emit
+# the global signal); enable(): always signals, even if unchanged.
+kind in input video
+watch_global
+create a in A
+create p in P private
+watch a
+watch p
+remove a
+remove a
+removed a
+rename a B
+rename a B
+rename p Q
+info a
+info p
+enable a 0
+enable a 0
+enable a 1
+info a

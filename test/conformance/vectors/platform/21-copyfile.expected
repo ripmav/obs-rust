@@ -1,0 +1,35 @@
+copyfile s0 d0 0
+info d0 file size=0 fnv=811c9dc5
+copyfile s1 d1 0
+copyfile s4095 d4095 0
+copyfile s4096 d4096 0
+copyfile s4097 d4097 0
+copyfile s8192 d8192 0
+copyfile s10000 d10000 0
+info s1 file size=1 fnv=060c5eb2
+info d1 file size=1 fnv=060c5eb2
+info s4095 file size=4095 fnv=4f077abb
+info d4095 file size=4095 fnv=4f077abb
+info s4096 file size=4096 fnv=afc57dc5
+info d4096 file size=4096 fnv=afc57dc5
+info s4097 file size=4097 fnv=79e4feb2
+info d4097 file size=4097 fnv=79e4feb2
+info s8192 file size=8192 fnv=d66e5dc5
+info d8192 file size=8192 fnv=d66e5dc5
+info s10000 file size=10000 fnv=c3cecd45
+info d10000 file size=10000 fnv=c3cecd45
+copyfile s1 keep.txt -1
+cat keep.txt size=8 hex=70726563696f7573
+copyfile s1 d0 -1
+info d0 file size=0 fnv=811c9dc5
+copyfile nosuch.bin out.bin -1
+exists out.bin 0
+copyfile s1 nodir/out -1
+mkdir dd 0
+copyfile s1 dd -1
+mkdir srcdir 0
+copyfile srcdir fromdir -1
+info fromdir file size=0 fnv=811c9dc5
+symlink 1
+copyfile lnk viaLink 0
+info viaLink file size=1 fnv=060c5eb2

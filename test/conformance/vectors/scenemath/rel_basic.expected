@@ -1,0 +1,55 @@
+add c ok
+-- fresh item: nothing computed yet
+item c id=1 parent=main group=0 scene=0 abs=0 vis=1 user_vis=1 sel=0 lock=0 need_update=0
+  stored pos=-1.77777779,-1 rot=0 scale=1,1 scale_ref=1920,1080 align=5
+  bounds type=0 align=0 size=0,0 crop_to_bounds=0
+  crop l=0 r=0 t=0 b=0 bounds_crop l=0 r=0 t=0 b=0 last=0,0
+  output_scale=0,0 box_scale=0,0
+  draw [1,0,0,0] [0,1,0,0] [0,0,1,0] [0,0,0,1]
+  box [1,0,0,0] [0,1,0,0] [0,0,1,0] [0,0,0,1]
+-- position round-trip (integers, halves, quarter px snap to .5)
+get c pos=100,50 rot=0 scale=1,1 align=5 btype=0 balign=0 bounds=0,0 bcrop=0 crop=0,0,0,0
+info c pos=100,50 rot=0 scale=1,1 align=5 btype=0 balign=0 bounds=0,0 crop_to_bounds=0
+ box_scale=1280,720
+get c pos=100,50.5 rot=0 scale=1,1 align=5 btype=0 balign=0 bounds=0,0 bcrop=0 crop=0,0,0,0
+info c pos=100,50.5 rot=0 scale=1,1 align=5 btype=0 balign=0 bounds=0,0 crop_to_bounds=0
+ box_scale=1280,720
+get c pos=100.5,50.5 rot=0 scale=1,1 align=5 btype=0 balign=0 bounds=0,0 bcrop=0 crop=0,0,0,0
+info c pos=100.5,50.5 rot=0 scale=1,1 align=5 btype=0 balign=0 bounds=0,0 crop_to_bounds=0
+ box_scale=1280,720
+get c pos=100.5,51 rot=0 scale=1,1 align=5 btype=0 balign=0 bounds=0,0 bcrop=0 crop=0,0,0,0
+info c pos=100.5,51 rot=0 scale=1,1 align=5 btype=0 balign=0 bounds=0,0 crop_to_bounds=0
+ box_scale=1280,720
+get c pos=-37.5,2000 rot=0 scale=1,1 align=5 btype=0 balign=0 bounds=0,0 bcrop=0 crop=0,0,0,0
+info c pos=-37.5,2000 rot=0 scale=1,1 align=5 btype=0 balign=0 bounds=0,0 crop_to_bounds=0
+ box_scale=1280,720
+-- after set_pos the matrices are recomputed at once (parent is a plain scene)
+item c id=1 parent=main group=0 scene=0 abs=0 vis=1 user_vis=1 sel=0 lock=0 need_update=0
+  stored pos=-1.77777779,-1 rot=0 scale=1,1 scale_ref=1920,1080 align=5
+  bounds type=0 align=0 size=0,0 crop_to_bounds=0
+  crop l=0 r=0 t=0 b=0 bounds_crop l=0 r=0 t=0 b=0 last=1280,720
+  output_scale=1,1 box_scale=1280,720
+  draw [1,0,0,0] [0,1,0,0] [0,0,1,0] [0,0,0,1]
+  box [1280,0,0,0] [0,720,0,0] [0,0,1,0] [0,0,0,1]
+-- scale stored relative to the canvas height at creation (scale_ref)
+item c id=1 parent=main group=0 scene=0 abs=0 vis=1 user_vis=1 sel=0 lock=0 need_update=0
+  stored pos=-1.77777779,-1 rot=0 scale=2,0.5 scale_ref=1920,1080 align=5
+  bounds type=0 align=0 size=0,0 crop_to_bounds=0
+  crop l=0 r=0 t=0 b=0 bounds_crop l=0 r=0 t=0 b=0 last=1280,720
+  output_scale=2,0.5 box_scale=2560,360
+  draw [2,0,0,0] [0,0.5,0,0] [0,0,1,0] [0,0,0,1]
+  box [2560,0,0,0] [0,360,0,0] [0,0,1,0] [0,0,0,1]
+item c id=1 parent=main group=0 scene=0 abs=0 vis=1 user_vis=1 sel=0 lock=0 need_update=0
+  stored pos=-1.77777779,-1 rot=0 scale=-1,1 scale_ref=1920,1080 align=5
+  bounds type=0 align=0 size=0,0 crop_to_bounds=0
+  crop l=0 r=0 t=0 b=0 bounds_crop l=0 r=0 t=0 b=0 last=1280,720
+  output_scale=-1,1 box_scale=-1280,720
+  draw [-1,0,0,0] [0,1,0,0] [0,0,1,0] [0,0,0,1]
+  box [-1280,0,0,0] [0,720,0,0] [0,0,1,0] [0,0,0,1]
+-- bounds go through the same size conversion
+get c pos=0,0 rot=0 scale=-1,1 align=5 btype=2 balign=0 bounds=640,360 bcrop=0 crop=0,0,0,0
+info c pos=0,0 rot=0 scale=-1,1 align=5 btype=2 balign=0 bounds=640,360 crop_to_bounds=0
+ box_scale=640,360
+get c pos=0,0 rot=0 scale=-1,1 align=5 btype=2 balign=0 bounds=640.5,360.5 bcrop=0 crop=0,0,0,0
+info c pos=0,0 rot=0 scale=-1,1 align=5 btype=2 balign=0 bounds=640.5,360.5 crop_to_bounds=0
+ box_scale=640.5,360.5

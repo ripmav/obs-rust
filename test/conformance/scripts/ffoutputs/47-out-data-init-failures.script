@@ -1,0 +1,10 @@
+# ffmpeg_data_init failure paths that need no encoder: an empty/NULL url fails silently (no error text, no log), an
+# unknown format name fails with the "Couldn't find matching output format" text (NULL shown as "(NULL)"). The rtmp://
+# url special case (always format "flv") needs an H.264 encoder and is not exercised; a url with no known
+# extension and no format fails the same way. The real libav format registry is used ("null" exists, "nosuchfmt" not).
+fo_data_init - - -
+fo_data_init "" - -
+fo_data_init u nosuchfmt -
+fo_data_init u nosuchfmt video/x-nosuch
+fo_data_init file.nosuchext - -
+fo_data_init u - video/x-nosuch

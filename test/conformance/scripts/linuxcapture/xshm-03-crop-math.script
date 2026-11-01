@@ -1,0 +1,58 @@
+# S-049 xshm: crop (cut_*) arithmetic on top of the screen geometry (RandR mode).
+# adj_x = (x_org > 0 ? x_org + cut_left : cut_left); same for y. A screen with origin <= 0 therefore
+# IGNORES its own (zero or negative) origin once a cut is set (quirk Q-1). adj_w = w - cut_left - cut_right,
+# adj_h = h - cut_top - cut_bot; nothing is clamped (defect D-1: results may be <= 0).
+x-ext randr 1
+x-screen 0 0 1920 1080 DP-1
+x-screen 1920 100 2560 1440 HDMI-1
+x-screen -1280 -50 1280 1024 DP-2
+xshm-defaults
+set-int screen 0
+set-int cut_top 10
+set-int cut_left 20
+set-int cut_right 30
+set-int cut_bot 40
+xshm-create
+xshm-destroy
+# non-zero origin: origin is added
+set-int screen 1
+xshm-create
+xshm-destroy
+# negative origin: origin ignored
+set-int screen 2
+xshm-create
+xshm-destroy
+# negative cuts (top/left allowed down to -4096) grow the area
+set-int screen 0
+set-int cut_top -10
+set-int cut_left -20
+set-int cut_right 0
+set-int cut_bot 0
+xshm-create
+xshm-destroy
+set-int screen 1
+xshm-create
+xshm-destroy
+# a cut as large as / larger than the screen: size 0 or negative, nothing validates it
+set-int screen 0
+set-int cut_top 0
+set-int cut_left 0
+set-int cut_right 1920
+set-int cut_bot 0
+xshm-create
+xshm-destroy
+set-int cut_right 2000
+xshm-create
+xshm-destroy
+set-int cut_right 0
+set-int cut_bot 1080
+xshm-create
+xshm-destroy
+# update(): size change return value of update_geometry (-1 failure, 0 unchanged, 1 changed)
+set-int cut_bot 0
+xshm-create
+xshm-geometry
+set-int cut_top 8
+xshm-update
+xshm-geometry
+xshm-destroy

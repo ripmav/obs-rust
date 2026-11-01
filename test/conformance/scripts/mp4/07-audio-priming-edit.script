@@ -1,0 +1,12 @@
+# S-022 audio edit list: first PTS < 0 (priming). media_time = |first_pts| in track units (1024),
+# segment_duration = track duration (ms) - priming (ms). The edit list written in the INITIAL
+# fragmented moov never contains the delay (no sample has been processed then).
+# Also: mvhd.duration is 0 for a file without video track (Q-3), tkhd.duration is not.
+enc a audio codec aac rate 48000 extra 1190
+mux mp4
+pkt a -1024 -1024 1 gen:10
+pkt a 0 0 1 gen:10
+pkt a 1024 1024 1 gen:10
+pkt a 2048 2048 1 gen:10
+finalise
+dump

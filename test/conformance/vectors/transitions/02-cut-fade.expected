@@ -1,0 +1,104 @@
+create c cut_transition
+  ev transition_enable_fixed 1 duration_ms=0
+  instance=1
+  fields (none)
+render c
+  ev transition_video_render callback=none placeholder=9000
+  ev   default render (no callback)
+create f fade_transition
+  ev enter_graphics
+  ev effect_create file=@data/fade_transition.effect
+  ev leave_graphics
+  instance=1
+  fields (none)
+render f
+  ev set_linear_srgb 1 (previous 0)
+  ev transition_video_render2 callback=yes placeholder=null
+  ev   callback a=1 b=2 t=0.25 cx=1920 cy=1080
+  ev enable_framebuffer_srgb 1
+  ev set_texture tex_a tex=1 srgb=0
+  ev set_texture tex_b tex=2 srgb=0
+  ev set_float fade_val 0.25
+  ev effect_loop technique=Fade pass=0
+  ev draw_sprite tex=null flip=0 w=1920 h=1080
+  ev enable_framebuffer_srgb 0
+  ev set_linear_srgb 0 (previous 1)
+render f
+  ev set_linear_srgb 1 (previous 0)
+  ev transition_video_render2 callback=yes placeholder=null
+  ev   callback a=1 b=2 t=0.25 cx=1920 cy=1080
+  ev enable_framebuffer_srgb 1
+  ev set_texture tex_a tex=1 srgb=1
+  ev set_texture tex_b tex=2 srgb=1
+  ev set_float fade_val 0.25
+  ev effect_loop technique=FadeLinear pass=0
+  ev draw_sprite tex=null flip=0 w=1920 h=1080
+  ev enable_framebuffer_srgb 0
+  ev set_linear_srgb 0 (previous 1)
+render f
+  ev set_linear_srgb 1 (previous 0)
+  ev transition_video_render2 callback=yes placeholder=null
+  ev   callback a=1 b=2 t=0.25 cx=1920 cy=1080
+  ev enable_framebuffer_srgb 1
+  ev set_texture tex_a tex=1 srgb=1
+  ev set_texture tex_b tex=2 srgb=1
+  ev set_float fade_val 0.25
+  ev effect_loop technique=FadeLinear pass=0
+  ev draw_sprite tex=null flip=0 w=1920 h=1080
+  ev enable_framebuffer_srgb 0
+  ev set_linear_srgb 0 (previous 1)
+render f
+  ev set_linear_srgb 1 (previous 0)
+  ev transition_video_render2 callback=yes placeholder=null
+  ev   callback a=1 b=null t=0.25 cx=1920 cy=1080
+  ev enable_framebuffer_srgb 1
+  ev set_texture tex_a tex=1 srgb=1
+  ev set_float fade_val 0.75
+  ev effect_loop technique=FadeSingle pass=0
+  ev draw_sprite tex=null flip=0 w=1920 h=1080
+  ev enable_framebuffer_srgb 0
+  ev set_linear_srgb 0 (previous 1)
+render f
+  ev set_linear_srgb 1 (previous 0)
+  ev transition_video_render2 callback=yes placeholder=null
+  ev   callback a=null b=2 t=0.25 cx=1920 cy=1080
+  ev enable_framebuffer_srgb 1
+  ev set_texture tex_a tex=2 srgb=1
+  ev set_float fade_val 0.25
+  ev effect_loop technique=FadeSingle pass=0
+  ev draw_sprite tex=null flip=0 w=1920 h=1080
+  ev enable_framebuffer_srgb 0
+  ev set_linear_srgb 0 (previous 1)
+render f
+  ev set_linear_srgb 1 (previous 0)
+  ev transition_video_render2 callback=yes placeholder=null
+  ev   callback a=null b=null t=0.25 cx=1920 cy=1080
+  ev set_linear_srgb 0 (previous 1)
+render f
+  ev set_linear_srgb 1 (previous 0)
+  ev transition_video_render2 callback=yes placeholder=null
+  ev   callback a=1 b=null t=0.75 cx=1920 cy=1080
+  ev enable_framebuffer_srgb 1
+  ev set_texture tex_a tex=1 srgb=1
+  ev set_float fade_val 0.25
+  ev effect_loop technique=FadeSingle pass=0
+  ev draw_sprite tex=null flip=0 w=1920 h=1080
+  ev enable_framebuffer_srgb 0
+  ev set_linear_srgb 0 (previous 1)
+render f
+  ev set_linear_srgb 1 (previous 0)
+  ev transition_video_render2 callback=yes placeholder=null
+  ev   callback skipped (size 0)
+  ev set_linear_srgb 0 (previous 1)
+create f2 fade_transition
+  ev enter_graphics
+  ev effect_create file=@data/fade_transition.effect
+  ev   -> fail
+  ev leave_graphics
+log error Could not find fade_transition.effect
+  instance=0
+  fields (no instance)
+create c2 cut_transition
+  ev transition_enable_fixed 1 duration_ms=0
+  instance=1
+  fields (none)

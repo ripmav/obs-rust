@@ -1,0 +1,15 @@
+# S-052 init_screen_stream: SCStreamConfiguration values by capture type, macOS version (major*100+minor) and fps.
+# type macos fps_num fps_den show_cursor have_video_info w h
+sck_config 0 1400 60 1 1 1 3024 1964
+sck_config 0 1500 30000 1001 0 1 2560 1440
+sck_config 0 1300 60 1 1 1 1920 1080
+sck_config 1 1205 60 1 1 1 800 600
+sck_config 1 1402 60 1 1 1 800 600
+sck_config 0 1205 60 1 1 1 1920 1080
+sck_config 2 1205 60 1 1 1 1920 1080
+sck_config 2 1402 60 1 1 0 1920 1080
+sck_color_space SRGB
+sck_color_space 709_EXTENDED SRGB
+sck_color_space SRGB 709_EXTENDED SRGB_16F
+sck_color_space 709_SCRGB
+sck_color_space

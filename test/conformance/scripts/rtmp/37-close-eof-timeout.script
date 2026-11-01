@@ -1,0 +1,132 @@
+# Connection end behaviour: peer EOF / reset closes the engine (sending FCUnpublish + deleteStream first when a stream id
+# is known), a receive timeout only sets the timed-out flag, explicit Close, server close invokes (R114..R121).
+echo eof-before-createstream-result
+new
+clock 1000
+seed 3
+seturl rtmp://h/a
+enablewrite
+set flashver FMLE
+addstream key
+feed 03
+feed_s1 0 1000 00000000
+feed_echo
+feed 0300000000001414000000000200075f726573756c74003ff000000000000005
+empty eof
+connect
+connectstream
+state
+echo eof-after-publish-id-known
+new
+clock 1000
+seed 3
+seturl rtmp://h/a
+enablewrite
+set flashver FMLE
+addstream key
+feed 03
+feed_s1 0 1000 00000000
+feed_echo
+feed 0300000000001414000000000200075f726573756c74003ff000000000000005
+feed 0300000000001d14000000000200075f726573756c7400401000000000000005003ff0000000000000
+empty eof
+connect
+connectstream
+state
+echo timeout-keeps-connection
+new
+clock 1000
+seed 3
+seturl rtmp://h/a
+enablewrite
+set flashver FMLE
+addstream key
+feed 03
+feed_s1 0 1000 00000000
+feed_echo
+feed 0300000000001414000000000200075f726573756c74003ff000000000000005
+feed 0300000000001d14000000000200075f726573756c7400401000000000000005003ff0000000000000
+connect
+connectstream
+state
+close
+state
+close
+echo reset-by-peer
+new
+clock 1000
+seed 3
+seturl rtmp://h/a
+enablewrite
+set flashver FMLE
+addstream key
+feed 03
+feed_s1 0 1000 00000000
+feed_echo
+feed 0300000000001414000000000200075f726573756c74003ff000000000000005
+feed 0300000000001d14000000000200075f726573756c7400401000000000000005003ff0000000000000
+empty reset
+connect
+connectstream
+state
+echo eof-mid-header
+new
+clock 1000
+seed 3
+seturl rtmp://h/a
+enablewrite
+set flashver FMLE
+addstream key
+feed 03
+feed_s1 0 1000 00000000
+feed_echo
+feed 43
+empty eof
+connect
+read
+state
+echo server-close-and-fcunsubscribe
+new
+clock 1000
+seed 3
+seturl rtmp://h/a
+enablewrite
+set flashver FMLE
+addstream key
+feed 03
+feed_s1 0 1000 00000000
+feed_echo
+feed 030000000000121400000000020005636c6f736500000000000000000005
+connect
+connectstream
+state
+echo onFCUnsubscribe
+new
+clock 1000
+seed 3
+seturl rtmp://h/a
+enablewrite
+set flashver FMLE
+addstream key
+feed 03
+feed_s1 0 1000 00000000
+feed_echo
+feed 0300000000001c140000000002000f6f6e4643556e73756273637269626500000000000000000005
+connect
+client
+state
+echo play-complete-closes
+new
+clock 1000
+seed 3
+seturl rtmp://h/app
+addstream vid.mp4
+feed 03
+feed_s1 0 1000 00000000
+feed_echo
+feed 0300000000001414000000000200075f726573756c74003ff000000000000005
+feed 0300000000001d14000000000200075f726573756c7400400000000000000005003ff0000000000000
+feed 0300000000005a14000000000200086f6e537461747573000000000000000000050300056c6576656c0200067374617475730004636f64650200174e657453747265616d2e506c61792e436f6d706c657465000b6465736372697074696f6e02000164000009
+connect
+connectstream
+state

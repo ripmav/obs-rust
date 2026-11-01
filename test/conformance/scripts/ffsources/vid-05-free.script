@@ -1,0 +1,19 @@
+# ffmpeg_video_encoder_free: flush of an initialised encoder, safe release otherwise.
+av_codec fake_enc 1
+host_video 8 2 Y800 709 partial 60 1
+vid_init V fake_enc @null "Fake" 0 0
+vid_update V 1000 0 @null
+vid_init_codec V
+# flush: send NULL, receive until an error; each received packet is released
+av_recv 0 3 0 0 1
+av_recv 0 3 1 1 0
+vid_free V
+echo ---- initialisation failed before the codec was created: free is still safe
+vid_init_stack zero nosuch_enc @null "Fake"
+echo ---- open failed (not initialised): no flush
+host_int open_rc -1000
+host_last_error @null
+vid_init V fake_enc @null "Fake" 0 0
+vid_update V 1000 0 @null
+vid_init_codec V
+vid_free V

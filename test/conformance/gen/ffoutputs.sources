@@ -1,0 +1,24 @@
+# S-046 ffoutputs: the real plugins/obs-ffmpeg/obs-ffmpeg-mux.c, obs-ffmpeg-hls-mux.c (included by the runner) and
+# obs-ffmpeg-output.c (included by ffoutputs_out.c) with a fake libobs / pipe / file system / thread world
+# (gen/ffoutputs_stubs.c); libav* is the real, system FFmpeg (the "null" muxer, rawvideo and pcm_s16le are used).
+test/conformance/gen/ffoutputs_runner.c
+test/conformance/gen/ffoutputs_out.c
+test/conformance/gen/ffoutputs_stubs.c
+libobs/util/bmem.c
+libobs/util/base.c
+libobs/util/dstr.c
+libobs/util/utf8.c
+libobs/util/pipe.c
+libobs/callback/calldata.c
+libobs/obs-avc.c
+libobs/obs-nal.c
+libobs/util/bitstream.c
+libobs/util/array-serializer.c
+-lavformat
+-lavcodec
+-lavutil
+-lswscale
+-Wno-deprecated-declarations
+-Wl,--unresolved-symbols=ignore-all
+-no-pie
+!nostubs

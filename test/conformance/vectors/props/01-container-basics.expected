@@ -1,0 +1,28 @@
+get_flags 0
+get_param @null
+first @null
+dump P flags=0 param=@null
+add bool zeta ok
+add int alpha ok
+add text mid ok
+add bool beta ok
+dump P flags=0 param=@null
+  prop zeta type=bool desc="Z" long=@null enabled=1 visible=1
+    -
+  prop alpha type=int desc="A" long=@null enabled=1 visible=1
+    min=0 max=10 step=1 numtype=scroller suffix=@null
+  prop mid type=text desc="M" long=@null enabled=1 visible=1
+    texttype=default monospace=0 infotype=normal wrap=1
+  prop beta type=bool desc="B" long=@null enabled=1 visible=1
+    -
+echo iterate-with-first-next
+first zeta
+next -> 1 alpha
+next -> 1 mid
+next -> 1 beta
+next -> 0 @null
+echo next-at-end-stays-null
+next -> 0 @null
+get_flags 1
+get_flags 3735928559
+get_flags 0

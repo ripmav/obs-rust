@@ -1,0 +1,181 @@
+call effect_create file=crop_filter.effect -> e1 uniforms=5 techniques=4
+call get_param e1:mul_val -> ok
+call get_param e1:add_val -> ok
+call get_param e1:multiplier -> ok
+call source_update a deferred=1
+create a -> ok
+call deferred_update a
+tick a 0.016
+echo source=SRGB current=SRGB
+render a
+call filter_begin_cs a format=RGBA space=SRGB allow=NO_DIRECT -> 1
+call set_vec2 e1:mul_val 1 1
+call set_vec2 e1:add_val 0 0
+call set_float e1:multiplier 1
+call blend_push
+call blend_function ONE INVSRCALPHA
+call filter_tech_end a e1 size=1920x1080 technique=Draw exists=1
+call blend_pop
+echo source=SRGB current=SRGB_16F
+render a
+call filter_begin_cs a format=RGBA space=SRGB allow=NO_DIRECT -> 1
+call set_vec2 e1:mul_val 1 1
+call set_vec2 e1:add_val 0 0
+call set_float e1:multiplier 1
+call blend_push
+call blend_function ONE INVSRCALPHA
+call filter_tech_end a e1 size=1920x1080 technique=Draw exists=1
+call blend_pop
+echo source=SRGB current=709_EXTENDED
+render a
+call filter_begin_cs a format=RGBA space=SRGB allow=NO_DIRECT -> 1
+call set_vec2 e1:mul_val 1 1
+call set_vec2 e1:add_val 0 0
+call set_float e1:multiplier 1
+call blend_push
+call blend_function ONE INVSRCALPHA
+call filter_tech_end a e1 size=1920x1080 technique=Draw exists=1
+call blend_pop
+echo source=SRGB current=709_SCRGB
+render a
+call filter_begin_cs a format=RGBA space=SRGB allow=NO_DIRECT -> 1
+call set_vec2 e1:mul_val 1 1
+call set_vec2 e1:add_val 0 0
+call set_float e1:multiplier 3.75
+call blend_push
+call blend_function ONE INVSRCALPHA
+call filter_tech_end a e1 size=1920x1080 technique=DrawMultiply exists=1
+call blend_pop
+echo source=SRGB_16F current=SRGB
+render a
+call filter_begin_cs a format=RGBA16F space=SRGB_16F allow=NO_DIRECT -> 1
+call set_vec2 e1:mul_val 1 1
+call set_vec2 e1:add_val 0 0
+call set_float e1:multiplier 1
+call blend_push
+call blend_function ONE INVSRCALPHA
+call filter_tech_end a e1 size=1920x1080 technique=Draw exists=1
+call blend_pop
+echo source=SRGB_16F current=SRGB_16F
+render a
+call filter_begin_cs a format=RGBA16F space=SRGB_16F allow=NO_DIRECT -> 1
+call set_vec2 e1:mul_val 1 1
+call set_vec2 e1:add_val 0 0
+call set_float e1:multiplier 1
+call blend_push
+call blend_function ONE INVSRCALPHA
+call filter_tech_end a e1 size=1920x1080 technique=Draw exists=1
+call blend_pop
+echo source=SRGB_16F current=709_EXTENDED
+render a
+call filter_begin_cs a format=RGBA16F space=SRGB_16F allow=NO_DIRECT -> 1
+call set_vec2 e1:mul_val 1 1
+call set_vec2 e1:add_val 0 0
+call set_float e1:multiplier 1
+call blend_push
+call blend_function ONE INVSRCALPHA
+call filter_tech_end a e1 size=1920x1080 technique=Draw exists=1
+call blend_pop
+echo source=SRGB_16F current=709_SCRGB
+render a
+call filter_begin_cs a format=RGBA16F space=SRGB_16F allow=NO_DIRECT -> 1
+call set_vec2 e1:mul_val 1 1
+call set_vec2 e1:add_val 0 0
+call set_float e1:multiplier 3.75
+call blend_push
+call blend_function ONE INVSRCALPHA
+call filter_tech_end a e1 size=1920x1080 technique=DrawMultiply exists=1
+call blend_pop
+echo source=709_EXTENDED current=SRGB
+render a
+call filter_begin_cs a format=RGBA16F space=709_EXTENDED allow=NO_DIRECT -> 1
+call set_vec2 e1:mul_val 1 1
+call set_vec2 e1:add_val 0 0
+call set_float e1:multiplier 1
+call blend_push
+call blend_function ONE INVSRCALPHA
+call filter_tech_end a e1 size=1920x1080 technique=DrawTonemap exists=1
+call blend_pop
+echo source=709_EXTENDED current=SRGB_16F
+render a
+call filter_begin_cs a format=RGBA16F space=709_EXTENDED allow=NO_DIRECT -> 1
+call set_vec2 e1:mul_val 1 1
+call set_vec2 e1:add_val 0 0
+call set_float e1:multiplier 1
+call blend_push
+call blend_function ONE INVSRCALPHA
+call filter_tech_end a e1 size=1920x1080 technique=DrawTonemap exists=1
+call blend_pop
+echo source=709_EXTENDED current=709_EXTENDED
+render a
+call filter_begin_cs a format=RGBA16F space=709_EXTENDED allow=NO_DIRECT -> 1
+call set_vec2 e1:mul_val 1 1
+call set_vec2 e1:add_val 0 0
+call set_float e1:multiplier 1
+call blend_push
+call blend_function ONE INVSRCALPHA
+call filter_tech_end a e1 size=1920x1080 technique=Draw exists=1
+call blend_pop
+echo source=709_EXTENDED current=709_SCRGB
+render a
+call filter_begin_cs a format=RGBA16F space=709_EXTENDED allow=NO_DIRECT -> 1
+call set_vec2 e1:mul_val 1 1
+call set_vec2 e1:add_val 0 0
+call set_float e1:multiplier 3.75
+call blend_push
+call blend_function ONE INVSRCALPHA
+call filter_tech_end a e1 size=1920x1080 technique=DrawMultiply exists=1
+call blend_pop
+echo source=709_SCRGB current=SRGB
+render a
+call filter_begin_cs a format=RGBA16F space=709_SCRGB allow=NO_DIRECT -> 1
+call set_vec2 e1:mul_val 1 1
+call set_vec2 e1:add_val 0 0
+call set_float e1:multiplier 0.266666681
+call blend_push
+call blend_function ONE INVSRCALPHA
+call filter_tech_end a e1 size=1920x1080 technique=DrawMultiplyTonemap exists=1
+call blend_pop
+echo source=709_SCRGB current=SRGB_16F
+render a
+call filter_begin_cs a format=RGBA16F space=709_SCRGB allow=NO_DIRECT -> 1
+call set_vec2 e1:mul_val 1 1
+call set_vec2 e1:add_val 0 0
+call set_float e1:multiplier 0.266666681
+call blend_push
+call blend_function ONE INVSRCALPHA
+call filter_tech_end a e1 size=1920x1080 technique=DrawMultiplyTonemap exists=1
+call blend_pop
+echo source=709_SCRGB current=709_EXTENDED
+render a
+call filter_begin_cs a format=RGBA16F space=709_SCRGB allow=NO_DIRECT -> 1
+call set_vec2 e1:mul_val 1 1
+call set_vec2 e1:add_val 0 0
+call set_float e1:multiplier 0.266666681
+call blend_push
+call blend_function ONE INVSRCALPHA
+call filter_tech_end a e1 size=1920x1080 technique=DrawMultiply exists=1
+call blend_pop
+echo source=709_SCRGB current=709_SCRGB
+render a
+call filter_begin_cs a format=RGBA16F space=709_SCRGB allow=NO_DIRECT -> 1
+call set_vec2 e1:mul_val 1 1
+call set_vec2 e1:add_val 0 0
+call set_float e1:multiplier 1
+call blend_push
+call blend_function ONE INVSRCALPHA
+call filter_tech_end a e1 size=1920x1080 technique=Draw exists=1
+call blend_pop
+echo colour-space negotiation of the filter itself (count preferred spaces, scan order, first match wins)
+cs a -> SRGB
+cs a -> SRGB
+cs a -> 709_EXTENDED
+cs a -> SRGB
+cs a -> SRGB_16F
+cs a -> SRGB_16F
+cs a -> 709_EXTENDED
+cs a -> SRGB_16F
+cs a -> 709_EXTENDED
+cs a -> SRGB
+cs a -> 709_EXTENDED
+cs a -> 709_EXTENDED

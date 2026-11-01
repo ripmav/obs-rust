@@ -1,0 +1,47 @@
+> reset
+> ascii 5 8 0 8 384
+> font Sans Serif - 0 p/sans
+> load
+load -> 1
+registered id=text_ft2_source version=0
+registered id=text_ft2_source version=2
+> create s 2
+ev ft init ok
+create s -> 1
+> echo --- create alone does not load a font
+--- create alone does not load a font
+> state s
+state s font=NULL style=NULL size=0 flags=0 face=0 from_file=0 aa=0
+state s outline=0 shadow=0 outline_width=0 word_wrap=0 custom_width=0 log_mode=0 log_lines=0 color=00000000,00000000
+state s cx=0 cy=0 max_h=0 texbuf=0,0 tex=0 vbuf=0 effect=0
+state s file=NULL load_failed=0 update_file=0 mtime=0 last_checked_ms=0
+state s text=NULL
+> echo --- default update: text is empty, font 256 px loaded and standard glyphs cached
+--- default update: text is empty, font 256 px loaded and standard glyphs cached
+> update s
+ev gfx effect_create file=text_default.effect ok
+ev font_lookup face=Sans Serif size=256 style= flags=0
+ev ft new_face path=p/sans index=0 ok
+ev ft set_pixel_sizes 0 256
+ev ft select_charmap unicode=1
+ev gfx texture_create 2048x2048 a8=1
+update done
+> state s
+state s font="Sans Serif" style="" size=256 flags=0 face=1 from_file=0 aa=1
+state s outline=0 shadow=0 outline_width=0 word_wrap=0 custom_width=0 log_mode=0 log_lines=6 color=ffffffff,ffffffff
+state s cx=0 cy=8 max_h=8 texbuf=553,0 tex=1 vbuf=0 effect=1
+state s file=NULL load_failed=0 update_file=0 mtime=0 last_checked_ms=0
+state s text=""
+> echo --- same font settings again: no reload of the face
+--- same font settings again: no reload of the face
+> update s
+update done
+> echo --- unloading after a source existed shuts FreeType down
+--- unloading after a source existed shuts FreeType down
+> destroy s
+ev ft done_face
+ev gfx texture_destroy
+ev gfx effect_destroy
+> unload
+ev font_list_freed
+ev ft done_library

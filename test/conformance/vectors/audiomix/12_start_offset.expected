@@ -1,0 +1,10 @@
+tick 0 ret=1 out_ts=1000000000 wait=0 total=0 bufq=0
+order a | roots a
+mix 0 0 first=480 last=1023 sum=136 peak=0.25
+mix 0 1 first=480 last=1023 sum=102 peak=0.1875
+state a audio_ts=1021333333 pending=0 buf=480 last_buf=0 pending_stop=0 timing_set=1 timing_adjust=0 next_ts_min=1031333333 next_sys_ts_min=1010000000 resample_offset=0 failed=0 vol=1 user_vol=1 muted=0 user_muted=0 actions=0
+tick 0 ret=1 out_ts=1021333333 wait=0 total=0 bufq=0
+order a b | roots a b
+mix 0 0 first=416 last=1023 sum=152 peak=0.25
+mix 0 1 first=416 last=1023 sum=114 peak=0.1875
+state b audio_ts=1042666666 pending=0 buf=416 last_buf=0 pending_stop=0 timing_set=1 timing_adjust=0 next_ts_min=1051333333 next_sys_ts_min=1030000000 resample_offset=0 failed=0 vol=1 user_vol=1 muted=0 user_muted=0 actions=0

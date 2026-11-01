@@ -1,0 +1,38 @@
+add c ok
+get c pos=100,50 rot=30 scale=2,3 align=0 btype=2 balign=5 bounds=400,300 bcrop=1 crop=0,0,0,0
+info c pos=100,50 rot=30 scale=2,3 align=0 btype=2 balign=5 bounds=400,300 crop_to_bounds=1
+ box_scale=400,300
+item c id=1 parent=main group=0 scene=0 abs=0 vis=1 user_vis=1 sel=0 lock=0 need_update=0
+  stored pos=-1.5925926,-0.907407403 rot=30 scale=2,3 scale_ref=1920,1080 align=0
+  bounds type=2 align=5 size=0.740740716,0.555555582 crop_to_bounds=1
+  crop l=0 r=0 t=0 b=0 bounds_crop l=0 r=0 t=0 b=0 last=1280,720
+  output_scale=0.277777791,0.416666687 box_scale=400,300
+  draw [0.240562618,0.13888891,0,0] [-0.208333373,0.360843927,0,0] [0,0,1,0] [1.7949295,-179.903824,0,1]
+  box [346.410156,200.000031,0,0] [-150.000015,259.807617,0,0] [0,0,1,0] [1.7949295,-179.903824,0,1]
+-- NaN scale is ignored
+get c pos=100,50 rot=30 scale=2,3 align=0 btype=2 balign=5 bounds=400,300 bcrop=1 crop=0,0,0,0
+info c pos=100,50 rot=30 scale=2,3 align=0 btype=2 balign=5 bounds=400,300 crop_to_bounds=1
+ box_scale=400,300
+-- explicit info with infinite scale not possible via script; zero scale allowed
+get c pos=0,0 rot=0 scale=0,0 align=5 btype=0 balign=0 bounds=0,0 bcrop=0 crop=0,0,0,0
+info c pos=0,0 rot=0 scale=0,0 align=5 btype=0 balign=0 bounds=0,0 crop_to_bounds=0
+ box_scale=0,0
+item c id=1 parent=main group=0 scene=0 abs=0 vis=1 user_vis=1 sel=0 lock=0 need_update=0
+  stored pos=-1.77777779,-1 rot=0 scale=0,0 scale_ref=1920,1080 align=5
+  bounds type=0 align=0 size=0,0 crop_to_bounds=0
+  crop l=0 r=0 t=0 b=0 bounds_crop l=0 r=0 t=0 b=0 last=1280,720
+  output_scale=0,0 box_scale=0,0
+  draw [0,0,0,0] [0,0,0,0] [0,0,1,0] [0,0,0,1]
+  box [0,0,0,0] [0,0,0,0] [0,0,1,0] [0,0,0,1]
+-- absolute mode: set_info stores verbatim
+add d ok
+get d pos=100.400002,50.5999985 rot=0 scale=1.25,1.25 align=5 btype=2 balign=5 bounds=400.5,300.5 bcrop=0 crop=0,0,0,0
+info d pos=100.400002,50.5999985 rot=0 scale=1.25,1.25 align=5 btype=2 balign=5 bounds=400.5,300.5 crop_to_bounds=0
+ box_scale=400.5,300.5
+item d id=1 parent=a group=0 scene=0 abs=1 vis=1 user_vis=1 sel=0 lock=0 need_update=0
+  stored pos=100.400002,50.5999985 rot=0 scale=1.25,1.25 scale_ref=1920,1080 align=5
+  bounds type=2 align=5 size=400.5,300.5 crop_to_bounds=0
+  crop l=0 r=0 t=0 b=0 bounds_crop l=0 r=0 t=0 b=0 last=1280,720
+  output_scale=0.312890649,0.312890649 box_scale=400.5,300.5
+  draw [0.312890649,0,0,0] [0,0.312890649,0,0] [0,0,1,0] [100.400002,50.5999985,0,1]
+  box [400.5,0,0,0] [0,300.5,0,0] [0,0,1,0] [100.400002,50.5999985,0,1]

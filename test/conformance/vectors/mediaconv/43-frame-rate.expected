@@ -1,0 +1,14 @@
+fps 30/1: interval=0.033333333333333333 fps=30 valid=1
+fps 60/1: interval=0.016666666666666666 fps=60 valid=1
+fps 30000/1001: interval=0.033366666666666669 fps=29.970029970029969 valid=1
+fps 24000/1001: interval=0.041708333333333333 fps=23.976023976023978 valid=1
+fps 25/1: interval=0.040000000000000001 fps=25 valid=1
+fps 1/1: interval=1 fps=1 valid=1
+fps 1/3: interval=3 fps=0.33333333333333331 valid=1
+fps 7/3: interval=0.42857142857142855 fps=2.3333333333333335 valid=1
+fps 4294967295/1: interval=2.3283064370807974e-10 fps=4294967295 valid=1
+fps 1/4294967295: interval=4294967295 fps=2.3283064370807974e-10 valid=1
+fps 0/1: interval=inf fps=0 valid=0
+fps 1/0: interval=0 fps=inf valid=0
+fps 0/0: interval=nan fps=nan valid=0
+fps 60/2: interval=0.033333333333333333 fps=30 valid=1

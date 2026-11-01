@@ -1,0 +1,47 @@
+# Seek while paused: seek_to() with seek_next_ts && pause && v_preload_cb prepares one frame and hands it to the
+# SEEK callback (v_seek_cb) instead of the preload callback (the "scrub while paused" path).
+# With cbs lacking 'seek', the preload callback is NOT used for the paused case when request_preload=1.
+media sp 400000 0
+video 1 1000 16 16 yuv420p frames=5
+pkt 0 0 fdur=40
+pkt 0 40 fdur=40
+pkt 0 80 fdur=40
+pkt 0 120 fdur=40
+pkt 0 160 fdur=40
+endmedia
+clock 1000000000
+minit sp local=1
+mreset
+mplay 0
+mtickw 0 0
+mtick 2
+mpause 1
+mtickw 1 1
+echo seek while paused (seek callback, frame near 120 ms)
+mseek 120
+mtick 1
+mstate
+echo again with the seek callback disabled and request_preload=0: preload callback
+mfree
+clock 1000000000
+minit sp local=1 cbs=v,a,pre,stop
+mreset
+mplay 0
+mtickw 0 0
+mtick 2
+mpause 1
+mtickw 1 1
+mseek 120
+mtick 1
+echo with request_preload=1 and no seek callback nothing is delivered
+mfree
+clock 1000000000
+minit sp local=1 cbs=v,a,pre,stop request_preload=1
+mreset
+mplay 0
+mtickw 0 0
+mtick 2
+mpause 1
+mtickw 1 1
+mseek 120
+mtick 1

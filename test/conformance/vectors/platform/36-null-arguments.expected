@@ -1,0 +1,18 @@
+fopen a null
+fopen a null
+wfopen a null
+file_size @null -1
+abs_path @null rc=0
+abs_path_ptr @null @null
+quick_read_utf8 @null
+quick_read_mbs @null
+quick_write_utf8 0
+quick_write_mbs 0
+os_u2w rc=0
+os_w2u rc=0
+os_u2w_ptr rc=0 ptr=null
+os_w2u_ptr rc=0 ptr=null
+os_mbs2wcs_ptr rc=0 ptr=null
+os_wcs2mbs_ptr rc=0 str=@null
+os_u2mbs_ptr rc=0 str=@null
+os_mbs2u_ptr rc=0 str=@null

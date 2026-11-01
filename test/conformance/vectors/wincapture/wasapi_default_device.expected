@@ -1,0 +1,17 @@
+wasapi_new device_id=default timing=0 default=1 priority=0 class= title= exe=
+wasapi_default restart=1 tracked=devA
+wasapi_default restart=0 tracked=devA
+wasapi_default restart=1 tracked=devB
+wasapi_default restart=0 tracked=devB
+wasapi_default restart=0 tracked=devB
+wasapi_default restart=0 tracked=devB
+wasapi_default restart=1 tracked=
+wasapi_default restart=0 tracked=
+wasapi_default restart=1 tracked=devA
+wasapi_new device_id=default timing=1 default=1 priority=0 class= title= exe=
+wasapi_default restart=1 tracked=devA
+wasapi_default restart=0 tracked=devA
+wasapi_default restart=0 tracked=devA
+wasapi_default restart=1 tracked=devB
+wasapi_update restart=1 capture_device_changed_signal=1 device_id={0.0.0.00000000}.{x} default=0 timing=1
+wasapi_default restart=0 tracked=devB

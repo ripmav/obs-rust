@@ -1,0 +1,20 @@
+A==b
+B=c=d
+C=e f
+D=g#h
+E="x"y
+F="abc\"
+G="a\\nb"
+H	=	"t"
+I=#c
+J="z"
+K.L-M_1=-5.5
+"q r"="s t"
+M="has = and # inside"
+N="a\rb\\n"
+  
+O=1 2
+P="\n\n"
+Q="tab\there"
+R="\\"
+S="end"

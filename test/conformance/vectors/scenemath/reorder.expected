@@ -1,0 +1,26 @@
+add a ok
+add b ok
+add c ok
+reorder -> 1
+order main: c a b
+-- same order again: false
+reorder -> 0
+-- subset: false
+reorder -> 0
+-- duplicate entries: size matches but an item is missing
+reorder -> 0
+order main: c a b
+-- unknown item from another scene
+add z ok
+reorder -> 0
+order main: c a b
+-- a real permutation succeeds
+reorder -> 1
+order main: b a c
+signal item_add scene=main item#1
+signal item_add scene=main item#2
+signal item_add scene=main item#3
+signal reorder scene=main
+signal item_add scene=other item#1
+signal reorder scene=main
+log end

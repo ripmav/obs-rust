@@ -1,0 +1,14 @@
+# Buffering policy: bufType 0 auto, 1 on, 2 off. Auto buffers when the device is "delayed": the format is a
+# compressed/encoded type (value > MJPEG in libdshowcapture's VideoFormat order, passed here as the 3rd arg) or the
+# name contains (case-insensitively) "elgato game capture hd" or "stream engine". "gv-usb2" devices are decoupled.
+m_dshow_buffering 0 "Logitech Webcam" 0
+m_dshow_buffering 0 "Logitech Webcam" 1
+m_dshow_buffering 0 "Elgato Game Capture HD" 0
+m_dshow_buffering 0 "ELGATO GAME CAPTURE HD60" 0
+m_dshow_buffering 0 "AVerMedia Stream Engine" 0
+m_dshow_buffering 0 "I-O DATA GV-USB2" 0
+m_dshow_buffering 0 "Elgato Game Capture HD60 S" 0
+m_dshow_buffering 1 "Logitech Webcam" 0
+m_dshow_buffering 2 "Elgato Game Capture HD" 1
+m_dshow_buffering 7 "Logitech Webcam" 1
+m_dshow_buffering 7 "Logitech Webcam" 0

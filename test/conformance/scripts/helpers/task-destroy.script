@@ -1,0 +1,9 @@
+# destroy(): all tasks queued before destroy() still run (the stop marker is deferred behind
+# pending tasks) before the worker exits; destroy() returns after the thread was joined (CORE).
+task_create 0
+task_gate 0
+task_queue 0 first
+task_queue 0 second
+task_queue 0 third
+task_destroy_release 0 4
+task_log

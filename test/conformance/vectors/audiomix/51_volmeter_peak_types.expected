@@ -1,0 +1,6 @@
+meter_attach ret=1
+meter_cb 0 mag -12.0412006 -14.5399752 -inf -inf -inf -inf -inf -inf peak 0 -2.49877477 -inf -inf -inf -inf -inf -inf ip 0 -2.49877477 -inf -inf -inf -inf -inf -inf
+meter_cb 0 mag -12.0412006 -14.5399752 -inf -inf -inf -inf -inf -inf peak 0 -2.49877477 -inf -inf -inf -inf -inf -inf ip 0 -2.49877477 -inf -inf -inf -inf -inf -inf
+meter_cb 0 mag -6.02060032 -8.51937485 -inf -inf -inf -inf -inf -inf peak -6.02060032 -8.51937485 -inf -inf -inf -inf -inf -inf ip -6.02060032 -8.51937485 -inf -inf -inf -inf -inf -inf
+meter_cb 0 mag -5.17326641 -7.67204189 -inf -inf -inf -inf -inf -inf peak -0.4968611 -2.99563622 -inf -inf -inf -inf -inf -inf ip -0.4968611 -2.99563622 -inf -inf -inf -inf -inf -inf
+meter_cb 0 mag -5.17326641 -7.67204189 -inf -inf -inf -inf -inf -inf peak -1.93820012 -4.43697453 -inf -inf -inf -inf -inf -inf ip -1.93820012 -4.43697453 -inf -inf -inf -inf -inf -inf

@@ -1,0 +1,151 @@
+> trace 0
+> gs_create g
+ret 0 created
+> gs_enter_context g
+> trace 1
+> size 640 360
+> gs_texrender_create GS_RGBA GS_ZS_NONE > tr
+ret ptr
+> gs_texrender_get_format tr
+ret 3
+> gs_texrender_get_texture tr
+ret null
+== begin allocates the target (levels=1, render target flag) and switches to it
+> gs_set_viewport 5 6 7 8
+  dev device_set_viewport x=5 y=6 w=7 h=8
+> gs_matrix_translate3f 3 3 3
+> gs_texrender_begin tr 128 64
+  dev device_texture_create w=128 h=64 fmt=3 levels=1 data=null flags=4
+  dev device_get_viewport
+  dev device_projection_push
+  dev device_get_render_target
+  dev device_get_zstencil_target
+  dev device_get_color_space
+  dev device_set_render_target_with_color_space tex=#6 zs=null space=0
+  dev device_set_viewport x=0 y=0 w=128 h=64
+ret true
+(inside: matrix is identity)
+> gs_matrix_get
+matrix 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1
+> gs_texrender_get_texture tr
+ret #6
+> gs_texrender_end tr
+  dev device_set_render_target_with_color_space tex=null zs=null space=0
+  dev device_projection_pop
+  dev device_set_viewport x=5 y=6 w=7 h=8
+== after end the saved viewport, projection and matrix are back
+> gs_matrix_get
+matrix 1 0 0 0 0 1 0 0 0 0 1 0 3 3 3 1
+> gs_get_viewport
+  dev device_get_viewport
+viewport 5 6 7 8
+== a second begin after end but without reset is refused because 'rendered' is set
+> gs_texrender_begin tr 128 64
+ret false
+> gs_texrender_reset tr
+== same size again: no reallocation
+> gs_texrender_begin tr 128 64
+  dev device_get_viewport
+  dev device_projection_push
+  dev device_get_render_target
+  dev device_get_zstencil_target
+  dev device_get_color_space
+  dev device_set_render_target_with_color_space tex=#6 zs=null space=0
+  dev device_set_viewport x=0 y=0 w=128 h=64
+ret true
+> gs_texrender_end tr
+  dev device_set_render_target_with_color_space tex=null zs=null space=0
+  dev device_projection_pop
+  dev device_set_viewport x=5 y=6 w=7 h=8
+> gs_texrender_reset tr
+== different size re-allocates: old texture destroyed, new one created
+> gs_texrender_begin tr 32 16
+  dev gs_texture_destroy tex=#6
+  dev device_texture_create w=32 h=16 fmt=3 levels=1 data=null flags=4
+  dev device_get_viewport
+  dev device_projection_push
+  dev device_get_render_target
+  dev device_get_zstencil_target
+  dev device_get_color_space
+  dev device_set_render_target_with_color_space tex=#7 zs=null space=0
+  dev device_set_viewport x=0 y=0 w=32 h=16
+ret true
+> gs_texrender_end tr
+  dev device_set_render_target_with_color_space tex=null zs=null space=0
+  dev device_projection_pop
+  dev device_set_viewport x=5 y=6 w=7 h=8
+> gs_texrender_reset tr
+== zero size is refused
+> gs_texrender_begin tr 0 16
+ret false
+> gs_texrender_begin tr 16 0
+ret false
+== with a colour space argument and depth buffer
+> gs_texrender_create GS_RGBA16F GS_Z24_S8 > tz
+ret ptr
+> gs_texrender_get_format tz
+ret 9
+> gs_texrender_begin_with_color_space tz 10 10 GS_CS_709_SCRGB
+  dev device_texture_create w=10 h=10 fmt=9 levels=1 data=null flags=4
+  dev device_zstencil_create width=10 height=10 format=2
+  dev device_get_viewport
+  dev device_projection_push
+  dev device_get_render_target
+  dev device_get_zstencil_target
+  dev device_get_color_space
+  dev device_set_render_target_with_color_space tex=#8 zs=#9 space=3
+  dev device_set_viewport x=0 y=0 w=10 h=10
+ret true
+> gs_texrender_end tz
+  dev device_set_render_target_with_color_space tex=null zs=null space=0
+  dev device_projection_pop
+  dev device_set_viewport x=5 y=6 w=7 h=8
+== the previous render target and its colour space are restored
+> gs_texrender_reset tz
+== target creation failure
+> fail device_texture_create 1
+> gs_texrender_begin tr 99 99
+  dev gs_texture_destroy tex=#7
+  dev device_texture_create w=99 h=99 fmt=3 levels=1 data=null flags=4
+ret false
+> fail device_texture_create 0
+== QUIRK: after a failed allocation the new size is remembered, so the same size is refused without retrying
+> gs_texrender_begin tr 99 99
+ret false
+> gs_texrender_begin tr 98 99
+  dev device_texture_create w=98 h=99 fmt=3 levels=1 data=null flags=4
+  dev device_get_viewport
+  dev device_projection_push
+  dev device_get_render_target
+  dev device_get_zstencil_target
+  dev device_get_color_space
+  dev device_set_render_target_with_color_space tex=#10 zs=null space=0
+  dev device_set_viewport x=0 y=0 w=98 h=99
+ret true
+> gs_texrender_end tr
+  dev device_set_render_target_with_color_space tex=null zs=null space=0
+  dev device_projection_pop
+  dev device_set_viewport x=5 y=6 w=7 h=8
+> gs_texrender_reset tr
+== zstencil creation failure destroys the new target
+> fail device_zstencil_create 1
+> gs_texrender_begin tz 77 77
+  dev gs_texture_destroy tex=#8
+  dev gs_zstencil_destroy zstencil=#9
+  dev device_texture_create w=77 h=77 fmt=9 levels=1 data=null flags=4
+  dev device_zstencil_create width=77 height=77 format=2
+  dev gs_texture_destroy tex=#11
+ret false
+> fail device_zstencil_create 0
+== NULL texrender everywhere
+> gs_texrender_begin - 1 1
+ret false
+> gs_texrender_end -
+> gs_texrender_reset -
+> gs_texrender_get_texture -
+ret null
+> gs_texrender_destroy -
+== destroy releases texture and zstencil
+> gs_texrender_destroy tz
+> gs_texrender_destroy tr
+  dev gs_texture_destroy tex=#10

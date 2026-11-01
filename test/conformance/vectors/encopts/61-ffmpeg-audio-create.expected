@@ -1,0 +1,114 @@
+echo aac-stereo
+av.find_encoder aac -> found
+log info ---------------------------------
+log info [FFmpeg aac encoder: 'enc'] bitrate: 128, channels: 2, channel_layout: layout-2-3, track: 1 
+av.open2 codec=aac bit_rate=128000 sample_rate=48000 channels=2 sample_fmt=8 strict=-2 flags=4194304
+av.samples_alloc channels=2 nb_samples=1024 fmt=8
+aud_create aac ok type=aac
+aud state bit_rate=128000 sample_rate=48000 channels=2 order=1 mask=0x3 sample_fmt=8
+aud state frame_size=1024 frame_size_bytes=4096 planes=2 audio_size=4 strict=-2 flags=4194304
+echo opus-uses-libopus-first
+av.find_encoder libopus -> found
+log info ---------------------------------
+log info [FFmpeg libopus encoder: 'enc'] bitrate: 128, channels: 2, channel_layout: layout-2-3, track: 1 
+av.open2 codec=libopus bit_rate=128000 sample_rate=48000 channels=2 sample_fmt=3 strict=-2 flags=4194304
+av.samples_alloc channels=2 nb_samples=1024 fmt=3
+aud_create opus ok type=libopus
+aud state bit_rate=128000 sample_rate=48000 channels=2 order=1 mask=0x3 sample_fmt=3
+aud state frame_size=1024 frame_size_bytes=8192 planes=1 audio_size=8 strict=-2 flags=4194304
+echo opus-falls-back-to-opus-name
+av.find_encoder libopus -> missing
+av.find_encoder opus -> found
+log info ---------------------------------
+log info [FFmpeg opus encoder: 'enc'] bitrate: 128, channels: 2, channel_layout: layout-2-3, track: 1 
+av.open2 codec=opus bit_rate=128000 sample_rate=48000 channels=2 sample_fmt=3 strict=-2 flags=4194304
+av.samples_alloc channels=2 nb_samples=1024 fmt=3
+aud_create opus ok type=opus
+aud state bit_rate=128000 sample_rate=48000 channels=2 order=1 mask=0x3 sample_fmt=3
+aud state frame_size=1024 frame_size_bytes=8192 planes=1 audio_size=8 strict=-2 flags=4194304
+echo missing-codec
+av.find_encoder aac -> missing
+log info ---------------------------------
+log warning [FFmpeg aac encoder: 'enc'] Couldn't find encoder
+aud_create aac null
+echo zero-bitrate-invalid-for-lossy
+av.find_encoder aac -> found
+log info ---------------------------------
+log warning [FFmpeg aac encoder: 'enc'] Invalid bitrate specified
+aud_create aac null
+echo zero-bitrate-allowed-for-lossless
+av.find_encoder flac -> found
+log info ---------------------------------
+log info [FFmpeg flac encoder: 'enc'] bitrate: 0, channels: 2, channel_layout: layout-2-3, track: 1 
+av.open2 codec=flac bit_rate=0 sample_rate=48000 channels=2 sample_fmt=1 strict=-2 flags=4194304
+av.samples_alloc channels=2 nb_samples=1024 fmt=1
+aud_create flac ok type=flac
+aud state bit_rate=0 sample_rate=48000 channels=2 order=1 mask=0x3 sample_fmt=1
+aud state frame_size=1024 frame_size_bytes=4096 planes=1 audio_size=4 strict=-2 flags=4194304
+av.find_encoder alac -> found
+log info ---------------------------------
+log info [FFmpeg alac encoder: 'enc'] bitrate: 0, channels: 2, channel_layout: layout-2-3, track: 1 
+av.open2 codec=alac bit_rate=0 sample_rate=48000 channels=2 sample_fmt=3 strict=-2 flags=4194304
+av.samples_alloc channels=2 nb_samples=1024 fmt=3
+aud_create alac ok type=alac
+aud state bit_rate=0 sample_rate=48000 channels=2 order=1 mask=0x3 sample_fmt=3
+aud state frame_size=1024 frame_size_bytes=8192 planes=1 audio_size=8 strict=-2 flags=4194304
+av.find_encoder pcm_s16le -> found
+log info ---------------------------------
+log info [FFmpeg pcm_s16le encoder: 'enc'] bitrate: 0, channels: 2, channel_layout: layout-2-3, track: 1 
+av.open2 codec=pcm_s16le bit_rate=0 sample_rate=48000 channels=2 sample_fmt=3 strict=-2 flags=4194304
+av.samples_alloc channels=2 nb_samples=1024 fmt=3
+aud_create pcm ok type=pcm_s16le
+aud state bit_rate=0 sample_rate=48000 channels=2 order=1 mask=0x3 sample_fmt=3
+aud state frame_size=1024 frame_size_bytes=8192 planes=1 audio_size=8 strict=-2 flags=4194304
+av.find_encoder pcm_s24le -> found
+log info ---------------------------------
+log info [FFmpeg pcm_s24le encoder: 'enc'] bitrate: 0, channels: 2, channel_layout: layout-2-3, track: 1 
+av.open2 codec=pcm_s24le bit_rate=0 sample_rate=48000 channels=2 sample_fmt=3 strict=-2 flags=4194304
+av.samples_alloc channels=2 nb_samples=1024 fmt=3
+aud_create pcm24 ok type=pcm_s24le
+aud state bit_rate=0 sample_rate=48000 channels=2 order=1 mask=0x3 sample_fmt=3
+aud state frame_size=1024 frame_size_bytes=8192 planes=1 audio_size=8 strict=-2 flags=4194304
+av.find_encoder pcm_f32le -> found
+log info ---------------------------------
+log info [FFmpeg pcm_f32le encoder: 'enc'] bitrate: 0, channels: 2, channel_layout: layout-2-3, track: 1 
+av.open2 codec=pcm_f32le bit_rate=0 sample_rate=48000 channels=2 sample_fmt=3 strict=-2 flags=4194304
+av.samples_alloc channels=2 nb_samples=1024 fmt=3
+aud_create pcm32 ok type=pcm_f32le
+aud state bit_rate=0 sample_rate=48000 channels=2 order=1 mask=0x3 sample_fmt=3
+aud state frame_size=1024 frame_size_bytes=8192 planes=1 audio_size=8 strict=-2 flags=4194304
+echo bitrate-of-lossless-codec-ignored
+av.find_encoder flac -> found
+log info ---------------------------------
+log info [FFmpeg flac encoder: 'enc'] bitrate: 0, channels: 2, channel_layout: layout-2-3, track: 1 
+av.open2 codec=flac bit_rate=0 sample_rate=48000 channels=2 sample_fmt=1 strict=-2 flags=4194304
+av.samples_alloc channels=2 nb_samples=1024 fmt=1
+aud_create flac ok type=flac
+aud state bit_rate=0 sample_rate=48000 channels=2 order=1 mask=0x3 sample_fmt=1
+aud state frame_size=1024 frame_size_bytes=4096 planes=1 audio_size=4 strict=-2 flags=4194304
+echo lossy-bitrate
+av.find_encoder aac -> found
+log info ---------------------------------
+log info [FFmpeg aac encoder: 'enc'] bitrate: 320, channels: 2, channel_layout: layout-2-3, track: 1 
+av.open2 codec=aac bit_rate=320000 sample_rate=48000 channels=2 sample_fmt=3 strict=-2 flags=4194304
+av.samples_alloc channels=2 nb_samples=1024 fmt=3
+aud_create aac ok type=aac
+aud state bit_rate=320000 sample_rate=48000 channels=2 order=1 mask=0x3 sample_fmt=3
+aud state frame_size=1024 frame_size_bytes=8192 planes=1 audio_size=8 strict=-2 flags=4194304
+echo negative-bitrate-is-accepted-and-negated
+av.find_encoder aac -> found
+log info ---------------------------------
+log info [FFmpeg aac encoder: 'enc'] bitrate: -64, channels: 2, channel_layout: layout-2-3, track: 1 
+av.open2 codec=aac bit_rate=-64000 sample_rate=48000 channels=2 sample_fmt=3 strict=-2 flags=4194304
+av.samples_alloc channels=2 nb_samples=1024 fmt=3
+aud_create aac ok type=aac
+aud state bit_rate=-64000 sample_rate=48000 channels=2 order=1 mask=0x3 sample_fmt=3
+aud state frame_size=1024 frame_size_bytes=8192 planes=1 audio_size=8 strict=-2 flags=4194304
+echo open-failure
+av.find_encoder aac -> found
+log info ---------------------------------
+log info [FFmpeg aac encoder: 'enc'] bitrate: 128, channels: 2, channel_layout: layout-2-3, track: 1 
+av.open2 codec=aac bit_rate=128000 sample_rate=48000 channels=2 sample_fmt=3 strict=-2 flags=4194304
+host.set_last_error "Failed to open AAC codec: error -1"
+log warning [FFmpeg aac encoder: 'enc'] Failed to open AAC codec: error -1
+aud_create aac null

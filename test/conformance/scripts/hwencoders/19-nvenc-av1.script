@@ -1,0 +1,34 @@
+# S-050 nvenc: AV1 specifics (tiles at >= 4K pixels, colour description, tier/level, bit depth).
+dump 2
+nvcap dyn_bitrate 1
+nvcap 10bit 1
+defaults av1
+create av1 soft
+destroy
+# 3840x2160 and above: 2 tile columns; just below: 0
+host size 3840 2160
+create av1 soft
+destroy
+host size 3839 2160
+create av1 soft
+destroy
+host size 4096 1716
+create av1 soft
+destroy
+host size 1920 1080
+# P010 + PQ + HDR flags
+host format p010
+host colorspace pq
+host range full
+create av1 soft
+state
+destroy
+host colorspace hlg
+create av1 soft
+destroy
+# CBR enables bitstream padding; the rate-control default (lowercase cbr) also counts (mode check)
+host format nv12
+host colorspace 601
+set str rate_control VBR
+create av1 soft
+destroy

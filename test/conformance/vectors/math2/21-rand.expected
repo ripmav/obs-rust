@@ -1,0 +1,6 @@
+rand_check positive=1 n=2000 in_range=1 varies=1
+rand_check positive=0 n=2000 in_range=1 varies=1
+rand_check positive=5 n=2000 in_range=1 varies=1
+rand_check positive=-1 n=2000 in_range=1 varies=1
+vec3_rand_check positive=1 n=1000 in_range=1 varies=1 w_zero=1
+vec3_rand_check positive=0 n=1000 in_range=1 varies=1 w_zero=1

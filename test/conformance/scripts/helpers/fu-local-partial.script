@@ -1,0 +1,17 @@
+# Cache already holds an OLDER package: only files that are newer locally (strictly greater
+# version) or absent from the cache package are copied; files with equal or higher cached
+# version are left untouched (CORE).
+fu_put /L/package.json "{\"version\":5,\"files\":[{\"name\":\"same.json\",\"version\":1},{\"name\":\"newer.json\",\"version\":3},{\"name\":\"older.json\",\"version\":1},{\"name\":\"new.json\",\"version\":1}]}"
+fu_put /L/same.json "same-local"
+fu_put /L/newer.json "newer-local"
+fu_put /L/older.json "older-local"
+fu_put /L/new.json "new-local"
+fu_put /C/package.json "{\"version\":4,\"files\":[{\"name\":\"same.json\",\"version\":1},{\"name\":\"newer.json\",\"version\":2},{\"name\":\"older.json\",\"version\":9}]}"
+fu_put /C/same.json "same-cache"
+fu_put /C/newer.json "newer-cache"
+fu_put /C/older.json "older-cache"
+fu_run /L /C http://srv/updates UA/1.0
+fu_cat /C/same.json
+fu_cat /C/newer.json
+fu_cat /C/older.json
+fu_cat /C/new.json

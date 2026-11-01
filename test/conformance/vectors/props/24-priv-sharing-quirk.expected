@@ -1,0 +1,13 @@
+add button2 b ok
+click click_b prop=b props=P data=tbtn
+click -> 1
+click click_b prop=b props=P data=tmod
+click -> 1
+echo priv-cleared-by-null-priv
+click click_b prop=b props=P data=tctx
+click -> 1
+echo modified-callback-sees-same-slot
+modified2 mod priv=tmod prop=b props=P settings=@null
+modified -> 1
+click click_b prop=b props=P data=tmod
+click -> 1

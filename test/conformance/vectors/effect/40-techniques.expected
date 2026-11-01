@@ -1,0 +1,283 @@
+backend vertexshader_create location="t1.effect (Vertex shader, technique A, pass 0)" len=84 fnv=f084d8dad56eaab7
+  result ok
+backend pixelshader_create location="t1.effect (Pixel shader, technique A, pass 0)" len=82 fnv=d17192e5faa77a44
+  result ok
+backend vertexshader_create location="t1.effect (Vertex shader, technique B, pass 0)" len=84 fnv=f084d8dad56eaab7
+  result ok
+backend pixelshader_create location="t1.effect (Pixel shader, technique B, pass 0)" len=82 fnv=d17192e5faa77a44
+  result ok
+backend vertexshader_create location="t1.effect (Vertex shader, technique B, pass 1)" len=84 fnv=f084d8dad56eaab7
+  result ok
+backend pixelshader_create location="t1.effect (Pixel shader, technique B, pass 1)" len=82 fnv=d17192e5faa77a44
+  result ok
+backend vertexshader_create location="t1.effect (Vertex shader, technique C, pass 0)" len=84 fnv=f084d8dad56eaab7
+  result ok
+backend pixelshader_create location="t1.effect (Pixel shader, technique C, pass 0)" len=82 fnv=d17192e5faa77a44
+  result ok
+backend vertexshader_create location="t1.effect (Vertex shader, technique C, pass 1)" len=84 fnv=f084d8dad56eaab7
+  result ok
+backend pixelshader_create location="t1.effect (Pixel shader, technique C, pass 1)" len=82 fnv=d17192e5faa77a44
+  result ok
+backend vertexshader_create location="t1.effect (Vertex shader, technique A, pass 0)" len=84 fnv=f084d8dad56eaab7
+  result ok
+backend pixelshader_create location="t1.effect (Pixel shader, technique A, pass 0)" len=82 fnv=d17192e5faa77a44
+  result ok
+backend vertexshader_create location="t1.effect (Vertex shader, technique A, pass 1)" len=84 fnv=f084d8dad56eaab7
+  result ok
+backend pixelshader_create location="t1.effect (Pixel shader, technique A, pass 1)" len=82 fnv=d17192e5faa77a44
+  result ok
+backend vertexshader_create location="t1.effect (Vertex shader, technique Tricky, pass 0)" len=84 fnv=f084d8dad56eaab7
+  result ok
+backend pixelshader_create location="t1.effect (Pixel shader, technique Tricky, pass 0)" len=82 fnv=d17192e5faa77a44
+  result ok
+backend vertexshader_create location="t1.effect (Vertex shader, technique Tricky, pass 1)" len=84 fnv=f084d8dad56eaab7
+  result ok
+backend pixelshader_create location="t1.effect (Pixel shader, technique Tricky, pass 1)" len=82 fnv=d17192e5faa77a44
+  result ok
+ep result=ok
+  errors count=0 has_errors=0
+  ep params=0 structs=0 funcs=2 samplers=0 techniques=6
+  ep_func 0 name=VS ret=float4 mapping="POSITION" params=0
+    struct_deps=[] func_deps=[] param_deps=[] sampler_deps=[]
+    contents="{ return float4(0,0,0,1); }"
+  ep_func 1 name=PS ret=float4 mapping="TARGET" params=0
+    struct_deps=[] func_deps=[] param_deps=[] sampler_deps=[]
+    contents="{ return float4(1,1,1,1); }"
+  ep_technique 0 name=A passes=1
+    ep_pass 0 name=@null
+      vertex=["VS","(",")",";"]
+      fragment=["PS","(",")",";"]
+  ep_technique 1 name=B passes=2
+    ep_pass 0 name="p1"
+      vertex=["VS","(",")",";"]
+      fragment=["PS","(",")",";"]
+    ep_pass 1 name="p2"
+      vertex=["VS","(",")",";"]
+      fragment=["PS","(",")",";"]
+  ep_technique 2 name=Empty passes=0
+  ep_technique 3 name=C passes=2
+    ep_pass 0 name="first"
+      vertex=["VS","(",")",";"]
+      fragment=["PS","(",")",";"]
+    ep_pass 1 name="first"
+      vertex=["VS","(",")",";"]
+      fragment=["PS","(",")",";"]
+  ep_technique 4 name=A passes=2
+    ep_pass 0 name=@null
+      vertex=["VS","(",")",";"]
+      fragment=["PS","(",")",";"]
+    ep_pass 1 name=@null
+      vertex=["VS","(",")",";"]
+      fragment=["PS","(",")",";"]
+  ep_technique 5 name=Tricky passes=2
+    ep_pass 0 name="123"
+      vertex=["VS","(",")",";"]
+      fragment=["PS","(",")",";"]
+    ep_pass 1 name="\"quoted\""
+      vertex=["VS","(",")",";"]
+      fragment=["PS","(",")",";"]
+  error_string=@null
+effect (effect) params=0 techniques=6 viewproj=- world=-
+  technique 0 name=A passes=1
+    pass 0 name=@null vertex_params=[] pixel_params=[] vertex=yes pixel=yes
+  technique 1 name=B passes=2
+    pass 0 name="p1" vertex_params=[] pixel_params=[] vertex=yes pixel=yes
+    pass 1 name="p2" vertex_params=[] pixel_params=[] vertex=yes pixel=yes
+  technique 2 name=Empty passes=0
+  technique 3 name=C passes=2
+    pass 0 name="first" vertex_params=[] pixel_params=[] vertex=yes pixel=yes
+    pass 1 name="first" vertex_params=[] pixel_params=[] vertex=yes pixel=yes
+  technique 4 name=A passes=2
+    pass 0 name=@null vertex_params=[] pixel_params=[] vertex=yes pixel=yes
+    pass 1 name=@null vertex_params=[] pixel_params=[] vertex=yes pixel=yes
+  technique 5 name=Tricky passes=2
+    pass 0 name="123" vertex_params=[] pixel_params=[] vertex=yes pixel=yes
+    pass 1 name="\"quoted\"" vertex_params=[] pixel_params=[] vertex=yes pixel=yes
+backend shader_destroy location="t1.effect (Vertex shader, technique A, pass 0)"
+backend shader_destroy location="t1.effect (Pixel shader, technique A, pass 0)"
+backend shader_destroy location="t1.effect (Vertex shader, technique B, pass 0)"
+backend shader_destroy location="t1.effect (Pixel shader, technique B, pass 0)"
+backend shader_destroy location="t1.effect (Vertex shader, technique B, pass 1)"
+backend shader_destroy location="t1.effect (Pixel shader, technique B, pass 1)"
+backend shader_destroy location="t1.effect (Vertex shader, technique C, pass 0)"
+backend shader_destroy location="t1.effect (Pixel shader, technique C, pass 0)"
+backend shader_destroy location="t1.effect (Vertex shader, technique C, pass 1)"
+backend shader_destroy location="t1.effect (Pixel shader, technique C, pass 1)"
+backend shader_destroy location="t1.effect (Vertex shader, technique A, pass 0)"
+backend shader_destroy location="t1.effect (Pixel shader, technique A, pass 0)"
+backend shader_destroy location="t1.effect (Vertex shader, technique A, pass 1)"
+backend shader_destroy location="t1.effect (Pixel shader, technique A, pass 1)"
+backend shader_destroy location="t1.effect (Vertex shader, technique Tricky, pass 0)"
+backend shader_destroy location="t1.effect (Pixel shader, technique Tricky, pass 0)"
+backend shader_destroy location="t1.effect (Vertex shader, technique Tricky, pass 1)"
+backend shader_destroy location="t1.effect (Pixel shader, technique Tricky, pass 1)"
+backend vertexshader_create location="t1.effect (Vertex shader, technique A, pass 0)" len=84 fnv=f084d8dad56eaab7
+  result ok
+backend pixelshader_create location="t1.effect (Pixel shader, technique A, pass 0)" len=82 fnv=d17192e5faa77a44
+  result ok
+backend vertexshader_create location="t1.effect (Vertex shader, technique B, pass 0)" len=84 fnv=f084d8dad56eaab7
+  result ok
+backend pixelshader_create location="t1.effect (Pixel shader, technique B, pass 0)" len=82 fnv=d17192e5faa77a44
+  result ok
+backend vertexshader_create location="t1.effect (Vertex shader, technique B, pass 1)" len=84 fnv=f084d8dad56eaab7
+  result ok
+backend pixelshader_create location="t1.effect (Pixel shader, technique B, pass 1)" len=82 fnv=d17192e5faa77a44
+  result ok
+backend vertexshader_create location="t1.effect (Vertex shader, technique C, pass 0)" len=84 fnv=f084d8dad56eaab7
+  result ok
+backend pixelshader_create location="t1.effect (Pixel shader, technique C, pass 0)" len=82 fnv=d17192e5faa77a44
+  result ok
+backend vertexshader_create location="t1.effect (Vertex shader, technique C, pass 1)" len=84 fnv=f084d8dad56eaab7
+  result ok
+backend pixelshader_create location="t1.effect (Pixel shader, technique C, pass 1)" len=82 fnv=d17192e5faa77a44
+  result ok
+backend vertexshader_create location="t1.effect (Vertex shader, technique A, pass 0)" len=84 fnv=f084d8dad56eaab7
+  result ok
+backend pixelshader_create location="t1.effect (Pixel shader, technique A, pass 0)" len=82 fnv=d17192e5faa77a44
+  result ok
+backend vertexshader_create location="t1.effect (Vertex shader, technique A, pass 1)" len=84 fnv=f084d8dad56eaab7
+  result ok
+backend pixelshader_create location="t1.effect (Pixel shader, technique A, pass 1)" len=82 fnv=d17192e5faa77a44
+  result ok
+backend vertexshader_create location="t1.effect (Vertex shader, technique Tricky, pass 0)" len=84 fnv=f084d8dad56eaab7
+  result ok
+backend pixelshader_create location="t1.effect (Pixel shader, technique Tricky, pass 0)" len=82 fnv=d17192e5faa77a44
+  result ok
+backend vertexshader_create location="t1.effect (Vertex shader, technique Tricky, pass 1)" len=84 fnv=f084d8dad56eaab7
+  result ok
+backend pixelshader_create location="t1.effect (Pixel shader, technique Tricky, pass 1)" len=82 fnv=d17192e5faa77a44
+  result ok
+effect e1 result=ok
+  error_string=@null
+effect e1 params=0 techniques=6 viewproj=- world=-
+  technique 0 name=A passes=1
+    pass 0 name=@null vertex_params=[] pixel_params=[] vertex=yes pixel=yes
+  technique 1 name=B passes=2
+    pass 0 name="p1" vertex_params=[] pixel_params=[] vertex=yes pixel=yes
+    pass 1 name="p2" vertex_params=[] pixel_params=[] vertex=yes pixel=yes
+  technique 2 name=Empty passes=0
+  technique 3 name=C passes=2
+    pass 0 name="first" vertex_params=[] pixel_params=[] vertex=yes pixel=yes
+    pass 1 name="first" vertex_params=[] pixel_params=[] vertex=yes pixel=yes
+  technique 4 name=A passes=2
+    pass 0 name=@null vertex_params=[] pixel_params=[] vertex=yes pixel=yes
+    pass 1 name=@null vertex_params=[] pixel_params=[] vertex=yes pixel=yes
+  technique 5 name=Tricky passes=2
+    pass 0 name="123" vertex_params=[] pixel_params=[] vertex=yes pixel=yes
+    pass 1 name="\"quoted\"" vertex_params=[] pixel_params=[] vertex=yes pixel=yes
+technique A -> found passes=1
+technique B -> found passes=2
+technique Empty -> found passes=0
+technique Missing -> null
+technique a -> null
+--- passes by name and index
+pass_by_name p2 -> index=1
+pass_by_name P2 -> null
+pass_by_name first -> index=0
+pass_by_idx 0 -> name=p1
+pass_by_idx 1 -> name=p2
+--- pass must be followed by the name or '{'; the token after the name is not checked to be '{'
+backend vertexshader_create location="p1 (Vertex shader, technique T, pass 0)" len=70 fnv=033a740bcae5f27f
+  result ok
+log debug gs_pixelshader_create: Null 'shader' parameter
+log error Pass (0) <a> missing pixel shader!
+backend vertexshader_create location="p1 (Vertex shader, technique T, pass 1)" len=70 fnv=033a740bcae5f27f
+  result ok
+log debug gs_pixelshader_create: Null 'shader' parameter
+log error Pass (1) <> missing pixel shader!
+ep result=fail
+  errors count=0 has_errors=0
+  ep params=0 structs=0 funcs=1 samplers=0 techniques=1
+  ep_func 0 name=VS ret=float4 mapping="POSITION" params=0
+    struct_deps=[] func_deps=[] param_deps=[] sampler_deps=[]
+    contents="{ return 0; }"
+  ep_technique 0 name=T passes=2
+    ep_pass 0 name="a"
+      vertex=["VS","(",")",";"]
+      fragment=[]
+    ep_pass 1 name=@null
+      vertex=["VS","(",")",";"]
+      fragment=[]
+  error_string=@null
+backend shader_destroy location="p1 (Vertex shader, technique T, pass 0)"
+backend shader_destroy location="p1 (Vertex shader, technique T, pass 1)"
+--- technique and pass keywords are case sensitive
+ep result=fail
+  errors count=1 has_errors=1
+    err 0 error file="p2" row=1 col=13 msg="Unexpected code segment"
+  ep params=0 structs=0 funcs=0 samplers=0 techniques=0
+  error_string="p2 (1, 13): Unexpected code segment\n"
+ep result=ok
+  errors count=0 has_errors=0
+  ep params=0 structs=0 funcs=1 samplers=0 techniques=1
+  ep_func 0 name=VS ret=float4 mapping="POSITION" params=0
+    struct_deps=[] func_deps=[] param_deps=[] sampler_deps=[]
+    contents="{ return 0; }"
+  ep_technique 0 name=T passes=0
+  error_string=@null
+effect (effect) params=0 techniques=1 viewproj=- world=-
+  technique 0 name=T passes=0
+--- whitespace and comments between the parts
+log debug gs_vertexshader_create: Null 'shader' parameter
+log error Pass (0) <> missing vertex shader!
+log debug gs_pixelshader_create: Null 'shader' parameter
+log error Pass (0) <> missing pixel shader!
+ep result=fail
+  errors count=0 has_errors=0
+  ep params=0 structs=0 funcs=0 samplers=0 techniques=1
+  ep_technique 0 name=T passes=1
+    ep_pass 0 name=@null
+      vertex=[]
+      fragment=[]
+  error_string=@null
+--- several statements in one pass
+backend vertexshader_create location="p5 (Vertex shader, technique T, pass 0)" len=70 fnv=033a740bcae5f27f
+  result ok
+backend pixelshader_create location="p5 (Pixel shader, technique T, pass 0)" len=70 fnv=033a740bcae5f27f
+  result ok
+ep result=ok
+  errors count=0 has_errors=0
+  ep params=0 structs=0 funcs=1 samplers=0 techniques=1
+  ep_func 0 name=VS ret=float4 mapping="POSITION" params=0
+    struct_deps=[] func_deps=[] param_deps=[] sampler_deps=[]
+    contents="{ return 0; }"
+  ep_technique 0 name=T passes=1
+    ep_pass 0 name=@null
+      vertex=["VS","(",")",";"]
+      fragment=["VS","(",")",";"]
+  error_string=@null
+effect (effect) params=0 techniques=1 viewproj=- world=-
+  technique 0 name=T passes=1
+    pass 0 name=@null vertex_params=[] pixel_params=[] vertex=yes pixel=yes
+backend shader_destroy location="p5 (Vertex shader, technique T, pass 0)"
+backend shader_destroy location="p5 (Pixel shader, technique T, pass 0)"
+--- technique names may be any NAME token, including keywords
+ep result=ok
+  errors count=0 has_errors=0
+  ep params=0 structs=0 funcs=0 samplers=0 techniques=3
+  ep_technique 0 name=pass passes=0
+  ep_technique 1 name=technique passes=0
+  ep_technique 2 name=struct passes=0
+  error_string=@null
+effect (effect) params=0 techniques=3 viewproj=- world=-
+  technique 0 name=pass passes=0
+  technique 1 name=technique passes=0
+  technique 2 name=struct passes=0
+backend shader_destroy location="t1.effect (Vertex shader, technique A, pass 0)"
+backend shader_destroy location="t1.effect (Pixel shader, technique A, pass 0)"
+backend shader_destroy location="t1.effect (Vertex shader, technique B, pass 0)"
+backend shader_destroy location="t1.effect (Pixel shader, technique B, pass 0)"
+backend shader_destroy location="t1.effect (Vertex shader, technique B, pass 1)"
+backend shader_destroy location="t1.effect (Pixel shader, technique B, pass 1)"
+backend shader_destroy location="t1.effect (Vertex shader, technique C, pass 0)"
+backend shader_destroy location="t1.effect (Pixel shader, technique C, pass 0)"
+backend shader_destroy location="t1.effect (Vertex shader, technique C, pass 1)"
+backend shader_destroy location="t1.effect (Pixel shader, technique C, pass 1)"
+backend shader_destroy location="t1.effect (Vertex shader, technique A, pass 0)"
+backend shader_destroy location="t1.effect (Pixel shader, technique A, pass 0)"
+backend shader_destroy location="t1.effect (Vertex shader, technique A, pass 1)"
+backend shader_destroy location="t1.effect (Pixel shader, technique A, pass 1)"
+backend shader_destroy location="t1.effect (Vertex shader, technique Tricky, pass 0)"
+backend shader_destroy location="t1.effect (Pixel shader, technique Tricky, pass 0)"
+backend shader_destroy location="t1.effect (Vertex shader, technique Tricky, pass 1)"
+backend shader_destroy location="t1.effect (Pixel shader, technique Tricky, pass 1)"

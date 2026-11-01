@@ -1,0 +1,45 @@
+# WASAPI source settings parsing and the restart decision on update. Device sources restart only when device_id
+# changes (case-sensitive compare; "default" is detected case-insensitively); process-output sources restart when
+# priority, class, title or executable changed. use_device_timing never restarts.
+s_reset
+s_defaults wasapi_input
+m_wasapi_new input
+s_set device_id str "{0.0.1.00000000}.{abc}"
+m_wasapi_update
+m_wasapi_update
+s_set use_device_timing bool true
+m_wasapi_update
+s_set device_id str "{0.0.1.00000000}.{ABC}"
+m_wasapi_update
+s_set device_id str "DEFAULT"
+m_wasapi_update
+s_set device_id str "default"
+m_wasapi_update
+# input sources ignore window/priority settings
+s_set window str "T:C:e.exe"
+s_set priority int 2
+m_wasapi_new input
+# process output
+s_reset
+s_defaults wasapi_process
+s_set window str "Game#3A X:UnrealWindow:game.exe"
+s_set priority int 1
+m_wasapi_new process
+m_wasapi_update
+s_set priority int 0
+m_wasapi_update
+s_set window str "Game#3A X:UnrealWindow:game.exe"
+m_wasapi_update
+s_set window str "Game#3A Y:UnrealWindow:game.exe"
+m_wasapi_update
+s_set window str "garbage"
+m_wasapi_update
+s_set window str ""
+m_wasapi_update
+# device output: device_id changes also notify the output-capture-device-changed signal
+s_reset
+s_defaults wasapi_output
+m_wasapi_new device
+s_set device_id str "{0.0.0.00000000}.{out1}"
+m_wasapi_update
+m_wasapi_update

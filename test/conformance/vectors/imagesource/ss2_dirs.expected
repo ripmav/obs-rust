@@ -1,0 +1,45 @@
+ev create slideshow_v2#1 public
+ev hotkey_register slideshow_v2#1 id=1 name=SlideShow.PlayPause desc=SlideShow.PlayPause
+ev hotkey_register slideshow_v2#1 id=2 name=SlideShow.Restart desc=SlideShow.Restart
+ev hotkey_register slideshow_v2#1 id=3 name=SlideShow.Stop desc=SlideShow.Stop
+ev hotkey_register slideshow_v2#1 id=4 name=SlideShow.NextSlide desc=SlideShow.NextSlide
+ev hotkey_register slideshow_v2#1 id=5 name=SlideShow.PreviousSlide desc=SlideShow.PreviousSlide
+ev create fade_transition#2 private
+ev create image_source#3[/s/a.png] private
+ev task_queued
+ev create image_source#4[/s/b.png] private
+ev task_queued
+ev create image_source#5[/s/c.PNG] private
+ev task_queued
+ev create image_source#6[/s/x.webp] private
+ev task_queued
+ev create image_source#7[/s/d.jpeg] private
+ev task_queued
+ev create image_source#8[/s/e.GIF] private
+ev task_queued
+ev create image_source#9[/s/a.png] private
+ev task_queued
+ev create image_source#10[/missing/z.png] private
+ev task_queued
+ev create image_source#11[/s/.png] private
+ev task_queued
+ev tr_size fade_transition#2 1920x1080
+ev tr_align fade_transition#2 0
+ev tr_scale fade_transition#2 1
+ev tr_start fade_transition#2 mode=0 ms=700 dest=image_source#3[/s/a.png] -> started
+ev signal media_started slideshow_v2#1
+tick 0 clock=16000001
+state slideshow2 behavior=2 manual=0 randomize=0 loop=1 hide=0 use_cut=0 paused=0 stop=0 restart_on_activate=0 pause_on_deactivate=0 slide_time=2.70000005 tr_speed=700 tr_name=null elapsed=0.0160000008 cx=1920 cy=1080 state=1 transition=fade_transition#2 files=9
+state   file 0 /s/a.png
+state   file 1 /s/b.png
+state   file 2 /s/c.PNG
+state   file 3 /s/x.webp
+state   file 4 /s/d.jpeg
+state   file 5 /s/e.GIF
+state   file 6 /s/.png
+state   file 7 /missing/z.png
+state   file 8 /s/a.png
+state   cur 0 image_source#3[/s/a.png]
+state   prev 4:image_source#7[/s/d.jpeg] 5:image_source#8[/s/e.GIF] 6:image_source#11[/s/.png] 7:image_source#10[/missing/z.png] 8:image_source#9[/s/a.png]
+state   next 1:image_source#4[/s/b.png] 2:image_source#5[/s/c.PNG] 3:image_source#6[/s/x.webp] 4:image_source#7[/s/d.jpeg] 5:image_source#8[/s/e.GIF]
+proc total_files ok 9

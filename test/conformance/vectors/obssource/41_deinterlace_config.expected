@@ -1,0 +1,11 @@
+  cb C create
+log debug source 'C' (cam) created
+create c ok
+deint c mode=0 field=0 half_dur=0 offset=0 frame_ts=0
+deint c mode=2 field=0 half_dur=0 offset=0 frame_ts=0
+deint c mode=5 field=0 half_dur=0 offset=0 frame_ts=0
+deint c mode=5 field=1 half_dur=0 offset=0 frame_ts=0
+deint c mode=5 field=0 half_dur=0 offset=0 frame_ts=0
+deint c mode=5 field=1 half_dur=0 offset=0 frame_ts=0
+deint c mode=0 field=1 half_dur=0 offset=0 frame_ts=0
+deint c mode=99 field=1 half_dur=0 offset=0 frame_ts=0

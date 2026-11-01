@@ -1,0 +1,24 @@
+# Fader attached to a source: attach reads the volume; set_db drives obs_source_set_volume and the next "volume" signal
+# is swallowed (ignore_next_signal); external volume changes update the fader and fire callbacks (reverse order of registration).
+init 48000 2
+clock 1000000000
+source a input
+set a volume 0.5
+fader_new 0 0
+fader_attach 0 a
+fader_get 0
+fader_cb 0 add one
+fader_cb 0 add two
+fader_set 0 db -12
+state a
+set a volume 0.25
+fader_get 0
+set a volume 0.125
+fader_get 0
+fader_detach 0
+set a volume 1
+fader_get 0
+fader_cb 0 remove one
+fader_attach 0 a
+set a volume 0.7
+fader_get 0

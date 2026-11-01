@@ -1,0 +1,41 @@
+add a ok
+add b ok
+group g ok
+item g id=3 parent=main group=1 scene=0 abs=1 vis=0 user_vis=1 sel=0 lock=0 need_update=0
+  stored pos=100.25,100.75 rot=0 scale=1,1 scale_ref=1920,1080 align=5
+  bounds type=0 align=0 size=0,0 crop_to_bounds=0
+  crop l=0 r=0 t=0 b=0 bounds_crop l=0 r=0 t=0 b=0 last=500,300
+  output_scale=1,1 box_scale=500,300
+  draw [1,0,0,0] [0,1,0,0] [0,0,1,0] [100.25,100.75,0,1]
+  box [500,0,0,0] [0,300,0,0] [0,0,1,0] [100.25,100.75,0,1]
+item a id=1 parent=g group=0 scene=0 abs=1 vis=1 user_vis=1 sel=0 lock=0 need_update=0
+  stored pos=0,0 rot=0 scale=1,1 scale_ref=1920,1080 align=5
+  bounds type=0 align=0 size=0,0 crop_to_bounds=0
+  crop l=0 r=0 t=0 b=0 bounds_crop l=0 r=0 t=0 b=0 last=200,100
+  output_scale=1,1 box_scale=200,100
+  draw [1,0,0,0] [0,1,0,0] [0,0,1,0] [0,0,0,1]
+  box [200,0,0,0] [0,100,0,0] [0,0,1,0] [0,0,0,1]
+item b id=2 parent=g group=0 scene=0 abs=1 vis=1 user_vis=1 sel=0 lock=0 need_update=0
+  stored pos=299.75,199.25 rot=0 scale=1,1 scale_ref=1920,1080 align=5
+  bounds type=0 align=0 size=0,0 crop_to_bounds=0
+  crop l=0 r=0 t=0 b=0 bounds_crop l=0 r=0 t=0 b=0 last=200,100
+  output_scale=1,1 box_scale=200,100
+  draw [1,0,0,0] [0,1,0,0] [0,0,1,0] [299.75,199.25,0,1]
+  box [200,0,0,0] [0,100,0,0] [0,0,1,0] [299.75,199.25,0,1]
+item g id=3 parent=main group=1 scene=0 abs=1 vis=0 user_vis=1 sel=0 lock=0 need_update=0
+  stored pos=50,50 rot=30 scale=1,1 scale_ref=1920,1080 align=5
+  bounds type=0 align=0 size=0,0 crop_to_bounds=0
+  crop l=0 r=0 t=0 b=0 bounds_crop l=0 r=0 t=0 b=0 last=500,300
+  output_scale=1,1 box_scale=500,300
+  draw [0.866025388,0.50000006,0,0] [-0.50000006,0.866025388,0,0] [0,0,1,0] [50,50,0,1]
+  box [433.012695,250.000031,0,0] [-150.000015,259.807617,0,0] [0,0,1,0] [50,50,0,1]
+get a pos=0,0 rot=0 scale=1,1 align=5 btype=0 balign=0 bounds=0,0 bcrop=0 crop=0,0,0,0
+info a pos=0,0 rot=0 scale=1,1 align=5 btype=0 balign=0 bounds=0,0 crop_to_bounds=0
+ box_scale=200,100
+item g id=3 parent=main group=1 scene=0 abs=1 vis=0 user_vis=1 sel=0 lock=0 need_update=0
+  stored pos=50,50 rot=30 scale=1,1 scale_ref=1920,1080 align=5
+  bounds type=0 align=0 size=0,0 crop_to_bounds=0
+  crop l=0 r=0 t=0 b=0 bounds_crop l=0 r=0 t=0 b=0 last=500,300
+  output_scale=1,1 box_scale=500,300
+  draw [0.866025388,0.50000006,0,0] [-0.50000006,0.866025388,0,0] [0,0,1,0] [50,50,0,1]
+  box [433.012695,250.000031,0,0] [-150.000015,259.807617,0,0] [0,0,1,0] [50,50,0,1]

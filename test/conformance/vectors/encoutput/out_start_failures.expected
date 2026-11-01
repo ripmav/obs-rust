@@ -1,0 +1,45 @@
+log debug encoder 'v' (v) created
+encoder v created tb=1/30
+log debug encoder 'a' (a) created
+encoder a created tb=1/48000
+log debug encoder 'vbad' (vbad) created
+encoder vbad created tb=1/30
+--- plugin start returns false: no starting signal, no activate
+log debug output 'bad' (bad) created
+output bad created flags=7 reconnect=20/2
+set_venc bad idx=0 -> video_slots=01 audio_slots=00
+set_aenc bad idx=0 -> video_slots=01 audio_slots=01
+plugin out bad start
+start bad -> 0
+info bad flags=7 active=0 reconnecting=0 delay=0 active_delay=0
+--- begin_data_capture without audio encoder fails (video+audio flags, no audio encoder)
+log debug output 'noaud' (noaud) created
+output noaud created flags=7 reconnect=20/2
+set_venc noaud idx=0 -> video_slots=01 audio_slots=00
+plugin out noaud start
+plugin out noaud cannot begin
+start noaud -> 0
+can_begin noaud -> 0
+--- service flag without service
+log debug output 'svc' (svc) created
+output svc created flags=15 reconnect=20/2
+set_venc svc idx=0 -> video_slots=01 audio_slots=00
+set_aenc svc idx=0 -> video_slots=01 audio_slots=01
+start svc -> 0
+service set=1
+can_begin svc -> 1
+--- encoder whose create callback fails: initialize_encoders false, last error unset
+log debug output 'ie' (ie) created
+output ie created flags=7 reconnect=20/2
+set_venc ie idx=0 -> video_slots=01 audio_slots=00
+set_aenc ie idx=0 -> video_slots=01 audio_slots=01
+plugin out ie start
+plugin enc vbad create fail
+plugin out ie cannot begin
+start ie -> 0
+plugin enc vbad create fail
+init_encoders ie -> 0
+lasterr ie = -
+--- no data (plugin context NULL) is not testable here; last error API
+lasterr ie = boom
+lasterr ie = -

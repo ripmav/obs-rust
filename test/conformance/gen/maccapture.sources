@@ -1,0 +1,3 @@
+# S-052 maccapture: pure MODEL runner (macOS ObjC/CoreAudio/SCK/VideoToolbox code cannot be compiled on Linux);
+# only libobs media-io inline helpers (audio-io.h, video-io.h enums) are real.
+test/conformance/gen/maccapture_runner.c

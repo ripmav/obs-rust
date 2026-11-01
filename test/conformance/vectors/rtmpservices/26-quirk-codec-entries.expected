@@ -1,0 +1,7 @@
+guard-begin
+guard-end ok
+echo codecs-are-split-on-semicolons-after-joining-so-a-codec-containing-a-semicolon-becomes-two
+get vcodecs = ["h264","hevc","av1"]
+get acodecs = @null
+echo codec-of-exactly-15-and-16-chars
+get vcodecs = ["123456789012345","123456789012345"]

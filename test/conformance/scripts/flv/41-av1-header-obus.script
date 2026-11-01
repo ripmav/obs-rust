@@ -1,0 +1,74 @@
+# S-021 obs_parse_av1_header: OBU framing, metadata OBUs, malformed input.
+# OBUs are scanned in order. Temporal delimiters and every other OBU type are skipped, the
+# Sequence Header (type 1) is parsed, Metadata OBUs (type 5) are remembered (the LAST one is kept).
+# Failure (return 0, *header untouched): no sequence header, a second sequence header, a sequence
+# header or metadata OBU whose payload size is 0, an OBU that does not parse (forbidden bit, size
+# beyond the data, size field cut off), a sequence header that does not parse.
+# Input with the top bit of byte 0 set is taken to be an av1C record already: copied verbatim when
+# (byte0 & 0x7f) == 1 and size >= 4, else failure.
+echo "metadata-and-other-obus"
+# temporal delimiter + sequence header + metadata
+av1_header 12000a0b00000042abbfc37709d0012a050123456789
+# metadata before the sequence header
+av1_header 2a0501234567890a0b00000042abbfc37709d001
+# two metadata OBUs: the last one is kept
+av1_header 0a0b00000042abbfc37709d0012a0501234567892a0202ab
+# metadata between TD and sequence header and a frame OBU after
+av1_header 12002a0501234567890a0b00000042abbfc37709d001320410aabbcc
+# frame, padding (15), tile group (4) OBUs are skipped
+av1_header 12000a0b00000042abbfc37709d0017a020000320410aabbcc220101
+# sequence header with extension header
+av1_header 0e280b00000042abbfc37709d001
+# sequence header OBU without size field as the last OBU
+av1_header 0800000042abbfc37709d001
+# sequence header OBU with a 2-byte size field
+av1_header 0a8b0000000042abbfc37709d001
+# OBU with extension and no size field following (the last OBU): size = rest
+av1_header 12000a0b00000042abbfc37709d0012c000102
+echo "already-av1C"
+# av1C record: version 1, copied
+av1_header 81080c000a0b00000042abbfc37709d001
+# av1C record of exactly 4 bytes
+av1_header 81000000
+# av1C with marker but version 2: failure
+av1_header 82080c000a0b00000042abbfc37709d001
+# av1C marker, size 3: failure
+av1_header 81080c
+# av1C marker only: failure
+av1_header 81
+# av1C marker with version 0x7f: failure
+av1_header ff080c00
+echo "failures"
+# no sequence header
+av1_header 1200320410aabbcc
+# only a temporal delimiter
+av1_header 1200
+# two sequence headers
+av1_header 0a0b00000042abbfc37709d0010a0b00000042abbfc37709d001
+# sequence header with size 0
+av1_header 0a00
+# metadata OBU with size 0
+av1_header 0a0b00000042abbfc37709d0012a00
+# sequence header that is longer than the syntax (extra bits before the trailing one)
+av1_header 0a0d00000042abbfc37709d000ff80
+# obu_forbidden_bit set
+av1_header 8a0b00000042abbfc37709d001
+# OBU whose size runs beyond the data (declared 100, present 4)
+av1_header 0a6400000042
+# OBU after the sequence header does not parse (size beyond the data): everything fails
+av1_header 0a0b00000042abbfc37709d0012a7f01
+# OBU after the sequence header with the forbidden bit set
+av1_header 0a0b00000042abbfc37709d0018a0101
+echo "cut-off-inputs-that-fail-cleanly"
+# type 1 OBU header without size flag and no payload: size 0
+av1_header 08
+# size field 1 but payload missing
+av1_header 0a01
+# sequence header cut after its first byte
+av1_header 0a0b00
+# sequence header cut in the middle
+av1_header 0a0b00000042abbfc377
+# a lone temporal delimiter header byte without size flag is a complete OBU
+av1_header 0a0b00000042abbfc37709d00110
+# empty sequence header payload but valid OBU after
+av1_header 0a002a050123456789

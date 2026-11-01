@@ -1,0 +1,12 @@
+# Sprite edge cases: NULL texture + zero size is an error, the matrix is restored afterwards.
+trace 0
+gs_create g
+gs_enter_context g
+trace 1
+gs_matrix_translate3f 5 6 7
+gs_texture_create 4 4 GS_RGBA 1 0 > t
+gs_draw_sprite t 0 8 8
+echo == the caller's matrix is unchanged after drawing
+gs_matrix_get
+gs_draw_sprite - 0 0 0
+gs_matrix_get

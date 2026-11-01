@@ -1,0 +1,11 @@
+http GET http://x/single.txt
+confirm name="http://x/single.txt" version=0 size=17
+fu_single done
+http GET http://x/empty.txt
+fu_single done
+http GET http://x/missing.txt
+log warning Remote update of URL "http://x/missing.txt" failed: HTTP error
+fu_single done
+http GET http://x/unregistered.txt
+log warning Remote update of URL "http://x/unregistered.txt" failed: transfer failed
+fu_single done

@@ -1,0 +1,62 @@
+# filter_add checks compatibility: caps(x) = x.output_flags & (VIDEO|ASYNC|AUDIO) (note VIDEO is part of the mask);
+# the filter's caps must be a subset of the source's.  If a filter has AUDIO but not VIDEO, its ASYNC bit is
+# ignored (filter kind fx).  Incompatible filters are silently refused (no log, no signal).
+# Sources: sv=VIDEO, sa=ASYNC_VIDEO(=ASYNC|VIDEO), so=AUDIO, sb=ASYNC_VIDEO|AUDIO.
+# Filters (one fresh set per source): fv=VIDEO, fa=ASYNC_VIDEO, fo=AUDIO, fav=ASYNC_VIDEO|AUDIO, fx=ASYNC|AUDIO.
+kind vid input video
+kind avs input asyncvideo
+kind aud input audio
+kind av input asyncvideo,audio
+kind fv filter video
+kind fa filter asyncvideo
+kind fo filter audio
+kind fav filter asyncvideo,audio
+kind fx filter async,audio
+create sv vid SV
+create sv_fv fv SV_FV
+filter_add sv sv_fv
+create sv_fa fa SV_FA
+filter_add sv sv_fa
+create sv_fo fo SV_FO
+filter_add sv sv_fo
+create sv_fav fav SV_FAV
+filter_add sv sv_fav
+create sv_fx fx SV_FX
+filter_add sv sv_fx
+names sv
+create sa avs SA
+create sa_fv fv SA_FV
+filter_add sa sa_fv
+create sa_fa fa SA_FA
+filter_add sa sa_fa
+create sa_fo fo SA_FO
+filter_add sa sa_fo
+create sa_fav fav SA_FAV
+filter_add sa sa_fav
+create sa_fx fx SA_FX
+filter_add sa sa_fx
+names sa
+create so aud SO
+create so_fv fv SO_FV
+filter_add so so_fv
+create so_fa fa SO_FA
+filter_add so so_fa
+create so_fo fo SO_FO
+filter_add so so_fo
+create so_fav fav SO_FAV
+filter_add so so_fav
+create so_fx fx SO_FX
+filter_add so so_fx
+names so
+create sb av SB
+create sb_fv fv SB_FV
+filter_add sb sb_fv
+create sb_fa fa SB_FA
+filter_add sb sb_fa
+create sb_fo fo SB_FO
+filter_add sb sb_fo
+create sb_fav fav SB_FAV
+filter_add sb sb_fav
+create sb_fx fx SB_FX
+filter_add sb sb_fx
+names sb

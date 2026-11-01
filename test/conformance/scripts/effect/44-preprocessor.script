@@ -1,0 +1,48 @@
+# CORE: wiring of the C-like preprocessor (S-011) into the effect parser.
+#   - the backend's preprocessor name (device_preprocessor_name(), e.g. "_OPENGL" / "_D3D11") is pre-defined as an
+#     empty object-like macro, so "#ifdef _OPENGL" selects backend specific code;
+#   - "#include "name"" is resolved relative to the directory part of the effect's file name (if it has a '/'),
+#     else relative to the process working directory; the runner uses a scratch directory for these tests;
+#   - parse errors inside an included file are reported with the included file's name and its own row/column.
+backend text none
+echo --- the preprocessor name
+gfx _OPENGL
+effect a1 pp1.effect "#ifdef _OPENGL\nuniform float gl_only;\n#endif\n#ifdef _D3D11\nuniform float d3d_only;\n#endif\n#ifndef _OPENGL\nuniform float not_gl;\n#endif"
+dump a1
+gfx _D3D11
+effect a2 pp2.effect "#ifdef _OPENGL\nuniform float gl_only;\n#endif\n#ifdef _D3D11\nuniform float d3d_only;\n#endif"
+dump a2
+gfx @null
+effect a3 pp3.effect "#ifdef _OPENGL\nuniform float gl_only;\n#endif\n#ifndef _OPENGL\nuniform float no_backend_name;\n#endif"
+dump a3
+gfx _OPENGL
+echo --- "#if defined(...)" is not supported by the C-like preprocessor (S-011); #ifdef/#ifndef are
+effect a4 pp4.effect "#if defined(_OPENGL)\nuniform float x;\n#endif"
+echo --- a user definition of the same name (see also 90-defects for using the name as an identifier)
+effect a6 pp6.effect "#define _OPENGL 1\n#ifdef _OPENGL\nuniform float redefined;\n#endif"
+dump a6
+echo --- macros
+effect b1 m1.effect "#define N 3\n#define TYPE float\nuniform TYPE v[N];\n#undef N\n#ifdef N\nuniform float still_defined;\n#endif"
+ep b2 "#define\nfloat x;"
+ep b3 "#define X 1\n#define X 2\nuniform float f = X;"
+echo --- include relative to the effect file's directory
+cd @tmp
+mkdir inc
+writefile inc/common.effect "uniform float from_common;\nstruct CS { float a; };\nfloat helper(float x) { return x * 2; }\n"
+writefile inc/bad.effect "uniform float ok_before;\nuniform float 3 bad;\nuniform float ok_after;\n"
+writefile inc/nested.effect "#include \"common.effect\"\nuniform float from_nested;\n"
+writefile top.effect "uniform float from_top;\n"
+effect c1 inc/main.effect "#include \"common.effect\"\nfloat F() { return helper(from_common); }\ntechnique T { pass { vertex_shader = F(); pixel_shader = F(); } }"
+dump c1
+echo --- include with no directory part is relative to the working directory
+effect c2 main2.effect "#include \"top.effect\"\nuniform float after;"
+dump c2
+echo --- nested include, resolved against the MAIN file's directory
+effect c3 inc/main3.effect "#include \"nested.effect\"\nuniform float after;"
+dump c3
+echo --- missing include file
+effect c5 inc/main5.effect "#include \"does_not_exist.effect\"\nuniform float after;"
+echo --- an include inside a function body is spliced into the body
+writefile inc/body.effect "return 42;"
+effect c6 inc/main6.effect "float F() {\n#include \"body.effect\"\n}\ntechnique T { pass { vertex_shader = F(); pixel_shader = F(); } }"
+cd @repo

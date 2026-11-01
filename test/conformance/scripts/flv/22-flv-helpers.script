@@ -1,0 +1,50 @@
+# S-021 small helpers from flv-mux.h that the output plugins use:
+#   to_video_type(codec name) : "h264" -> 1, "av1" -> 2, "hevc" -> 3 (when HEVC support is built), else 0
+#   to_audio_type(codec name) : "aac" -> 1, else 0
+#   get_ms_time(packet, value) = (int32)(value * 1000 / timebase_den) (64-bit division truncating
+#   toward zero, then truncated to 32 bits)
+echo video-codec-names
+to_video h264
+to_video av1
+to_video hevc
+to_video H264
+to_video avc
+to_video ""
+to_video "h264 "
+to_video vp9
+echo audio-codec-names
+to_audio aac
+to_audio AAC
+to_audio mp4a
+to_audio opus
+to_audio ""
+echo get_ms_time
+pkt t1 video 0 0 1 1000 0 aa
+pkt t90 video 0 0 1 90000 0 aa
+pkt t48 audio 0 0 1 48000 0 aa
+pkt t30 video 0 0 1001 30000 0 aa
+ms t1 0
+ms t1 1
+ms t1 -1
+ms t1 123456789
+ms t1 2147483647
+ms t1 2147483648
+ms t1 4294967296
+ms t1 4294967295
+ms t1 -2147483648
+ms t1 -2147483649
+ms t90 89
+ms t90 90
+ms t90 -89
+ms t90 -90
+ms t90 -91
+ms t90 8100000
+ms t90 193273528320000
+ms t48 47
+ms t48 48
+ms t48 1024
+ms t48 -1024
+ms t30 1
+ms t30 30
+ms t30 30030
+ms t1 9223372036854775

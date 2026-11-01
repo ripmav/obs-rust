@@ -1,0 +1,44 @@
+# CORE/QUIRK: valid_int_str / valid_float_str. N limits the examined characters AFTER an optional sign (0 = whole string).
+# Q: '1e+5' is rejected, '1e5+3' accepted, '.5' rejected, 'E' rejected.
+valid_int "-12a" 2
+valid_int "-12a" 3
+valid_float "-1.5abc" 3
+valid_float "-1.5abc" 4
+valid_int "123" 0
+valid_int "-123" 0
+valid_int "+1" 0
+valid_int "-" 0
+valid_int "" 0
+valid_int @null 0
+valid_int "12a" 0
+valid_int "12a" 2
+valid_int "12a" 3
+valid_int "1 " 0
+valid_int "007" 0
+valid_int "1.5" 0
+valid_int "123456" 3
+valid_float "1.5" 0
+valid_float "1" 0
+valid_float "1." 0
+valid_float ".5" 0
+valid_float "-.5" 0
+valid_float "-1.5" 0
+valid_float "1e5" 0
+valid_float "1e+5" 0
+valid_float "1e-5" 0
+valid_float "1e5+3" 0
+valid_float "1e5-3" 0
+valid_float "1E5" 0
+valid_float "1e" 0
+valid_float "e5" 0
+valid_float "1.5.2" 0
+valid_float "1e5.2" 0
+valid_float "1e5e2" 0
+valid_float "1-2" 0
+valid_float "+" 0
+valid_float "" 0
+valid_float @null 0
+valid_float "1.5abc" 3
+valid_float "1.5abc" 0
+valid_float "1.5" 2
+valid_float "12.5" 1

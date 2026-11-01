@@ -1,0 +1,45 @@
+# matrix3 operations (S-009-R35..R39, R41). a is a rotation-with-translation, b a scale-ish matrix.
+mat3 a 0 1 0 0  -1 0 0 0  0 0 1 0  1 2 3 0
+mat3 b 2 0 0 0  0 3 0 0  0 0 4 0  5 6 7 0
+mat3 g 1 2 3 0  4 5 6 0  7 8 10 0  1 1 1 0
+# matrix3_mul: rows x,y,z of the result are dot(row, m2.row_k) (i.e. m1 * transpose(m2) in xyz),
+# and the t row is transform3x4(m1.t, m2) = dot(m1.t - m2.t, m2.row_k).
+call m matrix3_mul a b
+call m matrix3_mul b a
+call m matrix3_mul g g
+call m matrix3_mul a a
+# aliasing: destination equal to either input gives the same result as a separate destination
+mat3 a1 0 1 0 0  -1 0 0 0  0 0 1 0  1 2 3 0
+mat3 b1 2 0 0 0  0 3 0 0  0 0 4 0  5 6 7 0
+call a1 matrix3_mul a1 b
+call b1 matrix3_mul a b1
+# matrix3_translate SUBTRACTS the vector from the translation row and writes only the t row
+vec3 v 1 1 1
+call t matrix3_translate a v
+mat3 pre 9 9 9 9  8 8 8 8  7 7 7 7  6 6 6 6
+call pre matrix3_translate a v
+call t2 matrix3_translate3f a 0.5 -0.5 2
+# scale multiplies every row (including t) component-wise by v
+vec3 s 2 3 4
+call sc matrix3_scale a s
+call sc matrix3_scale3f a 2 3 4
+# rotate / rotate_aa = mul(m, from_quat(q))
+quat qz 0 0 0.70710678 0.70710678
+call r matrix3_rotate a qz
+aa zaxis 0 0 1 1.57079633
+call r matrix3_rotate_aa a zaxis
+call r matrix3_rotate_aa4f a 0 0 1 1.57079633
+call r matrix3_rotate_aa b zaxis
+# transpose: xyz block transposed; new t = -(old t dotted with the ORIGINAL rows)
+call tr matrix3_transpose a
+call tr matrix3_transpose g
+call tr matrix3_transpose b
+call tr2 matrix3_transpose tr
+# in place
+mat3 gi 1 2 3 0  4 5 6 0  7 8 10 0  1 1 1 0
+call gi matrix3_transpose gi
+# mirror across a plane / a normal
+plane py 0 1 0 1
+vec3 ny 0 1 0
+call mi matrix3_mirror g py
+call mi matrix3_mirrorv g ny

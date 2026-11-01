@@ -1,0 +1,44 @@
+--- ordinary relative name
+exit 0
+stdout|"init=0"
+stdout|"params: has_video=0 tracks=1 num_audio_streams=1 nb_streams=1"
+stdout|"format=matroska"
+stdout|"stream_key=\"\" printable_file=\"ffmuxproto-plain.mkv\""
+stdout|"audio0: stream_id=0 type=audio codec=aac tag=0x00000000 bit_rate=128000"
+stdout|"  sample_rate=48000 frame_size=1024 channels=2 layout=stereo initial_padding=0"
+stdout|"  ctx_time_base=1/48000 global_header=1 title=\"A\""
+stdout|"  extradata=1190"
+--- a relative file name that merely starts with udp is treated as a network target
+exit 0
+stdout|"init=0"
+stdout|"params: has_video=0 tracks=1 num_audio_streams=1 nb_streams=1"
+stdout|"format=mpegts"
+stdout|"stream_key=\"\" printable_file=\"udp_dump.mkv\""
+stdout|"audio0: stream_id=0 type=audio codec=aac tag=0x00000000 bit_rate=128000"
+stdout|"  sample_rate=48000 frame_size=1024 channels=2 layout=stereo initial_padding=0"
+stdout|"  ctx_time_base=1/48000 global_header=0 title=\"A\""
+stdout|"  extradata=1190"
+--- http prefix: format still guessed from the name
+exit 0
+stdout|"init=0"
+stdout|"params: has_video=0 tracks=1 num_audio_streams=1 nb_streams=1"
+stdout|"format=matroska"
+stdout|"stream_key=\"\" printable_file=\"httpfoo.mkv\""
+stdout|"audio0: stream_id=0 type=audio codec=aac tag=0x00000000 bit_rate=128000"
+stdout|"  sample_rate=48000 frame_size=1024 channels=2 layout=stereo initial_padding=0"
+stdout|"  ctx_time_base=1/48000 global_header=1 title=\"A\""
+stdout|"  extradata=1190"
+--- TCP prefix match is case sensitive and prefix only
+exit 0
+stdout|"init=0"
+stdout|"params: has_video=0 tracks=1 num_audio_streams=1 nb_streams=1"
+stdout|"format=matroska"
+stdout|"stream_key=\"\" printable_file=\"Tcp_dump.mkv\""
+stdout|"audio0: stream_id=0 type=audio codec=aac tag=0x00000000 bit_rate=128000"
+stdout|"  sample_rate=48000 frame_size=1024 channels=2 layout=stereo initial_padding=0"
+stdout|"  ctx_time_base=1/48000 global_header=1 title=\"A\""
+stdout|"  extradata=1190"
+--- unknown extension
+exit -1
+stderr|"Couldn't find an appropriate muxer for 'out.zzz'"
+stderr|"Couldn't initialize muxer"

@@ -1,0 +1,21 @@
+monotonic 1
+sleep_ms elapsed_ge=1
+sleep_ms elapsed_ge=1
+sleepto rc=0 reached=1
+sleepto rc=1 reached=1
+sleepto_fast rc=0 reached=1
+sleepto_fast rc=1 reached=1
+free_space . space=ok disk=nonzero
+free_space nosuch space=error disk=zero
+free_space nosuch space_rc=-1
+free_space sub space=error disk=zero
+free_space sub space_rc=-1
+mkdir sub 0
+free_space sub space=ok disk=nonzero
+system cores_ok=1 free_mem_pos=1 total_mem_pos=1 free_le_total=1 proc_mem=1 resident_pos=1 virtual_pos=1
+system resident_fn_pos=1 virtual_fn_pos=1 emulation=0 is_obs_plugin=1 perf_token_null=1
+cpu_usage nonneg=1 null_is_zero=1
+uuid length=36 format=1 version=4 variant_ok=1 distinct=1
+exe_path ok=1 absolute=1 suffix=1
+exe_path ok=1 absolute=1 suffix=1
+exe_path ok=1 absolute=1 suffix=1

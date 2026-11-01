@@ -1,0 +1,55 @@
+--- all optional arguments missing (a message each, init still succeeds)
+exit 0
+stdout|"Missing expected option: 'stream key'"
+stdout|"Missing expected option: 'muxer settings'"
+stdout|"init=0"
+stdout|"params: has_video=0 tracks=1 num_audio_streams=1 nb_streams=1"
+stdout|"format=matroska"
+stdout|"stream_key=\"\" printable_file=\"@o.mkv\""
+stdout|"audio0: stream_id=0 type=audio codec=aac tag=0x00000000 bit_rate=128000"
+stdout|"  sample_rate=48000 frame_size=1024 channels=2 layout=stereo initial_padding=0"
+stdout|"  ctx_time_base=1/48000 global_header=1 title=\"t\""
+stdout|"  extradata=1190"
+--- codec tag missing for video: tag 0 (then the arguments are exhausted)
+exit 0
+stdout|"Missing expected option: 'video codec tag'"
+stdout|"Missing expected option: 'stream key'"
+stdout|"Missing expected option: 'muxer settings'"
+stdout|"init=0"
+stdout|"params: has_video=1 tracks=0 num_audio_streams=0 nb_streams=1"
+stdout|"format=matroska"
+stdout|"stream_key=\"\" printable_file=\"@o.mkv\""
+stdout|"video: stream_id=0 type=video codec=h264 tag=0x00000000 bit_rate=6000000"
+stdout|"  size=640x360 coded=640x360 primaries=1 trc=1 space=1 range=1 chroma_loc=1"
+stdout|"  ctx_time_base=1/30 avg_frame_rate=30/1 global_header=1"
+stdout|"  extradata=0164001fffe100046764001f01000468ce3c80"
+--- codec tag given: numeric value stored verbatim (little endian fourcc computed by the sender)
+exit 0
+stdout|"init=0"
+stdout|"params: has_video=1 tracks=0 num_audio_streams=0 nb_streams=1"
+stdout|"format=matroska"
+stdout|"stream_key=\"\" printable_file=\"@o.mkv\""
+stdout|"video: stream_id=0 type=video codec=h264 tag=0x34363268 bit_rate=6000000"
+stdout|"  size=640x360 coded=640x360 primaries=1 trc=1 space=1 range=1 chroma_loc=1"
+stdout|"  ctx_time_base=1/30 avg_frame_rate=30/1 global_header=1"
+stdout|"  extradata=0164001fffe100046764001f01000468ce3c80"
+--- stream key replaced in the printable name (every occurrence)
+exit 0
+stdout|"init=0"
+stdout|"params: has_video=0 tracks=1 num_audio_streams=1 nb_streams=1"
+stdout|"format=matroska"
+stdout|"stream_key=\"o.mkv\" printable_file=\"@{stream_key}\""
+stdout|"audio0: stream_id=0 type=audio codec=aac tag=0x00000000 bit_rate=128000"
+stdout|"  sample_rate=48000 frame_size=1024 channels=2 layout=stereo initial_padding=0"
+stdout|"  ctx_time_base=1/48000 global_header=1 title=\"t\""
+stdout|"  extradata=1190"
+--- extra trailing arguments are ignored
+exit 0
+stdout|"init=0"
+stdout|"params: has_video=0 tracks=1 num_audio_streams=1 nb_streams=1"
+stdout|"format=matroska"
+stdout|"stream_key=\"\" printable_file=\"@o.mkv\""
+stdout|"audio0: stream_id=0 type=audio codec=aac tag=0x00000000 bit_rate=128000"
+stdout|"  sample_rate=48000 frame_size=1024 channels=2 layout=stereo initial_padding=0"
+stdout|"  ctx_time_base=1/48000 global_header=1 title=\"t\""
+stdout|"  extradata=1190"

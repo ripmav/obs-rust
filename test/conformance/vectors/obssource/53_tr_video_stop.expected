@@ -1,0 +1,25 @@
+  cb T create
+log debug source 'T' (tr) created
+create t ok
+  cb A create
+log debug source 'A' (in) created
+create a ok
+  cb B create
+log debug source 'B' (in) created
+create b ok
+  cb T transition_start
+  gsig source_transition_start source=T
+  sig transition_start source=T
+tr_start t 1
+  vcb t=0.5 size=100x100
+tr t A=a(act=1) B=b(act=1) video=1 audio=1 mode=0 manual_val=0 target=0 size=0x0 actual=100x100 start=1000 dur=1000000000
+echo ---
+  gsig source_transition_video_stop source=T
+  sig transition_video_stop source=T
+tr t A=a(act=1) B=b(act=1) video=0 audio=1 mode=0 manual_val=0 target=0 size=0x0 actual=100x100 start=1000 dur=1000000000
+echo ---
+  cb T transition_stop
+  gsig source_transition_stop source=T
+  sig transition_stop source=T
+tr_audio t ret=1 ts=2000000000 mix0ch0[0]=0.5 [512]=0.5 [1023]=0.5 mix1ch0[0]=0.5 mix0ch1[0]=0.5
+tr t A=b(act=1) B=-(act=0) video=0 audio=0 mode=0 manual_val=0 target=0 size=0x0 actual=100x100 start=1000 dur=1000000000

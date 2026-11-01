@@ -1,0 +1,25 @@
+open array ok
+write 000102030405060708090a0b 12 -> 12
+seek start 4 -> 4
+dump array num=12 pos=4 bytes=000102030405060708090a0b
+seek start 12 -> 12
+seek start 13 -> -1
+seek start -1 -> -1
+seek cur 0 -> 12
+seek cur -2 -> 10
+seek cur 5 -> -1
+seek cur 100 -> -1
+seek cur -100 -> -1
+dump array num=12 pos=10 bytes=000102030405060708090a0b
+seek end 0 -> 12
+seek end 12 -> 0
+seek end 1 -> 11
+seek end 13 -> -1
+seek end -1 -> -1
+dump array num=12 pos=11 bytes=000102030405060708090a0b
+seek start 0 -> 0
+seek cur 0 -> 0
+seek cur -1 -> -1
+seek end 12 -> 0
+seek end 13 -> -1
+dump array num=12 pos=0 bytes=000102030405060708090a0b

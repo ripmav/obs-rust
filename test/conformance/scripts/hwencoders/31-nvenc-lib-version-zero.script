@@ -1,0 +1,3 @@
+# S-050 nvenc: version 0 from the driver counts as "missing" (different message from too-old).
+maxver 0
+initnv

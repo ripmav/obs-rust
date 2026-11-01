@@ -1,0 +1,25 @@
+  cb V create
+log debug source 'V' (vid) created
+create v ok
+  cb A create
+log debug source 'A' (aud) created
+create a ok
+setting v dflt 7
+deferred v 1
+setting v x 1
+  cb V update
+  sig update source=V
+deferred v 0
+deferred v 2
+  cb V update
+  sig update source=V
+deferred v 0
+  cb A update
+  sig update source=A
+deferred a 0
+setting a x 1
+  cb A update
+  sig update source=A
+setting a x 0
+setting a dflt 7
+  sig update_properties source=A

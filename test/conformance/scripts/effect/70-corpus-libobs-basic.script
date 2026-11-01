@@ -1,0 +1,81 @@
+# CORPUS (CORE): every shipped effect file of this group is parsed by the real effect parser against the fake
+# OpenGL backend (preprocessor name _OPENGL). For each file the runner prints, in order: the backend calls
+# (location string, exact assembled shader text, shader parameters), the creation result, the effect structure
+# (parameters with types and defaults, techniques, passes with the parameters bound to each shader) and the
+# parser-internal structure (counts, struct/function/sampler/technique tables, dependency lists). The files
+# are read from the repository; the file name given to the parser is the repository relative path (it also
+# decides where "#include" is resolved; the runner starts in the repository root).
+gfx _OPENGL
+echo === libobs/data/color.effect
+backend text full
+backend events off
+effect e libobs/data/color.effect @file:libobs/data/color.effect
+dump e
+backend text none
+backend ep brief
+ep libobs/data/color.effect @file:libobs/data/color.effect
+destroy e
+echo === libobs/data/default.effect
+backend text full
+backend events off
+effect e libobs/data/default.effect @file:libobs/data/default.effect
+dump e
+backend text none
+backend ep brief
+ep libobs/data/default.effect @file:libobs/data/default.effect
+destroy e
+echo === libobs/data/default_rect.effect
+backend text full
+backend events off
+effect e libobs/data/default_rect.effect @file:libobs/data/default_rect.effect
+dump e
+backend text none
+backend ep brief
+ep libobs/data/default_rect.effect @file:libobs/data/default_rect.effect
+destroy e
+echo === libobs/data/format_conversion.effect
+# (the 60 shader texts of this file are large; only their length and FNV-1a hash are recorded)
+backend text hash
+backend events off
+effect e libobs/data/format_conversion.effect @file:libobs/data/format_conversion.effect
+dump e
+backend text none
+backend ep brief
+ep libobs/data/format_conversion.effect @file:libobs/data/format_conversion.effect
+destroy e
+echo === libobs/data/opaque.effect
+backend text full
+backend events off
+effect e libobs/data/opaque.effect @file:libobs/data/opaque.effect
+dump e
+backend text none
+backend ep brief
+ep libobs/data/opaque.effect @file:libobs/data/opaque.effect
+destroy e
+echo === libobs/data/premultiplied_alpha.effect
+backend text full
+backend events off
+effect e libobs/data/premultiplied_alpha.effect @file:libobs/data/premultiplied_alpha.effect
+dump e
+backend text none
+backend ep brief
+ep libobs/data/premultiplied_alpha.effect @file:libobs/data/premultiplied_alpha.effect
+destroy e
+echo === libobs/data/repeat.effect
+backend text full
+backend events off
+effect e libobs/data/repeat.effect @file:libobs/data/repeat.effect
+dump e
+backend text none
+backend ep brief
+ep libobs/data/repeat.effect @file:libobs/data/repeat.effect
+destroy e
+echo === libobs/data/solid.effect
+backend text full
+backend events off
+effect e libobs/data/solid.effect @file:libobs/data/solid.effect
+dump e
+backend text none
+backend ep brief
+ep libobs/data/solid.effect @file:libobs/data/solid.effect
+destroy e

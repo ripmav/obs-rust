@@ -1,0 +1,123 @@
+ff open path=cs format=- nobuffer=1 interrupt=0 opts=[]
+cinit -> ok
+ff seek stream=0 target=0 flags=BACKWARD
+ff decoder flush
+ff decoder flush
+ff read #0 stream=0 pts=0 size=4
+ff read #1 stream=1 pts=0 size=4
+ff read #2 stream=0 pts=40 size=4
+ff read #3 stream=1 pts=25 size=4
+ff read #4 stream=0 pts=80 size=4
+ff read #5 stream=1 pts=50 size=4
+ff read #6 stream=0 pts=110 size=4
+ff read #7 stream=1 pts=75 size=4
+ff decoder drain
+ff decoder drain
+ff seek stream=0 target=0 flags=BACKWARD
+ff decoder flush
+ff decoder flush
+ff read #0 stream=0 pts=0 size=4
+ff read #1 stream=1 pts=0 size=4
+cdecode -> ok frames=4 segs=4
+cframe 0 ts=0 8x4 fmt=I420
+cframe 1 ts=40000000 8x4 fmt=I420
+cframe 2 ts=80000000 8x4 fmt=I420
+cframe 3 ts=110000000 8x4 fmt=I420
+csegment 0 ts=0 frames=25 rate=1000
+csegment 1 ts=25000000 frames=25 rate=1000
+csegment 2 ts=50000000 frames=25 rate=1000
+csegment 3 ts=75000000 frames=25 rate=1000
+cstate frames=4 segs=4 has_v=1 has_a=1 active=0 stopping=0 looping=0 pause=0 seek_next_ts=0
+  cur_v=0 next_v=0 cur_a=0 next_a=0 next_v_ts=0 next_a_ts=0 final_v=30000000 final_a=25000000
+  base_ts=0 start_ts=0 play_sys_ts=0 next_pts_ns=0 next_ns=0 start_time=0 media_duration=100000000 speed=100
+# exact match on frame 2 (80 ms in ns)
+cstate frames=4 segs=4 has_v=1 has_a=1 active=0 stopping=0 looping=0 pause=0 seek_next_ts=0
+  cur_v=2 next_v=2 cur_a=3 next_a=3 next_v_ts=110000000 next_a_ts=100000000 final_v=30000000 final_a=25000000
+  base_ts=0 start_ts=0 play_sys_ts=0 next_pts_ns=0 next_ns=0 start_time=0 media_duration=100000000 speed=100
+# between frames: next one at or after
+cstate frames=4 segs=4 has_v=1 has_a=1 active=0 stopping=0 looping=0 pause=0 seek_next_ts=0
+  cur_v=2 next_v=2 cur_a=2 next_a=2 next_v_ts=110000000 next_a_ts=75000000 final_v=30000000 final_a=25000000
+  base_ts=0 start_ts=0 play_sys_ts=0 next_pts_ns=0 next_ns=0 start_time=0 media_duration=100000000 speed=100
+# before the first
+cstate frames=4 segs=4 has_v=1 has_a=1 active=0 stopping=0 looping=0 pause=0 seek_next_ts=0
+  cur_v=0 next_v=0 cur_a=0 next_a=0 next_v_ts=40000000 next_a_ts=25000000 final_v=30000000 final_a=25000000
+  base_ts=0 start_ts=0 play_sys_ts=0 next_pts_ns=0 next_ns=0 start_time=0 media_duration=100000000 speed=100
+cstate frames=4 segs=4 has_v=1 has_a=1 active=0 stopping=0 looping=0 pause=0 seek_next_ts=0
+  cur_v=0 next_v=0 cur_a=0 next_a=0 next_v_ts=40000000 next_a_ts=25000000 final_v=30000000 final_a=25000000
+  base_ts=0 start_ts=0 play_sys_ts=0 next_pts_ns=0 next_ns=0 start_time=0 media_duration=100000000 speed=100
+# after the last stored frame but inside the media duration: last element, next ts = last + final duration
+cstate frames=4 segs=4 has_v=1 has_a=1 active=0 stopping=0 looping=0 pause=0 seek_next_ts=0
+  cur_v=3 next_v=3 cur_a=3 next_a=3 next_v_ts=140000000 next_a_ts=100000000 final_v=30000000 final_a=25000000
+  base_ts=0 start_ts=0 play_sys_ts=0 next_pts_ns=0 next_ns=0 start_time=0 media_duration=100000000 speed=100
+# positions above the container duration (in the same raw unit) are rejected
+cstate frames=4 segs=4 has_v=1 has_a=1 active=0 stopping=0 looping=0 pause=0 seek_next_ts=0
+  cur_v=3 next_v=3 cur_a=3 next_a=3 next_v_ts=140000000 next_a_ts=100000000 final_v=30000000 final_a=25000000
+  base_ts=0 start_ts=0 play_sys_ts=0 next_pts_ns=0 next_ns=0 start_time=0 media_duration=100000000 speed=100
+log warning MP: Invalid seek position
+cstate frames=4 segs=4 has_v=1 has_a=1 active=0 stopping=0 looping=0 pause=0 seek_next_ts=0
+  cur_v=3 next_v=3 cur_a=3 next_a=3 next_v_ts=140000000 next_a_ts=100000000 final_v=30000000 final_a=25000000
+  base_ts=0 start_ts=0 play_sys_ts=0 next_pts_ns=0 next_ns=0 start_time=0 media_duration=100000000 speed=100
+cfree
+# ---- video only and audio only
+ff open path=csv format=- nobuffer=1 interrupt=0 opts=[]
+cinit -> ok
+ff seek stream=0 target=0 flags=BACKWARD
+ff decoder flush
+ff read #0 stream=0 pts=0 size=4
+ff read #1 stream=0 pts=40 size=4
+ff read #2 stream=0 pts=80 size=4
+ff decoder drain
+ff seek stream=0 target=0 flags=BACKWARD
+ff decoder flush
+ff read #0 stream=0 pts=0 size=4
+cdecode -> ok frames=3 segs=0
+cstate frames=3 segs=0 has_v=1 has_a=0 active=0 stopping=0 looping=0 pause=0 seek_next_ts=0
+  cur_v=2 next_v=2 cur_a=0 next_a=0 next_v_ts=110000000 next_a_ts=0 final_v=30000000 final_a=0
+  base_ts=0 start_ts=0 play_sys_ts=0 next_pts_ns=0 next_ns=0 start_time=0 media_duration=100000000 speed=100
+cfree
+ff open path=csa format=- nobuffer=1 interrupt=0 opts=[]
+cinit -> ok
+ff seek stream=0 target=0 flags=BACKWARD
+ff decoder flush
+ff read #0 stream=0 pts=0 size=4
+ff read #1 stream=0 pts=25 size=4
+ff decoder drain
+ff seek stream=0 target=0 flags=BACKWARD
+ff decoder flush
+ff read #0 stream=0 pts=0 size=4
+cdecode -> ok frames=0 segs=2
+cstate frames=0 segs=2 has_v=0 has_a=1 active=0 stopping=0 looping=0 pause=0 seek_next_ts=0
+  cur_v=0 next_v=0 cur_a=1 next_a=1 next_v_ts=0 next_a_ts=50000000 final_v=0 final_a=25000000
+  base_ts=0 start_ts=0 play_sys_ts=0 next_pts_ns=0 next_ns=0 start_time=0 media_duration=100000000 speed=100
+cfree
+# ---- end to end: media_playback_seek(80 ms) stores 80000 us, which is compared with ns timestamps: lands on frame 1
+ff open path=cs format=- nobuffer=1 interrupt=0 opts=[]
+cinit -> ok
+ff seek stream=0 target=0 flags=BACKWARD
+ff decoder flush
+ff decoder flush
+ff read #0 stream=0 pts=0 size=4
+ff read #1 stream=1 pts=0 size=4
+ff read #2 stream=0 pts=40 size=4
+ff read #3 stream=1 pts=25 size=4
+ff read #4 stream=0 pts=80 size=4
+ff read #5 stream=1 pts=50 size=4
+ff read #6 stream=0 pts=110 size=4
+ff read #7 stream=1 pts=75 size=4
+ff decoder drain
+ff decoder drain
+ff seek stream=0 target=0 flags=BACKWARD
+ff decoder flush
+ff decoder flush
+ff read #0 stream=0 pts=0 size=4
+ff read #1 stream=1 pts=0 size=4
+cdecode -> ok frames=4 segs=4
+tick -> idle
+cb video ts=-1000000000 fmt=I420 8x4 flip=0 full=0 trc=DEFAULT maxlum=0 flags=0 mat0=1.16438 min0=0.0627451 max0=0.921569
+cb audio ts=-1000000000 fmt=U8BIT spk=MONO rate=1000 frames=25
+tick -> played
+sleep 25
+tick -> seek
+cstate frames=4 segs=4 has_v=1 has_a=1 active=1 stopping=0 looping=0 pause=0 seek_next_ts=1
+  cur_v=1 next_v=1 cur_a=1 next_a=1 next_v_ts=80000000 next_a_ts=50000000 final_v=30000000 final_a=25000000
+  base_ts=0 start_ts=0 play_sys_ts=0 next_pts_ns=25000000 next_ns=1025000000 start_time=0 media_duration=100000000 speed=100

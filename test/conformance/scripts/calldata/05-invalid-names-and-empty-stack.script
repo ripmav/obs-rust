@@ -1,0 +1,17 @@
+# Empty names are ignored; reads from an empty/never-initialised stack fail.
+dump
+capacity
+get_int x
+get_string x
+init
+dump
+get_int x
+set_int "" 5
+dump
+get_int ""
+set_int x 5
+set_int "" 6
+dump
+get_int ""
+get_int x
+free

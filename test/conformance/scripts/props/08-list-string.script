@@ -1,0 +1,38 @@
+# CORE. List properties: formats string/int/float/bool; add returns the index of the new item;
+# insert shifts later items; names and values are copied.
+props P
+add list P l "List" list string as l
+info l
+list_add l string "One" "1"
+list_add l string "Two" "2"
+list_add l string "Three" "3"
+info l
+list_insert l string 0 "Zero" "0"
+list_insert l string 2 "Mid" "m"
+list_insert l string 5 "End" "e"
+info l
+echo remove
+list_remove l 0
+list_remove l 3
+list_remove l 99
+info l
+echo disable
+list_disable l 1 1
+list_disable l 99 1
+info l
+list_disable l 1 0
+info l
+echo clear-keeps-the-list-kind
+list_clear l
+info l
+list_add l string "After" "a"
+info l
+echo item-access-out-of-range
+list_item l 0
+list_item l 1
+list_item l 100
+echo null-name-and-null-value
+list_add l string @null "v"
+list_add l string "n" @null
+info l
+destroy P

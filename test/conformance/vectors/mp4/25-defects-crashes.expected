@@ -1,0 +1,41 @@
+mux mp4 tracks=1
+pkt a pts=0 dts=0 key=1 size=10 -> 1 pos=0
+pkt a pts=1024 dts=1024 key=1 size=10 -> 1 pos=0
+log info [mp4 muxer: 'conformance'] Flushing final fragment...
+try finalise crash
+echo --- D-2: encoder reports no codec string (NULL): strcmp(NULL) while creating the tracks
+try mux crash
+echo --- D-3: PCM with unknown speaker layout in MOV: division by zero (channels = 0) in the v2 entry
+mux mov tracks=1
+pkt a pts=0 dts=0 key=1 size=8 -> 1 pos=0
+log info [mov muxer: 'conformance'] Flushing final fragment...
+try finalise crash
+echo --- D-4: OpusHead extra data shorter than 19 bytes is read past its end (outcome depends on heap contents:
+echo --- nothing is printed about it; a conforming implementation must fail cleanly)
+mux mp4 tracks=1
+pkt a pts=0 dts=0 key=1 size=10 -> 1 pos=0
+log info [mp4 muxer: 'conformance'] Flushing final fragment...
+log info [mp4 muxer: 'conformance'] Number of fragments: 1
+log warning [mp4 muxer: 'conformance'] Skipping finalization!
+finalise -> 1
+try finalise ok
+echo --- D-5: audio encoder without audio output (obs_encoder_audio NULL): channel count query on NULL
+mux mp4 tracks=1
+pkt a pts=0 dts=0 key=1 size=10 -> 1 pos=0
+log info [mp4 muxer: 'conformance'] Flushing final fragment...
+try finalise crash
+echo --- D-6: video encoder without video output: colour/rate info query on NULL while creating the tracks
+try mux crash
+echo --- D-8: AV1 packets with a truncated OBU header or a frame OBU of size 0 make the reference read 1-2 bytes past the packet.
+echo --- Output of the packet itself is deterministic (the packet is stored without keyframe information from the garbage byte)
+mux mp4 tracks=1
+pkt v pts=0 dts=0 key=0 size=1 -> 1 pos=0
+try pkt ok
+pkt v pts=0 dts=0 key=0 size=1 -> 1 pos=0
+try pkt ok
+pkt v pts=0 dts=0 key=0 size=2 -> 1 pos=0
+try pkt ok
+pkt v pts=0 dts=0 key=0 size=2 -> 1 pos=0
+try pkt ok
+pkt v pts=0 dts=0 key=0 size=1 -> 1 pos=0
+try pkt ok

@@ -1,0 +1,51 @@
+signal hotkey_register id=0
+reg A -> 0
+signal hotkey_register id=1
+reg B -> 1
+signal hotkey_bindings_changed id=0
+signal hotkey_bindings_changed id=1
+single-press-release
+poll
+poll
+cb A id=0 same_ptr=1 pressed=1
+b 0 hk=0 mods=0x0 key=OBS_KEY_A pressed=1 modmatch=1 hkptr_ok=1
+b 1 hk=1 mods=0x0 key=OBS_KEY_B pressed=0 modmatch=1 hkptr_ok=1
+b 2 hk=1 mods=0x0 key=OBS_KEY_C pressed=0 modmatch=1 hkptr_ok=1
+enumb done
+poll
+cb A id=0 same_ptr=1 pressed=0
+poll
+two-bindings-one-hotkey
+poll
+cb B id=1 same_ptr=1 pressed=1
+poll
+info B id=1 type=0 partner=INVALID registerer=none pressed_count=2
+  name="B"
+  desc="b"
+poll
+info B id=1 type=0 partner=INVALID registerer=none pressed_count=1
+  name="B"
+  desc="b"
+poll
+cb B id=1 same_ptr=1 pressed=0
+info B id=1 type=0 partner=INVALID registerer=none pressed_count=0
+  name="B"
+  desc="b"
+unrelated-modifier-held-with-strict-modifiers-blocks
+poll
+b 0 hk=0 mods=0x0 key=OBS_KEY_A pressed=0 modmatch=0 hkptr_ok=1
+b 1 hk=1 mods=0x0 key=OBS_KEY_B pressed=0 modmatch=0 hkptr_ok=1
+b 2 hk=1 mods=0x0 key=OBS_KEY_C pressed=0 modmatch=0 hkptr_ok=1
+enumb done
+poll
+same-with-non-strict
+poll
+cb A id=0 same_ptr=1 pressed=1
+poll
+poll
+poll
+cb A id=0 same_ptr=1 pressed=0
+keys-up-while-no-bindings-loaded
+signal hotkey_bindings_changed id=0
+poll
+poll

@@ -1,0 +1,39 @@
+# Property lists (types, ranges, defaults of path, list items) of every filter version; descriptions are locale keys.
+source T 1920 1080 1920 1080 SRGB video
+source P 1920 1080 1920 1080 SRGB video
+filter f1 color_filter 0  @null T P
+props f1
+filter f2 color_filter 2  @null T P
+props f2
+filter f3 clut_filter 0  @null T P
+props f3
+filter f4 chroma_key_filter 0  @null T P
+props f4
+filter f5 chroma_key_filter 2  @null T P
+props f5
+filter f6 color_key_filter 0  @null T P
+props f6
+filter f7 color_key_filter 2  @null T P
+props f7
+filter f8 luma_key_filter 0  @null T P
+props f8
+filter f9 luma_key_filter 2  @null T P
+props f9
+filter f10 sharpness_filter 2  @null T P
+props f10
+filter f11 scroll_filter 0  @null T P
+props f11
+filter f12 crop_filter 0  @null T P
+props f12
+filter f13 scale_filter 0  @null T P
+props f13
+filter f14 mask_filter 0  @null T P
+props f14
+filter f15 mask_filter 2  @null T P
+props f15
+filter f16 gpu_delay 0  @null T P
+props f16
+filter f17 hdr_tonemap_filter 0  @null T P
+props f17
+filter f18 sdr_on_hdr_filter 0  @null T P
+props f18

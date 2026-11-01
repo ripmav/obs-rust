@@ -1,0 +1,36 @@
+> q_adapter 0 0 0 0 0
+> q_load
+qsv.check_adapters
+> q_adapter 0 1 0 0 0
+> q_load
+qsv.check_adapters
+encoder id=obs_qsv11_v2 codec=h264 type=video caps=[pass_texture dyn_bitrate roi ] cb=[encode_texture2 extra_data sei_data video_info update defaults properties destroy create]
+encoder id=obs_qsv11 codec=h264 type=video caps=[deprecated pass_texture dyn_bitrate ] cb=[encode_texture2 extra_data sei_data video_info update defaults properties destroy create]
+encoder id=obs_qsv11_soft_v2 codec=h264 type=video caps=[dyn_bitrate internal roi ] cb=[encode extra_data sei_data video_info update defaults properties destroy create]
+encoder id=obs_qsv11_soft codec=h264 type=video caps=[deprecated dyn_bitrate internal ] cb=[encode extra_data sei_data video_info update defaults properties destroy create]
+> q_adapter 1 0 1 1 1
+> q_load
+qsv.check_adapters
+encoder id=obs_qsv11_v2 codec=h264 type=video caps=[pass_texture dyn_bitrate roi ] cb=[encode_texture2 extra_data sei_data video_info update defaults properties destroy create]
+encoder id=obs_qsv11 codec=h264 type=video caps=[deprecated pass_texture dyn_bitrate ] cb=[encode_texture2 extra_data sei_data video_info update defaults properties destroy create]
+encoder id=obs_qsv11_soft_v2 codec=h264 type=video caps=[dyn_bitrate internal roi ] cb=[encode extra_data sei_data video_info update defaults properties destroy create]
+encoder id=obs_qsv11_soft codec=h264 type=video caps=[deprecated dyn_bitrate internal ] cb=[encode extra_data sei_data video_info update defaults properties destroy create]
+> q_adapter 1 1 1 1 0
+> q_load
+qsv.check_adapters
+encoder id=obs_qsv11_v2 codec=h264 type=video caps=[pass_texture dyn_bitrate roi ] cb=[encode_texture2 extra_data sei_data video_info update defaults properties destroy create]
+encoder id=obs_qsv11 codec=h264 type=video caps=[deprecated pass_texture dyn_bitrate ] cb=[encode_texture2 extra_data sei_data video_info update defaults properties destroy create]
+encoder id=obs_qsv11_soft_v2 codec=h264 type=video caps=[dyn_bitrate internal roi ] cb=[encode extra_data sei_data video_info update defaults properties destroy create]
+encoder id=obs_qsv11_soft codec=h264 type=video caps=[deprecated dyn_bitrate internal ] cb=[encode extra_data sei_data video_info update defaults properties destroy create]
+encoder id=obs_qsv11_av1 codec=av1 type=video caps=[pass_texture dyn_bitrate roi ] cb=[encode_texture2 extra_data video_info update defaults properties destroy create]
+encoder id=obs_qsv11_av1_soft codec=av1 type=video caps=[dyn_bitrate internal roi ] cb=[encode extra_data video_info update defaults properties destroy create]
+> q_adapter 0 1 0 0 1
+> q_adapter 1 0 0 1 0
+> q_load
+qsv.check_adapters
+encoder id=obs_qsv11_v2 codec=h264 type=video caps=[pass_texture dyn_bitrate roi ] cb=[encode_texture2 extra_data sei_data video_info update defaults properties destroy create]
+encoder id=obs_qsv11 codec=h264 type=video caps=[deprecated pass_texture dyn_bitrate ] cb=[encode_texture2 extra_data sei_data video_info update defaults properties destroy create]
+encoder id=obs_qsv11_soft_v2 codec=h264 type=video caps=[dyn_bitrate internal roi ] cb=[encode extra_data sei_data video_info update defaults properties destroy create]
+encoder id=obs_qsv11_soft codec=h264 type=video caps=[deprecated dyn_bitrate internal ] cb=[encode extra_data sei_data video_info update defaults properties destroy create]
+encoder id=obs_qsv11_hevc codec=hevc type=video caps=[pass_texture dyn_bitrate roi ] cb=[encode_texture2 extra_data video_info update defaults properties destroy create]
+encoder id=obs_qsv11_hevc_soft codec=hevc type=video caps=[dyn_bitrate internal roi ] cb=[encode extra_data video_info update defaults properties destroy create]
