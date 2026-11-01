@@ -9,6 +9,7 @@ Goal: delete what is replaced, decide the fate of remaining native code, and shi
 - [ ] **P7-03 Delete C plugins** (M): remove every ported plugin directory; keep list of intentional FFI leftovers (obs-browser CEF glue, DeckLink/AJA SDK glue, libdshowcapture, graphics-hook DLL).
 - [ ] **P7-04 Delete vendored deps** (S): `deps/` entries with no remaining users (`blake2`, `json11`, `glad`, `libcaption` if ported, `w32-pthreads`, `libnsgif`).
 - [ ] **P7-05 Delete `shared/`** (S): `shared/obs-scripting`, `obs-frontend-api`-related shared helpers, `shared/bpm`, `shared/media-playback`, `shared/ipc-util`, `shared/happy-eyeballs`, `shared/properties-view`, `shared/qt` — after each is confirmed to have a Rust replacement.
+- [ ] **P7-25 Delete the C test harness** (S) (added): `test/cmocka/` (`test_bitstream.c`, `test_darray.c`, `test_os_path.c`, `test_serializer.c` — superseded by the Rust crates' own tests and the `test/conformance/` suite), `test/test-input/` (C ABI test plugin, superseded by P0-15's Rust plugin), `test/win/`, `test/osx/`. Runs in the same PR wave as P7-01…P7-05 because cmocka links the C libobs that P7-01 removes. Keep tag `last-c-test`.
 
 ## B. Build system
 

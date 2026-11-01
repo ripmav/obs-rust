@@ -31,6 +31,11 @@ Verified: the top-level directories are `libobs`, `libobs-opengl`, `libobs-d3d11
 - [ ] **P7-05.1 Mapping table** — `bpm`, `file-updater`, `happy-eyeballs`, `ipc-util`, `media-playback`, `obs-d3d8-api`, `obs-hook-config`, `obs-inject-library`, `obs-scripting`, `obs-shared-memory-queue`, `obs-tiny-nv12-scale`, `opts-parser`, `properties-view`, `qt` → Rust crate or "still used by hook DLL".
 - [ ] **P7-05.2 Delete** the migrated ones; keep those used by the C++ hook DLL/inject helper.
 
+### P7-25 Delete the C test harness (added)
+- [ ] **P7-25.1 Preconditions** — prove the four cmocka suites (`test_bitstream.c`, `test_darray.c`, `test_os_path.c`, `test_serializer.c`) and `test/test-input` are superseded: every exercised behaviour has a Rust test or a `test/conformance/` area. Done when: coverage table committed in `docs/tests/`.
+- [ ] **P7-25.2 Tag** `last-c-test`.
+- [ ] **P7-25.3 Delete** `test/` per the delete recipe (CMake/CI references in the same PR). Done when: build green on 3 OSes.
+
 ## B. Build system
 
 ### P7-06 Cargo-first build

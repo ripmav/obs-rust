@@ -55,7 +55,7 @@ Linux:
 
 Windows:
 - [ ] **P5-30 `win-wasapi`** (L): device and application (process loopback) audio capture, `windows` crate, device notification, exclusive/shared, latency tests.
-- [ ] **P5-31 `win-capture`** (XL; split: monitor capture DXGI duplication, WGC capture (`libobs-winrt`), window capture BitBlt/WGC, game capture hook DLL + injector (`graphics-hook`, `get-graphics-offsets`, `inject-helper`), cursor capture): hook DLL stays C/C++ at first (injected into games; ABI-sensitive); host side in Rust. Test with D3D9/10/11/12/Vulkan/OpenGL samples.
+- [ ] **P5-31 `win-capture`** (XL; split: monitor capture DXGI duplication, WGC capture (`libobs-winrt`), window capture BitBlt/WGC, game capture hook DLL + injector (`graphics-hook`, `get-graphics-offsets`, `inject-helper`, plus `shared/ipc-util` for the hook IPC pipe), cursor capture): hook DLL stays C/C++ at first (injected into games; ABI-sensitive); host side in Rust. Test with D3D9/10/11/12/Vulkan/OpenGL samples.
 - [ ] **P5-32 `win-dshow`** (L): DirectShow capture (`deps/libdshowcapture`), virtual camera driver (`virtualcam-module`, `shared-memory-queue`). Port host; keep libdshowcapture FFI.
 - [ ] **P5-33 `libobs-winrt`** (M): `winrt-capture.cpp`, `winrt-dispatch.cpp` -> `windows` crate (Windows.Graphics.Capture).
 
@@ -63,7 +63,7 @@ macOS:
 - [ ] **P5-34 `mac-capture`** (XL): ScreenCaptureKit (display, window, application), audio capture (`objc2` + `screencapturekit` crate), permissions, cursor.
 - [ ] **P5-35 `mac-avcapture`** (L): AVFoundation cameras, formats, presets, controls, Continuity Camera.
 - [ ] **P5-36 `mac-syphon`** (M): Syphon client; IOSurface (depends on P3-20).
-- [ ] **P5-37 `mac-virtualcam`** (L): CoreMediaIO system extension (DAL plug-in removed): sink stream, extension install flow, code-signing, entitlements.
+- [ ] **P5-37 `mac-virtualcam`** (L): the plugin ships **two** camera backends: the legacy CoreMediaIO DAL plug-in (`src/dal-plugin/`, 12 ObjC files, plus shared `src/common/MachProtocol.h`) and the new system extension (`src/camera-extension/` Swift + `src/obs-plugin/` host). Port the host side (sink stream, extension install flow, code-signing, entitlements); keep the DAL plug-in building until the extension flow is the default, then remove it (D-14).
 - [ ] **P5-38 `mac-videotoolbox`** (L): H.264/HEVC/ProRes hardware encoder; pixel buffer sharing with Metal (depends on P3-21).
 
 ## D. Hardware encoders

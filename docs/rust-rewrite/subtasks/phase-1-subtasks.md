@@ -185,7 +185,16 @@ Corrections to the earlier plan, verified in the tree: the ring buffer is `libob
 - [ ] **P1-28.2 Combo JSON** — `obs_hotkey_binding` save/load format. Done when: round trip of corpus hotkeys.
 - [ ] **P1-28.3 Golden**
 
-## E. Integration
+## E. `shared/` leaf helpers
+
+### P1-33 `shared/` leaf helpers (added)
+- [ ] **P1-33.1 `shared/bpm`** — apply recipe for S-024 M8 (counters, timestamps, SEI payloads, per-codec packet injection). Done when: the `bpm` scripts in `test/conformance/scripts/helpers/` pass against the C reference.
+- [ ] **P1-33.2 `shared/file-updater`** — apply recipe for S-024 M10 (version comparison, fake-HTTP/in-memory-filesystem driven; the module has no hashes). Done when: M10 scripts pass.
+- [ ] **P1-33.3 `shared/happy-eyeballs`** — apply recipe for S-024 M9 (address-list ordering, resolver hints, constants only — the socket race is out of scope and stays behind the C until a spec exists). Done when: M9 scripts pass.
+- [ ] **P1-33.4 `shared/obs-inject-library`** — no spec (thin `LoadLibrary`/`dlopen` helper): port from the C, unit-test symbol resolution and the failure paths. Consumed by P5-31.7 (game-capture injection) and P5-32.6. Done when: C file excluded from the build, consumers link the crate.
+- [ ] **P1-33.5 `shared/opts-parser`** — apply recipe for S-024 M1 (option-string parsing). Done when: M1 scripts pass.
+
+## F. Integration
 
 ### P1-29 `obs-ffi` header diff
 - [ ] **P1-29.1 cbindgen config** per crate with `cpp_compat`, prefix none. Done when: header generated.

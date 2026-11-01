@@ -15,7 +15,7 @@ Facts verified in this checkout that shape Phase 0:
   - Done when: template renders on GitHub and README lists how to add an ADR.
 - [ ] **P0-01.2 Context section**
   - Files: `docs/adr/0001-strangler-migration.md`
-  - Steps: copy measured sizes (libobs 94k, frontend 89k, plugins 170k, deps 70k lines), mention 3 OSes and ~40 plugins, state the C-plugin-ABI constraint with link to `libobs/obs-module.h`.
+  - Steps: copy measured sizes (libobs 94k, frontend 109k incl. `.ui`, plugins 172k, shared 22k, deps 70k lines), mention 3 OSes and ~40 plugins, state the C-plugin-ABI constraint with link to `libobs/obs-module.h`.
   - Done when: every number has a reproducible command in a footnote (`find ... | xargs cat | wc -l`).
 - [ ] **P0-01.3 Alternatives**
   - Steps: write big-bang rewrite, new repository, status quo, "Rust only for new plugins"; for each give cost, risk, why rejected.

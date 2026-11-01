@@ -13,8 +13,22 @@ gen/<area>_runner.c               reference runner (links the C implementation)
 run.sh generate | check           (re)generate or verify vectors; needs a C compiler
 ```
 
-Areas: `bmem` (S-001), `calldata` (S-002), `decl` (S-003), `signal` (S-004),
-`darray` and `deque` (S-005).
+Areas (59): `bmem` (S-001), `calldata` (S-002), `decl` (S-003), `signal` (S-004),
+`darray` and `deque` (S-005), `dstr` (S-006), `config` (S-007), `math` (S-008),
+`math2` (S-009), `serial` (S-010), `lexer` (S-011), `nal` (S-012), `mediaconv`
+(S-013), `obsdata` (S-014), `props` (S-015), `effect` (S-020), `flv` (S-021),
+`mp4` (S-022), `platform` (S-023), `helpers` (S-024), `encopts` (S-025),
+`rtmpservices` (S-026), `audiofilters` (S-027), `videofilters` (S-028),
+`transitions` (S-029), `imagesource` (S-030), `rtmp` (S-031), `audiomix` (S-032),
+`scenemath` (S-033), `hotkeys` (S-034), `modservice` (S-035), `mediaplayback`
+(S-036), `ffmuxproto` (S-037), `textft2` (S-038), `scripting` (S-039),
+`obssource` (S-040), `encoutput` (S-041), `obscore` (S-042), `graphics` (S-043),
+`avio` (S-044), `rtmpstream` (S-045), `ffoutputs` (S-046), `ffsources` (S-047),
+`frontendfmt` (S-048), `linuxcapture` and `linuxinputs` (S-049), `hwencoders`
+(S-050), `wincapture` (S-051), `maccapture` (S-052), `gfximages` (S-053),
+`filtersrest` (S-054), `utilrest` (S-055), `pipewire` (S-056), `glbackend`
+(S-057), `obsvideo` (S-058), `mpegtsout` (S-059), `luascript` (S-060), and
+`pyscript` (no spec yet — decision D-29 in `docs/rust-rewrite/DECISIONS-NEEDED.md`).
 
 **Who uses what.** Spec authors use `run.sh` and `gen/`. Implementers of a clean-room
 port need only `scripts/`, `vectors/`, this README, and the spec; they write a runner
