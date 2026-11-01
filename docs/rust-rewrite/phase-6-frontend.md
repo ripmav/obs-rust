@@ -40,7 +40,7 @@ Source map: `frontend/OBSApp*.cpp`, `obs-main.cpp`, `OBSStudioAPI.*`, `api/`, `c
 
 - [ ] **P6-24 Scene collection manager** (L): `models/SceneCollection`, JSON load/save, backups, autosave, `.json.bak`, rename/duplicate/delete/import/export, migration of missing files.
 - [ ] **P6-25 Profile manager** (M): create, duplicate, rename, remove, export/import, per-profile `basic.ini`, `streamEncoder.json`, `recordEncoder.json`.
-- [ ] **P6-26 Importers** (L): `importers/classic.cpp`, `sl.cpp` (Streamlabs), `studio.cpp`, `xsplit.cpp`. Golden: converted JSON vs reference for sample files.
+- [ ] **P6-26 Importers** (L): `importers/classic.cpp`, `sl.cpp` (Streamlabs), `studio.cpp`, `xsplit.cpp` plus the import dialog `frontend/importer/` (`OBSImporter`, `ImporterModel`, `ImporterEntryPathItemDelegate`) and `forms/OBSImporter.ui` (P6-26.6). Golden: converted JSON vs reference for sample files.
 - [ ] **P6-27 Missing files dialog** (S): `OBSMissingFiles`.
 - [ ] **P6-28 Remux dialog** (S): `OBSRemux`, uses `ffmpeg` remux with progress.
 
@@ -72,5 +72,6 @@ Source map: `frontend/OBSApp*.cpp`, `obs-main.cpp`, `OBSStudioAPI.*`, `api/`, `c
 - [ ] **P6-46 End-to-end UI tests** (L): scripted UI tests (AT-SPI / `accessibility` APIs or screenshot compare) of the top 30 user journeys: add source, record, stream to local RTMP, switch scene, change setting, import collection.
 - [ ] **P6-47 Beta programme** (M): publish nightly beta, collect crash and regression reports for 2 releases.
 - [ ] **P6-48 Phase 6 review** (S): tick this file.
+- [ ] **P6-49 Frontend components sweep** (M) (added): owns every remaining frontend file no dedicated task lists — `frontend/components/*` generic Qt widgets (21 files: FlowFrame/FlowLayout, FocusList, MenuButton, ClickableLabel, DelButton, EditWidget, InfoChip, UIValidation, UrlPushButton, SilentUpdate*…), `shared/qt/*` (45 files: obs-spinbox, idian components, icon-label, plain-text-edit, qt-wrappers, slider-ignorewheel, vertical-scroll-area) and `frontend/data/striped_line.effect`. Port per the P0-04 toolkit decision (D-01), view-model test first per the UI bookend, ordered by consumer count. Done when: the 67 files are excluded from the C build and `tools/task-coverage.py --write` shows P6-49 with zero rows.
 
 Exit criteria: Rust application reaches feature parity per `docs/rust-rewrite/parity-checklist.md` (generated from the C++ UI by walking menus and settings), passes the UI test suite, ships as beta on 3 OSes.

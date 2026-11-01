@@ -252,7 +252,7 @@ Verified in this checkout: **`plugins/obs-websocket` and `plugins/obs-browser` a
 - [ ] **P5-31.3 DXGI duplication** — `duplicator-monitor-capture.c`, `monitor-capture.c`. Done when: monitor capture incl. multi-GPU.
 - [ ] **P5-31.4 WGC** — via P5-33. Done when: monitor and window capture.
 - [ ] **P5-31.5 Window/BitBlt** — `window-capture.c`, `dc-capture.c/.h`, `app-helpers.c/.h`, `compat-helpers.c/.h` (compat list). Done when: window selection by title/class/exe.
-- [ ] **P5-31.6 Game capture host** — `game-capture.c`, `game-capture-file-init.c`, `load-graphics-offsets.c`, `nt-stuff.c/.h`: hook state machine, shared memory/events, anti-cheat compat. Done when: hooks a D3D11 sample.
+- [ ] **P5-31.6 Game capture host** — `game-capture.c`, `game-capture-file-init.c`, `load-graphics-offsets.c`, `nt-stuff.c/.h` plus `shared/ipc-util` (the named-pipe IPC the hook process uses; the only consumers in the tree are game capture and its hook build, so it ports here): hook state machine, shared memory/events, anti-cheat compat. Done when: hooks a D3D11 sample.
 - [ ] **P5-31.7 Hook DLL and helpers** — `graphics-hook/` (`d3d8/9/10/11/12`, `dxgi`, `gl`, `vulkan` capture), `inject-helper/inject-helper.c`, `get-graphics-offsets/`. Stay C/C++ initially; wrap build only. Done when: builds from Cargo.
 - [ ] **P5-31.8 Cursor** — `cursor-capture.c/.h`. Done when: cursor visible.
 - [ ] **P5-31.9 API matrix** — D3D8/9/10/11/12, OpenGL, Vulkan samples.
@@ -292,8 +292,8 @@ Verified in this checkout: **`plugins/obs-websocket` and `plugins/obs-browser` a
 
 ### P5-37 `mac-virtualcam`
 - [ ] **P5-37.1/.2** S1/S2
-- [ ] **P5-37.3 Extension** — `mac-virtualcam/src/`: CoreMediaIO camera extension (Swift/ObjC); Rust cannot be the extension host directly — define bridge. Done when: extension builds.
-- [ ] **P5-37.4 Sink/install** — sink stream, `OSSystemExtensionRequest`. Done when: install flow tested.
+- [ ] **P5-37.3 Legacy DAL plug-in** — `src/dal-plugin/` (12 ObjC files) + `src/common/MachProtocol.h`: keep it building and tested against the C reference during the port; it is the fallback camera until the extension flow is the default. Per D-14, remove it in this subtask once the extension is the default, and record the removal in `retired.md`. Done when: DAL still green, then deleted with no regressions.
+- [ ] **P5-37.4 System extension + host** — `src/camera-extension/` (Swift: `OBSCameraDeviceSource`, `OBSCameraProviderSource`, stream sink/source) and `src/obs-plugin/` (host: `OBSDALMachServer`, `plugin-main.mm`): Rust cannot be the extension host directly — define the Mach-bridge. Sink stream, `OSSystemExtensionRequest`. Done when: extension builds and the install flow is tested.
 - [ ] **P5-37.5 Signing** — entitlements, provisioning. Done when: notarised build.
 - [ ] **P5-37.6/.7** E1/E2
 

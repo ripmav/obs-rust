@@ -66,8 +66,16 @@ conformance suite (`test/conformance/`). Process, roles and rules:
 | [S-050](S-050-hardware-encoders.md) | hardware encoders: obs-nvenc, QSV, VAAPI, ffmpeg-nvenc (hand-written SDK shims); AMF rules only | ≈ 9,000 lines | 57 | Draft (Tier C) | not run |
 | [S-051](S-051-windows-capture-plugins.md) | Windows capture: window matching, hook structs, virtual-camera queue (real C); other logic MODEL/SRC | ≈ 12,000 lines | 28 | Draft (Tier C) | not run |
 | [S-052](S-052-macos-plugins.md) | macOS plugins: all vectors MODEL (source-derived), numeric Apple constants need checking on a Mac | ≈ 8,000 lines | 11 | Draft (Tier C) | not run |
+| [S-053](S-053-graphics-images-and-builtin-effects.md) | image decoding (image-file, graphics-ffmpeg, libnsgif) and the built-in effects (`libobs/data/*.effect`) | ≈ 8,100 lines | 21 | Draft (vectors complete from real C; sufficiency check not performed) | not run |
+| [S-054](S-054-obs-filters-remainder.md) | obs-filters remainder: module table, vendored RNNoise/SpeexDSP contract, effect inventory | ≈ 650 lines (+ 13,500 vendored) | 8 | Ready for review (sufficiency check skipped) | skipped |
+| [S-055](S-055-libobs-util-remainder.md) | CRC-32, child-process pipes, source profiler, D-Bus/portal sleep inhibition, PulseAudio audio monitor | ≈ 2,300 lines | 26 | Ready for review (sufficiency check skipped) | skipped |
+| [S-056](S-056-linux-pipewire.md) | linux-pipewire: screencast/camera portals, formats | ≈ 4,000 lines | 56 | complete for scripted-fake-reachable behaviour | not run |
+| [S-057](S-057-opengl-backend.md) | OpenGL backend (`libobs-opengl`), real C on a real software GL context | ≈ 7,100 lines | 22 | Ready for review (sufficiency check skipped) | skipped |
+| [S-058](S-058-video-render-loop-and-nix-glue.md) | graphics-thread frame loop, GPU encode, nix/X11 glue — Wayland **not** covered | ≈ 3,300 lines | 23 | Ready for review (sufficiency check not performed) | not run |
+| [S-059](S-059-mpegts-srt-rist-output.md) | `mpegtsout`: native MPEG-TS network output (SRT / RIST / UDP / TCP) | ≈ 2,700 lines | 32 | Ready for review (sufficiency check skipped) | skipped |
+| [S-060](S-060-lua-scripting-backend.md) | Lua scripting backend (obslua) | ≈ 2,400 lines | 25 | Draft (sufficiency check skipped) | not run |
 
-Totals: **1,309 scripts / 1,309 committed vectors**, 49 areas, `test/conformance/run.sh check` passes against the C reference.
+Totals: **1,561 scripts / 1,554 committed vectors**, 59 areas, `test/conformance/run.sh check` passes against the C reference.
 
 "Ready for review" means the spec author finished it; it becomes **Ready** only after the
 second-author check in PROCESS.md section 4.
@@ -91,45 +99,61 @@ drive a correct implementation*, which a real clean-room implementer must still 
 These check implementations were throw-away and are not committed (they would not be
 clean-room provenance). `bmem` was not implemented in the check.
 
-Known gaps: the native SRT/RIST MPEG-TS output (`obs-ffmpeg-mpegts.c`) needs its own spec; `run.sh` needs `CONFORMANCE_BUILD_DIR` exported on every call, otherwise it builds into a new temp directory; run it from `test/conformance`.
+Known gaps: `run.sh` needs `CONFORMANCE_BUILD_DIR` exported on every call, otherwise it builds
+into a new temp directory; run it from `test/conformance`. The SRT/RIST MPEG-TS output gap is
+closed by S-059. The remaining spec gaps (threading, obs-websocket, Python backend, Wayland,
+audio-monitoring win32/osx/null, win-wasapi, vendor SDKs) are tracked in
+[../DECISIONS-NEEDED.md](../DECISIONS-NEEDED.md) section D.
 
 ## Backlog (not yet specified)
 
-Sizes are lines of C/C++ in the reference (rough measure of spec effort). Order follows the
-phase plan. **Nothing below exists yet.**
+Most of the original backlog is now written. The rows below that were once "not yet specified"
+have been absorbed into a numbered spec; the rest are the genuine gaps, each with a decision
+owner in [../DECISIONS-NEEDED.md](../DECISIONS-NEEDED.md) section D.
 
-### Phase 1 – leaf libraries (remaining)
-| Next ID | Component | C lines |
-|---|---|---|
-| S-016 | `profiler` | 1,100 |
-| S-017 | threading primitives (`os_event`, `os_sem`, …) and time/sleep | 600 + part of 2,200 |
-| S-018 | platform file/process utilities (`os_fopen`, `os_mkdirs`, `os_glob`, `os_fread_utf8`, `os_dtostr`, `os_strtod`, `os_safe_replace`, pipes, paths) | ≈ 2,200 |
-| S-019 | UTF-8 / wide conversion (`utf8.c`) | small |
+### Absorbed (now specified)
+| Old backlog item | Now in |
+|---|---|
+| `profiler` (was S-016) | S-024 (M7) |
+| platform file/process utilities + UTF-8 (was S-018 / S-019) | S-023 |
+| effect/shader language and parsers | S-020 |
+| built-in effects | S-053 |
+| `gs_*` API semantics | S-043 |
+| OpenGL backend contract | S-057 |
+| video-io / audio-io threads | S-044 |
+| audio mixing and controls | S-032 |
+| audio resampler / scaler | S-013, S-044 |
+| sources, filters, transitions | S-040 |
+| scenes | S-033 |
+| encoders / outputs / services | S-041 |
+| hotkeys | S-034 |
+| `obs_core` start-up, canvas, view, display | S-042, S-043 |
+| module loading and locale | S-035 |
+| FLV/RTMP, MP4 wire formats | S-021, S-031, S-022 (WebSocket protocol is gap S-062) |
+| frontend CLI / INI / API catalog | S-048 |
+| per-plugin specs (≈ 40) | S-025…S-032, S-038, S-045…S-056 |
 
-### Phase 2 – media (remaining)
-IDs are assigned when work starts (S-020 onward): video-io and audio-io threads (1,100 lines);
-audio mixing and controls (1,600); audio resampler/scaler wrappers; audio-monitoring backends.
-
-### Phase 3 – graphics
-Effect/shader language and parsers (3,200); `gs_*` API semantics (3,300 + headers); backend contract
-(`gs_exports`, ≈176 functions); built-in effects.
-
-### Phase 4 – core
-Module loading and locale; sources, filters, transitions (7,600); scenes (4,100); encoders/outputs/
-services (5,800); hotkeys (1,400); `obs_core` start-up and video/audio reset (3,500); canvases, views, displays.
-
-### Phases 5–7
-One spec per plugin (≈ 40), each with: registered ids, settings keys and defaults, behaviours,
-wire formats where applicable (e.g. FLV/RTMP, MP4 boxes, WebSocket protocol), locale keys.
-Frontend: file formats, CLI flags, frontend API (99 functions, 44 events), UI behaviour tables.
+### Genuine gaps (no spec yet)
+| Suggested ID | Component | Why it is a gap | Blocked task | Decision |
+|---|---|---|---|---|
+| S-061 | threading primitives (`os_event`, `os_sem`, `pthread_mutex`, `os_set_thread_name`) and time/sleep (was S-017) | P1-05 / P1-06 would read the C | P1-05, P1-06 | D-27 |
+| S-062 | `obs-websocket` protocol | most-integrated third-party plugin; no S-xxx | P5-20 | D-28 |
+| S-063 | Python scripting backend (25 `pyscript` vectors exist; S-039/S-060 cover only the core and Lua) | P6-37.2 would read the C | P6-37.2 | D-29 |
+| S-064 | Wayland platform glue (`obs-nix-wayland.c`, 41 KB: keyboard-shortcuts-inhibit, GlobalShortcuts portal) | S-058 explicitly excludes it | P4-32.2 | D-30 |
+| S-065 | audio-monitoring win32 / osx / null backends | S-055 covers PulseAudio only | P2-15.3, P2-15.4 | D-31 |
+| S-066 | `win-wasapi` enumeration/capture | S-051 covers window matching/hook/vqueue, not WASAPI | P5-30 | D-32 |
+| — | vendor-SDK behavioural tables (obs-nvenc helpers, coreaudio-encoder, nv-filters, vlc-video, decklink, aja) | mostly "kept as FFI" per D-04/D-10 | P5-38…P5-43 | D-33 |
 
 ## Scale — an honest estimate
 
-The forty-eight specs above cover about **165k of ≈460k lines** (≈ 36 %), though the Tier C ones are partial, most of Phase 1 and the pure parts of Phase 2. The remaining specs are
-larger and less self-contained (threads, GPU state, network protocols, UI), so the effort per
-line will be higher than for this first, deliberately well-contained tranche. UI-heavy and
-hardware-dependent parts (preview, properties view, capture plugins, encoders with vendor SDKs)
-cannot be fully specified as text + vectors; they need *behavioural* specs with screenshot
-or device-in-the-loop acceptance tests, and some will remain judgement calls. Plan for the
-spec effort to be a large fraction of the total project, run in parallel with the first
-implementations rather than before them.
+The 56 specs above cover about **168,640 of 313,755 non-frontend lines (53.7 %)**, measured by
+`tools/coverage.py` against libobs 33.0.1 (target ≥ 85 %; the remaining ~98k lines are the gaps
+above plus platform/vendor-SDK code that is kept as FFI by decision rather than specified). The
+Tier C specs are partial. The frontend (~109k lines) is deliberately specified as behavioural
+tables (S-048) rather than text + vectors: UI-heavy and hardware-dependent parts (preview,
+properties view, capture plugins, encoders with vendor SDKs) need screenshot or
+device-in-the-loop acceptance tests, and some will remain judgement calls. The remaining
+non-frontend gaps are larger and less self-contained (threads, GPU state, network protocols),
+so the effort per line will be higher than for this first, deliberately well-contained tranche.
+Plan for the spec effort to be a large fraction of the total project, run in parallel with the
+first implementations rather than before them.

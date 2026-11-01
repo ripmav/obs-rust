@@ -48,7 +48,9 @@ Start with [`guides/00-developer-primer.md`](guides/00-developer-primer.md) (bui
 For work that must be done **without reading the C implementation** (by any engineer or AI agent):
 
 - Process, roles, forbidden paths, provenance: [`clean-room/PROCESS.md`](clean-room/PROCESS.md); AI-agent prompt block: [`clean-room/AGENT-BRIEF.md`](clean-room/AGENT-BRIEF.md).
-- Specifications (`S-001` … `S-005` written so far, backlog listed): [`specs/README.md`](specs/README.md).
-- Executable conformance suite (scripts, vectors from the C reference, runners, script language): `test/conformance/README.md`; verify with `test/conformance/run.sh check`.
+- Specifications (56 written, `S-001` … `S-060`, remaining gaps listed): [`specs/README.md`](specs/README.md).
+- Executable conformance suite (1,561 scripts / 1,554 vectors, 59 areas): `test/conformance/README.md`; verify with `test/conformance/run.sh check`.
+- Coverage: every file of the C reference mapped to a task in [`coverage/coverage-matrix.md`](coverage/coverage-matrix.md) (regenerate with `python3 tools/task-coverage.py --write`); line-level spec/test coverage with `python3 tools/coverage.py`.
+- Decisions that need user/maintainer input, each with a default so work is never blocked: [`DECISIONS-NEEDED.md`](DECISIONS-NEEDED.md).
 
 Task files reference the spec that applies (for Phase 1: P1-01 → S-001, P1-03/P1-04 → S-005, P1-20 → S-002, P1-21 → S-003, P1-22/P1-23 → S-004).
