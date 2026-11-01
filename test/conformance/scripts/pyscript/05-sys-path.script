@@ -1,0 +1,44 @@
+# sys.path handling: the script directory (with its trailing slash) is APPENDED once per distinct directory;
+# two entries come from the interpreter start-up (executable-relative "../share/obs/obs-scripting" and the absolute
+# script directory; both are faked here). script_path() / __script_dir__ exist only after the module body has run.
+scripting load
+py_begin paths_a.py
+import sys, obspython as obs
+try:
+    script_path
+except NameError as e:
+    print("at import: script_path undefined")
+def script_load(settings):
+    d = script_path()
+    print("script_path == __script_dir__:", d == __script_dir__)
+    print("ends with slash:", d.endswith("/"))
+    shown = ["<DIR>" if p == d else p for p in sys.path if p == d or "fakeroot" in p or p == ""]
+    print("entries:", shown)
+    print("dir appended last:", sys.path[-1] == d)
+    print("dir count:", sys.path.count(d))
+py_end
+py_begin paths_b.py
+import sys
+def script_load(settings):
+    d = script_path()
+    print("second script, same dir, count:", sys.path.count(d))
+py_end
+py_begin paths_c.py
+import sys
+def script_load(settings):
+    sys.path.append("/fakeroot/added/by/script")
+    print("script appended:", sys.path[-1])
+py_end
+echo create two scripts from the same directory
+create S0 paths_a.py
+create S1 paths_b.py
+create S2 paths_c.py
+echo the entry added by a script itself stays after the script is destroyed
+destroy S2
+py_begin paths_d.py
+import sys
+def script_load(settings):
+    print("still there:", "/fakeroot/added/by/script" in sys.path)
+py_end
+create S3 paths_d.py
+scripting unload

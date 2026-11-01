@@ -1,0 +1,30 @@
+# Branches of the "stopping" state that a real stop races past, reached deterministically with the runner's hold/blind hooks:
+# the write thread processes a queued packet while stopping is set. Packet with sys_ts (pause_offset + dts in ns) below stop_ts is
+# still written; at or above it is dropped. QUIRK: the encoder callback compares sys_dts_usec (microseconds) with stop_ts
+# (nanoseconds) while the write thread compares nanoseconds.
+create
+world pause_offset 1000
+start
+pkt v 0 0 0 1 3000
+pkt a 0 0 0 1 200
+drain
+state
+hold on
+blind 1
+pkt v 0 3 3 0 800
+stop_async 100000000
+hold off
+wait
+state
+# second run: stop_ts far above the packet's system time -> the in-flight packet is still written (total_bytes counts it)
+start
+pkt v 0 0 0 1 3000
+pkt a 0 0 0 1 200
+drain
+hold on
+blind 1
+pkt v 0 3 3 0 800
+stop_async 900000000
+hold off
+wait
+state

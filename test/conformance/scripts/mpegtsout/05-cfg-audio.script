@@ -1,0 +1,18 @@
+# setup_audio_settings: number of tracks is found by probing obs_output_get_audio_encoder() until it returns NULL; codec
+# and frame size come from track 0, one bitrate per track.
+create
+cfg audio
+world tracks 3
+world abitrate 0 96
+world abitrate 1 128
+world abitrate 2 192
+cfg audio
+world acodec opus
+world framesize 960
+cfg audio
+# a codec that is neither aac nor opus leaves audio_encoder_id untouched (stack garbage in the reference; zeroed here)
+world acodec mp3
+cfg audio
+# muxer settings come from the output's "muxer_settings" setting (default "" is written back as default), protocol settings are ""
+setting muxer_settings "mpegts_flags=+resend_headers pat_period=0.5"
+cfg muxer

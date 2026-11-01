@@ -1,0 +1,32 @@
+# fetch_service_info: how the service's connect info becomes the muxer configuration, and the URL-query parsing of the
+# packet size (payload_size is looked up first, then pkt_size; value via strtol base 10; absent -> 0 = "use protocol default").
+create
+cfg
+world url "srt://192.0.2.10:9000?pkt_size=1000"
+cfg
+world url "srt://192.0.2.10:9000?payload_size=1200"
+cfg
+# both present: payload_size is looked up first and wins (the || short-circuits, pkt_size is not even looked at)
+world url "srt://192.0.2.10:9000?pkt_size=1000&payload_size=1200"
+cfg
+world url "srt://192.0.2.10:9000?pkt_size=abc"
+cfg
+world url "srt://192.0.2.10:9000?pkt_size=-5"
+cfg
+world url "srt://192.0.2.10:9000?pkt_size=0x10"
+cfg
+world url "srt://192.0.2.10:9000?latency=120&pkt_size=1316&mode=caller"
+cfg
+world url "srt://192.0.2.10:9000?"
+cfg
+# the query is only looked for after the first '?'
+world url "srt://192.0.2.10:9000/pkt_size=1000"
+cfg
+world url "rist://192.0.2.20:8000?buffer=500&pkt_size=1400"
+cfg
+world url "udp://192.0.2.30:5000"
+cfg
+world url "RIST://192.0.2.20:8000"
+cfg
+world url "tcp://192.0.2.30:5000"
+cfg

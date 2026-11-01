@@ -1,0 +1,36 @@
+# The per-source history is a circular buffer of fps*5 samples (ceil(fps_num/fps_den)*5). Here fps=1 -> 5 samples.
+# Older samples are overwritten; averages cover only the last 5 collected frames.
+sp_source 0 0
+sp_enable 1
+sp_frame_begin
+sp_reset_video 1 1
+sp_clock 1
+sp_frame_begin
+sp_tick 0 10
+sp_frame_collect
+sp_frame_begin
+sp_tick 0 20
+sp_frame_collect
+sp_frame_begin
+sp_tick 0 30
+sp_frame_collect
+sp_frame_begin
+sp_tick 0 40
+sp_frame_collect
+sp_frame_begin
+sp_tick 0 50
+sp_frame_collect
+sp_frame_begin
+sp_tick 0 60
+sp_frame_collect
+sp_result 0
+sp_frame_begin
+sp_tick 0 70
+sp_frame_collect
+sp_frame_begin
+sp_tick 0 1000
+sp_frame_collect
+sp_result 0
+# reset_video discards all history (the video thread is not running)
+sp_reset_video 30000 1001
+sp_result 0

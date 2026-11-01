@@ -1,0 +1,205 @@
+file ok.gif 93 bytes
+== scan the first N bytes only (progressive input), then the rest
+gif_new size=93 -> Success
+gif_scan 5 -> Unexpected end of GIF source data
+gif_scan 13 -> Unexpected end of GIF source data
+gif_scan 20 -> Unexpected end of GIF source data
+gif_scan 60 -> Unexpected end of GIF source data
+gif_info width=2 height=2 frames=0 loop_max=0 background=ff0000ff global_palette=1
+  frame_info(frame_count) null
+gif_scan 93 -> Success
+gif_info width=2 height=2 frames=2 loop_max=0 background=ff0000ff global_palette=1
+  frame 0 display=1 transparency=0 local_palette=0 interlaced=0 disposal=Unspecified(0) delay=10 rect=0,0,2,2
+  frame 1 display=1 transparency=0 local_palette=0 interlaced=0 disposal=Unspecified(0) delay=20 rect=0,0,2,2
+  frame_info(frame_count) null
+trunc t0.gif 0 bytes
+== truncated to 0 bytes
+gif_new size=0 -> Success
+gif_scan 0 -> Unexpected end of GIF source data
+gif_info width=0 height=0 frames=0 loop_max=0 background=00000000 global_palette=0
+  frame_info(frame_count) null
+gif_complete
+gif_info width=0 height=0 frames=0 loop_max=0 background=00000000 global_palette=0
+  frame_info(frame_count) null
+gif_frame 0 -> Requested frame does not exist
+gif_frame 1 -> Requested frame does not exist
+trunc t3.gif 3 bytes
+== truncated to 3 bytes
+gif_new size=3 -> Success
+gif_scan 3 -> Unexpected end of GIF source data
+gif_info width=0 height=0 frames=0 loop_max=0 background=00000000 global_palette=0
+  frame_info(frame_count) null
+gif_complete
+gif_info width=0 height=0 frames=0 loop_max=0 background=00000000 global_palette=0
+  frame_info(frame_count) null
+gif_frame 0 -> Requested frame does not exist
+gif_frame 1 -> Requested frame does not exist
+trunc t6.gif 6 bytes
+== truncated to 6 bytes
+gif_new size=6 -> Success
+gif_scan 6 -> Unexpected end of GIF source data
+gif_info width=0 height=0 frames=0 loop_max=0 background=00000000 global_palette=0
+  frame_info(frame_count) null
+gif_complete
+gif_info width=0 height=0 frames=0 loop_max=0 background=00000000 global_palette=0
+  frame_info(frame_count) null
+gif_frame 0 -> Requested frame does not exist
+gif_frame 1 -> Requested frame does not exist
+trunc t10.gif 10 bytes
+== truncated to 10 bytes
+gif_new size=10 -> Success
+gif_scan 10 -> Unexpected end of GIF source data
+gif_info width=0 height=0 frames=0 loop_max=0 background=00000000 global_palette=0
+  frame_info(frame_count) null
+gif_complete
+gif_info width=0 height=0 frames=0 loop_max=0 background=00000000 global_palette=0
+  frame_info(frame_count) null
+gif_frame 0 -> Requested frame does not exist
+gif_frame 1 -> Requested frame does not exist
+trunc t13.gif 13 bytes
+== truncated to 13 bytes
+gif_new size=13 -> Success
+gif_scan 13 -> Unexpected end of GIF source data
+gif_info width=2 height=2 frames=0 loop_max=1 background=00000000 global_palette=1
+  frame_info(frame_count) null
+gif_complete
+gif_info width=2 height=2 frames=0 loop_max=1 background=00000000 global_palette=1
+  frame_info(frame_count) null
+gif_frame 0 -> Requested frame does not exist
+gif_frame 1 -> Requested frame does not exist
+trunc t14.gif 14 bytes
+== truncated to 14 bytes
+gif_new size=14 -> Success
+gif_scan 14 -> Unexpected end of GIF source data
+gif_info width=2 height=2 frames=0 loop_max=1 background=00000000 global_palette=1
+  frame_info(frame_count) null
+gif_complete
+gif_info width=2 height=2 frames=0 loop_max=1 background=00000000 global_palette=1
+  frame_info(frame_count) null
+gif_frame 0 -> Requested frame does not exist
+gif_frame 1 -> Requested frame does not exist
+trunc t20.gif 20 bytes
+== truncated to 20 bytes
+gif_new size=20 -> Success
+gif_scan 20 -> Unexpected end of GIF source data
+gif_info width=2 height=2 frames=0 loop_max=1 background=00000000 global_palette=1
+  frame_info(frame_count) null
+gif_complete
+gif_info width=2 height=2 frames=0 loop_max=1 background=00000000 global_palette=1
+  frame_info(frame_count) null
+gif_frame 0 -> Requested frame does not exist
+gif_frame 1 -> Requested frame does not exist
+trunc t30.gif 30 bytes
+== truncated to 30 bytes
+gif_new size=30 -> Success
+gif_scan 30 -> Unexpected end of GIF source data
+gif_info width=2 height=2 frames=0 loop_max=1 background=ff0000ff global_palette=1
+  frame_info(frame_count) null
+gif_complete
+gif_info width=2 height=2 frames=0 loop_max=1 background=ff0000ff global_palette=1
+  frame_info(frame_count) null
+gif_frame 0 -> Requested frame does not exist
+gif_frame 1 -> Requested frame does not exist
+trunc t50.gif 50 bytes
+== truncated to 50 bytes
+gif_new size=50 -> Success
+gif_scan 50 -> Unexpected end of GIF source data
+gif_info width=2 height=2 frames=0 loop_max=0 background=ff0000ff global_palette=1
+  frame_info(frame_count) null
+gif_complete
+gif_info width=2 height=2 frames=0 loop_max=0 background=ff0000ff global_palette=1
+  frame_info(frame_count) null
+gif_frame 0 -> Requested frame does not exist
+gif_frame 1 -> Requested frame does not exist
+trunc t70.gif 70 bytes
+== truncated to 70 bytes
+gif_new size=70 -> Success
+gif_scan 70 -> Success
+gif_info width=2 height=2 frames=1 loop_max=0 background=ff0000ff global_palette=1
+  frame 0 display=1 transparency=0 local_palette=0 interlaced=0 disposal=Unspecified(0) delay=10 rect=0,0,2,2
+  frame_info(frame_count) null
+gif_complete
+gif_info width=2 height=2 frames=1 loop_max=0 background=ff0000ff global_palette=1
+  frame 0 display=1 transparency=0 local_palette=0 interlaced=0 disposal=Unspecified(0) delay=10 rect=0,0,2,2
+  frame_info(frame_count) null
+gif_frame 0 -> Success pixels=ff0000ff00ff00ff0000ffffffffffff
+gif_frame 1 -> Requested frame does not exist
+trunc t92.gif 92 bytes
+== truncated to 92 bytes
+gif_new size=92 -> Success
+gif_scan 92 -> Success
+gif_info width=2 height=2 frames=2 loop_max=0 background=ff0000ff global_palette=1
+  frame 0 display=1 transparency=0 local_palette=0 interlaced=0 disposal=Unspecified(0) delay=10 rect=0,0,2,2
+  frame 1 display=1 transparency=0 local_palette=0 interlaced=0 disposal=Unspecified(0) delay=20 rect=0,0,2,2
+  frame_info(frame_count) null
+gif_complete
+gif_info width=2 height=2 frames=2 loop_max=0 background=ff0000ff global_palette=1
+  frame 0 display=1 transparency=0 local_palette=0 interlaced=0 disposal=Unspecified(0) delay=10 rect=0,0,2,2
+  frame 1 display=1 transparency=0 local_palette=0 interlaced=0 disposal=Unspecified(0) delay=20 rect=0,0,2,2
+  frame_info(frame_count) null
+gif_frame 0 -> Success pixels=ff0000ff00ff00ff0000ffffffffffff
+gif_frame 1 -> Success pixels=ffffffff0000ffff00ff00ffff0000ff
+file badsig.gif 93 bytes
+== bad version
+gif_new size=93 -> Success
+gif_scan 93 -> Success
+gif_complete
+gif_info width=2 height=2 frames=2 loop_max=0 background=ff0000ff global_palette=1
+  frame 0 display=1 transparency=0 local_palette=0 interlaced=0 disposal=Unspecified(0) delay=10 rect=0,0,2,2
+  frame 1 display=1 transparency=0 local_palette=0 interlaced=0 disposal=Unspecified(0) delay=20 rect=0,0,2,2
+  frame_info(frame_count) null
+file badmagic.gif 93 bytes
+== bad magic
+gif_new size=93 -> Success
+gif_scan 93 -> Invalid source data
+gif_complete
+gif_info width=0 height=0 frames=0 loop_max=0 background=00000000 global_palette=0
+  frame_info(frame_count) null
+file notrailer.gif 49 bytes
+== no trailer byte
+gif_new size=49 -> Success
+gif_scan 49 -> Success
+gif_info width=2 height=2 frames=1 loop_max=1 background=ff0000ff global_palette=1
+  frame 0 display=1 transparency=0 local_palette=0 interlaced=0 disposal=Unspecified(0) delay=5 rect=0,0,2,2
+  frame_info(frame_count) null
+gif_complete
+gif_info width=2 height=2 frames=1 loop_max=1 background=ff0000ff global_palette=1
+  frame 0 display=1 transparency=0 local_palette=0 interlaced=0 disposal=Unspecified(0) delay=5 rect=0,0,2,2
+  frame_info(frame_count) null
+gif_frame 0 -> Success pixels=ff0000ff00ff00ff0000ffffffffffff
+file zero.gif 49 bytes
+== logical screen 0x0
+gif_new size=49 -> Success
+gif_scan 49 -> Success
+gif_complete
+gif_info width=1 height=1 frames=1 loop_max=1 background=ff0000ff global_palette=1
+  frame 0 display=1 transparency=0 local_palette=0 interlaced=0 disposal=Unspecified(0) delay=5 rect=0,0,1,1
+  frame_info(frame_count) null
+file zeroframe.gif 48 bytes
+== frame 0x0
+gif_new size=48 -> Success
+gif_scan 48 -> Success
+gif_complete
+gif_info width=2 height=2 frames=1 loop_max=1 background=ff0000ff global_palette=1
+  frame 0 display=1 transparency=0 local_palette=0 interlaced=0 disposal=Unspecified(0) delay=5 rect=0,0,0,0
+  frame_info(frame_count) null
+gif_frame 0 -> Success pixels=00000000000000000000000000000000
+file noframes.gif 26 bytes
+== header and trailer only
+gif_new size=26 -> Success
+gif_scan 26 -> Success
+gif_complete
+gif_info width=2 height=2 frames=0 loop_max=1 background=ff0000ff global_palette=1
+  frame_info(frame_count) null
+gif_frame 0 -> Requested frame does not exist
+== scan after complete, complete twice, destroy
+gif_new size=93 -> Success
+gif_scan 93 -> Success
+gif_complete
+gif_complete
+gif_scan 93 -> Can't add data to completed GIF
+gif_info width=2 height=2 frames=2 loop_max=0 background=ff0000ff global_palette=1
+  frame 0 display=1 transparency=0 local_palette=0 interlaced=0 disposal=Unspecified(0) delay=10 rect=0,0,2,2
+  frame 1 display=1 transparency=0 local_palette=0 interlaced=0 disposal=Unspecified(0) delay=20 rect=0,0,2,2
+  frame_info(frame_count) null
+gif_destroy

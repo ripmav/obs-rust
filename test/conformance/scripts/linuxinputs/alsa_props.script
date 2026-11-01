@@ -1,0 +1,14 @@
+# S-062 ALSA: property list construction from device-name hints.
+# Only hints whose IOID is absent or "Input" and whose NAME contains "front:" are listed; DESC is cut at the first newline.
+alsa-reset
+alsa-hint "front:CARD=PCH,DEV=0" "HDA Intel PCH, ALC892 Analog\nFront speakers" -
+alsa-hint "front:CARD=PCH,DEV=1" "Second input" Input
+alsa-hint "front:CARD=PCH,DEV=2" "An output" Output
+alsa-hint "hw:CARD=PCH,DEV=0" "Not a front device" Input
+alsa-hint - "NULL name" Input
+alsa-hint "front:CARD=X,DEV=0" - Input
+alsa-hint "surround51:front:CARD=X" "substring front: also matches" -
+alsa-props
+alsa-hint-fail 1
+echo hint call fails: only the three static parts are present and no Custom entry
+alsa-props

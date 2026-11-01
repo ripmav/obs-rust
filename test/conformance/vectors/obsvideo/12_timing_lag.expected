@@ -1,0 +1,23 @@
+--- on time: the clock jumps to the deadline
+loop -> 1 last_time=1000 frame_time_total=0 fps_total_ns=100 fps_frames=1
+counters total_frames=1 lagged_frames=0 video_time=1100 fps=0 avg_frame_time_ns=0 mixes=1 ctx_depth=0 underflow=0
+--- late by 0 (sleep fails, clock still at the frame start + 0): count clamps to 1
+loop -> 1 last_time=1100 frame_time_total=0 fps_total_ns=200 fps_frames=2
+counters total_frames=2 lagged_frames=0 video_time=1200 fps=0 avg_frame_time_ns=0 mixes=1 ctx_depth=0 underflow=0
+--- late by 250ns of a 100ns interval -> 2 intervals elapsed
+loop -> 1 last_time=1200 frame_time_total=0 fps_total_ns=400 fps_frames=3
+counters total_frames=4 lagged_frames=1 video_time=1400 fps=0 avg_frame_time_ns=0 mixes=1 ctx_depth=0 underflow=0
+--- late by 999 -> 9 intervals
+loop -> 1 last_time=1400 frame_time_total=0 fps_total_ns=1300 fps_frames=4
+counters total_frames=13 lagged_frames=9 video_time=2300 fps=0 avg_frame_time_ns=0 mixes=1 ctx_depth=0 underflow=0
+--- exactly 3 intervals late
+loop -> 1 last_time=2300 frame_time_total=0 fps_total_ns=1900 fps_frames=5
+counters total_frames=19 lagged_frames=14 video_time=2900 fps=0 avg_frame_time_ns=0 mixes=1 ctx_depth=0 underflow=0
+--- clock behind video_time (negative difference) clamps to one interval
+loop -> 1 last_time=2900 frame_time_total=0 fps_total_ns=2000 fps_frames=6
+counters total_frames=20 lagged_frames=14 video_time=3000 fps=0 avg_frame_time_ns=0 mixes=1 ctx_depth=0 underflow=0
+--- explicit sequence of sleep results: ok, fail, ok
+loop -> 1 last_time=3000 frame_time_total=0 fps_total_ns=2100 fps_frames=7
+loop -> 1 last_time=3100 frame_time_total=0 fps_total_ns=2200 fps_frames=8
+loop -> 1 last_time=3200 frame_time_total=0 fps_total_ns=2300 fps_frames=9
+counters total_frames=23 lagged_frames=14 video_time=3300 fps=0 avg_frame_time_ns=0 mixes=1 ctx_depth=0 underflow=0

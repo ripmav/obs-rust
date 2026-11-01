@@ -1,0 +1,16 @@
+scripting load -> 1 ticks=1
+fake obs_module_add_source good_src
+fake obs_module_add_source filter_src
+log warning [Lua] obs_lua_register_source: no item 'id' of type string
+log warning [Lua] Wrong parameter type for parameter 1 of obs_lua_register_source
+log warning [Lua] Wrong number of parameters for obs_lua_register_source
+log warning [Lua] Wrong number of parameters for obs_lua_register_source
+log warning [Lua] obs_lua_register_source: item 'create' is not a function
+log warning [Lua] obs_lua_register_source: item 'update' is not a function
+fake obs_module_add_source warn_src
+log info [obs-scripting]: Loaded lua script: src.lua
+create S0 -> loaded=1 lang=1 file=src.lua desc=NULL
+src_types [good_src type=0 flags=1 enabled=1 name="Good Source"] [filter_src type=1 flags=3 enabled=1 name="A Filter"] [warn_src type=0 flags=1 enabled=1 name="Warn"]
+fake obs_enable_source_type warn_src 0
+fake obs_enable_source_type filter_src 0
+fake obs_enable_source_type good_src 0

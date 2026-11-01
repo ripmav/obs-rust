@@ -1,0 +1,26 @@
+# S-054 filtersrest: REAL noise-suppress-filter.c linked against the REAL vendored RNNoise (plugins/obs-filters/rnnoise/src)
+# and the REAL system libspeexdsp; real obs-filters.c module registration table; real libswresample-backed audio resampler.
+# Run from test/conformance (the -I path is relative, like audiofilters).
+test/conformance/gen/filtersrest_runner.c
+test/conformance/gen/filtersrest_modreg.c
+plugins/obs-filters/rnnoise/src/denoise.c
+plugins/obs-filters/rnnoise/src/kiss_fft.c
+plugins/obs-filters/rnnoise/src/pitch.c
+plugins/obs-filters/rnnoise/src/celt_lpc.c
+plugins/obs-filters/rnnoise/src/rnn.c
+plugins/obs-filters/rnnoise/src/rnn_data.c
+libobs/media-io/audio-resampler-ffmpeg.c
+libobs/obs-properties.c
+libobs/obs-data.c
+-ljansson
+-lspeexdsp
+-lswresample
+-lavutil
+-lavformat
+-Iplugins/obs-filters/rnnoise/include
+-DLIBSPEEXDSP_ENABLED
+-DLIBRNNOISE_ENABLED
+-DHAS_NOISEREDUCTION
+-DCOMPILE_OPUS
+-Wno-deprecated-declarations
+-w

@@ -1,0 +1,62 @@
+noise-suppress-level-roundtrip
+spx_create a ok=1
+spx_ctl a set=-30 get=-30 ret=0
+spx_ctl a set=-60 get=-60 ret=0
+spx_ctl a set=0 get=0 ret=0
+spx_ctl a set=12 get=-12 ret=0
+spx_ctl a set=-30 get=-30 ret=0
+steady-noise-48k-level-minus-30-and-minus-60
+spx a frame=0 rms_in=972 rms_out=3
+spx a frame=1 rms_in=942 rms_out=962
+spx a frame=2 rms_in=940 rms_out=933
+spx a frame=3 rms_in=942 rms_out=931
+spx a frame=4 rms_in=962 rms_out=933
+spx a frame=5 rms_in=960 rms_out=954
+spx_create b ok=1
+spx_ctl b set=-60 get=-60 ret=0
+spx b frame=0 rms_in=972 rms_out=3
+spx b frame=1 rms_in=942 rms_out=962
+spx b frame=2 rms_in=940 rms_out=933
+spx b frame=3 rms_in=942 rms_out=931
+spx b frame=4 rms_in=962 rms_out=933
+spx b frame=5 rms_in=960 rms_out=954
+speech-like-signal-with-noise-level-minus-30
+spx_create c ok=1
+spx_ctl c set=-30 get=-30 ret=0
+spx c frame=0 rms_in=4291 rms_out=5
+spx c frame=1 rms_in=4322 rms_out=4253
+spx c frame=2 rms_in=4333 rms_out=4284
+spx c frame=3 rms_in=4296 rms_out=4295
+spx c frame=4 rms_in=4305 rms_out=4258
+spx c frame=5 rms_in=4324 rms_out=4267
+spx c frame=6 rms_in=4299 rms_out=4286
+spx c frame=7 rms_in=4298 rms_out=4261
+44100-hz-uses-441-frame-segments
+spx_create d ok=1
+spx_ctl d set=-30 get=-30 ret=0
+spx d frame=0 rms_in=966 rms_out=3
+spx d frame=1 rms_in=955 rms_out=956
+spx d frame=2 rms_in=954 rms_out=946
+spx d frame=3 rms_in=904 rms_out=945
+long-run-2-seconds-noise-estimate-converges-level-matters
+spx_create e ok=1
+spx_ctl e set=-30 get=-30 ret=0
+spx e frame=0 rms_in=972 rms_out=3
+spx e frame=50 rms_in=952 rms_out=492
+spx e frame=100 rms_in=931 rms_out=62
+spx e frame=150 rms_in=996 rms_out=44
+spx e frame=199 rms_in=947 rms_out=55
+spx_create g ok=1
+spx_ctl g set=-60 get=-60 ret=0
+spx g frame=0 rms_in=972 rms_out=3
+spx g frame=50 rms_in=952 rms_out=475
+spx g frame=100 rms_in=931 rms_out=20
+spx g frame=150 rms_in=996 rms_out=8
+spx g frame=199 rms_in=947 rms_out=17
+spx_create h ok=1
+spx_ctl h set=0 get=0 ret=0
+spx h frame=0 rms_in=972 rms_out=1
+spx h frame=50 rms_in=952 rms_out=926
+spx h frame=100 rms_in=931 rms_out=971
+spx h frame=150 rms_in=996 rms_out=928
+spx h frame=199 rms_in=947 rms_out=934

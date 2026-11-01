@@ -1,0 +1,72 @@
+# The sink's sample format / channel count decide the monitor stream; unsupported ones fall back (float32 / stereo).
+# Planar float input (L=v, R=-v, second channel of a mono output unused) is converted by the FAKE resampler
+# (nearest-plane copy, no rate change) to the target format; the point is which target the client asks for.
+# Each play is 2 frames and the sink rate keeps tlength small (1 byte of tlength per 40 us ...), so data is written at once
+# when the buffered size reaches tlength: use rate 100 -> tlength = 2.5 frames.
+pa_server pulse 16.1 alsa_output.a
+pa_sink u8 "" u8 100 2
+pa_sink s16 "" s16 100 2
+pa_sink s32 "" s32 100 2
+pa_sink f32 "" f32 100 2
+pa_sink s24 "" s24 100 2
+pa_sink alaw "" alaw 100 2
+pa_sink mono "" s16 100 1
+pa_sink ch3 "" s16 100 3
+pa_sink ch4 "" s16 100 4
+pa_sink ch5 "" s16 100 5
+pa_sink ch6 "" s16 100 6
+pa_sink ch7 "" s16 100 7
+pa_sink ch8 "" s16 100 8
+mon_src 0 0 1.0 - 1
+mon_dev u8
+mon_create 0 0
+mon_play 0 4 0.125 0.125
+mon_destroy 0
+mon_dev s16
+mon_create 0 0
+mon_play 0 4 0.125 0.125
+mon_destroy 0
+mon_dev s32
+mon_create 0 0
+mon_play 0 4 0.125 0.125
+mon_destroy 0
+mon_dev f32
+mon_create 0 0
+mon_play 0 4 0.125 0.125
+mon_destroy 0
+# 24-bit and a-law are not supported by OBS: float32 is requested instead (the log says so)
+mon_dev s24
+mon_create 0 0
+mon_play 0 4 0.125 0.125
+mon_destroy 0
+mon_dev alaw
+mon_create 0 0
+mon_play 0 4 0.125 0.125
+mon_destroy 0
+# channel counts 1,2,3,4,5,6,8 are native layouts; 7 is not supported: stereo is requested.
+# DEFECT D-4: that log message prints the channel numbers with %c, i.e. as raw control characters (\x07 and \x02).
+mon_dev mono
+mon_create 0 0
+mon_play 0 4 0.125 0.125
+mon_destroy 0
+mon_dev ch3
+mon_create 0 0
+mon_play 0 4 0.125 0.125
+mon_destroy 0
+mon_dev ch4
+mon_create 0 0
+mon_destroy 0
+mon_dev ch5
+mon_create 0 0
+mon_destroy 0
+mon_dev ch6
+mon_create 0 0
+mon_destroy 0
+mon_dev ch7
+mon_create 0 0
+mon_play 0 4 0.125 0.125
+mon_destroy 0
+mon_dev ch8
+mon_create 0 0
+mon_destroy 0
+pa_stats

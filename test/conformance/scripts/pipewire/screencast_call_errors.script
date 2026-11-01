@@ -1,0 +1,18 @@
+# D-Bus method call failures (the async reply carries an error): non-cancel errors are logged, cancel errors are silent,
+# and neither advances the flow. Also: the bus connection or the portal proxy cannot be created.
+unique_name :1.9
+prop ScreenCast AvailableSourceTypes "uint32 3"
+prop ScreenCast AvailableCursorModes "uint32 1"
+prop ScreenCast version "uint32 4"
+screencast_load
+new a pipewire-screen-capture-source
+finish 1 error failed "no portal"
+new b pipewire-screen-capture-source
+finish 2 error cancelled "x"
+new c pipewire-screen-capture-source
+response 3 "(0, {'session_handle': <'/s/c'>})"
+finish 4 error failed "select boom"
+response 4 "(0, {})"
+finish 5 error failed "start boom"
+response 5 "(0, {'streams': <[(@u 5, @a{sv} {})]>})"
+finish 6 error failed "remote boom"

@@ -1,0 +1,7 @@
+# No cursor modes advertised at all (0, or the property missing): HIDDEN is still requested.
+unique_name :1.1
+prop ScreenCast AvailableSourceTypes "uint32 1"
+prop ScreenCast version "uint32 1"
+screencast_load
+new m pipewire-desktop-capture-source
+response 1 "(0, {'session_handle': <'/s/m'>})"

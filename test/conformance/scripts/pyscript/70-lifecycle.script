@@ -1,0 +1,43 @@
+# Subsystem and script lifecycle: obs_script_create returns NULL before obs_scripting_load; the interpreter comes up
+# with obs_scripting_load (one libobs tick callback); unloading a script runs script_unload and drops its
+# timers/ticks/hotkeys/signals; destroy implies unload; reload keeps the module object (see 06).
+py_begin early.py
+print("early script body")
+def script_description():
+    return "early"
+py_end
+echo create before the subsystem is loaded
+create S0 early.py
+scripting load
+create S0 early.py
+py_begin life.py
+import obspython as obs
+def script_load(settings):
+    print("load")
+    obs.timer_add(lambda: print("timer"), 10)
+    obs.obs_add_tick_callback(lambda s: print("tick cb"))
+def script_tick(s):
+    print("script_tick")
+def script_unload():
+    print("unload")
+py_end
+create S1 life.py
+barrier
+tick 0.1 100000000
+callbacks S1
+echo reload: unload (everything dropped) then load again
+reload S1
+tick 0.1 200000000
+echo destroy unloads; the removed tick callback is dropped from libobs at the next tick
+destroy S1
+counts
+tick 0.1 300000000
+counts
+echo the same file loaded again in a new script object, reloaded twice
+create S2 life.py
+reload S2
+reload S2
+echo loading the subsystem a second time changes nothing
+scripting load
+counts
+scripting unload

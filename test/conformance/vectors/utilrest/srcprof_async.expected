@@ -1,0 +1,16 @@
+tick_start_was_zero=0
+tick_start_was_zero=0
+tick_start_was_zero=0
+tick_start_was_zero=0
+tick_start_was_zero=0
+fill=1
+tick_avg=10 tick_max=10 render_avg=0 render_max=0 render_sum=0
+gpu_avg=0 gpu_max=0 gpu_sum=0
+async_input=45.4545455 in_best=16000000 in_worst=33000000 async_rendered=2.81425891 out_best=17000000 out_worst=1016000000
+tick_start_was_zero=0
+tick_start_was_zero=0
+tick_start_was_zero=0
+fill=1
+tick_avg=10 tick_max=10 render_avg=0 render_max=0 render_sum=0
+gpu_avg=0 gpu_max=0 gpu_sum=0
+async_input=0 in_best=0 in_worst=0 async_rendered=0 out_best=0 out_worst=0

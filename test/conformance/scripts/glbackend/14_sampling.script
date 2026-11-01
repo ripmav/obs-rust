@@ -1,0 +1,106 @@
+# Texture sampling in a pixel shader: point filtering, address modes, sampler objects.
+# A 2x2 texture (red, green / blue, white) is stretched over the 4x4 target with uv in [0,1]
+# (point filtering: exact), then sampled outside [0,1] with each address mode.
+create
+enter
+tex rt 4 4 RGBA 1 RENDER_TARGET -
+set_rt rt
+viewport 0 0 4 4
+ortho 0 4 0 4 -100 100
+cull NEITHER
+tex img 2 2 RGBA 1 0 ff0000ff00ff00ff0000ffffffffffff
+vshader vs
+uniform float4x4 ViewProj;
+struct VI { float4 pos : POSITION; float2 uv : TEXCOORD0; };
+VI main(VI v) { VI o; o.pos = mul(float4(v.pos.xyz, 1.0), ViewProj); o.uv = v.uv; return o; }
+end
+pshader ps
+uniform texture2d image;
+sampler_state samp { Filter = Point; AddressU = Clamp; AddressV = Clamp; };
+struct VI { float4 pos : POSITION; float2 uv : TEXCOORD0; };
+float4 main(VI v) : TARGET { return image.Sample(samp, v.uv); }
+end
+params ps
+# full-screen quad, uv 0..1
+vb full 6 0 0 1
+0 0 0 0 0
+0 4 0 0 1
+4 0 0 1 0
+4 0 0 1 0
+0 4 0 0 1
+4 4 0 1 1
+end
+# uv -1.1..4.1 over the 4 pixels: pixel centres sample u (and v) = -0.45, 0.85, 2.15, 3.45,
+# chosen to stay away from texel boundaries (0, 0.5, 1 modulo the period)
+vb wide 6 0 0 1
+0 0 0 -1.1 -1.1
+0 4 0 -1.1 4.1
+4 0 0 4.1 -1.1
+4 0 0 4.1 -1.1
+0 4 0 -1.1 4.1
+4 4 0 4.1 4.1
+end
+echo section1
+load_vb full
+load_vs vs
+load_ps ps
+load_tex - 0
+set ps image tex img
+clear CLEAR_COLOR 0 0 0 1
+draw TRIS 0 6
+read rt
+# Q-3 (see 15_texture_binding_quirk): read-back unbinds the texture of unit 0 behind the
+# device's back, so before each draw the script unloads unit 0 and sets the texture again.
+# The sampler written in the shader text is only a declaration; the sampler actually applied
+# at draw time is the one handed to the parameter with gs_shader_set_next_sampler (here: 'set
+# ... sampler'), otherwise the device's raw-load sampler (see 16_sampler_quirk).
+echo clamp-from-shader-text
+load_vb wide
+load_tex - 0
+set ps image tex img
+clear CLEAR_COLOR 0 0 0 1
+draw TRIS 0 6
+read rt
+sampler wrap POINT ADDRESS_WRAP ADDRESS_WRAP ADDRESS_WRAP 1 0
+set ps image sampler wrap
+echo sampler-wrap
+load_tex - 0
+set ps image tex img
+clear CLEAR_COLOR 0 0 0 1
+draw TRIS 0 6
+read rt
+sampler mirror POINT ADDRESS_MIRROR ADDRESS_MIRROR ADDRESS_WRAP 1 0
+set ps image sampler mirror
+echo sampler-mirror
+load_tex - 0
+set ps image tex img
+clear CLEAR_COLOR 0 0 0 1
+draw TRIS 0 6
+read rt
+# D-4: the border colour is only converted when max_anisotropy is OUT of [1, max]; with a
+# valid anisotropy of 1 the border stays transparent black (0,0,0,0)
+sampler border POINT ADDRESS_BORDER ADDRESS_BORDER ADDRESS_WRAP 1 0xffff00ff
+set ps image sampler border
+echo sampler-border
+load_tex - 0
+set ps image tex img
+clear CLEAR_COLOR 0 0 0 1
+draw TRIS 0 6
+read rt
+sampler border0 POINT ADDRESS_BORDER ADDRESS_BORDER ADDRESS_WRAP 0 0xffff00ff
+set ps image sampler border0
+echo sampler-border-with-anisotropy-0
+load_tex - 0
+set ps image tex img
+clear CLEAR_COLOR 0 0 0 1
+draw TRIS 0 6
+read rt
+sampler clamp POINT ADDRESS_CLAMP ADDRESS_CLAMP ADDRESS_WRAP 1 0
+set ps image sampler clamp
+echo sampler-clamp
+load_tex - 0
+set ps image tex img
+clear CLEAR_COLOR 0 0 0 1
+draw TRIS 0 6
+read rt
+destroy

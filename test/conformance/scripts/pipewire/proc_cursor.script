@@ -1,0 +1,47 @@
+# Cursor metadata (PipeWire embeds the cursor as metadata when the portal offers METADATA mode): with ShowCursor on, a valid
+# cursor (id != 0) with a bitmap becomes a texture (RGBx bitmaps are swizzled, unsupported bitmap formats leave no texture),
+# position/hotspot are tracked, and render draws it translated by position-hotspot. Without bitmap the previous bitmap is kept.
+# With ShowCursor off none of this is processed.
+unique_name :1.5
+prop ScreenCast AvailableSourceTypes "uint32 1"
+prop ScreenCast version "uint32 2"
+screencast_load
+new a pipewire-desktop-capture-source
+portal_ok 54
+param_changed format=BGRx size=100x50
+buf_data 0 0 memptr 0 0 400 5000 0 0x10
+buf_meta 0 cursor 1 40 30 2 3 BGRA 4 2 0x40
+buf_push 0
+process
+render a
+# position-only update keeps the bitmap
+buf_data 1 0 memptr 0 0 400 5000 0 0x10
+buf_meta 1 cursor 1 50 35 2 3
+buf_push 1
+process
+render a
+# cursor id 0 -> invalid, nothing drawn
+buf_data 2 0 memptr 0 0 400 5000 0 0x10
+buf_meta 2 cursor 0 50 35 2 3 BGRA 4 2 0x40
+buf_push 2
+process
+render a
+# RGBx bitmap is swizzled
+buf_data 3 0 memptr 0 0 400 5000 0 0x10
+buf_meta 3 cursor 7 1 1 0 0 RGBx 2 2 0x50
+buf_push 3
+process
+# unsupported bitmap format: old texture dropped, none created
+buf_data 4 0 memptr 0 0 400 5000 0 0x10
+buf_meta 4 cursor 7 1 1 0 0 I420 2 2 0x50
+buf_push 4
+process
+render a
+# hidden cursor: metadata ignored
+set a ShowCursor bool 0
+update a
+buf_data 5 0 memptr 0 0 400 5000 0 0x10
+buf_meta 5 cursor 7 9 9 0 0 BGRA 2 2 0x60
+buf_push 5
+process
+render a

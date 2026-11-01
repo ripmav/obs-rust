@@ -1,0 +1,57 @@
+# Choosing a device, a format and a framerate in the camera properties: format selection (re)starts the stream with a single
+# fixed format (and the resolution as min=max range); the framerate list is rebuilt for that format+resolution (sorted ascending,
+# duplicates kept); choosing a framerate or another resolution of the SAME format renegotiates in place (loop event),
+# another format restarts the stream; control changes are sent as Props to the node.
+unique_name :1.8
+camera_load
+new cam pipewire-camera-source
+response 1 "(0, {})"
+finish 2 fd
+registry_global 50 PipeWire:Interface:Node 3 node.name=cam0 "node.description=Front Camera" media.class=Video/Source
+node_info 50 3:2 1:2
+pod_enum_format f1 raw YUY2 1280 720 enum:30/1,30/1,15/1
+pod_enum_format f2 raw NV12 1920 1080 none:60/1
+pod_enum_format f3 raw YUY2 640 480 enum:30/1,30/1,25/1,15/1
+pod_prop_info c1 0x20001 Brightness int range - 128 0 255
+pod_prop_info c2 0x20002 AutoMode bool none - 1
+pod_prop_info c3 0x20007 Gain float range - 1.5 0 10
+node_param 50 async:1 3 f1
+node_param 50 async:1 3 f2
+node_param 50 async:1 3 f3
+node_param 50 async:1 1 c1
+node_param 50 async:1 1 c2
+node_param 50 async:1 1 c3
+proxy_done 50 3
+props cam
+set cam device_id str cam0
+modified cam device_id
+set cam format str "{\"encoded\":false,\"video_format\":4,\"width\":1280,\"height\":720}"
+modified cam format
+dump cam
+# framerate selection renegotiates through the loop event
+set cam framerate str "{\"framerate\":{\"numerator\":15.0,\"denominator\":1.0}}"
+modified cam framerate
+run_events
+# same framerate again: no event
+modified cam framerate
+# other resolution of the same pixel format: renegotiate in place
+set cam format str "{\"encoded\":false,\"video_format\":4,\"width\":640,\"height\":480}"
+modified cam format
+run_events
+dump cam
+# other pixel format: the stream is torn down and restarted
+set cam format str "{\"encoded\":false,\"video_format\":23,\"width\":1920,\"height\":1080}"
+modified cam format
+run_events
+# controls
+set cam Brightness int 200
+modified cam Brightness controls
+set cam AutoMode bool 1
+modified cam AutoMode controls
+set cam Gain dbl 2.5
+modified cam Gain controls
+# show/hide and size before negotiation
+show cam
+hide cam
+size cam
+destroy cam

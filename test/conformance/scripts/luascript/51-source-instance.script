@@ -1,0 +1,55 @@
+# Source callbacks: each libobs callback maps to the Lua function of the same name.  create(settings, source)
+# returns the per-instance data object (a nil return means: instance creation fails); other callbacks get that data
+# first.  get_width/get_height default to 0, are converted with lua_tointeger.  get_defaults(settings) is called
+# on the type.  Errors are logged as "Failed to call <callback> for <display name>".
+scripting load
+lua_begin inst.lua
+local info = {}
+info.id = "inst_src"
+info.type = obslua.OBS_SOURCE_TYPE_INPUT
+info.output_flags = obslua.OBS_SOURCE_VIDEO
+info.get_name = function() return "Instance Source" end
+info.create = function(settings, source)
+  print("create name=" .. obslua.obs_source_get_name(source) .. " k=" .. obslua.obs_data_get_string(settings, "k"))
+  if obslua.obs_data_get_string(settings, "k") == "fail" then return nil end
+  return {w = 100, h = 50, name = obslua.obs_source_get_name(source)}
+end
+info.destroy = function(d) print("destroy " .. d.name) end
+info.get_width = function(d) return d.w end
+info.get_height = function(d) return d.h + 0.9 end
+info.get_defaults = function(s) obslua.obs_data_set_default_string(s, "dflt", "from-lua"); obslua.obs_data_set_default_int(s, "dn", 3) end
+info.get_properties = function(d)
+  local p = obslua.obs_properties_create()
+  obslua.obs_properties_add_text(p, "text_" .. d.name, "T", obslua.OBS_TEXT_DEFAULT)
+  return p
+end
+info.update = function(d, s) print("update " .. d.name .. " k=" .. obslua.obs_data_get_string(s, "k")) end
+info.activate = function(d) print("activate " .. d.name) end
+info.deactivate = function(d) print("deactivate " .. d.name) end
+info.show = function(d) print("show " .. d.name) end
+info.hide = function(d) local t = nil; t.x = 1 end
+info.video_tick = function(d, sec) print(string.format("video_tick %s %.2f", d.name, sec)) end
+info.video_render = function(d, effect) print("video_render " .. d.name .. " effect=" .. tostring(obslua.fake_is_userdata(effect))) end
+info.save = function(d, s) obslua.obs_data_set_string(s, "saved", d.name) end
+info.load = function(d, s) print("load " .. d.name .. " v=" .. obslua.obs_data_get_string(s, "v")) end
+obslua.obs_register_source(info)
+lua_end
+create S0 inst.lua
+src_types
+src_defaults inst_src s:dflt i:dn
+src_create inst_src one s:k=v1
+src_create inst_src two s:k=fail
+src_create inst_src three s:k=v3
+src_call one width
+src_call one height
+src_call one update s:k=v2
+src_call one activate
+src_call one deactivate
+src_call one show
+src_call one hide
+src_call one tick
+src_call one render
+src_call one save s:saved
+src_call one load s:v=loaded
+src_call one props
+src_call three destroy

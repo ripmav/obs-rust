@@ -1,0 +1,124 @@
+# Depth test with a Z24_S8 buffer attached.  With the prelude's ortho (near -100, far 100) a
+# larger z is closer to the viewer.  Three quads cover the same pixels: A at z=0 (red),
+# N at z=10 (nearer, green), F at z=-10 (farther, blue).  Depth buffer is cleared to 1.0.
+create
+enter
+tex rt 4 4 RGBA 1 RENDER_TARGET -
+set_rt rt
+viewport 0 0 4 4
+ortho 0 4 0 4 -100 100
+cull NEITHER
+clear CLEAR_COLOR 0 0 0 1
+vshader vs
+uniform float4x4 ViewProj;
+struct VI { float4 pos : POSITION; };
+VI main(VI v) { VI o; o.pos = mul(float4(v.pos.xyz, 1.0), ViewProj); return o; }
+end
+pshader ps
+uniform float4 color = {1.0, 0.0, 0.0, 1.0};
+struct VI { float4 pos : POSITION; };
+float4 main(VI v) : TARGET { return color; }
+end
+vb quad 6 0 0 0
+1 1 0
+1 3 0
+3 1 0
+3 1 0
+1 3 0
+3 3 0
+end
+load_vb quad
+load_vs vs
+load_ps ps
+zs z 4 4 Z24_S8
+set_rt rt z
+get_rt
+vb na 6 0 0 0
+1 1 10
+1 3 10
+3 1 10
+3 1 10
+1 3 10
+3 3 10
+end
+vb fa 6 0 0 0
+1 1 -10
+1 3 -10
+3 1 -10
+3 1 -10
+1 3 -10
+3 3 -10
+end
+depth on
+depthfn LESS
+clear CLEAR_COLOR|CLEAR_DEPTH 0 0 0 1 1.0 0
+set ps color vec4 1 0 0 1
+draw TRIS 0 6
+load_vb na
+set ps color vec4 0 1 0 1
+draw TRIS 0 6
+load_vb fa
+set ps color vec4 0 0 1 1
+draw TRIS 0 6
+read rt
+# GREATER (depth cleared to 0.0): A passes, N (smaller depth than A) fails, F (larger) passes
+depthfn GREATER
+clear CLEAR_COLOR|CLEAR_DEPTH 0 0 0 1 0.0 0
+load_vb quad
+set ps color vec4 1 0 0 1
+draw TRIS 0 6
+load_vb na
+set ps color vec4 0 1 0 1
+draw TRIS 0 6
+load_vb fa
+set ps color vec4 0 0 1 1
+draw TRIS 0 6
+read rt
+# EQUAL: a second identical draw passes, a different depth does not
+depthfn EQUAL
+clear CLEAR_COLOR|CLEAR_DEPTH 0 0 0 1 1.0 0
+depthfn ALWAYS
+load_vb quad
+set ps color vec4 1 0 0 1
+draw TRIS 0 6
+depthfn EQUAL
+set ps color vec4 0 1 0 1
+draw TRIS 0 6
+load_vb na
+set ps color vec4 0 0 1 1
+draw TRIS 0 6
+read rt
+# NEVER and NOTEQUAL, LEQUAL, GEQUAL
+depthfn NEVER
+clear CLEAR_COLOR 0 0 0 1
+draw TRIS 0 6
+read rt
+depthfn NOTEQUAL
+set ps color vec4 1 1 0 1
+draw TRIS 0 6
+read rt
+depthfn LEQUAL
+clear CLEAR_COLOR 0 0 0 1
+set ps color vec4 0 1 1 1
+load_vb quad
+draw TRIS 0 6
+read rt
+depthfn GEQUAL
+clear CLEAR_COLOR 0 0 0 1
+set ps color vec4 1 0 1 1
+draw TRIS 0 6
+read rt
+# depth test disabled: the last draw always wins
+depth off
+clear CLEAR_COLOR|CLEAR_DEPTH 0 0 0 1 0.0 0
+load_vb quad
+set ps color vec4 1 0 0 1
+draw TRIS 0 6
+load_vb fa
+set ps color vec4 0 0 1 1
+draw TRIS 0 6
+read rt
+# detaching and re-attaching
+set_rt rt
+get_rt
+destroy

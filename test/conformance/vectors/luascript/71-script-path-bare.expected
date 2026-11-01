@@ -1,0 +1,5 @@
+scripting load -> 1 ticks=1
+log warning [Lua: nodir.lua] Error opening file: (null)
+create S0 -> loaded=0 lang=1 file=nodir.lua desc=NULL
+log warning obs-scripting: [obs_script_create] path is null
+create S1 -> NULL

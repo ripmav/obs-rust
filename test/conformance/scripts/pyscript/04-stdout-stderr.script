@@ -1,0 +1,30 @@
+# sys.stdout / sys.stderr are replaced by loggers: stdout -> INFO, stderr -> ERROR, split at newlines,
+# partial lines are buffered until a newline arrives (the buffer is shared by both streams).
+scripting load
+py_begin streams.py
+import sys
+import obspython as obs
+print("line one")
+print("two", "words", 3)
+sys.stdout.write("part A, ")
+sys.stdout.write("part B\n")
+sys.stdout.write("multi\nline\nwrite\n")
+sys.stderr.write("an error line\n")
+print("to stderr", file=sys.stderr)
+sys.stdout.write("")
+sys.stdout.flush()
+print("")
+print("after empty")
+sys.stdout.write("no newline at end")
+py_end
+create S0 streams.py
+echo the buffered tail is joined with the next write (stderr write completes a stdout fragment)
+py_begin tail.py
+import sys
+sys.stderr.write(" + completed by stderr\n")
+print("unicode: café ✓")
+print(type(sys.stdout).__name__, type(sys.stderr).__name__)
+print(sys.stdout.flush())
+py_end
+create S1 tail.py
+scripting unload

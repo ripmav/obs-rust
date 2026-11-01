@@ -1,0 +1,18 @@
+ns_create s frames=480 channels=2 use_rnnoise=0 latency=10000000 resampler=0
+ns_process s in_frames=480 in_ts=1000000000 -> frames=480 ts=990000000 rms0=0 rms1=0 rms_in0=0.028 queued_in=0 queued_out=0
+ns_process s in_frames=480 in_ts=1010000000 -> frames=480 ts=1000000000 rms0=0.028 rms1=0.029 rms_in0=0.029 queued_in=0 queued_out=0
+ns_process s in_frames=480 in_ts=1020000000 -> frames=480 ts=1010000000 rms0=0.029 rms1=0.028 rms_in0=0.029 queued_in=0 queued_out=0
+ns_process s in_frames=480 in_ts=1030000000 -> frames=480 ts=1020000000 rms0=0.029 rms1=0.028 rms_in0=0.028 queued_in=0 queued_out=0
+ns_destroy s
+level-minus-60
+ns_create t frames=480 channels=2 use_rnnoise=0 latency=10000000 resampler=0
+ns_process t in_frames=480 in_ts=1000000000 -> frames=480 ts=990000000 rms0=0 rms1=0 rms_in0=0.028 queued_in=0 queued_out=0
+ns_process t in_frames=480 in_ts=1010000000 -> frames=480 ts=1000000000 rms0=0.028 rms1=0 rms_in0=0.029 queued_in=0 queued_out=0
+ns_process t in_frames=480 in_ts=1020000000 -> frames=480 ts=1010000000 rms0=0.029 rms1=0 rms_in0=0.029 queued_in=0 queued_out=0
+ns_process t in_frames=960 in_ts=1030000000 -> frames=960 ts=1020000000 rms0=0.028 rms1=0 rms_in0=0.029 queued_in=0 queued_out=0
+ns_destroy t
+mono-1ch-host
+ns_create m frames=480 channels=1 use_rnnoise=0 latency=10000000 resampler=0
+ns_process m in_frames=480 in_ts=1000000000 -> frames=480 ts=990000000 rms0=0 rms_in0=0.356 queued_in=0 queued_out=0
+ns_process m in_frames=480 in_ts=1010000000 -> frames=480 ts=1000000000 rms0=0.353 rms_in0=0.352 queued_in=0 queued_out=0
+ns_destroy m

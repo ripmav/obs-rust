@@ -1,0 +1,29 @@
+# Exceptions in tick functions are logged each tick; the remaining scripts are still called.
+# Without a current script the tick/signal/hotkey-unregister functions raise RuntimeError.
+scripting load
+py_begin tick_err.py
+def script_tick(seconds):
+    raise RuntimeError("tick failure")
+py_end
+py_begin tick_ok.py
+def script_tick(seconds):
+    print("ok tick")
+py_end
+create S0 tick_err.py
+create S1 tick_ok.py
+tick 0.1
+tick 0.1
+echo registration functions called with no current script (here from __main__, as a Python thread would)
+pyexec "import obspython as o; o.obs_add_tick_callback(len)"
+pyexec "import obspython as o; o.obs_remove_tick_callback(len)"
+pyexec "import obspython as o; o.signal_handler_connect(o.fake_handler(0), 'x', len)"
+pyexec "import obspython as o; o.signal_handler_connect_global(o.fake_handler(0), len)"
+pyexec "import obspython as o; o.signal_handler_disconnect(o.fake_handler(0), 'x', len)"
+pyexec "import obspython as o; o.signal_handler_disconnect_global(o.fake_handler(0), len)"
+pyexec "import obspython as o; o.obs_hotkey_unregister(len)"
+echo remove_current_callback outside a callback is a no-op
+pyexec "import obspython as o; print(o.remove_current_callback())"
+echo output outside a script is attributed to [Unknown Script]
+pyexec "print('hello from main')"
+counts
+scripting unload

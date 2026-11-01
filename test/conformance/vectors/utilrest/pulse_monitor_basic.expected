@@ -1,0 +1,16 @@
+log info pulse-am: Server name: 'pulse 16.1'
+log info pulse-am: Audio format: float32le, 48000 Hz, 2 channels
+pa stream_new "src" spec=float32le 2ch 48000Hz map_channels=2 map0=1 map3=7 map4=5
+pa stream_connect dev="alsa_output.a" tlength=9600 fragsize=4294967295 maxlength=4294967295 minreq=4294967295 prebuf=4294967295 flags=0xb
+log info pulse-am: Started Monitoring in 'alsa_output.a'
+mon_create 0 ok monitors_registered=1 cb=1 adds=1 removes=0
+pa stream_cork 0
+pa stream_write bytes=9600 first=0000803e000080be0000803e000080be0000803e000080be...
+pa stream_write bytes=80 first=0000003e000000be0000003e000000be0000003e000000be...
+pa stream_disconnect
+pa stream_set_write_callback cleared
+pa stream_unref
+log info pulse-am: Stopped Monitoring in 'alsa_output.a'
+log info pulse-am: Got 3 packets with 1210 frames
+mon_destroy monitors_registered=0
+pa loops created=1 freed=1 contexts created=1 freed=1 null_mainloop_calls=0

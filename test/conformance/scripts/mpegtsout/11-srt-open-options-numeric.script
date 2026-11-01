@@ -1,0 +1,15 @@
+# Every numeric query option of libsrt_open mapped to its socket option (value conversions: latency family usec->ms by /1000,
+# snddropdelay /1000 only when > 0, connect_timeout passed as is, linger -> struct linger{onoff=(linger>0), linger}).
+srt_open "srt://192.0.2.10:9000?maxbw=1000000&pbkeylen=16&enforced_encryption=1&kmrefreshrate=1000&kmpreannounce=500&snddropdelay=2500&mss=1400&ffs=25600&ipttl=64&iptos=184&inputbw=500000&oheadbw=30"
+srt_close
+srt_open "srt://192.0.2.10:9000?latency=120000&rcvlatency=130000&peerlatency=140000&tlpktdrop=1&nakreport=0&connect_timeout=3000&sndbuf=65536&rcvbuf=131072&lossmaxttl=3&minversion=0x010402&messageapi=0&linger=5&tsbpd=1"
+srt_close
+# tsbpddelay is an alias that overwrites latency; the later tag in the code (not the URL) wins
+srt_open "srt://192.0.2.10:9000?latency=100000&tsbpddelay=200000"
+srt_close
+# snddropdelay -1 (disable) is passed as -1, 0 stays 0; linger=0 gives onoff=0
+srt_open "srt://192.0.2.10:9000?snddropdelay=-1&linger=0"
+srt_close
+# sub-millisecond latency truncates to 0 ms; negative latency is treated as unset
+srt_open "srt://192.0.2.10:9000?latency=999&rcvlatency=-1"
+srt_close

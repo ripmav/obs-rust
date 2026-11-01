@@ -1,0 +1,20 @@
+popen 0 ok
+pwrite 0 n=8
+pread 0 n=0 ""
+pclose 0 ret=3
+popen 1 ok
+pclose 1 ret=5
+popen 2 ok
+pwrite 2 n=40
+pclose 2 ret=7
+popen 3 ok
+pwrite_big 3 n=100000
+pclose 3 ret=9
+popen 4 ok
+pwrite 4 n=0
+pclose 4 ret=0
+popen 5 ok
+pclose 5 ret=11
+popen 6 ok
+pread_err 6 n=4 "oops"
+pclose 6 ret=12

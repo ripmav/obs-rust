@@ -1,0 +1,15 @@
+# The device list always contains the configured device: if it is currently not present it is appended as a DISABLED item.
+# Before any device has been announced that disabled item is the only entry; modified() on a device that is not present is a no-op (false).
+unique_name :1.8
+camera_load
+set a device_id str gone
+new a pipewire-camera-source
+props a
+get a device_id str
+response 1 "(0, {})"
+finish 2 fd
+registry_global 50 PipeWire:Interface:Node 3 node.name=cam0 "node.description=Front Camera"
+dump a
+props a
+modified a device_id
+name a

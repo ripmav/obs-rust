@@ -1,0 +1,7 @@
+# GNOME/MATE session managers use another parameter layout: (program, xid=0, reason, flags=0xC) and "Uninhibit".
+dbus_service gnome
+dsi_create 0
+dsi_inhibit 0 "Recording" 1
+dsi_inhibit 0 "-" 0
+dbus_log
+dsi_destroy 0

@@ -1,0 +1,32 @@
+scripting load -> 1 python=1 ticks=1
+log info [obs-scripting]: Loaded python script: props.py
+create S0 -> loaded=1 lang=2 file=props.py desc=NULL
+log info [Python: props.py] button returned a property: True
+props P0 -> name:text:"Name" size:int:"Size" flag:bool:"Flag" go:button:"Go" num:button:"Num" yes:button:"Yes" err:button:"Err"
+callbacks S0 total=5 removed=0
+echo click: returns the C bool derived from the callback result
+log info [Python: props.py] clicked go; props capsule: True prop capsule: True
+click P0 go -> 1
+click P0 num -> 0
+click P0 yes -> 1
+log warning [Python] Python failure in button_prop_clicked:<line>:
+log error [Python: props.py] Traceback (most recent call last):
+log error [Python: props.py]   File "$TMP/props.py", line 22, in on_err
+log error [Python: props.py] RuntimeError: button failure
+click P0 err -> 0
+click P0 plain -> 0
+log info [Python: props.py] button returned a property: True
+props P0 -> name:text:"Name" size:int:"Size" flag:bool:"Flag" go:button:"Go" num:button:"Num" yes:button:"Yes" err:button:"Err"
+echo modified callback
+log info [Python: props.py] modified; name = Alice
+modify P0 name -> 1
+log info [Python: props.py] button returned a property: True
+props P0 -> name:text:"Name" size:int:"Size" flag:bool:"Flag" go:button:"Go" num:button:"Num" yes:button:"Yes" err:button:"Err"
+echo properties are rebuilt on every call: each call adds NEW records
+callbacks S0 total=15 removed=0
+echo after unload the callbacks are inert
+log info [obs-scripting]: Unloaded python script: props.py
+destroy S0
+click P0 go -> 0
+log info [Scripting] Total detached callbacks: 15
+scripting unload ticks=0

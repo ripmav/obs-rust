@@ -1,0 +1,19 @@
+# S-062 ALSA: reopen thread back-off 1000,2000,3000,4000,5000,5000... ms until the open succeeds.
+alsa-reset
+set-str device_id default
+set-int rate 44100
+alsa-cfg open-fail 5 -19
+alsa-create
+alsa-state
+alsa-reopen-tick
+alsa-reopen-tick
+alsa-reopen-tick
+alsa-reopen-tick
+alsa-reopen-tick
+alsa-state
+echo --- 6th attempt succeeds
+alsa-reopen-tick
+alsa-reopen-reap
+alsa-state
+alsa-destroy
+alsa-counts

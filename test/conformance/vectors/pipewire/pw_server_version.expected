@@ -1,0 +1,192 @@
+> unique_name :1.5
+> prop ScreenCast AvailableSourceTypes uint32 1
+> prop ScreenCast version uint32 2
+> screencast_load
+dbus.bus_get type=2 -> ok
+dbus.proxy_new org.freedesktop.portal.Desktop /org/freedesktop/portal/desktop org.freedesktop.portal.ScreenCast flags=0
+log info [pipewire] Available capture sources:
+log info [pipewire]     - Monitor source
+host.register_source pipewire-desktop-capture-source type=0 flags=0x481 icon=6
+host.register_source pipewire-screen-capture-source type=0 flags=0x81 icon=6
+> gs_dmabuf 0 ARGB8888
+> gs_modifiers ARGB8888 0x0 0x100000000000001
+> pw_server_version 0.3.33
+> new a pipewire-desktop-capture-source
+log info PipeWire initialized
+dbus.subscribe#1 org.freedesktop.portal.Desktop org.freedesktop.portal.Request.Response path=/org/freedesktop/portal/desktop/request/1_5/obs1 arg0=NULL flags=1
+dbus.call#1 CreateSession ({'handle_token': <'obs1'>, 'session_handle_token': <'obs1'>},)
+created a
+> portal_ok 1
+dbus.signal Response -> /org/freedesktop/portal/desktop/request/1_5/obs1
+log info [pipewire] Screencast session created
+dbus.subscribe#2 org.freedesktop.portal.Desktop org.freedesktop.portal.Request.Response path=/org/freedesktop/portal/desktop/request/1_5/obs2 arg0=NULL flags=1
+dbus.call#2 SelectSources (objectpath '/s/auto', {'types': <uint32 1>, 'multiple': <false>, 'handle_token': <'obs2'>, 'cursor_mode': <uint32 1>})
+dbus.unsubscribe#1
+dbus.signal Response -> /org/freedesktop/portal/desktop/request/1_5/obs2
+log debug [pipewire] Response to select source received
+log info [pipewire] Asking for monitor
+dbus.subscribe#3 org.freedesktop.portal.Desktop org.freedesktop.portal.Request.Response path=/org/freedesktop/portal/desktop/request/1_5/obs3 arg0=NULL flags=1
+dbus.call#3 Start (objectpath '/s/auto', '', {'handle_token': <'obs3'>})
+dbus.unsubscribe#2
+dbus.signal Response -> /org/freedesktop/portal/desktop/request/1_5/obs3
+log info [pipewire] source selected, setting up screencast
+dbus.call#4 OpenPipeWireRemote (objectpath '/s/auto', @a{sv} {})
+dbus.unsubscribe#3
+dbus.finish#4 OpenPipeWireRemote
+pw.thread_loop_new "PipeWire thread loop"
+pw.thread_loop_start -> 0
+pw.context_connect_fd -> core
+pw.core_add_listener
+pw.core_sync id=0 seq_in=0 -> 1
+log info [pipewire] Server version: 0.3.33
+log info [pipewire] Library version: lib-version
+log info [pipewire] Header version: <hdr>
+gs.query_dmabuf_capabilities -> 1
+gs.query_dmabuf_modifiers 0x34325241 -> 2
+pw.loop_add_event#1
+log debug [pipewire] registered event <ptr>
+pw.stream_new#1 "OBS Studio" props={media.type=Video,media.category=Capture,media.role=Screen}
+log info [pipewire] Created stream <ptr>
+pw.stream_connect#1 dir=input target=1 flags=0x5 n_params=7
+  param[0] Object(type=0x40003,id=3){mediaType=Id:2(video); mediaSubtype=Id:1(raw); format=Id:12(BGRA); modifier[flags=0x18]=Choice:Enum<Long:0,Long:0,Long:72057594037927937>; size=Choice:Range<Rect:1920x1080,Rect:1x1,Rect:8192x4320>; framerate=Choice:Range<Frac:60/1,Frac:0/1,Frac:360/1>}
+  param[1] Object(type=0x40003,id=3){mediaType=Id:2(video); mediaSubtype=Id:1(raw); format=Id:12(BGRA); size=Choice:Range<Rect:1920x1080,Rect:1x1,Rect:8192x4320>; framerate=Choice:Range<Frac:60/1,Frac:0/1,Frac:360/1>}
+  param[2] Object(type=0x40003,id=3){mediaType=Id:2(video); mediaSubtype=Id:1(raw); format=Id:11(RGBA); size=Choice:Range<Rect:1920x1080,Rect:1x1,Rect:8192x4320>; framerate=Choice:Range<Frac:60/1,Frac:0/1,Frac:360/1>}
+  param[3] Object(type=0x40003,id=3){mediaType=Id:2(video); mediaSubtype=Id:1(raw); format=Id:8(BGRx); size=Choice:Range<Rect:1920x1080,Rect:1x1,Rect:8192x4320>; framerate=Choice:Range<Frac:60/1,Frac:0/1,Frac:360/1>}
+  param[4] Object(type=0x40003,id=3){mediaType=Id:2(video); mediaSubtype=Id:1(raw); format=Id:7(RGBx); size=Choice:Range<Rect:1920x1080,Rect:1x1,Rect:8192x4320>; framerate=Choice:Range<Frac:60/1,Frac:0/1,Frac:360/1>}
+  param[5] Object(type=0x40003,id=3){mediaType=Id:2(video); mediaSubtype=Id:1(raw); format=Id:85(ABGR_210LE); size=Choice:Range<Rect:1920x1080,Rect:1x1,Rect:8192x4320>; framerate=Choice:Range<Frac:60/1,Frac:0/1,Frac:360/1>}
+  param[6] Object(type=0x40003,id=3){mediaType=Id:2(video); mediaSubtype=Id:1(raw); format=Id:81(xBGR_210LE); size=Choice:Range<Rect:1920x1080,Rect:1x1,Rect:8192x4320>; framerate=Choice:Range<Frac:60/1,Frac:0/1,Frac:360/1>}
+log info [pipewire] Playing stream <ptr>
+> pw_server_version 0.3.32
+> new b pipewire-desktop-capture-source
+log info PipeWire initialized
+dbus.subscribe#4 org.freedesktop.portal.Desktop org.freedesktop.portal.Request.Response path=/org/freedesktop/portal/desktop/request/1_5/obs4 arg0=NULL flags=1
+dbus.call#5 CreateSession ({'handle_token': <'obs4'>, 'session_handle_token': <'obs2'>},)
+created b
+> portal_ok 2
+dbus.signal Response -> /org/freedesktop/portal/desktop/request/1_5/obs4
+log info [pipewire] Screencast session created
+dbus.subscribe#5 org.freedesktop.portal.Desktop org.freedesktop.portal.Request.Response path=/org/freedesktop/portal/desktop/request/1_5/obs5 arg0=NULL flags=1
+dbus.call#6 SelectSources (objectpath '/s/auto', {'types': <uint32 1>, 'multiple': <false>, 'handle_token': <'obs5'>, 'cursor_mode': <uint32 1>})
+dbus.unsubscribe#4
+dbus.signal Response -> /org/freedesktop/portal/desktop/request/1_5/obs5
+log debug [pipewire] Response to select source received
+log info [pipewire] Asking for monitor
+dbus.subscribe#6 org.freedesktop.portal.Desktop org.freedesktop.portal.Request.Response path=/org/freedesktop/portal/desktop/request/1_5/obs6 arg0=NULL flags=1
+dbus.call#7 Start (objectpath '/s/auto', '', {'handle_token': <'obs6'>})
+dbus.unsubscribe#5
+dbus.signal Response -> /org/freedesktop/portal/desktop/request/1_5/obs6
+log info [pipewire] source selected, setting up screencast
+dbus.call#8 OpenPipeWireRemote (objectpath '/s/auto', @a{sv} {})
+dbus.unsubscribe#6
+dbus.finish#8 OpenPipeWireRemote
+pw.thread_loop_new "PipeWire thread loop"
+pw.thread_loop_start -> 0
+pw.context_connect_fd -> core
+pw.core_add_listener
+pw.core_sync id=0 seq_in=0 -> 1
+log info [pipewire] Server version: 0.3.32
+log info [pipewire] Library version: lib-version
+log info [pipewire] Header version: <hdr>
+gs.query_dmabuf_capabilities -> 1
+gs.query_dmabuf_modifiers 0x34325241 -> 2
+pw.loop_add_event#2
+log debug [pipewire] registered event <ptr>
+pw.stream_new#2 "OBS Studio" props={media.type=Video,media.category=Capture,media.role=Screen}
+log info [pipewire] Created stream <ptr>
+pw.stream_connect#2 dir=input target=2 flags=0x5 n_params=6
+  param[0] Object(type=0x40003,id=3){mediaType=Id:2(video); mediaSubtype=Id:1(raw); format=Id:12(BGRA); size=Choice:Range<Rect:1920x1080,Rect:1x1,Rect:8192x4320>; framerate=Choice:Range<Frac:60/1,Frac:0/1,Frac:360/1>}
+  param[1] Object(type=0x40003,id=3){mediaType=Id:2(video); mediaSubtype=Id:1(raw); format=Id:11(RGBA); size=Choice:Range<Rect:1920x1080,Rect:1x1,Rect:8192x4320>; framerate=Choice:Range<Frac:60/1,Frac:0/1,Frac:360/1>}
+  param[2] Object(type=0x40003,id=3){mediaType=Id:2(video); mediaSubtype=Id:1(raw); format=Id:8(BGRx); size=Choice:Range<Rect:1920x1080,Rect:1x1,Rect:8192x4320>; framerate=Choice:Range<Frac:60/1,Frac:0/1,Frac:360/1>}
+  param[3] Object(type=0x40003,id=3){mediaType=Id:2(video); mediaSubtype=Id:1(raw); format=Id:7(RGBx); size=Choice:Range<Rect:1920x1080,Rect:1x1,Rect:8192x4320>; framerate=Choice:Range<Frac:60/1,Frac:0/1,Frac:360/1>}
+  param[4] Object(type=0x40003,id=3){mediaType=Id:2(video); mediaSubtype=Id:1(raw); format=Id:85(ABGR_210LE); size=Choice:Range<Rect:1920x1080,Rect:1x1,Rect:8192x4320>; framerate=Choice:Range<Frac:60/1,Frac:0/1,Frac:360/1>}
+  param[5] Object(type=0x40003,id=3){mediaType=Id:2(video); mediaSubtype=Id:1(raw); format=Id:81(xBGR_210LE); size=Choice:Range<Rect:1920x1080,Rect:1x1,Rect:8192x4320>; framerate=Choice:Range<Frac:60/1,Frac:0/1,Frac:360/1>}
+log info [pipewire] Playing stream <ptr>
+> pw_server_version 1.2
+> new c pipewire-desktop-capture-source
+log info PipeWire initialized
+dbus.subscribe#7 org.freedesktop.portal.Desktop org.freedesktop.portal.Request.Response path=/org/freedesktop/portal/desktop/request/1_5/obs7 arg0=NULL flags=1
+dbus.call#9 CreateSession ({'handle_token': <'obs7'>, 'session_handle_token': <'obs3'>},)
+created c
+> portal_ok 3
+dbus.signal Response -> /org/freedesktop/portal/desktop/request/1_5/obs7
+log info [pipewire] Screencast session created
+dbus.subscribe#8 org.freedesktop.portal.Desktop org.freedesktop.portal.Request.Response path=/org/freedesktop/portal/desktop/request/1_5/obs8 arg0=NULL flags=1
+dbus.call#10 SelectSources (objectpath '/s/auto', {'types': <uint32 1>, 'multiple': <false>, 'handle_token': <'obs8'>, 'cursor_mode': <uint32 1>})
+dbus.unsubscribe#7
+dbus.signal Response -> /org/freedesktop/portal/desktop/request/1_5/obs8
+log debug [pipewire] Response to select source received
+log info [pipewire] Asking for monitor
+dbus.subscribe#9 org.freedesktop.portal.Desktop org.freedesktop.portal.Request.Response path=/org/freedesktop/portal/desktop/request/1_5/obs9 arg0=NULL flags=1
+dbus.call#11 Start (objectpath '/s/auto', '', {'handle_token': <'obs9'>})
+dbus.unsubscribe#8
+dbus.signal Response -> /org/freedesktop/portal/desktop/request/1_5/obs9
+log info [pipewire] source selected, setting up screencast
+dbus.call#12 OpenPipeWireRemote (objectpath '/s/auto', @a{sv} {})
+dbus.unsubscribe#9
+dbus.finish#12 OpenPipeWireRemote
+pw.thread_loop_new "PipeWire thread loop"
+pw.thread_loop_start -> 0
+pw.context_connect_fd -> core
+pw.core_add_listener
+pw.core_sync id=0 seq_in=0 -> 1
+log info [pipewire] Server version: 1.2
+log info [pipewire] Library version: lib-version
+log info [pipewire] Header version: <hdr>
+log warning [pipewire] failed to parse server version
+gs.query_dmabuf_capabilities -> 1
+gs.query_dmabuf_modifiers 0x34325241 -> 2
+pw.loop_add_event#3
+log debug [pipewire] registered event <ptr>
+pw.stream_new#3 "OBS Studio" props={media.type=Video,media.category=Capture,media.role=Screen}
+log info [pipewire] Created stream <ptr>
+pw.stream_connect#3 dir=input target=3 flags=0x5 n_params=7
+  param[0] Object(type=0x40003,id=3){mediaType=Id:2(video); mediaSubtype=Id:1(raw); format=Id:12(BGRA); modifier[flags=0x18]=Choice:Enum<Long:0,Long:0,Long:72057594037927937>; size=Choice:Range<Rect:1920x1080,Rect:1x1,Rect:8192x4320>; framerate=Choice:Range<Frac:60/1,Frac:0/1,Frac:360/1>}
+  param[1] Object(type=0x40003,id=3){mediaType=Id:2(video); mediaSubtype=Id:1(raw); format=Id:12(BGRA); size=Choice:Range<Rect:1920x1080,Rect:1x1,Rect:8192x4320>; framerate=Choice:Range<Frac:60/1,Frac:0/1,Frac:360/1>}
+  param[2] Object(type=0x40003,id=3){mediaType=Id:2(video); mediaSubtype=Id:1(raw); format=Id:11(RGBA); size=Choice:Range<Rect:1920x1080,Rect:1x1,Rect:8192x4320>; framerate=Choice:Range<Frac:60/1,Frac:0/1,Frac:360/1>}
+  param[3] Object(type=0x40003,id=3){mediaType=Id:2(video); mediaSubtype=Id:1(raw); format=Id:8(BGRx); size=Choice:Range<Rect:1920x1080,Rect:1x1,Rect:8192x4320>; framerate=Choice:Range<Frac:60/1,Frac:0/1,Frac:360/1>}
+  param[4] Object(type=0x40003,id=3){mediaType=Id:2(video); mediaSubtype=Id:1(raw); format=Id:7(RGBx); size=Choice:Range<Rect:1920x1080,Rect:1x1,Rect:8192x4320>; framerate=Choice:Range<Frac:60/1,Frac:0/1,Frac:360/1>}
+  param[5] Object(type=0x40003,id=3){mediaType=Id:2(video); mediaSubtype=Id:1(raw); format=Id:85(ABGR_210LE); size=Choice:Range<Rect:1920x1080,Rect:1x1,Rect:8192x4320>; framerate=Choice:Range<Frac:60/1,Frac:0/1,Frac:360/1>}
+  param[6] Object(type=0x40003,id=3){mediaType=Id:2(video); mediaSubtype=Id:1(raw); format=Id:81(xBGR_210LE); size=Choice:Range<Rect:1920x1080,Rect:1x1,Rect:8192x4320>; framerate=Choice:Range<Frac:60/1,Frac:0/1,Frac:360/1>}
+log info [pipewire] Playing stream <ptr>
+> pw_server_version -
+> new d pipewire-desktop-capture-source
+log info PipeWire initialized
+dbus.subscribe#10 org.freedesktop.portal.Desktop org.freedesktop.portal.Request.Response path=/org/freedesktop/portal/desktop/request/1_5/obs10 arg0=NULL flags=1
+dbus.call#13 CreateSession ({'handle_token': <'obs10'>, 'session_handle_token': <'obs4'>},)
+created d
+> portal_ok 4
+dbus.signal Response -> /org/freedesktop/portal/desktop/request/1_5/obs10
+log info [pipewire] Screencast session created
+dbus.subscribe#11 org.freedesktop.portal.Desktop org.freedesktop.portal.Request.Response path=/org/freedesktop/portal/desktop/request/1_5/obs11 arg0=NULL flags=1
+dbus.call#14 SelectSources (objectpath '/s/auto', {'types': <uint32 1>, 'multiple': <false>, 'handle_token': <'obs11'>, 'cursor_mode': <uint32 1>})
+dbus.unsubscribe#10
+dbus.signal Response -> /org/freedesktop/portal/desktop/request/1_5/obs11
+log debug [pipewire] Response to select source received
+log info [pipewire] Asking for monitor
+dbus.subscribe#12 org.freedesktop.portal.Desktop org.freedesktop.portal.Request.Response path=/org/freedesktop/portal/desktop/request/1_5/obs12 arg0=NULL flags=1
+dbus.call#15 Start (objectpath '/s/auto', '', {'handle_token': <'obs12'>})
+dbus.unsubscribe#11
+dbus.signal Response -> /org/freedesktop/portal/desktop/request/1_5/obs12
+log info [pipewire] source selected, setting up screencast
+dbus.call#16 OpenPipeWireRemote (objectpath '/s/auto', @a{sv} {})
+dbus.unsubscribe#12
+dbus.finish#16 OpenPipeWireRemote
+pw.thread_loop_new "PipeWire thread loop"
+pw.thread_loop_start -> 0
+pw.context_connect_fd -> core
+pw.core_add_listener
+pw.core_sync id=0 seq_in=0 -> 1
+gs.query_dmabuf_capabilities -> 1
+gs.query_dmabuf_modifiers 0x34325241 -> 2
+pw.loop_add_event#4
+log debug [pipewire] registered event <ptr>
+pw.stream_new#4 "OBS Studio" props={media.type=Video,media.category=Capture,media.role=Screen}
+log info [pipewire] Created stream <ptr>
+pw.stream_connect#4 dir=input target=4 flags=0x5 n_params=6
+  param[0] Object(type=0x40003,id=3){mediaType=Id:2(video); mediaSubtype=Id:1(raw); format=Id:12(BGRA); size=Choice:Range<Rect:1920x1080,Rect:1x1,Rect:8192x4320>; framerate=Choice:Range<Frac:60/1,Frac:0/1,Frac:360/1>}
+  param[1] Object(type=0x40003,id=3){mediaType=Id:2(video); mediaSubtype=Id:1(raw); format=Id:11(RGBA); size=Choice:Range<Rect:1920x1080,Rect:1x1,Rect:8192x4320>; framerate=Choice:Range<Frac:60/1,Frac:0/1,Frac:360/1>}
+  param[2] Object(type=0x40003,id=3){mediaType=Id:2(video); mediaSubtype=Id:1(raw); format=Id:8(BGRx); size=Choice:Range<Rect:1920x1080,Rect:1x1,Rect:8192x4320>; framerate=Choice:Range<Frac:60/1,Frac:0/1,Frac:360/1>}
+  param[3] Object(type=0x40003,id=3){mediaType=Id:2(video); mediaSubtype=Id:1(raw); format=Id:7(RGBx); size=Choice:Range<Rect:1920x1080,Rect:1x1,Rect:8192x4320>; framerate=Choice:Range<Frac:60/1,Frac:0/1,Frac:360/1>}
+  param[4] Object(type=0x40003,id=3){mediaType=Id:2(video); mediaSubtype=Id:1(raw); format=Id:85(ABGR_210LE); size=Choice:Range<Rect:1920x1080,Rect:1x1,Rect:8192x4320>; framerate=Choice:Range<Frac:60/1,Frac:0/1,Frac:360/1>}
+  param[5] Object(type=0x40003,id=3){mediaType=Id:2(video); mediaSubtype=Id:1(raw); format=Id:81(xBGR_210LE); size=Choice:Range<Rect:1920x1080,Rect:1x1,Rect:8192x4320>; framerate=Choice:Range<Frac:60/1,Frac:0/1,Frac:360/1>}
+log info [pipewire] Playing stream <ptr>

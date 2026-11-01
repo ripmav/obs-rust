@@ -1,0 +1,43 @@
+# get_properties return values: a script without script_properties gives NULL; a return value that is not a
+# properties object (None, int, a source pointer) gives NULL after a SWIG conversion warning; an exception gives NULL.
+scripting load
+fake_source Src
+py_begin pm_none.py
+def script_properties():
+    return None
+py_end
+py_begin pm_int.py
+def script_properties():
+    return 42
+py_end
+py_begin pm_wrong.py
+import obspython as obs
+def script_properties():
+    return obs.fake_source(0)
+py_end
+py_begin pm_absent.py
+x = 1
+py_end
+py_begin pm_noncallable.py
+script_properties = 5
+py_end
+py_begin pm_text.py
+import obspython as obs
+def script_properties():
+    p = obs.obs_properties_create()
+    obs.obs_properties_add_text(p, "t", "T", obs.OBS_TEXT_DEFAULT)
+    return p
+py_end
+create S0 pm_none.py
+create S1 pm_int.py
+create S2 pm_wrong.py
+create S3 pm_absent.py
+create S4 pm_noncallable.py
+create S5 pm_text.py
+props S0 P0
+props S1 P1
+props S2 P2
+props S3 P3
+props S4 P0
+props S5 P1
+scripting unload

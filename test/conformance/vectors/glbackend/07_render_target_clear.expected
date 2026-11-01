@@ -1,0 +1,50 @@
+create rc=0 device=yes
+tex rt ok
+tex plain ok
+rt - zs -
+rt rt zs -
+read rt 4x4 linesize=16
+  row 0 ff0000ffff0000ffff0000ffff0000ff
+  row 1 ff0000ffff0000ffff0000ffff0000ff
+  row 2 ff0000ffff0000ffff0000ffff0000ff
+  row 3 ff0000ffff0000ffff0000ffff0000ff
+read rt 4x4 linesize=16
+  row 0 00ff000000ff000000ff000000ff0000
+  row 1 00ff000000ff000000ff000000ff0000
+  row 2 00ff000000ff000000ff000000ff0000
+  row 3 00ff000000ff000000ff000000ff0000
+read rt 4x4 linesize=16
+  row 0 00ff000000ff000000ff000000ff0000
+  row 1 00ff000000ff000000ff000000ff0000
+  row 2 00ff000000ff000000ff000000ff0000
+  row 3 00ff000000ff000000ff000000ff0000
+read rt 4x4 linesize=16
+  row 0 00ff00000000ffff0000ffff00ff0000
+  row 1 00ff00000000ffff0000ffff00ff0000
+  row 2 00ff000000ff000000ff000000ff0000
+  row 3 00ff000000ff000000ff000000ff0000
+read rt 4x4 linesize=16
+  row 0 ff0000ffff0000ffff0000ffff0000ff
+  row 1 ff0000ffff0000ffff0000ffff0000ff
+  row 2 ff0000ffff0000ffff0000ffff0000ff
+  row 3 ff0000ffff0000ffff0000ffff0000ff
+viewport 1 1 2 2
+rt - zs -
+log error Texture is not a render target
+log error device_set_render_target (GL) failed
+rt - zs -
+log error glBindTexture failed, glGetError returned GL_INVALID_ENUM(0x500)
+log error glBindTexture failed, glGetError returned GL_INVALID_ENUM(0x500)
+log error glBindTexture failed, glGetError returned GL_INVALID_ENUM(0x500)
+log error glBindTexture failed, glGetError returned GL_INVALID_ENUM(0x500)
+log error glBindTexture failed, glGetError returned GL_INVALID_ENUM(0x500)
+log error glBindTexture failed, glGetError returned GL_INVALID_ENUM(0x500)
+log error glBindTexture failed, glGetError returned GL_INVALID_ENUM(0x500)
+log error glBindTexture failed, glGetError returned GL_INVALID_ENUM(0x500)
+log error glBindTexture failed, glGetError returned GL_INVALID_ENUM(0x500)
+log error glBindTexture failed, glGetError returned GL_INVALID_ENUM(0x500)
+log error glBindTexture failed, glGetError returned GL_INVALID_ENUM(0x500)
+log error glBindTexture failed, glGetError returned GL_INVALID_ENUM(0x500)
+log error device_cubetexture_create (GL) failed
+cube c fail
+destroyed

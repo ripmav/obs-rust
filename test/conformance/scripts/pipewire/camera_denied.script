@@ -1,0 +1,15 @@
+# Camera access refused / failing: a non-zero Response only logs a warning. QUIRK: the shared connection stays in the
+# "initializing" state, so sources created afterwards never ask the portal again and never stream. A failed AccessCamera call is
+# logged unless it was cancelled.
+unique_name :1.8
+camera_load
+new c1 pipewire-camera-source
+response 1 "(2, {})"
+new c2 pipewire-camera-source
+size c2
+camera_unload
+new c3 pipewire-camera-source
+finish 2 error failed "no camera portal"
+camera_unload
+new c4 pipewire-camera-source
+finish 3 error cancelled "x"

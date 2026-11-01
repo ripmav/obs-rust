@@ -1,0 +1,15 @@
+# Several scripts at once: independent states and settings, tick order newest first, one script's failure
+# does not affect another, scripts can be created from the same file.
+scripting load
+lua_begin multi2.lua
+function script_load(s) g = s end
+function script_tick(sec) print("tick of " .. obslua.obs_data_get_string(g, "seed")) end
+lua_end
+create S0 multi2.lua s:seed=one
+create S1 multi2.lua s:seed=two
+create S2 multi2.lua s:seed=three
+tick 0.01
+destroy S1
+tick 0.01
+settings S0 s:seed
+settings S2 s:seed

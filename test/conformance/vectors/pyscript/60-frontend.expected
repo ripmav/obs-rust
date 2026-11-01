@@ -1,0 +1,44 @@
+scripting load -> 1 python=1 ticks=1
+log info [Python: fe.py] scenes: ['Scene A', 'Scene B']
+log info [Python: fe.py] scene objects: ['SceneA', 'SceneB']
+log info [Python: fe.py] current: SceneA
+fake set_current_scene SceneA
+log info [Python: fe.py] transitions: ['SceneA']
+log warning [Python] get_current_transition:<line>: SWIG failed to convert obs object to python object: obs_source_t *
+log info [Python: fe.py] current transition: None
+log info [Python: fe.py] duration: 300
+log info [Python: fe.py] duration now: 750
+log info [Python: fe.py] collections: ['Default', 'Other'] Default
+log info [Python: fe.py] collection now: Other
+log info [Python: fe.py] profiles: ['Untitled', 'Second'] Untitled
+log info [Python: fe.py] profile now: Second
+fake set_current_scene (null)
+log info [obs-scripting]: Loaded python script: fe.py
+create S0 -> loaded=1 lang=2 file=fe.py desc=NULL
+fe_state duration=750 collection=Other profile=Second
+counts ticks=1 renders=0 hotkeys=0 fe_event=1 fe_save=1
+echo events
+log info [Python: fe.py] event 5 int
+log info [Python: fe.py] event 99 int
+fake frontend event callback removed
+echo save callback, saving and loading
+log info [Python: fe.py] save callback; saving = True bool
+fe_save result from_script="yes"
+log info [Python: fe.py] save callback; saving = False bool
+fe_save result from_script="no"
+echo removal API
+log info [obs-scripting]: Loaded python script: fe2.py
+create S1 -> loaded=1 lang=2 file=fe2.py desc=NULL
+fake frontend event callback removed
+log info [Python: fe.py] save callback; saving = True bool
+fake frontend save callback removed
+fe_save result
+echo unload: libobs drops the callbacks on the next event
+log info [obs-scripting]: Unloaded python script: fe.py
+destroy S0
+fake frontend save callback removed
+fe_save result
+log info [obs-scripting]: Unloaded python script: fe2.py
+auto-destroy S1
+log info [Scripting] Total detached callbacks: 4
+scripting unload ticks=0

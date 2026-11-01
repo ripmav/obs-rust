@@ -1,0 +1,164 @@
+> log warning
+> srt_open srt://multi.test:9000
+srt startup
+srt create_socket -> 1
+srt setsockopt fd=1 SRTO_TRANSTYPE=0
+srt setsockopt fd=1 SRTO_ENFORCEDENCRYPTION=0
+srt setsockopt fd=1 SRTO_KMREFRESHRATE=0
+srt setsockopt fd=1 SRTO_KMPREANNOUNCE=0
+srt setsockopt fd=1 SRTO_SNDDROPDELAY=0
+srt setsockopt fd=1 SRTO_PAYLOADSIZE=1316
+srt setsockopt fd=1 SRTO_SENDER=1
+srt setsockopt fd=1 SRTO_SNDSYN=0
+srt setsockopt fd=1 SRTO_RCVSYN=0
+srt connect fd=1 192.0.2.1:9000
+srt epoll_release
+srt setsockopt fd=1 SRTO_INPUTBW=0
+srt setsockopt fd=1 SRTO_OHEADBW=25
+srt_open ret=SUCCESS(0) max_packet_size=1316 rw_timeout=0 mode=0 transtype=0
+srt_open last_error obs=SUCCESS srt=0 listen_timeout=-1 payload_size=1316
+> srt_close
+srt epoll_release
+srt close fd=1
+srt cleanup
+srt_close ret=0
+> srt_reset_net
+> srt_fail connect ECONNFAIL 0 1
+> srt_open srt://multi.test:9000
+srt startup
+srt create_socket -> 1
+srt setsockopt fd=1 SRTO_TRANSTYPE=0
+srt setsockopt fd=1 SRTO_ENFORCEDENCRYPTION=0
+srt setsockopt fd=1 SRTO_KMREFRESHRATE=0
+srt setsockopt fd=1 SRTO_KMPREANNOUNCE=0
+srt setsockopt fd=1 SRTO_SNDDROPDELAY=0
+srt setsockopt fd=1 SRTO_PAYLOADSIZE=1316
+srt setsockopt fd=1 SRTO_SENDER=1
+srt setsockopt fd=1 SRTO_SNDSYN=0
+srt setsockopt fd=1 SRTO_RCVSYN=0
+srt connect fd=1 192.0.2.1:9000
+log error [obs-ffmpeg mpegts muxer / libsrt]: fake srt error 2000
+srt epoll_release
+srt close fd=1
+srt create_socket -> 2
+srt setsockopt fd=2 SRTO_TRANSTYPE=0
+srt setsockopt fd=2 SRTO_ENFORCEDENCRYPTION=0
+srt setsockopt fd=2 SRTO_KMREFRESHRATE=0
+srt setsockopt fd=2 SRTO_KMPREANNOUNCE=0
+srt setsockopt fd=2 SRTO_SNDDROPDELAY=0
+srt setsockopt fd=2 SRTO_PAYLOADSIZE=1316
+srt setsockopt fd=2 SRTO_SENDER=1
+srt setsockopt fd=2 SRTO_SNDSYN=0
+srt setsockopt fd=2 SRTO_RCVSYN=0
+srt connect fd=2 192.0.2.2:9000
+srt epoll_release
+srt setsockopt fd=2 SRTO_INPUTBW=0
+srt setsockopt fd=2 SRTO_OHEADBW=25
+srt_open ret=SUCCESS(0) max_packet_size=1316 rw_timeout=0 mode=0 transtype=0
+srt_open last_error obs=ERROR srt=2000 listen_timeout=-1 payload_size=1316
+> srt_close
+srt epoll_release
+srt close fd=2
+srt cleanup
+srt_close ret=0
+> srt_reset_net
+> srt_fail connect ECONNFAIL
+> srt_open srt://multi.test:9000
+srt startup
+srt create_socket -> 1
+srt setsockopt fd=1 SRTO_TRANSTYPE=0
+srt setsockopt fd=1 SRTO_ENFORCEDENCRYPTION=0
+srt setsockopt fd=1 SRTO_KMREFRESHRATE=0
+srt setsockopt fd=1 SRTO_KMPREANNOUNCE=0
+srt setsockopt fd=1 SRTO_SNDDROPDELAY=0
+srt setsockopt fd=1 SRTO_PAYLOADSIZE=1316
+srt setsockopt fd=1 SRTO_SENDER=1
+srt setsockopt fd=1 SRTO_SNDSYN=0
+srt setsockopt fd=1 SRTO_RCVSYN=0
+srt connect fd=1 192.0.2.1:9000
+log error [obs-ffmpeg mpegts muxer / libsrt]: fake srt error 2000
+srt epoll_release
+srt close fd=1
+srt create_socket -> 2
+srt setsockopt fd=2 SRTO_TRANSTYPE=0
+srt setsockopt fd=2 SRTO_ENFORCEDENCRYPTION=0
+srt setsockopt fd=2 SRTO_KMREFRESHRATE=0
+srt setsockopt fd=2 SRTO_KMPREANNOUNCE=0
+srt setsockopt fd=2 SRTO_SNDDROPDELAY=0
+srt setsockopt fd=2 SRTO_PAYLOADSIZE=1316
+srt setsockopt fd=2 SRTO_SENDER=1
+srt setsockopt fd=2 SRTO_SNDSYN=0
+srt setsockopt fd=2 SRTO_RCVSYN=0
+srt connect fd=2 192.0.2.2:9000
+log error [obs-ffmpeg mpegts muxer / libsrt]: fake srt error 2000
+srt epoll_release
+srt close fd=2
+srt cleanup
+srt_open ret=ERROR(-4) max_packet_size=1316 rw_timeout=0 mode=0 transtype=0
+srt_open last_error obs=ERROR srt=2000 listen_timeout=-1 payload_size=1316
+> srt_reset_net
+> srt_fail setsockopt:SRTO_PAYLOADSIZE EUNKNOWN 0 1
+> srt_open srt://multi.test:9000
+srt startup
+srt create_socket -> 1
+srt setsockopt fd=1 SRTO_TRANSTYPE=0
+srt setsockopt fd=1 SRTO_ENFORCEDENCRYPTION=0
+srt setsockopt fd=1 SRTO_KMREFRESHRATE=0
+srt setsockopt fd=1 SRTO_KMPREANNOUNCE=0
+srt setsockopt fd=1 SRTO_SNDDROPDELAY=0
+srt setsockopt fd=1 SRTO_PAYLOADSIZE=1316 FAIL
+log error [obs-ffmpeg mpegts muxer / libsrt]: Failed to set option SRTO_PAYLOADSIZE on socket: fake srt error -1
+srt close fd=1
+srt create_socket -> 2
+srt setsockopt fd=2 SRTO_TRANSTYPE=0
+srt setsockopt fd=2 SRTO_ENFORCEDENCRYPTION=0
+srt setsockopt fd=2 SRTO_KMREFRESHRATE=0
+srt setsockopt fd=2 SRTO_KMPREANNOUNCE=0
+srt setsockopt fd=2 SRTO_SNDDROPDELAY=0
+srt setsockopt fd=2 SRTO_PAYLOADSIZE=1316
+srt setsockopt fd=2 SRTO_SENDER=1
+srt setsockopt fd=2 SRTO_SNDSYN=0
+srt setsockopt fd=2 SRTO_RCVSYN=0
+srt connect fd=2 192.0.2.2:9000
+srt epoll_release
+srt setsockopt fd=2 SRTO_INPUTBW=0
+srt setsockopt fd=2 SRTO_OHEADBW=25
+srt_open ret=SUCCESS(0) max_packet_size=1316 rw_timeout=0 mode=0 transtype=0
+srt_open last_error obs=ERROR srt=-1 listen_timeout=-1 payload_size=1316
+> srt_reset_net
+> srt_epoll error ECONNFAIL 0
+> srt_open srt://multi.test:9000?timeout=1000
+srt startup
+srt create_socket -> 1
+srt setsockopt fd=1 SRTO_TRANSTYPE=0
+srt setsockopt fd=1 SRTO_ENFORCEDENCRYPTION=0
+srt setsockopt fd=1 SRTO_KMREFRESHRATE=0
+srt setsockopt fd=1 SRTO_KMPREANNOUNCE=0
+srt setsockopt fd=1 SRTO_SNDDROPDELAY=0
+srt setsockopt fd=1 SRTO_PAYLOADSIZE=1316
+srt setsockopt fd=1 SRTO_SENDER=1
+srt setsockopt fd=1 SRTO_SNDSYN=0
+srt setsockopt fd=1 SRTO_RCVSYN=0
+srt connect fd=1 192.0.2.1:9000
+log error [obs-ffmpeg mpegts muxer / libsrt]: fake srt error 2000
+log warning [obs-ffmpeg mpegts muxer / libsrt]: Connection to srt://multi.test:9000?timeout=1000 failed (Unknown error occurred), trying next address
+srt epoll_release
+srt close fd=1
+srt create_socket -> 2
+srt setsockopt fd=2 SRTO_TRANSTYPE=0
+srt setsockopt fd=2 SRTO_ENFORCEDENCRYPTION=0
+srt setsockopt fd=2 SRTO_KMREFRESHRATE=0
+srt setsockopt fd=2 SRTO_KMPREANNOUNCE=0
+srt setsockopt fd=2 SRTO_SNDDROPDELAY=0
+srt setsockopt fd=2 SRTO_PAYLOADSIZE=1316
+srt setsockopt fd=2 SRTO_SENDER=1
+srt setsockopt fd=2 SRTO_SNDSYN=0
+srt setsockopt fd=2 SRTO_RCVSYN=0
+srt connect fd=2 192.0.2.2:9000
+log error [obs-ffmpeg mpegts muxer / libsrt]: fake srt error 2000
+log error [obs-ffmpeg mpegts muxer / libsrt]: Connection to srt://multi.test:9000?timeout=1000 failed: Unknown error occurred
+srt epoll_release
+srt close fd=2
+srt cleanup
+srt_open ret=ERROR(-4) max_packet_size=1316 rw_timeout=1000 mode=0 transtype=0
+srt_open last_error obs=ERROR srt=2000 listen_timeout=-1 payload_size=1316

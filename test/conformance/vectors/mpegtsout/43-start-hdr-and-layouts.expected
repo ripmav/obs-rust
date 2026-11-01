@@ -1,0 +1,91 @@
+> create
+create ok
+> world vformat p010
+> world colorspace pq
+> start
+start returned 1
+srt startup
+srt create_socket -> 1
+srt setsockopt fd=1 SRTO_TRANSTYPE=0
+srt setsockopt fd=1 SRTO_ENFORCEDENCRYPTION=0
+srt setsockopt fd=1 SRTO_KMREFRESHRATE=0
+srt setsockopt fd=1 SRTO_KMPREANNOUNCE=0
+srt setsockopt fd=1 SRTO_SNDDROPDELAY=0
+srt setsockopt fd=1 SRTO_PAYLOADSIZE=1316
+srt setsockopt fd=1 SRTO_SENDER=1
+srt setsockopt fd=1 SRTO_SNDSYN=0
+srt setsockopt fd=1 SRTO_RCVSYN=0
+srt connect fd=1 192.0.2.10:9000
+srt epoll_release
+srt setsockopt fd=1 SRTO_INPUTBW=0
+srt setsockopt fd=1 SRTO_OHEADBW=25
+> events
+events -
+> pkt v 0 0 0 1 3000
+> pkt a 0 0 0 1 200
+> drain
+> stop 0
+srt epoll_release
+srt close fd=1
+srt cleanup
+> events
+events SUCCESS
+> world colorspace hlg
+> start
+start returned 1
+srt startup
+srt create_socket -> 1
+srt setsockopt fd=1 SRTO_TRANSTYPE=0
+srt setsockopt fd=1 SRTO_ENFORCEDENCRYPTION=0
+srt setsockopt fd=1 SRTO_KMREFRESHRATE=0
+srt setsockopt fd=1 SRTO_KMPREANNOUNCE=0
+srt setsockopt fd=1 SRTO_SNDDROPDELAY=0
+srt setsockopt fd=1 SRTO_PAYLOADSIZE=1316
+srt setsockopt fd=1 SRTO_SENDER=1
+srt setsockopt fd=1 SRTO_SNDSYN=0
+srt setsockopt fd=1 SRTO_RCVSYN=0
+srt connect fd=1 192.0.2.10:9000
+srt epoll_release
+srt setsockopt fd=1 SRTO_INPUTBW=0
+srt setsockopt fd=1 SRTO_OHEADBW=25
+> events
+events -
+> stop 0
+srt epoll_release
+srt close fd=1
+srt cleanup
+> world colorspace 709
+> world vformat nv12
+> world speakers 4.1
+> start
+start returned 1
+srt startup
+srt create_socket -> 1
+srt setsockopt fd=1 SRTO_TRANSTYPE=0
+srt setsockopt fd=1 SRTO_ENFORCEDENCRYPTION=0
+srt setsockopt fd=1 SRTO_KMREFRESHRATE=0
+srt setsockopt fd=1 SRTO_KMPREANNOUNCE=0
+srt setsockopt fd=1 SRTO_SNDDROPDELAY=0
+srt setsockopt fd=1 SRTO_PAYLOADSIZE=1316
+srt setsockopt fd=1 SRTO_SENDER=1
+srt setsockopt fd=1 SRTO_SNDSYN=0
+srt setsockopt fd=1 SRTO_RCVSYN=0
+srt connect fd=1 192.0.2.10:9000
+srt epoll_release
+srt setsockopt fd=1 SRTO_INPUTBW=0
+srt setsockopt fd=1 SRTO_OHEADBW=25
+> events
+events SUCCESS
+> stop 0
+srt epoll_release
+srt close fd=1
+srt cleanup
+> world speakers stereo
+> world acodec nonexistent
+> start
+start returned 1
+log warning [obs-ffmpeg mpegts muxer: 'mpegts']: Couldn't find codec 'nonexistent'
+log error [obs-ffmpeg mpegts muxer: 'mpegts']: mpegts avstream failed to be created
+log error failed to start the mpegts output
+> events
+events SUCCESS ERROR

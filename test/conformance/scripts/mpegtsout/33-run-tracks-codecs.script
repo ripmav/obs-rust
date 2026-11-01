@@ -1,0 +1,16 @@
+# Several audio tracks and codecs: one MPEG-TS elementary stream per track; track index selects the stream; PIDs follow stream
+# creation order (video first); packets of a track whose stream does not exist are ignored (not tested: precondition).
+create
+world tracks 2
+start
+pkt v 0 0 0 1 3000
+pkt a 0 0 0 1 200
+pkt a 1 0 0 1 300
+pkt v 0 1 1 0 800
+pkt a 0 1024 1024 1 200
+pkt a 1 1024 1024 1 300
+drain
+stop 0
+events
+ts
+destroy

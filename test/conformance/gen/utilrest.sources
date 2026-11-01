@@ -1,0 +1,29 @@
+# S-055 utilrest: real util/crc32.c, pipe.c, pipe-posix.c, source-profiler.c, platform-nix-dbus.c, platform-nix-portal.c
+# and audio-monitoring/pulse/* (wrapper, output, enum, available) against a fake PulseAudio and a private D-Bus daemon.
+test/conformance/gen/utilrest_runner.c
+test/conformance/gen/utilrest_stubs.c
+test/conformance/gen/utilrest_pafake.c
+libobs/util/crc32.c
+libobs/util/pipe.c
+libobs/util/pipe-posix.c
+libobs/util/source-profiler.c
+libobs/util/platform-nix-dbus.c
+libobs/util/platform-nix-portal.c
+libobs/audio-monitoring/pulse/pulseaudio-wrapper.c
+libobs/audio-monitoring/pulse/pulseaudio-output.c
+libobs/audio-monitoring/pulse/pulseaudio-enum-devices.c
+libobs/audio-monitoring/pulse/pulseaudio-monitoring-available.c
+libobs/util/bmem.c
+libobs/util/base.c
+libobs/util/threading-posix.c
+libobs/util/dstr.c
+libobs/util/utf8.c
+-I/usr/include/glib-2.0
+-I/usr/lib/glib-2.0/include
+-Wl,--no-as-needed
+-lpulse
+-lgio-2.0
+-lgobject-2.0
+-lglib-2.0
+-no-pie
+!nostubs

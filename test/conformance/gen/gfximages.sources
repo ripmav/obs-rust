@@ -1,0 +1,29 @@
+# libobs image decoding (image-file.c, graphics-ffmpeg.c, vendored libnsgif) + built-in effects through the
+# real effect parser, on a fake graphics backend with textures (spec S-053)
+test/conformance/gen/gfximages_runner.c
+test/conformance/gen/gfximages_stubs.c
+libobs/graphics/image-file.c
+test/conformance/gen/gfximages_ffwrap.c
+libobs/graphics/libnsgif/gif.c
+libobs/graphics/libnsgif/lzw.c
+libobs/graphics/graphics.c
+libobs/graphics/effect.c
+libobs/graphics/effect-parser.c
+libobs/graphics/shader-parser.c
+libobs/graphics/vec2.c
+libobs/graphics/vec3.c
+libobs/graphics/vec4.c
+libobs/graphics/quat.c
+libobs/graphics/axisang.c
+libobs/graphics/matrix3.c
+libobs/graphics/matrix4.c
+libobs/graphics/plane.c
+libobs/graphics/math-extra.c
+libobs/util/lexer.c
+libobs/util/cf-lexer.c
+libobs/util/cf-parser.c
+-lavformat
+-lavcodec
+-lswscale
+-lavutil
+-Wno-deprecated-declarations

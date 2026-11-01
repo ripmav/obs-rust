@@ -1,0 +1,24 @@
+# source_profiler_remove_source schedules the deletion on the graphics thread (the fake queues it until sp_run_tasks).
+# Only when the profiler is enabled.
+sp_source 0 0
+sp_remove 0
+sp_enable 1
+sp_frame_begin
+sp_reset_video 60 1
+sp_clock 1
+sp_frame_begin
+sp_tick 0 10
+sp_frame_collect
+sp_frame_begin
+sp_tick 0 10
+sp_frame_collect
+sp_result 0
+sp_remove 0
+# still present until the task ran
+sp_result 0
+sp_run_tasks
+sp_result 0
+# removing a source that was never profiled is fine
+sp_remove 1
+sp_run_tasks
+sp_result 1

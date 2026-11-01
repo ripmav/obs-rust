@@ -1,0 +1,26 @@
+# find_libobs_data_file search order (obs-nix.c): 1. "<OBS_DATA_PATH>/libobs/<file>" relative to the working directory
+# (the test tree uses "data/libobs"), 2. "<executable dir>/../<OBS_DATA_PATH>/libobs/<file>", 3. only when OBS_INSTALL_PREFIX is
+# non-empty: "<prefix>/<OBS_DATA_PATH>/libobs/<file>" (the runner defines the prefix as the relative path "prefix").
+# Returns the first path that exists as a newly allocated string, otherwise NULL. Paths below are masked: <work>.
+nix_find a.effect
+echo "--- prefix only"
+nix_file prefix a.effect
+nix_find a.effect
+echo "--- executable-relative beats prefix"
+nix_file exe a.effect
+nix_find a.effect
+echo "--- working directory beats both"
+nix_file cwd a.effect
+nix_find a.effect
+echo "--- removing in reverse order falls back down the list"
+nix_unfile cwd a.effect
+nix_find a.effect
+nix_unfile exe a.effect
+nix_find a.effect
+nix_unfile prefix a.effect
+nix_find a.effect
+echo "--- the file name is appended verbatim (subdirectory)"
+nix_file exe sub/b.effect
+nix_find sub/b.effect
+nix_find sub
+nix_find ""

@@ -1,0 +1,17 @@
+# Source lifecycle after the portal handed out a PipeWire remote: show/hide toggle the stream, the ShowCursor setting
+# is forwarded to the stream, destroy tears down in order (session Close, stream disconnect+destroy, thread loop stop).
+unique_name :1.5
+prop ScreenCast AvailableSourceTypes "uint32 1"
+prop ScreenCast AvailableCursorModes "uint32 4"
+prop ScreenCast version "uint32 2"
+screencast_load
+new sc pipewire-desktop-capture-source
+response 1 "(0, {'session_handle': <'/s/x'>})"
+response 2 "(0, {})"
+response 3 "(0, {'streams': <[(@u 33, @a{sv} {})]>})"
+finish 4 fd
+show sc
+hide sc
+set sc ShowCursor bool 0
+update sc
+destroy sc

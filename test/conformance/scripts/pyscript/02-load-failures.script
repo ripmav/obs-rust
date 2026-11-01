@@ -1,0 +1,30 @@
+# Load failures: each leaves loaded=0 and reports through the interpreter's stderr (redirected to the log).
+scripting load
+py_begin syntax_bad.py
+def broken(:
+    pass
+py_end
+py_begin raises_on_import.py
+import obspython as obs
+print("before raise")
+raise RuntimeError("boom at import")
+py_end
+py_begin missing_dep.py
+import no_such_module_zzz
+py_end
+py_begin ok_after.py
+print("fine")
+py_end
+echo syntax error
+create S0 syntax_bad.py
+echo exception while importing
+create S1 raises_on_import.py
+echo import of a missing module
+create S2 missing_dep.py
+echo file does not exist (module not found, path still split)
+create S3 does_not_exist.py
+echo the interpreter survives failures
+create S4 ok_after.py
+echo reload of a failed script retries the import
+reload S1
+scripting unload

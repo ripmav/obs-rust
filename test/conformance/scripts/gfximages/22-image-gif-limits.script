@@ -1,0 +1,62 @@
+# gs_image_file_ex_init on GIF paths: the 4096 limit, single-frame GIFs, misnamed files and missing files.
+# Whether a path is treated as GIF is decided only by its last four characters (case-insensitive ".gif",
+# and the name must be longer than four characters).
+file badlzw.gif 47494638396102000200910000ff000000ff000000ffffffff21f90400050000002c0000000002000200000c02445c003b
+file w4097.gif 47494638396101100100910000ff000000ff000000ffffffff21f90400050000002c0000000001100100000245848fa9cbed0fa39cb4da8bb3debcfb0f86e24896e689a6eacab6ee0bc7f24cd7f68de7facef7fe0f0c0a87c4a2f1884c2a97cca6f3098d4aa7d4aaf58acd6ab7dcaed75000003b
+file w4097b.gif 47494638396101100100910000ff000000ff000000ffffffff21f90400050000002c0000000001100100000245848fa9cbed0fa39cb4da8bb3debcfb0f86e24896e689a6eacab6ee0bc7f24cd7f68de7facef7fe0f0c0a87c4a2f1884c2a97cca6f3098d4aa7d4aaf58acd6ab7dcaed750000021f90400050000002c00000000011001000002458c8fa9cbed0fa39cb4da8bb3debcfb0f86e24896e689a6eacab6ee0bc7f24cd7f68de7facef7fe0f0c0a87c4a2f1884c2a97cca6f3098d4aa7d4aaf58acd6ab7dcaed75000003b
+file h4096.gif 47494638396101000010910000ff000000ff000000ffffffff21f90400050000002c0000000001000010000245848fa9cbed0fa39cb4da8bb3debcfb0f86e24896e689a6eacab6ee0bc7f24cd7f68de7facef7fe0f0c0a87c4a2f1884c2a97cca6f3098d4aa7d4aaf58acd6ab7dcae1750000021f90400050000002c00000000010000100002458c8fa9cbed0fa39cb4da8bb3debcfb0f86e24896e689a6eacab6ee0bc7f24cd7f68de7facef7fe0f0c0a87c4a2f1884c2a97cca6f3098d4aa7d4aaf58acd6ab7dcae375000003b
+file w4096.gif 47494638396100100100910000ff000000ff000000ffffffff21f90400050000002c0000000000100100000245848fa9cbed0fa39cb4da8bb3debcfb0f86e24896e689a6eacab6ee0bc7f24cd7f68de7facef7fe0f0c0a87c4a2f1884c2a97cca6f3098d4aa7d4aaf58acd6ab7dcae1750000021f90400050000002c00000000001001000002458c8fa9cbed0fa39cb4da8bb3debcfb0f86e24896e689a6eacab6ee0bc7f24cd7f68de7facef7fe0f0c0a87c4a2f1884c2a97cca6f3098d4aa7d4aaf58acd6ab7dcae375000003b
+file one.gif 47494638396102000200910000ff000000ff000000ffffffff2c0000000002000200000203443405003b
+file fake.gif 89504e470d0a1a0a0000000d49484452000000010000000108060000001f15c4890000000d49444154789c63f8cfc0f01f00050001ff89993d1d0000000049454e44ae426082
+file junk.gif 6e6f7420612067696620617420616c6c
+file empty.gif -
+file x.GIF 47494638396102000200910000ff000000ff000000ffffffff21ff0b4e45545343415045322e30030100000021f904000a0000002c00000000020002000002034434050021f90400140000002c00000000020002000002039c0205003b
+file ab.gif 47494638396102000200910000ff000000ff000000ffffffff21ff0b4e45545343415045322e30030100000021f904000a0000002c00000000020002000002034434050021f90400140000002c00000000020002000002039c0205003b
+echo == 4097x1, one frame: rejected even though a still image would be fine elsewhere
+img_init w4097.gif straight
+img_state
+echo == 4097x1, two frames
+img_init w4097b.gif straight
+img_state
+echo == 1x4096 two frames (limit is inclusive)
+img_init h4096.gif straight
+img_state
+img_free
+echo == 4096x1 two frames
+img_init w4096.gif straight
+img_state
+img_free
+echo == a single-frame GIF is not animated: loaded by the generic still-image path
+img_init one.gif straight
+img_state
+img_pixels
+img_free
+echo == a PNG named .gif: DEFECT D-1, the reference never returns (scan error is not detected)
+img_try fake.gif straight
+echo == garbage named .gif (same hang)
+img_try junk.gif straight
+echo == empty file named .gif: DEFECT D-2, bmalloc(0) invokes the crash handler
+img_try empty.gif straight
+echo == upper-case extension .GIF is recognised (case-insensitive)
+img_init x.GIF straight
+img_state
+img_free
+file two.gif 47494638396102000200910000ff000000ff000000ffffffff21ff0b4e45545343415045322e30030100000021f904000a0000002c00000000020002000002034434050021f90400140000002c00000000020002000002039c0205003b
+echo == truncated animated GIFs (img_try: the child is killed after 2 s)
+trunc two.gif cut13.gif 13
+img_try cut13.gif straight
+trunc two.gif cut50.gif 50
+img_try cut50.gif straight
+trunc two.gif cut70.gif 70
+img_try cut70.gif straight
+trunc two.gif cut92.gif 92
+img_try cut92.gif straight
+echo == a GIF whose first frame has an illegal LZW minimum code size
+img_try badlzw.gif straight
+echo == missing file
+img_init nothere.gif straight
+img_state
+echo == NULL path (clears the image)
+img_init_null
+img_free
+img_free

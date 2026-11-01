@@ -1,0 +1,19 @@
+file s6.gif 183 bytes
+image loaded=1 animated=1 cx=1 cy=1 format=RGBA frame_updated=0 cur_frame=0 cur_loop=0 cur_time=0 mem_usage=259 alpha_mode=0 space=0 texture=no texture_data=no
+image loaded=1 animated=1 cx=1 cy=1 format=RGBA frame_updated=0 cur_frame=0 cur_loop=0 cur_time=0 mem_usage=259 alpha_mode=0 space=0 texture=yes texture_data=no
+texture cx=1 cy=1 format=RGBA flags=2 map_calls=0 data=ff0000ff
+== skip ahead
+tick 100000000 -> 1 cur_frame=3 cur_loop=0 cur_time=40000000
+image loaded=1 animated=1 cx=1 cy=1 format=RGBA frame_updated=0 cur_frame=3 cur_loop=0 cur_time=40000000 mem_usage=259 alpha_mode=0 space=0 texture=yes texture_data=no
+tick 100000000 -> 1 cur_frame=5 cur_loop=0 cur_time=50000000
+update_texture
+texture cx=1 cy=1 format=RGBA flags=2 map_calls=1 data=00ff00ff
+tick 300000000 -> 1 cur_frame=3 cur_loop=0 cur_time=20000000
+update_texture
+texture cx=1 cy=1 format=RGBA flags=2 map_calls=2 data=ffffffff
+tick 1000000000 -> 1 cur_frame=1 cur_loop=0 cur_time=20000000
+update_texture
+texture cx=1 cy=1 format=RGBA flags=2 map_calls=3 data=00ff00ff
+image loaded=1 animated=1 cx=1 cy=1 format=RGBA frame_updated=0 cur_frame=1 cur_loop=0 cur_time=20000000 mem_usage=259 alpha_mode=0 space=0 texture=yes texture_data=no
+image loaded=0 animated=0 cx=0 cy=0 format=UNKNOWN frame_updated=0 cur_frame=0 cur_loop=0 cur_time=0 mem_usage=0 alpha_mode=0 space=0 texture=no texture_data=no
+textures_alive=0

@@ -1,0 +1,26 @@
+scripting load -> 1 python=1 ticks=1
+log info [obs-scripting]: Loaded python script: st.py
+log info [Python: st.py] update a=default-a n=10 user(a)=False user(n)=False
+create S0 -> loaded=1 lang=2 file=st.py desc=NULL
+log info [obs-scripting]: Loaded python script: st.py
+log info [Python: st.py] update a=given n=10 user(a)=True user(n)=False
+create S1 -> loaded=1 lang=2 file=st.py desc=NULL
+log info [Python: st.py] update a=default-a n=99 user(a)=False user(n)=True
+update S0 done
+log info [Python: st.py] update a=changed n=99 user(a)=True user(n)=True
+update S0 done
+save S0 last_saved="x" a="changed" n=99
+settings S1 a="given" n=10 extra=5 n?=0 a?=1
+echo a script without script_update: settings still stored and returned
+log info [obs-scripting]: Loaded python script: st2.py
+create S2 -> loaded=1 lang=2 file=st2.py desc=NULL
+update S2 done
+settings S2 k="v"
+log info [obs-scripting]: Unloaded python script: st.py
+auto-destroy S0
+log info [obs-scripting]: Unloaded python script: st.py
+auto-destroy S1
+log info [obs-scripting]: Unloaded python script: st2.py
+auto-destroy S2
+log info [Scripting] Total detached callbacks: 0
+scripting unload ticks=0

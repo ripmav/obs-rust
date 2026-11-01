@@ -1,0 +1,11 @@
+# Device lifecycle against a real headless context (Xvfb + Mesa software GL).
+# Shows: device_create result, identity strings of the backend (not driver strings), adapter
+# enumeration, the size queries that need a swap chain (none here: 0 and a warning), destroy.
+create
+info
+adapters
+enter
+size
+leave
+enter
+destroy

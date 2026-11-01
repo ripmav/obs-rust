@@ -1,0 +1,30 @@
+# portal error handling: a failing Inhibit call logs an error and resets the state; uninhibit before the reply arrives
+# cancels the pending call instead of closing a request.
+dbus_service portal
+pii_create 0
+dbus_log
+dbus_fail Inhibit
+pii_inhibit 0 "x" 1
+dbus_wait 1
+dbus_log
+dbus_ok Inhibit
+# uninhibit failing: warning only
+pii_inhibit 0 "y" 1
+dbus_wait 1
+dbus_fail Close
+pii_inhibit 0 "-" 0
+dbus_wait 1
+dbus_log
+pii_destroy 0
+pii_destroy_null
+# uninhibit before the portal has answered cancels the pending call (no Close is sent, no error is logged)
+pii_create 1
+dbus_log
+dbus_delay 600
+pii_inhibit 1 "z" 1
+dbus_wait 1
+pii_inhibit 1 "-" 0
+dbus_wait 0
+dbus_log
+dbus_delay 0
+pii_destroy 1

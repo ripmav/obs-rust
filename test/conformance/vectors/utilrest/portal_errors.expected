@@ -1,0 +1,20 @@
+log debug Found portal inhibitor
+pii_create 0 ok
+svc call org.freedesktop.DBus.Properties.Get path=/org/freedesktop/portal/desktop body=('org.freedesktop.portal.Inhibit', 'version')
+pii_inhibit done
+log error Failed to inhibit:
+svc call org.freedesktop.portal.Inhibit.Inhibit path=/org/freedesktop/portal/desktop body=('', 12, {'handle_token': <'obs_inhibit_portal#'>, 'reason': <'x'>})
+pii_inhibit done
+pii_inhibit done
+log warning Error uninhibiting:
+svc call org.freedesktop.portal.Inhibit.Inhibit path=/org/freedesktop/portal/desktop body=('', 12, {'handle_token': <'obs_inhibit_portal#'>, 'reason': <'y'>})
+svc call org.freedesktop.portal.Request.Close path=/org/freedesktop/portal/desktop/request/<S>/obs_inhibit_portal# body=()
+pii_destroy done
+pii_destroy_null ok
+log debug Found portal inhibitor
+pii_create 1 ok
+svc call org.freedesktop.DBus.Properties.Get path=/org/freedesktop/portal/desktop body=('org.freedesktop.portal.Inhibit', 'version')
+pii_inhibit done
+pii_inhibit done
+svc call org.freedesktop.portal.Inhibit.Inhibit path=/org/freedesktop/portal/desktop body=('', 12, {'handle_token': <'obs_inhibit_portal#'>, 'reason': <'z'>})
+pii_destroy done

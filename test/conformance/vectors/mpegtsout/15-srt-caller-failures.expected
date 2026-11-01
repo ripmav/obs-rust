@@ -1,0 +1,494 @@
+> log error
+> srt_reset_net
+> srt_fail create_socket EUNKNOWN
+> srt_open srt://192.0.2.10:9000
+srt startup
+log error [obs-ffmpeg mpegts muxer / libsrt]: fake srt error -1
+srt cleanup
+srt_open ret=ERROR(-4) max_packet_size=1316 rw_timeout=0 mode=0 transtype=0
+srt_open last_error obs=ERROR srt=-1 listen_timeout=-1 payload_size=1316
+> srt_reset_net
+> srt_fail setsockopt:SRTO_LATENCY EUNKNOWN
+> srt_open srt://192.0.2.10:9000?latency=100000
+srt startup
+srt create_socket -> 1
+srt setsockopt fd=1 SRTO_TRANSTYPE=0
+srt setsockopt fd=1 SRTO_ENFORCEDENCRYPTION=0
+srt setsockopt fd=1 SRTO_KMREFRESHRATE=0
+srt setsockopt fd=1 SRTO_KMPREANNOUNCE=0
+srt setsockopt fd=1 SRTO_SNDDROPDELAY=0
+srt setsockopt fd=1 SRTO_LATENCY=100 FAIL
+log error [obs-ffmpeg mpegts muxer / libsrt]: Failed to set option SRTO_LATENCY on socket: fake srt error -1
+srt close fd=1
+srt cleanup
+srt_open ret=ERROR(-4) max_packet_size=1316 rw_timeout=0 mode=0 transtype=0
+srt_open last_error obs=ERROR srt=-1 listen_timeout=-1 payload_size=1316
+> srt_reset_net
+> srt_fail setsockopt:SRTO_PAYLOADSIZE EUNKNOWN
+> srt_open srt://192.0.2.10:9000
+srt startup
+srt create_socket -> 1
+srt setsockopt fd=1 SRTO_TRANSTYPE=0
+srt setsockopt fd=1 SRTO_ENFORCEDENCRYPTION=0
+srt setsockopt fd=1 SRTO_KMREFRESHRATE=0
+srt setsockopt fd=1 SRTO_KMPREANNOUNCE=0
+srt setsockopt fd=1 SRTO_SNDDROPDELAY=0
+srt setsockopt fd=1 SRTO_PAYLOADSIZE=1316 FAIL
+log error [obs-ffmpeg mpegts muxer / libsrt]: Failed to set option SRTO_PAYLOADSIZE on socket: fake srt error -1
+srt close fd=1
+srt cleanup
+srt_open ret=ERROR(-4) max_packet_size=1316 rw_timeout=0 mode=0 transtype=0
+srt_open last_error obs=ERROR srt=-1 listen_timeout=-1 payload_size=1316
+> srt_reset_net
+> srt_fail setsockopt:SRTO_SENDER EUNKNOWN
+> srt_open srt://192.0.2.10:9000
+srt startup
+srt create_socket -> 1
+srt setsockopt fd=1 SRTO_TRANSTYPE=0
+srt setsockopt fd=1 SRTO_ENFORCEDENCRYPTION=0
+srt setsockopt fd=1 SRTO_KMREFRESHRATE=0
+srt setsockopt fd=1 SRTO_KMPREANNOUNCE=0
+srt setsockopt fd=1 SRTO_SNDDROPDELAY=0
+srt setsockopt fd=1 SRTO_PAYLOADSIZE=1316
+srt setsockopt fd=1 SRTO_SENDER=1 FAIL
+log error [obs-ffmpeg mpegts muxer / libsrt]: Failed to set option SRTO_SENDER on socket: fake srt error -1
+srt close fd=1
+srt cleanup
+srt_open ret=ERROR(-4) max_packet_size=1316 rw_timeout=0 mode=0 transtype=0
+srt_open last_error obs=ERROR srt=-1 listen_timeout=-1 payload_size=1316
+> srt_reset_net
+> srt_fail epoll_create EUNKNOWN
+> srt_open srt://192.0.2.10:9000
+srt startup
+srt create_socket -> 1
+srt setsockopt fd=1 SRTO_TRANSTYPE=0
+srt setsockopt fd=1 SRTO_ENFORCEDENCRYPTION=0
+srt setsockopt fd=1 SRTO_KMREFRESHRATE=0
+srt setsockopt fd=1 SRTO_KMPREANNOUNCE=0
+srt setsockopt fd=1 SRTO_SNDDROPDELAY=0
+srt setsockopt fd=1 SRTO_PAYLOADSIZE=1316
+srt setsockopt fd=1 SRTO_SENDER=1
+srt setsockopt fd=1 SRTO_SNDSYN=0
+srt setsockopt fd=1 SRTO_RCVSYN=0
+log error [obs-ffmpeg mpegts muxer / libsrt]: fake srt error -1
+srt close fd=1
+srt cleanup
+srt_open ret=ERROR(-4) max_packet_size=1316 rw_timeout=0 mode=0 transtype=0
+srt_open last_error obs=ERROR srt=-1 listen_timeout=-1 payload_size=1316
+> srt_reset_net
+> srt_fail connect ECONNREJ
+> srt_reject badsecret
+> srt_open srt://192.0.2.10:9000
+srt startup
+srt create_socket -> 1
+srt setsockopt fd=1 SRTO_TRANSTYPE=0
+srt setsockopt fd=1 SRTO_ENFORCEDENCRYPTION=0
+srt setsockopt fd=1 SRTO_KMREFRESHRATE=0
+srt setsockopt fd=1 SRTO_KMPREANNOUNCE=0
+srt setsockopt fd=1 SRTO_SNDDROPDELAY=0
+srt setsockopt fd=1 SRTO_PAYLOADSIZE=1316
+srt setsockopt fd=1 SRTO_SENDER=1
+srt setsockopt fd=1 SRTO_SNDSYN=0
+srt setsockopt fd=1 SRTO_RCVSYN=0
+srt connect fd=1 192.0.2.10:9000
+log error [obs-ffmpeg mpegts muxer / libsrt]: fake srt error 1002
+log error [obs-ffmpeg mpegts muxer / libsrt]: Wrong password
+srt epoll_release
+srt close fd=1
+srt cleanup
+srt_open ret=ERROR(-4) max_packet_size=1316 rw_timeout=0 mode=0 transtype=0
+srt_open last_error obs=ERROR srt=1002 listen_timeout=-1 payload_size=1316
+> srt_reset_net
+> srt_fail connect ECONNREJ
+> srt_open srt://192.0.2.10:9000
+srt startup
+srt create_socket -> 1
+srt setsockopt fd=1 SRTO_TRANSTYPE=0
+srt setsockopt fd=1 SRTO_ENFORCEDENCRYPTION=0
+srt setsockopt fd=1 SRTO_KMREFRESHRATE=0
+srt setsockopt fd=1 SRTO_KMPREANNOUNCE=0
+srt setsockopt fd=1 SRTO_SNDDROPDELAY=0
+srt setsockopt fd=1 SRTO_PAYLOADSIZE=1316
+srt setsockopt fd=1 SRTO_SENDER=1
+srt setsockopt fd=1 SRTO_SNDSYN=0
+srt setsockopt fd=1 SRTO_RCVSYN=0
+srt connect fd=1 192.0.2.10:9000
+log error [obs-ffmpeg mpegts muxer / libsrt]: fake srt error 1002
+log error [obs-ffmpeg mpegts muxer / libsrt]: Connection rejected, fake reject reason 2
+srt epoll_release
+srt close fd=1
+srt cleanup
+srt_open ret=ERROR(-4) max_packet_size=1316 rw_timeout=0 mode=0 transtype=0
+srt_open last_error obs=ERROR srt=1002 listen_timeout=-1 payload_size=1316
+> srt_reset_net
+> srt_fail connect ECONNSOCK
+> srt_open srt://192.0.2.10:9000
+srt startup
+srt create_socket -> 1
+srt setsockopt fd=1 SRTO_TRANSTYPE=0
+srt setsockopt fd=1 SRTO_ENFORCEDENCRYPTION=0
+srt setsockopt fd=1 SRTO_KMREFRESHRATE=0
+srt setsockopt fd=1 SRTO_KMPREANNOUNCE=0
+srt setsockopt fd=1 SRTO_SNDDROPDELAY=0
+srt setsockopt fd=1 SRTO_PAYLOADSIZE=1316
+srt setsockopt fd=1 SRTO_SENDER=1
+srt setsockopt fd=1 SRTO_SNDSYN=0
+srt setsockopt fd=1 SRTO_RCVSYN=0
+srt connect fd=1 192.0.2.10:9000
+log error [obs-ffmpeg mpegts muxer / libsrt]: fake srt error 5002
+srt epoll_release
+srt close fd=1
+srt cleanup
+srt_open ret=ERROR(-4) max_packet_size=1316 rw_timeout=0 mode=0 transtype=0
+srt_open last_error obs=ERROR srt=5002 listen_timeout=-1 payload_size=1316
+> srt_reset_net
+> srt_fail connect ESECFAIL
+> srt_open srt://192.0.2.10:9000
+srt startup
+srt create_socket -> 1
+srt setsockopt fd=1 SRTO_TRANSTYPE=0
+srt setsockopt fd=1 SRTO_ENFORCEDENCRYPTION=0
+srt setsockopt fd=1 SRTO_KMREFRESHRATE=0
+srt setsockopt fd=1 SRTO_KMPREANNOUNCE=0
+srt setsockopt fd=1 SRTO_SNDDROPDELAY=0
+srt setsockopt fd=1 SRTO_PAYLOADSIZE=1316
+srt setsockopt fd=1 SRTO_SENDER=1
+srt setsockopt fd=1 SRTO_SNDSYN=0
+srt setsockopt fd=1 SRTO_RCVSYN=0
+srt connect fd=1 192.0.2.10:9000
+log error [obs-ffmpeg mpegts muxer / libsrt]: fake srt error 1004
+srt epoll_release
+srt close fd=1
+srt cleanup
+srt_open ret=ERROR(-4) max_packet_size=1316 rw_timeout=0 mode=0 transtype=0
+srt_open last_error obs=ERROR srt=1004 listen_timeout=-1 payload_size=1316
+> srt_reset_net
+> srt_fail connect ECONNLOST
+> srt_open srt://192.0.2.10:9000
+srt startup
+srt create_socket -> 1
+srt setsockopt fd=1 SRTO_TRANSTYPE=0
+srt setsockopt fd=1 SRTO_ENFORCEDENCRYPTION=0
+srt setsockopt fd=1 SRTO_KMREFRESHRATE=0
+srt setsockopt fd=1 SRTO_KMPREANNOUNCE=0
+srt setsockopt fd=1 SRTO_SNDDROPDELAY=0
+srt setsockopt fd=1 SRTO_PAYLOADSIZE=1316
+srt setsockopt fd=1 SRTO_SENDER=1
+srt setsockopt fd=1 SRTO_SNDSYN=0
+srt setsockopt fd=1 SRTO_RCVSYN=0
+srt connect fd=1 192.0.2.10:9000
+log error [obs-ffmpeg mpegts muxer / libsrt]: fake srt error 2001
+srt epoll_release
+srt close fd=1
+srt cleanup
+srt_open ret=ERROR(-4) max_packet_size=1316 rw_timeout=0 mode=0 transtype=0
+srt_open last_error obs=ERROR srt=2001 listen_timeout=-1 payload_size=1316
+> srt_reset_net
+> srt_fail connect ENOCONN
+> srt_open srt://192.0.2.10:9000
+srt startup
+srt create_socket -> 1
+srt setsockopt fd=1 SRTO_TRANSTYPE=0
+srt setsockopt fd=1 SRTO_ENFORCEDENCRYPTION=0
+srt setsockopt fd=1 SRTO_KMREFRESHRATE=0
+srt setsockopt fd=1 SRTO_KMPREANNOUNCE=0
+srt setsockopt fd=1 SRTO_SNDDROPDELAY=0
+srt setsockopt fd=1 SRTO_PAYLOADSIZE=1316
+srt setsockopt fd=1 SRTO_SENDER=1
+srt setsockopt fd=1 SRTO_SNDSYN=0
+srt setsockopt fd=1 SRTO_RCVSYN=0
+srt connect fd=1 192.0.2.10:9000
+log error [obs-ffmpeg mpegts muxer / libsrt]: fake srt error 2002
+srt epoll_release
+srt close fd=1
+srt cleanup
+srt_open ret=ERROR(-4) max_packet_size=1316 rw_timeout=0 mode=0 transtype=0
+srt_open last_error obs=ERROR srt=2002 listen_timeout=-1 payload_size=1316
+> srt_reset_net
+> srt_fail connect ECONNFAIL
+> srt_open srt://192.0.2.10:9000
+srt startup
+srt create_socket -> 1
+srt setsockopt fd=1 SRTO_TRANSTYPE=0
+srt setsockopt fd=1 SRTO_ENFORCEDENCRYPTION=0
+srt setsockopt fd=1 SRTO_KMREFRESHRATE=0
+srt setsockopt fd=1 SRTO_KMPREANNOUNCE=0
+srt setsockopt fd=1 SRTO_SNDDROPDELAY=0
+srt setsockopt fd=1 SRTO_PAYLOADSIZE=1316
+srt setsockopt fd=1 SRTO_SENDER=1
+srt setsockopt fd=1 SRTO_SNDSYN=0
+srt setsockopt fd=1 SRTO_RCVSYN=0
+srt connect fd=1 192.0.2.10:9000
+log error [obs-ffmpeg mpegts muxer / libsrt]: fake srt error 2000
+srt epoll_release
+srt close fd=1
+srt cleanup
+srt_open ret=ERROR(-4) max_packet_size=1316 rw_timeout=0 mode=0 transtype=0
+srt_open last_error obs=ERROR srt=2000 listen_timeout=-1 payload_size=1316
+> srt_reset_net
+> srt_fail connect ENOSERVER
+> srt_open srt://192.0.2.10:9000
+srt startup
+srt create_socket -> 1
+srt setsockopt fd=1 SRTO_TRANSTYPE=0
+srt setsockopt fd=1 SRTO_ENFORCEDENCRYPTION=0
+srt setsockopt fd=1 SRTO_KMREFRESHRATE=0
+srt setsockopt fd=1 SRTO_KMPREANNOUNCE=0
+srt setsockopt fd=1 SRTO_SNDDROPDELAY=0
+srt setsockopt fd=1 SRTO_PAYLOADSIZE=1316
+srt setsockopt fd=1 SRTO_SENDER=1
+srt setsockopt fd=1 SRTO_SNDSYN=0
+srt setsockopt fd=1 SRTO_RCVSYN=0
+srt connect fd=1 192.0.2.10:9000
+log error [obs-ffmpeg mpegts muxer / libsrt]: fake srt error 1001
+log error [obs-ffmpeg mpegts muxer / libsrt]: Connection timed out, fake reject reason 16
+srt epoll_release
+srt close fd=1
+srt cleanup
+srt_open ret=ERROR(-4) max_packet_size=1316 rw_timeout=0 mode=0 transtype=0
+srt_open last_error obs=ERROR srt=1001 listen_timeout=-1 payload_size=1316
+> srt_reset_net
+> srt_fail connect ETIMEOUT
+> srt_open srt://192.0.2.10:9000
+srt startup
+srt create_socket -> 1
+srt setsockopt fd=1 SRTO_TRANSTYPE=0
+srt setsockopt fd=1 SRTO_ENFORCEDENCRYPTION=0
+srt setsockopt fd=1 SRTO_KMREFRESHRATE=0
+srt setsockopt fd=1 SRTO_KMPREANNOUNCE=0
+srt setsockopt fd=1 SRTO_SNDDROPDELAY=0
+srt setsockopt fd=1 SRTO_PAYLOADSIZE=1316
+srt setsockopt fd=1 SRTO_SENDER=1
+srt setsockopt fd=1 SRTO_SNDSYN=0
+srt setsockopt fd=1 SRTO_RCVSYN=0
+srt connect fd=1 192.0.2.10:9000
+log error [obs-ffmpeg mpegts muxer / libsrt]: fake srt error 6003
+log error [obs-ffmpeg mpegts muxer / libsrt]: Connection timed out, fake reject reason 16
+srt epoll_release
+srt close fd=1
+srt cleanup
+srt_open ret=ERROR(-4) max_packet_size=1316 rw_timeout=0 mode=0 transtype=0
+srt_open last_error obs=ERROR srt=6003 listen_timeout=-1 payload_size=1316
+> srt_reset_net
+> srt_fail connect EASYNCSND
+> srt_open srt://192.0.2.10:9000
+srt startup
+srt create_socket -> 1
+srt setsockopt fd=1 SRTO_TRANSTYPE=0
+srt setsockopt fd=1 SRTO_ENFORCEDENCRYPTION=0
+srt setsockopt fd=1 SRTO_KMREFRESHRATE=0
+srt setsockopt fd=1 SRTO_KMPREANNOUNCE=0
+srt setsockopt fd=1 SRTO_SNDDROPDELAY=0
+srt setsockopt fd=1 SRTO_PAYLOADSIZE=1316
+srt setsockopt fd=1 SRTO_SENDER=1
+srt setsockopt fd=1 SRTO_SNDSYN=0
+srt setsockopt fd=1 SRTO_RCVSYN=0
+srt connect fd=1 192.0.2.10:9000
+log error [obs-ffmpeg mpegts muxer / libsrt]: fake srt error 6001
+srt epoll_release
+srt close fd=1
+srt cleanup
+srt_open ret=ERROR(-4) max_packet_size=1316 rw_timeout=0 mode=0 transtype=0
+srt_open last_error obs=ERROR srt=6001 listen_timeout=-1 payload_size=1316
+> srt_reset_net
+> srt_fail connect 9999
+> srt_open srt://192.0.2.10:9000
+srt startup
+srt create_socket -> 1
+srt setsockopt fd=1 SRTO_TRANSTYPE=0
+srt setsockopt fd=1 SRTO_ENFORCEDENCRYPTION=0
+srt setsockopt fd=1 SRTO_KMREFRESHRATE=0
+srt setsockopt fd=1 SRTO_KMPREANNOUNCE=0
+srt setsockopt fd=1 SRTO_SNDDROPDELAY=0
+srt setsockopt fd=1 SRTO_PAYLOADSIZE=1316
+srt setsockopt fd=1 SRTO_SENDER=1
+srt setsockopt fd=1 SRTO_SNDSYN=0
+srt setsockopt fd=1 SRTO_RCVSYN=0
+srt connect fd=1 192.0.2.10:9000
+log error [obs-ffmpeg mpegts muxer / libsrt]: fake srt error 9999
+srt epoll_release
+srt close fd=1
+srt cleanup
+srt_open ret=ERROR(-4) max_packet_size=1316 rw_timeout=0 mode=0 transtype=0
+srt_open last_error obs=ERROR srt=9999 listen_timeout=-1 payload_size=1316
+> srt_reset_net
+> srt_state connecting
+> srt_open srt://192.0.2.10:9000
+srt startup
+srt create_socket -> 1
+srt setsockopt fd=1 SRTO_TRANSTYPE=0
+srt setsockopt fd=1 SRTO_ENFORCEDENCRYPTION=0
+srt setsockopt fd=1 SRTO_KMREFRESHRATE=0
+srt setsockopt fd=1 SRTO_KMPREANNOUNCE=0
+srt setsockopt fd=1 SRTO_SNDDROPDELAY=0
+srt setsockopt fd=1 SRTO_PAYLOADSIZE=1316
+srt setsockopt fd=1 SRTO_SENDER=1
+srt setsockopt fd=1 SRTO_SNDSYN=0
+srt setsockopt fd=1 SRTO_RCVSYN=0
+srt connect fd=1 192.0.2.10:9000
+srt epoll_release
+srt close fd=1
+srt cleanup
+srt_open ret=CONNECT_FAILED(-2) max_packet_size=1316 rw_timeout=0 mode=0 transtype=0
+srt_open last_error obs=CONNECT_FAILED srt=0 listen_timeout=-1 payload_size=1316
+> srt_reset_net
+> srt_state broken
+> srt_open srt://192.0.2.10:9000
+srt startup
+srt create_socket -> 1
+srt setsockopt fd=1 SRTO_TRANSTYPE=0
+srt setsockopt fd=1 SRTO_ENFORCEDENCRYPTION=0
+srt setsockopt fd=1 SRTO_KMREFRESHRATE=0
+srt setsockopt fd=1 SRTO_KMPREANNOUNCE=0
+srt setsockopt fd=1 SRTO_SNDDROPDELAY=0
+srt setsockopt fd=1 SRTO_PAYLOADSIZE=1316
+srt setsockopt fd=1 SRTO_SENDER=1
+srt setsockopt fd=1 SRTO_SNDSYN=0
+srt setsockopt fd=1 SRTO_RCVSYN=0
+srt connect fd=1 192.0.2.10:9000
+srt epoll_release
+srt close fd=1
+srt cleanup
+srt_open ret=CONNECT_FAILED(-2) max_packet_size=1316 rw_timeout=0 mode=0 transtype=0
+srt_open last_error obs=CONNECT_FAILED srt=0 listen_timeout=-1 payload_size=1316
+> srt_reset_net
+> srt_epoll error ECONNLOST
+> srt_open srt://192.0.2.10:9000
+srt startup
+srt create_socket -> 1
+srt setsockopt fd=1 SRTO_TRANSTYPE=0
+srt setsockopt fd=1 SRTO_ENFORCEDENCRYPTION=0
+srt setsockopt fd=1 SRTO_KMREFRESHRATE=0
+srt setsockopt fd=1 SRTO_KMPREANNOUNCE=0
+srt setsockopt fd=1 SRTO_SNDDROPDELAY=0
+srt setsockopt fd=1 SRTO_PAYLOADSIZE=1316
+srt setsockopt fd=1 SRTO_SENDER=1
+srt setsockopt fd=1 SRTO_SNDSYN=0
+srt setsockopt fd=1 SRTO_RCVSYN=0
+srt connect fd=1 192.0.2.10:9000
+log error [obs-ffmpeg mpegts muxer / libsrt]: fake srt error 2001
+log error [obs-ffmpeg mpegts muxer / libsrt]: Connection to srt://192.0.2.10:9000 failed: Unknown error occurred
+srt epoll_release
+srt close fd=1
+srt cleanup
+srt_open ret=ERROR(-4) max_packet_size=1316 rw_timeout=0 mode=0 transtype=0
+srt_open last_error obs=ERROR srt=2001 listen_timeout=-1 payload_size=1316
+> srt_reset_net
+> srt_epoll timeout
+> srt_open srt://192.0.2.10:9000?timeout=1000
+srt startup
+srt create_socket -> 1
+srt setsockopt fd=1 SRTO_TRANSTYPE=0
+srt setsockopt fd=1 SRTO_ENFORCEDENCRYPTION=0
+srt setsockopt fd=1 SRTO_KMREFRESHRATE=0
+srt setsockopt fd=1 SRTO_KMPREANNOUNCE=0
+srt setsockopt fd=1 SRTO_SNDDROPDELAY=0
+srt setsockopt fd=1 SRTO_PAYLOADSIZE=1316
+srt setsockopt fd=1 SRTO_SENDER=1
+srt setsockopt fd=1 SRTO_SNDSYN=0
+srt setsockopt fd=1 SRTO_RCVSYN=0
+srt connect fd=1 192.0.2.10:9000
+log error [obs-ffmpeg mpegts muxer / libsrt]: Connection to srt://192.0.2.10:9000?timeout=1000 failed: Connection timed out
+srt epoll_release
+srt close fd=1
+srt cleanup
+srt_open ret=ERROR(-4) max_packet_size=1316 rw_timeout=1000 mode=0 transtype=0
+srt_open last_error obs=ERROR srt=6003 listen_timeout=-1 payload_size=1316
+> srt_reset_net
+> srt_fail setsockopt:SRTO_INPUTBW EUNKNOWN
+> srt_open srt://192.0.2.10:9000
+srt startup
+srt create_socket -> 1
+srt setsockopt fd=1 SRTO_TRANSTYPE=0
+srt setsockopt fd=1 SRTO_ENFORCEDENCRYPTION=0
+srt setsockopt fd=1 SRTO_KMREFRESHRATE=0
+srt setsockopt fd=1 SRTO_KMPREANNOUNCE=0
+srt setsockopt fd=1 SRTO_SNDDROPDELAY=0
+srt setsockopt fd=1 SRTO_PAYLOADSIZE=1316
+srt setsockopt fd=1 SRTO_SENDER=1
+srt setsockopt fd=1 SRTO_SNDSYN=0
+srt setsockopt fd=1 SRTO_RCVSYN=0
+srt connect fd=1 192.0.2.10:9000
+srt epoll_release
+srt setsockopt fd=1 SRTO_INPUTBW=0 FAIL
+log error [obs-ffmpeg mpegts muxer / libsrt]: Failed to set option SRTO_INPUTBW on socket: fake srt error -1
+srt setsockopt fd=1 SRTO_OHEADBW=25
+srt close fd=1
+srt cleanup
+srt_open ret=ERROR(-4) max_packet_size=1316 rw_timeout=0 mode=0 transtype=0
+srt_open last_error obs=ERROR srt=-1 listen_timeout=-1 payload_size=1316
+> srt_reset_net
+> srt_fail setsockopt:SRTO_OHEADBW EUNKNOWN
+> srt_open srt://192.0.2.10:9000
+srt startup
+srt create_socket -> 1
+srt setsockopt fd=1 SRTO_TRANSTYPE=0
+srt setsockopt fd=1 SRTO_ENFORCEDENCRYPTION=0
+srt setsockopt fd=1 SRTO_KMREFRESHRATE=0
+srt setsockopt fd=1 SRTO_KMPREANNOUNCE=0
+srt setsockopt fd=1 SRTO_SNDDROPDELAY=0
+srt setsockopt fd=1 SRTO_PAYLOADSIZE=1316
+srt setsockopt fd=1 SRTO_SENDER=1
+srt setsockopt fd=1 SRTO_SNDSYN=0
+srt setsockopt fd=1 SRTO_RCVSYN=0
+srt connect fd=1 192.0.2.10:9000
+srt epoll_release
+srt setsockopt fd=1 SRTO_INPUTBW=0
+srt setsockopt fd=1 SRTO_OHEADBW=25 FAIL
+log error [obs-ffmpeg mpegts muxer / libsrt]: Failed to set option SRTO_OHEADBW on socket: fake srt error -1
+srt close fd=1
+srt cleanup
+srt_open ret=ERROR(-4) max_packet_size=1316 rw_timeout=0 mode=0 transtype=0
+srt_open last_error obs=ERROR srt=-1 listen_timeout=-1 payload_size=1316
+> srt_reset_net
+> srt_fail getsockopt EUNKNOWN
+> srt_open srt://192.0.2.10:9000
+srt startup
+srt create_socket -> 1
+srt setsockopt fd=1 SRTO_TRANSTYPE=0
+srt setsockopt fd=1 SRTO_ENFORCEDENCRYPTION=0
+srt setsockopt fd=1 SRTO_KMREFRESHRATE=0
+srt setsockopt fd=1 SRTO_KMPREANNOUNCE=0
+srt setsockopt fd=1 SRTO_SNDDROPDELAY=0
+srt setsockopt fd=1 SRTO_PAYLOADSIZE=1316
+srt setsockopt fd=1 SRTO_SENDER=1
+srt setsockopt fd=1 SRTO_SNDSYN=0
+srt setsockopt fd=1 SRTO_RCVSYN=0
+srt connect fd=1 192.0.2.10:9000
+srt epoll_release
+srt setsockopt fd=1 SRTO_INPUTBW=0
+srt setsockopt fd=1 SRTO_OHEADBW=25
+srt close fd=1
+srt cleanup
+srt_open ret=ERROR(-4) max_packet_size=1316 rw_timeout=0 mode=0 transtype=0
+srt_open last_error obs=ERROR srt=0 listen_timeout=-1 payload_size=1316
+> srt_reset_net
+> srt_fail epoll_create EUNKNOWN 0 2
+> srt_open srt://192.0.2.10:9000
+srt startup
+srt create_socket -> 1
+srt setsockopt fd=1 SRTO_TRANSTYPE=0
+srt setsockopt fd=1 SRTO_ENFORCEDENCRYPTION=0
+srt setsockopt fd=1 SRTO_KMREFRESHRATE=0
+srt setsockopt fd=1 SRTO_KMPREANNOUNCE=0
+srt setsockopt fd=1 SRTO_SNDDROPDELAY=0
+srt setsockopt fd=1 SRTO_PAYLOADSIZE=1316
+srt setsockopt fd=1 SRTO_SENDER=1
+srt setsockopt fd=1 SRTO_SNDSYN=0
+srt setsockopt fd=1 SRTO_RCVSYN=0
+srt connect fd=1 192.0.2.10:9000
+srt epoll_release
+srt setsockopt fd=1 SRTO_INPUTBW=0
+srt setsockopt fd=1 SRTO_OHEADBW=25
+log error [obs-ffmpeg mpegts muxer / libsrt]: fake srt error -1
+srt close fd=1
+srt cleanup
+srt_open ret=ERROR(-4) max_packet_size=1316 rw_timeout=0 mode=0 transtype=0
+srt_open last_error obs=ERROR srt=-1 listen_timeout=-1 payload_size=1316
+> srt_reset_net
+> srt_fail startup EUNKNOWN
+> srt_open srt://192.0.2.10:9000
+srt startup
+log error [obs-ffmpeg mpegts muxer / libsrt]: libsrt failed to load
+srt_open ret=ERROR(-4) max_packet_size=1316 rw_timeout=0 mode=0 transtype=0
+srt_open last_error obs=SUCCESS srt=0 listen_timeout=0 payload_size=0

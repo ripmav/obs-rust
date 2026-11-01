@@ -1,0 +1,6 @@
+# Module entry points: obs_module_load makes the GL function table available (inside the graphics context), initialises
+# PipeWire, registers the camera source (library >= 0.3.60) and then the screencast sources; unload tears the screencast
+# proxy and the shared camera connection down. The camera source is registered even when the screencast portal is absent.
+prop ScreenCast AvailableSourceTypes "uint32 3"
+module_load
+module_unload

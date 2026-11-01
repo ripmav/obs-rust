@@ -1,0 +1,6 @@
+log error Could not create dbus connection:
+dsi_create 0 null
+log error Could not create dbus connection:
+pii_create 0 null
+dsi_destroy_null ok
+pii_destroy_null ok

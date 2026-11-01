@@ -1,0 +1,7 @@
+# Probe order and per-service call shapes. All four services present: ScreenSaver wins.
+dbus_service ss pm mate gnome
+dsi_create 0
+dsi_inhibit 0 "r1" 1
+dsi_inhibit 0 "r1" 0
+dbus_log
+dsi_destroy 0

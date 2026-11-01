@@ -1,0 +1,57 @@
+# QUIRK Q-3 (stale texture binding after read-back).  device_stage_texture binds the source
+# texture to GL's currently active texture unit and then unbinds it (binds 0), but the
+# device's cache of "texture on unit N" is not updated.  A texture loaded before a read-back
+# is therefore no longer bound afterwards while the cache still says it is: loading the SAME
+# texture again is a no-op and the shader samples an unbound texture (black).  Loading a
+# different texture, or none and then the texture again, fixes it.
+create
+enter
+tex rt 4 4 RGBA 1 RENDER_TARGET -
+set_rt rt
+viewport 0 0 4 4
+ortho 0 4 0 4 -100 100
+cull NEITHER
+tex img 1 1 RGBA 1 0 ff0000ff
+tex img2 1 1 RGBA 1 0 00ff00ff
+vshader vs
+uniform float4x4 ViewProj;
+struct VI { float4 pos : POSITION; float2 uv : TEXCOORD0; };
+VI main(VI v) { VI o; o.pos = mul(float4(v.pos.xyz, 1.0), ViewProj); o.uv = v.uv; return o; }
+end
+pshader ps
+uniform texture2d image;
+sampler_state samp { Filter = Point; AddressU = Clamp; AddressV = Clamp; };
+struct VI { float4 pos : POSITION; float2 uv : TEXCOORD0; };
+float4 main(VI v) : TARGET { return image.Sample(samp, v.uv); }
+end
+vb full 6 0 0 1
+0 0 0 0 0
+0 4 0 0 1
+4 0 0 1 0
+4 0 0 1 0
+0 4 0 0 1
+4 4 0 1 1
+end
+load_vb full
+load_vs vs
+load_ps ps
+set ps image tex img
+clear CLEAR_COLOR 0 0 0 1
+draw TRIS 0 6
+echo first draw: red
+read rt
+clear CLEAR_COLOR 0 0 0 1
+draw TRIS 0 6
+echo second draw after read-back with the same texture: stale (black)
+read rt
+set ps image tex img2
+clear CLEAR_COLOR 0 0 0 1
+draw TRIS 0 6
+echo other texture: green
+read rt
+set ps image tex img
+clear CLEAR_COLOR 0 0 0 1
+draw TRIS 0 6
+echo back to the first texture after a read-back: still works because the cache differs
+read rt
+destroy

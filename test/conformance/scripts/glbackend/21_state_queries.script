@@ -1,0 +1,22 @@
+# Small state getters and toggles that have observable results without drawing.
+create
+enter
+get_cull
+cull FRONT
+get_cull
+cull BACK
+get_cull
+get_srgb
+srgb on
+get_srgb
+srgb off
+get_srgb
+# scissor and viewport are not validated against the target
+tex rt 4 4 RGBA 1 RENDER_TARGET -
+set_rt rt
+viewport 0 0 4 4
+get_viewport
+viewport -1 -2 100 200
+get_viewport
+flush
+destroy

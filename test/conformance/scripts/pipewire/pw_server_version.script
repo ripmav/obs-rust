@@ -1,0 +1,20 @@
+# The core "info" event carries the server version string "major.minor.micro"; it is parsed with sscanf and gates features
+# (modifier negotiation needs >= 0.3.33). With dmabuf support advertised, only servers >= 0.3.33 get modifier-bearing formats.
+unique_name :1.5
+prop ScreenCast AvailableSourceTypes "uint32 1"
+prop ScreenCast version "uint32 2"
+screencast_load
+gs_dmabuf 0 ARGB8888
+gs_modifiers ARGB8888 0x0 0x100000000000001
+pw_server_version 0.3.33
+new a pipewire-desktop-capture-source
+portal_ok 1
+pw_server_version 0.3.32
+new b pipewire-desktop-capture-source
+portal_ok 2
+pw_server_version 1.2
+new c pipewire-desktop-capture-source
+portal_ok 3
+pw_server_version -
+new d pipewire-desktop-capture-source
+portal_ok 4

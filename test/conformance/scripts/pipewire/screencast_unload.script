@@ -1,0 +1,5 @@
+# Unloading releases the cached portal proxy; a later load re-creates it.
+prop ScreenCast AvailableSourceTypes "uint32 1"
+screencast_load
+screencast_unload
+screencast_load

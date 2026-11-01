@@ -1,0 +1,114 @@
+> srt_open srt://192.0.2.10:9000?passphrase=secret-pass-1&streamid=cam1&smoother=live&transtype=live
+srt startup
+srt create_socket -> 1
+srt setsockopt fd=1 SRTO_TRANSTYPE=0
+srt setsockopt fd=1 SRTO_PASSPHRASE="secret-pass-1"
+srt setsockopt fd=1 SRTO_ENFORCEDENCRYPTION=0
+srt setsockopt fd=1 SRTO_KMREFRESHRATE=0
+srt setsockopt fd=1 SRTO_KMPREANNOUNCE=0
+srt setsockopt fd=1 SRTO_SNDDROPDELAY=0
+srt setsockopt fd=1 SRTO_STREAMID="cam1"
+srt setsockopt fd=1 SRTO_CONGESTION="live"
+srt setsockopt fd=1 SRTO_PAYLOADSIZE=1316
+srt setsockopt fd=1 SRTO_SENDER=1
+srt setsockopt fd=1 SRTO_SNDSYN=0
+srt setsockopt fd=1 SRTO_RCVSYN=0
+srt connect fd=1 192.0.2.10:9000
+srt epoll_release
+srt setsockopt fd=1 SRTO_INPUTBW=0
+srt setsockopt fd=1 SRTO_OHEADBW=25
+srt_open ret=SUCCESS(0) max_packet_size=1316 rw_timeout=0 mode=0 transtype=0
+srt_open last_error obs=SUCCESS srt=0 listen_timeout=-1 payload_size=1316
+> srt_close
+srt epoll_release
+srt close fd=1
+srt cleanup
+srt_close ret=0
+> srt_open srt://192.0.2.10:9000 svc-stream svc-phrase1234
+srt startup
+srt create_socket -> 1
+srt setsockopt fd=1 SRTO_TRANSTYPE=0
+srt setsockopt fd=1 SRTO_PASSPHRASE="svc-phrase1234"
+srt setsockopt fd=1 SRTO_ENFORCEDENCRYPTION=0
+srt setsockopt fd=1 SRTO_KMREFRESHRATE=0
+srt setsockopt fd=1 SRTO_KMPREANNOUNCE=0
+srt setsockopt fd=1 SRTO_SNDDROPDELAY=0
+srt setsockopt fd=1 SRTO_STREAMID="svc-stream"
+srt setsockopt fd=1 SRTO_PAYLOADSIZE=1316
+srt setsockopt fd=1 SRTO_SENDER=1
+srt setsockopt fd=1 SRTO_SNDSYN=0
+srt setsockopt fd=1 SRTO_RCVSYN=0
+srt connect fd=1 192.0.2.10:9000
+srt epoll_release
+srt setsockopt fd=1 SRTO_INPUTBW=0
+srt setsockopt fd=1 SRTO_OHEADBW=25
+srt_open ret=SUCCESS(0) max_packet_size=1316 rw_timeout=0 mode=0 transtype=0
+srt_open last_error obs=SUCCESS srt=0 listen_timeout=-1 payload_size=1316
+> srt_close
+srt epoll_release
+srt close fd=1
+srt cleanup
+srt_close ret=0
+> srt_open srt://192.0.2.10:9000?streamid=url-stream&passphrase=url-phrase1234 svc-stream svc-phrase1234
+srt startup
+srt create_socket -> 1
+srt setsockopt fd=1 SRTO_TRANSTYPE=0
+srt setsockopt fd=1 SRTO_PASSPHRASE="url-phrase1234"
+srt setsockopt fd=1 SRTO_ENFORCEDENCRYPTION=0
+srt setsockopt fd=1 SRTO_KMREFRESHRATE=0
+srt setsockopt fd=1 SRTO_KMPREANNOUNCE=0
+srt setsockopt fd=1 SRTO_SNDDROPDELAY=0
+srt setsockopt fd=1 SRTO_STREAMID="url-stream"
+srt setsockopt fd=1 SRTO_PAYLOADSIZE=1316
+srt setsockopt fd=1 SRTO_SENDER=1
+srt setsockopt fd=1 SRTO_SNDSYN=0
+srt setsockopt fd=1 SRTO_RCVSYN=0
+srt connect fd=1 192.0.2.10:9000
+srt epoll_release
+srt setsockopt fd=1 SRTO_INPUTBW=0
+srt setsockopt fd=1 SRTO_OHEADBW=25
+srt_open ret=SUCCESS(0) max_packet_size=1316 rw_timeout=0 mode=0 transtype=0
+srt_open last_error obs=SUCCESS srt=0 listen_timeout=-1 payload_size=1316
+> srt_close
+srt epoll_release
+srt close fd=1
+srt cleanup
+srt_close ret=0
+> srt_open srt://192.0.2.10:9000?transtype=file
+srt startup
+srt create_socket -> 1
+srt setsockopt fd=1 SRTO_TRANSTYPE=1
+srt setsockopt fd=1 SRTO_ENFORCEDENCRYPTION=0
+srt setsockopt fd=1 SRTO_KMREFRESHRATE=0
+srt setsockopt fd=1 SRTO_KMPREANNOUNCE=0
+srt setsockopt fd=1 SRTO_SNDDROPDELAY=0
+srt setsockopt fd=1 SRTO_PAYLOADSIZE=1316
+srt setsockopt fd=1 SRTO_SENDER=1
+srt setsockopt fd=1 SRTO_SNDSYN=0
+srt setsockopt fd=1 SRTO_RCVSYN=0
+srt connect fd=1 192.0.2.10:9000
+srt epoll_release
+srt setsockopt fd=1 SRTO_INPUTBW=0
+srt setsockopt fd=1 SRTO_OHEADBW=25
+srt_open ret=SUCCESS(0) max_packet_size=1316 rw_timeout=0 mode=0 transtype=1
+srt_open last_error obs=SUCCESS srt=0 listen_timeout=-1 payload_size=1316
+> srt_close
+srt epoll_release
+srt close fd=1
+srt cleanup
+srt_close ret=0
+> srt_open srt://192.0.2.10:9000?transtype=bogus
+srt startup
+srt cleanup
+srt_open ret=ERROR(-4) max_packet_size=1316 rw_timeout=0 mode=0 transtype=0
+srt_open last_error obs=SUCCESS srt=0 listen_timeout=-1 payload_size=1316
+> srt_open srt://192.0.2.10:9000?mode=bogus
+srt startup
+srt cleanup
+srt_open ret=ERROR(-4) max_packet_size=1316 rw_timeout=0 mode=0 transtype=0
+srt_open last_error obs=SUCCESS srt=0 listen_timeout=-1 payload_size=1316
+> srt_open srt://192.0.2.10:9000?mode=Caller
+srt startup
+srt cleanup
+srt_open ret=ERROR(-4) max_packet_size=1316 rw_timeout=0 mode=0 transtype=0
+srt_open last_error obs=SUCCESS srt=0 listen_timeout=-1 payload_size=1316

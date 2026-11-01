@@ -1,0 +1,22 @@
+scripting load -> 1 python=1 ticks=1
+log warning [Python] obs_python_signal_handler_connect:<line>: SWIG failed to convert python object to obs object: signal_handler_t *
+log info [obs-scripting]: Loaded python script: sig.py
+create S0 -> loaded=1 lang=2 file=sig.py desc=NULL
+callbacks S0 total=3 removed=0
+echo ping reaches both callbacks in connection order of libobs
+log info [Python: sig.py] sig: hi 1
+log info [Python: sig.py] other: 1
+echo the self-removing callback is gone; pong reaches on_sig
+log info [Python: sig.py] sig: again 2
+log info [Python: sig.py] sig: pong 3
+echo disconnect: needs the same signal name and handler
+log info [obs-scripting]: Loaded python script: sig2.py
+create S1 -> loaded=1 lang=2 file=sig2.py desc=NULL
+log info [Python: sig.py] sig: x 4
+echo unloading marks the script's callbacks removed: libobs drops them at the next emission
+log info [obs-scripting]: Unloaded python script: sig.py
+destroy S0
+log info [obs-scripting]: Unloaded python script: sig2.py
+auto-destroy S1
+log info [Scripting] Total detached callbacks: 4
+scripting unload ticks=0

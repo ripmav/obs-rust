@@ -1,0 +1,37 @@
+scripting load -> 1 python=1 ticks=1
+log info [obs-scripting]: Loaded python script: pm_none.py
+create S0 -> loaded=1 lang=2 file=pm_none.py desc=NULL
+log info [obs-scripting]: Loaded python script: pm_int.py
+create S1 -> loaded=1 lang=2 file=pm_int.py desc=NULL
+log info [obs-scripting]: Loaded python script: pm_wrong.py
+create S2 -> loaded=1 lang=2 file=pm_wrong.py desc=NULL
+log info [obs-scripting]: Loaded python script: pm_absent.py
+create S3 -> loaded=1 lang=2 file=pm_absent.py desc=NULL
+log info [obs-scripting]: Loaded python script: pm_noncallable.py
+create S4 -> loaded=1 lang=2 file=pm_noncallable.py desc=NULL
+log info [obs-scripting]: Loaded python script: pm_text.py
+create S5 -> loaded=1 lang=2 file=pm_text.py desc=NULL
+props P0 ->
+log warning [Python] obs_python_script_get_properties:<line>: SWIG failed to convert python object to obs object: obs_properties_t *
+props P1 ->
+log warning [Python] obs_python_script_get_properties:<line>: SWIG failed to convert python object to obs object: obs_properties_t *
+props P2 ->
+props P3 ->
+log warning [Python] Python failure in obs_python_script_get_properties:<line>:
+log error [Python: pm_noncallable.py] TypeError: 'int' object is not callable
+props P0 ->
+props P1 -> t:text:"T"
+log info [obs-scripting]: Unloaded python script: pm_none.py
+auto-destroy S0
+log info [obs-scripting]: Unloaded python script: pm_int.py
+auto-destroy S1
+log info [obs-scripting]: Unloaded python script: pm_wrong.py
+auto-destroy S2
+log info [obs-scripting]: Unloaded python script: pm_absent.py
+auto-destroy S3
+log info [obs-scripting]: Unloaded python script: pm_noncallable.py
+auto-destroy S4
+log info [obs-scripting]: Unloaded python script: pm_text.py
+auto-destroy S5
+log info [Scripting] Total detached callbacks: 0
+scripting unload ticks=0

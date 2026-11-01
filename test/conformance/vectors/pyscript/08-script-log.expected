@@ -1,0 +1,24 @@
+scripting load -> 1 python=1 ticks=1
+log error [Python: logs.py] error text
+log warning [Python: logs.py] warning text
+log info [Python: logs.py] info text
+log debug [Python: logs.py] debug text
+log 5 [Python: logs.py] level five
+log info [Python: logs.py] two
+log info [Python: logs.py] lines
+log info [Python: logs.py] trailing newline
+log info [Python: logs.py] 
+log error [Python: logs.py] no ending
+log info [Python: logs.py] pending + endl
+log info [Python: logs.py] raised SystemError for ('x',)
+log info [Python: logs.py] raised SystemError for (1,)
+log info [Python: logs.py] raised SystemError for (300,)
+log info [Python: logs.py] raised SystemError for (300, 5)
+log info [Python: logs.py] raised SystemError for ()
+log info [Python: logs.py] done
+log info [obs-scripting]: Loaded python script: logs.py
+create S0 -> loaded=1 lang=2 file=logs.py desc=NULL
+log info [obs-scripting]: Unloaded python script: logs.py
+auto-destroy S0
+log info [Scripting] Total detached callbacks: 0
+scripting unload ticks=0

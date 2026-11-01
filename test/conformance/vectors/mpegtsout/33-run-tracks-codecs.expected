@@ -1,0 +1,49 @@
+> create
+create ok
+> world tracks 2
+> start
+start returned 1
+srt startup
+srt create_socket -> 1
+srt setsockopt fd=1 SRTO_TRANSTYPE=0
+srt setsockopt fd=1 SRTO_ENFORCEDENCRYPTION=0
+srt setsockopt fd=1 SRTO_KMREFRESHRATE=0
+srt setsockopt fd=1 SRTO_KMPREANNOUNCE=0
+srt setsockopt fd=1 SRTO_SNDDROPDELAY=0
+srt setsockopt fd=1 SRTO_PAYLOADSIZE=1316
+srt setsockopt fd=1 SRTO_SENDER=1
+srt setsockopt fd=1 SRTO_SNDSYN=0
+srt setsockopt fd=1 SRTO_RCVSYN=0
+srt connect fd=1 192.0.2.10:9000
+srt epoll_release
+srt setsockopt fd=1 SRTO_INPUTBW=0
+srt setsockopt fd=1 SRTO_OHEADBW=25
+> pkt v 0 0 0 1 3000
+> pkt a 0 0 0 1 200
+> pkt a 1 0 0 1 300
+> pkt v 0 1 1 0 800
+> pkt a 0 1024 1024 1 200
+> pkt a 1 1024 1024 1 300
+> drain
+> stop 0
+srt epoll_release
+srt close fd=1
+srt cleanup
+> events
+events SUCCESS
+> ts
+ts bytes_multiple_of_188=1 send_chunks_multiple_of_188=1
+ts pat program=1 pmt_pid=0x1000
+ts pmt pcr_pid=0x0100
+ts pmt stream pid=0x0100 type=0x1b
+ts pmt stream pid=0x0101 type=0x0f
+ts pmt stream pid=0x0102 type=0x0f
+ts packets_nonzero=1 sync_ok=1 continuity_ok=1
+ts pid 0x0000 pat
+ts pid 0x0011
+ts pid 0x0100 pes_starts=2 stream_id=0xe0 pts_deltas=3000
+ts pid 0x0101 pes_starts=2 stream_id=0xc0 pts_deltas=2090
+ts pid 0x0102 pes_starts=2 stream_id=0xc0 pts_deltas=2090
+ts pid 0x1000 pmt
+> destroy
+destroyed

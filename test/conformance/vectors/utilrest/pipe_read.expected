@@ -1,0 +1,38 @@
+popen 0 ok
+pread 0 n=5 "hello"
+pread 0 n=0 ""
+pread_err 0 n=0 ""
+pclose 0 ret=0
+popen 1 ok
+pread_err 1 n=3 "err"
+pread 1 n=3 "out"
+pclose 1 ret=0
+popen 2 ok
+pread 2 n=4 "abcd"
+pread 2 n=4 "efgh"
+pread 2 n=2 "ij"
+pclose 2 ret=0
+popen 3 ok
+pclose 3 ret=0
+popen 3 ok
+pclose 3 ret=7
+popen 3 ok
+pclose 3 ret=-56
+popen 3 ok
+pclose 3 ret=-1
+popen 3 ok
+pclose 3 ret=-128
+popen 4 ok
+pclose 4 ret=127
+popen 5 ok
+pread 5 n=2 "rw"
+pclose 5 ret=0
+popen 6 ok
+pwrite 6 n=0
+pclose 6 ret=0
+popen 7 ok
+pread 7 n=7 "200000\n"
+pclose 7 ret=0
+popen 0 ok
+pread 0 n=0 ""
+pclose 0 ret_is_positive=1

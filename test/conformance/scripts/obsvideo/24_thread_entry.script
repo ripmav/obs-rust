@@ -1,0 +1,21 @@
+# obs_graphics_thread: marks the thread as the graphics thread, snapshots the frame interval, sets video_time to the
+# current clock, registers the profiler root "obs_graphics_thread(<interval ms>)" with the interval as expected time between
+# calls, then runs obs_graphics_thread_loop until it reports stop. The first tick uses last_time 0, i.e. it reports a delta
+# of exactly one frame interval. The loop passes the interval in its context (fixed for the thread's life).
+core 33333333
+trace 1
+clock 777000000
+mix_add M 1 16 16 16 16 BGRA 0 0 0
+stop_after M 2
+cb_add tick T
+sleep_result 1
+thread
+counters
+echo "--- a second thread with a fresh core and a different interval"
+core 16666667
+clock 5
+mix_add M 1 16 16 16 16 BGRA 0 0 0
+stop_after M 1
+trace 0
+thread
+counters

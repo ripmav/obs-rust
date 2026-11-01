@@ -1,0 +1,15 @@
+--- three frames: below 1 s, nothing published
+loop -> 1 last_time=1000000000 frame_time_total=7 fps_total_ns=250000000 fps_frames=1
+loop -> 1 last_time=1250000000 frame_time_total=14 fps_total_ns=500000000 fps_frames=2
+loop -> 1 last_time=1500000000 frame_time_total=21 fps_total_ns=750000000 fps_frames=3
+counters total_frames=3 lagged_frames=0 video_time=1750000000 fps=0 avg_frame_time_ns=0 mixes=1 ctx_depth=0 underflow=0
+--- fourth frame crosses 1 s
+loop -> 1 last_time=1750000000 frame_time_total=0 fps_total_ns=0 fps_frames=0
+counters total_frames=4 lagged_frames=0 video_time=2000000000 fps=4 avg_frame_time_ns=7 mixes=1 ctx_depth=0 underflow=0
+--- accumulators reset; next frames start a new second
+loop -> 1 last_time=2000000000 frame_time_total=7 fps_total_ns=250000000 fps_frames=1
+loop -> 1 last_time=2250000000 frame_time_total=14 fps_total_ns=500000000 fps_frames=2
+counters total_frames=6 lagged_frames=0 video_time=2500000000 fps=4 avg_frame_time_ns=7 mixes=1 ctx_depth=0 underflow=0
+--- a lagging second: each frame takes 2 intervals
+loop -> 1 last_time=2000000000 frame_time_total=0 fps_total_ns=0 fps_frames=0
+counters total_frames=10 lagged_frames=3 video_time=3000000000 fps=2 avg_frame_time_ns=4 mixes=1 ctx_depth=0 underflow=0

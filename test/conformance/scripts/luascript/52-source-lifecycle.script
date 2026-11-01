@@ -1,0 +1,39 @@
+# Source type lifetime vs script lifetime.  Unloading a script destroys (calls destroy on) all live instances,
+# drops the Lua callbacks and DISABLES the registered type (libobs keeps the definition).  Instances then answer
+# 0 / nothing.  Reloading a script that registers the same id RE-ENABLES the type and re-creates the Lua data of
+# every surviving instance (create is called again with the instance's current settings).
+# A second script cannot take over an id that a loaded script still owns.
+scripting load
+lua_begin life.lua
+local info = {id = "life_src", type = obslua.OBS_SOURCE_TYPE_INPUT, output_flags = obslua.OBS_SOURCE_VIDEO}
+info.get_name = function() return "Life" end
+info.create = function(s, src) print("create " .. obslua.obs_source_get_name(src)); return {n = obslua.obs_source_get_name(src)} end
+info.destroy = function(d) print("destroy " .. d.n) end
+info.get_width = function(d) return 7 end
+obslua.obs_register_source(info)
+lua_end
+lua_begin thief.lua
+local info = {id = "life_src", type = obslua.OBS_SOURCE_TYPE_INPUT, output_flags = obslua.OBS_SOURCE_VIDEO}
+info.get_name = function() return "Thief" end
+info.create = function(s, src) print("thief create"); return {} end
+obslua.obs_register_source(info)
+lua_end
+create S0 life.lua
+create S1 thief.lua
+src_types
+src_create life_src a
+src_create life_src b
+src_call a width
+echo --- reload: destroyed, disabled, then re-enabled and re-created
+reload S0
+src_types
+src_call a width
+echo --- unload: types disabled, instances answer 0
+lua_begin dummy.lua
+lua_end
+destroy S0
+src_types
+src_call a width
+echo --- thief may take the id over now that the type has no owner script
+reload S1
+src_types

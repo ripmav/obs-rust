@@ -1,0 +1,34 @@
+# Shader creation failures.  The error string handed back is present (its text is a driver or
+# parser diagnostic and is not part of the vectors).  Failures log
+# "device_vertexshader_create (GL) failed" / "device_pixelshader_create (GL) failed".
+create
+enter
+# syntax error
+vshader bad1
+this is not a shader
+end
+# no function named main (the effect compiler renames the entry point to main)
+pshader bad2
+struct VI { float4 pos : POSITION; };
+float4 other(VI v) : TARGET { return float4(1.0, 0.0, 0.0, 1.0); }
+end
+# undeclared identifier
+pshader bad3
+struct VI { float4 pos : POSITION; };
+float4 main(VI v) : TARGET { return nosuchvariable; }
+end
+# empty text
+pshader bad4
+end
+# valid minimal shaders
+vshader good1
+struct VI { float4 pos : POSITION; };
+VI main(VI v) { return v; }
+end
+params good1
+pshader good2
+struct VI { float4 pos : POSITION; };
+float4 main(VI v) : TARGET { return float4(1.0, 1.0, 1.0, 1.0); }
+end
+params good2
+destroy

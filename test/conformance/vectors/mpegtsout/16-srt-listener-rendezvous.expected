@@ -1,0 +1,280 @@
+> log warning
+> srt_open srt://0.0.0.0:9000?mode=listener
+srt startup
+srt create_socket -> 1
+srt setsockopt fd=1 SRTO_TRANSTYPE=0
+srt setsockopt fd=1 SRTO_ENFORCEDENCRYPTION=0
+srt setsockopt fd=1 SRTO_KMREFRESHRATE=0
+srt setsockopt fd=1 SRTO_KMPREANNOUNCE=0
+srt setsockopt fd=1 SRTO_SNDDROPDELAY=0
+srt setsockopt fd=1 SRTO_PAYLOADSIZE=1316
+srt setsockopt fd=1 SRTO_SENDER=1
+srt setsockopt fd=1 SRTO_SNDSYN=0
+srt setsockopt fd=1 SRTO_RCVSYN=0
+srt setsockopt fd=1 SRTO_REUSEADDR=1
+srt bind fd=1 0.0.0.0:9000
+srt listen fd=1 backlog=1
+srt accept fd=1 -> 2
+srt setsockopt fd=2 SRTO_SNDSYN=0
+srt setsockopt fd=2 SRTO_RCVSYN=0
+srt epoll_release
+srt close fd=1
+srt setsockopt fd=2 SRTO_INPUTBW=0
+srt setsockopt fd=2 SRTO_OHEADBW=25
+srt_open ret=SUCCESS(0) max_packet_size=1316 rw_timeout=0 mode=1 transtype=0
+srt_open last_error obs=SUCCESS srt=0 listen_timeout=-1 payload_size=1316
+> srt_close
+srt epoll_release
+srt close fd=2
+srt cleanup
+srt_close ret=0
+> srt_open srt://192.0.2.10:9000?mode=listener&listen_timeout=5000000
+srt startup
+srt create_socket -> 1
+srt setsockopt fd=1 SRTO_TRANSTYPE=0
+srt setsockopt fd=1 SRTO_ENFORCEDENCRYPTION=0
+srt setsockopt fd=1 SRTO_KMREFRESHRATE=0
+srt setsockopt fd=1 SRTO_KMPREANNOUNCE=0
+srt setsockopt fd=1 SRTO_SNDDROPDELAY=0
+srt setsockopt fd=1 SRTO_PAYLOADSIZE=1316
+srt setsockopt fd=1 SRTO_SENDER=1
+srt setsockopt fd=1 SRTO_SNDSYN=0
+srt setsockopt fd=1 SRTO_RCVSYN=0
+srt setsockopt fd=1 SRTO_REUSEADDR=1
+srt bind fd=1 192.0.2.10:9000
+srt listen fd=1 backlog=1
+srt accept fd=1 -> 2
+srt setsockopt fd=2 SRTO_SNDSYN=0
+srt setsockopt fd=2 SRTO_RCVSYN=0
+srt epoll_release
+srt close fd=1
+srt setsockopt fd=2 SRTO_INPUTBW=0
+srt setsockopt fd=2 SRTO_OHEADBW=25
+srt_open ret=SUCCESS(0) max_packet_size=1316 rw_timeout=0 mode=1 transtype=0
+srt_open last_error obs=SUCCESS srt=0 listen_timeout=5000000 payload_size=1316
+> srt_close
+srt epoll_release
+srt close fd=2
+srt cleanup
+srt_close ret=0
+> srt_open srt://:9000?mode=listener
+srt startup
+srt create_socket -> 1
+srt setsockopt fd=1 SRTO_TRANSTYPE=0
+srt setsockopt fd=1 SRTO_ENFORCEDENCRYPTION=0
+srt setsockopt fd=1 SRTO_KMREFRESHRATE=0
+srt setsockopt fd=1 SRTO_KMPREANNOUNCE=0
+srt setsockopt fd=1 SRTO_SNDDROPDELAY=0
+srt setsockopt fd=1 SRTO_PAYLOADSIZE=1316
+srt setsockopt fd=1 SRTO_SENDER=1
+srt setsockopt fd=1 SRTO_SNDSYN=0
+srt setsockopt fd=1 SRTO_RCVSYN=0
+srt setsockopt fd=1 SRTO_REUSEADDR=1
+srt bind fd=1 0.0.0.0:9000
+srt listen fd=1 backlog=1
+srt accept fd=1 -> 2
+srt setsockopt fd=2 SRTO_SNDSYN=0
+srt setsockopt fd=2 SRTO_RCVSYN=0
+srt epoll_release
+srt close fd=1
+srt setsockopt fd=2 SRTO_INPUTBW=0
+srt setsockopt fd=2 SRTO_OHEADBW=25
+srt_open ret=SUCCESS(0) max_packet_size=1316 rw_timeout=0 mode=1 transtype=0
+srt_open last_error obs=SUCCESS srt=0 listen_timeout=-1 payload_size=1316
+> srt_close
+srt epoll_release
+srt close fd=2
+srt cleanup
+srt_close ret=0
+> srt_fail accept ECONNLOST
+> srt_open srt://0.0.0.0:9000?mode=listener
+srt startup
+srt create_socket -> 1
+srt setsockopt fd=1 SRTO_TRANSTYPE=0
+srt setsockopt fd=1 SRTO_ENFORCEDENCRYPTION=0
+srt setsockopt fd=1 SRTO_KMREFRESHRATE=0
+srt setsockopt fd=1 SRTO_KMPREANNOUNCE=0
+srt setsockopt fd=1 SRTO_SNDDROPDELAY=0
+srt setsockopt fd=1 SRTO_PAYLOADSIZE=1316
+srt setsockopt fd=1 SRTO_SENDER=1
+srt setsockopt fd=1 SRTO_SNDSYN=0
+srt setsockopt fd=1 SRTO_RCVSYN=0
+srt setsockopt fd=1 SRTO_REUSEADDR=1
+srt bind fd=1 0.0.0.0:9000
+srt listen fd=1 backlog=1
+log error [obs-ffmpeg mpegts muxer / libsrt]: fake srt error 2001
+srt epoll_release
+srt close fd=1
+srt cleanup
+srt_open ret=ERROR(-4) max_packet_size=1316 rw_timeout=0 mode=1 transtype=0
+srt_open last_error obs=ERROR srt=2001 listen_timeout=-1 payload_size=1316
+> srt_reset_net
+> srt_fail bind ECONNSOCK
+> srt_open srt://0.0.0.0:9000?mode=listener
+srt startup
+srt create_socket -> 1
+srt setsockopt fd=1 SRTO_TRANSTYPE=0
+srt setsockopt fd=1 SRTO_ENFORCEDENCRYPTION=0
+srt setsockopt fd=1 SRTO_KMREFRESHRATE=0
+srt setsockopt fd=1 SRTO_KMPREANNOUNCE=0
+srt setsockopt fd=1 SRTO_SNDDROPDELAY=0
+srt setsockopt fd=1 SRTO_PAYLOADSIZE=1316
+srt setsockopt fd=1 SRTO_SENDER=1
+srt setsockopt fd=1 SRTO_SNDSYN=0
+srt setsockopt fd=1 SRTO_RCVSYN=0
+srt setsockopt fd=1 SRTO_REUSEADDR=1
+srt bind fd=1 0.0.0.0:9000
+log error [obs-ffmpeg mpegts muxer / libsrt]: fake srt error 5002
+srt epoll_release
+srt close fd=1
+srt cleanup
+srt_open ret=ERROR(-4) max_packet_size=1316 rw_timeout=0 mode=1 transtype=0
+srt_open last_error obs=ERROR srt=5002 listen_timeout=-1 payload_size=1316
+> srt_reset_net
+> srt_fail listen ECONNSOCK
+> srt_open srt://0.0.0.0:9000?mode=listener
+srt startup
+srt create_socket -> 1
+srt setsockopt fd=1 SRTO_TRANSTYPE=0
+srt setsockopt fd=1 SRTO_ENFORCEDENCRYPTION=0
+srt setsockopt fd=1 SRTO_KMREFRESHRATE=0
+srt setsockopt fd=1 SRTO_KMPREANNOUNCE=0
+srt setsockopt fd=1 SRTO_SNDDROPDELAY=0
+srt setsockopt fd=1 SRTO_PAYLOADSIZE=1316
+srt setsockopt fd=1 SRTO_SENDER=1
+srt setsockopt fd=1 SRTO_SNDSYN=0
+srt setsockopt fd=1 SRTO_RCVSYN=0
+srt setsockopt fd=1 SRTO_REUSEADDR=1
+srt bind fd=1 0.0.0.0:9000
+srt listen fd=1 backlog=1
+log error [obs-ffmpeg mpegts muxer / libsrt]: fake srt error 5002
+srt epoll_release
+srt close fd=1
+srt cleanup
+srt_open ret=ERROR(-4) max_packet_size=1316 rw_timeout=0 mode=1 transtype=0
+srt_open last_error obs=ERROR srt=5002 listen_timeout=-1 payload_size=1316
+> srt_reset_net
+> srt_epoll timeout
+> srt_open srt://0.0.0.0:9000?mode=listener&listen_timeout=1000
+srt startup
+srt create_socket -> 1
+srt setsockopt fd=1 SRTO_TRANSTYPE=0
+srt setsockopt fd=1 SRTO_ENFORCEDENCRYPTION=0
+srt setsockopt fd=1 SRTO_KMREFRESHRATE=0
+srt setsockopt fd=1 SRTO_KMPREANNOUNCE=0
+srt setsockopt fd=1 SRTO_SNDDROPDELAY=0
+srt setsockopt fd=1 SRTO_PAYLOADSIZE=1316
+srt setsockopt fd=1 SRTO_SENDER=1
+srt setsockopt fd=1 SRTO_SNDSYN=0
+srt setsockopt fd=1 SRTO_RCVSYN=0
+srt setsockopt fd=1 SRTO_REUSEADDR=1
+srt bind fd=1 0.0.0.0:9000
+srt listen fd=1 backlog=1
+srt epoll_release
+srt close fd=1
+srt cleanup
+srt_open ret=ERROR(-4) max_packet_size=1316 rw_timeout=0 mode=1 transtype=0
+srt_open last_error obs=ERROR srt=-1 listen_timeout=1000 payload_size=1316
+> srt_reset_net
+> srt_fail setsockopt:SRTO_REUSEADDR EUNKNOWN
+> srt_open srt://0.0.0.0:9000?mode=listener
+srt startup
+srt create_socket -> 1
+srt setsockopt fd=1 SRTO_TRANSTYPE=0
+srt setsockopt fd=1 SRTO_ENFORCEDENCRYPTION=0
+srt setsockopt fd=1 SRTO_KMREFRESHRATE=0
+srt setsockopt fd=1 SRTO_KMPREANNOUNCE=0
+srt setsockopt fd=1 SRTO_SNDDROPDELAY=0
+srt setsockopt fd=1 SRTO_PAYLOADSIZE=1316
+srt setsockopt fd=1 SRTO_SENDER=1
+srt setsockopt fd=1 SRTO_SNDSYN=0
+srt setsockopt fd=1 SRTO_RCVSYN=0
+srt setsockopt fd=1 SRTO_REUSEADDR=1 FAIL
+log warning [obs-ffmpeg mpegts muxer / libsrt]: setsockopt(SRTO_REUSEADDR) failed
+srt bind fd=1 0.0.0.0:9000
+srt listen fd=1 backlog=1
+srt accept fd=1 -> 2
+srt setsockopt fd=2 SRTO_SNDSYN=0
+srt setsockopt fd=2 SRTO_RCVSYN=0
+srt epoll_release
+srt close fd=1
+srt setsockopt fd=2 SRTO_INPUTBW=0
+srt setsockopt fd=2 SRTO_OHEADBW=25
+srt_open ret=SUCCESS(0) max_packet_size=1316 rw_timeout=0 mode=1 transtype=0
+srt_open last_error obs=SUCCESS srt=0 listen_timeout=-1 payload_size=1316
+> srt_close
+srt epoll_release
+srt close fd=2
+srt cleanup
+srt_close ret=0
+> srt_reset_net
+> srt_open srt://192.0.2.10:9000?mode=rendezvous&localip=192.0.2.99&localport=9001
+srt startup
+srt create_socket -> 1
+srt setsockopt fd=1 SRTO_RENDEZVOUS=1
+srt setsockopt fd=1 SRTO_TRANSTYPE=0
+srt setsockopt fd=1 SRTO_ENFORCEDENCRYPTION=0
+srt setsockopt fd=1 SRTO_KMREFRESHRATE=0
+srt setsockopt fd=1 SRTO_KMPREANNOUNCE=0
+srt setsockopt fd=1 SRTO_SNDDROPDELAY=0
+srt setsockopt fd=1 SRTO_PAYLOADSIZE=1316
+srt setsockopt fd=1 SRTO_SENDER=1
+srt setsockopt fd=1 SRTO_SNDSYN=0
+srt setsockopt fd=1 SRTO_RCVSYN=0
+srt bind fd=1 192.0.2.99:9000
+srt connect fd=1 192.0.2.10:9000
+srt epoll_release
+srt setsockopt fd=1 SRTO_INPUTBW=0
+srt setsockopt fd=1 SRTO_OHEADBW=25
+srt_open ret=SUCCESS(0) max_packet_size=1316 rw_timeout=0 mode=2 transtype=0
+srt_open last_error obs=SUCCESS srt=0 listen_timeout=-1 payload_size=1316
+> srt_close
+srt epoll_release
+srt close fd=1
+srt cleanup
+srt_close ret=0
+> srt_open srt://192.0.2.10:9000?mode=rendezvous
+srt startup
+log error Invalid adapter configuration 
+srt cleanup
+srt_open ret=BAD_PATH(-1) max_packet_size=1316 rw_timeout=0 mode=2 transtype=0
+srt_open last_error obs=BAD_PATH srt=0 listen_timeout=-1 payload_size=1316
+> srt_open srt://192.0.2.10:9000?mode=rendezvous&localip=192.0.2.99
+srt startup
+log error Invalid adapter configuration 
+srt cleanup
+srt_open ret=BAD_PATH(-1) max_packet_size=1316 rw_timeout=0 mode=2 transtype=0
+srt_open last_error obs=BAD_PATH srt=0 listen_timeout=-1 payload_size=1316
+> srt_open srt://192.0.2.10:9000?mode=rendezvous&localip=192.0.2.99&localport=0
+srt startup
+log error [obs-ffmpeg mpegts muxer / libsrt]: Local port missing in URL 
+srt cleanup
+srt_open ret=BAD_PATH(-1) max_packet_size=1316 rw_timeout=0 mode=2 transtype=0
+srt_open last_error obs=BAD_PATH srt=0 listen_timeout=-1 payload_size=1316
+> srt_open srt://192.0.2.10:9000?mode=rendezvous&localip=192.0.2.99&localport=70000
+srt startup
+log error [obs-ffmpeg mpegts muxer / libsrt]: Local port missing in URL 
+srt cleanup
+srt_open ret=BAD_PATH(-1) max_packet_size=1316 rw_timeout=0 mode=2 transtype=0
+srt_open last_error obs=BAD_PATH srt=0 listen_timeout=-1 payload_size=1316
+> srt_fail bind ECONNSOCK
+> srt_open srt://192.0.2.10:9000?mode=rendezvous&localip=192.0.2.99&localport=9001
+srt startup
+srt create_socket -> 1
+srt setsockopt fd=1 SRTO_RENDEZVOUS=1
+srt setsockopt fd=1 SRTO_TRANSTYPE=0
+srt setsockopt fd=1 SRTO_ENFORCEDENCRYPTION=0
+srt setsockopt fd=1 SRTO_KMREFRESHRATE=0
+srt setsockopt fd=1 SRTO_KMPREANNOUNCE=0
+srt setsockopt fd=1 SRTO_SNDDROPDELAY=0
+srt setsockopt fd=1 SRTO_PAYLOADSIZE=1316
+srt setsockopt fd=1 SRTO_SENDER=1
+srt setsockopt fd=1 SRTO_SNDSYN=0
+srt setsockopt fd=1 SRTO_RCVSYN=0
+srt bind fd=1 192.0.2.99:9000
+log error [obs-ffmpeg mpegts muxer / libsrt]: fake srt error 5002
+srt epoll_release
+srt close fd=1
+srt cleanup
+srt_open ret=CONNECT_FAILED(-2) max_packet_size=1316 rw_timeout=0 mode=2 transtype=0
+srt_open last_error obs=CONNECT_FAILED srt=5002 listen_timeout=-1 payload_size=1316

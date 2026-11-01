@@ -1,0 +1,46 @@
+# REAL libspeexdsp preprocessor driven exactly as the plugin does (int16 conversion with truncation, one state per channel).
+# Tolerance: rms +-5 % (SpeexDSP versions share the algorithm but a port using another implementation must stay within it).
+echo noise-suppress-level-roundtrip
+spx_create a 480 48000
+spx_ctl a -30
+spx_ctl a -60
+spx_ctl a 0
+spx_ctl a 12
+spx_ctl a -30
+echo steady-noise-48k-level-minus-30-and-minus-60
+spx_gen a noise 0.05 17
+spx_run a 6 480 48000
+spx_destroy a
+spx_create b 480 48000
+spx_ctl b -60
+spx_gen b noise 0.05 17
+spx_run b 6 480 48000
+spx_destroy b
+echo speech-like-signal-with-noise-level-minus-30
+spx_create c 480 48000
+spx_ctl c -30
+spx_gen c speechlike 200 0.3 0.02 5
+spx_run c 8 480 48000
+spx_destroy c
+echo 44100-hz-uses-441-frame-segments
+spx_create d 441 44100
+spx_ctl d -30
+spx_gen d noise 0.05 17
+spx_run d 4 441 44100
+spx_destroy d
+echo long-run-2-seconds-noise-estimate-converges-level-matters
+spx_create e 480 48000
+spx_ctl e -30
+spx_gen e noise 0.05 17
+spx_run e 200 480 48000 every=50
+spx_destroy e
+spx_create g 480 48000
+spx_ctl g -60
+spx_gen g noise 0.05 17
+spx_run g 200 480 48000 every=50
+spx_destroy g
+spx_create h 480 48000
+spx_ctl h 0
+spx_gen h noise 0.05 17
+spx_run h 200 480 48000 every=50
+spx_destroy h

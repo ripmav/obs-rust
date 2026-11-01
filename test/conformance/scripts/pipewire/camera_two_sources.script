@@ -1,0 +1,17 @@
+# A second camera source created while the first one is still waiting for the portal is queued on the same connection (no second
+# AccessCamera call); once devices exist both sources stream their own device. Destroying a source removes it from the list.
+unique_name :1.8
+camera_load
+set a device_id str cam0
+set a format str "{\"encoded\":false,\"video_format\":4,\"width\":1280,\"height\":720}"
+new a pipewire-camera-source
+set b device_id str cam0
+set b format str "{\"encoded\":false,\"video_format\":23,\"width\":640,\"height\":360}"
+new b pipewire-camera-source
+response 1 "(0, {})"
+finish 2 fd
+registry_global 50 PipeWire:Interface:Node 3 node.name=cam0 "node.description=Front Camera"
+destroy a
+registry_global 51 PipeWire:Interface:Node 3 node.name=cam1 "node.description=Other"
+props b
+camera_unload

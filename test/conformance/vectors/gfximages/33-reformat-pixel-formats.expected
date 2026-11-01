@@ -1,0 +1,28 @@
+reformat rgba orient=0 straight -> format=RGBA cx=2 cy=2 data=ff0000ff00ff00800000ff00c86432c8
+reformat rgba orient=0 srgb -> format=RGBA cx=2 cy=2 data=ff0000ff00bc008000000000b3592cc8
+reformat rgba orient=0 premul -> format=RGBA cx=2 cy=2 data=ff0000ff00800080000000009d4e27c8
+reformat bgra orient=0 straight -> format=BGRA cx=2 cy=2 data=ff0000ff00ff00800000ff00c86432c8
+reformat bgra orient=0 srgb -> format=BGRA cx=2 cy=2 data=ff0000ff00bc008000000000b3592cc8
+reformat bgra orient=0 premul -> format=BGRA cx=2 cy=2 data=ff0000ff00800080000000009d4e27c8
+== padded lines (linesize larger than the row)
+reformat rgba orient=0 straight -> format=RGBA cx=2 cy=2 data=ff0000ff00ff00800000ff00c86432c8
+reformat rgba orient=0 srgb -> format=RGBA cx=2 cy=2 data=ff0000ff00bc008000000000b3592cc8
+reformat rgba orient=0 premul -> format=RGBA cx=2 cy=2 data=ff0000ff00800080000000009d4e27c8
+== bgr0: straight copy whatever the alpha mode; the fourth byte is not touched
+reformat bgr0 orient=0 straight -> format=BGRX cx=2 cy=2 data=ff0000ff00ff00800000ff00c86432c8
+reformat bgr0 orient=0 premul -> format=BGRX cx=2 cy=2 data=ff0000ff00ff00800000ff00c86432c8
+== 16-bit RGBA big-endian
+reformat rgba64be orient=0 straight -> format=RGBA cx=2 cy=1 data=ff0000ff0080ff80
+reformat rgba64be orient=0 srgb -> format=RGBA cx=2 cy=1 data=ff0000ff005cbc80
+reformat rgba64be orient=0 premul -> format=RGBA cx=2 cy=1 data=ff0000ff00408080
+reformat rgba64be orient=0 straight -> format=RGBA cx=1 cy=1 data=ff0000ff
+== formats converted through swscale to BGRA, then premultiplied by the alpha mode
+reformat rgb24 orient=0 straight -> format=BGRA cx=2 cy=1 data=0000ffff00ff00ff
+reformat rgb24 orient=0 premul -> format=BGRA cx=2 cy=1 data=0000ffff00ff00ff
+reformat gray8 orient=0 straight -> format=BGRA cx=2 cy=1 data=404040ffc0c0c0ff
+reformat yuv420p orient=0 straight -> format=BGRA cx=2 cy=2 data=000000ffffffffff828282ffa7a7a7ff
+reformat yuv420p orient=0 srgb -> format=BGRA cx=2 cy=2 data=000000ffffffffff828282ffa7a7a7ff
+reformat nosuchformat null
+== orientation combined with premultiplication
+reformat rgba orient=6 premul -> format=RGBA cx=2 cy=2 data=00000000ff0000ff9d4e27c800800080
+reformat gray8 orient=8 straight -> format=BGRA cx=1 cy=2 data=c0c0c0ff404040ff

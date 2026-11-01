@@ -1,0 +1,46 @@
+ev sp_frame_begin
+ev gs_enter_context
+ev gs_begin_frame
+ev gs_leave_context
+ev tick_callback T2 seconds=0.0166666675
+ev tick_callback T1 seconds=0.0166666675
+ev source_tick S2 seconds=0.0166666675
+ev source_tick S1 seconds=0.0166666675
+ev sp_render_begin
+ev gs_enter_context
+ev gs_begin_scene
+ev gs_enable_depth_test 0
+ev gs_set_cull_mode 2
+ev gs_set_render_target_cs main.render cs=0
+ev gs_clear flags=1 color=0,0,0,0 depth=1 stencil=0
+ev gs_enable_depth_test 0
+ev gs_set_cull_mode 2
+ev gs_ortho 0 1920 0 1080 -100 100
+ev gs_set_viewport 0 0 1920 1080
+ev draw_callback D2 1920x1080
+ev draw_callback D1 1920x1080
+ev obs_view_render main.view
+ev rendered_callback R1
+ev rendered_callback R2
+ev gs_set_render_target null
+ev gs_enable_blending 1
+ev gs_end_scene
+ev gs_flush
+ev gs_leave_context
+ev gs_enter_context
+ev render_display disp1 ctx_depth=1
+ev render_display disp2 ctx_depth=1
+ev gs_leave_context
+ev sp_render_end
+ev graphics_task task1
+ev graphics_task task2
+ev sp_frame_collect
+ev sleepto 1016666667 -> 1
+loop -> 0 last_time=1000000000 frame_time_total=0 fps_total_ns=16666667 fps_frames=1
+counters total_frames=1 lagged_frames=0 video_time=1016666667 fps=0 avg_frame_time_ns=0 mixes=1 ctx_depth=0 underflow=0
+mix main raw_active=0 gpu_active=0 raw_was=0 gpu_was=0 was=0 cur_texture=1 rendered=1 converted=0 copied=0,0 vframes=0 vframes_gpu=0 gpu_q=0 gpu_avail=0
+mix main active_surfaces: [0][0]=null [0][1]=null [0][2]=null [1][0]=null [1][1]=null [1][2]=null
+mix main mapped: 0 0 0
+source S1 refs=0
+source S3 refs=0
+tasks_run=2

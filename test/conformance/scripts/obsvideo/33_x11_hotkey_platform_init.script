@@ -1,0 +1,64 @@
+# X11 hotkey platform (obs-nix.c dispatch + obs-nix-x11.c). Init opens its OWN display connection (XOpenDisplay(NULL));
+# failure returns false and leaves no context. With a connection it (1) registers raw mouse button events on the root
+# window of the default screen, (2) fills base_keysyms[key] from the static key->keysym table, (3) reads the keyboard mapping
+# for [min_keycode, max_keycode] and, scanning each keycode's keysyms in column order, stops at the first keysym that is
+# Super_L (records super_l_code), Super_R (super_r_code), or maps to an obs key (via base keysym, with Shift_R/Control_R/Alt_R
+# as extra aliases for SHIFT/CONTROL/ALT); a zero keysym ends the scan of that keycode. A key may collect several keycodes.
+# A failing mapping request is only logged: init still returns true with empty tables.
+x11_server down
+hk_init
+x11_server up
+x11_setup 8 40 4
+x11_map 9 XK_Escape
+x11_map 10 XK_1 XK_exclam
+x11_map 11 XK_a XK_A
+x11_map 12 XK_Shift_L
+x11_map 13 XK_Shift_R
+x11_map 14 XK_Control_R
+x11_map 15 XK_Super_L
+x11_map 16 XK_Super_R
+x11_map 17 XK_Return
+x11_map 18 XK_Return
+x11_map 19 XK_KP_0
+x11_map 20 XK_F1
+x11_map 21 XK_Alt_R
+x11_map 22 0 XK_b
+x11_map 23 XK_Mode_switch
+x11_map 24 XK_Hyper_L XK_Return
+x11_map 25 XK_Menu
+echo "--- connect"
+hk_init
+x11_stats
+hk_keycodes OBS_KEY_ESCAPE
+hk_keycodes OBS_KEY_1
+hk_keycodes OBS_KEY_EXCLAM
+hk_keycodes OBS_KEY_A
+hk_keycodes OBS_KEY_SHIFT
+hk_keycodes OBS_KEY_CONTROL
+hk_keycodes OBS_KEY_ALT
+hk_keycodes OBS_KEY_META
+hk_keycodes OBS_KEY_RETURN
+hk_keycodes OBS_KEY_NUM0
+hk_keycodes OBS_KEY_F1
+hk_keycodes OBS_KEY_B
+hk_keycodes OBS_KEY_MENU
+echo "--- base keysyms of the static table"
+hk_base OBS_KEY_A
+hk_base OBS_KEY_ESCAPE
+hk_base OBS_KEY_SHIFT
+hk_base OBS_KEY_META
+hk_base OBS_KEY_NONE
+hk_base OBS_KEY_MOUSE1
+echo "--- free closes the connection and clears the context and vtable"
+hk_free
+x11_stats
+echo "--- keyboard mapping request fails: init still succeeds, nothing learned"
+x11_kb_fail 1
+hk_init
+hk_keycodes OBS_KEY_ESCAPE
+hk_free
+x11_kb_fail 0
+echo "--- a default screen index that does not exist: root window falls back to 0 (select_events on window 0)"
+x11_screen 3
+hk_init
+hk_free

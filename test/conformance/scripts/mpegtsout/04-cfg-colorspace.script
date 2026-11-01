@@ -1,0 +1,21 @@
+# Colour description derived from video_output_info (range, colorspace, YUV-ness of the format).
+create
+world colorspace 601
+cfg video
+world colorspace 709
+cfg video
+world colorspace default
+cfg video
+world colorspace srgb
+cfg video
+world colorspace pq
+cfg video
+world colorspace hlg
+cfg video
+world range full
+world colorspace 709
+cfg video
+# RGB format: the "RGB colorspace" assignment is overwritten by the switch below for every VIDEO_CS_* value
+world vformat bgra
+world colorspace 709
+cfg video

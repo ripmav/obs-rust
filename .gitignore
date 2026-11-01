@@ -1,0 +1,11 @@
+# Links to the read-only OBS Studio checkout (see tools/link-obs-source.sh)
+/libobs
+/libobs-opengl
+/libobs-d3d11
+/libobs-metal
+/libobs-winrt
+/plugins
+/shared
+/deps
+/frontend
+/cmake

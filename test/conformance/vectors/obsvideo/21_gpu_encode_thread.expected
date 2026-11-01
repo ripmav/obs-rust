@@ -1,0 +1,216 @@
+init_gpu_encoding -> 1 initialized=1 avail=10
+--- token 1 is swallowed, token 2 encodes one frame with an encode_texture2 encoder (frame returns to avail)
+ev profile_register_root obs_gpu_encode_thread(0.001 ms) 1000
+ev video_output_inc_texture_frames
+ev video_pause_check E1 ts=5000 -> 0
+ev group_reconfigure_request E1
+ev encode_texture2 E1 tex0=f1.y tex1=f1.uv tex2=null handle=4294967295 pts=0 lock_key=7 next_key_in=0 -> 1,1
+ev send_off_packet E1 success=1 received=1 timebase=1/60
+gpu_thread done budget_left=0
+avail_count=11
+texture_frames=1 skipped=0
+encoder E1 encodes=1 cur_pts=1 start_ts=5000 divisor_counter=0 reconfigure=0 packet_times=1 refs=0
+  ept pts=0 cts=5000 fer_set=1 ferc_set=1
+--- only the first token: swallowed, queue untouched
+ev profile_register_root obs_gpu_encode_thread(0.001 ms) 1000
+gpu_thread done budget_left=0
+avail_count=11
+queue[0] tex=f2.y uv=f2.uv count=1 ts=6000 key=0 released=0
+texture_frames=1 skipped=0
+--- the legacy encode_texture entry point is used when encode_texture2 is absent; handle is -1 on this platform
+ev profile_register_root obs_gpu_encode_thread(0.001 ms) 1000
+ev video_output_inc_texture_frames
+ev video_pause_check E1 ts=6100 -> 0
+ev group_reconfigure_request E1
+ev encode_texture2 E1 tex0=f2b.y tex1=f2b.uv tex2=null handle=4294967295 pts=1 lock_key=0 next_key_in=1 -> 1,1
+ev send_off_packet E1 success=1 received=1 timebase=1/60
+ev video_pause_check E2 ts=6100 -> 0
+ev group_reconfigure_request E2
+ev encode_texture E2 handle=4294967295 pts=0 lock_key=1 next_key_in=0 -> 1,1
+ev send_off_packet E2 success=1 received=1 timebase=1/60
+gpu_thread done budget_left=0
+avail_count=12
+texture_frames=2 skipped=0
+encoder E2 encodes=1 cur_pts=1 start_ts=6100 divisor_counter=0 reconfigure=0 packet_times=1 refs=0
+  ept pts=0 cts=6100 fer_set=1 ferc_set=1
+--- the frame timestamp 0 produces no packet-time record (packet_times unchanged)
+ev profile_register_root obs_gpu_encode_thread(0.001 ms) 1000
+ev video_output_inc_texture_frames
+ev video_pause_check E1 ts=0 -> 0
+ev group_reconfigure_request E1
+ev encode_texture2 E1 tex0=f3.y tex1=f3.uv tex2=null handle=4294967295 pts=2 lock_key=0 next_key_in=1 -> 1,1
+ev send_off_packet E1 success=1 received=1 timebase=1/60
+ev video_pause_check E2 ts=0 -> 0
+ev group_reconfigure_request E2
+ev encode_texture E2 handle=4294967295 pts=1 lock_key=1 next_key_in=0 -> 1,1
+ev send_off_packet E2 success=1 received=1 timebase=1/60
+gpu_thread done budget_left=0
+encoder E1 encodes=3 cur_pts=3 start_ts=5000 divisor_counter=0 reconfigure=0 packet_times=2 refs=0
+  ept pts=0 cts=5000 fer_set=1 ferc_set=1
+  ept pts=1 cts=6100 fer_set=1 ferc_set=1
+--- an encode failure still records packet times but with ferc = 0 (ferc_set=0)
+ev profile_register_root obs_gpu_encode_thread(0.001 ms) 1000
+ev video_output_inc_texture_frames
+ev video_pause_check E1 ts=7000 -> 0
+ev group_reconfigure_request E1
+ev encode_texture2 E1 tex0=f3b.y tex1=f3b.uv tex2=null handle=4294967295 pts=3 lock_key=0 next_key_in=1 -> 0,1
+ev send_off_packet E1 success=0 received=1 timebase=1/60
+ev video_pause_check E2 ts=7000 -> 0
+ev group_reconfigure_request E2
+ev encode_texture E2 handle=4294967295 pts=2 lock_key=1 next_key_in=0 -> 1,1
+ev send_off_packet E2 success=1 received=1 timebase=1/60
+gpu_thread done budget_left=0
+encoder E1 encodes=4 cur_pts=4 start_ts=5000 divisor_counter=0 reconfigure=0 packet_times=3 refs=0
+  ept pts=0 cts=5000 fer_set=1 ferc_set=1
+  ept pts=1 cts=6100 fer_set=1 ferc_set=1
+  ept pts=3 cts=7000 fer_set=1 ferc_set=0
+--- lock key chain with two encoders: E1 gets lock_key, E2 (last) is told next_key 0
+ev profile_register_root obs_gpu_encode_thread(0.001 ms) 1000
+ev video_output_inc_texture_frames
+ev video_pause_check E1 ts=8000 -> 0
+ev group_reconfigure_request E1
+ev encode_texture2 E1 tex0=f4.y tex1=f4.uv tex2=null handle=4294967295 pts=4 lock_key=40 next_key_in=41 -> 1,1
+ev send_off_packet E1 success=1 received=1 timebase=1/60
+ev video_pause_check E2 ts=8000 -> 0
+ev group_reconfigure_request E2
+ev encode_texture E2 handle=4294967295 pts=3 lock_key=41 next_key_in=0 -> 1,1
+ev send_off_packet E2 success=1 received=1 timebase=1/60
+gpu_thread done budget_left=0
+--- frame count 3: re-queued at the FRONT with timestamp += interval, skipped counter incremented, encoded again
+ev profile_register_root obs_gpu_encode_thread(0.001 ms) 1000
+ev video_output_inc_texture_frames
+ev video_pause_check E1 ts=9000 -> 0
+ev group_reconfigure_request E1
+ev encode_texture2 E1 tex0=f5.y tex1=f5.uv tex2=null handle=4294967295 pts=5 lock_key=0 next_key_in=1 -> 1,1
+ev send_off_packet E1 success=1 received=1 timebase=1/60
+ev video_pause_check E2 ts=9000 -> 0
+ev group_reconfigure_request E2
+ev encode_texture E2 handle=4294967295 pts=4 lock_key=1 next_key_in=0 -> 1,1
+ev send_off_packet E2 success=1 received=1 timebase=1/60
+ev video_output_inc_texture_skipped_frames
+ev video_output_inc_texture_frames
+ev video_pause_check E1 ts=10000 -> 0
+ev group_reconfigure_request E1
+ev encode_texture2 E1 tex0=f5.y tex1=f5.uv tex2=null handle=4294967295 pts=6 lock_key=0 next_key_in=1 -> 1,1
+ev send_off_packet E1 success=1 received=1 timebase=1/60
+ev video_pause_check E2 ts=10000 -> 0
+ev group_reconfigure_request E2
+ev encode_texture E2 handle=4294967295 pts=5 lock_key=1 next_key_in=0 -> 1,1
+ev send_off_packet E2 success=1 received=1 timebase=1/60
+ev video_output_inc_texture_skipped_frames
+ev video_output_inc_texture_frames
+ev video_pause_check E1 ts=11000 -> 0
+ev group_reconfigure_request E1
+ev encode_texture2 E1 tex0=f5.y tex1=f5.uv tex2=null handle=4294967295 pts=7 lock_key=0 next_key_in=1 -> 1,1
+ev send_off_packet E1 success=1 received=1 timebase=1/60
+ev video_pause_check E2 ts=11000 -> 0
+ev group_reconfigure_request E2
+ev encode_texture E2 handle=4294967295 pts=6 lock_key=1 next_key_in=0 -> 1,1
+ev send_off_packet E2 success=1 received=1 timebase=1/60
+gpu_thread done budget_left=0
+avail_count=16
+texture_frames=8 skipped=2
+--- paused encoder is skipped (its pts does not advance)
+ev profile_register_root obs_gpu_encode_thread(0.001 ms) 1000
+ev video_output_inc_texture_frames
+ev video_pause_check E1 ts=9500 -> 1
+ev video_pause_check E2 ts=9500 -> 1
+gpu_thread done budget_left=0
+encoder E1 encodes=8 cur_pts=8 start_ts=5000 divisor_counter=0 reconfigure=0 packet_times=7 refs=0
+  ept pts=0 cts=5000 fer_set=1 ferc_set=1
+  ept pts=1 cts=6100 fer_set=1 ferc_set=1
+  ept pts=3 cts=7000 fer_set=1 ferc_set=0
+  ept pts=4 cts=8000 fer_set=1 ferc_set=1
+  ept pts=5 cts=9000 fer_set=1 ferc_set=1
+  ept pts=6 cts=10000 fer_set=1 ferc_set=1
+  ept pts=7 cts=11000 fer_set=1 ferc_set=1
+--- frame rate divisor 3: encodes only every third frame, pts advances by timebase_num*divisor
+ev profile_register_root obs_gpu_encode_thread(0.001 ms) 1000
+ev video_output_inc_texture_frames
+ev video_pause_check E1 ts=10000 -> 1
+ev video_pause_check E2 ts=10000 -> 1
+ev video_pause_check E3 ts=10000 -> 0
+ev group_reconfigure_request E3
+ev encode_texture2 E3 tex0=g1.y tex1=g1.uv tex2=null handle=4294967295 pts=0 lock_key=0 next_key_in=1 -> 1,1
+ev send_off_packet E3 success=1 received=1 timebase=6/90
+ev video_output_inc_texture_frames
+ev video_pause_check E1 ts=10001 -> 1
+ev video_pause_check E2 ts=10001 -> 1
+ev video_pause_check E3 ts=10001 -> 0
+ev video_output_inc_texture_frames
+ev video_pause_check E1 ts=10002 -> 1
+ev video_pause_check E2 ts=10002 -> 1
+ev video_pause_check E3 ts=10002 -> 0
+ev video_output_inc_texture_frames
+ev video_pause_check E1 ts=10003 -> 1
+ev video_pause_check E2 ts=10003 -> 1
+ev video_pause_check E3 ts=10003 -> 0
+ev group_reconfigure_request E3
+ev encode_texture2 E3 tex0=g4.y tex1=g4.uv tex2=null handle=4294967295 pts=6 lock_key=0 next_key_in=1 -> 1,1
+ev send_off_packet E3 success=1 received=1 timebase=6/90
+gpu_thread done budget_left=0
+encoder E3 encodes=2 cur_pts=12 start_ts=10000 divisor_counter=1 reconfigure=0 packet_times=2 refs=0
+  ept pts=0 cts=10000 fer_set=1 ferc_set=1
+  ept pts=6 cts=10003 fer_set=1 ferc_set=1
+--- reconfigure request: handled via the group hook and the encoder update callback before the encode
+ev profile_register_root obs_gpu_encode_thread(0.001 ms) 1000
+ev video_output_inc_texture_frames
+ev video_pause_check E1 ts=11000 -> 1
+ev video_pause_check E2 ts=11000 -> 1
+ev video_pause_check E3 ts=11000 -> 0
+ev group_reconfigure_request E3
+ev encoder_update E3
+ev encode_texture2 E3 tex0=h1.y tex1=h1.uv tex2=null handle=4294967295 pts=12 lock_key=0 next_key_in=1 -> 1,1
+ev send_off_packet E3 success=1 received=1 timebase=6/90
+gpu_thread done budget_left=0
+encoder E3 encodes=3 cur_pts=18 start_ts=10000 divisor_counter=1 reconfigure=0 packet_times=3 refs=0
+  ept pts=0 cts=10000 fer_set=1 ferc_set=1
+  ept pts=6 cts=10003 fer_set=1 ferc_set=1
+  ept pts=12 cts=11000 fer_set=1 ferc_set=1
+--- audio pairing: a video encoder that has not received its first packet waits until every live paired encoder has
+--- received one AND its first raw timestamp is not after this frame
+ev profile_register_root obs_gpu_encode_thread(0.001 ms) 1000
+ev video_output_inc_texture_frames
+ev video_pause_check E1 ts=12000 -> 1
+ev video_pause_check E2 ts=12000 -> 1
+ev video_pause_check E3 ts=12000 -> 1
+ev video_pause_check A1 ts=12000 -> 1
+gpu_thread done budget_left=0
+encoder V1 encodes=0 cur_pts=0 start_ts=0 divisor_counter=0 reconfigure=0 packet_times=0 refs=0
+ev profile_register_root obs_gpu_encode_thread(0.001 ms) 1000
+ev video_output_inc_texture_frames
+ev video_pause_check E1 ts=12500 -> 1
+ev video_pause_check E2 ts=12500 -> 1
+ev video_pause_check E3 ts=12500 -> 1
+ev video_pause_check A1 ts=12500 -> 1
+gpu_thread done budget_left=0
+encoder V1 encodes=0 cur_pts=0 start_ts=0 divisor_counter=0 reconfigure=0 packet_times=0 refs=0
+ev profile_register_root obs_gpu_encode_thread(0.001 ms) 1000
+ev video_output_inc_texture_frames
+ev video_pause_check E1 ts=12500 -> 1
+ev video_pause_check E2 ts=12500 -> 1
+ev video_pause_check E3 ts=12500 -> 1
+ev video_pause_check A1 ts=12500 -> 1
+ev video_pause_check V1 ts=12500 -> 0
+ev group_reconfigure_request V1
+ev encode_texture2 V1 tex0=p3.y tex1=p3.uv tex2=null handle=4294967295 pts=0 lock_key=0 next_key_in=1 -> 1,1
+ev send_off_packet V1 success=1 received=1 timebase=1/60
+gpu_thread done budget_left=0
+encoder V1 encodes=1 cur_pts=1 start_ts=12500 divisor_counter=0 reconfigure=0 packet_times=1 refs=0
+  ept pts=0 cts=12500 fer_set=1 ferc_set=1
+--- a paired encoder that cannot be promoted (dead) does not block
+ev profile_register_root obs_gpu_encode_thread(0.001 ms) 1000
+ev video_output_inc_texture_frames
+ev video_pause_check E1 ts=14000 -> 1
+ev video_pause_check E2 ts=14000 -> 1
+ev video_pause_check E3 ts=14000 -> 1
+ev video_pause_check A1 ts=14000 -> 1
+ev video_pause_check V1 ts=14000 -> 1
+ev video_pause_check V2 ts=14000 -> 0
+ev group_reconfigure_request V2
+ev encode_texture2 V2 tex0=p4.y tex1=p4.uv tex2=null handle=4294967295 pts=0 lock_key=0 next_key_in=1 -> 1,1
+ev send_off_packet V2 success=1 received=1 timebase=1/60
+ev video_pause_check A2 ts=14000 -> 1
+gpu_thread done budget_left=0
+encoder V2 encodes=1 cur_pts=1 start_ts=14000 divisor_counter=0 reconfigure=0 packet_times=1 refs=0
+  ept pts=0 cts=14000 fer_set=1 ferc_set=1

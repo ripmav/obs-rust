@@ -1,0 +1,21 @@
+popen 0 null
+popen 0 null
+popen 0 null
+pnull read=0 read_err=0 write=0
+pclose_null ret=0
+args argc=6 argv: "/bin/echo" "hello" "a b" "c;d" "$HOME" "*" terminator=null
+popen2 0 ok
+pread 0 n=22 "hello a b c;d $HOME *\n"
+pclose 0 ret=0
+args argc=2 argv: "echo" "x" terminator=null
+popen2 1 null
+args argc=1 argv: "/nonexistent/binary" terminator=null
+popen2 1 null
+args argc=2 argv: "/bin/printf" "fmt-2" terminator=null
+popen2 1 ok
+pread 1 n=5 "fmt-2"
+pclose 1 ret=0
+args argc=3 argv: "/bin/sh" "-c" "read a; [ \"$a\" = line ] && exit 4; exit 5" terminator=null
+popen2 2 ok
+pwrite 2 n=5
+pclose 2 ret=4

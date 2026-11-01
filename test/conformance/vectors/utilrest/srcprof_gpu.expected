@@ -1,0 +1,35 @@
+render timer=none
+tick_start_was_zero=0
+gfx timers create=0 destroy=0 begin=0 end=0 ranges create=0 destroy=0 begin=0 end=0 ctx_unbalanced=0
+tick_start_was_zero=0
+render timer=yes
+render timer=yes
+gfx timers create=2 destroy=0 begin=2 end=2 ranges create=1 destroy=0 begin=1 end=1 ctx_unbalanced=0
+tick_start_was_zero=0
+render timer=yes
+fill=1
+tick_avg=7 tick_max=7 render_avg=2 render_max=5 render_sum=5
+gpu_avg=1000 gpu_max=2000 gpu_sum=2500
+async_input=0 in_best=0 in_worst=0 async_rendered=0 out_best=0 out_worst=0
+gfx timers create=3 destroy=2 begin=3 end=3 ranges create=2 destroy=0 begin=2 end=2 ctx_unbalanced=0
+tick_start_was_zero=0
+render timer=yes
+tick_start_was_zero=0
+render timer=yes
+fill=1
+tick_avg=7 tick_max=7 render_avg=3 render_max=5 render_sum=5
+gpu_avg=1500 gpu_max=4000 gpu_sum=2250
+async_input=0 in_best=0 in_worst=0 async_rendered=0 out_best=0 out_worst=0
+tick_start_was_zero=0
+render timer=yes
+fill=1
+tick_avg=7 tick_max=7 render_avg=4 render_max=5 render_sum=5
+gpu_avg=1200 gpu_max=4000 gpu_sum=1800
+async_input=0 in_best=0 in_worst=0 async_rendered=0 out_best=0 out_worst=0
+tick_start_was_zero=0
+render timer=yes
+gfx timers create=7 destroy=6 begin=7 end=7 ranges create=2 destroy=0 begin=6 end=6 ctx_unbalanced=0
+gfx timers create=7 destroy=6 begin=7 end=7 ranges create=2 destroy=2 begin=6 end=6 ctx_unbalanced=0
+fill=0
+untouched=1
+gfx timers create=7 destroy=7 begin=7 end=7 ranges create=2 destroy=2 begin=6 end=6 ctx_unbalanced=0

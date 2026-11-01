@@ -1,0 +1,46 @@
+# Ways a script can fail to load.  A script object is still returned (loaded=0); the core never sees a
+# difference.  "Error ..." messages are WARNINGs on the script's log channel.  A chunk that returns exactly
+# one boolean false counts as a deliberate refusal to load (no warning); any other return value is fine.
+scripting load
+lua_begin syntax.lua
+this is not lua
+lua_end
+lua_begin runtime.lua
+print("before")
+local x = nil
+x.y = 1
+print("after")
+lua_end
+lua_begin refuse.lua
+print("refusing")
+function script_description() return "never read" end
+return false
+lua_end
+lua_begin accept_true.lua
+return true
+lua_end
+lua_begin accept_number.lua
+function script_description() return "number return ok" end
+return 5
+lua_end
+lua_begin accept_two.lua
+function script_description() return "two returns ok" end
+return false, false
+lua_end
+lua_begin accept_nil.lua
+function script_description() return "nil return ok" end
+return nil
+lua_end
+create S0 missing.lua
+create S1 syntax.lua
+create S2 runtime.lua
+create S3 refuse.lua
+create S4 accept_true.lua
+create S5 accept_number.lua
+destroy S0
+create S0 accept_two.lua
+destroy S1
+create S1 accept_nil.lua
+reload S2
+reload S3
+reload S4

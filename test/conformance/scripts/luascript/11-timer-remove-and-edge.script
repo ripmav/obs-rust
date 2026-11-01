@@ -1,0 +1,41 @@
+# timer_remove(fn) removes the FIRST callback record registered for fn (most recently added one); a removed timer
+# is flagged at once and never fires again; unlinking from the global list happens lazily in the next tick.
+# timer_add with 0 ms, a missing/non-integer ms or a non-function first argument is silently ignored.
+# remove_current_callback() inside the timer removes that very timer.
+scripting load
+lua_begin tr.lua
+function t1() print("t1") end
+function once()
+  print("once")
+  obslua.remove_current_callback()
+end
+obslua.timer_add(t1, 10)
+obslua.timer_add(t1, 10)
+obslua.timer_add(once, 10)
+obslua.timer_add(t1, 0)
+obslua.timer_add(t1)
+obslua.timer_add(t1, "abc")
+obslua.timer_add("notfn", 10)
+obslua.timer_add(nil, 10)
+obslua.timer_add(t1, 10.9)
+function script_description() return "timers" end
+lua_end
+time 0
+create S0 tr.lua
+callbacks S0
+barrier
+tick 0.01 10000000
+echo --- once is gone; remove one t1 registration
+lua_begin remover.lua
+function t1() print("t1") end
+obslua.timer_add(t1, 10)
+obslua.timer_add(t1, 10)
+obslua.timer_remove(t1)
+obslua.timer_remove(function() end)
+obslua.timer_remove(5)
+lua_end
+create S1 remover.lua
+callbacks S1
+barrier
+tick 0.01 20000000
+callbacks S1

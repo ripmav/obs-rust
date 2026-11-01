@@ -1,0 +1,57 @@
+> create
+create ok
+> cfg
+cfg service=1 url=srt://192.0.2.10:9000 username=(null) password=(null) stream_id=(null) passphrase=(null)
+cfg format=mpegts mime=video/M2PT is_srt=1 is_rist=0 srt_pkt_size=0
+> world url srt://192.0.2.10:9000?pkt_size=1000
+> cfg
+cfg service=1 url=srt://192.0.2.10:9000?pkt_size=1000 username=(null) password=(null) stream_id=(null) passphrase=(null)
+cfg format=mpegts mime=video/M2PT is_srt=1 is_rist=0 srt_pkt_size=1000
+> world url srt://192.0.2.10:9000?payload_size=1200
+> cfg
+cfg service=1 url=srt://192.0.2.10:9000?payload_size=1200 username=(null) password=(null) stream_id=(null) passphrase=(null)
+cfg format=mpegts mime=video/M2PT is_srt=1 is_rist=0 srt_pkt_size=1200
+> world url srt://192.0.2.10:9000?pkt_size=1000&payload_size=1200
+> cfg
+cfg service=1 url=srt://192.0.2.10:9000?pkt_size=1000&payload_size=1200 username=(null) password=(null) stream_id=(null) passphrase=(null)
+cfg format=mpegts mime=video/M2PT is_srt=1 is_rist=0 srt_pkt_size=1200
+> world url srt://192.0.2.10:9000?pkt_size=abc
+> cfg
+cfg service=1 url=srt://192.0.2.10:9000?pkt_size=abc username=(null) password=(null) stream_id=(null) passphrase=(null)
+cfg format=mpegts mime=video/M2PT is_srt=1 is_rist=0 srt_pkt_size=0
+> world url srt://192.0.2.10:9000?pkt_size=-5
+> cfg
+cfg service=1 url=srt://192.0.2.10:9000?pkt_size=-5 username=(null) password=(null) stream_id=(null) passphrase=(null)
+cfg format=mpegts mime=video/M2PT is_srt=1 is_rist=0 srt_pkt_size=-5
+> world url srt://192.0.2.10:9000?pkt_size=0x10
+> cfg
+cfg service=1 url=srt://192.0.2.10:9000?pkt_size=0x10 username=(null) password=(null) stream_id=(null) passphrase=(null)
+cfg format=mpegts mime=video/M2PT is_srt=1 is_rist=0 srt_pkt_size=0
+> world url srt://192.0.2.10:9000?latency=120&pkt_size=1316&mode=caller
+> cfg
+cfg service=1 url=srt://192.0.2.10:9000?latency=120&pkt_size=1316&mode=caller username=(null) password=(null) stream_id=(null) passphrase=(null)
+cfg format=mpegts mime=video/M2PT is_srt=1 is_rist=0 srt_pkt_size=1316
+> world url srt://192.0.2.10:9000?
+> cfg
+cfg service=1 url=srt://192.0.2.10:9000? username=(null) password=(null) stream_id=(null) passphrase=(null)
+cfg format=mpegts mime=video/M2PT is_srt=1 is_rist=0 srt_pkt_size=0
+> world url srt://192.0.2.10:9000/pkt_size=1000
+> cfg
+cfg service=1 url=srt://192.0.2.10:9000/pkt_size=1000 username=(null) password=(null) stream_id=(null) passphrase=(null)
+cfg format=mpegts mime=video/M2PT is_srt=1 is_rist=0 srt_pkt_size=0
+> world url rist://192.0.2.20:8000?buffer=500&pkt_size=1400
+> cfg
+cfg service=1 url=rist://192.0.2.20:8000?buffer=500&pkt_size=1400 username=(null) password=(null) stream_id=(null) passphrase=(null)
+cfg format=mpegts mime=video/M2PT is_srt=0 is_rist=1 srt_pkt_size=1400
+> world url udp://192.0.2.30:5000
+> cfg
+cfg service=1 url=udp://192.0.2.30:5000 username=(null) password=(null) stream_id=(null) passphrase=(null)
+cfg format=mpegts mime=video/M2PT is_srt=0 is_rist=0 srt_pkt_size=0
+> world url RIST://192.0.2.20:8000
+> cfg
+cfg service=1 url=RIST://192.0.2.20:8000 username=(null) password=(null) stream_id=(null) passphrase=(null)
+cfg format=mpegts mime=video/M2PT is_srt=0 is_rist=0 srt_pkt_size=0
+> world url tcp://192.0.2.30:5000
+> cfg
+cfg service=1 url=tcp://192.0.2.30:5000 username=(null) password=(null) stream_id=(null) passphrase=(null)
+cfg format=mpegts mime=video/M2PT is_srt=0 is_rist=0 srt_pkt_size=0

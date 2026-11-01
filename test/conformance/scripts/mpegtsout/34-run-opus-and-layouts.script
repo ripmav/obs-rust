@@ -1,0 +1,15 @@
+# Opus audio and non-stereo layouts: layout is derived from the audio info (4.1 special case), the codec from the encoder name.
+create
+world acodec opus
+world samplerate 48000
+world framesize 960
+start
+events
+pkt v 0 0 0 1 3000
+pkt a 0 0 0 1 120
+pkt a 0 960 960 1 120
+pkt v 0 1 1 0 800
+drain
+stop 0
+events
+ts

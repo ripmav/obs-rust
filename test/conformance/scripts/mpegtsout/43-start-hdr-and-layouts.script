@@ -1,0 +1,27 @@
+# HDR transfer functions (PQ / HLG) add content-light-level and mastering-display side data to the video stream (not
+# observable in the TS bytes; the start must simply succeed with a 10-bit format), 4.1 audio selects an explicit layout,
+# an unknown audio codec name fails the stream set-up.
+create
+world vformat p010
+world colorspace pq
+start
+events
+pkt v 0 0 0 1 3000
+pkt a 0 0 0 1 200
+drain
+stop 0
+events
+world colorspace hlg
+start
+events
+stop 0
+world colorspace 709
+world vformat nv12
+world speakers 4.1
+start
+events
+stop 0
+world speakers stereo
+world acodec nonexistent
+start
+events

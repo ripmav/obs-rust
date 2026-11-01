@@ -1,0 +1,23 @@
+# REAL vendored RNNoise driven directly (the library contract the plugin relies on, S-054 section 3).
+# Input scale: float samples in int16 units (the plugin multiplies by 32768 before the call). Frame = 480 samples @ 48 kHz.
+# Tolerance when porting: vad +-0.02 absolute, rms/peak +-3 % (+-2 absolute) -- an equivalent RNNoise implementation
+# (same model weights) must agree within this; the values are printed rounded so libm differences do not show.
+rnn_info
+rnn_create a
+echo harmonic-speechlike-voice-plus-low-noise-passes-with-warmup
+rnn_gen a speechlike 200 8000 300 7
+rnn_run a 12
+echo voice-stops-gain-decays-over-the-following-frames
+rnn_gen a silence
+rnn_run a 4
+rnn_destroy a
+echo pure-white-noise-is-suppressed
+rnn_create n
+rnn_gen n noise 3000 99
+rnn_run n 12
+rnn_destroy n
+echo steady-sine-tone
+rnn_create t
+rnn_gen t sine 1000 8000
+rnn_run t 8
+rnn_destroy t

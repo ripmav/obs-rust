@@ -1,0 +1,28 @@
+# Frames that are not turned into textures: no buffer ("Out of buffers"), corrupt header meta (buffer returned, nothing else),
+# empty chunk (size 0, kwin/mutter workaround), unsupported SPA format, corrupted chunk. The previous texture stays.
+unique_name :1.5
+prop ScreenCast AvailableSourceTypes "uint32 1"
+prop ScreenCast version "uint32 2"
+screencast_load
+new a pipewire-desktop-capture-source
+portal_ok 42
+param_changed format=BGRx size=4x2
+process
+buf_data 0 0 memptr 0 0 16 32 0 0x10
+buf_meta 0 header 2
+buf_push 0
+process
+buf_data 1 0 memptr 0 0 16 0 0 0x10
+buf_push 1
+process
+buf_data 2 0 memptr 0 0 16 32 1 0x10
+buf_push 2
+process
+param_changed format=I420 size=4x2
+buf_data 3 0 memptr 0 0 16 32 0 0x10
+buf_push 3
+process
+param_changed format=NV12 size=4x2
+buf_push 3
+process
+leaks

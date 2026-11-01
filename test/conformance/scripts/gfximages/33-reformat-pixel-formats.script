@@ -1,0 +1,31 @@
+# graphics-ffmpeg.c ffmpeg_image_reformat_frame by input pixel format and alpha mode (fabricated decoded
+# frames): which formats are copied, which are converted by swscale (always to BGRA), 16-bit conversion to 8-bit,
+# line padding, and the resulting texture format (RGBA / BGRA / BGRX).
+reformat rgba 2 2 8 0 straight ff0000ff00ff00800000ff00c86432c8
+reformat rgba 2 2 8 0 srgb ff0000ff00ff00800000ff00c86432c8
+reformat rgba 2 2 8 0 premul ff0000ff00ff00800000ff00c86432c8
+reformat bgra 2 2 8 0 straight ff0000ff00ff00800000ff00c86432c8
+reformat bgra 2 2 8 0 srgb ff0000ff00ff00800000ff00c86432c8
+reformat bgra 2 2 8 0 premul ff0000ff00ff00800000ff00c86432c8
+echo == padded lines (linesize larger than the row)
+reformat rgba 2 2 12 0 straight ff0000ff00ff0080eeeeeeee0000ff00c86432c8eeeeeeee
+reformat rgba 2 2 12 0 srgb ff0000ff00ff0080eeeeeeee0000ff00c86432c8eeeeeeee
+reformat rgba 2 2 12 0 premul ff0000ff00ff0080eeeeeeee0000ff00c86432c8eeeeeeee
+echo == bgr0: straight copy whatever the alpha mode; the fourth byte is not touched
+reformat bgr0 2 2 8 0 straight ff0000ff00ff00800000ff00c86432c8
+reformat bgr0 2 2 8 0 premul ff0000ff00ff00800000ff00c86432c8
+echo == 16-bit RGBA big-endian
+reformat rgba64be 2 1 16 0 straight ffff00000000ffff00008000ffff8000
+reformat rgba64be 2 1 16 0 srgb ffff00000000ffff00008000ffff8000
+reformat rgba64be 2 1 16 0 premul ffff00000000ffff00008000ffff8000
+reformat rgba64be 1 1 12 0 straight ffff00000000ffff00000000
+echo == formats converted through swscale to BGRA, then premultiplied by the alpha mode
+reformat rgb24 2 1 6 0 straight ff000000ff00
+reformat rgb24 2 1 6 0 premul ff000000ff00
+reformat gray8 2 1 2 0 straight 40c0
+reformat yuv420p 2 2 2 0 straight 10f080a0
+reformat yuv420p 2 2 2 0 srgb 10f080a0
+reformat nosuchformat 1 1 4 0 straight 00000000
+echo == orientation combined with premultiplication
+reformat rgba 2 2 8 6 premul ff0000ff00ff00800000ff00c86432c8
+reformat gray8 2 1 2 8 straight 40c0

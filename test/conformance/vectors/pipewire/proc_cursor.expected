@@ -1,0 +1,180 @@
+> unique_name :1.5
+> prop ScreenCast AvailableSourceTypes uint32 1
+> prop ScreenCast version uint32 2
+> screencast_load
+dbus.bus_get type=2 -> ok
+dbus.proxy_new org.freedesktop.portal.Desktop /org/freedesktop/portal/desktop org.freedesktop.portal.ScreenCast flags=0
+log info [pipewire] Available capture sources:
+log info [pipewire]     - Monitor source
+host.register_source pipewire-desktop-capture-source type=0 flags=0x481 icon=6
+host.register_source pipewire-screen-capture-source type=0 flags=0x81 icon=6
+> new a pipewire-desktop-capture-source
+log info PipeWire initialized
+dbus.subscribe#1 org.freedesktop.portal.Desktop org.freedesktop.portal.Request.Response path=/org/freedesktop/portal/desktop/request/1_5/obs1 arg0=NULL flags=1
+dbus.call#1 CreateSession ({'handle_token': <'obs1'>, 'session_handle_token': <'obs1'>},)
+created a
+> portal_ok 54
+dbus.signal Response -> /org/freedesktop/portal/desktop/request/1_5/obs1
+log info [pipewire] Screencast session created
+dbus.subscribe#2 org.freedesktop.portal.Desktop org.freedesktop.portal.Request.Response path=/org/freedesktop/portal/desktop/request/1_5/obs2 arg0=NULL flags=1
+dbus.call#2 SelectSources (objectpath '/s/auto', {'types': <uint32 1>, 'multiple': <false>, 'handle_token': <'obs2'>, 'cursor_mode': <uint32 1>})
+dbus.unsubscribe#1
+dbus.signal Response -> /org/freedesktop/portal/desktop/request/1_5/obs2
+log debug [pipewire] Response to select source received
+log info [pipewire] Asking for monitor
+dbus.subscribe#3 org.freedesktop.portal.Desktop org.freedesktop.portal.Request.Response path=/org/freedesktop/portal/desktop/request/1_5/obs3 arg0=NULL flags=1
+dbus.call#3 Start (objectpath '/s/auto', '', {'handle_token': <'obs3'>})
+dbus.unsubscribe#2
+dbus.signal Response -> /org/freedesktop/portal/desktop/request/1_5/obs3
+log info [pipewire] source selected, setting up screencast
+dbus.call#4 OpenPipeWireRemote (objectpath '/s/auto', @a{sv} {})
+dbus.unsubscribe#3
+dbus.finish#4 OpenPipeWireRemote
+pw.thread_loop_new "PipeWire thread loop"
+pw.thread_loop_start -> 0
+pw.context_connect_fd -> core
+pw.core_add_listener
+pw.core_sync id=0 seq_in=0 -> 1
+log info [pipewire] Server version: 1.0.0
+log info [pipewire] Library version: lib-version
+log info [pipewire] Header version: <hdr>
+gs.query_dmabuf_capabilities -> 0
+pw.loop_add_event#1
+log debug [pipewire] registered event <ptr>
+pw.stream_new#1 "OBS Studio" props={media.type=Video,media.category=Capture,media.role=Screen}
+log info [pipewire] Created stream <ptr>
+pw.stream_connect#1 dir=input target=54 flags=0x5 n_params=6
+  param[0] Object(type=0x40003,id=3){mediaType=Id:2(video); mediaSubtype=Id:1(raw); format=Id:12(BGRA); size=Choice:Range<Rect:1920x1080,Rect:1x1,Rect:8192x4320>; framerate=Choice:Range<Frac:60/1,Frac:0/1,Frac:360/1>}
+  param[1] Object(type=0x40003,id=3){mediaType=Id:2(video); mediaSubtype=Id:1(raw); format=Id:11(RGBA); size=Choice:Range<Rect:1920x1080,Rect:1x1,Rect:8192x4320>; framerate=Choice:Range<Frac:60/1,Frac:0/1,Frac:360/1>}
+  param[2] Object(type=0x40003,id=3){mediaType=Id:2(video); mediaSubtype=Id:1(raw); format=Id:8(BGRx); size=Choice:Range<Rect:1920x1080,Rect:1x1,Rect:8192x4320>; framerate=Choice:Range<Frac:60/1,Frac:0/1,Frac:360/1>}
+  param[3] Object(type=0x40003,id=3){mediaType=Id:2(video); mediaSubtype=Id:1(raw); format=Id:7(RGBx); size=Choice:Range<Rect:1920x1080,Rect:1x1,Rect:8192x4320>; framerate=Choice:Range<Frac:60/1,Frac:0/1,Frac:360/1>}
+  param[4] Object(type=0x40003,id=3){mediaType=Id:2(video); mediaSubtype=Id:1(raw); format=Id:85(ABGR_210LE); size=Choice:Range<Rect:1920x1080,Rect:1x1,Rect:8192x4320>; framerate=Choice:Range<Frac:60/1,Frac:0/1,Frac:360/1>}
+  param[5] Object(type=0x40003,id=3){mediaType=Id:2(video); mediaSubtype=Id:1(raw); format=Id:81(xBGR_210LE); size=Choice:Range<Rect:1920x1080,Rect:1x1,Rect:8192x4320>; framerate=Choice:Range<Frac:60/1,Frac:0/1,Frac:360/1>}
+log info [pipewire] Playing stream <ptr>
+> param_changed format=BGRx size=100x50
+pw.event param_changed id=4 Object(type=0x40003,id=4){mediaType=Id:2(video); mediaSubtype=Id:1(raw); format=Id:8(BGRx); size=Rect:100x50; framerate=Frac:60/1}
+gs.query_sync_capabilities -> 0
+log info [pipewire] Negotiated format:
+log info [pipewire]     Format: 8 (Spa:Enum:VideoFormat:BGRx)
+log info [pipewire]     Size: 100x50
+log info [pipewire]     Framerate: 60/1
+pw.stream_update_params#1 n_params=5
+  param[0] Object(type=0x40005,id=6){type=Id:2(VideoCrop); size=Int:16}
+  param[1] Object(type=0x40005,id=6){type=Id:5(Cursor); size=Choice:Range<Int:16432,Int:52,Int:4194352>}
+  param[2] Object(type=0x40004,id=5){dataType=Int:10}
+  param[3] Object(type=0x40005,id=6){type=Id:1(Header); size=Int:32}
+  param[4] Object(type=0x40005,id=6){type=Id:8(VideoTransform); size=Int:4}
+> buf_data 0 0 memptr 0 0 400 5000 0 0x10
+> buf_meta 0 cursor 1 40 30 2 3 BGRA 4 2 0x40
+> buf_push 0
+> process
+pw.event process
+pw.dequeue_buffer #0
+log debug [pipewire] Buffer has memory texture
+gs.texture_create #1 100x50 fmt=4 levels=1 flags=0x2 data0=10111213
+gs.texture_create #2 4x2 fmt=5 levels=1 flags=0x2 data0=40414243
+pw.queue_buffer #0
+> render a
+gs.effect_get_param image
+gs.effect_set_texture #1
+gs.blend_push
+gs.blend_function 1 5
+gs.draw_sprite #1 flip=0 0x0
+gs.matrix_push
+gs.matrix_translate3f 38 27 0
+gs.effect_set_texture #2
+gs.draw_sprite #1 flip=0 4x2
+gs.matrix_pop
+gs.blend_pop
+> buf_data 1 0 memptr 0 0 400 5000 0 0x10
+> buf_meta 1 cursor 1 50 35 2 3
+> buf_push 1
+> process
+pw.event process
+pw.dequeue_buffer #1
+log debug [pipewire] Buffer has memory texture
+gs.texture_destroy #1
+gs.texture_create #3 100x50 fmt=4 levels=1 flags=0x2 data0=10111213
+pw.queue_buffer #1
+> render a
+gs.effect_get_param image
+gs.effect_set_texture #3
+gs.blend_push
+gs.blend_function 1 5
+gs.draw_sprite #3 flip=0 0x0
+gs.matrix_push
+gs.matrix_translate3f 48 32 0
+gs.effect_set_texture #2
+gs.draw_sprite #3 flip=0 4x2
+gs.matrix_pop
+gs.blend_pop
+> buf_data 2 0 memptr 0 0 400 5000 0 0x10
+> buf_meta 2 cursor 0 50 35 2 3 BGRA 4 2 0x40
+> buf_push 2
+> process
+pw.event process
+pw.dequeue_buffer #2
+log debug [pipewire] Buffer has memory texture
+gs.texture_destroy #3
+gs.texture_create #4 100x50 fmt=4 levels=1 flags=0x2 data0=10111213
+pw.queue_buffer #2
+> render a
+gs.effect_get_param image
+gs.effect_set_texture #4
+gs.blend_push
+gs.blend_function 1 5
+gs.draw_sprite #4 flip=0 0x0
+gs.blend_pop
+> buf_data 3 0 memptr 0 0 400 5000 0 0x10
+> buf_meta 3 cursor 7 1 1 0 0 RGBx 2 2 0x50
+> buf_push 3
+> process
+pw.event process
+pw.dequeue_buffer #3
+log debug [pipewire] Buffer has memory texture
+gs.texture_destroy #4
+gs.texture_create #5 100x50 fmt=4 levels=1 flags=0x2 data0=10111213
+gs.texture_destroy #2
+gs.texture_create #6 2x2 fmt=4 levels=1 flags=0x2 data0=50515253
+gl.BindTexture 0xde1 106
+gl.TexParameteri 0xde1 0x8e44 0x1903
+gl.TexParameteri 0xde1 0x8e42 0x1905
+gl.BindTexture 0xde1 0
+pw.queue_buffer #3
+> buf_data 4 0 memptr 0 0 400 5000 0 0x10
+> buf_meta 4 cursor 7 1 1 0 0 I420 2 2 0x50
+> buf_push 4
+> process
+pw.event process
+pw.dequeue_buffer #4
+log debug [pipewire] Buffer has memory texture
+gs.texture_destroy #5
+gs.texture_create #7 100x50 fmt=4 levels=1 flags=0x2 data0=10111213
+gs.texture_destroy #6
+pw.queue_buffer #4
+> render a
+gs.effect_get_param image
+gs.effect_set_texture #7
+gs.blend_push
+gs.blend_function 1 5
+gs.draw_sprite #7 flip=0 0x0
+gs.blend_pop
+> set a ShowCursor bool 0
+> update a
+> buf_data 5 0 memptr 0 0 400 5000 0 0x10
+> buf_meta 5 cursor 7 9 9 0 0 BGRA 2 2 0x60
+> buf_push 5
+> process
+pw.event process
+pw.dequeue_buffer #5
+log debug [pipewire] Buffer has memory texture
+gs.texture_destroy #7
+gs.texture_create #8 100x50 fmt=4 levels=1 flags=0x2 data0=10111213
+pw.queue_buffer #5
+> render a
+gs.effect_get_param image
+gs.effect_set_texture #8
+gs.blend_push
+gs.blend_function 1 5
+gs.draw_sprite #8 flip=0 0x0
+gs.blend_pop

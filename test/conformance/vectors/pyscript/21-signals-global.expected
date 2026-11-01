@@ -1,0 +1,21 @@
+scripting load -> 1 python=1 ticks=1
+log warning [Python] obs_python_signal_handler_connect_global:<line>: SWIG failed to convert python object to obs object: signal_handler_t *
+log info [obs-scripting]: Loaded python script: sigglob.py
+create S0 -> loaded=1 lang=2 file=sigglob.py desc=NULL
+log info [Python: sigglob.py] global: a 1
+log info [Python: sigglob.py] global: boom 2
+log warning [Python] Python failure in calldata_signal_callback_global:<line>:
+log error [Python: sigglob.py] Traceback (most recent call last):
+log error [Python: sigglob.py]   File "$TMP/sigglob.py", line 6, in on_any
+log error [Python: sigglob.py] ValueError: global failure
+echo disconnect_global matches by handler only (the callback argument is not used for matching)
+log info [obs-scripting]: Loaded python script: sigglob2.py
+create S1 -> loaded=1 lang=2 file=sigglob2.py desc=NULL
+log info [Python: sigglob.py] global: a 3
+log info [Python: sigglob2.py] two a
+log info [obs-scripting]: Unloaded python script: sigglob.py
+destroy S0
+log info [obs-scripting]: Unloaded python script: sigglob2.py
+destroy S1
+log info [Scripting] Total detached callbacks: 3
+scripting unload ticks=0

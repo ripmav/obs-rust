@@ -1,0 +1,30 @@
+tick_start_was_zero=1
+fill=0
+untouched=1
+get=null
+fill_null=0
+tick_start_was_zero=1
+tick_start_was_zero=0
+render timer=none
+fill=0
+untouched=0
+tick_start_was_zero=0
+render timer=none
+fill=1
+tick_avg=100 tick_max=100 render_avg=40 render_max=40 render_sum=40
+gpu_avg=0 gpu_max=0 gpu_sum=0
+async_input=0 in_best=0 in_worst=0 async_rendered=0 out_best=0 out_worst=0
+tick_start_was_zero=0
+render timer=none
+render timer=none
+fill=1
+tick_avg=200 tick_max=300 render_avg=50 render_max=60 render_sum=50
+gpu_avg=0 gpu_max=0 gpu_sum=0
+async_input=0 in_best=0 in_worst=0 async_rendered=0 out_best=0 out_worst=0
+get=result
+tick_avg=200 tick_max=300 render_avg=50 render_max=60 render_sum=50
+gpu_avg=0 gpu_max=0 gpu_sum=0
+async_input=0 in_best=0 in_worst=0 async_rendered=0 out_best=0 out_worst=0
+fill=0
+untouched=0
+get=null

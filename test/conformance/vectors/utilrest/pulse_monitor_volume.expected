@@ -1,0 +1,98 @@
+log info pulse-am: Server name: 'pulse 16.1'
+log info pulse-am: Audio format: u8, 100 Hz, 1 channels
+pa stream_new "src" spec=u8 1ch 100Hz map_channels=1 map0=0 map3=7 map4=5
+pa stream_connect dev="u8" tlength=2 fragsize=4294967295 maxlength=4294967295 minreq=4294967295 prebuf=4294967295 flags=0xb
+log info pulse-am: Started Monitoring in 'u8'
+mon_create 0 ok monitors_registered=1 cb=1 adds=1 removes=0
+pa stream_cork 0
+pa stream_write bytes=4 first=878f979f
+pa stream_disconnect
+pa stream_set_write_callback cleared
+pa stream_unref
+log info pulse-am: Stopped Monitoring in 'u8'
+log info pulse-am: Got 1 packets with 4 frames
+mon_destroy monitors_registered=0
+log info pulse-am: Server name: 'pulse 16.1'
+log info pulse-am: Audio format: s16le, 100 Hz, 1 channels
+pa stream_new "src" spec=s16le 1ch 100Hz map_channels=1 map0=0 map3=7 map4=5
+pa stream_connect dev="s16" tlength=4 fragsize=4294967295 maxlength=4294967295 minreq=4294967295 prebuf=4294967295 flags=0xb
+log info pulse-am: Started Monitoring in 's16'
+mon_create 0 ok monitors_registered=1 cb=1 adds=2 removes=1
+pa stream_cork 0
+pa stream_write bytes=8 first=ff07ff0fff17ff1f
+pa stream_disconnect
+pa stream_set_write_callback cleared
+pa stream_unref
+log info pulse-am: Stopped Monitoring in 's16'
+log info pulse-am: Got 1 packets with 4 frames
+mon_destroy monitors_registered=0
+log info pulse-am: Server name: 'pulse 16.1'
+log info pulse-am: Audio format: s32le, 100 Hz, 1 channels
+pa stream_new "src" spec=s32le 1ch 100Hz map_channels=1 map0=0 map3=7 map4=5
+pa stream_connect dev="s32" tlength=8 fragsize=4294967295 maxlength=4294967295 minreq=4294967295 prebuf=4294967295 flags=0xb
+log info pulse-am: Started Monitoring in 's32'
+mon_create 0 ok monitors_registered=1 cb=1 adds=3 removes=2
+pa stream_cork 0
+pa stream_write bytes=16 first=00000008000000100000001800000020
+pa stream_disconnect
+pa stream_set_write_callback cleared
+pa stream_unref
+log info pulse-am: Stopped Monitoring in 's32'
+log info pulse-am: Got 1 packets with 4 frames
+mon_destroy monitors_registered=0
+log info pulse-am: Server name: 'pulse 16.1'
+log info pulse-am: Audio format: float32le, 100 Hz, 1 channels
+pa stream_new "src" spec=float32le 1ch 100Hz map_channels=1 map0=0 map3=7 map4=5
+pa stream_connect dev="f32" tlength=8 fragsize=4294967295 maxlength=4294967295 minreq=4294967295 prebuf=4294967295 flags=0xb
+log info pulse-am: Started Monitoring in 'f32'
+mon_create 0 ok monitors_registered=1 cb=1 adds=4 removes=3
+pa stream_cork 0
+pa stream_write bytes=16 first=0000803d0000003e0000403e0000803e
+pa stream_disconnect
+pa stream_set_write_callback cleared
+pa stream_unref
+log info pulse-am: Stopped Monitoring in 'f32'
+log info pulse-am: Got 1 packets with 4 frames
+mon_destroy monitors_registered=0
+log info pulse-am: Server name: 'pulse 16.1'
+log info pulse-am: Audio format: s16le, 100 Hz, 1 channels
+pa stream_new "src" spec=s16le 1ch 100Hz map_channels=1 map0=0 map3=7 map4=5
+pa stream_connect dev="s16" tlength=4 fragsize=4294967295 maxlength=4294967295 minreq=4294967295 prebuf=4294967295 flags=0xb
+log info pulse-am: Started Monitoring in 's16'
+mon_create 0 ok monitors_registered=1 cb=1 adds=5 removes=4
+pa stream_cork 0
+pa stream_write bytes=8 first=ff0fff1fff2fff3f
+pa stream_disconnect
+pa stream_set_write_callback cleared
+pa stream_unref
+log info pulse-am: Stopped Monitoring in 's16'
+log info pulse-am: Got 1 packets with 4 frames
+mon_destroy monitors_registered=0
+log info pulse-am: Server name: 'pulse 16.1'
+log info pulse-am: Audio format: u8, 100 Hz, 1 channels
+pa stream_new "src" spec=u8 1ch 100Hz map_channels=1 map0=0 map3=7 map4=5
+pa stream_connect dev="u8" tlength=2 fragsize=4294967295 maxlength=4294967295 minreq=4294967295 prebuf=4294967295 flags=0xb
+log info pulse-am: Started Monitoring in 'u8'
+mon_create 0 ok monitors_registered=1 cb=1 adds=6 removes=5
+pa stream_cork 0
+pa stream_write bytes=4 first=80808080
+pa stream_disconnect
+pa stream_set_write_callback cleared
+pa stream_unref
+log info pulse-am: Stopped Monitoring in 'u8'
+log info pulse-am: Got 1 packets with 4 frames
+mon_destroy monitors_registered=0
+log info pulse-am: Server name: 'pulse 16.1'
+log info pulse-am: Audio format: s16le, 100 Hz, 1 channels
+pa stream_new "src" spec=s16le 1ch 100Hz map_channels=1 map0=0 map3=7 map4=5
+pa stream_connect dev="s16" tlength=4 fragsize=4294967295 maxlength=4294967295 minreq=4294967295 prebuf=4294967295 flags=0xb
+log info pulse-am: Started Monitoring in 's16'
+mon_create 0 ok monitors_registered=1 cb=1 adds=7 removes=6
+pa stream_cork 0
+pa stream_write bytes=8 first=fe3ffe4ffe5ffe6f
+pa stream_disconnect
+pa stream_set_write_callback cleared
+pa stream_unref
+log info pulse-am: Stopped Monitoring in 's16'
+log info pulse-am: Got 1 packets with 4 frames
+mon_destroy monitors_registered=0

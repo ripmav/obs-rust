@@ -1,0 +1,22 @@
+# DEFECT D-2: signal_handler_disconnect_global(handler, fn) ignores fn.  The reference compares each record with
+# stack index 3 (the function it has just pushed itself), so every record "matches" and the first record in the
+# script's list whose stored handler equals `handler` (= the most recently added one) is removed.
+# Reference behaviour is reproduced here: disconnecting g1 removes g2.
+scripting load
+handler H0 "void ping(int n)"
+lua_begin dg.lua
+local h = obslua.fake_handler(0)
+function g1(name, cd) print("g1 " .. name) end
+function g2(name, cd) print("g2 " .. name) end
+obslua.signal_handler_connect_global(h, g1)
+obslua.signal_handler_connect_global(h, g2)
+function script_update(s)
+  if obslua.obs_data_get_string(s, "cmd") == "disc" then obslua.signal_handler_disconnect_global(h, g1) end
+end
+lua_end
+create S0 dg.lua
+barrier
+emit H0 ping i:n=1
+update S0 s:cmd=disc
+callbacks S0
+emit H0 ping i:n=2

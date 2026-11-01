@@ -1,0 +1,11 @@
+create rc=0 device=yes
+tex rt ok
+vshader vs ok
+vb quad ok
+pshader p3 ok
+read rt 4x4 linesize=16
+  row 0 000000ff000000ff000000ff000000ff
+  row 1 000000ffff00ffffff00ffff000000ff
+  row 2 000000ffff00ffffff00ffff000000ff
+  row 3 000000ff000000ff000000ff000000ff
+destroyed

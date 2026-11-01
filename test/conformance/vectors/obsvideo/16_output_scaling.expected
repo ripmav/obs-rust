@@ -1,0 +1,748 @@
+--- same size: texture passed through (no scale pass)
+ev sp_frame_begin
+ev gs_enter_context
+ev gs_begin_frame
+ev gs_leave_context
+ev sp_render_begin
+ev gs_enter_context
+ev gs_begin_scene
+ev gs_enable_depth_test 0
+ev gs_set_cull_mode 2
+ev gs_set_render_target_cs S.render cs=0
+ev gs_clear flags=1 color=0,0,0,0 depth=1 stencil=0
+ev gs_enable_depth_test 0
+ev gs_set_cull_mode 2
+ev gs_ortho 0 1920 0 1080 -100 100
+ev gs_set_viewport 0 0 1920 1080
+ev obs_view_render S.view
+ev gs_stage_texture S.surf0_0 <- S.render
+ev gs_set_render_target null
+ev gs_enable_blending 1
+ev gs_end_scene
+ev gs_flush
+ev gs_leave_context
+ev gs_enter_context
+ev gs_leave_context
+ev sp_render_end
+ev sp_frame_collect
+ev sleepto 2000 -> 1
+loop -> 1 last_time=1000 frame_time_total=0 fps_total_ns=1000 fps_frames=1
+--- within 16 px: default effect even though bicubic is configured
+ev sp_frame_begin
+ev gs_enter_context
+ev gs_begin_frame
+ev gs_leave_context
+ev sp_render_begin
+ev gs_enter_context
+ev gs_begin_scene
+ev gs_enable_depth_test 0
+ev gs_set_cull_mode 2
+ev gs_set_render_target_cs S.render cs=0
+ev gs_clear flags=1 color=0,0,0,0 depth=1 stencil=0
+ev gs_enable_depth_test 0
+ev gs_set_cull_mode 2
+ev gs_ortho 0 1920 0 1080 -100 100
+ev gs_set_viewport 0 0 1920 1080
+ev obs_view_render S.view
+ev gs_set_render_target S.output
+ev gs_enable_depth_test 0
+ev gs_set_cull_mode 2
+ev gs_ortho 0 1904 0 1064 -100 100
+ev gs_set_viewport 0 0 1904 1064
+ev effect_set_texture_srgb default.image = S.render
+ev gs_enable_framebuffer_srgb 1
+ev gs_enable_blending 0
+ev technique_begin default.Draw passes=1
+ev technique_pass 0
+ev gs_draw_sprite S.render flip=0 1904x1064
+ev technique_end
+ev gs_enable_blending 1
+ev gs_enable_framebuffer_srgb 0
+ev gs_stage_texture S.surf1_0 <- S.output
+ev gs_set_render_target null
+ev gs_enable_blending 1
+ev gs_end_scene
+ev gs_stagesurface_map S.surf0_0 linesize=7680
+ev gs_flush
+ev gs_leave_context
+ev video_output_lock_frame S count=1 ts=1000 -> 1
+ev video_output_unlock_frame S
+ev gs_enter_context
+ev gs_leave_context
+ev sp_render_end
+ev sp_frame_collect
+ev sleepto 3000 -> 1
+loop -> 1 last_time=2000 frame_time_total=0 fps_total_ns=2000 fps_frames=2
+--- 17 px apart on one axis: configured scale type (bicubic)
+ev sp_frame_begin
+ev gs_enter_context
+ev gs_begin_frame
+ev gs_leave_context
+ev sp_render_begin
+ev gs_enter_context
+ev gs_begin_scene
+ev gs_enable_depth_test 0
+ev gs_set_cull_mode 2
+ev gs_set_render_target_cs S.render cs=0
+ev gs_clear flags=1 color=0,0,0,0 depth=1 stencil=0
+ev gs_enable_depth_test 0
+ev gs_set_cull_mode 2
+ev gs_ortho 0 1920 0 1080 -100 100
+ev gs_set_viewport 0 0 1920 1080
+ev obs_view_render S.view
+ev gs_set_render_target S.output
+ev gs_enable_depth_test 0
+ev gs_set_cull_mode 2
+ev gs_ortho 0 1903 0 1080 -100 100
+ev gs_set_viewport 0 0 1903 1080
+ev effect_set_vec2 base_dimension = 1920,1080
+ev effect_set_vec2 base_dimension_i = 0.000520833,0.000925926
+ev effect_set_texture_srgb bicubic.image = S.render
+ev gs_enable_framebuffer_srgb 1
+ev gs_enable_blending 0
+ev technique_begin bicubic.Draw passes=1
+ev technique_pass 0
+ev gs_draw_sprite S.render flip=0 1903x1080
+ev technique_end
+ev gs_enable_blending 1
+ev gs_enable_framebuffer_srgb 0
+ev gs_stagesurface_unmap S.surf0_0
+ev gs_stage_texture S.surf0_0 <- S.output
+ev gs_set_render_target null
+ev gs_enable_blending 1
+ev gs_end_scene
+ev gs_stagesurface_map S.surf1_0 linesize=7680
+ev gs_flush
+ev gs_leave_context
+ev video_output_lock_frame S count=1 ts=2000 -> 1
+ev video_output_unlock_frame S
+ev gs_enter_context
+ev gs_leave_context
+ev sp_render_end
+ev sp_frame_collect
+ev sleepto 4000 -> 1
+loop -> 1 last_time=3000 frame_time_total=0 fps_total_ns=3000 fps_frames=3
+--- exactly half is NOT under half -> configured type; one under half on one axis only -> configured type
+ev sp_frame_begin
+ev gs_enter_context
+ev gs_begin_frame
+ev gs_leave_context
+ev sp_render_begin
+ev gs_enter_context
+ev gs_begin_scene
+ev gs_enable_depth_test 0
+ev gs_set_cull_mode 2
+ev gs_set_render_target_cs S.render cs=0
+ev gs_clear flags=1 color=0,0,0,0 depth=1 stencil=0
+ev gs_enable_depth_test 0
+ev gs_set_cull_mode 2
+ev gs_ortho 0 1920 0 1080 -100 100
+ev gs_set_viewport 0 0 1920 1080
+ev obs_view_render S.view
+ev gs_set_render_target S.output
+ev gs_enable_depth_test 0
+ev gs_set_cull_mode 2
+ev gs_ortho 0 960 0 540 -100 100
+ev gs_set_viewport 0 0 960 540
+ev effect_set_vec2 base_dimension = 1920,1080
+ev effect_set_vec2 base_dimension_i = 0.000520833,0.000925926
+ev effect_set_texture_srgb bicubic.image = S.render
+ev gs_enable_framebuffer_srgb 1
+ev gs_enable_blending 0
+ev technique_begin bicubic.Draw passes=1
+ev technique_pass 0
+ev gs_draw_sprite S.render flip=0 960x540
+ev technique_end
+ev gs_enable_blending 1
+ev gs_enable_framebuffer_srgb 0
+ev gs_stagesurface_unmap S.surf1_0
+ev gs_stage_texture S.surf1_0 <- S.output
+ev gs_set_render_target null
+ev gs_enable_blending 1
+ev gs_end_scene
+ev gs_stagesurface_map S.surf0_0 linesize=7680
+ev gs_flush
+ev gs_leave_context
+ev video_output_lock_frame S count=1 ts=3000 -> 1
+ev video_output_unlock_frame S
+ev gs_enter_context
+ev gs_leave_context
+ev sp_render_end
+ev sp_frame_collect
+ev sleepto 5000 -> 1
+loop -> 1 last_time=4000 frame_time_total=0 fps_total_ns=4000 fps_frames=4
+ev sp_frame_begin
+ev gs_enter_context
+ev gs_begin_frame
+ev gs_leave_context
+ev sp_render_begin
+ev gs_enter_context
+ev gs_begin_scene
+ev gs_enable_depth_test 0
+ev gs_set_cull_mode 2
+ev gs_set_render_target_cs S.render cs=0
+ev gs_clear flags=1 color=0,0,0,0 depth=1 stencil=0
+ev gs_enable_depth_test 0
+ev gs_set_cull_mode 2
+ev gs_ortho 0 1920 0 1080 -100 100
+ev gs_set_viewport 0 0 1920 1080
+ev obs_view_render S.view
+ev gs_set_render_target S.output
+ev gs_enable_depth_test 0
+ev gs_set_cull_mode 2
+ev gs_ortho 0 959 0 600 -100 100
+ev gs_set_viewport 0 0 959 600
+ev effect_set_vec2 base_dimension = 1920,1080
+ev effect_set_vec2 base_dimension_i = 0.000520833,0.000925926
+ev effect_set_texture_srgb bicubic.image = S.render
+ev gs_enable_framebuffer_srgb 1
+ev gs_enable_blending 0
+ev technique_begin bicubic.Draw passes=1
+ev technique_pass 0
+ev gs_draw_sprite S.render flip=0 959x600
+ev technique_end
+ev gs_enable_blending 1
+ev gs_enable_framebuffer_srgb 0
+ev gs_stagesurface_unmap S.surf0_0
+ev gs_stage_texture S.surf0_0 <- S.output
+ev gs_set_render_target null
+ev gs_enable_blending 1
+ev gs_end_scene
+ev gs_stagesurface_map S.surf1_0 linesize=7680
+ev gs_flush
+ev gs_leave_context
+ev video_output_lock_frame S count=1 ts=4000 -> 1
+ev video_output_unlock_frame S
+ev gs_enter_context
+ev gs_leave_context
+ev sp_render_end
+ev sp_frame_collect
+ev sleepto 6000 -> 1
+loop -> 1 last_time=5000 frame_time_total=0 fps_total_ns=5000 fps_frames=5
+--- under half on both axes -> bilinear lowres (no base_dimension params on that effect)
+ev sp_frame_begin
+ev gs_enter_context
+ev gs_begin_frame
+ev gs_leave_context
+ev sp_render_begin
+ev gs_enter_context
+ev gs_begin_scene
+ev gs_enable_depth_test 0
+ev gs_set_cull_mode 2
+ev gs_set_render_target_cs S.render cs=0
+ev gs_clear flags=1 color=0,0,0,0 depth=1 stencil=0
+ev gs_enable_depth_test 0
+ev gs_set_cull_mode 2
+ev gs_ortho 0 1920 0 1080 -100 100
+ev gs_set_viewport 0 0 1920 1080
+ev obs_view_render S.view
+ev gs_set_render_target S.output
+ev gs_enable_depth_test 0
+ev gs_set_cull_mode 2
+ev gs_ortho 0 959 0 539 -100 100
+ev gs_set_viewport 0 0 959 539
+ev effect_set_texture_srgb bilinear_lowres.image = S.render
+ev gs_enable_framebuffer_srgb 1
+ev gs_enable_blending 0
+ev technique_begin bilinear_lowres.Draw passes=1
+ev technique_pass 0
+ev gs_draw_sprite S.render flip=0 959x539
+ev technique_end
+ev gs_enable_blending 1
+ev gs_enable_framebuffer_srgb 0
+ev gs_stagesurface_unmap S.surf1_0
+ev gs_stage_texture S.surf1_0 <- S.output
+ev gs_set_render_target null
+ev gs_enable_blending 1
+ev gs_end_scene
+ev gs_stagesurface_map S.surf0_0 linesize=7680
+ev gs_flush
+ev gs_leave_context
+ev video_output_lock_frame S count=1 ts=5000 -> 1
+ev video_output_unlock_frame S
+ev gs_enter_context
+ev gs_leave_context
+ev sp_render_end
+ev sp_frame_collect
+ev sleepto 7000 -> 1
+loop -> 1 last_time=6000 frame_time_total=0 fps_total_ns=6000 fps_frames=6
+--- scale types at 1280x720
+ev sp_frame_begin
+ev gs_enter_context
+ev gs_begin_frame
+ev gs_leave_context
+ev sp_render_begin
+ev gs_enter_context
+ev gs_begin_scene
+ev gs_enable_depth_test 0
+ev gs_set_cull_mode 2
+ev gs_set_render_target_cs S.render cs=0
+ev gs_clear flags=1 color=0,0,0,0 depth=1 stencil=0
+ev gs_enable_depth_test 0
+ev gs_set_cull_mode 2
+ev gs_ortho 0 1920 0 1080 -100 100
+ev gs_set_viewport 0 0 1920 1080
+ev obs_view_render S.view
+ev gs_set_render_target S.output
+ev gs_enable_depth_test 0
+ev gs_set_cull_mode 2
+ev gs_ortho 0 1280 0 720 -100 100
+ev gs_set_viewport 0 0 1280 720
+ev effect_set_texture_srgb default.image = S.render
+ev gs_enable_framebuffer_srgb 1
+ev gs_enable_blending 0
+ev technique_begin default.Draw passes=1
+ev technique_pass 0
+ev gs_draw_sprite S.render flip=0 1280x720
+ev technique_end
+ev gs_enable_blending 1
+ev gs_enable_framebuffer_srgb 0
+ev gs_stagesurface_unmap S.surf0_0
+ev gs_stage_texture S.surf0_0 <- S.output
+ev gs_set_render_target null
+ev gs_enable_blending 1
+ev gs_end_scene
+ev gs_stagesurface_map S.surf1_0 linesize=7680
+ev gs_flush
+ev gs_leave_context
+ev video_output_lock_frame S count=1 ts=6000 -> 1
+ev video_output_unlock_frame S
+ev gs_enter_context
+ev gs_leave_context
+ev sp_render_end
+ev sp_frame_collect
+ev sleepto 8000 -> 1
+loop -> 1 last_time=7000 frame_time_total=0 fps_total_ns=7000 fps_frames=7
+ev sp_frame_begin
+ev gs_enter_context
+ev gs_begin_frame
+ev gs_leave_context
+ev sp_render_begin
+ev gs_enter_context
+ev gs_begin_scene
+ev gs_enable_depth_test 0
+ev gs_set_cull_mode 2
+ev gs_set_render_target_cs S.render cs=0
+ev gs_clear flags=1 color=0,0,0,0 depth=1 stencil=0
+ev gs_enable_depth_test 0
+ev gs_set_cull_mode 2
+ev gs_ortho 0 1920 0 1080 -100 100
+ev gs_set_viewport 0 0 1920 1080
+ev obs_view_render S.view
+ev gs_set_render_target S.output
+ev gs_enable_depth_test 0
+ev gs_set_cull_mode 2
+ev gs_ortho 0 1280 0 720 -100 100
+ev gs_set_viewport 0 0 1280 720
+ev effect_set_vec2 base_dimension = 1920,1080
+ev effect_set_vec2 base_dimension_i = 0.000520833,0.000925926
+ev effect_set_texture_srgb lanczos.image = S.render
+ev gs_enable_framebuffer_srgb 1
+ev gs_enable_blending 0
+ev technique_begin lanczos.Draw passes=1
+ev technique_pass 0
+ev gs_draw_sprite S.render flip=0 1280x720
+ev technique_end
+ev gs_enable_blending 1
+ev gs_enable_framebuffer_srgb 0
+ev gs_stagesurface_unmap S.surf1_0
+ev gs_stage_texture S.surf1_0 <- S.output
+ev gs_set_render_target null
+ev gs_enable_blending 1
+ev gs_end_scene
+ev gs_stagesurface_map S.surf0_0 linesize=7680
+ev gs_flush
+ev gs_leave_context
+ev video_output_lock_frame S count=1 ts=7000 -> 1
+ev video_output_unlock_frame S
+ev gs_enter_context
+ev gs_leave_context
+ev sp_render_end
+ev sp_frame_collect
+ev sleepto 9000 -> 1
+loop -> 1 last_time=8000 frame_time_total=0 fps_total_ns=8000 fps_frames=8
+ev sp_frame_begin
+ev gs_enter_context
+ev gs_begin_frame
+ev gs_leave_context
+ev sp_render_begin
+ev gs_enter_context
+ev gs_begin_scene
+ev gs_enable_depth_test 0
+ev gs_set_cull_mode 2
+ev gs_set_render_target_cs S.render cs=0
+ev gs_clear flags=1 color=0,0,0,0 depth=1 stencil=0
+ev gs_enable_depth_test 0
+ev gs_set_cull_mode 2
+ev gs_ortho 0 1920 0 1080 -100 100
+ev gs_set_viewport 0 0 1920 1080
+ev obs_view_render S.view
+ev gs_set_render_target S.output
+ev gs_enable_depth_test 0
+ev gs_set_cull_mode 2
+ev gs_ortho 0 1280 0 720 -100 100
+ev gs_set_viewport 0 0 1280 720
+ev effect_set_vec2 base_dimension = 1920,1080
+ev effect_set_vec2 base_dimension_i = 0.000520833,0.000925926
+ev effect_set_texture_srgb area.image = S.render
+ev gs_enable_framebuffer_srgb 1
+ev gs_enable_blending 0
+ev technique_begin area.Draw passes=1
+ev technique_pass 0
+ev gs_draw_sprite S.render flip=0 1280x720
+ev technique_end
+ev gs_enable_blending 1
+ev gs_enable_framebuffer_srgb 0
+ev gs_stagesurface_unmap S.surf0_0
+ev gs_stage_texture S.surf0_0 <- S.output
+ev gs_set_render_target null
+ev gs_enable_blending 1
+ev gs_end_scene
+ev gs_stagesurface_map S.surf1_0 linesize=7680
+ev gs_flush
+ev gs_leave_context
+ev video_output_lock_frame S count=1 ts=8000 -> 1
+ev video_output_unlock_frame S
+ev gs_enter_context
+ev gs_leave_context
+ev sp_render_end
+ev sp_frame_collect
+ev sleepto 10000 -> 1
+loop -> 1 last_time=9000 frame_time_total=0 fps_total_ns=9000 fps_frames=9
+ev sp_frame_begin
+ev gs_enter_context
+ev gs_begin_frame
+ev gs_leave_context
+ev sp_render_begin
+ev gs_enter_context
+ev gs_begin_scene
+ev gs_enable_depth_test 0
+ev gs_set_cull_mode 2
+ev gs_set_render_target_cs S.render cs=0
+ev gs_clear flags=1 color=0,0,0,0 depth=1 stencil=0
+ev gs_enable_depth_test 0
+ev gs_set_cull_mode 2
+ev gs_ortho 0 1920 0 1080 -100 100
+ev gs_set_viewport 0 0 1920 1080
+ev obs_view_render S.view
+ev gs_set_render_target S.output
+ev gs_enable_depth_test 0
+ev gs_set_cull_mode 2
+ev gs_ortho 0 1280 0 720 -100 100
+ev gs_set_viewport 0 0 1280 720
+ev effect_set_vec2 base_dimension = 1920,1080
+ev effect_set_vec2 base_dimension_i = 0.000520833,0.000925926
+ev effect_set_texture_srgb bicubic.image = S.render
+ev gs_enable_framebuffer_srgb 1
+ev gs_enable_blending 0
+ev technique_begin bicubic.Draw passes=1
+ev technique_pass 0
+ev gs_draw_sprite S.render flip=0 1280x720
+ev technique_end
+ev gs_enable_blending 1
+ev gs_enable_framebuffer_srgb 0
+ev gs_stagesurface_unmap S.surf1_0
+ev gs_stage_texture S.surf1_0 <- S.output
+ev gs_set_render_target null
+ev gs_enable_blending 1
+ev gs_end_scene
+ev gs_stagesurface_map S.surf0_0 linesize=7680
+ev gs_flush
+ev gs_leave_context
+ev video_output_lock_frame S count=1 ts=9000 -> 1
+ev video_output_unlock_frame S
+ev gs_enter_context
+ev gs_leave_context
+ev sp_render_end
+ev sp_frame_collect
+ev sleepto 11000 -> 1
+loop -> 1 last_time=10000 frame_time_total=0 fps_total_ns=10000 fps_frames=10
+ev sp_frame_begin
+ev gs_enter_context
+ev gs_begin_frame
+ev gs_leave_context
+ev sp_render_begin
+ev gs_enter_context
+ev gs_begin_scene
+ev gs_enable_depth_test 0
+ev gs_set_cull_mode 2
+ev gs_set_render_target_cs S.render cs=0
+ev gs_clear flags=1 color=0,0,0,0 depth=1 stencil=0
+ev gs_enable_depth_test 0
+ev gs_set_cull_mode 2
+ev gs_ortho 0 1920 0 1080 -100 100
+ev gs_set_viewport 0 0 1920 1080
+ev obs_view_render S.view
+ev gs_set_render_target S.output
+ev gs_enable_depth_test 0
+ev gs_set_cull_mode 2
+ev gs_ortho 0 1280 0 720 -100 100
+ev gs_set_viewport 0 0 1280 720
+ev effect_set_vec2 base_dimension = 1920,1080
+ev effect_set_vec2 base_dimension_i = 0.000520833,0.000925926
+ev effect_set_texture_srgb bicubic.image = S.render
+ev gs_enable_framebuffer_srgb 1
+ev gs_enable_blending 0
+ev technique_begin bicubic.Draw passes=1
+ev technique_pass 0
+ev gs_draw_sprite S.render flip=0 1280x720
+ev technique_end
+ev gs_enable_blending 1
+ev gs_enable_framebuffer_srgb 0
+ev gs_stagesurface_unmap S.surf0_0
+ev gs_stage_texture S.surf0_0 <- S.output
+ev gs_set_render_target null
+ev gs_enable_blending 1
+ev gs_end_scene
+ev gs_stagesurface_map S.surf1_0 linesize=7680
+ev gs_flush
+ev gs_leave_context
+ev video_output_lock_frame S count=1 ts=10000 -> 1
+ev video_output_unlock_frame S
+ev gs_enter_context
+ev gs_leave_context
+ev sp_render_end
+ev sp_frame_collect
+ev sleepto 12000 -> 1
+loop -> 1 last_time=11000 frame_time_total=0 fps_total_ns=11000 fps_frames=11
+ev sp_frame_begin
+ev gs_enter_context
+ev gs_begin_frame
+ev gs_leave_context
+ev sp_render_begin
+ev gs_enter_context
+ev gs_begin_scene
+ev gs_enable_depth_test 0
+ev gs_set_cull_mode 2
+ev gs_set_render_target_cs S.render cs=0
+ev gs_clear flags=1 color=0,0,0,0 depth=1 stencil=0
+ev gs_enable_depth_test 0
+ev gs_set_cull_mode 2
+ev gs_ortho 0 1920 0 1080 -100 100
+ev gs_set_viewport 0 0 1920 1080
+ev obs_view_render S.view
+ev gs_set_render_target S.output
+ev gs_enable_depth_test 0
+ev gs_set_cull_mode 2
+ev gs_ortho 0 1280 0 720 -100 100
+ev gs_set_viewport 0 0 1280 720
+ev effect_set_vec2 base_dimension = 1920,1080
+ev effect_set_vec2 base_dimension_i = 0.000520833,0.000925926
+ev effect_set_texture_srgb bicubic.image = S.render
+ev gs_enable_framebuffer_srgb 1
+ev gs_enable_blending 0
+ev technique_begin bicubic.Draw passes=1
+ev technique_pass 0
+ev gs_draw_sprite S.render flip=0 1280x720
+ev technique_end
+ev gs_enable_blending 1
+ev gs_enable_framebuffer_srgb 0
+ev gs_stagesurface_unmap S.surf1_0
+ev gs_stage_texture S.surf1_0 <- S.output
+ev gs_set_render_target null
+ev gs_enable_blending 1
+ev gs_end_scene
+ev gs_stagesurface_map S.surf0_0 linesize=7680
+ev gs_flush
+ev gs_leave_context
+ev video_output_lock_frame S count=1 ts=11000 -> 1
+ev video_output_unlock_frame S
+ev gs_enter_context
+ev gs_leave_context
+ev sp_render_end
+ev sp_frame_collect
+ev sleepto 13000 -> 1
+loop -> 1 last_time=12000 frame_time_total=0 fps_total_ns=12000 fps_frames=12
+--- missing effects: lanczos missing -> bicubic; both missing -> default
+ev sp_frame_begin
+ev gs_enter_context
+ev gs_begin_frame
+ev gs_leave_context
+ev sp_render_begin
+ev gs_enter_context
+ev gs_begin_scene
+ev gs_enable_depth_test 0
+ev gs_set_cull_mode 2
+ev gs_set_render_target_cs S.render cs=0
+ev gs_clear flags=1 color=0,0,0,0 depth=1 stencil=0
+ev gs_enable_depth_test 0
+ev gs_set_cull_mode 2
+ev gs_ortho 0 1920 0 1080 -100 100
+ev gs_set_viewport 0 0 1920 1080
+ev obs_view_render S.view
+ev gs_set_render_target S.output
+ev gs_enable_depth_test 0
+ev gs_set_cull_mode 2
+ev gs_ortho 0 1280 0 720 -100 100
+ev gs_set_viewport 0 0 1280 720
+ev effect_set_vec2 base_dimension = 1920,1080
+ev effect_set_vec2 base_dimension_i = 0.000520833,0.000925926
+ev effect_set_texture_srgb bicubic.image = S.render
+ev gs_enable_framebuffer_srgb 1
+ev gs_enable_blending 0
+ev technique_begin bicubic.Draw passes=1
+ev technique_pass 0
+ev gs_draw_sprite S.render flip=0 1280x720
+ev technique_end
+ev gs_enable_blending 1
+ev gs_enable_framebuffer_srgb 0
+ev gs_stagesurface_unmap S.surf0_0
+ev gs_stage_texture S.surf0_0 <- S.output
+ev gs_set_render_target null
+ev gs_enable_blending 1
+ev gs_end_scene
+ev gs_stagesurface_map S.surf1_0 linesize=7680
+ev gs_flush
+ev gs_leave_context
+ev video_output_lock_frame S count=1 ts=12000 -> 1
+ev video_output_unlock_frame S
+ev gs_enter_context
+ev gs_leave_context
+ev sp_render_end
+ev sp_frame_collect
+ev sleepto 14000 -> 1
+loop -> 1 last_time=13000 frame_time_total=0 fps_total_ns=13000 fps_frames=13
+ev sp_frame_begin
+ev gs_enter_context
+ev gs_begin_frame
+ev gs_leave_context
+ev sp_render_begin
+ev gs_enter_context
+ev gs_begin_scene
+ev gs_enable_depth_test 0
+ev gs_set_cull_mode 2
+ev gs_set_render_target_cs S.render cs=0
+ev gs_clear flags=1 color=0,0,0,0 depth=1 stencil=0
+ev gs_enable_depth_test 0
+ev gs_set_cull_mode 2
+ev gs_ortho 0 1920 0 1080 -100 100
+ev gs_set_viewport 0 0 1920 1080
+ev obs_view_render S.view
+ev gs_set_render_target S.output
+ev gs_enable_depth_test 0
+ev gs_set_cull_mode 2
+ev gs_ortho 0 1280 0 720 -100 100
+ev gs_set_viewport 0 0 1280 720
+ev effect_set_texture_srgb default.image = S.render
+ev gs_enable_framebuffer_srgb 1
+ev gs_enable_blending 0
+ev technique_begin default.Draw passes=1
+ev technique_pass 0
+ev gs_draw_sprite S.render flip=0 1280x720
+ev technique_end
+ev gs_enable_blending 1
+ev gs_enable_framebuffer_srgb 0
+ev gs_stagesurface_unmap S.surf1_0
+ev gs_stage_texture S.surf1_0 <- S.output
+ev gs_set_render_target null
+ev gs_enable_blending 1
+ev gs_end_scene
+ev gs_stagesurface_map S.surf0_0 linesize=7680
+ev gs_flush
+ev gs_leave_context
+ev video_output_lock_frame S count=1 ts=13000 -> 1
+ev video_output_unlock_frame S
+ev gs_enter_context
+ev gs_leave_context
+ev sp_render_end
+ev sp_frame_collect
+ev sleepto 15000 -> 1
+loop -> 1 last_time=14000 frame_time_total=0 fps_total_ns=14000 fps_frames=14
+--- missing lowres effect: under half falls through to the scale type (area missing too -> default)
+ev sp_frame_begin
+ev gs_enter_context
+ev gs_begin_frame
+ev gs_leave_context
+ev sp_render_begin
+ev gs_enter_context
+ev gs_begin_scene
+ev gs_enable_depth_test 0
+ev gs_set_cull_mode 2
+ev gs_set_render_target_cs S.render cs=0
+ev gs_clear flags=1 color=0,0,0,0 depth=1 stencil=0
+ev gs_enable_depth_test 0
+ev gs_set_cull_mode 2
+ev gs_ortho 0 1920 0 1080 -100 100
+ev gs_set_viewport 0 0 1920 1080
+ev obs_view_render S.view
+ev gs_set_render_target S.output
+ev gs_enable_depth_test 0
+ev gs_set_cull_mode 2
+ev gs_ortho 0 100 0 100 -100 100
+ev gs_set_viewport 0 0 100 100
+ev effect_set_texture_srgb default.image = S.render
+ev gs_enable_framebuffer_srgb 1
+ev gs_enable_blending 0
+ev technique_begin default.Draw passes=1
+ev technique_pass 0
+ev gs_draw_sprite S.render flip=0 100x100
+ev technique_end
+ev gs_enable_blending 1
+ev gs_enable_framebuffer_srgb 0
+ev gs_stagesurface_unmap S.surf0_0
+ev gs_stage_texture S.surf0_0 <- S.output
+ev gs_set_render_target null
+ev gs_enable_blending 1
+ev gs_end_scene
+ev gs_stagesurface_map S.surf1_0 linesize=7680
+ev gs_flush
+ev gs_leave_context
+ev video_output_lock_frame S count=1 ts=14000 -> 1
+ev video_output_unlock_frame S
+ev gs_enter_context
+ev gs_leave_context
+ev sp_render_end
+ev sp_frame_collect
+ev sleepto 16000 -> 1
+loop -> 1 last_time=15000 frame_time_total=0 fps_total_ns=15000 fps_frames=15
+--- multi-pass technique runs each pass
+ev sp_frame_begin
+ev gs_enter_context
+ev gs_begin_frame
+ev gs_leave_context
+ev sp_render_begin
+ev gs_enter_context
+ev gs_begin_scene
+ev gs_enable_depth_test 0
+ev gs_set_cull_mode 2
+ev gs_set_render_target_cs S.render cs=0
+ev gs_clear flags=1 color=0,0,0,0 depth=1 stencil=0
+ev gs_enable_depth_test 0
+ev gs_set_cull_mode 2
+ev gs_ortho 0 1920 0 1080 -100 100
+ev gs_set_viewport 0 0 1920 1080
+ev obs_view_render S.view
+ev gs_set_render_target S.output
+ev gs_enable_depth_test 0
+ev gs_set_cull_mode 2
+ev gs_ortho 0 1280 0 720 -100 100
+ev gs_set_viewport 0 0 1280 720
+ev effect_set_texture_srgb default.image = S.render
+ev gs_enable_framebuffer_srgb 1
+ev gs_enable_blending 0
+ev technique_begin default.Draw passes=3
+ev technique_pass 0
+ev gs_draw_sprite S.render flip=0 1280x720
+ev technique_pass 1
+ev gs_draw_sprite S.render flip=0 1280x720
+ev technique_pass 2
+ev gs_draw_sprite S.render flip=0 1280x720
+ev technique_end
+ev gs_enable_blending 1
+ev gs_enable_framebuffer_srgb 0
+ev gs_stagesurface_unmap S.surf1_0
+ev gs_stage_texture S.surf1_0 <- S.output
+ev gs_set_render_target null
+ev gs_enable_blending 1
+ev gs_end_scene
+ev gs_stagesurface_map S.surf0_0 linesize=7680
+ev gs_flush
+ev gs_leave_context
+ev video_output_lock_frame S count=1 ts=15000 -> 1
+ev video_output_unlock_frame S
+ev gs_enter_context
+ev gs_leave_context
+ev sp_render_end
+ev sp_frame_collect
+ev sleepto 17000 -> 1
+loop -> 1 last_time=16000 frame_time_total=0 fps_total_ns=16000 fps_frames=16

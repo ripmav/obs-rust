@@ -1,0 +1,43 @@
+# Raw (CPU) output without GPU colour conversion (BGRA/RGBA/BGRX output): each frame stages the output texture into
+# copy_surfaces[cur_texture][0] and marks textures_copied[cur]; the frame that is DOWNLOADED is the one staged on the
+# PREVIOUS iteration (prev_texture), so the first frame after activation produces no output (one-frame latency).
+# The mapped surface is unmapped at the start of the next stage. The vframe info (timestamp,count) queued by
+# video_sleep is consumed only when a frame is actually delivered.
+core 1000
+trace 1
+ctx_new 1000
+mix_add M 1 4 2 4 2 BGRA 0 0 0
+stop_after M 100
+clock 10000
+video_time 10000
+mix_active M 1 0
+echo "--- frame 1: renders+stages into slot 0, nothing to download (prev slot never copied)"
+loop 1
+mix_dump M
+echo "--- frame 2: stages slot 1, downloads slot 0, lock_frame, copies rows (line sizes equal: single memcpy)"
+loop 1
+mix_dump M
+out_dump M 0 32
+echo "--- frame 3: unmap previous, stage slot 0 again, download slot 1"
+out_clear M
+loop 1
+out_dump M 0 32
+echo "--- output buffer with a different line size: copy row by row (width*4 bytes per row, remaining bytes untouched)"
+out_clear M
+lock_cfg M 1 20 4 4
+loop 1
+out_dump M 0 40
+echo "--- the video output refuses the frame (lock fails): the frame is dropped silently, slot bookkeeping continues"
+lock_cfg M 0 16 4 4
+loop 1
+mix_dump M
+echo "--- surface map failure: frame dropped, nothing mapped"
+lock_cfg M 1 16 4 4
+surf_cfg M 0 0 16 fail
+surf_cfg M 1 0 16 fail
+loop 2
+mix_dump M
+echo "--- raw consumer removed: no staging, no download, vframes not queued"
+mix_active M 0 0
+loop 1
+mix_dump M

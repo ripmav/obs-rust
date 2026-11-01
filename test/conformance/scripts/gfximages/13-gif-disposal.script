@@ -1,0 +1,96 @@
+# libnsgif disposal methods and frame composition. Canvas 3x3, palette red/green/blue/white/black, background
+# index 4 (black). Frame 0 fills the canvas (disposal 1 = keep), frame 1 is a 2x2 green square at (1,1) with
+# disposal 2 (restore to background), frame 2 is one blue pixel at (0,0) with disposal 3 (restore previous),
+# frame 3 a white 1x2 strip at (2,0). The second part tries every 3-bit disposal value 0..7.
+file disp.gif 47494638396103000300a20400ff000000ff000000ffffffff00000000000000000000000021f90404050000002c000000000300030000030308ba9b0021f90408050000002c0100010002000200000303181a090021f9040c050000002c000000000100010000030228090021f90400050000002c02000000010002000003023893003b
+gif_new disp.gif
+gif_scan
+gif_complete
+gif_info
+gif_frame 0
+gif_frame 1
+gif_frame 2
+gif_frame 3
+echo == decode again out of order: 3, 1, 0, 2
+gif_frame 3
+gif_frame 1
+gif_frame 0
+gif_frame 2
+file d0.gif 47494638396102000200a20400ff000000ff000000ffffffff00000000000000000000000021f90400050000002c0000000002000200000303080a090021f90400050000002c01000000010001000003021809003b
+echo == disposal 0 on frame 0 (frame 1 is one green pixel at 1,0)
+gif_new d0.gif
+gif_scan
+gif_complete
+gif_info
+gif_frame 0
+gif_frame 1
+file d1.gif 47494638396102000200a20400ff000000ff000000ffffffff00000000000000000000000021f90404050000002c0000000002000200000303080a090021f90400050000002c01000000010001000003021809003b
+echo == disposal 1 on frame 0 (frame 1 is one green pixel at 1,0)
+gif_new d1.gif
+gif_scan
+gif_complete
+gif_info
+gif_frame 0
+gif_frame 1
+file d2.gif 47494638396102000200a20400ff000000ff000000ffffffff00000000000000000000000021f90408050000002c0000000002000200000303080a090021f90400050000002c01000000010001000003021809003b
+echo == disposal 2 on frame 0 (frame 1 is one green pixel at 1,0)
+gif_new d2.gif
+gif_scan
+gif_complete
+gif_info
+gif_frame 0
+gif_frame 1
+file d3.gif 47494638396102000200a20400ff000000ff000000ffffffff00000000000000000000000021f9040c050000002c0000000002000200000303080a090021f90400050000002c01000000010001000003021809003b
+echo == disposal 3 on frame 0 (frame 1 is one green pixel at 1,0)
+gif_new d3.gif
+gif_scan
+gif_complete
+gif_info
+gif_frame 0
+gif_frame 1
+file d4.gif 47494638396102000200a20400ff000000ff000000ffffffff00000000000000000000000021f90410050000002c0000000002000200000303080a090021f90400050000002c01000000010001000003021809003b
+echo == disposal 4 on frame 0 (frame 1 is one green pixel at 1,0)
+gif_new d4.gif
+gif_scan
+gif_complete
+gif_info
+gif_frame 0
+gif_frame 1
+file d5.gif 47494638396102000200a20400ff000000ff000000ffffffff00000000000000000000000021f90414050000002c0000000002000200000303080a090021f90400050000002c01000000010001000003021809003b
+echo == disposal 5 on frame 0 (frame 1 is one green pixel at 1,0)
+gif_new d5.gif
+gif_scan
+gif_complete
+gif_info
+gif_frame 0
+gif_frame 1
+file d6.gif 47494638396102000200a20400ff000000ff000000ffffffff00000000000000000000000021f90418050000002c0000000002000200000303080a090021f90400050000002c01000000010001000003021809003b
+echo == disposal 6 on frame 0 (frame 1 is one green pixel at 1,0)
+gif_new d6.gif
+gif_scan
+gif_complete
+gif_info
+gif_frame 0
+gif_frame 1
+file d7.gif 47494638396102000200a20400ff000000ff000000ffffffff00000000000000000000000021f9041c050000002c0000000002000200000303080a090021f90400050000002c01000000010001000003021809003b
+echo == disposal 7 on frame 0 (frame 1 is one green pixel at 1,0)
+gif_new d7.gif
+gif_scan
+gif_complete
+gif_info
+gif_frame 0
+gif_frame 1
+file bg0.gif 47494638396102000200a20000ff000000ff000000ffffffff00000000000000000000000021f90408050000002c0000000002000200000303383a090021f90400050000002c01000000010001000003020809003b
+echo == restore-to-background uses the global table colour of the background index (0)
+gif_new bg0.gif
+gif_scan
+gif_complete
+gif_info
+gif_frame 1
+file bg2.gif 47494638396102000200a20200ff000000ff000000ffffffff00000000000000000000000021f90408050000002c0000000002000200000303383a090021f90400050000002c01000000010001000003020809003b
+echo == restore-to-background uses the global table colour of the background index (2)
+gif_new bg2.gif
+gif_scan
+gif_complete
+gif_info
+gif_frame 1

@@ -1,0 +1,46 @@
+# Protocols other than SRT/RIST (udp, tcp, http) are opened by libavformat's avio_open2 and not through the custom AVIO. The
+# runner opens REAL loopback sockets to receive the bytes ("@PORT@" in the URL = the port of the listener). Connection refused
+# yields a raw negative AVERROR value as the stop code (QUIRK: not an OBS_OUTPUT_* code); other schemes give BAD_PATH.
+create
+sock_listen udp
+world url "udp://127.0.0.1:@PORT@"
+start
+events
+pkt v 0 0 0 1 3000
+pkt a 0 0 0 1 200
+pkt v 0 1 1 0 800
+pkt a 0 1024 1024 1 200
+drain
+stop 0
+sock_close
+events
+ts
+capture_clear
+sock_listen tcp
+world url "tcp://127.0.0.1:@PORT@"
+start
+events
+pkt v 0 0 0 1 3000
+pkt a 0 0 0 1 200
+pkt v 0 1 1 0 800
+pkt a 0 1024 1024 1 200
+drain
+stop 0
+sock_close
+events
+ts
+# the listener is gone: the port refuses connections now
+world url "tcp://127.0.0.1:@PORT@"
+start
+events
+state
+world url "http://127.0.0.1:@PORT@/live"
+start
+events
+# any other scheme is rejected before any connection attempt
+world url "ftp://192.0.2.1/x"
+start
+events
+world url "file:///tmp/out.ts"
+start
+events

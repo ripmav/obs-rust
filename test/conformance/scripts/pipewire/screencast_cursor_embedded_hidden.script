@@ -1,0 +1,10 @@
+# ShowCursor=false with only EMBEDDED/HIDDEN available -> HIDDEN(1). Non-empty RestoreToken is sent back to the portal.
+unique_name :1.1
+prop ScreenCast AvailableSourceTypes "uint32 1"
+prop ScreenCast AvailableCursorModes "uint32 3"
+prop ScreenCast version "uint32 4"
+screencast_load
+set m ShowCursor bool 0
+set m RestoreToken str tok-123
+new m pipewire-desktop-capture-source
+response 1 "(0, {'session_handle': <'/s/m'>})"

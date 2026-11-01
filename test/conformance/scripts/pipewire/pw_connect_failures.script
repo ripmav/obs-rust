@@ -1,0 +1,15 @@
+# Failure paths when connecting to the PipeWire remote handed out by the portal: the daemon refuses the fd (no core),
+# or the thread loop cannot start. In both cases no stream is created and the source keeps working with size 0x0.
+unique_name :1.5
+prop ScreenCast AvailableSourceTypes "uint32 1"
+prop ScreenCast version "uint32 2"
+screencast_load
+pw_connect fail
+new a pipewire-desktop-capture-source
+portal_ok 5
+size a
+pw_connect ok
+pw_thread fail
+new b pipewire-desktop-capture-source
+portal_ok 6
+size b

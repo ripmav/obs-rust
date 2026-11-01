@@ -1,0 +1,47 @@
+scripting load -> 1 ticks=1
+fake obs_module_add_source life_src
+log info [obs-scripting]: Loaded lua script: life.lua
+create S0 -> loaded=1 lang=1 file=life.lua desc=NULL
+log info [obs-scripting]: Loaded lua script: thief.lua
+create S1 -> loaded=1 lang=1 file=thief.lua desc=NULL
+src_types [life_src type=0 flags=1 enabled=1 name="Life"]
+log info [Lua: life.lua] create a
+src_create a -> data=yes
+log info [Lua: life.lua] create b
+src_create b -> data=yes
+src_call a width
+  -> 7
+
+echo --- reload: destroyed, disabled, then re-enabled and re-created
+fake obs_enable_source_type life_src 0
+log info [Unknown Script] destroy b
+log info [Unknown Script] destroy a
+log info [obs-scripting]: Unloaded lua script: life.lua
+fake obs_enable_source_type life_src 1
+log info [Lua: life.lua] create b
+log info [Lua: life.lua] create a
+log info [obs-scripting]: Loaded lua script: life.lua
+reload S0 -> 1
+src_types [life_src type=0 flags=1 enabled=1 name="Life"]
+src_call a width
+  -> 7
+
+echo --- unload: types disabled, instances answer 0
+fake obs_enable_source_type life_src 0
+log info [Unknown Script] destroy b
+log info [Unknown Script] destroy a
+log info [obs-scripting]: Unloaded lua script: life.lua
+destroy S0
+src_types [life_src type=0 flags=1 enabled=0 name="Life"]
+src_call a width
+  -> 0
+
+echo --- thief may take the id over now that the type has no owner script
+log info [obs-scripting]: Unloaded lua script: thief.lua
+fake obs_enable_source_type life_src 1
+log info [Lua: thief.lua] thief create
+log info [Lua: thief.lua] thief create
+log info [obs-scripting]: Loaded lua script: thief.lua
+reload S1 -> 1
+src_types [life_src type=0 flags=1 enabled=1 name="Thief"]
+fake obs_enable_source_type life_src 0

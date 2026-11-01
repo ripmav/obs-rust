@@ -1,0 +1,84 @@
+> unique_name :1.8
+> camera_load
+host.register_source pipewire-camera-source type=0 flags=0x5 icon=9
+> set a device_id str cam0
+> set a format str {"encoded":false,"video_format":4,"width":1280,"height":720}
+> new a pipewire-camera-source
+log error obs-data.c: [obs_data_create_from_json] Failed reading json string <jansson>
+dbus.bus_get type=2 -> ok
+dbus.subscribe#1 org.freedesktop.portal.Desktop org.freedesktop.portal.Request.Response path=/org/freedesktop/portal/desktop/request/1_8/obs1 arg0=NULL flags=1
+dbus.proxy_new org.freedesktop.portal.Desktop /org/freedesktop/portal/desktop org.freedesktop.portal.Camera flags=0
+dbus.call#1 AccessCamera ({'handle_token': <'obs1'>},)
+created a
+> set b device_id str cam0
+> set b format str {"encoded":false,"video_format":23,"width":640,"height":360}
+> new b pipewire-camera-source
+log error obs-data.c: [obs_data_create_from_json] Failed reading json string <jansson>
+created b
+> response 1 (0, {})
+dbus.signal Response -> /org/freedesktop/portal/desktop/request/1_8/obs1
+log info [camera-portal] Successfully accessed cameras
+dbus.call#2 OpenPipeWireRemote (@a{sv} {},)
+dbus.unsubscribe#1
+> finish 2 fd
+dbus.finish#2 OpenPipeWireRemote
+pw.thread_loop_new "PipeWire thread loop"
+pw.thread_loop_start -> 0
+pw.context_connect_fd -> core
+pw.core_add_listener
+pw.core_sync id=0 seq_in=0 -> 1
+log info [pipewire] Server version: 1.0.0
+log info [pipewire] Library version: lib-version
+log info [pipewire] Header version: <hdr>
+pw.core_get_registry version=3
+pw.registry_add_listener
+log info [pipewire] Created registry <ptr>
+pw.core_sync id=0 seq_in=1 -> 2
+> registry_global 50 PipeWire:Interface:Node 3 node.name=cam0 node.description=Front Camera
+pw.event registry_global id=50 type=PipeWire:Interface:Node
+log info [camera-portal] Found device cam0
+pw.registry_bind id=50 type=PipeWire:Interface:Node version=3 -> proxy
+host.update_properties a
+log info [camera-portal] streaming camera 'cam0'
+pw.loop_add_event#1
+log debug [pipewire] registered event <ptr>
+pw.stream_new#1 "OBS PipeWire Camera" props={media.type=Video,media.category=Capture,media.role=Camera}
+log info [pipewire] Created stream <ptr>
+pw.stream_connect#1 dir=input target=50 flags=0x5 n_params=1
+  param[0] Object(type=0x40003,id=3){mediaType=Id:2(video); mediaSubtype=Id:1(raw); format=Id:4(YUY2); size=Choice:Range<Rect:1280x720,Rect:1280x720,Rect:1280x720>; framerate=Choice:Range<Frac:60/1,Frac:0/1,Frac:360/1>}
+log info [pipewire] Playing stream <ptr>
+host.update_properties b
+log info [camera-portal] streaming camera 'cam0'
+pw.loop_add_event#2
+log debug [pipewire] registered event <ptr>
+pw.stream_new#2 "OBS PipeWire Camera" props={media.type=Video,media.category=Capture,media.role=Camera}
+log info [pipewire] Created stream <ptr>
+pw.stream_connect#2 dir=input target=50 flags=0x5 n_params=1
+  param[0] Object(type=0x40003,id=3){mediaType=Id:2(video); mediaSubtype=Id:1(raw); format=Id:23(NV12); size=Choice:Range<Rect:640x360,Rect:640x360,Rect:640x360>; framerate=Choice:Range<Frac:60/1,Frac:0/1,Frac:360/1>}
+log info [pipewire] Playing stream <ptr>
+> destroy a
+host.output_video NULL
+pw.stream_disconnect#1
+pw.stream_destroy#1
+> registry_global 51 PipeWire:Interface:Node 3 node.name=cam1 node.description=Other
+pw.event registry_global id=51 type=PipeWire:Interface:Node
+log info [camera-portal] Found device cam1
+pw.registry_bind id=51 type=PipeWire:Interface:Node version=3 -> proxy
+host.update_properties b
+> props b
+prop device_id type=list desc="PipeWireCameraDevice" visible=1 enabled=1 format=3 items=2
+  item "Other" = "cam1" disabled=0
+  item "Front Camera" = "cam0" disabled=0
+prop format type=list desc="VideoFormat" visible=1 enabled=1 format=3 items=0
+prop framerate type=list desc="FrameRate" visible=1 enabled=1 format=3 items=0
+prop controls type=group desc="CameraControls" visible=1 enabled=1
+> camera_unload
+pw.proxy_destroy node#51
+pw.proxy_destroy node#50
+host.output_video NULL
+pw.stream_disconnect#2
+pw.stream_destroy#2
+pw.thread_loop_stop
+pw.registry_destroy
+pw.context_destroy
+pw.thread_loop_destroy lock_depth=0

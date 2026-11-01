@@ -1,0 +1,17 @@
+scripting load -> 1 ticks=1
+log warning [Lua] obs_lua_signal_handler_connect:482: SWIG failed to convert lua object to obs object: signal_handler_t *
+log info [obs-scripting]: Loaded lua script: sig.lua
+create S0 -> loaded=1 lang=1 file=sig.lua desc=NULL
+callbacks S0 total=3 removed=0
+log info [Lua: sig.lua] on msg=hello n=1
+log info [Lua: sig.lua] on msg=world n=2
+log info [Lua: sig.lua] on msg=nil n=3
+echo --- disconnect with wrong signal / wrong function does nothing
+update S0 done
+update S0 done
+log info [Lua: sig.lua] on msg=still n=4
+echo --- disconnect matches handler+signal+function
+update S0 done
+callbacks S0 total=2 removed=0
+log info [Lua: sig.lua] on msg=other-handler n=6
+log info [Lua: sig.lua] on msg=nil n=7

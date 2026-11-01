@@ -1,0 +1,15 @@
+scripting load -> 1 ticks=1
+log info [Lua: hk.lua] id1=1
+log info [Lua: hk.lua] id2=-1
+log info [Lua: hk.lua] noname results=0
+log info [Lua: hk.lua] nodesc results=0
+log info [Lua: hk.lua] nofn results=0
+log info [obs-scripting]: Loaded lua script: hk.lua
+create S0 -> loaded=1 lang=1 file=hk.lua desc=NULL
+callbacks S0 total=1 removed=0
+log info [Lua: hk.lua] hot pressed=true
+log info [Lua: hk.lua] hot pressed=false
+fake obs_hotkey_unregister hk1
+update S0 done
+callbacks S0 total=0 removed=0
+hotkey 1 not registered

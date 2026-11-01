@@ -1,0 +1,21 @@
+scripting load -> 1 python=1 ticks=1
+log info [Python: d_none.py] load after bad description
+log info [obs-scripting]: Loaded python script: d_none.py
+log info [Python: d_none.py] update after bad description
+create S0 -> loaded=1 lang=2 file=d_none.py desc=NULL
+log info [obs-scripting]: Loaded python script: d_ok.py
+create S1 -> loaded=1 lang=2 file=d_ok.py desc="next script is unaffected"
+log info [obs-scripting]: Loaded python script: d_bytes.py
+create S2 -> loaded=1 lang=2 file=d_bytes.py desc=NULL
+log info [obs-scripting]: Loaded python script: d_empty.py
+create S3 -> loaded=1 lang=2 file=d_empty.py desc=NULL
+log info [obs-scripting]: Unloaded python script: d_none.py
+auto-destroy S0
+log info [obs-scripting]: Unloaded python script: d_ok.py
+auto-destroy S1
+log info [obs-scripting]: Unloaded python script: d_bytes.py
+auto-destroy S2
+log info [obs-scripting]: Unloaded python script: d_empty.py
+auto-destroy S3
+log info [Scripting] Total detached callbacks: 0
+scripting unload ticks=0

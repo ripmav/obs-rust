@@ -1,0 +1,44 @@
+# Every entry point is called inside the backend; an exception in one is reported (warning line + traceback) and
+# does not stop the others. A failing script_load does NOT make the load fail.
+scripting load
+py_begin entry_errors.py
+import obspython as obs
+def script_defaults(settings):
+    raise ValueError("bad defaults")
+def script_load(settings):
+    raise RuntimeError("bad load")
+def script_update(settings):
+    raise RuntimeError("bad update")
+def script_save(settings):
+    raise RuntimeError("bad save")
+def script_properties():
+    raise RuntimeError("bad properties")
+def script_unload():
+    raise RuntimeError("bad unload")
+py_end
+create S0 entry_errors.py
+echo save
+save S0
+echo properties
+props S0 P0
+echo update
+update S0
+echo unload
+destroy S0
+echo description returning a non-string
+py_begin desc_int.py
+def script_description():
+    return 42
+py_end
+create S1 desc_int.py
+py_begin desc_none.py
+def script_description():
+    pass
+py_end
+create S2 desc_none.py
+py_begin desc_unicode.py
+def script_description():
+    return "café ✓"
+py_end
+create S3 desc_unicode.py
+scripting unload

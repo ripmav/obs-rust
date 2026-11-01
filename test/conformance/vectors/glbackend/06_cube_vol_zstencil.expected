@@ -1,0 +1,41 @@
+create rc=0 device=yes
+log error glBindTexture failed, glGetError returned GL_INVALID_ENUM(0x500)
+log error glBindTexture failed, glGetError returned GL_INVALID_ENUM(0x500)
+log error glBindTexture failed, glGetError returned GL_INVALID_ENUM(0x500)
+log error glBindTexture failed, glGetError returned GL_INVALID_ENUM(0x500)
+log error glBindTexture failed, glGetError returned GL_INVALID_ENUM(0x500)
+log error glBindTexture failed, glGetError returned GL_INVALID_ENUM(0x500)
+log error glBindTexture failed, glGetError returned GL_INVALID_ENUM(0x500)
+log error glBindTexture failed, glGetError returned GL_INVALID_ENUM(0x500)
+log error glBindTexture failed, glGetError returned GL_INVALID_ENUM(0x500)
+log error glBindTexture failed, glGetError returned GL_INVALID_ENUM(0x500)
+log error glBindTexture failed, glGetError returned GL_INVALID_ENUM(0x500)
+log error glBindTexture failed, glGetError returned GL_INVALID_ENUM(0x500)
+log error device_cubetexture_create (GL) failed
+cube c fail
+log error glBindTexture failed, glGetError returned GL_INVALID_ENUM(0x500)
+log error glBindTexture failed, glGetError returned GL_INVALID_ENUM(0x500)
+log error glBindTexture failed, glGetError returned GL_INVALID_ENUM(0x500)
+log error glBindTexture failed, glGetError returned GL_INVALID_ENUM(0x500)
+log error glBindTexture failed, glGetError returned GL_INVALID_ENUM(0x500)
+log error glBindTexture failed, glGetError returned GL_INVALID_ENUM(0x500)
+log error glBindTexture failed, glGetError returned GL_INVALID_ENUM(0x500)
+log error glBindTexture failed, glGetError returned GL_INVALID_ENUM(0x500)
+log error glBindTexture failed, glGetError returned GL_INVALID_ENUM(0x500)
+log error glBindTexture failed, glGetError returned GL_INVALID_ENUM(0x500)
+log error glBindTexture failed, glGetError returned GL_INVALID_ENUM(0x500)
+log error glBindTexture failed, glGetError returned GL_INVALID_ENUM(0x500)
+log error device_cubetexture_create (GL) failed
+cube c2 fail
+vol v ok
+volinfo v 0x0x0 fmt=UNKNOWN type=TEXTURE_3D
+vol vd ok
+vol vm ok
+zs z16 ok
+zs z24 ok
+zs z32 ok
+zs z32s ok
+log error glRenderbufferStorage failed, glGetError returned GL_INVALID_ENUM(0x500)
+log error device_zstencil_create (GL) failed
+zs znone fail
+destroyed

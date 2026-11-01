@@ -1,0 +1,20 @@
+> create
+create ok
+> cfg audio
+cfg audio tracks=1 aenc=aac id=86018 frame_size=1024 bitrates=160
+> world tracks 3
+> world abitrate 0 96
+> world abitrate 1 128
+> world abitrate 2 192
+> cfg audio
+cfg audio tracks=3 aenc=aac id=86018 frame_size=1024 bitrates=96,128,192
+> world acodec opus
+> world framesize 960
+> cfg audio
+cfg audio tracks=3 aenc=opus id=86076 frame_size=960 bitrates=96,128,192
+> world acodec mp3
+> cfg audio
+cfg audio tracks=3 aenc=mp3 id=0 frame_size=960 bitrates=96,128,192
+> setting muxer_settings mpegts_flags=+resend_headers pat_period=0.5
+> cfg muxer
+cfg muxer_settings="mpegts_flags=+resend_headers pat_period=0.5" protocol_settings=""

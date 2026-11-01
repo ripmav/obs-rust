@@ -1,0 +1,26 @@
+scripting load -> 1 python=1 ticks=1
+log info [Python: streams.py] line one
+log info [Python: streams.py] two words 3
+log info [Python: streams.py] part A, part B
+log info [Python: streams.py] multi
+log info [Python: streams.py] line
+log info [Python: streams.py] write
+log error [Python: streams.py] an error line
+log error [Python: streams.py] to stderr
+log info [Python: streams.py] 
+log info [Python: streams.py] after empty
+log info [obs-scripting]: Loaded python script: streams.py
+create S0 -> loaded=1 lang=2 file=streams.py desc=NULL
+echo the buffered tail is joined with the next write (stderr write completes a stdout fragment)
+log error [Python: tail.py] no newline at end + completed by stderr
+log info [Python: tail.py] unicode: café ✓
+log info [Python: tail.py] stdout_logger stderr_logger
+log info [Python: tail.py] None
+log info [obs-scripting]: Loaded python script: tail.py
+create S1 -> loaded=1 lang=2 file=tail.py desc=NULL
+log info [obs-scripting]: Unloaded python script: streams.py
+auto-destroy S0
+log info [obs-scripting]: Unloaded python script: tail.py
+auto-destroy S1
+log info [Scripting] Total detached callbacks: 0
+scripting unload ticks=0

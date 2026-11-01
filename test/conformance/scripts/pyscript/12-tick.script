@@ -1,0 +1,55 @@
+# script_tick(seconds) and obs_add_tick_callback / obs_remove_tick_callback. script_tick scripts are called from the
+# backend's single libobs tick callback, most recently loaded script first, with the GIL held and the script current.
+# obs_add_tick_callback registers a separate libobs tick callback per record (only plain Python functions are accepted).
+scripting load
+py_begin tick_a.py
+import obspython as obs
+def script_tick(seconds):
+    print("tick_a %.3f" % seconds)
+py_end
+py_begin tick_b.py
+import obspython as obs
+count = 0
+def cb(seconds):
+    global count
+    count += 1
+    print("cb tick %d %.3f" % (count, seconds))
+    if count == 2:
+        obs.remove_current_callback()
+def script_tick(seconds):
+    print("tick_b %.3f" % seconds)
+def script_load(settings):
+    obs.obs_add_tick_callback(cb)
+    obs.obs_add_tick_callback(len)
+    obs.obs_add_tick_callback(lambda s: print("lambda tick"))
+py_end
+create S0 tick_a.py
+counts
+create S1 tick_b.py
+counts
+tick 0.5
+tick 0.25
+echo third tick: cb was removed by remove_current_callback after the second one
+tick 0.125
+callbacks S1
+echo unloading tick_a removes it from the list
+destroy S0
+tick 0.0625
+echo explicit removal; wrong kinds of argument are ignored
+py_begin tick_c.py
+import obspython as obs
+def f(seconds):
+    print("f", seconds)
+def script_load(settings):
+    obs.obs_add_tick_callback(f)
+    obs.obs_remove_tick_callback(len)
+    obs.obs_remove_tick_callback(f)
+    obs.obs_remove_tick_callback(f)
+py_end
+create S2 tick_c.py
+tick 1.0
+destroy S1
+destroy S2
+tick 1.0
+counts
+scripting unload

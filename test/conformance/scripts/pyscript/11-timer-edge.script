@@ -1,0 +1,40 @@
+# timer_add / timer_remove edge cases. timer_add does no function check (only PyArg "Oi"): a non-callable is accepted
+# and fails when it fires; timer_remove removes the FIRST record of the script whose object is identical, whatever
+# its kind; a timer with interval 0 fires on every tick; the interval is a C int in ms. An argument error is not
+# reported as such: the C function returns None with a TypeError pending, so CPython raises SystemError in the caller
+# (the first argument is parsed as a plain object, so "x" is accepted).
+scripting load
+py_begin timer_edge.py
+import obspython as obs
+def a():
+    print("a")
+def b():
+    print("b")
+def script_load(settings):
+    obs.timer_add(a, 10)
+    obs.timer_add(b, 10)
+    obs.timer_add(a, 10)
+    print("removing a once")
+    obs.timer_remove(a)
+    obs.timer_remove(b)
+    obs.timer_remove(print)
+    obs.timer_remove(12345)
+    obs.timer_add(lambda: print("lambda"), 0)
+    obs.timer_add(42, 10)
+    obs.timer_add("x", 10)
+    for bad in ((a, "10"), (a,), (a, 10, 1), ()):
+        try:
+            obs.timer_add(*bad)
+            print("no error for", len(bad), "args")
+        except Exception as e:
+            print(type(e).__name__, "for", len(bad), "args")
+py_end
+time 0
+create S0 timer_edge.py
+barrier
+callbacks S0
+echo tick at 10ms: the surviving "a" fires, lambda fires, 42 and "x" raise TypeError (logged)
+tick 0.01 10000000
+time 10000000
+callbacks S0
+scripting unload

@@ -1,0 +1,7 @@
+log debug Found dbus service: org.mate.SessionManager
+dsi_create 0 ok
+dsi_inhibit done
+dsi_inhibit done
+svc call org.mate.SessionManager.Inhibit path=/org/mate/SessionManager body=('libobs', 0, 'Recording', 12)
+svc call org.mate.SessionManager.Uninhibit path=/org/mate/SessionManager body=(43,)
+dsi_destroy done

@@ -1,0 +1,130 @@
+effect libobs/data/default.effect parse=ok params=3 techniques=14 viewproj=ViewProj world=-
+  param 0 ViewProj MATRIX4X4 default=-
+  param 1 image TEXTURE default=-
+  param 2 multiplier FLOAT default=-
+  technique Draw passes=1
+    pass 0 name=@null vertex=VSDefault(vert_in); pixel=PSDrawBare(vert_in);
+      vs_params=[ViewProj] ps_params=[image]
+  technique DrawAlphaDivide passes=1
+    pass 0 name=@null vertex=VSDefault(vert_in); pixel=PSDrawAlphaDivide(vert_in);
+      vs_params=[ViewProj] ps_params=[image]
+  technique DrawAlphaDivideTonemap passes=1
+    pass 0 name=@null vertex=VSDefault(vert_in); pixel=PSDrawAlphaDivideTonemap(vert_in);
+      vs_params=[ViewProj] ps_params=[image]
+  technique DrawAlphaDivideR10L passes=1
+    pass 0 name=@null vertex=VSDefault(vert_in); pixel=PSDrawAlphaDivideR10L(vert_in);
+      vs_params=[ViewProj] ps_params=[image,multiplier]
+  technique DrawNonlinearAlpha passes=1
+    pass 0 name=@null vertex=VSDefault(vert_in); pixel=PSDrawNonlinearAlpha(vert_in);
+      vs_params=[ViewProj] ps_params=[image]
+  technique DrawNonlinearAlphaMultiply passes=1
+    pass 0 name=@null vertex=VSDefault(vert_in); pixel=PSDrawNonlinearAlphaMultiply(vert_in);
+      vs_params=[ViewProj] ps_params=[image,multiplier]
+  technique DrawSrgbDecompress passes=1
+    pass 0 name=@null vertex=VSDefault(vert_in); pixel=PSDrawSrgbDecompress(vert_in);
+      vs_params=[ViewProj] ps_params=[image]
+  technique DrawSrgbDecompressMultiply passes=1
+    pass 0 name=@null vertex=VSDefault(vert_in); pixel=PSDrawSrgbDecompressMultiply(vert_in);
+      vs_params=[ViewProj] ps_params=[image,multiplier]
+  technique DrawMultiply passes=1
+    pass 0 name=@null vertex=VSDefault(vert_in); pixel=PSDrawMultiply(vert_in);
+      vs_params=[ViewProj] ps_params=[image,multiplier]
+  technique DrawTonemap passes=1
+    pass 0 name=@null vertex=VSDefault(vert_in); pixel=PSDrawTonemap(vert_in);
+      vs_params=[ViewProj] ps_params=[image]
+  technique DrawMultiplyTonemap passes=1
+    pass 0 name=@null vertex=VSDefault(vert_in); pixel=PSDrawMultiplyTonemap(vert_in);
+      vs_params=[ViewProj] ps_params=[image,multiplier]
+  technique DrawPQ passes=1
+    pass 0 name=@null vertex=VSDefault(vert_in); pixel=PSDrawPQ(vert_in);
+      vs_params=[ViewProj] ps_params=[image,multiplier]
+  technique DrawTonemapPQ passes=1
+    pass 0 name=@null vertex=VSDefault(vert_in); pixel=PSDrawTonemapPQ(vert_in);
+      vs_params=[ViewProj] ps_params=[image,multiplier]
+  technique DrawD65P3 passes=1
+    pass 0 name=@null vertex=VSDefault(vert_in); pixel=PSDrawD65P3(vert_in);
+      vs_params=[ViewProj] ps_params=[image]
+  funcs=36 structs=1 samplers=1
+  sampler def_sampler Filter=Linear AddressU=Clamp AddressV=Clamp
+effect libobs/data/default_rect.effect parse=ok params=2 techniques=4 viewproj=ViewProj world=-
+  param 0 ViewProj MATRIX4X4 default=-
+  param 1 image TEXTURE default=-
+  technique Draw passes=1
+    pass 0 name=@null vertex=VSDefault(vert_in); pixel=PSDrawBare(vert_in);
+      vs_params=[ViewProj] ps_params=[image]
+  technique DrawD65P3 passes=1
+    pass 0 name=@null vertex=VSDefault(vert_in); pixel=PSDrawD65P3(vert_in);
+      vs_params=[ViewProj] ps_params=[image]
+  technique DrawOpaque passes=1
+    pass 0 name=@null vertex=VSDefault(vert_in); pixel=PSDrawOpaque(vert_in);
+      vs_params=[ViewProj] ps_params=[image]
+  technique DrawSrgbDecompress passes=1
+    pass 0 name=@null vertex=VSDefault(vert_in); pixel=PSDrawSrgbDecompress(vert_in);
+      vs_params=[ViewProj] ps_params=[image]
+  funcs=26 structs=1 samplers=1
+  sampler def_sampler Filter=Linear AddressU=Clamp AddressV=Clamp
+effect libobs/data/solid.effect parse=ok params=5 techniques=3 viewproj=ViewProj world=-
+  param 0 ViewProj MATRIX4X4 default=-
+  param 1 color VEC4 default=[1,1,1,1]
+  param 2 randomvals1 VEC4 default=-
+  param 3 randomvals2 VEC4 default=-
+  param 4 randomvals3 VEC4 default=-
+  technique Solid passes=1
+    pass 0 name=@null vertex=VSSolid(vert_in); pixel=PSSolid(vert_in);
+      vs_params=[ViewProj] ps_params=[color]
+  technique SolidColored passes=1
+    pass 0 name=@null vertex=VSSolidColored(vert_in); pixel=PSSolidColored(vert_in);
+      vs_params=[ViewProj,color] ps_params=[color]
+  technique Random passes=1
+    pass 0 name=@null vertex=VSSolid(vert_in); pixel=PSRandom(vert_in);
+      vs_params=[ViewProj] ps_params=[randomvals1,randomvals2,randomvals3]
+  funcs=6 structs=2 samplers=0
+effect libobs/data/color.effect parse=ok params=0 techniques=0 viewproj=- world=-
+  funcs=21 structs=0 samplers=0
+effect libobs/data/opaque.effect parse=ok params=3 techniques=8 viewproj=ViewProj world=-
+  param 0 ViewProj MATRIX4X4 default=-
+  param 1 image TEXTURE default=-
+  param 2 multiplier FLOAT default=-
+  technique Draw passes=1
+    pass 0 name=@null vertex=VSDefault(vert_in); pixel=PSDraw(vert_in);
+      vs_params=[ViewProj] ps_params=[image]
+  technique DrawSrgbDecompress passes=1
+    pass 0 name=@null vertex=VSDefault(vert_in); pixel=PSDrawSrgbDecompress(vert_in);
+      vs_params=[ViewProj] ps_params=[image]
+  technique DrawSrgbDecompressMultiply passes=1
+    pass 0 name=@null vertex=VSDefault(vert_in); pixel=PSDrawSrgbDecompressMultiply(vert_in);
+      vs_params=[ViewProj] ps_params=[image,multiplier]
+  technique DrawMultiply passes=1
+    pass 0 name=@null vertex=VSDefault(vert_in); pixel=PSDrawMultiply(vert_in);
+      vs_params=[ViewProj] ps_params=[image,multiplier]
+  technique DrawTonemap passes=1
+    pass 0 name=@null vertex=VSDefault(vert_in); pixel=PSDrawTonemap(vert_in);
+      vs_params=[ViewProj] ps_params=[image]
+  technique DrawMultiplyTonemap passes=1
+    pass 0 name=@null vertex=VSDefault(vert_in); pixel=PSDrawMultiplyTonemap(vert_in);
+      vs_params=[ViewProj] ps_params=[image,multiplier]
+  technique DrawPQ passes=1
+    pass 0 name=@null vertex=VSDefault(vert_in); pixel=PSDrawPQ(vert_in);
+      vs_params=[ViewProj] ps_params=[image,multiplier]
+  technique DrawTonemapPQ passes=1
+    pass 0 name=@null vertex=VSDefault(vert_in); pixel=PSDrawTonemapPQ(vert_in);
+      vs_params=[ViewProj] ps_params=[image,multiplier]
+  funcs=30 structs=1 samplers=1
+  sampler def_sampler Filter=Linear AddressU=Clamp AddressV=Clamp
+effect libobs/data/premultiplied_alpha.effect parse=ok params=2 techniques=1 viewproj=ViewProj world=-
+  param 0 ViewProj MATRIX4X4 default=-
+  param 1 image TEXTURE default=-
+  technique Draw passes=1
+    pass 0 name=@null vertex=VSDefault(vert_in); pixel=PSDraw(vert_in);
+      vs_params=[ViewProj] ps_params=[image]
+  funcs=2 structs=1 samplers=1
+  sampler def_sampler Filter=Linear AddressU=Clamp AddressV=Clamp
+effect libobs/data/repeat.effect parse=ok params=3 techniques=1 viewproj=ViewProj world=-
+  param 0 ViewProj MATRIX4X4 default=-
+  param 1 image TEXTURE default=-
+  param 2 scale VEC2 default=-
+  technique Draw passes=1
+    pass 0 name=@null vertex=VSDefault(vert_in); pixel=PSDrawBare(vert_in);
+      vs_params=[ViewProj,scale] ps_params=[image]
+  funcs=2 structs=1 samplers=1
+  sampler def_sampler Filter=Linear AddressU=Repeat AddressV=Repeat

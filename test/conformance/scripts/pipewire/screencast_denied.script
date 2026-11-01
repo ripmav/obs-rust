@@ -1,0 +1,17 @@
+# Every stage of the portal flow can be refused by the user (Response code != 0): the flow stops, a warning is logged,
+# no further portal call is made and no PipeWire connection is opened.
+unique_name :1.7
+prop ScreenCast AvailableSourceTypes "uint32 3"
+prop ScreenCast AvailableCursorModes "uint32 1"
+prop ScreenCast version "uint32 2"
+screencast_load
+new s1 pipewire-screen-capture-source
+response 1 "(1, {})"
+new s2 pipewire-screen-capture-source
+response 2 "(0, {'session_handle': <'/s/2'>})"
+response 3 "(2, {})"
+new s3 pipewire-screen-capture-source
+response 4 "(0, {'session_handle': <'/s/3'>})"
+response 5 "(0, {})"
+response 6 "(1, {})"
+size s3

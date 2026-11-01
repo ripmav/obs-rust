@@ -1,0 +1,20 @@
+# S-062 ALSA: capture thread: the first packet fixes first_ts = ts + 500 ms and is dropped; only packets with
+# timestamp > first_ts are delivered. Timestamp = now - frames*1e9/rate.
+alsa-reset
+alsa-cfg period 480
+set-int rate 48000
+alsa-create
+echo now 2000000000: first packet (480 frames) -> ts 1990000000 -> first_ts 2490000000, dropped
+alsa-push 480 2000000000
+echo packet at 2400000000 -> ts 2390000000 <= first_ts, dropped
+alsa-push 480 2400000000
+echo packet at 2500000000 -> ts 2490000000 == first_ts, dropped (strictly greater needed)
+alsa-push 480 2500000000
+echo packet at 2500000001 -> delivered
+alsa-push 480 2500000001
+echo short read of 100 frames
+alsa-push 100 2700000000
+alsa-wait-drain
+alsa-state
+audio-dump
+alsa-destroy

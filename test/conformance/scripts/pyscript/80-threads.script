@@ -1,0 +1,50 @@
+# GIL and threads. Backend calls from libobs threads take the GIL (PyGILState_Ensure); callbacks run on the thread
+# that delivers them. The "current script" is a process-wide variable (not per thread): output of a Python thread
+# is attributed to whichever script is current at that moment, or to [Unknown Script].
+scripting load
+py_begin thr_a.py
+import threading
+ev = threading.Event()
+main_ident = threading.get_ident()
+def work():
+    ev.wait()
+    print("message from a thread started by thr_a")
+t = threading.Thread(target=work)
+def script_load(settings):
+    t.start()
+    print("load thread:", threading.get_ident() == main_ident)
+def script_tick(seconds):
+    print("tick thread is the loading thread:", threading.get_ident() == main_ident)
+py_end
+create S0 thr_a.py
+tick 0.1
+echo release the thread while no script is current
+pyexec "import thr_a; thr_a.ev.set(); thr_a.t.join()"
+echo release it again from inside another script's callback: attributed to that script
+py_begin thr_b.py
+import threading, sys
+def script_update(settings):
+    mod = sys.modules["thr_a"]
+    mod.t = threading.Thread(target=mod.work)
+    mod.t.start()
+    mod.ev.set()
+    mod.t.join()
+    print("joined")
+py_end
+create S1 thr_b.py
+echo a Python thread that outlives its start can call the API without a script
+pyexec "import obspython as o, threading; r=[]; t=threading.Thread(target=lambda: r.append(o.obs_get_video_frame_time())); t.start(); t.join(); print('thread result', r)"
+echo timers run on the tick thread too
+py_begin thr_c.py
+import threading, obspython as obs
+main = threading.get_ident()
+def fire():
+    print("timer on tick thread:", threading.get_ident() == main)
+    obs.remove_current_callback()
+def script_load(settings):
+    obs.timer_add(fire, 1)
+py_end
+time 0
+create S2 thr_c.py
+tick 0.1 5000000
+scripting unload

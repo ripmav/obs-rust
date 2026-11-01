@@ -1,0 +1,7 @@
+log debug Found dbus service: org.freedesktop.ScreenSaver
+dsi_create 0 ok
+dsi_inhibit done
+dsi_inhibit done
+svc call org.freedesktop.ScreenSaver.Inhibit path=/ScreenSaver body=('libobs', 'r1')
+svc call org.freedesktop.ScreenSaver.UnInhibit path=/ScreenSaver body=(42,)
+dsi_destroy done

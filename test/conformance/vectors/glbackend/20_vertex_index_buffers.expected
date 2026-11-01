@@ -1,0 +1,48 @@
+create rc=0 device=yes
+tex rt ok
+vshader vs ok
+pshader ps ok
+vb cq ok
+read rt 4x4 linesize=16
+  row 0 ff2020ffff6020ffff9f20ffffdf20ff
+  row 1 ff2060ffff6060ffff9f60ffffdf60ff
+  row 2 ff209fffff609fffff9f9fffffdf9fff
+  row 3 ff20dfffff60dfffff9fdfffffdfdfff
+ib i16 ok
+ib info num=6 type=UNSIGNED_SHORT
+read rt 4x4 linesize=16
+  row 0 ff2020ffff6020ffff9f20ffffdf20ff
+  row 1 ff2060ffff6060ffff9f60ffffdf60ff
+  row 2 ff209fffff609fffff9f9fffffdf9fff
+  row 3 ff20dfffff60dfffff9fdfffffdfdfff
+read rt 4x4 linesize=16
+  row 0 000000000000000000000000ffdf20ff
+  row 1 0000000000000000ff9f60ffffdf60ff
+  row 2 00000000ff609fffff9f9fffffdf9fff
+  row 3 ff20dfffff60dfffff9fdfffffdfdfff
+ib i32 ok
+ib info num=3 type=UNSIGNED_LONG
+read rt 4x4 linesize=16
+  row 0 ff2020ffff6020ffff9f20ff00000000
+  row 1 ff2060ffff6060ff0000000000000000
+  row 2 ff209fff000000000000000000000000
+  row 3 00000000000000000000000000000000
+vb lp ok
+read rt 4x4 linesize=16
+  row 0 00000000000000000000000000000000
+  row 1 00000000000000000000000000000000
+  row 2 ff0000ffff0000ffff0000ffff0000ff
+  row 3 00000000000000000000000000000000
+read rt 4x4 linesize=16
+  row 0 00000000ff0000ff00000000ff0000ff
+  row 1 00000000000000000000000000000000
+  row 2 00000000000000000000000000000000
+  row 3 00000000000000000000000000000000
+vb nouv ok
+log error Vertex buffer does not have the required inputs for vertex shader
+read rt 4x4 linesize=16
+  row 0 ff0000ffff0000ffff0000ff00000000
+  row 1 ff0000ffff0000ff0000000000000000
+  row 2 ff0000ff000000000000000000000000
+  row 3 00000000000000000000000000000000
+destroyed

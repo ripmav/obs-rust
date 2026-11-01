@@ -1,0 +1,15 @@
+scripting load -> 1 ticks=1
+log info [obs-scripting]: Loaded lua script: timers.lua
+create S0 -> loaded=1 lang=1 file=timers.lua desc=NULL
+echo --- before interval elapsed: nothing
+echo --- exactly one interval after registration (>= is inclusive)
+log info [Lua: timers.lua] B
+log info [Lua: timers.lua] A 1
+echo --- 250ms late: one call per tick, catch-up one interval per tick
+log info [Lua: timers.lua] B
+log info [Lua: timers.lua] A 2
+log info [Lua: timers.lua] B
+log info [Lua: timers.lua] A 3
+echo --- last_ts advanced by whole intervals, so next fire is at 1400000000+...
+log info [Lua: timers.lua] B
+log info [Lua: timers.lua] A 4

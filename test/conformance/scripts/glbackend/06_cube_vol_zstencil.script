@@ -1,0 +1,17 @@
+# Cube, volume and z-stencil objects.
+# D-1: cube texture creation always fails (per-face glBindTexture is invalid in core GL).
+# D-2: volume texture getters are unimplemented stubs (0 / UNKNOWN).
+create
+enter
+cube c 4 RGBA 1 0
+cube c2 4 RGBA 1 RENDER_TARGET
+vol v 2 2 2 RGBA 1 0
+volinfo v
+vol vd 2 2 2 RGBA 1 DYNAMIC
+vol vm 2 2 2 R8 0 0
+zs z16 4 4 Z16
+zs z24 4 4 Z24_S8
+zs z32 4 4 Z32F
+zs z32s 4 4 Z32F_S8X24
+zs znone 4 4 ZS_NONE
+destroy

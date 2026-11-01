@@ -1,0 +1,34 @@
+scripting load -> 1 ticks=1
+log warning [Lua: errs.lua] Error calling script_defaults: [string "<chunk>"]:1: attempt to call global 'error_not_defined_function' (a nil value)
+log warning [Lua: errs.lua] Error calling script_defaults: [string "<chunk>"]:2: attempt to index local 't' (a nil value)
+log warning [Lua: errs.lua] Error calling script_load: [string "<chunk>"]:3: attempt to index local 't' (a nil value)
+log info [obs-scripting]: Loaded lua script: errs.lua
+log info [Lua: errs.lua] update ran
+log warning [Lua: errs.lua] Failed to call script_update for obs_lua_script_update: [string "<chunk>"]:4: attempt to index local 't' (a nil value)
+create S0 -> loaded=1 lang=1 file=errs.lua desc=NULL
+log info [Lua: errs.lua] update ran
+log warning [Lua: errs.lua] Failed to call script_update for obs_lua_script_update: [string "<chunk>"]:4: attempt to index local 't' (a nil value)
+update S0 done
+log warning [Lua: errs.lua] Failed to call script_save for obs_lua_script_save: [string "<chunk>"]:5: attempt to index local 't' (a nil value)
+save S0
+log warning [Lua: errs.lua] Failed to call script_properties for obs_lua_script_get_properties: [string "<chunk>"]:6: attempt to index local 't' (a nil value)
+props P0 ->
+log info [obs-scripting]: Unloaded lua script: errs.lua
+log warning [Lua: errs.lua] Error calling script_defaults: [string "<chunk>"]:1: attempt to call global 'error_not_defined_function' (a nil value)
+log warning [Lua: errs.lua] Error calling script_defaults: [string "<chunk>"]:2: attempt to index local 't' (a nil value)
+log warning [Lua: errs.lua] Error calling script_load: [string "<chunk>"]:3: attempt to index local 't' (a nil value)
+log info [obs-scripting]: Loaded lua script: errs.lua
+log info [Lua: errs.lua] update ran
+log warning [Lua: errs.lua] Failed to call script_update for obs_lua_script_update: [string "<chunk>"]:4: attempt to index local 't' (a nil value)
+reload S0 -> 1
+log info [obs-scripting]: Unloaded lua script: errs.lua
+destroy S0
+echo --- description conversions
+log info [obs-scripting]: Loaded lua script: desc_num.lua
+create S1 -> loaded=1 lang=1 file=desc_num.lua desc="42"
+log info [obs-scripting]: Loaded lua script: desc_tbl.lua
+create S2 -> loaded=1 lang=1 file=desc_tbl.lua desc=NULL
+log info [obs-scripting]: Loaded lua script: desc_empty.lua
+create S3 -> loaded=1 lang=1 file=desc_empty.lua desc=NULL
+log info [obs-scripting]: Loaded lua script: desc_nilret.lua
+create S4 -> loaded=1 lang=1 file=desc_nilret.lua desc=NULL

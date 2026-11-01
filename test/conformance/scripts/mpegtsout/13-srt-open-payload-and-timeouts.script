@@ -1,0 +1,18 @@
+# payload_size / pkt_size set SRTO_PAYLOADSIZE; after connecting the socket's value (queried back) becomes max_packet_size.
+# timeout= is the read/write timeout in usec (h->rw_timeout), listen_timeout= only matters in listener mode.
+srt_open "srt://192.0.2.10:9000?payload_size=1000"
+srt_close
+srt_open "srt://192.0.2.10:9000?pkt_size=1456"
+srt_close
+# payload_size=-1 is "unset" (not applied) ; the read-back default 1316 is used
+srt_open "srt://192.0.2.10:9000?payload_size=-1"
+srt_close
+# read-back of 0 leaves the context's max_packet_size (1316 from the output) untouched
+srt_payload 0
+srt_open "srt://192.0.2.10:9000"
+srt_close
+srt_payload auto
+srt_open "srt://192.0.2.10:9000?timeout=5000000&listen_timeout=7000000"
+srt_close
+srt_open "srt://192.0.2.10:9000?timeout=abc"
+srt_close

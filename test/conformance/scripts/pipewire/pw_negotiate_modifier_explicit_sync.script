@@ -1,0 +1,11 @@
+# Format with a DRM modifier: the modifier is logged in hex. With explicit-sync support in the graphics backend an extra
+# Buffers param (DmaBuf only, SyncTimeline meta mandatory) and a SyncTimeline meta param are added.
+unique_name :1.5
+prop ScreenCast AvailableSourceTypes "uint32 1"
+prop ScreenCast version "uint32 2"
+screencast_load
+gs_sync 1
+pw_server_version 1.2.0
+new a pipewire-desktop-capture-source
+portal_ok 32
+param_changed format=BGRA size=800x600 fps=60/1 modifier=0x0100000000000001

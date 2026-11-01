@@ -1,0 +1,36 @@
+# Errors inside entry points never fail the load.  script_defaults / script_load / script_description errors are
+# logged during load; a failing script_description keeps the (wrong) text "script_defaults" (reference quirk Q-1);
+# script_update / script_save / script_properties failures are reported with the C function name as origin.
+scripting load
+lua_begin errs.lua
+function script_defaults(s) error_not_defined_function() end
+function script_description() local t = nil; return t.x end
+function script_load(s) local t = nil; return t.x end
+function script_update(s) print("update ran"); local t = nil; t.x = 1 end
+function script_save(s) local t = nil; t.x = 1 end
+function script_properties() local t = nil; t.x = 1 end
+function script_unload() local t = nil; t.x = 1 end
+lua_end
+create S0 errs.lua
+update S0
+save S0
+props S0 P0
+reload S0
+destroy S0
+echo --- description conversions
+lua_begin desc_num.lua
+function script_description() return 42 end
+lua_end
+lua_begin desc_tbl.lua
+function script_description() return {} end
+lua_end
+lua_begin desc_empty.lua
+function script_description() return "" end
+lua_end
+lua_begin desc_nilret.lua
+function script_description() end
+lua_end
+create S1 desc_num.lua
+create S2 desc_tbl.lua
+create S3 desc_empty.lua
+create S4 desc_nilret.lua

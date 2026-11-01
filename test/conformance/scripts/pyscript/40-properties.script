@@ -1,0 +1,51 @@
+# script_properties() returns an obs_properties_t wrapped by SWIG; obs_properties_add_button and
+# obs_property_set_modified_callback are replaced by script-aware versions. Button/modified callbacks receive the
+# wrapped pointers; the C side treats ONLY the object True as "refresh" (a truthy int such as 1 is false).
+scripting load
+py_begin props.py
+import obspython as obs
+def script_properties():
+    p = obs.obs_properties_create()
+    obs.obs_properties_add_text(p, "name", "Name", obs.OBS_TEXT_DEFAULT)
+    obs.obs_properties_add_int(p, "size", "Size", 1, 100, 1)
+    obs.obs_properties_add_bool(p, "flag", "Flag")
+    b = obs.obs_properties_add_button(p, "go", "Go", on_go)
+    print("button returned a property:", b is not None and obs.fake_is_capsule(b))
+    obs.obs_properties_add_button(p, "plain", "Plain", len)
+    obs.obs_properties_add_button(p, "num", "Num", lambda props, prop: 1)
+    obs.obs_properties_add_button(p, "yes", "Yes", lambda props, prop: True)
+    obs.obs_properties_add_button(p, "err", "Err", on_err)
+    name = obs.obs_properties_get(p, "name")
+    obs.obs_property_set_modified_callback(name, on_modified)
+    obs.obs_property_set_modified_callback(obs.obs_properties_get(p, "size"), len)
+    return p
+def on_go(props, prop):
+    print("clicked go; props capsule:", obs.fake_is_capsule(props), "prop capsule:", obs.fake_is_capsule(prop))
+    obs.obs_property_set_description(obs.obs_properties_get(props, "flag"), "Flag (changed)")
+    return True
+def on_err(props, prop):
+    raise RuntimeError("button failure")
+def on_modified(props, prop, settings):
+    print("modified; name =", obs.obs_data_get_string(settings, "name"))
+    obs.obs_property_set_enabled(obs.obs_properties_get(props, "size"), False)
+    return True
+py_end
+create S0 props.py s:name=Alice
+props S0 P0
+callbacks S0
+echo click: returns the C bool derived from the callback result
+click P0 go
+click P0 num
+click P0 yes
+click P0 err
+click P0 plain
+props S0 P0
+echo modified callback
+modify P0 name S0
+props S0 P0
+echo properties are rebuilt on every call: each call adds NEW records
+callbacks S0
+echo after unload the callbacks are inert
+destroy S0
+click P0 go
+scripting unload

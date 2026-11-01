@@ -1,0 +1,70 @@
+> create
+create ok
+> world pause_offset 1000
+> start
+start returned 1
+srt startup
+srt create_socket -> 1
+srt setsockopt fd=1 SRTO_TRANSTYPE=0
+srt setsockopt fd=1 SRTO_ENFORCEDENCRYPTION=0
+srt setsockopt fd=1 SRTO_KMREFRESHRATE=0
+srt setsockopt fd=1 SRTO_KMPREANNOUNCE=0
+srt setsockopt fd=1 SRTO_SNDDROPDELAY=0
+srt setsockopt fd=1 SRTO_PAYLOADSIZE=1316
+srt setsockopt fd=1 SRTO_SENDER=1
+srt setsockopt fd=1 SRTO_SNDSYN=0
+srt setsockopt fd=1 SRTO_RCVSYN=0
+srt connect fd=1 192.0.2.10:9000
+srt epoll_release
+srt setsockopt fd=1 SRTO_INPUTBW=0
+srt setsockopt fd=1 SRTO_OHEADBW=25
+> pkt v 0 0 0 1 3000
+> pkt a 0 0 0 1 200
+> drain
+> state
+state running=1 stopping=0 write_thread_active=1 has_connected=1 got_headers=1 queued=0
+state total_bytes=3200 initialized=1 begin_calls=1 stop_ts=0
+> hold on
+> blind 1
+> pkt v 0 3 3 0 800
+> stop_async 100000000
+> hold off
+> wait
+srt epoll_release
+srt close fd=1
+srt cleanup
+> state
+state running=0 stopping=1 write_thread_active=0 has_connected=0 got_headers=1 queued=0
+state total_bytes=3200 initialized=0 begin_calls=1 stop_ts=100000000
+> start
+start returned 1
+srt startup
+srt create_socket -> 1
+srt setsockopt fd=1 SRTO_TRANSTYPE=0
+srt setsockopt fd=1 SRTO_ENFORCEDENCRYPTION=0
+srt setsockopt fd=1 SRTO_KMREFRESHRATE=0
+srt setsockopt fd=1 SRTO_KMPREANNOUNCE=0
+srt setsockopt fd=1 SRTO_SNDDROPDELAY=0
+srt setsockopt fd=1 SRTO_PAYLOADSIZE=1316
+srt setsockopt fd=1 SRTO_SENDER=1
+srt setsockopt fd=1 SRTO_SNDSYN=0
+srt setsockopt fd=1 SRTO_RCVSYN=0
+srt connect fd=1 192.0.2.10:9000
+srt epoll_release
+srt setsockopt fd=1 SRTO_INPUTBW=0
+srt setsockopt fd=1 SRTO_OHEADBW=25
+> pkt v 0 0 0 1 3000
+> pkt a 0 0 0 1 200
+> drain
+> hold on
+> blind 1
+> pkt v 0 3 3 0 800
+> stop_async 900000000
+> hold off
+> wait
+srt epoll_release
+srt close fd=1
+srt cleanup
+> state
+state running=0 stopping=1 write_thread_active=0 has_connected=0 got_headers=1 queued=0
+state total_bytes=4000 initialized=0 begin_calls=2 stop_ts=900000000

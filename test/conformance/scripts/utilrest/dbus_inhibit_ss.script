@@ -1,0 +1,24 @@
+# dbus_sleep_info: the first service from the fixed probe order (ScreenSaver, PowerManagement, MATE, GNOME) that has an
+# owner on the session bus is used. Private dbus-daemon + in-process fake service.
+# Only the PowerManagement service exists: it is found second.
+dbus_service pm
+dsi_create 0
+# inhibit (params "(ss)": program "libobs", reason); the fake service answers the cookie 42
+dsi_inhibit 0 "Streaming" 1
+# the same state again does nothing (no call)
+dsi_inhibit 0 "Streaming" 1
+# uninhibit sends the cookie
+dsi_inhibit 0 "ignored" 0
+dsi_inhibit 0 "ignored" 0
+dsi_inhibit 0 "Again" 1
+dbus_log
+# an error reply is logged and the state does not change: inhibit failing keeps the cookie 0
+dbus_fail Inhibit
+dsi_destroy 0
+dsi_create 0
+dsi_inhibit 0 "Fails" 1
+dbus_log
+dbus_ok Inhibit
+dsi_inhibit 0 "Works" 1
+dsi_destroy 0
+dbus_log

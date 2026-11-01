@@ -1,0 +1,52 @@
+echo create before the subsystem is loaded
+create S0 -> NULL
+scripting load -> 1 python=1 ticks=1
+log info [Python: early.py] early script body
+log info [obs-scripting]: Loaded python script: early.py
+create S0 -> loaded=1 lang=2 file=early.py desc="early"
+log info [Python: life.py] load
+log info [obs-scripting]: Loaded python script: life.py
+create S1 -> loaded=1 lang=2 file=life.py desc=NULL
+log info [Python: life.py] script_tick
+log info [Python: life.py] timer
+log info [Python: life.py] tick cb
+callbacks S1 total=2 removed=0
+echo reload: unload (everything dropped) then load again
+log info [Python: life.py] unload
+log info [obs-scripting]: Unloaded python script: life.py
+log info [Python: life.py] load
+log info [obs-scripting]: Loaded python script: life.py
+reload S1 -> 1
+log info [Python: life.py] script_tick
+log info [Python: life.py] timer
+log info [Python: life.py] tick cb
+echo destroy unloads; the removed tick callback is dropped from libobs at the next tick
+log info [Python: life.py] unload
+log info [obs-scripting]: Unloaded python script: life.py
+destroy S1
+counts ticks=2 renders=0 hotkeys=0 fe_event=0 fe_save=0
+counts ticks=1 renders=0 hotkeys=0 fe_event=0 fe_save=0
+echo the same file loaded again in a new script object, reloaded twice
+log info [Python: life.py] load
+log info [obs-scripting]: Loaded python script: life.py
+create S2 -> loaded=1 lang=2 file=life.py desc=NULL
+log info [Python: life.py] unload
+log info [obs-scripting]: Unloaded python script: life.py
+log info [Python: life.py] load
+log info [obs-scripting]: Loaded python script: life.py
+reload S2 -> 1
+log info [Python: life.py] unload
+log info [obs-scripting]: Unloaded python script: life.py
+log info [Python: life.py] load
+log info [obs-scripting]: Loaded python script: life.py
+reload S2 -> 1
+echo loading the subsystem a second time changes nothing
+scripting load -> 1 python=1 ticks=4
+counts ticks=4 renders=0 hotkeys=0 fe_event=0 fe_save=0
+log info [obs-scripting]: Unloaded python script: early.py
+auto-destroy S0
+log info [Python: life.py] unload
+log info [obs-scripting]: Unloaded python script: life.py
+auto-destroy S2
+log info [Scripting] Total detached callbacks: 10
+scripting unload ticks=3

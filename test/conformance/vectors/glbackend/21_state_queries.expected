@@ -1,0 +1,11 @@
+create rc=0 device=yes
+cull BACK
+cull FRONT
+cull BACK
+srgb 0
+srgb 1
+srgb 0
+tex rt ok
+viewport 0 0 4 4
+viewport -1 -2 100 200
+destroyed

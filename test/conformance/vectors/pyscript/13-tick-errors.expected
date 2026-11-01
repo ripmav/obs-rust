@@ -1,0 +1,50 @@
+scripting load -> 1 python=1 ticks=1
+log info [obs-scripting]: Loaded python script: tick_err.py
+create S0 -> loaded=1 lang=2 file=tick_err.py desc=NULL
+log info [obs-scripting]: Loaded python script: tick_ok.py
+create S1 -> loaded=1 lang=2 file=tick_ok.py desc=NULL
+log info [Python: tick_ok.py] ok tick
+log warning [Python] Python failure in python_tick:<line>:
+log error [Python: tick_err.py] Traceback (most recent call last):
+log error [Python: tick_err.py]   File "$TMP/tick_err.py", line 2, in script_tick
+log error [Python: tick_err.py] RuntimeError: tick failure
+log info [Python: tick_ok.py] ok tick
+log warning [Python] Python failure in python_tick:<line>:
+log error [Python: tick_err.py] Traceback (most recent call last):
+log error [Python: tick_err.py]   File "$TMP/tick_err.py", line 2, in script_tick
+log error [Python: tick_err.py] RuntimeError: tick failure
+echo registration functions called with no current script (here from __main__, as a Python thread would)
+log error [Unknown Script] Traceback (most recent call last):
+log error [Unknown Script] RuntimeError: No active script, report this to Lain
+pyexec -> -1
+log error [Unknown Script] Traceback (most recent call last):
+log error [Unknown Script] RuntimeError: No active script, report this to Lain
+pyexec -> -1
+log error [Unknown Script] Traceback (most recent call last):
+log error [Unknown Script] RuntimeError: No active script, report this to Lain
+pyexec -> -1
+log error [Unknown Script] Traceback (most recent call last):
+log error [Unknown Script] RuntimeError: No active script, report this to Lain
+pyexec -> -1
+log error [Unknown Script] Traceback (most recent call last):
+log error [Unknown Script] RuntimeError: No active script, report this to Lain
+pyexec -> -1
+log error [Unknown Script] Traceback (most recent call last):
+log error [Unknown Script] RuntimeError: No active script, report this to Lain
+pyexec -> -1
+log error [Unknown Script] Traceback (most recent call last):
+log error [Unknown Script] RuntimeError: No active script, report this to Lain
+pyexec -> -1
+echo remove_current_callback outside a callback is a no-op
+log info [Unknown Script] None
+pyexec -> 0
+echo output outside a script is attributed to [Unknown Script]
+log info [Unknown Script] hello from main
+pyexec -> 0
+counts ticks=1 renders=0 hotkeys=0 fe_event=0 fe_save=0
+log info [obs-scripting]: Unloaded python script: tick_err.py
+auto-destroy S0
+log info [obs-scripting]: Unloaded python script: tick_ok.py
+auto-destroy S1
+log info [Scripting] Total detached callbacks: 0
+scripting unload ticks=0

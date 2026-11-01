@@ -1,0 +1,25 @@
+# Shader parameter discovery: every global 'uniform' of a shader text becomes a parameter whose
+# type is derived from the declared type; ViewProj / World are additionally exposed as the
+# viewproj / world matrix parameters; defaults come from the initialiser.
+create
+enter
+pshader ps
+uniform float f;
+uniform int i;
+uniform bool b;
+uniform float2 v2;
+uniform float3 v3;
+uniform float4 v4;
+uniform int2 i2;
+uniform int3 i3;
+uniform int4 i4;
+uniform float4x4 m;
+uniform float4x4 World;
+uniform texture2d tex;
+uniform float4 arr[2];
+uniform float init = 0.5;
+struct VI { float4 pos : POSITION; };
+float4 main(VI v) : TARGET { float4 t1 = mul(v.pos, m); float4 t2 = mul(v.pos, World); return float4(f, float(i), v2.x, 1.0) + v3.xxxx + v4 + float4(float(i2.x), float(i3.y), float(i4.z), 0.0) + float4(t1.x, t2.y, 0.0, 0.0) + float4(0.0, 0.0, b ? 1.0 : 0.0, init); }
+end
+params ps
+destroy

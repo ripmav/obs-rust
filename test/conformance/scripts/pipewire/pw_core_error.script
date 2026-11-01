@@ -1,0 +1,10 @@
+# A core error event is logged (id, seq, res, strerror text, message) and wakes the waiting thread; nothing else changes.
+unique_name :1.5
+prop ScreenCast AvailableSourceTypes "uint32 1"
+prop ScreenCast version "uint32 2"
+screencast_load
+new a pipewire-desktop-capture-source
+portal_ok 7
+core_error 0 3 -32 "connection broke"
+core_done 0 99
+core_done 5 1

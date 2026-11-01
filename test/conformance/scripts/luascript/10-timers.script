@@ -1,0 +1,27 @@
+# timer_add(fn, ms): registered through the deferred queue (so a `barrier` is needed before the first tick can
+# see it); interval = ms*1e6 ns; last_ts = video frame time AT THE CALL.  Each libobs tick (frame time ts) fires a
+# timer at most once when ts - last_ts >= interval and then advances last_ts by exactly one interval (late timers
+# catch up one interval per tick).  Timers added later are called first (new timers are linked at the list head).
+scripting load
+lua_begin timers.lua
+count_a = 0
+function a() count_a = count_a + 1; print("A " .. count_a) end
+function b() print("B") end
+obslua.timer_add(a, 100)
+obslua.timer_add(b, 100)
+lua_end
+time 1000000000
+create S0 timers.lua
+barrier
+echo --- before interval elapsed: nothing
+tick 0.01 1050000000
+echo --- exactly one interval after registration (>= is inclusive)
+tick 0.01 1100000000
+echo --- 250ms late: one call per tick, catch-up one interval per tick
+tick 0.25 1350000000
+tick 0.01 1350000000
+tick 0.01 1350000000
+tick 0.01 1350000000
+echo --- last_ts advanced by whole intervals, so next fire is at 1400000000+...
+tick 0.01 1399999999
+tick 0.01 1400000000

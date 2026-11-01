@@ -1,0 +1,136 @@
+> srt_open srt://192.0.2.10:9000?maxbw=1000000&pbkeylen=16&enforced_encryption=1&kmrefreshrate=1000&kmpreannounce=500&snddropdelay=2500&mss=1400&ffs=25600&ipttl=64&iptos=184&inputbw=500000&oheadbw=30
+srt startup
+srt create_socket -> 1
+srt setsockopt fd=1 SRTO_TRANSTYPE=0
+srt setsockopt fd=1 SRTO_MAXBW=1000000
+srt setsockopt fd=1 SRTO_PBKEYLEN=16
+srt setsockopt fd=1 SRTO_ENFORCEDENCRYPTION=1
+srt setsockopt fd=1 SRTO_KMREFRESHRATE=1000
+srt setsockopt fd=1 SRTO_KMPREANNOUNCE=500
+srt setsockopt fd=1 SRTO_SNDDROPDELAY=2
+srt setsockopt fd=1 SRTO_MSS=1400
+srt setsockopt fd=1 SRTO_FC=25600
+srt setsockopt fd=1 SRTO_IPTTL=64
+srt setsockopt fd=1 SRTO_IPTOS=184
+srt setsockopt fd=1 SRTO_PAYLOADSIZE=1316
+srt setsockopt fd=1 SRTO_SENDER=1
+srt setsockopt fd=1 SRTO_SNDSYN=0
+srt setsockopt fd=1 SRTO_RCVSYN=0
+srt connect fd=1 192.0.2.10:9000
+srt epoll_release
+srt setsockopt fd=1 SRTO_INPUTBW=500000
+srt setsockopt fd=1 SRTO_OHEADBW=30
+srt_open ret=SUCCESS(0) max_packet_size=1316 rw_timeout=0 mode=0 transtype=0
+srt_open last_error obs=SUCCESS srt=0 listen_timeout=-1 payload_size=1316
+> srt_close
+srt epoll_release
+srt close fd=1
+srt cleanup
+srt_close ret=0
+> srt_open srt://192.0.2.10:9000?latency=120000&rcvlatency=130000&peerlatency=140000&tlpktdrop=1&nakreport=0&connect_timeout=3000&sndbuf=65536&rcvbuf=131072&lossmaxttl=3&minversion=0x010402&messageapi=0&linger=5&tsbpd=1
+srt startup
+srt create_socket -> 1
+srt setsockopt fd=1 SRTO_TRANSTYPE=0
+srt setsockopt fd=1 SRTO_ENFORCEDENCRYPTION=0
+srt setsockopt fd=1 SRTO_KMREFRESHRATE=0
+srt setsockopt fd=1 SRTO_KMPREANNOUNCE=0
+srt setsockopt fd=1 SRTO_SNDDROPDELAY=0
+srt setsockopt fd=1 SRTO_LATENCY=120
+srt setsockopt fd=1 SRTO_RCVLATENCY=130
+srt setsockopt fd=1 SRTO_PEERLATENCY=140
+srt setsockopt fd=1 SRTO_TLPKTDROP=1
+srt setsockopt fd=1 SRTO_NAKREPORT=0
+srt setsockopt fd=1 SRTO_CONNTIMEO=3000
+srt setsockopt fd=1 SRTO_SNDBUF=65536
+srt setsockopt fd=1 SRTO_RCVBUF=131072
+srt setsockopt fd=1 SRTO_LOSSMAXTTL=3
+srt setsockopt fd=1 SRTO_MINVERSION=66562
+srt setsockopt fd=1 SRTO_MESSAGEAPI=0
+srt setsockopt fd=1 SRTO_PAYLOADSIZE=1316
+srt setsockopt fd=1 SRTO_SENDER=1
+srt setsockopt fd=1 SRTO_LINGER=onoff=1,linger=5
+srt setsockopt fd=1 SRTO_SNDSYN=0
+srt setsockopt fd=1 SRTO_RCVSYN=0
+srt connect fd=1 192.0.2.10:9000
+srt epoll_release
+srt setsockopt fd=1 SRTO_INPUTBW=0
+srt setsockopt fd=1 SRTO_OHEADBW=25
+srt_open ret=SUCCESS(0) max_packet_size=1316 rw_timeout=0 mode=0 transtype=0
+srt_open last_error obs=SUCCESS srt=0 listen_timeout=-1 payload_size=1316
+> srt_close
+srt epoll_release
+srt close fd=1
+srt cleanup
+srt_close ret=0
+> srt_open srt://192.0.2.10:9000?latency=100000&tsbpddelay=200000
+srt startup
+srt create_socket -> 1
+srt setsockopt fd=1 SRTO_TRANSTYPE=0
+srt setsockopt fd=1 SRTO_ENFORCEDENCRYPTION=0
+srt setsockopt fd=1 SRTO_KMREFRESHRATE=0
+srt setsockopt fd=1 SRTO_KMPREANNOUNCE=0
+srt setsockopt fd=1 SRTO_SNDDROPDELAY=0
+srt setsockopt fd=1 SRTO_LATENCY=200
+srt setsockopt fd=1 SRTO_PAYLOADSIZE=1316
+srt setsockopt fd=1 SRTO_SENDER=1
+srt setsockopt fd=1 SRTO_SNDSYN=0
+srt setsockopt fd=1 SRTO_RCVSYN=0
+srt connect fd=1 192.0.2.10:9000
+srt epoll_release
+srt setsockopt fd=1 SRTO_INPUTBW=0
+srt setsockopt fd=1 SRTO_OHEADBW=25
+srt_open ret=SUCCESS(0) max_packet_size=1316 rw_timeout=0 mode=0 transtype=0
+srt_open last_error obs=SUCCESS srt=0 listen_timeout=-1 payload_size=1316
+> srt_close
+srt epoll_release
+srt close fd=1
+srt cleanup
+srt_close ret=0
+> srt_open srt://192.0.2.10:9000?snddropdelay=-1&linger=0
+srt startup
+srt create_socket -> 1
+srt setsockopt fd=1 SRTO_TRANSTYPE=0
+srt setsockopt fd=1 SRTO_ENFORCEDENCRYPTION=0
+srt setsockopt fd=1 SRTO_KMREFRESHRATE=0
+srt setsockopt fd=1 SRTO_KMPREANNOUNCE=0
+srt setsockopt fd=1 SRTO_SNDDROPDELAY=-1
+srt setsockopt fd=1 SRTO_PAYLOADSIZE=1316
+srt setsockopt fd=1 SRTO_SENDER=1
+srt setsockopt fd=1 SRTO_LINGER=onoff=0,linger=0
+srt setsockopt fd=1 SRTO_SNDSYN=0
+srt setsockopt fd=1 SRTO_RCVSYN=0
+srt connect fd=1 192.0.2.10:9000
+srt epoll_release
+srt setsockopt fd=1 SRTO_INPUTBW=0
+srt setsockopt fd=1 SRTO_OHEADBW=25
+srt_open ret=SUCCESS(0) max_packet_size=1316 rw_timeout=0 mode=0 transtype=0
+srt_open last_error obs=SUCCESS srt=0 listen_timeout=-1 payload_size=1316
+> srt_close
+srt epoll_release
+srt close fd=1
+srt cleanup
+srt_close ret=0
+> srt_open srt://192.0.2.10:9000?latency=999&rcvlatency=-1
+srt startup
+srt create_socket -> 1
+srt setsockopt fd=1 SRTO_TRANSTYPE=0
+srt setsockopt fd=1 SRTO_ENFORCEDENCRYPTION=0
+srt setsockopt fd=1 SRTO_KMREFRESHRATE=0
+srt setsockopt fd=1 SRTO_KMPREANNOUNCE=0
+srt setsockopt fd=1 SRTO_SNDDROPDELAY=0
+srt setsockopt fd=1 SRTO_LATENCY=0
+srt setsockopt fd=1 SRTO_PAYLOADSIZE=1316
+srt setsockopt fd=1 SRTO_SENDER=1
+srt setsockopt fd=1 SRTO_SNDSYN=0
+srt setsockopt fd=1 SRTO_RCVSYN=0
+srt connect fd=1 192.0.2.10:9000
+srt epoll_release
+srt setsockopt fd=1 SRTO_INPUTBW=0
+srt setsockopt fd=1 SRTO_OHEADBW=25
+srt_open ret=SUCCESS(0) max_packet_size=1316 rw_timeout=0 mode=0 transtype=0
+srt_open last_error obs=SUCCESS srt=0 listen_timeout=-1 payload_size=1316
+> srt_close
+srt epoll_release
+srt close fd=1
+srt cleanup
+srt_close ret=0

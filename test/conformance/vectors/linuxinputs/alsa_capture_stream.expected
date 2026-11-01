@@ -1,0 +1,45 @@
+> alsa-reset
+> alsa-cfg period 480
+> set-int rate 48000
+> alsa-create
+snd_pcm_open '' stream=1 mode=0
+hw_params_any
+hw_params_set_access 3
+hw_params_test_format S16_LE -> ok
+hw_params_set_format S16_LE
+hw_params_set_rate_near req=48000 dir=null
+log info alsa-input: PCM '' rate set to 48000
+hw_params_get_channels -> EINVAL (range 1..8)
+hw_params_set_channels_near req=2
+log info alsa-input: PCM '' channels set to 2
+hw_params commit
+hw_params_get_period_size -> 480
+snd_pcm_start
+create -> ok
+> echo now 2000000000: first packet (480 frames) -> ts 1990000000 -> first_ts 2490000000, dropped
+> alsa-push 480 2000000000
+log debug alsa-input: Capture thread started.
+> echo packet at 2400000000 -> ts 2390000000 <= first_ts, dropped
+> alsa-push 480 2400000000
+> echo packet at 2500000000 -> ts 2490000000 == first_ts, dropped (strictly greater needed)
+> alsa-push 480 2500000000
+> echo packet at 2500000001 -> delivered
+> alsa-push 480 2500000001
+> echo short read of 100 frames
+> alsa-push 100 2700000000
+> alsa-wait-drain
+snd_pcm_recover err=-11 -> -11
+snd_pcm_wait 100
+snd_pcm_recover err=-11 -> -11
+snd_pcm_wait 100
+snd_pcm_recover err=-11 -> -11
+snd_pcm_wait 100
+> alsa-state
+state device= rate=48000 channels=2 format=S16_LE sample_size=4 period=480 handle=1 listen_thread=1 reopen_thread=0 reopen=0 shutdown=0 buffer=1 first_ts=2490000000
+> audio-dump
+audio[0] speakers=STEREO format=16BIT rate=48000 frames=480 ts=2490000001 head=0405060708090a0b
+audio[1] speakers=STEREO format=16BIT rate=48000 frames=100 ts=2697916667 head=05060708090a0b0c
+> alsa-destroy
+snd_pcm_drop
+snd_pcm_close
+log debug alsa-input: Capture thread is about to exit.

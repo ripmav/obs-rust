@@ -1,0 +1,29 @@
+# script_description must return str. Anything else leaves a TypeError pending inside the interpreter (the backend
+# neither prints nor clears it) and the description stays empty. The leftover error has no visible effect on the
+# following entry points (probed on CPython 3.14: script_load / script_update run normally and print as usual).
+scripting load
+py_begin d_none.py
+def script_description():
+    return None
+def script_load(settings):
+    print("load after bad description")
+def script_update(settings):
+    print("update after bad description")
+py_end
+create S0 d_none.py
+py_begin d_ok.py
+def script_description():
+    return "next script is unaffected"
+py_end
+create S1 d_ok.py
+py_begin d_bytes.py
+def script_description():
+    return b"bytes"
+py_end
+create S2 d_bytes.py
+py_begin d_empty.py
+def script_description():
+    return ""
+py_end
+create S3 d_empty.py
+scripting unload

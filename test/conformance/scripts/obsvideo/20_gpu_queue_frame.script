@@ -1,0 +1,77 @@
+# GPU encode hand-off from the graphics thread (output_gpu_encoders/queue_frame). Preconditions: the mix has a GPU
+# consumer, the frame was converted this iteration (texture_converted) and the gpu vframe-info buffer has an entry (queued
+# by video_sleep of the PREVIOUS iteration, so the first iteration after activation hands nothing over).
+# Per vframe entry (timestamp,count) queue_frame is called until it returns 0:
+#   duplicate  := avail queue empty  OR (encode queue non-empty AND count > 1)
+#   duplicate -> bump the count of the newest queued frame (no queue entry => stop), post the semaphore
+#   else      -> pop an avail frame; if raw output is ALSO active or count > 1, GPU-copy the converted textures into it,
+#                otherwise SWAP the avail frame's textures with the mix's convert_textures_encode (no copy);
+#                frame.count=1, timestamp=entry timestamp; push to the encode queue; post the semaphore
+#   returns --count of the entry.
+core 1000
+trace 0
+ctx_new 1000
+clock 1000
+video_time 1000
+mix_add M 1 16 16 16 16 NV12 1 0 0
+stop_after M 1000
+gpu_init M
+sleep_result 1
+mix_active M 0 1
+echo "--- iteration 1: no vframe info yet, nothing queued"
+loop 1
+sem
+gpu_queue_dump M
+echo "--- iteration 2: the entry queued by iteration 1 (ts 1000, count 1) -> avail frame swapped with the mix encode textures"
+trace 1
+loop 1
+trace 0
+sem
+gpu_queue_dump M
+echo "--- an entry with count 3 while the queue is non-empty: the first two units duplicate the newest queued frame (its count grows by 2), the last unit has count 1 and so queues a NEW frame (3 posts)"
+vframe_clear M gpu
+vframe_push M gpu 77 3
+loop 1
+sem
+gpu_queue_dump M
+echo "--- empty queue + count 2: not a duplicate (queue empty) -> copy path creates a frame, then count 1 creates a second frame"
+vframe_clear M gpu
+gpu_queue_clear M
+vframe_push M gpu 88 2
+trace 1
+loop 1
+trace 0
+sem
+gpu_queue_dump M
+echo "--- raw consumer active as well: copy instead of swap (raw also needs its own vframe entry)"
+vframe_clear M gpu
+gpu_queue_clear M
+mix_active M 1 1
+loop 1
+vframe_clear M gpu
+vframe_push M gpu 99 1
+trace 1
+loop 1
+trace 0
+gpu_queue_dump M
+mix_active M 0 1
+echo "--- avail queue exhausted: duplicates the newest queued frame"
+gpu_avail_trim M 0
+vframe_clear M gpu
+vframe_push M gpu 111 1
+loop 1
+gpu_queue_dump M
+echo "--- avail exhausted and encode queue empty: nothing to duplicate, the entry is consumed, nothing is posted"
+gpu_queue_clear M
+vframe_clear M gpu
+vframe_push M gpu 122 1
+loop 1
+gpu_queue_dump M
+mix_dump M
+echo "--- a GPU-active mix WITHOUT gpu conversion never sets texture_converted: its vframe entries are never consumed (they accumulate, one per frame)"
+mix_active M 0 0
+mix_add B 1 16 16 16 16 BGRA 0 0 0
+stop_after B 1000
+mix_active B 0 1
+loop 4
+mix_dump B

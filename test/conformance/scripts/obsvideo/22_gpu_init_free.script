@@ -1,0 +1,32 @@
+# init_gpu_encoding / stop_gpu_encoding_thread / free_gpu_encoding.
+# init: stop flag cleared; NUM_ENCODE_TEXTURES (10) texture pairs created (P010 output -> p010 textures, anything else nv12)
+# with RENDER_TARGET|SHARED_KM_TEX flags (0x? see trace) and pushed to the avail queue with handle -1 on non-Windows;
+# first creation failure -> returns false immediately (frames created so far stay queued); then semaphore, event, thread.
+# stop: only if the thread was started: set stop flag, post the semaphore, join. free: destroys semaphore/event and every
+# texture of both queues.
+core 1000
+trace 1
+mix_add M 1 16 16 16 16 NV12 1 0 0
+mix_add P 1 16 16 16 16 P010 1 0 0
+echo "--- nv12 init"
+gpu_init M
+gpu_queue_dump M
+echo "--- p010 init"
+gpu_init P
+echo "--- texture creation failure on the first pair"
+mix_add F 1 16 16 16 16 NV12 1 0 0
+gpu_init F tex_fail
+echo "--- thread creation failure"
+pthread_create_result 11
+mix_add G 1 16 16 16 16 NV12 1 0 0
+gpu_init G
+pthread_create_result 0
+echo "--- stop on a mix whose thread never started: no join"
+gpu_stop G
+echo "--- stop on a running one"
+gpu_stop M
+gpu_stop M
+echo "--- free destroys every queued texture exactly once"
+gpu_queue_push M extra 1 5 0 0
+gpu_free M
+gpu_free M

@@ -1,0 +1,18 @@
+# Property/script_properties edge cases: no script_properties -> NULL from backend (core substitutes an empty set);
+# script_properties returning nil or a non-pointer -> NULL.
+scripting load
+lua_begin np.lua
+x = 1
+lua_end
+lua_begin nilp.lua
+function script_properties() return nil end
+lua_end
+lua_begin numprops.lua
+function script_properties() return 5 end
+lua_end
+create S0 np.lua
+props S0 P0
+create S1 nilp.lua
+props S1 P0
+create S2 numprops.lua
+props S2 P0

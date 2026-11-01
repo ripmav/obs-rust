@@ -1,0 +1,30 @@
+# DMA-BUF frames: planes are the leading DmaBuf datas of the buffer; offsets/strides come from the chunks; the modifier of the
+# negotiated format is passed per plane unless it is DRM_FORMAT_MOD_INVALID (then none). Formats without a GS format
+# (NV12, YUY2) are refused; a corrupted plane chunk skips the frame; the dmabuf texture replaces the previous one.
+unique_name :1.5
+prop ScreenCast AvailableSourceTypes "uint32 1"
+prop ScreenCast version "uint32 2"
+screencast_load
+new a pipewire-desktop-capture-source
+portal_ok 44
+param_changed format=BGRA size=1920x1080 modifier=0x0100000000000001
+buf_data 0 0 dmabuf 11 0 7680 8294400 0 0
+buf_push 0
+process
+param_changed format=BGRA size=1920x1080 modifier=0x00ffffffffffffff
+buf_push 0
+process
+param_changed format=BGRx size=640x480 modifier=0x5
+buf_data 1 0 dmabuf 21 0 2560 100 0 0
+buf_data 1 1 dmabuf 22 4096 1280 100 0 0
+buf_data 1 2 memptr 0 0 0 100 0 0
+buf_push 1
+process
+buf_data 2 0 dmabuf 31 0 2560 100 0 0
+buf_data 2 1 dmabuf 32 0 2560 100 1 0
+buf_push 2
+process
+param_changed format=NV12 size=640x480 modifier=0x5
+buf_push 1
+process
+leaks

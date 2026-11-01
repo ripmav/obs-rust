@@ -1,0 +1,100 @@
+> log error
+> rist_open rist://192.0.2.20:8000
+rist sender_create profile=1 flow_id=0
+rist peer_create address=rist://192.0.2.20:8000 physical_port=0 virt_dst_port=1968 key_size=0 secret=""
+rist   srp_username="" srp_password="" recovery_length_min=3000 recovery_length_max=3000
+rist   initiate_conn=0 recovery_mode=2 weight=0 session_timeout=0 cname="" compression=0
+rist start
+rist stats_callback_set interval=60000
+rist_open ret=SUCCESS(0) max_packet_size=1316 buffer_size=3000 profile=1 packet_size=1316 fifo_shift=13 statsinterval=60000
+> rist_close
+rist destroy
+rist_close ret=0
+> rist_open rist://192.0.2.20:8000?buffer=500
+rist sender_create profile=1 flow_id=0
+rist peer_create address=rist://192.0.2.20:8000 physical_port=0 virt_dst_port=1968 key_size=0 secret=""
+rist   srp_username="" srp_password="" recovery_length_min=3000 recovery_length_max=3000
+rist   initiate_conn=0 recovery_mode=2 weight=0 session_timeout=0 cname="" compression=0
+rist start
+rist stats_callback_set interval=60000
+rist_open ret=SUCCESS(0) max_packet_size=1316 buffer_size=3000 profile=1 packet_size=1316 fifo_shift=13 statsinterval=60000
+> rist_close
+rist destroy
+rist_close ret=0
+> rist_open rist://@192.0.2.20:8000
+rist sender_create profile=1 flow_id=0
+rist peer_create address=rist://@192.0.2.20:8000 physical_port=0 virt_dst_port=1968 key_size=0 secret=""
+rist   srp_username="" srp_password="" recovery_length_min=3000 recovery_length_max=3000
+rist   initiate_conn=0 recovery_mode=2 weight=0 session_timeout=0 cname="" compression=0
+rist start
+rist stats_callback_set interval=60000
+rist_open ret=SUCCESS(0) max_packet_size=1316 buffer_size=3000 profile=1 packet_size=1316 fifo_shift=13 statsinterval=60000
+> rist_close
+rist destroy
+rist_close ret=0
+> rist_open rist://192.0.2.20:8000?secret=urlsecret1&aes-type=128
+rist sender_create profile=1 flow_id=0
+rist peer_create address=rist://192.0.2.20:8000 physical_port=0 virt_dst_port=1968 key_size=128 secret="urlsecret1"
+rist   srp_username="" srp_password="" recovery_length_min=3000 recovery_length_max=3000
+rist   initiate_conn=0 recovery_mode=2 weight=0 session_timeout=0 cname="" compression=0
+rist start
+rist stats_callback_set interval=60000
+rist_open ret=SUCCESS(0) max_packet_size=1316 buffer_size=3000 profile=1 packet_size=1316 fifo_shift=13 statsinterval=60000
+> rist_close
+rist destroy
+rist_close ret=0
+> rist_open rist://192.0.2.20:8000 svc-secret
+rist sender_create profile=1 flow_id=0
+rist peer_create address=rist://192.0.2.20:8000 physical_port=0 virt_dst_port=1968 key_size=0 secret="svc-secret"
+rist   srp_username="" srp_password="" recovery_length_min=3000 recovery_length_max=3000
+rist   initiate_conn=0 recovery_mode=2 weight=0 session_timeout=0 cname="" compression=0
+rist start
+rist stats_callback_set interval=60000
+rist_open ret=SUCCESS(0) max_packet_size=1316 buffer_size=3000 profile=1 packet_size=1316 fifo_shift=13 statsinterval=60000
+> rist_close
+rist destroy
+rist_close ret=0
+> rist_open rist://192.0.2.20:8000?secret=urlsecret1&aes-type=256 svc-secret
+rist sender_create profile=1 flow_id=0
+rist peer_create address=rist://192.0.2.20:8000 physical_port=0 virt_dst_port=1968 key_size=256 secret="urlsecret1"
+rist   srp_username="" srp_password="" recovery_length_min=3000 recovery_length_max=3000
+rist   initiate_conn=0 recovery_mode=2 weight=0 session_timeout=0 cname="" compression=0
+rist start
+rist stats_callback_set interval=60000
+rist_open ret=SUCCESS(0) max_packet_size=1316 buffer_size=3000 profile=1 packet_size=1316 fifo_shift=13 statsinterval=60000
+> rist_close
+rist destroy
+rist_close ret=0
+> rist_open rist://192.0.2.20:8000 - alice s3cret
+rist sender_create profile=1 flow_id=0
+rist peer_create address=rist://192.0.2.20:8000 physical_port=0 virt_dst_port=1968 key_size=0 secret=""
+rist   srp_username="alice" srp_password="s3cret" recovery_length_min=3000 recovery_length_max=3000
+rist   initiate_conn=0 recovery_mode=2 weight=0 session_timeout=0 cname="" compression=0
+rist start
+rist stats_callback_set interval=60000
+rist_open ret=SUCCESS(0) max_packet_size=1316 buffer_size=3000 profile=1 packet_size=1316 fifo_shift=13 statsinterval=60000
+> rist_close
+rist destroy
+rist_close ret=0
+> rist_open rist://192.0.2.20:8000?username=bob&password=pw2 - alice s3cret
+rist sender_create profile=1 flow_id=0
+rist peer_create address=rist://192.0.2.20:8000 physical_port=0 virt_dst_port=1968 key_size=0 secret=""
+rist   srp_username="bob" srp_password="pw2" recovery_length_min=3000 recovery_length_max=3000
+rist   initiate_conn=0 recovery_mode=2 weight=0 session_timeout=0 cname="" compression=0
+rist start
+rist stats_callback_set interval=60000
+rist_open ret=SUCCESS(0) max_packet_size=1316 buffer_size=3000 profile=1 packet_size=1316 fifo_shift=13 statsinterval=60000
+> rist_close
+rist destroy
+rist_close ret=0
+> rist_open rist://192.0.2.20:8000?virt-dst-port=1970
+rist sender_create profile=1 flow_id=0
+rist peer_create address=rist://192.0.2.20:8000 physical_port=0 virt_dst_port=1970 key_size=0 secret=""
+rist   srp_username="" srp_password="" recovery_length_min=3000 recovery_length_max=3000
+rist   initiate_conn=0 recovery_mode=2 weight=0 session_timeout=0 cname="" compression=0
+rist start
+rist stats_callback_set interval=60000
+rist_open ret=SUCCESS(0) max_packet_size=1316 buffer_size=3000 profile=1 packet_size=1316 fifo_shift=13 statsinterval=60000
+> rist_close
+rist destroy
+rist_close ret=0

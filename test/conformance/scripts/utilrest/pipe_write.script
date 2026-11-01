@@ -1,0 +1,30 @@
+# os_process_pipe_create (write mode): the runner's writes arrive on the child's stdin. Because os_process_pipe_write is
+# a buffered stdio write that is NOT flushed (QUIRK Q-1), data only reaches the child when destroy closes the stream;
+# results are therefore observed through the child's exit status returned by destroy.
+popen 0 w "read x; [ \"$x\" = payload ] && exit 3; exit 4"
+pwrite 0 "payload\n"
+# the child's stdout is NOT captured in write mode; reading it returns 0
+pread 0 10
+pclose 0
+# destroy closes stdin: the child sees EOF and finishes (here: no bytes at all arrive)
+popen 1 w "[ $(wc -c) -eq 0 ] && exit 5; exit 6"
+pclose 1
+# all bytes of a write arrive (40 bytes counted by the child)
+popen 2 w "[ $(wc -c) -eq 40 ] && exit 7; exit 8"
+pwrite 2 "0123456789012345678901234567890123456789"
+pclose 2
+# a 100000-byte write is delivered completely (exercises the partial-write loop; the child drains stdin concurrently)
+popen 3 w "[ $(wc -c) -eq 100000 ] && exit 9; exit 10"
+pwrite_big 3 100000
+pclose 3
+# empty write returns 0
+popen 4 w "cat >/dev/null"
+pwrite 4 ""
+pclose 4
+# the type is "write" for anything not starting with 'r'
+popen 5 x "cat >/dev/null; exit 11"
+pclose 5
+# the child's stderr can be read before it is closed only when it ends by itself
+popen 6 w "printf oops >&2; exit 12"
+pread_err 6 100
+pclose 6

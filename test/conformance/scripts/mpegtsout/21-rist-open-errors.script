@@ -1,0 +1,30 @@
+# librist_open failures: each failure path destroys the context (rist_destroy) once; return values are OBS stop codes.
+log error
+# QUIRK/library: the real rist_parse_address2 is very lenient (any scheme / host / port is accepted at this stage and
+# validated later by rist_peer_create); only an empty URL fails to parse -> BAD_PATH (the context is destroyed)
+rist_open ""
+rist_open "rist://:::"
+rist_open "foo://x:1"
+# encryption requested (aes-type) without a secret -> INVALID_STREAM
+rist_open "rist://192.0.2.20:8000?aes-type=128"
+rist_open "rist://192.0.2.20:8000?aes-type=256"
+rist_open "rist://192.0.2.20:8000?aes-type=192"
+# sender creation, peer creation and start failures -> OBS_OUTPUT_ERROR
+rist_fail sender_create -1
+rist_open "rist://192.0.2.20:8000"
+srt_reset_net
+rist_fail peer_create -1
+rist_open "rist://192.0.2.20:8000"
+srt_reset_net
+rist_fail start -1
+rist_open "rist://192.0.2.20:8000"
+srt_reset_net
+# stats callback registration failure is only logged (returns -1 in the real library; here 0 = tolerated: open succeeds)
+rist_fail stats_callback_set -1
+rist_open "rist://192.0.2.20:8000"
+rist_close
+srt_reset_net
+# close failing: -1
+rist_open "rist://192.0.2.20:8000"
+rist_fail destroy -1
+rist_close

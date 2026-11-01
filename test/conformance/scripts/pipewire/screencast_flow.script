@@ -1,0 +1,20 @@
+# Full portal flow for the unified screen-capture source: CreateSession -> SelectSources -> Start -> OpenPipeWireRemote,
+# with the request/session paths, token counters, cursor mode choice, persist_mode/restore_token (portal version >= 4)
+# and the stream creation request that follows.
+unique_name :1.42
+prop ScreenCast AvailableSourceTypes "uint32 3"
+prop ScreenCast AvailableCursorModes "uint32 7"
+prop ScreenCast version "uint32 5"
+screencast_load
+set sc RestoreToken str old-token
+new sc pipewire-screen-capture-source
+# 1st call: CreateSession; its Response signal (subscription 1) carries session_handle
+finish 1 ok "()"
+response 1 "(0, {'session_handle': <'/org/freedesktop/portal/desktop/session/1_42/obs1'>})"
+finish 2 ok "()"
+response 2 "(0, {})"
+finish 3 ok "()"
+response 3 "(0, {'streams': <[(@u 57, @a{sv} {})]>, 'restore_token': <'new-token'>})"
+finish 4 fd
+get sc RestoreToken str
+size sc

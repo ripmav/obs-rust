@@ -1,0 +1,24 @@
+> unique_name :1.1
+> prop ScreenCast AvailableSourceTypes uint32 2
+> prop ScreenCast AvailableCursorModes uint32 2
+> prop ScreenCast version uint32 3
+> screencast_load
+dbus.bus_get type=2 -> ok
+dbus.proxy_new org.freedesktop.portal.Desktop /org/freedesktop/portal/desktop org.freedesktop.portal.ScreenCast flags=0
+log info [pipewire] Available capture sources:
+log info [pipewire]     - Window source
+host.register_source pipewire-window-capture-source type=0 flags=0x481 icon=7
+host.register_source pipewire-screen-capture-source type=0 flags=0x81 icon=6
+> new w pipewire-window-capture-source
+log info PipeWire initialized
+dbus.subscribe#1 org.freedesktop.portal.Desktop org.freedesktop.portal.Request.Response path=/org/freedesktop/portal/desktop/request/1_1/obs1 arg0=NULL flags=1
+dbus.call#1 CreateSession ({'handle_token': <'obs1'>, 'session_handle_token': <'obs1'>},)
+created w
+> name w
+name = PipeWireWindowCapture
+> response 1 (0, {'session_handle': <'/s/w'>})
+dbus.signal Response -> /org/freedesktop/portal/desktop/request/1_1/obs1
+log info [pipewire] Screencast session created
+dbus.subscribe#2 org.freedesktop.portal.Desktop org.freedesktop.portal.Request.Response path=/org/freedesktop/portal/desktop/request/1_1/obs2 arg0=NULL flags=1
+dbus.call#2 SelectSources (objectpath '/s/w', {'types': <uint32 2>, 'multiple': <false>, 'handle_token': <'obs2'>, 'cursor_mode': <uint32 2>})
+dbus.unsubscribe#1

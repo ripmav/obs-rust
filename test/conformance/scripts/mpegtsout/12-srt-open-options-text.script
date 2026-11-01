@@ -1,0 +1,17 @@
+# Text query options: passphrase (URL value replaces the one given by the service), streamid, smoother (congestion control),
+# transtype (live/file; anything else is an error), localip/localport are only used in rendezvous mode.
+srt_open "srt://192.0.2.10:9000?passphrase=secret-pass-1&streamid=cam1&smoother=live&transtype=live"
+srt_close
+# service supplied streamid / passphrase (srt_open's 2nd and 3rd argument) are applied when the URL does not override them
+srt_open "srt://192.0.2.10:9000" svc-stream svc-phrase1234
+srt_close
+srt_open "srt://192.0.2.10:9000?streamid=url-stream&passphrase=url-phrase1234" svc-stream svc-phrase1234
+srt_close
+# transtype=file selects SRTT_FILE (value 1)
+srt_open "srt://192.0.2.10:9000?transtype=file"
+srt_close
+# invalid transtype / mode -> OBS_OUTPUT_ERROR before any socket is created (srt_cleanup is still called by the error path)
+srt_open "srt://192.0.2.10:9000?transtype=bogus"
+srt_open "srt://192.0.2.10:9000?mode=bogus"
+# strings are case sensitive
+srt_open "srt://192.0.2.10:9000?mode=Caller"

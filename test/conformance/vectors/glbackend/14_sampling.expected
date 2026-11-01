@@ -1,0 +1,58 @@
+create rc=0 device=yes
+tex rt ok
+tex img ok
+vshader vs ok
+pshader ps ok
+params ps count=1
+  0 image SHADER_PARAM_TEXTURE
+  viewproj=no world=no
+vb full ok
+vb wide ok
+# section1
+read rt 4x4 linesize=16
+  row 0 ff0000ffff0000ff00ff00ff00ff00ff
+  row 1 ff0000ffff0000ff00ff00ff00ff00ff
+  row 2 0000ffff0000ffffffffffffffffffff
+  row 3 0000ffff0000ffffffffffffffffffff
+# clamp-from-shader-text
+read rt 4x4 linesize=16
+  row 0 ff0000ff00ff00ff00ff00ff00ff00ff
+  row 1 0000ffffffffffffffffffffffffffff
+  row 2 0000ffffffffffffffffffffffffffff
+  row 3 0000ffffffffffffffffffffffffffff
+sampler wrap ok
+# sampler-wrap
+read rt 4x4 linesize=16
+  row 0 ffffffffffffffff0000ffff0000ffff
+  row 1 ffffffffffffffff0000ffff0000ffff
+  row 2 00ff00ff00ff00ffff0000ffff0000ff
+  row 3 00ff00ff00ff00ffff0000ffff0000ff
+sampler mirror ok
+# sampler-mirror
+read rt 4x4 linesize=16
+  row 0 ff0000ff00ff00ffff0000ff00ff00ff
+  row 1 0000ffffffffffff0000ffffffffffff
+  row 2 ff0000ff00ff00ffff0000ff00ff00ff
+  row 3 0000ffffffffffff0000ffffffffffff
+sampler border ok
+# sampler-border
+read rt 4x4 linesize=16
+  row 0 00000000000000000000000000000000
+  row 1 00000000ffffffff0000000000000000
+  row 2 00000000000000000000000000000000
+  row 3 00000000000000000000000000000000
+sampler border0 ok
+# sampler-border-with-anisotropy-0
+read rt 4x4 linesize=16
+  row 0 ff00ffffff00ffffff00ffffff00ffff
+  row 1 ff00ffffffffffffff00ffffff00ffff
+  row 2 ff00ffffff00ffffff00ffffff00ffff
+  row 3 ff00ffffff00ffffff00ffffff00ffff
+sampler clamp ok
+# sampler-clamp
+read rt 4x4 linesize=16
+  row 0 ff0000ff00ff00ff00ff00ff00ff00ff
+  row 1 0000ffffffffffffffffffffffffffff
+  row 2 0000ffffffffffffffffffffffffffff
+  row 3 0000ffffffffffffffffffffffffffff
+destroyed

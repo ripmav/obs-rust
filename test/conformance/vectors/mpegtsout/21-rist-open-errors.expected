@@ -1,0 +1,92 @@
+> log error
+> rist_open 
+rist sender_create profile=1 flow_id=0
+log error [obs-ffmpeg mpegts muxer / librist]: Failed to parse url: 
+rist destroy
+rist_open ret=BAD_PATH(-1) max_packet_size=1316 buffer_size=3000 profile=1 packet_size=1316 fifo_shift=13 statsinterval=60000
+> rist_open rist://:::
+rist sender_create profile=1 flow_id=0
+rist peer_create address=rist://::: physical_port=0 virt_dst_port=1968 key_size=0 secret=""
+rist   srp_username="" srp_password="" recovery_length_min=3000 recovery_length_max=3000
+rist   initiate_conn=0 recovery_mode=2 weight=0 session_timeout=0 cname="" compression=0
+rist start
+rist stats_callback_set interval=60000
+rist_open ret=SUCCESS(0) max_packet_size=1316 buffer_size=3000 profile=1 packet_size=1316 fifo_shift=13 statsinterval=60000
+> rist_open foo://x:1
+rist sender_create profile=1 flow_id=0
+rist peer_create address=foo://x:1 physical_port=0 virt_dst_port=1968 key_size=0 secret=""
+rist   srp_username="" srp_password="" recovery_length_min=3000 recovery_length_max=3000
+rist   initiate_conn=0 recovery_mode=2 weight=0 session_timeout=0 cname="" compression=0
+rist start
+rist stats_callback_set interval=60000
+rist_open ret=SUCCESS(0) max_packet_size=1316 buffer_size=3000 profile=1 packet_size=1316 fifo_shift=13 statsinterval=60000
+> rist_open rist://192.0.2.20:8000?aes-type=128
+rist sender_create profile=1 flow_id=0
+log error [obs-ffmpeg mpegts muxer / librist]: Secret is mandatory if encryption is enabled
+rist destroy
+rist_open ret=INVALID_STREAM(-3) max_packet_size=1316 buffer_size=3000 profile=1 packet_size=1316 fifo_shift=13 statsinterval=60000
+> rist_open rist://192.0.2.20:8000?aes-type=256
+rist sender_create profile=1 flow_id=0
+log error [obs-ffmpeg mpegts muxer / librist]: Secret is mandatory if encryption is enabled
+rist destroy
+rist_open ret=INVALID_STREAM(-3) max_packet_size=1316 buffer_size=3000 profile=1 packet_size=1316 fifo_shift=13 statsinterval=60000
+> rist_open rist://192.0.2.20:8000?aes-type=192
+rist sender_create profile=1 flow_id=0
+rist peer_create address=rist://192.0.2.20:8000 physical_port=0 virt_dst_port=1968 key_size=192 secret=""
+rist   srp_username="" srp_password="" recovery_length_min=3000 recovery_length_max=3000
+rist   initiate_conn=0 recovery_mode=2 weight=0 session_timeout=0 cname="" compression=0
+rist start
+rist stats_callback_set interval=60000
+rist_open ret=SUCCESS(0) max_packet_size=1316 buffer_size=3000 profile=1 packet_size=1316 fifo_shift=13 statsinterval=60000
+> rist_fail sender_create -1
+> rist_open rist://192.0.2.20:8000
+log error [obs-ffmpeg mpegts muxer / librist]: Failed to create a sender
+rist_open ret=ERROR(-4) max_packet_size=1316 buffer_size=3000 profile=1 packet_size=1316 fifo_shift=13 statsinterval=60000
+> srt_reset_net
+> rist_fail peer_create -1
+> rist_open rist://192.0.2.20:8000
+rist sender_create profile=1 flow_id=0
+rist peer_create address=rist://192.0.2.20:8000 physical_port=0 virt_dst_port=1968 key_size=0 secret=""
+rist   srp_username="" srp_password="" recovery_length_min=3000 recovery_length_max=3000
+rist   initiate_conn=0 recovery_mode=2 weight=0 session_timeout=0 cname="" compression=0
+log error [obs-ffmpeg mpegts muxer / librist]: Failed to create a peer.
+rist destroy
+rist_open ret=ERROR(-4) max_packet_size=1316 buffer_size=3000 profile=1 packet_size=1316 fifo_shift=13 statsinterval=60000
+> srt_reset_net
+> rist_fail start -1
+> rist_open rist://192.0.2.20:8000
+rist sender_create profile=1 flow_id=0
+rist peer_create address=rist://192.0.2.20:8000 physical_port=0 virt_dst_port=1968 key_size=0 secret=""
+rist   srp_username="" srp_password="" recovery_length_min=3000 recovery_length_max=3000
+rist   initiate_conn=0 recovery_mode=2 weight=0 session_timeout=0 cname="" compression=0
+rist start
+log error [obs-ffmpeg mpegts muxer / librist]: RIST failed to start
+rist destroy
+rist_open ret=ERROR(-4) max_packet_size=1316 buffer_size=3000 profile=1 packet_size=1316 fifo_shift=13 statsinterval=60000
+> srt_reset_net
+> rist_fail stats_callback_set -1
+> rist_open rist://192.0.2.20:8000
+rist sender_create profile=1 flow_id=0
+rist peer_create address=rist://192.0.2.20:8000 physical_port=0 virt_dst_port=1968 key_size=0 secret=""
+rist   srp_username="" srp_password="" recovery_length_min=3000 recovery_length_max=3000
+rist   initiate_conn=0 recovery_mode=2 weight=0 session_timeout=0 cname="" compression=0
+rist start
+rist stats_callback_set interval=60000
+rist_open ret=SUCCESS(0) max_packet_size=1316 buffer_size=3000 profile=1 packet_size=1316 fifo_shift=13 statsinterval=60000
+> rist_close
+rist destroy
+rist_close ret=0
+> srt_reset_net
+> rist_open rist://192.0.2.20:8000
+rist sender_create profile=1 flow_id=0
+rist peer_create address=rist://192.0.2.20:8000 physical_port=0 virt_dst_port=1968 key_size=0 secret=""
+rist   srp_username="" srp_password="" recovery_length_min=3000 recovery_length_max=3000
+rist   initiate_conn=0 recovery_mode=2 weight=0 session_timeout=0 cname="" compression=0
+rist start
+rist stats_callback_set interval=60000
+rist_open ret=SUCCESS(0) max_packet_size=1316 buffer_size=3000 profile=1 packet_size=1316 fifo_shift=13 statsinterval=60000
+> rist_fail destroy -1
+> rist_close
+rist destroy
+log error [obs-ffmpeg mpegts muxer / librist]: Failed to close properly rist://192.0.2.20:8000
+rist_close ret=-1

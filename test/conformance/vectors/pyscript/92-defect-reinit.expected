@@ -1,0 +1,11 @@
+scripting load -> 1 python=1 ticks=1
+log info [Python: again.py] first run
+log info [obs-scripting]: Loaded python script: again.py
+create S0 -> loaded=1 lang=2 file=again.py desc=NULL
+log info [obs-scripting]: Unloaded python script: again.py
+auto-destroy S0
+log info [Scripting] Total detached callbacks: 0
+scripting unload ticks=0
+scripting load -> 1 python=1 ticks=0
+tryseq S0 -> crash
+scripting unload ticks=0

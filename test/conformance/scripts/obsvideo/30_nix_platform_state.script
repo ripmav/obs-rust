@@ -1,0 +1,11 @@
+# obs-nix-platform.c: process-wide platform selector (default X11/EGL) and display pointer. obs_set_nix_platform asserts on
+# INVALID (not exercised). get_module_extension() is ".so" on this platform.
+nix_platform_get
+nix_module_ext
+nix_platform_set 2
+nix_platform_get
+nix_display_set fake
+nix_platform_get
+nix_platform_set 1
+nix_display_set null
+nix_platform_get

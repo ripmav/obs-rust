@@ -1,0 +1,51 @@
+scripting load -> 1 ticks=1
+fake obs_module_add_source inst_src
+log info [obs-scripting]: Loaded lua script: inst.lua
+create S0 -> loaded=1 lang=1 file=inst.lua desc=NULL
+src_types [inst_src type=0 flags=1 enabled=1 name="Instance Source"]
+src_defaults inst_src dflt="from-lua" dn=3
+log info [Lua: inst.lua] create name=one k=v1
+src_create one -> data=yes
+log info [Lua: inst.lua] create name=two k=fail
+src_create two -> data=NULL
+log info [Lua: inst.lua] create name=three k=v3
+src_create three -> data=yes
+src_call one width
+  -> 100
+
+src_call one height
+  -> 50
+
+src_call one update
+log info [Lua: inst.lua] update one k=v2
+
+src_call one activate
+log info [Lua: inst.lua] activate one
+
+src_call one deactivate
+log info [Lua: inst.lua] deactivate one
+
+src_call one show
+log info [Lua: inst.lua] show one
+
+src_call one hide
+log warning [Lua: inst.lua] Failed to call hide for Instance Source: [string "<chunk>"]:24: attempt to index local 't' (a nil value)
+
+src_call one tick
+log info [Lua: inst.lua] video_tick one 0.50
+
+src_call one render
+log info [Lua: inst.lua] video_render one effect=true
+
+src_call one save
+ saved="one"
+
+src_call one load
+log info [Lua: inst.lua] load one v=loaded
+
+src_call one props
+  -> text_one
+src_call three destroy
+log info [Lua: inst.lua] destroy three
+
+fake obs_enable_source_type inst_src 0

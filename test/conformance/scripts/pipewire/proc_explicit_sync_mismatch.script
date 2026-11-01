@@ -1,0 +1,16 @@
+# SyncTimeline meta present but the buffer does not have exactly planes+2 datas -> sync is disabled for that frame
+# (render then draws without waiting); no meta -> same.
+unique_name :1.5
+prop ScreenCast AvailableSourceTypes "uint32 1"
+prop ScreenCast version "uint32 2"
+screencast_load
+gs_sync 1
+new a pipewire-desktop-capture-source
+portal_ok 52
+param_changed format=BGRA size=64x64 modifier=0x7
+buf_data 0 0 dmabuf 11 0 256 100 0 0
+buf_data 0 1 syncobj 12 0 0 0 0 0
+buf_meta 0 sync 1 2
+buf_push 0
+process
+render a

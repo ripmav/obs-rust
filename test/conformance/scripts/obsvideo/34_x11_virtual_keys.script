@@ -1,0 +1,27 @@
+# obs_key_from_virtual_key (keysym -> obs key): linear search of the keysym table copied from the server for the FIRST
+# matching entry; the keycode is min_keycode + index/syms_per_code; the result is the obs key owning that keycode (so a SHIFTED
+# keysym such as '!' resolves to the key of the physical key, here OBS_KEY_1). 0 -> NONE; unknown -> NONE; a keycode that
+# no obs key claimed -> NONE. obs_key_to_virtual_key: META -> Super_L, otherwise the base keysym (0 when none).
+x11_setup 8 40 4
+x11_map 10 XK_1 XK_exclam
+x11_map 11 XK_a XK_A
+x11_map 15 XK_Super_L
+x11_map 17 XK_Return
+x11_map 30 XK_Hyper_L
+hk_init
+hk_from_vk XK_1
+hk_from_vk XK_exclam
+hk_from_vk XK_a
+hk_from_vk XK_A
+hk_from_vk XK_Return
+hk_from_vk XK_Super_L
+hk_from_vk XK_Hyper_L
+hk_from_vk 0
+hk_from_vk 0x12345678
+hk_to_vk OBS_KEY_A
+hk_to_vk OBS_KEY_META
+hk_to_vk OBS_KEY_RETURN
+hk_to_vk OBS_KEY_NONE
+hk_to_vk OBS_KEY_MOUSE1
+hk_to_vk OBS_KEY_F1
+hk_free

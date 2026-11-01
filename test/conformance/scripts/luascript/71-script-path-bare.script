@@ -1,0 +1,4 @@
+# A script path without any slash: file name = whole path; a missing file is a load failure. A NULL path (-) makes the core return NULL.
+scripting load
+create S0 raw:nodir.lua
+create S1 -

@@ -1,0 +1,10 @@
+# DEFECT D-1: obslua.script_log(level, "") dereferences a NULL buffer in the reference (the scratch string is
+# freed by the empty copy, then searched for a newline) and crashes the host process.  Required behaviour of a
+# re-implementation: log nothing and carry on.  The reference crash is captured with a forked child ("try").
+scripting load
+lua_begin crash.lua
+obslua.script_log(obslua.LOG_INFO, "before")
+obslua.script_log(obslua.LOG_INFO, "")
+print("survived")
+lua_end
+try create S0 crash.lua

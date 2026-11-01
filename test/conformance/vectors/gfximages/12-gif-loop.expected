@@ -1,0 +1,88 @@
+file l.gif 66 bytes
+== NETSCAPE loop count absent
+gif_new size=66 -> Success
+gif_scan 66 -> Success
+gif_complete
+gif_info width=1 height=1 frames=2 loop_max=1 background=ff0000ff global_palette=1
+  frame 0 display=1 transparency=0 local_palette=0 interlaced=0 disposal=Unspecified(0) delay=5 rect=0,0,1,1
+  frame 1 display=1 transparency=0 local_palette=0 interlaced=0 disposal=Unspecified(0) delay=5 rect=0,0,1,1
+  frame_info(frame_count) null
+file l.gif 85 bytes
+== NETSCAPE loop count 0
+gif_new size=85 -> Success
+gif_scan 85 -> Success
+gif_complete
+gif_info width=1 height=1 frames=2 loop_max=0 background=ff0000ff global_palette=1
+  frame 0 display=1 transparency=0 local_palette=0 interlaced=0 disposal=Unspecified(0) delay=5 rect=0,0,1,1
+  frame 1 display=1 transparency=0 local_palette=0 interlaced=0 disposal=Unspecified(0) delay=5 rect=0,0,1,1
+  frame_info(frame_count) null
+file l.gif 85 bytes
+== NETSCAPE loop count 1
+gif_new size=85 -> Success
+gif_scan 85 -> Success
+gif_complete
+gif_info width=1 height=1 frames=2 loop_max=2 background=ff0000ff global_palette=1
+  frame 0 display=1 transparency=0 local_palette=0 interlaced=0 disposal=Unspecified(0) delay=5 rect=0,0,1,1
+  frame 1 display=1 transparency=0 local_palette=0 interlaced=0 disposal=Unspecified(0) delay=5 rect=0,0,1,1
+  frame_info(frame_count) null
+file l.gif 85 bytes
+== NETSCAPE loop count 2
+gif_new size=85 -> Success
+gif_scan 85 -> Success
+gif_complete
+gif_info width=1 height=1 frames=2 loop_max=3 background=ff0000ff global_palette=1
+  frame 0 display=1 transparency=0 local_palette=0 interlaced=0 disposal=Unspecified(0) delay=5 rect=0,0,1,1
+  frame 1 display=1 transparency=0 local_palette=0 interlaced=0 disposal=Unspecified(0) delay=5 rect=0,0,1,1
+  frame_info(frame_count) null
+file l.gif 85 bytes
+== NETSCAPE loop count 255
+gif_new size=85 -> Success
+gif_scan 85 -> Success
+gif_complete
+gif_info width=1 height=1 frames=2 loop_max=256 background=ff0000ff global_palette=1
+  frame 0 display=1 transparency=0 local_palette=0 interlaced=0 disposal=Unspecified(0) delay=5 rect=0,0,1,1
+  frame 1 display=1 transparency=0 local_palette=0 interlaced=0 disposal=Unspecified(0) delay=5 rect=0,0,1,1
+  frame_info(frame_count) null
+file l.gif 85 bytes
+== NETSCAPE loop count 65534
+gif_new size=85 -> Success
+gif_scan 85 -> Success
+gif_complete
+gif_info width=1 height=1 frames=2 loop_max=65535 background=ff0000ff global_palette=1
+  frame 0 display=1 transparency=0 local_palette=0 interlaced=0 disposal=Unspecified(0) delay=5 rect=0,0,1,1
+  frame 1 display=1 transparency=0 local_palette=0 interlaced=0 disposal=Unspecified(0) delay=5 rect=0,0,1,1
+  frame_info(frame_count) null
+file l.gif 85 bytes
+== NETSCAPE loop count 65535
+gif_new size=85 -> Success
+gif_scan 85 -> Success
+gif_complete
+gif_info width=1 height=1 frames=2 loop_max=65536 background=ff0000ff global_palette=1
+  frame 0 display=1 transparency=0 local_palette=0 interlaced=0 disposal=Unspecified(0) delay=5 rect=0,0,1,1
+  frame 1 display=1 transparency=0 local_palette=0 interlaced=0 disposal=Unspecified(0) delay=5 rect=0,0,1,1
+  frame_info(frame_count) null
+file lbadid.gif 85 bytes
+== NETSCAPE sub-block id 2
+gif_new size=85 -> Success
+gif_scan 85 -> Invalid frame data
+gif_complete
+gif_info width=1 height=1 frames=0 loop_max=1 background=ff0000ff global_palette=1
+  frame_info(frame_count) null
+file lbadlen.gif 85 bytes
+== NETSCAPE sub-block length 2
+gif_new size=85 -> Success
+gif_scan 85 -> Success
+gif_complete
+gif_info width=1 height=1 frames=2 loop_max=1 background=ff0000ff global_palette=1
+  frame 0 display=1 transparency=0 local_palette=0 interlaced=0 disposal=Unspecified(0) delay=5 rect=0,0,1,1
+  frame 1 display=1 transparency=0 local_palette=0 interlaced=0 disposal=Unspecified(0) delay=5 rect=0,0,1,1
+  frame_info(frame_count) null
+file lani.gif 85 bytes
+== ANIMEXTS1.0 identifier instead of NETSCAPE2.0
+gif_new size=85 -> Success
+gif_scan 85 -> Success
+gif_complete
+gif_info width=1 height=1 frames=2 loop_max=4 background=ff0000ff global_palette=1
+  frame 0 display=1 transparency=0 local_palette=0 interlaced=0 disposal=Unspecified(0) delay=5 rect=0,0,1,1
+  frame 1 display=1 transparency=0 local_palette=0 interlaced=0 disposal=Unspecified(0) delay=5 rect=0,0,1,1
+  frame_info(frame_count) null

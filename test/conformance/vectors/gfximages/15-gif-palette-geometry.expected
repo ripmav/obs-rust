@@ -1,0 +1,57 @@
+file il.gif 64 bytes
+file nl.gif 63 bytes
+file nopal.gif 37 bytes
+file big.gif 53 bytes
+file off.gif 50 bytes
+file off2.gif 74 bytes
+== interlaced (row order 0 | 4 | 2 6 | 1 3 5 7 in the stream)
+gif_new size=64 -> Success
+gif_scan 64 -> Success
+gif_complete
+gif_info width=4 height=8 frames=1 loop_max=1 background=ff0000ff global_palette=1
+  frame 0 display=1 transparency=0 local_palette=0 interlaced=1 disposal=Unspecified(0) delay=10 rect=0,0,4,8
+  frame_info(frame_count) null
+gif_frame 0 -> Success pixels=ff0000ff00ff00ff0000ffffffffffff00ff00ff0000ffffffffffff000000ff0000ffffffffffff000000ff090909ffff0000ff00ff00ff0000ffffffffffff00ff00ff0000ffffffffffff000000ff0000ffffffffffff000000ff090909ffff0000ff00ff00ff0000ffffffffffff00ff00ff0000ffffffffffff000000ff
+== the same pixels, sequential
+gif_new size=63 -> Success
+gif_scan 63 -> Success
+gif_complete
+gif_info width=4 height=8 frames=1 loop_max=1 background=ff0000ff global_palette=1
+  frame 0 display=1 transparency=0 local_palette=0 interlaced=0 disposal=Unspecified(0) delay=10 rect=0,0,4,8
+  frame_info(frame_count) null
+gif_frame 0 -> Success pixels=ff0000ff00ff00ff0000ffffffffffff00ff00ff0000ffffffffffff000000ff0000ffffffffffff000000ff090909ffff0000ff00ff00ff0000ffffffffffff00ff00ff0000ffffffffffff000000ff0000ffffffffffff000000ff090909ffff0000ff00ff00ff0000ffffffffffff00ff00ff0000ffffffffffff000000ff
+== no colour table anywhere
+gif_new size=37 -> Success
+gif_scan 37 -> Success
+gif_complete
+gif_info width=2 height=2 frames=1 loop_max=1 background=ff000000 global_palette=0
+  frame 0 display=1 transparency=0 local_palette=0 interlaced=0 disposal=Unspecified(0) delay=5 rect=0,0,2,2
+  frame_info(frame_count) null
+gif_frame 0 -> Success pixels=000000ffffffffff000000ffffffffff
+gif_palette global ok=1 entries=2 ff000000 ffffffff
+== frame 4x4 on a 2x2 screen
+gif_new size=53 -> Success
+gif_scan 53 -> Success
+gif_complete
+gif_info width=4 height=4 frames=1 loop_max=1 background=ff0000ff global_palette=1
+  frame 0 display=1 transparency=0 local_palette=0 interlaced=0 disposal=Unspecified(0) delay=5 rect=0,0,4,4
+  frame_info(frame_count) null
+gif_frame 0 -> Success pixels=ff0000ff00ff00ff0000ffffffffffffff0000ff00ff00ff0000ffffffffffffff0000ff00ff00ff0000ffffffffffffff0000ff00ff00ff0000ffffffffffff
+== frame at (1,1) extends past the screen
+gif_new size=50 -> Success
+gif_scan 50 -> Success
+gif_complete
+gif_info width=3 height=3 frames=1 loop_max=1 background=ff0000ff global_palette=1
+  frame 0 display=1 transparency=0 local_palette=0 interlaced=0 disposal=Unspecified(0) delay=5 rect=1,1,3,3
+  frame_info(frame_count) null
+gif_frame 0 -> Success pixels=00000000000000000000000000000000ff0000ff00ff00ff000000000000ffffffffffff
+== first frame entirely outside the screen
+gif_new size=74 -> Success
+gif_scan 74 -> Success
+gif_complete
+gif_info width=7 height=7 frames=2 loop_max=1 background=ff0000ff global_palette=1
+  frame 0 display=1 transparency=0 local_palette=0 interlaced=0 disposal=Unspecified(0) delay=5 rect=5,5,7,7
+  frame 1 display=1 transparency=0 local_palette=0 interlaced=0 disposal=Unspecified(0) delay=5 rect=0,0,2,2
+  frame_info(frame_count) null
+gif_frame 0 -> Success pixels=00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000ff0000ff00ff00ff00000000000000000000000000000000000000000000ffffffffffff
+gif_frame 1 -> Success pixels=ffffffff0000ffff000000000000000000000000000000000000000000ff00ffff0000ff00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000ff0000ff00ff00ff00000000000000000000000000000000000000000000ffffffffffff

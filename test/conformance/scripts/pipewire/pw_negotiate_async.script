@@ -1,0 +1,11 @@
+# Async-video sources never get DmaBuf (MemPtr only) and never query graphics for explicit sync.
+unique_name :1.5
+prop ScreenCast AvailableSourceTypes "uint32 1"
+prop ScreenCast version "uint32 2"
+screencast_load
+gs_sync 1
+pw_server_version 1.2.0
+new a pipewire-desktop-capture-source
+outflags a 5
+portal_ok 36
+param_changed format=YUY2 size=640x480 fps=30/1

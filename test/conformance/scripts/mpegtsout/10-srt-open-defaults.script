@@ -1,0 +1,7 @@
+# libsrt_open with a bare URL: every context field gets its "unset" default; the socket options that ARE applied are those whose
+# default passes the ">= 0" test. QUIRK: enforced_encryption, kmrefreshrate, kmpreannounce and snddropdelay are never given a
+# default (zero-initialised context), so they are always applied as 0 although every other option defaults to -1 (unset).
+# QUIRK: SRTO_PAYLOADSIZE defaults to 1316 and SRTO_SENDER is always set. Order of calls = order of the reference.
+log info
+srt_open srt://192.0.2.10:9000
+srt_close

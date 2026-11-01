@@ -1,0 +1,67 @@
+file a3.gif 114 bytes
+file a3l1.gif 114 bytes
+file a3l2.gif 114 bytes
+== infinite animation (3 frames, delays 10, 5, 0 cs)
+image loaded=1 animated=1 cx=2 cy=2 format=RGBA frame_updated=0 cur_frame=0 cur_loop=0 cur_time=0 mem_usage=202 alpha_mode=0 space=0 texture=no texture_data=no
+image loaded=1 animated=1 cx=2 cy=2 format=RGBA frame_updated=0 cur_frame=0 cur_loop=0 cur_time=0 mem_usage=202 alpha_mode=0 space=0 texture=yes texture_data=no
+texture cx=2 cy=2 format=RGBA flags=2 map_calls=0 data=ff0000ffff0000ffff0000ffff0000ff
+tick 99999999 -> 0 cur_frame=0 cur_loop=0 cur_time=99999999
+tick 1 -> 0 cur_frame=0 cur_loop=0 cur_time=100000000
+tick 1 -> 1 cur_frame=1 cur_loop=0 cur_time=1
+update_texture
+texture cx=2 cy=2 format=RGBA flags=2 map_calls=1 data=00ff00ff00ff00ff00ff00ff00ff00ff
+tick 50000000 -> 1 cur_frame=2 cur_loop=0 cur_time=1
+tick 50000000 -> 0 cur_frame=2 cur_loop=0 cur_time=50000001
+update_texture
+texture cx=2 cy=2 format=RGBA flags=2 map_calls=2 data=0000ffff0000ffff0000ffff0000ffff
+tick 100000000 -> 1 cur_frame=0 cur_loop=0 cur_time=50000001
+tick 100000000 -> 1 cur_frame=2 cur_loop=0 cur_time=1
+tick 100000000 -> 1 cur_frame=0 cur_loop=0 cur_time=1
+update_texture
+texture cx=2 cy=2 format=RGBA flags=2 map_calls=3 data=ff0000ffff0000ffff0000ffff0000ff
+== state after a 1 s tick (frame 2 has delay 0 = 100 ms)
+tick 1000000000 -> 0 cur_frame=0 cur_loop=0 cur_time=1
+image loaded=1 animated=1 cx=2 cy=2 format=RGBA frame_updated=0 cur_frame=0 cur_loop=0 cur_time=1 mem_usage=202 alpha_mode=0 space=0 texture=yes texture_data=no
+image loaded=0 animated=0 cx=0 cy=0 format=UNKNOWN frame_updated=0 cur_frame=0 cur_loop=0 cur_time=0 mem_usage=0 alpha_mode=0 space=0 texture=no texture_data=no
+textures_alive=0
+== NETSCAPE count 1 = loop_max 2 = two plays: stops on the last frame
+image loaded=1 animated=1 cx=2 cy=2 format=RGBA frame_updated=0 cur_frame=0 cur_loop=0 cur_time=0 mem_usage=202 alpha_mode=0 space=0 texture=no texture_data=no
+image loaded=1 animated=1 cx=2 cy=2 format=RGBA frame_updated=0 cur_frame=0 cur_loop=0 cur_time=0 mem_usage=202 alpha_mode=0 space=0 texture=yes texture_data=no
+tick 150000000 -> 1 cur_frame=1 cur_loop=0 cur_time=50000000
+update_texture
+texture cx=2 cy=2 format=RGBA flags=2 map_calls=1 data=00ff00ff00ff00ff00ff00ff00ff00ff
+tick 150000000 -> 1 cur_frame=0 cur_loop=1 cur_time=50000000
+tick 1000000000 -> 1 cur_frame=2 cur_loop=2 cur_time=800000000
+tick 1000000000 -> 0 cur_frame=2 cur_loop=2 cur_time=800000000
+tick 1000000000 -> 0 cur_frame=2 cur_loop=2 cur_time=800000000
+image loaded=1 animated=1 cx=2 cy=2 format=RGBA frame_updated=0 cur_frame=2 cur_loop=2 cur_time=800000000 mem_usage=202 alpha_mode=0 space=0 texture=yes texture_data=no
+update_texture
+texture cx=2 cy=2 format=RGBA flags=2 map_calls=2 data=0000ffff0000ffff0000ffff0000ffff
+image loaded=0 animated=0 cx=0 cy=0 format=UNKNOWN frame_updated=0 cur_frame=0 cur_loop=0 cur_time=0 mem_usage=0 alpha_mode=0 space=0 texture=no texture_data=no
+textures_alive=0
+== NETSCAPE count 2 = three plays
+image loaded=1 animated=1 cx=2 cy=2 format=RGBA frame_updated=0 cur_frame=0 cur_loop=0 cur_time=0 mem_usage=202 alpha_mode=0 space=0 texture=no texture_data=no
+image loaded=1 animated=1 cx=2 cy=2 format=RGBA frame_updated=0 cur_frame=0 cur_loop=0 cur_time=0 mem_usage=202 alpha_mode=0 space=0 texture=yes texture_data=no
+tick 150000000 -> 1 cur_frame=1 cur_loop=0 cur_time=50000000
+tick 150000000 -> 1 cur_frame=0 cur_loop=1 cur_time=50000000
+tick 1000000000 -> 1 cur_frame=2 cur_loop=3 cur_time=550000000
+tick 150000000 -> 0 cur_frame=2 cur_loop=3 cur_time=550000000
+tick 1000000000 -> 0 cur_frame=2 cur_loop=3 cur_time=550000000
+tick 1000000000 -> 0 cur_frame=2 cur_loop=3 cur_time=550000000
+image loaded=1 animated=1 cx=2 cy=2 format=RGBA frame_updated=0 cur_frame=2 cur_loop=3 cur_time=550000000 mem_usage=202 alpha_mode=0 space=0 texture=yes texture_data=no
+image loaded=0 animated=0 cx=0 cy=0 format=UNKNOWN frame_updated=0 cur_frame=0 cur_loop=0 cur_time=0 mem_usage=0 alpha_mode=0 space=0 texture=no texture_data=no
+textures_alive=0
+== one huge tick spans several loops
+image loaded=1 animated=1 cx=2 cy=2 format=RGBA frame_updated=0 cur_frame=0 cur_loop=0 cur_time=0 mem_usage=202 alpha_mode=0 space=0 texture=no texture_data=no
+image loaded=1 animated=1 cx=2 cy=2 format=RGBA frame_updated=0 cur_frame=0 cur_loop=0 cur_time=0 mem_usage=202 alpha_mode=0 space=0 texture=yes texture_data=no
+tick 10000000000 -> 1 cur_frame=2 cur_loop=3 cur_time=9250000000
+image loaded=1 animated=1 cx=2 cy=2 format=RGBA frame_updated=0 cur_frame=2 cur_loop=3 cur_time=9250000000 mem_usage=202 alpha_mode=0 space=0 texture=yes texture_data=no
+image loaded=0 animated=0 cx=0 cy=0 format=UNKNOWN frame_updated=0 cur_frame=0 cur_loop=0 cur_time=0 mem_usage=0 alpha_mode=0 space=0 texture=no texture_data=no
+textures_alive=0
+== one huge tick on an infinite animation
+image loaded=1 animated=1 cx=2 cy=2 format=RGBA frame_updated=0 cur_frame=0 cur_loop=0 cur_time=0 mem_usage=202 alpha_mode=0 space=0 texture=no texture_data=no
+image loaded=1 animated=1 cx=2 cy=2 format=RGBA frame_updated=0 cur_frame=0 cur_loop=0 cur_time=0 mem_usage=202 alpha_mode=0 space=0 texture=yes texture_data=no
+tick 10000000000 -> 1 cur_frame=2 cur_loop=0 cur_time=100000000
+image loaded=1 animated=1 cx=2 cy=2 format=RGBA frame_updated=0 cur_frame=2 cur_loop=0 cur_time=100000000 mem_usage=202 alpha_mode=0 space=0 texture=yes texture_data=no
+image loaded=0 animated=0 cx=0 cy=0 format=UNKNOWN frame_updated=0 cur_frame=0 cur_loop=0 cur_time=0 mem_usage=0 alpha_mode=0 space=0 texture=no texture_data=no
+textures_alive=0

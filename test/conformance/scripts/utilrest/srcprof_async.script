@@ -1,0 +1,49 @@
+# Async video sources: frame arrival timestamps (clock at receipt) and frame render timestamps
+# (obs_source_get_last_async_ts at collect time) give an input FPS, a rendered FPS and best/worst frame times.
+# Needs an existing entry (created at the first collect) before async_frame_received is recorded.
+sp_source 0 1
+sp_enable 1
+sp_frame_begin
+sp_reset_video 60 1
+sp_clock 1000000000
+sp_async_recv 0
+sp_frame_begin
+sp_tick 0 10
+sp_async_ts 1000000000
+sp_frame_collect
+sp_frame_begin
+sp_tick 0 10
+sp_frame_collect
+# now the entry exists: three arrivals 16 ms, 17 ms, 33 ms apart
+sp_clock 2000000000
+sp_async_recv 0
+sp_clock 2016000000
+sp_async_recv 0
+sp_clock 2033000000
+sp_async_recv 0
+sp_clock 2066000000
+sp_async_recv 0
+sp_async_ts 2016000000
+sp_frame_begin
+sp_tick 0 10
+sp_frame_collect
+sp_async_ts 2033000000
+sp_frame_begin
+sp_tick 0 10
+sp_frame_collect
+sp_async_ts 2066000000
+sp_frame_begin
+sp_tick 0 10
+sp_frame_collect
+sp_result 0
+# a non-async source never reports async numbers
+sp_source 1 0
+sp_tick 1 10
+sp_frame_begin
+sp_tick 1 10
+sp_frame_collect
+sp_frame_begin
+sp_tick 1 10
+sp_frame_collect
+sp_async_recv 1
+sp_result 1

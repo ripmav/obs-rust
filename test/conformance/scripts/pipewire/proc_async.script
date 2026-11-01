@@ -1,0 +1,40 @@
+# Async (CPU frame) path: the buffer is wrapped into an obs_source_frame (OBS video format from the table, linesize =
+# width*bpp rounded up to 4, color matrix/range from the SPA colorimetry) and pushed to the source; formats without an OBS
+# video format (RGBx, ABGR_210LE, I420), empty chunks and missing data pointers are dropped. The buffer is always returned.
+unique_name :1.5
+prop ScreenCast AvailableSourceTypes "uint32 1"
+prop ScreenCast version "uint32 2"
+screencast_load
+new a pipewire-desktop-capture-source
+outflags a 5
+portal_ok 55
+param_changed format=BGRA size=5x2 cm=3 cr=1
+buf_data 0 0 memptr 0 0 20 40 0 0x10
+buf_push 0
+process
+param_changed format=YUY2 size=3x2 cm=4 cr=2
+buf_data 1 0 memptr 0 0 6 12 0 0x20
+buf_push 1
+process
+param_changed format=NV12 size=3x2 cm=1 cr=0
+buf_data 2 0 memptr 0 0 6 12 0 0x30
+buf_data 2 1 memptr 0 0 6 6 0 0x40
+buf_push 2
+process
+param_changed format=RGBA size=2x2
+buf_push 0
+process
+param_changed format=RGBx size=2x2
+buf_push 0
+process
+param_changed format=I420 size=2x2
+buf_push 0
+process
+param_changed format=BGRx size=2x2
+buf_data 3 0 memptr 0 0 8 0 0 0x10
+buf_push 3
+process
+buf_data 4 0 memptr-null 0 0 8 8 0 0x10
+buf_push 4
+process
+size a

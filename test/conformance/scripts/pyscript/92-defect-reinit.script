@@ -1,0 +1,13 @@
+# DEFECT D-3: obs_scripting_unload finalizes the interpreter but never clears the "python loaded" flag, so a second
+# obs_scripting_load skips the interpreter start (reports success) and the next backend call uses a finalized
+# interpreter. Required behaviour: the flag is cleared on unload and a new load starts a fresh interpreter.
+scripting load
+py_begin again.py
+print("first run")
+py_end
+create S0 again.py
+scripting unload
+tryseq 2
+scripting load
+create S0 again.py
+scripting unload

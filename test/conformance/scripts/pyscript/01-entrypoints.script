@@ -1,0 +1,25 @@
+# Interpreter start, load of a script with all entry points, save, unload.
+scripting load
+py_begin entry.py
+import obspython as obs
+def script_description():
+    return "Entry script"
+def script_defaults(settings):
+    obs.obs_data_set_default_string(settings, "greeting", "hello")
+    obs.obs_data_set_default_int(settings, "count", 3)
+def script_load(settings):
+    print("load greeting=" + obs.obs_data_get_string(settings, "greeting"))
+def script_update(settings):
+    print("update count=%d" % obs.obs_data_get_int(settings, "count"))
+def script_save(settings):
+    obs.obs_data_set_string(settings, "saved", "yes")
+    print("save")
+def script_unload():
+    print("unload")
+print("import time")
+py_end
+create S0 entry.py i:count=7
+save S0 s:saved
+update S0 i:count=9
+destroy S0
+scripting unload

@@ -1,0 +1,37 @@
+create rc=0 device=yes
+tex src ok
+tex dst ok
+read dst 4x2 linesize=16
+  row 0 0102030405060708090a0b0c0d0e0f10
+  row 1 1112131415161718191a1b1c1d1e1f20
+tex dst2 ok
+read dst2 4x2 linesize=16
+  row 0 000000000000000015161718191a1b1c
+  row 1 00000000000000000000000000000000
+tex dst3 ok
+read dst3 4x2 linesize=16
+  row 0 191a1b1c1d1e1f200000000000000000
+  row 1 00000000000000000000000000000000
+tex small ok
+log error Destination texture region is not big enough to hold the source region
+log error device_copy_texture (GL) failed
+tex r8 ok
+log error Source and destination formats do not match
+log error device_copy_texture (GL) failed
+tex bgra ok
+log error Source and destination formats do not match
+log error device_copy_texture (GL) failed
+tex bgrx ok
+log error Source and destination formats do not match
+log error device_copy_texture (GL) failed
+stage ok
+log error Source and destination formats do not match
+log error device_stage_texture (GL) failed
+stage info 4x2 fmt=BGRA
+stage ok
+log error Source and destination must have the same dimensions
+log error device_stage_texture (GL) failed
+stage info 2x2 fmt=RGBA
+stage ok
+stage info 4x2 fmt=RGBA
+destroyed

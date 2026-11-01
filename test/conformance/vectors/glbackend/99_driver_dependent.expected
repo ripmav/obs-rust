@@ -1,0 +1,14 @@
+create rc=0 device=yes
+nv12=1 p010=1
+tex rt ok
+tex img ok
+vshader vs ok
+pshader ps ok
+vb full ok
+sampler lin ok
+read rt 4x4 linesize=16
+  row 0 ff0000ffbf4000ff40bf00ff00ff00ff
+  row 1 ff0000ffbf4000ff40bf00ff00ff00ff
+  row 2 ff0000ffbf4000ff40bf00ff00ff00ff
+  row 3 ff0000ffbf4000ff40bf00ff00ff00ff
+destroyed

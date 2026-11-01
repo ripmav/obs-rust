@@ -1,0 +1,63 @@
+scripting load -> 1 python=1 ticks=1
+log info [Python: modattrs.py] name: modattrs
+log info [Python: modattrs.py] injected: True True True
+log info [Python: modattrs.py] capsule type: PyCapsule
+log info [Python: modattrs.py] in sys.modules: True
+log info [Python: modattrs.py] counter after load: 1
+log info [obs-scripting]: Loaded python script: modattrs.py
+create S0 -> loaded=1 lang=2 file=modattrs.py desc=NULL
+log info [Python: modattrs.py] unload counter: 1
+log info [obs-scripting]: Unloaded python script: modattrs.py
+log info [Python: modattrs.py] name: modattrs
+log info [Python: modattrs.py] injected: True True True
+log info [Python: modattrs.py] capsule type: PyCapsule
+log info [Python: modattrs.py] in sys.modules: True
+log info [Python: modattrs.py] counter after load: 2
+log info [obs-scripting]: Loaded python script: modattrs.py
+reload S0 -> 1
+log info [Python: modattrs.py] unload counter: 2
+log info [obs-scripting]: Unloaded python script: modattrs.py
+log info [Python: modattrs.py] name: modattrs
+log info [Python: modattrs.py] injected: True True True
+log info [Python: modattrs.py] capsule type: PyCapsule
+log info [Python: modattrs.py] in sys.modules: True
+log info [Python: modattrs.py] counter after load: 3
+log info [obs-scripting]: Loaded python script: modattrs.py
+reload S0 -> 1
+echo the injected module attribute is usable inside functions without an import
+log info [obs-scripting]: Loaded python script: noimport.py
+log info [Python: noimport.py] 300 nobody
+create S1 -> loaded=1 lang=2 file=noimport.py desc=NULL
+echo reload re-reads the file (new source is picked up)
+log info [Python: changing.py] version 1
+log info [obs-scripting]: Loaded python script: changing.py
+create S2 -> loaded=1 lang=2 file=changing.py desc=NULL
+log info [obs-scripting]: Unloaded python script: changing.py
+log info [Python: changing.py] version 2
+log info [obs-scripting]: Loaded python script: changing.py
+reload S2 -> 1
+echo name derivation: first .py wins, so dupx.pyz.py is module dupx (loads dupx.py, not the named file)
+log info [Python: dupx.pyz.py] this is dupx.py
+log info [obs-scripting]: Loaded python script: dupx.pyz.py
+create S3 -> loaded=1 lang=2 file=dupx.pyz.py desc=NULL
+echo a module of the standard library wins over the script (sys.path is appended): colorsys.py never runs
+log info [obs-scripting]: Loaded python script: colorsys.py
+create S4 -> loaded=1 lang=2 file=colorsys.py desc=NULL
+echo no slash in the path: file name only, directory empty
+log warning [Python] Python failure in load_python_script:<line>:
+log error [Python: nonexistent_in_cwd.py] ModuleNotFoundError: No module named 'nonexistent_in_cwd'
+create S5 -> loaded=0 lang=2 file=nonexistent_in_cwd.py desc=NULL
+log info [Python: modattrs.py] unload counter: 3
+log info [obs-scripting]: Unloaded python script: modattrs.py
+auto-destroy S0
+log info [obs-scripting]: Unloaded python script: noimport.py
+auto-destroy S1
+log info [obs-scripting]: Unloaded python script: changing.py
+auto-destroy S2
+log info [obs-scripting]: Unloaded python script: dupx.pyz.py
+auto-destroy S3
+log info [obs-scripting]: Unloaded python script: colorsys.py
+auto-destroy S4
+auto-destroy S5
+log info [Scripting] Total detached callbacks: 0
+scripting unload ticks=0

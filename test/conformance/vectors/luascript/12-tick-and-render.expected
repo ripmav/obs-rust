@@ -1,0 +1,24 @@
+scripting load -> 1 ticks=1
+log info [obs-scripting]: Loaded lua script: tickA.lua
+create S0 -> loaded=1 lang=1 file=tickA.lua desc=NULL
+log warning [Lua] Wrong parameter type for parameter 1 of obs_lua_add_tick_callback
+log warning [Lua] Wrong number of parameters for obs_lua_add_tick_callback
+log warning [Lua] Wrong number of parameters for obs_lua_add_tick_callback
+log warning [Lua] Wrong parameter type for parameter 1 of obs_lua_remove_tick_callback
+log warning [Lua] Wrong number of parameters for obs_lua_remove_main_render_callback
+log info [obs-scripting]: Loaded lua script: tickB.lua
+create S1 -> loaded=1 lang=1 file=tickB.lua desc=NULL
+counts ticks=2 renders=2 hotkeys=0 fe_event=0 fe_save=0
+log info [Lua: tickB.lua] B tick 0.017
+log info [Lua: tickA.lua] A tick 0.017
+log info [Lua: tickB.lua] B cbt 0.017
+log info [Lua: tickB.lua] B render 640x360
+log warning [Lua: tickB.lua] Failed to call obs_lua_main_render_callback for obs_lua_main_render_callback: [string "<chunk>"]:4: attempt to index local 't' (a nil value)
+echo --- remove the tick and one render callback
+update S1 done
+echo --- flagged records stay registered with libobs until libobs calls them; Lua is not called
+counts ticks=2 renders=2 hotkeys=0 fe_event=0 fe_save=0
+log info [Lua: tickB.lua] B tick 0.017
+log info [Lua: tickA.lua] A tick 0.017
+log warning [Lua: tickB.lua] Failed to call obs_lua_main_render_callback for obs_lua_main_render_callback: [string "<chunk>"]:4: attempt to index local 't' (a nil value)
+counts ticks=1 renders=1 hotkeys=0 fe_event=0 fe_save=0

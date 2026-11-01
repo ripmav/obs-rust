@@ -1,0 +1,51 @@
+# os_process_pipe_create (read mode, "r"): the command runs under /bin/sh -c; its stdout is read with
+# os_process_pipe_read, its stderr with os_process_pipe_read_err; os_process_pipe_destroy waits and returns the exit status.
+popen 0 r "printf 'hello'"
+pread 0 100
+# at EOF the read returns 0 bytes
+pread 0 100
+pread_err 0 100
+pclose 0
+# stdout and stderr are separate streams
+popen 1 r "printf out; printf err >&2"
+pread_err 1 100
+pread 1 100
+pclose 1
+# a short read: fread semantics, blocks until len bytes or EOF
+popen 2 r "printf abcdefghij"
+pread 2 4
+pread 2 4
+pread 2 4
+pclose 2
+# the exit status is returned by destroy
+popen 3 r "exit 0"
+pclose 3
+popen 3 r "exit 7"
+pclose 3
+# only the low 8 bits, interpreted as a signed char: 200 -> -56, 255 -> -1, 128 -> -128
+popen 3 r "exit 200"
+pclose 3
+popen 3 r "exit 255"
+pclose 3
+popen 3 r "exit 128"
+pclose 3
+# a missing command is reported by the shell (127), not by a NULL handle
+popen 4 r "this-command-does-not-exist-xyz 2>/dev/null"
+pclose 4
+# any type string starting with 'r' is read mode, anything else is write mode (checked via write below)
+popen 5 rw "printf rw"
+pread 5 10
+pclose 5
+# writing to a read-mode pipe returns 0, nothing is sent
+popen 6 r "exit 0"
+pwrite 6 "ignored"
+pclose 6
+# a large output is read completely (bigger than a pipe buffer would hold unread)
+popen 7 r "head -c 200000 /dev/zero | tr '\\0' 'x' | wc -c"
+pread 7 100
+pclose 7
+# DEFECT D-1: when the child dies from a signal the result is NOT an exit status but the (positive) waitpid() result,
+# i.e. the process id. Only the sign is stable, so the runner prints just that.
+popen 0 r "kill -KILL $$"
+pread 0 10
+pclose_signalled 0

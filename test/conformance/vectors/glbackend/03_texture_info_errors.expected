@@ -1,0 +1,35 @@
+create rc=0 device=yes
+tex t ok
+texinfo t 2x2 fmt=RGBA type=TEXTURE_2D rect=0
+log error glBindTexture failed, glGetError returned GL_INVALID_ENUM(0x500)
+log error glBindTexture failed, glGetError returned GL_INVALID_ENUM(0x500)
+log error glBindTexture failed, glGetError returned GL_INVALID_ENUM(0x500)
+log error glBindTexture failed, glGetError returned GL_INVALID_ENUM(0x500)
+log error glBindTexture failed, glGetError returned GL_INVALID_ENUM(0x500)
+log error glBindTexture failed, glGetError returned GL_INVALID_ENUM(0x500)
+log error glBindTexture failed, glGetError returned GL_INVALID_ENUM(0x500)
+log error glBindTexture failed, glGetError returned GL_INVALID_ENUM(0x500)
+log error glBindTexture failed, glGetError returned GL_INVALID_ENUM(0x500)
+log error glBindTexture failed, glGetError returned GL_INVALID_ENUM(0x500)
+log error glBindTexture failed, glGetError returned GL_INVALID_ENUM(0x500)
+log error glBindTexture failed, glGetError returned GL_INVALID_ENUM(0x500)
+log error device_cubetexture_create (GL) failed
+cube c fail
+vol v ok
+volinfo v 0x0x0 fmt=UNKNOWN type=TEXTURE_3D
+tex dyn ok
+texinfo dyn 2x2 fmt=RGBA type=TEXTURE_2D rect=0
+log error Texture is not dynamic
+log error gs_texture_map (GL) failed
+texmap t ok=0 linesize=0
+tex mip ok
+texinfo mip 4x4 fmt=RGBA type=TEXTURE_2D rect=0
+tex mip2 ok
+read mip2 4x4 linesize=16
+  row 0 ff0000ffff0000ffff0000ffff0000ff
+  row 1 ff0000ffff0000ffff0000ffff0000ff
+  row 2 ff0000ffff0000ffff0000ffff0000ff
+  row 3 ff0000ffff0000ffff0000ffff0000ff
+tex dummy ok
+texinfo dummy 4x4 fmt=RGBA type=TEXTURE_2D rect=0
+destroyed

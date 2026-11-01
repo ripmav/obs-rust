@@ -1,0 +1,29 @@
+# platform-nix-portal.c: xdg-desktop-portal Inhibit. create checks the portal by reading its "version" property.
+dbus_service portal
+pii_create 0
+dbus_log
+# inhibit starts an asynchronous request; the portal replies with a request handle and later a Response signal
+pii_inhibit 0 "Streaming" 1
+dbus_wait 1
+dbus_log
+# state is "active" already: calling again does nothing
+pii_inhibit 0 "Streaming" 1
+dbus_wait 0
+# the user accepts (response 0): nothing changes
+dbus_response 0
+# uninhibit closes the request
+pii_inhibit 0 "-" 0
+dbus_wait 1
+dbus_log
+# a second uninhibit does nothing
+pii_inhibit 0 "-" 0
+dbus_wait 0
+dbus_log
+# the user denies (response 1): a warning is logged and the inhibitor is forgotten, so inhibit may be requested again
+pii_inhibit 0 "Streaming" 1
+dbus_wait 1
+dbus_response 1
+pii_inhibit 0 "Streaming" 1
+dbus_wait 1
+dbus_log
+pii_destroy 0

@@ -1,0 +1,46 @@
+create rc=0 device=yes
+tex rt ok
+vshader vs ok
+vb quad ok
+pshader ps ok
+pshader ps_vec ok
+pshader ps_int ok
+pshader ps_mat ok
+log error Parameter 'v3' set to invalid size 16, expected 12
+read rt 4x4 linesize=16
+  row 0 000000ff000000ff000000ff000000ff
+  row 1 000000ffff00ffffff00ffff000000ff
+  row 2 000000ffff00ffffff00ffff000000ff
+  row 3 000000ff000000ff000000ff000000ff
+log error gs_shader_set_val (GL): Size of shader param does not match the size of the input
+read rt 4x4 linesize=16
+  row 0 000000ff000000ff000000ff000000ff
+  row 1 000000ffff00ffffff00ffff000000ff
+  row 2 000000ffff00ffffff00ffff000000ff
+  row 3 000000ff000000ff000000ff000000ff
+read rt 4x4 linesize=16
+  row 0 000000ff000000ff000000ff000000ff
+  row 1 000000ff00ff00ff00ff00ff000000ff
+  row 2 000000ff00ff00ff00ff00ff000000ff
+  row 3 000000ff000000ff000000ff000000ff
+read rt 4x4 linesize=16
+  row 0 000000ff000000ff000000ff000000ff
+  row 1 000000ff00ffffff00ffffff000000ff
+  row 2 000000ff00ffffff00ffffff000000ff
+  row 3 000000ff000000ff000000ff000000ff
+read rt 4x4 linesize=16
+  row 0 000000ff000000ff000000ff000000ff
+  row 1 000000ffffffffffffffffff000000ff
+  row 2 000000ffffffffffffffffff000000ff
+  row 3 000000ff000000ff000000ff000000ff
+read rt 4x4 linesize=16
+  row 0 000000ff000000ff000000ff000000ff
+  row 1 000000ffff00ffffff00ffff000000ff
+  row 2 000000ffff00ffffff00ffff000000ff
+  row 3 000000ff000000ff000000ff000000ff
+read rt 4x4 linesize=16
+  row 0 000000ff000000ff000000ff000000ff
+  row 1 000000ffff00ffffff00ffff000000ff
+  row 2 000000ffff00ffffff00ffff000000ff
+  row 3 000000ff000000ff000000ff000000ff
+destroyed

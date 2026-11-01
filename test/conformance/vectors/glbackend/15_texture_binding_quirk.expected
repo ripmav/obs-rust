@@ -1,0 +1,32 @@
+create rc=0 device=yes
+tex rt ok
+tex img ok
+tex img2 ok
+vshader vs ok
+pshader ps ok
+vb full ok
+# first
+read rt 4x4 linesize=16
+  row 0 ff0000ffff0000ffff0000ffff0000ff
+  row 1 ff0000ffff0000ffff0000ffff0000ff
+  row 2 ff0000ffff0000ffff0000ffff0000ff
+  row 3 ff0000ffff0000ffff0000ffff0000ff
+# second
+read rt 4x4 linesize=16
+  row 0 000000ff000000ff000000ff000000ff
+  row 1 000000ff000000ff000000ff000000ff
+  row 2 000000ff000000ff000000ff000000ff
+  row 3 000000ff000000ff000000ff000000ff
+# other
+read rt 4x4 linesize=16
+  row 0 00ff00ff00ff00ff00ff00ff00ff00ff
+  row 1 00ff00ff00ff00ff00ff00ff00ff00ff
+  row 2 00ff00ff00ff00ff00ff00ff00ff00ff
+  row 3 00ff00ff00ff00ff00ff00ff00ff00ff
+# back
+read rt 4x4 linesize=16
+  row 0 ff0000ffff0000ffff0000ffff0000ff
+  row 1 ff0000ffff0000ffff0000ffff0000ff
+  row 2 ff0000ffff0000ffff0000ffff0000ff
+  row 3 ff0000ffff0000ffff0000ffff0000ff
+destroyed

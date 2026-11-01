@@ -1,0 +1,20 @@
+scripting load -> 1 ticks=1
+log info [obs-scripting]: Loaded lua script: bad.lua
+create S0 -> loaded=1 lang=1 file=bad.lua desc=NULL
+log info [obs-scripting]: Loaded lua script: good.lua
+create S1 -> loaded=1 lang=1 file=good.lua desc=NULL
+log info [obs-scripting]: Loaded lua script: notfn.lua
+create S2 -> loaded=1 lang=1 file=notfn.lua desc=NULL
+log info [Lua: good.lua] good tick
+log info [Lua: bad.lua] bad tick
+log warning [Lua: bad.lua] Failed to call tick for lua_tick: [string "<chunk>"]:1: attempt to index local 't' (a nil value)
+log info [obs-scripting]: Unloaded lua script: bad.lua
+log info [obs-scripting]: Loaded lua script: bad.lua
+reload S0 -> 1
+log info [Lua: bad.lua] bad tick
+log warning [Lua: bad.lua] Failed to call tick for lua_tick: [string "<chunk>"]:1: attempt to index local 't' (a nil value)
+log info [Lua: good.lua] good tick
+log info [obs-scripting]: Unloaded lua script: good.lua
+destroy S1
+log info [Lua: bad.lua] bad tick
+log warning [Lua: bad.lua] Failed to call tick for lua_tick: [string "<chunk>"]:1: attempt to index local 't' (a nil value)

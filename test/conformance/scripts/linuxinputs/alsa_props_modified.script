@@ -1,0 +1,9 @@
+# S-062 ALSA: choosing "__custom__" shows custom_pcm; any other value hides it.
+alsa-reset
+alsa-props
+set-str device_id __custom__
+modified device_id
+props
+set-str device_id default
+modified device_id
+props

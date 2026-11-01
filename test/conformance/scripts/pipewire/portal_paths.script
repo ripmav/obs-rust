@@ -1,0 +1,13 @@
+# Request/session path and token construction: the D-Bus unique name loses its leading ':' and every '.' becomes '_';
+# the request token counter ("obsN") is global and increases on every request (CreateSession, SelectSources, Start);
+# the session token counter is independent and consumed once per CreateSession.
+unique_name :1.2.3
+prop ScreenCast AvailableSourceTypes "uint32 1"
+prop ScreenCast AvailableCursorModes "uint32 1"
+prop ScreenCast version "uint32 1"
+screencast_load
+new a pipewire-desktop-capture-source
+response 1 "(0, {'session_handle': <'/s/a'>})"
+response 2 "(0, {})"
+# a second source gets the next request / session tokens
+new b pipewire-desktop-capture-source

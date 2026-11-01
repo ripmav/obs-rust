@@ -1,0 +1,10 @@
+# Portal unavailable: no session bus (module load registers nothing and warns), or the ScreenCast proxy cannot be built.
+bus fail
+screencast_load
+bus ok
+proxy ScreenCast fail
+screencast_load
+prop ScreenCast AvailableSourceTypes "uint32 3"
+proxy ScreenCast ok
+screencast_load
+new a pipewire-screen-capture-source

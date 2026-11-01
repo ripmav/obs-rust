@@ -1,0 +1,39 @@
+# audio_monitor_create failure paths. A failed create returns NULL, registers nothing and leaves the wrapper balanced
+# (except the very first case, see pulse_monitor_refcount_defect).
+pa_server pulse 16.1 alsa_output.a
+pa_sink alsa_output.a "A" f32 48000 2
+pa_sink bad_rate "" s16 0 2
+mon_src 0 0 1.0 - 1
+# unknown sink: the by-name query reports an error (eol < 0) -> format INVALID -> create fails
+mon_dev no_such_sink
+mon_create 0 0
+# invalid sample spec (rate 0)
+mon_dev bad_rate
+mon_create 0 0
+# the server cannot start the info operations
+mon_dev alsa_output.a
+pa_cfg ops_fail 1
+mon_create 0 0
+pa_cfg ops_fail 0
+# resampler creation fails
+resampler_fail 1
+mon_create 0 0
+resampler_fail 0
+# stream cannot be created
+pa_cfg stream_new_fails 1
+mon_create 0 0
+pa_cfg stream_new_fails 0
+# connect to the sink fails: the stream is stopped again and create fails
+pa_cfg connect_ret -1
+mon_create 0 0
+pa_cfg connect_ret 0
+# context never becomes ready (server down): get_server_info fails
+pa_cfg connect_fails 1
+mon_create 0 0
+pa_cfg connect_fails 0
+# all balanced: every mainloop/context created was freed
+pa_stats
+# and a normal create still works afterwards
+mon_create 0 0
+mon_destroy 0
+pa_stats

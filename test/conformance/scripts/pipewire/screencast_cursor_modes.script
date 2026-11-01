@@ -1,0 +1,9 @@
+# cursor_mode choice in SelectSources: METADATA(4) always wins; EMBEDDED(2) only when ShowCursor is true; otherwise HIDDEN(1).
+# persist_mode / restore_token only for portal version >= 4, and an empty restore token is not sent.
+unique_name :1.1
+prop ScreenCast AvailableSourceTypes "uint32 1"
+prop ScreenCast AvailableCursorModes "uint32 7"
+prop ScreenCast version "uint32 3"
+screencast_load
+new m pipewire-desktop-capture-source
+response 1 "(0, {'session_handle': <'/s/m'>})"

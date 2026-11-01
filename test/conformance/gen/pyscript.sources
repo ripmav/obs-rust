@@ -1,0 +1,44 @@
+# S-061 Python scripting backend: REAL shared/obs-scripting/{obs-scripting-python.c,obs-scripting-python-frontend.c}
+# on an embedded CPython (python3-embed, 3.14 on the authoring machine), plus the real scripting core
+# (obs-scripting.c, logging, cstrcache). obs-scripting-python-import.c is NOT linked: on Linux RUNTIME_LINK is 0 and
+# the file is only compiled for Windows/macOS (cmake/python.cmake).
+# The SWIG-generated runtime header and the "obspython" module are not available (SWIG not installed); they are
+# replaced by gen/pyscript_swig/swig/swigpyrun.h and a hand-written built-in mini "obspython" in gen/pyscript_stubs.c.
+# libobs is faked in gen/pyscript_stubs.c except obs-data, obs-properties, calldata and the signal handler.
+test/conformance/gen/pyscript_runner.c
+test/conformance/gen/pyscript_stubs.c
+shared/obs-scripting/obs-scripting.c
+shared/obs-scripting/obs-scripting-logging.c
+shared/obs-scripting/cstrcache.cpp
+shared/obs-scripting/obs-scripting-python.c
+shared/obs-scripting/obs-scripting-python-frontend.c
+libobs/callback/calldata.c
+libobs/callback/decl.c
+libobs/callback/signal.c
+libobs/callback/proc.c
+libobs/util/lexer.c
+libobs/util/cf-lexer.c
+libobs/util/cf-parser.c
+libobs/obs-data.c
+libobs/obs-properties.c
+libobs/graphics/vec2.c
+libobs/graphics/vec3.c
+libobs/graphics/vec4.c
+libobs/graphics/quat.c
+libobs/graphics/axisang.c
+libobs/graphics/matrix3.c
+libobs/graphics/matrix4.c
+libobs/graphics/plane.c
+libobs/graphics/math-extra.c
+-DPython_FOUND
+-DENABLE_FRONTEND
+-DSCRIPT_DIR=\"share/obs/obs-scripting\"
+-I/usr/include/python3.14
+-Igen/pyscript_swig
+-I../../frontend/api
+-I../../shared/obs-scripting
+-lstdc++
+-ljansson
+-lpython3.14
+-ldl
+-Wno-deprecated-declarations

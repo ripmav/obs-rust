@@ -1,0 +1,33 @@
+scripting load -> 1 python=1 ticks=1
+log info [Python: hk.py] ids: [1, 18446744073709551615, 18446744073709551615, 2]
+log info [obs-scripting]: Loaded python script: hk.py
+create S0 -> loaded=1 lang=2 file=hk.py desc=NULL
+counts ticks=1 renders=0 hotkeys=2 fe_event=0 fe_save=0
+log info [Python: hk.py] key: True bool other thread: True
+log info [Python: hk.py] key: False bool other thread: True
+log info [Python: hk.py] second True
+hotkey 3 not registered
+echo explicit unregister
+fake obs_hotkey_unregister hk.f
+log info [obs-scripting]: Loaded python script: hk2.py
+create S1 -> loaded=1 lang=2 file=hk2.py desc=NULL
+hotkey 3 not registered
+echo a callback removing itself on press
+log info [obs-scripting]: Loaded python script: hk3.py
+create S2 -> loaded=1 lang=2 file=hk3.py desc=NULL
+log info [Python: hk3.py] once True
+fake obs_hotkey_unregister hk.once
+hotkey 4 not registered
+echo unload unregisters the remaining live hotkeys
+log info [obs-scripting]: Unloaded python script: hk.py
+fake obs_hotkey_unregister hk.second
+fake obs_hotkey_unregister hk.first
+destroy S0
+hotkey 1 not registered
+hotkey 3 not registered
+log info [obs-scripting]: Unloaded python script: hk2.py
+auto-destroy S1
+log info [obs-scripting]: Unloaded python script: hk3.py
+auto-destroy S2
+log info [Scripting] Total detached callbacks: 5
+scripting unload ticks=0

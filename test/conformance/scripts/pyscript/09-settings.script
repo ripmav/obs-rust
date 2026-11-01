@@ -1,0 +1,31 @@
+# Settings: the object passed to script_defaults is the script's own settings object (defaults set there are
+# defaults, not user values); settings given at create / update are applied on top; script_save receives the
+# same object and obs_script_save returns it.
+scripting load
+py_begin st.py
+import obspython as obs
+def script_defaults(settings):
+    obs.obs_data_set_default_string(settings, "a", "default-a")
+    obs.obs_data_set_default_int(settings, "n", 10)
+def script_update(settings):
+    print("update a=%s n=%d user(a)=%s user(n)=%s" % (
+        obs.obs_data_get_string(settings, "a"), obs.obs_data_get_int(settings, "n"),
+        obs.obs_data_has_user_value(settings, "a"), obs.obs_data_has_user_value(settings, "n")))
+def script_save(settings):
+    obs.obs_data_set_string(settings, "last_saved", "x")
+py_end
+create S0 st.py
+create S1 st.py s:a=given i:extra=5
+update S0 i:n=99
+update S0 s:a=changed
+save S0 s:last_saved s:a i:n
+settings S1 s:a i:n i:extra u:n u:a
+echo a script without script_update: settings still stored and returned
+py_begin st2.py
+def script_defaults(settings):
+    pass
+py_end
+create S2 st2.py s:k=v
+update S2 s:k=w
+settings S2 s:k
+scripting unload

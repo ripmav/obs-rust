@@ -1,0 +1,17 @@
+# S-062 ALSA QUIRK: first_ts lives in the instance and is never reset when the device is reopened (update with a new
+# rate): after a restart packets are judged against the old first_ts (500 ms after the very first packet).
+alsa-reset
+alsa-cfg period 480
+set-int rate 48000
+alsa-create
+alsa-push 480 1000000000
+alsa-wait-drain
+alsa-state
+set-int rate 44100
+alsa-update
+alsa-state
+alsa-push 480 1100000000
+alsa-push 480 1600000000
+alsa-wait-drain
+audio-dump
+alsa-destroy

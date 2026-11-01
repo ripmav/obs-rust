@@ -1,0 +1,21 @@
+# S-062 ALSA: read errors: EPIPE (xrun) / EINTR / ESTRPIPE are recovered (recover returns 0 -> wait -> retry, nothing
+# delivered); other errors stay <=0 -> snd_pcm_wait(100) and retry. Zero-frame reads behave like errors (recover(0)).
+alsa-reset
+alsa-cfg period 480
+set-int rate 48000
+alsa-create
+alsa-push 480 1000000000
+alsa-push-err -32 3000000000
+alsa-push-err -4 3000000000
+alsa-push-err -86 3000000000
+alsa-push-err -5 3000000000
+alsa-push 0 3000000000
+alsa-push 480 4000000000
+alsa-wait-drain
+audio-dump
+echo --- suspended device that cannot resume
+alsa-reset
+alsa-cfg resume 0
+alsa-push-err -86 4100000000
+alsa-wait-drain
+alsa-destroy

@@ -1,0 +1,5 @@
+platform=1 display=null
+module_ext=.so
+platform=2 display=null
+platform=2 display=set
+platform=1 display=null

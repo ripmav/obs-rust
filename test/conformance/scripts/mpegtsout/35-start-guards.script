@@ -1,0 +1,31 @@
+# Preconditions and early failures of start. can_begin / initialize_encoders false: start returns false, nothing else happens.
+# Failures inside the start thread are reported through the stop signal (start itself has already returned true).
+create
+world can_begin off
+start
+world can_begin on
+world init_ok off
+start
+world init_ok on
+state
+world service off
+start
+events
+world service on
+world vformat none
+start
+events
+world vformat nv12
+world ainfo off
+start
+events
+world ainfo on
+world vinfo off
+start
+events
+world vinfo on
+world vcodec nonexistent
+start
+events
+world vcodec h264
+state

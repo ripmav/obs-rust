@@ -1,0 +1,19 @@
+# Texture queries and misuse: type/rect queries, wrong-kind calls (a cube texture queried as 2D
+# logs "Not a 2D texture" and returns 0), non-dynamic map, mismatched staging.
+create
+enter
+tex t 2 2 RGBA 1 0 ff000000ff000000ff00000000ff00
+texinfo t
+cube c 2 RGBA 1 0
+vol v 2 2 2 RGBA 1 0
+volinfo v
+tex dyn 2 2 RGBA 1 DYNAMIC -
+texinfo dyn
+texmap t 00
+tex mip 4 4 RGBA 0 0 -
+texinfo mip
+tex mip2 4 4 RGBA 1 BUILD_MIPMAPS rep:16:ff0000ff
+read mip2
+tex dummy 4 4 RGBA 1 GL_DUMMYTEX -
+texinfo dummy
+destroy

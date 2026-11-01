@@ -1,0 +1,47 @@
+# S-062 ALSA: channel count -> speaker layout and format -> audio_format mapping on delivered packets.
+alsa-reset
+alsa-cfg period 16
+alsa-cfg channels 1 1
+alsa-cfg formats u8
+set-int rate 48000
+alsa-create
+alsa-push 16 1000000000
+alsa-push 16 3000000000
+alsa-wait-drain
+audio-dump
+alsa-destroy
+audio-reset
+alsa-cfg channels 3 3
+alsa-cfg formats s32
+alsa-create
+alsa-push 16 1000000000
+alsa-push 16 3000000000
+alsa-wait-drain
+audio-dump
+alsa-destroy
+audio-reset
+alsa-cfg channels 5 5
+alsa-cfg formats float
+alsa-create
+alsa-push 16 1000000000
+alsa-push 16 3000000000
+alsa-wait-drain
+audio-dump
+alsa-destroy
+audio-reset
+alsa-cfg channels 7 7
+alsa-cfg formats s16
+alsa-create
+alsa-push 16 1000000000
+alsa-push 16 3000000000
+alsa-wait-drain
+audio-dump
+alsa-destroy
+audio-reset
+alsa-cfg channels 8 8
+alsa-create
+alsa-push 16 1000000000
+alsa-push 16 3000000000
+alsa-wait-drain
+audio-dump
+alsa-destroy

@@ -1,0 +1,87 @@
+ev profile_register_root obs_graphics_thread(33.3333 ms) 33333333
+ev sp_frame_begin
+ev gs_enter_context
+ev gs_begin_frame
+ev gs_leave_context
+ev tick_callback T seconds=0.0333333313
+ev sp_render_begin
+ev gs_enter_context
+ev gs_begin_scene
+ev gs_enable_depth_test 0
+ev gs_set_cull_mode 2
+ev gs_set_render_target_cs M.render cs=0
+ev gs_clear flags=1 color=0,0,0,0 depth=1 stencil=0
+ev gs_enable_depth_test 0
+ev gs_set_cull_mode 2
+ev gs_ortho 0 16 0 16 -100 100
+ev gs_set_viewport 0 0 16 16
+ev obs_view_render M.view
+ev gs_set_render_target null
+ev gs_enable_blending 1
+ev gs_end_scene
+ev gs_flush
+ev gs_leave_context
+ev gs_enter_context
+ev gs_leave_context
+ev sp_render_end
+ev sp_frame_collect
+ev sleepto 810333333 -> 1
+ev sp_frame_begin
+ev gs_enter_context
+ev gs_begin_frame
+ev gs_leave_context
+ev tick_callback T seconds=0.0333333313
+ev sp_render_begin
+ev gs_enter_context
+ev gs_begin_scene
+ev gs_enable_depth_test 0
+ev gs_set_cull_mode 2
+ev gs_set_render_target_cs M.render cs=0
+ev gs_clear flags=1 color=0,0,0,0 depth=1 stencil=0
+ev gs_enable_depth_test 0
+ev gs_set_cull_mode 2
+ev gs_ortho 0 16 0 16 -100 100
+ev gs_set_viewport 0 0 16 16
+ev obs_view_render M.view
+ev gs_set_render_target null
+ev gs_enable_blending 1
+ev gs_end_scene
+ev gs_flush
+ev gs_leave_context
+ev gs_enter_context
+ev gs_leave_context
+ev sp_render_end
+ev sp_frame_collect
+ev sleepto 843666666 -> 1
+ev sp_frame_begin
+ev gs_enter_context
+ev gs_begin_frame
+ev gs_leave_context
+ev tick_callback T seconds=0.0333333313
+ev sp_render_begin
+ev gs_enter_context
+ev gs_begin_scene
+ev gs_enable_depth_test 0
+ev gs_set_cull_mode 2
+ev gs_set_render_target_cs M.render cs=0
+ev gs_clear flags=1 color=0,0,0,0 depth=1 stencil=0
+ev gs_enable_depth_test 0
+ev gs_set_cull_mode 2
+ev gs_ortho 0 16 0 16 -100 100
+ev gs_set_viewport 0 0 16 16
+ev obs_view_render M.view
+ev gs_set_render_target null
+ev gs_enable_blending 1
+ev gs_end_scene
+ev gs_flush
+ev gs_leave_context
+ev gs_enter_context
+ev gs_leave_context
+ev sp_render_end
+ev sp_frame_collect
+ev sleepto 876999999 -> 1
+thread returned
+counters total_frames=3 lagged_frames=0 video_time=876999999 fps=0 avg_frame_time_ns=0 mixes=1 ctx_depth=0 underflow=0
+--- a second thread with a fresh core and a different interval
+thread returned
+counters total_frames=2 lagged_frames=0 video_time=33333339 fps=0 avg_frame_time_ns=0 mixes=1 ctx_depth=0 underflow=0

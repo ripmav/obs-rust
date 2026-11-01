@@ -1,0 +1,13 @@
+# Built-in effect files of libobs/data/ loaded through the real effect parser (spec S-020) against a fake
+# backend. Per file: parser result, parameters (type, default, annotations), techniques, passes with the
+# entry functions of both stages and the effect parameters each stage reads, the number of functions, structs and
+# samplers, and sampler states. The repository relative path is also the label.
+effect libobs/data/deinterlace_base.effect
+effect libobs/data/deinterlace_blend.effect
+effect libobs/data/deinterlace_blend_2x.effect
+effect libobs/data/deinterlace_discard.effect
+effect libobs/data/deinterlace_discard_2x.effect
+effect libobs/data/deinterlace_linear.effect
+effect libobs/data/deinterlace_linear_2x.effect
+effect libobs/data/deinterlace_yadif.effect
+effect libobs/data/deinterlace_yadif_2x.effect

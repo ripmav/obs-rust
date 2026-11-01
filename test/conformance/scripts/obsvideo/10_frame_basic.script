@@ -1,0 +1,26 @@
+# A single idle mix (no raw/gpu consumer): one frame of the loop. Shows the fixed order
+# begin_frame -> tick callbacks (reverse registration) -> source ticks -> per-mix render -> displays -> tasks -> sleep.
+core 16666667
+clock 1000000000
+video_time 1000000000
+cb_add tick T1
+cb_add tick T2
+cb_add draw D1
+cb_add draw D2
+cb_add rendered R1
+cb_add rendered R2
+source_add S1
+source_add S2
+source_add S3 removed
+mix_add main 1 1920 1080 1920 1080 BGRA 0 0 0
+display_add disp1
+display_add disp2
+task_add task1
+task_add task2
+ctx_new 16666667
+loop 1
+counters
+mix_dump main
+source_refs S1
+source_refs S3
+tasks_run

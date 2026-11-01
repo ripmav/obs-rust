@@ -1,0 +1,11 @@
+# Start reply WITHOUT restore_token (portal version 4): stored token is dropped and "" is saved.
+unique_name :1.5
+prop ScreenCast AvailableSourceTypes "uint32 1"
+prop ScreenCast version "uint32 4"
+screencast_load
+set a RestoreToken str stored-A
+new a pipewire-desktop-capture-source
+response 1 "(0, {'session_handle': <'/s/a'>})"
+response 2 "(0, {})"
+response 3 "(0, {'streams': <[(@u 1, @a{sv} {})]>})"
+get a RestoreToken str

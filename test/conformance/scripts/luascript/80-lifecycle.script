@@ -1,0 +1,37 @@
+# Unload / reload / destroy of a script that owns callbacks.  Unload order: all callback records flagged, sources
+# undefined, tick unhooked, script_unload() called (can still log), records removed (detached list), Lua state
+# closed.  After unload nothing of the script is called by timers, signals or ticks; reload starts from a fresh
+# Lua state (globals gone) but keeps the script's settings.  The detached records are counted and freed by
+# obs_scripting_unload.
+scripting load
+handler H0 "void ping(int n)"
+lua_begin life.lua
+counter = (counter or 0) + 1
+print("fresh state, counter=" .. counter)
+function script_tick(s) print("tick") end
+function t() print("timer") end
+function on(cd) print("signal") end
+obslua.timer_add(t, 10)
+obslua.signal_handler_connect(obslua.fake_handler(0), "ping", on)
+function script_unload() print("script_unload, can still log") end
+function script_update(s) obslua.obs_data_set_default_int(s, "u", 1); print("update u=" .. obslua.obs_data_get_int(s, "u")) end
+lua_end
+time 0
+create S0 life.lua s:keep=me
+barrier
+callbacks S0
+tick 0.01 10000000
+emit H0 ping i:n=1
+echo --- reload
+reload S0
+barrier
+callbacks S0
+settings S0 s:keep
+echo --- old timer record is dropped lazily on the next tick; only the new one fires
+tick 0.01 20000000
+emit H0 ping i:n=2
+echo --- destroy
+destroy S0
+tick 0.01 30000000
+emit H0 ping i:n=3
+scripting unload

@@ -1,0 +1,18 @@
+# Same flow over RIST: the shim captures rist_sender_data_write() payloads; the AVIO buffer is 1316 bytes (the packet size
+# librist_open always sets), so each write carries at most 7 TS packets.
+create
+world url "rist://192.0.2.20:8000?buffer=800"
+start
+events
+pkt v 0 0 0 1 3000
+pkt a 0 0 0 1 200
+pkt v 0 1 1 0 2000
+pkt a 0 1024 1024 1 200
+pkt v 0 2 2 0 2000
+drain
+state
+stop 0
+events
+ts
+sends
+destroy

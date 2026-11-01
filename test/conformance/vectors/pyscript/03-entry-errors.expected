@@ -1,0 +1,55 @@
+scripting load -> 1 python=1 ticks=1
+log warning [Python] Python failure in get_defaults:<line>:
+log error [Python: entry_errors.py] Traceback (most recent call last):
+log error [Python: entry_errors.py]   File "$TMP/entry_errors.py", line 3, in script_defaults
+log error [Python: entry_errors.py] ValueError: bad defaults
+log warning [Python] Python failure in load_python_script:<line>:
+log error [Python: entry_errors.py] Traceback (most recent call last):
+log error [Python: entry_errors.py]   File "$TMP/entry_errors.py", line 5, in script_load
+log error [Python: entry_errors.py] RuntimeError: bad load
+log info [obs-scripting]: Loaded python script: entry_errors.py
+log warning [Python] Python failure in obs_python_script_update:<line>:
+log error [Python: entry_errors.py] Traceback (most recent call last):
+log error [Python: entry_errors.py]   File "$TMP/entry_errors.py", line 7, in script_update
+log error [Python: entry_errors.py] RuntimeError: bad update
+create S0 -> loaded=1 lang=2 file=entry_errors.py desc=NULL
+echo save
+log warning [Python] Python failure in obs_python_script_save:<line>:
+log error [Python: entry_errors.py] Traceback (most recent call last):
+log error [Python: entry_errors.py]   File "$TMP/entry_errors.py", line 9, in script_save
+log error [Python: entry_errors.py] RuntimeError: bad save
+save S0
+echo properties
+log warning [Python] Python failure in obs_python_script_get_properties:<line>:
+log error [Python: entry_errors.py] Traceback (most recent call last):
+log error [Python: entry_errors.py]   File "$TMP/entry_errors.py", line 11, in script_properties
+log error [Python: entry_errors.py] RuntimeError: bad properties
+props P0 ->
+echo update
+log warning [Python] Python failure in obs_python_script_update:<line>:
+log error [Python: entry_errors.py] Traceback (most recent call last):
+log error [Python: entry_errors.py]   File "$TMP/entry_errors.py", line 7, in script_update
+log error [Python: entry_errors.py] RuntimeError: bad update
+update S0 done
+echo unload
+log warning [Python] Python failure in unload_python_script:<line>:
+log error [Python: entry_errors.py] Traceback (most recent call last):
+log error [Python: entry_errors.py]   File "$TMP/entry_errors.py", line 13, in script_unload
+log error [Python: entry_errors.py] RuntimeError: bad unload
+log info [obs-scripting]: Unloaded python script: entry_errors.py
+destroy S0
+echo description returning a non-string
+log info [obs-scripting]: Loaded python script: desc_int.py
+create S1 -> loaded=1 lang=2 file=desc_int.py desc=NULL
+log info [obs-scripting]: Loaded python script: desc_none.py
+create S2 -> loaded=1 lang=2 file=desc_none.py desc=NULL
+log info [obs-scripting]: Loaded python script: desc_unicode.py
+create S3 -> loaded=1 lang=2 file=desc_unicode.py desc="caf\xc3\xa9 \xe2\x9c\x93"
+log info [obs-scripting]: Unloaded python script: desc_int.py
+auto-destroy S1
+log info [obs-scripting]: Unloaded python script: desc_none.py
+auto-destroy S2
+log info [obs-scripting]: Unloaded python script: desc_unicode.py
+auto-destroy S3
+log info [Scripting] Total detached callbacks: 0
+scripting unload ticks=0

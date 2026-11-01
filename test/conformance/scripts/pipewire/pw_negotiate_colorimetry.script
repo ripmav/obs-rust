@@ -1,0 +1,8 @@
+# Format pods carrying color matrix / range are parsed without affecting the reply.
+unique_name :1.5
+prop ScreenCast AvailableSourceTypes "uint32 1"
+prop ScreenCast version "uint32 2"
+screencast_load
+new a pipewire-desktop-capture-source
+portal_ok 38
+param_changed format=BGRA cm=3 cr=1

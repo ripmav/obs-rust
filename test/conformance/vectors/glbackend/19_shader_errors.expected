@@ -1,0 +1,20 @@
+create rc=0 device=yes
+log warning Shader parser errors/warnings: script (2, 1): Unexpected EOF  
+log error device_vertexshader_create (GL) failed
+vshader bad1 fail
+log error function 'main' not found
+log error device_pixelshader_create (GL) failed
+pshader bad2 fail
+log error Error compiling shader
+log error device_pixelshader_create (GL) failed
+pshader bad3 fail
+  error-text present
+log error device_pixelshader_create (GL) failed
+pshader bad4 fail
+vshader good1 ok
+params good1 count=0
+  viewproj=no world=no
+pshader good2 ok
+params good2 count=0
+  viewproj=no world=no
+destroyed
