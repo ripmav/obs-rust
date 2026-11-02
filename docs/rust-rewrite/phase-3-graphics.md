@@ -2,11 +2,11 @@
 
 Goal: port the effect/shader language and the `gs_*` abstraction, then add a `wgpu` backend. Legacy backends (`libobs-opengl`, `libobs-d3d11`, `libobs-metal`) stay selectable until `wgpu` reaches parity.
 
-Source map: `libobs/graphics/*` (non-math), `libobs/data/*.effect`, `libobs-opengl/`, `libobs-d3d11/`, `libobs-metal/`, `libobs-winrt/`, `deps/glad`, `libobs/obs-display.c`, `obs-view.c`, `obs-video.c` (render part), `obs-source.c` (render part), `obs-nix-*.c`, `obs-cocoa.m`, `obs-windows.c`.
+Source map: `libobs/graphics/*` (non-math), `libobs/data/*.effect`, `libobs-opengl/`, `libobs-d3d11/`, `libobs-metal/`, `deps/glad`, `libobs/obs-display.c` (presentation part; the `obs_display_*` API is P4-31), `libobs/obs-video.c` (render part). Not here: `libobs-winrt/` (P5-33), `obs-canvas.c`/`obs-view.c` (P4-33/P4-31), `obs-source.c` render path (P4-05), platform window glue `obs-nix-*.c`/`obs-cocoa.m`/`obs-windows.c` (P4-32).
 
 ## A. Effect language
 
-- [ ] **P3-01 Lexer and preprocessor** (M): `cf-lexer.c`, `cf-parser.c` token streams, `#include`, `#define`. Golden: token dump of every `libobs/data/*.effect` and `plugins/**/data/*.effect`.
+- [ ] **P3-01 Effect-file preprocessing** (S): drive the S-011 lexer/preprocessor (P1-08.3, `cf-lexer.c`/`cf-parser.c`) on `.effect` files: the `gs_preprocessor_name()` backend define (e.g. `OPENGL`) that `effect-parser.c` injects, plus `#include` resolution relative to the effect file. Golden: preprocessed token dump of every `libobs/data/*.effect` and `plugins/**/data/*.effect` equals the C dump.
 - [ ] **P3-02 Shader parser (HLSL-like)** (L): `shader-parser.c`: types, structs, functions, statements, expressions. AST golden dumps for all effect files.
 - [ ] **P3-03 Effect parser** (L): `effect-parser.c`: techniques, passes, parameters, annotations, samplers, `vertex_shader`/`pixel_shader` entry points. Error messages must keep line/column format.
 - [ ] **P3-04 Effect runtime** (M): `effect.c`: parameters set/get, `gs_effect_set_*`, loop over passes (`gs_effect_loop`), default values, `gs_effect_get_param_by_name`.
@@ -16,11 +16,11 @@ Source map: `libobs/graphics/*` (non-math), `libobs/data/*.effect`, `libobs-open
 ## B. `gs_*` API
 
 - [ ] **P3-07 Trait design** (M): `GraphicsDevice` trait covering `graphics.h`: textures (2D/3D/cube/stage/shared), render targets, zstencil, vertex/index buffers, shaders, samplers, blend/depth/stencil/raster state, viewport/scissor, matrices stack. Doc with C function mapping table.
-- [ ] **P3-08 C shim `gs_*`** (L): `graphics.c`, `graphics-imports.c`, `device-exports.h`: all ~200 exported functions dispatch to the active backend through a vtable; thread-local graphics context (`gs_enter_context`, `gs_leave_context`) preserved.
+- [ ] **P3-08 C shim `gs_*`** (L): `graphics.c`, `graphics-imports.c`: all `gs_*` exports of `graphics.h` (291) dispatch to the active backend through the 190 `device_*` entries of `struct gs_exports` (`graphics-internal.h:30`); thread-local graphics context (`gs_enter_context`/`gs_leave_context`, refcounted) preserved.
 - [ ] **P3-09 Matrix stack and transforms** (S): `gs_matrix_*`, projection, `gs_set_viewport`, `gs_ortho`, `gs_perspective`.
 - [ ] **P3-10 Immediate-mode vertex API** (M): `gs_render_start/stop`, `gs_vertex2f`, `gs_color`, `gs_texcoord`, `gs_draw_sprite`, `gs_draw_quadf`; vertex buffer pooling.
 - [ ] **P3-11 Texture utilities** (M): `texture-render.c`, `gs_texrender`, `gs_stagesurface`, `gs_texture_map/unmap`, `gs_copy_texture`, mip generation.
-- [ ] **P3-12 Image loading** (M): `image-file.c`, `graphics-ffmpeg.c` (still/animated image via FFmpeg and `deps/libnsgif`), `gs_image_file_*`. Use `image` crate for PNG/JPG/GIF/WebP; keep FFmpeg for the rest. Golden pixel hash for 30 sample images.
+- [ ] **P3-12 Image loading** (M): `image-file.c` (`gs_image_file_ex_*`), `graphics-ffmpeg.c` (FFmpeg decode of everything). Use the `image` crate for still PNG/JPG/BMP/TGA/WebP; animated GIF stays on the `libnsgif` path; keep FFmpeg for the rest. Golden pixel hash for 30 sample images.
 
 ## C. Backends
 
@@ -28,20 +28,20 @@ Source map: `libobs/graphics/*` (non-math), `libobs/data/*.effect`, `libobs-open
 - [ ] **P3-14 `wgpu` resources** (L): textures (all `gs_color_format` values incl. `RGBA16F`, `R10G10B10A2`, sRGB variants), buffers, samplers. Format support table and fallback.
 - [ ] **P3-15 `wgpu` pipeline cache** (M): state combination -> render pipeline cache keyed on shader+blend+depth+raster; avoid per-frame creation.
 - [ ] **P3-16 `wgpu` render and readback** (M): render targets, clear, draw, staging readback with async map but a sync API facade (`gs_stagesurface`).
-- [ ] **P3-17 Frame pacing and presentation** (M): `obs-display.c`, vsync off by default, preview resizing, multiple displays (`obs_display_*`), draw callbacks.
+- [ ] **P3-17 Frame pacing and presentation** (M): `obs-display.c`, preview resizing, multiple displays (`obs_display_*`), draw callbacks, `gs_present` pacing (C: D3D11 legacy swap chain presents with interval 1 = vsync on; flip model paces via the frame-latency waitable object; macOS has a `DisableOSXVSync` setting — `gs_init_data` has no vsync field).
 - [ ] **P3-18 Shared texture import: Linux** (L): DMA-BUF import via `wgpu` Vulkan HAL (for `linux-pipewire`, `linux-capture`), with modifiers; GL EGL image fallback. Test with PipeWire screencast.
 - [ ] **P3-19 Shared texture import: Windows** (L): DXGI shared handle / NT handle import (D3D12/Vulkan interop) for `win-capture` (game capture hooks); keep D3D11 fallback.
 - [ ] **P3-20 Shared texture import: macOS** (L): IOSurface -> Metal texture for `mac-capture`, `mac-syphon`, `mac-virtualcam`.
-- [ ] **P3-21 GPU encoder texture sharing** (L): the NVENC/QSV/AMF/VideoToolbox paths need a GPU texture handle (`gs_texture_get_obj`, `obs_encoder_*texture*`); define an escape hatch exposing native handles.
+- [ ] **P3-21 GPU encoder texture sharing** (L): the NVENC/QSV/AMF/VideoToolbox paths need a GPU texture handle (`encode_texture`/`encode_texture2` callbacks, `struct encoder_texture`, `gs_texture_get_obj`); define an escape hatch exposing native handles.
 - [ ] **P3-22 Legacy backend adapters** (M): wrap `libobs-opengl`, `libobs-d3d11`, `libobs-metal` as `GraphicsDevice` implementations through the C vtable so both can be selected at runtime (`--graphics wgpu|legacy`).
-- [ ] **P3-23 HDR and colour management** (M): HDR10/scRGB swap chains, SDR white level, `gs_get_hdr_nominal_peak_level`, sRGB framebuffer behaviour. Visual tests.
+- [ ] **P3-23 HDR and colour management** (M): HDR10/scRGB swap chains, SDR white level (`gs_is_monitor_hdr`, `gs_duplicator_get_sdr_white_level` on the backend side; `obs_get_video_sdr_white_level` / `obs_get_video_hdr_nominal_peak_level` are libobs-level, Phase 4), sRGB framebuffer behaviour. Visual tests.
 
 ## D. Built-in effects and render loop
 
-- [ ] **P3-24 Port built-in effects** (M): `libobs/data/*.effect` (default, solid, opaque, format_conversion, bicubic/lanczos/bilinear scale, premultiplied alpha, repeat, area). Image-diff test (PSNR > 60 dB vs legacy renders).
-- [ ] **P3-25 Plugin effects** (M): effects shipped by `obs-filters`, `obs-transitions`, `image-source`, `text-freetype2`, `nv-filters` compile through the transpiler; test list auto-generated.
-- [ ] **P3-26 Render loop** (L): `obs-video.c` render part: render sources -> main texture -> output texture -> scale/convert -> stage -> copy to CPU; GPU-conversion path. Golden: 120 frames of a deterministic scene as PNG hashes.
-- [ ] **P3-27 Canvas and projectors** (M): `obs-canvas.c`, `obs-view.c`, multiple canvases, projector windows.
+- [ ] **P3-24 Port built-in effects** (M): all 21 `libobs/data/*.effect` (default, default_rect, solid, opaque, color, repeat, area, bicubic/lanczos/bilinear_lowres scale, format_conversion, premultiplied alpha, and the nine `deinterlace_*.effect`). Image-diff test (PSNR > 60 dB vs legacy renders).
+- [ ] **P3-25 Plugin effects** (M): every `.effect` shipped by plugins (28 files: `obs-filters` 18, `obs-transitions` 6, `nv-filters` 3, `text-freetype2` 1) compiles through the transpiler; test list auto-generated by glob.
+- [ ] **P3-26 Render loop** (L): `obs-video.c` render part: main texture -> output texture -> scale/convert -> stage -> copy to CPU (`render_main_texture`, `render_output_texture`, `render_convert_texture`, `stage_output_texture`, `set_gpu_converted_data`); the scene walk itself is P4-05 — drive these with a static test scene. Golden: 120 frames as PNG hashes.
+- [ ] **P3-27 Multi-canvas render support** (S): the render loop must serve every mix/canvas (`obs->video.mixes`, per-mix output textures). The canvas/view objects themselves are P4-33/P4-31 — test with two fake canvases.
 
 ## E. Cleanup
 

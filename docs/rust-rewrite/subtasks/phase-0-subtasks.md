@@ -15,8 +15,8 @@ Facts verified in this checkout that shape Phase 0:
   - Done when: template renders on GitHub and README lists how to add an ADR.
 - [ ] **P0-01.2 Context section**
   - Files: `docs/adr/0001-strangler-migration.md`
-  - Steps: copy measured sizes (libobs 94k, frontend 109k incl. `.ui`, plugins 172k, shared 22k, deps 70k lines), mention 3 OSes and ~40 plugins, state the C-plugin-ABI constraint with link to `libobs/obs-module.h`.
-  - Done when: every number has a reproducible command in a footnote (`find ... | xargs cat | wc -l`).
+  - Steps: copy measured sizes (libobs 94k, frontend 109k incl. `.ui`, plugins 172k, shared 22k, deps 70k lines — all measured over the same tracked set as `tools/task-coverage.py`: `.c .cpp .cc .h .hpp .m .mm .swift .ui .effect`), mention 3 OSes and 41 plugins, state the C-plugin-ABI constraint with link to `libobs/obs-module.h`.
+  - Done when: every number has a reproducible command in a footnote, e.g. `git ls-files libobs/ | grep -E '\.(c|cpp|cc|h|hpp|m|mm|swift|ui|effect)$' | xargs cat | wc -l`.
 - [ ] **P0-01.3 Alternatives**
   - Steps: write big-bang rewrite, new repository, status quo, "Rust only for new plugins"; for each give cost, risk, why rejected.
   - Done when: each alternative has at least two concrete reasons.
@@ -148,7 +148,7 @@ Facts verified in this checkout that shape Phase 0:
   - Done when: `obs-ref-dump --list` prints available dumps.
 - [ ] **P0-14.2 Math dumps** — vec2/3/4, matrix3/4, quat, plane, bounds with seeded PRNG (fixed seed `0x0B5`). Done when: output stable across 3 OSes (print floats with `%.9g`).
 - [ ] **P0-14.3 Data dumps** — `obs_data` build/serialise/parse for corpus files; `calldata` pack/unpack. Done when: JSON output sorted deterministically.
-- [ ] **P0-14.4 Media dumps** — audio mix of generated sine waves; pixel conversion of a generated gradient for NV12/I420/UYVY/YUY2. Done when: hashes recorded.
+- [ ] **P0-14.4 Media dumps** — audio mix of generated sine waves; pixel conversion of a generated gradient for NV12/I420/UYVY/YUY2. Note: `mix_audio` is `static inline` in `obs-audio.c` (line 90), so the dumper compiles that function in (include the .c or a verbatim copy) rather than linking it; `format-conversion.c` functions are exported. Done when: hashes recorded.
 - [ ] **P0-14.5 Generate and verify** — run twice, diff must be empty, commit under `test/golden/`. Done when: CI regenerates and diffs in a job.
 
 ### P0-15 ABI conformance test plugin

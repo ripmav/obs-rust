@@ -10,8 +10,8 @@
 
 ## 1. Scope
 
-The loadable graphics backend `libobs-opengl`: a module that exports ~176 `device_*` / `gs_*`
-functions (the "gs_exports" table that `graphics.c`, S-043, calls through). This spec covers the
+The loadable graphics backend `libobs-opengl`: a module that exports 190 `device_*` / `gs_*` / `gpu_*`
+functions (the `gs_exports` struct in `graphics-internal.h` that `graphics.c`, S-043, calls through). This spec covers the
 **observable behaviour of those exports**: device lifecycle, 2D / cube / volume textures, stage
 surfaces (read-back), render targets and z-stencil buffers, blend / depth / stencil / cull /
 scissor / viewport state, vertex and index buffers, shaders (OBS-HLSL text to GLSL, see S-020 for

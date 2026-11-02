@@ -8,8 +8,10 @@ Every plugin task below starts with **S1/S2** and ends with **E1/E2**; they are 
 
 - **S1 Inventory.** Files: `plugins/<name>/*.c|cpp`. Steps: grep `obs_register_(source|output|encoder|service)`, list ids and flags, list every `obs_data_get_*`/`set_default_*` key and each hotkey. Done when: table `docs/tests/plugin-<name>-inventory.md` is committed.
 - **S2 Settings compatibility test.** Steps: pick sources/filters/outputs of this plugin from the P0-18 corpus, load settings with the Rust plugin, assert the same effective values (defaults included). Done when: test passes for every corpus file that uses the plugin; gaps listed.
-- **E1 cdylib build.** Steps: crate `crate-type = ["cdylib"]` named exactly like the old module (`<name>.so|.dll|.dylib`), exports `obs_module_*`; install rules keep `obs-plugins/<arch>/` and `data/obs-plugins/<name>/`. Done when: `ldd`/`dumpbin`/`otool` show the expected exports and loader picks it up.
-- **E2 Cutover.** Steps: remove the C sources from `plugins/CMakeLists.txt`, delete them in the same PR, update README, run the manual smoke test on each supported OS and record in `docs/tests/plugin-<name>.md`. Done when: CI green and smoke result recorded.
+- **E1 cdylib build.** Steps: crate `crate-type = ["cdylib"]` named exactly like the old module (`<name>.so|.dll|.dylib`), exports `obs_module_*`; install rules keep the per-OS destinations (Windows: `core/<name>.dll` + `core/<name>/data`; Linux: `lib/obs-modules/core/<name>.so` + `share/obs/obs-modules/core/<name>`). Done when: `ldd`/`dumpbin`/`otool` show the expected exports and loader picks it up.
+- **E2 Cutover.** Steps: drop the plugin's `add_subdirectory` from `plugins/CMakeLists.txt`, delete the ported C sources in the same PR, update README, run the manual smoke test on each supported OS and record in `docs/tests/plugin-<name>.md`. Done when: CI green and smoke result recorded.
+
+Shared CMake targets: `obs-ffmpeg` spans P5-11…P5-16 + P5-41 and `obs-outputs` spans P5-17 + P5-18. Those tasks port their own files, but E2 cutover happens once, in the last-finishing task (the C target is deleted only then).
 
 Verified in this checkout: **`plugins/obs-websocket` and `plugins/obs-browser` are git submodules and are empty** (`.gitmodules`), as is `deps/libdshowcapture/src`. Run `git submodule update --init` first; the file lists for those two plugins below come from knowledge of the upstream repos and must be re-checked once present. There is no separate AMF plugin directory: AMF lives in `plugins/obs-ffmpeg` (`texture-amf.cpp`, `texture-amf-opts.hpp`, `obs-amf-test/`). Media playback code is shared: `shared/media-playback/media-playback/{media,decode,cache,media-playback}.c`.
 
@@ -38,7 +40,7 @@ Verified in this checkout: **`plugins/obs-websocket` and `plugins/obs-browser` a
 - [ ] **P5-03.3 Image** — `image-source.c`: unload when hidden, file change detection, linear alpha. Done when: tests.
 - [ ] **P5-03.4 Colour** — `color-source.c`. Done when: golden.
 - [ ] **P5-03.5 Slideshow** — `obs-slideshow.c`, `obs-slideshow-mk2.c`: transition, playback modes (`always play`, `pause when hidden`, `stop when hidden`), shuffle, loop. Done when: tick-by-tick trace equal.
-- [ ] **P5-03.6 Animations** — GIF/APNG/WebP. Done when: frame delays equal.
+- [ ] **P5-03.6 Animations** — animated GIF via libobs `libnsgif`; other formats (WebP, …) are FFmpeg-decoded stills. Done when: GIF frame delays equal.
 - [ ] **P5-03.7/.8** E1/E2
 
 ### P5-04 `obs-text` (Windows GDI+)
@@ -54,7 +56,7 @@ Verified in this checkout: **`plugins/obs-websocket` and `plugins/obs-browser` a
 - [ ] **P5-05.3 Backend** — `freetype` bindings vs `cosmic-text`/`swash`. Done when: spike result.
 - [ ] **P5-05.4 Fonts** — Files: `find-font.c`, `find-font-unix.c`, `find-font-windows.c`, `find-font-cocoa.m`, `find-font-iconv.c`. Done when: font by family+style found on each OS.
 - [ ] **P5-05.5 Layout** — Files: `text-freetype2.c`, `text-functionality.c`, `obs-convenience.c`: colours, outline, drop shadow, word wrap, custom width, vertical text. Done when: golden.
-- [ ] **P5-05.6 Metric goldens**
+- [ ] **P5-05.6 Metric goldens** — glyph advances/positions for 10 font configs equal C. Done when: goldens committed.
 - [ ] **P5-05.7/.8** E1/E2
 
 ### P5-06 `rtmp-services`
@@ -91,7 +93,7 @@ Verified in this checkout: **`plugins/obs-websocket` and `plugins/obs-browser` a
 - [ ] **P5-10.3 SDK loading** — Files: `nvafx-load.h`, `nvvfx-load.h`, `nv_sdk_versions.h`: dynamic loading; versions. Done when: absence handled.
 - [ ] **P5-10.4 Audio** — `nvidia-audiofx-filter.c` (denoise, dereverb). Done when: runs on RTX.
 - [ ] **P5-10.5 Video** — `nvidia-videofx-filter.c` (greenscreen, background blur). Done when: runs on RTX.
-- [ ] **P5-10.6 Hardware test**
+- [ ] **P5-10.6 Hardware test** — Done when: runs on RTX.
 - [ ] **P5-10.7/.8** E1/E2 (Windows only)
 
 ## B. Network and muxing
@@ -138,7 +140,7 @@ Verified in this checkout: **`plugins/obs-websocket` and `plugins/obs-browser` a
 - [ ] **P5-16.4 Cache/loop/seek** — `cache.c`, `media-playback.c`. Done when: seek accuracy test.
 - [ ] **P5-16.5 HW decode** — selection list and fallback in `obs-ffmpeg-source.c`. Done when: log of chosen decoder equal.
 - [ ] **P5-16.6 Drift** — 2 h file < 1 frame.
-- [ ] **P5-16.7/.8** E1/E2 (also covers the `shared/media-playback` crate used by VLC-less sources)
+- [ ] **P5-16.7/.8** E1/E2 (also covers the `shared/media-playback` crate; only in-tree consumer is obs-ffmpeg)
 
 ### P5-17 `obs-outputs` RTMP/FLV
 - [ ] **P5-17.1/.2** S1/S2
@@ -182,7 +184,7 @@ Verified in this checkout: **`plugins/obs-websocket` and `plugins/obs-browser` a
 - [ ] **P5-21.3 Scan/load** — `VSTPlugin.cpp`, `win/`, `mac/`, `linux/`, `headers/`, `vst_header/`. Done when: lists installed VST2 plugins.
 - [ ] **P5-21.4 Audio** — process callback, channel mapping, latency. Done when: test with free plugin.
 - [ ] **P5-21.5 Editor** — `EditorWidget.cpp` window embedding per OS (depends on P6 toolkit). Done when: editor opens.
-- [ ] **P5-21.6 Test**
+- [ ] **P5-21.6 Test** — Done when: a free VST plugin processes audio.
 - [ ] **P5-21.7/.8** E1/E2 (may remain C++; see P5-50)
 
 ### P5-22 `vlc-video`
@@ -234,23 +236,23 @@ Verified in this checkout: **`plugins/obs-websocket` and `plugins/obs-browser` a
 - [ ] **P5-28.4/.5** E1/E2
 
 ### P5-29 `oss-audio`, `sndio`
-- [ ] **P5-29.1 Inventory** both plugins.
-- [ ] **P5-29.2 OSS** — `oss-input.c`, `oss-audio.c`, `oss-platform.h.in`. Done when: FreeBSD run.
-- [ ] **P5-29.3 sndio** — `sndio.c`, `sndio-input.c/.h`. Done when: OpenBSD run.
-- [ ] **P5-29.4 Smoke** on BSD.
+- [ ] **P5-29.1/.2** S1/S2 (both plugins)
+- [ ] **P5-29.3 OSS** — `oss-input.c`, `oss-audio.c`, `oss-platform.h.in`. Done when: FreeBSD run.
+- [ ] **P5-29.4 sndio** — `sndio.c`, `sndio-input.c/.h`. Done when: OpenBSD run.
+- [ ] **P5-29.5/.6** E1/E2 (added; E2 = BSD smoke run recorded in `docs/tests/`)
 
 ### P5-30 `win-wasapi`
 - [ ] **P5-30.1/.2** S1/S2
 - [ ] **P5-30.3 Devices** — `enum-wasapi.cpp/.hpp`, `wasapi-notify.cpp/.hpp` (IMMNotificationClient). Done when: hotplug.
 - [ ] **P5-30.4 Capture** — `win-wasapi.cpp`: shared mode loop, buffer sizes, resample. Done when: levels and latency.
 - [ ] **P5-30.5 Process loopback** — application audio capture (`ActivateAudioInterfaceAsync`), `plugin-main.cpp`. Done when: captures one app.
-- [ ] **P5-30.6 Latency tests**
+- [ ] **P5-30.6 Latency tests** — Done when: latency within C's measurements.
 - [ ] **P5-30.7/.8** E1/E2
 
 ### P5-31 `win-capture`
 - [ ] **P5-31.1/.2** S1/S2
 - [ ] **P5-31.3 DXGI duplication** — `duplicator-monitor-capture.c`, `monitor-capture.c`. Done when: monitor capture incl. multi-GPU.
-- [ ] **P5-31.4 WGC** — via P5-33. Done when: monitor and window capture.
+- [ ] **P5-31.4 WGC** — via the `libobs-winrt` module (existing C module during the port; its Rust port is P5-33). Done when: monitor and window capture.
 - [ ] **P5-31.5 Window/BitBlt** — `window-capture.c`, `dc-capture.c/.h`, `app-helpers.c/.h`, `compat-helpers.c/.h` (compat list). Done when: window selection by title/class/exe.
 - [ ] **P5-31.6 Game capture host** — `game-capture.c`, `game-capture-file-init.c`, `load-graphics-offsets.c`, `nt-stuff.c/.h` plus `shared/ipc-util` (the named-pipe IPC the hook process uses; the only consumers in the tree are game capture and its hook build, so it ports here): hook state machine, shared memory/events, anti-cheat compat. Done when: hooks a D3D11 sample.
 - [ ] **P5-31.7 Hook DLL and helpers** — `graphics-hook/` (`d3d8/9/10/11/12`, `dxgi`, `gl`, `vulkan` capture), `inject-helper/inject-helper.c`, `get-graphics-offsets/`. Stay C/C++ initially; wrap build only. Done when: builds from Cargo.
@@ -267,9 +269,10 @@ Verified in this checkout: **`plugins/obs-websocket` and `plugins/obs-browser` a
 - [ ] **P5-32.7/.8** E1/E2
 
 ### P5-33 `libobs-winrt`
-- [ ] **P5-33.1 Capture** — `libobs-winrt/winrt-capture.cpp`: `GraphicsCaptureItem`, frame pool, `Direct3D11CaptureFramePool::CreateFreeThreaded`. Done when: window capture via WGC.
+- [ ] **P5-33.1 S1/S2 + Capture** — helper module: S1 = the exported `winrt_capture_*` C API (no `obs_register_*`; win-capture loads it by module name), S2 vacuous (no settings). Then `libobs-winrt/winrt-capture.cpp`: `GraphicsCaptureItem`, frame pool, `Direct3D11CaptureFramePool::CreateFreeThreaded`. Done when: window capture via WGC.
 - [ ] **P5-33.2 Dispatcher** — `winrt-dispatch.cpp`. Done when: tests.
-- [ ] **P5-33.3 Integration** with P5-31.4.
+- [ ] **P5-33.3 Integration** with P5-31.4. Done when: WGC window capture through the win-capture module.
+- [ ] **P5-33.4/.5** E1/E2 (added; module name stays `libobs-winrt`)
 
 ### P5-34 `mac-capture`
 - [ ] **P5-34.1/.2** S1/S2
@@ -282,7 +285,7 @@ Verified in this checkout: **`plugins/obs-websocket` and `plugins/obs-browser` a
 ### P5-35 `mac-avcapture`
 - [ ] **P5-35.1/.2** S1/S2
 - [ ] **P5-35.3 Devices** — `OBSAVCapture.m/.h`, `OBSAVCapturePresetInfo.m/.h`, `AVCaptureDeviceFormat+OBSListable.*`, `plugin-properties.m/.h`. Done when: formats list equal.
-- [ ] **P5-35.4 Controls** — Continuity Camera, `legacy/` fallback. Done when: iPhone camera works.
+- [ ] **P5-35.4 Controls + legacy** — `legacy/av-capture.mm` ships as a second module (`mac-avcapture-legacy`); keep it building alongside the port. Done when: formats/controls work and the legacy module loads.
 - [ ] **P5-35.5/.6** E1/E2
 
 ### P5-36 `mac-syphon`
@@ -292,7 +295,7 @@ Verified in this checkout: **`plugins/obs-websocket` and `plugins/obs-browser` a
 
 ### P5-37 `mac-virtualcam`
 - [ ] **P5-37.1/.2** S1/S2
-- [ ] **P5-37.3 Legacy DAL plug-in** — `src/dal-plugin/` (12 ObjC files) + `src/common/MachProtocol.h`: keep it building and tested against the C reference during the port; it is the fallback camera until the extension flow is the default. Per D-14, remove it in this subtask once the extension is the default, and record the removal in `retired.md`. Done when: DAL still green, then deleted with no regressions.
+- [ ] **P5-37.3 Legacy DAL plug-in** — `src/dal-plugin/` (17 ObjC files) + `src/common/MachProtocol.h`: keep it building and tested against the C reference during the port; it is the fallback camera until the extension flow is the default. Per D-14, remove it in this subtask once the extension is the default, and record the removal in `retired.md`. Done when: DAL still green, then deleted with no regressions.
 - [ ] **P5-37.4 System extension + host** — `src/camera-extension/` (Swift: `OBSCameraDeviceSource`, `OBSCameraProviderSource`, stream sink/source) and `src/obs-plugin/` (host: `OBSDALMachServer`, `plugin-main.mm`): Rust cannot be the extension host directly — define the Mach-bridge. Sink stream, `OSSystemExtensionRequest`. Done when: extension builds and the install flow is tested.
 - [ ] **P5-37.5 Signing** — entitlements, provisioning. Done when: notarised build.
 - [ ] **P5-37.6/.7** E1/E2
@@ -319,7 +322,7 @@ Verified in this checkout: **`plugins/obs-websocket` and `plugins/obs-browser` a
 - [ ] **P5-40.1/.2** S1/S2
 - [ ] **P5-40.3 Bindings** — oneVPL FFI. Done when: init session.
 - [ ] **P5-40.4 Encode** — `QSV_Encoder.cpp/.h`, `QSV_Encoder_Internal.cpp/.h`, `obs-qsv11.c`, `common_directx11.*`, `common_utils*.cpp`: H.264/HEVC/AV1, texture input. Done when: encode.
-- [ ] **P5-40.5 Test helper** — `obs-qsv-test/`.
+- [ ] **P5-40.5 Test helper** — `obs-qsv-test/`. Done when: ported.
 - [ ] **P5-40.6/.7** E1/E2
 
 ### P5-41 AMF
@@ -331,21 +334,24 @@ Verified in this checkout: **`plugins/obs-websocket` and `plugins/obs-browser` a
 ## E. Vendor SDK cards and tools
 
 ### P5-42 DeckLink
-- [ ] **P5-42.1 FFI crate** — wrap Blackmagic SDK (COM on Windows via IDL, C++ interfaces on Linux/mac). Files: `plugins/decklink/{windows|mac|linux}/`, `platform.hpp`. Done when: library loads without hardware.
+- [ ] **P5-42.1 S1/S2 + FFI crate** — S1/S2 first (registers `decklink-input` source + `decklink_output` output; the `decklink-captions` module registers its own captions input). Then wrap Blackmagic SDK (COM on Windows via IDL, C++ interfaces on Linux/mac). Files: `plugins/decklink/{win|mac|linux}/`, `platform.hpp`. Done when: table committed, library loads without hardware.
 - [ ] **P5-42.2 Discovery** — `decklink-device-discovery.*`, `decklink-devices.*`, `decklink-device-mode.*`. Done when: mode list equal.
 - [ ] **P5-42.3 Input** — `DecklinkInput.*`, `decklink-source.cpp`, `audio-repack.*`. Done when: capture.
-- [ ] **P5-42.4 Output/captions** — `DecklinkOutput.*`, `decklink-output.cpp`, plugins `decklink-captions`, `decklink-output-ui`. Done when: output.
-- [ ] **P5-42.5 Hardware test**
+- [ ] **P5-42.4 Output/captions** — `DecklinkOutput.*`, `decklink-output.cpp`, `decklink-captions` plugin (`decklink-output-ui` is P6-40). Done when: output.
+- [ ] **P5-42.5 Hardware test** — Done when: capture + output verified on one card per OS.
+- [ ] **P5-42.6/.7** E1/E2 (added; D-10: SDK glue C++ stays, cutover removes only the ported logic)
 
 ### P5-43 AJA
-- [ ] **P5-43.1 FFI** — NTV2 SDK. Files: `aja-card-manager.*`, `aja-common.*`, `aja-routing.*`.
+- [ ] **P5-43.1 S1/S2 + FFI** — S1/S2 first (aja source + output; ids per the S1 table). NTV2 SDK. Files: `aja-card-manager.*`, `aja-common.*`, `aja-routing.*`. Done when: table committed, NTV2 session inits on a card.
 - [ ] **P5-43.2 Capture/output** — `aja-source.*`, `aja-output.*`, `audio-repack.*`. Done when: signal.
-- [ ] **P5-43.3 Presets/props** — `aja-presets.*`, `aja-props.*`, `aja-vpid-data.*`, `aja-widget-io.*`.
-- [ ] **P5-43.4 Hardware test**; `aja-output-ui` in P6-40.
+- [ ] **P5-43.3 Presets/props** — `aja-presets.*`, `aja-props.*`, `aja-vpid-data.*`, `aja-widget-io.*`. Done when: properties parity with C.
+- [ ] **P5-43.4 Hardware test**; `aja-output-ui` in P6-40. Done when: signal on card.
+- [ ] **P5-43.5/.6** E1/E2 (added; D-10: SDK glue C++ stays, cutover removes only the ported logic)
 
 ### P5-44 `frontend-tools`
-- [ ] **P5-44.1 Cross-reference** — scripts → P6-37; auto-scene-switcher → P6-38; captions/output-timer → P6-39.
-- [ ] **P5-44.2 Check** nothing in `plugins/frontend-tools/*` is unassigned.
+(Bookends n/a — ported in Phase 6, see the phase file.)
+- [ ] **P5-44.1 Cross-reference** — scripts → P6-37; auto-scene-switcher → P6-38; captions/output-timer → P6-39. Done when: the Phase 6 file owns every file.
+- [ ] **P5-44.2 Check** nothing in `plugins/frontend-tools/*` is unassigned. Done when: the coverage matrix maps all files to P6-xx.
 
 ## F. Browser
 
@@ -364,24 +370,24 @@ Verified in this checkout: **`plugins/obs-websocket` and `plugins/obs-browser` a
 - [ ] **P5-46.1 Traits** — `Source`, `Filter`, `Encoder`, `Output`, `Service`, `Transition` with default methods for optional callbacks. Done when: docs.
 - [ ] **P5-46.2 Macro** — `#[obs_module(name, author, description, version)]` generating `obs_module_*` exports. Done when: `cargo expand` shows exports.
 - [ ] **P5-46.3 Builders** — settings and properties builders over `obs-data`. Done when: example plugin compiled.
-- [ ] **P5-46.4 Template** — `cargo generate` template + `docs/rust-rewrite/plugin-sdk.md`.
+- [ ] **P5-46.4 Template** — `cargo generate` template + `docs/rust-rewrite/plugin-sdk.md`. Done when: a generated crate builds.
 - [ ] **P5-46.5 Pilot** — migrate `obs-transitions` onto the SDK. Done when: golden unchanged.
 
 ### P5-47 Plugin loader supports both
-- [ ] **P5-47.1 Unified list** — Rust-native and C modules in one registry.
-- [ ] **P5-47.2 Order/failures** — failure reporting via `obs_module_failure_info`.
-- [ ] **P5-47.3 Mixed test** — one Rust and one C module together.
+- [ ] **P5-47.1 Unified list** — Rust-native and C modules in one registry. Done when: registry lists both kinds.
+- [ ] **P5-47.2 Order/failures** — failure reporting via `obs_module_failure_info`. Done when: a failing C module reports as before.
+- [ ] **P5-47.3 Mixed test** — one Rust and one C module together. Done when: both load, order preserved.
 
 ### P5-48 Installer layout
 - [ ] **P5-48.1 Compare** installed trees (old/new) with a script. Done when: diff empty or approved.
-- [ ] **P5-48.2 CMake/Cargo install rules**.
-- [ ] **P5-48.3 Flatpak manifest** (`build-aux/`).
+- [ ] **P5-48.2 CMake/Cargo install rules**. Done when: installed trees match (P5-48.1).
+- [ ] **P5-48.3 Flatpak manifest** (`build-aux/`). Done when: manifest paths match and the Flatpak build passes.
 
 ### P5-49 Full-feature regression run
-- [ ] **P5-49.1 Automated** smoke test on 3 OSes.
-- [ ] **P5-49.2 Manual matrix** of all ~40 plugins.
-- [ ] **P5-49.3 Record** and open issues.
+- [ ] **P5-49.1 Automated** smoke test on 3 OSes. Done when: CI jobs green.
+- [ ] **P5-49.2 Manual matrix** of all 41 plugins. Done when: matrix recorded in `docs/tests/`.
+- [ ] **P5-49.3 Record** and open issues. Done when: `docs/tests/phase-5-regression.md` committed.
 
 ### P5-50 Phase 5 review
-- [ ] **P5-50.1 FFI-shim list** with owner and reason.
-- [ ] **P5-50.2 Tick** parents.
+- [ ] **P5-50.1 FFI-shim list** with owner and reason. Done when: table committed (input to P7-03.1).
+- [ ] **P5-50.2 Tick** parents. Done when: every P5-xx checkbox is ticked in the phase file.

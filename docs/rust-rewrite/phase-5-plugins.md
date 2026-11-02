@@ -12,19 +12,19 @@ Every plugin task has the same shape. **Common checklist (applies to each P5-xx 
 6. Remove the C plugin from CMake in the same PR; update the README.
 7. Manual smoke test on each supported OS and note it in `docs/tests/`.
 
-Order: A (pure logic) -> B (network/mux) -> C (platform capture) -> D (hardware encoders) -> E (vendor SDK) -> F (browser). Within a group tasks are independent and can run in parallel.
+Order: A (pure logic) -> B (network/mux) -> C (platform capture) -> D (hardware encoders) -> E (vendor SDK) -> F (browser). Within a group tasks are independent and can run in parallel. Exception: start P5-46.1–.5 (native SDK + obs-transitions pilot) early, right after the foundation, because the pilot proves the SDK the remaining ports use; P5-47…P5-50 stay the wrap-up.
 
 ## A. Pure logic (start here; lowest risk)
 
-- [ ] **P5-01 `obs-filters`** (L): colour correction, chroma/colour key, LUT, sharpen, scroll, mask, crop/pad, render delay, scale/aspect, noise gate/suppress (RNNoise via `nnnoiseless`, speex), compressor, limiter, expander, gain, invert polarity, upmix, async delay, EQ. Source: `plugins/obs-filters/*.c`, `data/*.effect`. Done when: audio filters match golden PCM within 1e-4; video filters match PNG goldens.
+- [ ] **P5-01 `obs-filters`** (L): colour correction, chroma/colour key, LUT, sharpen, scroll, mask, crop, render delay, scale/aspect, noise gate/suppress (RNNoise via `nnnoiseless`, speex), compressor, limiter, expander, gain, invert polarity, async delay, EQ, HDR tonemap / SDR-on-HDR. Source: `plugins/obs-filters/*.c`, `data/*.effect`. Done when: audio filters match golden PCM within 1e-4; video filters match PNG goldens.
 - [ ] **P5-02 `obs-transitions`** (M): cut, fade, swipe, slide, stinger, fade-to-colour, luma wipe. Golden: 30 frames per transition.
-- [ ] **P5-03 `image-source`** (M): image source, slideshow, colour source, `color-source.c`, `obs-slideshow.c`. Includes animated GIF/APNG/WebP.
+- [ ] **P5-03 `image-source`** (M): image source, slideshow, colour source, `color-source.c`, `obs-slideshow.c`. Includes animated GIF (libobs `libnsgif`) and FFmpeg-decoded stills (WebP etc.).
 - [ ] **P5-04 `obs-text`** (M): GDI+ text source (Windows only), port to DirectWrite (`windows` crate). Golden screenshots of fonts/outlines.
 - [ ] **P5-05 `text-freetype2`** (M): FreeType text, read-from-file, custom effects. Use `freetype-rs` or `cosmic-text`/`swash`; check glyph metrics vs golden.
 - [ ] **P5-06 `rtmp-services`** (M): `services.json` loading, per-service settings, `rtmp-common`, `rtmp-custom`, JSON schema validation, service list update from the web (`json-file`, package update), enhanced broadcasting/multitrack config.
-- [ ] **P5-07 `obs-x264`** (M): x264 encoder via `x264` crate bindings; settings parse (`obs-x264-options.c`), CRF/CBR/VBR/ABR, custom `x264opts` strings. Done when: bitstream is byte-identical for fixed input and settings.
+- [ ] **P5-07 `obs-x264`** (M): x264 encoder via `x264` crate bindings; settings parse (`obs-x264.c`), CRF/CBR/VBR/ABR, custom `x264opts` strings. Done when: bitstream is byte-identical for fixed input and settings.
 - [ ] **P5-08 `obs-libfdk`** (S): AAC via libfdk (kept as FFI). Optional build.
-- [ ] **P5-09 `coreaudio-encoder`** (M): macOS AAC encoder via `AudioToolbox` (`objc2`/`coreaudio-sys`). Test on macOS CI.
+- [ ] **P5-09 `coreaudio-encoder`** (M): AAC encoder via `AudioToolbox` (`objc2`/`coreaudio-sys` on macOS; Windows via `windows-imports.h`). Test on macOS CI.
 - [ ] **P5-10 `nv-filters`** (L): NVIDIA Broadcast/AR SDK filters (noise suppress, room echo removal, face tracking/greenscreen) - FFI around the vendor SDK; Windows only. Task includes loading the SDK dynamically.
 
 ## B. Network and muxing
@@ -34,11 +34,11 @@ Order: A (pure logic) -> B (network/mux) -> C (platform capture) -> D (hardware 
 - [ ] **P5-13 `obs-ffmpeg` NVENC fallback** (S): `obs-ffmpeg-nvenc.c` (legacy FFmpeg NVENC path).
 - [ ] **P5-14 `obs-ffmpeg-mux` helper process** (L): `plugins/obs-ffmpeg/ffmpeg-mux/` out-of-process muxer: stdin protocol, MKV/MP4/fMP4/MOV/HLS, chapters, replay buffer, split file. Keep protocol; add fuzz tests for the pipe reader.
 - [ ] **P5-15 `obs-ffmpeg` outputs** (L): `obs-ffmpeg-output.c`, `obs-ffmpeg-mpegts.c` (SRT, RIST via `obs-ffmpeg-srt.h`, `obs-ffmpeg-rist.h`), `obs-ffmpeg-hls-mux.c`, `obs-ffmpeg-url.h`. Loopback tests with `ffplay` or `srt-live-transmit`.
-- [ ] **P5-16 `obs-ffmpeg` media source** (L): `obs-ffmpeg-source.c`, `media-playback/` decoder (A/V sync, looping, hw decode, seek, buffering, `mp-media`, `mp-decode`, `mp-cache`). Done when: A/V drift < 1 frame over a 2 h file.
+- [ ] **P5-16 `obs-ffmpeg` media source** (L): `obs-ffmpeg-source.c`, `media-playback/` decoder (A/V sync, looping, hw decode, seek, buffering; `shared/media-playback`: `media.c`, `decode.c`, `cache.c`). Done when: A/V drift < 1 frame over a 2 h file.
 - [ ] **P5-17 `obs-outputs` RTMP/FLV** (XL; split: FLV muxer, RTMP client (`librtmp` replacement, e.g. `rml_rtmp` or in-tree), enhanced-RTMP HEVC/AV1, multitrack, congestion control `dbr`, socket tuning): `rtmp-stream.c`, `flv-mux.c`, `flv-output.c`, `librtmp/`, `net-if.c`. Tested against nginx-rtmp and a mock server; TLS via `rustls`.
 - [ ] **P5-18 `obs-outputs` FTL, null, mp4 output** (M): `ftl-stream.c`, `null-output.c`, `mp4-output.c`, `mp4-mux.c`. Golden MP4 box dumps (`mp4dump`).
 - [ ] **P5-19 `obs-webrtc`** (L): WHIP output (`whip-output.cpp`, `whip-utils.h`), libdatachannel -> `webrtc-rs` or keep libdatachannel FFI; test against a WHIP server (e.g. mediamtx).
-- [ ] **P5-20 `obs-websocket`** (XL; split: server/transport (`tokio-tungstenite`), auth (SHA256 challenge), request handlers by category (general, config, sources, scenes, inputs, transitions, filters, scene items, outputs, stream, record, media inputs, UI, ...), event dispatch, vendor API, CLI args): preserve protocol v5.x exactly; run the official obs-websocket protocol test-suite and `obs-websocket-js` client.
+- [ ] **P5-20 `obs-websocket`** (XL; git submodule — `git submodule update --init` first; split: server/transport (`tokio-tungstenite`), auth (SHA256 challenge), request handlers by category (general, config, sources, scenes, inputs, transitions, filters, scene items, outputs, stream, record, media inputs, UI, ...), event dispatch, vendor API, CLI args): preserve protocol v5.x exactly; run the official obs-websocket protocol test-suite and `obs-websocket-js` client.
 - [ ] **P5-21 `obs-vst`** (L): VST2 host (Windows/macOS/Linux): dynamic loading, editor window embedding. Hard to test; tie to a free VST plugin; consider keeping C++.
 - [ ] **P5-22 `vlc-video`** (M): VLC source via `libvlc` FFI; playlist handling; optional.
 
@@ -61,9 +61,9 @@ Windows:
 
 macOS:
 - [ ] **P5-34 `mac-capture`** (XL): ScreenCaptureKit (display, window, application), audio capture (`objc2` + `screencapturekit` crate), permissions, cursor.
-- [ ] **P5-35 `mac-avcapture`** (L): AVFoundation cameras, formats, presets, controls, Continuity Camera.
+- [ ] **P5-35 `mac-avcapture`** (L): AVFoundation cameras, formats, presets, controls; keep the legacy module (`legacy/` → `mac-avcapture-legacy`) building.
 - [ ] **P5-36 `mac-syphon`** (M): Syphon client; IOSurface (depends on P3-20).
-- [ ] **P5-37 `mac-virtualcam`** (L): the plugin ships **two** camera backends: the legacy CoreMediaIO DAL plug-in (`src/dal-plugin/`, 12 ObjC files, plus shared `src/common/MachProtocol.h`) and the new system extension (`src/camera-extension/` Swift + `src/obs-plugin/` host). Port the host side (sink stream, extension install flow, code-signing, entitlements); keep the DAL plug-in building until the extension flow is the default, then remove it (D-14).
+- [ ] **P5-37 `mac-virtualcam`** (L): the plugin ships **two** camera backends: the legacy CoreMediaIO DAL plug-in (`src/dal-plugin/`, 17 ObjC files, plus shared `src/common/MachProtocol.h`) and the new system extension (`src/camera-extension/` Swift + `src/obs-plugin/` host). Port the host side (sink stream, extension install flow, code-signing, entitlements); keep the DAL plug-in building until the extension flow is the default, then remove it (D-14).
 - [ ] **P5-38 `mac-videotoolbox`** (L): H.264/HEVC/ProRes hardware encoder; pixel buffer sharing with Metal (depends on P3-21).
 
 ## D. Hardware encoders
@@ -74,19 +74,19 @@ macOS:
 
 ## E. Vendor SDK cards and tools
 
-- [ ] **P5-42 `decklink`, `decklink-captions`, `decklink-output-ui`** (L): Blackmagic SDK (COM on Windows, C++ on Linux/macOS): keep the SDK glue as a thin C++ FFI crate; port the plugin logic (device discovery, input/output, format detection, captions) in Rust.
-- [ ] **P5-43 `aja`, `aja-output-ui`** (L): AJA NTV2 SDK; same strategy as DeckLink.
+- [ ] **P5-42 `decklink`, `decklink-captions`** (L): Blackmagic SDK (COM on Windows, C++ on Linux/macOS): keep the SDK glue as a thin C++ FFI crate; port the plugin logic (device discovery, input/output, format detection, captions) in Rust. (`decklink-output-ui` is P6-40.)
+- [ ] **P5-43 `aja`** (L): AJA NTV2 SDK; same strategy as DeckLink. (`aja-output-ui` is P6-40.)
 - [ ] **P5-44 `frontend-tools`** (XL; handled in Phase 6): auto scene switcher, captions (MS SAPI), output timer, scripts. Not part of this phase except where noted in Phase 6.
 
 ## F. Browser
 
-- [ ] **P5-45 `obs-browser`** (XL): CEF (Chromium Embedded Framework) is a C++ library; keep it. Port the surrounding plugin (browser source, browser panel/dock, JS bindings `obsstudio` object, QuickJS/V8 bridge, cookie manager) to Rust via a thin C++ `cef-bridge` crate. Done when: `https://obsproject.com`, a Twitch chat dock and a WebGL overlay render correctly on each OS; page-visibility and shutdown flags behave as before.
+- [ ] **P5-45 `obs-browser`** (XL; git submodule — `git submodule update --init` first): CEF (Chromium Embedded Framework) is a C++ library; keep it. Port the surrounding plugin (browser source, browser panel/dock, JS bindings `obsstudio` object, CEF/V8 JS bridge, cookie manager) to Rust via a thin C++ `cef-bridge` crate. Done when: `https://obsproject.com`, a Twitch chat dock and a WebGL overlay render correctly on each OS; page-visibility and shutdown flags behave as before.
 
 ## G. Phase wrap-up
 
 - [ ] **P5-46 Native plugin SDK `obs-plugin-api`** (L): `trait Source/Filter/Encoder/Output/Service`, `#[obs_module]` proc-macro, safe settings and properties builders, docs and a `cargo generate` template. All ported plugins use it.
 - [ ] **P5-47 Plugin loader supports both** (M): load Rust-native modules (static/dynamic) and C-ABI modules in one list.
-- [ ] **P5-48 Installer layout and module list** (S): confirm file names, `obs-plugins/` layout, `data/obs-plugins/<name>/` paths unchanged; update `cmake/` install rules and Flatpak manifest.
+- [ ] **P5-48 Installer layout and module list** (S): confirm file names and per-OS module/data install destinations unchanged (Windows: `core/<name>.dll` + `core/<name>/data`; Linux: `lib/obs-modules/core/<name>.so` + `share/obs/obs-modules/core/<name>`; macOS: bundle layout per `cmake/macos/`); update `cmake/` install rules and Flatpak manifest.
 - [ ] **P5-49 Full-feature regression run** (L): run the P0-16 smoke test + a manual matrix of the 40 original plugins on 3 OSes; record in `docs/tests/`.
 - [ ] **P5-50 Phase 5 review** (S): tick this file; list any plugin deliberately kept as C/C++ with reason.
 

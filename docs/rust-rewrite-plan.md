@@ -9,16 +9,16 @@ Status: proposal. Nothing here is implemented yet. Tick the checkboxes as phases
 | Core engine (`libobs`) | `libobs/` | 94k | C (+ObjC for macOS) |
 | Graphics backends | `libobs-opengl`, `libobs-d3d11`, `libobs-metal`, `libobs-winrt` | 17k | C / C++ / Swift |
 | Frontend (Qt6 GUI) | `frontend/` | 109k | C++ (+ `.ui`) |
-| Plugins (~40 modules) | `plugins/` | 172k | C / C++ / ObjC |
+| Plugins (41 modules) | `plugins/` | 172k | C / C++ / ObjC |
 | Shared helpers | `shared/` | 22k | C / C++ |
 | Vendored deps | `deps/` (blake2, glad, json11, libcaption, libdshowcapture, ...) | 70k | C / C++ |
 
-Total about 494k tracked source lines (`tools/task-coverage.py` against libobs 33.0.1), 15.8k commits, 3 OSes, 40 plugins.
+Total about 494k tracked source lines (`tools/task-coverage.py` against libobs 33.0.1), 15,819 commits, 3 OSes, 41 plugin modules.
 
 Key architectural facts that shape the plan:
 
 - **`libobs` is the product.** It owns sources, scenes, outputs, encoders, services, filters, the video/audio mixing threads, hotkeys, `obs_data` settings, and the signal/proc/calldata callback system. It is ~680 exported `EXPORT` symbols in `obs.h` alone.
-- **The plugin ABI is C.** Plugins are shared libraries exporting `obs_module_load` etc. via `OBS_DECLARE_MODULE` (40 in-tree), registering `struct obs_source_info` and similar vtables. Hundreds of third-party plugins (and the scripting, browser and websocket integrations) depend on this ABI.
+- **The plugin ABI is C.** Plugins are shared libraries exporting `obs_module_load` etc. via `OBS_DECLARE_MODULE` (41 in-tree), registering `struct obs_source_info` and similar vtables. Hundreds of third-party plugins (and the scripting, browser and websocket integrations) depend on this ABI.
 - **Graphics is an abstraction layer** (`libobs/graphics`, `gs_*` API) with a custom effect/shader language (`effect-parser.c`, `shader-parser.c`) transpiled per backend.
 - **The frontend is Qt6 C++** (~109k lines incl. `.ui` forms, docks, settings, wizards, importers, updater, plugin manager) and also embeds Lua/Python scripting (`plugins/frontend-tools`).
 - **Heavy native dependencies**: FFmpeg, x264, libcurl, Qt6, CEF (browser), PipeWire, Pulse/ALSA/JACK, V4L2, WASAPI, DirectShow, CoreAudio, AVFoundation, NVENC/AMF/QSV/VideoToolbox, Python/Lua.
@@ -90,7 +90,7 @@ Order is dictated by dependency and risk: leaf libraries first, the core second,
 - [ ] `obs-ffi`: complete `obs.h` surface, with vtable adapters so unmodified C plugins register sources/encoders/outputs.
 - [ ] Module loader (`libloading`); the three platform loaders merge into one.
 - [ ] Save/load of scene collections and profiles stays format-compatible (JSON); add round-trip tests with real user collections.
-- Exit: unmodified upstream C plugins (obs-websocket, obs-browser, obs-ffmpeg) load and run on the Rust core. At this point `libobs` is retired.
+- Exit: unmodified upstream C plugins (obs-websocket, obs-browser, obs-ffmpeg) load and run on the Rust core. At this point every `libobs` function is served by Rust behind `OBS_ENABLE_RUST` (the C code itself is deleted in Phase 7, P7-01).
 
 ### Phase 5 — Plugins, in order of risk (each is its own PR stack)
 1. Pure logic: `obs-filters`, `obs-transitions`, `obs-text`, `image-source`, `rtmp-services`, `obs-x264`.
@@ -101,7 +101,7 @@ Order is dictated by dependency and risk: leaf libraries first, the core second,
 6. `obs-browser` (CEF): remains C++ wrapped by the Rust plugin API. Not a rewrite candidate.
 
 ### Phase 6 — Frontend (`frontend/`)
-- [ ] With `cxx-qt`: port docks, scene/source tree, mixer, settings, wizards, importers, updater, plugin manager incrementally; each QObject-based widget is replaced by a Rust-backed QML or widget module. Frontend API (`OBSStudioAPI`) re-exposed through `obs-ffi`.
+- [ ] With `cxx-qt` (default; P0-04 prototypes the alternatives): port docks, scene/source tree, mixer, settings, wizards, importers, updater, plugin manager incrementally; each QObject-based widget is replaced by a Rust-backed Qt widget module, migrating the `.ui` forms step by step. Frontend API (`OBSStudioAPI`) re-exposed through `obs-ffi`.
 - [ ] Scripting (`frontend-tools`): `mlua` + `pyo3`.
 - [ ] i18n (`data/locale/*.ini`) kept as is; loaded by a Rust loader.
 - [ ] Packaging for Flatpak, Windows installer, macOS notarized app, plus the existing update channel.
