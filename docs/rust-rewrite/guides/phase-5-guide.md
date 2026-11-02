@@ -19,7 +19,7 @@ struct obs_source_info gain_filter = { .id = "gain_filter", .type = OBS_SOURCE_T
     .destroy = gain_destroy, .update = gain_update, .filter_audio = gain_filter_audio,
     .get_defaults = gain_defaults, .get_properties = gain_properties };
 ```
-`obs-filters.c` has `OBS_DECLARE_MODULE()`, `OBS_MODULE_USE_DEFAULT_LOCALE("obs-filters", "en-US")` and `obs_module_load()` which calls `obs_register_source(&gain_filter)` for each filter. Strings come from `data/locale/en-US.ini` via `obs_module_text`. CMake: `add_library(obs-filters MODULE)`, installed to `obs-plugins/`, data to `data/obs-plugins/obs-filters/`.
+`obs-filters.c` has `OBS_DECLARE_MODULE()`, `OBS_MODULE_USE_DEFAULT_LOCALE("obs-filters", "en-US")` and `obs_module_load()` which calls `obs_register_source(&gain_filter)` for each filter. Strings come from `data/locale/en-US.ini` via `obs_module_text`. CMake: `add_library(obs-filters MODULE)`; the module installs to `core/` (Windows) or `lib/obs-modules/core/` (Linux), data to `core/obs-filters/data` (Windows) or `share/obs/obs-modules/core/obs-filters` (Linux).
 
 The Rust version (**Proposal**, SDK in P5-46) should read like:
 ```rust
@@ -41,7 +41,7 @@ Until the SDK exists, port plugins with a thin hand-written `extern "C"` registr
 
 | Lines | Plugins |
 |---|---|
-| 15k–22k | `obs-filters` (includes vendored RNNoise), `obs-outputs` (includes vendored librtmp), `obs-ffmpeg`, `decklink`, `win-capture` |
+| 15k+ | `obs-filters` (includes vendored RNNoise), `obs-outputs` (includes vendored librtmp), `obs-ffmpeg`, `decklink`, `win-capture` |
 | 4k–9k | `aja`, `mac-avcapture`, `obs-qsv11`, `obs-nvenc`, `win-dshow`, `linux-pipewire` |
 | 2k–4k | `mac-capture`, `mac-virtualcam`, `frontend-tools`, `nv-filters`, `image-source`, `linux-v4l2`, `text-freetype2`, `linux-capture`, `rtmp-services`, `win-wasapi` |
 | 1k–2k | `obs-transitions`, `obs-vst`, `coreaudio-encoder`, `vlc-video`, `mac-videotoolbox`, `obs-text`, `obs-webrtc`, `linux-pulseaudio` |
@@ -69,17 +69,17 @@ Until the SDK exists, port plugins with a thin hand-written `extern "C"` registr
 
 ## Plugin-specific context
 
-**`obs-filters`.** One file per filter; GPU filters use `.effect` files in `data/` (`color_correction_filter.effect`, etc.) via `gs_effect_create_from_file`; audio filters implement `filter_audio` on planar float. Noise suppression uses vendored RNNoise (`rnnoise/`) and optionally Speex and the NVIDIA AFX (the latter lives in `nv-filters`). Compressor/limiter/expander share envelope code; compare against golden PCM with 1e-4 tolerance because float summation order changes.
+**`obs-filters`.** One file per filter; GPU filters use `.effect` files in `data/` (`color_correction_filter.effect`, etc.) via `gs_effect_create_from_file`; audio filters implement `filter_audio` on planar float. Noise suppression uses vendored RNNoise (`rnnoise/`) and optionally Speex and the NVIDIA AFX (the latter lives in `nv-filters`). Compressor/limiter/expander each implement the same attack/release envelope math; compare against golden PCM with 1e-4 tolerance because float summation order changes.
 
 **`obs-outputs`.** `rtmp-stream.c` (the RTMP output with congestion control, dynamic bitrate and multitrack), `flv-mux.c`, `rtmp-hevc.c`, `rtmp-av1.c`, `mp4-mux.c` (hybrid/fragmented MP4), `net-if.c` (bind-to-interface), vendored `librtmp/`. No FTL sources are present in this tree (decision task P5-18.3).
 
-**`obs-ffmpeg`.** The biggest hub of external codecs. `ffmpeg-mux/` is a **separate helper executable** that receives packets on stdin: preserve its protocol exactly, as updaters and old versions may meet new ones. VAAPI, AMF (`texture-amf.cpp`), openh264, SRT/RIST. The media source uses `shared/media-playback/media-playback/*` (`media.c`, `decode.c`, `cache.c`) which is shared with other code — port it as its own crate and reuse.
+**`obs-ffmpeg`.** The biggest hub of external codecs. `ffmpeg-mux/` is a **separate helper executable** that receives packets on stdin: preserve its protocol exactly, as updaters and old versions may meet new ones. VAAPI, AMF (`texture-amf.cpp`), openh264, SRT/RIST. The media source uses `shared/media-playback/media-playback/*` (`media.c`, `decode.c`, `cache.c`; obs-ffmpeg is its only in-tree consumer) — port it as its own crate and reuse.
 
 **`win-capture`.** Three capture families: DXGI desktop duplication, Windows Graphics Capture (needs `libobs-winrt`), and *game capture*, which injects `graphics-hook.dll` (`plugins/win-capture/graphics-hook/`, covers D3D8/9/10/11/12, DXGI, OpenGL and Vulkan layers) into the game via `inject-helper`. The hook runs inside third-party processes with anti-cheat constraints: it stays C/C++ (smallest possible dependency surface); port only the host side.
 
 **`linux-pipewire`.** Portal-based capture: `portal.c`, `screencast-portal.c`, `camera-portal.c`, formats negotiation in `formats.c`; produces DMA-BUF textures (Phase 3 P3-18). Test on GNOME, KDE and a wlroots compositor.
 
-**`mac-*`.** Objective-C/Swift today (`mac-capture` uses ScreenCaptureKit, `mac-avcapture` AVFoundation, `mac-virtualcam/src` a CoreMediaIO extension). Rust bindings via `objc2`; the virtual-camera *extension* is a separate bundle with its own entitlements and may remain Swift.
+**`mac-*`.** Objective-C/Swift today (`mac-capture` uses ScreenCaptureKit, `mac-avcapture` AVFoundation plus a second `mac-avcapture-legacy` module, `mac-virtualcam` a legacy CoreMediaIO DAL plug-in plus a system extension). Rust bindings via `objc2`; the virtual-camera *system extension* is a separate bundle with its own entitlements and may remain Swift (D-14: drop the DAL plug-in once the extension flow is the default).
 
 **Hardware encoders.** `obs-nvenc` (`nvenc-d3d11.c`, `nvenc-cuda.c`, `nvenc-opengl.c`, `nvenc-properties.c`), `obs-qsv11` (+ `obs-qsv-test` helper), AMF inside `obs-ffmpeg`. Test helpers run in **separate processes** to probe drivers safely (a crashing driver must not take OBS down): keep that architecture.
 
@@ -90,7 +90,7 @@ Until the SDK exists, port plugins with a thin hand-written `extern "C"` registr
 - A "port" that changes behaviour silently is worse than a bug: always run the old and new plugin side by side on the same inputs (golden/differential).
 - Don't conflate FFmpeg *bindings* with FFmpeg *functionality*. Use `ffmpeg-next`/`rsmpeg` or direct `-sys` bindings; match the FFmpeg major version the C build uses (see `cmake` for the pinned version in the dependency preset).
 - Several plugins load vendor libraries at runtime (`nvEncodeAPI`, AFX/VFX SDKs, `libvlc`, CEF). Keep dynamic loading and graceful "not installed" behaviour; do not link statically.
-- Some plugins are Windows-only (`obs-text`, `win-*`, `nv-filters`), macOS-only (`mac-*`, `coreaudio-encoder`) or Linux-only; CI must build each on its OS.
+- Some plugins are Windows-only (`obs-text`, `win-*`, `nv-filters`), macOS-only (`mac-*`), Windows+macOS (`coreaudio-encoder`, via `windows-imports.h` on Windows) or Linux-only; CI must build each on its OS.
 - `frontend-tools` is mostly frontend code (Qt dialogs); its tasks live in Phase 6.
 
 ## Verification checklist per plugin

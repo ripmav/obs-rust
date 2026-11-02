@@ -15,15 +15,15 @@ Verified facts: `libobs/obs-internal.h` has 46 `pthread_mutex_t` fields (P4-04 m
 - [ ] **P4-01.4 ADR 0007** — write and review.
 
 ### P4-02 Handle registry and refcount compat
-- [ ] **P4-02.1 addref/release** — `obs_source_addref`, `obs_source_release`, and the equivalent for every kind. Done when: refcount observable through a debug function equals C after scripted sequences.
+- [ ] **P4-02.1 addref/release** — `obs_source_get_ref`, `obs_source_release` (there is no `obs_source_addref` in 33), and the equivalent for every kind. Done when: refcount observable through a debug function equals C after scripted sequences.
 - [ ] **P4-02.2 Weak** — `obs_source_get_weak_source`, `obs_weak_source_get_source`, `addref/release_weak`, `references_source`. Done when: upgrade after destroy returns NULL.
 - [ ] **P4-02.3 Race tests** — `loom`: release vs upgrade. Done when: model passes.
 
 ### P4-03 Global context
 - [ ] **P4-03.1 `Core`** — struct replacing the `obs_core` globals in `obs-internal.h` (data, video, audio, hotkeys, modules, sources lists). Done when: no `static mut`.
 - [ ] **P4-03.2 Startup/shutdown** — `obs_startup(locale, module_config_path, store)`, `obs_shutdown`, `obs_initialized`. Done when: double-startup returns false as in C.
-- [ ] **P4-03.3 Reset video/audio** — `obs_reset_video(struct obs_video_info*)` (all 20+ fields, error codes `OBS_VIDEO_*`), `obs_reset_audio(2)`. Done when: invalid combinations return the same codes.
-- [ ] **P4-03.4 Leak report** — print leaked objects at shutdown like `bnum_allocs`. Done when: deliberate leak is reported.
+- [ ] **P4-03.3 Reset video/audio** — `obs_reset_video(struct obs_video_info*)` (all 13 fields, error codes `OBS_VIDEO_SUCCESS/NOT_SUPPORTED/INVALID_PARAM/CURRENTLY_ACTIVE/MODULE_NOT_FOUND/FAIL`), `obs_reset_audio(2)`. Done when: invalid combinations return the same codes.
+- [ ] **P4-03.4 Leak check** — C `obs_shutdown` prints nothing; add a Rust check comparing `bnum_allocs()` (or the Rust allocator counter) to the startup baseline. Done when: deliberate leak is detected by the check.
 
 ### P4-04 Lock inventory and ordering
 - [ ] **P4-04.1 Table of 46 mutexes** — name, struct, protects, order. Done when: complete.
@@ -34,13 +34,13 @@ Verified facts: `libobs/obs-internal.h` has 46 `pthread_mutex_t` fields (P4-04 m
 ### P4-05 Source info vtable adapter
 - [ ] **P4-05.1 Trait** — methods mirroring `obs_source_info` callbacks (`get_name`, `create`, `destroy`, `get_width/height`, `get_defaults(2)`, `get_properties(2)`, `update`, `activate/deactivate`, `show/hide`, `video_tick`, `video_render`, `audio_render`, `filter_*`, `enum_active_sources`, `save/load`, `mouse_*`, `key_click`, `focus`, `missing_files`, `get_color_space`, …). Done when: one-to-one table.
 - [ ] **P4-05.2 `CSource`** — copy the struct respecting `obs_register_source_s(info, size)`; ignore unknown fields. Done when: old and new-size structs both register.
-- [ ] **P4-05.3 Flags** — `OBS_SOURCE_VIDEO/AUDIO/ASYNC/ASYNC_VIDEO/CUSTOM_DRAW/INTERACTION/COMPOSITE/DO_NOT_DUPLICATE/DEPRECATED/DO_NOT_SELF_MONITOR/CAP_DISABLED/MONITOR_BY_DEFAULT/CONTROLLABLE_MEDIA/CEA_708/SRGB/CAP_OBSOLETE/REQUIRES_CANVAS`. Done when: each flag has a behavioural test.
+- [ ] **P4-05.3 Flags** — all 19 `output_flags` (plus the 4 `OBS_SOURCE_TYPE_*`): `OBS_SOURCE_VIDEO/AUDIO/ASYNC/ASYNC_VIDEO/CUSTOM_DRAW/INTERACTION/COMPOSITE/DO_NOT_DUPLICATE/DEPRECATED/DO_NOT_SELF_MONITOR/CAP_DISABLED/CAP_DONT_SHOW_PROPERTIES/MONITOR_BY_DEFAULT/CONTROLLABLE_MEDIA/CEA_708/SRGB/CAP_OBSOLETE/REQUIRES_CANVAS/SUBMIX`. Done when: each flag has a behavioural test.
 - [ ] **P4-05.4 Threading** — which callbacks run on graphics, audio, UI threads and with which locks held. Done when: documented and asserted.
 
 ### P4-06 Source lifecycle
-- [ ] **P4-06.1 Create/destroy** — `obs_source_create`, `_private`, `_set_defaults`, destroy order. Done when: callback trace equal.
+- [ ] **P4-06.1 Create/destroy** — `obs_source_create`/`_private`, stub-info path for unknown ids (source still created "so the user's data doesn't become lost"), destroy order. Done when: callback trace equal.
 - [ ] **P4-06.2 Update** — `obs_source_update`, `obs_source_update_properties`, `obs_source_properties`. Done when: settings applied once.
-- [ ] **P4-06.3 Save/load** — `obs_save_source`, `obs_load_source`, `obs_load_sources` (JSON keys: `name`, `uuid`, `id`, `versioned_id`, `settings`, `mixers`, `sync`, `flags`, `volume`, `balance`, `enabled`, `muted`, `push-to-mute`, `hotkeys`, `filters`, `private_settings`, …). Done when: corpus round trip.
+- [ ] **P4-06.3 Save/load** — `obs_save_source`, `obs_load_source`, `obs_load_sources` (JSON keys: `prev_ver`, `name`, `uuid`, `id`, `versioned_id`, `settings`, `mixers`, `sync`, `flags`, `volume`, `balance`, `enabled`, `muted`, `monitoring_type`, `monitoring_enabled`, `hotkeys`, `deinterlace_mode`, `deinterlace_field_order`, `canvas_uuid`, `filters`, `private_settings`). Done when: corpus round trip.
 - [ ] **P4-06.4 Naming/duplicate** — unique names, UUIDs, `obs_source_duplicate`, `obs_source_set_name`. Done when: tests.
 
 ### P4-07 Async video sources
@@ -55,8 +55,8 @@ Verified facts: `libobs/obs-internal.h` has 46 `pthread_mutex_t` fields (P4-04 m
 - [ ] **P4-08.3 Capture callbacks** — `obs_source_add_audio_capture_callback`. Done when: callbacks fire per tick with expected data.
 
 ### P4-09 Filters
-- [ ] **P4-09.1 Chain** — `obs_source_filter_add/remove/set_order/get_by_name`, `filter_parent`, `filter_target`. Done when: order test.
-- [ ] **P4-09.2 Processing** — `obs_source_process_filter_begin/end/tech_end`, `obs_source_skip_video_filter`, `obs_source_default_filter_*`. Done when: golden render.
+- [ ] **P4-09.1 Chain** — `obs_source_filter_add/remove/set_order/set_index`, `obs_source_get_filter_by_name`, `obs_filter_get_parent`, `obs_filter_get_target`. Done when: order test.
+- [ ] **P4-09.2 Processing** — `obs_source_process_filter_begin/end/tech_end`, `obs_source_skip_video_filter`, pass-through for filters without a `filter_video` callback (there is no `obs_source_default_filter_*` in 33). Done when: golden render.
 - [ ] **P4-09.3 Audio filters** — `filter_audio` callback chain. Done when: golden.
 
 ### P4-10 Source render path
@@ -68,12 +68,12 @@ Verified facts: `libobs/obs-internal.h` has 46 `pthread_mutex_t` fields (P4-04 m
 - [ ] **P4-11.1 State** — `obs_transition_start`, `set`, `clear`, `get_time`, duration modes (`OBS_TRANSITION_MODE_AUTO/MANUAL`). Done when: timeline test.
 - [ ] **P4-11.2 Mix callbacks** — `transition_video_render`, A/B sources, `obs_transition_video_render(2)`, `obs_transition_get_source`. Done when: frames at t=0,0.5,1 equal.
 - [ ] **P4-11.3 Audio** — `obs_transition_audio_render`, mix callbacks (`mix_a/mix_b`). Done when: PCM golden.
-- [ ] **P4-11.4 Helpers** — fixed transitions, T-bar `obs_transition_set_manual_time`, stinger hooks. Done when: tests.
+- [ ] **P4-11.4 Helpers** — T-bar `obs_transition_set_manual_time`, duration-mode helpers. (Stingers are a frontend concept — a transition over a video source; libobs has no stinger code.) Done when: tests.
 
 ### P4-12 Source signals and procs
 - [ ] **P4-12.1 List** — extract signals from `obs-source.c` (`signal_handler_add` strings) and docs. Done when: list committed.
 - [ ] **P4-12.2 Signals** — implement all with exact parameter names. Done when: table test emits each.
-- [ ] **P4-12.3 Procs** — `get_hotkey_bindings`, `get_hotkey_names`, transition procs. Done when: table test.
+- [ ] **P4-12.3 Procs** — expose `obs_source_get_proc_handler` per source; plugins add their own procs (e.g. obs-ffmpeg `restart`/`get_duration`) and must call them through the ABI. (`get_hotkey_bindings`/`get_hotkey_names` do not exist in 33.0.1.) Done when: table test with a plugin-registered proc.
 
 ### P4-13 Source types registry
 - [ ] **P4-13.1 Registration** — `obs_register_source_s`, `obs_enum_source_types`, `obs_enum_input_types(2)`, `obs_enum_filter_types`, `obs_enum_transition_types`. Done when: enumeration order equal.
@@ -84,8 +84,8 @@ Verified facts: `libobs/obs-internal.h` has 46 `pthread_mutex_t` fields (P4-04 m
 - [ ] **P4-14.2 Routing** — `obs_source_send_mouse_click/move/wheel`, `send_key_click`, `send_focus`. Done when: events reach C source.
 
 ### P4-15 Missing-files tracking
-- [ ] **P4-15.1 Tracker** — `libobs/obs-missing-files.c`. Done when: add/remove/callback tests.
-- [ ] **P4-15.2 Frontend callback** hook.
+- [ ] **P4-15.1 Tracker** — `libobs/obs-missing-files.c`: `obs_missing_files_create/add_file/count/get_file/destroy/append`. Done when: add/remove/count tests.
+- [ ] **P4-15.2 Callback** — `obs_missing_file_create(path, callback, src_type, …)` and `obs_missing_file_issue_callback` (how the frontend learns of replaced files). Done when: callback fires with the new path.
 
 ## C. Scenes
 
@@ -93,13 +93,13 @@ Verified facts: `libobs/obs-internal.h` has 46 `pthread_mutex_t` fields (P4-04 m
 - [ ] **P4-16.1 Scene as source** — `obs_scene_create`, `_private`, `obs_scene_get_source`. Done when: scene usable as input.
 - [ ] **P4-16.2 Items** — `obs_scene_add`, `obs_sceneitem_remove`, reorder (`set_order`, `set_order_position`). Done when: order tests.
 - [ ] **P4-16.3 Transform** — pos/rot/scale/bounds/bounds_type/alignment/crop/`obs_sceneitem_set_info2`. Done when: round trip.
-- [ ] **P4-16.4 Visual flags** — scale filter, blend method/type, locked, visible, pixel density. Done when: golden.
+- [ ] **P4-16.4 Visual flags** — scale filter, blend method/type, locked, visible; the scene-level `AbsoluteCoords` private setting drives the pos/scale conversions. Done when: golden.
 - [ ] **P4-16.5 Show/hide transitions** — `obs_sceneitem_set_transition(item, show, transition)`, `obs_sceneitem_set_transition_duration`, `obs_sceneitem_do_transition`, `obs_sceneitem_transition_load`. Done when: test.
 
 ### P4-17 Groups and nested scenes
-- [ ] **P4-17.1 Groups** — `obs_scene_add_group(2)`, `obs_sceneitem_group_add_item`, `ungroup`, `group_enum_items`. Done when: tests.
+- [ ] **P4-17.1 Groups** — `obs_scene_add_group(2)`, `obs_sceneitem_group_add_item`, `obs_sceneitem_group_ungroup(2)`, `obs_sceneitem_group_enum_items`. Done when: tests.
 - [ ] **P4-17.2 Nested** — scene-in-scene rendering. Done when: golden.
-- [ ] **P4-17.3 Cycles** — detection `obs_scene_...` prevent self-reference. Done when: add of parent fails.
+- [ ] **P4-17.3 Cycles** — `obs_source_add_active_child` detects infinite source recursion (self/ancestor reference); add fails with a log. Done when: add of parent fails.
 
 ### P4-18 Scene rendering
 - [ ] **P4-18.1 Matrix** — `update_item_transform`. Done when: 50 cases equal to C.
@@ -114,23 +114,23 @@ Verified facts: `libobs/obs-internal.h` has 46 `pthread_mutex_t` fields (P4-04 m
 
 ### P4-20 Scene audio mixing
 - [ ] **P4-20.1 Compose** — child audio mixing in scene source. Done when: golden PCM.
-- [ ] **P4-20.2 Ducking** — inactive sources contribute nothing. Done when: test.
+- [ ] **P4-20.2 Hidden items** — a non-visible item contributes nothing to scene audio, except while its hide transition is active (`scene_audio_render`). Done when: test.
 
 ## D. Encoders, outputs, services
 
 ### P4-21 Encoder vtable adapter
 - [ ] **P4-21.1 Trait/adapter** (adapter pattern) for `obs_encoder_info`: `create`, `destroy`, `encode`, `encode_texture(2)`, `get_defaults`, `get_properties`, `update`, `get_extra_data`, `get_sei_data`, `get_audio_info/video_info`, `get_frame_size`, `get_name`. Done when: ABI test encoder works.
-- [ ] **P4-21.2 Threads** — video encode thread, audio encode thread, packet callbacks. Done when: trace equal.
+- [ ] **P4-21.2 Encode path** — `encode`/`encode_texture(2)` are called from the graphics thread (video mix) and audio thread (mixer); C has no dedicated encoder thread; packet callbacks to outputs under `callbacks_mutex`/`outputs_mutex`. Done when: call-site thread trace equal.
 - [ ] **P4-21.3 Texture path** — `encode_texture` with `gs_texture`/handle (needs P3-21). Done when: mocked texture encoder.
 - [ ] **P4-21.4 Scaling** — `obs_encoder_set_scaled_size`, `set_gpu_scale_type`, `obs_encoder_scaling_enabled`. Done when: size test.
 
 ### P4-22 Encoder lifecycle and signals
-- [ ] **P4-22.1 Active state** — `obs_encoder_active`, `initialize`, `shutdown`, `obs_encoder_set_preferred_video_format`. Done when: state diagram test.
-- [ ] **P4-22.2 Sharing** — one encoder feeding two outputs (`obs_encoder_packet_create_instance`). Done when: refcount check.
-- [ ] **P4-22.3 ROI** — `obs_encoder_add_roi`, `clear_roi`, `enum_roi`, `roi_increment`. Done when: tests.
+- [ ] **P4-22.1 Active state** — `obs_encoder_active`, `obs_encoder_paused`, internal `obs_encoder_initialize` (called from `obs_output_start`; no public init/uninit), `obs_encoder_set_preferred_video_format`. Done when: state diagram test.
+- [ ] **P4-22.2 Sharing** — packet fan-out: public `obs_encoder_packet_ref/release`, internal `obs_encoder_packet_create_instance` (interleaving and delay copy the packet). Done when: refcount check.
+- [ ] **P4-22.3 ROI** — `obs_encoder_add_roi`, `obs_encoder_has_roi`, `obs_encoder_clear_roi`, `obs_encoder_enum_roi`, `obs_encoder_get_roi_increment`. Done when: tests.
 
 ### P4-23 Output vtable adapter
-- [ ] **P4-23.1 Trait/adapter** (adapter pattern) for `obs_output_info`: `start`, `stop`, `raw_video`, `raw_audio(2)`, `encoded_packet`, `get_properties`, `get_total_bytes`, `get_dropped_frames`, `get_congestion`, `get_connect_time_ms`, `get_stats`. Done when: ABI test output works.
+- [ ] **P4-23.1 Trait/adapter** (adapter pattern) for `obs_output_info`: `start`, `stop`, `raw_video`, `raw_audio(2)`, `encoded_packet`, `get_properties`, `get_total_bytes`, `get_dropped_frames`, `get_congestion`, `get_connect_time_ms`, codec strings, `protocols` (there is no `get_stats` field). Done when: ABI test output works.
 - [ ] **P4-23.2 Data capture** — `obs_output_begin_data_capture`, `end_data_capture`, flags `OBS_OUTPUT_VIDEO/AUDIO/ENCODED/SERVICE`. Done when: raw and encoded flows.
 - [ ] **P4-23.3 Reconnect** — `obs_output_set_reconnect_settings`, exponential back-off, `reconnect_retry_*`. Done when: fake-clock test.
 - [ ] **P4-23.4 Delay/stats** — `obs_output_set_delay`, counters. Done when: tests.
@@ -147,26 +147,26 @@ Verified facts: `libobs/obs-internal.h` has 46 `pthread_mutex_t` fields (P4-04 m
 
 ### P4-26 Multitrack video plumbing
 - [ ] **P4-26.1 Connect info** — `OBS_SERVICE_CONNECT_INFO_*` enums. Done when: all values.
-- [ ] **P4-26.2 Capabilities** — output capability negotiation. Done when: tests.
-- [ ] **P4-26.3 DBR hooks** — `obs_output_...` dynamic bitrate callbacks. Done when: test.
+- [ ] **P4-26.2 Per-track encoders** — `obs_output_set_video_encoder2`/`obs_output_get_video_encoder2`, `obs_output_set_audio_encoder`/`obs_output_get_audio_encoder` (10 video / 6 audio tracks, `MAX_OUTPUT_*_ENCODERS`). Done when: tests.
+- [ ] **P4-26.3 DBR out of scope** — verify libobs 33.0.1 has no dynamic-bitrate API (it lives in `plugins/obs-outputs/rtmp-stream.c`); note in the phase review that the Rust port inherits the same split. Done when: note committed.
 
 ### P4-27 Output state machine tests
 - [ ] **P4-27.1 State table** — starting/active/stopping/reconnecting/paused/delay. Done when: table lists every legal transition.
 - [ ] **P4-27.2 Signal order** — `starting`, `start`, `stopping`, `stop`, `reconnect`, `reconnect_success`, `pause`, `unpause`. Done when: expected sequences.
-- [ ] **P4-27.3 Failure/force-stop** — `obs_output_force_stop`, error codes `OBS_OUTPUT_*`. Done when: tests.
+- [ ] **P4-27.3 Failure/force-stop** — `obs_output_force_stop`, `obs_output_signal_stop` codes (`OBS_OUTPUT_SUCCESS` = 0, `obs-defs.h`). Done when: tests.
 
 ## E. Hotkeys, modules, display
 
 ### P4-28 Hotkey system
 - [ ] **P4-28.1 Registration** — `obs_hotkey_register_frontend/source/output/encoder/service`, `unregister`. Done when: ids stable.
-- [ ] **P4-28.2 Bindings** — `obs_hotkey_load_bindings`, `set_bindings`, combos with modifiers. Done when: JSON round trip.
+- [ ] **P4-28.2 Bindings** — `obs_hotkey_load_bindings` (raw combinations), `obs_hotkey_load` (JSON array), `obs_hotkeys_load_source/output/encoder/service`, combos with modifiers. Done when: JSON round trip.
 - [ ] **P4-28.3 Thread and routing** — hotkey thread, press/release, push-to-talk helpers (`obs_hotkey_pair_*`). Done when: simulated key events.
 - [ ] **P4-28.4 Platform keys** — `obs-nix-x11.c`, `obs-nix-wayland.c`, `obs-windows.c`, `obs-cocoa.m` translators. Done when: key-code tables equal.
 
 ### P4-29 Module loader
 - [ ] **P4-29.1 Descriptor** — `obs_module_t`, exported functions `obs_module_load/unload/post_load/set_locale/free_locale/get_string/author/name/description/ver/set_pointer`. Done when: all resolved via `libloading`.
-- [ ] **P4-29.2 Paths** — `obs_add_module_path`, search patterns from `obs-core-modules-loader-{nix,win,mac}`. Done when: each OS finds modules.
-- [ ] **P4-29.3 Lifecycle** — `obs_open_module`, `obs_init_module`, `obs_post_load_modules`, unload. Done when: order test.
+- [ ] **P4-29.2 Paths** — `obs_add_module_path`, search patterns from `obs-core-modules-loader-{nix.c,win.c,mac.m}`. Done when: each OS finds modules.
+- [ ] **P4-29.3 Lifecycle** — `obs_open_module`, `obs_init_module`, `obs_post_load_modules`, unload (`mod->unload` called from `free_module` during shutdown; C deliberately does not dlclose). Done when: order test.
 - [ ] **P4-29.4 Failures** — `struct obs_module_failure_info` + `obs_module_failure_info_free`, `obs_load_plugins(info, error)` (the older `obs_load_all_modules2` is `OBS_DEPRECATED` but still exported), `MODULE_FAILED_TO_OPEN` / `MODULE_MISSING_EXPORTS` codes, disabled list, `obs_get_module_file_name`, `obs_module_get_locale_string/text`. Done when: failing module reported.
 - [ ] **P4-29.5 Built-in modules** — `obs-core-modules.c.in` static list. Done when: generated Rust table.
 
@@ -180,14 +180,14 @@ Verified facts: `libobs/obs-internal.h` has 46 `pthread_mutex_t` fields (P4-04 m
 - [ ] **P4-31.3 Views** — `libobs/obs-view.c`, `obs_view_*`. Done when: channel set/get.
 
 ### P4-32 Platform integration
-- [ ] **P4-32.1 X11** — `obs-nix-x11.c` via `x11rb` (hotkeys, window info). Done when: hotkey fires.
-- [ ] **P4-32.2 Wayland** — `obs-nix-wayland.c` (41 KB: keyboard-shortcuts-inhibit, portal GlobalShortcuts); `wayland-client`. Done when: connect and log compositor.
+- [ ] **P4-32.1 X11** — `obs-nix-x11.c` via `x11rb`: hotkey platform vtable (XInput2 raw events on the root window, pointer coordinates) + `obs_nix_x11_log_info`. Done when: hotkey fires.
+- [ ] **P4-32.2 Wayland** — `obs-nix-wayland.c` (41 KB: `wl_keyboard` + xkbcommon keymaps for hotkey translation, seat capabilities, `obs_nix_wayland_log_info`; no portal protocols in 33.0.1); `wayland-client`. Done when: connect and log compositor.
 - [ ] **P4-32.3 Windows** — `obs-windows.c`: version info, CPU names, `obs_hotkeys_platform`, crash handler `obs-win-crash-handler.c`. Done when: logs identical fields.
-- [ ] **P4-32.4 macOS** — `obs-cocoa.m` (33 KB): hotkeys, system info, permissions. Done when: logs identical.
+- [ ] **P4-32.4 macOS** — `obs-cocoa.m` (34 KB): hotkeys, system info, permissions. Done when: logs identical.
 - [ ] **P4-32.5 System info logging** — `log_system_info` content parity. Done when: log diff reviewed.
 
 ### P4-33 Canvases
-- [ ] **P4-33.1 Canvas** — `obs_canvas_create/destroy/get_video_info/reset_video`, main canvas. Done when: second canvas.
+- [ ] **P4-33.1 Canvas** — `obs_canvas_create(/_private)`, `obs_canvas_release/get_ref` (destroy is internal), `obs_canvas_get_video_info`, `obs_canvas_reset_video`, `obs_get_main_canvas`. Done when: second canvas.
 - [ ] **P4-33.2 Outputs** — per-canvas `obs_canvas_get_video`. Done when: output records canvas.
 
 ## F. ABI surface and verification

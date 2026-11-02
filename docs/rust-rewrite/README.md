@@ -15,14 +15,11 @@ Detailed, single-task breakdown for the strategy in [`../rust-rewrite-plan.md`](
 
 ## Task format
 
-Every task is a checkbox with a stable ID (`P<phase>-<nn>`) and these fields:
+Every task is a checkbox with a stable ID (`P<phase>-<nn>`) and a size — S (<=2 days), M (<=1 week), L (<=3 weeks), XL (split further before starting) — naming the C files it replaces and a verifiable acceptance criterion:
 
-- **Source**: the C/C++ files being replaced or wrapped.
-- **Do**: the concrete work.
-- **Deliverables**: what lands in the PR.
-- **Done when**: acceptance criteria, which must be verifiable.
-- **Depends on**: task IDs that must be finished first.
-- **Size**: S (<=2 days), M (<=1 week), L (<=3 weeks), XL (split further before starting).
+    - [ ] **P<N>-<nn> Name** (M): <files and work>. Done when: <verifiable result>.
+
+Dependencies are stated inline where non-obvious (and in the per-phase "Dependency note"/guide); the day-sized subtasks below carry the precise **Files**, **Steps** and **Done when**.
 
 ## Rules that apply to every task
 
@@ -33,7 +30,7 @@ Every task is a checkbox with a stable ID (`P<phase>-<nn>`) and these fields:
 5. Every test file gets a test matrix in `docs/tests/`; every issue gets `docs/tests/I-<n>-<name>.md`.
 6. Update README/rustdoc/comments with each change.
 7. Gate before commit: `cargo fmt --check`, `cargo clippy --all-targets -- -D warnings`, `cargo deny check`, `cargo audit`, `cargo test --workspace`, plus the C build (`cmake --build`) and `ctest` while C code remains.
-8. Commit footer: `Assisted-by: [Model] ([Effort]) via Claude Code`.
+8. Commit footer: `Assisted-by: [Model] ([Effort]) via [Tool]` (omit the effort brackets when the model has no effort setting).
 
 ## Subtasks
 

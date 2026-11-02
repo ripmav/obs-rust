@@ -48,7 +48,7 @@ RULES = [
     ("libobs/obs-core-modules*.c", "P4-29", "S-035", ""),
     ("libobs/obs-core-modules-loader-mac.m", "P4-29", "S-035", ""),
     ("libobs/obs-cocoa.m", "P4-32.4", "", "macOS platform glue (objc2)"),
-    ("libobs/obs-hotkey-name-map.c", "P4-28", "S-034", ""),
+    ("libobs/obs-hotkey-name-map.c", "P1-28.1, P4-28", "S-024/S-034", ""),
     ("libobs/obs.hpp", "P4-34", "", "C++ wrapper over the frozen C ABI"),
     ("libobs/obs-display.c", "P3-17, P4-31", "S-043", ""),
     ("libobs/obs-encoder.*", "P4-21", "S-041", ""),
@@ -154,7 +154,7 @@ RULES = [
     ("libobs/util/platform-nix-portal.c", "P1-07.3", "S-055", ""),
     ("libobs/util/platform-nix.c", "P1-07.1", "S-023", ""),
     ("libobs/util/platform-windows.c", "P1-07.1", "S-023", ""),
-    ("libobs/util/platform.*", "P1-06, P1-07", "S-023", ""),
+    ("libobs/util/platform.*", "P1-06, P1-07", "S-023", "sleep half un-specified: D-27/S-061"),
     ("libobs/util/profiler.*", "P1-12", "S-024", ""),
     ("libobs/util/source-profiler.*", "P1-12.3", "S-055", ""),
     ("libobs/util/sse-intrin.h", "P1-19.1", "", ""),
@@ -373,7 +373,7 @@ RULES = [
     ("plugins/nv-filters/*", "P5-10", "", ""),
     ("plugins/obs-ffmpeg/ffmpeg-mux/*", "P5-14.3", "S-037", ""),
     ("plugins/obs-ffmpeg/obs-amf-test/*", "P5-41.4", "S-050", ""),
-    ("plugins/obs-ffmpeg/texture-amf.*", "P5-41.3", "S-050", ""),
+    ("plugins/obs-ffmpeg/texture-amf*", "P5-41.3", "S-050", ""),
     ("plugins/obs-ffmpeg/obs-ffmpeg-mpegts.c", "P5-15.4", "S-059", ""),
     ("plugins/obs-ffmpeg/obs-ffmpeg-srt.h", "P5-15.4", "S-059", ""),
     ("plugins/obs-ffmpeg/obs-ffmpeg-rist.h", "P5-15.5", "S-059", ""),
@@ -441,7 +441,7 @@ RULES = [
     ("shared/media-playback/*", "P5-16", "S-036", ""),
     ("shared/obs-d3d8-api/*", "P5-31.7", "", "D-08: stays C (hook DLL headers)"),
     ("shared/obs-hook-config/*", "P5-31.7", "", "D-08: stays C (hook config)"),
-    ("shared/obs-inject-library/*", "P1-33.4", "", "used by P5-31.7, P5-32.6"),
+    ("shared/obs-inject-library/*", "P1-33.4", "", "used by win-capture (P5-31.7) only"),
     ("shared/obs-scripting/obs-scripting-lua*.*", "P6-37.1", "S-060", ""),
     ("shared/obs-scripting/obs-scripting-python*.*", "P6-37.2", "D-29", "spec gap: Python backend"),
     ("shared/obs-scripting/obslua/*", "P6-37.1", "S-060", ""),
@@ -453,9 +453,9 @@ RULES = [
     ("shared/properties-view/*", "P6-16.1", "", ""),
     ("shared/qt/*", "P6-49", "", "D-01: carried over per toolkit decision"),
     # ---------- deps ----------
-    ("deps/blake2/*", "P1-10.3, P1-31.2", "", "drop, use blake2 crate"),
+    ("deps/blake2/*", "P1-10.3, P1-31.2", "", "drop in Phase 6 (frontend-only user: updater, P6-32); blake2 crate"),
     ("deps/glad/*", "P3-30", "", "drop when legacy GL is gone"),
-    ("deps/json11/*", "P1-24.1, P1-31.2", "", "drop, use serde_json"),
+    ("deps/json11/*", "P1-24.1, P1-31.2", "", "drop in Phase 6 (frontend-only); serde_json"),
     ("deps/libcaption/*", "P2-21", "", "D-18: probably FFI"),
     ("deps/libdshowcapture/*", "P5-32.3", "", "D-19: FFI (submodule)"),
     ("deps/w32-pthreads/*", "P1-05.3, P7-04.2", "", "D-26: absorb into Rust threading"),
@@ -469,7 +469,6 @@ RULES = [
     ("cmake/*", "P0-08, P7-06.3", "", "Corrosion hook, removed in Phase 7"),
     ("additional_install_files/*", "P6-42.1", "", "Windows installer layout"),
     ("docs/sphinx/*", "P7-14.1", "", "docs rewritten in Phase 7"),
-    ("scripts/*", "P7-25", "", "top-level build scripts"),
 ]
 
 AREA = {
@@ -487,7 +486,6 @@ AREA = {
     "cmake/": "Build system (`cmake/`)",
     "additional_install_files/": "Installer layout (`additional_install_files/`)",
     "docs/": "Docs (`docs/sphinx/`)",
-    "scripts/": "Top-level scripts (`scripts/`)",
 }
 
 

@@ -22,9 +22,9 @@ Tracked = every `.c .cpp .cc .h .hpp .m .mm .swift`, `.ui` and `.effect` file (s
 
 | File | Task | Spec | Note |
 |---|---|---|---|
-| `deps/blake2/src/blake2-impl.h` | P1-10.3, P1-31.2 | — | drop, use blake2 crate |
-| `deps/blake2/src/blake2.h` | P1-10.3, P1-31.2 | — | drop, use blake2 crate |
-| `deps/blake2/src/blake2b-ref.c` | P1-10.3, P1-31.2 | — | drop, use blake2 crate |
+| `deps/blake2/src/blake2-impl.h` | P1-10.3, P1-31.2 | — | drop in Phase 6 (frontend-only user: updater, P6-32); blake2 crate |
+| `deps/blake2/src/blake2.h` | P1-10.3, P1-31.2 | — | drop in Phase 6 (frontend-only user: updater, P6-32); blake2 crate |
+| `deps/blake2/src/blake2b-ref.c` | P1-10.3, P1-31.2 | — | drop in Phase 6 (frontend-only user: updater, P6-32); blake2 crate |
 | `deps/glad/include/EGL/eglplatform.h` | P3-30 | — | drop when legacy GL is gone |
 | `deps/glad/include/KHR/khrplatform.h` | P3-30 | — | drop when legacy GL is gone |
 | `deps/glad/include/glad/glad.h` | P3-30 | — | drop when legacy GL is gone |
@@ -33,8 +33,8 @@ Tracked = every `.c .cpp .cc .h .hpp .m .mm .swift`, `.ui` and `.effect` file (s
 | `deps/glad/src/glad.c` | P3-30 | — | drop when legacy GL is gone |
 | `deps/glad/src/glad_egl.c` | P3-30 | — | drop when legacy GL is gone |
 | `deps/glad/src/glad_wgl.c` | P3-30 | — | drop when legacy GL is gone |
-| `deps/json11/json11.cpp` | P1-24.1, P1-31.2 | — | drop, use serde_json |
-| `deps/json11/json11.hpp` | P1-24.1, P1-31.2 | — | drop, use serde_json |
+| `deps/json11/json11.cpp` | P1-24.1, P1-31.2 | — | drop in Phase 6 (frontend-only); serde_json |
+| `deps/json11/json11.hpp` | P1-24.1, P1-31.2 | — | drop in Phase 6 (frontend-only); serde_json |
 | `deps/libcaption/caption/caption.h` | P2-21 | — | D-18: probably FFI |
 | `deps/libcaption/caption/cea708.h` | P2-21 | — | D-18: probably FFI |
 | `deps/libcaption/caption/dvtcc.h` | P2-21 | — | D-18: probably FFI |
@@ -1044,7 +1044,7 @@ Build/data files in this area: **1** (34 lines) — owner: same task as the area
 | `libobs/obs-ffmpeg-compat.h` | P5-11 | — |  |
 | `libobs/obs-hevc.c` | P2-19 | S-012 |  |
 | `libobs/obs-hevc.h` | P2-19 | S-012 |  |
-| `libobs/obs-hotkey-name-map.c` | P4-28 | S-034 |  |
+| `libobs/obs-hotkey-name-map.c` | P1-28.1, P4-28 | S-024/S-034 |  |
 | `libobs/obs-hotkey.c` | P4-28 | S-034 |  |
 | `libobs/obs-hotkey.h` | P4-28 | S-034 |  |
 | `libobs/obs-hotkeys.h` | P4-28 | S-034 |  |
@@ -1125,8 +1125,8 @@ Build/data files in this area: **1** (34 lines) — owner: same task as the area
 | `libobs/util/platform-nix-portal.c` | P1-07.3 | S-055 |  |
 | `libobs/util/platform-nix.c` | P1-07.1 | S-023 |  |
 | `libobs/util/platform-windows.c` | P1-07.1 | S-023 |  |
-| `libobs/util/platform.c` | P1-06, P1-07 | S-023 |  |
-| `libobs/util/platform.h` | P1-06, P1-07 | S-023 |  |
+| `libobs/util/platform.c` | P1-06, P1-07 | S-023 | sleep half un-specified: D-27/S-061 |
+| `libobs/util/platform.h` | P1-06, P1-07 | S-023 | sleep half un-specified: D-27/S-061 |
 | `libobs/util/profiler.c` | P1-12 | S-024 |  |
 | `libobs/util/profiler.h` | P1-12 | S-024 |  |
 | `libobs/util/profiler.hpp` | P1-12 | S-024 |  |
@@ -1478,7 +1478,7 @@ Build/data files in this area: **18** (878 lines) — owner: same task as the ar
 | `plugins/obs-ffmpeg/obs-ffmpeg-video-encoders.c` | P5-11 | S-047/S-046/S-025 | module core, encoders, formats, logging |
 | `plugins/obs-ffmpeg/obs-ffmpeg-video-encoders.h` | P5-11 | S-047/S-046/S-025 | module core, encoders, formats, logging |
 | `plugins/obs-ffmpeg/obs-ffmpeg.c` | P5-11 | S-047/S-046/S-025 | module core, encoders, formats, logging |
-| `plugins/obs-ffmpeg/texture-amf-opts.hpp` | P5-11 | S-047/S-046/S-025 | module core, encoders, formats, logging |
+| `plugins/obs-ffmpeg/texture-amf-opts.hpp` | P5-41.3 | S-050 |  |
 | `plugins/obs-ffmpeg/texture-amf.cpp` | P5-41.3 | S-050 |  |
 | `plugins/obs-ffmpeg/vaapi-utils.c` | P5-12.3 | S-050 |  |
 | `plugins/obs-ffmpeg/vaapi-utils.h` | P5-12.3 | S-050 |  |
@@ -1782,8 +1782,8 @@ Build/data files in this area: **2550** (112782 lines) — owner: same task as t
 | `shared/obs-hook-config/graphics-hook-info.h` | P5-31.7 | — | D-08: stays C (hook config) |
 | `shared/obs-hook-config/graphics-hook-ver.h` | P5-31.7 | — | D-08: stays C (hook config) |
 | `shared/obs-hook-config/hook-helpers.h` | P5-31.7 | — | D-08: stays C (hook config) |
-| `shared/obs-inject-library/inject-library.c` | P1-33.4 | — | used by P5-31.7, P5-32.6 |
-| `shared/obs-inject-library/inject-library.h` | P1-33.4 | — | used by P5-31.7, P5-32.6 |
+| `shared/obs-inject-library/inject-library.c` | P1-33.4 | — | used by win-capture (P5-31.7) only |
+| `shared/obs-inject-library/inject-library.h` | P1-33.4 | — | used by win-capture (P5-31.7) only |
 | `shared/obs-scripting/cstrcache.cpp` | P6-37 | S-039 | language-independent core |
 | `shared/obs-scripting/cstrcache.h` | P6-37 | S-039 | language-independent core |
 | `shared/obs-scripting/obs-scripting-callback.h` | P6-37 | S-039 | language-independent core |
