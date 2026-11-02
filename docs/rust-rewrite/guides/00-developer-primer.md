@@ -21,8 +21,8 @@ You cannot replace what you have not run. Do this once.
 | `libobs/graphics` (+ `libobs/data/*.effect`) | `gs_*` API, effect and shader parsers | Phase 3 |
 | `libobs-opengl`, `libobs-d3d11`, `libobs-metal` (Swift), `libobs-winrt` | graphics backends loaded as shared modules | Phase 3 |
 | `libobs/obs-*.c` | sources, scenes, outputs, encoders, services, hotkeys, modules, canvases | Phase 4 |
-| `plugins/*` | ~40 modules (some submodules) | Phase 5 |
-| `frontend/` | Qt6 application (≈89k lines, 34 `.ui` forms, 77 locales) | Phase 6 |
+| `plugins/*` | 41 modules (5 with their own Qt UI: `aja-output-ui`, `decklink-captions`, `decklink-output-ui`, `frontend-tools`, `obs-vst`; some are submodules) | Phase 5 |
+| `frontend/` | Qt6 application (≈88k C++ lines, 36 `.ui` forms, 77 locales) | Phase 6 |
 | `shared/` | helpers used by several components (`obs-scripting`, `media-playback`, `properties-view`, …) | Phases 5–7 |
 | `deps/` | `blake2`, `glad`, `json11`, `libcaption`, `libdshowcapture`, `w32-pthreads` | Phases 1, 2, 7 |
 | `test/` | cmocka tests + `test-input` plugin | extended in Phase 0 |
@@ -102,7 +102,7 @@ Names must match the C header exactly. Keep the symbol list diff (P1-29, P4-34) 
 6. **Clean-room work** uses the specs in `docs/rust-rewrite/specs/` and the conformance suite in `test/conformance/` (see `docs/rust-rewrite/clean-room/PROCESS.md`).
 7. Add a test-matrix file in `docs/tests/` for every test file (project rule); name it after the issue number when there is one (`I-<n>-<name>.md`).
 
-## 7. Project rules every PR must follow (from CLAUDE.md)
+## 7. Project rules every PR must follow (from the project guidelines, `AGENTS.md`)
 
 - Never work on `master`. Branch name `<type>/<issue>-<short-description>` (`feat`, `fix`, `refactor`, `docs`, `test`, `ci`, `perf`, `build`, `chore`).
 - Stack PRs; start a stack with `docs:` PRs (ADRs, specs).

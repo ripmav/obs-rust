@@ -20,7 +20,7 @@ These modules have no dependency on the rest of libobs, so they can be swapped o
 ```c
 struct dstr { char *array; size_t len; /* excl. NUL */ size_t capacity; };
 ```
-Many functions are `static inline` in `dstr.h` (45 of them: `dstr_init`, `dstr_free`, `dstr_copy_dstr`, …). The exported ones to port are `dstr_copy`, `dstr_cat`, `dstr_ncat`, `dstr_insert`, `dstr_erase`, `dstr_replace`, `dstr_find*`, `dstr_printf/vprintf/catf/vcatf` (**variadic/`va_list`: C shim, see primer §5.5**), `astrcmpi`, `astrstri`, `strdepad`, `strlist_split`, … Check `capacity` growth: tests that compare layouts after a series of appends will notice if you change the growth policy.
+Many functions are `static inline` in `dstr.h` (45 of them: `dstr_init`, `dstr_free`, `dstr_copy_dstr`, `dstr_resize`, `dstr_find*`, …). The exported ones to port are `dstr_copy*`, `dstr_cat*`, `dstr_ncat*`, `dstr_insert*`, `dstr_remove`, `dstr_replace`, `dstr_printf/vprintf/catf/vcatf` (**variadic/`va_list`: C shim, see primer §5.5**), `astrcmpi`, `astrstri`, `strdepad`, `strlist_split`, `dstr_depad`, … Check `capacity` growth: tests that compare layouts after a series of appends will notice if you change the growth policy.
 
 ### `darray` / `deque` (P1-03, P1-04)
 `struct darray { void *array; size_t num; size_t capacity; }` and `struct deque { void *data; size_t size, start_pos, end_pos, capacity; }`. Both are header-only (inline). The Rust job is the layout-compatible types and a test that C and Rust agree after the same operation sequences. There is no `circlebuf_*` alias in this tree. Spec: [S-005](../specs/S-005-darray-deque.md).
@@ -29,7 +29,7 @@ Many functions are `static inline` in `dstr.h` (45 of them: `dstr_init`, `dstr_f
 `os_event_t` (auto/manual reset), `os_sem_t`, thread naming. Behavioural contract to copy exactly: `os_event_try` returns `EAGAIN` when not signalled (used by `audio_thread`: `while (os_event_try(stop_event) == EAGAIN)`), `os_event_timedwait` returns `ETIMEDOUT`. Windows version uses `HANDLE`s; `threading-posix.c` has a separate `#ifdef __APPLE__` implementation of `os_sem_init` (around line 170–220; macOS lacks unnamed POSIX semaphores) — read it before porting and test macOS separately.
 
 ### Time and sleep (P1-06)
-`os_gettime_ns` must be monotonic. `os_sleepto_ns_fast` (used by the audio thread) returns `false` immediately if the target is already past, otherwise loops `usleep(min(remaining_us, 999999))` until `os_gettime_ns() >= target` (verified in `platform-nix.c`; the Windows and macOS versions in `platform-windows.c` / `platform-cocoa.m` differ — read each before porting). There is no busy-spin on Linux. Its wake-up jitter directly affects audio buffering, so compare wake-up histograms against C on each OS (P1-06.3) and copy the per-OS strategy rather than "improving" it.
+`os_gettime_ns` must be monotonic (`CLOCK_MONOTONIC` on nix, QPC on Windows). `os_sleepto_ns_fast` (used by the audio thread) returns `false` immediately if the target is already past, otherwise loops `usleep(min(remaining_us, 999999))` until `os_gettime_ns() >= target` (verified in `platform-nix.c`, which also serves macOS — `libobs/cmake/os-macos.cmake` compiles it next to `platform-cocoa.m`; the Windows version in `platform-windows.c` is different: `Sleep(remain_ms)` loop — read it before porting). `os_sleepto_ns` on Windows is a `Sleep(ms-1)` + `QueryPerformanceCounter`/`YieldProcessor` spin; there is no busy-spin on Linux. Its wake-up jitter directly affects audio buffering, so compare wake-up histograms against C on each OS (P1-06.3) and copy the per-OS strategy rather than "improving" it.
 
 ### Filesystem (P1-07)
 Subtle behaviours: `os_mkdirs` creates intermediate directories; `os_rename` must replace an existing destination on Windows (uses `MoveFileEx` with replace); `os_get_config_path` returns different directories per OS and honours Flatpak/XDG (`platform-nix.c`, `platform-nix-portal.c`, `platform-nix-dbus.c`). UTF-8 ↔ UTF-16 conversion for every Windows call. Add tests with paths > 260 chars and with emoji.
@@ -49,16 +49,16 @@ Subtle behaviours: `os_mkdirs` creates intermediate directories; `os_rename` mus
 Call-tree profiler with named scopes (`profile_start("name")`); heavily used in render loops. Names are interned in a store (`profiler_name_store_t`; `profile_store_name` is variadic → C shim). Output format is parsed by external tools; keep text and CSV identical.
 
 ### Logging (P1-13)
-`blog` formats with `vsnprintf` then calls the registered handler `void (*)(int lvl, const char *fmt, va_list args, void *param)` — the handler receives the *unformatted* format string and the `va_list`. That means formatting must stay in C. Keep `base.c` (≈ 100 lines) as C in `obs-ffi/c/`, and give Rust a function `obs_ffi_log`. Do not try to be clever with nightly `c_variadic`.
+`blog` formats with `vsnprintf` then calls the registered handler `void (*)(int lvl, const char *fmt, va_list args, void *param)` — the handler receives the *unformatted* format string and the `va_list`. That means formatting must stay in C. Keep `base.c` (126 lines) as C in `obs-ffi/c/`, and give Rust a function `obs_ffi_log`. Do not try to be clever with nightly `c_variadic`.
 
 ### Math (P1-15…P1-19)
-Types in `libobs/graphics/vec2.h`, `vec3.h`, `vec4.h`, `matrix3.h`, `matrix4.h`, `quat.h`, `plane.h`, `axisang.h`, `bounds.h`. **`struct vec3` is 16 bytes, not 12:** it is a union of `{float x, y, z, w;}`, `float ptr[4]` and `__m128 m` (verified in `vec3.h:35` and `vec4.h:33`), 16-byte aligned. Rust types need `#[repr(C, align(16))]` with a fourth `w` field, otherwise `matrix3/matrix4` (arrays of these) get a different size and every plugin that includes the header breaks. Also note `vec3_zero` etc. are `static inline` using SSE intrinsics (`_mm_*`) in the header — they stay in C; on aarch64 the header relies on `simde` (see `util/sse-intrin.h`). Tolerance in goldens: compare bit patterns when the C code does only add/mul in the same order, use relative 1e-6 where SSE vs scalar changes rounding (document each case).
+Types in `libobs/graphics/vec2.h`, `vec3.h`, `vec4.h`, `matrix3.h`, `matrix4.h`, `quat.h`, `plane.h`, `axisang.h`, `bounds.h`. **`struct vec3` is 16 bytes, not 12:** it is a union of `{float x, y, z, w;}`, `float ptr[4]` and `__m128 m` (verified in `vec3.h:34` and `vec4.h:32`), 16-byte aligned. Rust types need `#[repr(C, align(16))]` with a fourth `w` field, otherwise `matrix3/matrix4` (arrays of these) get a different size and every plugin that includes the header breaks. Also note `vec3_zero` etc. are `static inline` using SSE intrinsics (`_mm_*`) in the header — they stay in C; on aarch64 the header relies on `simde` (see `util/sse-intrin.h`). Tolerance in goldens: compare bit patterns when the C code does only add/mul in the same order, use relative 1e-6 where SSE vs scalar changes rounding (document each case).
 
 ### calldata (P1-20)
 Layout (verified in `calldata.c`): `stack` is a packed buffer of records `[size_t name_len][name bytes incl NUL][size_t data_size][data bytes]…` terminated by a zero `size_t` (note `calldata_clear` writes a single `size_t` of 0 and sets `size = sizeof(size_t)`). The inline getters (`calldata_get_int`, …) walk this buffer in the plugin, so **the byte format is the ABI**. Implement `calldata_get_data/set_data` exactly; test by building calldata with C inline setters and reading with Rust, and the reverse.
 
 ### decl / proc / signal (P1-21, P1-22)
-`decl.c` parses strings like `"void source_add(ptr source)"`. Signal semantics you must reproduce (read `callback/signal.c` lines 279–350):
+`decl.c` parses strings like `"void source_add(ptr source)"`. Signal semantics you must reproduce (read `callback/signal.c` lines 290–351, `signal_handler_signal`):
 
 - each signal has its own mutex (`sig->mutex`), taken for the entire emit, and `sig->signalling = true`;
 - callbacks are called in registration order **while that mutex is held**; a callback may disconnect itself or others — disconnecting during emit sets `cb->remove = true` (a thread-local `current_signal_cb` supports "disconnect self"), and the entries are physically erased *after* the loop;
@@ -72,7 +72,7 @@ Consequences for Rust: the emit loop uses indices (the array can grow during ite
 
 ## Order of work inside the phase
 
-util (P1-01…14) → math (15…19) → calldata/decl/proc (20,21) → signal (22,23) → obs_data (24…28) → integration (29…32). `obs_data` depends on `dstr`, `darray`, `bmem`, JSON; `signal` depends on `calldata`, threading.
+util (P1-01…14) → math (15…19) → calldata/decl/proc (20,21) → signal (22,23) → obs_data (24…28) → shared helpers (33) → integration (29…32). `obs_data` depends on `dstr`, `darray`, `bmem`, JSON; `signal` depends on `calldata`, threading; P1-33 uses S-001/S-006 only as implementation details, its file-updater module (M10) uses `obs_data`'s JSON semantics (P1-25), and its bpm AV1 framing inlines S-012's `metadata_obu` formula — so P1-33 runs after P1-25, with no Phase 2 build dependency.
 
 ## Verification checklist
 

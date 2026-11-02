@@ -1,19 +1,19 @@
 # Phase 1 subtasks
 
 Parent file: [../phase-1-leaf-libraries.md](../phase-1-leaf-libraries.md).
-**Clean-room specs written for this phase** (use them instead of reading the C): S-001 allocator/logging (P1-01, P1-13), S-002 calldata (P1-20), S-003 declaration language (P1-21), S-004 signals/procs (P1-22, P1-23), S-005 darray/deque (P1-03, P1-04). Index: [../specs/README.md](../specs/README.md).
+**Clean-room specs written for this phase** (use them instead of reading the C): S-001 allocator/logging (P1-01, P1-13), S-002 calldata (P1-20), S-003 declaration language (P1-21), S-004 signals/procs (P1-22, P1-23), S-005 darray/deque (P1-03, P1-04), S-006 dstr (P1-02), S-007 config-file (P1-09), S-008 vec3/4/quat/matrix4/axisang (P1-15…P1-17), S-009 vec2/matrix3/plane/bounds/math-extra/half/sRGB (P1-15, P1-16, P1-17, P1-18; Draft — second-author check pending), S-010 serializers/bitstream/text-lookup (P1-08.4, P1-14.2), S-011 lexer/cf-parser (P1-08.2, P1-08.3). No spec yet: threading primitives and time/sleep (P1-05, P1-06 — D-27, old backlog S-017); the rest of the phase is specified: P1-07 → S-023, P1-11 → S-055 (pipes) + S-024 M3 (process args), P1-12 → S-024 M7, P1-14.3 → S-024 M2/M6. Index: [../specs/README.md](../specs/README.md).
  Each subtask has **Files**, **Steps**, **Done when**.
 
 **Recipe** (referred to as "apply recipe"): (1) safe Rust API in the crate; (2) `extern "C"` shim with the exact C signature in `obs-ffi`; (3) `cbindgen` output diffed against the existing header; (4) golden/unit/fuzz test passes against the C reference dump; (5) the C source is excluded when `OBS_ENABLE_RUST=ON`; (6) matrix file in `docs/tests/`.
 
-Corrections to the earlier plan, verified in the tree: the ring buffer is `libobs/util/deque.h` (there is **no** `circlebuf_*` compatibility alias in this tree; `source-profiler.c` has an unrelated private `ucirclebuf`), and `libobs/util` also contains `bitstream.*`, `serializer.h`, `array-serializer.*`, `file-serializer.*`, `buffered-file-serializer.*`, `pipe*.c`, `task.*`, `platform-nix-dbus.c`, `platform-nix-portal.c`, `util_uint64.h`, `util_uint128.h`, `uthash.h`, `curl/` and `windows/`. These are covered in P1-14.
+Corrections to the earlier plan, verified in the tree: the ring buffer is `libobs/util/deque.h` (there is **no** `circlebuf_*` compatibility alias in this tree; `source-profiler.c` has an unrelated private `ucirclebuf`), and `libobs/util` also contains `bitstream.*`, `serializer.h`, `array-serializer.*`, `file-serializer.*`, `buffered-file-serializer.*`, `pipe*.c`, `task.*`, `platform-nix-dbus.c`, `platform-nix-portal.c`, `util_uint64.h`, `util_uint128.h`, `uthash.h`, `curl/` and `windows/`. These are covered by P1-07.3 (portal/dbus), P1-11.2 (pipes) and P1-14 (the rest).
 
 ## A. `obs-util` (`libobs/util/`)
 
 ### P1-01 Memory helpers
 - [ ] **P1-01.1 Allocator wrappers**
   - Files: `libobs/util/bmem.c/.h`
-  - Steps: `bmalloc`, `brealloc`, `bfree`, `bzalloc`, `bmemdup`, `bstrdup` using the system allocator; alignment ≥ 16 bytes.
+  - Steps: `bmalloc`, `brealloc`, `bfree`, `bzalloc`, `bmemdup`, `bstrdup` using the system allocator; 32-byte alignment (`base_get_alignment()` returns 32: `_aligned_malloc` on Windows, offset-header hack on POSIX).
   - Done when: unit tests for zero-size and null-free match C.
 - [ ] **P1-01.2 Counter and hooks** — `bnum_allocs()` (`base_set_allocator` does not exist); atomic counter. Spec: `specs/S-001-bmem-base.md` (R04–R09). Done when: concurrent test (8 threads × 100k allocs) returns 0 at end.
 - [ ] **P1-01.3 Apply recipe** and compare with `test/cmocka` style leak check.
@@ -23,8 +23,8 @@ Corrections to the earlier plan, verified in the tree: the ring buffer is `libob
   - Files: `libobs/util/dstr.c/.h`, `dstr.hpp`
   - Steps: `struct dstr {char*, len, capacity}` layout; capacity policy identical.
   - Done when: layout test passes.
-- [ ] **P1-02.2 Core ops** — `copy`, `cat`, `ncat`, `insert`, `erase`, `resize`, `compare`, `find`, `find_i`. Done when: table tests including empty and overlapping inputs.
-- [ ] **P1-02.3 Replace and format** — `dstr_replace`, `cat_strref`, case variants, `strip`. `dstr_printf`, `dstr_catf`, `dstr_vprintf`, `dstr_vcatf` are variadic/`va_list`: implement in the C shim (primer §5.5), not in Rust. Done when: matches C on 1000 generated cases.
+- [ ] **P1-02.2 Core ops** — the exported `dstr_copy*`, `dstr_cat*`, `dstr_ncat*`, `dstr_insert*`, `dstr_remove`, `dstr_replace`; `dstr_resize`/`dstr_find*` are `static inline` (layout-compatible only). Done when: table tests including empty and overlapping inputs.
+- [ ] **P1-02.3 Replace and format** — `dstr_replace`, `dstr_cat_strref`, case-insensitive helpers (`astrcmpi`, `astrstri`, `strdepad`, `strlist_split`), `dstr_depad`. `dstr_printf`, `dstr_catf`, `dstr_vprintf`, `dstr_vcatf` are variadic/`va_list`: implement in the C shim (primer §5.5), not in Rust. Done when: matches C on 1000 generated cases.
 - [ ] **P1-02.4 Fuzz and recipe** — `cargo-fuzz` target applying random op sequences to Rust and C builds and comparing; apply recipe.
 
 ### P1-03 Dynamic arrays
@@ -43,15 +43,15 @@ Corrections to the earlier plan, verified in the tree: the ring buffer is `libob
 ### P1-05 Threading primitives
 - [ ] **P1-05.1 Events**
   - Files: `libobs/util/threading.h`, `threading-posix.c/.h`, `threading-windows.c/.h`
-  - Steps: `os_event_init/wait/timedwait/signal/reset/destroy` for auto and manual reset.
+  - Steps: `os_event_init/destroy/wait/timedwait/try/signal/reset` for auto and manual reset (`os_event_try` returns `EAGAIN` when not signalled — the audio thread loops on it).
   - Done when: signal-before-wait and timeout tests pass.
 - [ ] **P1-05.2 Semaphores and thread names** — `os_sem_*`, `os_set_thread_name`. Done when: thread name visible in debugger on each OS.
-- [ ] **P1-05.3 Windows parity** — compare behaviour with `threading-windows.c` (SRW locks, `WaitForSingleObject`). Done when: Windows CI green.
+- [ ] **P1-05.3 Windows parity** — compare behaviour with `threading-windows.c` (events/semaphores are `HANDLE`s from `CreateEvent`/`CreateSemaphore`, driven by `WaitForSingleObject`; no SRW locks). Done when: Windows CI green.
 - [ ] **P1-05.4 Stress and recipe** — 64 threads × 1M signals; apply recipe.
 
 ### P1-06 Time and sleep
-- [ ] **P1-06.1 Clock** — `os_gettime_ns` monotonic; `os_gettime_ms`. Done when: never decreases in a 10 s loop.
-- [ ] **P1-06.2 Sleep** — `os_sleepto_ns`, `os_sleepto_ns_fast`, `os_sleep_ms` using `clock_nanosleep` / waitable timers / `mach_wait_until`. Done when: jitter histogram is attached.
+- [ ] **P1-06.1 Clock** — `os_gettime_ns` monotonic (`CLOCK_MONOTONIC` in `platform-nix.c`, which also serves macOS; QPC in `platform-windows.c`). There is no `os_gettime_ms` in this tree. Done when: never decreases in a 10 s loop.
+- [ ] **P1-06.2 Sleep** — copy the per-OS strategies verbatim: `os_sleepto_ns` (interruptible `nanosleep` loop on nix incl. macOS; `Sleep(ms-1)` + `QueryPerformanceCounter`/`YieldProcessor` spin on Windows, returns whether it stalled), `os_sleepto_ns_fast` (`usleep(≤999999)` loop on nix; `Sleep(remain_ms)` loop on Windows), `os_sleep_ms` (`usleep` on nix; `Sleep` with the Win8+ precision decrement on Windows). Done when: jitter histogram is attached.
 - [ ] **P1-06.3 Compare and recipe** — jitter ≤ C's p99.
 
 ### P1-07 File system utilities
@@ -76,13 +76,13 @@ Corrections to the earlier plan, verified in the tree: the ring buffer is `libob
 - [ ] **P1-09.4 Round trip** — byte-identical for corpus. Done when: golden.
 
 ### P1-10 Base64, CRC32, hashes
-- [ ] **P1-10.1 base64** — `libobs/util/base.c` helpers/`base64` in `libobs/util`; use `base64` crate; padding behaviour equal. Done when: RFC 4648 vectors.
-- [ ] **P1-10.2 CRC32** — `crc32.c`; `crc32fast`. Done when: vectors.
-- [ ] **P1-10.3 blake2** — replace `deps/blake2` users with `blake2`. Done when: known-answer vectors and all callers compile.
+- [ ] **P1-10.1 base64 (none in libobs)** — there is no `base64.c`/`base64.h` in `libobs/`; the only base64 in the tree is the vendored librtmp `cencode.c/.h` (Phase 5, P5-17.4). Done when: absence re-verified by grep and the decision (skip) noted in ADR 0005.
+- [ ] **P1-10.2 CRC32** — `crc32.c` (`calc_crc32`; only in-tree user: `plugins/text-freetype2/find-font-windows.c`); `crc32fast`. Done when: vectors.
+- [ ] **P1-10.3 blake2** — port `deps/blake2` (blake2b) to the `blake2` crate with known-answer vectors; its only C caller is `frontend/updater/hash.cpp` (Windows), which keeps the vendored copy until P6-32 — no libobs caller exists. Done when: vectors pass.
 
 ### P1-11 Process and module loading
 - [ ] **P1-11.1 Dynamic libs** — `os_dlopen`, `os_dlsym`, `os_dlclose`, `os_dlopen` error strings. Done when: loading missing lib returns NULL + same message class.
-- [ ] **P1-11.2 Processes and pipes** — `os_process_pipe_create/read/write/destroy` (`libobs/util/pipe*.c`), `os_get_exe_path`. Done when: echo-process roundtrip on 3 OSes.
+- [ ] **P1-11.2 Processes and pipes** — `os_process_pipe_create/read/write/destroy` (`libobs/util/pipe*.c`), `os_get_executable_path_ptr`. Done when: echo-process roundtrip on 3 OSes.
 - [ ] **P1-11.3 Edge cases** — paths with spaces, non-UTF-8 bytes, closed pipe. Done when: tests.
 
 ### P1-12 Profiler
@@ -96,7 +96,7 @@ Corrections to the earlier plan, verified in the tree: the ring buffer is `libob
 - [ ] **P1-13.3 `log` facade** — Rust `log` records forwarded to `blog`. Done when: level mapping table tested.
 
 ### P1-14 Miscellaneous util
-- [ ] **P1-14.1 Inventory** — table of: `bitstream.*`, `serializer.h`, `array-serializer.*`, `file-serializer.*`, `buffered-file-serializer.*`, `task.*`, `pipe.*`, `uthash.h`, `util_uint64.h`, `util_uint128.h`, `sse-intrin.h`, `source-profiler.*`, `curl/`, `windows/`, `apple/` with decision keep/port/drop. Done when: every file has a decision.
+- [ ] **P1-14.1 Inventory** — table for the files P1-14 owns per the coverage matrix: `uthash.h`, `util.hpp`, `windows/` (COM helpers), `curl/`, with a keep/port/drop decision each. The other leftover util files already have owning tasks: `bitstream.*`/serializers → P1-14.2, `task.*`/`util_uint64.h`/`util_uint128.h` → P1-14.3, `sse-intrin.h` → P1-19.1, `source-profiler.*` → P1-12.3, `pipe.*` → P1-11.2, `apple/` → P1-07.1. Done when: every P1-14 file has a decision.
 - [ ] **P1-14.2 Port serializers and bitstream** — existing `test/cmocka/test_bitstream.c` and `test_serializer.c` must pass against the Rust build. Done when: they do.
 - [ ] **P1-14.3 Port task queue and uint128** — `os_task_queue`, 128-bit helpers. Done when: unit tests.
 - [ ] **P1-14.4 Document leftovers** — curl helpers remain FFI until Phase 6. Done when: noted in ADR 0005.
@@ -105,7 +105,7 @@ Corrections to the earlier plan, verified in the tree: the ring buffer is `libob
 
 ### P1-15 vec2/vec3/vec4
 - [ ] **P1-15.1 Types** — `repr(C)` `Vec2/Vec3/Vec4` matching `libobs/graphics/vec*.h` (including the union with `ptr[4]`/SSE `m128`). Done when: size/align tests.
-- [ ] **P1-15.2 Functions** — all exported `vec*_` functions (add, sub, mul, div, dot, cross, norm, dist, transform, min/max, `vec3_rand`). Done when: list diff with header is empty.
+- [ ] **P1-15.2 Functions** — the non-inline exported `vec*_` functions: vec2 `abs/floor/ceil/close/norm`, vec3 `from_vec4/plane_dist/rotate/transform/transform3x4/mirror/mirrorv/rand`, vec4 `from_vec3/transform`; `add/sub/mul/div/dot/cross/norm...` are `static inline` in the headers and stay in C. Done when: list diff with the headers is empty.
 - [ ] **P1-15.3 Goldens** — 10k seeded random cases from `obs-ref-dump`; tolerance 1e-6 relative. Done when: pass.
 - [ ] **P1-15.4 Recipe**
 
@@ -116,7 +116,7 @@ Corrections to the earlier plan, verified in the tree: the ring buffer is `libob
 - [ ] **P1-16.4 Benchmarks** — vs baseline. Done when: ≥ C speed.
 
 ### P1-17 quat, axisang, plane, bounds
-- [ ] **P1-17.1 quat** — `quat_set`, mul, slerp/lerp, `quat_from_matrix`, `quat_get_dir`. Done when: golden.
+- [ ] **P1-17.1 quat** — the non-inline exports: `quat_mul`, `quat_from_axisang`, `quat_from_matrix3/4`, `quat_get_dir`, `quat_set_look_dir`, `quat_log`, `quat_exp`, `quat_interpolate`, `quat_get_tangent`, `quat_interpolate_cubic` (`quat_set`/`quat_norm`/… are `static inline`). Done when: golden.
 - [ ] **P1-17.2 axisang/plane** — from/to quat, plane from tri, distance, intersection. Done when: golden.
 - [ ] **P1-17.3 bounds** — `bounds_transform`, `bounds_intersects`, `bounds_intersects_ray`, `bounds_get_point`. Done when: golden for 100 shapes.
 - [ ] **P1-17.4 Recipe**
@@ -135,7 +135,7 @@ Corrections to the earlier plan, verified in the tree: the ring buffer is `libob
 
 ### P1-20 calldata
 - [ ] **P1-20.1 Storage** — `calldata.c/.h` byte stack with name/size/data packing and `fixed` mode. Done when: byte layout equals C.
-- [ ] **P1-20.2 Typed accessors** — `calldata_set/get_int/float/bool/ptr/string`, `_data`. Done when: mixed-type test.
+- [ ] **P1-20.2 Exported API** — the only non-inline exports are `calldata_get_data`, `calldata_set_data`, `calldata_get_string`; the typed `calldata_get/set_int/float/bool/ptr` are `static inline` and rely on the byte layout. Done when: mixed-type test building calldata with C inline setters and reading with Rust (and vice versa).
 - [ ] **P1-20.3 Fuzz + recipe** — random set/get sequences compared with C.
 
 ### P1-21 decl and proc
@@ -145,7 +145,7 @@ Corrections to the earlier plan, verified in the tree: the ring buffer is `libob
 
 ### P1-22 signal
 - [ ] **P1-22.1 Handler** — `signal.c`: add signal by declaration, connect/disconnect. Done when: ordering equals C (callbacks run in connection order).
-- [ ] **P1-22.2 Emit** — replicate `signal.c:290–350`: take the per-signal **recursive** mutex for the whole emit, iterate by index (array may grow), skip entries with `remove == true`, then erase removed entries after the loop; `signal_handler_disconnect` during emit only sets `remove` (thread-local `current_signal_cb` handles "disconnect self"). Then run global callbacks under `global_callbacks_mutex`. Done when: tests disconnect self, disconnect others, connect new, and emit the same signal recursively.
+- [ ] **P1-22.2 Emit** — replicate `signal.c:290–351` (`signal_handler_signal`): take the per-signal **recursive** mutex for the whole emit, iterate by index (array may grow), skip entries with `remove == true`, then erase removed entries after the loop; `signal_handler_disconnect` during emit only sets `remove` (thread-local `current_signal_cb` handles "disconnect self"). Then run global callbacks under `global_callbacks_mutex`, and adjust `handler->refs` by the `keep_ref` removals. Done when: tests disconnect self, disconnect others, connect new, and emit the same signal recursively.
 - [ ] **P1-22.3 Threads** — keep the lock structure (per-signal recursive mutex, handler mutex, global-callbacks recursive mutex); document any deviation. Done when: no deadlock under `loom` for connect-from-other-thread during emit.
 - [ ] **P1-22.4 Recipe**
 
@@ -182,16 +182,16 @@ Corrections to the earlier plan, verified in the tree: the ring buffer is `libob
 
 ### P1-28 Hotkey data layer
 - [ ] **P1-28.1 Name map** — `libobs/obs-hotkey-name-map.c`. Done when: all key names equal.
-- [ ] **P1-28.2 Combo JSON** — `obs_hotkey_binding` save/load format. Done when: round trip of corpus hotkeys.
+- [ ] **P1-28.2 Combo JSON** — `obs_hotkey_binding` save/load format is specified by S-034 (persistence section) and vectorized in `hotkeys/03-bindings-load-save.script`; the implementation belongs to P4-28.2. Done when: vectors verified against C `obs-hotkey.c` behaviour (no Phase-1 code).
 - [ ] **P1-28.3 Golden**
 
 ## E. `shared/` leaf helpers
 
 ### P1-33 `shared/` leaf helpers (added)
-- [ ] **P1-33.1 `shared/bpm`** — apply recipe for S-024 M8 (counters, timestamps, SEI payloads, per-codec packet injection). Done when: the `bpm` scripts in `test/conformance/scripts/helpers/` pass against the C reference.
+- [ ] **P1-33.1 `shared/bpm`** — apply recipe for S-024 M8 (counters, timestamps, SEI payloads, per-codec packet injection). The AV1 `metadata_obu` framing is inlined from S-012 (formula given in S-024 §4.8) — no build dependency on the Phase 2 NAL tasks (P2-17…P2-20). Done when: the `bpm` scripts in `test/conformance/scripts/helpers/` pass against the C reference.
 - [ ] **P1-33.2 `shared/file-updater`** — apply recipe for S-024 M10 (version comparison, fake-HTTP/in-memory-filesystem driven; the module has no hashes). Done when: M10 scripts pass.
 - [ ] **P1-33.3 `shared/happy-eyeballs`** — apply recipe for S-024 M9 (address-list ordering, resolver hints, constants only — the socket race is out of scope and stays behind the C until a spec exists). Done when: M9 scripts pass.
-- [ ] **P1-33.4 `shared/obs-inject-library`** — no spec (thin `LoadLibrary`/`dlopen` helper): port from the C, unit-test symbol resolution and the failure paths. Consumed by P5-31.7 (game-capture injection) and P5-32.6. Done when: C file excluded from the build, consumers link the crate.
+- [ ] **P1-33.4 `shared/obs-inject-library`** — no spec (thin `LoadLibrary`/`dlopen` helper, 134 lines): port from the C, unit-test symbol resolution and the failure paths. Consumed only by `plugins/win-capture` (game capture + `inject-helper`), i.e. P5-31.7. Done when: crate passes its unit tests and the C file stays linked for P5-31.7 (excluded only when win-capture is ported).
 - [ ] **P1-33.5 `shared/opts-parser`** — apply recipe for S-024 M1 (option-string parsing). Done when: M1 scripts pass.
 
 ## F. Integration
@@ -207,8 +207,8 @@ Corrections to the earlier plan, verified in the tree: the ring buffer is `libob
 - [ ] **P1-30.3 Flip** default and update docs.
 
 ### P1-31 Remove vendored deps
-- [ ] **P1-31.1 Usage scan** — `grep -r "blake2\|json11" --include=CMakeLists.txt --include=*.c*`. Done when: no users.
-- [ ] **P1-31.2 Delete** `deps/blake2`, `deps/json11` and CMake references.
+- [ ] **P1-31.1 Usage scan** — `grep -rn "blake2\|json11" --include=CMakeLists.txt --include=*.c* --include=*.cpp .`. Done when: the only remaining users are frontend — `deps/blake2`: `frontend/updater/hash.cpp`; `deps/json11`: `frontend/` OAuth/importer code — and nothing in `libobs/`.
+- [ ] **P1-31.2 Deletion (deferred to Phase 6)** — cannot delete in Phase 1: `frontend/updater` (P6-32) still links `deps/blake2` and the C frontend still links `deps/json11` until Phase 6 ports them. Record the deferral (with both consumers named) so Phase 6 deletes them. Done when: deferral recorded in the P1-32 review notes.
 
 ### P1-32 Phase 1 review
 - [ ] **P1-32.1 Benchmarks** vs baseline table.

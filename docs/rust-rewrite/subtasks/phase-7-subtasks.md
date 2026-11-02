@@ -4,7 +4,7 @@ Parent file: [../phase-7-retire-c.md](../phase-7-retire-c.md). Each subtask has 
 
 **Delete recipe** (used below): (1) `grep -r` for includes/link references and fix them; (2) tag the last commit that contains the code; (3) delete in one PR with the CMake/CI references; (4) update docs; (5) full CI on 3 OSes; (6) keep the tag listed in `docs/rust-rewrite/retired.md`.
 
-Verified: the top-level directories are `libobs`, `libobs-opengl`, `libobs-d3d11`, `libobs-metal` (Swift), `libobs-winrt`, `frontend`, `plugins`, `deps`, `shared`, `test`, `cmake`, `build-aux`, `docs/sphinx`. `deps/` contains `blake2`, `glad`, `json11`, `libcaption`, `libdshowcapture`, `w32-pthreads` (`libnsgif` is not in `deps/`: it is `libobs/graphics/libnsgif/` and goes away with P7-01). `shared/` contains `bpm`, `file-updater`, `happy-eyeballs`, `ipc-util`, `media-playback`, `obs-d3d8-api`, `obs-hook-config`, `obs-inject-library`, `obs-scripting`, `obs-shared-memory-queue`, `obs-tiny-nv12-scale`, `opts-parser`, `properties-view`, `qt`.
+Verified: the top-level directories are `libobs`, `libobs-opengl`, `libobs-d3d11`, `libobs-metal` (Swift), `libobs-winrt`, `frontend`, `plugins`, `deps`, `shared`, `test`, `cmake`, `build-aux`, `additional_install_files`, `docs` (sphinx). Ownership outside this phase: packaging `build-aux/`/`additional_install_files/` by P6-42…P6-44 (Windows install-tree layout P6-42.1), `docs/sphinx` by P7-14.1; `cmake/` and the root CMake files are removed by P7-06.3. `deps/` contains `blake2`, `glad`, `json11`, `libcaption`, `libdshowcapture`, `w32-pthreads` (`libnsgif` is not in `deps/`: it is `libobs/graphics/libnsgif/` and goes away with P7-01). `shared/` contains `bpm`, `file-updater`, `happy-eyeballs`, `ipc-util`, `media-playback`, `obs-d3d8-api`, `obs-hook-config`, `obs-inject-library`, `obs-scripting`, `obs-shared-memory-queue`, `obs-tiny-nv12-scale`, `opts-parser`, `properties-view`, `qt`.
 
 ## A. Removal
 
@@ -16,20 +16,20 @@ Verified: the top-level directories are `libobs`, `libobs-opengl`, `libobs-d3d11
 ### P7-02 Delete C++ frontend
 - [ ] **P7-02.1 Preconditions** — parity checklist (P6-48.1) 100%, beta feedback closed.
 - [ ] **P7-02.2 Tag** `last-cpp-frontend`.
-- [ ] **P7-02.3 Delete** `frontend/` including `.ui` forms, themes/locale moved to the Rust app's data dir first. Done when: installers still contain locale and themes.
+- [ ] **P7-02.3 Delete** `frontend/` including `.ui` forms (themes/locale moved to the Rust app's data dir first), per delete recipe. Done when: installers still contain locale and themes, CI green on 3 OSes, tag listed in `docs/rust-rewrite/retired.md`.
 
 ### P7-03 Delete C plugins
 - [ ] **P7-03.1 List** — plugin → status table from P5-50.
-- [ ] **P7-03.2 Delete** each fully ported plugin dir in its own commit (so `git revert` per plugin works).
-- [ ] **P7-03.3 FFI leftovers** — document `obs-browser` CEF glue, DeckLink/AJA SDK glue, `libdshowcapture`, `graphics-hook`, `mac-virtualcam` extension host, owner and next review date.
+- [ ] **P7-03.2 Delete** each fully ported plugin dir in its own commit, tagged `last-c-plugin-<name>` on the last commit containing it first (so `git revert` per plugin works); CMake/CI references in the same PR per delete recipe. Done when: only the P7-03.3 leftovers remain under `plugins/` and the tags are listed in `docs/rust-rewrite/retired.md`.
+- [ ] **P7-03.3 FFI leftovers** — document `obs-browser` CEF glue, DeckLink/AJA SDK glue, `libdshowcapture`, `graphics-hook`, `mac-virtualcam` extension host with owner, next review date and the decision IDs (D-08, D-09, D-10, D-14, D-19). Done when: list committed and every `plugins/` dir not in it is deleted.
 
 ### P7-04 Delete vendored deps
 - [ ] **P7-04.1 Scan** — for each `deps/*` entry, `grep` consumers.
-- [ ] **P7-04.2 Delete** unused ones (`blake2`, `json11`, `glad`, `w32-pthreads`, `libcaption` if ported; keep `libdshowcapture` while `win-dshow` uses it).
+- [ ] **P7-04.2 Delete** unused ones (`blake2`, `json11`, `glad`, `w32-pthreads`, `libcaption` if ported), tagged `last-c-deps` first, per delete recipe; keep `libdshowcapture` (D-19: FFI, listed in P7-03.3). Done when: no CMake/CI references remain, CI green on 3 OSes, tag listed in `docs/rust-rewrite/retired.md`.
 
 ### P7-05 Delete `shared/`
 - [ ] **P7-05.1 Mapping table** — `bpm`, `file-updater`, `happy-eyeballs`, `ipc-util`, `media-playback`, `obs-d3d8-api`, `obs-hook-config`, `obs-inject-library`, `obs-scripting`, `obs-shared-memory-queue`, `obs-tiny-nv12-scale`, `opts-parser`, `properties-view`, `qt` → Rust crate or "still used by hook DLL".
-- [ ] **P7-05.2 Delete** the migrated ones; keep those used by the C++ hook DLL/inject helper.
+- [ ] **P7-05.2 Delete** the migrated ones per delete recipe, tagged `last-c-shared` first; keep those used by the C game-capture hook DLL/inject helper (D-08). Done when: only the P7-05.1-mapped leftovers remain, CI green on 3 OSes, tag listed in `docs/rust-rewrite/retired.md`.
 
 ### P7-25 Delete the C test harness (added)
 - [ ] **P7-25.1 Preconditions** — prove the four cmocka suites (`test_bitstream.c`, `test_darray.c`, `test_os_path.c`, `test_serializer.c`) and `test/test-input` are superseded: every exercised behaviour has a Rust test or a `test/conformance/` area. Done when: coverage table committed in `docs/tests/`.
@@ -41,7 +41,7 @@ Verified: the top-level directories are `libobs`, `libobs-opengl`, `libobs-d3d11
 ### P7-06 Cargo-first build
 - [ ] **P7-06.1 xtask** — commands `build`, `package`, `install`, `test`, `lint`, `fmt`, `deps` (fetch native libs). Done when: replaces documented CMake commands.
 - [ ] **P7-06.2 C++ shims** — `build.rs` with `cc`/`cmake` for the leftovers from P7-03.3. Done when: builds on 3 OSes.
-- [ ] **P7-06.3 Remove CMake** — `CMakeLists.txt`, `CMakePresets.json`, `cmake/`; keep `build-aux/` packaging. Done when: CI uses xtask only.
+- [ ] **P7-06.3 Remove CMake** — `CMakeLists.txt`, `CMakePresets.json`, `cmake/`; keep `build-aux/` packaging. Only after P7-01…P7-05 and P7-25 are done and P7-06.2 builds the leftovers. Done when: CI uses xtask only.
 
 ### P7-07 Dependency management
 - [ ] **P7-07.1 Pins** — FFmpeg, x264, CEF, SRT, RIST, libdatachannel/webrtc, Qt (if kept), with versions and SHA-256.
@@ -63,7 +63,7 @@ Verified: the top-level directories are `libobs`, `libobs-opengl`, `libobs-d3d11
 ### P7-10 C ABI as opt-in compat feature
 - [ ] **P7-10.1 Feature** — move C exports of `obs-ffi` behind `compat-c-abi` (default on until deprecation).
 - [ ] **P7-10.2 Supported headers** — document API versions supported.
-- [ ] **P7-10.3 Deprecation ADR** — timeline (announce, N releases, remove).
+- [ ] **P7-10.3 Deprecation ADR** — record the D-05 timeline (announce with SDK 1.0, remove after 3 releases). Done when: ADR merged and timeline published with the SDK 1.0 notes.
 
 ### P7-11 Native plugin SDK 1.0
 - [ ] **P7-11.1 Freeze review** — public API audit.

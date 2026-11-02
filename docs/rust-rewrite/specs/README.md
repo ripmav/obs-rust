@@ -139,7 +139,7 @@ owner in [../DECISIONS-NEEDED.md](../DECISIONS-NEEDED.md) section D.
 | S-061 | threading primitives (`os_event`, `os_sem`, `pthread_mutex`, `os_set_thread_name`) and time/sleep (was S-017) | P1-05 / P1-06 would read the C | P1-05, P1-06 | D-27 |
 | S-062 | `obs-websocket` protocol | most-integrated third-party plugin; no S-xxx | P5-20 | D-28 |
 | S-063 | Python scripting backend (25 `pyscript` vectors exist; S-039/S-060 cover only the core and Lua) | P6-37.2 would read the C | P6-37.2 | D-29 |
-| S-064 | Wayland platform glue (`obs-nix-wayland.c`, 41 KB: keyboard-shortcuts-inhibit, GlobalShortcuts portal) | S-058 explicitly excludes it | P4-32.2 | D-30 |
+| S-064 | Wayland hotkey platform (`obs-nix-wayland.c`, 42 KB: `wl_keyboard` + xkbcommon; no portal code — that is the pipewire/dbus glue in `platform-nix-*.c`) | S-058 explicitly excludes it | P4-32.2 | D-30 |
 | S-065 | audio-monitoring win32 / osx / null backends | S-055 covers PulseAudio only | P2-15.3, P2-15.4 | D-31 |
 | S-066 | `win-wasapi` enumeration/capture | S-051 covers window matching/hook/vqueue, not WASAPI | P5-30 | D-32 |
 | — | vendor-SDK behavioural tables (obs-nvenc helpers, coreaudio-encoder, nv-filters, vlc-video, decklink, aja) | mostly "kept as FFI" per D-04/D-10 | P5-38…P5-43 | D-33 |

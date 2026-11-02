@@ -14,7 +14,7 @@ Everything in `media-io` that is a pure function of its arguments:
 
 - the three CPU **packed 4:4:4 to planar** converters `compress_uyvx_to_i420`, `compress_uyvx_to_nv12`,
   `convert_uyvx_to_i444` and the three **to packed 32-bit** decoders `decompress_420`, `decompress_nv12`,
-  `decompress_422` (exported, called by plugins and by older libobs paths);
+  `decompress_422` (exported; zero in-tree callers in 33.0.1, kept normative for out-of-tree C plugins);
 - plane layout of every `video_format`: `video_frame_init`, `video_frame_copy`, the two non-public helpers
   `video_frame_get_linesizes` / `video_frame_get_plane_heights`, `video_frame_free/create/destroy`;
 - the YUV to RGB matrices `video_format_get_parameters` and `video_format_get_parameters_for_format`;
@@ -22,7 +22,7 @@ Everything in `media-io` that is a pure function of its arguments:
 - the inline helpers and every enum of `video-io.h` / `audio-io.h` that plugins compile in (names, flags, channel
   counts, sizes), `audio-math.h` (dB), `audio_frames_to_ns` / `ns_to_audio_frames`, `frame-rate.h`.
 
-Callers: plugins (capture sources, encoders, `obs-ffmpeg`), libobs (`obs-source`, `obs-video`), and the frontend.
+Callers in 33.0.1: none in-tree (only stale `#include`s in `obs-video.c`, `obs-source.c`, `video-io.c`); out-of-tree C plugins may still link these — port for S-013/ABI, not for in-tree use.
 Numeric enum values and struct layouts cross the plugin ABI and are normative.
 
 ## 2. Terminology and conventions

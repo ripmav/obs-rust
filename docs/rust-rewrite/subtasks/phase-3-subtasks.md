@@ -2,16 +2,16 @@
 
 Parent file: [../phase-3-graphics.md](../phase-3-graphics.md). Each subtask has **Files**, **Steps**, **Done when**.
 
-Verified file map: `libobs/graphics/` has `effect.c`, `effect-parser.c`, `shader-parser.c`, `graphics.c`, `graphics-imports.c`, `graphics-internal.h`, `device-exports.h`, `graphics-ffmpeg.c`, `image-file.c`, `texture-render.c`, `libnsgif/` and the math files. Built-in effects in `libobs/data/`: `area`, `bicubic_scale`, `bilinear_lowres_scale`, `color`, `default`, `default_rect`, `deinterlace_{base,blend,blend_2x,discard,discard_2x,linear,linear_2x,yadif,yadif_2x}`, `format_conversion`, `lanczos_scale`, `opaque`, `premultiplied_alpha`, `repeat`, `solid` (`.effect`). Backends: `libobs-opengl/` (`gl-*.c`, `gl-nix.c`, `gl-x11-egl.c`, `gl-wayland-egl.c`, `gl-windows.c`, `gl-cocoa.m`), `libobs-d3d11/` (`d3d11-*.cpp`), `libobs-metal/` (a real Swift backend: `MTL*+Extensions.swift`, `CVPixelFormat+Extensions.swift`, … — the earlier "≈32 lines" figure only counted C/C++/ObjC and understated it), `libobs-winrt/`. Deinterlace effects were missing from the earlier effect list and are added to P3-24.
+Verified file map: `libobs/graphics/` has `effect.c`, `effect-parser.c`, `shader-parser.c`, `graphics.c`, `graphics-imports.c`, `graphics-internal.h`, `device-exports.h`, `graphics-ffmpeg.c`, `image-file.c`, `texture-render.c`, `libnsgif/` and the math files. Built-in effects in `libobs/data/`: `area`, `bicubic_scale`, `bilinear_lowres_scale`, `color`, `default`, `default_rect`, `deinterlace_{base,blend,blend_2x,discard,discard_2x,linear,linear_2x,yadif,yadif_2x}`, `format_conversion`, `lanczos_scale`, `opaque`, `premultiplied_alpha`, `repeat`, `solid` (`.effect`). Backends: `libobs-opengl/` (`gl-*.c`, `gl-nix.c`, `gl-x11-egl.c`, `gl-wayland-egl.c`, `gl-windows.c`, `gl-cocoa.m`), `libobs-d3d11/` (`d3d11-*.cpp`), `libobs-metal/` (a real Swift backend: `MTL*+Extensions.swift`, `CVPixelFormat+Extensions.swift`, … — the earlier "≈32 lines" figure only counted C/C++/ObjC and understated it). `libobs-winrt/` is **not** a graphics backend (it is the Windows.Graphics.Capture module, P5-33). Deinterlace effects were missing from the earlier effect list and are added to P3-24.
 
-**Ordering note (see `../guides/phase-3-guide.md`):** the `wgpu` backend (P3-13…P3-23) can be built first as a loadable `libobs-wgpu` module exporting the `device_*` symbols of `graphics-internal.h:30` under the unmodified C `graphics.c`. P3-26 (`render_video`, `output_frames`) lives in `obs-video.c` and belongs with Phase 4.
+**Ordering note (see `../guides/phase-3-guide.md`):** the `wgpu` backend (P3-13…P3-23) can be built first as a loadable `libobs-wgpu` module exporting the `device_*` symbols of `graphics-internal.h:30` under the unmodified C `graphics.c`. P3-26 ports the render functions of `obs-video.c` in Phase 3 (static test scene); their callers (`render_video`, `output_frames`, the scene walk) wire up in Phase 4 (P4-05).
 
 ## A. Effect language
 
-### P3-01 Lexer and preprocessor
-- [ ] **P3-01.1 Tokens** — `libobs/util/cf-lexer.c/.h`: token kinds, whitespace/comments, string/number literals. Done when: Rust lexer passes the same token dump for all inputs.
-- [ ] **P3-01.2 Preprocessor** — `#include` (relative to effect file), `#define`, `#ifdef`, line markers. Done when: cases with nested includes and missing file error.
-- [ ] **P3-01.3 Goldens** — dump tokens for every file in `libobs/data/*.effect` and `plugins/*/data/*.effect`. Done when: committed `.golden`.
+### P3-01 Effect-file preprocessing
+- [ ] **P3-01.1 Backend define** — `effect-parser.c` injects the `gs_preprocessor_name()` define (e.g. `OPENGL`) before `cf_parser_parse`. Done when: `#ifdef`-per-backend effect files parse equal to C.
+- [ ] **P3-01.2 Include resolution** — `#include "..."` relative to the effect file (the lexer/preprocessor engine itself is P1-08.3, S-011). Done when: cases with nested includes and missing file error.
+- [ ] **P3-01.3 Goldens** — dump the preprocessed token stream for every file in `libobs/data/*.effect` and `plugins/*/data/*.effect`. Done when: committed `.golden`.
 
 ### P3-02 Shader parser
 - [ ] **P3-02.1 AST** — types for `shader-parser.h`: `shader_var`, `shader_struct`, `shader_func`, `cf_token`s, expressions. Done when: AST can print itself.
@@ -58,8 +58,8 @@ Verified file map: `libobs/graphics/` has `effect.c`, `effect-parser.c`, `shader
 - [ ] **P3-08.4 Symbol diff** vs `device-exports.h` and `graphics.h`.
 
 ### P3-09 Matrix stack and transforms
-- [ ] **P3-09.1 Stack** — `gs_matrix_push/pop/identity/transpose/set/get/mul/translate/rotate/scale`. Done when: golden.
-- [ ] **P3-09.2 Projection** — `gs_ortho`, `gs_frustum`, `gs_perspective`, `gs_set_viewport`, `gs_set_cur_context`. Done when: golden.
+- [ ] **P3-09.1 Stack** — `gs_matrix_push/pop/identity/transpose/set/get/mul/translate/rotaa/rotquat/scale` (+ the `...3f`/`4f` f32 variants). Done when: golden.
+- [ ] **P3-09.2 Projection** — `gs_ortho`, `gs_frustum`, `gs_perspective`, `gs_set_viewport`, `gs_get_context`. Done when: golden.
 - [ ] **P3-09.3 Golden**
 
 ### P3-10 Immediate-mode vertex API
@@ -71,10 +71,10 @@ Verified file map: `libobs/graphics/` has `effect.c`, `effect-parser.c`, `shader
 - [ ] **P3-11.1 texrender** — `libobs/graphics/texture-render.c`. Done when: begin/end with zstencil.
 - [ ] **P3-11.2 stagesurface** — create/stage/map. Done when: pixel read-back equal.
 - [ ] **P3-11.3 map/unmap/copy** — `gs_texture_map`, `gs_copy_texture(_region)`. Done when: tests.
-- [ ] **P3-11.4 Mipmaps** — `GS_GEN_MIPMAPS`. Done when: level count test.
+- [ ] **P3-11.4 Mipmaps** — `GS_BUILD_MIPMAPS` flag + `levels` param of `gs_texture_create`; pow2-only warning path. Done when: level count + warning test.
 
 ### P3-12 Image loading
-- [ ] **P3-12.1 Static** — PNG, JPG, BMP, TGA via `image` crate (vs `graphics-ffmpeg.c`). Done when: pixel hash equal for 30 files.
+- [ ] **P3-12.1 Static** — PNG, JPG, BMP, TGA, WebP via `image` crate (vs `graphics-ffmpeg.c`). Done when: pixel hash equal for 30 files.
 - [ ] **P3-12.2 Animated** — GIF (`libnsgif`), APNG, WebP frame delays. Done when: delays equal.
 - [ ] **P3-12.3 FFmpeg fallback** — formats the crate does not cover. Done when: list documented.
 - [ ] **P3-12.4 Hash goldens**
@@ -106,7 +106,7 @@ Verified file map: `libobs/graphics/` has `effect.c`, `effect-parser.c`, `shader
 ### P3-17 Frame pacing and presentation
 - [ ] **P3-17.1 Display** — `obs_display_create/resize/destroy` from `libobs/obs-display.c`. Done when: resize without flicker.
 - [ ] **P3-17.2 Multiple + callbacks** — draw callbacks, background colour. Done when: two displays at once.
-- [ ] **P3-17.3 Present modes** — vsync off default, `gs_present`. Done when: configurable.
+- [ ] **P3-17.3 Present modes** — `gs_present` pacing: D3D11 legacy swap chain = interval 1 (vsync on), flip model paced by the frame-latency waitable object; `gs_init_data` has no vsync field (macOS: `DisableOSXVSync` setting). Done when: present path matches C on each OS.
 
 ### P3-18 Shared texture import: Linux
 - [ ] **P3-18.1 DMA-BUF** — `plugins/linux-pipewire/pipewire.c` produces them; import with modifiers via Vulkan external memory. Done when: screencast shows.
@@ -157,10 +157,10 @@ Verified file map: `libobs/graphics/` has `effect.c`, `effect-parser.c`, `shader
 - [ ] **P3-26.4 GPU encode path** — `obs-video-gpu-encode.c`. Done when: NVENC path unchanged.
 - [ ] **P3-26.5 Deterministic golden** — 120 frames hashed.
 
-### P3-27 Canvas and projectors
-- [ ] **P3-27.1 Canvas** — `libobs/obs-canvas.c`, `obs-view.c`. Done when: second canvas renders.
-- [ ] **P3-27.2 Projectors** — display callbacks. Done when: windowed projector.
-- [ ] **P3-27.3 Test** with 2 canvases.
+### P3-27 Multi-canvas render support
+- [ ] **P3-27.1 Mixes** — the render loop iterates `obs->video.mixes` (per-mix `render_texture`/`output_texture`); the canvas/view objects themselves are P4-33/P4-31. Done when: two fake mixes render.
+- [ ] **P3-27.2 Per-mix staging** — per-mix `stage_output_texture` to CPU. Done when: each mix's frame equals its expected output.
+- [ ] **P3-27.3 Test** with 2 mixes.
 
 ## E. Cleanup
 
