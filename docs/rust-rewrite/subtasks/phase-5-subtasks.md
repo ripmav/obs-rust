@@ -13,7 +13,7 @@ Every plugin task below starts with **S1/S2** and ends with **E1/E2**; they are 
 
 Shared CMake targets: `obs-ffmpeg` spans P5-11…P5-16 + P5-41 and `obs-outputs` spans P5-17 + P5-18. Those tasks port their own files, but E2 cutover happens once, in the last-finishing task (the C target is deleted only then).
 
-Verified in this checkout: **`plugins/obs-websocket` and `plugins/obs-browser` are git submodules and are empty** (`.gitmodules`), as is `deps/libdshowcapture/src`. Run `git submodule update --init` first; the file lists for those two plugins below come from knowledge of the upstream repos and must be re-checked once present. There is no separate AMF plugin directory: AMF lives in `plugins/obs-ffmpeg` (`texture-amf.cpp`, `texture-amf-opts.hpp`, `obs-amf-test/`). Media playback code is shared: `shared/media-playback/media-playback/{media,decode,cache,media-playback}.c`.
+Verified in this checkout (submodules initialised): **`plugins/obs-websocket` at tag 5.7.6** — 16.9k LOC in `src/`+`lib/`; real layout: `src/websocketserver/` (server + protocol: `WebSocketServer.cpp`, `WebSocketServer_Protocol.cpp`, `rpc/WebSocketSession.h`, close/op-code types), `src/requesthandler/` (147 request types in per-category `RequestHandler_*.cpp` + `RequestBatchHandler` + `rpc/Request[BatchRequest|Result]` + `types/RequestStatus.h`), `src/eventhandler/` (60 events, per-category `EventHandler_*.cpp`, `types/EventSubscription.h`), `src/utils/` (`Crypto.cpp` = SHA256/Base64 auth, JSON, `Obs_*` helpers, volume meter), `src/Config.cpp` (settings + CLI overrides), `src/forms/` (Qt dialogs), `lib/obs-websocket-api.h` (vendor API v3) + `lib/example/`, `docs/generated/protocol.json` + `protocol.md` (generated protocol reference). There is **no `src/protocol/` directory and no in-tree `test/` at 5.7.6**. **`plugins/obs-browser` pinned at 2.23.4-126-gd4db73e** (version file 2.27.5) — 6.5k LOC: CEF glue `browser-app.cpp` (registers `window.obsstudio`, `ExecuteJSFunction`), `browser-client.cpp`, `browser-scheme.cpp`, `browser-dummy-client.cpp`; `obs-browser-source.cpp`; module main `obs-browser-plugin.cpp` (CEF init, cookie migration, stream/record event dispatch, links the obs-websocket vendor API); `panel/` Qt dock; `obs-browser-page/` page-process main (Windows `obs-browser-page` exe, macOS `OBS Helper` ×4 bundles); `deps/` (base64, ip-string, signal-restore, wide-string). **`deps/libdshowcapture/src` pinned at no-atl+121 (8878638)** — 44 files / 8.1k LOC: public API `dshowcapture.hpp` (enums per S-051 §11), implementation `source/`; "no-atl" = ATL removed, own `ComPtr.hpp`/`CoTaskMemPtr.hpp` instead of `atlbase.h`; **its nested submodule `src/external/capture-device-support` (Elgato vendor support) is NOT initialised here — fresh clones need `git submodule update --init --recursive`**. There is no separate AMF plugin directory: AMF lives in `plugins/obs-ffmpeg` (`texture-amf.cpp`, `texture-amf-opts.hpp`, `obs-amf-test/`). Media playback code is shared: `shared/media-playback/media-playback/{media,decode,cache,media-playback}.c`.
 
 ## A. Pure logic
 
@@ -32,7 +32,7 @@ Verified in this checkout: **`plugins/obs-websocket` and `plugins/obs-browser` a
 - [ ] **P5-02.4 Swipe/slide** — `transition-swipe.c`, `transition-slide.c` (direction, easing). Done when: golden per direction.
 - [ ] **P5-02.5 Luma wipe** — `transition-luma-wipe.c` + `data/luma_wipes/*`. Done when: golden per wipe image.
 - [ ] **P5-02.6 Stinger** — `transition-stinger.c`: media source, transition point (ms or frame), matte modes, audio fade styles. Done when: golden.
-- [ ] **P5-02.7 Goldens** — 30 frames per transition.
+- [ ] **P5-02.7 Goldens** — 30 frames per transition. Done when: goldens committed and matching.
 - [ ] **P5-02.8/.9** E1/E2
 
 ### P5-03 `image-source`
@@ -48,7 +48,7 @@ Verified in this checkout: **`plugins/obs-websocket` and `plugins/obs-browser` a
 - [ ] **P5-04.3 Decision** — DirectWrite vs GDI+ via `windows` crate; stay pixel-compatible if possible. Done when: note.
 - [ ] **P5-04.4 Layout** — Files: `gdiplus/obs-text.cpp`: font face/size/style, colours with gradient, outline, extents, chatlog mode, vertical align. Done when: screenshot golden of 10 configs.
 - [ ] **P5-04.5 File mode** — read from file with change detection, UTF-8/UTF-16 BOM. Done when: tests.
-- [ ] **P5-04.6 Goldens** — fonts/outlines.
+- [ ] **P5-04.6 Goldens** — fonts/outlines. Done when: goldens match GDI+.
 - [ ] **P5-04.7/.8** E1/E2 (Windows only)
 
 ### P5-05 `text-freetype2`
@@ -78,14 +78,14 @@ Verified in this checkout: **`plugins/obs-websocket` and `plugins/obs-browser` a
 ### P5-08 `obs-libfdk`
 - [ ] **P5-08.1/.2** S1/S2
 - [ ] **P5-08.3 Encoder** — Files: `obs-libfdk.c`: AAC-LC/HE modes, bitrate, afterburner. Done when: output decodes with ffprobe.
-- [ ] **P5-08.4 Optional build** (cargo feature `fdk`).
+- [ ] **P5-08.4 Optional build** (cargo feature `fdk`). Done when: builds with and without the feature.
 - [ ] **P5-08.5/.6** E1/E2
 
 ### P5-09 `coreaudio-encoder`
 - [ ] **P5-09.1/.2** S1/S2
 - [ ] **P5-09.3 Converter** — Files: `encoder.cpp`, `windows-imports.h` (loads Apple libs on Windows too). Wrap `AudioConverter`. Done when: AAC out decodes.
 - [ ] **P5-09.4 Tables** — bitrates/sample rates/modes (CBR, ABR, CVBR, VBR). Done when: option list equal.
-- [ ] **P5-09.5 Compare** on macOS CI.
+- [ ] **P5-09.5 Compare** on macOS CI. Done when: option lists equal C and the output decodes on macOS CI.
 - [ ] **P5-09.6/.7** E1/E2
 
 ### P5-10 `nv-filters`
@@ -102,14 +102,14 @@ Verified in this checkout: **`plugins/obs-websocket` and `plugins/obs-browser` a
 - [ ] **P5-11.1/.2** S1/S2
 - [ ] **P5-11.3 Audio** — `obs-ffmpeg-audio-encoders.c` (AAC, Opus, PCM s16/s24/f32, ALAC, FLAC). Done when: ffprobe parameters equal.
 - [ ] **P5-11.4 Video** — `obs-ffmpeg-video-encoders.c/.h`, `obs-ffmpeg-av1.c`, `obs-ffmpeg-openh264.c`; options via `obs-ffmpeg-formats.h`. Done when: packets equal.
-- [ ] **P5-11.5 Compare** packet bytes with C.
+- [ ] **P5-11.5 Compare** packet bytes with C. Done when: packet bytes equal.
 - [ ] **P5-11.6/.7** E1/E2
 
 ### P5-12 VAAPI
 - [ ] **P5-12.1/.2** S1/S2
 - [ ] **P5-12.3 Probe** — `vaapi-utils.c/.h`, device selection (`/dev/dri/renderD*`), supported profiles/entrypoints. Done when: log matches C.
 - [ ] **P5-12.4 Encode** — `obs-ffmpeg-vaapi.c` H.264/HEVC/AV1, CQP/CBR/VBR. Done when: playable stream.
-- [ ] **P5-12.5 Test** Intel and AMD.
+- [ ] **P5-12.5 Test** Intel and AMD. Done when: encodes play back on both.
 - [ ] **P5-12.6/.7** E1/E2
 
 ### P5-13 NVENC (FFmpeg legacy)
@@ -123,7 +123,7 @@ Verified in this checkout: **`plugins/obs-websocket` and `plugins/obs-browser` a
 - [ ] **P5-14.3 Protocol** — `ffmpeg-mux/ffmpeg-mux.c/.h`: header struct, stdin packet framing, argument parsing. Done when: parser fuzzed.
 - [ ] **P5-14.4 Containers** — MKV, MP4, fMP4, MOV, MPEG-TS, HLS. Done when: `ffprobe` of each equal.
 - [ ] **P5-14.5 Features** — replay buffer, split files, chapters, `obs-ffmpeg-mux.c` host side. Done when: tests.
-- [ ] **P5-14.6 Fuzz** pipe reader.
+- [ ] **P5-14.6 Fuzz** pipe reader. Done when: fuzz run clean.
 - [ ] **P5-14.7/.8** E1/E2
 
 ### P5-15 `obs-ffmpeg` outputs
@@ -131,7 +131,7 @@ Verified in this checkout: **`plugins/obs-websocket` and `plugins/obs-browser` a
 - [ ] **P5-15.3 Generic** — `obs-ffmpeg-output.c/.h`. Done when: custom output works.
 - [ ] **P5-15.4 MPEG-TS/SRT** — `obs-ffmpeg-mpegts.c`, `obs-ffmpeg-srt.h` (latency, passphrase, stream id). Done when: loopback with `srt-live-transmit`.
 - [ ] **P5-15.5 RIST/HLS** — `obs-ffmpeg-rist.h`, `obs-ffmpeg-hls-mux.c`, `obs-ffmpeg-url.h`. Done when: HLS playlist valid.
-- [ ] **P5-15.6 Loopback** tests.
+- [ ] **P5-15.6 Loopback** tests. Done when: loopback passes.
 - [ ] **P5-15.7/.8** E1/E2
 
 ### P5-16 `obs-ffmpeg` media source
@@ -139,7 +139,7 @@ Verified in this checkout: **`plugins/obs-websocket` and `plugins/obs-browser` a
 - [ ] **P5-16.3 Playback core** — `shared/media-playback/media-playback/{media.c,decode.c}`: demux thread, decode thread, queues, frame timing. Done when: A/V sync tests.
 - [ ] **P5-16.4 Cache/loop/seek** — `cache.c`, `media-playback.c`. Done when: seek accuracy test.
 - [ ] **P5-16.5 HW decode** — selection list and fallback in `obs-ffmpeg-source.c`. Done when: log of chosen decoder equal.
-- [ ] **P5-16.6 Drift** — 2 h file < 1 frame.
+- [ ] **P5-16.6 Drift** — 2 h file < 1 frame. Done when: measured drift < 1 frame.
 - [ ] **P5-16.7/.8** E1/E2 (also covers the `shared/media-playback` crate; only in-tree consumer is obs-ffmpeg)
 
 ### P5-17 `obs-outputs` RTMP/FLV
@@ -149,7 +149,7 @@ Verified in this checkout: **`plugins/obs-websocket` and `plugins/obs-browser` a
 - [ ] **P5-17.5 TLS/sockets** — `rtmp-stream.c`, `net-if.c/.h`, `rtmp-windows.c` (TCP_NODELAY, send buffer tuning, bind to interface, IPv4/IPv6). Done when: RTMPS works through `rustls`.
 - [ ] **P5-17.6 Congestion/DBR** — drop priorities (PFRAMES/BFRAMES), dynamic bitrate. Done when: scripted congestion trace equal.
 - [ ] **P5-17.7 Multitrack** — enhanced RTMP multitrack. Done when: two-track publish verified.
-- [ ] **P5-17.8 Servers** — nginx-rtmp and a mock server in CI.
+- [ ] **P5-17.8 Servers** — nginx-rtmp and a mock server in CI. Done when: CI jobs publish to both.
 - [ ] **P5-17.9/.10** E1/E2
 
 ### P5-18 `obs-outputs` FTL, null, MP4
@@ -157,7 +157,7 @@ Verified in this checkout: **`plugins/obs-websocket` and `plugins/obs-browser` a
 - [ ] **P5-18.3 FTL** — FTL code is a submodule/vendored in upstream builds; verify presence in this tree first (not in `ls`). Decision: drop if removed upstream. Done when: decision recorded.
 - [ ] **P5-18.4 Null** — `null-output.c`. Done when: counts bytes.
 - [ ] **P5-18.5 MP4** — `mp4-mux.c/.h`, `mp4-mux-internal.h`, `mp4-output.c`: fragmented/hybrid MP4, chapters, multi-track audio. Done when: `mp4dump` equal.
-- [ ] **P5-18.6 Box goldens**
+- [ ] **P5-18.6 Box goldens** — `mp4dump` of fixed input. Done when: dumps equal C.
 - [ ] **P5-18.7/.8** E1/E2
 
 ### P5-19 `obs-webrtc`
@@ -165,19 +165,19 @@ Verified in this checkout: **`plugins/obs-websocket` and `plugins/obs-browser` a
 - [ ] **P5-19.3 Stack** — `obs-webrtc.cpp`, `whip-output.cpp/.h`, `whip-service.cpp/.h`, `whip-utils.h`: libdatachannel (C++) today; choose `webrtc-rs` vs FFI. Done when: spike.
 - [ ] **P5-19.4 Signalling** — HTTP POST SDP offer, bearer token, ICE trickle/PATCH. Done when: mock server test.
 - [ ] **P5-19.5 Media** — H.264/AV1/Opus tracks, RTCP feedback, packetization. Done when: receives on mediamtx.
-- [ ] **P5-19.6 Interop** — mediamtx and one hosted WHIP service.
+- [ ] **P5-19.6 Interop** — mediamtx and one hosted WHIP service. Done when: both receive the stream.
 - [ ] **P5-19.7/.8** E1/E2
 
-### P5-20 `obs-websocket` (submodule)
-- [ ] **P5-20.1/.2** S1/S2 (after `git submodule update --init plugins/obs-websocket`)
-- [ ] **P5-20.3 Transport** — HTTP upgrade, JSON and MsgPack subprotocols, `tokio-tungstenite`. Done when: official client connects.
-- [ ] **P5-20.4 Auth** — Hello/Identify with SHA256 challenge. Done when: wrong password rejected with same code.
-- [ ] **P5-20.5 Requests A** — General, Config, Sources, Scenes, Inputs. Done when: each request type has a test.
-- [ ] **P5-20.6 Requests B** — Transitions, Filters, SceneItems, Outputs, Stream, Record. Done when: same.
-- [ ] **P5-20.7 Requests C** — MediaInputs, Ui, Vendor, batch requests (`RequestBatch`, execution types). Done when: same.
-- [ ] **P5-20.8 Events** — subscriptions bitmask, high-volume events. Done when: events delivered in order.
-- [ ] **P5-20.9 Protocol suite** — run the upstream protocol tests and `obs-websocket-js`.
-- [ ] **P5-20.10/.11** E1/E2 (also requires P6-36 frontend API)
+### P5-20 `obs-websocket` (submodule, tag 5.7.6)
+- [ ] **P5-20.1/.2** S1/S2 (submodule initialised in this checkout; fresh clones still need `git submodule update --init plugins/obs-websocket`)
+- [ ] **P5-20.3 Transport** — `src/websocketserver/` (`WebSocketServer.cpp` 464 LOC, `WebSocketServer_Protocol.cpp` 411, `rpc/WebSocketSession.h` 109, `types/WebSocketCloseCode.h` 172 + `WebSocketOpCode.h` 129): HTTP upgrade, `obswebsocket.json` / `obswebsocket.msgpack` subprotocols, opcodes Hello(0)/Identify(1)/Identified(2)/Reidentify(3)/Event(5)/Request(6)/RequestResponse(7)/RequestBatch(8)/RequestBatchResponse(9) → `tokio-tungstenite` + JSON/MsgPack codecs. Done when: `obs-websocket-js` connects over both subprotocols.
+- [ ] **P5-20.4 Auth + config** — Hello/Identify with SHA256(+Base64) challenge (`src/utils/Crypto.cpp`: salt → secret → auth string); settings in `src/Config.cpp` (module `config.json`: `first_load`, `server_enabled`, `server_port`, `alerts_enabled`, `auth_required`, `server_password`; CLI overrides `--websocket-port`, `--websocket-ipv4-only`, `--websocket-password`, `--websocket-debug`). Done when: wrong password rejected with the same code and close reason.
+- [ ] **P5-20.5 Requests A** — `src/requesthandler/RequestHandler_{General,Config,Sources,Scenes,Inputs}.cpp` (8+17+3+11+28 request types). Done when: each request type has a test.
+- [ ] **P5-20.6 Requests B** — `RequestHandler_{Transitions,Filters,SceneItems,Outputs,Stream,Record}.cpp` (9+10+17+17+5+9). Done when: same.
+- [ ] **P5-20.7 Requests C + vendor** — `RequestHandler_{MediaInputs,Ui,Canvases}.cpp` (4+8+1; Canvases new in 5.7), vendor API (`lib/obs-websocket-api.h` API v3 + `src/WebSocketApi.cpp`), batch requests (`RequestBatchHandler.cpp`, `rpc/RequestBatchRequest`, `types/RequestBatchExecutionType.h`). Done when: same, incl. a registered vendor request/event round-trip.
+- [ ] **P5-20.8 Events** — `src/eventhandler/` (`EventHandler.cpp` + per-category `EventHandler_*.cpp`, `types/EventSubscription.h` bitmask incl. the 4 high-volume bits; 60 event types). Done when: events delivered in order for a subscribed mask.
+- [ ] **P5-20.9 Protocol reference** — no in-tree protocol test suite at 5.7.6: conformance against `docs/generated/protocol.json` + `protocol.md` (147 requests, 60 events, 7 enums — generated from the C++ doc comments by `docs/docs/generate_md.py`) plus `obs-websocket-js`. Done when: a protocol.json-driven harness passes.
+- [ ] **P5-20.10/.11** E1/E2 (also requires P6-36 frontend API; the Qt `src/forms/` dialogs are part of this port)
 
 ### P5-21 `obs-vst`
 - [ ] **P5-21.1/.2** S1/S2
@@ -199,9 +199,9 @@ Verified in this checkout: **`plugins/obs-websocket` and `plugins/obs-browser` a
 - [ ] **P5-23.1/.2** S1/S2
 - [ ] **P5-23.3 Portal** — Files: `portal.c/.h`, `screencast-portal.c/.h`: `ashpd`/`zbus` session, `CreateSession`, `SelectSources`, `Start`, restore tokens. Done when: capture starts and re-starts without prompt.
 - [ ] **P5-23.4 Streams** — `pipewire.c/.h`, `formats.c/.h`: format negotiation, modifiers, cursor metadata, damage. Done when: formats table equal.
-- [ ] **P5-23.5 DMA-BUF** import (needs P3-18).
+- [ ] **P5-23.5 DMA-BUF** import (needs P3-18). Done when: DMA-BUF texture renders.
 - [ ] **P5-23.6 Camera** — `camera-portal.c/.h`, `linux-pipewire.c`: device listing, controls. Done when: camera preview.
-- [ ] **P5-23.7 Matrix** — GNOME, KDE, wlroots.
+- [ ] **P5-23.7 Matrix** — GNOME, KDE, wlroots. Done when: results recorded in `docs/tests/`.
 - [ ] **P5-23.8/.9** E1/E2
 
 ### P5-24 `linux-capture`
@@ -222,7 +222,7 @@ Verified in this checkout: **`plugins/obs-websocket` and `plugins/obs-browser` a
 - [ ] **P5-26.1/.2** S1/S2
 - [ ] **P5-26.3 Capture** — input/output (monitor) sources via `libpulse-binding`. Done when: levels visible.
 - [ ] **P5-26.4 Devices** — hotplug, default devices. Done when: switching default works.
-- [ ] **P5-26.5 Monitoring** — with P2-15 backend.
+- [ ] **P5-26.5 Monitoring** — with P2-15 backend. Done when: monitor capture works.
 - [ ] **P5-26.6/.7** E1/E2
 
 ### P5-27 `linux-alsa`
@@ -257,13 +257,13 @@ Verified in this checkout: **`plugins/obs-websocket` and `plugins/obs-browser` a
 - [ ] **P5-31.6 Game capture host** — `game-capture.c`, `game-capture-file-init.c`, `load-graphics-offsets.c`, `nt-stuff.c/.h` plus `shared/ipc-util` (the named-pipe IPC the hook process uses; the only consumers in the tree are game capture and its hook build, so it ports here): hook state machine, shared memory/events, anti-cheat compat. Done when: hooks a D3D11 sample.
 - [ ] **P5-31.7 Hook DLL and helpers** — `graphics-hook/` (`d3d8/9/10/11/12`, `dxgi`, `gl`, `vulkan` capture), `inject-helper/inject-helper.c`, `get-graphics-offsets/`. Stay C/C++ initially; wrap build only. Done when: builds from Cargo.
 - [ ] **P5-31.8 Cursor** — `cursor-capture.c/.h`. Done when: cursor visible.
-- [ ] **P5-31.9 API matrix** — D3D8/9/10/11/12, OpenGL, Vulkan samples.
+- [ ] **P5-31.9 API matrix** — D3D8/9/10/11/12, OpenGL, Vulkan samples. Done when: matrix recorded in `docs/tests/`.
 - [ ] **P5-31.10/.11** E1/E2
 
 ### P5-32 `win-dshow`
-- [ ] **P5-32.1/.2** S1/S2 (requires `deps/libdshowcapture/src` submodule)
-- [ ] **P5-32.3 Bindings** — `libdshowcapture` FFI. Done when: device enumeration.
-- [ ] **P5-32.4 Source** — `win-dshow.cpp`, `ffmpeg-decode.c/.h`, `encode-dstr.hpp`, `tiny-nv12-scale.c/.h`: formats, MJPEG/H.264 decode, audio. Done when: webcam preview.
+- [ ] **P5-32.1/.2** S1/S2 (`deps/libdshowcapture/src` submodule initialised in this checkout; fresh clones need `git submodule update --init --recursive deps/libdshowcapture` — it has a nested Elgato submodule)
+- [ ] **P5-32.3 Bindings** — `libdshowcapture` FFI (D-19): public API is `src/dshowcapture.hpp` (306 LOC: `DShowDevice`/`DShowDeviceEx`, VideoFormat MJPEG=400/H264=401/HEVC=402, AudioFormat Wave16bit=100…MPGA=202 per S-051 §11); keep the C++ library (44 files / 8.1k LOC under `src/`; ATL-free since the `no-atl` line — own `ComPtr.hpp`/`CoTaskMemPtr.hpp`, no `atlbase.h`; the nested `src/external/capture-device-support` Elgato submodule must be initialised for the build). Done when: device enumeration + capture via the Rust binding match C.
+- [ ] **P5-32.4 Source** — `win-dshow.cpp`, `ffmpeg-decode.c/.h`, `encode-dstr.hpp` (+ `shared/obs-tiny-nv12-scale`): formats, MJPEG/H.264 decode, audio. Done when: webcam preview.
 - [ ] **P5-32.5 Hardware encoder devices** — `win-dshow-encoder.cpp`. Done when: lists devices.
 - [ ] **P5-32.6 Virtual cam** — `virtualcam.c`, `virtualcam-module/` (`virtualcam-filter.cpp`, `virtualcam-module.cpp`, install/uninstall scripts), `shared-memory-queue.c/.h`. Done when: visible in a video-call app.
 - [ ] **P5-32.7/.8** E1/E2
@@ -355,13 +355,13 @@ Verified in this checkout: **`plugins/obs-websocket` and `plugins/obs-browser` a
 
 ## F. Browser
 
-### P5-45 `obs-browser` (submodule)
-- [ ] **P5-45.1/.2** S1/S2 (after submodule init)
-- [ ] **P5-45.3 Bridge** — C ABI `cef-bridge` around CEF (C++): browser create/destroy, navigate, execute JS, paint callback with shared texture. Done when: header reviewed.
-- [ ] **P5-45.4 Source** — lifecycle, settings (URL, size, FPS, CSS, shutdown when not visible, refresh when active, local file). Done when: tests.
-- [ ] **P5-45.5 JS bindings** — `window.obsstudio` object and events (`obsSourceVisibleChanged`, `obsSourceActiveChanged`, `obsStreamingStarting`, …). Done when: page receives events.
-- [ ] **P5-45.6 Docks/cookies** — browser docks (Qt-dependent), cookie manager. Done when: Twitch chat dock loads.
-- [ ] **P5-45.7 Render tests** — static, WebGL, chat dock on each OS.
+### P5-45 `obs-browser` (submodule, pinned 2.23.4-126-gd4db73e)
+- [ ] **P5-45.1/.2** S1/S2 (submodule initialised in this checkout)
+- [ ] **P5-45.3 Bridge** — C ABI `cef-bridge` around CEF (C++, ≥95): browser create/destroy, navigate, execute JS, paint callback with shared texture. Files: `browser-app.cpp` (CefApp; registers `window.obsstudio`, `ExecuteJSFunction`), `browser-client.cpp` (CefClient render/load/life-span/keyboard handlers), `browser-scheme.cpp` (`http://absolute/` local-file scheme), `browser-dummy-client.cpp` (no-CEF fallback), `cef-headers.hpp`, `drm-format.cpp` (Linux), `linux-keyboard-helpers.hpp`; keep the CEF process model — Windows `obs-browser-page` exe (`obs-browser-page/obs-browser-page-main.cpp`, target `obs-browser-helper`) and macOS `OBS Helper` ×4 bundles (`cmake/macos/entitlements-helper*.plist`). Done when: header reviewed and the page processes build from Cargo.
+- [ ] **P5-45.4 Source** — `obs-browser-source.cpp`: lifecycle, settings (`is_local_file`, `width`/`height`, `fps_custom`/`fps`, `shutdown` = shutdown when not visible, `restart_when_active`, `css`, `url`/`local_file`, `reroute_audio`, `webpage_control_level`) + `ObsBrowser.Refresh` hotkey. Done when: tests.
+- [ ] **P5-45.5 JS bindings** — `window.obsstudio` object (registered in `browser-app.cpp`) and events: `obsSourceVisibleChanged`, `obsSourceActiveChanged` (source) + `obsStreamingStarting/Started/Stopping/Stopped`, `obsRecordingStarting/Started/Paused/Unpaused/Stopping/Stopped` (module). Done when: page receives events.
+- [ ] **P5-45.6 Docks/cookies** — browser dock (`panel/browser-panel.cpp`, Qt) + cookie manager (`obs-browser-plugin.cpp` migration of `obs_profile_cookies`, `panel/` cookie clearing). Done when: Twitch chat dock loads.
+- [ ] **P5-45.7 Render tests** — static, WebGL, chat dock on each OS. Done when: results recorded in `docs/tests/`.
 - [ ] **P5-45.8/.9** E1/E2
 
 ## G. Wrap-up

@@ -66,7 +66,7 @@ If P0-04 picks a non-Qt toolkit this strategy becomes "parallel app + feature pa
 
 ## Suggested order
 
-P6-04 (locale), P6-24/25/26 (collections, profiles, importers), P6-29/30/32 (OAuth, YouTube, updater logic) as libraries → P6-36 (frontend API) → P6-37 (scripting) → components and dialogs (P6-07…18) → settings (P6-19…23) → shell (P6-01…06) → packaging (P6-42…44) → components sweep (P6-49) → parity checklist and beta (P6-45…48).
+P6-04 (locale), P6-24/25/26 (collections, profiles, importers), P6-29/30/32 (OAuth, YouTube, updater logic) as libraries → P6-36 (frontend API) → P6-37 (scripting) → components and dialogs (P6-07…18) → settings (P6-19…23) → shell (P6-01…06) → remaining dialogs and tools (P6-31, P6-33…35, P6-38…41) → packaging (P6-42…44) → components sweep (P6-49) → size/startup, e2e UI tests, parity checklist and beta (P6-45…48).
 
 ## Verification checklist
 

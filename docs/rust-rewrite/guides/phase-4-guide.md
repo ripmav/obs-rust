@@ -49,7 +49,7 @@ Calling conventions to preserve (read each callback's comments in the header):
 
 ## Module loading (verified)
 
-`obs_open_module(&module, path, data_path)` (`obs-module.c`): `os_dlopen`, `load_module_exports` (required: `obs_module_load`; optional ones set function pointers), rejects modules built against a newer libobs: `(mod.ver() & 0xFFFF0000) > LIBOBS_API_VER` (patch version ignored) → `MODULE_INCOMPATIBLE_VER`; builds `obs_module_t` (bin/data paths, name from file), loads a metadata file if present (`obs_module_load_metadata`), calls `mod.set_pointer(module)` (what `OBS_DECLARE_MODULE` defines). `obs_init_module(module)` sets the global `loadingModule` and calls `module->load()` — **`obs_register_*` calls made during load are attributed to that module via `loadingModule`**; do not break this (uninstalling/disabling modules relies on the per-module lists `sources/outputs/encoders/services`). Failures are reported via `struct obs_module_failure_info` and `obs_load_plugins`.
+`obs_open_module(&module, path, data_path)` (`obs-module.c`): `os_dlopen`, `load_module_exports` (required: `obs_module_load`, `obs_module_set_pointer`, `obs_module_ver`; the rest optional), rejects modules built against a newer libobs: `(mod.ver() & 0xFFFF0000) > LIBOBS_API_VER` (patch version ignored) → `MODULE_INCOMPATIBLE_VER`; builds `obs_module_t` (bin/data paths, name from file), loads a metadata file if present (`obs_module_load_metadata`), calls `mod.set_pointer(module)` (what `OBS_DECLARE_MODULE` defines). `obs_init_module(module)` sets the global `loadingModule` and calls `module->load()` — **`obs_register_*` calls made during load are attributed to that module via `loadingModule`**; do not break this (uninstalling/disabling modules relies on the per-module lists `sources/outputs/encoders/services`). Failures are reported via `struct obs_module_failure_info` and `obs_load_plugins`.
 
 Platform differences: `obs-core-modules-loader-{nix.c,win.c,mac.m}` resolve the per-module bin/data paths (macOS reads the app bundle's PlugIns; the mac loader is Objective-C) and walk the *static* built-in module list that `obs-core-modules.c.in` generates.
 
@@ -59,7 +59,7 @@ Platform differences: `obs-core-modules-loader-{nix.c,win.c,mac.m}` resolve the 
 
 ## Frontend hooks libobs already has
 
-`obs_task_handler_t ui_task_handler` (run a task on the UI thread; used by `obs_queue_task(OBS_TASK_UI, …)`); signals/procs on `obs->signals`; `obs_frontend_*` is a separate API owned by Phase 6 but **plugins call it through `obs-frontend-api`**, so Phase 4 tests with the C frontend must keep working.
+`obs_task_handler_t ui_task_handler` (run a task on the UI thread; used by `obs_queue_task(OBS_TASK_UI, …)`); signals/procs on `obs->signals`; `obs_frontend_*` is a separate API owned by Phase 6 (P6-36) but **plugins call it through `obs-frontend-api`**, so Phase 4 tests with the C frontend must keep working.
 
 ## Suggested order
 
