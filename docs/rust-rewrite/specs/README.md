@@ -144,11 +144,23 @@ owner in [../DECISIONS-NEEDED.md](../DECISIONS-NEEDED.md) section D.
 | S-066 | `win-wasapi` enumeration/capture | S-051 covers window matching/hook/vqueue, not WASAPI | P5-30 | D-32 |
 | — | vendor-SDK behavioural tables (obs-nvenc helpers, coreaudio-encoder, nv-filters, vlc-video, decklink, aja) | mostly "kept as FFI" per D-04/D-10 | P5-38…P5-43 | D-33 |
 
+**Round 6 (2026-11) — full spec-coverage gap.** The user decision: *every behaviour in a spec, not
+only the tested ones*. The complete gap — every first-party non-trivial file no spec cites
+(748 files / 7,975 functions at 33.0.1, incl. the rows above, the vendor-SDK FFI surfaces and the
+whole frontend) — is tracked in [BACKLOG.md](BACKLOG.md): 23 new specs (S-061…S-063 from round 5,
+S-068…S-087 incl. the FFI-surface contracts S-081…S-086 that supersede the D-33 "only if ported"
+deferral for the kept-C surfaces) + 18 extensions of existing specs, scheduled as subtasks
+**P1-34, P3-32, P5-51, P6-50** plus the round-5 spec subtasks (P1-05.5, P2-15.6, P4-32.6,
+P5-20.12, P5-30.9, P6-37.6, P6-07.9).
+Done criterion: `S2 = 1` for every first-party non-trivial file in `function-inventory.csv`
+(`python3 tools/spec-backlog.py` fails while any file has no action).
+
 ## Scale — an honest estimate
 
 The 56 specs above cover about **168,640 of 313,755 non-frontend lines (53.7 %)**, measured by
 `tools/coverage.py` against libobs 33.0.1 (target ≥ 85 %; the remaining ~98k lines are the gaps
-above plus platform/vendor-SDK code that is kept as FFI by decision rather than specified). The
+above plus platform/vendor-SDK code that is kept as FFI by decision — since round 6 the kept-C
+FFI surfaces are specified as contracts S-081…S-086 rather than left unspecified). The
 Tier C specs are partial. The frontend (~109k lines) is deliberately specified as behavioural
 tables (S-048) rather than text + vectors: UI-heavy and hardware-dependent parts (preview,
 properties view, capture plugins, encoders with vendor SDKs) need screenshot or

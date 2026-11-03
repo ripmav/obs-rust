@@ -62,7 +62,7 @@ These are not forks: the plan proceeds, but a spec author must be assigned. Numb
 | D-30 | **Wayland hotkey-platform spec** — S-058 explicitly does not cover `obs-nix-wayland.c` (42 KB: `wl_keyboard` + xkbcommon hotkey platform; no portal code — the portals live in `platform-nix-dbus.c`/`platform-nix-portal.c`) | P4-32.2 would otherwise read the C | Extend S-058 or write S-064 (public Wayland + xkbcommon protocols) |
 | D-31 | **Audio-monitoring win32/osx/null specs** — S-055 covers PulseAudio only | P2-15.2…P2-15.4 would otherwise read the C | Small spec (S-065) or accept reading the C (it is thin platform glue) |
 | D-32 | **`win-wasapi` spec** — S-051 covers window matching/hooks/vqueue, not WASAPI enumeration/capture | P5-30 would otherwise read the C | Add to S-051 or write S-066 |
-| D-33 | **Vendor-SDK behavioural specs** (obs-nvenc test helpers, `coreaudio-encoder`, `nv-filters`, `vlc-video`, `decklink`, `aja`) | Mostly "kept as FFI" per D-04/D-10; specs would be behavioural tables | Only if a port is attempted; otherwise document the FFI surface in the plugin task |
+| D-33 | **Vendor-SDK behavioural specs** (obs-nvenc test helpers, `coreaudio-encoder`, `nv-filters`, `vlc-video`, `decklink`, `aja`) | Mostly "kept as FFI" per D-04/D-10; specs would be behavioural tables | **Resolved (round 6):** the FFI surfaces of all kept-C code are specified as contracts S-081…S-086 (subtasks P5-51.12–.19) — "every behaviour in a spec" |
 
 ## How to unblock
 

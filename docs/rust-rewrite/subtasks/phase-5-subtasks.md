@@ -1544,3 +1544,69 @@ Verified in this checkout (submodules initialised): **`plugins/obs-websocket` at
   - Files: `docs/rust-rewrite/phase-5-plugins.md`
   - Steps: 1) Tick every P5-xx task whose subtasks are done. 2) Re-run `python3 tools/task-coverage.py`.
   - Done when: every P5-xx checkbox is ticked in the phase file.
+
+### P5-51 Plugin spec coverage (added)
+- Goal: every plugin file cited by a spec — extend the owning spec or write a new one (per-file lists in `docs/rust-rewrite/specs/BACKLOG.md`). FFI-kept code gets an **FFI-surface contract** (D-33 + round-6 decision: the kept-C surface is specified even though it is not ported). S-062 (obs-websocket), S-051 §5.G (WASAPI) and S-063 (Python backend) are already scheduled as P5-20.12 / P5-30.9 / P6-37.6 — they are not repeated here.
+- [ ] **P5-51.1 Extend S-027/S-028/S-054** — obs-filters (28 files / 297 fns)
+  - Files: the 13 video filters (chroma-key 19, colour-key 19, mask 19, colour-grade 15, colour-correction 14, crop 13, scale 13, scroll 15, gpu-delay 15, sharpness 7, hdr-tonemap 9, sdr-on-hdr 9, eq is audio), the audio filters (compressor 17, expander 17, limiter 10, noise-gate 7, gain 6, invert-polarity 3), `rnnoise/` (S-054 contract) — full list in `specs/BACKLOG.md`.
+  - Steps: 1. extend S-027/S-028 with per-filter rule sections for every filter file (parameter ranges, effect invocation, defaults); 2. extend S-054 to cite the `rnnoise/` sources and pin the RNNoise/SpeexDSP contract.
+  - Done when: all 28 files cited.
+- [ ] **P5-51.2 Extend S-029** — obs-transitions (7 files / 92 fns: stinger 26, fade-to-color 14, luma-wipe 13, slide 11, swipe 11, fade 9, cut 8)
+  - Steps: cite the files + add the per-transition progress/timing rules that are not yet rules in S-029.
+  - Done when: all 7 files cited.
+- [ ] **P5-51.3 Extend S-030** — image-source (4 files / 119 fns: slideshow-mk2 44, slideshow 40, image-source 24, colour-source 11)
+  - Done when: all 4 files cited.
+- [ ] **P5-51.4 Extend S-038** — text: freetype2 + GDI (10 files / 91 fns)
+  - Files: `plugins/text-freetype2/*` (9), `plugins/obs-text/gdiplus/obs-text.cpp` (27 — new GDI section in S-038).
+  - Done when: all 10 files cited.
+- [ ] **P5-51.5 Extend S-046/S-047/S-037** — obs-ffmpeg (8 files / 116 fns: source 38, nvenc 21, audio-encoders 19, openh264 11, obs-ffmpeg.c 11, video-encoders 6, amf-test 5, logging 5)
+  - Done when: all 8 files cited.
+- [ ] **P5-51.6 Extend S-050/S-025** — encoder runtimes (22 files / 277 fns)
+  - Files: `obs-qsv11/*` (9), `obs-nvenc/*` (4), `obs-x264/*` (3), `obs-libfdk/*` (1), `nv-filters/*` (5), the `obs-*-test` plugins.
+  - Steps: extend S-050 with the runtime sections (init/encode/destroy, error paths, test-plugin surfaces); extend S-025 where option logic lives in the gap files.
+  - Done when: all 22 files cited.
+- [ ] **P5-51.7 Extend S-026** — rtmp-services service-specific (2 files / 3 fns: amazon-ivs 2, twitch 1)
+  - Done when: both files cited.
+- [ ] **P5-51.8 Extend S-049** — Linux capture + audio backends (13 files / 72 fns)
+  - Files: `linux-v4l2/*` (3), `linux-capture/*` (1), `linux-alsa/*` (1), `linux-pulseaudio/*` (1), `sndio/*` (2), `oss-audio/*` (2), `linux-jack/*` (3).
+  - Steps: cite the files + add the audio-output-backend rules (device enum, format fallback, error paths) that S-049 lists as "rules only" or omits (sndio/oss have no section yet).
+  - Done when: all 13 files cited.
+- [ ] **P5-51.9 Write S-080** — obs-webrtc / WHIP output (4 files / 29 fns: whip-output 16, whip-utils 7, whip-service 5, module 1)
+  - Steps: 1. write `specs/S-080-whip-output.md` (WHIP handshake, chunk upload, codec selection, simulcast). 2. add the row to `specs/README.md`.
+  - Done when: S-080 committed; all 4 files cited.
+- [ ] **P5-51.10 Extend S-041** — obs-outputs plugin glue (3 files / 16 fns: null-output 7, obs-outputs.c 6, utils.h 3)
+  - Done when: all 3 files cited.
+- [ ] **P5-51.11 Extend S-051** — win-capture host (15 files / 221 fns)
+  - Files: `game-capture.c` (68), `window-capture.c` (25), `duplicator-monitor-capture.c` (27), `monitor-capture.c` (15), `dc-capture.c` (8), `cursor-capture.c` (12), helpers (21), `libobs-winrt/` (20), `shared/obs-d3d8-api/` (12), `shared/obs-inject-library/` (2), `plugin-main.c` (5).
+  - Done when: all 15 files cited.
+- [ ] **P5-51.12 Write S-086** — win-capture graphics-hook FFI contract (20 files / 265 fns)
+  - Files: `graphics-hook/*` (14: vulkan-capture 61+792-line table, d3d8-9-10-11-12 captures, gl, dxgi, graphics-hook.c 40), `inject-helper/` (6), `get-graphics-offsets/` (9), `load-graphics-offsets.c` (20).
+  - Steps: 1. write `specs/S-086-graphics-hook-ffi.md`: the hook stays C++ (D-08) — specify the FFI surface the Rust host depends on: named-pipe IPC protocol, shared-memory/event layout (cross-ref S-051 §4.3–4.4), hook entry behaviour, the format tables (cross-ref P5-31.12 vectors). 2. add the row.
+  - Done when: S-086 committed; all 20 files cited.
+- [ ] **P5-51.13 Extend S-051** — win-dshow host (9 files / 124 fns)
+  - Files: `win-dshow.cpp` (64), `virtualcam-module/*` (34), `win-dshow-encoder.cpp` (12), `virtualcam.c` (7), `encode-dstr.hpp` (5), `dshow-plugin.cpp` (2).
+  - Done when: all 9 files cited.
+- [ ] **P5-51.14 Write S-081** — libdshowcapture FFI contract (20 files / 282 fns)
+  - Files: `deps/libdshowcapture/src/source/*` (20 — the library stays C++, D-19).
+  - Steps: 1. write `specs/S-081-dshow-ffi.md`: the `dshowcapture.hpp` API contract (device/format enumeration, MJPEG/H264/HEVC=400-402 / Wave16bit-MPGA=100-202, callbacks) + behavioural rules of the COM layer the host relies on. 2. add the row.
+  - Done when: S-081 committed; all 20 files cited.
+- [ ] **P5-51.15 Extend S-052** — macOS plugins (40 files / 484 fns)
+  - Files: `mac-avcapture/*` (9, legacy `av-capture.mm` 89), `mac-capture/*` (11: mac-audio 41, sck-video 22, display 20), `mac-virtualcam/*` (15: DAL plug-in + camera-extension), `mac-syphon/*` (3: syphon.m 41), `coreaudio-encoder/*` (2: encoder.cpp 46).
+  - Steps: 1. cite every file in S-052 and add the rules the vectors model but do not pin (AVFoundation preset handling, DAL object-store contract, syphon server protocol, CoreAudio encoder format negotiation). 2. mark each rule [MODEL]/[SRC] per the S-052 convention.
+  - Done when: all 40 files cited.
+- [ ] **P5-51.16 Write S-082** — obs-browser / CEF FFI contract (21 files / 149 fns)
+  - Files: `plugins/obs-browser/*` (CEF stays, D-09: obs-browser-source 23, plugin 22, browser-client 23, panel 25+16, browser-app 13, deps/* 12).
+  - Steps: 1. write `specs/S-082-browser-ffi.md`: the CEF-process IPC contract (message protocol, `obs://` scheme, DRM, keyboard input on Linux) + source lifecycle the Rust host drives. 2. add the row.
+  - Done when: S-082 committed; all 21 files cited.
+- [ ] **P5-51.17 Write S-083** — decklink FFI contract (23 files / 153 fns)
+  - Files: `plugins/decklink/*` (19), `decklink-output-ui/*` (2), `decklink-captions/*` (2).
+  - Steps: 1. write `specs/S-083-decklink-ffi.md`: device discovery/mode/instance lifecycle, `OBSVideoFrame` layout, audio repack, UI-provider contract (D-10). 2. add the row.
+  - Done when: S-083 committed; all 23 files cited.
+- [ ] **P5-51.18 Write S-084** — aja FFI contract (13 files / 210 fns)
+  - Files: `plugins/aja/*` (11: common 40, output 36, source 31, card-manager 25, routing 7, presets 4), `aja-output-ui/*` (2).
+  - Steps: 1. write `specs/S-084-aja-ffi.md`: card discovery, stream routing, VPID handling, preset format, UI-provider contract (D-10). 2. add the row.
+  - Done when: S-084 committed; all 13 files cited.
+- [ ] **P5-51.19 Write S-085** — vlc-video + obs-vst FFI contract (11 files / 86 fns)
+  - Files: `plugins/vlc-video/*` (2: vlc-video-source.c 41), `plugins/obs-vst/*` (9: VSTPlugin 16, obs-vst 13, per-OS wrappers 9).
+  - Steps: 1. write `specs/S-085-vlc-vst-ffi.md`: the VLC media-player process contract (launch args, `obs-vlc` IPC, frame delivery) and the VST host contract (plugin load/enumerate, parameter mapping, editor embedding) (D-10). 2. add the row.
+  - Done when: S-085 committed; all 11 files cited.
