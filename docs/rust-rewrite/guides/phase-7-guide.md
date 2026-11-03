@@ -23,10 +23,11 @@ Keep a git tag per deletion (`last-c-libobs`, `last-cpp-frontend`, `last-c-plugi
 
 ## What must remain C/C++ (documented leftovers)
 
-Decided per item (D-08, D-09, D-10, D-14, D-19); record owner and review date in P7-03.3:
-- `plugins/win-capture/graphics-hook` and `inject-helper` (injected into third-party processes — smallest dependency surface, anti-cheat constraints), plus the `get-graphics-offsets` offset tool.
+Decided per item (D-08, D-09, D-10, D-11, D-14, D-19); record owner and review date in P7-03.3:
+- `plugins/win-capture/graphics-hook` and `inject-helper` (injected into third-party processes — smallest dependency surface, anti-cheat constraints), plus the `get-graphics-offsets` offset tool; their CMakeLists also build `shared/{ipc-util,obs-d3d8-api,obs-hook-config,obs-inject-library}` and link `OBS::obfuscate` (extracted from `libobs` in P7-01.3).
 - `plugins/obs-browser` CEF glue (Chromium Embedded Framework is C++), incl. the page-process helpers: `obs-browser-page` (Windows), `OBS Helper*` bundles (macOS), `browser-helper` (Linux).
 - DeckLink and AJA vendor SDK glue.
+- `plugins/obs-vst` (VST2 host; editor-window embedding per OS is the hard part, D-11).
 - `libdshowcapture` (submodule) for DirectShow.
 - macOS camera extension host (`plugins/mac-virtualcam/src`) if it must be Swift/ObjC.
 - Any C shim required by variadic/`va_list` APIs unless the plugin ABI drops them (primer §5.5).
@@ -58,6 +59,14 @@ Today: CMake presets + `cmake/` helpers + dependency preset that downloads prebu
 - `docs/sphinx` documents the C API; plugin authors will search it. Redirect, do not just delete.
 - The updater and installers must handle a user upgrading from the last C version directly (settings, plugins, disabled-modules list, portable mode).
 - Keep `last-*` tags reachable (protected branches or release branches) for emergency security fixes.
+
+## Running this phase's checks
+
+After every deletion wave (P7-01…P7-05, P7-25) the PR merges only if all of these pass on Windows, macOS and Linux:
+1. Conformance: `test/conformance/run.sh check` — all 59 areas byte-identical.
+2. Rust suite: `cargo nextest run` (or `cargo test`) green.
+3. From P7-06.1 on: `cargo xtask build`, `cargo xtask test`, `cargo xtask lint` (and `package` for release waves) replace the CMake commands.
+4. The subtask's no-reference greps (e.g. `git grep -n "libobs" -- CMakeLists.txt '*.cmake'`) return nothing outside the keep set.
 
 ## Verification checklist
 

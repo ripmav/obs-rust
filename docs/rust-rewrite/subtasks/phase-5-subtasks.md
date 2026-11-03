@@ -19,375 +19,1514 @@ Verified in this checkout (submodules initialised): **`plugins/obs-websocket` at
 
 ### P5-01 `obs-filters`
 - [ ] **P5-01.1/.2** S1/S2
-- [ ] **P5-01.3 Colour filters** — Files: `color-correction-filter.c`, `color-grade-filter.c` (LUT), `chroma-key-filter.c`, `color-key-filter.c`, `luma-key-filter.c`, `sharpness-filter.c`, `mask-filter.c`, `crop-filter.c`, `scale-filter.c`, `scroll-filter.c`, `gpu-delay.c`. Steps: port parameter setting for the effects in `data/*.effect`. Done when: each filter renders a PNG golden for 3 settings.
-- [ ] **P5-01.4 HDR filters** — Files: `hdr-tonemap-filter.c`, `sdr-on-hdr-filter.c`. Steps: port constants (needs P2-05). Done when: golden on PQ test frame.
-- [ ] **P5-01.5 Dynamics** — Files: `compressor-filter.c`, `limiter-filter.c`, `expander-filter.c`, `noise-gate-filter.c`, `gain-filter.c`. Steps: port envelope math exactly (attack/release in ms, sidechain). Done when: PCM golden within 1e-4.
-- [ ] **P5-01.6 Utility audio** — Files: `invert-audio-polarity.c`, `async-delay-filter.c`, `eq-filter.c`. Steps: port EQ biquads. Done when: golden.
-- [ ] **P5-01.7 Noise suppression** — Files: `noise-suppress-filter.c`, `rnnoise/` vendored. Steps: choose `nnnoiseless` crate vs keep vendored RNNoise FFI; Speex option via `speexdsp`. Done when: output within tolerance and CPU cost ≤ C.
+  - Files: `plugins/obs-filters/obs-filters.c` (78), `CMakeLists.txt` (target `obs-filters`, MODULE), `data/locale/en-US.ini`
+  - Steps: 1) Bookend S1: the 30 `obs_register_source` calls in `obs-filters.c` carry 25 ids, 5 of them doubled as `_v2` (`color_filter`, `sharpness_filter`, `chroma_key_filter`, `color_key_filter`, `luma_key_filter`, `mask_filter`, `noise_suppress_filter`); record every settings key per filter. 2) Bookend S2: P0-18 corpus through the P0-15 ABI host against `crates/obs-modules/obs-filters`.
+  - Done when: `docs/tests/plugin-obs-filters-inventory.md` committed; S2 passes on every corpus file using a filter.
+- [ ] **P5-01.3 Colour filters**
+  - Files: `color-correction-filter.c` (733), `color-grade-filter.c` (509), `chroma-key-filter.c` (515), `color-key-filter.c` (466), `luma-key-filter.c` (227), `sharpness-filter.c` (171), `mask-filter.c` (407), `crop-filter.c` (300), `scale-filter.c` (591), `scroll-filter.c` (335), `gpu-delay.c` (359); 13 `data/*.effect`: `color_correction_filter` (74), `color_grade_filter` (177), `chroma_key_filter` (99) + `_v2` (111), `color_key_filter` (65) + `_v2` (77), `luma_key_filter` (52) + `_v2` (54), `sharpness` (76), `crop_filter` (95), `mask_alpha_filter` (54), `mask_color_filter` (55)
+  - Steps: 1) Port each filter's create/update/get_properties plus its `gs_effect_create_from_file` parameter names; ship the `.effect` files byte-identical. 2) Keep the v0/v1/v2 id pairs and `unversioned_id` mappings. 3) Drive the port with the `videofilters` conformance runner.
+  - Spec: S-028 (video filters, R-rules per filter)
+  - Vectors: `test/conformance/scripts/videofilters/`
+  - Pitfalls:
+    - S-028 Q-1: v0 key colour alpha wraps for opacity >100 or negative (`0xFFFFFF | (opacity*255/100)<<24`).
+    - S-028 Q-3: unknown scale `sampling` means bicubic; an invalid resolution leaves `sampling`/`undistort`/`cx_in` untouched.
+    - S-028 D-2/D-4: clut-PNG tile-row OOB and crop int overflow — reject/saturate, MUST NOT crash.
+  - Done when: each filter renders a PNG golden for 3 settings.
+- [ ] **P5-01.4 HDR filters**
+  - Files: `hdr-tonemap-filter.c` (234), `sdr-on-hdr-filter.c` (173), `data/hdr_tonemap_filter.effect` (97), `data/sdr_on_hdr_filter.effect` (69)
+  - Steps: 1) Port the PQ/HLG constants and technique selection (needs P2-05 HDR). 2) Run runner scripts `23-hdr-tonemap`, `24-sdr-on-hdr`.
+  - Spec: S-028 (hdr_tonemap / sdr_on_hdr rules)
+  - Vectors: `test/conformance/scripts/videofilters/`
+  - Pitfalls:
+    - S-028 Q-5: `transform` outside 0..2 selects technique `MaxRGBSDR` with multiplier `* 0.0001`.
+    - S-028 D-7: zero SDR white level / base size divides by zero — the port MUST push `inf` too.
+  - Done when: golden on PQ test frame.
+- [ ] **P5-01.5 Dynamics**
+  - Files: `compressor-filter.c` (514), `limiter-filter.c` (214), `expander-filter.c` (494), `noise-gate-filter.c` (196), `gain-filter.c` (95)
+  - Steps: 1) Port envelope math exactly (attack/release ms, sidechain tap, per-channel state). 2) Port expander's 5 presets + both ids (`expander_filter`, `upward_compressor_filter`). 3) Drive with the `audiofilters` runner (`create`/`process`/`seek`/`sc_push`).
+  - Spec: S-027 (audio filter DSP)
+  - Vectors: `test/conformance/scripts/audiofilters/`
+  - Pitfalls:
+    - S-027 Q-2: limiter attack constant is 1 µs (instantaneous) — `ATK_TIME` already in seconds divided by 1000 again.
+    - S-027 D-1: NULL planes must be skipped everywhere (treated as absent/silence), never dereferenced.
+    - S-027 D-4: channel/rate growth after first allocation must extend state, not index OOB.
+  - Done when: PCM golden within 1e-4.
+- [ ] **P5-01.6 Utility audio**
+  - Files: `invert-audio-polarity.c` (48), `async-delay-filter.c` (239), `eq-filter.c` (157)
+  - Steps: 1) Port the 5-band biquad EQ, polarity sign flip, async delay queue. 2) Run runner scripts `02`, `09`, `11`.
+  - Spec: S-027
+  - Vectors: `test/conformance/scripts/audiofilters/`
+  - Pitfalls:
+    - S-027 D-1: EQ and polarity must skip NULL planes (the reference dereferences them).
+  - Done when: golden.
+- [ ] **P5-01.7 Noise suppression**
+  - Files: `noise-suppress-filter.c` (553); vendored `rnnoise/` 18 files / 14 733 lines (`rnn_data.c` 11 051, `denoise.c` 644, `kiss_fft.c` 602, `pitch.c` 532, `celt_lpc.c` 282, `rnn.c` 178, `rnn_reader.c` 168 + 11 headers)
+  - Steps: 1) Write the decision note: `nnnoiseless` crate vs keep the vendored RNNoise behind a thin FFI. 2) Speex option via the `speexdsp` crate; port the 48k resample path. 3) Run the `filtersrest` scripts (both `ns` and `ns2` filter names).
+  - Spec: S-054 (noise suppression, RNNoise/Speex)
+  - Vectors: `test/conformance/scripts/filtersrest/`
+  - Pitfalls:
+    - S-054 Q-1: SpeexDSP stores `suppress_level` negated.
+    - S-054 Q-2: RNNoise on white noise is not a hard gate — do not "fix" it.
+    - S-054 Q-3: first output after every timestamp reset is a start-up dip — tests check it.
+  - Done when: output within tolerance and CPU cost ≤ C.
 - [ ] **P5-01.8/.9** E1/E2
+  - Files: `obs-filters.c` (78) (module main + `obs_module_load`), `CMakeLists.txt` (target `obs-filters` MODULE, data dir `data/`)
+  - Steps: 1) Bookend E1: `crates/obs-modules/obs-filters` cdylib, module name `obs-filters`, exports `obs_module_*` (registration via P5-46.2 macro or hand-written until it exists). 2) Bookend E2: remove `plugins/obs-filters` from the CMake build in the same PR; keep the 13 `data/*.effect` and `data/locale/` files byte-identical.
+  - Done when: E1 export/loader check passes on each OS; E2 CI green and smoke recorded in `docs/tests/plugin-obs-filters.md`.
 
 ### P5-02 `obs-transitions`
 - [ ] **P5-02.1/.2** S1/S2
-- [ ] **P5-02.3 Simple** — Files: `transition-cut.c`, `transition-fade.c`, `transition-fade-to-color.c`, `easings.h`. Done when: golden at t=0, .25, .5, .75, 1.
-- [ ] **P5-02.4 Swipe/slide** — `transition-swipe.c`, `transition-slide.c` (direction, easing). Done when: golden per direction.
-- [ ] **P5-02.5 Luma wipe** — `transition-luma-wipe.c` + `data/luma_wipes/*`. Done when: golden per wipe image.
-- [ ] **P5-02.6 Stinger** — `transition-stinger.c`: media source, transition point (ms or frame), matte modes, audio fade styles. Done when: golden.
-- [ ] **P5-02.7 Goldens** — 30 frames per transition. Done when: goldens committed and matching.
+  - Files: `plugins/obs-transitions/obs-transitions.c` (28), `CMakeLists.txt` (target `obs-transitions` MODULE), `data/locale/en-US.ini`
+  - Steps: 1) Bookend S1: 7 sources — `cut`, `fade`, `swipe`, `slide`, `stinger`, `fade_to_color`, `luma_wipe`; the conformance `transitions` runner `load` command dumps id/flags/callbacks for comparison. 2) Bookend S2: P0-18 corpus transitions through the P0-15 ABI host.
+  - Done when: `docs/tests/plugin-obs-transitions-inventory.md` committed; S2 passes.
+- [ ] **P5-02.3 Simple**
+  - Files: `transition-cut.c` (76), `transition-fade.c` (148), `transition-fade-to-color.c` (213), `easings.h` (11), `data/fade_transition.effect` (98), `data/fade_to_color_transition.effect` (48)
+  - Steps: 1) Port cut/fade/fade-to-color with `cubic_ease_in_out` and the fade-to-color `smoothstep`. 2) Render at the golden progress values with the runner's `render`/`mix`.
+  - Spec: S-029
+  - Vectors: `test/conformance/scripts/transitions/`
+  - Pitfalls:
+    - S-029 Q-3: fade-to-color switch point 0 or 100 evaluates `smoothstep` with `0/0` — NaN propagates.
+  - Done when: golden at t=0, .25, .5, .75, 1.
+- [ ] **P5-02.4 Swipe/slide**
+  - Files: `transition-swipe.c` (167), `transition-slide.c` (171), `data/swipe_transition.effect` (45), `data/slide_transition.effect` (48)
+  - Steps: 1) Port direction + easing for both transitions. 2) Zero-initialise `dir`/`swipe_in`; never render before the first update. 3) Golden per direction.
+  - Spec: S-029
+  - Vectors: `test/conformance/scripts/transitions/`
+  - Pitfalls:
+    - S-029 Q-7: swipe negation yields `-0` components (sign of zero is significant in the vectors).
+    - S-029 D-3: `swipe_create` leaves `dir`/`swipe_in` uninitialised in C; the port zero-initialises.
+  - Done when: golden per direction.
+- [ ] **P5-02.5 Luma wipe**
+  - Files: `transition-luma-wipe.c` (230), `data/luma_wipe_transition.effect` (63), the 34 `data/luma_wipes/*.png` wipe images + `wipes.json` (name→file mapping)
+  - Steps: 1) Port the wipe-image load (PNG → texture) + `wipes.json` selection. 2) Run the runner `assets` command to verify image hashes. 3) Golden per wipe image (sample set).
+  - Spec: S-029
+  - Vectors: `test/conformance/scripts/transitions/`
+  - Pitfalls:
+    - S-029 Q-5: the luma image name is not validated — unknown files behave as in C (missing-file path).
+  - Done when: golden per wipe image.
+- [ ] **P5-02.6 Stinger**
+  - Files: `transition-stinger.c` (824), `data/stinger_matte_transition.effect` (86)
+  - Steps: 1) Port the embedded media source, transition point (ms or frame), matte modes (luma/chroma), audio fade styles. 2) Run runner scripts `08`/`09`/`14`/`16` (start/stop, quirks, defects).
+  - Spec: S-029 (R43 worked example for the transition point)
+  - Vectors: `test/conformance/scripts/transitions/`
+  - Pitfalls:
+    - S-029 Q-2: frame mode `num_frames == 0` → clamped 0.999; `0/0` point → NaN left as NaN.
+    - S-029 Q-6: the media source is recreated on every update with the *previous* `is_track_matte` value.
+    - S-029 D-2: `(u32)(duration_ns/1e6)` truncates modulo 2^32 — reproduce, no panic.
+  - Done when: golden.
+- [ ] **P5-02.7 Goldens**
+  - Files: the 6 `data/*.effect` (45–98 each), `data/luma_wipes/*.png` (34) + `wipes.json`
+  - Steps: 1) Render 30 frames per transition (7 transitions) via the runner `render`/`mix` at fixed progress values. 2) Commit goldens; re-run after each P5-02.x change.
+  - Spec: S-029
+  - Vectors: `test/conformance/scripts/transitions/`
+  - Done when: goldens committed and matching.
 - [ ] **P5-02.8/.9** E1/E2
+  - Files: `obs-transitions.c` (28) (module main), `CMakeLists.txt` (target `obs-transitions` MODULE)
+  - Steps: 1) Bookend E1: `crates/obs-modules/obs-transitions` cdylib named `obs-transitions`. 2) Bookend E2: remove the C plugin in the same PR; keep `data/` byte-identical. This is the P5-46.5 pilot plugin.
+  - Done when: E1 export/loader check passes on each OS; E2 CI green and smoke recorded in `docs/tests/plugin-obs-transitions.md`.
 
 ### P5-03 `image-source`
 - [ ] **P5-03.1/.2** S1/S2
-- [ ] **P5-03.3 Image** — `image-source.c`: unload when hidden, file change detection, linear alpha. Done when: tests.
-- [ ] **P5-03.4 Colour** — `color-source.c`. Done when: golden.
-- [ ] **P5-03.5 Slideshow** — `obs-slideshow.c`, `obs-slideshow-mk2.c`: transition, playback modes (`always play`, `pause when hidden`, `stop when hidden`), shuffle, loop. Done when: tick-by-tick trace equal.
-- [ ] **P5-03.6 Animations** — animated GIF via libobs `libnsgif`; other formats (WebP, …) are FFmpeg-decoded stills. Done when: GIF frame delays equal.
+  - Files: `plugins/image-source/image-source.c` (412) (module main; all 6 registrations), `CMakeLists.txt` (target `image-source` MODULE), `data/locale/en-US.ini`
+  - Steps: 1) Bookend S1: 6 ids from `obs_register_source` in `image-source.c` — `image_source`, `color_source` (v1/v2/v3), `slideshow`, `slideshow` mk2. 2) Bookend S2: P0-18 corpus through the P0-15 ABI host.
+  - Done when: `docs/tests/plugin-image-source-inventory.md` committed; S2 passes.
+- [ ] **P5-03.3 Image**
+  - Files: `image-source.c` (412)
+  - Steps: 1) Port unload-when-hidden, file change detection (poll timer), linear alpha. 2) Run the `imagesource` runner scripts `image_*`.
+  - Spec: S-030
+  - Vectors: `test/conformance/scripts/imagesource/`
+  - Pitfalls:
+    - S-030 Q-2: `update_time_elapsed`/`last_time` stay stale while hidden.
+    - S-030 Q-3: image colour space is always sRGB; `space`/`alpha_mode` fields never set.
+  - Done when: tests.
+- [ ] **P5-03.4 Colour**
+  - Files: `color-source.c` (180)
+  - Steps: 1) Port the `color_source` v1/v2/v3 sources (opacity, premultiplied alpha). 2) Run runner scripts `color_basic`, `color_edges`, `color_render`.
+  - Spec: S-030
+  - Vectors: `test/conformance/scripts/imagesource/`
+  - Done when: golden.
+- [ ] **P5-03.5 Slideshow**
+  - Files: `obs-slideshow.c` (1071), `obs-slideshow-mk2.c` (1176)
+  - Steps: 1) Port v1 and mk2 state machines: transition, playback modes (`always play`, `pause when hidden`, `stop when hidden`), shuffle, loop. 2) Port folder scanning (dedup rules differ per version). 3) Run runner scripts `ss1_*`/`ss2_*`; tick-by-tick trace equality.
+  - Spec: S-030
+  - Vectors: `test/conformance/scripts/imagesource/`
+  - Pitfalls:
+    - S-030 Q-1: v1 random start never picks index 0 with >= 2 files; mk2 may.
+    - S-030 Q-4: folder listings unsorted; a plain file that is also in a folder is deduplicated by v1 only.
+    - S-030 D-1: v1 aspect-only size with zero/negative component converts inf/negative to u32 — required: truncate toward zero to i64 then wrap to u32, 0 for non-finite; no crash.
+  - Done when: tick-by-tick trace equal.
+- [ ] **P5-03.6 Animations**
+  - Files: GIF path inside `image-source.c`; decoder `libobs/graphics/libnsgif/` (`nsgif.h` 527, `gif.c` 2076, `lzw.c` 613, `lzw.h` 137)
+  - Steps: 1) Reuse the Rust port of libobs `libnsgif` (graphics crate); do not re-vendor. 2) Verify GIF frame delays and loop counts against C. 3) Other formats (WebP, …) stay FFmpeg-decoded stills.
+  - Spec: S-030 (GIF loop rules)
+  - Vectors: `test/conformance/scripts/imagesource/` (`image_gif`, `image_gif_loops`)
+  - Pitfalls:
+    - S-030 Q-2: the GIF tick loop reads the same stale `update_time_elapsed` while hidden as the image source.
+  - Done when: GIF frame delays equal.
 - [ ] **P5-03.7/.8** E1/E2
+  - Files: `image-source.c` (412) (module main), `CMakeLists.txt` (target `image-source` MODULE)
+  - Steps: 1) Bookend E1: `crates/obs-modules/image-source` cdylib named `image-source`. 2) Bookend E2: remove the C plugin in the same PR.
+  - Done when: E1 export/loader check passes on each OS; E2 CI green and smoke recorded in `docs/tests/plugin-image-source.md`.
 
 ### P5-04 `obs-text` (Windows GDI+)
 - [ ] **P5-04.1/.2** S1/S2
-- [ ] **P5-04.3 Decision** — DirectWrite vs GDI+ via `windows` crate; stay pixel-compatible if possible. Done when: note.
-- [ ] **P5-04.4 Layout** — Files: `gdiplus/obs-text.cpp`: font face/size/style, colours with gradient, outline, extents, chatlog mode, vertical align. Done when: screenshot golden of 10 configs.
-- [ ] **P5-04.5 File mode** — read from file with change detection, UTF-8/UTF-16 BOM. Done when: tests.
-- [ ] **P5-04.6 Goldens** — fonts/outlines. Done when: goldens match GDI+.
+  - Files: `plugins/obs-text/gdiplus/obs-text.cpp` (1195) (module main + source), `CMakeLists.txt` (target `obs-text`, Windows-only build)
+  - Steps: 1) Bookend S1: one source id `text_source`; record font/colour/gradient settings keys. 2) Bookend S2: P0-18 corpus (Windows profiles only) through the P0-15 ABI host.
+  - Done when: `docs/tests/plugin-obs-text-inventory.md` committed; S2 passes.
+- [ ] **P5-04.3 Decision** — DirectWrite vs GDI+ via `windows` crate; stay pixel-compatible if possible.
+  - Files: `gdiplus/obs-text.cpp` (1195) (the GDI+ layout code the decision compares against)
+  - Steps: 1) Measure DirectWrite vs GDI+ rendering of 10 font configs (advances, glyphs, gradients). 2) Decide; record the pixel-delta numbers. Commit the note to `docs/rust-rewrite/`.
+  - Done when: note.
+- [ ] **P5-04.4 Layout**
+  - Files: `gdiplus/obs-text.cpp` (1195)
+  - Steps: 1) Port font face/size/style, colours with gradient, outline, extents, chatlog mode, vertical align on the backend chosen in P5-04.3. 2) Build the 10-config screenshot harness.
+  - Done when: screenshot golden of 10 configs.
+- [ ] **P5-04.5 File mode**
+  - Files: `gdiplus/obs-text.cpp` (read-from-file section)
+  - Steps: 1) Port read-from-file with change detection. 2) Port UTF-8/UTF-16 BOM handling per the C paths.
+  - Done when: tests.
+- [ ] **P5-04.6 Goldens** — fonts/outlines.
+  - Files: `gdiplus/obs-text.cpp` (1195)
+  - Steps: 1) Render the golden set (multiple fonts, outline widths, gradient). 2) Commit goldens captured from the C reference.
+  - Done when: goldens match GDI+.
 - [ ] **P5-04.7/.8** E1/E2 (Windows only)
+  - Files: `gdiplus/obs-text.cpp` (1195), `CMakeLists.txt` (target `obs-text`)
+  - Steps: 1) Bookend E1: `crates/obs-modules/obs-text` cdylib named `obs-text`, Windows build only. 2) Bookend E2: remove the C plugin; smoke on Windows.
+  - Done when: E1 export/loader check passes on Windows; E2 CI green and smoke recorded in `docs/tests/plugin-obs-text.md`.
 
 ### P5-05 `text-freetype2`
 - [ ] **P5-05.1/.2** S1/S2
-- [ ] **P5-05.3 Backend** — `freetype` bindings vs `cosmic-text`/`swash`. Done when: spike result.
-- [ ] **P5-05.4 Fonts** — Files: `find-font.c`, `find-font-unix.c`, `find-font-windows.c`, `find-font-cocoa.m`, `find-font-iconv.c`. Done when: font by family+style found on each OS.
-- [ ] **P5-05.5 Layout** — Files: `text-freetype2.c`, `text-functionality.c`, `obs-convenience.c`: colours, outline, drop shadow, word wrap, custom width, vertical text. Done when: golden.
-- [ ] **P5-05.6 Metric goldens** — glyph advances/positions for 10 font configs equal C. Done when: goldens committed.
+  - Files: `plugins/text-freetype2/text-freetype2.c` (616) (module main; registers `freetype2` v1/v2), `CMakeLists.txt` (target `text-freetype2` MODULE), `data/text_default.effect` (39)
+  - Steps: 1) Bookend S1: ids `freetype2` (v1) + `freetype2_v2`; record text/colour/outline/shadow/wrap keys. 2) Bookend S2: P0-18 corpus through the P0-15 ABI host.
+  - Done when: `docs/tests/plugin-text-freetype2-inventory.md` committed; S2 passes.
+- [ ] **P5-05.3 Backend** — `freetype` bindings vs `cosmic-text`/`swash`.
+  - Files: `text-freetype2.c` (616), `text-functionality.c` (533) (the glyph/atlas code the spike must replicate)
+  - Steps: 1) Spike: build 10 font configs with each candidate, dump glyph advances/positions. 2) Compare against the C golden; pick the candidate that matches or the one with the smallest delta. Commit the spike result.
+  - Spec: S-038 (fake FreeType defines the reference metrics)
+  - Vectors: `test/conformance/scripts/textft2/`
+  - Done when: spike result.
+- [ ] **P5-05.4 Fonts**
+  - Files: `find-font.c` (407), `find-font-unix.c` (73), `find-font-windows.c` (261), `find-font-cocoa.m` (108), `find-font-iconv.c` (128), `find-font.h` (41)
+  - Steps: 1) Port font lookup by family+style per OS. 2) Port the iconv fallback and the cocoa list. 3) Run runner scripts `05`/`06` (lookup behaviour).
+  - Spec: S-038
+  - Vectors: `test/conformance/scripts/textft2/`
+  - Pitfalls:
+    - S-038 Q4: a failed font lookup records the new name (not retried until the settings change), keeps the old face/atlas, zeroes max_h.
+  - Done when: font by family+style found on each OS.
+- [ ] **P5-05.5 Layout**
+  - Files: `text-freetype2.c` (616), `text-functionality.c` (533), `obs-convenience.c` (95) + `obs-convenience.h` (44), `data/text_default.effect` (39)
+  - Steps: 1) Port colours, outline, drop shadow, word wrap, custom width, vertical text + the log-file tail (chatlog). 2) Run the `textft2` runner over the layout scripts.
+  - Spec: S-038
+  - Vectors: `test/conformance/scripts/textft2/`
+  - Pitfalls:
+    - S-038 Q2: word wrap only when `custom_width > 100`; width 100 is character-wrapped only.
+    - S-038 Q10: the reported size adds `outline_width` to both dimensions.
+    - S-038 D1: tick reload with NULL face dereferences in C — the port skips reload when no face.
+  - Done when: golden.
+- [ ] **P5-05.6 Metric goldens** — glyph advances/positions for 10 font configs equal C.
+  - Files: `text-functionality.c` (533) (atlas + quad generation)
+  - Steps: 1) Dump per-glyph advances/positions for the 10 configs from C. 2) Commit goldens; assert the Rust output is equal.
+  - Spec: S-038
+  - Vectors: `test/conformance/scripts/textft2/`
+  - Done when: goldens committed.
 - [ ] **P5-05.7/.8** E1/E2
+  - Files: `text-freetype2.c` (616) (module main), `CMakeLists.txt` (target `text-freetype2` MODULE)
+  - Steps: 1) Bookend E1: `crates/obs-modules/text-freetype2` cdylib named `text-freetype2`. 2) Bookend E2: remove the C plugin in the same PR; keep `data/text_default.effect`.
+  - Done when: E1 export/loader check passes on each OS; E2 CI green and smoke recorded in `docs/tests/plugin-text-freetype2.md`.
 
 ### P5-06 `rtmp-services`
 - [ ] **P5-06.1/.2** S1/S2
-- [ ] **P5-06.3 JSON loading** — Files: `rtmp-common.c`, `rtmp-services-main.c`: `services.json` + `package.json`, schema checks, `format_version` (`rtmp-format-ver.h`). Done when: loads current file.
-- [ ] **P5-06.4 Objects** — `rtmp-custom.c`, common services with server lists and stream-key rules. Done when: URL/key tests.
-- [ ] **P5-06.5 Updater** — fetch + verify + atomic replace (uses `shared/file-updater`). Done when: local server test.
-- [ ] **P5-06.6 Multitrack config** — `service-specific/` dir (per-service helpers such as Twitch ingest). Done when: tests with captured responses.
+  - Files: `plugins/rtmp-services/rtmp-services-main.c` (138) (module main; registers `rtmp_common` + `rtmp_custom`), `CMakeLists.txt` (target `rtmp-services` MODULE), `data/locale/en-US.ini`
+  - Steps: 1) Bookend S1: the 2 `obs_register_service` calls in `rtmp-services-main.c`; record `service`/`server`/key settings keys. 2) Bookend S2: P0-18 corpus services through the P0-15 ABI host.
+  - Done when: `docs/tests/plugin-rtmp-services-inventory.md` committed; S2 passes.
+- [ ] **P5-06.3 JSON loading**
+  - Files: `rtmp-common.c` (1180), `rtmp-services-main.c` (138), `rtmp-format-ver.h` (3)
+  - Steps: 1) Port `services.json` + `package.json` loading with the `format_version` gate. 2) Port the schema checks (service fields, server lists). 3) Run the `rtmpservices` runner.
+  - Spec: S-026 (JSON loading and selection)
+  - Vectors: `test/conformance/scripts/rtmpservices/`
+  - Done when: loads current file.
+- [ ] **P5-06.4 Objects**
+  - Files: `rtmp-custom.c` (194), `rtmp-common.c` (service table + common services)
+  - Steps: 1) Port common services with server lists and stream-key rules. 2) Port the custom service (url/key, per-service overrides). 3) URL/key round-trip tests from the runner.
+  - Spec: S-026 (R20–R83 lookup/protocol/settings/URL rules)
+  - Vectors: `test/conformance/scripts/rtmpservices/`
+  - Pitfalls:
+    - S-026 Q-4: an unknown current service is inserted disabled at the top of the list twice (once by the lookup, once by the callback) and the server list gets a stored item at index 0.
+    - S-026 D-1: a server element without a string `url` crashes the C availability test — the port treats it as not matching `rtmp://`/`rtmps://`.
+  - Done when: URL/key tests.
+- [ ] **P5-06.5 Updater** — fetch + verify + atomic replace (uses `shared/file-updater`).
+  - Files: `rtmp-common.c` (update path), `shared/file-updater/file-updater/file-updater.c` (541) + `file-updater.h` (22) (ported by P1-33.2)
+  - Steps: 1) Use the P1-33.2 `obs-file-updater` crate for fetch/verify/atomic replace. 2) Drive against a local HTTP server; assert the fs-call trace.
+  - Vectors: `test/conformance/scripts/helpers/` (`fu-*` scripts)
+  - Done when: local server test.
+- [ ] **P5-06.6 Multitrack config**
+  - Files: `service-specific/twitch.c` (53), `amazon-ivs.c` (54), `dacast.c` (174), `nimotv.c` (131), `showroom.c` (151), `service-ingest.c` (192) + 6 headers (3–30 each)
+  - Steps: 1) Port the per-service ingest-list refresh helpers. 2) Test with captured responses (no network in CI).
+  - Spec: S-026 (service-specific sections)
+  - Vectors: `test/conformance/scripts/rtmpservices/`
+  - Pitfalls:
+    - S-026 Q-7: `multitrack_video_name` etc. are not cleared when the new service lacks them — the previous service's name leaks into the disclaimer.
+    - S-026 D-5: an ingest download whose elements are all skipped with `count >= 2` leaves the table empty in C — the port keeps the previous table.
+  - Done when: tests with captured responses.
 - [ ] **P5-06.7/.8** E1/E2
+  - Files: `rtmp-services-main.c` (138) (module main), `CMakeLists.txt` (target `rtmp-services` MODULE)
+  - Steps: 1) Bookend E1: `crates/obs-modules/rtmp-services` cdylib named `rtmp-services`. 2) Bookend E2: remove the C plugin in the same PR; ship `data/` (incl. `services.json`) byte-identical.
+  - Done when: E1 export/loader check passes on each OS; E2 CI green and smoke recorded in `docs/tests/plugin-rtmp-services.md`.
 
 ### P5-07 `obs-x264`
 - [ ] **P5-07.1/.2** S1/S2
-- [ ] **P5-07.3 Bindings** — FFI crate for libx264 (`x264_encoder_open`, `x264_param_*`). Done when: links on 3 OSes.
-- [ ] **P5-07.4 Options** — Files: `obs-x264.c`: rate control (CBR/ABR/VBR/CRF/lossless), keyint, bframes, preset, tune, profile, threads, `x264opts` string parser. Done when: golden param dump for 20 settings.
-- [ ] **P5-07.5 Encode loop** — NAL → packet, SEI, `get_extra_data`, pts/dts offsets. Done when: packet metadata equal.
-- [ ] **P5-07.6 Bit-exactness** — same input + settings → identical bitstream. Done when: hash equal.
+  - Files: `plugins/obs-x264/obs-x264-plugin-main.c` (16) (module main; registers `obs_x264_encoder`), `CMakeLists.txt` (target `obs-x264` MODULE)
+  - Steps: 1) Bookend S1: encoder id `obs_x264`; record rate-control/preset/profile keys. 2) Bookend S2: P0-18 corpus encoder settings through the P0-15 ABI host.
+  - Done when: `docs/tests/plugin-obs-x264-inventory.md` committed; S2 passes.
+- [ ] **P5-07.3 Bindings** — FFI crate for libx264 (`x264_encoder_open`, `x264_param_*`).
+  - Files: `obs-x264.c` (865) (the call surface: `x264_param_default_preset`, `x264_param_parse`, `x264_param_apply_profile`, `x264_encoder_open/headers/reconfig/close`)
+  - Steps: 1) Write the `x264-sys` FFI bindings for the 8 functions above. 2) Match the fake library contract in `test/conformance/README.md` (encopts section) — sentinels and print formats are the contract. 3) Link on the 3 OSes.
+  - Spec: S-025 (x264 section; fake contract table)
+  - Done when: links on 3 OSes.
+- [ ] **P5-07.4 Options**
+  - Files: `obs-x264.c` (865)
+  - Steps: 1) Port `update_settings`/`update_params`: rate control (CBR/ABR/VBR/CRF/lossless), keyint, bframes, preset/tune/profile, threads, the `x264opts` string parser with the case-insensitive skip list. 2) Run the encopts `x264_*` scripts (defaults, props, create, update, fail switches).
+  - Spec: S-025 §5 (R10–R20)
+  - Vectors: `test/conformance/scripts/encopts/`
+  - Pitfalls:
+    - S-025 Q-1: `PRESET=slow`/`Tune=film` override the base setting case-insensitively but are still forwarded to `x264_param_parse`.
+    - S-025 Q-5: unknown/empty `rate_control` is CBR in the parameters but shows `crf` in the callback.
+    - S-025 Q-6: negative `keyint_sec` converts to unsigned before the math (e.g. `-3*30000/1001` → 4290587).
+  - Done when: golden param dump for 20 settings.
+- [ ] **P5-07.5 Encode loop** — NAL → packet, SEI, `get_extra_data`, pts/dts offsets.
+  - Files: `obs-x264.c` (865) (encode + packet functions)
+  - Steps: 1) Port NAL splitting to `obs_encoder_packet`, SEI attachment, `get_extra_data`. 2) Verify pts/dts offsets against the C encoder on a fixed input.
+  - Spec: S-012 (NAL helpers) + S-025 §5
+  - Done when: packet metadata equal.
+- [ ] **P5-07.6 Bit-exactness** — same input + settings → identical bitstream.
+  - Files: `obs-x264.c` (865)
+  - Steps: 1) Encode a fixed test sequence with C and Rust at several settings. 2) Assert hash equality of the bitstreams.
+  - Done when: hash equal.
 - [ ] **P5-07.7/.8** E1/E2 (`obs-x264-test.c` helper retained)
+  - Files: `obs-x264-plugin-main.c` (16) (module main), `obs-x264-test.c` (71) (helper), `CMakeLists.txt` (target `obs-x264` MODULE)
+  - Steps: 1) Bookend E1: `crates/obs-modules/obs-x264` cdylib named `obs-x264`. 2) Retain `obs-x264-test.c` as C for now (input to P5-50.1 FFI list). 3) Bookend E2: remove the ported C sources in the same PR.
+  - Done when: E1 export/loader check passes on each OS; E2 CI green and smoke recorded in `docs/tests/plugin-obs-x264.md`.
 
 ### P5-08 `obs-libfdk`
 - [ ] **P5-08.1/.2** S1/S2
-- [ ] **P5-08.3 Encoder** — Files: `obs-libfdk.c`: AAC-LC/HE modes, bitrate, afterburner. Done when: output decodes with ffprobe.
-- [ ] **P5-08.4 Optional build** (cargo feature `fdk`). Done when: builds with and without the feature.
+  - Files: `plugins/obs-libfdk/obs-libfdk.c` (327) (module main; registers `obs_libfdk_encoder`), `CMakeLists.txt` (target `obs-libfdk` MODULE)
+  - Steps: 1) Bookend S1: encoder id `obs_libfdk`; record AOT/bitrate/afterburner keys. 2) Bookend S2: P0-18 corpus through the P0-15 ABI host.
+  - Done when: `docs/tests/plugin-obs-libfdk-inventory.md` committed; S2 passes.
+- [ ] **P5-08.3 Encoder**
+  - Files: `obs-libfdk.c` (327)
+  - Steps: 1) FFI to libfdk-aac (`aacEncOpen/SetParam/Encode/Info/Close`); port AAC-LC/HE modes, bitrate, afterburner. 2) Match the fake library contract in `test/conformance/README.md` (encopts fdk section). 3) Run the encopts `fdk_*` scripts.
+  - Spec: S-025 §8 (fdk: R50–R59)
+  - Vectors: `test/conformance/scripts/encopts/`
+  - Done when: output decodes with ffprobe.
+- [ ] **P5-08.4 Optional build** (cargo feature `fdk`).
+  - Files: `obs-libfdk.c` (327)
+  - Steps: 1) Put the FFI + encoder behind cargo feature `fdk`. 2) Build the workspace with and without the feature; the module is absent when off.
+  - Done when: builds with and without the feature.
 - [ ] **P5-08.5/.6** E1/E2
+  - Files: `obs-libfdk.c` (327) (module main), `CMakeLists.txt` (target `obs-libfdk` MODULE)
+  - Steps: 1) Bookend E1: `crates/obs-modules/obs-libfdk` cdylib named `obs-libfdk`. 2) Bookend E2: remove the C plugin in the same PR.
+  - Done when: E1 export/loader check passes on each OS; E2 CI green and smoke recorded in `docs/tests/plugin-obs-libfdk.md`.
 
 ### P5-09 `coreaudio-encoder`
 - [ ] **P5-09.1/.2** S1/S2
-- [ ] **P5-09.3 Converter** — Files: `encoder.cpp`, `windows-imports.h` (loads Apple libs on Windows too). Wrap `AudioConverter`. Done when: AAC out decodes.
-- [ ] **P5-09.4 Tables** — bitrates/sample rates/modes (CBR, ABR, CVBR, VBR). Done when: option list equal.
-- [ ] **P5-09.5 Compare** on macOS CI. Done when: option lists equal C and the output decodes on macOS CI.
+  - Files: `plugins/coreaudio-encoder/encoder.cpp` (1324) (module main; registers `aac`), `windows-imports.h` (482), `CMakeLists.txt` (target `coreaudio-encoder` MODULE)
+  - Steps: 1) Bookend S1: encoder id `aac`; record rate/mode/bitrate keys. 2) Bookend S2: P0-18 corpus through the P0-15 ABI host (macOS + Windows).
+  - Done when: `docs/tests/plugin-coreaudio-encoder-inventory.md` committed; S2 passes.
+- [ ] **P5-09.3 Converter**
+  - Files: `encoder.cpp` (1324), `windows-imports.h` (482) (loads the Apple libraries on Windows too)
+  - Steps: 1) Wrap `AudioConverter`/`AudioConverterChain` with `objc2`/`coreaudio-sys` on macOS; on Windows keep the dynamic-load pattern of `windows-imports.h` (no static link). 2) Port create/update/encode/destroy.
+  - Done when: AAC out decodes.
+- [ ] **P5-09.4 Tables** — bitrates/sample rates/modes (CBR, ABR, CVBR, VBR).
+  - Files: `encoder.cpp` (1324) (defaults + property tables)
+  - Steps: 1) Port the bitrate/rate/mode tables and property callbacks. 2) Assert the option lists equal C.
+  - Done when: option list equal.
+- [ ] **P5-09.5 Compare** on macOS CI.
+  - Files: `encoder.cpp` (1324)
+  - Steps: 1) Encode a fixed stereo input on macOS CI with C and Rust. 2) Decode both; compare parameters + decodability.
+  - Done when: option lists equal C and the output decodes on macOS CI.
 - [ ] **P5-09.6/.7** E1/E2
+  - Files: `encoder.cpp` (1324) (module main), `windows-imports.h` (482), `CMakeLists.txt` (target `coreaudio-encoder` MODULE)
+  - Steps: 1) Bookend E1: `crates/obs-modules/coreaudio-encoder` cdylib named `coreaudio-encoder` (macOS + Windows builds). 2) Bookend E2: remove the C plugin in the same PR.
+  - Done when: E1 export/loader check passes on macOS and Windows; E2 CI green and smoke recorded in `docs/tests/plugin-coreaudio-encoder.md`.
 
 ### P5-10 `nv-filters`
 - [ ] **P5-10.1/.2** S1/S2
-- [ ] **P5-10.3 SDK loading** — Files: `nvafx-load.h`, `nvvfx-load.h`, `nv_sdk_versions.h`: dynamic loading; versions. Done when: absence handled.
-- [ ] **P5-10.4 Audio** — `nvidia-audiofx-filter.c` (denoise, dereverb). Done when: runs on RTX.
-- [ ] **P5-10.5 Video** — `nvidia-videofx-filter.c` (greenscreen, background blur). Done when: runs on RTX.
-- [ ] **P5-10.6 Hardware test** — Done when: runs on RTX.
+  - Files: `plugins/nv-filters/nv-filters.c` (50) (module main; registers the NVAudioFX + NVVideoFX sources), `CMakeLists.txt` (target `nv-filters` MODULE, Windows-only)
+  - Steps: 1) Bookend S1: 2 source ids; record settings keys per filter. 2) Bookend S2: P0-18 corpus (Windows profiles) through the P0-15 ABI host.
+  - Done when: `docs/tests/plugin-nv-filters-inventory.md` committed; S2 passes.
+- [ ] **P5-10.3 SDK loading**
+  - Files: `nvafx-load.h` (319), `nvvfx-load.h` (592), `nv_sdk_versions.h` (7)
+  - Steps: 1) Port the dynamic loaders (module version probe, symbol table). 2) Port the graceful "SDK absent" path (filters register but fail create with the same message).
+  - Done when: absence handled.
+- [ ] **P5-10.4 Audio**
+  - Files: `nvidia-audiofx-filter.c` (868) (denoise, dereverb)
+  - Steps: 1) Port the NVAudioFX filter lifecycle (create/update/filter_audio) over the P5-10.3 loader. 2) Run on RTX hardware.
+  - Done when: runs on RTX.
+- [ ] **P5-10.5 Video**
+  - Files: `nvidia-videofx-filter.c` (1235) (greenscreen, background blur), `data/rtx_blur.effect` (190), `data/rtx_greenscreen.effect` (183), `data/color.effect` (95)
+  - Steps: 1) Port the NVVideoFX filter lifecycle + the 2 `.effect` files. 2) Run on RTX hardware.
+  - Done when: runs on RTX.
+- [ ] **P5-10.6 Hardware test**
+  - Files: `nv-filters.c` (50)
+  - Steps: 1) Full-module smoke on an RTX machine with the SDKs installed. 2) Record the result.
+  - Done when: runs on RTX.
 - [ ] **P5-10.7/.8** E1/E2 (Windows only)
+  - Files: `nv-filters.c` (50) (module main), `CMakeLists.txt` (target `nv-filters` MODULE)
+  - Steps: 1) Bookend E1: `crates/obs-modules/nv-filters` cdylib named `nv-filters`, Windows build only. 2) Bookend E2: remove the C plugin; smoke on Windows.
+  - Done when: E1 export/loader check passes on Windows; E2 CI green and smoke recorded in `docs/tests/plugin-nv-filters.md`.
 
 ## B. Network and muxing
 
 ### P5-11 `obs-ffmpeg` software encoders
 - [ ] **P5-11.1/.2** S1/S2
-- [ ] **P5-11.3 Audio** — `obs-ffmpeg-audio-encoders.c` (AAC, Opus, PCM s16/s24/f32, ALAC, FLAC). Done when: ffprobe parameters equal.
-- [ ] **P5-11.4 Video** — `obs-ffmpeg-video-encoders.c/.h`, `obs-ffmpeg-av1.c`, `obs-ffmpeg-openh264.c`; options via `obs-ffmpeg-formats.h`. Done when: packets equal.
-- [ ] **P5-11.5 Compare** packet bytes with C. Done when: packet bytes equal.
+  - Files: `plugins/obs-ffmpeg/obs-ffmpeg.c` (429) (module main; 22 registrations: source `ffmpeg_source`, 4 outputs, 15 encoders), `CMakeLists.txt` (target `obs-ffmpeg` MODULE)
+  - Steps: 1) Bookend S1: ids — `ffmpeg_source`; outputs `ffmpeg_output`, `ffmpeg_muxer`, `ffmpeg_mpegts_muxer`, `ffmpeg_hls_muxer` + `replay_buffer` (registered from `obs-ffmpeg.c` via `obs-ffmpeg-mux.c`); encoders `aac`, `opus`, `pcm16`, `pcm24`, `pcm32`, `alac`, `flac` + the video table. 2) Bookend S2: P0-18 corpus through the P0-15 ABI host.
+  - Done when: `docs/tests/plugin-obs-ffmpeg-inventory.md` committed; S2 passes.
+- [ ] **P5-11.3 Audio**
+  - Files: `obs-ffmpeg-audio-encoders.c` (565)
+  - Steps: 1) Port the 7 audio encoders (AAC, Opus, PCM s16/s24/f32, ALAC, FLAC) on `ffmpeg-next` bindings. 2) Run the encopts `aud_*` scripts and the ffsources `aud-*` scripts.
+  - Spec: S-025 §9.2 (R62–R64, create-time half), S-047 §5.7 (runtime half)
+  - Vectors: `test/conformance/scripts/encopts/`, `test/conformance/scripts/ffsources/`
+  - Pitfalls:
+    - S-025 Q-12: sample-rate snapping searches from `closest = 0`, so a rate nearer to 0 than every listed rate is not snapped.
+    - S-025 D-1: `bitrate*1000` overflows i32 above 2 147 483 kbps — the port wraps, no panic.
+  - Done when: ffprobe parameters equal.
+- [ ] **P5-11.4 Video**
+  - Files: `obs-ffmpeg-video-encoders.c` (279) + `obs-ffmpeg-video-encoders.h` (50), `obs-ffmpeg-av1.c` (346), `obs-ffmpeg-openh264.c` (250), `obs-ffmpeg-formats.h` (118), `obs-ffmpeg-logging.c` (136), `obs-ffmpeg-compat.h` (11)
+  - Steps: 1) Port the shared `ffmpeg_video_encoder_*` layer (bitrate, keyint, colours, `opts` passthrough). 2) Port the AV1 and openh264 wrappers. 3) Run the encopts `vid_*` scripts and the ffsources `vid-*` scripts.
+  - Spec: S-025 §9.1 (R60), S-047 §5.8 (video encoder wrapper)
+  - Vectors: `test/conformance/scripts/encopts/`, `test/conformance/scripts/ffsources/`
+  - Pitfalls:
+    - S-047 D-1: codec-not-found path crashes C with an uninitialised error string — the port sets `Couldn't find encoder: <lib>`, logs WARNING, returns false.
+  - Done when: packets equal.
+- [ ] **P5-11.5 Compare** — packet bytes with C.
+  - Files: `obs-ffmpeg-audio-encoders.c` (565), `obs-ffmpeg-video-encoders.c` (279)
+  - Steps: 1) Encode fixed inputs with C and Rust at identical settings. 2) Compare packet bytes for every codec (excluding timestamp fields).
+  - Done when: packet bytes equal.
 - [ ] **P5-11.6/.7** E1/E2
+  - Files: `obs-ffmpeg.c` (429) (module main)
+  - Steps: 1) Bookend E1: `crates/obs-modules/obs-ffmpeg` cdylib named `obs-ffmpeg`; shared CMake target — E2 cutover happens once, in the last-finishing task of the `obs-ffmpeg` group (P5-11…P5-16, P5-41).
+  - Done when: E1 export/loader check passes; E2 CI green and smoke recorded in `docs/tests/plugin-obs-ffmpeg.md`.
 
 ### P5-12 VAAPI
-- [ ] **P5-12.1/.2** S1/S2
-- [ ] **P5-12.3 Probe** — `vaapi-utils.c/.h`, device selection (`/dev/dri/renderD*`), supported profiles/entrypoints. Done when: log matches C.
-- [ ] **P5-12.4 Encode** — `obs-ffmpeg-vaapi.c` H.264/HEVC/AV1, CQP/CBR/VBR. Done when: playable stream.
-- [ ] **P5-12.5 Test** Intel and AMD. Done when: encodes play back on both.
-- [ ] **P5-12.6/.7** E1/E2
+- [ ] **P5-12.1/.2** S1/S2 (part of the P5-11.1/.2 inventory; ids: `h264_vaapi`, `h264_vaapi_tex`, `av1_vaapi`, `av1_vaapi_tex`, `hevc_vaapi`, `hevc_vaapi_tex`)
+  - Files: `plugins/obs-ffmpeg/obs-ffmpeg-vaapi.c` (1302), `obs-ffmpeg.c` (429) (registration)
+  - Steps: 1) Record the 6 VAAPI encoder ids + settings keys in the P5-11 inventory. 2) S2: P0-18 corpus through the P0-15 ABI host (Linux only).
+  - Done when: inventory rows committed; S2 passes.
+- [ ] **P5-12.3 Probe**
+  - Files: `vaapi-utils.c` (379) + `vaapi-utils.h` (29)
+  - Steps: 1) Port device selection (`/dev/dri/renderD*`) and profile/entrypoint probing. 2) Compare the probe log against C on the same hardware.
+  - Spec: S-050 (VAAPI: rate-control table, device-modified callback; device probing itself not vectored)
+  - Vectors: `test/conformance/scripts/hwencoders/` (scripts 50–57)
+  - Done when: log matches C.
+- [ ] **P5-12.4 Encode**
+  - Files: `obs-ffmpeg-vaapi.c` (1302)
+  - Steps: 1) Port H.264/HEVC/AV1 encoders (CQP/CBR/VBR) + texture variants. 2) Port packet post-processing and `video_info`. 3) Run runner scripts `50`–`57`.
+  - Spec: S-050 (VAAPI rules)
+  - Vectors: `test/conformance/scripts/hwencoders/`
+  - Pitfalls:
+    - S-050 D-3: unknown rate control string → C does `strcmp(NULL)` and crashes — the port treats it as CBR.
+  - Done when: playable stream.
+- [ ] **P5-12.5 Test** — Intel and AMD.
+  - Files: `obs-ffmpeg-vaapi.c` (1302), `vaapi-utils.c` (379)
+  - Steps: 1) Encode on Intel and AMD hardware. 2) Play back the outputs; record the results.
+  - Done when: encodes play back on both.
+- [ ] **P5-12.6/.7** E1/E2 (shared `obs-ffmpeg` target; cutover with the group)
+  - Files: `obs-ffmpeg-vaapi.c` (1302), `vaapi-utils.c` (379)
+  - Steps: 1) Bookend E1: VAAPI encoders live inside the `obs-ffmpeg` cdylib (Linux build). 2) Bookend E2: no separate cutover — covered by the group's last-finishing task.
+  - Done when: group E2 done; smoke recorded in `docs/tests/plugin-obs-ffmpeg.md`.
 
 ### P5-13 NVENC (FFmpeg legacy)
-- [ ] **P5-13.1/.2** S1/S2
-- [ ] **P5-13.3 Wrapper** — `obs-ffmpeg-nvenc.c`. Done when: encodes.
-- [ ] **P5-13.4 Deprecate** after P5-39. Done when: removal ADR.
-- [ ] **P5-13.5/.6** E1/E2
+- [ ] **P5-13.1/.2** S1/S2 (part of the P5-11.1/.2 inventory; ids: `ffmpeg_nvenc`, `ffmpeg_hevc_nvenc`)
+  - Files: `plugins/obs-ffmpeg/obs-ffmpeg-nvenc.c` (611), `obs-ffmpeg.c` (429) (registration)
+  - Steps: 1) Record the 2 ids + settings keys in the P5-11 inventory. 2) S2: P0-18 corpus through the P0-15 ABI host.
+  - Done when: inventory rows committed; S2 passes.
+- [ ] **P5-13.3 Wrapper**
+  - Files: `obs-ffmpeg-nvenc.c` (611)
+  - Steps: 1) Port settings → libavcodec private options, create gates, psycho-AQ retry, first-packet header extraction + dts correction, reconfigure. 2) Run runner scripts `40`–`45`.
+  - Spec: S-050 (obs-ffmpeg-nvenc rules)
+  - Vectors: `test/conformance/scripts/hwencoders/` (scripts 40–45)
+  - Done when: encodes.
+- [ ] **P5-13.4 Deprecate** after P5-39.
+  - Files: `obs-ffmpeg-nvenc.c` (611)
+  - Steps: 1) After P5-39 lands, write the ADR: drop the legacy path (or keep behind a flag). 2) Remove or flag the two encoders per the ADR.
+  - Done when: removal ADR.
+- [ ] **P5-13.5/.6** E1/E2 (shared `obs-ffmpeg` target; cutover with the group)
+  - Files: `obs-ffmpeg-nvenc.c` (611)
+  - Steps: 1) Bookend E1: inside the `obs-ffmpeg` cdylib. 2) Bookend E2: covered by the group's last-finishing task.
+  - Done when: group E2 done; smoke recorded in `docs/tests/plugin-obs-ffmpeg.md`.
 
 ### P5-14 `ffmpeg-mux` helper
 - [ ] **P5-14.1/.2** S1/S2
-- [ ] **P5-14.3 Protocol** — `ffmpeg-mux/ffmpeg-mux.c/.h`: header struct, stdin packet framing, argument parsing. Done when: parser fuzzed.
-- [ ] **P5-14.4 Containers** — MKV, MP4, fMP4, MOV, MPEG-TS, HLS. Done when: `ffprobe` of each equal.
-- [ ] **P5-14.5 Features** — replay buffer, split files, chapters, `obs-ffmpeg-mux.c` host side. Done when: tests.
-- [ ] **P5-14.6 Fuzz** pipe reader. Done when: fuzz run clean.
+  - Files: `plugins/obs-ffmpeg/obs-ffmpeg-mux.c` (1261) (registers `ffmpeg_muxer`, `replay_buffer`), `CMakeLists.txt` (helper target `obs-ffmpeg-mux` executable)
+  - Steps: 1) Bookend S1: outputs `ffmpeg_muxer` + `replay_buffer`; record the replay settings keys. 2) Bookend S2: P0-18 corpus through the P0-15 ABI host.
+  - Done when: inventory rows committed; S2 passes.
+- [ ] **P5-14.3 Protocol**
+  - Files: `ffmpeg-mux/ffmpeg-mux.c` (1201), `ffmpeg-mux/ffmpeg-mux.h` (39)
+  - Steps: 1) Port the stdin framing (init/headers/packet/size-change messages) and argument parsing. 2) Keep the exact stderr wording (the host logs it). 3) Run the `ffmuxproto` runner.
+  - Spec: S-037 (stdin protocol)
+  - Vectors: `test/conformance/scripts/ffmuxproto/`
+  - Pitfalls:
+    - S-037 Q-1: after a successful init the exit status is 0 even if muxing failed or stdin was cut.
+    - S-037 Q-8: `pts`/`dts` are divided by the time-base numerator before rescaling — non-multiples lose their remainder.
+    - S-037 D-1: a header with out-of-range `index`/mismatched `type` writes past the header table in C — the port fails init with `FFM_ERROR`.
+  - Done when: parser fuzzed.
+- [ ] **P5-14.4 Containers** — MKV, MP4, fMP4, MOV, MPEG-TS, HLS.
+  - Files: `ffmpeg-mux/ffmpeg-mux.c` (1201) (all container paths)
+  - Steps: 1) Port the container selection + muxer wiring per container. 2) `ffprobe` each output; compare with C.
+  - Spec: S-037 (container handling, R-rules)
+  - Vectors: `test/conformance/scripts/ffmuxproto/`
+  - Done when: `ffprobe` of each equal.
+- [ ] **P5-14.5 Features** — replay buffer, split files, chapters, `obs-ffmpeg-mux.c` host side.
+  - Files: `obs-ffmpeg-mux.c` (1261) + `obs-ffmpeg-mux.h` (76)
+  - Steps: 1) Port the host side: spawn the helper, write the pipe, replay buffer ring, split (time/size), chapters, HLS host path. 2) Run the `ffoutputs` runner.
+  - Spec: S-046 (replay buffer, split, HLS host rules)
+  - Vectors: `test/conformance/scripts/ffoutputs/`
+  - Pitfalls:
+    - S-046 Q-3: split triggered by the first packet sends CHANGE_FILE first and the headers twice.
+    - S-046 D-1: the replay purge loops spin forever in C once the ring is emptied — the port stops purging when empty and treats a 0 limit as unlimited.
+  - Done when: tests.
+- [ ] **P5-14.6 Fuzz** — pipe reader.
+  - Files: `ffmpeg-mux/ffmpeg-mux.c` (1201) (the read loop)
+  - Steps: 1) Fuzz the stdin reader with random/corrupt frames. 2) No crash, no hang, exit status per S-037.
+  - Spec: S-037 (D-4: allocation failures fail the read)
+  - Done when: fuzz run clean.
 - [ ] **P5-14.7/.8** E1/E2
+  - Files: `ffmpeg-mux/CMakeLists.txt` (target `obs-ffmpeg-mux` executable), `obs-ffmpeg-mux.c` (1261)
+  - Steps: 1) Bookend E1: helper executable `obs-ffmpeg-mux` from Rust with the same name/arguments; module side inside the `obs-ffmpeg` cdylib. 2) Bookend E2: covered by the group's last-finishing task; keep the helper's install destination unchanged.
+  - Done when: group E2 done; helper path verified; smoke recorded in `docs/tests/plugin-obs-ffmpeg.md`.
 
 ### P5-15 `obs-ffmpeg` outputs
-- [ ] **P5-15.1/.2** S1/S2
-- [ ] **P5-15.3 Generic** — `obs-ffmpeg-output.c/.h`. Done when: custom output works.
-- [ ] **P5-15.4 MPEG-TS/SRT** — `obs-ffmpeg-mpegts.c`, `obs-ffmpeg-srt.h` (latency, passphrase, stream id). Done when: loopback with `srt-live-transmit`.
-- [ ] **P5-15.5 RIST/HLS** — `obs-ffmpeg-rist.h`, `obs-ffmpeg-hls-mux.c`, `obs-ffmpeg-url.h`. Done when: HLS playlist valid.
-- [ ] **P5-15.6 Loopback** tests. Done when: loopback passes.
-- [ ] **P5-15.7/.8** E1/E2
+- [ ] **P5-15.1/.2** S1/S2 (part of the P5-11.1/.2 inventory; ids: `ffmpeg_output`, `ffmpeg_mpegts_muxer`, `ffmpeg_hls_muxer`)
+  - Files: `plugins/obs-ffmpeg/obs-ffmpeg-output.c` (1157), `obs-ffmpeg.c` (429) (registration)
+  - Steps: 1) Record the 3 ids + settings keys in the P5-11 inventory. 2) S2: P0-18 corpus through the P0-15 ABI host.
+  - Done when: inventory rows committed; S2 passes.
+- [ ] **P5-15.3 Generic**
+  - Files: `obs-ffmpeg-output.c` (1157) + `obs-ffmpeg-output.h` (139)
+  - Steps: 1) Port the generic `ffmpeg_output` (file/network targets, start/stop, encoder wiring). 2) Run the `ffoutputs` runner scripts `04`–`46`.
+  - Spec: S-046 (ffmpeg_output lifecycle rules)
+  - Vectors: `test/conformance/scripts/ffoutputs/`
+  - Pitfalls:
+    - S-046 Q-1: the file-start writability probe truncates and deletes an existing file — keep (callers rely on it); never in network mode.
+    - S-046 Q-18: start timestamps of 0 are retaken by the next frame.
+    - S-046 Q-20: `connecting` is assigned after thread creation (race) — the Rust port MUST set it before spawning.
+  - Done when: custom output works.
+- [ ] **P5-15.4 MPEG-TS/SRT**
+  - Files: `obs-ffmpeg-mpegts.c` (1392), `obs-ffmpeg-srt.h` (919)
+  - Steps: 1) Port the MPEG-TS muxer output + SRT client (latency, passphrase, stream id). 2) Loopback with `srt-live-transmit`; run the `mpegtsout` runner.
+  - Spec: S-059 (MPEG-TS/SRT/RIST output, R-rules + SRT defaults)
+  - Vectors: `test/conformance/scripts/mpegtsout/`
+  - Pitfalls:
+    - S-059 D-1: double close/cleanup after a failed SRT connect — the port cleans up exactly once.
+    - S-059 D-3: zero audio encoders dereferences NULL in C — the port rejects at create.
+  - Done when: loopback with `srt-live-transmit`.
+- [ ] **P5-15.5 RIST/HLS**
+  - Files: `obs-ffmpeg-rist.h` (253), `obs-ffmpeg-hls-mux.c` (331), `obs-ffmpeg-url.h` (140)
+  - Steps: 1) Port the RIST client + HLS muxer (segment naming, playlist). 2) Validate the playlist with `ffprobe`.
+  - Spec: S-059 (RIST client), S-046 (HLS rules R44 + drop test)
+  - Vectors: `test/conformance/scripts/mpegtsout/`, `test/conformance/scripts/ffoutputs/`
+  - Pitfalls:
+    - S-046 Q-12: HLS `keyint_sec`/`last_dts_usec` survive a restart; the "first video packet" for the drop test is the first non-keyframe.
+    - S-059 Q-10: RIST key size 192 is unchecked and `hevc` maps to the AV1 id.
+  - Done when: HLS playlist valid.
+- [ ] **P5-15.6 Loopback** tests.
+  - Files: `obs-ffmpeg-output.c` (1157), `obs-ffmpeg-mpegts.c` (1392), `obs-ffmpeg-hls-mux.c` (331)
+  - Steps: 1) CI loopback: RTMP-less file, SRT (srt-live-transmit), HLS playlist, UDP MPEG-TS (`ffplay`/`ffprobe`). 2) Assert decodability + parameters.
+  - Done when: loopback passes.
+- [ ] **P5-15.7/.8** E1/E2 (shared `obs-ffmpeg` target; cutover with the group)
+  - Files: `obs-ffmpeg-output.c` (1157)
+  - Steps: 1) Bookend E1: inside the `obs-ffmpeg` cdylib. 2) Bookend E2: covered by the group's last-finishing task.
+  - Done when: group E2 done; smoke recorded in `docs/tests/plugin-obs-ffmpeg.md`.
 
 ### P5-16 `obs-ffmpeg` media source
-- [ ] **P5-16.1/.2** S1/S2
-- [ ] **P5-16.3 Playback core** — `shared/media-playback/media-playback/{media.c,decode.c}`: demux thread, decode thread, queues, frame timing. Done when: A/V sync tests.
-- [ ] **P5-16.4 Cache/loop/seek** — `cache.c`, `media-playback.c`. Done when: seek accuracy test.
-- [ ] **P5-16.5 HW decode** — selection list and fallback in `obs-ffmpeg-source.c`. Done when: log of chosen decoder equal.
-- [ ] **P5-16.6 Drift** — 2 h file < 1 frame. Done when: measured drift < 1 frame.
+- [ ] **P5-16.1/.2** S1/S2 (part of the P5-11.1/.2 inventory; id: `ffmpeg_source`)
+  - Files: `plugins/obs-ffmpeg/obs-ffmpeg-source.c` (807), `obs-ffmpeg.c` (429) (registration)
+  - Steps: 1) Record the `ffmpeg_source` id + all source settings keys in the P5-11 inventory. 2) S2: P0-18 corpus through the P0-15 ABI host.
+  - Done when: inventory rows committed; S2 passes.
+- [ ] **P5-16.3 Playback core**
+  - Files: `shared/media-playback/media-playback/media.c` (1052) + `media.h` (126), `decode.c` (421) + `decode.h` (81)
+  - Steps: 1) Port the demux thread, decode thread, queues, frame timing into `crates/obs-media-playback`. 2) Implement the `mediaplayback` runner language against the crate. 3) Run the `mediaplayback` scripts.
+  - Spec: S-036 (media thread, decode, frame timing)
+  - Vectors: `test/conformance/scripts/mediaplayback/`
+  - Pitfalls:
+    - S-036 Q-1/Q-2: at `speed != 100` the pts-difference estimate subtracts the previous *scaled* pts from the new *unscaled* pts; a previous pts of 0 counts as "no previous frame".
+    - S-036 Q-3: the decoder-time-base fallback is `tb.num * tb` (40 ms for 1/25, 160 ms for 2/25).
+    - S-036 Q-5: the "is active" snapshot is taken before the semaphore wait and not refreshed.
+  - Done when: A/V sync tests.
+- [ ] **P5-16.4 Cache/loop/seek**
+  - Files: `shared/media-playback/media-playback/cache.c` (701) + `cache.h` (97), `media-playback.c` (176) + `media-playback.h` (65), `closest-format.h` (117)
+  - Steps: 1) Port the file cache (loop stop/pause, preload), seek (stream 0 rules), loop. 2) Run the seek/cache scripts (`14`, `15`, `16`, `43`, `41`).
+  - Spec: S-036 (cache + seek rules R26/R32/R56–R58)
+  - Vectors: `test/conformance/scripts/mediaplayback/`
+  - Pitfalls:
+    - S-036 Q-4: every wake-up of a paused player runs `reset_ts`, which adds the end position to `base_ts` again.
+    - S-036 Q-11/Q-12: cache reset seeks in microseconds although the arrays hold ns; after a reset the first frame of every pass is delivered one frame duration early.
+  - Done when: seek accuracy test.
+- [ ] **P5-16.5 HW decode**
+  - Files: `obs-ffmpeg-source.c` (807) (selection list + fallback)
+  - Steps: 1) Port the hw-decode device selection and fallback logic. 2) Assert the chosen-decoder log matches C.
+  - Spec: S-047 §5.1–5.6 (media source rules)
+  - Vectors: `test/conformance/scripts/ffsources/`
+  - Pitfalls:
+    - S-047 Q-1: changes to `buffering_mb`, `full_decode`, `clear_on_media_end`, `log_changes` take effect only at the next restart.
+  - Done when: log of chosen decoder equal.
+- [ ] **P5-16.6 Drift** — 2 h file < 1 frame.
+  - Files: `shared/media-playback/media-playback/media.c` (1052), `obs-ffmpeg-source.c` (807)
+  - Steps: 1) Play a 2 h test file end-to-end. 2) Measure A/V drift at the end; record the number.
+  - Done when: measured drift < 1 frame.
 - [ ] **P5-16.7/.8** E1/E2 (also covers the `shared/media-playback` crate; only in-tree consumer is obs-ffmpeg)
+  - Files: `obs-ffmpeg-source.c` (807), `shared/media-playback/media-playback/` (5 files + 4 headers, 2 836 lines)
+  - Steps: 1) Bookend E1: media source inside the `obs-ffmpeg` cdylib; `crates/obs-media-playback` is a separate crate (no module of its own). 2) Bookend E2: remove `shared/media-playback` C sources in the same PR as the group cutover.
+  - Done when: group E2 done; `crates/obs-media-playback` tested; smoke recorded in `docs/tests/plugin-obs-ffmpeg.md`.
 
 ### P5-17 `obs-outputs` RTMP/FLV
 - [ ] **P5-17.1/.2** S1/S2
-- [ ] **P5-17.3 FLV mux** — `flv-mux.c/.h`, `flv-output.c`, enhanced codecs in `rtmp-hevc.c/.h`, `rtmp-av1.c/.h`. Done when: tag bytes equal C.
-- [ ] **P5-17.4 RTMP client** — vendored `librtmp/` replaced by Rust or kept as FFI; decision note; handshake, chunking, AMF0, `connect`/`publish`. Done when: publishes to nginx-rtmp.
-- [ ] **P5-17.5 TLS/sockets** — `rtmp-stream.c`, `net-if.c/.h`, `rtmp-windows.c` (TCP_NODELAY, send buffer tuning, bind to interface, IPv4/IPv6). Done when: RTMPS works through `rustls`.
-- [ ] **P5-17.6 Congestion/DBR** — drop priorities (PFRAMES/BFRAMES), dynamic bitrate. Done when: scripted congestion trace equal.
-- [ ] **P5-17.7 Multitrack** — enhanced RTMP multitrack. Done when: two-track publish verified.
-- [ ] **P5-17.8 Servers** — nginx-rtmp and a mock server in CI. Done when: CI jobs publish to both.
+  - Files: `plugins/obs-outputs/obs-outputs.c` (79) (module main; registers `rtmp_output`, `null_output`, `flv_output`, `mp4_output`, `mov_output`), `CMakeLists.txt` (target `obs-outputs` MODULE)
+  - Steps: 1) Bookend S1: the 5 output ids + all settings keys (RTMP: url/key/server; MP4: path/chapters; FLV: file). 2) Bookend S2: P0-18 corpus through the P0-15 ABI host.
+  - Done when: `docs/tests/plugin-obs-outputs-inventory.md` committed; S2 passes.
+- [ ] **P5-17.3 FLV mux**
+  - Files: `flv-mux.c` (643) + `flv-mux.h` (79), `flv-output.c` (629), `rtmp-hevc.c` (877) + `rtmp-hevc.h` (23), `rtmp-av1.c` (603) + `rtmp-av1.h` (26), `rtmp-helpers.h` (51)
+  - Steps: 1) Port `flv_meta_data`, `flv_packet_mux`, the enhanced-RTMP start/frames paths. 2) Port the HEVC/AV1 configuration-record builders (SPS/PPS → hvcC, OBUs → av1C). 3) Run the `flv` runner (AMF0 scripts 01–09, muxer 10–22, HEVC 30–37, AV1 40–43).
+  - Spec: S-021 (FLV/AMF0/enhanced RTMP)
+  - Vectors: `test/conformance/scripts/flv/`
+  - Pitfalls:
+    - S-021 Q-14: `flv_packet_start/_end` use the packet's own dts as timestamp (offset 0); `timebase_num` is ignored.
+    - S-021 Q-17: multitrack trackId is `idx & 0xff` — idx 256 gives trackId 0 but stays multitrack.
+    - S-021 D-5: `flv_meta_data` overruns a 4096-byte property buffer when the version string exceeds 3699 bytes — REQUIRED: error.
+  - Done when: tag bytes equal C.
+- [ ] **P5-17.4 RTMP client**
+  - Files: vendored `librtmp/`: `rtmp.c` (5395), `amf.c` (1318) + `amf.h` (165), `handshake.h` (950), `parseurl.c` (279), `md5.c` (295), `hashswf.c` (694), `log.c` (228) + `cencode.c` (111), 8 headers (`rtmp.h` 556, `rtmp_sys.h` 82, `bytes.h` 89, `http.h` 49, `md5.h` 45, `cencode.h` 31, `log.h` 70)
+  - Steps: 1) Write the decision note: Rust port vs keep `librtmp` as FFI. 2) Port handshake, chunking, AMF0, `connect`/`publish` (or wrap the FFI). 3) Run the `rtmp` runner.
+  - Spec: S-031 (RTMP protocol: handshake, chunking, AMF0)
+  - Vectors: `test/conformance/scripts/rtmp/`
+  - Pitfalls:
+    - S-031 Q-12: `rtmp://[::1]` without slash parses host `[`, port 0 (colon search starts at host start).
+    - S-031 D-1: `ParsePlaypath` reads 4 bytes before the input when `?` is within the first 4 bytes — REQUIRED: no OOB, treat as "no extension".
+    - S-031 D-4: Window-Ack-Size/Peer-Bandwidth bodies < 4 bytes read past the body — REQUIRED: ignore the message.
+  - Done when: publishes to nginx-rtmp.
+- [ ] **P5-17.5 TLS/sockets**
+  - Files: `rtmp-stream.c` (2008) + `rtmp-stream.h` (230), `net-if.c` (265) + `net-if.h` (77), `rtmp-windows.c` (320), `obs-output-ver.h` (3)
+  - Steps: 1) Port the output thread (start/stop/connect), TLS via `rustls`. 2) Port `net-if` (bind to interface, IPv4/IPv6) and the Windows socket tuning (TCP_NODELAY, send buffer). 3) Run the `rtmpstream` runner.
+  - Spec: S-045 (rtmp-stream + net-if)
+  - Vectors: `test/conformance/scripts/rtmpstream/`
+  - Pitfalls:
+    - S-045 Q-10: failed thread creation / early `connect_thread` return leave `connecting` set in C so `stop` joins a thread that never ran — the Rust port must not hang.
+    - S-045 Q-7: an unparsable `bind_ip` silently becomes an all-zero address of the guessed family.
+  - Done when: RTMPS works through `rustls`.
+- [ ] **P5-17.6 Congestion/DBR** — drop priorities (PFRAMES/BFRAMES), dynamic bitrate.
+  - Files: `rtmp-stream.c` (2008) (drop + DBR sections)
+  - Steps: 1) Port the drop-priority logic and the DBR table (load/migrate/parsing). 2) Run the scripted congestion trace; compare byte-for-byte.
+  - Spec: S-045 (drop + DBR rules)
+  - Vectors: `test/conformance/scripts/rtmpstream/`
+  - Pitfalls:
+    - S-045 Q-1: default DBR rows are appended on every `init_connect` — the table grows by 2 rows per start.
+    - S-045 Q-12: the packet that triggers dropping is itself checked against the new `min_priority` and usually rejected.
+  - Done when: scripted congestion trace equal.
+- [ ] **P5-17.7 Multitrack** — enhanced RTMP multitrack.
+  - Files: `flv-mux.c` (643) (multitrack paths), `rtmp-stream.c` (2008) (track wiring)
+  - Steps: 1) Port the multitrack video/audio tag paths (trackId, inner packet types). 2) Verify a two-track publish with a decoder that reads enhanced RTMP.
+  - Spec: S-021 (multitrack R31/R32)
+  - Vectors: `test/conformance/scripts/flv/`
+  - Done when: two-track publish verified.
+- [ ] **P5-17.8 Servers** — nginx-rtmp and a mock server in CI.
+  - Files: CI config (new), `rtmp-stream.c` (2008)
+  - Steps: 1) Add the nginx-rtmp CI job (publish + record + verify). 2) Add the mock-server job (scripted responses, TLS).
+  - Done when: CI jobs publish to both.
 - [ ] **P5-17.9/.10** E1/E2
+  - Files: `obs-outputs.c` (79) (module main), `CMakeLists.txt` (target `obs-outputs` MODULE)
+  - Steps: 1) Bookend E1: `crates/obs-modules/obs-outputs` cdylib named `obs-outputs`. 2) Bookend E2: shared CMake target — cutover happens once, in the last-finishing task of P5-17/P5-18; delete the ported C sources (incl. `librtmp/` if replaced) in that PR.
+  - Done when: E1 export/loader check passes on each OS; E2 CI green and smoke recorded in `docs/tests/plugin-obs-outputs.md`.
 
 ### P5-18 `obs-outputs` FTL, null, MP4
-- [ ] **P5-18.1/.2** S1/S2
-- [ ] **P5-18.3 FTL** — FTL code is a submodule/vendored in upstream builds; verify presence in this tree first (not in `ls`). Decision: drop if removed upstream. Done when: decision recorded.
-- [ ] **P5-18.4 Null** — `null-output.c`. Done when: counts bytes.
-- [ ] **P5-18.5 MP4** — `mp4-mux.c/.h`, `mp4-mux-internal.h`, `mp4-output.c`: fragmented/hybrid MP4, chapters, multi-track audio. Done when: `mp4dump` equal.
-- [ ] **P5-18.6 Box goldens** — `mp4dump` of fixed input. Done when: dumps equal C.
+- [ ] **P5-18.1/.2** S1/S2 (part of the P5-17.1/.2 inventory; ids: `mp4_output`, `mov_output`, `null_output`)
+  - Files: `plugins/obs-outputs/obs-outputs.c` (79) (registration)
+  - Steps: 1) Record the 3 ids + settings keys in the P5-17 inventory. 2) S2: P0-18 corpus through the P0-15 ABI host.
+  - Done when: inventory rows committed; S2 passes.
+- [ ] **P5-18.3 FTL**
+  - Files: none in this tree — `git -C ~/github/obs-studio ls-files plugins/obs-outputs | grep -i ftl` is empty (verified; no FTL sources in 33.0.1)
+  - Steps: 1) Re-run the grep as the guard. 2) Record the decision: drop (FTL is absent from the C reference, so there is nothing to port).
+  - Done when: decision recorded.
+- [ ] **P5-18.4 Null**
+  - Files: `null-output.c` (97)
+  - Steps: 1) Port `null_output` (byte/sample counting, no encode). 2) Assert the counts.
+  - Done when: counts bytes.
+- [ ] **P5-18.5 MP4**
+  - Files: `mp4-mux.c` (3028) + `mp4-mux.h` (48), `mp4-mux-internal.h` (416), `mp4-output.c` (636)
+  - Steps: 1) Port the MP4/MOV muxer: fragmented/hybrid MP4, chapters, multi-track audio. 2) Port the `mp4_output`/`mov_output` output glue. 3) Run the `mp4` runner.
+  - Spec: S-022 (MP4 muxer, all boxes)
+  - Vectors: `test/conformance/scripts/mp4/`
+  - Pitfalls:
+    - S-022 Q-2: `mvhd.duration` is taken from the first video track; audio-only files have `mvhd.duration = 0`.
+    - S-022 Q-5: a lone last packet in the final fragment is dropped; empty/1-packet tracks are omitted from the final moov.
+    - S-022 D-1: `MP4_WRITE_ENCODER_INFO` with NULL id does `strlen(NULL)` — REQUIRED: write an empty `©enc` and continue.
+  - Done when: `mp4dump` equal.
+- [ ] **P5-18.6 Box goldens**
+  - Files: `mp4-mux.c` (3028)
+  - Steps: 1) Mux a fixed input with C; capture the `mp4dump` box tree. 2) Commit goldens; assert the Rust muxer's tree is equal.
+  - Spec: S-022
+  - Vectors: `test/conformance/scripts/mp4/`
+  - Done when: dumps equal C.
 - [ ] **P5-18.7/.8** E1/E2
+  - Files: `obs-outputs.c` (79) (module main), `CMakeLists.txt` (target `obs-outputs` MODULE)
+  - Steps: 1) Bookend E1: MP4/null inside the `obs-outputs` cdylib. 2) Bookend E2: shared CMake target — cutover once, in the last-finishing task of P5-17/P5-18.
+  - Done when: E1 export/loader check passes; E2 CI green and smoke recorded in `docs/tests/plugin-obs-outputs.md`.
 
 ### P5-19 `obs-webrtc`
 - [ ] **P5-19.1/.2** S1/S2
-- [ ] **P5-19.3 Stack** — `obs-webrtc.cpp`, `whip-output.cpp/.h`, `whip-service.cpp/.h`, `whip-utils.h`: libdatachannel (C++) today; choose `webrtc-rs` vs FFI. Done when: spike.
-- [ ] **P5-19.4 Signalling** — HTTP POST SDP offer, bearer token, ICE trickle/PATCH. Done when: mock server test.
-- [ ] **P5-19.5 Media** — H.264/AV1/Opus tracks, RTCP feedback, packetization. Done when: receives on mediamtx.
-- [ ] **P5-19.6 Interop** — mediamtx and one hosted WHIP service. Done when: both receive the stream.
+  - Files: `plugins/obs-webrtc/obs-webrtc.cpp` (19) (module main), `whip-output.cpp` (792) (3 `obs_register_output` at lines 780–791), `whip-service.cpp` (98) (`obs_register_service`), `CMakeLists.txt` (target `obs-webrtc` MODULE)
+  - Steps: 1) Bookend S1: 3 WHIP output ids + 1 service id; record settings keys. 2) Bookend S2: P0-18 corpus through the P0-15 ABI host.
+  - Done when: `docs/tests/plugin-obs-webrtc-inventory.md` committed; S2 passes.
+- [ ] **P5-19.3 Stack**
+  - Files: `obs-webrtc.cpp` (19), `whip-output.cpp` (792) + `whip-output.h` (77), `whip-service.cpp` (98) + `whip-service.h` (18), `whip-utils.h` (107)
+  - Steps: 1) libdatachannel (C++) today; write the spike: `webrtc-rs` vs keep libdatachannel FFI. 2) Port the WHIP output/service glue (offer/answer flow, token). 3) Commit the spike decision.
+  - Done when: spike.
+- [ ] **P5-19.4 Signalling**
+  - Files: `whip-output.cpp` (792) (HTTP POST SDP offer), `whip-service.cpp` (98)
+  - Steps: 1) Port the HTTP POST SDP offer with bearer token. 2) Port ICE trickle/PATCH handling. 3) Test against a mock WHIP server.
+  - Done when: mock server test.
+- [ ] **P5-19.5 Media** — H.264/AV1/Opus tracks, RTCP feedback, packetization.
+  - Files: `whip-output.cpp` (792) (track wiring), `whip-utils.h` (107)
+  - Steps: 1) Port H.264/AV1/Opus track creation + RTCP feedback. 2) Receive the stream on mediamtx; verify codecs/timing.
+  - Done when: receives on mediamtx.
+- [ ] **P5-19.6 Interop** — mediamtx and one hosted WHIP service.
+  - Files: `whip-output.cpp` (792)
+  - Steps: 1) Run against mediamtx (CI) and one hosted service (manual). 2) Record the results.
+  - Done when: both receive the stream.
 - [ ] **P5-19.7/.8** E1/E2
+  - Files: `obs-webrtc.cpp` (19) (module main), `CMakeLists.txt` (target `obs-webrtc` MODULE)
+  - Steps: 1) Bookend E1: `crates/obs-modules/obs-webrtc` cdylib named `obs-webrtc`. 2) Bookend E2: remove the C plugin in the same PR (libdatachannel stays as a dependency per P5-19.3).
+  - Done when: E1 export/loader check passes on each OS; E2 CI green and smoke recorded in `docs/tests/plugin-obs-webrtc.md`.
 
 ### P5-20 `obs-websocket` (submodule, tag 5.7.6)
 - [ ] **P5-20.1/.2** S1/S2 (submodule initialised in this checkout; fresh clones still need `git submodule update --init plugins/obs-websocket`)
-- [ ] **P5-20.3 Transport** — `src/websocketserver/` (`WebSocketServer.cpp` 464 LOC, `WebSocketServer_Protocol.cpp` 411, `rpc/WebSocketSession.h` 109, `types/WebSocketCloseCode.h` 172 + `WebSocketOpCode.h` 129): HTTP upgrade, `obswebsocket.json` / `obswebsocket.msgpack` subprotocols, opcodes Hello(0)/Identify(1)/Identified(2)/Reidentify(3)/Event(5)/Request(6)/RequestResponse(7)/RequestBatch(8)/RequestBatchResponse(9) → `tokio-tungstenite` + JSON/MsgPack codecs. Done when: `obs-websocket-js` connects over both subprotocols.
-- [ ] **P5-20.4 Auth + config** — Hello/Identify with SHA256(+Base64) challenge (`src/utils/Crypto.cpp`: salt → secret → auth string); settings in `src/Config.cpp` (module `config.json`: `first_load`, `server_enabled`, `server_port`, `alerts_enabled`, `auth_required`, `server_password`; CLI overrides `--websocket-port`, `--websocket-ipv4-only`, `--websocket-password`, `--websocket-debug`). Done when: wrong password rejected with the same code and close reason.
-- [ ] **P5-20.5 Requests A** — `src/requesthandler/RequestHandler_{General,Config,Sources,Scenes,Inputs}.cpp` (8+17+3+11+28 request types). Done when: each request type has a test.
-- [ ] **P5-20.6 Requests B** — `RequestHandler_{Transitions,Filters,SceneItems,Outputs,Stream,Record}.cpp` (9+10+17+17+5+9). Done when: same.
-- [ ] **P5-20.7 Requests C + vendor** — `RequestHandler_{MediaInputs,Ui,Canvases}.cpp` (4+8+1; Canvases new in 5.7), vendor API (`lib/obs-websocket-api.h` API v3 + `src/WebSocketApi.cpp`), batch requests (`RequestBatchHandler.cpp`, `rpc/RequestBatchRequest`, `types/RequestBatchExecutionType.h`). Done when: same, incl. a registered vendor request/event round-trip.
-- [ ] **P5-20.8 Events** — `src/eventhandler/` (`EventHandler.cpp` + per-category `EventHandler_*.cpp`, `types/EventSubscription.h` bitmask incl. the 4 high-volume bits; 60 event types). Done when: events delivered in order for a subscribed mask.
-- [ ] **P5-20.9 Protocol reference** — no in-tree protocol test suite at 5.7.6: conformance against `docs/generated/protocol.json` + `protocol.md` (147 requests, 60 events, 7 enums — generated from the C++ doc comments by `docs/docs/generate_md.py`) plus `obs-websocket-js`. Done when: a protocol.json-driven harness passes.
+  - Files: `plugins/obs-websocket/src/obs-websocket.cpp` (322) + `src/obs-websocket.h` (56) (module main), `src/Config.cpp` (227) (ids: no `obs_register_*` — it registers the `OBSWebSocket` service-less module + hotkeys), `CMakeLists.txt` (target `obs-websocket` MODULE)
+  - Steps: 1) Bookend S1: record the module surface — no sources/outputs; the settings keys from `src/Config.cpp` + the 4 CLI overrides + hotkeys. 2) Bookend S2: P0-18 corpus (the `obswebsocket.json` profile settings) through the P0-15 ABI host. 3) Coordinate with the upstream owners before starting (external repo).
+  - Done when: `docs/tests/plugin-obs-websocket-inventory.md` committed; S2 passes.
+- [ ] **P5-20.3 Transport**
+  - Files: `src/websocketserver/` (1 389 lines): `WebSocketServer.cpp` (464), `WebSocketServer.h` (104), `WebSocketServer_Protocol.cpp` (411), `rpc/WebSocketSession.h` (109), `types/WebSocketCloseCode.h` (172), `types/WebSocketOpCode.h` (129)
+  - Steps: 1) Port the HTTP upgrade + `obswebsocket.json`/`obswebsocket.msgpack` subprotocols onto `tokio-tungstenite` + JSON/MsgPack codecs. 2) Keep opcodes exactly: Hello(0)/Identify(1)/Identified(2)/Reidentify(3)/Event(5)/Request(6)/RequestResponse(7)/RequestBatch(8)/RequestBatchResponse(9).
+  - Done when: `obs-websocket-js` connects over both subprotocols.
+- [ ] **P5-20.4 Auth + config**
+  - Files: `src/utils/Crypto.cpp` (85) + `src/utils/Crypto.h` (32), `src/Config.cpp` (227) + `src/Config.h` (47), `src/utils/Platform.cpp` (127)
+  - Steps: 1) Port Hello/Identify with the SHA256(+Base64) challenge (salt → secret → auth string). 2) Port the module `config.json` keys (`first_load`, `server_enabled`, `server_port`, `alerts_enabled`, `auth_required`, `server_password`) + the 4 CLI overrides (`--websocket-port`, `--websocket-ipv4-only`, `--websocket-password`, `--websocket-debug`).
+  - Done when: wrong password rejected with the same code and close reason.
+- [ ] **P5-20.5 Requests A**
+  - Files: `src/requesthandler/RequestHandler_General.cpp` (374), `RequestHandler_Config.cpp` (658), `RequestHandler_Sources.cpp` (357), `RequestHandler_Inputs.cpp` (1114); shared: `RequestHandler.cpp` (239) + `RequestHandler.h` (227), `rpc/Request.cpp` (408) + `Request.h` (86), `rpc/RequestResult.cpp` (38) + `RequestResult.h` (34), `types/RequestStatus.h` (419), `src/utils/Json.cpp` (224) + `Json.h` (103) (8+17+3+11 request types)
+  - Steps: 1) Port the request framework (dispatch, result/status codes, JSON shape). 2) Port the 39 request types of the 4 categories. 3) One test per request type.
+  - Done when: each request type has a test.
+- [ ] **P5-20.6 Requests B**
+  - Files: `src/requesthandler/RequestHandler_Transitions.cpp` (334), `RequestHandler_Filters.cpp` (377), `RequestHandler_SceneItems.cpp` (846), `RequestHandler_Outputs.cpp` (487), `RequestHandler_Stream.cpp` (162), `RequestHandler_Record.cpp` (248) (9+10+17+17+5+9 request types)
+  - Steps: 1) Port the 6 categories onto the P5-20.5 framework. 2) One test per request type.
+  - Done when: same.
+- [ ] **P5-20.7 Requests C + vendor**
+  - Files: `src/requesthandler/RequestHandler_MediaInputs.cpp` (206), `RequestHandler_Ui.cpp` (309), `RequestHandler_Canvases.cpp` (64; new in 5.7), `RequestBatchHandler.cpp` (234) + `RequestBatchHandler.h` (31), `rpc/RequestBatchRequest.cpp` (28) + `RequestBatchRequest.h` (30), `types/RequestBatchExecutionType.h` (84), `src/WebSocketApi.cpp` (377) + `WebSocketApi.h` (89), `lib/obs-websocket-api.h` (259, vendor API v3)
+  - Steps: 1) Port the 3 categories + batch requests (`RequestBatchExecutionType`). 2) Port the vendor API registration (API v3) — third parties use it. 3) Tests incl. a registered vendor request/event round-trip.
+  - Done when: same, incl. a registered vendor request/event round-trip.
+- [ ] **P5-20.8 Events**
+  - Files: `src/eventhandler/` (3 135 lines): `EventHandler.cpp` (671) + `EventHandler.h` (201), `EventHandler_Inputs.cpp` (452), `EventHandler_SceneItems.cpp` (307), `EventHandler_Filters.cpp` (227), `EventHandler_MediaInputs.cpp` (207), `EventHandler_Scenes.cpp` (184), `EventHandler_Outputs.cpp` (174), `EventHandler_Transitions.cpp` (155), `EventHandler_Config.cpp` (145), `EventHandler_Canvases.cpp` (88), `EventHandler_Ui.cpp` (64), `EventHandler_General.cpp` (36), `types/EventSubscription.h` (224) (60 event types)
+  - Steps: 1) Port the event dispatch + the `EventSubscription` bitmask (incl. the 4 high-volume bits). 2) Port the 60 per-category event payloads. 3) Deliver a scripted event storm; assert order for a subscribed mask.
+  - Done when: events delivered in order for a subscribed mask.
+- [ ] **P5-20.9 Protocol reference**
+  - Files: `docs/generated/protocol.json` + `protocol.md` (generated from the C++ doc comments by `docs/docs/generate_md.py`); `src/utils/Obs_*` helpers (1 235 lines across 10 files)
+  - Steps: 1) No in-tree protocol test suite at 5.7.6 — build the `protocol.json`-driven harness (147 requests, 60 events, 7 enums, rpcVersion 1). 2) Run the harness + `obs-websocket-js` against the Rust server.
+  - Done when: a protocol.json-driven harness passes.
 - [ ] **P5-20.10/.11** E1/E2 (also requires P6-36 frontend API; the Qt `src/forms/` dialogs are part of this port)
+  - Files: `src/obs-websocket.cpp` (322) (module main), `src/forms/` (568 lines: `ConnectInfo.cpp` 135, `SettingsDialog.cpp` 331 + 2 headers), `CMakeLists.txt` (target `obs-websocket` MODULE)
+  - Steps: 1) Bookend E1: `crates/obs-modules/obs-websocket` cdylib named `obs-websocket`; the `src/forms/` Qt dialogs are ported with it (frontend API via P6-36). 2) Bookend E2: the submodule's CMake target is removed when the submodule is retired; smoke on each OS.
+  - Done when: E1 export/loader check passes; E2 CI green and smoke recorded in `docs/tests/plugin-obs-websocket.md`.
 
 ### P5-21 `obs-vst`
 - [ ] **P5-21.1/.2** S1/S2
-- [ ] **P5-21.3 Scan/load** — `VSTPlugin.cpp`, `win/`, `mac/`, `linux/`, `headers/`, `vst_header/`. Done when: lists installed VST2 plugins.
-- [ ] **P5-21.4 Audio** — process callback, channel mapping, latency. Done when: test with free plugin.
-- [ ] **P5-21.5 Editor** — `EditorWidget.cpp` window embedding per OS (depends on P6 toolkit). Done when: editor opens.
-- [ ] **P5-21.6 Test** — Done when: a free VST plugin processes audio.
+  - Files: `plugins/obs-vst/obs-vst.cpp` (348) (module main; registers `vst_audio`), `CMakeLists.txt` (target `obs-vst` MODULE)
+  - Steps: 1) Bookend S1: 1 source id `vst_audio`; record the plugin-path settings keys. 2) Bookend S2: P0-18 corpus through the P0-15 ABI host.
+  - Done when: `docs/tests/plugin-obs-vst-inventory.md` committed; S2 passes.
+- [ ] **P5-21.3 Scan/load**
+  - Files: `VSTPlugin.cpp` (429) + `headers/VSTPlugin.h` (110), `win/VSTPlugin-win.cpp` (92), `mac/VSTPlugin-osx.mm` (92), `linux/VSTPlugin-linux.cpp` (69), `vst_header/aeffectx.h` (382), `headers/vst-plugin-callbacks.hpp` (21)
+  - Steps: 1) Keep the C++ plugin (D-11); wire its existing build into Cargo as a cdylib (CMake wrapper). 2) Verify the VST2 scan lists installed plugins on the 3 OSes.
+  - Pitfalls:
+    - D-11 (DECISIONS-NEEDED): the whole plugin stays C++ behind the plugin ABI — the editor-window embedding per OS is the hard part; low value for the risk. Nothing crosses the FFI except the module ABI.
+  - Done when: lists installed VST2 plugins.
+- [ ] **P5-21.4 Audio**
+  - Files: `VSTPlugin.cpp` (429) (process callback), `obs-vst.cpp` (348)
+  - Steps: 1) Verify the process callback, channel mapping, latency handling through the C++-as-cdylib build. 2) Test with a free VST plugin.
+  - Done when: test with free plugin.
+- [ ] **P5-21.5 Editor**
+  - Files: `EditorWidget.cpp` (31) + `headers/EditorWidget.h` (63), `win/EditorWidget-win.cpp` (89), `linux/EditorWidget-linux.cpp` (36) (depends on the P6 toolkit)
+  - Steps: 1) Verify the editor window embedding per OS in the C++ build (Qt host during the port). 2) Record the P6 toolkit dependency.
+  - Done when: editor opens.
+- [ ] **P5-21.6 Test**
+  - Files: `obs-vst.cpp` (348)
+  - Steps: 1) Full-module smoke with a free VST plugin on each OS. 2) Record the results.
+  - Done when: a free VST plugin processes audio.
 - [ ] **P5-21.7/.8** E1/E2 (may remain C++; see P5-50)
+  - Files: `obs-vst.cpp` (348) (module main), `CMakeLists.txt` (target `obs-vst` MODULE)
+  - Steps: 1) Bookend E1: build the existing C++ plugin as `obs-vst.so|.dll|.dylib` via the Cargo CMake wrapper; exports unchanged. 2) Bookend E2: no source deletion (kept as C++ per D-11); record in the P5-50.1 FFI-shim list with owner + reason.
+  - Done when: E1 export/loader check passes; E2 recorded in `docs/tests/plugin-obs-vst.md` + P5-50.1 table.
 
 ### P5-22 `vlc-video`
 - [ ] **P5-22.1/.2** S1/S2
-- [ ] **P5-22.3 libvlc** — `vlc-video-source.c`, `vlc-video-plugin.c/.h`: dynamic load of libvlc, callbacks for video/audio. Done when: plays a file.
-- [ ] **P5-22.4 Playlist** — shuffle/loop/behaviours. Done when: trace equal.
+  - Files: `plugins/vlc-video/vlc-video-plugin.c` (244) (module main; registers `vlc_source`), `vlc-video-plugin.h` (216, libvlc declarations), `CMakeLists.txt` (target `vlc-video` MODULE)
+  - Steps: 1) Bookend S1: 1 source id `vlc_source`; record the playlist/loop settings keys. 2) Bookend S2: P0-18 corpus through the P0-15 ABI host.
+  - Done when: `docs/tests/plugin-vlc-video-inventory.md` committed; S2 passes.
+- [ ] **P5-22.3 libvlc**
+  - Files: `vlc-video-source.c` (1170), `vlc-video-plugin.c` (244) + `vlc-video-plugin.h` (216)
+  - Steps: 1) Dynamic-load libvlc (dlopen pattern, version gate) — do not link statically. 2) Port the video-output callback (format → texture) and the audio callback. 3) Play a file.
+  - Done when: plays a file.
+- [ ] **P5-22.4 Playlist** — shuffle/loop/behaviours.
+  - Files: `vlc-video-source.c` (1170) (playlist state machine)
+  - Steps: 1) Port the playlist shuffle/loop/behaviour state machine. 2) Trace the event sequence; compare with C.
+  - Done when: trace equal.
 - [ ] **P5-22.5/.6** E1/E2
+  - Files: `vlc-video-plugin.c` (244) (module main), `CMakeLists.txt` (target `vlc-video` MODULE)
+  - Steps: 1) Bookend E1: `crates/obs-modules/vlc-video` cdylib named `vlc-video`. 2) Bookend E2: remove the C plugin in the same PR.
+  - Done when: E1 export/loader check passes on each OS; E2 CI green and smoke recorded in `docs/tests/plugin-vlc-video.md`.
 
 ## C. Platform capture and audio
 
 ### P5-23 `linux-pipewire`
 - [ ] **P5-23.1/.2** S1/S2
-- [ ] **P5-23.3 Portal** — Files: `portal.c/.h`, `screencast-portal.c/.h`: `ashpd`/`zbus` session, `CreateSession`, `SelectSources`, `Start`, restore tokens. Done when: capture starts and re-starts without prompt.
-- [ ] **P5-23.4 Streams** — `pipewire.c/.h`, `formats.c/.h`: format negotiation, modifiers, cursor metadata, damage. Done when: formats table equal.
-- [ ] **P5-23.5 DMA-BUF** import (needs P3-18). Done when: DMA-BUF texture renders.
-- [ ] **P5-23.6 Camera** — `camera-portal.c/.h`, `linux-pipewire.c`: device listing, controls. Done when: camera preview.
-- [ ] **P5-23.7 Matrix** — GNOME, KDE, wlroots. Done when: results recorded in `docs/tests/`.
+  - Files: `plugins/linux-pipewire/linux-pipewire.c` (68) (module main; 4 sources), `CMakeLists.txt` (target `linux-pipewire` MODULE)
+  - Steps: 1) Bookend S1: the 4 source ids from S-056 §1 — `pipewire-camera-source` (ASYNC_VIDEO), `pipewire-desktop-capture-source`, `pipewire-window-capture-source` (both VIDEO|DO_NOT_DUPLICATE|CAP_OBSOLETE), `pipewire-screen-capture-source` (VIDEO|DO_NOT_DUPLICATE). 2) Bookend S2: P0-18 corpus through the P0-15 ABI host (Linux).
+  - Spec: S-056 §1 (source ids and flags)
+  - Done when: `docs/tests/plugin-linux-pipewire-inventory.md` committed; S2 passes.
+- [ ] **P5-23.3 Portal**
+  - Files: `portal.c` (190) + `portal.h` (34), `screencast-portal.c` (760) + `screencast-portal.h` (24)
+  - Steps: 1) Port the xdg-desktop-portal session via `ashpd`/`zbus`: `CreateSession`, `SelectSources`, `Start`, restore tokens. 2) Run the `pipewire` runner (portal fakes).
+  - Spec: S-056 (portal helpers + screencast rules)
+  - Vectors: `test/conformance/scripts/pipewire/`
+  - Pitfalls:
+    - S-056 Q-2: server version `"1.2"` fails the 3-field parse but leaves major=1, minor=2, micro=0 — version gates evaluate as 1.2.0.
+    - S-056 D-1: `on_registry_global_remove_cb` logs `device_id` after the hash table freed it — the port logs the device name, not the freed pointer.
+    - S-056 D-2: a Start reply with 0 streams underflows `n_streams - 1` and loops — REQUIRED: treat as failure (log, stop).
+  - Done when: capture starts and re-starts without prompt.
+- [ ] **P5-23.4 Streams**
+  - Files: `pipewire.c` (1471) + `pipewire.h` (63), `formats.c` (120) + `formats.h` (38)
+  - Steps: 1) Port the PipeWire connection, format negotiation (SPA format table), modifiers, cursor metadata, damage handling. 2) Run the `pipewire` runner (stream engine fakes).
+  - Spec: S-056 (stream engine rules R1–R40)
+  - Vectors: `test/conformance/scripts/pipewire/`
+  - Pitfalls:
+    - S-056 Q-1: the `pw_stream_destroy` path tests `flags & OBS_SOURCE_ASYNC_VIDEO` as a bitmask, so every video source clears async frames — SHOULD match.
+    - S-056 Q-8: a stale framerate is re-applied after format changes; `RestoreToken` keeps the old value after Reload until next save.
+  - Done when: formats table equal.
+- [ ] **P5-23.5 DMA-BUF** import (needs P3-18).
+  - Files: `pipewire.c` (1471) (DMA-BUF buffer path)
+  - Steps: 1) Import the DMA-BUF fd via the P3-18 shared-texture path. 2) Render a captured frame to a texture.
+  - Done when: DMA-BUF texture renders.
+- [ ] **P5-23.6 Camera**
+  - Files: `camera-portal.c` (1352) + `camera-portal.h` (24), `linux-pipewire.c` (68)
+  - Steps: 1) Port the Camera portal: device listing, controls, the stream. 2) Verify a camera preview.
+  - Spec: S-056 (camera portal rules)
+  - Vectors: `test/conformance/scripts/pipewire/`
+  - Pitfalls:
+    - S-056 Q-5: camera `initializing` is never cleared after a denial/failure — no later source asks again until `camera_portal_unload`.
+    - S-056 Q-9: request subscriptions of failed calls leak in C (no cancellable) — the port removes them.
+  - Done when: camera preview.
+- [ ] **P5-23.7 Matrix** — GNOME, KDE, wlroots.
+  - Files: `linux-pipewire.c` (68) (module main)
+  - Steps: 1) Run screen/camera/audio capture on GNOME, KDE and wlroots. 2) Record results in `docs/tests/`.
+  - Done when: results recorded in `docs/tests/`.
 - [ ] **P5-23.8/.9** E1/E2
+  - Files: `linux-pipewire.c` (68) (module main), `CMakeLists.txt` (target `linux-pipewire` MODULE)
+  - Steps: 1) Bookend E1: `crates/obs-modules/linux-pipewire` cdylib named `linux-pipewire` (Linux build). 2) Bookend E2: remove the C plugin in the same PR; smoke on Linux.
+  - Done when: E1 export/loader check passes on Linux; E2 CI green and smoke recorded in `docs/tests/plugin-linux-pipewire.md`.
 
 ### P5-24 `linux-capture`
 - [ ] **P5-24.1/.2** S1/S2
-- [ ] **P5-24.3 XSHM** — `xshm-input.c`, `xhelpers.c/.h`. Done when: monitor capture.
-- [ ] **P5-24.4 XComposite** — `xcomposite-input.c/.h`: window list, redirect, GLX/EGL pixmap. Done when: window capture.
-- [ ] **P5-24.5 Cursor** — `xcursor-xcb.c/.h`. Done when: cursor visible.
+  - Files: `plugins/linux-capture/linux-capture.c` (48) (module main; registers `xshm_input`, `xcomposite_input`, `xcursor_x11`), `CMakeLists.txt` (target `linux-capture` MODULE)
+  - Steps: 1) Bookend S1: the 3 source ids + settings keys. 2) Bookend S2: P0-18 corpus through the P0-15 ABI host (Linux/X11).
+  - Done when: `docs/tests/plugin-linux-capture-inventory.md` committed; S2 passes.
+- [ ] **P5-24.3 XSHM**
+  - Files: `xshm-input.c` (609), `xhelpers.c` (326) + `xhelpers.h` (146), `linux-capture.c` (48)
+  - Steps: 1) Port the SHM attach + the X11 helpers (display, window geometry) via `x11rb`. 2) Run the `xshm-01..05` scripts.
+  - Spec: S-049 §5.8 (xshm)
+  - Vectors: `test/conformance/scripts/linuxcapture/`
+  - Pitfalls:
+    - S-049 D-5: crop values larger than the screen give zero/negative `adj_*` and wrap in C — treat `adj_w <= 0 || adj_h <= 0` as a failed geometry; MUST match for 0 < size.
+    - S-049 Q-5: with a screen origin `<= 0` and non-zero `cut_top`/`cut_left` the origin is ignored.
+  - Done when: monitor capture.
+- [ ] **P5-24.4 XComposite**
+  - Files: `xcomposite-input.c` (985) + `xcomposite-input.h` (4)
+  - Steps: 1) Port the window list, redirect, GLX/EGL pixmap capture. 2) Capture a window (no vectors: catalogued in S-049 §5.11 — test manually).
+  - Spec: S-049 §5.11 (xcomposite, catalogued)
+  - Vectors: none (catalogued, no scripts)
+  - Pitfalls:
+    - S-049 D-7: a window string with exactly one `\r\n` makes `secondMark - secondStr` undefined in C — treat as "id only" and ignore the rest.
+  - Done when: window capture.
+- [ ] **P5-24.5 Cursor**
+  - Files: `xcursor-xcb.c` (147) + `xcursor-xcb.h` (83)
+  - Steps: 1) Port the cursor image capture (shape + position via XCB). 2) Verify the cursor is visible in captures.
+  - Done when: cursor visible.
 - [ ] **P5-24.6/.7** E1/E2
+  - Files: `linux-capture.c` (48) (module main), `CMakeLists.txt` (target `linux-capture` MODULE)
+  - Steps: 1) Bookend E1: `crates/obs-modules/linux-capture` cdylib named `linux-capture` (Linux build). 2) Bookend E2: remove the C plugin in the same PR; smoke on Linux/X11.
+  - Done when: E1 export/loader check passes on Linux; E2 CI green and smoke recorded in `docs/tests/plugin-linux-capture.md`.
 
 ### P5-25 `linux-v4l2`
 - [ ] **P5-25.1/.2** S1/S2
-- [ ] **P5-25.3 Enumeration** — `v4l2-helpers.c/.h`, formats, frame sizes/rates. Done when: lists equal `v4l2-ctl`.
-- [ ] **P5-25.4 Capture** — `v4l2-input.c`, `v4l2-controls.c/.h`, `v4l2-decoder.c/.h` (MJPEG decode). Done when: preview.
-- [ ] **P5-25.5 Hotplug** — `v4l2-udev.c/.h` via `udev` crate; `v4l2-output.c` (virtual cam output). Done when: plug/unplug test.
+  - Files: `plugins/linux-v4l2/linux-v4l2.c` (42) (module main; registers `v4l2_input_capture` + the `v4l2_output` virtual cam), `CMakeLists.txt` (target `linux-v4l2` MODULE)
+  - Steps: 1) Bookend S1: source id `v4l2_input_capture` + output id `v4l2_output`; record the device/format/framerate keys. 2) Bookend S2: P0-18 corpus through the P0-15 ABI host (Linux).
+  - Done when: `docs/tests/plugin-linux-v4l2-inventory.md` committed; S2 passes.
+- [ ] **P5-25.3 Enumeration**
+  - Files: `v4l2-helpers.c` (315) + `v4l2-helpers.h` (327)
+  - Steps: 1) Port the V4L2 ioctl helpers (formats, frame sizes/rates, standards) via the `v4l` crate. 2) Compare the lists with `v4l2-ctl`. 3) Run the `v4l2-01..04` scripts.
+  - Spec: S-049 §4.1–4.3, §5.1 (packed tuples, hardcoded tables, pixel map)
+  - Vectors: `test/conformance/scripts/linuxinputs/`
+  - Pitfalls:
+    - S-049 Q-1: `pack(0,b)` is the legacy encoding — `pack(0,70000)` unpacks as `(1,4464)`.
+    - S-049 D-2: a failing first enumeration ioctl leaves the type uninitialised in C — behave as "not discrete" → hardcoded table.
+  - Done when: lists equal `v4l2-ctl`.
+- [ ] **P5-25.4 Capture**
+  - Files: `v4l2-input.c` (1109), `v4l2-controls.c` (151) + `v4l2-controls.h` (39), `v4l2-decoder.c` (129) + `v4l2-decoder.h` (68) (MJPEG decode)
+  - Steps: 1) Port the capture loop (DQBUF/QBUF), the controls, the MJPEG decoder. 2) Run the `v4l2-05..15` scripts; verify a preview.
+  - Spec: S-049 §5.2–5.6
+  - Vectors: `test/conformance/scripts/linuxinputs/`
+  - Pitfalls:
+    - S-049 D-1: `v4l2_framerate_list` narrows `pack(num,den)` to 32 bits in C (list shows `den` only) — REQUIRED: store the full `pack` value and exclude `v4l2-12` from comparison with a documented deviation.
+    - S-049 D-3: `G_STD`/`S_STD` use 64-bit `v4l2_std_id` into a 4-byte `int` in C — the port uses a 64-bit id.
+  - Done when: preview.
+- [ ] **P5-25.5 Hotplug**
+  - Files: `v4l2-udev.c` (203) + `v4l2-udev.h` (47) via the `udev` crate, `v4l2-output.c` (325) (virtual cam output)
+  - Steps: 1) Port the udev hotplug watcher. 2) Port `v4l2_output` (virtual cam). 3) Plug/unplug test.
+  - Spec: S-049 (hotplug + output, catalogued)
+  - Pitfalls:
+    - S-049 D-4: `format_selected` leaks the device fd on `get_input_caps` failure in C — the port closes it.
+  - Done when: plug/unplug test.
 - [ ] **P5-25.6/.7** E1/E2
+  - Files: `linux-v4l2.c` (42) (module main), `CMakeLists.txt` (target `linux-v4l2` MODULE)
+  - Steps: 1) Bookend E1: `crates/obs-modules/linux-v4l2` cdylib named `linux-v4l2` (Linux build). 2) Bookend E2: remove the C plugin in the same PR; smoke on Linux.
+  - Done when: E1 export/loader check passes on Linux; E2 CI green and smoke recorded in `docs/tests/plugin-linux-v4l2.md`.
 
 ### P5-26 `linux-pulseaudio`
 - [ ] **P5-26.1/.2** S1/S2
-- [ ] **P5-26.3 Capture** — input/output (monitor) sources via `libpulse-binding`. Done when: levels visible.
-- [ ] **P5-26.4 Devices** — hotplug, default devices. Done when: switching default works.
-- [ ] **P5-26.5 Monitoring** — with P2-15 backend. Done when: monitor capture works.
+  - Files: `plugins/linux-pulseaudio/linux-pulseaudio.c` (34) (module main; registers `pulse_input_capture`, `pulse_output_capture`), `CMakeLists.txt` (target `linux-pulseaudio` MODULE)
+  - Steps: 1) Bookend S1: the 2 source ids + device keys. 2) Bookend S2: P0-18 corpus through the P0-15 ABI host (Linux).
+  - Done when: `docs/tests/plugin-linux-pulseaudio-inventory.md` committed; S2 passes.
+- [ ] **P5-26.3 Capture**
+  - Files: `pulse-input.c` (601), `pulse-wrapper.c` (260) + `pulse-wrapper.h` (149)
+  - Steps: 1) Port input (capture) and output (monitor) sources via `libpulse-binding`. 2) Run the `pulse-01..06` scripts.
+  - Spec: S-049 §5.7 (linux-pulseaudio)
+  - Vectors: `test/conformance/scripts/linuxinputs/`
+  - Done when: levels visible.
+- [ ] **P5-26.4 Devices** — hotplug, default devices.
+  - Files: `pulse-input.c` (601) (device enumeration + change handling)
+  - Steps: 1) Port the device hotplug + default-device handling. 2) Switch the server default; verify the restart.
+  - Spec: S-049 §5.7
+  - Vectors: `test/conformance/scripts/linuxinputs/`
+  - Pitfalls:
+    - S-049 Q-3: after a device change the "Stopped recording from" line names the NEW device (the string is replaced before stopping).
+    - S-049 Q-4: `device_id == "default"` is resolved in place, so every later `update` with `"default"` compares unequal and restarts the stream.
+  - Done when: switching default works.
+- [ ] **P5-26.5 Monitoring** — with P2-15 backend.
+  - Files: `pulse-input.c` (601) (monitor path)
+  - Steps: 1) Wire the monitor (output) source to the P2-15 audio backend. 2) Verify monitor capture.
+  - Done when: monitor capture works.
 - [ ] **P5-26.6/.7** E1/E2
+  - Files: `linux-pulseaudio.c` (34) (module main), `CMakeLists.txt` (target `linux-pulseaudio` MODULE)
+  - Steps: 1) Bookend E1: `crates/obs-modules/linux-pulseaudio` cdylib named `linux-pulseaudio` (Linux build). 2) Bookend E2: remove the C plugin in the same PR; smoke on Linux.
+  - Done when: E1 export/loader check passes on Linux; E2 CI green and smoke recorded in `docs/tests/plugin-linux-pulseaudio.md`.
 
 ### P5-27 `linux-alsa`
 - [ ] **P5-27.1/.2** S1/S2
-- [ ] **P5-27.3 Input** — `alsa-input.c`, `linux-alsa.c`: `alsa` crate, device list, rate/format negotiation. Done when: capture works.
+  - Files: `plugins/linux-alsa/linux-alsa.c` (32) (module main; registers `alsa_input_capture`), `CMakeLists.txt` (target `linux-alsa` MODULE)
+  - Steps: 1) Bookend S1: source id `alsa_input_capture`; record the device/format keys. 2) Bookend S2: P0-18 corpus through the P0-15 ABI host (Linux).
+  - Done when: `docs/tests/plugin-linux-alsa-inventory.md` committed; S2 passes.
+- [ ] **P5-27.3 Input**
+  - Files: `alsa-input.c` (654), `linux-alsa.c` (32)
+  - Steps: 1) Port the device list, rate/format negotiation, the capture loop via the `alsa` crate. 2) Verify capture (no vectors: catalogued in S-049 §5.9).
+  - Spec: S-049 §5.9 (linux-alsa, catalogued — no vectors)
+  - Done when: capture works.
 - [ ] **P5-27.4/.5** E1/E2
+  - Files: `linux-alsa.c` (32) (module main), `CMakeLists.txt` (target `linux-alsa` MODULE)
+  - Steps: 1) Bookend E1: `crates/obs-modules/linux-alsa` cdylib named `linux-alsa` (Linux build). 2) Bookend E2: remove the C plugin in the same PR; smoke on Linux.
+  - Done when: E1 export/loader check passes on Linux; E2 CI green and smoke recorded in `docs/tests/plugin-linux-alsa.md`.
 
 ### P5-28 `linux-jack`
 - [ ] **P5-28.1/.2** S1/S2
-- [ ] **P5-28.3 Client** — `jack-input.c`, `jack-wrapper.c/.h`: ports, autoconnect, xruns. Done when: capture works.
+  - Files: `plugins/linux-jack/linux-jack.c` (32) (module main; registers `jack_output_capture`), `CMakeLists.txt` (target `linux-jack` MODULE)
+  - Steps: 1) Bookend S1: source id `jack_output_capture`. 2) Bookend S2: P0-18 corpus through the P0-15 ABI host (Linux).
+  - Done when: `docs/tests/plugin-linux-jack-inventory.md` committed; S2 passes.
+- [ ] **P5-28.3 Client**
+  - Files: `jack-input.c` (155), `jack-wrapper.c` (166) + `jack-wrapper.h` (51), `linux-jack.c` (32)
+  - Steps: 1) Port the JACK client: ports, autoconnect, the process callback, xrun handling. 2) Verify capture (no vectors: catalogued in S-049 §5.10).
+  - Spec: S-049 §5.10 (linux-jack, catalogued — no vectors)
+  - Pitfalls:
+    - S-049 D-6: `data->samples_per_sec` is never assigned in C, so the cycle-times fallback divides by zero — the port uses the JACK sample rate.
+  - Done when: capture works.
 - [ ] **P5-28.4/.5** E1/E2
+  - Files: `linux-jack.c` (32) (module main), `CMakeLists.txt` (target `linux-jack` MODULE)
+  - Steps: 1) Bookend E1: `crates/obs-modules/linux-jack` cdylib named `linux-jack` (Linux build). 2) Bookend E2: remove the C plugin in the same PR; smoke on Linux.
+  - Done when: E1 export/loader check passes on Linux; E2 CI green and smoke recorded in `docs/tests/plugin-linux-jack.md`.
 
 ### P5-29 `oss-audio`, `sndio`
 - [ ] **P5-29.1/.2** S1/S2 (both plugins)
-- [ ] **P5-29.3 OSS** — `oss-input.c`, `oss-audio.c`, `oss-platform.h.in`. Done when: FreeBSD run.
-- [ ] **P5-29.4 sndio** — `sndio.c`, `sndio-input.c/.h`. Done when: OpenBSD run.
+  - Files: `plugins/oss-audio/oss-audio.c` (33) (registers `oss_input_capture`), `plugins/sndio/sndio.c` (32) (registers `sndio_output_capture`), both `CMakeLists.txt`
+  - Steps: 1) Bookend S1: ids `oss_input_capture` + `sndio_output_capture` + device keys. 2) Bookend S2: P0-18 corpus through the P0-15 ABI host (the respective BSD/Linux host).
+  - Done when: `docs/tests/plugin-oss-audio-inventory.md` + `docs/tests/plugin-sndio-inventory.md` committed; S2 passes.
+- [ ] **P5-29.3 OSS**
+  - Files: `plugins/oss-audio/oss-input.c` (693), `oss-audio.c` (33), `oss-platform.h.in` (3)
+  - Steps: 1) Port the OSS device open/read loop (raw PCM). 2) Run on FreeBSD.
+  - Done when: FreeBSD run.
+- [ ] **P5-29.4 sndio**
+  - Files: `plugins/sndio/sndio-input.c` (392) + `sndio-input.h` (18), `sndio.c` (32)
+  - Steps: 1) Port the sndio open/read loop via the `sndio` crate. 2) Run on OpenBSD.
+  - Done when: OpenBSD run.
 - [ ] **P5-29.5/.6** E1/E2 (added; E2 = BSD smoke run recorded in `docs/tests/`)
+  - Files: `oss-audio.c` (33), `sndio.c` (32) (module mains), both `CMakeLists.txt`
+  - Steps: 1) Bookend E1: `crates/obs-modules/oss-audio` + `crates/obs-modules/sndio` cdylibs named `oss-audio`/`sndio` (BSD builds). 2) Bookend E2: remove the C plugins in the same PR; record the BSD smoke run.
+  - Done when: E1 export/loader check passes on the target OS; E2 smoke run recorded in `docs/tests/plugin-oss-audio.md` + `docs/tests/plugin-sndio.md`.
 
 ### P5-30 `win-wasapi`
 - [ ] **P5-30.1/.2** S1/S2
-- [ ] **P5-30.3 Devices** — `enum-wasapi.cpp/.hpp`, `wasapi-notify.cpp/.hpp` (IMMNotificationClient). Done when: hotplug.
-- [ ] **P5-30.4 Capture** — `win-wasapi.cpp`: shared mode loop, buffer sizes, resample. Done when: levels and latency.
-- [ ] **P5-30.5 Process loopback** — application audio capture (`ActivateAudioInterfaceAsync`), `plugin-main.cpp`. Done when: captures one app.
-- [ ] **P5-30.6 Latency tests** — Done when: latency within C's measurements.
+  - Files: `plugins/win-wasapi/plugin-main.cpp` (76) (module main; registers `wasapi_input_capture` + `wasapi_output_capture`), `CMakeLists.txt` (target `win-wasapi` MODULE)
+  - Steps: 1) Bookend S1: the 2 source ids + device/format keys. 2) Bookend S2: P0-18 corpus through the P0-15 ABI host (Windows).
+  - Done when: `docs/tests/plugin-win-wasapi-inventory.md` committed; S2 passes.
+- [ ] **P5-30.3 Devices**
+  - Files: `enum-wasapi.cpp` (97) + `enum-wasapi.hpp` (41), `wasapi-notify.cpp` (109) + `wasapi-notify.hpp` (31)
+  - Steps: 1) Port the COM enumeration (`IMMDeviceEnumerator`) + `IMMNotificationClient` hotplug via the `windows` crate. 2) Run the `wasapi_defaults`, `wasapi_layout`, `wasapi_default_device` scripts.
+  - Spec: S-051 §5.G (WASAPI sources)
+  - Vectors: `test/conformance/scripts/wincapture/`
+  - Done when: hotplug.
+- [ ] **P5-30.4 Capture**
+  - Files: `win-wasapi.cpp` (1648)
+  - Steps: 1) Port the shared-mode capture loop, buffer sizes, resample. 2) Run the `wasapi_update` script; verify levels and latency.
+  - Spec: S-051 §5.G
+  - Vectors: `test/conformance/scripts/wincapture/`
+  - Pitfalls:
+    - S-051 Q-8: `device_id == "default"` compare is case-insensitive for `is_default` but case-sensitive for restart.
+    - S-051 Q-1: an unknown channel mask maps to layout = channel count — clamp unsupported counts to "unknown/stereo" at the audio-API boundary.
+  - Done when: levels and latency.
+- [ ] **P5-30.5 Process loopback** — application audio capture (`ActivateAudioInterfaceAsync`).
+  - Files: `win-wasapi.cpp` (1648) (process loopback section), `plugin-main.cpp` (76)
+  - Steps: 1) Port the process loopback path (`ActivateAudioInterfaceAsync` + the audio session interface). 2) Capture one app's audio.
+  - Spec: S-051 §5.G
+  - Done when: captures one app.
+- [ ] **P5-30.6 Latency tests**
+  - Files: `win-wasapi.cpp` (1648)
+  - Steps: 1) Measure the capture latency with C and Rust (loopback through a known path). 2) Record both numbers.
+  - Done when: latency within C's measurements.
 - [ ] **P5-30.7/.8** E1/E2
+  - Files: `plugin-main.cpp` (76) (module main), `CMakeLists.txt` (target `win-wasapi` MODULE)
+  - Steps: 1) Bookend E1: `crates/obs-modules/win-wasapi` cdylib named `win-wasapi` (Windows build). 2) Bookend E2: remove the C plugin in the same PR; smoke on Windows.
+  - Done when: E1 export/loader check passes on Windows; E2 CI green and smoke recorded in `docs/tests/plugin-win-wasapi.md`.
 
 ### P5-31 `win-capture`
 - [ ] **P5-31.1/.2** S1/S2
-- [ ] **P5-31.3 DXGI duplication** — `duplicator-monitor-capture.c`, `monitor-capture.c`. Done when: monitor capture incl. multi-GPU.
-- [ ] **P5-31.4 WGC** — via the `libobs-winrt` module (existing C module during the port; its Rust port is P5-33). Done when: monitor and window capture.
-- [ ] **P5-31.5 Window/BitBlt** — `window-capture.c`, `dc-capture.c/.h`, `app-helpers.c/.h`, `compat-helpers.c/.h` (compat list). Done when: window selection by title/class/exe.
-- [ ] **P5-31.6 Game capture host** — `game-capture.c`, `game-capture-file-init.c`, `load-graphics-offsets.c`, `nt-stuff.c/.h` plus `shared/ipc-util` (the named-pipe IPC the hook process uses; the only consumers in the tree are game capture and its hook build, so it ports here): hook state machine, shared memory/events, anti-cheat compat. Done when: hooks a D3D11 sample.
-- [ ] **P5-31.7 Hook DLL and helpers** — `graphics-hook/` (`d3d8/9/10/11/12`, `dxgi`, `gl`, `vulkan` capture), `inject-helper/inject-helper.c`, `get-graphics-offsets/`. Stay C/C++ initially; wrap build only. Done when: builds from Cargo.
-- [ ] **P5-31.8 Cursor** — `cursor-capture.c/.h`. Done when: cursor visible.
-- [ ] **P5-31.9 API matrix** — D3D8/9/10/11/12, OpenGL, Vulkan samples. Done when: matrix recorded in `docs/tests/`.
+  - Files: `plugins/win-capture/plugin-main.c` (161) (module main; registers `monitor_capture`, `window_capture`, `game_capture`, `cursor`), `CMakeLists.txt` (target `win-capture` MODULE)
+  - Steps: 1) Bookend S1: the 4 source ids + all settings keys (window strings, monitor index, cursor mode). 2) Bookend S2: P0-18 corpus through the P0-15 ABI host (Windows).
+  - Done when: `docs/tests/plugin-win-capture-inventory.md` committed; S2 passes.
+- [ ] **P5-31.3 DXGI duplication**
+  - Files: `duplicator-monitor-capture.c` (867), `monitor-capture.c` (235)
+  - Steps: 1) Port the DXGI desktop duplication monitor capture (multi-GPU aware). 2) Run the `monitor_settings` script; verify capture.
+  - Spec: S-051 §5.E (monitor/display capture)
+  - Vectors: `test/conformance/scripts/wincapture/`
+  - Done when: monitor capture incl. multi-GPU.
+- [ ] **P5-31.4 WGC**
+  - Files: `window-capture.c` (846) (WGC path; loads the `libobs-winrt` module by name at line 311), `duplicator-monitor-capture.c` (867) (line 435)
+  - Steps: 1) Port the WGC integration via the `libobs-winrt` module (existing C module during the port; its Rust port is P5-33). 2) Verify monitor and window capture through WGC.
+  - Spec: S-051 §5.C (window capture)
+  - Vectors: `test/conformance/scripts/wincapture/`
+  - Done when: monitor and window capture.
+- [ ] **P5-31.5 Window/BitBlt**
+  - Files: `window-capture.c` (846), `dc-capture.c` (242) + `dc-capture.h` (34), `app-helpers.c` (82) + `app-helpers.h` (10), `compat-helpers.c` (190) + `compat-helpers.h` (17) + `compat-format-ver.h` (3)
+  - Steps: 1) Port the window enumeration + identity strings, the BitBlt/DC path, the compat list. 2) Run the `window_*`, `compat_check` scripts.
+  - Spec: S-051 §5.B (window identity strings), §5.C, §5.H (compat list)
+  - Vectors: `test/conformance/scripts/wincapture/`
+  - Pitfalls:
+    - S-051 Q-3: `find_top_level` ignores UWP children and always skips cloaked windows.
+    - S-051 Q-7: the `explorer.exe` empty-title filter compares case-sensitively while all other exe tests are case-insensitive.
+    - S-051 D-2: `compat_json_free` leaves a dangling cache pointer in C — reset to empty.
+  - Done when: window selection by title/class/exe.
+- [ ] **P5-31.6 Game capture host**
+  - Files: `game-capture.c` (2354), `game-capture-file-init.c` (348), `load-graphics-offsets.c` (224), `nt-stuff.c` (233) + `nt-stuff.h` (7), `audio-helpers.c` (125) + `audio-helpers.h` (27); `shared/ipc-util/ipc-util/` (`pipe.h` 53, `pipe-windows.c` 271, `pipe-windows.h` 43, `pipe-posix.c` 17, `pipe-posix.h` 21 — the only consumers in the tree are game capture and the hook build, so it ports here)
+  - Steps: 1) Port the hook state machine, shared memory/events, anti-cheat compat handling. 2) Port `shared/ipc-util` (named-pipe IPC) into the crate. 3) Run the `gc_*`, `hook_*` scripts.
+  - Spec: S-051 §4.1–4.4 (hook protocol, kernel names, shared-memory layout), §5.D
+  - Vectors: `test/conformance/scripts/wincapture/`
+  - Done when: hooks a D3D11 sample.
+- [ ] **P5-31.7 Hook DLL and helpers**
+  - Files: `graphics-hook/` (15 files / 8 180 lines: `vulkan-capture.c` 2103 + `vulkan-capture.h` 875, `d3d9-capture.cpp` 866 + `d3d9-patches.hpp` 184, `gl-capture.c` 881 + `gl-decs.h` 144, `graphics-hook.c` 907 + `graphics-hook.h` 263, `d3d12-capture.cpp` 441, `d3d8-capture.cpp` 396, `d3d10-capture.cpp` 370, `d3d11-capture.cpp` 328, `dxgi-capture.cpp` 353 + `dxgi-helpers.hpp` 52), `inject-helper/inject-helper.c` (118), `get-graphics-offsets/` (6 files / 641 lines: `d3d9-offsets.cpp` 355, `dxgi-offsets.cpp` 116, `d3d8-offsets.cpp` 86, `get-graphics-offsets.c` 50 + `.h` 33, `ddraw-offsets.cpp` 1)
+  - Steps: 1) Keep the hook + helpers C/C++ (D-08); wrap their existing CMake targets (`graphics-hook` MODULE, `inject-helper`/`get-graphics-offsets` executables) from Cargo. 2) Build all three from the Cargo workspace.
+  - Pitfalls:
+    - D-08 (DECISIONS-NEEDED): `graphics-hook/`, `inject-helper/`, `get-graphics-offsets/` stay C/C++ — the hook is injected into third-party games and is ABI-sensitive. The only FFI crossing is the named-pipe IPC (P5-31.6 `ipc-util` protocol) + the shared-memory/event layout (S-051 §4.3–4.4), which the Rust host owns.
+  - Done when: builds from Cargo.
+- [ ] **P5-31.8 Cursor**
+  - Files: `cursor-capture.c` (257) + `cursor-capture.h` (28)
+  - Steps: 1) Port the cursor capture (image + position). 2) Verify the cursor is visible.
+  - Spec: S-051 (cursor rules)
+  - Vectors: `test/conformance/scripts/wincapture/`
+  - Done when: cursor visible.
+- [ ] **P5-31.9 API matrix** — D3D8/9/10/11/12, OpenGL, Vulkan samples.
+  - Files: `plugin-main.c` (161) (module main)
+  - Steps: 1) Run each graphics API sample through game capture with the hook. 2) Record the matrix in `docs/tests/`.
+  - Done when: matrix recorded in `docs/tests/`.
+
 - [ ] **P5-31.10/.11** E1/E2
+  - Files: `plugin-main.c` (161) (module main), `CMakeLists.txt` (targets: `win-capture` MODULE, `graphics-hook` MODULE, `inject-helper` + `get-graphics-offsets` executables)
+  - Steps: 1) Bookend E1: `crates/obs-modules/win-capture` cdylib named `win-capture` (host side); the hook/helpers stay C++ (D-08) and keep their module/executable names. 2) Bookend E2: remove the ported host-side C sources in the same PR; keep `graphics-hook/`, `inject-helper/`, `get-graphics-offsets/` until P7-03.3.
+  - Done when: E1 export/loader check passes on Windows; E2 CI green and smoke recorded in `docs/tests/plugin-win-capture.md`.
 
 ### P5-32 `win-dshow`
 - [ ] **P5-32.1/.2** S1/S2 (`deps/libdshowcapture/src` submodule initialised in this checkout; fresh clones need `git submodule update --init --recursive deps/libdshowcapture` — it has a nested Elgato submodule)
-- [ ] **P5-32.3 Bindings** — `libdshowcapture` FFI (D-19): public API is `src/dshowcapture.hpp` (306 LOC: `DShowDevice`/`DShowDeviceEx`, VideoFormat MJPEG=400/H264=401/HEVC=402, AudioFormat Wave16bit=100…MPGA=202 per S-051 §11); keep the C++ library (44 files / 8.1k LOC under `src/`; ATL-free since the `no-atl` line — own `ComPtr.hpp`/`CoTaskMemPtr.hpp`, no `atlbase.h`; the nested `src/external/capture-device-support` Elgato submodule must be initialised for the build). Done when: device enumeration + capture via the Rust binding match C.
-- [ ] **P5-32.4 Source** — `win-dshow.cpp`, `ffmpeg-decode.c/.h`, `encode-dstr.hpp` (+ `shared/obs-tiny-nv12-scale`): formats, MJPEG/H.264 decode, audio. Done when: webcam preview.
-- [ ] **P5-32.5 Hardware encoder devices** — `win-dshow-encoder.cpp`. Done when: lists devices.
-- [ ] **P5-32.6 Virtual cam** — `virtualcam.c`, `virtualcam-module/` (`virtualcam-filter.cpp`, `virtualcam-module.cpp`, install/uninstall scripts), `shared-memory-queue.c/.h`. Done when: visible in a video-call app.
+  - Files: `plugins/win-dshow/dshow-plugin.cpp` (54) (module main; registers `dshow_input`, `obs_dshow_c985`, `obs_dshow_c353`), `CMakeLists.txt` (target `win-dshow` MODULE)
+  - Steps: 1) Bookend S1: the 3 source ids + device/format keys. 2) Bookend S2: P0-18 corpus through the P0-15 ABI host (Windows).
+  - Done when: `docs/tests/plugin-win-dshow-inventory.md` committed; S2 passes.
+- [ ] **P5-32.3 Bindings**
+  - Files: `deps/libdshowcapture/src/dshowcapture.hpp` (306, public API: `DShowDevice`/`DShowDeviceEx`, VideoFormat MJPEG=400/H264=401/HEVC=402, AudioFormat Wave16bit=100…MPGA=202); implementation `deps/libdshowcapture/src/source/` (23 files / 7 767 lines: `output-filter.cpp` 992, `dshow-base.cpp` 1031, `device.cpp` 875, `capture-filter.cpp` 696, `dshow-enum.cpp` 573, `encoder.cpp` 411, + 17 more)
+  - Steps: 1) Keep the C++ library as-is (D-19); write the Rust FFI bindings over `dshowcapture.hpp`. 2) Initialse the nested `src/external/capture-device-support` submodule before building. 3) Verify enumeration + capture through the binding.
+  - Spec: S-051 §11 (DShow enums)
+  - Pitfalls:
+    - D-19 (DECISIONS-NEEDED): `deps/libdshowcapture/src` stays C++ (DirectShow COM is the job); only the host side ports to Rust. The FFI crossing is the `dshowcapture.hpp` API (device, format, callback).
+  - Done when: device enumeration + capture via the Rust binding match C.
+- [ ] **P5-32.4 Source**
+  - Files: `win-dshow.cpp` (2094), `ffmpeg-decode.c` (414) + `ffmpeg-decode.h` (69), `encode-dstr.hpp` (76), `tiny-nv12-scale.c` (200) + `tiny-nv12-scale.h` (33) (same code as `shared/obs-tiny-nv12-scale/`, 233 lines)
+  - Steps: 1) Port the `dshow_input` source: formats, MJPEG/H.264/HEVC decode via FFmpeg, audio. 2) Reuse the `obs-tiny-nv12-scale` crate (P1-33) for scaling. 3) Run the `dshow_*` scripts.
+  - Spec: S-051 §5.I (DirectShow video capture)
+  - Vectors: `test/conformance/scripts/wincapture/`
+  - Pitfalls:
+    - S-051 D-4: `video_queue_read` before READY dereferences unset pointers in C — the port lazy-inits / returns false.
+    - S-051 D-5: `video_queue_create` frame size has no overflow/zero check (`cx*cy*3/2` truncates for odd sizes) — reject zero or odd dimensions.
+  - Done when: webcam preview.
+- [ ] **P5-32.5 Hardware encoder devices**
+  - Files: `win-dshow-encoder.cpp` (360)
+  - Steps: 1) Port the `obs_dshow_c985`/`obs_dshow_c353` hardware-encoder sources (AVC/H264 encoder devices). 2) Verify device listing + encode.
+  - Spec: S-051 §5.J
+  - Vectors: `test/conformance/scripts/wincapture/`
+  - Pitfalls:
+    - S-051 D-3: 32-bit wrap in the DirectShow encoder `frameInterval` (and `keyint` overflow for huge values) — use 64-bit math.
+  - Done when: lists devices.
+- [ ] **P5-32.6 Virtual cam**
+  - Files: `virtualcam.c` (121), `virtualcam-module/` (10 files: `virtualcam-module.cpp` 285, `virtualcam-filter.cpp` 361 + `.hpp` 72, `placeholder.cpp` 155, `sleepto.c` 50 + `.h` 14, `virtualcam-install.bat.in` 55, `virtualcam-uninstall.bat.in` 32, `virtualcam-guid.h.in` 19, `virtualcam-module.def.in` 8), `shared-memory-queue.c` (218) + `shared-memory-queue.h` (33)
+  - Steps: 1) Port `virtualcam.c` + the `shared-memory-queue` (frame queue written for the driver). 2) Keep the `virtualcam-module/` driver as C++ (AVStream driver); wire its build from Cargo. 3) Verify the camera in a video-call app.
+  - Spec: S-051 §5.K (virtual-camera queue, REAL)
+  - Vectors: `test/conformance/scripts/wincapture/` (`vqueue*`)
+  - Done when: visible in a video-call app.
 - [ ] **P5-32.7/.8** E1/E2
+  - Files: `dshow-plugin.cpp` (54) (module main), `CMakeLists.txt` (target `win-dshow` MODULE)
+  - Steps: 1) Bookend E1: `crates/obs-modules/win-dshow` cdylib named `win-dshow` (Windows build); links the `libdshowcapture` static lib. 2) Bookend E2: remove the ported C sources in the same PR; keep the submodule + driver.
+  - Done when: E1 export/loader check passes on Windows; E2 CI green and smoke recorded in `docs/tests/plugin-win-dshow.md`.
 
 ### P5-33 `libobs-winrt`
-- [ ] **P5-33.1 S1/S2 + Capture** — helper module: S1 = the exported `winrt_capture_*` C API (no `obs_register_*`; win-capture loads it by module name), S2 vacuous (no settings). Then `libobs-winrt/winrt-capture.cpp`: `GraphicsCaptureItem`, frame pool, `Direct3D11CaptureFramePool::CreateFreeThreaded`. Done when: window capture via WGC.
-- [ ] **P5-33.2 Dispatcher** — `winrt-dispatch.cpp`. Done when: tests.
-- [ ] **P5-33.3 Integration** with P5-31.4. Done when: WGC window capture through the win-capture module.
+- [ ] **P5-33.1 S1/S2 + Capture**
+  - Files: `libobs-winrt/winrt-capture.cpp` (606) + `winrt-capture.h` (30) (exported C API: `winrt_capture_supported`, `winrt_capture_cursor_toggle_supported`, `winrt_capture_init_window`, `winrt_capture_free`, `winrt_capture_active`, …), `CMakeLists.txt` (target `libobs-winrt` MODULE — note: repo root, not `plugins/`)
+  - Steps: 1) S1: list the exported `winrt_capture_*` C API (no `obs_register_*`; win-capture loads it by module name "libobs-winrt"). S2 is vacuous (no settings). 2) Port `winrt-capture.cpp`: `GraphicsCaptureItem`, frame pool, `Direct3D11CaptureFramePool::CreateFreeThreaded` via the `windows` crate.
+  - Done when: window capture via WGC.
+- [ ] **P5-33.2 Dispatcher**
+  - Files: `libobs-winrt/winrt-dispatch.cpp` (56) + `winrt-dispatch.h` (19)
+  - Steps: 1) Port the WinRT apartment/dispatch helpers. 2) Unit-test the dispatch sequencing.
+  - Done when: tests.
+- [ ] **P5-33.3 Integration** with P5-31.4.
+  - Files: `libobs-winrt/winrt-capture.cpp` (606), `plugins/win-capture/window-capture.c` (846) (consumer)
+  - Steps: 1) Load the Rust `libobs-winrt` module from the Rust win-capture host. 2) Verify WGC window capture end-to-end.
+  - Done when: WGC window capture through the win-capture module.
 - [ ] **P5-33.4/.5** E1/E2 (added; module name stays `libobs-winrt`)
+  - Files: `libobs-winrt/CMakeLists.txt` (target `libobs-winrt` MODULE)
+  - Steps: 1) Bookend E1: `crates/obs-modules/libobs-winrt` cdylib named exactly `libobs-winrt` (Windows build) — the name is load-bearing. 2) Bookend E2: remove the C module in the same PR.
+  - Done when: E1 export/loader check passes on Windows (win-capture loads it by name); E2 CI green and smoke recorded in `docs/tests/plugin-libobs-winrt.md`.
 
 ### P5-34 `mac-capture`
 - [ ] **P5-34.1/.2** S1/S2
-- [ ] **P5-34.3 Display** — `mac-display-capture.m`, `mac-sck-video-capture.m`, `mac-sck-common.m/.h`. Done when: display capture incl. HDR.
-- [ ] **P5-34.4 Window/app** — `mac-window-capture.m`, `window-utils.m/.h`. Done when: window and application capture.
-- [ ] **P5-34.5 Audio** — `mac-audio.c`, `audio-device-enum.c/.h`, `mac-sck-audio-capture.m`. Done when: device and app audio.
-- [ ] **P5-34.6 Permissions/cursor** — screen-recording permission flow. Done when: denied state handled.
+  - Files: `plugins/mac-capture/plugin-main.c` (35) (module main; registers `screen_capture`, `sck_audio_capture`, `display_capture`, `window_capture`, `coreaudio_input_capture`, `coreaudio_output_capture`), `CMakeLists.txt` (target `mac-capture` MODULE)
+  - Steps: 1) Bookend S1: the 6 source ids + settings keys (display/window lists, crop, cursor). 2) Bookend S2: P0-18 corpus through the P0-15 ABI host (macOS).
+  - Done when: `docs/tests/plugin-mac-capture-inventory.md` committed; S2 passes.
+- [ ] **P5-34.3 Display**
+  - Files: `mac-display-capture.m` (684), `mac-sck-video-capture.m` (716), `mac-sck-common.m` (352) + `mac-sck-common.h` (83)
+  - Steps: 1) Port the ScreenCaptureKit display capture (stream config, frame-size tracking) via `objc2` + `screencapturekit` crate. 2) Run the `sck_*` runner scripts.
+  - Spec: S-052 (screen_capture rules R1–R10)
+  - Vectors: `test/conformance/scripts/maccapture/`
+  - Done when: display capture incl. HDR.
+- [ ] **P5-34.4 Window/app**
+  - Files: `mac-window-capture.m` (223), `window-utils.m` (280) + `window-utils.h` (38)
+  - Steps: 1) Port the window/application list building + matching (CGWindowList). 2) Run the `sck_lists`, `sck_update` scripts.
+  - Spec: S-052 (window/application list rules)
+  - Vectors: `test/conformance/scripts/maccapture/`
+  - Pitfalls:
+    - S-052 Q-6: `window` setting 0 never clears the stored window.
+    - S-052 D-3: an application type with an unmatched bundle id builds an include list containing nil in C — treat as "no application": capture nothing, log a warning.
+  - Done when: window and application capture.
+- [ ] **P5-34.5 Audio**
+  - Files: `mac-audio.c` (1058), `audio-device-enum.c` (139) + `audio-device-enum.h` (36), `mac-sck-audio-capture.m` (317)
+  - Steps: 1) Port the CoreAudio device + app capture (device enumeration, `sck_audio_capture`). 2) Run the `sck_audio`, `coreaudio` scripts.
+  - Spec: S-052 (sck_audio_capture + CoreAudio capture rules)
+  - Vectors: `test/conformance/scripts/maccapture/`
+  - Pitfalls:
+    - S-052 D-1: >8 audio channels overflows the plane array in C — reject the buffer.
+  - Done when: device and app audio.
+- [ ] **P5-34.6 Permissions/cursor**
+  - Files: `mac-sck-video-capture.m` (716) (permission + cursor paths)
+  - Steps: 1) Port the screen-recording permission flow (request, denied state, re-check). 2) Port the cursor toggle.
+  - Spec: S-052 (permission rules)
+  - Pitfalls:
+    - S-052 Q-1: the cursor toggle restarts the SCK stream (SHOULD match, or update live).
+  - Done when: denied state handled.
 - [ ] **P5-34.7/.8** E1/E2
+  - Files: `plugin-main.c` (35) (module main), `CMakeLists.txt` (target `mac-capture` MODULE)
+  - Steps: 1) Bookend E1: `crates/obs-modules/mac-capture` cdylib named `mac-capture` (macOS build). 2) Bookend E2: remove the C plugin in the same PR; smoke on macOS.
+  - Done when: E1 export/loader check passes on macOS; E2 CI green and smoke recorded in `docs/tests/plugin-mac-capture.md`.
 
 ### P5-35 `mac-avcapture`
 - [ ] **P5-35.1/.2** S1/S2
-- [ ] **P5-35.3 Devices** — `OBSAVCapture.m/.h`, `OBSAVCapturePresetInfo.m/.h`, `AVCaptureDeviceFormat+OBSListable.*`, `plugin-properties.m/.h`. Done when: formats list equal.
-- [ ] **P5-35.4 Controls + legacy** — `legacy/av-capture.mm` ships as a second module (`mac-avcapture-legacy`); keep it building alongside the port. Done when: formats/controls work and the legacy module loads.
+  - Files: `plugins/mac-avcapture/plugin-main.m` (325) + `plugin-main.h` (119) (module main; registers `macos-avcapture` + `macos-avcapture-fast`), `CMakeLists.txt` (targets `mac-avcapture` MODULE + `mac-avcapture-legacy` MODULE)
+  - Steps: 1) Bookend S1: the 2 source ids + settings keys. 2) Bookend S2: P0-18 corpus through the P0-15 ABI host (macOS).
+  - Done when: `docs/tests/plugin-mac-avcapture-inventory.md` committed; S2 passes.
+- [ ] **P5-35.3 Devices**
+  - Files: `OBSAVCapture.m` (1523) + `OBSAVCapture.h` (390), `OBSAVCapturePresetInfo.m` (25) + `OBSAVCapturePresetInfo.h` (24), `AVCaptureDeviceFormat+OBSListable.m` (163) + `.h` (26), `plugin-properties.m` (330) + `plugin-properties.h` (81)
+  - Steps: 1) Port the device/format/preset tables + the `macos-avcapture`-vs-`fast` decision logic. 2) Run the `avcapture` runner script.
+  - Spec: S-052 (macos-avcapture decision logic + text tables, §8 tables)
+  - Vectors: `test/conformance/scripts/maccapture/`
+  - Done when: formats list equal.
+- [ ] **P5-35.4 Controls + legacy**
+  - Files: `plugin-properties.m` (330) (controls), `legacy/av-capture.mm` (2155) + `legacy/left-right.hpp` (66) + `legacy/scope-guard.hpp` (63)
+  - Steps: 1) Port the controls plumbing. 2) Keep the legacy module (`legacy/` → `mac-avcapture-legacy`) building alongside the port (C++, CMake target unchanged). 3) Run the `legacy_window_display` script.
+  - Spec: S-052 (legacy display/window capture rules R8-14)
+  - Vectors: `test/conformance/scripts/maccapture/`
+  - Pitfalls:
+    - S-052 Q-3: the "960x460" label for the 960x540 preset (display-only; MAY fix).
+  - Done when: formats/controls work and the legacy module loads.
 - [ ] **P5-35.5/.6** E1/E2
+  - Files: `plugin-main.m` (325) (module main), `CMakeLists.txt` (targets `mac-avcapture` + `mac-avcapture-legacy` MODULE)
+  - Steps: 1) Bookend E1: `crates/obs-modules/mac-avcapture` cdylib named `mac-avcapture` (macOS build); the legacy module stays C++. 2) Bookend E2: remove the ported C sources in the same PR; keep the `legacy/` target.
+  - Done when: E1 export/loader check passes on macOS; E2 CI green and smoke recorded in `docs/tests/plugin-mac-avcapture.md`.
 
 ### P5-36 `mac-syphon`
 - [ ] **P5-36.1/.2** S1/S2
-- [ ] **P5-36.3 Client** — `syphon.m`, `SyphonOBSClient.m/.h`, `plugin-main.c`; IOSurface import (P3-20). Done when: Syphon server visible.
+  - Files: `plugins/mac-syphon/plugin-main.c` (16) (module main; registers the Syphon source), `CMakeLists.txt` (target `mac-syphon` MODULE)
+  - Steps: 1) Bookend S1: the source id + settings keys. 2) Bookend S2: P0-18 corpus through the P0-15 ABI host (macOS).
+  - Done when: `docs/tests/plugin-mac-syphon-inventory.md` committed; S2 passes.
+- [ ] **P5-36.3 Client**
+  - Files: `syphon.m` (749), `SyphonOBSClient.m` (18) + `SyphonOBSClient.h` (11), `plugin-main.c` (16)
+  - Steps: 1) Port the Syphon client (server enumeration, receive callback) via `objc2`. 2) Import the IOSurface through P3-20. 3) Verify a Syphon server is visible.
+  - Done when: Syphon server visible.
 - [ ] **P5-36.4/.5** E1/E2
+  - Files: `plugin-main.c` (16) (module main), `CMakeLists.txt` (target `mac-syphon` MODULE)
+  - Steps: 1) Bookend E1: `crates/obs-modules/mac-syphon` cdylib named `mac-syphon` (macOS build). 2) Bookend E2: remove the C plugin in the same PR; smoke on macOS.
+  - Done when: E1 export/loader check passes on macOS; E2 CI green and smoke recorded in `docs/tests/plugin-mac-syphon.md`.
 
 ### P5-37 `mac-virtualcam`
 - [ ] **P5-37.1/.2** S1/S2
-- [ ] **P5-37.3 Legacy DAL plug-in** — `src/dal-plugin/` (17 ObjC files) + `src/common/MachProtocol.h`: keep it building and tested against the C reference during the port; it is the fallback camera until the extension flow is the default. Per D-14, remove it in this subtask once the extension is the default, and record the removal in `retired.md`. Done when: DAL still green, then deleted with no regressions.
-- [ ] **P5-37.4 System extension + host** — `src/camera-extension/` (Swift: `OBSCameraDeviceSource`, `OBSCameraProviderSource`, stream sink/source) and `src/obs-plugin/` (host: `OBSDALMachServer`, `plugin-main.mm`): Rust cannot be the extension host directly — define the Mach-bridge. Sink stream, `OSSystemExtensionRequest`. Done when: extension builds and the install flow is tested.
-- [ ] **P5-37.5 Signing** — entitlements, provisioning. Done when: notarised build.
+  - Files: `plugins/mac-virtualcam/src/obs-plugin/plugin-main.mm` (567) (module main; registers the virtual-cam host), `src/common/MachProtocol.h` (17), `CMakeLists.txt`
+  - Steps: 1) Bookend S1: record the module surface (the camera is a system extension, not an `obs_register_*` object) + the Mach protocol message ids (S-052 §7). 2) Bookend S2: vacuous (no OBS settings) — verify the module loads.
+  - Spec: S-052 (mac-virtualcam protocol constants, §7)
+  - Vectors: `test/conformance/scripts/maccapture/` (`virtualcam`)
+  - Done when: `docs/tests/plugin-mac-virtualcam-inventory.md` committed; module loads.
+- [ ] **P5-37.3 Legacy DAL plug-in**
+  - Files: `src/dal-plugin/` (17 ObjC files / 2 223 lines: `OBSDALStream.mm` 537, `OBSDALPlugInInterface.mm` 370, `OBSDALObjectStore.mm` 279, `OBSDALDevice.mm` 272, `OBSDALMachClient.mm` 156, + 12 more), `src/common/MachProtocol.h` (17)
+  - Steps: 1) Keep it building and tested against the C reference during the port (fallback camera). 2) Per D-14, remove it once the extension flow is the default; record the removal in `retired.md`.
+  - Pitfalls:
+    - D-14 (DECISIONS-NEEDED): keep the DAL plug-in building until the extension flow is the default, then drop it in this subtask.
+  - Done when: DAL still green, then deleted with no regressions.
+- [ ] **P5-37.4 System extension + host**
+  - Files: `src/camera-extension/` (5 Swift: `OBSCameraDeviceSource.swift`, `OBSCameraProviderSource.swift`, `OBSCameraStreamSink.swift`, `OBSCameraStreamSource.swift`, `main.swift` + `cmake/macos/entitlements.plist`), `src/obs-plugin/OBSDALMachServer.mm` (167) + `.h` (29), `plugin-main.mm` (567), `Defines.h` (22)
+  - Steps: 1) Rust cannot be the extension host directly — define the Mach-bridge (port the `OBSDALMachServer` protocol). 2) Keep the Swift extension bundle; port the host side (sink stream, `OSSystemExtensionRequest` install flow). 3) Test the extension build + install flow on a signed runner.
+  - Done when: extension builds and the install flow is tested.
+- [ ] **P5-37.5 Signing** — entitlements, provisioning.
+  - Files: `src/camera-extension/cmake/macos/entitlements.plist`, `src/dal-plugin/cmake/macos/Info.plist.in` (22)
+  - Steps: 1) Port the entitlements/provisioning requirements into the build (Cargo + codesign steps). 2) Produce a notarised build.
+  - Done when: notarised build.
 - [ ] **P5-37.6/.7** E1/E2
+  - Files: `src/obs-plugin/plugin-main.mm` (567) (module main), `CMakeLists.txt`
+  - Steps: 1) Bookend E1: `crates/obs-modules/mac-virtualcam` cdylib named `mac-virtualcam` (macOS build); the Swift extension bundle keeps its name/layout. 2) Bookend E2: remove the ported host C/ObjC in the same PR; smoke on macOS.
+  - Done when: E1 export/loader check passes on macOS; E2 CI green and smoke recorded in `docs/tests/plugin-mac-virtualcam.md`.
 
 ### P5-38 `mac-videotoolbox`
 - [ ] **P5-38.1/.2** S1/S2
-- [ ] **P5-38.3 Session** — `encoder.c`: `VTCompressionSession`, H.264/HEVC properties, profiles, B-frames. Done when: stream plays.
-- [ ] **P5-38.4 ProRes/buffers** — ProRes 422/4444, pixel buffers from Metal (P3-21). Done when: ProRes file valid.
+  - Files: `plugins/mac-videotoolbox/encoder.c` (1535) (module main; registers the `videotoolbox_v100` + `videotoolbox_prores` encoders), `CMakeLists.txt` (target `mac-videotoolbox` MODULE)
+  - Steps: 1) Bookend S1: the 2 encoder ids + settings keys (H.264/HEVC + ProRes). 2) Bookend S2: P0-18 corpus through the P0-15 ABI host (macOS).
+  - Done when: `docs/tests/plugin-mac-videotoolbox-inventory.md` committed; S2 passes.
+- [ ] **P5-38.3 Session**
+  - Files: `encoder.c` (1535)
+  - Steps: 1) Port the `VTCompressionSession` path: H.264/HEVC properties, profiles, B-frames, the property/profile/rate-control/colour tables (S-025 parsers excluded). 2) Run the `videotoolbox` runner script.
+  - Spec: S-052 (mac-videotoolbox encoder property/profile/rate-control/colour logic)
+  - Vectors: `test/conformance/scripts/maccapture/`
+  - Done when: stream plays.
+- [ ] **P5-38.4 ProRes/buffers** — ProRes 422/4444, pixel buffers from Metal.
+  - Files: `encoder.c` (1535) (ProRes + Metal pixel-buffer paths; P3-21)
+  - Steps: 1) Port the ProRes encoder-id discovery + the Metal pixel-buffer import. 2) Verify a ProRes file.
+  - Spec: S-052 (ProRes rules)
+  - Pitfalls:
+    - S-052 Q-4: `vt_update` ignores `update_params` failure — SHOULD report the error.
+    - S-052 Q-5: only bitrate/limit changes are re-applied live (the rest need a restart).
+  - Done when: ProRes file valid.
 - [ ] **P5-38.5/.6** E1/E2
+  - Files: `encoder.c` (1535) (module main), `CMakeLists.txt` (target `mac-videotoolbox` MODULE)
+  - Steps: 1) Bookend E1: `crates/obs-modules/mac-videotoolbox` cdylib named `mac-videotoolbox` (macOS build). 2) Bookend E2: remove the C plugin in the same PR; smoke on macOS.
+  - Done when: E1 export/loader check passes on macOS; E2 CI green and smoke recorded in `docs/tests/plugin-mac-videotoolbox.md`.
 
 ## D. Hardware encoders
 
 ### P5-39 `obs-nvenc`
 - [ ] **P5-39.1/.2** S1/S2
-- [ ] **P5-39.3 Loader** — `nvenc-helpers.c/.h`, `nvenc-internal.h`: dynamic `nvEncodeAPI`, capability queries, driver version checks. Done when: capability log equal.
-- [ ] **P5-39.4 D3D** — `nvenc-d3d11.c`, `nvenc-compat.c`: texture registration, shared textures. Done when: encodes from GPU texture.
-- [ ] **P5-39.5 CUDA/GL** — `nvenc-cuda.c`, `cuda-helpers.c/.h`, `nvenc-opengl.c`. Done when: Linux encode.
-- [ ] **P5-39.6 H.264/HEVC** — `nvenc.c`, `nvenc-properties.c`, `nvenc-opts-parser.c`: presets p1–p7, tune, multipass, lookahead, psycho-AQ, B-ref, bitrate modes. Done when: option parity table.
-- [ ] **P5-39.7 AV1/10-bit** — AV1, P010, HDR metadata. Done when: HDR stream valid.
-- [ ] **P5-39.8 Test helper** — `obs-nvenc-test/` process that probes GPUs. Done when: ported.
+  - Files: `plugins/obs-nvenc/obs-nvenc.c` (30) (module main; registers `h264_nvenc`, `hevc_nvenc`, `av1_nvenc` + the legacy `jim_*` compat ids), `CMakeLists.txt` (target `obs-nvenc` MODULE + `obs-nvenc-test` executable)
+  - Steps: 1) Bookend S1: the encoder ids (incl. the `ENABLE_NVENC_FFMPEG_IDS`-gated legacy ids) + settings keys. 2) Bookend S2: P0-18 corpus through the P0-15 ABI host.
+  - Done when: `docs/tests/plugin-obs-nvenc-inventory.md` committed; S2 passes.
+- [ ] **P5-39.3 Loader**
+  - Files: `nvenc-helpers.c` (390) + `nvenc-helpers.h` (89), `nvenc-internal.h` (212)
+  - Steps: 1) Port the dynamic `nvEncodeAPI` load (module version gate, symbol table), capability queries, driver version checks. 2) Run the hwencoders scripts `31-*` (lib load) and `32-*` (caps INI).
+  - Spec: S-050 (NVENC: library/driver version gate, capability table)
+  - Vectors: `test/conformance/scripts/hwencoders/`
+  - Pitfalls:
+    - S-050 Q-2: `init_nvenc` failure is sticky and silent after the first call.
+    - S-050 D-2: missing `driver_ver` in the caps INI → C does `sscanf(NULL)` — treat as 0.0.
+  - Done when: capability log equal.
+- [ ] **P5-39.4 D3D**
+  - Files: `nvenc-d3d11.c` (264), `nvenc-compat.c` (407)
+  - Steps: 1) Port texture registration, shared textures, the `jim_*` compat encoders. 2) Run the hwencoders scripts `21`, `33`.
+  - Spec: S-050 (NVENC texture/soft routing)
+  - Vectors: `test/conformance/scripts/hwencoders/`
+  - Done when: encodes from GPU texture.
+- [ ] **P5-39.5 CUDA/GL**
+  - Files: `nvenc-cuda.c` (326), `cuda-helpers.c` (156) + `cuda-helpers.h` (63), `nvenc-opengl.c` (145)
+  - Steps: 1) Port the CUDA + OpenGL backends (texture interop). 2) Encode on Linux (CUDA).
+  - Spec: S-050 (backends stubbed in the vectors — test on hardware)
+  - Done when: Linux encode.
+- [ ] **P5-39.6 H.264/HEVC**
+  - Files: `nvenc.c` (1534), `nvenc-properties.c` (289), `nvenc-opts-parser.c` (226)
+  - Steps: 1) Port presets p1–p7, tune, multipass, lookahead, psycho-AQ, B-ref, bitrate modes to `NV_ENC_CONFIG`. 2) Run the encopts `nv_*` scripts + hwencoders `10`–`30`.
+  - Spec: S-025 §6 (defaults/properties/user options), S-050 (settings → NV_ENC_CONFIG rules)
+  - Vectors: `test/conformance/scripts/encopts/`, `test/conformance/scripts/hwencoders/`
+  - Pitfalls:
+    - S-050 Q-1: rate-control matching is `strcmp` for `CQP`/`lossless`/H.264 buffering-period SEI `"CBR"`, `astrcmpi` elsewhere; the default is lowercase `cbr`.
+    - S-050 D-1: `bitrate*1000` overflows a signed int in C — use u32 modular arithmetic.
+    - S-050 Q-4: H.264/HEVC/AV1 `idrPeriod` is copied before user options.
+  - Done when: option parity table.
+- [ ] **P5-39.7 AV1/10-bit** — AV1, P010, HDR metadata.
+  - Files: `nvenc.c` (1534) (AV1 + 10-bit + HDR sections)
+  - Steps: 1) Port the AV1 encoder path, P010 routing, HDR metadata (CLL/MDL). 2) Run hwencoders scripts `19`, `28`. 3) Verify an HDR stream.
+  - Spec: S-050 (AV1 rules + HDR picture params)
+  - Vectors: `test/conformance/scripts/hwencoders/`
+  - Pitfalls:
+    - S-050 Q-5: H.264 sets no HDR VUI although `mdi`/`cll` are allocated.
+  - Done when: HDR stream valid.
+- [ ] **P5-39.8 Test helper**
+  - Files: `obs-nvenc-test/obs-nvenc-test.cpp` (576)
+  - Steps: 1) Port the probe helper (separate process that probes GPUs; a crashing driver must not take OBS down). 2) Emit the caps INI the loader consumes.
+  - Done when: ported.
 - [ ] **P5-39.9/.10** E1/E2
+  - Files: `obs-nvenc.c` (30) (module main), `CMakeLists.txt` (target `obs-nvenc` MODULE)
+  - Steps: 1) Bookend E1: `crates/obs-modules/obs-nvenc` cdylib named `obs-nvenc`; the test helper keeps its executable name. 2) Bookend E2: remove the ported C sources in the same PR.
+  - Done when: E1 export/loader check passes on each OS; E2 CI green and smoke recorded in `docs/tests/plugin-obs-nvenc.md`.
 
 ### P5-40 `obs-qsv11`
 - [ ] **P5-40.1/.2** S1/S2
-- [ ] **P5-40.3 Bindings** — oneVPL FFI. Done when: init session.
-- [ ] **P5-40.4 Encode** — `QSV_Encoder.cpp/.h`, `QSV_Encoder_Internal.cpp/.h`, `obs-qsv11.c`, `common_directx11.*`, `common_utils*.cpp`: H.264/HEVC/AV1, texture input. Done when: encode.
-- [ ] **P5-40.5 Test helper** — `obs-qsv-test/`. Done when: ported.
+  - Files: `plugins/obs-qsv11/obs-qsv11-plugin-main.c` (109) (module main; registers `h264_qsv`, `hevc_qsv`, `av1_qsv` + the legacy v1/v2 ids), `CMakeLists.txt` (target `obs-qsv11` MODULE + `obs-qsv-test` executable)
+  - Steps: 1) Bookend S1: the encoder ids (incl. `h264_qsv_v1`/`h264_qsv_v2` migrations) + settings keys. 2) Bookend S2: P0-18 corpus through the P0-15 ABI host.
+  - Done when: `docs/tests/plugin-obs-qsv11-inventory.md` committed; S2 passes.
+- [ ] **P5-40.3 Bindings** — oneVPL FFI.
+  - Files: `QSV_Encoder.cpp` (332) + `QSV_Encoder.h` (171), `QSV_Encoder_Internal.cpp` (980) + `QSV_Encoder_Internal.h` (139) (the oneVPL call surface)
+  - Steps: 1) Write the oneVPL FFI bindings for the surface used by `QSV_Encoder*`. 2) Verify a session inits.
+  - Spec: S-050 (obs-qsv11: QSV library internals not vectored)
+  - Done when: init session.
+- [ ] **P5-40.4 Encode**
+  - Files: `obs-qsv11.c` (1422), `common_directx11.cpp` (530) + `common_directx11.h` (28), `common_utils.cpp` (307) + `common_utils.h` (177), `common_utils_linux.cpp` (529), `common_utils_windows.cpp` (246), `bits/linux_defs.h` (9) + `bits/windows_defs.h` (6)
+  - Steps: 1) Port H.264/HEVC/AV1 encode: create gates, texture fallbacks, header assembly, 90 kHz timestamp conversion, packet post-processing, ROI forwarding. 2) Run the encopts `qsv_*` scripts.
+  - Spec: S-025 §7 (defaults/properties/migrations/R44–R46), S-050 (create gates + packet rules)
+  - Vectors: `test/conformance/scripts/encopts/`
+  - Pitfalls:
+    - S-025 Q-9: the UI callback (and `update_params`) rewrites the settings (erases `async_depth`/`la_depth`).
+    - S-025 D-3: bitrates/size/fps/keyint/ICQ/B-frame counts are stored in u16 — larger values wrap silently.
+  - Done when: encode.
+- [ ] **P5-40.5 Test helper**
+  - Files: `obs-qsv-test/obs-qsv-test.cpp` (209)
+  - Steps: 1) Port the probe helper (separate process). 2) Verify it reports the QSV version/devices.
+  - Done when: ported.
 - [ ] **P5-40.6/.7** E1/E2
+  - Files: `obs-qsv11-plugin-main.c` (109) (module main), `CMakeLists.txt` (target `obs-qsv11` MODULE)
+  - Steps: 1) Bookend E1: `crates/obs-modules/obs-qsv11` cdylib named `obs-qsv11`. 2) Bookend E2: remove the ported C sources in the same PR.
+  - Done when: E1 export/loader check passes on each OS; E2 CI green and smoke recorded in `docs/tests/plugin-obs-qsv11.md`.
 
 ### P5-41 AMF
 - [ ] **P5-41.1/.2** S1/S2 (inside `plugins/obs-ffmpeg`)
-- [ ] **P5-41.3 Encoder** — `texture-amf.cpp`, `texture-amf-opts.hpp`: AMF SDK via dynamic loading; H.264/HEVC/AV1 options. Done when: encode.
-- [ ] **P5-41.4 Probe** — `obs-amf-test/`. Done when: ported.
-- [ ] **P5-41.5/.6** E1/E2
+  - Files: `plugins/obs-ffmpeg/texture-amf.cpp` (2822) (AMF registration happens through the obs-ffmpeg module main), `CMakeLists.txt` (built into target `obs-ffmpeg` MODULE)
+  - Steps: 1) Record the AMF encoder ids + settings keys in the P5-11 inventory. 2) S2: P0-18 corpus through the P0-15 ABI host.
+  - Done when: inventory rows committed; S2 passes.
+- [ ] **P5-41.3 Encoder**
+  - Files: `texture-amf.cpp` (2822), `texture-amf-opts.hpp` (345)
+  - Steps: 1) Port the AMF SDK dynamic loading + H.264/HEVC/AV1 option mapping (rules from S-050 §9, reading-only — no vectors). 2) Encode on AMD hardware.
+  - Spec: S-050 §9 (AMF: rules from reading only, no vectors)
+  - Vectors: none (AMF not vectored)
+  - Done when: encode.
+- [ ] **P5-41.4 Probe**
+  - Files: `obs-amf-test/obs-amf-test.cpp` (180)
+  - Steps: 1) Port the probe helper (separate process). 2) Verify it lists the AMF devices.
+  - Done when: ported.
+- [ ] **P5-41.5/.6** E1/E2 (shared `obs-ffmpeg` target; cutover with the group)
+  - Files: `texture-amf.cpp` (2822), `obs-amf-test/obs-amf-test.cpp` (180)
+  - Steps: 1) Bookend E1: AMF encoders inside the `obs-ffmpeg` cdylib; the `obs-amf-test` executable keeps its name. 2) Bookend E2: covered by the group's last-finishing task.
+  - Done when: group E2 done; smoke recorded in `docs/tests/plugin-obs-ffmpeg.md`.
 
 ## E. Vendor SDK cards and tools
 
 ### P5-42 DeckLink
-- [ ] **P5-42.1 S1/S2 + FFI crate** — S1/S2 first (registers `decklink-input` source + `decklink_output` output; the `decklink-captions` module registers its own captions input). Then wrap Blackmagic SDK (COM on Windows via IDL, C++ interfaces on Linux/mac). Files: `plugins/decklink/{win|mac|linux}/`, `platform.hpp`. Done when: table committed, library loads without hardware.
-- [ ] **P5-42.2 Discovery** — `decklink-device-discovery.*`, `decklink-devices.*`, `decklink-device-mode.*`. Done when: mode list equal.
-- [ ] **P5-42.3 Input** — `DecklinkInput.*`, `decklink-source.cpp`, `audio-repack.*`. Done when: capture.
-- [ ] **P5-42.4 Output/captions** — `DecklinkOutput.*`, `decklink-output.cpp`, `decklink-captions` plugin (`decklink-output-ui` is P6-40). Done when: output.
-- [ ] **P5-42.5 Hardware test** — Done when: capture + output verified on one card per OS.
+- [ ] **P5-42.1 S1/S2 + FFI crate**
+  - Files: `plugins/decklink/plugin-main.cpp` (69) (module main; registers `decklink-input` source + `decklink_output` output), `platform.hpp` (33) + `win/platform.cpp` (42) + `mac/platform.cpp` (18) + `linux/platform.cpp` (15), `DecklinkBase.cpp` (18) + `DecklinkBase.h` (35), `decklink-captions/decklink-captions.cpp` (155) + `.h` (30) (separate module, registers its own captions input)
+  - Steps: 1) S1: ids `decklink-input`, `decklink_output` + the captions module's input; record settings keys. 2) S2: P0-18 corpus through the P0-15 ABI host. 3) Wrap the Blackmagic SDK (COM on Windows via IDL, C++ interfaces on Linux/mac) in a thin FFI crate — keep the SDK glue C++ (D-10).
+  - Pitfalls:
+    - D-10 (DECISIONS-NEEDED): the SDK glue (COM/C++ interfaces, the per-OS `platform.cpp` shims) stays C++; the ported logic (discovery, input/output, format detection, captions) is Rust. The FFI crossing is the FFI crate's device/instance/mode surface.
+  - Done when: table committed, library loads without hardware.
+- [ ] **P5-42.2 Discovery**
+  - Files: `decklink-device-discovery.cpp` (135) + `decklink-device-discovery.hpp` (77), `decklink-devices.cpp` (15) + `decklink-devices.hpp` (8), `decklink-device.cpp` (272) + `decklink-device.hpp` (66), `decklink-device-mode.cpp` (92) + `decklink-device-mode.hpp` (31)
+  - Steps: 1) Port device discovery + the mode list. 2) Assert the mode list equals C (dummy devices).
+  - Done when: mode list equal.
+- [ ] **P5-42.3 Input**
+  - Files: `decklink-device-instance.cpp` (824) + `decklink-device-instance.hpp` (213), `DecklinkInput.cpp` (152) + `DecklinkInput.hpp` (42), `decklink-source.cpp` (288), `OBSVideoFrame.cpp` (228) + `OBSVideoFrame.h` (114), `audio-repack.c` (95) + `audio-repack.h` (45)
+  - Steps: 1) Port the input path (frame callback → texture, audio repack). 2) Verify capture on one card.
+  - Done when: capture.
+- [ ] **P5-42.4 Output/captions**
+  - Files: `DecklinkOutput.cpp` (113) + `DecklinkOutput.hpp` (35), `decklink-output.cpp` (293), `decklink-captions/decklink-captions.cpp` (155) + `decklink-captions/forms/captions.ui` (115)
+  - Steps: 1) Port the output path + the `decklink-captions` plugin (the `decklink-output-ui` frontend is P6-40). 2) Verify output on one card.
+  - Done when: output.
+- [ ] **P5-42.5 Hardware test**
+  - Files: `plugin-main.cpp` (69)
+  - Steps: 1) Capture + output on one card per OS. 2) Record the results.
+  - Done when: capture + output verified on one card per OS.
 - [ ] **P5-42.6/.7** E1/E2 (added; D-10: SDK glue C++ stays, cutover removes only the ported logic)
+  - Files: `plugin-main.cpp` (69) (module main), `CMakeLists.txt` (targets `decklink` MODULE + `decklink-captions` MODULE)
+  - Steps: 1) Bookend E1: `crates/obs-modules/decklink` + `crates/obs-modules/decklink-captions` cdylibs with unchanged names; the C++ SDK-glue static lib is linked in. 2) Bookend E2: remove only the ported logic from the C target; the SDK glue stays until P7-03.3.
+  - Done when: E1 export/loader check passes on each OS; E2 CI green and smoke recorded in `docs/tests/plugin-decklink.md`.
 
 ### P5-43 AJA
-- [ ] **P5-43.1 S1/S2 + FFI** — S1/S2 first (aja source + output; ids per the S1 table). NTV2 SDK. Files: `aja-card-manager.*`, `aja-common.*`, `aja-routing.*`. Done when: table committed, NTV2 session inits on a card.
-- [ ] **P5-43.2 Capture/output** — `aja-source.*`, `aja-output.*`, `audio-repack.*`. Done when: signal.
-- [ ] **P5-43.3 Presets/props** — `aja-presets.*`, `aja-props.*`, `aja-vpid-data.*`, `aja-widget-io.*`. Done when: properties parity with C.
-- [ ] **P5-43.4 Hardware test**; `aja-output-ui` in P6-40. Done when: signal on card.
+- [ ] **P5-43.1 S1/S2 + FFI**
+  - Files: `plugins/aja/main.cpp` (47) (module main; registers the AJA source + output), `aja-card-manager.cpp` (573) + `aja-card-manager.hpp` (96), `aja-common.cpp` (1113) + `aja-common.hpp` (95), `aja-routing.cpp` (532) + `aja-routing.hpp` (60)
+  - Steps: 1) S1: ids per the S1 table (AJA input + output); record settings keys. 2) S2: P0-18 corpus through the P0-15 ABI host. 3) Wrap the NTV2 SDK in a thin FFI crate (D-10).
+  - Pitfalls:
+    - D-10 (DECISIONS-NEEDED): same strategy as DeckLink — the NTV2 SDK glue stays C++; the FFI crossing is the card-manager/routing surface.
+  - Done when: table committed, NTV2 session inits on a card.
+- [ ] **P5-43.2 Capture/output**
+  - Files: `aja-source.cpp` (1114) + `aja-source.hpp` (86), `aja-output.cpp` (1238) + `aja-output.hpp` (152), `audio-repack.c` (250) + `audio-repack.h` (48) + `audio-repack.hpp` (22)
+  - Steps: 1) Port the source (frame callback) + output paths. 2) Verify signal on a card.
+  - Done when: signal.
+- [ ] **P5-43.3 Presets/props**
+  - Files: `aja-presets.cpp` (1834) + `aja-presets.hpp` (47), `aja-props.cpp` (401) + `aja-props.hpp` (83), `aja-vpid-data.cpp` (140) + `aja-vpid-data.hpp` (46), `aja-widget-io.cpp` (468) + `aja-widget-io.hpp` (36), `aja-enums.hpp` (66), `aja-ui-props.hpp` (129)
+  - Steps: 1) Port the preset tables, property callbacks, VPID parsing, widget I/O. 2) Assert property parity with C.
+  - Done when: properties parity with C.
+- [ ] **P5-43.4 Hardware test**; `aja-output-ui` in P6-40.
+  - Files: `main.cpp` (47)
+  - Steps: 1) Verify signal on a card. 2) Record the result.
+  - Done when: signal on card.
 - [ ] **P5-43.5/.6** E1/E2 (added; D-10: SDK glue C++ stays, cutover removes only the ported logic)
+  - Files: `main.cpp` (47) (module main), `CMakeLists.txt` (target `aja` MODULE)
+  - Steps: 1) Bookend E1: `crates/obs-modules/aja` cdylib named `aja`; the NTV2 SDK-glue static lib is linked in. 2) Bookend E2: remove only the ported logic from the C target.
+  - Done when: E1 export/loader check passes on each OS; E2 CI green and smoke recorded in `docs/tests/plugin-aja.md`.
 
 ### P5-44 `frontend-tools`
 (Bookends n/a — ported in Phase 6, see the phase file.)
-- [ ] **P5-44.1 Cross-reference** — scripts → P6-37; auto-scene-switcher → P6-38; captions/output-timer → P6-39. Done when: the Phase 6 file owns every file.
-- [ ] **P5-44.2 Check** nothing in `plugins/frontend-tools/*` is unassigned. Done when: the coverage matrix maps all files to P6-xx.
+- [ ] **P5-44.1 Cross-reference** — scripts → P6-37; auto-scene-switcher → P6-38; captions/output-timer → P6-39.
+  - Files: `plugins/frontend-tools/scripts.cpp` (694) + `scripts.hpp` (64), `auto-scene-switcher.cpp` (525) + `.hpp` (46) + `-nix.cpp` (199) + `-win.cpp` (77), `captions.cpp` (439) + `captions-handler.cpp` (43) + `captions-mssapi.cpp` (186) + `captions-mssapi-stream.cpp` (410) + headers, `output-timer.cpp` (332) + `output-timer.hpp` (44), `frontend-tools.c` (51)
+  - Steps: 1) Map every file to its P6-37/38/39 owner in the coverage matrix. 2) Fix the Phase 6 file entries so each file has exactly one owner.
+  - Done when: the Phase 6 file owns every file.
+- [ ] **P5-44.2 Check** — nothing in `plugins/frontend-tools/*` is unassigned.
+  - Files: all of `plugins/frontend-tools/` (20 source files / 3 403 lines)
+  - Steps: 1) Run `python3 tools/task-coverage.py` over `plugins/frontend-tools/`. 2) Assert every file maps to a P6-xx task.
+  - Done when: the coverage matrix maps all files to P6-xx.
 
 ## F. Browser
 
 ### P5-45 `obs-browser` (submodule, pinned 2.23.4-126-gd4db73e)
 - [ ] **P5-45.1/.2** S1/S2 (submodule initialised in this checkout)
-- [ ] **P5-45.3 Bridge** — C ABI `cef-bridge` around CEF (C++, ≥95): browser create/destroy, navigate, execute JS, paint callback with shared texture. Files: `browser-app.cpp` (CefApp; registers `window.obsstudio`, `ExecuteJSFunction`), `browser-client.cpp` (CefClient render/load/life-span/keyboard handlers), `browser-scheme.cpp` (`http://absolute/` local-file scheme), `browser-dummy-client.cpp` (no-CEF fallback), `cef-headers.hpp`, `drm-format.cpp` (Linux), `linux-keyboard-helpers.hpp`; keep the CEF process model — Windows `obs-browser-page` exe (`obs-browser-page/obs-browser-page-main.cpp`, target `obs-browser-helper`) and macOS `OBS Helper` ×4 bundles (`cmake/macos/entitlements-helper*.plist`). Done when: header reviewed and the page processes build from Cargo.
-- [ ] **P5-45.4 Source** — `obs-browser-source.cpp`: lifecycle, settings (`is_local_file`, `width`/`height`, `fps_custom`/`fps`, `shutdown` = shutdown when not visible, `restart_when_active`, `css`, `url`/`local_file`, `reroute_audio`, `webpage_control_level`) + `ObsBrowser.Refresh` hotkey. Done when: tests.
-- [ ] **P5-45.5 JS bindings** — `window.obsstudio` object (registered in `browser-app.cpp`) and events: `obsSourceVisibleChanged`, `obsSourceActiveChanged` (source) + `obsStreamingStarting/Started/Stopping/Stopped`, `obsRecordingStarting/Started/Paused/Unpaused/Stopping/Stopped` (module). Done when: page receives events.
-- [ ] **P5-45.6 Docks/cookies** — browser dock (`panel/browser-panel.cpp`, Qt) + cookie manager (`obs-browser-plugin.cpp` migration of `obs_profile_cookies`, `panel/` cookie clearing). Done when: Twitch chat dock loads.
-- [ ] **P5-45.7 Render tests** — static, WebGL, chat dock on each OS. Done when: results recorded in `docs/tests/`.
+  - Files: `plugins/obs-browser/obs-browser-plugin.cpp` (943) (module main; registers the `browser_source` source + the dock), `CMakeLists.txt` (target `obs-browser` MODULE + `obs-browser-helper` executable + the 4 macOS helper bundles)
+  - Steps: 1) Bookend S1: the source id `browser_source` + settings keys + the `ObsBrowser.Refresh` hotkey. 2) Bookend S2: P0-18 corpus through the P0-15 ABI host. 3) Coordinate with the upstream owners before starting (external repo).
+  - Done when: `docs/tests/plugin-obs-browser-inventory.md` committed; S2 passes.
+- [ ] **P5-45.3 Bridge**
+  - Files: CEF glue (stays C++, D-09): `browser-app.cpp` (507) + `browser-app.hpp` (117) (CefApp; registers `window.obsstudio`, `ExecuteJSFunction`), `browser-client.cpp` (715) + `browser-client.hpp` (169) (CefClient render/load/life-span/keyboard handlers), `browser-scheme.cpp` (84) + `browser-scheme.hpp` (31) (`http://absolute/` local-file scheme), `browser-dummy-client.cpp` (87) + `browser-dummy-client.hpp` (64) (no-CEF fallback), `cef-headers.hpp` (62), `drm-format.cpp` (62) + `drm-format.hpp` (21) (Linux), `linux-keyboard-helpers.hpp` (749), `deps/` (6 files / 403 lines: base64, ip-string, signal-restore, wide-string); page processes: `obs-browser-page/obs-browser-page-main.cpp` (136), `cmake/macos/entitlements-helper*.plist` (×4 bundles)
+  - Steps: 1) Define the C ABI `cef-bridge` (C++, ≥95): browser create/destroy, navigate, execute JS, paint callback with shared texture. 2) Keep the CEF process model — the Windows `obs-browser-page` exe (target `obs-browser-helper`) and the macOS `OBS Helper` ×4 bundles build from Cargo and keep their names. 3) Review the bridge header.
+  - Pitfalls:
+    - D-09 (DECISIONS-NEEDED): the CEF glue stays C++ (CEF is a C++ library, ≥95). Stays C: `browser-app.cpp`, `browser-client.cpp`, `browser-scheme.cpp`, `browser-dummy-client.cpp`, `cef-headers.hpp`, `drm-format.cpp`, `linux-keyboard-helpers.hpp`, `deps/`, `obs-browser-page/`. Crosses the FFI: the `cef-bridge` C ABI (create/destroy/navigate/executeJS/paint callback) + the JS `window.obsstudio` object.
+  - Done when: header reviewed and the page processes build from Cargo.
+- [ ] **P5-45.4 Source**
+  - Files: `obs-browser-source.cpp` (700) + `obs-browser-source.hpp` (135)
+  - Steps: 1) Port the source lifecycle + settings (`is_local_file`, `width`/`height`, `fps_custom`/`fps`, `shutdown` = shutdown when not visible, `restart_when_active`, `css`, `url`/`local_file`, `reroute_audio`, `webpage_control_level`). 2) Port the `ObsBrowser.Refresh` hotkey. 3) Tests for the visibility/shutdown flags.
+  - Done when: tests.
+- [ ] **P5-45.5 JS bindings**
+  - Files: `browser-app.cpp` (507) (the `window.obsstudio` registration via CefV8), `obs-browser-plugin.cpp` (943) (stream/record event dispatch)
+  - Steps: 1) Port the `window.obsstudio` object surface + the source events `obsSourceVisibleChanged`, `obsSourceActiveChanged`. 2) Port the module events `obsStreamingStarting/Started/Stopping/Stopped`, `obsRecordingStarting/Started/Paused/Unpaused/Stopping/Stopped`. 3) Verify a test page receives the events.
+  - Done when: page receives events.
+- [ ] **P5-45.6 Docks/cookies**
+  - Files: `panel/browser-panel.cpp` (642) + `browser-panel-client.cpp` (552) + `browser-panel-internal.hpp` (68) + 3 headers (Qt dock), `obs-browser-plugin.cpp` (943) (cookie migration of `obs_profile_cookies` + panel cookie clearing)
+  - Steps: 1) Port the Qt dock (with the P6 frontend toolkit). 2) Port the cookie migration + clearing. 3) Load a Twitch chat dock.
+  - Done when: Twitch chat dock loads.
+- [ ] **P5-45.7 Render tests** — static, WebGL, chat dock on each OS.
+  - Files: `obs-browser-source.cpp` (700)
+  - Steps: 1) Render static, WebGL and chat-dock pages on each OS. 2) Record the results in `docs/tests/`.
+  - Done when: results recorded in `docs/tests/`.
 - [ ] **P5-45.8/.9** E1/E2
+  - Files: `obs-browser-plugin.cpp` (943) (module main), `CMakeLists.txt` (target `obs-browser` MODULE + helper bundles)
+  - Steps: 1) Bookend E1: `crates/obs-modules/obs-browser` cdylib named `obs-browser`; links the C++ `cef-bridge` + CEF; the helper bundles keep their names. 2) Bookend E2: the submodule's C sources for the ported parts are removed when the submodule is retired; smoke on each OS.
+  - Done when: E1 export/loader check passes; E2 CI green and smoke recorded in `docs/tests/plugin-obs-browser.md`.
 
 ## G. Wrap-up
 
 ### P5-46 Native plugin SDK
-- [ ] **P5-46.1 Traits** — `Source`, `Filter`, `Encoder`, `Output`, `Service`, `Transition` with default methods for optional callbacks. Done when: docs.
-- [ ] **P5-46.2 Macro** — `#[obs_module(name, author, description, version)]` generating `obs_module_*` exports. Done when: `cargo expand` shows exports.
-- [ ] **P5-46.3 Builders** — settings and properties builders over `obs-data`. Done when: example plugin compiled.
-- [ ] **P5-46.4 Template** — `cargo generate` template + `docs/rust-rewrite/plugin-sdk.md`. Done when: a generated crate builds.
-- [ ] **P5-46.5 Pilot** — migrate `obs-transitions` onto the SDK. Done when: golden unchanged.
+- [ ] **P5-46.1 Traits** — `Source`, `Filter`, `Encoder`, `Output`, `Service`, `Transition` with default methods for optional callbacks.
+  - Files: `crates/obs-plugin-api/src/lib.rs` (new)
+  - Steps: 1) Define the 6 traits mirroring the `obs_*_info` vtables (one associated `ID`, default methods for optional callbacks). 2) Write the doc examples.
+  - Done when: docs.
+- [ ] **P5-46.2 Macro** — `#[obs_module(name, author, description, version)]` generating `obs_module_*` exports.
+  - Files: `crates/obs-plugin-api-macros/` (new proc-macro crate)
+  - Steps: 1) Implement the proc-macro generating the `obs_module_load/unload/set_priv` exports. 2) Verify with `cargo expand`.
+  - Done when: `cargo expand` shows exports.
+- [ ] **P5-46.3 Builders** — settings and properties builders over `obs-data`.
+  - Files: `crates/obs-plugin-api/src/{settings,properties}.rs` (new)
+  - Steps: 1) Port the `obs_data_set_default_*`/`obs_properties_*` ergonomics as builders. 2) Compile an example plugin using them.
+  - Done when: example plugin compiled.
+- [ ] **P5-46.4 Template** — `cargo generate` template + `docs/rust-rewrite/plugin-sdk.md`.
+  - Files: `templates/plugin/` (new), `docs/rust-rewrite/plugin-sdk.md` (new)
+  - Steps: 1) Write the `cargo generate` template (cdylib crate + example source + tests). 2) Write the SDK docs. 3) Generate a crate and build it.
+  - Done when: a generated crate builds.
+- [ ] **P5-46.5 Pilot** — migrate `obs-transitions` onto the SDK.
+  - Files: `crates/obs-modules/obs-transitions/` (the P5-02 crate)
+  - Steps: 1) Migrate the P5-02 port to the P5-46.1–.3 API. 2) Re-run the `transitions` conformance + goldens.
+  - Spec: S-029
+  - Vectors: `test/conformance/scripts/transitions/`
+  - Done when: golden unchanged.
 
 ### P5-47 Plugin loader supports both
-- [ ] **P5-47.1 Unified list** — Rust-native and C modules in one registry. Done when: registry lists both kinds.
-- [ ] **P5-47.2 Order/failures** — failure reporting via `obs_module_failure_info`. Done when: a failing C module reports as before.
-- [ ] **P5-47.3 Mixed test** — one Rust and one C module together. Done when: both load, order preserved.
+- [ ] **P5-47.1 Unified list** — Rust-native and C modules in one registry.
+  - Files: the module loader crate (Phase 4, `S-035`), `crates/obs-modules/*` (the registered plugins)
+  - Steps: 1) Extend the loader registry to hold Rust-native + C-ABI modules in one list. 2) Assert the registry lists both kinds.
+  - Spec: S-035 (module loader)
+  - Done when: registry lists both kinds.
+- [ ] **P5-47.2 Order/failures** — failure reporting via `obs_module_failure_info`.
+  - Files: the module loader crate (Phase 4)
+  - Steps: 1) Wire `obs_module_failure_info` for failing C modules. 2) Load a deliberately failing C module; assert the report matches C.
+  - Spec: S-035
+  - Done when: a failing C module reports as before.
+- [ ] **P5-47.3 Mixed test** — one Rust and one C module together.
+  - Files: `test/abi-host/` (the P0-15 host)
+  - Steps: 1) Load one Rust cdylib module + one C module in the P0-15 ABI host. 2) Assert both load and the order is preserved.
+  - Done when: both load, order preserved.
 
 ### P5-48 Installer layout
-- [ ] **P5-48.1 Compare** installed trees (old/new) with a script. Done when: diff empty or approved.
-- [ ] **P5-48.2 CMake/Cargo install rules**. Done when: installed trees match (P5-48.1).
-- [ ] **P5-48.3 Flatpak manifest** (`build-aux/`). Done when: manifest paths match and the Flatpak build passes.
+- [ ] **P5-48.1 Compare** installed trees (old/new) with a script.
+  - Files: `build-aux/` (flatpak), `cmake/` (install rules), `tools/` (new comparison script)
+  - Steps: 1) Write the script that diffs the installed trees (Windows: `core/<name>.dll` + `core/<name>/data`; Linux: `lib/obs-modules/core/<name>.so` + `share/obs/obs-modules/core/<name>`; macOS: bundle layout per `cmake/macos/`). 2) Run it against a full C install + the Rust install.
+  - Done when: diff empty or approved.
+- [ ] **P5-48.2 CMake/Cargo install rules**.
+  - Files: `cmake/` (per-plugin install rules), the per-crate `Cargo.toml` install targets
+  - Steps: 1) Update the CMake install rules for the kept-C plugins. 2) Set the Cargo install destinations to the same paths. 3) Re-run P5-48.1.
+  - Done when: installed trees match (P5-48.1).
+- [ ] **P5-48.3 Flatpak manifest** (`build-aux/`).
+  - Files: `build-aux/` (Flatpak manifest)
+  - Steps: 1) Update the manifest paths for the renamed/relocated modules. 2) Run the Flatpak build.
+  - Done when: manifest paths match and the Flatpak build passes.
 
 ### P5-49 Full-feature regression run
-- [ ] **P5-49.1 Automated** smoke test on 3 OSes. Done when: CI jobs green.
-- [ ] **P5-49.2 Manual matrix** of all 41 plugins. Done when: matrix recorded in `docs/tests/`.
-- [ ] **P5-49.3 Record** and open issues. Done when: `docs/tests/phase-5-regression.md` committed.
+- [ ] **P5-49.1 Automated** — smoke test on 3 OSes.
+  - Files: `test/headless/` (the P0-16 smoke host) + CI config
+  - Steps: 1) Run the P0-16 headless smoke + the per-plugin S2 corpus on Windows/Linux/macOS CI. 2) Assert all jobs green.
+  - Done when: CI jobs green.
+- [ ] **P5-49.2 Manual matrix** of all 41 plugins.
+  - Files: `docs/tests/` (the per-plugin smoke records from every E2)
+  - Steps: 1) Compile the manual smoke results of all 41 plugins into one matrix. 2) Fill the gaps (OSes not covered by CI).
+  - Done when: matrix recorded in `docs/tests/`.
+- [ ] **P5-49.3 Record** and open issues.
+  - Files: `docs/tests/phase-5-regression.md` (new)
+  - Steps: 1) Write the regression report (pass/fail per plugin × OS + known gaps). 2) Open issues for the failures.
+  - Done when: `docs/tests/phase-5-regression.md` committed.
 
 ### P5-50 Phase 5 review
-- [ ] **P5-50.1 FFI-shim list** with owner and reason. Done when: table committed (input to P7-03.1).
-- [ ] **P5-50.2 Tick** parents. Done when: every P5-xx checkbox is ticked in the phase file.
+- [ ] **P5-50.1 FFI-shim list** with owner and reason.
+  - Files: `docs/rust-rewrite/` (new table; inputs: P5-21 D-11 obs-vst, P5-31.7 D-08 graphics-hook, P5-32.3 D-19 libdshowcapture, P5-42/43 D-10 decklink/aja, P5-45.3 D-09 CEF glue, P5-37.3 D-14 DAL plug-in, P5-07.7 obs-x264-test)
+  - Steps: 1) Collect every kept-C/C++ piece with owner + reason. 2) Commit the table (input to P7-03.1).
+  - Done when: table committed (input to P7-03.1).
+- [ ] **P5-50.2 Tick** parents.
+  - Files: `docs/rust-rewrite/phase-5-plugins.md`
+  - Steps: 1) Tick every P5-xx task whose subtasks are done. 2) Re-run `python3 tools/task-coverage.py`.
+  - Done when: every P5-xx checkbox is ticked in the phase file.
