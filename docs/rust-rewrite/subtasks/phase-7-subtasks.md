@@ -21,11 +21,11 @@ Verified: the top-level directories are `libobs`, `libobs-opengl`, `libobs-d3d11
 ### P7-03 Delete C plugins
 - [ ] **P7-03.1 List** — plugin → status table from P5-50.
 - [ ] **P7-03.2 Delete** each fully ported plugin dir in its own commit, tagged `last-c-plugin-<name>` on the last commit containing it first (so `git revert` per plugin works); CMake/CI references in the same PR per delete recipe. Done when: only the P7-03.3 leftovers remain under `plugins/` and the tags are listed in `docs/rust-rewrite/retired.md`.
-- [ ] **P7-03.3 FFI leftovers** — document `obs-browser` CEF glue, DeckLink/AJA SDK glue, `libdshowcapture`, `graphics-hook`, `mac-virtualcam` extension host with owner, next review date and the decision IDs (D-08, D-09, D-10, D-14, D-19). Done when: list committed and every `plugins/` dir not in it is deleted.
+- [ ] **P7-03.3 FFI leftovers** — document `obs-browser` CEF glue (incl. the page-process helpers: `obs-browser-page` on Windows, the `OBS Helper*` bundles on macOS, `browser-helper` on Linux), DeckLink/AJA SDK glue, `libdshowcapture` (INTERFACE lib; header surface `src/dshowcapture.hpp`), win-capture `graphics-hook`, `inject-helper` and `get-graphics-offsets`, and the `mac-virtualcam` extension host, with owner, next review date and the decision IDs (D-08, D-09, D-10, D-14, D-19). Done when: list committed and every `plugins/` dir not in it is deleted.
 
 ### P7-04 Delete vendored deps
 - [ ] **P7-04.1 Scan** — for each `deps/*` entry, `grep` consumers.
-- [ ] **P7-04.2 Delete** unused ones (`blake2`, `json11`, `glad`, `w32-pthreads`, `libcaption` if ported), tagged `last-c-deps` first, per delete recipe; keep `libdshowcapture` (D-19: FFI, listed in P7-03.3). Done when: no CMake/CI references remain, CI green on 3 OSes, tag listed in `docs/rust-rewrite/retired.md`.
+- [ ] **P7-04.2 Delete** unused ones (`blake2`, `json11`, `glad`, `w32-pthreads`, `libcaption` if ported), tagged `last-c-deps` first, per delete recipe; keep `libdshowcapture` (D-19: FFI, listed in P7-03.3) with its nested `capture-device-support` submodule (elgatosf; referenced by `deps/libdshowcapture/CMakeLists.txt`). Done when: no CMake/CI references remain, CI green on 3 OSes, tag listed in `docs/rust-rewrite/retired.md`.
 
 ### P7-05 Delete `shared/`
 - [ ] **P7-05.1 Mapping table** — `bpm`, `file-updater`, `happy-eyeballs`, `ipc-util`, `media-playback`, `obs-d3d8-api`, `obs-hook-config`, `obs-inject-library`, `obs-scripting`, `obs-shared-memory-queue`, `obs-tiny-nv12-scale`, `opts-parser`, `properties-view`, `qt` → Rust crate or "still used by hook DLL".

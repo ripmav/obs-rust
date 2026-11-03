@@ -57,7 +57,7 @@ RULES = [
     ("libobs/obs-interaction.h", "P4-14", "S-040", ""),
     ("libobs/obs-missing-files.*", "P4-15", "S-024", ""),
     ("libobs/obs-module.*", "P4-29", "S-035", ""),
-    ("libobs/obs-nix-platform.*", "P4-32.5", "S-058", ""),
+    ("libobs/obs-nix-platform.*", "P4-32", "S-058", "platform selection ABI (obs_set_nix_platform[_display])"),
     ("libobs/obs-nix-x11.*", "P4-32.1", "S-058", ""),
     ("libobs/obs-nix-wayland.*", "P4-32.2", "D-30", "spec gap: S-058 excludes it"),
     ("libobs/obs-nix.*", "P4-32", "S-058", ""),
@@ -282,7 +282,7 @@ RULES = [
     ("frontend/utility/OBSUpdateDelegate.*", "P6-32.3", "", ""),
     ("frontend/utility/update-helpers.*", "P6-32.1", "", ""),
     ("frontend/utility/win-dll-blocklist.c", "P6-32.3", "", ""),
-    ("frontend/utility/crypto-helpers*.*", "P6-32.2", "", ""),
+    ("frontend/utility/crypto-helpers*.*", "P6-23.2", "", "What's-New feed RSA (mbedtls/mac impls); updater does not link them"),
     ("frontend/utility/GoLiveAPI_*", "P6-31.3", "", ""),
     ("frontend/utility/MultitrackVideo*.*", "P6-31.3", "", ""),
     ("frontend/utility/StartMultiTrackVideoStreamingGuard.hpp", "P6-31.3", "", ""),
@@ -299,7 +299,7 @@ RULES = [
     ("frontend/utility/MissingFiles*.*", "P6-27", "", ""),
     ("frontend/utility/Remux*.*", "P6-28", "", ""),
     ("frontend/utility/ExtraBrowsers*.*", "P6-15.2", "", ""),
-    ("frontend/utility/SceneRenameDelegate.*", "P6-08.2", "", ""),
+    ("frontend/utility/SceneRenameDelegate.*", "P6-08.3", "", "in-place rename delegate (scene context menu)"),
     ("frontend/utility/NativeEventFilter*.*", "P6-07.6", "", ""),
     ("frontend/utility/PreviewProgramSizeObserver.*", "P6-07.7", "", ""),
     ("frontend/utility/item-widget-helpers.*", "P6-09", "", ""),
@@ -309,8 +309,8 @@ RULES = [
     ("frontend/utility/platform*.*", "P6-41.3", "", ""),
     ("frontend/utility/display-helpers.hpp", "P6-41.3", "", ""),
     ("frontend/utility/system-info*.*", "P6-41.4", "", ""),
-    ("frontend/utility/obf.*", "P6-02.2", "", "stream-key obfuscation"),
-    ("frontend/utility/OBSCanvas.*", "P6-06.3", "", ""),
+    ("frontend/utility/obf.*", "P6-29", "", "OAuth/YouTube credential obfuscation (oauth/*, YoutubeApiWrappers)"),
+    ("frontend/utility/OBSCanvas.*", "P6-06.3", "", "canvas window widget; obs_frontend_add_canvas API is P6-36.4"),
     ("frontend/utility/RemoteTextThread.*", "P6-23.2", "", ""),
     ("frontend/utility/WhatsNew*.*", "P6-23.2", "", ""),
     ("frontend/utility/WHIPSimulcastEncoders.hpp", "P6-20.3", "", ""),
@@ -322,7 +322,7 @@ RULES = [
     ("frontend/widgets/ColorSelect.*", "P6-16.4", "", ""),
     ("frontend/widgets/OBSBasic_MainControls.*", "P6-06.1", "", ""),
     ("frontend/widgets/OBSBasic_Docks.cpp", "P6-06.3", "", ""),
-    ("frontend/widgets/OBSBasic_Canvases.cpp", "P6-06.3", "", ""),
+    ("frontend/widgets/OBSBasic_Canvases.cpp", "P6-06.3", "", "canvas manager UI; obs_frontend_add_canvas API is P6-36.4"),
     ("frontend/widgets/OBSBasic_Icons.cpp", "P6-06.1", "", ""),
     ("frontend/widgets/OBSBasic_Hotkeys.cpp", "P6-21", "", ""),
     ("frontend/widgets/OBSBasic_SysTray.cpp", "P6-41.1", "", ""),
@@ -453,9 +453,9 @@ RULES = [
     ("shared/properties-view/*", "P6-16.1", "", ""),
     ("shared/qt/*", "P6-49", "", "D-01: carried over per toolkit decision"),
     # ---------- deps ----------
-    ("deps/blake2/*", "P1-10.3, P1-31.2", "", "drop in Phase 6 (frontend-only user: updater, P6-32); blake2 crate"),
-    ("deps/glad/*", "P3-30", "", "drop when legacy GL is gone"),
-    ("deps/json11/*", "P1-24.1, P1-31.2", "", "drop in Phase 6 (frontend-only); serde_json"),
+    ("deps/blake2/*", "P1-10.3, P1-31.2, P7-04", "", "frontend-only users (updater P6-32, WhatsNewInfoThread); dropped by P7-04; blake2 crate"),
+    ("deps/glad/*", "P3-30, P7-04", "", "drop when legacy GL is gone (P7-04)"),
+    ("deps/json11/*", "P1-31.2, P7-04", "", "frontend-only (oauth/importer/YouTube, 17 files); dropped by P7-04; serde_json"),
     ("deps/libcaption/*", "P2-21", "", "D-18: probably FFI"),
     ("deps/libdshowcapture/*", "P5-32.3", "", "D-19: FFI (submodule)"),
     ("deps/w32-pthreads/*", "P1-05.3, P7-04.2", "", "D-26: absorb into Rust threading"),
@@ -498,6 +498,27 @@ def main():
 
     files = subprocess.check_output(["git", "-C", src, "ls-files"], text=True).split("\n")
     files = [f for f in files if f]
+    # Submodules (plugins/obs-websocket, plugins/obs-browser, deps/libdshowcapture/src,
+    # nested: deps/libdshowcapture/src/external/capture-device-support): the superproject's
+    # ls-files only sees the gitlink, so list each initialized one separately, recursively.
+    def walk_submodules(base, prefix):
+        nonlocal files
+        try:
+            cfg = subprocess.check_output(["git", "-C", base, "config", "-f", ".gitmodules", "--get-regexp", "path"], text=True)
+        except subprocess.CalledProcessError:
+            return
+        for line in cfg.splitlines():
+            sub_dir = os.path.join(base, line.split()[-1])
+            sub_prefix = prefix + line.split()[-1] + "/"
+            try:
+                sub_files = subprocess.check_output(["git", "-C", sub_dir, "ls-files"], text=True)
+            except subprocess.CalledProcessError:
+                pass  # not initialized yet; still walk it (it may define nested submodules)
+            else:
+                files += [f"{sub_prefix}{p}" for p in sub_files.split("\n") if p]
+            walk_submodules(sub_dir, sub_prefix)
+
+    walk_submodules(src, "")
     rev = subprocess.check_output(["git", "-C", src, "describe", "--always"], text=True).strip()
 
     tracked = [f for f in files if f.endswith(TRACKED_EXT)]
@@ -527,7 +548,11 @@ def main():
             return 0
 
     total_loc = sum(loc(f) for f in tracked)
-    kept_c = [f for f in tracked if match(f) and ("stays C" in match(f)[2] or "kept C" in match(f)[2])]
+    def is_kept(f):
+        n = match(f)[2]
+        return "stays C" in n or "kept C" in n or ("FFI" in n and "port" not in n)
+
+    kept_c = [f for f in tracked if match(f) and is_kept(f)]
 
     print(f"checkout: {src} @ {rev}")
     print(f"tracked source/ui/effect files: {len(tracked)} ({total_loc} lines)")

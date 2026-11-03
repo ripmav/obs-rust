@@ -34,7 +34,7 @@ Dependencies are stated inline where non-obvious (and in the per-phase "Dependen
 
 ## Subtasks
 
-Every task is broken into day-sized subtasks (`P<phase>-<nn>.<m>`) in [`subtasks/`](subtasks/): `phase-0-subtasks.md` … `phase-7-subtasks.md`. Each subtask lists **Files**, **Steps** and **Done when**; file and API names were checked against this checkout (the empty submodules `obs-websocket`, `obs-browser` and `libdshowcapture` could not be checked). Tick a subtask in its file; tick the parent task in the phase file once all of its subtasks are done.
+Every task is broken into day-sized subtasks (`P<phase>-<nn>.<m>`) in [`subtasks/`](subtasks/): `phase-0-subtasks.md` … `phase-7-subtasks.md`. Each subtask lists **Files**, **Steps** and **Done when**; file and API names were checked against this checkout, including the initialized submodules (`obs-websocket` 5.7.6, `obs-browser` 2.23.4, `libdshowcapture` no-atl — 141 of the 1,929 tracked source files). Tick a subtask in its file; tick the parent task in the phase file once all of its subtasks are done.
 
 ## Developer guides
 

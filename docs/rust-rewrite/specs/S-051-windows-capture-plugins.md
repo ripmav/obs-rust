@@ -312,7 +312,7 @@ Floating point: the only printed floats are `hook_rate` multipliers (`%.9g`); co
 
 ## 11. Open questions / not covered
 
-1. `VideoFormat` and `AudioFormat` enum numeric values, `DeviceId` encoding, and device-capability enumeration live in `libdshowcapture`, which is an empty submodule in this checkout (`deps/libdshowcapture/src` is empty). The `video_format` default and the `> MJPEG` ordering rule (R107) cannot be pinned numerically; the vectors use opaque tokens.
+1. `VideoFormat` / `AudioFormat` values, `DeviceId` encoding, and device-capability enumeration live in `libdshowcapture` (now initialized in this checkout, `deps/libdshowcapture/src`, no-atl branch). Pinned from `dshowcapture.hpp`: `VideoFormat` (:77) = Any 0, Unknown 1, ARGB 100, XRGB 101, RGB24 102, I420 200, NV12 201, YV12 202, Y800 203, P010 204, YVYU 300, YUY2 301, UYVY 302, HDYC 303, MJPEG 400, H264 401, HEVC 402 — so R107's `> MJPEG` rule means `> 400` (H264/HEVC). `AudioFormat` (:105) = Any 0, Unknown 1, Wave16bit 100, WaveFloat 101, AAC 200, AC3 201, MPGA 202. `DeviceId` encoding and capability enumeration remain Windows-runtime behaviour; the vectors keep opaque tokens for the device side.
 2. R04–R06/R09–R10/R12: needs a Windows host with a hooked game to validate; `get-graphics-offsets` output format for ddraw/d3d12 offsets is not read by the plugin (R06) — confirm whether the hook computes them itself.
 3. `tiny-nv12-scale` interpolation and UYVY/YUY2 targets (only the dimension contract is vector-tested with uniform frames).
 4. Whether D-3's wrapped value must be preserved for compatibility: no stored data depends on it, so the spec recommends the corrected arithmetic.

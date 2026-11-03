@@ -24,8 +24,8 @@ Keep a git tag per deletion (`last-c-libobs`, `last-cpp-frontend`, `last-c-plugi
 ## What must remain C/C++ (documented leftovers)
 
 Decided per item (D-08, D-09, D-10, D-14, D-19); record owner and review date in P7-03.3:
-- `plugins/win-capture/graphics-hook` and `inject-helper`: injected into third-party processes (smallest dependency surface, anti-cheat constraints).
-- `plugins/obs-browser` CEF glue (Chromium Embedded Framework is C++).
+- `plugins/win-capture/graphics-hook` and `inject-helper` (injected into third-party processes — smallest dependency surface, anti-cheat constraints), plus the `get-graphics-offsets` offset tool.
+- `plugins/obs-browser` CEF glue (Chromium Embedded Framework is C++), incl. the page-process helpers: `obs-browser-page` (Windows), `OBS Helper*` bundles (macOS), `browser-helper` (Linux).
 - DeckLink and AJA vendor SDK glue.
 - `libdshowcapture` (submodule) for DirectShow.
 - macOS camera extension host (`plugins/mac-virtualcam/src`) if it must be Swift/ObjC.
@@ -34,7 +34,7 @@ Decided per item (D-08, D-09, D-10, D-14, D-19); record owner and review date in
 ## Build system replacement (P7-06…09)
 
 Today: CMake presets + `cmake/` helpers + dependency preset that downloads prebuilt Qt/FFmpeg/CEF etc. (`cmake/common/buildspec_common.cmake`, `cmake/macos/buildspec.cmake`, `cmake/windows/buildspec.cmake`; Linux uses system packages — there is no root `buildspec.json` in this checkout). Target: `cargo xtask` for build/package/test, with native dependencies pinned and fetched by a script. Things that are easy to forget:
-- Installer/packaging inputs live in `build-aux/` (Flatpak manifest `com.obsproject.Studio.json`, Steam build files), `cmake/{windows,macos,linux}/` (CPack generators: Windows portable ZIP, Linux DEB/TGZ, FreeBSD; macOS bundle layout, `Info.plist`, entitlements, export options) and `additional_install_files/` (Windows install-tree layout, P6-42.1) — port the logic, not just the build. There is no NSIS in this checkout.
+- Installer/packaging inputs live in `build-aux/` (Flatpak manifest `com.obsproject.Studio.json`, Steam build files), `cmake/{windows,macos,linux}/` (CPack generators: Windows portable ZIP, Linux DEB, FreeBSD, plus the TGZ source dist; macOS bundle layout, `Info.plist`, entitlements) and `additional_install_files/` (Windows install-tree layout, P6-42.1) — port the logic, not just the build. Packaging that is *not* in `cmake/`: macOS zips/signs/notarizes in the CI action `.github/actions/package-obs`, and the Windows auto-update patches are built and signed by the BOUF-based actions `.github/actions/windows-patches`/`windows-signing` (NSIS comes from the pinned BOUF release, not this repo — no `.nsi` files in the tree).
 - Version numbers: `libobs/cmake/obs-version.cmake` and `cmake/common/versionconfig.cmake` (version derived from git tags unless `OBS_VERSION_OVERRIDE` is set) define the OBS version; `LIBOBS_API_VER` lives in `libobs/obs-config.h`; keep them single-sourced.
 - Code signing and notarisation steps are part of the release pipeline (`.github/workflows/`: `build-project`, `push`, `pr-pull`, `publish`, `sign-windows`, `scheduled`, `analyze-project`, `check-format`, `dispatch`).
 

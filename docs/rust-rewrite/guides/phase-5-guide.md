@@ -41,12 +41,13 @@ Until the SDK exists, port plugins with a thin hand-written `extern "C"` registr
 
 | Lines | Plugins |
 |---|---|
-| 15k+ | `obs-filters` (includes vendored RNNoise), `obs-outputs` (includes vendored librtmp), `obs-ffmpeg`, `decklink`, `win-capture` |
-| 4k–9k | `aja`, `mac-avcapture`, `obs-qsv11`, `obs-nvenc`, `win-dshow`, `linux-pipewire` |
+| 15k+ | `obs-filters` (includes vendored RNNoise), `obs-outputs` (includes vendored librtmp), `obs-ffmpeg`, `decklink`, `win-capture`, `obs-websocket` (submodule, tag 5.7.6) |
+| 4k–9k | `aja`, `mac-avcapture`, `obs-qsv11`, `obs-nvenc`, `win-dshow`, `linux-pipewire`, `obs-browser` (submodule, pinned 2.23.4-126-gd4db73e) |
 | 2k–4k | `mac-capture`, `mac-virtualcam`, `frontend-tools`, `nv-filters`, `image-source`, `linux-v4l2`, `text-freetype2`, `linux-capture`, `rtmp-services`, `win-wasapi` |
 | 1k–2k | `obs-transitions`, `obs-vst`, `coreaudio-encoder`, `vlc-video`, `mac-videotoolbox`, `obs-text`, `obs-webrtc`, `linux-pulseaudio` |
 | < 1k | `obs-x264`, `mac-syphon`, `*-output-ui`, `oss-audio`, `linux-alsa`, `sndio`, `linux-jack`, `obs-libfdk`, `decklink-captions` |
-| unknown | `obs-websocket`, `obs-browser` (empty submodules here: `git submodule update --init` first) |
+
+Submodule lines are measured the same way (C/C++/ObjC/Swift source files); the submodules are initialised in this checkout (fresh clones still need `git submodule update --init`).
 
 ## Choosing the order (risk-based)
 
@@ -83,7 +84,9 @@ Until the SDK exists, port plugins with a thin hand-written `extern "C"` registr
 
 **Hardware encoders.** `obs-nvenc` (`nvenc-d3d11.c`, `nvenc-cuda.c`, `nvenc-opengl.c`, `nvenc-properties.c`), `obs-qsv11` (+ `obs-qsv-test` helper), AMF inside `obs-ffmpeg`. Test helpers run in **separate processes** to probe drivers safely (a crashing driver must not take OBS down): keep that architecture.
 
-**`obs-websocket`, `obs-browser`.** External repos (submodules). Their upstream owners may prefer to port in their own repos; coordinate before starting. `obs-websocket` depends on the frontend API (`obs_frontend_*`, Phase 6) and on `obs-websocket`-specific vendor requests used by third parties.
+**`obs-websocket`.** Submodule at tag 5.7.6 (16.9k LOC). Protocol surface: `src/websocketserver/` (Hello/Identify auth with SHA256+Base64 challenge, `obswebsocket.json`/`obswebsocket.msgpack` subprotocols), 147 request types in `src/requesthandler/` per category (+ batch, Canvases new in 5.7), 60 events in `src/eventhandler/`, vendor API in `lib/obs-websocket-api.h` (API v3). The protocol spec is *generated* from the C++ doc comments into `docs/generated/protocol.json` + `protocol.md` — treat that file (147 requests / 60 events / 7 enums, rpcVersion 1) as the conformance reference; there is no in-tree test suite at 5.7.6. Config + CLI args (`--websocket-port/-ipv4-only/-password/-debug`) in `src/Config.cpp`. It depends on the frontend API (`obs_frontend_*`, Phase 6) and on vendor requests used by third parties. External repo — its upstream owners may prefer to port in their own repo; coordinate before starting.
+
+**`obs-browser`.** Submodule pinned at 2.23.4-126-gd4db73e (version file 2.27.5; 6.5k LOC). CEF (≥95) stays C++ and keeps its process model: a Windows `obs-browser-page` page process and four macOS `OBS Helper` bundles (GPU/Plugin/Renderer) with entitlements — the port must keep spawning them. `window.obsstudio` is registered via CefV8 in `browser-app.cpp`; source settings include `shutdown` (when not visible), `restart_when_active`, `is_local_file`, `reroute_audio`, `webpage_control_level`; cookie migration lives in the module main; the Qt dock is in `panel/`. The module also links the obs-websocket vendor API. External repo — coordinate with its upstream owners before starting.
 
 ## Pitfalls
 

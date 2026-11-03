@@ -172,7 +172,7 @@ Facts verified in this checkout that shape Phase 0:
 - [ ] **P0-17.1 Harness** — criterion crate `benches/`, C baseline runner printing the same metrics as JSON. Done when: one bench runs in both.
 - [ ] **P0-17.2 Math/pixel benches** — 1M matrix multiplies; 1080p NV12→RGB. Done when: stable ±3% between runs.
 - [ ] **P0-17.3 Audio/render benches** — mix 8 tracks × 1024 frames; render 20-item scene headless. Done when: stable.
-- [ ] **P0-17.4 Baselines** — record machine spec + numbers in `docs/rust-rewrite/benchmarks.md`.
+- [ ] **P0-17.4 Baselines** — record machine spec + numbers in `docs/rust-rewrite/benchmarks.md`. Done when: baseline committed with the machine spec.
 - [ ] **P0-17.5 Regression gate** — job compares PR vs stored baseline; fails > 2%. Done when: deliberate slowdown trips it.
 
 ### P0-18 Scene-collection corpus
@@ -189,9 +189,9 @@ Facts verified in this checkout that shape Phase 0:
 - [ ] **P0-19.3 Phase issues** — one tracking issue per phase linking the task files. Done when: 8 issues exist.
 
 ### P0-20 Test matrices
-- [ ] **P0-20.1 Directory and template** — `docs/tests/README.md`, `_template.md` (Case / Input / Expected / Platforms / Status).
-- [ ] **P0-20.2 Golden framework matrix** — `docs/tests/obs-golden.md`.
-- [ ] **P0-20.3 ABI plugin matrix** — `docs/tests/abi-conformance.md`.
+- [ ] **P0-20.1 Directory and template** — `docs/tests/README.md`, `_template.md` (Case / Input / Expected / Platforms / Status). Done when: both files exist.
+- [ ] **P0-20.2 Golden framework matrix** — `docs/tests/obs-golden.md`. Done when: matrix lists the demo-test cases.
+- [ ] **P0-20.3 ABI plugin matrix** — `docs/tests/abi-conformance.md`. Done when: matrix lists the lifecycle cases.
 - [ ] **P0-20.4 CI check** — script fails if a `tests/*.rs` or `test_*.c` has no matching matrix. Done when: negative test proves it.
 
 ### P0-21 Phase 0 review
