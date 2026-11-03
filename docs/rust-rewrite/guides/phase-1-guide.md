@@ -74,6 +74,14 @@ Consequences for Rust: the emit loop uses indices (the array can grow during ite
 
 util (P1-01…14) → math (15…19) → calldata/decl/proc (20,21) → signal (22,23) → obs_data (24…28) → shared helpers (33) → integration (29…32). `obs_data` depends on `dstr`, `darray`, `bmem`, JSON; `signal` depends on `calldata`, threading; P1-33 uses S-001/S-006 only as implementation details, its file-updater module (M10) uses `obs_data`'s JSON semantics (P1-25), and its bpm AV1 framing inlines S-012's `metadata_obu` formula — so P1-33 runs after P1-25, with no Phase 2 build dependency.
 
+## Running this phase's checks
+
+- Conformance (the clean-room check): implement the area's runner per `test/conformance/README.md`, run every script in `test/conformance/scripts/<area>/`, compare with `vectors/<area>/` under the README's comparison rules (log lines level-only, `crash` in expected = `ok` in yours).
+- Phase 1 areas: `bmem` (S-001), `dstr` (S-006), `darray`, `deque` (S-005), `config` (S-007), `math` (S-008), `math2` (S-009), `serial` (S-010), `lexer` (S-011), `calldata` (S-002), `decl` (S-003), `signal` (S-004), `obsdata` (S-014), `props` (S-015), `platform` (S-023), `helpers` (S-024), `hotkeys` (S-034), `utilrest` (S-055).
+- Sanity of the C reference (regenerate/verify vectors, needs a C compiler): `cd test/conformance && ./run.sh check <AREA>` — always pass one AREA so other vectors are untouched; export `CONFORMANCE_BUILD_DIR` to reuse the build dir.
+- C-side regression: `ctest` with `ENABLE_UNIT_TESTS=ON` — the `test/cmocka/` suite must pass against the Rust build.
+- Rust: `cargo test --workspace`, `cargo clippy -D warnings`; no `cargo xtask` yet (that is Phase 7, P7-06).
+
 ## Verification checklist
 
 - [ ] `test/cmocka/test_darray.c`, `test_bitstream.c`, `test_serializer.c`, `test_os_path.c` pass against the Rust build.

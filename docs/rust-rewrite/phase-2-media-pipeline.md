@@ -2,7 +2,7 @@
 
 Goal: port `libobs/media-io`, the audio mixing code, and the bitstream parsers. This is real-time code: no allocation or blocking locks on the hot path, and no regression in benchmarks.
 
-Source map: `libobs/media-io/*`, `libobs/obs-audio.c`, `obs-audio-controls.c`, `audio-monitoring/`, `obs-av1.c`, `obs-avc.c`, `obs-hevc.c`, `obs-nal.c`, `obs-video.c` (timing part only), `obs-output-delay.c`, `obs-encoder.c` (packet queue part only), `obs-output.c` (interleave/caption part only).
+Source map (libobs 33.0.1, line counts): `libobs/media-io/*` (19 files, 3,642 lines; key: `video-io.c` 679, `audio-io.c` 455, `format-conversion.c` 288, `video-scaler-ffmpeg.c` 270, `video-frame.c` 263, `media-remux.c` 266, `video-matrices.c` 256, +12 more), `libobs/obs-audio.c` (721), `obs-audio-controls.c` (878), `audio-monitoring/` (14 files, 2,433 lines: `pulse/` 1,166, `win32/` 665, `osx/` 567, `null/` 35), `obs-av1.c` (208), `obs-avc.c` (321), `obs-hevc.c` (202), `obs-nal.c` (66), `obs-video.c` (1200; timing part only), `obs-output-delay.c` (209), `obs-encoder.c` (2286; packet queue part only), `obs-output.c` (3340; interleave/caption part only).
 
 ## A. Formats and conversion
 

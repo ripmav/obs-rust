@@ -82,6 +82,14 @@ Because libobs's graphics thread, audio callback and packet queues all depend on
 - **Scenes need a canvas** (`requires_canvas`): a scene created without one is assigned `obs->data.main_canvas` with a warning. Mirror it.
 - **Order of signals** (`source_create` after `create` callback, etc.) is relied on by the frontend and obs-websocket. Table-test the order.
 
+## Running this phase's checks
+
+- Conformance: write a runner per area (script language and comparison rules: `test/conformance/README.md`), run it over `scripts/<area>/`, and compare stdout with `vectors/<area>/*.expected`. The C reference regenerates vectors via `./run.sh check` from `test/conformance` (export `CONFORMANCE_BUILD_DIR`).
+- Phase 4 areas: `obssource` (51 scripts), `scenemath` (40), `audiomix` (39), `encoutput` (33), `obscore` (48), `hotkeys` (15), `modservice` (23), `avio` (26), plus `helpers` (missing-files, hotkey table) and `signal` (procs).
+- ABI: the P0-15 test plugin — C plugin in `test/test-input/` loaded by the `test/abi-host/` host; lifecycle traces must match `test/abi-host/traces/*.golden` (`ctest -R abi`).
+- End-to-end: the P0-16 headless smoke test (`test/headless/`) — build a scene, record 5 s MKV, validate with `ffprobe`; run under `xvfb-run` on Linux.
+- Corpus: the P0-18 collections in `test/fixtures/` must round-trip with stable ids (P4-06.3, P4-19.3).
+
 ## Verification checklist
 
 - [ ] Symbol list diff (C vs Rust) = 0 missing (P4-34).

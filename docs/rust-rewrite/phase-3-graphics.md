@@ -2,7 +2,7 @@
 
 Goal: port the effect/shader language and the `gs_*` abstraction, then add a `wgpu` backend. Legacy backends (`libobs-opengl`, `libobs-d3d11`, `libobs-metal`) stay selectable until `wgpu` reaches parity.
 
-Source map: `libobs/graphics/*` (non-math), `libobs/data/*.effect`, `libobs-opengl/`, `libobs-d3d11/`, `libobs-metal/`, `deps/glad`, `libobs/obs-display.c` (presentation part; the `obs_display_*` API is P4-31), `libobs/obs-video.c` (render part). Not here: `libobs-winrt/` (P5-33), `obs-canvas.c`/`obs-view.c` (P4-33/P4-31), `obs-source.c` render path (P4-05), platform window glue `obs-nix-*.c`/`obs-cocoa.m`/`obs-windows.c` (P4-32).
+Source map (libobs 33.0.1, line counts): `libobs/graphics/*` (non-math: 16 files + `libnsgif/` (4); key: `graphics.c` 3312, `effect-parser.c` 1972, `shader-parser.c` 717, `effect.c` 556, `graphics-ffmpeg.c` 787, `image-file.c` 409), `libobs/data/*.effect` (21 files), `libobs-opengl/` (27 files, 8,984 lines), `libobs-d3d11/` (16, 7,340), `libobs-metal/` (37, 8,530, mostly Swift), `deps/glad`, `libobs/obs-display.c` (311; presentation part; the `obs_display_*` API is P4-31), `libobs/obs-video.c` (1200; render part), `obs-video-gpu-encode.c` (312). Not here: `libobs-winrt/` (P5-33), `obs-canvas.c`/`obs-view.c` (P4-33/P4-31), `obs-source.c` render path (P4-05), platform window glue `obs-nix-*.c`/`obs-cocoa.m`/`obs-windows.c` (P4-32).
 
 ## A. Effect language
 

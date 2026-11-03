@@ -46,7 +46,7 @@ Legend: **Blocked** = tasks that wait on the answer. **Default** = what the plan
 | D-22 | **x264 bindings**: `x264` crate vs hand-rolled FFI shim | P5-07.3 | `x264` crate if current, else FFI shim; bit-exactness test is the gate either way |
 | D-23 | **RSA key usage** (`OBSPublicRSAKey.pem`): in C it signs the What's-New feed only (P6-23.2) — the updater verifies patches by blake2b manifest hashes + Authenticode (VC redist), no key signature. Keep RSA for the feed or move to ed25519? | P6-23.2, P6-32.2 | Keep RSA (same key, same verification path); ed25519 only if D-07 review wants it |
 | D-24 | **MSRV policy** | P0-05.2 | Track latest stable, bump within one release cycle |
-| D-25 | **FTL output** (`ftl-stream.c`, vendored FTL): keep or drop? | P5-18.3 | Drop if the vendored FTL is gone/stale upstream (verify in P5-18.3); FTL has had no releases since 2021 |
+| D-25 | **FTL output** (`ftl-stream.c`, vendored FTL): keep or drop? | P5-18.3 | Drop — verified 2026-11-03: no FTL sources or CMake references remain in the 33.0.1 checkout (removed upstream); FTL has had no releases since 2021 |
 | D-26 | **`deps/w32-pthreads`**: absorbed by the Rust threading crate (P1-05) and deleted (P7-04) — confirm nobody needs it out-of-tree | P1-05.3, P7-04.2 | Absorb + delete |
 
 ## D. Spec backlog — work to schedule, not forks in the road

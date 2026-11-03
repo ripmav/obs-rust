@@ -61,12 +61,12 @@ Start the PR stack with the `docs:` tasks (P0-01 to P0-06).
   - Do: a `obs-golden` crate: reads/writes `*.golden`, `UPDATE_GOLDEN=1` regenerates, shows readable diffs.
   - Done when: used by one demo test.
 - [ ] **P0-14 C reference dumper** (L)
-  - Source: `libobs/util`, `libobs/graphics/*math*`, `libobs/obs-data.c`, `libobs/callback`, `libobs/media-io`.
+  - Source: `libobs/graphics/{vec3,vec4,matrix3,matrix4,quat,axisang,plane,bounds,math-extra}.c` (1,448) + their headers, `libobs/obs-data.c` (2,181), `libobs/callback/{calldata,decl,proc,signal}.c` (988), `libobs/media-io/format-conversion.c` (288), `libobs/obs-audio.c` (721, `mix_audio`).
   - Do: a C test executable `obs-ref-dump` that runs fixed inputs through the C implementation and prints canonical output (math, `obs_data` JSON round trips, calldata, audio mixing, pixel conversion).
   - Deliverables: `test/golden/*.golden` produced from the C code.
   - Done when: re-running produces byte-identical files (deterministic).
 - [ ] **P0-15 ABI conformance test plugin** (M)
-  - Source: `test/` (existing test dir), `libobs/obs-module.h`.
+  - Source: `test/test-input/` (11 files, 1013 lines: `test-input.c`, `test-filter.c`, `test-random.c`, `test-sinewave.c`, `sync-*.c`, 2 `.effect`), `libobs/obs-module.h` (201).
   - Do: a small C plugin registering a source, filter, encoder, output and service; loaded by a test host, checks lifecycle callbacks (create, update, video_tick, video_render, destroy).
   - Done when: passes against the current `libobs` and is wired into CI.
 - [ ] **P0-16 Headless smoke test** (M)

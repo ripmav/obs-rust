@@ -66,6 +66,15 @@ Public API in `libobs/obs-nal.h`, `obs-avc.h`, `obs-hevc.h`, `obs-av1.h` (all ex
 - Floating-point: clamping `-1..1` happens once per mix after summation; summing in a different order changes low bits. Goldens should allow ≤ 1 ULP only where the order is demonstrably different.
 - macOS and Windows differ in `audio-monitoring` backends; there is no ALSA monitoring backend (only `null`, `osx`, `pulse`, `win32`).
 
+## Running this phase's checks
+
+Conformance: from `test/conformance/` with `CONFORMANCE_BUILD_DIR` exported, `./run.sh check <area>` for
+`mediaconv` (S-013, 27 scripts), `avio` (S-044, 26), `nal` (S-012, 19), `audiomix` (S-032, 39), `encoutput`
+(S-041, 33) and `utilrest` (S-055, 26). A Rust runner implements each area's script language and diffs stdout
+against `vectors/<area>/` (comparison rules: `test/conformance/README.md`). CMake side: build with
+`-DOBS_ENABLE_RUST=ON/OFF` and run `ctest` (P0-08). Rust side: `cargo test`, `cargo clippy -- -D warnings`,
+`cargo bench` against the P0-17 baselines in `docs/rust-rewrite/benchmarks.md`. `cargo xtask` arrives in Phase 7 (P7-06).
+
 ## Verification checklist
 
 - [ ] Goldens for converters (all 26 formats where supported) and colour matrices.

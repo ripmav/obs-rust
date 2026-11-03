@@ -50,6 +50,14 @@ Use the null/software path available on CI. Without a GPU, libobs graphics init 
 ### Corpus (P0-18)
 Scene collections are JSON; secrets to strip: stream keys (`key` in `service.json`), URLs with tokens (browser sources), window titles, absolute file paths. Keep a mapping from original to placeholder so the structure stays valid.
 
+## Running this phase's checks
+
+- Conformance reference (proves the C reference still matches its vectors; all 59 areas): `cd test/conformance && ./run.sh check` — needs a C compiler; export `CONFORMANCE_BUILD_DIR` to reuse the build dir (README, "Known gaps").
+- C unit tests: `cmake --preset ubuntu -DENABLE_UNIT_TESTS=ON` then `ctest` (runs `test/cmocka/`).
+- Safety-net jobs: `obs-ref-dump --list` (P0-14), `ctest -R abi` (P0-15), headless smoke (P0-16), benchmark baseline (P0-17).
+- Rust workspace: `cargo build --workspace`, `cargo test --workspace`, `cargo fmt --check`, `cargo clippy -D warnings`.
+- No `cargo xtask` exists yet (that is Phase 7, P7-06); use the cmake/cargo commands above.
+
 ## Pitfalls
 
 - Corrosion + `cdylib` module crates (Phase 5) need different crate types than the aggregate `staticlib`; plan the crate-type matrix now.
