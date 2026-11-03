@@ -331,6 +331,10 @@ Verified file map (libobs 33.0.1 checkout, line counts): `libobs/media-io/` has 
   - Done when: compile and play on macOS.
 - [ ] **P2-15.5 Device switch** — manual test per OS.
   - Done when: device switch verified manually on each OS.
+- [ ] **P2-15.6 Write S-065 (added)** — audio-monitoring win32/osx/null spec (D-31)
+  - Files: `libobs/audio-monitoring/win32/wasapi-output.c` (463), `libobs/audio-monitoring/osx/coreaudio-output.c` (322), `libobs/audio-monitoring/null/null-audio-monitoring.c` (35).
+  - Steps: 1. read the three C backends (thin platform glue) and enumerate the contract: device matching, stream creation, format handling, error paths. 2. write `specs/S-065-audio-monitoring-platforms.md` mirroring S-055 (PulseAudio). 3. add the row to `specs/README.md`.
+  - Done when: S-065 committed; P2-15.3/.4 cite it.
 
 ### P2-16 Audio volume/pan/mono kernels
 - [ ] **P2-16.1 Kernels**

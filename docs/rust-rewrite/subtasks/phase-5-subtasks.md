@@ -704,7 +704,7 @@ Verified in this checkout (submodules initialised): **`plugins/obs-websocket` at
   - Done when: `docs/tests/plugin-obs-websocket-inventory.md` committed; S2 passes.
 - [ ] **P5-20.3 Transport**
   - Files: `src/websocketserver/` (1 389 lines): `WebSocketServer.cpp` (464), `WebSocketServer.h` (104), `WebSocketServer_Protocol.cpp` (411), `rpc/WebSocketSession.h` (109), `types/WebSocketCloseCode.h` (172), `types/WebSocketOpCode.h` (129)
-  - Steps: 1) Port the HTTP upgrade + `obswebsocket.json`/`obswebsocket.msgpack` subprotocols onto `tokio-tungstenite` + JSON/MsgPack codecs. 2) Keep opcodes exactly: Hello(0)/Identify(1)/Identified(2)/Reidentify(3)/Event(5)/Request(6)/RequestResponse(7)/RequestBatch(8)/RequestBatchResponse(9).
+  - Steps: 1) Port the HTTP upgrade + `obswebsocket.json`/`obswebsocket.msgpack` subprotocols onto `tokio-tungstenite` + JSON/MsgPack codecs. 2) Keep opcodes exactly: Hello(0)/Identify(1)/Identified(2)/Reidentify(3)/Event(5)/Request(6)/RequestResponse(7)/RequestBatch(8)/RequestBatchResponse(9). 3) Port `ProcessMessage` (`WebSocketServer_Protocol.cpp`:69, 285 lines — the per-session request dispatch) exactly.
   - Done when: `obs-websocket-js` connects over both subprotocols.
 - [ ] **P5-20.4 Auth + config**
   - Files: `src/utils/Crypto.cpp` (85) + `src/utils/Crypto.h` (32), `src/Config.cpp` (227) + `src/Config.h` (47), `src/utils/Platform.cpp` (127)
@@ -734,6 +734,10 @@ Verified in this checkout (submodules initialised): **`plugins/obs-websocket` at
   - Files: `src/obs-websocket.cpp` (322) (module main), `src/forms/` (568 lines: `ConnectInfo.cpp` 135, `SettingsDialog.cpp` 331 + 2 headers), `CMakeLists.txt` (target `obs-websocket` MODULE)
   - Steps: 1) Bookend E1: `crates/obs-modules/obs-websocket` cdylib named `obs-websocket`; the `src/forms/` Qt dialogs are ported with it (frontend API via P6-36). 2) Bookend E2: the submodule's CMake target is removed when the submodule is retired; smoke on each OS.
   - Done when: E1 export/loader check passes; E2 CI green and smoke recorded in `docs/tests/plugin-obs-websocket.md`.
+- [ ] **P5-20.12 Write S-062 (added)** — obs-websocket protocol spec (D-28)
+  - Files: `plugins/obs-websocket/docs/generated/protocol.json` (5.7.6: 147 requests / 60 events / 7 enums, each with `rpcVersion`/`initialVersion`/`deprecated`), `protocol.md`.
+  - Steps: 1) write `specs/S-062-obs-websocket.md` from the in-tree generated protocol (request/event/enum contract, auth flow, opcodes, close codes). 2) build the protocol vectors from the C build (P5-20.9 harness). 3) add the row to `specs/README.md`.
+  - Done when: S-062 committed; P5-20.5–.8 cite it.
 
 ### P5-21 `obs-vst`
 - [ ] **P5-21.1/.2** S1/S2
@@ -1008,6 +1012,10 @@ Verified in this checkout (submodules initialised): **`plugins/obs-websocket` at
   - Files: `plugin-main.cpp` (76) (module main), `CMakeLists.txt` (target `win-wasapi` MODULE)
   - Steps: 1) Bookend E1: `crates/obs-modules/win-wasapi` cdylib named `win-wasapi` (Windows build). 2) Bookend E2: remove the C plugin in the same PR; smoke on Windows.
   - Done when: E1 export/loader check passes on Windows; E2 CI green and smoke recorded in `docs/tests/plugin-win-wasapi.md`.
+- [ ] **P5-30.9 WASAPI spec gap (added)** — D-32
+  - Files: `enum-wasapi.cpp` (97), `wasapi-notify.cpp` (109), `win-wasapi.cpp` (1648).
+  - Steps: 1. cross-check S-051 §5.G (R80–R89) against the three files above. 2. extend §5.G for every still-unpinned rule (default: extend S-051 per D-32 — enumeration order, `IMMNotificationClient` hotplug → which sources update/restart, capture-loop buffer handling). 3. vectors for the new rules.
+  - Done when: §5.G cross-checked and extended; no unpinned rule left in the three files.
 
 ### P5-31 `win-capture`
 - [ ] **P5-31.1/.2** S1/S2
@@ -1063,6 +1071,12 @@ Verified in this checkout (submodules initialised): **`plugins/obs-websocket` at
   - Files: `plugin-main.c` (161) (module main), `CMakeLists.txt` (targets: `win-capture` MODULE, `graphics-hook` MODULE, `inject-helper` + `get-graphics-offsets` executables)
   - Steps: 1) Bookend E1: `crates/obs-modules/win-capture` cdylib named `win-capture` (host side); the hook/helpers stay C++ (D-08) and keep their module/executable names. 2) Bookend E2: remove the ported host-side C sources in the same PR; keep `graphics-hook/`, `inject-helper/`, `get-graphics-offsets/` until P7-03.3.
   - Done when: E1 export/loader check passes on Windows; E2 CI green and smoke recorded in `docs/tests/plugin-win-capture.md`.
+- [ ] **P5-31.12 Vulkan format table vectors (added)**
+  - Files: `graphics-hook/vulkan-capture.h` (875; `vk_format_to_dxgi` table, 512 lines at :338, `vk_format_to_str` table, 237 lines at :56).
+  - Steps: 1. the hook stays C++ (D-08) — pin the two tables instead of porting: generate a `vulkan-formats` script + committed `.expected` vector from the C build asserting every VkFormat→DXGI-format mapping (incl. the unsupported fallback) and every VkFormat→name string. 2. regenerate the vector if the hook table changes.
+  - Spec: S-051 (vulkan capture).
+  - Vectors: `test/conformance/scripts/wincapture/`.
+  - Done when: all rows of both tables are pinned by committed vectors.
 
 ### P5-32 `win-dshow`
 - [ ] **P5-32.1/.2** S1/S2 (`deps/libdshowcapture/src` submodule initialised in this checkout; fresh clones need `git submodule update --init --recursive deps/libdshowcapture` — it has a nested Elgato submodule)
@@ -1071,7 +1085,7 @@ Verified in this checkout (submodules initialised): **`plugins/obs-websocket` at
   - Done when: `docs/tests/plugin-win-dshow-inventory.md` committed; S2 passes.
 - [ ] **P5-32.3 Bindings**
   - Files: `deps/libdshowcapture/src/dshowcapture.hpp` (306, public API: `DShowDevice`/`DShowDeviceEx`, VideoFormat MJPEG=400/H264=401/HEVC=402, AudioFormat Wave16bit=100…MPGA=202); implementation `deps/libdshowcapture/src/source/` (23 files / 7 767 lines: `output-filter.cpp` 992, `dshow-base.cpp` 1031, `device.cpp` 875, `capture-filter.cpp` 696, `dshow-enum.cpp` 573, `encoder.cpp` 411, + 17 more)
-  - Steps: 1) Keep the C++ library as-is (D-19); write the Rust FFI bindings over `dshowcapture.hpp`. 2) Initialse the nested `src/external/capture-device-support` submodule before building. 3) Verify enumeration + capture through the binding.
+  - Steps: 1) Keep the C++ library as-is (D-19); write the Rust FFI bindings over `dshowcapture.hpp`. 2) Initialse the nested `src/external/capture-device-support` submodule before building. 3) Verify enumeration + capture through the binding. 4) Name every source file of `deps/libdshowcapture/src` (30 at 65c320b46: the 6 named above + 17 more in `source/` + 6 outside it) in this Files list — source of truth `docs/rust-rewrite/coverage/function-inventory.csv`.
   - Spec: S-051 §11 (DShow enums)
   - Pitfalls:
     - D-19 (DECISIONS-NEEDED): `deps/libdshowcapture/src` stays C++ (DirectShow COM is the job); only the host side ports to Rust. The FFI crossing is the `dshowcapture.hpp` API (device, format, callback).
