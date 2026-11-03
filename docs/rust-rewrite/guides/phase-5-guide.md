@@ -103,3 +103,10 @@ Submodule lines are measured the same way (C/C++/ObjC/Swift source files); the s
 - [ ] Module file name and install layout unchanged.
 - [ ] Manual smoke test on each supported OS recorded in `docs/tests/plugin-<name>.md`.
 - [ ] C sources removed in the same PR.
+
+## Running this phase's checks
+
+1. **Conformance (per subtask):** the subtask's `Spec:`/`Vectors:` line names the area. Run your Rust runner over `test/conformance/scripts/<area>/` and compare against `test/conformance/vectors/<area>/*.expected` byte-for-byte (log-line and crash rules in `test/conformance/README.md`; `run.sh check` re-verifies the C reference and needs a C toolchain).
+2. **Settings compatibility (S2 bookend):** load the P0-18 corpus settings into the Rust `cdylib` through the P0-15 ABI host (`test/abi-host/`, which drives the module's lifecycle and writes a trace) — effective values must match the C plugin.
+3. **Golden/differential (task "Done when"):** PNG/PCM/box-dump/packet-byte goldens against the C plugin on identical inputs.
+4. **Smoke (E2 bookend):** manual smoke on each supported OS, result recorded in `docs/tests/plugin-<name>.md`.

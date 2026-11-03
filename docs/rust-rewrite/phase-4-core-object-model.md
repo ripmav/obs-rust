@@ -2,7 +2,7 @@
 
 Goal: port the remainder of `libobs` (sources, scenes, filters, transitions, encoders, outputs, services, hotkeys, modules, canvases, display) and ship a complete C ABI (`obs-ffi`) so unmodified C plugins keep working. At the end `libobs` C code is retired.
 
-Source map: `libobs/obs.c`, `obs-internal.h`, `obs-source.c`, `obs-source-deinterlace.c`, `obs-source-transition.c`, `obs-scene.c`, `obs-encoder.c`, `obs-output.c`, `obs-service.c`, `obs-module.c`, `obs-hotkey.c`, `obs-canvas.c`, `obs-view.c`, `obs-display.c`, `obs-missing-files.c`, `obs-properties.c`, `obs-config.h`, `obs-core-modules*`, `obs-cocoa.m`, `obs-nix*.c`, `obs-windows.c`, `obs-interaction.h`.
+Source map: `libobs/obs.c`, `obs-internal.h`, `obs-source.c`, `obs-source-deinterlace.c`, `obs-source-transition.c`, `obs-scene.c`, `obs-encoder.c`, `obs-output.c`, `obs-service.c`, `obs-module.c`, `obs-hotkey.c`, `obs-canvas.c`, `obs-view.c`, `obs-display.c`, `obs-missing-files.c`, `obs-properties.c`, `obs-config.h`, `obs-core-modules.c.in` (34) + `obs-core-modules.h` (25) + the three `obs-core-modules-loader-{nix.c (62), win.c (66), mac.m (60)}`, `obs-cocoa.m` (835), `obs-nix.c` (458), `obs-nix-x11.c` (1280), `obs-nix-wayland.c` (1630), `obs-nix-platform.c` (45), `obs-windows.c` (1233), `obs-win-crash-handler.c` (534), `obs-interaction.h` (56).
 
 ## A. Design
 

@@ -71,6 +71,15 @@ APIs (grep in `graphics.h`): `gs_texture_open_shared(handle)`, `gs_texture_open_
 - Some backends need the display and the main renderer on the same thread (macOS Metal layer). Keep `gs_enter_context`/`gs_leave_context` semantics (thread-local current graphics with a recursion counter).
 - Never assume the graphics thread is the process main thread.
 
+## Running this phase's checks
+
+Conformance: from `test/conformance/` with `CONFORMANCE_BUILD_DIR` exported, `./run.sh check <area>` for
+`effect` (S-020, 41 scripts), `graphics` (S-043, 31), `gfximages` (S-053, 21), `glbackend` (S-057, 22),
+`obsvideo` (S-058, 23), `math` (S-008, 8), `lexer` (S-011, 25). A Rust runner implements each area's script
+language and diffs stdout against `vectors/<area>/` (comparison rules: `test/conformance/README.md`). Rust side:
+`cargo test`, `cargo clippy -- -D warnings`; effect renders compared by PSNR > 60 dB (P3-24.3). `cargo xtask`
+arrives in Phase 7 (P7-06).
+
 ## Verification checklist
 
 - [ ] Every `.effect` (libobs + plugins + frontend) compiles under the transpiler with a golden WGSL.
