@@ -44,7 +44,7 @@ Legend: **Blocked** = tasks that wait on the answer. **Default** = what the plan
 | D-20 | **FreeType text**: `freetype-rs` (metrics-identical) vs `cosmic-text`/`swash` (modern layout)? | P5-05.3 | Spike decides (P5-05.3); default `freetype-rs` because S-038 vectors pin the current glyph metrics |
 | D-21 | **Noise suppression**: `nnnoiseless` crate vs keep vendored RNNoise FFI | P5-01.7 | `nnnoiseless` crate (same algorithm, maintained) |
 | D-22 | **x264 bindings**: `x264` crate vs hand-rolled FFI shim | P5-07.3 | `x264` crate if current, else FFI shim; bit-exactness test is the gate either way |
-| D-23 | **Updater signature**: keep RSA (existing `OBSPublicRSAKey.pem`) or move to ed25519? | P6-32.2 | Keep RSA for compatibility with already-shipped updates; ed25519 only if D-07 review wants it |
+| D-23 | **RSA key usage** (`OBSPublicRSAKey.pem`): in C it signs the What's-New feed only (P6-23.2) — the updater verifies patches by blake2b manifest hashes + Authenticode (VC redist), no key signature. Keep RSA for the feed or move to ed25519? | P6-23.2, P6-32.2 | Keep RSA (same key, same verification path); ed25519 only if D-07 review wants it |
 | D-24 | **MSRV policy** | P0-05.2 | Track latest stable, bump within one release cycle |
 | D-25 | **FTL output** (`ftl-stream.c`, vendored FTL): keep or drop? | P5-18.3 | Drop if the vendored FTL is gone/stale upstream (verify in P5-18.3); FTL has had no releases since 2021 |
 | D-26 | **`deps/w32-pthreads`**: absorbed by the Rust threading crate (P1-05) and deleted (P7-04) — confirm nobody needs it out-of-tree | P1-05.3, P7-04.2 | Absorb + delete |
@@ -57,7 +57,7 @@ These are not forks: the plan proceeds, but a spec author must be assigned. Numb
 | ID | Item | Why it matters | Suggested |
 |---|---|---|---|
 | D-27 | **Threading primitives spec** (`os_event`, `os_sem`, `pthread_mutex` wrappers — old backlog S-017) | P1-05 is one of the first implementation tasks and has no clean-room spec; P1-05 subtasks therefore read the C | Write S-061 before starting P1-05 |
-| D-28 | **`obs-websocket` spec** (protocol is documented upstream; no S-xxx yet) | P5-20 is XL and the single most-integrated third-party plugin | Write S-062 from the upstream protocol docs + vectors from the C build |
+| D-28 | **`obs-websocket` spec** (protocol is documented upstream; no S-xxx yet) | P5-20 is XL and the single most-integrated third-party plugin | Write S-062 from the in-tree generated spec `plugins/obs-websocket/docs/generated/protocol.json` (5.7.6: 147 requests / 60 events / 7 enums, each with `rpcVersion`/`initialVersion`/`deprecated`) + vectors from the C build |
 | D-29 | **Python scripting backend spec** — 25 `pyscript` conformance vectors already exist, but S-039 explicitly excludes the backends and S-060 covers Lua only | P6-37.2 would otherwise be implemented by reading the C | Extend S-039/S-060 into a backend pair, or write S-063 from the existing `pyscript` vectors |
 | D-30 | **Wayland hotkey-platform spec** — S-058 explicitly does not cover `obs-nix-wayland.c` (42 KB: `wl_keyboard` + xkbcommon hotkey platform; no portal code — the portals live in `platform-nix-dbus.c`/`platform-nix-portal.c`) | P4-32.2 would otherwise read the C | Extend S-058 or write S-064 (public Wayland + xkbcommon protocols) |
 | D-31 | **Audio-monitoring win32/osx/null specs** — S-055 covers PulseAudio only | P2-15.2…P2-15.4 would otherwise read the C | Small spec (S-065) or accept reading the C (it is thin platform glue) |

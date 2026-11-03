@@ -8,7 +8,7 @@ You cannot replace what you have not run. Do this once.
 
 1. Presets are in `CMakePresets.json` (`ubuntu`, `ubuntu-ci`, `macos`, `macos-ci`, `windows-x64`, `windows-arm64`, `*-ci-*`, plus a `dependencies` preset). Linux: `cmake --preset ubuntu` then `cmake --build --preset ubuntu` (read `cmake/common/buildspec_common.cmake` for how prebuilt dependencies are fetched).
 2. Unit tests are gated by `ENABLE_UNIT_TESTS` (see `test/CMakeLists.txt`; it adds `test/cmocka`, needs the `cmocka` package). `BUILD_TESTS` builds `test/test-input`, a plugin used by tests. Run with `ctest --test-dir build_<preset>`.
-3. Git submodules: `plugins/obs-websocket`, `plugins/obs-browser`, `deps/libdshowcapture/src` are empty until `git submodule update --init`.
+3. Git submodules: `plugins/obs-websocket` (5.7.6), `plugins/obs-browser` (2.23.4) and `deps/libdshowcapture/src` (no-atl) are initialized in this checkout (a fresh clone still needs `git submodule update --init`); their source files are part of the coverage matrix.
 4. Run the app once, make a scene with a Colour Source and a Text source, record 10 seconds. Open `~/.config/obs-studio/logs/` (Linux) and read the log start-up sequence: it prints every module loaded, the graphics adapter, the video/audio settings. Expect the same lines from the Rust build.
 
 ## 2. Repository map (what lives where)

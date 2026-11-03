@@ -95,7 +95,7 @@ Verified file map: `libobs/media-io/` contains `audio-io.c/.h`, `audio-math.h`, 
 ### P2-13 Audio mixer
 - [ ] **P2-13.1 Source buffers** — `libobs/obs-audio.c`: per-source per-mix float buffers (`source->audio_output_buf[mix][ch]`, allocated by P4-05; supplied by a fake source here) consumed into `audio_output_data`. Done when: add/consume tests.
 - [ ] **P2-13.2 Alignment** — `calc_min_ts`, `add_audio_buffering`, `set_fixed_audio_buffering`, `discard_if_stopped`, `ignore_audio`. Done when: timestamp cases equal to C.
-- [ ] **P2-13.3 Mute/monitoring** — mute skip in the render order, per-mix volume in `mix_audio`, `should_silence_monitored_source` dedup. Done when: golden.
+- [ ] **P2-13.3 Mute/monitoring** — `mix_audio` is summation only; mute (→ vol 0 via `get_source_volume`) and per-mix volume land source-side in `apply_audio_volume` (P2-16); `should_silence_monitored_source` dedup. Done when: golden.
 - [ ] **P2-13.4 Missing data** — `source->audio_pending`, `audio_ts`, `audio_buffering` handling. Done when: gap test.
 - [ ] **P2-13.5 Golden** — 8 sources × 6 mixes × 10 s PCM, hash compare.
 
@@ -106,7 +106,7 @@ Verified file map: `libobs/media-io/` contains `audio-io.c/.h`, `audio-math.h`, 
 - [ ] **P2-14.4 Golden**
 
 ### P2-15 Audio monitoring
-- [ ] **P2-15.1 Trait** — `MonitorBackend` from the `obs-internal.h` contract: `obs_audio_monitoring_available`, `obs_enum_audio_monitoring_devices`, `audio_monitor_create/reset/destroy`, `devices_match`. Done when: documented.
+- [ ] **P2-15.1 Trait** — `MonitorBackend` from the C contract: `obs_audio_monitoring_available`/`obs_enum_audio_monitoring_devices` (public, `obs.h`), `audio_monitor_create/reset/destroy` (`obs-internal.h`), `devices_match` (each backend). Done when: documented.
 - [ ] **P2-15.2 PulseAudio** — `libobs/audio-monitoring/pulse/`. Done when: monitor plays a test tone.
 - [ ] **P2-15.3 WASAPI** — `libobs/audio-monitoring/win32/`. Done when: same on Windows.
 - [ ] **P2-15.4 CoreAudio + null** — `osx/`, `null/`. Done when: compile and play on macOS.
@@ -120,7 +120,7 @@ Verified file map: `libobs/media-io/` contains `audio-io.c/.h`, `audio-math.h`, 
 
 ### P2-17 NAL / start-code
 - [ ] **P2-17.1 Scanner** — `libobs/obs-nal.c`: `obs_nal_find_startcode`. Done when: vectors.
-- [ ] **P2-17.2 Emulation prevention** — scanner must skip `00 00 03 00/01` sequences exactly like the C wrapper. Done when: vectors.
+- [ ] **P2-17.2 Emulation-prevention edges** — the C scanner is naive: it does **not** skip `00 00 03 xx` sequences, so vectors must pin its behaviour with EPB bytes present (EPB stripping is the SPS path, P2-18). Done when: vectors.
 - [ ] **P2-17.3 Fuzz** target.
 
 ### P2-18 AVC

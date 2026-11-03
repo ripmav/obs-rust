@@ -12,11 +12,11 @@ Verified facts: `libobs/obs-internal.h` has 46 `pthread_mutex_t` fields (P4-04 m
 - [ ] **P4-01.1 Handles** — decide that `obs_source_t*` etc. are `Box<Arc<Inner>>` pointers; define null/dangling rules; one handle type per object kind. Done when: table of every kind (source, scene, sceneitem, encoder, output, service, data, properties, canvas, display, view, module).
 - [ ] **P4-01.2 Weak refs and destruction** — `obs_weak_source_*` etc.; destroy callback runs when the last strong ref drops; deferred destruction on the graphics thread. Done when: sequence diagrams for last-ref-on-wrong-thread.
 - [ ] **P4-01.3 Thread affinity** — list every function requiring graphics context (`gs_*`, `video_render`, `obs_source_video_render`). Done when: table with enter/leave requirement.
-- [ ] **P4-01.4 ADR 0007** — write and review.
+- [ ] **P4-01.4 ADR 0007** — write and review. Done when: ADR committed with handle, weak-ref and thread-affinity tables.
 
 ### P4-02 Handle registry and refcount compat
-- [ ] **P4-02.1 addref/release** — `obs_source_get_ref`, `obs_source_release` (there is no `obs_source_addref` in 33), and the equivalent for every kind. Done when: refcount observable through a debug function equals C after scripted sequences.
-- [ ] **P4-02.2 Weak** — `obs_source_get_weak_source`, `obs_weak_source_get_source`, `addref/release_weak`, `references_source`. Done when: upgrade after destroy returns NULL.
+- [ ] **P4-02.1 addref/release** — `obs_source_get_ref`, `obs_source_release` (no exported `obs_source_addref` in 33 — only an internal helper in `obs-internal.h`), and the equivalent for every kind. Done when: refcount observable through a debug function equals C after scripted sequences.
+- [ ] **P4-02.2 Weak** — `obs_source_get_weak_source`, `obs_weak_source_get_source`, `obs_weak_source_addref/release`, `obs_weak_source_references_source` (plus `obs_weak_source_expired`). Done when: upgrade after destroy returns NULL.
 - [ ] **P4-02.3 Race tests** — `loom`: release vs upgrade. Done when: model passes.
 
 ### P4-03 Global context
@@ -40,7 +40,7 @@ Verified facts: `libobs/obs-internal.h` has 46 `pthread_mutex_t` fields (P4-04 m
 ### P4-06 Source lifecycle
 - [ ] **P4-06.1 Create/destroy** — `obs_source_create`/`_private`, stub-info path for unknown ids (source still created "so the user's data doesn't become lost"), destroy order. Done when: callback trace equal.
 - [ ] **P4-06.2 Update** — `obs_source_update`, `obs_source_update_properties`, `obs_source_properties`. Done when: settings applied once.
-- [ ] **P4-06.3 Save/load** — `obs_save_source`, `obs_load_source`, `obs_load_sources` (JSON keys: `prev_ver`, `name`, `uuid`, `id`, `versioned_id`, `settings`, `mixers`, `sync`, `flags`, `volume`, `balance`, `enabled`, `muted`, `monitoring_type`, `monitoring_enabled`, `hotkeys`, `deinterlace_mode`, `deinterlace_field_order`, `canvas_uuid`, `filters`, `private_settings`). Done when: corpus round trip.
+- [ ] **P4-06.3 Save/load** — `obs_save_source`, `obs_load_source`, `obs_load_sources` (JSON keys: `prev_ver`, `name`, `uuid`, `id`, `versioned_id`, `settings`, `mixers`, `sync`, `flags`, `volume`, `balance`, `enabled`, `muted`, `push-to-mute`/`-delay`, `push-to-talk`/`-delay`, `hotkeys`, `deinterlace_mode`, `deinterlace_field_order`, `monitoring_type`, `monitoring_enabled`, `canvas_uuid`, `private_settings`, `filters`, + `transition_*` keys for transitions). Done when: corpus round trip.
 - [ ] **P4-06.4 Naming/duplicate** — unique names, UUIDs, `obs_source_duplicate`, `obs_source_set_name`. Done when: tests.
 
 ### P4-07 Async video sources
@@ -71,7 +71,7 @@ Verified facts: `libobs/obs-internal.h` has 46 `pthread_mutex_t` fields (P4-04 m
 - [ ] **P4-11.4 Helpers** — T-bar `obs_transition_set_manual_time`, duration-mode helpers. (Stingers are a frontend concept — a transition over a video source; libobs has no stinger code.) Done when: tests.
 
 ### P4-12 Source signals and procs
-- [ ] **P4-12.1 List** — extract signals from `obs-source.c` (`signal_handler_add` strings) and docs. Done when: list committed.
+- [ ] **P4-12.1 List** — extract signals from `obs-source.c` (the `source_signals` array passed to `signal_handler_add_array`) and docs. Done when: list committed.
 - [ ] **P4-12.2 Signals** — implement all with exact parameter names. Done when: table test emits each.
 - [ ] **P4-12.3 Procs** — expose `obs_source_get_proc_handler` per source; plugins add their own procs (e.g. obs-ffmpeg `restart`/`get_duration`) and must call them through the ABI. (`get_hotkey_bindings`/`get_hotkey_names` do not exist in 33.0.1.) Done when: table test with a plugin-registered proc.
 
@@ -93,7 +93,7 @@ Verified facts: `libobs/obs-internal.h` has 46 `pthread_mutex_t` fields (P4-04 m
 - [ ] **P4-16.1 Scene as source** — `obs_scene_create`, `_private`, `obs_scene_get_source`. Done when: scene usable as input.
 - [ ] **P4-16.2 Items** — `obs_scene_add`, `obs_sceneitem_remove`, reorder (`set_order`, `set_order_position`). Done when: order tests.
 - [ ] **P4-16.3 Transform** — pos/rot/scale/bounds/bounds_type/alignment/crop/`obs_sceneitem_set_info2`. Done when: round trip.
-- [ ] **P4-16.4 Visual flags** — scale filter, blend method/type, locked, visible; the scene-level `AbsoluteCoords` private setting drives the pos/scale conversions. Done when: golden.
+- [ ] **P4-16.4 Visual flags** — scale filter, blend method/type, locked, visible; the collection-level `AbsoluteCoordinates` private setting (core data, `obs-scene.c`) drives the pos/scale conversions. Done when: golden.
 - [ ] **P4-16.5 Show/hide transitions** — `obs_sceneitem_set_transition(item, show, transition)`, `obs_sceneitem_set_transition_duration`, `obs_sceneitem_do_transition`, `obs_sceneitem_transition_load`. Done when: test.
 
 ### P4-17 Groups and nested scenes
@@ -105,12 +105,12 @@ Verified facts: `libobs/obs-internal.h` has 46 `pthread_mutex_t` fields (P4-04 m
 - [ ] **P4-18.1 Matrix** — `update_item_transform`. Done when: 50 cases equal to C.
 - [ ] **P4-18.2 Crop/bounds** — all `obs_bounds_type` modes. Done when: golden.
 - [ ] **P4-18.3 Queries** — `obs_sceneitem_get_box_transform`, `get_box_scale`, `get_draw_transform`. Done when: matrix equality.
-- [ ] **P4-18.4 Goldens** (50 transform cases).
+- [ ] **P4-18.4 Goldens** (50 transform cases). Done when: 50 golden cases committed and passing.
 
 ### P4-19 Scene save/load
 - [ ] **P4-19.1 Item JSON** — keys `name`, `source_uuid`, `visible`, `locked`, `rot`, `pos`, `scale`, `align`, `bounds`, `crop_*`, `blend_type`, `scale_filter`, `group_item_backup`, `show_transition`, …. Done when: unknown keys preserved.
 - [ ] **P4-19.2 IDs/ordering** — `id`, `private_settings`. Done when: stable ids.
-- [ ] **P4-19.3 Corpus round trip**.
+- [ ] **P4-19.3 Corpus round trip**. Done when: P0-18 corpus round-trips with stable ids.
 
 ### P4-20 Scene audio mixing
 - [ ] **P4-20.1 Compose** — child audio mixing in scene source. Done when: golden PCM.
@@ -130,7 +130,7 @@ Verified facts: `libobs/obs-internal.h` has 46 `pthread_mutex_t` fields (P4-04 m
 - [ ] **P4-22.3 ROI** — `obs_encoder_add_roi`, `obs_encoder_has_roi`, `obs_encoder_clear_roi`, `obs_encoder_enum_roi`, `obs_encoder_get_roi_increment`. Done when: tests.
 
 ### P4-23 Output vtable adapter
-- [ ] **P4-23.1 Trait/adapter** (adapter pattern) for `obs_output_info`: `start`, `stop`, `raw_video`, `raw_audio(2)`, `encoded_packet`, `get_properties`, `get_total_bytes`, `get_dropped_frames`, `get_congestion`, `get_connect_time_ms`, codec strings, `protocols` (there is no `get_stats` field). Done when: ABI test output works.
+- [ ] **P4-23.1 Trait/adapter** (adapter pattern) for `obs_output_info`: `create`, `destroy`, `update`, `get_defaults`, `get_name`, `start`, `stop`, `raw_video`, `raw_audio(2)`, `encoded_packet`, `get_properties`, `get_total_bytes`, `get_dropped_frames`, `get_congestion`, `get_connect_time_ms`, codec strings, `protocols` (there is no `get_stats` field). Done when: ABI test output works.
 - [ ] **P4-23.2 Data capture** — `obs_output_begin_data_capture`, `end_data_capture`, flags `OBS_OUTPUT_VIDEO/AUDIO/ENCODED/SERVICE`. Done when: raw and encoded flows.
 - [ ] **P4-23.3 Reconnect** — `obs_output_set_reconnect_settings`, exponential back-off, `reconnect_retry_*`. Done when: fake-clock test.
 - [ ] **P4-23.4 Delay/stats** — `obs_output_set_delay`, counters. Done when: tests.
@@ -141,7 +141,7 @@ Verified facts: `libobs/obs-internal.h` has 46 `pthread_mutex_t` fields (P4-04 m
 - [ ] **P4-24.3 Service** — `obs_output_set_service`. Done when: URL/key reach output.
 
 ### P4-25 Service API
-- [ ] **P4-25.1 Adapter** for `obs_service_info`: `get_url`, `get_key`, `get_username`, `get_password`, `apply_encoder_settings`, `get_supported_video_codecs`, `get_protocol`, `get_connect_info`, `can_try_to_connect`. Done when: ABI test service.
+- [ ] **P4-25.1 Adapter** for `obs_service_info`: `create`, `destroy`, `activate`, `deactivate`, `update`, `get_defaults`, `get_properties`, `initialize`, `get_url`, `get_key`, `get_username`, `get_password`, `apply_encoder_settings`, `get_supported_video_codecs`, `get_protocol`, `get_connect_info`, `can_try_to_connect`. Done when: ABI test service.
 - [ ] **P4-25.2 URL/key** — `obs_service_get_connect_info(type)`. Done when: tests.
 - [ ] **P4-25.3 Encoder settings** — `obs_service_apply_encoder_settings`. Done when: bitrate clamp test.
 
@@ -195,42 +195,42 @@ Verified facts: `libobs/obs-internal.h` has 46 `pthread_mutex_t` fields (P4-04 m
 ### P4-34 `obs-ffi` header completeness
 - [ ] **P4-34.1 C symbol list** — script: preprocess headers, list `EXPORT` function names (~1,000). Done when: file committed.
 - [ ] **P4-34.2 Rust symbol list** — `nm -D` on `obs-ffi`. Done when: script prints missing/extra.
-- [ ] **P4-34.3 CI gate** on missing.
-- [ ] **P4-34.4 Fill gaps** until zero.
+- [ ] **P4-34.3 CI gate** on missing. Done when: CI fails on any missing symbol.
+- [ ] **P4-34.4 Fill gaps** until zero. Done when: C-vs-Rust symbol diff is empty.
 
 ### P4-35 ABI struct layout checks
 - [ ] **P4-35.1 Generate** — `size_of`/`offset_of` assertions for each public struct (`obs_source_info`, `obs_source_frame(2)`, `obs_audio_data`, `obs_source_audio`, `encoder_packet`, `encoder_frame`, `obs_video_info`, `obs_audio_info(2)`, `obs_output_info`, `obs_encoder_info`, `obs_service_info`, `gs_init_data`, …). Done when: asserts compile.
 - [ ] **P4-35.2 Platforms** — Linux/Windows/macOS × x86_64/aarch64. Done when: matrix green.
 
 ### P4-36 Third-party plugin matrix
-- [ ] **P4-36.1 Select** 10 widely used plugins covering sources, filters, transitions, outputs, encoders.
-- [ ] **P4-36.2 Obtain** builds for the three OSes (record versions and licences).
-- [ ] **P4-36.3 Run** a standard scenario each; log results in `docs/tests/third-party-plugins.md`.
+- [ ] **P4-36.1 Select** 10 widely used plugins covering sources, filters, transitions, outputs, encoders. Done when: list committed in `docs/tests/third-party-plugins.md`.
+- [ ] **P4-36.2 Obtain** builds for the three OSes (record versions and licences). Done when: builds recorded with versions and licences.
+- [ ] **P4-36.3 Run** a standard scenario each; log results in `docs/tests/third-party-plugins.md`. Done when: results matrix committed.
 
 ### P4-37 In-tree plugin compatibility run
-- [ ] **P4-37.1 Submodules** — run `git submodule update --init plugins/obs-websocket plugins/obs-browser` (empty in a fresh checkout). Done when: sources present.
+- [ ] **P4-37.1 Submodules** — `plugins/obs-websocket` (5.7.6) and `plugins/obs-browser` (2.23.4-126) are already initialized in this checkout (sources present); a fresh clone still needs `git submodule update --init plugins/obs-websocket plugins/obs-browser`. Done when: both submodules' sources are present in the build tree.
 - [ ] **P4-37.2 Load** obs-websocket and obs-browser on the Rust core. Done when: both initialise.
-- [ ] **P4-37.3 Load** obs-ffmpeg, obs-filters and run P0-16 smoke test.
+- [ ] **P4-37.3 Load** obs-ffmpeg, obs-filters and run P0-16 smoke test. Done when: smoke test passes on the Rust core.
 
 ### P4-38 Thread-safety test
 - [ ] **P4-38.1 TSan builds** (Linux). Done when: smoke test clean.
 - [ ] **P4-38.2 Stress** — 200 sources randomly created/destroyed/toggled for 1 h. Done when: no crash or leak.
-- [ ] **P4-38.3 Fix findings**.
+- [ ] **P4-38.3 Fix findings**. Done when: all findings fixed or filed with rationale.
 
 ### P4-39 Memory test
-- [ ] **P4-39.1 Valgrind/ASan** on smoke test.
-- [ ] **P4-39.2 Miri** for pure crates.
+- [ ] **P4-39.1 Valgrind/ASan** on smoke test. Done when: smoke test leak-free.
+- [ ] **P4-39.2 Miri** for pure crates. Done when: Miri clean on the pure crates.
 
 ### P4-40 Retire libobs C
-- [ ] **P4-40.1 Flip default** to Rust.
-- [ ] **P4-40.2 One release** with `OBS_ENABLE_RUST=OFF` fallback.
-- [ ] **P4-40.3 Delete** C sources in the next release.
+- [ ] **P4-40.1 Flip default** to Rust. Done when: the default build links the Rust core.
+- [ ] **P4-40.2 One release** with `OBS_ENABLE_RUST=OFF` fallback. Done when: one release ships with the fallback.
+- [ ] **P4-40.3 Delete** C sources in the next release. Done when: C libobs sources removed from the tree.
 
 ### P4-41 Headless `obs-cli`
-- [ ] **P4-41.1 CLI** (`clap`): `--module-path`, `--collection`, `--profile`, `--record`, `--stream`, `--duration`.
-- [ ] **P4-41.2 Loading** modules and collection.
+- [ ] **P4-41.1 CLI** (`clap`): `--module-path`, `--collection`, `--profile`, `--record`, `--stream`, `--duration`. Done when: `--help` lists all flags.
+- [ ] **P4-41.2 Loading** modules and collection. Done when: obs-cli loads modules and a collection.
 - [ ] **P4-41.3 Commands** record/stream; exit codes. Done when: replaces the P0-16 host.
 
 ### P4-42 Phase 4 review
-- [ ] **P4-42.1 Matrix** of compatibility results.
-- [ ] **P4-42.2 Tick** parents.
+- [ ] **P4-42.1 Matrix** of compatibility results. Done when: matrix committed in `docs/tests/`.
+- [ ] **P4-42.2 Tick** parents. Done when: all Phase 4 tasks ticked.

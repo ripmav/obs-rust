@@ -26,6 +26,7 @@ Start the PR stack with the `docs:` tasks (P0-01 to P0-06).
 - [ ] **P0-05 ADR: unsafe, MSRV, dependency policy** (S)
   - Do: define `unsafe` rules (FFI and platform boundaries only, `// SAFETY:` required), MSRV (latest stable), licence allow-list (GPLv2+ compatible), and "stdlib first" for deps.
   - Deliverables: `docs/adr/0005-code-policy.md`.
+  - Done when: ADR 0005 merged with all five rules and the dependency checklist (P0-05.3).
 - [ ] **P0-06 ADR: concurrency model** (S)
   - Source: `libobs/obs-video.c`, `obs-audio.c`, `media-io/video-io.c`, `audio-io.c`.
   - Do: document the current thread layout (graphics thread, audio thread, encoder threads, output threads) and the target one (real-time threads, lock-free queues, tokio only for network).
@@ -46,11 +47,13 @@ Start the PR stack with the `docs:` tasks (P0-01 to P0-06).
   - Done when: required checks block merging.
 - [ ] **P0-10 `cargo-deny` and licence policy** (S)
   - Deliverables: `deny.toml` with licence allow-list and banned crates.
+  - Done when: `cargo deny check` passes on the workspace and is wired into CI (P0-09.3).
 - [ ] **P0-11 `.gitattributes`** (S)
   - Do: add `*.text -text` and `*.golden -text` so Windows tests do not break on line endings; review other text fixtures.
   - Done when: Windows CI passes golden tests unchanged.
 - [ ] **P0-12 Dev container / build docs** (S)
   - Do: document `cargo`, `cmake`, FFmpeg and Qt prerequisites in `INSTALL` and `docs/rust-rewrite/BUILDING.md`.
+  - Done when: a clean environment builds the repo following only the doc.
 
 ## C. Safety net
 
@@ -79,8 +82,8 @@ Start the PR stack with the `docs:` tasks (P0-01 to P0-06).
 
 ## D. Tracking
 
-- [ ] **P0-19 Issue templates and labels** (S): `rust-rewrite`, `phase-N`, `abi`, `perf`.
-- [ ] **P0-20 Test matrices** (S): create `docs/tests/` and the first matrix files for the golden framework and the ABI test.
-- [ ] **P0-21 Phase 0 review** (S): demo the safety net, confirm exit criteria, tick this file.
+- [ ] **P0-19 Issue templates and labels** (S): `rust-rewrite`, `phase-N`, `abi`, `perf`. Done when: labels exist and the template creates a valid issue.
+- [ ] **P0-20 Test matrices** (S): create `docs/tests/` and the first matrix files for the golden framework and the ABI test. Done when: both matrix files exist and the CI check (P0-20.4) passes.
+- [ ] **P0-21 Phase 0 review** (S): demo the safety net, confirm exit criteria, tick this file. Done when: exit-criteria checklist ticked and the review PR merged.
 
 Exit criteria: ADRs 1-6 merged, CI green on 3 OSes with Rust jobs, golden files generated from C, ABI plugin test passing, benchmark baseline stored.

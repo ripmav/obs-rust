@@ -6,35 +6,35 @@ Tracked = every `.c .cpp .cc .h .hpp .m .mm .swift`, `.ui` and `.effect` file (s
 
 | Area | Files | Lines | Owns |
 |---|---|---|---|
-| [Vendored deps (`deps/`)](#deps) | 343 | 70002 | P1-05.3, P1-10.3, P1-24.1, P2-21… |
-| [Qt6 frontend (`frontend/`)](#frontend) | 424 | 109211 | P6-01, P6-01.4, P6-02, P6-02.2… |
+| [Vendored deps (`deps/`)](#deps) | 373 | 78075 | P1-05.3, P1-10.3, P1-31.2, P2-21… |
+| [Qt6 frontend (`frontend/`)](#frontend) | 424 | 109211 | P6-01, P6-01.4, P6-02, P6-03… |
 | [D3D11 backend (`libobs-d3d11/`)](#libobs-d3d11) | 14 | 7268 | P3-22.2 |
 | [Metal backend (`libobs-metal/`, Swift)](#libobs-metal) | 35 | 8377 | P3-22.3 |
 | [OpenGL backend (`libobs-opengl/`)](#libobs-opengl) | 24 | 8880 | P3-22.1 |
 | [Windows.Graphics.Capture (`libobs-winrt/`)](#libobs-winrt) | 4 | 711 | P5-33 |
 | [libobs core (`libobs/`)](#libobs) | 247 | 93899 | P0-02, P1-01, P1-02, P1-03… |
-| [Plugins (`plugins/`)](#plugins) | 578 | 172057 | P5-01, P5-01.7, P5-02, P5-03… |
+| [Plugins (`plugins/`)](#plugins) | 689 | 196046 | P5-01, P5-01.7, P5-02, P5-03… |
 | [Shared helpers (`shared/`)](#shared) | 103 | 22382 | P1-33.1, P1-33.2, P1-33.3, P1-33.4… |
 | [C test harness (`test/`)](#test) | 16 | 1561 | P0-14.1, P0-15, P7-25 |
-| **Total** | **1788** | **494348** | |
+| **Total** | **1929** | **526410** | |
 
 ## Vendored deps (`deps/`)
 
 | File | Task | Spec | Note |
 |---|---|---|---|
-| `deps/blake2/src/blake2-impl.h` | P1-10.3, P1-31.2 | — | drop in Phase 6 (frontend-only user: updater, P6-32); blake2 crate |
-| `deps/blake2/src/blake2.h` | P1-10.3, P1-31.2 | — | drop in Phase 6 (frontend-only user: updater, P6-32); blake2 crate |
-| `deps/blake2/src/blake2b-ref.c` | P1-10.3, P1-31.2 | — | drop in Phase 6 (frontend-only user: updater, P6-32); blake2 crate |
-| `deps/glad/include/EGL/eglplatform.h` | P3-30 | — | drop when legacy GL is gone |
-| `deps/glad/include/KHR/khrplatform.h` | P3-30 | — | drop when legacy GL is gone |
-| `deps/glad/include/glad/glad.h` | P3-30 | — | drop when legacy GL is gone |
-| `deps/glad/include/glad/glad_egl.h` | P3-30 | — | drop when legacy GL is gone |
-| `deps/glad/include/glad/glad_wgl.h` | P3-30 | — | drop when legacy GL is gone |
-| `deps/glad/src/glad.c` | P3-30 | — | drop when legacy GL is gone |
-| `deps/glad/src/glad_egl.c` | P3-30 | — | drop when legacy GL is gone |
-| `deps/glad/src/glad_wgl.c` | P3-30 | — | drop when legacy GL is gone |
-| `deps/json11/json11.cpp` | P1-24.1, P1-31.2 | — | drop in Phase 6 (frontend-only); serde_json |
-| `deps/json11/json11.hpp` | P1-24.1, P1-31.2 | — | drop in Phase 6 (frontend-only); serde_json |
+| `deps/blake2/src/blake2-impl.h` | P1-10.3, P1-31.2, P7-04 | — | frontend-only users (updater P6-32, WhatsNewInfoThread); dropped by P7-04; blake2 crate |
+| `deps/blake2/src/blake2.h` | P1-10.3, P1-31.2, P7-04 | — | frontend-only users (updater P6-32, WhatsNewInfoThread); dropped by P7-04; blake2 crate |
+| `deps/blake2/src/blake2b-ref.c` | P1-10.3, P1-31.2, P7-04 | — | frontend-only users (updater P6-32, WhatsNewInfoThread); dropped by P7-04; blake2 crate |
+| `deps/glad/include/EGL/eglplatform.h` | P3-30, P7-04 | — | drop when legacy GL is gone (P7-04) |
+| `deps/glad/include/KHR/khrplatform.h` | P3-30, P7-04 | — | drop when legacy GL is gone (P7-04) |
+| `deps/glad/include/glad/glad.h` | P3-30, P7-04 | — | drop when legacy GL is gone (P7-04) |
+| `deps/glad/include/glad/glad_egl.h` | P3-30, P7-04 | — | drop when legacy GL is gone (P7-04) |
+| `deps/glad/include/glad/glad_wgl.h` | P3-30, P7-04 | — | drop when legacy GL is gone (P7-04) |
+| `deps/glad/src/glad.c` | P3-30, P7-04 | — | drop when legacy GL is gone (P7-04) |
+| `deps/glad/src/glad_egl.c` | P3-30, P7-04 | — | drop when legacy GL is gone (P7-04) |
+| `deps/glad/src/glad_wgl.c` | P3-30, P7-04 | — | drop when legacy GL is gone (P7-04) |
+| `deps/json11/json11.cpp` | P1-31.2, P7-04 | — | frontend-only (oauth/importer/YouTube, 17 files); dropped by P7-04; serde_json |
+| `deps/json11/json11.hpp` | P1-31.2, P7-04 | — | frontend-only (oauth/importer/YouTube, 17 files); dropped by P7-04; serde_json |
 | `deps/libcaption/caption/caption.h` | P2-21 | — | D-18: probably FFI |
 | `deps/libcaption/caption/cea708.h` | P2-21 | — | D-18: probably FFI |
 | `deps/libcaption/caption/dvtcc.h` | P2-21 | — | D-18: probably FFI |
@@ -58,6 +58,36 @@ Tracked = every `.c .cpp .cc .h .hpp .m .mm .swift`, `.ui` and `.effect` file (s
 | `deps/libcaption/src/utf8.c` | P2-21 | — | D-18: probably FFI |
 | `deps/libcaption/src/vtt.c` | P2-21 | — | D-18: probably FFI |
 | `deps/libcaption/src/xds.c` | P2-21 | — | D-18: probably FFI |
+| `deps/libdshowcapture/src/dshowcapture.hpp` | P5-32.3 | — | D-19: FFI (submodule) |
+| `deps/libdshowcapture/src/source/CoTaskMemPtr.hpp` | P5-32.3 | — | D-19: FFI (submodule) |
+| `deps/libdshowcapture/src/source/ComPtr.hpp` | P5-32.3 | — | D-19: FFI (submodule) |
+| `deps/libdshowcapture/src/source/avermedia-encode.h` | P5-32.3 | — | D-19: FFI (submodule) |
+| `deps/libdshowcapture/src/source/capture-filter.cpp` | P5-32.3 | — | D-19: FFI (submodule) |
+| `deps/libdshowcapture/src/source/capture-filter.hpp` | P5-32.3 | — | D-19: FFI (submodule) |
+| `deps/libdshowcapture/src/source/device-vendor.cpp` | P5-32.3 | — | D-19: FFI (submodule) |
+| `deps/libdshowcapture/src/source/device.cpp` | P5-32.3 | — | D-19: FFI (submodule) |
+| `deps/libdshowcapture/src/source/device.hpp` | P5-32.3 | — | D-19: FFI (submodule) |
+| `deps/libdshowcapture/src/source/dshow-base.cpp` | P5-32.3 | — | D-19: FFI (submodule) |
+| `deps/libdshowcapture/src/source/dshow-base.hpp` | P5-32.3 | — | D-19: FFI (submodule) |
+| `deps/libdshowcapture/src/source/dshow-demux.cpp` | P5-32.3 | — | D-19: FFI (submodule) |
+| `deps/libdshowcapture/src/source/dshow-demux.hpp` | P5-32.3 | — | D-19: FFI (submodule) |
+| `deps/libdshowcapture/src/source/dshow-device-defs.hpp` | P5-32.3 | — | D-19: FFI (submodule) |
+| `deps/libdshowcapture/src/source/dshow-encoded-device.cpp` | P5-32.3 | — | D-19: FFI (submodule) |
+| `deps/libdshowcapture/src/source/dshow-enum.cpp` | P5-32.3 | — | D-19: FFI (submodule) |
+| `deps/libdshowcapture/src/source/dshow-enum.hpp` | P5-32.3 | — | D-19: FFI (submodule) |
+| `deps/libdshowcapture/src/source/dshow-formats.cpp` | P5-32.3 | — | D-19: FFI (submodule) |
+| `deps/libdshowcapture/src/source/dshow-formats.hpp` | P5-32.3 | — | D-19: FFI (submodule) |
+| `deps/libdshowcapture/src/source/dshow-media-type.cpp` | P5-32.3 | — | D-19: FFI (submodule) |
+| `deps/libdshowcapture/src/source/dshow-media-type.hpp` | P5-32.3 | — | D-19: FFI (submodule) |
+| `deps/libdshowcapture/src/source/dshowcapture.cpp` | P5-32.3 | — | D-19: FFI (submodule) |
+| `deps/libdshowcapture/src/source/dshowencode.cpp` | P5-32.3 | — | D-19: FFI (submodule) |
+| `deps/libdshowcapture/src/source/encoder.cpp` | P5-32.3 | — | D-19: FFI (submodule) |
+| `deps/libdshowcapture/src/source/encoder.hpp` | P5-32.3 | — | D-19: FFI (submodule) |
+| `deps/libdshowcapture/src/source/external/IVideoCaptureFilter.h` | P5-32.3 | — | D-19: FFI (submodule) |
+| `deps/libdshowcapture/src/source/log.cpp` | P5-32.3 | — | D-19: FFI (submodule) |
+| `deps/libdshowcapture/src/source/log.hpp` | P5-32.3 | — | D-19: FFI (submodule) |
+| `deps/libdshowcapture/src/source/output-filter.cpp` | P5-32.3 | — | D-19: FFI (submodule) |
+| `deps/libdshowcapture/src/source/output-filter.hpp` | P5-32.3 | — | D-19: FFI (submodule) |
 | `deps/w32-pthreads/attr.c` | P1-05.3, P7-04.2 | — | D-26: absorb into Rust threading |
 | `deps/w32-pthreads/autostatic.c` | P1-05.3, P7-04.2 | — | D-26: absorb into Rust threading |
 | `deps/w32-pthreads/barrier.c` | P1-05.3, P7-04.2 | — | D-26: absorb into Rust threading |
@@ -366,7 +396,7 @@ Tracked = every `.c .cpp .cc .h .hpp .m .mm .swift`, `.ui` and `.effect` file (s
 | `deps/w32-pthreads/tsd.c` | P1-05.3, P7-04.2 | — | D-26: absorb into Rust threading |
 | `deps/w32-pthreads/w32_CancelableWait.c` | P1-05.3, P7-04.2 | — | D-26: absorb into Rust threading |
 
-Build/data files in this area: **128** (30850 lines) — owner: same task as the area's source files; packaging owned by P6-42…P6-44, CMake removal by P7-06.3.
+Build/data files in this area: **143** (31924 lines) — owner: same task as the area's source files; packaging owned by P6-42…P6-44, CMake removal by P7-06.3.
 
 
 ## Qt6 frontend (`frontend/`)
@@ -662,8 +692,8 @@ Build/data files in this area: **128** (30850 lines) — owner: same task as the
 | `frontend/utility/NativeEventFilter.cpp` | P6-07.6 | — |  |
 | `frontend/utility/NativeEventFilter.hpp` | P6-07.6 | — |  |
 | `frontend/utility/NativeEventFilter_Windows.cpp` | P6-07.6 | — |  |
-| `frontend/utility/OBSCanvas.cpp` | P6-06.3 | — |  |
-| `frontend/utility/OBSCanvas.hpp` | P6-06.3 | — |  |
+| `frontend/utility/OBSCanvas.cpp` | P6-06.3 | — | canvas window widget; obs_frontend_add_canvas API is P6-36.4 |
+| `frontend/utility/OBSCanvas.hpp` | P6-06.3 | — | canvas window widget; obs_frontend_add_canvas API is P6-36.4 |
 | `frontend/utility/OBSEventFilter.hpp` | P6-03.2 | — |  |
 | `frontend/utility/OBSProxyStyle.cpp` | P6-03.2 | — |  |
 | `frontend/utility/OBSProxyStyle.hpp` | P6-03.2 | — |  |
@@ -688,8 +718,8 @@ Build/data files in this area: **128** (30850 lines) — owner: same task as the
 | `frontend/utility/RemuxWorker.cpp` | P6-28 | — |  |
 | `frontend/utility/RemuxWorker.hpp` | P6-28 | — |  |
 | `frontend/utility/ResizeSignaler.hpp` | P6-07.1 | — |  |
-| `frontend/utility/SceneRenameDelegate.cpp` | P6-08.2 | — |  |
-| `frontend/utility/SceneRenameDelegate.hpp` | P6-08.2 | — |  |
+| `frontend/utility/SceneRenameDelegate.cpp` | P6-08.3 | — | in-place rename delegate (scene context menu) |
+| `frontend/utility/SceneRenameDelegate.hpp` | P6-08.3 | — | in-place rename delegate (scene context menu) |
 | `frontend/utility/ScreenshotObj.cpp` | P6-08.3 | — |  |
 | `frontend/utility/ScreenshotObj.hpp` | P6-08.3 | — |  |
 | `frontend/utility/SettingsEventFilter.hpp` | P6-19.2 | — |  |
@@ -713,17 +743,17 @@ Build/data files in this area: **128** (30850 lines) — owner: same task as the
 | `frontend/utility/YoutubeApiWrappers.hpp` | P6-30.2 | — |  |
 | `frontend/utility/audio-encoders.cpp` | P6-20.3 | — |  |
 | `frontend/utility/audio-encoders.hpp` | P6-20.3 | — |  |
-| `frontend/utility/crypto-helpers-mac.mm` | P6-32.2 | — |  |
-| `frontend/utility/crypto-helpers-mbedtls.cpp` | P6-32.2 | — |  |
-| `frontend/utility/crypto-helpers.hpp` | P6-32.2 | — |  |
+| `frontend/utility/crypto-helpers-mac.mm` | P6-23.2 | — | What's-New feed RSA (mbedtls/mac impls); updater does not link them |
+| `frontend/utility/crypto-helpers-mbedtls.cpp` | P6-23.2 | — | What's-New feed RSA (mbedtls/mac impls); updater does not link them |
+| `frontend/utility/crypto-helpers.hpp` | P6-23.2 | — | What's-New feed RSA (mbedtls/mac impls); updater does not link them |
 | `frontend/utility/display-helpers.hpp` | P6-41.3 | — |  |
 | `frontend/utility/item-widget-helpers.cpp` | P6-09 | — |  |
 | `frontend/utility/item-widget-helpers.hpp` | P6-09 | — |  |
 | `frontend/utility/models/branches.hpp` | P6-20.6 | — | update channels |
 | `frontend/utility/models/multitrack-video.hpp` | P6-31.3 | — |  |
 | `frontend/utility/models/whatsnew.hpp` | P6-23.2 | — |  |
-| `frontend/utility/obf.c` | P6-02.2 | — | stream-key obfuscation |
-| `frontend/utility/obf.h` | P6-02.2 | — | stream-key obfuscation |
+| `frontend/utility/obf.c` | P6-29 | — | OAuth/YouTube credential obfuscation (oauth/*, YoutubeApiWrappers) |
+| `frontend/utility/obf.h` | P6-29 | — | OAuth/YouTube credential obfuscation (oauth/*, YoutubeApiWrappers) |
 | `frontend/utility/platform-osx.mm` | P6-41.3 | — |  |
 | `frontend/utility/platform-windows.cpp` | P6-41.3 | — |  |
 | `frontend/utility/platform-x11.cpp` | P6-41.3 | — |  |
@@ -752,7 +782,7 @@ Build/data files in this area: **128** (30850 lines) — owner: same task as the
 | `frontend/widgets/OBSBasicStatusBar.cpp` | P6-06.2 | — |  |
 | `frontend/widgets/OBSBasicStatusBar.hpp` | P6-06.2 | — |  |
 | `frontend/widgets/OBSBasic_Browser.cpp` | P6-15.2 | — |  |
-| `frontend/widgets/OBSBasic_Canvases.cpp` | P6-06.3 | — |  |
+| `frontend/widgets/OBSBasic_Canvases.cpp` | P6-06.3 | — | canvas manager UI; obs_frontend_add_canvas API is P6-36.4 |
 | `frontend/widgets/OBSBasic_Clipboard.cpp` | P6-09 | — |  |
 | `frontend/widgets/OBSBasic_ContextToolbar.cpp` | P6-14 | — |  |
 | `frontend/widgets/OBSBasic_Docks.cpp` | P6-06.3 | — |  |
@@ -1056,8 +1086,8 @@ Build/data files in this area: **1** (34 lines) — owner: same task as the area
 | `libobs/obs-module.h` | P4-29 | S-035 |  |
 | `libobs/obs-nal.c` | P2-17 | S-012 |  |
 | `libobs/obs-nal.h` | P2-17 | S-012 |  |
-| `libobs/obs-nix-platform.c` | P4-32.5 | S-058 |  |
-| `libobs/obs-nix-platform.h` | P4-32.5 | S-058 |  |
+| `libobs/obs-nix-platform.c` | P4-32 | S-058 | platform selection ABI (obs_set_nix_platform[_display]) |
+| `libobs/obs-nix-platform.h` | P4-32 | S-058 | platform selection ABI (obs_set_nix_platform[_display]) |
 | `libobs/obs-nix-wayland.c` | P4-32.2 | D-30 | spec gap: S-058 excludes it |
 | `libobs/obs-nix-wayland.h` | P4-32.2 | D-30 | spec gap: S-058 excludes it |
 | `libobs/obs-nix-x11.c` | P4-32.1 | S-058 |  |
@@ -1454,6 +1484,37 @@ Build/data files in this area: **18** (878 lines) — owner: same task as the ar
 | `plugins/nv-filters/nvidia-audiofx-filter.c` | P5-10 | — |  |
 | `plugins/nv-filters/nvidia-videofx-filter.c` | P5-10 | — |  |
 | `plugins/nv-filters/nvvfx-load.h` | P5-10 | — |  |
+| `plugins/obs-browser/browser-app.cpp` | P5-45 | — | D-09: CEF stays C++ (submodule) |
+| `plugins/obs-browser/browser-app.hpp` | P5-45 | — | D-09: CEF stays C++ (submodule) |
+| `plugins/obs-browser/browser-client.cpp` | P5-45 | — | D-09: CEF stays C++ (submodule) |
+| `plugins/obs-browser/browser-client.hpp` | P5-45 | — | D-09: CEF stays C++ (submodule) |
+| `plugins/obs-browser/browser-dummy-client.cpp` | P5-45 | — | D-09: CEF stays C++ (submodule) |
+| `plugins/obs-browser/browser-dummy-client.hpp` | P5-45 | — | D-09: CEF stays C++ (submodule) |
+| `plugins/obs-browser/browser-scheme.cpp` | P5-45 | — | D-09: CEF stays C++ (submodule) |
+| `plugins/obs-browser/browser-scheme.hpp` | P5-45 | — | D-09: CEF stays C++ (submodule) |
+| `plugins/obs-browser/browser-version.h` | P5-45 | — | D-09: CEF stays C++ (submodule) |
+| `plugins/obs-browser/cef-headers.hpp` | P5-45 | — | D-09: CEF stays C++ (submodule) |
+| `plugins/obs-browser/deps/base64/base64.cpp` | P5-45 | — | D-09: CEF stays C++ (submodule) |
+| `plugins/obs-browser/deps/base64/base64.hpp` | P5-45 | — | D-09: CEF stays C++ (submodule) |
+| `plugins/obs-browser/deps/ip-string-posix.cpp` | P5-45 | — | D-09: CEF stays C++ (submodule) |
+| `plugins/obs-browser/deps/ip-string-windows.cpp` | P5-45 | — | D-09: CEF stays C++ (submodule) |
+| `plugins/obs-browser/deps/ip-string.hpp` | P5-45 | — | D-09: CEF stays C++ (submodule) |
+| `plugins/obs-browser/deps/signal-restore.cpp` | P5-45 | — | D-09: CEF stays C++ (submodule) |
+| `plugins/obs-browser/deps/signal-restore.hpp` | P5-45 | — | D-09: CEF stays C++ (submodule) |
+| `plugins/obs-browser/deps/wide-string.cpp` | P5-45 | — | D-09: CEF stays C++ (submodule) |
+| `plugins/obs-browser/deps/wide-string.hpp` | P5-45 | — | D-09: CEF stays C++ (submodule) |
+| `plugins/obs-browser/drm-format.cpp` | P5-45 | — | D-09: CEF stays C++ (submodule) |
+| `plugins/obs-browser/drm-format.hpp` | P5-45 | — | D-09: CEF stays C++ (submodule) |
+| `plugins/obs-browser/linux-keyboard-helpers.hpp` | P5-45 | — | D-09: CEF stays C++ (submodule) |
+| `plugins/obs-browser/obs-browser-page/obs-browser-page-main.cpp` | P5-45 | — | D-09: CEF stays C++ (submodule) |
+| `plugins/obs-browser/obs-browser-plugin.cpp` | P5-45 | — | D-09: CEF stays C++ (submodule) |
+| `plugins/obs-browser/obs-browser-source.cpp` | P5-45 | — | D-09: CEF stays C++ (submodule) |
+| `plugins/obs-browser/obs-browser-source.hpp` | P5-45 | — | D-09: CEF stays C++ (submodule) |
+| `plugins/obs-browser/panel/browser-panel-client.cpp` | P5-45 | — | D-09: CEF stays C++ (submodule) |
+| `plugins/obs-browser/panel/browser-panel-client.hpp` | P5-45 | — | D-09: CEF stays C++ (submodule) |
+| `plugins/obs-browser/panel/browser-panel-internal.hpp` | P5-45 | — | D-09: CEF stays C++ (submodule) |
+| `plugins/obs-browser/panel/browser-panel.cpp` | P5-45 | — | D-09: CEF stays C++ (submodule) |
+| `plugins/obs-browser/panel/browser-panel.hpp` | P5-45 | — | D-09: CEF stays C++ (submodule) |
 | `plugins/obs-ffmpeg/ffmpeg-mux/ffmpeg-mux.c` | P5-14.3 | S-037 |  |
 | `plugins/obs-ffmpeg/ffmpeg-mux/ffmpeg-mux.h` | P5-14.3 | S-037 |  |
 | `plugins/obs-ffmpeg/obs-amf-test/obs-amf-test.cpp` | P5-41.4 | S-050 |  |
@@ -1644,6 +1705,86 @@ Build/data files in this area: **18** (878 lines) — owner: same task as the ar
 | `plugins/obs-webrtc/whip-service.cpp` | P5-19 | — | D-16 |
 | `plugins/obs-webrtc/whip-service.h` | P5-19 | — | D-16 |
 | `plugins/obs-webrtc/whip-utils.h` | P5-19 | — | D-16 |
+| `plugins/obs-websocket/lib/example/simplest-plugin.c` | P5-20 | D-28 | spec gap: protocol spec not written |
+| `plugins/obs-websocket/lib/obs-websocket-api.h` | P5-20 | D-28 | spec gap: protocol spec not written |
+| `plugins/obs-websocket/src/Config.cpp` | P5-20 | D-28 | spec gap: protocol spec not written |
+| `plugins/obs-websocket/src/Config.h` | P5-20 | D-28 | spec gap: protocol spec not written |
+| `plugins/obs-websocket/src/WebSocketApi.cpp` | P5-20 | D-28 | spec gap: protocol spec not written |
+| `plugins/obs-websocket/src/WebSocketApi.h` | P5-20 | D-28 | spec gap: protocol spec not written |
+| `plugins/obs-websocket/src/eventhandler/EventHandler.cpp` | P5-20 | D-28 | spec gap: protocol spec not written |
+| `plugins/obs-websocket/src/eventhandler/EventHandler.h` | P5-20 | D-28 | spec gap: protocol spec not written |
+| `plugins/obs-websocket/src/eventhandler/EventHandler_Canvases.cpp` | P5-20 | D-28 | spec gap: protocol spec not written |
+| `plugins/obs-websocket/src/eventhandler/EventHandler_Config.cpp` | P5-20 | D-28 | spec gap: protocol spec not written |
+| `plugins/obs-websocket/src/eventhandler/EventHandler_Filters.cpp` | P5-20 | D-28 | spec gap: protocol spec not written |
+| `plugins/obs-websocket/src/eventhandler/EventHandler_General.cpp` | P5-20 | D-28 | spec gap: protocol spec not written |
+| `plugins/obs-websocket/src/eventhandler/EventHandler_Inputs.cpp` | P5-20 | D-28 | spec gap: protocol spec not written |
+| `plugins/obs-websocket/src/eventhandler/EventHandler_MediaInputs.cpp` | P5-20 | D-28 | spec gap: protocol spec not written |
+| `plugins/obs-websocket/src/eventhandler/EventHandler_Outputs.cpp` | P5-20 | D-28 | spec gap: protocol spec not written |
+| `plugins/obs-websocket/src/eventhandler/EventHandler_SceneItems.cpp` | P5-20 | D-28 | spec gap: protocol spec not written |
+| `plugins/obs-websocket/src/eventhandler/EventHandler_Scenes.cpp` | P5-20 | D-28 | spec gap: protocol spec not written |
+| `plugins/obs-websocket/src/eventhandler/EventHandler_Transitions.cpp` | P5-20 | D-28 | spec gap: protocol spec not written |
+| `plugins/obs-websocket/src/eventhandler/EventHandler_Ui.cpp` | P5-20 | D-28 | spec gap: protocol spec not written |
+| `plugins/obs-websocket/src/eventhandler/types/EventSubscription.h` | P5-20 | D-28 | spec gap: protocol spec not written |
+| `plugins/obs-websocket/src/forms/ConnectInfo.cpp` | P5-20 | D-28 | spec gap: protocol spec not written |
+| `plugins/obs-websocket/src/forms/ConnectInfo.h` | P5-20 | D-28 | spec gap: protocol spec not written |
+| `plugins/obs-websocket/src/forms/ConnectInfo.ui` | P5-20 | D-28 | spec gap: protocol spec not written |
+| `plugins/obs-websocket/src/forms/SettingsDialog.cpp` | P5-20 | D-28 | spec gap: protocol spec not written |
+| `plugins/obs-websocket/src/forms/SettingsDialog.h` | P5-20 | D-28 | spec gap: protocol spec not written |
+| `plugins/obs-websocket/src/forms/SettingsDialog.ui` | P5-20 | D-28 | spec gap: protocol spec not written |
+| `plugins/obs-websocket/src/obs-websocket.cpp` | P5-20 | D-28 | spec gap: protocol spec not written |
+| `plugins/obs-websocket/src/obs-websocket.h` | P5-20 | D-28 | spec gap: protocol spec not written |
+| `plugins/obs-websocket/src/requesthandler/RequestBatchHandler.cpp` | P5-20 | D-28 | spec gap: protocol spec not written |
+| `plugins/obs-websocket/src/requesthandler/RequestBatchHandler.h` | P5-20 | D-28 | spec gap: protocol spec not written |
+| `plugins/obs-websocket/src/requesthandler/RequestHandler.cpp` | P5-20 | D-28 | spec gap: protocol spec not written |
+| `plugins/obs-websocket/src/requesthandler/RequestHandler.h` | P5-20 | D-28 | spec gap: protocol spec not written |
+| `plugins/obs-websocket/src/requesthandler/RequestHandler_Canvases.cpp` | P5-20 | D-28 | spec gap: protocol spec not written |
+| `plugins/obs-websocket/src/requesthandler/RequestHandler_Config.cpp` | P5-20 | D-28 | spec gap: protocol spec not written |
+| `plugins/obs-websocket/src/requesthandler/RequestHandler_Filters.cpp` | P5-20 | D-28 | spec gap: protocol spec not written |
+| `plugins/obs-websocket/src/requesthandler/RequestHandler_General.cpp` | P5-20 | D-28 | spec gap: protocol spec not written |
+| `plugins/obs-websocket/src/requesthandler/RequestHandler_Inputs.cpp` | P5-20 | D-28 | spec gap: protocol spec not written |
+| `plugins/obs-websocket/src/requesthandler/RequestHandler_MediaInputs.cpp` | P5-20 | D-28 | spec gap: protocol spec not written |
+| `plugins/obs-websocket/src/requesthandler/RequestHandler_Outputs.cpp` | P5-20 | D-28 | spec gap: protocol spec not written |
+| `plugins/obs-websocket/src/requesthandler/RequestHandler_Record.cpp` | P5-20 | D-28 | spec gap: protocol spec not written |
+| `plugins/obs-websocket/src/requesthandler/RequestHandler_SceneItems.cpp` | P5-20 | D-28 | spec gap: protocol spec not written |
+| `plugins/obs-websocket/src/requesthandler/RequestHandler_Scenes.cpp` | P5-20 | D-28 | spec gap: protocol spec not written |
+| `plugins/obs-websocket/src/requesthandler/RequestHandler_Sources.cpp` | P5-20 | D-28 | spec gap: protocol spec not written |
+| `plugins/obs-websocket/src/requesthandler/RequestHandler_Stream.cpp` | P5-20 | D-28 | spec gap: protocol spec not written |
+| `plugins/obs-websocket/src/requesthandler/RequestHandler_Transitions.cpp` | P5-20 | D-28 | spec gap: protocol spec not written |
+| `plugins/obs-websocket/src/requesthandler/RequestHandler_Ui.cpp` | P5-20 | D-28 | spec gap: protocol spec not written |
+| `plugins/obs-websocket/src/requesthandler/rpc/Request.cpp` | P5-20 | D-28 | spec gap: protocol spec not written |
+| `plugins/obs-websocket/src/requesthandler/rpc/Request.h` | P5-20 | D-28 | spec gap: protocol spec not written |
+| `plugins/obs-websocket/src/requesthandler/rpc/RequestBatchRequest.cpp` | P5-20 | D-28 | spec gap: protocol spec not written |
+| `plugins/obs-websocket/src/requesthandler/rpc/RequestBatchRequest.h` | P5-20 | D-28 | spec gap: protocol spec not written |
+| `plugins/obs-websocket/src/requesthandler/rpc/RequestResult.cpp` | P5-20 | D-28 | spec gap: protocol spec not written |
+| `plugins/obs-websocket/src/requesthandler/rpc/RequestResult.h` | P5-20 | D-28 | spec gap: protocol spec not written |
+| `plugins/obs-websocket/src/requesthandler/types/RequestBatchExecutionType.h` | P5-20 | D-28 | spec gap: protocol spec not written |
+| `plugins/obs-websocket/src/requesthandler/types/RequestStatus.h` | P5-20 | D-28 | spec gap: protocol spec not written |
+| `plugins/obs-websocket/src/utils/Compat.cpp` | P5-20 | D-28 | spec gap: protocol spec not written |
+| `plugins/obs-websocket/src/utils/Compat.h` | P5-20 | D-28 | spec gap: protocol spec not written |
+| `plugins/obs-websocket/src/utils/Crypto.cpp` | P5-20 | D-28 | spec gap: protocol spec not written |
+| `plugins/obs-websocket/src/utils/Crypto.h` | P5-20 | D-28 | spec gap: protocol spec not written |
+| `plugins/obs-websocket/src/utils/Json.cpp` | P5-20 | D-28 | spec gap: protocol spec not written |
+| `plugins/obs-websocket/src/utils/Json.h` | P5-20 | D-28 | spec gap: protocol spec not written |
+| `plugins/obs-websocket/src/utils/Obs.cpp` | P5-20 | D-28 | spec gap: protocol spec not written |
+| `plugins/obs-websocket/src/utils/Obs.h` | P5-20 | D-28 | spec gap: protocol spec not written |
+| `plugins/obs-websocket/src/utils/Obs_ActionHelper.cpp` | P5-20 | D-28 | spec gap: protocol spec not written |
+| `plugins/obs-websocket/src/utils/Obs_ArrayHelper.cpp` | P5-20 | D-28 | spec gap: protocol spec not written |
+| `plugins/obs-websocket/src/utils/Obs_NumberHelper.cpp` | P5-20 | D-28 | spec gap: protocol spec not written |
+| `plugins/obs-websocket/src/utils/Obs_ObjectHelper.cpp` | P5-20 | D-28 | spec gap: protocol spec not written |
+| `plugins/obs-websocket/src/utils/Obs_SearchHelper.cpp` | P5-20 | D-28 | spec gap: protocol spec not written |
+| `plugins/obs-websocket/src/utils/Obs_StringHelper.cpp` | P5-20 | D-28 | spec gap: protocol spec not written |
+| `plugins/obs-websocket/src/utils/Obs_VolumeMeter.cpp` | P5-20 | D-28 | spec gap: protocol spec not written |
+| `plugins/obs-websocket/src/utils/Obs_VolumeMeter.h` | P5-20 | D-28 | spec gap: protocol spec not written |
+| `plugins/obs-websocket/src/utils/Obs_VolumeMeter_Helpers.h` | P5-20 | D-28 | spec gap: protocol spec not written |
+| `plugins/obs-websocket/src/utils/Platform.cpp` | P5-20 | D-28 | spec gap: protocol spec not written |
+| `plugins/obs-websocket/src/utils/Platform.h` | P5-20 | D-28 | spec gap: protocol spec not written |
+| `plugins/obs-websocket/src/utils/Utils.h` | P5-20 | D-28 | spec gap: protocol spec not written |
+| `plugins/obs-websocket/src/websocketserver/WebSocketServer.cpp` | P5-20 | D-28 | spec gap: protocol spec not written |
+| `plugins/obs-websocket/src/websocketserver/WebSocketServer.h` | P5-20 | D-28 | spec gap: protocol spec not written |
+| `plugins/obs-websocket/src/websocketserver/WebSocketServer_Protocol.cpp` | P5-20 | D-28 | spec gap: protocol spec not written |
+| `plugins/obs-websocket/src/websocketserver/rpc/WebSocketSession.h` | P5-20 | D-28 | spec gap: protocol spec not written |
+| `plugins/obs-websocket/src/websocketserver/types/WebSocketCloseCode.h` | P5-20 | D-28 | spec gap: protocol spec not written |
+| `plugins/obs-websocket/src/websocketserver/types/WebSocketOpCode.h` | P5-20 | D-28 | spec gap: protocol spec not written |
 | `plugins/obs-x264/obs-x264-plugin-main.c` | P5-07 | S-025 |  |
 | `plugins/obs-x264/obs-x264-test.c` | P5-07 | S-025 |  |
 | `plugins/obs-x264/obs-x264.c` | P5-07 | S-025 |  |
@@ -1748,7 +1889,7 @@ Build/data files in this area: **18** (878 lines) — owner: same task as the ar
 | `plugins/win-wasapi/wasapi-notify.hpp` | P5-30 | D-32 | spec gap |
 | `plugins/win-wasapi/win-wasapi.cpp` | P5-30 | D-32 | spec gap |
 
-Build/data files in this area: **2550** (112782 lines) — owner: same task as the area's source files; packaging owned by P6-42…P6-44, CMake removal by P7-06.3.
+Build/data files in this area: **2756** (135886 lines) — owner: same task as the area's source files; packaging owned by P6-42…P6-44, CMake removal by P7-06.3.
 
 
 ## Shared helpers (`shared/`)

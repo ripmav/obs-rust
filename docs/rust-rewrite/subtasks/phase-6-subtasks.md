@@ -2,7 +2,7 @@
 
 Parent file: [../phase-6-frontend.md](../phase-6-frontend.md). Each subtask has **Files**, **Steps**, **Done when**.
 
-Verified facts: the main window is split across `frontend/widgets/OBSBasic*.cpp` (33 files, ≈20K lines: `_Docks`, `_Hotkeys`, `_Preview`, `_Profiles`, `_SceneCollections`, `_Scenes`, `_SceneItems`, `_Streaming`, `_Recording`, `_ReplayBuffer`, `_StudioMode`, `_Transitions`, `_VirtualCam`, `_SysTray`, `_Updater`, `_YouTube`, …). `frontend/forms/` has 36 `.ui` files (29 top-level, 7 in `source-toolbar/`; `AutoConfigFinishPage.ui` is an orphan form referenced only by the build, never instantiated). `frontend/data/locale/` has 77 locale files. Themes in `frontend/data/themes/`: two `.obt` base themes (`System.obt`, hidden from the theme list, and `Yami.obt`) plus `Yami_*.ovt` variants (Acri, Classic, Default, Grey, Light, Rachni); the `Acri/`, `Dark/`, `Light/`, `Rachni/`, `Yami/` subdirs hold theme images; high-contrast themes use the `.oha` extension. The frontend API (`frontend/api/obs-frontend-api.h`) has 99 exported functions and 44 `OBS_FRONTEND_EVENT_*` values. Scripting bindings are SWIG interfaces: `shared/obs-scripting/obslua/obslua.i`, `obspython/obspython.i`. `plugins/obs-websocket` and `plugins/obs-browser` (needed by several tasks) are empty submodules until initialised.
+Verified facts: the main window is split across `frontend/widgets/OBSBasic*.cpp` (33 files, ≈20K lines: `_Docks`, `_Hotkeys`, `_Preview`, `_Profiles`, `_SceneCollections`, `_Scenes`, `_SceneItems`, `_Streaming`, `_Recording`, `_ReplayBuffer`, `_StudioMode`, `_Transitions`, `_VirtualCam`, `_SysTray`, `_Updater`, `_YouTube`, …). `frontend/forms/` has 36 `.ui` files (29 top-level, 7 in `source-toolbar/`; `AutoConfigFinishPage.ui` is an orphan form referenced only by the build, never instantiated). `frontend/data/locale/` has 77 locale files. Themes in `frontend/data/themes/`: two `.obt` base themes (`System.obt`, hidden from the theme list, and `Yami.obt`) plus `Yami_*.ovt` variants (Acri, Classic, Default, Grey, Light, Rachni); the `Acri/`, `Dark/`, `Light/`, `Rachni/`, `Yami/` subdirs hold theme images; high-contrast themes use the `.oha` extension. The frontend API (`frontend/api/obs-frontend-api.h`) has 99 exported functions and 44 `OBS_FRONTEND_EVENT_*` values. Scripting bindings are SWIG interfaces: `shared/obs-scripting/obslua/obslua.i`, `obspython/obspython.i`. `plugins/obs-websocket` and `plugins/obs-browser` (needed by several tasks) are initialised in this checkout; a fresh clone still needs `git submodule update --init`.
 
 **UI bookend** (written "+UI"): (a) view-model unit test before the widget, (b) screenshot/accessibility-tree snapshot in light and dark themes, (c) full keyboard-only operation, (d) string keys taken from `frontend/data/locale/en-US.ini` (no new hard-coded text).
 
@@ -73,20 +73,20 @@ Verified facts: the main window is split across `frontend/widgets/OBSBasic*.cpp`
 - [ ] **P6-10.3 Mute/monitor** — `MuteCheckBox`, per-source menu. Done when: toggles.
 - [ ] **P6-10.4 Layouts** — `widgets/AudioMixer.cpp`: vertical/horizontal/hidden-sources. Done when: persisted.
 - [ ] **P6-10.5 Advanced audio** — `dialogs/OBSBasicAdvAudio.cpp`, `components/OBSAdvAudioCtrl.cpp`: sync offset, tracks, monitoring, balance. Done when: all fields.
-- [ ] **P6-10.6 Reference compare**
+- [ ] **P6-10.6 Reference compare** — Done when: pixel diff within threshold.
 
 ### P6-11 Transitions dock
 - [ ] **P6-11.1 Selector/duration** — `widgets/OBSBasic_Transitions.cpp`. +UI.
-- [ ] **P6-11.2 Properties** — add/rename/remove transitions, properties dialog.
+- [ ] **P6-11.2 Properties** — add/rename/remove transitions, properties dialog. +UI. Done when: add/rename/remove works.
 - [ ] **P6-11.3 Quick transitions/T-bar** — `utility/QuickTransition.cpp`, hotkeys. Done when: transitions fire.
 
 ### P6-12 Controls dock
 - [ ] **P6-12.1 Stream/record** — `widgets/OBSBasicControls.cpp`, `OBSBasic_Streaming.cpp`, `OBSBasic_Recording.cpp`: button text/state, pause. +UI.
 - [ ] **P6-12.2 Replay/vcam** — `OBSBasic_ReplayBuffer.cpp`, `OBSBasic_VirtualCam.cpp`. +UI.
-- [ ] **P6-12.3 States** — reconnecting/paused/failed message dialogs from locale.
+- [ ] **P6-12.3 States** — reconnecting/paused/failed message dialogs from locale. Done when: each state shows its locale text.
 
 ### P6-13 Stats dock
-- [ ] **P6-13.1 Collection** — `widgets/OBSBasicStats.cpp`: CPU%, mem, disk space, FPS, render time, skipped/missed frames, output bitrate, dropped.
+- [ ] **P6-13.1 Collection** — `widgets/OBSBasicStats.cpp`: CPU%, mem, disk space, FPS, render time, skipped/missed frames, output bitrate, dropped. Done when: values match a live C session.
 - [ ] **P6-13.2 Table +UI** — reset button, colour thresholds.
 
 ### P6-14 Source toolbars
@@ -109,7 +109,7 @@ Verified facts: the main window is split across `frontend/widgets/OBSBasic*.cpp`
 
 ### P6-17 Media controls
 - [ ] **P6-17.1 Play/pause/seek** — `components/MediaControls.cpp`, slider. +UI.
-- [ ] **P6-17.2 Extras** — time labels, loop, restart, previous/next.
+- [ ] **P6-17.2 Extras** — time labels, loop, restart, previous/next. Done when: match C behaviour.
 
 ### P6-18 Accessibility pass
 - [ ] **P6-18.1 Labels** — audit every widget role/name (`AccessibleAlignment*`, `VolumeAccessibleInterface` exist for custom widgets). Done when: report.
@@ -135,17 +135,17 @@ Verified facts: the main window is split across `frontend/widgets/OBSBasic*.cpp`
 ### P6-21 Hotkey editor
 - [ ] **P6-21.1 Capture** — `settings/OBSHotkeyEdit`, `OBSHotkeyWidget`, `OBSHotkeyLabel`: per-OS key capture incl. mouse buttons. +UI. Done when: modifier combos.
 - [ ] **P6-21.2 Conflicts** — highlight duplicates. Done when: test.
-- [ ] **P6-21.3 Clear/reset/filter**.
+- [ ] **P6-21.3 Clear/reset/filter**. Done when: list updates.
 
 ### P6-22 Auto-configuration wizard
 - [ ] **P6-22.1 Framework** — `wizards/AutoConfig*.cpp` pages. +UI.
 - [ ] **P6-22.2 Bandwidth test** — `AutoConfigTestPage`: test stream to ingest, bitrate ramp. Done when: mock server.
 - [ ] **P6-22.3 Encoder tests** — resolution/FPS/encoder trials. Done when: logic equal.
-- [ ] **P6-22.4 Apply** results into profile.
+- [ ] **P6-22.4 Apply** results into profile. Done when: results appear in profile settings.
 
 ### P6-23 First-run / what's new / about
 - [ ] **P6-23.1 About** — `dialogs/OBSAbout.cpp`: authors, licence (`frontend/data/license`). +UI.
-- [ ] **P6-23.2 What's new** — `OBSWhatsNew` (web view). +UI.
+- [ ] **P6-23.2 What's new** — `OBSWhatsNew` (web view), `utility/WhatsNewInfoThread` feed fetch: RSA signature checked against `data/OBSPublicRSAKey.pem` (keep RSA per D-23) plus a blake2 If-None-Match hash. +UI. Done when: feed loads and a tampered feed is rejected.
 - [ ] **P6-23.3 macOS permissions** — `OBSPermissions`. +UI.
 
 ## D. Profiles, collections, importers
@@ -158,8 +158,8 @@ Verified facts: the main window is split across `frontend/widgets/OBSBasic*.cpp`
 
 ### P6-25 Profile manager
 - [ ] **P6-25.1 CRUD** — `widgets/OBSBasic_Profiles.cpp`. +UI.
-- [ ] **P6-25.2 Export/import**.
-- [ ] **P6-25.3 Encoder JSON** — `streamEncoder.json`, `recordEncoder.json`, `service.json`.
+- [ ] **P6-25.2 Export/import**. Done when: round-trip restores the profile.
+- [ ] **P6-25.3 Encoder JSON** — `streamEncoder.json`, `recordEncoder.json`, `service.json`. Done when: files parse identically.
 
 ### P6-26 Importers
 - [ ] **P6-26.1 Classic** — `importers/classic.cpp`. Done when: golden JSON.
@@ -195,24 +195,24 @@ Verified facts: the main window is split across `frontend/widgets/OBSBasic*.cpp`
 
 ### P6-31 Streaming services UI
 - [ ] **P6-31.1 Pickers** — service/server dropdowns from `rtmp-services`.
-- [ ] **P6-31.2 Key hiding** — show/hide button.
+- [ ] **P6-31.2 Key hiding** — show/hide button. +UI. Done when: key hidden by default, toggles.
 - [ ] **P6-31.3 Multitrack** — `utility/MultitrackVideoOutput.cpp`, `GoLiveAPI_*.cpp` (network request, censored JSON, post data), error dialogs. Done when: mock GoLive API.
 
 ### P6-32 Updater
 - [ ] **P6-32.1 Manifest** — `frontend/updater/` (`manifest.hpp`, `http.cpp`, `hash.cpp`, `patch.cpp`): fetch, compare. Done when: local server.
-- [ ] **P6-32.2 Download/verify** — delta patches, hashes, RSA signature (Windows CryptoAPI; keep RSA per D-23 — `data/OBSPublicRSAKey.pem` also verifies the What's-New feed). Done when: tamper test fails.
+- [ ] **P6-32.2 Download/verify** — delta patches verified by blake2b manifest hashes (`hash.cpp`), VC redist via Authenticode (Windows CryptoAPI); keep RSA per D-23 (ed25519 only if D-07 review demands it — the `data/OBSPublicRSAKey.pem` RSA check lives in the What's-New feed, P6-23.2). Done when: tamper test fails.
 - [ ] **P6-32.3 Windows swap** — `updater.cpp` as helper process, in-place replace, rollback. Done when: update test VM.
 - [ ] **P6-32.4 macOS/Linux** — Sparkle (`OBSSparkle.mm`), package manager notice. Done when: documented.
 - [ ] **P6-32.5 Tests** with local manifest.
 
 ### P6-33 Plugin manager
 - [ ] **P6-33.1 List** — `plugin-manager/PluginManager.cpp`, `InstalledPluginRow`. +UI.
-- [ ] **P6-33.2 Enable/disable** — libobs `obs_add_disabled_module`/`obs_get_disabled_module` (session-scoped, cleared on restart; Phase 4 API), restart prompt (see recent fix in git log for stale data).
+- [ ] **P6-33.2 Enable/disable** — libobs `obs_add_disabled_module`/`obs_get_disabled_module` (session-scoped, cleared on restart; Phase 4 API), restart prompt (see recent fix in git log for stale data). Done when: disabled module persists for the session and clears on restart.
 - [ ] **P6-33.3 Paths** — `LoaderPaths_{Linux,BSD,Flatpak}.hpp.in`, `PluginModuleLoader_*.cpp`. Done when: Flatpak path correct.
 
 ### P6-34 Virtual camera config
 - [ ] **P6-34.1 Dialog** — `dialogs/OBSBasicVCamConfig.cpp`: output type (program, preview, scene, source). +UI.
-- [ ] **P6-34.2 Persist**.
+- [ ] **P6-34.2 Persist**. Done when: choice survives restart.
 
 ### P6-35 Debug dialogs
 - [ ] **P6-35.1 Decide** — `dialogs/OBSIdianPlayground.cpp`: keep/drop.
@@ -259,26 +259,26 @@ Verified facts: the main window is split across `frontend/widgets/OBSBasic*.cpp`
 
 ### P6-42 Windows
 - [ ] **P6-42.1 Installer** — install-tree layout in `additional_install_files/`, CPack portable ZIP (`CPACK_GENERATOR ZIP`; no NSIS/Inno in the C build); VC runtime.
-- [ ] **P6-42.2 Portable ZIP**.
+- [ ] **P6-42.2 Portable ZIP**. Done when: ZIP launches and runs.
 - [ ] **P6-42.3 Signing** — Authenticode.
 
 ### P6-43 macOS
-- [ ] **P6-43.1 Bundle** — universal binary, Info.plist, camera extension embed.
+- [ ] **P6-43.1 Bundle** — universal binary, Info.plist, camera extension embed. Done when: bundle launches.
 - [ ] **P6-43.2 Notarise** — entitlements.
 - [ ] **P6-43.3 Update feed**.
 
 ### P6-44 Linux
-- [ ] **P6-44.1 Flatpak** — manifest `com.obsproject.Studio.json` in `build-aux/`.
-- [ ] **P6-44.2 deb/rpm** — C build ships DEB + TGZ source (CPack, no RPM); port the DEB generator, add RPM only if the release decision wants it.
+- [ ] **P6-44.1 Flatpak** — manifest `com.obsproject.Studio.json` in `build-aux/`. Done when: flatpak-builder runs the manifest.
+- [ ] **P6-44.2 deb/rpm** — C build ships DEB + TGZ source (CPack, no RPM); port the DEB generator, add RPM only if the release decision wants it. Done when: .deb installs and runs.
 - [ ] **P6-44.3 Sessions** — Wayland and X11 test.
 
 ### P6-45 Size and startup
-- [ ] **P6-45.1 Measure** binary size, cold/warm start.
+- [ ] **P6-45.1 Measure** binary size, cold/warm start. Done when: numbers recorded vs the C build.
 - [ ] **P6-45.2 Optimise** to within 10% of C++.
 
 ### P6-46 End-to-end UI tests
-- [ ] **P6-46.1 Tooling** — per OS (AT-SPI, UIA, macOS accessibility, or screenshot compare).
-- [ ] **P6-46.2 Journeys** — 30: add source, edit properties, record, stream to local RTMP, switch scene, studio mode, change setting, import collection, update, plugin manager, scripting.
+- [ ] **P6-46.1 Tooling** — per OS (AT-SPI, UIA, macOS accessibility, or screenshot compare). Done when: one journey passes per OS.
+- [ ] **P6-46.2 Journeys** — 30: add source, edit properties, record, stream to local RTMP, switch scene, studio mode, change setting, import collection, update, plugin manager, scripting. Done when: all 30 pass.
 - [ ] **P6-46.3 Nightly run** in CI.
 
 ### P6-47 Beta programme
