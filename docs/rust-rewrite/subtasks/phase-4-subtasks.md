@@ -712,6 +712,17 @@ Verified facts: `libobs/obs-internal.h` has 46 `pthread_mutex_t` fields (P4-04 m
   - Steps: port each platform's `log_system_info` (CPU/memory/etc.); diff the Rust log against the C log.
   - Spec: S-058 Part B (the nix system-information logging).
   - Done when: log diff reviewed.
+- [ ] **P4-32.6 Write S-064 (added)** — Wayland hotkey-platform spec (D-30)
+  - Files: `libobs/obs-nix-wayland.c` (1630; `wl_keyboard` + xkbcommon keymaps, seat capabilities, `obs_nix_wayland_log_info`).
+  - Steps: 1. read the C: keymap translation, hotkey registration/release, log fields. 2. write `specs/S-064-wayland-hotkeys.md` (public Wayland + xkbcommon protocols; S-058 explicitly excludes Wayland). 3. add the row to `specs/README.md`.
+  - Pitfalls: D-30 allows extending S-058 instead — default is a new S-064 since S-058 is already in review.
+  - Done when: S-064 committed; P4-32.2 cites it instead of "read the C".
+- [ ] **P4-32.7 Keymap table vectors (added)**
+  - Files: `libobs/obs-windows.c` (1233; `get_virtual_key` table, 598 lines at :359), `libobs/obs-nix-x11.c` (1280; `get_keysym` table, 586 lines at :108), `libobs/obs-nix-wayland.c` (1630; `obs_nix_wayland_key_to_virtual_key` table, 562 lines at :1054).
+  - Steps: 1. port the three keymap tables as static data (pure lookup). 2. extend the `hotkeys` conformance area (S-034) with `keymap-*` scripts whose committed `.expected` vectors assert every mapping of each table (generated from the C build).
+  - Spec: S-034 (hotkey translation).
+  - Vectors: `test/conformance/scripts/hotkeys/`.
+  - Done when: all rows of the three tables are pinned by committed vectors.
 
 ### P4-33 Canvases
 - [ ] **P4-33.1 Canvas**
