@@ -59,6 +59,11 @@ Corrections to the earlier plan, verified in the tree: the ring buffer is `libob
 - [ ] **P1-05.2 Semaphores and thread names** — `os_sem_init/post/wait/destroy`, `os_set_thread_name` from `threading-posix.c`. Spec: no spec (S-061 gap). Pitfall: `threading-posix.c` carries a separate `#ifdef __APPLE__` `os_sem_init` path (lines ~170–220; macOS lacks unnamed POSIX semaphores) — read it before porting, test macOS separately. Done when: thread name visible in debugger on each OS.
 - [ ] **P1-05.3 Windows parity** — compare behaviour with `threading-windows.c` (213) (events/semaphores are `HANDLE`s from `CreateEvent`/`CreateSemaphore`, driven by `WaitForSingleObject`; no SRW locks). Done when: Windows CI green.
 - [ ] **P1-05.4 Stress and recipe** — 64 threads × 1M signals; apply recipe (Files: `libobs/CMakeLists.txt` (396), `obs-ffi` shim).
+- [ ] **P1-05.5 Write S-061 (added)** — threading-primitives spec (D-27)
+  - Files: `libobs/util/threading.h` (103), `threading-posix.c` (273), `threading-windows.c` (213).
+  - Steps: 1. read the C and enumerate the contract: `os_event_init/post/wait/destroy` (auto-reset), `os_sem_init/post/wait/destroy`, `os_set_thread_name`, the Windows `HANDLE` mapping and the pthread path. 2. write `specs/S-061-threading.md` (format like S-034). 3. add the row to `specs/README.md`.
+  - Pitfalls: prerequisite of P1-05.1 (D-27: "write S-061 before starting P1-05"); `os_set_thread_name` (threading-windows.c:168) carries an `#ifdef NO_SEH_MINGW` dual `__try`/`__except` branch — resolve it in the spec.
+  - Done when: S-061 committed and listed in `specs/README.md`.
 
 ### P1-06 Time and sleep
 - [ ] **P1-06.1 Clock** — Files: `libobs/util/platform-nix.c` (1108), `platform-cocoa.m` (530), `platform-windows.c` (1374), `platform.h` (224). `os_gettime_ns` monotonic (`CLOCK_MONOTONIC` in `platform-nix.c`; `CLOCK_UPTIME_RAW` via `clock_gettime_nsec_np` in `platform-cocoa.m` on macOS — the nix copy is `#if !defined(__APPLE__)`; QPC in `platform-windows.c`). There is no `os_gettime_ms` in this tree. Spec: S-023 R100 (property contract, Linux); Windows/macOS strategy unspecified — port from C. Vectors: `test/conformance/scripts/platform/` (`monotonic`, `nstime`). Done when: never decreases in a 10 s loop.
