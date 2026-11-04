@@ -466,11 +466,20 @@ def corpus_files(paths):
     base_cited = set()
     # '+' for ObjC category files (MTLTexture+Extensions.swift)
     pat = re.compile(r"[\w.+/~-]+\.(?:c|h|hpp|hxx|cc|cpp|cxx|m|mm|swift|effect|ui)(?:\.in)?(?![\w.])")
+    # brace-form citations: plugins/x/{a,b}.c -> plugins/x/a.c + plugins/x/b.c
+    # (round-7 verifier found S-049 cites `plugins/linux-jack/{jack-input,jack-wrapper}.c`)
+    brace = re.compile(
+        r"([A-Za-z0-9_/.~-]*)(\{[A-Za-z0-9_,\-]+\})\.(c|h|hpp|hxx|cc|cpp|cxx|m|mm|swift|effect|ui)(\.in)?(?![\w.])")
     for p in paths:
         try:
             text = open(p, encoding="utf-8", errors="replace").read()
         except OSError:
             continue
+        text = brace.sub(
+            lambda m: " ".join(
+                f"{m.group(1)}{part}.{m.group(3)}{m.group(4) or ''}"
+                for part in m.group(2).strip("{}").split(",")),
+            text)
         for m in pat.findall(text):
             paths_cited.add(m)
             base_cited.add(os.path.basename(m))
@@ -658,12 +667,17 @@ def main():
     s = stats(core)
     union = sum(1 for i in core if i["F1"] or i["any1"])
     pinned = sum(1 for i in core if i["S2"] or i["X2"])
+    # round-7 headline: covered by (sub)tasks, specs or tests — a task owns the
+    # file (T2), the plan names it (F1), or any artefact names the function
+    # (any1) or cites the file (any2)
+    covered = sum(1 for i in core if i["T2"] or i["F1"] or i["any1"] or i["any2"])
     md.append("## Coverage verdict (non-trivial first-party functions, helpers excluded)")
     md.append("")
     md.append(f"- Task coverage (file -> task, T2): **{pct(s['T2'], s['n'])}** — the plan owns every file.")
     md.append(f"- File explicitly named in the plan (F1): **{pct(s['F1'], s['n'])}**.")
     md.append(f"- Function named by a task, spec or test (any1): **{pct(s['any1'], s['n'])}**.")
     md.append(f"- Behaviour pinned by a spec or a test (S2 or X2): **{pct(pinned, s['n'])}**.")
+    md.append(f"- Covered by (sub)tasks, specs or tests (T2 or F1 or any1 or any2 — round-7 headline): **{pct(covered, s['n'])}**.")
     md.append(f"- Combined practical coverage (F1 or any1 — a developer can locate how the function is treated): **{pct(union, s['n'])}**.")
     md.append(f"- Full triple (task + spec + test all reach the file, all2): **{pct(s['all2'], s['n'])}**.")
     md.append("")
