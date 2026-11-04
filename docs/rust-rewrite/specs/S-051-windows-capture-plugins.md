@@ -318,3 +318,85 @@ Floating point: the only printed floats are `hook_rate` multipliers (`%.9g`); co
 4. Whether D-3's wrapped value must be preserved for compatibility: no stored data depends on it, so the spec recommends the corrected arithmetic.
 5. Rendering/HDR (`GS_CS_*` selection in `game_capture_render`), `dc-capture`, `cursor-capture`, WGC frame path, injection, AppContainer object paths, WASAPI timestamp logic (`OnStartCapture`, device-timing vs system-timing) and DShow audio/video timestamp matching were **not** specified (cost control: breadth first on protocol, matching and selection rules).
 6. Sufficiency check (Rust re-implementation from this spec and the vectors) was **skipped** by instruction (cost control); no pass count is claimed.
+
+## 12. Round 8: capture host surface — game/window/monitor/duplicator/cursor/dc/WGC/injection (added)
+
+§5 R04–R107 pin the hook IPC protocol, window matching and vqueue rules; this section
+pins the host-side files those rules live in, plus the paths §11 item 5 left un-specified
+(rendering/HDR, dc-capture, cursor-capture, WGC frame path, injection). The hook DLL
+itself is specified by S-086 (kept C++, D-08); this section is the host side only.
+
+### Reference files (all cited)
+
+- `plugins/win-capture/game-capture.c`, `plugins/win-capture/game-capture-file-init.c`, `plugins/win-capture/window-capture.c`, `plugins/win-capture/duplicator-monitor-capture.c`, `plugins/win-capture/monitor-capture.c`, `plugins/win-capture/dc-capture.c`, `plugins/win-capture/cursor-capture.c`, `plugins/win-capture/app-helpers.c`, `plugins/win-capture/audio-helpers.c`, `plugins/win-capture/nt-stuff.c`, `plugins/win-capture/plugin-main.c`
+- `libobs-winrt/winrt-capture.cpp`, `libobs-winrt/winrt-dispatch.cpp`
+- `shared/obs-d3d8-api/d3d8.h`, `shared/obs-inject-library/inject-library.c`
+
+### 12.1 Game-capture host
+
+- **S-051-R120 [SRC]** `game-capture.c` owns the game-capture object: window matching
+  per R04–R12; `game_capture_update` re-resolves the process and re-configures the hook
+  (capture type, colour format, delay) on settings change; the hook message protocol is
+  §4/§5. Hook internals (offset tables, renderer hooks) are S-086.
+- **S-051-R121 [SRC]** Injection: the hook DLL is staged to a unique temp file
+  (`game-capture-file-init.c`: copy + naming, cleanup on unload) and injected per S-086
+  §injection; failure → error state + property error text. `inject-library.c` is the
+  shared injection library (CreateRemoteThread-style flow, cross-ref S-086).
+- **S-051-R122 [SRC]** `nt-stuff.c` resolves NT-native functions by name
+  (`NtOpenMutant`, `NtOpenEvent`, `NtOpenSection`, `NtQuerySystemInformation`,
+  `NtCreateMutant`, `RtlNtStatusToDosError`, `RtlInitUnicodeString`) to open the hook's
+  named IPC objects (mutex/event/section) cross-process; a missing function disables the
+  affected path (logged, capture unavailable).
+- **S-051-R123 [SRC]** `audio-helpers.c`: per-window audio device selection helper
+  (default vs specific device, feeding the audio rules in §5); `app-helpers.c`:
+  window-class/app-path helpers used by the matchers.
+
+### 12.2 Window-capture host
+
+- **S-051-R124 [SRC]** `window-capture.c`: same hook protocol as game capture but
+  window-only (no per-process hook state machine); colour conversion and delay per the
+  §5 rules; bounds from the window rectangle with monitor-offset handling.
+
+### 12.3 Monitor capture (DXGI + WGC)
+
+- **S-051-R125 [SRC]** `duplicator-monitor-capture.c`: method enum
+  DXGI (legacy duplicator) / WGC; `choose_method(requested, wgc_supported, monitor)`:
+  WGC unsupported → DXGI; per-monitor restrictions fall back to DXGI (Q1); the chosen
+  method persists in the `method` setting (label `Method.WindowsGraphicsCapture` for
+  WGC).
+- **S-051-R126 [SRC]** DXGI path (`monitor-capture.c`): per-monitor DXGI output
+  duplication (S-078 R24–R25), cursor overlay option, scaling for multi-monitor setups.
+- **S-051-R127 [SRC]** WGC path (`winrt-capture.cpp`, `winrt-dispatch.cpp`): wraps
+  Windows.Graphics.Capture (create for monitor/window, frame pool, Closed/Failed
+  events); `winrt-dispatch.cpp` pumps the WinRT events on its thread; frames land as
+  textures (S-078); first-use permission request is a Windows runtime flow (Q2).
+- **S-051-R128 [SRC]** `dc-capture.c`: DirectComposition window capture
+  (Windows 10 2004+): captures the window's DComp surface by HWND; used as the
+  "direct composition" method of game capture, falling back to window capture when the
+  OS build does not support it.
+
+### 12.4 Cursor overlay
+
+- **S-051-R129 [SRC]** `cursor-capture.c`: when cursor capture is enabled and the
+  cursor is inside the capture bounds, each frame reads the cursor bitmap
+  (XOR colour + AND mask): the AND mask is inverted into alpha (`bit_to_alpha` with
+  invert), XOR supplies the colour; a 32-bit bitmap with its own alpha channel is used
+  as-is; a zero AND mask means opaque. The cursor sprite renders at the cursor position
+  scaled by the monitor DPI and capture scale.
+
+### 12.5 D3D8 API + plugin glue
+
+- **S-051-R130 [SRC]** `shared/obs-d3d8-api/d3d8.h`: the D3D8-compatible surface
+  (function-pointer tables + hook trampoline types) the hook uses for D3D8 games; the
+  host side only references it for offset-table layout (hook behaviour: S-086).
+- **S-051-R131 [SRC]** `plugin-main.c`: registers the capture source ids
+  (game/window/monitor/dc) and loads the hook DLL path (plugin dir or temp staging,
+  R121).
+
+### 12.6 Quirks (added)
+
+- Q1: exact per-monitor WGC restrictions in `choose_method` (which virtual outputs are
+  rejected and why).
+- Q2: WGC permission-request flow (user consent dialog) — Windows runtime behaviour,
+  not derivable from the repository.
+- Q3: `nt-stuff.c` fallback list when an NT function is absent (which paths degrade).

@@ -533,7 +533,7 @@ Verified file map (libobs 33.0.1 checkout, line counts): `libobs/graphics/` (46 
   - Done when: parent tasks ticked in `../phase-3-graphics.md`.
 
 ### P3-32 Graphics backend spec coverage (added)
-- [ ] **P3-32.1 Write S-078** — D3D11 backend (13 files / 272 fns: `libobs-d3d11/*`)
+- [x] **P3-32.1 Write S-078** — D3D11 backend (13 files / 272 fns: `libobs-d3d11/*`)
   - Steps: 1. write `specs/S-078-d3d11-backend.md`: gs_* → ID3D11 device mapping, texture/vertex/index buffer lifecycles, shader compile + processing, rebuild rules, duplicator interop (`d3d11-subsystem.cpp` 156 fns, `d3d11-rebuild.cpp` 20). 2. add the row to `specs/README.md`.
   - Done when: S-078 committed; `libobs-d3d11/` fully cited.
 - [ ] **P3-32.2 Write S-079** — Metal backend (21 files / 184 fns: `libobs-metal/*`)
