@@ -48,6 +48,7 @@ Legend: **Blocked** = tasks that wait on the answer. **Default** = what the plan
 | D-24 | **MSRV policy** | P0-05.2 | Track latest stable, bump within one release cycle |
 | D-25 | **FTL output** (`ftl-stream.c`, vendored FTL): keep or drop? | P5-18.3 | Drop — verified 2026-11-03: no FTL sources or CMake references remain in the 33.0.1 checkout (removed upstream); FTL has had no releases since 2021 |
 | D-26 | **`deps/w32-pthreads`**: absorbed by the Rust threading crate (P1-05) and deleted (P7-04) — confirm nobody needs it out-of-tree | P1-05.3, P7-04.2 | Absorb + delete |
+| D-34 | **Pinned-coverage acceptance criterion**: "behaviour pinned by a spec or a test" (function-level S2 ∨ X2, non-trivial first-party) is the binding coverage number | round 8 | **Resolved (user, 2026-11-04):** floor 75 %, optimum band 80–90 %. The round-6 spec backlog (`specs/BACKLOG.md`) is executed in pinned-impact order (round 8 = top 16 actions by function count) until the number is inside the band; the headline "covered by (sub)tasks, specs or tests" (round-7 metric, 100 %) stays informational |
 
 ## D. Spec backlog — work to schedule, not forks in the road
 

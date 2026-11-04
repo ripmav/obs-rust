@@ -214,3 +214,58 @@ Covered, in priority order: (1) `screen_capture` (ScreenCaptureKit video; settin
 4. Numeric FourCC and flag constants should be checked against the SDK headers (the vectors use symbolic names).
 5. `ENABLE_HEVC` is assumed defined for official macOS builds (HEVC rules R46/R47/R49/R53).
 6. The Rust sufficiency check was **skipped** by instruction (cost control); nothing here has been implemented independently.
+
+## 15. Round 8: file citations + capture internals, CoreAudio encoder, Syphon, DAL IPC (added)
+
+### Reference files (all cited; §7–§10 already pin much of the behaviour below)
+
+- `plugins/mac-capture/mac-audio.c`, `plugins/mac-capture/audio-device-enum.c`, `plugins/mac-capture/audio-device-enum.h`, `plugins/mac-capture/plugin-main.c`, `plugins/mac-capture/mac-sck-video-capture.m`, `plugins/mac-capture/mac-sck-audio-capture.m`, `plugins/mac-capture/mac-sck-common.h`, `plugins/mac-capture/mac-sck-common.m`, `plugins/mac-capture/mac-display-capture.m`, `plugins/mac-capture/mac-window-capture.m`, `plugins/mac-capture/window-utils.h`
+- `plugins/mac-avcapture/legacy/av-capture.mm`, `plugins/mac-avcapture/legacy/left-right.hpp`, `plugins/mac-avcapture/legacy/scope-guard.hpp`, `plugins/mac-avcapture/plugin-main.m`, `plugins/mac-avcapture/plugin-main.h`, `plugins/mac-avcapture/plugin-properties.m`, `plugins/mac-avcapture/plugin-properties.h`, `plugins/mac-avcapture/OBSAVCapture.h`, `plugins/mac-avcapture/OBSAVCapturePresetInfo.m`
+- `plugins/coreaudio-encoder/encoder.cpp`, `plugins/coreaudio-encoder/windows-imports.h`
+- `plugins/mac-syphon/syphon.m`, `plugins/mac-syphon/SyphonOBSClient.m`, `plugins/mac-syphon/plugin-main.c`
+- `plugins/mac-virtualcam/src/dal-plugin/OBSDALPlugIn.mm`, `plugins/mac-virtualcam/src/dal-plugin/OBSDALPlugInInterface.mm`, `plugins/mac-virtualcam/src/dal-plugin/OBSDALPlugInInterface.h`, `plugins/mac-virtualcam/src/dal-plugin/OBSDALPlugInMain.mm`, `plugins/mac-virtualcam/src/dal-plugin/OBSDALDevice.mm`, `plugins/mac-virtualcam/src/dal-plugin/OBSDALStream.mm`, `plugins/mac-virtualcam/src/dal-plugin/OBSDALMachClient.mm`, `plugins/mac-virtualcam/src/dal-plugin/OBSDALObjectStore.mm`, `plugins/mac-virtualcam/src/dal-plugin/CMSampleBufferUtils.mm`, `plugins/mac-virtualcam/src/obs-plugin/plugin-main.mm`, `plugins/mac-virtualcam/src/obs-plugin/OBSDALMachServer.mm`, `plugins/mac-virtualcam/src/camera-extension/OBSCameraProviderSource.swift`, `plugins/mac-virtualcam/src/camera-extension/OBSCameraDeviceSource.swift`, `plugins/mac-virtualcam/src/camera-extension/OBSCameraStreamSource.swift`, `plugins/mac-virtualcam/src/camera-extension/OBSCameraStreamSink.swift`
+
+### 15.1 CoreAudio input path — remaining init rules (`mac-audio.c`, `audio-device-enum.c/.h`)
+
+- **S-052-R59 [SRC]** §7 R26–R36 pin the device/format/reconnect/capture behaviour of `plugins/mac-capture/mac-audio.c`; the AudioUnit init path adds: unit created input-scope for the resolved device; the input stream description is read (`kAudioUnitProperty_StreamFormat`, input scope, bus 1), then the output-scope format is set to the input's sample rate and channel count; `sample_rate` = that rate; buffer size read via `kAudioDevicePropertyBufferFrameSize` (global scope).
+- **S-052-R60 [SRC]** Capture entry point is the AudioUnit render callback (`input_callback(data, action_flags, timestamp, inputRange, outputBus, outputData)`): render the unit, then convert per R35 (planar buffers, host-time → ns).
+- **S-052-R61 [SRC]** `audio-device-enum.c` / `audio-device-enum.h` implement the device enumeration backing R30 (names + uids, input vs output filtering); `mac-capture/plugin-main.c` registers the plugin module.
+
+### 15.2 Legacy AVCapture path (`legacy/av-capture.mm` + properties)
+
+- **S-052-R63 [SRC]** Device = `AVCaptureDevice deviceWithUniqueID:` from the `device` setting; `use_preset` true → session preset string applied, false → explicit `outputSettings` (format + fps). Cross-ref R39 (update decision) and R45 (legacy `resolution` JSON).
+- **S-052-R64 [SRC]** Session graph: `AVCaptureSession` + device input + data output; data-output pixel format chosen from the R43 table; sample-buffer delegate pushes obs frames; session start/stop on create/update/destroy; device-interruption notifications stop and reconfigure.
+- **S-052-R65 [SRC]** `plugin-properties.m` / `plugin-properties.h` / `OBSAVCapturePresetInfo.m` / `OBSAVCapture.h` are the properties model: device discovery session → combo; per-device format list with preset info (dimensions, frame-rate ranges and aspect-ratio text per R40/R41, fallback fps per R42); selections write `device` / `use_preset` / `preset` / `resolution`.
+- **S-052-R66 [SRC]** `mac-avcapture/plugin-main.m` / `plugin-main.h` register the legacy source ids (S-052 §3) and wire the properties; `legacy/left-right.hpp` / `legacy/scope-guard.hpp` are RAII/left-right helper headers with no further behaviour.
+
+### 15.3 CoreAudio encoder (`coreaudio-encoder/encoder.cpp`)
+
+- **S-052-R67 [SRC]** Registered as an obs audio encoder. The format→string table (LinearPCM, AC3, 60958AC3, AppleIMA4, MPEG4AAC, MPEG4CELP/HVXC/TwinVQ, MACE3/6, ULaw, ALaw, QDesign/QDesign2, QUALCOMM, MPEGLayer1/2/3) is for logging/diagnostics — the accepted input set is resolved at runtime by CoreAudio support queries (Q-6).
+- **S-052-R68 [SRC]** Pipeline: setup (input format + encoder settings → CoreAudio encoder), encode (input `AudioBufferList` → encoded packet queue → obs encoder frames), teardown; failures log and fail the encode call.
+- **S-052-R69 [SRC]** `windows-imports.h` is the Win32 import shim letting the encoder compile on Windows (harness use); the encoder is macOS-only at runtime.
+
+### 15.4 Syphon (`mac-syphon/syphon.m`)
+
+- **S-052-R70 [SRC]** Each source instance owns a Syphon server announced to `SyphonServerDirectory` (description: UUID, version, app name, surfaces). `SyphonServerAnnounceNotification` updates the source (app name, active state) when a sending app's description appears/changes; the connection is matched on the server UUID.
+- **S-052-R71 [SRC]** Frames arrive as `CVImageBuffer` → converted to an obs BGRA video frame at the buffer's size; server invalidation (sender quit) stops delivery.
+- **S-052-R72 [SRC]** `SyphonOBSClient.m` is the client-side wrapper used by the source; `mac-syphon/plugin-main.c` registers the plugin.
+
+### 15.5 SCK display/window capture + shared helpers (`mac-capture/*`)
+
+- **S-052-R73 [SRC]** `mac-sck-common.h` / `mac-sck-common.m`: shared ScreenCaptureKit helpers (filter construction, display/window selection state) used by §4/§6.
+- **S-052-R74 [SRC]** `mac-sck-video-capture.m`: the SCK video capture source implementing §4; `mac-sck-audio-capture.m`: the SCK audio source implementing §5.
+- **S-052-R75 [SRC]** `mac-display-capture.m`: SCK display capture (monitor selection; cross-ref §4/§6); `mac-window-capture.m`: SCK window capture (window filter + selection).
+- **S-052-R76 [SRC]** `window-utils.h`: window enumeration helpers (CGWindowList-based) used by the selection UI and filters.
+
+### 15.6 VirtualCam DAL plug-in + Mach IPC (all `mac-virtualcam` files)
+
+- **S-052-R77 [SRC]** Three components: camera extension (`OBSCameraProviderSource.swift`, `OBSCameraDeviceSource.swift`, `OBSCameraStreamSource.swift`, `OBSCameraStreamSink.swift`), DAL plug-in (`OBSDALPlugIn.mm`, `OBSDALPlugInInterface.mm/.h`, `OBSDALPlugInMain.mm`, `OBSDALDevice.mm`, `OBSDALStream.mm`, `OBSDALMachClient.mm`, `OBSDALObjectStore.mm`, `CMSampleBufferUtils.mm`), OBS side (`obs-plugin/plugin-main.mm`, `OBSDALMachServer.mm`).
+- **S-052-R78 [SRC]** `OBSDALObjectStore.mm` maps device UUID → device/stream objects; `OBSDALDevice.mm` / `OBSDALStream.mm` implement the DAL stream, each stream owning a `CMIOStreamClock` (created on alloc, invalidated on dealloc); `CMSampleBufferUtils.mm` does the CMSampleBuffer/CVPixelBuffer → obs frame conversion.
+- **S-052-R79 [SRC]** IPC contract: `OBSDALMachClient.mm` (plug-in) ↔ `OBSDALMachServer.mm` (OBS) over the Mach service pinned by R58 (ids 1/2/3, `com.obsproject.obs-mac-virtualcam.server`); the client connects at plug-in start (Connect carries the stream), OBS pushes frames/Stop back; server absence → the device reports unavailable (Q-7).
+- **S-052-R80 [SRC]** `OBSCameraStreamSink.swift` pushes plug-in frames into the camera extension; `OBSCameraDeviceSource.swift` exposes device metadata/formats; `OBSCameraProviderSource.swift` implements the DAL provider entry; `OBSCameraStreamSource.swift` the stream source.
+- **S-052-R81 [SRC]** `obs-plugin/plugin-main.mm` registers the virtualcam source (§3) and starts/stops the Mach server with the module.
+
+### 15.7 Quirks (added)
+
+- **Q-6** The exact set of input formats `coreaudio-encoder` accepts at runtime (CoreAudio support query result); the format table is diagnostic only.
+- **Q-7** Exact byte layout of the DAL frame payload (pixel buffer transferred as a Mach right; layout not re-derived this round).
