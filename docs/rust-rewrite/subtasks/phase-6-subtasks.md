@@ -919,11 +919,11 @@ Verified facts: the main window is split across `frontend/widgets/OBSBasic*.cpp`
 
 ### P6-50 Frontend spec series (added)
 - Goal: every `frontend/` file cited by a spec — the frontend (~109k lines) was previously specified only as S-048 (formats/CLI) + S-067 (preview interaction); round 6 adds the behavioural spec series S-068…S-077 + S-087. Per-file lists in `docs/rust-rewrite/specs/BACKLOG.md`; every spec gets a row in `specs/README.md`. UI-heavy behaviour is specified as behavioural tables (the S-048 convention), not line-by-line.
-- [ ] **P6-50.1 Write S-068** — frontend settings dialog (10 files / 256 fns)
+- [x] **P6-50.1 Write S-068** — frontend settings dialog (10 files / 256 fns)
   - Files: `frontend/settings/*` (OBSBasicSettings.cpp 158, _Stream 41, _A11y 18, _Appearance 7, OBSHotkey* 27, .hpp 27).
   - Steps: 1. write `specs/S-068-settings-dialog.md`: page structure, dirty-flag/Apply-OK-Cancel semantics, restart-needed rules, per-page load/save key tables (cross-ref S-048 §4), hotkey capture widget. 2. add the row.
   - Done when: S-068 committed; all 10 files cited.
-- [ ] **P6-50.2 Write S-069** — frontend main window & controls (58 files / 821 fns)
+- [x] **P6-50.2 Write S-069** — frontend main window & controls (58 files / 821 fns)
   - Files: `OBSBasic.cpp/hpp` (35+11), `OBSApp*` (2), `OBSBasic_MainControls` (42), `OBSBasicControls` (16), `OBSBasicStatusBar` (28+1), `OBSBasic_Scenes` (35), `OBSBasic_Transitions` (53), `OBSBasic_Streaming` (11), `OBSBasic_Recording` (17), `OBSBasic_StudioMode` (8), `OBSBasic_SysTray` (5), `OBSBasic_Service` (5), `OBSBasic_Canvases` (4), `OBSBasic_ReplayBuffer` (10), `OBSBasic_VirtualCam` + `OBSBasicVCamConfig` (14), `OBSBasic_Icons` (2), `OBSBasic_ContextToolbar` (10), `OBSBasic_Browser` (12), `OBSBasic_YouTube` (20), `OBSQTDisplay` (11+1), `OBSBasicPreview*` + `OBSBasic_Preview` + scaling combo/label + `PreviewProgramSizeObserver` (127+6), `Multiview` (6+2), `OBSProjector` + `OBSBasic_Projectors` (21+14), `OBSBasic_Dropfiles` (7), `OBSBasicInteraction` (15), `OBSBasic_Clipboard` (14), `OBSBasic_Screenshots` (3), `OBSBasic_Hotkeys` (5), `OBSBasicStats` (16), `OBSBasic_Docks` (10), `OBSDock` (1), `AutoConfig*` + `TestMode.hpp` (63), `OBSCanvas` (5), `display-helpers` (4).
   - Pitfalls: the interaction behaviour of `OBSBasic_SceneItems.cpp` + `OBSBasicPreview.cpp` is S-067 (P6-07.9) — S-069 covers the remaining widget surface, not the hit-test/handle rules.
   - Done when: S-069 committed; all 58 files cited.
@@ -931,30 +931,30 @@ Verified facts: the main window is split across `frontend/widgets/OBSBasic*.cpp`
   - Files: `OBSBasic_SceneCollections` (42), `OBSBasic_Profiles` (30), `importers/*` (48), `importer/*` (22).
   - Steps: 1. write `specs/S-070-collections-profiles-importers.md`: collection save/load/duplicate/rename, profile format (cross-ref S-048), the four importer transforms (cross-ref P6-26.7 inventory), dialog view model. 2. add the row.
   - Done when: S-070 committed; all 11 files cited.
-- [ ] **P6-50.4 Write S-071** — frontend audio mixer & volume widgets (11 files / 156 fns)
+- [x] **P6-50.4 Write S-071** — frontend audio mixer & volume widgets (11 files / 156 fns)
   - Files: `AudioMixer` (48), `VolumeControl` (39+1), `VolumeMeter` (34), `VolumeName` (13), `VolumeSlider` (2), `VolumeAccessibleInterface` (2), `BalanceSlider.hpp` (1), `AbsoluteSlider` (7), `MuteCheckBox.hpp` (1), `MenuCheckBox` (7).
   - Steps: write `specs/S-071-audio-mixer-ui.md` — the UI half of S-032 (fader curves, meter peak behaviour, per-source widget state).
   - Done when: S-071 committed; all 11 files cited.
-- [ ] **P6-50.5 Write S-072** — frontend dialogs & source pickers/toolbars (47 files / 260 fns)
+- [x] **P6-50.5 Write S-072** — frontend dialogs & source pickers/toolbars (47 files / 260 fns)
   - Files: `OBSBasicFilters` (46+1), `OBSBasicProperties` (17), `OBSBasicSourceSelect` (26), `SourceSelectButton` (8), `OBSBasicTransform` (20+1), `OBSBasicAdvAudio` + `OBSAdvAudioCtrl` (39), `OBSMissingFiles` + model/delegate (25), `NameDialog` (4), `OBSPermissions` (7), `OBSAbout` (4), `OBSLogViewer` (4), `OBSUpdate` (1), `OBSWhatsNew` (3), `OBSExtraBrowsers` + model/delegate (20), `LogUploadDialog` (6), `OBSIdianPlayground` (1), `OBSHotkey*` label (5+2), `SourceTree*` (39+1), `SceneTree` (8), `AlignmentSelector` + accessible (23), `SourceToolbar` + 8 toolbars (35+2), `VisibilityItem*` (12), `SceneRenameDelegate` (2), `ColorSourceToolbar` (4), `GameCaptureToolbar` (4), `TextSourceToolbar` (4), `BrowserToolbar` (2), `DeviceCaptureToolbar` (2), `DisplayCaptureToolbar` (1), `AudioCaptureToolbar` (1), `ApplicationAudioCaptureToolbar` (1), `WindowCaptureToolbar` (1), `ImageSourceToolbar` (2), `ComboSelectToolbar` (6), `MenuButton` (1), `UrlPushButton` (1), `ClickableLabel.hpp` (1), `FlowLayout` (10), `FlowFrame` (2), `FocusList` (1), `OBSHotkeyEdit/Widget.hpp` (12).
   - Done when: S-072 committed; all 47 files cited.
-- [ ] **P6-50.6 Write S-073** — frontend output pipeline UI (26 files / 233 fns)
+- [x] **P6-50.6 Write S-073** — frontend output pipeline UI (26 files / 233 fns)
   - Files: `SimpleOutput` (33), `AdvancedOutput` (23), `BasicOutputHandler` (30+4), `OBSBasic_OutputHandler` (7), `audio-encoders` (14), `FFmpegCodec/Format/Shared` (11), `RemuxQueueModel` + `RemuxWorker` + `RemuxEntryPathItemDelegate` + `OBSRemux` (39), `MultitrackVideo*` (42), `WHIPSimulcastEncoders` (4), `QuickTransition` (3+1), `SilentUpdateCheckBox/SpinBox` (2), `MediaControls` (35).
   - Done when: S-073 committed; all 26 files cited.
-- [ ] **P6-50.7 Write S-074** — frontend updater, oauth & YouTube (33 files / 226 fns)
+- [x] **P6-50.7 Write S-074** — frontend updater, oauth & YouTube (33 files / 226 fns)
   - Files: `updater/*` (64), `oauth/*` (57), `YouTube*` docks/wrappers (60), `GoLiveAPI_*` (9), `WhatsNew*` + `RemoteTextThread` (17), `BrowserDock` (3), `MacUpdateThread` (3), `update-helpers` (2), `AutoUpdateThread` (8), `crypto-helpers-*` (3), `OBSSparkle`/`OBSUpdateDelegate` (4), `OBSBasic_Updater` (5), `OBSUpdate.cpp` dialog (1).
   - Done when: S-074 committed; all 33 files cited.
 - [ ] **P6-50.8 Write S-075** — frontend plugin manager, crash handler & system info (26 files / 134 fns)
   - Files: `plugin-manager/*` (35), `CrashHandler*` (20), `system-info-*` (23), `platform-{windows,osx,x11}` (54), `win-dll-blocklist` (4), `NativeEventFilter*` (2), `OBSProxyStyle` (2).
   - Done when: S-075 committed; all 26 files cited.
-- [ ] **P6-50.9 Write S-076** — properties view & Qt widget kit (27 files / 184 fns)
+- [x] **P6-50.9 Write S-076** — properties view & Qt widget kit (27 files / 184 fns)
   - Files: `shared/properties-view/*` (73), `shared/qt/idian/*` (44), `shared/qt/obs-spinbox/*` (24), `shared/qt/{slider-ignorewheel, icon-label, plain-text-edit, vertical-scroll-area}/*` (7), `shared/qt/wrappers/qt-wrappers.cpp` (22).
   - Steps: write `specs/S-076-properties-view-ui.md` — property-view rendering rules (widget per property type, visibility/enable callbacks, value round-trips), the idian row/state model, spinbox behaviour.
   - Done when: S-076 committed; all 27 files cited.
-- [ ] **P6-50.10 Write S-077** — frontend API & utility glue (19 files / 136 fns)
+- [x] **P6-50.10 Write S-077** — frontend API & utility glue (19 files / 136 fns)
   - Files: `frontend/api/obs-frontend-api.{cpp,h}` (60+2 — the public frontend API surface; S-048 lists the catalog but never the behaviour), `Thumbnail*` (23), `undo_stack` (11), `OBSTranslator` (1), `UIValidation` (3), `ResizeSignaler.hpp` (1), `SurfaceEventFilter` (1), `SettingsEventFilter` (1), `item-widget-helpers*` (3), `display-helpers.hpp` (4), `models/*` (8+1), `obf.c` (1).
   - Done when: S-077 committed; all 19 files cited.
-- [ ] **P6-50.11 Write S-087** — frontend-tools plugin (13 files / 138 fns)
+- [x] **P6-50.11 Write S-087** — frontend-tools plugin (13 files / 138 fns)
   - Files: `plugins/frontend-tools/*` (scripts.cpp 31, captions-mssapi-stream 28, auto-scene-switcher 22+13, output-timer 17, captions 15, captions-mssapi 4, captions-handler 3, tool-helpers 2, module 2).
   - Steps: write `specs/S-087-frontend-tools.md` — auto-scene-switcher scoring/decision rules, output-timer semantics, the Windows MSS captions contract, the scripts-manager behaviour (cross-ref P6-37.4).
   - Done when: S-087 committed; all 13 files cited.

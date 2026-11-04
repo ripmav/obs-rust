@@ -734,7 +734,7 @@ Verified in this checkout (submodules initialised): **`plugins/obs-websocket` at
   - Files: `src/obs-websocket.cpp` (322) (module main), `src/forms/` (568 lines: `ConnectInfo.cpp` 135, `SettingsDialog.cpp` 331 + 2 headers), `CMakeLists.txt` (target `obs-websocket` MODULE)
   - Steps: 1) Bookend E1: `crates/obs-modules/obs-websocket` cdylib named `obs-websocket`; the `src/forms/` Qt dialogs are ported with it (frontend API via P6-36). 2) Bookend E2: the submodule's CMake target is removed when the submodule is retired; smoke on each OS.
   - Done when: E1 export/loader check passes; E2 CI green and smoke recorded in `docs/tests/plugin-obs-websocket.md`.
-- [ ] **P5-20.12 Write S-062 (added)** — obs-websocket protocol spec (D-28)
+- [x] **P5-20.12 Write S-062 (added)** — obs-websocket protocol spec (D-28)
   - Files: `plugins/obs-websocket/docs/generated/protocol.json` (5.7.6: 147 requests / 60 events / 7 enums, each with `rpcVersion`/`initialVersion`/`deprecated`), `protocol.md`.
   - Steps: 1) write `specs/S-062-obs-websocket.md` from the in-tree generated protocol (request/event/enum contract, auth flow, opcodes, close codes). 2) build the protocol vectors from the C build (P5-20.9 harness). 3) add the row to `specs/README.md`.
   - Done when: S-062 committed; P5-20.5–.8 cite it.
@@ -1561,7 +1561,7 @@ Verified in this checkout (submodules initialised): **`plugins/obs-websocket` at
   - Done when: all 10 files cited.
 - [ ] **P5-51.5 Extend S-046/S-047/S-037** — obs-ffmpeg (8 files / 116 fns: source 38, nvenc 21, audio-encoders 19, openh264 11, obs-ffmpeg.c 11, video-encoders 6, amf-test 5, logging 5)
   - Done when: all 8 files cited.
-- [ ] **P5-51.6 Extend S-050/S-025** — encoder runtimes (22 files / 277 fns)
+- [x] **P5-51.6 Extend S-050/S-025** — encoder runtimes (22 files / 277 fns)
   - Files: `obs-qsv11/*` (9), `obs-nvenc/*` (4), `obs-x264/*` (3), `obs-libfdk/*` (1), `nv-filters/*` (5), the `obs-*-test` plugins.
   - Steps: extend S-050 with the runtime sections (init/encode/destroy, error paths, test-plugin surfaces); extend S-025 where option logic lives in the gap files.
   - Done when: all 22 files cited.
@@ -1576,21 +1576,21 @@ Verified in this checkout (submodules initialised): **`plugins/obs-websocket` at
   - Done when: S-080 committed; all 4 files cited.
 - [ ] **P5-51.10 Extend S-041** — obs-outputs plugin glue (3 files / 16 fns: null-output 7, obs-outputs.c 6, utils.h 3)
   - Done when: all 3 files cited.
-- [ ] **P5-51.11 Extend S-051** — win-capture host (15 files / 221 fns)
+- [x] **P5-51.11 Extend S-051** — win-capture host (15 files / 221 fns)
   - Files: `game-capture.c` (68), `window-capture.c` (25), `duplicator-monitor-capture.c` (27), `monitor-capture.c` (15), `dc-capture.c` (8), `cursor-capture.c` (12), helpers (21), `libobs-winrt/` (20), `shared/obs-d3d8-api/` (12), `shared/obs-inject-library/` (2), `plugin-main.c` (5).
   - Done when: all 15 files cited.
-- [ ] **P5-51.12 Write S-086** — win-capture graphics-hook FFI contract (20 files / 265 fns)
+- [x] **P5-51.12 Write S-086** — win-capture graphics-hook FFI contract (20 files / 265 fns)
   - Files: `graphics-hook/*` (14: vulkan-capture 61+792-line table, d3d8-9-10-11-12 captures, gl, dxgi, graphics-hook.c 40), `inject-helper/` (6), `get-graphics-offsets/` (9), `load-graphics-offsets.c` (20).
   - Steps: 1. write `specs/S-086-graphics-hook-ffi.md`: the hook stays C++ (D-08) — specify the FFI surface the Rust host depends on: named-pipe IPC protocol, shared-memory/event layout (cross-ref S-051 §4.3–4.4), hook entry behaviour, the format tables (cross-ref P5-31.12 vectors). 2. add the row.
   - Done when: S-086 committed; all 20 files cited.
 - [ ] **P5-51.13 Extend S-051** — win-dshow host (9 files / 124 fns)
   - Files: `win-dshow.cpp` (64), `virtualcam-module/*` (34), `win-dshow-encoder.cpp` (12), `virtualcam.c` (7), `encode-dstr.hpp` (5), `dshow-plugin.cpp` (2).
   - Done when: all 9 files cited.
-- [ ] **P5-51.14 Write S-081** — libdshowcapture FFI contract (20 files / 282 fns)
+- [x] **P5-51.14 Write S-081** — libdshowcapture FFI contract (20 files / 282 fns)
   - Files: `deps/libdshowcapture/src/source/*` (20 — the library stays C++, D-19).
   - Steps: 1. write `specs/S-081-dshow-ffi.md`: the `dshowcapture.hpp` API contract (device/format enumeration, MJPEG/H264/HEVC=400-402 / Wave16bit-MPGA=100-202, callbacks) + behavioural rules of the COM layer the host relies on. 2. add the row.
   - Done when: S-081 committed; all 20 files cited.
-- [ ] **P5-51.15 Extend S-052** — macOS plugins (40 files / 484 fns)
+- [x] **P5-51.15 Extend S-052** — macOS plugins (40 files / 484 fns)
   - Files: `mac-avcapture/*` (9, legacy `av-capture.mm` 89), `mac-capture/*` (11: mac-audio 41, sck-video 22, display 20), `mac-virtualcam/*` (15: DAL plug-in + camera-extension), `mac-syphon/*` (3: syphon.m 41), `coreaudio-encoder/*` (2: encoder.cpp 46).
   - Steps: 1. cite every file in S-052 and add the rules the vectors model but do not pin (AVFoundation preset handling, DAL object-store contract, syphon server protocol, CoreAudio encoder format negotiation). 2. mark each rule [MODEL]/[SRC] per the S-052 convention.
   - Done when: all 40 files cited.
