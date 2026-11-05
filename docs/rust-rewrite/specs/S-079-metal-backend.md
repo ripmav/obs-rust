@@ -289,3 +289,8 @@ Round 10 second-author check (2026-11-05): corrected R01 (was `device_get_name` 
 `GS_DEVICE_METAL` / `"_Metal"` — constants in `libobs-metal-Bridging-Header.h`) and R24
 (was `Z24_S8 → depth24_stencil8`; source `libobs+Extensions.swift` returns
 `depth24Unorm_stencil8`). R01/R03/R15/R17/R21/R25/R27 re-derived and otherwise confirmed.
+
+Round 11 (2026-11-05): conformance vectors deferred — the reference
+implementation is Swift (`libobs-metal/*.swift`) and cannot run on the Linux
+machine that generates vectors; the `gs_*`→Metal format tables (R23) and the MSL
+transpiler rules are the natural first batch once a macOS runner exists.

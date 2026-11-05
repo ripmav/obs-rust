@@ -113,3 +113,10 @@ resource URL comes from `Location` (relative resolved via `curl_url`), `Link` he
 carry ICE servers for `gatherLocalCandidates`), R06 (201-only, body trimmed at
 `"v=0"`, simulcast mismatch is a hard `Error.SimulcastLayersRejected` failure, not layer
 reduction) and R08 (exact helper semantics). OQ1 resolved.
+
+Round 11 (2026-11-05): conformance vectors deferred — `plugins/obs-webrtc` is
+C++ against libdatachannel, which is not vendored in the 33.0.1 checkout
+(fetched at CMake configure time), so no reference runner can be built on the
+Linux machine; the HTTP-contract rules (R04–R06, R08: 201-only, `Location`,
+`Link`-header ICE parsing, SDP trim at `v=0`) are the natural first batch once
+a runner exists.

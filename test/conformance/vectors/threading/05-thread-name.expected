@@ -1,0 +1,5 @@
+wname hello got="hello"
+wname abcdefghijklmno got="abcdefghijklmno"
+wname abcdefghijklmnop got="abcdefghijklmno"
+wname a b c got="a b c"
+wname  got=""

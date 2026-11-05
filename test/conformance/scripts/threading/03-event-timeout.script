@@ -1,0 +1,19 @@
+# S-061 R01/R03: timedwait timeout vs. pre-signal vs. signal-during-wait
+evt c auto
+wtimed c 40
+esig c
+wtimed c 40
+esig c
+wwait c
+evt d manual
+wtimedwake d 200
+etry d
+ereset d
+etry d
+evt e auto
+esig e
+wtry e
+wtry e
+edest c
+edest d
+edest e

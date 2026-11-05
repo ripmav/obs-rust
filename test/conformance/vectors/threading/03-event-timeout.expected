@@ -1,0 +1,18 @@
+evt c ok
+wtimed c 40 110
+esig c 0
+wtimed c 40 0
+esig c 0
+wwait c 0
+evt d ok
+wtimedwake d 200 0
+etry d 0
+ereset d
+etry d 11
+evt e ok
+esig e 0
+wtry e 0
+wtry e 11
+edest c
+edest d
+edest e
