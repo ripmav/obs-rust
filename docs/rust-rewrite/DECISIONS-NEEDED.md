@@ -11,13 +11,13 @@ Legend: **Blocked** = tasks that wait on the answer. **Default** = what the plan
 
 | ID | Decision | Blocked | Default (proceed with this) |
 |---|---|---|---|
-| D-01 | **GUI toolkit**: `cxx-qt` (keep Qt6, migrate `.ui` forms) vs `Slint` / `egui` / `iced` / `Tauri` | P0-04 (prototype), all Phase 6 tasks, `shared/qt` + `shared/properties-view` porting | `cxx-qt`. P0-04 prototypes the alternatives; Phase 6 task wording changes if the winner differs (P0-04.5 updates the phase files in the same PR) |
-| D-02 | **C plugin ABI compatibility** a hard requirement for the first Rust release? | P0-02, P4-34…P4-37, P7-10 | Yes — the C ABI (`obs.h` & friends) is frozen until Phase 7 and served by `obs-ffi` from Phase 1 onward |
-| D-03 | **Graphics**: `wgpu` as the one backend, dropping native GL/D3D11/Metal after parity? | P0-03, P3-13…P3-23, P7-01 | Yes, with the legacy backends kept selectable (`--graphics wgpu\|legacy`) as fallback until parity (P3-22 adapters) |
-| D-04 | **Platforms / vendor SDKs in scope for the first all-Rust release** | P5-39…P5-43, P7-23 | Linux + Windows + macOS, x86_64 + arm64; vendor SDKs (NVENC, QSV/AMF, VideoToolbox, DeckLink, AJA, CEF) remain FFI shims, never "rewritten" |
-| D-05 | **C-ABI deprecation timeline** after Phase 7 | P7-10.3 | Announce with SDK 1.0, remove after 3 Rust releases |
-| D-06 | **Native plugin API transport**: `cdylib` + proc-macro vs `abi_stable` vs WASM | P5-46, P7-11, P7-12 | Native `cdylib` + `#[obs_module]` proc-macro (simplest, no codegen layer); WASM stays research (P7-12) |
-| D-07 | **License of the rewrite** (GPL-2.0-or-later assumed by `clean-room/PROCESS.md`) and the crate allow-list | P0-05, P0-10 | GPL-2.0-or-later; `deny.toml` allow-list = MIT/Apache-2.0/BSD/ISC/Zlib/MPL-2.0 per review (P0-10.1) |
+| D-01 | **GUI toolkit**: `cxx-qt` (keep Qt6, migrate `.ui` forms) vs `Slint` / `egui` / `iced` / `Tauri` | P0-04 (prototype), all Phase 6 tasks, `shared/qt` + `shared/properties-view` porting | **Confirmed (user, 2026-11-05):** `cxx-qt` — keep Qt6, migrate the `.ui` forms; P0-04 still prototypes the alternatives as due diligence, but the Phase 6 wording stands unless the prototype surfaces a blocker |
+| D-02 | **C plugin ABI compatibility** a hard requirement for the first Rust release? | P0-02, P4-34…P4-37, P7-10 | **Confirmed (user, 2026-11-05): Best-effort.** `obs-ffi` still serves the C ABI (`obs.h` & friends) from Phase 1 onward and compatibility is actively maintained, but it is not a frozen hard requirement: breakage is allowed only with a deprecation path and migration docs (the D-05 timeline governs removal). Phase files updated 2026-11-05 |
+| D-03 | **Graphics**: `wgpu` as the one backend, dropping native GL/D3D11/Metal after parity? | P0-03, P3-13…P3-23, P7-01 | **Confirmed (user, 2026-11-05):** Yes — wgpu is the one backend; legacy backends stay selectable (`--graphics wgpu\|legacy`) until parity (P3-22 adapters), deleted in P7-01 (D-13 stands) |
+| D-04 | **Platforms / vendor SDKs in scope for the first all-Rust release** | P5-39…P5-43, P7-23 | **Confirmed (user, 2026-11-05):** Linux + Windows + macOS, x86_64 + arm64; vendor SDKs (NVENC, QSV/AMF, VideoToolbox, DeckLink, AJA, CEF) remain FFI shims, never "rewritten" |
+| D-05 | **C-ABI deprecation timeline** after Phase 7 | P7-10.3 | **Confirmed (user, 2026-11-05):** announce with SDK 1.0, remove after 3 Rust releases (P7-10.3 names the release in the ADR) |
+| D-06 | **Native plugin API transport**: `cdylib` + proc-macro vs `abi_stable` vs WASM | P5-46, P7-11, P7-12 | **Confirmed (user, 2026-11-05):** native `cdylib` + `#[obs_module]` proc-macro; WASM stays research (P7-12) |
+| D-07 | **License of the rewrite** (GPL-2.0-or-later assumed by `clean-room/PROCESS.md`) and the crate allow-list | P0-05, P0-10 | **Confirmed (user, 2026-11-05):** GPL-2.0-or-later; `deny.toml` allow-list = MIT/Apache-2.0/BSD/ISC/Zlib/MPL-2.0 (P0-10.1) |
 
 ## B. Scope and platform code that stays C/C++
 

@@ -12,9 +12,9 @@ Start the PR stack with the `docs:` tasks (P0-01 to P0-06).
   - Done when: reviewed by two maintainers; alternatives (big-bang, new-repo) are listed with reasons for rejection.
 - [ ] **P0-02 ADR: plugin ABI policy** (S)
   - Source: `libobs/obs-module.h`, `obs-source.h`, `obs-output.h`, `obs-encoder.h`, `obs-service.h`.
-  - Do: define that the C ABI is frozen until Phase 7, how versions are bumped (`LIBOBS_API_VER`), and how a native Rust plugin API coexists.
+  - Do: define the C ABI compatibility policy — **best-effort** per D-02 (not a frozen hard requirement: compatibility is actively maintained, breakage allowed only with a deprecation path per D-05), how versions are bumped (`LIBOBS_API_VER`), and how a native Rust plugin API coexists.
   - Deliverables: `docs/adr/0002-plugin-abi.md`.
-  - Done when: lists every header that is part of the frozen ABI.
+  - Done when: lists every header in the compat-tracked ABI and the ADR/deprecation rules for changes.
 - [ ] **P0-03 ADR: graphics backend** (M)
   - Do: prototype a textured quad plus a custom effect in `wgpu` on Linux, Windows and macOS; measure frame time; test DMA-BUF, DXGI shared handle and IOSurface import.
   - Deliverables: `docs/adr/0003-graphics.md` with measurements and a go/no-go.
