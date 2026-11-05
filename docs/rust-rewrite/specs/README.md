@@ -91,11 +91,11 @@ conformance suite (`test/conformance/`). Process, roles and rules:
 | [S-079](S-079-metal-backend.md) | Metal `gs` backend: device/display-link render loop, GLSL→MSL transpiler, IOSurface/CAMetalLayer presentation | ≈ 3,900 lines | 0 | Draft (2nd-author checked round 10: 8/8 rules re-derived, 2 corrected; no vectors yet) | not run |
 | [S-080](S-080-obs-webrtc-whip.md) | obs-webrtc WHIP output: offer POST, 401 challenge, Link header, answer SDP, simulcast, DELETE | ≈ 900 lines | 0 | Draft (2nd-author checked round 10: 8/8 rules re-derived, 7 corrected; no vectors yet) | not run |
 | [S-081](S-081-dshow-ffi.md) | libdshowcapture FFI contract (kept C++ library, D-19) | ≈ 5,300 lines | 0 | Draft (2nd-author checked round 10: 8/8 rules re-derived, 3 corrected; no vectors yet) | not run |
-| [S-082](S-082-obs-browser-cef-ffi.md) | obs-browser / CEF FFI contract (CEF kept, D-09) | ≈ 4,150 lines | 0 | Draft (2nd-author checked round 10: 8/8 rules re-derived, 2 corrected; no vectors yet) | not run |
+| [S-082](S-082-obs-browser-cef-ffi.md) | obs-browser / CEF FFI contract (CEF kept as library, glue in Rust — D-09) | ≈ 4,150 lines | 0 | Draft (2nd-author checked round 10: 8/8 rules re-derived, 2 corrected; no vectors yet) | not run |
 | [S-083](S-083-decklink-ffi.md) | Blackmagic DeckLink FFI contract (SDK kept, D-04/D-10) | ≈ 3,050 lines | 0 | Draft (2nd-author checked round 10: 8/8 rules re-derived, clean; no vectors yet) | not run |
 | [S-084](S-084-aja-ffi.md) | AJA FFI contract (Kona SDK kept, D-04/D-10) | ≈ 6,950 lines | 0 | Draft (2nd-author checked round 10: 8/8 rules re-derived, 3 corrected; no vectors yet) | not run |
 | [S-085](S-085-vlc-vst-ffi.md) | vlc-video + obs-vst FFI contract (D-10) | ≈ 2,150 lines | 0 | Draft (2nd-author checked round 10: 8/8 rules re-derived, clean; no vectors yet) | not run |
-| [S-086](S-086-graphics-hook-ffi.md) | win-capture graphics-hook FFI contract (kept C++, D-08) | ≈ 7,300 lines | 0 | Draft (2nd-author checked round 10: 8/8 rules re-derived, 4 corrected; no vectors yet) | not run |
+| [S-086](S-086-graphics-hook-ffi.md) | win-capture graphics-hook FFI contract (ported to Rust, D-08) | ≈ 7,300 lines | 0 | Draft (2nd-author checked round 10: 8/8 rules re-derived, 4 corrected; no vectors yet) | not run |
 | [S-087](S-087-frontend-tools.md) | frontend-tools plugin (auto-scene-switcher, output-timer, captions, scripts UI) | ≈ 2,500 lines | 0 | Draft (2nd-author checked round 10: 8/8 rules re-derived, 1 corrected; no vectors yet) | not run |
 
 Totals: **1,561 scripts / 1,554 committed vectors**, 59 areas, `test/conformance/run.sh check` passes against the C reference.
