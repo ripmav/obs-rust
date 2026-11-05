@@ -625,7 +625,7 @@ Build/data files in this area: **143** (31924 lines) — owner: same task as the
 | `frontend/plugin-manager/PluginManagerWindow.cpp` | P6-33 | — |  |
 | `frontend/plugin-manager/PluginManagerWindow.hpp` | P6-33 | — |  |
 | `frontend/plugin-manager/PluginModuleLoader.hpp` | P6-33 | — |  |
-| `frontend/plugin-manager/PluginModuleLoader_BSD.cpp` | P6-33 | — |  |
+| `frontend/plugin-manager/PluginModuleLoader_BSD.cpp` | P6-33 | — | D-12: not ported (drop BSD) |
 | `frontend/plugin-manager/PluginModuleLoader_Flatpak.cpp` | P6-33 | — |  |
 | `frontend/plugin-manager/PluginModuleLoader_Linux.cpp` | P6-33 | — |  |
 | `frontend/plugin-manager/PluginModuleLoader_MacOS.mm` | P6-33 | — |  |
@@ -660,7 +660,7 @@ Build/data files in this area: **143** (31924 lines) — owner: same task as the
 | `frontend/utility/BasicOutputHandler.hpp` | P6-12.1 | — |  |
 | `frontend/utility/CrashHandler.cpp` | P6-01.4 | — |  |
 | `frontend/utility/CrashHandler.hpp` | P6-01.4 | — |  |
-| `frontend/utility/CrashHandler_FreeBSD.cpp` | P6-01.4 | — |  |
+| `frontend/utility/CrashHandler_FreeBSD.cpp` | P6-01.4 | — | D-12: not ported (drop BSD) |
 | `frontend/utility/CrashHandler_Linux.cpp` | P6-01.4 | — |  |
 | `frontend/utility/CrashHandler_MacOS.mm` | P6-01.4 | — |  |
 | `frontend/utility/CrashHandler_Windows.cpp` | P6-01.4 | — |  |
