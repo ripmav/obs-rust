@@ -55,7 +55,7 @@ Submodule lines are measured the same way (C/C++/ObjC/Swift source files); the s
 2. **Network and muxing** (`obs-outputs`, `obs-ffmpeg`, `obs-webrtc`, `obs-websocket`): memory-safety win is highest here (parsers and network input). Differential tests against nginx-rtmp/mediamtx/protocol suites.
 3. **Platform capture/audio**: one OS at a time, after the matching Phase 3 shared-texture task exists.
 4. **Hardware encoders**: thin SDK wrappers around vendor DLLs; low safety gain, high test cost (needs hardware).
-5. **Vendor SDK cards**: keep SDK glue in C++ behind a tiny FFI crate.
+5. **Vendor SDK cards**: glue in Rust over FFI to the vendor API (NVENC/QSV/AMF ship C APIs; DeckLink/AJA need hand-written vtable FFI per D-10); the SDKs stay native (D-04).
 6. **Browser**: CEF stays the C++ vendor library (D-09) — the glue is Rust over the C API.
 
 ## Cross-cutting rules for every plugin port
