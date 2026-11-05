@@ -403,14 +403,18 @@ Verified file map (libobs 33.0.1 checkout, line counts): `libobs/graphics/` (46 
   - Vectors: glbackend (22 scripts).
   - Pitfalls: S-057 D-1 — GL cannot create cube textures (per-face `glBindTexture`): creation returns NULL (R11). D-2 — `gs_voltexture_get_*` are stubs (return 0 / UNKNOWN, R12).
   - Done when: renders test scene.
-- [ ] **P3-22.2 D3D11**
+- [ ] **P3-22.2 D3D11** (L; port per D-13, confirmed 2026-11-05)
   - Files: `libobs-d3d11/d3d11-subsystem.cpp` (3435) + 15 more files in `libobs-d3d11/`.
-  - Steps: same for `libobs-d3d11` via the vtable.
-  - Done when: renders test scene.
-- [ ] **P3-22.3 Metal**
+  - Steps: port the D3D11 backend to Rust (`crates/obs-d3d11`, `windows` crate COM) as a `GraphicsDevice` implementation; the C backend stays selectable as the fallback until the Rust one passes S-078, then the Rust backend is the `legacy` choice.
+  - Spec: S-078 (D3D11 backend, Draft).
+  - Vectors: `test/conformance/scripts/d3d11/` (Windows-only; headless D3D11 device).
+  - Done when: renders test scene and S-078 conformance passes.
+- [ ] **P3-22.3 Metal** (L; port per D-13, confirmed 2026-11-05)
   - Files: `libobs-metal/metal-subsystem.swift` (985) + 30 more files in `libobs-metal/` (see file map).
-  - Steps: same for the Swift `libobs-metal` backend (it is part of the C ABI vtable, written in Swift; check how CMake builds it first — `libobs-metal/CMakeLists.txt`, 70).
-  - Done when: renders the test scene on macOS and the build note is recorded.
+  - Steps: port the Metal backend (reference is Swift) to Rust (`crates/obs-graphics-metal`, `metal` crate) as a `GraphicsDevice` implementation; the C/Swift backend stays selectable as the fallback until the Rust one passes S-079.
+  - Spec: S-079 (Metal backend, Draft).
+  - Vectors: not vector-testable headless (S-079 §11); macOS GPU test recorded in `docs/tests/`.
+  - Done when: renders the test scene on macOS.
 - [ ] **P3-22.4 Runtime switch**
   - Steps: `--graphics wgpu|legacy` and a settings key.
   - Done when: both backends selectable at runtime.

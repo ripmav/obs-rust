@@ -5,7 +5,7 @@
 | Status | Draft (round 8 — behavioural catalog written from C reference; no vectors yet) |
 | Spec version | initial |
 | Reference | OBS Studio 33.0.1, `libobs-d3d11/` |
-| Target crate | `crates/obs-d3d11` (the `gs` backend for Windows) |
+| Target crate | `crates/obs-d3d11` (the `gs` backend for Windows). Per **D-13** (confirmed 2026-11-05) this backend is ported to Rust; the C `libobs-d3d11` stays the selectable fallback until the port passes this spec, both are deleted in P7-01. |
 | Depends on | S-043 (graphics API — `gs_*` surface, color formats), S-020 (effect language) |
 | Conformance | planned `test/conformance/scripts/d3d11/` — none yet (Windows-only; vectors via a headless D3D11 device) |
 
