@@ -2,7 +2,7 @@
 
 | | |
 |---|---|
-| Status | Draft (round 9 — behaviour catalog written from C reference; no vectors yet; 25 `pyscript` conformance vectors already exist from round 5) |
+| Status | Draft (round 9 — behaviour catalog written from C reference; conformance coverage in section 8, round 12) |
 | Spec version | initial |
 | Reference | OBS Studio 33.0.1, `shared/obs-scripting` (Python backend) |
 | Target crate | `crates/obs-scripting` (python backend module) |
@@ -103,8 +103,13 @@ adds the GIL as the only extra lock.
 
 1. (resolved) library-name patterns + the minor-version probe 3.12→3.5 are pinned in R01;
    Linux links Python at build time and never calls `import_python`.
-2. Which of the 25 existing `pyscript` vectors already exercise R05–R07 vs. which need new
-   vectors (the vector set predates this spec).
+2. (resolved round 12) which of the 25 existing `pyscript` vectors exercise R05–R07:
+   section 8.
+3. (documented round 12) the `Unloaded python script` log and the deferred
+   `obs_hotkey_unregister` from the same destroy are unsynchronised in the reference
+   (main thread vs. worker thread; either order can occur). The conformance suite
+   serialises them at the runner's `barrier` — see `test/conformance/README.md`,
+   pyscript runner, "Worker-thread determinism".
 
 Round 10 second-author check (2026-11-05): corrected the Conventions/R01 platform split
 (was: all symbols dynamically imported "for the requested version"; source: `RUNTIME_LINK`
@@ -117,3 +122,27 @@ a calldata converter; `py_error_` logs + `PyErr_Print`s); corrected R07 trampoli
 (was: profile name / event name; source: `obs_data_t` + save flag / event enum value as
 int) and the self-removal mechanism (reverse iteration + removed-flag check, not a
 snapshot).
+
+## 8. Conformance coverage
+
+`test/conformance/scripts/pyscript/` — area `pyscript`, runner `gen/pyscript_runner.c`
+(script language, the fake libobs and the worker-thread determinism described in
+`test/conformance/README.md`, pyscript runner). The runner links the real backend on an
+embedded CPython 3.14; `obs-scripting-python-import.c` is not linked (Windows/macOS only).
+Vectors regenerate bit-identically (checked round 12).
+
+| Rule | Scripts |
+|---|---|
+| R01 | `70-lifecycle` (Linux links the interpreter at build time, so only the linked path — interpreter present after `scripting load` — is testable on POSIX; the dynamic-import path is Windows/macOS-only and its file is not linked here) |
+| R02 | — (Windows/macOS-only: the private-deallocator header is not linked into the POSIX runner) |
+| R03 | `20-signals` (connect/disconnect by signal name, the self-removing callback, non-callables silently ignored), `21-signals-global` (global connect, matching by handler only, an exception is logged and delivery continues) |
+| R04 | `03-entry-errors` (an exception in an entry point is reported as a warning + traceback and does not fail the load), `13-tick-errors` (tick-callback exceptions), `61-object-lists` (wrong arguments return None with the error left pending) |
+| R05 | `60-frontend` (scene names/objects, current scene, transitions, duration), `61-object-lists` (enumeration lists take an extra reference; the `*_release` functions drop it) |
+| R06 | `60-frontend` (collection and profile queries + setters) |
+| R07 | `60-frontend` (event callbacks receive the enum as an int, save callbacks receive `(data, saving)`, removal from within the callback), `91-defect-no-current-script` (frontend (de)registration with no current script — the reference defect D-2) |
+
+The remaining scripts (`01-entrypoints`, `02-load-failures`, `04-stdout-stderr`,
+`05-sys-path`, `06-module-and-reload`, `07-description-edge`, `08-script-log`, `09-settings`,
+`10-timers`, `11-timer-edge`, `12-tick`, `30-hotkeys`, `40-properties`, `41-properties-misc`,
+`80-threads`, `90-defect-description`, `92-defect-reinit`) pin the scripting core's lifecycle,
+GIL rules and defects — S-039 territory, run by the same vectors.

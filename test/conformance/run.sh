@@ -53,24 +53,31 @@ declare -A runner_sources=(
 )
 
 declare -A extra_flags=()
+declare -A extra_libs=()
 declare -A no_common=()
 for f in "$here"/gen/*.sources; do
 	[ -e "$f" ] || continue
 	a="$(basename "$f" .sources)"
 	srcs=""
 	flags=""
+	libs=""
 	while IFS= read -r line; do
 		line="${line%%#*}"
 		line="$(echo "$line" | xargs)"
 		[ -n "$line" ] || continue
 		case "$line" in
 		'!nostubs') no_common[$a]=1 ;;
+		# -l flags are emitted after the objects: linkers that default to
+		# --as-needed (e.g. Ubuntu) drop a shared lib listed before the
+		# objects that need its symbols.
+		-l*) libs="$libs $line" ;;
 		-*) flags="$flags $line" ;;
 		*) srcs="$srcs $root/$line" ;;
 		esac
 	done <"$f"
 	runner_sources[$a]="$srcs"
 	extra_flags[$a]="$flags"
+	extra_libs[$a]="$libs"
 done
 
 export CONFORMANCE_TMPDIR="$build"
@@ -81,7 +88,7 @@ for area in "${!runner_sources[@]}"; do
 	commons=("${common[@]}")
 	[ -z "${no_common[$area]:-}" ] || commons=()
 	# shellcheck disable=SC2086
-	"$cc" "${cflags[@]}" ${extra_flags[$area]:-} -o "$build/$area-runner" ${runner_sources[$area]} "${commons[@]}" -lpthread -lm
+	"$cc" "${cflags[@]}" ${extra_flags[$area]:-} -o "$build/$area-runner" ${runner_sources[$area]} "${commons[@]}" ${extra_libs[$area]:-} -lpthread -lm
 	mkdir -p "$here/vectors/$area"
 	for script in "$here/scripts/$area"/*.script; do
 		name="$(basename "$script" .script)"
