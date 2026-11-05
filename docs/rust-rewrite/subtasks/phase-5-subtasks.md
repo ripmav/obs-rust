@@ -964,19 +964,19 @@ Verified in this checkout (submodules initialised): **`plugins/obs-websocket` at
 ### P5-29 `oss-audio`, `sndio`
 - [ ] **P5-29.1/.2** S1/S2 (both plugins)
   - Files: `plugins/oss-audio/oss-audio.c` (33) (registers `oss_input_capture`), `plugins/sndio/sndio.c` (32) (registers `sndio_output_capture`), both `CMakeLists.txt`
-  - Steps: 1) Bookend S1: ids `oss_input_capture` + `sndio_output_capture` + device keys. 2) Bookend S2: P0-18 corpus through the P0-15 ABI host (the respective BSD/Linux host).
+  - Steps: 1) Bookend S1: ids `oss_input_capture` + `sndio_output_capture` + device keys. 2) Bookend S2: P0-18 corpus through the P0-15 ABI host (Linux — BSD out of scope per D-12).
   - Done when: `docs/tests/plugin-oss-audio-inventory.md` + `docs/tests/plugin-sndio-inventory.md` committed; S2 passes.
 - [ ] **P5-29.3 OSS**
   - Files: `plugins/oss-audio/oss-input.c` (693), `oss-audio.c` (33), `oss-platform.h.in` (3)
-  - Steps: 1) Port the OSS device open/read loop (raw PCM). 2) Run on FreeBSD.
-  - Done when: FreeBSD run.
+  - Steps: 1) Port the OSS device open/read loop (raw PCM). 2) Run on Linux (the `/dev/sndstat` parser is BSD-only in the reference; keep the guard, D-12).
+  - Done when: Linux run.
 - [ ] **P5-29.4 sndio**
   - Files: `plugins/sndio/sndio-input.c` (392) + `sndio-input.h` (18), `sndio.c` (32)
-  - Steps: 1) Port the sndio open/read loop via the `sndio` crate. 2) Run on OpenBSD.
-  - Done when: OpenBSD run.
-- [ ] **P5-29.5/.6** E1/E2 (added; E2 = BSD smoke run recorded in `docs/tests/`)
+  - Steps: 1) Port the sndio open/read loop via the `sndio` crate. 2) Run on Linux.
+  - Done when: Linux run.
+- [ ] **P5-29.5/.6** E1/E2 (added; E2 = Linux smoke run recorded in `docs/tests/`)
   - Files: `oss-audio.c` (33), `sndio.c` (32) (module mains), both `CMakeLists.txt`
-  - Steps: 1) Bookend E1: `crates/obs-modules/oss-audio` + `crates/obs-modules/sndio` cdylibs named `oss-audio`/`sndio` (BSD builds). 2) Bookend E2: remove the C plugins in the same PR; record the BSD smoke run.
+  - Steps: 1) Bookend E1: `crates/obs-modules/oss-audio` + `crates/obs-modules/sndio` cdylibs named `oss-audio`/`sndio` (Linux builds; BSD out of scope per D-12). 2) Bookend E2: remove the C plugins in the same PR; record the Linux smoke run.
   - Done when: E1 export/loader check passes on the target OS; E2 smoke run recorded in `docs/tests/plugin-oss-audio.md` + `docs/tests/plugin-sndio.md`.
 
 ### P5-30 `win-wasapi`

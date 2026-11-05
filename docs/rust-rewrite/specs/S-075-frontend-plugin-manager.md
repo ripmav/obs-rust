@@ -17,7 +17,10 @@ crash sentinel + crash-log detection + upload, the macOS update-branch fetch and
 glue, the per-platform system-info collectors, the platform utility layer, the Windows
 DLL blocklist, the session-end event filter, and the RSA verification helpers. Out of
 scope: libobs-side module loading internals, the Sparkle framework itself, the GoLive API
-protocol (only its post-data assembly), Qt/Idian widget implementation details.
+protocol (only its post-data assembly), Qt/Idian widget implementation details. Per
+D-12 (confirmed 2026-11-05) BSD is out of scope: the Rust port implements Linux/Windows/
+macOS only (D-04) — the BSD rows/columns in this spec document the C reference and are not
+ported.
 
 ### Reference files (26, full paths relative to `obs-studio/`)
 
@@ -25,14 +28,14 @@ protocol (only its post-data assembly), Qt/Idian widget implementation details.
 - `frontend/plugin-manager/PluginModuleLoader.hpp` — `obs_load_plugins` wrapper + path env-var constants
 - `frontend/plugin-manager/PluginModuleLoader_Windows.cpp` — Windows discovery paths
 - `frontend/plugin-manager/PluginModuleLoader_Linux.cpp` — Linux discovery paths
-- `frontend/plugin-manager/PluginModuleLoader_BSD.cpp` — FreeBSD/DragonFly discovery paths
+- `frontend/plugin-manager/PluginModuleLoader_BSD.cpp` — FreeBSD/DragonFly discovery paths (not ported, D-12)
 - `frontend/plugin-manager/PluginModuleLoader_Flatpak.cpp` — Flatpak discovery paths
 - `frontend/plugin-manager/PluginManagerWindow.cpp` — manager dialog: sections, categorisation, toggles
 - `frontend/plugin-manager/InstalledPluginRow.cpp` — one module row: chips, toggle, trash
 - `frontend/utility/CrashHandler.cpp` — sentinel, crash-log state, upload
 - `frontend/utility/CrashHandler_Windows.cpp` — Windows crash-log discovery
 - `frontend/utility/CrashHandler_Linux.cpp` — Linux crash-log discovery (stub)
-- `frontend/utility/CrashHandler_FreeBSD.cpp` — FreeBSD crash-log discovery (stub)
+- `frontend/utility/CrashHandler_FreeBSD.cpp` — FreeBSD crash-log discovery (stub; not ported, D-12)
 - `frontend/utility/MacUpdateThread.cpp` — update-branch fetch + validation
 - `frontend/utility/OBSSparkle.mm` — Sparkle controller wrapper
 - `frontend/utility/OBSUpdateDelegate.mm` — Sparkle delegate: channels, feed URL, menu state

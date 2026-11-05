@@ -28,7 +28,7 @@ Verified facts: the main window is split across `frontend/widgets/OBSBasic*.cpp`
   - Pitfalls: a second instance clears the `unclean_shutdown` flag (obs-main.cpp:591) — keep that, or safe-mode prompts fire falsely.
   - Done when: second launch shows the dialog.
 - [ ] **P6-01.4 Crash handler/log rotation**
-  - Files: `frontend/utility/CrashHandler.cpp` (392), `CrashHandler.hpp` (97), `CrashHandler_Windows.cpp` (85), `CrashHandler_Linux.cpp` (40), `CrashHandler_FreeBSD.cpp` (40), `CrashHandler_MacOS.mm` (115); `frontend/obs-main.cpp` (325–360, `delete_oldest_file`).
+  - Files: `frontend/utility/CrashHandler.cpp` (392), `CrashHandler.hpp` (97), `CrashHandler_Windows.cpp` (85), `CrashHandler_Linux.cpp` (40), `CrashHandler_MacOS.mm` (115); `frontend/obs-main.cpp` (325–360, `delete_oldest_file`). (`CrashHandler_FreeBSD.cpp` (40) is **not** ported — D-12 drops BSD; it dies with the C frontend in P7-02.)
   - Steps: 1. port the crash handlers per OS (minidump / signal paths); 2. keep the `logs/` + `crashes/` directory layout; 3. implement oldest-log deletion by filename timestamp; 4. forced-crash self-check.
   - Pitfalls: deletion is governed by `global.ini` `[General] MaxLogs`, default 10 (`config_set_default_uint`, OBSApp.cpp:326; read at obs-main.cpp:332); only files matching the log-name pattern count.
   - Done when: forced crash writes report.
@@ -675,8 +675,8 @@ Verified facts: the main window is split across `frontend/widgets/OBSBasic*.cpp`
   - Pitfalls: the disabled-module list is session-scoped (libobs API) — it is cleared on restart; do not persist it to disk (see the recent stale-data fix in the git log).
   - Done when: disabled module persists for the session and clears on restart.
 - [ ] **P6-33.3 Paths**
-  - Files: `frontend/plugin-manager/LoaderPaths_Linux.hpp.in` (30), `LoaderPaths_Flatpak.hpp.in` (30), `LoaderPaths_BSD.hpp.in` (28), `PluginModuleLoader_Linux.cpp` (224), `PluginModuleLoader_Flatpak.cpp` (142), `PluginModuleLoader_BSD.cpp` (220), `PluginModuleLoader_MacOS.mm` (196), `PluginModuleLoader_Windows.cpp` (196).
-  - Steps: 1. port the per-OS/Flatpak loader paths; 2. Flatpak path test; 3. document BSD as best-effort (D-12).
+  - Files: `frontend/plugin-manager/LoaderPaths_Linux.hpp.in` (30), `LoaderPaths_Flatpak.hpp.in` (30), `PluginModuleLoader_Linux.cpp` (224), `PluginModuleLoader_Flatpak.cpp` (142), `PluginModuleLoader_MacOS.mm` (196), `PluginModuleLoader_Windows.cpp` (196). (`LoaderPaths_BSD.hpp.in` (28) + `PluginModuleLoader_BSD.cpp` (220) are **not** ported — D-12 drops BSD; they die with the C frontend in P7-02.)
+  - Steps: 1. port the per-OS/Flatpak loader paths; 2. Flatpak path test; 3. skip the BSD loader (D-12: drop BSD).
   - Done when: Flatpak path correct.
 
 ### P6-34 Virtual camera config
