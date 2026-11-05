@@ -23,10 +23,10 @@ Keep a git tag per deletion (`last-c-libobs`, `last-cpp-frontend`, `last-c-plugi
 
 ## What must remain C/C++ (documented leftovers)
 
-Decided per item (D-08, D-11, D-14, D-19); record owner and review date in P7-03.3:
+Decided per item (D-08, D-14, D-19); record owner and review date in P7-03.3:
 - `plugins/win-capture/inject-helper` and `get-graphics-offsets` (small helper executables; the `graphics-hook` DLL is ported to Rust by P5-31.7 per D-08 — its C sources and hook-only `shared/` modules are deleted with it, P7-03/P7-05.2); `inject-helper` links `OBS::obfuscate` (extracted from `libobs` in P7-01.3) and the kept `shared/` modules.
 - The vendored `plugins/decklink/{linux,mac,win}/decklink-sdk/` trees (vendor SDK headers + Linux COM dispatch; the DeckLink/AJA glue is Rust per D-10).
-- `plugins/obs-vst` (VST2 host; editor-window embedding per OS is the hard part, D-11).
+- The vendored `plugins/obs-vst/vst_header/` VST2 ABI headers (the host is Rust per D-11).
 - `libdshowcapture` (submodule) for DirectShow.
 - macOS camera extension host (`plugins/mac-virtualcam/src`) if it must be Swift/ObjC.
 - Any C shim required by variadic/`va_list` APIs unless the plugin ABI drops them (primer §5.5).

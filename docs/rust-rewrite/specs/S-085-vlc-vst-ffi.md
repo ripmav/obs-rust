@@ -1,11 +1,11 @@
-# S-085 vlc-video + obs-vst FFI contract (obs-vst per D-11)
+# S-085 vlc-video + obs-vst FFI contract (both ports; VST2 ABI — D-11)
 
 | | |
 |---|---|
 | Status | Draft (round 9 — behaviour catalog written from C reference; no vectors yet) |
 | Spec version | initial |
 | Reference | OBS Studio 33.0.1: `plugins/vlc-video/*` (C, libvlc 5 kept), `plugins/obs-vst/*` (C++, VST 2.x kept) |
-| Target crate | `crates/vlc-vst-ffi` (host glue: plugin discovery, chunk/MD5 state, settings mapping). vlc-video is ported to Rust via the libvlc FFI (P5-22); obs-vst stays C++ pending D-11 — the Rust host depends on the contract below for the VST side. |
+| Target crate | `crates/vlc-vst-ffi` (host glue: plugin discovery, chunk/MD5 state, settings mapping). vlc-video is ported to Rust via the libvlc FFI (P5-22); obs-vst is ported to Rust per D-11 (confirmed 2026-11-05) — the contract below pins the VST2 ABI the Rust host must honour. |
 | Depends on | libobs core (source info, audio frame layout, hotkeys, missing-files framework, proc handler), Qt (VST editor host) |
 | Conformance | planned, none yet |
 
