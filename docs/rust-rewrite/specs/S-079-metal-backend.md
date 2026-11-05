@@ -5,7 +5,7 @@
 | Status | Draft (round 9 — behaviour catalog written from C reference; no vectors yet) |
 | Spec version | initial |
 | Reference | OBS Studio 33.0.1, `libobs-metal/` (Swift 5, Apple Metal) |
-| Target crate | `crates/obs-graphics-metal` |
+| Target crate | `crates/obs-graphics-metal`. Per **D-13** (confirmed 2026-11-05) this backend is ported to Rust (reference is Swift); the C/Swift `libobs-metal` stays the selectable fallback until the port passes this spec, both are deleted in P7-01. |
 | Depends on | S-044 (the `gs_*` device contract this backend implements), S-011 (the shader parser the transpiler reuses), S-020 (effect/shader source format) |
 | Conformance | planned — none yet (GPU behaviour is not vector-testable headless; see §11) |
 
