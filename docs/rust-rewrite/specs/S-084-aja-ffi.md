@@ -1,11 +1,11 @@
-# S-084 AJA FFI contract (Kona SDK kept, D-04/D-10)
+# S-084 AJA FFI contract (Kona SDK kept, glue Rust — D-04/D-10)
 
 | | |
 |---|---|
 | Status | Draft (round 9 — behaviour catalog written from C reference; no vectors yet) |
 | Spec version | initial |
 | Reference | OBS Studio 33.0.1: `plugins/aja/*` (capture/output plugin), `plugins/aja-output-ui/*` (Qt settings UI) |
-| Target crate | `crates/aja-ffi` (contract + device control surface). Per **D-04/D-10** the AJA Kona (NTV2) card driver/SDK stays native: the Rust host MUST link the same `CNTV2Card` API and replicate this contract; it does not reimplement card firmware routing. |
+| Target crate | `crates/aja-ffi` (contract + device control surface). Per **D-04/D-10** (confirmed 2026-11-05) the AJA Kona (NTV2) card driver/SDK stays native and the glue is Rust: the host links the same `CNTV2Card` API via hand-written FFI and replicates this contract; it does not reimplement card firmware routing. |
 | Depends on | S-014 (obs_data/obs_property settings), S-015 (obs sources/outputs registration) |
 | Conformance | planned, none yet |
 

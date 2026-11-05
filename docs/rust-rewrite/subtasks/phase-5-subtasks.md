@@ -1372,9 +1372,9 @@ Verified in this checkout (submodules initialised): **`plugins/obs-websocket` at
 ### P5-42 DeckLink
 - [ ] **P5-42.1 S1/S2 + FFI crate**
   - Files: `plugins/decklink/plugin-main.cpp` (69) (module main; registers `decklink-input` source + `decklink_output` output), `platform.hpp` (33) + `win/platform.cpp` (42) + `mac/platform.cpp` (18) + `linux/platform.cpp` (15), `DecklinkBase.cpp` (18) + `DecklinkBase.h` (35), `decklink-captions/decklink-captions.cpp` (155) + `.h` (30) (separate module, registers its own captions input)
-  - Steps: 1) S1: ids `decklink-input`, `decklink_output` + the captions module's input; record settings keys. 2) S2: P0-18 corpus through the P0-15 ABI host. 3) Wrap the Blackmagic SDK (COM on Windows via IDL, C++ interfaces on Linux/mac) in a thin FFI crate — keep the SDK glue C++ (D-10).
+  - Steps: 1) S1: ids `decklink-input`, `decklink_output` + the captions module's input; record settings keys. 2) S2: P0-18 corpus through the P0-15 ABI host. 3) Wrap the Blackmagic SDK (COM on Windows via IDL, C++ interfaces on Linux/mac) in a Rust FFI crate — hand-written FFI over the vendor C++/COM interfaces (D-10, confirmed 2026-11-05: glue is Rust; no C API layer).
   - Pitfalls:
-    - D-10 (DECISIONS-NEEDED): the SDK glue (COM/C++ interfaces, the per-OS `platform.cpp` shims) stays C++; the ported logic (discovery, input/output, format detection, captions) is Rust. The FFI crossing is the FFI crate's device/instance/mode surface.
+    - D-10 (DECISIONS-NEEDED, confirmed 2026-11-05): the SDK glue (COM/C++ interfaces, the per-OS `platform.cpp` shims) is ported to Rust — hand-written FFI over vendor C++/COM vtables; vendor SDK upgrades are FFI maintenance. The FFI surface is the device/instance/mode surface, pinned by S-083.
   - Done when: table committed, library loads without hardware.
 - [ ] **P5-42.2 Discovery**
   - Files: `decklink-device-discovery.cpp` (135) + `decklink-device-discovery.hpp` (77), `decklink-devices.cpp` (15) + `decklink-devices.hpp` (8), `decklink-device.cpp` (272) + `decklink-device.hpp` (66), `decklink-device-mode.cpp` (92) + `decklink-device-mode.hpp` (31)
@@ -1392,17 +1392,17 @@ Verified in this checkout (submodules initialised): **`plugins/obs-websocket` at
   - Files: `plugin-main.cpp` (69)
   - Steps: 1) Capture + output on one card per OS. 2) Record the results.
   - Done when: capture + output verified on one card per OS.
-- [ ] **P5-42.6/.7** E1/E2 (added; D-10: SDK glue C++ stays, cutover removes only the ported logic)
+- [ ] **P5-42.6/.7** E1/E2 (added; D-10 confirmed 2026-11-05: glue is Rust, cutover removes the C plugin)
   - Files: `plugin-main.cpp` (69) (module main), `CMakeLists.txt` (targets `decklink` MODULE + `decklink-captions` MODULE)
-  - Steps: 1) Bookend E1: `crates/obs-modules/decklink` + `crates/obs-modules/decklink-captions` cdylibs with unchanged names; the C++ SDK-glue static lib is linked in. 2) Bookend E2: remove only the ported logic from the C target; the SDK glue stays until P7-03.3.
+  - Steps: 1) Bookend E1: `crates/obs-modules/decklink` + `crates/obs-modules/decklink-captions` cdylibs with unchanged names; the Rust FFI crate links the vendor SDK. 2) Bookend E2: remove the C plugin sources (glue included, D-10) in the same PR; the vendored `decklink-sdk/` trees stay as FFI inputs (D-04).
   - Done when: E1 export/loader check passes on each OS; E2 CI green and smoke recorded in `docs/tests/plugin-decklink.md`.
 
 ### P5-43 AJA
 - [ ] **P5-43.1 S1/S2 + FFI**
   - Files: `plugins/aja/main.cpp` (47) (module main; registers the AJA source + output), `aja-card-manager.cpp` (573) + `aja-card-manager.hpp` (96), `aja-common.cpp` (1113) + `aja-common.hpp` (95), `aja-routing.cpp` (532) + `aja-routing.hpp` (60)
-  - Steps: 1) S1: ids per the S1 table (AJA input + output); record settings keys. 2) S2: P0-18 corpus through the P0-15 ABI host. 3) Wrap the NTV2 SDK in a thin FFI crate (D-10).
+  - Steps: 1) S1: ids per the S1 table (AJA input + output); record settings keys. 2) S2: P0-18 corpus through the P0-15 ABI host. 3) Wrap the NTV2 SDK in a Rust FFI crate — hand-written FFI over the vendor C++/COM interfaces (D-10, confirmed 2026-11-05).
   - Pitfalls:
-    - D-10 (DECISIONS-NEEDED): same strategy as DeckLink — the NTV2 SDK glue stays C++; the FFI crossing is the card-manager/routing surface.
+    - D-10 (DECISIONS-NEEDED, confirmed 2026-11-05): same strategy as DeckLink — the NTV2 SDK glue is Rust (hand-written FFI, no C API layer); the FFI surface is the card-manager/routing surface, pinned by S-084.
   - Done when: table committed, NTV2 session inits on a card.
 - [ ] **P5-43.2 Capture/output**
   - Files: `aja-source.cpp` (1114) + `aja-source.hpp` (86), `aja-output.cpp` (1238) + `aja-output.hpp` (152), `audio-repack.c` (250) + `audio-repack.h` (48) + `audio-repack.hpp` (22)
@@ -1416,9 +1416,9 @@ Verified in this checkout (submodules initialised): **`plugins/obs-websocket` at
   - Files: `main.cpp` (47)
   - Steps: 1) Verify signal on a card. 2) Record the result.
   - Done when: signal on card.
-- [ ] **P5-43.5/.6** E1/E2 (added; D-10: SDK glue C++ stays, cutover removes only the ported logic)
+- [ ] **P5-43.5/.6** E1/E2 (added; D-10 confirmed 2026-11-05: glue is Rust, cutover removes the C plugin)
   - Files: `main.cpp` (47) (module main), `CMakeLists.txt` (target `aja` MODULE)
-  - Steps: 1) Bookend E1: `crates/obs-modules/aja` cdylib named `aja`; the NTV2 SDK-glue static lib is linked in. 2) Bookend E2: remove only the ported logic from the C target.
+  - Steps: 1) Bookend E1: `crates/obs-modules/aja` cdylib named `aja`; the Rust FFI crate links the vendor NTV2 SDK. 2) Bookend E2: remove the C plugin sources (glue included, D-10) in the same PR.
   - Done when: E1 export/loader check passes on each OS; E2 CI green and smoke recorded in `docs/tests/plugin-aja.md`.
 
 ### P5-44 `frontend-tools`
