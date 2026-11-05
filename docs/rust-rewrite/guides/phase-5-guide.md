@@ -56,7 +56,7 @@ Submodule lines are measured the same way (C/C++/ObjC/Swift source files); the s
 3. **Platform capture/audio**: one OS at a time, after the matching Phase 3 shared-texture task exists.
 4. **Hardware encoders**: thin SDK wrappers around vendor DLLs; low safety gain, high test cost (needs hardware).
 5. **Vendor SDK cards**: keep SDK glue in C++ behind a tiny FFI crate.
-6. **Browser**: CEF stays C++.
+6. **Browser**: CEF stays the C++ vendor library (D-09) — the glue is Rust over the C API.
 
 ## Cross-cutting rules for every plugin port
 
@@ -76,7 +76,7 @@ Submodule lines are measured the same way (C/C++/ObjC/Swift source files); the s
 
 **`obs-ffmpeg`.** The biggest hub of external codecs. `ffmpeg-mux/` is a **separate helper executable** that receives packets on stdin: preserve its protocol exactly, as updaters and old versions may meet new ones. VAAPI, AMF (`texture-amf.cpp`), openh264, SRT/RIST. The media source uses `shared/media-playback/media-playback/*` (`media.c`, `decode.c`, `cache.c`; obs-ffmpeg is its only in-tree consumer) — port it as its own crate and reuse.
 
-**`win-capture`.** Three capture families: DXGI desktop duplication, Windows Graphics Capture (needs `libobs-winrt`), and *game capture*, which injects `graphics-hook.dll` (`plugins/win-capture/graphics-hook/`, covers D3D8/9/10/11/12, DXGI, OpenGL and Vulkan layers) into the game via `inject-helper`. The hook runs inside third-party processes with anti-cheat constraints: it stays C/C++ (smallest possible dependency surface); port only the host side.
+**`win-capture`.** Three capture families: DXGI desktop duplication, Windows Graphics Capture (needs `libobs-winrt`), and *game capture*, which injects `graphics-hook.dll` (`plugins/win-capture/graphics-hook/`, covers D3D8/9/10/11/12, DXGI, OpenGL and Vulkan layers) into the game via `inject-helper`. The hook runs inside third-party processes with anti-cheat constraints: per D-08 it is ported to Rust (same module name; phased per hook with the C DLL as fallback, P5-31.7 — a hook bug crashes the user's game), the helpers `inject-helper`/`get-graphics-offsets` stay C.
 
 **`linux-pipewire`.** Portal-based capture: `portal.c`, `screencast-portal.c`, `camera-portal.c`, formats negotiation in `formats.c`; produces DMA-BUF textures (Phase 3 P3-18). Test on GNOME, KDE and a wlroots compositor.
 
@@ -86,7 +86,7 @@ Submodule lines are measured the same way (C/C++/ObjC/Swift source files); the s
 
 **`obs-websocket`.** Submodule at tag 5.7.6 (16.9k LOC). Protocol surface: `src/websocketserver/` (Hello/Identify auth with SHA256+Base64 challenge, `obswebsocket.json`/`obswebsocket.msgpack` subprotocols), 147 request types in `src/requesthandler/` per category (+ batch, Canvases new in 5.7), 60 events in `src/eventhandler/`, vendor API in `lib/obs-websocket-api.h` (API v3). The protocol spec is *generated* from the C++ doc comments into `docs/generated/protocol.json` + `protocol.md` — treat that file (147 requests / 60 events / 7 enums, rpcVersion 1) as the conformance reference; there is no in-tree test suite at 5.7.6. Config + CLI args (`--websocket-port/-ipv4-only/-password/-debug`) in `src/Config.cpp`. It depends on the frontend API (`obs_frontend_*`, Phase 6) and on vendor requests used by third parties. External repo — its upstream owners may prefer to port in their own repo; coordinate before starting.
 
-**`obs-browser`.** Submodule pinned at 2.23.4-126-gd4db73e (version file 2.27.5; 6.5k LOC). CEF (≥95) stays C++ and keeps its process model: a Windows `obs-browser-page` page process and four macOS `OBS Helper` bundles (GPU/Plugin/Renderer) with entitlements — the port must keep spawning them. `window.obsstudio` is registered via CefV8 in `browser-app.cpp`; source settings include `shutdown` (when not visible), `restart_when_active`, `is_local_file`, `reroute_audio`, `webpage_control_level`; cookie migration lives in the module main; the Qt dock is in `panel/`. The module also links the obs-websocket vendor API. External repo — coordinate with its upstream owners before starting.
+**`obs-browser`.** Submodule pinned at 2.23.4-126-gd4db73e (version file 2.27.5; 6.5k LOC). CEF (≥95) stays the C++ vendor library (D-09; the glue is Rust over the C API) and keeps its process model: a Windows `obs-browser-page` page process and four macOS `OBS Helper` bundles (GPU/Plugin/Renderer) with entitlements — the port must keep spawning them. `window.obsstudio` is registered via CefV8 in `browser-app.cpp`; source settings include `shutdown` (when not visible), `restart_when_active`, `is_local_file`, `reroute_audio`, `webpage_control_level`; cookie migration lives in the module main; the Qt dock is in `panel/`. The module also links the obs-websocket vendor API. External repo — coordinate with its upstream owners before starting.
 
 ## Pitfalls
 

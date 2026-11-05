@@ -15,7 +15,7 @@ libobs/ + libobs-{opengl,d3d11,metal,winrt}/   ← one PR (P7-01): the backends 
 frontend/                                      ← after the P6-48.1 parity checklist is 100% and beta feedback is closed
 plugins/<name>                                 ← each when its Rust port shipped; one plugin per commit, FFI leftovers in P7-03.3
 deps/{blake2,json11,glad,w32-pthreads,libcaption}  ← after the last consumer is gone; libdshowcapture stays (D-19)
-shared/*                                       ← per the P7-05.1 mapping; hook-DLL modules stay with the C game-capture code (D-08)
+shared/*                                       ← per the P7-05.1 mapping; hook-related shared modules stay only while the C hook fallback / `inject-helper` need them (D-08)
 test/                                          ← after the P7-25.1 supersession table; same PR wave as P7-01…P7-05
                                                 (cmocka links the C libobs that P7-01 removes)
 ```
@@ -23,9 +23,8 @@ Keep a git tag per deletion (`last-c-libobs`, `last-cpp-frontend`, `last-c-plugi
 
 ## What must remain C/C++ (documented leftovers)
 
-Decided per item (D-08, D-09, D-10, D-11, D-14, D-19); record owner and review date in P7-03.3:
-- `plugins/win-capture/graphics-hook` and `inject-helper` (injected into third-party processes — smallest dependency surface, anti-cheat constraints), plus the `get-graphics-offsets` offset tool; their CMakeLists also build `shared/{ipc-util,obs-d3d8-api,obs-hook-config,obs-inject-library}` and link `OBS::obfuscate` (extracted from `libobs` in P7-01.3).
-- `plugins/obs-browser` CEF glue (Chromium Embedded Framework is C++), incl. the page-process helpers: `obs-browser-page` (Windows), `OBS Helper*` bundles (macOS), `browser-helper` (Linux).
+Decided per item (D-08, D-10, D-11, D-14, D-19); record owner and review date in P7-03.3:
+- `plugins/win-capture/inject-helper` and `get-graphics-offsets` (small helper executables; the `graphics-hook` DLL is ported to Rust by P5-31.7 per D-08 — its C sources and hook-only `shared/` modules are deleted with it, P7-03/P7-05.2); `inject-helper` links `OBS::obfuscate` (extracted from `libobs` in P7-01.3) and the kept `shared/` modules.
 - DeckLink and AJA vendor SDK glue.
 - `plugins/obs-vst` (VST2 host; editor-window embedding per OS is the hard part, D-11).
 - `libdshowcapture` (submodule) for DirectShow.
