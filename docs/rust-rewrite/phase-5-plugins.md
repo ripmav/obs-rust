@@ -51,7 +51,7 @@ Linux:
 - [ ] **P5-26 `linux-pulseaudio`** (M): `libpulse-binding`; input/output capture, monitoring, device hot-plug. Source: `plugins/linux-pulseaudio/` (4 files / 1k lines) — `pulse-input.c` (601), `pulse-wrapper.c` (260) + `.h` (149), `linux-pulseaudio.c` (34). Done when: capture and device hot-plug work.
 - [ ] **P5-27 `linux-alsa`** (S): `alsa` crate. Source: `plugins/linux-alsa/` — `alsa-input.c` (654), `linux-alsa.c` (32). Done when: capture works.
 - [ ] **P5-28 `linux-jack`** (S): `jack` crate. Source: `plugins/linux-jack/` (4 files / 404 lines) — `jack-input.c` (155), `jack-wrapper.c` (166) + `.h` (51), `linux-jack.c` (32). Done when: capture works.
-- [ ] **P5-29 `oss-audio`, `sndio`** (S each): BSD audio backends. Source: `plugins/oss-audio/` — `oss-input.c` (693), `oss-audio.c` (33); `plugins/sndio/` — `sndio-input.c` (392), `sndio-input.h` (18), `sndio.c` (32). Done when: FreeBSD/OpenBSD smoke runs recorded in `docs/tests/`.
+- [ ] **P5-29 `oss-audio`, `sndio`** (S each): OSS/sndio audio backends (Linux; BSD out of scope per D-12). Source: `plugins/oss-audio/` — `oss-input.c` (693), `oss-audio.c` (33); `plugins/sndio/` — `sndio-input.c` (392), `sndio-input.h` (18), `sndio.c` (32). Done when: Linux smoke runs recorded in `docs/tests/`.
 
 Windows:
 - [ ] **P5-30 `win-wasapi`** (L): device and application (process loopback) audio capture, `windows` crate, device notification, exclusive/shared. Source: `plugins/win-wasapi/` (6 files / 2k lines) — `win-wasapi.cpp` (1 648), `wasapi-notify.cpp` (109), `enum-wasapi.cpp` (97) + 3 more. Done when: latency within C's measurements.
