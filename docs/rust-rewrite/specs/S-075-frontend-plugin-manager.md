@@ -250,7 +250,7 @@ them at exit.
 | S-075-R14 | Crash sentinel = app config `obs-studio/.sentinel/run_<launch-uuid-without-braces>`; created if absent; any foreign `run_*` at startup ⇒ unclean shutdown; clean exit removes `run_*`; whole mechanism disabled in non-`NDEBUG` builds. |
 | S-075-R15 | Crash-log discovery: Windows = app config `obs-studio/crashes`, newest `"Crash "*` by last-write time; Linux/FreeBSD = not implemented (empty); macOS = newest `OBS*.ips` in `~/Library/Logs/DiagnosticReports` by creation date. |
 | S-075-R16 | New-crash = last log differs from remembered, or no remembered URL. Upload POSTs `text/plain` to `https://obsproject.com/logs/upload` (Windows body prefixed `"OBS <version> crash file uploaded at <%Y-%m-%d, %X>\n\n"`, macOS raw, others empty); response JSON `{"url":…}`; persists app-config `CrashHandler` keys `last_crash_log_file`, `last_crash_log_time`, `last_crash_log_url` + safe save. A known URL without a new log re-emits the URL without re-uploading. |
-| S-075-R17 | Update branches: verify+fetched `https://obsproject.com/update_studio/branches.json` → data dir `obs-studio/updates/branches.json`; selection from app config `General`/`UpdateBranch` with fallbacks: unset → `stable` (silent), disabled → `stable` (silent), removed → `stable` + warning dialog; result signal `(branch, manual)`. |
+| S-075-R17 | Update branches: verify+fetched `https://obsproject.com/update_studio/branches.json` → data dir `obs-studio/updates/branches.json`; selection from app config `General`/`UpdateBranch` with fallbacks: unset → `stable` (silent), disabled → `stable` (silent), removed → `stable` + info dialog (`OBSMessageBox::information`, `Updater.BranchNotFound.*`); result signal `(branch, manual)`. |
 | S-075-R18 | Sparkle (macOS): channel = {branch}; feed = `https://obsproject.com/osx_update/updates_arm64_v2.xml` iff `os_get_emulation_status()`, else default appcast; menu action enabled via KVO `canCheckForUpdates`; manual vs background check. |
 | S-075-R19 | `system_info` fills `GoLiveApi::Capabilities` (cpu/memory/gpu/system/gaming_features fields as listed in §8); the 33.0.1 consumer is the GoLive post-data builder (out of file set). |
 | S-075-R20 | Windows collector: DXGI adapters minus Basic Render `0x1414:0x008c`, driver version from `CheckInterfaceSupport`; CPU from `CentralProcessor\0` registry; gaming features (Win10+) from 6 registry values (Game Mode backup name; HAGS missing⇒false, disabled=1); version = major.minor + UBR + build, `DisplayVersion` iff build > 19041 else `ReleaseId`. |
@@ -298,3 +298,7 @@ them at exit.
 5. Windows `GetDataFilePath` tries cwd-relative `data/obs-studio/` first — pin the
    expected process cwd during conformance; the Win/macOS `HighContrastEnabled`
    mechanisms were not read in full.
+
+Round 10 second-author check (2026-11-05): corrected R17's removed-branch dialog (was
+"warning dialog"; source `MacUpdateThread.cpp` uses `OBSMessageBox::information` — §7
+already said info dialog). R01/R11/R12/R14/R16/R20/R25 re-derived and confirmed.

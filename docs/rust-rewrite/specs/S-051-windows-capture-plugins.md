@@ -33,7 +33,7 @@ Covered (priority order as requested): (1) the hook protocol and shared structs 
 
 ## 3. Interface
 
-Sources registered (ids matter for saved scenes, **must be kept**): `window_capture`, `game_capture`, `monitor_capture`, `display_capture`, `wasapi_input_capture`, `wasapi_output_capture`, `wasapi_process_output_capture`, `dshow_input`, DirectShow encoders `obs_dshow_c985` / `obs_dshow_c353` (codec `h264`) [SRC for registration details]. `window_capture`, `game_capture` and `wasapi_process_output_capture` expose the proc `get_hooked(out bool hooked, out string title, out string class, out string executable)` and the signals `hooked(ptr source, string title, string class, string executable)` / `unhooked(ptr source)` (the title/class/exe strings are `""` when not hooked) [SRC]. `wasapi_process_output_capture` also has proc `reroute_audio(in ptr target)`.
+Sources registered (ids matter for saved scenes, **must be kept**): `window_capture`, `game_capture`, `monitor_capture`, `display_capture`, `wasapi_input_capture`, `wasapi_output_capture`, `wasapi_process_output_capture`, `dshow_input`, DirectShow encoders `dshow_c985_h264` / `dshow_c353_h264` (codec `h264`) [SRC for registration details]. `window_capture`, `game_capture` and `wasapi_process_output_capture` expose the proc `get_hooked(out bool hooked, out string title, out string class, out string executable)` and the signals `hooked(ptr source, string title, string class, string executable)` / `unhooked(ptr source)` (the title/class/exe strings are `""` when not hooked) [SRC]. `wasapi_process_output_capture` also has proc `reroute_audio(in ptr target)`.
 
 ## 4. Data formats
 
@@ -207,7 +207,7 @@ Notation: `R` = `S-051-R`.
 - **R110 [SRC]** Audio: `audio_output_mode` 0 capture / 1 DirectSound / 2 WaveOut; `use_custom_audio_device` + `audio_device_id` selects a separate audio device; an audio device attached to the video device is used otherwise (`deviceHasAudio`, `separateAudioFilter`); audio timestamps are matched to video; `active` and `deactivate_when_not_showing` control opening the device only while visible.
 - **R111 [SRC]** Device identity: `video_device_id` encodes name and path (libdshowcapture `EncodeDeviceId`, separator and escaping **unknown here**); a device matches iff both decoded name and path are equal; decode failure aborts the update ("DecodeDeviceId failed").
 
-### 5.J DirectShow hardware encoders (`obs_dshow_c985`, `obs_dshow_c353`) [MODEL]
+### 5.J DirectShow hardware encoders (`dshow_c985_h264`, `dshow_c353_h264`) [MODEL]
 
 - **R120** Device selection: first enumerated encoder device whose name contains `C985` / `C353`. Settings: `bitrate` (default 1000, UI range 1000..60000 step 1), `keyint_sec` (0 → 2).
 - **R121** Output size is forced to **1024×768** if `|aspect − 1024/768| < |aspect − 1280/720|` else **1280×720**, `aspect = width/height` in double. Frame interval `frameInterval = fps_den * 10_000_000 / fps_num` and keyframe interval `keyint = keyint_sec * fps_num / fps_den` (frames). **DEFECT D-3:** both products are evaluated in **unsigned 32-bit**; `fps_den * 10^7` wraps for `fps_den > 429` (e.g. 30000/1001 yields 47335 instead of 333666). Required behaviour: compute in 64-bit signed (`333666`); the vector pins the reference's wrapped value, a conforming implementation SHOULD deviate and the discrepancy is recorded (`dshow_encoder.script`, lines 24000/1001, 30000/1001, 60000/1001).
@@ -318,6 +318,7 @@ Floating point: the only printed floats are `hook_rate` multipliers (`%.9g`); co
 4. Whether D-3's wrapped value must be preserved for compatibility: no stored data depends on it, so the spec recommends the corrected arithmetic.
 5. Rendering/HDR (`GS_CS_*` selection in `game_capture_render`), `dc-capture`, `cursor-capture`, WGC frame path, injection, AppContainer object paths, WASAPI timestamp logic (`OnStartCapture`, device-timing vs system-timing) and DShow audio/video timestamp matching were **not** specified (cost control: breadth first on protocol, matching and selection rules).
 6. Sufficiency check (Rust re-implementation from this spec and the vectors) was **skipped** by instruction (cost control); no pass count is claimed.
+7. Round 10 second-author check (2026-11-05): encoder ids corrected to the 33.0.1 values `dshow_c985_h264` / `dshow_c353_h264` (both registered from `win-dshow-encoder.cpp`; the old `obs_dshow_c985` / `obs_dshow_c353` names predate the merge). Known remaining cosmetic issue: the bare `R120–R131` (section 5) and `S-051-R120–R131` (round 8) series overlap numerically.
 
 ## 12. Round 8: capture host surface — game/window/monitor/duplicator/cursor/dc/WGC/injection (added)
 
@@ -440,7 +441,7 @@ per action target, with subsections.
   (name = before, path = after); decode both; true. `DecodeDeviceId(out, id)`: decodes into the
   libdshowcapture `DeviceId`; false on failure (the R111 "DecodeDeviceId failed" abort).
 - **S-051-R138 [SRC]** `win-dshow-encoder.cpp` (12 fns): registers the two encoder infos
-  `obs_dshow_c985` / `obs_dshow_c353`; each selects the first enumerated DirectShow encoder whose
+  `dshow_c985_h264` / `dshow_c353_h264`; each selects the first enumerated DirectShow encoder whose
   friendly name contains `L"C985"` / `L"C353"` respectively. `get_video_info` / update / encode /
   extra-data behaviour: R120–R124.
 - **S-051-R139 [SRC]** `dshow-plugin.cpp` (2 fns): module description "Windows DirectShow

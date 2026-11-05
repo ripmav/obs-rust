@@ -121,7 +121,7 @@ entry on `main->undo_s` (callbacks + optional JSON payload).
 ### 5.4 Clipboard and canvases (`OBSBasic_Clipboard.cpp`, `OBSBasic_Canvases.cpp`, `OBSCanvas.cpp`)
 
 - **S-069-R17** `copySceneItem` fills `SourceCopyInfo`; `pasteSceneItem(scene, duplicate)` adds the item from the stored source (or a duplicated source) at the stored transform — both with undo; `on_actionCopyRef`/`PasteRef` copy/paste the source as an existing reference; `on_actionPasteDup` pastes a full duplicate.
-- **S-069-R18** Filter clipboard: `actionCopyFilters` stores per-filter settings JSON; `actionPasteFilters`/`SourcePasteFilters` recreate in order; `CreateFilterPasteUndoRedoAction` (undo = remove by name, redo = re-add); `SceneCopyFilters`/`ScenePasteFilters` across selected items.
+- **S-069-R18** Filter clipboard: `actionCopyFilters` stores the source weak ref (paste copies the filter graph via `obs_source_copy_filters`); `actionPasteFilters`/`SourcePasteFilters` paste onto the destination source; `CreateFilterPasteUndoRedoAction` = undo/redo restore the pre-copy / post-copy JSON filter backup via `obs_source_restore_filters`; `SceneCopyFilters`/`ScenePasteFilters` operate on the current scene's scene-source filters (not selected items).
 - **S-069-R19** Canvases: per-scene canvas bounds — `RemoveCanvas`/`ClearCanvases` (undo); `OBSCanvas::SaveCanvases` writes per-scene canvas data into the scene collection (S-048).
 
 ### 5.5 Transform dialog (`OBSBasicTransform.cpp/.hpp`)
@@ -141,7 +141,7 @@ entry on `main->undo_s` (callbacks + optional JSON payload).
 
 ### 5.7 Main control bar (`OBSBasicControls.cpp`)
 
-- **S-069-R29** Pure button state machine on the main-window signals: streaming Preparing (disable) / Starting / Started (`withDelay` → "Live (delay)") / Stopping / Stopped; recording Started (`pausable`) / Paused / Unpaused / Stopping / Stopped; replay Started / Stopping / Stopped; vcam Started / Stopped; `UpdateStudioModeState` swaps the stream button for the preview/program toggle; `EnableBroadcastFlow`/`EnableReplayBufferButtons`/`EnableVirtualCamButtons` gate optional buttons; clicks → `*ButtonClicked` → `*ActionTriggered` (R30–R37).
+- **S-069-R29** Pure button state machine on the main-window signals: streaming Preparing (disable) / Starting / Started (`withDelay` → start/stop action menu attached to the stream button; the delay countdown text is the status bar's job, R46) / Stopping / Stopped; recording Started (`pausable`) / Paused / Unpaused / Stopping / Stopped; replay Started / Stopping / Stopped; vcam Started / Stopped; `UpdateStudioModeState` swaps the stream button for the preview/program toggle; `EnableBroadcastFlow`/`EnableReplayBufferButtons`/`EnableVirtualCamButtons` gate optional buttons; clicks → `*ButtonClicked` → `*ActionTriggered` (R30–R37).
 
 ### 5.8 Streaming (`OBSBasic_Streaming.cpp`)
 
@@ -197,7 +197,7 @@ entry on `main->undo_s` (callbacks + optional JSON payload).
 
 - **S-069-R53** Structure: Start → Stream → Test → Video → results; `done(Accept)` → `SaveStreamSettings` (service + encoder) + `SaveSettings` (video settings into the profile), Cancel → no writes; `TestHardwareEncoding` probes HW encoders; `CanTestServer` gates the bandwidth test.
 - **S-069-R54** Stream page: `LoadServices` (all/registered), OAuth account connect/disconnect, custom-server fields, `validatePage` requires server + key (or connected account), `on_preferHardware_clicked`; `ServiceChanged`/`UpdateServerList` keep the UI in sync. `TestMode`: ctor saves the video info, registers a random-noise render callback, disables all six output sources; `SetVideo(128, 128, 60, 1)`; dtor restores.
-- **S-069-R55** Bandwidth test (`TestBandwidthThread`, background thread): x264 (CBR, `veryfast`, keyint 2, `startingBitrate`) + ffmpeg_aac (32 k) + `rtmp_common`/`rtmp_custom` service; stream key suffixed `?bandwidthtest` (Twitch/AmazonIVS) or `?test=true` (Restream.io); `bind_ip`/`ip_family` from user config `[Output]`; each candidate server (`GetServers`, or the single custom) probed ~10 s; highest sustainable bitrate within the service max is adopted.
+- **S-069-R55** Bandwidth test (`TestBandwidthThread`, background thread): x264 (CBR, `veryfast`, keyint 2, `startingBitrate`) + ffmpeg_aac (32 k) + `rtmp_common`/`rtmp_custom` service; stream key suffixed `?bandwidthtest` (Twitch/AmazonIVS) or `?test=true` (service name `Restream.io` / `Restream.io - RTMP`); `bind_ip`/`ip_family` from the profile config `[Output]` (`BindIP`/`IPFamily`); each candidate server (`GetServers`, or the single custom) probed ~10 s; highest sustainable bitrate within the service max is adopted.
 - **S-069-R56** Encoder tests: `TestSoftwareEncoding` through `null_output` (x264 streaming → CBR `idealBitrate`, keyint 2, `main`, `veryfast`; recording → CRF 20, `high`, `veryfast`; aac 32 k) measuring FPS; `TestStreamEncoderThread`/`TestRecordingEncoderThread` run the selected HW encoder at target resolution/FPS.
 - **S-069-R57** `FindIdealHardwareResolution` (§6 ladder: `maxDataRate` = 1920·1200·60+1000 px/s for ≥ 4 physical cores else 1280·720·30+1000; non-NVENC HW encoders bump min-bitrate × 114/100; ≤ 3 accepted). `FinalizeResults`: temp service + `obs_service_apply_encoder_settings` → recommended bitrate; ideal resolution clamped to the closest supported service resolution, ideal FPS to the service max; results form shows multitrack "Automatic" vs fixed. Video page (`validatePage`) validates the existing base resolution/FPS inputs only.
 
@@ -296,3 +296,4 @@ fade_to_black, hotkeys}`; load matches `name` via
    only the state machine is pinned — conformance scope undefined.
 5. `EstimateMinBitrate` (used by R57) was not transcribed line by line;
    only its use is pinned.
+6. Round 10 second-author check (2026-11-05): corrected R18 (filter clipboard stores the source weak ref; undo/redo restore JSON filter backups via `obs_source_restore_filters`; scene copy/paste = current scene's scene-source filters), R29 (no `Live (delay)` string — `withDelay` attaches the start/stop menu to the stream button; delay countdown lives in the status bar), R55 (`bind_ip`/`ip_family` come from the profile config, not user config; the `?test=true` match covers `Restream.io` and `Restream.io - RTMP`).

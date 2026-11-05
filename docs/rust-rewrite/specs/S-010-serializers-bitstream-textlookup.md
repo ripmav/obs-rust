@@ -408,6 +408,7 @@ behaviour. `os_fread_utf8` also strips a BOM only (no UTF-16 handling).
 - Buffered negative-seek write (Q-9) and writes after a failed `seek` in the file serializer are unspecified.
 - Windows: `os_fopen` accepts UTF-8 paths only through conversion; not verified here.
 - R47: the 1 MiB / `chunk_size` deadlock is a reference limitation, not exercised.
+- Round 10 second-author check (2026-11-05): R72 corrected — the lookup table backs `obs_module_get_locale_string` (there is no `obs_get_text` in libobs 33.0.1).
 
 ## 12. Round 9: serializer backends, text-lookup file, bitstream reader (added)
 
@@ -419,5 +420,5 @@ behaviour. `os_fread_utf8` also strips a BOM only (no UTF-16 handling).
 - **S-010-R69** `file-serializer.c`: the file-backed vtables — input: `file_input_seek`/`file_input_serializer_init`/`file_input_serializer_free` (read-only); output: `file_output_write`/`file_output_seek`/`file_output_get_pos`/`file_output_serializer_init`/`file_output_serializer_init_safe`/`file_output_serializer_free`.
 - **S-010-R70** `buffered-file-serializer.c`: the buffered file writer — a background `io_thread` flushes the buffer; `file_output_write`/`file_output_seek`/`file_output_get_pos` operate on the buffer; `buffered_file_serializer_init`/`buffered_file_serializer_free` (free flushes and joins the thread).
 - **S-010-R71** `array-serializer.c`: the growable in-memory serializer — `array_output_write` (append, growing), `array_output_get_pos`/`array_output_seek`, `array_output_serializer_init`/`array_output_serializer_reset`.
-- **S-010-R72** `text-lookup.c`: the `obs_get_text` translation table — `text_lookup_create`/`text_lookup_add`/`text_lookup_destroy`, `text_lookup_getstr` (token → translated string, token itself as fallback); internals `lookup_gettoken`/`lookup_getstringtoken`/`lookup_goto_nextline`/`convert_string`/`lookup_addfiledata`/`text_item_destroy` (the lookup file format per the earlier sections).
+- **S-010-R72** `text-lookup.c`: the locale-string translation table behind `obs_module_get_locale_string` — `text_lookup_create`/`text_lookup_add`/`text_lookup_destroy`, `text_lookup_getstr` (token → translated string, token itself as fallback); internals `lookup_gettoken`/`lookup_getstringtoken`/`lookup_goto_nextline`/`convert_string`/`lookup_addfiledata`/`text_item_destroy` (the lookup file format per the earlier sections).
 - **S-010-R73** `bitstream.c`: the bit reader — `bitstream_reader_init`, `bitstream_reader_read_bit`, `bitstream_reader_read_bits` (1–32 bits, MSB first per the earlier sections), `bitstream_reader_r16` (explicit 16-bit read).
