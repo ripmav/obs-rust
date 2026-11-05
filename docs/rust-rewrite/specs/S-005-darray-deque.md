@@ -171,3 +171,14 @@ CORE: all scripts. Q-A1…Q-A3, Q-D1 have no QUIRK vectors.
 - None for the behaviours above. The `ENABLE_DARRAY_TYPE_TEST` macro variant and the remaining
   `da_*` convenience macros (`da_insert`, `da_erase`, `da_push_back_array`, …) are pure
   forwarding wrappers of the functions listed in section 3.
+
+## 12. Round 9: full inline surface of `darray.h` / `deque.h` (added)
+
+### Reference files (all cited)
+
+- `libobs/util/darray.h`, `libobs/util/deque.h`
+
+- **S-005-R-E01** `darray.h` — the complete inline surface over the struct pinned in section 2: lifecycle (`darray_init`, `darray_free`, `darray_end`), capacity (`darray_reserve`, `darray_ensure_capacity`, `darray_resize`, `darray_copy`, `darray_copy_array`, `darray_move`), mutation/lookup (`darray_push_back`, `darray_push_back_new`, `darray_push_back_array`, `darray_insert`, `darray_erase`, `darray_find`). Each is a thin wrapper applying the capacity/ensure rules of section 3 (R-A series) to typed element size.
+- **S-005-R-E02** The `da_*` typed convenience macros forward to the inlines of R-E01; semantics are identical, element type supplied by the macro.
+- **S-005-R-E03** `deque.h` — the byte ring-buffer inline surface: `deque_free`, `deque_reserve`, `deque_ensure_capacity`, `deque_upsize` (realloc + `deque_reorder_data` to fix the wrap point), `deque_place` (internal cursor management).
+- **S-005-R-E04** Push/pop inlines: `deque_push_back`/`deque_push_front` (and the `_zero` variants), `deque_peek_front`/`deque_peek_back`, `deque_pop_front`/`deque_pop_back` (plus their array forms copying N bytes) — wrap-around handling per the rules pinned in the earlier sections.

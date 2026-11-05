@@ -328,3 +328,108 @@ D-6, Q-4, `device_resize`, swap chains, and everything listed under "Not covered
 * **OQ-2** Behaviour of swap chains / `present` / `device_resize` could not be tested without a real X window.
 * **OQ-3** `device_enum_adapters` returned 2 callbacks on this host; the rule for how many is host dependent.
 * **OQ-4** Wayland/WGL/Cocoa paths and dma-buf / sync-object / timer queries are untested.
+
+## 12. Round 9: file ownership of the backend files (added)
+
+§3–§7 pin the observable behaviour of the exports; the backend files themselves were not cited. This
+section maps the eleven cited files to the rules that own them and pins the file-local facts they
+carry: device lifecycle, struct layouts, the nix winsys selection, the X11/EGL context setup and the
+GLSL parser state. Nothing here overrides an existing rule; where a rule already pins a value it is
+not restated.
+
+### Reference files (all cited)
+
+- `libobs-opengl/gl-subsystem.c`, `libobs-opengl/gl-subsystem.h`, `libobs-opengl/gl-nix.c`, `libobs-opengl/gl-x11-egl.c`, `libobs-opengl/gl-egl-common.c`, `libobs-opengl/gl-helpers.h`, `libobs-opengl/gl-helpers.c`, `libobs-opengl/gl-texture2d.c`, `libobs-opengl/gl-texturecube.c`, `libobs-opengl/gl-texture3d.c`, `libobs-opengl/gl-shaderparser.h`
+
+### 12.1 Device lifecycle (`gl-subsystem.c`)
+
+- **S-057-R44 [SRC]** `device_create(p_device, adapter)` (the behaviour rules R01–R03 pin the
+  observable results): zero-allocate the device; `plat := gl_platform_create(device, adapter)`
+  (failure: free, return GS_ERROR_FAIL); INFO-log GL_VENDOR/GL_RENDERER; `gl_init_extensions`:
+  GL < 3.3 → ERROR "obs-studio requires OpenGL version 3.3 or higher." and fail with
+  GS_ERROR_NOT_SUPPORTED; missing `EXT_texture_sRGB_decode` → ERROR and fail with
+  GS_ERROR_NOT_SUPPORTED; `copy_type := COPY_TYPE_ARB` if `GL_ARB_copy_image` else `COPY_TYPE_NV`
+  if `GL_NV_copy_image` else `COPY_TYPE_FBO_BLIT`. Then INFO-log version + shading language,
+  `gl_enable(GL_CULL_FACE)`, generate `empty_vao`, create `raw_load_sampler` (POINT filter, BORDER
+  addressing on U/V/W, max_anisotropy 1, border_color 0), `gl_clear_context`, `cur_swap := NULL`; on
+  Windows one extra INFO warning recommending Direct3D 11. `device_destroy`: destroy every program
+  in `first_program`, release `raw_load_sampler`, delete `empty_vao`, free `proj_stack`,
+  `gl_platform_destroy(plat)`, free the device. File-to-rule map: texture creation/format/info
+  R04–R10 (Q-1), cube R11 (D-1), volume R12 (D-2), z/stencil R13, stage copy R14–R15, render target
+  R16, clear R17–R19 (Q-2), draw R20–R23, state R24–R30 (Q-2), sampling R31–R34 (D-4, Q-3, Q-4),
+  shaders R35–R40 (D-5, D-6), buffers R41–R43.
+
+### 12.2 Structs and winsys glue
+
+- **S-057-R45 [SRC]** `gl-subsystem.h` (15 fns): `struct gs_timer { GLuint queries[2] }`;
+  `struct gs_shader_param { enum gs_shader_param_type type; char *name; gs_shader_t *shader;
+  gs_samplerstate_t *next_sampler; GLint texture_id; size_t sampler_id; int array_count; struct
+  gs_texture *texture; bool srgb; DARRAY(uint8_t) cur_value; DARRAY(uint8_t) def_value; bool changed
+  }`; `enum attrib_type { ATTRIB_POSITION, ATTRIB_NORMAL, ATTRIB_TANGENT, ATTRIB_COLOR,
+  ATTRIB_TEXCOORD, ATTRIB_TARGET }`; `struct shader_attrib { char *name; size_t index; enum
+  attrib_type type }`; `struct gs_shader { device, type, GLuint obj, viewproj, world, attribs,
+  params, samplers }` (viewproj/world are fixed-name params); `struct program_param { GLint obj;
+  struct gs_shader_param *param }`; `struct gs_program { device, obj, vertex_shader, pixel_shader,
+  params, attribs, prev_next, next }` — programs form a doubly linked list rooted at
+  `device->first_program` (R44 walks it); `struct gs_vertex_buffer { vao, vertex/normal/tangent/
+  color buffer, uv_buffers, uv_sizes, device, num, dynamic, data }`; sampler state refcount is
+  inline (atomic inc on load, free at zero, R33).
+- **S-057-R46 [SRC]** `gl-nix.c` (12 fns): one process-global `const struct gl_winsys_vtable
+  *gl_vtable`. `init_winsys` (asserts the vtable is NULL): `obs_get_nix_platform()` — X11_EGL →
+  `gl_x11_egl_get_winsys_vtable()`; Wayland (only when `ENABLE_WAYLAND`) →
+  `gl_wayland_egl_get_winsys_vtable()` + INFO "Using EGL/Wayland"; asserts the vtable is now set.
+  `gl_platform_create` calls `init_winsys` before dispatching; `gl_platform_destroy` dispatches,
+  then sets `gl_vtable = NULL` again. `device_leave_context` (the nix entry) also clears
+  `device->cur_render_target`, `cur_zstencil_buffer`, `cur_vertex_buffer` and `cur_index_buffer`.
+  All other exports are one-line vtable dispatches.
+- **S-057-R47 [SRC]** `gl-x11-egl.c` (31 fns): the X11/EGL winsys. `struct gl_windowinfo {
+  xcb_window_t window; EGLSurface surface }`. Platform init: `eglGetDisplay` (X11),
+  `eglInitialize`, `eglChooseConfig` with config attribs {STENCIL_SIZE 0, DEPTH_SIZE 0, BUFFER_SIZE
+  24, ALPHA_SIZE 0, RENDERABLE_TYPE OPENGL_BIT, SURFACE_TYPE WINDOW|PBUFFER}; context attribs
+  {`[EGL_CONTEXT_OPENGL_DEBUG TRUE]` in `_DEBUG` builds only, CORE_PROFILE, major 3, minor 3}; in a
+  debug build a `EGL_BAD_ATTRIBUTE` from context creation retries once without the DEBUG attrib;
+  pbuffer surface 2x2 (`{EGL_WIDTH 2, EGL_HEIGHT 2}`) created and made current. The rendered target
+  is `cur_swap->wi->surface` when a swap chain is current, else the pbuffer.
+- **S-057-R48 [SRC]** `gl-egl-common.c` (19 fns): EGL helpers shared by X11 and Wayland — extension
+  lookup + dynamic loading of `eglCreateImage`/`eglImageTargetTexture2DOES`, dmabuf/eglimage pixmap
+  import, `gl_egl_enum_adapters` (the `device_enum_adapters` implementation; OQ-3),
+  `gs_get_adapter_count`, dmabuf format/modifier/capability queries, sync-object/timeline export and
+  import, `gl_egl_error_to_string`, DRM render-node fd open/close. These back the exports listed
+  under "Not covered" in section 1 (OQ-4); nothing here is pinned by a rule.
+- **S-057-R49 [SRC]** `gl-texture2d.c` (11 fns): `upload_texture_2d` (via the PBO from
+  `create_pixel_unpack_buffer`), `device_texture_create` (R04–R10), `is_texture_2d`,
+  `gs_texture_destroy`, `gs_texture_get_width/height/color_format`, `gs_texture_map`/`unmap` (R06,
+  Q-1), `gs_texture_is_rect` (width != height), `gs_texture_get_obj`.
+- **S-057-R50 [SRC]** `gl-helpers.c` (5 fns): `gl_init_face` (bind one face, storage + parameters;
+  false on any error), `gl_copy_fbo` (internal blit), `gl_copy_texture` (the R09/R10 copy path),
+  `gl_create_buffer` (gen + storage + usage), `update_buffer` (re-upload buffer data).
+- **S-057-R51 [SRC]** `gl-helpers.h` (23 fns): the error-checked wrapper set —
+  `gl_success(funcname)` reads the GL error and logs it on failure; `gl_gen/bind/delete` for
+  textures, buffers, vertex arrays, framebuffers, renderbuffers; `gl_tex_param_f/fv/i`;
+  `gl_active_texture`, `gl_enable/disable`, `gl_cull_face`, `gl_get_integer_v`. Every GL call in the
+  backend goes through one of these (a failed call is logged with the caller name and returns the
+  failure value).
+- **S-057-R52 [SRC]** `gl-texturecube.c` (5 fns): `upload_texture_cube` (per-face
+  `glTexImage2D` after binding the face — the D-1 mechanism), `device_cubetexture_create` (R11,
+  D-1), `gs_cubetexture_destroy`, `is_texture_cube`, `gs_cubetexture_get_size`,
+  `gs_cubetexture_get_color_format`.
+- **S-057-R53 [SRC]** `gl-texture3d.c` (4 fns): `gl_init_volume`, `upload_texture_3d`,
+  `create_pixel_unpack_buffer`, `device_voltexture_create` (R12), `gs_voltexture_destroy`.
+- **S-057-R54 [SRC]** `gl-shaderparser.h` (2 fns): `struct gl_shader_parser { enum gs_shader_type
+  type; const char *input_prefix, *output_prefix; struct shader_parser parser; struct dstr
+  gl_string; int sincos_counter; DARRAY(uint32_t) texture_samplers; DARRAY(struct gl_parser_attrib)
+  attribs }` with `gl_parser_attrib { dstr name; const char *mapping; bool input }`. Init: vertex
+  shaders use input prefix `_input_attrib` / output `_vertex_shader_attrib`; pixel shaders use
+  `_vertex_shader_attrib` / `_pixel_shader_attrib`; `sincos_counter := 1` (sincos names are emitted
+  with unique suffixes starting at 1, shared between the two stages via the output/input prefix
+  match). This is the OBS-HLSL→GLSL bridge of R35 (the language itself is S-020).
+
+### 12.3 Quirks (added)
+
+- Q-6: the winsys vtable is process-global and one-shot per platform: `init_winsys` asserts it is
+  NULL, and `gl_platform_destroy` resets it to NULL — a second `device_create` after the first
+  `device_destroy` re-initialises, but two devices cannot coexist, and a platform other than the one
+  chosen first (Wayland on an X11 build without Wayland enabled) is an assert, not an error.
+- Q-7: `device_leave_context` on nix silently clears the cached render target, z/stencil, vertex and
+  index buffers (gl-nix.c) — after a context switch the backend has no memory of the previous
+  binding; nothing is logged.

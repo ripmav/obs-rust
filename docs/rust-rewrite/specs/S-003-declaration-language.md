@@ -128,3 +128,13 @@ After `(`:
   (not reachable through the C API, which takes a C string).
 - The reference's use of a generic parser means numbers/strings/punctuation form tokens; tokens
   that are neither NAME nor `(` `)` `,` only matter in the positions listed above.
+
+## 11. Round 9: `decl.c` parse internals (added)
+
+### Reference files (all cited)
+
+- `libobs/callback/decl.c`
+
+- **S-003-R13** `parse_decl_string`: the entry point — tokenizes the declaration string with the cf-lexer (S-011), splits it into params (`parse_params`, one per `parse_param` call); errors accumulate in the lexer error data and are rendered by `print_errors` (one line per error, with position).
+- **S-003-R14** Name rules: reserved param names — `int`, `float`, `bool`, `ptr`, `string`, `void`, `return` — are rejected (`err_reserved_name`); a param name already present in the decl is rejected (`name_exists`).
+- **S-003-R15** Type resolution: `get_type` maps the type token to the calldata type; `is_in_out_specifier` recognizes in/out/in-out markers; type defaults and the resulting param order follow the earlier sections.

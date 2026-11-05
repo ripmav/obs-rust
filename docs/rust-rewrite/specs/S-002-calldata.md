@@ -178,4 +178,14 @@ CORE: all scripts. QUIRK vectors are embedded in `02` and `12`.
 
 ## 11. Open questions
 
-None. 32-bit (`W = 4`) layouts follow from the formulas in section 4; vectors for W = 4 must be generated from a 32-bit build of the reference.
+None. 32-bit (`W = 4`) layouts follow from the formulas in section 4; vectors for W = 4 must be generated from a 32-bit 
+
+## 12. Round 9: `calldata.c` uncited functions (added)
+
+### Reference files (all cited)
+
+- `libobs/callback/calldata.c`
+
+- **S-002-R23** `calldata_get_data`/`calldata_set_data`: the typed accessors over the param array (get: type check with the default 0/empty-string on mismatch per the earlier sections; set: replaces in place, string params are copied).
+- **S-002-R24** `calldata_get_string`/`cd_getparam`: raw param access without type checking — used by proc handlers; `cd_getparam` returns the param at the handler's current cursor.
+- **S-002-R25** Copy/serialize internals: `cd_copy_string` (duplicate a param string), `cd_copy_data` (deep copy of the whole calldata — every param, strings duplicated), `cd_ensure_capacity`/`cd_set_first_param` (capacity/cursor management), `cd_serialize_size`/`cd_serialize_string` (the calldata half of the binary serialization format pinned in S-010: size computation, then byte writing).build of the reference.

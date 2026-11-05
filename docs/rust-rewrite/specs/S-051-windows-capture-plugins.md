@@ -400,3 +400,138 @@ itself is specified by S-086 (kept C++, D-08); this section is the host side onl
 - Q2: WGC permission-request flow (user consent dialog) — Windows runtime behaviour,
   not derivable from the repository.
 - Q3: `nt-stuff.c` fallback list when an NT function is absent (which paths degrade).
+
+## 13. Round 9: DirectShow host/virtual-camera + WASAPI host (added)
+
+§5.I–§5.K pin the dshow_input settings/capability behaviour, the C985/C353 encoders and the
+shared-memory virtual-camera queue; §5.G pins the WASAPI sources. This section pins the host-side
+files those rules live in (the DirectShow input object and its action loop, the device-id codec,
+the virtual-camera output and driver, the plugin glue) and the four WASAPI host files. One section
+per action target, with subsections.
+
+### Reference files (all cited)
+
+- `plugins/win-dshow/win-dshow.cpp`, `plugins/win-dshow/win-dshow-encoder.cpp`, `plugins/win-dshow/virtualcam.c`, `plugins/win-dshow/virtualcam-module/virtualcam-module.cpp`, `plugins/win-dshow/virtualcam-module/virtualcam-filter.cpp`, `plugins/win-dshow/virtualcam-module/placeholder.cpp`, `plugins/win-dshow/virtualcam-module/sleepto.c`, `plugins/win-dshow/encode-dstr.hpp`, `plugins/win-dshow/dshow-plugin.cpp`, `plugins/win-wasapi/win-wasapi.cpp`, `plugins/win-wasapi/wasapi-notify.cpp`, `plugins/win-wasapi/enum-wasapi.cpp`, `plugins/win-wasapi/plugin-main.cpp`
+
+### 13.1 DirectShow host (`win-dshow.cpp`)
+
+- **S-051-R136 [SRC]** The DirectShow work runs on one OS thread per input ("win-dshow: DShowThread",
+  `CoInitialize`'d): `DShowLoop` loops on `MsgWaitForMultipleObjects(1, semaphore, INFINITE,
+  QS_ALLINPUT)` — a window message is pumped (`PeekMessage`/`TranslateMessage`/`DispatchMessage`
+  until empty) and re-waited; the semaphore hands out actions from a critical-section-guarded
+  queue; anything else exits the loop. `enum class Action { None, Activate, ActivateBlock,
+  Deactivate, Shutdown, ConfigVideo, ConfigAudio, ConfigCrossbar1, ConfigCrossbar2 }`.
+  Activate/ActivateBlock: take the source settings; `Activate(settings)` — on failure
+  `obs_source_output_video2(source, nullptr)` (blank frame); ActivateBlock additionally signals the
+  activated event. Deactivate → `Deactivate()`; Shutdown → `device.ShutdownGraph()` and return
+  (thread exit); ConfigVideo/ConfigAudio/ConfigCrossbar1/ConfigCrossbar2 →
+  `device.OpenDialog(nullptr, DialogType::ConfigVideo/ConfigAudio/Crossbar/Crossbar2)`. All
+  §5.I behaviour (open/configure/decode/output) executes on this thread — the "single thread per
+  device" invariant the comment states. `FPS_HIGHEST = 0` / `FPS_MATCHING = -1` are the file-local
+  interval constants behind R104/R106.
+
+### 13.2 Device-id codec, encoders, plugin glue
+
+- **S-051-R137 [SRC]** `encode-dstr.hpp` (5 fns) — the codec R111 left unknown:
+  `encode_dstr(s)`: replace `#` → `#22`, then `:` → `#3A`; `decode_dstr(s)`: the inverse order
+  (`#3A` → `:` first, then `#22` → `#`). `EncodeDeviceId(encoded, name, path)`: UTF-16 → UTF-8,
+  encode both halves, `encoded = name + ":" + path` — the separator is the one literal unencoded
+  `:`. `DecodeDeviceDstr(name, path, id)`: false on empty id; split on the **first** `:`
+  (name = before, path = after); decode both; true. `DecodeDeviceId(out, id)`: decodes into the
+  libdshowcapture `DeviceId`; false on failure (the R111 "DecodeDeviceId failed" abort).
+- **S-051-R138 [SRC]** `win-dshow-encoder.cpp` (12 fns): registers the two encoder infos
+  `obs_dshow_c985` / `obs_dshow_c353`; each selects the first enumerated DirectShow encoder whose
+  friendly name contains `L"C985"` / `L"C353"` respectively. `get_video_info` / update / encode /
+  extra-data behaviour: R120–R124.
+- **S-051-R139 [SRC]** `dshow-plugin.cpp` (2 fns): module description "Windows DirectShow
+  source/encoder", locale en-US. Load: `RegisterDShowSource()` + `RegisterDShowEncoders()`; when
+  built with `VIRTUALCAM_AVAILABLE` and `vcam_installed(false)`: register `virtualcam_info`.
+  `vcam_installed(b64)`: `StringFromGUID2(CLSID_OBS_VirtualVideo)` →
+  `RegOpenKeyExW(HKEY_CLASSES_ROOT, L"CLSID\\<guid>", 0, KEY_READ | (b64 ? KEY_WOW64_64KEY :
+  KEY_WOW64_32KEY))` — the caller only ever passes `false`, so only the 32-bit registry view is
+  checked (Q4).
+
+### 13.3 Virtual camera (output side + driver side)
+
+- **S-051-R140 [SRC]** `virtualcam.c` (7 fns): the virtual-camera **output** (writer). start:
+  `interval = fps_den * 10000000ULL / fps_num` from the current video info; write
+  `"%dx%dx%lld"` (width, height, interval) to `<config dir>/obs-virtualcam.txt` via the safe
+  temp-write (overwritten on every start); `video_queue_create(width, height, interval)` (R130) —
+  failure (a mapping already exists): WARNING `starting virtual-output failed`, start fails; set
+  the output's video conversion to NV12 at the output size, `active = true`, `stopping = false`,
+  INFO `Virtual output started`, `obs_output_begin_data_capture(output, 0)`. stop/deactivate:
+  `obs_output_end_data_capture` + `video_queue_close` (R135). encoded_packet: `video_queue_write`
+  (R132) with the frame's planes/linesize/timestamp.
+- **S-051-R141 [SRC]** `virtualcam-module/virtualcam-module.cpp` (14 fns): the DirectShow
+  **driver** (reader, a separate in-proc COM module): `VCamFactory` is the `IClassFactory` for
+  `CLSID_OBS_VirtualVideo` (friendly name "OBS Virtual Camera"); server registration writes the
+  CLSID key and maps the filter into the capture category via `IFilterMapper2`.
+- **S-051-R142 [SRC]** `virtualcam-module/virtualcam-filter.cpp` (12 fns): the filter opens the
+  shared-memory queue (R131), reads its cx/cy/interval and advertises NV12 + I420 + YUY2 media
+  types at that size/interval (NV12 is the default). Per output request: convert the queue frame
+  to the negotiated format with `nv12_scale_init` (NV12/I420/YUY2 targets); when no fresh frame
+  is available (queue not READY, or R134's repeated-index limit) it delivers the default frame —
+  `ShowDefaultFrame` memsets the whole output buffer to **127** (neutral grey) — or the
+  placeholder image scaled into the same format.
+- **S-051-R143 [SRC]** `virtualcam-module/placeholder.cpp` (5 fns): loads
+  `placeholder.png` from the module directory (bitmap decoded to RGB), converts RGB → NV12
+  (planar, `width*height*3/2` bytes) once, and serves the buffer pointer to R142.
+- **S-051-R144 [SRC]** `virtualcam-module/sleepto.c` (3 fns): `gettime_100ns` =
+  `QueryPerformanceCounter` scaled to 100-ns units through a double; `sleepto_100ns(target)`:
+  already past → false; else `Sleep(ms - 1)` for `ms = (target - t) / 10000` when `ms > 1`, then
+  spin `Sleep(0)` until the target is reached → true (a high-resolution sleep without a timer
+  object, used to pace the driver's frame delivery).
+
+### 13.4 WASAPI host
+
+- **S-051-R145 [SRC]** `win-wasapi.cpp` (46 fns): the per-source object — COM pointers
+  (enumerator/client/capture), the source + a `reroute_target` weak source, `default_id` (wide),
+  `device_id`/`device_name` (narrow), the mmdevapi module plus the dynamically resolved RTWQ
+  functions (`ActivateAudioInterfaceAsync`, `RtwqUnlockWorkQueue`, `RtwqLockSharedWorkQueue`,
+  `RtwqCreateAsyncResult`, `RtwqPutWorkItem`, `RtwqPutWaitingWorkItem`) and `rtwq_supported`
+  (RTWorkQ.dll present; RTWQ is Win 8.1+ but "silently fails" on some systems per the comment),
+  the window fields (priority/class/title/executable/hwnd/process id), `sourceType`, atomics
+  `useDeviceTiming`/`isDefaultDevice`/`sawBadTimestamp`, `hooked`, and the reconnect thread +
+  its three events. RTWQ is used to marshal the two ASIO-style callbacks (start-capture,
+  sample-ready) onto a shared work queue; the async result objects are created at init. The
+  capture thread (`CoInitializeEx(MULTITHREADED)`) drives init (R84–R86) and then
+  `ProcessCaptureData`: per packet the format/speakers/rate come from the client format;
+  timestamp = `ts * 100` (100-ns device timestamp) for process output, else
+  `useDeviceTiming ? ts * 100 : now_ns - frames * 1e9 / rate`; the audio goes to
+  `reroute_target` when set (resolved through the weak reference), else the own source; the
+  buffer is released afterwards. On init failure the source arms the reconnect thread
+  (`reconnectDuration = RECONNECT_INTERVAL = 3000` ms, R88): it waits on (exit, reconnect)
+  signals, and on each reconnect signal — after the duration, interrupted by the stop signal —
+  calls `Start()` again; the exit signal ends it.
+- **S-051-R146 [SRC]** `wasapi-notify.cpp` (8 fns): `WASAPINotify` creates an
+  `IMMDeviceEnumerator` and registers one `NotificationClient`
+  (`IMMNotificationClient`, refcount from 1): `OnDefaultDeviceChanged(flow, role, id)` forwards to
+  the stored callback only when both the callback and `id` are non-null; the other four
+  notifications (device added/removed/state-changed, property changed) are no-ops returning
+  S_OK. The callback table is registered at construction and unregistered at destruction;
+  `AddDefaultDeviceChangedCallback(module, cb)` binds the callback (the module is retained so the
+  callback can address the owning module).
+- **S-051-R147 [SRC]** `enum-wasapi.cpp` (3 fns): `GetDeviceName(device)` = the
+  `PKEY_Device_FriendlyName` property-store value as UTF-8 (empty string when absent or empty);
+  `GetWASAPIAudioDevices(input)` enumerates the **active** endpoints of `input ? eCapture :
+  eRender` (any HRESULT failure throws an `HRError` with the failing call) and returns one record
+  per device (name via `GetDeviceName`, id, ...). This is the list backing R89's `Default` +
+  endpoints property lists.
+- **S-051-R148 [SRC]** `plugin-main.cpp` (3 fns): module description "Windows WASAPI audio
+  input/output sources", locale en-US. Load: compute `process_filter_supported` =
+  Win10 build `>= 19041.0` (the comment notes MS documents 20348, "but process filtering seems to
+  work earlier"); register input + device output always, process output only when supported;
+  create the process-global `WASAPINotify` and add the default-device-changed callback: it reads
+  the current monitoring device (`obs_get_audio_monitoring_device(nullptr, &id)`), acts only when
+  it is the literal `"default"` (NULL or other → ignore) **and** `flow == eRender`, then queues an
+  `OBS_TASK_UI` task running `obs_reset_audio_monitoring()`. Unload: delete the notify object.
+  `GetNotify()` exposes the global.
+
+### 13.5 Quirks (added)
+
+- Q4: `vcam_installed` accepts a `b64` flag but the only call site passes `false` — a
+  64-bit-only virtual-camera installation is invisible to the dshow plugin on 64-bit Windows.
+- Q5: `obs-virtualcam.txt` is rewritten on every virtual-camera start (no locking, atomic
+  temp-rename); its only consumer is external tooling — the driver side never reads it.
+- Q6: the WASAPI process-output gate (build 19041) is looser than Microsoft's documented build
+  (20348): process loopback is registered on builds where the API is officially unsupported.
