@@ -155,7 +155,7 @@ LoadInHelper`. Both: `CefExecuteProcess(args, new BrowserApp, nullptr)`.
 | # | Rule |
 |---|---|
 | S-082-R01 | `obs-browser-plugin.cpp`: CEF init runs once per process on a dedicated thread (or Qt loop); hwaccel is decided at load (Windows: adapter blacklist `Intel`/`Microsoft`/`Radeon HD 8850M`/`Radeon HD 7660` when ≥2 adapters or non-Intel default; Linux: all DRM formats must be supported; macOS/Win: shared-texture availability). Unload: quit the CEF message loop, join the thread. |
-| S-082-R02 | `obs-browser-source.cpp`: `Tick` blocks until the `cef_started_event`; browser creation is queued as a CEF UI task (`CreateBrowserSync`); windowless rendering always; `external_begin_frame_enabled` when shared textures + not custom-fps, else `windowless_frame_rate = fps (custom) or obs fps`; default font sizes 16. |
+| S-082-R02 | `obs-browser-source.cpp`: `Tick` checks `cef_started_event` **non-blockingly** (`os_event_try`) and returns early until CEF has started; browser creation is queued as a CEF UI task (`CreateBrowser` → `QueueCEFTask` → `CreateBrowserSync`); windowless rendering always; in shared-texture builds with external begin-frame: `external_begin_frame_enabled` + `windowless_frame_rate = 0` when not custom-fps, else `windowless_frame_rate = fps` (shared-texture builds without external begin-frame use `fps_custom ? fps : obs fps`; non-shared builds `= fps`); default font sizes 16 (`default_font_size` + `default_fixed_font_size`). |
 | S-082-R03 | `obs-browser-source.cpp`: mouse click/move/wheel, key click, focus are forwarded to `CefBrowserHost` (Linux keys go through `linux-keyboard-helpers.hpp` X11 keysym→keycode mapping); `show`/`hide` dispatch visibility JS; `activate` refreshes the page when `restart_when_active`. |
 | S-082-R04 | `obs-browser-plugin.cpp` defaults: url `https://obsproject.com/browser-source`, 800×600, fps 30, `fps_custom` = (shared textures ? false : true), shutdown false, restart_when_active false, control level `ReadObs`, css = transparent-body default, reroute_audio false. `is_local_file` toggle swaps the visible `url`/`local_file` properties; a missing local file is re-located via the frontend missing-file callback and written back to settings. |
 | S-082-R05 | `browser-client.cpp`: popups blocked (`OnBeforePopup` true); context menu cleared; tooltips forwarded to a Qt tooltip; render-process crash ⇒ `LOG_ERROR "[obs-browser: '<name>'] Webpage has crashed unexpectedly! Reason: '<reason>'"`; permission prompts: loopback-network (localhost) implicitly accepted, everything else denied; load start re-mutes when rerouting; load end (main frame) injects the user `css`; load error logged (ERR_ABORTED ignored on new CEF). |
@@ -163,7 +163,7 @@ LoadInHelper`. Both: `CefExecuteProcess(args, new BrowserApp, nullptr)`.
 | S-082-R07 | `browser-dummy-client.cpp`: the app-level default client returns "handled" for chrome commands/menu/toolbar (all hidden) and **closes any browser created without a client** in `OnAfterCreated` — the host MUST keep an equivalent safety net so unmanaged windows cannot appear. |
 | S-082-R08 | `browser-scheme.cpp`: rules of §3.4 are exact (origin check, double URI decode, woff2 alias, IP segment rejection, mime fallback). |
 | S-082-R09 | `panel/browser-panel.cpp`: `QCefWidget` creates its own CEF browser (windowed, `allowAllPopups` option, injected `script`); cookie manager with a storage path and optional session persistence; resize resizes the CEF view; close destroys the browser. |
-| S-082-R10 | `panel/browser-panel-client.cpp`: panel popups: `allowAllPopups` ⇒ attach the same client to the popup; else block. JS dialogs (alert/confirm/prompt) are shown as Qt dialogs; focus handled via `OnSetFocus`; Windows adds a native context menu. |
+| S-082-R10 | `panel/browser-panel-client.cpp`: panel popups: `allowAllPopups` ⇒ the popup is allowed (no client attached; on Windows it is parented to the widget's HWND); else the URL is checked against the panel's popup whitelist (case-insensitive) — whitelisted URLs are allowed (same parenting), any other URL is opened in the user's default browser (`QDesktopServices::openUrl`) and blocked in CEF. JS dialogs (alert/confirm/prompt) are shown as Qt dialogs (`QMessageBox`/`QInputDialog`); focus handled via `OnSetFocus`; the context menu is customised via the CEF menu model on all platforms (adds reload-no-cache + zoom in/reset/out, removes print/view-source). |
 | S-082-R11 | `deps/wide-string.cpp` / `deps/base64/base64.cpp` / `deps/signal-restore.cpp` / `deps/ip-string-*.cpp`: utilities as described in §1 — UTF-8→wide via `os_utf8_to_wcs`, base64 helper, signal backup/restore of 13 signals, `inet_pton`-based IP detection. |
 | S-082-R12 | `drm-format.cpp`: only RGBA_8888 and BGRA_8888 are accepted; `obs_cef_all_drm_formats_supported` requires **both** in the GPU's dmabuf list; unknown CEF color type ⇒ error log + `DRM_FORMAT_INVALID`. |
 | S-082-R13 | `obs-browser-source.hpp`: `ControlLevel` values 0..5 as in §2; `BrowserSource` keeps one primary + one extra texture and a `destroying` flag for tear-down ordering. |
@@ -198,3 +198,11 @@ LoadInHelper`. Both: `CefExecuteProcess(args, new BrowserApp, nullptr)`.
    above is identical; only the message pump differs.
 3. Whether the Qt panels (`QCefWidget`) get a Rust-FFI wrapper or stay in the C++
    frontend (they are UI, not a source contract).
+
+Round 10 second-author check (2026-11-05): corrected R02 (was "Tick blocks until
+`cef_started_event`"; source uses non-blocking `os_event_try`; added the exact
+`windowless_frame_rate` branches per build configuration) and R10 (was "attach the same
+client to the popup; else block"; source: allowed popup gets no client, else-branch is a
+URL whitelist with fall-through to the user's default browser, and the context-menu
+customisation is cross-platform CEF menu-model editing, not a Windows-only native menu).
+R03/R04/R05/R07/R11/R12 re-derived and confirmed.

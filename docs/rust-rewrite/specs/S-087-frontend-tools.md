@@ -48,7 +48,7 @@ state objects.
 |---|---|---|---|---|
 | S-087-R01 | `frontend-tools.c` | `obs_module_load` | Init order: `InitCaptions` (W only) → `InitSceneSwitcher` → `InitOutputTimer` → `InitScripts` (only when scripting is compiled in **and** not safe mode; else `LOG_WARNING "Scripting is disabled in Safe Mode"`). MUST always return `true`. | per-tool globals |
 | S-087-R02 | `frontend-tools.c` | `obs_module_unload` | Reverse order; `FreeScripts` only if scripting was inited (i.e. not safe mode). | — |
-| S-087-R03 | all tool files | `Init*` | Each tool adds exactly one `QAction` to the Tools menu via `obs_frontend_add_tools_menu_qaction(<translated title>)` and registers its save/event callbacks (S-048 §5.9). Dialogs are created lazily on trigger with `obs_frontend_push/pop_ui_translation(obs_module_get_string)` around the modal loop. | Tools menu |
+| S-087-R03 | all tool files | `Init*` | Each tool adds exactly one `QAction` to the Tools menu via `obs_frontend_add_tools_menu_qaction(<translated title>)` and registers its save/event callbacks (S-048 §5.9). The switcher and captions dialogs are created lazily per trigger; the output-timer dialog is created at init (show/hide on trigger) and the scripts tool window on first trigger (log window at init). Trigger callbacks wrap the dialog in `obs_frontend_push/pop_ui_translation(obs_module_get_string)`. | Tools menu |
 
 ### 3.2 Auto-scene-switcher (`auto-scene-switcher*.cpp`)
 
@@ -157,3 +157,5 @@ implementation MUST NOT offer captions on non-Windows builds.
    `obs_script_*` API set (create/update/reload/save/get_settings/get_properties/log).
 3. Output-timer: does the rewrite keep the "hidden dialog defers until next click" flow (R16)
    or change it to start on the triggering click? Behaviour as written is the 33.0.1 one.
+
+Round 10 second-author check (2026-11-05): corrected R03 (dialog creation timing — switcher/captions lazy per trigger, output-timer dialog created at init, scripts tool window on first trigger; not all "lazily on trigger"). Re-derived R07/R08/R10/R13/R18/R21/R22/R35 — all correct; R11/R12/R14/R15/R16 also verified during the pass.

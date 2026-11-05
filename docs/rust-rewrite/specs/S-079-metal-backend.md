@@ -67,9 +67,9 @@ returns NULL (or the default) rather than trapping the process.
   **fallback vertex buffer**, and a compiled **NOP vertex function**
   (`[[vertex]] float4 vsNop() { return (float4)0; }`, fast-math) used by the clear pass and
   for pipelines without a real vertex stage. `device_destroy` tears down the display link
-  and command queue; `device_get_name` = `"metal"`, `device_get_type` = the Metal gs device
-  type, `device_preprocessor_name` = the Metal preprocessor name libobs shaders are matched
-  against. `OBSLog` routes Swift logs into libobs logging with the OBS level enum
+  and command queue; `device_get_name` = `"Metal"`, `device_get_type` = `GS_DEVICE_METAL`,
+  `device_preprocessor_name` = `"_Metal"` (both constants live in the bridging header,
+  `libobs-metal-Bridging-Header.h`). `OBSLog` routes Swift logs into libobs logging with the OBS level enum
   (error=100 … debug=400, `libobs+Extensions.swift`).
 - **S-079-R02** Render state: `MetalRenderState` holds the current view/projection/viewproj
   matrices (identity at init), scissor-rect flag, colour space, the active swap chain, blend
@@ -226,7 +226,7 @@ returns NULL (or the default) rather than trapping the process.
 ## 8. Depth/stencil and samplers
 
 - **S-079-R24** `metal-zstencilbuffer.swift`: `device_zstencil_create` (format via the
-  `gs_zstencil_format.mtlFormat` table: Z16 → depth16Unorm, Z24_S8 → depth24_stencil8,
+  `gs_zstencil_format.mtlFormat` table: Z16 → depth16Unorm, Z24_S8 → depth24Unorm_stencil8,
   Z32F → depth32Float, Z32F_S8X24 → depth32Float_stencil8; NONE → invalid/NULL) and
   `device_get_zstencil_target` (the current target from the render state).
 - **S-079-R25** `metal-samplerstate.swift`: `device_samplerstate_create` builds an
@@ -283,3 +283,9 @@ returns NULL (or the default) rather than trapping the process.
    characterised.
 4. What happens on `MTLDevice` loss / GPU hang (Metal error handler behaviour) — the
    reference relies on Metal's own recovery; not specified.
+
+Round 10 second-author check (2026-11-05): corrected R01 (was `device_get_name` =
+`"metal"`, type/preprocessor names left unexpanded; source: `"Metal"` /
+`GS_DEVICE_METAL` / `"_Metal"` — constants in `libobs-metal-Bridging-Header.h`) and R24
+(was `Z24_S8 → depth24_stencil8`; source `libobs+Extensions.swift` returns
+`depth24Unorm_stencil8`). R01/R03/R15/R17/R21/R25/R27 re-derived and otherwise confirmed.
