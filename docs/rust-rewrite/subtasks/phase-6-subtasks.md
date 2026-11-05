@@ -753,7 +753,7 @@ Verified facts: the main window is split across `frontend/widgets/OBSBasic*.cpp`
   - Files: `docs/sphinx` scripting pages (obs-studio checkout).
   - Steps: 1. extract every example from the scripting pages; 2. run them as tests against the host.
   - Done when: examples pass.
-- [ ] **P6-37.6 Write S-063 (added)** — Python scripting backend spec (D-29)
+- [x] **P6-37.6 Write S-063 (added)** — Python scripting backend spec (D-29)
   - Files: `shared/obs-scripting/obs-scripting-python.c` (1769), `obs-scripting-python-frontend.c` (450), the existing `test/conformance/scripts/pyscript/` (25 vectors).
   - Steps: 1. write `specs/S-063-pyscript-backend.md` from the 25 existing `pyscript` vectors + the C (GIL handling, import hook, timer semantics). 2. add the row to `specs/README.md`.
   - Pitfalls: S-039 explicitly excludes the backends and S-060 covers Lua only — pair with S-060, do not duplicate it.
@@ -927,7 +927,7 @@ Verified facts: the main window is split across `frontend/widgets/OBSBasic*.cpp`
   - Files: `OBSBasic.cpp/hpp` (35+11), `OBSApp*` (2), `OBSBasic_MainControls` (42), `OBSBasicControls` (16), `OBSBasicStatusBar` (28+1), `OBSBasic_Scenes` (35), `OBSBasic_Transitions` (53), `OBSBasic_Streaming` (11), `OBSBasic_Recording` (17), `OBSBasic_StudioMode` (8), `OBSBasic_SysTray` (5), `OBSBasic_Service` (5), `OBSBasic_Canvases` (4), `OBSBasic_ReplayBuffer` (10), `OBSBasic_VirtualCam` + `OBSBasicVCamConfig` (14), `OBSBasic_Icons` (2), `OBSBasic_ContextToolbar` (10), `OBSBasic_Browser` (12), `OBSBasic_YouTube` (20), `OBSQTDisplay` (11+1), `OBSBasicPreview*` + `OBSBasic_Preview` + scaling combo/label + `PreviewProgramSizeObserver` (127+6), `Multiview` (6+2), `OBSProjector` + `OBSBasic_Projectors` (21+14), `OBSBasic_Dropfiles` (7), `OBSBasicInteraction` (15), `OBSBasic_Clipboard` (14), `OBSBasic_Screenshots` (3), `OBSBasic_Hotkeys` (5), `OBSBasicStats` (16), `OBSBasic_Docks` (10), `OBSDock` (1), `AutoConfig*` + `TestMode.hpp` (63), `OBSCanvas` (5), `display-helpers` (4).
   - Pitfalls: the interaction behaviour of `OBSBasic_SceneItems.cpp` + `OBSBasicPreview.cpp` is S-067 (P6-07.9) — S-069 covers the remaining widget surface, not the hit-test/handle rules.
   - Done when: S-069 committed; all 58 files cited.
-- [ ] **P6-50.3 Write S-070** — frontend scene collections, profiles & importers (11 files / 148 fns)
+- [x] **P6-50.3 Write S-070** — frontend scene collections, profiles & importers (11 files / 148 fns)
   - Files: `OBSBasic_SceneCollections` (42), `OBSBasic_Profiles` (30), `importers/*` (48), `importer/*` (22).
   - Steps: 1. write `specs/S-070-collections-profiles-importers.md`: collection save/load/duplicate/rename, profile format (cross-ref S-048), the four importer transforms (cross-ref P6-26.7 inventory), dialog view model. 2. add the row.
   - Done when: S-070 committed; all 11 files cited.
@@ -944,7 +944,7 @@ Verified facts: the main window is split across `frontend/widgets/OBSBasic*.cpp`
 - [x] **P6-50.7 Write S-074** — frontend updater, oauth & YouTube (33 files / 226 fns)
   - Files: `updater/*` (64), `oauth/*` (57), `YouTube*` docks/wrappers (60), `GoLiveAPI_*` (9), `WhatsNew*` + `RemoteTextThread` (17), `BrowserDock` (3), `MacUpdateThread` (3), `update-helpers` (2), `AutoUpdateThread` (8), `crypto-helpers-*` (3), `OBSSparkle`/`OBSUpdateDelegate` (4), `OBSBasic_Updater` (5), `OBSUpdate.cpp` dialog (1).
   - Done when: S-074 committed; all 33 files cited.
-- [ ] **P6-50.8 Write S-075** — frontend plugin manager, crash handler & system info (26 files / 134 fns)
+- [x] **P6-50.8 Write S-075** — frontend plugin manager, crash handler & system info (26 files / 134 fns)
   - Files: `plugin-manager/*` (35), `CrashHandler*` (20), `system-info-*` (23), `platform-{windows,osx,x11}` (54), `win-dll-blocklist` (4), `NativeEventFilter*` (2), `OBSProxyStyle` (2).
   - Done when: S-075 committed; all 26 files cited.
 - [x] **P6-50.9 Write S-076** — properties view & Qt widget kit (27 files / 184 fns)

@@ -536,9 +536,9 @@ Verified file map (libobs 33.0.1 checkout, line counts): `libobs/graphics/` (46 
 - [x] **P3-32.1 Write S-078** — D3D11 backend (13 files / 272 fns: `libobs-d3d11/*`)
   - Steps: 1. write `specs/S-078-d3d11-backend.md`: gs_* → ID3D11 device mapping, texture/vertex/index buffer lifecycles, shader compile + processing, rebuild rules, duplicator interop (`d3d11-subsystem.cpp` 156 fns, `d3d11-rebuild.cpp` 20). 2. add the row to `specs/README.md`.
   - Done when: S-078 committed; `libobs-d3d11/` fully cited.
-- [ ] **P3-32.2 Write S-079** — Metal backend (21 files / 184 fns: `libobs-metal/*`)
+- [x] **P3-32.2 Write S-079** — Metal backend (21 files / 184 fns: `libobs-metal/*`)
   - Steps: 1. write `specs/S-079-metal-backend.md` (Swift: device/swapchain/texture/buffer/shader semantics, MTL → gs_* mapping; `metal-subsystem.swift` 38, `OBSShader.swift` 20, `MetalDevice.swift` 16). 2. add the row.
   - Done when: S-079 committed; `libobs-metal/` fully cited.
-- [ ] **P3-32.3 Extend S-057** — OpenGL backend file citations (11 files / 212 fns: `libobs-opengl/*`)
+- [x] **P3-32.3 Extend S-057** — OpenGL backend file citations (11 files / 212 fns: `libobs-opengl/*`)
   - Steps: 1. cite the remaining files (`gl-subsystem.c` 85, `gl-x11-egl.c` 31, `gl-egl-common.c` 19, …) and add rules for the uncited helpers.
   - Done when: `libobs-opengl/` fully cited.

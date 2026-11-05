@@ -501,3 +501,40 @@ getter results and every fake interaction (`fake ...` lines). Comparison rules f
    the frontend spec.
 4. Thread interleavings of the real updater (answer arriving between poll iterations) are modelled only by
    the `updater-route` delay.
+
+## 12. Round 9: Twitch / Amazon IVS service-specific files (added)
+
+R150–R157 pin the shared `service-ingest.c` machinery (defaults, cache, refresh thread, accessors)
+and the built-in default entries. This section pins the two thin per-service wrapper files that
+instantiate it; every behaviour of the shared path is cross-referenced, not restated.
+
+### Reference files (all cited)
+
+- `plugins/rtmp-services/service-specific/amazon-ivs.c`, `plugins/rtmp-services/service-specific/twitch.c`
+
+- **S-026-R158 [SRC]** `twitch.c`: one file-local `static struct service_ingests twitch` —
+  `update_info = NULL`, `mutex = PTHREAD_MUTEX_INITIALIZER`, `ingests_refreshed/refreshing/loaded =
+  false`, empty `cur_ingests`, `cache_old_filename = "twitch_ingests.json"`, `cache_new_filename =
+  "twitch_ingests.new.json"`. Exports, all delegating to the shared path of R151–R157:
+  `twitch_ingests_lock/unlock` (the mutex), `twitch_ingest_count` (`cur_ingests.num`),
+  `twitch_ingest(idx)` (`get_ingest`), `init_twitch_data` (`init_service_data`),
+  `twitch_ingests_refresh(seconds)` (`service_ingests_refresh` with log prefix `"[twitch ingest
+  update] "` and URL `https://ingest.twitch.tv/ingests`), `load_twitch_data` (`load_service_data`
+  with the built-in default `{name "Default", url "rtmp://ingest.global-contribute.live-video.net/
+  app"}` — the R150 entry — and the old cache filename), `unload_twitch_data`
+  (`unload_service_data`).
+- **S-026-R159 [SRC]** `amazon-ivs.c`: the same shape — `static struct service_ingests
+  amazon_ivs` with `cache_old_filename = "amazon_ivs_ingests.json"`,
+  `cache_new_filename = "amazon_ivs_ingests.new.json"`. Exports: `amazon_ivs_ingests_lock/unlock`,
+  `amazon_ivs_ingest_count`, `amazon_ivs_ingest(idx)`, `init_amazon_ivs_data`,
+  `amazon_ivs_ingests_refresh(seconds)` (log prefix `"[amazon ivs ingest update] "`, URL
+  `https://ingest.contribute.live-video.net/ingests`), `load_amazon_ivs_data` (`load_service_data`
+  with the built-in default `{name "Default", url "rtmps://ingest.global-contribute.live-video.
+  net:443/app/"}` — the R150 entry — and the old cache filename), `unload_amazon_ivs_data`.
+
+### Quirks (added)
+
+- Q-15: the two built-in defaults are the *contribute* endpoint of the same host and differ only in
+  scheme/port/slash: Twitch `rtmp://ingest.global-contribute.live-video.net/app` (no port, no
+  trailing slash, plain rtmp) vs Amazon IVS `rtmps://ingest.global-contribute.live-video.net:443/
+  app/` (R150) — a copy-paste asymmetry, not two different services' home URLs.

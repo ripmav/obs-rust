@@ -59,7 +59,7 @@ Corrections to the earlier plan, verified in the tree: the ring buffer is `libob
 - [ ] **P1-05.2 Semaphores and thread names** — `os_sem_init/post/wait/destroy`, `os_set_thread_name` from `threading-posix.c`. Spec: no spec (S-061 gap). Pitfall: `threading-posix.c` carries a separate `#ifdef __APPLE__` `os_sem_init` path (lines ~170–220; macOS lacks unnamed POSIX semaphores) — read it before porting, test macOS separately. Done when: thread name visible in debugger on each OS.
 - [ ] **P1-05.3 Windows parity** — compare behaviour with `threading-windows.c` (213) (events/semaphores are `HANDLE`s from `CreateEvent`/`CreateSemaphore`, driven by `WaitForSingleObject`; no SRW locks). Done when: Windows CI green.
 - [ ] **P1-05.4 Stress and recipe** — 64 threads × 1M signals; apply recipe (Files: `libobs/CMakeLists.txt` (396), `obs-ffi` shim).
-- [ ] **P1-05.5 Write S-061 (added)** — threading-primitives spec (D-27)
+- [x] **P1-05.5 Write S-061 (added)** — threading-primitives spec (D-27)
   - Files: `libobs/util/threading.h` (103), `threading-posix.c` (273), `threading-windows.c` (213).
   - Steps: 1. read the C and enumerate the contract: `os_event_init/post/wait/destroy` (auto-reset), `os_sem_init/post/wait/destroy`, `os_set_thread_name`, the Windows `HANDLE` mapping and the pthread path. 2. write `specs/S-061-threading.md` (format like S-034). 3. add the row to `specs/README.md`.
   - Pitfalls: prerequisite of P1-05.1 (D-27: "write S-061 before starting P1-05"); `os_set_thread_name` (threading-windows.c:168) carries an `#ifdef NO_SEH_MINGW` dual `__try`/`__except` branch — resolve it in the spec.
@@ -247,18 +247,18 @@ Corrections to the earlier plan, verified in the tree: the ring buffer is `libob
 
 ### P1-34 libobs & shared spec sweep (added)
 - Goal: every `libobs/` + `shared/` file cited by a spec (round-6 target: S2 = 100% on the function inventory; per-file lists in `docs/rust-rewrite/specs/BACKLOG.md`).
-- [ ] **P1-34.1 Extend S-001…S-011** — container/math/lexer header inlines + core glue (32 files / 361 fns)
+- [x] **P1-34.1 Extend S-001…S-011** — container/math/lexer header inlines + core glue (32 files / 361 fns)
   - Files: `libobs/callback/`, `libobs/graphics/`, `libobs/util/{darray.h, deque.h, dstr.h, cf-lexer.*, cf-parser.*, lexer.*, base.c, bmem.*, util.hpp}` — full list in `specs/BACKLOG.md`.
   - Steps: 1. extend each of S-001/002/003/004/005/006/008/009/010/011 to cite its remaining files and add rules for the uncited functions (header inlines, e.g. `vec3.h` 20, `darray.h` 26, `dstr.h` 18, `cf-lexer.c` 55).
   - Done when: the 32 files cite (S2 = 1 in the inventory) and no file behaviour is left unspecified.
-- [ ] **P1-34.2 Extend S-010/S-013/S-023/S-024** — media conversion, serializers, platform/util, small helpers (24 files / 254 fns)
+- [x] **P1-34.2 Extend S-010/S-013/S-023/S-024** — media conversion, serializers, platform/util, small helpers (24 files / 254 fns)
   - Files: `libobs/media-io/`, the serializer files, `libobs/util/{platform.c, platform-windows.c, utf8.c, profiler.hpp, windows/}`, `shared/{file-updater, happy-eyeballs, bpm, opts-parser}`.
   - Steps: 1. cite the files in the owning spec and add rules for the uncited functions (`platform-windows.c` 67 fns is the largest).
   - Done when: same.
-- [ ] **P1-34.3 Extend S-041/S-042/S-035** — output, core remainder, module loader (10 files / 233 fns)
+- [x] **P1-34.3 Extend S-041/S-042/S-035** — output, core remainder, module loader (10 files / 233 fns)
   - Files: `libobs/obs-output.c` (146 fns — S-041 is marked "partial coverage" for exactly this file), `obs-output-delay.c`, `obs-cocoa.m`, `obs-windows.c`, `obs-win-crash-handler.c`, `obs.hpp`, `obs-core-modules*`.
   - Steps: 1. finish S-041 for `obs-output.c` + delay; 2. extend S-042 with the platform vtables + crash handler + module-loader glue.
   - Done when: same; S-041 no longer "partial coverage".
-- [ ] **P1-34.4 Extend S-032/S-065** — audio controls + audio-monitoring backends (4 files / 54 fns)
+- [x] **P1-34.4 Extend S-032/S-065** — audio controls + audio-monitoring backends (4 files / 54 fns)
   - Files: `libobs/obs-audio-controls.c` (40 fns), `libobs/audio-monitoring/{win32,osx}/` enumeration files.
   - Done when: same (S-065 is written by P1-05.5's sibling P2-15.6 — coordinate).

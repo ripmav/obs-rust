@@ -413,3 +413,54 @@ The rule labels R-E / R-O / R-I / R-C / R-D used in text map to the numeric rang
 * Whether `R-C03`'s exponent randomisation `[1.5, 1.55)` is relied on by anything: the vectors pin it to 1.5 through a test hook.
 * The unspecified order of `stop` (main thread) and `deactivate` (end thread); the vectors fix `stop` before `deactivate`.
 * `D-1`: required behaviour is stated but cannot be demonstrated without aborting the reference.
+
+## 12. Round 9: `obs-output.c` object model & `obs-output-delay.c` loop (added)
+
+### Reference files (all cited)
+
+- `libobs/obs-output.c`, `libobs/obs-output-delay.c`
+
+- **S-041-R76** `obs-output.c` object model: output registration/lookup (`find_output`, `obs_output_get_display_name`, `obs_output_get_module`, `obs_get_output_flags`), state (`obs_output_load_state`/save pair, `get_defaults`), lifecycle (`obs_output_create`/`init_output_handlers`/`obs_output_destroy` with `free_packets`, `clear_raw_audio_buffers`, `destroy_caption_track`), start/stop (`obs_output_start`/`obs_output_actual_start`, `obs_output_stop`/`obs_output_actual_stop`, `obs_output_force_stop`), and the per-packet flag logging helpers `log_flag_encoded`/`log_flag_video`/`log_flag_audio`/`log_flag_service` + `log_frame_info` — the start/stop ordering and packet routing are pinned in the earlier sections; this rule pins the file's remaining surface (the 146 non-trivial functions of the output object).
+- **S-041-R77** `obs-output-delay.c`: the output-delay loop — `obs_output_delay_start`/`obs_output_delay_stop` (start/stop the delay thread + active flag), `obs_output_set_delay`/`obs_output_get_active_delay`, `process_delay`/`process_delay_data` (the timer: pop queued packets whose delay has elapsed), `push_packet`/`pop_packet` (the delayed-packet queue), `obs_output_cleanup_delay`, `log_flag_encoded` — delay semantics per the earlier sections.
+
+## 13. Round 9: obs-outputs plugin — null output, module glue, utils (added)
+
+Section 12 pinned the libobs object model this plugin builds on; this section pins the
+`plugins/obs-outputs` files that were not cited: the null output (a consumer of the encoded-output
+object), the plugin module glue, and the small bit helpers.
+
+### Reference files (all cited)
+
+- `plugins/obs-outputs/null-output.c`, `plugins/obs-outputs/obs-outputs.c`, `plugins/obs-outputs/utils.h`
+
+- **S-041-R78 [SRC]** `null-output.c` (7 fns): `struct null_output { obs_output_t *output; pthread_t
+  stop_thread; bool stop_thread_active }`. Info: id `null_output`, flags `AV | ENCODED |
+  MULTI_TRACK_AV`, `get_name` returns the **literal** string `Null Encoding Output` (not a module
+  text key, Q-10), callbacks create/destroy/start/stop/encoded_packet. create: zeroed object,
+  stores the output handle, settings ignored. start: `obs_output_can_begin_data_capture(output, 0)`
+  failure → false; `obs_output_initialize_encoders(output, 0)` failure → false; if a stop thread is
+  still active join it first; `obs_output_begin_data_capture(output, 0)`; true. stop(`ts` ignored):
+  `stop_thread_active := (pthread_create(stop_thread) == 0)` — the end of the capture runs
+  **asynchronously**. stop_thread: `obs_output_end_data_capture(output)`, then
+  `stop_thread_active = false`. encoded_packet: no-op (packets are dropped). destroy: join the stop
+  thread if active, free. (The join-in-start is what makes a stop→start race safe; the output
+  object's own start/stop ordering is the earlier sections'.)
+- **S-041-R79 [SRC]** `obs-outputs.c` (6 fns): module description "OBS core RTMP/FLV/null outputs",
+  locale en-US. `obs_module_load`: on `_WIN32` `WSAStartup(MAKEWORD(2, 2), ...)` (result ignored);
+  on `_WIN32` + `MBEDTLS_THREADING_ALT`: `mbedtls_threading_set_alt` with a CRITICAL_SECTION-backed
+  implementation (init: bzalloc + InitializeCriticalSection; free: Delete + free + NULL; lock/unlock:
+  Enter/Leave, always return 0); then register the five outputs in order: `rtmp_output_info`,
+  `null_output_info`, `flv_output_info`, `mp4_output_info`, `mov_output_info`.
+  `obs_module_unload`: on `_WIN32` — `mbedtls_threading_free_alt()` (if `MBEDTLS_THREADING_ALT`)
+  then `WSACleanup()`.
+- **S-041-R80 [SRC]** `utils.h` (3 fns): the bit helpers used by the plugin's RTMP codec helpers
+  (rtmp-av1.c, rtmp-hevc.c): `clz32` / `ctz32` — GCC/clang: `__builtin_clz` / `__builtin_ctz`;
+  MSVC: clz via `_BitScanReverse` → `31 - index` (BSR chosen deliberately over `_lzcnt_u32` for
+  older-Intel compatibility), ctz via `_tzcnt_u32` (x86) or `_CountTrailingZeros` (ARM64); other
+  compilers: portable `popcnt`, clz = `32 - popcnt(bitspread(x))`, ctz = `popcnt((x & -x) - 1)`.
+  Plus the trivial `min_u32` / `min_u16` / `min_i32` / `max_u8` inlines.
+
+### Quirks (added)
+
+- Q-10: the null output's `get_name` returns a hardcoded English literal, while the other outputs of
+  the same plugin go through `obs_module_text` — it never localises.

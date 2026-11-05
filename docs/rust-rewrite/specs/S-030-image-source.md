@@ -292,3 +292,17 @@ equivalent guarantee; observable results are as in the single-threaded fake.
   implementation. Expect gaps in H3/H6 details and in the obs-data coercion rules (int<->double only).
 - Log text is not specified except levels (warning for load failures).
 - The audio path, real decoding and real transition rendering are not specified.
+
+## 11. Round 9: file ownership of the four plugin sources (added)
+
+§5 pins all four sources at behaviour level; the plugin's `.c` files themselves were not cited. This section
+maps each file to the rules that own it and pins the struct layouts (the state those rules manipulate).
+
+### Reference files (all cited)
+
+- `plugins/image-source/image-source.c`, `plugins/image-source/color-source.c`, `plugins/image-source/obs-slideshow.c`, `plugins/image-source/obs-slideshow-mk2.c`
+
+- **S-030-R47 [SRC]** `image-source.c` (24 fns): `struct image_source {source, char *file, bool persistent, is_slide, linear_alpha, time_t file_timestamp, float update_time_elapsed, uint64 last_time, bool active, restart_gif, volatile bool file_decoded, volatile bool texture_loaded, gs_image_file_ex_t image}`. Owned by R10–R19; note the two **volatile** flags: `file_decoded` is written by the decode task (R46) and read by the tick (R15), `texture_loaded` by the tick.
+- **S-030-R48 [SRC]** `color-source.c` (11 fns): `struct color_source {vec4 color, vec4 color_srgb, uint32 width, height, src}`. All three descriptors live in this file: v0 and v2 flags `VIDEO|CUSTOM_DRAW|CAP_OBSOLETE`, v3 `VIDEO|CUSTOM_DRAW|SRGB`; owned by R01–R03.
+- **S-030-R49 [SRC]** `obs-slideshow.c` (40 fns): `struct image_file_data {char *path, obs_source_t *source}`; `struct slideshow {source, bools randomize/loop/restart_on_activate/pause_on_deactivate/restart/manual/hide/use_cut/paused/stop, float slide_time, uint32 tr_speed, const char *tr_name, transition, calldata_t cd, float elapsed, size_t cur_item, uint32 cx, cy, uint64 mem_usage, pthread_mutex_t mutex, image_file_array_t files, enum behavior, five obs_hotkey_id, enum obs_media_state state}`. v1 guards `files` and the transition with the mutex (taken by tick, update and the size accessors; §7); owned by R20–R33.
+- **S-030-R50 [SRC]** `obs-slideshow-mk2.c` (44 fns): `struct image_file_data {char *path}` (no source — the slide sources live in the buffers); `struct source_data {size_t slide_idx, const char *path, obs_source_t *source}`; `struct active_slides {deque prev, deque next, source_data cur}` with five entries per deque as R43 orders them (`prev[0]` farthest back, `next[4]` farthest ahead); `struct slideshow_data {slides, files, float slide_time, uint32 tr_speed, const char *tr_name, bools manual/randomize/loop/restart_on_activate/pause_on_deactivate/restart/hide/use_cut/paused/stop, calldata_t cd, float elapsed, enum behavior, state}`; `struct slideshow {source, data}`. mk2 holds no mutex of its own (§7); owned by R41–R46.

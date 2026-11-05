@@ -378,3 +378,56 @@ by f32 rounding except for pathological values (use `f64` and verify on the vect
 
 - Real PNG decode (16-bit, palette) is delegated to the image loader; only the shipped greyscale set is pinned.
 - Behaviour of the real core helpers is only contract-level here (3.2); see the source-core spec.
+
+## 12. Round 9: file ownership of the seven transition files (added)
+
+§5.2–§5.8 pin every transition's observable behaviour; the `.c` files themselves were not cited. This
+section maps each file to the rules that own it and adds the file-local facts they carry: the per-file
+data struct and the `obs_source_info` record. Where a rule already pins a value it is not restated.
+
+### Reference files (all cited)
+
+- `plugins/obs-transitions/transition-stinger.c`, `plugins/obs-transitions/transition-fade-to-color.c`, `plugins/obs-transitions/transition-luma-wipe.c`, `plugins/obs-transitions/transition-slide.c`, `plugins/obs-transitions/transition-swipe.c`, `plugins/obs-transitions/transition-fade.c`, `plugins/obs-transitions/transition-cut.c`
+
+### 12.1 Simple transitions
+
+- **S-029-R57 [SRC]** `transition-cut.c` (8 fns): `struct cut_info { obs_source_t *source }`;
+  `struct obs_source_info cut_transition` — id `cut_transition`, type TRANSITION, callbacks
+  get_name/create/destroy/video_render/audio_render/video_get_color_space only (no update, no
+  properties, no defaults). Behaviour R11–R14.
+- **S-029-R58 [SRC]** `transition-fade.c` (9 fns): `struct fade_info { source; gs_effect_t *effect;
+  gs_eparam_t *a_param, *b_param, *fade_param }`; info `fade_transition` (id `fade_transition`),
+  callbacks as R15–R19. Behaviour R15–R19.
+- **S-029-R59 [SRC]** `transition-fade-to-color.c` (14 fns): `struct fade_to_color_info { source;
+  gs_effect_t *effect; gs_eparam_t *ep_tex, *ep_swp, *ep_color; struct vec4 color, color_srgb; float
+  switch_point }` (the two vec4s are the R21 pair); info `fade_to_color_transition`. Behaviour
+  R20–R26.
+- **S-029-R60 [SRC]** `transition-luma-wipe.c` (13 fns): `struct luma_wipe_info { source;
+  gs_effect_t *effect; gs_eparam_t *ep_a_tex, *ep_b_tex, *ep_l_tex, *ep_progress, *ep_invert,
+  *ep_softness; gs_image_file_ex_t luma_image; bool invert_luma; float softness; obs_data_t
+  *wipes_list }` (`wipes_list` holds the R29 list source); info `luma_wipe_transition`. Behaviour
+  R27–R31.
+- **S-029-R61 [SRC]** `transition-slide.c` (11 fns): `struct slide_info { source; gs_effect_t
+  *effect; gs_eparam_t *a_param, *b_param, *tex_a_dir_param, *tex_b_dir_param; struct vec2 dir; bool
+  slide_in }` (the instance is bzalloc'd; `slide_in` is never written or read afterwards — a dead
+  field, always 0; the direction mapping is R33); info `slide_transition`. Behaviour R32–R36.
+- **S-029-R62 [SRC]** `transition-swipe.c` (11 fns): `struct swipe_info { source; gs_effect_t
+  *effect; gs_eparam_t *a_param, *b_param, *swipe_param; struct vec2 dir; bool swipe_in }`; info
+  `swipe_transition`. Behaviour R37–R39, R40.
+
+### 12.2 Stinger
+
+- **S-029-R63 [SRC]** `transition-stinger.c` (26 fns): `struct stinger_info { source; obs_source_t
+  *media_source, *matte_source; uint64_t duration_ns, duration_frames, transition_point_ns,
+  transition_point_frame; float transition_point, transition_a_mul, transition_b_mul; bool
+  transitioning, transition_point_is_frame, monitoring; enum fade_style fade_style; bool
+  track_matte_enabled; int matte_layout; float matte_width_factor, matte_height_factor; bool
+  invert_matte, do_texrender, matte_rendered; gs_effect_t *matte_effect; gs_eparam_t *ep_a_tex,
+  *ep_b_tex, *ep_matte_tex, *ep_invert_matte; gs_texrender_t *matte_tex, *stinger_tex; float
+  (*mix_a)(void *data, float t), (*mix_b)(void *data, float t) }` — the mix function pointers are
+  bound in update to the R54 curves (style 0) or the cross-fade pair (style 1); `matte_width_factor`
+  / `matte_height_factor` are the R49 layout split factors. `struct obs_source_info stinger_transition`
+  — id `obs_stinger_transition`, type TRANSITION, callbacks: get_name, create, destroy, update,
+  get_defaults, video_render, video_tick, audio_render, missing_files, get_properties,
+  enum_active_sources, enum_all_sources, transition_start, transition_stop, video_get_color_space.
+  Behaviour R41–R56.

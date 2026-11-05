@@ -321,3 +321,14 @@ identical.
 - Odd `start_y` / `end_y`, `out_linesize[0]` not a multiple of 4 and unaligned compressor input are outside the contract (D-2); the
   reference results are not vectors. Whether the Rust side should reject them or process `ols0` pixels is a project decision.
 - Whether `decompress_422`'s linesize handling (Q-4) is intended; no in-tree caller exists in libobs 33.0.1 (the symbols remain for plugins).
+
+## 12. Round 9: FFmpeg-backed remux/scaler/resampler + conversion file citation (added)
+
+### Reference files (all cited)
+
+- `libobs/media-io/media-remux.c`, `libobs/media-io/video-scaler-ffmpeg.c`, `libobs/media-io/audio-resampler-ffmpeg.c`, `libobs/media-io/format-conversion.c`
+
+- **S-013-R56** `media-remux.c`: the libav-format-based remux job — `media_remux_job_create` (open input/output via `init_input`/`init_output`, size metadata via `init_size`), `process_packet`/`process_packets` (read input packet, rescale pts/dts, map streams, write to output), `media_remux_job_process` (pump until done), `media_remux_job_destroy`.
+- **S-013-R57** `video-scaler-ffmpeg.c`: the swscale-backed reference scaler — `get_ffmpeg_video_format`/`get_ffmpeg_scale_type`/`get_ffmpeg_coeffs`/`get_ffmpeg_range_type` (obs → FFmpeg mapping), `video_scaler_create`/`video_scaler_destroy`, `video_scaler_scale` (the sws call; scaler contract per the earlier sections).
+- **S-013-R58** `audio-resampler-ffmpeg.c`: the aresample-backed resampler — `convert_audio_format`/`convert_speaker_layout` (obs → FFmpeg), `audio_resampler_create`/`audio_resampler_destroy`, `audio_resampler_resample`.
+- **S-013-R59** `format-conversion.c`: the pure-C uyvx pack/unpack set — `compress_uyvx_to_i420`/`compress_uyvx_to_nv12`, `convert_uyvx_to_i444`, `decompress_420`/`decompress_nv12`/`decompress_422` (Q-4 applies) — semantics per the earlier sections.

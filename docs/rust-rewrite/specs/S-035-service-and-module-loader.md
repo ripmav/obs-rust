@@ -436,3 +436,11 @@ Runner commands are in `test/conformance/README.md` (section "modservice runner"
 * Platform-specific loaders (Windows, macOS) and `get_plugin_info` on Windows were read but not testable here.
 * `LOG_WARNING` vs `LOG_ERROR` levels are as printed in the vectors; texts are informative.
 * `obs_module_get_locale_string(NULL)` aborts through `assert` in debug builds; release behaviour (return false) is assumed.
+
+## 12. Round 9: core-module loaders (added)
+
+### Reference files (all cited)
+
+- `libobs/obs-core-modules-loader-mac.m`, `libobs/obs-core-modules-loader-nix.c`, `libobs/obs-core-modules-loader-win.c`, `libobs/obs-core-modules.c.in`
+
+- **S-035-R115** Core-module loaders: each platform file provides `load_core_modules` (mac: also `find_core_module`) — the built-in (non-file) modules are loaded by name from the generated `obs-core-modules.c.in` list; `obs_in_core_module_list` (generated from the `.c.in` template) answers "is this module built in". Behaviour per the module-loader rules pinned in the earlier sections (load order, failure = skip with log).

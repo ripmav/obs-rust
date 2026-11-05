@@ -160,3 +160,109 @@ Atlas cursor logic and wrap pre-pass must be reproduced exactly (the stored text
 
 ## 11. Open questions
 Windows 16-bit wchar behaviour (surrogate pairs, UTF-16 files) and real font rasterisation are unverified. Real FreeType hinting changes advances/bitmaps; the fake uses scripted metrics.
+
+## 12. Round 9: font discovery (contract level) + GDI text source (added)
+
+Section 1 replaced font discovery by the fake host; the find-font files are now pinned at contract
+level ([SRC], the implementer reads the C reference for the API calls). The GDI text source
+(`plugins/obs-text`, a separate plugin) is a new component for this spec. The freetype2 core files
+map to the existing rules.
+
+### Reference files (all cited)
+
+- `plugins/obs-text/gdiplus/obs-text.cpp`, `plugins/text-freetype2/text-freetype2.c`, `plugins/text-freetype2/text-functionality.c`, `plugins/text-freetype2/find-font.c`, `plugins/text-freetype2/find-font-cocoa.m`, `plugins/text-freetype2/find-font-windows.c`, `plugins/text-freetype2/find-font-iconv.c`, `plugins/text-freetype2/obs-convenience.c`, `plugins/text-freetype2/find-font-unix.c`, `plugins/text-freetype2/find-font.h`
+
+### 12.1 File-to-rule map: freetype2 core
+
+- **S-038-R71 [SRC]** `text-freetype2.c` (17 fns): registration/defaults/properties/create/update/
+  missing-files/module-unload — R01–R07, R10–R19, R70.
+- **S-038-R72 [SRC]** `text-functionality.c` (15 fns): glyph cache R20–R25, text width R30, vertex
+  build R31–R34 (`fill_vertex_buffer`), render R40 (`draw_outlines`/`drop_shadow`), file reading
+  R50–R52 (`load_text_from_file`, `read_from_end`, `get_ft2_text_width`).
+- **S-038-R73 [SRC]** `obs-convenience.c` (2 fns): `create_uv_vbuffer(num_verts, add_color)` (the
+  vertex buffer of R31: uv + optional colour attribute) and `draw_uv_vbuffer` (the draw of R40).
+
+### 12.2 Font discovery (contract level, [SRC] throughout)
+
+- **S-038-R74 [SRC]** `find-font.h`: `struct font_path_info { char *face_and_style; uint32_t full_len,
+  face_len; bool is_bitmap; uint32_t num_sizes; int *sizes; bool bold, italic; char *path; FT_Long
+  index }`; exports `build_font_path_info`, `sfnt_name_to_utf8`, `load_cached_os_font_list`,
+  `load_os_font_list`, `free_os_font_list`, `get_font_path`.
+- **S-038-R75 [SRC]** `find-font.c` (11 fns; the shared machinery used by the Windows and Cocoa
+  builds): a module-global darray `font_list` of `font_path_info`, filled by
+  `build_font_path_info(face, idx, path)` (face_and_style from the face's sfnt family + style names
+  via `sfnt_name_to_utf8`, `face_len` = family part length, `is_bitmap` = fixed-size face, the
+  bitmap strike `sizes`, bold/italic face bits, `index` = face index). Cache file
+  `font_data.bin` in the module config dir: read = u32 version (must be 1) + u32 font checksum (must
+  equal `get_font_checksum()`) + the list; any mismatch rebuilds. Save writes the same layout via
+  the "tmp" suffix atomic rename (skipped when the checksum is 0). `get_font_path(family, size,
+  style, flags, idx)`: compare string = family (+ " " + style when style non-empty); per entry:
+  rating = case-insensitive (toupper) common-prefix length of (face_and_style, compare string);
+  rating < face_len → skip; bitmap entry: rating /= (best_diff + 1), best_diff = min over strikes of
+  |strike − size| (starting 1000); rating += 1 per matching bold flag, += 1 per matching italic
+  flag; strict `rating > best_rating` (start 0.0) updates the result. Returns the best path (or
+  NULL) and sets `*idx` to that entry's face index.
+- **S-038-R76 [SRC]** `find-font-unix.c` (fontconfig build): no font list and no cache —
+  `load_os_font_list`/`free_os_font_list` are empty, `load_cached_os_font_list` returns true.
+  `get_font_path` builds an FcPattern (FAMILY, STYLE, WEIGHT bold?BOLD:REGULAR, SLANT
+  italic?ITALIC:ROMAN, SIZE), runs `FcConfigSubstitute(NULL, pattern, FcMatchPattern)` +
+  `FcDefaultSubstitute`, then `FcFontMatch`; on match: `FcPatternFormat(match, "%{file}")` copied
+  (strncpy, 511) into a `static __thread char result[512]`, `*idx` from FC_INDEX (default 0),
+  returns `&result[0]`; on no match: WARNING `no matching font for '%s' found` (family) and NULL.
+- **S-038-R77 [SRC]** `find-font-windows.c` (7 fns): `get_font_checksum`: `SHGetFolderPathA(CSIDL_FONTS)`
+  (failure: WARNING `Error finding windows font folder`, 0); `FindFirstFileA(dir + "\\*.*")`;
+  checksum = CRC32 accumulated over each entry's `ftLastWriteTime` (whole FILETIME) then
+  `cFileName` (strlen bytes). `load_os_font_list`: same scan, directories skipped, each file opened
+  with `FT_New_Face` per face index (loop while it succeeds, `num_faces` bounds) →
+  `build_font_path_info` per face. `wide_to_utf8`: UTF-16 → UTF-8 including surrogate pairs.
+- **S-038-R78 [SRC]** `find-font-iconv.c` (3 fns): `sfnt_name_to_utf8(name)` picks an iconv charset
+  by `platform_id`: APPLE_UNICODE → "UTF-16BE"; MACINTOSH → the 27-entry table
+  (ROMAN: ENGLISH/ANY "macintosh", ICELANDIC "x-mac-icelandic", TURKISH/POLISH/CZECH/SLOVAK
+  "x-mac-ce", ROMANIAN "x-mac-romanian"; JAPANESE "Shift_JIS"; KOREAN "EUC-KR"; ARABIC
+  ARABIC/ANY "x-mac-arabic", URDU/FARSI "x-mac-farsi"; HEBREW "x-mac-hebrew"; GREEK "x-mac-greek";
+  RUSSIAN "x-mac-cyrillic"; DEVANAGARI/GURMUKHI/GUJARATI "x-mac-<script>"; TRADITIONAL_CHINESE
+  "Big5"; SIMPLIFIED_CHINESE "GB2312") with exact (encoding,language) then (encoding, ANY)
+  fallback; ISO → iso_codes[encoding_id] {0 "us-ascii", 1 none, 2 "iso-8859-1"}; MICROSOFT →
+  ms_codes[encoding_id] {0,1 "UTF-16BE", 2 "Shift_JIS", 4 "Big5", 10 "UTF-16BE"}; anything else →
+  NULL (DEBUG log with the three ids). Conversion: `iconv_open("UTF-8", charset)` (failure: DEBUG
+  log, NULL), iconv into a 256-byte buffer (failure: WARNING `couldn't convert font name text:
+  errno = %d`), NUL-terminated, returned as a copy.
+- **S-038-R79 [SRC]** `find-font-cocoa.m` (7 fns): `load_os_font_list` walks
+  `NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSAllDomainsMask)` → `<dir>/Fonts`
+  (when a directory) recursively via `NSFileManager contentsOfDirectoryAtPath`; every file gets the
+  same `FT_New_Face`-per-face + `build_font_path_info` loop as Windows. `get_font_checksum`: CRC32
+  over the full paths of the files in those `Fonts` directories (non-recursive). The rest
+  (list, cache, `get_font_path`) is the shared machinery of R75.
+
+### 12.3 GDI text source (`obs-text/gdiplus/obs-text.cpp`, new component)
+
+- **S-038-R80** Registered three times, all id `text_gdiplus`, type INPUT, icon TEXT, name key
+  `TextGDIPlus`, flags `VIDEO|CUSTOM_DRAW|CAP_OBSOLETE|SRGB` — version 0 (flags as-is), version 2
+  (same flags, version field 2), version 3 (version 3, CAP_OBSOLETE cleared). All three share
+  create/update/tick/render/missing-files/get_properties/get_width/get_height; only `get_defaults`
+  (R81, the size default) and the create flag differ: versions 0 and 2 construct the source with
+  `old_extents = true`, version 3 with `old_extents = false` (it changes the extents/wrap sizing in
+  `CalculateTextSizes`/`TransformText` [SRC]). Module load registers the three infos then runs
+  `GdiplusStartup` (default-initialized input) — the GDI+ token is process-global.
+- **S-038-R81** Defaults (both size classes, `ver == 1` only for version 0): font object
+  `face = "Arial"`, `size = ver == 1 ? 36 : 256`, `flags = 0`, `style = ""`; `align = "left"`,
+  `valign = "top"`, `color = 0xFFFFFF`, `opacity = 100`, `gradient_color = 0xFFFFFF`,
+  `gradient_opacity = 100`, `gradient_dir = 90.0`, `bkcolor = 0x000000`, `bkopacity = 0`,
+  `outline_size = 2`, `outline_color = 0xFFFFFF`, `outline_opacity = 100`, `chatlog_lines = 6`,
+  `extents_wrap = true`, `extents_cx = 100`, `extents_cy = 100`, `transform = none`,
+  `antialiasing = true`.
+- **S-038-R82** Tick: no-op unless reading from a file; accumulate `seconds` into
+  `update_time_elapsed`; when >= 1.0: query the file's mtime (−1 on error), reset the accumulator;
+  if a reload was scheduled: `LoadFileText` + `TransformText` + `RenderText`, clear the flag; then if
+  the mtime differs from the stored one: store it and schedule the reload. As S-038-R60 for the
+  FreeType source: a change is noticed on one check and applied on the next.
+- **S-038-R83** Render: no-op without a texture; otherwise the base `OBS_EFFECT_DEFAULT` effect,
+  technique `Draw`, pass 0: framebuffer-sRGB enabled (previous state restored after),
+  `set_texture_srgb("image", tex)`, `draw_sprite(tex, 0, cx, cy)`. The texture is built in
+  `RenderText` by GDI+ drawing (`StringFormat` generic-typographic, a `LinearGradientBrush` between
+  the two opacity-applied colours along `gradient_dir`, background fill of the extents rectangle when
+  the text overflows the box) into a 32bpp ARGB bitmap, uploaded as a texture.
+- **S-038-R84** missing_files: as S-038-R70 (the `use_file`/`file` keys, source kind, the callback
+  stores the new path and updates the source). Update flow: `LoadFileText` (file text, UTF-8 or
+  UTF-16 by BOM [SRC]), `TransformText` (layout, extents, wrap, chat-log tail), `RenderText`
+  (R83's bitmap) — run together on update and on the tick's scheduled reload.

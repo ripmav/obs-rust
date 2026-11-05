@@ -499,3 +499,15 @@ No function holds a lock. `os_get_physical_cores`/`logical`/`os_get_sys_total_si
 6. `os_fgets`-style helpers and `os_extract_path_*` do not exist in the 33.0.1 platform files and are therefore not specified.
 
 > **Resolution of the S-007 conflict (open question 5):** `test/conformance/gen/stubs.c` now contains the exact reference `os_dtostr`, `S-007-R08` and the `config/04-typed-values` vectors were corrected to the real (defective) behaviour, and the choice between reproducing and fixing it is recorded as S-007 open question 2.
+
+## 12. Round 9: the `platform.c` / `platform-windows.c` implementations, utf8 predicates, Windows helpers (added)
+
+### Reference files (all cited)
+
+- `libobs/util/platform.c`, `libobs/util/platform-windows.c`, `libobs/util/utf8.c`, `libobs/util/windows/obfuscate.c`, `libobs/util/windows/WinHandle.hpp`, `libobs/util/windows/device-enum.c`, `libobs/util/windows/win-version.h`
+
+- **S-023-R108** `platform.c`: the cross-platform `os_*` file/IO layer — `os_wfopen`/`os_fopen`, `os_fgetsize`/`os_stat`/`os_fseeki64`/`os_ftelli64`, `os_fread_mbs`/`os_fread_utf8` (whole-file reads into arrays), `os_quick_read_mbs_file`/`os_quick_read_utf8_file`, `os_quick_write_mbs_file`/`os_quick_write_utf8_file` and `os_quick_write_utf8_file_safe` (atomic temp-file + rename), `os_get_file_size`, and the wide-conversion wrappers `os_mbs_to_wcs`/`os_utf8_to_wcs` (+ their `_free`/count variants) — the cross-platform contract is pinned in the earlier sections; this file is the shared implementation.
+- **S-023-R109** `platform-windows.c`: the Win32 implementation of that contract — `get_clockfreq`/`get_winver` (cached system/build info), module access `os_dlopen`/`os_dlsym`/`has_obs_export`/`get_plugin_info`/`os_is_obs_plugin`, CPU usage `os_cpu_usage_info_start`/`os_cpu_usage_info_query`/`os_cpu_usage_info_destroy` (process + kernel/user times), `os_sleepto_ns`/`os_sleepto_ns_fast`/`os_sleep_ms`, `os_gettime_ns` (QPC), the `os_get_path_*` family (`os_get_path_internal`/`os_get_path_ptr_internal`), plus the remaining `os_*` entries (environment, process spawn/kill, window helpers, admin check) per the contract pinned earlier.
+- **S-023-R110** `utf8.c`: `has_utf8_bom`, `utf8_to_wchar`/`wchar_to_utf8` (conversion with the error rules pinned earlier), `wchar_forbidden`/`utf8_forbidden` (forbidden-character predicates used by the path sanitiser).
+- **S-023-R111** `windows/obfuscate.c`: `deobfuscate_str` (XOR unscramble at first use) and `ms_get_obfuscated_func` (resolve a CRT function name from the obfuscated table, so the binary does not reference it by plain name).
+- **S-023-R112** Small Windows helpers: `windows/WinHandle.hpp` (`Clear` — RAII handle closer), `windows/device-enum.c` (`enum_graphics_device_luids` — graphics-device LUIDs via EnumDisplayDevices), `windows/win-version.h` (`win_version_compare` — build-version comparison).
