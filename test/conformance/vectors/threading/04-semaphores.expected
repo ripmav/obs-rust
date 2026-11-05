@@ -1,0 +1,14 @@
+sem a ok
+wsem a 0
+wsem a 0
+spost a 1 0
+wsem a 0
+sdest a
+sem b ok
+wsemwake b 0
+wsemwake b 0
+sdest b
+sem c fail rc=-1
+snull wait=-1 post=-1
+sdest @null
+spost @null 1 -1

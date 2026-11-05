@@ -1,0 +1,7 @@
+# S-061 R05: os_set_thread_name on glibc — read back with pthread_getname_np;
+# the 15-char truncation and the empty name
+wname "hello"
+wname "abcdefghijklmno"
+wname "abcdefghijklmnop"
+wname "a b c"
+wname ""

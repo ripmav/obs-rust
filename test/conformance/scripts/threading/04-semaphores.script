@@ -1,0 +1,16 @@
+# S-061 R04: counting semaphore — posts, waits, zero-init wake, NULL guards,
+# negative initial count
+sem a 2
+wsem a
+wsem a
+spost a 1
+wsem a
+sdest a
+sem b 0
+wsemwake b 1
+wsemwake b 2
+sdest b
+sem c -1
+snull
+sdest @null
+spost @null

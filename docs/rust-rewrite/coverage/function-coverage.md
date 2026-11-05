@@ -27,31 +27,31 @@ Inventory: 1850 source files, 16414 functions total, 13309 non-trivial (1112 in 
 
 | set | n | T1 named | F1 file named in plan | T2 file->task | S1 named | S2 file in spec | X1 named | X2 file in tests | any1 named | any2 file | all2 triple |
 |---|---|---|---|---|---|---|---|---|---|---|---|
-| all non-trivial | 13309 | 976 (7.3%) | 11688 (87.8%) | 13308 (100.0%) | 3388 (25.5%) | 12251 (92.1%) | 3248 (24.4%) | 5429 (40.8%) | 5034 (37.8%) | 13309 (100.0%) | 5098 (38.3%) |
-| first-party | 12197 | 817 (6.7%) | 11500 (94.3%) | 12196 (100.0%) | 3121 (25.6%) | 12133 (99.5%) | 2972 (24.4%) | 4997 (41.0%) | 4721 (38.7%) | 12197 (100.0%) | 4997 (41.0%) |
+| all non-trivial | 13309 | 976 (7.3%) | 11688 (87.8%) | 13308 (100.0%) | 3417 (25.7%) | 12251 (92.1%) | 3248 (24.4%) | 5431 (40.8%) | 5057 (38.0%) | 13309 (100.0%) | 5100 (38.3%) |
+| first-party | 12197 | 817 (6.7%) | 11500 (94.3%) | 12196 (100.0%) | 3150 (25.8%) | 12133 (99.5%) | 2972 (24.4%) | 4999 (41.0%) | 4744 (38.9%) | 12197 (100.0%) | 4999 (41.0%) |
 | vendored third-party | 1112 | 159 (14.3%) | 188 (16.9%) | 1112 (100.0%) | 267 (24.0%) | 118 (10.6%) | 276 (24.8%) | 432 (38.8%) | 313 (28.1%) | 1112 (100.0%) | 101 (9.1%) |
-| trivial (helpers, excluded) | 3105 | 183 (5.9%) | 2456 (79.1%) | 3105 (100.0%) | 663 (21.4%) | 2576 (83.0%) | 908 (29.2%) | 972 (31.3%) | 1192 (38.4%) | 3105 (100.0%) | 875 (28.2%) |
+| trivial (helpers, excluded) | 3105 | 183 (5.9%) | 2456 (79.1%) | 3105 (100.0%) | 684 (22.0%) | 2576 (83.0%) | 908 (29.2%) | 972 (31.3%) | 1207 (38.9%) | 3105 (100.0%) | 875 (28.2%) |
 
 ## Per area (non-trivial, first-party)
 
 | area | n | T1 named | F1 file named in plan | T2 file->task | S1 named | S2 file in spec | X1 named | X2 file in tests | any1 named | any2 file | all2 triple |
 |---|---|---|---|---|---|---|---|---|---|---|---|
-| libobs | 3235 | 433 (13.4%) | 3235 (100.0%) | 3234 (100.0%) | 882 (27.3%) | 3235 (100.0%) | 1729 (53.4%) | 2754 (85.1%) | 1902 (58.8%) | 3235 (100.0%) | 2754 (85.1%) |
-| frontend | 2520 | 161 (6.4%) | 2278 (90.4%) | 2520 (100.0%) | 943 (37.4%) | 2520 (100.0%) | 121 (4.8%) | 124 (4.9%) | 1009 (40.0%) | 2520 (100.0%) | 124 (4.9%) |
+| libobs | 3235 | 433 (13.4%) | 3235 (100.0%) | 3234 (100.0%) | 887 (27.4%) | 3235 (100.0%) | 1729 (53.4%) | 2756 (85.2%) | 1902 (58.8%) | 3235 (100.0%) | 2756 (85.2%) |
+| frontend | 2520 | 161 (6.4%) | 2278 (90.4%) | 2520 (100.0%) | 949 (37.7%) | 2520 (100.0%) | 121 (4.8%) | 124 (4.9%) | 1014 (40.2%) | 2520 (100.0%) | 124 (4.9%) |
 | shared | 592 | 15 (2.5%) | 476 (80.4%) | 592 (100.0%) | 159 (26.9%) | 592 (100.0%) | 148 (25.0%) | 375 (63.3%) | 260 (43.9%) | 592 (100.0%) | 375 (63.3%) |
 | obs-ffmpeg | 467 | 8 (1.7%) | 467 (100.0%) | 467 (100.0%) | 57 (12.2%) | 467 (100.0%) | 127 (27.2%) | 300 (64.2%) | 137 (29.3%) | 467 (100.0%) | 300 (64.2%) |
-| win-capture | 459 | 9 (2.0%) | 458 (99.8%) | 459 (100.0%) | 57 (12.4%) | 459 (100.0%) | 18 (3.9%) | 7 (1.5%) | 64 (13.9%) | 459 (100.0%) | 7 (1.5%) |
+| win-capture | 459 | 9 (2.0%) | 458 (99.8%) | 459 (100.0%) | 59 (12.9%) | 459 (100.0%) | 18 (3.9%) | 7 (1.5%) | 66 (14.4%) | 459 (100.0%) | 7 (1.5%) |
 | obs-websocket | 439 | 7 (1.6%) | 366 (83.4%) | 439 (100.0%) | 28 (6.4%) | 439 (100.0%) | 11 (2.5%) | 0 (0.0%) | 29 (6.6%) | 439 (100.0%) | 0 (0.0%) |
 | libobs-opengl | 377 | 6 (1.6%) | 320 (84.9%) | 377 (100.0%) | 110 (29.2%) | 377 (100.0%) | 113 (30.0%) | 259 (68.7%) | 144 (38.2%) | 377 (100.0%) | 259 (68.7%) |
-| obs-filters | 324 | 9 (2.8%) | 319 (98.5%) | 324 (100.0%) | 28 (8.6%) | 324 (100.0%) | 8 (2.5%) | 239 (73.8%) | 36 (11.1%) | 324 (100.0%) | 239 (73.8%) |
+| obs-filters | 324 | 9 (2.8%) | 319 (98.5%) | 324 (100.0%) | 31 (9.6%) | 324 (100.0%) | 8 (2.5%) | 239 (73.8%) | 39 (12.0%) | 324 (100.0%) | 239 (73.8%) |
 | obs-outputs | 300 | 7 (2.3%) | 300 (100.0%) | 300 (100.0%) | 51 (17.0%) | 300 (100.0%) | 61 (20.3%) | 237 (79.0%) | 71 (23.7%) | 300 (100.0%) | 237 (79.0%) |
 | libdshowcapture (submodule) | 282 | 5 (1.8%) | 215 (76.2%) | 282 (100.0%) | 122 (43.3%) | 282 (100.0%) | 28 (9.9%) | 0 (0.0%) | 123 (43.6%) | 282 (100.0%) | 0 (0.0%) |
-| libobs-d3d11 | 272 | 10 (3.7%) | 258 (94.9%) | 272 (100.0%) | 98 (36.0%) | 272 (100.0%) | 99 (36.4%) | 0 (0.0%) | 124 (45.6%) | 272 (100.0%) | 0 (0.0%) |
+| libobs-d3d11 | 272 | 10 (3.7%) | 258 (94.9%) | 272 (100.0%) | 104 (38.2%) | 272 (100.0%) | 99 (36.4%) | 0 (0.0%) | 130 (47.8%) | 272 (100.0%) | 0 (0.0%) |
 | libobs-metal | 184 | 10 (5.4%) | 122 (66.3%) | 184 (100.0%) | 133 (72.3%) | 184 (100.0%) | 115 (62.5%) | 0 (0.0%) | 170 (92.4%) | 184 (100.0%) | 0 (0.0%) |
-| aja | 181 | 2 (1.1%) | 181 (100.0%) | 181 (100.0%) | 50 (27.6%) | 181 (100.0%) | 6 (3.3%) | 0 (0.0%) | 50 (27.6%) | 181 (100.0%) | 0 (0.0%) |
+| aja | 181 | 2 (1.1%) | 181 (100.0%) | 181 (100.0%) | 54 (29.8%) | 181 (100.0%) | 6 (3.3%) | 0 (0.0%) | 54 (29.8%) | 181 (100.0%) | 0 (0.0%) |
 | mac-avcapture | 174 | 11 (6.3%) | 174 (100.0%) | 174 (100.0%) | 16 (9.2%) | 174 (100.0%) | 16 (9.2%) | 0 (0.0%) | 18 (10.3%) | 174 (100.0%) | 0 (0.0%) |
 | mac-capture | 166 | 3 (1.8%) | 166 (100.0%) | 166 (100.0%) | 14 (8.4%) | 166 (100.0%) | 15 (9.0%) | 99 (59.6%) | 23 (13.9%) | 166 (100.0%) | 99 (59.6%) |
-| obs-browser | 149 | 4 (2.7%) | 135 (90.6%) | 149 (100.0%) | 43 (28.9%) | 149 (100.0%) | 7 (4.7%) | 0 (0.0%) | 44 (29.5%) | 149 (100.0%) | 0 (0.0%) |
+| obs-browser | 149 | 4 (2.7%) | 135 (90.6%) | 149 (100.0%) | 45 (30.2%) | 149 (100.0%) | 7 (4.7%) | 0 (0.0%) | 46 (30.9%) | 149 (100.0%) | 0 (0.0%) |
 | win-dshow | 149 | 4 (2.7%) | 149 (100.0%) | 149 (100.0%) | 18 (12.1%) | 149 (100.0%) | 25 (16.8%) | 14 (9.4%) | 36 (24.2%) | 149 (100.0%) | 14 (9.4%) |
 | frontend-tools | 138 | 5 (3.6%) | 136 (98.6%) | 138 (100.0%) | 39 (28.3%) | 138 (100.0%) | 13 (9.4%) | 0 (0.0%) | 39 (28.3%) | 138 (100.0%) | 0 (0.0%) |
 | linux-pipewire | 137 | 4 (2.9%) | 137 (100.0%) | 137 (100.0%) | 18 (13.1%) | 137 (100.0%) | 11 (8.0%) | 137 (100.0%) | 21 (15.3%) | 137 (100.0%) | 137 (100.0%) |
@@ -76,7 +76,7 @@ Inventory: 1850 source files, 16414 functions total, 13309 non-trivial (1112 in 
 | obs-x264 | 34 | 5 (14.7%) | 34 (100.0%) | 34 (100.0%) | 10 (29.4%) | 34 (100.0%) | 17 (50.0%) | 0 (0.0%) | 20 (58.8%) | 34 (100.0%) | 0 (0.0%) |
 | linux-pulseaudio | 30 | 1 (3.3%) | 30 (100.0%) | 30 (100.0%) | 3 (10.0%) | 30 (100.0%) | 14 (46.7%) | 18 (60.0%) | 14 (46.7%) | 30 (100.0%) | 18 (60.0%) |
 | aja-output-ui | 29 | 1 (3.4%) | 29 (100.0%) | 29 (100.0%) | 5 (17.2%) | 29 (100.0%) | 1 (3.4%) | 0 (0.0%) | 5 (17.2%) | 29 (100.0%) | 0 (0.0%) |
-| obs-webrtc | 29 | 3 (10.3%) | 29 (100.0%) | 29 (100.0%) | 27 (93.1%) | 29 (100.0%) | 9 (31.0%) | 0 (0.0%) | 27 (93.1%) | 29 (100.0%) | 0 (0.0%) |
+| obs-webrtc | 29 | 3 (10.3%) | 29 (100.0%) | 29 (100.0%) | 28 (96.6%) | 29 (100.0%) | 9 (31.0%) | 0 (0.0%) | 28 (96.6%) | 29 (100.0%) | 0 (0.0%) |
 | obs-text | 27 | 5 (18.5%) | 27 (100.0%) | 27 (100.0%) | 6 (22.2%) | 27 (100.0%) | 5 (18.5%) | 0 (0.0%) | 6 (22.2%) | 27 (100.0%) | 0 (0.0%) |
 | decklink-output-ui | 25 | 0 (0.0%) | 25 (100.0%) | 25 (100.0%) | 5 (20.0%) | 25 (100.0%) | 2 (8.0%) | 0 (0.0%) | 5 (20.0%) | 25 (100.0%) | 0 (0.0%) |
 | libobs-winrt | 20 | 4 (20.0%) | 20 (100.0%) | 20 (100.0%) | 0 (0.0%) | 20 (100.0%) | 0 (0.0%) | 0 (0.0%) | 4 (20.0%) | 20 (100.0%) | 0 (0.0%) |
@@ -87,7 +87,7 @@ Inventory: 1850 source files, 16414 functions total, 13309 non-trivial (1112 in 
 | sndio | 11 | 1 (9.1%) | 11 (100.0%) | 11 (100.0%) | 1 (9.1%) | 11 (100.0%) | 1 (9.1%) | 0 (0.0%) | 1 (9.1%) | 11 (100.0%) | 0 (0.0%) |
 | decklink-captions | 9 | 2 (22.2%) | 8 (88.9%) | 9 (100.0%) | 5 (55.6%) | 9 (100.0%) | 3 (33.3%) | 0 (0.0%) | 5 (55.6%) | 9 (100.0%) | 0 (0.0%) |
 
-## Gap list: 7476 non-trivial first-party functions named by no task, spec or test
+## Gap list: 7453 non-trivial first-party functions named by no task, spec or test
 
 Top 60 by body size — candidates for a follow-up round (name them in a subtask step, a spec rule, or a vector):
 
@@ -110,7 +110,6 @@ Top 60 by body size — candidates for a follow-up round (name them in a subtask
 | `ft2_source_update` | `plugins/text-freetype2/text-freetype2.c` | 190 | 1 | 1 | 1 |
 | `vk_shtex_capture` | `plugins/win-capture/graphics-hook/vulkan-capture.c` | 187 | 1 | 1 | 0 |
 | `wc_tick` | `plugins/win-capture/window-capture.c` | 185 | 1 | 1 | 0 |
-| `RebuildDevice` | `libobs-d3d11/d3d11-rebuild.cpp` | 183 | 1 | 1 | 0 |
 | `ss_update` | `plugins/image-source/obs-slideshow-mk2.c` | 183 | 1 | 1 | 1 |
 | `setupInstalledPage` | `frontend/plugin-manager/PluginManagerWindow.cpp` | 182 | 1 | 1 | 0 |
 | `OnFrontendEvent` | `plugins/obs-websocket/src/eventhandler/EventHandler.cpp` | 180 | 1 | 1 | 0 |
@@ -153,14 +152,15 @@ Top 60 by body size — candidates for a follow-up round (name them in a subtask
 | `load_python_script` | `shared/obs-scripting/obs-scripting-python.c` | 133 | 1 | 1 | 1 |
 | `InstalledPluginRow` | `frontend/plugin-manager/InstalledPluginRow.cpp` | 131 | 1 | 1 | 0 |
 | `SimpleRecordingEncoderChanged` | `frontend/settings/OBSBasicSettings.cpp` | 131 | 1 | 1 | 0 |
+| `BrowserInit` | `plugins/obs-browser/obs-browser-plugin.cpp` | 131 | 1 | 1 | 0 |
 
-Per-area gap totals (non-trivial first-party, `any1` = 0): frontend: 1511, libobs: 1333, obs-websocket: 410, win-capture: 395, shared: 332, obs-ffmpeg: 330, obs-filters: 288, libobs-opengl: 233, obs-outputs: 229, libdshowcapture (submodule): 159, mac-avcapture: 156, libobs-d3d11: 148, mac-capture: 143, aja: 131, linux-pipewire: 116, win-dshow: 113, image-source: 111, obs-browser: 105, frontend-tools: 99, mac-virtualcam: 87, rtmp-services: 86, obs-qsv11: 81, obs-transitions: 72, decklink: 67, obs-nvenc: 59, text-freetype2: 54, nv-filters: 52, test: 52, win-wasapi: 50, linux-capture: 49, coreaudio-encoder: 47, mac-syphon: 41, vlc-video: 41, linux-v4l2: 37, mac-videotoolbox: 36, obs-vst: 29, aja-output-ui: 24, obs-text: 21, decklink-output-ui: 20, linux-alsa: 19, oss-audio: 17, libobs-winrt: 16, linux-pulseaudio: 16, libobs-metal: 14, obs-x264: 14, linux-jack: 10, sndio: 10, obs-libfdk: 7, decklink-captions: 4, obs-webrtc: 2.
+Per-area gap totals (non-trivial first-party, `any1` = 0): frontend: 1506, libobs: 1333, obs-websocket: 410, win-capture: 393, shared: 332, obs-ffmpeg: 330, obs-filters: 285, libobs-opengl: 233, obs-outputs: 229, libdshowcapture (submodule): 159, mac-avcapture: 156, mac-capture: 143, libobs-d3d11: 142, aja: 127, linux-pipewire: 116, win-dshow: 113, image-source: 111, obs-browser: 103, frontend-tools: 99, mac-virtualcam: 87, rtmp-services: 86, obs-qsv11: 81, obs-transitions: 72, decklink: 67, obs-nvenc: 59, text-freetype2: 54, nv-filters: 52, test: 52, win-wasapi: 50, linux-capture: 49, coreaudio-encoder: 47, mac-syphon: 41, vlc-video: 41, linux-v4l2: 37, mac-videotoolbox: 36, obs-vst: 29, aja-output-ui: 24, obs-text: 21, decklink-output-ui: 20, linux-alsa: 19, oss-audio: 17, libobs-winrt: 16, linux-pulseaudio: 16, libobs-metal: 14, obs-x264: 14, linux-jack: 10, sndio: 10, obs-libfdk: 7, decklink-captions: 4, obs-webrtc: 1.
 
 ## Coverage verdict (non-trivial first-party functions, helpers excluded)
 
 - Task coverage (file -> task, T2): **100.0%** — the plan owns every file.
 - File explicitly named in the plan (F1): **94.3%**.
-- Function named by a task, spec or test (any1): **38.7%**.
+- Function named by a task, spec or test (any1): **38.9%**.
 - Behaviour pinned by a spec or a test (S2 or X2): **99.5%**.
 - Covered by (sub)tasks, specs or tests (T2 or F1 or any1 or any2 — round-7 headline): **100.0%**.
 - Combined practical coverage (F1 or any1 — a developer can locate how the function is treated): **96.9%**.
