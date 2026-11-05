@@ -331,3 +331,21 @@ use `errors`, which prints `@null`).
 - Behaviour of `cf_literal_to_str` for `count` larger than the string length is not characterised (precondition: `count <= strlen`).
 - The exact warning text positions of D-5, and include recursion limits (D-4), are implementer's choice.
 - `lexer_getstroffset` with a pointer outside the text is not characterised.
+
+## 12. Round 9: lexer/cf-lexer internals, cursor API, shader & effect parser AST inlines (added)
+
+### Reference files (all cited)
+
+- `libobs/util/cf-lexer.c`, `libobs/util/cf-lexer.h`
+- `libobs/util/cf-parser.c`, `libobs/util/cf-parser.h`
+- `libobs/util/lexer.c`, `libobs/util/lexer.h`
+- `libobs/graphics/shader-parser.h`, `libobs/graphics/effect-parser.h`
+
+- **S-011-R81** `cf-lexer.c` token loop: `cf_lexer_init`/`cf_lexer_nexttoken` drive character-by-character scanning; `cf_get_token_type` classifies the upcoming token; `cf_lexer_process_string` handles quoted strings whose escapes are expanded by `cf_convert_from_escape_literal` (`\'`, `\"`, `\?`, `\\`, and the standard character escapes); `cf_literal_to_str` materializes a string/char literal (with `count` handling); `cf_lexer_write_strref` accumulates token text into a strref (S-006).
+- **S-011-R82** `cf-lexer.c` comments/splices: `cf_is_comment`/`cf_lexer_process_comment` (line and block comments), `cf_lexer_is_include`/`cf_lexer_getstrtoken` (the `#include` path token), `cf_pass_any_splices` (conditional-compile splices per the earlier sections).
+- **S-011-R83** `cf-lexer.h`: `cf_token_add` (append to the token list), `cf_def_init`/`cf_def_free` (a preprocessor definition entry: name + replacement value), `cf_preprocessor_add_sys_include_dir` (system include search path for `#include`).
+- **S-011-R84** `cf-parser.c`: `cf_adderror` (error accumulation with source position into the lexer error data) and `cf_pass_pair` (consume an opening token and find/consume its matching closing token).
+- **S-011-R85** `cf-parser.h` cursor API: `cf_parser_init`/`cf_parser_free`, `cf_parser_parse` (run to completion); walking: `cf_next_token`/`cf_next_valid_token` (valid = skip comments), `cf_go_to_token`/`cf_go_to_valid_token`, `cf_go_to_token_type`, `cf_peek_token`/`cf_peek_valid_token`, `cf_token_is_type`; checking: `cf_token_should_be`/`cf_next_token_should_be` (consume and error on mismatch), `cf_get_name` (the NAME text of the current token).
+- **S-011-R86** `lexer.c`/`lexer.h` (the generic, non-cf lexer): strref comparison `strref_cmp`/`strref_cmpi` (+ `_strref` variants) and `strref_clear`/`strref_set`/`strref_copy`/`strref_add`; numeric validation `valid_int_str`/`valid_float_str`; error data `error_item_free`/`error_item_array_free`, `error_data_free`/`error_data_add`/`error_data_buildstring`/`error_data_type_count`/`error_data_has_errors`, `newline_size`; `lexer_free`/`lexer_start`/`lexer_start_move`, `lexer_getbasetoken`, `lexer_getstroffset`.
+- **S-011-R87** `shader-parser.h`: the parsed-shader AST inlines — `shader_var_init_param`/`shader_var_free`, `shader_sampler_free`, `shader_struct_free`, `shader_func_init`/`shader_func_free`, `shader_parser_init`/`shader_parser_free`; lookups `shader_parser_getparam`/`_getstruct`/`_getsampler`/`_getfunc`. The AST shape is the one the effect-language spec (S-020) pins.
+- **S-011-R88** `effect-parser.h`: the effect (pass/technique) AST inlines — `ep_var_free`, `ep_param_init`/`ep_param_free`, `ep_struct_mapped` (struct with mapped name), `ep_struct_free`, `ep_sampler_free`, `ep_pass_free`, `ep_technique_free`, `ep_func_init`/`ep_func_free`, `ep_init`.

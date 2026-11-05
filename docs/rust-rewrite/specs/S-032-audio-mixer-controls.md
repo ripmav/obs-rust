@@ -404,3 +404,67 @@ The mixing callback allocates nothing per tick in the reference (`render_order` 
 3. Real resampler (`audio_resampler_resample`) timestamp offset semantics beyond "value is subtracted from the stored timestamp" (R12) are not specified.
 4. Behaviour of `audio_callback` with `C` different from the channels the sources were ingested with after a mid-run `obs_reset_audio` is not covered.
 5. Windows/macOS: `util_mul_div64` uses `_udiv128` on MSVC (exact result) so timestamps can differ by 1 ns in extreme ranges; the vectors stay inside the range where both agree.
+
+## 12. Round 9: audio-monitoring backends (added)
+
+§5.1–§5.8 pin `obs-audio-controls.c`; the platform device-enumeration backends behind
+`obs_enum_audio_monitoring_devices` / `devices_match` were not covered. This section maps the four
+files and pins the two backends at contract level ([SRC], the implementer reads the C reference for
+the COM/CoreAudio calls).
+
+### Reference files (all cited)
+
+- `libobs/obs-audio-controls.c`, `libobs/audio-monitoring/win32/wasapi-enum-devices.c`, `libobs/audio-monitoring/osx/coreaudio-enum-devices.c`, `libobs/audio-monitoring/osx/mac-helpers.h`
+
+### 12.1 File-to-rule map
+
+- **S-032-R56 [SRC]** `obs-audio-controls.c` (40 fns): the whole core — ingestion (5.1),
+  timestamps (5.2), buffer writes (5.3), mute/volume (5.4), render (5.5), mixing callback (5.6),
+  faders (5.7), volmeters (5.8): R01–R55.
+
+### 12.2 Windows backend (WASAPI)
+
+- **S-032-R57 [SRC]** `wasapi-enum-devices.c` (4 fns):
+  `obs_enum_audio_monitoring_devices(cb, data)`: create `IMMDeviceEnumerator`,
+  `EnumAudioEndpoints(eRender, DEVICE_STATE_ACTIVE)`; per device: `GetId`, `OpenPropertyStore`
+  (read) → `PKEY_Device_FriendlyName` → `cb(data, utf8_name, utf8_id)` (512-byte buffers, wide →
+  UTF-8); any failed HRESULT skips that device (enumeration continues); a `false` from the callback
+  stops it. `get_default_id(p_id)`: no-op if already set; `GetDefaultAudioEndpoint(eRender,
+  eConsole)` → `GetId` → UTF-8; on any failure `*p_id` is the empty string. `devices_match(id1,
+  id2)`: NULL → false; each side equal to `"default"` is replaced by its resolved default id
+  (resolved once, shared); result = byte compare of the ids.
+
+### 12.3 macOS backend (CoreAudio)
+
+- **S-032-R58 [SRC]** `coreaudio-enum-devices.c` (9 fns): `enum_audio_devices(cb, data,
+  allow_inputs)`: read `kAudioHardwarePropertyDevices` from the system object; per device id: skip
+  when `!allow_inputs` and the output stream count (`kAudioDevicePropertyStreams` / ScopeOutput /
+  Main, data size 0) is 0; else read `kAudioDevicePropertyDeviceUID` +
+  `kAudioDevicePropertyDeviceNameCFString` (both to UTF-8) → `cb(data, name, uid)`.
+  `obs_enum_audio_monitoring_devices` = the call with `allow_inputs = false`. `get_default_id(p_id)`:
+  no-op if set; `kAudioHardwarePropertyDefaultOutputDevice` → the device, enumerated with
+  `allow_inputs = true`, id copied by the callback; on failure the empty string.
+  `get_desktop_default_id(p_id)`: no-op if set; `kAudioHardwarePropertyDefaultSystemOutputDevice`
+  (NOT the plain default output) → the device with `allow_inputs = false`; if the resolved id is a
+  blacklisted virtual device (R59) it is discarded and the full device list (`allow_inputs = false`)
+  is scanned for the first id that is not blacklisted; on failure the empty string.
+  `devices_match(id1, id2)`: NULL → false; `"default"` resolved as above; then **names** are looked
+  up for both ids in the full device list (`allow_inputs = true`) and compared — a missing name on
+  either side is false.
+- **S-032-R59 [SRC]** `device_is_input(device)` (same file): true when `device` contains
+  (case-insensitively, substring) any of `soundflower`, `wavtap`, `soundsiphon`, `ishowu`,
+  `blackhole`, `loopback`, `groundcontrol`, `vbcable`.
+- **S-032-R60 [SRC]** `mac-helpers.h` (1 fn): the `success(stat, call)` macro — `stat != noErr`
+  → WARNING `"%s: %s failed: %d"` (`__FUNCTION__`, call, stat) and false; else true. Every
+  CoreAudio call in the backend goes through it.
+
+### 12.4 Quirks (added)
+
+- Q-9: platform asymmetry of `devices_match`: Windows compares **device ids**, macOS compares
+  **device names** — an id change or a rename breaks the match differently on each platform. A
+  `"default"` with no resolvable default endpoint becomes the empty string and only matches another
+  equally-unresolved one.
+- Q-10: in `get_desktop_default_id` the virtual-device blacklist (R59) is applied to the device
+  **uid** (the enumeration callback's id argument), not to the display name — the parameter is
+  named `device` but receives uids, so a soundflower/BlackHole *name* with a different uid is not
+  filtered.

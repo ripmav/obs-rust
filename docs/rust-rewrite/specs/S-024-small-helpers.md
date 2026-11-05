@@ -465,3 +465,15 @@ The hotkey table and the constants table are best generated from the vectors by 
 2. `meta.json` escaping of non-ASCII ETags (jansson compact encoder) is untested; ETags are ASCII in practice.
 3. `profiler_snapshot_dump_csv_gz` and a profiler used from several threads are not covered by vectors.
 4. Behaviour of M5/M3 under allocation failure and of M6 thread-creation failure (returns NULL) is not covered.
+
+## 11. Round 9: file-updater, happy-eyeballs, bpm metrics, opts-parser & profiler citation (added)
+
+### Reference files (all cited)
+
+- `shared/file-updater/file-updater/file-updater.c`, `shared/happy-eyeballs/happy-eyeballs.c`, `shared/bpm/bpm.c`, `shared/opts-parser/opts-parser.c`, `libobs/util/profiler.hpp`
+
+- **S-024-R74** `file-updater.c`: the shared HTTP file updater (used by the frontend auto-update) — `init_update` (fetch and read the remote version file), `do_http_request`/`do_relative_http_request` over the minimal HTTP client (`http_write`/`http_header`), `get_package` (parse the package manifest), `get_path`, `copy_local_to_cache`, `enum_files`/`newer_than_cache` (download only what is newer, into a cache dir), `update_files_to_local` + `update_local_version` (install), `replace_file` (atomic swap: old → temp name, new written, old removed), `update_remote_files` (top-level driver), `update_info_destroy`.
+- **S-024-R75** `happy-eyeballs.c`: RFC 8305 Happy Eyeballs dual-stack connect — `happy_eyeballs_create`/`happy_eyeballs_destroy`, `build_addr_list` (order addresses, IPv6 preference), `happy_eyeballs_connect`/`happy_eyeballs_try` (start attempt 1, stagger later attempts), `launch_worker`/`happy_connect_worker` (one thread per attempt), `happy_eyeballs_timedwait` (wait for any attempt), `coalesce_errors` (report the last error), `signal_end` (cancel remaining attempts), `check_comodo` (Windows/Comodo IPv6 workaround), `happy_eyeballs_set_bind_addr`/`get_remote_addr`/`get_connection_time_ns`.
+- **S-024-R76** `bpm.c`: the beat-metrics (BPM) SEI track consumed by the auto-scene-switcher — `bpm_init`/`bpm_destroy`, `bpm_inject` (hook into the encoder SEI stream), `process_metrics` (frame pts → metric updates), `update_metrics`/`render_metrics_time` (time-window scoring), the three SEI renderers `bpm_ts_sei_render`/`bpm_sm_sei_render`/`bpm_erm_sei_render`, `extract_buffer_from_sei`, `bpm_create_metrics_track`/`bpm_get_track` (the obs-data track the UI polls).
+- **S-024-R77** `opts-parser.c`: `obs_parse_options` (parse the `key=val,key2=val2` string into the options array; unrecognised words counted separately as `ignored_word_count`), `getparam` (single-entry parse), `obs_free_options` — semantics per the earlier sections.
+- **S-024-R78** `profiler.hpp`: the remaining profiler RAII inline `Stop` (scope-exit timer stop; the profiler model per the earlier sections).

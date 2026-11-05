@@ -296,3 +296,127 @@ Not performed (cost control, as instructed). The statement "an implementer can p
 - Is the double `ENUM_FRAMESIZES` index-0 query (R19) required, or may a rewrite query once? Observable only through a call trace.
 - For D-1, should the legacy 32-bit decode accept `30` as `1/30` (heuristic for old saved settings)? The reference cannot tell the two apart (Q-1).
 - JACK/ALSA/xcomposite vectors: worth adding behind fakes in a later pass?
+
+## 14. Round 9: module registration, v4l2-helpers.h, OSS and sndio inputs (added)
+
+§5.1–§5.11 pin the v4l2, pulseaudio, xshm, alsa, jack and xcomposite behaviour. This section
+pins what was left: the seven plugin module mains, the v4l2 helpers header, and the two audio
+inputs this spec had not covered at all — OSS (`oss-audio`) and sndio (`sndio`).
+
+### Reference files (all cited)
+
+- `plugins/oss-audio/oss-input.c`, `plugins/sndio/sndio-input.c`, `plugins/linux-capture/linux-capture.c`, `plugins/linux-v4l2/v4l2-helpers.h`, `plugins/linux-alsa/linux-alsa.c`, `plugins/linux-jack/linux-jack.c`, `plugins/linux-pulseaudio/linux-pulseaudio.c`, `plugins/linux-v4l2/linux-v4l2.c`, `plugins/oss-audio/oss-audio.c`, `plugins/sndio/sndio.c`
+
+### 14.1 Module registration
+
+- **S-049-R84 [SRC]** The seven `obs_module_load` functions, each registering exactly (description
+  strings verbatim): `linux-alsa.c` "Linux ALSA audio input capture" → `alsa_input_capture`;
+  `linux-jack.c` "JACK Audio Connection Kit output capture" → `jack_output_capture`;
+  `linux-pulseaudio.c` "Linux PulseAudio input/output capture" → `pulse_input_capture` +
+  `pulse_output_capture`; `oss-audio.c` "OSS audio input capture" → `oss_input_capture`;
+  `sndio.c` "sndio output capture" → `sndio_output_capture`; `linux-v4l2.c` "Video4Linux2(V4L2)
+  sources/virtual camera" → `v4l2_input`, plus `virtualcam_info` **only if**
+  `loopback_module_available()`, else WARNING `v4l2loopback not installed, virtual camera not
+  registered`; `linux-capture.c` "xcomposite/xshm based window/screen capture for X11" → only when
+  `obs_get_nix_platform() == OBS_NIX_PLATFORM_X11_EGL`: register `xshm_input` + `xshm_input_v2` and
+  call `xcomposite_load()` (which registers the xcomposite source); `obs_module_unload` mirrors it
+  with `xcomposite_unload()` under the same platform check. All use locale "en-US".
+
+### 14.2 v4l2-helpers.h
+
+- **S-049-R85 [SRC]** `#define PACK64(a, b) (((uint64_t)a << 32) | ((uint64_t)b & 0xffffffff))`;
+  `struct v4l2_mmap_info { size_t length; void *start }`; `struct v4l2_buffer_data { uint_fast32_t
+  count; struct v4l2_mmap_info *info }`. `v4l2_to_obs_video_format` is the 4.3 map (YVYU, YUYV→
+  YUY2, UYVY, NV12, YUV420→I420, YVU420→I420, XBGR32→BGRX and ABGR32→BGRA each only when the
+  kernel constant is available, BGR24→BGR3, default NONE). The `v4l2_framesizes[]` table (PACK64
+  pairs, zero-terminated) is the 4.2 table behind R19/R22.
+
+### 14.3 OSS input (`oss-input.c`, new component)
+
+- **S-049-R86** Info: id `oss_input_capture`, type INPUT, flags AUDIO, icon AUDIO_INPUT, name key
+  `OSSInput`; callbacks create/destroy/update/get_defaults/get_properties only.
+  `struct oss_input_data { obs_source_t *source; char *device; int channels, rate, sample_fmt;
+  pthread_t reader_thr; int notify_pipe[2]; int dsp_fd; void *dsp_buf; size_t dsp_fragsize }`.
+  Defaults: `channels = 2`, `rate = 48000`, `sample_fmt = AFMT_S16_LE`, `dsp = "/dev/dsp"`.
+- **S-049-R87** Properties, in order: `dsp` (string list, desc `DSP`: item `Default` = `/dev/dsp`,
+  item `Custom` = `/`, plus `oss_prop_add_devices`), `custom_dsp` (text, `CustomDSPPath`), `rate`
+  (int list, `SampleRate`), `channels` (int list, `Channels`), `sample_fmt` (int list,
+  `SampleFormat`: `pcm8` = AFMT_U8, `pcm16le` = AFMT_S16_LE, `pcm32le` = AFMT_S32_LE). The `dsp`
+  modified-callback: `custom_dsp` visible iff `dsp == "/"`; fill rate/channels for the new device
+  (R88); trigger modified on `rate`, `channels`, `custom_dsp`; return true.
+  `oss_fill_device_info(rate, channels, device)`: clear both; if `device == "/"` skip to the
+  fallbacks; open O_RDONLY (failure: ERROR, fallbacks); `SNDCTL_ENGINEINFO` (failure: ERROR,
+  fallbacks); channels: for `i` in `min_channels..max_channels` (and `i <= 8`) with a known speaker
+  layout (1,2,3,4,5,6,8) add int item `"%d"` = `i`; rate: from the 10-entry table
+  {8000, 11025, 16000, 22050, 32000, 44100, 48000, 96000, 192000, 384000 Hz} those within
+  `[min_rate, max_rate]`; fallbacks: empty rate list → `48000 Hz` = 48000, empty channels list →
+  `2` = 2. `oss_prop_add_devices` (FreeBSD/DragonFly only): parse `/dev/sndstat` line by line —
+  section headers `Installed devices:` (system) / `Installed devices from userspace:` (userspace) /
+  `File Versions:` (skip the rest); skip blank lines; system lines start `pcm<N>: `, userspace
+  lines give the name up to the first `:`; the description is between the first `<` and the **last**
+  `>`; the mode in parentheses must be `rec` or `play/rec`, or `Np:Mv/Dr:Dv` with at least one
+  receive channel — else the line is skipped; item name `pcm<N>: <desc>` (system) / `<name>: <desc>`
+  (userspace), value `/dev/dsp<N>` (system) / `/dev/<name>` (userspace). On Linux the list stays
+  just Default + Custom (Q-9).
+- **S-049-R88** create: allocate; read `dsp` (NULL → return the object with no device and no
+  reader); `dsp == "/"` → device = `custom_dsp` (NULL → return as-is), else device = `dsp`; read
+  `channels`, `rate`, `sample_fmt`; `oss_setup_device`: open O_RDONLY, `SNDCTL_DSP_CHANNELS`,
+  `SNDCTL_DSP_SETFMT`, `SNDCTL_DSP_SPEED` (each failure: ERROR with the device, -1),
+  `SNDCTL_DSP_GETISPACE` → `fragsize`, allocate the buffer. Then `oss_start_reader`: `pipe()` +
+  pthread (failure closes the device and create returns NULL; the failure path frees everything).
+  `update`: **always** stops the reader and closes the device first, then the same device/params/
+  setup/reader sequence — any failure leaves the object alive with `device = NULL` and no reader
+  (no error return; the source just goes silent).
+- **S-049-R89** Reader thread: `poll` on `(dsp_fd, notify_pipe[0])`, POLLIN, infinite. Audio ready:
+  read `fragsize` bytes (EINTR retried); `< 0` → ERROR, exit; `0` → ERROR `Unexpected EOF`, exit;
+  else one audio packet: `format` = U8BIT/16BIT/32BIT for AFMT_U8/AFMT_S16_LE/AFMT_S32_LE (else
+  UNKNOWN), `speakers` = 1..8 layout (else UNKNOWN), `samples_per_sec` = rate, `frames = nbytes /
+  framesize`, `timestamp = now_ns - frames * 1e9 / rate`, `output_audio`. Pipe ready: read one
+  byte, exit. Stopping writes one byte to the pipe, joins the thread, closes both pipe ends.
+
+### 14.4 sndio input (`sndio-input.c`, new component)
+
+- **S-049-R90** Info: id `sndio_output_capture`, type INPUT, flags AUDIO, icon AUDIO_OUTPUT, name
+  key `SndioInput`; callbacks create/destroy/update/get_defaults/get_properties (the
+  `activate`/`deactivate` entries are inside `#if SHUTDOWN_ON_DEACTIVATE`, an **undefined** macro —
+  evaluates to 0, so they are never registered, Q-7). `struct sndio_thr_data { obs_source_t *source;
+  struct obs_source_audio out; struct sio_hdl *hdl; struct sio_par par; int sock }` (the `out`
+  field is never used — the thread builds a local packet); `struct sndio_data { obs_source_t
+  *source; pthread_attr_t attr; int sock }`. Defaults: `device = SIO_DEVANY` (the sndio library's
+  default device), `rate = 48000`, `bits = 16`, `channels = 2`.
+- **S-049-R91** Properties: `device` (text, `Device`), `rate` (int list, `Rate`: 11025, 22050,
+  32000, 44100, 48000, 96000, 192000 Hz), `bits` (int list, `BitsPerSample`: 8, 16, 32),
+  `channels` (int 1..8 step 1, `Channels`).
+- **S-049-R92** `sndio_apply` (runs from both create and update): allocate `thrdata`;
+  `socketpair(AF_UNIX, SOCK_STREAM | SOCK_NONBLOCK | SOCK_CLOEXEC, 0, ...)` (failure: error, abort);
+  close the previous `data->sock` (**without joining the previous thread** — it is detached and dies
+  on the socket EOF, Q-8); `data->sock = socks[0]`, `thrdata->sock = socks[1]`. Open
+  `sio_open(devname, SIO_REC, 0)` (failure: error, abort). Parameters: `sio_initpar`, then
+  `bits` = setting, `bps = SIO_BPS(bits)`, `sig = bits > 8`, `le = 1`, `rate` = setting,
+  `rchan` = setting, `xrun = SIO_SYNC` (makes timestamping easy); `sio_setpar` (failure: error,
+  abort), INFO log of the resulting appbufsz/bps; `sio_start` (failure: error, abort); start the
+  reader thread as **detached** (attribute set once in create). `create` = bzalloc + attr init +
+  `sndio_apply`. `destroy`: close `data->sock`, destroy the attribute, free (no join — Q-8).
+- **S-049-R93** Reader thread: buffer size `appbufsz * bps * 2` (allocated 2x). Loop: `poll` on
+  `(sock, sio fds)` — sock POLLHUP/EOF: INFO, exit; sock POLLIN: accumulate partial reads of a
+  `struct sio_par` (EAGAIN falls through to the sio check); on a complete par: `sio_stop`,
+  `sio_setpar(new par)` (failure: WARNING `sio_setpar failed, keeping old params`), copy the par
+  into `thrdata->par`, `brealloc` the buffer to the new `appbufsz * bps * 2` (failure: error,
+  exit), INFO log, `sio_start` (failure: ERROR, exit), `ts = now`, **continue** (this poll
+  iteration's sio events are dropped). Sio side: `sio_revents` POLLHUP → ERROR `sndio device error
+  happened, exiting`; POLLIN: `sio_read` into the buffer — 0 → `sio_eof` ? ERROR, exit : continue;
+  else one packet: `frames = nread / par.bps`, `format` = U8BIT/16BIT/32BIT for 8/16/32-bit par (else
+  UNKNOWN), `speakers` from `par.rchan` (1..8, else UNKNOWN), `samples_per_sec = par.rate`,
+  `timestamp = ts` then `ts += frames * 1e9 / rate` (timestamps count **forward** from thread start
+  / last re-setpar, unlike the other inputs). Exit: `sio_close`, close the sock end, free.
+
+### 14.5 Quirks (added)
+
+- Q-7: the sndio info record's `#if SHUTDOWN_ON_DEACTIVATE` guards `activate`/`deactivate` that do
+  not exist anywhere; the macro is undefined, so in C the condition is 0 — the branch is dead code,
+  never compiled, no activate/deactivate callbacks registered.
+- Q-8: `sndio_apply` is re-entrant only by accident: it closes the old socket end while the old
+  (detached) thread is still running, and the new thread starts before the old one has exited —
+  two threads may briefly both read from the same sndio device; there is no join, ever.
+- Q-9: the OSS device list is populated only on FreeBSD/DragonFly (the `/dev/sndstat` parser); on
+  Linux the list contains only `Default` and `Custom`, so auto-discovery is a no-op.

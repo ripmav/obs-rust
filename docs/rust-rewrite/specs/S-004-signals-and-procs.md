@@ -182,3 +182,14 @@ CORE: all scripts except `14`, `15`, `16` (QUIRK).
 
 - Behaviour under concurrent connect/emit from multiple threads is defined by the locks in section 7 but not covered by vectors; the crate needs a `loom`/stress test.
 - Memory ordering of `refs`: the reference uses sequentially consistent atomics; implementers SHOULD use `SeqCst`.
+
+## 12. Round 9: `signal.c` uncited functions (added)
+
+### Reference files (all cited)
+
+- `libobs/callback/signal.c`
+
+- **S-004-R64** Signal registry: `signal_info_create`/`signal_info_destroy` own the signal object (name, callback array, global-callback list, its mutex); `signal_get_callback_idx` resolves a callback id to its index; `getsignal`/`getsignal_locked` look up a signal object by name.
+- **S-004-R65** Handler lifecycle: `signal_handler_create`/`signal_handler_destroy` (the latter via `signal_handler_actually_destroy`); `signal_handler_add` appends a callback (unique id); `signal_handler_disconnect` removes one — reference-count rules per the earlier sections.
+- **S-004-R66** `signal_handler_signal` (emit): iterates the callbacks under the lock in registration order; `signal_handler_remove_current` lets a callback remove itself mid-emit (re-entrancy rules per the earlier sections).
+- **S-004-R67** `signal_handler_connect_global`/`signal_handler_connect_internal`: global callbacks (signal-name-independent) live in a separate mutex-guarded list, deduplicated by (callback, data); they are invoked for every signal on the handler.

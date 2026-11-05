@@ -419,3 +419,35 @@ Not covered by an executable script (derived from the source): the `rtmp://` spe
 * The Rust sufficiency check required by the process brief was **skipped on request** (cost control); the spec has therefore not been validated by an independent implementation, and the rule texts R84 (purge loop guards) are the likeliest to need revision.
 * Fakes (not the real components): `obs_data` (S-014) is a tiny typed store; signal/proc handlers (S-004) only print; `os_process_pipe_*` (S-001) is a byte decoder; `os_generate_formatted_filename` (S-023) is replaced by `format` with `%N` expanded and spaces mapped; file existence is virtual; the clock is a knob; `obs_encoder_packet_ref/release` is a counter.
   Windows/macOS differences (`.exe` name, Defender text) are source-derived only.
+
+## 12. Round 9: module glue and the FFmpeg log bridge (added)
+
+§3.1 pins the six registered output ids, but the module entry point and the plugin-wide FFmpeg log bridge were
+never cited. This section pins `obs_module_load`/`obs_module_unload` and the libav log callback that covers
+**all** libav use in the OBS process (the `ffmpeg_output` libav link, §5.10–5.13, and the muxer senders).
+
+### Reference files (all cited)
+
+- `plugins/obs-ffmpeg/obs-ffmpeg.c`, `plugins/obs-ffmpeg/obs-ffmpeg-logging.c`
+
+- **S-046-R169** Module (description "FFmpeg based sources/outputs/encoders"). `obs_module_load` registers, in
+  this exact order: the source `ffmpeg_source` (S-047); the six outputs of this spec (`ffmpeg_output,
+  ffmpeg_muxer, ffmpeg_mpegts_muxer, ffmpeg_hls_muxer, replay_buffer`); then the encoders (S-047): `ffmpeg_aac`
+  unconditionally, `openh264`/`svt_av1`/`aom_av1` only when FFmpeg exposes the `libopenh264`/`libsvtav1`/
+  `libaom-av1` encoders (avcodec lookup), `opus, pcm (s16le), pcm_s24le, pcm_f32le, alac, flac` unconditionally;
+  NVENC h264 (+hevc if built) only when `nvenc_supported` reports them (log "NVENC supported"); AMF only on
+  Win32 non-ARM64; VAAPI h264/av1/hevc (each with its texture variant) only when the libav encoder exists **and**
+  the default device is non-NULL — with a WARNING log if the environment variable `LIBVA_DRIVER_NAME` is set.
+  Last: the log bridge (R170). `obs_module_unload` releases the log bridge.
+- **S-046-R170** Log bridge (`obs-ffmpeg-logging.c`): `obs_ffmpeg_load_logging` initialises two context arrays
+  (active + freelist cache) and a mutex, and only if the mutex init succeeds calls `av_log_set_callback` and
+  sets the `logging_initialized` flag; `obs_ffmpeg_unload_logging` (no-op without the flag) restores
+  `av_log_default_callback` and destroys the mutex.
+- **S-046-R171** Callback: one 4096-byte buffer per distinct libav `context` pointer, looked up linearly in the
+  active array and reused LIFO from the freelist (all under the mutex). Per message: `format == NULL` → drop
+  (before any allocation); append via `av_log_format_line`; if libav did not print the prefix (`print_prefix`
+  stays 0) → drop; else map the level (PANIC/FATAL → ERROR, ERROR/WARNING → WARNING, INFO/VERBOSE → INFO,
+  DEBUG and unknown → DEBUG), trim trailing newlines, drop if the line is now empty, and log `[ffmpeg] %s`.
+- **S-046-R172** The bridge is process-global: it also formats libav messages of the muxer senders (their
+  in-process libavformat); the `obs-ffmpeg-mux` **helper process** has its own callback that suppresses libav
+  logging (S-037, line 288) and is unaffected.

@@ -74,17 +74,27 @@ conformance suite (`test/conformance/`). Process, roles and rules:
 | [S-058](S-058-video-render-loop-and-nix-glue.md) | graphics-thread frame loop, GPU encode, nix/X11 glue — Wayland **not** covered | ≈ 3,300 lines | 23 | Ready for review (sufficiency check not performed) | not run |
 | [S-059](S-059-mpegts-srt-rist-output.md) | `mpegtsout`: native MPEG-TS network output (SRT / RIST / UDP / TCP) | ≈ 2,700 lines | 32 | Ready for review (sufficiency check skipped) | skipped |
 | [S-060](S-060-lua-scripting-backend.md) | Lua scripting backend (obslua) | ≈ 2,400 lines | 25 | Draft (sufficiency check skipped) | not run |
+| [S-061](S-061-threading-primitives.md) | threading primitives: `os_event` (auto/manual), `os_sem`, thread naming, platform atomics | ≈ 430 lines | 0 | Draft (round 9 — behaviour catalog, no vectors yet) | not run |
 | [S-062](S-062-obs-websocket.md) | obs-websocket plugin: 5.x wire protocol, identify/auth, request/event dispatch, vendor C API v3 | ≈ 9,000 lines | 0 | Draft (round 8 — behaviour catalog, no vectors yet) | not run |
+| [S-063](S-063-python-scripting-backend.md) | Python scripting backend: dynamic CPython import, GIL bridging, Python frontend API (25 `pyscript` vectors exist) | ≈ 630 lines | 0 | Draft (round 9 — behaviour catalog, no vectors yet) | not run |
 | [S-068](S-068-frontend-settings.md) | frontend settings dialog (pages, dirty/apply/save, hotkeys) | ≈ 8,200 lines | 0 | Draft (round 8 — behaviour catalog, no vectors yet) | not run |
 | [S-069](S-069-frontend-main-window.md) | frontend main window, controls, preview host & per-area widgets (preview interaction → S-067) | ≈ 21,900 lines | 0 | Draft (round 8 — behaviour catalog, no vectors yet) | not run |
+| [S-070](S-070-frontend-scene-collections.md) | frontend scene collections, profiles & importers (import rules, profile copy, migration) | ≈ 5,000 lines | 0 | Draft (round 9 — behaviour catalog, no vectors yet) | not run |
 | [S-071](S-071-audio-mixer-widgets.md) | frontend audio mixer dock & volume widgets (mixer state, pin/hide, meters, sliders) | ≈ 3,100 lines | 0 | Draft (round 8 — behaviour catalog, no vectors yet) | not run |
 | [S-072](S-072-frontend-dialogs-toolbars.md) | frontend dialogs, source pickers, toolbars & tree widgets | ≈ 5,400 lines | 0 | Draft (round 8 — behaviour catalog, no vectors yet) | not run |
 | [S-073](S-073-frontend-output-ui.md) | frontend output pipeline UI (simple/advanced output, remux, multitrack, media controls) | ≈ 5,700 lines | 0 | Draft (round 8 — behaviour catalog, no vectors yet) | not run |
 | [S-074](S-074-frontend-updater-oauth-youtube.md) | frontend updater, OAuth & YouTube | ≈ 6,700 lines | 0 | Draft (round 8 — behaviour catalog, no vectors yet) | not run |
+| [S-075](S-075-frontend-plugin-manager.md) | frontend plugin manager, crash handler & system info (install = drop files; no install flow in 33.0.1) | ≈ 3,600 lines | 0 | Draft (round 9 — behaviour catalog, no vectors yet) | not run |
 | [S-076](S-076-properties-view-ui.md) | properties view & Qt widget kit | ≈ 3,800 lines | 0 | Draft (round 8 — behaviour catalog, no vectors yet) | not run |
 | [S-077](S-077-frontend-api.md) | frontend API (obs_frontend_api) & utility glue (catalog in S-048) | ≈ 1,700 lines | 0 | Draft (round 8 — behaviour catalog, no vectors yet) | not run |
 | [S-078](S-078-d3d11-backend.md) | D3D11 `gs` backend: device/swap chain, resources, shaders, device-loss rebuild, duplicator | ≈ 5,400 lines | 0 | Draft (round 8 — behaviour catalog, no vectors yet) | not run |
+| [S-079](S-079-metal-backend.md) | Metal `gs` backend: device/display-link render loop, GLSL→MSL transpiler, IOSurface/CAMetalLayer presentation | ≈ 3,900 lines | 0 | Draft (round 9 — behaviour catalog, no vectors yet) | not run |
+| [S-080](S-080-obs-webrtc-whip.md) | obs-webrtc WHIP output: offer POST, 401 challenge, Link header, answer SDP, simulcast, DELETE | ≈ 900 lines | 0 | Draft (round 9 — behaviour catalog, no vectors yet) | not run |
 | [S-081](S-081-dshow-ffi.md) | libdshowcapture FFI contract (kept C++ library, D-19) | ≈ 5,300 lines | 0 | Draft (round 8 — behaviour catalog, no vectors yet) | not run |
+| [S-082](S-082-obs-browser-cef-ffi.md) | obs-browser / CEF FFI contract (CEF kept, D-09) | ≈ 4,150 lines | 0 | Draft (round 9 — behaviour catalog, no vectors yet) | not run |
+| [S-083](S-083-decklink-ffi.md) | Blackmagic DeckLink FFI contract (SDK kept, D-04/D-10) | ≈ 3,050 lines | 0 | Draft (round 9 — behaviour catalog, no vectors yet) | not run |
+| [S-084](S-084-aja-ffi.md) | AJA FFI contract (Kona SDK kept, D-04/D-10) | ≈ 6,950 lines | 0 | Draft (round 9 — behaviour catalog, no vectors yet) | not run |
+| [S-085](S-085-vlc-vst-ffi.md) | vlc-video + obs-vst FFI contract (D-10) | ≈ 2,150 lines | 0 | Draft (round 9 — behaviour catalog, no vectors yet) | not run |
 | [S-086](S-086-graphics-hook-ffi.md) | win-capture graphics-hook FFI contract (kept C++, D-08) | ≈ 7,300 lines | 0 | Draft (round 8 — behaviour catalog, no vectors yet) | not run |
 | [S-087](S-087-frontend-tools.md) | frontend-tools plugin (auto-scene-switcher, output-timer, captions, scripts UI) | ≈ 2,500 lines | 0 | Draft (round 8 — behaviour catalog, no vectors yet) | not run |
 

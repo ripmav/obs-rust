@@ -150,3 +150,13 @@ dstr_ncmp, dstr_ncmpi, dstr_end
 ## 13. Open questions
 
 - UTF-8 ↔ wide conversion edge cases (invalid sequences, surrogates) are in the platform/utf8 spec (not yet written).
+
+## 14. Round 9: full inline surface of `dstr.h` (added)
+
+### Reference files (all cited)
+
+- `libobs/util/dstr.h`
+
+- **S-006-R64** Construction/lifecycle inlines: `dstr_init`, `dstr_init_move`/`dstr_init_move_array` (take ownership of an existing buffer), `dstr_init_copy`/`dstr_init_copy_dstr`, `dstr_free`, `dstr_array_free`, `dstr_move`/`dstr_move_array`, `dstr_copy_dstr` — ownership rules per the earlier sections.
+- **S-006-R65** Capacity/element inlines: `dstr_reserve`, `dstr_ensure_capacity`, `dstr_resize`, `dstr_is_empty` and the remaining surface of the 18 non-trivial inlines (length, front/back, clear, push/pop, push-array) — the growth rule is the one pinned in the earlier sections.
+- **S-006-R66** Append/format inlines: the `dstr_printf`/`dstr_cat` family grows the buffer (`vsnprintf`-sized) then appends; `dstr_cat_quoted` wraps in double quotes; the wide variants convert per S-023.
