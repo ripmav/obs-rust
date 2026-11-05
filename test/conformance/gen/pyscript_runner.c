@@ -48,6 +48,7 @@ static void barrier(void)
 	defer_call_post(signal_fn, ev);
 	os_event_wait(ev);
 	os_event_destroy(ev);
+	lf_flush_hotkey_unregs();
 }
 
 static int idx(const char *s, char letter, int max)
@@ -237,6 +238,7 @@ static int count_cbs(struct script_callback *cb, int *removed)
 int main(int argc, char **argv)
 {
 	FILE *f = harness_open(argc, argv);
+	lf_main_thread = pthread_self();
 	tmpdir = getenv("CONFORMANCE_TMPDIR");
 	if (!tmpdir) {
 		fprintf(stderr, "CONFORMANCE_TMPDIR not set\n");

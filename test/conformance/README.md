@@ -13,7 +13,7 @@ gen/<area>_runner.c               reference runner (links the C implementation)
 run.sh generate | check           (re)generate or verify vectors; needs a C compiler
 ```
 
-Areas (59): `bmem` (S-001), `calldata` (S-002), `decl` (S-003), `signal` (S-004),
+Areas (60): `bmem` (S-001), `calldata` (S-002), `decl` (S-003), `signal` (S-004),
 `darray` and `deque` (S-005), `dstr` (S-006), `config` (S-007), `math` (S-008),
 `math2` (S-009), `serial` (S-010), `lexer` (S-011), `nal` (S-012), `mediaconv`
 (S-013), `obsdata` (S-014), `props` (S-015), `effect` (S-020), `flv` (S-021),
@@ -47,6 +47,22 @@ in their own language (50–150 lines per area) and compare output.
   includes `<simde/x86/sse2.h>`; simde is a system/prefix dependency since
   obs-studio 2bd23cd50). On a machine without them: clone
   `simd-everywhere/simde` and run with `CONFORMANCE_EXTRA_CFLAGS="-I<clone>"`.
+- 40 of the 60 areas build and pass on a bare 64-bit Linux box without root (checked
+  round 12) given the above plus jansson, uthash, uuid, zlib and freetype2 (`libobs`'s
+  own code needs them; the per-area link lines are the `gen/*.sources` files). The rest
+  need one more system dev package each: FFmpeg dev headers
+  (`ffmuxproto`, `ffoutputs`, `ffsources`, `filtersrest`, `gfximages`, `hwencoders`,
+  `mediaplayback`, `mpegtsout`), `x264.h` (`encopts`), LuaJIT (`luascript`),
+  `libv4l2.h` + `pulse/stream.h` (`linuxcapture`), the `xcb` headers — `randr` and
+  `xinput`, plus plain `xcb.h` (`linuxcapture`, `linuxinputs`, `obsvideo`),
+  `xf86drm.h` + `X11/Xlib-xcb.h` (`glbackend`), pipewire (`pipewire`), `mbedtls/`
+  (`rtmp`), glib (`utilrest`), `curl/curl.h` (`helpers`), CPython dev files
+  (`pyscript`). Without root, `apt-get download <pkg>` + `dpkg-deb -x <deb> <prefix>`
+  extracts a package into a local prefix; point the build at it with
+  `CONFORMANCE_EXTRA_CFLAGS="-I<prefix>/usr/include ... -L<prefix>/usr/lib/..."` (the
+  flag is inherited by the runners, so the runtime-compiled plugins of `modservice`
+  pick it up too). Dangling dev `.so` symlinks in the prefix must be repointed at the
+  installed runtime library.
 
 ## Comparison rules (the conformance procedure)
 
@@ -427,7 +443,9 @@ died; a conforming implementation MUST NOT crash, and everything printed between
 Reference: libobs `obs-data.c` with jansson 2.15 for JSON; `os_quick_*` file helpers in
 `gen/obsdata_stubs.c`. Files used by scripts live in `$CONFORMANCE_TMPDIR`; script file names
 are relative names (`conf.json`) that the runner maps into that directory (an implementation
-may use any directory; the runner removes its files before and after a script).
+may use any directory; the runner removes its files before and after a script). With an older
+jansson (e.g. 2.14) the `json` output can differ in how doubles are formatted (shortest
+representation, e.g. `-2.9` vs. `-2.8999999999999999`); the vectors assume 2.15.
 
 **Handles.** Three separate namespaces of script-chosen names: *data* (`obs_data_t`), *arrays*
 (`obs_data_array_t`), *items* (`obs_data_item_t`). Creating commands bind a name to an empty slot
@@ -2070,6 +2088,45 @@ Handles: `S0..S5` scripts, `P0..P3` property sets, `H0..H3` signal handlers, sou
 
 Output: `log <level> <text>` (chunk names inside Lua errors printed as `[string "<chunk>"]`, the private directory as `$TMP`; levels
 other than error/warning/info/debug as the number), `fake ...` lines from the libobs fakes, and the result lines above.
+
+## pyscript runner (spec S-063)
+
+`gen/pyscript_runner.c` drives the REAL Python backend (`shared/obs-scripting/obs-scripting-python.c`,
+`obs-scripting-python-frontend.c`) on an embedded CPython (3.14 on the authoring machine; on Linux
+`RUNTIME_LINK=0`, so Python is linked at build time and `obs-scripting-python-import.c` is not linked
+and never exercised) plus the real scripting core. libobs is faked in `gen/pyscript_stubs.c`; the SWIG
+runtime header and the `obspython` module are stand-ins (`gen/pyscript_swig/`, see `gen/pyscript_stubs.c`).
+Needs CPython dev files and jansson. Python source is written verbatim between `py_begin NAME` and
+`py_end` (raw lines, no tokenizing) to a private directory. Handles: `S0..S5` scripts, `P0..P3` property
+sets, `H0..H3` signal handlers, sources by name.
+
+| Command | Meaning |
+|---|---|
+| `scripting load\|unload` | `obs_scripting_load/unload` (prints `load -> 1 python=1 ticks=N` / `unload ticks=N`; unload destroys all live scripts first) |
+| `create Sn FILE [s:k=v i:k=n b:k=0\|1 d:k=x]`, `create Sn raw:PATH`, `create Sn -` | `obs_script_create` (file in the private dir, raw path, NULL); prints `create Sn -> loaded=N lang=N file=... desc=...` or `-> NULL` |
+| `destroy Sn`, `reload Sn`, `update Sn [kv..]`, `save Sn [spec..]`, `settings Sn spec..`, `callbacks Sn` | script API; `spec` = `s:key`, `i:key`, `b:key`, `d:key`, `u:key` (has user value); `callbacks` prints `total=N removed=N` |
+| `props Sn Pn`, `click Pn NAME`, `modify Pn NAME Sn` | `get_properties` (lists name:type:description), button click, modified callback |
+| `time NS`, `tick SECONDS [NS]`, `render CX CY` | set frame time / call the registered libobs tick and render callbacks (registration order) |
+| `pyexec "CODE"` | run code in `__main__` with the GIL held and no current script (harness driver; like a Python thread started by a script) |
+| `barrier` | drain the deferred queue |
+| `handler Hn "decl"`, `emit Hn SIGNAL [s:k=v i:k=n ..]` | real signal handler and emission |
+| `hotkey ID 0\|1`, `fe_event N`, `fe_save 0\|1 [spec..]`, `fe_state`, `counts` | libobs/frontend side events and registration counts |
+| `fake_source NAME [nfilters]`, `scene_items N`, `refs`, `swig_hide "TYPE *" 0\|1` | object fixtures, reference counts, hide a type from the SWIG stand-in |
+| `try CMD..` / `tryseq N` | run one command (the next N commands) in a forked child, print `try CMD -> crash` if it dies (no signal number: it differs between Python versions; `barrier` is a no-op in the child) |
+| `echo ...` | comment line in the output |
+
+Output: `log <level> <text>` (the private directory printed as `$TMP`; Python tracebacks reduced to the
+script's own frames and the final exception line; the C line number of `Python failure in` and the SWIG
+`[Python] FUNC:LINE:` warnings printed as `<line>`), `fake ...` lines from the libobs fakes, and the
+result lines above.
+
+**Worker-thread determinism.** The backend runs every Python callback on the scripting worker thread.
+Every command that can invoke callbacks (`create`, `destroy`, `reload`, `update`, `hotkey`,
+`scripting unload`) blocks until the deferred queue has drained (an implicit `barrier`), so no output
+depends on scheduling. The reference does not synchronise the `Unloaded python script` log with the
+deferred `obs_hotkey_unregister` of the same destroy (main thread vs. worker thread); the fakes
+serialize the two: an unregister that runs on the worker thread is recorded and printed at the next
+`barrier` (i.e. at the end of the command that triggered the unload), so the order is fixed.
 
 ## mpegtsout runner (spec S-059)
 

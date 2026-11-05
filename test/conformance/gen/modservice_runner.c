@@ -613,9 +613,13 @@ static void cmd_mkmod(struct script_line *sl)
 		strcpy(gen, ".");
 	char cmd[16384];
 	const char *cc = getenv("CC") ? getenv("CC") : "cc";
+	/* Same extra includes (e.g. simde) as the runner build: the fake plugin includes
+	 * libobs headers, which need them on machines where they are not in the default path. */
+	const char *extra = getenv("CONFORMANCE_EXTRA_CFLAGS");
 	snprintf(cmd, sizeof(cmd),
-		 "%s -shared -fPIC -w -std=gnu11 -I'%s' -I'%s' -DNAME='\"%s\"' -DVER='%s' -DLOADRET=%s %s%s%s%s -o '%s' '%s'", cc,
-		 inc, gen, name, ver, loadret, defs, reg[0] ? "-DREG='" : "", reg, reg[0] ? "' " : "", out, src);
+		 "%s -shared -fPIC -w -std=gnu11 -I'%s' -I'%s' -DNAME='\"%s\"' -DVER='%s' -DLOADRET=%s %s%s%s%s %s -o '%s' '%s'",
+		 cc, inc, gen, name, ver, loadret, defs, reg[0] ? "-DREG='" : "", reg, reg[0] ? "' " : "",
+		 extra ? extra : "", out, src);
 	if (system(cmd) != 0) {
 		fprintf(stderr, "mkmod failed: %s\n", cmd);
 		exit(2);
