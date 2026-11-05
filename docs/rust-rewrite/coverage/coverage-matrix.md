@@ -1686,19 +1686,19 @@ Build/data files in this area: **18** (878 lines) — owner: same task as the ar
 | `plugins/obs-transitions/transition-slide.c` | P5-02 | S-029 |  |
 | `plugins/obs-transitions/transition-stinger.c` | P5-02 | S-029 |  |
 | `plugins/obs-transitions/transition-swipe.c` | P5-02 | S-029 |  |
-| `plugins/obs-vst/EditorWidget.cpp` | P5-21 | — | D-11: probably stays C++ |
-| `plugins/obs-vst/VSTPlugin.cpp` | P5-21 | — | D-11: probably stays C++ |
-| `plugins/obs-vst/headers/EditorWidget.h` | P5-21 | — | D-11: probably stays C++ |
-| `plugins/obs-vst/headers/VSTPlugin.h` | P5-21 | — | D-11: probably stays C++ |
-| `plugins/obs-vst/headers/vst-plugin-callbacks.hpp` | P5-21 | — | D-11: probably stays C++ |
-| `plugins/obs-vst/linux/EditorWidget-linux.cpp` | P5-21 | — | D-11: probably stays C++ |
-| `plugins/obs-vst/linux/VSTPlugin-linux.cpp` | P5-21 | — | D-11: probably stays C++ |
-| `plugins/obs-vst/mac/EditorWidget-osx.mm` | P5-21 | — | D-11: probably stays C++ |
-| `plugins/obs-vst/mac/VSTPlugin-osx.mm` | P5-21 | — | D-11: probably stays C++ |
-| `plugins/obs-vst/obs-vst.cpp` | P5-21 | — | D-11: probably stays C++ |
-| `plugins/obs-vst/vst_header/aeffectx.h` | P5-21 | — | D-11: probably stays C++ |
-| `plugins/obs-vst/win/EditorWidget-win.cpp` | P5-21 | — | D-11: probably stays C++ |
-| `plugins/obs-vst/win/VSTPlugin-win.cpp` | P5-21 | — | D-11: probably stays C++ |
+| `plugins/obs-vst/EditorWidget.cpp` | P5-21 | — | D-11: ported to Rust |
+| `plugins/obs-vst/VSTPlugin.cpp` | P5-21 | — | D-11: ported to Rust |
+| `plugins/obs-vst/headers/EditorWidget.h` | P5-21 | — | D-11: ported to Rust |
+| `plugins/obs-vst/headers/VSTPlugin.h` | P5-21 | — | D-11: ported to Rust |
+| `plugins/obs-vst/headers/vst-plugin-callbacks.hpp` | P5-21 | — | D-11: ported to Rust |
+| `plugins/obs-vst/linux/EditorWidget-linux.cpp` | P5-21 | — | D-11: ported to Rust |
+| `plugins/obs-vst/linux/VSTPlugin-linux.cpp` | P5-21 | — | D-11: ported to Rust |
+| `plugins/obs-vst/mac/EditorWidget-osx.mm` | P5-21 | — | D-11: ported to Rust |
+| `plugins/obs-vst/mac/VSTPlugin-osx.mm` | P5-21 | — | D-11: ported to Rust |
+| `plugins/obs-vst/obs-vst.cpp` | P5-21 | — | D-11: ported to Rust |
+| `plugins/obs-vst/vst_header/aeffectx.h` | P5-21 | — | D-11: vendor ABI header (stays) |
+| `plugins/obs-vst/win/EditorWidget-win.cpp` | P5-21 | — | D-11: ported to Rust |
+| `plugins/obs-vst/win/VSTPlugin-win.cpp` | P5-21 | — | D-11: ported to Rust |
 | `plugins/obs-webrtc/obs-webrtc.cpp` | P5-19 | — | D-16 |
 | `plugins/obs-webrtc/whip-output.cpp` | P5-19 | — | D-16 |
 | `plugins/obs-webrtc/whip-output.h` | P5-19 | — | D-16 |
