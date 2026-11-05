@@ -1,11 +1,11 @@
-# S-082 obs-browser / CEF FFI contract (CEF kept, D-09)
+# S-082 obs-browser / CEF FFI contract (CEF kept as library, glue in Rust — D-09)
 
 | | |
 |---|---|
 | Status | Draft (round 9 — behaviour catalog written from C reference; no vectors yet) |
 | Spec version | initial |
 | Reference | OBS Studio 33.0.1: `plugins/obs-browser/*` (CEF host, browser source, Qt panels) |
-| Target crate | `crates/browser-ffi` (contract + CEF host integration). Per **D-09** CEF stays a native dependency: the Rust host MUST drive the same CEF APIs (windowless `CefBrowserHost`, render/audio/load handlers, V8 bridge) and replicate this contract. |
+| Target crate | `crates/browser-ffi` (contract + CEF host integration). Per **D-09** (confirmed 2026-11-05) CEF stays the native C++ dependency and the glue is Rust: the host drives CEF through its official C API (`include/capi/`, bindgen — no hand-written C++ bridge) and replicates this contract. |
 | Depends on | S-014 (obs_data settings), S-015 (obs sources), S-048 §5.9 (frontend events + API the JS bridge calls) |
 | Conformance | planned, none yet |
 
@@ -48,6 +48,9 @@ RFC 2119 words. "OSR" = off-screen rendering (windowless). "Control level" = the
 per-source `ControlLevel` enum: `None=0, ReadObs=1, ReadUser=2, Basic=3, Advanced=4,
 All=5` (default `ReadObs`). JS→OBS calls are CEF process messages; OBS→JS events are V8
 function calls on every frame of the browser.
+
+The C++ symbol names in this spec are the reference implementation's; the Rust glue (D-09)
+drives the equivalent C-API functions in `include/capi/`.
 
 ## 3. Interface — the CEF surface the host depends on
 
@@ -196,8 +199,8 @@ LoadInHelper`. Both: `CefExecuteProcess(args, new BrowserApp, nullptr)`.
    `CHROME_VERSION_BUILD` in many places; this spec records no version numbers).
 2. `ENABLE_BROWSER_QT_LOOP` vs dedicated-thread build for the Rust host — the contract
    above is identical; only the message pump differs.
-3. Whether the Qt panels (`QCefWidget`) get a Rust-FFI wrapper or stay in the C++
-   frontend (they are UI, not a source contract).
+3. Resolved (D-09, 2026-11-05): the Qt panels (`QCefWidget`) become Rust (Phase 6, cxx-qt
+   per D-01) driving CEF via the C API; R09/R10 stand as behaviour the Rust panel must keep.
 
 Round 10 second-author check (2026-11-05): corrected R02 (was "Tick blocks until
 `cef_started_event`"; source uses non-blocking `os_event_try`; added the exact

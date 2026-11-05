@@ -1050,12 +1050,13 @@ Verified in this checkout (submodules initialised): **`plugins/obs-websocket` at
   - Spec: S-051 §4.1–4.4 (hook protocol, kernel names, shared-memory layout), §5.D
   - Vectors: `test/conformance/scripts/wincapture/`
   - Done when: hooks a D3D11 sample.
-- [ ] **P5-31.7 Hook DLL and helpers**
+- [ ] **P5-31.7 Port the hook DLL to Rust** (D-08, confirmed 2026-11-05)
   - Files: `graphics-hook/` (15 files / 8 180 lines: `vulkan-capture.c` 2103 + `vulkan-capture.h` 875, `d3d9-capture.cpp` 866 + `d3d9-patches.hpp` 184, `gl-capture.c` 881 + `gl-decs.h` 144, `graphics-hook.c` 907 + `graphics-hook.h` 263, `d3d12-capture.cpp` 441, `d3d8-capture.cpp` 396, `d3d10-capture.cpp` 370, `d3d11-capture.cpp` 328, `dxgi-capture.cpp` 353 + `dxgi-helpers.hpp` 52), `inject-helper/inject-helper.c` (118), `get-graphics-offsets/` (6 files / 641 lines: `d3d9-offsets.cpp` 355, `dxgi-offsets.cpp` 116, `d3d8-offsets.cpp` 86, `get-graphics-offsets.c` 50 + `.h` 33, `ddraw-offsets.cpp` 1)
-  - Steps: 1) Keep the hook + helpers C/C++ (D-08); wrap their existing CMake targets (`graphics-hook` MODULE, `inject-helper`/`get-graphics-offsets` executables) from Cargo. 2) Build all three from the Cargo workspace.
+  - Steps: 1) Port the per-version hook functions (d3d12, d3d11, d3d10, d3d9, d3d8, dxgi, gl, vulkan) to a Rust cdylib `graphics-hook` — same module name, same injection, same named-pipe IPC + shared-memory/event contract (P5-31.6 `ipc-util`, S-051 §4.3–4.4); the Rust host owns that contract. 2) Phase per hook: each backend ships behind a runtime toggle with the C DLL as fallback until it passes the P5-31.9 sample matrix (start with d3d12/d3d11; d3d9's runtime patching per `d3d9-patches.hpp` is the hardest). 3) Keep `inject-helper/` and `get-graphics-offsets/` C (small helper executables, outside D-08's scope) and wrap their CMake targets from Cargo.
   - Pitfalls:
-    - D-08 (DECISIONS-NEEDED): `graphics-hook/`, `inject-helper/`, `get-graphics-offsets/` stay C/C++ — the hook is injected into third-party games and is ABI-sensitive. The only FFI crossing is the named-pipe IPC (P5-31.6 `ipc-util` protocol) + the shared-memory/event layout (S-051 §4.3–4.4), which the Rust host owns.
-  - Done when: builds from Cargo.
+    - D-08 (DECISIONS-NEEDED, confirmed 2026-11-05): the hook runs injected into third-party games — a bug there crashes the user's game, so the per-hook phasing with the C fallback is mandatory, and each hook's ABI-sensitivity (prologues, offset resolution, DXGI/GL/Vulkan interposition) must match the C behaviour exactly.
+    - D3D9 patching: offset tables + patch bytes must be identical to `d3d9-patches.hpp` or anti-cheat/games break silently.
+  - Done when: every `graphics-hook/` backend passes the P5-31.9 matrix with the Rust DLL (C fallback still available per hook); helpers build from Cargo.
 - [ ] **P5-31.8 Cursor**
   - Files: `cursor-capture.c` (257) + `cursor-capture.h` (28)
   - Steps: 1) Port the cursor capture (image + position). 2) Verify the cursor is visible.
@@ -1069,11 +1070,11 @@ Verified in this checkout (submodules initialised): **`plugins/obs-websocket` at
 
 - [ ] **P5-31.10/.11** E1/E2
   - Files: `plugin-main.c` (161) (module main), `CMakeLists.txt` (targets: `win-capture` MODULE, `graphics-hook` MODULE, `inject-helper` + `get-graphics-offsets` executables)
-  - Steps: 1) Bookend E1: `crates/obs-modules/win-capture` cdylib named `win-capture` (host side); the hook/helpers stay C++ (D-08) and keep their module/executable names. 2) Bookend E2: remove the ported host-side C sources in the same PR; keep `graphics-hook/`, `inject-helper/`, `get-graphics-offsets/` until P7-03.3.
+  - Steps: 1) Bookend E1: `crates/obs-modules/win-capture` cdylib named `win-capture` (host side); the Rust `graphics-hook` cdylib keeps its module name (D-08), the C helpers keep their executable names. 2) Bookend E2: remove the ported host-side C sources in the same PR; keep `inject-helper/`, `get-graphics-offsets/` until P7-03.3, and the C `graphics-hook/` sources until P5-31.7 retires them hook-by-hook.
   - Done when: E1 export/loader check passes on Windows; E2 CI green and smoke recorded in `docs/tests/plugin-win-capture.md`.
 - [ ] **P5-31.12 Vulkan format table vectors (added)**
   - Files: `graphics-hook/vulkan-capture.h` (875; `vk_format_to_dxgi` table, 512 lines at :338, `vk_format_to_str` table, 237 lines at :56).
-  - Steps: 1. the hook stays C++ (D-08) — pin the two tables instead of porting: generate a `vulkan-formats` script + committed `.expected` vector from the C build asserting every VkFormat→DXGI-format mapping (incl. the unsupported fallback) and every VkFormat→name string. 2. regenerate the vector if the hook table changes.
+  - Steps: 1. the hook is ported to Rust (D-08) — pin the two tables with conformance vectors: generate a `vulkan-formats` script + committed `.expected` vector from the C build (reference) and assert the Rust port (P5-31.7) matches every VkFormat→DXGI-format mapping (incl. the unsupported fallback) and every VkFormat→name string. 2. regenerate the vector if the hook table changes.
   - Spec: S-051 (vulkan capture).
   - Vectors: `test/conformance/scripts/wincapture/`.
   - Done when: all rows of both tables are pinned by committed vectors.
@@ -1438,12 +1439,13 @@ Verified in this checkout (submodules initialised): **`plugins/obs-websocket` at
   - Files: `plugins/obs-browser/obs-browser-plugin.cpp` (943) (module main; registers the `browser_source` source + the dock), `CMakeLists.txt` (target `obs-browser` MODULE + `obs-browser-helper` executable + the 4 macOS helper bundles)
   - Steps: 1) Bookend S1: the source id `browser_source` + settings keys + the `ObsBrowser.Refresh` hotkey. 2) Bookend S2: P0-18 corpus through the P0-15 ABI host. 3) Coordinate with the upstream owners before starting (external repo).
   - Done when: `docs/tests/plugin-obs-browser-inventory.md` committed; S2 passes.
-- [ ] **P5-45.3 Bridge**
-  - Files: CEF glue (stays C++, D-09): `browser-app.cpp` (507) + `browser-app.hpp` (117) (CefApp; registers `window.obsstudio`, `ExecuteJSFunction`), `browser-client.cpp` (715) + `browser-client.hpp` (169) (CefClient render/load/life-span/keyboard handlers), `browser-scheme.cpp` (84) + `browser-scheme.hpp` (31) (`http://absolute/` local-file scheme), `browser-dummy-client.cpp` (87) + `browser-dummy-client.hpp` (64) (no-CEF fallback), `cef-headers.hpp` (62), `drm-format.cpp` (62) + `drm-format.hpp` (21) (Linux), `linux-keyboard-helpers.hpp` (749), `deps/` (6 files / 403 lines: base64, ip-string, signal-restore, wide-string); page processes: `obs-browser-page/obs-browser-page-main.cpp` (136), `cmake/macos/entitlements-helper*.plist` (×4 bundles)
-  - Steps: 1) Define the C ABI `cef-bridge` (C++, ≥95): browser create/destroy, navigate, execute JS, paint callback with shared texture. 2) Keep the CEF process model — the Windows `obs-browser-page` exe (target `obs-browser-helper`) and the macOS `OBS Helper` ×4 bundles build from Cargo and keep their names. 3) Review the bridge header.
+- [ ] **P5-45.3 Port the CEF glue to Rust** (D-09, confirmed 2026-11-05)
+  - Files: CEF glue sources, all ported: `browser-app.cpp` (507) + `browser-app.hpp` (117) (CefApp; registers `window.obsstudio`, `ExecuteJSFunction`), `browser-client.cpp` (715) + `browser-client.hpp` (169) (CefClient render/load/life-span/keyboard handlers), `browser-scheme.cpp` (84) + `browser-scheme.hpp` (31) (`http://absolute/` local-file scheme), `browser-dummy-client.cpp` (87) + `browser-dummy-client.hpp` (64) (no-CEF fallback), `cef-headers.hpp` (62), `drm-format.cpp` (62) + `drm-format.hpp` (21) (Linux), `linux-keyboard-helpers.hpp` (749), `deps/` (6 files / 403 lines: base64, ip-string, signal-restore, wide-string); page processes: `obs-browser-page/obs-browser-page-main.cpp` (136), `cmake/macos/entitlements-helper*.plist` (×4 bundles). CEF itself stays the C++ vendor library (D-04), driven through its official C API (`include/capi/`, bindgen — no hand-written C++ bridge).
+  - Steps: 1) bindgen over the CEF ≥95 C API (`include/capi/`). 2) Port the glue 1:1 against S-082: CefApp + `window.obsstudio` V8 registration + `ExecuteJSFunction`, per-source client handlers (render/audio/load/life-span/keyboard), `http://absolute/` scheme, dummy-client fallback, drm-format map, signal restore around init. 3) Port the page processes as Rust binaries keeping names/entitlements (Windows `obs-browser-page` exe, target `obs-browser-helper`; macOS `OBS Helper` ×4 bundles; Linux `browser-helper`).
   - Pitfalls:
-    - D-09 (DECISIONS-NEEDED): the CEF glue stays C++ (CEF is a C++ library, ≥95). Stays C: `browser-app.cpp`, `browser-client.cpp`, `browser-scheme.cpp`, `browser-dummy-client.cpp`, `cef-headers.hpp`, `drm-format.cpp`, `linux-keyboard-helpers.hpp`, `deps/`, `obs-browser-page/`. Crosses the FFI: the `cef-bridge` C ABI (create/destroy/navigate/executeJS/paint callback) + the JS `window.obsstudio` object.
-  - Done when: header reviewed and the page processes build from Cargo.
+    - D-09 (DECISIONS-NEEDED, confirmed 2026-11-05): CEF's threading rules carry over to the C API — UI-thread marshalling (`CefPostTask(TID_UI)` equivalent), audio callbacks on the CEF audio thread, V8 on the UI thread (S-082 §5). The C API stores raw function pointers: trampolines must be `extern "C"` with correct lifetimes.
+    - Keep the no-CEF fallback (dummy client): it runs when CEF is missing and tests use it.
+  - Done when: glue + page processes build from Cargo (names/entitlements kept); S-082 R01–R13 exercised via P5-45.4–.7.
 - [ ] **P5-45.4 Source**
   - Files: `obs-browser-source.cpp` (700) + `obs-browser-source.hpp` (135)
   - Steps: 1) Port the source lifecycle + settings (`is_local_file`, `width`/`height`, `fps_custom`/`fps`, `shutdown` = shutdown when not visible, `restart_when_active`, `css`, `url`/`local_file`, `reroute_audio`, `webpage_control_level`). 2) Port the `ObsBrowser.Refresh` hotkey. 3) Tests for the visibility/shutdown flags.
@@ -1462,7 +1464,7 @@ Verified in this checkout (submodules initialised): **`plugins/obs-websocket` at
   - Done when: results recorded in `docs/tests/`.
 - [ ] **P5-45.8/.9** E1/E2
   - Files: `obs-browser-plugin.cpp` (943) (module main), `CMakeLists.txt` (target `obs-browser` MODULE + helper bundles)
-  - Steps: 1) Bookend E1: `crates/obs-modules/obs-browser` cdylib named `obs-browser`; links the C++ `cef-bridge` + CEF; the helper bundles keep their names. 2) Bookend E2: the submodule's C sources for the ported parts are removed when the submodule is retired; smoke on each OS.
+  - Steps: 1) Bookend E1: `crates/obs-modules/obs-browser` cdylib named `obs-browser`; links CEF through its C API (bindgen, D-09); the Rust page processes keep their names/entitlements. 2) Bookend E2: the submodule's C sources for the ported parts are removed when the submodule is retired; smoke on each OS.
   - Done when: E1 export/loader check passes; E2 CI green and smoke recorded in `docs/tests/plugin-obs-browser.md`.
 
 ## G. Wrap-up
@@ -1537,7 +1539,7 @@ Verified in this checkout (submodules initialised): **`plugins/obs-websocket` at
 
 ### P5-50 Phase 5 review
 - [ ] **P5-50.1 FFI-shim list** with owner and reason.
-  - Files: `docs/rust-rewrite/` (new table; inputs: P5-21 D-11 obs-vst, P5-31.7 D-08 graphics-hook, P5-32.3 D-19 libdshowcapture, P5-42/43 D-10 decklink/aja, P5-45.3 D-09 CEF glue, P5-37.3 D-14 DAL plug-in, P5-07.7 obs-x264-test)
+  - Files: `docs/rust-rewrite/` (new table; inputs: P5-21 D-11 obs-vst, P5-31.7 D-08 win-capture C helpers (inject-helper, get-graphics-offsets), P5-32.3 D-19 libdshowcapture, P5-42/43 D-10 decklink/aja, P5-45 D-09 CEF (vendor library via C API), P5-37.3 D-14 DAL plug-in, P5-07.7 obs-x264-test)
   - Steps: 1) Collect every kept-C/C++ piece with owner + reason. 2) Commit the table (input to P7-03.1).
   - Done when: table committed (input to P7-03.1).
 - [ ] **P5-50.2 Tick** parents.

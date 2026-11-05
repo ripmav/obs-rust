@@ -1484,37 +1484,37 @@ Build/data files in this area: **18** (878 lines) — owner: same task as the ar
 | `plugins/nv-filters/nvidia-audiofx-filter.c` | P5-10 | — |  |
 | `plugins/nv-filters/nvidia-videofx-filter.c` | P5-10 | — |  |
 | `plugins/nv-filters/nvvfx-load.h` | P5-10 | — |  |
-| `plugins/obs-browser/browser-app.cpp` | P5-45 | — | D-09: CEF stays C++ (submodule) |
-| `plugins/obs-browser/browser-app.hpp` | P5-45 | — | D-09: CEF stays C++ (submodule) |
-| `plugins/obs-browser/browser-client.cpp` | P5-45 | — | D-09: CEF stays C++ (submodule) |
-| `plugins/obs-browser/browser-client.hpp` | P5-45 | — | D-09: CEF stays C++ (submodule) |
-| `plugins/obs-browser/browser-dummy-client.cpp` | P5-45 | — | D-09: CEF stays C++ (submodule) |
-| `plugins/obs-browser/browser-dummy-client.hpp` | P5-45 | — | D-09: CEF stays C++ (submodule) |
-| `plugins/obs-browser/browser-scheme.cpp` | P5-45 | — | D-09: CEF stays C++ (submodule) |
-| `plugins/obs-browser/browser-scheme.hpp` | P5-45 | — | D-09: CEF stays C++ (submodule) |
-| `plugins/obs-browser/browser-version.h` | P5-45 | — | D-09: CEF stays C++ (submodule) |
-| `plugins/obs-browser/cef-headers.hpp` | P5-45 | — | D-09: CEF stays C++ (submodule) |
-| `plugins/obs-browser/deps/base64/base64.cpp` | P5-45 | — | D-09: CEF stays C++ (submodule) |
-| `plugins/obs-browser/deps/base64/base64.hpp` | P5-45 | — | D-09: CEF stays C++ (submodule) |
-| `plugins/obs-browser/deps/ip-string-posix.cpp` | P5-45 | — | D-09: CEF stays C++ (submodule) |
-| `plugins/obs-browser/deps/ip-string-windows.cpp` | P5-45 | — | D-09: CEF stays C++ (submodule) |
-| `plugins/obs-browser/deps/ip-string.hpp` | P5-45 | — | D-09: CEF stays C++ (submodule) |
-| `plugins/obs-browser/deps/signal-restore.cpp` | P5-45 | — | D-09: CEF stays C++ (submodule) |
-| `plugins/obs-browser/deps/signal-restore.hpp` | P5-45 | — | D-09: CEF stays C++ (submodule) |
-| `plugins/obs-browser/deps/wide-string.cpp` | P5-45 | — | D-09: CEF stays C++ (submodule) |
-| `plugins/obs-browser/deps/wide-string.hpp` | P5-45 | — | D-09: CEF stays C++ (submodule) |
-| `plugins/obs-browser/drm-format.cpp` | P5-45 | — | D-09: CEF stays C++ (submodule) |
-| `plugins/obs-browser/drm-format.hpp` | P5-45 | — | D-09: CEF stays C++ (submodule) |
-| `plugins/obs-browser/linux-keyboard-helpers.hpp` | P5-45 | — | D-09: CEF stays C++ (submodule) |
-| `plugins/obs-browser/obs-browser-page/obs-browser-page-main.cpp` | P5-45 | — | D-09: CEF stays C++ (submodule) |
-| `plugins/obs-browser/obs-browser-plugin.cpp` | P5-45 | — | D-09: CEF stays C++ (submodule) |
-| `plugins/obs-browser/obs-browser-source.cpp` | P5-45 | — | D-09: CEF stays C++ (submodule) |
-| `plugins/obs-browser/obs-browser-source.hpp` | P5-45 | — | D-09: CEF stays C++ (submodule) |
-| `plugins/obs-browser/panel/browser-panel-client.cpp` | P5-45 | — | D-09: CEF stays C++ (submodule) |
-| `plugins/obs-browser/panel/browser-panel-client.hpp` | P5-45 | — | D-09: CEF stays C++ (submodule) |
-| `plugins/obs-browser/panel/browser-panel-internal.hpp` | P5-45 | — | D-09: CEF stays C++ (submodule) |
-| `plugins/obs-browser/panel/browser-panel.cpp` | P5-45 | — | D-09: CEF stays C++ (submodule) |
-| `plugins/obs-browser/panel/browser-panel.hpp` | P5-45 | — | D-09: CEF stays C++ (submodule) |
+| `plugins/obs-browser/browser-app.cpp` | P5-45 | — | D-09: ported to Rust (CEF stays C++ lib) |
+| `plugins/obs-browser/browser-app.hpp` | P5-45 | — | D-09: ported to Rust (CEF stays C++ lib) |
+| `plugins/obs-browser/browser-client.cpp` | P5-45 | — | D-09: ported to Rust (CEF stays C++ lib) |
+| `plugins/obs-browser/browser-client.hpp` | P5-45 | — | D-09: ported to Rust (CEF stays C++ lib) |
+| `plugins/obs-browser/browser-dummy-client.cpp` | P5-45 | — | D-09: ported to Rust (CEF stays C++ lib) |
+| `plugins/obs-browser/browser-dummy-client.hpp` | P5-45 | — | D-09: ported to Rust (CEF stays C++ lib) |
+| `plugins/obs-browser/browser-scheme.cpp` | P5-45 | — | D-09: ported to Rust (CEF stays C++ lib) |
+| `plugins/obs-browser/browser-scheme.hpp` | P5-45 | — | D-09: ported to Rust (CEF stays C++ lib) |
+| `plugins/obs-browser/browser-version.h` | P5-45 | — | D-09: ported to Rust (CEF stays C++ lib) |
+| `plugins/obs-browser/cef-headers.hpp` | P5-45 | — | D-09: ported to Rust (CEF stays C++ lib) |
+| `plugins/obs-browser/deps/base64/base64.cpp` | P5-45 | — | D-09: ported to Rust (CEF stays C++ lib) |
+| `plugins/obs-browser/deps/base64/base64.hpp` | P5-45 | — | D-09: ported to Rust (CEF stays C++ lib) |
+| `plugins/obs-browser/deps/ip-string-posix.cpp` | P5-45 | — | D-09: ported to Rust (CEF stays C++ lib) |
+| `plugins/obs-browser/deps/ip-string-windows.cpp` | P5-45 | — | D-09: ported to Rust (CEF stays C++ lib) |
+| `plugins/obs-browser/deps/ip-string.hpp` | P5-45 | — | D-09: ported to Rust (CEF stays C++ lib) |
+| `plugins/obs-browser/deps/signal-restore.cpp` | P5-45 | — | D-09: ported to Rust (CEF stays C++ lib) |
+| `plugins/obs-browser/deps/signal-restore.hpp` | P5-45 | — | D-09: ported to Rust (CEF stays C++ lib) |
+| `plugins/obs-browser/deps/wide-string.cpp` | P5-45 | — | D-09: ported to Rust (CEF stays C++ lib) |
+| `plugins/obs-browser/deps/wide-string.hpp` | P5-45 | — | D-09: ported to Rust (CEF stays C++ lib) |
+| `plugins/obs-browser/drm-format.cpp` | P5-45 | — | D-09: ported to Rust (CEF stays C++ lib) |
+| `plugins/obs-browser/drm-format.hpp` | P5-45 | — | D-09: ported to Rust (CEF stays C++ lib) |
+| `plugins/obs-browser/linux-keyboard-helpers.hpp` | P5-45 | — | D-09: ported to Rust (CEF stays C++ lib) |
+| `plugins/obs-browser/obs-browser-page/obs-browser-page-main.cpp` | P5-45 | — | D-09: ported to Rust (CEF stays C++ lib) |
+| `plugins/obs-browser/obs-browser-plugin.cpp` | P5-45 | — | D-09: ported to Rust (CEF stays C++ lib) |
+| `plugins/obs-browser/obs-browser-source.cpp` | P5-45 | — | D-09: ported to Rust (CEF stays C++ lib) |
+| `plugins/obs-browser/obs-browser-source.hpp` | P5-45 | — | D-09: ported to Rust (CEF stays C++ lib) |
+| `plugins/obs-browser/panel/browser-panel-client.cpp` | P5-45 | — | D-09: ported to Rust (CEF stays C++ lib) |
+| `plugins/obs-browser/panel/browser-panel-client.hpp` | P5-45 | — | D-09: ported to Rust (CEF stays C++ lib) |
+| `plugins/obs-browser/panel/browser-panel-internal.hpp` | P5-45 | — | D-09: ported to Rust (CEF stays C++ lib) |
+| `plugins/obs-browser/panel/browser-panel.cpp` | P5-45 | — | D-09: ported to Rust (CEF stays C++ lib) |
+| `plugins/obs-browser/panel/browser-panel.hpp` | P5-45 | — | D-09: ported to Rust (CEF stays C++ lib) |
 | `plugins/obs-ffmpeg/ffmpeg-mux/ffmpeg-mux.c` | P5-14.3 | S-037 |  |
 | `plugins/obs-ffmpeg/ffmpeg-mux/ffmpeg-mux.h` | P5-14.3 | S-037 |  |
 | `plugins/obs-ffmpeg/obs-amf-test/obs-amf-test.cpp` | P5-41.4 | S-050 |  |
@@ -1844,20 +1844,20 @@ Build/data files in this area: **18** (878 lines) — owner: same task as the ar
 | `plugins/win-capture/get-graphics-offsets/dxgi-offsets.cpp` | P5-31.7 | — | D-08: stays C/C++ |
 | `plugins/win-capture/get-graphics-offsets/get-graphics-offsets.c` | P5-31.7 | — | D-08: stays C/C++ |
 | `plugins/win-capture/get-graphics-offsets/get-graphics-offsets.h` | P5-31.7 | — | D-08: stays C/C++ |
-| `plugins/win-capture/graphics-hook/d3d10-capture.cpp` | P5-31.7 | — | D-08: stays C/C++ (hook DLL) |
-| `plugins/win-capture/graphics-hook/d3d11-capture.cpp` | P5-31.7 | — | D-08: stays C/C++ (hook DLL) |
-| `plugins/win-capture/graphics-hook/d3d12-capture.cpp` | P5-31.7 | — | D-08: stays C/C++ (hook DLL) |
-| `plugins/win-capture/graphics-hook/d3d8-capture.cpp` | P5-31.7 | — | D-08: stays C/C++ (hook DLL) |
-| `plugins/win-capture/graphics-hook/d3d9-capture.cpp` | P5-31.7 | — | D-08: stays C/C++ (hook DLL) |
-| `plugins/win-capture/graphics-hook/d3d9-patches.hpp` | P5-31.7 | — | D-08: stays C/C++ (hook DLL) |
-| `plugins/win-capture/graphics-hook/dxgi-capture.cpp` | P5-31.7 | — | D-08: stays C/C++ (hook DLL) |
-| `plugins/win-capture/graphics-hook/dxgi-helpers.hpp` | P5-31.7 | — | D-08: stays C/C++ (hook DLL) |
-| `plugins/win-capture/graphics-hook/gl-capture.c` | P5-31.7 | — | D-08: stays C/C++ (hook DLL) |
-| `plugins/win-capture/graphics-hook/gl-decs.h` | P5-31.7 | — | D-08: stays C/C++ (hook DLL) |
-| `plugins/win-capture/graphics-hook/graphics-hook.c` | P5-31.7 | — | D-08: stays C/C++ (hook DLL) |
-| `plugins/win-capture/graphics-hook/graphics-hook.h` | P5-31.7 | — | D-08: stays C/C++ (hook DLL) |
-| `plugins/win-capture/graphics-hook/vulkan-capture.c` | P5-31.7 | — | D-08: stays C/C++ (hook DLL) |
-| `plugins/win-capture/graphics-hook/vulkan-capture.h` | P5-31.7 | — | D-08: stays C/C++ (hook DLL) |
+| `plugins/win-capture/graphics-hook/d3d10-capture.cpp` | P5-31.7 | — | D-08: ported to Rust (hook DLL) |
+| `plugins/win-capture/graphics-hook/d3d11-capture.cpp` | P5-31.7 | — | D-08: ported to Rust (hook DLL) |
+| `plugins/win-capture/graphics-hook/d3d12-capture.cpp` | P5-31.7 | — | D-08: ported to Rust (hook DLL) |
+| `plugins/win-capture/graphics-hook/d3d8-capture.cpp` | P5-31.7 | — | D-08: ported to Rust (hook DLL) |
+| `plugins/win-capture/graphics-hook/d3d9-capture.cpp` | P5-31.7 | — | D-08: ported to Rust (hook DLL) |
+| `plugins/win-capture/graphics-hook/d3d9-patches.hpp` | P5-31.7 | — | D-08: ported to Rust (hook DLL) |
+| `plugins/win-capture/graphics-hook/dxgi-capture.cpp` | P5-31.7 | — | D-08: ported to Rust (hook DLL) |
+| `plugins/win-capture/graphics-hook/dxgi-helpers.hpp` | P5-31.7 | — | D-08: ported to Rust (hook DLL) |
+| `plugins/win-capture/graphics-hook/gl-capture.c` | P5-31.7 | — | D-08: ported to Rust (hook DLL) |
+| `plugins/win-capture/graphics-hook/gl-decs.h` | P5-31.7 | — | D-08: ported to Rust (hook DLL) |
+| `plugins/win-capture/graphics-hook/graphics-hook.c` | P5-31.7 | — | D-08: ported to Rust (hook DLL) |
+| `plugins/win-capture/graphics-hook/graphics-hook.h` | P5-31.7 | — | D-08: ported to Rust (hook DLL) |
+| `plugins/win-capture/graphics-hook/vulkan-capture.c` | P5-31.7 | — | D-08: ported to Rust (hook DLL) |
+| `plugins/win-capture/graphics-hook/vulkan-capture.h` | P5-31.7 | — | D-08: ported to Rust (hook DLL) |
 | `plugins/win-capture/inject-helper/inject-helper.c` | P5-31.7 | — | D-08: stays C/C++ |
 | `plugins/win-capture/load-graphics-offsets.c` | P5-31 | S-051 |  |
 | `plugins/win-capture/monitor-capture.c` | P5-31 | S-051 |  |

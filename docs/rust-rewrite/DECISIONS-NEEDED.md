@@ -23,8 +23,8 @@ Legend: **Blocked** = tasks that wait on the answer. **Default** = what the plan
 
 | ID | Decision | Blocked | Default |
 |---|---|---|---|
-| D-08 | **win-capture game-capture hook DLL** (D3D8/9/10/11/12, DXGI, GL, Vulkan hooks) — port to Rust or keep C/C++ forever? | P5-31.7, P7-03.3 | Keep C/C++: it is injected into third-party games and is ABI-sensitive; the host side is Rust |
-| D-09 | **`obs-browser` CEF glue** stays C++? | P5-45, P7-03.3 | Yes; only the surrounding plugin is ported |
+| D-08 | **win-capture game-capture hook DLL** (D3D8/9/10/11/12, DXGI, GL, Vulkan hooks) — port to Rust or keep C/C++ forever? | P5-31.7, P7-03.3 | **Confirmed (user, 2026-11-05): Port to Rust.** The hook DLL becomes a Rust cdylib with the same injection; per-version hook functions (D3D8/9/10/11/12, DXGI, GL, Vulkan) ported in Rust. Risk noted: a bug = game crash, and the hook surface is large — P5-31.7 grows from "keep C, Rust host" to a full port; phased per-hook with the C DLL as fallback until each hook proves stable. Task files updated 2026-11-05 |
+| D-09 | **`obs-browser` CEF glue** stays C++? | P5-45, P7-03.3 | **Confirmed (user, 2026-11-05): Port the glue to Rust.** CEF stays the linked C++ vendor library (D-04), driven through its official C API (`include/capi/`, bindgen — no hand-written C++ bridge); all glue + page processes port to Rust, helper names/entitlements kept. No obs-browser C/C++ left for P7-03.3. Task files updated 2026-11-05 |
 | D-10 | **DeckLink / AJA SDK glue** stays C++? | P5-42/43, P7-03.3 | Yes (vendor SDKs ship C++/COM interfaces) |
 | D-11 | **`obs-vst`** — port the VST2 host to Rust or keep C++? | P5-21.6 | Keep C++ behind the plugin ABI (editor-window embedding per OS is the hard part; low value for the risk) |
 | D-12 | **BSD support tier** (`oss-audio`, `sndio`, FreeBSD crash handler, `LoaderPaths_BSD`) — full support or best-effort? | P5-29, P6-44, P6-33.3 | Best-effort: plugins ported, no BSD job in the required-CI matrix |

@@ -1,11 +1,11 @@
-# S-086 win-capture graphics-hook FFI contract (hook stays C++, D-08)
+# S-086 win-capture graphics-hook FFI contract (hook ported to Rust, D-08 confirmed 2026-11-05)
 
 | | |
 |---|---|
 | Status | Draft (round 8 — behaviour catalog written from C reference; no vectors yet) |
 | Spec version | initial |
 | Reference | OBS Studio 33.0.1 (`plugins/win-capture/graphics-hook/` + injection/offset tooling) |
-| Target crate | `crates/capture-hook-ffi` (FFI contract, name/layout tables, injection client). Per **D-08** the hook DLL itself remains the C/C++ `graphics-hook.dll`; the Rust side MUST consume it, not reimplement it. |
+| Target crate | `crates/capture-hook-ffi` (FFI contract, name/layout tables, injection client). Per **D-08** (confirmed 2026-11-05) the hook DLL is ported to Rust (cdylib, same module name, P5-31.7); this contract pins the hook-side behaviour the port MUST preserve (exports, entry, IPC, shmem layout) and governs the per-hook C fallback during the port window. |
 | Depends on | S-051 §4 (hook protocol structures §4.1, kernel object names §4.2, shmem layout §4.3), S-074 R09 (hook DLL copy + vulkan registry post-update) |
 | Conformance | planned, none yet |
 
@@ -144,10 +144,10 @@ Detour = Microsoft Detours attach on an out-of-line function pointer.
 
 ## 6. Open questions
 
-1. Confirm the rewrite's `crates/capture-hook-ffi` ships the **same** DLL (built from the
-   33.0.1 sources, unmodified) vs. a re-hosted build — D-08 says "hook stays C++"; if the
-   build system changes (MSVC version, Detours version), R18/R23/R27 behaviour must be
-   re-verified, since offsets and obfuscated lookups are toolchain-sensitive.
+1. Resolved (D-08, 2026-11-05): the hook is ported to Rust (P5-31.7, cdylib with the same
+   module name) — R18/R23/R27 (offsets, obfuscated lookups) must be reproduced exactly in
+   the Rust port; the C build (same MSVC/Detours settings) is the reference during the port
+   window and is re-verified whenever the toolchain changes.
 2. `get-graphics-offsets` runs *inside* a fresh process that loads real d3d9/dxgi — on
    modern Windows (no d3d8) confirm which sections legitimately stay zero and that the
    version cache treats missing modules as "always valid".
