@@ -64,14 +64,19 @@ persistence medium for mixer UI state.
 
 ## 4. VolumeControl composite (`VolumeControl.cpp` / `.hpp`)
 
-- **S-071-R07** One row widget combining, left to right: `VolumeName`, `MuteCheckBox`,
-  balance control, `VolumeSlider`, `VolumeMeter`. The volume slider drives the source
-  volume (`obs_source_set_volume`); the mute checkbox drives source mute; the meter is fed
-  by the S-032 volmeter (per-channel levels), not by the slider.
+- **S-071-R07** One row widget combining, left to right: category label ("Active"),
+  `VolumeName`, a checkable mute `QPushButton` (`btn-mute`), a checkable monitor
+  `QPushButton` (`btn-monitor`), a volume `QLabel` (dB text), `VolumeSlider`, `VolumeMeter`.
+  The slider moves the row's `OBS_FADER_LOG` fader (`obs_fader_set_deflection`, range
+  0..`FADER_PRECISION`) whose callback applies the volume to the source (the undo action
+  calls `obs_source_set_volume`); the mute button drives source mute via `handleMuteButton`;
+  the meter is fed by the S-032 volmeter (per-channel levels), not by the slider. The mixer
+  row has **no** balance slider.
 - **S-071-R08** The `MixerStatus` flag set (at least `Pinned`, plus hidden/locked as
   applicable) is queryable via `mixerStatus()` and drives the R04/R05 behaviour.
-- **S-071-R09** Emitted signals used by the dock: `unhideAll` (and the per-row state-change
-  signals feeding R03 writes).
+- **S-071-R09** The only emitted signal is `unhideAll`; the R03 private-settings writes are
+  made directly by the state setters (`setPinnedInMixer`/`setHiddenInMixer`/`setVolumeLocked`)
+  — there are no per-row state-change signals.
 
 ## 5. Sub-widgets
 
@@ -85,15 +90,18 @@ persistence medium for mixer UI state.
   *absolute* — press or move sets the value to the cursor position, never relative
   stepping: `mousePressEvent` / `mouseMoveEvent` emit `sliderMoved(posToRangeValue(event))`;
   hover emits `absoluteSliderHovered(val)`. Wheel events are ignored (base class).
-- **S-071-R12** `VolumeSlider.cpp`: the volume slider used in the row (absolute semantics of
-  R11 with volume range mapping); `BalanceSlider.hpp`: the left/right balance slider of the
-  row.
+- **S-071-R12** `VolumeSlider.cpp`: the volume slider used in the row — `VolumeSlider :
+  AbsoluteSlider` (R11), holding the row's `obs_fader_t` (log) so the 0..`FADER_PRECISION`
+  deflection maps to volume via the fader, and painting fader ticks (dB labels via
+  `obs_fader_db_to_def`); `BalanceSlider.hpp`: a left/right balance slider used only in the
+  advanced-audio dock row (`OBSAdvAudioCtrl`, S-072), **not** in the mixer row.
 - **S-071-R13** `MuteCheckBox.hpp`: `QCheckBox` with `setTristate(true)` and style property
   `class = "indicator-mute"`; the partial (tristate) state exists for internal use, the
   user-facing toggle is binary (Q3 for the exact partial-state rule).
-- **S-071-R14** `MenuCheckBox.cpp`: a checkbox with an attached dropdown menu — the row's
-  mode selector (meter type etc.); checking the box enables the feature, the menu chooses
-  the mode.
+- **S-071-R14** `MenuCheckBox.cpp`: a checkable item *inside* a dropdown menu — a
+  `QCheckBox` carrying a `QAction` (`setAction`); when its parent is a `QMenu` it mirrors
+  the menu's hover state. In the mixer it backs the context-menu view options (Show Hidden /
+  Show Inactive / Hidden-Last / Inactive-Last).
 - **S-071-R15** `VolumeName.cpp`: the row's source-name label; kept in sync with the source
   name (updated on rename) and truncated to the row width.
 - **S-071-R16** `VolumeAccessibleInterface.cpp`: the `QAccessible` implementation for the
@@ -115,3 +123,4 @@ threads are introduced by the widgets.
 - Q3: the exact rule that sets/clears `MuteCheckBox`'s partial state.
 - Q4: `VolumeAccessibleInterface`'s exact accessible value (dB text vs linear volume).
 - Q5: `MenuCheckBox` menu contents per feature (mode list is UI data).
+- Round 10 second-author check (2026-11-05): corrected R07 (row = category label + `VolumeName` + mute/monitor `QPushButton`s + volume `QLabel` + `VolumeSlider` + `VolumeMeter`; no `MuteCheckBox`/balance in the row; slider drives an `OBS_FADER_LOG` fader that applies volume), R09 (only signal is `unhideAll`; pin/hide/lock writes are direct from the setters), R12 (`BalanceSlider` belongs to the advanced-audio row, not the mixer row; `VolumeSlider` = `AbsoluteSlider` + `obs_fader` + tick painting), R14 (`MenuCheckBox` is a checkable item inside a `QMenu` — the mixer context-menu view options — not a checkbox with an attached menu).

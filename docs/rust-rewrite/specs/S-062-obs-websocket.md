@@ -32,7 +32,7 @@ parameter schemas are open questions Q4).
 - `plugins/obs-websocket/src/forms/SettingsDialog.cpp`, `plugins/obs-websocket/src/forms/ConnectInfo.cpp`
 - `plugins/obs-websocket/src/requesthandler/RequestHandler.cpp`, `plugins/obs-websocket/src/requesthandler/RequestBatchHandler.cpp`, `plugins/obs-websocket/src/requesthandler/RequestHandler_Inputs.cpp`, `plugins/obs-websocket/src/requesthandler/RequestHandler_Outputs.cpp`, `plugins/obs-websocket/src/requesthandler/RequestHandler_SceneItems.cpp`, `plugins/obs-websocket/src/requesthandler/RequestHandler_Config.cpp`, `plugins/obs-websocket/src/requesthandler/RequestHandler_Scenes.cpp`, `plugins/obs-websocket/src/requesthandler/RequestHandler_Sources.cpp`, `plugins/obs-websocket/src/requesthandler/RequestHandler_Filters.cpp`, `plugins/obs-websocket/src/requesthandler/RequestHandler_General.cpp`, `plugins/obs-websocket/src/requesthandler/RequestHandler_Ui.cpp`, `plugins/obs-websocket/src/requesthandler/RequestHandler_Record.cpp`, `plugins/obs-websocket/src/requesthandler/RequestHandler_Transitions.cpp`, `plugins/obs-websocket/src/requesthandler/RequestHandler_MediaInputs.cpp`, `plugins/obs-websocket/src/requesthandler/RequestHandler_Stream.cpp`, `plugins/obs-websocket/src/requesthandler/RequestHandler_Canvases.cpp`, `plugins/obs-websocket/src/requesthandler/rpc/Request.cpp`, `plugins/obs-websocket/src/requesthandler/rpc/RequestBatchRequest.cpp`, `plugins/obs-websocket/src/requesthandler/rpc/RequestResult.cpp`
 - `plugins/obs-websocket/src/utils/Obs_ArrayHelper.cpp`, `plugins/obs-websocket/src/utils/Obs_VolumeMeter.cpp`, `plugins/obs-websocket/src/utils/Obs_VolumeMeter_Helpers.h`, `plugins/obs-websocket/src/utils/Json.cpp`, `plugins/obs-websocket/src/utils/Obs_StringHelper.cpp`, `plugins/obs-websocket/src/utils/Crypto.cpp`, `plugins/obs-websocket/src/utils/Obs_NumberHelper.cpp`, `plugins/obs-websocket/src/utils/Platform.cpp`, `plugins/obs-websocket/src/utils/Obs_ActionHelper.cpp`, `plugins/obs-websocket/src/utils/Obs_ObjectHelper.cpp`, `plugins/obs-websocket/src/utils/Obs_SearchHelper.cpp`, `plugins/obs-websocket/src/utils/Obs.h`
-- `plugins/obs-websocket/src/websocketserver/WebSocketServer.cpp`, `plugins/obs-websocket/src/websocketserver/WebSocketServer_Protocol.cpp`, `plugins/obs-websocket/src/websocketserver/rpc/WebSocketSession.h`
+- `plugins/obs-websocket/src/websocketserver/WebSocketServer.cpp`, `plugins/obs-websocket/src/websocketserver/WebSocketServer_Protocol.cpp`, `plugins/obs-websocket/src/websocketserver/rpc/WebSocketSession.h`, `plugins/obs-websocket/src/websocketserver/types/WebSocketOpCode.h`, `plugins/obs-websocket/src/websocketserver/types/WebSocketCloseCode.h`
 
 ## 2. Conventions
 
@@ -55,7 +55,7 @@ compiled in, `WebSocketEncoding { Json, MsgPack }`): `{"op": <opcode string>, "d
 | `RequestResponse` | 7 | server → client |
 | `RequestBatch` | 8 | client → server |
 | `RequestBatchResponse` | 9 | server → client |
-| `Disconnect` | 10 (Q5) | server → client (final message, with close) |
+| — (no `Disconnect`) | (Q5) | no `Disconnect` opcode in the 5.x enum; ends at `RequestBatchResponse = 9`, `IsValid()` covers 0–9; disconnect is a native connection close |
 
 S-062-R01: On connect the server sends `Hello`; the session is *not identified* until it
 receives a valid `Identify` (or the client disconnects).
@@ -208,6 +208,7 @@ volume-meter events are rate-limited per input (Q2).
 - Q4: full per-request parameter schemas for every 5.x request type (deferred: they are
   the published 5.x protocol; handler files above are the authoritative list of covered
   domains).
-- Q5: `Disconnect` opcode wire value (10 in the published 5.x protocol; confirm against
-  `WebSocketOpCode.h`).
+- Q5 (resolved): no `Disconnect` opcode in the 5.x source — `WebSocketOpCode` ends at
+  `RequestBatchResponse = 9` and `IsValid()` covers 0–9; there is no opcode-10 message.
 - Q6: exact `requestId` type validation beyond presence; `RequestStatus` numeric values.
+- Round 10 second-author check (2026-11-05): corrected `Disconnect` opcode row (was: value 10, server → client final message) — 5.x `WebSocketOpCode` has no `Disconnect` entry; Q5 resolved; added cited type headers (`WebSocketOpCode.h`, `WebSocketCloseCode.h`) to Reference files.

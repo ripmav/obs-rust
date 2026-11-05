@@ -159,11 +159,11 @@ source 1-2/1-8 → `SetAudioLoopBack(OFF)` → `StopAudioOutput`.
 | # | Rule |
 |---|---|
 | S-084-R11 | `aja-source.cpp` settings read: `ui_prop_device` (card ID string), `ui_prop_input` (IOSelection int), `ui_prop_vid_fmt`, `ui_prop_pix_fmt` (0 = auto-detect), `ui_prop_sdi_transport`, `ui_prop_sdi_transport_4k`, `ui_prop_channel_format` (audio channels, default 2), `ui_prop_channel_swap_fc_lfe`, `ui_prop_deactivate_when_not_showing`, `ui_prop_buffering` (default true; false ⇒ `obs_source_set_async_unbuffered`). |
-| S-084-R12 | Capture thread: ping-pongs two card frames starting at `framestoreIndex*2`; each loop: `WaitForInputFieldID(NTV2_FIELD0, channel)`; detect `GetInputVideoFormat`; if UNKNOWN ⇒ write black test pattern to framestore, sleep 250 ms, loop; if auto-detect and format changed ⇒ `obs_source_update(source, nullptr)` + stop (restart via update callback). |
+| S-084-R12 | Capture thread: ping-pongs two card frames starting at `framestoreIndex*2`; each loop: `WaitForInputFieldID(NTV2_FIELD0, channel)`; detect `GetInputVideoFormat`; if UNKNOWN ⇒ emit a black test-pattern frame to OBS (`obs_source_output_video2`, no card write), sleep 250 ms, loop; if auto-detect and format changed ⇒ `obs_source_update(source, nullptr)` + stop (restart via update callback). |
 | S-084-R13 | Audio per loop: `CheckTransferAudioDMA`/`TransferAudio` (`DMAReadAudio` between read offsets); on success emit one `obs_source_audio` (rate = props, 32-bit, layout from props, frames = bytes/(8×4)); channels 2..6 ⇒ repacked from 8ch, 0 ⇒ memset silence, else pass-through 8ch. On failure: reset audio offsets. |
 | S-084-R14 | Video per loop: `DMAReadFrame` → `obs_source_output_video2` with raster size/linesize from `NTV2FormatDesc`, colorspace `VIDEO_CS_601` for SD else `VIDEO_CS_709`, partial range; Level-B formats reported as Level-A; then `SetInputFrame(framestore, currentCardFrame)`. |
-| S-084-R15 | Card removed while capturing (`GetModelName() == "(Not Found)"`): sleep 250 ms, `obs_source_update(source, nullptr)`, stop thread. On clean stop: black test pattern to the framestore. |
-| S-084-R16 | `deactivate_while_not_showing`: source deactivates when not shown; activate/deactivate acquire/release the channel + IO selection and start/stop the capture thread. |
+| S-084-R15 | Card removed while capturing (`GetModelName() == "(Not Found)"`): sleep 250 ms, `obs_source_update(source, nullptr)`, stop thread. On clean stop: emit a black test-pattern frame to OBS (`GenerateTestPattern`, same path as R12's UNKNOWN branch). |
+| S-084-R16 | `ui_prop_deactivate_when_not_showing` (default false): `aja_source_hide` stops the capture thread (`Deactivate()`) when the source is no longer showing; `aja_source_show` restarts it (`Activate(true)`) when showing again. The OBS `activate`/`deactivate` callbacks are no-ops, and `Activate`/`Deactivate` only start/stop the capture thread — channel + IO-selection acquire/release happens in the update path and on destroy, not in show/hide. |
 
 ### 4.3 Output
 
@@ -214,3 +214,9 @@ source 1-2/1-8 → `SetAudioLoopBack(OFF)` → `StopAudioOutput`.
 3. `kDefaultAJAVideoFormat` (720p5994) and `kDefaultAJAPixelFormat` (8-bit YCBCR) are defined
    in `aja-common.hpp` but the source defaults to auto-detect; confirm whether any path still
    falls back to these constants.
+
+Round 10 second-author check (2026-11-05): corrected R12/R15 (black test pattern is emitted to
+OBS via `obs_source_output_video2`, was "written to the framestore") and R16 (property id is
+`ui_prop_deactivate_when_not_showing`, OBS activate/deactivate callbacks are no-ops — show/hide
+only start/stop the capture thread, was "activate/deactivate acquire/release the channel + IO
+selection"). R02/R04/R06/R12/R13/R17/R20 re-derived against 33.0.1 sources and confirmed.
