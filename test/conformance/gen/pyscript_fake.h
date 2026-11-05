@@ -1,5 +1,6 @@
 /* Shared declarations between pyscript_runner.c and pyscript_stubs.c (fake libobs for the Python backend). */
 #pragma once
+#include <pthread.h>
 #include <stdbool.h>
 #include <stdint.h>
 #include <obs.h>
@@ -61,6 +62,8 @@ extern struct lf_render lf_renders[LF_MAX_CB];
 extern int lf_nrenders;
 extern struct lf_hotkey lf_hotkeys[LF_MAX_CB];
 extern int lf_nhotkeys;
+extern pthread_t lf_main_thread;
+void lf_flush_hotkey_unregs(void);
 extern signal_handler_t *lf_handlers[4];
 extern obs_frontend_event_cb lf_fe_event_cb[LF_MAX_CB];
 extern void *lf_fe_event_p[LF_MAX_CB];
