@@ -1,11 +1,11 @@
-# S-083 Blackmagic DeckLink FFI contract (SDK kept, D-04/D-10)
+# S-083 Blackmagic DeckLink FFI contract (SDK kept, glue Rust — D-04/D-10)
 
 | | |
 |---|---|
 | Status | Draft (round 9 — behaviour catalog written from C reference; no vectors yet) |
 | Spec version | initial |
 | Reference | OBS Studio 33.0.1: `plugins/decklink/*` (capture/output), `plugins/decklink-output-ui/*` (Qt UI), `plugins/decklink-captions/*` (CEA-708 forwarder) |
-| Target crate | `crates/decklink-ffi` (contract + device control surface). Per **D-04/D-10** the Blackmagic DeckLink SDK/com drivers stay native: the Rust host MUST link the same `IDeckLink*` COM interfaces and replicate this contract. |
+| Target crate | `crates/decklink-ffi` (contract + device control surface). Per **D-04/D-10** (confirmed 2026-11-05) the Blackmagic DeckLink SDK/com drivers stay native and the glue is Rust: the host links the same `IDeckLink*` COM interfaces via hand-written FFI (no C API layer) and replicates this contract. |
 | Depends on | S-014 (obs_data/obs_property settings), S-015 (obs sources/outputs), S-048 (profile save callbacks, §5.9 frontend API) |
 | Conformance | planned, none yet |
 
