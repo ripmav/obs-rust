@@ -25,7 +25,7 @@ Dependencies are stated inline where non-obvious (and in the per-phase "Dependen
 
 1. One task is one PR (or one PR stack if it is L/XL). Branch: `<prefix>/<issue>-<short-description>`.
 2. Work starts with the test: add or extend a golden/unit test that fails against the Rust code, then implement.
-3. Keep the C ABI intact. A task that changes a public header is not allowed without an ADR.
+3. Keep the C ABI compatible (best-effort, D-02). A task that changes a public header needs an ADR; breaking changes additionally need a deprecation path (D-05).
 4. Tick the checkbox in this file in the same PR that finishes the task.
 5. Every test file gets a test matrix in `docs/tests/`; every issue gets `docs/tests/I-<n>-<name>.md`.
 6. Update README/rustdoc/comments with each change.
