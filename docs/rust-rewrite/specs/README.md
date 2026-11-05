@@ -94,7 +94,7 @@ conformance suite (`test/conformance/`). Process, roles and rules:
 | [S-082](S-082-obs-browser-cef-ffi.md) | obs-browser / CEF FFI contract (CEF kept as library, glue in Rust — D-09) | ≈ 4,150 lines | 0 | Draft (2nd-author checked round 10: 8/8 rules re-derived, 2 corrected; no vectors yet) | not run |
 | [S-083](S-083-decklink-ffi.md) | Blackmagic DeckLink FFI contract (SDK kept, glue Rust, D-04/D-10) | ≈ 3,050 lines | 0 | Draft (2nd-author checked round 10: 8/8 rules re-derived, clean; no vectors yet) | not run |
 | [S-084](S-084-aja-ffi.md) | AJA FFI contract (Kona SDK kept, glue Rust, D-04/D-10) | ≈ 6,950 lines | 0 | Draft (2nd-author checked round 10: 8/8 rules re-derived, 3 corrected; no vectors yet) | not run |
-| [S-085](S-085-vlc-vst-ffi.md) | vlc-video + obs-vst FFI contract (obs-vst per D-11) | ≈ 2,150 lines | 0 | Draft (2nd-author checked round 10: 8/8 rules re-derived, clean; no vectors yet) | not run |
+| [S-085](S-085-vlc-vst-ffi.md) | vlc-video + obs-vst FFI contract (both ports; VST2 ABI — D-11) | ≈ 2,150 lines | 0 | Draft (2nd-author checked round 10: 8/8 rules re-derived, clean; no vectors yet) | not run |
 | [S-086](S-086-graphics-hook-ffi.md) | win-capture graphics-hook FFI contract (ported to Rust, D-08) | ≈ 7,300 lines | 0 | Draft (2nd-author checked round 10: 8/8 rules re-derived, 4 corrected; no vectors yet) | not run |
 | [S-087](S-087-frontend-tools.md) | frontend-tools plugin (auto-scene-switcher, output-timer, captions, scripts UI) | ≈ 2,500 lines | 0 | Draft (2nd-author checked round 10: 8/8 rules re-derived, 1 corrected; no vectors yet) | not run |
 

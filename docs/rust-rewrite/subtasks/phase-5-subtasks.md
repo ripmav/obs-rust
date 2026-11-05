@@ -746,26 +746,26 @@ Verified in this checkout (submodules initialised): **`plugins/obs-websocket` at
   - Done when: `docs/tests/plugin-obs-vst-inventory.md` committed; S2 passes.
 - [ ] **P5-21.3 Scan/load**
   - Files: `VSTPlugin.cpp` (429) + `headers/VSTPlugin.h` (110), `win/VSTPlugin-win.cpp` (92), `mac/VSTPlugin-osx.mm` (92), `linux/VSTPlugin-linux.cpp` (69), `vst_header/aeffectx.h` (382), `headers/vst-plugin-callbacks.hpp` (21)
-  - Steps: 1) Keep the C++ plugin (D-11); wire its existing build into Cargo as a cdylib (CMake wrapper). 2) Verify the VST2 scan lists installed plugins on the 3 OSes.
+  - Steps: 1) Port the scan/load to Rust over the VST2 C ABI (`aeffectx.h`; D-11, confirmed 2026-11-05). 2) Verify the VST2 scan lists installed plugins on the 3 OSes.
   - Pitfalls:
-    - D-11 (DECISIONS-NEEDED): the whole plugin stays C++ behind the plugin ABI — the editor-window embedding per OS is the hard part; low value for the risk. Nothing crosses the FFI except the module ABI.
+    - D-11 (DECISIONS-NEEDED, confirmed 2026-11-05): the host is Rust over the VST2 C ABI; per-OS editor-window embedding (AEffEdit handle) is the hard part, and the third-party VST binary is an untrusted ABI either way — a crashing VST can take OBS down, same as the C++ host.
   - Done when: lists installed VST2 plugins.
 - [ ] **P5-21.4 Audio**
   - Files: `VSTPlugin.cpp` (429) (process callback), `obs-vst.cpp` (348)
-  - Steps: 1) Verify the process callback, channel mapping, latency handling through the C++-as-cdylib build. 2) Test with a free VST plugin.
+  - Steps: 1) Port the process callback, channel mapping, latency handling to Rust. 2) Test with a free VST plugin.
   - Done when: test with free plugin.
 - [ ] **P5-21.5 Editor**
   - Files: `EditorWidget.cpp` (31) + `headers/EditorWidget.h` (63), `win/EditorWidget-win.cpp` (89), `linux/EditorWidget-linux.cpp` (36) (depends on the P6 toolkit)
-  - Steps: 1) Verify the editor window embedding per OS in the C++ build (Qt host during the port). 2) Record the P6 toolkit dependency.
+  - Steps: 1) Port the editor window embedding per OS (AEffEdit handle → cxx-qt host widget; the P6 toolkit). 2) Record the P6 toolkit dependency.
   - Done when: editor opens.
 - [ ] **P5-21.6 Test**
   - Files: `obs-vst.cpp` (348)
   - Steps: 1) Full-module smoke with a free VST plugin on each OS. 2) Record the results.
   - Done when: a free VST plugin processes audio.
-- [ ] **P5-21.7/.8** E1/E2 (may remain C++; see P5-50)
+- [ ] **P5-21.7/.8** E1/E2 (added; D-11 confirmed 2026-11-05: host is Rust, cutover removes the C plugin)
   - Files: `obs-vst.cpp` (348) (module main), `CMakeLists.txt` (target `obs-vst` MODULE)
-  - Steps: 1) Bookend E1: build the existing C++ plugin as `obs-vst.so|.dll|.dylib` via the Cargo CMake wrapper; exports unchanged. 2) Bookend E2: no source deletion (kept as C++ per D-11); record in the P5-50.1 FFI-shim list with owner + reason.
-  - Done when: E1 export/loader check passes; E2 recorded in `docs/tests/plugin-obs-vst.md` + P5-50.1 table.
+  - Steps: 1) Bookend E1: `crates/obs-modules/obs-vst` cdylib with the unchanged module name; the vendored `vst_header/` stays as the FFI input (vendor ABI header). 2) Bookend E2: remove the C++ plugin sources in the same PR.
+  - Done when: E1 export/loader check passes; E2 CI green and smoke recorded in `docs/tests/plugin-obs-vst.md`.
 
 ### P5-22 `vlc-video`
 - [ ] **P5-22.1/.2** S1/S2
@@ -1539,7 +1539,7 @@ Verified in this checkout (submodules initialised): **`plugins/obs-websocket` at
 
 ### P5-50 Phase 5 review
 - [ ] **P5-50.1 FFI-shim list** with owner and reason.
-  - Files: `docs/rust-rewrite/` (new table; inputs: P5-21 D-11 obs-vst, P5-31.7 D-08 win-capture C helpers (inject-helper, get-graphics-offsets), P5-32.3 D-19 libdshowcapture, P5-42/43 D-10 decklink/aja, P5-45 D-09 CEF (vendor library via C API), P5-37.3 D-14 DAL plug-in, P5-07.7 obs-x264-test)
+  - Files: `docs/rust-rewrite/` (new table; inputs: P5-31.7 D-08 win-capture C helpers (inject-helper, get-graphics-offsets), P5-32.3 D-19 libdshowcapture, P5-42/43 D-10 decklink/aja, P5-45 D-09 CEF (vendor library via C API), P5-37.3 D-14 DAL plug-in, P5-07.7 obs-x264-test)
   - Steps: 1) Collect every kept-C/C++ piece with owner + reason. 2) Commit the table (input to P7-03.1).
   - Done when: table committed (input to P7-03.1).
 - [ ] **P5-50.2 Tick** parents.
