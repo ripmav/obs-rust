@@ -1,6 +1,6 @@
 # Phase 3: Graphics
 
-Goal: port the effect/shader language and the `gs_*` abstraction, then add a `wgpu` backend. Legacy backends (`libobs-opengl`, `libobs-d3d11`, `libobs-metal`) stay selectable until `wgpu` reaches parity.
+Goal: port the effect/shader language and the `gs_*` abstraction, then add a `wgpu` backend. Legacy backends (`libobs-opengl`, `libobs-d3d11`, `libobs-metal`) stay selectable until `wgpu` reaches parity — D3D11/Metal are ported to Rust per D-13 (S-078/S-079), OpenGL stays C.
 
 Source map (libobs 33.0.1, line counts): `libobs/graphics/*` (non-math: 16 files + `libnsgif/` (4); key: `graphics.c` 3312, `effect-parser.c` 1972, `shader-parser.c` 717, `effect.c` 556, `graphics-ffmpeg.c` 787, `image-file.c` 409), `libobs/data/*.effect` (21 files), `libobs-opengl/` (27 files, 8,984 lines), `libobs-d3d11/` (16, 7,340), `libobs-metal/` (37, 8,530, mostly Swift), `deps/glad`, `libobs/obs-display.c` (311; presentation part; the `obs_display_*` API is P4-31), `libobs/obs-video.c` (1200; render part), `obs-video-gpu-encode.c` (312). Not here: `libobs-winrt/` (P5-33), `obs-canvas.c`/`obs-view.c` (P4-33/P4-31), `obs-source.c` render path (P4-05), platform window glue `obs-nix-*.c`/`obs-cocoa.m`/`obs-windows.c` (P4-32).
 
@@ -33,7 +33,7 @@ Source map (libobs 33.0.1, line counts): `libobs/graphics/*` (non-math: 16 files
 - [ ] **P3-19 Shared texture import: Windows** (L): DXGI shared handle / NT handle import (D3D12/Vulkan interop) for `win-capture` (game capture hooks); keep D3D11 fallback. Done when: game capture hooks render via the import path on Windows.
 - [ ] **P3-20 Shared texture import: macOS** (L): IOSurface -> Metal texture for `mac-capture`, `mac-syphon`, `mac-virtualcam`. Done when: mac-capture/mac-syphon render via IOSurface import.
 - [ ] **P3-21 GPU encoder texture sharing** (L): the NVENC/QSV/AMF/VideoToolbox paths need a GPU texture handle (`encode_texture`/`encode_texture2` callbacks, `struct encoder_texture`, `gs_texture_get_obj`); define an escape hatch exposing native handles. Done when: the escape hatch feeds the NVENC/QSV/AMF/VideoToolbox paths.
-- [ ] **P3-22 Legacy backend adapters** (M): wrap `libobs-opengl`, `libobs-d3d11`, `libobs-metal` as `GraphicsDevice` implementations through the C vtable so both can be selected at runtime (`--graphics wgpu|legacy`). Done when: `--graphics legacy` renders goldens equal to the C build.
+- [ ] **P3-22 Legacy backend adapters** (L): make the legacy backends selectable at runtime (`--graphics wgpu|legacy`) as `GraphicsDevice` implementations — `libobs-opengl` wrapped through the C vtable (stays C), `libobs-d3d11`/`libobs-metal` ported to Rust per D-13 (S-078/S-079). Done when: `--graphics legacy` renders goldens equal to the C build.
 - [ ] **P3-23 HDR and colour management** (M): HDR10/scRGB swap chains, SDR white level (`gs_is_monitor_hdr`, `gs_duplicator_get_sdr_white_level` on the backend side; `obs_get_video_sdr_white_level` / `obs_get_video_hdr_nominal_peak_level` are libobs-level, Phase 4), sRGB framebuffer behaviour. Done when: SDR/HDR visual regressions match C.
 
 ## D. Built-in effects and render loop
