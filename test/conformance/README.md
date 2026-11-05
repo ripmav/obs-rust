@@ -27,8 +27,8 @@ Areas (59): `bmem` (S-001), `calldata` (S-002), `decl` (S-003), `signal` (S-004)
 `frontendfmt` (S-048), `linuxcapture` and `linuxinputs` (S-049), `hwencoders`
 (S-050), `wincapture` (S-051), `maccapture` (S-052), `gfximages` (S-053),
 `filtersrest` (S-054), `utilrest` (S-055), `pipewire` (S-056), `glbackend`
-(S-057), `obsvideo` (S-058), `mpegtsout` (S-059), `luascript` (S-060), and
-`pyscript` (no spec yet — decision D-29 in `docs/rust-rewrite/DECISIONS-NEEDED.md`).
+(S-057), `obsvideo` (S-058), `mpegtsout` (S-059), `luascript` (S-060), `pyscript` (S-063) and
+`threading` (S-061).
 
 **Who uses what.** Spec authors use `run.sh` and `gen/`. Implementers of a clean-room
 port need only `scripts/`, `vectors/`, this README, and the spec; they write a runner
@@ -43,6 +43,10 @@ in their own language (50–150 lines per area) and compare output.
 - POSIX build of the reference (Linux). Where Windows or macOS differ, the spec says so.
 - Output is line-oriented text, `\n` line endings. Files are marked `-text` in
   `.gitattributes` so that Windows checkouts keep them byte-exact.
+- The 33.0.1 reference needs the simde headers (`libobs/util/sse-intrin.h`
+  includes `<simde/x86/sse2.h>`; simde is a system/prefix dependency since
+  obs-studio 2bd23cd50). On a machine without them: clone
+  `simd-everywhere/simde` and run with `CONFORMANCE_EXTRA_CFLAGS="-I<clone>"`.
 
 ## Comparison rules (the conformance procedure)
 
@@ -2085,3 +2089,31 @@ headers; libavformat's MPEG-TS muxer is real. Needs libavformat/libavcodec/libav
 | `srt_fail NAME ERR [ERRNO [NTH]]`, `rist_fail NAME [RET [NTH]]`, `srt_epoll ready\|timeout\|error [ERR [SKIP]]`, `srt_state NAME\|auto`, `srt_payload N\|auto`, `srt_reject badsecret\|N`, `srt_stats TS RATE SENT RETR DROP`, `srt_reset_net` | fault / behaviour injection into the fake transport |
 | `rist_stats`, `rist_stats_other`, `clock_skew S`, `write_fail N RET`, `hold on\|off`, `blind N`, `crash_start` | fire the stats callback, skew wall clock, fail the nth muxer write, hold the write thread, hide the stop event N times, run start in a child (crash capture) |
 | `sock_listen tcp\|udp`, `sock_close` | real loopback receiver for udp:// / tcp:// URLs |
+
+## threading runner (spec S-061)
+
+`gen/threading_runner.c` drives the REAL `libobs/util/threading-posix.c` (linked
+via the common sources) plus `os_set_thread_name` and the `pthread_mutex_init_*`
+helpers of `threading.h`. Blocking operations run on a single persistent worker
+thread; every worker command blocks the main thread until the worker has printed
+its result line, so the output order is deterministic. Scripts only issue waits
+that are guaranteed to be satisfied (pre-signalled, signalled during the command,
+or a timeout); the `wake` forms post/signal from the main thread right after
+dispatch — both orderings (post before the wait starts vs. waking a wait that
+already started) print the same result, so no output depends on scheduling.
+
+Main-thread commands: `evt NAME auto|manual` (`evt NAME ok` / `evt NAME fail
+rc=R`), `esig NAME` (prints the return), `etry NAME`, `ereset NAME`,
+`edest NAME|@null`, `sem NAME N` (`sem NAME ok` / `sem NAME fail rc=R`; the slot
+is empty on failure — never `sdest` it), `spost NAME [K]` (posts K times,
+default 1, prints the return), `sdest NAME|@null`, `snull` (the NULL guards of
+`os_sem_wait`/`os_sem_post`), `mval` / `mrec` (`pthread_mutex_init_value` /
+`pthread_mutex_init_recursive`), `mlock` / `munlock` (print the return), `echo`.
+Worker commands: `wwait NAME`, `wtimed NAME MS`, `wtimedwake NAME MS` (the main
+thread signals NAME right after dispatch), `wtry NAME`, `wsem NAME`,
+`wsemwake NAME [K]` (the main thread posts K times, default 1, right after
+dispatch), `wname NAME` (`os_set_thread_name(NAME)`, then prints the name read
+back with `pthread_getname_np` as `got="..."` or `rc=R`).
+
+Return values print as decimal POSIX errno constants (glibc): `EAGAIN` = 11 from
+`os_event_try`, `ETIMEDOUT` = 110 from a timed wait, 0 on success.

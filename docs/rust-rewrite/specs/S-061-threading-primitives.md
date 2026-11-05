@@ -2,12 +2,12 @@
 
 | | |
 |---|---|
-| Status | Draft (round 9 — behaviour catalog written from C reference; no vectors yet) |
+| Status | Draft (6 conformance vectors, round 11) |
 | Spec version | initial |
 | Reference | OBS Studio 33.0.1, `libobs/util/threading-*` |
 | Target crate | `crates/obs-util` (module `threading`) |
 | Depends on | S-001 (allocators used by the glue) |
-| Conformance | planned `test/conformance/scripts/threading/` — none yet |
+| Conformance | `test/conformance/scripts/threading/` (6 scripts, round 11) |
 
 ## 1. Scope
 
@@ -99,3 +99,20 @@ clock, counter flag, ms-boundary rounding; source: wall clock, signalled+manual 
 exact ms→timespec); corrected R04 param type (was `uint32_t`; source `int`); completed
 the R06 helper list and dropped the unverified seq-cst claim (ARM paths are
 acquire/release); pinned the glibc 15-char thread-name limit.
+
+## 8. Conformance coverage
+
+`test/conformance/scripts/threading/` — area `threading`, runner
+`gen/threading_runner.c` (script language and the worker-thread determinism
+guarantee described in `test/conformance/README.md`). Vectors regenerate
+bit-identically (checked round 11).
+
+| Rule | Scripts |
+|---|---|
+| R01 | `01-events-auto`, `02-events-manual`, `03-event-timeout` (0 / `EAGAIN` / `ETIMEDOUT` returns; AUTO consumption by wait, timedwait and try) |
+| R02 | `01-events-auto`, `02-events-manual` (MANUAL stays set until reset; `os_event_destroy(NULL)` no-op) |
+| R03 | `03-event-timeout` (timeout vs. pre-signal vs. signal-during-wait; the mutex/cond mechanism itself is internal and not tested) |
+| R04 | `04-semaphores` (counting, wake of a waiting thread, NULL guards return -1, negative initial count fails with rc=-1) |
+| R05 | `05-thread-name` (glibc: 15-char truncation, empty name accepted, read-back via `pthread_getname_np`) |
+| R06 | (Windows-only helpers — not testable on the POSIX reference) |
+| R07 | `06-mutex-init` (value-init, recursive re-entrant lock) |

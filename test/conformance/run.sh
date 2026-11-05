@@ -27,6 +27,10 @@ only_area="${2:-}"
 root="$(cd "$here/../.." && pwd)"
 cc="${CC:-cc}"
 cflags=(-std=gnu11 -O0 -g -Wall -Wno-unused-function -I"$libobs" -I"$here/gen")
+# Extra includes for system dependencies that OBS 33.0.1 expects installed
+# (e.g. simde, `CONFORMANCE_EXTRA_CFLAGS="-I/path/to/simde-repo"`).
+# shellcheck disable=SC2206
+cflags+=(${CONFORMANCE_EXTRA_CFLAGS:-})
 
 # Shared sources every runner needs (allocator, logging, threading, text helpers).
 common=("$here/gen/stubs.c" "$libobs/util/bmem.c" "$libobs/util/base.c" "$libobs/util/threading-posix.c"
@@ -44,6 +48,8 @@ declare -A runner_sources=(
 	[dstr]="$here/gen/dstr_runner.c"
 	[math]="$here/gen/math_runner.c $libobs/graphics/vec3.c $libobs/graphics/vec4.c $libobs/graphics/quat.c $libobs/graphics/matrix4.c $libobs/graphics/matrix3.c $libobs/graphics/axisang.c $libobs/graphics/plane.c $libobs/graphics/math-extra.c"
 	[config]="$here/gen/config_runner.c $libobs/util/config-file.c ${lexer[*]}"
+	# threading-posix.c comes from the common sources.
+	[threading]="$here/gen/threading_runner.c"
 )
 
 declare -A extra_flags=()
