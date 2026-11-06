@@ -278,9 +278,9 @@ Verified in this checkout (submodules initialised): **`plugins/obs-websocket` at
   - Files: `plugins/obs-x264/obs-x264-plugin-main.c` (16) (module main; registers `obs_x264_encoder`), `CMakeLists.txt` (target `obs-x264` MODULE)
   - Steps: 1) Bookend S1: encoder id `obs_x264`; record rate-control/preset/profile keys. 2) Bookend S2: P0-18 corpus encoder settings through the P0-15 ABI host.
   - Done when: `docs/tests/plugin-obs-x264-inventory.md` committed; S2 passes.
-- [ ] **P5-07.3 Bindings** — FFI crate for libx264 (`x264_encoder_open`, `x264_param_*`).
+- [ ] **P5-07.3 Bindings** — libx264 bindings (`x264_encoder_open`, `x264_param_*`).
   - Files: `obs-x264.c` (865) (the call surface: `x264_param_default_preset`, `x264_param_parse`, `x264_param_apply_profile`, `x264_encoder_open/headers/reconfig/close`)
-  - Steps: 1) Write the `x264-sys` FFI bindings for the 8 functions above. 2) Match the fake library contract in `test/conformance/README.md` (encopts section) — sentinels and print formats are the contract. 3) Link on the 3 OSes.
+  - Steps: 1) Use the `x264` crate if current (D-22, confirmed 2026-11-06); else hand-roll the `x264-sys` FFI bindings for the 8 functions above — the bit-exactness test is the gate either way. 2) Match the fake library contract in `test/conformance/README.md` (encopts section) — sentinels and print formats are the contract. 3) Link on the 3 OSes.
   - Spec: S-025 (x264 section; fake contract table)
   - Done when: links on 3 OSes.
 - [ ] **P5-07.4 Options**
