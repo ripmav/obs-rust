@@ -825,7 +825,7 @@ Verified facts: the main window is split across `frontend/widgets/OBSBasic*.cpp`
 - [ ] **P6-42.1 Installer**
   - Files: `additional_install_files/` (data/, exec32–64{,d,r}/, libs32–64{,d,r}/, misc/, steam/), `cmake/windows/cpackconfig.cmake` (15), `frontend/updater/updater.rc` (146).
   - Steps: 1. mirror the install-tree layout from `additional_install_files/`; 2. build the portable ZIP via CPack (`CPACK_GENERATOR ZIP`); 3. handle the VC runtime.
-  - Pitfalls: parity per D-34 — the C build ships a ZIP only (no NSIS/Inno); no new installer format in 1.0.
+  - Pitfalls: parity per D-39 (renumbered from D-34) — the C build ships a ZIP only (no NSIS/Inno); no new installer format in 1.0.
   - Done when: ZIP builds and launches.
 - [ ] **P6-42.2 Portable ZIP**
   - Files: `additional_install_files/`, `frontend/obs-main.cpp` (1065–1079, portable detection).

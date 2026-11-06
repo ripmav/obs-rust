@@ -65,7 +65,7 @@ Source map: `frontend/OBSApp*.cpp`, `obs-main.cpp`, `OBSStudioAPI.*`, `api/`, `c
 
 ## G. Packaging and release
 
-- [ ] **P6-42 Windows installer and portable ZIP** (M): install-tree layout in `additional_install_files/`, CPack portable ZIP (no NSIS/Inno in the C build), code signing, VC runtime handling. Installer scope per D-34 (parity: ZIP only, no new format in 1.0).
+- [ ] **P6-42 Windows installer and portable ZIP** (M): install-tree layout in `additional_install_files/`, CPack portable ZIP (no NSIS/Inno in the C build), code signing, VC runtime handling. Installer scope per D-39 (parity: ZIP only, no new format in 1.0).
 - [ ] **P6-43 macOS bundle** (M): notarisation, entitlements, sparkle feed, Info.plist, universal binary.
 - [ ] **P6-44 Linux: Flatpak, deb, AppImage?, RPM** (M): `build-aux` Flatpak manifest + CPack (C build ships DEB/TGZ/pkg only); Wayland and X11 tests; no FreeBSD packaging (D-12: drop BSD).
 - [ ] **P6-45 Binary size and startup time** (S): compare against C++ build; target startup within 10%.
