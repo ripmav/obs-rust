@@ -199,12 +199,12 @@ Verified in this checkout (submodules initialised): **`plugins/obs-websocket` at
   - Files: `plugins/text-freetype2/text-freetype2.c` (616) (module main; registers `freetype2` v1/v2), `CMakeLists.txt` (target `text-freetype2` MODULE), `data/text_default.effect` (39)
   - Steps: 1) Bookend S1: ids `freetype2` (v1) + `freetype2_v2`; record text/colour/outline/shadow/wrap keys. 2) Bookend S2: P0-18 corpus through the P0-15 ABI host.
   - Done when: `docs/tests/plugin-text-freetype2-inventory.md` committed; S2 passes.
-- [ ] **P5-05.3 Backend** — `freetype` bindings vs `cosmic-text`/`swash`.
-  - Files: `text-freetype2.c` (616), `text-functionality.c` (533) (the glyph/atlas code the spike must replicate)
-  - Steps: 1) Spike: build 10 font configs with each candidate, dump glyph advances/positions. 2) Compare against the C golden; pick the candidate that matches or the one with the smallest delta. Commit the spike result.
-  - Spec: S-038 (fake FreeType defines the reference metrics)
+- [ ] **P5-05.3 Backend** — `cosmic-text`/`swash` (D-20, confirmed 2026-11-06).
+  - Files: `text-freetype2.c` (616), `text-functionality.c` (533) (the glyph/atlas code the port replaces)
+  - Steps: 1) Build 10 font configs with cosmic-text/swash, dump glyph advances/positions. 2) Compare against the C golden; document the (expected non-zero) delta in the P5-05.3 report. 3) Commit the delta report.
+  - Spec: S-038 (fake FreeType defines the layout-reference metrics — engine-agnostic, stays valid)
   - Vectors: `test/conformance/scripts/textft2/`
-  - Done when: spike result.
+  - Done when: delta report committed.
 - [ ] **P5-05.4 Fonts**
   - Files: `find-font.c` (407), `find-font-unix.c` (73), `find-font-windows.c` (261), `find-font-cocoa.m` (108), `find-font-iconv.c` (128), `find-font.h` (41)
   - Steps: 1) Port font lookup by family+style per OS. 2) Port the iconv fallback and the cocoa list. 3) Run runner scripts `05`/`06` (lookup behaviour).
@@ -223,12 +223,12 @@ Verified in this checkout (submodules initialised): **`plugins/obs-websocket` at
     - S-038 Q10: the reported size adds `outline_width` to both dimensions.
     - S-038 D1: tick reload with NULL face dereferences in C — the port skips reload when no face.
   - Done when: golden.
-- [ ] **P5-05.6 Metric goldens** — glyph advances/positions for 10 font configs equal C.
+- [ ] **P5-05.6 Metric goldens** (D-20: cosmic-text/swash) — glyph advances/positions for 10 font configs from the Rust build.
   - Files: `text-functionality.c` (533) (atlas + quad generation)
-  - Steps: 1) Dump per-glyph advances/positions for the 10 configs from C. 2) Commit goldens; assert the Rust output is equal.
+  - Steps: 1) Dump per-glyph advances/positions for the 10 configs from the Rust build. 2) Cross-check the delta vs C in the P5-05.3 report. 3) Commit the new goldens; assert the Rust output equals them.
   - Spec: S-038
   - Vectors: `test/conformance/scripts/textft2/`
-  - Done when: goldens committed.
+  - Done when: new goldens committed and stable.
 - [ ] **P5-05.7/.8** E1/E2
   - Files: `text-freetype2.c` (616) (module main), `CMakeLists.txt` (target `text-freetype2` MODULE)
   - Steps: 1) Bookend E1: `crates/obs-modules/text-freetype2` cdylib named `text-freetype2`. 2) Bookend E2: remove the C plugin in the same PR; keep `data/text_default.effect`.
