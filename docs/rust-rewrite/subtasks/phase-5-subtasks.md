@@ -596,7 +596,7 @@ Verified in this checkout (submodules initialised): **`plugins/obs-websocket` at
   - Done when: tag bytes equal C.
 - [ ] **P5-17.4 RTMP client**
   - Files: vendored `librtmp/`: `rtmp.c` (5395), `amf.c` (1318) + `amf.h` (165), `handshake.h` (950), `parseurl.c` (279), `md5.c` (295), `hashswf.c` (694), `log.c` (228) + `cencode.c` (111), 8 headers (`rtmp.h` 556, `rtmp_sys.h` 82, `bytes.h` 89, `http.h` 49, `md5.h` 45, `cencode.h` 31, `log.h` 70)
-  - Steps: 1) Write the decision note: Rust port vs keep `librtmp` as FFI. 2) Port handshake, chunking, AMF0, `connect`/`publish` (or wrap the FFI). 3) Run the `rtmp` runner.
+  - Steps: 1) Record the ADR note: port to Rust (D-15, confirmed 2026-11-06). 2) Port handshake, chunking, AMF0, `connect`/`publish`. 3) Run the `rtmp` runner.
   - Spec: S-031 (RTMP protocol: handshake, chunking, AMF0)
   - Vectors: `test/conformance/scripts/rtmp/`
   - Pitfalls:
