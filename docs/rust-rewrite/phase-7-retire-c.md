@@ -14,7 +14,7 @@ Goal: delete what is replaced, decide the fate of remaining native code, and shi
 ## B. Build system
 
 - [ ] **P7-06 Cargo-first build** (L): replace the top-level `CMakeLists.txt` (37 lines), `CMakePresets.json` (227 lines), `cmake/` (72 files / 23,380 lines; `build-aux/` packaging stays with P6-42…P6-44) with `cargo xtask` (`build`, `package`, `install`, `test`, `lint`, `fmt`, `deps`) plus `build.rs` shims (`cc`/`cmake` crates) for the remaining C++ leftovers from P7-03.3. Done when: CI builds, tests and packages via xtask only and `cmake/` is deleted.
-- [ ] **P7-07 Dependency management** (M): pin all native deps (FFmpeg, x264, CEF, Qt if kept, SRT, RIST, libdatachannel) with a lock file and a reproducible build recipe; vendoring policy. Done when: an offline build from the pinned manifest succeeds on 3 OSes.
+- [ ] **P7-07 Dependency management** (M): pin all native deps (FFmpeg, x264, CEF, Qt if kept, SRT, RIST — WebRTC is webrtc-rs, a Rust dep, D-16) with a lock file and a reproducible build recipe; vendoring policy. Done when: an offline build from the pinned manifest succeeds on 3 OSes.
 - [ ] **P7-08 Cross-compilation and CI caches** (M): Windows (x64, arm64), macOS (universal), Linux (x86_64, aarch64); `sccache`, `cargo-nextest`. Done when: all target matrices build in CI and end-to-end CI is under 30 minutes.
 - [ ] **P7-09 Reproducible and signed builds** (M): `SOURCE_DATE_EPOCH`, SBOM (`cargo-cyclonedx`), provenance attestations, signatures. Done when: two clean builds are hash-equal and SBOM, attestations and signatures ship with the RC.
 
