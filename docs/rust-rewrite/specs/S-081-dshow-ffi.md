@@ -1,11 +1,11 @@
-# S-081 libdshowcapture FFI contract (kept C++ library, D-19)
+# S-081 libdshowcapture FFI contract (library ported to Rust, D-19 confirmed 2026-11-06)
 
 | | |
 |---|---|
 | Status | Draft (round 8 — behaviour catalog written from C reference; no vectors yet) |
 | Spec version | initial |
 | Reference | OBS Studio 33.0.1, `deps/libdshowcapture` (C++ DirectShow wrapper, no-atl branch) |
-| Target crate | `crates/dshow-capture` (the library **stays C++** per D-19; the Rust side only binds via the host plugin `plugins/win-dshow`, S-051) |
+| Target crate | `crates/dshow-capture` (the library is **ported to Rust** per D-19, confirmed 2026-11-06 — DirectShow COM via the windows crate; the nested `capture-device-support` vendor tree stays as an FFI input, D-04). This contract pins the observable behaviour (enumeration, capture, device-id encoding, vendor workarounds) the port MUST preserve; the C build is the reference during the port window (P5-32.3). |
 | Depends on | S-051 (win-dshow host — format constants pinned there, its §11) |
 | Conformance | planned; none yet (all behaviour is Windows COM runtime, not reproducible in Linux test vectors) |
 
@@ -226,10 +226,12 @@ return best.found ? best.mt : fail
 
 ## 9. Implementation notes (non-normative)
 
-- D-19: the library **remains C++**, consumed only from the C++-hosted
-  `win-dshow` plugin; no Rust re-implementation planned. A Rust host crate
-  is the *host-side* FFI boundary of S-051, not this library.
-- If any future Rust binding is added: expose `Device`/`VideoEncoder` as
+- D-19 (confirmed 2026-11-06): the library is **ported to Rust**
+  (`crates/dshow-capture`, P5-32.3); this contract is the behaviour the
+  port MUST preserve, and the C build is the reference during the port
+  window. The nested `capture-device-support` vendor tree stays an FFI
+  input (D-04).
+- The Rust port (D-19) should: expose `Device`/`VideoEncoder` as
   opaque handles; callbacks as function pointers with a trampoline; keep
   `VideoConfig`/`AudioConfig` as owned structs (copy in, copy the
   *resolved* value out per R03/R04); never retain callback buffers.

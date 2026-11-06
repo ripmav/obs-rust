@@ -14,7 +14,7 @@ libobs/ + libobs-{opengl,d3d11,metal,winrt}/   ← one PR (P7-01): the backends 
                                                 fallback usage below the agreed threshold (P7-01.1)
 frontend/                                      ← after the P6-48.1 parity checklist is 100% and beta feedback is closed
 plugins/<name>                                 ← each when its Rust port shipped; one plugin per commit, FFI leftovers in P7-03.3
-deps/{blake2,json11,glad,w32-pthreads,libcaption}  ← after the last consumer is gone; libdshowcapture stays (D-19)
+deps/{blake2,json11,glad,w32-pthreads,libcaption}  ← after the last consumer is gone; libdshowcapture's vendor capture-device-support tree stays (D-04/D-19)
 shared/*                                       ← per the P7-05.1 mapping; hook-related shared modules stay only while the C hook fallback / `inject-helper` need them (D-08)
 test/                                          ← after the P7-25.1 supersession table; same PR wave as P7-01…P7-05
                                                 (cmocka links the C libobs that P7-01 removes)
@@ -23,11 +23,11 @@ Keep a git tag per deletion (`last-c-libobs`, `last-cpp-frontend`, `last-c-plugi
 
 ## What must remain C/C++ (documented leftovers)
 
-Decided per item (D-08, D-14, D-19); record owner and review date in P7-03.3:
+Decided per item (D-08, D-14); record owner and review date in P7-03.3:
 - `plugins/win-capture/inject-helper` and `get-graphics-offsets` (small helper executables; the `graphics-hook` DLL is ported to Rust by P5-31.7 per D-08 — its C sources and hook-only `shared/` modules are deleted with it, P7-03/P7-05.2); `inject-helper` links `OBS::obfuscate` (extracted from `libobs` in P7-01.3) and the kept `shared/` modules.
 - The vendored `plugins/decklink/{linux,mac,win}/decklink-sdk/` trees (vendor SDK headers + Linux COM dispatch; the DeckLink/AJA glue is Rust per D-10).
 - The vendored `plugins/obs-vst/vst_header/` VST2 ABI headers (the host is Rust per D-11).
-- `libdshowcapture` (submodule) for DirectShow.
+- The nested `capture-device-support` vendor tree under `deps/libdshowcapture/src/` (elgatosf — vendor FFI input to the Rust win-dshow port; the C++ `libdshowcapture` library itself is ported per D-19).
 - macOS camera extension host (`plugins/mac-virtualcam/src`) if it must be Swift/ObjC.
 - Any C shim required by variadic/`va_list` APIs unless the plugin ABI drops them (primer §5.5).
 

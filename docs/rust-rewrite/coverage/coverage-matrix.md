@@ -58,36 +58,36 @@ Tracked = every `.c .cpp .cc .h .hpp .m .mm .swift`, `.ui` and `.effect` file (s
 | `deps/libcaption/src/utf8.c` | P2-21 | — | D-18: ported to Rust |
 | `deps/libcaption/src/vtt.c` | P2-21 | — | D-18: ported to Rust |
 | `deps/libcaption/src/xds.c` | P2-21 | — | D-18: ported to Rust |
-| `deps/libdshowcapture/src/dshowcapture.hpp` | P5-32.3 | — | D-19: FFI (submodule) |
-| `deps/libdshowcapture/src/source/CoTaskMemPtr.hpp` | P5-32.3 | — | D-19: FFI (submodule) |
-| `deps/libdshowcapture/src/source/ComPtr.hpp` | P5-32.3 | — | D-19: FFI (submodule) |
-| `deps/libdshowcapture/src/source/avermedia-encode.h` | P5-32.3 | — | D-19: FFI (submodule) |
-| `deps/libdshowcapture/src/source/capture-filter.cpp` | P5-32.3 | — | D-19: FFI (submodule) |
-| `deps/libdshowcapture/src/source/capture-filter.hpp` | P5-32.3 | — | D-19: FFI (submodule) |
-| `deps/libdshowcapture/src/source/device-vendor.cpp` | P5-32.3 | — | D-19: FFI (submodule) |
-| `deps/libdshowcapture/src/source/device.cpp` | P5-32.3 | — | D-19: FFI (submodule) |
-| `deps/libdshowcapture/src/source/device.hpp` | P5-32.3 | — | D-19: FFI (submodule) |
-| `deps/libdshowcapture/src/source/dshow-base.cpp` | P5-32.3 | — | D-19: FFI (submodule) |
-| `deps/libdshowcapture/src/source/dshow-base.hpp` | P5-32.3 | — | D-19: FFI (submodule) |
-| `deps/libdshowcapture/src/source/dshow-demux.cpp` | P5-32.3 | — | D-19: FFI (submodule) |
-| `deps/libdshowcapture/src/source/dshow-demux.hpp` | P5-32.3 | — | D-19: FFI (submodule) |
-| `deps/libdshowcapture/src/source/dshow-device-defs.hpp` | P5-32.3 | — | D-19: FFI (submodule) |
-| `deps/libdshowcapture/src/source/dshow-encoded-device.cpp` | P5-32.3 | — | D-19: FFI (submodule) |
-| `deps/libdshowcapture/src/source/dshow-enum.cpp` | P5-32.3 | — | D-19: FFI (submodule) |
-| `deps/libdshowcapture/src/source/dshow-enum.hpp` | P5-32.3 | — | D-19: FFI (submodule) |
-| `deps/libdshowcapture/src/source/dshow-formats.cpp` | P5-32.3 | — | D-19: FFI (submodule) |
-| `deps/libdshowcapture/src/source/dshow-formats.hpp` | P5-32.3 | — | D-19: FFI (submodule) |
-| `deps/libdshowcapture/src/source/dshow-media-type.cpp` | P5-32.3 | — | D-19: FFI (submodule) |
-| `deps/libdshowcapture/src/source/dshow-media-type.hpp` | P5-32.3 | — | D-19: FFI (submodule) |
-| `deps/libdshowcapture/src/source/dshowcapture.cpp` | P5-32.3 | — | D-19: FFI (submodule) |
-| `deps/libdshowcapture/src/source/dshowencode.cpp` | P5-32.3 | — | D-19: FFI (submodule) |
-| `deps/libdshowcapture/src/source/encoder.cpp` | P5-32.3 | — | D-19: FFI (submodule) |
-| `deps/libdshowcapture/src/source/encoder.hpp` | P5-32.3 | — | D-19: FFI (submodule) |
-| `deps/libdshowcapture/src/source/external/IVideoCaptureFilter.h` | P5-32.3 | — | D-19: FFI (submodule) |
-| `deps/libdshowcapture/src/source/log.cpp` | P5-32.3 | — | D-19: FFI (submodule) |
-| `deps/libdshowcapture/src/source/log.hpp` | P5-32.3 | — | D-19: FFI (submodule) |
-| `deps/libdshowcapture/src/source/output-filter.cpp` | P5-32.3 | — | D-19: FFI (submodule) |
-| `deps/libdshowcapture/src/source/output-filter.hpp` | P5-32.3 | — | D-19: FFI (submodule) |
+| `deps/libdshowcapture/src/dshowcapture.hpp` | P5-32.3 | — | D-19: ported to Rust (submodule) |
+| `deps/libdshowcapture/src/source/CoTaskMemPtr.hpp` | P5-32.3 | — | D-19: ported to Rust (submodule) |
+| `deps/libdshowcapture/src/source/ComPtr.hpp` | P5-32.3 | — | D-19: ported to Rust (submodule) |
+| `deps/libdshowcapture/src/source/avermedia-encode.h` | P5-32.3 | — | D-19: ported to Rust (submodule) |
+| `deps/libdshowcapture/src/source/capture-filter.cpp` | P5-32.3 | — | D-19: ported to Rust (submodule) |
+| `deps/libdshowcapture/src/source/capture-filter.hpp` | P5-32.3 | — | D-19: ported to Rust (submodule) |
+| `deps/libdshowcapture/src/source/device-vendor.cpp` | P5-32.3 | — | D-19: ported to Rust (submodule) |
+| `deps/libdshowcapture/src/source/device.cpp` | P5-32.3 | — | D-19: ported to Rust (submodule) |
+| `deps/libdshowcapture/src/source/device.hpp` | P5-32.3 | — | D-19: ported to Rust (submodule) |
+| `deps/libdshowcapture/src/source/dshow-base.cpp` | P5-32.3 | — | D-19: ported to Rust (submodule) |
+| `deps/libdshowcapture/src/source/dshow-base.hpp` | P5-32.3 | — | D-19: ported to Rust (submodule) |
+| `deps/libdshowcapture/src/source/dshow-demux.cpp` | P5-32.3 | — | D-19: ported to Rust (submodule) |
+| `deps/libdshowcapture/src/source/dshow-demux.hpp` | P5-32.3 | — | D-19: ported to Rust (submodule) |
+| `deps/libdshowcapture/src/source/dshow-device-defs.hpp` | P5-32.3 | — | D-19: ported to Rust (submodule) |
+| `deps/libdshowcapture/src/source/dshow-encoded-device.cpp` | P5-32.3 | — | D-19: ported to Rust (submodule) |
+| `deps/libdshowcapture/src/source/dshow-enum.cpp` | P5-32.3 | — | D-19: ported to Rust (submodule) |
+| `deps/libdshowcapture/src/source/dshow-enum.hpp` | P5-32.3 | — | D-19: ported to Rust (submodule) |
+| `deps/libdshowcapture/src/source/dshow-formats.cpp` | P5-32.3 | — | D-19: ported to Rust (submodule) |
+| `deps/libdshowcapture/src/source/dshow-formats.hpp` | P5-32.3 | — | D-19: ported to Rust (submodule) |
+| `deps/libdshowcapture/src/source/dshow-media-type.cpp` | P5-32.3 | — | D-19: ported to Rust (submodule) |
+| `deps/libdshowcapture/src/source/dshow-media-type.hpp` | P5-32.3 | — | D-19: ported to Rust (submodule) |
+| `deps/libdshowcapture/src/source/dshowcapture.cpp` | P5-32.3 | — | D-19: ported to Rust (submodule) |
+| `deps/libdshowcapture/src/source/dshowencode.cpp` | P5-32.3 | — | D-19: ported to Rust (submodule) |
+| `deps/libdshowcapture/src/source/encoder.cpp` | P5-32.3 | — | D-19: ported to Rust (submodule) |
+| `deps/libdshowcapture/src/source/encoder.hpp` | P5-32.3 | — | D-19: ported to Rust (submodule) |
+| `deps/libdshowcapture/src/source/external/IVideoCaptureFilter.h` | P5-32.3 | — | D-19: ported to Rust (submodule) |
+| `deps/libdshowcapture/src/source/log.cpp` | P5-32.3 | — | D-19: ported to Rust (submodule) |
+| `deps/libdshowcapture/src/source/log.hpp` | P5-32.3 | — | D-19: ported to Rust (submodule) |
+| `deps/libdshowcapture/src/source/output-filter.cpp` | P5-32.3 | — | D-19: ported to Rust (submodule) |
+| `deps/libdshowcapture/src/source/output-filter.hpp` | P5-32.3 | — | D-19: ported to Rust (submodule) |
 | `deps/w32-pthreads/attr.c` | P1-05.3, P7-04.2 | — | D-26: absorb into Rust threading |
 | `deps/w32-pthreads/autostatic.c` | P1-05.3, P7-04.2 | — | D-26: absorb into Rust threading |
 | `deps/w32-pthreads/barrier.c` | P1-05.3, P7-04.2 | — | D-26: absorb into Rust threading |
