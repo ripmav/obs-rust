@@ -1012,6 +1012,10 @@ Verified in this checkout (submodules initialised): **`plugins/obs-websocket` at
   - Files: `plugin-main.cpp` (76) (module main), `CMakeLists.txt` (target `win-wasapi` MODULE)
   - Steps: 1) Bookend E1: `crates/obs-modules/win-wasapi` cdylib named `win-wasapi` (Windows build). 2) Bookend E2: remove the C plugin in the same PR; smoke on Windows.
   - Done when: E1 export/loader check passes on Windows; E2 CI green and smoke recorded in `docs/tests/plugin-win-wasapi.md`.
+- [ ] **P5-30.9 Write S-066 (added)** — win-wasapi enumeration/capture spec (D-32, confirmed 2026-11-06)
+  - Files: `plugins/win-wasapi/*` (the three C sources named above)
+  - Steps: 1. read the C backends and enumerate the contract: COM enumeration + hotplug, shared-mode capture loop, buffer sizing, process loopback; 2. write `specs/S-066-win-wasapi.md`.
+  - Done when: S-066 committed; P5-30.3–.5 cite it alongside S-051 §5.G.
 - [x] **P5-30.9 WASAPI spec gap (added)** — D-32
   - Files: `enum-wasapi.cpp` (97), `wasapi-notify.cpp` (109), `win-wasapi.cpp` (1648).
   - Steps: 1. cross-check S-051 §5.G (R80–R89) against the three files above. 2. extend §5.G for every still-unpinned rule (default: extend S-051 per D-32 — enumeration order, `IMMNotificationClient` hotplug → which sources update/restart, capture-loop buffer handling). 3. vectors for the new rules.
