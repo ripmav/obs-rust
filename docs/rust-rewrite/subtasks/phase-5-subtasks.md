@@ -1084,13 +1084,13 @@ Verified in this checkout (submodules initialised): **`plugins/obs-websocket` at
   - Files: `plugins/win-dshow/dshow-plugin.cpp` (54) (module main; registers `dshow_input`, `obs_dshow_c985`, `obs_dshow_c353`), `CMakeLists.txt` (target `win-dshow` MODULE)
   - Steps: 1) Bookend S1: the 3 source ids + device/format keys. 2) Bookend S2: P0-18 corpus through the P0-15 ABI host (Windows).
   - Done when: `docs/tests/plugin-win-dshow-inventory.md` committed; S2 passes.
-- [ ] **P5-32.3 Bindings**
-  - Files: `deps/libdshowcapture/src/dshowcapture.hpp` (306, public API: `DShowDevice`/`DShowDeviceEx`, VideoFormat MJPEG=400/H264=401/HEVC=402, AudioFormat Wave16bit=100…MPGA=202); implementation `deps/libdshowcapture/src/source/` (23 files / 7 767 lines: `output-filter.cpp` 992, `dshow-base.cpp` 1031, `device.cpp` 875, `capture-filter.cpp` 696, `dshow-enum.cpp` 573, `encoder.cpp` 411, + 17 more)
-  - Steps: 1) Keep the C++ library as-is (D-19); write the Rust FFI bindings over `dshowcapture.hpp`. 2) Initialse the nested `src/external/capture-device-support` submodule before building. 3) Verify enumeration + capture through the binding. 4) Name every source file of `deps/libdshowcapture/src` (30 at 65c320b46: the 6 named above + 17 more in `source/` + 6 outside it) in this Files list — source of truth `docs/rust-rewrite/coverage/function-inventory.csv`.
-  - Spec: S-051 §11 (DShow enums)
+- [ ] **P5-32.3 Port libdshowcapture** (D-19, confirmed 2026-11-06)
+  - Files: `deps/libdshowcapture/src/dshowcapture.hpp` (306, public API: `DShowDevice`/`DShowDeviceEx`, VideoFormat MJPEG=400/H264=401/HEVC=402, AudioFormat Wave16bit=100…MPGA=202); implementation `deps/libdshowcapture/src/source/` (23 files / 7 767 lines: `output-filter.cpp` 992, `dshow-base.cpp` 1031, `device.cpp` 875, `capture-filter.cpp` 696, `dshow-enum.cpp` 573, `encoder.cpp` 411, + 17 more); nested `src/external/capture-device-support` vendor tree (stays as an FFI input, D-04)
+  - Steps: 1) Port the library to Rust (`crates/dshow-capture`, DirectShow COM via the windows crate) 1:1 against S-081. 2) Wrap the nested `capture-device-support` vendor tree via FFI where the port uses it. 3) Verify enumeration + capture through the crate. 4) Name every source file of `deps/libdshowcapture/src` (30 at 65c320b46: the 6 named above + 17 more in `source/` + 6 outside it) in this Files list — source of truth `docs/rust-rewrite/coverage/function-inventory.csv`.
+  - Spec: S-051 §11 (DShow enums), S-081 (the observable contract the port MUST preserve)
   - Pitfalls:
-    - D-19 (DECISIONS-NEEDED): `deps/libdshowcapture/src` stays C++ (DirectShow COM is the job); only the host side ports to Rust. The FFI crossing is the `dshowcapture.hpp` API (device, format, callback).
-  - Done when: device enumeration + capture via the Rust binding match C.
+    - D-19 (DECISIONS-NEEDED, confirmed 2026-11-06): the library is ported to Rust — DirectShow graph state + the vendor workarounds (S-081 §5) are the hard part, and this is the largest FFI surface in the plan. Windows-hardware testing is the gate; the C build is the reference during the port window.
+  - Done when: device enumeration + capture via the Rust crate match the C build.
 - [ ] **P5-32.4 Source**
   - Files: `win-dshow.cpp` (2094), `ffmpeg-decode.c` (414) + `ffmpeg-decode.h` (69), `encode-dstr.hpp` (76), `tiny-nv12-scale.c` (200) + `tiny-nv12-scale.h` (33) (same code as `shared/obs-tiny-nv12-scale/`, 233 lines)
   - Steps: 1) Port the `dshow_input` source: formats, MJPEG/H.264/HEVC decode via FFmpeg, audio. 2) Reuse the `obs-tiny-nv12-scale` crate (P1-33) for scaling. 3) Run the `dshow_*` scripts.
@@ -1116,7 +1116,7 @@ Verified in this checkout (submodules initialised): **`plugins/obs-websocket` at
   - Done when: visible in a video-call app.
 - [ ] **P5-32.7/.8** E1/E2
   - Files: `dshow-plugin.cpp` (54) (module main), `CMakeLists.txt` (target `win-dshow` MODULE)
-  - Steps: 1) Bookend E1: `crates/obs-modules/win-dshow` cdylib named `win-dshow` (Windows build); links the `libdshowcapture` static lib. 2) Bookend E2: remove the ported C sources in the same PR; keep the submodule + driver.
+  - Steps: 1) Bookend E1: `crates/obs-modules/win-dshow` cdylib named `win-dshow` (Windows build); links the Rust `dshow-capture` crate (D-19). 2) Bookend E2: remove the ported C sources and the `libdshowcapture` C++ sources in the same PR; keep the vendor `capture-device-support` tree + the driver.
   - Done when: E1 export/loader check passes on Windows; E2 CI green and smoke recorded in `docs/tests/plugin-win-dshow.md`.
 
 ### P5-33 `libobs-winrt`
@@ -1539,7 +1539,7 @@ Verified in this checkout (submodules initialised): **`plugins/obs-websocket` at
 
 ### P5-50 Phase 5 review
 - [ ] **P5-50.1 FFI-shim list** with owner and reason.
-  - Files: `docs/rust-rewrite/` (new table; inputs: P5-31.7 D-08 win-capture C helpers (inject-helper, get-graphics-offsets), P5-32.3 D-19 libdshowcapture, P5-42/43 D-10 decklink/aja, P5-45 D-09 CEF (vendor library via C API), P5-37.3 D-14 DAL plug-in, P5-07.7 obs-x264-test)
+  - Files: `docs/rust-rewrite/` (new table; inputs: P5-31.7 D-08 win-capture C helpers (inject-helper, get-graphics-offsets), P5-42/43 D-10 decklink/aja, P5-45 D-09 CEF (vendor library via C API), P5-37.3 D-14 DAL plug-in, P5-07.7 obs-x264-test)
   - Steps: 1) Collect every kept-C/C++ piece with owner + reason. 2) Commit the table (input to P7-03.1).
   - Done when: table committed (input to P7-03.1).
 - [ ] **P5-50.2 Tick** parents.
@@ -1589,7 +1589,7 @@ Verified in this checkout (submodules initialised): **`plugins/obs-websocket` at
   - Files: `win-dshow.cpp` (64), `virtualcam-module/*` (34), `win-dshow-encoder.cpp` (12), `virtualcam.c` (7), `encode-dstr.hpp` (5), `dshow-plugin.cpp` (2).
   - Done when: all 9 files cited.
 - [x] **P5-51.14 Write S-081** — libdshowcapture FFI contract (20 files / 282 fns)
-  - Files: `deps/libdshowcapture/src/source/*` (20 — the library stays C++, D-19).
+  - Files: `deps/libdshowcapture/src/source/*` (20 — the library is ported to Rust per D-19; this contract pins the behaviour the port MUST preserve).
   - Steps: 1. write `specs/S-081-dshow-ffi.md`: the `dshowcapture.hpp` API contract (device/format enumeration, MJPEG/H264/HEVC=400-402 / Wave16bit-MPGA=100-202, callbacks) + behavioural rules of the COM layer the host relies on. 2. add the row.
   - Done when: S-081 committed; all 20 files cited.
 - [x] **P5-51.15 Extend S-052** — macOS plugins (40 files / 484 fns)
