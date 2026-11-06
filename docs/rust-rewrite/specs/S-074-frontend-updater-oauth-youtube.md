@@ -171,9 +171,9 @@ process (W). "The app" = OBS Studio itself. Config sections in `basic.ini`.
 1. The updater is Windows-only in 33.0.1; confirm the Rust plan keeps a separate
    `updater` binary (W) vs. in-app auto-update only, and whether `patch.cpp`
    (ZSTD-dict deltas) is in scope at all.
-2. `OBSPublicRSAKey.pem` is a data file; confirm it ships unchanged and that the rewrite keeps
-   RSA-PSS/PKCS1-v1_5 as in `VerifySignature` (libobs `crypto-helpers`) — the algorithm itself
-   lives outside this file list.
+2. Resolved (D-23, 2026-11-06): the key moves to ed25519 — a new key pair ships as a data
+   file, replacing `OBSPublicRSAKey.pem`; the C build's RSA-PSS/PKCS1-v1_5
+   (`VerifySignature`, libobs `crypto-helpers`) stays the documented reference only.
 3. YouTube broadcast flow (R35–R38) depends on CEF; if the rewrite's browser layer differs
    (S-062/CEF replacement), the dock injection scripts need a host-API equivalent — flag when
    the browser spec lands.

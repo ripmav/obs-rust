@@ -477,9 +477,9 @@ Verified facts: the main window is split across `frontend/widgets/OBSBasic*.cpp`
   - Steps: 1. port the about dialog (authors, licence); 2. UI bookend.
   - Done when: UI bookend passes.
 - [ ] **P6-23.2 What's new** +UI
-  - Files: `frontend/dialogs/OBSWhatsNew.cpp` (66), `OBSWhatsNew.hpp` (21), `frontend/utility/WhatsNewInfoThread.cpp` (297), `WhatsNewInfoThread.hpp` (18), `frontend/data/OBSPublicRSAKey.pem` (14).
-  - Steps: 1. port the feed fetch + RSA signature check against `data/OBSPublicRSAKey.pem`; 2. port the blake2b If-None-Match cache hash; 3. UI bookend (web view).
-  - Pitfalls: keep RSA per D-23 (same key, same verification path); the RSA check signs the feed only — the blake2b hash is the If-None-Match ETag, not a signature (WhatsNewInfoThread.cpp:88–111, 167, 229).
+  - Files: `frontend/dialogs/OBSWhatsNew.cpp` (66), `OBSWhatsNew.hpp` (21), `frontend/utility/WhatsNewInfoThread.cpp` (297), `WhatsNewInfoThread.hpp` (18), `frontend/data/OBSPublicRSAKey.pem` (14; C reference — replaced by a new ed25519 key per D-23).
+  - Steps: 1. port the feed fetch + ed25519 signature check (D-23, confirmed 2026-11-06 — a new key pair replaces the C build's `OBSPublicRSAKey.pem`); 2. port the blake2b If-None-Match cache hash; 3. UI bookend (web view).
+  - Pitfalls: the signature check covers the feed only — the blake2b hash is the If-None-Match ETag, not a signature (WhatsNewInfoThread.cpp:88–111, 167, 229); the ed25519 switch is a one-time break for external feed-signature verifiers (D-23).
   - Done when: feed loads and a tampered feed is rejected.
 - [ ] **P6-23.3 macOS permissions** +UI
   - Files: `frontend/dialogs/OBSPermissions.cpp` (98), `OBSPermissions.hpp` (46), `frontend/forms/OBSPermissions.ui` (496).
@@ -649,7 +649,7 @@ Verified facts: the main window is split across `frontend/widgets/OBSBasic*.cpp`
 - [ ] **P6-32.2 Download/verify**
   - Files: `frontend/updater/hash.cpp` (81), `patch.cpp` (150), `updater.cpp` (2173; VC redist Authenticode via Windows CryptoAPI).
   - Steps: 1. port the delta-patch download + blake2b manifest hash verification; 2. port the VC redist Authenticode check (Windows); 3. tamper test.
-  - Pitfalls: keep RSA per D-23, but the RSA check lives in the What's-New feed (P6-23.2), not the updater — the updater verifies by blake2b manifest hashes + Authenticode only; ed25519 only if D-07 review demands it.
+  - Pitfalls: the feed's signature check lives in the What's-New feed (P6-23.2), not the updater — the updater verifies by blake2b manifest hashes + Authenticode only; the feed check is ed25519 per D-23 (confirmed 2026-11-06).
   - Done when: tamper test fails.
 - [ ] **P6-32.3 Windows swap**
   - Files: `frontend/updater/updater.cpp` (2173).
