@@ -49,7 +49,7 @@ Source map: `frontend/OBSApp*.cpp`, `obs-main.cpp`, `OBSStudioAPI.*`, `api/`, `c
 - [ ] **P6-29 OAuth framework** (L): `oauth/Auth`, `OAuth`, local listener (`AuthListener`), token storage (OS keychain via `keyring` crate), refresh. Twitch (`TwitchAuth`), YouTube (`YoutubeAuth`), Restream (`RestreamAuth`).
 - [ ] **P6-30 YouTube integration** (L): `OBSYoutubeActions`, `YouTubeAppDock`, `YouTubeChatDock`, broadcast creation, stream key retrieval, scheduling; mock-API tests.
 - [ ] **P6-31 Streaming services UI** (M): stream page: service list, key hiding, server picking, multitrack video config; connects to `rtmp-services`.
-- [ ] **P6-32 Updater** (L): `updater/` (Windows updater with manifest, delta, blake2b hash verify, VC redist Authenticode; macOS Sparkle; Linux package managers). Keep RSA per D-23 (ed25519 only if D-07 review demands it) — the `data/OBSPublicRSAKey.pem` RSA check is the What's-New feed's (P6-23.2); test with local manifest server.
+- [ ] **P6-32 Updater** (L): `updater/` (Windows updater with manifest, delta, blake2b hash verify, VC redist Authenticode; macOS Sparkle; Linux package managers). Feed signature is ed25519 per D-23 (confirmed 2026-11-06 — the `data/OBSPublicRSAKey.pem` check is the What's-New feed's, P6-23.2, now verified with a new ed25519 key); test with local manifest server.
 - [ ] **P6-33 Plugin manager** (M): `plugin-manager/`: list installed modules, enable/disable, pending restart prompt, Flatpak and Linux paths (`LoaderPaths_*`).
 - [ ] **P6-34 Virtual camera config** (S): `OBSBasicVCamConfig`.
 - [ ] **P6-35 Idian playground / debug dialogs** (S): `OBSIdianPlayground`, decide to keep or drop.

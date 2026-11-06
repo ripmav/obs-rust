@@ -15,7 +15,8 @@ In scope: the plugin lifecycle around startup (core module load, per-platform th
 plugin discovery paths, the `modules.json` cache, plugin-manager window behaviour), the
 crash sentinel + crash-log detection + upload, the macOS update-branch fetch and Sparkle
 glue, the per-platform system-info collectors, the platform utility layer, the Windows
-DLL blocklist, the session-end event filter, and the RSA verification helpers. Out of
+DLL blocklist, the session-end event filter, and the signature verification helpers
+(ed25519 per D-23, confirmed 2026-11-06). Out of
 scope: libobs-side module loading internals, the Sparkle framework itself, the GoLive API
 protocol (only its post-data assembly), Qt/Idian widget implementation details. Per
 D-12 (confirmed 2026-11-05) BSD is out of scope: the Rust port implements Linux/Windows/
@@ -177,7 +178,7 @@ changed state triggers the restart prompt (window → app).
 
 | | |
 |---|---|
-| Branch list | fetch + RSA-verify `https://obsproject.com/update_studio/branches.json` via the shared `FetchAndVerifyFile` helper (S-074) → store under data dir `obs-studio/updates/branches.json` → `OBSApp::SetBranchData` |
+| Branch list | fetch + ed25519-verify `https://obsproject.com/update_studio/branches.json` via the shared `FetchAndVerifyFile` helper (S-074) (D-23 — the C reference is RSA, R25) → store under data dir `obs-studio/updates/branches.json` → `OBSApp::SetBranchData` |
 | Branch selection | app config **`General` / `UpdateBranch`**; unset ⇒ `stable` (silent); branch present but disabled ⇒ silent fallback to `stable`; branch absent from fetched list ⇒ config reset to `stable` **and** info dialog (`Updater.BranchNotFound.*`) |
 | Result | `Result(branch, manualUpdate)` signal |
 | Sparkle | `SPUStandardUpdaterController` with `OBSUpdateDelegate`: allowed channel = {branch}; feed URL = `https://obsproject.com/osx_update/updates_arm64_v2.xml` when `os_get_emulation_status()` is true, else the default appcast (delegate feed URL nil); KVO on `canCheckForUpdates` enables/disables the Check-for-Updates menu action; `checkForUpdates(manual)`: manual ⇒ `checkForUpdates:`, else `checkForUpdatesInBackground` |
@@ -261,7 +262,7 @@ them at exit.
 | S-075-R22 | macOS collector is arm64-only: sysctl CPU brand, SoC GPU (vendor `0x106b`, device `0`), release names for major 11–15 (else `"unknown"`), bits 64, arm true; non-arm64 `system_info` is a no-op. |
 | S-075-R23 | Platform utilities behave per §9's table (single-instance checks, data paths, video save paths, locale lists, high-contrast queries differ per platform). |
 | S-075-R24 | Windows session handling: `WM_QUERYENDSESSION` critical ⇒ `saveAll()`; prompt-eligible ⇒ reject + queued `close()`; else pass through. `WM_ENDSESSION(TRUE)` ⇒ immediate `closeWindow()`. Non-Windows filter is a stub returning false. |
-| S-075-R25 | `VerifySignature` = RSA PKCS#1 v1.5 / SHA-512 over the buffer; macOS via Security.framework, else mbedTLS (PEM key parsed with `pubKeyLen + 1` — caller must NUL-terminate). |
+| S-075-R25 | `VerifySignature` = RSA PKCS#1 v1.5 / SHA-512 over the buffer in the C reference (macOS via Security.framework, else mbedTLS; PEM key parsed with `pubKeyLen + 1` — caller must NUL-terminate). Per D-23 (confirmed 2026-11-06) the Rust port verifies with ed25519 (new key pair) instead — the C algorithm is pinned here as reference behaviour only. |
 | S-075-R26 | Windows DLL blocklist: `NtMapViewOfSection` hook; case-insensitive **suffix** match of the full image path against ~28 blocked entries; timestamp-gated entries compare the image PE timestamp (`TS_*` methods); blocked maps denied + counted, `log_blocked_dlls` at exit. |
 
 ## 13. Reference defects and quirks
