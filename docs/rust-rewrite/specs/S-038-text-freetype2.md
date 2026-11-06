@@ -5,7 +5,7 @@
 | Status | Draft |
 | Spec version | initial |
 | Reference | C implementation, libobs 33.0.1, plugin `text-freetype2` |
-| Target crate | `crates/text-freetype2` |
+| Target crate | `crates/text-freetype2`. Per **D-20** (confirmed 2026-11-06) the backend is `cosmic-text`/`swash`; the fake-FT metrics in this spec are the layout reference and stay valid, but real-font glyph metrics differ from the C FreeType build — the P5-05.6 goldens are regenerated and the delta documented. |
 | Depends on | S-014 (obs_data), S-015 (obs_properties), S-023 (UTF-8/wide conversion) |
 | Conformance | `test/conformance/scripts/textft2/` (22 scripts, vectors in `vectors/textft2/`) |
 
