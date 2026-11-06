@@ -822,11 +822,16 @@ Verified facts: the main window is split across `frontend/widgets/OBSBasic*.cpp`
 ## G. Packaging and release
 
 ### P6-42 Windows
-- [ ] **P6-42.1 Installer**
+- [ ] **P6-42.0 MSIX feasibility spike** (added; D-39 confirmed 2026-11-06: MSIX)
+  - Files: none (spike — record findings in `docs/tests/windows-msix-spike.md`).
+  - Steps: 1. build a minimal MSIX around the OBS install tree; 2. verify third-party plugin loading (plugins outside the package directory) under MSIX file-system virtualization; 3. verify per-user install, auto-update (the updater must replace/re-register the package — BOUF `windows-patches` flow, phase-7 guide), and Steam compatibility.
+  - Pitfalls: OBS's plugin model fights MSIX — package identity pins the install location, virtualization redirects writes to the package directory, and plugin/data directories outside the package need `AppContainerIsResourceVirtualizable` or a documented fallback. If any of 2–3 fails, MSIX is not viable as the default: fall back to ZIP parity (the C-build behaviour) and record the outcome in D-39.
+  - Done when: `docs/tests/windows-msix-spike.md` records a GO/NO-GO decision.
+- [ ] **P6-42.1 Installer (MSIX)**
   - Files: `additional_install_files/` (data/, exec32–64{,d,r}/, libs32–64{,d,r}/, misc/, steam/), `cmake/windows/cpackconfig.cmake` (15), `frontend/updater/updater.rc` (146).
-  - Steps: 1. mirror the install-tree layout from `additional_install_files/`; 2. build the portable ZIP via CPack (`CPACK_GENERATOR ZIP`); 3. handle the VC runtime.
-  - Pitfalls: parity per D-39 (renumbered from D-34) — the C build ships a ZIP only (no NSIS/Inno); no new installer format in 1.0.
-  - Done when: ZIP builds and launches.
+  - Steps: 1. mirror the install-tree layout from `additional_install_files/`; 2. build the MSIX package per the P6-42.0 findings (only if GO); 3. handle the VC runtime inside the package.
+  - Pitfalls: D-39 (confirmed 2026-11-06, renumbered from D-34): the C build ships a ZIP only (no NSIS/Inno); the Rust build ships MSIX per the spike — the portable ZIP (P6-42.2) stays as the fallback channel either way.
+  - Done when: MSIX installs, launches and loads a third-party plugin (or the spike's NO-GO is recorded and ZIP parity ships instead).
 - [ ] **P6-42.2 Portable ZIP**
   - Files: `additional_install_files/`, `frontend/obs-main.cpp` (1065–1079, portable detection).
   - Steps: 1. package the ZIP with portable mode enabled; 2. launch test from an arbitrary directory.
