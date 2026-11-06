@@ -7500,7 +7500,7 @@ libobs/obs-hotkey.c,libobs,remove_bindings,803,16,c/c++,0,0,1,1,0,1,0,1,0,1,1
 libobs/obs-hotkey.c,libobs,release_registerer,820,25,c/c++,0,0,1,1,0,1,0,1,0,1,1
 libobs/obs-hotkey.c,libobs,unregister_hotkey,846,25,c/c++,0,0,1,1,0,1,0,1,0,1,1
 libobs/obs-hotkey.c,libobs,unregister_hotkey_pair,872,16,c/c++,0,0,1,1,0,1,0,1,0,1,1
-libobs/obs-hotkey.c,libobs,obs_hotkey_unregister,889,8,c/c++,0,0,1,1,0,1,1,1,1,1,1
+libobs/obs-hotkey.c,libobs,obs_hotkey_unregister,889,8,c/c++,0,0,1,1,1,1,1,1,1,1,1
 libobs/obs-hotkey.c,libobs,obs_hotkey_pair_unregister,898,8,c/c++,0,0,1,1,0,1,1,1,1,1,1
 libobs/obs-hotkey.c,libobs,context_release_hotkeys,907,11,c/c++,0,0,1,1,0,1,0,1,0,1,1
 libobs/obs-hotkey.c,libobs,context_release_hotkey_pairs,919,11,c/c++,0,0,1,1,0,1,0,1,0,1,1
