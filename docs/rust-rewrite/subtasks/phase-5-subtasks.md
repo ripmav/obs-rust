@@ -61,7 +61,7 @@ Verified in this checkout (submodules initialised): **`plugins/obs-websocket` at
   - Done when: golden.
 - [ ] **P5-01.7 Noise suppression**
   - Files: `noise-suppress-filter.c` (553); vendored `rnnoise/` 18 files / 14 733 lines (`rnn_data.c` 11 051, `denoise.c` 644, `kiss_fft.c` 602, `pitch.c` 532, `celt_lpc.c` 282, `rnn.c` 178, `rnn_reader.c` 168 + 11 headers)
-  - Steps: 1) Write the decision note: `nnnoiseless` crate vs keep the vendored RNNoise behind a thin FFI. 2) Speex option via the `speexdsp` crate; port the 48k resample path. 3) Run the `filtersrest` scripts (both `ns` and `ns2` filter names).
+  - Steps: 1) Record the ADR note: `nnnoiseless` crate (D-21, confirmed 2026-11-06 — port to Rust; the vendored `rnnoise/` sources die with the plugin cutover in P7-03). 2) Speex option via the `speexdsp` crate; port the 48k resample path. 3) Run the `filtersrest` scripts (both `ns` and `ns2` filter names).
   - Spec: S-054 (noise suppression, RNNoise/Speex)
   - Vectors: `test/conformance/scripts/filtersrest/`
   - Pitfalls:

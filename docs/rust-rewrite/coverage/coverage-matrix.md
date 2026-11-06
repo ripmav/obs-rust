@@ -1580,24 +1580,24 @@ Build/data files in this area: **18** (878 lines) — owner: same task as the ar
 | `plugins/obs-filters/noise-gate-filter.c` | P5-01 | S-027/S-028/S-054 |  |
 | `plugins/obs-filters/noise-suppress-filter.c` | P5-01 | S-027/S-028/S-054 |  |
 | `plugins/obs-filters/obs-filters.c` | P5-01 | S-027/S-028/S-054 |  |
-| `plugins/obs-filters/rnnoise/include/rnnoise.h` | P5-01.7 | S-054 |  |
-| `plugins/obs-filters/rnnoise/src/_kiss_fft_guts.h` | P5-01.7 | S-054 |  |
-| `plugins/obs-filters/rnnoise/src/arch.h` | P5-01.7 | S-054 |  |
-| `plugins/obs-filters/rnnoise/src/celt_lpc.c` | P5-01.7 | S-054 |  |
-| `plugins/obs-filters/rnnoise/src/celt_lpc.h` | P5-01.7 | S-054 |  |
-| `plugins/obs-filters/rnnoise/src/common.h` | P5-01.7 | S-054 |  |
-| `plugins/obs-filters/rnnoise/src/denoise.c` | P5-01.7 | S-054 |  |
-| `plugins/obs-filters/rnnoise/src/kiss_fft.c` | P5-01.7 | S-054 |  |
-| `plugins/obs-filters/rnnoise/src/kiss_fft.h` | P5-01.7 | S-054 |  |
-| `plugins/obs-filters/rnnoise/src/opus_types.h` | P5-01.7 | S-054 |  |
-| `plugins/obs-filters/rnnoise/src/pitch.c` | P5-01.7 | S-054 |  |
-| `plugins/obs-filters/rnnoise/src/pitch.h` | P5-01.7 | S-054 |  |
-| `plugins/obs-filters/rnnoise/src/rnn.c` | P5-01.7 | S-054 |  |
-| `plugins/obs-filters/rnnoise/src/rnn.h` | P5-01.7 | S-054 |  |
-| `plugins/obs-filters/rnnoise/src/rnn_data.c` | P5-01.7 | S-054 |  |
-| `plugins/obs-filters/rnnoise/src/rnn_data.h` | P5-01.7 | S-054 |  |
-| `plugins/obs-filters/rnnoise/src/rnn_reader.c` | P5-01.7 | S-054 |  |
-| `plugins/obs-filters/rnnoise/src/tansig_table.h` | P5-01.7 | S-054 |  |
+| `plugins/obs-filters/rnnoise/include/rnnoise.h` | P5-01.7 | S-054 | D-21: replaced by the nnnoiseless crate  |
+| `plugins/obs-filters/rnnoise/src/_kiss_fft_guts.h` | P5-01.7 | S-054 | D-21: replaced by the nnnoiseless crate  |
+| `plugins/obs-filters/rnnoise/src/arch.h` | P5-01.7 | S-054 | D-21: replaced by the nnnoiseless crate  |
+| `plugins/obs-filters/rnnoise/src/celt_lpc.c` | P5-01.7 | S-054 | D-21: replaced by the nnnoiseless crate  |
+| `plugins/obs-filters/rnnoise/src/celt_lpc.h` | P5-01.7 | S-054 | D-21: replaced by the nnnoiseless crate  |
+| `plugins/obs-filters/rnnoise/src/common.h` | P5-01.7 | S-054 | D-21: replaced by the nnnoiseless crate  |
+| `plugins/obs-filters/rnnoise/src/denoise.c` | P5-01.7 | S-054 | D-21: replaced by the nnnoiseless crate  |
+| `plugins/obs-filters/rnnoise/src/kiss_fft.c` | P5-01.7 | S-054 | D-21: replaced by the nnnoiseless crate  |
+| `plugins/obs-filters/rnnoise/src/kiss_fft.h` | P5-01.7 | S-054 | D-21: replaced by the nnnoiseless crate  |
+| `plugins/obs-filters/rnnoise/src/opus_types.h` | P5-01.7 | S-054 | D-21: replaced by the nnnoiseless crate  |
+| `plugins/obs-filters/rnnoise/src/pitch.c` | P5-01.7 | S-054 | D-21: replaced by the nnnoiseless crate  |
+| `plugins/obs-filters/rnnoise/src/pitch.h` | P5-01.7 | S-054 | D-21: replaced by the nnnoiseless crate  |
+| `plugins/obs-filters/rnnoise/src/rnn.c` | P5-01.7 | S-054 | D-21: replaced by the nnnoiseless crate  |
+| `plugins/obs-filters/rnnoise/src/rnn.h` | P5-01.7 | S-054 | D-21: replaced by the nnnoiseless crate  |
+| `plugins/obs-filters/rnnoise/src/rnn_data.c` | P5-01.7 | S-054 | D-21: replaced by the nnnoiseless crate  |
+| `plugins/obs-filters/rnnoise/src/rnn_data.h` | P5-01.7 | S-054 | D-21: replaced by the nnnoiseless crate  |
+| `plugins/obs-filters/rnnoise/src/rnn_reader.c` | P5-01.7 | S-054 | D-21: replaced by the nnnoiseless crate  |
+| `plugins/obs-filters/rnnoise/src/tansig_table.h` | P5-01.7 | S-054 | D-21: replaced by the nnnoiseless crate  |
 | `plugins/obs-filters/scale-filter.c` | P5-01 | S-027/S-028/S-054 |  |
 | `plugins/obs-filters/scroll-filter.c` | P5-01 | S-027/S-028/S-054 |  |
 | `plugins/obs-filters/sdr-on-hdr-filter.c` | P5-01 | S-027/S-028/S-054 |  |
