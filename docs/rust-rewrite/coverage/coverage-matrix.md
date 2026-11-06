@@ -743,9 +743,9 @@ Build/data files in this area: **143** (31924 lines) — owner: same task as the
 | `frontend/utility/YoutubeApiWrappers.hpp` | P6-30.2 | — |  |
 | `frontend/utility/audio-encoders.cpp` | P6-20.3 | — |  |
 | `frontend/utility/audio-encoders.hpp` | P6-20.3 | — |  |
-| `frontend/utility/crypto-helpers-mac.mm` | P6-23.2 | — | What's-New feed RSA (mbedtls/mac impls); updater does not link them |
-| `frontend/utility/crypto-helpers-mbedtls.cpp` | P6-23.2 | — | What's-New feed RSA (mbedtls/mac impls); updater does not link them |
-| `frontend/utility/crypto-helpers.hpp` | P6-23.2 | — | What's-New feed RSA (mbedtls/mac impls); updater does not link them |
+| `frontend/utility/crypto-helpers-mac.mm` | P6-23.2 | — | What's-New feed signature (C reference RSA, mbedtls/mac impls); updater does not link them; port verifies ed25519 per D-23 |
+| `frontend/utility/crypto-helpers-mbedtls.cpp` | P6-23.2 | — | What's-New feed signature (C reference RSA, mbedtls/mac impls); updater does not link them; port verifies ed25519 per D-23 |
+| `frontend/utility/crypto-helpers.hpp` | P6-23.2 | — | What's-New feed signature (C reference RSA, mbedtls/mac impls); updater does not link them; port verifies ed25519 per D-23 |
 | `frontend/utility/display-helpers.hpp` | P6-41.3 | — |  |
 | `frontend/utility/item-widget-helpers.cpp` | P6-09 | — |  |
 | `frontend/utility/item-widget-helpers.hpp` | P6-09 | — |  |
