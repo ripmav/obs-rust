@@ -113,7 +113,7 @@ Verified: the top-level directories are `libobs`, `libobs-opengl`, `libobs-d3d11
   - Done when: CI uses xtask only.
 
 ### P7-07 Dependency management
-- [ ] **P7-07.1 Pins** — FFmpeg, x264, CEF, SRT, RIST, libdatachannel/webrtc, Qt (if kept), with versions and SHA-256.
+- [ ] **P7-07.1 Pins** — FFmpeg, x264, CEF, SRT, RIST, Qt (if kept), with versions and SHA-256 (the WebRTC stack is webrtc-rs — Rust crates, pinned by Cargo.lock, not this manifest, D-16).
   - Files: `xtask` `deps` manifest (new).
   - Steps: 1. collect the current versions from `cmake/*/buildspec*.cmake` + `deps/`; 2. record version + SHA-256 per native dep in the manifest; 3. `xtask deps` verifies every hash on fetch.
   - Done when: every pinned dep has a version and SHA-256 and fetch verifies.
