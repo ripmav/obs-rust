@@ -678,8 +678,8 @@ Verified in this checkout (submodules initialised): **`plugins/obs-websocket` at
   - Done when: `docs/tests/plugin-obs-webrtc-inventory.md` committed; S2 passes.
 - [ ] **P5-19.3 Stack**
   - Files: `obs-webrtc.cpp` (19), `whip-output.cpp` (792) + `whip-output.h` (77), `whip-service.cpp` (98) + `whip-service.h` (18), `whip-utils.h` (107)
-  - Steps: 1) libdatachannel (C++) today; write the spike: `webrtc-rs` vs keep libdatachannel FFI. 2) Port the WHIP output/service glue (offer/answer flow, token). 3) Commit the spike decision.
-  - Done when: spike.
+  - Steps: 1) Build the WHIP output/service glue (offer/answer flow, token) on the `webrtc-rs` stack (D-16, confirmed 2026-11-06 — no libdatachannel FFI). 2) Evaluate the webrtc-rs API surface against the C build's libdatachannel usage; record gaps.
+  - Done when: glue compiles and the API-gap note is committed.
 - [ ] **P5-19.4 Signalling**
   - Files: `whip-output.cpp` (792) (HTTP POST SDP offer), `whip-service.cpp` (98)
   - Steps: 1) Port the HTTP POST SDP offer with bearer token. 2) Port ICE trickle/PATCH handling. 3) Test against a mock WHIP server.
@@ -694,7 +694,7 @@ Verified in this checkout (submodules initialised): **`plugins/obs-websocket` at
   - Done when: both receive the stream.
 - [ ] **P5-19.7/.8** E1/E2
   - Files: `obs-webrtc.cpp` (19) (module main), `CMakeLists.txt` (target `obs-webrtc` MODULE)
-  - Steps: 1) Bookend E1: `crates/obs-modules/obs-webrtc` cdylib named `obs-webrtc`. 2) Bookend E2: remove the C plugin in the same PR (libdatachannel stays as a dependency per P5-19.3).
+  - Steps: 1) Bookend E1: `crates/obs-modules/obs-webrtc` cdylib named `obs-webrtc`. 2) Bookend E2: remove the C plugin in the same PR (the WebRTC stack is webrtc-rs, a Rust dependency per D-16).
   - Done when: E1 export/loader check passes on each OS; E2 CI green and smoke recorded in `docs/tests/plugin-obs-webrtc.md`.
 
 ### P5-20 `obs-websocket` (submodule, tag 5.7.6)

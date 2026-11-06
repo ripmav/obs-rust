@@ -15,8 +15,8 @@ The WHIP (Web-Initiated HTTP Streaming) output: the service (URL + optional bear
 token), the output (WebRTC peer connection driven over a libcurl HTTP session), SDP
 offer/answer, the optional bearer-token auth header, and the `Location` (resource URL)
 and `Link` (ICE servers) header parsing.
-The full WebRTC stack (libdatachannel) stays a native dependency; this spec pins the
-plugin's contract around it.
+The WebRTC stack is `webrtc-rs` (Rust; D-16, confirmed 2026-11-06 — replaces the C
+build's libdatachannel); this spec pins the plugin's contract around it.
 
 ### Reference files (all cited)
 
