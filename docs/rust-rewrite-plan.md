@@ -1,6 +1,6 @@
 # Plan: Rewriting OBS Studio in Rust
 
-Status: proposal. Nothing here is implemented yet. Tick the checkboxes as phases complete.
+Status: strategy confirmed — all 39 questions in [`docs/rust-rewrite/DECISIONS-NEEDED.md`](rust-rewrite/DECISIONS-NEEDED.md) answered 2026-11-06. Nothing implemented yet; tick the checkboxes as phases complete.
 
 ## 1. What exists today (measured)
 
@@ -43,17 +43,17 @@ crates/
   obs-media-io      # video-io, audio-io, format conversion, resampler
   obs-core          # sources, scenes, scene items, filters, transitions, outputs, encoders, services, hotkeys, mixers
   obs-ffi           # C ABI surface: generated obs.h, vtable adapters for C plugins
-  obs-plugin-api    # native Rust plugin SDK (traits + proc macros), stable via abi_stable or WASM
+  obs-plugin-api    # native Rust plugin SDK (traits + proc macros), cdylib per D-06
   obs-modules/*     # one crate per current plugin
   obs-app           # frontend
   obs-cli           # headless binary used for tests and CI
 ```
 
-Key design decisions (to confirm in ADRs before coding):
+Key design decisions (confirmed 2026-11-06 in `DECISIONS-NEEDED.md`; the Phase 0 ADR set encodes them):
 
 1. **Concurrency**: dedicated real-time threads for video and audio mixing (as today), `crossbeam` channels / lock-free ring buffers on the hot path, `tokio` only for network outputs and services. No allocation or locks in the audio callback.
 2. **Graphics**: `wgpu` as the single backend replaces OpenGL/D3D11/Metal, with a port of the effect language to WGSL (or compiled via `naga`). Risk: per-frame texture sharing with capture sources (DMA-BUF, DXGI shared handles, IOSurface) needs `wgpu` HAL escape hatches.
-3. **Frontend toolkit**: the largest open decision. Options: `cxx-qt` (keeps Qt, `.ui` forms and the existing UX, lowest risk), `Slint`, `egui`, `iced`, or `Tauri`. Recommended default: `cxx-qt` first, revisit later.
+3. **Frontend toolkit**: the largest open decision. Options: `cxx-qt` (keeps Qt, `.ui` forms and the existing UX, lowest risk), `Slint`, `egui`, `iced`, or `Tauri`. Confirmed (D-01, 2026-11-06): `cxx-qt` first; P0-04 still prototypes the alternatives.
 4. **Plugin model**: keep loading C-ABI `.so/.dll/.dylib` modules (via `libloading`) for compatibility; add a Rust-native plugin API as the preferred path for new in-tree modules.
 5. **Encoders/muxing**: bind FFmpeg through `ffmpeg-next`/`ffmpeg-sys-next` (or `rsmpeg`); keep x264 via `x264` bindings. These are not rewritten.
 6. **Scripting**: `mlua` for Lua, `pyo3` for Python, exposing the same script API.
@@ -64,7 +64,7 @@ Key design decisions (to confirm in ADRs before coding):
 Order is dictated by dependency and risk: leaf libraries first, the core second, plugins third, GUI last.
 
 ### Phase 0 — Foundation (docs, tooling, ADRs)
-- [ ] ADRs: strategy (strangler), graphics (wgpu), GUI toolkit, plugin ABI policy, MSRV, unsafe policy (`docs/adr/`, prefixed `docs:` PRs, first in the stack).
+- [ ] ADRs: strategy (strangler), graphics (wgpu), GUI toolkit, plugin ABI policy, MSRV, unsafe policy, licensing (GPL-2.0-or-later + allow-list, D-07) (`docs/adr/`, prefixed `docs:` PRs, first in the stack).
 - [ ] Cargo workspace, Corrosion integration in CMake, CI matrix (Linux/macOS/Windows), `cargo fmt/clippy/deny/audit/test`.
 - [ ] Golden-test harness: record the current C implementation's outputs (math, `obs_data` JSON, audio mixing, video compositing frames, effect parsing) as `*.golden` files; add `.gitattributes` with `*.text -text` and `*.golden -text`.
 - [ ] ABI test: build a small C plugin against `obs.h` and run it against both implementations.
@@ -81,7 +81,7 @@ Order is dictated by dependency and risk: leaf libraries first, the core second,
 
 ### Phase 3 — Graphics
 - [ ] Effect and shader language parser (`effect-parser.c`, `shader-parser.c`) in Rust, with `nom`/`winnow` and golden AST dumps.
-- [ ] `gs_*` trait; wgpu backend; the legacy GL/D3D11/Metal backends remain selectable until parity.
+- [ ] `gs_*` trait; wgpu backend; the legacy D3D11/Metal backends are ported to Rust (D-13, S-078/S-079) and retired with their C sources in Phase 7 (P7-01); the OpenGL backend stays C (D-13).
 - [ ] Port built-in effects (`libobs/data/*.effect`) and verify with image-diff tests.
 - [ ] Shared-texture interop for capture sources per platform.
 
@@ -94,17 +94,17 @@ Order is dictated by dependency and risk: leaf libraries first, the core second,
 
 ### Phase 5 — Plugins, in order of risk (each is its own PR stack)
 1. Pure logic: `obs-filters`, `obs-transitions`, `obs-text`, `image-source`, `rtmp-services`, `obs-x264`.
-2. Network/muxing: `obs-outputs` (RTMP, FTL, WHIP via `obs-webrtc`), `obs-ffmpeg` (mux, SRT, RIST, HLS), `obs-websocket` (`tokio-tungstenite`).
+2. Network/muxing: `obs-outputs` (RTMP ported per D-15; WHIP/WebRTC via `webrtc-rs` per D-16; FTL dropped per D-25 — not present in the 33.0.1 reference), `obs-ffmpeg` (mux; SRT/RIST via FFI over the same native libs per D-17; HLS), `obs-websocket` (`tokio-tungstenite`).
 3. Platform capture/audio: Linux (`linux-pipewire`, `linux-v4l2`, `linux-pulseaudio`, `linux-alsa`, `linux-jack`, `linux-capture`), then Windows (`win-wasapi`, `win-capture`, `win-dshow`, `winrt`), then macOS (`mac-capture`, `mac-avcapture`, `mac-videotoolbox`, `mac-virtualcam`).
 4. Hardware encoders: `obs-nvenc`, `obs-qsv11`, AMF, VideoToolbox. These are thin SDK wrappers, so low gain and high risk; port last.
-5. Third-party SDK bound: `decklink`, `aja`, `obs-vst`, `obs-libfdk`, `vlc-video`. Keep as C/C++ behind the plugin ABI or defer; evaluate demand.
-6. `obs-browser` (CEF): remains C++ wrapped by the Rust plugin API. Not a rewrite candidate.
+5. Third-party SDK bound: `decklink`, `aja` (D-10) and `obs-vst` (D-11) port their glue to Rust over hand-written FFI to the vendor SDK (the vendored SDK trees stay); `obs-libfdk` and `vlc-video` stay thin FFI over their native libraries (libfdk, libvlc).
+6. `obs-browser` (CEF): the CEF glue and page processes are ported to Rust (D-09); CEF itself stays a vendor library, accessed through its official C API.
 
 ### Phase 6 — Frontend (`frontend/`)
-- [ ] With `cxx-qt` (default; P0-04 prototypes the alternatives): port docks, scene/source tree, mixer, settings, wizards, importers, updater, plugin manager incrementally; each QObject-based widget is replaced by a Rust-backed Qt widget module, migrating the `.ui` forms step by step. Frontend API (`OBSStudioAPI`) re-exposed through `obs-ffi`.
+- [ ] With `cxx-qt` (D-01, confirmed 2026-11-06; P0-04 prototypes the alternatives): port docks, scene/source tree, mixer, settings, wizards, importers, updater, plugin manager incrementally; each QObject-based widget is replaced by a Rust-backed Qt widget module, migrating the `.ui` forms step by step. Frontend API (`OBSStudioAPI`) re-exposed through `obs-ffi`.
 - [ ] Scripting (`frontend-tools`): `mlua` + `pyo3`.
 - [ ] i18n (`data/locale/*.ini`) kept as is; loaded by a Rust loader.
-- [ ] Packaging for Flatpak, Windows installer, macOS notarized app, plus the existing update channel.
+- [ ] Packaging for Flatpak, Windows installer (MSIX per D-39, portable ZIP as fallback; P6-42.0 feasibility spike), macOS notarized app, plus the existing update channel.
 
 ### Phase 7 — Retire C/C++
 - [ ] Remove the C ABI shim's default-on status (keep it as an opt-in compat feature for third-party plugins).
@@ -125,11 +125,11 @@ Order is dictated by dependency and risk: leaf libraries first, the core second,
 |---|---|
 | Plugin ecosystem break | Keep C ABI compat through Phase 7; ABI conformance tests from Phase 0 |
 | Real-time glitches (frame drops, audio xruns) | Lock-free hot path, soak tests, benchmarks in CI |
-| wgpu cannot import platform shared textures cleanly | Keep legacy GL/D3D11/Metal backends as fallback until parity |
-| GUI rewrite dwarfs everything else | Decide toolkit by prototype in Phase 0; default to `cxx-qt` |
+| wgpu cannot import platform shared textures cleanly | the OpenGL backend stays C as the non-wgpu fallback (D-13); D3D11/Metal are ported (S-078/S-079), not retained; wgpu HAL escape hatches for shared textures |
+| GUI rewrite dwarfs everything else | toolkit decided by the Phase 0 prototype (D-01 confirmed: `cxx-qt`) |
 | Scope creep and contributor burnout | Each phase ships, and each is independently valuable (memory safety in parsing and muxing first) |
-| Unportable vendor SDKs (NVENC, AMF, DeckLink, CEF) | Treat as permanent FFI; do not count as "rewrite" |
-| Licensing (GPLv2+) of new deps | `cargo-deny` license policy in Phase 0 |
+| Unportable vendor SDKs (NVENC, AMF, DeckLink, AJA, CEF, VST) | the SDK binaries stay permanent FFI inputs; the glue around them is Rust (D-09/D-10/D-11); the SDKs themselves are not counted as "rewrite" |
+| Licensing (GPLv2+) of new deps | `cargo-deny` license policy in Phase 0 (D-07 confirmed: GPL-2.0-or-later + allow-list) |
 
 ## 7. Rough effort (one team of ~6 experienced engineers)
 
@@ -146,15 +146,15 @@ Order is dictated by dependency and risk: leaf libraries first, the core second,
 
 Realistic total: **3-4 years**. A useful interim milestone, a Rust headless core (`obs-cli`) running unmodified C plugins, lands after about 18-24 months.
 
-## 8. Open questions for the maintainers
+## 8. Decisions for the maintainers
 
-These are tracked, with a default for each so work is never blocked, in
+All 39 questions were confirmed or resolved with the user on 2026-11-06 — no open questions remain. The answers are recorded in
 [`docs/rust-rewrite/DECISIONS-NEEDED.md`](rust-rewrite/DECISIONS-NEEDED.md) (strategy D-01…D-07,
-C/C++ that stays D-08…D-14, dependency choices D-15…D-26, spec backlog D-27…D-33). The original four:
+scope and platform code D-08…D-14, dependency choices D-15…D-26, spec backlog D-27…D-33, plus D-34…D-39). The original four:
 
-1. Is plugin ABI compatibility a hard requirement for the first Rust release? (Assumed yes — D-02.)
-2. Which GUI toolkit? Staying on Qt via `cxx-qt` is assumed (D-01).
-3. Is dropping the native GL/D3D11/Metal backends in favour of `wgpu` acceptable? (D-03/D-13.)
-4. Which platforms/vendor SDKs are in scope for the first all-Rust release? (D-04.)
+1. Is plugin ABI compatibility a hard requirement for the first Rust release? (D-02/D-05, confirmed: best-effort C ABI; deprecation after three releases.)
+2. Which GUI toolkit? (D-01, confirmed: `cxx-qt`.)
+3. Is dropping the native GL/D3D11/Metal backends in favour of `wgpu` acceptable? (D-03/D-13, confirmed: wgpu is the single backend; D3D11/Metal are ported to Rust and retired in P7-01; OpenGL stays C.)
+4. Which platforms/vendor SDKs are in scope for the first all-Rust release? (D-04, confirmed: Linux/Windows/macOS, x86_64 + arm64; vendor SDKs via FFI.)
 
 Detailed per-phase task lists live in [`docs/rust-rewrite/`](rust-rewrite/README.md).
