@@ -426,10 +426,10 @@ Verified file map (libobs 33.0.1 checkout, line counts): `libobs/media-io/` has 
   - Done when: fuzz green, goldens committed.
 
 ### P2-21 Caption support
-- [ ] **P2-21.1 FFI wrapper**
-  - Files: `deps/libcaption/` (≈7,465 lines across `caption/` + `src/`; kept as FFI per D-18 — no port).
-  - Steps: build a Rust crate wrapping `caption_*`/`sei_*`; decode CEA-608/708 and compare against C.
-  - Done when: crate wraps `caption_*`/`sei_*` and CEA-608/708 decode equals C.
+- [ ] **P2-21.1 Port libcaption** (D-18, confirmed 2026-11-06)
+  - Files: `deps/libcaption/` (≈7,465 lines across `caption/` + `src/`; ported to Rust — `deps/libcaption` dies in P7-04).
+  - Steps: port the CEA-608/708 parser (`caption_*`/`sei_*` surface) to a Rust crate; decode against the C build's output as conformance vectors (the parser is stateful protocol logic — pin the full session, not just the happy path).
+  - Done when: Rust decode equals C on the vector set.
 - [ ] **P2-21.2 Encode path**
   - Files: `libobs/obs-output.c` (3340; the caption queue), `libobs/obs.h` (2734; `obs_output_output_caption_text1/2`, `obs_output_caption` at lines 2159–2162).
   - Steps: port the caption queue and the `obs_output_output_caption_text1/2` entry points with a fake output (the file itself is P4-23).
