@@ -35,29 +35,29 @@ Tracked = every `.c .cpp .cc .h .hpp .m .mm .swift`, `.ui` and `.effect` file (s
 | `deps/glad/src/glad_wgl.c` | P3-30, P7-04 | — | drop when legacy GL is gone (P7-04) |
 | `deps/json11/json11.cpp` | P1-31.2, P7-04 | — | frontend-only (oauth/importer/YouTube, 17 files); dropped by P7-04; serde_json |
 | `deps/json11/json11.hpp` | P1-31.2, P7-04 | — | frontend-only (oauth/importer/YouTube, 17 files); dropped by P7-04; serde_json |
-| `deps/libcaption/caption/caption.h` | P2-21 | — | D-18: probably FFI |
-| `deps/libcaption/caption/cea708.h` | P2-21 | — | D-18: probably FFI |
-| `deps/libcaption/caption/dvtcc.h` | P2-21 | — | D-18: probably FFI |
-| `deps/libcaption/caption/eia608.h` | P2-21 | — | D-18: probably FFI |
-| `deps/libcaption/caption/eia608_charmap.h` | P2-21 | — | D-18: probably FFI |
-| `deps/libcaption/caption/mpeg.h` | P2-21 | — | D-18: probably FFI |
-| `deps/libcaption/caption/scc.h` | P2-21 | — | D-18: probably FFI |
-| `deps/libcaption/caption/srt.h` | P2-21 | — | D-18: probably FFI |
-| `deps/libcaption/caption/utf8.h` | P2-21 | — | D-18: probably FFI |
-| `deps/libcaption/caption/vtt.h` | P2-21 | — | D-18: probably FFI |
-| `deps/libcaption/caption/xds.h` | P2-21 | — | D-18: probably FFI |
-| `deps/libcaption/src/caption.c` | P2-21 | — | D-18: probably FFI |
-| `deps/libcaption/src/cea708.c` | P2-21 | — | D-18: probably FFI |
-| `deps/libcaption/src/dvtcc.c` | P2-21 | — | D-18: probably FFI |
-| `deps/libcaption/src/eia608.c` | P2-21 | — | D-18: probably FFI |
-| `deps/libcaption/src/eia608_charmap.c` | P2-21 | — | D-18: probably FFI |
-| `deps/libcaption/src/eia608_from_utf8.c` | P2-21 | — | D-18: probably FFI |
-| `deps/libcaption/src/mpeg.c` | P2-21 | — | D-18: probably FFI |
-| `deps/libcaption/src/scc.c` | P2-21 | — | D-18: probably FFI |
-| `deps/libcaption/src/srt.c` | P2-21 | — | D-18: probably FFI |
-| `deps/libcaption/src/utf8.c` | P2-21 | — | D-18: probably FFI |
-| `deps/libcaption/src/vtt.c` | P2-21 | — | D-18: probably FFI |
-| `deps/libcaption/src/xds.c` | P2-21 | — | D-18: probably FFI |
+| `deps/libcaption/caption/caption.h` | P2-21 | — | D-18: ported to Rust |
+| `deps/libcaption/caption/cea708.h` | P2-21 | — | D-18: ported to Rust |
+| `deps/libcaption/caption/dvtcc.h` | P2-21 | — | D-18: ported to Rust |
+| `deps/libcaption/caption/eia608.h` | P2-21 | — | D-18: ported to Rust |
+| `deps/libcaption/caption/eia608_charmap.h` | P2-21 | — | D-18: ported to Rust |
+| `deps/libcaption/caption/mpeg.h` | P2-21 | — | D-18: ported to Rust |
+| `deps/libcaption/caption/scc.h` | P2-21 | — | D-18: ported to Rust |
+| `deps/libcaption/caption/srt.h` | P2-21 | — | D-18: ported to Rust |
+| `deps/libcaption/caption/utf8.h` | P2-21 | — | D-18: ported to Rust |
+| `deps/libcaption/caption/vtt.h` | P2-21 | — | D-18: ported to Rust |
+| `deps/libcaption/caption/xds.h` | P2-21 | — | D-18: ported to Rust |
+| `deps/libcaption/src/caption.c` | P2-21 | — | D-18: ported to Rust |
+| `deps/libcaption/src/cea708.c` | P2-21 | — | D-18: ported to Rust |
+| `deps/libcaption/src/dvtcc.c` | P2-21 | — | D-18: ported to Rust |
+| `deps/libcaption/src/eia608.c` | P2-21 | — | D-18: ported to Rust |
+| `deps/libcaption/src/eia608_charmap.c` | P2-21 | — | D-18: ported to Rust |
+| `deps/libcaption/src/eia608_from_utf8.c` | P2-21 | — | D-18: ported to Rust |
+| `deps/libcaption/src/mpeg.c` | P2-21 | — | D-18: ported to Rust |
+| `deps/libcaption/src/scc.c` | P2-21 | — | D-18: ported to Rust |
+| `deps/libcaption/src/srt.c` | P2-21 | — | D-18: ported to Rust |
+| `deps/libcaption/src/utf8.c` | P2-21 | — | D-18: ported to Rust |
+| `deps/libcaption/src/vtt.c` | P2-21 | — | D-18: ported to Rust |
+| `deps/libcaption/src/xds.c` | P2-21 | — | D-18: ported to Rust |
 | `deps/libdshowcapture/src/dshowcapture.hpp` | P5-32.3 | — | D-19: FFI (submodule) |
 | `deps/libdshowcapture/src/source/CoTaskMemPtr.hpp` | P5-32.3 | — | D-19: FFI (submodule) |
 | `deps/libdshowcapture/src/source/ComPtr.hpp` | P5-32.3 | — | D-19: FFI (submodule) |
