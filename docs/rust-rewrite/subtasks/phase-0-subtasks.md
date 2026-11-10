@@ -129,7 +129,7 @@ Facts verified in this checkout that shape Phase 0:
 - [x] **P0-10.3 Exceptions process** — Files: `docs/adr/0005-code-policy.md` (new section). Add section to ADR 0005. Done when: example exception written.
 
 ### P0-11 `.gitattributes`
-- [ ] **P0-11.1 Create file** — Files: `.gitattributes` (new). Add `*.text -text` and `*.golden -text`. Done when: `git check-attr` shows `-text` on a sample.
+- [x] **P0-11.1 Create file** — Files: `.gitattributes` (new). Add `*.text -text` and `*.golden -text`. Done when: `git check-attr` shows `-text` on a sample.
 - [ ] **P0-11.2 Fixture audit**
   - Files: `test/cmocka/` (`test_bitstream.c` 36, `test_darray.c` 31, `test_os_path.c` 53, `test_serializer.c` 36), `frontend/data/locale/` (77 `.ini` files), `libobs/data/` (22 `.effect` files)
   - Steps: find fixtures compared byte-for-byte and add them.
