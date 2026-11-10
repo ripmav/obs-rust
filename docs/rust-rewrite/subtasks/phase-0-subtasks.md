@@ -87,7 +87,7 @@ Facts verified in this checkout that shape Phase 0:
 - [x] **P0-05.4 `-sys` and vendored code rule** — Files: `docs/adr/0005-code-policy.md` (new); pins live in `cmake/` dependency presets and `deps/`. Pin versions, forbid network in `build.rs`, document who updates FFmpeg/x264/CEF pins. Done when: rule referenced from ADR.
 
 ### P0-06 ADR: concurrency model
-- [ ] **P0-06.1 Thread diagram**
+- [x] **P0-06.1 Thread diagram**
   - Files: `libobs/obs-video.c` (1200), `obs-audio.c` (721), `media-io/video-io.c` (679), `media-io/audio-io.c` (455), `obs-video-gpu-encode.c` (312), `obs-encoder.c` (2286), `obs-output.c` (3340)
   - Steps: list each `pthread_create` / `os_event` loop and what it owns.
   - Done when: diagram with at least 6 thread kinds is in the ADR.
@@ -95,8 +95,8 @@ Facts verified in this checkout that shape Phase 0:
   - Files: `libobs/obs-internal.h` (1543)
   - Steps: extract every `pthread_mutex_t` field with: protects, taken by, taken while holding.
   - Done when: table has every mutex; unknown entries are marked TODO with an owner.
-- [ ] **P0-06.3 Target model** — Files: `docs/adr/0006-concurrency.md` (new). Define lock hierarchy, RT threads, SPSC queues, tokio use. Done when: hierarchy rule can be checked by a debug-only lock-order assert.
-- [ ] **P0-06.4 RT rules** — Files: `docs/adr/0006-concurrency.md` (new). "No alloc, no lock, no syscall in audio callback/video tick"; define the test (P2-12). Done when: referenced from Phase 2.
+- [x] **P0-06.3 Target model** — Files: `docs/adr/0006-concurrency.md` (new). Define lock hierarchy, RT threads, SPSC queues, tokio use. Done when: hierarchy rule can be checked by a debug-only lock-order assert.
+- [x] **P0-06.4 RT rules** — Files: `docs/adr/0006-concurrency.md` (new). "No alloc, no lock, no syscall in audio callback/video tick"; define the test (P2-12). Done when: referenced from Phase 2.
 
 ## B. Workspace and CI
 
