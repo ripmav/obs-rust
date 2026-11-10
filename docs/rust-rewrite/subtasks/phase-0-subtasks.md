@@ -144,10 +144,10 @@ Facts verified in this checkout that shape Phase 0:
 ## C. Safety net
 
 ### P0-13 Golden-test framework
-- [ ] **P0-13.1 Crate `obs-golden`** — Files: new crate `crates/obs-golden/`. `assert_golden(name, &str|&[u8])` reading `tests/golden/<name>.golden`. Done when: unit-tested.
-- [ ] **P0-13.2 Update mode** — `UPDATE_GOLDEN=1` rewrites files and prints a summary. Done when: CI refuses to run with the variable set.
-- [ ] **P0-13.3 Diff output** — unified diff (e.g. `similar`) truncated to N lines. Done when: mismatch shows first differing line and byte offset.
-- [ ] **P0-13.4 Demo and matrix** — Files: `docs/tests/obs-golden.md` (new). One demo test + matrix. Done when: matrix lists cases and expected results.
+- [x] **P0-13.1 Crate `obs-golden`** — Files: new crate `crates/obs-golden/`. `assert_golden(name, &str|&[u8])` reading `tests/golden/<name>.golden`. Done when: unit-tested.
+- [x] **P0-13.2 Update mode** — `UPDATE_GOLDEN=1` rewrites files and prints a summary. Done when: CI refuses to run with the variable set.
+- [x] **P0-13.3 Diff output** — unified diff (e.g. `similar`) truncated to N lines. Done when: mismatch shows first differing line and byte offset.
+- [x] **P0-13.4 Demo and matrix** — Files: `docs/tests/obs-golden.md` (new). One demo test + matrix. Done when: matrix lists cases and expected results.
 
 ### P0-14 C reference dumper
 - [ ] **P0-14.1 Target**

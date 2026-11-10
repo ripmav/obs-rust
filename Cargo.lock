@@ -19,6 +19,10 @@ name = "obs-ffi"
 version = "0.1.0"
 
 [[package]]
+name = "obs-golden"
+version = "0.1.0"
+
+[[package]]
 name = "obs-graphics"
 version = "0.1.0"
 

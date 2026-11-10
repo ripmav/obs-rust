@@ -12,6 +12,7 @@ members = [
     "crates/obs-graphics",
     "crates/obs-core",
     "crates/obs-ffi",
+    "crates/obs-golden",
     "crates/obs-cli",
 ]
 
