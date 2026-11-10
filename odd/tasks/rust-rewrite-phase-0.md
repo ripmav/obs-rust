@@ -59,7 +59,7 @@ S12 (confirmed decisions, verbatim from `DECISIONS-NEEDED.md`):
 | T1 | P0-01: `docs/adr/0000-template.md`, `docs/adr/README.md`, `docs/adr/0001-strangler-migration.md` | S2,S3,S4,S5,S11 | inline | 892b402 |
 | T2 | P0-05: `docs/adr/0005-code-policy.md` (+ P0-10.3 exception section), `CONTRIBUTING.md` dependency checklist | S7,S12 | inline | 8aae571 |
 | T3 | P0-02: `docs/adr/0002-plugin-abi.md`, `CODEOWNERS`, `CONTRIBUTING.md` public-header rule | S6,S12 | inline | 396d70c |
-| T4 | P0-06: `docs/adr/0006-concurrency.md` (target model + RT rules; P0-06.2 mutex table pending L3) | S8,S12 | inline | — |
+| T4 | P0-06: `docs/adr/0006-concurrency.md` (target model + RT rules; P0-06.2 mutex table pending L3) | S8,S12 | inline | ce1bfb8 |
 | T5 | P0-03: ADR 0003 graphics | S12 (D-03) | blocked: wgpu quad prototype + DMA-BUF/DXGI/IOSurface imports on 3 OS/GPUs (P0-03.1–.3, hardware) | — |
 | T6 | P0-04: ADR 0004 GUI toolkit | S12 (D-01) | blocked: cxx-qt/Slint/egui dock prototypes (P0-04.2–.3, hardware) | — |
 
