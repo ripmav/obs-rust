@@ -1,6 +1,6 @@
-# Rust rewrite — Phase 0 ADR stack (P0-01…P0-06)
+# Rust rewrite — Phase 0 execution (P0-01…P0-21, unblocked subset)
 
-Status: in progress. Working branch `docs/rewrite-coverage-2026-11` (L2). Scope: the six Phase 0 ADR tasks — the `docs:` start of the PR stack. P0-07…P0-21 are a later unit (see Out of scope). Reference C checkout (libobs 33.0.1) is NOT linked on this machine (L3); verified facts from it are quoted from `docs/rust-rewrite/subtasks/phase-0-subtasks.md` ("Facts verified in this checkout").
+Status: in progress. Working branch `docs/rewrite-coverage-2026-11` (L2). Scope expanded 2026-11-10 (L9) from the six ADR tasks to **all unblocked Phase 0 subtasks**: the `docs:` ADR stack (P0-01…P0-06) plus workspace skeleton, golden framework, deny policy, issue templates, labels/tracking issues, and test matrices. Reference C checkout (libobs 33.0.1) is NOT linked on this machine (L3); verified facts from it are quoted from `docs/rust-rewrite/subtasks/phase-0-subtasks.md` ("Facts verified in this checkout").
 
 ## Specs
 
@@ -52,6 +52,17 @@ S12 (confirmed decisions, verbatim from `DECISIONS-NEEDED.md`):
 - D-07: "**Confirmed (user, 2026-11-05):** GPL-2.0-or-later; `deny.toml` allow-list = MIT/Apache-2.0/BSD/ISC/Zlib/MPL-2.0 (P0-10.1)"
 - D-24: "**Confirmed (user, 2026-11-06): Track latest stable.** Bump within one release cycle (P0-05.2 already encodes this: ADR 0005 + MSRV CI job). No task-file changes."
 
+S13 (user instruction 2026-11-10, verbatim): "review-readability has the same model configured as all others, the `solheim/qwen3.8-37b` so do your thing and review, fix and work at the all other open tasks"
+- Note: the local catalog only lists `solheim/qwen3.8-27b` (same as all sibling review agents); `solheim/qwen3.8-37b` is not resolvable in `models.json`, so `review-readability.md` was configured with `solheim/qwen3.8-27b` to match all other reviewers (L9).
+
+S14 (new-task "Done when" quotes, `subtasks/phase-0-subtasks.md`):
+- P0-07.1: "Done when: `cargo build --workspace` passes." / P0-07.2: "Done when: `cargo test` and `cargo clippy` run on all crates." / P0-07.3: "Done when: rustfmt, clippy, and toolchain configs committed." (P0-07.4 "CI runs on 3 OSes" — pending P0-09/CI)
+- P0-10.1: "Done when: `cargo deny check licenses` passes." / P0-10.2: "Done when: rules documented."
+- P0-11.1: "Done when: `.gitattributes` has `*.golden -text` (and `*.text -text`)."
+- P0-13.1: "Done when: `assert_golden` reads/writes `*.golden`." / P0-13.2: "Done when: CI refuses to run with the variable set." / P0-13.3: "Done when: mismatch shows first differing line and byte offset." / P0-13.4: "Done when: matrix at `docs/tests/obs-golden.md`; used by one demo test."
+- P0-19.1: "Done when: labels exist on the repo." / P0-19.2: "Done when: template creates a valid issue." / P0-19.3: "Done when: 8 issues exist, each linking its phase file and exit criteria."
+- P0-20.1: "Done when: README explains the one-matrix-per-test-file rule." / P0-20.2: "Done when: matrix lists the cases." / P0-20.3: "Done when: matrix lists them." (P0-20.4 CI check — pending P0-09)
+
 ## Tasks
 
 | ID | Task | S# | Route | Commit |
@@ -62,18 +73,33 @@ S12 (confirmed decisions, verbatim from `DECISIONS-NEEDED.md`):
 | T4 | P0-06: `docs/adr/0006-concurrency.md` (target model + RT rules; P0-06.2 mutex table pending L3) | S8,S12 | inline | ce1bfb8 |
 | T5 | P0-03: ADR 0003 graphics | S12 (D-03) | blocked: wgpu quad prototype + DMA-BUF/DXGI/IOSurface imports on 3 OS/GPUs (P0-03.1–.3, hardware) | — |
 | T6 | P0-04: ADR 0004 GUI toolkit | S12 (D-01) | blocked: cxx-qt/Slint/egui dock prototypes (P0-04.2–.3, hardware) | — |
+| T7 | P0-11.1: `.gitattributes` `*.text`/`*.golden` `-text` verification (patterns pre-existed; `git check-attr` = unset) | S14 | inline | 5a7ee84 |
+| T8 | P0-20.1: `docs/tests/README.md` (one-matrix-per-test-file rule) + `docs/tests/_template.md` | S14 | inline | f5a2cc1 |
+| T9 | P0-07.1–.3: root `Cargo.toml` workspace (9 crates), `rust-toolchain.toml`, `rustfmt.toml`, `clippy.toml`, `.cargo/config.toml`, skeleton crates with smoke tests | S14 | inline (workspace root = this repo root, L10) | 53cc6d5 |
+| T10 | P0-19.2: `.github/ISSUE_TEMPLATE/rust-task.yml` (YAML-validated) | S14 | inline | 8758ca6 |
+| T11 | P0-19.1: 12 labels on `ripmav/obs-rust`; P0-19.3: 8 phase tracking issues #2–#9 (phase file, subtasks, guide, verbatim exit criteria, `rust-rewrite`+`phase-N` labels) | S14 | remote (gh) | fc6250f (tick commit) |
+| T12 | P0-13.1–.4: `crates/obs-golden` (10th member) — `assert_golden_str`/`assert_golden_bytes`, `UPDATE_GOLDEN=1` + in-crate CI refusal, line/byte mismatch reports, demo golden, 7 tests | S14,S12 (stdlib-first rule 4) | inline | 248c013 |
+| T13 | P0-10.1–.2: `deny.toml` (D-07 allow-list in SPDX terms + GPL-2.0-or-later, openssl-sys ban, multiple-versions warn, unknown-registry deny); `cargo deny check` all ok | S14,S12 (D-07) | inline | 82011a1 |
+| T14 | P0-20.2: `docs/tests/obs-golden.md` matrix (7 cases, pass); P0-20.3: `docs/tests/abi-conformance.md` matrix (lifecycle cases from P0-15 spec, pending rows) | S14 | inline | 3364bbd |
 
-Out of scope (later unit): P0-07…P0-21 (Cargo workspace, Corrosion, CI, golden/ABI/smoke/bench harnesses, corpus). Needs the C build environment this checkout lacks (no `CMakeLists.txt`, no `.github/`) plus P0-03/P0-04 prototype hardware. Open question to surface at P0-07 start: where the Cargo workspace lands — plan says "repo root, next to the CMake build"; this planning repo has no CMake build.
+Out of scope / remaining (L14): P0-08 (Corrosion integration — needs CMake tree), P0-09 (CI pipeline + branch protection — remote/CI unit), P0-12 (BUILDING.md — clean-env build untestable here), P0-11.2/P0-14/P0-15/P0-16/P0-17 (need the C reference checkout linked, L3), P0-18 (real-world corpus — user consent on sources), P0-20.4 (CI check), P0-21 (phase review — maintainer), plus the open subtask tails P0-02.1, P0-05.2, P0-06.2, P0-07.4, P0-01.5, P0-02.4.
 
-Tick policy (L4): subtask boxes ticked in `subtasks/phase-0-subtasks.md` only when the artifact verifiably exists; review/merge/remote-verification steps (P0-01.5, P0-02.4, P0-05.2 "merged") stay open for the user's PR; parent task boxes stay open until all subtasks close.
+Tick policy (L4): subtask boxes ticked in `subtasks/phase-0-subtasks.md` only when the artifact verifiably exists; review/merge/remote-verification/CI steps stay open for the user's PR/CI. P0-13.2 ticked on the in-crate CI refusal (panic when `UPDATE_GOLDEN`+`CI` set, tested) — the CI job that sets `CI` lands with P0-09.
 
 ## Log
 
 L1: "start working on rewrite plan `docs/rust-rewrite-plan.md` other importent documents you can find in `docs/rust-rewrite/` and other sub-folders"
 L2: user checked out `docs/rewrite-coverage-2026-11` before starting; work commits land on that branch (one commit per task, S10 footer). The plan's `<prefix>/<issue>-<short-description>` branch rule applies when the user splits this into stacked PRs at push time.
-L3: C reference checkout not linked on this machine (no `../obs-studio`; no `libobs/` tree found under `/home/ripmav` to depth 4). `tools/link-obs-source.sh` is the linker (default `../obs-studio`). Consequences: ADR numbers quoted from the plan §1 table + subtask file's verified facts with the subtask's reproducible footnote commands (S5 P0-01.2); P0-02.1 install-set script re-run, P0-06.1 source line refs, P0-06.2 mutex table (46 mutexes in `obs-internal.h`) pending `tools/link-obs-source.sh` run.
+L3: C reference checkout not linked on this machine (no `../obs-studio`; no `libobs/` tree found under `/home/ripmav` to depth 4). `tools/link-obs-source.sh` is the linker (default `../obs-studio`). Consequences: ADR numbers quoted from the plan §1 table + subtask file's verified facts with the subtask's reproducible footnote commands (S5 P0-01.2); P0-02.1 install-set script re-run, P0-06.1 source line refs, P0-06.2 mutex table (46 mutexes in `obs-internal.h`), P0-11.2 fixture audit, P0-14/15/16/17 pending the link.
 L4: tick policy as in "Tick policy" above.
 L5: branch `docs/rewrite-coverage-2026-11` already carried 38 commits (~33.5k lines vs origin/main) of coverage/decisions docs work before this ADR unit; slice accounting below for this unit: each task commit is one reviewable slice (T1 = 892b402, ~450 lines).
 L6: P0-10.3 (exception process, belongs to P0-10) completed early inside T2 because its deliverable is a section of ADR 0005; ticked there.
 L7: ADR 0002 open verification note: the P0-02.1 header snapshot does not list `obs.h`/`obs-config.h` and the public/internal split is provisional — both close with the install-set script re-run once the reference checkout is linked (L3). T2 commit = 8aae571.
-L8: P0-06.1 ticked on the strength of the primer §4 verified thread table (7 thread kinds, in-repo); the per-file `pthread_create` enumeration against source awaits the checkout link and folds into the P0-06.2 mutex-table session. Unit state after T4: 4 of 6 ADR tasks committed (892b402, 8aae571, 396d70c, T4 pending commit); T5/T6 blocked on prototype hardware; remaining P0 subtasks for T3/T4: P0-02.1 (script re-run), P0-02.4 (test PR), P0-05.2 (MSRV CI job), P0-06.2 (mutex table) — all pending L3/remote/CI, none further workable on this machine.
+L8: P0-06.1 ticked on the strength of the primer §4 verified thread table (7 thread kinds, in-repo); the per-file `pthread_create` enumeration against source awaits the checkout link and folds into the P0-06.2 mutex-table session. After T4: 4 of 6 ADR tasks committed; T5/T6 blocked on prototype hardware.
+L9 (2026-11-10): user instruction S13 — review, fix, and work all other open tasks. Review side: `review-readability.md` had no `model:` line (first capture failed `reviewer-config-invalid`); added `model: solheim/qwen3.8-27b` to match all sibling reviewers (user said "the same model configured as all others"; `37b` is not in the local catalog). Two subsequent captures of lineage `review-5a8563cca9abb7d4` (target sha256:69a98dbd…, 11 files/933 lines, medium) failed at the host relay with `UND_ERR_SOCKET` after ~15 min thinking-only output, 0 text; provider guidance `automatic_retry: false`. Review state: `reviewing`, blocked on a reviewer model-run that completes — user decision: retry when the provider is healthy, pick a different reviewer model, or accept this candidate unreviewed.
+L10 (2026-11-10): P0-07 location question resolved — the skeleton workspace lands in THIS repo root (`Cargo.toml` at root, `crates/*`), i.e. "repo root" per P0-07.1's Files spec; when the C checkout is linked, P0-08 wires the same workspace into the CMake build. T7 = 5a7ee84, T8 = f5a2cc1, T9 = 53cc6d5, T10 = 8758ca6.
+L11 (2026-11-10): P0-19 remote work executed against `https://github.com/ripmav/obs-rust.git` (gh authed): 12 labels, 8 phase tracking issues (#2–#9) with corrected links after a first-body `.md` omission, tick commit T11 = fc6250f.
+L12 (2026-11-10): P0-13 obs-golden (T12 = 248c013) and P0-10 deny.toml (T13 = 82011a1; `cargo-deny 0.20.2` installed for the check), P0-20.2/.3 matrices (T14 = 3364bbd). `deny.toml` needs SPDX license terms — `BSD-2`/`BSD-3` rejected by cargo-deny; replaced with `BSD-2-Clause`, `BSD-2-Clause-Patent`, `BSD-3-Clause`, `BSD-3-Clause-LBNL`, `0BSD`.
+L13 (2026-11-10): workspace gates green after T14: `cargo build`/`cargo test` (19 suites ok incl. 7 obs-golden tests)/`cargo fmt --check`/`cargo clippy --all-targets -- -D warnings`; `cargo deny check` → advisories/bans/licenses/sources ok.
+L14 (2026-11-10): remaining work, none further workable on this machine without (a) the C checkout linked via `tools/link-obs-source.sh` — P0-02.1, P0-05.2, P0-06.2, P0-07.4, P0-08, P0-11.2, P0-12, P0-14, P0-15, P0-16, P0-17, P0-20.4; (b) prototype hardware — P0-03 (ADR 0003), P0-04 (ADR 0004); (c) user/remote — P0-09 CI + branch protection, P0-18 corpus consent, P0-21 phase review, PR creation/merge (T5/T6 tails); (d) healthy reviewer model run or explicit waive — lineage `review-5a8563cca9abb7d4`.
+L15: branch is 13 commits ahead of `origin/docs/rewrite-coverage-2026-11` (this unit), 51 commits ahead of `origin/main`; push stays the user's decision. Unit commits in order: 892b402 (T1), 8aae571 (T2), 396d70c (T3), ce1bfb8 (T4), 67ecb19 (ODD hash record), 5a7ee84 (T7), f5a2cc1 (T8), 53cc6d5 (T9), 8758ca6 (T10), fc6250f (T11 tick), 248c013 (T12), 82011a1 (T13), 3364bbd (T14).
