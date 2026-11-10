@@ -1,0 +1,2 @@
+# ADR 0005 rule 5: no network in build.rs; artifacts come from the CMake
+# presets / system packages / pinned vendored trees. No build settings yet.
