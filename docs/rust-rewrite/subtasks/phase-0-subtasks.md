@@ -10,19 +10,19 @@ Facts verified in this checkout that shape Phase 0:
 ## A. Decisions (ADRs)
 
 ### P0-01 ADR: migration strategy
-- [ ] **P0-01.1 ADR template**
+- [x] **P0-01.1 ADR template**
   - Files: `docs/adr/0000-template.md` (new), `docs/adr/README.md` (new)
   - Steps: create sections Status / Context / Decision / Alternatives / Consequences / Links; add numbering rule (4 digits) and "supersedes" field.
   - Done when: template renders on GitHub and README lists how to add an ADR.
-- [ ] **P0-01.2 Context section**
+- [x] **P0-01.2 Context section**
   - Files: `docs/adr/0001-strangler-migration.md` (new)
   - Steps: copy measured sizes (libobs 94k, frontend 109k incl. `.ui`, plugins 172k, shared 22k, deps 70k lines — all measured over the same tracked set as `tools/task-coverage.py`: `.c .cpp .cc .h .hpp .m .mm .swift .ui .effect`), mention 3 OSes and 41 plugins, state the C-plugin-ABI constraint with link to `libobs/obs-module.h` (201).
   - Done when: every number has a reproducible command in a footnote, e.g. `git ls-files libobs/ | grep -E '\.(c|cpp|cc|h|hpp|m|mm|swift|ui|effect)$' | xargs cat | wc -l`.
-- [ ] **P0-01.3 Alternatives**
+- [x] **P0-01.3 Alternatives**
   - Files: `docs/adr/0001-strangler-migration.md`
   - Steps: write big-bang rewrite, new repository, status quo, "Rust only for new plugins"; for each give cost, risk, why rejected.
   - Done when: each alternative has at least two concrete reasons.
-- [ ] **P0-01.4 Exit criteria per phase**
+- [x] **P0-01.4 Exit criteria per phase**
   - Files: `docs/adr/0001-strangler-migration.md`; sources `docs/rust-rewrite/phase-0-foundation.md`, `phase-1-leaf-libraries.md`, `phase-2-media-pipeline.md`, `phase-3-graphics.md`, `phase-4-core-object-model.md`, `phase-5-plugins.md`, `phase-6-frontend.md`, `phase-7-retire-c.md` (8 files)
   - Steps: copy the exit-criteria lines from each `phase-N-*.md` into a table; define "ships" (nightly passes smoke test on 3 OSes).
   - Done when: table has 8 rows and a measurable check each.
