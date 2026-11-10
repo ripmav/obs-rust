@@ -124,8 +124,8 @@ Facts verified in this checkout that shape Phase 0:
 - [ ] **P0-09.5 Required checks** — Files: GitHub branch-protection settings. Update branch protection. Done when: settings screenshot/export in PR.
 
 ### P0-10 `cargo-deny` and licence policy
-- [ ] **P0-10.1 `deny.toml` licences** — Files: `deny.toml` (new). Allow GPL-2.0-or-later compatible set (MIT, Apache-2.0, BSD-*, ISC, Zlib, MPL-2.0 per review). Done when: `cargo deny check licenses` passes.
-- [ ] **P0-10.2 Bans** — Files: `deny.toml`. Ban `openssl-sys` if `rustls` chosen, duplicate major versions warn. Done when: rules documented.
+- [x] **P0-10.1 `deny.toml` licences** — Files: `deny.toml` (new). Allow GPL-2.0-or-later compatible set (MIT, Apache-2.0, BSD-*, ISC, Zlib, MPL-2.0 per review). Done when: `cargo deny check licenses` passes.
+- [x] **P0-10.2 Bans** — Files: `deny.toml`. Ban `openssl-sys` if `rustls` chosen, duplicate major versions warn. Done when: rules documented.
 - [x] **P0-10.3 Exceptions process** — Files: `docs/adr/0005-code-policy.md` (new section). Add section to ADR 0005. Done when: example exception written.
 
 ### P0-11 `.gitattributes`
