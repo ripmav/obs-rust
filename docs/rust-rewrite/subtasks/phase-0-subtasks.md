@@ -207,9 +207,9 @@ Facts verified in this checkout that shape Phase 0:
 ## D. Tracking
 
 ### P0-19 Issue templates and labels
-- [ ] **P0-19.1 Labels** — Files: GitHub repo settings. `rust-rewrite`, `phase-0`…`phase-7`, `abi`, `perf`, `blocked-submodule`. Done when: visible in repo.
+- [x] **P0-19.1 Labels** — Files: GitHub repo settings. `rust-rewrite`, `phase-0`…`phase-7`, `abi`, `perf`, `blocked-submodule`. Done when: visible in repo.
 - [x] **P0-19.2 Template** — Files: `.github/ISSUE_TEMPLATE/rust-task.yml` (new) with fields from the task format. Done when: template creates a valid issue.
-- [ ] **P0-19.3 Phase issues** — Files: GitHub issues linking the 8 `docs/rust-rewrite/phase-*.md` files. One tracking issue per phase. Done when: 8 issues exist.
+- [x] **P0-19.3 Phase issues** — Files: GitHub issues linking the 8 `docs/rust-rewrite/phase-*.md` files. One tracking issue per phase. Done when: 8 issues exist.
 
 ### P0-20 Test matrices
 - [x] **P0-20.1 Directory and template** — Files: `docs/tests/README.md`, `docs/tests/_template.md` (new: Case / Input / Expected / Platforms / Status). Done when: both files exist.
