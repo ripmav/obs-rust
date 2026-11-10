@@ -57,7 +57,7 @@ S12 (confirmed decisions, verbatim from `DECISIONS-NEEDED.md`):
 | ID | Task | S# | Route | Commit |
 |---|---|---|---|---|
 | T1 | P0-01: `docs/adr/0000-template.md`, `docs/adr/README.md`, `docs/adr/0001-strangler-migration.md` | S2,S3,S4,S5,S11 | inline | 892b402 |
-| T2 | P0-05: `docs/adr/0005-code-policy.md` (+ P0-10.3 exception section), `CONTRIBUTING.md` dependency checklist | S7,S12 | inline | — |
+| T2 | P0-05: `docs/adr/0005-code-policy.md` (+ P0-10.3 exception section), `CONTRIBUTING.md` dependency checklist | S7,S12 | inline | 8aae571 |
 | T3 | P0-02: `docs/adr/0002-plugin-abi.md`, `CODEOWNERS`, `CONTRIBUTING.md` public-header rule | S6,S12 | inline | — |
 | T4 | P0-06: `docs/adr/0006-concurrency.md` (target model + RT rules; P0-06.1 source refs / P0-06.2 mutex table pending L3) | S8,S12 | inline | — |
 | T5 | P0-03: ADR 0003 graphics | S12 (D-03) | blocked: wgpu quad prototype + DMA-BUF/DXGI/IOSurface imports on 3 OS/GPUs (P0-03.1–.3, hardware) | — |
@@ -75,3 +75,4 @@ L3: C reference checkout not linked on this machine (no `../obs-studio`; no `lib
 L4: tick policy as in "Tick policy" above.
 L5: branch `docs/rewrite-coverage-2026-11` already carried 38 commits (~33.5k lines vs origin/main) of coverage/decisions docs work before this ADR unit; slice accounting below for this unit: each task commit is one reviewable slice (T1 = 892b402, ~450 lines).
 L6: P0-10.3 (exception process, belongs to P0-10) completed early inside T2 because its deliverable is a section of ADR 0005; ticked there.
+L7: ADR 0002 open verification note: the P0-02.1 header snapshot does not list `obs.h`/`obs-config.h` and the public/internal split is provisional — both close with the install-set script re-run once the reference checkout is linked (L3). T2 commit = 8aae571.
