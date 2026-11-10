@@ -1,0 +1,9 @@
+# ABI compat-tracked headers — route public-header changes to the ABI owners.
+# Placeholder team handle; set real maintainer handles at repo setup (P0-19).
+# Applies when the headers live in this tree (transition C headers and the
+# obs-ffi generated header set from Phase 4); see docs/adr/0002-plugin-abi.md.
+/libobs/obs-*.h            @obs-rust/abi
+/libobs/graphics/*.h       @obs-rust/abi
+/libobs/media-io/*.h       @obs-rust/abi
+/libobs/util/*.h           @obs-rust/abi
+/libobs/callback/*.h       @obs-rust/abi
