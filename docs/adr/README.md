@@ -16,3 +16,4 @@ Format, numbering, and status rules: [0000-template.md](0000-template.md).
 | # | ADR | Status | Date |
 |---|---|---|---|
 | 0001 | [Strangler-fig migration strategy](0001-strangler-migration.md) | Accepted (maintainer review pending, P0-01.5) | 2026-11-10 |
+| 0005 | [Code policy: unsafe, MSRV, dependencies](0005-code-policy.md) | Accepted | 2026-11-10 |

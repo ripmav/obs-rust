@@ -81,10 +81,10 @@ Facts verified in this checkout that shape Phase 0:
 - [ ] **P0-04.5 Write ADR 0004** — Files: `docs/adr/0004-gui-toolkit.md` (new), `docs/rust-rewrite/phase-6-frontend.md`. And adjust Phase 6 wording if the toolkit is not `cxx-qt`. Done when: accepted and Phase 6 files updated in the same PR.
 
 ### P0-05 ADR: unsafe, MSRV, dependency policy
-- [ ] **P0-05.1 Unsafe rules** — Files: `docs/adr/0005-code-policy.md` (new); lint config lands in `[workspace.lints]` (P0-07.1). Allowed only in `*-sys`, `obs-ffi`, platform crates; each block needs `// SAFETY:`; crate-level `#![deny(unsafe_op_in_unsafe_fn)]`. Done when: lint config committed in P0-07.
+- [x] **P0-05.1 Unsafe rules** — Files: `docs/adr/0005-code-policy.md` (new); lint config lands in `[workspace.lints]` (P0-07.1). Allowed only in `*-sys`, `obs-ffi`, platform crates; each block needs `// SAFETY:`; crate-level `#![deny(unsafe_op_in_unsafe_fn)]`. Done when: lint config committed in P0-07.
 - [ ] **P0-05.2 MSRV** — Files: `docs/adr/0005-code-policy.md` (new), `.github/workflows/` (MSRV job). Track latest stable; bump within one release cycle; document the CI job that checks it. Done when: policy text merged.
-- [ ] **P0-05.3 Dependency admission** — Files: `CONTRIBUTING.md`. Checklist: stdlib alternative considered, licence GPLv2+-compatible, maintained (release < 12 months), `cargo audit` clean, one-line justification in PR. Done when: checklist is in `CONTRIBUTING.md`.
-- [ ] **P0-05.4 `-sys` and vendored code rule** — Files: `docs/adr/0005-code-policy.md` (new); pins live in `cmake/` dependency presets and `deps/`. Pin versions, forbid network in `build.rs`, document who updates FFmpeg/x264/CEF pins. Done when: rule referenced from ADR.
+- [x] **P0-05.3 Dependency admission** — Files: `CONTRIBUTING.md`. Checklist: stdlib alternative considered, licence GPLv2+-compatible, maintained (release < 12 months), `cargo audit` clean, one-line justification in PR. Done when: checklist is in `CONTRIBUTING.md`.
+- [x] **P0-05.4 `-sys` and vendored code rule** — Files: `docs/adr/0005-code-policy.md` (new); pins live in `cmake/` dependency presets and `deps/`. Pin versions, forbid network in `build.rs`, document who updates FFmpeg/x264/CEF pins. Done when: rule referenced from ADR.
 
 ### P0-06 ADR: concurrency model
 - [ ] **P0-06.1 Thread diagram**
@@ -126,7 +126,7 @@ Facts verified in this checkout that shape Phase 0:
 ### P0-10 `cargo-deny` and licence policy
 - [ ] **P0-10.1 `deny.toml` licences** — Files: `deny.toml` (new). Allow GPL-2.0-or-later compatible set (MIT, Apache-2.0, BSD-*, ISC, Zlib, MPL-2.0 per review). Done when: `cargo deny check licenses` passes.
 - [ ] **P0-10.2 Bans** — Files: `deny.toml`. Ban `openssl-sys` if `rustls` chosen, duplicate major versions warn. Done when: rules documented.
-- [ ] **P0-10.3 Exceptions process** — Files: `docs/adr/0005-code-policy.md` (new section). Add section to ADR 0005. Done when: example exception written.
+- [x] **P0-10.3 Exceptions process** — Files: `docs/adr/0005-code-policy.md` (new section). Add section to ADR 0005. Done when: example exception written.
 
 ### P0-11 `.gitattributes`
 - [ ] **P0-11.1 Create file** — Files: `.gitattributes` (new). Add `*.text -text` and `*.golden -text`. Done when: `git check-attr` shows `-text` on a sample.
