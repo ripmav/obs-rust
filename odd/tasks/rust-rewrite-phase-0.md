@@ -56,7 +56,7 @@ S12 (confirmed decisions, verbatim from `DECISIONS-NEEDED.md`):
 
 | ID | Task | S# | Route | Commit |
 |---|---|---|---|---|
-| T1 | P0-01: `docs/adr/0000-template.md`, `docs/adr/README.md`, `docs/adr/0001-strangler-migration.md` | S2,S3,S4,S5,S11 | inline | — |
+| T1 | P0-01: `docs/adr/0000-template.md`, `docs/adr/README.md`, `docs/adr/0001-strangler-migration.md` | S2,S3,S4,S5,S11 | inline | 892b402 |
 | T2 | P0-05: `docs/adr/0005-code-policy.md` (+ P0-10.3 exception section), `CONTRIBUTING.md` dependency checklist | S7,S12 | inline | — |
 | T3 | P0-02: `docs/adr/0002-plugin-abi.md`, `CODEOWNERS`, `CONTRIBUTING.md` public-header rule | S6,S12 | inline | — |
 | T4 | P0-06: `docs/adr/0006-concurrency.md` (target model + RT rules; P0-06.1 source refs / P0-06.2 mutex table pending L3) | S8,S12 | inline | — |
@@ -73,3 +73,5 @@ L1: "start working on rewrite plan `docs/rust-rewrite-plan.md` other importent d
 L2: user checked out `docs/rewrite-coverage-2026-11` before starting; work commits land on that branch (one commit per task, S10 footer). The plan's `<prefix>/<issue>-<short-description>` branch rule applies when the user splits this into stacked PRs at push time.
 L3: C reference checkout not linked on this machine (no `../obs-studio`; no `libobs/` tree found under `/home/ripmav` to depth 4). `tools/link-obs-source.sh` is the linker (default `../obs-studio`). Consequences: ADR numbers quoted from the plan §1 table + subtask file's verified facts with the subtask's reproducible footnote commands (S5 P0-01.2); P0-02.1 install-set script re-run, P0-06.1 source line refs, P0-06.2 mutex table (46 mutexes in `obs-internal.h`) pending `tools/link-obs-source.sh` run.
 L4: tick policy as in "Tick policy" above.
+L5: branch `docs/rewrite-coverage-2026-11` already carried 38 commits (~33.5k lines vs origin/main) of coverage/decisions docs work before this ADR unit; slice accounting below for this unit: each task commit is one reviewable slice (T1 = 892b402, ~450 lines).
+L6: P0-10.3 (exception process, belongs to P0-10) completed early inside T2 because its deliverable is a section of ADR 0005; ticked there.
