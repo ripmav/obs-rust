@@ -1,0 +1,10 @@
+[package]
+name = "obs-golden"
+description = "Golden-file assertions for the Phase 0 safety net (P0-13)."
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+rust-version.workspace = true
+
+[lints]
+workspace = true
