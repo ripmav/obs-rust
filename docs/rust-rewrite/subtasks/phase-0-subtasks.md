@@ -101,9 +101,9 @@ Facts verified in this checkout that shape Phase 0:
 ## B. Workspace and CI
 
 ### P0-07 Cargo workspace skeleton
-- [ ] **P0-07.1 Root manifest** — Files: `Cargo.toml` (new). `[workspace]`, `[workspace.package]` (edition, licence GPL-2.0-or-later, rust-version), `[workspace.dependencies]`, `[workspace.lints]`. Done when: `cargo metadata` works.
-- [ ] **P0-07.2 Tool config** — Files: `rust-toolchain.toml`, `rustfmt.toml`, `clippy.toml`, `.cargo/config.toml` (all new). Done when: `cargo fmt --check` and `cargo clippy` run.
-- [ ] **P0-07.3 Empty crates** — Files: new `crates/obs-util`, `obs-math`, `obs-data`, `obs-signal`, `obs-media-io`, `obs-graphics`, `obs-core`, `obs-ffi`, `obs-cli`, each with a doc comment and a trivial test. Done when: `cargo test --workspace` passes.
+- [x] **P0-07.1 Root manifest** — Files: `Cargo.toml` (new). `[workspace]`, `[workspace.package]` (edition, licence GPL-2.0-or-later, rust-version), `[workspace.dependencies]`, `[workspace.lints]`. Done when: `cargo metadata` works.
+- [x] **P0-07.2 Tool config** — Files: `rust-toolchain.toml`, `rustfmt.toml`, `clippy.toml`, `.cargo/config.toml` (all new). Done when: `cargo fmt --check` and `cargo clippy` run.
+- [x] **P0-07.3 Empty crates** — Files: new `crates/obs-util`, `obs-math`, `obs-data`, `obs-signal`, `obs-media-io`, `obs-graphics`, `obs-core`, `obs-ffi`, `obs-cli`, each with a doc comment and a trivial test. Done when: `cargo test --workspace` passes.
 - [ ] **P0-07.4 Three-OS build** — Files: `.github/workflows/` (new job `cargo build --workspace`). Done when: green on Linux, Windows, macOS.
 
 ### P0-08 Corrosion integration in CMake

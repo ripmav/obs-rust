@@ -1,0 +1,30 @@
+# OBS Rust rewrite — Cargo workspace (P0-07).
+# Plan §3: workspace at the repo root; CMake invokes Cargo via Corrosion during
+# the transition (P0-08, lands when the C build tree is part of this repo).
+[workspace]
+resolver = "2"
+members = [
+    "crates/obs-util",
+    "crates/obs-math",
+    "crates/obs-data",
+    "crates/obs-signal",
+    "crates/obs-media-io",
+    "crates/obs-graphics",
+    "crates/obs-core",
+    "crates/obs-ffi",
+    "crates/obs-cli",
+]
+
+[workspace.package]
+version = "0.1.0"
+edition = "2024"
+# ADR 0005 rule 3 (D-07): project is GPL-2.0-or-later.
+license = "GPL-2.0-or-later"
+# ADR 0005 rule 2 (D-24): MSRV = latest stable, bump within one release cycle.
+rust-version = "1.99"
+
+[workspace.dependencies]
+
+[workspace.lints.rust]
+# ADR 0005 rule 1: unsafe is confined to *-sys / obs-ffi / platform crates.
+unsafe_op_in_unsafe_fn = "deny"
