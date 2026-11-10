@@ -1,0 +1,10 @@
+[package]
+name = "obs-ffi"
+description = "C ABI surface: generated obs.h, vtable adapters for C plugins (Phase 4)."
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+rust-version.workspace = true
+
+[lints]
+workspace = true

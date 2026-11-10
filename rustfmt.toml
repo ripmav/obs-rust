@@ -1,0 +1,2 @@
+# Intentionally empty: rustfmt defaults apply. This file is the explicit home
+# for formatting rules as the workspace matures (P0-07.2).
