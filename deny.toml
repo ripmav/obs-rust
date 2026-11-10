@@ -1,0 +1,44 @@
+# cargo-deny policy — ADR 0005 (code policy), rules 3 and 5; D-07.
+# Project licence: GPL-2.0-or-later. Dependency allow-list per D-07.
+
+[licenses]
+# Allow-list (D-07): MIT/Apache-2.0/BSD/ISC/Zlib/MPL-2.0. GPL-2.0-or-later is
+# the project's own licence family and is listed explicitly so it stays
+# visible; anything else must go through the exceptions process in ADR 0005
+# (table entry + matching [[licenses.exceptions]] + reviewer approval).
+allow = [
+    "MIT",
+    "Apache-2.0",
+    "BSD-2-Clause",
+    "BSD-2-Clause-Patent",
+    "BSD-3-Clause",
+    "BSD-3-Clause-LBNL",
+    "0BSD",
+    "ISC",
+    "Zlib",
+    "MPL-2.0",
+    "GPL-2.0-or-later",
+]
+# A dependency's declared licence below this confidence is rejected.
+confidence-threshold = 0.8
+
+# P0-10.3 exceptions format (none yet — see the exceptions table in
+# docs/adr/0005-code-policy.md):
+# [[licenses.exceptions]]
+# crate = "example-crate"
+# allow = ["AGPL-3.0"]
+# reason = "no GPL-compatible alternative; see ADR 0005 exceptions table, review by YYYY-MM-DD"
+
+[bans]
+# P0-10.2: the network stack is rustls-first (Phase 5, D-15/D-16); native
+# OpenSSL is banned so it cannot sneak in transitively.
+deny = ["openssl-sys"]
+# Duplicate major versions warn (review before allowing a second major).
+multiple-versions = "warn"
+skip = []
+skip-tree = []
+
+[sources]
+# Dependencies come from crates.io (or path deps inside this workspace) only;
+# ADR 0005 rule 5: no network in build.rs, no ad-hoc registries.
+unknown-registry = "deny"
