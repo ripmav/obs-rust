@@ -212,7 +212,7 @@ Facts verified in this checkout that shape Phase 0:
 - [ ] **P0-19.3 Phase issues** — Files: GitHub issues linking the 8 `docs/rust-rewrite/phase-*.md` files. One tracking issue per phase. Done when: 8 issues exist.
 
 ### P0-20 Test matrices
-- [ ] **P0-20.1 Directory and template** — Files: `docs/tests/README.md`, `docs/tests/_template.md` (new: Case / Input / Expected / Platforms / Status). Done when: both files exist.
+- [x] **P0-20.1 Directory and template** — Files: `docs/tests/README.md`, `docs/tests/_template.md` (new: Case / Input / Expected / Platforms / Status). Done when: both files exist.
 - [ ] **P0-20.2 Golden framework matrix** — Files: `docs/tests/obs-golden.md` (new). Matrix lists the demo-test cases. Done when: matrix lists the cases.
 - [ ] **P0-20.3 ABI plugin matrix** — Files: `docs/tests/abi-conformance.md` (new). Matrix lists the lifecycle cases. Done when: matrix lists them.
 - [ ] **P0-20.4 CI check** — Files: `.github/workflows/` (new check). Script fails if a `tests/*.rs` or `test_*.c` has no matching matrix. Done when: negative test proves it.
