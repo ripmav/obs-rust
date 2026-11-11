@@ -120,6 +120,7 @@ surface isolated behind trait Y" — owner P5-20 — review 2027-11-01.
 |---|---|---|---|
 | `crc32fast` 1.5.x | MIT | 2026-11-11 (P1-10, S-055 U1) | `calc_crc32` is the whole of `libobs/util/crc32.c`; the stdlib has no CRC-32; the crate is the table-driven reference implementation with the running-state API the C signature needs (S-055-R01/R02) |
 | `blake2` 0.11.x (feature `blake2b`) | MIT | 2026-11-11 (P1-10) | Rust side of the vendored `deps/blake2` (blake2b-512); the frontend keeps the C copy until Phase 6 (P6-32/P6-23); no reimplementation of a published hash standard |
+| `parking_lot` 0.13.x | MIT OR Apache-2.0 | 2026-11-11 (P1-22, S-004) | `ReentrantMutex` is a direct requirement of S-004 (per-signal and global-callback recursive locks; procs R60); std has no reentrant mutex; both licences on the D-07 allow-list |
 
 P1-10.1 **base64: skip** — there is no base64 in `libobs/`; the only in-tree
 copy is the librtmp vendored `cencode.c` (a Phase 5 concern, P5-17.4). No Rust
