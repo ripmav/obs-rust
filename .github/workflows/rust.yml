@@ -70,7 +70,9 @@ jobs:
       - name: miri
         run: |
           rustup toolchain install nightly --profile minimal --component miri
-          cargo +nightly miri test -p obs-util -p obs-math -p obs-data -p obs-signal
+          # --lib: unit tests only. Subprocess re-exec tests (bmem_fatal) are
+          # incompatible with Miri isolation and already run in the test job.
+          cargo +nightly miri test -p obs-util -p obs-math -p obs-data -p obs-signal --lib
 
   coverage:
     name: coverage (llvm-cov)
