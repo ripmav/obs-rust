@@ -3,6 +3,8 @@
 //! Layout: four `f32` lanes `[x, y, z, w]`, 16 bytes, 16-byte aligned.
 //! No special-casing: every operation works on all four lanes (R04).
 
+use crate::gs_float_to_u8;
+
 /// S-008 §3: the C `struct vec4`.
 #[repr(C, align(16))]
 #[derive(Clone, Copy, Debug, PartialEq)]
@@ -211,16 +213,10 @@ pub fn vec4_transform(v: &Vec4, m: &crate::matrix4::Matrix4) -> Vec4 {
     }
 }
 
-/// S-008-R08: `gs_float_to_u8(f) = (uint8)(f·255 + 0.5)` — **no
-/// clamping**; inputs outside `[0,1]` are undefined behaviour in C (the
-/// Rust cast saturates instead).
-#[must_use]
-pub fn gs_float_to_u8(f: f32) -> u8 {
-    (f * 255.0 + 0.5) as u8
-}
-
 /// S-008-R08: packs `R,G,B,A` in memory order `[R,G,B,A]` as a
 /// native-endian `u32` (LE: `0xAABBGGRR`). No clamping (Q-4).
+/// (`gs_float_to_u8` itself is S-009-R121, defined in `srgb.rs` — in
+/// C it is the single `static inline` in `srgb.h`.)
 #[must_use]
 pub fn vec4_to_rgba(v: &Vec4) -> u32 {
     let r = gs_float_to_u8(v.x) as u32;
