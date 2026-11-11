@@ -11,6 +11,7 @@
 //! `docs/rust-rewrite/specs/S-008-vec-quat-matrix4.md`.
 
 pub mod axisang;
+pub mod bounds;
 pub mod math_extra;
 pub mod matrix3;
 pub mod matrix4;
@@ -21,6 +22,7 @@ pub mod vec3;
 pub mod vec4;
 
 pub use axisang::*;
+pub use bounds::*;
 pub use math_extra::*;
 pub use matrix3::*;
 pub use matrix4::*;
@@ -83,11 +85,13 @@ mod tests {
         assert_eq!(EPSILON, 1e-4);
         assert_eq!(LARGE_EPSILON, 1e-2);
         assert_eq!(TINY_EPSILON, 1e-5);
-        // R02: close_float is absolute and inclusive — the boundary is
-        // tested with exact values (1.0 + 1e-4 cannot represent the
-        // difference exactly in f32)
+        // R02: absolute, inclusive (exact-value boundary; 1.0 + 1e-4
+        // cannot represent the difference exactly in f32)
         assert!(close_float(0.0, 1e-4, 1e-4), "inclusive: |a-b| == p");
         assert!(!close_float(0.0, 2e-4, 1e-4));
+        // R02: NaN difference fails, including equal infinities
         assert!(!close_float(f32::NAN, f32::NAN, 1e-4));
+        assert!(!close_float(f32::INFINITY, f32::INFINITY, 1.0));
+        assert!(close_float(1e20, -1e20, f32::INFINITY));
     }
 }
