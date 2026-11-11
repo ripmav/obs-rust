@@ -12,7 +12,7 @@
 | layout (vec2) | size/offset | 8 bytes, align 4 | Linux, Windows, macOS | pass |
 | set_zero_copy (vec2) | `(3,−4)` | round-trip | Linux, Windows, macOS | pass |
 | dist_min_max (vec2) | `(3,4)`, `(0,0)`, `±f` | 5.0; component-wise | Linux, Windows, macOS | pass |
-| norm (vec2) | `(3,4)`; zero | `(0.6,0.8)`; zero → zero (division-by-zero rule, R37) | Linux, Windows, macOS | pass |
+| norm (vec2) | `(3,4)`; zero | `(0.6,0.8)`; **zero/NaN length → destination not written** (S-009 Q-1, fixed in WP-10 — the old "zero → zero" reading was the WP-5 divergence; `vec3_norm` still writes zeros) | Linux, Windows, macOS | pass |
 | layout (vec3/vec4/quat/axisang) | size/offset | 16 bytes, align 16, C field order | Linux, Windows, macOS | pass |
 | set_stores_w_zero | `vec3_set(1,2,3)` | `w = 0` (R01) | Linux, Windows, macOS | pass |
 | w_lane_zeroed_by_most_ops | 14 ops on live-w input | `w = 0` for add/sub/div/±f/min(f)/max(f)/neg/abs/floor/ceil/cross (R02) | Linux, Windows, macOS | pass |
@@ -29,7 +29,7 @@
 | identity_and_dot (quat) | `(1,2,3,4)` | identity `(0,0,0,1)`; dot 30 (R10) | Linux, Windows, macOS | pass |
 | from_axisang_half_angle | 90° about +Z | `s = sin(π/4)`, `c = cos(π/4)`; non-normalised axis doubles the vector part (R14) | Linux, Windows, macOS | pass |
 | axisang basics | set/zero/copy | `w` = radians (R44) | Linux, Windows, macOS | pass |
-| layout (matrix3/matrix4) | size/align | 48/16 and 64/16, row order x,y,z(,t) | Linux, Windows, macOS | pass |
+| layout (matrix3/matrix4) | size/align | **64/16 and 64/16** (WP-10: matrix3 rebuilt to the C 3×4 = four `Vec3` rows `x,y,z,t` per S-009 §3; the WP-5 48-byte 3×`Vec4` reading is superseded), row order x,y,z(,t) | Linux, Windows, macOS | pass |
 | identity_and_transpose | 1..16 matrix | transpose; `d == m` safe (R30) | Linux, Windows, macOS | pass |
 | mul_and_aliasing | `T(1,2,3) · S(2)` | `t = (2,4,6,1)`; `S·S` alias-safe = `S(4)` (R31) | Linux, Windows, macOS | pass |
 | mul_4x3_only_copies_t | garbage `m1.t` | `d.t = m2.t` unchanged; first 3 rows exact (R31) | Linux, Windows, macOS | pass |
@@ -39,7 +39,7 @@
 | composition_helpers | T/S/rotate compositions | `dst = m ∘ op`; translate lands unscaled by m (R35) | Linux, Windows, macOS | pass |
 | inverse_order_variants | v = (20,60,120) | vector 05: `ti = 20 60 120 1`; with `m = S(2)`: scaled (40,120,240,1); rotate_i/scale_i via `mul_4x3_only` (R36) | Linux, Windows, macOS | pass |
 | inline_scalar_variants | `*_3f`/`rotate_aa4f` | scalar convenience forms (R41) | Linux, Windows, macOS | pass |
-| matrix3 identity_transpose_copy / mul_and_aliasing / inverse / constructions / composition | same families | 3×3 corner; translation in row `w` lanes with implicit `(0,0,0,1)` row; `from_matrix4`/`from_matrix3` projection pair (R41) | Linux, Windows, macOS | pass |
+| matrix3 identity_transpose_copy / mul_and_aliasing / inverse / constructions / composition | same families | **superseded by WP-10 (S-009 §5.4)**: 3×4 layout (64 bytes), Q-12 mul convention, Q-3 transpose `w`-lane, D-1 inv — see `docs/tests/math-rest.md` | Linux, Windows, macOS | pass |
 
 Notes:
 - **Q-5 pin**: `FRAC_1_SQRT_2` is an approximate unit quaternion, so
@@ -47,15 +47,16 @@ Notes:
   at the spec tolerance (1e-6), never `assert_eq` — an exact compare is
   build-dependent (FMA contraction on real hardware differs from Miri;
   Miri caught this in this WP).
-- **matrix3 `w`-lane convention**: the affine translation lives in the
-  row `w` lanes with an implicit fourth row `(0,0,0,1)`; S-008 fixes the
-  layout but not this reading — to be confirmed against the C source in
-  the conformance substep.
+- **matrix3 layout — RESOLVED by S-009 (WP-10)**: the provisional
+  WP-5 reading (implicit fourth row `(0,0,0,1)`) is superseded by the
+  C 3×4 struct (four `Vec3` rows `x,y,z,t`, 64 bytes); the `w` lanes
+  are live data (Q-2: they participate in dots). Full matrix:
+  `docs/tests/math-rest.md`.
 - Exported functions **not** in this WP (their rules/inputs are not
-  pinned by S-008 or belong to later WPs): `vec3_rotate`,
-  `vec3_transform3x4`, `vec3_mirror(v)`, `vec3_plane_dist` (plane,
-  P1-17), `vec3_rand` (S-009 R44 `rand_float`), `matrix3_mirror(v)`
-  (needs the C formula). The full quat set (R11–R13, R15–R21), plane
-  (R42), bounds (R43), math-extra (R44) → P1-17/P1-18.
+  pinned by S-008): `vec3_rotate`, `vec3_transform3x4`,
+  `vec3_mirror(v)`, `vec3_plane_dist`, `vec3_rand`, `matrix3_mirror(v)`
+  — **all delivered in WP-10** (see `docs/tests/math-rest.md`).
+  Remaining (P1-17): the full quat set (R11–R13, R15–R21) and
+  `axisang_from_quat`.
 - C-side remainder: conformance scripts `test/conformance/scripts/math/`
   (8) vs C, cbindgen header diff — blocked on the C checkout.
