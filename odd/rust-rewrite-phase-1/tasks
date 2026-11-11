@@ -43,6 +43,24 @@ Evidence: obs-signal lib 28/28 (12 decl tests), Miri 28/28 (6.5s),
 workspace 21 binaries green, clippy 0, deny ok. C-side: 9 conformance
 scripts + cbindgen diff blocked on C checkout.
 
+**L12 (Incident, 2026-11-11) — uncommitted working-tree leftovers broke the committed tree.**
+While committing WP-8, two working-tree changes turned out to be
+uncommitted fixes from earlier WPs: (1) `deque.rs` — the removal of the
+parallel `bnum_allocs()` counter test (WP-3 fix, helper
+`__test_serialize_counter` was removed from bmem in 2ca4270, so the
+committed lib test target **did not compile** on any branch from
+`p1/darray` through `p1/decl`, i.e. PRs #14–#19 on fresh checkouts);
+(2) `Cargo.lock` — the obs-signal→obs-util dependency from WP-7.
+Fix: `a7d13f5` on `p1/darray` (PR #14); cherry-picked onto
+`p1/crc-hash` (1848746, #15), `p1/vec-matrix` (e76f940, #16),
+`p1/dstr` (40b1a5c, #17), `p1/calldata` (e32ccff, #18), `p1/decl`
+(4eccf41, #19); lock committed on `p1/calldata` (694d045, #18).
+No force-push (safety guard blocked it): each fix landed as a
+fast-forward cherry-pick; all PR diffs stay clean (fix present in
+both base and head cancels in the tree diff). Lesson recorded:
+**verify `git status` is clean before a WP commit is declared done**
+— gates run on the working tree and can mask uncommitted fixes.
+
 ## Log
 
 L1 (2026-11-11): user request verbatim — see S1.
