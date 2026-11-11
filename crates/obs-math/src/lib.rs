@@ -11,16 +11,20 @@
 //! `docs/rust-rewrite/specs/S-008-vec-quat-matrix4.md`.
 
 pub mod axisang;
+pub mod math_extra;
 pub mod matrix3;
 pub mod matrix4;
+pub mod plane;
 pub mod quat;
 pub mod vec2;
 pub mod vec3;
 pub mod vec4;
 
 pub use axisang::*;
+pub use math_extra::*;
 pub use matrix3::*;
 pub use matrix4::*;
+pub use plane::*;
 pub use quat::*;
 pub use vec2::*;
 pub use vec3::*;
@@ -32,6 +36,29 @@ pub const EPSILON: f32 = 1e-4;
 pub const LARGE_EPSILON: f32 = 1e-2;
 /// S-008 §2: `TINY_EPSILON = 1e-5`.
 pub const TINY_EPSILON: f32 = 1e-5;
+
+/// S-009-R01: `M_INFINITE` — a finite sentinel, not `+inf`.
+pub const M_INFINITE: f32 = 3.4e38;
+
+/// S-009-R01: `M_PI` as the `f32` literal the header falls back to (the
+/// platform `f64` `M_PI` is `std::f64::consts::PI`).
+// The exact decimal literals are pinned by S-009-R01 (C header values).
+#[allow(clippy::excessive_precision)]
+pub const M_PI_F32: f32 = 3.14159274;
+
+/// S-009-R01: the `RAD` macro — product with the `f32` constant.
+#[must_use]
+#[allow(clippy::excessive_precision)]
+pub const fn rad(v: f32) -> f32 {
+    v * 0.0174532924
+}
+
+/// S-009-R01: the `DEG` macro — product with the `f32` constant.
+#[must_use]
+#[allow(clippy::excessive_precision)]
+pub const fn deg(v: f32) -> f32 {
+    v * 57.2957802
+}
 
 /// S-008 §2: `close_float(a, b, p) = |a - b| <= p`.
 #[must_use]
