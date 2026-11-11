@@ -28,6 +28,7 @@
 use std::fs;
 use std::path::{Path, PathBuf};
 
+use crate::os_fs::os_safe_replace;
 use crate::os_str::{os_dtostr, os_strtod};
 
 pub const CONFIG_SUCCESS: i32 = 0;
@@ -678,6 +679,123 @@ pub fn config_has_default_value(config: &Config, section: &str, name: &str) -> b
     has_in(&config.defaults, section, name)
 }
 
+// ---------------------------------------------------------------------------
+// writing (S-007 §4.2)
+// ---------------------------------------------------------------------------
+
+/// Escape a value for the file: `\` -> `\\` first, then CR -> `\r`,
+/// LF -> `\n` — in that order (spec §4.2), so a value consisting of a
+/// backslash followed by `r` round-trips differently from a real CR.
+fn escape_value(value: &str) -> String {
+    let mut out = String::with_capacity(value.len());
+    for c in value.chars() {
+        match c {
+            '\\' => out.push_str("\\\\"),
+            '\r' => out.push_str("\\r"),
+            '\n' => out.push_str("\\n"),
+            _ => out.push(c),
+        }
+    }
+    out
+}
+
+/// The exact file content of the **user** map (defaults are never
+/// written): sections in order, one blank line before every section
+/// after the first, `[name]\n` per section, `name=value\n` per item,
+/// no trailing blank line (spec §4.2).
+fn render_user(config: &Config) -> String {
+    let mut out = String::new();
+    for (i, section) in config.user.iter().enumerate() {
+        if i > 0 {
+            out.push('\n');
+        }
+        out.push('[');
+        out.push_str(&section.name);
+        out.push_str("]\n");
+        for item in &section.items {
+            out.push_str(&item.name);
+            out.push('=');
+            out.push_str(&escape_value(&item.value));
+            out.push('\n');
+        }
+    }
+    out
+}
+
+/// Write `config` to `path` (S-007-R04 semantics on a chosen path):
+/// `CONFIG_FILENOTFOUND` if the file cannot be opened for writing;
+/// Q-2: an empty config truncates the file to zero bytes and returns
+/// `CONFIG_ERROR`.
+fn save_to(config: &Config, path: &Path) -> i32 {
+    use std::io::Write;
+    let mut file = match fs::File::create(path) {
+        Ok(f) => f,
+        Err(e) if e.kind() == std::io::ErrorKind::NotFound => return CONFIG_FILENOTFOUND,
+        Err(_) => return CONFIG_ERROR,
+    };
+    if config.user.is_empty() {
+        // Q-2: the file is truncated (File::create already did that)
+        // and the save of a zero-length config fails
+        return CONFIG_ERROR;
+    }
+    match file.write_all(render_user(config).as_bytes()) {
+        Ok(()) => CONFIG_SUCCESS,
+        Err(_) => CONFIG_ERROR,
+    }
+}
+
+/// S-007-R04 `config_save`: `CONFIG_ERROR` if the config has no file;
+/// `CONFIG_FILENOTFOUND` if the file cannot be opened for writing;
+/// `CONFIG_SUCCESS` after writing. An empty config cannot be saved
+/// successfully (Q-2, see `save_to`).
+pub fn config_save(config: &Config) -> i32 {
+    let Some(file) = &config.file else {
+        return CONFIG_ERROR;
+    };
+    save_to(config, file)
+}
+
+/// S-007-R05 `config_save_safe`: writes the config to a temporary
+/// file (`file` + `.` + `temp_ext`, a leading `.` in the extension is
+/// not doubled) and swaps it into place with `os_safe_replace`,
+/// optionally moving the previous target to the backup
+/// (`file` + `.` + `backup_ext`). An empty `temp_ext` fails with
+/// `CONFIG_ERROR` (the C code logs
+/// `"config_save_safe: invalid temporary extension specified"`); a
+/// failed temp write fails with that error and leaves the target
+/// untouched (C logs
+/// `"config_save_safe: failed to write to <temp>"`).
+pub fn config_save_safe(config: &Config, temp_ext: &str, backup_ext: &str) -> i32 {
+    let Some(file) = &config.file else {
+        return CONFIG_ERROR;
+    };
+    if temp_ext.is_empty() {
+        return CONFIG_ERROR;
+    }
+    let temp = join_ext(file, temp_ext);
+    if save_to(config, &temp) != CONFIG_SUCCESS {
+        return CONFIG_ERROR;
+    }
+    let backup = if backup_ext.is_empty() {
+        None
+    } else {
+        Some(join_ext(file, backup_ext))
+    };
+    if os_safe_replace(file, &temp, backup.as_deref()) == 0 {
+        CONFIG_SUCCESS
+    } else {
+        CONFIG_ERROR
+    }
+}
+
+/// `file` + `.` + `ext` (a leading `.` in the extension is not
+/// doubled; S-007-R05).
+fn join_ext(file: &Path, ext: &str) -> PathBuf {
+    let base = file.to_string_lossy();
+    let ext = ext.strip_prefix('.').unwrap_or(ext);
+    PathBuf::from(format!("{base}.{ext}"))
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -1108,5 +1226,177 @@ mod tests {
         assert_eq!(config_get_int(&c, "S", "M"), 0);
         assert!(!config_get_bool(&c, "S", "M"));
         assert_eq!(config_get_double(&c, "S", "M"), 0.0);
+    }
+
+    // ------------------------------------------------------------------
+    // writing (S-007 §4.2, R04, R05, Q-2)
+    // ------------------------------------------------------------------
+
+    /// A unique directory per test: the save tests run in parallel and
+    /// each one removes its directory at the end.
+    fn temp_dir(label: &str) -> std::path::PathBuf {
+        let d = std::env::temp_dir().join(format!("obs_rust_config_save_{label}"));
+        std::fs::create_dir_all(&d).unwrap();
+        d
+    }
+
+    #[test]
+    #[cfg_attr(miri, ignore)] // file system access (Miri isolation)
+    fn save_format() {
+        // §4.2: sections in order, blank line between, [S]\n,
+        // name=value\n, no trailing blank line
+        let d = temp_dir("format");
+        let f = d.join("s.ini");
+        let mut c = open("[A]\nX=2\n[B]\nZ=1\n");
+        config_set_string(&mut c, "C", "New", Some("n"));
+        c.file = Some(f.clone());
+        assert_eq!(config_save(&c), CONFIG_SUCCESS);
+        assert_eq!(
+            std::fs::read_to_string(&f).unwrap(),
+            "[A]\nX=2\n\n[B]\nZ=1\n\n[C]\nNew=n\n"
+        );
+        std::fs::remove_dir_all(&d).unwrap();
+    }
+
+    #[test]
+    #[cfg_attr(miri, ignore)] // file system access (Miri isolation)
+    fn save_q2_empty_config_truncates_and_fails() {
+        // Q-2: empty config -> file truncated to zero bytes, CONFIG_ERROR
+        let d = temp_dir("empty");
+        let f = d.join("e.ini");
+        std::fs::write(&f, "stale content").unwrap();
+        let mut c = open("");
+        c.file = Some(f.clone());
+        assert_eq!(config_save(&c), CONFIG_ERROR);
+        assert_eq!(std::fs::read_to_string(&f).unwrap(), "");
+        // save without a file fails too (R04)
+        let c = open("[S]\nA=1\n");
+        assert_eq!(config_save(&c), CONFIG_ERROR);
+        // save into a missing parent directory -> FILENOTFOUND
+        let mut c2 = open("[S]\nA=1\n");
+        c2.file = Some(d.join("nosuchdir/x.ini"));
+        assert_eq!(config_save(&c2), CONFIG_FILENOTFOUND);
+        std::fs::remove_dir_all(&d).unwrap();
+    }
+
+    #[test]
+    #[cfg_attr(miri, ignore)] // file system access (Miri isolation)
+    fn save_roundtrip_bit_exact() {
+        // user data must round-trip bit-exactly across versions
+        let d = temp_dir("roundtrip");
+        let f = d.join("r.ini");
+        let mut c = open("[S]\nK=v\n");
+        // values built from pieces so the escaping stays unambiguous:
+        // bs  = a\b (one backslash)
+        // cr  = x<CR>y (a real carriage return)
+        // lf  = p<LF>q (a real line feed)
+        // bsr = backslash + 'r' (two characters, not a CR)
+        let bs = "a".to_string() + "\\" + "b";
+        let cr = "x".to_string() + "\r" + "y";
+        let lf = "p".to_string() + "\n" + "q";
+        let bsr = "\\".to_string() + "r";
+        config_set_string(&mut c, "S", "bs", Some(&bs));
+        config_set_string(&mut c, "S", "cr", Some(&cr));
+        config_set_string(&mut c, "S", "lf", Some(&lf));
+        config_set_string(&mut c, "S", "bsr", Some(&bsr));
+        config_set_string(&mut c, "S", "empty", None);
+        c.file = Some(f.clone());
+        assert_eq!(config_save(&c), CONFIG_SUCCESS);
+        let text = std::fs::read_to_string(&f).unwrap();
+        // the file text carries the escaped forms: a\\b, x\\ry,
+        // p\\nq, \\\\r
+        assert!(text.contains("bs=a\\\\b\n"));
+        assert!(text.contains("cr=x\\ry\n"));
+        assert!(text.contains("lf=p\\nq\n"));
+        assert!(text.contains("bsr=\\\\r\n"));
+        // re-open: the values are back, bit-exact
+        let mut out: Option<Box<Config>> = None;
+        assert_eq!(
+            config_open(&mut out, &f, ConfigOpenType::Existing),
+            CONFIG_SUCCESS
+        );
+        let c2 = out.take().unwrap();
+        assert_eq!(config_get_string(&c2, "S", "bs"), Some(bs.as_str()));
+        assert_eq!(config_get_string(&c2, "S", "cr"), Some(cr.as_str()));
+        assert_eq!(config_get_string(&c2, "S", "lf"), Some(lf.as_str()));
+        assert_eq!(config_get_string(&c2, "S", "bsr"), Some(bsr.as_str()));
+        assert_eq!(config_get_string(&c2, "S", "empty"), Some(""));
+        std::fs::remove_dir_all(&d).unwrap();
+    }
+
+    #[test]
+    #[cfg_attr(miri, ignore)] // file system access (Miri isolation)
+    fn save_q1_duplicate_sections_both_written() {
+        let d = temp_dir("dup");
+        let f = d.join("d.ini");
+        let mut c = open("[A]\nK=1\n[A]\nK=2\n");
+        c.file = Some(f.clone());
+        assert_eq!(config_save(&c), CONFIG_SUCCESS);
+        // both duplicate sections stay in the file (Q-1)
+        assert_eq!(
+            std::fs::read_to_string(&f).unwrap(),
+            "[A]\nK=1\n\n[A]\nK=2\n"
+        );
+        std::fs::remove_dir_all(&d).unwrap();
+    }
+
+    #[test]
+    #[cfg_attr(miri, ignore)] // file system access (Miri isolation)
+    fn save_safe_success_with_backup() {
+        // R05: temp is written, target -> backup, temp -> target;
+        // the temp file no longer exists, the backup holds the
+        // previous contents
+        let d = temp_dir("safe_bak");
+        let f = d.join("app.ini");
+        std::fs::write(&f, "previous\n").unwrap();
+        let mut c = open("[S]\nA=1\n");
+        c.file = Some(f.clone());
+        assert_eq!(config_save_safe(&c, "tmp", "bak"), CONFIG_SUCCESS);
+        assert_eq!(std::fs::read_to_string(&f).unwrap(), "[S]\nA=1\n");
+        assert_eq!(
+            std::fs::read_to_string(d.join("app.ini.bak")).unwrap(),
+            "previous\n"
+        );
+        assert!(!d.join("app.ini.tmp").exists(), "temp is gone");
+        // a leading `.` in the extension is not doubled
+        std::fs::write(&f, "v2\n").unwrap();
+        assert_eq!(config_save_safe(&c, ".tmp", ".bak"), CONFIG_SUCCESS);
+        assert_eq!(
+            std::fs::read_to_string(d.join("app.ini.bak")).unwrap(),
+            "v2\n"
+        );
+        std::fs::remove_dir_all(&d).unwrap();
+    }
+
+    #[test]
+    #[cfg_attr(miri, ignore)] // file system access (Miri isolation)
+    fn save_safe_no_backup_and_new_target() {
+        // no backup_ext -> no backup; missing target -> created
+        let d = temp_dir("safe_new");
+        let f = d.join("new.ini");
+        let mut c = open("[S]\nA=1\n");
+        c.file = Some(f.clone());
+        assert_eq!(config_save_safe(&c, "tmp", ""), CONFIG_SUCCESS);
+        assert_eq!(std::fs::read_to_string(&f).unwrap(), "[S]\nA=1\n");
+        assert!(!d.join("new.ini.bak").exists());
+        assert!(!d.join("new.ini.tmp").exists());
+        std::fs::remove_dir_all(&d).unwrap();
+    }
+
+    #[test]
+    #[cfg_attr(miri, ignore)] // file system access (Miri isolation)
+    fn save_safe_empty_temp_ext_fails() {
+        // R05: empty temp_ext -> CONFIG_ERROR, target untouched
+        let d = temp_dir("safe_empty");
+        let f = d.join("app.ini");
+        std::fs::write(&f, "keep\n").unwrap();
+        let mut c = open("[S]\nA=1\n");
+        c.file = Some(f.clone());
+        assert_eq!(config_save_safe(&c, "", "bak"), CONFIG_ERROR);
+        assert_eq!(std::fs::read_to_string(&f).unwrap(), "keep\n");
+        // without a file bound it fails too
+        let c = open("[S]\nA=1\n");
+        assert_eq!(config_save_safe(&c, "tmp", "bak"), CONFIG_ERROR);
+        std::fs::remove_dir_all(&d).unwrap();
     }
 }
