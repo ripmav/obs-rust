@@ -8,6 +8,7 @@ pub mod darray;
 pub mod deque;
 pub mod dstr;
 pub mod hash;
+pub mod os_str;
 
 #[cfg(test)]
 mod tests {
