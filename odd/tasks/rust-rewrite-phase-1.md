@@ -17,7 +17,7 @@ Stack: branches off the Phase 0 head `docs/rewrite-coverage-2026-11` (PR #10); r
 - WP-3 = P1-03 darray — spec S-005 — branch `p1/darray` — C-blocked: layout vs C header, OBS_ENABLE_RUST. Done spec-side 2026-11-11 (see L6).
 - WP-4 = P1-10 crc32/blake2 — known-answer tests — branch `p1/crc-hash` — C-blocked: none beyond usage scan (deps are frontend-only per phase file). Done spec-side 2026-11-11 (see L7).
 - WP-5 = P1-15/P1-16 vec + matrix4 — spec S-008 — branch `p1/vec-matrix` — C-blocked: 10k goldens vs C, size/align vs C headers, benchmark.
-- WP-6+ = dstr (S-006), calldata (S-002), decl (S-003), signal (S-004), math-rest (S-009), config-file (S-007), obs-data (S-014) — branches `p1/<name>` as capacity allows. WP-6 = P1-02 dstr done spec-side 2026-11-11 (see L9). WP-7 = P1-06 calldata done spec-side 2026-11-11 (see L10). WP-8 = P1-07 decl done spec-side 2026-11-11 (see L11). WP-9 = P1-22 signal (S-004) done spec-side 2026-11-11 (see L13). WP-10 = P1-15/16/17/18 math-rest (S-009) done spec-side 2026-11-11 (see L14). Next: config-file (S-007).
+- WP-6+ = dstr (S-006), calldata (S-002), decl (S-003), signal (S-004), math-rest (S-009), config-file (S-007), obs-data (S-014) — branches `p1/<name>` as capacity allows. WP-6 = P1-02 dstr done spec-side 2026-11-11 (see L9). WP-7 = P1-06 calldata done spec-side 2026-11-11 (see L10). WP-8 = P1-07 decl done spec-side 2026-11-11 (see L11). WP-9 = P1-22 signal (S-004) done spec-side 2026-11-11 (see L13). WP-10 = P1-15/16/17/18 math-rest (S-009) done spec-side 2026-11-11 (see L14). WP-11 = P1-09 config-file (S-007) done spec-side 2026-11-11 (see L15). Next: obs-data (S-014).
 - C-tail WPs = P1-29/30/31/32 — blocked on C checkout + two-week nightly soak.
 
 **L11 (WP-8, 2026-11-11) — P1-07 decl (S-003) — branch `p1/decl` (off `p1/calldata`), PR #19.**
@@ -93,6 +93,38 @@ failed, clippy 0, deny ok. New dep per ADR 0005 log: `parking_lot` 0.13.x
 `docs/tests/signal.md` (23 rows). NOT ticked: P1-22.3 loom check,
 P1-22.4 recipe (C checkout), P1-23 typed API (own substep). Review status:
 see PR body.
+
+**L15 (WP-11, 2026-11-11) — P1-09 config-file (S-007) — branch `p1/config-file` (off `p1/math-rest`).**
+Four commits: `bc9f94b` platform helpers (S-023 R40/R41: `os_dtostr` D-2-fixed,
+`os_strtod` — Rust has no `%g` and no hex-float `FromStr`, both implemented
+from scratch and verified against a glibc `printf`/`strtod` probe),
+`f2b726a` store core (model, INI parser per §4.1, open family,
+R06/R10/R15), `14354ba` typed API (R07–R13: setters/getters,
+`strtoll`/`strtoull` conversion semantics, `%g` six significant digits for
+default doubles (Q-3)), `f257e32` save/`save_safe` (writer per §4.2,
+Q-2 empty save, `os_safe_replace` S-023 R61 + Q-9 no-rollback,
+`os_file_exists` R62). Findings: (1) **open question 2 decided**: the port
+takes the D-2-fixed branch for `os_dtostr` (per P1-09.3 "the port MUST make
+text and return value consistent"); the corrupted reference texts are pinned
+as documented divergences (`1e21` → `1e21`, the C build writes `1e211`);
+(2) **Q-1 lookup semantics**: "the last inserted entry" is scanned across
+duplicate section records — a key defined in an earlier same-named section
+stays findable (caught by `open_defaults_accumulates`); (3) **Miri:
+`f64::powi` is inexact** (same as the WP-10 `f32` finding) — the hex-float
+conversion uses exact bit-built powers of two; (4) invalid UTF-8 → U+FFFD
+(spec uncharacterised; a Rust `String` cannot carry raw bytes — documented
+deviation), NUL bytes pass through; (5) file-system tests are
+`#[cfg_attr(miri, ignore)]` under Miri isolation, each with a unique temp
+dir (a shared dir raced with `remove_dir_all` in parallel runs). Tick
+policy: P1-09.2 (default-vs-user precedence tested) and P1-09.3 (power-loss
+window: a kill after the temp write leaves the old target intact — the swap
+happens only in the atomic rename) ticked; **not** ticked: P1-09.1
+("10 real files parse" — C checkout), P1-09.4 (byte-identical corpus —
+C checkout), P1-09.5 (apply recipe — C checkout). Evidence:
+`cargo test -p obs-util --lib` 120/120, **Miri obs-util lib green**
+(106 passed, 13 fs tests ignored), fmt ok, clippy 0, deny ok (no new
+deps), workspace 257/0. Matrix: `docs/tests/config-file.md`. Review
+status: see PR body.
 
 **L14 (WP-10, 2026-11-11) — P1-15/16/17/18 math-rest (S-009) — branch `p1/math-rest` (off `p1/signal`).**
 `obs-math` gains `plane`, `bounds`, `math_extra` (extended), `half`,
