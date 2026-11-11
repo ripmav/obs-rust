@@ -1,8 +1,9 @@
 name: ci
 
 on:
+  # All PRs, not just base=main: WP PRs are stacked on the Phase 0 head and
+  # must run the same pipeline (P0-09).
   pull_request:
-    branches: [main]
   push:
     branches: [main]
   workflow_dispatch:
