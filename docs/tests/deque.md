@@ -1,6 +1,7 @@
 # Test matrix: deque (obs-util)
 
-- Test files: `crates/obs-util/src/deque.rs` (unit + property tests)
+- Test files: `crates/obs-util/src/deque.rs` (unit + property tests),
+  `crates/obs-util/tests/leak_counters.rs` (process-wide counter / drop-leak)
 - Task: P1-04 (spec S-005, deque half; `darray` half lands with P1-03)
 - Golden files: none (byte-level expectations are inline from S-005 algorithms)
 
@@ -23,7 +24,7 @@
 | peek_front_back_and_deque_data | peeks + `deque_data` | logical-order copies, wrapping reads; `idx >= size` → None (R-D08/R-D12) | Linux, Windows, macOS | pass |
 | zero_pushes | `push_back_zero`/`push_front_zero` | same layout effects as pushes, zero bytes (R-D07) | Linux, Windows, macOS | pass |
 | random_ops_match_vecdeque_model | 2000 random ops (push/pop/peek/place/upsize/reserve) | logical bytes equal a `VecDeque` model after every op | Linux, Windows, macOS | pass |
-| drop_returns_memory_to_bmem | 40 bytes through 10 push cycles | `bnum_allocs()` back to baseline (R-D01 + S-001) | Linux, Windows, macOS | pass |
+| process_wide_counter_is_balanced (deque part) | 40 bytes through 10 push cycles, dropped | `bnum_allocs()` back to baseline (R-D01 + S-001); runs in the dedicated counter binary | Linux, Windows, macOS | pass |
 
 Notes:
 - The random-op model test is the primary logic safety net (deterministic
@@ -34,7 +35,8 @@ Notes:
   C-checkout substep; until then the field order/widths are pinned from
   S-005 §5.
 - Memory flows exclusively through the S-001 allocator
-  (`bmem::brealloc_raw`/`bfree_raw`); the drop test pins that no allocation
-  is leaked or double-freed. Miri runs the whole module green.
+  (`bmem::brealloc_raw`/`bfree_raw`); the drop-leak part of
+  `leak_counters.rs` pins that no allocation is leaked or double-freed.
+  Miri runs the whole module green.
 - `end_pos == 0` with `size > 0` is believed unreachable through the public
   operations (S-005 §6.3) — debug-asserted in `peek_back`.
