@@ -11,3 +11,4 @@ workspace = true
 
 [dependencies]
 obs-util = { path = "../obs-util" }
+parking_lot = "0.13.0"
