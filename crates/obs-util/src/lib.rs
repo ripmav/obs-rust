@@ -6,6 +6,7 @@
 pub mod bmem;
 pub mod darray;
 pub mod deque;
+pub mod hash;
 
 #[cfg(test)]
 mod tests {

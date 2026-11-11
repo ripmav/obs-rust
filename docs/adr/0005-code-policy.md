@@ -114,6 +114,18 @@ surface isolated behind trait Y" — owner P5-20 — review 2027-11-01.
    unsafety with worse tooling. The boundary policy above is the standard
    mitigation (SAFETY comments, Miri on pure crates, `-sys` crate isolation).
 
+### Admitted dependencies (log)
+
+| Dependency | Licence | Admitted | Reason (Rule 4 checklist) |
+|---|---|---|---|
+| `crc32fast` 1.5.x | MIT | 2026-11-11 (P1-10, S-055 U1) | `calc_crc32` is the whole of `libobs/util/crc32.c`; the stdlib has no CRC-32; the crate is the table-driven reference implementation with the running-state API the C signature needs (S-055-R01/R02) |
+| `blake2` 0.11.x (feature `blake2b`) | MIT | 2026-11-11 (P1-10) | Rust side of the vendored `deps/blake2` (blake2b-512); the frontend keeps the C copy until Phase 6 (P6-32/P6-23); no reimplementation of a published hash standard |
+
+P1-10.1 **base64: skip** — there is no base64 in `libobs/`; the only in-tree
+copy is the librtmp vendored `cencode.c` (a Phase 5 concern, P5-17.4). No Rust
+base64 dependency is admitted for Phase 1; the absence re-verification by grep
+is the C-checkout substep.
+
 ## Consequences
 
 - Easier: reviewers have a mechanical checklist for deps and unsafe; Miri gives
