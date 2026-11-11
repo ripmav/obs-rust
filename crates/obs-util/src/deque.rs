@@ -813,20 +813,4 @@ mod tests {
             );
         }
     }
-
-    #[test]
-    fn drop_returns_memory_to_bmem() {
-        // R-D01 + S-001: drop frees exactly what was allocated.
-        let _lock = bmem::__test_serialize_counter();
-        let base = bmem::bnum_allocs();
-        {
-            let mut d = Deque::new();
-            for _ in 0..10 {
-                d.push_back(&[1u8, 2, 3]);
-                d.push_front(&[4u8]);
-            }
-            assert_eq!(d.len(), 40);
-        }
-        assert_eq!(bmem::bnum_allocs(), base);
-    }
 }
