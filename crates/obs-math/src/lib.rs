@@ -65,3 +65,29 @@ pub const fn deg(v: f32) -> f32 {
 pub fn close_float(a: f32, b: f32, p: f32) -> bool {
     (a - b).abs() <= p
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    #[allow(clippy::excessive_precision)] // spec-pinned decimal literals
+    fn r01_constants_and_macros() {
+        // S-009-R01/R02 worked examples
+        assert_eq!(M_INFINITE, 3.4e38);
+        assert!(M_INFINITE.is_finite(), "a finite sentinel, not +inf");
+        assert!((rad(180.0) - 3.14159274_f32).abs() <= 1e-6, "RAD(180)");
+        assert_eq!(deg(1.0), 57.2957802);
+        assert_eq!(M_PI_F32, 3.14159274_f32);
+        assert!((M_PI_F32 - std::f64::consts::PI as f32).abs() < 1e-6);
+        assert_eq!(EPSILON, 1e-4);
+        assert_eq!(LARGE_EPSILON, 1e-2);
+        assert_eq!(TINY_EPSILON, 1e-5);
+        // R02: close_float is absolute and inclusive — the boundary is
+        // tested with exact values (1.0 + 1e-4 cannot represent the
+        // difference exactly in f32)
+        assert!(close_float(0.0, 1e-4, 1e-4), "inclusive: |a-b| == p");
+        assert!(!close_float(0.0, 2e-4, 1e-4));
+        assert!(!close_float(f32::NAN, f32::NAN, 1e-4));
+    }
+}
