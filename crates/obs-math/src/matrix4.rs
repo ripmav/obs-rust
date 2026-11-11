@@ -304,16 +304,32 @@ pub fn matrix4_from_axisang(d: &mut Matrix4, aa: &AxisAng) {
     matrix4_from_quat(d, &q);
 }
 
-/// S-008-R34: `matrix4_from_matrix3` copies the three rows and sets
-/// `t = (0,0,0,1)`.
+/// S-009-R32 (supersedes the S-008-R34 reading for the 3×4 layout): the
+/// four rows are copied — rows `x, y, z` **with their `w` lanes**,
+/// `t = (m.t.x, m.t.y, m.t.z, 1)`.
 pub fn matrix4_from_matrix3(d: &mut Matrix4, m: &crate::matrix3::Matrix3) {
-    d.x = m.x;
-    d.y = m.y;
-    d.z = m.z;
+    d.x = Vec4 {
+        x: m.x.x,
+        y: m.x.y,
+        z: m.x.z,
+        w: m.x.w,
+    };
+    d.y = Vec4 {
+        x: m.y.x,
+        y: m.y.y,
+        z: m.y.z,
+        w: m.y.w,
+    };
+    d.z = Vec4 {
+        x: m.z.x,
+        y: m.z.y,
+        z: m.z.z,
+        w: m.z.w,
+    };
     d.t = Vec4 {
-        x: 0.0,
-        y: 0.0,
-        z: 0.0,
+        x: m.t.x,
+        y: m.t.y,
+        z: m.t.z,
         w: 1.0,
     };
 }
