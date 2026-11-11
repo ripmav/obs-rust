@@ -12,22 +12,26 @@
 
 pub mod axisang;
 pub mod bounds;
+pub mod half;
 pub mod math_extra;
 pub mod matrix3;
 pub mod matrix4;
 pub mod plane;
 pub mod quat;
+pub mod srgb;
 pub mod vec2;
 pub mod vec3;
 pub mod vec4;
 
 pub use axisang::*;
 pub use bounds::*;
+pub use half::*;
 pub use math_extra::*;
 pub use matrix3::*;
 pub use matrix4::*;
 pub use plane::*;
 pub use quat::*;
+pub use srgb::*;
 pub use vec2::*;
 pub use vec3::*;
 pub use vec4::*;
