@@ -4,6 +4,7 @@
 //! named above; the skeleton only proves the workspace builds.
 
 pub mod calldata;
+pub mod decl;
 
 #[cfg(test)]
 mod tests {

@@ -20,6 +20,29 @@ Stack: branches off the Phase 0 head `docs/rewrite-coverage-2026-11` (PR #10); r
 - WP-6+ = dstr (S-006), calldata (S-002), decl (S-003), signal (S-004), math-rest (S-009), config-file (S-007), obs-data (S-014) — branches `p1/<name>` as capacity allows. WP-6 = P1-02 dstr done spec-side 2026-11-11 (see L9). WP-7 = P1-06 calldata done spec-side 2026-11-11 (see L10).
 - C-tail WPs = P1-29/30/31/32 — blocked on C checkout + two-week nightly soak.
 
+**L11 (WP-8, 2026-11-11) — P1-07 decl (S-003) — branch `p1/decl` (off `p1/calldata`), PR #19.**
+`crates/obs-signal/src/decl.rs`: `CallParamType` (repr u32 = C enum int,
+5W-struct), `DeclParam` 16B, `DeclInfo` 5W, `parse_decl` (safe API) +
+`parse_decl_string` (C-facade, R01 borrow, R10 reset, R11 warning),
+`decl_info_free`/`decl_param_free`. Handwritten `&[u8]` scanner
+(bytes ≥ 0x80 = unknown tokens, no UTF-8), grammar per spec §4,
+parameter-list loop per §5.1. R01–R12 + all quirks: Q-1 (leading WS
+fails — first token never WS-skipped), Q-2 (trailing junk ignored),
+Q-3 (silent stop), Q-4 (trailing comma), Q-5 (empty string: `false`
++ no log), D-1 (reference crash on non-NAME function name → fail +
+log, never crash; the crash class is documented in the module).
+Bugs found in own draft (fixed before commit): (1) the first
+`list`-loop version could only `break` (clippy `never_loop`) and the
+Q-3 arm re-entered the list loop — restructured to entry match +
+after-param loop; (2) the after-param loop ran for the **empty**
+list and reported "Unexpected EOF" on `void f()` — the loop now
+lives inside the NAME arm; (3) `fail()` test helper had a type error
+(`unwrap_err` on `Decl`); (4) layout expectation wrong: C
+`decl_param` is 16 bytes (enum @8, flags @12, no padding), not 3W.
+Evidence: obs-signal lib 28/28 (12 decl tests), Miri 28/28 (6.5s),
+workspace 21 binaries green, clippy 0, deny ok. C-side: 9 conformance
+scripts + cbindgen diff blocked on C checkout.
+
 ## Log
 
 L1 (2026-11-11): user request verbatim — see S1.
