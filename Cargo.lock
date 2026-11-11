@@ -114,6 +114,9 @@ version = "0.1.0"
 [[package]]
 name = "obs-signal"
 version = "0.1.0"
+dependencies = [
+ "obs-util",
+]
 
 [[package]]
 name = "obs-util"
