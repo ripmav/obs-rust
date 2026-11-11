@@ -219,6 +219,118 @@ pub unsafe fn brealloc_raw(ptr: *mut u8, size: usize) -> *mut u8 {
     unsafe { new_block.add(HEADER) }
 }
 
+// ── Dup helpers + safe handle (S-001 R11–R13) ───────────────────────────────
+
+/// S-001-R11: `bmemdup(p, size)` = `bmalloc(size)` then copy `size` bytes
+/// (size 0 → fatal via the bmalloc text). Header-inline in C; exported here
+/// for the Rust side and the future `obs-ffi` shim.
+///
+/// # Safety
+/// `src` must be valid for `size` reads (or `size == 0`).
+#[must_use]
+pub unsafe fn bmemdup_raw(src: *const u8, size: usize) -> *mut u8 {
+    let dst = unsafe { bmalloc_raw(size) };
+    if size != 0 {
+        unsafe { std::ptr::copy_nonoverlapping(src, dst, size) };
+    }
+    dst
+}
+
+/// A safe RAII handle to bmem-allocated memory — the Rust analogue of the
+/// C++ `BPtr` (S-001-R29). Frees via `bfree` on drop.
+#[derive(Debug)]
+pub struct BMem {
+    ptr: *mut u8,
+    len: usize,
+}
+
+impl BMem {
+    /// Consume and return the raw pointer (caller takes ownership and must
+    /// free via `bfree_raw`).
+    #[must_use]
+    pub fn into_raw(self) -> *mut u8 {
+        let p = self.ptr;
+        std::mem::forget(self);
+        p
+    }
+
+    /// Re-wrap a live bmem pointer.
+    ///
+    /// # Safety
+    /// `ptr` must be a live pointer from this allocator (or the process
+    /// will double-free at drop).
+    #[must_use]
+    pub const unsafe fn from_raw(ptr: *mut u8, len: usize) -> Self {
+        Self { ptr, len }
+    }
+
+    #[must_use]
+    pub const fn as_ptr(&self) -> *const u8 {
+        self.ptr
+    }
+
+    #[must_use]
+    pub const fn as_mut_ptr(&mut self) -> *mut u8 {
+        self.ptr
+    }
+}
+
+impl std::ops::Deref for BMem {
+    type Target = [u8];
+    fn deref(&self) -> &[u8] {
+        unsafe { std::slice::from_raw_parts(self.ptr, self.len) }
+    }
+}
+
+impl std::ops::DerefMut for BMem {
+    fn deref_mut(&mut self) -> &mut [u8] {
+        unsafe { std::slice::from_raw_parts_mut(self.ptr, self.len) }
+    }
+}
+
+impl Drop for BMem {
+    fn drop(&mut self) {
+        unsafe { bfree_raw(self.ptr) };
+    }
+}
+
+/// Safe `bmemdup` (R11) over a slice.
+#[must_use]
+pub fn bmemdup(src: &[u8]) -> BMem {
+    unsafe { BMem::from_raw(bmemdup_raw(src.as_ptr(), src.len()), src.len()) }
+}
+
+/// S-001-R12: `bzalloc(size)` = `bmalloc(size)` + zero-fill; 0 is fatal.
+#[must_use]
+pub fn bzalloc(size: usize) -> BMem {
+    let p = unsafe { bmalloc_raw(size) };
+    if size != 0 {
+        unsafe { p.write_bytes(0, size) };
+    }
+    unsafe { BMem::from_raw(p, size) }
+}
+
+/// S-001-R13 (byte form): copies `n` bytes and NUL-terminates at `n`
+/// (`bmemdup(str, n + 1)` then `d[n] = 0`). The C `NULL → NULL` case has
+/// no safe analogue; the wide (`wchar_t`) variants live in the `obs-ffi`
+/// shim. Panics when `n > src.len()` (the C contract's caller guarantee).
+#[must_use]
+pub fn bstrdup_n(src: &[u8], n: usize) -> BMem {
+    assert!(
+        n <= src.len(),
+        "bstrdup_n: n must be <= src len (S-001-R13)"
+    );
+    let mut d = bzalloc(n + 1);
+    d[..n].copy_from_slice(&src[..n]);
+    d
+}
+
+/// S-001-R13: `bstrdup(str)` = `bstrdup_n(str, strlen(str))`.
+#[must_use]
+pub fn bstrdup(src: &[u8]) -> BMem {
+    bstrdup_n(src, src.len())
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -361,5 +473,57 @@ mod tests {
             }
             bfree_raw(new);
         }
+    }
+    #[test]
+    fn bmemdup_copies_bytes() {
+        // S-001-R11
+        let _lock = COUNTER_LOCK.lock().unwrap();
+        let base = bnum_allocs();
+        let src = [1u8, 2, 3, 4, 5];
+        let d = bmemdup(&src);
+        assert_eq!(d.len(), 5);
+        assert_eq!(d[..], src);
+        assert_eq!(bnum_allocs(), base + 1);
+    }
+
+    #[test]
+    fn bzalloc_zero_fills_and_counts() {
+        // S-001-R12
+        let _lock = COUNTER_LOCK.lock().unwrap();
+        let base = bnum_allocs();
+        let z = bzalloc(64);
+        assert!(z.iter().all(|&b| b == 0));
+        assert_eq!(bnum_allocs(), base + 1);
+    }
+
+    #[test]
+    fn bstrdup_nul_terminates() {
+        // S-001-R13
+        let _lock = COUNTER_LOCK.lock().unwrap();
+        let base = bnum_allocs();
+        let s = b"hola";
+        let d = bstrdup(s);
+        assert_eq!(d.len(), 5);
+        assert_eq!(&d[..4], s);
+        assert_eq!(d[4], 0);
+        let n = bstrdup_n(s, 2);
+        assert_eq!(n.len(), 3);
+        assert_eq!(&n[..2], &s[..2]);
+        assert_eq!(n[2], 0);
+        assert_eq!(bnum_allocs(), base + 2);
+    }
+
+    #[test]
+    fn bmem_raw_roundtrip_keeps_counter() {
+        // S-001-R05/R09: into_raw/from_raw is a no-op for the counter.
+        let _lock = COUNTER_LOCK.lock().unwrap();
+        let base = bnum_allocs();
+        let d = bstrdup(b"abc");
+        let raw = d.into_raw();
+        assert_eq!(bnum_allocs(), base + 1);
+        let back = unsafe { BMem::from_raw(raw, 4) };
+        assert_eq!(&back[..], b"abc\0");
+        drop(back);
+        assert_eq!(bnum_allocs(), base);
     }
 }
