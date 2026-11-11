@@ -17,7 +17,7 @@ Stack: branches off the Phase 0 head `docs/rewrite-coverage-2026-11` (PR #10); r
 - WP-3 = P1-03 darray — spec S-005 — branch `p1/darray` — C-blocked: layout vs C header, OBS_ENABLE_RUST. Done spec-side 2026-11-11 (see L6).
 - WP-4 = P1-10 crc32/blake2 — known-answer tests — branch `p1/crc-hash` — C-blocked: none beyond usage scan (deps are frontend-only per phase file). Done spec-side 2026-11-11 (see L7).
 - WP-5 = P1-15/P1-16 vec + matrix4 — spec S-008 — branch `p1/vec-matrix` — C-blocked: 10k goldens vs C, size/align vs C headers, benchmark.
-- WP-6+ = dstr (S-006), calldata (S-002), decl (S-003), signal (S-004), math-rest (S-009), config-file (S-007), obs-data (S-014) — branches `p1/<name>` as capacity allows. WP-6 = P1-02 dstr done spec-side 2026-11-11 (see L9). WP-7 = P1-06 calldata done spec-side 2026-11-11 (see L10). WP-8 = P1-07 decl done spec-side 2026-11-11 (see L11). WP-9 = P1-22 signal (S-004) done spec-side 2026-11-11 (see L13).
+- WP-6+ = dstr (S-006), calldata (S-002), decl (S-003), signal (S-004), math-rest (S-009), config-file (S-007), obs-data (S-014) — branches `p1/<name>` as capacity allows. WP-6 = P1-02 dstr done spec-side 2026-11-11 (see L9). WP-7 = P1-06 calldata done spec-side 2026-11-11 (see L10). WP-8 = P1-07 decl done spec-side 2026-11-11 (see L11). WP-9 = P1-22 signal (S-004) done spec-side 2026-11-11 (see L13). WP-10 = P1-15/16/17/18 math-rest (S-009) done spec-side 2026-11-11 (see L14). Next: config-file (S-007).
 - C-tail WPs = P1-29/30/31/32 — blocked on C checkout + two-week nightly soak.
 
 **L11 (WP-8, 2026-11-11) — P1-07 decl (S-003) — branch `p1/decl` (off `p1/calldata`), PR #19.**
@@ -93,6 +93,41 @@ failed, clippy 0, deny ok. New dep per ADR 0005 log: `parking_lot` 0.13.x
 `docs/tests/signal.md` (23 rows). NOT ticked: P1-22.3 loom check,
 P1-22.4 recipe (C checkout), P1-23 typed API (own substep). Review status:
 see PR body.
+
+**L14 (WP-10, 2026-11-11) — P1-15/16/17/18 math-rest (S-009) — branch `p1/math-rest` (off `p1/signal`).**
+`obs-math` gains `plane`, `bounds`, `math_extra` (extended), `half`,
+`srgb`; `vec2`/`vec3` get their S-009 surfaces; **`Matrix3` rebuilt to
+the C 3×4 layout** (four `Vec3` rows `x,y,z,t`, 64 bytes, align 16 —
+supersedes the WP-5 provisional 3×`Vec4`/48-byte reading; no external
+consumers existed, only `matrix4_from_matrix3`, updated per R32: rows
+keep their `w` lanes, `t.w = 1`). Commits: `c52b981` core (matrix3
+R30–R41, vec2 R10–R15, vec3 R20–R25, plane struct R50, rand_float R96,
+math-defs R01/R02), `3a862ef` plane R51–R58, `ea08acc` bounds R70–R81,
+`a9b4665` math-extra R90–R95 + half R110–R113 + srgb R120–R125. Findings:
+(1) **WP-5 Q-1 divergence fixed** — `vec2_norm` now leaves the
+destination unwritten for zero/NaN length (S-009 Q-1; `vec3_norm` still
+writes zeros); (2) vec2 `min/max` use explicit C-conditional comparisons
+(not `f32::min`/`max`) — NaN returns the second operand (R12); (3)
+**Miri `f32::powi` is not exact** (2⁻²⁵ → `0x32FFFFFC`) — the half
+tie-boundary vectors use `f32::from_bits` inputs; (4) Q-10 verified on
+representable values: `65504.0` (`0x477FE000`) stays `0x7BFF`, the
+smallest f32 above it (`65504.00390625`) already overflows to inf;
+(5) `calc_torque` Q-9 (`d == v1` corruption) is unreachable from Rust
+(caller aliasing violation) — documented deviation, the port reads
+`v1` fully before the store; (6) `gs_float_to_u8` deduped into
+`srgb.rs` (single definition, C `srgb.h` `static inline`) — vec4.rs
+uses it, clears the ambiguous glob re-export; (7) `bounds_min_dist`
+pinned to the spec formula (`p.dist` cancels: `dot4(c,dir) − half`).
+Miri-clean throughout (no UB found this WP; the half integer algorithm
+is bit-exact on both). Tick policy: P1-15.1/.2, P1-16.1/.2/.3,
+P1-17.3, P1-18.1/.2/.3 ticked (Rust artifacts + spec-list complete);
+**not** ticked: P1-15.3 10k goldens, P1-16.4 benchmark, P1-16.5/P1-17.4
+recipes (C checkout, S2), P1-17.1 full quat set + P1-17.2
+`axisang_from_quat` (S-008 §5, not delivered). Evidence:
+`cargo test -p obs-math --lib` 90/90, **Miri 90/90**, fmt ok, clippy 0,
+workspace 216/0, deny ok (no new deps). Matrix: `docs/tests/math-rest.md`
+(55 rows); `docs/tests/vec-matrix.md` updated (matrix3 layout + Q-1 +
+w-lane note). Review status: see PR body.
 
 ## Log
 
