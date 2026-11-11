@@ -1,0 +1,101 @@
+name: ci
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  lint:
+    name: lint (fmt + clippy)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+      - name: fmt
+        run: cargo fmt --all --check
+      - name: clippy
+        run: cargo clippy --workspace --all-targets -- -D warnings
+
+  test:
+    name: test (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+      - uses: taiki-e/install-action@v2
+        with:
+          tool: nextest
+      - name: nextest
+        run: cargo nextest run --workspace --profile ci
+      - name: upload test report
+        uses: actions/upload-artifact@v4
+        with:
+          name: nextest-junit-${{ matrix.os }}
+          path: junit.xml
+
+  supply-chain:
+    name: supply chain (deny + audit + miri)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+      - uses: taiki-e/install-action@v2
+        with:
+          tool: cargo-deny
+      - uses: taiki-e/install-action@v2
+        with:
+          tool: cargo-audit
+      - name: cargo deny
+        run: cargo deny check
+      - name: cargo audit
+        run: cargo audit
+      - name: miri
+        run: |
+          rustup toolchain install nightly --profile minimal --component miri
+          cargo +nightly miri test -p obs-util -p obs-math -p obs-data -p obs-signal
+
+  coverage:
+    name: coverage (llvm-cov)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: llvm-tools-preview
+      - uses: Swatinem/rust-cache@v2
+      - uses: taiki-e/install-action@v2
+        with:
+          tool: cargo-llvm-cov
+      - name: collect coverage
+        run: cargo llvm-cov --workspace --summary-only --output-path lcov.info
+      - name: upload coverage
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-lcov
+          path: lcov.info
+      - name: comment on PR
+        if: github.event_name == 'pull_request'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh pr comment "${{ github.event.pull_request.number }}" \
+            --repo "${{ github.repository }}" \
+            --body "$(cargo llvm-cov --workspace --summary-only)"
