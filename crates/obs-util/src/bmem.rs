@@ -117,16 +117,6 @@ pub fn __crash_handler_installed_for_test() -> bool {
     CRASH_HANDLER_SET.load(Ordering::SeqCst)
 }
 
-/// Test hook: serialise tests that snapshot the process-wide allocation
-/// counter (other test threads would race the snapshot). Used by sibling
-/// modules (deque, darray, ...).
-#[doc(hidden)]
-pub fn __test_serialize_counter() -> std::sync::MutexGuard<'static, ()> {
-    static LOCK: std::sync::Mutex<()> = std::sync::Mutex::new(());
-    LOCK.lock()
-        .unwrap_or_else(std::sync::PoisonError::into_inner)
-}
-
 // ── Allocation core (S-001 R01–R13) ─────────────────────────────────────────
 
 /// S-001-R02: zero size is a fatal error (message is MUST — crash reports).
@@ -391,7 +381,6 @@ mod tests {
 
     #[test]
     fn blocks_are_32_aligned() {
-        let _lock = super::__test_serialize_counter();
         // S-001-R01
         for size in [1usize, 7, 31, 32, 33, 1000, 4096, 1 << 20] {
             let p = alloc_guard(size);
@@ -399,49 +388,26 @@ mod tests {
         }
     }
 
-    #[test]
-    fn counter_tracks_alloc_free() {
-        let _lock = super::__test_serialize_counter();
-        // S-001-R04/R05/R09
-        let base = bnum_allocs();
-        {
-            let a = alloc_guard(10);
-            let b = alloc_guard(100);
-            let c = alloc_guard(1000);
-            assert_eq!(bnum_allocs(), base + 3);
-            std::mem::drop(c);
-            assert_eq!(bnum_allocs(), base + 2);
-            let _ = (a, b);
-        }
-        assert_eq!(bnum_allocs(), base);
-    }
+    // S-001-R04/R05/R09 counter checks live in tests/leak_counters.rs
+    // (process-wide counter: cannot run in parallel with the other tests).
 
     #[test]
     fn bfree_null_is_noop() {
-        let _lock = super::__test_serialize_counter();
-        // S-001-R05
-        let base = bnum_allocs();
+        // S-001-R05 (counter effect in tests/leak_counters.rs)
         unsafe { bfree_raw(std::ptr::null_mut()) };
-        assert_eq!(bnum_allocs(), base);
     }
 
     #[test]
     fn brealloc_null_is_alloc() {
-        let _lock = super::__test_serialize_counter();
-        // S-001-R06: net counter effect +1, aligned result.
-        let base = bnum_allocs();
+        // S-001-R06: aligned result (counter effect in tests/leak_counters.rs).
         let p = unsafe { brealloc_raw(std::ptr::null_mut(), 64) };
         assert_eq!(p as usize % ALIGNMENT, 0);
-        assert_eq!(bnum_allocs(), base + 1);
         unsafe { bfree_raw(p) };
-        assert_eq!(bnum_allocs(), base);
     }
 
     #[test]
     fn brealloc_grows_preserving_prefix() {
-        let _lock = super::__test_serialize_counter();
-        // S-001-R08: first min(old,new) bytes preserved, counter unchanged.
-        let base = bnum_allocs();
+        // S-001-R08: first min(old,new) bytes preserved.
         let old = unsafe { bmalloc_raw(16) };
         unsafe {
             for i in 0..16 {
@@ -450,7 +416,6 @@ mod tests {
         }
         let new = unsafe { brealloc_raw(old, 256) };
         assert_eq!(new as usize % ALIGNMENT, 0);
-        assert_eq!(bnum_allocs(), base + 1); // unchanged by realloc (one live block)
         unsafe {
             for i in 0..16usize {
                 assert_eq!(*new.add(i), i.wrapping_mul(7) as u8);
@@ -461,9 +426,7 @@ mod tests {
 
     #[test]
     fn brealloc_shrinks_preserving_prefix() {
-        let _lock = super::__test_serialize_counter();
         // S-001-R08: shrink keeps the first `new` bytes.
-        let base = bnum_allocs();
         let old = unsafe { bmalloc_raw(256) };
         unsafe {
             for i in 0..256usize {
@@ -471,7 +434,6 @@ mod tests {
             }
         }
         let new = unsafe { brealloc_raw(old, 32) };
-        assert_eq!(bnum_allocs(), base + 1); // unchanged by realloc (one live block)
         unsafe {
             for i in 0..32usize {
                 assert_eq!(*new.add(i), i as u8);
@@ -481,31 +443,23 @@ mod tests {
     }
     #[test]
     fn bmemdup_copies_bytes() {
-        // S-001-R11
-        let _lock = super::__test_serialize_counter();
-        let base = bnum_allocs();
+        // S-001-R11 (counter effect in tests/leak_counters.rs)
         let src = [1u8, 2, 3, 4, 5];
         let d = bmemdup(&src);
         assert_eq!(d.len(), 5);
         assert_eq!(d[..], src);
-        assert_eq!(bnum_allocs(), base + 1);
     }
 
     #[test]
-    fn bzalloc_zero_fills_and_counts() {
-        // S-001-R12
-        let _lock = super::__test_serialize_counter();
-        let base = bnum_allocs();
+    fn bzalloc_zero_fills() {
+        // S-001-R12 (counter effect in tests/leak_counters.rs)
         let z = bzalloc(64);
         assert!(z.iter().all(|&b| b == 0));
-        assert_eq!(bnum_allocs(), base + 1);
     }
 
     #[test]
     fn bstrdup_nul_terminates() {
-        // S-001-R13
-        let _lock = super::__test_serialize_counter();
-        let base = bnum_allocs();
+        // S-001-R13 (counter effect in tests/leak_counters.rs)
         let s = b"hola";
         let d = bstrdup(s);
         assert_eq!(d.len(), 5);
@@ -515,20 +469,16 @@ mod tests {
         assert_eq!(n.len(), 3);
         assert_eq!(&n[..2], &s[..2]);
         assert_eq!(n[2], 0);
-        assert_eq!(bnum_allocs(), base + 2);
     }
 
     #[test]
-    fn bmem_raw_roundtrip_keeps_counter() {
-        // S-001-R05/R09: into_raw/from_raw is a no-op for the counter.
-        let _lock = super::__test_serialize_counter();
-        let base = bnum_allocs();
+    fn bmem_raw_roundtrip() {
+        // S-001-R05/R09: into_raw/from_raw round-trips (counter effect in
+        // tests/leak_counters.rs).
         let d = bstrdup(b"abc");
         let raw = d.into_raw();
-        assert_eq!(bnum_allocs(), base + 1);
         let back = unsafe { BMem::from_raw(raw, 4) };
         assert_eq!(&back[..], b"abc\0");
         drop(back);
-        assert_eq!(bnum_allocs(), base);
     }
 }
