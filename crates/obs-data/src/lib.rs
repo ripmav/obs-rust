@@ -15,6 +15,7 @@
 //! emitted yet: this crate has no logger (it arrives with the platform
 //! crate, S-023); the FFI layer will wire them.
 
+pub mod api;
 pub mod json;
 pub mod model;
 

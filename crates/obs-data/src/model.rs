@@ -20,6 +20,10 @@
 //! NULL arguments are unrepresentable in the safe API and noted where the
 //! C no-op would apply.
 
+// The public handles expose their `Rc<RefCell<T>>` interiors (crate-internal
+// `T`) so the FFI layer and the conformance runner can take references.
+#![allow(private_interfaces)]
+
 use std::cell::RefCell;
 use std::rc::{Rc, Weak};
 
@@ -160,24 +164,26 @@ pub struct ObsDataItem {
     pub(crate) item: ItemRc,
 }
 
-struct Data {
+pub(crate) struct Data {
     /// List order — the source of iteration/JSON key order (§6.1).
     items: Vec<ItemRc>,
-    /// The buffer of the most recent `get_json*` call (R81, QUIRK Q4).
+    /// The buffer of the most recent `get_json*` call (R81, QUIRK Q4) —
+    /// written by the JSON layer.
+    #[allow(dead_code)]
     pub(crate) last_json: Option<String>,
 }
 
-struct Arr {
+pub(crate) struct Arr {
     /// Elements are shared: `array_item` returns the same object.
     elements: Vec<DataRc>,
 }
 
-struct Item {
-    name: Vec<u8>,
-    ty: Ty,
-    user: Option<Value>,
-    default: Option<Value>,
-    autoselect: Option<Value>,
+pub(crate) struct Item {
+    pub(crate) name: Vec<u8>,
+    pub(crate) ty: Ty,
+    pub(crate) user: Option<Value>,
+    pub(crate) default: Option<Value>,
+    pub(crate) autoselect: Option<Value>,
     // §6.1 size model
     ds: usize,
     dl: usize,
@@ -394,6 +400,11 @@ pub(crate) fn clear_inner(inner: &DataRc) {
     }
 }
 
+/// The number of items in list order (shells included).
+pub fn data_count(d: &ObsData) -> usize {
+    d.inner.borrow().items.len()
+}
+
 /// Find an item by name (byte-exact, case-sensitive) — a clone of the
 /// item's `Rc` (the list's reference is untouched).
 pub(crate) fn data_find(d: &ObsData, name: &str) -> Option<ItemRc> {
@@ -491,22 +502,34 @@ pub fn data_get_defaults(d: &ObsData) -> ObsData {
 
 fn get_defaults_into(out: &DataRc, d: &DataRc) {
     // list order; the cloned values hold temporary references
-    let info: Vec<(Vec<u8>, Ty, Option<Value>, Option<Value>)> = {
+    struct DefInfo {
+        name: Vec<u8>,
+        ty: Ty,
+        default_v: Option<Value>,
+        eff: Option<Value>,
+    }
+    let info: Vec<DefInfo> = {
         let data = d.borrow();
         data.items
             .iter()
             .map(|it| {
                 let b = it.borrow();
-                (
-                    b.name.clone(),
-                    b.ty,
-                    b.default.clone(),
-                    effective_value(&b).cloned(),
-                )
+                DefInfo {
+                    name: b.name.clone(),
+                    ty: b.ty,
+                    default_v: b.default.clone(),
+                    eff: effective_value(&b).cloned(),
+                }
             })
             .collect()
     };
-    for (name, ty, default_v, eff) in info {
+    for DefInfo {
+        name,
+        ty,
+        default_v,
+        eff,
+    } in info
+    {
         match ty {
             Ty::String => {
                 let v = match &default_v {
@@ -653,15 +676,17 @@ pub fn data_item_remove(it: &mut Option<ObsDataItem>) {
         (b.owner.clone(), !b.detached)
     };
     if attached {
-        if let Some(owner) = owner.upgrade() {
-            let mut data = owner.borrow_mut();
-            if let Some(idx) = data.items.iter().position(|i| Rc::ptr_eq(i, &h.item)) {
-                let succ = data.items.get(idx + 1).map(Rc::downgrade);
-                data.items.remove(idx); // releases the list's reference
-                let mut b = h.item.borrow_mut();
-                b.detached = true;
-                b.next_item = succ;
-            }
+        let Some(owner) = owner.upgrade() else {
+            // `h` drops below: the handle's reference is released
+            return;
+        };
+        let mut data = owner.borrow_mut();
+        if let Some(idx) = data.items.iter().position(|i| Rc::ptr_eq(i, &h.item)) {
+            let succ = data.items.get(idx + 1).map(Rc::downgrade);
+            data.items.remove(idx); // releases the list's reference
+            let mut b = h.item.borrow_mut();
+            b.detached = true;
+            b.next_item = succ;
         }
     }
     // `h` drops here: the handle's reference is released
@@ -730,8 +755,7 @@ pub fn data_item_unset(it: &ObsDataItem, layer: Layer) {
 /// refers to the same (now last) item (D4: all handles stay valid).
 pub(crate) fn item_set_layer(item: &ItemRc, layer: Layer, v: Value) {
     let n = v.size();
-    let mut moved = false;
-    {
+    let moved = {
         let mut b = item.borrow_mut();
         if b.ty != v.ty() {
             if layer == Layer::Default {
@@ -751,8 +775,8 @@ pub(crate) fn item_set_layer(item: &ItemRc, layer: Layer, v: Value) {
             Layer::Default => b.default = Some(v),
             Layer::Autoselect => b.autoselect = Some(v),
         }
-        moved = b.apply_set_sizes(layer, n);
-    }
+        b.apply_set_sizes(layer, n)
+    };
     if moved {
         let owner = {
             let b = item.borrow();
@@ -774,12 +798,6 @@ pub(crate) fn item_layer_value(it: &ObsDataItem, layer: Layer) -> Option<Value> 
         Layer::Default => b.default.clone(),
         Layer::Autoselect => b.autoselect.clone(),
     }
-}
-
-/// Read the effective value of the handle's item (§4.2).
-pub(crate) fn item_effective_value(it: &ObsDataItem) -> Option<Value> {
-    let b = it.item.borrow();
-    effective_value(&b).cloned()
 }
 
 // ---------------------------------------------------------------------------
@@ -830,7 +848,7 @@ pub fn array_erase(a: &ObsDataArray, idx: usize) {
 /// R52: append every element of `b` to `a` in order, taking one
 /// reference per element (elements are shared).
 pub fn array_push_back_array(a: &ObsDataArray, b: &ObsDataArray) {
-    let elems: Vec<DataRc> = b.inner.borrow().elements.iter().cloned().collect();
+    let elems = b.inner.borrow().elements.clone();
     a.inner.borrow_mut().elements.extend(elems);
 }
 
@@ -1131,7 +1149,7 @@ mod tests {
         // append while walking: the new item is visited
         set_string(&o, "c", "3");
         while data_item_next(&mut it) {
-            seen.push(data_item_get_name(&it.as_ref().unwrap()));
+            seen.push(data_item_get_name(it.as_ref().unwrap()));
         }
         assert_eq!(seen, vec!["a", "b", "c"]);
     }
@@ -1146,7 +1164,7 @@ mod tests {
         let mut seen = vec![data_item_get_name(it.as_ref().unwrap())];
         erase_inner(&o.inner, b"b"); // erase the *next* item
         while data_item_next(&mut it) {
-            seen.push(data_item_get_name(&it.as_ref().unwrap()));
+            seen.push(data_item_get_name(it.as_ref().unwrap()));
         }
         assert_eq!(seen, vec!["a", "c"]);
     }
@@ -1173,7 +1191,7 @@ mod tests {
         // next from the detached handle yields the item that followed at
         // detach time (the walk continues)
         assert!(data_item_next(&mut h));
-        assert_eq!(data_item_get_name(&h.as_ref().unwrap()), "c");
+        assert_eq!(data_item_get_name(h.as_ref().unwrap()), "c");
         assert!(!data_item_next(&mut h));
         assert!(h.is_none());
     }
@@ -1324,7 +1342,7 @@ mod tests {
         set_int(&src, "i", 7);
         set_layer_value(&src.inner, Layer::Default, b"i", Value::Int(70));
         // a nested object with user + default layers and a NULL member
-        let mut inner = d();
+        let inner = d();
         set_string(&inner, "u", "in");
         set_layer_value(
             &inner.inner,
