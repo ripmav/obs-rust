@@ -117,6 +117,14 @@ impl ObsData {
         Rc::strong_count(&self.inner)
     }
 
+    /// Identity token for the opaque `obs_data_t` handle that
+    /// `obs_properties` callbacks pass around (S-015 §1: the properties
+    /// component never dereferences it). Valid while at least one
+    /// `ObsData` reference lives; never dereference.
+    pub fn as_opaque(&self) -> *mut std::os::raw::c_void {
+        Rc::as_ptr(&self.inner) as *mut std::os::raw::c_void
+    }
+
     /// S-014-R01: `obs_data_create`, count 1.
     pub fn create() -> ObsData {
         ObsData {
