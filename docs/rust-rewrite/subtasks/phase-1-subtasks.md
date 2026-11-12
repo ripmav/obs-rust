@@ -202,10 +202,10 @@ Corrections to the earlier plan, verified in the tree: the ring buffer is `libob
 - [ ] **P1-26.3 Fix findings**
 
 ### P1-27 `obs_properties`
-- [ ] **P1-27.1 Container** — Files: `libobs/obs-properties.c` (1415), `obs-properties.h` (364). Ordering, `obs_properties_apply_settings`, flags, parent/group in `crates/obs-data`. Spec: S-015. Vectors: `test/conformance/scripts/props/`. Pitfall: S-015 Q-1 — `add_group` checks only direct children for duplicates; Q-2 — a cycle-forming `add_group` returns NULL silently. Done when: ordering test.
-- [ ] **P1-27.2 Simple kinds** — bool, int, float, text (+types), path (+filters), button (S-015 §5). Vectors: `test/conformance/scripts/props/`. Done when: each reachable via ABI test.
-- [ ] **P1-27.3 Complex kinds** — list (string/int/float, disabled items), editable list, font, color, frame rate (ranges/options), group. Pitfall: S-015 Q-3 — `list_add_*` on a wrong format returns 0 (not an error). Done when: same.
-- [ ] **P1-27.4 Callbacks** — modified, button clicked, enabled/visible. Pitfall: S-015 Q-5 — v1 beats v2 when both are set; `apply_settings` passes its own root, `modified`/`button_clicked` pass the top-most container. Done when: callback returns `true` triggers refresh.
+- [x] **P1-27.1 Container** — Files: `libobs/obs-properties.c` (1415), `obs-properties.h` (364). Ordering, `obs_properties_apply_settings`, flags, parent/group in `crates/obs-data`. Spec: S-015. Vectors: `test/conformance/scripts/props/`. Pitfall: S-015 Q-1 — `add_group` checks only direct children for duplicates; Q-2 — a cycle-forming `add_group` returns NULL silently. Done when: ordering test.
+- [x] **P1-27.2 Simple kinds** — bool, int, float, text (+types), path (+filters), button (S-015 §5). Vectors: `test/conformance/scripts/props/`. Done when: each reachable via ABI test.
+- [x] **P1-27.3 Complex kinds** — list (string/int/float, disabled items), editable list, font, color, frame rate (ranges/options), group. Pitfall: S-015 Q-3 — `list_add_*` on a wrong format returns 0 (not an error). Done when: same.
+- [x] **P1-27.4 Callbacks** — modified, button clicked, enabled/visible. Pitfall: S-015 Q-5 — v1 beats v2 when both are set; `apply_settings` passes its own root, `modified`/`button_clicked` pass the top-most container. Done when: callback returns `true` triggers refresh.
 - [ ] **P1-27.5 ABI test** — extend the plugin of P0-15 (`test/test-input/`).
 - [ ] **P1-27.6 Apply recipe (added)** — Files: `libobs/CMakeLists.txt` (396), `obs-ffi` shim. Vectors: `test/conformance/scripts/props/`.
 

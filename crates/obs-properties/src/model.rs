@@ -703,17 +703,20 @@ mod tests {
     }
 
     // vector 02 — param and destroy order
-    static CALLS: Mutex<Vec<&'static str>> = Mutex::new(Vec::new());
+    static CALLS: Mutex<Vec<usize>> = Mutex::new(Vec::new());
 
     fn destroy_token(p: *mut c_void) {
-        CALLS
-            .lock()
-            .unwrap()
-            .push(unsafe { *(p as *const &'static str) });
+        CALLS.lock().unwrap().push(p as usize);
     }
 
+    /// Miri-compatible token: the address of the string literal (unique
+    /// per literal, lives in the binary, never freed).
     fn param(tok: &'static str) -> *mut c_void {
-        Box::leak(Box::new(tok)) as *mut &'static str as *mut c_void
+        tok as *const str as *mut c_void
+    }
+
+    fn lit(s: &'static str) -> usize {
+        s as *const str as *mut c_void as usize
     }
 
     #[test]
@@ -725,7 +728,7 @@ mod tests {
         let a = properties_create_param(t1, Some(destroy_token));
         assert_eq!(properties_get_param(&a), t1);
         drop(a);
-        assert_eq!(*CALLS.lock().unwrap(), ["t1"]);
+        assert_eq!(*CALLS.lock().unwrap(), [lit("t1")]);
         CALLS.lock().unwrap().clear();
 
         // param without destroy callback: stored, never called
@@ -745,7 +748,7 @@ mod tests {
         let t3 = param("t3");
         properties_set_param(&c, t3, None);
         // old (t2b, destroy): the old destroy runs
-        assert_eq!(*CALLS.lock().unwrap(), ["t2b"]);
+        assert_eq!(*CALLS.lock().unwrap(), [lit("t2b")]);
         CALLS.lock().unwrap().clear();
         assert_eq!(properties_get_param(&c), t3);
         let t4 = param("t4");
@@ -754,7 +757,7 @@ mod tests {
         assert!(CALLS.lock().unwrap().is_empty());
         // NULL param keeps the destroy callback; the old (t4, destroy) runs
         properties_set_param(&c, std::ptr::null_mut(), Some(destroy_token));
-        assert_eq!(*CALLS.lock().unwrap(), ["t4"]);
+        assert_eq!(*CALLS.lock().unwrap(), [lit("t4")]);
         CALLS.lock().unwrap().clear();
         assert!(properties_get_param(&c).is_null());
         drop(c);
@@ -781,7 +784,10 @@ mod tests {
         drop(g1);
         drop(g2);
         drop(t);
-        assert_eq!(*CALLS.lock().unwrap(), ["top", "g1p", "nested", "g2p"]);
+        assert_eq!(
+            *CALLS.lock().unwrap(),
+            [lit("top"), lit("g1p"), lit("nested"), lit("g2p")]
+        );
     }
 
     // vector 03 — lookup, duplicates, remove
@@ -961,7 +967,7 @@ mod tests {
         // removing the inner group destroys its content (param callback)
         properties_remove_by_name(&top, "inner");
         assert!(properties_get(&top, "c").is_none());
-        assert_eq!(*CALLS.lock().unwrap(), ["gp2"]);
+        assert_eq!(*CALLS.lock().unwrap(), [lit("gp2")]);
 
         // add after remove
         add_bool(&top, "c", "C again").unwrap();
@@ -972,9 +978,9 @@ mod tests {
         // removing the group destroys its content
         properties_remove_by_name(&top, "g");
         assert!(properties_get(&top, "a").is_none());
-        assert_eq!(*CALLS.lock().unwrap(), ["gp2", "gp1"]);
+        assert_eq!(*CALLS.lock().unwrap(), [lit("gp2"), lit("gp1")]);
         drop(top);
-        assert_eq!(*CALLS.lock().unwrap(), ["gp2", "gp1", "tp"]);
+        assert_eq!(*CALLS.lock().unwrap(), [lit("gp2"), lit("gp1"), lit("tp")]);
     }
 
     // vector 21 — quirks (Q-1)
