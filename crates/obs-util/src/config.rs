@@ -1385,6 +1385,28 @@ mod tests {
 
     #[test]
     #[cfg_attr(miri, ignore)] // file system access (Miri isolation)
+    fn save_safe_power_loss_window() {
+        // P1-09.3 power-loss simulation: at any moment before the
+        // final rename (a kill after the temp write) the old target
+        // file is intact — the swap happens only in the atomic rename
+        let d = temp_dir("power_loss");
+        let f = d.join("app.ini");
+        std::fs::write(&f, "old\n").unwrap();
+        let mut c = open("[S]\nA=1\n");
+        c.file = Some(f.clone());
+        let temp = join_ext(&f, "tmp");
+        assert_eq!(save_to(&c, &temp), CONFIG_SUCCESS);
+        // kill point: the temp file exists, the target is still old
+        assert_eq!(std::fs::read_to_string(&f).unwrap(), "old\n");
+        assert!(temp.exists());
+        // completing the swap
+        assert_eq!(os_safe_replace(&f, &temp, Some(&join_ext(&f, "bak"))), 0);
+        assert_eq!(std::fs::read_to_string(&f).unwrap(), "[S]\nA=1\n");
+        std::fs::remove_dir_all(&d).unwrap();
+    }
+
+    #[test]
+    #[cfg_attr(miri, ignore)] // file system access (Miri isolation)
     fn save_safe_empty_temp_ext_fails() {
         // R05: empty temp_ext -> CONFIG_ERROR, target untouched
         let d = temp_dir("safe_empty");
