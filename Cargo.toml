@@ -7,6 +7,7 @@ members = [
     "crates/obs-util",
     "crates/obs-math",
     "crates/obs-data",
+    "crates/obs-properties",
     "crates/obs-signal",
     "crates/obs-media-io",
     "crates/obs-graphics",

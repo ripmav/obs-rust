@@ -1,0 +1,13 @@
+[package]
+name = "obs-properties"
+description = "obs_properties_t / obs_property_t (S-015, Phase 1)."
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+rust-version.workspace = true
+
+[lints]
+workspace = true
+
+[dependencies]
+obs-data = { path = "../obs-data" }
