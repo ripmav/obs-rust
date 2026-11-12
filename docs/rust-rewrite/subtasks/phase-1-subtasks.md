@@ -210,7 +210,7 @@ Corrections to the earlier plan, verified in the tree: the ring buffer is `libob
 - [ ] **P1-27.6 Apply recipe (added)** — Files: `libobs/CMakeLists.txt` (396), `obs-ffi` shim. Vectors: `test/conformance/scripts/props/`.
 
 ### P1-28 Hotkey data layer
-- [ ] **P1-28.1 Name map** — Files: `libobs/obs-hotkey-name-map.c` (134), `libobs/obs-hotkeys.h` (653, key list). Key id↔name table both lookups → `crates/obs-hotkey-names` (S-024 M4). Vectors: `test/conformance/scripts/helpers/` (`hotkeys-*` scripts). Done when: all key names equal.
+- [x] **P1-28.1 Name map** — Files: `libobs/obs-hotkey-name-map.c` (134), `libobs/obs-hotkeys.h` (653, key list). Key id↔name table both lookups → `crates/obs-hotkey-names` (S-024 M4). Vectors: `test/conformance/scripts/helpers/` (`hotkeys-*` scripts). Done when: all key names equal.
 - [ ] **P1-28.2 Combo JSON** — `obs_hotkey_binding` save/load format is specified by S-034 (persistence section) and vectorized in `test/conformance/scripts/hotkeys/03-bindings-load-save.script`; the implementation belongs to P4-28.2. C reference behaviour: `libobs/obs-hotkey.c` (1400). Done when: vectors verified against C `obs-hotkey.c` behaviour (no Phase-1 code).
 - [ ] **P1-28.3 Golden** — Vectors: `test/conformance/scripts/helpers/` (`hotkeys-*`), `hotkeys/`.
 - [ ] **P1-28.4 Apply recipe (added)** — for the name map (P1-28.1; Files: `libobs/CMakeLists.txt` (396), `obs-ffi` shim); P1-28.2 is vectors only.
