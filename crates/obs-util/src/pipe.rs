@@ -475,4 +475,39 @@ mod tests {
         assert_eq!(os_process_pipe_write(Some(&p), b"line\n"), 5);
         assert_eq!(os_process_pipe_destroy(Some(p)), 4);
     }
+
+    // P1-11.3 edge cases (the vectors for these live in
+    // test/conformance/scripts/utilrest/ for the runner; the C-NULL and
+    // non-UTF-8 byte cases are unrepresentable in the safe API —
+    // documented in the module docs)
+    #[test]
+    #[cfg_attr(miri, ignore)]
+    fn pipe_edge_cases() {
+        // an executable path containing a space
+        let dir = std::env::temp_dir().join("pipe-space-test");
+        std::fs::create_dir_all(&dir).unwrap();
+        let exe = dir.join("echo sp.bin");
+        std::fs::copy("/bin/echo", &exe).unwrap();
+        let mut args = ProcessArgs::create(exe.to_string_lossy().as_ref());
+        args.add_arg("spaced");
+        let p = os_process_pipe_create2(&args, "r").unwrap();
+        let out = read_all(&p, 100);
+        assert_eq!(out, b"spaced\n");
+        assert_eq!(os_process_pipe_destroy(Some(p)), 0);
+
+        // a write after the child exited (EPIPE): returns a count, no
+        // hang
+        let p = os_process_pipe_create("exit 0", "w").unwrap();
+        // the child is gone before we write
+        std::thread::sleep(std::time::Duration::from_millis(200));
+        let n = os_process_pipe_write(Some(&p), b"0123456789");
+        assert!(n <= 10, "EPIPE write: {n}");
+        assert_eq!(os_process_pipe_destroy(Some(p)), 0);
+
+        // reading a closed pipe (the child exited): EOF, 0
+        let p = os_process_pipe_create("exit 0", "r").unwrap();
+        std::thread::sleep(std::time::Duration::from_millis(200));
+        assert_eq!(os_process_pipe_read(Some(&p), &mut [0; 16]), 0);
+        assert_eq!(os_process_pipe_destroy(Some(p)), 0);
+    }
 }
