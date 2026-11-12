@@ -17,7 +17,7 @@ Stack: branches off the Phase 0 head `docs/rewrite-coverage-2026-11` (PR #10); r
 - WP-3 = P1-03 darray — spec S-005 — branch `p1/darray` — C-blocked: layout vs C header, OBS_ENABLE_RUST. Done spec-side 2026-11-11 (see L6).
 - WP-4 = P1-10 crc32/blake2 — known-answer tests — branch `p1/crc-hash` — C-blocked: none beyond usage scan (deps are frontend-only per phase file). Done spec-side 2026-11-11 (see L7).
 - WP-5 = P1-15/P1-16 vec + matrix4 — spec S-008 — branch `p1/vec-matrix` — C-blocked: 10k goldens vs C, size/align vs C headers, benchmark.
-- WP-6+ = dstr (S-006), calldata (S-002), decl (S-003), signal (S-004), math-rest (S-009), config-file (S-007), obs-data (S-014) — branches `p1/<name>` as capacity allows. WP-6 = P1-02 dstr done spec-side 2026-11-11 (see L9). WP-7 = P1-06 calldata done spec-side 2026-11-11 (see L10). WP-8 = P1-07 decl done spec-side 2026-11-11 (see L11). WP-9 = P1-22 signal (S-004) done spec-side 2026-11-11 (see L13). WP-10 = P1-15/16/17/18 math-rest (S-009) done spec-side 2026-11-11 (see L14). WP-11 = P1-09 config-file (S-007) done spec-side 2026-11-11 (see L15). Next: obs-data (S-014).
+- WP-6+ = dstr (S-006), calldata (S-002), decl (S-003), signal (S-004), math-rest (S-009), config-file (S-007), obs-data (S-014) — branches `p1/<name>` as capacity allows. WP-6 = P1-02 dstr done spec-side 2026-11-11 (see L9). WP-7 = P1-06 calldata done spec-side 2026-11-11 (see L10). WP-8 = P1-07 decl done spec-side 2026-11-11 (see L11). WP-9 = P1-22 signal (S-004) done spec-side 2026-11-11 (see L13). WP-10 = P1-15/16/17/18 math-rest (S-009) done spec-side 2026-11-11 (see L14). WP-11 = P1-09 config-file (S-007) done spec-side 2026-11-11 (see L15). WP-12 = P1-24/P1-25 obs-data (S-014) done spec-side 2026-11-12 (see L16). Next: obs-properties (S-015, P1-27).
 - C-tail WPs = P1-29/30/31/32 — blocked on C checkout + two-week nightly soak.
 
 **L11 (WP-8, 2026-11-11) — P1-07 decl (S-003) — branch `p1/decl` (off `p1/calldata`), PR #19.**
@@ -93,6 +93,45 @@ failed, clippy 0, deny ok. New dep per ADR 0005 log: `parking_lot` 0.13.x
 `docs/tests/signal.md` (23 rows). NOT ticked: P1-22.3 loom check,
 P1-22.4 recipe (C checkout), P1-23 typed API (own substep). Review status:
 see PR body.
+
+**L16 (WP-12, 2026-11-12) — P1-24/P1-25 obs-data (S-014) — branch `p1/obs-data` (off `p1/config-file`), PR #24.**
+Four commits: `a85a3a0` §6 JSON engine (jansson 2.15.1 reader +
+writer, hand-rolled; `serde_json` rejected — it accepts duplicate
+keys, `1e400`, unbounded depth and `\u0000`), `53f844e` model
+(`ObsData`/`ObsDataArray`/`ObsDataItem` on `Rc<RefCell<…>>`:
+clone=addref/drop=release, three value layers, byte-exact names and
+strings, present-NULL obj/arr values R26, D1 refcount fix, D3
+type-change releases mismatching layers, D4 handles survive growth
+by construction, §6.1 size model with Q1 item-moves-to-end, item
+handles R40–R43 incl. the detached walk, arrays R50–R53, `apply`
+R32 + `get_defaults` R33), `8ffdbe5` typed API (3-layer
+set/get ×7 kinds, zero values R20, R22/D5 number conversion,
+has/unset R24/R30, erase/clear R31, vec/quat R60/R61 — the C vec3
+has no `w` —, frames-per-second R65/R66 with clamp-to-`[0,
+4294967295]` stored even on a false result, item forms R13),
+`99199cf` JSON entry points + file helpers (get_json family R80–R83
+with Q4 `last_json`, `create_from_json` with Q2/Q3, files R70–R72
+on S-023 R57/R58/R60 + WP-11 `os_safe_replace`, Q6 backup
+consumed even for a merely-missing primary). Findings: (1) the
+runner's C reference (`obsdata_runner.c` + `libobs/obs-data.c` +
+system jansson) needs the C checkout — P1-24.2/.3, P1-25.5/.6 stay
+unticked (S2); (2) `obs-math` `Vec3` has a `w` lane the C `vec3`
+does not — `get_vec3` never touches `out.w` (pinned); (3) a number
+shell writes as DOUBLE `0.0` (R82/§6.2), a shell item in
+`get_defaults` creates no member (R33); (4) invalid UTF-8 through
+the safe API renders lossily (a `String` cannot carry raw bytes —
+documented deviation, the FFI layer handles bytes); the C log lines
+(LOG_ERROR on parse failure, LOG_WARNING on backup use) are not
+wired yet (no logger in the crate). Tick policy: P1-24.1 (decision +
+differences note), P1-25.1/.2/.3/.4 ticked (Rust artifacts complete,
+tests from spec + existing behaviour); **not** ticked: P1-24.2
+formatting diff vs C, P1-24.3 corpus round trip, P1-25.5 reference
+dump on the corpus, P1-25.6 apply recipe (CMake exclusion,
+obs-ffi shim, header diff) — all C checkout (S2). Evidence:
+`cargo test -p obs-data --lib` 60/60, **Miri 57 + 3 fs ignored**,
+workspace 22 targets ok, clippy 0, fmt ok, deny ok (reuses
+`obs-util`, no new deps). Matrix: `docs/tests/obs-data.md`
+(66 rows). Review status: see PR body.
 
 **L15 (WP-11, 2026-11-11) — P1-09 config-file (S-007) — branch `p1/config-file` (off `p1/math-rest`).**
 Four commits: `bc9f94b` platform helpers (S-023 R40/R41: `os_dtostr` D-2-fixed,
