@@ -129,6 +129,10 @@ name = "obs-graphics"
 version = "0.1.0"
 
 [[package]]
+name = "obs-hotkey-names"
+version = "0.1.0"
+
+[[package]]
 name = "obs-math"
 version = "0.1.0"
 
