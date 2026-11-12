@@ -17,7 +17,7 @@ Stack: branches off the Phase 0 head `docs/rewrite-coverage-2026-11` (PR #10); r
 - WP-3 = P1-03 darray — spec S-005 — branch `p1/darray` — C-blocked: layout vs C header, OBS_ENABLE_RUST. Done spec-side 2026-11-11 (see L6).
 - WP-4 = P1-10 crc32/blake2 — known-answer tests — branch `p1/crc-hash` — C-blocked: none beyond usage scan (deps are frontend-only per phase file). Done spec-side 2026-11-11 (see L7).
 - WP-5 = P1-15/P1-16 vec + matrix4 — spec S-008 — branch `p1/vec-matrix` — C-blocked: 10k goldens vs C, size/align vs C headers, benchmark.
-- WP-6+ = dstr (S-006), calldata (S-002), decl (S-003), signal (S-004), math-rest (S-009), config-file (S-007), obs-data (S-014) — branches `p1/<name>` as capacity allows. WP-6 = P1-02 dstr done spec-side 2026-11-11 (see L9). WP-7 = P1-06 calldata done spec-side 2026-11-11 (see L10). WP-8 = P1-07 decl done spec-side 2026-11-11 (see L11). WP-9 = P1-22 signal (S-004) done spec-side 2026-11-11 (see L13). WP-10 = P1-15/16/17/18 math-rest (S-009) done spec-side 2026-11-11 (see L14). WP-11 = P1-09 config-file (S-007) done spec-side 2026-11-11 (see L15). WP-12 = P1-24/P1-25 obs-data (S-014) done spec-side 2026-11-12 (see L16). Next: obs-properties (S-015, P1-27).
+- WP-6+ = dstr (S-006), calldata (S-002), decl (S-003), signal (S-004), math-rest (S-009), config-file (S-007), obs-data (S-014) — branches `p1/<name>` as capacity allows. WP-6 = P1-02 dstr done spec-side 2026-11-11 (see L9). WP-7 = P1-06 calldata done spec-side 2026-11-11 (see L10). WP-8 = P1-07 decl done spec-side 2026-11-11 (see L11). WP-9 = P1-22 signal (S-004) done spec-side 2026-11-11 (see L13). WP-10 = P1-15/16/17/18 math-rest (S-009) done spec-side 2026-11-11 (see L14). WP-11 = P1-09 config-file (S-007) done spec-side 2026-11-11 (see L15). WP-12 = P1-24/P1-25 obs-data (S-014) done spec-side 2026-11-12 (see L16). WP-13 = P1-27 obs-properties (S-015) done spec-side 2026-11-12 (see L17). Next: obs-hotkeys (S-034, P1-28).
 - C-tail WPs = P1-29/30/31/32 — blocked on C checkout + two-week nightly soak.
 
 **L11 (WP-8, 2026-11-11) — P1-07 decl (S-003) — branch `p1/decl` (off `p1/calldata`), PR #19.**
@@ -93,6 +93,49 @@ failed, clippy 0, deny ok. New dep per ADR 0005 log: `parking_lot` 0.13.x
 `docs/tests/signal.md` (23 rows). NOT ticked: P1-22.3 loom check,
 P1-22.4 recipe (C checkout), P1-23 typed API (own substep). Review status:
 see PR body.
+
+**L17 (WP-13, 2026-11-12) — P1-27 obs-properties (S-015) — branch `p1/properties` (off `p1/obs-data`), PR #25.**
+Three commits: `0422899` enums + model (ABI enums with `Unknown`
+catch-all for out-of-range values; the property tree as
+`Rc<RefCell<…>>` with `Weak` parent/owner links — no reference
+cycles; container/property handles as `Rc`-cloning wrappers so
+handles stay valid across removals (D4); R05/R06 param + destroy
+order, R07 first/next, R08 get/parent, R09 duplicate rejection
+(direct children only, Q-1), R10/R11 group add with self/
+descendant/already-grouped rejection and the silent-NULL cycle
+case (Q-2), `group_content`, `SettingsHandle` as the opaque
+obs_data identity token via `From<&ObsData>` — the crate never
+reads the data), `1ca6d3f` simple kinds + list + frame rate +
+callbacks (R12–R26: bool/int/float/text/path/button/button2 with
+description/long (empty == NULL, R15), visible/enabled (R17),
+int/float limits + suffix, text defaults, path filters stored for
+FILE/FILE_SAVE only (Q-1), url type (R18); R27–R33 list:
+editable-combo refusal (R09 first), silent no-op returning 0 on
+wrong format (Q-3), `idx > count` insert ignored (D-5), item
+access per format, disable, clear; R36–R40 frame rate: options +
+ranges, no validation (zero denominators stored), `(usize)-1` on
+wrong kind; R16–R19 callbacks: the single priv slot shared by
+button2 and modified2 (Q-4), v1 wins over v2 (Q-5), `modified` /
+`button_clicked` get the TOP-most container, `apply_settings`
+gets the applied container, reverse of the depth-first pre-gather
+(Q-8), a property removed during the run is skipped (D-6),
+callbacks taken out before the call so they may mutate (S-015
+§9)). Findings: (1) the 25 conformance scripts are mirrored in
+the test modules (v01–v25 names); the runner itself needs the C
+checkout — P1-27.5/.6 stay unticked (S2); (2) the two logged
+messages of R09/R27 are not emitted yet (no logger in the crate —
+platform crate, S-023); the rejections are pinned; (3) Miri leak
+check: test tokens moved from `Box::leak` to string-literal
+addresses (binary, never freed — Miri-clean, pointer equality in
+assertions); (4) the callback tests share recording statics and
+run under a test lock (parallel test functions corrupted each
+other). Tick policy: P1-27.1/.2/.3/.4 ticked; **not** ticked:
+P1-27.5 (ABI test, extends the P0-15 plugin), P1-27.6 (apply
+recipe, CMake + obs-ffi shim) — C checkout (S2). Evidence:
+`cargo test -p obs-properties --lib` 28/28, **Miri 28/28**,
+clippy 0, fmt ok, deny ok (depends on `obs-data` only, no new
+external deps). Matrix: `docs/tests/obs-properties.md`. Review
+status: see PR body.
 
 **L16 (WP-12, 2026-11-12) — P1-24/P1-25 obs-data (S-014) — branch `p1/obs-data` (off `p1/config-file`), PR #24.**
 Four commits: `a85a3a0` §6 JSON engine (jansson 2.15.1 reader +
