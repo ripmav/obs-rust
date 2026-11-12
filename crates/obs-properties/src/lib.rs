@@ -19,13 +19,24 @@
 //! anything; callbacks run synchronously on the calling thread and may
 //! call back into the same container.
 
+pub mod api;
+pub mod callback;
 pub mod enums;
+pub mod list;
 pub mod model;
 
+pub use api::*;
 pub use enums::*;
+pub use list::*;
 pub use model::{
     ClickedCb, DestroyCb, Modified2Cb, ModifiedCb, ObsProperties, ObsProperty, SettingsHandle,
-    group_content, group_type, properties_create, properties_create_param, properties_first,
-    properties_get, properties_get_flags, properties_get_param, properties_get_parent,
-    properties_remove_by_name, properties_set_flags, properties_set_param,
+    group_content, group_type, properties_add_group, properties_create, properties_create_param,
+    properties_first, properties_get, properties_get_flags, properties_get_param,
+    properties_get_parent, properties_remove_by_name, properties_set_flags, properties_set_param,
+    property_next,
+};
+
+pub use callback::{
+    properties_apply_settings, property_button_clicked, property_modified,
+    property_set_modified_callback, property_set_modified_callback2,
 };
