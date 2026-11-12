@@ -42,13 +42,14 @@ jobs:
       - uses: taiki-e/install-action@v2
         with:
           tool: nextest
+          version: 0.9.151
       - name: nextest
         run: cargo nextest run --workspace --profile ci
       - name: upload test report
         uses: actions/upload-artifact@v4
         with:
           name: nextest-junit-${{ matrix.os }}
-          path: junit.xml
+          path: target/nextest/ci/junit.xml
 
   supply-chain:
     name: supply chain (deny + audit + miri)
@@ -70,7 +71,9 @@ jobs:
       - name: miri
         run: |
           rustup toolchain install nightly --profile minimal --component miri
-          cargo +nightly miri test -p obs-util -p obs-math -p obs-data -p obs-signal
+          # --lib: unit tests only. Subprocess re-exec tests (bmem_fatal) are
+          # incompatible with Miri isolation and already run in the test job.
+          cargo +nightly miri test -p obs-util -p obs-math -p obs-data -p obs-signal --lib
 
   coverage:
     name: coverage (llvm-cov)
