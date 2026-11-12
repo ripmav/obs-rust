@@ -8,7 +8,7 @@ You cannot replace what you have not run. Do this once.
 
 1. Presets are in `CMakePresets.json` (`ubuntu`, `ubuntu-ci`, `macos`, `macos-ci`, `windows-x64`, `windows-arm64`, `*-ci-*`, plus a `dependencies` preset). Linux: `cmake --preset ubuntu` then `cmake --build --preset ubuntu` (read `cmake/common/buildspec_common.cmake` for how prebuilt dependencies are fetched).
 2. Unit tests are gated by `ENABLE_UNIT_TESTS` (see `test/CMakeLists.txt`; it adds `test/cmocka`, needs the `cmocka` package). `BUILD_TESTS` builds `test/test-input`, a plugin used by tests. Run with `ctest --test-dir build_<preset>`.
-3. Git submodules: `plugins/obs-websocket`, `plugins/obs-browser`, `deps/libdshowcapture/src` are empty until `git submodule update --init`.
+3. Git submodules: `plugins/obs-websocket` (5.7.6), `plugins/obs-browser` (2.23.4) and `deps/libdshowcapture/src` (no-atl) are initialized in this checkout (a fresh clone still needs `git submodule update --init`); their source files are part of the coverage matrix.
 4. Run the app once, make a scene with a Colour Source and a Text source, record 10 seconds. Open `~/.config/obs-studio/logs/` (Linux) and read the log start-up sequence: it prints every module loaded, the graphics adapter, the video/audio settings. Expect the same lines from the Rust build.
 
 ## 2. Repository map (what lives where)
@@ -21,8 +21,8 @@ You cannot replace what you have not run. Do this once.
 | `libobs/graphics` (+ `libobs/data/*.effect`) | `gs_*` API, effect and shader parsers | Phase 3 |
 | `libobs-opengl`, `libobs-d3d11`, `libobs-metal` (Swift), `libobs-winrt` | graphics backends loaded as shared modules | Phase 3 |
 | `libobs/obs-*.c` | sources, scenes, outputs, encoders, services, hotkeys, modules, canvases | Phase 4 |
-| `plugins/*` | ~40 modules (some submodules) | Phase 5 |
-| `frontend/` | Qt6 application (≈89k lines, 34 `.ui` forms, 77 locales) | Phase 6 |
+| `plugins/*` | 41 modules (5 with their own Qt UI: `aja-output-ui`, `decklink-captions`, `decklink-output-ui`, `frontend-tools`, `obs-vst`; some are submodules) | Phase 5 |
+| `frontend/` | Qt6 application (≈88k C++ lines, 36 `.ui` forms, 77 locales) | Phase 6 |
 | `shared/` | helpers used by several components (`obs-scripting`, `media-playback`, `properties-view`, …) | Phases 5–7 |
 | `deps/` | `blake2`, `glad`, `json11`, `libcaption`, `libdshowcapture`, `w32-pthreads` | Phases 1, 2, 7 |
 | `test/` | cmocka tests + `test-input` plugin | extended in Phase 0 |
@@ -102,7 +102,7 @@ Names must match the C header exactly. Keep the symbol list diff (P1-29, P4-34) 
 6. **Clean-room work** uses the specs in `docs/rust-rewrite/specs/` and the conformance suite in `test/conformance/` (see `docs/rust-rewrite/clean-room/PROCESS.md`).
 7. Add a test-matrix file in `docs/tests/` for every test file (project rule); name it after the issue number when there is one (`I-<n>-<name>.md`).
 
-## 7. Project rules every PR must follow (from CLAUDE.md)
+## 7. Project rules every PR must follow (from the project guidelines, `AGENTS.md`)
 
 - Never work on `master`. Branch name `<type>/<issue>-<short-description>` (`feat`, `fix`, `refactor`, `docs`, `test`, `ci`, `perf`, `build`, `chore`).
 - Stack PRs; start a stack with `docs:` PRs (ADRs, specs).

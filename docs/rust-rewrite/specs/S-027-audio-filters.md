@@ -341,3 +341,26 @@ filters in practice; the reference does not lock). A Rust implementation must wr
 - Whether to preserve D-2/D-3 exactly in a Rust port is moot (the required behaviour is the safe one).
 - Noise suppress with Speex/RNNoise compiled out (flags `LIBSPEEXDSP_ENABLED`, `LIBRNNOISE_ENABLED`) changes defaults and properties (§3.2/§3.3) and turns `process_*` into no-ops; only the "both enabled" build is covered by vectors.
 - NVIDIA AFX variants (`LIBNVAFX_ENABLED`) of the noise suppress source are not part of this spec.
+## 12. Round 9: audio-side boundary of the RNNoise backend (added)
+
+This round's obs-filters action brings **no new audio filter `.c` files**: the nine audio filters of
+`plugins/obs-filters` (gain, invert polarity, compressor, limiter, expander, noise gate, async delay, EQ,
+noise suppress) are the files cited in §1 and are fully pinned by R01–R99. The only audio-facing files of
+the action are the vendored RNNoise sources consumed by the noise suppress filter (R90–R98); their contract
+level is pinned in S-054 §11 (Round 9) and their tolerances in S-054 §5. What remains S-027-side is the
+call boundary below.
+
+### Reference files (all cited)
+
+- `plugins/obs-filters/rnnoise/src/denoise.c`, `plugins/obs-filters/rnnoise/src/kiss_fft.c`, `plugins/obs-filters/rnnoise/src/pitch.c`, `plugins/obs-filters/rnnoise/src/celt_lpc.c`, `plugins/obs-filters/rnnoise/src/rnn.c`, `plugins/obs-filters/rnnoise/src/pitch.h`, `plugins/obs-filters/rnnoise/src/arch.h`, `plugins/obs-filters/rnnoise/src/rnn_reader.c`
+
+- **S-027-R100 [SRC]** Call boundary: the noise suppress filter uses exactly three library entry points —
+  `rnnoise_create(NULL)` (one state per channel, R91), `rnnoise_process_frame(state, seg, seg)` (in place,
+  480 samples, int16-unit scaling, R96) and `rnnoise_destroy` (R98). The returned VAD probability is
+  **discarded** in every call: it is not logged, stored, or fed back into the output. No other function of
+  `denoise.c` is reachable from the plugin.
+- **S-027-R101** What the library computes (480-sample framing, 22 log bands, RNN/GRU pipeline, pitch
+  estimation, the first-frame fade-in) is S-054 §11 R45–R54; per-channel independence and the observed
+  behaviour are S-054 R10–R13/R42. S-027's rules are independent of the library internals: a substitute
+  denoiser is conforming iff it meets S-054 §5 (and keeps R90–R98's queueing, scaling and reset rules).
+

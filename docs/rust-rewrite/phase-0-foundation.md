@@ -12,9 +12,9 @@ Start the PR stack with the `docs:` tasks (P0-01 to P0-06).
   - Done when: reviewed by two maintainers; alternatives (big-bang, new-repo) are listed with reasons for rejection.
 - [ ] **P0-02 ADR: plugin ABI policy** (S)
   - Source: `libobs/obs-module.h`, `obs-source.h`, `obs-output.h`, `obs-encoder.h`, `obs-service.h`.
-  - Do: define that the C ABI is frozen until Phase 7, how versions are bumped (`LIBOBS_API_VER`), and how a native Rust plugin API coexists.
+  - Do: define the C ABI compatibility policy — **best-effort** per D-02 (not a frozen hard requirement: compatibility is actively maintained, breakage allowed only with a deprecation path per D-05), how versions are bumped (`LIBOBS_API_VER`), and how a native Rust plugin API coexists.
   - Deliverables: `docs/adr/0002-plugin-abi.md`.
-  - Done when: lists every header that is part of the frozen ABI.
+  - Done when: lists every header in the compat-tracked ABI and the ADR/deprecation rules for changes.
 - [ ] **P0-03 ADR: graphics backend** (M)
   - Do: prototype a textured quad plus a custom effect in `wgpu` on Linux, Windows and macOS; measure frame time; test DMA-BUF, DXGI shared handle and IOSurface import.
   - Deliverables: `docs/adr/0003-graphics.md` with measurements and a go/no-go.
@@ -26,6 +26,7 @@ Start the PR stack with the `docs:` tasks (P0-01 to P0-06).
 - [ ] **P0-05 ADR: unsafe, MSRV, dependency policy** (S)
   - Do: define `unsafe` rules (FFI and platform boundaries only, `// SAFETY:` required), MSRV (latest stable), licence allow-list (GPLv2+ compatible), and "stdlib first" for deps.
   - Deliverables: `docs/adr/0005-code-policy.md`.
+  - Done when: ADR 0005 merged with all five rules and the dependency checklist (P0-05.3).
 - [ ] **P0-06 ADR: concurrency model** (S)
   - Source: `libobs/obs-video.c`, `obs-audio.c`, `media-io/video-io.c`, `audio-io.c`.
   - Do: document the current thread layout (graphics thread, audio thread, encoder threads, output threads) and the target one (real-time threads, lock-free queues, tokio only for network).
@@ -46,11 +47,13 @@ Start the PR stack with the `docs:` tasks (P0-01 to P0-06).
   - Done when: required checks block merging.
 - [ ] **P0-10 `cargo-deny` and licence policy** (S)
   - Deliverables: `deny.toml` with licence allow-list and banned crates.
+  - Done when: `cargo deny check` passes on the workspace and is wired into CI (P0-09.3).
 - [ ] **P0-11 `.gitattributes`** (S)
   - Do: add `*.text -text` and `*.golden -text` so Windows tests do not break on line endings; review other text fixtures.
   - Done when: Windows CI passes golden tests unchanged.
 - [ ] **P0-12 Dev container / build docs** (S)
   - Do: document `cargo`, `cmake`, FFmpeg and Qt prerequisites in `INSTALL` and `docs/rust-rewrite/BUILDING.md`.
+  - Done when: a clean environment builds the repo following only the doc.
 
 ## C. Safety net
 
@@ -58,12 +61,12 @@ Start the PR stack with the `docs:` tasks (P0-01 to P0-06).
   - Do: a `obs-golden` crate: reads/writes `*.golden`, `UPDATE_GOLDEN=1` regenerates, shows readable diffs.
   - Done when: used by one demo test.
 - [ ] **P0-14 C reference dumper** (L)
-  - Source: `libobs/util`, `libobs/graphics/*math*`, `libobs/obs-data.c`, `libobs/callback`, `libobs/media-io`.
+  - Source: `libobs/graphics/{vec3,vec4,matrix3,matrix4,quat,axisang,plane,bounds,math-extra}.c` (1,448) + their headers, `libobs/obs-data.c` (2,181), `libobs/callback/{calldata,decl,proc,signal}.c` (988), `libobs/media-io/format-conversion.c` (288), `libobs/obs-audio.c` (721, `mix_audio`).
   - Do: a C test executable `obs-ref-dump` that runs fixed inputs through the C implementation and prints canonical output (math, `obs_data` JSON round trips, calldata, audio mixing, pixel conversion).
   - Deliverables: `test/golden/*.golden` produced from the C code.
   - Done when: re-running produces byte-identical files (deterministic).
 - [ ] **P0-15 ABI conformance test plugin** (M)
-  - Source: `test/` (existing test dir), `libobs/obs-module.h`.
+  - Source: `test/test-input/` (11 files, 1013 lines: `test-input.c`, `test-filter.c`, `test-random.c`, `test-sinewave.c`, `sync-*.c`, 2 `.effect`), `libobs/obs-module.h` (201).
   - Do: a small C plugin registering a source, filter, encoder, output and service; loaded by a test host, checks lifecycle callbacks (create, update, video_tick, video_render, destroy).
   - Done when: passes against the current `libobs` and is wired into CI.
 - [ ] **P0-16 Headless smoke test** (M)
@@ -79,8 +82,8 @@ Start the PR stack with the `docs:` tasks (P0-01 to P0-06).
 
 ## D. Tracking
 
-- [ ] **P0-19 Issue templates and labels** (S): `rust-rewrite`, `phase-N`, `abi`, `perf`.
-- [ ] **P0-20 Test matrices** (S): create `docs/tests/` and the first matrix files for the golden framework and the ABI test.
-- [ ] **P0-21 Phase 0 review** (S): demo the safety net, confirm exit criteria, tick this file.
+- [ ] **P0-19 Issue templates and labels** (S): `rust-rewrite`, `phase-N`, `abi`, `perf`. Done when: labels exist and the template creates a valid issue.
+- [ ] **P0-20 Test matrices** (S): create `docs/tests/` and the first matrix files for the golden framework and the ABI test. Done when: both matrix files exist and the CI check (P0-20.4) passes.
+- [ ] **P0-21 Phase 0 review** (S): demo the safety net, confirm exit criteria, tick this file. Done when: exit-criteria checklist ticked and the review PR merged.
 
 Exit criteria: ADRs 1-6 merged, CI green on 3 OSes with Rust jobs, golden files generated from C, ABI plugin test passing, benchmark baseline stored.

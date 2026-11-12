@@ -27,6 +27,10 @@ only_area="${2:-}"
 root="$(cd "$here/../.." && pwd)"
 cc="${CC:-cc}"
 cflags=(-std=gnu11 -O0 -g -Wall -Wno-unused-function -I"$libobs" -I"$here/gen")
+# Extra includes for system dependencies that OBS 33.0.1 expects installed
+# (e.g. simde, `CONFORMANCE_EXTRA_CFLAGS="-I/path/to/simde-repo"`).
+# shellcheck disable=SC2206
+cflags+=(${CONFORMANCE_EXTRA_CFLAGS:-})
 
 # Shared sources every runner needs (allocator, logging, threading, text helpers).
 common=("$here/gen/stubs.c" "$libobs/util/bmem.c" "$libobs/util/base.c" "$libobs/util/threading-posix.c"
@@ -44,27 +48,36 @@ declare -A runner_sources=(
 	[dstr]="$here/gen/dstr_runner.c"
 	[math]="$here/gen/math_runner.c $libobs/graphics/vec3.c $libobs/graphics/vec4.c $libobs/graphics/quat.c $libobs/graphics/matrix4.c $libobs/graphics/matrix3.c $libobs/graphics/axisang.c $libobs/graphics/plane.c $libobs/graphics/math-extra.c"
 	[config]="$here/gen/config_runner.c $libobs/util/config-file.c ${lexer[*]}"
+	# threading-posix.c comes from the common sources.
+	[threading]="$here/gen/threading_runner.c"
 )
 
 declare -A extra_flags=()
+declare -A extra_libs=()
 declare -A no_common=()
 for f in "$here"/gen/*.sources; do
 	[ -e "$f" ] || continue
 	a="$(basename "$f" .sources)"
 	srcs=""
 	flags=""
+	libs=""
 	while IFS= read -r line; do
 		line="${line%%#*}"
 		line="$(echo "$line" | xargs)"
 		[ -n "$line" ] || continue
 		case "$line" in
 		'!nostubs') no_common[$a]=1 ;;
+		# -l flags are emitted after the objects: linkers that default to
+		# --as-needed (e.g. Ubuntu) drop a shared lib listed before the
+		# objects that need its symbols.
+		-l*) libs="$libs $line" ;;
 		-*) flags="$flags $line" ;;
 		*) srcs="$srcs $root/$line" ;;
 		esac
 	done <"$f"
 	runner_sources[$a]="$srcs"
 	extra_flags[$a]="$flags"
+	extra_libs[$a]="$libs"
 done
 
 export CONFORMANCE_TMPDIR="$build"
@@ -75,7 +88,7 @@ for area in "${!runner_sources[@]}"; do
 	commons=("${common[@]}")
 	[ -z "${no_common[$area]:-}" ] || commons=()
 	# shellcheck disable=SC2086
-	"$cc" "${cflags[@]}" ${extra_flags[$area]:-} -o "$build/$area-runner" ${runner_sources[$area]} "${commons[@]}" -lpthread -lm
+	"$cc" "${cflags[@]}" ${extra_flags[$area]:-} -o "$build/$area-runner" ${runner_sources[$area]} "${commons[@]}" ${extra_libs[$area]:-} -lpthread -lm
 	mkdir -p "$here/vectors/$area"
 	for script in "$here/scripts/$area"/*.script; do
 		name="$(basename "$script" .script)"

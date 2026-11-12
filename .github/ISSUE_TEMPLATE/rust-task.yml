@@ -1,0 +1,58 @@
+name: "Rust rewrite task"
+description: "Track one P<phase>-<nn> task from docs/rust-rewrite/"
+title: "P#-## "
+labels: ["rust-rewrite"]
+body:
+  - type: input
+    id: task
+    attributes:
+      label: Task ID
+      description: "Stable ID from the phase file, e.g. P1-07"
+      placeholder: "P#-##"
+    required: true
+  - type: dropdown
+    id: phase
+    attributes:
+      label: Phase
+      options:
+        - "0 — Foundation"
+        - "1 — Leaf libraries"
+        - "2 — Media pipeline"
+        - "3 — Graphics"
+        - "4 — Core object model"
+        - "5 — Plugins"
+        - "6 — Frontend"
+        - "7 — Retire C/C++"
+    required: true
+  - type: dropdown
+    id: size
+    attributes:
+      label: Size
+      description: "S (<=2 days), M (<=1 week), L (<=3 weeks), XL (split further before starting)"
+      options: ["S", "M", "L", "XL"]
+    required: true
+  - type: textarea
+    id: files
+    attributes:
+      label: C files / work
+      description: "Which C files it replaces and what the work is"
+    required: true
+  - type: textarea
+    id: done-when
+    attributes:
+      label: Done when (acceptance)
+      description: "The verifiable result, quoted from the task file"
+    required: true
+  - type: input
+    id: spec
+    attributes:
+      label: Spec
+      description: "S-xxx if a clean-room spec applies (docs/rust-rewrite/specs/)"
+  - type: textarea
+    id: deps
+    attributes:
+      label: Dependencies
+      description: "Tasks, specs, or decisions this waits on"
+  - type: markdown
+    attributes:
+      value: "Rules (docs/rust-rewrite/README.md): one task is one PR; branch `<prefix>/<issue>-<short-description>`; work starts with the failing test; public-header changes need an ADR (ADR 0002); every test file gets a matrix in `docs/tests/`; tick the checkbox in the phase/subtask file in the same PR; commit footer `Assisted-by: [Model] ([Effort]) via [Tool]`."

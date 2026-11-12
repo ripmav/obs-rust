@@ -10,7 +10,7 @@ Read [00-developer-primer.md](00-developer-primer.md) first. Tasks: [../phase-6-
 |---|---|
 | `obs-main.cpp` (`main` at line 882, `run_program` at 487) | argument parsing (22 flags), log file, single-instance check, crash handler, creates `OBSApp program(argc, argv, nameStore)` and calls `program.OBSInit()` then `program.exec()` |
 | `OBSApp.cpp/.hpp`, `OBSApp_Themes.cpp` | `class OBSApp : public QApplication`: config (`global.ini`), locale, theme, `StartupOBS()` (libobs init), creates `OBSBasic` |
-| `widgets/OBSBasic*.cpp` and related files (≈21.7k lines in the `.cpp` files) | the main window, split by feature: `_Docks`, `_Hotkeys`, `_Preview`, `_Profiles`, `_SceneCollections`, `_Scenes`, `_SceneItems`, `_Streaming`, `_Recording`, `_ReplayBuffer`, `_StudioMode`, `_Transitions`, `_VirtualCam`, `_SysTray`, `_Updater`, `_YouTube`, `_OutputHandler`, … |
+| `widgets/OBSBasic*.cpp` and related files (≈20K lines in the 33 `.cpp` files) | the main window, split by feature: `_Docks`, `_Hotkeys`, `_Preview`, `_Profiles`, `_SceneCollections`, `_Scenes`, `_SceneItems`, `_Streaming`, `_Recording`, `_ReplayBuffer`, `_StudioMode`, `_Transitions`, `_VirtualCam`, `_SysTray`, `_Updater`, `_YouTube`, `_OutputHandler`, … |
 | `components/` | 43 `.cpp` files of reusable widgets: source tree, scene tree, volume meter/control/slider, toolbars, alignment selector, flow layout, multiview, media controls |
 | `dialogs/` | 20 `.cpp` files: filters, properties, source select, transform, interaction, advanced audio, log viewer, remux, missing files, about, what's new, YouTube actions, extra browsers, permissions, VCam config, update |
 | `docks/` | `OBSDock`, `BrowserDock`, `YouTubeAppDock`, `YouTubeChatDock` |
@@ -22,7 +22,7 @@ Read [00-developer-primer.md](00-developer-primer.md) first. Tasks: [../phase-6-
 | `updater/` | Windows updater executable (manifest, hashing, patching) |
 | `utility/` | output handlers (`SimpleOutput`, `AdvancedOutput`, `BasicOutputHandler`), multitrack video (`MultitrackVideoOutput`, `GoLiveAPI_*`), FFmpeg format/codec tables, platform helpers per OS, crash handlers, theme types, remux worker, thumbnails |
 | `api/` | `obs-frontend-api` (99 exported functions, 44 `OBS_FRONTEND_EVENT_*`) implemented by `OBSStudioAPI.cpp` over the abstract `obs_frontend_callbacks` (`api/obs-frontend-internal.hpp`) |
-| `forms/` | 34 Qt Designer `.ui` files |
+| `forms/` | 36 Qt Designer `.ui` files (29 top-level, 7 in `source-toolbar/`; `AutoConfigFinishPage.ui` is an orphan, build-list only) |
 | `data/` | `locale/` (77 `.ini` files), `themes/` (`.obt` themes, `.ovt` variants), images, `striped_line.effect`, `OBSPublicRSAKey.pem`, `license/` |
 
 Startup (verified): `main` → `run_program` → `OBSApp::OBSInit()` (`OBSApp.cpp:1274`): sets the libobs Linux platform (`obs_set_nix_platform` EGL/X11 or Wayland, from `QApplication::platformName()`), calls `StartupOBS(locale, nameStore)` (libobs init), then `new OBSBasic()` and `mainWindow->OBSInit()` (modules load, profile and collection load, UI setup).
@@ -39,7 +39,7 @@ If P0-04 picks a non-Qt toolkit this strategy becomes "parallel app + feature pa
 
 ## Contracts you must keep
 
-- **Frontend API** (`obs-frontend-api.h`): third-party plugins and obs-websocket call it. The implementation object `obs_frontend_callbacks` is a C++ abstract class with ~99 virtual methods; the exported C functions delegate to it. Rust must export the same C functions; the 44 event ids (`OBS_FRONTEND_EVENT_*`) must fire in the same order and thread (UI thread) as today — table-test it.
+- **Frontend API** (`obs-frontend-api.h`): third-party plugins and obs-websocket call it. The implementation object `obs_frontend_callbacks` is a C++ abstract struct with 101 pure virtual methods; the 99 exported C functions delegate to it. Rust must export the same C functions; the 44 event ids (`OBS_FRONTEND_EVENT_*`) must fire in the same order and thread (UI thread) as today — table-test it.
 - **File formats**: `global.ini`, `user.ini`, `basic.ini` per profile, `service.json`, `streamEncoder.json`, `recordEncoder.json`, scene-collection JSON, `.bak` files, log and crash folders. Downgrade compatibility is a goal: keep keys and structure.
 - **Themes**: `.obt` / `.ovt` syntax (variables, `@define`, `calc`) from `OBSTheme.hpp` / `OBSThemeVariable.hpp`; third-party themes exist.
 - **Locale**: same `.ini` files, same keys; `Str("Key")` call sites are what translators depend on.
@@ -49,7 +49,7 @@ If P0-04 picks a non-Qt toolkit this strategy becomes "parallel app + feature pa
 ## Hard parts (budget extra time)
 
 1. **Preview widget** (`OBSBasicPreview.cpp`, `OBSQTDisplay.cpp`): a native child window that libobs renders into via `obs_display_create` with platform handles (X11 window id/Wayland surface/HWND/NSView). Hit-testing, snapping and transform handles are hundreds of lines of subtle geometry (modifier keys, rotation, crop, bounds types). Port after writing a behaviour table from the C++.
-2. **Properties view** (`shared/properties-view` + `widgets`): generates UI from `obs_properties_t` (15+ property kinds with callbacks that mutate other properties). Plugin authors rely on every detail.
+2. **Properties view** (`shared/properties-view` + `widgets`): generates UI from `obs_properties_t` (13 property kinds with callbacks that mutate other properties). Plugin authors rely on every detail.
 3. **Source tree / scene tree**: drag-and-drop reordering with groups, multi-select, in-place rename, accessibility.
 4. **Audio mixer meters**: custom painting with peak-hold, magnitude, clip indicators; pixel-compare against reference renders.
 5. **Auto-configuration wizard**: runs real test streams with a bandwidth test; hard to test without a mock ingest.
@@ -66,11 +66,18 @@ If P0-04 picks a non-Qt toolkit this strategy becomes "parallel app + feature pa
 
 ## Suggested order
 
-P6-04 (locale), P6-24/25/26 (collections, profiles, importers), P6-29/30/32 (OAuth, YouTube, updater logic) as libraries → P6-36 (frontend API) → P6-37 (scripting) → components and dialogs (P6-08…18) → settings (P6-19…23) → shell (P6-01…06) → packaging (P6-42…44) → parity checklist and beta (P6-45…48).
+P6-04 (locale), P6-24/25/26 (collections, profiles, importers), P6-29/30/32 (OAuth, YouTube, updater logic) as libraries → P6-36 (frontend API) → P6-37 (scripting) → components and dialogs (P6-07…18) → settings (P6-19…23) → shell (P6-01…06) → remaining dialogs and tools (P6-31, P6-33…35, P6-38…41) → packaging (P6-42…44) → components sweep (P6-49) → size/startup, e2e UI tests, parity checklist and beta (P6-45…48).
+
+## Running this phase's checks
+
+- **Conformance**: per cited area, write a small Rust runner for the script language and compare its stdout with `test/conformance/vectors/<area>/*.expected` per the comparison rules in `test/conformance/README.md` (CORE must match; QUIRK should; DEFECT must not crash). `run.sh check` verifies the C reference vectors.
+- **Phase-6 areas**: `frontendfmt` (S-048: CLI flags, INI defaults/migrations, names), `props` (S-015), `audiomix` (S-032), `transitions` (S-029), `hotkeys` (S-034), `mediaplayback` (S-036), `rtmpservices` (S-026), `scripting` + `luascript` (S-039/S-060), `pyscript` (25 vectors, spec pending per D-29).
+- **Parity checklist**: `docs/rust-rewrite/parity-checklist.md` (generated in P6-48.1 by walking the 36 `.ui` forms + settings pages) is the feature-parity acceptance; every item is verified and ticked in P6-48.2.
+- **UI bookend**: every `+UI` subtask needs (a) view-model unit test before the widget, (b) screenshot/accessibility-tree snapshot in light and dark themes, (c) keyboard-only operation, (d) strings from `frontend/data/locale/en-US.ini`.
 
 ## Verification checklist
 
-- [ ] Parity checklist generated from the 34 `.ui` forms and settings pages is 100% ticked.
+- [ ] Parity checklist generated from the 36 `.ui` forms and settings pages is 100% ticked.
 - [ ] Frontend API contract test passes with obs-websocket (submodule initialised) and a test plugin.
 - [ ] 30 UI journeys pass nightly on three OSes.
 - [ ] Startup time and binary size within 10% of the C++ build.

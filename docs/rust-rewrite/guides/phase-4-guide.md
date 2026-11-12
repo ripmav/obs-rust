@@ -19,7 +19,7 @@ locale, module_config_path, name_store
 video (obs_core_video), audio (obs_core_audio), data (obs_core_data), hotkeys (obs_core_hotkeys)
 destruction_task_thread, ui_task_handler, core_modules_loaded
 ```
-Start-up (`obs_startup` → `obs_init`, `obs.c:1326/1228`) calls `obs_init_data`, `obs_init_video`/`obs_init_graphics` (`obs.c:478`), `obs_init_audio`, hotkeys, locks. `obs_reset_video(ovi)` (`obs.c:1526`) creates the graphics context, default effects, the video mix and the graphics thread; it returns `OBS_VIDEO_*` error codes (`MODULE_NOT_FOUND`, `NOT_SUPPORTED`, `FAIL`, …). **Replicate the error codes**: the frontend shows different messages for each.
+Start-up (`obs_startup` → `obs_init`, `obs.c:1326/1228`) calls `obs_init_data` (`obs.c:969`), `obs_init_hotkeys` (`obs.c:1138`) and initialises the mutexes; double start-up logs and returns false. `obs_reset_video(ovi)` (`obs.c:1526`) then runs `obs_init_graphics` (`obs.c:478`) — graphics context, default effects, the video mix, graphics thread — and `obs_reset_audio` runs `obs_init_audio` (`obs.c:906`). `obs_reset_video` returns `OBS_VIDEO_*` error codes (`MODULE_NOT_FOUND`, `NOT_SUPPORTED`, `FAIL`, …). **Replicate the error codes**: the frontend shows different messages for each.
 
 `obs_core_video` owns a list of `obs_core_video_mix` (one per canvas: textures, stage surfaces, conversion textures), `mixes_mutex`, the `graphics` pointer, default effects, and the graphics thread. `obs_core_data` owns the intrusive linked lists of all sources/outputs/encoders/services and their mutexes (`audio_sources_mutex`, `sources_mutex`, …).
 
@@ -38,7 +38,7 @@ Reference counting: every object has a **control block** `obs_weak_*` that doubl
 
 ## Plugin-facing vtables
 
-`struct obs_source_info` has ~60 fields (`obs-source.h`): `id`, `type`, `output_flags`, `get_name`, `create`, `destroy`, `get_width/height`, `get_defaults`, `get_properties`, `update`, `activate/deactivate`, `show/hide`, `video_tick`, `video_render`, `filter_video`, `filter_audio`, `enum_active_sources`, `save/load`, `mouse_*`, `focus`, `key_click`, `filter_remove`, `type_data`, `free_type_data`, `audio_render`, `enum_all_sources`, `transition_start/stop`, `get_defaults2`, `get_properties2`, `audio_mix`, `icon_type`, `media_*` (10), `version`, `unversioned_id`, `missing_files`, `video_get_color_space`, `filter_add`, `get_dark_icon`, `get_light_icon`. Fields were **appended over time**; `obs_register_source_s(info, size)` (`obs-module.c:1035`) copies only `size` bytes, so old plugins have the later fields NULL. Your adapter must treat every callback as optional and never read past `size`. Same for encoder/output/service infos.
+`struct obs_source_info` has 54 fields (`obs-source.h`): `id`, `type`, `output_flags`, `get_name`, `create`, `destroy`, `get_width/height`, `get_defaults`, `get_properties`, `update`, `activate/deactivate`, `show/hide`, `video_tick`, `video_render`, `filter_video`, `filter_audio`, `enum_active_sources`, `save/load`, `mouse_*`, `focus`, `key_click`, `filter_remove`, `type_data`, `free_type_data`, `audio_render`, `enum_all_sources`, `transition_start/stop`, `get_defaults2`, `get_properties2`, `audio_mix`, `icon_type`, `media_*` (9), `version`, `unversioned_id`, `missing_files`, `video_get_color_space`, `filter_add`, `get_dark_icon`, `get_light_icon`. Fields were **appended over time**; `obs_register_source_s(info, size)` (`obs-module.c:1035`) copies only `size` bytes, so old plugins have the later fields NULL. Your adapter must treat every callback as optional and never read past `size`. Same for encoder/output/service infos.
 
 Calling conventions to preserve (read each callback's comments in the header):
 - `video_render(data, effect)` runs on the graphics thread inside `gs_enter_context`.
@@ -49,17 +49,17 @@ Calling conventions to preserve (read each callback's comments in the header):
 
 ## Module loading (verified)
 
-`obs_open_module(&module, path, data_path)` (`obs-module.c`): `os_dlopen`, `load_module_exports` (required: `obs_module_load`; optional ones set function pointers), rejects modules built against a newer libobs: `(mod.ver() & 0xFFFF0000) > LIBOBS_API_VER` (patch version ignored) → `MODULE_INCOMPATIBLE_VER`; builds `obs_module_t` (bin/data paths, name from file), loads a metadata file if present (`obs_module_load_metadata`), calls `mod.set_pointer(module)` (what `OBS_DECLARE_MODULE` defines). `obs_init_module(module)` sets the global `loadingModule` and calls `module->load()` — **`obs_register_*` calls made during load are attributed to that module via `loadingModule`**; do not break this (uninstalling/disabling modules relies on the per-module lists `sources/outputs/encoders/services`). Failures are reported via `struct obs_module_failure_info` and `obs_load_plugins`.
+`obs_open_module(&module, path, data_path)` (`obs-module.c`): `os_dlopen`, `load_module_exports` (required: `obs_module_load`, `obs_module_set_pointer`, `obs_module_ver`; the rest optional), rejects modules built against a newer libobs: `(mod.ver() & 0xFFFF0000) > LIBOBS_API_VER` (patch version ignored) → `MODULE_INCOMPATIBLE_VER`; builds `obs_module_t` (bin/data paths, name from file), loads a metadata file if present (`obs_module_load_metadata`), calls `mod.set_pointer(module)` (what `OBS_DECLARE_MODULE` defines). `obs_init_module(module)` sets the global `loadingModule` and calls `module->load()` — **`obs_register_*` calls made during load are attributed to that module via `loadingModule`**; do not break this (uninstalling/disabling modules relies on the per-module lists `sources/outputs/encoders/services`). Failures are reported via `struct obs_module_failure_info` and `obs_load_plugins`.
 
-Platform differences: `obs-core-modules-loader-{nix,win,mac}` implement the search of plugin directories (`obs-core-modules.c.in` generates the list of *static* built-in modules). There is a macOS-only hard-coded skip of a legacy obs-browser location — keep it.
+Platform differences: `obs-core-modules-loader-{nix.c,win.c,mac.m}` resolve the per-module bin/data paths (macOS reads the app bundle's PlugIns; the mac loader is Objective-C) and walk the *static* built-in module list that `obs-core-modules.c.in` generates.
 
 ## Hotkeys, platform
 
-`obs-hotkey.c` (34 KB): registrations return ids; bindings map to `obs_key_combination`; a dedicated hotkey thread processes platform events; `obs-nix-x11.c`, `obs-nix-wayland.c` (41 KB, uses `wayland-client` protocols), `obs-windows.c`, `obs-cocoa.m` (34 KB) translate platform keys and provide system information for the log. The frontend sets the platform before init (`obs_set_nix_platform`, `obs_set_nix_platform_display` in `OBSApp::OBSInit`); replicate those entry points.
+`obs-hotkey.c` (34 KB): registrations return ids; bindings map to `obs_key_combination`; a dedicated hotkey thread (`obs_hotkey_thread`) processes platform events; `obs-nix-x11.c` (xcb + XInput2), `obs-nix-wayland.c` (41 KB: `wl_keyboard` + xkbcommon keymaps; Rust: `wayland-client`), `obs-windows.c`, `obs-cocoa.m` (34 KB) translate platform keys and provide system information for the log (`log_system_info` in each file). The frontend sets the platform before init (`obs_set_nix_platform`, `obs_set_nix_platform_display` in `OBSApp::OBSInit`); replicate those entry points.
 
 ## Frontend hooks libobs already has
 
-`obs_task_handler_t ui_task_handler` (run a task on the UI thread; used by `obs_queue_task(OBS_TASK_UI, …)`); signals/procs on `obs->signals`; `obs_frontend_*` is a separate API owned by Phase 6 but **plugins call it through `obs-frontend-api`**, so Phase 4 tests with the C frontend must keep working.
+`obs_task_handler_t ui_task_handler` (run a task on the UI thread; used by `obs_queue_task(OBS_TASK_UI, …)`); signals/procs on `obs->signals`; `obs_frontend_*` is a separate API owned by Phase 6 (P6-36) but **plugins call it through `obs-frontend-api`**, so Phase 4 tests with the C frontend must keep working.
 
 ## Suggested order
 
@@ -81,6 +81,14 @@ Because libobs's graphics thread, audio callback and packet queues all depend on
 - **Strings returned to C** live as long as the owning object or until the next call on that object; document per function and keep storage in the object.
 - **Scenes need a canvas** (`requires_canvas`): a scene created without one is assigned `obs->data.main_canvas` with a warning. Mirror it.
 - **Order of signals** (`source_create` after `create` callback, etc.) is relied on by the frontend and obs-websocket. Table-test the order.
+
+## Running this phase's checks
+
+- Conformance: write a runner per area (script language and comparison rules: `test/conformance/README.md`), run it over `scripts/<area>/`, and compare stdout with `vectors/<area>/*.expected`. The C reference regenerates vectors via `./run.sh check` from `test/conformance` (export `CONFORMANCE_BUILD_DIR`).
+- Phase 4 areas: `obssource` (51 scripts), `scenemath` (40), `audiomix` (39), `encoutput` (33), `obscore` (48), `hotkeys` (15), `modservice` (23), `avio` (26), plus `helpers` (missing-files, hotkey table) and `signal` (procs).
+- ABI: the P0-15 test plugin — C plugin in `test/test-input/` loaded by the `test/abi-host/` host; lifecycle traces must match `test/abi-host/traces/*.golden` (`ctest -R abi`).
+- End-to-end: the P0-16 headless smoke test (`test/headless/`) — build a scene, record 5 s MKV, validate with `ffprobe`; run under `xvfb-run` on Linux.
+- Corpus: the P0-18 collections in `test/fixtures/` must round-trip with stable ids (P4-06.3, P4-19.3).
 
 ## Verification checklist
 

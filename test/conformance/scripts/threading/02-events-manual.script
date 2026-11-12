@@ -1,0 +1,15 @@
+# S-061 R02/R03: MANUAL event — stays set until reset, multiple waiters
+evt b manual
+etry b
+esig b
+etry b
+etry b
+wwait b
+wwait b
+ereset b
+etry b
+wtimed b 30
+esig b
+esig b
+wwait b
+edest b

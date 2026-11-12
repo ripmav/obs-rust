@@ -126,3 +126,14 @@ All functions in section 3 are thread-safe, except that `base_set_log_handler`, 
 
 - None known. (OOM paths are not exercised by vectors.)
 
+## 10. Round 9: core glue — allocation wrappers, base log/crash handlers, C++ RAII (added)
+
+### Reference files (all cited)
+
+- `libobs/util/bmem.c`, `libobs/util/bmem.h`, `libobs/util/base.c`, `libobs/util/util.hpp`
+
+- **S-001-R26** `bmem.c`: the allocation functions pinned earlier (`bmalloc`/`brealloc`/`bfree`/`bmemdup`) route through private `a_malloc`/`a_realloc`/`a_free` wrappers which maintain a process-wide allocation counter (`num_allocs`); the earlier OOM rules apply unchanged.
+- **S-001-R27** `bmem.h`: the zeroing/string-dup inlines over `bmalloc`: `bzalloc` (zeroed memory), `bstrdup`/`bstrdup_n` and the wide variants `bwstrdup`/`bwstrdup_n` (`_n` = length-bounded).
+- **S-001-R28** `base.c`: `blog(level, fmt, …)` dispatches through the current log handler, swapped by `base_get_log_handler`/`base_set_log_handler`; the default `def_log_handler` formats into an 8192-byte buffer (`vsnprintf`) and prints to stdout with a per-level prefix (`"debug: "`, `"info: "`, …). `bcrash(msg)` calls the current crash handler (default in the same file; swapped by `base_set_crash_handler`).
+- **S-001-R29** `util.hpp`: the C++ convenience wrappers: `BPtr<T>` — move-only RAII pointer freeing via `bfree` (`Get`, `operator T*`, `operator&`, `operator!`, comparisons); `ConfigFile` — move-only RAII over S-007's `config_t` (copy deleted; `Create` → `config_create`, `Close`/destructor → `config_close`, plus `Swap`, `Open`/`OpenString`, `GetString`) and a `TextLookup` accessor over S-010's text lookup.
+

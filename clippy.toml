@@ -1,0 +1,3 @@
+# ADR 0005: unsafe only in *-sys / obs-ffi / platform crates, // SAFETY:
+# required, Miri on pure crates (P0-09.3). Clippy runs with -D warnings in CI
+# (P0-09.1). No crate-specific settings yet.

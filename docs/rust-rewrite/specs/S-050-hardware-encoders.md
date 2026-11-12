@@ -181,3 +181,48 @@ Scripts live in `test/conformance/scripts/hwencoders/`; the runner command langu
 3. `ENABLE_NVENC_FFMPEG_IDS` (extra legacy ids) is a build option; behaviour is by reading only.
 4. QSV texture-encode (`obs_qsv_encode_tex` success path with a real texture) and the VAAPI/NVENC texture backends are not covered.
 5. Whether signed-overflow in D-1 can actually trap on any supported compiler (it did not change the observed output).
+
+## 14. Round 8: encoder runtimes, platform utils, nv-filters, test entry points (E-S050-S025, added)
+
+### Reference files (all cited; §4/§5 already pin the create/encode surface of `nvenc.c` and `obs-qsv11.c`)
+
+- `plugins/obs-qsv11/obs-qsv11.c`, `plugins/obs-qsv11/obs-qsv11-plugin-main.c`, `plugins/obs-qsv11/QSV_Encoder.cpp`, `plugins/obs-qsv11/QSV_Encoder_Internal.cpp`, `plugins/obs-qsv11/common_utils.cpp`, `plugins/obs-qsv11/common_utils_linux.cpp`, `plugins/obs-qsv11/common_utils_windows.cpp`, `plugins/obs-qsv11/common_directx11.cpp`, `plugins/obs-qsv11/obs-qsv-test/obs-qsv-test.cpp`
+- `plugins/obs-nvenc/nvenc.c`, `plugins/obs-nvenc/nvenc-helpers.h`, `plugins/obs-nvenc/obs-nvenc.c`, `plugins/obs-nvenc/obs-nvenc-test/obs-nvenc-test.cpp`
+- `plugins/obs-x264/obs-x264.c`, `plugins/obs-x264/obs-x264-plugin-main.c`, `plugins/obs-x264/obs-x264-test.c`
+- `plugins/obs-libfdk/obs-libfdk.c`
+- `plugins/nv-filters/nv-filters.c`, `plugins/nv-filters/nvidia-videofx-filter.c`, `plugins/nv-filters/nvidia-audiofx-filter.c`, `plugins/nv-filters/nvvfx-load.h`, `plugins/nv-filters/nvafx-load.h`
+
+### 14.1 QSV runtime internals
+
+- **S-050-R58** `obs-qsv11-plugin-main.c`: `obs_module_load` probes adapters (R30) and registers, in file order: `obs_qsv_encoder_tex_v2`, `obs_qsv_encoder_tex`, `obs_qsv_encoder_v2`, `obs_qsv_encoder`, then (AV1 adapters) `obs_qsv_av1_encoder_tex`, `obs_qsv_av1_encoder`, then (HEVC adapters) `obs_qsv_hevc_encoder_tex`, `obs_qsv_hevc_encoder`.
+- **S-050-R59** `common_utils.cpp`: shared adapter state — global `adapters[MAX_ADAPTERS]` array, `adapter_count`, `adapter_index`; the enumeration helpers used by R30's Intel/AV1/HEVC capability checks.
+- **S-050-R60** `common_directx11.cpp`: the D3D11↔MFX bridge. Implementation candidates start at `{MFX_IMPL_HARDWARE (0), MFX_IMPL_HARDWARE2 (1), …}`; `MFXQueryIMPL` selects the working implementation; the D3D11 device is created with `D3D11CreateDevice(g_pAdapter, D3D_DRIVER_TYPE_UNKNOWN, …)`. Allocation requests: `MFX_FOURCC_NV12` → GPU surface, `MFX_FOURCC_RGB4` → system-memory alternative (other fourcc rejected).
+- **S-050-R61** `common_utils_linux.cpp`: the Linux initialisation path (VA-API device type for the MFX session); `common_utils_windows.cpp`: the Windows-only initialisation (DXVA). `obs-qsv11.c` selects per platform.
+- **S-050-R62** `QSV_Encoder.cpp` / `QSV_Encoder_Internal.cpp`: the encoder session wrapper. Encoding is asynchronous: `m_pmfxENC->EncodeFrameAsync(&m_ctrl, pSurface, &m_pTaskPool[nTaskIdx].mfxBS, &syncp)` draws the bitstream buffer from the task pool (async depth = pool size); the caller waits on the sync point before consuming the bitstream (consumption rules: R34).
+- **S-050-R63** Internal rate-control mapping: `m_mfxEncParams.mfx.RateControlMethod = nRateControl`; when `HasOptimizedBRCSupport(platform, version, method)`: CBR → `MFX_RATECONTROL_LA_HRD`, VBR → `MFX_RATECONTROL_LA`, ICQ → `MFX_RATECONTROL_LA_ICQ` (lookahead variants; non-supporting platforms keep the plain method).
+- **S-050-R64** `obs-qsv-test/obs-qsv-test.cpp`: standalone capability-probe executable (has `main`): opens an MFX session, `has_encoder(session, MFX_CODEC_AV1 / MFX_CODEC_HEVC)`, reports `supports_av1` / `supports_hevc` — the probe R30's module load consumes.
+
+### 14.2 NVENC helper process and module entry (file citations)
+
+- **S-050-R65** `obs-nvenc-test.cpp` is the executable `nvenc_check` spawns (R02): loads the NVENC API + NVML, walks devices (`getEncoderSessions` → per-device `encoder_sessions`), computes the compiled version as `NVENC_CONFIGURED_VERSION = MAJOR<<4 | MINOR`, and writes the INI document R03 parses (`[general] nvenc_supported`, `nvenc_devices`, `driver_ver`, per-codec `h264`/`hevc`/`av1` sections) to stdout, then exits. `nvenc-helpers.h` declares the helper API `nvenc.c` uses (R01–R06); `obs-nvenc.c` is the module registration entry (registers the encoders of §4.5).
+
+### 14.3 x264 runtime
+
+- **S-050-R66** `obs-x264.c`: registers encoder `obs_x264`. Defaults: `bitrate 6000`, `use_bufsize false`, `buffer_size 6000`, `keyint_sec 0`, `crf 23`, `vfr false`, `rate_control "CBR"`, `preset "veryfast"`, `profile ""`, `tune ""`. Create: build `x264_param_t` from settings (property set: S-025) → `x264_encoder_open`; extra data via `x264_encoder_headers` (SPS/PPS NALs). Encode: `x264_encoder_encode(context, &nals, &nal_count, &pic, &pic_out)` — one packet per output NAL, pts from the frame, keyframe from the NAL type.
+- **S-050-R67** `obs-x264-plugin-main.c` registers the plugin; `obs-x264-test.c` is a standalone self-test of the shared options parser (`obs_parse_options`: `NULL`/`""` → 0 options, `"ref=3"` → 1 option named `ref`), **not** an obs encoder.
+
+### 14.4 libfdk-aac runtime
+
+- **S-050-R68** `obs-libfdk.c`: registers the `libfdk_aac` encoder. Create: `aacEncOpen(&handle, 0, channels)` → `aacEncoder_SetParam` (`AACENC_AOT`, `AACENC_BITRATEMODE 0`, `AACENC_BITRATE bitrate`, `AACENC_TRANSMUX`, `AACENC_AFTERBURNER`) → `aacEncEncode(handle, NULL, NULL, NULL, NULL)` → `aacEncInfo`; logs `"libfdk_aac encoder created"` and `"libfdk_aac bitrate: %d, channels: %d"`. Failure: log `"libfdk_aac encoder creation failed"`, close and return NULL. Destroy: `aacEncClose`. Encode: one PCM frame in, one packet out with the frame's pts.
+
+### 14.5 nv-filters (NVIDIA Video/AudioFX SDK)
+
+- **S-050-R69** `nv-filters.c`: `obs_module_load` (always returns true): `LIBNVAFX_ENABLED` build — register `nvidia_audiofx_filter` iff `load_nvidia_afx()` succeeds; `LIBNVVFX_ENABLED` build — the three video filters (`nvidia_greenscreen_filter_info`, `nvidia_blur_filter_info`, `nvidia_background_blur_filter_info`) register only when `gs_get_device_type() == GS_DEVICE_DIRECT3D_11` **and** `load_nvidia_vfx()` succeeds. `obs_module_unload` calls the matching unloaders.
+- **S-050-R70** `nvvfx-load.h` / `nvafx-load.h`: lazy SDK loaders — `nvafx_get_sdk_path` resolves the SDK directory; `load_vfx_module(HMODULE*, sdk_path, filename)` builds the path and calls `LoadLibraryExA(path, NULL, LOAD_LIBRARY_SEARCH_DLL_LOAD_DIR | LOAD_LIBRARY_SEARCH_DEFAULT_DIRS)`; VFX core modules `NVCVImage.dll` + `NVVideoEffects.dll`, effect modules `nvVFXGreenScreen.dll` + `NVVFXBackgroundBlur.dll`; each header typedefs its SDK entry points (NvVFX: `GetVersion`, `CreateEffect`, `SetU32`/`SetF32`/`SetString`, `Load`, state-object deallocation, …; NvAFX: the AFX equivalents).
+- **S-050-R71** `nvidia-videofx-filter.c`: per-effect video filter. Create: `NvVFX_CreateEffect` + a state object per handle; configure then `NvVFX_Load` (greenscreen: `NvVFX_SetU32(handle, NVVFX_MODE, mode)`; blur: `NvVFX_SetF32(handle_blur, NVVFX_STRENGTH, strength)`); the alpha-mask variant composites through `gs_effect` + `gs_texrender` (`render`, `render_unorm`, `alpha_texture`, `blur_texture`). Destroy: `NvVFX_DeallocateState` then `NvVFX_DestroyEffect` for every handle.
+- **S-050-R72** `nvidia-audiofx-filter.c`: audio filter with per-channel handles `handle[MAX_PREPROC_CHANNELS]`. `use_nvafx` is set true at creation only if the SDK directory is found; a failed initialisation sets it false and the filter is destroyed (no silent passthrough). Entry points are loaded explicitly (`NvAFX_CreateEffect`, `NvAFX_DestroyEffect`, `NvAFX_SetU32`, `NvAFX_SetString`, `NvAFX_SetFloat`, `NvAFX_GetU32`, …); teardown: `NvAFX_DestroyEffect` per channel + `NvAFX_UninitializeLogger`.
+
+### 14.6 Quirks and open questions (added)
+
+- Q-8: the load headers are Windows-only (`HMODULE`/`LoadLibraryExA`; the Linux `dlopen` path is a `TODO` stub) — nv-filters is Windows/D3D11-only at runtime (R69's device-type gate).
+- Q-9: the full NvVFX parameter set (selectors beyond `NVVFX_MODE`/`NVVFX_STRENGTH` pinned above) — SDK-provided, not re-derived.

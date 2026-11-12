@@ -9,45 +9,48 @@ It is mostly *deleting*, *build system replacement*, and *stabilising what third
 ## Deletion order and dependencies
 
 ```
-libobs-opengl / d3d11 / metal / winrt  ← last: needed as fallback until wgpu has two clean releases
-libobs (C)                             ← after Phase 4 default flip + one release with fallback
-plugins/<name>                         ← each when its Rust port shipped; delete one plugin per commit
-frontend/                              ← after parity checklist is complete and beta feedback is closed
-deps/{blake2,json11,glad,w32-pthreads,libcaption}   ← after the last consumer is gone
-shared/*                               ← per module, some are used by the C++ game-capture hook DLL
+libobs/ + libobs-{opengl,d3d11,metal,winrt}/   ← one PR (P7-01): the backends are the C fallback and go with libobs;
+                                                after wgpu default for two clean releases, no open regressions,
+                                                fallback usage below the agreed threshold (P7-01.1)
+frontend/                                      ← after the P6-48.1 parity checklist is 100% and beta feedback is closed
+plugins/<name>                                 ← each when its Rust port shipped; one plugin per commit, FFI leftovers in P7-03.3
+deps/{blake2,json11,glad,w32-pthreads,libcaption}  ← after the last consumer is gone; libdshowcapture's vendor capture-device-support tree stays (D-04/D-19)
+shared/*                                       ← per the P7-05.1 mapping; hook-related shared modules stay only while the C hook fallback / `inject-helper` need them (D-08)
+test/                                          ← after the P7-25.1 supersession table; same PR wave as P7-01…P7-05
+                                                (cmocka links the C libobs that P7-01 removes)
 ```
-Keep a git tag per deletion (`last-c-libobs`, `last-cpp-frontend`, …) and list them in `docs/rust-rewrite/retired.md` so history is easy to find.
+Keep a git tag per deletion (`last-c-libobs`, `last-cpp-frontend`, `last-c-plugin-<name>`, `last-c-deps`, `last-c-shared`, `last-c-test`) and list them in `docs/rust-rewrite/retired.md` so history is easy to find.
 
 ## What must remain C/C++ (documented leftovers)
 
-Typical candidates (decide per item, record owner and review date in P7-03.3):
-- `plugins/win-capture/graphics-hook` and `inject-helper`: injected into third-party processes (smallest dependency surface, anti-cheat constraints).
-- `plugins/obs-browser` CEF glue (Chromium Embedded Framework is C++).
-- DeckLink and AJA vendor SDK glue.
-- `libdshowcapture` (submodule) for DirectShow.
+Decided per item (D-08, D-14); record owner and review date in P7-03.3:
+- `plugins/win-capture/inject-helper` and `get-graphics-offsets` (small helper executables; the `graphics-hook` DLL is ported to Rust by P5-31.7 per D-08 — its C sources and hook-only `shared/` modules are deleted with it, P7-03/P7-05.2); `inject-helper` links `OBS::obfuscate` (extracted from `libobs` in P7-01.3) and the kept `shared/` modules.
+- The vendored `plugins/decklink/{linux,mac,win}/decklink-sdk/` trees (vendor SDK headers + Linux COM dispatch; the DeckLink/AJA glue is Rust per D-10).
+- The vendored `plugins/obs-vst/vst_header/` VST2 ABI headers (the host is Rust per D-11).
+- The nested `capture-device-support` vendor tree under `deps/libdshowcapture/src/` (elgatosf — vendor FFI input to the Rust win-dshow port; the C++ `libdshowcapture` library itself is ported per D-19).
 - macOS camera extension host (`plugins/mac-virtualcam/src`) if it must be Swift/ObjC.
 - Any C shim required by variadic/`va_list` APIs unless the plugin ABI drops them (primer §5.5).
 
 ## Build system replacement (P7-06…09)
 
 Today: CMake presets + `cmake/` helpers + dependency preset that downloads prebuilt Qt/FFmpeg/CEF etc. (`cmake/common/buildspec_common.cmake`, `cmake/macos/buildspec.cmake`, `cmake/windows/buildspec.cmake`; Linux uses system packages — there is no root `buildspec.json` in this checkout). Target: `cargo xtask` for build/package/test, with native dependencies pinned and fetched by a script. Things that are easy to forget:
-- Installer/packaging inputs live in `build-aux/` and `cmake/{windows,macos,linux}` (bundle layout, plist, NSIS/installer scripts, Flatpak manifest) — port the logic, not just the build.
+- Installer/packaging inputs live in `build-aux/` (Flatpak manifest `com.obsproject.Studio.json`, Steam build files), `cmake/{windows,macos,linux}/` (CPack generators: Windows portable ZIP, Linux DEB, FreeBSD, plus the TGZ source dist; macOS bundle layout, `Info.plist`, entitlements) and `additional_install_files/` (Windows install-tree layout, P6-42.1) — port the logic, not just the build. Packaging that is *not* in `cmake/`: macOS zips/signs/notarizes in the CI action `.github/actions/package-obs`, and the Windows auto-update patches are built and signed by the BOUF-based actions `.github/actions/windows-patches`/`windows-signing` (NSIS comes from the pinned BOUF release, not this repo — no `.nsi` files in the tree).
 - Version numbers: `libobs/cmake/obs-version.cmake` and `cmake/common/versionconfig.cmake` (version derived from git tags unless `OBS_VERSION_OVERRIDE` is set) define the OBS version; `LIBOBS_API_VER` lives in `libobs/obs-config.h`; keep them single-sourced.
 - Code signing and notarisation steps are part of the release pipeline (`.github/workflows/`: `build-project`, `push`, `pr-pull`, `publish`, `sign-windows`, `scheduled`, `analyze-project`, `check-format`, `dispatch`).
 
 ## Public interfaces to freeze (P7-10, P7-11)
 
 1. **C ABI**: after the last C consumers are gone, it becomes an opt-in compatibility feature. Publish the list of supported `LIBOBS_API_VER`s and the deprecation timeline (ADR).
-2. **Native Rust plugin API** (`obs-plugin-api`): semver-checked (`cargo-semver-checks`). Provide a migration guide covering each plugin type with a C and a Rust version side by side (use `gain_filter` as the filter example, an encoder and an output example from `test/test-input` or `obs-x264`).
+2. **Native Rust plugin API** (`obs-plugin-api`): semver-checked (`cargo-semver-checks`). Provide a migration guide covering each plugin type with a C and a Rust version side by side (use `gain_filter` as the filter example, the x264 encoder from `obs-x264`, and the FLV/MP4 outputs from `obs-outputs`).
 3. **Scripting API** (Lua/Python): names and behaviour must match the SWIG-generated bindings; run all documented examples.
-4. **Frontend API**: the 99 functions and 44 events remain supported.
+4. **Frontend API**: the 99 exported functions and 44 events of `frontend/api/obs-frontend-api.h` remain supported.
 
 ## Release engineering
 
 - Release candidates with crash-rate tracking by signature; go/no-go criteria written before RC1.
 - Reproducible build checks (two builds → same hash), SBOM, signed artifacts.
 - Security: external audit of `unsafe`, network parsing (RTMP, WHIP, WebSocket), updater, importers, OAuth token handling, scripting; continuous fuzzing of all parsers (list in P7-19.1).
-- Performance acceptance: compare against the last C tag on the same reference setups used in Phase 0.
+- Performance acceptance (P7-20): compare against the last C tag on the P7-20.1 reference setups, on the machine spec'd in `docs/rust-rewrite/benchmarks.md` (P0-17.4).
 
 ## Pitfalls
 
@@ -55,6 +58,14 @@ Today: CMake presets + `cmake/` helpers + dependency preset that downloads prebu
 - `docs/sphinx` documents the C API; plugin authors will search it. Redirect, do not just delete.
 - The updater and installers must handle a user upgrading from the last C version directly (settings, plugins, disabled-modules list, portable mode).
 - Keep `last-*` tags reachable (protected branches or release branches) for emergency security fixes.
+
+## Running this phase's checks
+
+After every deletion wave (P7-01…P7-05, P7-25) the PR merges only if all of these pass on Windows, macOS and Linux:
+1. Conformance: `test/conformance/run.sh check` — all 59 areas byte-identical.
+2. Rust suite: `cargo nextest run` (or `cargo test`) green.
+3. From P7-06.1 on: `cargo xtask build`, `cargo xtask test`, `cargo xtask lint` (and `package` for release waves) replace the CMake commands.
+4. The subtask's no-reference greps (e.g. `git grep -n "libobs" -- CMakeLists.txt '*.cmake'`) return nothing outside the keep set.
 
 ## Verification checklist
 

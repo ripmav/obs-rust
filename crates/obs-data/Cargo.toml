@@ -1,0 +1,10 @@
+[package]
+name = "obs-data"
+description = "obs_data / obs_properties / JSON (Phase 1)."
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+rust-version.workspace = true
+
+[lints]
+workspace = true

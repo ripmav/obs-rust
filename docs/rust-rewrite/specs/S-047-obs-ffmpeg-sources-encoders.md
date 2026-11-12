@@ -366,3 +366,105 @@ Tolerance: none (no floating point output). Vector lines `log LEVEL TEXT`: compa
 - `av_err2str` texts for real codec error codes are library-specific; only the template (`Failed to open <name>: <text><br><br>`) is normative.
 - Thread timing of the real reconnect body (`os_event_timedwait` precision) is not specified.
 - Not linked/faked: libavcodec (every call), libavformat, the real player, libobs source/hotkey/proc/missing-files modules, real threads and events.
+
+## 12. Round 9: file ownership of the ffmpeg source/encoders + OpenH264 + amf-test (added)
+
+§5.1–§5.8 pin the observable behaviour of the media source, the seven audio encoders and the video
+encoder wrapper, but the `.c` files themselves were not cited. This section maps the five remaining
+files to the rules that own them and pins the two components no existing rule covers: the OpenH264
+H.264 encoder (`obs-ffmpeg-openh264.c`) and the standalone AMF diagnostic program
+(`obs-amf-test/obs-amf-test.cpp`).
+
+### Reference files (all cited)
+
+- `plugins/obs-ffmpeg/obs-ffmpeg-source.c`, `plugins/obs-ffmpeg/obs-ffmpeg-audio-encoders.c`, `plugins/obs-ffmpeg/obs-ffmpeg-video-encoders.c`, `plugins/obs-ffmpeg/obs-ffmpeg-openh264.c`, `plugins/obs-ffmpeg/obs-amf-test/obs-amf-test.cpp`
+
+### 12.1 File-to-rule map: media source, audio encoders, video encoders
+
+- **S-047-R60 [SRC]** `obs-ffmpeg-source.c` (38 fns): full `struct ffmpeg_source` field list, in order:
+  `media_playback_t *media; bool destroy_media; enum video_range_type range; bool is_linear_alpha;
+  obs_source_t *source; obs_hotkey_id hotkey; char *input; char *input_format; char *ffmpeg_options;
+  int buffering_mb; int speed_percent; bool is_looping; bool is_local_file; bool is_hw_decoding; bool
+  full_decode; bool is_clear_on_media_end; bool restart_on_activate; bool close_when_inactive; bool
+  seekable; bool is_stinger; bool is_track_matte; bool log_changes; pthread_t reconnect_thread;
+  pthread_mutex_t reconnect_mutex; bool reconnect_thread_valid; os_event_t *reconnect_stop_event;
+  volatile bool reconnecting; int reconnect_delay_sec; enum obs_media_state state; obs_hotkey_pair_id
+  play_pause_hotkey; obs_hotkey_id stop_hotkey`. `hotkey` is the restart hotkey, `play_pause_hotkey`
+  the Play/Pause pair, `stop_hotkey` the stop hotkey (R06 step 3). Behaviour: R01–R27 (UI R01–R05,
+  lifecycle R06/R26, update R07–R14, player callbacks R15–R16, reconnect R17–R19, controls R20–R25).
+- **S-047-R61 [SRC]** `obs-ffmpeg-audio-encoders.c` (19 fns): the per-encoder `enc_create` arguments
+  (registration itself: 3.1 table; create procedure: S-025 R62–R64): `ffmpeg_aac` = ("aac", no
+  fallback, AV_SAMPLE_FMT_NONE), `ffmpeg_opus` = ("libopus", fallback "opus", AV_SAMPLE_FMT_FLT),
+  `ffmpeg_pcm_s16le` = ("pcm_s16le", NONE), `ffmpeg_pcm_s24le` = ("pcm_s24le", NONE),
+  `ffmpeg_pcm_f32le` = ("pcm_f32le", NONE), `ffmpeg_alac` = ("alac", AV_SAMPLE_FMT_S32P),
+  `ffmpeg_flac` = ("flac", AV_SAMPLE_FMT_S16). `enc_defaults`/`enc_properties` are R31; runtime
+  (encode, packet fields, audio info, extra data, destroy) R32–R40.
+- **S-047-R62 [SRC]** `obs-ffmpeg-video-encoders.c` (6 fns): only the shared wrapper —
+  `ffmpeg_video_encoder_init` (R50), `ffmpeg_video_encoder_init_codec` (R51–R53),
+  `ffmpeg_video_encoder_update` (R53/S-025 R60), `ffmpeg_video_encoder_free` (R58), static `copy_data`
+  (R54) and `ffmpeg_video_encode` (R55–R57). No encoder is registered in this file (NVENC info:
+  S-046; OpenH264: 12.2).
+
+### 12.2 OpenH264 encoder (`obs-ffmpeg-openh264.c`, new component)
+
+- **S-047-R63** Info record: `id = "ffmpeg_openh264"`, type VIDEO, `codec = "h264"`, get_name "OpenH264";
+  callbacks create/destroy/encode/defaults/properties/extra-data/video-info as the file's functions; no
+  audio_info. `struct openh264_encoder { struct ffmpeg_video_encoder ffve; enum openh264_encoder_type
+  type; DARRAY(uint8_t) header }` (the enum has the single value `H264_ENCODER_TYPE_OH264`, set when
+  `enc_lib == "libopenh264"`).
+- **S-047-R64** create: gate 1 — `voi->format` must be in the whitelist
+  {I420, NV12, YVYU, YUY2, UYVY, RGBA, BGRA, BGRX, BGR3, Y800, I444, I422, I40A, I42A, YUVA, AYUV},
+  else last-error `T("H264.UnsupportedVideoFormat")`, one ERROR log, return failure. Gate 2 —
+  `voi->colorspace` must be DEFAULT or 709, else `T("H264.UnsupportedColorSpace")`, one ERROR log,
+  failure. Then allocate (zeroed), set the type, `ffmpeg_video_encoder_init` (R50) with
+  `enc_lib = "libopenh264"`, `enc_name = "OpenH264"`, `on_first_packet` callback = this file's; then
+  update (R65). Any init/update failure: destroy (R68) and return failure.
+- **S-047-R65** update: read `profile` (string), `bitrate`, `keyint_sec` (ints). Build the scale info
+  from the video output (format, colorspace, range), set `context->thread_count = 0`, then overwrite
+  `info.format = I420` (OpenH264 only supports I420 output), then on `context->priv_data`:
+  `rc_mode = "quality"`, `profile = profile`, `allow_skip_frames = 1` (required by quality mode).
+  `ffmpeg_video_encoder_update(bitrate, keyint_sec, voi, &info, ffmpeg_opts)` (R53), then one INFO log
+  "settings:" with encoder, rc_mode, bitrate, keyint_sec, profile, width, height, ffmpeg opts, then
+  `flags |= AV_CODEC_FLAG_GLOBAL_HEADER`, then `init_codec` (R51) — its result is the update result.
+- **S-047-R66** `on_first_packet(parent, avpkt, da)` (invoked via the R56 first-packet path): copy
+  `context->extradata` (`extradata_size` bytes) into `header`, then append the first packet's bytes —
+  `header` = extradata ++ first packet. `get_extra_data` always true, returns `header.array`/`num`.
+  `get_video_info`: output format I420 (as in R65). destroy: `ffmpeg_video_encoder_free` (R58), free
+  `header`, free the object. encode: `ffmpeg_video_encode` (R55–R57).
+- **S-047-R67** Defaults: `bitrate = 6000`, `profile = "main"`. Properties: list `profile`
+  {constrained_baseline, main, high}; int `bitrate` 50..300000 step 50, suffix " Kbps"; int `keyint_sec`
+  0..20 step 1, suffix " s"; text `ffmpeg_opts`.
+
+### 12.3 AMF diagnostic program (`obs-amf-test/obs-amf-test.cpp`, new component)
+
+- **S-047-R68 [SRC]** Standalone Windows console program (own executable, **not** part of the
+  obs-ffmpeg plugin): `main` duplicates its main-thread handle, spawns `TimeoutThread` —
+  `WaitForSingleObject(hMainThread, 2500)`; on `WAIT_TIMEOUT`:
+  `TerminateProcess(GetCurrentProcess(), STATUS_TIMEOUT)` — then `LoadLibraryW(AMF_DLL_NAME)` (throw
+  "Failed to load AMF lib" on failure), `GetProcAddress(amf_module, AMF_INIT_FUNCTION_NAME)` (throw
+  "Failed to get init func"), `AMFInit(AMF_FULL_VERSION, &amf_factory)` (throw "AMFInit failed").
+  `argv[1..argc-1]` are parsed as hex u64 into `luid_order` (the expected adapter LUID order).
+  `CreateDXGIFactory1` (throw on failure); loop `get_adapter_caps(factory, idx++)` (R69) until
+  `EnumAdapters` fails. Then for each stored adapter, in key order, print exactly:
+  `[%u]\nis_amd=%s\nsupports_avc=%s\nsupports_hevc=%s\nsupports_av1=%s\n` (true/false). The whole
+  main body is one `try/catch(const char *text)`: on throw print `[error]\nstring=%s\n` and **return 0**
+  (Q-11). On MSVC the file exports `AmdPowerXpressRequestHighPerformance = 1` (dllexport) so the AMD
+  driver picks the high-performance GPU.
+- **S-047-R69 [SRC]** `get_adapter_caps(factory, adapter_idx)`: `EnumAdapters` (failure: return false —
+  end of loop); take `DXGI_ADAPTER_DESC`; `luid_idx := index of desc.AdapterLuid in luid_order, else
+  adapter_idx`; `adapter_info[luid_idx]` is the caps slot (default all-false). If `desc.VendorId !=
+  0x1002` (AMD): leave the slot all-false, return true. Else set `is_amd`, create a D3D11 device on the
+  adapter (`D3D_DRIVER_TYPE_UNKNOWN`, no debug, flags 0, `D3D11_SDK_VERSION`; failure: return true,
+  slot left as-is), `amf_factory->CreateContext` (failure: return true), `amf_context->InitDX11(device)`
+  (failure: return true), then `supports_avc/hevc/av1 := CreateComponent(context,
+  AMFVideoEncoderVCE_AVC / AMFVideoEncoder_HEVC / AMFVideoEncoder_AV1) == AMF_OK`.
+
+### 12.4 Quirks (added)
+
+- Q-11: the amf-test program exits 0 on every handled failure — the catch block prints the message and
+  returns 0; only the 2500 ms watchdog can kill it (with `STATUS_TIMEOUT`). Consumers must parse stdout,
+  not the exit code.
+- Q-12: non-AMD adapters still occupy an `adapter_info` slot and are printed (all `false`); an adapter
+  whose D3D11/AMF context creation fails is likewise printed with only `is_amd=true`. The LUID
+  remapping only reorders output for adapters whose LUID appears in `argv`; unknown LUIDs keep their
+  enumeration index.

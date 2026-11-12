@@ -1,0 +1,14 @@
+evt a ok
+etry a 11
+esig a 0
+etry a 0
+etry a 11
+esig a 0
+wwait a 0
+etry a 11
+esig a 0
+wtimed a 20 0
+ereset a
+etry a 11
+edest a
+edest @null

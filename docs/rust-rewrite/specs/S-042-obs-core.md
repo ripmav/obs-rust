@@ -623,3 +623,14 @@ Not covered (no script, no rule or only a stub in the table above); implementers
 11. Signed-overflow of reported buffering (D-5) and the NULL-core behaviours (D-6) have no vectors.
 12. The **sufficiency check (a clean-room Rust implementation run against these vectors) was NOT performed** (explicit cost decision); the spec has therefore
     not been validated for completeness by an independent implementer.
+
+## 12. Round 9: platform system-info logging, crash handler, C++ signal wrapper (added)
+
+### Reference files (all cited)
+
+- `libobs/obs-cocoa.m`, `libobs/obs-windows.c`, `libobs/obs-win-crash-handler.c`, `libobs/obs.hpp`
+
+- **S-042-R87** `obs-cocoa.m`: the macOS half of the core — `find_libobs_data_file`, the system-info logger (`log_processor_name`/`log_processor_speed`/`log_model_name`/`log_available_memory`/`log_os`/`log_kernel_version`/`log_system_info`/`log_layout_name`), `dstr_from_cfstring`, the graphics-thread autorelease helpers (`obs_graphics_thread_autorelease`/`obs_graphics_thread_loop_autorelease`), and the macOS hotkey platform (`obs_hotkeys_platform_init`/`_free` via `KeyboardEventProc`/`InputMethodChangedProc`, `key_glyphs`, `hotkeys_release`, `obs_key_to_localized_string`/`key_code_to_string`, `obs_key_to_virtual_key`/`obs_key_from_virtual_key`).
+- **S-042-R88** `obs-windows.c`: the Windows half — `find_libobs_data_file`, the system-info logger (`log_processor_info`, `log_emulation_status`, `log_available_memory`, `log_lenovo_vantage`, `log_windows_version`, `log_admin_status`, `log_gaming_features`, `log_security_products`/`log_security_products_by_type` with `get_str_for_state`/`get_str_for_type`), and the Windows hotkey platform (`obs_hotkeys_platform_init`/`_free`, `obs_hotkeys_platform_is_pressed` via `vk_down`/`get_virtual_key`, `obs_key_to_str`/`obs_key_from_virtual_key`/`obs_key_to_virtual_key`, `add_combo_key`).
+- **S-042-R89** `obs-win-crash-handler.c`: the Windows crash handler — `initialize_crash_handler`/`exception_handler` (SEH top-level), `handle_exception` → writes a text crash dump: `write_header`, CPU info (`init_cpu_info`, `init_instruction_data`), symbol info (`get_dbghelp_imports`, `init_sym_info`), the module list (`enum_all_modules`/`enum_module`/`write_module_list`), and per-thread stack traces (`walk_stack`, `get_thread_name`, `write_thread_trace`/`write_thread_traces`); `exception_handler_data_free` on exit.
+- **S-042-R90** `obs.hpp`: the C++ convenience wrapper — `OBSSignal` (RAII signal connect: `Connect`/`Disconnect`, move-only) and the `Replace` helpers — thin RAII over S-004's signal API.

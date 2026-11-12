@@ -15,29 +15,26 @@ Detailed, single-task breakdown for the strategy in [`../rust-rewrite-plan.md`](
 
 ## Task format
 
-Every task is a checkbox with a stable ID (`P<phase>-<nn>`) and these fields:
+Every task is a checkbox with a stable ID (`P<phase>-<nn>`) and a size — S (<=2 days), M (<=1 week), L (<=3 weeks), XL (split further before starting) — naming the C files it replaces and a verifiable acceptance criterion:
 
-- **Source**: the C/C++ files being replaced or wrapped.
-- **Do**: the concrete work.
-- **Deliverables**: what lands in the PR.
-- **Done when**: acceptance criteria, which must be verifiable.
-- **Depends on**: task IDs that must be finished first.
-- **Size**: S (<=2 days), M (<=1 week), L (<=3 weeks), XL (split further before starting).
+    - [ ] **P<N>-<nn> Name** (M): <files and work>. Done when: <verifiable result>.
+
+Dependencies are stated inline where non-obvious (and in the per-phase "Dependency note"/guide); the day-sized subtasks below carry the precise **Files**, **Steps** and **Done when**.
 
 ## Rules that apply to every task
 
 1. One task is one PR (or one PR stack if it is L/XL). Branch: `<prefix>/<issue>-<short-description>`.
 2. Work starts with the test: add or extend a golden/unit test that fails against the Rust code, then implement.
-3. Keep the C ABI intact. A task that changes a public header is not allowed without an ADR.
+3. Keep the C ABI compatible (best-effort, D-02). A task that changes a public header needs an ADR; breaking changes additionally need a deprecation path (D-05).
 4. Tick the checkbox in this file in the same PR that finishes the task.
 5. Every test file gets a test matrix in `docs/tests/`; every issue gets `docs/tests/I-<n>-<name>.md`.
 6. Update README/rustdoc/comments with each change.
 7. Gate before commit: `cargo fmt --check`, `cargo clippy --all-targets -- -D warnings`, `cargo deny check`, `cargo audit`, `cargo test --workspace`, plus the C build (`cmake --build`) and `ctest` while C code remains.
-8. Commit footer: `Assisted-by: [Model] ([Effort]) via Claude Code`.
+8. Commit footer: `Assisted-by: [Model] ([Effort]) via [Tool]` (omit the effort brackets when the model has no effort setting).
 
 ## Subtasks
 
-Every task is broken into day-sized subtasks (`P<phase>-<nn>.<m>`) in [`subtasks/`](subtasks/): `phase-0-subtasks.md` … `phase-7-subtasks.md`. Each subtask lists **Files**, **Steps** and **Done when**; file and API names were checked against this checkout (the empty submodules `obs-websocket`, `obs-browser` and `libdshowcapture` could not be checked). Tick a subtask in its file; tick the parent task in the phase file once all of its subtasks are done.
+Every task is broken into day-sized subtasks (`P<phase>-<nn>.<m>`) in [`subtasks/`](subtasks/): `phase-0-subtasks.md` … `phase-7-subtasks.md`. Each subtask lists **Files**, **Steps** and **Done when**; file and API names were checked against this checkout, including the initialized submodules (`obs-websocket` 5.7.6, `obs-browser` 2.23.4, `libdshowcapture` no-atl — 141 of the 1,929 tracked source files). Tick a subtask in its file; tick the parent task in the phase file once all of its subtasks are done.
 
 ## Developer guides
 
@@ -48,7 +45,9 @@ Start with [`guides/00-developer-primer.md`](guides/00-developer-primer.md) (bui
 For work that must be done **without reading the C implementation** (by any engineer or AI agent):
 
 - Process, roles, forbidden paths, provenance: [`clean-room/PROCESS.md`](clean-room/PROCESS.md); AI-agent prompt block: [`clean-room/AGENT-BRIEF.md`](clean-room/AGENT-BRIEF.md).
-- Specifications (`S-001` … `S-005` written so far, backlog listed): [`specs/README.md`](specs/README.md).
-- Executable conformance suite (scripts, vectors from the C reference, runners, script language): `test/conformance/README.md`; verify with `test/conformance/run.sh check`.
+- Specifications (56 written, `S-001` … `S-060`, remaining gaps listed): [`specs/README.md`](specs/README.md).
+- Executable conformance suite (1,561 scripts / 1,554 vectors, 59 areas): `test/conformance/README.md`; verify with `test/conformance/run.sh check`.
+- Coverage: every file of the C reference mapped to a task in [`coverage/coverage-matrix.md`](coverage/coverage-matrix.md) (regenerate with `python3 tools/task-coverage.py --write`); line-level spec/test coverage with `python3 tools/coverage.py`.
+- Decisions that need user/maintainer input, each with a default so work is never blocked: [`DECISIONS-NEEDED.md`](DECISIONS-NEEDED.md).
 
 Task files reference the spec that applies (for Phase 1: P1-01 → S-001, P1-03/P1-04 → S-005, P1-20 → S-002, P1-21 → S-003, P1-22/P1-23 → S-004).

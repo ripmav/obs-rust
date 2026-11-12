@@ -33,7 +33,7 @@ Covered (priority order as requested): (1) the hook protocol and shared structs 
 
 ## 3. Interface
 
-Sources registered (ids matter for saved scenes, **must be kept**): `window_capture`, `game_capture`, `monitor_capture`, `display_capture`, `wasapi_input_capture`, `wasapi_output_capture`, `wasapi_process_output_capture`, `dshow_input`, DirectShow encoders `obs_dshow_c985` / `obs_dshow_c353` (codec `h264`) [SRC for registration details]. `window_capture`, `game_capture` and `wasapi_process_output_capture` expose the proc `get_hooked(out bool hooked, out string title, out string class, out string executable)` and the signals `hooked(ptr source, string title, string class, string executable)` / `unhooked(ptr source)` (the title/class/exe strings are `""` when not hooked) [SRC]. `wasapi_process_output_capture` also has proc `reroute_audio(in ptr target)`.
+Sources registered (ids matter for saved scenes, **must be kept**): `window_capture`, `game_capture`, `monitor_capture`, `display_capture`, `wasapi_input_capture`, `wasapi_output_capture`, `wasapi_process_output_capture`, `dshow_input`, DirectShow encoders `dshow_c985_h264` / `dshow_c353_h264` (codec `h264`) [SRC for registration details]. `window_capture`, `game_capture` and `wasapi_process_output_capture` expose the proc `get_hooked(out bool hooked, out string title, out string class, out string executable)` and the signals `hooked(ptr source, string title, string class, string executable)` / `unhooked(ptr source)` (the title/class/exe strings are `""` when not hooked) [SRC]. `wasapi_process_output_capture` also has proc `reroute_audio(in ptr target)`.
 
 ## 4. Data formats
 
@@ -207,7 +207,7 @@ Notation: `R` = `S-051-R`.
 - **R110 [SRC]** Audio: `audio_output_mode` 0 capture / 1 DirectSound / 2 WaveOut; `use_custom_audio_device` + `audio_device_id` selects a separate audio device; an audio device attached to the video device is used otherwise (`deviceHasAudio`, `separateAudioFilter`); audio timestamps are matched to video; `active` and `deactivate_when_not_showing` control opening the device only while visible.
 - **R111 [SRC]** Device identity: `video_device_id` encodes name and path (libdshowcapture `EncodeDeviceId`, separator and escaping **unknown here**); a device matches iff both decoded name and path are equal; decode failure aborts the update ("DecodeDeviceId failed").
 
-### 5.J DirectShow hardware encoders (`obs_dshow_c985`, `obs_dshow_c353`) [MODEL]
+### 5.J DirectShow hardware encoders (`dshow_c985_h264`, `dshow_c353_h264`) [MODEL]
 
 - **R120** Device selection: first enumerated encoder device whose name contains `C985` / `C353`. Settings: `bitrate` (default 1000, UI range 1000..60000 step 1), `keyint_sec` (0 → 2).
 - **R121** Output size is forced to **1024×768** if `|aspect − 1024/768| < |aspect − 1280/720|` else **1280×720**, `aspect = width/height` in double. Frame interval `frameInterval = fps_den * 10_000_000 / fps_num` and keyframe interval `keyint = keyint_sec * fps_num / fps_den` (frames). **DEFECT D-3:** both products are evaluated in **unsigned 32-bit**; `fps_den * 10^7` wraps for `fps_den > 429` (e.g. 30000/1001 yields 47335 instead of 333666). Required behaviour: compute in 64-bit signed (`333666`); the vector pins the reference's wrapped value, a conforming implementation SHOULD deviate and the discrepancy is recorded (`dshow_encoder.script`, lines 24000/1001, 30000/1001, 60000/1001).
@@ -312,9 +312,227 @@ Floating point: the only printed floats are `hook_rate` multipliers (`%.9g`); co
 
 ## 11. Open questions / not covered
 
-1. `VideoFormat` and `AudioFormat` enum numeric values, `DeviceId` encoding, and device-capability enumeration live in `libdshowcapture`, which is an empty submodule in this checkout (`deps/libdshowcapture/src` is empty). The `video_format` default and the `> MJPEG` ordering rule (R107) cannot be pinned numerically; the vectors use opaque tokens.
+1. `VideoFormat` / `AudioFormat` values, `DeviceId` encoding, and device-capability enumeration live in `libdshowcapture` (now initialized in this checkout, `deps/libdshowcapture/src`, no-atl branch). Pinned from `dshowcapture.hpp`: `VideoFormat` (:77) = Any 0, Unknown 1, ARGB 100, XRGB 101, RGB24 102, I420 200, NV12 201, YV12 202, Y800 203, P010 204, YVYU 300, YUY2 301, UYVY 302, HDYC 303, MJPEG 400, H264 401, HEVC 402 — so R107's `> MJPEG` rule means `> 400` (H264/HEVC). `AudioFormat` (:105) = Any 0, Unknown 1, Wave16bit 100, WaveFloat 101, AAC 200, AC3 201, MPGA 202. `DeviceId` encoding and capability enumeration remain Windows-runtime behaviour; the vectors keep opaque tokens for the device side.
 2. R04–R06/R09–R10/R12: needs a Windows host with a hooked game to validate; `get-graphics-offsets` output format for ddraw/d3d12 offsets is not read by the plugin (R06) — confirm whether the hook computes them itself.
 3. `tiny-nv12-scale` interpolation and UYVY/YUY2 targets (only the dimension contract is vector-tested with uniform frames).
 4. Whether D-3's wrapped value must be preserved for compatibility: no stored data depends on it, so the spec recommends the corrected arithmetic.
 5. Rendering/HDR (`GS_CS_*` selection in `game_capture_render`), `dc-capture`, `cursor-capture`, WGC frame path, injection, AppContainer object paths, WASAPI timestamp logic (`OnStartCapture`, device-timing vs system-timing) and DShow audio/video timestamp matching were **not** specified (cost control: breadth first on protocol, matching and selection rules).
 6. Sufficiency check (Rust re-implementation from this spec and the vectors) was **skipped** by instruction (cost control); no pass count is claimed.
+7. Round 10 second-author check (2026-11-05): encoder ids corrected to the 33.0.1 values `dshow_c985_h264` / `dshow_c353_h264` (both registered from `win-dshow-encoder.cpp`; the old `obs_dshow_c985` / `obs_dshow_c353` names predate the merge). Known remaining cosmetic issue: the bare `R120–R131` (section 5) and `S-051-R120–R131` (round 8) series overlap numerically.
+
+## 12. Round 8: capture host surface — game/window/monitor/duplicator/cursor/dc/WGC/injection (added)
+
+§5 R04–R107 pin the hook IPC protocol, window matching and vqueue rules; this section
+pins the host-side files those rules live in, plus the paths §11 item 5 left un-specified
+(rendering/HDR, dc-capture, cursor-capture, WGC frame path, injection). The hook DLL
+itself is specified by S-086 (kept C++, D-08); this section is the host side only.
+
+### Reference files (all cited)
+
+- `plugins/win-capture/game-capture.c`, `plugins/win-capture/game-capture-file-init.c`, `plugins/win-capture/window-capture.c`, `plugins/win-capture/duplicator-monitor-capture.c`, `plugins/win-capture/monitor-capture.c`, `plugins/win-capture/dc-capture.c`, `plugins/win-capture/cursor-capture.c`, `plugins/win-capture/app-helpers.c`, `plugins/win-capture/audio-helpers.c`, `plugins/win-capture/nt-stuff.c`, `plugins/win-capture/plugin-main.c`
+- `libobs-winrt/winrt-capture.cpp`, `libobs-winrt/winrt-dispatch.cpp`
+- `shared/obs-d3d8-api/d3d8.h`, `shared/obs-inject-library/inject-library.c`
+
+### 12.1 Game-capture host
+
+- **S-051-R120 [SRC]** `game-capture.c` owns the game-capture object: window matching
+  per R04–R12; `game_capture_update` re-resolves the process and re-configures the hook
+  (capture type, colour format, delay) on settings change; the hook message protocol is
+  §4/§5. Hook internals (offset tables, renderer hooks) are S-086.
+- **S-051-R121 [SRC]** Injection: the hook DLL is staged to a unique temp file
+  (`game-capture-file-init.c`: copy + naming, cleanup on unload) and injected per S-086
+  §injection; failure → error state + property error text. `inject-library.c` is the
+  shared injection library (CreateRemoteThread-style flow, cross-ref S-086).
+- **S-051-R122 [SRC]** `nt-stuff.c` resolves NT-native functions by name
+  (`NtOpenMutant`, `NtOpenEvent`, `NtOpenSection`, `NtQuerySystemInformation`,
+  `NtCreateMutant`, `RtlNtStatusToDosError`, `RtlInitUnicodeString`) to open the hook's
+  named IPC objects (mutex/event/section) cross-process; a missing function disables the
+  affected path (logged, capture unavailable).
+- **S-051-R123 [SRC]** `audio-helpers.c`: per-window audio device selection helper
+  (default vs specific device, feeding the audio rules in §5); `app-helpers.c`:
+  window-class/app-path helpers used by the matchers.
+
+### 12.2 Window-capture host
+
+- **S-051-R124 [SRC]** `window-capture.c`: same hook protocol as game capture but
+  window-only (no per-process hook state machine); colour conversion and delay per the
+  §5 rules; bounds from the window rectangle with monitor-offset handling.
+
+### 12.3 Monitor capture (DXGI + WGC)
+
+- **S-051-R125 [SRC]** `duplicator-monitor-capture.c`: method enum
+  DXGI (legacy duplicator) / WGC; `choose_method(requested, wgc_supported, monitor)`:
+  WGC unsupported → DXGI; per-monitor restrictions fall back to DXGI (Q1); the chosen
+  method persists in the `method` setting (label `Method.WindowsGraphicsCapture` for
+  WGC).
+- **S-051-R126 [SRC]** DXGI path (`monitor-capture.c`): per-monitor DXGI output
+  duplication (S-078 R24–R25), cursor overlay option, scaling for multi-monitor setups.
+- **S-051-R127 [SRC]** WGC path (`winrt-capture.cpp`, `winrt-dispatch.cpp`): wraps
+  Windows.Graphics.Capture (create for monitor/window, frame pool, Closed/Failed
+  events); `winrt-dispatch.cpp` pumps the WinRT events on its thread; frames land as
+  textures (S-078); first-use permission request is a Windows runtime flow (Q2).
+- **S-051-R128 [SRC]** `dc-capture.c`: DirectComposition window capture
+  (Windows 10 2004+): captures the window's DComp surface by HWND; used as the
+  "direct composition" method of game capture, falling back to window capture when the
+  OS build does not support it.
+
+### 12.4 Cursor overlay
+
+- **S-051-R129 [SRC]** `cursor-capture.c`: when cursor capture is enabled and the
+  cursor is inside the capture bounds, each frame reads the cursor bitmap
+  (XOR colour + AND mask): the AND mask is inverted into alpha (`bit_to_alpha` with
+  invert), XOR supplies the colour; a 32-bit bitmap with its own alpha channel is used
+  as-is; a zero AND mask means opaque. The cursor sprite renders at the cursor position
+  scaled by the monitor DPI and capture scale.
+
+### 12.5 D3D8 API + plugin glue
+
+- **S-051-R130 [SRC]** `shared/obs-d3d8-api/d3d8.h`: the D3D8-compatible surface
+  (function-pointer tables + hook trampoline types) the hook uses for D3D8 games; the
+  host side only references it for offset-table layout (hook behaviour: S-086).
+- **S-051-R131 [SRC]** `plugin-main.c`: registers the capture source ids
+  (game/window/monitor/dc) and loads the hook DLL path (plugin dir or temp staging,
+  R121).
+
+### 12.6 Quirks (added)
+
+- Q1: exact per-monitor WGC restrictions in `choose_method` (which virtual outputs are
+  rejected and why).
+- Q2: WGC permission-request flow (user consent dialog) — Windows runtime behaviour,
+  not derivable from the repository.
+- Q3: `nt-stuff.c` fallback list when an NT function is absent (which paths degrade).
+
+## 13. Round 9: DirectShow host/virtual-camera + WASAPI host (added)
+
+§5.I–§5.K pin the dshow_input settings/capability behaviour, the C985/C353 encoders and the
+shared-memory virtual-camera queue; §5.G pins the WASAPI sources. This section pins the host-side
+files those rules live in (the DirectShow input object and its action loop, the device-id codec,
+the virtual-camera output and driver, the plugin glue) and the four WASAPI host files. One section
+per action target, with subsections.
+
+### Reference files (all cited)
+
+- `plugins/win-dshow/win-dshow.cpp`, `plugins/win-dshow/win-dshow-encoder.cpp`, `plugins/win-dshow/virtualcam.c`, `plugins/win-dshow/virtualcam-module/virtualcam-module.cpp`, `plugins/win-dshow/virtualcam-module/virtualcam-filter.cpp`, `plugins/win-dshow/virtualcam-module/placeholder.cpp`, `plugins/win-dshow/virtualcam-module/sleepto.c`, `plugins/win-dshow/encode-dstr.hpp`, `plugins/win-dshow/dshow-plugin.cpp`, `plugins/win-wasapi/win-wasapi.cpp`, `plugins/win-wasapi/wasapi-notify.cpp`, `plugins/win-wasapi/enum-wasapi.cpp`, `plugins/win-wasapi/plugin-main.cpp`
+
+### 13.1 DirectShow host (`win-dshow.cpp`)
+
+- **S-051-R136 [SRC]** The DirectShow work runs on one OS thread per input ("win-dshow: DShowThread",
+  `CoInitialize`'d): `DShowLoop` loops on `MsgWaitForMultipleObjects(1, semaphore, INFINITE,
+  QS_ALLINPUT)` — a window message is pumped (`PeekMessage`/`TranslateMessage`/`DispatchMessage`
+  until empty) and re-waited; the semaphore hands out actions from a critical-section-guarded
+  queue; anything else exits the loop. `enum class Action { None, Activate, ActivateBlock,
+  Deactivate, Shutdown, ConfigVideo, ConfigAudio, ConfigCrossbar1, ConfigCrossbar2 }`.
+  Activate/ActivateBlock: take the source settings; `Activate(settings)` — on failure
+  `obs_source_output_video2(source, nullptr)` (blank frame); ActivateBlock additionally signals the
+  activated event. Deactivate → `Deactivate()`; Shutdown → `device.ShutdownGraph()` and return
+  (thread exit); ConfigVideo/ConfigAudio/ConfigCrossbar1/ConfigCrossbar2 →
+  `device.OpenDialog(nullptr, DialogType::ConfigVideo/ConfigAudio/Crossbar/Crossbar2)`. All
+  §5.I behaviour (open/configure/decode/output) executes on this thread — the "single thread per
+  device" invariant the comment states. `FPS_HIGHEST = 0` / `FPS_MATCHING = -1` are the file-local
+  interval constants behind R104/R106.
+
+### 13.2 Device-id codec, encoders, plugin glue
+
+- **S-051-R137 [SRC]** `encode-dstr.hpp` (5 fns) — the codec R111 left unknown:
+  `encode_dstr(s)`: replace `#` → `#22`, then `:` → `#3A`; `decode_dstr(s)`: the inverse order
+  (`#3A` → `:` first, then `#22` → `#`). `EncodeDeviceId(encoded, name, path)`: UTF-16 → UTF-8,
+  encode both halves, `encoded = name + ":" + path` — the separator is the one literal unencoded
+  `:`. `DecodeDeviceDstr(name, path, id)`: false on empty id; split on the **first** `:`
+  (name = before, path = after); decode both; true. `DecodeDeviceId(out, id)`: decodes into the
+  libdshowcapture `DeviceId`; false on failure (the R111 "DecodeDeviceId failed" abort).
+- **S-051-R138 [SRC]** `win-dshow-encoder.cpp` (12 fns): registers the two encoder infos
+  `dshow_c985_h264` / `dshow_c353_h264`; each selects the first enumerated DirectShow encoder whose
+  friendly name contains `L"C985"` / `L"C353"` respectively. `get_video_info` / update / encode /
+  extra-data behaviour: R120–R124.
+- **S-051-R139 [SRC]** `dshow-plugin.cpp` (2 fns): module description "Windows DirectShow
+  source/encoder", locale en-US. Load: `RegisterDShowSource()` + `RegisterDShowEncoders()`; when
+  built with `VIRTUALCAM_AVAILABLE` and `vcam_installed(false)`: register `virtualcam_info`.
+  `vcam_installed(b64)`: `StringFromGUID2(CLSID_OBS_VirtualVideo)` →
+  `RegOpenKeyExW(HKEY_CLASSES_ROOT, L"CLSID\\<guid>", 0, KEY_READ | (b64 ? KEY_WOW64_64KEY :
+  KEY_WOW64_32KEY))` — the caller only ever passes `false`, so only the 32-bit registry view is
+  checked (Q4).
+
+### 13.3 Virtual camera (output side + driver side)
+
+- **S-051-R140 [SRC]** `virtualcam.c` (7 fns): the virtual-camera **output** (writer). start:
+  `interval = fps_den * 10000000ULL / fps_num` from the current video info; write
+  `"%dx%dx%lld"` (width, height, interval) to `<config dir>/obs-virtualcam.txt` via the safe
+  temp-write (overwritten on every start); `video_queue_create(width, height, interval)` (R130) —
+  failure (a mapping already exists): WARNING `starting virtual-output failed`, start fails; set
+  the output's video conversion to NV12 at the output size, `active = true`, `stopping = false`,
+  INFO `Virtual output started`, `obs_output_begin_data_capture(output, 0)`. stop/deactivate:
+  `obs_output_end_data_capture` + `video_queue_close` (R135). encoded_packet: `video_queue_write`
+  (R132) with the frame's planes/linesize/timestamp.
+- **S-051-R141 [SRC]** `virtualcam-module/virtualcam-module.cpp` (14 fns): the DirectShow
+  **driver** (reader, a separate in-proc COM module): `VCamFactory` is the `IClassFactory` for
+  `CLSID_OBS_VirtualVideo` (friendly name "OBS Virtual Camera"); server registration writes the
+  CLSID key and maps the filter into the capture category via `IFilterMapper2`.
+- **S-051-R142 [SRC]** `virtualcam-module/virtualcam-filter.cpp` (12 fns): the filter opens the
+  shared-memory queue (R131), reads its cx/cy/interval and advertises NV12 + I420 + YUY2 media
+  types at that size/interval (NV12 is the default). Per output request: convert the queue frame
+  to the negotiated format with `nv12_scale_init` (NV12/I420/YUY2 targets); when no fresh frame
+  is available (queue not READY, or R134's repeated-index limit) it delivers the default frame —
+  `ShowDefaultFrame` memsets the whole output buffer to **127** (neutral grey) — or the
+  placeholder image scaled into the same format.
+- **S-051-R143 [SRC]** `virtualcam-module/placeholder.cpp` (5 fns): loads
+  `placeholder.png` from the module directory (bitmap decoded to RGB), converts RGB → NV12
+  (planar, `width*height*3/2` bytes) once, and serves the buffer pointer to R142.
+- **S-051-R144 [SRC]** `virtualcam-module/sleepto.c` (3 fns): `gettime_100ns` =
+  `QueryPerformanceCounter` scaled to 100-ns units through a double; `sleepto_100ns(target)`:
+  already past → false; else `Sleep(ms - 1)` for `ms = (target - t) / 10000` when `ms > 1`, then
+  spin `Sleep(0)` until the target is reached → true (a high-resolution sleep without a timer
+  object, used to pace the driver's frame delivery).
+
+### 13.4 WASAPI host
+
+- **S-051-R145 [SRC]** `win-wasapi.cpp` (46 fns): the per-source object — COM pointers
+  (enumerator/client/capture), the source + a `reroute_target` weak source, `default_id` (wide),
+  `device_id`/`device_name` (narrow), the mmdevapi module plus the dynamically resolved RTWQ
+  functions (`ActivateAudioInterfaceAsync`, `RtwqUnlockWorkQueue`, `RtwqLockSharedWorkQueue`,
+  `RtwqCreateAsyncResult`, `RtwqPutWorkItem`, `RtwqPutWaitingWorkItem`) and `rtwq_supported`
+  (RTWorkQ.dll present; RTWQ is Win 8.1+ but "silently fails" on some systems per the comment),
+  the window fields (priority/class/title/executable/hwnd/process id), `sourceType`, atomics
+  `useDeviceTiming`/`isDefaultDevice`/`sawBadTimestamp`, `hooked`, and the reconnect thread +
+  its three events. RTWQ is used to marshal the two ASIO-style callbacks (start-capture,
+  sample-ready) onto a shared work queue; the async result objects are created at init. The
+  capture thread (`CoInitializeEx(MULTITHREADED)`) drives init (R84–R86) and then
+  `ProcessCaptureData`: per packet the format/speakers/rate come from the client format;
+  timestamp = `ts * 100` (100-ns device timestamp) for process output, else
+  `useDeviceTiming ? ts * 100 : now_ns - frames * 1e9 / rate`; the audio goes to
+  `reroute_target` when set (resolved through the weak reference), else the own source; the
+  buffer is released afterwards. On init failure the source arms the reconnect thread
+  (`reconnectDuration = RECONNECT_INTERVAL = 3000` ms, R88): it waits on (exit, reconnect)
+  signals, and on each reconnect signal — after the duration, interrupted by the stop signal —
+  calls `Start()` again; the exit signal ends it.
+- **S-051-R146 [SRC]** `wasapi-notify.cpp` (8 fns): `WASAPINotify` creates an
+  `IMMDeviceEnumerator` and registers one `NotificationClient`
+  (`IMMNotificationClient`, refcount from 1): `OnDefaultDeviceChanged(flow, role, id)` forwards to
+  the stored callback only when both the callback and `id` are non-null; the other four
+  notifications (device added/removed/state-changed, property changed) are no-ops returning
+  S_OK. The callback table is registered at construction and unregistered at destruction;
+  `AddDefaultDeviceChangedCallback(module, cb)` binds the callback (the module is retained so the
+  callback can address the owning module).
+- **S-051-R147 [SRC]** `enum-wasapi.cpp` (3 fns): `GetDeviceName(device)` = the
+  `PKEY_Device_FriendlyName` property-store value as UTF-8 (empty string when absent or empty);
+  `GetWASAPIAudioDevices(input)` enumerates the **active** endpoints of `input ? eCapture :
+  eRender` (any HRESULT failure throws an `HRError` with the failing call) and returns one record
+  per device (name via `GetDeviceName`, id, ...). This is the list backing R89's `Default` +
+  endpoints property lists.
+- **S-051-R148 [SRC]** `plugin-main.cpp` (3 fns): module description "Windows WASAPI audio
+  input/output sources", locale en-US. Load: compute `process_filter_supported` =
+  Win10 build `>= 19041.0` (the comment notes MS documents 20348, "but process filtering seems to
+  work earlier"); register input + device output always, process output only when supported;
+  create the process-global `WASAPINotify` and add the default-device-changed callback: it reads
+  the current monitoring device (`obs_get_audio_monitoring_device(nullptr, &id)`), acts only when
+  it is the literal `"default"` (NULL or other → ignore) **and** `flow == eRender`, then queues an
+  `OBS_TASK_UI` task running `obs_reset_audio_monitoring()`. Unload: delete the notify object.
+  `GetNotify()` exposes the global.
+
+### 13.5 Quirks (added)
+
+- Q4: `vcam_installed` accepts a `b64` flag but the only call site passes `false` — a
+  64-bit-only virtual-camera installation is invisible to the dshow plugin on 64-bit Windows.
+- Q5: `obs-virtualcam.txt` is rewritten on every virtual-camera start (no locking, atomic
+  temp-rename); its only consumer is external tooling — the driver side never reads it.
+- Q6: the WASAPI process-output gate (build 19041) is looser than Microsoft's documented build
+  (20348): process loopback is registered on builds where the API is officially unsupported.

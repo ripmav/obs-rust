@@ -9,3 +9,6 @@
 /deps
 /frontend
 /cmake
+
+# Rust (P0-07 workspace)
+/target

@@ -1,0 +1,15 @@
+# S-061 R01/R02: AUTO event lifecycle — try/signal/wait consumption, destroy
+evt a auto
+etry a
+esig a
+etry a
+etry a
+esig a
+wwait a
+etry a
+esig a
+wtimed a 20
+ereset a
+etry a
+edest a
+edest @null

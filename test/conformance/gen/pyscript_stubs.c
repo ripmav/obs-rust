@@ -9,6 +9,7 @@
  * Test tooling, not part of libobs.
  */
 #include <Python.h>
+#include <pthread.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -81,6 +82,13 @@ struct lf_render lf_renders[LF_MAX_CB];
 int lf_nrenders;
 struct lf_hotkey lf_hotkeys[LF_MAX_CB];
 int lf_nhotkeys;
+/* A deferred hotkey unregister runs on the scripting worker thread, which can
+ * print it before the main thread's "Unloaded python script" log (no sync
+ * between the two). To keep vectors deterministic, non-main-thread
+ * unregistrations are recorded here and printed by the runner's barrier(). */
+pthread_t lf_main_thread;
+static char lf_unregs[LF_MAX_CB][64];
+static int lf_nunregs;
 signal_handler_t *lf_handlers[4];
 obs_frontend_event_cb lf_fe_event_cb[LF_MAX_CB];
 void *lf_fe_event_p[LF_MAX_CB];
@@ -204,8 +212,19 @@ void obs_hotkey_unregister(obs_hotkey_id id)
 {
 	if (id >= 1 && id <= (obs_hotkey_id)lf_nhotkeys) {
 		lf_hotkeys[id - 1].live = false;
-		printf("fake obs_hotkey_unregister %s\n", lf_hotkeys[id - 1].name);
+		if (pthread_self() == lf_main_thread) {
+			printf("fake obs_hotkey_unregister %s\n", lf_hotkeys[id - 1].name);
+		} else {
+			/* single worker thread; barrier()'s ping orders it before the flush */
+			snprintf(lf_unregs[lf_nunregs++], 64, "%s", lf_hotkeys[id - 1].name);
+		}
 	}
+}
+void lf_flush_hotkey_unregs(void)
+{
+	for (int i = 0; i < lf_nunregs; i++)
+		printf("fake obs_hotkey_unregister %s\n", lf_unregs[i]);
+	lf_nunregs = 0;
 }
 
 /* frontend ----------------------------------------------------------- */

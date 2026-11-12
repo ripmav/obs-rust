@@ -379,3 +379,42 @@ author-model scripts (tolerance 1e-4, not authoritative: they check the shader p
 * **O-2** `obs_source_get_color_space` of a *filter chain* target (as opposed to a plain source) is the host's job and is an input here.
 * **O-3** Behaviour of `smoothstep` with equal edges, `pow` of negative numbers etc. in shaders is GPU dependent.
 * **O-4** The exact multiplier/technique tables of §6.3 were transcribed from the code; the vector `15` covers only the combinations listed in that script. Unknown colour-space integers are not covered.
+## 12. Round 9: file ownership of the 13 GPU filter files (added)
+
+§5/§6 pin every filter's observable behaviour; the filter `.c` files themselves were not cited. This section maps
+each file to the rules that own it and adds the file-local facts they carry: struct layouts, effect file names,
+info flags and setting keys. Nothing here overrides an existing rule; where a rule already pins a value it is not
+restated.
+
+### Reference files (all cited)
+
+- `plugins/obs-filters/chroma-key-filter.c`, `plugins/obs-filters/color-key-filter.c`, `plugins/obs-filters/luma-key-filter.c`, `plugins/obs-filters/mask-filter.c`, `plugins/obs-filters/color-grade-filter.c`, `plugins/obs-filters/color-correction-filter.c`, `plugins/obs-filters/crop-filter.c`, `plugins/obs-filters/scroll-filter.c`, `plugins/obs-filters/scale-filter.c`, `plugins/obs-filters/gpu-delay.c`, `plugins/obs-filters/hdr-tonemap-filter.c`, `plugins/obs-filters/sdr-on-hdr-filter.c`, `plugins/obs-filters/sharpness-filter.c`
+
+### 12.1 Key filters
+
+- **S-028-R84 [SRC]** `chroma-key-filter.c` (19 fns): `struct chroma_key_filter_data {context, effect, eparams color/contrast/brightness/gamma/pixel_size/chroma/similarity/smoothness/spill, vec4 color, float contrast/brightness/gamma, vec2 chroma, float similarity/smoothness/spill}`; the v2 data struct additionally stores `opacity` and the `cb_v4`/`cr_v4` eparams. Setting keys: `sdr_only_info`, `opacity`, `contrast`, `brightness`, `gamma`, `key_color_type`, `key_color`, `similarity`, `smoothness`, `spill`. Two infos in the file: `chroma_key_filter` (v0, `VIDEO|CAP_OBSOLETE`) and `chroma_key_filter_v2` (`VIDEO|SRGB`). Behaviour R30-R32, pixels §6.4.
+- **S-028-R85 [SRC]** `color-key-filter.c` (19 fns): the v0 data struct is `chroma_key_filter_data` without `spill` (params `color, contrast, brightness, gamma, key_color, similarity, smoothness`); v2 stores `opacity` instead of `color`. Keys: `sdr_only_info`, `opacity`, `contrast`, `brightness`, `gamma`, `key_color_type`, `key_color`, `similarity`, `smoothness`. Infos `color_key_filter` (v0, `CAP_OBSOLETE`) / `color_key_filter_v2` (`SRGB`). Behaviour R33, pixels §6.4.
+- **S-028-R86 [SRC]** `luma-key-filter.c` (10 fns): `struct luma_key_filter_data {context, effect, eparams lumaMax/lumaMin/lumaMaxSmooth/lumaMinSmooth, float luma_max/luma_min/luma_max_smooth/luma_min_smooth}`; v0 and v2 infos in one file. Behaviour R34, pixels §6.4.
+
+### 12.2 Mask, colour grade, colour correction
+
+- **S-028-R87 [SRC]** `mask-filter.c` (19 fns): `struct mask_filter_data {last_time (u64), context, effect, char *image_file, time_t image_file_timestamp, float update_time_elapsed, gs_texture_t *target, gs_image_file_ex_t image, vec4 color, bool lock_aspect}`. The four registered masks (alpha, colour, blend-mul, blend-add/sub) select their `.effect` at update from the `type` setting (R55); file watching per R55-R57 (Q-7). `stretch` bool → `lock_aspect` (R55).
+- **S-028-R88 [SRC]** `color-grade-filter.c` (15 fns): `struct lut_filter_data {context, effect, target, gs_image_file_ex_t image, uint32 cube_width, void *cube_data, char *file, float clut_amount, vec3 clut_scale/clut_offset/domain_min/domain_max, const char *clut_texture_name, const char *tech_name}`. `LUT_WIDTH = 64`. Update/load/technique-selection and scale/offset maths are R60-R63 (tile permutation Q-4/D-2); render R64.
+- **S-028-R89 [SRC]** `color-correction-filter.c` (14 fns): `struct color_correction_filter_data {context, effect, eparams gamma/final_matrix, float gamma, matrix4 con_matrix/bright_matrix/sat_matrix/hue_op_matrix/color_matrix/final_matrix, vec3 half_unit}` — the §6.1 product is pre-computed on update into these six matrices; only `gamma` and the final `color_matrix` are pushed. Infos `color_filter` (v0) / `color_filter_v2` (v2). Behaviour §5.4.
+
+### 12.3 Crop, scroll, scale
+
+- **S-028-R90 [SRC]** `crop-filter.c` (13 fns): `struct crop_filter_data {context, effect, eparams mul_val/add_val/multiplier, int left/right/top/bottom/abs_cx/abs_cy/width/height, bool absolute, vec2 mul_val, vec2 add_val}`. Effect file `crop_filter.effect` (created in `create`, NULL → create fails). The `relative` property toggles visibility of `right`/`bottom` and swaps the `left`/`top` descriptions (`Crop.Left`/`Crop.Top` ↔ `X`/`Y`) [SRC]. Behaviour R40-R44.
+- **S-028-R91 [SRC]** `scroll-filter.c` (15 fns): `struct scroll_filter_data {context, effect, eparams add/mul/image/multiplier, vec2 scroll_speed, gs_samplerstate_t *sampler, bool limit_cx, limit_cy, uint32 cx, cy, vec2 size_i, vec2 offset, bool loop}`. `size_i` is written only by render (R47). Behaviour R45-R47, Q-6.
+- **S-028-R92 [SRC]** `scale-filter.c` (13 fns): `struct scale_filter_data {context, effect, eparams image/dimension/dimension_i/undistort_factor/multiplier, vec2 dimension, dimension_i, double undistort_factor, int cx_in/cy_in/cx_out/cy_out, enum obs_scale_type sampling, gs_samplerstate_t *point_sampler, bool aspect_ratio_only, target_valid, valid, can_undistort, undistort, upscale, base_canvas_resolution}`. `point_sampler` is created once in `create` (all-zero `gs_sampler_info`: point filter, clamp) and used only for point sampling (R53). Behaviour R50-R53, Q-2/Q-3, D-1/D-3.
+
+### 12.4 GPU delay and HDR filters
+
+- **S-028-R93 [SRC]** `gpu-delay.c` (15 fns): `struct frame {gs_texrender_t *render, enum gs_color_space space, uint64_t ts}`; `struct gpu_delay_filter_data {context, deque frames, uint64 delay_ns, interval_ns, uint32 cx, cy, bool target_valid, processed_frame}`. Property `delay_ms` int 0..500 step 1, suffix " ms". Behaviour R70-R75, Q-11, D-5.
+- **S-028-R94 [SRC]** `hdr-tonemap-filter.c` (9 fns): `struct hdr_tonemap_filter_data {context, effect, eparams multiplier/input_maximum_nits/output_maximum_nits, enum hdr_tonemap_transform transform, float sdr_white_level_nits_i, hdr_input_maximum_nits, hdr_output_maximum_nits, sdr_input_maximum_nits, sdr_output_maximum_nits}`. Behaviour R80-R82, Q-5, D-7.
+- **S-028-R95 [SRC]** `sdr-on-hdr-filter.c` (9 fns): `struct sdr_on_hdr_filter_data {context, effect, eparams multiplier/power, enum sdr_on_hdr_gamma gamma, float multiplier, power}`. Behaviour R83, D-7.
+- **S-028-R96 [SRC]** `sharpness-filter.c` (7 fns): `struct sharpness_data {context, effect, eparams sharpness/texture_width/texture_height, float sharpness, texwidth, texheight}`. Two infos: `sharpness_filter` (v0, `VIDEO|CAP_OBSOLETE`) and `sharpness_filter_v2` (`VIDEO|SRGB`, separate `sharpness_v2.effect`). Behaviour R36, R35.
+
+### 12.5 Quirks (added)
+
+- Q-12: `scale_filter` with an aspect string whose `B` (or `A`) parses **negative**: `sscanf` succeeds, `new_aspect` is negative, and the aspect branch produces a negative `cy_out`/`cx_out` that wraps in `get_width/height` (D-1 only guards zero divisors). No vector.

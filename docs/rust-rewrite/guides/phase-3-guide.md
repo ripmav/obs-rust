@@ -12,7 +12,7 @@ plugins / libobs render code
         ▼
 graphics subsystem  (libobs/graphics/graphics.c, 3312 lines)
   matrix stack, immediate-mode vertex buffer, effect list, viewport stack, blend stack
-        │  struct gs_exports  (graphics-internal.h:30, ~176 function pointers: device_*)
+        │  struct gs_exports  (graphics-internal.h:30, 190 function pointers: 115 device_* + 71 gs_* + 4 gpu_*)
         ▼
 backend module, loaded with os_dlopen:  libobs-opengl | libobs-d3d11 | libobs-metal
 ```
@@ -25,7 +25,7 @@ backend module, loaded with os_dlopen:  libobs-opengl | libobs-d3d11 | libobs-me
 1. A **`wgpu` backend can be built as a new loadable module** (`libobs-wgpu`) that exports the same `device_*` symbols and plugs into today's unmodified C `graphics.c`. It does not need Phase 4. Do this first (P3-13…P3-23): it proves the rendering path with the C engine above it.
 2. The **WGSL transpiler (P3-05) lives inside that backend**: input is the shader text the effect parser passes in. It can reuse the C `shader_parser` through libobs or the Rust port of it (P3-02) — decide in the P3-05.1 spike.
 3. The **Rust port of the effect parser and `graphics.c`** (P3-01…P3-12) is optional until you want to delete C; port it afterwards, behind the same `gs_*` and `device_*` boundaries. The golden token/AST dumps (P3-01.3, P3-02.4) are what make it safe.
-4. Correction to P3-26 ("Render loop"): `render_video`, `render_main_texture`, `output_frames` live in `obs-video.c` and depend on `obs_core`, scenes and sources. They move in **Phase 4**, not Phase 3; Phase 3 only needs them to exist for tests via the C code.
+4. Correction to P3-26 ("Render loop"): the render functions (`render_main_texture`, `render_output_texture`, `render_convert_texture`, `stage_output_texture`) live in `obs-video.c` and are ported **in Phase 3** (the coverage matrix maps `obs-video.c` to P2-10 + P3-26). Their callers — `render_video`, `output_frames`, and the scene/source walk — depend on `obs_core` and only exist in **Phase 4** (P4-05). In Phase 3, drive the render functions with a static test scene.
 
 ## Reading list (in order)
 
@@ -51,7 +51,7 @@ APIs (grep in `graphics.h`): `gs_texture_open_shared(handle)`, `gs_texture_open_
 
 - Device lifecycle and loss: `device_create`, `device_destroy`, adapter enumeration (`gs_enum_adapters`), `gs_get_device_type` (`GS_DEVICE_OPENGL`, `GS_DEVICE_DIRECT3D_11`, `GS_DEVICE_METAL` — add a new constant and check every `gs_get_device_type()` call in plugins: e.g. `obs_init_graphics` loads `default_rect.effect` only for OpenGL).
 - Swap chains (`gs_swapchain_*`), render targets, zstencil, stage surfaces (CPU read-back, synchronous API), mapping/unmapping, copy/region copy.
-- Blend/depth/stencil/raster state objects, samplers, viewport/scissor, vertex/index buffers (dynamic), `gs_draw`/`gs_load_*`.
+- Blend/depth/stencil state (function-based in 33.0.1, no state objects: `gs_blend_function`, `gs_depth_function`, `gs_stencil_function`/`gs_stencil_op`, `gs_set_cull_mode`), samplers, viewport/scissor (`gs_set_viewport`, `gs_set_scissor_rect`), vertex/index buffers (dynamic), `gs_draw`/`gs_load_*`.
 - Timestamp queries (`gs_timer`, `gs_timer_range`) used by stats.
 - HDR: `gs_is_monitor_hdr`, `gs_duplicator_get_sdr_white_level`; the nominal-peak / SDR-white values themselves are exposed to plugins at the libobs level (`obs_get_video_hdr_nominal_peak_level`, `obs_get_video_sdr_white_level`, `obs.h`), not by `gs_*`.
 
@@ -61,7 +61,7 @@ APIs (grep in `graphics.h`): `gs_texture_open_shared(handle)`, `gs_texture_open_
 2. P3-05 transpiler, then P3-24/25 (compile every effect, image-diff).
 3. P3-18…P3-21 sharing (platform by platform, each with a capture plugin as the test).
 4. P3-22/23 backend selection, HDR.
-5. Optionally P3-01…P3-12, P3-07…P3-11 (Rust `graphics.c`/parsers) when ready to delete C.
+5. Optionally P3-01…P3-04, P3-06, P3-07…P3-12 (Rust `graphics.c`/parsers; P3-05 already done in step 2) when ready to delete C.
 
 ## Pitfalls
 
@@ -70,6 +70,15 @@ APIs (grep in `graphics.h`): `gs_texture_open_shared(handle)`, `gs_texture_open_
 - `gs_stagesurface_map` is synchronous in the API; `wgpu` maps are async. Use a staging ring and poll on the graphics thread; do not block on the main thread.
 - Some backends need the display and the main renderer on the same thread (macOS Metal layer). Keep `gs_enter_context`/`gs_leave_context` semantics (thread-local current graphics with a recursion counter).
 - Never assume the graphics thread is the process main thread.
+
+## Running this phase's checks
+
+Conformance: from `test/conformance/` with `CONFORMANCE_BUILD_DIR` exported, `./run.sh check <area>` for
+`effect` (S-020, 41 scripts), `graphics` (S-043, 31), `gfximages` (S-053, 21), `glbackend` (S-057, 22),
+`obsvideo` (S-058, 23), `math` (S-008, 8), `lexer` (S-011, 25). A Rust runner implements each area's script
+language and diffs stdout against `vectors/<area>/` (comparison rules: `test/conformance/README.md`). Rust side:
+`cargo test`, `cargo clippy -- -D warnings`; effect renders compared by PSNR > 60 dB (P3-24.3). `cargo xtask`
+arrives in Phase 7 (P7-06).
 
 ## Verification checklist
 

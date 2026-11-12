@@ -1,0 +1,9 @@
+# S-061 R07: the two mutex-init styles; recursive allows a re-entrant lock
+mval
+mlock
+munlock
+mrec
+mlock
+mlock
+munlock
+munlock

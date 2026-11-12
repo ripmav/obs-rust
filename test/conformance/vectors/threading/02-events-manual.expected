@@ -1,0 +1,14 @@
+evt b ok
+etry b 11
+esig b 0
+etry b 0
+etry b 0
+wwait b 0
+wwait b 0
+ereset b
+etry b 11
+wtimed b 30 110
+esig b 0
+esig b 0
+wwait b 0
+edest b
