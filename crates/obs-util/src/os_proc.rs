@@ -10,7 +10,9 @@ pub fn os_get_executable_path_ptr(name: Option<&str>) -> Option<String> {
     // SAFETY: a valid NUL-terminated path, buffer large enough.
     let c = CString::new("/proc/self/exe").ok()?;
     let mut buf = [0u8; 4096];
-    let n = unsafe { libc::readlink(c.as_ptr(), buf.as_mut_ptr(), buf.len()) };
+    // readlink(2) takes a c_char buffer (*mut i8 on x86_64, *mut u8 on
+    // aarch64); .cast() infers the platform type.
+    let n = unsafe { libc::readlink(c.as_ptr(), buf.as_mut_ptr().cast(), buf.len()) };
     if n <= 0 {
         return None;
     }
