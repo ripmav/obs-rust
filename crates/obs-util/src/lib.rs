@@ -11,6 +11,7 @@ pub mod dl;
 pub mod dstr;
 pub mod hash;
 pub mod os_fs;
+pub mod os_proc;
 pub mod os_str;
 pub mod pipe;
 pub mod process_args;

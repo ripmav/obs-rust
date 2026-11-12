@@ -17,7 +17,7 @@ Stack: branches off the Phase 0 head `docs/rewrite-coverage-2026-11` (PR #10); r
 - WP-3 = P1-03 darray — spec S-005 — branch `p1/darray` — C-blocked: layout vs C header, OBS_ENABLE_RUST. Done spec-side 2026-11-11 (see L6).
 - WP-4 = P1-10 crc32/blake2 — known-answer tests — branch `p1/crc-hash` — C-blocked: none beyond usage scan (deps are frontend-only per phase file). Done spec-side 2026-11-11 (see L7).
 - WP-5 = P1-15/P1-16 vec + matrix4 — spec S-008 — branch `p1/vec-matrix` — C-blocked: 10k goldens vs C, size/align vs C headers, benchmark.
-- WP-6+ = dstr (S-006), calldata (S-002), decl (S-003), signal (S-004), math-rest (S-009), config-file (S-007), obs-data (S-014) — branches `p1/<name>` as capacity allows. WP-6 = P1-02 dstr done spec-side 2026-11-11 (see L9). WP-7 = P1-06 calldata done spec-side 2026-11-11 (see L10). WP-8 = P1-07 decl done spec-side 2026-11-11 (see L11). WP-9 = P1-22 signal (S-004) done spec-side 2026-11-11 (see L13). WP-10 = P1-15/16/17/18 math-rest (S-009) done spec-side 2026-11-11 (see L14). WP-11 = P1-09 config-file (S-007) done spec-side 2026-11-11 (see L15). WP-12 = P1-24/P1-25 obs-data (S-014) done spec-side 2026-11-12 (see L16). WP-13 = P1-27 obs-properties (S-015) done spec-side 2026-11-12 (see L17). WP-14 = P1-28.1 hotkey key table (S-024 M4) done spec-side 2026-11-12 (see L18). Next: remaining spec-side Phase 1 WPs as capacity allows (S-034 registry itself is Phase 4).
+- WP-6+ = dstr (S-006), calldata (S-002), decl (S-003), signal (S-004), math-rest (S-009), config-file (S-007), obs-data (S-014) — branches `p1/<name>` as capacity allows. WP-6 = P1-02 dstr done spec-side 2026-11-11 (see L9). WP-7 = P1-06 calldata done spec-side 2026-11-11 (see L10). WP-8 = P1-07 decl done spec-side 2026-11-11 (see L11). WP-9 = P1-22 signal (S-004) done spec-side 2026-11-11 (see L13). WP-10 = P1-15/16/17/18 math-rest (S-009) done spec-side 2026-11-11 (see L14). WP-11 = P1-09 config-file (S-007) done spec-side 2026-11-11 (see L15). WP-12 = P1-24/P1-25 obs-data (S-014) done spec-side 2026-11-12 (see L16). WP-13 = P1-27 obs-properties (S-015) done spec-side 2026-11-12 (see L17). WP-14 = P1-28.1 hotkey key table (S-024 M4) done spec-side 2026-11-12 (see L18). WP-15 = P1-11 process + module loading (S-055 U2, S-024 M3, S-023 R107/R82) done spec-side 2026-11-12 (see L19). Next: remaining spec-side Phase 1 WPs as capacity allows (S-034 registry itself is Phase 4).
 - C-tail WPs = P1-29/30/31/32 — blocked on C checkout + two-week nightly soak.
 
 **L11 (WP-8, 2026-11-11) — P1-07 decl (S-003) — branch `p1/decl` (off `p1/calldata`), PR #19.**
@@ -93,6 +93,46 @@ failed, clippy 0, deny ok. New dep per ADR 0005 log: `parking_lot` 0.13.x
 `docs/tests/signal.md` (23 rows). NOT ticked: P1-22.3 loom check,
 P1-22.4 recipe (C checkout), P1-23 typed API (own substep). Review status:
 see PR body.
+
+**L19 (WP-15, 2026-11-12) — P1-11 process + module loading (S-055 U2, S-024 M3, S-023 R107/R82) — branch `p1/process` (off `p1/hotkey-names`), PR #27.**
+Four commits: `3660bc2` `obs_util::process_args` — the S-024 M3
+argument container (`create`/`add_arg`/`add_argf` with the pinned
+printf subset `%d` `%i` `%s` `%x` `%X`, decimal width, zero pad, `%%`;
+unsupported specifiers pass through verbatim) + `argc`/`argv`
+(NULL-terminated view, count without it). R16 defect fixed: a format
+expanding to the empty string stores `""` (C stored NULL). Q-3 (NULL
+executable/arg stored as NULL elements) is unrepresentable in the safe
+API — the FFI layer maps C-NULL to `""` (documented). `97f469b`
+`obs_util::dl` — S-023 R107 `os_dlopen`/`os_dlsym`/`os_dlclose`
+(`.so` append rule, `RTLD_NOW`); the R107 error log is not wired yet
+(no logger in the crate) — the used file name is pinned through the
+failed `dlerror` text instead. `3609c47` `obs_util::pipe` — S-055 U2
+`os_process_pipe_create` (`/bin/sh -c cmd`) / `create2` (`argv[0]`
+direct, no shell, no PATH lookup) / `read` + `read_err` (`fread`
+semantics) / `write` / `destroy` (exit status as
+`(int)(signed char)status`: 7→7, 200→-56, 255→-1, 128→-128; D-1
+signalled child → the pid). Mode by first char of `type` (R04);
+missing executable → `None` with no leaked descriptor (R06, pre-`access`
+check); missing command → handle + 127 on destroy. `os_proc` —
+S-023-R82 `os_get_executable_path_ptr` (`/proc/self/exe`). Two
+documented deviations: Q-1 write buffering — the port writes directly
+(delivery at least as early, same exit statuses), and the spawn
+mechanism is fork + dup2 + execv instead of posix_spawn file actions
+(this glibc 2.41's `posix_spawn_file_actions_adddup2` argument order
+made file actions unusable — verified with a C probe; observable
+behaviour R03-R09 identical). New dependency per ADR 0005 log:
+`libc` 0.2.x (MIT OR Apache-2.0, allow-list D-07) — the platform FFI
+of S-023/S-055; the `extern "C"` surface stays in `obs-ffi` (Rule 1).
+All FFI tests `#[cfg_attr(miri, ignore)]`. Evidence:
+`cargo test -p obs-util --lib` 133/133 (stable ×5, vectors
+pipe_read/pipe_write/pipe_null_and_args + args-* mirrored + P1-11.3
+edge cases), **Miri 111 + 22 ignored**, workspace 363/0, clippy 0,
+fmt ok, `cargo deny check` ok. Matrix: `docs/tests/process.md`
+(27 rows). Tick policy: P1-11.1, P1-11.2, P1-11.3 ticked (Rust
+artifacts + tests); **not** ticked: P1-11.4 apply recipe (C checkout:
+`extern "C"` shims, cbindgen diff, `OBS_ENABLE_RUST`), the 3-OS
+roundtrip of the P1-11 "Done when" (Linux only here), R107 error-log
+text (needs the logger). Review status: see PR body.
 
 **L18 (WP-14, 2026-11-12) — P1-28.1 hotkey key table (S-024 M4) — branch `p1/hotkey-names` (off `p1/properties`), PR #26.**
 One commit: `ed2912e` new crate `crates/obs-hotkey-names` — the
