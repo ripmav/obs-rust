@@ -589,6 +589,15 @@ mod tests {
         // a corrupt primary without a backup: still None
         fs::write(&p2, b"{corrupt").unwrap();
         assert!(data_create_from_json_file_safe(&p2, "bak").is_none());
+        // QUIRK Q6: the backup is consumed even when the primary merely
+        // does not exist
+        let p3 = dir.join("r.json").to_string_lossy().into_owned();
+        let p3b = dir.join("r.json.bak");
+        fs::write(&p3b, br#"{"from":"backup"}"#).unwrap();
+        let r = data_create_from_json_file_safe(&p3, "bak")
+            .expect("the backup is renamed over the missing primary");
+        assert_eq!(data_get_string(&r, "from"), "backup");
+        assert!(dir.join("r.json").exists() && !p3b.exists());
         let _ = fs::remove_dir_all(&dir);
     }
 
