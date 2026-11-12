@@ -8,6 +8,7 @@ members = [
     "crates/obs-math",
     "crates/obs-data",
     "crates/obs-properties",
+    "crates/obs-hotkey-names",
     "crates/obs-signal",
     "crates/obs-media-io",
     "crates/obs-graphics",
