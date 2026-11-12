@@ -70,6 +70,7 @@ mod tests {
     // a real library, a missing symbol, a missing library (with and
     // without the .so suffix), and the .so append rule.
     #[test]
+    #[cfg_attr(miri, ignore)]
     fn dl_real_library() {
         let lib = os_dlopen("libm.so.6").expect("libm.so.6 loads");
         assert!(os_dlsym(&lib, "cos").is_some());
@@ -78,6 +79,7 @@ mod tests {
     }
 
     #[test]
+    #[cfg_attr(miri, ignore)]
     fn dl_missing_library() {
         assert!(os_dlopen("nosuchlibrary_xyz").is_none());
         assert!(os_dlopen("nosuchlibrary_xyz.so").is_none());
@@ -100,6 +102,7 @@ mod tests {
     }
 
     #[test]
+    #[cfg_attr(miri, ignore)]
     fn dl_appends_so_rule() {
         // no ".so" substring: ".so" is appended — the attempted name in
         // the error is "nosuchlibrary_xyz.so"
