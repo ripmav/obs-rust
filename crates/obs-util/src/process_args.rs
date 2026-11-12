@@ -81,9 +81,9 @@ fn format_argf(fmt: &str, args: &[ArgfArg]) -> String {
             out.push('%');
             break;
         }
-        if tail.starts_with('%') {
+        if let Some(t) = tail.strip_prefix('%') {
             out.push('%');
-            rest = &tail[1..];
+            rest = t;
             continue;
         }
         // parse [0][width]conversion

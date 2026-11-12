@@ -7,11 +7,12 @@ pub mod bmem;
 pub mod config;
 pub mod darray;
 pub mod deque;
+pub mod dl;
 pub mod dstr;
 pub mod hash;
 pub mod os_fs;
-pub mod process_args;
 pub mod os_str;
+pub mod process_args;
 
 #[cfg(test)]
 mod tests {
