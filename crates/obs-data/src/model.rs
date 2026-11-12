@@ -166,7 +166,7 @@ pub struct ObsDataItem {
 
 pub(crate) struct Data {
     /// List order — the source of iteration/JSON key order (§6.1).
-    items: Vec<ItemRc>,
+    pub(crate) items: Vec<ItemRc>,
     /// The buffer of the most recent `get_json*` call (R81, QUIRK Q4) —
     /// written by the JSON layer.
     #[allow(dead_code)]
@@ -175,7 +175,7 @@ pub(crate) struct Data {
 
 pub(crate) struct Arr {
     /// Elements are shared: `array_item` returns the same object.
-    elements: Vec<DataRc>,
+    pub(crate) elements: Vec<DataRc>,
 }
 
 pub(crate) struct Item {

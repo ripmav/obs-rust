@@ -11,3 +11,4 @@ workspace = true
 
 [dependencies]
 obs-math = { path = "../obs-math" }
+obs-util = { path = "../obs-util" }
