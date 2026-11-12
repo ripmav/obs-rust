@@ -16,6 +16,7 @@
 //! crate, S-023); the FFI layer will wire them.
 
 pub mod json;
+pub mod model;
 
 #[cfg(test)]
 mod tests {
