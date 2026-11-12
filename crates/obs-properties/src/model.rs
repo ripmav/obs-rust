@@ -196,7 +196,7 @@ pub(crate) struct Container {
     /// order after the param.
     param: Option<Param>,
     flags: u32,
-    props: Vec<PropRc>,
+    pub(crate) props: Vec<PropRc>,
     /// Number of GROUP properties directly in `props` (R09/R10 shortcut).
     group_count: usize,
     /// The GROUP property whose content this container is (R11), or none.
@@ -313,7 +313,7 @@ fn tree_contains(c: &ContainerRc, name: &str) -> bool {
 
 /// `has_prop(c, name) = tree_contains(topmost(c), name)` — the R09 check
 /// every `add_*` runs first.
-fn has_prop(c: &ContainerRc, name: &str) -> bool {
+pub(crate) fn has_prop(c: &ContainerRc, name: &str) -> bool {
     match topmost(c) {
         Some(t) => tree_contains(&t, name),
         None => false,
@@ -492,21 +492,15 @@ fn remove_inner(c: &ContainerRc, name: &str) {
 // R13: property construction
 // ---------------------------------------------------------------------------
 
-/// Create, name-check (R09) and append a property. Returns the new
-/// property or `None` (name duplicate anywhere in the top-most tree, or a
-/// kind-specific refusal — see the callers).
-fn add_checked(
+/// Append a property **without** the R09 name check (callers that must
+/// order a refusal before/after R09 use this directly).
+pub(crate) fn add_unchecked(
     c: &ContainerRc,
     name: &str,
     ty: PropType,
     desc: Option<String>,
     kind: Kind,
-) -> Option<PropRc> {
-    if has_prop(c, name) {
-        // R09: LOG_WARNING "Property '<name>' exists" — the FFI layer
-        // wires the logger (crate has none yet, as in obs-data).
-        return None;
-    }
+) -> PropRc {
     let r = Rc::new(RefCell::new(Prop {
         name: name.to_string(),
         desc,
@@ -528,7 +522,24 @@ fn add_checked(
         let mut p = r.borrow_mut();
         p.owner = Rc::downgrade(c);
     }
-    Some(r)
+    r
+}
+
+/// Create, name-check (R09) and append a property. Returns the new
+/// property or `None` (name duplicate anywhere in the top-most tree).
+pub(crate) fn add_checked(
+    c: &ContainerRc,
+    name: &str,
+    ty: PropType,
+    desc: Option<String>,
+    kind: Kind,
+) -> Option<PropRc> {
+    if has_prop(c, name) {
+        // R09: LOG_WARNING "Property '<name>' exists" — the FFI layer
+        // wires the logger (crate has none yet, as in obs-data).
+        return None;
+    }
+    Some(add_unchecked(c, name, ty, desc, kind))
 }
 
 /// R41 check 5: would adopting `group` under `target` create a cycle, i.e.
@@ -555,7 +566,7 @@ fn group_tree_contains(target: &ContainerRc, group: &ContainerRc) -> bool {
 pub fn properties_add_group(
     props: &ObsProperties,
     name: &str,
-    desc: Option<String>,
+    desc: Option<&str>,
     ty: GroupType,
     group: &ObsProperties,
 ) -> Option<ObsProperty> {
@@ -589,7 +600,7 @@ pub fn properties_add_group(
         &props.inner,
         name,
         PropType::GROUP,
-        desc,
+        desc.map(str::to_string),
         Kind::Group {
             ty: ty.as_raw(),
             content: group.inner.clone(),
@@ -763,10 +774,10 @@ mod tests {
         let g2 = properties_create_param(g2p, Some(destroy_token));
         let nested = param("nested");
         let g3 = properties_create_param(nested, Some(destroy_token));
-        properties_add_group(&g1, "inner", Some("Inner".into()), GroupType::NORMAL, &g3).unwrap();
+        properties_add_group(&g1, "inner", Some("Inner"), GroupType::NORMAL, &g3).unwrap();
         drop(g3);
-        properties_add_group(&t, "first", Some("First".into()), GroupType::NORMAL, &g1).unwrap();
-        properties_add_group(&t, "second", Some("Second".into()), GroupType::NORMAL, &g2).unwrap();
+        properties_add_group(&t, "first", Some("First"), GroupType::NORMAL, &g1).unwrap();
+        properties_add_group(&t, "second", Some("Second"), GroupType::NORMAL, &g2).unwrap();
         drop(g1);
         drop(g2);
         drop(t);
@@ -837,17 +848,11 @@ mod tests {
         add_bool(&g1, "b", "B").unwrap();
         add_bool(&g2, "c", "C").unwrap();
 
-        let g1p = properties_add_group(&top, "g1", Some("Group 1".into()), GroupType::NORMAL, &g1)
-            .unwrap();
+        let g1p =
+            properties_add_group(&top, "g1", Some("Group 1"), GroupType::NORMAL, &g1).unwrap();
         add_bool(&top, "t", "T").unwrap();
-        let g2p = properties_add_group(
-            &top,
-            "g2",
-            Some("Group 2".into()),
-            GroupType::CHECKABLE,
-            &g2,
-        )
-        .unwrap();
+        let g2p =
+            properties_add_group(&top, "g2", Some("Group 2"), GroupType::CHECKABLE, &g2).unwrap();
         assert_eq!(group_type(&g1p), GroupType::NORMAL);
         assert_eq!(group_type(&g2p), GroupType::CHECKABLE);
         assert!(Rc::ptr_eq(&group_content(&g1p).unwrap().inner, &g1.inner));
@@ -896,36 +901,35 @@ mod tests {
 
         // duplicate between the group's DIRECT children and the target tree
         add_bool(&g, "x", "x").unwrap();
-        assert!(properties_add_group(&top, "g", Some("G".into()), GroupType::NORMAL, &g).is_none());
+        assert!(properties_add_group(&top, "g", Some("G"), GroupType::NORMAL, &g).is_none());
         // the rejected group was not adopted
         assert!(g.inner.borrow().parent.is_none());
 
         // duplicate group name
         let g2 = properties_create();
         assert!(
-            properties_add_group(&top, "x", Some("dup name".into()), GroupType::NORMAL, &g2)
-                .is_none()
+            properties_add_group(&top, "x", Some("dup name"), GroupType::NORMAL, &g2).is_none()
         );
         assert!(g2.inner.borrow().parent.is_none());
 
         // fix and retry
         properties_remove_by_name(&g, "x");
         add_bool(&g, "y", "Y").unwrap();
-        assert!(properties_add_group(&top, "g", Some("G".into()), GroupType::NORMAL, &g).is_some());
+        assert!(properties_add_group(&top, "g", Some("G"), GroupType::NORMAL, &g).is_some());
         drop(g);
 
         // recursion cycles through nesting: A -> b(B) -> c(C)
         let a = properties_create();
         let b = properties_create();
         let c = properties_create();
-        properties_add_group(&a, "b", Some("B".into()), GroupType::NORMAL, &b).unwrap();
-        properties_add_group(&b, "c", Some("C".into()), GroupType::NORMAL, &c).unwrap();
+        properties_add_group(&a, "b", Some("B"), GroupType::NORMAL, &b).unwrap();
+        properties_add_group(&b, "c", Some("C"), GroupType::NORMAL, &c).unwrap();
         // A contains B contains C: C cannot adopt A, B cannot adopt A, A != A2
-        assert!(properties_add_group(&c, "a", Some("A".into()), GroupType::NORMAL, &a).is_none());
-        assert!(properties_add_group(&b, "a", Some("A".into()), GroupType::NORMAL, &a).is_none());
-        assert!(properties_add_group(&a, "a2", Some("A2".into()), GroupType::NORMAL, &a).is_none());
+        assert!(properties_add_group(&c, "a", Some("A"), GroupType::NORMAL, &a).is_none());
+        assert!(properties_add_group(&b, "a", Some("A"), GroupType::NORMAL, &a).is_none());
+        assert!(properties_add_group(&a, "a2", Some("A2"), GroupType::NORMAL, &a).is_none());
         // not a cycle (sibling): Top can adopt A
-        assert!(properties_add_group(&top, "a", Some("A".into()), GroupType::NORMAL, &a).is_some());
+        assert!(properties_add_group(&top, "a", Some("A"), GroupType::NORMAL, &a).is_some());
         drop(a);
         drop(b);
         drop(c);
@@ -941,8 +945,8 @@ mod tests {
         add_bool(&g1, "a", "A").unwrap();
         add_bool(&g1, "b", "B").unwrap();
         add_bool(&g2, "c", "C").unwrap();
-        properties_add_group(&g1, "inner", Some("Inner".into()), GroupType::NORMAL, &g2).unwrap();
-        properties_add_group(&top, "g", Some("Group".into()), GroupType::NORMAL, &g1).unwrap();
+        properties_add_group(&g1, "inner", Some("Inner"), GroupType::NORMAL, &g2).unwrap();
+        properties_add_group(&top, "g", Some("Group"), GroupType::NORMAL, &g1).unwrap();
         add_bool(&top, "t", "T").unwrap();
         drop(g1);
         drop(g2);
@@ -981,10 +985,10 @@ mod tests {
         let h = properties_create();
         add_bool(&top, "x", "X top").unwrap();
         add_bool(&h, "x", "X deep").unwrap();
-        properties_add_group(&g, "h", Some("H".into()), GroupType::NORMAL, &h).unwrap();
+        properties_add_group(&g, "h", Some("H"), GroupType::NORMAL, &h).unwrap();
         drop(h);
         // a name nested two levels deep does NOT trip the direct-child check
-        assert!(properties_add_group(&top, "g", Some("G".into()), GroupType::NORMAL, &g).is_some());
+        assert!(properties_add_group(&top, "g", Some("G"), GroupType::NORMAL, &g).is_some());
         drop(g);
         // get returns the first match in search order (top-level first)
         let x = properties_get(&top, "x").unwrap();
@@ -999,8 +1003,7 @@ mod tests {
         let top2 = properties_create();
         add_bool(&k, "same", "child").unwrap();
         assert!(
-            properties_add_group(&top2, "same", Some("group".into()), GroupType::NORMAL, &k)
-                .is_some()
+            properties_add_group(&top2, "same", Some("group"), GroupType::NORMAL, &k).is_some()
         );
         drop(k);
         let s = properties_get(&top2, "same").unwrap();
@@ -1013,9 +1016,9 @@ mod tests {
         let a = properties_create();
         let b = properties_create();
         let c = properties_create();
-        properties_add_group(&a, "g", Some("g".into()), GroupType::NORMAL, &c).unwrap();
+        properties_add_group(&a, "g", Some("g"), GroupType::NORMAL, &c).unwrap();
         // c already has a parent: a second adoption is refused
-        assert!(properties_add_group(&b, "g2", Some("g2".into()), GroupType::NORMAL, &c).is_none());
+        assert!(properties_add_group(&b, "g2", Some("g2"), GroupType::NORMAL, &c).is_none());
         assert!(Rc::ptr_eq(
             &properties_get_parent(&c).unwrap().inner,
             &a.inner
