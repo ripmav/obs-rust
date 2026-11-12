@@ -10,6 +10,7 @@ pub mod deque;
 pub mod dstr;
 pub mod hash;
 pub mod os_fs;
+pub mod process_args;
 pub mod os_str;
 
 #[cfg(test)]
