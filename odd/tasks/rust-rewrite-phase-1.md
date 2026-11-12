@@ -17,7 +17,7 @@ Stack: branches off the Phase 0 head `docs/rewrite-coverage-2026-11` (PR #10); r
 - WP-3 = P1-03 darray — spec S-005 — branch `p1/darray` — C-blocked: layout vs C header, OBS_ENABLE_RUST. Done spec-side 2026-11-11 (see L6).
 - WP-4 = P1-10 crc32/blake2 — known-answer tests — branch `p1/crc-hash` — C-blocked: none beyond usage scan (deps are frontend-only per phase file). Done spec-side 2026-11-11 (see L7).
 - WP-5 = P1-15/P1-16 vec + matrix4 — spec S-008 — branch `p1/vec-matrix` — C-blocked: 10k goldens vs C, size/align vs C headers, benchmark.
-- WP-6+ = dstr (S-006), calldata (S-002), decl (S-003), signal (S-004), math-rest (S-009), config-file (S-007), obs-data (S-014) — branches `p1/<name>` as capacity allows. WP-6 = P1-02 dstr done spec-side 2026-11-11 (see L9). WP-7 = P1-06 calldata done spec-side 2026-11-11 (see L10). WP-8 = P1-07 decl done spec-side 2026-11-11 (see L11). WP-9 = P1-22 signal (S-004) done spec-side 2026-11-11 (see L13). WP-10 = P1-15/16/17/18 math-rest (S-009) done spec-side 2026-11-11 (see L14). WP-11 = P1-09 config-file (S-007) done spec-side 2026-11-11 (see L15). WP-12 = P1-24/P1-25 obs-data (S-014) done spec-side 2026-11-12 (see L16). WP-13 = P1-27 obs-properties (S-015) done spec-side 2026-11-12 (see L17). WP-14 = P1-28.1 hotkey key table (S-024 M4) done spec-side 2026-11-12 (see L18). WP-15 = P1-11 process + module loading (S-055 U2, S-024 M3, S-023 R107/R82) done spec-side 2026-11-12 (see L19). Next: remaining spec-side Phase 1 WPs as capacity allows (S-034 registry itself is Phase 4).
+- WP-6+ = dstr (S-006), calldata (S-002), decl (S-003), signal (S-004), math-rest (S-009), config-file (S-007), obs-data (S-014) — branches `p1/<name>` as capacity allows. WP-6 = P1-02 dstr done spec-side 2026-11-11 (see L9). WP-7 = P1-06 calldata done spec-side 2026-11-11 (see L10). WP-8 = P1-07 decl done spec-side 2026-11-11 (see L11). WP-9 = P1-22 signal (S-004) done spec-side 2026-11-11 (see L13). WP-10 = P1-15/16/17/18 math-rest (S-009) done spec-side 2026-11-11 (see L14). WP-11 = P1-09 config-file (S-007) done spec-side 2026-11-11 (see L15). WP-12 = P1-24/P1-25 obs-data (S-014) done spec-side 2026-11-12 (see L16). WP-13 = P1-27 obs-properties (S-015) done spec-side 2026-11-12 (see L17). WP-14 = P1-28.1 hotkey key table (S-024 M4) done spec-side 2026-11-12 (see L18). WP-15 = P1-11 process + module loading (S-055 U2, S-024 M3, S-023 R107/R82) done spec-side 2026-11-12 (see L19). WP-16 = P1-14.3 task queue + 128-bit helpers (S-024 M2/M6) done spec-side 2026-11-12 (see L20). Next: remaining spec-side Phase 1 WPs as capacity allows (S-034 registry itself is Phase 4).
 - C-tail WPs = P1-29/30/31/32 — blocked on C checkout + two-week nightly soak.
 
 **L11 (WP-8, 2026-11-11) — P1-07 decl (S-003) — branch `p1/decl` (off `p1/calldata`), PR #19.**
@@ -93,6 +93,42 @@ failed, clippy 0, deny ok. New dep per ADR 0005 log: `parking_lot` 0.13.x
 `docs/tests/signal.md` (23 rows). NOT ticked: P1-22.3 loom check,
 P1-22.4 recipe (C checkout), P1-23 typed API (own substep). Review status:
 see PR body.
+
+**L20 (WP-16, 2026-11-12) — P1-14.3 task queue + 128-bit helpers (S-024 M2/M6) — branch `p1/uint128-task` (off `p1/process`), PR #28.**
+One commit: `acb30eb` new crate `crates/obs-util-small` (the S-024
+crate split is a suggestion; M3 and the S-023/S-055 platform helpers
+already landed in `obs-util` per the P1-11 subtasks) — module
+`uint128`: `UtilUInt128` (16 bytes, LE i32 limbs, R10) +
+`util_add128` (mod 2^128), `util_lshift64_internal_32/_64`,
+`util_mul64_64`, `util_div128_32` (divisor 0 = D-1 precondition:
+panic, no value) and `util_mul_div64` — exact `floor(n*m/d)` via a
+u128 intermediate (R09/Q-2: exact wins over the reference's wrapping
+formula); an exact quotient that does not fit in u64 saturates to
+`u64::MAX` (documented choice). Module `task_queue`: `os_task_queue`
+— one worker thread per queue, FIFO (R29); `wait` with the R31 marker
+deferral (marker at the head with a task queued behind it is moved to
+the back — a task queued from a running task still runs before
+`wait()` returns) and R32 semantics (true iff a non-marker task is
+taken off the queue while a wait marker is in the queue — a task
+already in flight does not count); `destroy` defers its stop marker
+behind every pending task and joins (R33); `inside` true only on the
+queue's own worker (R34). C-NULL arguments unrepresentable (R30 maps
+them in the FFI layer). Implementation note: the vectors'
+`task_wait_release` = wait while the gate is released from another
+thread — the tests reproduce that exactly (a gate task that is
+already in flight when the wait starts does not count as processed;
+verified flaky without the entered-synchronisation, pinned with it).
+No new dependencies (std only). Evidence: `cargo test
+-p obs-util-small` 15/15 (vectors u128_layout/u128-add/u128-mul64/
+u128-div32/u128-shift/muldiv64/muldiv64-quirk-overflow/
+u128-defect-div0 + task-order/task-requeue/task-wait-idle/
+task-inside/task-destroy/task-null mirrored; stable ×20), **Miri
+15/15** (real threads under Miri), workspace 378/0, clippy 0, fmt ok,
+`cargo deny check` ok (no deps). Matrix: `docs/tests/util-small.md`
+(21 rows). Tick policy: P1-14.3 ticked (Rust artifacts + tests);
+**not** ticked: P1-14.1 (inventory, separate substep), P1-14.4
+(curl) and the apply-recipe steps (C checkout). Review status: see
+PR body.
 
 **L19 (WP-15, 2026-11-12) — P1-11 process + module loading (S-055 U2, S-024 M3, S-023 R107/R82) — branch `p1/process` (off `p1/hotkey-names`), PR #27.**
 Four commits: `3660bc2` `obs_util::process_args` — the S-024 M3
