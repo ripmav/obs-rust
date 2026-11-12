@@ -185,8 +185,10 @@ mod tests {
         true
     }
 
+    /// Miri-compatible token: the address of the string literal (unique
+    /// per literal, lives in the binary, never freed).
     fn token(t: &'static str) -> *mut c_void {
-        Box::leak(Box::new(t)) as *mut &'static str as *mut c_void
+        t as *const str as *mut c_void
     }
 
     fn prop_ptr(p: &ObsProperty) -> usize {
