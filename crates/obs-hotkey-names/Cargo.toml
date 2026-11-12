@@ -1,0 +1,12 @@
+[package]
+name = "obs-hotkey-names"
+description = "obs_key id <-> name table and lookups (S-024 M4, Phase 1)."
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+rust-version.workspace = true
+
+[lints]
+workspace = true
+
+[dependencies]
