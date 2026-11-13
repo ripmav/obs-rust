@@ -1,0 +1,14 @@
+# P0-09.2: nextest configuration (repository-level, shared by all developers and CI).
+# Nextest 0.9.150+ reads repository config from .config/nextest.toml (the old
+# root-level cargo-nextest.toml is no longer read; profiles defined there are
+# silently ignored, which broke `--profile ci` in CI).
+# nextest-version pins the minimum release so a future config-schema change
+# fails loudly instead of silently ignoring keys.
+nextest-version = "0.9.151"
+
+[profile.ci]
+# Run all tests regardless of failures so the per-OS junit artifact is complete.
+fail-fast = false
+
+[profile.ci.junit]
+path = "junit.xml"

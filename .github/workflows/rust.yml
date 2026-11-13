@@ -1,0 +1,131 @@
+name: ci
+
+on:
+  # All PRs, not just base=main: WP PRs are stacked on the Phase 0 head and
+  # must run the same pipeline (P0-09).
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  lint:
+    name: lint (fmt + clippy)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+      - name: fmt
+        run: cargo fmt --all --check
+      - name: clippy
+        run: cargo clippy --workspace --all-targets -- -D warnings
+
+  test:
+    name: test (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+      - uses: taiki-e/install-action@v2
+        with:
+          tool: nextest
+          version: 0.9.151
+      - name: nextest
+        run: cargo nextest run --workspace --profile ci
+      - name: upload test report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: nextest-junit-${{ matrix.os }}
+          path: target/nextest/ci/junit.xml
+
+  supply-chain:
+    name: supply chain (deny + audit + miri)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+      - uses: taiki-e/install-action@v2
+        with:
+          tool: cargo-deny
+      - uses: taiki-e/install-action@v2
+        with:
+          tool: cargo-audit
+      - name: cargo deny
+        run: cargo deny check
+      - name: cargo audit
+        run: cargo audit
+      - name: miri
+        run: |
+          rustup toolchain install nightly --profile minimal --component miri
+          # --lib: unit tests only. Subprocess re-exec tests (bmem_fatal) are
+          # incompatible with Miri isolation and already run in the test job.
+          cargo +nightly miri test -p obs-util -p obs-math -p obs-data -p obs-signal --lib
+
+  coverage:
+    name: coverage (llvm-cov)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: llvm-tools-preview
+      - uses: Swatinem/rust-cache@v2
+      - uses: taiki-e/install-action@v2
+        with:
+          tool: cargo-llvm-cov
+      # Summary is captured once here; the PR comment reuses the file instead
+      # of re-running cargo llvm-cov.
+      - name: collect coverage
+        run: |
+          cargo llvm-cov --workspace --summary-only --output-path lcov.info > coverage-summary.txt
+          cat coverage-summary.txt
+      - name: upload coverage
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-lcov
+          path: |
+            lcov.info
+            coverage-summary.txt
+      # One coverage comment per PR: the HTML marker identifies our comment,
+      # so re-runs edit it in place instead of piling up new comments.
+      - name: comment on PR
+        if: github.event_name == 'pull_request'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          PR=${{ github.event.pull_request.number }}
+          REPO=${{ github.repository }}
+          {
+            echo "<!-- coverage-summary -->"
+            echo "### Coverage"
+            echo
+            echo '```text'
+            cat coverage-summary.txt
+            echo '```'
+          } > coverage-comment.md
+          COMMENT_ID=$(gh api "repos/$REPO/issues/$PR/comments" --paginate \
+            --jq '.[] | select(.body | contains("<!-- coverage-summary -->")) | .id' \
+            | tail -1)
+          if [ -n "$COMMENT_ID" ]; then
+            gh api -X PATCH "repos/$REPO/issues/$PR/comments/$COMMENT_ID" \
+              -f body="$(cat coverage-comment.md)" > /dev/null
+            echo "Updated coverage comment $COMMENT_ID"
+          else
+            gh pr comment "$PR" --repo "$REPO" --body-file coverage-comment.md
+          fi
