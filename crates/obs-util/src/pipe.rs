@@ -373,14 +373,13 @@ mod tests {
         assert_eq!(os_process_pipe_destroy(Some(p)), 0);
 
         // a large output is read completely (BSD `wc -c` pads the count
-        // with a leading space, GNU does not — both pinned)
+        // with leading spaces — two for 200000 on the runner — GNU does
+        // not; strip padding, pin the count)
         let p =
             os_process_pipe_create("head -c 200000 /dev/zero | tr '\\0' 'x' | wc -c", "r").unwrap();
         let out = read_all(&p, 100);
-        assert!(
-            out == b"200000\n" || out == b" 200000\n",
-            "wc count: {out:?}"
-        );
+        let unpadded: Vec<u8> = out.iter().copied().filter(|b| *b != b' ').collect();
+        assert_eq!(unpadded, b"200000\n");
         assert_eq!(os_process_pipe_destroy(Some(p)), 0);
 
         // D-1: a signalled child returns the (positive) pid
