@@ -298,6 +298,68 @@ pub fn vec3_transform(v: &Vec3, m: &crate::matrix4::Matrix4) -> Vec3 {
     }
 }
 
+// ── S-009-R20–R25: vec3 functions using plane / matrix3 ──────────────
+
+/// S-009-R20: `vec3_plane_dist(v, p) = dot4(v, p.dir) − p.dist` (the `w`
+/// lane participates through the dot — Q-2).
+#[must_use]
+pub fn vec3_plane_dist(v: &Vec3, p: &crate::plane::Plane) -> f32 {
+    vec3_dot(v, &p.dir) - p.dist
+}
+
+/// S-009-R21/Q-2: four-lane dots — `v.w` and the rows' `w` lanes take
+/// part.
+#[must_use]
+pub fn vec3_rotate(v: &Vec3, m: &crate::matrix3::Matrix3) -> Vec3 {
+    Vec3 {
+        x: vec3_dot(v, &m.x),
+        y: vec3_dot(v, &m.y),
+        z: vec3_dot(v, &m.z),
+        w: 0.0,
+    }
+}
+
+/// S-009-R22/Q-12: `t = v − m.t` (`vec3_sub` zeroes `w`), then the three
+/// four-lane dots with the rows; `d.w = 0`.
+#[must_use]
+pub fn vec3_transform3x4(v: &Vec3, m: &crate::matrix3::Matrix3) -> Vec3 {
+    let t = vec3_sub(v, &m.t);
+    Vec3 {
+        x: vec3_dot(&t, &m.x),
+        y: vec3_dot(&t, &m.y),
+        z: vec3_dot(&t, &m.z),
+        w: 0.0,
+    }
+}
+
+/// S-009-R23: `k = 2·plane_dist(v, p)`; `d = v − p.dir·k` (four-lane
+/// `vec3_mulf`, then `vec3_sub`). Result `w = 0`.
+#[must_use]
+pub fn vec3_mirror(v: &Vec3, p: &crate::plane::Plane) -> Vec3 {
+    let k = vec3_plane_dist(v, p) * 2.0;
+    vec3_sub(v, &vec3_mulf(&p.dir, k))
+}
+
+/// S-009-R24: `k = 2·dot4(v, n)`; `d = v − n·k` (four-lane `vec3_mulf`,
+/// `vec3_sub`). The normal is used as given (not normalised). `w = 0`.
+#[must_use]
+pub fn vec3_mirrorv(v: &Vec3, n: &Vec3) -> Vec3 {
+    let k = vec3_dot(v, n) * 2.0;
+    vec3_sub(v, &vec3_mulf(n, k))
+}
+
+/// S-009-R25: three successive `rand_float` calls (in this order),
+/// `d.w = 0`.
+#[must_use]
+pub fn vec3_rand(positive_only: bool) -> Vec3 {
+    Vec3 {
+        x: crate::math_extra::rand_float(positive_only),
+        y: crate::math_extra::rand_float(positive_only),
+        z: crate::math_extra::rand_float(positive_only),
+        w: 0.0,
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -474,5 +536,98 @@ mod tests {
         m2.t = vec4_set(1.0, 0.0, 0.0, 3.0);
         let r = crate::vec4::vec4_transform(&vec4_set(1.0, 2.0, 3.0, 1.0), &m2);
         assert!(within(r.w, 3.0));
+    }
+
+    #[test]
+    fn r20_r25_plane_and_matrix3_helpers() {
+        // S-009-R20: plane dist = dot4(v, dir) − dist
+        let p = crate::plane::Plane {
+            dir: vec3_set(0.0, 1.0, 0.0),
+            dist: 2.0,
+        };
+        let v = vec3_set(1.0, 5.0, 3.0);
+        assert_eq!(vec3_plane_dist(&v, &p), 3.0);
+        // w lane participates (Q-2): (0,0,0,7) · (0,1,0,2) − 2 = 12
+        let pw = crate::plane::Plane {
+            dir: Vec3 {
+                x: 0.0,
+                y: 1.0,
+                z: 0.0,
+                w: 2.0,
+            },
+            dist: 2.0,
+        };
+        assert_eq!(
+            vec3_plane_dist(
+                &Vec3 {
+                    x: 0.0,
+                    y: 0.0,
+                    z: 0.0,
+                    w: 7.0
+                },
+                &pw
+            ),
+            12.0
+        );
+        // S-009-R21: rotate — identity rows, rows' w lanes count (Q-2)
+        let m = crate::matrix3::Matrix3 {
+            x: vec3_set(1.0, 0.0, 0.0),
+            y: vec3_set(0.0, 1.0, 0.0),
+            z: vec3_set(0.0, 0.0, 1.0),
+            t: vec3_zero(),
+        };
+        assert_eq!(vec3_rotate(&v, &m), vec3_set(1.0, 5.0, 3.0));
+        // Q-2: v.w × row.w lane takes part
+        let mw = crate::matrix3::Matrix3 {
+            x: Vec3 {
+                x: 0.0,
+                y: 0.0,
+                z: 0.0,
+                w: 0.5,
+            },
+            y: vec3_zero(),
+            z: vec3_zero(),
+            t: vec3_zero(),
+        };
+        let vw = Vec3 {
+            x: 1.0,
+            y: 0.0,
+            z: 0.0,
+            w: 10.0,
+        };
+        assert_eq!(vec3_rotate(&vw, &m).x, 1.0); // 1·1 + 10·0
+        assert_eq!(vec3_rotate(&vw, &mw).x, 5.0); // 10 · 0.5
+        // S-009-R22: transform3x4 subtracts t first (Q-12)
+        let m3 = crate::matrix3::Matrix3 {
+            x: vec3_set(1.0, 0.0, 0.0),
+            y: vec3_set(0.0, 1.0, 0.0),
+            z: vec3_set(0.0, 0.0, 1.0),
+            t: vec3_set(1.0, 2.0, 3.0),
+        };
+        let t = vec3_transform3x4(&vec3_set(4.0, 7.0, 12.0), &m3);
+        assert_eq!(t, vec3_set(3.0, 5.0, 9.0));
+        assert_eq!(t.w, 0.0);
+        // S-009-R23: mirror in the plane y = 2: (1,5,3) -> (1,-1,3)
+        assert_eq!(vec3_mirror(&v, &p), vec3_set(1.0, -1.0, 3.0));
+        // S-009-R24: mirrorv, normal (0,1,0): k = 2·5 = 10 -> (1,-5,3)
+        assert_eq!(
+            vec3_mirrorv(&v, &vec3_set(0.0, 1.0, 0.0)),
+            vec3_set(1.0, -5.0, 3.0)
+        );
+        // unnormalised normal (0,2,0): k = 2·dot4(v,n) = 2·10 = 20;
+        // v − (0,2,0)·20 = (1, 5−40, 3)
+        assert_eq!(
+            vec3_mirrorv(&v, &vec3_set(0.0, 2.0, 0.0)),
+            vec3_set(1.0, -35.0, 3.0)
+        );
+        // S-009-R25: range + w lane
+        for positive in [true, false] {
+            let r = vec3_rand(positive);
+            assert_eq!(r.w, 0.0);
+            for c in [r.x, r.y, r.z] {
+                let lo = if positive { 0.0 } else { -1.0 };
+                assert!((lo..=1.0).contains(&c));
+            }
+        }
     }
 }

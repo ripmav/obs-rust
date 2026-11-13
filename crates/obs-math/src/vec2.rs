@@ -27,7 +27,8 @@ pub fn vec2_copy(d: &mut Vec2, v: &Vec2) {
     *d = *v;
 }
 
-/// `vec2_dist(a, b)` — 2D Euclidean distance.
+/// `vec2_dist(a, b)` — 2D Euclidean distance (R11: `len(a − b)`, no zero
+/// guard).
 #[must_use]
 pub fn vec2_dist(a: &Vec2, b: &Vec2) -> f32 {
     let dx = a.x - b.x;
@@ -35,52 +36,184 @@ pub fn vec2_dist(a: &Vec2, b: &Vec2) -> f32 {
     (dx * dx + dy * dy).sqrt()
 }
 
-/// `vec2_min(a, b)` — component-wise.
+// ── S-009-R10: component-wise, IEEE semantics ───────────────────────────
+
+/// S-009-R10.
+#[must_use]
+pub fn vec2_add(a: &Vec2, b: &Vec2) -> Vec2 {
+    Vec2 {
+        x: a.x + b.x,
+        y: a.y + b.y,
+    }
+}
+
+/// S-009-R10.
+#[must_use]
+pub fn vec2_sub(a: &Vec2, b: &Vec2) -> Vec2 {
+    Vec2 {
+        x: a.x - b.x,
+        y: a.y - b.y,
+    }
+}
+
+/// S-009-R10.
+#[must_use]
+pub fn vec2_mul(a: &Vec2, b: &Vec2) -> Vec2 {
+    Vec2 {
+        x: a.x * b.x,
+        y: a.y * b.y,
+    }
+}
+
+/// S-009-R10: division by zero gives inf/NaN, no checks.
+#[must_use]
+pub fn vec2_div(a: &Vec2, b: &Vec2) -> Vec2 {
+    Vec2 {
+        x: a.x / b.x,
+        y: a.y / b.y,
+    }
+}
+
+/// S-009-R10.
+#[must_use]
+pub fn vec2_addf(a: &Vec2, f: f32) -> Vec2 {
+    Vec2 {
+        x: a.x + f,
+        y: a.y + f,
+    }
+}
+
+/// S-009-R10.
+#[must_use]
+pub fn vec2_subf(a: &Vec2, f: f32) -> Vec2 {
+    Vec2 {
+        x: a.x - f,
+        y: a.y - f,
+    }
+}
+
+/// S-009-R10.
+#[must_use]
+pub fn vec2_mulf(a: &Vec2, f: f32) -> Vec2 {
+    Vec2 {
+        x: a.x * f,
+        y: a.y * f,
+    }
+}
+
+/// S-009-R10.
+#[must_use]
+pub fn vec2_divf(a: &Vec2, f: f32) -> Vec2 {
+    Vec2 {
+        x: a.x / f,
+        y: a.y / f,
+    }
+}
+
+/// S-009-R10.
+#[must_use]
+pub fn vec2_neg(a: &Vec2) -> Vec2 {
+    Vec2 { x: -a.x, y: -a.y }
+}
+
+// ── S-009-R11 ────────────────────────────────────────────────────────────
+
+/// S-009-R11: `x1·x2 + y1·y2`.
+#[must_use]
+pub fn vec2_dot(a: &Vec2, b: &Vec2) -> f32 {
+    a.x * b.x + a.y * b.y
+}
+
+/// S-009-R11: `sqrt(x·x + y·y)` — no zero guard, NaN propagates.
+#[must_use]
+pub fn vec2_len(v: &Vec2) -> f32 {
+    (v.x * v.x + v.y * v.y).sqrt()
+}
+
+// ── S-009-R12 ────────────────────────────────────────────────────────────
+
+/// S-009-R12: C conditional — a comparison involving NaN is false, so the
+/// **second operand is returned** (R12 worked example).
 #[must_use]
 pub fn vec2_min(a: &Vec2, b: &Vec2) -> Vec2 {
     Vec2 {
-        x: a.x.min(b.x),
-        y: a.y.min(b.y),
+        x: if a.x < b.x { a.x } else { b.x },
+        y: if a.y < b.y { a.y } else { b.y },
     }
 }
 
-/// `vec2_max(a, b)` — component-wise.
+/// S-009-R12: C conditional (second operand on NaN/false).
 #[must_use]
 pub fn vec2_max(a: &Vec2, b: &Vec2) -> Vec2 {
     Vec2 {
-        x: a.x.max(b.x),
-        y: a.y.max(b.y),
+        x: if a.x > b.x { a.x } else { b.x },
+        y: if a.y > b.y { a.y } else { b.y },
     }
 }
 
-/// `vec2_minf(a, f)`.
+/// S-009-R12: scalar as the second operand (NaN second → returned).
 #[must_use]
 pub fn vec2_minf(a: &Vec2, f: f32) -> Vec2 {
     Vec2 {
-        x: a.x.min(f),
-        y: a.y.min(f),
+        x: if a.x < f { a.x } else { f },
+        y: if a.y < f { a.y } else { f },
     }
 }
 
-/// `vec2_maxf(a, f)`.
+/// S-009-R12: scalar as the second operand (NaN second → returned).
 #[must_use]
 pub fn vec2_maxf(a: &Vec2, f: f32) -> Vec2 {
     Vec2 {
-        x: a.x.max(f),
-        y: a.y.max(f),
+        x: if a.x > f { a.x } else { f },
+        y: if a.y > f { a.y } else { f },
     }
 }
 
-/// `vec2_norm(d, v)` (in `vec2.c`) — unit vector; division by zero yields
-/// the zero vector (R37 convention).
+/// S-009-R12: per-component `fabsf`.
+#[must_use]
+pub fn vec2_abs(a: &Vec2) -> Vec2 {
+    Vec2 {
+        x: a.x.abs(),
+        y: a.y.abs(),
+    }
+}
+
+/// S-009-R12: per-component `floorf`.
+#[must_use]
+pub fn vec2_floor(a: &Vec2) -> Vec2 {
+    Vec2 {
+        x: a.x.floor(),
+        y: a.y.floor(),
+    }
+}
+
+/// S-009-R12: per-component `ceilf`.
+#[must_use]
+pub fn vec2_ceil(a: &Vec2) -> Vec2 {
+    Vec2 {
+        x: a.x.ceil(),
+        y: a.y.ceil(),
+    }
+}
+
+// ── S-009-R14/R15 ────────────────────────────────────────────────────────
+
+/// S-009-R14: `close_float` on both components — **absolute value**,
+/// inclusive. Returns `bool` (the C `int` 0/1).
+#[must_use]
+pub fn vec2_close(a: &Vec2, b: &Vec2, eps: f32) -> bool {
+    crate::close_float(a.x, b.x, eps) && crate::close_float(a.y, b.y, eps)
+}
+
+/// S-009-R15/Q-1: `d = v / len` **only if `len > 0`** — otherwise `d` is
+/// **not written** (contrast `vec3_norm`, which writes zeros). An infinite
+/// length gives `v · 0` (NaN components for infinite inputs).
 pub fn vec2_norm(d: &mut Vec2, v: &Vec2) {
     let len = (v.x * v.x + v.y * v.y).sqrt();
     if len > 0.0 {
-        d.x = v.x / len;
-        d.y = v.y / len;
-    } else {
-        d.x = 0.0;
-        d.y = 0.0;
+        let f = 1.0 / len;
+        d.x = v.x * f;
+        d.y = v.y * f;
     }
 }
 
@@ -126,13 +259,106 @@ mod tests {
     }
 
     #[test]
+    fn min_max_nan_returns_second_operand() {
+        // S-009-R12 worked example: min((nan,1),(5,nan)) = (5,nan)
+        let a = Vec2 {
+            x: f32::NAN,
+            y: 1.0,
+        };
+        let b = Vec2 {
+            x: 5.0,
+            y: f32::NAN,
+        };
+        let m = vec2_min(&a, &b);
+        assert_eq!(m.x, 5.0);
+        assert!(m.y.is_nan());
+        // second operand NaN -> NaN (Rust's `f32::min` would keep `a.x`)
+        assert!(vec2_minf(&vec2_set(1.0, 2.0), f32::NAN).x.is_nan());
+        assert!(vec2_maxf(&vec2_set(1.0, 2.0), f32::NAN).y.is_nan());
+        // first operand NaN -> the other operand (both NaN-free here)
+        assert_eq!(vec2_max(&a, &b).x, 5.0);
+        // second operand NaN -> NaN (R12 conditional: 1 < NaN is false)
+        assert!(vec2_min(&a, &b).y.is_nan());
+        assert!(vec2_max(&a, &b).y.is_nan());
+    }
+
+    #[test]
+    fn r10_r11_component_wise() {
+        // S-009-R10/R11
+        let a = vec2_set(3.0, 4.0);
+        let b = vec2_set(1.0, -2.0);
+        assert_eq!(vec2_add(&a, &b), vec2_set(4.0, 2.0));
+        assert_eq!(vec2_sub(&a, &b), vec2_set(2.0, 6.0));
+        assert_eq!(vec2_mul(&a, &b), vec2_set(3.0, -8.0));
+        assert_eq!(vec2_div(&a, &b), vec2_set(3.0, -2.0));
+        assert_eq!(vec2_addf(&a, 1.0), vec2_set(4.0, 5.0));
+        assert_eq!(vec2_subf(&a, 1.0), vec2_set(2.0, 3.0));
+        assert_eq!(vec2_mulf(&a, 2.0), vec2_set(6.0, 8.0));
+        assert_eq!(vec2_divf(&a, 2.0), vec2_set(1.5, 2.0));
+        assert_eq!(vec2_neg(&a), vec2_set(-3.0, -4.0));
+        // IEEE: no checks
+        assert!(vec2_div(&a, &vec2_set(0.0, 1.0)).x.is_infinite());
+        assert_eq!(vec2_dot(&a, &b), 3.0 * 1.0 + 4.0 * -2.0);
+        assert!(within(vec2_len(&a), 5.0));
+        // no zero guard: len(zero) = 0, len(nan) = nan
+        assert_eq!(vec2_len(&vec2_zero()), 0.0);
+        assert!(vec2_len(&vec2_set(f32::NAN, 0.0)).is_nan());
+        assert_eq!(vec2_abs(&vec2_set(-1.5, 2.5)), vec2_set(1.5, 2.5));
+        assert_eq!(vec2_floor(&vec2_set(1.7, -1.2)), vec2_set(1.0, -2.0));
+        assert_eq!(vec2_ceil(&vec2_set(1.2, -1.7)), vec2_set(2.0, -1.0));
+    }
+
+    #[test]
+    fn r14_close_is_absolute() {
+        // S-009-R14 (contrast the signed vec3_close)
+        assert!(vec2_close(
+            &vec2_set(1.0, 1.0),
+            &vec2_set(1.0 + 0.5e-4, 1.0),
+            1e-4
+        ));
+        assert!(!vec2_close(
+            &vec2_set(1.0, 1.0),
+            &vec2_set(1.0 + 2.0e-4, 1.0),
+            1e-4
+        ));
+        // inclusive: distance exactly eps
+        assert!(vec2_close(&vec2_set(0.0, 0.0), &vec2_set(1e-4, 0.0), 1e-4));
+        // NaN fails the comparison (R02)
+        assert!(!vec2_close(
+            &vec2_set(f32::NAN, 0.0),
+            &vec2_set(f32::NAN, 0.0),
+            1e-4
+        ));
+    }
+
+    #[test]
+    fn r15_norm_q1() {
+        // S-009-R15/Q-1: zero/NaN length -> d NOT written
+        let mut d = vec2_set(9.0, 9.0);
+        vec2_norm(&mut d, &vec2_zero());
+        assert_eq!(d, vec2_set(9.0, 9.0), "Q-1: destination untouched");
+        vec2_norm(&mut d, &vec2_set(f32::NAN, 0.0));
+        assert_eq!(d, vec2_set(9.0, 9.0), "Q-1: NaN length, untouched");
+        // normal case
+        let mut u = vec2_zero();
+        vec2_norm(&mut u, &vec2_set(3.0, 4.0));
+        assert!(within(u.x, 0.6));
+        assert!(within(u.y, 0.8));
+        // infinite length -> v * 0 (NaN for infinite inputs)
+        let mut inf_d = vec2_zero();
+        vec2_norm(&mut inf_d, &vec2_set(f32::INFINITY, 0.0));
+        assert!(inf_d.x.is_nan());
+    }
+
+    #[test]
     fn norm() {
         let mut d = vec2_zero();
         vec2_norm(&mut d, &vec2_set(3.0, 4.0));
         assert!(within(d.x, 0.6));
         assert!(within(d.y, 0.8));
-        // Division by zero -> zero vector (R37).
+        // S-009-R15/Q-1: zero length -> destination NOT written
         vec2_norm(&mut d, &vec2_zero());
-        assert_eq!(d, vec2_zero());
+        assert!(within(d.x, 0.6));
+        assert!(within(d.y, 0.8));
     }
 }
