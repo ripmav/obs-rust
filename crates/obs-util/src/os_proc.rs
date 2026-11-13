@@ -29,9 +29,11 @@ mod tests {
     use super::*;
 
     #[test]
-    #[cfg_attr(miri, ignore)]
+    #[cfg(all(target_os = "linux", not(miri)))]
     fn executable_path() {
-        // R82: the directory of the running executable
+        // R82 Linux variant (/proc/self/exe): not present on macOS/Windows
+        // — the per-OS variants arrive with the S-023 platform crate.
+        // The directory of the running executable
         let dir = os_get_executable_path_ptr(None).expect("exe dir");
         let cur = std::env::current_exe().expect("current exe");
         assert_eq!(
