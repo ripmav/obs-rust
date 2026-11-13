@@ -7,10 +7,20 @@ pub mod bmem;
 pub mod config;
 pub mod darray;
 pub mod deque;
+// POSIX-only modules: their libc surface (dlopen/readlink/pipe/fork/...) does
+// not exist in the Windows build of the `libc` crate; the Windows variants
+// arrive with the platform crate (S-023) when the C reference is in place.
+#[cfg(unix)]
+pub mod dl;
 pub mod dstr;
 pub mod hash;
 pub mod os_fs;
+#[cfg(unix)]
+pub mod os_proc;
 pub mod os_str;
+#[cfg(unix)]
+pub mod pipe;
+pub mod process_args;
 
 #[cfg(test)]
 mod tests {

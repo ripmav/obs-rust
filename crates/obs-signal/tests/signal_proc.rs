@@ -155,7 +155,7 @@ impl DeclArray {
         let strings: Vec<CString> = decls.iter().map(|d| CString::new(*d).unwrap()).collect();
         // CStr::as_ptr() yields *const c_char (u8 on aarch64, i8 on x86_64);
         // declarations are byte data, normalize to *const u8.
-        let mut ptrs: Vec<*const u8> = strings.iter().map(|c| c.as_ptr() as *const u8).collect();
+        let mut ptrs: Vec<*const u8> = strings.iter().map(|c| c.as_ptr().cast()).collect();
         ptrs.push(std::ptr::null::<u8>());
         Self { strings, ptrs }
     }
