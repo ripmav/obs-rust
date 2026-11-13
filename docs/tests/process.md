@@ -13,9 +13,9 @@ path).
 | add_argf: `%d` `%i` `%s` `%x` `%X`, decimal width, zero pad, `%%`, literal-only | `args_argf` | `helpers/args-argf` |
 | R16 defect fix: a format expanding to the empty string stores `""` (C stored NULL) | `args_argf` (empty entry) | `helpers/args-defect-argf-empty` |
 | **dl (S-023 R107)** | | |
-| real library loads, symbol found / missing symbol absent | `dl_real_library` | `platform/35-dl-and-misc` |
+| real library loads, symbol found / missing symbol absent (Linux-only: glibc name `libm.so.6`; macOS libm is unreachable through the R107 append rule — revisit with the C checkout) | `dl_real_library` | `platform/35-dl-and-misc` |
 | missing library → `None` (with and without a `.so` suffix) | `dl_missing_library` | `platform/35-dl-and-misc` |
-| the `.so` append rule (substring check), pinned through the failed `dlerror` text, which names the used file | `dl_appends_so_rule` | `platform/35-dl-and-misc` |
+| the `.so` append rule (substring check), pinned through the failed `dlerror` text, which names the used file (asserts name presence — the dlerror format is platform-dependent) | `dl_appends_so_rule` | `platform/35-dl-and-misc` |
 | **pipe (S-055 U2, R03-R09)** | | |
 | read mode: stdout captured, stderr separate, EOF read returns 0 | `pipe_read` | `utilrest/pipe_read` |
 | short reads: `fread` semantics (4/4/2 of 10 bytes) | `pipe_read` | `utilrest/pipe_read` |
