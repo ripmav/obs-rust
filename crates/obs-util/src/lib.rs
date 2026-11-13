@@ -4,6 +4,7 @@
 //! named above; the skeleton only proves the workspace builds.
 
 pub mod bmem;
+pub mod darray;
 pub mod deque;
 
 #[cfg(test)]
