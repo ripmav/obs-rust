@@ -4,10 +4,13 @@
 //! named above; the skeleton only proves the workspace builds.
 
 pub mod bmem;
+pub mod config;
 pub mod darray;
 pub mod deque;
 pub mod dstr;
 pub mod hash;
+pub mod os_fs;
+pub mod os_str;
 
 #[cfg(test)]
 mod tests {
