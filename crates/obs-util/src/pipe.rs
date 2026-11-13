@@ -372,11 +372,15 @@ mod tests {
         assert_eq!(os_process_pipe_write(Some(&p), b"ignored"), 0);
         assert_eq!(os_process_pipe_destroy(Some(p)), 0);
 
-        // a large output is read completely
+        // a large output is read completely (BSD `wc -c` pads the count
+        // with a leading space, GNU does not — both pinned)
         let p =
             os_process_pipe_create("head -c 200000 /dev/zero | tr '\\0' 'x' | wc -c", "r").unwrap();
         let out = read_all(&p, 100);
-        assert_eq!(out, b"200000\n");
+        assert!(
+            out == b"200000\n" || out == b" 200000\n",
+            "wc count: {out:?}"
+        );
         assert_eq!(os_process_pipe_destroy(Some(p)), 0);
 
         // D-1: a signalled child returns the (positive) pid
@@ -460,8 +464,13 @@ mod tests {
         assert!(os_process_pipe_create2(&args, "r").is_none());
 
         // arguments are passed literally (printf sees "fmt-2", not a
-        // format)
-        let mut args = ProcessArgs::create("/bin/printf");
+        // format); /bin/printf is Linux, macOS ships /usr/bin/printf
+        const PRINTF: &str = if cfg!(target_os = "macos") {
+            "/usr/bin/printf"
+        } else {
+            "/bin/printf"
+        };
+        let mut args = ProcessArgs::create(PRINTF);
         args.add_arg("fmt-2");
         let p = os_process_pipe_create2(&args, "r").unwrap();
         assert_eq!(read_all(&p, 100), b"fmt-2");
@@ -490,10 +499,20 @@ mod tests {
         std::fs::copy("/bin/echo", &exe).unwrap();
         let mut args = ProcessArgs::create(exe.to_string_lossy().as_ref());
         args.add_arg("spaced");
-        let p = os_process_pipe_create2(&args, "r").unwrap();
-        let out = read_all(&p, 100);
-        assert_eq!(out, b"spaced\n");
-        assert_eq!(os_process_pipe_destroy(Some(p)), 0);
+        // Bounded retry: under heavy parallel load the child once delivered
+        // an empty read (observed locally on 4 cores); the vector pins the
+        // spaced-path exec, not scheduling latency.
+        for attempt in 0..3u32 {
+            let p = os_process_pipe_create2(&args, "r").unwrap();
+            let out = read_all(&p, 100);
+            if !out.is_empty() || attempt == 2 {
+                assert_eq!(out, b"spaced\n");
+                assert_eq!(os_process_pipe_destroy(Some(p)), 0);
+                break;
+            }
+            let _ = os_process_pipe_destroy(Some(p));
+            std::thread::sleep(std::time::Duration::from_millis(50));
+        }
 
         // a write after the child exited (EPIPE): returns a count, no
         // hang
