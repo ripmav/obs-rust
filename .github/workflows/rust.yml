@@ -46,6 +46,7 @@ jobs:
       - name: nextest
         run: cargo nextest run --workspace --profile ci
       - name: upload test report
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: nextest-junit-${{ matrix.os }}
