@@ -17,7 +17,7 @@ Stack: branches off the Phase 0 head `docs/rewrite-coverage-2026-11` (PR #10); r
 - WP-3 = P1-03 darray — spec S-005 — branch `p1/darray` — C-blocked: layout vs C header, OBS_ENABLE_RUST. Done spec-side 2026-11-11 (see L6).
 - WP-4 = P1-10 crc32/blake2 — known-answer tests — branch `p1/crc-hash` — C-blocked: none beyond usage scan (deps are frontend-only per phase file). Done spec-side 2026-11-11 (see L7).
 - WP-5 = P1-15/P1-16 vec + matrix4 — spec S-008 — branch `p1/vec-matrix` — C-blocked: 10k goldens vs C, size/align vs C headers, benchmark.
-- WP-6+ = dstr (S-006), calldata (S-002), decl (S-003), signal (S-004), math-rest (S-009), config-file (S-007), obs-data (S-014) — branches `p1/<name>` as capacity allows. WP-6 = P1-02 dstr done spec-side 2026-11-11 (see L9). WP-7 = P1-06 calldata done spec-side 2026-11-11 (see L10).
+- WP-6+ = dstr (S-006), calldata (S-002), decl (S-003), signal (S-004), math-rest (S-009), config-file (S-007), obs-data (S-014) — branches `p1/<name>` as capacity allows. WP-6 = P1-02 dstr done spec-side 2026-11-11 (see L9). WP-7 = P1-06 calldata done spec-side 2026-11-11 (see L10). WP-8 = P1-07 decl done spec-side 2026-11-11 (see L11). WP-9 = P1-22 signal (S-004) done spec-side 2026-11-11 (see L13).
 - C-tail WPs = P1-29/30/31/32 — blocked on C checkout + two-week nightly soak.
 
 **L11 (WP-8, 2026-11-11) — P1-07 decl (S-003) — branch `p1/decl` (off `p1/calldata`), PR #19.**
@@ -60,6 +60,39 @@ fast-forward cherry-pick; all PR diffs stay clean (fix present in
 both base and head cancels in the tree diff). Lesson recorded:
 **verify `git status` is clean before a WP commit is declared done**
 — gates run on the working tree and can mask uncommitted fixes.
+
+**L13 (WP-9, 2026-11-11) — P1-22 signal + procs (S-004) — branch `p1/signal` (off `p1/decl`), PR #20.**
+`crates/obs-signal/src/signal.rs` + `src/proc.rs`: the full S-004 surface —
+handler create/destroy with refs (R02, R22, R30), add/add_array (R10/R11 +
+header inline), connect/disconnect/connect_ref (R20–R22, R30), emit
+(R40–R45: index loop re-reading the length, skip-marked, erase-after,
+global pass under the recursive global lock, keep_ref subtraction R41.6),
+`signal_handler_remove_current` (Q-2), globals (R23–R26, Q-5), procs
+(R60–R63). Locks: handler mutex, per-signal recursive mutex, recursive
+global mutex (parking_lot). `SignalHandler` = opaque `Box<Inner>`; both
+lists are `UnsafeCell<Vec<Box<…>>>` (entry allocations stable across
+pushes → Q-1 mid-emit appends reachable; raw `*mut Signal` valid while the
+handler lock is released, S-004 §7). Three safe Rust deviations documented:
+deferred free of a dead handler until the in-flight emit unwinds;
+remove-current outside a callback is a no-op; connect_ref on a missing
+signal does not leak a ref. **Miri findings (both fixed):** (1)
+`addr_of!` + `cast_mut` + deref is only SharedReadOnly under Stacked
+Borrows — lists moved to `UnsafeCell`; (2) a live `&mut` held across a
+callback is invalidated by the re-entrant `remove_current`'s own `&mut`
+— every list access now derives a short-lived reference per helper call
+(`cb_*`/`g_*`), none across a callback. **Miri limitation (documented):**
+Miri gives every function-item coercion a different address (verified:
+same item → 0x212b7 vs 0x212c2), so the 8 vectors whose semantics need
+C's fn-pointer-identity dedupe are `#[cfg(not(miri))]` (they run on real
+hardware; C conformance covers them). Tests: dedicated sequential binary
+`tests/signal_proc.rs` (23 vectors in one test, own process). Evidence:
+obs-signal lib 28/28 + signal_proc 1/1 (real hw, all 23 vectors), **Miri
+28/28 lib + signal_proc green** (15 vectors), workspace 166 passed / 0
+failed, clippy 0, deny ok. New dep per ADR 0005 log: `parking_lot` 0.13.x
+(MIT OR Apache-2.0) — reentrant mutexes, allow-list D-07. Matrix:
+`docs/tests/signal.md` (23 rows). NOT ticked: P1-22.3 loom check,
+P1-22.4 recipe (C checkout), P1-23 typed API (own substep). Review status:
+see PR body.
 
 ## Log
 
