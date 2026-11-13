@@ -70,8 +70,12 @@ mod tests {
     // a real library, a missing symbol, a missing library (with and
     // without the .so suffix), and the .so append rule.
     #[test]
-    #[cfg_attr(miri, ignore)]
+    #[cfg(all(target_os = "linux", not(miri)))]
     fn dl_real_library() {
+        // glibc vector: the real-library case uses the glibc name libm.so.6.
+        // Not runnable on macOS (libm is libm.dylib, which the R107 append
+        // rule would mangle: a name without a ".so" substring gets ".so"
+        // appended) — revisit with the C checkout (S2).
         let lib = os_dlopen("libm.so.6").expect("libm.so.6 loads");
         assert!(os_dlsym(&lib, "cos").is_some());
         assert!(os_dlsym(&lib, "no_such_symbol_in_libm").is_none());
@@ -87,7 +91,10 @@ mod tests {
 
     /// The failed `dlerror` text names the *used* file — this pins the
     /// `.so` append rule (the reference's error log carries
-    /// `<path>-><used name>`; the log itself is not wired yet).
+    /// `<path>-><used name>`; the log itself is not wired yet). The dlerror
+    /// *format* is platform-dependent (glibc: `<name>: cannot open...`,
+    /// macOS: `dlopen(<name>, ...): tried: ...`), so the assertions check
+    /// that the attempted name is present, not that it is the prefix.
     fn dlerror_text() -> String {
         // SAFETY: per-thread; returns a valid NUL-terminated string.
         let ptr = unsafe { libc::dlerror() };
@@ -102,28 +109,28 @@ mod tests {
     }
 
     #[test]
-    #[cfg_attr(miri, ignore)]
+    #[cfg(not(miri))]
     fn dl_appends_so_rule() {
         // no ".so" substring: ".so" is appended — the attempted name in
         // the error is "nosuchlibrary_xyz.so"
         assert!(os_dlopen("nosuchlibrary_xyz").is_none());
         let err = dlerror_text();
         assert!(
-            err.starts_with("nosuchlibrary_xyz.so"),
+            err.contains("nosuchlibrary_xyz.so"),
             "append rule applied: {err}"
         );
         // ".so" substring: used as is (never "…so.so")
         assert!(os_dlopen("nosuchlibrary_xyz.so").is_none());
         let err = dlerror_text();
         assert!(
-            err.starts_with("nosuchlibrary_xyz.so") && !err.contains(".so.so"),
+            err.contains("nosuchlibrary_xyz.so") && !err.contains(".so.so"),
             "used as is: {err}"
         );
         // a name with ".so" in the middle is also used as is
         assert!(os_dlopen("nosuchlibrary_xyz.something.so").is_none());
         let err = dlerror_text();
         assert!(
-            err.starts_with("nosuchlibrary_xyz.something.so"),
+            err.contains("nosuchlibrary_xyz.something.so"),
             "used as is: {err}"
         );
     }
