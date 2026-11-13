@@ -88,19 +88,44 @@ jobs:
       - uses: taiki-e/install-action@v2
         with:
           tool: cargo-llvm-cov
+      # Summary is captured once here; the PR comment reuses the file instead
+      # of re-running cargo llvm-cov.
       - name: collect coverage
-        run: cargo llvm-cov --workspace --summary-only --output-path lcov.info
+        run: |
+          cargo llvm-cov --workspace --summary-only --output-path lcov.info > coverage-summary.txt
+          cat coverage-summary.txt
       - name: upload coverage
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: coverage-lcov
-          path: lcov.info
+          path: |
+            lcov.info
+            coverage-summary.txt
+      # One coverage comment per PR: the HTML marker identifies our comment,
+      # so re-runs edit it in place instead of piling up new comments.
       - name: comment on PR
         if: github.event_name == 'pull_request'
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          gh pr comment "${{ github.event.pull_request.number }}" \
-            --repo "${{ github.repository }}" \
-            --body "$(cargo llvm-cov --workspace --summary-only)"
+          PR=${{ github.event.pull_request.number }}
+          REPO=${{ github.repository }}
+          {
+            echo "<!-- coverage-summary -->"
+            echo "### Coverage"
+            echo
+            echo '```text'
+            cat coverage-summary.txt
+            echo '```'
+          } > coverage-comment.md
+          COMMENT_ID=$(gh api "repos/$REPO/issues/$PR/comments" --paginate \
+            --jq '.[] | select(.body | contains("<!-- coverage-summary -->")) | .id' \
+            | tail -1)
+          if [ -n "$COMMENT_ID" ]; then
+            gh api -X PATCH "repos/$REPO/issues/$PR/comments/$COMMENT_ID" \
+              -f body="$(cat coverage-comment.md)" > /dev/null
+            echo "Updated coverage comment $COMMENT_ID"
+          else
+            gh pr comment "$PR" --repo "$REPO" --body-file coverage-comment.md
+          fi
