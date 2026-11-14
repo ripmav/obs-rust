@@ -123,7 +123,7 @@ jobs:
             --jq '.[] | select(.body | contains("<!-- coverage-summary -->")) | .id' \
             | tail -1)
           if [ -n "$COMMENT_ID" ]; then
-            gh api -X PATCH "repos/$REPO/issues/$PR/comments/$COMMENT_ID" \
+            gh api -X PATCH "repos/$REPO/issues/comments/$COMMENT_ID" \
               -f body="$(cat coverage-comment.md)" > /dev/null
             echo "Updated coverage comment $COMMENT_ID"
           else
