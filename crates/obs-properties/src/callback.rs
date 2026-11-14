@@ -554,6 +554,7 @@ mod tests {
     // D-6 — a property removed during apply is skipped
     #[test]
     fn d6_remove_during_apply_skipped() {
+        let _lock = TEST_LOCK.lock().unwrap();
         let top = properties_create();
         let a = properties_add_bool(&top, "a", Some("A")).unwrap();
         let b = properties_add_bool(&top, "b", Some("B")).unwrap();

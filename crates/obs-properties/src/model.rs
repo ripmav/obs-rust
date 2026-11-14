@@ -705,6 +705,11 @@ mod tests {
     // vector 02 — param and destroy order
     static CALLS: Mutex<Vec<usize>> = Mutex::new(Vec::new());
 
+    /// Serializes the tests that share the recording statics (cross-test
+    /// interference on a shared global is a race under libtest's in-process
+    /// parallelism; nextest's per-process isolation masks it).
+    static TEST_LOCK: Mutex<()> = Mutex::new(());
+
     fn destroy_token(p: *mut c_void) {
         CALLS.lock().unwrap().push(p as usize);
     }
@@ -721,6 +726,7 @@ mod tests {
 
     #[test]
     fn v02_param_and_destroy_order() {
+        let _lock = TEST_LOCK.lock().unwrap();
         CALLS.lock().unwrap().clear();
 
         // plain param with destroy
@@ -944,6 +950,7 @@ mod tests {
     // vector 16 — group remove
     #[test]
     fn v16_group_remove() {
+        let _lock = TEST_LOCK.lock().unwrap();
         CALLS.lock().unwrap().clear();
         let top = properties_create_param(param("tp"), Some(destroy_token));
         let g1 = properties_create_param(param("gp1"), Some(destroy_token));
