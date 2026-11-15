@@ -133,8 +133,18 @@ fn spawn(
             unsafe { libc::dup2(pin[0], 0) }
         };
         let _ = unsafe { libc::dup2(perr[1], 2) };
+        // Close the pipe ends the child does not use — but never fd
+        // numbers 0/1/2 themselves: if the parent's low fds are free
+        // (a runner that closes stdin), pipe() can hand out numbers
+        // 0-2, and closing one of them would destroy the just-dup'd
+        // stdio end (observed as deterministic empty reads after the
+        // 2026-11-15 ubuntu-latest 24.04 -> 26.04 runner swap). Any
+        // pipe fd that shares a stdio number is CLOEXEC, so exec
+        // closes it either way.
         for fd in [pout[0], pout[1], pin[0], pin[1], perr[0], perr[1]] {
-            unsafe { libc::close(fd) };
+            if fd >= 3 {
+                unsafe { libc::close(fd) };
+            }
         }
         // SAFETY: NUL-terminated argv built before the fork.
         unsafe { libc::execv(exe_c.as_ptr(), argv_p.as_ptr()) };
@@ -498,19 +508,46 @@ mod tests {
         std::fs::copy("/bin/echo", &exe).unwrap();
         let mut args = ProcessArgs::create(exe.to_string_lossy().as_ref());
         args.add_arg("spaced");
-        // Bounded retry: under heavy parallel load the child intermittently
-        // exits before writing (empty read / EOF): observed locally on 4
-        // cores and 3x in one 18-PR CI batch on loaded ubuntu runners
-        // (2026-11-15, assert at this line). The vector pins the spaced-path
-        // exec, not scheduling latency; the assertion below stays strict.
+        // Bounded retry: after the 2026-11-15 ubuntu-latest 24.04 ->
+        // 26.04 runner swap this test failed deterministically in every
+        // run carrying it (empty read = EOF with no output, all
+        // attempts); green locally and on 24.04. The vector pins the
+        // spaced-path exec, not scheduling latency; the assertion stays
+        // strict. On final failure the child's exit status and stderr
+        // are reported (127 = exec failed; 0 = ran but stdout
+        // misrouted; a pid-sized value = killed by a signal, per the
+        // D-1 destroy contract).
         const ATTEMPTS: u32 = 10;
         for attempt in 0..ATTEMPTS {
             let p = os_process_pipe_create2(&args, "r").unwrap();
             let out = read_all(&p, 100);
-            if !out.is_empty() || attempt + 1 == ATTEMPTS {
+            if !out.is_empty() {
                 assert_eq!(out, b"spaced\n");
                 assert_eq!(os_process_pipe_destroy(Some(p)), 0);
                 break;
+            }
+            if attempt + 1 == ATTEMPTS {
+                let mut err = [0u8; 256];
+                let mut n = 0usize;
+                while n < err.len() {
+                    // SAFETY: err_fd is an open pipe read end, err is live.
+                    let r = unsafe {
+                        libc::read(
+                            p.err_fd,
+                            err[n..].as_mut_ptr() as *mut c_void,
+                            err.len() - n,
+                        )
+                    };
+                    if r <= 0 {
+                        break;
+                    }
+                    n += r as usize;
+                }
+                let code = os_process_pipe_destroy(Some(p));
+                panic!(
+                    "spaced-exec child produced no output (x{ATTEMPTS}): exit_status={code}, stderr={:?}",
+                    &err[..n]
+                );
             }
             let _ = os_process_pipe_destroy(Some(p));
             std::thread::sleep(std::time::Duration::from_millis(200));
