@@ -1,11 +1,246 @@
-//! obs-ffi: C ABI surface: generated obs.h, vtable adapters for C plugins (Phase 4).
+//! obs-ffi: C ABI surface.
 //!
-//! Phase 0 skeleton (P0-07.3). Real content and tests arrive with the phase
-//! named above; the skeleton only proves the workspace builds.
+//! P1-13.1 (S-001 §4.2, R20-R25): the logging shim. The variadic `blog`/
+//! `bcrash` and the `va_list` handler callbacks stay in `c/base-logging.c`
+//! (stable Rust cannot define or consume variadics — primer §5.5). Rust
+//! code logs through [`blog`], which routes via `obs_ffi_log(level, msg)`
+//! = `blog(level, "%s", msg)` into the installed C handler.
+
+use std::os::raw::{c_int, c_void};
+
+/// S-001 §3 (R20): log level constants; lower numbers are more severe.
+pub const LOG_ERROR: c_int = 100;
+/// S-001 §3 (R20).
+pub const LOG_WARNING: c_int = 200;
+/// S-001 §3 (R20).
+pub const LOG_INFO: c_int = 300;
+/// S-001 §3 (R20).
+pub const LOG_DEBUG: c_int = 400;
+
+/// Opaque C `va_list`; handler callbacks receive it, Rust never builds one.
+pub type VaList = *mut c_void;
+/// C `log_handler_t` (R21): receives the **unformatted** format string.
+pub type LogHandler = unsafe extern "C" fn(
+    level: c_int,
+    format: *const std::ffi::c_char,
+    args: VaList,
+    param: *mut c_void,
+);
+/// C crash handler type (R24).
+pub type CrashHandler =
+    unsafe extern "C" fn(format: *const std::ffi::c_char, args: VaList, param: *mut c_void);
+
+mod ffi {
+    use super::{CrashHandler, LogHandler};
+    use std::ffi::c_char;
+    use std::os::raw::{c_int, c_void};
+
+    unsafe extern "C" {
+        pub fn obs_ffi_log(level: c_int, msg: *const c_char);
+        pub fn base_get_log_handler(handler: *mut Option<LogHandler>, param: *mut *mut c_void);
+        pub fn base_set_log_handler(handler: Option<LogHandler>, param: *mut c_void);
+        pub fn base_set_crash_handler(handler: CrashHandler, param: *mut c_void);
+    }
+}
+
+/// `blog(level, "%s", msg)` (primer §5.5): log an already-formatted message
+/// through the installed C handler. `msg` is treated as a C string — an
+/// embedded NUL terminates it.
+pub fn blog(level: c_int, msg: &str) {
+    unsafe {
+        ffi::obs_ffi_log(level, msg.as_ptr().cast());
+    }
+}
+
+/// Install a log handler (R22). `None` reinstalls the default handler
+/// (and stores `param`).
+///
+/// # Safety
+/// The C shim stores `param` and the handler is called with C data; the
+/// handler must follow the C `log_handler_t` contract.
+pub unsafe fn base_set_log_handler(handler: Option<LogHandler>, param: *mut c_void) {
+    unsafe {
+        ffi::base_set_log_handler(handler, param);
+    }
+}
+
+/// The current log handler and parameter (R22). `Some` unless a NULL
+/// handler was installed from C (the default handler is a real function).
+///
+/// # Safety
+/// Reads handler state owned by the C shim; the returned `param` is only
+/// valid while the handler remains installed.
+pub unsafe fn base_get_log_handler() -> (Option<LogHandler>, *mut c_void) {
+    let mut h: Option<LogHandler> = None;
+    let mut p: *mut c_void = std::ptr::null_mut();
+    unsafe {
+        ffi::base_get_log_handler(&mut h, &mut p);
+    }
+    (h, p)
+}
+
+/// Install the crash handler — succeeds at most once per process (R25);
+/// later calls are ignored (with a `LOG_WARNING` from the C shim).
+///
+/// # Safety
+/// The C shim stores `param`; the handler must follow the C crash-handler
+/// contract (R24).
+pub unsafe fn base_set_crash_handler(handler: CrashHandler, param: *mut c_void) {
+    unsafe {
+        ffi::base_set_crash_handler(handler, param);
+    }
+}
 
 #[cfg(test)]
 mod tests {
-    /// Skeleton smoke test (P0-07.3); replaced by real tests in the port.
+    use super::*;
+    use std::ffi::CStr;
+    use std::sync::Mutex;
+
+    // The log handler is process-global; serialize the in-process handler
+    // tests on it (W9 fence pattern).
+    static TEST_LOCK: Mutex<()> = Mutex::new(());
+
+    static CAP: Mutex<Option<(c_int, String, usize)>> = Mutex::new(None);
+
+    unsafe extern "C" fn capture(
+        level: c_int,
+        format: *const std::ffi::c_char,
+        _args: VaList,
+        param: *mut c_void,
+    ) {
+        let s = unsafe { CStr::from_ptr(format) }
+            .to_string_lossy()
+            .into_owned();
+        *CAP.lock().unwrap() = Some((level, s, param as usize));
+    }
+
+    fn run_bin(mode: &str) -> (i32, String, String) {
+        let bin = std::env::var("OBS_FFI_LOGTEST").expect("OBS_FFI_LOGTEST set by build.rs");
+        let out = std::process::Command::new(&bin)
+            .arg(mode)
+            .output()
+            .expect("run log-test-bin");
+        (
+            out.status.code().expect("exit code"),
+            String::from_utf8_lossy(&out.stdout).into_owned(),
+            String::from_utf8_lossy(&out.stderr).into_owned(),
+        )
+    }
+
+    // R20: the constants the Rust side exposes
     #[test]
-    fn skeleton_smoke() {}
+    fn r20_level_constants() {
+        assert_eq!(LOG_ERROR, 100);
+        assert_eq!(LOG_WARNING, 200);
+        assert_eq!(LOG_INFO, 300);
+        assert_eq!(LOG_DEBUG, 400);
+    }
+
+    // R21/R22 in-process: the handler gets the unformatted format ("%s"
+    // for the Rust path), the param round-trips, NULL reinstalls the default
+    #[test]
+    fn r21_r22_handler_roundtrip() {
+        let _lock = TEST_LOCK.lock().unwrap();
+        let mut sentinel = 0u8;
+        unsafe { base_set_log_handler(Some(capture), &mut sentinel as *mut _ as *mut c_void) };
+        blog(LOG_INFO, "hello");
+        let (lvl, fmt, p) = CAP.lock().unwrap().take().expect("handler ran");
+        assert_eq!(lvl, LOG_INFO);
+        assert_eq!(fmt, "%s");
+        assert_eq!(p, &mut sentinel as *mut _ as usize);
+
+        let (h, p) = unsafe { base_get_log_handler() };
+        assert!(h.is_some());
+        assert_eq!(p as usize, &mut sentinel as *mut _ as usize);
+
+        // NULL reinstalls the default (R22): the capture stops receiving
+        unsafe { base_set_log_handler(None, std::ptr::null_mut()) };
+        let (h, p) = unsafe { base_get_log_handler() };
+        assert!(h.is_some());
+        assert!(p.is_null());
+        *CAP.lock().unwrap() = None;
+        blog(LOG_INFO, "to the default handler");
+        assert!(CAP.lock().unwrap().is_none());
+    }
+
+    // R23: default handler output — prefixes, streams, Q-3 drop, truncation
+    #[test]
+    fn r23_default_handler_output() {
+        let (code, out, err) = run_bin("default");
+        assert_eq!(code, 0);
+        assert_eq!(err, "error: e1\n");
+        assert_eq!(
+            out,
+            format!(
+                "warning: w1\ninfo: i1 7\ndebug: d1\ninfo: padded\ninfo: {}\n",
+                "x".repeat(8191)
+            )
+        );
+    }
+
+    // R21: the C handler receives the unformatted format + args
+    #[test]
+    fn r21_handler_gets_unformatted() {
+        let (code, out, err) = run_bin("fmt");
+        assert_eq!(code, 0);
+        assert_eq!(err, "");
+        assert_eq!(out, "lvl=400 fmt=a=%d b=%s out=a=7 b=x\n");
+    }
+
+    // R24: default crash handler — formatted message, no trailing newline,
+    // exit 0
+    #[test]
+    fn r24_default_crash() {
+        let (code, out, err) = run_bin("crash-default");
+        assert_eq!(code, 0);
+        assert_eq!(out, "");
+        assert_eq!(err, "boom 42");
+    }
+
+    // R24: a crash handler that itself calls bcrash -> "Crashed in the
+    // crash handler", exit 2
+    #[test]
+    fn r24_nested_crash() {
+        let (code, out, err) = run_bin("crash-nested");
+        assert_eq!(code, 2);
+        assert_eq!(out, "");
+        assert_eq!(err, "A outerCrashed in the crash handler");
+    }
+
+    // R24: a returning crash handler -> exit 0
+    #[test]
+    fn r24_crash_handler_returns() {
+        let (code, out, err) = run_bin("crash-return");
+        assert_eq!(code, 0);
+        assert_eq!(out, "");
+        assert_eq!(err, "B ret v");
+    }
+
+    // R25: the crash handler can be set at most once; the second call is
+    // ignored with the warning, the first handler stays active
+    #[test]
+    fn r25_crash_handler_once() {
+        let (code, out, err) = run_bin("once");
+        assert_eq!(code, 0);
+        assert_eq!(
+            out,
+            "warning: Tried to set a crash handler when one already exists.\n"
+        );
+        assert_eq!(err, "B who");
+    }
+
+    // the Rust wrapper passes the message through as "%s" (embedded-NUL
+    // caveat is C behaviour, not asserted)
+    #[test]
+    fn blog_wrapper_formats() {
+        let _lock = TEST_LOCK.lock().unwrap();
+        let mut sentinel = 0u8;
+        unsafe { base_set_log_handler(Some(capture), &mut sentinel as *mut _ as *mut c_void) };
+        blog(LOG_ERROR, "plain message");
+        let (lvl, fmt, _) = CAP.lock().unwrap().take().expect("handler ran");
+        assert_eq!(lvl, LOG_ERROR);
+        assert_eq!(fmt, "%s");
+        unsafe { base_set_log_handler(None, std::ptr::null_mut()) };
+    }
 }
