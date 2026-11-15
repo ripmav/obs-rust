@@ -71,7 +71,9 @@ pub fn profiler_step_fake_clock(delta: u64) {
 // ---------------------------------------------------------------------------
 // Log sink (C `blog`; P1-13 logging is a later WP — injectable until then)
 
-static LOG_SINK: Mutex<Option<Box<dyn FnMut(u32, &str) + Send>>> = Mutex::new(None);
+type LogSink = dyn FnMut(u32, &str) + Send;
+
+static LOG_SINK: Mutex<Option<Box<LogSink>>> = Mutex::new(None);
 
 /// Test seam: route profiler log lines to `sink` (replaces the default).
 #[doc(hidden)]
@@ -499,7 +501,7 @@ fn g_fmt(x: f64) -> String {
             .parse()
             .unwrap()
     };
-    let out = if x_exp < -4 || x_exp >= 6 {
+    let out = if !(-4..6).contains(&x_exp) {
         // %e with precision 5, C exponent form e+06 / e-05
         let s = format!("{:.5e}", ax);
         let (m, e) = s.split_once('e').unwrap();
@@ -726,6 +728,93 @@ fn between_line(e: &SnapshotEntry) -> String {
         g_fmt(l),
         g_fmt(h)
     )
+}
+
+// ---------------------------------------------------------------------------
+// CSV (spec §4.7 "CSV", R47): id tokens are stable unique ordinals
+// (first appearance); `(nil)` where C prints a NULL %p.
+
+const CSV_HEADER: &str =
+    "id,parent_id,name_id,parent_name_id,name,time_between_calls,time_delta_\u{b5}s,count";
+
+fn csv_rows(
+    e: &SnapshotEntry,
+    parent_entry: Option<&str>,
+    parent_name: Option<&str>,
+    entry_ids: &mut HashMap<ProfilerName, String>, // name handle -> token
+    next_name: &mut u64,
+    next_entry: &mut u64,
+    out: &mut Vec<String>,
+) {
+    let entry_id = format!("#{}", *next_entry);
+    *next_entry += 1;
+    let name_id = entry_ids
+        .entry(e.name)
+        .or_insert_with(|| {
+            let t = format!("#{}", *next_name);
+            *next_name += 1;
+            t
+        })
+        .clone();
+    let p_entry = parent_entry.unwrap_or("(nil)");
+    let p_name = parent_name.unwrap_or("(nil)");
+    let name = profile_name_text(e.name);
+    for &(us, count) in &e.times {
+        out.push(format!(
+            "{},{},{},{},{},0,{},{}",
+            entry_id, p_entry, name_id, p_name, name, us, count
+        ));
+    }
+    for &(us, count) in &e.times_between_calls {
+        out.push(format!(
+            "{},{},{},{},{},{},{},{}",
+            entry_id, p_entry, name_id, p_name, name, e.expected, us, count
+        ));
+    }
+    let my_entry = entry_id.clone();
+    let my_name = name_id.clone();
+    for c in &e.children {
+        csv_rows(
+            c,
+            Some(&my_entry),
+            Some(&my_name),
+            entry_ids,
+            next_name,
+            next_entry,
+            out,
+        );
+    }
+}
+
+/// The CSV content (header + depth-first rows, `\n` endings, R47).
+pub fn profiler_snapshot_csv(snap: &ProfilerSnapshot) -> String {
+    let mut entry_ids: HashMap<ProfilerName, String> = HashMap::new();
+    let mut next_name = 1u64;
+    let mut next_entry = 1u64;
+    let mut rows: Vec<String> = Vec::new();
+    for r in &snap.roots {
+        csv_rows(
+            r,
+            None,
+            None,
+            &mut entry_ids,
+            &mut next_name,
+            &mut next_entry,
+            &mut rows,
+        );
+    }
+    let mut s = String::from(CSV_HEADER);
+    for row in rows {
+        s.push('\n');
+        s.push_str(&row);
+    }
+    s.push('\n');
+    s
+}
+
+/// Write the CSV to `path` (R47); false on IO error.
+pub fn profiler_snapshot_dump_csv(snap: &ProfilerSnapshot, path: &str) -> bool {
+    std::fs::write(path, profiler_snapshot_csv(snap)).is_ok()
 }
 
 #[cfg(test)]
@@ -1174,8 +1263,8 @@ mod tests {
         let _lock = TEST_LOCK.lock().unwrap();
         let lines = setup_all();
         let mut snap = ProfilerSnapshot::default();
-        let mut c = entry("C", vec![(500, 3)]);
-        let mut d = entry("D", vec![(700, 1), (300, 1)]);
+        let c = entry("C", vec![(500, 3)]);
+        let d = entry("D", vec![(700, 1), (300, 1)]);
         let mut r = entry("R", vec![(1000, 2)]);
         r.children = vec![c, d];
         snap.roots.push(r);
@@ -1198,11 +1287,11 @@ mod tests {
         let _lock = TEST_LOCK.lock().unwrap();
         let lines = setup_all();
         let mut snap = ProfilerSnapshot::default();
-        let mut x = entry("X", vec![(1000, 1)]);
-        let mut y = entry("Y", vec![(1000, 1)]);
+        let x = entry("X", vec![(1000, 1)]);
+        let y = entry("Y", vec![(1000, 1)]);
         let mut a = entry("A", vec![(1000, 1)]);
         a.children = vec![x, y];
-        let mut b = entry("B", vec![(1000, 1)]);
+        let b = entry("B", vec![(1000, 1)]);
         let mut r = entry("R", vec![(1000, 1)]);
         r.children = vec![a, b];
         snap.roots.push(r);
@@ -1221,8 +1310,8 @@ mod tests {
         );
         // and: single (last) child with its own children -> "  " + ┣/┗
         let mut snap2 = ProfilerSnapshot::default();
-        let mut x = entry("X", vec![(1000, 1)]);
-        let mut y = entry("Y", vec![(1000, 1)]);
+        let x = entry("X", vec![(1000, 1)]);
+        let y = entry("Y", vec![(1000, 1)]);
         let mut a = entry("A", vec![(1000, 1)]);
         a.children = vec![x, y];
         let mut r = entry("R", vec![(1000, 1)]);
@@ -1343,7 +1432,7 @@ mod tests {
         let mut child = entry("C", vec![(100, 1)]);
         child.expected = 500; // a child with an expectation: still never printed
         a.children = vec![child];
-        let mut b = entry("B", vec![(1000, 1)]); // no expectation
+        let b = entry("B", vec![(1000, 1)]); // no expectation
         snap.roots = vec![a, b];
         profiler_print_time_between_calls(Some(&snap));
         assert_eq!(
@@ -1373,5 +1462,101 @@ mod tests {
         assert_eq!(g_fmt(1234567.0), "1.23457e+06");
         assert_eq!(g_fmt(0.000012345), "1.23450e-05");
         assert_eq!(g_fmt(-1.5), "-1.5");
+    }
+
+    // R47: depth-first rows, (nil) parents for roots, id ordinals,
+    // sampleless entries contribute no rows
+    #[test]
+    fn csv_layout_depth_first() {
+        let _lock = TEST_LOCK.lock().unwrap();
+        let lines = setup_all();
+        let _ = lines;
+        let mut snap = ProfilerSnapshot::default();
+        let b = entry("B", vec![(500, 1)]);
+        let c = entry("C", Vec::new()); // no samples: no rows
+        let mut a = entry("A", vec![(2000, 1), (1000, 3)]);
+        a.expected = 1000;
+        a.expected_time_between_calls = 1000;
+        a.times_between_calls = vec![(1000, 2)];
+        a.overall_between_calls_count = 2;
+        a.min_time_between_calls = 1000;
+        a.max_time_between_calls = 1000;
+        a.children = vec![b, c];
+        snap.roots.push(a);
+        let expected = [
+            "id,parent_id,name_id,parent_name_id,name,time_between_calls,time_delta_\u{b5}s,count",
+            "#1,(nil),#1,(nil),A,0,2000,1",
+            "#1,(nil),#1,(nil),A,0,1000,3",
+            "#1,(nil),#1,(nil),A,1000,1000,2",
+            "#2,#1,#2,#1,B,0,500,1",
+        ]
+        .join("\n")
+            + "\n";
+        assert_eq!(profiler_snapshot_csv(&snap), expected);
+    }
+
+    // the same name object shares its token; a second root gets new ids
+    #[test]
+    fn csv_tokens_stable_unique() {
+        let _lock = TEST_LOCK.lock().unwrap();
+        setup_all();
+        let a1 = profile_store_name("A");
+        let a2 = profile_store_name("A"); // different handle: different token (Q-7)
+        let mut snap = ProfilerSnapshot::default();
+        let mut r1 = entry_by_handle(a1, vec![(10, 1)]);
+        let r2 = entry_by_handle(a2, vec![(20, 1)]);
+        let kid = entry_by_handle(a1, vec![(30, 1)]);
+        r1.children = vec![kid];
+        snap.roots = vec![r1, r2];
+        let csv = profiler_snapshot_csv(&snap);
+        let l: Vec<&str> = csv.lines().collect();
+        assert_eq!(l[1], "#1,(nil),#1,(nil),A,0,10,1");
+        assert_eq!(l[2], "#2,#1,#1,#1,A,0,30,1"); // child shares name token #1
+        assert_eq!(l[3], "#3,(nil),#2,(nil),A,0,20,1"); // a2: new handle, new token
+    }
+
+    // dump to file: content + ok; bad path: false
+    #[test]
+    fn csv_dump_to_file() {
+        let _lock = TEST_LOCK.lock().unwrap();
+        let _ = setup_all();
+        let mut snap = ProfilerSnapshot::default();
+        snap.roots.push(entry("A", vec![(100, 1)]));
+        let path = std::env::temp_dir().join("profiler_csv_test.csv");
+        let p = path.to_str().unwrap();
+        assert!(profiler_snapshot_dump_csv(&snap, p));
+        let read = std::fs::read_to_string(p).unwrap();
+        assert_eq!(read, profiler_snapshot_csv(&snap));
+        let _ = std::fs::remove_file(p);
+        assert!(!profiler_snapshot_dump_csv(
+            &snap,
+            "/nonexistent-dir-xyz/x.csv"
+        ));
+    }
+
+    fn entry_by_handle(name: ProfilerName, times: Vec<(u64, u64)>) -> SnapshotEntry {
+        let overall: u64 = times.iter().map(|(_, c)| *c).sum();
+        let (mn, mx) = if times.is_empty() {
+            (u64::MAX, 0)
+        } else {
+            (
+                times.iter().map(|(v, _)| *v).min().unwrap(),
+                times.iter().map(|(v, _)| *v).max().unwrap(),
+            )
+        };
+        SnapshotEntry {
+            name,
+            expected: 0,
+            times,
+            overall_count: overall,
+            min_time: mn,
+            max_time: mx,
+            times_between_calls: Vec::new(),
+            overall_between_calls_count: 0,
+            min_time_between_calls: 0,
+            max_time_between_calls: 0,
+            expected_time_between_calls: 0,
+            children: Vec::new(),
+        }
     }
 }
