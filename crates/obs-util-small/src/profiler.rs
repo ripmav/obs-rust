@@ -474,6 +474,260 @@ pub fn profiler_snapshot_enumerate_children(
     }
 }
 
+// ---------------------------------------------------------------------------
+// Report text (spec §4.7 "Report text", R42-R45)
+
+const PRINT_HEADER: &str = "== Profiler Results =============================";
+const BETWEEN_HEADER: &str = "== Profiler Time Between Calls ==================";
+const FOOTER: &str = "==================================================";
+
+/// C `%g` (precision 6) of `x` (R42 `G(x)` uses this).
+fn g_fmt(x: f64) -> String {
+    if x == 0.0 {
+        return "0".to_string();
+    }
+    let neg = x < 0.0;
+    let ax = x.abs();
+    // exact decimal exponent X = floor(log10 |x|)
+    let x_exp: i32 = if ax >= 1.0 {
+        format!("{:.10}", ax).split('.').next().unwrap().len() as i32 - 1
+    } else {
+        format!("{:.17e}", ax)
+            .rsplit('e')
+            .next()
+            .unwrap()
+            .parse()
+            .unwrap()
+    };
+    let out = if x_exp < -4 || x_exp >= 6 {
+        // %e with precision 5, C exponent form e+06 / e-05
+        let s = format!("{:.5e}", ax);
+        let (m, e) = s.split_once('e').unwrap();
+        let ev: i32 = e.parse().unwrap();
+        format!("{}e{:+03}", m, ev)
+    } else {
+        let d = (5 - x_exp) as usize; // P-1-X
+        let mut s = format!("{:.*}", d, ax);
+        while s.ends_with('0') {
+            s.pop();
+        }
+        if s.ends_with('.') {
+            s.pop();
+        }
+        s
+    };
+    if neg {
+        format!("-{out}")
+    } else {
+        out
+    }
+}
+
+/// `G(x)`: `%g` of the ms value followed by NBSP + "ms" (R42).
+fn g_ms(us: u64) -> String {
+    format!("{}\u{a0}ms", g_fmt(us as f64 / 1000.0))
+}
+
+/// C `lround` (half away from zero); r > 0 here.
+fn lround_pos(x: f64) -> i64 {
+    let fl = x.floor() as i64;
+    if x - fl as f64 >= 0.5 {
+        fl + 1
+    } else {
+        fl
+    }
+}
+
+/// p99/median over `times` (descending) per §4.7, incl. quirk Q-10.
+fn p99_median(times: &[(u64, u64)], calls: u64) -> (u64, u64) {
+    let mut p99 = 0u64;
+    let mut median = 0u64;
+    let mut accu: f64 = 0.0;
+    for &(value, count) in times {
+        let old = accu;
+        accu += count as f64;
+        if old < (calls as f64) * 0.01 && accu >= (calls as f64) * 0.01 {
+            p99 = value;
+        } else if old < (calls as f64) * 0.5 && accu >= (calls as f64) * 0.5 {
+            median = value;
+            break;
+        }
+    }
+    (p99, median)
+}
+
+fn entry_line(indent: &str, e: &SnapshotEntry, parent_calls: u64) -> String {
+    let calls = e.overall_count;
+    let (min_v, max_v) = if calls == 0 {
+        (0, 0)
+    } else {
+        (e.min_time, e.max_time)
+    };
+    let mut line = format!("{}{}: ", indent, profile_name_text(e.name));
+    if min_v == max_v {
+        // (a) single value; with no samples all stats are 0 -> "0 ms"
+        line.push_str(&g_ms(min_v));
+    } else {
+        let (p99, median) = p99_median(&e.times, calls);
+        line.push_str(&format!(
+            "min={}, median={}, max={}, 99th percentile={}",
+            g_ms(min_v),
+            g_ms(median),
+            g_ms(max_v),
+            g_ms(p99)
+        ));
+        if e.expected != 0 {
+            let a: u64 = e
+                .times
+                .iter()
+                .filter(|(v, _)| *v >= e.expected)
+                .map(|(_, c)| *c)
+                .sum();
+            let p = (1.0 - (a as f64) / (calls as f64)) * 100.0;
+            line.push_str(&format!(", {}% below {}", g_fmt(p), g_ms(e.expected)));
+        }
+    }
+    if parent_calls != 0 && calls != parent_calls {
+        let r = (calls as f64) / (parent_calls as f64);
+        if lround_pos(r * 10.0) != 10 {
+            line.push_str(&format!(", {} calls per parent call", g_fmt(r)));
+        }
+    }
+    line
+}
+
+/// Indent for level `n >= 1` (R43): over `i = 0..n` (the `n` units), the
+/// unit is ` ┣`/` ┃` when bit `i` of `active` is set (` ┣` for the last
+/// unit), else ` ┗` (last unit) or two spaces.
+fn build_indent(level: u32, active: u64) -> String {
+    let mut s = String::new();
+    for i in 0..level {
+        let last = i == level - 1;
+        if (active >> i) & 1 == 1 {
+            s.push_str(if last { " ┣" } else { " ┃" });
+        } else {
+            s.push_str(if last { " ┗" } else { "  " });
+        }
+    }
+    s
+}
+
+fn print_pre_order(level: u32, active: u64, e: &SnapshotEntry, parent_calls: u64) {
+    let indent = build_indent(level, active);
+    log(LOG_INFO, &entry_line(&indent, e, parent_calls));
+    let active = active | (1u64 << level);
+    let n = e.children.len();
+    for (j, c) in e.children.iter().enumerate() {
+        let a = if j + 1 == n {
+            active & ((1u64 << level) - 1)
+        } else {
+            active
+        };
+        print_pre_order(level + 1, a, c, e.overall_count);
+    }
+}
+
+/// `profiler_print` (R42): header, roots pre-order, footer — as INFO lines.
+/// NULL snapshot -> the live tree.
+pub fn profiler_print(snap: Option<&ProfilerSnapshot>) {
+    let owned = snap.is_none().then(profile_snapshot_create);
+    let s: &ProfilerSnapshot = match snap {
+        Some(s) => s,
+        None => owned.as_ref().unwrap(),
+    };
+    log(LOG_INFO, PRINT_HEADER);
+    for r in &s.roots {
+        print_pre_order(0, 0, r, 0);
+    }
+    log(LOG_INFO, FOOTER);
+}
+
+/// `profiler_print_time_between_calls` (R45): header, one line per root with
+/// `expected != 0`, footer.
+pub fn profiler_print_time_between_calls(snap: Option<&ProfilerSnapshot>) {
+    let owned = snap.is_none().then(profile_snapshot_create);
+    let s: &ProfilerSnapshot = match snap {
+        Some(s) => s,
+        None => owned.as_ref().unwrap(),
+    };
+    log(LOG_INFO, BETWEEN_HEADER);
+    for r in &s.roots {
+        if r.expected != 0 {
+            log(LOG_INFO, &between_line(r));
+        }
+    }
+    log(LOG_INFO, FOOTER);
+}
+
+/// The §4.7 between-calls algorithm (lo/hi window, P/L/H buckets, median).
+fn between_line(e: &SnapshotEntry) -> String {
+    let entries = &e.times_between_calls;
+    let calls = e.overall_between_calls_count;
+    let (bmin, bmax) = if entries.is_empty() {
+        (0, 0)
+    } else {
+        (e.min_time_between_calls, e.max_time_between_calls)
+    };
+    let expected = e.expected;
+    let lo = (expected as f64 * 0.98) as u64;
+    let hi = (expected as f64 * 1.02 + 0.5) as u64;
+    let mut med = 0u64;
+    let mut p = 0.0f64;
+    let mut l = 0.0f64;
+    let mut h = 0.0f64;
+    if !entries.is_empty() {
+        let mut accu: f64 = 0.0;
+        for &(v, c) in entries {
+            accu += c as f64;
+            if accu >= (calls as f64) * 0.5 {
+                med = v;
+                break;
+            }
+        }
+        let found_hi0 = bmax <= hi;
+        if bmin >= hi {
+            h = 100.0;
+        } else if found_hi0 && bmin >= lo {
+            p = 100.0;
+        } else {
+            let mut accu: f64 = 0.0;
+            let mut found_hi = found_hi0;
+            let mut found_lo = false;
+            for &(v, c) in entries {
+                if !found_hi && v <= hi {
+                    h = accu / (calls as f64) * 100.0;
+                    accu = 0.0;
+                    found_hi = true;
+                }
+                if !found_lo && v < lo {
+                    p = accu / (calls as f64) * 100.0;
+                    accu = 0.0;
+                    found_lo = true;
+                }
+                accu += c as f64;
+            }
+            if !found_hi {
+                h = 100.0;
+            } else if !found_lo {
+                p = accu / (calls as f64) * 100.0;
+            } else {
+                l = accu / (calls as f64) * 100.0;
+            }
+        }
+    }
+    format!(
+        "{}: min={}, median={}, max={}, {}% within \u{b1}2% of {} ({}% lower, {}% higher)",
+        profile_name_text(e.name),
+        g_ms(bmin),
+        g_ms(med),
+        g_ms(bmax),
+        g_fmt(p),
+        g_ms(expected),
+        g_fmt(l),
+        g_fmt(h)
+    )
+}
+
 #[cfg(test)]
 fn open_call_count() -> usize {
     ARENA.with(|c| c.borrow().stack.len())
@@ -504,6 +758,44 @@ mod tests {
         profiler_free();
         profiler_set_fake_clock(0);
         (n, errs)
+    }
+
+    /// Like `setup` but the sink collects INFO lines too (report tests).
+    fn setup_all() -> Arc<Mutex<Vec<String>>> {
+        let lines = Arc::new(Mutex::new(Vec::new()));
+        let l2 = Arc::clone(&lines);
+        profiler_set_log_sink(move |_lvl, msg| {
+            l2.lock().unwrap().push(msg.to_string());
+        });
+        profiler_free();
+        profiler_set_fake_clock(0);
+        lines
+    }
+
+    fn entry(name: &str, times: Vec<(u64, u64)>) -> SnapshotEntry {
+        let overall: u64 = times.iter().map(|(_, c)| *c).sum();
+        let (mn, mx) = if times.is_empty() {
+            (u64::MAX, 0)
+        } else {
+            (
+                times.iter().map(|(v, _)| *v).min().unwrap(),
+                times.iter().map(|(v, _)| *v).max().unwrap(),
+            )
+        };
+        SnapshotEntry {
+            name: profile_store_name(name),
+            expected: 0,
+            times,
+            overall_count: overall,
+            min_time: mn,
+            max_time: mx,
+            times_between_calls: Vec::new(),
+            overall_between_calls_count: 0,
+            min_time_between_calls: 0,
+            max_time_between_calls: 0,
+            expected_time_between_calls: 0,
+            children: Vec::new(),
+        }
     }
 
     fn names() -> (ProfilerName, ProfilerName, ProfilerName) {
@@ -837,5 +1129,249 @@ mod tests {
             true
         });
         assert_eq!(kids, vec!["childB"]);
+    }
+
+    // R42: header/footer + single-value line (min == max)
+    #[test]
+    fn print_single_value_line() {
+        let _lock = TEST_LOCK.lock().unwrap();
+        let lines = setup_all();
+        let mut snap = ProfilerSnapshot::default();
+        let mut a = entry("A", vec![(2000, 1)]);
+        a.children = Vec::new();
+        snap.roots.push(a);
+        profiler_print(Some(&snap));
+        assert_eq!(
+            *lines.lock().unwrap(),
+            vec![PRINT_HEADER, "A: 2\u{a0}ms", FOOTER,]
+        );
+    }
+
+    // R42 full form + P%-below + Q-10 (two distinct calls: median 0)
+    #[test]
+    fn print_full_stats_and_q10_median_zero() {
+        let _lock = TEST_LOCK.lock().unwrap();
+        let lines = setup_all();
+        let mut snap = ProfilerSnapshot::default();
+        let mut a = entry("A", vec![(3, 1), (2, 1)]);
+        a.expected = 2000;
+        a.expected_time_between_calls = 2000;
+        snap.roots.push(a);
+        profiler_print(Some(&snap));
+        let l = lines.lock().unwrap();
+        assert_eq!(l.len(), 3);
+        // p99: first entry crosses 1% -> 3; median: second entry's
+        // old=1 is not < calls*0.5=1 -> stays 0 (Q-10)
+        assert_eq!(
+            l[1],
+            "A: min=0.002\u{a0}ms, median=0\u{a0}ms, max=0.003\u{a0}ms, 99th percentile=0.003\u{a0}ms, 100% below 2\u{a0}ms"
+        );
+    }
+
+    // R42 parent-call suffix + R43 indent (root, 2 children)
+    #[test]
+    fn print_parent_suffix_and_indent() {
+        let _lock = TEST_LOCK.lock().unwrap();
+        let lines = setup_all();
+        let mut snap = ProfilerSnapshot::default();
+        let mut c = entry("C", vec![(500, 3)]);
+        let mut d = entry("D", vec![(700, 1), (300, 1)]);
+        let mut r = entry("R", vec![(1000, 2)]);
+        r.children = vec![c, d];
+        snap.roots.push(r);
+        profiler_print(Some(&snap));
+        assert_eq!(
+            *lines.lock().unwrap(),
+            vec![
+                PRINT_HEADER,
+                "R: 1\u{a0}ms",
+                " \u{2523}C: 0.5\u{a0}ms, 1.5 calls per parent call",
+                " \u{2517}D: min=0.3\u{a0}ms, median=0\u{a0}ms, max=0.7\u{a0}ms, 99th percentile=0.7\u{a0}ms",
+                FOOTER,
+            ]
+        );
+    }
+
+    // R43 deep indent: ┃/┣ above, ┗ for the last child
+    #[test]
+    fn print_deep_indent_bits() {
+        let _lock = TEST_LOCK.lock().unwrap();
+        let lines = setup_all();
+        let mut snap = ProfilerSnapshot::default();
+        let mut x = entry("X", vec![(1000, 1)]);
+        let mut y = entry("Y", vec![(1000, 1)]);
+        let mut a = entry("A", vec![(1000, 1)]);
+        a.children = vec![x, y];
+        let mut b = entry("B", vec![(1000, 1)]);
+        let mut r = entry("R", vec![(1000, 1)]);
+        r.children = vec![a, b];
+        snap.roots.push(r);
+        profiler_print(Some(&snap));
+        assert_eq!(
+            *lines.lock().unwrap(),
+            vec![
+                PRINT_HEADER,
+                "R: 1\u{a0}ms",
+                " \u{2523}A: 1\u{a0}ms",
+                " \u{2503} \u{2523}X: 1\u{a0}ms",
+                " \u{2503} \u{2517}Y: 1\u{a0}ms",
+                " \u{2517}B: 1\u{a0}ms",
+                FOOTER,
+            ]
+        );
+        // and: single (last) child with its own children -> "  " + ┣/┗
+        let mut snap2 = ProfilerSnapshot::default();
+        let mut x = entry("X", vec![(1000, 1)]);
+        let mut y = entry("Y", vec![(1000, 1)]);
+        let mut a = entry("A", vec![(1000, 1)]);
+        a.children = vec![x, y];
+        let mut r = entry("R", vec![(1000, 1)]);
+        r.children = vec![a];
+        snap2.roots.push(r);
+        profiler_print(Some(&snap2));
+        assert_eq!(
+            *lines.lock().unwrap(),
+            vec![
+                PRINT_HEADER,
+                "R: 1\u{a0}ms",
+                " \u{2523}A: 1\u{a0}ms",
+                " \u{2503} \u{2523}X: 1\u{a0}ms",
+                " \u{2503} \u{2517}Y: 1\u{a0}ms",
+                " \u{2517}B: 1\u{a0}ms",
+                FOOTER,
+                PRINT_HEADER,
+                "R: 1\u{a0}ms",
+                " \u{2517}A: 1\u{a0}ms",
+                "   \u{2523}X: 1\u{a0}ms",
+                "   \u{2517}Y: 1\u{a0}ms",
+                FOOTER,
+            ]
+        );
+    }
+
+    // no samples: all stats 0 -> "0 ms"
+    #[test]
+    fn print_no_samples() {
+        let _lock = TEST_LOCK.lock().unwrap();
+        let lines = setup_all();
+        let mut snap = ProfilerSnapshot::default();
+        snap.roots.push(entry("Z", Vec::new()));
+        profiler_print(Some(&snap));
+        assert_eq!(
+            *lines.lock().unwrap(),
+            vec![PRINT_HEADER, "Z: 0\u{a0}ms", FOOTER]
+        );
+    }
+
+    // R45: mixed between window (T5 vector)
+    #[test]
+    fn between_calls_mixed_window() {
+        let _lock = TEST_LOCK.lock().unwrap();
+        let lines = setup_all();
+        let mut snap = ProfilerSnapshot::default();
+        let mut a = entry("A", vec![(1000, 1)]);
+        a.expected = 1000;
+        a.expected_time_between_calls = 1000;
+        a.times_between_calls = vec![(1100, 1), (1000, 2)];
+        a.overall_between_calls_count = 3;
+        a.min_time_between_calls = 1000;
+        a.max_time_between_calls = 1100;
+        snap.roots.push(a);
+        profiler_print_time_between_calls(Some(&snap));
+        assert_eq!(
+            *lines.lock().unwrap(),
+            vec![
+                BETWEEN_HEADER,
+                "A: min=1\u{a0}ms, median=1\u{a0}ms, max=1.1\u{a0}ms, 66.6667% within \u{b1}2% of 1\u{a0}ms (0% lower, 33.3333% higher)",
+                FOOTER,
+            ]
+        );
+    }
+
+    // R45: everything above the window -> H = 100, done
+    #[test]
+    fn between_calls_all_above() {
+        let _lock = TEST_LOCK.lock().unwrap();
+        let lines = setup_all();
+        let mut snap = ProfilerSnapshot::default();
+        let mut a = entry("A", vec![(1100, 1)]);
+        a.expected = 1000;
+        a.expected_time_between_calls = 1000;
+        a.times_between_calls = vec![(1100, 2)];
+        a.overall_between_calls_count = 2;
+        a.min_time_between_calls = 1100;
+        a.max_time_between_calls = 1100;
+        snap.roots.push(a);
+        profiler_print_time_between_calls(Some(&snap));
+        assert_eq!(
+            lines.lock().unwrap()[1],
+            "A: min=1.1\u{a0}ms, median=1.1\u{a0}ms, max=1.1\u{a0}ms, 0% within \u{b1}2% of 1\u{a0}ms (0% lower, 100% higher)"
+        );
+    }
+
+    // R45: found_hi && min >= lo -> P = 100, done
+    #[test]
+    fn between_calls_all_inside() {
+        let _lock = TEST_LOCK.lock().unwrap();
+        let lines = setup_all();
+        let mut snap = ProfilerSnapshot::default();
+        let mut a = entry("A", vec![(1000, 1)]);
+        a.expected = 1000;
+        a.expected_time_between_calls = 1000;
+        a.times_between_calls = vec![(1000, 1), (990, 1)];
+        a.overall_between_calls_count = 2;
+        a.min_time_between_calls = 990;
+        a.max_time_between_calls = 1000;
+        snap.roots.push(a);
+        profiler_print_time_between_calls(Some(&snap));
+        assert_eq!(
+            lines.lock().unwrap()[1],
+            "A: min=0.99\u{a0}ms, median=1\u{a0}ms, max=1\u{a0}ms, 100% within \u{b1}2% of 1\u{a0}ms (0% lower, 0% higher)"
+        );
+    }
+
+    // R45: no between samples -> all zero; expected == 0 roots skipped;
+    // children never printed
+    #[test]
+    fn between_calls_zero_and_filtering() {
+        let _lock = TEST_LOCK.lock().unwrap();
+        let lines = setup_all();
+        let mut snap = ProfilerSnapshot::default();
+        let mut a = entry("A", vec![(1000, 1)]);
+        a.expected = 1000;
+        a.expected_time_between_calls = 1000;
+        let mut child = entry("C", vec![(100, 1)]);
+        child.expected = 500; // a child with an expectation: still never printed
+        a.children = vec![child];
+        let mut b = entry("B", vec![(1000, 1)]); // no expectation
+        snap.roots = vec![a, b];
+        profiler_print_time_between_calls(Some(&snap));
+        assert_eq!(
+            *lines.lock().unwrap(),
+            vec![
+                BETWEEN_HEADER,
+                "A: min=0\u{a0}ms, median=0\u{a0}ms, max=0\u{a0}ms, 0% within \u{b1}2% of 1\u{a0}ms (0% lower, 0% higher)",
+                FOOTER,
+            ]
+        );
+    }
+
+    // g_fmt: C %g shapes
+    #[test]
+    fn g_fmt_shapes() {
+        let _lock = TEST_LOCK.lock().unwrap();
+        setup();
+        assert_eq!(g_fmt(0.0), "0");
+        assert_eq!(g_fmt(2.0), "2");
+        assert_eq!(g_fmt(0.002), "0.002");
+        assert_eq!(g_fmt(1.1), "1.1");
+        assert_eq!(g_fmt(0.99), "0.99");
+        assert_eq!(g_fmt(100.0), "100");
+        assert_eq!(g_fmt(33.333333333333336), "33.3333");
+        assert_eq!(g_fmt(66.66666666666667), "66.6667");
+        assert_eq!(g_fmt(123456.0), "123456");
+        assert_eq!(g_fmt(1234567.0), "1.23457e+06");
+        assert_eq!(g_fmt(0.000012345), "1.23450e-05");
+        assert_eq!(g_fmt(-1.5), "-1.5");
     }
 }
