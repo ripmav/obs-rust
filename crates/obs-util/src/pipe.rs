@@ -498,19 +498,22 @@ mod tests {
         std::fs::copy("/bin/echo", &exe).unwrap();
         let mut args = ProcessArgs::create(exe.to_string_lossy().as_ref());
         args.add_arg("spaced");
-        // Bounded retry: under heavy parallel load the child once delivered
-        // an empty read (observed locally on 4 cores); the vector pins the
-        // spaced-path exec, not scheduling latency.
-        for attempt in 0..3u32 {
+        // Bounded retry: under heavy parallel load the child intermittently
+        // exits before writing (empty read / EOF): observed locally on 4
+        // cores and 3x in one 18-PR CI batch on loaded ubuntu runners
+        // (2026-11-15, assert at this line). The vector pins the spaced-path
+        // exec, not scheduling latency; the assertion below stays strict.
+        const ATTEMPTS: u32 = 10;
+        for attempt in 0..ATTEMPTS {
             let p = os_process_pipe_create2(&args, "r").unwrap();
             let out = read_all(&p, 100);
-            if !out.is_empty() || attempt == 2 {
+            if !out.is_empty() || attempt + 1 == ATTEMPTS {
                 assert_eq!(out, b"spaced\n");
                 assert_eq!(os_process_pipe_destroy(Some(p)), 0);
                 break;
             }
             let _ = os_process_pipe_destroy(Some(p));
-            std::thread::sleep(std::time::Duration::from_millis(50));
+            std::thread::sleep(std::time::Duration::from_millis(200));
         }
 
         // a write after the child exited (EPIPE): returns a count, no
