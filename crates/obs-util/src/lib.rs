@@ -14,6 +14,7 @@ pub mod deque;
 pub mod dl;
 pub mod dstr;
 pub mod hash;
+pub mod lexer;
 pub mod os_fs;
 #[cfg(unix)]
 pub mod os_proc;
