@@ -4,6 +4,8 @@
 //!
 //! - `uint128`: S-024 M2 (`util_uint128.h` / `util_uint64.h`)
 //! - `task_queue`: S-024 M6 (`util/task.c`)
+//! - `profiler`: S-024 M7 (`util/profiler.c`)
 
+pub mod profiler;
 pub mod task_queue;
 pub mod uint128;
