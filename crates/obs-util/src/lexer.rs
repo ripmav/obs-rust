@@ -390,6 +390,12 @@ impl Lexer {
         self.offset
     }
 
+    /// Set the scan cursor (C `lex->offset` assignment, used by the
+    /// cf-lexer layer for splice skips and break rewinds).
+    pub fn set_offset(&mut self, off: usize) {
+        self.offset = off;
+    }
+
     /// `lexer_getbasetoken` (R03): produce the next base token. ALPHA/DIGIT
     /// tokens extend over the maximal same-class run; WHITESPACE and OTHER
     /// tokens are one character, except a `\r\n`/`\n\r` pair is a single
