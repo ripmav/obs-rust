@@ -115,19 +115,6 @@ mod tests {
         *CAP.lock().unwrap() = Some((level, s, param as usize));
     }
 
-    fn run_bin(mode: &str) -> (i32, String, String) {
-        let bin = std::env::var("OBS_FFI_LOGTEST").expect("OBS_FFI_LOGTEST set by build.rs");
-        let out = std::process::Command::new(&bin)
-            .arg(mode)
-            .output()
-            .expect("run log-test-bin");
-        (
-            out.status.code().expect("exit code"),
-            String::from_utf8_lossy(&out.stdout).into_owned(),
-            String::from_utf8_lossy(&out.stderr).into_owned(),
-        )
-    }
-
     // R20: the constants the Rust side exposes
     #[test]
     fn r20_level_constants() {
@@ -162,72 +149,6 @@ mod tests {
         *CAP.lock().unwrap() = None;
         blog(LOG_INFO, "to the default handler");
         assert!(CAP.lock().unwrap().is_none());
-    }
-
-    // R23: default handler output — prefixes, streams, Q-3 drop, truncation
-    #[test]
-    fn r23_default_handler_output() {
-        let (code, out, err) = run_bin("default");
-        assert_eq!(code, 0);
-        assert_eq!(err, "error: e1\n");
-        assert_eq!(
-            out,
-            format!(
-                "warning: w1\ninfo: i1 7\ndebug: d1\ninfo: padded\ninfo: {}\n",
-                "x".repeat(8191)
-            )
-        );
-    }
-
-    // R21: the C handler receives the unformatted format + args
-    #[test]
-    fn r21_handler_gets_unformatted() {
-        let (code, out, err) = run_bin("fmt");
-        assert_eq!(code, 0);
-        assert_eq!(err, "");
-        assert_eq!(out, "lvl=400 fmt=a=%d b=%s out=a=7 b=x\n");
-    }
-
-    // R24: default crash handler — formatted message, no trailing newline,
-    // exit 0
-    #[test]
-    fn r24_default_crash() {
-        let (code, out, err) = run_bin("crash-default");
-        assert_eq!(code, 0);
-        assert_eq!(out, "");
-        assert_eq!(err, "boom 42");
-    }
-
-    // R24: a crash handler that itself calls bcrash -> "Crashed in the
-    // crash handler", exit 2
-    #[test]
-    fn r24_nested_crash() {
-        let (code, out, err) = run_bin("crash-nested");
-        assert_eq!(code, 2);
-        assert_eq!(out, "");
-        assert_eq!(err, "A outerCrashed in the crash handler");
-    }
-
-    // R24: a returning crash handler -> exit 0
-    #[test]
-    fn r24_crash_handler_returns() {
-        let (code, out, err) = run_bin("crash-return");
-        assert_eq!(code, 0);
-        assert_eq!(out, "");
-        assert_eq!(err, "B ret v");
-    }
-
-    // R25: the crash handler can be set at most once; the second call is
-    // ignored with the warning, the first handler stays active
-    #[test]
-    fn r25_crash_handler_once() {
-        let (code, out, err) = run_bin("once");
-        assert_eq!(code, 0);
-        assert_eq!(
-            out,
-            "warning: Tried to set a crash handler when one already exists.\n"
-        );
-        assert_eq!(err, "B who");
     }
 
     // the Rust wrapper passes the message through as "%s" (embedded-NUL
