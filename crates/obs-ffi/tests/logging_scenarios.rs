@@ -121,7 +121,10 @@ fn run(directive: &str) -> (i32, String, String) {
         .stderr(Stdio::piped())
         .output()
         .unwrap();
-    let stdout = String::from_utf8_lossy(&out.stdout).into_owned();
+    // Windows CRT text mode translates \n to \r\n in the C streams; the
+    // spec behaviour is the byte-exact newline, so normalize the artifact.
+    let strip = |s: &str| s.replace("\r\n", "\n");
+    let stdout = strip(&String::from_utf8_lossy(&out.stdout));
     let idx = stdout
         .find(MARKER)
         .expect("scenario marker in child stdout")
@@ -129,7 +132,7 @@ fn run(directive: &str) -> (i32, String, String) {
     (
         out.status.code().unwrap(),
         stdout[idx..].to_string(),
-        String::from_utf8_lossy(&out.stderr).into_owned(),
+        strip(&String::from_utf8_lossy(&out.stderr)),
     )
 }
 
