@@ -5,8 +5,11 @@
 resolver = "2"
 members = [
     "crates/obs-util",
+    "crates/obs-util-small",
     "crates/obs-math",
     "crates/obs-data",
+    "crates/obs-properties",
+    "crates/obs-hotkey-names",
     "crates/obs-signal",
     "crates/obs-media-io",
     "crates/obs-graphics",
