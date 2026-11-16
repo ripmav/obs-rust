@@ -47,7 +47,7 @@ jobs:
         run: cargo nextest run --workspace --profile ci
       - name: upload test report
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: nextest-junit-${{ matrix.os }}
           path: target/nextest/ci/junit.xml
@@ -96,7 +96,7 @@ jobs:
           cat coverage-summary.txt
       - name: upload coverage
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: coverage-lcov
           path: |
