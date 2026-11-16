@@ -21,6 +21,7 @@ pub mod os_str;
 #[cfg(unix)]
 pub mod pipe;
 pub mod process_args;
+pub mod utf8;
 
 #[cfg(test)]
 mod tests {

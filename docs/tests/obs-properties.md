@@ -47,6 +47,8 @@ properties (D4 class). The `settings` object is the opaque `SettingsHandle`
 | button click: context data vs priv, non-button false | `v11_button_clicks` | 11 |
 | callbacks edit the layout (add/remove/hide/disable/re-describe, list refill) | `v23_callbacks_edit_layout` | 23 |
 | shared priv slot between button2 and modified2 (Q-4) | `v24_priv_sharing_quirk` | 24 |
+| **test serialization** | | |
+| tests sharing the recording statics (`CALLS` in model.rs: v02/v16; `ORDER` in callback.rs: d6/v18/v24) are fenced by `TEST_LOCK` — full-content assertions on a shared global race under libtest's in-process parallelism (nextest's per-process isolation masks it; CI coverage job = plain cargo test) | `v02_param_and_destroy_order`, `v16_group_remove`, `d6_remove_during_apply_skipped` (fence present) | — |
 | group content additions findable from the top | `v22_group_content_adds` | 22 |
 | D-6: property removed during apply is skipped | `d6_remove_during_apply_skipped` | — |
 
