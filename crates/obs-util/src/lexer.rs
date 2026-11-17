@@ -481,11 +481,12 @@ impl Lexer {
 
 /// `struct error_item` + `struct error_data` (R12).
 #[derive(Clone, Debug)]
-pub struct ErrorItem<'a> {
-    /// The file pointer is held, not copied (R12); `None` = NULL (C prints
-    /// implementation-defined text there — Rust prints nothing; do not rely
-    /// on it).
-    pub file: Option<&'a str>,
+pub struct ErrorItem {
+    /// A copy of the file name (R12 holds the C pointer; the Rust item
+    /// copies it so error lists are self-contained); `None` = NULL (C
+    /// prints implementation-defined text there — Rust prints nothing; do
+    /// not rely on it).
+    pub file: Option<String>,
     pub row: u32,
     pub column: u32,
     pub level: i32,
@@ -494,11 +495,11 @@ pub struct ErrorItem<'a> {
 }
 
 #[derive(Clone, Debug, Default)]
-pub struct ErrorData<'a> {
-    items: Vec<ErrorItem<'a>>,
+pub struct ErrorData {
+    items: Vec<ErrorItem>,
 }
 
-impl<'a> ErrorData<'a> {
+impl ErrorData {
     /// `error_data_init`.
     pub fn new() -> Self {
         Self::default()
@@ -506,9 +507,9 @@ impl<'a> ErrorData<'a> {
 
     /// `error_data_add` (R12). (Adding to a NULL `error_data` is a C no-op
     /// with no Rust equivalent.)
-    pub fn add(&mut self, file: Option<&'a str>, row: u32, column: u32, msg: &str, level: i32) {
+    pub fn add(&mut self, file: Option<&str>, row: u32, column: u32, msg: &str, level: i32) {
         self.items.push(ErrorItem {
-            file,
+            file: file.map(str::to_owned),
             row,
             column,
             level,
@@ -517,7 +518,7 @@ impl<'a> ErrorData<'a> {
     }
 
     /// `error_data_item`.
-    pub fn item(&self, idx: usize) -> Option<&ErrorItem<'a>> {
+    pub fn item(&self, idx: usize) -> Option<&ErrorItem> {
         self.items.get(idx)
     }
 
@@ -553,7 +554,7 @@ impl<'a> ErrorData<'a> {
         }
         let mut s = String::new();
         for it in &self.items {
-            s.push_str(it.file.unwrap_or(""));
+            s.push_str(it.file.as_deref().unwrap_or(""));
             s.push_str(&format!(" ({}, {}): {}\n", it.row, it.column, it.msg));
         }
         Some(s)
@@ -887,7 +888,7 @@ mod tests {
         assert!(ed.has_errors());
         let it = ed.item(1).expect("item 1");
         assert_eq!(
-            (it.file, it.row, it.column, it.msg.as_str()),
+            (it.file.as_deref(), it.row, it.column, it.msg.as_str()),
             (Some("g"), 10u32, 20u32, "warn")
         );
 

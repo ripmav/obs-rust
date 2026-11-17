@@ -39,3 +39,42 @@ splice skips and break rewinds.
 Verification (W21a): `cargo test -p obs-util` 173 passed; `cargo clippy
 -p obs-util --all-targets -- -D warnings` clean (host + x86_64);
 `cargo fmt --check` clean; nextest workspace 447/447.
+
+## Preprocessor (S-011 §5.3, R40–R54) — W21b
+
+Module `cf_preprocessor` (`src/cf_preprocessor.rs`). Same oracle: the
+committed vectors `test/conformance/vectors/lexer/{20,21,22,23,24,25,26,
+50,90}` in the runner's print format; `run.sh check lexer` is green
+against the linked C reference, so the vectors and the reference agree.
+ErrorData items now carry an **owned** file name (C holds a pointer; the
+Rust item copies it so error lists are self-contained — `ErrorData` lost
+its lifetime parameter). Output tokens are views into `main`, the
+dependency lexers (`TokenSource::Dep`), caller-owned API side lexers
+(`TokenSource::Side`) or synthesized (`Synth`, one-byte space filler);
+`src=-` in the dump means `Synth` span, `u=` shows the owning span when
+it differs from the token text.
+
+| Area | Pinned by test | Conformance vector |
+| --- | --- | --- |
+| **define/undef (R45, R54, Q-6)** | | |
+| object-like define + expansion (leading synthetic blank, body tokens keep their source positions), `#undef`, undef of a missing name (no-op), first definition wins (second `#define` of a name does not replace) | `v20_pp_define`, `v50_pp_quirks` (Q-6 case) | `20-pp-define`, `50-quirks` |
+| directive error paths: `#define` without a name, `#define 1`, `#define` at EOL, `#ifdef`/`#undef` without a name, `#ifdef 5`, `#pragma` unknown directive (name skipped, rest of the line hits the expected-newline error) | `v20_pp_define` (case 3), `v22_pp_ifdef` (case 7), `v25_pp_errors`, `v50_pp_quirks` (unknown directive) | `20-pp-define`, `22-pp-ifdef`, `25-pp-errors`, `50-quirks` |
+| **function-like macros (R46, Q-8, Q-9, D-6)** | | |
+| multi-param expansion with nested-paren args (`F(g(1,2),3)`), params expanded with their stored tokens, synthetic blanks carrying the macro-name span (`u="S"`/`u="F"`) | `v21_pp_macro` (case 1) | `21-pp-macro` |
+| zero-param macro call `N()`, extra args `N(1)`; `M(a)` called with `M(1,2)` — mismatch error at the closing `)` (reference position, not the extra arg); `#define M(a,)` → "Expected identifier" at `)`; `F (1)` (blank before `(`) still expands | `v21_pp_macro` (cases 2, 3), `v50_pp_quirks` (Q-9 case) | `21-pp-macro`, `50-quirks` |
+| macro name without `(`: "Expected '('" at the following token, which is consumed (the rest of the line is dropped); `#define Z() 0` → "Expected identifier" and `Z` stays undefined | `v50_pp_quirks` (Q-8, Q-9) | `50-quirks` |
+| **conditional blocks (R50, R51, R44)** | | |
+| `#ifdef`/`#ifndef`/`#else`/`#endif`, nesting, ignored branches emit nothing; unterminated block → "Unexpected end of file before #endif" at the NONE token; stray `#else`/`#endif`/`#elif` outside a block → per-directive error | `v22_pp_ifdef` (cases 1–4) | `22-pp-ifdef` |
+| trailing junk after a directive ("expected newline" at the first non-blank, line dropped); Q-13: `#elif` after a TRUE block reports the spurious "expected newline" at the `#elif` operand | `v22_pp_ifdef` (case 5), `v50_pp_quirks` (Q-13) | `22-pp-ifdef`, `50-quirks` |
+| `#if` with NUM/NAME operands (NAME follows defines recursively), all six comparators, bare value (`#elif V`), `#elif` chains, `#else`; Q-14 `sscanf("%i")` semantics (hex `0x10`, `08` → 0, `1.5` → 1 over the rest of the buffer); malformed conditions: `=` / `~` comparators, undefined/missing operands, "Expected identifier or number" / "Expected comparator" at the reference positions, `#if 1 == 1 junk` → expected-newline | `v23_pp_if` (all cases) | `23-pp-if` |
+| **include (R48, R49, Q-7, D-4)** | | |
+| local include: dependency lexed with its path as file, tokens emitted with their dependency positions + `f="file"`; a `#define` inside a dependency registers in the shared define list (first wins on re-include); repeated include re-preprocesses the existing dependency; system `<...>` includes accepted and ignored; BOM stripped from the dependency text | `v24_pp_include` (both cases) | `24-pp-include` |
+| Q-7: "Could not open file" embeds the rest of the buffer from the string token; `#include foo` → "Expected string"; `#include "x" y` → open error + expected-newline at `y`; nested/relative resolution against the main file's directory | `v24_pp_include` (case 1) | `24-pp-include` |
+| **API definitions (R53, D-5)** | | |
+| `cf_preprocessor_add_def` / `remove_def`: API defs carry exactly the caller's tokens (no leading blank), `#ifdef` sees them, expansion emits the body tokens verbatim, `remove_def` by name, missing name no-op | `v26_pp_api_defs` | `26-pp-api-defs` |
+| **defects (D-3, D-4, D-7)** | | |
+| D-3: a definition with an empty body expands to nothing (no crash); D-4: an empty included file yields no tokens and no crash; D-7: self-referencing (`#define A A`) and mutually recursive (`A → B → A`) macros terminate, the name emitted verbatim | `v90_defects` | `90-defects` (try-blocks: output not compared, must not crash) |
+
+Verification (W21b): `cargo test -p obs-util` 177 + 4 + 1 passed;
+`cargo clippy -p obs-util --all-targets -- -D warnings` clean (host +
+x86_64); `cargo fmt --check` clean; nextest workspace 456/456.

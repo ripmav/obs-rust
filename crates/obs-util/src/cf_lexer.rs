@@ -43,6 +43,22 @@ impl CfTokenType {
     }
 }
 
+/// Which buffer a token's views point into. Tokens from different lexers
+/// are distinguished by this id, never by pointer identity (spec section 9).
+#[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
+pub enum TokenSource {
+    /// The main (top-level) lexer the preprocessor was handed.
+    #[default]
+    Main,
+    /// An include dependency of the preprocessor (by index).
+    Dep(usize),
+    /// An extra token source registered by the owner, e.g. the lexers
+    /// backing API-level definitions (by index).
+    Side(usize),
+    /// A synthesized token with no owning buffer (dumps as `src=-`).
+    Synth,
+}
+
 /// `struct cf_token`: text view + source span + type.
 #[derive(Clone, Copy, Debug, Default)]
 pub struct CfToken {
@@ -54,6 +70,11 @@ pub struct CfToken {
     /// Span length; STRING tokens are one byte longer than the text (Q-5).
     pub span_len: usize,
     pub r#type: CfTokenType,
+    /// Owner of the token text (ignored for `Synth` tokens, which carry a
+    /// one-byte space filler).
+    pub src: TokenSource,
+    /// Owner of the source span; `Synth` means no span at all (dumps `src=-`).
+    pub span_src: TokenSource,
 }
 
 impl CfToken {
@@ -141,6 +162,7 @@ impl CfLexer {
             span_off: self.base.offset(),
             span_len: 0,
             r#type: CfTokenType::None,
+            ..Default::default()
         });
 
         !self.unexpected_eof
@@ -224,6 +246,7 @@ impl CfLexer {
             span_off: start_off,
             span_len: end - start_off,
             r#type: get_token_type(first, start_type),
+            ..Default::default()
         })
     }
 
@@ -287,6 +310,7 @@ impl CfLexer {
             span_off,
             span_len: o - span_off,
             r#type: CfTokenType::Spacetab,
+            ..Default::default()
         })
     }
 
@@ -344,6 +368,7 @@ impl CfLexer {
             // Q-5: one byte longer than the covered text
             span_len: 1 + (o - span_off),
             r#type: CfTokenType::String,
+            ..Default::default()
         })
     }
 
