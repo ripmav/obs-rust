@@ -1,0 +1,53 @@
+# text-lookup (S-010 §5.7, R60–R67) — test matrix
+
+WP-22 (P1-08.4 text-lookup), crate `crates/obs-util`, module
+`text_lookup` (`src/text_lookup.rs`). Spec: `S-010-*.md` §5.7 (R60–R67),
+§6.2/§6.3 (tokenization and file parsing), §8 (Q-5/Q-6/Q-7, D-1), §9
+(byte-wise storage). The tests encode the committed C reference vectors
+`test/conformance/{scripts,vectors}/serial/textlookup_*` (serial runner
+`gen/serial_runner.c`, print format included), so the vectors are the
+oracle, byte values included. The harness replays each committed script
+against the Rust table and compares the runner's printed lines.
+Tokenization reuses the WP-20 base lexer (`Lexer::get_basetoken`
+PARSE_WHITESPACE + `set_offset` for the C push-backs); keys and values
+are owned byte vectors (they may hold invalid UTF-8, S-010 §9), so
+`getstr` returns `Option<&[u8]>`. There is no fallback or miss default:
+a miss is `None` and a locale fallback chain is caller-side (S-010 §1);
+`text_lookup_destroy` has no Rust equivalent (`Drop` frees the table,
+the NULL no-op is meaningless for an owned value).
+
+| Area | Pinned by test | Conformance vector |
+| --- | --- | --- |
+| **lifecycle (R60, R61, R63)** | | |
+| create `ok`/`null` (missing, empty, BOM-only file); add `true`/`false` with the table unchanged on failed adds; duplicate keys last wins within one file and across `add`s (later file overrides); `getstr` on a destroyed (NULL) table is a miss; destroy prints nothing | `v_tl_files`, `v_tl_basic` | `textlookup_files`, `textlookup_basic` |
+| **lookup (R62, R66)** | | |
+| exact case-sensitive byte-wise keys: `key1`/`KEY1`/`Key`/`Key11` all miss; keys with `.`, `-`, `_` and multi-byte UTF-8 (`Ключ`); `""` and `"#"` miss; keys are never unescaped | `v_tl_basic`, `v_tl_tokens` | `textlookup_basic`, `textlookup_tokens` |
+| **file preprocessing (R64)** | | |
+| BOM stripped (BOM-only file fails, BOM-prefixed file parses); every CR → space over the whole text (the CRLF `J`/`K` lines still store); a blank/comment-only file succeeds with zero entries | `v_tl_files`, `v_tl_tokens`, `v_tl_basic` | `textlookup_files`, `textlookup_tokens`, `textlookup_basic` |
+| **name/value tokens (§6.2)** | | |
+| unquoted values stop at whitespace, `=` or `#` (`B=c=d` → `c`, `C=g#h` → `g`); text after the value on the same line is ignored (`G` in `F="v" G="ignored"` is not stored); `#` comments run to EOL (full line and trailing); quoted names with spaces; quoted values may contain `=`, `#`, spaces | `v_tl_tokens`, `v_tl_basic` | `textlookup_tokens`, `textlookup_basic` |
+| **quoted scan (§6.2)** | | |
+| unterminated quote runs to EOL (LF not consumed, `B="unterminated` → `unterminated`); `\` escapes the next char, so an escaped quote at end of line stays in the content (`"abc\"` → `abc\`) | `v_tl_unterminated` | `textlookup_unterminated` |
+| **value unescaping (R65)** | | |
+| `\n`/`\t`/`\r`/`\"` replaced in sequential passes; `\\n` → backslash + LF (the H case, passes are not a single pass); other backslash sequences kept (`\x`, `\\` incl. `I`/`J`) | `v_tl_escapes` | `textlookup_escapes` |
+| **Q-5: whitespace is a token (§8)** | | |
+| `K = "v"` stores `K -> " "`; `  L="w"` stores `" " -> " "` (the value is the second space, `L` is not stored); `H<TAB>=<TAB>"t"` stores `H -> "\t"`; `M= "x"` and `N ="y"` store `" "` | `v_tl_quirk_whitespace` | `textlookup_quirk_whitespace` |
+| **Q-6: `=` separator (§8)** | | |
+| name without value dropped (`B=`, bare `C`); the first `=` after a name is skipped; a second `=` becomes the value (`A==b` → `A -> "="`); `=x` stores `"=" -> "x"`; a bare `==` stores nothing; a comment value drops the name (`D=#c`) | `v_tl_quirk_equals` | `textlookup_quirk_equals` |
+| **Q-7: empty quoted string (§8)** | | |
+| `""` is a token failure that ends parsing silently: `B=""` drops `B` and everything after it (`C` lost); an empty quoted name kills the whole file (`A` never stored) while create still succeeds | `v_tl_quirk_empty_string` | `textlookup_quirk_empty_string` |
+| **D-1: lone quote at EOF (§8)** | | |
+| `B="` + EOF: no panic, create succeeds, earlier entries survive (`A -> "1"`), the lone-quote entry is a miss; a lone quote followed by LF (tu-2) drops the name and parsing continues (`C -> "3"`) | `v_tl_defect_lone_quote`, `v_tl_unterminated` | `textlookup_defect_lone_quote`, `textlookup_unterminated` |
+
+D-1 deviation (documented in the test comment): the C expected file
+contains the runner's `-> ub` marker because the reference underflows
+the token length and crashes (the runner then loads the equivalent file
+`td-*eq`). The Rust test is a conforming runner: it loads the defect
+file itself, asserts `tl_defect ... -> ok` for both defect files (no
+panic, create succeeds), and compares the expected file's non-`ub`
+lines against the harness output minus the `tl_defect` lines.
+
+Verification (WP-22): `cargo test -p obs-util` 193 + 4 + 1 passed;
+`cargo clippy -p obs-util --all-targets -- -D warnings` clean (host +
+x86_64-unknown-linux-gnu); `cargo fmt --check` clean; nextest workspace
+472/472 (nextest 0.9.151, CI-exact).
