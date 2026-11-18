@@ -5,6 +5,7 @@
 
 pub mod bmem;
 pub mod cf_lexer;
+pub mod cf_parser;
 pub mod cf_preprocessor;
 pub mod config;
 pub mod darray;

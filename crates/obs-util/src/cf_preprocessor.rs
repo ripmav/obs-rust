@@ -420,7 +420,12 @@ fn end_token() -> CfToken {
 }
 
 /// R54: sequential global `$n` replacements; `None` args leave `$n` intact.
-fn substitute(msg: &str, v1: Option<&str>, v2: Option<&str>, v3: Option<&str>) -> String {
+pub(crate) fn substitute(
+    msg: &str,
+    v1: Option<&str>,
+    v2: Option<&str>,
+    v3: Option<&str>,
+) -> String {
     let mut s = msg.to_owned();
     if let Some(v) = v1 {
         s = s.replace("$1", v);

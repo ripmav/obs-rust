@@ -78,3 +78,34 @@ it differs from the token text.
 Verification (W21b): `cargo test -p obs-util` 177 + 4 + 1 passed;
 `cargo clippy -p obs-util --all-targets -- -D warnings` clean (host +
 x86_64); `cargo fmt --check` clean; nextest workspace 456/456.
+
+## Parser helpers (S-011 §5.5, R70–R80) — W21c
+
+Module `cf_parser` (`src/cf_parser.rs`): `CfParser` owns its main lexer,
+preprocessor and error list; the cursor is an index into the
+preprocessed stream. D-2 (the reference crashes on a NULL cursor after a
+failed parse) has no Rust equivalent: a fresh/failed parser treats the
+stream as empty, every helper is safe and reports the end-of-stream NONE
+sentinel. `parse` does not clear preprocessor definitions (like the
+runner; `reset` does). Same oracle: committed vectors `30, 31, 32, 50
+(parser parts), 90`.
+
+| Area | Pinned by test | Conformance vector |
+| --- | --- | --- |
+| **navigation (R72, R73, R74, R76, R77, Q-11)** | | |
+| Q-11: the first `next` on a stream starting with a non-blank token skips that token; `next`/`next_valid` with cursor positions, `peek` (token line + restored cursor), `token_is` (exact case-sensitive), `goto_type` (no pre-advance; NONE = false) | `v30_parser_nav` (all cases), `v50_parser_quirks` (Q-11 case) | `30-parser-nav`, `50-quirks` |
+| `pass_pair` nesting and recursion: `f ( { [ ( ) ] } ) g` consumes through the nested `(...)` pair to the space after `)`; non-OTHER or non-matching first char returns `cur.type != NONE` without moving | `v30_parser_nav` (cases 2, 3) | `30-parser-nav` |
+| **should_be / is_type (R78, R79)** | | |
+| `should_be` SUCCESS / CONTINUE with `Expected '<s>'` at the post-jump cursor / EOF without an error when the goto misses; `next_should_be` with the same trio; `is_type` SUCCESS / CONTINUE+expecting / EOF (goto miss adds `Unexpected EOF`) | `v30_parser_nav` (case 1), `v31_parser_names` (case 4) | `30-parser-nav`, `31-parser-names` |
+| **goto and Q-12 (R75)** | | |
+| `go_to_token(s1, s2)` scanning with `{...}` block skipping; Q-12: `a {}x y` — the token right after a skipped block without a preceding blank is not examined (goto misses, ends at NONE); `a { } x y` finds it; the token's first char (any token type) triggers the pair skip | `v30_parser_nav` (case 2), `v50_parser_quirks` (Q-12 cases) | `30-parser-nav`, `50-quirks` |
+| **name/copy helpers (R80)** | | |
+| `next_name`/`next_name_ref`/`get_name_ref`/`next_copy`/`copy` with the PARSE codes (SUCCESS/CONTINUE/EOF), `name=`/`ref=`/`copy=` values (`@null` on failure), EOF on missing tokens with `Unexpected EOF` at the NONE position | `v31_parser_names` (cases 1–3) | `31-parser-names` |
+| **adderror formatting (R71)** | | |
+| positions and files from the cursor's span lexer; verbatim message when all values are NULL; sequential `$1/$2/$3` global substitution (a value's `$n` is subject to later passes — pinned via `only2 $1$2$3` with a NULL middle value staying literal), the three fixed helpers, `errstr` (buildstring, NULL file prints `(null)`) | `v32_parser_errors` | `32-parser-errors` |
+| **defects (D-2, D-3, D-4, D-7)** | | |
+| D-2: `parse ""` fails and every helper (next/peek/adderror) on the never-parsed parser is safe (empty stream, no crash); D-3/API: an empty definition expands to nothing; D-4: an empty included file is loaded without a crash; D-7: self- and mutually recursive macros terminate (reference crashes in all seven try-blocks: `try-end crash`) | `v90_defects` (no output comparison, no-panic asserts) | `90-defects` (try-blocks) |
+
+Verification (W21c): `cargo test -p obs-util` 182 + 4 + 1 passed;
+`cargo clippy -p obs-util --all-targets -- -D warnings` clean (host +
+x86_64); `cargo fmt --check` clean; nextest workspace 461/461.

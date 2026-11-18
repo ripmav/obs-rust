@@ -548,13 +548,15 @@ impl ErrorData {
 
     /// `error_data_buildstring` (R12): per item,
     /// `"<file> (<row>, <col>): <msg>\n"`; `None` when there are no items.
+    /// A missing file prints as `(null)` (the C reference prints the NULL
+    /// file through `printf %s`; glibc renders that as `(null)`).
     pub fn buildstring(&self) -> Option<String> {
         if self.items.is_empty() {
             return None;
         }
         let mut s = String::new();
         for it in &self.items {
-            s.push_str(it.file.as_deref().unwrap_or(""));
+            s.push_str(it.file.as_deref().unwrap_or("(null)"));
             s.push_str(&format!(" ({}, {}): {}\n", it.row, it.column, it.msg));
         }
         Some(s)
@@ -901,6 +903,15 @@ mod tests {
         assert!(ed.is_empty());
         assert!(ed.buildstring().is_none());
         assert!(!ed.has_errors());
+
+        // A NULL file prints as "(null)" (vector 32 pins this through
+        // errstr).
+        let mut ed2 = ErrorData::new();
+        ed2.add(None, 1, 1, "no file", LEX_ERROR);
+        assert_eq!(
+            ed2.buildstring().as_deref(),
+            Some("(null) (1, 1): no file\n")
+        );
     }
 
     // 06-stroffset
