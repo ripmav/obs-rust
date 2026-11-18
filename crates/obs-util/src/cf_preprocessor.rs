@@ -1528,6 +1528,13 @@ mod tests {
             std::fs::write(self.tmp.join(name), content).unwrap();
         }
 
+        /// File name string for `parse`: forward-slash form on every
+        /// platform (Path::join appends the native separator on Windows,
+        /// but cf include resolution is slash-based: C strrchr(file, '/')).
+        fn tmpfile(&self, name: &str) -> String {
+            self.tmp.join(name).to_string_lossy().replace('\\', "/")
+        }
+
         fn reset(&mut self) {
             self.pp = CfPreprocessor::new();
             self.main = CfLexer::new();
@@ -2053,16 +2060,14 @@ err 0 ERROR file=@null row=2 col=2 msg="Expected '('"
         let mut out = String::new();
         let mut ed = ErrorData::new();
         c.writefile("inc.h", b"#define INC 5\nincval INC\n");
-        let file = c.tmp.join("main.cf");
-        let file = file.to_str().unwrap().to_owned();
+        let file = c.tmpfile("main.cf");
         run_case(&mut c, &mut out, &mut ed, b"a\n#include \"inc.h\"\nb INC\n#include \"inc.h\"\n#include \"nofile.h\"\n#include <sys.h>\n#include foo\n#include \"x\" y\n", Some(&file));
         out.push_str(&c.tokens_pp());
         out.push_str(&c.errors(&ed));
         c.writefile("bom.h", b"\xef\xbb\xbfbomtext\n");
         c.reset();
         ed = ErrorData::new();
-        let file = c.tmp.join("m2.cf");
-        let file = file.to_str().unwrap().to_owned();
+        let file = c.tmpfile("m2.cf");
         run_case(
             &mut c,
             &mut out,
@@ -2294,8 +2299,7 @@ err 0 ERROR file=@null row=1 col=9 msg=\"Unexpected token after preprocessor, ex
         let mut ed = ErrorData::new();
         c.writefile("emptyfile.h", b"");
         // D-4: an empty included file produces no tokens and no crash.
-        let file = c.tmp.join("main.cf");
-        let file = file.to_str().unwrap().to_owned();
+        let file = c.tmpfile("main.cf");
         let ok = c.parse(b"#include \"emptyfile.h\"\nx\n", Some(&file), &mut ed);
         assert!(ok, "parse of an empty include must succeed");
         assert!(!c.pp.tokens.is_empty(), "stream must end with a token");

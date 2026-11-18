@@ -423,7 +423,10 @@ mod tests {
         }
 
         fn tmpfile(&self, name: &str) -> String {
-            self.tmp.join(name).to_string_lossy().into_owned()
+            // Forward-slash form on every platform: Path::join appends the
+            // native separator on Windows, but cf include resolution is
+            // slash-based (C strrchr(file, '/')).
+            self.tmp.join(name).to_string_lossy().replace('\\', "/")
         }
 
         fn writefile(&self, name: &str, content: &[u8]) {
