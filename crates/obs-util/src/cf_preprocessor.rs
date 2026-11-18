@@ -1509,9 +1509,13 @@ mod tests {
 
     impl Case {
         fn new() -> Self {
-            let tmp =
+            let raw =
                 std::env::temp_dir().join(format!("cfpp-{}-{}", std::process::id(), unique()));
-            std::fs::create_dir_all(&tmp).unwrap();
+            // Forward-slash form: cf include resolution is slash-based (C:
+            // strrchr(file, '/')) and the Windows file APIs accept '/'. The
+            // directory is created lazily on the first writefile (Miri
+            // isolation does not permit mkdir).
+            let tmp = std::path::PathBuf::from(raw.to_string_lossy().replace('\\', "/"));
             Self {
                 pp: CfPreprocessor::new(),
                 main: CfLexer::new(),
@@ -1520,6 +1524,7 @@ mod tests {
         }
 
         fn writefile(&self, name: &str, content: &[u8]) {
+            std::fs::create_dir_all(&self.tmp).unwrap();
             std::fs::write(self.tmp.join(name), content).unwrap();
         }
 
@@ -2040,6 +2045,9 @@ err 0 ERROR file=@null row=2 col=2 msg="Expected '('"
         let _ = c.tmp;
     }
     #[test]
+    #[cfg(not(miri))]
+    // Miri isolation: writes real include files (lazy mkdir + fs::read in the
+    // include loader).
     fn v24_pp_include() {
         let mut c = Case::new();
         let mut out = String::new();
@@ -2279,6 +2287,8 @@ err 0 ERROR file=@null row=1 col=9 msg=\"Unexpected token after preprocessor, ex
         let _ = c.tmp;
     }
     #[test]
+    #[cfg(not(miri))]
+    // Miri isolation: the D-4 case writes an empty include file.
     fn v90_defects() {
         let mut c = Case::new();
         let mut ed = ErrorData::new();

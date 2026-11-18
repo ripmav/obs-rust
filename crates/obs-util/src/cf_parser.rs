@@ -409,9 +409,13 @@ mod tests {
 
     impl Case {
         fn new() -> Self {
-            let tmp =
+            let raw =
                 std::env::temp_dir().join(format!("cfpar-{}-{}", std::process::id(), unique()));
-            std::fs::create_dir_all(&tmp).unwrap();
+            // Forward-slash form: cf include resolution is slash-based (C:
+            // strrchr(file, '/')) and the Windows file APIs accept '/'. The
+            // directory is created lazily on the first writefile (Miri
+            // isolation does not permit mkdir).
+            let tmp = std::path::PathBuf::from(raw.to_string_lossy().replace('\\', "/"));
             Self {
                 p: CfParser::new(),
                 tmp,
@@ -423,6 +427,7 @@ mod tests {
         }
 
         fn writefile(&self, name: &str, content: &[u8]) {
+            std::fs::create_dir_all(&self.tmp).unwrap();
             std::fs::write(self.tmp.join(name), content).unwrap();
         }
 
@@ -1199,6 +1204,8 @@ next 1
     // output is not compared: each case runs in-process and must not panic.
 
     #[test]
+    #[cfg(not(miri))]
+    // Miri isolation: the D-4 case writes an empty include file.
     fn v90_defects() {
         let mut c = Case::new();
         let mut out = String::new();
@@ -1256,6 +1263,9 @@ next 1
     }
 
     #[test]
+    #[cfg(not(miri))]
+    // Miri isolation: canonicalize + real reads are unsupported; the
+    // pipeline logic it covers is exercised by the in-memory tests.
     fn v_corpus_effect_digests() {
         let root =
             std::fs::canonicalize(std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("../.."))
