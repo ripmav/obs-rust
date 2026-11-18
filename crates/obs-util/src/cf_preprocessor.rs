@@ -1183,7 +1183,10 @@ fn save_macro_params(
     let Some(tok) = cur.tok() else {
         return;
     };
-    if tok.r#type != CfTokenType::Other || cur.first_byte() != b'(' {
+    // Def-body cursors carry buf=&[]: resolve the byte through the token's
+    // own source (first_byte is only valid on main/dep cursors).
+    let f = pp.resolve(main, tok).first().copied().unwrap_or(0);
+    if tok.r#type != CfTokenType::Other || f != b'(' {
         addew(
             pp,
             main,
@@ -1210,7 +1213,7 @@ fn save_macro_params(
         let Some(tok) = cur.tok() else {
             return;
         };
-        let f = cur.first_byte();
+        let f = pp.resolve(main, tok).first().copied().unwrap_or(0);
         if tok.r#type != CfTokenType::Other || !(f == b',' || f == b')') {
             addew(
                 pp,
@@ -1272,7 +1275,10 @@ fn save_macro_param(
     param.tokens.push(append_space(Some(base)));
     let mut brace = 0;
     while cur.ty() != CfTokenType::None {
-        let f = cur.first_byte();
+        let Some(tok) = cur.tok() else {
+            break;
+        };
+        let f = pp.resolve(main, tok).first().copied().unwrap_or(0);
         if f == b'(' {
             brace += 1;
         } else if f == b')' {
@@ -2106,6 +2112,55 @@ err 0 ERROR file=@null row=2 col=2 msg="Expected '('"
             &c,
             &out,
             include_str!("../../../test/conformance/vectors/lexer/26-pp-api-defs.expected"),
+        );
+        let _ = c.tmp;
+    }
+
+    // -- vector 27: parameterized macro calls inside def bodies ---------------
+
+    #[test]
+    fn v27_pp_macro_in_def() {
+        let mut c = Case::new();
+        let mut out = String::new();
+        let mut ed = ErrorData::new();
+        run_case(
+            &mut c,
+            &mut out,
+            &mut ed,
+            "#define F(a) a\n#define G(x) F(x)\nG(1)\n",
+            None,
+        );
+        out.push_str(&c.tokens_pp());
+        out.push_str(&c.errors(&ed));
+
+        c.reset();
+        ed = ErrorData::new();
+        run_case(
+            &mut c,
+            &mut out,
+            &mut ed,
+            "#define ADD(a, b) a + b\n#define P(x, y) ADD(x, y)\nP(1, 2)\n",
+            None,
+        );
+        out.push_str(&c.tokens_pp());
+        out.push_str(&c.errors(&ed));
+
+        c.reset();
+        ed = ErrorData::new();
+        run_case(
+            &mut c,
+            &mut out,
+            &mut ed,
+            "#define ADD(a, b) a + b\n#define P(x, y) ADD(x)\nP(1, 2)\n",
+            None,
+        );
+        out.push_str(&c.tokens_pp());
+        out.push_str(&c.errors(&ed));
+
+        check(
+            &c,
+            &out,
+            include_str!("../../../test/conformance/vectors/lexer/27-pp-macro-in-def.expected"),
         );
         let _ = c.tmp;
     }

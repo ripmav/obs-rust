@@ -63,6 +63,8 @@ it differs from the token text.
 | multi-param expansion with nested-paren args (`F(g(1,2),3)`), params expanded with their stored tokens, synthetic blanks carrying the macro-name span (`u="S"`/`u="F"`) | `v21_pp_macro` (case 1) | `21-pp-macro` |
 | zero-param macro call `N()`, extra args `N(1)`; `M(a)` called with `M(1,2)` — mismatch error at the closing `)` (reference position, not the extra arg); `#define M(a,)` → "Expected identifier" at `)`; `F (1)` (blank before `(`) still expands | `v21_pp_macro` (cases 2, 3), `v50_pp_quirks` (Q-9 case) | `21-pp-macro`, `50-quirks` |
 | macro name without `(`: "Expected '('" at the following token, which is consumed (the rest of the line is dropped); `#define Z() 0` → "Expected identifier" and `Z` stays undefined | `v50_pp_quirks` (Q-8, Q-9) | `50-quirks` |
+| **nested calls in def bodies (W21d regression)** | | |
+| a parameterized macro called inside another macro's body substitutes its parameters (single- and multi-param nesting); wrong arity at the nested call pins the reference `Mismatching number of macro parameters` position. Regression: the def-body cursor's buffer is `&[]`, so `first_byte` must be resolved through `pp.resolve(main, tok)` (C `strref`s are pointers and have no such context dependency) | `v27_pp_macro_in_def` | `27-pp-macro-in-def` |
 | **conditional blocks (R50, R51, R44)** | | |
 | `#ifdef`/`#ifndef`/`#else`/`#endif`, nesting, ignored branches emit nothing; unterminated block → "Unexpected end of file before #endif" at the NONE token; stray `#else`/`#endif`/`#elif` outside a block → per-directive error | `v22_pp_ifdef` (cases 1–4) | `22-pp-ifdef` |
 | trailing junk after a directive ("expected newline" at the first non-blank, line dropped); Q-13: `#elif` after a TRUE block reports the spurious "expected newline" at the `#elif` operand | `v22_pp_ifdef` (case 5), `v50_pp_quirks` (Q-13) | `22-pp-ifdef`, `50-quirks` |
@@ -103,9 +105,47 @@ runner; `reset` does). Same oracle: committed vectors `30, 31, 32, 50
 | `next_name`/`next_name_ref`/`get_name_ref`/`next_copy`/`copy` with the PARSE codes (SUCCESS/CONTINUE/EOF), `name=`/`ref=`/`copy=` values (`@null` on failure), EOF on missing tokens with `Unexpected EOF` at the NONE position | `v31_parser_names` (cases 1–3) | `31-parser-names` |
 | **adderror formatting (R71)** | | |
 | positions and files from the cursor's span lexer; verbatim message when all values are NULL; sequential `$1/$2/$3` global substitution (a value's `$n` is subject to later passes — pinned via `only2 $1$2$3` with a NULL middle value staying literal), the three fixed helpers, `errstr` (buildstring, NULL file prints `(null)`) | `v32_parser_errors` | `32-parser-errors` |
+| **effect corpus (W21d golden)** | | |
+| all 21 `libobs/data/*.effect` through the full pipeline: `(tokens, errors, blake2b-512)` per file compared against the committed C-reference digest golden `test/conformance/vectors/effect/corpus-digests.expected` (generator `test/conformance/gen/effect_dump.c`, data-dir file names printed as `@data/...`); skips cleanly when the C checkout link is absent (CI) | `v_corpus_effect_digests` | `corpus-digests` (effect area) |
 | **defects (D-2, D-3, D-4, D-7)** | | |
 | D-2: `parse ""` fails and every helper (next/peek/adderror) on the never-parsed parser is safe (empty stream, no crash); D-3/API: an empty definition expands to nothing; D-4: an empty included file is loaded without a crash; D-7: self- and mutually recursive macros terminate (reference crashes in all seven try-blocks: `try-end crash`) | `v90_defects` (no output comparison, no-panic asserts) | `90-defects` (try-blocks) |
 
 Verification (W21c): `cargo test -p obs-util` 182 + 4 + 1 passed;
 `cargo clippy -p obs-util --all-targets -- -D warnings` clean (host +
 x86_64); `cargo fmt --check` clean; nextest workspace 461/461.
+
+## Effect corpus goldens + nested-macro fix — W21d
+
+Deliverable for the P1-08.3 "Done when" (golden dump for every
+`libobs/data/*.effect`; 21 files at C tip `fe1ed79`, the subtask's "22"
+was a miscount). The 8.5 MB of full token dumps are not committed;
+instead each file is pinned by `(token count, error count, blake2b-512
+of the full dump)` in `test/conformance/vectors/effect/corpus-digests.expected`,
+regenerable with the committed `test/conformance/gen/effect_dump.c`. The
+digest test re-runs the whole Rust pipeline (lexer → preprocessor) over
+each corpus file and compares byte-for-byte; it skips cleanly in CI
+where the `libobs` C-checkout link is absent. The committed S-020 effect
+corpus scripts 70/71/72 already cover the same 21 files at the full
+effect-parser level.
+
+The digest golden immediately caught a real preprocessor bug (12/21
+files, the deinterlace family): a parameterized macro **called inside a
+def body** lost parameter substitution — `unwrap_define` drives the def
+body with a cursor whose buffer is `&[]`, and `save_macro_params` /
+`save_macro_param` read `first_byte()` from that cursor (C `strref`s are
+pointers into the real text, so the reference has no such context
+dependency). Fixed by resolving the first byte through
+`pp.resolve(main, tok)` at the three def-body cursor sites (the pattern
+`add_token` already uses); `v27_pp_macro_in_def` (vector 27, C-oracle
+generated) is the regression pin. RED: `deinterlace_base.effect` Rust
+`(7455 tokens, 24 errors)` vs C `(8279, 0)`; GREEN: 21/21 digests match.
+
+Verification (W21d): `cargo test -p obs-util --lib` 184 passed / 0
+failed; `cargo test -p obs-util` 184 + 4 + 1; clippy clean (host +
+x86_64); `cargo fmt --check` clean; nextest workspace 463/463 (nextest
+0.9.151, CI-exact). C reference at `fe1ed79` (linked): 21/21 corpus
+dumps `parse true`, 0 errors; effect corpus scripts 70/71/72 diff-clean
+against committed vectors; all 28 lexer-area scripts re-run against the
+C runner — 27 diff-clean, `03-strref-cmp` (base-lexer, WP-20) differs on
+this aarch64 host only (the committed vector encodes x86_64 signed-`char`
+semantics of `strref_cmp`; pre-existing, CI unaffected).

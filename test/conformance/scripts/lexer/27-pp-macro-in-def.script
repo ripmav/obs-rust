@@ -1,0 +1,14 @@
+# CORE: parameterized macros called inside a def body (nested expansion): argument detection works
+# on def-body token streams and parameters substitute recursively; a wrong-arity nested call is
+# an error at the nested call site.
+parse "#define F(a) a\n#define G(x) F(x)\nG(1)\n"
+tokens pp
+errors
+reset
+parse "#define ADD(a, b) a + b\n#define P(x, y) ADD(x, y)\nP(1, 2)\n"
+tokens pp
+errors
+reset
+parse "#define ADD(a, b) a + b\n#define P(x, y) ADD(x)\nP(1, 2)\n"
+tokens pp
+errors

@@ -437,34 +437,8 @@ mod tests {
         }
 
         fn dump_tok(&self, t: &CfToken) -> String {
-            let mut s = format!(
-                "type={} str={}",
-                ctype(t.r#type),
-                pseg(self.p.pp.token_str(&self.p.main, t))
-            );
-            match self.p.pp.token_span_lexer(&self.p.main, t) {
-                Some(l) => {
-                    let (r, c) = l.rowcol(t.span_off);
-                    let _ = write!(s, " src={}+{} @{}:{}", t.span_off, t.span_len, r, c);
-                    let strb = self.p.pp.token_str(&self.p.main, t);
-                    let text = l.text();
-                    let start = t.span_off.min(text.len());
-                    let end = t.span_off.saturating_add(t.span_len).min(text.len());
-                    let u = &text[start..end];
-                    // C: differ when the lengths differ or the first
-                    // str.len bytes differ (span always covers the text).
-                    let n = strb.len().min(u.len());
-                    let differ = t.span_len != t.str_len || strb[..n] != u[..n];
-                    if differ {
-                        let _ = write!(s, " u={}", pseg(u));
-                    }
-                    if t.span_src != TokenSource::Main {
-                        let _ = write!(s, " f={}", pfile(l.file.as_deref(), &self.tmp));
-                    }
-                }
-                None => s.push_str(" src=-"),
-            }
-            s
+            let tmp = self.tmp.to_string_lossy();
+            dump_tok(&self.p, t, &tmp, "@tmp")
         }
 
         /// Runner `cur`.
@@ -640,6 +614,7 @@ mod tests {
                 if ed.has_errors() { 1 } else { 0 }
             );
             s.push('\n');
+            let tmp = self.tmp.to_string_lossy();
             for i in 0..ed.len() {
                 let item = ed.item(i).unwrap();
                 let _ = writeln!(
@@ -650,7 +625,7 @@ mod tests {
                     } else {
                         "WARNING"
                     },
-                    pfile(item.file.as_deref(), &self.tmp),
+                    pfile(item.file.as_deref(), &tmp, "@tmp"),
                     item.row,
                     item.column,
                     pseg(item.msg.as_bytes())
@@ -704,6 +679,79 @@ mod tests {
             }
             self.p.pp.add_def(None, &def);
         }
+    }
+
+    /// Runner token line (after `tok I`): type/str, then the source span in
+    /// the owning lexer (`src=-` for synthesised tokens), `u=` when the
+    /// unmerged span differs from the token text, and `f=` for an
+    /// included-file owner. `prefix`/`tag` map the printed file names.
+    fn dump_tok(p: &CfParser, t: &CfToken, prefix: &str, tag: &str) -> String {
+        let mut s = format!(
+            "type={} str={}",
+            ctype(t.r#type),
+            pseg(p.pp.token_str(&p.main, t))
+        );
+        match p.pp.token_span_lexer(&p.main, t) {
+            Some(l) => {
+                let (r, c) = l.rowcol(t.span_off);
+                let _ = write!(s, " src={}+{} @{}:{}", t.span_off, t.span_len, r, c);
+                let strb = p.pp.token_str(&p.main, t);
+                let text = l.text();
+                let start = t.span_off.min(text.len());
+                let end = t.span_off.saturating_add(t.span_len).min(text.len());
+                let u = &text[start..end];
+                // C: differ when the lengths differ or the first
+                // str.len bytes differ (span always covers the text).
+                let n = strb.len().min(u.len());
+                let differ = t.span_len != t.str_len || strb[..n] != u[..n];
+                if differ {
+                    let _ = write!(s, " u={}", pseg(u));
+                }
+                if t.span_src != TokenSource::Main {
+                    let _ = write!(s, " f={}", pfile(l.file.as_deref(), prefix, tag));
+                }
+            }
+            None => s.push_str(" src=-"),
+        }
+        s
+    }
+
+    /// The full dump text of `gen/effect_dump.c` for a successfully parsed
+    /// corpus file: `parse` + `tokens pp` + the token lines + `errors` (plus
+    /// the `err` lines). `data_prefix` (no trailing slash) maps file names
+    /// to `@data…` in the `f=` and `err` prints.
+    fn corpus_dump(p: &CfParser, data_prefix: &str) -> String {
+        let mut s = String::from("parse true\n");
+        let _ = writeln!(s, "tokens pp {}", p.pp.tokens.len());
+        for (i, t) in p.pp.tokens.iter().enumerate() {
+            let _ = writeln!(s, "tok {i} {}", dump_tok(p, t, data_prefix, "@data"));
+        }
+        let ed = &p.error_list;
+        let _ = writeln!(
+            s,
+            "errors {} (errors={} warnings={} has_errors={})",
+            ed.len(),
+            ed.type_count(LEX_ERROR),
+            ed.type_count(LEX_WARNING),
+            if ed.has_errors() { 1 } else { 0 }
+        );
+        for i in 0..ed.len() {
+            let item = ed.item(i).unwrap();
+            let _ = writeln!(
+                s,
+                "err {i} {} file={} row={} col={} msg={}",
+                if item.level == LEX_ERROR {
+                    "ERROR"
+                } else {
+                    "WARNING"
+                },
+                pfile(item.file.as_deref(), data_prefix, "@data"),
+                item.row,
+                item.column,
+                pseg(item.msg.as_bytes())
+            );
+        }
+        s
     }
 
     fn rebase_tokens(lex: &mut CfLexer, src: TokenSource) {
@@ -770,14 +818,16 @@ mod tests {
         s
     }
 
-    /// Runner `pfile`: `@null` for none, the temp dir printed as `@tmp`.
-    fn pfile(f: Option<&str>, tmp: &std::path::Path) -> String {
+    /// Runner `pfile`: `@null` for none; a file name under `prefix` (with a
+    /// following `/`) is printed as `@tag…`.
+    fn pfile(f: Option<&str>, prefix: &str, tag: &str) -> String {
         let Some(f) = f else {
             return "@null".into();
         };
-        let tmp_str = tmp.to_string_lossy();
-        if let Some(rest) = f.strip_prefix(&*tmp_str) {
-            pseg(format!("@tmp{rest}").as_bytes())
+        if let Some(rest) = f.strip_prefix(prefix)
+            && rest.starts_with('/')
+        {
+            pseg(format!("{tag}{rest}").as_bytes())
         } else {
             pseg(f.as_bytes())
         }
@@ -1189,5 +1239,83 @@ next 1
 
         // The stream must exist and end in NONE in every case.
         assert!(out.contains("parse"));
+    }
+
+    // -- corpus: libobs/data effect-file digests (W21d) ----------------------
+    // vectors/effect/corpus-digests.expected was generated by
+    // test/conformance/gen/effect_dump.c against the C reference; the dump
+    // text rebuilt here must match it byte for byte (blake2b-512). Skipped
+    // (one line printed) when the libobs checkout link is absent (CI).
+
+    fn hex64(s: &str) -> [u8; 64] {
+        let mut out = [0u8; 64];
+        for i in 0..64 {
+            out[i] = u8::from_str_radix(&s[2 * i..2 * i + 2], 16).unwrap();
+        }
+        out
+    }
+
+    #[test]
+    fn v_corpus_effect_digests() {
+        let root =
+            std::fs::canonicalize(std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("../.."))
+                .unwrap();
+        let data_dir = root.join("libobs/data");
+        let digest_path = root.join("test/conformance/vectors/effect/corpus-digests.expected");
+        let Ok(text) = std::fs::read_to_string(&digest_path) else {
+            eprintln!("v_corpus_effect_digests: skipped - C checkout link (libobs/data) missing");
+            return;
+        };
+        let want: Vec<(String, usize, usize, [u8; 64])> = text
+            .lines()
+            .filter(|l| !l.trim().is_empty() && !l.trim_start().starts_with('#'))
+            .map(|line| {
+                let mut f = line.split_whitespace();
+                let name = f.next().unwrap().to_owned();
+                let mut tokens = 0;
+                let mut errors = 0;
+                let mut hash = [0u8; 64];
+                for k in f {
+                    if let Some(v) = k.strip_prefix("tokens=") {
+                        tokens = v.parse().unwrap();
+                    } else if let Some(v) = k.strip_prefix("errors=") {
+                        errors = v.parse().unwrap();
+                    } else if let Some(h) = k.strip_prefix("blake2b512=") {
+                        hash = hex64(h);
+                    }
+                }
+                (name, tokens, errors, hash)
+            })
+            .collect();
+        let Some((first, ..)) = want.first() else {
+            eprintln!("v_corpus_effect_digests: skipped - C checkout link (libobs/data) missing");
+            return;
+        };
+        if !data_dir.is_dir() || !data_dir.join(first).is_file() {
+            eprintln!("v_corpus_effect_digests: skipped - C checkout link (libobs/data) missing");
+            return;
+        }
+        let data_prefix = data_dir.to_string_lossy().into_owned();
+        let mut checked = 0;
+        for (name, want_tokens, want_errors, want_hash) in &want {
+            let path = data_dir.join(name);
+            let bytes = std::fs::read(&path).unwrap();
+            let path_str = path.to_string_lossy().into_owned();
+            let mut p = CfParser::new();
+            assert!(p.parse(&bytes, Some(&path_str)), "{name} must parse");
+            let dump = corpus_dump(&p, &data_prefix);
+            assert_eq!(
+                (
+                    p.pp.tokens.len(),
+                    p.error_list.len(),
+                    crate::hash::blake2b_512(dump.as_bytes())
+                ),
+                (*want_tokens, *want_errors, *want_hash),
+                "{name}: corpus digest mismatch"
+            );
+            checked += 1;
+        }
+        assert_eq!(checked, want.len(), "corpus digest lines not all checked");
+        eprintln!("v_corpus_effect_digests: checked {checked} effect files");
     }
 }
