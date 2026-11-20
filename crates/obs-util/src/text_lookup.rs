@@ -33,7 +33,7 @@ impl TextLookup {
     /// `text_lookup_create` (R60): a new empty table, then `add(path)`;
     /// `None` when the add fails (unreadable, empty or BOM-only file). A
     /// file with entries or only blank/comment lines succeeds.
-    pub fn create(path: &str) -> Option<Self> {
+    pub fn create(path: &[u8]) -> Option<Self> {
         let mut lookup = Self {
             items: HashMap::new(),
         };
@@ -44,7 +44,7 @@ impl TextLookup {
     /// entries into the table (duplicate keys are replaced, last wins within
     /// and across files). `false` when the file cannot be opened, is empty,
     /// or contains only a BOM (the table is then unchanged).
-    pub fn add(&mut self, path: &str) -> bool {
+    pub fn add(&mut self, path: &[u8]) -> bool {
         let Some(data) = read_file_text(path) else {
             return false;
         };
@@ -55,16 +55,31 @@ impl TextLookup {
     /// `text_lookup_getstr` (R62): exact, case-sensitive byte lookup. The
     /// value is valid until the next `add` that replaces this key, or drop.
     /// A miss is `None` (no fallback; the caller chains the lookups).
+    ///
+    /// The returned slice excludes the stored NUL terminator (the C dstr
+    /// invariant, kept so the FFI bridge can hand out a `%s`-safe pointer).
     pub fn getstr(&self, key: &[u8]) -> Option<&[u8]> {
-        self.items.get(key).map(Vec::as_slice)
+        self.items.get(key).map(|v| &v[..v.len() - 1])
     }
 }
 
 /// `os_fopen` + `os_fread_utf8` (R61, R64): whole-file read, `None` on open
 /// failure or an empty file; a leading UTF-8 BOM is stripped (a BOM-only
 /// file is then empty and fails too).
-fn read_file_text(path: &str) -> Option<Vec<u8>> {
-    let data = std::fs::read(path).ok()?;
+fn read_file_text(path: &[u8]) -> Option<Vec<u8>> {
+    // C paths are byte strings; keep them verbatim on unix.
+    // shortcut: narrow Windows C paths are locale-modelled; lossy UTF-8
+    // is the pragmatic mapping (upgrade if a Windows vector uses non-UTF-8).
+    #[cfg(unix)]
+    let p = {
+        let os = <std::ffi::OsStr as std::os::unix::ffi::OsStrExt>::from_bytes(path);
+        std::path::Path::new(os)
+    };
+    #[cfg(not(unix))]
+    let p = std::path::Path::new(&std::ffi::OsString::from(
+        String::from_utf8_lossy(path).into_owned(),
+    ));
+    let data = std::fs::read(p).ok()?;
     let text = if data.starts_with(b"\xEF\xBB\xBF") {
         &data[3..]
     } else {
@@ -266,7 +281,10 @@ fn add_file_data(items: &mut HashMap<Vec<u8>, Vec<u8>>, text: &[u8]) {
         let Some(Tok::Word(val)) = value else {
             continue;
         };
-        items.insert(key, convert_string(val));
+        let mut val = convert_string(val);
+        // C dstr invariant: stored values are NUL-terminated (getstr strips it).
+        val.push(0);
+        items.insert(key, val);
         if !goto_nextline(&mut lex) {
             break;
         }
@@ -488,7 +506,7 @@ mod tests {
                 }
                 "tl_create" => {
                     let slot = slot_of(&toks[1]);
-                    let lookup = TextLookup::create(&case.tmpfile(str_of(&toks[2])));
+                    let lookup = TextLookup::create(case.tmpfile(str_of(&toks[2])).as_bytes());
                     let ok = lookup.is_some();
                     case.slots[slot] = lookup;
                     tl_line(
@@ -503,7 +521,7 @@ mod tests {
                     let slot = slot_of(&toks[1]);
                     let file = case.tmpfile(str_of(&toks[2]));
                     let ok = match &mut case.slots[slot] {
-                        Some(l) => l.add(&file),
+                        Some(l) => l.add(file.as_bytes()),
                         // No table: the C reference would crash on a readable
                         // file (NULL deref); the vectors never add to a NULL
                         // slot, so report a safe miss instead.
@@ -535,7 +553,7 @@ mod tests {
                     // A conforming runner loads the defect file itself (the
                     // reference loads the equivalent file and prints "ub").
                     let slot = slot_of(&toks[1]);
-                    let lookup = TextLookup::create(&case.tmpfile(str_of(&toks[2])));
+                    let lookup = TextLookup::create(case.tmpfile(str_of(&toks[2])).as_bytes());
                     let ok = lookup.is_some();
                     case.slots[slot] = lookup;
                     tl_line(

@@ -186,6 +186,18 @@ impl CfPreprocessor {
         }
     }
 
+    /// `cf_preprocessor_add_def` (R53) without the duplicate-name warning:
+    /// replace the definition at `replace_at` when given (the caller
+    /// resolved the duplicate, e.g. against the C-visible mirror in the
+    /// P1-08.5 FFI bridge, which reports the reference-position warnings
+    /// itself), otherwise append.
+    pub fn upsert_def(&mut self, def: &CfDef, replace_at: Option<usize>) {
+        match replace_at {
+            Some(i) if i < self.defines.len() => self.defines[i] = def.clone(),
+            _ => self.defines.push(def.clone()),
+        }
+    }
+
     /// `cf_preprocessor_remove_def` (R54): remove the first definition with
     /// the given name; missing names are a no-op.
     pub fn remove_def(&mut self, main: &CfLexer, name: &str) {
@@ -420,12 +432,10 @@ fn end_token() -> CfToken {
 }
 
 /// R54: sequential global `$n` replacements; `None` args leave `$n` intact.
-pub(crate) fn substitute(
-    msg: &str,
-    v1: Option<&str>,
-    v2: Option<&str>,
-    v3: Option<&str>,
-) -> String {
+///
+/// P1-08.5: public because the FFI bridge (`cf_adderror` /
+/// `cf_preprocessor_add_def`) formats the same messages over C state.
+pub fn substitute(msg: &str, v1: Option<&str>, v2: Option<&str>, v3: Option<&str>) -> String {
     let mut s = msg.to_owned();
     if let Some(v) = v1 {
         s = s.replace("$1", v);

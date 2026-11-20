@@ -5,6 +5,16 @@
 //! (stable Rust cannot define or consume variadics — primer §5.5). Rust
 //! code logs through [`blog`], which routes via `obs_ffi_log(level, msg)`
 //! = `blog(level, "%s", msg)` into the installed C handler.
+//!
+//! P1-08.5 (recipe step 2): the `extern "C"` bridges for the ported leaf
+//! modules live in `abi_*` modules ([`abi_text_lookup`] first, then
+//! [`abi_lexer`], then [`abi_cf_lexer`]).
+
+pub mod abi_cf_lexer;
+pub mod abi_cf_parser;
+pub mod abi_common;
+pub mod abi_lexer;
+pub mod abi_text_lookup;
 
 use std::os::raw::{c_int, c_void};
 

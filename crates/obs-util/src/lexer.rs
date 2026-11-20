@@ -342,6 +342,90 @@ impl<'a> BaseToken<'a> {
     }
 }
 
+/// `lexer_getbasetoken` (R03) over an external (C-owned) buffer: scan one
+/// base token starting at `*offset`, advance `*offset` past it, and report
+/// the token start and type. `text` is the NUL-terminated buffer *without*
+/// the NUL; the offset is relative to its start. ALPHA/DIGIT tokens extend
+/// over the maximal same-class run; WHITESPACE and OTHER tokens are one
+/// character, except a `\r\n`/`\n\r` pair is a single two-character
+/// WHITESPACE token. With `ignore_whitespace`, leading whitespace is skipped
+/// (the offset still advances past it). Returns false at the end of the
+/// text; `*offset` is left at the end and the outputs unmodified.
+///
+/// P1-08.5: the P1-08.5 FFI bridge runs this over the C `struct lexer`
+/// buffer (design constraint: the C struct owns the text and the offset).
+pub fn basetoken_next(
+    text: &[u8],
+    offset: &mut usize,
+    start: &mut Option<usize>,
+    ty: &mut BaseTokenType,
+    ignore_whitespace: bool,
+) -> bool {
+    let mut off = *offset;
+    let mut token_start: Option<usize> = None;
+    let mut type_ = BaseTokenType::None;
+
+    while off < text.len() {
+        let ch = text[off];
+        off += 1;
+        let new_type = match ch {
+            c if is_whitespace(c) => BaseTokenType::Whitespace,
+            b'0'..=b'9' => BaseTokenType::Digit,
+            b'a'..=b'z' | b'A'..=b'Z' => BaseTokenType::Alpha,
+            _ => BaseTokenType::Other,
+        };
+
+        if type_ == BaseTokenType::None {
+            if new_type == BaseTokenType::Whitespace && ignore_whitespace {
+                continue;
+            }
+            token_start = Some(off - 1);
+            type_ = new_type;
+            if !matches!(type_, BaseTokenType::Digit | BaseTokenType::Alpha) {
+                if is_newline(ch) && is_newline_pair(ch, *text.get(off).unwrap_or(&0)) {
+                    off += 1;
+                }
+                break;
+            }
+        } else if type_ != new_type {
+            off -= 1;
+            break;
+        }
+    }
+
+    *offset = off;
+
+    if let Some(s) = token_start.filter(|&s| off > s) {
+        *start = Some(s);
+        *ty = type_;
+        true
+    } else {
+        false
+    }
+}
+
+/// `lexer_getstroffset` (R04) over an external buffer: 1-based row/column
+/// of the byte at `pos` (a `\r\n`/`\n\r` pair is one line break). `pos` is
+/// relative to the buffer start and may point at one past the last byte
+/// (the NUL position of the C string).
+pub fn stroffset(text: &[u8], pos: usize, row: &mut u32, col: &mut u32) {
+    let mut i = 0;
+    let mut cur_col: u32 = 1;
+    let mut cur_row: u32 = 1;
+    while i < pos {
+        if is_newline(text[i]) {
+            i += newline_size(&text[i..]) as usize - 1;
+            cur_col = 1;
+            cur_row += 1;
+        } else {
+            cur_col += 1;
+        }
+        i += 1;
+    }
+    *row = cur_row;
+    *col = cur_col;
+}
+
 /// `struct lexer` (R01): an owned copy (or moved) text buffer plus the scan
 /// offset.
 #[derive(Clone, Debug, Default)]
@@ -410,72 +494,31 @@ impl Lexer {
     where
         'b: 'a,
     {
-        let text = self.text.as_slice();
-        let mut offset = self.offset;
-        let mut token_start: Option<usize> = None;
-        let mut type_ = BaseTokenType::None;
-
-        while offset < text.len() {
-            let ch = text[offset];
-            offset += 1;
-            let new_type = match ch {
-                c if is_whitespace(c) => BaseTokenType::Whitespace,
-                b'0'..=b'9' => BaseTokenType::Digit,
-                b'a'..=b'z' | b'A'..=b'Z' => BaseTokenType::Alpha,
-                _ => BaseTokenType::Other,
-            };
-
-            if type_ == BaseTokenType::None {
-                if new_type == BaseTokenType::Whitespace && ignore_whitespace {
-                    continue;
-                }
-                token_start = Some(offset - 1);
-                type_ = new_type;
-                if !matches!(type_, BaseTokenType::Digit | BaseTokenType::Alpha) {
-                    if is_newline(ch) && is_newline_pair(ch, *text.get(offset).unwrap_or(&0)) {
-                        offset += 1;
-                    }
-                    break;
-                }
-            } else if type_ != new_type {
-                offset -= 1;
-                break;
-            }
+        let mut start = None;
+        let mut ty = BaseTokenType::None;
+        let ok = basetoken_next(
+            self.text.as_slice(),
+            &mut self.offset,
+            &mut start,
+            &mut ty,
+            ignore_whitespace,
+        );
+        if ok {
+            let s = start.expect("basetoken_next sets start on success");
+            token.text = StrRef::set(&self.text[s..], self.offset - s);
+            token.r#type = ty;
         }
-
-        self.offset = offset;
-
-        if let Some(start) = token_start.filter(|&s| offset > s) {
-            token.text = StrRef::set(&self.text[start..], offset - start);
-            token.r#type = type_;
-            return true;
-        }
-        false
+        ok
     }
 
     /// `lexer_getstroffset` (R04): 1-based row/column of a position inside
     /// the text; a `\r\n`/`\n\r` pair is one line break. `None` (a NULL C
     /// pointer) leaves both outputs untouched.
     pub fn get_stroffset(&self, pos: Option<usize>, row: &mut u32, col: &mut u32) {
-        let Some(pos) = pos else {
+        let Some(pos) = pos.map(|p| p.min(self.text.len())) else {
             return;
         };
-        let text = &self.text;
-        let mut i = 0;
-        let mut cur_col: u32 = 1;
-        let mut cur_row: u32 = 1;
-        while i < pos {
-            if is_newline(text[i]) {
-                i += newline_size(&text[i..]) as usize - 1;
-                cur_col = 1;
-                cur_row += 1;
-            } else {
-                cur_col += 1;
-            }
-            i += 1;
-        }
-        *row = cur_row;
-        *col = cur_col;
+        stroffset(&self.text, pos, row, col);
     }
 }
 
