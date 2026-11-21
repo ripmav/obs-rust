@@ -1,0 +1,10 @@
+# R100: os_sleep_ms sleeps at least the requested time. The runner prints
+# 0/1 bucket flags (elapsed >= MS, elapsed < UB_MS), never raw elapsed
+# values, so the vector is byte-stable.
+sleep_ms_range 50 5000
+# Q-16: the reference computes MS*1000 in 32 bits. 4294968*1000 wraps
+# 2^32 by 704, so the C reference sleeps 704 microseconds, not 4294968
+# milliseconds: ge=0 (far below the requested time) and lt=1. The Rust
+# port computes the product in 64 bits and sleeps the full time (documented
+# deviation, S-023 Q-16); it must not reproduce this line's ge=0.
+sleep_ms_range 4294968 10000

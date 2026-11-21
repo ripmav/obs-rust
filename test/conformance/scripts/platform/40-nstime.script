@@ -1,0 +1,15 @@
+# R100/R102: the value and monotonicity contract of os_gettime_ns. The
+# ns->timespec relationship itself (process-wide anchor, tv_nsec
+# normalisation, signed differences) is already pinned by
+# 34-nstime-to-timespec; this script pins what 34 does not: the conversion
+# is exactly linear (+N ns in == +N ns out, including across the 1 s
+# boundary), non-decreasing in the input, and anchored once per process, so
+# converting the same pair of timestamps again yields the same difference.
+# All printed differences are pure functions of the inputs (byte-stable).
+nstime +0 +1000000
+nstime +0 +1000000
+nstime +1000000000 +1000000000
+nstime +1000000 +2000000
+nstime -2000000 -1000000
+nstime +0 +1000000000
+nstime +1000000000 +2000000000

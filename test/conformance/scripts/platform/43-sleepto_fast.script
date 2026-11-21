@@ -1,0 +1,5 @@
+# R101: os_sleepto_ns_fast — same contract as os_sleepto_ns, implemented as
+# repeated sleeps of at most 999999 microseconds with the remaining time
+# rounded up to whole microseconds (50 ms is a single chunk).
+sleepto_fast -50
+sleepto_fast 50
