@@ -20,7 +20,7 @@ Source map (libobs 33.0.1, line counts): `libobs/media-io/*` (19 files, 3,642 li
 - [ ] **P2-09 `video-io` core** (L): `video-io.c`: video thread with cached frame ring, frame skipping counters, `video_output_connect/disconnect`, `video_output_lock_frame/unlock_frame`, frame-rate divisor, GPU encoding flag. Done when: dropped-frame accounting matches C in a 10 min simulated run.
 - [ ] **P2-10 Timing and clock** (M): `obs-video.c` frame timing loop (`os_sleepto_ns`), `obs->video.video_time`, `video_output_get_frame_time`, clock drift handling. Test with a fake clock. Done when: 1000-frame fake-clock run equals the C trace.
 - [ ] **P2-11 Lock-free queues** (M): replace `deque + mutex` pairs (`libobs/util/deque.h`) on the hot path with SPSC rings (`rtrb` or hand-rolled). `loom` model checks. Done when: queue choice documented in an ADR, loom models green, benchmark unchanged or better.
-- [ ] **P2-12 Real-time audit** (S): check there is no `malloc`, mutex or syscall in audio callbacks, via `assert_no_alloc` in tests. Done when: the harness catches a deliberate alloc and the audio/video ticks pass under it.
+- [ ] **P2-12 Real-time audit** (S): per [ADR 0006](../adr/0006-concurrency.md) RT rules (P0-06.4), check there is no `malloc`, mutex or syscall in audio callbacks, via `assert_no_alloc` in tests. Done when: the harness catches a deliberate alloc and the audio/video ticks pass under it.
 
 ## C. Audio mixing and controls
 

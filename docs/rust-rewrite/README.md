@@ -45,7 +45,7 @@ Start with [`guides/00-developer-primer.md`](guides/00-developer-primer.md) (bui
 For work that must be done **without reading the C implementation** (by any engineer or AI agent):
 
 - Process, roles, forbidden paths, provenance: [`clean-room/PROCESS.md`](clean-room/PROCESS.md); AI-agent prompt block: [`clean-room/AGENT-BRIEF.md`](clean-room/AGENT-BRIEF.md).
-- Specifications (56 written, `S-001` … `S-060`, remaining gaps listed): [`specs/README.md`](specs/README.md).
+- Specifications (S-001 … S-087; S-064 … S-067 are still unwritten, gaps listed): [`specs/README.md`](specs/README.md).
 - Executable conformance suite (1,561 scripts / 1,554 vectors, 59 areas): `test/conformance/README.md`; verify with `test/conformance/run.sh check`.
 - Coverage: every file of the C reference mapped to a task in [`coverage/coverage-matrix.md`](coverage/coverage-matrix.md) (regenerate with `python3 tools/task-coverage.py --write`); line-level spec/test coverage with `python3 tools/coverage.py`.
 - Decisions that need user/maintainer input, each with a default so work is never blocked: [`DECISIONS-NEEDED.md`](DECISIONS-NEEDED.md).

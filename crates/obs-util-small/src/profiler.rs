@@ -240,11 +240,7 @@ pub fn profile_end(name: ProfilerName) {
         a.calls[t].end = end;
         a.stack.pop();
         // it was a root call iff nothing is left on the stack below
-        if a.stack.is_empty() {
-            Some(t)
-        } else {
-            None
-        }
+        if a.stack.is_empty() { Some(t) } else { None }
     });
     if let Some(idx) = root_idx {
         merge(idx);
@@ -310,11 +306,11 @@ fn merge_call(entry: &mut Entry, idx: usize, arena: &[Call], prev_start: Option<
         };
         merge_call(&mut entry.children[cpos], cidx, arena, None);
     }
-    if entry.expected != 0 {
-        if let Some(ps) = prev_start {
-            let sample = call.start.wrapping_sub(ps).wrapping_add(500) / 1000;
-            *entry.between.entry(sample).or_insert(0) += 1;
-        }
+    if entry.expected != 0
+        && let Some(ps) = prev_start
+    {
+        let sample = call.start.wrapping_sub(ps).wrapping_add(500) / 1000;
+        *entry.between.entry(sample).or_insert(0) += 1;
     }
     let sample = call.end.wrapping_sub(call.start).wrapping_add(500) / 1000;
     *entry.times.entry(sample).or_insert(0) += 1;
@@ -518,11 +514,7 @@ fn g_fmt(x: f64) -> String {
         }
         s
     };
-    if neg {
-        format!("-{out}")
-    } else {
-        out
-    }
+    if neg { format!("-{out}") } else { out }
 }
 
 /// `G(x)`: `%g` of the ms value followed by NBSP + "ms" (R42).
@@ -533,11 +525,7 @@ fn g_ms(us: u64) -> String {
 /// C `lround` (half away from zero); r > 0 here.
 fn lround_pos(x: f64) -> i64 {
     let fl = x.floor() as i64;
-    if x - fl as f64 >= 0.5 {
-        fl + 1
-    } else {
-        fl
-    }
+    if x - fl as f64 >= 0.5 { fl + 1 } else { fl }
 }
 
 /// p99/median over `times` (descending) per §4.7, incl. quirk Q-10.
@@ -825,8 +813,8 @@ fn open_call_count() -> usize {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use std::sync::atomic::AtomicUsize;
     use std::sync::Arc;
+    use std::sync::atomic::AtomicUsize;
 
     // The profiler state is process-global (PROFILES, NAMES, ENABLED, the
     // clock, the log sink); serialize the tests on it (W9 fence pattern).
@@ -941,8 +929,8 @@ mod tests {
         profiler_start();
         let (a, b, _) = names();
         profile_register_root(a, 2_000_000); // expected = 2000 µs
-                                             // t=0: A starts; t=500ns: B starts; t=1500ns: B ends (1000ns = 1 µs
-                                             // sample: (1500-500+500)/1000 = 1); t=2000ns: A ends (2 µs)
+        // t=0: A starts; t=500ns: B starts; t=1500ns: B ends (1000ns = 1 µs
+        // sample: (1500-500+500)/1000 = 1); t=2000ns: A ends (2 µs)
         profile_start(a);
         profiler_step_fake_clock(500);
         profile_start(b);
@@ -1079,7 +1067,7 @@ mod tests {
         profile_end(b); // B: 1 µs
         profiler_step_fake_clock(500);
         profile_end(a); // A: 2 µs
-                        // A again: 3 µs -> A samples {3:1, 2:1}
+        // A again: 3 µs -> A samples {3:1, 2:1}
         profiler_step_fake_clock(3000);
         profile_start(a);
         profiler_step_fake_clock(3000);

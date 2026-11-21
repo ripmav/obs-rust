@@ -1,6 +1,6 @@
 # Plan: Rewriting OBS Studio in Rust
 
-Status: strategy confirmed — all 39 questions in [`docs/rust-rewrite/DECISIONS-NEEDED.md`](rust-rewrite/DECISIONS-NEEDED.md) answered 2026-11-06. Nothing implemented yet; tick the checkboxes as phases complete.
+Status: strategy confirmed — all 39 questions in [`docs/rust-rewrite/DECISIONS-NEEDED.md`](rust-rewrite/DECISIONS-NEEDED.md) answered 2026-11-06. Implementation status (2026-11-21): Phase 0 is partly done (workspace, CI, golden framework, ADRs 1/2/5/6); Phase 1 has most leaf crates on `main` (util, math, signal, data, properties, lexers, FFI bridges behind `c-swap`) but no task is complete, and Phases 2 to 7 have specs only. Source of truth: the checkboxes in `docs/rust-rewrite/subtasks/`, summarised in [`rust-rewrite/STATUS-REVIEW-2026-11-21.md`](rust-rewrite/STATUS-REVIEW-2026-11-21.md).
 
 ## 1. What exists today (measured)
 
