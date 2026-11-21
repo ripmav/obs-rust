@@ -1504,6 +1504,7 @@ mod tests {
     }
 
     // dump to file: content + ok; bad path: false
+    #[cfg_attr(miri, ignore)]
     #[test]
     fn csv_dump_to_file() {
         let _lock = TEST_LOCK.lock().unwrap();
