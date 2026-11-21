@@ -155,8 +155,10 @@ for area in "${!runner_sources[@]}"; do
 			"$build/$area-runner" "$script" >/dev/null
 			echo "skip $area/$name (known C reference bug)"
 		else
-			if ! diff -u "$out" <("$build/$area-runner" "$script") >/dev/null; then
+			actual="$build/$name.actual"
+			if ! diff -u "$out" <("$build/$area-runner" "$script" >"$actual") >/dev/null; then
 				echo "FAIL $area/$name" >&2
+				diff -u "$out" "$actual" 2>&1 | head -40 >&2
 				status=1
 			else
 				echo "ok   $area/$name"

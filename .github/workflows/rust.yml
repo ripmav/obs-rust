@@ -91,7 +91,8 @@ jobs:
             -I${{ github.workspace }}/simde
             -I${{ runner.temp }}/jansson/include
             -L${{ runner.temp }}/jansson/lib
-            -I/usr/include/glib-2.0 -I/usr/include/gio-2.0 -I/usr/include/gio-unix-2.0
+            -I/usr/include/glib-2.0 -I/usr/include/gio-2.0 -I/usr/include/gio-unix-2.0 \
+            -I/usr/lib/x86_64-linux-gnu/glib-2.0/include
         run: |
           # run.sh must be invoked from test/conformance: gen/helpers.sources
           # uses relative -I paths against that directory.
@@ -106,7 +107,8 @@ jobs:
             -I${{ github.workspace }}/simde
             -I${{ runner.temp }}/jansson/include
             -L${{ runner.temp }}/jansson/lib
-            -I/usr/include/glib-2.0 -I/usr/include/gio-2.0 -I/usr/include/gio-unix-2.0
+            -I/usr/include/glib-2.0 -I/usr/include/gio-2.0 -I/usr/include/gio-unix-2.0 \
+            -I/usr/lib/x86_64-linux-gnu/glib-2.0/include
         run: |
           status=0
           for area in $(grep -vE '^[[:space:]]*(#|$)' test/conformance/ci-areas.txt); do
