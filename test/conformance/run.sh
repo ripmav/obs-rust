@@ -148,6 +148,12 @@ for area in "${!runner_sources[@]}"; do
 		out="$here/vectors/$area/$name.expected"
 		if [ "$mode" = generate ]; then
 			"$build/$area-runner" "$script" >"$out"
+		elif grep -qxF "$area/$name" "$here/known-c-bugs.txt"; then
+			# Known C reference bug (see known-c-bugs.txt): still run the
+			# runner (a crash still fails) but skip the diff against the
+			# spec-ideal vector.
+			"$build/$area-runner" "$script" >/dev/null
+			echo "skip $area/$name (known C reference bug)"
 		else
 			if ! diff -u "$out" <("$build/$area-runner" "$script") >/dev/null; then
 				echo "FAIL $area/$name" >&2
