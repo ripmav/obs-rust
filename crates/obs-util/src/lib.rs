@@ -26,6 +26,9 @@ pub mod os_str;
 pub mod pipe;
 pub mod process_args;
 pub mod text_lookup;
+#[cfg(unix)]
+#[cfg(unix)]
+pub mod threading;
 pub mod utf8;
 
 #[cfg(test)]
