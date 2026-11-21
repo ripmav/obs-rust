@@ -70,8 +70,9 @@ jobs:
           sudo apt-get update
           # jansson: the spec (S-014 §6.2) pins jansson 2.15.1 semantics
           # (shortest round-trip reals), which distro packages do not provide;
-          # build it from source below. Everything else is a distro package.
-          sudo apt-get install -y cmake uthash-dev libuuid-dev zlib1g-dev \
+          # build it from source below. Everything else is a distro package
+          # (uuid-dev = the libuuid-dev rename in Ubuntu 26.04).
+          sudo apt-get install -y cmake uthash-dev uuid-dev zlib1g-dev \
             libcurl4-openssl-dev libglib2.0-dev libpulse-dev
       - name: simde (pinned)
         run: |
