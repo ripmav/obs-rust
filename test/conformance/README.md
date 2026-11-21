@@ -98,11 +98,19 @@ defect (e.g. `signal.c`'s global-callback `da_find` memcmps uninitialized
    fails) but skips the diff and reports `skip <area>/<name>`. Entries are
    removed once the C bug is fixed upstream or the area's C sources are
    fully replaced by the Rust staticlib in swap mode.
+7. **Racy C reference runner** (`known-racy.txt`): a script whose runner
+   prints lines from a real io thread that can interleave with the driver
+   thread's command echoes in a schedule-dependent order (a pure line-order
+   swap; every state line agrees). Same skip treatment as item 6. This is a
+   bug in the suite's runner, not in the C code: the proper fix is to gate
+   the io thread's printing to the driver thread (lockstep) and regenerate
+   the affected vectors, which lands with the owning porting WP.
 
 Scripts never depend on pointer values, time, thread scheduling or uninitialised
 memory. If you find one that does, that is a bug in the suite: file a spec
 question (or, for a genuine C defect that the spec deliberately does not copy,
-record it in `known-c-bugs.txt`).
+record it in `known-c-bugs.txt`; for a runner whose output order is
+schedule-dependent, in `known-racy.txt`).
 
 ## Script language (common)
 

@@ -1,0 +1,15 @@
+# Scripts whose C reference runner is not deterministic (suite bug, not a C
+# bug): the real video-io.c thread loop prints callback lines (vcb ...) from
+# the io thread, which can interleave with the driver thread's command echoes
+# in a schedule-dependent order. The observed lines are a pure order swap -
+# every state line (vstate/vdump) agrees.
+#
+# run.sh still builds and runs the runner (a crash still fails) but skips the
+# diff and reports `skip <area>/<name> (racy C reference runner)`.
+#
+# Proper fix (with the P1-14 avio porting WP, wave 3): gate the io thread's
+# printing to the driver thread (lockstep), regenerate the affected vectors.
+# See README "Comparing".
+avio/video_cache0
+avio/video_disconnect
+avio/audio_defects

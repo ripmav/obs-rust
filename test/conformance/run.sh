@@ -148,21 +148,29 @@ for area in "${!runner_sources[@]}"; do
 		out="$here/vectors/$area/$name.expected"
 		if [ "$mode" = generate ]; then
 			"$build/$area-runner" "$script" >"$out"
-		elif grep -qxF "$area/$name" "$here/known-c-bugs.txt"; then
-			# Known C reference bug (see known-c-bugs.txt): still run the
-			# runner (a crash still fails) but skip the diff against the
-			# spec-ideal vector.
-			"$build/$area-runner" "$script" >/dev/null
-			echo "skip $area/$name (known C reference bug)"
 		else
-			actual="$build/$name.actual"
-			"$build/$area-runner" "$script" >"$actual"
-			if ! diff -u "$out" "$actual" >/dev/null; then
-				echo "FAIL $area/$name" >&2
-				diff -u "$out" "$actual" 2>&1 | head -40 >&2
-				status=1
+			# Allowlists (see the two files): scripts the C reference cannot run
+			# reliably are still built and run (a crash still fails) but their diff
+			# against the spec-ideal vector is skipped.
+			skip=""
+			if grep -qxF "$area/$name" "$here/known-c-bugs.txt" 2>/dev/null; then
+				skip="known C reference bug"
+			elif [ -f "$here/known-racy.txt" ] && grep -qxF "$area/$name" "$here/known-racy.txt"; then
+				skip="racy C reference runner"
+			fi
+			if [ -n "$skip" ]; then
+				"$build/$area-runner" "$script" >/dev/null
+				echo "skip $area/$name ($skip)"
 			else
-				echo "ok   $area/$name"
+				actual="$build/$name.actual"
+				"$build/$area-runner" "$script" >"$actual"
+				if ! diff -u "$out" "$actual" >/dev/null; then
+					echo "FAIL $area/$name" >&2
+					diff -u "$out" "$actual" 2>&1 | head -40 >&2
+					status=1
+				else
+					echo "ok   $area/$name"
+				fi
 			fi
 		fi
 	done
