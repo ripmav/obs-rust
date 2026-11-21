@@ -96,9 +96,12 @@ jobs:
         run: |
           # run.sh must be invoked from test/conformance: gen/helpers.sources
           # uses relative -I paths against that directory.
+          # Build dirs go to $RUNNER_TEMP (not the /tmp mktemp default) so
+          # the runners cannot be starved by a small /tmp.
           status=0
           for area in $(grep -vE '^[[:space:]]*(#|$)' test/conformance/ci-areas.txt); do
-            (cd test/conformance && ./run.sh check "$area") || status=1
+            mkdir -p "$RUNNER_TEMP/conform-check/$area"
+            (cd test/conformance && CONFORMANCE_BUILD_DIR="$RUNNER_TEMP/conform-check/$area" ./run.sh check "$area") || status=1
           done
           exit "$status"
       - name: swap (Rust staticlib replaces the ported C sources)
@@ -112,7 +115,8 @@ jobs:
         run: |
           status=0
           for area in $(grep -vE '^[[:space:]]*(#|$)' test/conformance/ci-areas.txt); do
-            (cd test/conformance && ./run.sh swap "$area") || status=1
+            mkdir -p "$RUNNER_TEMP/conform-swap/$area"
+            (cd test/conformance && CONFORMANCE_BUILD_DIR="$RUNNER_TEMP/conform-swap/$area" ./run.sh swap "$area") || status=1
           done
           exit "$status"
 
