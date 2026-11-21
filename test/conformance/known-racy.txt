@@ -13,3 +13,4 @@
 avio/video_cache0
 avio/video_disconnect
 avio/audio_defects
+avio/video_lag
