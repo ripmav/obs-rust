@@ -253,7 +253,7 @@ fn sr_bytes(s: &strref) -> &[u8] {
     if s.array.is_null() {
         &[]
     } else {
-        unsafe { std::slice::from_raw_parts(s.array, s.len) }
+        unsafe { std::slice::from_raw_parts(s.array.cast::<u8>(), s.len) }
     }
 }
 
@@ -466,7 +466,7 @@ pub unsafe extern "C" fn cf_lexer_lex(
     let rf = &eng.reformatted;
     l.reformatted = unsafe { bmalloc(rf.len() + 1) as *mut c_char };
     unsafe {
-        ptr::copy_nonoverlapping(rf.as_ptr(), l.reformatted, rf.len());
+        ptr::copy_nonoverlapping(rf.as_ptr(), l.reformatted.cast::<u8>(), rf.len());
         l.reformatted.add(rf.len()).write(0);
     };
     l.write_offset = unsafe { l.reformatted.add(rf.len()) };
@@ -772,7 +772,7 @@ fn cf_include_file(pp: *mut cf_preprocessor, file_token: *const cf_token) {
         }
     }
 
-    let file = unsafe { os_fopen(path_nul.as_ptr(), c"rb".as_ptr()) };
+    let file = unsafe { os_fopen(path_nul.as_ptr().cast(), c"rb".as_ptr()) };
     if file.is_null() {
         cf_addew(
             pp,
@@ -873,7 +873,8 @@ fn pp_macro_params(pp: *mut cf_preprocessor, def: &mut cf_def, p_cur: &mut *mut 
         def.params.push(unsafe { &*cur });
         next_token(&mut cur, true);
         if unsafe { (*cur).r#type } != CFTOKEN_OTHER
-            || (unsafe { *(*cur).str.array } != b',' && unsafe { *(*cur).str.array } != b')')
+            || (unsafe { *(*cur).str.array } != b',' as c_char
+                && unsafe { *(*cur).str.array } != b')' as c_char)
         {
             cf_addew(
                 pp,
@@ -888,7 +889,7 @@ fn pp_macro_params(pp: *mut cf_preprocessor, def: &mut cf_def, p_cur: &mut *mut 
             *p_cur = cur;
             return false;
         }
-        if unsafe { *(*cur).str.array } == b')' {
+        if unsafe { *(*cur).str.array } == b')' as c_char {
             break;
         }
     }
@@ -935,7 +936,7 @@ fn pp_define(pp: *mut cf_preprocessor, p_cur: &mut *mut cf_token) {
         *p_cur = cur;
         return;
     }
-    if unsafe { *(*cur).str.array } == b'(' && !pp_macro_params(pp, &mut def, &mut cur) {
+    if unsafe { *(*cur).str.array } == b'(' as c_char && !pp_macro_params(pp, &mut def, &mut cur) {
         cf_def_free(&mut def as *mut cf_def);
         *p_cur = cur;
         return;
@@ -1255,15 +1256,15 @@ fn save_macro_param(
     let mut brace = 0;
     while unsafe { (*cur).r#type } != CFTOKEN_NONE {
         let first = unsafe { *(*cur).str.array };
-        if first == b'(' {
+        if first == b'(' as c_char {
             brace += 1;
-        } else if first == b')' {
+        } else if first == b')' as c_char {
             if brace != 0 {
                 brace -= 1;
             } else {
                 break;
             }
-        } else if first == b',' && brace == 0 {
+        } else if first == b',' as c_char && brace == 0 {
             break;
         }
         pp_addtoken(pp, &mut param.tokens, &mut cur, base, cur_params);
@@ -1297,7 +1298,7 @@ fn save_macro_params(
     let mut cur = *p_cur;
     let mut count: usize = 0;
     next_token(&mut cur, false);
-    if unsafe { (*cur).r#type } != CFTOKEN_OTHER || unsafe { *(*cur).str.array } != b'(' {
+    if unsafe { (*cur).r#type } != CFTOKEN_OTHER || unsafe { *(*cur).str.array } != b'(' as c_char {
         cf_addew(
             pp,
             cur,
@@ -1319,7 +1320,8 @@ fn save_macro_params(
         count += 1;
         save_macro_param(pp, &mut cur, &mut param, base, cur_params);
         if unsafe { (*cur).r#type } != CFTOKEN_OTHER
-            || (unsafe { *(*cur).str.array } != b',' && unsafe { *(*cur).str.array } != b')')
+            || (unsafe { *(*cur).str.array } != b',' as c_char
+                && unsafe { *(*cur).str.array } != b')' as c_char)
         {
             macro_param_free(&mut param);
             cf_addew(
@@ -1336,7 +1338,7 @@ fn save_macro_params(
         }
         if param_is_whitespace(&param) {
             // If 0-param macro, ignore first entry.
-            if count == 1 && def.params.num == 0 && unsafe { *(*cur).str.array } == b')' {
+            if count == 1 && def.params.num == 0 && unsafe { *(*cur).str.array } == b')' as c_char {
                 macro_param_free(&mut param);
                 break;
             }
@@ -1347,7 +1349,7 @@ fn save_macro_params(
         } else {
             macro_param_free(&mut param);
         }
-        if unsafe { *(*cur).str.array } == b')' {
+        if unsafe { *(*cur).str.array } == b')' as c_char {
             break;
         }
     }
@@ -1472,7 +1474,7 @@ fn cf_preprocess_tokens(pp: *mut cf_preprocessor, if_block: bool, p_cur: &mut *m
                     break;
                 }
             }
-            if newline && unsafe { *(*cur).str.array } == b'#' {
+            if newline && unsafe { *(*cur).str.array } == b'#' as c_char {
                 next_token(&mut cur, true);
                 preprocessor_line = true;
                 if !pp_dispatch(pp, if_block, &mut cur) {
@@ -1908,19 +1910,19 @@ mod tests {
         let r = unsafe { cf_literal_to_str(s.as_ptr(), 0) };
         assert!(!r.is_null());
         assert_eq!(cbuf(r), b"abc");
-        bfree(r);
+        bfree(r.cast());
 
         // the Q-10 quirk: the closing quote leaks after \x
         let s = cstr("'\\x41'");
         let r = unsafe { cf_literal_to_str(s.as_ptr(), 0) };
         assert_eq!(cbuf(r), b"A'");
-        bfree(r);
+        bfree(r.cast());
 
         // explicit count, and rejection cases
         let s = cstr("\"abc\"");
         let r = unsafe { cf_literal_to_str(s.as_ptr(), 5) };
         assert_eq!(cbuf(r), b"abc");
-        bfree(r);
+        bfree(r.cast());
         let bad = cstr("\"abc'");
         assert!(unsafe { cf_literal_to_str(bad.as_ptr(), 0) }.is_null());
         let short = cstr("\"a\"");

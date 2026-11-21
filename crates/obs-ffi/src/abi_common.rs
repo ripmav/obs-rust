@@ -20,10 +20,22 @@ use crate::abi_lexer::{error_data, error_item};
 // `libobs/util/bmem.c` next to the Rust staticlib.
 unsafe extern "C" {
     pub(crate) fn bmalloc(size: usize) -> *mut u8;
-    pub(crate) fn bfree(ptr: *mut u8);
+    #[link_name = "bfree"]
+    fn bfree_raw(ptr: *mut u8);
     /// Used by the part B (cf-lexer/cf-parser) bridges.
     #[allow(dead_code)]
     pub(crate) fn brealloc(ptr: *mut u8, size: usize) -> *mut u8;
+}
+
+/// C `bfree` for any pointee type: C `char` is `i8` on x86 and `u8` on
+/// arm, so callers pass `*mut c_char`/`*mut u8` without per-site casts.
+///
+/// # Safety
+/// `ptr` is NULL or came from `bmalloc`/`brealloc`/`bstrdup` and is not
+/// used afterwards.
+pub(crate) unsafe fn bfree<T>(ptr: *mut T) {
+    // SAFETY: forwarded contract; the cast only changes the pointee type.
+    unsafe { bfree_raw(ptr.cast()) }
 }
 
 /// C `bstrdup` (a `static inline` in bmem.h, so not linkable): a
@@ -50,7 +62,7 @@ pub(crate) unsafe fn bstrdup(s: *const c_char) -> *mut c_char {
 pub(crate) unsafe fn bstrdup_bytes(bytes: &[u8]) -> *mut c_char {
     let p = unsafe { bmalloc(bytes.len() + 1) } as *mut c_char;
     unsafe {
-        std::ptr::copy_nonoverlapping(bytes.as_ptr(), p, bytes.len());
+        std::ptr::copy_nonoverlapping(bytes.as_ptr(), p.cast::<u8>(), bytes.len());
         *p.add(bytes.len()) = 0;
     };
     p
