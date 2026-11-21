@@ -1,8 +1,12 @@
 [package]
 name = "obs-util-small"
 version.workspace = true
-edition = "2021"
+edition.workspace = true
+rust-version.workspace = true
 description = "Small S-024 helper modules of the OBS Rust rewrite (M2 128-bit, M6 task queue)"
 license.workspace = true
+
+[lints]
+workspace = true
 
 [dependencies]
