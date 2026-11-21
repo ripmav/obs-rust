@@ -877,6 +877,13 @@ static void run(struct script_line *sl)
 		uint64_t a = os_gettime_ns();
 		os_sleep_ms((uint32_t)N(sl, 1));
 		printf("sleep_ms elapsed_ge=%d\n", os_gettime_ns() - a >= (uint64_t)N(sl, 1) * 1000000ull);
+	} else if (IS("sleep_ms_range")) { /* MS UB_MS : both coarse bounds as 0/1 flags */
+		script_need(sl, 3);
+		uint64_t a = os_gettime_ns();
+		os_sleep_ms((uint32_t)N(sl, 1));
+		uint64_t el = os_gettime_ns() - a;
+		printf("sleep_ms_range ge=%d lt=%d\n", el >= (uint64_t)N(sl, 1) * 1000000ull,
+		       el < (uint64_t)N(sl, 2) * 1000000ull);
 	} else if (IS("sleepto") || IS("sleepto_fast")) { /* REL_MS (may be negative) */
 		script_need(sl, 2);
 		uint64_t target = os_gettime_ns() + (uint64_t)(N(sl, 1) * 1000000ll);

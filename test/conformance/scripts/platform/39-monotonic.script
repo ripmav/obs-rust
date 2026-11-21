@@ -1,0 +1,5 @@
+# R100: os_gettime_ns never decreases across a tight iteration loop. Vector
+# 33 pins the same property at 1000 reads; this is the tight-loop form of
+# P1-06.1 (10M reads, well under 2 s). Prints 1 only if every read is >= the
+# previous one and the first read is non-zero.
+monotonic 10000000

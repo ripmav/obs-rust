@@ -1,0 +1,5 @@
+# R101: os_sleepto_ns returns false at once when the deadline is already
+# past, else sleeps (resuming after interruptions) until the monotonic clock
+# reaches it and returns true. REL_MS is the deadline relative to now.
+sleepto -50
+sleepto 50
