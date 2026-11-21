@@ -1,0 +1,33 @@
+# os_time (S-023 R100–R101, Q-16) — test matrix
+
+WP-26 (P1-06.1 clock + P1-06.2 sleep, spec-side), crate `crates/obs-util`,
+module `os_time` (`src/os_time.rs`, `#[cfg(unix)]` — the Windows QPC/`Sleep`
+strategies and the macOS `CLOCK_UPTIME_RAW` clock are P1-05-style trailing
+work for the platform crate, S-023). Spec: `S-023-platform-utf8.md`
+(R100–R102). The C port source is `libobs/util/platform-nix.c`
+(`os_gettime_ns`, `os_sleepto_ns`, `os_sleepto_ns_fast`, `os_sleep_ms`).
+The tests encode the committed C reference vectors
+`test/conformance/vectors/platform/39..43` (generated from the C reference;
+property flags only — no raw elapsed values — so the vectors are
+byte-stable); the vectors are the oracle. R102 (`os_nstime_to_timespec`)
+stays pinned by vector `34-nstime-to-timespec` against the C reference —
+its Rust port is out of this module's scope.
+
+| Area | Pinned by test | Conformance vector |
+| --- | --- | --- |
+| **os_gettime_ns (R100)** | | |
+| 10M consecutive reads never decrease and are non-zero (the vector's loop count) | `v39_monotonic` | `39-monotonic` |
+| non-zero value, and strictly advancing across a 1 ms sleep (the value/monotonicity contract; the ns->timespec relationship itself is vector 34's) | `v40_nstime_value_contract` | `40-nstime` |
+| never decreases over a 10 s tight loop (P1-06.1 Done-when; ~10 s) | `monotonic_10s` (`tests/os_time.rs`, own binary, the `threading_stress.rs` house pattern) | — (Done-when) |
+| **os_sleep_ms (R100)** | | |
+| 50 ms: elapsed in the [50 ms, 5 s) bucket | `v41_sleep_ms_buckets` | `41-sleep_ms` (`ge=1 lt=1`) |
+| Q-16: the C 32-bit `ms*1000` wraps at `ms >= 4_294_968` (`4_294_968 -> 704` µs, pinned by the vector's `ge=0 lt=1`); the port's 64-bit product is the full time (`4_294_968_000` µs, `u32::MAX -> 4_294_967_295_000`) and `4_294_967` is the last non-wrapping value both sides agree on — the 4294 s sleep is not performed, the arithmetic is pinned | `v41_sleep_ms_q16` | `41-sleep_ms` (Q-16 line) |
+| **os_sleepto_ns (R101)** | | |
+| past deadline (now − 50 ms) -> `false` at once; future deadline (now + 50 ms) -> `true`, clock reached it, elapsed in [50 ms, 5 s) | `v42_sleepto` | `42-sleepto` (`rc=0/1 reached=1`) |
+| **os_sleepto_ns_fast (R101)** | | |
+| same contract via the <= 999999 µs usleep chunks (50 ms is a single chunk) | `v43_sleepto_fast` | `43-sleepto_fast` (`rc=0/1 reached=1`) |
+
+Not covered here (by design): R102 `os_nstime_to_timespec` (vector 34 pins
+it against C; the Rust port is platform-crate work), the Windows
+`Sleep`/QPC strategies and the macOS `CLOCK_UPTIME_RAW` clock (trailing
+work, P1-06.3 territory), and the P1-06.3 jitter p99 comparison vs C.

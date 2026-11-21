@@ -23,6 +23,8 @@ pub mod os_fs;
 pub mod os_proc;
 pub mod os_str;
 #[cfg(unix)]
+pub mod os_time;
+#[cfg(unix)]
 pub mod pipe;
 pub mod process_args;
 pub mod text_lookup;

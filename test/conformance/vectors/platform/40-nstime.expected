@@ -1,0 +1,7 @@
+nstime ret_is_storage=1 diff_ns=1000000 nsec_in_range=1
+nstime ret_is_storage=1 diff_ns=1000000 nsec_in_range=1
+nstime ret_is_storage=1 diff_ns=0 nsec_in_range=1
+nstime ret_is_storage=1 diff_ns=1000000 nsec_in_range=1
+nstime ret_is_storage=1 diff_ns=1000000 nsec_in_range=1
+nstime ret_is_storage=1 diff_ns=1000000000 nsec_in_range=1
+nstime ret_is_storage=1 diff_ns=1000000000 nsec_in_range=1
