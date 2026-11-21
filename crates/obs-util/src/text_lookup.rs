@@ -76,9 +76,7 @@ fn read_file_text(path: &[u8]) -> Option<Vec<u8>> {
         std::path::Path::new(os)
     };
     #[cfg(not(unix))]
-    let p = std::path::Path::new(&std::ffi::OsString::from(
-        String::from_utf8_lossy(path).into_owned(),
-    ));
+    let p = std::path::PathBuf::from(String::from_utf8_lossy(path).into_owned());
     let data = std::fs::read(p).ok()?;
     let text = if data.starts_with(b"\xEF\xBB\xBF") {
         &data[3..]
