@@ -315,8 +315,11 @@ pub fn os_set_thread_name(name: &str) {
         c.extend_from_slice(bytes);
         c.push(0);
         // SAFETY: `c` is a valid NUL-terminated C string for the duration
-        // of the call.
-        unsafe { libc::pthread_setname_np(libc::pthread_self(), c.as_ptr()) };
+        // of the call. The cast keeps this portable across the `c_char`
+        // sign difference (x86_64: i8, aarch64: u8).
+        unsafe {
+            libc::pthread_setname_np(libc::pthread_self(), c.as_ptr().cast::<libc::c_char>())
+        };
     }
     // shortcut: macOS (pthread_setname_np_np) and FreeBSD pass-through
     // names are no-ops until P1-05.3 wires the remaining platform paths
