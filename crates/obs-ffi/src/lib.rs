@@ -7,13 +7,24 @@
 //! = `blog(level, "%s", msg)` into the installed C handler.
 //!
 //! P1-08.5 (recipe step 2): the `extern "C"` bridges for the ported leaf
-//! modules live in `abi_*` modules ([`abi_text_lookup`] first, then
+//! modules (feature `c-swap`) live in `abi_*` modules ([`abi_text_lookup`] first, then
 //! [`abi_lexer`], then [`abi_cf_lexer`]).
 
+// The bridges reference C symbols (`bmalloc`, `bfree`, `os_fopen`, ...) that
+// only exist in the swap build (libobs/util/*.c linked next to this
+// staticlib). They are compiled only for that build (`--features c-swap`,
+// what `OBS_ENABLE_RUST=ON` passes) and for this crate's unit tests, which
+// provide stand-ins. Without the gate, linkers that do not garbage-collect
+// unreferenced sections (MSVC) fail with LNK2019 on the integration tests.
+#[cfg(any(test, feature = "c-swap"))]
 pub mod abi_cf_lexer;
+#[cfg(any(test, feature = "c-swap"))]
 pub mod abi_cf_parser;
+#[cfg(any(test, feature = "c-swap"))]
 pub mod abi_common;
+#[cfg(any(test, feature = "c-swap"))]
 pub mod abi_lexer;
+#[cfg(any(test, feature = "c-swap"))]
 pub mod abi_text_lookup;
 
 use std::os::raw::{c_int, c_void};
