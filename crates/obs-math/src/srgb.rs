@@ -249,6 +249,51 @@ mod tests {
     }
 
     #[test]
+    fn r120_r121_256_point_golden() {
+        // vector 27-srgb-256-golden (generated from the C reference):
+        // four sections of 256 lines over the points i/255 (i = 0..255).
+        // Section 1: srgb_nonlinear_to_linear, section 2:
+        // srgb_linear_to_nonlinear (floats, printed with %.9g), section 3:
+        // u8_to_float(0..255), section 4: float_to_u8 at the points.
+        // The C runner takes (float)strtod — the same f32 input is
+        // (i as f64) / 255.0 as f32. Tolerance 1e-6 (review 2026-11-21).
+        let path = concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../test/conformance/vectors/math2/27-srgb-256-golden.expected"
+        );
+        let text = std::fs::read_to_string(path).expect("normative vector");
+        let lines: Vec<&str> = text.lines().collect();
+        assert_eq!(lines.len(), 1024);
+        for i in 0..256 {
+            let p = ((i as f64) / 255.0) as f32;
+            let l1 = lines[i].splitn(3, ' ').collect::<Vec<_>>();
+            assert_eq!((l1[0], l1[1]), ("c", "float"), "line {i}: {}", lines[i]);
+            let want1: f32 = l1[2].parse().unwrap();
+            assert!(
+                (gs_srgb_nonlinear_to_linear(p) - want1).abs() <= 1e-6,
+                "nonlinear->linear i={i}"
+            );
+            let l2 = lines[256 + i].splitn(3, ' ').collect::<Vec<_>>();
+            let want2: f32 = l2[2].parse().unwrap();
+            assert!(
+                (gs_srgb_linear_to_nonlinear(p) - want2).abs() <= 1e-6,
+                "linear->nonlinear i={i}"
+            );
+            // u8 -> float is exact: u / 255.0
+            let l3 = lines[512 + i].splitn(3, ' ').collect::<Vec<_>>();
+            let want3: f32 = l3[2].parse().unwrap();
+            assert!(
+                (gs_u8_to_float(i as u8) - want3).abs() <= 1e-7,
+                "u8->float i={i}"
+            );
+            // float -> u8 at the point: integer, exact
+            let l4 = lines[768 + i].splitn(3, ' ').collect::<Vec<_>>();
+            let want4: u8 = l4[2].parse().unwrap();
+            assert_eq!(gs_float_to_u8(p), want4, "float->u8 i={i}");
+        }
+    }
+
+    #[test]
     fn r122_lane_conversions() {
         // S-009-R122
         let u = [255u8, 128, 64, 0];

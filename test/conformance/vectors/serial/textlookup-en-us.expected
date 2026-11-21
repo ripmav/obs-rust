@@ -1,0 +1,1581 @@
+# textlookup-en-us.expected: full dump of frontend/data/locale/en-US.ini
+# (1 of the 77 locale files) through the C text_lookup (S-010 §5.7,
+# P1-08.4 "Done when: loads en-US.ini and gets identical values").
+# Provenance: C reference obsproject/obs-studio 33.0.1, 64-bit Linux, -O2.
+# Generator: test/conformance/gen/textlookup_dump.c (one line per key:
+#   "kv <key> <value>").
+# The Rust test (obs-util text_lookup) loads the same file through its
+# port with the same key extraction and compares every line. Gated:
+# skipped (one printed line) when the libobs checkout link is absent.
+kv Language English
+kv OK OK
+kv Apply Apply
+kv Cancel Cancel
+kv Close Close
+kv Save Save
+kv Discard Discard
+kv Disable Disable
+kv Yes Yes
+kv No No
+kv Add Add
+kv Remove Remove
+kv Rename Rename...
+kv Interact Interact
+kv Filters Filters
+kv Properties Properties
+kv MoveUp Move Up
+kv MoveDown Move Down
+kv Settings Settings
+kv Display Display
+kv Name Name
+kv Exit Exit
+kv Mixer Audio Mixer
+kv Browse Browse
+kv Mono Mono
+kv Stereo Stereo
+kv DroppedFrames Dropped Frames %1 (%2%)
+kv Projector.Open.Program Open Program Projector
+kv Projector.Open.Preview Open Preview Projector
+kv Projector.Open.Scene Open Scene Projector
+kv Projector.Open.Source Open Source Projector
+kv Projector.Open.Multiview Open Multiview
+kv Projector.Display Display: %1
+kv Projector.Window New window
+kv Projector.Title Projector
+kv Projector.Title.Scene Scene: %1
+kv Projector.Title.Source Source: %1
+kv Projector.Title.Multiview Multiview
+kv Projector.ResizeWindowToContent Fit window to content
+kv Clear Clear
+kv Revert Revert
+kv Show Show
+kv Hide Hide
+kv UnhideAll Unhide All
+kv Untitled Untitled
+kv New New...
+kv Duplicate Duplicate...
+kv Enable Enable
+kv DisableOSXVSync Disable macOS V-Sync
+kv ResetOSXVSyncOnExit Reset macOS V-Sync on Exit
+kv HighResourceUsage Encoding overloaded! Consider turning down video settings or using a faster encoding preset.
+kv Transition Transition
+kv QuickTransitions Quick Transitions
+kv FadeToBlack Fade to Black
+kv Left Left
+kv Right Right
+kv Top Top
+kv Bottom Bottom
+kv Width Width
+kv Height Height
+kv Reset Reset
+kv Hours Hours
+kv Minutes Minutes
+kv Seconds Seconds
+kv Deprecated Deprecated
+kv ReplayBuffer Replay Buffer
+kv Import Import
+kv Export Export
+kv Copy Copy
+kv Paste Paste
+kv PasteReference Paste (Reference)
+kv PasteDuplicate Paste (Duplicate)
+kv RemuxRecordings Remux Recordings
+kv Next Next
+kv Back Back
+kv Defaults Defaults
+kv RestoreDefaults Defaults
+kv HideMixer Hide in Mixer
+kv TransitionOverride Transition Override
+kv ShowTransition Show Transition
+kv HideTransition Hide Transition
+kv None None
+kv StudioMode.Preview Preview
+kv StudioMode.Program Program
+kv StudioMode.PreviewSceneName Preview: %1
+kv StudioMode.ProgramSceneName Program: %1
+kv ShowInMultiview Show in Multiview
+kv VerticalLayout Vertical Layout
+kv Group Group
+kv DoNotShowAgain Do not show again
+kv Default (Default)
+kv Calculating Calculating...
+kv Fullscreen Fullscreen
+kv Windowed Windowed
+kv RefreshBrowser Refresh
+kv AspectRatio Aspect Ratio <b>%1:%2</b>
+kv LockVolume Lock Volume
+kv LogViewer Log Viewer
+kv ShowOnStartup Show on startup
+kv OpenFile Open file
+kv AddScene Add Scene
+kv AddSource Add Source
+kv RemoveScene Remove Selected Scene
+kv RemoveSource Remove Selected Source(s)
+kv MoveSceneUp Move Scene Up
+kv MoveSceneDown Move Scene Down
+kv MoveSourceUp Move Source(s) Up
+kv MoveSourceDown Move Source(s) Down
+kv SourceProperties Open Source Properties
+kv SourceFilters Open Source Filters
+kv MixerToolbarMenu Audio Mixer Menu
+kv SceneFilters Open Scene Filters
+kv List List
+kv Grid Grid
+kv Automatic Automatic
+kv ComingSoon Coming Soon
+kv PluginsFailedToLoad.Title Plugin Load Error
+kv PluginsFailedToLoad.Text The following OBS plugins failed to load:
+
+%1
+Please update or remove these plugins.
+kv AlreadyRunning.Title OBS is already running
+kv AlreadyRunning.Text OBS is already running! Unless you meant to do this, please shut down any existing instances of OBS before trying to run a new instance. If you have OBS set to minimize to the system tray, please check to see if it's still running there.
+kv AlreadyRunning.LaunchAnyway Launch Anyway
+kv CrashHandling.Dialog.Title OBS Studio Crash Detected
+kv CrashHandling.Labels.Text OBS Studio did not properly shut down.
+
+Run in Safe Mode (third-party plugins, scripting, and WebSockets disabled)?
+kv CrashHandling.Labels.PrivacyNotice You can also choose to automatically upload the most recent crash report to the OBSProject.<br /><br />Please read the <a href='https://obsproject.com/privacy-policy'>Privacy Policy</a> before uploading any files and pay special attention to the parts regarding file uploads.
+kv CrashHandling.Checkbox.SendReport I have read the privacy policy and consent to the upload.
+kv CrashHandling.Buttons.LaunchSafe Run in Safe Mode
+kv CrashHandling.Buttons.LaunchNormal Run in Normal Mode
+kv CrashHandling.Errors.UploadJSONError An error occurred while trying to upload the most recent crash log. Please try again later.
+kv CrashHandling.Errors.Title Crash Log Upload Error
+kv PluginFailure.Dialog.Title Plugin Errors
+kv PluginFailure.Labels.Text OBS Studio was not able to load all third-party plugins.
+
+More details are available in the plugin manager.
+kv PluginFailure.Dialog.Continue Dismiss
+kv PluginFailure.Dialog.Open Open Plugin Manager
+kv SafeMode.Restart Do you want to restart OBS in Safe Mode (third-party plugins, scripting, and WebSockets disabled)?
+kv SafeMode.RestartNormal Do you want to restart OBS in Normal Mode?
+kv ChromeOS.Title Unsupported Platform
+kv ChromeOS.Text OBS appears to be running inside a ChromeOS container. This platform is unsupported.
+kv Wine.Title Wine detected
+kv Wine.Text Running OBS in Wine is unsupported, and many features such as capture or device sources will not work or only in limited capacity.<br><br>It is recommended to run a native version of OBS instead, for example <a href='https://flathub.org/apps/details/com.obsproject.Studio'>our Flatpak version</a> or your operating system's packages.
+kv DockCloseWarning.Title Closing Dockable Window
+kv DockCloseWarning.Text You just closed a dockable window. If you'd like to show it again, use the Docks menu on the menu bar.
+kv ExtraBrowsers Custom Browser Docks
+kv ExtraBrowsers.Info Add docks by giving them a name and URL, then click Apply or Close to open the docks. You can add or remove docks at any time.
+kv ExtraBrowsers.DockName Dock Name
+kv Auth.Authing.Title Authenticating...
+kv Auth.Authing.Text Authenticating with %1, please wait...
+kv Auth.AuthFailure.Title Authentication Failure
+kv Auth.AuthFailure.Text Failed to authenticate with %1:
+
+%2: %3
+kv Auth.InvalidScope.Title Authentication Required
+kv Auth.InvalidScope.Text The authentication requirements for %1 have changed. Some features may not be available.
+kv Auth.LoadingChannel.Title Loading channel information...
+kv Auth.LoadingChannel.Text Loading channel information for %1, please wait...
+kv Auth.LoadingChannel.Error Couldn't get channel information.
+kv Auth.ChannelFailure.Title Failed to load channel
+kv Auth.ChannelFailure.Text Failed to load channel information for %1
+
+%2: %3
+kv Auth.Chat Chat
+kv Auth.StreamInfo Stream Information
+kv TwitchAuth.Stats Twitch Stats
+kv TwitchAuth.Feed Twitch Activity Feed
+kv TwitchAuth.TwoFactorFail.Title Could not query stream key
+kv TwitchAuth.TwoFactorFail.Text OBS was unable to connect to your Twitch account. Please make sure two-factor authentication is set up in your <a href='https://www.twitch.tv/settings/security'>Twitch security settings</a> as this is required to stream.
+kv RestreamAuth.Channels Restream Channels
+kv Copy.Filters Copy Filters
+kv Paste.Filters Paste Filters
+kv BrowserPanelInit.Title Initializing Browser...
+kv BrowserPanelInit.Text Initializing browser, please wait...
+kv BandwidthTest.Region Region
+kv BandwidthTest.Region.US United States
+kv BandwidthTest.Region.EU Europe
+kv BandwidthTest.Region.Asia Asia
+kv BandwidthTest.Region.Other Other
+kv Basic.AutoConfig Auto-Configuration Wizard
+kv Basic.AutoConfig.ApplySettings Apply Settings
+kv Basic.AutoConfig.StartPage Usage Information
+kv Basic.AutoConfig.StartPage.SubTitle Specify what you want to use the program for
+kv Basic.AutoConfig.StartPage.PrioritizeStreaming Optimize for streaming, recording is secondary
+kv Basic.AutoConfig.StartPage.PrioritizeRecording Optimize just for recording, I will not be streaming
+kv Basic.AutoConfig.StartPage.PrioritizeVirtualCam I will only be using the virtual camera
+kv Basic.AutoConfig.VideoPage Video Settings
+kv Basic.AutoConfig.VideoPage.SubTitle Specify the video settings you would like to use
+kv Basic.AutoConfig.VideoPage.BaseResolution.UseCurrent Use Current (%1x%2)
+kv Basic.AutoConfig.VideoPage.BaseResolution.Display Display %1 (%2x%3)
+kv Basic.AutoConfig.VideoPage.FPS.UseCurrent Use Current (%1)
+kv Basic.AutoConfig.VideoPage.FPS.PreferHighFPS Either 60 or 30, but prefer 60 when possible
+kv Basic.AutoConfig.VideoPage.FPS.PreferHighRes Either 60 or 30, but prefer high resolution
+kv Basic.AutoConfig.VideoPage.CanvasExplanation Note: The canvas (base) resolution is not necessarily the same as the resolution you will stream or record with. Your actual stream/recording resolution may be scaled down from the canvas resolution to reduce resource usage or bitrate requirements.
+kv Basic.AutoConfig.StreamPage Stream Information
+kv Basic.AutoConfig.StreamPage.SubTitle Please enter your stream information
+kv Basic.AutoConfig.StreamPage.ConnectAccount Connect Account (recommended)
+kv Basic.AutoConfig.StreamPage.DisconnectAccount Disconnect Account
+kv Basic.AutoConfig.StreamPage.DisconnectAccount.Confirm.Title Disconnect Account?
+kv Basic.AutoConfig.StreamPage.DisconnectAccount.Confirm.Text This change will apply immediately. Are you sure you want to disconnect your account?
+kv Basic.AutoConfig.StreamPage.GetStreamKey Get Stream Key
+kv Basic.AutoConfig.StreamPage.MoreInfo More Info
+kv Basic.AutoConfig.StreamPage.UseStreamKey Use Stream Key
+kv Basic.AutoConfig.StreamPage.UseStreamKeyAdvanced Use Stream Key (advanced)
+kv Basic.AutoConfig.StreamPage.Service Service
+kv Basic.AutoConfig.StreamPage.Service.ShowAll Show All...
+kv Basic.AutoConfig.StreamPage.Service.Custom Custom...
+kv Basic.AutoConfig.StreamPage.Server Server
+kv Basic.AutoConfig.StreamPage.StreamKey Stream Key
+kv Basic.AutoConfig.StreamPage.StreamKey.ToolTip RIST: enter the encryption passphrase.
+RTMP: enter the key provided by the service.
+SRT: enter the streamid if the service uses one.
+kv Basic.AutoConfig.StreamPage.EncoderKey Encoder Key
+kv Basic.AutoConfig.StreamPage.BearerToken Bearer Token
+kv Basic.AutoConfig.StreamPage.ConnectedAccount Connected account
+kv Basic.AutoConfig.StreamPage.PerformBandwidthTest Estimate bitrate with bandwidth test (may take a few minutes)
+kv Basic.AutoConfig.StreamPage.PreferHardwareEncoding Prefer hardware encoding
+kv Basic.AutoConfig.StreamPage.PreferHardwareEncoding.ToolTip Hardware Encoding eliminates most CPU usage, but may require more bitrate to obtain the same level of quality.
+kv Basic.AutoConfig.StreamPage.StreamWarning.Title Stream warning
+kv Basic.AutoConfig.StreamPage.StreamWarning.Text The bandwidth test is about to stream randomized video data without audio to your channel. If you're able, it's recommended to temporarily turn off saving videos of streams and set the stream to private until after the test has completed. Continue?
+kv Basic.AutoConfig.StreamPage.UseMultitrackVideo Test %1
+kv Basic.AutoConfig.TestPage Final Results
+kv Basic.AutoConfig.TestPage.SubTitle.Testing The program is now executing a set of tests to estimate the ideal settings
+kv Basic.AutoConfig.TestPage.SubTitle.Complete Testing complete
+kv Basic.AutoConfig.TestPage.TestingBandwidth Performing bandwidth test, this may take a few minutes...
+kv Basic.AutoConfig.TestPage.TestingBandwidth.NoOutput No output for the protocol of this service was found
+kv Basic.AutoConfig.TestPage.TestingBandwidth.Connecting Connecting to: %1...
+kv Basic.AutoConfig.TestPage.TestingBandwidth.ConnectFailed Failed to connect to any servers, please check your internet connection and try again.
+kv Basic.AutoConfig.TestPage.TestingBandwidth.Server Testing bandwidth for: %1
+kv Basic.AutoConfig.TestPage.TestingStreamEncoder Testing stream encoder, this may take a minute...
+kv Basic.AutoConfig.TestPage.TestingRecordingEncoder Testing recording encoder, this may take a minute...
+kv Basic.AutoConfig.TestPage.TestingRes.Fail Failed to start up encoder
+kv Basic.AutoConfig.TestPage.TestingRes.Resolution Testing %1x%2 %3 FPS...
+kv Basic.AutoConfig.TestPage.Result.StreamingEncoder Streaming Encoder
+kv Basic.AutoConfig.TestPage.Result.RecordingEncoder Recording Encoder
+kv Basic.AutoConfig.TestPage.Result.Header The program has determined that these estimated settings are ideal for you:
+kv Basic.AutoConfig.TestPage.Result.Footer To use these settings, click Apply Settings. To reconfigure the wizard and try again, click Back. To manually configure settings yourself, click Cancel and open Settings.
+kv Basic.AutoConfig.Info The auto-configuration wizard will determine the best settings based on your computer specs and internet speed.
+kv Basic.AutoConfig.RunAnytime This can be run at any time by going to the Tools menu.
+kv Basic.AutoConfig.TestPage.Result.StreamingResolution Streaming (Scaled) Resolution
+kv Basic.Stats Stats
+kv Basic.Stats.CPUUsage CPU Usage
+kv Basic.Stats.HDDSpaceAvailable Disk space available
+kv Basic.Stats.MemoryUsage Memory Usage
+kv Basic.Stats.AverageTimeToRender Average time to render frame
+kv Basic.Stats.SkippedFrames Skipped frames due to encoding lag
+kv Basic.Stats.MissedFrames Frames missed due to rendering lag
+kv Basic.Stats.Output.Stream Stream
+kv Basic.Stats.Output.Recording Recording
+kv Basic.Stats.Status Status
+kv Basic.Stats.Status.Recording Recording
+kv Basic.Stats.Status.Live LIVE
+kv Basic.Stats.Status.Reconnecting Reconnecting
+kv Basic.Stats.Status.Inactive Inactive
+kv Basic.Stats.Status.Active Active
+kv Basic.Stats.DroppedFrames Dropped Frames (Network)
+kv Basic.Stats.MegabytesSent Total Data Output
+kv Basic.Stats.Bitrate Bitrate
+kv Basic.Stats.DiskFullIn Disk full in (approx.)
+kv Basic.Stats.DiskFullIn.Text %1 Hours, %2 Minutes
+kv Basic.Stats.ResetStats Reset Stats
+kv ResetUIWarning.Title Are you sure you want to reset the UI?
+kv ResetUIWarning.Text Resetting the UI will hide additional docks. You will need to unhide these docks from the Docks menu if you want them to be visible.
+
+Are you sure you want to reset the UI?
+kv Updater.Title New update available
+kv Updater.Text There is a new update available:
+kv Updater.UpdateNow Update Now
+kv Updater.RemindMeLater Remind me Later
+kv Updater.Skip Skip Version
+kv Updater.NoUpdatesAvailable.Title No updates available
+kv Updater.NoUpdatesAvailable.Text No updates are currently available
+kv Updater.BranchNotFound.Title Update Channel Removed
+kv Updater.BranchNotFound.Text Your selected update channel is no longer available, OBS has been reset to the default.
+kv Updater.RepairButUpdatesAvailable.Title Integrity Check Unavailable
+kv Updater.RepairButUpdatesAvailable.Text Checking file integrity is only possible for the latest version available. Use Help → Check For Updates to verify and update your OBS installation.
+kv Updater.RepairConfirm.Title Confirm Integrity Check
+kv Updater.RepairConfirm.Text Starting the integrity check will scan your OBS installation for corruption and redownload broken/modified files. This may take a moment.
+
+Do you wish to proceed?
+kv Updater.FailedToLaunch Failed to launch updater
+kv QuickTransitions.SwapScenes Swap Preview/Program Scenes After Transitioning
+kv QuickTransitions.SwapScenesTT Swaps the preview and program scenes after transitioning (if the program's original scene still exists).
+This will not undo any changes that may have been made to the program's original scene.
+kv QuickTransitions.DuplicateScene Duplicate Scene
+kv QuickTransitions.DuplicateSceneTT When editing the same scene, allows editing transform/visibility of sources without modifying the program output.
+To edit properties of sources without modifying the program output, enable 'Duplicate Sources'.
+Changing this value will reset the current program scene (if it still exists).
+kv QuickTransitions.EditProperties Duplicate Sources
+kv QuickTransitions.EditPropertiesTT When editing the same scene, allows editing properties of sources without modifying the program output.
+This can only be used if 'Duplicate Scene' is enabled.
+Certain sources (such as capture or media sources) do not support this and cannot be edited separately.
+Changing this value will reset the current program scene (if it still exists).
+
+Warning: Because sources will be duplicated, this may require extra system or video resources.
+kv QuickTransitions.HotkeyName Quick Transition: %1
+kv Basic.AddTransition Add Configurable Transition
+kv Basic.RemoveTransition Remove Configurable Transition
+kv Basic.TransitionProperties Transition Properties
+kv Basic.SceneTransitions Scene Transitions
+kv Basic.TransitionDuration Duration
+kv Basic.TogglePreviewProgramMode Studio Mode
+kv Basic.EnablePreviewProgramMode Enable Studio Mode
+kv Basic.DisablePreviewProgramMode Disable Studio Mode
+kv Undo.Undo Undo
+kv Undo.Redo Redo
+kv Undo.Add Add '%1'
+kv Undo.Delete Delete '%1'
+kv Undo.Rename Rename '%1'
+kv Undo.SceneCollection.Switch Switch to '%1'
+kv Undo.Item.Undo Undo %1
+kv Undo.Item.Redo Redo %1
+kv Undo.Sources.Multi Delete %1 Sources
+kv Undo.Filters Filter Changes on '%1'
+kv Undo.Filters.Paste.Single Paste Filter '%1' to '%2'
+kv Undo.Filters.Paste.Multiple Copy Filters from '%1' to '%2'
+kv Undo.Transform Transform source(s) In '%1'
+kv Undo.Transform.Paste Paste Transformation in '%1'
+kv Undo.Transform.Rotate Rotation In '%1'
+kv Undo.Transform.Reset Transform Reset In '%1'
+kv Undo.Transform.HFlip Horizontal Flip In '%1'
+kv Undo.Transform.VFlip Vertical Flip In '%1'
+kv Undo.Transform.FitToScreen Fit to Screen In '%1'
+kv Undo.Transform.StretchToScreen Stretch to Screen in '%1'
+kv Undo.Transform.Center Center to Screen in '%1'
+kv Undo.Transform.VCenter Vertical Center to Screen in '%1'
+kv Undo.Transform.HCenter Horizontal Center to Screen in '%1'
+kv Undo.Volume.Change Volume Change on '%1'
+kv Undo.Volume.Mute Mute '%1'
+kv Undo.Volume.Unmute Unmute '%1'
+kv Undo.Balance.Change Audio Balance Change on '%1'
+kv Undo.SyncOffset.Change Audio Sync Offset Change on '%1'
+kv Undo.MonitoringType.Change Change Audio Monitoring on '%1'
+kv Undo.Mixers.Change Change Audio Mixers on '%1'
+kv Undo.ForceMono.On Enable Force Mono on '%1'
+kv Undo.ForceMono.Off Disable Force Mono on '%1'
+kv Undo.Properties Property Change on '%1'
+kv Undo.Scene.Duplicate Duplicate Scene '%1'
+kv Undo.ShowTransition Show Transition on '%1'
+kv Undo.HideTransition Hide Transition on '%1'
+kv Undo.ShowSceneItem Show '%1' in '%2'
+kv Undo.HideSceneItem Hide '%1' in '%2'
+kv Undo.ReorderSources Reorder sources in '%1'
+kv Undo.MoveUp Move '%1' up in '%2'
+kv Undo.MoveDown Move '%1' down in '%2'
+kv Undo.MoveToTop Move '%1' to top in '%2'
+kv Undo.MoveToBottom Move '%1' to bottom in '%2'
+kv Undo.PasteSource Paste Source(s) in '%1'
+kv Undo.PasteSourceRef Paste Source Reference(s) in '%1'
+kv Undo.GroupItems Group Items into '%1'
+kv Undo.ScaleFiltering Scale Filtering on '%1' in '%2'
+kv Undo.BlendingMode Blending Mode on '%1' in '%2'
+kv Undo.BlendingMethod Blending Method on '%1' in '%2'
+kv Undo.DeinterlacingMode Deinterlacing Mode on '%1'
+kv Undo.DeinterlacingOrder Deinterlacing Field Order on '%1'
+kv TransitionNameDlg.Text Please enter the name of the transition
+kv TransitionNameDlg.Title Transition Name
+kv TitleBar.SafeMode SAFE MODE
+kv TitleBar.PortableMode Portable Mode
+kv TitleBar.Profile Profile
+kv TitleBar.Scenes Scenes
+kv NameExists.Title Name already exists
+kv NameExists.Text The name is already in use.
+kv NoNameEntered.Title Please enter a valid name
+kv NoNameEntered.Text You cannot use empty names.
+kv ConfirmStart.Title Start Stream?
+kv ConfirmStart.Text Are you sure you want to start the stream?
+kv ConfirmStop.Title Stop Stream?
+kv ConfirmStop.Text Are you sure you want to stop the stream?
+kv ConfirmStopRecord.Title Stop Recording?
+kv ConfirmStopRecord.Text Are you sure you want to stop recording?
+kv ConfirmBWTest.Title Start Bandwidth Test?
+kv ConfirmBWTest.Text You have OBS configured in bandwidth test mode. This mode allows for network testing without your channel going live. Once you are done testing, you will need to disable it in order for viewers to be able to see your stream.
+
+Do you want to continue?
+kv ConfirmExit.Title Active Outputs
+kv ConfirmExit.Text OBS is still currently active. All streams/recordings will be shut down.
+kv ConfirmRemove.Title Confirm Remove
+kv ConfirmRemove.Text Are you sure you wish to remove '%1'?
+kv ConfirmRemove.TextMultiple Are you sure you wish to remove %1 items?
+kv ConfirmReset.Title Reset Properties
+kv ConfirmReset.Text Are you sure you wish to reset current properties to their defaults?
+kv Output.StartStreamFailed Failed to start streaming
+kv Output.StartRecordingFailed Failed to start recording
+kv Output.StartReplayFailed Failed to start replay buffer
+kv Output.StartVirtualCamFailed Failed to start virtual camera
+kv Output.StartFailedGeneric Starting the output failed. Please check the log for details.
+
+Note: If you are using the NVENC or AMD encoders, make sure your video drivers are up to date.
+kv Output.ReplayBuffer.PauseWarning.Title Cannot save replays while paused
+kv Output.ReplayBuffer.PauseWarning.Text Warning: Replays cannot be saved while recording is paused.
+kv Output.ConnectFail.Title Failed to connect
+kv Output.ConnectFail.BadPath Invalid Path or Connection URL. Please check your settings to confirm that they are valid.
+kv Output.ConnectFail.ConnectFailed Failed to connect to server
+kv Output.ConnectFail.InvalidStream Could not access the specified channel or stream key, please double-check your stream key. If it is correct, there may be a problem connecting to the server.
+kv Output.ConnectFail.HdrDisabled HDR output is currently disabled for this output.
+kv Output.ConnectFail.Error An unexpected error occurred when trying to connect to the server. More information in the log file.
+kv Output.ConnectFail.Disconnected Disconnected from server.
+kv Output.StreamEncodeError.Title Encoding error
+kv Output.StreamEncodeError.Msg An encoder error occurred while streaming.
+kv Output.StreamEncodeError.Msg.LastError An encoder error occurred while streaming:<br><br>%1
+kv Output.RecordFail.Title Failed to start recording
+kv Output.RecordFail.Unsupported The output format is either unsupported or does not support more than one audio track. Please check your settings and try again.
+kv Output.RecordNoSpace.Title Insufficient disk space
+kv Output.RecordNoSpace.Msg There is not sufficient disk space to continue recording.
+kv Output.RecordError.Title Recording error
+kv Output.RecordError.Msg An unspecified error occurred while recording.
+kv Output.RecordError.EncodeErrorMsg An encoder error occurred while recording.
+kv Output.RecordError.EncodeErrorMsg.LastError An encoder error occurred while recording:<br><br>%1
+kv Output.BadPath.Title Bad File Path
+kv Output.BadPath.Text The configured Recording Path could not be opened. Please check your Recording Path under Settings → Output → Recording.
+kv Output.NoBroadcast.Title No Broadcast Configured
+kv Output.NoBroadcast.Text You need to set up a broadcast before you can start streaming.
+kv Output.BroadcastStartFailed Failed to start broadcast
+kv Output.BroadcastStopFailed Failed to stop broadcast
+kv LogUploadDialog.Title OBS Studio Log File Upload
+kv LogUploadDialog.Labels.PrivacyNotice Please read the <a href='https://obsproject.com/privacy-policy'>Privacy Policy</a> and its section regarding file uploads before uploading any files.
+kv LogUploadDialog.Labels.Progress Log upload in progress. Please wait...
+kv LogUploadDialog.Labels.Description.AppLog Your log file has been uploaded. You can now share the URL for debugging or support purposes.
+kv LogUploadDialog.Labels.Description.CrashLog Your crash report has been uploaded. You can now share the URL for debugging purposes.
+kv LogUploadDialog.Buttons.ConfirmUpload Upload
+kv LogUploadDialog.Buttons.CopyURL Copy Log URL
+kv LogUploadDialog.Buttons.AnalyzeURL Analyze Log File
+kv LogUploadDialog.Buttons.RetryButton Retry
+kv LogUploadDialog.Errors.Template An error occurred while trying to upload the file:
+
+%1
+kv LogUploadDialog.Errors.NoLogFile No file to upload found or file was empty.
+kv Remux.SourceFile OBS Recording
+kv Remux.TargetFile Target File
+kv Remux.Remux Remux
+kv Remux.Stop Stop Remuxing
+kv Remux.ClearFinished Clear Finished Items
+kv Remux.ClearAll Clear All Items
+kv Remux.OBSRecording OBS Recording
+kv Remux.FinishedTitle Remuxing finished
+kv Remux.Finished Recording remuxed
+kv Remux.FinishedError Recording remuxed, but the file may be incomplete
+kv Remux.SelectRecording Select OBS Recording...
+kv Remux.SelectTarget Select target file...
+kv Remux.FileExistsTitle Target files exist
+kv Remux.FileExists The following target files already exist. Do you want to replace them?
+kv Remux.ExitUnfinishedTitle Remuxing in progress
+kv Remux.ExitUnfinished Remuxing is not finished, stopping now may render the target file unusable.
+Are you sure you want to stop remuxing?
+kv Remux.HelpText Drop files in this window to remux, or select an empty "OBS Recording" cell to browse for a file.
+kv Remux.NoFilesAddedTitle No remuxing file added
+kv Remux.NoFilesAdded No file is added to remux. Drop a folder containing one or more video files.
+kv MissingFiles Missing Files
+kv MissingFiles.MissingFile Missing File
+kv MissingFiles.NewFile New File
+kv MissingFiles.HelpText Some files are missing since you last used OBS.
+kv MissingFiles.Clear <cleared>
+kv MissingFiles.NumFound Found %1 of %2
+kv MissingFiles.Search Search Directory...
+kv MissingFiles.SelectFile Select file...
+kv MissingFiles.SelectDir Select Folder to Search in
+kv MissingFiles.State State
+kv MissingFiles.Missing Missing
+kv MissingFiles.Replaced Replaced
+kv MissingFiles.Cleared Cleared
+kv MissingFiles.Found Found
+kv MissingFiles.AutoSearch Additional file matches found
+kv MissingFiles.AutoSearchText OBS has found additional matches for missing files in that directory. Would you like to add them?
+kv MissingFiles.NoMissing.Title Missing Files Check
+kv MissingFiles.NoMissing.Text No files appear to be missing.
+kv MacPermissions.MenuAction Review App Permissions...
+kv MacPermissions.Title Review App Permissions
+kv MacPermissions.Description OBS Studio requires your permission to be able to provide certain features. It is recommended to enable these permissions, but they are not required to use the app. You can always enable them later.
+kv MacPermissions.Description.OpenDialog You can re-open this dialog via the OBS Studio menu.
+kv MacPermissions.AccessGranted Access Granted
+kv MacPermissions.RequestAccess Request Access
+kv MacPermissions.OpenPreferences Open %1 Preferences
+kv MacPermissions.Item.ScreenRecording Screen Recording
+kv MacPermissions.Item.ScreenRecording.Details OBS requires this permission to be able to capture your screen.
+kv MacPermissions.Item.Camera Camera
+kv MacPermissions.Item.Camera.Details This permission is needed in order to capture content from a webcam or capture card.
+kv MacPermissions.Item.Microphone Microphone
+kv MacPermissions.Item.Microphone.Details OBS requires this permission if you want to capture your microphone or an external audio device.
+kv MacPermissions.Item.InputMonitoring Input Monitoring
+kv MacPermissions.Item.InputMonitoring.Details This permission is required for hotkeys to work while OBS is in the background.
+kv MacPermissions.Item.Accessibility Accessibility
+kv MacPermissions.Item.Accessibility.Details On older installations, OBS may be listed in "Accessibility" instead of "Input Monitoring".
+kv MacPermissions.Continue Continue
+kv SourceLeak.Title Source Cleanup Error
+kv SourceLeak.Text There was a problem while changing scene collections and some sources could not be unloaded. This issue is typically caused by plugins that are not releasing resources properly. Please ensure that any plugins you are using are up to date.
+
+OBS Studio will now exit to prevent any potential data corruption.
+kv Basic.DesktopDevice1 Desktop Audio
+kv Basic.DesktopDevice2 Desktop Audio 2
+kv Basic.AuxDevice1 Mic/Aux
+kv Basic.AuxDevice2 Mic/Aux 2
+kv Basic.AuxDevice3 Mic/Aux 3
+kv Basic.AuxDevice4 Mic/Aux 4
+kv Basic.Scene Scene
+kv Basic.DisplayCapture Display Capture
+kv Basic.Main.PreviewConextMenu.Enable Enable Preview
+kv Basic.Main.Preview.Disable Disable Preview
+kv ScaleFiltering Scale Filtering
+kv ScaleFiltering.Point Point
+kv ScaleFiltering.Bilinear Bilinear
+kv ScaleFiltering.Bicubic Bicubic
+kv ScaleFiltering.Lanczos Lanczos
+kv ScaleFiltering.Area Area
+kv BlendingMethod Blending Method
+kv BlendingMethod.Default Default
+kv BlendingMethod.SrgbOff SRGB Off
+kv BlendingMode Blending Mode
+kv BlendingMode.Normal Normal
+kv BlendingMode.Additive Add
+kv BlendingMode.Subtract Subtract
+kv BlendingMode.Screen Screen
+kv BlendingMode.Multiply Multiply
+kv BlendingMode.Lighten Lighten
+kv BlendingMode.Darken Darken
+kv Deinterlacing Deinterlacing
+kv Deinterlacing.Discard Discard
+kv Deinterlacing.Retro Retro
+kv Deinterlacing.Blend Blend
+kv Deinterlacing.Blend2x Blend 2x
+kv Deinterlacing.Linear Linear
+kv Deinterlacing.Linear2x Linear 2x
+kv Deinterlacing.Yadif Yadif
+kv Deinterlacing.Yadif2x Yadif 2x
+kv Deinterlacing.TopFieldFirst Top Field First
+kv Deinterlacing.BottomFieldFirst Bottom Field First
+kv VolControl.SliderUnmuted Volume slider for '%1':
+kv VolControl.SliderMuted Volume slider for '%1': (currently muted)
+kv VolControl.Mute Mute '%1'
+kv VolControl.Properties Properties for '%1'
+kv VolControl.UnassignedWarning.Title Unassigned Audio Source
+kv VolControl.UnassignedWarning.Text "%1" is not assigned to any audio tracks and it will not be audible in streams or recordings.
+
+To assign an audio source to a track, open the Advanced Audio Properties via the Edit menu on the menu bar, or the cog button in the mixer dock toolbar.
+kv Basic.Main.AddSceneDlg.Title Add Scene
+kv Basic.Main.AddSceneDlg.Text Please enter the name of the scene
+kv Basic.Main.DefaultSceneName.Text Scene %1
+kv Basic.Main.AddSceneCollection.Title Add Scene Collection
+kv Basic.Main.AddSceneCollection.Text Please enter the name of the scene collection
+kv Basic.Main.RenameSceneCollection.Title Rename Scene Collection
+kv Basic.Main.RemigrateSceneCollection.Title Update Scene Collection Resolution
+kv Basic.Main.RemigrateSceneCollection.Text Do you want to update the scene collection resolution of "%1" to match the current profile's canvas resolution of %2x%3?
+kv Basic.Main.RemigrateSceneCollection.CannotMigrate.Active Cannot update scene collection resolution while outputs are active.
+kv Basic.Main.RemigrateSceneCollection.CannotMigrate.UnknownBaseResolution Failed to update scene collection resolution. The original resolution is unknown.
+kv Basic.Main.RemigrateSceneCollection.CannotMigrate.FailedVideoReset Reset not possible: Changing OBS resolution failed.
+kv Basic.Main.RemigrateSceneCollection.CannotMigrate.BaseResolutionMatches Reset not possible: Current resolution already the base resolution of scene collection.
+kv AddProfile.Title Add Profile
+kv AddProfile.Text Please enter the name of the profile
+kv AddProfile.WizardCheckbox Show auto-configuration wizard
+kv RenameProfile.Title Rename Profile
+kv Basic.Main.MixerRename.Title Rename Audio Source
+kv Basic.Main.MixerRename.Text Please enter the name of the audio source
+kv Basic.Main.PreviewDisabled Preview is currently disabled
+kv Basic.SourceSelect Add Source
+kv Basic.SourceSelect.SelectType Source Type
+kv Basic.SourceSelect.Recent Recently Created
+kv Basic.SourceSelect.Description Select which source(s) to add to your current scene.
+kv Basic.SourceSelect.NewSource Add a new %1
+kv Basic.SourceSelect.AddExisting Add %1 existing
+kv Basic.SourceSelect.NoSelection Add existing
+kv Basic.SourceSelect.CreateButton Create New
+kv Basic.SourceSelect.AddVisible Make source visible
+kv Basic.SourceSelect.NoExisting You have no existing %1 sources yet.
+kv Basic.SourceSelect.Accessible.SourceName Source Name
+kv Basic.SourceSelect.Accessible.Existing Add an existing source
+kv Basic.SourceSelect.Deprecated.Create This source type is marked as deprecated and may be removed in the future.
+kv Basic.Main.Sources.Visibility Visibility
+kv Basic.Main.Sources.VisibilityDescription Controls the visibility of '%1' in the canvas
+kv Basic.Main.Sources.Lock Lock
+kv Basic.Main.Sources.LockDescription Locks the position and scale of '%1' in the canvas
+kv Basic.PropertiesWindow Properties for '%1'
+kv Basic.PropertiesWindow.AutoSelectFormat %1 (autoselect: %2)
+kv Basic.PropertiesWindow.SelectColor Select color
+kv Basic.PropertiesWindow.SelectFont Select font
+kv Basic.PropertiesWindow.SelectFont.WindowTitle Pick a Font
+kv Basic.PropertiesWindow.ConfirmTitle Settings Changed
+kv Basic.PropertiesWindow.Confirm There are unsaved changes. Do you want to keep them?
+kv Basic.PropertiesWindow.NoProperties No properties available
+kv Basic.PropertiesWindow.AddFiles Add Files
+kv Basic.PropertiesWindow.AddDir Add Directory
+kv Basic.PropertiesWindow.AddURL Add Path/URL
+kv Basic.PropertiesWindow.AddEditableListDir Add directory to '%1'
+kv Basic.PropertiesWindow.AddEditableListFiles Add files to '%1'
+kv Basic.PropertiesWindow.AddEditableListEntry Add entry to '%1'
+kv Basic.PropertiesWindow.EditEditableListEntry Edit entry from '%1'
+kv Basic.PropertiesView.FPS.Simple Simple FPS Values
+kv Basic.PropertiesView.FPS.Rational Rational FPS Values
+kv Basic.PropertiesView.FPS.ValidFPSRanges Valid FPS Ranges:
+kv Basic.PropertiesView.UrlButton.Text Open this link in your default web browser?
+kv Basic.PropertiesView.UrlButton.Text.Url URL: %1
+kv Basic.PropertiesView.UrlButton.OpenUrl Open URL
+kv Basic.InteractionWindow Interacting with '%1'
+kv Basic.StatusBar.Reconnecting Disconnected, reconnecting in %2 second(s) (attempt %1)
+kv Basic.StatusBar.AttemptingReconnect Attempting to reconnect... (attempt %1)
+kv Basic.StatusBar.ReconnectSuccessful Reconnection successful
+kv Basic.StatusBar.Delay Delay (%1 sec)
+kv Basic.StatusBar.DelayStartingIn Delay (starting in %1 sec)
+kv Basic.StatusBar.DelayStoppingIn Delay (stopping in %1 sec)
+kv Basic.StatusBar.DelayStartingStoppingIn Delay (stopping in %1 sec, starting in %2 sec)
+kv Basic.StatusBar.RecordingSavedTo Recording saved to '%1'
+kv Basic.StatusBar.ReplayBufferSavedTo Replay buffer saved to '%1'
+kv Basic.StatusBar.ScreenshotSavedTo Screenshot saved to '%1'
+kv Basic.StatusBar.AutoRemuxedTo Recording auto remuxed to '%1'
+kv Basic.Filters Filters
+kv Basic.Filters.AsyncFilters Audio/Video Filters
+kv Basic.Filters.AudioFilters Audio Filters
+kv Basic.Filters.EffectFilters Effect Filters
+kv Basic.Filters.Title Filters for '%1'
+kv Basic.Filters.AddFilter.Title Filter name
+kv Basic.Filters.AddFilter.Text Please specify the name of the filter
+kv Basic.TransformWindow Scene Item Transform
+kv Basic.TransformWindow.Position Position
+kv Basic.TransformWindow.PositionX X
+kv Basic.TransformWindow.PositionY Y
+kv Basic.TransformWindow.Rotation Rotation
+kv Basic.TransformWindow.Size Size
+kv Basic.TransformWindow.Width Width
+kv Basic.TransformWindow.Height Height
+kv Basic.TransformWindow.Alignment Alignment
+kv Basic.TransformWindow.BoundsType Bounds Type
+kv Basic.TransformWindow.BoundsAlignment Bounds Alignment
+kv Basic.TransformWindow.Bounds Bounds
+kv Basic.TransformWindow.BoundsWidth Bounding Box Width
+kv Basic.TransformWindow.BoundsHeight Bounding Box Height
+kv Basic.TransformWindow.CropToBounds Crop Bounds
+kv Basic.TransformWindow.Crop Crop
+kv Basic.TransformWindow.CropLeft Crop Left
+kv Basic.TransformWindow.CropRight Crop Right
+kv Basic.TransformWindow.CropTop Crop Top
+kv Basic.TransformWindow.CropBottom Crop Bottom
+kv Basic.TransformWindow.Accessible.PositionX X Position
+kv Basic.TransformWindow.Accessible.PositionY Y Position
+kv Basic.TransformWindow.Alignment.TopLeft Top Left
+kv Basic.TransformWindow.Alignment.TopCenter Top Center
+kv Basic.TransformWindow.Alignment.TopRight Top Right
+kv Basic.TransformWindow.Alignment.CenterLeft Center Left
+kv Basic.TransformWindow.Alignment.Center Center
+kv Basic.TransformWindow.Alignment.CenterRight Center Right
+kv Basic.TransformWindow.Alignment.BottomLeft Bottom Left
+kv Basic.TransformWindow.Alignment.BottomCenter Bottom Center
+kv Basic.TransformWindow.Alignment.BottomRight Bottom Right
+kv Basic.TransformWindow.BoundsType.None Automatic
+kv Basic.TransformWindow.BoundsType.MaxOnly Maximum size only
+kv Basic.TransformWindow.BoundsType.ScaleInner Fit
+kv Basic.TransformWindow.BoundsType.ScaleOuter Cover
+kv Basic.TransformWindow.BoundsType.ScaleToWidth Fill Width
+kv Basic.TransformWindow.BoundsType.ScaleToHeight Fill Height
+kv Basic.TransformWindow.BoundsType.Stretch Stretch
+kv Basic.TransformWindow.Title Edit Transform for '%1'
+kv Basic.TransformWindow.NoSelectedSource No source selected
+kv Basic.Main.AddSourceHelp.Title Cannot Add Source
+kv Basic.Main.AddSourceHelp.Text You need to have at least 1 scene to add a source.
+kv Basic.Main.Scenes Scenes
+kv Basic.Main.Sources Sources
+kv Basic.Main.Source Source
+kv Basic.Main.Controls Controls
+kv Basic.Main.PreparingStream Preparing...
+kv Basic.Main.Connecting Connecting...
+kv Basic.Main.StartRecording Start Recording
+kv Basic.Main.StartReplayBuffer Start Replay Buffer
+kv Basic.Main.SaveReplay Save Replay
+kv Basic.Main.StartStreaming Start Streaming
+kv Basic.Main.StartBroadcast Go Live
+kv Basic.Main.StartVirtualCam Start Virtual Camera
+kv Basic.Main.StopRecording Stop Recording
+kv Basic.Main.PauseRecording Pause Recording
+kv Basic.Main.UnpauseRecording Unpause Recording
+kv Basic.Main.SplitFile Split Recording File
+kv Basic.Main.AddChapterMarker Add Chapter Marker (Hybrid MP4/MOV only)
+kv Basic.Main.StoppingRecording Stopping Recording...
+kv Basic.Main.StopReplayBuffer Stop Replay Buffer
+kv Basic.Main.StoppingReplayBuffer Stopping Replay Buffer...
+kv Basic.Main.SetupBroadcast Manage Broadcast
+kv Basic.Main.StopStreaming Stop Streaming
+kv Basic.Main.StopBroadcast End Broadcast
+kv Basic.Main.AutoStopEnabled (Auto Stop)
+kv Basic.Main.StoppingStreaming Stopping Stream...
+kv Basic.Main.ForceStopStreaming Stop Streaming (discard delay)
+kv Basic.Main.ShowContextBar Show Source Toolbar
+kv Basic.Main.HideContextBar Hide Source Toolbar
+kv Basic.Main.StopVirtualCam Stop Virtual Camera
+kv Basic.Main.Group Group %1
+kv Basic.Main.NewGroup New Group
+kv Basic.Main.GroupItems Group Selected Items
+kv Basic.Main.Ungroup Ungroup
+kv Basic.Main.GridMode Grid Mode
+kv Basic.Main.ListMode List Mode
+kv Basic.Main.VirtualCamConfig Configure Virtual Camera
+kv Basic.VCam.VirtualCamera Virtual Camera
+kv Basic.VCam.OutputType Output Type
+kv Basic.VCam.OutputSelection Output Selection
+kv Basic.VCam.OutputType.Program Program (Default)
+kv Basic.VCam.OutputSelection.NoSelection No selection for this output type
+kv Basic.VCam.RestartWarning The virtual camera will be restarted to apply this change
+kv Basic.MainMenu.File &File
+kv Basic.MainMenu.File.Export &Export
+kv Basic.MainMenu.File.Import &Import
+kv Basic.MainMenu.File.ShowRecordings Show &Recordings
+kv Basic.MainMenu.File.Remux Re&mux Recordings
+kv Basic.MainMenu.File.Settings &Settings
+kv Basic.MainMenu.File.ShowSettingsFolder Show Settings Folder
+kv Basic.MainMenu.File.ShowProfileFolder Show Profile Folder
+kv Basic.MainMenu.File.ShowMissingFiles Check for Missing Files
+kv Basic.MainMenu.File.Exit E&xit
+kv Basic.MainMenu.Edit &Edit
+kv Basic.MainMenu.Edit.Undo &Undo
+kv Basic.MainMenu.Edit.Redo &Redo
+kv Basic.MainMenu.Edit.LockPreview &Lock Preview
+kv Basic.MainMenu.Edit.Scale Preview &Scaling
+kv Basic.MainMenu.Edit.Scale.Window Scale to Window
+kv Basic.MainMenu.Edit.Scale.Canvas Canvas (%1x%2)
+kv Basic.MainMenu.Edit.Scale.Output Output (%1x%2)
+kv Basic.MainMenu.Edit.Scale.Manual Scaled (%1x%2)
+kv Basic.MainMenu.Edit.Scale.ZoomIn Zoom In
+kv Basic.MainMenu.Edit.Scale.ZoomOut Zoom Out
+kv Basic.MainMenu.Edit.Scale.ResetZoom Reset Zoom
+kv Basic.MainMenu.Edit.Transform &Transform
+kv Basic.MainMenu.Edit.Transform.EditTransform &Edit Transform
+kv Basic.MainMenu.Edit.Transform.CopyTransform Copy Transform
+kv Basic.MainMenu.Edit.Transform.PasteTransform Paste Transform
+kv Basic.MainMenu.Edit.Transform.ResetTransform &Reset Transform
+kv Basic.MainMenu.Edit.Transform.Rotate90CW Rotate 90 degrees CW
+kv Basic.MainMenu.Edit.Transform.Rotate90CCW Rotate 90 degrees CCW
+kv Basic.MainMenu.Edit.Transform.Rotate180 Rotate 180 degrees
+kv Basic.MainMenu.Edit.Transform.FlipHorizontal Flip &Horizontal
+kv Basic.MainMenu.Edit.Transform.FlipVertical Flip &Vertical
+kv Basic.MainMenu.Edit.Transform.FitToScreen &Fit to screen
+kv Basic.MainMenu.Edit.Transform.StretchToScreen &Stretch to screen
+kv Basic.MainMenu.Edit.Transform.CenterToScreen &Center to screen
+kv Basic.MainMenu.Edit.Transform.VerticalCenter Center Vertically
+kv Basic.MainMenu.Edit.Transform.HorizontalCenter Center Horizontally
+kv Basic.MainMenu.Edit.Order &Order
+kv Basic.MainMenu.Edit.Order.MoveUp Move &Up
+kv Basic.MainMenu.Edit.Order.MoveDown Move &Down
+kv Basic.MainMenu.Edit.Order.MoveToTop Move to &Top
+kv Basic.MainMenu.Edit.Order.MoveToBottom Move to &Bottom
+kv Basic.MainMenu.Edit.AdvAudio &Advanced Audio Properties
+kv Basic.MainMenu.View &View
+kv Basic.MainMenu.View.Toolbars &Toolbars
+kv Basic.MainMenu.View.ListboxToolbars Dock Toolbars
+kv Basic.MainMenu.View.ContextBar Source Toolbar
+kv Basic.MainMenu.View.SourceIcons Source &Icons
+kv Basic.MainMenu.View.StatusBar &Status Bar
+kv Basic.MainMenu.View.Fullscreen.Interface Fullscreen Interface
+kv Basic.MainMenu.View.ResetUI &Reset UI
+kv Basic.MainMenu.View.AlwaysOnTop &Always On Top
+kv Basic.MainMenu.View.SceneListMode Scene List Mode
+kv Basic.MainMenu.Docks &Docks
+kv Basic.MainMenu.Docks.ResetDocks &Reset Docks
+kv Basic.MainMenu.Docks.LockDocks &Lock Docks
+kv Basic.MainMenu.Docks.SideDocks &Full-Height Docks
+kv Basic.MainMenu.Docks.CustomBrowserDocks &Custom Browser Docks
+kv Basic.MainMenu.Import Import...
+kv Basic.MainMenu.Export Export...
+kv Basic.MainMenu.SceneCollection &Scene Collection
+kv Basic.MainMenu.Profile &Profile
+kv Basic.MainMenu.Profile.Import Import Profile
+kv Basic.MainMenu.Profile.Export Export Profile
+kv Basic.MainMenu.SceneCollection.Import Import Scene Collection
+kv Basic.MainMenu.SceneCollection.Export Export Scene Collection
+kv Basic.MainMenu.SceneCollection.Remigrate Reset Base Resolution
+kv Basic.MainMenu.SceneCollection.Migrate Set Base Resolution
+kv Basic.MainMenu.Profile.Exists The profile already exists
+kv Basic.MainMenu.Tools &Tools
+kv Basic.MainMenu.Help &Help
+kv Basic.MainMenu.Help.HelpPortal Help &Portal
+kv Basic.MainMenu.Help.Website Visit &Website
+kv Basic.MainMenu.Help.Discord Join &Discord Server
+kv Basic.MainMenu.Help.WhatsNew What's New
+kv Basic.MainMenu.Help.Logs &Log Files
+kv Basic.MainMenu.Help.Logs.ShowLogs &Show Log Files
+kv Basic.MainMenu.Help.Logs.UploadCurrentLog Upload &Current Log File
+kv Basic.MainMenu.Help.Logs.UploadLastLog Upload &Previous Log File
+kv Basic.MainMenu.Help.Logs.ViewCurrentLog &View Current Log
+kv Basic.MainMenu.Help.ReleaseNotes Release Notes
+kv Basic.MainMenu.Help.CheckForUpdates Check For Updates
+kv Basic.MainMenu.Help.Repair Check File Integrity
+kv Basic.MainMenu.Help.RestartSafeMode Restart in Safe Mode
+kv Basic.MainMenu.Help.RestartNormal Restart in Normal Mode
+kv Basic.MainMenu.Help.CrashLogs Crash &Reports
+kv Basic.MainMenu.Help.CrashLogs.ShowLogs &Show Crash Reports
+kv Basic.MainMenu.Help.CrashLogs.UploadLastLog Upload &Previous Crash Report
+kv Basic.MainMenu.Help.About &About
+kv Basic.Settings.ProgramRestart The program must be restarted for these settings to take effect.
+kv Basic.Settings.ConfirmTitle Confirm Changes
+kv Basic.Settings.Confirm You have unsaved changes. Save changes?
+kv Basic.Settings.MultitrackVideoDisabledSettings %1 %2 is controlling some of your stream settings
+kv Basic.Settings.General General
+kv Basic.Settings.General.Language Language
+kv Basic.Settings.General.Updater Updates
+kv Basic.Settings.General.UpdateChannel Update Channel
+kv Basic.Settings.General.UpdateChannelDisabled (Disabled)
+kv Basic.Settings.General.UpdateChannelDefault (Default)
+kv Basic.Settings.General.EnableAutoUpdates Automatically check for updates on startup
+kv Basic.Settings.General.OpenStatsOnStartup Open stats dialog on startup
+kv Basic.Settings.General.HideOBSWindowsFromCapture Hide OBS windows from screen capture
+kv Basic.Settings.General.HideOBSWindowsFromCapture.Tooltip This setting will hide all non-projector OBS Studio windows from being captured by OBS and affects 
+other applications, such as conferencing, screen sharing, remote support, screenshots, and other capture software.
+kv Basic.Settings.General.HideOBSWindowsFromCapture.Message Enabling this option hides all non-projector OBS Studio windows from being captured by OBS and affects other applications, such as conferencing, screen sharing, remote support, screenshots, and other capture software.
+kv Basic.Settings.General.WarnBeforeStartingStream Show confirmation dialog when starting streams
+kv Basic.Settings.General.WarnBeforeStoppingStream Show confirmation dialog when stopping streams
+kv Basic.Settings.General.WarnBeforeStoppingRecord Show confirmation dialog when stopping recording
+kv Basic.Settings.General.Projectors Projectors
+kv Basic.Settings.General.HideProjectorCursor Hide cursor over projectors
+kv Basic.Settings.General.ProjectorAlwaysOnTop Make projectors always on top
+kv Basic.Settings.General.Snapping Source Alignment Snapping
+kv Basic.Settings.General.ScreenSnapping Snap Sources to edge of screen
+kv Basic.Settings.General.CenterSnapping Snap Sources to horizontal and vertical center
+kv Basic.Settings.General.SourceSnapping Snap Sources to other sources
+kv Basic.Settings.General.SnapDistance Snap Sensitivity
+kv Basic.Settings.General.SpacingHelpers Show pixel alignment guides
+kv Basic.Settings.General.RecordWhenStreaming Automatically record when streaming
+kv Basic.Settings.General.KeepRecordingWhenStreamStops Keep recording when stream stops
+kv Basic.Settings.General.ReplayBufferWhileStreaming Automatically start replay buffer when streaming
+kv Basic.Settings.General.KeepReplayBufferStreamStops Keep replay buffer active when stream stops
+kv Basic.Settings.General.SysTray System Tray
+kv Basic.Settings.General.SysTrayWhenStarted Minimize to system tray when started
+kv Basic.Settings.General.SystemTrayHideMinimize Always minimize to system tray instead of task bar
+kv Basic.Settings.General.SaveProjectors Save projectors on exit
+kv Basic.Settings.General.CloseExistingProjectors Limit one fullscreen projector per screen
+kv Basic.Settings.General.Preview Preview
+kv Basic.Settings.General.OverflowHidden Hide overflow
+kv Basic.Settings.General.OverflowAlwaysVisible Overflow always visible
+kv Basic.Settings.General.OverflowSelectionHidden Show overflow even when source is invisible
+kv Basic.Settings.General.Importers Importers
+kv Basic.Settings.General.AutomaticCollectionSearch Search known locations for scene collections when importing
+kv Basic.Settings.General.SwitchOnDoubleClick Transition to scene when double-clicked
+kv Basic.Settings.General.StudioPortraitLayout Enable portrait/vertical layout
+kv Basic.Settings.General.TogglePreviewProgramLabels Show preview/program labels
+kv Basic.Settings.General.Multiview Multiview
+kv Basic.Settings.General.Multiview.MouseSwitch Click to switch between scenes
+kv Basic.Settings.General.Multiview.DrawSourceNames Show scene names
+kv Basic.Settings.General.Multiview.DrawSafeAreas Draw safe areas (EBU R 95)
+kv Basic.Settings.General.MultiviewLayout Multiview Layout
+kv Basic.Settings.General.MultiviewLayout.Horizontal.Top Horizontal, Top (8 Scenes)
+kv Basic.Settings.General.MultiviewLayout.Horizontal.Bottom Horizontal, Bottom (8 Scenes)
+kv Basic.Settings.General.MultiviewLayout.Vertical.Left Vertical, Left (8 Scenes)
+kv Basic.Settings.General.MultiviewLayout.Vertical.Right Vertical, Right (8 Scenes)
+kv Basic.Settings.General.MultiviewLayout.Horizontal.18Scene.Top Horizontal, Top (18 Scenes)
+kv Basic.Settings.General.MultiviewLayout.Horizontal.Extended.Top Horizontal, Top (24 Scenes)
+kv Basic.Settings.General.MultiviewLayout.4Scene Scenes only (4 Scenes)
+kv Basic.Settings.General.MultiviewLayout.9Scene Scenes only (9 Scenes)
+kv Basic.Settings.General.MultiviewLayout.16Scene Scenes only (16 Scenes)
+kv Basic.Settings.General.MultiviewLayout.25Scene Scenes only (25 Scenes)
+kv Basic.Settings.General.ChannelName.stable Stable
+kv Basic.Settings.General.ChannelDescription.stable Latest stable release
+kv Basic.Settings.General.ChannelName.beta Betas / Release Candidates
+kv Basic.Settings.General.ChannelDescription.beta Potentially unstable pre-release versions
+kv Basic.Settings.Appearance Appearance
+kv Basic.Settings.Appearance.General General
+kv Basic.Settings.Appearance.General.Theme Theme
+kv Basic.Settings.Appearance.General.Variant Style
+kv Basic.Settings.Appearance.General.NoVariant No Styles Available
+kv Basic.Settings.Appearance.FontScale Font Size
+kv Basic.Settings.Appearance.Density Density
+kv Basic.Settings.Appearance.Classic Classic
+kv Basic.Settings.Appearance.Compact Compact
+kv Basic.Settings.Appearance.Normal Normal
+kv Basic.Settings.Appearance.Comfortable Comfortable
+kv Basic.Settings.Appearance.OptionsWarning Some appearance options are not available for this style.
+kv Basic.Settings.Stream Stream
+kv Basic.Settings.Stream.Destination Destination
+kv Basic.Settings.Stream.Custom.UseAuthentication Use authentication
+kv Basic.Settings.Stream.Custom.Username Username
+kv Basic.Settings.Stream.Custom.Password Password
+kv Basic.Settings.Stream.Custom.Username.ToolTip RIST: enter the srp_username.
+RTMP: enter the username.
+SRT: not used.
+kv Basic.Settings.Stream.Custom.Password.ToolTip RIST: enter the srp_password.
+RTMP: enter the password.
+SRT: enter the encryption passphrase.
+kv Basic.Settings.Stream.BandwidthTestMode Enable Bandwidth Test Mode
+kv Basic.Settings.Stream.TTVAddon Twitch Chat Add-Ons
+kv Basic.Settings.Stream.TTVAddon.None None
+kv Basic.Settings.Stream.TTVAddon.BTTV BetterTTV
+kv Basic.Settings.Stream.TTVAddon.FFZ FrankerFaceZ
+kv Basic.Settings.Stream.TTVAddon.Both BetterTTV and FrankerFaceZ
+kv Basic.Settings.Stream.MissingSettingAlert Missing Stream Setup
+kv Basic.Settings.Stream.StreamSettingsWarning Open Settings
+kv Basic.Settings.Stream.MissingUrlAndApiKey URL and Stream Key are missing.
+
+Open settings to enter the URL and Stream Key in the 'stream' tab.
+kv Basic.Settings.Stream.MissingUrl Stream URL is missing.
+
+Open settings to enter the URL in the 'Stream' tab.
+kv Basic.Settings.Stream.MissingStreamKey Stream key is missing.
+
+Open settings to enter the stream key in the 'Stream' tab.
+kv Basic.Settings.Stream.IgnoreRecommended Ignore streaming service setting recommendations
+kv Basic.Settings.Stream.IgnoreRecommended.Warn.Title Override Recommended Settings
+kv Basic.Settings.Stream.IgnoreRecommended.Warn.Text Warning: Ignoring the service's limitations may result in degraded stream quality or prevent you from streaming.
+
+Continue?
+kv Basic.Settings.Stream.Recommended.MaxVideoBitrate Maximum Video Bitrate: %1 kbps
+kv Basic.Settings.Stream.Recommended.MaxAudioBitrate Maximum Audio Bitrate: %1 kbps
+kv Basic.Settings.Stream.Recommended.MaxResolution Maximum Resolution: %1
+kv Basic.Settings.Stream.Recommended.MaxFPS Maximum FPS: %1
+kv Basic.Settings.Stream.SpecifyCustomServer Specify Custom Server...
+kv Basic.Settings.Stream.ServiceCustomServer Custom Server
+kv Basic.Settings.Stream.EnableMultitrackVideo Enable %1
+kv Basic.Settings.Stream.MultitrackVideoMaximumAggregateBitrate Maximum Streaming Bandwidth
+kv Basic.Settings.Stream.MultitrackVideoMaximumAggregateBitrateAuto Auto
+kv Basic.Settings.Stream.MultitrackVideoMaximumVideoTracks Maximum Video Tracks
+kv Basic.Settings.Stream.MultitrackVideoMaximumVideoTracksAuto Auto
+kv Basic.Settings.Stream.MultitrackVideoStreamDumpEnable Enable stream dump to FLV (uses simple recording file settings)
+kv Basic.Settings.Stream.MultitrackVideoConfigOverride Config Override (JSON)
+kv Basic.Settings.Stream.MultitrackVideoConfigOverrideEnable Enable Config Override
+kv Basic.Settings.Stream.MultitrackVideoLabel Multitrack Video
+kv Basic.Settings.Stream.MultitrackVideoExtraCanvas Additional Canvas
+kv Basic.Settings.Stream.WHIPSimulcastLabel Simulcast
+kv Basic.Settings.Stream.WHIPSimulcastInfo Simulcast allows you to encode and send multiple video qualities. <a href='https://obsproject.com/kb/whip-streaming-guide'>Learn More</a>
+kv Basic.Settings.Stream.WHIPSimulcastTotalLayers Total Layers
+kv Basic.Settings.Stream.AdvancedOptions Advanced Options
+kv Basic.Settings.Output Output
+kv Basic.Settings.Output.Format Recording Format
+kv Basic.Settings.Output.Format.MKV Matroska Video (.mkv)
+kv Basic.Settings.Output.Format.FLV Flash Video (.flv)
+kv Basic.Settings.Output.Format.MP4 MPEG-4 (.mp4)
+kv Basic.Settings.Output.Format.MOV QuickTime (.mov)
+kv Basic.Settings.Output.Format.TS MPEG-TS (.ts)
+kv Basic.Settings.Output.Format.HLS HLS (.m3u8 + .ts)
+kv Basic.Settings.Output.Format.hMP4 Hybrid MP4 (.mp4)
+kv Basic.Settings.Output.Format.hMOV Hybrid MOV (.mov)
+kv Basic.Settings.Output.Format.fMP4 Fragmented MP4 (.mp4)
+kv Basic.Settings.Output.Format.fMOV Fragmented MOV (.mov)
+kv Basic.Settings.Output.Format.TT.fragmented_mov Fragmented MOV writes the recording in chunks and does not require the same finalization as traditional MOV files.
+This ensures the file remains playable even if writing to disk is interrupted, for example, as a result of a BSOD or power loss.
+
+This may not be compatible with all players and editors. Use File → Remux Recordings to convert the file into a more compatible format if necessary.
+kv Basic.Settings.Output.Format.TT.fragmented_mp4 Fragmented MP4 writes the recording in chunks and does not require the same finalization as traditional MP4 files.
+This ensures the file remains playable even if writing to disk is interrupted, for example, as a result of a BSOD or power loss.
+
+This may not be compatible with all players and editors. Use File → Remux Recordings to convert the file into a more compatible format if necessary.
+kv Basic.Settings.Output.Encoder.Video Video Encoder
+kv Basic.Settings.Output.Encoder.Audio Audio Encoder
+kv Basic.Settings.Output.SelectDirectory Select Recording Directory
+kv Basic.Settings.Output.DynamicBitrate Dynamically change bitrate to manage congestion
+kv Basic.Settings.Output.DynamicBitrate.Beta Dynamically change bitrate to manage congestion (Beta)
+kv Basic.Settings.Output.DynamicBitrate.TT Instead of dropping frames to reduce congestion, dynamically changes bitrate on the fly.
+
+Note that this can increase delay to viewers if there is significant sudden congestion.
+When the bitrate drops, it can take up to a few minutes to restore.
+
+Currently only supported for RTMP.
+kv Basic.Settings.Output.Mode Output Mode
+kv Basic.Settings.Output.Mode.Simple Simple
+kv Basic.Settings.Output.Mode.Adv Advanced
+kv Basic.Settings.Output.Mode.FFmpeg FFmpeg Output
+kv Basic.Settings.Output.UseReplayBuffer Enable Replay Buffer
+kv Basic.Settings.Output.ReplayBuffer.SecondsMax Maximum Replay Time
+kv Basic.Settings.Output.ReplayBuffer.MegabytesMax Maximum Memory
+kv Basic.Settings.Output.ReplayBuffer.Estimate Estimated memory usage: %1 MB
+kv Basic.Settings.Output.ReplayBuffer.EstimateTooLarge Warning: Estimated memory usage of %1 MiB is larger than recommended maximum of %2 MiB
+kv Basic.Settings.Output.ReplayBuffer.EstimateUnknown Cannot estimate memory usage. Please set maximum memory limit.
+kv Basic.Settings.Output.ReplayBuffer.Prefix Replay Buffer Filename Prefix
+kv Basic.Settings.Output.ReplayBuffer.Suffix Suffix
+kv Basic.Settings.Output.ReplayBuffer.UnavailableCustomFFmpeg Replay Buffer cannot be used when recording type is set to Custom Output (FFmpeg).
+kv Basic.Settings.Output.Simple.SavePath Recording Path
+kv Basic.Settings.Output.Simple.RecordingQuality Recording Quality
+kv Basic.Settings.Output.Simple.RecordingQuality.Stream Same as stream
+kv Basic.Settings.Output.Simple.RecordingQuality.Small High Quality, Medium File Size
+kv Basic.Settings.Output.Simple.RecordingQuality.HQ Indistinguishable Quality, Large File Size
+kv Basic.Settings.Output.Simple.RecordingQuality.Lossless Lossless Quality, Tremendously Large File Size
+kv Basic.Settings.Output.Simple.Warn.VideoBitrate Warning: The streaming video bitrate will be set to %1, which is the upper limit for the current streaming service.
+kv Basic.Settings.Output.Simple.Warn.AudioBitrate Warning: The streaming audio bitrate will be set to %1, which is the upper limit for the current streaming service.
+kv Basic.Settings.Output.Simple.Warn.CannotPause Warning: Recordings cannot be paused if the recording quality is set to "Same as stream".
+kv Basic.Settings.Output.Simple.Warn.IncompatibleContainer Warning: The currently selected recording format is incompatible with the selected stream encoder(s).
+kv Basic.Settings.Output.Simple.Warn.Encoder Warning: Recording with a software encoder at a different quality than the stream will require extra CPU usage if you stream and record at the same time.
+kv Basic.Settings.Output.Simple.Warn.Lossless Warning: Lossless quality generates tremendously large file sizes! Lossless quality can use upward of 7 gigabytes of disk space per minute at high resolutions and framerates. Lossless is not recommended for long recordings unless you have a very large amount of disk space available. Replay buffer is unavailable when using lossless quality.
+kv Basic.Settings.Output.Simple.Warn.Lossless.Msg Are you sure you want to use lossless quality?
+kv Basic.Settings.Output.Simple.Warn.Lossless.Title Lossless quality warning!
+kv Basic.Settings.Output.Simple.Encoder.Software Software (x264)
+kv Basic.Settings.Output.Simple.Encoder.Hardware.QSV.H264 Hardware (QSV, H.264)
+kv Basic.Settings.Output.Simple.Encoder.Hardware.QSV.AV1 Hardware (QSV, AV1)
+kv Basic.Settings.Output.Simple.Encoder.Hardware.AMD.H264 Hardware (AMD, H.264)
+kv Basic.Settings.Output.Simple.Encoder.Hardware.AMD.HEVC Hardware (AMD, HEVC)
+kv Basic.Settings.Output.Simple.Encoder.Hardware.AMD.AV1 Hardware (AMD, AV1)
+kv Basic.Settings.Output.Simple.Encoder.Hardware.NVENC.H264 Hardware (NVENC, H.264)
+kv Basic.Settings.Output.Simple.Encoder.Hardware.NVENC.AV1 Hardware (NVENC, AV1)
+kv Basic.Settings.Output.Simple.Encoder.Hardware.NVENC.HEVC Hardware (NVENC, HEVC)
+kv Basic.Settings.Output.Simple.Encoder.Hardware.Apple.H264 Hardware (Apple, H.264)
+kv Basic.Settings.Output.Simple.Encoder.Hardware.Apple.HEVC Hardware (Apple, HEVC)
+kv Basic.Settings.Output.Simple.Encoder.SoftwareLowCPU Software (x264 low CPU usage preset, increases file size)
+kv Basic.Settings.Output.Simple.Codec.AAC AAC
+kv Basic.Settings.Output.Simple.Codec.AAC.Default AAC (Default)
+kv Basic.Settings.Output.Simple.Codec.Opus Opus
+kv Basic.Settings.Output.Simple.TwitchVodTrack Twitch VOD Track (Uses Track 2)
+kv Basic.Settings.Output.Simple.RecAudioTrack Audio Track
+kv Basic.Settings.Output.Warn.EnforceResolutionFPS.Title Incompatible Resolution/Framerate
+kv Basic.Settings.Output.Warn.EnforceResolutionFPS.Msg This streaming service does not support your current output resolution and/or framerate. They will be changed to the closest compatible value:
+
+%1
+
+Do you want to continue?
+kv Basic.Settings.Output.Warn.EnforceResolutionFPS.Resolution Resolution: %1
+kv Basic.Settings.Output.Warn.EnforceResolutionFPS.FPS FPS: %1
+kv Basic.Settings.Output.Warn.ServiceCodecCompatibility.Title Incompatible Encoder
+kv Basic.Settings.Output.Warn.ServiceCodecCompatibility.Msg The streaming service "%1" does not support the encoder "%2". The encoder will be changed to "%3".
+
+Do you want to continue?
+kv Basic.Settings.Output.Warn.ServiceCodecCompatibility.Msg2 The streaming service "%1" does not support encoders "%2" and "%3". These encoders will be changed to "%4" and "%5".
+
+Do you want to continue?
+kv Basic.Settings.Output.VideoBitrate Video Bitrate
+kv Basic.Settings.Output.AudioBitrate Audio Bitrate
+kv Basic.Settings.Output.Reconnect Automatically Reconnect
+kv Basic.Settings.Output.RetryDelay Retry Delay
+kv Basic.Settings.Output.MaxRetries Maximum Retries
+kv Basic.Settings.Output.Advanced Enable Custom Encoder Settings (Advanced)
+kv Basic.Settings.Output.EncoderPreset Encoder Preset
+kv Basic.Settings.Output.EncoderPreset.ultrafast %1 (low CPU usage, lowest quality)
+kv Basic.Settings.Output.EncoderPreset.veryfast %1 (default) (medium CPU usage, standard quality)
+kv Basic.Settings.Output.EncoderPreset.fast %1 (high CPU usage, high quality)
+kv Basic.Settings.Output.CustomEncoderSettings Custom Encoder Settings
+kv Basic.Settings.Output.CustomMuxerSettings Custom Muxer Settings
+kv Basic.Settings.Output.NoSpaceFileName Generate File Name without Space
+kv Basic.Settings.Output.Adv.Rescale Rescale Output
+kv Basic.Settings.Output.Adv.Rescale.Disabled Disabled
+kv Basic.Settings.Output.Adv.AudioTrack Audio Track
+kv Basic.Settings.Output.Adv.Streaming Streaming
+kv Basic.Settings.Output.Adv.Streaming.Settings Streaming Settings
+kv Basic.Settings.Output.Adv.Audio.Track1 Track 1
+kv Basic.Settings.Output.Adv.Audio.Track2 Track 2
+kv Basic.Settings.Output.Adv.Audio.Track3 Track 3
+kv Basic.Settings.Output.Adv.Audio.Track4 Track 4
+kv Basic.Settings.Output.Adv.Audio.Track5 Track 5
+kv Basic.Settings.Output.Adv.Audio.Track6 Track 6
+kv Basic.Settings.Output.Adv.TwitchVodTrack Twitch VOD Track
+kv Basic.Settings.Output.Adv.Encoder Encoder Settings
+kv Basic.Settings.Output.Adv.Recording Recording
+kv Basic.Settings.Output.Adv.Recording.Settings Recording Settings
+kv Basic.Settings.Output.Adv.Recording.RecType Recording Type
+kv Basic.Settings.Output.Adv.Recording.Type Type
+kv Basic.Settings.Output.Adv.Recording.Type.Standard Standard
+kv Basic.Settings.Output.Adv.Recording.Type.FFmpegOutput Custom Output (FFmpeg)
+kv Basic.Settings.Output.Adv.Recording.UseStreamEncoder (Use stream encoder)
+kv Basic.Settings.Output.Adv.Recording.Filename Filename Formatting
+kv Basic.Settings.Output.Adv.Recording.OverwriteIfExists Overwrite if file exists
+kv Basic.Settings.Output.Adv.FFmpeg.CustomModeWarning Custom Output (FFmpeg) is provided with no safeguards.
+Consider using the "Standard" recording type.
+kv Basic.Settings.Output.Adv.FFmpeg.Type FFmpeg Output Type
+kv Basic.Settings.Output.Adv.FFmpeg.Type.URL Output to URL
+kv Basic.Settings.Output.Adv.FFmpeg.Type.RecordToFile Output to File
+kv Basic.Settings.Output.Adv.FFmpeg.SaveFilter.Common Common recording formats
+kv Basic.Settings.Output.Adv.FFmpeg.SaveFilter.All All Files
+kv Basic.Settings.Output.Adv.FFmpeg.SavePathURL File path or URL
+kv Basic.Settings.Output.Adv.FFmpeg.Format Container Format
+kv Basic.Settings.Output.Adv.FFmpeg.FormatAudio Audio
+kv Basic.Settings.Output.Adv.FFmpeg.FormatVideo Video
+kv Basic.Settings.Output.Adv.FFmpeg.FormatDefault Default Format
+kv Basic.Settings.Output.Adv.FFmpeg.FormatDesc Container Format Description
+kv Basic.Settings.Output.Adv.FFmpeg.FormatDescDef Audio/Video Codec guessed from File path or URL
+kv Basic.Settings.Output.Adv.FFmpeg.AVEncoderDefault Default Encoder
+kv Basic.Settings.Output.Adv.FFmpeg.AVEncoderDisable Disable Encoder
+kv Basic.Settings.Output.Adv.FFmpeg.VEncoder Video Encoder
+kv Basic.Settings.Output.Adv.FFmpeg.VEncoderSettings Video Encoder Settings (if any)
+kv Basic.Settings.Output.Adv.FFmpeg.AEncoder Audio Encoder
+kv Basic.Settings.Output.Adv.FFmpeg.AEncoderSettings Audio Encoder Settings (if any)
+kv Basic.Settings.Output.Adv.FFmpeg.MuxerSettings Muxer Settings (if any)
+kv Basic.Settings.Output.Adv.FFmpeg.GOPSize Keyframe interval (frames)
+kv Basic.Settings.Output.Adv.FFmpeg.IgnoreCodecCompat Show all codecs (even if potentially incompatible)
+kv Basic.Settings.Output.Adv.FFmpeg.Settings FFmpeg Settings
+kv Basic.Settings.Output.EnableSplitFile Automatic File Splitting
+kv Basic.Settings.Output.SplitFile.TypeTime Split by Time
+kv Basic.Settings.Output.SplitFile.TypeSize Split by Size
+kv Basic.Settings.Output.SplitFile.TypeManual Only split manually
+kv Basic.Settings.Output.SplitFile.Time Split Time
+kv Basic.Settings.Output.SplitFile.Size Split Size
+kv Screenshot Screenshot Output
+kv Screenshot.SourceHotkey Screenshot Selected Source
+kv Screenshot.StudioProgram Save Program Screenshot
+kv Screenshot.Preview Save Preview Screenshot
+kv Screenshot.Scene Save Scene Screenshot
+kv Screenshot.Source Save Source Screenshot
+kv FilenameFormatting.completer %CCYY-%MM-%DD %hh-%mm-%ss
+%YY-%MM-%DD %hh-%mm-%ss
+%Y-%m-%d %H-%M-%S
+%y-%m-%d %H-%M-%S
+%a %Y-%m-%d %H-%M-%S
+%A %Y-%m-%d %H-%M-%S
+%Y-%b-%d %H-%M-%S
+%Y-%B-%d %H-%M-%S
+%Y-%m-%d %I-%M-%S-%p
+%Y-%m-%d %H-%M-%S-%z
+%Y-%m-%d %H-%M-%S-%Z
+%FPS
+%CRES
+%ORES
+%VF
+kv FilenameFormatting.TT.CCYY Year, four digits
+kv FilenameFormatting.TT.YY Year, last two digits (00-99)
+kv FilenameFormatting.TT.MM Month as a decimal number (01-12)
+kv FilenameFormatting.TT.DD Day of the month, zero-padded (01-31)
+kv FilenameFormatting.TT.hh Hour in 24h format (00-23)
+kv FilenameFormatting.TT.mm Minute (00-59)
+kv FilenameFormatting.TT.ss Second (00-59)
+kv FilenameFormatting.TT.Percent A % sign
+kv FilenameFormatting.TT.a Abbreviated weekday name
+kv FilenameFormatting.TT.A Full weekday name
+kv FilenameFormatting.TT.b Abbreviated month name
+kv FilenameFormatting.TT.B Full month name
+kv FilenameFormatting.TT.d Day of the month, zero-padded (01-31)
+kv FilenameFormatting.TT.H Hour in 24h format (00-23)
+kv FilenameFormatting.TT.I Hour in 12h format (01-12)
+kv FilenameFormatting.TT.m Month as a decimal number (01-12)
+kv FilenameFormatting.TT.M Minute (00-59)
+kv FilenameFormatting.TT.p AM or PM designation
+kv FilenameFormatting.TT.s Time in seconds since UNIX epoch
+kv FilenameFormatting.TT.S Second (00-59)
+kv FilenameFormatting.TT.y Year, last two digits (00-99)
+kv FilenameFormatting.TT.Y Year
+kv FilenameFormatting.TT.z ISO 8601 offset from UTC in timezone
+kv FilenameFormatting.TT.Z Timezone name or abbreviation
+kv FilenameFormatting.TT.FPS Frames per second
+kv FilenameFormatting.TT.CRES Base (canvas) resolution
+kv FilenameFormatting.TT.ORES Output (scaled) resolution
+kv FilenameFormatting.TT.VF Video format
+kv Basic.Settings.Video Video
+kv Basic.Settings.Video.Adapter Video Adapter
+kv Basic.Settings.Video.BaseResolution Base (Canvas) Resolution
+kv Basic.Settings.Video.ScaledResolution Output (Scaled) Resolution
+kv Basic.Settings.Video.DownscaleFilter Downscale Filter
+kv Basic.Settings.Video.DownscaleFilter.Unavailable [Resolutions match, no downscaling required]
+kv Basic.Settings.Video.FPS FPS
+kv Basic.Settings.Video.FPSCommon Common FPS Values
+kv Basic.Settings.Video.FPSInteger Integer FPS Value
+kv Basic.Settings.Video.FPSFraction Fractional FPS Value
+kv Basic.Settings.Video.Numerator Numerator
+kv Basic.Settings.Video.Denominator Denominator
+kv Basic.Settings.Video.Renderer Renderer
+kv Basic.Settings.Video.Renderer.Experimental %1 (Experimental)
+kv Basic.Settings.Video.InvalidResolution Invalid resolution value. Must be [width]x[height] (i.e. 1920x1080)
+kv Basic.Settings.Video.CurrentlyActive Video output is currently active. Please turn off any outputs to change video settings.
+kv Basic.Settings.Video.DownscaleFilter.Bilinear Bilinear (Fastest, but blurry if scaling)
+kv Basic.Settings.Video.DownscaleFilter.Bicubic Bicubic (Sharpened scaling, 16 samples)
+kv Basic.Settings.Video.DownscaleFilter.Lanczos Lanczos (Sharpened scaling, 36 samples)
+kv Basic.Settings.Video.DownscaleFilter.Area Area (Weighted sum, 4/6/9 samples)
+kv Basic.Settings.Audio Audio
+kv Basic.Settings.Audio.SampleRate Sample Rate
+kv Basic.Settings.Audio.Channels Channels
+kv Basic.Settings.Audio.Meters Meters
+kv Basic.Settings.Audio.MeterDecayRate Decay Rate
+kv Basic.Settings.Audio.MeterDecayRate.Fast Fast
+kv Basic.Settings.Audio.MeterDecayRate.Medium Medium (Type I PPM)
+kv Basic.Settings.Audio.MeterDecayRate.Slow Slow (Type II PPM)
+kv Basic.Settings.Audio.PeakMeterType Peak Meter Type
+kv Basic.Settings.Audio.PeakMeterType.SamplePeak Sample Peak
+kv Basic.Settings.Audio.PeakMeterType.TruePeak True Peak (Higher CPU usage)
+kv Basic.Settings.Audio.MultichannelWarning.Enabled WARNING: Surround sound audio is enabled.
+kv Basic.Settings.Audio.MultichannelWarning If streaming, check to see if your streaming service supports both surround sound ingest and surround sound playback. For instance, Facebook 360 Live fully supports surround sound; YouTube Live supports 5.1 audio ingest (and playback on TVs).
+
+OBS audio filters are compatible with surround sound, though VST plugin support isn't guaranteed.
+kv Basic.Settings.Audio.MultichannelWarning.Title Enable surround sound audio?
+kv Basic.Settings.Audio.MultichannelWarning.Confirm Are you sure you want to enable surround sound audio?
+kv Basic.Settings.Audio.Devices Global Audio Devices
+kv Basic.Settings.Audio.DesktopDevice Desktop Audio
+kv Basic.Settings.Audio.DesktopDevice2 Desktop Audio 2
+kv Basic.Settings.Audio.AuxDevice Mic/Auxiliary Audio
+kv Basic.Settings.Audio.AuxDevice2 Mic/Auxiliary Audio 2
+kv Basic.Settings.Audio.AuxDevice3 Mic/Auxiliary Audio 3
+kv Basic.Settings.Audio.AuxDevice4 Mic/Auxiliary Audio 4
+kv Basic.Settings.Audio.EnablePushToMute Enable Push-to-mute
+kv Basic.Settings.Audio.PushToMuteDelay Push-to-mute delay
+kv Basic.Settings.Audio.EnablePushToTalk Enable Push-to-talk
+kv Basic.Settings.Audio.PushToTalkDelay Push-to-talk delay
+kv Basic.Settings.Audio.UnknownAudioDevice [Device not connected or not available]
+kv Basic.Settings.Audio.Disabled Disabled
+kv Basic.Settings.Audio.LowLatencyBufferingMode Low Latency Audio Buffering Mode (For Decklink/NDI outputs)
+kv Basic.Settings.Audio.LowLatencyBufferingWarning.Enabled WARNING: Low latency audio buffering is enabled.
+kv Basic.Settings.Audio.LowLatencyBufferingWarning Low latency audio buffering mode may cause audio to glitch or stop playing from some sources.
+kv Basic.Settings.Audio.LowLatencyBufferingWarning.Title Enable low latency audio buffering mode?
+kv Basic.Settings.Audio.LowLatencyBufferingWarning.Confirm Are you sure you want to enable low latency audio buffering mode?
+kv Basic.Settings.Accessibility Accessibility
+kv Basic.Settings.Accessibility.ColorOverrides Use Different Colors
+kv Basic.Settings.Accessibility.ColorOverrides.SelectRed Source Border (Selection)
+kv Basic.Settings.Accessibility.ColorOverrides.SelectGreen Source Border (Crop)
+kv Basic.Settings.Accessibility.ColorOverrides.SelectBlue Source Border (Hover)
+kv Basic.Settings.Accessibility.ColorOverrides.MixerGreen Mixer Volume Band (-60 to -20dB)
+kv Basic.Settings.Accessibility.ColorOverrides.MixerYellow Mixer Volume Band (-20 to -9dB)
+kv Basic.Settings.Accessibility.ColorOverrides.MixerRed Mixer Volume Band (-9 to 0dB)
+kv Basic.Settings.Accessibility.ColorOverrides.MixerGreenActive Mixer Volume Band (-60 to -20dB) (active)
+kv Basic.Settings.Accessibility.ColorOverrides.MixerYellowActive Mixer Volume Band (-20 to -9dB) (active)
+kv Basic.Settings.Accessibility.ColorOverrides.MixerRedActive Mixer Volume Band (-9 to 0dB) (active)
+kv Basic.Settings.Accessibility.ColorOverrides.Preset Color Preset
+kv Basic.Settings.Accessibility.ColorOverrides.Preset.Default Default
+kv Basic.Settings.Accessibility.ColorOverrides.Preset.Custom Custom
+kv Basic.Settings.Accessibility.ColorOverrides.Preset.ColorBlind1 Color Blind Alternative
+kv Basic.Settings.Advanced Advanced
+kv Basic.Settings.Advanced.General.ConfirmOnExit Show active outputs warning on exit
+kv Basic.Settings.Advanced.General.ProcessPriority Process Priority
+kv Basic.Settings.Advanced.General.ProcessPriority.High High
+kv Basic.Settings.Advanced.General.ProcessPriority.AboveNormal Above Normal
+kv Basic.Settings.Advanced.General.ProcessPriority.Normal Normal
+kv Basic.Settings.Advanced.General.ProcessPriority.BelowNormal Below Normal
+kv Basic.Settings.Advanced.General.ProcessPriority.Idle Idle
+kv Basic.Settings.Advanced.FormatWarning Warning: Color formats other than NV12/P010 are primarily intended for recording, and are not recommended when streaming. Streaming may incur increased CPU usage due to color format conversion.
+kv Basic.Settings.Advanced.FormatWarningPreciseSdr Warning: High-precision formats are more commonly used with HDR color spaces.
+kv Basic.Settings.Advanced.FormatWarning2100 Warning: Rec. 2100 should use a format with more precision.
+kv Basic.Settings.Advanced.Video.ColorFormat Color Format
+kv Basic.Settings.Advanced.Video.ColorFormat.NV12 NV12 (8-bit, 4:2:0, 2 planes)
+kv Basic.Settings.Advanced.Video.ColorFormat.I420 I420 (8-bit, 4:2:0, 3 planes)
+kv Basic.Settings.Advanced.Video.ColorFormat.I444 I444 (8-bit, 4:4:4, 3 planes)
+kv Basic.Settings.Advanced.Video.ColorFormat.P010 P010 (10-bit, 4:2:0, 2 planes)
+kv Basic.Settings.Advanced.Video.ColorFormat.I010 I010 (10-bit, 4:2:0, 3 planes)
+kv Basic.Settings.Advanced.Video.ColorFormat.P216 P216 (16-bit, 4:2:2, 2 planes)
+kv Basic.Settings.Advanced.Video.ColorFormat.P416 P416 (16-bit, 4:4:4, 2 planes)
+kv Basic.Settings.Advanced.Video.ColorFormat.BGRA BGRA (8-bit)
+kv Basic.Settings.Advanced.Video.ColorSpace Color Space
+kv Basic.Settings.Advanced.Video.ColorSpace.sRGB sRGB
+kv Basic.Settings.Advanced.Video.ColorSpace.601 Rec. 601
+kv Basic.Settings.Advanced.Video.ColorSpace.709 Rec. 709
+kv Basic.Settings.Advanced.Video.ColorSpace.2100PQ Rec. 2100 (PQ)
+kv Basic.Settings.Advanced.Video.ColorSpace.2100HLG Rec. 2100 (HLG)
+kv Basic.Settings.Advanced.Video.ColorRange Color Range
+kv Basic.Settings.Advanced.Video.ColorRange.Partial Limited
+kv Basic.Settings.Advanced.Video.ColorRange.Full Full
+kv Basic.Settings.Advanced.Video.SdrWhiteLevel SDR White Level
+kv Basic.Settings.Advanced.Video.HdrNominalPeakLevel HDR Nominal Peak Level
+kv Basic.Settings.Advanced.Audio.MonitoringDevice Monitoring Device
+kv Basic.Settings.Advanced.Audio.MonitoringDevice.Default Default
+kv Basic.Settings.Advanced.Audio.DisableAudioDucking Disable Windows audio ducking
+kv Basic.Settings.Advanced.StreamDelay Stream Delay
+kv Basic.Settings.Advanced.StreamDelay.Duration Duration
+kv Basic.Settings.Advanced.StreamDelay.Preserve Preserve cutoff point (increase delay) when reconnecting
+kv Basic.Settings.Advanced.StreamDelay.MemoryUsage Estimated Memory Usage: %1 MB
+kv Basic.Settings.Advanced.Network Network
+kv Basic.Settings.Advanced.Network.Disabled The currently selected streaming protocol does not support changing network settings.
+kv Basic.Settings.Advanced.Network.BindToIP Bind to IP
+kv Basic.Settings.Advanced.Network.IPFamily IP Family
+kv Basic.Settings.Advanced.Network.EnableNewSocketLoop Enable network optimizations
+kv Basic.Settings.Advanced.Network.EnableLowLatencyMode Enable TCP pacing
+kv Basic.Settings.Advanced.Network.TCPPacing.Tooltip Attempts to make RTMP output friendlier to other latency sensitive applications on the network by regulating the rate of transmission.
+It may increase the risk of dropped frames on unstable connections.
+kv Basic.Settings.Advanced.Hotkeys.HotkeyFocusBehavior Hotkey Focus Behavior
+kv Basic.Settings.Advanced.Hotkeys.NeverDisableHotkeys Never disable hotkeys
+kv Basic.Settings.Advanced.Hotkeys.DisableHotkeysInFocus Disable hotkeys when main window is in focus
+kv Basic.Settings.Advanced.Hotkeys.DisableHotkeysOutOfFocus Disable hotkeys when main window is not in focus
+kv Basic.Settings.Advanced.AutoRemux Automatically remux to %1
+kv Basic.Settings.Advanced.AutoRemux.MP4 (record as mkv)
+kv Basic.AudioMixer.Pin Pin
+kv Basic.AudioMixer.Unpin Unpin
+kv Basic.AudioMixer.Options Options
+kv Basic.AudioMixer.Hide Hide
+kv Basic.AudioMixer.Unhide Unhide
+kv Basic.AudioMixer.HiddenTotal %1 hidden
+kv Basic.AudioMixer.ShowHidden Show hidden sources
+kv Basic.AudioMixer.HideHidden Hide hidden sources
+kv Basic.AudioMixer.KeepHiddenRight Keep hidden sources to the right
+kv Basic.AudioMixer.KeepHiddenBottom Keep hidden sources at the bottom
+kv Basic.AudioMixer.ShowInactive Show inactive sources
+kv Basic.AudioMixer.KeepInactiveRight Keep inactive sources to the right
+kv Basic.AudioMixer.KeepInactiveBottom Keep inactive sources at the bottom
+kv Basic.AudioMixer.Category.Global Global
+kv Basic.AudioMixer.Category.Pinned Pinned
+kv Basic.AudioMixer.Category.Active Active
+kv Basic.AudioMixer.Category.Inactive Inactive
+kv Basic.AudioMixer.Category.Preview Preview
+kv Basic.AudioMixer.Category.Hidden Hidden
+kv Basic.AudioMixer.Category.Unassigned Unassigned
+kv Basic.AudioMixer.Layout.Horizontal Horizontal Layout
+kv Basic.AudioMixer.Layout.Vertical Vertical Layout
+kv Basic.AudioMixer.Monitoring.Enable Enable Monitoring
+kv Basic.AudioMixer.Monitoring.Disable Disable Monitoring
+kv Basic.AdvAudio Advanced Audio Properties
+kv Basic.AdvAudio.ActiveOnly Active Sources Only
+kv Basic.AdvAudio.Name Name
+kv Basic.AdvAudio.Volume Volume
+kv Basic.AdvAudio.VolumeSource Volume for '%1'
+kv Basic.AdvAudio.Mono Mono
+kv Basic.AdvAudio.MonoSource Mono Downmix for '%1'
+kv Basic.AdvAudio.Balance Balance
+kv Basic.AdvAudio.BalanceSource Balance for '%1'
+kv Basic.AdvAudio.SyncOffset Sync Offset
+kv Basic.AdvAudio.SyncOffsetSource Sync Offset for '%1'
+kv Basic.AdvAudio.Monitoring Audio Monitoring
+kv Basic.AdvAudio.Monitoring.None Monitor Off
+kv Basic.AdvAudio.Monitoring.MonitorOnly Monitor Only (mute output)
+kv Basic.AdvAudio.Monitoring.Both Monitoring Enabled
+kv Basic.AdvAudio.MonitoringSource Audio Monitoring for '%1'
+kv Basic.AdvAudio.AudioTracks Tracks
+kv Basic.Settings.Hotkeys Hotkeys
+kv Basic.Settings.Hotkeys.Pair Key combinations shared with '%1' act as toggles
+kv Basic.Settings.Hotkeys.Filter Filter
+kv Basic.Settings.Hotkeys.FilterByHotkey Filter by Hotkey
+kv Basic.Settings.Hotkeys.DuplicateWarning This hotkey is shared by one or more other actions, click to show conflicts
+kv Basic.Settings.Hotkeys.PleaseWait Loading hotkeys, please wait...
+kv Basic.Hotkeys.SelectScene Switch to scene
+kv Basic.SystemTray.Show Show
+kv Basic.SystemTray.Hide Hide
+kv Basic.SystemTray.Message.Reconnecting Disconnected. Reconnecting...
+kv Hotkeys.Insert Insert
+kv Hotkeys.Delete Delete
+kv Hotkeys.Home Home
+kv Hotkeys.End End
+kv Hotkeys.PageUp Page Up
+kv Hotkeys.PageDown Page Down
+kv Hotkeys.NumLock Num Lock
+kv Hotkeys.ScrollLock Scroll Lock
+kv Hotkeys.CapsLock Caps Lock
+kv Hotkeys.Backspace Backspace
+kv Hotkeys.Tab Tab
+kv Hotkeys.Print Print
+kv Hotkeys.Pause Pause
+kv Hotkeys.Left Left
+kv Hotkeys.Right Right
+kv Hotkeys.Up Up
+kv Hotkeys.Down Down
+kv Hotkeys.Windows Windows
+kv Hotkeys.Super Super
+kv Hotkeys.Menu Menu
+kv Hotkeys.Space Space
+kv Hotkeys.NumpadNum Numpad %1
+kv Hotkeys.NumpadMultiply Numpad Multiply
+kv Hotkeys.NumpadDivide Numpad Divide
+kv Hotkeys.NumpadAdd Numpad Add
+kv Hotkeys.NumpadSubtract Numpad Subtract
+kv Hotkeys.NumpadDecimal Numpad Decimal
+kv Hotkeys.AppleKeypadNum %1 (Keypad)
+kv Hotkeys.AppleKeypadMultiply * (Keypad)
+kv Hotkeys.AppleKeypadDivide / (Keypad)
+kv Hotkeys.AppleKeypadAdd + (Keypad)
+kv Hotkeys.AppleKeypadSubtract - (Keypad)
+kv Hotkeys.AppleKeypadDecimal . (Keypad)
+kv Hotkeys.AppleKeypadEqual = (Keypad)
+kv Hotkeys.MouseButton Mouse %1
+kv Hotkeys.Escape Esc
+kv Mute Mute
+kv Unmute Unmute
+kv Push-to-mute Push-to-mute
+kv Push-to-talk Push-to-talk
+kv MonitorOn Enable Monitoring
+kv MonitorOff Disable Monitoring
+kv SceneItemShow Show '%1'
+kv SceneItemHide Hide '%1'
+kv OutputWarnings.NoTracksSelected You must select at least one track
+kv OutputWarnings.NoTracksSelectedOnExit.Title Output Settings Error
+kv OutputWarnings.NoTracksSelectedOnExit.Text All outputs must have at least one audio track selected.
+kv OutputWarnings.MP4Recording Warning: Recordings saved to MP4/MOV will be unrecoverable if the file cannot be finalized (e.g. as a result of BSODs, power losses, etc.). If you want to record multiple audio tracks consider using MKV and remux the recording to MP4/MOV after it is finished (File → Remux Recordings)
+kv OutputWarnings.CannotPause Warning: Recordings cannot be paused if the recording encoder is set to "(Use stream encoder)"
+kv OutputWarnings.CodecIncompatible The audio or video encoder selection was reset due to incompatibility. Please select a compatible encoder from the list.
+kv CodecCompat.Incompatible (Incompatible with %1)
+kv CodecCompat.CodecPlaceholder Select Encoder...
+kv CodecCompat.ContainerPlaceholder Select Format...
+kv CodecCompat.CodecMissingOnExit.Title No Encoder Selected
+kv CodecCompat.CodecMissingOnExit.Text At least one video or audio encoder is not set. Please make sure to select encoders for both recording and streaming.
+kv CodecCompat.ContainerMissingOnExit.Title No Format Selected
+kv CodecCompat.ContainerMissingOnExit.Text No recording format has been selected. Please select a recording format that is compatible with the selected stream encoder.
+kv FinalScene.Title Delete Scene
+kv FinalScene.Text There needs to be at least one scene.
+kv NoSources.Title No Sources
+kv NoSources.Text It looks like you haven't added any video sources yet, so you will only be outputting a blank screen. Are you sure you want to do this?
+kv NoSources.Text.AddSource You can add sources by clicking the + icon under the Sources box in the main window at any time.
+kv NoSources.Label You don't have any sources.
+Click the + button below,
+or right click here to add one.
+kv ChangeBG Set Color
+kv CustomColor Custom Color
+kv BrowserSource.EnableHardwareAcceleration Enable Browser Source Hardware Acceleration
+kv About About
+kv About.Info OBS Studio is a free and open source video recording and live streaming software.
+kv About.Donate Make a Contribution
+kv About.GetInvolved Get Involved
+kv About.Authors Authors
+kv About.License License
+kv About.Error Error! File could not be read.
+
+Go to: %1
+kv About.Contribute Support the OBS Project
+kv AddUrl.Title Add Source via URL
+kv AddUrl.Text You have dragged a URL into OBS. This will automatically add the link as a source. Continue?
+kv AddUrl.Text.Url URL: %1
+kv ResizeOutputSizeOfSource Resize output (source size)
+kv ResizeOutputSizeOfSource.Text The base and output resolutions will be resized to the size of the current source.
+kv ResizeOutputSizeOfSource.Continue Do you want to continue?
+kv PreviewTransition Preview Transition
+kv Importer Import Scene Collection
+kv Importer.SelectCollection Select a Scene Collection
+kv Importer.Collection Scene Collection
+kv Importer.HelpText Add files to this window to import collections from OBS or other supported programs.
+kv Importer.Path Collection Path
+kv Importer.Program Detected Application
+kv Importer.AutomaticCollectionPrompt Automatically Search for Scene Collections
+kv Importer.AutomaticCollectionText OBS can automatically find importable scene collections from supported third-party programs. Would you like OBS to automatically find collections for you?
+
+You can change this later in Settings > General > Importers.
+kv Importer.SelectFile Browse...
+kv OBSStudio OBS Studio
+kv OBSClassic OBS Classic
+kv Streamlabs Streamlabs
+kv XSplitBroadcaster XSplit Broadcaster
+kv Restart Restart
+kv NeedsRestart OBS Studio needs to be restarted. Do you want to restart now?
+kv LoadProfileNeedsRestart Profile contains settings that require restarting OBS:
+%1
+
+Do you want to restart OBS for these settings to take effect?
+kv ContextBar.NoSelectedSource No source selected
+kv ContextBar.MediaControls.PlayMedia Play Media
+kv ContextBar.MediaControls.PauseMedia Pause Media
+kv ContextBar.MediaControls.StopMedia Stop Media
+kv ContextBar.MediaControls.RestartMedia Restart Media
+kv ContextBar.MediaControls.PlaylistNext Next in Playlist
+kv ContextBar.MediaControls.PlaylistPrevious Previous in Playlist
+kv ContextBar.MediaControls.BlindSeek Media Seek Widget
+kv YouTube.Auth.Ok Authorization completed successfully.
+You can now close this page.
+kv YouTube.Auth.NoCode The authorization process was not completed.
+kv YouTube.Auth.NoChannels No channel(s) available on selected account
+kv YouTube.Auth.WaitingAuth.Title YouTube User Authorization
+kv YouTube.Auth.WaitingAuth.Text Please complete the authorization in your external browser.<br>If the external browser does not open, follow this link and complete the authorization:<br>%1
+kv YouTube.AuthError.Text Failed to get channel information: %1.
+kv YouTube.Actions.WindowTitle YouTube Broadcast Setup - Channel: %1
+kv YouTube.Actions.CreateNewEvent Create New Broadcast
+kv YouTube.Actions.ChooseEvent Select Existing Broadcast
+kv YouTube.Actions.Title Title*
+kv YouTube.Actions.MyBroadcast My Broadcast
+kv YouTube.Actions.Description Description
+kv YouTube.Actions.Privacy Privacy*
+kv YouTube.Actions.Privacy.Private Private
+kv YouTube.Actions.Privacy.Public Public
+kv YouTube.Actions.Privacy.Unlisted Unlisted
+kv YouTube.Actions.Category Category
+kv YouTube.Actions.Thumbnail Thumbnail
+kv YouTube.Actions.Thumbnail.SelectFile Select file...
+kv YouTube.Actions.Thumbnail.NoFileSelected No file selected
+kv YouTube.Actions.Thumbnail.ClearFile Clear
+kv YouTube.Actions.MadeForKids Is this video made for kids?*
+kv YouTube.Actions.MadeForKids.Yes Yes, it's made for kids
+kv YouTube.Actions.MadeForKids.No No, it's not made for kids
+kv YouTube.Actions.MadeForKids.Help <a href='https://support.google.com/youtube/topic/9689353'>(?)</a>
+kv YouTube.Actions.AdditionalSettings Additional settings
+kv YouTube.Actions.Latency Latency
+kv YouTube.Actions.Latency.Normal Normal
+kv YouTube.Actions.Latency.Low Low
+kv YouTube.Actions.Latency.UltraLow Ultra low
+kv YouTube.Actions.EnableAutoStart Enable Auto-start
+kv YouTube.Actions.EnableAutoStop Enable Auto-stop
+kv YouTube.Actions.AutoStartStop.TT Indicates whether this scheduled broadcast should start automatically
+kv YouTube.Actions.EnableDVR Enable DVR
+kv YouTube.Actions.360Video 360 video
+kv YouTube.Actions.360Video.Help <a href='https://vr.youtube.com/create/360/'>(?)</a>
+kv YouTube.Actions.ScheduleForLater Schedule for later
+kv YouTube.Actions.RememberSettings Remember these settings
+kv YouTube.Actions.Create_Ready Create broadcast
+kv YouTube.Actions.Create_GoLive Create broadcast and start streaming
+kv YouTube.Actions.Choose_Ready Select broadcast
+kv YouTube.Actions.Choose_GoLive Select broadcast and start streaming
+kv YouTube.Actions.Create_Schedule Schedule broadcast
+kv YouTube.Actions.Create_Schedule_Ready Schedule and select broadcast
+kv YouTube.Actions.Dashboard Open YouTube Studio
+kv YouTube.Actions.Error.Title Live broadcast creation error
+kv YouTube.Actions.Error.Text YouTube access error '%1'.<br/>A detailed error description can be found at <a href='https://developers.google.com/youtube/v3/live/docs/errors'>https://developers.google.com/youtube/v3/live/docs/errors</a>
+kv YouTube.Actions.Error.General YouTube access error. Please check your network connection or your YouTube server access.
+kv YouTube.Actions.Error.NoBroadcastCreated Broadcast creation error '%1'.<br/>A detailed error description can be found at <a href='https://developers.google.com/youtube/v3/live/docs/errors'>https://developers.google.com/youtube/v3/live/docs/errors</a>
+kv YouTube.Actions.Error.NoStreamCreated No stream created. Please relink your account.
+kv YouTube.Actions.Error.YouTubeApi YouTube API Error. Please see the log file for more information.
+kv YouTube.Actions.Error.BroadcastNotFound The selected broadcast was not found.
+kv YouTube.Actions.Error.FileMissing Selected file does not exist.
+kv YouTube.Actions.Error.FileOpeningFailed Failed opening selected file.
+kv YouTube.Actions.Error.FileTooLarge Selected file is too large (Limit: 2 MiB).
+kv YouTube.Actions.Error.BroadcastTransitionFailed Transitioning the broadcast failed: %1<br/><br/>If this error persists <a href='https://studio.youtube.com/video/%2/livestreaming'>open the broadcast in YouTube Studio</a> and try manually.
+kv YouTube.Actions.Error.BroadcastTestStarting Broadcast is transitioning to the test stage, this can take some time. Please try again in 10-30 seconds.
+kv YouTube.Actions.EventsLoading Loading list of events...
+kv YouTube.Actions.EventCreated.Title Event Created
+kv YouTube.Actions.EventCreated.Text Event created successfully.
+kv YouTube.Actions.Stream Stream
+kv YouTube.Actions.Stream.ScheduledFor Scheduled for %1
+kv YouTube.Actions.Stream.Resume Resume interrupted stream
+kv YouTube.Actions.Stream.YTStudio Automatically created by YouTube Studio
+kv YouTube.Actions.Notify.Title YouTube
+kv YouTube.Actions.Notify.CreatingBroadcast Creating a new Live Broadcast, please wait...
+kv YouTube.Actions.AutoStartStreamingWarning.Title Manual start required
+kv YouTube.Actions.AutoStartStreamingWarning Auto-start is disabled for this event, click "Go Live" to start your broadcast.
+kv YouTube.Actions.AutoStopStreamingWarning You will not be able to reconnect.<br>Your stream will stop and you will no longer be live.
+kv YouTube.Errors.liveStreamingNotEnabled Live streaming is not enabled on the selected YouTube channel.<br/><br/>See <a href='https://www.youtube.com/features'>youtube.com/features</a> for more information.
+kv YouTube.Errors.livePermissionBlocked Live streaming is unavailable on the selected YouTube Channel.<br/>Please note that it may take up to 24 hours for live streaming to become available after enabling it in your channel settings.<br/><br/>See <a href='https://www.youtube.com/features'>youtube.com/features</a> for details.
+kv YouTube.Errors.errorExecutingTransition Transition failed due to a backend error. Please try again in a few seconds.
+kv YouTube.Errors.errorStreamInactive YouTube is not receiving data for your stream. Please check your configuration and try again.
+kv YouTube.Errors.invalidTransition The attempted transition was invalid. This may be due to the stream not having finished a previous transition. Please wait a few seconds and try again.
+kv YouTube.DocksRemoval.Title Clear Legacy YouTube Browser Docks
+kv YouTube.DocksRemoval.Text These browser docks will be removed as deprecated:
+
+%1
+Use "Docks/YouTube Live Control Room" instead.
+kv ConfigDownload.WarningMessageTitle Warning
+kv FailedToStartStream.MissingConfigURL No config URL available for the current service
+kv FailedToStartStream.NoCustomRTMPURLInSettings Custom RTMP URL not specified
+kv FailedToStartStream.InvalidCustomConfig Invalid custom config
+kv FailedToStartStream.MissingCanvas A configured extra canvas is missing
+kv FailedToStartStream.FailedToCreateMultitrackVideoService Failed to create multitrack video service
+kv FailedToStartStream.FailedToCreateMultitrackVideoOutput Failed to create multitrack video RTMP output
+kv FailedToStartStream.EncoderNotAvailable NVENC not available.
+
+Failed to find encoder type '%1'
+kv FailedToStartStream.FailedToCreateVideoEncoder Failed to create video encoder '%1' (type: '%2')
+kv FailedToStartStream.FailedToGetOBSVideoInfo Failed to get OBS video info while creating encoder '%1' (type: '%2')
+kv FailedToStartStream.FailedToCreateAudioEncoder Failed to create audio encoder
+kv FailedToStartStream.NoRTMPURLInConfig Config does not contain stream target RTMP(S) URL
+kv FailedToStartStream.FallbackToDefault Starting the stream using %1 failed; do you want to retry using single encode settings?
+kv FailedToStartStream.ConfigRequestFailed Could not fetch config from %1
+
+HTTP error: %2
+kv FailedToStartStream.WarningUnknownStatus Received unknown status value '%1'
+kv FailedToStartStream.WarningRetryNonMultitrackVideo 
+
+Do you want to continue streaming without %1?
+kv FailedToStartStream.WarningRetry 
+
+Do you want to continue streaming?
+kv FailedToStartStream.MissingEncoderConfigs Go live config did not include encoder configurations
+kv FailedToStartStream.InvalidEncoderConfig Go live config included an invalid encoder configuration
+kv FailedToStartStream.StatusMissingHTML Go live request returned an unspecified error
+kv FailedToStartStream.NoConfigSupplied Missing config
+kv MultitrackVideo.Info %1 automatically optimizes your stream settings, which may include encoding multiple video qualities and/or canvas orientations. Selecting this option will send %2 information about your computer and software setup.
+kv MultitrackVideo.IncompatibleSettings.Title Incompatible Settings
+kv MultitrackVideo.IncompatibleSettings.AudioChannels %1 is not currently compatible with [Audio → General → Channels] set to '%2', %3
+kv MultitrackVideo.IncompatibleSettings.AudioChannelsSingle [Audio → General → Channels] needs to be set to '%1'
+kv MultitrackVideo.IncompatibleSettings.AudioChannelsMultiple %1 requires multiple different settings for [Audio → General → Channels]
+kv Basic.OpenPluginManager Plugin Manager
+kv PluginManager Plugin Manager
+kv PluginManager.Restart OBS Studio must be restarted to apply plugin changes
+kv PluginManager.MissingPlugin Missing Plugins
+kv PluginManager.SafeMode All plugins temporarily disabled by Safe Mode
+kv PluginManager.Section.Discover Browse
+kv PluginManager.Section.Manage Installed
+kv PluginManager.Section.Updates Updates
+kv PluginManager.Section.Manage.Title Installed
+kv PluginManager.Section.Manage.Description Manage your currently installed plugins.
+kv PluginManager.Section.Manage.NoPlugins No plugins found.
+kv PluginManager.Section.Errors.Title Errors
+kv PluginManager.Section.Errors.Description These plugins failed to load. Make sure they are up to date and compatible with this version of OBS Studio.
+kv PluginManager.Section.Missing.Title Missing
+kv PluginManager.Section.Missing.Description These plugins were previously installed but can no longer be found.
+kv PluginManager.Button.Enable Enable %1 plugin
+kv PluginManager.Status.Legacy Legacy
+kv PluginManager.Status.Disabled Disabled
+kv PluginManager.Status.Error Error
+kv PluginManager.Status.Missing Missing
+kv PluginManager.Status.Legacy.Description This plugin is installed to a location that will stop working in the future. <a href="%1">Learn More</a>
+kv Accessible.Widget.Name.AlignmentSelector Alignment Selector
+kv EncoderMissing.Title Missing Encoders
+kv EncoderMissing.Text The following configured encoders are missing:
+<ul>
+%1</ul><br>
+See the <a href="%2">Knowledge Base Article</a> for further information.
+kv EncoderMissing.ItemText <li>
+<h3>%1</h3>
+%2 (code: <code>%3</code>)
+</li>
+kv EncoderMissing.Unknown Unknown
+kv EncoderMissing.MissingModule Module "%1" not loaded
+kv EncoderMissing.NVENC.TestProgramFailedStartup NVENC check program start failure
+kv EncoderMissing.NVENC.TestProgramExitWithError NVENC check process failure, exit code: %1
+kv EncoderMissing.NVENC.TestProgramReadFailure NVENC check process output read failure, exit code: %1
+kv EncoderMissing.NVENC.TestProgramError NVENC check failed with reason: %1
+kv EncoderMissing.NVENC.NoDevices No NVIDIA GPUs found
+kv EncoderMissing.NVENC.Unsupported.Kepler The architecture (Kepler) of your GPU (%1) is no longer supported. Please use OBS 30.2 or earlier instead.
+kv EncoderMissing.NVENC.Reason.NvmlLoad Failed loading NVML library
+kv EncoderMissing.NVENC.Reason.NvmlInit Failed initializing NVML
+kv EncoderMissing.NVENC.Reason.NvencLoad Failed loading NVENC library
+kv EncoderMissing.NVENC.Reason.NvencInit Failed initializing NVENC
+kv EncoderMissing.NVENC.Reason.NvencVersion NVENC version empty
+kv EncoderMissing.NVENC.Reason.CudaLoad Failed loading CUDA library
+kv EncoderMissing.NVENC.Reason.CudaInit Failed initializing CUDA
+kv EncoderMissing.NVENC.Reason.CudaVersion Invalid/Missing CUDA version
+kv EncoderMissing.NVENC.Reason.DriverOutdated Outdated driver
+kv EncoderMissing.NVENC.Reason.NoSupportedDevices No NVIDIA devices with NVENC support found
+kv EncoderMissing.NVENC.Reason.SessionLimitExceeded Encoder session limit exceeded
+kv EncoderMissing.NVENC.Reason.AV1Unsupported AV1 encoding is not supported by any of the system's NVIDIA GPUs
