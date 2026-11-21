@@ -1023,6 +1023,18 @@ Floats print with `%.9g`; the hex is the stored bytes (little endian; ints/bools
 **Comparison notes.** Lines `... -> past-end` (from `pass_by_idx` / `annotation_idx` when the index equals the count) in the
 expected file match `... -> null` in the actual output (spec D-7). Everything else is byte-identical except `log` lines (level only).
 
+**Corpus digests.** `vectors/effect/corpus-digests.expected` holds, for every `libobs/data/*.effect`, the
+preprocessor token count, error count, and a blake2b-512 digest of the cf-lexer/preprocessor dump produced by
+`gen/effect_dump.c` against the C reference (dump = `parse` + `tokens pp` + `errors` in the runner's print format;
+file names under the data directory are printed as `@data/<name>`, so the digests are location-independent).
+The Rust `cf_parser` corpus test (`v_corpus_effect_digests`) rebuilds that dump text from the parsed tokens and
+compares the digest; it skips (one printed line) when the `libobs` checkout link is absent, as in CI.
+Regenerate by building the dumper from `test/conformance` and running it per file from the repository root:
+
+```
+cc -std=gnu11 -O0 -g -Wall -I../../libobs -Igen gen/effect_dump.c gen/stubs.c ../../libobs/util/cf-lexer.c ../../libobs/util/cf-parser.c ../../libobs/util/lexer.c ../../libobs/util/bmem.c ../../libobs/util/base.c ../../libobs/util/threading-posix.c ../../libobs/util/utf8.c ../../libobs/util/dstr.c -lpthread -lm -o effect_dump
+```
+
 ## transitions runner (spec S-029)
 
 Area `transitions` (`gen/transitions_runner.c`, `gen/transitions_stubs.c`, `gen/transitions.sources`).

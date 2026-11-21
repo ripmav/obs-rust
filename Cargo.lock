@@ -137,6 +137,7 @@ name = "obs-ffi"
 version = "0.1.0"
 dependencies = [
  "cc",
+ "obs-util",
 ]
 
 [[package]]

@@ -3,6 +3,16 @@
 #
 #   ./run.sh generate [AREA]   build the C runners from ../../libobs and (re)write vectors/
 #   ./run.sh check [AREA]      build the runners and fail if any output differs from vectors/
+#   ./run.sh swap [AREA]       P1-08.5 recipe: first `cargo build -p obs-ffi --release --features c-swap`,
+#                              then build each runner like check EXCEPT the C sources the Rust
+#                              staticlib replaces are dropped and ../../target/release/libobs_ffi.a
+#                              is appended before -lpthread -lm. Part A of P1-08.5 covers the
+#                              base lexer (lexer.c), text-lookup (text-lookup.c) and the
+#                              base-logging shim (base.c); part B adds the C-family lexer
+#                              (cf-lexer.c) and parser (cf-parser.c); P1-05.4 adds the threading
+#                              primitives (threading-posix.c) — the full swap set of
+#                              the OBS_ENABLE_RUST CMake patch. Areas without any swapped
+#                              file build normally.
 #
 # AREA limits the run to one area (always use it when working on one area so that
 # other areas' vectors are not touched).
@@ -81,14 +91,57 @@ for f in "$here"/gen/*.sources; do
 done
 
 export CONFORMANCE_TMPDIR="$build"
+
+# P1-08.5 swap mode: the Rust staticlib that replaces the swapped C sources
+# (--features c-swap compiles the abi_* bridges into the staticlib; the
+# OBS_ENABLE_RUST=ON build passes the same feature).
+rustlib="$root/target/release/libobs_ffi.a"
+if [ "$mode" = swap ]; then
+	( cd "$root" && cargo build -p obs-ffi --release --features c-swap )
+fi
+
+# Removes the swapped C sources from the array named by $1; sets SWAPPED=1
+# if anything was removed (the full swap set of the OBS_ENABLE_RUST CMake
+# patch: lexer.c, cf-lexer.c, cf-parser.c, text-lookup.c, base.c,
+# threading-posix.c).
+apply_swap() {
+	local -n _srcs=$1
+	local f n=${#_srcs[@]} out=()
+	for f in "${_srcs[@]}"; do
+		case "$f" in
+		*"libobs/util/lexer.c" | *"libobs/util/cf-lexer.c" | *"libobs/util/cf-parser.c" | *"libobs/util/text-lookup.c" | *"libobs/util/base.c" | *"libobs/util/threading-posix.c") SWAPPED=1 ;;
+		*) out+=("$f") ;;
+		esac
+	done
+	if [ "${#out[@]}" -lt "$n" ]; then
+		_srcs=("${out[@]}")
+	fi
+	return 0
+}
+
 status=0
 for area in "${!runner_sources[@]}"; do
 	[ -d "$here/scripts/$area" ] || continue
 	[ -z "$only_area" ] || [ "$only_area" = "$area" ] || continue
 	commons=("${common[@]}")
 	[ -z "${no_common[$area]:-}" ] || commons=()
-	# shellcheck disable=SC2086
-	"$cc" "${cflags[@]}" ${extra_flags[$area]:-} -o "$build/$area-runner" ${runner_sources[$area]} "${commons[@]}" ${extra_libs[$area]:-} -lpthread -lm
+	if [ "$mode" = swap ]; then
+		# swap mode: drop the swapped C sources; the staticlib provides the
+		# replaced symbols (appended below before -lpthread -lm, like a -l flag).
+		srcs=(${runner_sources[$area]})
+		SWAPPED=0
+		apply_swap srcs
+		apply_swap commons
+		rustlib_link=""
+		if [ "$SWAPPED" = 1 ]; then
+			rustlib_link="$rustlib"
+		fi
+		# shellcheck disable=SC2086
+		"$cc" "${cflags[@]}" ${extra_flags[$area]:-} -o "$build/$area-runner" "${srcs[@]}" "${commons[@]}" $rustlib_link ${extra_libs[$area]:-} -lpthread -lm
+	else
+		# shellcheck disable=SC2086
+		"$cc" "${cflags[@]}" ${extra_flags[$area]:-} -o "$build/$area-runner" ${runner_sources[$area]} "${commons[@]}" ${extra_libs[$area]:-} -lpthread -lm
+	fi
 	mkdir -p "$here/vectors/$area"
 	for script in "$here/scripts/$area"/*.script; do
 		name="$(basename "$script" .script)"

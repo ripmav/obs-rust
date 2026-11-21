@@ -4,6 +4,9 @@
 //! named above; the skeleton only proves the workspace builds.
 
 pub mod bmem;
+pub mod cf_lexer;
+pub mod cf_parser;
+pub mod cf_preprocessor;
 pub mod config;
 pub mod darray;
 pub mod deque;
@@ -14,6 +17,7 @@ pub mod deque;
 pub mod dl;
 pub mod dstr;
 pub mod hash;
+pub mod lexer;
 pub mod os_fs;
 #[cfg(unix)]
 pub mod os_proc;
@@ -21,6 +25,10 @@ pub mod os_str;
 #[cfg(unix)]
 pub mod pipe;
 pub mod process_args;
+pub mod text_lookup;
+#[cfg(unix)]
+#[cfg(unix)]
+pub mod threading;
 pub mod utf8;
 
 #[cfg(test)]

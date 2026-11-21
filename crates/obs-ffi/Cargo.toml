@@ -11,3 +11,15 @@ workspace = true
 
 [build-dependencies]
 cc = "1.11.2"
+
+[dependencies]
+obs-util = { path = "../obs-util" }
+
+[features]
+# Compile the C-ABI bridges that need libobs C symbols at link time
+# (the OBS_ENABLE_RUST=ON swap build). Off by default so plain `cargo test`
+# binaries link without the C tree.
+c-swap = []
+
+[lib]
+crate-type = ["staticlib", "rlib"]

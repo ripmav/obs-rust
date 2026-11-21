@@ -5,6 +5,34 @@
 //! (stable Rust cannot define or consume variadics — primer §5.5). Rust
 //! code logs through [`blog`], which routes via `obs_ffi_log(level, msg)`
 //! = `blog(level, "%s", msg)` into the installed C handler.
+//!
+//! P1-08.5 (recipe step 2): the `extern "C"` bridges for the ported leaf
+//! modules (feature `c-swap`) live in `abi_*` modules ([`abi_text_lookup`] first, then
+//! [`abi_lexer`], then [`abi_cf_lexer`]); P1-05.4 adds the threading
+//! primitives ([`abi_threading`], unix-only — the Windows HANDLE port is
+//! P1-05.3).
+
+// The bridges reference C symbols (`bmalloc`, `bfree`, `os_fopen`, ...) that
+// only exist in the swap build (libobs/util/*.c linked next to this
+// staticlib). They are compiled only for that build (`--features c-swap`,
+// what `OBS_ENABLE_RUST=ON` passes) and for this crate's unit tests, which
+// provide stand-ins. Without the gate, linkers that do not garbage-collect
+// unreferenced sections (MSVC) fail with LNK2019 on the integration tests.
+#[cfg(any(test, feature = "c-swap"))]
+pub mod abi_cf_lexer;
+#[cfg(any(test, feature = "c-swap"))]
+pub mod abi_cf_parser;
+#[cfg(any(test, feature = "c-swap"))]
+pub mod abi_common;
+#[cfg(any(test, feature = "c-swap"))]
+pub mod abi_lexer;
+#[cfg(any(test, feature = "c-swap"))]
+pub mod abi_text_lookup;
+// The threading primitives are unix in obs-util (`#[cfg(unix)]` — the
+// Windows HANDLE port is P1-05.3); the bridge follows the same gate.
+#[cfg(unix)]
+#[cfg(any(test, feature = "c-swap"))]
+pub mod abi_threading;
 
 use std::os::raw::{c_int, c_void};
 

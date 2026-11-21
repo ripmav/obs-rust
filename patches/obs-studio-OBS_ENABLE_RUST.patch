@@ -1,0 +1,135 @@
+From f3e04df3e79891f15343bca5692c40ef297a0b79 Mon Sep 17 00:00:00 2001
+From: "ripmav-bot[bot]" <353694380+ripmav-bot[bot]@users.noreply.github.com>
+Date: Thu, 19 Nov 2026 19:45:49 +0100
+Subject: [PATCH] libobs: add OBS_ENABLE_RUST option (Rust leaf-module swap,
+ obs-rust P1-08.5)
+
+When OBS_ENABLE_RUST=ON, the ported leaf modules (base.c, lexer.c,
+cf-lexer.c, cf-parser.c, text-lookup.c, threading-posix.c) are excluded
+from the build and their symbols are provided by the Rust staticlib
+named in OBS_RUST_FFI_LIB (cargo build -p obs-ffi --release).
+Mechanism verified with a shadow CMake project (genex source exclusion
++ imported staticlib resolving the real text_lookup_create symbol); a
+full libobs configure needs the complete OBS dependency set and remains
+unverified here.
+
+Assisted-by: Qwen 3.8 27B (off) via Pi
+---
+ libobs/CMakeLists.txt         | 25 ++++++++++++++++++++-----
+ libobs/cmake/os-freebsd.cmake |  2 +-
+ libobs/cmake/os-linux.cmake   |  2 +-
+ libobs/cmake/os-macos.cmake   |  2 +-
+ 4 files changed, 23 insertions(+), 8 deletions(-)
+diff --git a/libobs/CMakeLists.txt b/libobs/CMakeLists.txt
+index 70e3bee..b08ef90 100644
+--- a/libobs/CMakeLists.txt
++++ b/libobs/CMakeLists.txt
+@@ -9,6 +9,12 @@ endif()
+ 
+ include(cmake/obs-core-modules.cmake)
+ 
++# Rust rewrite recipe step 5 (obs-rust P1-08.5): when ON, the ported leaf
++# modules (base.c, lexer.c, cf-lexer.c, cf-parser.c, text-lookup.c and
++# threading-posix.c) are excluded; their symbols come from the Rust
++# staticlib pointed to by OBS_RUST_FFI_LIB (cargo build -p obs-ffi --release).
++option(OBS_ENABLE_RUST "Replace ported C leaf modules with the Rust staticlib implementation" OFF)
++
+ find_package(SIMDe REQUIRED)
+ find_package(Threads REQUIRED)
+ 
+@@ -88,7 +94,7 @@ target_sources(
+   PRIVATE
+     util/array-serializer.c
+     util/array-serializer.h
+-    util/base.c
++    $<$<NOT:$<BOOL:${OBS_ENABLE_RUST}>>:util/base.c>
+     util/base.h
+     util/bitstream.c
+     util/bitstream.h
+@@ -97,9 +103,9 @@ target_sources(
+     util/buffered-file-serializer.c
+     util/buffered-file-serializer.h
+     util/c99defs.h
+-    util/cf-lexer.c
++    $<$<NOT:$<BOOL:${OBS_ENABLE_RUST}>>:util/cf-lexer.c>
+     util/cf-lexer.h
+-    util/cf-parser.c
++    $<$<NOT:$<BOOL:${OBS_ENABLE_RUST}>>:util/cf-parser.c>
+     util/cf-parser.h
+     util/config-file.c
+     util/config-file.h
+@@ -112,7 +118,7 @@ target_sources(
+     util/dstr.h
+     util/file-serializer.c
+     util/file-serializer.h
+-    util/lexer.c
++    $<$<NOT:$<BOOL:${OBS_ENABLE_RUST}>>:util/lexer.c>
+     util/lexer.h
+     util/pipe.c
+     util/pipe.h
+@@ -128,7 +134,7 @@ target_sources(
+     util/sse-intrin.h
+     util/task.c
+     util/task.h
+-    util/text-lookup.c
++    $<$<NOT:$<BOOL:${OBS_ENABLE_RUST}>>:util/text-lookup.c>
+     util/text-lookup.h
+     util/threading.h
+     util/utf8.c
+@@ -264,6 +270,15 @@ target_link_libraries(
+   PUBLIC SIMDe::SIMDe Threads::Threads
+ )
+ 
++if(OBS_ENABLE_RUST)
++  if(NOT DEFINED OBS_RUST_FFI_LIB)
++    message(FATAL_ERROR "OBS_ENABLE_RUST=ON requires OBS_RUST_FFI_LIB=/path/to/libobs_ffi.a (cargo build -p obs-ffi --release)")
++  endif()
++  add_library(obs::rust-ffi STATIC IMPORTED GLOBAL)
++  set_target_properties(obs::rust-ffi PROPERTIES IMPORTED_LOCATION "${OBS_RUST_FFI_LIB}")
++  target_link_libraries(libobs PRIVATE obs::rust-ffi)
++endif()
++
+ if(OS_WINDOWS)
+   include(cmake/os-windows.cmake)
+ elseif(OS_MACOS)
+diff --git a/libobs/cmake/os-freebsd.cmake b/libobs/cmake/os-freebsd.cmake
+index 098fce0..0d58bfc 100644
+--- a/libobs/cmake/os-freebsd.cmake
++++ b/libobs/cmake/os-freebsd.cmake
+@@ -27,7 +27,7 @@ target_sources(
+     obs-nix.c
+     util/pipe-posix.c
+     util/platform-nix.c
+-    util/threading-posix.c
++    $<$<NOT:$<BOOL:${OBS_ENABLE_RUST}>>:util/threading-posix.c>
+     util/threading-posix.h
+ )
+ 
+diff --git a/libobs/cmake/os-linux.cmake b/libobs/cmake/os-linux.cmake
+index dbc31ee..b11b83b 100644
+--- a/libobs/cmake/os-linux.cmake
++++ b/libobs/cmake/os-linux.cmake
+@@ -13,7 +13,7 @@ target_sources(
+     obs-nix.c
+     util/pipe-posix.c
+     util/platform-nix.c
+-    util/threading-posix.c
++    $<$<NOT:$<BOOL:${OBS_ENABLE_RUST}>>:util/threading-posix.c>
+     util/threading-posix.h
+ )
+ 
+diff --git a/libobs/cmake/os-macos.cmake b/libobs/cmake/os-macos.cmake
+index e0dec44..53368ae 100644
+--- a/libobs/cmake/os-macos.cmake
++++ b/libobs/cmake/os-macos.cmake
+@@ -22,7 +22,7 @@ target_sources(
+     util/pipe-posix.c
+     util/platform-cocoa.m
+     util/platform-nix.c
+-    util/threading-posix.c
++    $<$<NOT:$<BOOL:${OBS_ENABLE_RUST}>>:util/threading-posix.c>
+     util/threading-posix.h
+ )
+ 
+-- 
+2.47.3

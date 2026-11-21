@@ -1,0 +1,57 @@
+parse true
+tokens pp 11
+tok 0 type=NEWLINE str="\n" src=14+1 @1:15
+tok 1 type=NEWLINE str="\n" src=32+1 @2:18
+tok 2 type=SPACETAB str=" " src=-
+tok 3 type=SPACETAB str=" " src=-
+tok 4 type=SPACETAB str=" " src=33+1 @3:1 u="G"
+tok 5 type=SPACETAB str=" " src=33+1 @3:1 u="G"
+tok 6 type=NUM str="1" src=35+1 @3:3
+tok 7 type=SPACETAB str=" " src=33+1 @3:1 u="G"
+tok 8 type=SPACETAB str=" " src=33+1 @3:1 u="G"
+tok 9 type=NEWLINE str="\n" src=37+1 @3:5
+tok 10 type=NONE str="" src=38+0 @4:1
+errors 0 (errors=0 warnings=0 has_errors=0)
+parse true
+tokens pp 21
+tok 0 type=NEWLINE str="\n" src=23+1 @1:24
+tok 1 type=NEWLINE str="\n" src=49+1 @2:26
+tok 2 type=SPACETAB str=" " src=-
+tok 3 type=SPACETAB str=" " src=-
+tok 4 type=SPACETAB str=" " src=50+1 @3:1 u="P"
+tok 5 type=SPACETAB str=" " src=50+1 @3:1 u="P"
+tok 6 type=NUM str="1" src=52+1 @3:3
+tok 7 type=SPACETAB str=" " src=50+1 @3:1 u="P"
+tok 8 type=SPACETAB str=" " src=50+1 @3:1 u="P"
+tok 9 type=SPACETAB str=" " src=19+1 @1:20
+tok 10 type=OTHER str="+" src=20+1 @1:21
+tok 11 type=SPACETAB str=" " src=21+1 @1:22
+tok 12 type=SPACETAB str=" " src=50+1 @3:1 u="P"
+tok 13 type=SPACETAB str=" " src=46+1 @2:23
+tok 14 type=SPACETAB str=" " src=50+1 @3:1 u="P"
+tok 15 type=SPACETAB str=" " src=54+1 @3:5
+tok 16 type=NUM str="2" src=55+1 @3:6
+tok 17 type=SPACETAB str=" " src=50+1 @3:1 u="P"
+tok 18 type=SPACETAB str=" " src=50+1 @3:1 u="P"
+tok 19 type=NEWLINE str="\n" src=57+1 @3:8
+tok 20 type=NONE str="" src=58+0 @4:1
+errors 0 (errors=0 warnings=0 has_errors=0)
+parse true
+tokens pp 15
+tok 0 type=NEWLINE str="\n" src=23+1 @1:24
+tok 1 type=NEWLINE str="\n" src=46+1 @2:23
+tok 2 type=SPACETAB str=" " src=-
+tok 3 type=SPACETAB str=" " src=-
+tok 4 type=SPACETAB str=" " src=47+1 @3:1 u="P"
+tok 5 type=SPACETAB str=" " src=47+1 @3:1 u="P"
+tok 6 type=NUM str="1" src=49+1 @3:3
+tok 7 type=SPACETAB str=" " src=47+1 @3:1 u="P"
+tok 8 type=SPACETAB str=" " src=47+1 @3:1 u="P"
+tok 9 type=SPACETAB str=" " src=19+1 @1:20
+tok 10 type=OTHER str="+" src=20+1 @1:21
+tok 11 type=SPACETAB str=" " src=21+1 @1:22
+tok 12 type=NAME str="b" src=22+1 @1:23
+tok 13 type=NEWLINE str="\n" src=54+1 @3:8
+tok 14 type=NONE str="" src=55+0 @4:1
+errors 1 (errors=1 warnings=0 has_errors=1)
+err 0 ERROR file=@null row=2 col=22 msg="Mismatching number of macro parameters"
