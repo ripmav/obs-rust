@@ -249,6 +249,7 @@ mod tests {
     }
 
     #[test]
+    #[cfg_attr(miri, ignore)]
     fn r120_r121_256_point_golden() {
         // vector 27-srgb-256-golden (generated from the C reference):
         // four sections of 256 lines over the points i/255 (i = 0..255).
