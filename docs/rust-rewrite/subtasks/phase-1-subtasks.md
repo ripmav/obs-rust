@@ -58,7 +58,7 @@ Corrections to the earlier plan, verified in the tree: the ring buffer is `libob
   - Done when: signal-before-wait and timeout tests pass.
 - [ ] **P1-05.2 Semaphores and thread names** — `os_sem_init/post/wait/destroy`, `os_set_thread_name` from `threading-posix.c`. Spec: no spec (S-061 gap). Pitfall: `threading-posix.c` carries a separate `#ifdef __APPLE__` `os_sem_init` path (lines ~170–220; macOS lacks unnamed POSIX semaphores) — read it before porting, test macOS separately. Done when: thread name visible in debugger on each OS.
 - [ ] **P1-05.3 Windows parity** — compare behaviour with `threading-windows.c` (213) (events/semaphores are `HANDLE`s from `CreateEvent`/`CreateSemaphore`, driven by `WaitForSingleObject`; no SRW locks). Done when: Windows CI green.
-- [ ] **P1-05.4 Stress and recipe** — 64 threads × 1M signals; apply recipe (Files: `libobs/CMakeLists.txt` (396), `obs-ffi` shim).
+- [x] **P1-05.4 Stress and recipe** — 64 threads × 1M signals; apply recipe (Files: `libobs/CMakeLists.txt` (396), `obs-ffi` shim).
 - [x] **P1-05.5 Write S-061 (added)** — threading-primitives spec (D-27)
   - Files: `libobs/util/threading.h` (103), `threading-posix.c` (273), `threading-windows.c` (213).
   - Steps: 1. read the C and enumerate the contract: `os_event_init/post/wait/destroy` (auto-reset), `os_sem_init/post/wait/destroy`, `os_set_thread_name`, the Windows `HANDLE` mapping and the pthread path. 2. write `specs/S-061-threading.md` (format like S-034). 3. add the row to `specs/README.md`.

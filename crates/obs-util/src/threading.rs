@@ -32,6 +32,11 @@
 use std::sync::{Condvar, Mutex};
 use std::time::Duration;
 
+/// C `pthread_mutex_t` — re-exported from `libc` so the FFI bridge in
+/// obs-ffi can name the type in the exact C signature without taking its
+/// own `libc` dependency.
+pub use libc::pthread_mutex_t;
+
 /// The event/semaphore guards cannot be poisoned: the only code that runs
 /// while the lock is held is an integer read/write (nothing panics), so
 /// `expect` here documents the invariant rather than recovering a real
@@ -301,12 +306,15 @@ pub fn os_sem_wait(sem: Option<&OsSem>) -> i32 {
 /// `os_set_thread_name` (S-061 R05): best-effort — the platform return
 /// code is discarded and the call never fails the caller.
 ///
+/// `name` is the raw C byte string (the glibc path reads `strlen(name)`
+/// bytes — a C string is bytes, not necessarily UTF-8).
+///
 /// glibc caps pthread names at 15 bytes; the C reference pre-truncates
 /// with `bstrdup_n(name, 15)` (S-061 Q2) because `pthread_setname_np`
 /// would reject the longer name. The Apple/FreeBSD paths pass the name
 /// through untruncated; other unix targets (including Android, which has
 /// no branch in the C reference) are silent no-ops.
-pub fn os_set_thread_name(name: &str) {
+pub fn os_set_thread_name(name: &[u8]) {
     // R05: best-effort — the platform error is discarded.
     #[cfg(target_os = "linux")]
     {
@@ -334,12 +342,11 @@ pub fn os_set_thread_name(name: &str) {
 /// NUL (the C `strlen` semantics of every platform path), and on glibc
 /// truncated to the 15-byte pthread-name limit (S-061 R05 + Q2 — the C
 /// reference pre-truncates with `bstrdup_n(name, 15)`).
-fn thread_name_bytes(name: &str) -> &[u8] {
-    let bytes = name.as_bytes();
-    let end = bytes.iter().position(|&c| c == 0).unwrap_or(bytes.len());
+fn thread_name_bytes(name: &[u8]) -> &[u8] {
+    let end = name.iter().position(|&c| c == 0).unwrap_or(name.len());
     // glibc pthread names are capped at 15 chars (S-061 Q2); the C
     // reference pre-truncates with `bstrdup_n(name, 15)`.
-    &bytes[..end.min(15)]
+    &name[..end.min(15)]
 }
 
 /// `pthread_mutex_init_value` (S-061 R07): assigns
@@ -606,17 +613,17 @@ mod tests {
     #[cfg(target_os = "linux")]
     #[cfg_attr(miri, ignore)]
     fn v05_thread_name() {
-        assert_eq!(worker_name("hello"), "hello");
-        assert_eq!(worker_name("abcdefghijklmno"), "abcdefghijklmno");
-        assert_eq!(worker_name("abcdefghijklmnop"), "abcdefghijklmno");
-        assert_eq!(worker_name("a b c"), "a b c");
-        assert_eq!(worker_name(""), "");
+        assert_eq!(worker_name(b"hello"), "hello");
+        assert_eq!(worker_name(b"abcdefghijklmno"), "abcdefghijklmno");
+        assert_eq!(worker_name(b"abcdefghijklmnop"), "abcdefghijklmno");
+        assert_eq!(worker_name(b"a b c"), "a b c");
+        assert_eq!(worker_name(b""), "");
     }
 
     /// Sets the name on a worker thread and reads it back with
     /// `pthread_getname_np` (mirroring the C runner's `wname`).
     #[cfg(target_os = "linux")]
-    fn worker_name(name: &str) -> String {
+    fn worker_name(name: &[u8]) -> String {
         let name = name.to_owned();
         let (tx, rx) = std::sync::mpsc::channel();
         let thread = std::thread::spawn(move || {
@@ -640,12 +647,12 @@ mod tests {
     #[test]
     #[cfg(target_os = "linux")]
     fn thread_name_bytes_truncates() {
-        assert_eq!(thread_name_bytes("hello"), b"hello");
-        assert_eq!(thread_name_bytes("abcdefghijklmno"), b"abcdefghijklmno");
-        assert_eq!(thread_name_bytes("abcdefghijklmnop"), b"abcdefghijklmno");
-        assert_eq!(thread_name_bytes("a b c"), b"a b c");
-        assert_eq!(thread_name_bytes(""), b"");
-        assert_eq!(thread_name_bytes("abc\0def"), b"abc");
+        assert_eq!(thread_name_bytes(b"hello"), b"hello");
+        assert_eq!(thread_name_bytes(b"abcdefghijklmno"), b"abcdefghijklmno");
+        assert_eq!(thread_name_bytes(b"abcdefghijklmnop"), b"abcdefghijklmno");
+        assert_eq!(thread_name_bytes(b"a b c"), b"a b c");
+        assert_eq!(thread_name_bytes(b""), b"");
+        assert_eq!(thread_name_bytes(b"abc\0def"), b"abc");
     }
 
     // vector 06-mutex-init (S-061 R07): the two init styles; the

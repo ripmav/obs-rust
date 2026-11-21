@@ -8,7 +8,9 @@
 //!
 //! P1-08.5 (recipe step 2): the `extern "C"` bridges for the ported leaf
 //! modules (feature `c-swap`) live in `abi_*` modules ([`abi_text_lookup`] first, then
-//! [`abi_lexer`], then [`abi_cf_lexer`]).
+//! [`abi_lexer`], then [`abi_cf_lexer`]); P1-05.4 adds the threading
+//! primitives ([`abi_threading`], unix-only — the Windows HANDLE port is
+//! P1-05.3).
 
 // The bridges reference C symbols (`bmalloc`, `bfree`, `os_fopen`, ...) that
 // only exist in the swap build (libobs/util/*.c linked next to this
@@ -26,6 +28,11 @@ pub mod abi_common;
 pub mod abi_lexer;
 #[cfg(any(test, feature = "c-swap"))]
 pub mod abi_text_lookup;
+// The threading primitives are unix in obs-util (`#[cfg(unix)]` — the
+// Windows HANDLE port is P1-05.3); the bridge follows the same gate.
+#[cfg(unix)]
+#[cfg(any(test, feature = "c-swap"))]
+pub mod abi_threading;
 
 use std::os::raw::{c_int, c_void};
 

@@ -25,17 +25,27 @@ if ! (cd "$root" && cbindgen --crate obs-ffi --lang C) >"$tmp/gen.h" 2>"$tmp/gen
 fi
 
 # Function names the C headers export (the ABI the bridge must provide).
-grep -hE "^EXPORT " "$libobs"/util/lexer.h "$libobs"/util/cf-lexer.h \
-    "$libobs"/util/cf-parser.h "$libobs"/util/text-lookup.h \
-    | sed -nE 's/^EXPORT [a-zA-Z_]+ ?\**([a-zA-Z_][a-zA-Z0-9_]*)\(.*/\1/p' \
-    | sort -u >"$tmp/c_fns.txt"
+{
+  grep -hE "^EXPORT " "$libobs"/util/lexer.h "$libobs"/util/cf-lexer.h \
+      "$libobs"/util/cf-parser.h "$libobs"/util/text-lookup.h "$libobs"/util/threading.h \
+    | sed -nE 's/^EXPORT [a-zA-Z_]+ ?\**([a-zA-Z_][a-zA-Z0-9_]*)\(.*/\1/p'
+  # threading.h also carries the two pthread mutex-init helpers as
+  # `static inline` (not linkable in C): the bridge provides the linkable
+  # form (the bstrdup precedent).
+  grep -E '^static inline (void|int) pthread_mutex_init_(value|recursive)\(' "$libobs"/util/threading.h \
+    | sed -nE 's/^static inline [a-zA-Z_]+ ?\**([a-zA-Z_][a-zA-Z0-9_]*)\(.*/\1/p'
+} | sort -u >"$tmp/c_fns.txt"
 
 # Function names the bridge actually declares: cbindgen keeps the C signature
 # quoted in the rustdoc comment right above each declaration, so the same
-# pattern applies to the generated header.
-grep -E '^ \* `EXPORT ' "$tmp/gen.h" \
-    | sed -nE 's/^ \* `EXPORT [a-zA-Z_]+ ?\**([a-zA-Z_][a-zA-Z0-9_]*)\(.*/\1/p' \
-    | sort -u >"$tmp/gen_fns.txt"
+# pattern applies to the generated header (the two `static inline` mutex
+# helpers carry that prefix instead of `EXPORT`).
+{
+  grep -E '^ \* `EXPORT ' "$tmp/gen.h" \
+    | sed -nE 's/^ \* `EXPORT [a-zA-Z_]+ ?\**([a-zA-Z_][a-zA-Z0-9_]*)\(.*/\1/p'
+  grep -E '^ \* `static inline ' "$tmp/gen.h" \
+    | sed -nE 's/^ \* `static inline [a-zA-Z_]+ ?\**([a-zA-Z_][a-zA-Z0-9_]*)\(.*/\1/p'
+} | sort -u >"$tmp/gen_fns.txt"
 
 status=0
 missing=$(comm -23 "$tmp/c_fns.txt" "$tmp/gen_fns.txt")

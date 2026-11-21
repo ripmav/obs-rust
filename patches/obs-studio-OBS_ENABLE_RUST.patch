@@ -5,20 +5,23 @@ Subject: [PATCH] libobs: add OBS_ENABLE_RUST option (Rust leaf-module swap,
  obs-rust P1-08.5)
 
 When OBS_ENABLE_RUST=ON, the ported leaf modules (base.c, lexer.c,
-cf-lexer.c, cf-parser.c, text-lookup.c) are excluded from the build and
-their symbols are provided by the Rust staticlib named in
-OBS_RUST_FFI_LIB (cargo build -p obs-ffi --release). Mechanism verified
-with a shadow CMake project (genex source exclusion + imported staticlib
-resolving the real text_lookup_create symbol); a full libobs configure
-needs the complete OBS dependency set and remains unverified here.
+cf-lexer.c, cf-parser.c, text-lookup.c, threading-posix.c) are excluded
+from the build and their symbols are provided by the Rust staticlib
+named in OBS_RUST_FFI_LIB (cargo build -p obs-ffi --release).
+Mechanism verified with a shadow CMake project (genex source exclusion
++ imported staticlib resolving the real text_lookup_create symbol); a
+full libobs configure needs the complete OBS dependency set and remains
+unverified here.
 
 Assisted-by: Qwen 3.8 27B (off) via Pi
 ---
- libobs/CMakeLists.txt | 25 ++++++++++++++++++++-----
- 1 file changed, 20 insertions(+), 5 deletions(-)
-
+ libobs/CMakeLists.txt         | 25 ++++++++++++++++++++-----
+ libobs/cmake/os-freebsd.cmake |  2 +-
+ libobs/cmake/os-linux.cmake   |  2 +-
+ libobs/cmake/os-macos.cmake   |  2 +-
+ 4 files changed, 23 insertions(+), 8 deletions(-)
 diff --git a/libobs/CMakeLists.txt b/libobs/CMakeLists.txt
-index 70e3bee..29a3f4b 100644
+index 70e3bee..b08ef90 100644
 --- a/libobs/CMakeLists.txt
 +++ b/libobs/CMakeLists.txt
 @@ -9,6 +9,12 @@ endif()
@@ -26,8 +29,8 @@ index 70e3bee..29a3f4b 100644
  include(cmake/obs-core-modules.cmake)
  
 +# Rust rewrite recipe step 5 (obs-rust P1-08.5): when ON, the ported leaf
-+# modules (base.c, lexer.c, cf-lexer.c, cf-parser.c, text-lookup.c) are
-+# excluded from this build and their symbols are provided by the Rust
++# modules (base.c, lexer.c, cf-lexer.c, cf-parser.c, text-lookup.c and
++# threading-posix.c) are excluded; their symbols come from the Rust
 +# staticlib pointed to by OBS_RUST_FFI_LIB (cargo build -p obs-ffi --release).
 +option(OBS_ENABLE_RUST "Replace ported C leaf modules with the Rust staticlib implementation" OFF)
 +
@@ -89,6 +92,44 @@ index 70e3bee..29a3f4b 100644
  if(OS_WINDOWS)
    include(cmake/os-windows.cmake)
  elseif(OS_MACOS)
+diff --git a/libobs/cmake/os-freebsd.cmake b/libobs/cmake/os-freebsd.cmake
+index 098fce0..0d58bfc 100644
+--- a/libobs/cmake/os-freebsd.cmake
++++ b/libobs/cmake/os-freebsd.cmake
+@@ -27,7 +27,7 @@ target_sources(
+     obs-nix.c
+     util/pipe-posix.c
+     util/platform-nix.c
+-    util/threading-posix.c
++    $<$<NOT:$<BOOL:${OBS_ENABLE_RUST}>>:util/threading-posix.c>
+     util/threading-posix.h
+ )
+ 
+diff --git a/libobs/cmake/os-linux.cmake b/libobs/cmake/os-linux.cmake
+index dbc31ee..b11b83b 100644
+--- a/libobs/cmake/os-linux.cmake
++++ b/libobs/cmake/os-linux.cmake
+@@ -13,7 +13,7 @@ target_sources(
+     obs-nix.c
+     util/pipe-posix.c
+     util/platform-nix.c
+-    util/threading-posix.c
++    $<$<NOT:$<BOOL:${OBS_ENABLE_RUST}>>:util/threading-posix.c>
+     util/threading-posix.h
+ )
+ 
+diff --git a/libobs/cmake/os-macos.cmake b/libobs/cmake/os-macos.cmake
+index e0dec44..53368ae 100644
+--- a/libobs/cmake/os-macos.cmake
++++ b/libobs/cmake/os-macos.cmake
+@@ -22,7 +22,7 @@ target_sources(
+     util/pipe-posix.c
+     util/platform-cocoa.m
+     util/platform-nix.c
+-    util/threading-posix.c
++    $<$<NOT:$<BOOL:${OBS_ENABLE_RUST}>>:util/threading-posix.c>
+     util/threading-posix.h
+ )
+ 
 -- 
 2.47.3
-

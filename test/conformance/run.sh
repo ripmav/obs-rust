@@ -3,13 +3,14 @@
 #
 #   ./run.sh generate [AREA]   build the C runners from ../../libobs and (re)write vectors/
 #   ./run.sh check [AREA]      build the runners and fail if any output differs from vectors/
-#   ./run.sh swap [AREA]       P1-08.5 recipe: first `cargo build -p obs-ffi --release`, then
-#                              build each runner like check EXCEPT the C sources the Rust
+#   ./run.sh swap [AREA]       P1-08.5 recipe: first `cargo build -p obs-ffi --release --features c-swap`,
+#                              then build each runner like check EXCEPT the C sources the Rust
 #                              staticlib replaces are dropped and ../../target/release/libobs_ffi.a
 #                              is appended before -lpthread -lm. Part A of P1-08.5 covers the
 #                              base lexer (lexer.c), text-lookup (text-lookup.c) and the
 #                              base-logging shim (base.c); part B adds the C-family lexer
-#                              (cf-lexer.c) and parser (cf-parser.c) — the full swap set of
+#                              (cf-lexer.c) and parser (cf-parser.c); P1-05.4 adds the threading
+#                              primitives (threading-posix.c) — the full swap set of
 #                              the OBS_ENABLE_RUST CMake patch. Areas without any swapped
 #                              file build normally.
 #
@@ -91,21 +92,24 @@ done
 
 export CONFORMANCE_TMPDIR="$build"
 
-# P1-08.5 swap mode: the Rust staticlib that replaces the swapped C sources.
+# P1-08.5 swap mode: the Rust staticlib that replaces the swapped C sources
+# (--features c-swap compiles the abi_* bridges into the staticlib; the
+# OBS_ENABLE_RUST=ON build passes the same feature).
 rustlib="$root/target/release/libobs_ffi.a"
 if [ "$mode" = swap ]; then
-	( cd "$root" && cargo build -p obs-ffi --release )
+	( cd "$root" && cargo build -p obs-ffi --release --features c-swap )
 fi
 
 # Removes the swapped C sources from the array named by $1; sets SWAPPED=1
 # if anything was removed (the full swap set of the OBS_ENABLE_RUST CMake
-# patch: lexer.c, cf-lexer.c, cf-parser.c, text-lookup.c, base.c).
+# patch: lexer.c, cf-lexer.c, cf-parser.c, text-lookup.c, base.c,
+# threading-posix.c).
 apply_swap() {
 	local -n _srcs=$1
 	local f n=${#_srcs[@]} out=()
 	for f in "${_srcs[@]}"; do
 		case "$f" in
-		*"libobs/util/lexer.c" | *"libobs/util/cf-lexer.c" | *"libobs/util/cf-parser.c" | *"libobs/util/text-lookup.c" | *"libobs/util/base.c") SWAPPED=1 ;;
+		*"libobs/util/lexer.c" | *"libobs/util/cf-lexer.c" | *"libobs/util/cf-parser.c" | *"libobs/util/text-lookup.c" | *"libobs/util/base.c" | *"libobs/util/threading-posix.c") SWAPPED=1 ;;
 		*) out+=("$f") ;;
 		esac
 	done
