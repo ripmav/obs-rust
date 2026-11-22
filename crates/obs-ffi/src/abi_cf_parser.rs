@@ -78,11 +78,14 @@ pub unsafe extern "C" fn cf_adderror(
     val2: *const c_char,
     val3: *const c_char,
 ) {
+    // SAFETY: C-ABI — the handle is non-NULL (guarded above); the value is live and exclusively owned for the call.
     let p = unsafe { &mut *parser };
     let cur = p.cur_token;
+    // SAFETY: C-ABI — the handle is non-NULL (guarded above); the value is live for the call.
     let lex = unsafe { &*(*cur).lex };
     let mut row: u32 = 0;
     let mut col: u32 = 0;
+    // SAFETY: C-ABI — `cur` is a live token inside the parse token array (checked above); the C helper reads a live C string.
     unsafe {
         lexer_getstroffset(
             &lex.base_lexer,
@@ -92,6 +95,7 @@ pub unsafe extern "C" fn cf_adderror(
         )
     };
     if val1.is_null() && val2.is_null() && val3.is_null() {
+        // SAFETY: C-ABI — raw CPOD field access on a live C struct (checked above); the fields are Copy, no drop.
         unsafe { error_data_add_c(&mut p.error_list, lex.file, row, col, error, level) };
         return;
     }
@@ -99,7 +103,9 @@ pub unsafe extern "C" fn cf_adderror(
     // bstrdups it) and frees the dstr. The temp copy is bstrdup_bytes'd
     // (Rust-owned bytes, never C-strlen'd) and bfree'd after the add.
     let msg = safe_printf(c_bytes(error).unwrap_or(&[]), val1, val2, val3);
+    // SAFETY: C-ABI — `msg` is valid byte storage; the result is bmem-owned.
     let temp = unsafe { bstrdup_bytes(&msg) };
+    // SAFETY: C-ABI — `p.error_list` and `lex.file` are live C values (checked above); the C API appends the error.
     unsafe {
         error_data_add_c(
             &mut p.error_list,
@@ -110,6 +116,7 @@ pub unsafe extern "C" fn cf_adderror(
             level,
         )
     };
+    // SAFETY: C-ABI — `temp` is a bmem buffer owned by this scope (allocated above).
     unsafe { bfree(temp) };
 }
 
@@ -131,7 +138,9 @@ pub unsafe extern "C" fn cf_adderror(
 /// pointer arithmetic; a NULL cursor dereferences, like the reference).
 #[unsafe(no_mangle)]
 pub unsafe extern "C" fn cf_pass_pair(p: *mut cf_parser, in_c: c_char, out_c: c_char) -> bool {
+    // SAFETY: C-ABI — `p` is non-NULL (guarded above); the parser is live and exclusively owned for the call.
     let p = unsafe { &mut *p };
+    // SAFETY: C-ABI — `cur` is a live token pointer inside the token array (checked above); the fields are CPOD (Copy).
     unsafe {
         let cur = p.cur_token;
         if (*cur).r#type != CFTOKEN_OTHER || *(*cur).str.array != in_c {
@@ -139,17 +148,23 @@ pub unsafe extern "C" fn cf_pass_pair(p: *mut cf_parser, in_c: c_char, out_c: c_
         }
         p.cur_token = cur.add(1);
     }
+    // SAFETY: C-ABI — `p.cur_token` is a live token cursor (checked above); CPOD field read.
     while unsafe { (*p.cur_token).r#type } != CFTOKEN_NONE {
+        // SAFETY: C-ABI — raw CPOD field access on a live C struct (checked above); the fields are Copy, no drop.
         if unsafe { *(*p.cur_token).str.array } == in_c {
+            // SAFETY: the parse struct is live (checked above); the C helper advances the live token cursor.
             if !unsafe { cf_pass_pair(p, in_c, out_c) } {
                 return false;
             }
             continue;
         }
+        // SAFETY: C-ABI — raw CPOD field access on a live C struct (checked above); the fields are Copy, no drop.
         if unsafe { *(*p.cur_token).str.array } == out_c {
+            // SAFETY: pointer arithmetic on the live C token cursor (checked above); the step stays inside the token array.
             unsafe { p.cur_token = p.cur_token.add(1) };
             return true;
         }
+        // SAFETY: pointer arithmetic on the live C token cursor (checked above); the step stays inside the token array.
         unsafe { p.cur_token = p.cur_token.add(1) };
     }
     false
@@ -211,6 +226,7 @@ mod tests {
             num: toks.len(),
             capacity: toks.len(),
         };
+        // SAFETY: pointer arithmetic on the live C token cursor (checked above); the step stays inside the token array.
         p.cur_token = unsafe { (toks.as_ptr() as *mut cf_token).add(at) };
         (toks, p)
     }
@@ -247,7 +263,9 @@ mod tests {
             cf_token::clear(),
         ];
         let (_t, mut p) = mk_parser(toks, 0);
+        // SAFETY: the parse struct is live (checked above); the C helper advances the live token cursor.
         assert!(unsafe { cf_pass_pair(&mut p, b'(' as c_char, b')' as c_char) });
+        // SAFETY: test — both pointers index the same live token array.
         assert_eq!(unsafe { p.cur_token.offset_from(p.pp.tokens.array) }, 7);
 
         // ( a ( b ) NONE — unbalanced: false, cursor at the terminator
@@ -260,13 +278,17 @@ mod tests {
             cf_token::clear(),
         ];
         let (_t, mut p) = mk_parser(toks, 0);
+        // SAFETY: the parse struct is live (checked above); the C helper advances the live token cursor.
         assert!(!unsafe { cf_pass_pair(&mut p, b'(' as c_char, b')' as c_char) });
+        // SAFETY: test — both pointers index the same live token array.
         assert_eq!(unsafe { p.cur_token.offset_from(p.pp.tokens.array) }, 5);
 
         // cursor not on the `in` char: true (type != NONE), cursor stays
         let toks = vec![other(b"a"), other(b"("), other(b")"), cf_token::clear()];
         let (_t, mut p) = mk_parser(toks, 0);
+        // SAFETY: the parse struct is live (checked above); the C helper advances the live token cursor.
         assert!(unsafe { cf_pass_pair(&mut p, b'(' as c_char, b')' as c_char) });
+        // SAFETY: test — both pointers index the same live token array.
         assert_eq!(unsafe { p.cur_token.offset_from(p.pp.tokens.array) }, 0);
 
         // a non-OTHER token on the cursor: same, cursor stays
@@ -280,13 +302,17 @@ mod tests {
             cf_token::clear(),
         ];
         let (_t, mut p) = mk_parser(toks, 0);
+        // SAFETY: the parse struct is live (checked above); the C helper advances the live token cursor.
         assert!(unsafe { cf_pass_pair(&mut p, b'(' as c_char, b')' as c_char) });
+        // SAFETY: test — both pointers index the same live token array.
         assert_eq!(unsafe { p.cur_token.offset_from(p.pp.tokens.array) }, 0);
 
         // at the terminator: false, cursor stays
         let toks = vec![other(b"a"), cf_token::clear()];
         let (_t, mut p) = mk_parser(toks, 1);
+        // SAFETY: the parse struct is live (checked above); the C helper advances the live token cursor.
         assert!(!unsafe { cf_pass_pair(&mut p, b'(' as c_char, b')' as c_char) });
+        // SAFETY: test — both pointers index the same live token array.
         assert_eq!(unsafe { p.cur_token.offset_from(p.pp.tokens.array) }, 1);
     }
 
@@ -298,10 +324,12 @@ mod tests {
             cf_token {
                 lex: ptr::null(),
                 str: strref {
+                    // SAFETY: C-ABI — the offset is within the live `text` buffer (literal, checked).
                     array: unsafe { text.as_ptr().add(5) },
                     len: 2,
                 },
                 unmerged_str: strref {
+                    // SAFETY: C-ABI — the offset is within the live `text` buffer (literal, checked).
                     array: unsafe { text.as_ptr().add(5) },
                     len: 2,
                 },
@@ -319,6 +347,7 @@ mod tests {
         // p.lex.file stays NULL (vector 32: file=@null)
 
         let plain = cstr("plain $1");
+        // SAFETY: C-ABI — `p` is a live CfParser (checked above); the C API appends the error.
         unsafe {
             cf_adderror(
                 &mut p,
@@ -332,14 +361,17 @@ mod tests {
         let fmt = cstr("v=$1 $2 $3");
         let a = cstr("A");
         let b = cstr("B");
+        // SAFETY: C-ABI — `p` is a live parser; the C string args are valid for the call.
         unsafe { cf_adderror(&mut p, fmt.as_ptr(), 1, a.as_ptr(), b.as_ptr(), ptr::null()) };
 
         assert_eq!(p.error_list.errors.num, 2);
+        // SAFETY: C-ABI — raw CPOD field access on a live C struct (checked above); the fields are Copy, no drop.
         let e0 = unsafe { &*p.error_list.errors.array.add(0) };
         assert_eq!((e0.level, e0.row, e0.column), (0, 2, 3));
         assert!(e0.file.is_null());
         // all-NULL values: the message is added verbatim
         assert_eq!(c_bytes(e0.error), Some(b"plain $1".as_slice()));
+        // SAFETY: C-ABI — raw CPOD field access on a live C struct (checked above); the fields are Copy, no drop.
         let e1 = unsafe { &*p.error_list.errors.array.add(1) };
         assert_eq!((e1.level, e1.row, e1.column), (1, 2, 3));
         // a NULL value leaves its $n in place (dstr_safe_printf)
@@ -347,9 +379,12 @@ mod tests {
 
         // free the C-allocated list like the C error_data_free inline
         for i in 0..p.error_list.errors.num {
+            // SAFETY: C-ABI — raw CPOD field access on a live C struct (checked above); the fields are Copy, no drop.
             let e = unsafe { &*p.error_list.errors.array.add(i) };
+            // SAFETY: C-ABI — `e.error` is a bmem-allocated C string uniquely owned by this error item.
             unsafe { bfree(e.error) };
         }
+        // SAFETY: C-ABI — raw CPOD field access on a live C struct (checked above); the fields are Copy, no drop.
         unsafe { bfree(p.error_list.errors.array as *mut u8) };
     }
 }

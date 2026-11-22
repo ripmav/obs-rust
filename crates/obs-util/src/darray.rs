@@ -45,6 +45,7 @@ impl<T: Copy> DArray<T> {
         self.capacity = 0;
         if !array.is_null() {
             let bytes = array.cast::<u8>();
+            // SAFETY: DArray invariant — `array` is a bmem buffer (capacity·es bytes) uniquely owned by this DArray (NULL is a no-op).
             unsafe { bmem::bfree_raw(bytes) };
         }
     }
@@ -72,6 +73,7 @@ impl<T: Copy> DArray<T> {
         if self.num == 0 {
             None
         } else {
+            // SAFETY: DArray invariant — num ≥ 1 is checked above; `array.add(num-1)` is within the buffer.
             Some(unsafe { &*self.array.add(self.num - 1) })
         }
     }
@@ -82,6 +84,7 @@ impl<T: Copy> DArray<T> {
         if self.num == 0 {
             &[]
         } else {
+            // SAFETY: DArray invariant — `array` is a valid bmem buffer and num ≤ capacity.
             unsafe { std::slice::from_raw_parts(self.array, self.num) }
         }
     }
@@ -92,6 +95,7 @@ impl<T: Copy> DArray<T> {
         if self.num == 0 {
             &mut []
         } else {
+            // SAFETY: DArray invariant — `array` is a valid bmem buffer and num ≤ capacity.
             unsafe { std::slice::from_raw_parts_mut(self.array, self.num) }
         }
     }
@@ -109,8 +113,10 @@ impl<T: Copy> DArray<T> {
         let new_cap = new_cap.max(n);
         let es = mem::size_of::<T>();
         let bytes = if self.array.is_null() {
+            // SAFETY: DArray invariant — allocation through the S-001 allocator; the result is stored into `array` immediately.
             unsafe { bmem::bmalloc_raw(new_cap * es) }
         } else {
+            // SAFETY: DArray invariant — `array` is a live bmem buffer; the result is stored into `array` immediately.
             unsafe { bmem::brealloc_raw(self.array.cast::<u8>(), new_cap * es) }
         };
         self.array = bytes.cast::<T>();
@@ -124,8 +130,10 @@ impl<T: Copy> DArray<T> {
         }
         let es = mem::size_of::<T>();
         let bytes = if self.array.is_null() {
+            // SAFETY: DArray invariant — allocation through the S-001 allocator; the result is stored into `array` immediately.
             unsafe { bmem::bmalloc_raw(c * es) }
         } else {
+            // SAFETY: DArray invariant — `array` is a live bmem buffer; the result is stored into `array` immediately.
             unsafe { bmem::brealloc_raw(self.array.cast::<u8>(), c * es) }
         };
         self.array = bytes.cast::<T>();
@@ -149,6 +157,7 @@ impl<T: Copy> DArray<T> {
         self.ensure_capacity(n);
         if n > self.num {
             let es = mem::size_of::<T>();
+            // SAFETY: DArray invariant — `array` has capacity ≥ n; the zero-fill covers exactly the new slots.
             unsafe {
                 self.array
                     .add(self.num)
@@ -163,6 +172,7 @@ impl<T: Copy> DArray<T> {
     pub fn push_back(&mut self, item: &T) -> usize {
         self.ensure_capacity(self.num + 1);
         let idx = self.num;
+        // SAFETY: DArray invariant — `array.add(idx)` is within the capacity (reserved above); `item` is a valid T.
         unsafe {
             self.array.add(idx).copy_from_nonoverlapping(item, 1);
         }
@@ -174,7 +184,9 @@ impl<T: Copy> DArray<T> {
     pub fn push_back_new(&mut self) -> *mut T {
         self.ensure_capacity(self.num + 1);
         let es = mem::size_of::<T>();
+        // SAFETY: DArray invariant — `array.add(num)` is within the capacity; the slot is es bytes.
         unsafe { self.array.add(self.num).cast::<u8>().write_bytes(0, es) };
+        // SAFETY: DArray invariant — `array.add(num)` is within the capacity (the slot was just zeroed).
         let ptr = unsafe { self.array.add(self.num) };
         self.num += 1;
         ptr
@@ -188,6 +200,7 @@ impl<T: Copy> DArray<T> {
         }
         let old = self.num;
         self.resize(self.num + a.len());
+        // SAFETY: DArray invariant — `array.add(old)` has room for a.len() elements (reserved above); the ranges do not overlap.
         unsafe {
             self.array
                 .add(old)
@@ -210,6 +223,7 @@ impl<T: Copy> DArray<T> {
         }
         let old = self.num;
         self.ensure_capacity(old + 1);
+        // SAFETY: DArray invariant — all shifts stay within the capacity (grown above); `item` is a valid T.
         unsafe {
             ptr::copy(self.array.add(idx), self.array.add(idx + 1), old - idx);
             self.array.add(idx).copy_from_nonoverlapping(item, 1);
@@ -225,12 +239,14 @@ impl<T: Copy> DArray<T> {
         }
         let old = self.num;
         self.ensure_capacity(old + 1);
+        // SAFETY: DArray invariant — the shift stays within the capacity (grown above); the slot is es bytes.
         unsafe {
             ptr::copy(self.array.add(idx), self.array.add(idx + 1), old - idx);
             let es = mem::size_of::<T>();
             self.array.add(idx).cast::<u8>().write_bytes(0, es);
         }
         self.num = old + 1;
+        // SAFETY: DArray invariant — idx is within the num range (checked above); the element is a valid T.
         unsafe { self.array.add(idx) }
     }
 
@@ -242,6 +258,7 @@ impl<T: Copy> DArray<T> {
         let n = a.len();
         let old = self.num;
         self.resize(old + n);
+        // SAFETY: DArray invariant — the shift stays within the capacity (grown above); `a` holds n elements.
         unsafe {
             ptr::copy(self.array.add(idx), self.array.add(idx + n), old - idx);
             self.array.add(idx).copy_from_nonoverlapping(a.as_ptr(), n);
@@ -254,6 +271,7 @@ impl<T: Copy> DArray<T> {
         let old = self.num;
         self.num = old - 1;
         if idx < old - 1 {
+            // SAFETY: DArray invariant — the tail shift stays within the buffer.
             unsafe {
                 ptr::copy(self.array.add(idx + 1), self.array.add(idx), old - idx - 1);
             }
@@ -281,6 +299,7 @@ impl<T: Copy> DArray<T> {
         let old = self.num;
         self.num = old - n;
         if end < old {
+            // SAFETY: DArray invariant — the tail shift stays within the buffer.
             unsafe {
                 ptr::copy(self.array.add(end), self.array.add(start), old - end);
             }
@@ -294,8 +313,10 @@ impl<T: Copy> DArray<T> {
     pub fn find(&self, item: &T, from: usize) -> Option<usize> {
         debug_assert!(from <= self.num);
         let es = mem::size_of::<T>();
+        // SAFETY: DArray invariant — whole-element byte view (Q-A2): `item` is valid for es bytes.
         let item_bytes = unsafe { std::slice::from_raw_parts(item as *const T as *const u8, es) };
         (from..self.num).find(|&i| {
+            // SAFETY: DArray invariant — whole-element byte view (Q-A2): `array.add(i)` is valid for es bytes.
             let elem = unsafe { std::slice::from_raw_parts(self.array.add(i) as *const u8, es) };
             elem == item_bytes
         })
@@ -308,6 +329,7 @@ impl<T: Copy> DArray<T> {
             return;
         }
         self.resize(src.num);
+        // SAFETY: DArray invariant — `array` has capacity ≥ src.num (reserved above); different blocks, no overlap.
         unsafe {
             self.array.copy_from_nonoverlapping(src.array, src.num);
         }
@@ -317,6 +339,7 @@ impl<T: Copy> DArray<T> {
     pub fn copy_array(&mut self, a: &[T]) {
         self.resize(a.len());
         if !a.is_empty() {
+            // SAFETY: DArray invariant — `array` has capacity ≥ a.len() (reserved above); different buffers, no overlap.
             unsafe {
                 self.array.copy_from_nonoverlapping(a.as_ptr(), a.len());
             }
@@ -338,6 +361,7 @@ impl<T: Copy> DArray<T> {
 
     /// R-A12: `erase(0)` (precondition `num != 0`).
     pub fn pop_front(&mut self) -> T {
+        // SAFETY: DArray invariant — num ≥ 1 is checked above; `array` points to a valid T.
         let item = unsafe { *self.array };
         self.erase(0);
         item
@@ -345,6 +369,7 @@ impl<T: Copy> DArray<T> {
 
     /// R-A12: `erase(num - 1)` (precondition `num != 0`).
     pub fn pop_back(&mut self) -> T {
+        // SAFETY: DArray invariant — num ≥ 1 is checked above; the last element is a valid T.
         let item = unsafe { *self.array.add(self.num - 1) };
         self.erase(self.num - 1);
         item
@@ -372,6 +397,7 @@ impl<T: Copy> DArray<T> {
             }
             if idx < self.num - 1 {
                 dst2.resize(self.num - idx);
+                // SAFETY: DArray invariant — `dst2` was reserved for num-idx elements above; `array.add(idx)` is valid for that many reads.
                 unsafe {
                     dst2.array
                         .copy_from_nonoverlapping(self.array.add(idx), self.num - idx);
@@ -388,12 +414,16 @@ impl<T: Copy> DArray<T> {
         if from == to {
             return;
         }
+        // SAFETY: DArray invariant — `from` is within the num range (checked above); the element is a valid T.
         let item = unsafe { *self.array.add(from) };
         if from < to {
+            // SAFETY: DArray invariant — the overlapping copy stays within the buffer (both indices within the num range).
             unsafe { ptr::copy(self.array.add(from + 1), self.array.add(from), to - from) };
         } else {
+            // SAFETY: DArray invariant — the overlapping copy stays within the buffer (both indices within the num range).
             unsafe { ptr::copy(self.array.add(to), self.array.add(to + 1), from - to) };
         }
+        // SAFETY: DArray invariant — `to` is within the num range (checked above).
         unsafe { *self.array.add(to) = item };
     }
 
@@ -405,7 +435,9 @@ impl<T: Copy> DArray<T> {
             return;
         }
         let es = mem::size_of::<T>();
+        // SAFETY: fresh bmem block of es bytes (swap scratch).
         let tmp = unsafe { bmem::bmalloc_raw(es) };
+        // SAFETY: `array.add(a)`/`array.add(b)` are within the num range (checked above); `tmp` is a fresh block; all copies are non-overlapping.
         unsafe {
             ptr::copy_nonoverlapping(self.array.add(a) as *const u8, tmp, es);
             ptr::copy_nonoverlapping(
@@ -555,7 +587,9 @@ mod tests {
         assert_eq!(d.push_back(&8), 1);
         let p = d.push_back_new();
         assert_eq!(d.len(), 3);
+        // SAFETY: test — the slot is within the grown buffer.
         assert_eq!(unsafe { *p }, 0); // zeroed slot
+        // SAFETY: test — the slot is within the grown buffer.
         unsafe { *p = 42 };
         assert_eq!(d.as_slice(), &[7, 8, 42]);
     }
@@ -586,6 +620,7 @@ mod tests {
         d.insert(6, &6); // idx == num -> push_back
         assert_eq!(d.as_slice(), &[5, 1, 9, 2, 3, 4, 6]);
         let p = d.insert_new(0);
+        // SAFETY: test — the slot is within the grown buffer.
         assert_eq!(unsafe { *p }, 0);
         assert_eq!(d.len(), 8);
         d.insert_array(2, &[70, 71]);

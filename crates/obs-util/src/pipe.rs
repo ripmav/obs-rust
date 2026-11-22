@@ -128,10 +128,13 @@ fn spawn(
         // else, exec. SAFETY: post-fork child; async-signal-safe calls
         // only.
         let _ = if read_mode {
+            // SAFETY: the pipe end is a live fd (created by `pipe()` above); 1 is a valid descriptor number.
             unsafe { libc::dup2(pout[1], 1) }
         } else {
+            // SAFETY: the pipe end is a live fd (created by `pipe()` above); 0 is a valid descriptor number.
             unsafe { libc::dup2(pin[0], 0) }
         };
+        // SAFETY: the pipe end is a live fd (created by `pipe()` above); 2 is a valid descriptor number.
         let _ = unsafe { libc::dup2(perr[1], 2) };
         // Close the pipe ends the child does not use — but never fd
         // numbers 0/1/2 themselves: if the parent's low fds are free
@@ -143,6 +146,7 @@ fn spawn(
         // closes it either way.
         for fd in [pout[0], pout[1], pin[0], pin[1], perr[0], perr[1]] {
             if fd >= 3 {
+                // SAFETY: `fd` is a live pipe fd the child does not use (fd ≥ 3 per the check above).
                 unsafe { libc::close(fd) };
             }
         }
@@ -150,6 +154,7 @@ fn spawn(
         unsafe { libc::execv(exe_c.as_ptr(), argv_p.as_ptr()) };
         // exec failed (the executable vanished between access and
         // exec): report 127 like a missing command
+        // SAFETY: child context after a failed `execv` — `_exit` is safe for the terminating child.
         unsafe { libc::_exit(127) };
     }
 

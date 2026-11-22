@@ -48,8 +48,11 @@ pub(crate) unsafe fn bstrdup(s: *const c_char) -> *mut c_char {
     if s.is_null() {
         return std::ptr::null_mut();
     }
+    // SAFETY: a live NUL-terminated C string (checked above).
     let len = unsafe { CStr::from_ptr(s) }.to_bytes().len();
+    // SAFETY: C-ABI — S-001 allocation; the result is stored into `p` immediately.
     let p = unsafe { bmalloc(len + 1) } as *mut c_char;
+    // SAFETY: the fresh bmalloc block is valid for len+1 bytes (allocated above); the NUL write fits.
     unsafe {
         std::ptr::copy_nonoverlapping(s, p, len);
         *p.add(len) = 0;
@@ -60,7 +63,9 @@ pub(crate) unsafe fn bstrdup(s: *const c_char) -> *mut c_char {
 /// NUL-terminated copy of a (possibly non-NUL-terminated) Rust byte buffer
 /// through `bmalloc`. Use this — not [`bstrdup`] — for Rust-owned strings.
 pub(crate) unsafe fn bstrdup_bytes(bytes: &[u8]) -> *mut c_char {
+    // SAFETY: C-ABI — S-001 allocation; the result is stored into `p` immediately.
     let p = unsafe { bmalloc(bytes.len() + 1) } as *mut c_char;
+    // SAFETY: the fresh bmalloc block is valid for bytes.len()+1 bytes (allocated above); the NUL write fits.
     unsafe {
         std::ptr::copy_nonoverlapping(bytes.as_ptr(), p.cast::<u8>(), bytes.len());
         *p.add(bytes.len()) = 0;
@@ -74,6 +79,7 @@ pub(crate) fn c_bytes<'a>(p: *const c_char) -> Option<&'a [u8]> {
     if p.is_null() {
         None
     } else {
+        // SAFETY: a live NUL-terminated C string (checked above).
         Some(unsafe { CStr::from_ptr(p) }.to_bytes())
     }
 }
@@ -93,6 +99,7 @@ fn da_ensure(ed: &mut error_data) {
         ed.errors.capacity * 2
     };
     let new_cap = new_cap.max(new_size);
+    // SAFETY: C-ABI error_list growth — the fresh bmalloc block is valid and the copy fits in old capacity·esize.
     unsafe {
         let ptr = bmalloc(esize * new_cap) as *mut error_item;
         if !ed.errors.array.is_null() && ed.errors.capacity > 0 {
@@ -120,8 +127,10 @@ pub(crate) unsafe fn error_data_add_c(
     if ed.is_null() {
         return;
     }
+    // SAFETY: C-ABI — the handle is non-NULL (guarded above); the value is live and exclusively owned for the call.
     let ed = unsafe { &mut *ed };
     da_ensure(ed);
+    // SAFETY: C-ABI — raw CPOD field access on a live C struct (checked above); the fields are Copy, no drop.
     unsafe {
         ed.errors.array.add(ed.errors.num).write(error_item {
             error: if msg.is_null() {
@@ -146,6 +155,7 @@ pub(crate) unsafe fn error_data_buildstring_c(ed: *const error_data) -> *mut c_c
     if ed.is_null() {
         return std::ptr::null_mut();
     }
+    // SAFETY: C-ABI — the handle is non-NULL (guarded above); the value is live for the call.
     let ed = unsafe { &*ed };
     if ed.errors.num == 0 {
         return std::ptr::null_mut();
@@ -153,6 +163,7 @@ pub(crate) unsafe fn error_data_buildstring_c(ed: *const error_data) -> *mut c_c
     let items = ed.errors.array;
     let mut s = String::new();
     for i in 0..ed.errors.num {
+        // SAFETY: C-ABI — i < items.num (checked above); the element is a live CPOD.
         let it = unsafe { &*items.add(i) };
         let file = c_bytes(it.file)
             .map(|f| String::from_utf8_lossy(f).into_owned())
@@ -163,5 +174,6 @@ pub(crate) unsafe fn error_data_buildstring_c(ed: *const error_data) -> *mut c_c
         s.push_str(&file);
         s.push_str(&format!(" ({}, {}): {}\n", it.row, it.column, msg));
     }
+    // SAFETY: C-ABI — the bytes are valid for the call; the result is bmem-owned.
     unsafe { bstrdup_bytes(s.as_bytes()) }
 }

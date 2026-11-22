@@ -16,34 +16,47 @@ fn process_wide_counter_is_balanced() {
     // S-001-R04/R05/R09: alloc/free cycle returns the counter to baseline.
     let base = bnum_allocs();
     {
+        // SAFETY: test — raw S-001 API used per its `# Safety` contract
         let a = unsafe { bmalloc_raw(10) };
+        // SAFETY: test — raw S-001 API used per its `# Safety` contract
         let b = unsafe { bmalloc_raw(100) };
+        // SAFETY: test — raw S-001 API used per its `# Safety` contract
         let c = unsafe { bmalloc_raw(1000) };
         assert_eq!(bnum_allocs(), base + 3);
+        // SAFETY: test — `c` is a live block from above (this test is the unique owner).
         unsafe { bfree_raw(c) };
+        // SAFETY: test — `b` is a live block from above (this test is the unique owner).
         unsafe { bfree_raw(b) };
         assert_eq!(bnum_allocs(), base + 1);
+        // SAFETY: test — `a` is a live block from above (this test is the unique owner).
         unsafe { bfree_raw(a) };
     }
     assert_eq!(bnum_allocs(), base);
 
     // R05: bfree(NULL) is a no-op.
     let base = bnum_allocs();
+    // SAFETY: test — NULL is the documented no-op case of `bfree_raw`.
     unsafe { bfree_raw(std::ptr::null_mut()) };
     assert_eq!(bnum_allocs(), base);
 
     // R06: brealloc(NULL, n) is an alloc — net +1.
+    // SAFETY: test — raw S-001 API used per its `# Safety` contract
     let p = unsafe { brealloc_raw(std::ptr::null_mut(), 64) };
     assert_eq!(bnum_allocs(), base + 1);
+    // SAFETY: test — `p` is a live block from the call above (this test is the unique owner).
     unsafe { bfree_raw(p) };
     assert_eq!(bnum_allocs(), base);
 
     // R08: realloc keeps the live-block count (1 in, 1 out).
+    // SAFETY: test — raw S-001 API used per its `# Safety` contract
     let old = unsafe { bmalloc_raw(16) };
+    // SAFETY: test — `old` is a live block from above (this test is the unique owner).
     let grown = unsafe { brealloc_raw(old, 256) };
     assert_eq!(bnum_allocs(), base + 1);
+    // SAFETY: test — `grown` is a live block from above (this test is the unique owner).
     let shrunk = unsafe { brealloc_raw(grown, 32) };
     assert_eq!(bnum_allocs(), base + 1);
+    // SAFETY: test — `shrunk` is a live block from above (this test is the unique owner).
     unsafe { bfree_raw(shrunk) };
     assert_eq!(bnum_allocs(), base);
 
@@ -62,6 +75,7 @@ fn process_wide_counter_is_balanced() {
     let s = bstrdup(b"abc");
     let raw = s.into_raw();
     assert_eq!(bnum_allocs(), base + 1);
+    // SAFETY: test — `raw` came from `into_raw` above; re-wraps the same unique block.
     let _back = unsafe { BMem::from_raw(raw, 4) };
     assert_eq!(bnum_allocs(), base + 1);
     drop(_back);

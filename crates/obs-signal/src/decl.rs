@@ -63,6 +63,7 @@ pub struct DeclInfo {
 /// struct.
 pub fn decl_param_free(p: &mut DeclParam) {
     if !p.name.is_null() {
+        // SAFETY: Decl invariant — `p.name` is a bmem-allocated C string uniquely owned by this param (NULL checked).
         unsafe { bfree_raw(p.name) };
     }
     p.name = std::ptr::null_mut();
@@ -75,11 +76,13 @@ pub fn decl_param_free(p: &mut DeclParam) {
 pub fn decl_info_free(d: &mut DeclInfo) {
     for p in d.params.as_slice() {
         if !p.name.is_null() {
+            // SAFETY: Decl invariant — `p.name` is a bmem-allocated C string uniquely owned by this param (NULL checked).
             unsafe { bfree_raw(p.name) };
         }
     }
     d.params.free();
     if !d.name.is_null() {
+        // SAFETY: Decl invariant — `d.name` is a bmem-allocated C string uniquely owned by this decl (NULL checked).
         unsafe { bfree_raw(d.name) };
     }
     d.name = std::ptr::null_mut();
@@ -713,6 +716,7 @@ mod tests {
         assert!(parse_decl_string(&mut info, s));
         assert_eq!(info.params.num, 3);
         assert_eq!(
+            // SAFETY: test — the param name buffer is valid for 1 byte (allocated in the fixture).
             unsafe { std::slice::from_raw_parts(info.params.as_slice()[0].name, 1) },
             b"a"
         );
@@ -721,6 +725,7 @@ mod tests {
             s.as_ptr() as usize,
             "R01: borrowed, not copied"
         );
+        // SAFETY: test — the decl name buffer is valid for 3 bytes (allocated in the fixture).
         let fname = unsafe { std::slice::from_raw_parts(info.name, 3) };
         assert_eq!(fname, b"add");
         decl_info_free(&mut info);

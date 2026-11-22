@@ -63,6 +63,7 @@ pub fn proc_handler_add(h: &ProcHandler, decl_string: &str, proc: ProcProc, data
     };
     let name = decl.name;
     let _l = h.lock.lock();
+    // SAFETY: the caller holds `h.lock` (re-entrant), the guard of this `UnsafeCell`; exclusive access.
     let procs = unsafe { &mut *h.procs.get() };
     if procs.iter().any(|p| p.name == name) {
         eprintln!("Procedure '{name}' already exists");
@@ -81,6 +82,7 @@ pub fn proc_handler_add(h: &ProcHandler, decl_string: &str, proc: ProcProc, data
 pub fn proc_handler_call(h: &ProcHandler, name: &str, params: &mut Calldata) -> bool {
     let rec = {
         let _l = h.lock.lock();
+        // SAFETY: the caller holds `h.lock` (re-entrant), the guard of this `UnsafeCell`; exclusive access.
         let procs = unsafe { &*h.procs.get() };
         procs.iter().find(|p| p.name == name).map(|p| p.rec)
     };
@@ -88,6 +90,7 @@ pub fn proc_handler_call(h: &ProcHandler, name: &str, params: &mut Calldata) -> 
         return false;
     };
     // Callbacks are `extern "C"`: a panic aborts (no unwinding into C).
+    // SAFETY: `rec.proc` is a live C callback (registered above); `params` is valid for the call.
     unsafe { (rec.proc)(rec.data, params as *mut Calldata) }
     true
 }

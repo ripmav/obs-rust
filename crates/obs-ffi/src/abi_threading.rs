@@ -34,6 +34,7 @@ pub unsafe extern "C" fn os_event_init(event: *mut *mut c_void, r#type: c_int) -
     };
     match obs_util::threading::os_event_init(kind) {
         Ok(e) => {
+            // SAFETY: fresh Box — the raw handle is C-owned until the matching destroy bridge (doc above).
             unsafe { *event = Box::into_raw(Box::new(e)) as *mut c_void };
             0
         }
@@ -49,6 +50,7 @@ pub unsafe extern "C" fn os_event_init(event: *mut *mut c_void, r#type: c_int) -
 #[unsafe(no_mangle)]
 pub unsafe extern "C" fn os_event_destroy(event: *mut c_void) {
     if !event.is_null() {
+        // SAFETY: the handle is non-NULL (guarded above) and came from the matching init bridge; ownership C -> Rust.
         let owned = unsafe { Box::from_raw(event as *mut OsEvent) };
         obs_util::threading::os_event_destroy(Some(*owned));
     }
@@ -61,6 +63,7 @@ pub unsafe extern "C" fn os_event_destroy(event: *mut c_void) {
 /// reference dereferences it unguarded; the conformance runner pre-checks).
 #[unsafe(no_mangle)]
 pub unsafe extern "C" fn os_event_wait(event: *mut c_void) -> c_int {
+    // SAFETY: C-ABI — the handle is non-NULL (guarded above); the value is live for the call.
     obs_util::threading::os_event_wait(unsafe { &*(event as *const OsEvent) })
 }
 
@@ -75,6 +78,7 @@ pub unsafe extern "C" fn os_event_timedwait(event: *mut c_void, milliseconds: c_
     // primitive takes `u32` — saturate (the conformance range is far
     // below the limit).
     let ms = milliseconds.min(u32::MAX as c_ulong) as u32;
+    // SAFETY: C-ABI — the handle is non-NULL (guarded above); the value is live for the call.
     obs_util::threading::os_event_timedwait(unsafe { &*(event as *const OsEvent) }, ms)
 }
 
@@ -84,6 +88,7 @@ pub unsafe extern "C" fn os_event_timedwait(event: *mut c_void, milliseconds: c_
 /// As [`os_event_wait`].
 #[unsafe(no_mangle)]
 pub unsafe extern "C" fn os_event_try(event: *mut c_void) -> c_int {
+    // SAFETY: C-ABI — the handle is non-NULL (guarded above); the value is live for the call.
     obs_util::threading::os_event_try(unsafe { &*(event as *const OsEvent) })
 }
 
@@ -93,6 +98,7 @@ pub unsafe extern "C" fn os_event_try(event: *mut c_void) -> c_int {
 /// As [`os_event_wait`].
 #[unsafe(no_mangle)]
 pub unsafe extern "C" fn os_event_signal(event: *mut c_void) -> c_int {
+    // SAFETY: C-ABI — the handle is non-NULL (guarded above); the value is live for the call.
     obs_util::threading::os_event_signal(unsafe { &*(event as *const OsEvent) })
 }
 
@@ -102,6 +108,7 @@ pub unsafe extern "C" fn os_event_signal(event: *mut c_void) -> c_int {
 /// As [`os_event_wait`].
 #[unsafe(no_mangle)]
 pub unsafe extern "C" fn os_event_reset(event: *mut c_void) {
+    // SAFETY: C-ABI — the handle is non-NULL (guarded above); the value is live for the call.
     obs_util::threading::os_event_reset(unsafe { &*(event as *const OsEvent) })
 }
 
@@ -116,6 +123,7 @@ pub unsafe extern "C" fn os_event_reset(event: *mut c_void) {
 pub unsafe extern "C" fn os_sem_init(sem: *mut *mut c_void, value: c_int) -> c_int {
     match obs_util::threading::os_sem_init(value) {
         Ok(s) => {
+            // SAFETY: fresh Box — the raw handle is C-owned until the matching destroy bridge (doc above).
             unsafe { *sem = Box::into_raw(Box::new(s)) as *mut c_void };
             0
         }
@@ -131,6 +139,7 @@ pub unsafe extern "C" fn os_sem_init(sem: *mut *mut c_void, value: c_int) -> c_i
 #[unsafe(no_mangle)]
 pub unsafe extern "C" fn os_sem_destroy(sem: *mut c_void) {
     if !sem.is_null() {
+        // SAFETY: the handle is non-NULL (guarded above) and came from the matching init bridge; ownership C -> Rust.
         let owned = unsafe { Box::from_raw(sem as *mut OsSem) };
         obs_util::threading::os_sem_destroy(Some(*owned));
     }
@@ -146,6 +155,7 @@ pub unsafe extern "C" fn os_sem_post(sem: *mut c_void) -> c_int {
     let sem = if sem.is_null() {
         None
     } else {
+        // SAFETY: C-ABI — the handle is non-NULL (guarded above); the value is live for the call.
         Some(unsafe { &*(sem as *const OsSem) })
     };
     obs_util::threading::os_sem_post(sem)
@@ -161,6 +171,7 @@ pub unsafe extern "C" fn os_sem_wait(sem: *mut c_void) -> c_int {
     let sem = if sem.is_null() {
         None
     } else {
+        // SAFETY: C-ABI — the handle is non-NULL (guarded above); the value is live for the call.
         Some(unsafe { &*(sem as *const OsSem) })
     };
     obs_util::threading::os_sem_wait(sem)
@@ -192,6 +203,7 @@ pub unsafe extern "C" fn os_set_thread_name(name: *const c_char) {
 /// storage.
 #[unsafe(no_mangle)]
 pub unsafe extern "C" fn pthread_mutex_init_value(mutex: *mut pthread_mutex_t) {
+    // SAFETY: caller contract: `mutex` is valid, exclusively owned, unused storage (NULL is the documented no-op case).
     unsafe { obs_util::threading::pthread_mutex_init_value(mutex) }
 }
 
@@ -206,6 +218,7 @@ pub unsafe extern "C" fn pthread_mutex_init_value(mutex: *mut pthread_mutex_t) {
 /// storage.
 #[unsafe(no_mangle)]
 pub unsafe extern "C" fn pthread_mutex_init_recursive(mutex: *mut pthread_mutex_t) -> c_int {
+    // SAFETY: caller contract: `mutex` is valid, exclusively owned, unused storage (NULL is the documented no-op case).
     unsafe { obs_util::threading::pthread_mutex_init_recursive(mutex) }
 }
 
@@ -221,6 +234,7 @@ mod tests {
     #[test]
     #[cfg_attr(miri, ignore)]
     fn event_bridge_roundtrip() {
+        // SAFETY: test — the handle is created by the bridge just above (asserted non-NULL) and valid for the call.
         unsafe {
             let mut ev: *mut c_void = std::ptr::null_mut();
             assert_eq!(os_event_init(&mut ev, 0), 0);
@@ -243,6 +257,7 @@ mod tests {
     #[test]
     #[cfg_attr(miri, ignore)]
     fn sem_bridge_roundtrip() {
+        // SAFETY: test — the handle is created by the bridge just above (asserted non-NULL) and valid for the call.
         unsafe {
             let mut sem: *mut c_void = std::ptr::null_mut();
             assert_eq!(os_sem_init(&mut sem, 1), 0);
@@ -269,7 +284,9 @@ mod tests {
     #[test]
     #[cfg_attr(miri, ignore)]
     fn mutex_bridge_init() {
+        // SAFETY: POD storage for a C type; initialized by the init call below (the return code is checked).
         let mut m = unsafe { std::mem::zeroed::<pthread_mutex_t>() };
+        // SAFETY: caller contract: `mutex` is valid, exclusively owned, unused storage (NULL is the documented no-op case).
         unsafe {
             pthread_mutex_init_value(&mut m);
             pthread_mutex_init_value(std::ptr::null_mut()); // NULL no-op

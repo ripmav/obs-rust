@@ -105,6 +105,7 @@ impl<T: Copy> darray<T> {
 
     /// C `da_free` (a NULL array frees nothing).
     pub fn free(&mut self) {
+        // SAFETY: C-ABI darray drop — `array` is a bmem buffer (capacity·esize) owned exclusively by this array (NULL is a no-op).
         unsafe { bfree(self.array as *mut u8) };
         *self = darray::init();
     }
@@ -120,6 +121,7 @@ impl<T: Copy> darray<T> {
         } else {
             (self.capacity * 2).max(new_size)
         };
+        // SAFETY: C-ABI darray growth — the fresh bmalloc block is valid and the copy fits in old capacity·esize.
         unsafe {
             let p = bmalloc(esize * new_cap) as *mut T;
             if !self.array.is_null() && self.capacity > 0 {
@@ -135,6 +137,7 @@ impl<T: Copy> darray<T> {
     pub fn push(&mut self, item: &T) {
         self.num += 1;
         self.ensure(self.num);
+        // SAFETY: C-ABI — num ≥ 1 (checked above); the slot fits esize bytes; `item` is a valid T.
         unsafe { self.array.add(self.num - 1).write(*item) };
     }
 
@@ -142,7 +145,9 @@ impl<T: Copy> darray<T> {
     pub fn push_new(&mut self) -> *mut T {
         self.num += 1;
         self.ensure(self.num);
+        // SAFETY: C-ABI — num ≥ 1 (checked above); the slot is within the buffer.
         let p = unsafe { self.array.add(self.num - 1) };
+        // SAFETY: C-ABI — `p` is the slot just fetched; it fits esize bytes within the buffer.
         unsafe { ptr::write_bytes(p as *mut u8, 0, size_of::<T>()) };
         p
     }
@@ -156,11 +161,13 @@ impl<T: Copy> darray<T> {
         if self.num == 0 {
             return;
         }
+        // SAFETY: C-ABI — the overlapping tail shift stays within the buffer (idx < num checked above).
         unsafe { ptr::copy(self.array.add(idx + 1), self.array.add(idx), self.num - idx) };
     }
 
     /// Element `i` (caller-checked range).
     pub fn get(&self, i: usize) -> &T {
+        // SAFETY: C-ABI — i < num (checked above); the element is a valid T.
         unsafe { &*self.array.add(i) }
     }
 }
@@ -253,6 +260,7 @@ fn sr_bytes(s: &strref) -> &[u8] {
     if s.array.is_null() {
         &[]
     } else {
+        // SAFETY: C-ABI — `s.array` is a valid bmem buffer and s.len ≤ s.capacity.
         unsafe { std::slice::from_raw_parts(s.array.cast::<u8>(), s.len) }
     }
 }
@@ -390,6 +398,7 @@ pub unsafe extern "C" fn cf_literal_to_str(literal: *const c_char, count: usize)
     };
     let mut buf = out;
     buf.push(0);
+    // SAFETY: C-ABI — `buf` is a valid C string buffer (checked above); the result is bmem-owned.
     unsafe { bstrdup(buf.as_ptr().cast::<c_char>()) }
 }
 
@@ -402,6 +411,7 @@ pub unsafe extern "C" fn cf_literal_to_str(literal: *const c_char, count: usize)
 /// `lex` must point to writable memory of size `cf_lexer`.
 #[unsafe(no_mangle)]
 pub unsafe extern "C" fn cf_lexer_init(lex: *mut cf_lexer) {
+    // SAFETY: C-ABI — `lex` is valid out storage (caller contract).
     unsafe { *lex = cf_lexer::init() };
 }
 
@@ -415,10 +425,14 @@ pub unsafe extern "C" fn cf_lexer_init(lex: *mut cf_lexer) {
 /// [`cf_lexer_lex`] (its allocations come from the C allocator).
 #[unsafe(no_mangle)]
 pub unsafe extern "C" fn cf_lexer_free(lex: *mut cf_lexer) {
+    // SAFETY: C-ABI — raw CPOD field access on a live C struct (checked above); the fields are Copy, no drop.
     unsafe { bfree((*lex).file) };
+    // SAFETY: C-ABI — raw CPOD field access on a live C struct (checked above); the fields are Copy, no drop.
     unsafe { bfree((*lex).reformatted) };
     // C `lexer_free`: bfree the text, re-init the base lexer.
+    // SAFETY: C-ABI — raw CPOD field access on a live C struct (checked above); the fields are Copy, no drop.
     unsafe { bfree((*lex).base_lexer.text) };
+    // SAFETY: C-ABI — the handle is non-NULL (guarded above); the value is live and exclusively owned for the call.
     let l = unsafe { &mut *lex };
     l.tokens.free();
     *l = cf_lexer::init();
@@ -445,6 +459,7 @@ pub unsafe extern "C" fn cf_lexer_lex(
     str: *const c_char,
     file: *const c_char,
 ) -> bool {
+    // SAFETY: the struct is a live C object (checked above); the C free is the owner's call.
     unsafe { cf_lexer_free(lex) };
     let Some(text) = c_bytes(str) else {
         return false;
@@ -452,11 +467,14 @@ pub unsafe extern "C" fn cf_lexer_lex(
     if text.is_empty() {
         return false;
     }
+    // SAFETY: C-ABI — the handle is non-NULL (guarded above); the value is live and exclusively owned for the call.
     let l = unsafe { &mut *lex };
     if !file.is_null() {
+        // SAFETY: C-ABI — `file` is a valid C string (caller contract); the result is bmem-owned.
         l.file = unsafe { bstrdup(file) };
     }
     // C `lexer_start`: bstrdup the text, offset at the start.
+    // SAFETY: C-ABI — `str` is a valid C string (caller contract); the result is bmem-owned.
     l.base_lexer.text = unsafe { bstrdup(str) };
     l.base_lexer.offset = l.base_lexer.text as *const c_char;
 
@@ -464,21 +482,26 @@ pub unsafe extern "C" fn cf_lexer_lex(
     eng.lex(Some(text), None);
 
     let rf = &eng.reformatted;
+    // SAFETY: C-ABI — S-001 allocation; the result is stored into `l.reformatted` immediately.
     l.reformatted = unsafe { bmalloc(rf.len() + 1) as *mut c_char };
+    // SAFETY: C-ABI — `l.reformatted` is a live C buffer of at least rf.len()+1 bytes; the write and NUL fit (checked above).
     unsafe {
         ptr::copy_nonoverlapping(rf.as_ptr(), l.reformatted.cast::<u8>(), rf.len());
         l.reformatted.add(rf.len()).write(0);
     };
+    // SAFETY: C-ABI — the write cursor sits at the end of the freshly written rf.len() bytes.
     l.write_offset = unsafe { l.reformatted.add(rf.len()) };
     let text_ptr = l.base_lexer.text as *const c_char;
     for t in &eng.tokens {
         l.tokens.push(&cf_token {
             lex: l as *const cf_lexer,
             str: strref {
+                // SAFETY: C-ABI — `t.str_off` is within the reformatted buffer (computed above).
                 array: unsafe { l.reformatted.add(t.str_off) } as *const c_char,
                 len: t.str_len,
             },
             unmerged_str: strref {
+                // SAFETY: C-ABI — `t.span_off` is within the live text buffer (computed above).
                 array: unsafe { text_ptr.add(t.span_off) },
                 len: t.span_len,
             },
@@ -486,6 +509,7 @@ pub unsafe extern "C" fn cf_lexer_lex(
         });
     }
     // C ends with the base offset at the NUL.
+    // SAFETY: C-ABI — the NUL terminator at the end of the live text buffer.
     l.base_lexer.offset = unsafe { text_ptr.add(text.len()) };
     l.unexpected_eof = eng.unexpected_eof;
     !l.unexpected_eof
@@ -500,6 +524,7 @@ pub unsafe extern "C" fn cf_lexer_lex(
 /// `pp` must point to writable memory of size `cf_preprocessor`.
 #[unsafe(no_mangle)]
 pub unsafe extern "C" fn cf_preprocessor_init(pp: *mut cf_preprocessor) {
+    // SAFETY: test — the structs/args are live C objects (checked above).
     unsafe { *pp = cf_preprocessor::init() };
 }
 
@@ -513,14 +538,18 @@ pub unsafe extern "C" fn cf_preprocessor_init(pp: *mut cf_preprocessor) {
 /// (its allocations come from the C allocator).
 #[unsafe(no_mangle)]
 pub unsafe extern "C" fn cf_preprocessor_free(pp: *mut cf_preprocessor) {
+    // SAFETY: C-ABI — the handle is non-NULL (guarded above); the value is live and exclusively owned for the call.
     let p = unsafe { &mut *pp };
     for i in 0..p.defines.num {
+        // SAFETY: C-ABI — raw CPOD field access on a live C struct (checked above); the fields are Copy, no drop.
         cf_def_free(unsafe { p.defines.array.add(i) });
     }
     for i in 0..p.sys_include_dirs.num {
+        // SAFETY: C-ABI — `i` is a live sys-include dir entry (bmem-owned C string); the preprocessor is the unique owner.
         unsafe { bfree(p.sys_include_dirs.get(i).cast::<u8>()) };
     }
     for i in 0..p.dependencies.num {
+        // SAFETY: the struct is a live C object (checked above); the C free is the owner's call.
         unsafe { cf_lexer_free(p.dependencies.array.add(i)) };
     }
     p.defines.free();
@@ -535,6 +564,7 @@ pub unsafe extern "C" fn cf_preprocessor_free(pp: *mut cf_preprocessor) {
 /// C `cf_def_free` (a `static inline` in cf-lexer.h, so the bridge must
 /// provide the logic for defs it frees itself).
 fn cf_def_free(cfd: *mut cf_def) {
+    // SAFETY: C-ABI — the handle is non-NULL (guarded above); the value is live and exclusively owned for the call.
     let d = unsafe { &mut *cfd };
     d.name = cf_token::clear();
     d.params.free();
@@ -547,10 +577,13 @@ fn cf_def_free(cfd: *mut cf_def) {
 /// C `go_to_newline`.
 fn go_to_newline(p_cur: &mut *mut cf_token) -> bool {
     let mut cur = *p_cur;
+    // SAFETY: C-ABI — raw CPOD field access on a live C struct (checked above); the fields are Copy, no drop.
     while unsafe { (*cur).r#type } != CFTOKEN_NONE && unsafe { (*cur).r#type } != CFTOKEN_NEWLINE {
+        // SAFETY: pointer arithmetic on the live C token cursor (checked above); the step stays inside the token array.
         unsafe { cur = cur.add(1) };
     }
     *p_cur = cur;
+    // SAFETY: C-ABI — raw CPOD field access on a live C struct (checked above); the fields are Copy, no drop.
     unsafe { (*cur).r#type != CFTOKEN_NONE }
 }
 
@@ -559,15 +592,21 @@ fn go_to_newline(p_cur: &mut *mut cf_token) -> bool {
 /// kept verbatim).
 fn next_token(p_cur: &mut *mut cf_token, preprocessor: bool) -> bool {
     let mut cur = *p_cur;
+    // SAFETY: C-ABI — raw CPOD field access on a live C struct (checked above); the fields are Copy, no drop.
     if unsafe { (*cur).r#type } != CFTOKEN_NONE {
+        // SAFETY: pointer arithmetic on the live C token cursor (checked above); the step stays inside the token array.
         unsafe { cur = cur.add(1) };
     }
+    // SAFETY: C-ABI — raw CPOD field access on a live C struct (checked above); the fields are Copy, no drop.
     while unsafe { (*cur).r#type } == CFTOKEN_SPACETAB
+        // SAFETY: C-ABI — raw CPOD field access on a live C struct (checked above); the fields are Copy, no drop.
         && (preprocessor || unsafe { (*cur).r#type } == CFTOKEN_NEWLINE)
     {
+        // SAFETY: pointer arithmetic on the live C token cursor (checked above); the step stays inside the token array.
         unsafe { cur = cur.add(1) };
     }
     *p_cur = cur;
+    // SAFETY: C-ABI — raw CPOD field access on a live C struct (checked above); the fields are Copy, no drop.
     unsafe { (*cur).r#type != CFTOKEN_NONE }
 }
 
@@ -583,12 +622,15 @@ fn cf_addew(
     v2: *const c_char,
     v3: *const c_char,
 ) {
+    // SAFETY: C-ABI — the handle is non-NULL (guarded above); the value is live for the call.
     let pp = unsafe { &*pp };
+    // SAFETY: C-ABI — the handle is non-NULL (guarded above); the value is live for the call.
     let token = unsafe { &*token };
     let mut row = 0u32;
     let mut col = 0u32;
     // C `cf_gettokenoffset`: `&pp->lex->base_lexer` — a NULL `pp->lex`
     // dereferences here, like the reference (90-defects pins the crash).
+    // SAFETY: C-ABI — `pp` and `token` are live C structs (checked above); the C lexer helper reads a live C string.
     unsafe {
         crate::abi_lexer::lexer_getstroffset(
             &(*pp.lex).base_lexer,
@@ -597,10 +639,12 @@ fn cf_addew(
             &mut col,
         )
     };
+    // SAFETY: C-ABI — `token.lex` is a live base lexer (checked above); the field is a CPOD pointer.
     let file = unsafe { (*token.lex).file };
     let msg = safe_printf(message, v1, v2, v3);
     let mut msgc = msg;
     msgc.push(0);
+    // SAFETY: C-ABI — `pp.ed` is a live error data object (checked above); the C string args are valid for the call.
     unsafe { error_data_add_c(pp.ed, file, row, col, msgc.as_ptr().cast::<c_char>(), level) };
 }
 
@@ -613,10 +657,12 @@ fn append_space(pp: *mut cf_preprocessor, tokens: &mut darray<cf_token>, base: *
     };
     token.r#type = CFTOKEN_SPACETAB;
     if !base.is_null() {
+        // SAFETY: C-ABI — the handle is non-NULL (guarded above); the value is live for the call.
         let b = unsafe { &*base };
         token.lex = b.lex;
         token.unmerged_str = b.unmerged_str;
     } else {
+        // SAFETY: C-ABI — raw CPOD field access on a live C struct (checked above); the fields are Copy, no drop.
         token.lex = unsafe { (*pp).lex };
         token.unmerged_str = token.str;
     }
@@ -633,8 +679,10 @@ fn get_macro_param(params: *const macro_params, name: &strref) -> Option<*const 
     if params.is_null() {
         return None;
     }
+    // SAFETY: C-ABI — the handle is non-NULL (guarded above); the value is live for the call.
     let p = unsafe { &*params };
     for i in 0..p.params.num {
+        // SAFETY: C-ABI — i < p.params.num (checked above); the element is a live CPOD.
         let mp = unsafe { &*p.params.array.add(i) };
         if sr_bytes(&mp.name.str) == sr_bytes(name) {
             return Some(mp as *const macro_param);
@@ -675,6 +723,7 @@ fn macro_param_free(p: &mut macro_param) {
 
 fn macro_params_free(mp: &mut macro_params) {
     for i in 0..mp.params.num {
+        // SAFETY: C-ABI — i < mp.params.num (checked above); the element is a live macro param (unique owner: the preprocessor).
         macro_param_free(unsafe { &mut *mp.params.array.add(i) });
     }
     mp.params.free();
@@ -682,7 +731,9 @@ fn macro_params_free(mp: &mut macro_params) {
 
 /// C `cf_preprocess_get_def_idx` (`INVALID_INDEX` = `usize::MAX`).
 fn get_def_idx(pp: *mut cf_preprocessor, name: &strref) -> usize {
+    // SAFETY: C-ABI — raw CPOD field access on a live C struct (checked above); the fields are Copy, no drop.
     for i in 0..unsafe { (*pp).defines.num } {
+        // SAFETY: C-ABI — the handle is non-NULL (guarded above); the value is live for the call.
         let d = unsafe { &*(*pp).defines.array.add(i) };
         if sr_bytes(&d.name.str) == sr_bytes(name) {
             return i;
@@ -697,6 +748,7 @@ fn get_def(pp: *mut cf_preprocessor, name: &strref) -> *const cf_def {
     if i == usize::MAX {
         ptr::null()
     } else {
+        // SAFETY: C-ABI — raw CPOD field access on a live C struct (checked above); the fields are Copy, no drop.
         unsafe { (*pp).defines.array.add(i) }
     }
 }
@@ -708,6 +760,7 @@ fn def_value(pp: *mut cf_preprocessor, name: &strref, value: &mut i64) -> bool {
     if i == usize::MAX {
         return false;
     }
+    // SAFETY: C-ABI — the handle is non-NULL (guarded above); the value is live for the call.
     let d = unsafe { &*(*pp).defines.array.add(i) };
     if d.r#macro {
         return false;
@@ -733,10 +786,12 @@ fn def_value(pp: *mut cf_preprocessor, name: &strref, value: &mut i64) -> bool {
 
 /// C `insert_path`: prefix the directory of the MAIN file.
 fn insert_path(pp: *mut cf_preprocessor, path: &mut Vec<u8>) {
+    // SAFETY: C-ABI — raw CPOD field access on a live C struct (checked above); the fields are Copy, no drop.
     let main_lex = unsafe { (*pp).lex };
     if main_lex.is_null() {
         return;
     }
+    // SAFETY: C-ABI — `main_lex` is live (checked above); the file field is a CPOD C string pointer.
     let Some(file) = c_bytes(unsafe { (*main_lex).file }) else {
         return;
     };
@@ -752,6 +807,7 @@ fn insert_path(pp: *mut cf_preprocessor, path: &mut Vec<u8>) {
 /// buffer at the string token; an already-included file re-runs the
 /// preprocessor on its tokens).
 fn cf_include_file(pp: *mut cf_preprocessor, file_token: *const cf_token) {
+    // SAFETY: C-ABI — `file_token` is non-NULL (guarded above); the token is live for the call.
     let ft = unsafe { &*file_token };
     // `dstr_copy_strref` + `dstr_mid(&str_file, &str_file, 1, len - 2)`:
     // the path is the string token without its surrounding quotes
@@ -763,7 +819,9 @@ fn cf_include_file(pp: *mut cf_preprocessor, file_token: *const cf_token) {
     path_nul.push(0);
 
     // If the dependency was already lexed, run the preprocessor on it.
+    // SAFETY: C-ABI — raw CPOD field access on a live C struct (checked above); the fields are Copy, no drop.
     for i in 0..unsafe { (*pp).dependencies.num } {
+        // SAFETY: C-ABI — the handle is non-NULL (guarded above); the value is live for the call.
         let dep = unsafe { &*(*pp).dependencies.array.add(i) };
         if !dep.file.is_null() && c_bytes(dep.file) == Some(&path[..]) {
             let mut tokens = dep.tokens.array;
@@ -772,6 +830,7 @@ fn cf_include_file(pp: *mut cf_preprocessor, file_token: *const cf_token) {
         }
     }
 
+    // SAFETY: C-ABI — both args are valid NUL-terminated C strings for the call.
     let file = unsafe { os_fopen(path_nul.as_ptr().cast(), c"rb".as_ptr()) };
     if file.is_null() {
         cf_addew(
@@ -786,20 +845,26 @@ fn cf_include_file(pp: *mut cf_preprocessor, file_token: *const cf_token) {
         return;
     }
     let mut file_data: *mut c_char = ptr::null_mut();
+    // SAFETY: C-ABI — `file` is a live FILE* (checked above); `file_data` is valid out storage.
     unsafe { os_fread_utf8(file, &mut file_data) };
+    // SAFETY: C-ABI — `file` is the live FILE* opened above.
     unsafe { fclose(file) };
 
     let mut new_lex = cf_lexer::init();
+    // SAFETY: the lexer and out params are live C storage (checked above); `text` is NUL-terminated for the call.
     unsafe { cf_lexer_lex(&mut new_lex, file_data, path_nul.as_ptr().cast::<c_char>()) };
     let mut tokens = new_lex.tokens.array;
     cf_preprocess_tokens(pp, false, &mut tokens);
+    // SAFETY: C-ABI — `file_data` is a bmem buffer owned by this scope (checked above).
     unsafe { bfree(file_data) };
+    // SAFETY: C-ABI — raw CPOD field access on a live C struct (checked above); the fields are Copy, no drop.
     unsafe { (*pp).dependencies.push(&new_lex) };
 }
 
 /// C `cf_preprocess_include` (system includes are accepted and ignored,
 /// like the reference's TODO).
 fn pp_include(pp: *mut cf_preprocessor, p_cur: &mut *mut cf_token) {
+    // SAFETY: C-ABI — raw CPOD field access on a live C struct (checked above); the fields are Copy, no drop.
     if unsafe { (*pp).ignore_state } {
         let mut cur = *p_cur;
         go_to_newline(&mut cur);
@@ -808,6 +873,7 @@ fn pp_include(pp: *mut cf_preprocessor, p_cur: &mut *mut cf_token) {
     }
     let mut cur = *p_cur;
     next_token(&mut cur, true);
+    // SAFETY: C-ABI — raw CPOD field access on a live C struct (checked above); the fields are Copy, no drop.
     if unsafe { (*cur).r#type } != CFTOKEN_STRING {
         cf_addew(
             pp,
@@ -822,6 +888,7 @@ fn pp_include(pp: *mut cf_preprocessor, p_cur: &mut *mut cf_token) {
         *p_cur = cur;
         return;
     }
+    // SAFETY: C-ABI — raw CPOD field access on a live C struct (checked above); the fields are Copy, no drop.
     let cur_str = unsafe { (*cur).str };
     let s = sr_bytes(&cur_str);
     let sys = s.len() >= 2 && s[0] == b'<' && s[s.len() - 1] == b'>';
@@ -829,6 +896,7 @@ fn pp_include(pp: *mut cf_preprocessor, p_cur: &mut *mut cf_token) {
     if sys {
         // TODO (same as the C reference): system includes.
     } else if loc {
+        // SAFETY: C-ABI — raw CPOD field access on a live C struct (checked above); the fields are Copy, no drop.
         if !unsafe { (*pp).ignore_state } {
             cf_include_file(pp, cur);
         }
@@ -846,6 +914,7 @@ fn pp_include(pp: *mut cf_preprocessor, p_cur: &mut *mut cf_token) {
         *p_cur = cur;
         return;
     }
+    // SAFETY: pointer arithmetic on the live C token cursor (checked above); the step stays inside the token array.
     unsafe { cur = cur.add(1) };
     *p_cur = cur;
 }
@@ -856,6 +925,7 @@ fn pp_macro_params(pp: *mut cf_preprocessor, def: &mut cf_def, p_cur: &mut *mut 
     def.r#macro = true;
     loop {
         next_token(&mut cur, true);
+        // SAFETY: C-ABI — raw CPOD field access on a live C struct (checked above); the fields are Copy, no drop.
         if unsafe { (*cur).r#type } != CFTOKEN_NAME {
             cf_addew(
                 pp,
@@ -870,10 +940,14 @@ fn pp_macro_params(pp: *mut cf_preprocessor, def: &mut cf_def, p_cur: &mut *mut 
             *p_cur = cur;
             return false;
         }
+        // SAFETY: C-ABI — the handle is non-NULL (guarded above); the value is live for the call.
         def.params.push(unsafe { &*cur });
         next_token(&mut cur, true);
+        // SAFETY: C-ABI — raw CPOD field access on a live C struct (checked above); the fields are Copy, no drop.
         if unsafe { (*cur).r#type } != CFTOKEN_OTHER
+            // SAFETY: C-ABI — raw CPOD field access on a live C struct (checked above); the fields are Copy, no drop.
             || (unsafe { *(*cur).str.array } != b',' as c_char
+                // SAFETY: C-ABI — raw CPOD field access on a live C struct (checked above); the fields are Copy, no drop.
                 && unsafe { *(*cur).str.array } != b')' as c_char)
         {
             cf_addew(
@@ -889,6 +963,7 @@ fn pp_macro_params(pp: *mut cf_preprocessor, def: &mut cf_def, p_cur: &mut *mut 
             *p_cur = cur;
             return false;
         }
+        // SAFETY: C-ABI — raw CPOD field access on a live C struct (checked above); the fields are Copy, no drop.
         if unsafe { *(*cur).str.array } == b')' as c_char {
             break;
         }
@@ -901,6 +976,7 @@ fn pp_macro_params(pp: *mut cf_preprocessor, def: &mut cf_def, p_cur: &mut *mut 
 
 /// C `cf_preprocess_define`.
 fn pp_define(pp: *mut cf_preprocessor, p_cur: &mut *mut cf_token) {
+    // SAFETY: C-ABI — raw CPOD field access on a live C struct (checked above); the fields are Copy, no drop.
     if unsafe { (*pp).ignore_state } {
         let mut cur = *p_cur;
         go_to_newline(&mut cur);
@@ -915,6 +991,7 @@ fn pp_define(pp: *mut cf_preprocessor, p_cur: &mut *mut cf_token) {
         r#macro: false,
     };
     next_token(&mut cur, true);
+    // SAFETY: C-ABI — raw CPOD field access on a live C struct (checked above); the fields are Copy, no drop.
     if unsafe { (*cur).r#type } != CFTOKEN_NAME {
         cf_addew(
             pp,
@@ -930,19 +1007,24 @@ fn pp_define(pp: *mut cf_preprocessor, p_cur: &mut *mut cf_token) {
         return;
     }
     append_space(pp, &mut def.tokens, ptr::null());
+    // SAFETY: C-ABI — `cur` is a live token pointer (checked above); CPOD copy.
     def.name = unsafe { *cur };
     if !next_token(&mut cur, true) {
         complete_def(pp, &mut def);
         *p_cur = cur;
         return;
     }
+    // SAFETY: C-ABI — raw CPOD field access on a live C struct (checked above); the fields are Copy, no drop.
     if unsafe { *(*cur).str.array } == b'(' as c_char && !pp_macro_params(pp, &mut def, &mut cur) {
         cf_def_free(&mut def as *mut cf_def);
         *p_cur = cur;
         return;
     }
+    // SAFETY: C-ABI — raw CPOD field access on a live C struct (checked above); the fields are Copy, no drop.
     while unsafe { (*cur).r#type } != CFTOKEN_NEWLINE && unsafe { (*cur).r#type } != CFTOKEN_NONE {
+        // SAFETY: C-ABI — the handle is non-NULL (guarded above); the value is live for the call.
         def.tokens.push(unsafe { &*cur });
+        // SAFETY: pointer arithmetic on the live C token cursor (checked above); the step stays inside the token array.
         unsafe { cur = cur.add(1) };
     }
     complete_def(pp, &mut def);
@@ -952,6 +1034,7 @@ fn pp_define(pp: *mut cf_preprocessor, p_cur: &mut *mut cf_token) {
 fn complete_def(pp: *mut cf_preprocessor, def: &mut cf_def) {
     append_end_token(&mut def.tokens);
     append_space(pp, &mut def.tokens, ptr::null());
+    // SAFETY: C-ABI — raw CPOD field access on a live C struct (checked above); the fields are Copy, no drop.
     unsafe { (*pp).defines.push(def) };
 }
 
@@ -959,13 +1042,16 @@ fn complete_def(pp: *mut cf_preprocessor, def: &mut cf_def) {
 fn remove_def_strref(pp: *mut cf_preprocessor, name: &strref) {
     let idx = get_def_idx(pp, name);
     if idx != usize::MAX {
+        // SAFETY: C-ABI — raw CPOD field access on a live C struct (checked above); the fields are Copy, no drop.
         cf_def_free(unsafe { (*pp).defines.array.add(idx) });
+        // SAFETY: C-ABI — raw CPOD field access on a live C struct (checked above); the fields are Copy, no drop.
         unsafe { (*pp).defines.erase(idx) };
     }
 }
 
 /// C `cf_preprocess_undef`.
 fn pp_undef(pp: *mut cf_preprocessor, p_cur: &mut *mut cf_token) {
+    // SAFETY: C-ABI — raw CPOD field access on a live C struct (checked above); the fields are Copy, no drop.
     if unsafe { (*pp).ignore_state } {
         let mut cur = *p_cur;
         go_to_newline(&mut cur);
@@ -974,6 +1060,7 @@ fn pp_undef(pp: *mut cf_preprocessor, p_cur: &mut *mut cf_token) {
     }
     let mut cur = *p_cur;
     next_token(&mut cur, true);
+    // SAFETY: C-ABI — raw CPOD field access on a live C struct (checked above); the fields are Copy, no drop.
     if unsafe { (*cur).r#type } != CFTOKEN_NAME {
         cf_addew(
             pp,
@@ -988,7 +1075,9 @@ fn pp_undef(pp: *mut cf_preprocessor, p_cur: &mut *mut cf_token) {
         *p_cur = cur;
         return;
     }
+    // SAFETY: C-ABI — raw CPOD field access on a live C struct (checked above); the fields are Copy, no drop.
     remove_def_strref(pp, &unsafe { (*cur).str });
+    // SAFETY: pointer arithmetic on the live C token cursor (checked above); the step stays inside the token array.
     unsafe { cur = cur.add(1) };
     *p_cur = cur;
 }
@@ -1000,13 +1089,17 @@ fn pp_subblock(pp: *mut cf_preprocessor, ignore: bool, p_cur: &mut *mut cf_token
         *p_cur = cur;
         return false;
     }
+    // SAFETY: C-ABI — raw CPOD field access on a live C struct (checked above); the fields are Copy, no drop.
     if !unsafe { (*pp).ignore_state } {
+        // SAFETY: C-ABI — raw CPOD field access on a live C struct (checked above); the fields are Copy, no drop.
         unsafe { (*pp).ignore_state = ignore };
         cf_preprocess_tokens(pp, true, &mut cur);
+        // SAFETY: C-ABI — raw CPOD field access on a live C struct (checked above); the fields are Copy, no drop.
         unsafe { (*pp).ignore_state = false };
     } else {
         cf_preprocess_tokens(pp, true, &mut cur);
     }
+    // SAFETY: C-ABI — raw CPOD field access on a live C struct (checked above); the fields are Copy, no drop.
     let eof = unsafe { (*cur).r#type } == CFTOKEN_NONE;
     if eof {
         cf_addew(
@@ -1026,6 +1119,7 @@ fn pp_subblock(pp: *mut cf_preprocessor, ignore: bool, p_cur: &mut *mut cf_token
 /// C `cf_preprocess_ifdef` / `cf_preprocess_if` shared tail: `#else` /
 /// `#elif` after a taken block.
 fn pp_else_elif(pp: *mut cf_preprocessor, is_true: bool, cur: &mut *mut cf_token) -> bool {
+    // SAFETY: C-ABI — raw CPOD field access on a live C struct (checked above); the fields are Copy, no drop.
     let cur_str = unsafe { (*(*cur)).str };
     let name = sr_bytes(&cur_str);
     if name == b"else" {
@@ -1033,6 +1127,7 @@ fn pp_else_elif(pp: *mut cf_preprocessor, is_true: bool, cur: &mut *mut cf_token
         // taken #else block (skipped on EOF, like the C `goto exit`).
         let taken = pp_subblock(pp, is_true, cur);
         if taken {
+            // SAFETY: pointer arithmetic on the live C token cursor (checked above); the step stays inside the token array.
             unsafe { *cur = (*cur).add(1) };
         }
         taken
@@ -1040,6 +1135,7 @@ fn pp_else_elif(pp: *mut cf_preprocessor, is_true: bool, cur: &mut *mut cf_token
         if is_true {
             let taken = pp_subblock(pp, is_true, cur);
             if taken {
+                // SAFETY: pointer arithmetic on the live C token cursor (checked above); the step stays inside the token array.
                 unsafe { *cur = (*cur).add(1) };
             }
             taken
@@ -1050,6 +1146,7 @@ fn pp_else_elif(pp: *mut cf_preprocessor, is_true: bool, cur: &mut *mut cf_token
             false
         }
     } else {
+        // SAFETY: pointer arithmetic on the live C token cursor (checked above); the step stays inside the token array.
         unsafe { *cur = (*cur).add(1) };
         true
     }
@@ -1059,6 +1156,7 @@ fn pp_else_elif(pp: *mut cf_preprocessor, is_true: bool, cur: &mut *mut cf_token
 fn pp_ifdef(pp: *mut cf_preprocessor, ifnot: bool, p_cur: &mut *mut cf_token) {
     let mut cur = *p_cur;
     next_token(&mut cur, true);
+    // SAFETY: C-ABI — raw CPOD field access on a live C struct (checked above); the fields are Copy, no drop.
     if unsafe { (*cur).r#type } != CFTOKEN_NAME {
         cf_addew(
             pp,
@@ -1073,6 +1171,7 @@ fn pp_ifdef(pp: *mut cf_preprocessor, ifnot: bool, p_cur: &mut *mut cf_token) {
         *p_cur = cur;
         return;
     }
+    // SAFETY: C-ABI — raw CPOD field access on a live C struct (checked above); the fields are Copy, no drop.
     let is_true = (get_def_idx(pp, &unsafe { (*cur).str }) == usize::MAX) == ifnot;
     if pp_subblock(pp, !is_true, &mut cur) {
         pp_else_elif(pp, is_true, &mut cur);
@@ -1088,11 +1187,15 @@ fn pp_if(pp: *mut cf_preprocessor, p_cur: &mut *mut cf_token) {
 
     next_token(&mut cur, true);
     let mut accepted = false;
+    // SAFETY: C-ABI — raw CPOD field access on a live C struct (checked above); the fields are Copy, no drop.
     if unsafe { (*cur).r#type } == CFTOKEN_NAME
+        // SAFETY: C-ABI — raw CPOD field access on a live C struct (checked above); the fields are Copy, no drop.
         && def_value(pp, &unsafe { (*cur).str }, &mut value_a)
     {
         accepted = true;
+    // SAFETY: C-ABI — raw CPOD field access on a live C struct (checked above); the fields are Copy, no drop.
     } else if unsafe { (*cur).r#type } == CFTOKEN_NUM
+        // SAFETY: test — `cur` is a live token (checked above); its str is a live C string.
         && let Some(v) = c_scan_int(c_bytes(unsafe { (*cur).str.array }).unwrap_or(&[]))
     {
         value_a = v;
@@ -1114,9 +1217,12 @@ fn pp_if(pp: *mut cf_preprocessor, p_cur: &mut *mut cf_token) {
     }
     next_token(&mut cur, true);
     let is_true;
+    // SAFETY: C-ABI — raw CPOD field access on a live C struct (checked above); the fields are Copy, no drop.
     if unsafe { (*cur).r#type } == CFTOKEN_NEWLINE {
         is_true = value_a != 0;
+        // SAFETY: pointer arithmetic on the live C token cursor (checked above); the step stays inside the token array.
         unsafe { cur = cur.sub(1) };
+    // SAFETY: C-ABI — raw CPOD field access on a live C struct (checked above); the fields are Copy, no drop.
     } else if unsafe { (*cur).r#type } != CFTOKEN_OTHER {
         cf_addew(
             pp,
@@ -1133,20 +1239,30 @@ fn pp_if(pp: *mut cf_preprocessor, p_cur: &mut *mut cf_token) {
     } else {
         // The comparator is the run of consecutive OTHER tokens (e.g. `<=`);
         // the strref spans are contiguous in the reformatted buffer.
+        // SAFETY: C-ABI — raw CPOD field access on a live C struct (checked above); the fields are Copy, no drop.
         let mut comparator = unsafe { (*cur).str };
+        // SAFETY: pointer arithmetic on the live C token cursor (checked above); the step stays inside the token array.
         unsafe { cur = cur.add(1) };
+        // SAFETY: C-ABI — raw CPOD field access on a live C struct (checked above); the fields are Copy, no drop.
         while unsafe { (*cur).r#type } == CFTOKEN_OTHER {
+            // SAFETY: C-ABI — raw CPOD field access on a live C struct (checked above); the fields are Copy, no drop.
             comparator.len += unsafe { (*cur).str.len };
+            // SAFETY: pointer arithmetic on the live C token cursor (checked above); the step stays inside the token array.
             unsafe { cur = cur.add(1) };
         }
+        // SAFETY: pointer arithmetic on the live C token cursor (checked above); the step stays inside the token array.
         unsafe { cur = cur.sub(1) };
         next_token(&mut cur, true);
         let mut accepted = false;
+        // SAFETY: C-ABI — raw CPOD field access on a live C struct (checked above); the fields are Copy, no drop.
         if unsafe { (*cur).r#type } == CFTOKEN_NAME
+            // SAFETY: C-ABI — raw CPOD field access on a live C struct (checked above); the fields are Copy, no drop.
             && def_value(pp, &unsafe { (*cur).str }, &mut value_b)
         {
             accepted = true;
+        // SAFETY: C-ABI — raw CPOD field access on a live C struct (checked above); the fields are Copy, no drop.
         } else if unsafe { (*cur).r#type } == CFTOKEN_NUM
+            // SAFETY: test — `cur` is a live token (checked above); its str is a live C string.
             && let Some(v) = c_scan_int(c_bytes(unsafe { (*cur).str.array }).unwrap_or(&[]))
         {
             value_b = v;
@@ -1201,6 +1317,7 @@ fn pp_if(pp: *mut cf_preprocessor, p_cur: &mut *mut cf_token) {
 /// current conditional block (an `#else`/`#elif`/`#endif` inside a block).
 fn pp_dispatch(pp: *mut cf_preprocessor, if_block: bool, p_cur: &mut *mut cf_token) -> bool {
     let cur = *p_cur;
+    // SAFETY: C-ABI — raw CPOD field access on a live C struct (checked above); the fields are Copy, no drop.
     let cur_str = unsafe { (*cur).str };
     let name = sr_bytes(&cur_str);
     if name == b"include" {
@@ -1228,15 +1345,19 @@ fn pp_dispatch(pp: *mut cf_preprocessor, if_block: bool, p_cur: &mut *mut cf_tok
                 ptr::null(),
                 ptr::null(),
             );
+            // SAFETY: pointer arithmetic on the live C token cursor (checked above); the step stays inside the token array.
             unsafe { *p_cur = cur.add(1) };
             return true;
         }
         return false;
+    // SAFETY: C-ABI — raw CPOD field access on a live C struct (checked above); the fields are Copy, no drop.
     } else if unsafe { (*cur).r#type } != CFTOKEN_NEWLINE
+        // SAFETY: C-ABI — raw CPOD field access on a live C struct (checked above); the fields are Copy, no drop.
         && unsafe { (*cur).r#type } != CFTOKEN_NONE
     {
         // Language-specific preprocessor stuff (TODO, same as the
         // reference): skip the directive name.
+        // SAFETY: pointer arithmetic on the live C token cursor (checked above); the step stays inside the token array.
         unsafe { *p_cur = cur.add(1) };
     }
     true
@@ -1254,7 +1375,9 @@ fn save_macro_param(
     let mut cur = *p_cur;
     append_space(pp, &mut param.tokens, base);
     let mut brace = 0;
+    // SAFETY: C-ABI — raw CPOD field access on a live C struct (checked above); the fields are Copy, no drop.
     while unsafe { (*cur).r#type } != CFTOKEN_NONE {
+        // SAFETY: C-ABI — raw CPOD field access on a live C struct (checked above); the fields are Copy, no drop.
         let first = unsafe { *(*cur).str.array };
         if first == b'(' as c_char {
             brace += 1;
@@ -1269,6 +1392,7 @@ fn save_macro_param(
         }
         pp_addtoken(pp, &mut param.tokens, &mut cur, base, cur_params);
     }
+    // SAFETY: C-ABI — raw CPOD field access on a live C struct (checked above); the fields are Copy, no drop.
     if unsafe { (*cur).r#type } == CFTOKEN_NONE {
         cf_addew(
             pp,
@@ -1298,6 +1422,7 @@ fn save_macro_params(
     let mut cur = *p_cur;
     let mut count: usize = 0;
     next_token(&mut cur, false);
+    // SAFETY: C-ABI — raw CPOD field access on a live C struct (checked above); the fields are Copy, no drop.
     if unsafe { (*cur).r#type } != CFTOKEN_OTHER || unsafe { *(*cur).str.array } != b'(' as c_char {
         cf_addew(
             pp,
@@ -1316,11 +1441,15 @@ fn save_macro_params(
             name: cf_token::clear(),
             tokens: darray::init(),
         };
+        // SAFETY: pointer arithmetic on the live C token cursor (checked above); the step stays inside the token array.
         unsafe { cur = cur.add(1) };
         count += 1;
         save_macro_param(pp, &mut cur, &mut param, base, cur_params);
+        // SAFETY: C-ABI — raw CPOD field access on a live C struct (checked above); the fields are Copy, no drop.
         if unsafe { (*cur).r#type } != CFTOKEN_OTHER
+            // SAFETY: C-ABI — raw CPOD field access on a live C struct (checked above); the fields are Copy, no drop.
             || (unsafe { *(*cur).str.array } != b',' as c_char
+                // SAFETY: C-ABI — raw CPOD field access on a live C struct (checked above); the fields are Copy, no drop.
                 && unsafe { *(*cur).str.array } != b')' as c_char)
         {
             macro_param_free(&mut param);
@@ -1338,6 +1467,7 @@ fn save_macro_params(
         }
         if param_is_whitespace(&param) {
             // If 0-param macro, ignore first entry.
+            // SAFETY: C-ABI — raw CPOD field access on a live C struct (checked above); the fields are Copy, no drop.
             if count == 1 && def.params.num == 0 && unsafe { *(*cur).str.array } == b')' as c_char {
                 macro_param_free(&mut param);
                 break;
@@ -1349,6 +1479,7 @@ fn save_macro_params(
         } else {
             macro_param_free(&mut param);
         }
+        // SAFETY: C-ABI — raw CPOD field access on a live C struct (checked above); the fields are Copy, no drop.
         if unsafe { *(*cur).str.array } == b')' as c_char {
             break;
         }
@@ -1376,11 +1507,14 @@ fn unwrap_param(
     param: *const macro_param,
 ) {
     let mut cur = *p_cur;
+    // SAFETY: C-ABI — the handle is non-NULL (guarded above); the value is live for the call.
     let p = unsafe { &*param };
     let mut param_cur = p.tokens.array;
+    // SAFETY: C-ABI — `param_cur` is a live token cursor (checked above); CPOD field read.
     while unsafe { (*param_cur).r#type } != CFTOKEN_NONE {
         pp_addtoken(pp, dst, &mut param_cur, base, ptr::null());
     }
+    // SAFETY: pointer arithmetic on the live C token cursor (checked above); the step stays inside the token array.
     unsafe { cur = cur.add(1) };
     *p_cur = cur;
 }
@@ -1403,10 +1537,12 @@ fn unwrap_define(
         save_macro_params(pp, &mut cur, def, base, cur_params, &mut new_params);
     }
     let mut body = def.tokens.array;
+    // SAFETY: C-ABI — `body` is a live token cursor (checked above); CPOD field read.
     while unsafe { (*body).r#type } != CFTOKEN_NONE {
         pp_addtoken(pp, dst, &mut body, base, &new_params);
     }
     macro_params_free(&mut new_params);
+    // SAFETY: pointer arithmetic on the live C token cursor (checked above); the step stays inside the token array.
     unsafe { cur = cur.add(1) };
     *p_cur = cur;
 }
@@ -1421,18 +1557,23 @@ fn pp_addtoken(
     params: *const macro_params,
 ) {
     let mut cur = *p_cur;
+    // SAFETY: C-ABI — raw CPOD field access on a live C struct (checked above); the fields are Copy, no drop.
     if unsafe { (*pp).ignore_state } {
+        // SAFETY: pointer arithmetic on the live C token cursor (checked above); the step stays inside the token array.
         unsafe { cur = cur.add(1) };
         *p_cur = cur;
         return;
     }
     let base = if base.is_null() { cur } else { base };
+    // SAFETY: C-ABI — raw CPOD field access on a live C struct (checked above); the fields are Copy, no drop.
     if unsafe { (*cur).r#type } == CFTOKEN_NAME {
+        // SAFETY: C-ABI — raw CPOD field access on a live C struct (checked above); the fields are Copy, no drop.
         if let Some(param) = get_macro_param(params, &unsafe { (*cur).str }) {
             unwrap_param(pp, dst, &mut cur, base, param);
             *p_cur = cur;
             return;
         }
+        // SAFETY: C-ABI — raw CPOD field access on a live C struct (checked above); the fields are Copy, no drop.
         let def = get_def(pp, &unsafe { (*cur).str });
         if !def.is_null() {
             // Copy the def to the stack: expansion only reads the body
@@ -1440,13 +1581,16 @@ fn pp_addtoken(
             // darray is never resized during expansion (only the
             // #define/#undef directives resize it, and those run in the
             // block loop, not here).
+            // SAFETY: C-ABI — `def` is a live cf_def (checked above); CPOD copy.
             let def = unsafe { *def };
             unwrap_define(pp, dst, &mut cur, base, &def, params);
             *p_cur = cur;
             return;
         }
     }
+    // SAFETY: C-ABI — the handle is non-NULL (guarded above); the value is live for the call.
     dst.push(unsafe { &*cur });
+    // SAFETY: pointer arithmetic on the live C token cursor (checked above); the step stays inside the token array.
     unsafe { cur = cur.add(1) };
     *p_cur = cur;
 }
@@ -1456,8 +1600,11 @@ fn cf_preprocess_tokens(pp: *mut cf_preprocessor, if_block: bool, p_cur: &mut *m
     let mut cur = *p_cur;
     let mut newline = true;
     let mut preprocessor_line = if_block;
+    // SAFETY: C-ABI — raw CPOD field access on a live C struct (checked above); the fields are Copy, no drop.
     while unsafe { (*cur).r#type } != CFTOKEN_NONE {
+        // SAFETY: C-ABI — raw CPOD field access on a live C struct (checked above); the fields are Copy, no drop.
         if unsafe { (*cur).r#type } != CFTOKEN_SPACETAB
+            // SAFETY: C-ABI — raw CPOD field access on a live C struct (checked above); the fields are Copy, no drop.
             && unsafe { (*cur).r#type } != CFTOKEN_NEWLINE
         {
             if preprocessor_line {
@@ -1474,6 +1621,7 @@ fn cf_preprocess_tokens(pp: *mut cf_preprocessor, if_block: bool, p_cur: &mut *m
                     break;
                 }
             }
+            // SAFETY: C-ABI — raw CPOD field access on a live C struct (checked above); the fields are Copy, no drop.
             if newline && unsafe { *(*cur).str.array } == b'#' as c_char {
                 next_token(&mut cur, true);
                 preprocessor_line = true;
@@ -1484,14 +1632,17 @@ fn cf_preprocess_tokens(pp: *mut cf_preprocessor, if_block: bool, p_cur: &mut *m
             }
             newline = false;
         }
+        // SAFETY: C-ABI — raw CPOD field access on a live C struct (checked above); the fields are Copy, no drop.
         if unsafe { (*cur).r#type } == CFTOKEN_NEWLINE {
             newline = true;
             preprocessor_line = false;
+        // SAFETY: C-ABI — raw CPOD field access on a live C struct (checked above); the fields are Copy, no drop.
         } else if unsafe { (*cur).r#type } == CFTOKEN_NONE {
             break;
         }
         pp_addtoken(
             pp,
+            // SAFETY: C-ABI — raw CPOD field access on a live C struct (checked above); the fields are Copy, no drop.
             unsafe { &mut (*pp).tokens },
             &mut cur,
             ptr::null(),
@@ -1524,17 +1675,21 @@ pub unsafe extern "C" fn cf_preprocess(
     lex: *mut cf_lexer,
     ed: *mut error_data,
 ) -> bool {
+    // SAFETY: C-ABI — raw CPOD field access on a live C struct (checked above); the fields are Copy, no drop.
     let tokens = unsafe { (*lex).tokens.array };
     if tokens.is_null() {
         return false;
     }
+    // SAFETY: C-ABI — raw CPOD field access on a live C struct (checked above); the fields are Copy, no drop.
     unsafe {
         (*pp).ed = ed;
         (*pp).lex = lex;
     };
     let mut cur = tokens;
     cf_preprocess_tokens(pp, false, &mut cur);
+    // SAFETY: C-ABI — the handle is non-NULL (guarded above); the value is live for the call.
     unsafe { (*pp).tokens.push(&*cur) };
+    // SAFETY: C-ABI — raw CPOD field access on a live C struct (checked above); the fields are Copy, no drop.
     !unsafe { (*lex).unexpected_eof }
 }
 
@@ -1551,6 +1706,7 @@ pub unsafe extern "C" fn cf_preprocess(
 /// `def` must point to a valid `cf_def` whose token views are readable.
 #[unsafe(no_mangle)]
 pub unsafe extern "C" fn cf_preprocessor_add_def(pp: *mut cf_preprocessor, def: *const cf_def) {
+    // SAFETY: C-ABI — the handle is non-NULL (guarded above); the value is live for the call.
     let d = unsafe { &*def };
     let existing = get_def(pp, &d.name.str);
     if !existing.is_null() {
@@ -1568,6 +1724,7 @@ pub unsafe extern "C" fn cf_preprocessor_add_def(pp: *mut cf_preprocessor, def: 
         );
         cf_addew(
             pp,
+            // SAFETY: C-ABI — `existing` is a live cf_def (checked above); the name field is a CPOD.
             unsafe { &(*existing).name } as *const cf_token,
             b"Previous definition of $1 is here",
             LEX_WARNING,
@@ -1576,8 +1733,10 @@ pub unsafe extern "C" fn cf_preprocessor_add_def(pp: *mut cf_preprocessor, def: 
             ptr::null(),
         );
         cf_def_free(existing as *mut cf_def);
+        // SAFETY: C-ABI — `def` and `existing` are live, disjoint cf_def objects (checked above); CPOD.
         unsafe { ptr::copy_nonoverlapping(def, existing as *mut cf_def, 1) };
     } else {
+        // SAFETY: C-ABI — raw CPOD field access on a live C struct (checked above); the fields are Copy, no drop.
         unsafe { (*pp).defines.push(d) };
     }
 }
@@ -1620,8 +1779,11 @@ mod tests {
     #[unsafe(no_mangle)]
     pub extern "C" fn bmalloc(size: usize) -> *mut u8 {
         let layout = Layout::from_size_align(size + 8, 8).expect("valid layout");
+        // SAFETY: the layout is non-zero and aligned (checked above); fresh allocation.
         let raw = unsafe { std::alloc::alloc(layout) } as *mut u64;
+        // SAFETY: the 8-byte size header sits just before the data pointer (the alloc above).
         unsafe { raw.write(size as u64) };
+        // SAFETY: the data pointer sits just after the 8-byte size header.
         unsafe { raw.add(1) as *mut u8 }
     }
 
@@ -1630,9 +1792,12 @@ mod tests {
         if ptr.is_null() {
             return;
         }
+        // SAFETY: the data pointer came from this allocator (8-byte size header just before it).
         let raw = unsafe { ptr.sub(1) as *const u64 };
+        // SAFETY: the size header was written by the matching alloc (checked above).
         let size = unsafe { raw.read() } as usize;
         let layout = Layout::from_size_align(size + 8, 8).expect("valid layout");
+        // SAFETY: the matching alloc for this layout (size header read above); the allocation is still live.
         unsafe { std::alloc::dealloc(ptr.sub(8), layout) };
     }
 
@@ -1643,6 +1808,7 @@ mod tests {
 
     #[unsafe(no_mangle)]
     pub extern "C" fn os_fread_utf8(_file: *mut c_void, pstr: *mut *mut c_char) -> usize {
+        // SAFETY: `pstr` is valid out storage (the caller's C pointer slot, documented above).
         unsafe { pstr.write(ptr::null_mut()) };
         0
     }
@@ -1717,6 +1883,7 @@ mod tests {
         let mut l = cf_lexer::init();
         let text = cstr("a /* b */ c\nd\ne");
         let file = cstr("f.cf");
+        // SAFETY: the lexer and out params are live C storage (checked above); `text` is NUL-terminated for the call.
         let r = unsafe { cf_lexer_lex(&mut l, text.as_ptr(), file.as_ptr()) };
         assert!(r);
         assert!(!l.unexpected_eof);
@@ -1754,8 +1921,10 @@ mod tests {
             );
         }
         // the base offset walked to the NUL
+        // SAFETY: C-ABI — both pointers are within the same live text buffer.
         let rel = unsafe { l.base_lexer.offset.offset_from(l.base_lexer.text) };
         assert_eq!(rel, text.as_bytes().len() as isize);
+        // SAFETY: the struct is a live C object (checked above); the C free is the owner's call.
         unsafe { cf_lexer_free(&mut l) };
         assert!(l.file.is_null());
         assert!(l.reformatted.is_null());
@@ -1767,6 +1936,7 @@ mod tests {
     fn cf_lexer_lex_unterminated_comment_and_splice() {
         let mut l = cf_lexer::init();
         let text = cstr("a /* x");
+        // SAFETY: the lexer and out params are live C storage (checked above); `text` is NUL-terminated for the call.
         let r = unsafe { cf_lexer_lex(&mut l, text.as_ptr(), ptr::null()) };
         assert!(!r);
         assert!(l.unexpected_eof);
@@ -1775,18 +1945,22 @@ mod tests {
         assert_eq!(tok_bytes(&l.tokens.get(1).str), b"  ");
         assert_eq!(tok_bytes(&l.tokens.get(1).unmerged_str), b" /* x");
         assert!(l.file.is_null());
+        // SAFETY: the struct is a live C object (checked above); the C free is the owner's call.
         unsafe { cf_lexer_free(&mut l) };
 
         // a splice merges the lines: str "abcd", span keeps the backslash
         let text = cstr("ab\\\ncd");
+        // SAFETY: the lexer and out params are live C storage (checked above); `text` is NUL-terminated for the call.
         assert!(unsafe { cf_lexer_lex(&mut l, text.as_ptr(), ptr::null()) });
         assert_eq!(l.tokens.num, 2);
         assert_eq!(tok_bytes(&l.tokens.get(0).str), b"abcd");
         assert_eq!(tok_bytes(&l.tokens.get(0).unmerged_str), b"ab\\\ncd");
+        // SAFETY: the struct is a live C object (checked above); the C free is the owner's call.
         unsafe { cf_lexer_free(&mut l) };
 
         // empty text: false, zeroed lexer
         let text = cstr("");
+        // SAFETY: the lexer and out params are live C storage (checked above); `text` is NUL-terminated for the call.
         assert!(!unsafe { cf_lexer_lex(&mut l, text.as_ptr(), ptr::null()) });
         assert_eq!(l.tokens.num, 0);
         assert!(l.reformatted.is_null());
@@ -1805,7 +1979,9 @@ mod tests {
             },
         };
         let text = cstr("#define A 1\nx A y\nA\n");
+        // SAFETY: the lexer and out params are live C storage (checked above); `text` is NUL-terminated for the call.
         assert!(unsafe { cf_lexer_lex(&mut l, text.as_ptr(), ptr::null()) });
+        // SAFETY: test — the structs/args are live C objects (checked above).
         assert!(unsafe { cf_preprocess(&mut pp, &mut l, &mut ed) });
         assert_eq!(pp.tokens.num, 12);
         let types: Vec<c_int> = (0..pp.tokens.num)
@@ -1836,7 +2012,9 @@ mod tests {
         assert_eq!(tok_bytes(&pp.tokens.get(4).unmerged_str), b"1");
         assert_eq!(tok_bytes(&pp.tokens.get(6).str), b"y");
         assert_eq!(ed.errors.num, 0);
+        // SAFETY: the struct is a live C object (checked above); the C free is the owner's call.
         unsafe { cf_preprocessor_free(&mut pp) };
+        // SAFETY: the struct is a live C object (checked above); the C free is the owner's call.
         unsafe { cf_lexer_free(&mut l) };
         assert!(pp.defines.array.is_null());
         assert!(pp.tokens.array.is_null());
@@ -1856,6 +2034,7 @@ mod tests {
             },
         };
         let text = cstr("FOO BAR FOO\n#ifdef FOO\ny\n#endif\n");
+        // SAFETY: the lexer and out params are live C storage (checked above); `text` is NUL-terminated for the call.
         assert!(unsafe { cf_lexer_lex(&mut l, text.as_ptr(), ptr::null()) });
 
         let name_c = cstr("FOO");
@@ -1863,8 +2042,10 @@ mod tests {
         let body_c = cstr("7");
         let file_body = cstr("def-body");
         let mut ln = cf_lexer::init();
+        // SAFETY: the lexer and out params are live C storage (checked above); `text` is NUL-terminated for the call.
         assert!(unsafe { cf_lexer_lex(&mut ln, name_c.as_ptr(), file_name.as_ptr()) });
         let mut lb = cf_lexer::init();
+        // SAFETY: the lexer and out params are live C storage (checked above); `text` is NUL-terminated for the call.
         assert!(unsafe { cf_lexer_lex(&mut lb, body_c.as_ptr(), file_body.as_ptr()) });
 
         let mut def = cf_def {
@@ -1876,9 +2057,11 @@ mod tests {
         for i in 0..lb.tokens.num {
             def.tokens.push(lb.tokens.get(i));
         }
+        // SAFETY: test — the structs/args are live C objects (checked above).
         unsafe { cf_preprocessor_add_def(&mut pp, &def) };
         assert_eq!(pp.defines.num, 1);
 
+        // SAFETY: test — the structs/args are live C objects (checked above).
         assert!(unsafe { cf_preprocess(&mut pp, &mut l, &mut ed) });
         // NUM 7 / SPACETAB / BAR / SPACETAB / NUM 7 / NEWLINE / NEWLINE
         // (the #ifdef line's, kept like the C reference) / y / NEWLINE /
@@ -1891,15 +2074,21 @@ mod tests {
         assert_eq!(ed.errors.num, 0);
 
         let f = cstr("FOO");
+        // SAFETY: test — the structs/args are live C objects (checked above).
         unsafe { cf_preprocessor_remove_def(&mut pp, f.as_ptr()) };
         assert_eq!(pp.defines.num, 0);
         let n = cstr("Nothing");
+        // SAFETY: test — the structs/args are live C objects (checked above).
         unsafe { cf_preprocessor_remove_def(&mut pp, n.as_ptr()) };
         assert_eq!(pp.defines.num, 0);
 
+        // SAFETY: the struct is a live C object (checked above); the C free is the owner's call.
         unsafe { cf_lexer_free(&mut ln) };
+        // SAFETY: the struct is a live C object (checked above); the C free is the owner's call.
         unsafe { cf_lexer_free(&mut lb) };
+        // SAFETY: the struct is a live C object (checked above); the C free is the owner's call.
         unsafe { cf_preprocessor_free(&mut pp) };
+        // SAFETY: the struct is a live C object (checked above); the C free is the owner's call.
         unsafe { cf_lexer_free(&mut l) };
     }
 
@@ -1907,6 +2096,7 @@ mod tests {
     fn cf_literal_to_str_bridged() {
         // vector 33 cases through the C entry point (result is C-allocated)
         let s = cstr("\"abc\"");
+        // SAFETY: the literal bytes are valid for the call; the result is a C-owned pointer (doc above).
         let r = unsafe { cf_literal_to_str(s.as_ptr(), 0) };
         assert!(!r.is_null());
         assert_eq!(cbuf(r), b"abc");
@@ -1914,18 +2104,22 @@ mod tests {
 
         // the Q-10 quirk: the closing quote leaks after \x
         let s = cstr("'\\x41'");
+        // SAFETY: the literal bytes are valid for the call; the result is a C-owned pointer (doc above).
         let r = unsafe { cf_literal_to_str(s.as_ptr(), 0) };
         assert_eq!(cbuf(r), b"A'");
         bfree(r.cast());
 
         // explicit count, and rejection cases
         let s = cstr("\"abc\"");
+        // SAFETY: the literal bytes are valid for the call; the result is a C-owned pointer (doc above).
         let r = unsafe { cf_literal_to_str(s.as_ptr(), 5) };
         assert_eq!(cbuf(r), b"abc");
         bfree(r.cast());
         let bad = cstr("\"abc'");
+        // SAFETY: the literal bytes are valid for the call; the result is a C-owned pointer (doc above).
         assert!(unsafe { cf_literal_to_str(bad.as_ptr(), 0) }.is_null());
         let short = cstr("\"a\"");
+        // SAFETY: the literal bytes are valid for the call; the result is a C-owned pointer (doc above).
         assert!(unsafe { cf_literal_to_str(short.as_ptr(), 2) }.is_null());
     }
 }

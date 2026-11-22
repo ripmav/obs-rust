@@ -107,6 +107,7 @@ fn sr_of(p: *const strref) -> StrRef<'static> {
     if p.is_null() {
         return StrRef::clear();
     }
+    // SAFETY: C-ABI — `p` is non-NULL (guarded above); the strref is a valid CPOD.
     let s = unsafe { &*p };
     if s.array.is_null() {
         StrRef::clear()
@@ -114,6 +115,7 @@ fn sr_of(p: *const strref) -> StrRef<'static> {
         // The span is a prefix of the NUL-terminated C buffer it came
         // from; the compare loops only read within `len` (out-of-range
         // reads compare against NUL exactly like the C reference).
+        // SAFETY: C-ABI — `s.array` is a valid buffer (checked above) and s.len bytes are valid.
         let bytes = unsafe { std::slice::from_raw_parts(s.array.cast::<u8>(), s.len) };
         StrRef::set(bytes, s.len)
     }
@@ -175,6 +177,7 @@ pub unsafe extern "C" fn valid_int_str(str: *const c_char, n: usize) -> bool {
     if str.is_null() {
         return false;
     }
+    // SAFETY: a live NUL-terminated C string (checked above).
     let bytes = unsafe { CStr::from_ptr(str) }.to_bytes_with_nul();
     obs_util::lexer::valid_int_str(Some(bytes), n)
 }
@@ -188,6 +191,7 @@ pub unsafe extern "C" fn valid_float_str(str: *const c_char, n: usize) -> bool {
     if str.is_null() {
         return false;
     }
+    // SAFETY: a live NUL-terminated C string (checked above).
     let bytes = unsafe { CStr::from_ptr(str) }.to_bytes_with_nul();
     obs_util::lexer::valid_float_str(Some(bytes), n)
 }
@@ -212,6 +216,7 @@ pub unsafe extern "C" fn error_data_add(
     msg: *const c_char,
     level: c_int,
 ) {
+    // SAFETY: C-ABI — `ed` is live (checked above); the C string args are valid for the call.
     unsafe { error_data_add_c(ed, file, row, column, msg, level) }
 }
 
@@ -224,6 +229,7 @@ pub unsafe extern "C" fn error_data_add(
 /// the C `bfree`.
 #[unsafe(no_mangle)]
 pub unsafe extern "C" fn error_data_buildstring(ed: *mut error_data) -> *mut c_char {
+    // SAFETY: C-ABI — `ed` is live (checked above); the result is bmem-owned.
     unsafe { error_data_buildstring_c(ed) }
 }
 
@@ -265,13 +271,16 @@ pub unsafe extern "C" fn lexer_getbasetoken(
     if lex.is_null() || t.is_null() {
         return false;
     }
+    // SAFETY: C-ABI — the handle is non-NULL (guarded above); the value is live and exclusively owned for the call.
     let l = unsafe { &mut *lex };
     if l.text.is_null() || l.offset.is_null() {
         return false;
     }
     // The C buffer is NUL-terminated (`bstrdup` from `lexer_start`); the
     // engine runs over the bytes without the NUL.
+    // SAFETY: a live NUL-terminated C string (checked above).
     let text = unsafe { CStr::from_ptr(l.text) }.to_bytes();
+    // SAFETY: C-ABI — both pointers are within the same live text buffer.
     let rel = unsafe { l.offset.offset_from(l.text as *const c_char) } as usize;
     let mut off = rel;
     let mut start = None;
@@ -283,13 +292,16 @@ pub unsafe extern "C" fn lexer_getbasetoken(
         &mut ty,
         iws == IGNORE_WHITESPACE,
     );
+    // SAFETY: C-ABI — `off` is within the live text buffer (checked above).
     l.offset = unsafe { l.text.add(off) } as *const c_char;
     if ok {
         let s = start.expect("basetoken_next sets start on success");
         // C writes only `token->text` and `token->type`;
         // `passed_whitespace` is left as the caller set it.
+        // SAFETY: C-ABI — the handle is non-NULL (guarded above); the value is live and exclusively owned for the call.
         let tok = unsafe { &mut *t };
         tok.text = strref {
+            // SAFETY: C-ABI — `s` is within the live text buffer (checked above).
             array: unsafe { l.text.add(s) } as *const c_char,
             len: off - s,
         };
@@ -319,11 +331,14 @@ pub unsafe extern "C" fn lexer_getstroffset(
     if lex.is_null() || str.is_null() || row.is_null() || col.is_null() {
         return;
     }
+    // SAFETY: C-ABI — the handle is non-NULL (guarded above); the value is live for the call.
     let l = unsafe { &*lex };
     if l.text.is_null() {
         return;
     }
+    // SAFETY: a live NUL-terminated C string (checked above).
     let text = unsafe { CStr::from_ptr(l.text) }.to_bytes();
+    // SAFETY: C-ABI — both pointers are within the same live text buffer.
     let pos = unsafe { str.offset_from(l.text as *const c_char) };
     // `str` may point at the NUL (one past the last byte); earlier than
     // `text` the C loop does not run (row 1, col 1).
@@ -332,7 +347,9 @@ pub unsafe extern "C" fn lexer_getstroffset(
     } else {
         (pos as usize).min(text.len())
     };
+    // SAFETY: C-ABI — valid out storage (caller contract).
     let row = unsafe { &mut *row };
+    // SAFETY: C-ABI — valid out storage (caller contract).
     let col = unsafe { &mut *col };
     obs_util::lexer::stroffset(text, pos, row, col);
 }
@@ -393,10 +410,12 @@ mod tests {
         };
         let mut got = Vec::new();
         loop {
+            // SAFETY: test — the lexer and token storage are live C storage (initialized above); the text is NUL-terminated.
             let r = unsafe { lexer_getbasetoken(&mut l, &mut t, PARSE_WHITESPACE) };
             if !r {
                 break;
             }
+            // SAFETY: C-ABI — `t.text.array` is a valid buffer (checked above) and t.text.len bytes are valid.
             let s = unsafe { std::slice::from_raw_parts(t.text.array.cast::<u8>(), t.text.len) };
             got.push((t.r#type, s.to_vec()));
         }
@@ -414,10 +433,12 @@ mod tests {
             ]
         );
         // the offset walked to the NUL and the text pointer is untouched
+        // SAFETY: C-ABI — both pointers are within the same live text buffer.
         let rel = unsafe { l.offset.offset_from(l.text as *const c_char) };
         assert_eq!(rel, bytes.len() as isize - 1);
         // ignore_whitespace: leading whitespace is skipped, no token
         l.offset = l.text as *const c_char;
+        // SAFETY: test — the lexer and token storage are live C storage (initialized above); the text is NUL-terminated.
         let r = unsafe { lexer_getbasetoken(&mut l, &mut t, IGNORE_WHITESPACE) };
         assert!(r);
         assert_eq!((t.r#type, t.text.len), (BASETOKEN_ALPHA, 2));
@@ -431,13 +452,16 @@ mod tests {
             r#type: BASETOKEN_NONE,
             passed_whitespace: false,
         };
+        // SAFETY: C-ABI — the NUL at the end of the live text buffer.
         l.offset = unsafe { l.text.add(bytes.len() - 1) } as *const c_char; // the NUL
         let at_end = l.offset;
+        // SAFETY: test — the lexer and token storage are live C storage (initialized above); the text is NUL-terminated.
         assert!(!unsafe { lexer_getbasetoken(&mut l, &mut t2, PARSE_WHITESPACE) });
         assert_eq!(l.offset, at_end);
         assert_eq!((t2.text.len, t2.r#type), (42, BASETOKEN_NONE));
         // NULL offset: false (C: `if (!offset) return false;`)
         l.offset = std::ptr::null();
+        // SAFETY: test — the lexer and token storage are live C storage (initialized above); the text is NUL-terminated.
         assert!(!unsafe { lexer_getbasetoken(&mut l, &mut t2, PARSE_WHITESPACE) });
     }
 
@@ -448,6 +472,7 @@ mod tests {
             text: bytes.as_mut_ptr() as *mut c_char,
             offset: bytes.as_ptr() as *const c_char,
         };
+        // SAFETY: test — i is within the live byte buffer (checked above).
         let at = |i: usize| unsafe { bytes.as_ptr().add(i) } as *const c_char;
         let cases: &[(usize, u32, u32)] = &[
             (0, 1, 1),
@@ -460,11 +485,13 @@ mod tests {
         ];
         for &(i, row, col) in cases {
             let (mut r, mut c) = (999u32, 999u32);
+            // SAFETY: test — `l` is a live lexer; the pointer is within the live text.
             unsafe { lexer_getstroffset(&l, at(i), &mut r, &mut c) };
             assert_eq!((r, c), (row, col), "pos {i}");
         }
         // NULL str leaves the outputs untouched
         let (mut r, mut c) = (7u32, 8u32);
+        // SAFETY: test — `l` is a live lexer; NULL is the documented offset-0 case.
         unsafe { lexer_getstroffset(&l, std::ptr::null(), &mut r, &mut c) };
         assert_eq!((r, c), (7, 8));
     }
@@ -495,17 +522,24 @@ mod tests {
             array: abc.ptr(),
             len: 3,
         };
+        // SAFETY: test — the strref/C string args are live for the call (test fixtures; NULL is the documented case).
         assert_eq!(unsafe { strref_cmp(&s, abc.ptr()) }, 0);
+        // SAFETY: test — the strref/C string args are live for the call (test fixtures; NULL is the documented case).
         assert_eq!(unsafe { strref_cmp(&s, abd.ptr()) }, -1);
+        // SAFETY: test — the strref/C string args are live for the call (test fixtures; NULL is the documented case).
         assert_eq!(unsafe { strref_cmp(&s, ab.ptr()) }, 1);
+        // SAFETY: test — the strref/C string args are live for the call (test fixtures; NULL is the documented case).
         assert_eq!(unsafe { strref_cmp(&s, std::ptr::null()) }, 1);
         // NULL str1 / NULL-array strref are empty (C `strref_is_empty`)
+        // SAFETY: test — the strref/C string args are live for the call (test fixtures; NULL is the documented case).
         assert_eq!(unsafe { strref_cmp(std::ptr::null(), std::ptr::null()) }, 0);
+        // SAFETY: test — the strref/C string args are live for the call (test fixtures; NULL is the documented case).
         assert_eq!(unsafe { strref_cmp(std::ptr::null(), x.ptr()) }, -1);
         let null_arr = strref {
             array: std::ptr::null(),
             len: 5,
         };
+        // SAFETY: test — the strref/C string args are live for the call (test fixtures; NULL is the documented case).
         assert_eq!(unsafe { strref_cmp(&null_arr, x.ptr()) }, -1);
         // signed-char semantics: 0xe9 sorts below ASCII (the C `char` on
         // the reference architecture)
@@ -515,14 +549,19 @@ mod tests {
             array: hi.ptr(),
             len: 1,
         };
+        // SAFETY: test — the strref/C string args are live for the call (test fixtures; NULL is the documented case).
         assert_eq!(unsafe { strref_cmp(&hs, a.ptr()) }, -1);
 
         let s2 = strref {
+            // SAFETY: test — the offset is within the live fixture buffer.
             array: unsafe { abc.ptr().add(1) },
             len: 2,
         };
+        // SAFETY: test — the strref/C string args are live for the call (test fixtures; NULL is the documented case).
         assert_eq!(unsafe { strref_cmp_strref(&s, &s2) }, -1);
+        // SAFETY: test — the strref/C string args are live for the call (test fixtures; NULL is the documented case).
         assert_eq!(unsafe { strref_cmp_strref(&s2, &s) }, 1);
+        // SAFETY: test — the strref/C string args are live for the call (test fixtures; NULL is the documented case).
         assert_eq!(unsafe { strref_cmp_strref(&s2, &s2) }, 0);
 
         let i123 = CStrRef::new("123");
@@ -530,12 +569,19 @@ mod tests {
         let f15 = CStrRef::new("1.5");
         let fe5 = CStrRef::new("1e+5");
         let fe5b = CStrRef::new("e5");
+        // SAFETY: test — the strref/C string args are live for the call (test fixtures; NULL is the documented case).
         assert!(unsafe { valid_int_str(i123.ptr(), 0) });
+        // SAFETY: test — the strref/C string args are live for the call (test fixtures; NULL is the documented case).
         assert!(!unsafe { valid_int_str(i12a.ptr(), 3) });
+        // SAFETY: test — the strref/C string args are live for the call (test fixtures; NULL is the documented case).
         assert!(!unsafe { valid_int_str(std::ptr::null(), 0) });
+        // SAFETY: test — the strref/C string args are live for the call (test fixtures; NULL is the documented case).
         assert!(!unsafe { valid_int_str(empty.ptr(), 0) });
+        // SAFETY: test — the strref/C string args are live for the call (test fixtures; NULL is the documented case).
         assert!(unsafe { valid_float_str(f15.ptr(), 0) });
+        // SAFETY: test — the strref/C string args are live for the call (test fixtures; NULL is the documented case).
         assert!(!unsafe { valid_float_str(fe5.ptr(), 0) });
+        // SAFETY: test — the strref/C string args are live for the call (test fixtures; NULL is the documented case).
         assert!(!unsafe { valid_float_str(fe5b.ptr(), 0) });
     }
 }

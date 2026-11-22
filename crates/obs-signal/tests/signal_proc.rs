@@ -36,6 +36,7 @@ unsafe extern "C" fn global_count2(_data: *mut c_void, _sig: *const u8, _p: *mut
     GLOBAL_COUNTER.fetch_add(10, SeqCst);
 }
 unsafe extern "C" fn disc_keep(data: *mut c_void, _p: *mut Calldata) {
+    // SAFETY: test — `data` carries `handler.as_ptr()` (the test's own live handler, registered above).
     unsafe {
         let h = &*(data as *const obs_signal::signal::SignalHandler);
         signal_handler_disconnect(h, "g", count_cb, data_token(1));
@@ -57,6 +58,7 @@ fn data_token(n: usize) -> *mut c_void {
 }
 
 unsafe extern "C" fn disconnect_next_cb(data: *mut c_void, _p: *mut Calldata) {
+    // SAFETY: test — `data` carries `handler.as_ptr()` (the test's own live handler, registered above).
     let h = unsafe { &*(data as *const obs_signal::signal::SignalHandler) };
     // disconnect the *other* connection: it hasn't run yet → skipped
     // (R45); the marked entry is erased at the end of this emit.
@@ -66,10 +68,12 @@ unsafe extern "C" fn remove_current_cb(_data: *mut c_void, _p: *mut Calldata) {
     signal_handler_remove_current();
 }
 unsafe extern "C" fn connect_more_cb(data: *mut c_void, _p: *mut Calldata) {
+    // SAFETY: test — `data` carries `handler.as_ptr()` (the test's own live handler, registered above).
     let h = unsafe { &*(data as *const obs_signal::signal::SignalHandler) };
     signal_handler_connect(h, "f", count_cb, data_token(7));
 }
 unsafe extern "C" fn nested_emit_cb(data: *mut c_void, _p: *mut Calldata) {
+    // SAFETY: test — `data` carries `handler.as_ptr()` (the test's own live handler, registered above).
     unsafe {
         let h = &*(data as *const obs_signal::signal::SignalHandler);
         COUNTER.fetch_add(1, SeqCst); // outer callback running
@@ -82,9 +86,11 @@ unsafe extern "C" fn global_remove_current(_d: *mut c_void, _s: *const u8, _p: *
     signal_handler_remove_current();
 }
 unsafe extern "C" fn set_a_cb(_d: *mut c_void, params: *mut Calldata) {
+    // SAFETY: test — `params` is a valid Calldata passed by the emission (callee contract).
     unsafe { calldata_set_int(&mut *params, b"a", 42) }
 }
 unsafe extern "C" fn see_a_cb(_d: *mut c_void, params: *mut Calldata) {
+    // SAFETY: test — `params` is a valid Calldata passed by the emission (callee contract).
     unsafe {
         SAW.store(
             calldata_get_int(&*params, b"a").unwrap_or(-1) as usize,
@@ -93,6 +99,7 @@ unsafe extern "C" fn see_a_cb(_d: *mut c_void, params: *mut Calldata) {
     }
 }
 unsafe extern "C" fn global_self_disconnect(data: *mut c_void, _s: *const u8, _p: *mut Calldata) {
+    // SAFETY: test — `data` carries `handler.as_ptr()` (the test's own live handler, registered above).
     unsafe {
         let h = &*(data as *const obs_signal::signal::SignalHandler);
         GLOBAL_COUNTER.fetch_add(1, SeqCst);
@@ -102,12 +109,14 @@ unsafe extern "C" fn global_self_disconnect(data: *mut c_void, _s: *const u8, _p
     }
 }
 unsafe extern "C" fn disconnect_and_reconnect(data: *mut c_void, _p: *mut Calldata) {
+    // SAFETY: test — `data` carries `handler.as_ptr()` (the test's own live handler, registered above).
     let h = unsafe { &*(data as *const obs_signal::signal::SignalHandler) };
     let d = data_token(2);
     signal_handler_disconnect(h, "f", count_cb, d);
     signal_handler_connect(h, "f", count_cb, d); // no-op: marked entry exists
 }
 unsafe extern "C" fn nested_then_remove(data: *mut c_void, _p: *mut Calldata) {
+    // SAFETY: test — `data` carries `handler.as_ptr()` (the test's own live handler, registered above).
     unsafe {
         let h = &*(data as *const obs_signal::signal::SignalHandler);
         COUNTER.fetch_add(1, SeqCst);
@@ -120,6 +129,7 @@ unsafe extern "C" fn nested_then_remove(data: *mut c_void, _p: *mut Calldata) {
 }
 static NESTED_ONCE: AtomicBool = AtomicBool::new(false);
 unsafe extern "C" fn outer_disc_inner(data: *mut c_void, _p: *mut Calldata) {
+    // SAFETY: test — `data` carries `handler.as_ptr()` (the test's own live handler, registered above).
     unsafe {
         let h = &*(data as *const obs_signal::signal::SignalHandler);
         COUNTER.fetch_add(1, SeqCst);
@@ -137,6 +147,7 @@ unsafe extern "C" fn outer_disc_inner(data: *mut c_void, _p: *mut Calldata) {
     }
 }
 unsafe extern "C" fn cross_emit(data: *mut c_void, _p: *mut Calldata) {
+    // SAFETY: test — `data` carries `handler.as_ptr()` (the test's own live handler, registered above).
     let h = unsafe { &*(data as *const obs_signal::signal::SignalHandler) };
     COUNTER.fetch_add(1, SeqCst);
     signal_handler_signal(h, "other", &mut Calldata::init());
@@ -166,6 +177,7 @@ impl DeclArray {
 static CALLED: AtomicUsize = AtomicUsize::new(0);
 
 unsafe extern "C" fn add_proc(data: *mut c_void, params: *mut Calldata) {
+    // SAFETY: test — `data` points to the test's own i64 (registered above); `params` is a valid Calldata (callee contract).
     unsafe {
         let n = *(data as *const i64);
         CALLED.fetch_add(1, SeqCst);
@@ -179,6 +191,7 @@ struct ReenterCtx {
     depth: i64,
 }
 unsafe extern "C" fn reentering_proc(data: *mut c_void, params: *mut Calldata) {
+    // SAFETY: test — `data` points to the test's live ReenterCtx (registered above); exclusive during the proc call; `params` is a valid Calldata.
     unsafe {
         let ctx = &mut *(data as *mut ReenterCtx);
         let h = &*ctx.h;
@@ -409,12 +422,14 @@ fn vec13_declarations() {
     assert_eq!(signal_handler_cb_count(&h, "f"), Some(0));
     // add_array
     let arr = DeclArray::new(&["void a()", "void b()"]);
+    // SAFETY: test — `h` is the test's live handler; `arr.ptrs` is a valid pointer array (NUL-terminated).
     assert!(unsafe { signal_handler_add_array(&h, arr.ptrs.as_ptr()) });
     assert!(signal_handler_add(&h, "void c()"));
     let mut cd = Calldata::init();
     signal_handler_signal(&h, "a", &mut cd);
     signal_handler_signal(&h, "b", &mut cd);
     // NULL array → false
+    // SAFETY: test — NULL is the documented empty-array case.
     assert!(!unsafe { signal_handler_add_array(&h, std::ptr::null()) });
 }
 
@@ -515,6 +530,7 @@ fn add_array_continues_after_failure() {
     assert!(signal_handler_add(&h, "void f()"));
     let arr = DeclArray::new(&["void g()", "void f()", "void h()"]);
     assert!(
+        // SAFETY: test — `h` is the test's live handler; `arr.ptrs` is a valid pointer array (duplicate names expected).
         !unsafe { signal_handler_add_array(&h, arr.ptrs.as_ptr()) },
         "f: duplicate"
     );

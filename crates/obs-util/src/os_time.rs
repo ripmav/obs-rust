@@ -36,6 +36,7 @@
 /// `os_gettime_ns` (S-023 R100): nanoseconds of the monotonic clock
 /// (`CLOCK_MONOTONIC`) — non-zero and never decreasing.
 pub fn os_gettime_ns() -> u64 {
+    // SAFETY: `timespec` is plain old data; the zeroed storage is overwritten by `clock_gettime` before read.
     let mut ts: libc::timespec = unsafe { std::mem::zeroed() };
     // SAFETY: `ts` is valid storage for a timespec. `clock_gettime` with
     // `CLOCK_MONOTONIC` does not fail on unix; like the C reference the

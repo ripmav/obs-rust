@@ -46,6 +46,7 @@ fn worker_or_noop() {
         // R23: per-level prefixes/streams, Q-3 drop, truncation at 8192
         Some("default") => {
             scenario_marker();
+            // SAFETY: C-ABI bridge calls — the c-string args are valid for the duration of the calls.
             unsafe {
                 ffi_c::blog(LOG_ERROR, c"e1".as_ptr());
                 ffi_c::blog(LOG_WARNING, c"w1".as_ptr());
@@ -62,6 +63,7 @@ fn worker_or_noop() {
         // R21: the handler receives the unformatted format + param (R22)
         Some("fmt") => {
             scenario_marker();
+            // SAFETY: the C log-handler setter; `capture` is a valid C function pointer for the process lifetime (test).
             unsafe {
                 base_set_log_handler(Some(ffi_c::log_test_cap), 0x1234usize as *mut c_void);
                 ffi_c::blog(400, c"a=%d b=%s".as_ptr(), 7i32, c"x".as_ptr());
@@ -71,6 +73,7 @@ fn worker_or_noop() {
         // R24: default crash handler — formatted, no trailing newline, exit 0
         Some("crash-default") => {
             scenario_marker();
+            // SAFETY: C-ABI bridge call — the c-string args are valid for the duration of the call.
             unsafe {
                 ffi_c::bcrash(c"boom %d".as_ptr(), 42i32);
             }
@@ -79,6 +82,7 @@ fn worker_or_noop() {
         // R24: crash inside the crash handler -> exit 2
         Some("crash-nested") => {
             scenario_marker();
+            // SAFETY: C-ABI bridge calls — the crash handler is a valid C function for the test's lifetime; the c-string args are valid for the call.
             unsafe {
                 base_set_crash_handler(ffi_c::log_test_crash_a, std::ptr::null_mut());
                 ffi_c::bcrash(c"outer".as_ptr());
@@ -88,6 +92,7 @@ fn worker_or_noop() {
         // R24: a returning crash handler -> exit 0
         Some("crash-return") => {
             scenario_marker();
+            // SAFETY: C-ABI bridge calls — the crash handler is a valid C function for the test's lifetime; the c-string args are valid for the call.
             unsafe {
                 base_set_crash_handler(ffi_c::log_test_crash_b, std::ptr::null_mut());
                 ffi_c::bcrash(c"ret %s".as_ptr(), c"v".as_ptr());
@@ -97,6 +102,7 @@ fn worker_or_noop() {
         // R25: the second install is ignored (warning) and the first stays
         Some("once") => {
             scenario_marker();
+            // SAFETY: C-ABI bridge calls — the crash handler is a valid C function for the test's lifetime; the c-string args are valid for the call.
             unsafe {
                 base_set_crash_handler(ffi_c::log_test_crash_b, std::ptr::null_mut());
                 base_set_crash_handler(ffi_c::log_test_crash_a, std::ptr::null_mut()); // ignored
