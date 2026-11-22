@@ -52,6 +52,95 @@ jobs:
           name: nextest-junit-${{ matrix.os }}
           path: target/nextest/ci/junit.xml
 
+  conformance:
+    name: conformance (C reference)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - name: checkout OBS reference (pinned 33.0.1)
+        uses: actions/checkout@v7
+        with:
+          repository: obsproject/obs-studio
+          ref: 33.0.1
+          path: obs-studio
+      - name: link the reference into the repo
+        run: tools/link-obs-source.sh "${GITHUB_WORKSPACE}/obs-studio"
+      - name: install system deps
+        run: |
+          sudo apt-get update
+          # jansson: the spec (S-014 §6.2) pins jansson 2.15.1 semantics
+          # (shortest round-trip reals), which distro packages do not provide;
+          # build it from source below. Everything else is a distro package
+          # (uuid-dev = the libuuid-dev rename in Ubuntu 26.04).
+          sudo apt-get install -y cmake uthash-dev uuid-dev zlib1g-dev \
+            libcurl4-openssl-dev libglib2.0-dev libpulse-dev
+      - name: simde (pinned)
+        run: |
+          git clone -q https://github.com/simd-everywhere/simde.git
+          cd simde && git checkout -q 24fa5420cd413621648063f04a09fa35c7afacf7
+      - name: jansson 2.15.1 (pinned)
+        run: |
+          git clone -q --depth 1 --branch v2.15.1 https://github.com/akheron/jansson.git
+          cmake -S jansson -B jansson/build -DCMAKE_BUILD_TYPE=Release \
+            -DCMAKE_INSTALL_PREFIX="$RUNNER_TEMP/jansson"
+          cmake --build jansson/build -j4
+          cmake --install jansson/build
+      - name: check (C reference vs committed vectors)
+        env:
+          CONFORMANCE_EXTRA_CFLAGS: >-
+            -I${{ github.workspace }}/simde
+            -I${{ runner.temp }}/jansson/include
+            -L${{ runner.temp }}/jansson/lib
+            -I/usr/include/glib-2.0 -I/usr/include/gio-2.0 -I/usr/include/gio-unix-2.0
+            -I/usr/lib/x86_64-linux-gnu/glib-2.0/include
+        run: |
+          # run.sh must be invoked from test/conformance: gen/helpers.sources
+          # uses relative -I paths against that directory.
+          # Build dirs go to $RUNNER_TEMP (not the /tmp mktemp default) so
+          # the runners cannot be starved by a small /tmp.
+          status=0
+          for area in $(grep -vE '^[[:space:]]*(#|$)' test/conformance/ci-areas.txt); do
+            mkdir -p "$RUNNER_TEMP/conform-check/$area"
+            (cd test/conformance && CONFORMANCE_BUILD_DIR="$RUNNER_TEMP/conform-check/$area" ./run.sh check "$area") || status=1
+          done
+          exit "$status"
+      - name: swap (Rust staticlib replaces the ported C sources)
+        env:
+          CONFORMANCE_EXTRA_CFLAGS: >-
+            -I${{ github.workspace }}/simde
+            -I${{ runner.temp }}/jansson/include
+            -L${{ runner.temp }}/jansson/lib
+            -I/usr/include/glib-2.0 -I/usr/include/gio-2.0 -I/usr/include/gio-unix-2.0
+            -I/usr/lib/x86_64-linux-gnu/glib-2.0/include
+        run: |
+          status=0
+          for area in $(grep -vE '^[[:space:]]*(#|$)' test/conformance/ci-areas.txt); do
+            mkdir -p "$RUNNER_TEMP/conform-swap/$area"
+            (cd test/conformance && CONFORMANCE_BUILD_DIR="$RUNNER_TEMP/conform-swap/$area" ./run.sh swap "$area") || status=1
+          done
+          exit "$status"
+
+  c-swap:
+    name: c-swap (obs-ffi non-test build)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+      - uses: taiki-e/install-action@v2
+        with:
+          tool: nextest
+          version: 0.9.151
+      # The abi_* bridges compile only under cfg(test) or --features c-swap;
+      # this job lints and builds the non-test (staticlib) configuration and
+      # runs the tests with the feature (finding 16 of the 2026-11-21 review).
+      - name: clippy (c-swap, non-test)
+        run: cargo clippy -p obs-ffi --features c-swap -- -D warnings
+      - name: build staticlib
+        run: cargo build -p obs-ffi --release --features c-swap
+      - name: nextest (c-swap)
+        run: cargo nextest run -p obs-ffi --features c-swap --profile ci
+
   supply-chain:
     name: supply chain (deny + audit + miri)
     runs-on: ubuntu-latest
@@ -74,7 +163,10 @@ jobs:
           rustup toolchain install nightly --profile minimal --component miri
           # --lib: unit tests only. Subprocess re-exec tests (bmem_fatal) are
           # incompatible with Miri isolation and already run in the test job.
-          cargo +nightly miri test -p obs-util -p obs-math -p obs-data -p obs-signal --lib
+          # obs-properties / obs-util-small / obs-hotkey-names were missing
+          # (finding 12 of the 2026-11-21 review).
+          cargo +nightly miri test -p obs-util -p obs-math -p obs-data -p obs-signal \
+            -p obs-properties -p obs-util-small -p obs-hotkey-names --lib
 
   coverage:
     name: coverage (llvm-cov)

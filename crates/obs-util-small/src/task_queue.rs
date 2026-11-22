@@ -147,8 +147,7 @@ pub fn task_queue_wait(q: &TaskQueue) -> bool {
         g = slot.cv.wait(g).unwrap();
     }
     drop(g);
-    let processed = *slot.processed.lock().unwrap();
-    processed
+    *slot.processed.lock().unwrap()
 }
 
 /// `os_task_queue_destroy` (R33): runs every task queued before this

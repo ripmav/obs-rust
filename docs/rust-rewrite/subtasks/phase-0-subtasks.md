@@ -104,7 +104,7 @@ Facts verified in this checkout that shape Phase 0:
 - [x] **P0-07.1 Root manifest** — Files: `Cargo.toml` (new). `[workspace]`, `[workspace.package]` (edition, licence GPL-2.0-or-later, rust-version), `[workspace.dependencies]`, `[workspace.lints]`. Done when: `cargo metadata` works.
 - [x] **P0-07.2 Tool config** — Files: `rust-toolchain.toml`, `rustfmt.toml`, `clippy.toml`, `.cargo/config.toml` (all new). Done when: `cargo fmt --check` and `cargo clippy` run.
 - [x] **P0-07.3 Empty crates** — Files: new `crates/obs-util`, `obs-math`, `obs-data`, `obs-signal`, `obs-media-io`, `obs-graphics`, `obs-core`, `obs-ffi`, `obs-cli`, each with a doc comment and a trivial test. Done when: `cargo test --workspace` passes.
-- [ ] **P0-07.4 Three-OS build** — Files: `.github/workflows/` (new job `cargo build --workspace`). Done when: green on Linux, Windows, macOS.
+- [x] **P0-07.4 Three-OS build** — Files: `.github/workflows/` (new job `cargo build --workspace`). Done when: green on Linux, Windows, macOS.
 
 ### P0-08 Corrosion integration in CMake
 - [ ] **P0-08.1 Fetch Corrosion**
@@ -117,10 +117,10 @@ Facts verified in this checkout that shape Phase 0:
 - [ ] **P0-08.4 CI** — Files: `.github/workflows/`. Run `ctest` for ON and OFF. Done when: both green.
 
 ### P0-09 CI pipeline for Rust
-- [ ] **P0-09.1 Lint jobs** — Files: `.github/workflows/` (new jobs `fmt`, `clippy -D warnings`). Done when: failing a lint blocks the PR.
-- [ ] **P0-09.2 Test jobs** — Files: `.github/workflows/`. `cargo nextest run --workspace` on 3 OSes. Done when: test report artifacts uploaded.
-- [ ] **P0-09.3 Supply chain** — Files: `.github/workflows/`. `cargo deny check`, `cargo audit`, Miri on `obs-util`, `obs-math`, `obs-data`, `obs-signal`.
-- [ ] **P0-09.4 Coverage and cache** — Files: `.github/workflows/`. `cargo-llvm-cov`, `Swatinem/rust-cache`. Done when: coverage % in PR comment.
+- [x] **P0-09.1 Lint jobs** — Files: `.github/workflows/` (new jobs `fmt`, `clippy -D warnings`). Done when: failing a lint blocks the PR.
+- [x] **P0-09.2 Test jobs** — Files: `.github/workflows/`. `cargo nextest run --workspace` on 3 OSes. Done when: test report artifacts uploaded.
+- [x] **P0-09.3 Supply chain** — Files: `.github/workflows/`. `cargo deny check`, `cargo audit`, Miri on `obs-util`, `obs-math`, `obs-data`, `obs-signal`.
+- [x] **P0-09.4 Coverage and cache** — Files: `.github/workflows/`. `cargo-llvm-cov`, `Swatinem/rust-cache`. Done when: coverage % in PR comment.
 - [ ] **P0-09.5 Required checks** — Files: GitHub branch-protection settings. Update branch protection. Done when: settings screenshot/export in PR.
 
 ### P0-10 `cargo-deny` and licence policy
@@ -134,7 +134,7 @@ Facts verified in this checkout that shape Phase 0:
   - Files: `test/cmocka/` (`test_bitstream.c` 36, `test_darray.c` 31, `test_os_path.c` 53, `test_serializer.c` 36), `frontend/data/locale/` (77 `.ini` files), `libobs/data/` (22 `.effect` files)
   - Steps: find fixtures compared byte-for-byte and add them.
   - Done when: list of added patterns in PR.
-- [ ] **P0-11.3 Windows verification** — run golden tests on Windows CI. Done when: green without `autocrlf` tricks.
+- [x] **P0-11.3 Windows verification** — run golden tests on Windows CI. Done when: green without `autocrlf` tricks.
 
 ### P0-12 Dev container / build docs
 - [ ] **P0-12.1 Linux doc** — Files: `docs/rust-rewrite/BUILDING.md` (new), `INSTALL`. Write `docs/rust-rewrite/BUILDING.md` listing packages (FFmpeg, x264, Qt6, PipeWire, Wayland dev packages). Done when: a clean container builds following only the doc.

@@ -1,7 +1,10 @@
-//! obs-util: bmem/dstr/darray/circlebuf/threading/platform helpers (Phase 1).
-//!
-//! Phase 0 skeleton (P0-07.3). Real content and tests arrive with the phase
-//! named above; the skeleton only proves the workspace builds.
+//! obs-util: the `libobs/util` leaf ports (Phase 1) — bmem, dstr, darray,
+//! deque, lexer/cf-lexer/cf-parser/cf-preprocessor, config, hash (blake2/
+//! crc32), dl, os_fs, os_proc/process_args, os_str, os_time, pipe,
+//! text_lookup, threading, utf8. One module per C source group, spec-driven
+//! (S-001..S-011, S-023, S-024, S-055); the committed conformance vectors
+//! are the oracle. `dl`, `pipe`, `os_proc`, `threading` are POSIX-only so
+//! far (P1-05.3/P1-07/P1-11 Windows parity outstanding, review 2026-11-21).
 
 pub mod bmem;
 pub mod cf_lexer;

@@ -155,6 +155,9 @@ version = "0.1.0"
 [[package]]
 name = "obs-math"
 version = "0.1.0"
+dependencies = [
+ "obs-util",
+]
 
 [[package]]
 name = "obs-media-io"

@@ -1,0 +1,49 @@
+# Areas run by the CI conformance job (one per line, '#' comments).
+#
+# Selection rule: every area whose C sources the rewrite has ported or is
+# porting (Phase 1 subtask vectors), plus the stable core areas. Areas are
+# added when work on them starts. Excluded today (and why):
+#
+#  - need a system dependency the job does not install: audiofilters (speexdsp),
+#    encopts (x264), ff* / filtersrest / gfximages / mediaplayback / mpegtsout
+#    (FFmpeg), glbackend (EGL/GL/X11), hwencoders (va/pci), linuxcapture
+#    (v4l2/pulse/xcb), linuxinputs (xcb), luascript (LuaJIT), pipewire,
+#    pyscript (CPython), rtmp (mbedtls), textft2 (freetype)
+#  - the C reference itself is unreliable there (see known-c-bugs.txt and the
+#    ODD): flv (defect script expects a crash that is UB on some hosts),
+#    imagesource, mediaconv (same UB-crash class), mp4 (same), obscore
+#    (restart segfaults in the stub harness), videofilters (C drift)
+#  - scenemath (S-033, Phase 4): one vector (quirk_negative_scale_align) does
+#    not reproduce against the pinned 33.0.1 reference; regenerate the S-033
+#    vectors against 33.0.1 before the Phase 4 scene work
+#
+# Known aarch64-only local failures (the CI runner is x86_64, where these
+# pass): helpers/u128-defect-div0 (SIGFPE in the 128-bit div-by-zero child is
+# host-dependent UB), lexer/03-strref-cmp and platform/06-07-utf8-encode
+# (aarch64 wchar_t is 4 bytes; see the README "Comparing" section).
+bmem
+calldata
+config
+darray
+decl
+deque
+dstr
+graphics
+helpers
+hotkeys
+lexer
+math
+math2
+modservice
+obsdata
+platform
+props
+rtmpstream
+serial
+signal
+threading
+audiomix
+avio
+frontendfmt
+maccapture
+utilrest

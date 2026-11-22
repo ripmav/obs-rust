@@ -4,6 +4,8 @@ Goal: decisions recorded, tooling in place, and a safety net (golden and ABI tes
 
 Start the PR stack with the `docs:` tasks (P0-01 to P0-06).
 
+**Status 2026-11-21 (verified against `main` at `0b65196`, see [`STATUS-REVIEW-2026-11-21.md`](STATUS-REVIEW-2026-11-21.md)):** done = P0-07, P0-10, P0-13, P0-19. Partly done = P0-01, P0-02, P0-05, P0-06 (ADRs written, review/mutex table/MSRV job open), P0-09 (CI jobs exist, required-check gate unverified), P0-11, P0-20. Not started = P0-03, P0-04, P0-08, P0-12, P0-14 to P0-18, P0-21. Exit criteria are not met.
+
 ## A. Decisions (ADRs, `docs/adr/`)
 
 - [ ] **P0-01 ADR: migration strategy** (S)
@@ -34,7 +36,7 @@ Start the PR stack with the `docs:` tasks (P0-01 to P0-06).
 
 ## B. Workspace and CI
 
-- [ ] **P0-07 Cargo workspace skeleton** (S)
+- [x] **P0-07 Cargo workspace skeleton** (S)
   - Do: root `Cargo.toml` with `[workspace]`, `rust-toolchain.toml`, `rustfmt.toml`, `clippy.toml`, empty crates `obs-util`, `obs-math`, `obs-data`, `obs-signal`, `obs-media-io`, `obs-graphics`, `obs-core`, `obs-ffi`, `obs-cli`.
   - Done when: `cargo build --workspace` passes on all three OSes.
 - [ ] **P0-08 Corrosion integration in CMake** (M)
@@ -45,7 +47,7 @@ Start the PR stack with the `docs:` tasks (P0-01 to P0-06).
   - Source: `.github/workflows/`, `CMakePresets.json`.
   - Do: jobs for fmt, clippy `-D warnings`, `cargo deny`, `cargo audit`, `cargo test`, Miri on pure crates, coverage; matrix Linux, macOS, Windows.
   - Done when: required checks block merging.
-- [ ] **P0-10 `cargo-deny` and licence policy** (S)
+- [x] **P0-10 `cargo-deny` and licence policy** (S)
   - Deliverables: `deny.toml` with licence allow-list and banned crates.
   - Done when: `cargo deny check` passes on the workspace and is wired into CI (P0-09.3).
 - [ ] **P0-11 `.gitattributes`** (S)
@@ -57,7 +59,7 @@ Start the PR stack with the `docs:` tasks (P0-01 to P0-06).
 
 ## C. Safety net
 
-- [ ] **P0-13 Golden-test framework** (M)
+- [x] **P0-13 Golden-test framework** (M)
   - Do: a `obs-golden` crate: reads/writes `*.golden`, `UPDATE_GOLDEN=1` regenerates, shows readable diffs.
   - Done when: used by one demo test.
 - [ ] **P0-14 C reference dumper** (L)
@@ -82,7 +84,7 @@ Start the PR stack with the `docs:` tasks (P0-01 to P0-06).
 
 ## D. Tracking
 
-- [ ] **P0-19 Issue templates and labels** (S): `rust-rewrite`, `phase-N`, `abi`, `perf`. Done when: labels exist and the template creates a valid issue.
+- [x] **P0-19 Issue templates and labels** (S): `rust-rewrite`, `phase-N`, `abi`, `perf`. Done when: labels exist and the template creates a valid issue.
 - [ ] **P0-20 Test matrices** (S): create `docs/tests/` and the first matrix files for the golden framework and the ABI test. Done when: both matrix files exist and the CI check (P0-20.4) passes.
 - [ ] **P0-21 Phase 0 review** (S): demo the safety net, confirm exit criteria, tick this file. Done when: exit-criteria checklist ticked and the review PR merged.
 

@@ -1,0 +1,30 @@
+# Known C reference bugs.
+#
+# One `area/script` per line ('#' starts a comment). For these scripts the C
+# reference implementation cannot *reliably* reproduce the committed
+# (spec-ideal) vectors: the C code has a real defect, the vectors record the
+# behaviour the spec requires of the Rust port, and whether C happens to
+# match depends on host details (stack garbage, allocator layout).
+#
+# Effect in run.sh: the runner is still BUILT and RUN (a crash still fails
+# the check); only the output diff is skipped, reported as `skip <area>/<script>`.
+#
+# Remove an entry once the C bug is fixed upstream or the area's C sources
+# are fully replaced by the Rust staticlib in swap mode.
+#
+# signal/08-global-callbacks: signal_handler_connect_global/disconnect_global
+#   da_find() memcmps the whole struct global_callback_info (32 bytes), of
+#   which the 7 bytes after `bool remove` are padding left uninitialized in
+#   both the connect and disconnect stack frames. The disconnect therefore
+#   matches only when the two frames happen to hold identical garbage
+#   (measured 0-1 of 1000). The vector records the field-wise semantics the
+#   spec (S-004) requires of the port.
+# signal/14-quirk-global-disconnect-by-name: same padding bug.
+# bmem/02-realloc: on POSIX, a_realloc() is a plain realloc() of the
+#   alignment-offset block; it does not preserve 32-byte alignment (the C
+#   source comment in bmem.c admits this). S-001 R08 requires the port to
+#   keep 32-byte alignment (allocate-copy-free). Whether C passes here
+#   depends on the host allocator doing in-place growth (top chunk).
+bmem/02-realloc
+signal/08-global-callbacks
+signal/14-quirk-global-disconnect-by-name

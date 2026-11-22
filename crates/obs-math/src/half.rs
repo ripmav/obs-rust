@@ -58,6 +58,93 @@ pub fn half_from_float(f: f32) -> Half {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use obs_util::hash::blake2b_512;
+
+    /// Exact f16 -> f32 bit embedding, pure integer arithmetic — the
+    /// same algorithm the C dumper (test/conformance/gen/half_dump.c)
+    /// uses, so both sides feed bit-identical f32 values into
+    /// half_from_float. NaN patterns map to the canonical quiet NaN
+    /// 0x7fc00000 (the conversion only distinguishes NaN from inf).
+    fn f16_to_f32_bits(u: u16) -> u32 {
+        let sign = (u as u32 & 0x8000) << 16;
+        let e = ((u >> 10) & 0x1F) as u32;
+        let m = (u & 0x3FF) as u32;
+        if (u & 0x7C00) == 0x7C00 {
+            return 0x7F80_0000 | (if m != 0 { 0x0040_0000 } else { 0 }) | sign;
+        }
+        if e == 0 {
+            if m == 0 {
+                return sign;
+            }
+            // subnormal: value = m * 2^-24; normalise to a 10-bit
+            // significand with the leading bit at position 9
+            let mut f = m;
+            while f & 0x200 == 0 {
+                f <<= 1;
+            }
+            let bits_m = 32 - m.leading_zeros(); // m's bit length
+            let mant = (f & 0x1FF) << 14;
+            let biased = 127 + bits_m - 25;
+            sign | (biased << 23) | mant
+        } else {
+            // normal: value = (1 + m*2^-10) * 2^(e-15)
+            sign | ((e + 112) << 23) | (m << 13)
+        }
+    }
+
+    /// P1-18.2 (review 2026-11-21): all 65536 f16 values round-trip
+    /// identically to the C reference — for every bit pattern P, the
+    /// exact f32 embedding of P fed through half_from_float must match
+    /// the C golden (vectors/math2/half_exhaustive.expected: blake2b-512
+    /// of the 65536-line dump + spot lines). The golden records the C
+    /// round-trip breaks (small subnormals, NaN payloads) — parity, not
+    /// identity.
+    #[test]
+    #[cfg_attr(miri, ignore)]
+    fn r111_exhaustive_65536_roundtrip() {
+        let path = concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../test/conformance/vectors/math2/half_exhaustive.expected"
+        );
+        let text = std::fs::read_to_string(path).expect("normative vector");
+        let mut want_digest = None;
+        let mut spots = Vec::new();
+        for line in text.lines() {
+            if let Some(h) = line.strip_prefix("blake2b512=") {
+                want_digest = Some(hex64(h));
+            } else if let Some(rest) = line.strip_prefix("spot ") {
+                let (p, out) = rest.split_once(' ').unwrap();
+                spots.push((
+                    u16::from_str_radix(p.trim_start_matches("0x"), 16).unwrap(),
+                    u16::from_str_radix(out.trim_start_matches("0x"), 16).unwrap(),
+                ));
+            }
+        }
+        let mut dump = String::with_capacity(65536 * 17);
+        for p in 0u32..0x10000 {
+            let in_bits = p as u16;
+            let f = f32::from_bits(f16_to_f32_bits(in_bits));
+            let out = half_from_float(f).u;
+            dump.push_str(&format!("half 0x{in_bits:04x} 0x{out:04x}\n"));
+        }
+        assert_eq!(
+            blake2b_512(dump.as_bytes()),
+            want_digest.expect("digest in vector"),
+            "65536-value f16 round-trip diverges from the C reference"
+        );
+        for (p, want) in &spots {
+            let f = f32::from_bits(f16_to_f32_bits(*p));
+            assert_eq!(half_from_float(f).u, *want, "spot {p:04x}");
+        }
+    }
+
+    fn hex64(s: &str) -> [u8; 64] {
+        let mut out = [0u8; 64];
+        for i in 0..64 {
+            out[i] = u8::from_str_radix(&s[i * 2..i * 2 + 2], 16).unwrap();
+        }
+        out
+    }
 
     /// Exact power of two via bit pattern — `f32::powi` is NOT exact in
     /// Miri (it computes by general means: 2^-25 becomes 0x32FFFFFC),

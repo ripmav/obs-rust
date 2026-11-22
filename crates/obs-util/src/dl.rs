@@ -8,14 +8,53 @@
 //! `*-sys`/`obs-ffi`/platform crates; these platform helpers are the
 //! platform tier of S-023).
 //!
-//! Logging: R107's `LOG_ERROR` on a failed `os_dlopen` is not emitted
-//! yet (no logger in the crate — it arrives with the platform crate,
-//! S-023); the `None` result is pinned, the FFI layer wires the log
-//! line. C-NULL arguments are unrepresentable in the safe API (NULL
+//! Logging: R107's failure log `os_dlopen(<path>-><used name>):
+//! <dlerror text>` goes through an injectable error sink (the profiler
+//! in obs-util-small set the pattern). obs-util sits BELOW the base
+//! logging layer (S-001 §4.2 lands in `obs-ffi`'s C base file), so it
+//! cannot call `blog` yet; the default sink is `eprintln!` (blog's
+//! ERROR stream is stderr). The FFI/base layer wires the real sink
+//! later. C-NULL arguments are unrepresentable in the safe API (NULL
 //! path returns NULL without a log; NULL handle for `os_dlclose` is a
 //! no-op — both documented).
 
 use std::os::raw::c_void;
+use std::sync::Mutex;
+
+/// R107 error sink: `blog(LOG_ERROR, "os_dlopen(%s->%s): %s\n", path, used,
+/// dlerror())`. Same injectable-sink pattern as the profiler in
+/// obs-util-small; default is `eprintln!` (blog's ERROR stream).
+type ErrorSink = dyn FnMut(&str) + Send;
+
+static ERROR_SINK: Mutex<Option<Box<ErrorSink>>> = Mutex::new(None);
+
+/// Route R107's failure line (and future platform-helper error lines)
+/// through `sink` instead of the default `eprintln!`.
+pub fn set_dlopen_error_sink(sink: impl FnMut(&str) + Send + 'static) {
+    *ERROR_SINK.lock().unwrap() = Some(Box::new(sink));
+}
+
+fn log_dlopen_error(line: &str) {
+    let mut guard = ERROR_SINK.lock().unwrap();
+    if let Some(sink) = guard.as_mut() {
+        sink(line);
+    } else {
+        eprintln!("{line}");
+    }
+}
+
+fn dlerror_text() -> String {
+    // SAFETY: per-thread; returns a valid NUL-terminated string or NULL.
+    let ptr = unsafe { libc::dlerror() };
+    if ptr.is_null() {
+        String::new()
+    } else {
+        // SAFETY: pointer from dlerror is valid for this call.
+        unsafe { std::ffi::CStr::from_ptr(ptr) }
+            .to_string_lossy()
+            .into_owned()
+    }
+}
 
 /// An open dynamic library (S-023 R107).
 #[derive(Debug)]
@@ -25,8 +64,8 @@ pub struct OsLibrary {
 
 /// `os_dlopen(path)`: if `path` contains the substring `.so` anywhere
 /// it is used as is, else `.so` is appended; `dlopen` with `RTLD_NOW`.
-/// `None` on failure (the C ERROR log is not wired yet — see the module
-/// docs).
+/// `None` on failure, logging `os_dlopen(<path>-><used name>): <dlerror`
+/// (R107; the sink is injectable via `set_dlopen_error_sink`).
 pub fn os_dlopen(path: &str) -> Option<OsLibrary> {
     let name: String = if path.contains(".so") {
         path.to_string()
@@ -38,6 +77,10 @@ pub fn os_dlopen(path: &str) -> Option<OsLibrary> {
     // this call; `dlopen` returns a valid handle or NULL.
     let handle = unsafe { libc::dlopen(c.as_ptr(), libc::RTLD_NOW) };
     if handle.is_null() {
+        // R107: exact C format `os_dlopen(%s->%s): %s\n`. The dlerror
+        // text is platform-dependent (the conformance vector truncates
+        // it at "):" and compares only the prefix).
+        log_dlopen_error(&format!("os_dlopen({path}->{name}): {}\n", dlerror_text()));
         None
     } else {
         Some(OsLibrary { handle })
@@ -66,6 +109,11 @@ pub fn os_dlclose(lib: &OsLibrary) {
 mod tests {
     use super::*;
 
+    // the error sink and dlerror state are process/thread-global: every
+    // test that calls os_dlopen serialises on this lock (house pattern,
+    // W9).
+    static DL_TEST_LOCK: Mutex<()> = Mutex::new(());
+
     // vector 35-dl-and-misc (the parts testable without the runner):
     // a real library, a missing symbol, a missing library (with and
     // without the .so suffix), and the .so append rule.
@@ -85,53 +133,52 @@ mod tests {
     #[test]
     #[cfg_attr(miri, ignore)]
     fn dl_missing_library() {
+        let _lock = DL_TEST_LOCK.lock().unwrap();
         assert!(os_dlopen("nosuchlibrary_xyz").is_none());
         assert!(os_dlopen("nosuchlibrary_xyz.so").is_none());
     }
 
-    /// The failed `dlerror` text names the *used* file — this pins the
-    /// `.so` append rule (the reference's error log carries
-    /// `<path>-><used name>`; the log itself is not wired yet). The dlerror
-    /// *format* is platform-dependent (glibc: `<name>: cannot open...`,
-    /// macOS: `dlopen(<name>, ...): tried: ...`), so the assertions check
-    /// that the attempted name is present, not that it is the prefix.
-    fn dlerror_text() -> String {
-        // SAFETY: per-thread; returns a valid NUL-terminated string.
-        let ptr = unsafe { libc::dlerror() };
-        if ptr.is_null() {
-            String::new()
-        } else {
-            // SAFETY: pointer from dlerror is valid for this call.
-            unsafe { std::ffi::CStr::from_ptr(ptr) }
-                .to_string_lossy()
-                .into_owned()
-        }
-    }
-
+    // vector 35-dl-and-misc, R107: the failure log is
+    // `os_dlopen(<path>-><used name>): <dlerror>` — the conformance
+    // runner truncates the non-portable dlerror text at "):", so the
+    // vector pins exactly the prefix up to and including "):". Capture
+    // the sink and assert that prefix byte-for-byte for the append case
+    // and the as-is case (the two vector lines).
     #[test]
     #[cfg(not(miri))]
-    fn dl_appends_so_rule() {
-        // no ".so" substring: ".so" is appended — the attempted name in
-        // the error is "nosuchlibrary_xyz.so"
+    fn dl_r107_error_line_prefix() {
+        use std::sync::Arc;
+        let _lock = DL_TEST_LOCK.lock().unwrap();
+        let lines: Arc<Mutex<Vec<String>>> = Arc::new(Mutex::new(Vec::new()));
+        let captured = lines.clone();
+        set_dlopen_error_sink(move |line| captured.lock().unwrap().push(line.to_string()));
         assert!(os_dlopen("nosuchlibrary_xyz").is_none());
-        let err = dlerror_text();
-        assert!(
-            err.contains("nosuchlibrary_xyz.so"),
-            "append rule applied: {err}"
-        );
-        // ".so" substring: used as is (never "…so.so")
         assert!(os_dlopen("nosuchlibrary_xyz.so").is_none());
-        let err = dlerror_text();
-        assert!(
-            err.contains("nosuchlibrary_xyz.so") && !err.contains(".so.so"),
-            "used as is: {err}"
-        );
-        // a name with ".so" in the middle is also used as is
         assert!(os_dlopen("nosuchlibrary_xyz.something.so").is_none());
-        let err = dlerror_text();
-        assert!(
-            err.contains("nosuchlibrary_xyz.something.so"),
-            "used as is: {err}"
+        // restore the default sink so other tests in this binary are
+        // unaffected (the sink is process-global).
+        *ERROR_SINK.lock().unwrap() = None;
+        let lines = lines.lock().unwrap();
+        assert_eq!(lines.len(), 3, "one error line per failed open");
+        // the dlerror text after "):" is platform-dependent, so assert the
+        // vector-pinned prefix (up to and including "):") and that a dlerror
+        // fragment follows it, with the C trailing newline.
+        let colon = lines[0].find("):").unwrap();
+        assert_eq!(
+            &lines[0][..colon + 2],
+            "os_dlopen(nosuchlibrary_xyz->nosuchlibrary_xyz.so):"
         );
+        let colon1 = lines[1].find("):").unwrap();
+        assert_eq!(
+            &lines[1][..colon1 + 2],
+            "os_dlopen(nosuchlibrary_xyz.so->nosuchlibrary_xyz.so):"
+        );
+        let colon2 = lines[2].find("):").unwrap();
+        assert_eq!(
+            &lines[2][..colon2 + 2],
+            "os_dlopen(nosuchlibrary_xyz.something.so->nosuchlibrary_xyz.something.so):"
+        );
+        assert!(lines[0].starts_with(&format!("{} ", &lines[0][..colon + 2])));
+        assert!(lines[0].ends_with('\n'));
     }
 }
