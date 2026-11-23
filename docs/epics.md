@@ -134,10 +134,11 @@ state: [phase-1-subtasks.md](rust-rewrite/subtasks/phase-1-subtasks.md) and
 | Story | I want | Acceptance | Status |
 |---|---|---|---|
 | **E12S1** Anonymiser + loader + index (code half) | the corpus tooling | anonymiser + load check + index pass on a synthetic fixture set | open |
-| **E12S2** ≥20 user collections (human half) | real, consenting-user collections ingested | ≥20 collections in the corpus, load check green; unblocks the corpus round-trip subtasks | open |
+| **E12S2** ≥20 corpus collections (D4, decided 2026-11-23) | the corpus populated with real-world-shaped data | ≥20 collections ingested, composed of licence-compliant public material (OBS issue-tracker configs, gists, …) + synthetic fixtures; load check green; unblocks the corpus round-trip subtasks | open |
 
-> Assumption: D4 — the code half proceeds on a synthetic corpus; the collection half is a human
-> step outside this repo.
+> D4 decided 2026-11-23: the corpus is a **mix of licence-compliant public material and synthetic
+> fixtures** (no private user collection). The code half (E12S1) runs on synthetic fixtures
+> immediately.
 
 ### Epic E13 — Recipe batch, nightly & dependency scan (WP-43 + WP-44 + WP-45)
 **Why:** the batch that ticks everything the toolchain finally makes verifiable — and the soak that flips the default.
