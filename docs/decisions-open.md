@@ -7,4 +7,4 @@ recorded (ADR, story, tenet or `AGENTS.md`), the row is deleted in that change.
 
 | ID | Status | Decision | Options | Assumed until decided | Blocks |
 |---|---|---|---|---|---|
-| D6 | open | S-009 (vec2/matrix3/plane/bounds/math-extra) is a **Draft** pending a second-author check — when does it happen? | before the first Phase 2 math consumer lands | the draft is binding for math2 work; behaviour is pinned by committed vectors (`27-srgb-256-golden`, `half_exhaustive`) regardless | none in M1–M3 (Phase 2 prep) |
+| D6 | answered — in progress: “Option 1” (2026-11-23) | S-009 (vec2/matrix3/plane/bounds/math-extra) is a **Draft** pending a second-author check — when does it happen? | (1) with the E21 batch after M2 (E21S5) — chosen; (2) immediately in M1; (3) left open until Phase 2 | S-009 stays a draft until E21S5; behaviour is already pinned by committed vectors (`27-srgb-256-golden`, `half_exhaustive`) | E21S5 (new) |
