@@ -156,6 +156,16 @@ state: [phase-1-subtasks.md](rust-rewrite/subtasks/phase-1-subtasks.md) and
 |---|---|---|---|
 | **E14S1** Phase 1 done-when | benchmarks vs baseline, goldens/ABI on 3 OSes, parent ticks in the phase-1 file | all P1 parent checkboxes ticked with passing evidence on all three OS CI runners | open |
 
+### Epic E21 *(M2)* — Phase 2+ spec prep (D5, decided 2026-11-23)
+**Why:** S-064…S-067 are unwritten; the phases that would otherwise "read the C" (P4-32.2, P2-15.3/.4, P5-30) need them. Written after E14 so the phase gate is not delayed by spec writing.
+
+| Story | I want | Acceptance | Status |
+|---|---|---|---|
+| **E21S1** Write S-064 (Wayland hotkey platform) | spec for `obs-nix-wayland.c` (wl_keyboard + xkbcommon) per D-30 | S-064 committed; P4-32.2 cites it instead of "read the C" | open |
+| **E21S2** Write S-065 (audio-monitoring win32/osx/null) | spec per D-31 (S-055 covers PulseAudio only), scheduled as P2-15.6 | S-065 committed; P1-34.4 becomes tickable; P2-15.3/.4 cite it | open |
+| **E21S3** Write S-066 (win-wasapi) + P5-30.9 dedupe | spec per D-32 (S-051 covers window matching/hooks/vqueue only); the duplicate P5-30.9 entry folded into the single "Write S-066" subtask | S-066 committed; P5-30.3–.5 cite it alongside S-051 §5.G; no duplicate entry remains | open |
+| **E21S4** Write S-067 (frontend preview interaction) | the spec S-069 references for preview interaction | S-067 committed; S-069's cross-reference resolves | open |
+
 ---
 
 ## Milestone 3 — Phase 0 close-out & future ADRs
@@ -234,7 +244,7 @@ state: [phase-1-subtasks.md](rust-rewrite/subtasks/phase-1-subtasks.md) and
 ## Out of scope
 
 - Phases 2–7 (spec-only, unchanged by the 2026-11-21 review).
-- P1-34.4 + the S-064…S-067 spec backlog — parked as Phase 2 prep (D5).
+- The S-064…S-067 spec backlog is **tracked, not parked** — D5 decided 2026-11-23: written after M2's phase-1 review, as E21 (P1-34.4 waits on E21S2).
 - Deleting `deps/blake2` / `deps/json11` — stays P7-04; E13S3 only records the deferral.
 
 ## Open questions
