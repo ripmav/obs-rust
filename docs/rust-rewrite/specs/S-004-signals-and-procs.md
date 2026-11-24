@@ -1,12 +1,12 @@
 # S-004 Signal handlers, global callbacks and procedure handlers
 
-| | |
-|---|---|
-| Status | Ready for review |
-| Reference | libobs 33.0.1 `callback/signal.c`, `signal.h`, `proc.c`, `proc.h` |
-| Target crate | `crates/obs-signal` (modules `signal`, `proc`) |
-| Depends on | S-001, S-002, S-003 |
-| Conformance | `test/conformance/scripts/signal/` (17 scripts) |
+|              |                                                                   |
+| ------------ | ----------------------------------------------------------------- |
+| Status       | Ready for review                                                  |
+| Reference    | libobs 33.0.1 `callback/signal.c`, `signal.h`, `proc.c`, `proc.h` |
+| Target crate | `crates/obs-signal` (modules `signal`, `proc`)                    |
+| Depends on   | S-001, S-002, S-003                                               |
+| Conformance  | `test/conformance/scripts/signal/` (17 scripts)                   |
 
 ## 1. Scope
 
@@ -108,11 +108,11 @@ Thread-local state: `current_cb` (pointer to the Cb being run on this thread, or
 - **S-004-R40** If `h` is NULL, or `sig` is not declared: return immediately. **Global callbacks are not called for undeclared signals.**
 - **S-004-R41** Otherwise, in this order:
   1. Lock the signal's recursive lock, set `signalling = true`.
-  2. For `i = 0; i < callbacks.length; i++` (length re-read every iteration, so entries appended during the emit **are reached by this emit**): if the entry is not marked `remove`, set `current_cb` to it, call `fn(data, params)`, then set `current_cb` to **none**.
-  3. Erase every entry marked `remove` (scan from the end to the start); count how many of those had `keep_ref`.
-  4. `signalling = false`; unlock.
-  5. Lock the global lock; for `i = 0; i < globals.length; i++`: if not marked `remove`: `signaling += 1`, set `current_global_cb`, call `fn(data, sig, params)`, set it to none, `signaling -= 1`. Then erase (scan from the end) every entry that is marked `remove` **and** has `signaling == 0`. Unlock.
-  6. If step 3 counted `k > 0` removed `keep_ref` entries: `refs = refs - k` (**no** destruction check here — Q-7).
+  1. For `i = 0; i < callbacks.length; i++` (length re-read every iteration, so entries appended during the emit **are reached by this emit**): if the entry is not marked `remove`, set `current_cb` to it, call `fn(data, params)`, then set `current_cb` to **none**.
+  1. Erase every entry marked `remove` (scan from the end to the start); count how many of those had `keep_ref`.
+  1. `signalling = false`; unlock.
+  1. Lock the global lock; for `i = 0; i < globals.length; i++`: if not marked `remove`: `signaling += 1`, set `current_global_cb`, call `fn(data, sig, params)`, set it to none, `signaling -= 1`. Then erase (scan from the end) every entry that is marked `remove` **and** has `signaling == 0`. Unlock.
+  1. If step 3 counted `k > 0` removed `keep_ref` entries: `refs = refs - k` (**no** destruction check here — Q-7).
 - **S-004-R42** All callbacks and global callbacks of one emit receive the **same** `params` pointer, in order; modifications made by one are seen by the next (vector `10`).
 - **S-004-R43** Order of invocation: the signal's own callbacks in connection order (with entries appended during the emit at the end), then the global callbacks in connection order.
 - **S-004-R44** Callbacks may call any function of this API on the same handler: emit (including the same signal, R50), connect, disconnect, remove_current.
@@ -159,22 +159,22 @@ Thread-local state: `current_cb` (pointer to the Cb being run on this thread, or
 
 ## 10. Conformance coverage
 
-| Rule | Scripts |
-|---|---|
-| R01, R02 | `01`, `11-refs` |
-| R10–R12 | `01-basic`, `13-declarations` |
-| R20–R22 | `01`, `02-connect-dedupe`, `13` |
-| R23 | `08-global-callbacks` |
-| R30 | `03-disconnect`, `04-disconnect-during-emit`, `11-refs` |
-| R31, R32 | `08`, `09-global-remove-current`, `05-remove-current` |
-| R40–R45 | `01`, `04`, `05`, `06-connect-during-emit`, `08`, `10-params-shared` |
-| R50 | `07-nested-emit`, `17-nested-emit-with-disconnect` |
-| R60–R63 | `12-procs` |
-| Q-1 | `06` |
-| Q-2 | `16-quirk-remove-current-after-nested-emit` |
-| Q-4 | `15-quirk-reconnect-during-emit` |
-| Q-5 | `14-quirk-global-disconnect-by-name` |
-| Q-3, Q-6 (executing entry), Q-7 | not covered by vectors (unit tests in the crate) |
+| Rule                            | Scripts                                                              |
+| ------------------------------- | -------------------------------------------------------------------- |
+| R01, R02                        | `01`, `11-refs`                                                      |
+| R10–R12                         | `01-basic`, `13-declarations`                                        |
+| R20–R22                         | `01`, `02-connect-dedupe`, `13`                                      |
+| R23                             | `08-global-callbacks`                                                |
+| R30                             | `03-disconnect`, `04-disconnect-during-emit`, `11-refs`              |
+| R31, R32                        | `08`, `09-global-remove-current`, `05-remove-current`                |
+| R40–R45                         | `01`, `04`, `05`, `06-connect-during-emit`, `08`, `10-params-shared` |
+| R50                             | `07-nested-emit`, `17-nested-emit-with-disconnect`                   |
+| R60–R63                         | `12-procs`                                                           |
+| Q-1                             | `06`                                                                 |
+| Q-2                             | `16-quirk-remove-current-after-nested-emit`                          |
+| Q-4                             | `15-quirk-reconnect-during-emit`                                     |
+| Q-5                             | `14-quirk-global-disconnect-by-name`                                 |
+| Q-3, Q-6 (executing entry), Q-7 | not covered by vectors (unit tests in the crate)                     |
 
 CORE: all scripts except `14`, `15`, `16` (QUIRK).
 
@@ -190,6 +190,9 @@ CORE: all scripts except `14`, `15`, `16` (QUIRK).
 - `libobs/callback/signal.c`
 
 - **S-004-R64** Signal registry: `signal_info_create`/`signal_info_destroy` own the signal object (name, callback array, global-callback list, its mutex); `signal_get_callback_idx` resolves a callback id to its index; `getsignal`/`getsignal_locked` look up a signal object by name.
+
 - **S-004-R65** Handler lifecycle: `signal_handler_create`/`signal_handler_destroy` (the latter via `signal_handler_actually_destroy`); `signal_handler_add` appends a callback (unique id); `signal_handler_disconnect` removes one — reference-count rules per the earlier sections.
+
 - **S-004-R66** `signal_handler_signal` (emit): iterates the callbacks under the lock in registration order; `signal_handler_remove_current` lets a callback remove itself mid-emit (re-entrancy rules per the earlier sections).
+
 - **S-004-R67** `signal_handler_connect_global`/`signal_handler_connect_internal`: global callbacks (signal-name-independent) live in a separate mutex-guarded list, deduplicated by (callback, data); they are invoked for every signal on the handler.

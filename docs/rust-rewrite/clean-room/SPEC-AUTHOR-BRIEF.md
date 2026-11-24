@@ -20,17 +20,17 @@ Study these finished examples first (they define the quality bar and style):
    **your own pseudocode** (never paste C), concurrency, reference defects/quirks
    (`Q-n` QUIRK, `D-n` DEFECT with required behaviour), implementation notes, a coverage table
    mapping every rule to scripts, open questions.
-2. `test/conformance/gen/<area>_runner.c` — a script-driven C runner linking the real C
+1. `test/conformance/gen/<area>_runner.c` — a script-driven C runner linking the real C
    implementation (uses `harness.h` / `script.h`).
-3. `test/conformance/gen/<area>.sources` — registration (see header of `run.sh`; paths relative to
+1. `test/conformance/gen/<area>.sources` — registration (see header of `run.sh`; paths relative to
    the repository root, `-l` flags, `!nostubs` if you link real platform code instead of
    `gen/stubs.c`). **Do not edit `run.sh`, `gen/stubs.c`, `gen/harness.h`, `gen/script.h`,
    `specs/README.md`** or any other area's files. If you need extra stub functions put them in
    `gen/<area>_stubs.c` and list it in your `.sources`.
-4. `test/conformance/scripts/<area>/*.script` — hand-written scripts (original), grouped by topic,
+1. `test/conformance/scripts/<area>/*.script` — hand-written scripts (original), grouped by topic,
    each with a header comment explaining what it demonstrates, and
    `test/conformance/vectors/<area>/*.expected` generated with `./run.sh generate <area>`.
-5. Extend `test/conformance/README.md` **only by appending** a section `## <area> runner (spec S-0NN)`
+1. Extend `test/conformance/README.md` **only by appending** a section `## <area> runner (spec S-0NN)`
    documenting your script language (append at the end of the file).
 
 ## Method
@@ -39,23 +39,23 @@ Study these finished examples first (they define the quality bar and style):
    compile in). Write down every observable behaviour: edge cases, NULL handling, allocation/
    capacity/ownership, error returns, logging (level; text only if it matters), ordering,
    rounding, endianness, thread-safety.
-2. Probe, don't assume: whenever you are not sure what the reference does, write a script and run
+1. Probe, don't assume: whenever you are not sure what the reference does, write a script and run
    it. Prefer many small scripts per topic over a few big ones. Cover: normal use, every error path,
    boundaries, empty/NULL inputs, documented preconditions' edges (but stay *inside* preconditions).
-3. Classify every oddity: CORE (must match), QUIRK (reference behaviour that looks accidental but
+1. Classify every oddity: CORE (must match), QUIRK (reference behaviour that looks accidental but
    callers/files may depend on: SHOULD match), DEFECT (reference crashes/UB/ABI-visible bug:
    state the required behaviour). Put quirk demonstrations in separate, clearly named scripts.
-4. Keep vectors **deterministic and independent of the environment**: no pointers, no addresses,
+1. Keep vectors **deterministic and independent of the environment**: no pointers, no addresses,
    no time, no thread scheduling, no uninitialised memory (print only defined bytes; mask others),
    no locale-dependent output, no file system paths. Floating point: print with `%.9g`
    (`%.17g` for doubles) and state the comparison tolerance in the spec.
-5. Run the runner under `-fsanitize=address,undefined` (compile it by hand into the scratchpad)
+1. Run the runner under `-fsanitize=address,undefined` (compile it by hand into the scratchpad)
    to find script-induced UB or leaks that signal a script outside the preconditions; fix the
    script. Record reference crashes with a fork-per-case runner (see `decl_runner.c`) as
    `crash` results.
-6. Verify stability: `./run.sh generate <area>` then `./run.sh check <area>` at least 3 times, all
+1. Verify stability: `./run.sh generate <area>` then `./run.sh check <area>` at least 3 times, all
    `ok`.
-7. **Sufficiency check (required):** in your scratchpad, implement the component in Rust using
+1. **Sufficiency check (required):** in your scratchpad, implement the component in Rust using
    *only your spec and the conformance README* (no looking at the C while implementing; fix the
    spec if you must look something up), write a runner for the script language, and run all your
    vectors. Report pass counts. Every mismatch is a spec bug: fix the spec (and add a script if the

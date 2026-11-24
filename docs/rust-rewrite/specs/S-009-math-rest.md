@@ -1,12 +1,12 @@
 # S-009 `vec2`, `matrix3`, `plane`, `bounds`, `math-extra`, `half`, `srgb`, `math-defs`
 
-| | |
-|---|---|
-| Status | Draft (needs second-author review) |
-| Reference | libobs 33.0.1 `graphics/vec2.*`, `matrix3.*`, `plane.*`, `bounds.*`, `math-extra.*`, `half.h`, `srgb.h`, `math-defs.h`, plus the `vec3_*` functions of `vec3.c` that use these types, `quat_from_matrix3`, `matrix4_from_matrix3` |
-| Target crate | `crates/obs-math` (same crate as S-008) |
-| Depends on | S-008 (`vec3`, `quat`, `matrix4`, `axisang`, lane rules, tolerance rule) |
-| Conformance | `test/conformance/scripts/math2/` (28 scripts, runner `gen/math2_runner.c`) |
+|              |                                                                                                                                                                                                                                   |
+| ------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Status       | Draft (needs second-author review)                                                                                                                                                                                                |
+| Reference    | libobs 33.0.1 `graphics/vec2.*`, `matrix3.*`, `plane.*`, `bounds.*`, `math-extra.*`, `half.h`, `srgb.h`, `math-defs.h`, plus the `vec3_*` functions of `vec3.c` that use these types, `quat_from_matrix3`, `matrix4_from_matrix3` |
+| Target crate | `crates/obs-math` (same crate as S-008)                                                                                                                                                                                           |
+| Depends on   | S-008 (`vec3`, `quat`, `matrix4`, `axisang`, lane rules, tolerance rule)                                                                                                                                                          |
+| Conformance  | `test/conformance/scripts/math2/` (28 scripts, runner `gen/math2_runner.c`)                                                                                                                                                       |
 
 ## 1. Scope
 
@@ -51,20 +51,13 @@ struct half    { uint16_t u; };                         /* 2 bytes */
 
 Exported (replaced by the crate): `vec2_abs vec2_floor vec2_ceil vec2_close vec2_norm`;
 `vec3_plane_dist vec3_rotate vec3_transform3x4 vec3_mirror vec3_mirrorv vec3_rand`;
-`matrix3_from_quat matrix3_from_axisang matrix3_from_matrix4 matrix3_mul matrix3_rotate matrix3_rotate_aa
-matrix3_scale matrix3_transpose matrix3_inv matrix3_mirror matrix3_mirrorv`, `quat_from_matrix3`,
+`matrix3_from_quat matrix3_from_axisang matrix3_from_matrix4 matrix3_mul matrix3_rotate matrix3_rotate_aa matrix3_scale matrix3_transpose matrix3_inv matrix3_mirror matrix3_mirrorv`, `quat_from_matrix3`,
 `matrix4_from_matrix3`;
-`plane_from_tri plane_transform plane_transform3x4 plane_intersection_ray plane_intersection_line
-plane_tri_inside plane_line_inside`;
-`bounds_move bounds_scale bounds_merge bounds_merge_point bounds_get_point bounds_get_center
-bounds_transform bounds_transform3x4 bounds_intersection_ray bounds_intersection_line bounds_plane_test
-bounds_under_plane bounds_intersects bounds_intersects_obb bounds_intersects_obb3x4 bounds_min_dist`;
+`plane_from_tri plane_transform plane_transform3x4 plane_intersection_ray plane_intersection_line plane_tri_inside plane_line_inside`;
+`bounds_move bounds_scale bounds_merge bounds_merge_point bounds_get_point bounds_get_center bounds_transform bounds_transform3x4 bounds_intersection_ray bounds_intersection_line bounds_plane_test bounds_under_plane bounds_intersects bounds_intersects_obb bounds_intersects_obb3x4 bounds_min_dist`;
 `polar_to_cart cart_to_polar norm_to_polar polar_to_norm calc_torquef calc_torque rand_float`.
 
-Header-inline (plugins compile them in; the crate must offer equal behaviour): `vec2_zero/set/copy/add/sub/mul/div/
-addf/subf/mulf/divf/neg/dot/len/dist/min/max/minf/maxf`, `matrix3_copy/identity/translate/translate3f/
-rotate_aa4f/scale3f`, `plane_copy/set/setf/close/coplanar`, `bounds_zero/copy/inside/vec3_inside/
-intersects_ray/intersects_line`, `get_percentage(i)`, `close_float`, `half_from_float`, `half_from_bits`,
+Header-inline (plugins compile them in; the crate must offer equal behaviour): `vec2_zero/set/copy/add/sub/mul/div/ addf/subf/mulf/divf/neg/dot/len/dist/min/max/minf/maxf`, `matrix3_copy/identity/translate/translate3f/ rotate_aa4f/scale3f`, `plane_copy/set/setf/close/coplanar`, `bounds_zero/copy/inside/vec3_inside/ intersects_ray/intersects_line`, `get_percentage(i)`, `close_float`, `half_from_float`, `half_from_bits`,
 and every function of `srgb.h` (`gs_srgb_*`, `gs_u8_*`, `gs_float*_to_u8*`, `gs_premultiply_*`).
 `axisang_zero/copy/set` (S-008 area) are included in R34. Unless stated, no function allocates, locks
 or logs; all are pure apart from writing the destination and are safe from any thread. Pointers
@@ -179,9 +172,9 @@ are worked in section 5.6; vectors `22-half`, `23-half-rounding`, `24-half-overf
   Otherwise `*t = (p.dist - dot4(p.dir, orig)) / c`, return true. (`t` may be negative: the line, not the half-line.)
 - **S-009-R55** `plane_intersection_line(p, v1, v2, *t)`: `d1 = vec3_plane_dist(v1, p)`, `d2 = vec3_plane_dist(v2, p)`.
   1. if `close_float(d1, 0, EPSILON)`: if `close_float(d2, 0, EPSILON)` return false (`*t` untouched); else `*t = 0`, return true.
-  2. else if `close_float(d2, 0, EPSILON)`: `*t = 1`, return true.
-  3. else if `(d1 > 0) == (d2 > 0)` return false (`*t` untouched).
-  4. else `a = abs(d1)`, `s = a + abs(d2)`; if `s < EPSILON` return false (unreachable after step 1-2 for finite input); `*t = a / s`, return true.
+  1. else if `close_float(d2, 0, EPSILON)`: `*t = 1`, return true.
+  1. else if `(d1 > 0) == (d2 > 0)` return false (`*t` untouched).
+  1. else `a = abs(d1)`, `s = a + abs(d2)`; if `s < EPSILON` return false (unreachable after step 1-2 for finite input); `*t = a / s`, return true.
 - **S-009-R56** `plane_tri_inside(p, v1, v2, v3, prec)` / `plane_line_inside(p, v1, v2, prec)`: for each vertex `d = vec3_plane_dist(v, p)`; a vertex
   contributes flag `2` if `d >= prec`, else flag `1` if `d <= -prec`, else nothing. The functions return **true when any flag
   is set** (Q-5): i.e. when at least one vertex is at least `prec` away from the plane on either side — NOT "inside". With `prec = 0`
@@ -328,28 +321,28 @@ No callbacks, locks, or re-entrancy concerns.
 
 ## 8. Reference defects and quirks
 
-| ID | Where | Reference behaviour | Required behaviour | Script |
-|---|---|---|---|---|
-| Q-1 | `vec2_norm` | zero/NaN-length vector: destination not written (unlike `vec3_norm`, which writes zeros) | reproduce | `03` |
-| Q-2 | `vec3_rotate`, `matrix3_*` | four-lane dot: `v.w` and rows' `w` lanes affect `x,y,z` | reproduce | `05`, `09` |
-| Q-3 | `matrix3_transpose` | `w` lane of all three rows = source `z.w` | reproduce | `09` |
-| D-1 | `matrix3_inv` | on matrix4_inv failure `d` untouched but `d.t.w = 0` | reproduce | `08` |
-| Q-4 | `plane_transform`, `plane_transform3x4` | normal transformed as a point (translation shifts it); the 3x4 variant never changes `dist` | reproduce | `11` |
-| Q-5 | `plane_tri_inside`, `plane_line_inside` | true when any vertex is >= `prec` away from the plane (misnomer) | reproduce | `12` |
-| Q-6 | `plane_close` | direction test is signed | reproduce | `12` |
-| Q-7 | `bounds_get_point` | index 8 accepted (acts like 6); `w` not written | reproduce | `14` |
-| D-2 | `bounds_plane_test` | `bool` return folds 1/2/3 to `true` | always `true` | `17` |
-| D-3 | `polar_to_cart`, `cart_to_polar` | `w` lane uninitialised | write `0`; vectors mask `w` | `19` |
-| Q-8 | `calc_torque` | uses signed `vec3_close` so v1 <= v2 componentwise snaps to v2 | reproduce | `20` |
-| Q-9 | `calc_torque` | `dst == v1` corrupts the result | reproduce (SHOULD) | `20` |
-| Q-10 | `half_from_float` | overflow to inf for any magnitude > 65504 | reproduce | `24` |
-| Q-11 | `half_from_float` | subnormal path truncates before rounding | reproduce algorithm R111 | `23` |
-| D-4 | `bounds_under_plane`, `bounds_plane_test` | `vmin.w`/`vmax.w` uninitialised, participates in `dot4` | treat as 0 | – |
-| D-5 | `bounds_intersects_obb` | singular `m`: `matrix4_inv` fails, uninitialised `mi` is used | SHOULD return `false` | – |
-| D-6 | `half_from_float` | shift count `113 - e` is >= 32 for `e <= 81` (|f| < 2^-45 and float subnormals): undefined; on x86-64 `-O0` gives garbage such as `0x0492` for some exponents (e.g. `e = 17, 49, 81`) | return signed zero | – (no vector, UB) |
-| Q-12 | `matrix3_mul`, `vec3_transform3x4`, `matrix3_transpose` | the `matrix3` product dots rows with rows and subtracts translation (`x' = (x - t) · rows`); `matrix3_inv` is the ordinary 4x4 inverse and does not invert this product | reproduce | `07`, `08` |
-| Q-13 | `bounds_scale` | negative scale leaves `min > max` | reproduce | `13` |
-| Q-14 | `gs_float_to_u8` | not clamped | defined range only | `26` |
+| ID   | Where                                                   | Reference behaviour                                                                                                                                                     | Required behaviour          | Script                                                                                                                              |
+| ---- | ------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
+| Q-1  | `vec2_norm`                                             | zero/NaN-length vector: destination not written (unlike `vec3_norm`, which writes zeros)                                                                                | reproduce                   | `03`                                                                                                                                |
+| Q-2  | `vec3_rotate`, `matrix3_*`                              | four-lane dot: `v.w` and rows' `w` lanes affect `x,y,z`                                                                                                                 | reproduce                   | `05`, `09`                                                                                                                          |
+| Q-3  | `matrix3_transpose`                                     | `w` lane of all three rows = source `z.w`                                                                                                                               | reproduce                   | `09`                                                                                                                                |
+| D-1  | `matrix3_inv`                                           | on matrix4_inv failure `d` untouched but `d.t.w = 0`                                                                                                                    | reproduce                   | `08`                                                                                                                                |
+| Q-4  | `plane_transform`, `plane_transform3x4`                 | normal transformed as a point (translation shifts it); the 3x4 variant never changes `dist`                                                                             | reproduce                   | `11`                                                                                                                                |
+| Q-5  | `plane_tri_inside`, `plane_line_inside`                 | true when any vertex is >= `prec` away from the plane (misnomer)                                                                                                        | reproduce                   | `12`                                                                                                                                |
+| Q-6  | `plane_close`                                           | direction test is signed                                                                                                                                                | reproduce                   | `12`                                                                                                                                |
+| Q-7  | `bounds_get_point`                                      | index 8 accepted (acts like 6); `w` not written                                                                                                                         | reproduce                   | `14`                                                                                                                                |
+| D-2  | `bounds_plane_test`                                     | `bool` return folds 1/2/3 to `true`                                                                                                                                     | always `true`               | `17`                                                                                                                                |
+| D-3  | `polar_to_cart`, `cart_to_polar`                        | `w` lane uninitialised                                                                                                                                                  | write `0`; vectors mask `w` | `19`                                                                                                                                |
+| Q-8  | `calc_torque`                                           | uses signed `vec3_close` so v1 \<= v2 componentwise snaps to v2                                                                                                         | reproduce                   | `20`                                                                                                                                |
+| Q-9  | `calc_torque`                                           | `dst == v1` corrupts the result                                                                                                                                         | reproduce (SHOULD)          | `20`                                                                                                                                |
+| Q-10 | `half_from_float`                                       | overflow to inf for any magnitude > 65504                                                                                                                               | reproduce                   | `24`                                                                                                                                |
+| Q-11 | `half_from_float`                                       | subnormal path truncates before rounding                                                                                                                                | reproduce algorithm R111    | `23`                                                                                                                                |
+| D-4  | `bounds_under_plane`, `bounds_plane_test`               | `vmin.w`/`vmax.w` uninitialised, participates in `dot4`                                                                                                                 | treat as 0                  | –                                                                                                                                   |
+| D-5  | `bounds_intersects_obb`                                 | singular `m`: `matrix4_inv` fails, uninitialised `mi` is used                                                                                                           | SHOULD return `false`       | –                                                                                                                                   |
+| D-6  | `half_from_float`                                       | shift count `113 - e` is >= 32 for `e <= 81` (                                                                                                                          | f                           | < 2^-45 and float subnormals): undefined; on x86-64 `-O0` gives garbage such as `0x0492` for some exponents (e.g. `e = 17, 49, 81`) |
+| Q-12 | `matrix3_mul`, `vec3_transform3x4`, `matrix3_transpose` | the `matrix3` product dots rows with rows and subtracts translation (`x' = (x - t) · rows`); `matrix3_inv` is the ordinary 4x4 inverse and does not invert this product | reproduce                   | `07`, `08`                                                                                                                          |
+| Q-13 | `bounds_scale`                                          | negative scale leaves `min > max`                                                                                                                                       | reproduce                   | `13`                                                                                                                                |
+| Q-14 | `gs_float_to_u8`                                        | not clamped                                                                                                                                                             | defined range only          | `26`                                                                                                                                |
 
 Also notable (CORE behaviour, flagged because they surprise): `vec2_close` is absolute while `vec3_close` is signed (R14); `matrix3_translate` subtracts and writes only `t` (R36);
 `close_float(inf, inf)` is false (R02); `matrix4_from_matrix3` keeps the rows' `w` lanes (R32).
@@ -365,33 +358,33 @@ Also notable (CORE behaviour, flagged because they surprise): `vec2_close` is ab
 
 ## 10. Conformance coverage
 
-| Rule | Scripts |
-|---|---|
-| R01-R03 | `01-defs` |
-| R10-R13 | `02-vec2` |
-| R14, R15 | `03-vec2-close-and-quirks` |
-| R20-R24 | `04-vec3-plane-matrix3`, `05-vec3-w-lane-quirks` |
-| R25, R96 | `21-rand` |
-| R30-R33 | `06-matrix3-build` |
-| R34 | `28-axisang-helpers` |
-| R35-R39, R41 | `07-matrix3-ops`, `09-matrix3-transpose-w-lane` |
-| R40 | `08-matrix3-inverse` |
-| R50, R51, R54, R55 | `10-plane-basic` |
-| R52, R53 | `11-plane-transform` |
-| R56-R58 | `12-plane-tests` |
-| R70, R72, R78 | `13-bounds-basic` |
-| R71 | `14-bounds-points` |
-| R73 | `15-bounds-transform` |
-| R74, R75 | `16-bounds-ray-line` |
-| R76, R77, R81 | `17-bounds-plane` |
-| R79, R80 | `18-bounds-intersects` |
-| R90-R92 | `19-math-extra-polar` |
-| R93-R95 | `20-math-extra-torque` |
-| R110-R112 | `22-half`, `24-half-overflow-quirk` |
-| R111, R113 | `23-half-rounding` |
-| R120 | `25-srgb-curves` |
-| R121, R122 | `26-srgb-u8` |
-| R123-R125 | `27-premultiply` |
+| Rule               | Scripts                                          |
+| ------------------ | ------------------------------------------------ |
+| R01-R03            | `01-defs`                                        |
+| R10-R13            | `02-vec2`                                        |
+| R14, R15           | `03-vec2-close-and-quirks`                       |
+| R20-R24            | `04-vec3-plane-matrix3`, `05-vec3-w-lane-quirks` |
+| R25, R96           | `21-rand`                                        |
+| R30-R33            | `06-matrix3-build`                               |
+| R34                | `28-axisang-helpers`                             |
+| R35-R39, R41       | `07-matrix3-ops`, `09-matrix3-transpose-w-lane`  |
+| R40                | `08-matrix3-inverse`                             |
+| R50, R51, R54, R55 | `10-plane-basic`                                 |
+| R52, R53           | `11-plane-transform`                             |
+| R56-R58            | `12-plane-tests`                                 |
+| R70, R72, R78      | `13-bounds-basic`                                |
+| R71                | `14-bounds-points`                               |
+| R73                | `15-bounds-transform`                            |
+| R74, R75           | `16-bounds-ray-line`                             |
+| R76, R77, R81      | `17-bounds-plane`                                |
+| R79, R80           | `18-bounds-intersects`                           |
+| R90-R92            | `19-math-extra-polar`                            |
+| R93-R95            | `20-math-extra-torque`                           |
+| R110-R112          | `22-half`, `24-half-overflow-quirk`              |
+| R111, R113         | `23-half-rounding`                               |
+| R120               | `25-srgb-curves`                                 |
+| R121, R122         | `26-srgb-u8`                                     |
+| R123-R125          | `27-premultiply`                                 |
 
 ## 11. Open questions
 

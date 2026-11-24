@@ -1,12 +1,12 @@
 # S-022 MP4 / MOV muxer (hybrid fragmented-then-remuxed ISO BMFF writer)
 
-| | |
-|---|---|
-| Status | Ready for review |
-| Reference | libobs 33.0.1 `plugins/obs-outputs` `mp4-mux.c`, `mp4-mux.h`, `mp4-mux-internal.h` (+ the packet/extradata helpers they call: `obs-avc.c`, `obs-hevc.c`, `rtmp-hevc.c`, `rtmp-av1.c`) |
-| Target crate | `crates/obs-mp4-mux` |
-| Depends on | S-001 (packet blocks), S-010 (serializer interface: `s_w8/s_wb16/s_wb24/s_wb32/s_wb64/s_write`, `get_pos`, `seek`, array serializer), S-012 (AVC/HEVC packet and AVC header conversion), S-014 (`obs_data` JSON, only for the optional encoder-info atom) |
-| Conformance | `test/conformance/scripts/mp4/` (30 scripts, vectors in `vectors/mp4/`) |
+|              |                                                                                                                                                                                                                                                           |
+| ------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Status       | Ready for review                                                                                                                                                                                                                                          |
+| Reference    | libobs 33.0.1 `plugins/obs-outputs` `mp4-mux.c`, `mp4-mux.h`, `mp4-mux-internal.h` (+ the packet/extradata helpers they call: `obs-avc.c`, `obs-hevc.c`, `rtmp-hevc.c`, `rtmp-av1.c`)                                                                     |
+| Target crate | `crates/obs-mp4-mux`                                                                                                                                                                                                                                      |
+| Depends on   | S-001 (packet blocks), S-010 (serializer interface: `s_w8/s_wb16/s_wb24/s_wb32/s_wb64/s_write`, `get_pos`, `seek`, array serializer), S-012 (AVC/HEVC packet and AVC header conversion), S-014 (`obs_data` JSON, only for the optional encoder-info atom) |
+| Conformance  | `test/conformance/scripts/mp4/` (30 scripts, vectors in `vectors/mp4/`)                                                                                                                                                                                   |
 
 ## 1. Scope
 
@@ -17,7 +17,7 @@ file is produced in two phases:
 1. **Fragmented phase.** While packets arrive, the muxer writes a fragmented MP4 (ftyp, a 16-byte
    placeholder box, an initial `moov` with `mvex`, then `moof`+`mdat` pairs). The file is therefore
    playable/recoverable after a crash.
-2. **Finalisation (soft remux).** `mp4_mux_finalise` appends a complete, non-fragmented `moov` at the end
+1. **Finalisation (soft remux).** `mp4_mux_finalise` appends a complete, non-fragmented `moov` at the end
    of the file and then overwrites the beginning: `ftyp` again, and the placeholder becomes the header of
    one huge `mdat` that *contains* the whole fragmented file (initial moov, all moof/mdat). Chunk
    offsets of the final `moov` point into that data. The result is a normal "faststart-less" MP4.
@@ -47,6 +47,7 @@ box(T, payload)          = be32(8 + len(payload)) fourcc(T) payload          -- 
 box(T, payload) [large]  = be32(1) fourcc(T) be64(16 + len(payload)) payload  -- size > 0xFFFFFFFF
 fullbox(T, v, f, payload)= box(T, u8(v) u24(f) payload)
 ```
+
 The large form is only produced by the generic helper for sizes beyond 4 GiB (never reached by the
 vectors; the sizes of ordinary boxes here are tiny). Many boxes are written with a placeholder size that
 is patched after the content; only the final byte image matters. "Size N" below always means the
@@ -73,6 +74,7 @@ bool   mp4_mux_submit_packet(struct mp4_mux *, struct encoder_packet *pkt);   //
 bool   mp4_mux_add_chapter (struct mp4_mux *, int64_t dts_usec, const char *name); // false: dts_usec < 0
 bool   mp4_mux_finalise    (struct mp4_mux *);                                // always true
 ```
+
 `struct serializer` must support write, `get_pos` (the position at which the next byte would be written,
 i.e. `ftell`) and `seek(SERIALIZE_SEEK_START)` to any previously valid position (S-010). The array
 serializer's `get_pos` returns its *length*, not its cursor: the muxer relies on `get_pos` meaning the
@@ -94,26 +96,26 @@ before the data).
 An implementation receives these as data. Each row names the libobs accessor, the stub in
 `gen/mp4_stubs.c`, and the script key (`enc ... key value`) that sets it.
 
-| Input | Accessor (reference) | Script key | Default | Used for |
-|---|---|---|---|---|
-| output name | `obs_output_get_name` | (fixed `conformance`) | `conformance` | log prefix only |
-| video encoders, slot i | `obs_output_get_video_encoder2(out, i)`, `i < MAX_OUTPUT_VIDEO_ENCODERS` | `slot` (video) | next free slot | track order |
-| audio encoders, slot i | `obs_output_get_audio_encoder(out, i)`, `i < MAX_OUTPUT_AUDIO_ENCODERS` (= 6) | `slot` (audio) | next free slot | track order |
-| encoder type | `obs_encoder_get_type` | `enc NAME video\|audio` | | VIDEO/AUDIO |
-| codec string | `obs_encoder_get_codec` | `codec` | `h264` / `aac` | selects `mp4_codec` (R10) |
-| encoder id | `obs_encoder_get_id` | `id` (`-` = NULL) | `stub_encoder` | `compressorname`, `(c)enc` atom |
-| encoder name | `obs_encoder_get_name` | `name` (`-` = NULL) | `Stub Encoder` | track `name` atom |
-| video size | `obs_encoder_get_width/height` | `width`, `height` | 1920, 1080 | tkhd, visual sample entry |
-| video output info | `video_output_get_info(obs_encoder_video(e))`: `fps_num`, `fps_den`, `colorspace` (`VIDEO_CS_DEFAULT/601/709/SRGB/2100_PQ/2100_HLG`), `range` (`FULL` or other) | `fps N/D`, `cs`, `range` | 30/1, `709`, `partial` | timebase, `colr`, `clli`, `mdcv` |
-| audio sample rate (encoder) | `obs_encoder_get_sample_rate` | `rate` | 48000 | audio timescale |
-| audio output info | `audio_output_get_info(obs_encoder_audio(e))->speakers`, `audio_output_get_channels`, `audio_output_get_sample_rate` | `speakers` (`mono stereo 2.1 4.0 4.1 5.1 7.1 unknown`), `arate` | stereo, 48000 | channel counts, layouts, MOV version choice |
-| frame size | `obs_encoder_get_frame_size` | `frame_size` | 1024 | MOV v1 header only |
-| extra data | `obs_encoder_get_extra_data` (returns false when absent) | `extra HEX` or `-` | absent | avcC/hvcC/av1C/esds/dOps/dfLa/alac |
-| settings | `obs_encoder_get_settings` (new reference, may be NULL): ints `bitrate` (kbps), `codec_type` (ProRes FourCC), arbitrary other keys for the JSON | `bitrate`, `codec_type`, `setting_str name=value`, `settings none\|empty` | NULL | esds bitrate, ProRes tag, `json` atom |
-| HDR peak | `obs_get_video_hdr_nominal_peak_level` (float) | `peak F` | 1000 | `clli`, `mdcv` |
-| version string | `obs_get_version_string` | `version S` | `33.0.1` | metadata atoms |
-| locale | `obs_module_text("MP4Output.StartChapter")` | `start_chapter_text S` | `Start` | automatic first chapter name |
-| clock | `time(NULL)` | `clock SECONDS` | 1700000000 | creation time |
+| Input                       | Accessor (reference)                                                                                                                                            | Script key                                                                | Default                | Used for                                    |
+| --------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------- | ---------------------- | ------------------------------------------- |
+| output name                 | `obs_output_get_name`                                                                                                                                           | (fixed `conformance`)                                                     | `conformance`          | log prefix only                             |
+| video encoders, slot i      | `obs_output_get_video_encoder2(out, i)`, `i < MAX_OUTPUT_VIDEO_ENCODERS`                                                                                        | `slot` (video)                                                            | next free slot         | track order                                 |
+| audio encoders, slot i      | `obs_output_get_audio_encoder(out, i)`, `i < MAX_OUTPUT_AUDIO_ENCODERS` (= 6)                                                                                   | `slot` (audio)                                                            | next free slot         | track order                                 |
+| encoder type                | `obs_encoder_get_type`                                                                                                                                          | `enc NAME video\|audio`                                                   |                        | VIDEO/AUDIO                                 |
+| codec string                | `obs_encoder_get_codec`                                                                                                                                         | `codec`                                                                   | `h264` / `aac`         | selects `mp4_codec` (R10)                   |
+| encoder id                  | `obs_encoder_get_id`                                                                                                                                            | `id` (`-` = NULL)                                                         | `stub_encoder`         | `compressorname`, `(c)enc` atom             |
+| encoder name                | `obs_encoder_get_name`                                                                                                                                          | `name` (`-` = NULL)                                                       | `Stub Encoder`         | track `name` atom                           |
+| video size                  | `obs_encoder_get_width/height`                                                                                                                                  | `width`, `height`                                                         | 1920, 1080             | tkhd, visual sample entry                   |
+| video output info           | `video_output_get_info(obs_encoder_video(e))`: `fps_num`, `fps_den`, `colorspace` (`VIDEO_CS_DEFAULT/601/709/SRGB/2100_PQ/2100_HLG`), `range` (`FULL` or other) | `fps N/D`, `cs`, `range`                                                  | 30/1, `709`, `partial` | timebase, `colr`, `clli`, `mdcv`            |
+| audio sample rate (encoder) | `obs_encoder_get_sample_rate`                                                                                                                                   | `rate`                                                                    | 48000                  | audio timescale                             |
+| audio output info           | `audio_output_get_info(obs_encoder_audio(e))->speakers`, `audio_output_get_channels`, `audio_output_get_sample_rate`                                            | `speakers` (`mono stereo 2.1 4.0 4.1 5.1 7.1 unknown`), `arate`           | stereo, 48000          | channel counts, layouts, MOV version choice |
+| frame size                  | `obs_encoder_get_frame_size`                                                                                                                                    | `frame_size`                                                              | 1024                   | MOV v1 header only                          |
+| extra data                  | `obs_encoder_get_extra_data` (returns false when absent)                                                                                                        | `extra HEX` or `-`                                                        | absent                 | avcC/hvcC/av1C/esds/dOps/dfLa/alac          |
+| settings                    | `obs_encoder_get_settings` (new reference, may be NULL): ints `bitrate` (kbps), `codec_type` (ProRes FourCC), arbitrary other keys for the JSON                 | `bitrate`, `codec_type`, `setting_str name=value`, `settings none\|empty` | NULL                   | esds bitrate, ProRes tag, `json` atom       |
+| HDR peak                    | `obs_get_video_hdr_nominal_peak_level` (float)                                                                                                                  | `peak F`                                                                  | 1000                   | `clli`, `mdcv`                              |
+| version string              | `obs_get_version_string`                                                                                                                                        | `version S`                                                               | `33.0.1`               | metadata atoms                              |
+| locale                      | `obs_module_text("MP4Output.StartChapter")`                                                                                                                     | `start_chapter_text S`                                                    | `Start`                | automatic first chapter name                |
+| clock                       | `time(NULL)`                                                                                                                                                    | `clock SECONDS`                                                           | 1700000000             | creation time                               |
 
 Encoder `video`/`audio` accessors returning NULL are a precondition violation (D-5, D-6).
 Accessors given a NULL encoder (this happens for the chapter track, which has no encoder) return 0 /
@@ -123,18 +125,18 @@ An implementation represents the chapter track as a track without encoder where 
 
 ### 3.3 Helper transformations the muxer depends on
 
-* AVC packets: `obs_parse_avc_packet` (S-012-R22). AVC extra data: `obs_parse_avc_header` (S-012-R30..R35).
-* HEVC packets: `obs_parse_hevc_packet` (S-012-R53).
-* HEVC extra data: `obs_parse_hevc_header(extra)`. Specified here only for the branch the vectors use:
+- AVC packets: `obs_parse_avc_packet` (S-012-R22). AVC extra data: `obs_parse_avc_header` (S-012-R30..R35).
+- HEVC packets: `obs_parse_hevc_packet` (S-012-R53).
+- HEVC extra data: `obs_parse_hevc_header(extra)`. Specified here only for the branch the vectors use:
   if `extra` does not start with an Annex-B start code (`00 00 01` or `00 00 00 01` at offset 0) the result
   is an exact copy of `extra` (a finished `hvcC`). Otherwise (Annex-B parameter sets) the result is a
   newly computed `hvcC` or empty (size 0); that algorithm is not part of this spec. An empty result
   yields an empty `hvcC` box (size 8).
-* AV1 extra data: `obs_parse_av1_header(extra)`: if `extra[0] & 0x80`: if `(extra[0] & 0x7f) != 1`
+- AV1 extra data: `obs_parse_av1_header(extra)`: if `extra[0] & 0x80`: if `(extra[0] & 0x7f) != 1`
   or `len < 4` the result is empty (size 0); else an exact copy. If the high bit is clear the sequence
   header OBU is parsed and an `av1C` built (not part of this spec); invalid input gives an empty result.
   An empty result yields an empty `av1C` box (size 8). (`extra` with len 0 is not defined; precondition.)
-* AV1 packets: `obs_parse_av1_packet`, specified in section 5.8 (R80..R82) because it lives in
+- AV1 packets: `obs_parse_av1_packet`, specified in section 5.8 (R80..R82) because it lives in
   `rtmp-av1.c` and is not covered by S-012.
 
 ## 4. Data formats
@@ -160,6 +162,7 @@ placeholder_offset      mdat header                be32(size) "mdat"  (8 bytes),
                                                    last mdat; size = data_end - placeholder_offset
 data_end                moov (final, non-fragmented)  (R60)
 ```
+
 If `data_end - placeholder_offset > 0xFFFFFFFF` the 16-byte header `be32(1) "mdat" be64(size)` is used
 instead (this is why the placeholder is 16 bytes); not covered by vectors.
 
@@ -176,9 +179,9 @@ final file, 3134 bytes
 @1625    mdat size 86   = 8 + 20+12+13 (video) + 10+11+12 (audio)
 @1711  moov   size 1423 (final: mvhd, trak video, trak audio, udta)
 ```
+
 Video sample data starts at 1633 (`stco = 0x661`), audio at 1633 + 45 = 1678 (`0x68e`). Final-moov tables: video
-`stts 1x(3, 1)`, `stss {1}`, `stsc 1x(first 1, 3 samples, desc 1)`, `stsz {20,12,13}`, `elst {duration 100 ms,
-media_time 0}`, `mdhd.duration 3`; audio `stts 1x(3, 1024)`, `stsz {10,11,12}`, `mdhd.duration 3072`,
+`stts 1x(3, 1)`, `stss {1}`, `stsc 1x(first 1, 3 samples, desc 1)`, `stsz {20,12,13}`, `elst {duration 100 ms, media_time 0}`, `mdhd.duration 3`; audio `stts 1x(3, 1024)`, `stsz {10,11,12}`, `mdhd.duration 3072`,
 `sgpd 01000000 726f6c6c 00000002 00000001 ffff`, `sbgp 00000000 726f6c6c 00000001 00000003 00000001`.
 The full byte image is in `vectors/mp4/01-basic-av.expected`.
 
@@ -212,12 +215,14 @@ MOV: `"qt  " be32(0x20140200) "qt  "` (size 20).
 **stsd**: `fullbox("stsd", V, 0, be32(1), entry?)` where `V` = 1 for MP4 audio tracks whose audio output has more than 2 channels, else 0 (R70). Entry per codec (R72..R78). Unknown audio codec or a track kind without entry: count is still 1, the entry is absent (the box is 16 bytes).
 
 **Visual sample entry body** (78 bytes after the entry header; `VSE`):
+
 ```
 u8[6] 0, be16(1) /*data_ref_index*/, be16(0), be16(0),
 MP4: be32(0) be32(0) be32(0)   |   MOV: "OBSS" be32(0x200) be32(0x200),
 be16((u16)width) be16((u16)height), be32(0x00480000) be32(0x00480000), be32(0), be16(1) /*frame_count*/,
 compressorname[32], be16(0x0018), be16(0xFFFF)
 ```
+
 `compressorname`: 32 zero bytes; if the encoder id is not NULL: byte 0 = `min(strlen(id), 31)`, followed by that many id bytes.
 
 **avc1** = `box("avc1", VSE avcC colr pasp)`; **hvc1** = `box("hvc1", VSE hvcC colr clli mdcv pasp)`; **av01** = `box("av01", VSE av1C colr clli mdcv pasp)`; **ProRes** = `box(tag, VSE colr clli mdcv pasp)`. `clli` and `mdcv` exist only for PQ/HLG. `avcC`, `hvcC` and `av1C` are *omitted* when the encoder has no extra data (the entry shrinks). When extra data exist but
@@ -226,10 +231,11 @@ the conversion of section 3.3 fails (empty result), the box is present with an e
 
 **colr** (19): `box("colr", "nclx" be16(pri) be16(trc) be16(spc) u8(full_range << 7))`; the triples by colour space: `601 -> 6,6,6`; `DEFAULT, 709 -> 1,1,1`; `SRGB -> 1,13,1`; `PQ -> 9,16,9`; `HLG -> 9,18,9`; `full_range = 1` iff `range == VIDEO_RANGE_FULL`.
 **pasp** (16): `box("pasp", be32(1) be32(1))`.
-**clli** (12): `box("clli", be16((u16)peak) be16((u16)peak))` with `peak = (float)obs_get_video_hdr_nominal_peak_level()`; `(u16)peak` of a float is `((u32)peak) & 0xFFFF` for 0 <= peak < 2^32.
+**clli** (12): `box("clli", be16((u16)peak) be16((u16)peak))` with `peak = (float)obs_get_video_hdr_nominal_peak_level()`; `(u16)peak` of a float is `((u32)peak) & 0xFFFF` for 0 \<= peak < 2^32.
 **mdcv** (32): `box("mdcv", be16(13250) be16(34500) be16(7500) be16(3000) be16(34000) be16(16000) be16(15635) be16(16450) be32(max_lum) be32(0))` with `max_lum = (u32)peak * 10000` (the float is converted to u32 first, then multiplied in 32-bit).
 
-**Audio sample entry body** `ASE(version)` (28 bytes for v0/v1 body, more for MOV): 
+**Audio sample entry body** `ASE(version)` (28 bytes for v0/v1 body, more for MOV):
+
 ```
 u8[6] 0, be16(1), be16(version) /*entry_version, equal to the stsd version for MP4*/, be16(0), be16(0), be16(0),
 if MOV and version == 2:  be16(3) be16(16) be16(0xFFFE) be16(0) be32(0x00010000) be32(72)
@@ -239,6 +245,7 @@ if MOV and version == 2:  be16(3) be16(16) be16(0xFFFE) be16(0) be32(0x00010000)
 else:                     be16(channels) be16(samplesize) be16(pre_defined) be16(0) be32(rate16 << 16)
                           [MOV and version == 1: be32(pcm ? 1 : frame_size) be32(pcm ? sample_size/channels : 0) be32(pcm ? sample_size : 0) be32(2)]
 ```
+
 `channels` = `audio_output_get_channels`; `rate16` = `timescale`, or 0 if `timescale > 65535` (warning R77); `samplesize` = 24 for ALAC in MP4 else 16; `pre_defined` = 0xFFFE for MOV non-PCM else 0; `(rate16 << 16)` is a u32 shift. `lpcm_flags` = Float|Packed (`1|8`) for f32; SignedInteger|Packed (`4|8`) for s16/s24. `pcm` = codec is one of the three PCM codecs.
 
 **mp4a** (MP4) = `box("mp4a", ASE(V) esds [chnl if V == 1])`. **Opus** = `box("Opus", ASE(V) dOps [chnl if V==1])`; **fLaC** = `box("fLaC", ASE(V) dfLa [chnl if V==1])`; **alac** (MP4) = `box("alac", ASE(V) cookie [chnl if V==1])` (cookie = extra data bytes, no wrapper; if the encoder has no extra data the whole entry is omitted); **ipcm / fpcm** = `box(codec==f32 ? "fpcm" : "ipcm", ASE(V) chnl pcmC)` (chnl always, also for V=0).
@@ -259,6 +266,7 @@ Chapter sample entry (`text` in the stsd of the chapter track): `fullbox("text",
 00000001 0000 00000000 00000000 00000000 00000000 0001 0000 00000000     (30 bytes: flags, justification, colours, box and style records)
 0000000d "ftab" 0001 0001 00                                              (13 bytes: font table)
 ```
+
 (TextSampleEntry, BoxRecord, StyleRecord and a `ftab` font table, copied from FFmpeg.) Total size 12 + 4 + 43 = 59. Chapter sample payload: `be16(len) name[len] 0000000c "encd" 00000100`.
 
 ## 5. Behaviour (rules)
@@ -307,7 +315,9 @@ flush():
   if next_frag_pts == 0 and chapter track exists: write_packets(chapter)
   next_frag_pts = 0
 ```
+
 **R30** `process_packets(t)`:
+
 ```
 n = number of queued packets; if n == 0: return
 final = (next_frag_pts == 0)
@@ -336,6 +346,7 @@ for i in 0 .. last-1:
     if offset != 0: t.needs_ctts = true
     if t.offsets empty or t.offsets.last.offset != offset: push {count = 1, offset}  else t.offsets.last.count += 1
 ```
+
 The tables use 32-bit counters/deltas (`u32` fields); `t.duration` is u64 and sums the *original* duration (not the PCM `1`). Note `track->samples` is only incremented for packets that are processed; `deltas`, `offsets`, `sync_samples` and `sample_sizes` therefore describe exactly the written samples.
 **R31** The queue is a FIFO. Packets whose index is `>= last` or that stop the loop stay in the queue for later flushes.
 **R32** `fragment_samples` of every track is the list of samples of the *current* fragment: entries are `{size, offset (ct-dt, possibly negcts-adjusted), duration (in track units, before the PCM override)}`.
@@ -349,6 +360,7 @@ The tables use 32-bit counters/deltas (`u32` fields); `t.duration` is u64 and su
 **R40** `moof = box("moof", mfhd traf*)`, one `traf` per track *in track order* that has `fragment_samples`. `mfhd.sequence_number = fragments_written` (after increment: 1 for the first). `samples_mdat_offset` starts at 0 for each moof and is advanced by the sample bytes of each `trun`.
 **R41** `traf = box("traf", tfhd tfdt trun)`.
 **R42** `tfhd = fullbox("tfhd", 0, flags, be32(track_id) be64(moof_start) [be32(def_dur)] [be32(def_size)] be32(def_flags))`. flags = `0x01` (base-data-offset) | `0x20` (default flags) | `0x08` if `durations_match` | `0x10` if `sizes_match`. Selection:
+
 ```
 if t.sample_size != 0:   duration = 1; size = t.sample_size; both match = true
 else:  duration = fs[0].duration; size = fs[0].size; durations_match = sizes_match = true
@@ -356,6 +368,7 @@ else:  duration = fs[0].duration; size = fs[0].size; durations_match = sizes_mat
 if durations_match and VIDEO: duration = (u32)mul_div(duration, timescale, timebase_den)
 def_flags = VIDEO ? 0x01010000 : 0x02000000
 ```
+
 `base_data_offset = moof_start` (absolute position of the moof box).
 **R43** `tfdt = fullbox("tfdt", 1, 0, be64(base))` (size 20), `base = t.duration - sum(fragment_samples[*].duration)` (for VIDEO converted by `mul_div(base, timescale, timebase_den)`; the sum uses the original durations, even for PCM).
 **R44** `trun = fullbox("trun", v, flags, be32(count) be32(data_offset) [be32(0x02000000) if VIDEO] per-sample...)`; `v = 1` iff NEGATIVE_CTS else 0. flags: `0x001` always; `0x200` if `t.sample_size == 0`; VIDEO adds `0x004` (first_sample_flags) and `0x800` (composition offsets). `data_offset = moof_size + 8 + samples_mdat_offset` (u32), where `moof_size` is the total size of the moof and `8` is the mdat header (a 16-byte mdat header, only above 4 GiB, makes this wrong: Q-13). `count = len(fragment_samples)`; for fixed-size tracks `count = total_bytes / sample_size` and `samples_mdat_offset += total_bytes` and **no per-sample entries** follow. Otherwise per sample: `be32(size)` then for VIDEO `be32((u32)(offset * timescale / timebase_den))` (computed as signed 64-bit: `(i64)offset * timescale / timebase_den`, truncating toward zero; identity for video). No sample durations are ever written to a `trun` (Q-1).
@@ -367,19 +380,21 @@ def_flags = VIDEO ? 0x01010000 : 0x02000000
 **R50** The initial `moov` (written at the first flush, before any packet is processed) = `box("moov", mvhd trak* mvex udta)` with `fragmented = true`: every A/V track gets a `trak` (also those without packets); stts/stsc/stco have `entry_count 0` (16 bytes each), stsz = `fullbox("stsz",0,0,be32(0) be32(0))` (20 bytes), no stss/ctts/sgpd/sbgp; `duration` fields are 0 because `t.duration == 0`. The chapter track is NOT written even if it exists, but the `tref` is (R93). The elst delay comes from the queue (R52).
 **R51** `mvhd.duration` (ms) = `mul_div(t.duration, 1000, t.timebase_den)` of the FIRST video track (track order), 0 if there is no video track (Q-2). `next_track_ID = track_counter + 1` (counts the chapter track if it exists). `version = 1` iff `duration > 0xFFFFFFFF` or `creation_time > 0xFFFFFFFF`. `tkhd.duration = mul_div(t.duration, 1000, t.timebase_den)` per track, same version rule. `mdhd.duration`: VIDEO `mul_div(t.duration, timescale, timebase_den)`, other `t.duration`; version 1 iff that exceeds 0xFFFFFFFF or `creation_time > 0xFFFFFFFF` (MOV additionally warns `Duration too large for MOV, this file may be unplayable in QuickTime!`). All other timestamps in v1 are be64.
 **R52** Edit list (every trak): `entry_count 1`; `segment_duration = (u32) mul_div(t.duration, 1000, t.timebase_den)` ms; `media_time` per type:
+
 - VIDEO and not NEGATIVE_CTS: `dts_offset` = offset of the FIRST ctts run if `t.offsets` is non-empty (that is `p0.pts - p0.dts` of the first processed sample), else if the queue is non-empty `queue[0].pts - queue[0].dts`, else 0; `media_time = (u32) mul_div(dts_offset, timescale, timebase_den)` (negative offsets wrap through the unsigned cast); `media_rate = 0x00010000`.
 - AUDIO with `first_pts < 0`: `delay = mul_div(|first_pts|, timescale, timebase_den)`; `media_time = delay`; `segment_duration = (u32)(mul_div(t.duration,1000,t.timebase_den) - mul_div(delay, 1000, timescale))` (u64 subtraction then cast).
 - everything else (incl. VIDEO with NEGATIVE_CTS, chapters): `media_time = 0`.
-`first_pts` is the pts of the first processed sample of the track, so it is 0 in the initial moov (Q-6).
-**R53** `stts`: one entry per delta run `{count, (u32) mul_div(delta, timescale, timebase_den)}`; `fragmented` form is entry_count 0.
-**R54** `stss` (final moov, VIDEO and not ProRes only): omitted if there are no sync samples; else `entry_count` + the sample numbers (u32). `ctts` (final only): if `needs_ctts`: version 1 iff NEGATIVE_CTS else 0, `entry_count = len(offsets)`, entries `{count, (u32)((i64)offset * timescale / timebase_den)}`.
-**R55** `stsc` (final): runs over chunks: a new entry `{first_chunk = idx + 1, samples_per_chunk, description 1}` whenever a chunk's `samples` differs from the previous chunk's (the first chunk always starts an entry).
-**R56** `stsz` (final): fixed size: `be32(sample_size) be32((u32)samples)`, no table; else `be32(0) be32(len(sample_sizes))` and the table. A warning `Track <id> has too many samples, its duration may not be read correctly. Remuxing the file to another format such as MKV may be required.` is logged first when `samples > 0xFFFFFFFF` (not testable).
-**R57** `stco`/`co64` (final): `co64` (8-byte offsets) iff the LAST chunk's offset exceeds `0xFFFFFFFF`, else `stco`; `entry_count = len(chunks)`. (A track without chunks never reaches here: R58.)
-**R58** The final moov contains a `trak` only for tracks that have at least one chunk (so a track whose samples were never written is absent, and a file without samples has just `mvhd`+`udta`). Tracks keep their original `track_id`s. Chapter track last, after all A/V tracks, also only if it has chunks.
-**R59** `sgpd`+`sbgp` (final only): AAC: `fullbox("sgpd",1,0, "roll" be32(2) be32(1) be16(0xFFFF))` (26 bytes) then `fullbox("sbgp",0,0, "roll" be32(1) be32((u32)samples) be32(1))` (28 bytes). Opus: `sgpd` as AAC but `roll_distance = -preroll_count`, then `sbgp` with two entries `{preroll_count, 0}`, `{(u32)samples - preroll_count, 1}` (size 36); `preroll_count` = number of leading samples needed until the sum of their deltas reaches 3840 (walk the delta runs sample by sample: `remaining = 3840; for each run, for j in 0..count: if remaining <= 0 stop; remaining -= run.delta; n += 1`), stored in a u16, so a track with fewer samples than needed gives `preroll_count = samples`.
-**R60** The final moov: `box("moov", mvhd trak* [chapter trak] udta)` with `fragmented = false`; no `mvex`. It is appended at `data_end`. Then (R61) the head of the file is rewritten.
-**R61** `finalise`:
+  `first_pts` is the pts of the first processed sample of the track, so it is 0 in the initial moov (Q-6).
+  **R53** `stts`: one entry per delta run `{count, (u32) mul_div(delta, timescale, timebase_den)}`; `fragmented` form is entry_count 0.
+  **R54** `stss` (final moov, VIDEO and not ProRes only): omitted if there are no sync samples; else `entry_count` + the sample numbers (u32). `ctts` (final only): if `needs_ctts`: version 1 iff NEGATIVE_CTS else 0, `entry_count = len(offsets)`, entries `{count, (u32)((i64)offset * timescale / timebase_den)}`.
+  **R55** `stsc` (final): runs over chunks: a new entry `{first_chunk = idx + 1, samples_per_chunk, description 1}` whenever a chunk's `samples` differs from the previous chunk's (the first chunk always starts an entry).
+  **R56** `stsz` (final): fixed size: `be32(sample_size) be32((u32)samples)`, no table; else `be32(0) be32(len(sample_sizes))` and the table. A warning `Track <id> has too many samples, its duration may not be read correctly. Remuxing the file to another format such as MKV may be required.` is logged first when `samples > 0xFFFFFFFF` (not testable).
+  **R57** `stco`/`co64` (final): `co64` (8-byte offsets) iff the LAST chunk's offset exceeds `0xFFFFFFFF`, else `stco`; `entry_count = len(chunks)`. (A track without chunks never reaches here: R58.)
+  **R58** The final moov contains a `trak` only for tracks that have at least one chunk (so a track whose samples were never written is absent, and a file without samples has just `mvhd`+`udta`). Tracks keep their original `track_id`s. Chapter track last, after all A/V tracks, also only if it has chunks.
+  **R59** `sgpd`+`sbgp` (final only): AAC: `fullbox("sgpd",1,0, "roll" be32(2) be32(1) be16(0xFFFF))` (26 bytes) then `fullbox("sbgp",0,0, "roll" be32(1) be32((u32)samples) be32(1))` (28 bytes). Opus: `sgpd` as AAC but `roll_distance = -preroll_count`, then `sbgp` with two entries `{preroll_count, 0}`, `{(u32)samples - preroll_count, 1}` (size 36); `preroll_count` = number of leading samples needed until the sum of their deltas reaches 3840 (walk the delta runs sample by sample: `remaining = 3840; for each run, for j in 0..count: if remaining <= 0 stop; remaining -= run.delta; n += 1`), stored in a u16, so a track with fewer samples than needed gives `preroll_count = samples`.
+  **R60** The final moov: `box("moov", mvhd trak* [chapter trak] udta)` with `fragmented = false`; no `mvex`. It is appended at `data_end`. Then (R61) the head of the file is rewritten.
+  **R61** `finalise`:
+
 ```
 next_frag_pts = 0; flush();                     -- the final fragment (may contain no samples at all)
 log info "Flushing final fragment..." (before) / "Number of fragments: <n>" (after the flush)
@@ -390,20 +405,23 @@ seek 0; write ftyp(fragmented=false)
 data_size = data_end - placeholder_offset; seek placeholder_offset
 write mdat header (8 bytes, or 16 if data_size > 0xFFFFFFFF); log info "Final mdat size: <data_size/1024> KiB"; return true
 ```
+
 (`Flushing final fragment...` is logged before the flush.) After `finalise` the serializer position is `placeholder_offset + 8` (or `+16`).
 
 ### 5.7 Codec-specific boxes
 
 **R70** `stsd` version `V`: MP4 flavor and AUDIO track: `1` iff `audio_output_get_channels(audio) > 2`, else 0; everything else (video, chapters, all MOV) 0. The same `V` is the `entry_version` of audio sample entries in MP4.
-**R71** Entry selection (MP4): VIDEO by codec (H264 avc1, HEVC hvc1, AV1 av01, PRORES tag); AUDIO AAC mp4a, OPUS Opus, FLAC fLaC, ALAC alac, PCM ipcm/fpcm; chapter: `text` (4.2). Unknown codec: no entry. MOV audio: R79; MOV video is identical to MP4 except for the visual sample entry fields (4.2). 
+**R71** Entry selection (MP4): VIDEO by codec (H264 avc1, HEVC hvc1, AV1 av01, PRORES tag); AUDIO AAC mp4a, OPUS Opus, FLAC fLaC, ALAC alac, PCM ipcm/fpcm; chapter: `text` (4.2). Unknown codec: no entry. MOV audio: R79; MOV video is identical to MP4 except for the visual sample entry fields (4.2).
 **R72** ProRes entry type: `tag = (u32) obs_data_get_int(settings, "codec_type")` (0 if settings NULL or key absent); the four type bytes are the big-endian bytes of `tag` (e.g. `0x61707368` -> `apch`).
 **R73** `esds = fullbox("esds", 0, 0, ES_Descriptor)`; `descr(tag, n) = u8(tag) u8((n>>21)|0x80) u8((n>>14)|0x80) u8((n>>7)|0x80) u8(n & 0x7F)` (always four length bytes; the shifts are `(n >> 7*i) | 0x80` truncated to u8). With `E` = extra data length (0 if absent), `D = E ? E + 5 : 0`:
+
 ```
 descr(0x03, 3 + 5 + 13 + D + 5 + 1)  be16(track_id) u8(0)
 descr(0x04, 13 + D)  u8(0x40) u8(0x15) u24(0) be32(bitrate) be32(bitrate)
 if E: descr(0x05, E) extra
 descr(0x06, 1) u8(0x02)
 ```
+
 `bitrate = (u32)(settings["bitrate"] * 1000)` (int64 arithmetic then cast), 0 if no settings or key is 0/absent.
 **R74** `dOps` (Opus): if the encoder has no extra data the `dOps` box is entirely absent. Given OpusHead `x` (`"OpusHead"` at offset 0, version byte at 8): `u8(0)`, `channels = x[9]`, `be16(le16(x[10..12]))` pre-skip, `be32(le32(x[12..16]))` rate, `be16(le16(x[16..18]))` gain, `map = x[18]`; if `map != 0` append `x[19 .. 19 + 2 + channels]`. Extra data shorter than 19 bytes (or `map != 0` and shorter than `21 + channels`) is read out of bounds (D-4); a conforming implementation SHOULD treat missing bytes as 0 and not fail.
 **R75** `dfLa`: absent if no extra data; else `fullbox("dfLa",0,0, u8(0x80) u24(len(extra)) extra)`.
@@ -460,32 +478,32 @@ None: one thread owns the muxer. Packet data blocks use an atomic reference coun
 
 ## 8. Reference defects and quirks
 
-| ID | Kind | Reference behaviour | Required | Script |
-|---|---|---|---|---|
-| Q-1 | QUIRK | `tfhd`: the "all durations/sizes equal" loop keeps only the last comparison, and `trun` never carries durations; fragments with varying durations get a wrong default duration (or none) | match (SHOULD); the final moov is unaffected | `27` |
-| Q-2 | QUIRK | `mvhd.duration` is taken from the first video track; audio-only files have `mvhd.duration = 0` while `tkhd/mdhd` carry real durations | match | `07`, `22` |
-| Q-3 | QUIRK | `mdhd` version 1: the 64-bit duration is written from a `(u32)` cast | match | `24` |
-| Q-4 | QUIRK | Packet `timebase_num` is ignored everywhere; microseconds are `pts * 1e6 / timebase_den` | match | `21` |
-| Q-5 | QUIRK | A lone last packet in the final fragment is dropped (no duration source); empty/1-packet tracks are omitted from the final moov, a file without samples has no `trak` | match | `22`, `29` |
-| Q-6 | QUIRK | The initial moov's audio edit list never has the priming delay; its video edit list uses the first QUEUED packet | match | `07`, `05` |
-| Q-7 | QUIRK | `MP4_USE_NEGATIVE_CTS` ftyp: `iso6` fragmented -> `iso4` final | match | `02`, `06` |
-| Q-8 | QUIRK | Unsorted chapters give u32 wrap-around durations | match | `19` |
-| Q-9 | QUIRK | `tref/chap` points at a track that does not exist in the initial moov; `next_track_ID`/trex mismatch | match | `19` |
-| Q-10 | QUIRK | AAC esds bitrate `(u32)(kbps*1000)` wraps; no settings -> 0 | match | `12` |
-| Q-11 | QUIRK | Track `udta` is written even when empty (8 bytes); `name` used where `id` is meant for `(c)enc` | match | `18`, `19` |
-| Q-12 | QUIRK | PCM + `unknown` speakers => fixed sample size 0 => treated as a variable-size track (MP4 flavor; in MOV this becomes D-3) | match | `30` |
-| Q-13 | QUIRK | `trun.data_offset` uses an 8-byte mdat header even when the mdat header is 16 bytes (fragment > 4 GiB); co64/large mdat paths | not testable | |
-| Q-14 | QUIRK | `FLAVOR_CMAF` is not special-cased: it behaves exactly like MP4 | match | `30` |
-| Q-15 | QUIRK | Keyframe flag: parsers only raise it; the first video packet with `pts <= 0` never sets the split point | match | `04`, `23` |
-| D-1 | DEFECT | `MP4_WRITE_ENCODER_INFO` with encoder name set and id NULL: `strlen(NULL)` crash | write `box("\xA9enc", "")` (empty) and continue | `25` |
-| D-2 | DEFECT | NULL codec string: `strcmp(NULL)` crash at create | treat as UNKNOWN | `25` |
-| D-3 | DEFECT | MOV v2 audio entry with 0 channels and PCM: division by zero | write `0` for the two derived fields | `25` |
-| D-4 | DEFECT | `dOps` reads OpusHead fields beyond short extra data (heap over-read) | treat missing bytes as 0, no crash | `25` |
-| D-5 | DEFECT | audio encoder without audio output: `audio_output_get_channels(NULL)` crash | fail `create`/treat channels as 0 | `25` |
-| D-6 | DEFECT | video encoder without video output: NULL `video_output_get_info` dereference in track creation | fail `create` cleanly | `25` |
-| D-7 | DEFECT | video track with an UNKNOWN codec: the stored packet is uninitialised stack memory | return `false` from submit (nothing stored) | not vectored (non-deterministic) |
-| D-8 | DEFECT | AV1 packets: the bit reader reads 1-2 bytes past the packet end for a truncated OBU header (the result is then rejected), and a frame/frame-header OBU with `size 0` reads the byte after the OBU to decide keyframe/priority (garbage if it is the last OBU). Not detectable with ASan in the harness because `bmalloc` over-allocates | truncated header: parse failure (R80); `size 0`: no keyframe/priority change | `25` (only checks that the call returns) |
-| D-9 | DEFECT (UB) | `rl32` shifts a promoted `int` into the sign bit (`ptr[3] << 24` for `ptr[3] >= 0x80`) | compute in u32 | |
+| ID   | Kind        | Reference behaviour                                                                                                                                                                                                                                                                                                                     | Required                                                                     | Script                                   |
+| ---- | ----------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------- | ---------------------------------------- |
+| Q-1  | QUIRK       | `tfhd`: the "all durations/sizes equal" loop keeps only the last comparison, and `trun` never carries durations; fragments with varying durations get a wrong default duration (or none)                                                                                                                                                | match (SHOULD); the final moov is unaffected                                 | `27`                                     |
+| Q-2  | QUIRK       | `mvhd.duration` is taken from the first video track; audio-only files have `mvhd.duration = 0` while `tkhd/mdhd` carry real durations                                                                                                                                                                                                   | match                                                                        | `07`, `22`                               |
+| Q-3  | QUIRK       | `mdhd` version 1: the 64-bit duration is written from a `(u32)` cast                                                                                                                                                                                                                                                                    | match                                                                        | `24`                                     |
+| Q-4  | QUIRK       | Packet `timebase_num` is ignored everywhere; microseconds are `pts * 1e6 / timebase_den`                                                                                                                                                                                                                                                | match                                                                        | `21`                                     |
+| Q-5  | QUIRK       | A lone last packet in the final fragment is dropped (no duration source); empty/1-packet tracks are omitted from the final moov, a file without samples has no `trak`                                                                                                                                                                   | match                                                                        | `22`, `29`                               |
+| Q-6  | QUIRK       | The initial moov's audio edit list never has the priming delay; its video edit list uses the first QUEUED packet                                                                                                                                                                                                                        | match                                                                        | `07`, `05`                               |
+| Q-7  | QUIRK       | `MP4_USE_NEGATIVE_CTS` ftyp: `iso6` fragmented -> `iso4` final                                                                                                                                                                                                                                                                          | match                                                                        | `02`, `06`                               |
+| Q-8  | QUIRK       | Unsorted chapters give u32 wrap-around durations                                                                                                                                                                                                                                                                                        | match                                                                        | `19`                                     |
+| Q-9  | QUIRK       | `tref/chap` points at a track that does not exist in the initial moov; `next_track_ID`/trex mismatch                                                                                                                                                                                                                                    | match                                                                        | `19`                                     |
+| Q-10 | QUIRK       | AAC esds bitrate `(u32)(kbps*1000)` wraps; no settings -> 0                                                                                                                                                                                                                                                                             | match                                                                        | `12`                                     |
+| Q-11 | QUIRK       | Track `udta` is written even when empty (8 bytes); `name` used where `id` is meant for `(c)enc`                                                                                                                                                                                                                                         | match                                                                        | `18`, `19`                               |
+| Q-12 | QUIRK       | PCM + `unknown` speakers => fixed sample size 0 => treated as a variable-size track (MP4 flavor; in MOV this becomes D-3)                                                                                                                                                                                                               | match                                                                        | `30`                                     |
+| Q-13 | QUIRK       | `trun.data_offset` uses an 8-byte mdat header even when the mdat header is 16 bytes (fragment > 4 GiB); co64/large mdat paths                                                                                                                                                                                                           | not testable                                                                 |                                          |
+| Q-14 | QUIRK       | `FLAVOR_CMAF` is not special-cased: it behaves exactly like MP4                                                                                                                                                                                                                                                                         | match                                                                        | `30`                                     |
+| Q-15 | QUIRK       | Keyframe flag: parsers only raise it; the first video packet with `pts <= 0` never sets the split point                                                                                                                                                                                                                                 | match                                                                        | `04`, `23`                               |
+| D-1  | DEFECT      | `MP4_WRITE_ENCODER_INFO` with encoder name set and id NULL: `strlen(NULL)` crash                                                                                                                                                                                                                                                        | write `box("\xA9enc", "")` (empty) and continue                              | `25`                                     |
+| D-2  | DEFECT      | NULL codec string: `strcmp(NULL)` crash at create                                                                                                                                                                                                                                                                                       | treat as UNKNOWN                                                             | `25`                                     |
+| D-3  | DEFECT      | MOV v2 audio entry with 0 channels and PCM: division by zero                                                                                                                                                                                                                                                                            | write `0` for the two derived fields                                         | `25`                                     |
+| D-4  | DEFECT      | `dOps` reads OpusHead fields beyond short extra data (heap over-read)                                                                                                                                                                                                                                                                   | treat missing bytes as 0, no crash                                           | `25`                                     |
+| D-5  | DEFECT      | audio encoder without audio output: `audio_output_get_channels(NULL)` crash                                                                                                                                                                                                                                                             | fail `create`/treat channels as 0                                            | `25`                                     |
+| D-6  | DEFECT      | video encoder without video output: NULL `video_output_get_info` dereference in track creation                                                                                                                                                                                                                                          | fail `create` cleanly                                                        | `25`                                     |
+| D-7  | DEFECT      | video track with an UNKNOWN codec: the stored packet is uninitialised stack memory                                                                                                                                                                                                                                                      | return `false` from submit (nothing stored)                                  | not vectored (non-deterministic)         |
+| D-8  | DEFECT      | AV1 packets: the bit reader reads 1-2 bytes past the packet end for a truncated OBU header (the result is then rejected), and a frame/frame-header OBU with `size 0` reads the byte after the OBU to decide keyframe/priority (garbage if it is the last OBU). Not detectable with ASan in the harness because `bmalloc` over-allocates | truncated header: parse failure (R80); `size 0`: no keyframe/priority change | `25` (only checks that the call returns) |
+| D-9  | DEFECT (UB) | `rl32` shifts a promoted `int` into the sign bit (`ptr[3] << 24` for `ptr[3] >= 0x80`)                                                                                                                                                                                                                                                  | compute in u32                                                               |                                          |
 
 ## 9. Implementation notes (non-normative)
 
@@ -500,63 +518,63 @@ None: one thread owns the muxer. Packet data blocks use an atomic reference coun
 
 Scripts are `test/conformance/scripts/mp4/NN-*.script`; below only the number is given.
 
-| Rule | Scripts |
-|---|---|
-| R01, R110 | `26` |
-| R10 | `01`, `09`, `10`, `11`, `13`, `14`, `15`, `23` (unknown audio codec) |
-| R11 | `20` |
-| R12 | `21`, `13` (Opus 48000), `01` |
-| R13 | `15`, `30` |
-| R14 | `24` |
-| R15 | `01`, `22` |
-| R16 | `20`, `26` |
-| R17 | `03`, `04`, `29` |
-| R18 | `09`, `10`, `23` |
-| R19 | `03`, `04`, `23` |
-| R20, R21 | `02`, `06`, `28` |
-| R30 | `03`, `05`, `22`, `29` |
-| R31, R32, R33 | `03`, `27`, `29`, `30` |
-| R34 | `01`, `03`, `15`, `30` |
-| R35 | `21` |
-| R40, R41, R43 | `03`, `30` |
-| R42 | `03`, `15`, `27`, `30` |
-| R44 | `03`, `06`, `15`, `30` |
-| R45 | `03`, `19` |
-| R46 | `02`, `20` |
-| R50 | `01`, `05`, `07`, `19` |
-| R51 | `01`, `07`, `22`, `24` |
-| R52 | `05`, `06`, `07` |
-| R53, R54 | `01`, `05`, `06`, `11` |
-| R55, R56, R57 | `03`, `15`, `30` (co64 and the stsz overflow warning are not covered) |
-| R58 | `22`, `29` |
-| R59 | `01`, `13` |
-| R60, R61 | `01`, `02`, `22`, `24` |
-| R70 | `01`, `16` |
-| R71 | `08`..`17`, `23` |
-| R72 | `11` |
-| R73 | `12`, `17` |
-| R74 | `13`, `25` |
-| R75 | `14` |
-| R76, R77 | `15`, `16` |
-| R78 | `15`, `17`, `30` |
-| R79 | `17` |
-| R80, R81, R82 | `10`, `25` |
-| R90, R91, R92, R93, R94 | `19` |
-| R100, R101, R102 | `18`, `25` |
-| R111 | every script (log lines) |
-| Q-1 | `27` |
-| Q-2 | `07`, `22` |
-| Q-3, Q-13 | `24` (Q-3); Q-13 not testable |
-| Q-4 | `21` |
-| Q-5 | `22`, `29` |
-| Q-6 | `05`, `07` |
-| Q-7 | `02`, `06` |
-| Q-8, Q-9, Q-11 | `19` (Q-11 also `18`) |
-| Q-10 | `12` |
-| Q-12, Q-14 | `30` |
-| Q-15 | `04`, `23` |
-| D-1..D-6, D-8 | `25` (fork per case) |
-| D-7, D-9 | not vectored (non-deterministic / compile-time UB) |
+| Rule                    | Scripts                                                               |
+| ----------------------- | --------------------------------------------------------------------- |
+| R01, R110               | `26`                                                                  |
+| R10                     | `01`, `09`, `10`, `11`, `13`, `14`, `15`, `23` (unknown audio codec)  |
+| R11                     | `20`                                                                  |
+| R12                     | `21`, `13` (Opus 48000), `01`                                         |
+| R13                     | `15`, `30`                                                            |
+| R14                     | `24`                                                                  |
+| R15                     | `01`, `22`                                                            |
+| R16                     | `20`, `26`                                                            |
+| R17                     | `03`, `04`, `29`                                                      |
+| R18                     | `09`, `10`, `23`                                                      |
+| R19                     | `03`, `04`, `23`                                                      |
+| R20, R21                | `02`, `06`, `28`                                                      |
+| R30                     | `03`, `05`, `22`, `29`                                                |
+| R31, R32, R33           | `03`, `27`, `29`, `30`                                                |
+| R34                     | `01`, `03`, `15`, `30`                                                |
+| R35                     | `21`                                                                  |
+| R40, R41, R43           | `03`, `30`                                                            |
+| R42                     | `03`, `15`, `27`, `30`                                                |
+| R44                     | `03`, `06`, `15`, `30`                                                |
+| R45                     | `03`, `19`                                                            |
+| R46                     | `02`, `20`                                                            |
+| R50                     | `01`, `05`, `07`, `19`                                                |
+| R51                     | `01`, `07`, `22`, `24`                                                |
+| R52                     | `05`, `06`, `07`                                                      |
+| R53, R54                | `01`, `05`, `06`, `11`                                                |
+| R55, R56, R57           | `03`, `15`, `30` (co64 and the stsz overflow warning are not covered) |
+| R58                     | `22`, `29`                                                            |
+| R59                     | `01`, `13`                                                            |
+| R60, R61                | `01`, `02`, `22`, `24`                                                |
+| R70                     | `01`, `16`                                                            |
+| R71                     | `08`..`17`, `23`                                                      |
+| R72                     | `11`                                                                  |
+| R73                     | `12`, `17`                                                            |
+| R74                     | `13`, `25`                                                            |
+| R75                     | `14`                                                                  |
+| R76, R77                | `15`, `16`                                                            |
+| R78                     | `15`, `17`, `30`                                                      |
+| R79                     | `17`                                                                  |
+| R80, R81, R82           | `10`, `25`                                                            |
+| R90, R91, R92, R93, R94 | `19`                                                                  |
+| R100, R101, R102        | `18`, `25`                                                            |
+| R111                    | every script (log lines)                                              |
+| Q-1                     | `27`                                                                  |
+| Q-2                     | `07`, `22`                                                            |
+| Q-3, Q-13               | `24` (Q-3); Q-13 not testable                                         |
+| Q-4                     | `21`                                                                  |
+| Q-5                     | `22`, `29`                                                            |
+| Q-6                     | `05`, `07`                                                            |
+| Q-7                     | `02`, `06`                                                            |
+| Q-8, Q-9, Q-11          | `19` (Q-11 also `18`)                                                 |
+| Q-10                    | `12`                                                                  |
+| Q-12, Q-14              | `30`                                                                  |
+| Q-15                    | `04`, `23`                                                            |
+| D-1..D-6, D-8           | `25` (fork per case)                                                  |
+| D-7, D-9                | not vectored (non-deterministic / compile-time UB)                    |
 
 ## 11. Open questions
 

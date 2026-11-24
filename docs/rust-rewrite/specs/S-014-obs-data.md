@@ -1,12 +1,12 @@
 # S-014 `obs-data` (settings objects and their JSON form)
 
-| | |
-|---|---|
-| Status | Ready for review |
-| Reference | libobs 33.0.1 `obs-data.c`, `obs-data.h`; JSON text is produced and parsed by jansson 2.15.1 (behaviour of jansson that matters is specified in §6, because a Rust port cannot link it); file helpers `os_quick_read_utf8_file`, `os_quick_write_utf8_file(_safe)`, `os_rename`, `os_file_exists` |
-| Target crate | `crates/obs-data` |
-| Depends on | S-001 (allocation), S-006 (`dstr`, only for path building), S-008 (`vec2/3/4`, `quat` field layout), platform file helpers (§3.4) |
-| Conformance | `test/conformance/scripts/obsdata/` (20 scripts), runner language in `test/conformance/README.md` ("obsdata runner") |
+|              |                                                                                                                                                                                                                                                                                                   |
+| ------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Status       | Ready for review                                                                                                                                                                                                                                                                                  |
+| Reference    | libobs 33.0.1 `obs-data.c`, `obs-data.h`; JSON text is produced and parsed by jansson 2.15.1 (behaviour of jansson that matters is specified in §6, because a Rust port cannot link it); file helpers `os_quick_read_utf8_file`, `os_quick_write_utf8_file(_safe)`, `os_rename`, `os_file_exists` |
+| Target crate | `crates/obs-data`                                                                                                                                                                                                                                                                                 |
+| Depends on   | S-001 (allocation), S-006 (`dstr`, only for path building), S-008 (`vec2/3/4`, `quat` field layout), platform file helpers (§3.4)                                                                                                                                                                 |
+| Conformance  | `test/conformance/scripts/obsdata/` (20 scripts), runner language in `test/conformance/README.md` ("obsdata runner")                                                                                                                                                                              |
 
 ## 1. Scope
 
@@ -37,6 +37,7 @@ enum obs_data_type        { OBS_DATA_NULL=0, OBS_DATA_STRING=1, OBS_DATA_NUMBER=
 enum obs_data_number_type { OBS_DATA_NUM_INVALID=0, OBS_DATA_NUM_INT=1, OBS_DATA_NUM_DOUBLE=2 };
 struct media_frames_per_second { uint32_t numerator, denominator; };   /* both non-zero = valid */
 ```
+
 `obs_data_t`, `obs_data_item_t`, `obs_data_array_t` are opaque, reference counted (§5.1).
 
 ### 3.2 Functions
@@ -53,8 +54,8 @@ All names below are exported with C linkage and the signatures of `obs-data.h`; 
 - Whole-object: `obs_data_apply(target, src)`, `obs_data_erase(D, name)`, `obs_data_clear(D)`,
   `obs_data_get_defaults(D)`.
 - Per-name setters for each layer L in {user (no infix), `default_`, `autoselect_`} and each kind K in
-  {`string` (const char*), `int` (long long), `double`, `bool`, `obj` (obs_data_t*), `array`
-  (obs_data_array_t*)}: `obs_data_set_[L_]K(D, name, value)`; getters `obs_data_get_[L_]K(D, name)`.
+  {`string` (const char\*), `int` (long long), `double`, `bool`, `obj` (obs_data_t\*), `array`
+  (obs_data_array_t\*)}: `obs_data_set_[L_]K(D, name, value)`; getters `obs_data_get_[L_]K(D, name)`.
   Also `has_user_value`, `has_default_value`, `has_autoselect_value`, `unset_user_value`,
   `unset_default_value`, `unset_autoselect_value` (all `(D, name)`).
 - Vec helpers `obs_data_set_[L_]{vec2,vec3,vec4,quat}(D, name, const struct *)` and
@@ -303,6 +304,7 @@ unset user / clear:   ds = 0; dl = 0          (clear: only when dl > 0 — same 
 unset default:        fs = 0; fl = 0
 unset autoselect:     as = 0
 ```
+
 `cap` never decreases; the item's name length does not matter. A `set` that changes nothing in
 size (e.g. int over int with no other layer) never moves the item; replacing a string by a longer one,
 adding a default to an item with a user value (the user region becomes aligned to 32) or the reverse
@@ -328,6 +330,7 @@ write_obj(D, pretty, defaults): for each item in list order:
     **omit the member entirely** (no error) if:
           the key is not valid UTF-8, or a string value is not valid UTF-8, or the real is NaN or ±infinity
 ```
+
 Valid UTF-8 means well-formed per RFC 3629: no overlongs (`C0`,`C1`, `E0 80..9F`, `F0 80..8F`), no surrogates
 (`ED A0..BF`), nothing above U+10FFFF (`F4 90..` and `F5..`).
 
@@ -345,6 +348,7 @@ is written raw as UTF-8.
 **Reals** (always distinguishable from integers): let `digits` be the shortest decimal digit string `d1…dn`
 that round-trips the double (as produced by shortest-round-trip printing, e.g. Rust `{:e}`), `x` its decimal exponent
 (`value = d1.d2…dn × 10^x`).
+
 - `0` → `0.0`, `-0` → `-0.0`.
 - If `-4 ≤ x < 16`, positional: for `x ≥ 0` the integer part is the first `x+1` digits (padded with zeros), then `.`, then the remaining
   digits or `0` if none; for `x < 0` it is `0.` followed by `-x-1` zeros and all digits. (`100.0`, `1000000000000000.0`, `0.0001`, `0.30000000000000004`, `1234567.125`.)
@@ -358,32 +362,32 @@ Input: C string `s`. If `s` is NULL: failure (error logged). The text is parsed 
 jansson's, which are RFC 8259 with the following specifics):
 
 1. Whitespace = space, `\t`, `\n`, `\r` only. A UTF-8 BOM is **not** skipped (it is an error), neither are comments.
-2. The top-level value must be an **object or an array** (`5`, `"x"`, `true`, `null`, empty text: error). Any non-whitespace after the value is an error.
-3. Object keys must be strings; **duplicate keys within one object are an error** (byte-wise comparison, at any depth,
+1. The top-level value must be an **object or an array** (`5`, `"x"`, `true`, `null`, empty text: error). Any non-whitespace after the value is an error.
+1. Object keys must be strings; **duplicate keys within one object are an error** (byte-wise comparison, at any depth,
    also inside arrays and inside arrays that will later be ignored).
-4. Numbers: `-? (0 | [1-9][0-9]*) (\. [0-9]+)? ([eE] [+-]? [0-9]+)?` — a number with `.`, `e` or `E` is a *real*, otherwise an
+1. Numbers: `-? (0 | [1-9][0-9]*) (\. [0-9]+)? ([eE] [+-]? [0-9]+)?` — a number with `.`, `e` or `E` is a *real*, otherwise an
    *integer*. A leading `+`, `.5`, `1.`, `01`, `-`, `1e`, hex, `NaN`, `Infinity` are errors. An integer that does not fit `i64`
    (`9223372036854775808`, `-9223372036854775809`) is an **error** (not converted to real). A real whose value overflows
    (`1e400`) is an error; underflow (`1e-400`) yields `0.0` (sign kept: `-1e-400` → `-0.0`). Reals are converted with correct rounding. `-0` is the integer 0; `-0.0` the real −0.
-5. Literals `true`, `false`, `null` exactly lower-case, delimited like any token (`nul`, `True`, `truex` are errors).
-6. Strings: control characters `< 0x20` (including raw newline and tab) are errors; escapes `\" \\ \/ \b \f \n \r \t \uXXXX` (hex any case);
+1. Literals `true`, `false`, `null` exactly lower-case, delimited like any token (`nul`, `True`, `truex` are errors).
+1. Strings: control characters `< 0x20` (including raw newline and tab) are errors; escapes `\" \\ \/ \b \f \n \r \t \uXXXX` (hex any case);
    any other escape is an error; `\u0000` is an **error** (also in keys); `\u` surrogates must come as a valid high+low pair, a lone or
    misordered surrogate is an error; the raw bytes must be well-formed UTF-8 (same rules as §6.2) else error.
-7. Nesting: containers may be nested to depth **2047**; 2048 or more levels are an error (the innermost scalar of a 2048-deep
+1. Nesting: containers may be nested to depth **2047**; 2048 or more levels are an error (the innermost scalar of a 2048-deep
    chain counts: `[[…[1]…]]` with 2048 pairs fails, with 2047 succeeds).
 
 On failure the function logs **one LOG_ERROR line** (message text informational) and returns NULL. On success the root's members, in
 document order, are converted (`add_item`) into the new object:
 
-| JSON | stored as user value |
-|---|---|
-| object | `set_obj` of a new object built recursively from its members |
-| array | `set_array` of a new array: for each element that **is an object**, a new object (members converted as above) appended; **all other elements (numbers, strings, bool, null, arrays) are silently dropped** (QUIRK Q3) |
-| string | `set_string` |
-| integer | `set_int` |
-| real | `set_double` |
-| `true`/`false` | `set_bool` |
-| `null` | `set_obj(NULL)` — an object item with a present NULL value |
+| JSON           | stored as user value                                                                                                                                                                                                  |
+| -------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| object         | `set_obj` of a new object built recursively from its members                                                                                                                                                          |
+| array          | `set_array` of a new array: for each element that **is an object**, a new object (members converted as above) appended; **all other elements (numbers, strings, bool, null, arrays) are silently dropped** (QUIRK Q3) |
+| string         | `set_string`                                                                                                                                                                                                          |
+| integer        | `set_int`                                                                                                                                                                                                             |
+| real           | `set_double`                                                                                                                                                                                                          |
+| `true`/`false` | `set_bool`                                                                                                                                                                                                            |
+| `null`         | `set_obj(NULL)` — an object item with a present NULL value                                                                                                                                                            |
 
 If the root is an **array** the result is a valid **empty** object (QUIRK Q2). Conversion uses the ordinary setters, so §6.1 applies
 (no member is ever replaced because duplicates are rejected, hence the order equals document order).
@@ -458,28 +462,28 @@ identical.
 
 ## 10. Conformance coverage
 
-| Rule / item | Scripts |
-|---|---|
-| R01–R05 (reference counts) | `04-refcounts`, `06-apply-clear-erase`, `09-arrays`, `08-item-api` |
-| R10–R13 setters | `01-scalars`, `02-layers`, `08-item-api`, `20-misc-quirks` |
-| R20–R25 getters, has, types | `01-scalars`, `02-layers`, `08-item-api`, `14-json-with-defaults` |
-| R26 NULL values | `04-refcounts`, `08-item-api`, `15-json-read`, `20-misc-quirks` |
-| R30, R31 unset/erase/clear | `02-layers`, `06-apply-clear-erase`, `07-iteration` |
-| R32 apply | `06-apply-clear-erase`, `19-roundtrip`, `20-misc-quirks` |
-| R33 get_defaults | `06-apply-clear-erase`, `20-misc-quirks` |
-| R40–R43 iteration | `07-iteration`, `08-item-api` |
-| R50–R53 arrays | `09-arrays`, `04-refcounts` |
-| R60, R61 vec/quat | `10-vec-quat` |
-| R65, R66 fps | `11-frames-per-second` |
-| §6.1 growth / Q1 | `03-order-growth` (+ key order in `12`,`13`,`14`,`19`) |
-| §6.2 writer, R80–R82 | `12-json-write`, `13-json-pretty`, `14-json-with-defaults`, `19-roundtrip` |
-| §6.3 reader | `15-json-read`, `16-json-read-errors`, `19-roundtrip` |
-| R70–R72, §6.4 files, Q6 | `17-json-files` |
-| R81, R83, Q4 | `13-json-pretty`, `12-json-write`, `19-roundtrip` |
-| Q2, Q3, Q5 | `15`, `16`, `12` |
-| D1 | `05-defect-default-ref` |
-| D2 | `18-null-name-crash` |
-| D3, D4, D5, D6 | not testable (undefined bytes / UB); stated here |
+| Rule / item                 | Scripts                                                                    |
+| --------------------------- | -------------------------------------------------------------------------- |
+| R01–R05 (reference counts)  | `04-refcounts`, `06-apply-clear-erase`, `09-arrays`, `08-item-api`         |
+| R10–R13 setters             | `01-scalars`, `02-layers`, `08-item-api`, `20-misc-quirks`                 |
+| R20–R25 getters, has, types | `01-scalars`, `02-layers`, `08-item-api`, `14-json-with-defaults`          |
+| R26 NULL values             | `04-refcounts`, `08-item-api`, `15-json-read`, `20-misc-quirks`            |
+| R30, R31 unset/erase/clear  | `02-layers`, `06-apply-clear-erase`, `07-iteration`                        |
+| R32 apply                   | `06-apply-clear-erase`, `19-roundtrip`, `20-misc-quirks`                   |
+| R33 get_defaults            | `06-apply-clear-erase`, `20-misc-quirks`                                   |
+| R40–R43 iteration           | `07-iteration`, `08-item-api`                                              |
+| R50–R53 arrays              | `09-arrays`, `04-refcounts`                                                |
+| R60, R61 vec/quat           | `10-vec-quat`                                                              |
+| R65, R66 fps                | `11-frames-per-second`                                                     |
+| §6.1 growth / Q1            | `03-order-growth` (+ key order in `12`,`13`,`14`,`19`)                     |
+| §6.2 writer, R80–R82        | `12-json-write`, `13-json-pretty`, `14-json-with-defaults`, `19-roundtrip` |
+| §6.3 reader                 | `15-json-read`, `16-json-read-errors`, `19-roundtrip`                      |
+| R70–R72, §6.4 files, Q6     | `17-json-files`                                                            |
+| R81, R83, Q4                | `13-json-pretty`, `12-json-write`, `19-roundtrip`                          |
+| Q2, Q3, Q5                  | `15`, `16`, `12`                                                           |
+| D1                          | `05-defect-default-ref`                                                    |
+| D2                          | `18-null-name-crash`                                                       |
+| D3, D4, D5, D6              | not testable (undefined bytes / UB); stated here                           |
 
 Comparison rules: all output lines byte-identical except (README "obsdata runner"): log message text, `info_*` lines, and `try X crash` (= `try X ok`). Doubles are compared as exact printed text (`%.17g`).
 

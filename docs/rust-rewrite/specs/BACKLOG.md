@@ -7,11 +7,10 @@ New spec IDs continue the series (S-061…S-066 = the DECISIONS-NEEDED backlog w
 ## Actions
 
 | Action | Kind | Task | Title | files | fns | lines |
-|---|---|---|---|---|---|---|
+| ------ | ---- | ---- | ----- | ----- | --- | ----- |
 
 ## Documented exclusions
 
 - `test/` — C-reference test harness (test-input plugin, cmocka unit tests, osx/win test hosts) — no port target; exercised by the conformance suite instead. (64 fns / 1153 lines)
 
 ## Files per action
-

@@ -1,13 +1,13 @@
 # S-023 Platform layer and UTF-8 conversion
 
-| | |
-|---|---|
-| Status | Draft |
-| Spec version | initial |
-| Reference | C implementation, libobs 33.0.1: `util/utf8.c`, `util/platform.c`, Linux half of `util/platform-nix.c` (file names for the spec author only) |
-| Target crate | `crates/platform` (module `utf8`, module `fs`, module `path`, module `text`) |
-| Depends on | S-001 (allocation, logging, crash handler), S-006 (`dstr` is only an implementation detail of the reference) |
-| Conformance | `test/conformance/scripts/platform/` (38 scripts), runner section "platform runner" in `test/conformance/README.md` |
+|              |                                                                                                                                              |
+| ------------ | -------------------------------------------------------------------------------------------------------------------------------------------- |
+| Status       | Draft                                                                                                                                        |
+| Spec version | initial                                                                                                                                      |
+| Reference    | C implementation, libobs 33.0.1: `util/utf8.c`, `util/platform.c`, Linux half of `util/platform-nix.c` (file names for the spec author only) |
+| Target crate | `crates/platform` (module `utf8`, module `fs`, module `path`, module `text`)                                                                 |
+| Depends on   | S-001 (allocation, logging, crash handler), S-006 (`dstr` is only an implementation detail of the reference)                                 |
+| Conformance  | `test/conformance/scripts/platform/` (38 scripts), runner section "platform runner" in `test/conformance/README.md`                          |
 
 ## 1. Scope
 
@@ -66,6 +66,7 @@ size_t os_mbs_to_utf8_ptr(const char *str,    size_t len, char **pstr);
 double os_strtod(const char *str);
 int    os_dtostr(double value, char *dst, size_t size);
 ```
+
 `_ptr` results are allocated with the S-001 allocator (`bmalloc`) and freed by the caller with `bfree`.
 
 ### 3.3 files
@@ -105,6 +106,7 @@ int os_get_program_data_path(char *dst, size_t size, const char *name); char *os
 char *os_get_executable_path_ptr(const char *name);
 char *os_generate_formatted_filename(const char *extension, bool space, const char *format);
 ```
+
 Layout (x86-64): `struct os_dirent` is 256 bytes of name followed by one `bool` (size 257, align 1);
 `struct os_globent` is `{ptr, bool}` (16 bytes); `struct os_glob_info` is `{size_t, ptr}` (16 bytes).
 
@@ -130,15 +132,15 @@ void os_breakpoint(void); void os_oom(void);
 
 A sequence is a lead byte followed by continuation bytes (`10xxxxxx`):
 
-| Lead byte | length n | payload bits of the lead |
-|---|---|---|
-| `00..7F` | 1 | 7 |
-| `C0..DF` | 2 | 5 (`& 0x1F`) |
-| `E0..EF` | 3 | 4 (`& 0x0F`) |
-| `F0..F7` | 4 | 3 (`& 0x07`) |
-| `F8..FB` | 5 | 2 (`& 0x03`) |
-| `FC..FD` | 6 | 1 (`& 0x01`) |
-| `80..BF`, `FE`, `FF` | none (invalid) | |
+| Lead byte            | length n       | payload bits of the lead |
+| -------------------- | -------------- | ------------------------ |
+| `00..7F`             | 1              | 7                        |
+| `C0..DF`             | 2              | 5 (`& 0x1F`)             |
+| `E0..EF`             | 3              | 4 (`& 0x0F`)             |
+| `F0..F7`             | 4              | 3 (`& 0x07`)             |
+| `F8..FB`             | 5              | 2 (`& 0x03`)             |
+| `FC..FD`             | 6              | 1 (`& 0x01`)             |
+| `80..BF`, `FE`, `FF` | none (invalid) |                          |
 
 The value is the lead payload followed by the 6 low bits of each continuation byte, most significant first,
 so values up to `0x7FFFFFFF` are representable. The encoder chooses the shortest form for a value:
@@ -164,17 +166,17 @@ adjustments of rule R40. Worked: `0.1` -> `0.10000000000000001`; `2` -> `2.0`; `
 
 Table T1 (order is significant; a token matches when the text at the current position starts with it):
 
-| # | Token | strftime format used | Result (C locale) |
-|---|---|---|---|
-| 1 | `%CCYY` | `%Y` | four digit year |
-| 2 | `%YY` | `%y` | two digit year |
-| 3 | `%MM` | `%m` | month 01-12 |
-| 4 | `%DD` | `%d` | day 01-31 |
-| 5 | `%hh` | `%H` | hour 00-23 |
-| 6 | `%mm` | `%M` | minute 00-59 |
-| 7 | `%ss` | `%S` | second 00-60 |
-| 8 | `%%` | `%%` | `%` |
-| 9-23 | `%a %A %b %B %d %H %I %m %M %p %S %y %Y %z %Z` | the token itself | abbreviated/full weekday (`Tue`/`Tuesday`), abbreviated/full month (`Jan`/`January`), day, hour 00-23, hour 01-12, minute `%M`, `AM`/`PM`, second, 2-digit year, year, `+hhmm`, zone abbreviation |
+| #    | Token                                          | strftime format used | Result (C locale)                                                                                                                                                                                 |
+| ---- | ---------------------------------------------- | -------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1    | `%CCYY`                                        | `%Y`                 | four digit year                                                                                                                                                                                   |
+| 2    | `%YY`                                          | `%y`                 | two digit year                                                                                                                                                                                    |
+| 3    | `%MM`                                          | `%m`                 | month 01-12                                                                                                                                                                                       |
+| 4    | `%DD`                                          | `%d`                 | day 01-31                                                                                                                                                                                         |
+| 5    | `%hh`                                          | `%H`                 | hour 00-23                                                                                                                                                                                        |
+| 6    | `%mm`                                          | `%M`                 | minute 00-59                                                                                                                                                                                      |
+| 7    | `%ss`                                          | `%S`                 | second 00-60                                                                                                                                                                                      |
+| 8    | `%%`                                           | `%%`                 | `%`                                                                                                                                                                                               |
+| 9-23 | `%a %A %b %B %d %H %I %m %M %p %S %y %Y %z %Z` | the token itself     | abbreviated/full weekday (`Tue`/`Tuesday`), abbreviated/full month (`Jan`/`January`), day, hour 00-23, hour 01-12, minute `%M`, `AM`/`PM`, second, 2-digit year, year, `+hhmm`, zone abbreviation |
 
 Table T2 (checked only when no T1 token matched): `%FPS`, `%CRES`, `%ORES`, `%VF`, `%s`.
 
@@ -361,7 +363,7 @@ Table T2 (checked only when no T1 token matched): `%FPS`, `%CRES`, `%ORES`, `%VF
 - **S-023-R101** `os_sleepto_ns(t)`: if `t < os_gettime_ns()` return false at once; else sleep (resuming after interruptions) until the monotonic clock has reached `t` and return true. `os_sleepto_ns_fast(t)`: same contract, implemented as repeated sleeps of at most 999999 microseconds with the remaining time rounded up to whole microseconds.
 - **S-023-R102** `os_nstime_to_timespec(ts, storage)`: NULL if `storage` is NULL or the wall clock could not be sampled. At the first call (process wide, once) one wall clock reading (`timespec_get(TIME_UTC)`) is paired with one `os_gettime_ns()` reading (the *anchor*). The result is the anchor wall time plus (`ts` - anchor monotonic time) in nanoseconds, signed, with `tv_nsec` normalised into `[0, 10^9)` (reference
   defect: a result with exactly `10^9` ns is not normalised, D-7). It returns `storage`. Differences between results are exact: `(t2-t1)` in ns for any two timestamps, earlier or later than the anchor.
-- **S-023-R103** `os_get_physical_cores()` / `os_get_logical_cores()`: cached after the first call. Logical = `sysconf(_SC_NPROCESSORS_ONLN)`. Physical: from `/proc/cpuinfo`, sum the `cpu cores` values once per distinct `physical id`; if the sum is 0 the logical count is used; if `/proc/cpuinfo` cannot be opened the physical count stays **0** (Q-17). Contract: logical >= 1, physical <= logical when available.
+- **S-023-R103** `os_get_physical_cores()` / `os_get_logical_cores()`: cached after the first call. Logical = `sysconf(_SC_NPROCESSORS_ONLN)`. Physical: from `/proc/cpuinfo`, sum the `cpu cores` values once per distinct `physical id`; if the sum is 0 the logical count is used; if `/proc/cpuinfo` cannot be opened the physical count stays **0** (Q-17). Contract: logical >= 1, physical \<= logical when available.
 - **S-023-R104** `os_get_sys_free_size()` = `(freeram + bufferram) * mem_unit` of `sysinfo` (0 on failure); `os_get_sys_total_size()` = `totalram * mem_unit`, cached. `os_get_proc_memory_usage(u)` (and the two single-value functions): from `/proc/self/statm`: `resident_size` = resident pages * page size (bytes); `virtual_size` = the **raw page count** (not multiplied, Q-12); false / 0 if the file cannot be parsed.
 - **S-023-R105** `os_cpu_usage_info_start()` samples `times()` and the online core count; `os_cpu_usage_info_query(info)` returns `100 * (d_user + d_sys) / d_wall / cores` since the previous sample and moves the sample forward; 0.0 for a NULL `info`, when no wall time has passed, or when a counter went backwards; `..._destroy(NULL)` is a no-op.
 - **S-023-R106** `os_generate_uuid()` returns a newly allocated 36 character lowercase hexadecimal random (version 4) UUID `xxxxxxxx-xxxx-4xxx-[89ab]xxx-xxxxxxxxxxxx` (NUL terminated, buffer 37).
@@ -384,6 +386,7 @@ if let Some(e) = index of 'e' in text:
     n = len(text)
 write text and a NUL into dst; return n
 ```
+
 (The exponent of `%.17g` never has fewer than two digits and never all zeros, so "digits with leading zeros removed" is never empty.)
 
 `utf8_to_wchar` (writing mode, flags F; `lim` = end of input, or the first NUL in terminator mode):
@@ -405,6 +408,7 @@ while i < lim:
     out[written++] = value; i += n
 return count
 ```
+
 (In sizing mode `written == outsize`, the surrogate test and the BOM test are omitted.) "skip 1" means `i += 1`.
 
 ## 7. Concurrency
@@ -414,32 +418,32 @@ No function holds a lock. `os_get_physical_cores`/`logical`/`os_get_sys_total_si
 
 ## 8. Reference defects and quirks
 
-| ID | Kind | What | Required behaviour | Script |
-|---|---|---|---|---|
-| Q-1 | QUIRK | `utf8_to_wchar` accepts overlong forms (`E0 80 80` = U+0000, `F0 80 80 AF`), 5/6 byte forms and values above U+10FFFF; it rejects only lead bytes `C0 C1 F5 FF` and surrogates | MUST match (R07) | `03-utf8-lenient-forms` |
-| Q-2 | QUIRK | With `UTF8_IGNORE_ERROR` the lead bytes `C0 C1 F5` are no longer rejected but decoded (`61 C0 80` -> `61, 0`) | MUST match (R03) | `04-utf8-decode-flags` |
-| Q-3 | QUIRK | After a bad sequence with IGNORE only one byte is skipped, so continuation bytes are looked at again (and dropped as stray bytes) | MUST match (R06) | `04-utf8-decode-flags` |
-| Q-4 | QUIRK | Sizing call (`out == NULL`) counts surrogates and BOM that the real conversion would drop (and succeeds for surrogates in strict mode) | MUST match (R12) | `05-utf8-sizing-quirks` |
-| Q-5 | QUIRK | A character that is dropped later still needs a free output slot when it is reached (`61 ED A0 80` with IGNORE and capacity 1 -> 0) | MUST match (R10) | `05-utf8-sizing-quirks` |
-| Q-6 | QUIRK | `wchar_to_utf8` encodes values above U+10FFFF as 4-6 byte forms instead of failing | MUST match (R15) | `06-utf8-encode` |
-| Q-7 | QUIRK | `os_dtostr` of `inf`/`nan` yields `inf.0`, `-inf.0`, `nan.0` (sign of a NaN as printed by `printf`) | SHOULD match | `09-dtostr` |
-| Q-8 | QUIRK | `os_dtostr` needs `length + 4` bytes for an integral value (buffer 4 fails for `5`, 5 works), and the size check precedes exponent shortening (`1e21` needs size > 5) | MUST match (R40) | `09-dtostr` |
-| Q-9 | QUIRK | `os_safe_replace`: when the final rename fails, the target has already been renamed to the backup (no rollback) | MUST match (R61) | `17-safe-replace` |
-| Q-10 | QUIRK | `os_copyfile` of a directory returns -1 but leaves an empty destination file | MUST match (R73) | `21-copyfile` |
-| Q-11 | QUIRK | `os_get_config_path_ptr(NULL or "")` ends with `/` while the buffer form does not | MUST match (R80) | `26-config-paths` |
-| Q-12 | QUIRK | `virtual_size` of the process memory query is in pages on Linux, `resident_size` in bytes | SHOULD match (a port MAY return bytes; no consumer depends on it); only "non-zero" is tested | `33-system-contracts` |
-| Q-13 | QUIRK | `os_quick_write_*` ignore the result of the final flush/close (disk-full is not reported) | SHOULD match (a port MAY report it) | not testable |
-| Q-14 | QUIRK | the `len` argument of `os_mbs_to_wcs*`/`os_wcs_to_mbs*` is ignored (`os_mbs_to_utf8_ptr("hello", 3)` -> `hello`) | MUST match (R22) | `38-mbs-conversions` |
-| Q-15 | QUIRK | `os_get_abs_path_ptr` truncates silently at 511 bytes | SHOULD match | not tested |
-| Q-16 | QUIRK | `os_sleep_ms` computes `ms * 1000` in 32 bits | MAY differ (a port should sleep the full time) | not tested |
-| Q-17 | QUIRK | physical core count is 0 when `/proc/cpuinfo` cannot be read | SHOULD match | not testable |
-| D-1 | DEFECT | `os_utf8_to_wcs`, `os_mbs_to_wcs`, `os_wcs_to_mbs` write the terminating NUL one unit **past** `dst` when the converted text exactly fills `dst_size` (heap buffer overflow, found with AddressSanitizer) | MUST NOT write outside `dst`; for `os_utf8_to_wcs` treat `dst_size <= needed` as failure: return 0 and store the empty string when `dst_size >= 1`; for the two multibyte functions any memory-safe result is acceptable when the buffer is too small | none (undefined in the reference) |
-| D-2 | DEFECT | `os_dtostr` shortens an exponent with a move that is one byte too short, so the buffer keeps stale trailing characters: `1e21` -> buffer `1e211` while the return value says 4; `config_set_double` stores the buffer, so values with an exponent are **corrupted** in config files (`1e-5` -> `1.0000000000000001e-55`) | return value and text MUST be consistent: the text is exactly the first `rc` bytes (`1e21`) and is NUL terminated there | `09-dtostr` (the stale buffer is on `info_dtostr_raw` lines, not compared) |
-| D-3 | DEFECT | `os_fread_utf8` always returns 0 (the length is never assigned; ABI-visible bug). The requirement keeps the bug on purpose: nothing consumes the value and an ABI shim that returned the length could change a caller that compares it | The C ABI function MUST return 0; a native Rust API may return the length | `13-fread-utf8` |
-| D-4 | DEFECT | `os_mkdirs("")` dereferences NULL (crash) | MUST NOT crash; return -1 (`MKDIR_ERROR`) | `37-platform-defects` |
-| D-5 | DEFECT | `os_opendir` keeps the caller's `path` pointer; passing a temporary string that is freed before `os_readdir` is a use-after-free | A port MUST copy the path | not testable |
-| D-6 | DEFECT | `os_mbs_to_wcs(_ptr)` / `os_wcs_to_mbs(_ptr)` on input the locale cannot convert get `(size_t)-1` from the C library and then allocate 0 bytes (fatal error) or index out of range | MUST return 0 and the empty string | not tested |
-| D-7 | DEFECT | `os_nstime_to_timespec` may return `tv_nsec == 1000000000` (condition is `>` instead of `>=`) | MUST return a normalised timespec (`tv_nsec < 10^9`) | not reachable deterministically |
+| ID   | Kind   | What                                                                                                                                                                                                                                                                                                                     | Required behaviour                                                                                                                                                                                                                                    | Script                                                                     |
+| ---- | ------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------- |
+| Q-1  | QUIRK  | `utf8_to_wchar` accepts overlong forms (`E0 80 80` = U+0000, `F0 80 80 AF`), 5/6 byte forms and values above U+10FFFF; it rejects only lead bytes `C0 C1 F5 FF` and surrogates                                                                                                                                           | MUST match (R07)                                                                                                                                                                                                                                      | `03-utf8-lenient-forms`                                                    |
+| Q-2  | QUIRK  | With `UTF8_IGNORE_ERROR` the lead bytes `C0 C1 F5` are no longer rejected but decoded (`61 C0 80` -> `61, 0`)                                                                                                                                                                                                            | MUST match (R03)                                                                                                                                                                                                                                      | `04-utf8-decode-flags`                                                     |
+| Q-3  | QUIRK  | After a bad sequence with IGNORE only one byte is skipped, so continuation bytes are looked at again (and dropped as stray bytes)                                                                                                                                                                                        | MUST match (R06)                                                                                                                                                                                                                                      | `04-utf8-decode-flags`                                                     |
+| Q-4  | QUIRK  | Sizing call (`out == NULL`) counts surrogates and BOM that the real conversion would drop (and succeeds for surrogates in strict mode)                                                                                                                                                                                   | MUST match (R12)                                                                                                                                                                                                                                      | `05-utf8-sizing-quirks`                                                    |
+| Q-5  | QUIRK  | A character that is dropped later still needs a free output slot when it is reached (`61 ED A0 80` with IGNORE and capacity 1 -> 0)                                                                                                                                                                                      | MUST match (R10)                                                                                                                                                                                                                                      | `05-utf8-sizing-quirks`                                                    |
+| Q-6  | QUIRK  | `wchar_to_utf8` encodes values above U+10FFFF as 4-6 byte forms instead of failing                                                                                                                                                                                                                                       | MUST match (R15)                                                                                                                                                                                                                                      | `06-utf8-encode`                                                           |
+| Q-7  | QUIRK  | `os_dtostr` of `inf`/`nan` yields `inf.0`, `-inf.0`, `nan.0` (sign of a NaN as printed by `printf`)                                                                                                                                                                                                                      | SHOULD match                                                                                                                                                                                                                                          | `09-dtostr`                                                                |
+| Q-8  | QUIRK  | `os_dtostr` needs `length + 4` bytes for an integral value (buffer 4 fails for `5`, 5 works), and the size check precedes exponent shortening (`1e21` needs size > 5)                                                                                                                                                    | MUST match (R40)                                                                                                                                                                                                                                      | `09-dtostr`                                                                |
+| Q-9  | QUIRK  | `os_safe_replace`: when the final rename fails, the target has already been renamed to the backup (no rollback)                                                                                                                                                                                                          | MUST match (R61)                                                                                                                                                                                                                                      | `17-safe-replace`                                                          |
+| Q-10 | QUIRK  | `os_copyfile` of a directory returns -1 but leaves an empty destination file                                                                                                                                                                                                                                             | MUST match (R73)                                                                                                                                                                                                                                      | `21-copyfile`                                                              |
+| Q-11 | QUIRK  | `os_get_config_path_ptr(NULL or "")` ends with `/` while the buffer form does not                                                                                                                                                                                                                                        | MUST match (R80)                                                                                                                                                                                                                                      | `26-config-paths`                                                          |
+| Q-12 | QUIRK  | `virtual_size` of the process memory query is in pages on Linux, `resident_size` in bytes                                                                                                                                                                                                                                | SHOULD match (a port MAY return bytes; no consumer depends on it); only "non-zero" is tested                                                                                                                                                          | `33-system-contracts`                                                      |
+| Q-13 | QUIRK  | `os_quick_write_*` ignore the result of the final flush/close (disk-full is not reported)                                                                                                                                                                                                                                | SHOULD match (a port MAY report it)                                                                                                                                                                                                                   | not testable                                                               |
+| Q-14 | QUIRK  | the `len` argument of `os_mbs_to_wcs*`/`os_wcs_to_mbs*` is ignored (`os_mbs_to_utf8_ptr("hello", 3)` -> `hello`)                                                                                                                                                                                                         | MUST match (R22)                                                                                                                                                                                                                                      | `38-mbs-conversions`                                                       |
+| Q-15 | QUIRK  | `os_get_abs_path_ptr` truncates silently at 511 bytes                                                                                                                                                                                                                                                                    | SHOULD match                                                                                                                                                                                                                                          | not tested                                                                 |
+| Q-16 | QUIRK  | `os_sleep_ms` computes `ms * 1000` in 32 bits                                                                                                                                                                                                                                                                            | MAY differ (a port should sleep the full time)                                                                                                                                                                                                        | not tested                                                                 |
+| Q-17 | QUIRK  | physical core count is 0 when `/proc/cpuinfo` cannot be read                                                                                                                                                                                                                                                             | SHOULD match                                                                                                                                                                                                                                          | not testable                                                               |
+| D-1  | DEFECT | `os_utf8_to_wcs`, `os_mbs_to_wcs`, `os_wcs_to_mbs` write the terminating NUL one unit **past** `dst` when the converted text exactly fills `dst_size` (heap buffer overflow, found with AddressSanitizer)                                                                                                                | MUST NOT write outside `dst`; for `os_utf8_to_wcs` treat `dst_size <= needed` as failure: return 0 and store the empty string when `dst_size >= 1`; for the two multibyte functions any memory-safe result is acceptable when the buffer is too small | none (undefined in the reference)                                          |
+| D-2  | DEFECT | `os_dtostr` shortens an exponent with a move that is one byte too short, so the buffer keeps stale trailing characters: `1e21` -> buffer `1e211` while the return value says 4; `config_set_double` stores the buffer, so values with an exponent are **corrupted** in config files (`1e-5` -> `1.0000000000000001e-55`) | return value and text MUST be consistent: the text is exactly the first `rc` bytes (`1e21`) and is NUL terminated there                                                                                                                               | `09-dtostr` (the stale buffer is on `info_dtostr_raw` lines, not compared) |
+| D-3  | DEFECT | `os_fread_utf8` always returns 0 (the length is never assigned; ABI-visible bug). The requirement keeps the bug on purpose: nothing consumes the value and an ABI shim that returned the length could change a caller that compares it                                                                                   | The C ABI function MUST return 0; a native Rust API may return the length                                                                                                                                                                             | `13-fread-utf8`                                                            |
+| D-4  | DEFECT | `os_mkdirs("")` dereferences NULL (crash)                                                                                                                                                                                                                                                                                | MUST NOT crash; return -1 (`MKDIR_ERROR`)                                                                                                                                                                                                             | `37-platform-defects`                                                      |
+| D-5  | DEFECT | `os_opendir` keeps the caller's `path` pointer; passing a temporary string that is freed before `os_readdir` is a use-after-free                                                                                                                                                                                         | A port MUST copy the path                                                                                                                                                                                                                             | not testable                                                               |
+| D-6  | DEFECT | `os_mbs_to_wcs(_ptr)` / `os_wcs_to_mbs(_ptr)` on input the locale cannot convert get `(size_t)-1` from the C library and then allocate 0 bytes (fatal error) or index out of range                                                                                                                                       | MUST return 0 and the empty string                                                                                                                                                                                                                    | not tested                                                                 |
+| D-7  | DEFECT | `os_nstime_to_timespec` may return `tv_nsec == 1000000000` (condition is `>` instead of `>=`)                                                                                                                                                                                                                            | MUST return a normalised timespec (`tv_nsec < 10^9`)                                                                                                                                                                                                  | not reachable deterministically                                            |
 
 ## 9. Implementation notes (non-normative)
 
@@ -454,49 +458,49 @@ No function holds a lock. `os_get_physical_cores`/`logical`/`os_get_sys_total_si
 
 ## 10. Conformance coverage
 
-| Rule | Scripts |
-|---|---|
-| R01-R05 | `01-utf8-decode-valid`, `02-utf8-decode-invalid` |
-| R06-R09 | `02-utf8-decode-invalid`, `03-utf8-lenient-forms`, `04-utf8-decode-flags` |
-| R10-R12 | `04-utf8-decode-flags`, `05-utf8-sizing-quirks`, `01-utf8-decode-valid` |
-| R13-R17 | `06-utf8-encode`, `07-utf8-encode-flags` |
-| R18-R22 | `08-os-wcs-utf8`, `38-mbs-conversions`, `36-null-arguments` |
-| R23 | (Windows only, not tested) |
-| R40 | `09-dtostr` |
-| R41 | `10-strtod` |
-| R50-R51 | `11-fopen-modes`, `36-null-arguments` |
-| R52-R54 | `12-file-seek-size` |
-| R55-R57 | `13-fread-utf8`, `14-fread-mbs` |
-| R58-R59 | `15-quick-write` |
-| R60 | `16-quick-write-safe` |
-| R61 | `17-safe-replace`, `16-quick-write-safe` |
-| R62 | `11-fopen-modes` (via `exists` in `15`, `16`, `20`) |
-| R70 | `18-mkdir` |
-| R71 | `19-mkdirs`, `37-platform-defects` |
-| R72 | `20-rename-unlink-rmdir` |
-| R73 | `21-copyfile` |
-| R74 | `25-abs-path-cwd` |
-| R75 | `33-system-contracts` |
-| R76 | `22-dir-iteration` |
-| R77 | `23-glob` |
-| R78 | `24-path-extension` |
-| R79 | `25-abs-path-cwd` |
-| R80-R81 | `26-config-paths` |
-| R82 | `33-system-contracts` |
-| R90-R96 | `27-formatted-filename`, `28-fname-time-tokens`, `29-fname-timezones`, `30-fname-video-tokens`, `31-fname-edge-cases`, `32-fname-truncation` |
-| R100-R101 | `33-system-contracts` |
-| R102 | `34-nstime-to-timespec` |
-| R103-R106 | `33-system-contracts` |
-| R107 | `35-dl-and-misc`, `33-system-contracts` |
+| Rule      | Scripts                                                                                                                                      |
+| --------- | -------------------------------------------------------------------------------------------------------------------------------------------- |
+| R01-R05   | `01-utf8-decode-valid`, `02-utf8-decode-invalid`                                                                                             |
+| R06-R09   | `02-utf8-decode-invalid`, `03-utf8-lenient-forms`, `04-utf8-decode-flags`                                                                    |
+| R10-R12   | `04-utf8-decode-flags`, `05-utf8-sizing-quirks`, `01-utf8-decode-valid`                                                                      |
+| R13-R17   | `06-utf8-encode`, `07-utf8-encode-flags`                                                                                                     |
+| R18-R22   | `08-os-wcs-utf8`, `38-mbs-conversions`, `36-null-arguments`                                                                                  |
+| R23       | (Windows only, not tested)                                                                                                                   |
+| R40       | `09-dtostr`                                                                                                                                  |
+| R41       | `10-strtod`                                                                                                                                  |
+| R50-R51   | `11-fopen-modes`, `36-null-arguments`                                                                                                        |
+| R52-R54   | `12-file-seek-size`                                                                                                                          |
+| R55-R57   | `13-fread-utf8`, `14-fread-mbs`                                                                                                              |
+| R58-R59   | `15-quick-write`                                                                                                                             |
+| R60       | `16-quick-write-safe`                                                                                                                        |
+| R61       | `17-safe-replace`, `16-quick-write-safe`                                                                                                     |
+| R62       | `11-fopen-modes` (via `exists` in `15`, `16`, `20`)                                                                                          |
+| R70       | `18-mkdir`                                                                                                                                   |
+| R71       | `19-mkdirs`, `37-platform-defects`                                                                                                           |
+| R72       | `20-rename-unlink-rmdir`                                                                                                                     |
+| R73       | `21-copyfile`                                                                                                                                |
+| R74       | `25-abs-path-cwd`                                                                                                                            |
+| R75       | `33-system-contracts`                                                                                                                        |
+| R76       | `22-dir-iteration`                                                                                                                           |
+| R77       | `23-glob`                                                                                                                                    |
+| R78       | `24-path-extension`                                                                                                                          |
+| R79       | `25-abs-path-cwd`                                                                                                                            |
+| R80-R81   | `26-config-paths`                                                                                                                            |
+| R82       | `33-system-contracts`                                                                                                                        |
+| R90-R96   | `27-formatted-filename`, `28-fname-time-tokens`, `29-fname-timezones`, `30-fname-video-tokens`, `31-fname-edge-cases`, `32-fname-truncation` |
+| R100-R101 | `33-system-contracts`                                                                                                                        |
+| R102      | `34-nstime-to-timespec`                                                                                                                      |
+| R103-R106 | `33-system-contracts`                                                                                                                        |
+| R107      | `35-dl-and-misc`, `33-system-contracts`                                                                                                      |
 
 ## 11. Open questions
 
 1. Comparison of pointer-returning results with the *machine-dependent* functions (`system`, `cpu_usage`, `free_space`, `exe_path`, `uuid`) is by property only; absolute values are not specified.
-2. `os_glob` ordering uses `strcoll` of the process locale; the vectors are bytewise (C locale). Whether the front end sets a locale that changes the order is not known to the author.
-3. `os_inhibit_sleep_*` (desktop-bus based, absent without GIO) are unspecified.
-4. Behaviour of `os_fopen` with an invalid `mode` string is the C library's and is not specified.
-5. **Conflict with S-007.** The S-007 conformance runner links a stand-in `os_dtostr` (in `gen/stubs.c`) that lacks exponent shortening and returns 0 on success: S-007-R08 (`1e21` -> `1e+21`) and the vector `config/04-typed-values` (`d4=1e+21`, `get_double T d4 1e+21`) do not describe the real function. The real function (this spec, R40/D-2) gives the text `1e21` (the reference buffer actually holds `1e211`, so `config_set_double` stores a corrupted value). S-007 must be revisited together with this spec. The other helpers S-007 assumes (`os_fread_utf8`, `os_strtod` in the C locale, `os_safe_replace`, `os_file_exists`) are consistent with S-023.
-6. `os_fgets`-style helpers and `os_extract_path_*` do not exist in the 33.0.1 platform files and are therefore not specified.
+1. `os_glob` ordering uses `strcoll` of the process locale; the vectors are bytewise (C locale). Whether the front end sets a locale that changes the order is not known to the author.
+1. `os_inhibit_sleep_*` (desktop-bus based, absent without GIO) are unspecified.
+1. Behaviour of `os_fopen` with an invalid `mode` string is the C library's and is not specified.
+1. **Conflict with S-007.** The S-007 conformance runner links a stand-in `os_dtostr` (in `gen/stubs.c`) that lacks exponent shortening and returns 0 on success: S-007-R08 (`1e21` -> `1e+21`) and the vector `config/04-typed-values` (`d4=1e+21`, `get_double T d4 1e+21`) do not describe the real function. The real function (this spec, R40/D-2) gives the text `1e21` (the reference buffer actually holds `1e211`, so `config_set_double` stores a corrupted value). S-007 must be revisited together with this spec. The other helpers S-007 assumes (`os_fread_utf8`, `os_strtod` in the C locale, `os_safe_replace`, `os_file_exists`) are consistent with S-023.
+1. `os_fgets`-style helpers and `os_extract_path_*` do not exist in the 33.0.1 platform files and are therefore not specified.
 
 > **Resolution of the S-007 conflict (open question 5):** `test/conformance/gen/stubs.c` now contains the exact reference `os_dtostr`, `S-007-R08` and the `config/04-typed-values` vectors were corrected to the real (defective) behaviour, and the choice between reproducing and fixing it is recorded as S-007 open question 2.
 
@@ -507,7 +511,11 @@ No function holds a lock. `os_get_physical_cores`/`logical`/`os_get_sys_total_si
 - `libobs/util/platform.c`, `libobs/util/platform-windows.c`, `libobs/util/utf8.c`, `libobs/util/windows/obfuscate.c`, `libobs/util/windows/WinHandle.hpp`, `libobs/util/windows/device-enum.c`, `libobs/util/windows/win-version.h`
 
 - **S-023-R108** `platform.c`: the cross-platform `os_*` file/IO layer — `os_wfopen`/`os_fopen`, `os_fgetsize`/`os_stat`/`os_fseeki64`/`os_ftelli64`, `os_fread_mbs`/`os_fread_utf8` (whole-file reads into arrays), `os_quick_read_mbs_file`/`os_quick_read_utf8_file`, `os_quick_write_mbs_file`/`os_quick_write_utf8_file` and `os_quick_write_utf8_file_safe` (atomic temp-file + rename), `os_get_file_size`, and the wide-conversion wrappers `os_mbs_to_wcs`/`os_utf8_to_wcs` (+ their `_free`/count variants) — the cross-platform contract is pinned in the earlier sections; this file is the shared implementation.
+
 - **S-023-R109** `platform-windows.c`: the Win32 implementation of that contract — `get_clockfreq`/`get_winver` (cached system/build info), module access `os_dlopen`/`os_dlsym`/`has_obs_export`/`get_plugin_info`/`os_is_obs_plugin`, CPU usage `os_cpu_usage_info_start`/`os_cpu_usage_info_query`/`os_cpu_usage_info_destroy` (process + kernel/user times), `os_sleepto_ns`/`os_sleepto_ns_fast`/`os_sleep_ms`, `os_gettime_ns` (QPC), the `os_get_path_*` family (`os_get_path_internal`/`os_get_path_ptr_internal`), plus the remaining `os_*` entries (environment, process spawn/kill, window helpers, admin check) per the contract pinned earlier.
+
 - **S-023-R110** `utf8.c`: `has_utf8_bom`, `utf8_to_wchar`/`wchar_to_utf8` (conversion with the error rules pinned earlier), `wchar_forbidden`/`utf8_forbidden` (forbidden-character predicates used by the path sanitiser).
+
 - **S-023-R111** `windows/obfuscate.c`: `deobfuscate_str` (XOR unscramble at first use) and `ms_get_obfuscated_func` (resolve a CRT function name from the obfuscated table, so the binary does not reference it by plain name).
+
 - **S-023-R112** Small Windows helpers: `windows/WinHandle.hpp` (`Clear` — RAII handle closer), `windows/device-enum.c` (`enum_graphics_device_luids` — graphics-device LUIDs via EnumDisplayDevices), `windows/win-version.h` (`win_version_compare` — build-version comparison).

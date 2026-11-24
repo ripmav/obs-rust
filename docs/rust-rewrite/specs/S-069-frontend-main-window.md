@@ -1,13 +1,13 @@
 # S-069 Frontend: main window, preview area, output controls & main-window dialogs
 
-| | |
-|---|---|
-| Status | Draft (round 8 — behaviour catalog written from C reference; no vectors yet) |
-| Spec version | initial |
-| Reference | OBS Studio 33.0.1, `frontend/widgets/OBSBasic*` (Qt main window) |
-| Target crate | `crates/frontend` (GUI layer; Qt in the reference) |
-| Depends on | S-048 (config files, CLI/app lifecycle, scene-collection format, frontend API) |
-| Conformance | planned; none yet (Qt widgets; no executable vectors) |
+|              |                                                                                |
+| ------------ | ------------------------------------------------------------------------------ |
+| Status       | Draft (round 8 — behaviour catalog written from C reference; no vectors yet)   |
+| Spec version | initial                                                                        |
+| Reference    | OBS Studio 33.0.1, `frontend/widgets/OBSBasic*` (Qt main window)               |
+| Target crate | `crates/frontend` (GUI layer; Qt in the reference)                             |
+| Depends on   | S-048 (config files, CLI/app lifecycle, scene-collection format, frontend API) |
+| Conformance  | planned; none yet (Qt widgets; no executable vectors)                          |
 
 ## 1. Scope
 
@@ -58,9 +58,7 @@ entry on `main->undo_s` (callbacks + optional JSON payload).
   (dialogs that block starting outputs), vcam active state, broadcast
   state (`broadcastActive/Ready`, `autoStart/StopBroadcast`).
 - Signals consumed elsewhere: `mainWindowClosed`,
-  `StreamingPreparing/Starting/Started(withDelay)/Stopping/
-  Stopped(withDelay)`, `RecordingStarted(pausable)/Paused/Unpaused/
-  Stopping/Stopped`, `ReplayBufferStarted/Stopping/Stopped`,
+  `StreamingPreparing/Starting/Started(withDelay)/Stopping/ Stopped(withDelay)`, `RecordingStarted(pausable)/Paused/Unpaused/ Stopping/Stopped`, `ReplayBufferStarted/Stopping/Stopped`,
   `VirtualCamStarted/Stopped`, `TransitionStarted/Stopped/Added`,
   `PreviewProgramModeChanged(bool)`, `CanvasResized`/`OutputResized`,
   `PreviewZoomIn/Out/Reset`, `TransitionDurationChanged`.
@@ -82,11 +80,9 @@ entry on `main->undo_s` (callbacks + optional JSON payload).
   `private_settings` JSON.
 - `SavedProjectorInfo`: type (preview/source/multiview/scene/program),
   source/scene uuid, windowed vs fullscreen, monitor.
-- Quick transitions persist as JSON array `{name, duration, id,
-  fade_to_black, hotkeys}` (R27); transition sources persist in the
+- Quick transitions persist as JSON array `{name, duration, id, fade_to_black, hotkeys}` (R27); transition sources persist in the
   scene collection (S-048).
-- Drop-file extension tables (R44): text `txt, log`; image `bmp, gif,
-  jpeg, jpg, [jxr (Win)], png, tga, webp`; html `htm, html`; media: ~90
+- Drop-file extension tables (R44): text `txt, log`; image `bmp, gif, jpeg, jpg, [jxr (Win)], png, tga, webp`; html `htm, html`; media: ~90
   audio/video extensions (full list in reference).
 - Wizard bandwidth test runs video at 128×128@60 with a random-noise
   render callback (`TestMode`, R55).
@@ -223,11 +219,9 @@ top-left of the draw transform re-expressed through the old alignment.
 
 Auto-config resolution ladder (R57): for cy in 2160, 1440, 1080, 720,
 480, 360 (240 forced): `cx = baseCX·cy/baseCY`; accept iff
-`cx·cy·fps ≤ maxDataRate` (or forced/recording) and `idealBitrate ≥
-minBitrate` (HW: ×1.14 unless NVENC); stop after 3 accepted.
+`cx·cy·fps ≤ maxDataRate` (or forced/recording) and `idealBitrate ≥ minBitrate` (HW: ×1.14 unless NVENC); stop after 3 accepted.
 
-Quick-transition persistence (R27): JSON array `{name, duration, id,
-fade_to_black, hotkeys}`; load matches `name` via
+Quick-transition persistence (R27): JSON array `{name, duration, id, fade_to_black, hotkeys}`; load matches `name` via
 `transitionNameToUuids`, re-sequences ids (counter = max+1).
 
 ## 7. Concurrency
@@ -279,8 +273,8 @@ fade_to_black, hotkeys}`; load matches `name` via
 
 ## 10. Conformance coverage
 
-| Rule(s) | Scripts |
-|---|---|
+| Rule(s)       | Scripts                                                                                                                                                         |
+| ------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | all S-069-Rxx | none yet (Qt UI). Pure-logic candidates: FPS map (R04), t-bar clamp/dead-zone (R28), alignment shift (R21), `GenerateSourceName` (R45), resolution ladder (R57) |
 
 ## 11. Open questions
@@ -288,12 +282,12 @@ fade_to_black, hotkeys}`; load matches `name` via
 1. Interaction split with S-067: this spec pins the preview state and
    signals; S-067 must pin the interaction that reads/writes them — one
    reconciliation pass needed before implementation.
-2. The `OBSBasicPreview` draw family (selection box, snap guides,
+1. The `OBSBasicPreview` draw family (selection box, snap guides,
    spacing helpers) is rendering-only but deferred to S-067; confirm.
-3. Projector re-layout on display change (R08/R41) is platform-specific;
+1. Projector re-layout on display change (R08/R41) is platform-specific;
    needs an ADR for the Rust target platform.
-4. Updater endpoints and sys-tray behaviour (R60/R61) are OS-specific;
+1. Updater endpoints and sys-tray behaviour (R60/R61) are OS-specific;
    only the state machine is pinned — conformance scope undefined.
-5. `EstimateMinBitrate` (used by R57) was not transcribed line by line;
+1. `EstimateMinBitrate` (used by R57) was not transcribed line by line;
    only its use is pinned.
-6. Round 10 second-author check (2026-11-05): corrected R18 (filter clipboard stores the source weak ref; undo/redo restore JSON filter backups via `obs_source_restore_filters`; scene copy/paste = current scene's scene-source filters), R29 (no `Live (delay)` string — `withDelay` attaches the start/stop menu to the stream button; delay countdown lives in the status bar), R55 (`bind_ip`/`ip_family` come from the profile config, not user config; the `?test=true` match covers `Restream.io` and `Restream.io - RTMP`).
+1. Round 10 second-author check (2026-11-05): corrected R18 (filter clipboard stores the source weak ref; undo/redo restore JSON filter backups via `obs_source_restore_filters`; scene copy/paste = current scene's scene-source filters), R29 (no `Live (delay)` string — `withDelay` attaches the start/stop menu to the stream button; delay countdown lives in the status bar), R55 (`bind_ip`/`ip_family` come from the profile config, not user config; the `?test=true` match covers `Restream.io` and `Restream.io - RTMP`).

@@ -1,12 +1,12 @@
 # S-032 `audiomix` (audio mixer callback, source audio ingestion/render, faders, volmeters)
 
-| | |
-|---|---|
-| Status | Draft (vectors generated and stable; Rust sufficiency check NOT performed, see section 11) |
-| Reference | libobs 33.0.1 `obs-audio.c` (`audio_callback` and helpers), `obs-audio-controls.c/.h`, and the audio parts of `obs-source.c` |
-| Target crate | `crates/obs-audio-mix` |
-| Depends on | S-004 (signals: "volume", "destroy"), S-005 (deque), S-008 (numeric tolerance), S-013 (`audio_frames_to_ns`, `mul_to_db`, `db_to_mul`, enums, channel counts) |
-| Conformance | `test/conformance/scripts/audiomix/` (39 scripts, runner `gen/audiomix_runner.c`, stubs `gen/audiomix_stubs.c`, `gen/audiomix.sources`) |
+|              |                                                                                                                                                               |
+| ------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Status       | Draft (vectors generated and stable; Rust sufficiency check NOT performed, see section 11)                                                                    |
+| Reference    | libobs 33.0.1 `obs-audio.c` (`audio_callback` and helpers), `obs-audio-controls.c/.h`, and the audio parts of `obs-source.c`                                  |
+| Target crate | `crates/obs-audio-mix`                                                                                                                                        |
+| Depends on   | S-004 (signals: "volume", "destroy"), S-005 (deque), S-008 (numeric tolerance), S-013 (`audio_frames_to_ns`, `mul_to_db`, `db_to_mul`, enums, channel counts) |
+| Conformance  | `test/conformance/scripts/audiomix/` (39 scripts, runner `gen/audiomix_runner.c`, stubs `gen/audiomix_stubs.c`, `gen/audiomix.sources`)                       |
 
 ## 1. Scope
 
@@ -44,8 +44,7 @@ otherwise `(ms*R/1000)/1024`).
 
 ### 3.1 State (normative field semantics; layout is not ABI)
 
-Core audio state `A`: `render_order: [Source]`, `root_nodes: [Source]`, `buffered_ts: u64`, `buffered_timestamps:
-deque<(start,end)>`, `buffering_wait_ticks: u64`, `total_buffering_ticks: i32`, `max_buffering_ticks: i32`,
+Core audio state `A`: `render_order: [Source]`, `root_nodes: [Source]`, `buffered_ts: u64`, `buffered_timestamps: deque<(start,end)>`, `buffering_wait_ticks: u64`, `total_buffering_ticks: i32`, `max_buffering_ticks: i32`,
 `fixed_buffer: bool`, `tasks: FIFO of closures`, `monitoring_duplicating_source: Option<Source>`.
 Data state `D`: `first_audio_source` singly linked list (new audio sources are inserted at the HEAD, so iteration is
 newest first). Video: list of mixes, each `{view, mix_audio}`; a view has 64 source channels.
@@ -59,8 +58,7 @@ Per-source audio state (fields used by this spec): `audio_ts u64` (0 = none), `a
 `sync_offset i64`, `last_sync_offset i64`, `flags` (bit1 = FORCE_MONO), `monitoring_type`
 (0 none, 1 monitor-only, 2 monitor-and-output), `monitoring_enabled`, `timing_set`, `timing_adjust u64`,
 `resample_offset u64`, `next_audio_ts_min`, `next_audio_sys_ts_min`, `sample_info {rate, format, speakers}`
-(all zero initially), `audio_failed`, `audio_data` (last processed packet), `audio_actions: queue of {timestamp,
-kind VOL|MUTE|PTT|PTM, value}`, `audio_is_duplicated`, `activate_refs`, `removed`, `async_unbuffered`,
+(all zero initially), `audio_failed`, `audio_data` (last processed packet), `audio_actions: queue of {timestamp, kind VOL|MUTE|PTT|PTM, value}`, `audio_is_duplicated`, `activate_refs`, `removed`, `async_unbuffered`,
 `async_decoupled`, capture callbacks list, `filters` list. Source kinds: *input* (type INPUT, flag AUDIO),
 *audio_render* source (has a custom `audio_render` callback), *composite* (flag COMPOSITE; enumerates children),
 *submix* (flag SUBMIX, has `audio_mix` callback).
@@ -114,8 +112,7 @@ ticks cover `[1e9, 1021333333)`, `[1021333333, 1042666666)`, ...; the source's `
   `balance > 0.51 || balance < 0.49`, then per frame `ch0 *= sinf(f32((1-balance) * (pi/2)))` and
   `ch1 *= sinf(f32(balance * (pi/2)))`, the product computed in double (`f32 * f64`) and rounded to f32 before
   `sinf`. Other balance values (inside the dead band) and other layouts are untouched.
-- **S-032-R05** Force-mono: if `C != 1` and `flags & FORCE_MONO`: `ch0 = (ch0 + ch1 + ... + ch(C-1)) * (1.0f /
-  (float)C)` (f32, summed in channel order), then ch0 is copied to channels 1..C-1.
+- **S-032-R05** Force-mono: if `C != 1` and `flags & FORCE_MONO`: `ch0 = (ch0 + ch1 + ... + ch(C-1)) * (1.0f / (float)C)` (f32, summed in channel order), then ch0 is copied to channels 1..C-1.
 - **S-032-R06** Filters: iterate the filter list from the last to the first; skip disabled filters and filters
   without `filter_audio`; each filter maps `audio_data` to new data or returns NULL. If any returns NULL the
   packet is dropped here (nothing stored, no capture callbacks, no timing update).
@@ -136,8 +133,7 @@ Let `os = os_gettime_ns()` and `in = data`.
   `next_audio_sys_ts_min != 0`: `diff = |next_audio_sys_ts_min - in.ts|`; `diff < 70e6` -> `push_back = true`;
   `diff > MAX_TS_VAR` -> `timing_set = true; timing_adjust = os - data.ts` (the *unmodified* packet timestamp) and
   `in.ts = data.ts + timing_adjust`.
-- **S-032-R12** `in.ts += sync_offset; in.ts -= resample_offset;` (wrapping). `next_audio_sys_ts_min =
-  next_audio_ts_min + timing_adjust`. If `last_sync_offset != sync_offset`: if `last_sync_offset != 0` then
+- **S-032-R12** `in.ts += sync_offset; in.ts -= resample_offset;` (wrapping). `next_audio_sys_ts_min = next_audio_ts_min + timing_adjust`. If `last_sync_offset != sync_offset`: if `last_sync_offset != 0` then
   `push_back = false`; `last_sync_offset = sync_offset`.
 - **S-032-R13** Unless `monitoring_type == MONITOR_ONLY` (then nothing is stored): if `push_back && audio_ts != 0` ->
   *append* (R15), else *place* (R16).
@@ -148,9 +144,7 @@ Let `os = os_gettime_ns()` and `in = data`.
 
 - **S-032-R15** *Append*: if `input_buf[0].size_bytes + frames*4 > MAX_BUF_SIZE` the packet is silently dropped. Else
   push `frames` samples on every one of the `C` channel FIFOs and set `last_input_size = 0`.
-- **S-032-R16** *Place*: if `audio_ts == 0 || in.ts < audio_ts`: clear all FIFOs, `last_input_size = 0`, `audio_ts =
-  in.ts`, `next_audio_sys_ts_min = in.ts`. Then `off = ns_to_frames(in.ts - audio_ts)`; if `(off+frames)*4 >
-  MAX_BUF_SIZE` the packet is dropped silently (note: `last_input_size` unchanged). Otherwise for each channel write
+- **S-032-R16** *Place*: if `audio_ts == 0 || in.ts < audio_ts`: clear all FIFOs, `last_input_size = 0`, `audio_ts = in.ts`, `next_audio_sys_ts_min = in.ts`. Then `off = ns_to_frames(in.ts - audio_ts)`; if `(off+frames)*4 > MAX_BUF_SIZE` the packet is dropped silently (note: `last_input_size` unchanged). Otherwise for each channel write
   the samples at FIFO offset `off` (if past the end, the gap is zero filled), then **truncate** the FIFO to exactly
   `off + frames` samples (anything stored after the written region is discarded), and set `last_input_size = 0`.
 
@@ -169,11 +163,8 @@ Let `os = os_gettime_ns()` and `in = data`.
   stored in ms.
 - **S-032-R20** Applying an action (audio thread): VOL sets `volume`, MUTE sets `muted`, PTT sets `ptt_pressed`, PTM sets `ptm_pressed`.
 - **S-032-R21** `get_source_volume(os_time)` (audio thread; `os_time` = the source's `audio_ts`, not the wall clock):
-  if `ptm_enabled && ptm_pressed`: `ptm_stop = os_time + ptm_delay*1_000_000`; likewise for talk. `ptm_active = ptm_pressed ||
-  os_time < ptm_stop`, `ptt_active = ptt_pressed || os_time < ptt_stop`. `muted = !enabled || muted_flag || (ptm_enabled
-  && ptm_active) || (ptt_enabled && !ptt_active)`. Result: `0` if `muted` or `|volume| <= 1e-4`; `1` if `|volume-1| <= 1e-4`; else `volume`.
-- **S-032-R22** `source_muted(os_time)` (callback flag) uses the *user* copies: `!enabled || user_muted || (ptm_enabled &&
-  (user_ptm_pressed || os_time < ptm_stop)) || (ptt_enabled && !(user_ptt_pressed || os_time < ptt_stop))`, after first
+  if `ptm_enabled && ptm_pressed`: `ptm_stop = os_time + ptm_delay*1_000_000`; likewise for talk. `ptm_active = ptm_pressed || os_time < ptm_stop`, `ptt_active = ptt_pressed || os_time < ptt_stop`. `muted = !enabled || muted_flag || (ptm_enabled && ptm_active) || (ptt_enabled && !ptt_active)`. Result: `0` if `muted` or `|volume| <= 1e-4`; `1` if `|volume-1| <= 1e-4`; else `volume`.
+- **S-032-R22** `source_muted(os_time)` (callback flag) uses the *user* copies: `!enabled || user_muted || (ptm_enabled && (user_ptm_pressed || os_time < ptm_stop)) || (ptt_enabled && !(user_ptt_pressed || os_time < ptt_stop))`, after first
   updating `ptm_stop/ptt_stop` from the user pressed flags exactly as R21 does with the audio-thread flags.
 
 ### 5.5 Render: what the mixer receives
@@ -199,14 +190,11 @@ Let `os = os_gettime_ns()` and `in = data`.
   - apply volume (R28); `audio_pending = false`.
 - **S-032-R27** `obs_source_audio_pending` returns true for invalid or removed sources and for sources that are neither
   composite nor audio; otherwise `audio_pending`.
-- **S-032-R28** *Apply volume* `(src, mixers, channels)`: if the action queue is non-empty and `actions[0].ts < audio_ts +
-  frames_to_ns(1024)`, run R29 and return. Else `v = get_source_volume(audio_ts)`; if `v == 1.0` return; if `v == 0.0 || mixers == 0`
+- **S-032-R28** *Apply volume* `(src, mixers, channels)`: if the action queue is non-empty and `actions[0].ts < audio_ts + frames_to_ns(1024)`, run R29 and return. Else `v = get_source_volume(audio_ts)`; if `v == 1.0` return; if `v == 0.0 || mixers == 0`
   zero the **entire** `output_buf` (all 6 mixes, 8 channels); else for each mix with the bit set in both `src.audio_mixers` and
   `mixers`, multiply channels 0..channels-1 of `output_buf[m]` by `v`.
-- **S-032-R29** *Actions inside the tick*: `cur = get_source_volume(audio_ts)`, `frame = 0`. For the queue in order: `t = max(action.ts,
-  audio_ts)`, `nf = ns_to_frames(t - audio_ts)`; if `nf >= 1024` stop (the action and all later ones stay queued); remove the
-  action, apply it (R20); if `nf > frame`: `vol[frame..nf) = cur; frame = nf`; then `cur = get_source_volume(t)`. Finally `vol[frame..1024) =
-  cur`. For every mix whose bit is set in `src.audio_mixers` (the `mixers` argument is NOT consulted), multiply channel c frame i of
+- **S-032-R29** *Actions inside the tick*: `cur = get_source_volume(audio_ts)`, `frame = 0`. For the queue in order: `t = max(action.ts, audio_ts)`, `nf = ns_to_frames(t - audio_ts)`; if `nf >= 1024` stop (the action and all later ones stay queued); remove the
+  action, apply it (R20); if `nf > frame`: `vol[frame..nf) = cur; frame = nf`; then `cur = get_source_volume(t)`. Finally `vol[frame..1024) = cur`. For every mix whose bit is set in `src.audio_mixers` (the `mixers` argument is NOT consulted), multiply channel c frame i of
   `output_buf[m]` by `vol[i]`.
 
 ### 5.6 The mixing callback
@@ -236,8 +224,7 @@ Let `os = os_gettime_ns()` and `in = data`.
 - **S-032-R37** `should_silence_monitored_source(src)`: false if there is no `monitoring_duplicating_source` or it is not active
   (`activate_refs == 0`). `muted_dup = |dup.volume - 0| <= 1e-4` (uses the AUDIO-THREAD copy `volume`); `unmuted = !dup.muted && !muted_dup`
   (audio-thread copy `muted`). Result `unmuted && src.monitoring_enabled && src != dup`.
-- **S-032-R38** *buffer insufficient* `(src, min_ts)`: false if `src` has `audio_render`, or is pending, or `audio_ts == 0`. If `audio_ts !=
-  min_ts && audio_ts != min_ts-1`: `sp = ns_to_frames(audio_ts - min_ts)`; if `sp >= 1024` return false; `need = 1024 - sp`; else `need = 1024`. If the
+- **S-032-R38** *buffer insufficient* `(src, min_ts)`: false if `src` has `audio_render`, or is pending, or `audio_ts == 0`. If `audio_ts != min_ts && audio_ts != min_ts-1`: `sp = ns_to_frames(audio_ts - min_ts)`; if `sp >= 1024` return false; `need = 1024 - sp`; else `need = 1024`. If the
   FIFO holds fewer than `need` frames: `audio_pending = true`, return true; else false.
 - **S-032-R39** *ignore_audio* `(src, start_ts)` (under the source buffer lock; `n` = FIFO frames): if `audio_ts == 0 && n > 0`: clear the FIFOs,
   `last_input_size = 0`, return false. If `n > 0`: `drop = mul_div(start_ts - audio_ts - 1, R, 1e9) + 1`, clamped to `n`; pop `drop` frames from each
@@ -264,8 +251,7 @@ Let `os = os_gettime_ns()` and `in = data`.
   `>= 0.075: (d-0.15)/0.075*10 - 40`; `>= 0.025: (d-0.075)/0.05*10 - 50`; `>= 0.001: (d-0.025)/0.025*90 - 60`; else `-inf`. `db_to_def`: `0 -> 1`; `-inf -> 0`;
   `>= -9: (db+9)/9*0.25 + 0.75`; `>= -20: (db+20)/11*0.25 + 0.5`; `>= -30: (db+30)/10*0.2 + 0.3`; `>= -40: (db+40)/10*0.15 + 0.15`; `>= -50: (db+50)/10*0.075 + 0.075`;
   `>= -60: (db+60)/10*0.05 + 0.025`; `>= -114: (db+150)/90*0.025`; else `0` (the pieces are NOT continuous at -60/-114, Q-5; values above 0 dB continue the first piece).
-  *Log*: `def_to_db(d) = 0 if d >= 1; -inf if d <= 0; else -(102) * (102/6)^(-d) + 6` (`powf`); `db_to_def(db) = 1 if db >= 0; 0 if db <= -96; else
-  (-log10f(-db + 6) - LOG_RANGE_VAL) / (LOG_OFFSET_VAL - LOG_RANGE_VAL)` with `LOG_OFFSET_VAL = -0.77815125038364363`, `LOG_RANGE_VAL = -2.00860017176191756`.
+  *Log*: `def_to_db(d) = 0 if d >= 1; -inf if d <= 0; else -(102) * (102/6)^(-d) + 6` (`powf`); `db_to_def(db) = 1 if db >= 0; 0 if db <= -96; else (-log10f(-db + 6) - LOG_RANGE_VAL) / (LOG_OFFSET_VAL - LOG_RANGE_VAL)` with `LOG_OFFSET_VAL = -0.77815125038364363`, `LOG_RANGE_VAL = -2.00860017176191756`.
   Limits: cubic/IEC `max_db = 0, min_db = -inf`; log `max_db = 0, min_db = -96`. Unknown type -> `create` returns NULL.
 - **S-032-R46** `set_db(db)`: NULL fader -> false. `cur = db`; if `cur > max_db`: `cur = max_db`, clamped; if `cur < min_db`: `cur = -inf`, clamped. Sets `ignore_next_signal = true` (even with no source),
   and if a source is attached calls `set_volume(source, db_to_mul(cur))`. Returns `!clamped`. `set_deflection(d) = set_db(def_to_db(d))`, `set_mul(m) = set_db(mul_to_db(m))`. Getters:
@@ -278,8 +264,7 @@ Let `os = os_gettime_ns()` and `in = data`.
 
 ### 5.8 Volmeters
 
-- **S-032-R50** `create(type)` stores the type (unused), `peak_meter_type = SAMPLE`, history/peaks/magnitudes zero. `attach_source` (NULL -> false): detach previous; connect "volume" (updates `cur_db =
-  mul_to_db(calldata.volume)`) and "destroy" (detach); register the audio-capture callback on the source; `cur_db = mul_to_db(get_volume(source))`. `detach` disconnects and unregisters.
+- **S-032-R50** `create(type)` stores the type (unused), `peak_meter_type = SAMPLE`, history/peaks/magnitudes zero. `attach_source` (NULL -> false): detach previous; connect "volume" (updates `cur_db = mul_to_db(calldata.volume)`) and "destroy" (detach); register the audio-capture callback on the source; `cur_db = mul_to_db(get_volume(source))`. `detach` disconnects and unregisters.
   `get_nr_channels = clamp(channels(source.sample_info.speakers) or 0 if unattached, 0, channels(output speakers) or 2 if there is no audio info)`.
 - **S-032-R51** On a capture callback `(data, muted)` under the meter lock: `nr = clamp(count of non-null planes among 8, 0, 8)`; then *peak* (R52), *magnitude* (R53); `mul = (muted && !source.user_muted) ? 0 : db_to_mul(cur_db)`;
   for ch in 0..7: `magnitude_db[ch] = mul_to_db(magnitude[ch]*mul)`, `peak_db[ch] = mul_to_db(peak[ch]*mul)`, `input_peak_db[ch] = mul_to_db(peak[ch])`. Callbacks are then invoked (newest first) outside the meter lock.
@@ -317,6 +302,7 @@ add_audio_buffering(ts, min_ts):               # called only when min_ts < ts.st
 set_fixed_audio_buffering(ts):                 # fixed mode; ticks = max - total
     same as above with ticks = max - total, total = max, one INFO log (ms(total))
 ```
+
 `ts` after buffering replaces the working timestamp: the tick mixes that earlier window instead (but with `buffering_wait_ticks > 0` nothing is mixed
 and the call returns `false`; mixes stay silent). Note `ticks` can be 0 (when `ticks - (total-max)` reaches 0) and then `new` is uninitialised in the
 reference (it would copy stack garbage into `ts`); a conforming implementation SHOULD leave `ts` unchanged in that case (not covered by vectors).
@@ -368,42 +354,42 @@ The mixing callback allocates nothing per tick in the reference (`render_order` 
 
 ## 10. Conformance coverage
 
-| Rule | Scripts |
-|---|---|
-| R01-R03 | 34_resample_hook, 39_failed_resampler_stale, 10_basic_mix |
-| R04, R05 | 35_balance_mono |
-| R06 | 36_filter_audio |
-| R07-R12 | 30_ingest_timestamps, 31_ingest_far_timestamp, 33_sync_offset |
-| R13, R14 | 37_monitoring, 50_volmeter_basic |
-| R15, R16 | 30_ingest_timestamps, 32_ingest_place, 32b_ingest_place_truncate |
-| R17-R19 | 11_volume_mute_mixers, 17_volume_actions, 38_push_to_talk_mute, 45_fader_ignore_quirk |
-| R20-R22 | 17_volume_actions, 38_push_to_talk_mute, 55_volmeter_muted_flag |
-| R23-R28 | 11_volume_mute_mixers, 15_custom_render, 16_submix, 12_start_offset |
-| R29 | 17_volume_actions |
-| R30-R33 | 10_basic_mix, 13_two_sources, 14_render_order, 19_double_root |
-| R34-R36, R38 | 20_buffering_dynamic, 21_buffering_fixed, 22_buffering_maxed |
-| R37 | 37_monitoring |
-| R39 | 18_ignore_audio_no_ts, 22_buffering_maxed |
-| R40 | 10_basic_mix, 12_start_offset, 13_two_sources |
-| R41-R43 | 23_discard_stopped, 10_basic_mix |
-| R44 | 20_buffering_dynamic, 24_tasks |
-| R45 | 40_fader_curve_cubic, 41_fader_curve_iec, 42_fader_curve_log |
-| R46 | 43_fader_state |
-| R47, R48 | 44_fader_source, 45_fader_ignore_quirk |
-| R49 | 40-42 (`fader_conv ... db`) |
-| R50 | 50_volmeter_basic, 53_volmeter_channels, 54_volmeter_callbacks |
-| R51 | 50_volmeter_basic, 55_volmeter_muted_flag |
-| R52, R54 | 51_volmeter_peak_types, 52_volmeter_framecount, 56_volmeter_unaligned_quirk |
-| R53 | 50_volmeter_basic, 52_volmeter_framecount |
-| R55 | 51_volmeter_peak_types, 54_volmeter_callbacks |
+| Rule         | Scripts                                                                               |
+| ------------ | ------------------------------------------------------------------------------------- |
+| R01-R03      | 34_resample_hook, 39_failed_resampler_stale, 10_basic_mix                             |
+| R04, R05     | 35_balance_mono                                                                       |
+| R06          | 36_filter_audio                                                                       |
+| R07-R12      | 30_ingest_timestamps, 31_ingest_far_timestamp, 33_sync_offset                         |
+| R13, R14     | 37_monitoring, 50_volmeter_basic                                                      |
+| R15, R16     | 30_ingest_timestamps, 32_ingest_place, 32b_ingest_place_truncate                      |
+| R17-R19      | 11_volume_mute_mixers, 17_volume_actions, 38_push_to_talk_mute, 45_fader_ignore_quirk |
+| R20-R22      | 17_volume_actions, 38_push_to_talk_mute, 55_volmeter_muted_flag                       |
+| R23-R28      | 11_volume_mute_mixers, 15_custom_render, 16_submix, 12_start_offset                   |
+| R29          | 17_volume_actions                                                                     |
+| R30-R33      | 10_basic_mix, 13_two_sources, 14_render_order, 19_double_root                         |
+| R34-R36, R38 | 20_buffering_dynamic, 21_buffering_fixed, 22_buffering_maxed                          |
+| R37          | 37_monitoring                                                                         |
+| R39          | 18_ignore_audio_no_ts, 22_buffering_maxed                                             |
+| R40          | 10_basic_mix, 12_start_offset, 13_two_sources                                         |
+| R41-R43      | 23_discard_stopped, 10_basic_mix                                                      |
+| R44          | 20_buffering_dynamic, 24_tasks                                                        |
+| R45          | 40_fader_curve_cubic, 41_fader_curve_iec, 42_fader_curve_log                          |
+| R46          | 43_fader_state                                                                        |
+| R47, R48     | 44_fader_source, 45_fader_ignore_quirk                                                |
+| R49          | 40-42 (`fader_conv ... db`)                                                           |
+| R50          | 50_volmeter_basic, 53_volmeter_channels, 54_volmeter_callbacks                        |
+| R51          | 50_volmeter_basic, 55_volmeter_muted_flag                                             |
+| R52, R54     | 51_volmeter_peak_types, 52_volmeter_framecount, 56_volmeter_unaligned_quirk           |
+| R53          | 50_volmeter_basic, 52_volmeter_framecount                                             |
+| R55          | 51_volmeter_peak_types, 54_volmeter_callbacks                                         |
 
 ## 11. Open questions
 
 1. The Rust sufficiency check (implementing from this spec and running the vectors) was **not performed** in this pass (usage limit); the spec has not been validated by an independent implementation.
-2. `scene` / `group` audio rendering (`obs-scene.c`) decides what a composite source reports and mixes; here composite sources use a harness callback. A scene spec must define it.
-3. Real resampler (`audio_resampler_resample`) timestamp offset semantics beyond "value is subtracted from the stored timestamp" (R12) are not specified.
-4. Behaviour of `audio_callback` with `C` different from the channels the sources were ingested with after a mid-run `obs_reset_audio` is not covered.
-5. Windows/macOS: `util_mul_div64` uses `_udiv128` on MSVC (exact result) so timestamps can differ by 1 ns in extreme ranges; the vectors stay inside the range where both agree.
+1. `scene` / `group` audio rendering (`obs-scene.c`) decides what a composite source reports and mixes; here composite sources use a harness callback. A scene spec must define it.
+1. Real resampler (`audio_resampler_resample`) timestamp offset semantics beyond "value is subtracted from the stored timestamp" (R12) are not specified.
+1. Behaviour of `audio_callback` with `C` different from the channels the sources were ingested with after a mid-run `obs_reset_audio` is not covered.
+1. Windows/macOS: `util_mul_div64` uses `_udiv128` on MSVC (exact result) so timestamps can differ by 1 ns in extreme ranges; the vectors stay inside the range where both agree.
 
 ## 12. Round 9: audio-monitoring backends (added)
 
@@ -429,15 +415,12 @@ the COM/CoreAudio calls).
   `EnumAudioEndpoints(eRender, DEVICE_STATE_ACTIVE)`; per device: `GetId`, `OpenPropertyStore`
   (read) → `PKEY_Device_FriendlyName` → `cb(data, utf8_name, utf8_id)` (512-byte buffers, wide →
   UTF-8); any failed HRESULT skips that device (enumeration continues); a `false` from the callback
-  stops it. `get_default_id(p_id)`: no-op if already set; `GetDefaultAudioEndpoint(eRender,
-  eConsole)` → `GetId` → UTF-8; on any failure `*p_id` is the empty string. `devices_match(id1,
-  id2)`: NULL → false; each side equal to `"default"` is replaced by its resolved default id
+  stops it. `get_default_id(p_id)`: no-op if already set; `GetDefaultAudioEndpoint(eRender, eConsole)` → `GetId` → UTF-8; on any failure `*p_id` is the empty string. `devices_match(id1, id2)`: NULL → false; each side equal to `"default"` is replaced by its resolved default id
   (resolved once, shared); result = byte compare of the ids.
 
 ### 12.3 macOS backend (CoreAudio)
 
-- **S-032-R58 [SRC]** `coreaudio-enum-devices.c` (9 fns): `enum_audio_devices(cb, data,
-  allow_inputs)`: read `kAudioHardwarePropertyDevices` from the system object; per device id: skip
+- **S-032-R58 [SRC]** `coreaudio-enum-devices.c` (9 fns): `enum_audio_devices(cb, data, allow_inputs)`: read `kAudioHardwarePropertyDevices` from the system object; per device id: skip
   when `!allow_inputs` and the output stream count (`kAudioDevicePropertyStreams` / ScopeOutput /
   Main, data size 0) is 0; else read `kAudioDevicePropertyDeviceUID` +
   `kAudioDevicePropertyDeviceNameCFString` (both to UTF-8) → `cb(data, name, uid)`.

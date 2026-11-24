@@ -1,12 +1,12 @@
 # S-001 Allocator, logging and crash base (`bmem`, `base`)
 
-| | |
-|---|---|
-| Status | Ready for review (second-author check pending) |
-| Reference | libobs 33.0.1 `util/bmem.*`, `util/base.*` |
-| Target crate | `crates/obs-util` (modules `bmem`, `base`) |
-| Depends on | – |
-| Conformance | `test/conformance/scripts/bmem/` |
+|              |                                                |
+| ------------ | ---------------------------------------------- |
+| Status       | Ready for review (second-author check pending) |
+| Reference    | libobs 33.0.1 `util/bmem.*`, `util/base.*`     |
+| Target crate | `crates/obs-util` (modules `bmem`, `base`)     |
+| Depends on   | –                                              |
+| Conformance  | `test/conformance/scripts/bmem/`               |
 
 ## 1. Scope
 
@@ -82,10 +82,10 @@ exists in the header but nothing installs one. (An earlier planning document men
 - **S-001-R21** `blog(level, fmt, ...)` ≡ `blogva(level, fmt, ap)`; `blogva` calls the installed handler `handler(level, fmt, ap, param)` with the **unformatted** format string and the argument list. Formatting is the handler's job.
 - **S-001-R22** Initially the handler is the *default handler*. `base_set_log_handler(h, p)` installs `h` and `p`; **`h == NULL` reinstalls the default handler** (and stores `p`). `base_get_log_handler(&h, &p)` stores the current handler and parameter into the non-NULL out pointers; either may be NULL.
 - **S-001-R23** Default handler: formats with `vsnprintf` into a 8192-byte buffer (longer messages are truncated), then writes one line, flushing after the write:
-  - `LOG_DEBUG`  → stdout `"debug: <msg>\n"`
-  - `LOG_INFO`   → stdout `"info: <msg>\n"`
+  - `LOG_DEBUG` → stdout `"debug: <msg>\n"`
+  - `LOG_INFO` → stdout `"info: <msg>\n"`
   - `LOG_WARNING`→ stdout `"warning: <msg>\n"`
-  - `LOG_ERROR`  → stderr `"error: <msg>\n"`
+  - `LOG_ERROR` → stderr `"error: <msg>\n"`
   - any other level value → nothing is written.
 - **S-001-R24** `bcrash(fmt, ...)`: if a crash is already in progress (a crash handler itself called `bcrash`) write `"Crashed in the crash handler"` to stderr and `exit(2)`. Otherwise mark crashing, call the crash handler `h(fmt, ap, param)`, and — if the handler returns — `exit(0)`. The default crash handler writes the formatted message to stderr **without a trailing newline** and calls `exit(0)`. `bcrash` never returns.
 - **S-001-R25** `base_set_crash_handler(h, p)` can succeed **at most once per process**: the first call stores `h`/`p`; every later call logs `LOG_WARNING "Tried to set a crash handler when one already exists."` and is ignored. (The flag is global and atomic; the default handler does not count as "set".)
@@ -113,14 +113,14 @@ All functions in section 3 are thread-safe, except that `base_set_log_handler`, 
 
 ## 8. Conformance coverage
 
-| Rule | Scripts |
-|---|---|
-| R01, R04, R05, R09, R10 | `bmem/01-alignment-and-count` |
-| R06, R08 | `bmem/02-realloc` |
-| R11, R13 | `bmem/03-dup` |
-| R02, R03(partially: OOM not scripted), R07, R11 (size 0), R12 (size 0) | `bmem/04-fatal-paths` |
-| R21 (format + handler dispatch) | `bmem/05-logging` |
-| R20, R22–R25 | not scriptable with the current runner; unit tests required in the crate (default-handler output, `base_set_log_handler(NULL)`, crash handler once-only) |
+| Rule                                                                   | Scripts                                                                                                                                                  |
+| ---------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| R01, R04, R05, R09, R10                                                | `bmem/01-alignment-and-count`                                                                                                                            |
+| R06, R08                                                               | `bmem/02-realloc`                                                                                                                                        |
+| R11, R13                                                               | `bmem/03-dup`                                                                                                                                            |
+| R02, R03(partially: OOM not scripted), R07, R11 (size 0), R12 (size 0) | `bmem/04-fatal-paths`                                                                                                                                    |
+| R21 (format + handler dispatch)                                        | `bmem/05-logging`                                                                                                                                        |
+| R20, R22–R25                                                           | not scriptable with the current runner; unit tests required in the crate (default-handler output, `base_set_log_handler(NULL)`, crash handler once-only) |
 
 ## 9. Open questions
 
@@ -133,7 +133,9 @@ All functions in section 3 are thread-safe, except that `base_set_log_handler`, 
 - `libobs/util/bmem.c`, `libobs/util/bmem.h`, `libobs/util/base.c`, `libobs/util/util.hpp`
 
 - **S-001-R26** `bmem.c`: the allocation functions pinned earlier (`bmalloc`/`brealloc`/`bfree`/`bmemdup`) route through private `a_malloc`/`a_realloc`/`a_free` wrappers which maintain a process-wide allocation counter (`num_allocs`); the earlier OOM rules apply unchanged.
-- **S-001-R27** `bmem.h`: the zeroing/string-dup inlines over `bmalloc`: `bzalloc` (zeroed memory), `bstrdup`/`bstrdup_n` and the wide variants `bwstrdup`/`bwstrdup_n` (`_n` = length-bounded).
-- **S-001-R28** `base.c`: `blog(level, fmt, …)` dispatches through the current log handler, swapped by `base_get_log_handler`/`base_set_log_handler`; the default `def_log_handler` formats into an 8192-byte buffer (`vsnprintf`) and prints to stdout with a per-level prefix (`"debug: "`, `"info: "`, …). `bcrash(msg)` calls the current crash handler (default in the same file; swapped by `base_set_crash_handler`).
-- **S-001-R29** `util.hpp`: the C++ convenience wrappers: `BPtr<T>` — move-only RAII pointer freeing via `bfree` (`Get`, `operator T*`, `operator&`, `operator!`, comparisons); `ConfigFile` — move-only RAII over S-007's `config_t` (copy deleted; `Create` → `config_create`, `Close`/destructor → `config_close`, plus `Swap`, `Open`/`OpenString`, `GetString`) and a `TextLookup` accessor over S-010's text lookup.
 
+- **S-001-R27** `bmem.h`: the zeroing/string-dup inlines over `bmalloc`: `bzalloc` (zeroed memory), `bstrdup`/`bstrdup_n` and the wide variants `bwstrdup`/`bwstrdup_n` (`_n` = length-bounded).
+
+- **S-001-R28** `base.c`: `blog(level, fmt, …)` dispatches through the current log handler, swapped by `base_get_log_handler`/`base_set_log_handler`; the default `def_log_handler` formats into an 8192-byte buffer (`vsnprintf`) and prints to stdout with a per-level prefix (`"debug: "`, `"info: "`, …). `bcrash(msg)` calls the current crash handler (default in the same file; swapped by `base_set_crash_handler`).
+
+- **S-001-R29** `util.hpp`: the C++ convenience wrappers: `BPtr<T>` — move-only RAII pointer freeing via `bfree` (`Get`, `operator T*`, `operator&`, `operator!`, comparisons); `ConfigFile` — move-only RAII over S-007's `config_t` (copy deleted; `Create` → `config_create`, `Close`/destructor → `config_close`, plus `Swap`, `Open`/`OpenString`, `GetString`) and a `TextLookup` accessor over S-010's text lookup.

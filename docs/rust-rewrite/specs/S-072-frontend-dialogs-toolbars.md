@@ -1,13 +1,13 @@
 # S-072 Frontend: dialogs, source pickers, toolbars & tree widgets
 
-| | |
-|---|---|
-| Status | Draft (round 8 — behaviour catalog written from C reference; no vectors yet) |
-| Spec version | initial |
-| Reference | OBS Studio 33.0.1, `frontend/components/*`, `frontend/dialogs/*`, `frontend/utility/*` (Qt widgets) |
-| Target crate | `crates/frontend` (GUI layer) |
-| Depends on | S-048 (frontend API catalog, config), S-033 (scene item model), S-034 (undo/redo via `obs_source` settings), S-069 (main window hosts these widgets) |
-| Conformance | planned; none yet (Qt UI; no executable vectors) |
+|              |                                                                                                                                                      |
+| ------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Status       | Draft (round 8 — behaviour catalog written from C reference; no vectors yet)                                                                         |
+| Spec version | initial                                                                                                                                              |
+| Reference    | OBS Studio 33.0.1, `frontend/components/*`, `frontend/dialogs/*`, `frontend/utility/*` (Qt widgets)                                                  |
+| Target crate | `crates/frontend` (GUI layer)                                                                                                                        |
+| Depends on   | S-048 (frontend API catalog, config), S-033 (scene item model), S-034 (undo/redo via `obs_source` settings), S-069 (main window hosts these widgets) |
+| Conformance  | planned; none yet (Qt UI; no executable vectors)                                                                                                     |
 
 ## 1. Scope
 
@@ -247,15 +247,15 @@ UpdateWidgets(force); accept event
 
 ## 10. Conformance coverage
 
-| Rule(s) | Scripts |
-|---|---|
+| Rule(s)       | Scripts                                 |
+| ------------- | --------------------------------------- |
 | all S-072-Rxx | none yet (Qt UI; no executable vectors) |
 
 ## 11. Open questions
 
 1. `SourceTreeModel::data()` roles beyond `AccessibleTextRole` (icon/tooltip are served by the row widget; the model may expose more in edge paths) not fully enumerated.
-2. `OBSMissingFiles::saveFiles`' exact per-source setting key writes (which sources accept `file` updates, how group/filter paths are rewritten) not transcribed line by line.
-3. `LogUploadDialog`'s upload transport (endpoint, auth) lives in `OBSApp` (S-074 territory); only the dialog's state machine is pinned.
-4. `TextSourceToolbar` font-dialog handling of the `font` data object (which fields are offered per freetype version) not detailed.
-5. `DeviceCaptureToolbar`'s activate path assumes the `win-dshow` module; the exact settings keys toggled beyond `active` (device re-init parameters) not read in full.
-6. Round 10 second-author check (2026-11-05): corrected R15 (collapse checkbox is checked iff private `collapsed` is true — it tracks the collapsed state, was inverted), R17 (rename API is `obs_source_set_name`, not `obs_source_set_source_name`), R23 (a11y role is `QAccessible::Grouping`, not Slider; cell text is the translated alignment name, not "Align <flags>"), R45 (`OBSSourceLabel` emits `clicked()` on any mouse press; `VisibilityItemWidget`'s enable signal toggles the checkbox — `SetColor` is paint state only).
+1. `OBSMissingFiles::saveFiles`' exact per-source setting key writes (which sources accept `file` updates, how group/filter paths are rewritten) not transcribed line by line.
+1. `LogUploadDialog`'s upload transport (endpoint, auth) lives in `OBSApp` (S-074 territory); only the dialog's state machine is pinned.
+1. `TextSourceToolbar` font-dialog handling of the `font` data object (which fields are offered per freetype version) not detailed.
+1. `DeviceCaptureToolbar`'s activate path assumes the `win-dshow` module; the exact settings keys toggled beyond `active` (device re-init parameters) not read in full.
+1. Round 10 second-author check (2026-11-05): corrected R15 (collapse checkbox is checked iff private `collapsed` is true — it tracks the collapsed state, was inverted), R17 (rename API is `obs_source_set_name`, not `obs_source_set_source_name`), R23 (a11y role is `QAccessible::Grouping`, not Slider; cell text is the translated alignment name, not "Align <flags>"), R45 (`OBSSourceLabel` emits `clicked()` on any mouse press; `VisibilityItemWidget`'s enable signal toggles the checkbox — `SetColor` is paint state only).

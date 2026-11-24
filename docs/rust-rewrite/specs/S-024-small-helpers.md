@@ -1,12 +1,12 @@
 # S-024 Small helpers: option strings, 128-bit math, process arguments, hotkey names, missing files, task queue, profiler, BPM, address ordering, file updater, constants
 
-| | |
-|---|---|
-| Status | Ready for review |
-| Reference | libobs 33.0.1: `shared/opts-parser`, `libobs/util/util_uint64.h`, `util_uint128.h`, `libobs/util/pipe.c` (argument list only), `libobs/obs-hotkey-name-map.c` (+ the key list `obs-hotkeys.h`), `libobs/obs-missing-files.c`, `libobs/util/task.c`, `libobs/util/profiler.c`, `shared/bpm`, `shared/happy-eyeballs` (address ordering only), `shared/file-updater`, `obs-defs.h`, `obs-config.h` and the public enums |
-| Target crates | `crates/obs-util-small` (M1-M3, M6, M7, M11), `crates/obs-hotkey-names` (M4), `crates/obs-missing-files` (M5), `crates/obs-bpm` (M8), `crates/obs-netutil` (M9), `crates/obs-file-updater` (M10) -- crate split is a suggestion |
-| Depends on | S-001 (allocation, only as implementation detail), S-006 (dstr, only as detail), S-012 (`metadata_obu`, used by M8), S-014 (obs_data: JSON semantic of `obs_data_get_int/get_string`, used by M10) |
-| Conformance | `test/conformance/scripts/helpers/` (75 scripts, vectors in `vectors/helpers/`) |
+|               |                                                                                                                                                                                                                                                                                                                                                                                                                       |
+| ------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Status        | Ready for review                                                                                                                                                                                                                                                                                                                                                                                                      |
+| Reference     | libobs 33.0.1: `shared/opts-parser`, `libobs/util/util_uint64.h`, `util_uint128.h`, `libobs/util/pipe.c` (argument list only), `libobs/obs-hotkey-name-map.c` (+ the key list `obs-hotkeys.h`), `libobs/obs-missing-files.c`, `libobs/util/task.c`, `libobs/util/profiler.c`, `shared/bpm`, `shared/happy-eyeballs` (address ordering only), `shared/file-updater`, `obs-defs.h`, `obs-config.h` and the public enums |
+| Target crates | `crates/obs-util-small` (M1-M3, M6, M7, M11), `crates/obs-hotkey-names` (M4), `crates/obs-missing-files` (M5), `crates/obs-bpm` (M8), `crates/obs-netutil` (M9), `crates/obs-file-updater` (M10) -- crate split is a suggestion                                                                                                                                                                                       |
+| Depends on    | S-001 (allocation, only as implementation detail), S-006 (dstr, only as detail), S-012 (`metadata_obu`, used by M8), S-014 (obs_data: JSON semantic of `obs_data_get_int/get_string`, used by M10)                                                                                                                                                                                                                    |
+| Conformance   | `test/conformance/scripts/helpers/` (75 scripts, vectors in `vectors/helpers/`)                                                                                                                                                                                                                                                                                                                                       |
 
 ## 1. Scope
 
@@ -14,20 +14,20 @@ Twelve small, mostly pure modules that are good clean-room targets. Each has its
 (M1-M12), its own rules (`S-024-Rnn`) and its own scripts. All modules are driven by one runner
 (`helpers_runner.c`, command prefix selects the module).
 
-| # | Module | In scope | Out of scope / skipped |
-|---|---|---|---|
-| M1 | `opts-parser` | whole module | |
-| M2 | `util_uint64.h` / `util_uint128.h` | whole headers | |
-| M3 | `os_process_args_*` (`pipe.c`) | argument list container | the `os_process_pipe_*` process functions (platform code) |
-| M4 | `obs-hotkey-name-map.c` | key id <-> name table, both lookups | |
-| M5 | `obs-missing-files.c` | list/record API, refcounts, callbacks | `obs_source_replace_missing_file` itself (S-0xx sources), only its observable call is modelled |
-| M6 | `util/task.c` | ordering, wait/destroy semantics, `inside` | thread name, failure paths of thread/semaphore creation |
-| M7 | `util/profiler.c` | complete (aggregation, snapshot, printing, CSV, name store) driven by a fake clock | the gzip CSV writer (`profiler_snapshot_dump_csv_gz`: same text as the plain CSV, compressed) |
-| M8 | `shared/bpm` | counters, timestamps, SEI payloads, per-codec packet injection | `libcaption` is only used as a framing detail (specified here); `obs_output` plumbing |
-| M9 | `shared/happy-eyeballs` | address-list ordering, resolver hints, constants | the connection race (sockets, timers, threads): not deterministic, **not specified** |
-| M10 | `shared/file-updater` | the full update algorithm, driven by a fake HTTP server and an in-memory file system | threads, real HTTP, TLS options |
-| M11 | `obs-defs.h`, `obs-config.h`, public enums | constants table + semantic-version macro | |
-| M12 | skipped modules | | `libobs/util/source-profiler.c`: needs `obs_source_t`, `gs_timer_t`, `obs->video` internals and `NUM_TEXTURES`, so it is not linkable without libobs; `shared/file-updater` hash handling: the module has **no hashes**, it compares integer versions |
+| #   | Module                                     | In scope                                                                             | Out of scope / skipped                                                                                                                                                                                                                                |
+| --- | ------------------------------------------ | ------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| M1  | `opts-parser`                              | whole module                                                                         |                                                                                                                                                                                                                                                       |
+| M2  | `util_uint64.h` / `util_uint128.h`         | whole headers                                                                        |                                                                                                                                                                                                                                                       |
+| M3  | `os_process_args_*` (`pipe.c`)             | argument list container                                                              | the `os_process_pipe_*` process functions (platform code)                                                                                                                                                                                             |
+| M4  | `obs-hotkey-name-map.c`                    | key id \<-> name table, both lookups                                                 |                                                                                                                                                                                                                                                       |
+| M5  | `obs-missing-files.c`                      | list/record API, refcounts, callbacks                                                | `obs_source_replace_missing_file` itself (S-0xx sources), only its observable call is modelled                                                                                                                                                        |
+| M6  | `util/task.c`                              | ordering, wait/destroy semantics, `inside`                                           | thread name, failure paths of thread/semaphore creation                                                                                                                                                                                               |
+| M7  | `util/profiler.c`                          | complete (aggregation, snapshot, printing, CSV, name store) driven by a fake clock   | the gzip CSV writer (`profiler_snapshot_dump_csv_gz`: same text as the plain CSV, compressed)                                                                                                                                                         |
+| M8  | `shared/bpm`                               | counters, timestamps, SEI payloads, per-codec packet injection                       | `libcaption` is only used as a framing detail (specified here); `obs_output` plumbing                                                                                                                                                                 |
+| M9  | `shared/happy-eyeballs`                    | address-list ordering, resolver hints, constants                                     | the connection race (sockets, timers, threads): not deterministic, **not specified**                                                                                                                                                                  |
+| M10 | `shared/file-updater`                      | the full update algorithm, driven by a fake HTTP server and an in-memory file system | threads, real HTTP, TLS options                                                                                                                                                                                                                       |
+| M11 | `obs-defs.h`, `obs-config.h`, public enums | constants table + semantic-version macro                                             |                                                                                                                                                                                                                                                       |
+| M12 | skipped modules                            |                                                                                      | `libobs/util/source-profiler.c`: needs `obs_source_t`, `gs_timer_t`, `obs->video` internals and `NUM_TEXTURES`, so it is not linkable without libobs; `shared/file-updater` hash handling: the module has **no hashes**, it compares integer versions |
 
 ## 2. Terminology and conventions
 
@@ -199,8 +199,7 @@ Samples are kept as a multiset `{µs value -> count}`. `register_root(n, ns)`: i
 by **descending** µs; `overall_count` = sum of counts; `min_time`/`max_time` = smallest/largest µs (an entry without samples:
 `min = 2^64-1`, `max = 0`, `count = 0`, Q-9); if `expected != 0` the same for `times_between_calls` (`overall_between_calls_count`,
 `min/max_time_between_calls`), else those fields are 0 and the array is empty; `expected_time_between_calls` = `expected`;
-`children` = copy of the children in order. `filter_roots(snap, f, data)`: `i = 0; while i < n: remove = false; res = f(data, name_i, &remove);
-if remove: delete root i (later roots shift down); if !res: stop; if !remove: i += 1`.
+`children` = copy of the children in order. `filter_roots(snap, f, data)`: `i = 0; while i < n: remove = false; res = f(data, name_i, &remove); if remove: delete root i (later roots shift down); if !res: stop; if !remove: i += 1`.
 
 **Report text** (`profiler_print`): blog(INFO) lines, in this order: the header
 `== Profiler Results =============================`, then every root (pre-order, `indent = 0`), then the footer of 49 `=`.
@@ -221,11 +220,7 @@ per root with `expected != 0` (roots without it print nothing; children are neve
 `<name>: min=G(bmin/1000.), median=G(med/1000.), max=G(bmax/1000.), <P>% within ±2% of G(expected/1000.) (<L>% lower, <H>% higher)`
 (`±` = U+00B1). With `lo = (u64)(expected*0.98)`, `hi = (u64)(expected*1.02 + 0.5)`, `calls = overall_between_calls_count`,
 `min,max` = between min/max, entries sorted descending with `accu`:
-`med = 0; P = L = H = 0; if no entries: all zero (done). med = value of the first entry with accu >= calls*0.5 (accumulating counts from the first entry).
-found_hi = (max <= hi); found_lo = false. if min >= hi: H = 100, done. if found_hi && min >= lo: P = 100, done.
-accu = 0; for each entry (value v, count c): if !found_hi && v <= hi: H = accu/calls*100; accu = 0; found_hi = true.
-if !found_lo && v < lo: P = accu/calls*100; accu = 0; found_lo = true. accu += c.
-after the loop: if !found_hi: H = 100; else if !found_lo: P = accu/calls*100; else L = accu/calls*100.`
+`med = 0; P = L = H = 0; if no entries: all zero (done). med = value of the first entry with accu >= calls*0.5 (accumulating counts from the first entry). found_hi = (max <= hi); found_lo = false. if min >= hi: H = 100, done. if found_hi && min >= lo: P = 100, done. accu = 0; for each entry (value v, count c): if !found_hi && v <= hi: H = accu/calls*100; accu = 0; found_hi = true. if !found_lo && v < lo: P = accu/calls*100; accu = 0; found_lo = true. accu += c. after the loop: if !found_hi: H = 100; else if !found_lo: P = accu/calls*100; else L = accu/calls*100.`
 
 **CSV** (`dump_csv`): header line `id,parent_id,name_id,parent_name_id,name,time_between_calls,time_delta_µs,count` (µ = U+00B5), `\n` endings; then
 for each root, depth first: for each `times` pair `<id>,<parent_id>,<name_id>,<parent_name_id>,<name>,0,<µs>,<count>`, then for each `times_between_calls` pair
@@ -237,10 +232,11 @@ for each root, depth first: for each `times` pair `<id>,<parent_id>,<name_id>,<p
 State per `(output, track_idx)` (track < 10): seven `{ref, curr, diff}` u32 counters, four timestamps, rendered flags. `bpm_destroy(output)` forgets all tracks of that output.
 
 `bpm_inject(output, pkt, time)`:
+
 1. `output` or `pkt` NULL -> debug log, return (nothing touched).
-2. Only video packets with `keyframe` are processed; anything else returns untouched.
-3. `time` NULL -> debug log, return untouched.
-4. Run `update_metrics`, then build and append the messages (below). Counters advance even when the packet ends up unchanged.
+1. Only video packets with `keyframe` are processed; anything else returns untouched.
+1. `time` NULL -> debug log, return untouched.
+1. Run `update_metrics`, then build and append the messages (below). Counters advance even when the packet ends up unchanged.
 
 `update_metrics`: read `session_output = frames output by the output`, `dropped = frames dropped by the output`, `rendered = total frames rendered by core`,
 `lagged = lagged frames` and, if the packet's encoder has a video handle, `rend_input = video total frames`, `rend_skipped = video skipped frames`,
@@ -253,6 +249,7 @@ State per `(output, track_idx)` (track < 10): seven `{ref, curr, diff}` u32 coun
 
 **Payloads** (all integers big-endian; `uuid_ts = 0aecffe7-5272-4e2f-a62f-d19cd61a93b5`, `uuid_sm = ca60e71c-6a8b-4388-a377-151df7bf8ac2`,
 `uuid_erm = f1fbc1d5-101e-4fb5-a61e-b8ce3c07b8c0`, written as the 16 bytes in textual order):
+
 - TS: `uuid_ts | (n-1) | { 01 | tag | string 00 }*n` for the valid timestamps in the order CTS (tag 1), FER (2), FERC (3), PIR (4); `n` in 2..4 (the byte holds `n-1` in its low 4 bits, high bits 0).
 - SM: `uuid_sm | 00 | 01 | 04 | PIR-string 00 | 03 | 01 u32(rendered.diff) | 02 u32(lagged.diff) | 03 u32(dropped.diff) | 04 u32(session_output.diff)`.
 - ERM: `uuid_erm | 00 | 01 | 04 | PIR-string 00 | 02 | 01 u32(rend_input.diff) | 02 u32(rend_skipped.diff) | 03 u32(rend_output.diff)`.
@@ -263,6 +260,7 @@ HEVC without start code -> two DEBUG lines (start code, "BPM injection processin
 Audio / non-key packets log nothing.
 
 **Framing** by codec string of the packet's encoder (`h264`, `hevc`, `av1`; others: see Q-11). For each of the three payloads in the order TS, SM, ERM:
+
 - *SEI NAL* `S(p)` = `06 | 05 | size(p) | escape(p) | 80`, with `size(p)` = `ff` repeated `len/255` times then `len%255` as one byte (`len = |p|` before escaping) and
   `escape` = emulation prevention: scanning `p`, insert `03` before every byte `<= 03` that is preceded by two consecutive `00` bytes (the run counter restarts after the
   inserted byte).
@@ -270,15 +268,14 @@ Audio / non-key packets log nothing.
 - `hevc`: if the packet does not start with `00 00 01` or `00 00 00 01` the packet is returned **unchanged** (debug log; counters already advanced).
   Else let `h0,h1` be the two bytes after that start code; append `00 00 01 | ((40<<1) | (h0 & 1)) | h1 | S(p)[1..]` (the AVC NAL header byte of `S(p)` is dropped).
 - `av1`: append `metadata_obu(p, 0x06)` of S-012 (`2a | leb128(|p|+2) | 06 | p | 80`) -- `p` raw (not escaped).
-The new packet data is `original bytes | appended` (size grows); the original buffer is released by the callee. `bpm_inject` returns nothing.
+  The new packet data is `original bytes | appended` (size grows); the original buffer is released by the callee. `bpm_inject` returns nothing.
 
 ### 4.9 M9 address ordering (happy eyeballs)
 
 `build_addr_list(host, port, ctx)`: hints = `{family, SOCK_STREAM, IPPROTO_TCP, AI_ADDRCONFIG}` with family = `AF_INET` if the configured bind
 address length equals `sizeof(sockaddr_in)` (16), `AF_INET6` if equal to `sizeof(sockaddr_in6)` (28), else `AF_UNSPEC`; the service string is the decimal port.
 Resolver failure -> status -1, error code = `errno`, message = its `strerror`, no list. Else reorder the result list `L` in place (single pass):
-`prev = L[0]; cur = L[1]; while cur: if prev.family == cur.family and family in {INET, INET6}: want = the other of the two; find the first node X after cur with family == want;
-if none: stop the whole loop; else move X to sit between prev and cur (X.next = cur, prev.next = X); prev = cur; cur = cur.next` (note: after the move `prev = cur` where `cur` is still the node
+`prev = L[0]; cur = L[1]; while cur: if prev.family == cur.family and family in {INET, INET6}: want = the other of the two; find the first node X after cur with family == want; if none: stop the whole loop; else move X to sit between prev and cur (X.next = cur, prev.next = X); prev = cur; cur = cur.next` (note: after the move `prev = cur` where `cur` is still the node
 that was shifted back; the moved node X is skipped over -- see vectors). Nodes of other families (e.g. `AF_UNIX`) never trigger a move and are not moved except when found as `X` (they are not, X is always INET/INET6).
 Constants: Resolution delay between attempts 200 ms, max 6 attempts, total connection timeout 25000 ms.
 
@@ -293,17 +290,17 @@ callback. `get_path(dir, file)` = `dir` + `"/"` (only if `dir` is non-empty and 
    that is missing or is not valid JSON counts as absent, an invalid one also logs an ERROR). If `cache/meta.json` exists and parses, send header
    `If-None-Match: <etag>` where `<etag>` = its string field `etag`, **or the empty string if that key is missing** (Q-16); always send `User-Agent: <ua>` (header list order:
    If-None-Match first, then User-Agent).
-2. `update_local_version`: `lv = local.version`, `cv = cache.version` (0 if missing). If `cv < lv`: for each file in `local.files` in order: look up its name in `cache.files` (first match);
+1. `update_local_version`: `lv = local.version`, `cv = cache.version` (0 if missing). If `cv < lv`: for each file in `local.files` in order: look up its name in `cache.files` (first match);
    if not found or `local.version > cache_entry.version` (strict): `copy_local_to_cache(name)`; then `copy_local_to_cache("package.json")`; `cache_package := local_package`; current = `lv`. Else current = `cv`.
    `copy_local_to_cache(f)`: `os_copyfile(local/f, temp/f)`; `os_unlink(cache/f)`; `os_rename(temp/f, cache/f)` (result codes ignored).
-3. `update_remote_version(current)`: GET `update_url/package.json`... (`url = get_path(update_url, "package.json")`) with failure-on-error. Transfer failure or HTTP >= 400 -> warn and stop. HTTP 304 -> stop.
+1. `update_remote_version(current)`: GET `update_url/package.json`... (`url = get_path(update_url, "package.json")`) with failure-on-error. Transfer failure or HTTP >= 400 -> warn and stop. HTTP 304 -> stop.
    If the body does not exist or its first byte is not `{` -> warn "Remote package does not exist or is not valid json", stop. **Save metadata**: if an `ETag` header was received, write `cache + "meta.json"` (**no separator**, Q-12) with the compact JSON
    `{"etag":"<escaped>"}`. Parse the body as JSON; failure -> warn, stop. `rv = remote.version`; if `rv <= current` stop. Write the body bytes to `temp/package.json`. `remote_url = remote.url` (may be `""`). For each `remote.files` entry: look up the name in the **current cache package**
    (the local one after step 2 if it was installed, else the cached one); if found and `remote.version <= cached.version` skip; else GET `get_path(remote_url, name)`; failures (transfer error or HTTP >= 400) skip only this file; call the callback if present with a buffer that holds the body plus one terminating NUL (`buffer.num = len+1`), the callback may replace the buffer; if it returns false: info log "rejected", skip; else write `buffer[0..num-1]` to `temp/name`, `unlink(cache/name)`, `rename(temp/name, cache/name)`, info log. Finally `replace_file(temp, cache, "package.json")` (unlink old, rename) and info "Successfully updated package (version N)".
-4. `os_rmdir(temp)`.
-ETag header handling (header callback, only while `remote_url` is unset, i.e. for the package request): a header line starting with `ETag: ` (exact case) and a non-empty remainder is copied, truncated at the first `\r`, then at the first `\n`; later headers overwrite earlier ones (the reference leaks the earlier copy).
-Single-file mode (`update_info_create_single`): GET the URL; on failure return; if the body is empty (first byte NUL) return; else call `cb(name = url, version = 0, buffer = body + NUL)`.
-Every filesystem call and HTTP request in the vectors appears in a trace (`fs ...`, `http GET ...`): **that trace is normative** (order, operands, result).
+1. `os_rmdir(temp)`.
+   ETag header handling (header callback, only while `remote_url` is unset, i.e. for the package request): a header line starting with `ETag: ` (exact case) and a non-empty remainder is copied, truncated at the first `\r`, then at the first `\n`; later headers overwrite earlier ones (the reference leaks the earlier copy).
+   Single-file mode (`update_info_create_single`): GET the URL; on failure return; if the body is empty (first byte NUL) return; else call `cb(name = url, version = 0, buffer = body + NUL)`.
+   Every filesystem call and HTTP request in the vectors appears in a trace (`fs ...`, `http GET ...`): **that trace is normative** (order, operands, result).
 
 ### 4.11 M11 constants
 
@@ -314,6 +311,7 @@ Every filesystem call and HTTP request in the vectors appears in a trace (`fs ..
 ## 5. Behaviour (numbered rules)
 
 ### M1 opts-parser
+
 - **S-024-R01** `parse(NULL)`, `parse("")`, and any string that has no non-space character return the zero result (count 0, all three pointers NULL).
 - **S-024-R02** Words are separated only by U+0020; empty words are dropped; the result keeps input order.
 - **S-024-R03** A word is an option iff it does not start with `=`, contains `=`, and has at least one character after the first `=`. `name` is the text before the first `=`, `value` everything after it (including further `=`).
@@ -323,11 +321,13 @@ Every filesystem call and HTTP request in the vectors appears in a trace (`fs ..
 - **S-024-R07** For a non-zero result `options`, `ignored_words` and `input_words` are non-NULL even when empty (all-ignored input: `count = 0` with non-NULL options).
 
 ### M2 128-bit
+
 - **S-024-R08** `util_add128` is addition modulo 2^128, `util_mul64_64` the exact 128-bit product, `lshift` helpers exact shifts, `util_div128_32` truncating division (divisor 0 forbidden: D-1).
 - **S-024-R09** `util_mul_div64(n,m,d)` returns `floor(n*m/d)` whenever that value fits in 64 bits and all intermediate products of the reference formula fit; ports MUST return the exact value for every input whose result fits in u64 (Q-2).
 - **S-024-R10** Layout: `sizeof(util_uint128_t) == 16`, `i32[k]` are the LE limbs (vector `u128_layout`).
 
 ### M3 process arguments
+
 - **S-024-R11** `create(exe)` -> `argc = 1`, `argv = [exe, NULL]`; `add_arg(s)` appends a copy (`argc += 1`); the NULL terminator is always at index `argc`.
 - **S-024-R12** `add_argf` appends exactly one argument: the printf expansion of the format and arguments.
 - **S-024-R13** No quoting, escaping or splitting of arguments (spaces/quotes are kept literally).
@@ -336,6 +336,7 @@ Every filesystem call and HTTP request in the vectors appears in a trace (`fs ..
 - **S-024-R16** (DEFECT D-4) `add_argf` with a format that expands to the empty string MUST store `""` (the reference stores NULL).
 
 ### M4 hotkeys
+
 - **S-024-R17** `obs_key_to_name(i)` for `0 <= i < 636` is the name in the normative table; `obs_key_from_name(name)` returns the id for that exact name (round trip is the identity).
 - **S-024-R18** Unknown, wrongly-cased, padded or empty names, and `"OBS_KEY_LAST_VALUE"`, map to 0 (`OBS_KEY_NONE`); no error is logged.
 - **S-024-R19** `obs_key_to_name` for an out-of-range id (>= 636 or negative) logs an ERROR and returns `""`.
@@ -343,6 +344,7 @@ Every filesystem call and HTTP request in the vectors appears in a trace (`fs ..
 - **S-024-R21** `obs_hotkey_name_map_free` releases the lazily built map; after it the map MUST be rebuilt on demand (the reference leaves a dangling pointer; calling lookups after it is undefined there, so no vector does).
 
 ### M5 missing files
+
 - **S-024-R22** `create` -> record with refcount 1, copied path, source name copied only for SOURCE records; `get_path`/`get_source_name` return those.
 - **S-024-R23** `list_create` -> empty list (`count 0`); `add_file` appends at the end without changing the refcount; `get_file(i)` returns the i-th appended handle (index must be `< count`).
 - **S-024-R24** `append(dst, src)` appends src's records to dst in order and increments each record's refcount; src is unchanged; repeated appends repeat entries.
@@ -352,6 +354,7 @@ Every filesystem call and HTTP request in the vectors appears in a trace (`fs ..
 - **S-024-R28** Preconditions not covered by vectors: `list_destroy(NULL)` and `append(l, l)` (infinite growth) are invalid (D-5).
 
 ### M6 task queue
+
 - **S-024-R29** Tasks run on the queue's worker thread, one at a time, in FIFO order of `queue_task` calls (with the exception of rule R31).
 - **S-024-R30** `queue_task(NULL, ...)` -> false; `wait(NULL)` -> false; `destroy(NULL)` no-op; `queue_task` on a live queue -> true.
 - **S-024-R31** A task queued from within a running task is placed behind any pending *wait* marker, but the marker is deferred behind it, so the new task still runs before `wait()` returns.
@@ -360,6 +363,7 @@ Every filesystem call and HTTP request in the vectors appears in a trace (`fs ..
 - **S-024-R34** `inside(tq)` is true on `tq`'s worker thread only; on the caller's thread, or on another queue's worker, it is false.
 
 ### M7 profiler
+
 - **S-024-R35** Sample values are `(ns + 500) / 1000` (integer) and are aggregated per distinct µs value; snapshot `times` are sorted by descending µs.
 - **S-024-R36** Entries are matched by name identity (Q-7); roots are listed in creation order; children in order of first appearance under their parent; a child's samples are aggregated over all calls of the root.
 - **S-024-R37** `min/max/overall_count` per entry as in 4.7; for an entry without samples `min = u64::MAX`, `max = 0`, `count = 0` (Q-9).
@@ -377,6 +381,7 @@ Every filesystem call and HTTP request in the vectors appears in a trace (`fs ..
 - **S-024-R49** Duration arithmetic is unsigned: a call whose end is earlier than its start produces a huge value (no vector; do not rely on it).
 
 ### M8 BPM
+
 - **S-024-R50** Only video keyframe packets with timing are modified; audio, non-key packets, missing timing and NULL arguments leave the packet untouched and do not advance counters.
 - **S-024-R51** Counters are reported as `curr - ref` (u32 wrapping), with `ref` starting at 0 per `(output, track)`; `pts == 0` reports all zeros but still stores the references.
 - **S-024-R52** Timestamp validity rules of 4.8 (FER > CTS, FERC > FER, PIR/CTS always); ms truncated.
@@ -389,11 +394,13 @@ Every filesystem call and HTTP request in the vectors appears in a trace (`fs ..
 - **S-024-R59** `bpm_destroy(output)` discards all tracks of the output; per-track and per-output state is independent.
 
 ### M9 happy eyeballs
+
 - **S-024-R60** Reordering algorithm of 4.9 (single pass, early exit, other families inert).
 - **S-024-R61** Resolver hints: family by bind length (16 -> IPv4, 28 -> IPv6, else unspecified), stream/TCP, port as decimal text.
 - **S-024-R62** A resolver error yields status -1 and an empty list. Constants 200 / 6 / 25000.
 
 ### M10 file updater
+
 - **S-024-R63** Version decision for local seeding: files are copied iff cache package version < local package version, and per file iff missing in the cache package or strictly newer; then `package.json` is copied.
 - **S-024-R64** Copy sequence local -> temp -> (unlink cache) -> rename cache.
 - **S-024-R65** Remote step runs only when the remote package version is strictly greater than the current version; files are fetched iff missing or strictly newer than the cache package entry.
@@ -405,6 +412,7 @@ Every filesystem call and HTTP request in the vectors appears in a trace (`fs ..
 - **S-024-R71** Missing `url` yields the empty base (Q-14). Single-file mode per 4.10.
 
 ### M11 constants
+
 - **S-024-R72** Every constant of the table has the listed value; `LIBOBS_API_VER = (33<<24)|(0<<16)|1`.
 - **S-024-R73** `MAKE_SEMANTIC_VERSION` is the unmasked bitwise OR (Q-13); a port provides it as a `const fn` that may mask or reject out-of-range input but MUST equal the C value in range (major < 128, minor < 256, patch < 65536).
 
@@ -415,27 +423,27 @@ M6 is the only module with a thread of its own (one per queue). Task bodies must
 
 ## 7. Reference defects and quirks
 
-| ID | Kind | Input / behaviour | Required behaviour | Script |
-|---|---|---|---|---|
-| Q-1 | QUIRK | opts: no quoting; `a="b c"` splits into `a="b` (option, value `"b`) and `c"` (ignored) | match | opts-noquoting |
-| Q-2 | QUIRK/DEFECT | `util_mul_div64` non-MSVC overflow gives a wrapped value | return the exact value (u128 intermediate) | muldiv64-quirk-overflow (compare field `exact=`) |
-| D-1 | DEFECT | division by zero (SIGFPE) in `mul_div64` / `div128_32` | precondition; do not return a value | u128-defect-div0 |
-| Q-3 | QUIRK | NULL executable/arg stored as NULL element | SHOULD match | args-quirk-null |
-| D-4 | DEFECT | `add_argf` with empty expansion stores NULL | store `""` | args-defect-argf-empty (expected `@null` below `argc` == `""`) |
-| D-3 | DEFECT | `obs_key_from_name(NULL)` crashes without core; negative key id is an out-of-bounds read with signed enums | return 0 / `""` + error | hotkeys-defect-null, hotkeys-lookup |
-| Q-5 | QUIRK | script records never notified | SHOULD match | missing-files-callback |
-| D-5 | DEFECT | list destroy NULL, append to itself | invalid input | -- |
-| Q-6 | QUIRK | `wait` returns false when nothing ran after it started (even if tasks ran before) | match | task-wait-idle |
-| Q-7 | QUIRK | profiler names compared by pointer | identity semantics | prof-names-identity |
-| Q-8 | QUIRK | completing a root call while stopped latches the thread off; `register_root` while stopped is a no-op | match | prof-enable |
-| Q-9 | QUIRK | no samples -> `min = u64::MAX` | match | prof-roots, prof-between-edge |
-| Q-10 | QUIRK | median stays 0 when the 1 % and 50 % thresholds are crossed by the same entry (`else if`); between-report median uses a different rule | match | prof-print, prof-between-stats |
-| Q-11 | QUIRK | bpm unknown codec: packet buffer replaced with an identical copy | bytes identical | bpm-other-codec |
-| Q-12 | QUIRK | meta.json written to `cache + "meta.json"` without separator but read from `cache/meta.json` | SHOULD match | fu-quirk-meta-path |
-| Q-13 | QUIRK | `MAKE_SEMANTIC_VERSION` unmasked; macro arguments are not parenthesised (`MAKE_SEMANTIC_VERSION(a+1,b,c)` mis-associates in C) | in-range equal | const-semver |
-| Q-14 | QUIRK | missing `url` in the remote package -> empty base, request goes to the bare file name | SHOULD match | fu-remote-invalid |
-| Q-16 | QUIRK | an existing, parsable `meta.json` without `etag` still produces `If-None-Match: ` (empty value) | SHOULD match | fu-etag-meta-noetag |
-| Q-15 | QUIRK | the profiler sorts empty arrays with `qsort(NULL, 0)` | none (UB-harmless) | prof-roots |
+| ID   | Kind         | Input / behaviour                                                                                                                      | Required behaviour                         | Script                                                         |
+| ---- | ------------ | -------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------ | -------------------------------------------------------------- |
+| Q-1  | QUIRK        | opts: no quoting; `a="b c"` splits into `a="b` (option, value `"b`) and `c"` (ignored)                                                 | match                                      | opts-noquoting                                                 |
+| Q-2  | QUIRK/DEFECT | `util_mul_div64` non-MSVC overflow gives a wrapped value                                                                               | return the exact value (u128 intermediate) | muldiv64-quirk-overflow (compare field `exact=`)               |
+| D-1  | DEFECT       | division by zero (SIGFPE) in `mul_div64` / `div128_32`                                                                                 | precondition; do not return a value        | u128-defect-div0                                               |
+| Q-3  | QUIRK        | NULL executable/arg stored as NULL element                                                                                             | SHOULD match                               | args-quirk-null                                                |
+| D-4  | DEFECT       | `add_argf` with empty expansion stores NULL                                                                                            | store `""`                                 | args-defect-argf-empty (expected `@null` below `argc` == `""`) |
+| D-3  | DEFECT       | `obs_key_from_name(NULL)` crashes without core; negative key id is an out-of-bounds read with signed enums                             | return 0 / `""` + error                    | hotkeys-defect-null, hotkeys-lookup                            |
+| Q-5  | QUIRK        | script records never notified                                                                                                          | SHOULD match                               | missing-files-callback                                         |
+| D-5  | DEFECT       | list destroy NULL, append to itself                                                                                                    | invalid input                              | --                                                             |
+| Q-6  | QUIRK        | `wait` returns false when nothing ran after it started (even if tasks ran before)                                                      | match                                      | task-wait-idle                                                 |
+| Q-7  | QUIRK        | profiler names compared by pointer                                                                                                     | identity semantics                         | prof-names-identity                                            |
+| Q-8  | QUIRK        | completing a root call while stopped latches the thread off; `register_root` while stopped is a no-op                                  | match                                      | prof-enable                                                    |
+| Q-9  | QUIRK        | no samples -> `min = u64::MAX`                                                                                                         | match                                      | prof-roots, prof-between-edge                                  |
+| Q-10 | QUIRK        | median stays 0 when the 1 % and 50 % thresholds are crossed by the same entry (`else if`); between-report median uses a different rule | match                                      | prof-print, prof-between-stats                                 |
+| Q-11 | QUIRK        | bpm unknown codec: packet buffer replaced with an identical copy                                                                       | bytes identical                            | bpm-other-codec                                                |
+| Q-12 | QUIRK        | meta.json written to `cache + "meta.json"` without separator but read from `cache/meta.json`                                           | SHOULD match                               | fu-quirk-meta-path                                             |
+| Q-13 | QUIRK        | `MAKE_SEMANTIC_VERSION` unmasked; macro arguments are not parenthesised (`MAKE_SEMANTIC_VERSION(a+1,b,c)` mis-associates in C)         | in-range equal                             | const-semver                                                   |
+| Q-14 | QUIRK        | missing `url` in the remote package -> empty base, request goes to the bare file name                                                  | SHOULD match                               | fu-remote-invalid                                              |
+| Q-16 | QUIRK        | an existing, parsable `meta.json` without `etag` still produces `If-None-Match: ` (empty value)                                        | SHOULD match                               | fu-etag-meta-noetag                                            |
+| Q-15 | QUIRK        | the profiler sorts empty arrays with `qsort(NULL, 0)`                                                                                  | none (UB-harmless)                         | prof-roots                                                     |
 
 ## 8. Implementation notes (non-normative)
 
@@ -445,27 +453,27 @@ The hotkey table and the constants table are best generated from the vectors by 
 
 ## 9. Conformance coverage
 
-| Rules | Scripts |
-|---|---|
-| R01-R07 | opts-basic, opts-ignored, opts-empty, opts-noquoting |
-| R08-R10 | u128-add, u128-mul64, u128-div32, u128-shift, muldiv64, muldiv64-quirk-overflow, u128-defect-div0 |
-| R11-R16 | args-basic, args-argf, args-multiple, args-quirk-null, args-defect-argf-empty |
-| R17-R21 | hotkeys-fallback-table, hotkeys-hash-table, hotkeys-lookup, hotkeys-defect-null |
-| R22-R28 | missing-files-basic, -append, -append-order, -release, -callback, -quirk-fields |
-| R29-R34 | task-order, task-wait-idle, task-requeue, task-destroy, task-inside, task-null |
-| R35-R49 | prof-basic, -nested, -print, -print-expected, -between, -between-stats, -between-edge, -enable, -names-identity, -mismatch, -unwind, -burst, -filter, -csv, -roots |
-| R50-R59 | bpm-avc-basic, -counters, -timestamps, -skip, -hevc, -av1, -other-codec, -tracks, -novideo |
-| R60-R62 | he-order, he-order-edge, he-resolve-args |
+| Rules   | Scripts                                                                                                                                                                                                           |
+| ------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| R01-R07 | opts-basic, opts-ignored, opts-empty, opts-noquoting                                                                                                                                                              |
+| R08-R10 | u128-add, u128-mul64, u128-div32, u128-shift, muldiv64, muldiv64-quirk-overflow, u128-defect-div0                                                                                                                 |
+| R11-R16 | args-basic, args-argf, args-multiple, args-quirk-null, args-defect-argf-empty                                                                                                                                     |
+| R17-R21 | hotkeys-fallback-table, hotkeys-hash-table, hotkeys-lookup, hotkeys-defect-null                                                                                                                                   |
+| R22-R28 | missing-files-basic, -append, -append-order, -release, -callback, -quirk-fields                                                                                                                                   |
+| R29-R34 | task-order, task-wait-idle, task-requeue, task-destroy, task-inside, task-null                                                                                                                                    |
+| R35-R49 | prof-basic, -nested, -print, -print-expected, -between, -between-stats, -between-edge, -enable, -names-identity, -mismatch, -unwind, -burst, -filter, -csv, -roots                                                |
+| R50-R59 | bpm-avc-basic, -counters, -timestamps, -skip, -hevc, -av1, -other-codec, -tracks, -novideo                                                                                                                        |
+| R60-R62 | he-order, he-order-edge, he-resolve-args                                                                                                                                                                          |
 | R63-R71 | fu-local-copy, -local-partial, -local-current, -remote-update, -remote-notnewer, -remote-reject, -remote-nocallback, -etag, -etag-forms, -quirk-meta-path, -remote-invalid, -single, -get-path, -etag-meta-noetag |
-| R72-R73 | const-table, const-semver |
+| R72-R73 | const-table, const-semver                                                                                                                                                                                         |
 
 ## 10. Open questions
 
 1. BPM wall-clock base: the reference captures `(wall, monotonic)` at first use; the vectors fix `wall(ns) = ns`. Behaviour for times before the capture instant (negative offset) is untested.
-2. `meta.json` escaping of non-ASCII ETags (jansson compact encoder) is untested; ETags are ASCII in practice.
-3. `profiler_snapshot_dump_csv_gz` and a profiler used from several threads are not covered by vectors.
-4. Behaviour of M5/M3 under allocation failure and of M6 thread-creation failure (returns NULL) is not covered.
-5. Round 10 second-author check (2026-11-05): R75 corrected — the accessors are `happy_eyeballs_get_remote_addr` / `happy_eyeballs_get_connection_time_ns` (prefixed, per `happy-eyeballs.c`).
+1. `meta.json` escaping of non-ASCII ETags (jansson compact encoder) is untested; ETags are ASCII in practice.
+1. `profiler_snapshot_dump_csv_gz` and a profiler used from several threads are not covered by vectors.
+1. Behaviour of M5/M3 under allocation failure and of M6 thread-creation failure (returns NULL) is not covered.
+1. Round 10 second-author check (2026-11-05): R75 corrected — the accessors are `happy_eyeballs_get_remote_addr` / `happy_eyeballs_get_connection_time_ns` (prefixed, per `happy-eyeballs.c`).
 
 ## 11. Round 9: file-updater, happy-eyeballs, bpm metrics, opts-parser & profiler citation (added)
 
@@ -474,7 +482,11 @@ The hotkey table and the constants table are best generated from the vectors by 
 - `shared/file-updater/file-updater/file-updater.c`, `shared/happy-eyeballs/happy-eyeballs.c`, `shared/bpm/bpm.c`, `shared/opts-parser/opts-parser.c`, `libobs/util/profiler.hpp`
 
 - **S-024-R74** `file-updater.c`: the shared HTTP file updater (used by the frontend auto-update) — `init_update` (fetch and read the remote version file), `do_http_request`/`do_relative_http_request` over the minimal HTTP client (`http_write`/`http_header`), `get_package` (parse the package manifest), `get_path`, `copy_local_to_cache`, `enum_files`/`newer_than_cache` (download only what is newer, into a cache dir), `update_files_to_local` + `update_local_version` (install), `replace_file` (atomic swap: old → temp name, new written, old removed), `update_remote_files` (top-level driver), `update_info_destroy`.
+
 - **S-024-R75** `happy-eyeballs.c`: RFC 8305 Happy Eyeballs dual-stack connect — `happy_eyeballs_create`/`happy_eyeballs_destroy`, `build_addr_list` (order addresses, IPv6 preference), `happy_eyeballs_connect`/`happy_eyeballs_try` (start attempt 1, stagger later attempts), `launch_worker`/`happy_connect_worker` (one thread per attempt), `happy_eyeballs_timedwait` (wait for any attempt), `coalesce_errors` (report the last error), `signal_end` (cancel remaining attempts), `check_comodo` (Windows/Comodo IPv6 workaround), `happy_eyeballs_set_bind_addr`/`happy_eyeballs_get_remote_addr`/`happy_eyeballs_get_connection_time_ns`.
+
 - **S-024-R76** `bpm.c`: the beat-metrics (BPM) SEI track consumed by the auto-scene-switcher — `bpm_init`/`bpm_destroy`, `bpm_inject` (hook into the encoder SEI stream), `process_metrics` (frame pts → metric updates), `update_metrics`/`render_metrics_time` (time-window scoring), the three SEI renderers `bpm_ts_sei_render`/`bpm_sm_sei_render`/`bpm_erm_sei_render`, `extract_buffer_from_sei`, `bpm_create_metrics_track`/`bpm_get_track` (the obs-data track the UI polls).
+
 - **S-024-R77** `opts-parser.c`: `obs_parse_options` (parse the `key=val,key2=val2` string into the options array; unrecognised words counted separately as `ignored_word_count`), `getparam` (single-entry parse), `obs_free_options` — semantics per the earlier sections.
+
 - **S-024-R78** `profiler.hpp`: the remaining profiler RAII inline `Stop` (scope-exit timer stop; the profiler model per the earlier sections).

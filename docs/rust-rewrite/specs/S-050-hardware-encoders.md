@@ -1,11 +1,11 @@
 # S-050 Hardware encoders: NVENC, QSV, VAAPI, FFmpeg-NVENC (behavioural catalog)
 
-| | |
-|---|---|
-| Reference | OBS Studio 33.0.1: `plugins/obs-nvenc/{nvenc,nvenc-helpers,nvenc-compat}.c`, `plugins/obs-qsv11/{obs-qsv11,obs-qsv11-plugin-main}.c`, `plugins/obs-ffmpeg/{obs-ffmpeg-nvenc,obs-ffmpeg-vaapi}.c`, `texture-amf*.{cpp,hpp}` (rules only) |
-| Tier | C (behavioural catalog): driver interaction is a call trace, not byte-exact |
-| Suite | `test/conformance/gen/hwencoders_*`, `scripts/hwencoders/*.script` (57 scripts), `vectors/hwencoders/*.expected` |
-| Rust sufficiency check | **Skipped** (cost control, per coordinator instruction). Vectors are therefore verified only against the C reference. |
+|                        |                                                                                                                                                                                                                                         |
+| ---------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Reference              | OBS Studio 33.0.1: `plugins/obs-nvenc/{nvenc,nvenc-helpers,nvenc-compat}.c`, `plugins/obs-qsv11/{obs-qsv11,obs-qsv11-plugin-main}.c`, `plugins/obs-ffmpeg/{obs-ffmpeg-nvenc,obs-ffmpeg-vaapi}.c`, `texture-amf*.{cpp,hpp}` (rules only) |
+| Tier                   | C (behavioural catalog): driver interaction is a call trace, not byte-exact                                                                                                                                                             |
+| Suite                  | `test/conformance/gen/hwencoders_*`, `scripts/hwencoders/*.script` (57 scripts), `vectors/hwencoders/*.expected`                                                                                                                        |
+| Rust sufficiency check | **Skipped** (cost control, per coordinator instruction). Vectors are therefore verified only against the C reference.                                                                                                                   |
 
 ## 1. Scope
 
@@ -102,7 +102,7 @@ Let `rc` = `rate_control` string, `cqvbr = rc =ci "CQVBR"`, `vbr = cqvbr || rc =
 - **S-050-R31** `create`: format gates identical to S-025 R44 (10-bit AVC, 16-bit, HDR on 8-bit), then `qsv_encoder_open`; NULL -> warning, destroy and return NULL; AV1/AVC `extra_data = SPS [+ PPS unless AV1]`, `sei = a single zero byte` (AV1 registers no SEI callback); HEVC `extra_data = VPS+SPS+PPS`, `sei` empty; a library-version info line is always logged; `os_request_high_performance("qsv encoding")`. `get_extra_data`/`get_sei_data` return false without a context.
 - **S-050-R32** Texture fallback (reroute ids `obs_qsv11_soft_v2`, `obs_qsv11_av1_soft`, `obs_qsv11_hevc_soft`; v1 texture uses `obs_qsv11_soft`): not on an Intel adapter (`adapters[ovi.adapter].is_intel`); AV1 and that adapter lacks AV1 (HEVC support is **not** checked); no NV12 texture (AVC) / neither NV12 nor P010 texture (AV1, HEVC); CPU scaling. GPU scaling logs and proceeds.
 - **S-050-R33** Timestamps: obs->mfx `ts * 90000 / fps_num` (i64, truncating; `fps_den` unused); mfx->obs `(ts*fps_num + s*div/2) / div * fps_den`, `div = 90000*fps_den`, `s = +1` for `ts >= 0` else `-1` (rounds half away from zero).
-- **S-050-R34** Packets: no bitstream or `DataLength == 0` -> no packet. `pts/dts` via R33; `keyframe = (FrameType & IDR(0x80))` stored in a bool; priority: `I(0x01)` -> 3, else `P(0x02)` or `REF(0x40)` -> 2, else 0. AVC only: for every NAL after a start code whose type (low 5 bits) is 1 or 5, set `ref_idc` (bits 5-6) to `priority` (so `priority 3` -> `0x65`, 0 clears). `DataLength` of the library bitstream is zeroed after consumption. Library error (<0) -> warning, false. The texture entry fails (`false`, `next_key := lock_key`) on null texture planes.
+- **S-050-R34** Packets: no bitstream or `DataLength == 0` -> no packet. `pts/dts` via R33; `keyframe = (FrameType & IDR(0x80))` stored in a bool; priority: `I(0x01)` -> 3, else `P(0x02)` or `REF(0x40)` -> 2, else 0. AVC only: for every NAL after a start code whose type (low 5 bits) is 1 or 5, set `ref_idc` (bits 5-6) to `priority` (so `priority 3` -> `0x65`, 0 clears). `DataLength` of the library bitstream is zeroed after consumption. Library error (\<0) -> warning, false. The texture entry fails (`false`, `next_key := lock_key`) on null texture planes.
 - **S-050-R35** ROI: when the encoder has ROIs and the increment differs from the cached one (initially 0): `qsv_encoder_clear_roi`, then add the ROIs in **reverse** enumeration order, cache the increment. **Q-6** applies (increment 0 never sends).
 
 ## 6. obs-ffmpeg-nvenc
@@ -133,23 +133,23 @@ NVENC `init_nvenc` is guarded by a process mutex; the QSV library calls (`open`,
 
 ## 9. AMF (rules from reading only, **unverified, no vectors**)
 
-`texture-amf.cpp` needs the AMD AMF SDK (absent). Read-only findings: defaults `rate_control "CBR"`, `bitrate 6000`, `cqp 20`, `preset "quality"`, `profile "high"`, `bf 2`; rate-control names (case-insensitive) `cqp, cbr, vbr, vbr_lat, qvbr, hqvbr, hqcbr` -> CONSTANT_QP, CBR, PEAK_CONSTRAINED_VBR, LATENCY_CONSTRAINED_VBR, QUALITY_VBR, HIGH_QUALITY_VBR, HIGH_QUALITY_CBR; unknown -> CBR. `bitrate` and `cqp` visibility: `bitrate` hidden for CQP and QVBR, `cqp` shown for CQP and QVBR. For modes other than CQP/QVBR: target = peak = VBV = bitrate; CBR adds filler data; PEAK_CONSTRAINED_VBR and HQ_VBR use peak = VBV = bitrate*1.5; LATENCY_CONSTRAINED_VBR uses VBV = (bitrate / (fps_num/fps_den)) * 1.1. CQP/QVBR set QP_I/QP_P to `cqp`. User options (`texture-amf-opts.hpp`) are matched by exact name (`g`/`keyint`, `usage`, `profile`, `level`, `quality`, `rc`, `enforce_hrd`, `filler_data`, `vbaq`, `qp_i`, `qp_p`, `me_half_pel`, `me_quarter_pel`, `aud`, `max_au_size`, plus codec-specific names); booleans parse `"1"` true, `"0"` false, then `true`/`false` case-insensitive, anything else false. A re-implementation needs a vendor-SDK fake to verify these.
+`texture-amf.cpp` needs the AMD AMF SDK (absent). Read-only findings: defaults `rate_control "CBR"`, `bitrate 6000`, `cqp 20`, `preset "quality"`, `profile "high"`, `bf 2`; rate-control names (case-insensitive) `cqp, cbr, vbr, vbr_lat, qvbr, hqvbr, hqcbr` -> CONSTANT_QP, CBR, PEAK_CONSTRAINED_VBR, LATENCY_CONSTRAINED_VBR, QUALITY_VBR, HIGH_QUALITY_VBR, HIGH_QUALITY_CBR; unknown -> CBR. `bitrate` and `cqp` visibility: `bitrate` hidden for CQP and QVBR, `cqp` shown for CQP and QVBR. For modes other than CQP/QVBR: target = peak = VBV = bitrate; CBR adds filler data; PEAK_CONSTRAINED_VBR and HQ_VBR use peak = VBV = bitrate\*1.5; LATENCY_CONSTRAINED_VBR uses VBV = (bitrate / (fps_num/fps_den)) * 1.1. CQP/QVBR set QP_I/QP_P to `cqp`. User options (`texture-amf-opts.hpp`) are matched by exact name (`g`/`keyint`, `usage`, `profile`, `level`, `quality`, `rc`, `enforce_hrd`, `filler_data`, `vbaq`, `qp_i`, `qp_p`, `me_half_pel`, `me_quarter_pel`, `aud`, `max_au_size`, plus codec-specific names); booleans parse `"1"` true, `"0"` false, then `true`/`false` case-insensitive, anything else false. A re-implementation needs a vendor-SDK fake to verify these.
 
 ## 10. Reference defects and quirks (index)
 
-| id | Where | Required behaviour |
-|---|---|---|
-| Q-1 | nvenc rate-control matching: `strcmp` for `CQP`/`lossless`/H.264 buffering-period SEI `"CBR"`, `astrcmpi` elsewhere; default is lowercase `cbr` | match (SHOULD) |
-| Q-2 | `init_nvenc` failure is sticky and silent after the first call | match |
-| Q-3 | lookahead dropped by a negative bound leaves the preset's lookahead bits | match |
-| Q-4 | H.264/HEVC/AV1 `idrPeriod` copied before user options | match |
-| Q-5 | H.264 sets no HDR VUI although `mdi`/`cll` are allocated | match |
-| Q-6 | ROI cache by increment (nvenc: first map always built; qsv: increment 0 never sent) | match |
-| Q-7 | `get_sei_data` of obs-nvenc always false | match |
-| D-1 | `bitrate*1000` in signed int (vector 26, reported by UBSan) | u32 modular |
-| D-2 | `driver_ver` missing -> NULL `sscanf` crash (vector 32 defect) | treat as 0.0 |
-| D-3 | VAAPI unknown rate control -> `strcmp(NULL)` crash (vector 51) | treat as CBR |
-| D-4 | empty sequence header -> `bmalloc(0)` | store empty, report no extra data |
+| id  | Where                                                                                                                                           | Required behaviour                |
+| --- | ----------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------- |
+| Q-1 | nvenc rate-control matching: `strcmp` for `CQP`/`lossless`/H.264 buffering-period SEI `"CBR"`, `astrcmpi` elsewhere; default is lowercase `cbr` | match (SHOULD)                    |
+| Q-2 | `init_nvenc` failure is sticky and silent after the first call                                                                                  | match                             |
+| Q-3 | lookahead dropped by a negative bound leaves the preset's lookahead bits                                                                        | match                             |
+| Q-4 | H.264/HEVC/AV1 `idrPeriod` copied before user options                                                                                           | match                             |
+| Q-5 | H.264 sets no HDR VUI although `mdi`/`cll` are allocated                                                                                        | match                             |
+| Q-6 | ROI cache by increment (nvenc: first map always built; qsv: increment 0 never sent)                                                             | match                             |
+| Q-7 | `get_sei_data` of obs-nvenc always false                                                                                                        | match                             |
+| D-1 | `bitrate*1000` in signed int (vector 26, reported by UBSan)                                                                                     | u32 modular                       |
+| D-2 | `driver_ver` missing -> NULL `sscanf` crash (vector 32 defect)                                                                                  | treat as 0.0                      |
+| D-3 | VAAPI unknown rate control -> `strcmp(NULL)` crash (vector 51)                                                                                  | treat as CBR                      |
+| D-4 | empty sequence header -> `bmalloc(0)`                                                                                                           | store empty, report no extra data |
 
 ## 11. Implementation notes
 
@@ -159,28 +159,28 @@ Model the vendor SDKs behind traits (session, capability query, preset config, e
 
 Scripts live in `test/conformance/scripts/hwencoders/`; the runner command language is documented in `test/conformance/README.md` ("hwencoders runner").
 
-| Rule | Scripts |
-|---|---|
-| R01-R06 | 30, 31-*, 32-* |
-| R07-R10 | 20, 21, 25, 28 |
-| R11 | 10 |
-| R12-R16 | 11, 12, 13, 14, 15, 16, 26, 29 |
-| R17-R20 | 17, 18, 19, 25, 29 |
-| R21 | 22 |
-| R22-R26 | 23, 24, 27, 28 |
-| R27-R28 | 33-*, 34-* |
-| R30-R35 | 60-66 |
-| R40-R46 | 40-45 |
-| R50-R57 | 50-57 |
+| Rule      | Scripts                               |
+| --------- | ------------------------------------- |
+| R01-R06   | 30, 31-*, 32-*                        |
+| R07-R10   | 20, 21, 25, 28                        |
+| R11       | 10                                    |
+| R12-R16   | 11, 12, 13, 14, 15, 16, 26, 29        |
+| R17-R20   | 17, 18, 19, 25, 29                    |
+| R21       | 22                                    |
+| R22-R26   | 23, 24, 27, 28                        |
+| R27-R28   | 33-*, 34-*                            |
+| R30-R35   | 60-66                                 |
+| R40-R46   | 40-45                                 |
+| R50-R57   | 50-57                                 |
 | D-2 / D-3 | 32-...-defect-missing-driver-ver / 51 |
 
 ## 13. Open questions
 
 1. NVENC SDK < 13 (pre-12.2 field names) branches are not verified.
-2. `config_open_string` rejection of the helper output could not be reproduced.
-3. `ENABLE_NVENC_FFMPEG_IDS` (extra legacy ids) is a build option; behaviour is by reading only.
-4. QSV texture-encode (`obs_qsv_encode_tex` success path with a real texture) and the VAAPI/NVENC texture backends are not covered.
-5. Whether signed-overflow in D-1 can actually trap on any supported compiler (it did not change the observed output).
+1. `config_open_string` rejection of the helper output could not be reproduced.
+1. `ENABLE_NVENC_FFMPEG_IDS` (extra legacy ids) is a build option; behaviour is by reading only.
+1. QSV texture-encode (`obs_qsv_encode_tex` success path with a real texture) and the VAAPI/NVENC texture backends are not covered.
+1. Whether signed-overflow in D-1 can actually trap on any supported compiler (it did not change the observed output).
 
 ## 14. Round 8: encoder runtimes, platform utils, nv-filters, test entry points (E-S050-S025, added)
 

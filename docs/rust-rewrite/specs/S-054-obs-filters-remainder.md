@@ -1,11 +1,11 @@
 # S-054 obs-filters remainder (module table, vendored RNNoise / SpeexDSP contract, effect inventory)
 
-| | |
-|---|---|
-| Status | Ready for review (Rust sufficiency check skipped by assignment) |
-| Reference | OBS Studio 33.0.1: `plugins/obs-filters/obs-filters.c`, `noise-suppress-filter.c` (real-library behaviour), `rnnoise/src/*.c` (vendored), `data/*.effect` |
-| Depends on | S-027 (audio filter plumbing; its rules S-027-R90..R98 define what the plugin does with the libraries), S-028 (video filters, shader maths), S-020 (effect language) |
-| Conformance | `test/conformance/scripts/filtersrest/` (8 scripts), runner section "filtersrest runner" in `test/conformance/README.md` |
+|             |                                                                                                                                                                      |
+| ----------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Status      | Ready for review (Rust sufficiency check skipped by assignment)                                                                                                      |
+| Reference   | OBS Studio 33.0.1: `plugins/obs-filters/obs-filters.c`, `noise-suppress-filter.c` (real-library behaviour), `rnnoise/src/*.c` (vendored), `data/*.effect`            |
+| Depends on  | S-027 (audio filter plumbing; its rules S-027-R90..R98 define what the plugin does with the libraries), S-028 (video filters, shader maths), S-020 (effect language) |
+| Conformance | `test/conformance/scripts/filtersrest/` (8 scripts), runner section "filtersrest runner" in `test/conformance/README.md`                                             |
 
 ## 1. Scope
 
@@ -24,11 +24,7 @@ are data of that library; do not re-specify them.
 - **S-054-R01** `obs_module_description()` is `"OBS core filters"`; `obs_module_load()` returns `true`.
 - **S-054-R02** `obs_module_load` registers, in this exact order, one `obs_source_info` per line (identifier = C symbol; the
   registered `.id` string is given in S-027/S-028):
-  `mask_filter, mask_filter_v2, crop_filter, gain_filter, eq_filter, hdr_tonemap_filter, sdr_on_hdr_filter, color_filter,
-  color_filter_v2, scale_filter, scroll_filter, gpu_delay_filter, color_key_filter, color_key_filter_v2, color_grade_filter,
-  sharpness_filter, sharpness_filter_v2, chroma_key_filter, chroma_key_filter_v2, async_delay_filter, [noise_suppress_filter,
-  noise_suppress_filter_v2], invert_polarity_filter, noise_gate_filter, compressor_filter, limiter_filter, expander_filter,
-  upward_compressor_filter, luma_key_filter, luma_key_filter_v2` -> 30 registrations (28 when `HAS_NOISEREDUCTION` is not
+  `mask_filter, mask_filter_v2, crop_filter, gain_filter, eq_filter, hdr_tonemap_filter, sdr_on_hdr_filter, color_filter, color_filter_v2, scale_filter, scroll_filter, gpu_delay_filter, color_key_filter, color_key_filter_v2, color_grade_filter, sharpness_filter, sharpness_filter_v2, chroma_key_filter, chroma_key_filter_v2, async_delay_filter, [noise_suppress_filter, noise_suppress_filter_v2], invert_polarity_filter, noise_gate_filter, compressor_filter, limiter_filter, expander_filter, upward_compressor_filter, luma_key_filter, luma_key_filter_v2` -> 30 registrations (28 when `HAS_NOISEREDUCTION` is not
   defined, i.e. neither SpeexDSP nor RNNoise was built; the bracketed pair is then skipped).
 - **S-054-R03** The two noise suppress registrations: v0: `id="noise_suppress_filter"`, `version=0`, type FILTER (1),
   `output_flags = AUDIO|CAP_OBSOLETE = 0x402`; v2: same id, `version=2`, flags `AUDIO = 0x2`. (Hidden-in-UI of the obsolete one
@@ -91,14 +87,14 @@ Everything in S-027-R90..R99 applies unchanged; the real-library vectors confirm
 
 ## 5. Tolerances (normative for ports using other library implementations)
 
-| Quantity | Tolerance vs the vectors |
-|---|---|
-| RNNoise `vad` | +-0.02 absolute |
-| RNNoise `rms_out`, `peak_out` (int16 units) | +-3 % relative or +-2 absolute, whichever is larger; frame 0 (fade-in) +-30 % |
-| RNNoise bit-exactness between two states, in-place vs copy | exact (self-consistency, any implementation) |
-| Speex `rms_out` | +-10 % (+-5 absolute) after convergence; first frame < 5 |
-| Filter `rms*` columns (float, 3 decimals) | +-0.01 absolute, resampled paths +-10 % |
-| Frame counts, timestamps, queue sizes, `null` returns | exact |
+| Quantity                                                   | Tolerance vs the vectors                                                      |
+| ---------------------------------------------------------- | ----------------------------------------------------------------------------- |
+| RNNoise `vad`                                              | +-0.02 absolute                                                               |
+| RNNoise `rms_out`, `peak_out` (int16 units)                | +-3 % relative or +-2 absolute, whichever is larger; frame 0 (fade-in) +-30 % |
+| RNNoise bit-exactness between two states, in-place vs copy | exact (self-consistency, any implementation)                                  |
+| Speex `rms_out`                                            | +-10 % (+-5 absolute) after convergence; first frame < 5                      |
+| Filter `rms*` columns (float, 3 decimals)                  | +-0.01 absolute, resampled paths +-10 %                                       |
+| Frame counts, timestamps, queue sizes, `null` returns      | exact                                                                         |
 
 The vectors print rounded values (`%.3f` for vad and float rms, integers for int16-unit rms) so that libm differences between
 machines do not appear; they were generated with glibc `sin`, `sqrt`, `-O0` GCC, no fast-math. The deterministic test signals
@@ -113,22 +109,22 @@ text are pinned (real C parser against a fake OpenGL backend) by `test/conforman
 (S-020). The semantics of the pixel shaders (key functions, tonemap maths, LUT sampling) are S-028 section 6.4. Inventory
 (types from the real parser; every effect also declares `ViewProj` and `image`):
 
-| File | Parameters (besides ViewProj/image) | Techniques |
-|---|---|---|
-| blend_add/mul/sub_filter | target:tex, color:vec4, mul_val:vec2, add_val:vec2 | Draw |
-| mask_alpha_filter, mask_color_filter | target:tex, color:vec4, mul_val:vec2, add_val:vec2 | Draw |
-| chroma_key_filter | yuv_mat:mat4, color:vec4, contrast, brightness, gamma:f, chroma_key:vec2, pixel_size:vec2, similarity, smoothness, spill:f | Draw |
-| chroma_key_filter_v2 | cb_v4:vec4, cr_v4:vec4, opacity, contrast, brightness, gamma, chroma_key:vec2, pixel_size:vec2, similarity, smoothness, spill | Draw |
-| color.effect | none (shared include with colour-space functions and matrices) | none |
-| color_correction_filter | gamma:f, color_matrix:mat4 | Draw |
-| color_grade_filter | clut_1d:tex, clut_3d:tex, clut_amount:f, clut_scale/offset/domain_min/domain_max:vec3 | Draw1D, Draw3D, DrawAlpha3D, DrawAmount3D, DrawDomain3D |
-| color_key_filter | color:vec4, contrast, brightness, gamma:f, key_color:vec4, similarity, smoothness:f | Draw |
-| color_key_filter_v2 | opacity, contrast, brightness, gamma:f, key_color:vec4, similarity, smoothness:f | Draw |
-| crop_filter | mul_val:vec2, add_val:vec2, multiplier:f | Draw, DrawMultiply, DrawTonemap, DrawMultiplyTonemap |
-| hdr_tonemap_filter | multiplier, input_maximum_nits, output_maximum_nits:f | Reinhard, MaxRGB, MaxRGBSDR |
-| luma_key_filter, luma_key_filter_v2 | lumaMax, lumaMin, lumaMaxSmooth, lumaMinSmooth:f | Draw |
-| sdr_on_hdr_filter | multiplier, power:f | GammaSrgb, GammaPower |
-| sharpness | sharpness, texture_width, texture_height:f | Draw |
+| File                                 | Parameters (besides ViewProj/image)                                                                                           | Techniques                                              |
+| ------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------- |
+| blend_add/mul/sub_filter             | target:tex, color:vec4, mul_val:vec2, add_val:vec2                                                                            | Draw                                                    |
+| mask_alpha_filter, mask_color_filter | target:tex, color:vec4, mul_val:vec2, add_val:vec2                                                                            | Draw                                                    |
+| chroma_key_filter                    | yuv_mat:mat4, color:vec4, contrast, brightness, gamma:f, chroma_key:vec2, pixel_size:vec2, similarity, smoothness, spill:f    | Draw                                                    |
+| chroma_key_filter_v2                 | cb_v4:vec4, cr_v4:vec4, opacity, contrast, brightness, gamma, chroma_key:vec2, pixel_size:vec2, similarity, smoothness, spill | Draw                                                    |
+| color.effect                         | none (shared include with colour-space functions and matrices)                                                                | none                                                    |
+| color_correction_filter              | gamma:f, color_matrix:mat4                                                                                                    | Draw                                                    |
+| color_grade_filter                   | clut_1d:tex, clut_3d:tex, clut_amount:f, clut_scale/offset/domain_min/domain_max:vec3                                         | Draw1D, Draw3D, DrawAlpha3D, DrawAmount3D, DrawDomain3D |
+| color_key_filter                     | color:vec4, contrast, brightness, gamma:f, key_color:vec4, similarity, smoothness:f                                           | Draw                                                    |
+| color_key_filter_v2                  | opacity, contrast, brightness, gamma:f, key_color:vec4, similarity, smoothness:f                                              | Draw                                                    |
+| crop_filter                          | mul_val:vec2, add_val:vec2, multiplier:f                                                                                      | Draw, DrawMultiply, DrawTonemap, DrawMultiplyTonemap    |
+| hdr_tonemap_filter                   | multiplier, input_maximum_nits, output_maximum_nits:f                                                                         | Reinhard, MaxRGB, MaxRGBSDR                             |
+| luma_key_filter, luma_key_filter_v2  | lumaMax, lumaMin, lumaMaxSmooth, lumaMinSmooth:f                                                                              | Draw                                                    |
+| sdr_on_hdr_filter                    | multiplier, power:f                                                                                                           | GammaSrgb, GammaPower                                   |
+| sharpness                            | sharpness, texture_width, texture_height:f                                                                                    | Draw                                                    |
 
 (Parameter order in the real dump begins `ViewProj, image`, then the list above in file order; see the vector for exact order and
 defaults.) The technique names are what the C code selects by name (S-028 section 4); a port must keep names byte-identical.
@@ -149,17 +145,17 @@ section "filtersrest runner". No concurrency beyond S-027 (audio thread only).
 
 ## 9. Coverage
 
-| Script | Rules |
-|---|---|
-| 10-rnnoise-speech-noise | R10-R13 |
-| 11-rnnoise-state | R10, R11 |
-| 20-speex-direct | R20-R22, Q-1 |
-| 30-filter-rnnoise-48k | R40, R41, R42 |
-| 31-filter-speex-48k | R22, R42, R44 |
-| 32-filter-rnnoise-resampled | R30 |
-| 33-filter-mono-and-channels | R42, R43 |
-| 40-module-registration | R01-R03 |
-| (S-020 vector 73) | section 6 |
+| Script                      | Rules         |
+| --------------------------- | ------------- |
+| 10-rnnoise-speech-noise     | R10-R13       |
+| 11-rnnoise-state            | R10, R11      |
+| 20-speex-direct             | R20-R22, Q-1  |
+| 30-filter-rnnoise-48k       | R40, R41, R42 |
+| 31-filter-speex-48k         | R22, R42, R44 |
+| 32-filter-rnnoise-resampled | R30           |
+| 33-filter-mono-and-channels | R42, R43      |
+| 40-module-registration      | R01-R03       |
+| (S-020 vector 73)           | section 6     |
 
 ## 10. Open questions
 
@@ -169,6 +165,7 @@ section "filtersrest runner". No concurrency beyond S-027 (audio thread only).
 - **O-2** NVIDIA AFX noise suppression (`LIBNVAFX_ENABLED`, `nv-filters`) not specified (proprietary SDK).
 - The Rust sufficiency check was skipped (cost control, per assignment).
 - Round 10 second-author check (2026-11-05): R51 corrected — the vendored `kiss_fft.c` uses the Opus naming (`opus_fft_c` / `opus_ifft_c`); there is no `kiss_fft_stride` symbol in the 33.0.1 copy. `WINDOW_SIZE = 2*FRAME_SIZE = 960` re-verified.
+
 ## 11. Round 9: vendored RNNoise internals (added)
 
 §3.1 pins the public API and the observed behaviour; the eight vendored sources below were not cited. This section
@@ -182,7 +179,7 @@ anything not stated here is library-internal and not observable beyond §5.
 
 ### 10.1 Signal path (`denoise.c`)
 
-- **S-054-R45** Constants: `FRAME_SIZE = 480` (120<<2), `WINDOW_SIZE = 960`, `FREQ_SIZE = 481`; pitch: `PITCH_MIN_PERIOD = 60`, `PITCH_MAX_PERIOD = 768`, `PITCH_FRAME_SIZE = 960`, `PITCH_BUF_SIZE = 1728`; features: `NB_BANDS = 22`, `CEPS_MEM = 8`, `NB_DELTA_CEPS = 6`, `NB_FEATURES = 42` (22 + 3·6 + 2). The 22 log-spaced band edges on the 481-bin 48 kHz spectrum (5 ms bands) are the fixed table `eband5ms = {0,1,2,3,4,5,6,7,8,10,12,14,16,20,24,28,34,40,48,60,78,100}`. The analysis pre-filter is a 2nd-order biquad highpass with fixed coefficients `a = {-1.99599f, 0.99600f}`, `b = {-2, 1}`.
+- **S-054-R45** Constants: `FRAME_SIZE = 480` (120\<<2), `WINDOW_SIZE = 960`, `FREQ_SIZE = 481`; pitch: `PITCH_MIN_PERIOD = 60`, `PITCH_MAX_PERIOD = 768`, `PITCH_FRAME_SIZE = 960`, `PITCH_BUF_SIZE = 1728`; features: `NB_BANDS = 22`, `CEPS_MEM = 8`, `NB_DELTA_CEPS = 6`, `NB_FEATURES = 42` (22 + 3·6 + 2). The 22 log-spaced band edges on the 481-bin 48 kHz spectrum (5 ms bands) are the fixed table `eband5ms = {0,1,2,3,4,5,6,7,8,10,12,14,16,20,24,28,34,40,48,60,78,100}`. The analysis pre-filter is a 2nd-order biquad highpass with fixed coefficients `a = {-1.99599f, 0.99600f}`, `b = {-2, 1}`.
 - **S-054-R46** State: `struct DenoiseState {analysis_mem[480], cepstral_mem[8][22], memid, synthesis_mem[480], pitch_buf[1728], pitch_enh_buf[1728], last_gain, last_period, mem_hp_x[2], lastg[22], RNNState rnn}` — one per channel (R10), nothing shared. `rnnoise_init` zero-fills the state; `model == NULL` selects the built-in model, otherwise the caller's model; the three GRU state arrays (`vad/noise/denoise`) are `calloc`'d to the model's GRU sizes. `rnnoise_get_size() = sizeof(DenoiseState)`. One process-wide `CommonState {init, kiss_fft_state *kfft, half_window[480], dct_table[22·22]}` is built lazily on first use and shared by all states.
 - **S-054-R47** Per-frame pipeline (`rnnoise_process_frame`): (1) biquad highpass (state `mem_hp_x`) over the 480 input samples; (2) analysis: 960-point FFT with 50 % overlap, band energies `Ex`, band correlation against the pitch frame `Ep/Exp`, DCT'd log-band energies (R48) into `features` (the 22 DCT terms, 18 delta-cepstral terms from the `CEPS_MEM`-frame `cepstral_mem` ring, and 2 pitch terms: the estimated period and gain), and the `silence` flag; the pitch ring buffer `pitch_buf` is advanced by `PITCH_FRAME_SIZE` each call, and `pitch_search` (R49) yields `(period, gain)` which are stored (`last_period`, `last_gain`) and fed to the correlation; (3) **only when not silent**: run the RNN (R52) → per-band gains `g[22]` and `vad_prob`; apply the pitch filter (per-bin renormalisation of `X` against the recomputed band energies); smooth per band `g[i] = max(g[i], 0.6 · lastg[i])` (state `lastg` persists across frames); interpolate the 22 band gains to `gf[481]` (`interp_band_gain`) and multiply the spectrum; when silent the spectrum is untouched and `vad_prob = 0` (the state is still updated); (4) synthesis: 960-point inverse FFT, overlap-add with the precomputed `half_window`, 480 output samples. Return `vad_prob`.
 - **S-054-R48** DCT: the 22×22 table holds `table[i·22+j] = cos((i+0.5)·j·π/22)` with column 0 multiplied by `sqrt(0.5)`; the forward transform multiplies the sum by `sqrt(2/22)`. (The inverse variant exists in the file but is not used on the inference path.)
@@ -200,4 +197,3 @@ anything not stated here is library-internal and not observable beyond §5.
 
 - Q-4: the exact `silence` decision inside the feature computation (energy threshold over the band terms) is not transcribed here; a different threshold changes which frames skip the RNN and is observable through the §5 tolerances. Implementers must not invent one — approximate the reference's decision or keep the vendored code.
 - Q-5: GRU tanh/sigmoid are 256-entry table lookups with pre-scaled weights, not libm transcendental functions; bit-exact reproduction (R11 self-consistency, §5) requires the same table (`tansig_table.h` is data).
-

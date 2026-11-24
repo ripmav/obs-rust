@@ -18,6 +18,7 @@ Verified in this checkout (submodules initialised): **`plugins/obs-websocket` at
 ## A. Pure logic
 
 ### P5-01 `obs-filters`
+
 - [ ] **P5-01.1/.2** S1/S2
   - Files: `plugins/obs-filters/obs-filters.c` (78), `CMakeLists.txt` (target `obs-filters`, MODULE), `data/locale/en-US.ini`
   - Steps: 1) Bookend S1: the 30 `obs_register_source` calls in `obs-filters.c` carry 25 ids, 5 of them doubled as `_v2` (`color_filter`, `sharpness_filter`, `chroma_key_filter`, `color_key_filter`, `luma_key_filter`, `mask_filter`, `noise_suppress_filter`); record every settings key per filter. 2) Bookend S2: P0-18 corpus through the P0-15 ABI host against `crates/obs-modules/obs-filters`.
@@ -75,6 +76,7 @@ Verified in this checkout (submodules initialised): **`plugins/obs-websocket` at
   - Done when: E1 export/loader check passes on each OS; E2 CI green and smoke recorded in `docs/tests/plugin-obs-filters.md`.
 
 ### P5-02 `obs-transitions`
+
 - [ ] **P5-02.1/.2** S1/S2
   - Files: `plugins/obs-transitions/obs-transitions.c` (28), `CMakeLists.txt` (target `obs-transitions` MODULE), `data/locale/en-US.ini`
   - Steps: 1) Bookend S1: 7 sources — `cut`, `fade`, `swipe`, `slide`, `stinger`, `fade_to_color`, `luma_wipe`; the conformance `transitions` runner `load` command dumps id/flags/callbacks for comparison. 2) Bookend S2: P0-18 corpus transitions through the P0-15 ABI host.
@@ -126,6 +128,7 @@ Verified in this checkout (submodules initialised): **`plugins/obs-websocket` at
   - Done when: E1 export/loader check passes on each OS; E2 CI green and smoke recorded in `docs/tests/plugin-obs-transitions.md`.
 
 ### P5-03 `image-source`
+
 - [ ] **P5-03.1/.2** S1/S2
   - Files: `plugins/image-source/image-source.c` (412) (module main; all 6 registrations), `CMakeLists.txt` (target `image-source` MODULE), `data/locale/en-US.ini`
   - Steps: 1) Bookend S1: 6 ids from `obs_register_source` in `image-source.c` — `image_source`, `color_source` (v1/v2/v3), `slideshow`, `slideshow` mk2. 2) Bookend S2: P0-18 corpus through the P0-15 ABI host.
@@ -169,6 +172,7 @@ Verified in this checkout (submodules initialised): **`plugins/obs-websocket` at
   - Done when: E1 export/loader check passes on each OS; E2 CI green and smoke recorded in `docs/tests/plugin-image-source.md`.
 
 ### P5-04 `obs-text` (Windows GDI+)
+
 - [ ] **P5-04.1/.2** S1/S2
   - Files: `plugins/obs-text/gdiplus/obs-text.cpp` (1195) (module main + source), `CMakeLists.txt` (target `obs-text`, Windows-only build)
   - Steps: 1) Bookend S1: one source id `text_source`; record font/colour/gradient settings keys. 2) Bookend S2: P0-18 corpus (Windows profiles only) through the P0-15 ABI host.
@@ -195,6 +199,7 @@ Verified in this checkout (submodules initialised): **`plugins/obs-websocket` at
   - Done when: E1 export/loader check passes on Windows; E2 CI green and smoke recorded in `docs/tests/plugin-obs-text.md`.
 
 ### P5-05 `text-freetype2`
+
 - [ ] **P5-05.1/.2** S1/S2
   - Files: `plugins/text-freetype2/text-freetype2.c` (616) (module main; registers `freetype2` v1/v2), `CMakeLists.txt` (target `text-freetype2` MODULE), `data/text_default.effect` (39)
   - Steps: 1) Bookend S1: ids `freetype2` (v1) + `freetype2_v2`; record text/colour/outline/shadow/wrap keys. 2) Bookend S2: P0-18 corpus through the P0-15 ABI host.
@@ -235,6 +240,7 @@ Verified in this checkout (submodules initialised): **`plugins/obs-websocket` at
   - Done when: E1 export/loader check passes on each OS; E2 CI green and smoke recorded in `docs/tests/plugin-text-freetype2.md`.
 
 ### P5-06 `rtmp-services`
+
 - [ ] **P5-06.1/.2** S1/S2
   - Files: `plugins/rtmp-services/rtmp-services-main.c` (138) (module main; registers `rtmp_common` + `rtmp_custom`), `CMakeLists.txt` (target `rtmp-services` MODULE), `data/locale/en-US.ini`
   - Steps: 1) Bookend S1: the 2 `obs_register_service` calls in `rtmp-services-main.c`; record `service`/`server`/key settings keys. 2) Bookend S2: P0-18 corpus services through the P0-15 ABI host.
@@ -274,6 +280,7 @@ Verified in this checkout (submodules initialised): **`plugins/obs-websocket` at
   - Done when: E1 export/loader check passes on each OS; E2 CI green and smoke recorded in `docs/tests/plugin-rtmp-services.md`.
 
 ### P5-07 `obs-x264`
+
 - [ ] **P5-07.1/.2** S1/S2
   - Files: `plugins/obs-x264/obs-x264-plugin-main.c` (16) (module main; registers `obs_x264_encoder`), `CMakeLists.txt` (target `obs-x264` MODULE)
   - Steps: 1) Bookend S1: encoder id `obs_x264`; record rate-control/preset/profile keys. 2) Bookend S2: P0-18 corpus encoder settings through the P0-15 ABI host.
@@ -308,6 +315,7 @@ Verified in this checkout (submodules initialised): **`plugins/obs-websocket` at
   - Done when: E1 export/loader check passes on each OS; E2 CI green and smoke recorded in `docs/tests/plugin-obs-x264.md`.
 
 ### P5-08 `obs-libfdk`
+
 - [ ] **P5-08.1/.2** S1/S2
   - Files: `plugins/obs-libfdk/obs-libfdk.c` (327) (module main; registers `obs_libfdk_encoder`), `CMakeLists.txt` (target `obs-libfdk` MODULE)
   - Steps: 1) Bookend S1: encoder id `obs_libfdk`; record AOT/bitrate/afterburner keys. 2) Bookend S2: P0-18 corpus through the P0-15 ABI host.
@@ -328,6 +336,7 @@ Verified in this checkout (submodules initialised): **`plugins/obs-websocket` at
   - Done when: E1 export/loader check passes on each OS; E2 CI green and smoke recorded in `docs/tests/plugin-obs-libfdk.md`.
 
 ### P5-09 `coreaudio-encoder`
+
 - [ ] **P5-09.1/.2** S1/S2
   - Files: `plugins/coreaudio-encoder/encoder.cpp` (1324) (module main; registers `aac`), `windows-imports.h` (482), `CMakeLists.txt` (target `coreaudio-encoder` MODULE)
   - Steps: 1) Bookend S1: encoder id `aac`; record rate/mode/bitrate keys. 2) Bookend S2: P0-18 corpus through the P0-15 ABI host (macOS + Windows).
@@ -350,6 +359,7 @@ Verified in this checkout (submodules initialised): **`plugins/obs-websocket` at
   - Done when: E1 export/loader check passes on macOS and Windows; E2 CI green and smoke recorded in `docs/tests/plugin-coreaudio-encoder.md`.
 
 ### P5-10 `nv-filters`
+
 - [ ] **P5-10.1/.2** S1/S2
   - Files: `plugins/nv-filters/nv-filters.c` (50) (module main; registers the NVAudioFX + NVVideoFX sources), `CMakeLists.txt` (target `nv-filters` MODULE, Windows-only)
   - Steps: 1) Bookend S1: 2 source ids; record settings keys per filter. 2) Bookend S2: P0-18 corpus (Windows profiles) through the P0-15 ABI host.
@@ -378,6 +388,7 @@ Verified in this checkout (submodules initialised): **`plugins/obs-websocket` at
 ## B. Network and muxing
 
 ### P5-11 `obs-ffmpeg` software encoders
+
 - [ ] **P5-11.1/.2** S1/S2
   - Files: `plugins/obs-ffmpeg/obs-ffmpeg.c` (429) (module main; 22 registrations: source `ffmpeg_source`, 4 outputs, 15 encoders), `CMakeLists.txt` (target `obs-ffmpeg` MODULE)
   - Steps: 1) Bookend S1: ids — `ffmpeg_source`; outputs `ffmpeg_output`, `ffmpeg_muxer`, `ffmpeg_mpegts_muxer`, `ffmpeg_hls_muxer` + `replay_buffer` (registered from `obs-ffmpeg.c` via `obs-ffmpeg-mux.c`); encoders `aac`, `opus`, `pcm16`, `pcm24`, `pcm32`, `alac`, `flac` + the video table. 2) Bookend S2: P0-18 corpus through the P0-15 ABI host.
@@ -409,6 +420,7 @@ Verified in this checkout (submodules initialised): **`plugins/obs-websocket` at
   - Done when: E1 export/loader check passes; E2 CI green and smoke recorded in `docs/tests/plugin-obs-ffmpeg.md`.
 
 ### P5-12 VAAPI
+
 - [ ] **P5-12.1/.2** S1/S2 (part of the P5-11.1/.2 inventory; ids: `h264_vaapi`, `h264_vaapi_tex`, `av1_vaapi`, `av1_vaapi_tex`, `hevc_vaapi`, `hevc_vaapi_tex`)
   - Files: `plugins/obs-ffmpeg/obs-ffmpeg-vaapi.c` (1302), `obs-ffmpeg.c` (429) (registration)
   - Steps: 1) Record the 6 VAAPI encoder ids + settings keys in the P5-11 inventory. 2) S2: P0-18 corpus through the P0-15 ABI host (Linux only).
@@ -437,6 +449,7 @@ Verified in this checkout (submodules initialised): **`plugins/obs-websocket` at
   - Done when: group E2 done; smoke recorded in `docs/tests/plugin-obs-ffmpeg.md`.
 
 ### P5-13 NVENC (FFmpeg legacy)
+
 - [ ] **P5-13.1/.2** S1/S2 (part of the P5-11.1/.2 inventory; ids: `ffmpeg_nvenc`, `ffmpeg_hevc_nvenc`)
   - Files: `plugins/obs-ffmpeg/obs-ffmpeg-nvenc.c` (611), `obs-ffmpeg.c` (429) (registration)
   - Steps: 1) Record the 2 ids + settings keys in the P5-11 inventory. 2) S2: P0-18 corpus through the P0-15 ABI host.
@@ -457,6 +470,7 @@ Verified in this checkout (submodules initialised): **`plugins/obs-websocket` at
   - Done when: group E2 done; smoke recorded in `docs/tests/plugin-obs-ffmpeg.md`.
 
 ### P5-14 `ffmpeg-mux` helper
+
 - [ ] **P5-14.1/.2** S1/S2
   - Files: `plugins/obs-ffmpeg/obs-ffmpeg-mux.c` (1261) (registers `ffmpeg_muxer`, `replay_buffer`), `CMakeLists.txt` (helper target `obs-ffmpeg-mux` executable)
   - Steps: 1) Bookend S1: outputs `ffmpeg_muxer` + `replay_buffer`; record the replay settings keys. 2) Bookend S2: P0-18 corpus through the P0-15 ABI host.
@@ -497,6 +511,7 @@ Verified in this checkout (submodules initialised): **`plugins/obs-websocket` at
   - Done when: group E2 done; helper path verified; smoke recorded in `docs/tests/plugin-obs-ffmpeg.md`.
 
 ### P5-15 `obs-ffmpeg` outputs
+
 - [ ] **P5-15.1/.2** S1/S2 (part of the P5-11.1/.2 inventory; ids: `ffmpeg_output`, `ffmpeg_mpegts_muxer`, `ffmpeg_hls_muxer`)
   - Files: `plugins/obs-ffmpeg/obs-ffmpeg-output.c` (1157), `obs-ffmpeg.c` (429) (registration)
   - Steps: 1) Record the 3 ids + settings keys in the P5-11 inventory. 2) S2: P0-18 corpus through the P0-15 ABI host.
@@ -539,6 +554,7 @@ Verified in this checkout (submodules initialised): **`plugins/obs-websocket` at
   - Done when: group E2 done; smoke recorded in `docs/tests/plugin-obs-ffmpeg.md`.
 
 ### P5-16 `obs-ffmpeg` media source
+
 - [ ] **P5-16.1/.2** S1/S2 (part of the P5-11.1/.2 inventory; id: `ffmpeg_source`)
   - Files: `plugins/obs-ffmpeg/obs-ffmpeg-source.c` (807), `obs-ffmpeg.c` (429) (registration)
   - Steps: 1) Record the `ffmpeg_source` id + all source settings keys in the P5-11 inventory. 2) S2: P0-18 corpus through the P0-15 ABI host.
@@ -580,6 +596,7 @@ Verified in this checkout (submodules initialised): **`plugins/obs-websocket` at
   - Done when: group E2 done; `crates/obs-media-playback` tested; smoke recorded in `docs/tests/plugin-obs-ffmpeg.md`.
 
 ### P5-17 `obs-outputs` RTMP/FLV
+
 - [ ] **P5-17.1/.2** S1/S2
   - Files: `plugins/obs-outputs/obs-outputs.c` (79) (module main; registers `rtmp_output`, `null_output`, `flv_output`, `mp4_output`, `mov_output`), `CMakeLists.txt` (target `obs-outputs` MODULE)
   - Steps: 1) Bookend S1: the 5 output ids + all settings keys (RTMP: url/key/server; MP4: path/chapters; FLV: file). 2) Bookend S2: P0-18 corpus through the P0-15 ABI host.
@@ -638,6 +655,7 @@ Verified in this checkout (submodules initialised): **`plugins/obs-websocket` at
   - Done when: E1 export/loader check passes on each OS; E2 CI green and smoke recorded in `docs/tests/plugin-obs-outputs.md`.
 
 ### P5-18 `obs-outputs` FTL, null, MP4
+
 - [ ] **P5-18.1/.2** S1/S2 (part of the P5-17.1/.2 inventory; ids: `mp4_output`, `mov_output`, `null_output`)
   - Files: `plugins/obs-outputs/obs-outputs.c` (79) (registration)
   - Steps: 1) Record the 3 ids + settings keys in the P5-17 inventory. 2) S2: P0-18 corpus through the P0-15 ABI host.
@@ -672,6 +690,7 @@ Verified in this checkout (submodules initialised): **`plugins/obs-websocket` at
   - Done when: E1 export/loader check passes; E2 CI green and smoke recorded in `docs/tests/plugin-obs-outputs.md`.
 
 ### P5-19 `obs-webrtc`
+
 - [ ] **P5-19.1/.2** S1/S2
   - Files: `plugins/obs-webrtc/obs-webrtc.cpp` (19) (module main), `whip-output.cpp` (792) (3 `obs_register_output` at lines 780–791), `whip-service.cpp` (98) (`obs_register_service`), `CMakeLists.txt` (target `obs-webrtc` MODULE)
   - Steps: 1) Bookend S1: 3 WHIP output ids + 1 service id; record settings keys. 2) Bookend S2: P0-18 corpus through the P0-15 ABI host.
@@ -698,6 +717,7 @@ Verified in this checkout (submodules initialised): **`plugins/obs-websocket` at
   - Done when: E1 export/loader check passes on each OS; E2 CI green and smoke recorded in `docs/tests/plugin-obs-webrtc.md`.
 
 ### P5-20 `obs-websocket` (submodule, tag 5.7.6)
+
 - [ ] **P5-20.1/.2** S1/S2 (submodule initialised in this checkout; fresh clones still need `git submodule update --init plugins/obs-websocket`)
   - Files: `plugins/obs-websocket/src/obs-websocket.cpp` (322) + `src/obs-websocket.h` (56) (module main), `src/Config.cpp` (227) (ids: no `obs_register_*` — it registers the `OBSWebSocket` service-less module + hotkeys), `CMakeLists.txt` (target `obs-websocket` MODULE)
   - Steps: 1) Bookend S1: record the module surface — no sources/outputs; the settings keys from `src/Config.cpp` + the 4 CLI overrides + hotkeys. 2) Bookend S2: P0-18 corpus (the `obswebsocket.json` profile settings) through the P0-15 ABI host. 3) Coordinate with the upstream owners before starting (external repo).
@@ -740,6 +760,7 @@ Verified in this checkout (submodules initialised): **`plugins/obs-websocket` at
   - Done when: S-062 committed; P5-20.5–.8 cite it.
 
 ### P5-21 `obs-vst`
+
 - [ ] **P5-21.1/.2** S1/S2
   - Files: `plugins/obs-vst/obs-vst.cpp` (348) (module main; registers `vst_audio`), `CMakeLists.txt` (target `obs-vst` MODULE)
   - Steps: 1) Bookend S1: 1 source id `vst_audio`; record the plugin-path settings keys. 2) Bookend S2: P0-18 corpus through the P0-15 ABI host.
@@ -768,6 +789,7 @@ Verified in this checkout (submodules initialised): **`plugins/obs-websocket` at
   - Done when: E1 export/loader check passes; E2 CI green and smoke recorded in `docs/tests/plugin-obs-vst.md`.
 
 ### P5-22 `vlc-video`
+
 - [ ] **P5-22.1/.2** S1/S2
   - Files: `plugins/vlc-video/vlc-video-plugin.c` (244) (module main; registers `vlc_source`), `vlc-video-plugin.h` (216, libvlc declarations), `CMakeLists.txt` (target `vlc-video` MODULE)
   - Steps: 1) Bookend S1: 1 source id `vlc_source`; record the playlist/loop settings keys. 2) Bookend S2: P0-18 corpus through the P0-15 ABI host.
@@ -788,6 +810,7 @@ Verified in this checkout (submodules initialised): **`plugins/obs-websocket` at
 ## C. Platform capture and audio
 
 ### P5-23 `linux-pipewire`
+
 - [ ] **P5-23.1/.2** S1/S2
   - Files: `plugins/linux-pipewire/linux-pipewire.c` (68) (module main; 4 sources), `CMakeLists.txt` (target `linux-pipewire` MODULE)
   - Steps: 1) Bookend S1: the 4 source ids from S-056 §1 — `pipewire-camera-source` (ASYNC_VIDEO), `pipewire-desktop-capture-source`, `pipewire-window-capture-source` (both VIDEO|DO_NOT_DUPLICATE|CAP_OBSOLETE), `pipewire-screen-capture-source` (VIDEO|DO_NOT_DUPLICATE). 2) Bookend S2: P0-18 corpus through the P0-15 ABI host (Linux).
@@ -835,6 +858,7 @@ Verified in this checkout (submodules initialised): **`plugins/obs-websocket` at
   - Done when: E1 export/loader check passes on Linux; E2 CI green and smoke recorded in `docs/tests/plugin-linux-pipewire.md`.
 
 ### P5-24 `linux-capture`
+
 - [ ] **P5-24.1/.2** S1/S2
   - Files: `plugins/linux-capture/linux-capture.c` (48) (module main; registers `xshm_input`, `xcomposite_input`, `xcursor_x11`), `CMakeLists.txt` (target `linux-capture` MODULE)
   - Steps: 1) Bookend S1: the 3 source ids + settings keys. 2) Bookend S2: P0-18 corpus through the P0-15 ABI host (Linux/X11).
@@ -866,6 +890,7 @@ Verified in this checkout (submodules initialised): **`plugins/obs-websocket` at
   - Done when: E1 export/loader check passes on Linux; E2 CI green and smoke recorded in `docs/tests/plugin-linux-capture.md`.
 
 ### P5-25 `linux-v4l2`
+
 - [ ] **P5-25.1/.2** S1/S2
   - Files: `plugins/linux-v4l2/linux-v4l2.c` (42) (module main; registers `v4l2_input_capture` + the `v4l2_output` virtual cam), `CMakeLists.txt` (target `linux-v4l2` MODULE)
   - Steps: 1) Bookend S1: source id `v4l2_input_capture` + output id `v4l2_output`; record the device/format/framerate keys. 2) Bookend S2: P0-18 corpus through the P0-15 ABI host (Linux).
@@ -901,6 +926,7 @@ Verified in this checkout (submodules initialised): **`plugins/obs-websocket` at
   - Done when: E1 export/loader check passes on Linux; E2 CI green and smoke recorded in `docs/tests/plugin-linux-v4l2.md`.
 
 ### P5-26 `linux-pulseaudio`
+
 - [ ] **P5-26.1/.2** S1/S2
   - Files: `plugins/linux-pulseaudio/linux-pulseaudio.c` (34) (module main; registers `pulse_input_capture`, `pulse_output_capture`), `CMakeLists.txt` (target `linux-pulseaudio` MODULE)
   - Steps: 1) Bookend S1: the 2 source ids + device keys. 2) Bookend S2: P0-18 corpus through the P0-15 ABI host (Linux).
@@ -930,6 +956,7 @@ Verified in this checkout (submodules initialised): **`plugins/obs-websocket` at
   - Done when: E1 export/loader check passes on Linux; E2 CI green and smoke recorded in `docs/tests/plugin-linux-pulseaudio.md`.
 
 ### P5-27 `linux-alsa`
+
 - [ ] **P5-27.1/.2** S1/S2
   - Files: `plugins/linux-alsa/linux-alsa.c` (32) (module main; registers `alsa_input_capture`), `CMakeLists.txt` (target `linux-alsa` MODULE)
   - Steps: 1) Bookend S1: source id `alsa_input_capture`; record the device/format keys. 2) Bookend S2: P0-18 corpus through the P0-15 ABI host (Linux).
@@ -945,6 +972,7 @@ Verified in this checkout (submodules initialised): **`plugins/obs-websocket` at
   - Done when: E1 export/loader check passes on Linux; E2 CI green and smoke recorded in `docs/tests/plugin-linux-alsa.md`.
 
 ### P5-28 `linux-jack`
+
 - [ ] **P5-28.1/.2** S1/S2
   - Files: `plugins/linux-jack/linux-jack.c` (32) (module main; registers `jack_output_capture`), `CMakeLists.txt` (target `linux-jack` MODULE)
   - Steps: 1) Bookend S1: source id `jack_output_capture`. 2) Bookend S2: P0-18 corpus through the P0-15 ABI host (Linux).
@@ -962,6 +990,7 @@ Verified in this checkout (submodules initialised): **`plugins/obs-websocket` at
   - Done when: E1 export/loader check passes on Linux; E2 CI green and smoke recorded in `docs/tests/plugin-linux-jack.md`.
 
 ### P5-29 `oss-audio`, `sndio`
+
 - [ ] **P5-29.1/.2** S1/S2 (both plugins)
   - Files: `plugins/oss-audio/oss-audio.c` (33) (registers `oss_input_capture`), `plugins/sndio/sndio.c` (32) (registers `sndio_output_capture`), both `CMakeLists.txt`
   - Steps: 1) Bookend S1: ids `oss_input_capture` + `sndio_output_capture` + device keys. 2) Bookend S2: P0-18 corpus through the P0-15 ABI host (Linux — BSD out of scope per D-12).
@@ -980,6 +1009,7 @@ Verified in this checkout (submodules initialised): **`plugins/obs-websocket` at
   - Done when: E1 export/loader check passes on the target OS; E2 smoke run recorded in `docs/tests/plugin-oss-audio.md` + `docs/tests/plugin-sndio.md`.
 
 ### P5-30 `win-wasapi`
+
 - [ ] **P5-30.1/.2** S1/S2
   - Files: `plugins/win-wasapi/plugin-main.cpp` (76) (module main; registers `wasapi_input_capture` + `wasapi_output_capture`), `CMakeLists.txt` (target `win-wasapi` MODULE)
   - Steps: 1) Bookend S1: the 2 source ids + device/format keys. 2) Bookend S2: P0-18 corpus through the P0-15 ABI host (Windows).
@@ -1022,23 +1052,31 @@ Verified in this checkout (submodules initialised): **`plugins/obs-websocket` at
   - Done when: §5.G cross-checked and extended; no unpinned rule left in the three files.
 
 ### P5-31 `win-capture`
+
 - [ ] **P5-31.1/.2** S1/S2
+
   - Files: `plugins/win-capture/plugin-main.c` (161) (module main; registers `monitor_capture`, `window_capture`, `game_capture`, `cursor`), `CMakeLists.txt` (target `win-capture` MODULE)
   - Steps: 1) Bookend S1: the 4 source ids + all settings keys (window strings, monitor index, cursor mode). 2) Bookend S2: P0-18 corpus through the P0-15 ABI host (Windows).
   - Done when: `docs/tests/plugin-win-capture-inventory.md` committed; S2 passes.
+
 - [ ] **P5-31.3 DXGI duplication**
+
   - Files: `duplicator-monitor-capture.c` (867), `monitor-capture.c` (235)
   - Steps: 1) Port the DXGI desktop duplication monitor capture (multi-GPU aware). 2) Run the `monitor_settings` script; verify capture.
   - Spec: S-051 §5.E (monitor/display capture)
   - Vectors: `test/conformance/scripts/wincapture/`
   - Done when: monitor capture incl. multi-GPU.
+
 - [ ] **P5-31.4 WGC**
+
   - Files: `window-capture.c` (846) (WGC path; loads the `libobs-winrt` module by name at line 311), `duplicator-monitor-capture.c` (867) (line 435)
   - Steps: 1) Port the WGC integration via the `libobs-winrt` module (existing C module during the port; its Rust port is P5-33). 2) Verify monitor and window capture through WGC.
   - Spec: S-051 §5.C (window capture)
   - Vectors: `test/conformance/scripts/wincapture/`
   - Done when: monitor and window capture.
+
 - [ ] **P5-31.5 Window/BitBlt**
+
   - Files: `window-capture.c` (846), `dc-capture.c` (242) + `dc-capture.h` (34), `app-helpers.c` (82) + `app-helpers.h` (10), `compat-helpers.c` (190) + `compat-helpers.h` (17) + `compat-format-ver.h` (3)
   - Steps: 1) Port the window enumeration + identity strings, the BitBlt/DC path, the compat list. 2) Run the `window_*`, `compat_check` scripts.
   - Spec: S-051 §5.B (window identity strings), §5.C, §5.H (compat list)
@@ -1048,35 +1086,46 @@ Verified in this checkout (submodules initialised): **`plugins/obs-websocket` at
     - S-051 Q-7: the `explorer.exe` empty-title filter compares case-sensitively while all other exe tests are case-insensitive.
     - S-051 D-2: `compat_json_free` leaves a dangling cache pointer in C — reset to empty.
   - Done when: window selection by title/class/exe.
+
 - [ ] **P5-31.6 Game capture host**
+
   - Files: `game-capture.c` (2354), `game-capture-file-init.c` (348), `load-graphics-offsets.c` (224), `nt-stuff.c` (233) + `nt-stuff.h` (7), `audio-helpers.c` (125) + `audio-helpers.h` (27); `shared/ipc-util/ipc-util/` (`pipe.h` 53, `pipe-windows.c` 271, `pipe-windows.h` 43, `pipe-posix.c` 17, `pipe-posix.h` 21 — the only consumers in the tree are game capture and the hook build, so it ports here)
   - Steps: 1) Port the hook state machine, shared memory/events, anti-cheat compat handling. 2) Port `shared/ipc-util` (named-pipe IPC) into the crate. 3) Run the `gc_*`, `hook_*` scripts.
   - Spec: S-051 §4.1–4.4 (hook protocol, kernel names, shared-memory layout), §5.D
   - Vectors: `test/conformance/scripts/wincapture/`
   - Done when: hooks a D3D11 sample.
+
 - [ ] **P5-31.7 Port the hook DLL to Rust** (D-08, confirmed 2026-11-05)
+
   - Files: `graphics-hook/` (15 files / 8 180 lines: `vulkan-capture.c` 2103 + `vulkan-capture.h` 875, `d3d9-capture.cpp` 866 + `d3d9-patches.hpp` 184, `gl-capture.c` 881 + `gl-decs.h` 144, `graphics-hook.c` 907 + `graphics-hook.h` 263, `d3d12-capture.cpp` 441, `d3d8-capture.cpp` 396, `d3d10-capture.cpp` 370, `d3d11-capture.cpp` 328, `dxgi-capture.cpp` 353 + `dxgi-helpers.hpp` 52), `inject-helper/inject-helper.c` (118), `get-graphics-offsets/` (6 files / 641 lines: `d3d9-offsets.cpp` 355, `dxgi-offsets.cpp` 116, `d3d8-offsets.cpp` 86, `get-graphics-offsets.c` 50 + `.h` 33, `ddraw-offsets.cpp` 1)
   - Steps: 1) Port the per-version hook functions (d3d12, d3d11, d3d10, d3d9, d3d8, dxgi, gl, vulkan) to a Rust cdylib `graphics-hook` — same module name, same injection, same named-pipe IPC + shared-memory/event contract (P5-31.6 `ipc-util`, S-051 §4.3–4.4); the Rust host owns that contract. 2) Phase per hook: each backend ships behind a runtime toggle with the C DLL as fallback until it passes the P5-31.9 sample matrix (start with d3d12/d3d11; d3d9's runtime patching per `d3d9-patches.hpp` is the hardest). 3) Keep `inject-helper/` and `get-graphics-offsets/` C (small helper executables, outside D-08's scope) and wrap their CMake targets from Cargo.
   - Pitfalls:
     - D-08 (DECISIONS-NEEDED, confirmed 2026-11-05): the hook runs injected into third-party games — a bug there crashes the user's game, so the per-hook phasing with the C fallback is mandatory, and each hook's ABI-sensitivity (prologues, offset resolution, DXGI/GL/Vulkan interposition) must match the C behaviour exactly.
     - D3D9 patching: offset tables + patch bytes must be identical to `d3d9-patches.hpp` or anti-cheat/games break silently.
   - Done when: every `graphics-hook/` backend passes the P5-31.9 matrix with the Rust DLL (C fallback still available per hook); helpers build from Cargo.
+
 - [ ] **P5-31.8 Cursor**
+
   - Files: `cursor-capture.c` (257) + `cursor-capture.h` (28)
   - Steps: 1) Port the cursor capture (image + position). 2) Verify the cursor is visible.
   - Spec: S-051 (cursor rules)
   - Vectors: `test/conformance/scripts/wincapture/`
   - Done when: cursor visible.
+
 - [ ] **P5-31.9 API matrix** — D3D8/9/10/11/12, OpenGL, Vulkan samples.
+
   - Files: `plugin-main.c` (161) (module main)
   - Steps: 1) Run each graphics API sample through game capture with the hook. 2) Record the matrix in `docs/tests/`.
   - Done when: matrix recorded in `docs/tests/`.
 
 - [ ] **P5-31.10/.11** E1/E2
+
   - Files: `plugin-main.c` (161) (module main), `CMakeLists.txt` (targets: `win-capture` MODULE, `graphics-hook` MODULE, `inject-helper` + `get-graphics-offsets` executables)
   - Steps: 1) Bookend E1: `crates/obs-modules/win-capture` cdylib named `win-capture` (host side); the Rust `graphics-hook` cdylib keeps its module name (D-08), the C helpers keep their executable names. 2) Bookend E2: remove the ported host-side C sources in the same PR; keep `inject-helper/`, `get-graphics-offsets/` until P7-03.3, and the C `graphics-hook/` sources until P5-31.7 retires them hook-by-hook.
   - Done when: E1 export/loader check passes on Windows; E2 CI green and smoke recorded in `docs/tests/plugin-win-capture.md`.
+
 - [ ] **P5-31.12 Vulkan format table vectors (added)**
+
   - Files: `graphics-hook/vulkan-capture.h` (875; `vk_format_to_dxgi` table, 512 lines at :338, `vk_format_to_str` table, 237 lines at :56).
   - Steps: 1. the hook is ported to Rust (D-08) — pin the two tables with conformance vectors: generate a `vulkan-formats` script + committed `.expected` vector from the C build (reference) and assert the Rust port (P5-31.7) matches every VkFormat→DXGI-format mapping (incl. the unsupported fallback) and every VkFormat→name string. 2. regenerate the vector if the hook table changes.
   - Spec: S-051 (vulkan capture).
@@ -1084,6 +1133,7 @@ Verified in this checkout (submodules initialised): **`plugins/obs-websocket` at
   - Done when: all rows of both tables are pinned by committed vectors.
 
 ### P5-32 `win-dshow`
+
 - [ ] **P5-32.1/.2** S1/S2 (`deps/libdshowcapture/src` submodule initialised in this checkout; fresh clones need `git submodule update --init --recursive deps/libdshowcapture` — it has a nested Elgato submodule)
   - Files: `plugins/win-dshow/dshow-plugin.cpp` (54) (module main; registers `dshow_input`, `obs_dshow_c985`, `obs_dshow_c353`), `CMakeLists.txt` (target `win-dshow` MODULE)
   - Steps: 1) Bookend S1: the 3 source ids + device/format keys. 2) Bookend S2: P0-18 corpus through the P0-15 ABI host (Windows).
@@ -1124,6 +1174,7 @@ Verified in this checkout (submodules initialised): **`plugins/obs-websocket` at
   - Done when: E1 export/loader check passes on Windows; E2 CI green and smoke recorded in `docs/tests/plugin-win-dshow.md`.
 
 ### P5-33 `libobs-winrt`
+
 - [ ] **P5-33.1 S1/S2 + Capture**
   - Files: `libobs-winrt/winrt-capture.cpp` (606) + `winrt-capture.h` (30) (exported C API: `winrt_capture_supported`, `winrt_capture_cursor_toggle_supported`, `winrt_capture_init_window`, `winrt_capture_free`, `winrt_capture_active`, …), `CMakeLists.txt` (target `libobs-winrt` MODULE — note: repo root, not `plugins/`)
   - Steps: 1) S1: list the exported `winrt_capture_*` C API (no `obs_register_*`; win-capture loads it by module name "libobs-winrt"). S2 is vacuous (no settings). 2) Port `winrt-capture.cpp`: `GraphicsCaptureItem`, frame pool, `Direct3D11CaptureFramePool::CreateFreeThreaded` via the `windows` crate.
@@ -1142,6 +1193,7 @@ Verified in this checkout (submodules initialised): **`plugins/obs-websocket` at
   - Done when: E1 export/loader check passes on Windows (win-capture loads it by name); E2 CI green and smoke recorded in `docs/tests/plugin-libobs-winrt.md`.
 
 ### P5-34 `mac-capture`
+
 - [ ] **P5-34.1/.2** S1/S2
   - Files: `plugins/mac-capture/plugin-main.c` (35) (module main; registers `screen_capture`, `sck_audio_capture`, `display_capture`, `window_capture`, `coreaudio_input_capture`, `coreaudio_output_capture`), `CMakeLists.txt` (target `mac-capture` MODULE)
   - Steps: 1) Bookend S1: the 6 source ids + settings keys (display/window lists, crop, cursor). 2) Bookend S2: P0-18 corpus through the P0-15 ABI host (macOS).
@@ -1182,6 +1234,7 @@ Verified in this checkout (submodules initialised): **`plugins/obs-websocket` at
   - Done when: E1 export/loader check passes on macOS; E2 CI green and smoke recorded in `docs/tests/plugin-mac-capture.md`.
 
 ### P5-35 `mac-avcapture`
+
 - [ ] **P5-35.1/.2** S1/S2
   - Files: `plugins/mac-avcapture/plugin-main.m` (325) + `plugin-main.h` (119) (module main; registers `macos-avcapture` + `macos-avcapture-fast`), `CMakeLists.txt` (targets `mac-avcapture` MODULE + `mac-avcapture-legacy` MODULE)
   - Steps: 1) Bookend S1: the 2 source ids + settings keys. 2) Bookend S2: P0-18 corpus through the P0-15 ABI host (macOS).
@@ -1206,6 +1259,7 @@ Verified in this checkout (submodules initialised): **`plugins/obs-websocket` at
   - Done when: E1 export/loader check passes on macOS; E2 CI green and smoke recorded in `docs/tests/plugin-mac-avcapture.md`.
 
 ### P5-36 `mac-syphon`
+
 - [ ] **P5-36.1/.2** S1/S2
   - Files: `plugins/mac-syphon/plugin-main.c` (16) (module main; registers the Syphon source), `CMakeLists.txt` (target `mac-syphon` MODULE)
   - Steps: 1) Bookend S1: the source id + settings keys. 2) Bookend S2: P0-18 corpus through the P0-15 ABI host (macOS).
@@ -1220,6 +1274,7 @@ Verified in this checkout (submodules initialised): **`plugins/obs-websocket` at
   - Done when: E1 export/loader check passes on macOS; E2 CI green and smoke recorded in `docs/tests/plugin-mac-syphon.md`.
 
 ### P5-37 `mac-virtualcam`
+
 - [ ] **P5-37.1/.2** S1/S2
   - Files: `plugins/mac-virtualcam/src/obs-plugin/plugin-main.mm` (567) (module main; registers the virtual-cam host), `src/common/MachProtocol.h` (17), `CMakeLists.txt`
   - Steps: 1) Bookend S1: record the module surface (the camera is a system extension, not an `obs_register_*` object) + the Mach protocol message ids (S-052 §7). 2) Bookend S2: vacuous (no OBS settings) — verify the module loads.
@@ -1246,6 +1301,7 @@ Verified in this checkout (submodules initialised): **`plugins/obs-websocket` at
   - Done when: E1 export/loader check passes on macOS; E2 CI green and smoke recorded in `docs/tests/plugin-mac-virtualcam.md`.
 
 ### P5-38 `mac-videotoolbox`
+
 - [ ] **P5-38.1/.2** S1/S2
   - Files: `plugins/mac-videotoolbox/encoder.c` (1535) (module main; registers the `videotoolbox_v100` + `videotoolbox_prores` encoders), `CMakeLists.txt` (target `mac-videotoolbox` MODULE)
   - Steps: 1) Bookend S1: the 2 encoder ids + settings keys (H.264/HEVC + ProRes). 2) Bookend S2: P0-18 corpus through the P0-15 ABI host (macOS).
@@ -1272,6 +1328,7 @@ Verified in this checkout (submodules initialised): **`plugins/obs-websocket` at
 ## D. Hardware encoders
 
 ### P5-39 `obs-nvenc`
+
 - [ ] **P5-39.1/.2** S1/S2
   - Files: `plugins/obs-nvenc/obs-nvenc.c` (30) (module main; registers `h264_nvenc`, `hevc_nvenc`, `av1_nvenc` + the legacy `jim_*` compat ids), `CMakeLists.txt` (target `obs-nvenc` MODULE + `obs-nvenc-test` executable)
   - Steps: 1) Bookend S1: the encoder ids (incl. the `ENABLE_NVENC_FFMPEG_IDS`-gated legacy ids) + settings keys. 2) Bookend S2: P0-18 corpus through the P0-15 ABI host.
@@ -1324,6 +1381,7 @@ Verified in this checkout (submodules initialised): **`plugins/obs-websocket` at
   - Done when: E1 export/loader check passes on each OS; E2 CI green and smoke recorded in `docs/tests/plugin-obs-nvenc.md`.
 
 ### P5-40 `obs-qsv11`
+
 - [ ] **P5-40.1/.2** S1/S2
   - Files: `plugins/obs-qsv11/obs-qsv11-plugin-main.c` (109) (module main; registers `h264_qsv`, `hevc_qsv`, `av1_qsv` + the legacy v1/v2 ids), `CMakeLists.txt` (target `obs-qsv11` MODULE + `obs-qsv-test` executable)
   - Steps: 1) Bookend S1: the encoder ids (incl. `h264_qsv_v1`/`h264_qsv_v2` migrations) + settings keys. 2) Bookend S2: P0-18 corpus through the P0-15 ABI host.
@@ -1352,6 +1410,7 @@ Verified in this checkout (submodules initialised): **`plugins/obs-websocket` at
   - Done when: E1 export/loader check passes on each OS; E2 CI green and smoke recorded in `docs/tests/plugin-obs-qsv11.md`.
 
 ### P5-41 AMF
+
 - [ ] **P5-41.1/.2** S1/S2 (inside `plugins/obs-ffmpeg`)
   - Files: `plugins/obs-ffmpeg/texture-amf.cpp` (2822) (AMF registration happens through the obs-ffmpeg module main), `CMakeLists.txt` (built into target `obs-ffmpeg` MODULE)
   - Steps: 1) Record the AMF encoder ids + settings keys in the P5-11 inventory. 2) S2: P0-18 corpus through the P0-15 ABI host.
@@ -1374,6 +1433,7 @@ Verified in this checkout (submodules initialised): **`plugins/obs-websocket` at
 ## E. Vendor SDK cards and tools
 
 ### P5-42 DeckLink
+
 - [ ] **P5-42.1 S1/S2 + FFI crate**
   - Files: `plugins/decklink/plugin-main.cpp` (69) (module main; registers `decklink-input` source + `decklink_output` output), `platform.hpp` (33) + `win/platform.cpp` (42) + `mac/platform.cpp` (18) + `linux/platform.cpp` (15), `DecklinkBase.cpp` (18) + `DecklinkBase.h` (35), `decklink-captions/decklink-captions.cpp` (155) + `.h` (30) (separate module, registers its own captions input)
   - Steps: 1) S1: ids `decklink-input`, `decklink_output` + the captions module's input; record settings keys. 2) S2: P0-18 corpus through the P0-15 ABI host. 3) Wrap the Blackmagic SDK (COM on Windows via IDL, C++ interfaces on Linux/mac) in a Rust FFI crate — hand-written FFI over the vendor C++/COM interfaces (D-10, confirmed 2026-11-05: glue is Rust; no C API layer).
@@ -1402,6 +1462,7 @@ Verified in this checkout (submodules initialised): **`plugins/obs-websocket` at
   - Done when: E1 export/loader check passes on each OS; E2 CI green and smoke recorded in `docs/tests/plugin-decklink.md`.
 
 ### P5-43 AJA
+
 - [ ] **P5-43.1 S1/S2 + FFI**
   - Files: `plugins/aja/main.cpp` (47) (module main; registers the AJA source + output), `aja-card-manager.cpp` (573) + `aja-card-manager.hpp` (96), `aja-common.cpp` (1113) + `aja-common.hpp` (95), `aja-routing.cpp` (532) + `aja-routing.hpp` (60)
   - Steps: 1) S1: ids per the S1 table (AJA input + output); record settings keys. 2) S2: P0-18 corpus through the P0-15 ABI host. 3) Wrap the NTV2 SDK in a Rust FFI crate — hand-written FFI over the vendor C++/COM interfaces (D-10, confirmed 2026-11-05).
@@ -1426,7 +1487,9 @@ Verified in this checkout (submodules initialised): **`plugins/obs-websocket` at
   - Done when: E1 export/loader check passes on each OS; E2 CI green and smoke recorded in `docs/tests/plugin-aja.md`.
 
 ### P5-44 `frontend-tools`
+
 (Bookends n/a — ported in Phase 6, see the phase file.)
+
 - [ ] **P5-44.1 Cross-reference** — scripts → P6-37; auto-scene-switcher → P6-38; captions/output-timer → P6-39.
   - Files: `plugins/frontend-tools/scripts.cpp` (694) + `scripts.hpp` (64), `auto-scene-switcher.cpp` (525) + `.hpp` (46) + `-nix.cpp` (199) + `-win.cpp` (77), `captions.cpp` (439) + `captions-handler.cpp` (43) + `captions-mssapi.cpp` (186) + `captions-mssapi-stream.cpp` (410) + headers, `output-timer.cpp` (332) + `output-timer.hpp` (44), `frontend-tools.c` (51)
   - Steps: 1) Map every file to its P6-37/38/39 owner in the coverage matrix. 2) Fix the Phase 6 file entries so each file has exactly one owner.
@@ -1439,6 +1502,7 @@ Verified in this checkout (submodules initialised): **`plugins/obs-websocket` at
 ## F. Browser
 
 ### P5-45 `obs-browser` (submodule, pinned 2.23.4-126-gd4db73e)
+
 - [ ] **P5-45.1/.2** S1/S2 (submodule initialised in this checkout)
   - Files: `plugins/obs-browser/obs-browser-plugin.cpp` (943) (module main; registers the `browser_source` source + the dock), `CMakeLists.txt` (target `obs-browser` MODULE + `obs-browser-helper` executable + the 4 macOS helper bundles)
   - Steps: 1) Bookend S1: the source id `browser_source` + settings keys + the `ObsBrowser.Refresh` hotkey. 2) Bookend S2: P0-18 corpus through the P0-15 ABI host. 3) Coordinate with the upstream owners before starting (external repo).
@@ -1474,6 +1538,7 @@ Verified in this checkout (submodules initialised): **`plugins/obs-websocket` at
 ## G. Wrap-up
 
 ### P5-46 Native plugin SDK
+
 - [ ] **P5-46.1 Traits** — `Source`, `Filter`, `Encoder`, `Output`, `Service`, `Transition` with default methods for optional callbacks.
   - Files: `crates/obs-plugin-api/src/lib.rs` (new)
   - Steps: 1) Define the 6 traits mirroring the `obs_*_info` vtables (one associated `ID`, default methods for optional callbacks). 2) Write the doc examples.
@@ -1498,6 +1563,7 @@ Verified in this checkout (submodules initialised): **`plugins/obs-websocket` at
   - Done when: golden unchanged.
 
 ### P5-47 Plugin loader supports both
+
 - [ ] **P5-47.1 Unified list** — Rust-native and C modules in one registry.
   - Files: the module loader crate (Phase 4, `S-035`), `crates/obs-modules/*` (the registered plugins)
   - Steps: 1) Extend the loader registry to hold Rust-native + C-ABI modules in one list. 2) Assert the registry lists both kinds.
@@ -1514,6 +1580,7 @@ Verified in this checkout (submodules initialised): **`plugins/obs-websocket` at
   - Done when: both load, order preserved.
 
 ### P5-48 Installer layout
+
 - [ ] **P5-48.1 Compare** installed trees (old/new) with a script.
   - Files: `build-aux/` (flatpak), `cmake/` (install rules), `tools/` (new comparison script)
   - Steps: 1) Write the script that diffs the installed trees (Windows: `core/<name>.dll` + `core/<name>/data`; Linux: `lib/obs-modules/core/<name>.so` + `share/obs/obs-modules/core/<name>`; macOS: bundle layout per `cmake/macos/`). 2) Run it against a full C install + the Rust install.
@@ -1528,6 +1595,7 @@ Verified in this checkout (submodules initialised): **`plugins/obs-websocket` at
   - Done when: manifest paths match and the Flatpak build passes.
 
 ### P5-49 Full-feature regression run
+
 - [ ] **P5-49.1 Automated** — smoke test on 3 OSes.
   - Files: `test/headless/` (the P0-16 smoke host) + CI config
   - Steps: 1) Run the P0-16 headless smoke + the per-plugin S2 corpus on Windows/Linux/macOS CI. 2) Assert all jobs green.
@@ -1542,6 +1610,7 @@ Verified in this checkout (submodules initialised): **`plugins/obs-websocket` at
   - Done when: `docs/tests/phase-5-regression.md` committed.
 
 ### P5-50 Phase 5 review
+
 - [ ] **P5-50.1 FFI-shim list** with owner and reason.
   - Files: `docs/rust-rewrite/` (new table; inputs: P5-31.7 D-08 win-capture C helpers (inject-helper, get-graphics-offsets), P5-42/43 D-10 decklink/aja, P5-45 D-09 CEF (vendor library via C API), P5-37.3 D-14 DAL plug-in, P5-07.7 obs-x264-test)
   - Steps: 1) Collect every kept-C/C++ piece with owner + reason. 2) Commit the table (input to P7-03.1).
@@ -1552,6 +1621,7 @@ Verified in this checkout (submodules initialised): **`plugins/obs-websocket` at
   - Done when: every P5-xx checkbox is ticked in the phase file.
 
 ### P5-51 Plugin spec coverage (added)
+
 - Goal: every plugin file cited by a spec — extend the owning spec or write a new one (per-file lists in `docs/rust-rewrite/specs/BACKLOG.md`). FFI-kept code gets an **FFI-surface contract** (D-33 + round-6 decision: the kept-C surface is specified even though it is not ported). S-062 (obs-websocket), S-051 §5.G (WASAPI) and S-063 (Python backend) are already scheduled as P5-20.12 / P5-30.9 / P6-37.6 — they are not repeated here.
 - [x] **P5-51.1 Extend S-027/S-028/S-054** — obs-filters (28 files / 297 fns)
   - Files: the 13 video filters (chroma-key 19, colour-key 19, mask 19, colour-grade 15, colour-correction 14, crop 13, scale 13, scroll 15, gpu-delay 15, sharpness 7, hdr-tonemap 9, sdr-on-hdr 9, eq is audio), the audio filters (compressor 17, expander 17, limiter 10, noise-gate 7, gain 6, invert-polarity 3), `rnnoise/` (S-054 contract) — full list in `specs/BACKLOG.md`.
@@ -1601,7 +1671,7 @@ Verified in this checkout (submodules initialised): **`plugins/obs-websocket` at
   - Steps: 1. cite every file in S-052 and add the rules the vectors model but do not pin (AVFoundation preset handling, DAL object-store contract, syphon server protocol, CoreAudio encoder format negotiation). 2. mark each rule [MODEL]/[SRC] per the S-052 convention.
   - Done when: all 40 files cited.
 - [x] **P5-51.16 Write S-082** — obs-browser / CEF FFI contract (21 files / 149 fns)
-  - Files: `plugins/obs-browser/*` (CEF stays, D-09: obs-browser-source 23, plugin 22, browser-client 23, panel 25+16, browser-app 13, deps/* 12).
+  - Files: `plugins/obs-browser/*` (CEF stays, D-09: obs-browser-source 23, plugin 22, browser-client 23, panel 25+16, browser-app 13, deps/\* 12).
   - Steps: 1. write `specs/S-082-browser-ffi.md`: the CEF-process IPC contract (message protocol, `obs://` scheme, DRM, keyboard input on Linux) + source lifecycle the Rust host drives. 2. add the row.
   - Done when: S-082 committed; all 21 files cited.
 - [x] **P5-51.17 Write S-083** — decklink FFI contract (23 files / 153 fns)

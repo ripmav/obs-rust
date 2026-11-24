@@ -1,13 +1,13 @@
 # S-010 Serializers, bit reader and text lookup
 
-| | |
-|---|---|
-| Status | Ready |
-| Spec version | working tree on `docs/rust-rewrite-plan` (uncommitted) |
-| Reference | C implementation, libobs 33.0.1 (`util/serializer.h`, `array-serializer.*`, `file-serializer.*`, `buffered-file-serializer.*`, `bitstream.*`, `text-lookup.*`) |
-| Target crate | `crates/obs-util` (modules `serializer`, `bitstream`, `text_lookup`) |
-| Depends on | S-001 (allocation, logging), S-005 (deque is internal only) |
-| Conformance | `test/conformance/scripts/serial/` (runner described in `test/conformance/README.md`, "serial runner") |
+|              |                                                                                                                                                                |
+| ------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Status       | Ready                                                                                                                                                          |
+| Spec version | working tree on `docs/rust-rewrite-plan` (uncommitted)                                                                                                         |
+| Reference    | C implementation, libobs 33.0.1 (`util/serializer.h`, `array-serializer.*`, `file-serializer.*`, `buffered-file-serializer.*`, `bitstream.*`, `text-lookup.*`) |
+| Target crate | `crates/obs-util` (modules `serializer`, `bitstream`, `text_lookup`)                                                                                           |
+| Depends on   | S-001 (allocation, logging), S-005 (deque is internal only)                                                                                                    |
+| Conformance  | `test/conformance/scripts/serial/` (runner described in `test/conformance/README.md`, "serial runner")                                                         |
 
 ## 1. Scope
 
@@ -17,8 +17,8 @@ Three small facilities used by libobs, the frontend and plugins:
    plus header-inline helpers that plugins compile in (`s_w8`, `s_wl32`, `serialize`, ...).
    Four implementations: in-memory growable array, file input, file output (optionally
    "safe" via temp file), and an asynchronous buffered file writer.
-2. **Bit reader** (`bitstream_reader_*`): MSB-first reader over a byte slice.
-3. **Text lookup** (`text_lookup_*`): loads `Key="Value"` locale files (`.ini` style) into a
+1. **Bit reader** (`bitstream_reader_*`): MSB-first reader over a byte slice.
+1. **Text lookup** (`text_lookup_*`): loads `Key="Value"` locale files (`.ini` style) into a
    case-sensitive string table.
 
 Absent from this version and MUST NOT be invented: read helpers (`s_r*`, `s_rb*`, `s_rl*`),
@@ -37,13 +37,13 @@ Quirk classes: CORE / QUIRK (SHOULD match) / DEFECT (required behaviour stated).
 
 ### 3.1 `struct serializer` (W = 8)
 
-| Offset | Field | Type |
-|---|---|---|
-| 0 | `data` | `void *` (opaque, passed first to every callback) |
-| 8 | `read` | `size_t (*)(void *data, void *buf, size_t size)` |
-| 16 | `write` | `size_t (*)(void *data, const void *buf, size_t size)` |
-| 24 | `seek` | `int64_t (*)(void *data, int64_t offset, enum serialize_seek_type)` |
-| 32 | `get_pos` | `int64_t (*)(void *data)` |
+| Offset | Field     | Type                                                                |
+| ------ | --------- | ------------------------------------------------------------------- |
+| 0      | `data`    | `void *` (opaque, passed first to every callback)                   |
+| 8      | `read`    | `size_t (*)(void *data, void *buf, size_t size)`                    |
+| 16     | `write`   | `size_t (*)(void *data, const void *buf, size_t size)`              |
+| 24     | `seek`    | `int64_t (*)(void *data, int64_t offset, enum serialize_seek_type)` |
+| 32     | `get_pos` | `int64_t (*)(void *data)`                                           |
 
 `enum serialize_seek_type { SERIALIZE_SEEK_START = 0, SERIALIZE_SEEK_CURRENT = 1, SERIALIZE_SEEK_END = 2 }`.
 A callback may be NULL ("not supported").
@@ -55,16 +55,16 @@ helper behaviour below is kept.
 
 All take `struct serializer *s` which MAY be NULL.
 
-| Helper | Behaviour |
-|---|---|
-| `size_t s_read(s, buf, size)` | see R01 |
-| `size_t s_write(s, buf, size)` | see R02 |
-| `size_t serialize(s, buf, len)` | see R03 |
-| `int64_t serializer_seek(s, offset, type)` | see R04 |
-| `int64_t serializer_get_pos(s)` | see R05 |
-| `void s_w8(s, u8)` | one byte |
+| Helper                                          | Behaviour                                                                       |
+| ----------------------------------------------- | ------------------------------------------------------------------------------- |
+| `size_t s_read(s, buf, size)`                   | see R01                                                                         |
+| `size_t s_write(s, buf, size)`                  | see R02                                                                         |
+| `size_t serialize(s, buf, len)`                 | see R03                                                                         |
+| `int64_t serializer_seek(s, offset, type)`      | see R04                                                                         |
+| `int64_t serializer_get_pos(s)`                 | see R05                                                                         |
+| `void s_w8(s, u8)`                              | one byte                                                                        |
 | `s_wl16 s_wl24 s_wl32 s_wl64`, `s_wlf`, `s_wld` | LE integers (24-bit takes a `u32` and emits its low 3 bytes), `float`, `double` |
-| `s_wb16 s_wb24 s_wb32 s_wb64`, `s_wbf`, `s_wbd` | BE counterparts |
+| `s_wb16 s_wb24 s_wb32 s_wb64`, `s_wbf`, `s_wbd` | BE counterparts                                                                 |
 
 Each multi-byte helper is composed of one-byte `s_w8` calls (see R06), so a serializer sees
 up to 8 separate 1-byte writes per helper call; their order is observable.
@@ -94,16 +94,16 @@ text_lookup_destroy(lookup)           text_lookup_getstr(lookup, key, &out) -> b
 
 ### 4.1 Worked byte examples (vector `helpers_endian`, `helpers_floats`)
 
-| Call | Bytes written |
-|---|---|
-| `s_wl16(0x1234)` | `34 12` |
-| `s_wb16(0x1234)` | `12 34` |
-| `s_wl24(0xaa123456)` | `56 34 12` (top byte dropped) |
-| `s_wb24(0xaa123456)` | `12 34 56` |
-| `s_wl32(0x01020304)` / `s_wb32` | `04 03 02 01` / `01 02 03 04` |
-| `s_wl64(0x0102030405060708)` / `s_wb64` | `08 07 .. 01` / `01 02 .. 08` |
-| `s_wlf(1.5f)` / `s_wbf` | `00 00 c0 3f` / `3f c0 00 00` |
-| `s_wld(-2.0)` / `s_wbd` | `00 00 00 00 00 00 00 c0` / `c0 00 .. 00` |
+| Call                                    | Bytes written                             |
+| --------------------------------------- | ----------------------------------------- |
+| `s_wl16(0x1234)`                        | `34 12`                                   |
+| `s_wb16(0x1234)`                        | `12 34`                                   |
+| `s_wl24(0xaa123456)`                    | `56 34 12` (top byte dropped)             |
+| `s_wb24(0xaa123456)`                    | `12 34 56`                                |
+| `s_wl32(0x01020304)` / `s_wb32`         | `04 03 02 01` / `01 02 03 04`             |
+| `s_wl64(0x0102030405060708)` / `s_wb64` | `08 07 .. 01` / `01 02 .. 08`             |
+| `s_wlf(1.5f)` / `s_wbf`                 | `00 00 c0 3f` / `3f c0 00 00`             |
+| `s_wld(-2.0)` / `s_wbd`                 | `00 00 00 00 00 00 00 c0` / `c0 00 .. 00` |
 
 Floats are written as their IEEE-754 bit pattern byte-for-byte (NaN payloads and -0 are
 preserved; no canonicalisation).
@@ -140,7 +140,7 @@ UTF-8 text (optional BOM `EF BB BF`), LF or CRLF, lines `Name="Value"`; see 5.6.
 
 ### 5.2 Array serializer
 
-State: byte vector `bytes` (length `num`) and `cur_pos` (<= num by construction).
+State: byte vector `bytes` (length `num`) and `cur_pos` (\<= num by construction).
 
 - **S-010-R10** `init` zeroes both structures, installs `write`, `seek`, `get_pos`; **no `read`**.
   The vector is empty, `cur_pos = 0`.
@@ -333,18 +333,18 @@ concurrently by several threads when nobody calls `add`.
 
 ## 8. Reference defects and quirks
 
-| ID | Class | Description | Required behaviour | Script |
-|---|---|---|---|---|
-| Q-1 | QUIRK | Array serializer `get_pos` returns the length, not the position set by seek. | SHOULD match (callers call `get_pos` only when appending). | `array_quirk_getpos` |
-| Q-2 | QUIRK | `serialize` prefers `write`; on the array serializer `serialize_r` writes the caller's buffer. | SHOULD match. | `array_quirk_serialize`, `helpers_callbacks` |
-| Q-3 | QUIRK | `bitstream_reader.pos` is 8 bits: for `len > 256` reading wraps to byte 0 after byte 255 and never reaches the end; for `len = 256` it also wraps; `len = 255` ends correctly. | SHOULD match (reproduce with `pos: u8`, `wrapping_add`). | `bitstream_quirk_pos_wrap` |
-| Q-4 | QUIRK | `read_bits(n > 8)` consumes n bits, returns last 8. | SHOULD match. | `bitstream_quirk_wide` |
-| Q-5 | QUIRK | Whitespace is a token: `K = "v"` stores `K -> " "`; leading blanks make `" "` a name. | SHOULD match; real locale files never contain spaces around `=`. | `textlookup_quirk_whitespace` |
-| Q-6 | QUIRK | `=` handling: name without value dropped; `A==b` stores `A -> "="`; `=x` stores `"=" -> "x"`. | SHOULD match. | `textlookup_quirk_equals` |
-| Q-7 | QUIRK | `""` (empty quoted token) ends parsing silently; later lines are lost. | SHOULD match. | `textlookup_quirk_empty_string` |
-| Q-8 | QUIRK | Three different SEEK_END conventions: array subtracts from the length, files add to the file size, buffered subtracts from the current position. | MUST match (CORE rules R12, R22, R42). | `array_seek`, `file_input`, `file_output`, `buffered_seek` |
-| Q-9 | QUIRK | Buffered `seek` has no range check; a negative START returns a negative number; the next write then lands at an unspecified place (reference: the physical file position after the last flushed write because the failed seek is ignored). | Return value MUST match; behaviour of a later write is UNSPECIFIED (not in vectors). | `buffered_seek` (last case, no write) |
-| D-1 | DEFECT | Value token that is a lone `"` as the last byte of the file (`B="` EOF) makes the reference compute length `SIZE_MAX`, call the allocator with size 0 (which aborts in some configurations or corrupts memory by writing one byte before the allocation). | MUST NOT crash or corrupt memory: treat like `B=""` (stop parsing, earlier entries kept, `create` succeeds). | `textlookup_defect_lone_quote` (`tl_defect`) |
+| ID  | Class  | Description                                                                                                                                                                                                                                               | Required behaviour                                                                                           | Script                                                     |
+| --- | ------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------ | ---------------------------------------------------------- |
+| Q-1 | QUIRK  | Array serializer `get_pos` returns the length, not the position set by seek.                                                                                                                                                                              | SHOULD match (callers call `get_pos` only when appending).                                                   | `array_quirk_getpos`                                       |
+| Q-2 | QUIRK  | `serialize` prefers `write`; on the array serializer `serialize_r` writes the caller's buffer.                                                                                                                                                            | SHOULD match.                                                                                                | `array_quirk_serialize`, `helpers_callbacks`               |
+| Q-3 | QUIRK  | `bitstream_reader.pos` is 8 bits: for `len > 256` reading wraps to byte 0 after byte 255 and never reaches the end; for `len = 256` it also wraps; `len = 255` ends correctly.                                                                            | SHOULD match (reproduce with `pos: u8`, `wrapping_add`).                                                     | `bitstream_quirk_pos_wrap`                                 |
+| Q-4 | QUIRK  | `read_bits(n > 8)` consumes n bits, returns last 8.                                                                                                                                                                                                       | SHOULD match.                                                                                                | `bitstream_quirk_wide`                                     |
+| Q-5 | QUIRK  | Whitespace is a token: `K = "v"` stores `K -> " "`; leading blanks make `" "` a name.                                                                                                                                                                     | SHOULD match; real locale files never contain spaces around `=`.                                             | `textlookup_quirk_whitespace`                              |
+| Q-6 | QUIRK  | `=` handling: name without value dropped; `A==b` stores `A -> "="`; `=x` stores `"=" -> "x"`.                                                                                                                                                             | SHOULD match.                                                                                                | `textlookup_quirk_equals`                                  |
+| Q-7 | QUIRK  | `""` (empty quoted token) ends parsing silently; later lines are lost.                                                                                                                                                                                    | SHOULD match.                                                                                                | `textlookup_quirk_empty_string`                            |
+| Q-8 | QUIRK  | Three different SEEK_END conventions: array subtracts from the length, files add to the file size, buffered subtracts from the current position.                                                                                                          | MUST match (CORE rules R12, R22, R42).                                                                       | `array_seek`, `file_input`, `file_output`, `buffered_seek` |
+| Q-9 | QUIRK  | Buffered `seek` has no range check; a negative START returns a negative number; the next write then lands at an unspecified place (reference: the physical file position after the last flushed write because the failed seek is ignored).                | Return value MUST match; behaviour of a later write is UNSPECIFIED (not in vectors).                         | `buffered_seek` (last case, no write)                      |
+| D-1 | DEFECT | Value token that is a lone `"` as the last byte of the file (`B="` EOF) makes the reference compute length `SIZE_MAX`, call the allocator with size 0 (which aborts in some configurations or corrupts memory by writing one byte before the allocation). | MUST NOT crash or corrupt memory: treat like `B=""` (stop parsing, earlier entries kept, `create` succeeds). | `textlookup_defect_lone_quote` (`tl_defect`)               |
 
 Platform notes: on Windows `fopen`/seek use UTF-8 -> wide conversion and `_fseeki64`; unchanged
 behaviour. `os_fread_utf8` also strips a BOM only (no UTF-16 handling).
@@ -366,40 +366,40 @@ behaviour. `os_fread_utf8` also strips a BOM only (no UTF-16 handling).
 
 ## 10. Conformance coverage
 
-| Rule | Scripts |
-|---|---|
-| R01, R02 | helpers_callbacks, helpers_null_empty, file_input, buffered_basic |
-| R03 | helpers_callbacks, array_quirk_serialize, file_input, helpers_null_empty |
-| R04, R05, R08 | helpers_callbacks, helpers_null_empty |
-| R06 | helpers_endian, helpers_callbacks |
-| R07 | helpers_floats |
-| R10 | array_basic, array_reset, helpers_endian |
-| R11 | array_basic |
-| R12 | array_seek |
-| R13 | array_quirk_getpos |
-| R14 | array_reset |
-| R20, R23 | file_input |
-| R21, R22 | file_input |
-| R30, R31 | file_output |
-| R32 | file_output (content only read after close) |
-| R33, R34 | file_output_safe |
-| R40 | buffered_basic, buffered_seek |
-| R41 | buffered_basic, buffered_large |
-| R42, R43 | buffered_seek, buffered_basic |
-| R44 | every buffered script (debug log line) |
-| R45 | not testable without fault injection (see 11) |
-| R46, R47 | buffered_large (informational / precondition) |
-| R50, R51 | bitstream_basic |
-| R52 | bitstream_basic, bitstream_quirk_wide |
-| R53 | bitstream_basic, bitstream_eof |
-| R54 | bitstream_eof |
-| R60, R61 | textlookup_files, textlookup_basic |
-| R62, R63 | textlookup_basic, textlookup_files |
-| R64 | textlookup_tokens, textlookup_files |
-| R65 | textlookup_escapes |
-| R66 | textlookup_basic (keys with `.`/`-`), textlookup_tokens |
-| 6.2 / 6.3 algorithm | textlookup_tokens, textlookup_unterminated, textlookup_quirk_* , textlookup_defect_lone_quote |
-| Q-1..Q-9, D-1 | see section 8 |
+| Rule                | Scripts                                                                                         |
+| ------------------- | ----------------------------------------------------------------------------------------------- |
+| R01, R02            | helpers_callbacks, helpers_null_empty, file_input, buffered_basic                               |
+| R03                 | helpers_callbacks, array_quirk_serialize, file_input, helpers_null_empty                        |
+| R04, R05, R08       | helpers_callbacks, helpers_null_empty                                                           |
+| R06                 | helpers_endian, helpers_callbacks                                                               |
+| R07                 | helpers_floats                                                                                  |
+| R10                 | array_basic, array_reset, helpers_endian                                                        |
+| R11                 | array_basic                                                                                     |
+| R12                 | array_seek                                                                                      |
+| R13                 | array_quirk_getpos                                                                              |
+| R14                 | array_reset                                                                                     |
+| R20, R23            | file_input                                                                                      |
+| R21, R22            | file_input                                                                                      |
+| R30, R31            | file_output                                                                                     |
+| R32                 | file_output (content only read after close)                                                     |
+| R33, R34            | file_output_safe                                                                                |
+| R40                 | buffered_basic, buffered_seek                                                                   |
+| R41                 | buffered_basic, buffered_large                                                                  |
+| R42, R43            | buffered_seek, buffered_basic                                                                   |
+| R44                 | every buffered script (debug log line)                                                          |
+| R45                 | not testable without fault injection (see 11)                                                   |
+| R46, R47            | buffered_large (informational / precondition)                                                   |
+| R50, R51            | bitstream_basic                                                                                 |
+| R52                 | bitstream_basic, bitstream_quirk_wide                                                           |
+| R53                 | bitstream_basic, bitstream_eof                                                                  |
+| R54                 | bitstream_eof                                                                                   |
+| R60, R61            | textlookup_files, textlookup_basic                                                              |
+| R62, R63            | textlookup_basic, textlookup_files                                                              |
+| R64                 | textlookup_tokens, textlookup_files                                                             |
+| R65                 | textlookup_escapes                                                                              |
+| R66                 | textlookup_basic (keys with `.`/`-`), textlookup_tokens                                         |
+| 6.2 / 6.3 algorithm | textlookup_tokens, textlookup_unterminated, textlookup_quirk\_\* , textlookup_defect_lone_quote |
+| Q-1..Q-9, D-1       | see section 8                                                                                   |
 
 ## 11. Open questions
 
@@ -417,8 +417,13 @@ behaviour. `os_fread_utf8` also strips a BOM only (no UTF-16 handling).
 - `libobs/util/serializer.h`, `libobs/util/file-serializer.c`, `libobs/util/buffered-file-serializer.c`, `libobs/util/array-serializer.c`, `libobs/util/text-lookup.c`, `libobs/util/bitstream.c`
 
 - **S-010-R68** `serializer.h`: the generic serializer struct and its inlines — `s_read`/`s_write` (route through the vtable), `serialize` (size-checked copy in either direction), `serializer_seek`/`serializer_get_pos`, and the width read/writes `s_wl16/24/32/64` (little-endian) and `s_wb16/24/32/64` (big-endian).
+
 - **S-010-R69** `file-serializer.c`: the file-backed vtables — input: `file_input_seek`/`file_input_serializer_init`/`file_input_serializer_free` (read-only); output: `file_output_write`/`file_output_seek`/`file_output_get_pos`/`file_output_serializer_init`/`file_output_serializer_init_safe`/`file_output_serializer_free`.
+
 - **S-010-R70** `buffered-file-serializer.c`: the buffered file writer — a background `io_thread` flushes the buffer; `file_output_write`/`file_output_seek`/`file_output_get_pos` operate on the buffer; `buffered_file_serializer_init`/`buffered_file_serializer_free` (free flushes and joins the thread).
+
 - **S-010-R71** `array-serializer.c`: the growable in-memory serializer — `array_output_write` (append, growing), `array_output_get_pos`/`array_output_seek`, `array_output_serializer_init`/`array_output_serializer_reset`.
+
 - **S-010-R72** `text-lookup.c`: the locale-string translation table behind `obs_module_get_locale_string` — `text_lookup_create`/`text_lookup_add`/`text_lookup_destroy`, `text_lookup_getstr` (token → translated string, token itself as fallback); internals `lookup_gettoken`/`lookup_getstringtoken`/`lookup_goto_nextline`/`convert_string`/`lookup_addfiledata`/`text_item_destroy` (the lookup file format per the earlier sections).
+
 - **S-010-R73** `bitstream.c`: the bit reader — `bitstream_reader_init`, `bitstream_reader_read_bit`, `bitstream_reader_read_bits` (1–32 bits, MSB first per the earlier sections), `bitstream_reader_r16` (explicit 16-bit read).

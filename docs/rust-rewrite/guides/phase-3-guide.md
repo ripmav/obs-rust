@@ -23,17 +23,17 @@ backend module, loaded with os_dlopen:  libobs-opengl | libobs-d3d11 | libobs-me
 ### What this means for the plan
 
 1. A **`wgpu` backend can be built as a new loadable module** (`libobs-wgpu`) that exports the same `device_*` symbols and plugs into today's unmodified C `graphics.c`. It does not need Phase 4. Do this first (P3-13…P3-23): it proves the rendering path with the C engine above it.
-2. The **WGSL transpiler (P3-05) lives inside that backend**: input is the shader text the effect parser passes in. It can reuse the C `shader_parser` through libobs or the Rust port of it (P3-02) — decide in the P3-05.1 spike.
-3. The **Rust port of the effect parser and `graphics.c`** (P3-01…P3-12) is optional until you want to delete C; port it afterwards, behind the same `gs_*` and `device_*` boundaries. The golden token/AST dumps (P3-01.3, P3-02.4) are what make it safe.
-4. Correction to P3-26 ("Render loop"): the render functions (`render_main_texture`, `render_output_texture`, `render_convert_texture`, `stage_output_texture`) live in `obs-video.c` and are ported **in Phase 3** (the coverage matrix maps `obs-video.c` to P2-10 + P3-26). Their callers — `render_video`, `output_frames`, and the scene/source walk — depend on `obs_core` and only exist in **Phase 4** (P4-05). In Phase 3, drive the render functions with a static test scene.
+1. The **WGSL transpiler (P3-05) lives inside that backend**: input is the shader text the effect parser passes in. It can reuse the C `shader_parser` through libobs or the Rust port of it (P3-02) — decide in the P3-05.1 spike.
+1. The **Rust port of the effect parser and `graphics.c`** (P3-01…P3-12) is optional until you want to delete C; port it afterwards, behind the same `gs_*` and `device_*` boundaries. The golden token/AST dumps (P3-01.3, P3-02.4) are what make it safe.
+1. Correction to P3-26 ("Render loop"): the render functions (`render_main_texture`, `render_output_texture`, `render_convert_texture`, `stage_output_texture`) live in `obs-video.c` and are ported **in Phase 3** (the coverage matrix maps `obs-video.c` to P2-10 + P3-26). Their callers — `render_video`, `output_frames`, and the scene/source walk — depend on `obs_core` and only exist in **Phase 4** (P4-05). In Phase 3, drive the render functions with a static test scene.
 
 ## Reading list (in order)
 
 1. `libobs/graphics/graphics.h` – the public `gs_*` API; skim the sections: devices/adapters, textures, buffers, shaders, state, drawing, immediate mode, effects.
-2. `libobs/graphics/graphics-internal.h` – `gs_exports` (what a backend must implement) and `graphics_subsystem` (what the subsystem keeps: `matrix_stack`, `viewport_stack`, immediate-mode `verts/norms/colors/texverts[16]`, `first_effect` list, `blend_state_stack`, `linear_srgb`).
-3. `libobs/graphics/effect-parser.c` + `shader-parser.c` – grammar. Walk through `libobs/data/default.effect` and `format_conversion.effect` with the parser in a debugger.
-4. `libobs-opengl/gl-subsystem.c` and `gl-shaderparser.c` – the reference backend. `libobs-d3d11/d3d11-subsystem.cpp` for the other.
-5. `libobs/obs-video.c` – `obs_init_graphics` in `obs.c:478` (shows which effects load at start: `default.effect`, `default_rect.effect` (OpenGL only), `opaque.effect`, `solid.effect`, …), then `render_video`.
+1. `libobs/graphics/graphics-internal.h` – `gs_exports` (what a backend must implement) and `graphics_subsystem` (what the subsystem keeps: `matrix_stack`, `viewport_stack`, immediate-mode `verts/norms/colors/texverts[16]`, `first_effect` list, `blend_state_stack`, `linear_srgb`).
+1. `libobs/graphics/effect-parser.c` + `shader-parser.c` – grammar. Walk through `libobs/data/default.effect` and `format_conversion.effect` with the parser in a debugger.
+1. `libobs-opengl/gl-subsystem.c` and `gl-shaderparser.c` – the reference backend. `libobs-d3d11/d3d11-subsystem.cpp` for the other.
+1. `libobs/obs-video.c` – `obs_init_graphics` in `obs.c:478` (shows which effects load at start: `default.effect`, `default_rect.effect` (OpenGL only), `opaque.effect`, `solid.effect`, …), then `render_video`.
 
 ## Effect files (verified inventory)
 
@@ -58,10 +58,10 @@ APIs (grep in `graphics.h`): `gs_texture_open_shared(handle)`, `gs_texture_open_
 ## Suggested order
 
 1. P3-13…P3-17 device, resources, pipeline cache, render/readback, presentation (`wgpu` module; run the C engine on top).
-2. P3-05 transpiler, then P3-24/25 (compile every effect, image-diff).
-3. P3-18…P3-21 sharing (platform by platform, each with a capture plugin as the test).
-4. P3-22/23 backend selection, HDR.
-5. Optionally P3-01…P3-04, P3-06, P3-07…P3-12 (Rust `graphics.c`/parsers; P3-05 already done in step 2) when ready to delete C.
+1. P3-05 transpiler, then P3-24/25 (compile every effect, image-diff).
+1. P3-18…P3-21 sharing (platform by platform, each with a capture plugin as the test).
+1. P3-22/23 backend selection, HDR.
+1. Optionally P3-01…P3-04, P3-06, P3-07…P3-12 (Rust `graphics.c`/parsers; P3-05 already done in step 2) when ready to delete C.
 
 ## Pitfalls
 

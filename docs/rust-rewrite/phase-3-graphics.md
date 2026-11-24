@@ -46,7 +46,7 @@ Source map (libobs 33.0.1, line counts): `libobs/graphics/*` (non-math: 16 files
 ## E. Cleanup
 
 - [ ] **P3-28 Backend selection UI/CLI and fallback** (S): auto-fallback to legacy if `wgpu` init fails; log adapter info. Done when: fallback triggers on a forced `wgpu` init failure.
-- [ ] **P3-29 Performance gate** (M): GPU time per frame vs legacy on 3 reference scenes per OS; allowed regression <= 5%. Done when: per-scene GPU time within 5% of legacy on all three OSes.
+- [ ] **P3-29 Performance gate** (M): GPU time per frame vs legacy on 3 reference scenes per OS; allowed regression \<= 5%. Done when: per-scene GPU time within 5% of legacy on all three OSes.
 - [ ] **P3-30 Remove `deps/glad`** (S): only when the legacy GL backend no longer needs it. Done when: `deps/glad` removed and the legacy GL backend still builds.
 - [ ] **P3-31 Phase 3 review** (S): visual diffs, performance, tick this file. Done when: review complete and this file ticked.
 

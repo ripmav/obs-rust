@@ -1,12 +1,12 @@
 # S-031 RTMP protocol engine (vendored librtmp)
 
-| | |
-|---|---|
-| Status | Ready for review |
-| Reference | libobs 33.0.1 tree, `plugins/obs-outputs/librtmp/{rtmp.c,rtmp.h,parseurl.c}` (+ `handshake.h` included by `rtmp.c`) |
-| Target crate | `crates/obs-rtmp` (modules `url`, `handshake`, `chunk`, `engine`, `auth`) |
-| Depends on | S-021 (AMF0 encoder/decoder, `AMFObject` model), S-024 (nothing required) |
-| Conformance | `test/conformance/scripts/rtmp/` (35 scripts) |
+|              |                                                                                                                     |
+| ------------ | ------------------------------------------------------------------------------------------------------------------- |
+| Status       | Ready for review                                                                                                    |
+| Reference    | libobs 33.0.1 tree, `plugins/obs-outputs/librtmp/{rtmp.c,rtmp.h,parseurl.c}` (+ `handshake.h` included by `rtmp.c`) |
+| Target crate | `crates/obs-rtmp` (modules `url`, `handshake`, `chunk`, `engine`, `auth`)                                           |
+| Depends on   | S-021 (AMF0 encoder/decoder, `AMFObject` model), S-024 (nothing required)                                           |
+| Conformance  | `test/conformance/scripts/rtmp/` (35 scripts)                                                                       |
 
 ## 1. Scope
 
@@ -178,23 +178,23 @@ It returns `m_bPlaying`. A `RTMP_ReadPacket` failure (timeout, EOF, bad data) en
 Sending uses `send(pkt, queue)` = `RTMP_SendPacket` (R54..R62); `queue` = remember (method, txn) until the response arrives. Message tables (all type 20 INVOKE unless noted;
 `txn = ++m_numInvokes` unless noted; `S(x)` AMF string, `N(x)` AMF number, `Z` AMF null):
 
-| message | csid | fmt | queue | body |
-|---|---|---|---|---|
-| SetChunkSize | 2 | 0 | no | type 1, `BE32 m_outChunkSize` — sent first iff publishing and `m_bSendChunkSizeInfo` |
-| connect | 3 | 0 | yes | 4.3 |
-| releaseStream | 3 | 1 | no | `S("releaseStream") N(txn) Z S(playpath)` |
-| FCPublish | 3 | 1 | no | `S("FCPublish") N(txn) Z S(playpath)` |
-| createStream | 3 | 1 | yes | `S("createStream") N(txn) Z` |
-| publish | 4 | 0 | yes | `S("publish") N(txn) Z S(playpath) S("live")`; stream id (LE) = `streams[cur].id` |
-| FCUnpublish | 3 | 1 | no | `S("FCUnpublish") N(txn) Z S(playpath)` |
-| deleteStream | 3 | 1 | no | `S("deleteStream") N(txn) Z N(stream id)` |
-| _checkbw | 3 | 0 | no | `S("_checkbw") N(txn) Z` |
-| _result (bw check) | 3 | 1 | no | `S("_result") N(server txn) Z N(counter)`; message timestamp = `0x16 * counter`, then `counter++` |
-| pong | 3 | 1 | no | `S("pong") N(server txn) Z`; timestamp `0x16 * m_nBWCheckCounter` |
-| secureTokenResponse | 3 | 1 | no | `S("secureTokenResponse") N(0) Z S(response)` |
-| ack | 2 | 1 | no | type 3, `BE32 m_nBytesIn` |
-| user control | 2 | 1 | no | type 4, see 5.9 |
-| server BW / client BW | 2 | 0 | no | type 5 `BE32 m_nServerBW`; type 6 `BE32 m_nClientBW, u8 m_nClientBW2` |
+| message               | csid | fmt | queue | body                                                                                              |
+| --------------------- | ---- | --- | ----- | ------------------------------------------------------------------------------------------------- |
+| SetChunkSize          | 2    | 0   | no    | type 1, `BE32 m_outChunkSize` — sent first iff publishing and `m_bSendChunkSizeInfo`              |
+| connect               | 3    | 0   | yes   | 4.3                                                                                               |
+| releaseStream         | 3    | 1   | no    | `S("releaseStream") N(txn) Z S(playpath)`                                                         |
+| FCPublish             | 3    | 1   | no    | `S("FCPublish") N(txn) Z S(playpath)`                                                             |
+| createStream          | 3    | 1   | yes   | `S("createStream") N(txn) Z`                                                                      |
+| publish               | 4    | 0   | yes   | `S("publish") N(txn) Z S(playpath) S("live")`; stream id (LE) = `streams[cur].id`                 |
+| FCUnpublish           | 3    | 1   | no    | `S("FCUnpublish") N(txn) Z S(playpath)`                                                           |
+| deleteStream          | 3    | 1   | no    | `S("deleteStream") N(txn) Z N(stream id)`                                                         |
+| \_checkbw             | 3    | 0   | no    | `S("_checkbw") N(txn) Z`                                                                          |
+| \_result (bw check)   | 3    | 1   | no    | `S("_result") N(server txn) Z N(counter)`; message timestamp = `0x16 * counter`, then `counter++` |
+| pong                  | 3    | 1   | no    | `S("pong") N(server txn) Z`; timestamp `0x16 * m_nBWCheckCounter`                                 |
+| secureTokenResponse   | 3    | 1   | no    | `S("secureTokenResponse") N(0) Z S(response)`                                                     |
+| ack                   | 2    | 1   | no    | type 3, `BE32 m_nBytesIn`                                                                         |
+| user control          | 2    | 1   | no    | type 4, see 5.9                                                                                   |
+| server BW / client BW | 2    | 0   | no    | type 5 `BE32 m_nServerBW`; type 6 `BE32 m_nClientBW, u8 m_nClientBW2`                             |
 
 - **S-031-R40** After the connect `_result` (txn matches the queued `connect`; the queue entry is removed): if `Link.token` is set and the result object contains a `secureToken` property (searched
   recursively, first match) → R113. Publishing: for `i` in 0..nStreams send releaseStream(i); then for each stream FCPublish(i); (each increments the txn counter); then for each stream createStream.
@@ -372,6 +372,7 @@ fn choose(prev, pkt):           # pkt.fmt is the requested type
      last = prev.ts
   t = pkt.ts - last; pkt.lastWire = t
 ```
+
 A requested fmt 2 or 3 is compressed further/kept as given (they are not "decompressed").
 
 ### 6.2 Reading loop (R70..R73)
@@ -402,27 +403,27 @@ One `RTMP` object is single-threaded. OBS' sender thread owns it after start; on
 
 ## 8. Reference defects and quirks
 
-| ID | Kind | Description | Required |
-|---|---|---|---|
-| Q-1 | QUIRK | `SetupURL` overwrites `Link.protocol`, dropping the WRITE flag if set earlier | match; call order `SetupURL` then `EnableWrite` |
-| Q-2 | QUIRK | `m_outChunkSize` takes effect immediately; announcing it (SetChunkSize) is a separate flag | match (script 17 announces explicitly) |
-| Q-3 | QUIRK | for `fmt != 0` with no previous packet, the "delta" is the absolute timestamp (last = 0) | match |
-| Q-4 | QUIRK | fmt-3 first chunk with `t >= 0xffffff` has no extended field; continuation chunks do | match |
-| Q-5 | QUIRK | reader does not consume the extended timestamp of type-3 continuation chunks | match |
-| Q-6 | QUIRK | mid-chunk timeout loses consumed bytes | treat as fatal |
-| Q-7 | QUIRK | ack threshold uses peer-bandwidth value; Window Ack Size ignored | match |
-| Q-8 | QUIRK | `RTMP_Write` puts audio, video and data on csid 4 | match |
-| Q-9 | QUIRK | `m_stream_id` is never assigned from createStream; `DeleteStream`/`UpdateBufferMS` use 0 | match |
-| Q-10 | QUIRK | Close on EOF/error writes FCUnpublish/deleteStream to the dead connection | match |
-| Q-11 | QUIRK | PublisherAuth failure branches keep the connection open | match |
-| Q-12 | QUIRK | `rtmp://[::1]` without slash: host `[`, port 0 (colon search starts at the host start) | match |
-| Q-13 | QUIRK | `Publish.Start` of any stream ends `ConnectStream` (multi-stream) | match |
-| D-1 | DEFECT | `ParsePlaypath` reads 4 bytes before the input when `?` is within the first 4 bytes of an input >= 4 bytes (`ab?cdef`, `?other=1`) | no OOB: treat as "no extension" |
-| D-2 | DEFECT | `%` not followed by two hex digits stores an uninitialised value | emit `%` literally and copy |
-| D-3 | DEFECT | `AddStream` with 8 streams already present overflows | return -1 |
-| D-4 | DEFECT | Window-Ack-Size / Peer-Bandwidth bodies < 4 bytes read past the body | ignore the message |
-| D-5 | DEFECT | signed left shifts (`ext<<24` in `RTMP_Write`, TEA word build) | use unsigned 32-bit arithmetic (results identical on two's complement) |
-| D-6 | DEFECT | `app`/`tcUrl` after PublisherAuth are not NUL-terminated and later passed to `strstr` | use lengths |
+| ID   | Kind   | Description                                                                                                                        | Required                                                               |
+| ---- | ------ | ---------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------- |
+| Q-1  | QUIRK  | `SetupURL` overwrites `Link.protocol`, dropping the WRITE flag if set earlier                                                      | match; call order `SetupURL` then `EnableWrite`                        |
+| Q-2  | QUIRK  | `m_outChunkSize` takes effect immediately; announcing it (SetChunkSize) is a separate flag                                         | match (script 17 announces explicitly)                                 |
+| Q-3  | QUIRK  | for `fmt != 0` with no previous packet, the "delta" is the absolute timestamp (last = 0)                                           | match                                                                  |
+| Q-4  | QUIRK  | fmt-3 first chunk with `t >= 0xffffff` has no extended field; continuation chunks do                                               | match                                                                  |
+| Q-5  | QUIRK  | reader does not consume the extended timestamp of type-3 continuation chunks                                                       | match                                                                  |
+| Q-6  | QUIRK  | mid-chunk timeout loses consumed bytes                                                                                             | treat as fatal                                                         |
+| Q-7  | QUIRK  | ack threshold uses peer-bandwidth value; Window Ack Size ignored                                                                   | match                                                                  |
+| Q-8  | QUIRK  | `RTMP_Write` puts audio, video and data on csid 4                                                                                  | match                                                                  |
+| Q-9  | QUIRK  | `m_stream_id` is never assigned from createStream; `DeleteStream`/`UpdateBufferMS` use 0                                           | match                                                                  |
+| Q-10 | QUIRK  | Close on EOF/error writes FCUnpublish/deleteStream to the dead connection                                                          | match                                                                  |
+| Q-11 | QUIRK  | PublisherAuth failure branches keep the connection open                                                                            | match                                                                  |
+| Q-12 | QUIRK  | `rtmp://[::1]` without slash: host `[`, port 0 (colon search starts at the host start)                                             | match                                                                  |
+| Q-13 | QUIRK  | `Publish.Start` of any stream ends `ConnectStream` (multi-stream)                                                                  | match                                                                  |
+| D-1  | DEFECT | `ParsePlaypath` reads 4 bytes before the input when `?` is within the first 4 bytes of an input >= 4 bytes (`ab?cdef`, `?other=1`) | no OOB: treat as "no extension"                                        |
+| D-2  | DEFECT | `%` not followed by two hex digits stores an uninitialised value                                                                   | emit `%` literally and copy                                            |
+| D-3  | DEFECT | `AddStream` with 8 streams already present overflows                                                                               | return -1                                                              |
+| D-4  | DEFECT | Window-Ack-Size / Peer-Bandwidth bodies < 4 bytes read past the body                                                               | ignore the message                                                     |
+| D-5  | DEFECT | signed left shifts (`ext<<24` in `RTMP_Write`, TEA word build)                                                                     | use unsigned 32-bit arithmetic (results identical on two's complement) |
+| D-6  | DEFECT | `app`/`tcUrl` after PublisherAuth are not NUL-terminated and later passed to `strstr`                                              | use lengths                                                            |
 
 Vectors: `04`/`05` (D-1, D-2 `ignore`), `06` (D-3), `27`/`28` (D-4), `16`/`36` (D-5).
 
@@ -436,27 +437,27 @@ Vectors: `04`/`05` (D-1, D-2 `ignore`), `06` (D-3), `27`/`28` (D-4), `16`/`36` (
 
 ## 10. Conformance coverage
 
-| Rules | Scripts |
-|---|---|
-| R01..R10 | 01-parseurl, 02-parseurl-limits |
-| R11..R16 | 03-setupurl |
-| R17..R24, D-1, D-2 | 04-playpath, 05-playpath-defects |
-| R23..R25, D-3 | 06-addstream |
-| R26 | (absence; no script) |
-| R27..R34 | 30-handshake-plain, 10-publish-flow, 38-send-errors |
-| R35..R39 | 31-handshake-digest |
-| R40..R43 | 10-publish-flow, 14-result-matching |
-| R44..R47 | 13-bwcheck-ping |
-| R48..R53 | 11-publish-rejected, 12-status-codes, 15-error-nonauth |
-| R54..R62 | 19-sendpacket, 16-write-tags, 17-write-chunking |
-| R63..R69 | 16-write-tags, 18-write-edge, 38-send-errors |
-| R70..R78 | 20-read-headers, 21-read-chunks, 22-read-extended-ts, 23-read-ext-continuation-quirk |
-| R79..R83 | 24-ack-accounting, 27-bandwidth-messages |
-| R84..R93 | 25-control-messages, 26-drain-no-clientpacket, 27, 28 (D-4) |
-| R94..R103 | 32-auth-adobe, 33-auth-llnw, 34-auth-failures |
-| R104..R113 | 35-play-mode, 36-secure-token |
-| R114..R129 | 37-close-eof-timeout, 38-send-errors |
-| R130..R136 | 39-direct-sends |
+| Rules              | Scripts                                                                              |
+| ------------------ | ------------------------------------------------------------------------------------ |
+| R01..R10           | 01-parseurl, 02-parseurl-limits                                                      |
+| R11..R16           | 03-setupurl                                                                          |
+| R17..R24, D-1, D-2 | 04-playpath, 05-playpath-defects                                                     |
+| R23..R25, D-3      | 06-addstream                                                                         |
+| R26                | (absence; no script)                                                                 |
+| R27..R34           | 30-handshake-plain, 10-publish-flow, 38-send-errors                                  |
+| R35..R39           | 31-handshake-digest                                                                  |
+| R40..R43           | 10-publish-flow, 14-result-matching                                                  |
+| R44..R47           | 13-bwcheck-ping                                                                      |
+| R48..R53           | 11-publish-rejected, 12-status-codes, 15-error-nonauth                               |
+| R54..R62           | 19-sendpacket, 16-write-tags, 17-write-chunking                                      |
+| R63..R69           | 16-write-tags, 18-write-edge, 38-send-errors                                         |
+| R70..R78           | 20-read-headers, 21-read-chunks, 22-read-extended-ts, 23-read-ext-continuation-quirk |
+| R79..R83           | 24-ack-accounting, 27-bandwidth-messages                                             |
+| R84..R93           | 25-control-messages, 26-drain-no-clientpacket, 27, 28 (D-4)                          |
+| R94..R103          | 32-auth-adobe, 33-auth-llnw, 34-auth-failures                                        |
+| R104..R113         | 35-play-mode, 36-secure-token                                                        |
+| R114..R129         | 37-close-eof-timeout, 38-send-errors                                                 |
+| R130..R136         | 39-direct-sends                                                                      |
 
 ## 11. Open questions
 

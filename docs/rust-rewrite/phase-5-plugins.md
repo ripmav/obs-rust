@@ -5,12 +5,12 @@ Goal: one crate per in-tree plugin under `crates/obs-modules/<name>`, ported to 
 Every plugin task has the same shape. **Common checklist (applies to each P5-xx task)**:
 
 1. Inventory: list registered sources/filters/encoders/outputs/services (`obs_register_*` calls) and the settings keys they read/write.
-2. Settings compatibility test: load old settings JSON (from the P0-18 corpus) and verify identical behaviour.
-3. Locale: reuse `data/locale/*.ini`, same string IDs.
-4. Port with a golden or behavioural test (frame hash, packet bytes, message trace).
-5. Build as `cdylib` with the same module name, so the installer layout does not change.
-6. Remove the C plugin from CMake in the same PR; update the README.
-7. Manual smoke test on each supported OS and note it in `docs/tests/`.
+1. Settings compatibility test: load old settings JSON (from the P0-18 corpus) and verify identical behaviour.
+1. Locale: reuse `data/locale/*.ini`, same string IDs.
+1. Port with a golden or behavioural test (frame hash, packet bytes, message trace).
+1. Build as `cdylib` with the same module name, so the installer layout does not change.
+1. Remove the C plugin from CMake in the same PR; update the README.
+1. Manual smoke test on each supported OS and note it in `docs/tests/`.
 
 Order: A (pure logic) -> B (network/mux) -> C (platform capture) -> D (hardware encoders) -> E (vendor SDK) -> F (browser). Within a group tasks are independent and can run in parallel. Exception: start P5-46.1–.5 (native SDK + obs-transitions pilot) early, right after the foundation, because the pilot proves the SDK the remaining ports use; P5-47…P5-50 stay the wrap-up.
 
@@ -45,6 +45,7 @@ Order: A (pure logic) -> B (network/mux) -> C (platform capture) -> D (hardware 
 ## C. Platform capture and audio
 
 Linux:
+
 - [ ] **P5-23 `linux-pipewire`** (XL): screen capture portal (`xdg-desktop-portal` via `ashpd`), camera portal, audio capture; DMA-BUF import (depends on P3-18). Source: `plugins/linux-pipewire/` (11 files / 4.1k lines) — `pipewire.c` (1 471), `camera-portal.c` (1 352), `screencast-portal.c` (760), `portal.c` (190) + 7 more. Done when: screen/camera/audio capture works on GNOME, KDE and wlroots.
 - [ ] **P5-24 `linux-capture`** (L): XSHM, XComposite window capture, X11 cursor; `x11rb` crate. Source: `plugins/linux-capture/` (8 files / 2.3k lines) — `xcomposite-input.c` (985), `xshm-input.c` (609), `xhelpers.c` (326) + `.h` (146), `xcursor-xcb.c` (147) + 3 more. Done when: monitor, window and cursor capture work.
 - [ ] **P5-25 `linux-v4l2`** (M): V4L2 devices via `v4l` crate, controls, format enumeration, hotplug (udev). Source: `plugins/linux-v4l2/` (11 files / 2.8k lines) — `v4l2-input.c` (1 109), `v4l2-output.c` (325), `v4l2-helpers.c` (315) + `.h` (327), `v4l2-udev.c` (203), `v4l2-controls.c` (151), `v4l2-decoder.c` (129). Done when: device lists match v4l2-ctl and hotplug works.
@@ -54,12 +55,14 @@ Linux:
 - [ ] **P5-29 `oss-audio`, `sndio`** (S each): OSS/sndio audio backends (Linux; BSD out of scope per D-12). Source: `plugins/oss-audio/` — `oss-input.c` (693), `oss-audio.c` (33); `plugins/sndio/` — `sndio-input.c` (392), `sndio-input.h` (18), `sndio.c` (32). Done when: Linux smoke runs recorded in `docs/tests/`.
 
 Windows:
+
 - [ ] **P5-30 `win-wasapi`** (L): device and application (process loopback) audio capture, `windows` crate, device notification, exclusive/shared. Source: `plugins/win-wasapi/` (6 files / 2k lines) — `win-wasapi.cpp` (1 648), `wasapi-notify.cpp` (109), `enum-wasapi.cpp` (97) + 3 more. Done when: latency within C's measurements.
 - [ ] **P5-31 `win-capture`** (XL; split: monitor capture DXGI duplication, WGC capture (`libobs-winrt`), window capture BitBlt/WGC, game capture hook DLL + injector (`graphics-hook`, `get-graphics-offsets`, `inject-helper`, plus `shared/ipc-util` for the hook IPC pipe), cursor capture): hook DLL ported to Rust per D-08 (phased per hook, C fallback; P5-31.7); helpers stay C; host side in Rust. Source: `plugins/win-capture/` (41 files / 15.2k lines) — `game-capture.c` (2 354), `graphics-hook/` (14 C/C++ files / 8.2k lines: `vulkan-capture.c` 2 103, `gl-capture.c` 881, `d3d9-capture.cpp` 866, `graphics-hook.c` 907, `d3d12-capture.cpp` 441 + 9 more), `duplicator-monitor-capture.c` (867), `window-capture.c` (846), `get-graphics-offsets/` (6 files / 641), `inject-helper/` (118). Done when: D3D8/9/10/11/12, OpenGL and Vulkan samples capture (matrix in `docs/tests/`).
 - [ ] **P5-32 `win-dshow`** (L): DirectShow capture (`deps/libdshowcapture` submodule, initialised in this checkout — public API `src/dshowcapture.hpp`, the C++ library ports to Rust per D-19), virtual camera driver (`virtualcam-module`, `shared-memory-queue`). Port host + libdshowcapture to Rust. Source: `plugins/win-dshow/` (17 files / 4.6k lines) — `win-dshow.cpp` (2 094), `ffmpeg-decode.c` (414), `win-dshow-encoder.cpp` (360), `virtualcam-module/` (`virtualcam-filter.cpp` 361, `virtualcam-module.cpp` 285, `placeholder.cpp` 155), `shared-memory-queue.c` (218), `tiny-nv12-scale.c` (200) + 9 more. Done when: webcam preview, MJPEG/H.264 decode and the virtual camera work as in C.
 - [ ] **P5-33 `libobs-winrt`** (M): Source: `libobs-winrt/` at the **repo root** (not under `plugins/`) — `winrt-capture.cpp` (606), `winrt-dispatch.cpp` (56) + 2 headers; loaded by name "libobs-winrt" from win-capture. -> `windows` crate (Windows.Graphics.Capture). Done when: WGC window capture works through win-capture.
 
 macOS:
+
 - [ ] **P5-34 `mac-capture`** (XL): ScreenCaptureKit (display, window, application), audio capture (`objc2` + `screencapturekit` crate), permissions, cursor. Source: `plugins/mac-capture/` (12 files / 4k lines) — `mac-audio.c` (1 058), `mac-sck-video-capture.m` (716), `mac-display-capture.m` (684), `mac-sck-common.m` (352), `mac-sck-audio-capture.m` (317) + 7 more. Done when: display/window/app and audio capture work and permissions are handled.
 - [ ] **P5-35 `mac-avcapture`** (L): AVFoundation cameras, formats, presets, controls; keep the legacy module (`legacy/` → `mac-avcapture-legacy`) building. Source: `plugins/mac-avcapture/` (13 files / 5.3k lines) — `legacy/av-capture.mm` (2 155), `OBSAVCapture.m` (1 523) + `.h` (390), `plugin-properties.m` (330), `plugin-main.m` (325) + 8 more. Done when: formats/controls equal C and the legacy module loads.
 - [ ] **P5-36 `mac-syphon`** (M): Syphon client; IOSurface (depends on P3-20). Source: `plugins/mac-syphon/` (4 files / 794 lines) — `syphon.m` (749), `SyphonOBSClient.m` (18), `plugin-main.c` (16). Done when: a Syphon server is visible.

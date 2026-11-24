@@ -1,12 +1,12 @@
 # S-008 `vec3`, `vec4`, `quat`, `matrix4`, `axisang` (core math types)
 
-| | |
-|---|---|
-| Status | Ready for review (vec2, matrix3, plane, bounds, `math-extra`, `half`, sRGB → S-009, not yet written) |
-| Reference | libobs 33.0.1 `graphics/vec3.*`, `vec4.*`, `quat.*`, `matrix4.*`, `axisang.*`, `srgb.h`, `math-defs.h` |
-| Target crate | `crates/obs-math` |
-| Depends on | – |
-| Conformance | `test/conformance/scripts/math/` (8 scripts, runner `gen/math_runner.c`) |
+|              |                                                                                                        |
+| ------------ | ------------------------------------------------------------------------------------------------------ |
+| Status       | Ready for review (vec2, matrix3, plane, bounds, `math-extra`, `half`, sRGB → S-009, not yet written)   |
+| Reference    | libobs 33.0.1 `graphics/vec3.*`, `vec4.*`, `quat.*`, `matrix4.*`, `axisang.*`, `srgb.h`, `math-defs.h` |
+| Target crate | `crates/obs-math`                                                                                      |
+| Depends on   | –                                                                                                      |
+| Conformance  | `test/conformance/scripts/math/` (8 scripts, runner `gen/math_runner.c`)                               |
 
 ## 1. Scope
 
@@ -32,6 +32,7 @@ struct vec3 { union { struct { float x, y, z, w; }; float ptr[4]; __m128 m; }; }
 struct vec4 { same };           struct quat { same };           struct axisang { same: x,y,z,w=angle };
 struct matrix4 { struct vec4 x, y, z, t; };                     /* 64 bytes, align 16 */
 ```
+
 Exported functions (replaced by the crate): `vec3_from_vec4`, `vec3_plane_dist`, `vec3_transform`, `vec3_rotate`, `vec3_transform3x4`, `vec3_mirror`, `vec3_mirrorv`, `vec3_rand`; `vec4_from_vec3`, `vec4_transform`; `quat_mul`, `quat_from_axisang`, `quat_from_matrix3`, `quat_from_matrix4`, `quat_get_dir`, `quat_set_look_dir`, `quat_log`, `quat_exp`, `quat_interpolate`, `quat_get_tangent`, `quat_interpolate_cubic`; `matrix4_from_matrix3`, `matrix4_from_quat`, `matrix4_from_axisang`, `matrix4_mul`, `matrix4_mul_4x3_only` (not in the public header), `matrix4_determinant`, `matrix4_translate3v/4v(_i)`, `matrix4_rotate(_aa)(_i)`, `matrix4_scale(_i)`, `matrix4_inv`, `matrix4_transpose`; `axisang_from_quat`. The remaining listed functions are inline (see section 5) and define the behaviour Rust-side wrappers must reproduce.
 
 ## 4. Lane rules for inline vector functions
@@ -67,7 +68,7 @@ Exported functions (replaced by the crate): `vec3_from_vec4`, `vec3_plane_dist`,
 - **S-008-R32** `matrix4_determinant`: expansion along the first row with 3×3 cofactors: `Σⱼ (−1)ʲ · m[0][j] · det₃(minor(0,j))`, `det₃` the usual 3×3 determinant.
 - **S-008-R33** `matrix4_inv(d, m)`: `det = determinant(m)`; **if `|det| < 0.0005` return `false` and leave `d` unmodified**; else `d[j].component[i] = (−1)^(i+j) · det₃(minor(i,j)) / det` for all `i, j` (adjugate/determinant), return `true`. (An invertible matrix with a determinant below the threshold — e.g. a pure scale by 0.0003 — is reported singular, vector `04`.) `d == m` is allowed.
 - **S-008-R34** `matrix4_from_quat(d, q)`: `n = quat_dot(q,q)`, `s = n > 0 ? 2/n : 0`; with `xx = q.x²s`, `yy = q.y²s`, `zz = q.z²s`, `xy = q.x q.y s`, `xz = q.x q.z s`, `yz = q.y q.z s`, `wx = q.w q.x s`, `wy = q.w q.y s`, `wz = q.w q.z s`: rows `x = (1−(yy+zz), xy+wz, xz−wy, 0)`, `y = (xy−wz, 1−(xx+zz), yz+wx, 0)`, `z = (xz+wy, yz−wx, 1−(xx+yy), 0)`, `t = (0,0,0,1)`. A zero quaternion therefore yields the identity. `matrix4_from_axisang` = `from_quat(from_axisang(aa))`. `matrix4_from_matrix3` copies the four rows and sets `t.w = 1`.
-- **S-008-R35** Composition helpers (`dst = m ∘ op`, where `op` is the new matrix and the product is `matrix4_mul(dst, m, op)`): `matrix4_translate3v/4v(dst, m, v)`: `op` = identity with row `t = (v, 1)` or `v`; `matrix4_rotate(dst, m, q)`: `op = from_quat(q)`; `matrix4_rotate_aa`: `op = from_axisang`; `matrix4_scale(dst, m, v)`: `op = diag(v.x, v.y, v.z, 1)`. 
+- **S-008-R35** Composition helpers (`dst = m ∘ op`, where `op` is the new matrix and the product is `matrix4_mul(dst, m, op)`): `matrix4_translate3v/4v(dst, m, v)`: `op` = identity with row `t = (v, 1)` or `v`; `matrix4_rotate(dst, m, q)`: `op = from_quat(q)`; `matrix4_rotate_aa`: `op = from_axisang`; `matrix4_scale(dst, m, v)`: `op = diag(v.x, v.y, v.z, 1)`.
 - **S-008-R36** The `_i` ("inverse order") variants apply the operation **before** `m`: `matrix4_translate3v_i(dst, v, m)`: rows `x,y,z` copied from `m`; `dst.t = (v, 1) · m`, i.e. `dst.t.c = Σₖ v4ₖ · m[k].c` with `v4 = (v.x, v.y, v.z, 1)` and `m[k]` the k-th row (translation applied first, then `m`; vector `05` `ti` = `20 60 120 1`); `matrix4_translate4v_i` same with a 4-vector. `matrix4_rotate_i(dst, q, m)` = `mul_4x3_only(from_quat(q), m)`; `matrix4_rotate_aa_i` likewise; `matrix4_scale_i(dst, v, m)` = `mul_4x3_only(diag(v,1), m)`. Vectors `05` list inputs and outputs.
 
 ## 7. Reference defects and quirks
@@ -88,41 +89,52 @@ Exported functions (replaced by the crate): `vec3_from_vec4`, `vec3_plane_dist`,
 
 ## 9. Conformance coverage
 
-| Rule | Scripts |
-|---|---|
-| R01–R03 | `01-vec3`, `02-vec3-w-lane-and-close` |
-| R04, R05 | `03-vec4` |
-| R06 | `02`, `03` |
-| R07, R08 | `03`, `04` (transforms), `03` (`rgba`) |
-| R10, R13 | `06-quat` |
-| R11, R12 | `07-quat-set-and-inv-defects` |
-| R14–R17 | `06-quat` (from axis-angle, matrix round-trips, dir) |
-| R18–R21 | `08-quat-interpolation` |
-| R30–R33 | `04-matrix4-basic` |
-| R34–R36 | `05-matrix4-compose`, `06-quat` |
-| `quat_from_matrix4` non-trace branch | `06-quat` (`back3`, `back4`) |
-| `vec3_rand`, `matrix3`, `plane`, `bounds`, `vec2` | S-009 |
+| Rule                                              | Scripts                                              |
+| ------------------------------------------------- | ---------------------------------------------------- |
+| R01–R03                                           | `01-vec3`, `02-vec3-w-lane-and-close`                |
+| R04, R05                                          | `03-vec4`                                            |
+| R06                                               | `02`, `03`                                           |
+| R07, R08                                          | `03`, `04` (transforms), `03` (`rgba`)               |
+| R10, R13                                          | `06-quat`                                            |
+| R11, R12                                          | `07-quat-set-and-inv-defects`                        |
+| R14–R17                                           | `06-quat` (from axis-angle, matrix round-trips, dir) |
+| R18–R21                                           | `08-quat-interpolation`                              |
+| R30–R33                                           | `04-matrix4-basic`                                   |
+| R34–R36                                           | `05-matrix4-compose`, `06-quat`                      |
+| `quat_from_matrix4` non-trace branch              | `06-quat` (`back3`, `back4`)                         |
+| `vec3_rand`, `matrix3`, `plane`, `bounds`, `vec2` | S-009                                                |
 
 ## 10. Open questions
 
 - Behaviour of `quat_from_matrix4` for a matrix that is not a pure rotation (scale/shear) follows the formula; no additional guarantees are made.
-- `vec3_close` / `*_close` intentionally preserve the signed comparison; whether to fix it in a future ABI version is a 
+- `vec3_close` / `*_close` intentionally preserve the signed comparison; whether to fix it in a future ABI version is a
 
 ## 11. Round 9: remaining math headers — vec2/vec3/vec4/quat inlines, matrix3, plane, bounds, axisang, math-extra (added)
 
 ### Reference files (all cited)
 
 - `libobs/graphics/vec2.h`, `libobs/graphics/vec2.c`, `libobs/graphics/vec3.h`, `libobs/graphics/vec4.h`, `libobs/graphics/quat.h`
+
 - `libobs/graphics/matrix3.c`, `libobs/graphics/matrix3.h`, `libobs/graphics/matrix4.h`
+
 - `libobs/graphics/plane.c`, `libobs/graphics/plane.h`
+
 - `libobs/graphics/bounds.c`, `libobs/graphics/bounds.h`
+
 - `libobs/graphics/axisang.h`, `libobs/graphics/math-extra.c`
 
 - **S-008-R37** `vec2.h`/`vec2.c`: the vec2 inline set (`vec2_zero`, `vec2_set`, `vec2_copy`, `vec2_dist`, `vec2_min`/`vec2_max` ± the `f` float variants) and `vec2_norm` in `vec2.c` — same conventions as the pinned vec3/vec4 rules (division by zero → zero vector).
+
 - **S-008-R38** `vec3.h`: the full vec3 inline set (`vec3_add`/`sub`/`div` ± `f`, `dot`, `cross`, `neg`, `len`, `dist`, `norm`, `close`, `min`/`max`, scale/mul helpers) — element-wise semantics per the earlier sections.
+
 - **S-008-R39** `vec4.h`: `vec4_dot`, `neg`, `len`, `dist`, `norm`, `close`, `abs`, `floor`, `ceil` plus the channel converters: `vec4_to_rgba`/`vec4_to_bgra` (0–1 floats → 0–255 bytes) and `vec4_from_rgba`/`vec4_from_bgra`/`vec4_from_rgba_srgb` (bytes → floats, srgb = linearized) — rounding/gamma per the earlier sections.
+
 - **S-008-R40** `quat.h`: `quat_identity`, `dot`, `inv` (conjugate), `neg`, `len`, `dist`, `norm`, `close` — quaternion conventions per the earlier sections.
+
 - **S-008-R41** `matrix3.c`/`matrix3.h`: 3×3 construction (`matrix3_from_quat`, `matrix3_from_axisang`, `matrix3_from_matrix4` — the 3×3 corner of a matrix4), `matrix3_mul`, rotations (`matrix3_rotate` quat / `matrix3_rotate_aa` axis-angle), `scale`, `transpose`, `inv`, `mirror`/`mirrorv`; inlines `matrix3_copy`, `matrix3_identity`, `translate3f`, `rotate_aa4f`, `scale3f` — element layout as pinned for `matrix4` in this spec. `matrix4.h`: the `matrix4_copy`/`matrix4_identity`/`matrix4_translate3f`/`matrix4_rotate_aa4f`/`matrix4_scale3f` inlines.
+
 - **S-008-R42** `plane.c`/`plane.h`: a plane is point + normal: `plane_from_tri` (normal from the triangle edges, normalized), `plane_transform`/`plane_transform3x4` (rotate point and normal), `plane_intersection_ray`/`plane_intersection_line` (parameter t; parallel/no-hit → false), `plane_tri_inside`/`plane_line_inside` (which side of the plane); inlines `plane_copy`, `plane_set`/`plane_setf`, `plane_coplanar` (epsilon test).
+
 - **S-008-R43** `bounds.c`/`bounds.h`: bounds manipulation — `bounds_move`, `bounds_scale`, `bounds_merge`/`bounds_merge_point`, `bounds_get_point`/`bounds_get_center`, `bounds_transform` (quat + scale + translate) /`bounds_transform3x4`; testing: `bounds_intersection_ray`/`_line` (t + point), `bounds_plane_test`/`bounds_under_plane`, `bounds_intersects` (AABB–AABB), `bounds_intersects_obb` (separating axes); inlines `bounds_zero`, `bounds_copy`, `bounds_inside`, `bounds_vec3_inside`, `bounds_intersects_ray`/`_line`.
-- **S-008-R44** `axisang.h`: `axisang_zero`/`axisang_copy`/`axisang_set`. `math-extra.c`: `polar_to_cart`/`cart_to_polar` (r, θ ↔ x, y), `norm_to_polar`/`polar_to_norm` (unit vector ↔ angle), `calc_torque`/`calc_torquef` (F × r), `rand_float` (pseudo-random float in [0,1)).project decision.
+
+- **S-008-R44** `axisang.h`: `axisang_zero`/`axisang_copy`/`axisang_set`. `math-extra.c`: `polar_to_cart`/`cart_to_polar` (r, θ ↔ x, y), `norm_to_polar`/`polar_to_norm` (unit vector ↔ angle), `calc_torque`/`calc_torquef` (F × r), `rand_float` (pseudo-random float in \[0,1)).project decision.

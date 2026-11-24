@@ -1,12 +1,12 @@
 # S-011 Lexer, C-like token layer, preprocessor and parser helpers
 
-| | |
-|---|---|
-| Status | Ready for review |
-| Reference | libobs 33.0.1 `util/lexer.c/.h`, `util/cf-lexer.c/.h`, `util/cf-parser.c/.h` |
-| Target crate | `crates/obs-util` (module `lexer`) |
-| Depends on | S-001 (allocator), S-006 (`dstr` `$n` substitution, only as described in R70) |
-| Conformance | `test/conformance/scripts/lexer/` (25 scripts), runner language in `test/conformance/README.md` ("lexer runner") |
+|              |                                                                                                                  |
+| ------------ | ---------------------------------------------------------------------------------------------------------------- |
+| Status       | Ready for review                                                                                                 |
+| Reference    | libobs 33.0.1 `util/lexer.c/.h`, `util/cf-lexer.c/.h`, `util/cf-parser.c/.h`                                     |
+| Target crate | `crates/obs-util` (module `lexer`)                                                                               |
+| Depends on   | S-001 (allocator), S-006 (`dstr` `$n` substitution, only as described in R70)                                    |
+| Conformance  | `test/conformance/scripts/lexer/` (25 scripts), runner language in `test/conformance/README.md` ("lexer runner") |
 
 ## 1. Scope
 
@@ -14,10 +14,10 @@ Three layers, all operating on NUL-terminated ASCII/UTF-8 text:
 
 1. **Base lexer** (`lexer.*`): splits text into ALPHA / DIGIT / WHITESPACE / OTHER runs; strref helpers; row/column
    computation; the `error_data` list used for diagnostics.
-2. **C-like layer** (`cf-lexer.*`): builds C-style tokens (names, numbers, strings, comments, spaces, newlines, splices),
+1. **C-like layer** (`cf-lexer.*`): builds C-style tokens (names, numbers, strings, comments, spaces, newlines, splices),
    a small C preprocessor (`#define` with parameters, `#undef`, `#ifdef/#ifndef/#if/#elif/#else/#endif`, `#include "file"`),
    and `cf_literal_to_str`.
-3. **Parser helpers** (`cf-parser.*`): a cursor over the preprocessed tokens with the helper API used by the
+1. **Parser helpers** (`cf-parser.*`): a cursor over the preprocessed tokens with the helper API used by the
    declaration parser (S-003), the effect-file parser (shaders) and the frontend theme parser.
 
 Users: `callback/decl.c` (S-003), `graphics/effect-parser.c`, `frontend/OBSApp_Themes.cpp`, `util/config-file.c` (S-007, base lexer
@@ -176,6 +176,7 @@ loop:
 if wrote: out.span.len = offset - out.span.start;  out.type = classify(out.str[0], start.type)
 return wrote
 ```
+
 `is_break(start, tb)`: by `start.type`: ALPHA -> tb is OTHER or WHITESPACE; DIGIT -> tb is WHITESPACE, or tb is OTHER and `tb[0] != '.'`; WHITESPACE -> not (is_st(start[0]) and is_st(tb[0])); OTHER -> if `start[0]=='.'` and tb is DIGIT then *start.type becomes DIGIT* and no break, else break. `classify`: ALPHA NAME, DIGIT NUM, WHITESPACE -> NEWLINE if `is_nl(str[0])` else SPACETAB, OTHER OTHER.
 
 `try_comment(out)`: requires `text[span.start]=='/'` followed (after splices) by `/` or `*`. Let `o` = offset after the first `/`, then skip splices. Append one space to the buffer, `out.str.len = 1`.
@@ -213,6 +214,7 @@ directive(if_block):                    # `cur` is at the directive-name token; 
   elif type(cur) not in {NEWLINE, NONE}: cur++        # unknown directive: skip its name
   return true
 ```
+
 Handlers follow R44-R48; their unusual cursor effects (tested by vectors) are: `define` leaves `cur` on the terminating NEWLINE/NONE; `undef` and `include` leave `cur` just after the consumed token; every error path ends with `to_newline`.
 
 ### 6.3 Conditional blocks
@@ -233,9 +235,11 @@ conditional(is_true):                   # after the condition was evaluated; cur
         else: run `#if` handling again with cur on "elif"; return        # evaluates the elif as a fresh #if, consumes through its own #endif
    cur++                                # past the #endif keyword (or past a second else/elif)
 ```
+
 `block(true)` returns when it meets `else`, `elif` or `endif` directive at its nesting level (cur on the keyword). A second `#else` therefore ends the else block and is consumed like `#endif`; a later `#endif` is then outside any block.
 
 `add_token(dst, cur, base, params)`:
+
 ```
 if pp.ignore_state: cur++; return
 if base none: base = cur
@@ -246,6 +250,7 @@ push cur to dst ; cur++
 expand(...): newp = []; if d.macro: collect_args(cur, d, base, params, newp) ; for t in d.tokens until NONE: add_token(dst, t, base, newp) ; cur++
 blank(base): token " " (static), type SPACETAB, span/lex = base's (or none = no span)
 ```
+
 `collect_args` is R52. Because parameter tokens were produced with the *calling* parameter set, nested macro arguments see the caller's parameters.
 
 ## 7. Concurrency
@@ -292,34 +297,34 @@ Defects (the reference crashes or reads out of bounds; the required behaviour is
 
 ## 10. Conformance coverage
 
-| Rule | Scripts |
-|---|---|
-| R01-R03, R05 | `01-base-tokens`, `02-base-classify` |
-| R04 | `06-stroffset` |
-| R06-R09 | `03-strref-cmp` |
-| R10, R11 | `04-valid-numbers` |
-| R12 | `05-error-data` |
-| R20, R30 | `11-cf-lex-empty`, `10-cf-lex-basic` |
-| R21-R23 | `10-cf-lex-basic`, `15-cf-lex-rows` |
-| R24 | `14-cf-lex-splices` |
-| R25 | `12-cf-lex-comments` |
-| R26-R28 | `13-cf-lex-strings`, `50-quirks` |
-| R27 | `13-cf-lex-strings` |
-| R29 | `12-cf-lex-comments`, `10-cf-lex-basic` |
-| R40-R43 | `22-pp-ifdef`, `25-pp-errors`, `50-quirks` |
-| R44, R45, R50, R51 | `20-pp-define`, `25-pp-errors` |
-| R46 | `22-pp-ifdef` |
-| R47 | `23-pp-if` |
-| R48, R49 | `24-pp-include` |
-| R52 | `21-pp-macro` |
-| R53 | `26-pp-api-defs` |
-| R54 | `25-pp-errors`, `22-pp-ifdef` |
-| R60 | `33-literal` |
-| R70-R73 | `30-parser-nav`, `31-parser-names`, `32-parser-errors` |
-| R74-R80 | `30-parser-nav`, `31-parser-names` |
-| Q-1..Q-14 | see section 8 |
-| D-2, D-3, D-4 (empty include), D-7 | `90-defects` |
-| D-1, D-5, D-6, D-8 | not in vectors (undefined output); implement per section 8 |
+| Rule                               | Scripts                                                    |
+| ---------------------------------- | ---------------------------------------------------------- |
+| R01-R03, R05                       | `01-base-tokens`, `02-base-classify`                       |
+| R04                                | `06-stroffset`                                             |
+| R06-R09                            | `03-strref-cmp`                                            |
+| R10, R11                           | `04-valid-numbers`                                         |
+| R12                                | `05-error-data`                                            |
+| R20, R30                           | `11-cf-lex-empty`, `10-cf-lex-basic`                       |
+| R21-R23                            | `10-cf-lex-basic`, `15-cf-lex-rows`                        |
+| R24                                | `14-cf-lex-splices`                                        |
+| R25                                | `12-cf-lex-comments`                                       |
+| R26-R28                            | `13-cf-lex-strings`, `50-quirks`                           |
+| R27                                | `13-cf-lex-strings`                                        |
+| R29                                | `12-cf-lex-comments`, `10-cf-lex-basic`                    |
+| R40-R43                            | `22-pp-ifdef`, `25-pp-errors`, `50-quirks`                 |
+| R44, R45, R50, R51                 | `20-pp-define`, `25-pp-errors`                             |
+| R46                                | `22-pp-ifdef`                                              |
+| R47                                | `23-pp-if`                                                 |
+| R48, R49                           | `24-pp-include`                                            |
+| R52                                | `21-pp-macro`                                              |
+| R53                                | `26-pp-api-defs`                                           |
+| R54                                | `25-pp-errors`, `22-pp-ifdef`                              |
+| R60                                | `33-literal`                                               |
+| R70-R73                            | `30-parser-nav`, `31-parser-names`, `32-parser-errors`     |
+| R74-R80                            | `30-parser-nav`, `31-parser-names`                         |
+| Q-1..Q-14                          | see section 8                                              |
+| D-2, D-3, D-4 (empty include), D-7 | `90-defects`                                               |
+| D-1, D-5, D-6, D-8                 | not in vectors (undefined output); implement per section 8 |
 
 Comparison: all lines byte-exact except `try-end crash` blocks (README). Error message texts are compared (they are deterministic) and
 SHOULD match; the reference's glibc rendering of a NULL file name is excluded (scripts always pass a file to `errstr`, or
@@ -337,15 +342,25 @@ use `errors`, which prints `@null`).
 ### Reference files (all cited)
 
 - `libobs/util/cf-lexer.c`, `libobs/util/cf-lexer.h`
+
 - `libobs/util/cf-parser.c`, `libobs/util/cf-parser.h`
+
 - `libobs/util/lexer.c`, `libobs/util/lexer.h`
+
 - `libobs/graphics/shader-parser.h`, `libobs/graphics/effect-parser.h`
 
 - **S-011-R81** `cf-lexer.c` token loop: `cf_lexer_init`/`cf_lexer_nexttoken` drive character-by-character scanning; `cf_get_token_type` classifies the upcoming token; `cf_lexer_process_string` handles quoted strings whose escapes are expanded by `cf_convert_from_escape_literal` (`\'`, `\"`, `\?`, `\\`, and the standard character escapes); `cf_literal_to_str` materializes a string/char literal (with `count` handling); `cf_lexer_write_strref` accumulates token text into a strref (S-006).
+
 - **S-011-R82** `cf-lexer.c` comments/splices: `cf_is_comment`/`cf_lexer_process_comment` (line and block comments), `cf_lexer_is_include`/`cf_lexer_getstrtoken` (the `#include` path token), `cf_pass_any_splices` (conditional-compile splices per the earlier sections).
+
 - **S-011-R83** `cf-lexer.h`: `cf_token_add` (append to the token list), `cf_def_init`/`cf_def_free` (a preprocessor definition entry: name + replacement value), `cf_preprocessor_add_sys_include_dir` (system include search path for `#include`).
+
 - **S-011-R84** `cf-parser.c`: `cf_adderror` (error accumulation with source position into the lexer error data) and `cf_pass_pair` (consume an opening token and find/consume its matching closing token).
+
 - **S-011-R85** `cf-parser.h` cursor API: `cf_parser_init`/`cf_parser_free`, `cf_parser_parse` (run to completion); walking: `cf_next_token`/`cf_next_valid_token` (valid = skip comments), `cf_go_to_token`/`cf_go_to_valid_token`, `cf_go_to_token_type`, `cf_peek_token`/`cf_peek_valid_token`, `cf_token_is_type`; checking: `cf_token_should_be`/`cf_next_token_should_be` (consume and error on mismatch), `cf_get_name` (the NAME text of the current token).
+
 - **S-011-R86** `lexer.c`/`lexer.h` (the generic, non-cf lexer): strref comparison `strref_cmp`/`strref_cmpi` (+ `_strref` variants) and `strref_clear`/`strref_set`/`strref_copy`/`strref_add`; numeric validation `valid_int_str`/`valid_float_str`; error data `error_item_free`/`error_item_array_free`, `error_data_free`/`error_data_add`/`error_data_buildstring`/`error_data_type_count`/`error_data_has_errors`, `newline_size`; `lexer_free`/`lexer_start`/`lexer_start_move`, `lexer_getbasetoken`, `lexer_getstroffset`.
+
 - **S-011-R87** `shader-parser.h`: the parsed-shader AST inlines — `shader_var_init_param`/`shader_var_free`, `shader_sampler_free`, `shader_struct_free`, `shader_func_init`/`shader_func_free`, `shader_parser_init`/`shader_parser_free`; lookups `shader_parser_getparam`/`_getstruct`/`_getsampler`/`_getfunc`. The AST shape is the one the effect-language spec (S-020) pins.
+
 - **S-011-R88** `effect-parser.h`: the effect (pass/technique) AST inlines — `ep_var_free`, `ep_param_init`/`ep_param_free`, `ep_struct_mapped` (struct with mapped name), `ep_struct_free`, `ep_sampler_free`, `ep_pass_free`, `ep_technique_free`, `ep_func_init`/`ep_func_free`, `ep_init`.

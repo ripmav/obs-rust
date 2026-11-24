@@ -38,8 +38,9 @@ Lint config is committed in P0-07.1.
 bump within one release cycle. Enforced by `rust-toolchain.toml` +
 `rust-version` in the workspace manifest (P0-07.2) and an MSRV CI job (lands in
 P0-09; no `.github/` in this checkout yet). Rationale: a 3–4 year project (ADR
-0001) should not pin a 2026 toolchain; "latest stable" keeps `cargo deny`/audit
-and stdlib fixes flowing, at the cost of periodic CI churn.
+
+1. should not pin a 2026 toolchain; "latest stable" keeps `cargo deny`/audit
+   and stdlib fixes flowing, at the cost of periodic CI churn.
 
 ### Rule 3 — License allow-list (D-07)
 
@@ -75,10 +76,10 @@ admission checklist below is the gate (P0-05.3, `CONTRIBUTING.md`).
 A dependency may be added only when all five hold:
 
 1. stdlib alternative considered (Rule 4),
-2. licence GPLv2+-compatible (Rule 3),
-3. maintained (release < 12 months),
-4. `cargo audit` clean,
-5. one-line justification in the PR.
+1. licence GPLv2+-compatible (Rule 3),
+1. maintained (release < 12 months),
+1. `cargo audit` clean,
+1. one-line justification in the PR.
 
 ### Exceptions process (P0-10.3)
 
@@ -88,9 +89,9 @@ table below with crate, licence, justification, owner, and review-by date;
 Exceptions expire at the review-by date and must be renewed or the dependency
 removed.
 
-| Crate | Licence | Justification | Owner | Review by |
-|---|---|---|---|---|
-| _(none yet — illustrative row removed on first real exception)_ | | | | |
+| Crate                                                           | Licence | Justification | Owner | Review by |
+| --------------------------------------------------------------- | ------- | ------------- | ----- | --------- |
+| _(none yet — illustrative row removed on first real exception)_ |         |               |       |           |
 
 Example of a correctly recorded exception (illustrative format):
 `libfoo` — AGPL-3.0 — "no GPL-compatible implementation of X exists; network
@@ -103,11 +104,11 @@ surface isolated behind trait Y" — owner P5-20 — review 2027-11-01.
    `cargo audit` debt and stdlib fixes that must be backported forever;
    (b) CI matrix cost (testing two toolchains) for a benefit — old-cargo
    compatibility — that no downstream user of a *release* binary needs.
-2. **Permissive (MIT/Apache) project licence.**
+1. **Permissive (MIT/Apache) project licence.**
    Rejected: (a) OBS is GPLv2+ and linking its code/headers would force the
    constraint anyway (D-07 confirmed 2026-11-05); (b) the ecosystem plugins
    and the C tree are already GPL.
-3. **Ban all `unsafe` (safe Rust only, no FFI crates).**
+1. **Ban all `unsafe` (safe Rust only, no FFI crates).**
    Rejected: (a) the entire point is to wrap FFmpeg/CEF/platform APIs that are
    C — an `unsafe`-free rewrite is impossible by construction; (b) banning it
    wholesale would push FFI into macro-generated code that hides the same
@@ -116,12 +117,12 @@ surface isolated behind trait Y" — owner P5-20 — review 2027-11-01.
 
 ### Admitted dependencies (log)
 
-| Dependency | Licence | Admitted | Reason (Rule 4 checklist) |
-|---|---|---|---|
-| `crc32fast` 1.5.x | MIT | 2026-11-11 (P1-10, S-055 U1) | `calc_crc32` is the whole of `libobs/util/crc32.c`; the stdlib has no CRC-32; the crate is the table-driven reference implementation with the running-state API the C signature needs (S-055-R01/R02) |
-| `blake2` 0.11.x (feature `blake2b`) | MIT | 2026-11-11 (P1-10) | Rust side of the vendored `deps/blake2` (blake2b-512); the frontend keeps the C copy until Phase 6 (P6-32/P6-23); no reimplementation of a published hash standard |
-| `parking_lot` 0.13.x | MIT OR Apache-2.0 | 2026-11-11 (P1-22, S-004) | `ReentrantMutex` is a direct requirement of S-004 (per-signal and global-callback recursive locks; procs R60); std has no reentrant mutex; both licences on the D-07 allow-list |
-| `libc` 0.2.x | MIT OR Apache-2.0 | 2026-11-12 (P1-11, S-023 R107 + S-055 U2) | `dlopen/dlsym/dlclose` and `pipe/fork/exec/waitpid` are the platform FFI of S-023/S-055; the stdlib has no dlopen or low-level child-pipe API; the `extern "C"` surface stays in `obs-ffi` (Rule 1) — only these two platform-helper modules in `obs-util` touch libc, each block with a `// SAFETY:` comment |
+| Dependency                          | Licence           | Admitted                                  | Reason (Rule 4 checklist)                                                                                                                                                                                                                                                                                     |
+| ----------------------------------- | ----------------- | ----------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `crc32fast` 1.5.x                   | MIT               | 2026-11-11 (P1-10, S-055 U1)              | `calc_crc32` is the whole of `libobs/util/crc32.c`; the stdlib has no CRC-32; the crate is the table-driven reference implementation with the running-state API the C signature needs (S-055-R01/R02)                                                                                                         |
+| `blake2` 0.11.x (feature `blake2b`) | MIT               | 2026-11-11 (P1-10)                        | Rust side of the vendored `deps/blake2` (blake2b-512); the frontend keeps the C copy until Phase 6 (P6-32/P6-23); no reimplementation of a published hash standard                                                                                                                                            |
+| `parking_lot` 0.13.x                | MIT OR Apache-2.0 | 2026-11-11 (P1-22, S-004)                 | `ReentrantMutex` is a direct requirement of S-004 (per-signal and global-callback recursive locks; procs R60); std has no reentrant mutex; both licences on the D-07 allow-list                                                                                                                               |
+| `libc` 0.2.x                        | MIT OR Apache-2.0 | 2026-11-12 (P1-11, S-023 R107 + S-055 U2) | `dlopen/dlsym/dlclose` and `pipe/fork/exec/waitpid` are the platform FFI of S-023/S-055; the stdlib has no dlopen or low-level child-pipe API; the `extern "C"` surface stays in `obs-ffi` (Rule 1) — only these two platform-helper modules in `obs-util` touch libc, each block with a `// SAFETY:` comment |
 
 P1-10.1 **base64: skip** — there is no base64 in `libobs/`; the only in-tree
 copy is the librtmp vendored `cencode.c` (a Phase 5 concern, P5-17.4). No Rust

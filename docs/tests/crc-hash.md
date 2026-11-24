@@ -6,13 +6,14 @@
 - Golden files: none (KAT vectors embedded; generated with an independent
   implementation: CPython `hashlib.blake2b` / `zlib.crc32`)
 
-| Case | Input | Expected | Platforms | Status |
-|---|---|---|---|---|
-| crc32_worked_examples_from_spec | `"123456789"`, `"1234"`, `"1"`, continuation | `cbf43926` / `9be3e0a3` / `83dcefb7`; `calc_crc32(9be3e0a3, "56789") == cbf43926` — S-055-R01 worked values | Linux, Windows, macOS | pass |
-| crc32_empty_and_seeds | empty slice, seed `0xdeadbeef`, 4096-byte pattern whole vs split-continue | seed returned unchanged (R02); split continuation == whole == `97b84ec2` (CPython zlib) | Linux, Windows, macOS | pass |
-| blake2b_known_answers | `""`, `"abc"`, 64/65 zeros, 111618 zeros, 1000-byte pattern | 64-byte digests match CPython `hashlib.blake2b` (incl. the 1- and 2-block boundaries) | Linux, Windows, macOS | pass |
+| Case                            | Input                                                                     | Expected                                                                                                    | Platforms             | Status |
+| ------------------------------- | ------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------- | --------------------- | ------ |
+| crc32_worked_examples_from_spec | `"123456789"`, `"1234"`, `"1"`, continuation                              | `cbf43926` / `9be3e0a3` / `83dcefb7`; `calc_crc32(9be3e0a3, "56789") == cbf43926` — S-055-R01 worked values | Linux, Windows, macOS | pass   |
+| crc32_empty_and_seeds           | empty slice, seed `0xdeadbeef`, 4096-byte pattern whole vs split-continue | seed returned unchanged (R02); split continuation == whole == `97b84ec2` (CPython zlib)                     | Linux, Windows, macOS | pass   |
+| blake2b_known_answers           | `""`, `"abc"`, 64/65 zeros, 111618 zeros, 1000-byte pattern               | 64-byte digests match CPython `hashlib.blake2b` (incl. the 1- and 2-block boundaries)                       | Linux, Windows, macOS | pass   |
 
 Notes:
+
 - `calc_crc32(crc, buf)` maps 1:1 onto the C
   `uint32_t calc_crc32(uint32_t crc, const void *buf, size_t size)`
   (S-055-R01/R02): zlib-compatible IEEE CRC-32, running finished value

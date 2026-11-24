@@ -1,12 +1,12 @@
 # S-051 Windows capture plugins (`win-capture`, `win-wasapi`, `win-dshow`) – behavioural catalog
 
-| | |
-|---|---|
-| Status | Ready for review (Tier C catalog; Windows-only code, partly verified on Linux through shims) |
-| Reference | OBS Studio 33.0.1: `plugins/win-capture` (incl. `graphics-hook/` consumers), `shared/obs-hook-config/*`, `libobs/util/windows/window-helpers.*`, `plugins/win-wasapi`, `plugins/win-dshow` |
-| Target crate | `crates/obs-win-capture` (hook protocol, window matching, settings), `crates/obs-win-wasapi`, `crates/obs-win-dshow` |
-| Depends on | S-004 (signals/procs, for the `hooked`/`unhooked` signals), S-007 (config file, for offsets ini), obs-data/obs-properties specs |
-| Conformance | `test/conformance/scripts/wincapture/` (28 scripts, runner `gen/wincapture_runner.c`) |
+|              |                                                                                                                                                                                            |
+| ------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Status       | Ready for review (Tier C catalog; Windows-only code, partly verified on Linux through shims)                                                                                               |
+| Reference    | OBS Studio 33.0.1: `plugins/win-capture` (incl. `graphics-hook/` consumers), `shared/obs-hook-config/*`, `libobs/util/windows/window-helpers.*`, `plugins/win-wasapi`, `plugins/win-dshow` |
+| Target crate | `crates/obs-win-capture` (hook protocol, window matching, settings), `crates/obs-win-wasapi`, `crates/obs-win-dshow`                                                                       |
+| Depends on   | S-004 (signals/procs, for the `hooked`/`unhooked` signals), S-007 (config file, for offsets ini), obs-data/obs-properties specs                                                            |
+| Conformance  | `test/conformance/scripts/wincapture/` (28 scripts, runner `gen/wincapture_runner.c`)                                                                                                      |
 
 ## Verification classes used in this document
 
@@ -78,22 +78,22 @@ Hook version (`graphics-hook-ver.h`): `HOOK_VER_MAJOR = 1`, `HOOK_VER_MINOR = 8`
 
 ### 4.2 Kernel object names (all pure functions of `pid`) [REAL for the constants and the hook-info name, SRC for the rest]
 
-| Object | Name (ASCII, stored UTF-16) | Creator |
-|---|---|---|
-| event restart | `CaptureHook_Restart<pid>` | hook |
-| event stop | `CaptureHook_Stop<pid>` | hook |
-| event hook ready | `CaptureHook_HookReady<pid>` | hook |
-| event hook exit | `CaptureHook_Exit<pid>` | hook |
-| event init | `CaptureHook_Initialize<pid>` | hook |
-| keep-alive mutex | `CaptureHook_KeepAlive<pid>` | **plugin** (`CreateMutexW`) |
-| texture mutexes | `CaptureHook_TextureMutex1<pid>`, `...2<pid>` | hook |
-| hook info mapping | `CaptureHook_HookInfo<pid>` (size 648) | hook (`create_hook_info`) |
+| Object                   | Name (ASCII, stored UTF-16)                            | Creator                                                 |
+| ------------------------ | ------------------------------------------------------ | ------------------------------------------------------- |
+| event restart            | `CaptureHook_Restart<pid>`                             | hook                                                    |
+| event stop               | `CaptureHook_Stop<pid>`                                | hook                                                    |
+| event hook ready         | `CaptureHook_HookReady<pid>`                           | hook                                                    |
+| event hook exit          | `CaptureHook_Exit<pid>`                                | hook                                                    |
+| event init               | `CaptureHook_Initialize<pid>`                          | hook                                                    |
+| keep-alive mutex         | `CaptureHook_KeepAlive<pid>`                           | **plugin** (`CreateMutexW`)                             |
+| texture mutexes          | `CaptureHook_TextureMutex1<pid>`, `...2<pid>`          | hook                                                    |
+| hook info mapping        | `CaptureHook_HookInfo<pid>` (size 648)                 | hook (`create_hook_info`)                               |
 | shmem/shtex data mapping | `CaptureHook_Texture_<top-level-HWND-as-u64>_<map_id>` | hook (`map_id` = counter, stored in `hook_info.map_id`) |
-| named pipe (log) | `CaptureHook_Pipe<pid>` | plugin (server) |
+| named pipe (log)         | `CaptureHook_Pipe<pid>`                                | plugin (server)                                         |
 
 `<pid>`, `<HWND>`, `<map_id>` are rendered in unsigned decimal, no padding (`hook_mapping.script` shows pid 0 and 4294967295). For UWP/AppContainer targets the plugin opens the objects as `\Sessions\<active console session>\AppContainerNamedObjects\<app SID>\<name>` instead (§5.A, [SRC]). Events are auto-reset, initially non-signalled; the plugin opens them with `EVENT_MODIFY_STATE|SYNCHRONIZE`, mutexes with `SYNCHRONIZE`; a mutex/event counts as signalled when `WaitForSingleObject(h, 0) == WAIT_OBJECT_0`.
 
-### 4.3 Shared-memory capture layout (written by the hook) [MODEL, `hook_protocol_model.script`]
+### 4.3 Shared-memory capture layout (written by the hook) \[MODEL, `hook_protocol_model.script`\]
 
 For `type == MEMORY`: `tex_size = cy * pitch` (u32); `aligned_header = align32(12) = 32`; `aligned_tex = align32(tex_size)`; `map_size = 32 + 2*aligned_tex + 32`. The first texture starts at the first 32-byte-aligned *address* ≥ base+32 (`tex1_offset = ((base + 32) & ~31) - base`, plus 32 if that is < 12); `tex2_offset = tex1_offset + aligned_tex`. For a page-aligned mapping (always) `tex1_offset = 32`. `last_tex` starts at −1. For `type == TEXTURE`: `map_size = 4`, payload is `shtex_data`.
 
@@ -137,9 +137,9 @@ Notation: `R` = `S-051-R`.
 - **R24** Enumeration fallback: if `FindWindowEx(desktop, NULL)` returns no window, the search switches to `GetWindow(desktop, GW_CHILD)` + `GetNextWindow(GW_HWNDNEXT)` and must give the same result (`window_find_fallback.script`).
 - **R25** Rating `window_rating(w, priority, class, title, exe)`; `cur_*` are the candidate's values; compares are case-insensitive; `title_val = |cmpi(cur_title, title)|` (0 equal, 1 different — `cmpi` returns −1/0/1); NULL class/title/exe compare as `""`:
   1. If the candidate's exe query fails (own process) → `0x7FFFFFFF`.
-  2. `generic_class` (searched class contains `Chrome` or `SDL_app`, case-insensitive substring) and `priority == CLASS` → priority becomes `TITLE`.
-  3. If `uwp_window` (searched class is exactly `Windows.UI.Core.CoreWindow` or `WinUIDesktopWin32WindowClass`, case-sensitive): `priority == EXE && !exe_match` → none; otherwise `title_val == 0 ? 0 : none` (class is ignored).
-  4. `CLASS`: class equal ? `title_val` (+`0x1000` when exe differs) : none. `TITLE`: `title_val == 0 ? 0 : none`. `EXE`: exe equal ? `title_val` : none.
+  1. `generic_class` (searched class contains `Chrome` or `SDL_app`, case-insensitive substring) and `priority == CLASS` → priority becomes `TITLE`.
+  1. If `uwp_window` (searched class is exactly `Windows.UI.Core.CoreWindow` or `WinUIDesktopWin32WindowClass`, case-sensitive): `priority == EXE && !exe_match` → none; otherwise `title_val == 0 ? 0 : none` (class is ignored).
+  1. `CLASS`: class equal ? `title_val` (+`0x1000` when exe differs) : none. `TITLE`: `title_val == 0 ? 0 : none`. `EXE`: exe equal ? `title_val` : none.
 - **R26** `ms_find_window(mode, priority, class, title, exe)`: NULL `class` → NULL result. Candidate order = enumeration order of R23 (same filter, **including UWP-child substitution**); best = strictly lowest rating (first wins ties); a rating of 0 stops the search; returns NULL if every rating is `0x7FFFFFFF`. Invisible/tool/child windows never match; iconic/cloaked/empty windows match only in `INCLUDE_MINIMIZED`.
 - **R27 QUIRK Q-3** `ms_find_window_top_level` enumerates only real top-level windows (`EnumWindows`), applies the same validity filter and **always** skips DWM-cloaked windows even in `INCLUDE_MINIMIZED`; it does **not** substitute UWP children (the host frame window itself is rated and returned). Enumeration continues while the rating is > 0, so it stops at the first rating-0 window (`window_find_modes.script`: top-level search returns the frame window 10 where `ms_find_window` returns child 11).
 - **R28 [REAL]** `ms_check_window_property_setting(props, list, settings, key, idx)`: if the setting value is non-empty and equals no list item's value, insert at `idx` a **disabled** string item named `"[<exe>]: <title>"` (from the decoded window string) with value = the setting, and return true; otherwise false, list untouched. (`window_property.script`.) **QUIRK Q-9 / DEFECT D-1:** the reference formats the description with a NULL `%s` whenever the exe or title part is NULL/empty (an empty title, or a value with fewer than three parts). The Windows CRT prints the text `(null)` for that argument, so users see `"[Explorer.EXE]: (null)"` for untitled windows (also in R23 list names, vector `window_enum`) and `"[(null)]: (null)"` for malformed values. Required behaviour: reproduce the text `(null)` for an absent part (formally undefined C behaviour in the reference; a Rust implementation must hard-code it).
@@ -254,20 +254,20 @@ select(cx, cy, interval, fmt, obs_interval):
 
 ## 8. Reference defects and quirks
 
-| Id | Kind | Description | Required behaviour |
-|---|---|---|---|
-| Q-1 | QUIRK | Unknown channel mask maps to layout = channel count (7 → invalid 7) | match, but clamp unsupported counts to "unknown/stereo" at the audio-API boundary |
-| Q-2 | QUIRK | Empty window-string part decodes to NULL | match (treat as empty string consumer-side) |
-| Q-3 | QUIRK | `find_top_level` ignores UWP children and always skips cloaked windows | match |
-| Q-5 | QUIRK | Resolution list not totally ordered | match |
-| Q-6 | QUIRK | Out-of-range frame rate accepted and clamped | match |
-| Q-7 | QUIRK | `explorer.exe` empty-title filter compares case-sensitively while all other exe tests are case-insensitive | match |
-| Q-8 | QUIRK | `device_id == "default"` compare is case-insensitive for `is_default`, case-sensitive for restart | match |
-| D-1 / Q-9 | DEFECT/QUIRK | NULL passed to `%s` for empty title or malformed window strings (prints `(null)` on Windows) | reproduce `(null)` |
-| D-2 | DEFECT | `compat_json_free` leaves a dangling cache pointer | reset to empty |
-| D-3 | DEFECT | 32-bit wrap in DirectShow encoder `frameInterval` (and `keyint` overflow for huge values) | use 64-bit math |
-| D-4 | DEFECT | `video_queue_read` before READY dereferences unset pointers | return false / lazy init |
-| D-5 | DEFECT | `video_queue_create` frame size has no overflow/zero check; `cx*cy*3/2` truncates for odd sizes | reject zero or odd dimensions explicitly (not covered by vectors) |
+| Id        | Kind         | Description                                                                                                | Required behaviour                                                                |
+| --------- | ------------ | ---------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------- |
+| Q-1       | QUIRK        | Unknown channel mask maps to layout = channel count (7 → invalid 7)                                        | match, but clamp unsupported counts to "unknown/stereo" at the audio-API boundary |
+| Q-2       | QUIRK        | Empty window-string part decodes to NULL                                                                   | match (treat as empty string consumer-side)                                       |
+| Q-3       | QUIRK        | `find_top_level` ignores UWP children and always skips cloaked windows                                     | match                                                                             |
+| Q-5       | QUIRK        | Resolution list not totally ordered                                                                        | match                                                                             |
+| Q-6       | QUIRK        | Out-of-range frame rate accepted and clamped                                                               | match                                                                             |
+| Q-7       | QUIRK        | `explorer.exe` empty-title filter compares case-sensitively while all other exe tests are case-insensitive | match                                                                             |
+| Q-8       | QUIRK        | `device_id == "default"` compare is case-insensitive for `is_default`, case-sensitive for restart          | match                                                                             |
+| D-1 / Q-9 | DEFECT/QUIRK | NULL passed to `%s` for empty title or malformed window strings (prints `(null)` on Windows)               | reproduce `(null)`                                                                |
+| D-2       | DEFECT       | `compat_json_free` leaves a dangling cache pointer                                                         | reset to empty                                                                    |
+| D-3       | DEFECT       | 32-bit wrap in DirectShow encoder `frameInterval` (and `keyint` overflow for huge values)                  | use 64-bit math                                                                   |
+| D-4       | DEFECT       | `video_queue_read` before READY dereferences unset pointers                                                | return false / lazy init                                                          |
+| D-5       | DEFECT       | `video_queue_create` frame size has no overflow/zero check; `cx*cy*3/2` truncates for odd sizes            | reject zero or odd dimensions explicitly (not covered by vectors)                 |
 
 ## 9. Implementation notes (non-normative)
 
@@ -281,44 +281,44 @@ select(cx, cy, interval, fmt, obs_interval):
 
 Runner: `test/conformance/gen/wincapture_runner.c` (+ `wincapture.sources`, `wincapture_shim/`). 28 scripts, vectors in `test/conformance/vectors/wincapture/`. Tag = how the vector was produced (R = reference code, M = model).
 
-| Rules | Script(s) | Tag |
-|---|---|---|
-| R01, R02, R03 | `hook_layout`, `hook_bytes` | R |
-| R07, R08, §4.3 | `hook_protocol_model` | M |
-| R11 | `gc_formats` | M |
-| R20, R21 | `window_strings` | R |
-| R22, R24 | `window_find_fallback` | R |
-| R23 | `window_enum` | R |
-| R25, R26, R27 | `window_find`, `window_find_modes` | R |
-| R28, D-1 | `window_property`, `window_enum` | R |
-| R40–R43 | `wc_settings` | M |
-| R50–R54 | `gc_settings` | M |
-| R60, R61 | `monitor_settings` | M |
-| R70 | `audio_helpers` | M |
-| R80, R81, R82 | `wasapi_defaults`, `wasapi_update` | M |
-| R83 | `wasapi_default_device` | M |
-| R86, R87 | `wasapi_layout` | M |
-| R90–R93 | `compat_check` | R |
-| R100, R120 | `dshow_defaults` | M |
-| R101, R103 | `dshow_resolution` | M |
-| R104 | `dshow_caps_select` | M |
-| R106 | `dshow_fps` | M |
-| R107 | `dshow_buffering` | M |
-| R121, R122, D-3 | `dshow_encoder` | M |
-| R130–R135 | `vqueue`, `vqueue_reader`, `vqueue_scale` | R |
-| R04–R06, R09, R10, R12, R44, R55, R62, R71, R84, R85, R88, R89, R102, R105, R108–R111, R123, R124 | none | SRC only |
+| Rules                                                                                             | Script(s)                                 | Tag      |
+| ------------------------------------------------------------------------------------------------- | ----------------------------------------- | -------- |
+| R01, R02, R03                                                                                     | `hook_layout`, `hook_bytes`               | R        |
+| R07, R08, §4.3                                                                                    | `hook_protocol_model`                     | M        |
+| R11                                                                                               | `gc_formats`                              | M        |
+| R20, R21                                                                                          | `window_strings`                          | R        |
+| R22, R24                                                                                          | `window_find_fallback`                    | R        |
+| R23                                                                                               | `window_enum`                             | R        |
+| R25, R26, R27                                                                                     | `window_find`, `window_find_modes`        | R        |
+| R28, D-1                                                                                          | `window_property`, `window_enum`          | R        |
+| R40–R43                                                                                           | `wc_settings`                             | M        |
+| R50–R54                                                                                           | `gc_settings`                             | M        |
+| R60, R61                                                                                          | `monitor_settings`                        | M        |
+| R70                                                                                               | `audio_helpers`                           | M        |
+| R80, R81, R82                                                                                     | `wasapi_defaults`, `wasapi_update`        | M        |
+| R83                                                                                               | `wasapi_default_device`                   | M        |
+| R86, R87                                                                                          | `wasapi_layout`                           | M        |
+| R90–R93                                                                                           | `compat_check`                            | R        |
+| R100, R120                                                                                        | `dshow_defaults`                          | M        |
+| R101, R103                                                                                        | `dshow_resolution`                        | M        |
+| R104                                                                                              | `dshow_caps_select`                       | M        |
+| R106                                                                                              | `dshow_fps`                               | M        |
+| R107                                                                                              | `dshow_buffering`                         | M        |
+| R121, R122, D-3                                                                                   | `dshow_encoder`                           | M        |
+| R130–R135                                                                                         | `vqueue`, `vqueue_reader`, `vqueue_scale` | R        |
+| R04–R06, R09, R10, R12, R44, R55, R62, R71, R84, R85, R88, R89, R102, R105, R108–R111, R123, R124 | none                                      | SRC only |
 
 Floating point: the only printed floats are `hook_rate` multipliers (`%.9g`); compare exactly.
 
 ## 11. Open questions / not covered
 
 1. `VideoFormat` / `AudioFormat` values, `DeviceId` encoding, and device-capability enumeration live in `libdshowcapture` (now initialized in this checkout, `deps/libdshowcapture/src`, no-atl branch). Pinned from `dshowcapture.hpp`: `VideoFormat` (:77) = Any 0, Unknown 1, ARGB 100, XRGB 101, RGB24 102, I420 200, NV12 201, YV12 202, Y800 203, P010 204, YVYU 300, YUY2 301, UYVY 302, HDYC 303, MJPEG 400, H264 401, HEVC 402 — so R107's `> MJPEG` rule means `> 400` (H264/HEVC). `AudioFormat` (:105) = Any 0, Unknown 1, Wave16bit 100, WaveFloat 101, AAC 200, AC3 201, MPGA 202. `DeviceId` encoding and capability enumeration remain Windows-runtime behaviour; the vectors keep opaque tokens for the device side.
-2. R04–R06/R09–R10/R12: needs a Windows host with a hooked game to validate; `get-graphics-offsets` output format for ddraw/d3d12 offsets is not read by the plugin (R06) — confirm whether the hook computes them itself.
-3. `tiny-nv12-scale` interpolation and UYVY/YUY2 targets (only the dimension contract is vector-tested with uniform frames).
-4. Whether D-3's wrapped value must be preserved for compatibility: no stored data depends on it, so the spec recommends the corrected arithmetic.
-5. Rendering/HDR (`GS_CS_*` selection in `game_capture_render`), `dc-capture`, `cursor-capture`, WGC frame path, injection, AppContainer object paths, WASAPI timestamp logic (`OnStartCapture`, device-timing vs system-timing) and DShow audio/video timestamp matching were **not** specified (cost control: breadth first on protocol, matching and selection rules).
-6. Sufficiency check (Rust re-implementation from this spec and the vectors) was **skipped** by instruction (cost control); no pass count is claimed.
-7. Round 10 second-author check (2026-11-05): encoder ids corrected to the 33.0.1 values `dshow_c985_h264` / `dshow_c353_h264` (both registered from `win-dshow-encoder.cpp`; the old `obs_dshow_c985` / `obs_dshow_c353` names predate the merge). Known remaining cosmetic issue: the bare `R120–R131` (section 5) and `S-051-R120–R131` (round 8) series overlap numerically.
+1. R04–R06/R09–R10/R12: needs a Windows host with a hooked game to validate; `get-graphics-offsets` output format for ddraw/d3d12 offsets is not read by the plugin (R06) — confirm whether the hook computes them itself.
+1. `tiny-nv12-scale` interpolation and UYVY/YUY2 targets (only the dimension contract is vector-tested with uniform frames).
+1. Whether D-3's wrapped value must be preserved for compatibility: no stored data depends on it, so the spec recommends the corrected arithmetic.
+1. Rendering/HDR (`GS_CS_*` selection in `game_capture_render`), `dc-capture`, `cursor-capture`, WGC frame path, injection, AppContainer object paths, WASAPI timestamp logic (`OnStartCapture`, device-timing vs system-timing) and DShow audio/video timestamp matching were **not** specified (cost control: breadth first on protocol, matching and selection rules).
+1. Sufficiency check (Rust re-implementation from this spec and the vectors) was **skipped** by instruction (cost control); no pass count is claimed.
+1. Round 10 second-author check (2026-11-05): encoder ids corrected to the 33.0.1 values `dshow_c985_h264` / `dshow_c353_h264` (both registered from `win-dshow-encoder.cpp`; the old `obs_dshow_c985` / `obs_dshow_c353` names predate the merge). Known remaining cosmetic issue: the bare `R120–R131` (section 5) and `S-051-R120–R131` (round 8) series overlap numerically.
 
 ## 12. Round 8: capture host surface — game/window/monitor/duplicator/cursor/dc/WGC/injection (added)
 
@@ -417,11 +417,9 @@ per action target, with subsections.
 ### 13.1 DirectShow host (`win-dshow.cpp`)
 
 - **S-051-R136 [SRC]** The DirectShow work runs on one OS thread per input ("win-dshow: DShowThread",
-  `CoInitialize`'d): `DShowLoop` loops on `MsgWaitForMultipleObjects(1, semaphore, INFINITE,
-  QS_ALLINPUT)` — a window message is pumped (`PeekMessage`/`TranslateMessage`/`DispatchMessage`
+  `CoInitialize`'d): `DShowLoop` loops on `MsgWaitForMultipleObjects(1, semaphore, INFINITE, QS_ALLINPUT)` — a window message is pumped (`PeekMessage`/`TranslateMessage`/`DispatchMessage`
   until empty) and re-waited; the semaphore hands out actions from a critical-section-guarded
-  queue; anything else exits the loop. `enum class Action { None, Activate, ActivateBlock,
-  Deactivate, Shutdown, ConfigVideo, ConfigAudio, ConfigCrossbar1, ConfigCrossbar2 }`.
+  queue; anything else exits the loop. `enum class Action { None, Activate, ActivateBlock, Deactivate, Shutdown, ConfigVideo, ConfigAudio, ConfigCrossbar1, ConfigCrossbar2 }`.
   Activate/ActivateBlock: take the source settings; `Activate(settings)` — on failure
   `obs_source_output_video2(source, nullptr)` (blank frame); ActivateBlock additionally signals the
   activated event. Deactivate → `Deactivate()`; Shutdown → `device.ShutdownGraph()` and return
@@ -448,8 +446,7 @@ per action target, with subsections.
   source/encoder", locale en-US. Load: `RegisterDShowSource()` + `RegisterDShowEncoders()`; when
   built with `VIRTUALCAM_AVAILABLE` and `vcam_installed(false)`: register `virtualcam_info`.
   `vcam_installed(b64)`: `StringFromGUID2(CLSID_OBS_VirtualVideo)` →
-  `RegOpenKeyExW(HKEY_CLASSES_ROOT, L"CLSID\\<guid>", 0, KEY_READ | (b64 ? KEY_WOW64_64KEY :
-  KEY_WOW64_32KEY))` — the caller only ever passes `false`, so only the 32-bit registry view is
+  `RegOpenKeyExW(HKEY_CLASSES_ROOT, L"CLSID\\<guid>", 0, KEY_READ | (b64 ? KEY_WOW64_64KEY : KEY_WOW64_32KEY))` — the caller only ever passes `false`, so only the 32-bit registry view is
   checked (Q4).
 
 ### 13.3 Virtual camera (output side + driver side)
@@ -514,8 +511,7 @@ per action target, with subsections.
   callback can address the owning module).
 - **S-051-R147 [SRC]** `enum-wasapi.cpp` (3 fns): `GetDeviceName(device)` = the
   `PKEY_Device_FriendlyName` property-store value as UTF-8 (empty string when absent or empty);
-  `GetWASAPIAudioDevices(input)` enumerates the **active** endpoints of `input ? eCapture :
-  eRender` (any HRESULT failure throws an `HRError` with the failing call) and returns one record
+  `GetWASAPIAudioDevices(input)` enumerates the **active** endpoints of `input ? eCapture : eRender` (any HRESULT failure throws an `HRError` with the failing call) and returns one record
   per device (name via `GetDeviceName`, id, ...). This is the list backing R89's `Default` +
   endpoints property lists.
 - **S-051-R148 [SRC]** `plugin-main.cpp` (3 fns): module description "Windows WASAPI audio

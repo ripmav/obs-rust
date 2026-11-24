@@ -1,23 +1,23 @@
 # S-055 libobs util remainder: CRC-32, child-process pipes, source profiler, D-Bus / portal sleep inhibition, PulseAudio audio monitor
 
-| | |
-|---|---|
-| Status | Ready for review (Rust sufficiency check skipped by assignment) |
-| Reference | libobs 33.0.1: `libobs/util/crc32.c` (+ `.h`), `libobs/util/pipe.c`, `libobs/util/pipe-posix.c`, `libobs/util/source-profiler.c` (+ `.h`), `libobs/util/platform-nix-dbus.c`, `libobs/util/platform-nix-portal.c`, `libobs/audio-monitoring/pulse/pulseaudio-wrapper.c` (+ `.h`), `pulseaudio-output.c`, `pulseaudio-enum-devices.c`, `pulseaudio-monitoring-available.c` |
-| Target crates | `obs-util-small` (crc32, pipe), `obs-source-profiler`, `obs-sleep-inhibit` (dbus + portal), `obs-audio-monitor-pulse` |
-| Depends on | S-001 (allocation), S-005 (deque, as detail), S-023 (platform helpers, `os_gettime_ns`), S-024 (`os_process_args_*` argument list container, `profiler.c` name-based profiler) |
-| Conformance | `test/conformance/scripts/utilrest/` (26 scripts, vectors in `vectors/utilrest/`), runner `gen/utilrest_runner.c` |
+|               |                                                                                                                                                                                                                                                                                                                                                                           |
+| ------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Status        | Ready for review (Rust sufficiency check skipped by assignment)                                                                                                                                                                                                                                                                                                           |
+| Reference     | libobs 33.0.1: `libobs/util/crc32.c` (+ `.h`), `libobs/util/pipe.c`, `libobs/util/pipe-posix.c`, `libobs/util/source-profiler.c` (+ `.h`), `libobs/util/platform-nix-dbus.c`, `libobs/util/platform-nix-portal.c`, `libobs/audio-monitoring/pulse/pulseaudio-wrapper.c` (+ `.h`), `pulseaudio-output.c`, `pulseaudio-enum-devices.c`, `pulseaudio-monitoring-available.c` |
+| Target crates | `obs-util-small` (crc32, pipe), `obs-source-profiler`, `obs-sleep-inhibit` (dbus + portal), `obs-audio-monitor-pulse`                                                                                                                                                                                                                                                     |
+| Depends on    | S-001 (allocation), S-005 (deque, as detail), S-023 (platform helpers, `os_gettime_ns`), S-024 (`os_process_args_*` argument list container, `profiler.c` name-based profiler)                                                                                                                                                                                            |
+| Conformance   | `test/conformance/scripts/utilrest/` (26 scripts, vectors in `vectors/utilrest/`), runner `gen/utilrest_runner.c`                                                                                                                                                                                                                                                         |
 
 ## 1. Scope
 
-| # | Module | In scope | Not covered |
-|---|---|---|---|
-| U1 | `crc32.c` | the whole function | |
-| U2 | `pipe-posix.c` + `os_process_args_*` of `pipe.c` | create (shell and argument-list form), read, read_err, write, destroy | `pipe-windows.c` (Windows) |
-| U3 | `source-profiler.c` | complete: enable / GPU enable, frame lifecycle, tick and render sampling, async timestamps, result computation, removal | the real graphics timers (replaced by a fake, see 8) |
-| U4 | `platform-nix-dbus.c` | service probing, inhibit / uninhibit | |
-| U5 | `platform-nix-portal.c` | xdg-desktop-portal Inhibit request flow | |
-| U6 | `audio-monitoring/pulse/*` | the whole PulseAudio monitoring backend against a fake server | the real PulseAudio server |
+| #   | Module                                           | In scope                                                                                                                | Not covered                                          |
+| --- | ------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------- |
+| U1  | `crc32.c`                                        | the whole function                                                                                                      |                                                      |
+| U2  | `pipe-posix.c` + `os_process_args_*` of `pipe.c` | create (shell and argument-list form), read, read_err, write, destroy                                                   | `pipe-windows.c` (Windows)                           |
+| U3  | `source-profiler.c`                              | complete: enable / GPU enable, frame lifecycle, tick and render sampling, async timestamps, result computation, removal | the real graphics timers (replaced by a fake, see 8) |
+| U4  | `platform-nix-dbus.c`                            | service probing, inhibit / uninhibit                                                                                    |                                                      |
+| U5  | `platform-nix-portal.c`                          | xdg-desktop-portal Inhibit request flow                                                                                 |                                                      |
+| U6  | `audio-monitoring/pulse/*`                       | the whole PulseAudio monitoring backend against a fake server                                                           | the real PulseAudio server                           |
 
 `audio-monitoring/windows/wasapi-*`, `audio-monitoring/apple/*`, `null-audio-monitoring.c`, `util/pipe-windows.c`, `util/platform-windows.c`, `platform-cocoa.m` are platform code and out of scope (Windows/macOS differences are listed in section 9). `util/profiler.c` is S-024 M7. `platform-nix.c` is S-023.
 
@@ -85,17 +85,17 @@ profiler_result_t *source_profiler_get_result(obs_source_t *);
 - **S-055-R17** `render_begin` / `render_end` (global): only when GPU profiling is effective. `render_begin` creates the timer range for the current index if absent and begins it; `render_end` ends it (nothing if the range does not exist). Both run inside the graphics context (enter / leave must balance).
 - **S-055-R18** `frame_collect`, when enabled: for each source with samples take slot `(frame_idx + 1) mod 2` (the *older* slot: processing lags one frame behind). If that slot's `tick == 0` the source is skipped. Otherwise find or create the source's history entry (circular buffers of `sample_capacity` u64 each: tick, cpu, gpu, cpu-sum, gpu-sum, async-frame timestamps, async-rendered timestamps) and
   1. push `tick`;
-  2. if the slot has CPU render times: push the first one into `render_cpu` and the sum of all into `render_cpu_sum`, clear the list; else push 0 / 0;
-  3. if the slot has GPU timers: for each timer, only when the GPU range of the previous index is ready and not disjoint, `gs_timer_get_data` is queried; successful ticks are converted to ns as `ticks * 1e9 / frequency` (128-bit safe) and accumulated; `first` = the first accumulated value; every timer is destroyed. If any `first != 0` it is pushed to `render_gpu` and the sum to `render_gpu_sum` (nothing is pushed if no timer produced data); if the slot has no timers push 0 / 0;
-  4. if the source is an async video source (`output_flags & OBS_SOURCE_ASYNC_VIDEO == OBS_SOURCE_ASYNC_VIDEO`) push `obs_source_get_last_async_ts(source)` into `async_rendered_ts`.
-  A circular buffer overwrites its oldest value when full. When GPU is effective the previous index' range is queried (`get_data` -> disjoint flag, frequency); if disjoint a warning "GPU Timers were disjoint, discarding samples." is logged and no GPU values are used. After processing: if `!enable_next` -> `enabled = gpu_enabled = false`, free all samples / entries / ranges; else if `!gpu_enable_next` -> `gpu_enabled = false`, destroy the timer ranges.
+  1. if the slot has CPU render times: push the first one into `render_cpu` and the sum of all into `render_cpu_sum`, clear the list; else push 0 / 0;
+  1. if the slot has GPU timers: for each timer, only when the GPU range of the previous index is ready and not disjoint, `gs_timer_get_data` is queried; successful ticks are converted to ns as `ticks * 1e9 / frequency` (128-bit safe) and accumulated; `first` = the first accumulated value; every timer is destroyed. If any `first != 0` it is pushed to `render_gpu` and the sum to `render_gpu_sum` (nothing is pushed if no timer produced data); if the slot has no timers push 0 / 0;
+  1. if the source is an async video source (`output_flags & OBS_SOURCE_ASYNC_VIDEO == OBS_SOURCE_ASYNC_VIDEO`) push `obs_source_get_last_async_ts(source)` into `async_rendered_ts`.
+     A circular buffer overwrites its oldest value when full. When GPU is effective the previous index' range is queried (`get_data` -> disjoint flag, frequency); if disjoint a warning "GPU Timers were disjoint, discarding samples." is logged and no GPU values are used. After processing: if `!enable_next` -> `enabled = gpu_enabled = false`, free all samples / entries / ranges; else if `!gpu_enable_next` -> `gpu_enabled = false`, destroy the timer ranges.
 - **S-055-R19** `async_frame_received(src)` pushes the current time into the source's `async_frame_ts` buffer *only if an entry exists* (entries are created by `frame_collect`, so frames received before the first collected sample are lost).
 - **S-055-R20** `fill_result(src, out)`: false if `!enabled` or `out == NULL` (no write). Otherwise zero `*out`, then if an entry exists return true with:
   - `tick_avg = floor(sum / n)` and `tick_max` over the n stored ticks (n = number of valid samples, at most the capacity); 0 when n = 0;
   - `render_avg = floor(sum(render_cpu) / n)`, `render_max`, `render_sum = floor(sum(render_cpu_sum) / n)`;
   - only if GPU is effective: `render_gpu_avg`, `render_gpu_max`, `render_gpu_sum` likewise over the GPU buffers (with n = number of stored GPU values);
   - for async sources: `async_input` / `async_rendered` with best / worst from the two timestamp buffers using the *fps rule* below.
-  If no entry exists the output stays zeroed and the result is false (Q-2). `get_result` allocates, calls `fill_result` and returns the buffer, or NULL (and frees it) on false.
+    If no entry exists the output stays zeroed and the result is false (Q-2). `get_result` allocates, calls `fill_result` and returns the buffer, or NULL (and frees it) on false.
 - **S-055-R21** FPS rule (per timestamp buffer, `num` valid entries): for index i in 0..num-1, stop at the first timestamp equal to 0; `prev = ts[i-1]`, but for i = 0 `prev = ts[num-1]` (wrap-around); skip when `prev == 0` or `prev >= ts[i]`; delta = `ts[i] - prev`; track best (minimum) and worst (maximum) delta, sum of deltas and count. If count and sum are non-zero: `fps = 1e9 / (sum / count)` (double), best, worst. Otherwise all three stay 0. Because of the wrap-around, a buffer that has wrapped (not in chronological order) or whose first element is the smallest produces a very large first delta (see `srcprof_async`: worst = 1016000000).
 - **S-055-R22** `remove_source(src)`: when enabled, queue a task on the *graphics* queue (non-waiting) that removes the source's samples (destroying their lists / timers) and its history entry. The data stays visible to `fill_result` until the task runs. When disabled nothing is queued. Removing an unknown source is harmless.
 
@@ -109,12 +109,12 @@ void dbus_sleep_info_destroy(struct dbus_sleep_info *);
 
 Probe table (fixed order, index = service type):
 
-| order | bus name | object path | interface | uninhibit method |
-|---|---|---|---|---|
-| 0 | `org.freedesktop.ScreenSaver` | `/ScreenSaver` | same as name | `UnInhibit` |
-| 1 | `org.freedesktop.PowerManagement.Inhibit` | `/org/freedesktop/PowerManagement` | same as name | `UnInhibit` |
-| 2 | `org.mate.SessionManager` | `/org/mate/SessionManager` | same as name | `Uninhibit` |
-| 3 | `org.gnome.SessionManager` | `/org/gnome/SessionManager` | same as name | `Uninhibit` |
+| order | bus name                                  | object path                        | interface    | uninhibit method |
+| ----- | ----------------------------------------- | ---------------------------------- | ------------ | ---------------- |
+| 0     | `org.freedesktop.ScreenSaver`             | `/ScreenSaver`                     | same as name | `UnInhibit`      |
+| 1     | `org.freedesktop.PowerManagement.Inhibit` | `/org/freedesktop/PowerManagement` | same as name | `UnInhibit`      |
+| 2     | `org.mate.SessionManager`                 | `/org/mate/SessionManager`         | same as name | `Uninhibit`      |
+| 3     | `org.gnome.SessionManager`                | `/org/gnome/SessionManager`        | same as name | `Uninhibit`      |
 
 - **S-055-R23** `create`: connect to the *session* bus (failure: log error "Could not create dbus connection: <reason>", return NULL). For each service in order call `org.freedesktop.DBus.GetNameOwner(name)` (no auto-start). The first one that answers is selected (debug log "Found dbus service: <name>", return the handle); if none does, return NULL. `destroy(NULL)` is a no-op.
 - **S-055-R24** `inhibit_sleep(info, reason, active)`: if `active == (cookie != 0)` do nothing. Inhibit calls `Inhibit` on the selected service: for types 0 and 1 with `(program, reason)` = `("libobs", reason)` strings; for types 2 and 3 with `(program, xid, reason, flags)` = `("libobs", u32 0, reason, u32 0xC)`. The reply `(u cookie)` is stored. Uninhibit calls the type's uninhibit method with `(u cookie)` and resets the cookie to 0. The `reason` is ignored when uninhibiting.
@@ -162,16 +162,16 @@ Inputs from the engine: `monitoring_device_id` (NULL = none), the engine's outpu
 - **S-055-R36** `create`: init in a local struct; on failure run the free routine on the local struct and return NULL (nothing registered). On success copy to the heap, register it in the engine's monitor list (under the monitoring mutex) and, unless it is in "ignore" mode, add a capture callback `on_audio_playback` to the source.
 - **S-055-R37** Init steps in order; each failure is `false`:
   1. `monitoring_device_id == NULL` -> false (no log, **before** `init`, see D-2).
-  2. If the source has `OBS_SOURCE_DO_NOT_SELF_MONITOR` and `devices_match(settings.device_id, monitoring_device_id)`: set `ignore`, log info "Prevented feedback-loop in '<device_id>'" and return **true** (no stream, no callback, no pulse init).
-  3. `pulseaudio_init()`. Device = `get_default_id` if the id is `"default"` else a copy of the id.
-  4. Server info query (info log "Server name: '<name> <version>'"); failure (-1) -> error "Unable to get server info !".
-  5. Sink-by-name query for the device: failure -> error "Unable to get sink info !". The callback with `eol < 0` marks the format invalid -> error "An error occurred while getting the source info!". With a sink: info "Audio format: <format>, <rate> Hz, <channels> channels".
-  6. Format: S16LE, S32LE, U8, FLOAT32LE are native (to OBS 16-bit, 32-bit, 8-bit, float); any other falls back to FLOAT32LE with info "Sample format <fmt> not supported by OBS,using <fmt2> instead for recording". Channels 1,2,3,4,5,6,8 map to MONO, STEREO, 2.1, 4.0, 4.1, 5.1, 7.1; others (0, 7, > 8) fall back to 2 with an info log (the log prints the two numbers with `%c`, D-4). Rate = the sink's rate.
-  7. Invalid sample spec (e.g. rate 0) -> error "Sample spec is not valid".
-  8. Create the resampler from (engine rate, speakers, planar float) to (sink rate, speakers for the channel count, native format); failure -> warning "audio_monitor_init: Failed to create resampler".
-  9. `bytes_per_frame` = frame size of the spec; channel map per layout (see 7.5); create the stream named after the source (NULL -> error "Unable to create stream").
-  10. Buffer attributes: `fragsize = maxlength = minreq = prebuf = 0xFFFFFFFF`, `tlength = bytes for 25 000 us` of the spec (`rate * channels * bytes_per_sample * 25000 / 1e6`, truncated). Flags `INTERPOLATE_TIMING | AUTO_TIMING_UPDATE | START_CORKED` (0xB in the fake log). Connect playback to the device; failure -> stop playback (disconnect, clear the write callback, unref the stream; info "Stopped Monitoring in '<dev>'" and "Got N packets with M frames") and error "Unable to connect to stream".
-  11. Info "Started Monitoring in '<device>'".
+  1. If the source has `OBS_SOURCE_DO_NOT_SELF_MONITOR` and `devices_match(settings.device_id, monitoring_device_id)`: set `ignore`, log info "Prevented feedback-loop in '\<device_id>'" and return **true** (no stream, no callback, no pulse init).
+  1. `pulseaudio_init()`. Device = `get_default_id` if the id is `"default"` else a copy of the id.
+  1. Server info query (info log "Server name: '<name> <version>'"); failure (-1) -> error "Unable to get server info !".
+  1. Sink-by-name query for the device: failure -> error "Unable to get sink info !". The callback with `eol < 0` marks the format invalid -> error "An error occurred while getting the source info!". With a sink: info "Audio format: <format>, <rate> Hz, <channels> channels".
+  1. Format: S16LE, S32LE, U8, FLOAT32LE are native (to OBS 16-bit, 32-bit, 8-bit, float); any other falls back to FLOAT32LE with info "Sample format <fmt> not supported by OBS,using <fmt2> instead for recording". Channels 1,2,3,4,5,6,8 map to MONO, STEREO, 2.1, 4.0, 4.1, 5.1, 7.1; others (0, 7, > 8) fall back to 2 with an info log (the log prints the two numbers with `%c`, D-4). Rate = the sink's rate.
+  1. Invalid sample spec (e.g. rate 0) -> error "Sample spec is not valid".
+  1. Create the resampler from (engine rate, speakers, planar float) to (sink rate, speakers for the channel count, native format); failure -> warning "audio_monitor_init: Failed to create resampler".
+  1. `bytes_per_frame` = frame size of the spec; channel map per layout (see 7.5); create the stream named after the source (NULL -> error "Unable to create stream").
+  1. Buffer attributes: `fragsize = maxlength = minreq = prebuf = 0xFFFFFFFF`, `tlength = bytes for 25 000 us` of the spec (`rate * channels * bytes_per_sample * 25000 / 1e6`, truncated). Flags `INTERPOLATE_TIMING | AUTO_TIMING_UPDATE | START_CORKED` (0xB in the fake log). Connect playback to the device; failure -> stop playback (disconnect, clear the write callback, unref the stream; info "Stopped Monitoring in '<dev>'" and "Got N packets with M frames") and error "Unable to connect to stream".
+  1. Info "Started Monitoring in '<device>'".
 - **S-055-R38** Free routine (used by create-failure, reset, destroy): if not `ignore`: remove the capture callback (even if it was never added, Q-3), destroy the resampler, free the pending-data deque, stop playback if a stream exists, `pulseaudio_unref()` and free the device. In `ignore` mode it does nothing.
 - **S-055-R39** `on_audio_playback(source, audio, muted)`: try-lock the monitor's mutex, return if busy. Skip data while `source.activate_refs == 0`. Resample the planar float input to the target format (failure: skip). If `|user_volume - 1| >= EPSILON (1e-4)` scale the converted frames in place (R40). Append the bytes (`bytes_per_frame * frames`) to the pending-data deque; `packets++`, `frames += n`. Unlock, then run the stream write (R41).
 - **S-055-R40** Volume scaling by native format: U8: `out = (in - 128) * vol + 128` computed in float then truncated to u8; S16 and S32: `out = (intN)(in * vol)` computed in float (wraps on overflow, no clipping); FLOAT32: `out = in * vol`. Other formats untouched.
@@ -209,37 +209,38 @@ Windows: `pipe-windows.c` (`CreatePipe`/`CreateProcess`) has the same API, exit 
 ## 10. Test setup (how the vectors are produced)
 
 The runner links the real files listed above with:
+
 - **fake clock** (`os_gettime_ns`), **fake graphics** (`gs_timer_*`, `gs_enter/leave_context` with a balance counter), **fake task queue** (`obs_queue_task` queues, `sp_run_tasks` runs), fake `obs` core and `obs_source` stand-ins;
 - **fake libpulse** (`utilrest_pafake.c`): a synchronous in-process model of the threaded mainloop, context, operations and playback stream (prints `pa ...` lines for stream calls); the pure helpers (`pa_sample_spec_valid`, `pa_frame_size`, `pa_usec_to_bytes`, `pa_sample_format_to_string`, proplists) are the **real libpulse** (so format names such as `float32le`, `aLaw`, `s24le` come from it);
 - **fake resampler**: float planar -> interleaved target format at the same rate; the nearest input plane is used per output channel; u8 `x*127+128`, s16 `x*32767`, s32 `x*2147483647`, float copy (no clamping, so scripts keep |x| < 1);
 - **private `dbus-daemon --session`** started by the runner (`dbus-daemon` MUST be installed) and an in-process GDBus service on a second connection that owns the requested names and answers calls (cookie 42 for freedesktop services, 43 for MATE / GNOME; portal replies `version=4`, an `(o)` request handle and, on demand, the `Response` signal).
-Not tested: real PulseAudio / real desktop services; timing (the dbus runner pumps the main loop 150 ms after each asynchronous step).
+  Not tested: real PulseAudio / real desktop services; timing (the dbus runner pumps the main loop 150 ms after each asynchronous step).
 
 Log lines are printed as `log <level> <text>` with non-printable bytes escaped; error texts that embed system wording are cut after the first `": "`.
 
 ## 11. Coverage table
 
-| Rule(s) | Script(s) |
-|---|---|
-| R01, R02 | `crc32` |
-| R03, R04, R05, R06, R07, R09 | `pipe_read`, `pipe_null_and_args` |
-| R05, R08, R09 (write mode, Q-1) | `pipe_write` |
-| R03, R10, R06 (`create2`) | `pipe_null_and_args` |
-| D-1 | `pipe_read` (end) |
-| R11, R12, R14, R15, R18, R20 | `srcprof_basic`, `srcprof_ring` |
-| R13 | `srcprof_ring`, `srcprof_basic` |
-| R16, R17, R18 (GPU), R11 (gpu ANDs enable) | `srcprof_gpu` |
-| R19, R21 | `srcprof_async` |
-| R22 | `srcprof_remove` |
-| R23, R24, R25 | `dbus_inhibit_ss`, `dbus_inhibit_order`, `dbus_inhibit_gnome`, `dbus_inhibit_mate`, `dbus_noservice`, `dbus_nobus` |
-| R26-R31 | `portal_inhibit`, `portal_errors`, `dbus_nobus` |
-| R32, R33, R35 | `pulse_enum` |
-| R34 | `pulse_default_match` |
-| R36, R37, R38, R42, R43, R44 | `pulse_monitor_basic`, `pulse_monitor_errors`, `pulse_monitor_lifecycle` |
-| R37 (formats / channels), 7.5 | `pulse_monitor_formats` |
-| R39, R40 | `pulse_monitor_volume`, `pulse_monitor_write` |
-| R41 | `pulse_monitor_write`, `pulse_monitor_basic` |
-| D-2, D-3, D-4 | `pulse_monitor_refcount_defect`, `pulse_monitor_lifecycle`, `pulse_monitor_formats` |
+| Rule(s)                                    | Script(s)                                                                                                          |
+| ------------------------------------------ | ------------------------------------------------------------------------------------------------------------------ |
+| R01, R02                                   | `crc32`                                                                                                            |
+| R03, R04, R05, R06, R07, R09               | `pipe_read`, `pipe_null_and_args`                                                                                  |
+| R05, R08, R09 (write mode, Q-1)            | `pipe_write`                                                                                                       |
+| R03, R10, R06 (`create2`)                  | `pipe_null_and_args`                                                                                               |
+| D-1                                        | `pipe_read` (end)                                                                                                  |
+| R11, R12, R14, R15, R18, R20               | `srcprof_basic`, `srcprof_ring`                                                                                    |
+| R13                                        | `srcprof_ring`, `srcprof_basic`                                                                                    |
+| R16, R17, R18 (GPU), R11 (gpu ANDs enable) | `srcprof_gpu`                                                                                                      |
+| R19, R21                                   | `srcprof_async`                                                                                                    |
+| R22                                        | `srcprof_remove`                                                                                                   |
+| R23, R24, R25                              | `dbus_inhibit_ss`, `dbus_inhibit_order`, `dbus_inhibit_gnome`, `dbus_inhibit_mate`, `dbus_noservice`, `dbus_nobus` |
+| R26-R31                                    | `portal_inhibit`, `portal_errors`, `dbus_nobus`                                                                    |
+| R32, R33, R35                              | `pulse_enum`                                                                                                       |
+| R34                                        | `pulse_default_match`                                                                                              |
+| R36, R37, R38, R42, R43, R44               | `pulse_monitor_basic`, `pulse_monitor_errors`, `pulse_monitor_lifecycle`                                           |
+| R37 (formats / channels), 7.5              | `pulse_monitor_formats`                                                                                            |
+| R39, R40                                   | `pulse_monitor_volume`, `pulse_monitor_write`                                                                      |
+| R41                                        | `pulse_monitor_write`, `pulse_monitor_basic`                                                                       |
+| D-2, D-3, D-4                              | `pulse_monitor_refcount_defect`, `pulse_monitor_lifecycle`, `pulse_monitor_formats`                                |
 
 ## 12. Implementation notes and open questions
 

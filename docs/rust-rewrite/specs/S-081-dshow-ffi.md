@@ -1,13 +1,13 @@
 # S-081 libdshowcapture FFI contract (library ported to Rust, D-19 confirmed 2026-11-06)
 
-| | |
-|---|---|
-| Status | Draft (round 8 — behaviour catalog written from C reference; no vectors yet) |
-| Spec version | initial |
-| Reference | OBS Studio 33.0.1, `deps/libdshowcapture` (C++ DirectShow wrapper, no-atl branch) |
+|              |                                                                                                                                                                                                                                                                                                                                                                                                                  |
+| ------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Status       | Draft (round 8 — behaviour catalog written from C reference; no vectors yet)                                                                                                                                                                                                                                                                                                                                     |
+| Spec version | initial                                                                                                                                                                                                                                                                                                                                                                                                          |
+| Reference    | OBS Studio 33.0.1, `deps/libdshowcapture` (C++ DirectShow wrapper, no-atl branch)                                                                                                                                                                                                                                                                                                                                |
 | Target crate | `crates/dshow-capture` (the library is **ported to Rust** per D-19, confirmed 2026-11-06 — DirectShow COM via the windows crate; the nested `capture-device-support` vendor tree stays as an FFI input, D-04). This contract pins the observable behaviour (enumeration, capture, device-id encoding, vendor workarounds) the port MUST preserve; the C build is the reference during the port window (P5-32.3). |
-| Depends on | S-051 (win-dshow host — format constants pinned there, its §11) |
-| Conformance | planned; none yet (all behaviour is Windows COM runtime, not reproducible in Linux test vectors) |
+| Depends on   | S-051 (win-dshow host — format constants pinned there, its §11)                                                                                                                                                                                                                                                                                                                                                  |
+| Conformance  | planned; none yet (all behaviour is Windows COM runtime, not reproducible in Linux test vectors)                                                                                                                                                                                                                                                                                                                 |
 
 ## 1. Scope
 
@@ -63,34 +63,21 @@ English (`ConvertHRToEnglish`).
 
 - `DeviceId { std::wstring name; std::wstring path; }` — `path` =
   registry `DevicePath` (instance path).
-- `VideoDevice : DeviceId { bool audioAttached; bool separateAudioFilter;
-  std::vector<VideoInfo> caps; }`;
+- `VideoDevice : DeviceId { bool audioAttached; bool separateAudioFilter; std::vector<VideoInfo> caps; }`;
   `AudioDevice : DeviceId { std::vector<AudioInfo> caps; }`.
-- `VideoInfo { int minCX, minCY, maxCX, maxCY, granularityCX,
-  granularityCY; long long minInterval, maxInterval; VideoFormat format;
-  }` — `minCY` may be negative (flip); granularity = step from min.
-- `AudioInfo { int minChannels, maxChannels, channelsGranularity,
-  minSampleRate, maxSampleRate, sampleRateGranularity; AudioFormat format;
-  }`.
+- `VideoInfo { int minCX, minCY, maxCX, maxCY, granularityCX, granularityCY; long long minInterval, maxInterval; VideoFormat format; }` — `minCY` may be negative (flip); granularity = step from min.
+- `AudioInfo { int minChannels, maxChannels, channelsGranularity, minSampleRate, maxSampleRate, sampleRateGranularity; AudioFormat format; }`.
 - `Config : DeviceId { bool useDefaultConfig = true; }`.
-- `VideoConfig : Config { VideoProc callback; ReactivateProc
-  reactivateCallback; int cx, cy_abs; bool cy_flip; long long
-  frameInterval; VideoFormat internalFormat; VideoFormat format; }` —
+- `VideoConfig : Config { VideoProc callback; ReactivateProc reactivateCallback; int cx, cy_abs; bool cy_flip; long long frameInterval; VideoFormat internalFormat; VideoFormat format; }` —
   `cy_flip` records a negative request; resolved height is positive.
-- `AudioConfig : Config { AudioProc callback; bool useVideoDevice;
-  bool useSeparateAudioFilter; int sampleRate, channels; AudioFormat
-  format; AudioMode mode; int buffer; }` — `buffer` = requested capture
+- `AudioConfig : Config { AudioProc callback; bool useVideoDevice; bool useSeparateAudioFilter; int sampleRate, channels; AudioFormat format; AudioMode mode; int buffer; }` — `buffer` = requested capture
   buffer in ms (0 → default, R24).
 - Callbacks (host functors, stored by value):
-  `VideoProc(const VideoConfig&, unsigned char *data, size_t size,
-  long long startTime, long long stopTime, long rotation)`;
-  `AudioProc(const AudioConfig&, unsigned char *data, size_t size,
-  long long startTime, long long stopTime)`; `ReactivateProc()`.
-- `VideoEncoderConfig : DeviceId { int fpsNumerator, fpsDenominator,
-  bitrate, keyframeInterval, cx, cy; }` — bitrate kbps,
+  `VideoProc(const VideoConfig&, unsigned char *data, size_t size, long long startTime, long long stopTime, long rotation)`;
+  `AudioProc(const AudioConfig&, unsigned char *data, size_t size, long long startTime, long long stopTime)`; `ReactivateProc()`.
+- `VideoEncoderConfig : DeviceId { int fpsNumerator, fpsDenominator, bitrate, keyframeInterval, cx, cy; }` — bitrate kbps,
   keyframeInterval frames.
-- `EncoderPacket { unsigned char *data; size_t size; long long pts, dts;
-  }`.
+- `EncoderPacket { unsigned char *data; size_t size; long long pts, dts; }`.
 
 ### 3.3 `Device` class (all methods)
 
@@ -109,9 +96,7 @@ English (`ConvertHRToEnglish`).
 `VideoEncoder()`, `~VideoEncoder()`, `Valid()`, `Active()`,
 `ResetGraph()`, `SetConfig(VideoEncoderConfig&)`,
 `GetConfig(VideoEncoderConfig&)`,
-`Encode(unsigned char *data[8], size_t linesize[8], long long
-timestampStart, long long timestampEnd, EncoderPacket&, bool
-&new_packet)`, `static EnumEncoders(std::vector<DeviceId>&)`.
+`Encode(unsigned char *data[8], size_t linesize[8], long long timestampStart, long long timestampEnd, EncoderPacket&, bool &new_packet)`, `static EnumEncoders(std::vector<DeviceId>&)`.
 
 `DSHOWCAPTURE_EXPORT void SetLogCallback(LogCallback, void *param)` with
 `LogCallback = void (*)(LogType, const wchar_t *msg, void *param)`.
@@ -240,14 +225,14 @@ return best.found ? best.mt : fail
 
 ## 10. Conformance coverage
 
-| Rule(s) | Scripts |
-|---|---|
+| Rule(s)       | Scripts                                                       |
+| ------------- | ------------------------------------------------------------- |
 | all S-081-Rxx | none yet (Windows COM runtime; no Linux-reproducible vectors) |
 
 ## 11. Open questions
 
 1. `ROCKET_WAIT_TIME_MS` and the exact `RocketPropStruct` field semantics were not fully decoded (magic numbers, Q-2) — treat as opaque.
-2. AVerMedia tonemapper v1 KSPROPERTY id `2` vs GC553 path selection order (which probe runs first when several succeed) not pinned; the observable effect (tonemapper on/off) is specified, the order is not.
-3. `AudioMode::DirectSound`/`WaveOut` render paths were verified at filter selection only (`CLSID_AudioRender`, `CLSID_DirectSoundRenderer`); playback behaviour beyond "no capture callbacks fire" was not exercised.
-4. `OutputPin::Connect`'s full allocator-handshake branches (external allocator negotiation) were not read line by line; R29 pins the reallocation path the host uses.
-5. Round 10 second-author check (2026-11-05): corrected R31 (was "constructed uninitialised" + "Valid() = device + encoder + output + capture filters present" — the ctor creates the graph immediately and `Valid()` only checks `initialized`; was "config requires the device (name/path) and the encoder (name/path)" — only the encoder name/path is in the config, the capture device is found via the encoder input pin medium), R35 (was "non-empty path → device moniker bound by instance path" — it is an exact `DevicePath` string match, no moniker binding) and R14 (was a generic `KSCATEGORY_ENCODER` enumeration — only `C985`/`C353`-named encoders are reported).
+1. AVerMedia tonemapper v1 KSPROPERTY id `2` vs GC553 path selection order (which probe runs first when several succeed) not pinned; the observable effect (tonemapper on/off) is specified, the order is not.
+1. `AudioMode::DirectSound`/`WaveOut` render paths were verified at filter selection only (`CLSID_AudioRender`, `CLSID_DirectSoundRenderer`); playback behaviour beyond "no capture callbacks fire" was not exercised.
+1. `OutputPin::Connect`'s full allocator-handshake branches (external allocator negotiation) were not read line by line; R29 pins the reallocation path the host uses.
+1. Round 10 second-author check (2026-11-05): corrected R31 (was "constructed uninitialised" + "Valid() = device + encoder + output + capture filters present" — the ctor creates the graph immediately and `Valid()` only checks `initialized`; was "config requires the device (name/path) and the encoder (name/path)" — only the encoder name/path is in the config, the capture device is found via the encoder input pin medium), R35 (was "non-empty path → device moniker bound by instance path" — it is an exact `DevicePath` string match, no moniker binding) and R14 (was a generic `KSCATEGORY_ENCODER` enumeration — only `C985`/`C353`-named encoders are reported).

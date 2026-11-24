@@ -1,13 +1,13 @@
 # S-048 Frontend: CLI, configuration files, profile / scene-collection formats, frontend API, output file names
 
-| | |
-|---|---|
-| Status | Draft (Tier C behavioural catalog; executable part covers only pure logic) |
-| Spec version | initial |
-| Reference | OBS Studio frontend 33.0.1 (C++/Qt): `obs-main.cpp`, `OBSApp.cpp`, `OBSStudioAPI.cpp`, `api/obs-frontend-api.{h,cpp}`, `widgets/OBSBasic*.cpp`, `models/SceneCollection.hpp` |
-| Target crate | `crates/frontend-core` (non-GUI part of the frontend) |
-| Depends on | S-007 (config file), S-014 (obs_data JSON), S-023 (`os_generate_formatted_filename`, UTF-8) |
-| Conformance | `test/conformance/scripts/frontendfmt/` (7 scripts) |
+|              |                                                                                                                                                                              |
+| ------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Status       | Draft (Tier C behavioural catalog; executable part covers only pure logic)                                                                                                   |
+| Spec version | initial                                                                                                                                                                      |
+| Reference    | OBS Studio frontend 33.0.1 (C++/Qt): `obs-main.cpp`, `OBSApp.cpp`, `OBSStudioAPI.cpp`, `api/obs-frontend-api.{h,cpp}`, `widgets/OBSBasic*.cpp`, `models/SceneCollection.hpp` |
+| Target crate | `crates/frontend-core` (non-GUI part of the frontend)                                                                                                                        |
+| Depends on   | S-007 (config file), S-014 (obs_data JSON), S-023 (`os_generate_formatted_filename`, UTF-8)                                                                                  |
+| Conformance  | `test/conformance/scripts/frontendfmt/` (7 scripts)                                                                                                                          |
 
 ## 1. Scope
 
@@ -37,14 +37,14 @@ columns: L = Linux, W = Windows, M = macOS; vectors are the Linux column.
 
 ### 3.1 Files and directories (per user, `CONFIG` = platform config dir, or `<install>/config` in portable mode)
 
-| Item | Path | Notes |
-|---|---|---|
-| global config | `CONFIG/obs-studio/global.ini` | "appConfig". Machine/app-level. |
-| user config | `<Locations.Configuration>/obs-studio/user.ini` | "userConfig". UI + session state. |
-| profile dir | `<Locations.Profiles>/obs-studio/basic/profiles/<dirname>/` | holds `basic.ini`, optionally `service.json`, `streamEncoder.json`, `recordEncoder.json` |
-| scene collection | `<Locations.SceneCollections>/obs-studio/basic/scenes/<file>.json` | plus `<file>.json.bak`, `.json.invalid`, `.json.v1` |
-| plugin manager | `<Locations.PluginManagerSettings>/obs-studio/plugin_manager` | |
-| created at start | `obs-studio/{basic,logs,profiler_data,updates,plugin_config}` (+`crashes` on W) | creation failure is fatal ("Failed to create directory") |
+| Item             | Path                                                                            | Notes                                                                                    |
+| ---------------- | ------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------- |
+| global config    | `CONFIG/obs-studio/global.ini`                                                  | "appConfig". Machine/app-level.                                                          |
+| user config      | `<Locations.Configuration>/obs-studio/user.ini`                                 | "userConfig". UI + session state.                                                        |
+| profile dir      | `<Locations.Profiles>/obs-studio/basic/profiles/<dirname>/`                     | holds `basic.ini`, optionally `service.json`, `streamEncoder.json`, `recordEncoder.json` |
+| scene collection | `<Locations.SceneCollections>/obs-studio/basic/scenes/<file>.json`              | plus `<file>.json.bak`, `.json.invalid`, `.json.v1`                                      |
+| plugin manager   | `<Locations.PluginManagerSettings>/obs-studio/plugin_manager`                   |                                                                                          |
+| created at start | `obs-studio/{basic,logs,profiler_data,updates,plugin_config}` (+`crashes` on W) | creation failure is fatal ("Failed to create directory")                                 |
 
 ### 3.2 Command-line flags (Section 5.1)
 
@@ -71,16 +71,16 @@ Keys written by the program: `[General] LastVersion` (int, set at every shutdown
 `EnableAutoUpdates`, `BrowserHWAccel`, `[Video] Renderer`, `[Locations] Configuration|SceneCollections|Profiles|PluginManagerSettings`.
 Defaults (set after migration, via `config_set_default_*`; vector `config_defaults`):
 
-| Section.Key | Type | Default |
-|---|---|---|
-| General.MaxLogs | uint | 10 |
-| General.InfoIncrement | int | -1 |
-| General.ProcessPriority | string | `Normal` |
-| General.EnableAutoUpdates | bool | true |
-| Video.Renderer | string | W `Direct3D 11`, L/M `OpenGL` |
-| General.BrowserHWAccel | bool | true on W/M/L |
-| Audio.DisableAudioDucking | bool | W only: true |
-| Video.DisableOSXVSync, Video.ResetOSXVSyncOnExit | bool | M only: true |
+| Section.Key                                                               | Type   | Default                                              |
+| ------------------------------------------------------------------------- | ------ | ---------------------------------------------------- |
+| General.MaxLogs                                                           | uint   | 10                                                   |
+| General.InfoIncrement                                                     | int    | -1                                                   |
+| General.ProcessPriority                                                   | string | `Normal`                                             |
+| General.EnableAutoUpdates                                                 | bool   | true                                                 |
+| Video.Renderer                                                            | string | W `Direct3D 11`, L/M `OpenGL`                        |
+| General.BrowserHWAccel                                                    | bool   | true on W/M/L                                        |
+| Audio.DisableAudioDucking                                                 | bool   | W only: true                                         |
+| Video.DisableOSXVSync, Video.ResetOSXVSyncOnExit                          | bool   | M only: true                                         |
 | Locations.{Configuration,SceneCollections,Profiles,PluginManagerSettings} | string | the platform config dir (`os_get_config_path(NULL)`) |
 
 ### 4.2 `user.ini` (userConfig) defaults (vector `config_defaults`, section "defaults user")
@@ -100,7 +100,7 @@ Session keys with no default (absent until first written): `[Basic] Profile`, `P
 `Pre21Defaults`, `Pre23Defaults`, `Pre24.1Defaults`, `ResetDockLock23`, `DisableHotkeysInFocus` (legacy),
 `[BasicWindow] MultiviewLayout`, `DocksLocked`, window geometry blobs.
 `MultiviewLayout` is an int enum: 0 HORIZONTAL_TOP_8, 1 HORIZONTAL_BOTTOM_8, 2 VERTICAL_LEFT_8,
-3 VERTICAL_RIGHT_8, 4 HORIZONTAL_TOP_24, 5 HORIZONTAL_TOP_18, 6 SCENES_ONLY_4, 7 _9, 8 _16, 9 _25.
+3 VERTICAL_RIGHT_8, 4 HORIZONTAL_TOP_24, 5 HORIZONTAL_TOP_18, 6 SCENES_ONLY_4, 7 \_9, 8 \_16, 9 \_25.
 
 ### 4.3 `basic.ini` (profile) defaults (vector `config_defaults`, section "defaults basic 1920 1080")
 
@@ -129,29 +129,29 @@ on W/L, `hybrid_mov` on M. Full table (type, value):
 
 Top-level object (keys in the order the reference sets them; JSON object order is not significant):
 
-| Key | Type | Meaning |
-|---|---|---|
-| `name` | string | collection display name (config `Basic.SceneCollection`) |
-| `DesktopAudioDevice1`, `DesktopAudioDevice2`, `AuxAudioDevice1..4` | object | saved source (S-040 `obs_save_source`) bound to output channels 1..6 in this order; key omitted if the channel is empty |
-| `sources` | array | all non-group non-scene sources except the six global audio sources, then all scenes |
-| `groups` | array | groups (kept separate so pre-22 versions ignore them). On load `groups` is appended to `sources`; if `sources` is absent, `groups` is used alone |
-| `scene_order` | array of `{ "name": string }` | UI order of scenes |
-| `current_scene` | string | selected (preview) scene name |
-| `current_program_scene` | string | program scene name (equals `current_scene` outside studio mode) |
-| `canvases` | array | extra canvases (non-ephemeral only) |
-| `current_transition` | string | name of the transition in output channel 0 |
-| `transition_duration` | int ms | missing or 0 on load means 300 |
-| `transitions` | array of `{name,id,settings}` | user transitions (+ hotkeys per entry) |
-| `quick_transitions` | array of `{name,duration,hotkeys,id,fade_to_black}` | |
-| `saved_projectors` | array | |
-| `preview_locked`, `scaling_enabled` | bool | |
-| `scaling_level` | int | |
-| `scaling_off_x`, `scaling_off_y` | double | |
-| `virtual-camera` | object | only when virtual camera enabled: `type2` int, plus `scene` (SceneOutput) or `source` (SourceOutput) |
-| `modules` | object | plugin data from save callbacks (Section 5.9), preserved verbatim for plugins that are not loaded |
-| `resolution` | `{x,y}` int | canvas size at save time (only if known) |
-| `migration_resolution` | `{x,y}` int | present only when coordinate mode is Relative and the migration size is non-zero |
-| `version` | int | 1 = absolute coordinates (legacy), 2 = relative coordinates (current; written 2 for Relative, 1 for Absolute) |
+| Key                                                                | Type                                                | Meaning                                                                                                                                          |
+| ------------------------------------------------------------------ | --------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `name`                                                             | string                                              | collection display name (config `Basic.SceneCollection`)                                                                                         |
+| `DesktopAudioDevice1`, `DesktopAudioDevice2`, `AuxAudioDevice1..4` | object                                              | saved source (S-040 `obs_save_source`) bound to output channels 1..6 in this order; key omitted if the channel is empty                          |
+| `sources`                                                          | array                                               | all non-group non-scene sources except the six global audio sources, then all scenes                                                             |
+| `groups`                                                           | array                                               | groups (kept separate so pre-22 versions ignore them). On load `groups` is appended to `sources`; if `sources` is absent, `groups` is used alone |
+| `scene_order`                                                      | array of `{ "name": string }`                       | UI order of scenes                                                                                                                               |
+| `current_scene`                                                    | string                                              | selected (preview) scene name                                                                                                                    |
+| `current_program_scene`                                            | string                                              | program scene name (equals `current_scene` outside studio mode)                                                                                  |
+| `canvases`                                                         | array                                               | extra canvases (non-ephemeral only)                                                                                                              |
+| `current_transition`                                               | string                                              | name of the transition in output channel 0                                                                                                       |
+| `transition_duration`                                              | int ms                                              | missing or 0 on load means 300                                                                                                                   |
+| `transitions`                                                      | array of `{name,id,settings}`                       | user transitions (+ hotkeys per entry)                                                                                                           |
+| `quick_transitions`                                                | array of `{name,duration,hotkeys,id,fade_to_black}` |                                                                                                                                                  |
+| `saved_projectors`                                                 | array                                               |                                                                                                                                                  |
+| `preview_locked`, `scaling_enabled`                                | bool                                                |                                                                                                                                                  |
+| `scaling_level`                                                    | int                                                 |                                                                                                                                                  |
+| `scaling_off_x`, `scaling_off_y`                                   | double                                              |                                                                                                                                                  |
+| `virtual-camera`                                                   | object                                              | only when virtual camera enabled: `type2` int, plus `scene` (SceneOutput) or `source` (SourceOutput)                                             |
+| `modules`                                                          | object                                              | plugin data from save callbacks (Section 5.9), preserved verbatim for plugins that are not loaded                                                |
+| `resolution`                                                       | `{x,y}` int                                         | canvas size at save time (only if known)                                                                                                         |
+| `migration_resolution`                                             | `{x,y}` int                                         | present only when coordinate mode is Relative and the migration size is non-zero                                                                 |
+| `version`                                                          | int                                                 | 1 = absolute coordinates (legacy), 2 = relative coordinates (current; written 2 for Relative, 1 for Absolute)                                    |
 
 Companion files in a profile dir: `service.json`, `streamEncoder.json`, `recordEncoder.json` (obs_data JSON).
 
@@ -291,13 +291,13 @@ All migrations run on every activation, before defaults, and save the profile (`
 - **S-048-R78** `get_streaming_output`: the multitrack-video output if one exists and is running, else the normal stream output; `get_recording_output`, `get_replay_buffer_output`, `get_virtualcam_output`: current output or NULL; all return a new reference.
 - **S-048-R79** Remaining behaviours: `get_locale_string(s)` -> localized string or `s` itself (pointer owned by the lookup); `get_last_recording/screenshot/replay` -> `bstrdup` of the last path (empty string if none); `get_current_record_output_path` -> `bstrdup` of the directory configured for the active mode; `is_theme_dark`; `reset_video` re-applies video settings; `save` is a no-op while saving is disabled (`disableSaving != 0`), otherwise it marks the project changed and schedules a queued save on the UI thread; `take_screenshot()` = program output, `take_source_screenshot(src)`; `push/pop_ui_translation` stack a translator `bool cb(const char*, const char**)`; `set_streaming_service`/`get_streaming_service`/`save_streaming_service`; `copy/can_paste/paste_sceneitem`; `add_undo_redo_action`; `add_canvas(name, ovi, flags)`/`remove_canvas`; `is_safe_mode_enabled`.
 
-**Event numbering** (`enum obs_frontend_event`, values are ABI): 0 STREAMING_STARTING, 1 STREAMING_STARTED, 2 STREAMING_STOPPING, 3 STREAMING_STOPPED, 4 RECORDING_STARTING, 5 RECORDING_STARTED, 6 RECORDING_STOPPING, 7 RECORDING_STOPPED, 8 SCENE_CHANGED, 9 SCENE_LIST_CHANGED, 10 TRANSITION_CHANGED, 11 TRANSITION_STOPPED, 12 TRANSITION_LIST_CHANGED, 13 SCENE_COLLECTION_CHANGED, 14 SCENE_COLLECTION_LIST_CHANGED, 15 PROFILE_CHANGED, 16 PROFILE_LIST_CHANGED, 17 EXIT, 18 REPLAY_BUFFER_STARTING, 19 _STARTED, 20 _STOPPING, 21 _STOPPED, 22 STUDIO_MODE_ENABLED, 23 STUDIO_MODE_DISABLED, 24 PREVIEW_SCENE_CHANGED, 25 SCENE_COLLECTION_CLEANUP, 26 FINISHED_LOADING, 27 RECORDING_PAUSED, 28 RECORDING_UNPAUSED, 29 TRANSITION_DURATION_CHANGED, 30 REPLAY_BUFFER_SAVED, 31 VIRTUALCAM_STARTED, 32 VIRTUALCAM_STOPPED, 33 TBAR_VALUE_CHANGED, 34 SCENE_COLLECTION_CHANGING, 35 PROFILE_CHANGING, 36 SCRIPTING_SHUTDOWN, 37 PROFILE_RENAMED, 38 SCENE_COLLECTION_RENAMED, 39 THEME_CHANGED, 40 SCREENSHOT_TAKEN, 41 CANVAS_ADDED, 42 CANVAS_REMOVED, 43 REPLAY_BUFFER_SAVING.
+**Event numbering** (`enum obs_frontend_event`, values are ABI): 0 STREAMING_STARTING, 1 STREAMING_STARTED, 2 STREAMING_STOPPING, 3 STREAMING_STOPPED, 4 RECORDING_STARTING, 5 RECORDING_STARTED, 6 RECORDING_STOPPING, 7 RECORDING_STOPPED, 8 SCENE_CHANGED, 9 SCENE_LIST_CHANGED, 10 TRANSITION_CHANGED, 11 TRANSITION_STOPPED, 12 TRANSITION_LIST_CHANGED, 13 SCENE_COLLECTION_CHANGED, 14 SCENE_COLLECTION_LIST_CHANGED, 15 PROFILE_CHANGED, 16 PROFILE_LIST_CHANGED, 17 EXIT, 18 REPLAY_BUFFER_STARTING, 19 \_STARTED, 20 \_STOPPING, 21 \_STOPPED, 22 STUDIO_MODE_ENABLED, 23 STUDIO_MODE_DISABLED, 24 PREVIEW_SCENE_CHANGED, 25 SCENE_COLLECTION_CLEANUP, 26 FINISHED_LOADING, 27 RECORDING_PAUSED, 28 RECORDING_UNPAUSED, 29 TRANSITION_DURATION_CHANGED, 30 REPLAY_BUFFER_SAVED, 31 VIRTUALCAM_STARTED, 32 VIRTUALCAM_STOPPED, 33 TBAR_VALUE_CHANGED, 34 SCENE_COLLECTION_CHANGING, 35 PROFILE_CHANGING, 36 SCRIPTING_SHUTDOWN, 37 PROFILE_RENAMED, 38 SCENE_COLLECTION_RENAMED, 39 THEME_CHANGED, 40 SCREENSHOT_TAKEN, 41 CANVAS_ADDED, 42 CANVAS_REMOVED, 43 REPLAY_BUFFER_SAVING.
 
-Emission points (what triggers each event): STREAMING_*, RECORDING_*, REPLAY_BUFFER_* and VIRTUALCAM_* mirror the corresponding output signal/command (starting/stopping when the request is accepted, started/stopped on the output's signal); REPLAY_BUFFER_SAVING when a save is requested and REPLAY_BUFFER_SAVED when the file is written; RECORDING_PAUSED/UNPAUSED on pause toggles. SCENE_CHANGED when the program scene (studio mode) or selected scene (normal) changes; PREVIEW_SCENE_CHANGED when the preview selection changes in studio mode (also emitted on collection load); SCENE_LIST_CHANGED on add/remove/rename/reorder of scenes; TRANSITION_CHANGED / _LIST_CHANGED / _DURATION_CHANGED / _STOPPED (transition finished) / TBAR_VALUE_CHANGED (t-bar moved); SCENE_COLLECTION_CHANGING before and _CHANGED after a switch, _LIST_CHANGED on create/delete/rename/import, _RENAMED on rename, _CLEANUP while the old scene data is torn down (delivered even while saving is disabled); PROFILE_* analogous (Section 5.3); STUDIO_MODE_ENABLED/DISABLED; FINISHED_LOADING once after start-up load completes; SCRIPTING_SHUTDOWN when scripting is stopped before exit; EXIT at shutdown (delivered even while saving is disabled); THEME_CHANGED after a theme switch; SCREENSHOT_TAKEN after a screenshot file is written; CANVAS_ADDED/REMOVED on canvas add/remove.
+Emission points (what triggers each event): STREAMING\_*, RECORDING\_*, REPLAY_BUFFER\_\* and VIRTUALCAM\_\* mirror the corresponding output signal/command (starting/stopping when the request is accepted, started/stopped on the output's signal); REPLAY_BUFFER_SAVING when a save is requested and REPLAY_BUFFER_SAVED when the file is written; RECORDING_PAUSED/UNPAUSED on pause toggles. SCENE_CHANGED when the program scene (studio mode) or selected scene (normal) changes; PREVIEW_SCENE_CHANGED when the preview selection changes in studio mode (also emitted on collection load); SCENE_LIST_CHANGED on add/remove/rename/reorder of scenes; TRANSITION_CHANGED / \_LIST_CHANGED / \_DURATION_CHANGED / \_STOPPED (transition finished) / TBAR_VALUE_CHANGED (t-bar moved); SCENE_COLLECTION_CHANGING before and \_CHANGED after a switch, \_LIST_CHANGED on create/delete/rename/import, \_RENAMED on rename, _CLEANUP while the old scene data is torn down (delivered even while saving is disabled); PROFILE_\* analogous (Section 5.3); STUDIO_MODE_ENABLED/DISABLED; FINISHED_LOADING once after start-up load completes; SCRIPTING_SHUTDOWN when scripting is stopped before exit; EXIT at shutdown (delivered even while saving is disabled); THEME_CHANGED after a theme switch; SCREENSHOT_TAKEN after a screenshot file is written; CANVAS_ADDED/REMOVED on canvas add/remove.
 
 **Function catalog** (99). Format: name -> effect; "BL" = blocking UI invoke, "Q" = queued UI invoke, "atomic" = reads atomic flag. No-callbacks result: `NULL` for pointer returns, `false` for bool, `0` for int, no-op for void.
 
-Windows/handles: `get_main_window` (QMainWindow*), `get_main_window_handle` (native handle), `get_system_tray` (QSystemTrayIcon*).
+Windows/handles: `get_main_window` (QMainWindow\*), `get_main_window_handle` (native handle), `get_system_tray` (QSystemTrayIcon\*).
 Scenes: `get_scene_names`, `get_scenes(list)`, `get_current_scene`, `set_current_scene` (R70-R72).
 Transitions: `get_transitions(list)`, `get_current_transition` (new ref), `set_current_transition(t)`, `get_transition_duration` (ms, int), `set_transition_duration(ms)`, `release_tbar` (end a manual t-bar drag, snapping to the end), `set_tbar_position(0..1023)`, `get_tbar_position`.
 Collections: `get_scene_collections`, `get_current_scene_collection`, `set_current_scene_collection`, `add_scene_collection` (R73).
@@ -347,17 +347,17 @@ Treat INI via S-007 and JSON via S-014. Keep the filename functions free of I/O 
 
 ## 10. Conformance coverage
 
-| Rules | Scripts |
-|---|---|
-| R01-R04 | cli_flags |
+| Rules                                                         | Scripts                                                     |
+| ------------------------------------------------------------- | ----------------------------------------------------------- |
+| R01-R04                                                       | cli_flags                                                   |
 | R05-R08, R12, R18, R20-R26 (non-name parts), R50-R57, R60-R79 | specified from source only (needs Qt or a running frontend) |
-| R10, R11 | migrate_user (`pre31` decision), config_defaults |
-| R13-R17 | migrate_user |
-| R30 | migrate_basic |
-| R31 | resolution_defaults, config_defaults (`defaults basic`) |
-| R40, R41, R47 | names |
-| R42-R45, R65 | recording_names |
-| 4.1-4.3 tables | config_defaults |
+| R10, R11                                                      | migrate_user (`pre31` decision), config_defaults            |
+| R13-R17                                                       | migrate_user                                                |
+| R30                                                           | migrate_basic                                               |
+| R31                                                           | resolution_defaults, config_defaults (`defaults basic`)     |
+| R40, R41, R47                                                 | names                                                       |
+| R42-R45, R65                                                  | recording_names                                             |
+| 4.1-4.3 tables                                                | config_defaults                                             |
 
 ## 11. Open questions
 

@@ -1,12 +1,12 @@
 # S-006 `dstr` dynamic string and string helpers
 
-| | |
-|---|---|
-| Status | Ready for review |
-| Reference | libobs 33.0.1 `util/dstr.c`, `util/dstr.h` |
-| Target crate | `crates/obs-util` (module `dstr`) |
-| Depends on | S-001 (allocator), S-005 (growth convention) |
-| Conformance | `test/conformance/scripts/dstr/` (10 scripts) |
+|              |                                               |
+| ------------ | --------------------------------------------- |
+| Status       | Ready for review                              |
+| Reference    | libobs 33.0.1 `util/dstr.c`, `util/dstr.h`    |
+| Target crate | `crates/obs-util` (module `dstr`)             |
+| Depends on   | S-001 (allocator), S-005 (growth convention)  |
+| Conformance  | `test/conformance/scripts/dstr/` (10 scripts) |
 
 ## 1. Scope
 
@@ -132,20 +132,20 @@ dstr_ncmp, dstr_ncmpi, dstr_end
 
 ## 12. Conformance coverage
 
-| Rule | Scripts |
-|---|---|
+| Rule              | Scripts                                            |
+| ----------------- | -------------------------------------------------- |
 | R01, R03, R10–R12 | `01-copy-and-capacity`, `04-remove-all-and-resize` |
-| R02 | `04-remove-all-and-resize` |
-| R13, R14 | `02-cat-and-growth` |
-| R15, R16 | `03-insert-remove` |
-| R20 | `08-compare-and-find` |
-| R21 | `05-replace` |
-| R22, R23 | `06-depad-and-substrings` |
-| R24 | `10-case` |
-| R30–R34 | `08-compare-and-find` |
-| R40 | `09-strlist-split` |
-| R60–R63 | `07-printf` |
-| R04, R05, R25 | unit tests in the crate (not scripted) |
+| R02               | `04-remove-all-and-resize`                         |
+| R13, R14          | `02-cat-and-growth`                                |
+| R15, R16          | `03-insert-remove`                                 |
+| R20               | `08-compare-and-find`                              |
+| R21               | `05-replace`                                       |
+| R22, R23          | `06-depad-and-substrings`                          |
+| R24               | `10-case`                                          |
+| R30–R34           | `08-compare-and-find`                              |
+| R40               | `09-strlist-split`                                 |
+| R60–R63           | `07-printf`                                        |
+| R04, R05, R25     | unit tests in the crate (not scripted)             |
 
 ## 13. Open questions
 
@@ -158,5 +158,7 @@ dstr_ncmp, dstr_ncmpi, dstr_end
 - `libobs/util/dstr.h`
 
 - **S-006-R64** Construction/lifecycle inlines: `dstr_init`, `dstr_init_move`/`dstr_init_move_array` (take ownership of an existing buffer), `dstr_init_copy`/`dstr_init_copy_dstr`, `dstr_free`, `dstr_array_free`, `dstr_move`/`dstr_move_array`, `dstr_copy_dstr` — ownership rules per the earlier sections.
+
 - **S-006-R65** Capacity/element inlines: `dstr_reserve`, `dstr_ensure_capacity`, `dstr_resize`, `dstr_is_empty` and the remaining surface of the 18 non-trivial inlines (length, front/back, clear, push/pop, push-array) — the growth rule is the one pinned in the earlier sections.
+
 - **S-006-R66** Append/format inlines: the `dstr_printf`/`dstr_cat` family grows the buffer (`vsnprintf`-sized) then appends; `dstr_cat_quoted` wraps in double quotes; the wide variants convert per S-023.

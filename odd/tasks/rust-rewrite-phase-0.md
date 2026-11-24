@@ -10,28 +10,32 @@ S2 (`docs/rust-rewrite-plan.md` §5, verbatim): "Work in stacked PRs, one per cr
 
 S3 (`docs/rust-rewrite/phase-0-foundation.md`, verbatim): "Start the PR stack with the `docs:` tasks (P0-01 to P0-06)."
 
-S4 (P0-01 task, verbatim): "- [ ] **P0-01 ADR: migration strategy** (S)\n  - Do: record the strangler-fig decision, the "every phase ships" rule, and the exit criteria per phase.\n  - Deliverables: `docs/adr/0001-strangler-migration.md`.\n  - Done when: reviewed by two maintainers; alternatives (big-bang, new-repo) are listed with reasons for rejection."
+S4 (P0-01 task, verbatim): "- [ ] **P0-01 ADR: migration strategy** (S)\\n - Do: record the strangler-fig decision, the "every phase ships" rule, and the exit criteria per phase.\\n - Deliverables: `docs/adr/0001-strangler-migration.md`.\\n - Done when: reviewed by two maintainers; alternatives (big-bang, new-repo) are listed with reasons for rejection."
 
 S5 (P0-01 subtasks, `subtasks/phase-0-subtasks.md` §P0-01; full Files/Steps verbatim there, "Done when" quoted):
+
 - P0-01.1: "Done when: template renders on GitHub and README lists how to add an ADR."
 - P0-01.2: "Done when: every number has a reproducible command in a footnote, e.g. `git ls-files libobs/ | grep -E '\.(c|cpp|cc|h|hpp|m|mm|swift|ui|effect)$' | xargs cat | wc -l`."
 - P0-01.3: "Done when: each alternative has at least two concrete reasons."
 - P0-01.4: "Done when: table has 8 rows and a measurable check each."
 - P0-01.5: "Done when: PR merged; ADR index lists it." (human: maintainer reviews)
 
-S6 (P0-02 task, verbatim): "- [ ] **P0-02 ADR: plugin ABI policy** (S)\n  - Source: `libobs/obs-module.h`, `obs-source.h`, `obs-output.h`, `obs-encoder.h`, `obs-service.h`.\n  - Do: define the C ABI compatibility policy — **best-effort** per D-02 (not a frozen hard requirement: compatibility is actively maintained, breakage allowed only with a deprecation path per D-05), how versions are bumped (`LIBOBS_API_VER`), and how a native Rust plugin API coexists.\n  - Deliverables: `docs/adr/0002-plugin-abi.md`.\n  - Done when: lists every header in the compat-tracked ABI and the ADR/deprecation rules for changes."
+S6 (P0-02 task, verbatim): "- [ ] **P0-02 ADR: plugin ABI policy** (S)\\n - Source: `libobs/obs-module.h`, `obs-source.h`, `obs-output.h`, `obs-encoder.h`, `obs-service.h`.\\n - Do: define the C ABI compatibility policy — **best-effort** per D-02 (not a frozen hard requirement: compatibility is actively maintained, breakage allowed only with a deprecation path per D-05), how versions are bumped (`LIBOBS_API_VER`), and how a native Rust plugin API coexists.\\n - Deliverables: `docs/adr/0002-plugin-abi.md`.\\n - Done when: lists every header in the compat-tracked ABI and the ADR/deprecation rules for changes."
+
 - P0-02.1: "Done when: list in ADR matches the install set exactly (script output attached)." (script re-run pending L3; list = verified install-set snapshot in the subtask file)
 - P0-02.2: "Done when: three worked examples (add field at end, remove symbol, change enum value) are classified."
 - P0-02.3: "Done when: sequence diagram of module load for both kinds is in the ADR."
 - P0-02.4: "Done when: a test PR touching `obs-source.h` requests the owners automatically." (verification pending remote; files created)
 
-S7 (P0-05 task, verbatim): "- [ ] **P0-05 ADR: unsafe, MSRV, dependency policy** (S)\n  - Do: define `unsafe` rules (FFI and platform boundaries only, `// SAFETY:` required), MSRV (latest stable), licence allow-list (GPLv2+ compatible), and "stdlib first" for deps.\n  - Deliverables: `docs/adr/0005-code-policy.md`.\n  - Done when: ADR 0005 merged with all five rules and the dependency checklist (P0-05.3)."
+S7 (P0-05 task, verbatim): "- [ ] **P0-05 ADR: unsafe, MSRV, dependency policy** (S)\\n - Do: define `unsafe` rules (FFI and platform boundaries only, `// SAFETY:` required), MSRV (latest stable), licence allow-list (GPLv2+ compatible), and "stdlib first" for deps.\\n - Deliverables: `docs/adr/0005-code-policy.md`.\\n - Done when: ADR 0005 merged with all five rules and the dependency checklist (P0-05.3)."
+
 - P0-05.1: "Done when: lint config committed in P0-07."
 - P0-05.2: "Done when: policy text merged." (MSRV CI job lands in P0-09; no `.github/` in this checkout)
 - P0-05.3: "Done when: checklist is in `CONTRIBUTING.md`."
 - P0-05.4: "Done when: rule referenced from ADR."
 
-S8 (P0-06 task, verbatim): "- [ ] **P0-06 ADR: concurrency model** (S)\n  - Source: `libobs/obs-video.c`, `obs-audio.c`, `media-io/video-io.c`, `audio-io.c`.\n  - Do: document the current thread layout (graphics thread, audio thread, encoder threads, output threads) and the target one (real-time threads, lock-free queues, tokio only for network).\n  - Done when: lists every lock in `obs-internal.h` and its replacement."
+S8 (P0-06 task, verbatim): "- [ ] **P0-06 ADR: concurrency model** (S)\\n - Source: `libobs/obs-video.c`, `obs-audio.c`, `media-io/video-io.c`, `audio-io.c`.\\n - Do: document the current thread layout (graphics thread, audio thread, encoder threads, output threads) and the target one (real-time threads, lock-free queues, tokio only for network).\\n - Done when: lists every lock in `obs-internal.h` and its replacement."
+
 - P0-06.1: "Done when: diagram with at least 6 thread kinds is in the ADR." (primer §4 table in; source line refs pending L3)
 - P0-06.2: "Done when: table has every mutex; unknown entries are marked TODO with an owner." (46 mutexes per `guides/phase-0-guide.md`; table pending L3 — section marked TODO with owner)
 - P0-06.3: "Done when: hierarchy rule can be checked by a debug-only lock-order assert."
@@ -41,9 +45,10 @@ S9 (Phase 0 exit criteria, verbatim): "Exit criteria: ADRs 1-6 merged, CI green 
 
 S10 (README rule 8, verbatim): "Commit footer: `Assisted-by: [Model] ([Effort]) via [Tool]` (omit the effort brackets when the model has no effort setting)."
 
-S11 (plan §1 measured table, verbatim): "| Core engine (`libobs`) | `libobs/` | 94k | C (+ObjC for macOS) |\n| Graphics backends | `libobs-opengl`, `libobs-d3d11`, `libobs-metal`, `libobs-winrt` | 17k | C / C++ / Swift |\n| Frontend (Qt6 GUI) | `frontend/` | 109k | C++ (+ `.ui`) |\n| Plugins (41 modules) | `plugins/` | 172k | C / C++ / ObjC |\n| Shared helpers | `shared/` | 22k | C / C++ |\n| Vendored deps | `deps/` (blake2, glad, json11, libcaption, libdshowcapture, ...) | 70k | C / C++ |" + "Total about 494k tracked source lines (`tools/task-coverage.py` against libobs 33.0.1), 15,819 commits, 3 OSes, 41 plugin modules." + "It is ~680 exported `EXPORT` symbols in `obs.h` alone."
+S11 (plan §1 measured table, verbatim): "| Core engine (`libobs`) | `libobs/` | 94k | C (+ObjC for macOS) |\\n| Graphics backends | `libobs-opengl`, `libobs-d3d11`, `libobs-metal`, `libobs-winrt` | 17k | C / C++ / Swift |\\n| Frontend (Qt6 GUI) | `frontend/` | 109k | C++ (+ `.ui`) |\\n| Plugins (41 modules) | `plugins/` | 172k | C / C++ / ObjC |\\n| Shared helpers | `shared/` | 22k | C / C++ |\\n| Vendored deps | `deps/` (blake2, glad, json11, libcaption, libdshowcapture, ...) | 70k | C / C++ |" + "Total about 494k tracked source lines (`tools/task-coverage.py` against libobs 33.0.1), 15,819 commits, 3 OSes, 41 plugin modules." + "It is ~680 exported `EXPORT` symbols in `obs.h` alone."
 
 S12 (confirmed decisions, verbatim from `DECISIONS-NEEDED.md`):
+
 - D-01: "**Confirmed (user, 2026-11-05):** `cxx-qt` — keep Qt6, migrate the `.ui` forms; P0-04 still prototypes the alternatives as due diligence, but the Phase 6 wording stands unless the prototype surfaces a blocker"
 - D-02: "**Confirmed (user, 2026-11-05): Best-effort.** `obs-ffi` still serves the C ABI (`obs.h` & friends) from Phase 1 onward and compatibility is actively maintained, but it is not a frozen hard requirement: breakage is allowed only with a deprecation path and migration docs (the D-05 timeline governs removal). Phase files updated 2026-11-05"
 - D-03: "**Confirmed (user, 2026-11-05):** Yes — wgpu is the one backend; legacy backends stay selectable (`--graphics wgpu\|legacy`) until parity (P3-22 adapters), deleted in P7-01 (D-13: D3D11/Metal ported to Rust per S-078/S-079; OpenGL stays C)"
@@ -53,9 +58,11 @@ S12 (confirmed decisions, verbatim from `DECISIONS-NEEDED.md`):
 - D-24: "**Confirmed (user, 2026-11-06): Track latest stable.** Bump within one release cycle (P0-05.2 already encodes this: ADR 0005 + MSRV CI job). No task-file changes."
 
 S13 (user instruction 2026-11-10, verbatim): "review-readability has the same model configured as all others, the `solheim/qwen3.8-37b` so do your thing and review, fix and work at the all other open tasks"
+
 - Note: the local catalog only lists `solheim/qwen3.8-27b` (same as all sibling review agents); `solheim/qwen3.8-37b` is not resolvable in `models.json`, so `review-readability.md` was configured with `solheim/qwen3.8-27b` to match all other reviewers (L9).
 
 S14 (new-task "Done when" quotes, `subtasks/phase-0-subtasks.md`):
+
 - P0-07.1: "Done when: `cargo build --workspace` passes." / P0-07.2: "Done when: `cargo test` and `cargo clippy` run on all crates." / P0-07.3: "Done when: rustfmt, clippy, and toolchain configs committed." (P0-07.4 "CI runs on 3 OSes" — pending P0-09/CI)
 - P0-10.1: "Done when: `cargo deny check licenses` passes." / P0-10.2: "Done when: rules documented."
 - P0-11.1: "Done when: `.gitattributes` has `*.golden -text` (and `*.text -text`)."
@@ -66,22 +73,22 @@ S14 (new-task "Done when" quotes, `subtasks/phase-0-subtasks.md`):
 
 ## Tasks
 
-| ID | Task | S# | Route | Commit |
-|---|---|---|---|---|
-| T1 | P0-01: `docs/adr/0000-template.md`, `docs/adr/README.md`, `docs/adr/0001-strangler-migration.md` | S2,S3,S4,S5,S11 | inline | 892b402 |
-| T2 | P0-05: `docs/adr/0005-code-policy.md` (+ P0-10.3 exception section), `CONTRIBUTING.md` dependency checklist | S7,S12 | inline | 8aae571 |
-| T3 | P0-02: `docs/adr/0002-plugin-abi.md`, `CODEOWNERS`, `CONTRIBUTING.md` public-header rule | S6,S12 | inline | 396d70c |
-| T4 | P0-06: `docs/adr/0006-concurrency.md` (target model + RT rules; P0-06.2 mutex table pending L3) | S8,S12 | inline | ce1bfb8 |
-| T5 | P0-03: ADR 0003 graphics | S12 (D-03) | blocked: wgpu quad prototype + DMA-BUF/DXGI/IOSurface imports on 3 OS/GPUs (P0-03.1–.3, hardware) | — |
-| T6 | P0-04: ADR 0004 GUI toolkit | S12 (D-01) | blocked: cxx-qt/Slint/egui dock prototypes (P0-04.2–.3, hardware) | — |
-| T7 | P0-11.1: `.gitattributes` `*.text`/`*.golden` `-text` verification (patterns pre-existed; `git check-attr` = unset) | S14 | inline | 5a7ee84 |
-| T8 | P0-20.1: `docs/tests/README.md` (one-matrix-per-test-file rule) + `docs/tests/_template.md` | S14 | inline | f5a2cc1 |
-| T9 | P0-07.1–.3: root `Cargo.toml` workspace (9 crates), `rust-toolchain.toml`, `rustfmt.toml`, `clippy.toml`, `.cargo/config.toml`, skeleton crates with smoke tests | S14 | inline (workspace root = this repo root, L10) | 53cc6d5 |
-| T10 | P0-19.2: `.github/ISSUE_TEMPLATE/rust-task.yml` (YAML-validated) | S14 | inline | 8758ca6 |
-| T11 | P0-19.1: 12 labels on `ripmav/obs-rust`; P0-19.3: 8 phase tracking issues #2–#9 (phase file, subtasks, guide, verbatim exit criteria, `rust-rewrite`+`phase-N` labels) | S14 | remote (gh) | fc6250f (tick commit) |
-| T12 | P0-13.1–.4: `crates/obs-golden` (10th member) — `assert_golden_str`/`assert_golden_bytes`, `UPDATE_GOLDEN=1` + in-crate CI refusal, line/byte mismatch reports, demo golden, 7 tests | S14,S12 (stdlib-first rule 4) | inline | 248c013 |
-| T13 | P0-10.1–.2: `deny.toml` (D-07 allow-list in SPDX terms + GPL-2.0-or-later, openssl-sys ban, multiple-versions warn, unknown-registry deny); `cargo deny check` all ok | S14,S12 (D-07) | inline | 82011a1 |
-| T14 | P0-20.2: `docs/tests/obs-golden.md` matrix (7 cases, pass); P0-20.3: `docs/tests/abi-conformance.md` matrix (lifecycle cases from P0-15 spec, pending rows) | S14 | inline | 3364bbd |
+| ID  | Task                                                                                                                                                                                 | S#                            | Route                                                                                             | Commit                |
+| --- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ----------------------------- | ------------------------------------------------------------------------------------------------- | --------------------- |
+| T1  | P0-01: `docs/adr/0000-template.md`, `docs/adr/README.md`, `docs/adr/0001-strangler-migration.md`                                                                                     | S2,S3,S4,S5,S11               | inline                                                                                            | 892b402               |
+| T2  | P0-05: `docs/adr/0005-code-policy.md` (+ P0-10.3 exception section), `CONTRIBUTING.md` dependency checklist                                                                          | S7,S12                        | inline                                                                                            | 8aae571               |
+| T3  | P0-02: `docs/adr/0002-plugin-abi.md`, `CODEOWNERS`, `CONTRIBUTING.md` public-header rule                                                                                             | S6,S12                        | inline                                                                                            | 396d70c               |
+| T4  | P0-06: `docs/adr/0006-concurrency.md` (target model + RT rules; P0-06.2 mutex table pending L3)                                                                                      | S8,S12                        | inline                                                                                            | ce1bfb8               |
+| T5  | P0-03: ADR 0003 graphics                                                                                                                                                             | S12 (D-03)                    | blocked: wgpu quad prototype + DMA-BUF/DXGI/IOSurface imports on 3 OS/GPUs (P0-03.1–.3, hardware) | —                     |
+| T6  | P0-04: ADR 0004 GUI toolkit                                                                                                                                                          | S12 (D-01)                    | blocked: cxx-qt/Slint/egui dock prototypes (P0-04.2–.3, hardware)                                 | —                     |
+| T7  | P0-11.1: `.gitattributes` `*.text`/`*.golden` `-text` verification (patterns pre-existed; `git check-attr` = unset)                                                                  | S14                           | inline                                                                                            | 5a7ee84               |
+| T8  | P0-20.1: `docs/tests/README.md` (one-matrix-per-test-file rule) + `docs/tests/_template.md`                                                                                          | S14                           | inline                                                                                            | f5a2cc1               |
+| T9  | P0-07.1–.3: root `Cargo.toml` workspace (9 crates), `rust-toolchain.toml`, `rustfmt.toml`, `clippy.toml`, `.cargo/config.toml`, skeleton crates with smoke tests                     | S14                           | inline (workspace root = this repo root, L10)                                                     | 53cc6d5               |
+| T10 | P0-19.2: `.github/ISSUE_TEMPLATE/rust-task.yml` (YAML-validated)                                                                                                                     | S14                           | inline                                                                                            | 8758ca6               |
+| T11 | P0-19.1: 12 labels on `ripmav/obs-rust`; P0-19.3: 8 phase tracking issues #2–#9 (phase file, subtasks, guide, verbatim exit criteria, `rust-rewrite`+`phase-N` labels)               | S14                           | remote (gh)                                                                                       | fc6250f (tick commit) |
+| T12 | P0-13.1–.4: `crates/obs-golden` (10th member) — `assert_golden_str`/`assert_golden_bytes`, `UPDATE_GOLDEN=1` + in-crate CI refusal, line/byte mismatch reports, demo golden, 7 tests | S14,S12 (stdlib-first rule 4) | inline                                                                                            | 248c013               |
+| T13 | P0-10.1–.2: `deny.toml` (D-07 allow-list in SPDX terms + GPL-2.0-or-later, openssl-sys ban, multiple-versions warn, unknown-registry deny); `cargo deny check` all ok                | S14,S12 (D-07)                | inline                                                                                            | 82011a1               |
+| T14 | P0-20.2: `docs/tests/obs-golden.md` matrix (7 cases, pass); P0-20.3: `docs/tests/abi-conformance.md` matrix (lifecycle cases from P0-15 spec, pending rows)                          | S14                           | inline                                                                                            | 3364bbd               |
 
 Out of scope / remaining (L14): P0-08 (Corrosion integration — needs CMake tree), P0-09 (CI pipeline + branch protection — remote/CI unit), P0-12 (BUILDING.md — clean-env build untestable here), P0-11.2/P0-14/P0-15/P0-16/P0-17 (need the C reference checkout linked, L3), P0-18 (real-world corpus — user consent on sources), P0-20.4 (CI check), P0-21 (phase review — maintainer), plus the open subtask tails P0-02.1, P0-05.2, P0-06.2, P0-07.4, P0-01.5, P0-02.4.
 

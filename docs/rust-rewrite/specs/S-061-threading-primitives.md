@@ -1,13 +1,13 @@
 # S-061 Threading primitives (os_event, os_sem, platform threading glue)
 
-| | |
-|---|---|
-| Status | Draft (6 conformance vectors, round 11) |
-| Spec version | initial |
-| Reference | OBS Studio 33.0.1, `libobs/util/threading-*` |
-| Target crate | `crates/obs-util` (module `threading`) |
-| Depends on | S-001 (allocators used by the glue) |
-| Conformance | `test/conformance/scripts/threading/` (6 scripts, round 11) |
+|              |                                                             |
+| ------------ | ----------------------------------------------------------- |
+| Status       | Draft (6 conformance vectors, round 11)                     |
+| Spec version | initial                                                     |
+| Reference    | OBS Studio 33.0.1, `libobs/util/threading-*`                |
+| Target crate | `crates/obs-util` (module `threading`)                      |
+| Depends on   | S-001 (allocators used by the glue)                         |
+| Conformance  | `test/conformance/scripts/threading/` (6 scripts, round 11) |
 
 ## 1. Scope
 
@@ -87,7 +87,7 @@ wrong.
 
 1. The exact Windows errno mapping table for event/semaphore failures (the source maps a
    handful of Win32 codes; the full table is not re-derived here).
-2. `os_set_thread_name` truncation length per platform — the source pins 15 chars on
+1. `os_set_thread_name` truncation length per platform — the source pins 15 chars on
    glibc (`bstrdup_n(name, 15)`); Apple/FreeBSD paths pass the name through untruncated.
 
 Round 10 second-author check (2026-11-05): corrected the timeout unit and return-value
@@ -107,12 +107,12 @@ acquire/release); pinned the glibc 15-char thread-name limit.
 guarantee described in `test/conformance/README.md`). Vectors regenerate
 bit-identically (checked round 11).
 
-| Rule | Scripts |
-|---|---|
-| R01 | `01-events-auto`, `02-events-manual`, `03-event-timeout` (0 / `EAGAIN` / `ETIMEDOUT` returns; AUTO consumption by wait, timedwait and try) |
-| R02 | `01-events-auto`, `02-events-manual` (MANUAL stays set until reset; `os_event_destroy(NULL)` no-op) |
-| R03 | `03-event-timeout` (timeout vs. pre-signal vs. signal-during-wait; the mutex/cond mechanism itself is internal and not tested) |
-| R04 | `04-semaphores` (counting, wake of a waiting thread, NULL guards return -1, negative initial count fails with rc=-1) |
-| R05 | `05-thread-name` (glibc: 15-char truncation, empty name accepted, read-back via `pthread_getname_np`) |
-| R06 | (Windows-only helpers — not testable on the POSIX reference) |
-| R07 | `06-mutex-init` (value-init, recursive re-entrant lock) |
+| Rule | Scripts                                                                                                                                    |
+| ---- | ------------------------------------------------------------------------------------------------------------------------------------------ |
+| R01  | `01-events-auto`, `02-events-manual`, `03-event-timeout` (0 / `EAGAIN` / `ETIMEDOUT` returns; AUTO consumption by wait, timedwait and try) |
+| R02  | `01-events-auto`, `02-events-manual` (MANUAL stays set until reset; `os_event_destroy(NULL)` no-op)                                        |
+| R03  | `03-event-timeout` (timeout vs. pre-signal vs. signal-during-wait; the mutex/cond mechanism itself is internal and not tested)             |
+| R04  | `04-semaphores` (counting, wake of a waiting thread, NULL guards return -1, negative initial count fails with rc=-1)                       |
+| R05  | `05-thread-name` (glibc: 15-char truncation, empty name accepted, read-back via `pthread_getname_np`)                                      |
+| R06  | (Windows-only helpers — not testable on the POSIX reference)                                                                               |
+| R07  | `06-mutex-init` (value-init, recursive re-entrant lock)                                                                                    |

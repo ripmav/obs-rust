@@ -1,12 +1,12 @@
 # S-039 Scripting core (language-independent part)
 
-| | |
-|---|---|
-| Status | Draft (no Rust sufficiency check performed, by instruction) |
-| Reference | libobs 33.0.1 `shared/obs-scripting/` : `obs-scripting.c`, `obs-scripting-logging.c`, `obs-scripting-callback.h` (header-inline), `cstrcache.cpp`, `obs-scripting-internal.h`; descriptive only: `obs-scripting-lua.c/.h`, `obs-scripting-python.c`, `obslua.i`, `obspython.i` |
-| Target crate | `crates/obs-scripting-core` |
-| Depends on | S-002 (calldata), S-004 (signals), S-014 (obs_data), S-015 (obs_properties), S-034 (hotkeys) |
-| Conformance | `test/conformance/scripts/scripting/` (14 scripts) |
+|              |                                                                                                                                                                                                                                                                                |
+| ------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Status       | Draft (no Rust sufficiency check performed, by instruction)                                                                                                                                                                                                                    |
+| Reference    | libobs 33.0.1 `shared/obs-scripting/` : `obs-scripting.c`, `obs-scripting-logging.c`, `obs-scripting-callback.h` (header-inline), `cstrcache.cpp`, `obs-scripting-internal.h`; descriptive only: `obs-scripting-lua.c/.h`, `obs-scripting-python.c`, `obslua.i`, `obspython.i` |
+| Target crate | `crates/obs-scripting-core`                                                                                                                                                                                                                                                    |
+| Depends on   | S-002 (calldata), S-004 (signals), S-014 (obs_data), S-015 (obs_properties), S-034 (hotkeys)                                                                                                                                                                                   |
+| Conformance  | `test/conformance/scripts/scripting/` (14 scripts)                                                                                                                                                                                                                             |
 
 ## 1. Scope
 
@@ -65,6 +65,7 @@ settings object is private to the script and handed out with an extra reference.
 ## 5. Behaviour
 
 ### Subsystem lifecycle
+
 - **S-039-R01** `set_module(m)` stores one process-global pointer (NULL allowed); `obs_current_module()` returns the last stored value, NULL initially.
 - **S-039-R02** `supported_formats()` returns a static NULL-terminated array, independent of load state: `"lua"` if the Lua backend is built in, then `"py"` if Python is. Extensions are given **without** the dot.
 - **S-039-R03** `obs_scripting_load()` initialises the detach mutex, the defer machinery (R30) and starts the defer worker, then calls each built-in backend's `L_load()` (Lua first, then Python); with Python it additionally attempts `load_python(NULL)` on platforms other than Windows/macOS. It returns true on success; if any primitive cannot be created it undoes the earlier ones and returns false without calling a backend. Afterwards the subsystem counts as *loaded*.
@@ -72,6 +73,7 @@ settings object is private to the script and handed out with an extra reference.
 - **S-039-R05** Scripts that still exist when unload runs are not touched by it (the frontend destroys them first).
 
 ### Script creation and dispatch
+
 - **S-039-R10** `obs_script_create(path, settings)` returns NULL, **silently**, when the subsystem is not loaded.
 - **S-039-R11** `path == NULL`: WARNING `obs-scripting: [obs_script_create] path is null`, return NULL.
 - **S-039-R12** The extension is everything from the **last** `'.'` in the whole path string (a dot inside a directory name counts). No `'.'` -> return NULL silently.
@@ -81,7 +83,9 @@ settings object is private to the script and handed out with an extra reference.
 - **S-039-R16** Backend contract assumed by the core (observed from the Lua backend and reproduced by the fake): `create` sets `type`, copies `path`, sets `file` to the text after the last `'/'` (or the whole path when none), creates `settings` as a fresh object into which the supplied settings (if any) are applied, then loads the script (so `loaded` and `desc` are meaningful on return). A successful load calls `update(script, NULL)` once. `desc.array` stays NULL until the script supplies a description.
 
 ### Accessors
+
 All functions below log WARNING `obs-scripting: [<function>] <param> is null` for a NULL script argument; `<function>` is the C function name and `<param>` the C parameter name (`script`).
+
 - **S-039-R20** `get_description` -> `desc.array` (possibly NULL even for a valid script); NULL script -> NULL.
 - **S-039-R21** `get_path`/`get_file` -> the string, or `""` when the stored array is NULL **or** the script is NULL (never NULL).
 - **S-039-R22** `get_lang` -> `type`; NULL script -> UNKNOWN. `loaded(script)` -> flag; NULL -> false.
@@ -93,9 +97,11 @@ All functions below log WARNING `obs-scripting: [<function>] <param> is null` fo
 - **S-039-R28** `destroy(script)`: NULL is silently ignored. Lua/Python: backend `unload` (no-op when not loaded) then backend `destroy`, which frees everything. UNKNOWN type: does nothing (the object is leaked, Q-3). No subsystem-loaded check.
 
 ### Python fallbacks (build without Python)
+
 - **S-039-R29** Without a Python backend: `load_python(path)` -> false, `python_loaded()` -> false, `python_runtime_linked()` -> **true** (Q-1), `python_version(buf, len)` writes the empty string (`buf[0] = 0`, `len` ignored).
 
 ### Deferred-call queue
+
 - **S-039-R30** `defer_call_post(fn, arg)` appends `(fn, arg)` to a FIFO and wakes the worker; it never blocks on the call itself. Posting while the queue is shut down (R34) silently drops the item.
 - **S-039-R31** One worker thread (named `scripting: defer`) pops entries in FIFO order and runs each call to completion before the next. A call runs on that thread, never on the poster's thread.
 - **S-039-R32** Therefore a job posted after a signalling job runs after it, and when a signalling job has fired every earlier job has finished (the barrier used by R27 and by the tests: `deferred (N)` lists).
@@ -103,7 +109,9 @@ All functions below log WARNING `obs-scripting: [<function>] <param> is null` fo
 - **S-039-R34** Shutdown (inside R04): under the mutex set the exit flag and free the queue, then wake the worker and join it. Entries not yet executed are discarded (unspecified which); the worker exits without running anything once it sees the flag.
 
 ### Script callback records
+
 Header-inline in the reference, so plugins/backends compile it: see section 6.
+
 - **S-039-R40** `add(first_ptr, script, extra_size)` allocates a zero-filled record of `sizeof(record) + extra_size` bytes, sets `script`, inserts it at the **head** of the list headed by `*first_ptr` and returns it; the `extra_size` tail bytes (directly after the record) are zero.
 - **S-039-R41** `remove(cb)`: set `removed` (atomic) first; unlink from its owner list; insert at the head of the global *detached* list (under the detach mutex); then, if set, call `on_remove(cb)` -- i.e. the hook sees `removed == true` and the record already at the head of the detached list. Memory, tail bytes and `extra` calldata stay intact.
 - **S-039-R42** `free(cb)`: under the detach mutex unlink from whatever list it is on (detached or still owner-attached, the same fix-up applies), then release `extra` and the record. The `on_remove` hook is not called.
@@ -112,11 +120,13 @@ Header-inline in the reference, so plugins/backends compile it: see section 6.
 - **S-039-R45** Unload (R04) counts and frees only the records on the detached list; records still on an owner list are not counted.
 
 ### Logging
+
 - **S-039-R50** `script_log(script, level, fmt, ...)` formats into a 2048-byte buffer that starts with a prefix, then the message (truncated so the whole buffer is at most 2047 characters + NUL).
 - **S-039-R51** Prefix: `"[<Lang>: <file>] "` with `<Lang>` = `Lua`, `Python` or `(Unknown language)` by `script->type`, `<file>` = `script->file.array`; for a NULL script the prefix is `"[Unknown Script] "`.
 - **S-039-R52** If a log handler is installed it is called FIRST with `(param, script, level, message-without-prefix)` (script may be NULL); then the prefixed text is logged with `blog(level, "%s", ...)`. `set_log_callback(NULL, ...)` removes the handler. Level numbers are libobs's (ERROR 100, WARNING 200, INFO 300, DEBUG 400).
 
 ### String cache
+
 - **S-039-R60** `cstrcache_get(s)`: NULL or `""` -> `""` (a shared constant, not a cache entry). Otherwise return a pointer to an interned copy: equal content (byte-wise up to NUL) gives the **same pointer** every time; the pointer is never the argument; it stays valid and its content unchanged for the life of the process, however many other strings are interned later. The table is never freed; no locking (not thread-safe, Q-6).
 
 ## 6. Algorithms (own pseudocode)
@@ -132,6 +142,7 @@ remove(cb):  atomic cb.removed = true ; unlink(cb)
 free(cb):    lock(detach) ; unlink(cb) ; unlock ; release(cb.extra) ; release(cb)
 record layout (W=8): next@0 prev_next@8 on_remove@16 script@24 extra(calldata: stack@32 size@40 capacity@48 fixed@56) removed@57 ; sizeof = 64
 ```
+
 The record layout matters only when a Rust implementation shares records with C backends.
 
 ## 7. Backend-visible semantics (descriptive, NOT conformance-tested)
@@ -139,10 +150,10 @@ The record layout matters only when a Rust implementation shares records with C 
 Read from the Lua backend; the Python backend mirrors it except where noted. A Rust re-implementation must reproduce these for scripts to behave the same.
 
 1. **Script entry points** (looked up as globals after the file ran): `script_properties`, `script_update`, `script_save`, `script_defaults(settings)`, `script_description()`, `script_load(settings)`, `script_tick(seconds)`, `script_unload()`. A file whose chunk returns exactly one boolean `false` fails to load. Load order after running the chunk: collect properties/update/save hooks, call `script_defaults(settings)`, `script_description()` (string stored in `desc`), `script_load(settings)`, register `script_tick`. Errors in these calls are logged (WARNING via `script_log`) and do not fail the load (the description error text wrongly says "script_defaults", Q-5). Unload: mark all of the script's callbacks removed, undefine script-defined sources, drop tick, call `script_unload()`, `remove` every callback record, close the interpreter, set loaded false.
-2. **Deferred registration.** API calls made by a script that connect something to libobs (`timer_add`, `obs_add_tick_callback`, `obs_add_main_render_callback`, `signal_handler_connect[_global]`) allocate a callback record immediately but perform the actual libobs connection through `defer_call_post` (so it happens on the worker thread, never inside a libobs lock the script call may be under). Removal flags the record (`removed`) at once; the dispatch functions check the flag and return (signal callbacks additionally call `signal_handler_remove_current()`), so a removed callback never fires even if the disconnect is still pending. Hotkey callbacks are re-posted to the worker (`pressed`/`unpressed` jobs); `on_remove` of a hotkey record posts an unregister job.
-3. **Calling convention.** Before invoking a script function the dispatcher takes the script's recursive mutex, sets thread-local `current script` and `current callback`, calls with protected-call semantics, logs failures as WARNING `Failed to call <fn> for <what>: <error>`, restores the thread-locals and unlocks. `remove_current_callback()` removes the thread-local current callback. Button callbacks and property-modified callbacks return a boolean (non-boolean result = false); signal callbacks receive the calldata, global ones receive `(signal_name, calldata)`.
-4. **Timers.** `timer_add(fn, ms)`: Lua ignores the call if `ms == 0` (Python does not check; Q-4). Interval = `ms * 1_000_000` ns; `last_ts` = current video frame time at the call. The worker later links the timer into the global timer list. Each libobs tick (frame time `ts`): for every timer, removed -> unlink; else if `ts - last_ts >= interval`: call once and `last_ts += interval` (at most one call per tick; a late timer catches up one interval per tick). `timer_remove(fn)` removes the **first** matching record in the script's list (= most recently added). Signal disconnect matches function identity + handler + signal name.
-5. **Exposed API.** The bindings expose the public libobs headers (graphics math, `obs.h`, `obs-source.h`, `obs-data.h`, `obs-properties.h`, `obs-interaction.h`, `obs-hotkey.h`, calldata/proc/signal, `bmem/base/platform/config-file` helpers, frontend API when built with the frontend), with `blog` replaced by a `(level, message)` wrapper and these replaced by script-aware versions: tick/render callbacks, `obs_enum_sources`, `obs_source_enum_filters`, scene item enumeration (return lists; must be released with `source_list_release`/`sceneitem_list_release`), `obs_properties_add_button`, `obs_property_set_modified_callback`, signal connect/disconnect (+global), `obs_hotkey_register_frontend`/`unregister`, `timer_add/remove`, `remove_current_callback`, `calldata_source/sceneitem`, `script_log`-based `print`/error hooks. Plain pointer-taking libobs functions are exposed mechanically.
+1. **Deferred registration.** API calls made by a script that connect something to libobs (`timer_add`, `obs_add_tick_callback`, `obs_add_main_render_callback`, `signal_handler_connect[_global]`) allocate a callback record immediately but perform the actual libobs connection through `defer_call_post` (so it happens on the worker thread, never inside a libobs lock the script call may be under). Removal flags the record (`removed`) at once; the dispatch functions check the flag and return (signal callbacks additionally call `signal_handler_remove_current()`), so a removed callback never fires even if the disconnect is still pending. Hotkey callbacks are re-posted to the worker (`pressed`/`unpressed` jobs); `on_remove` of a hotkey record posts an unregister job.
+1. **Calling convention.** Before invoking a script function the dispatcher takes the script's recursive mutex, sets thread-local `current script` and `current callback`, calls with protected-call semantics, logs failures as WARNING `Failed to call <fn> for <what>: <error>`, restores the thread-locals and unlocks. `remove_current_callback()` removes the thread-local current callback. Button callbacks and property-modified callbacks return a boolean (non-boolean result = false); signal callbacks receive the calldata, global ones receive `(signal_name, calldata)`.
+1. **Timers.** `timer_add(fn, ms)`: Lua ignores the call if `ms == 0` (Python does not check; Q-4). Interval = `ms * 1_000_000` ns; `last_ts` = current video frame time at the call. The worker later links the timer into the global timer list. Each libobs tick (frame time `ts`): for every timer, removed -> unlink; else if `ts - last_ts >= interval`: call once and `last_ts += interval` (at most one call per tick; a late timer catches up one interval per tick). `timer_remove(fn)` removes the **first** matching record in the script's list (= most recently added). Signal disconnect matches function identity + handler + signal name.
+1. **Exposed API.** The bindings expose the public libobs headers (graphics math, `obs.h`, `obs-source.h`, `obs-data.h`, `obs-properties.h`, `obs-interaction.h`, `obs-hotkey.h`, calldata/proc/signal, `bmem/base/platform/config-file` helpers, frontend API when built with the frontend), with `blog` replaced by a `(level, message)` wrapper and these replaced by script-aware versions: tick/render callbacks, `obs_enum_sources`, `obs_source_enum_filters`, scene item enumeration (return lists; must be released with `source_list_release`/`sceneitem_list_release`), `obs_properties_add_button`, `obs_property_set_modified_callback`, signal connect/disconnect (+global), `obs_hotkey_register_frontend`/`unregister`, `timer_add/remove`, `remove_current_callback`, `calldata_source/sceneitem`, `script_log`-based `print`/error hooks. Plain pointer-taking libobs functions are exposed mechanically.
 
 ## 8. Reference defects and quirks
 
@@ -166,24 +177,24 @@ Rust: `Script` trait object per backend (`create/load/unload/destroy/update/save
 
 Script language: `test/conformance/README.md`, section "scripting runner".
 
-| Rule | Scripts |
-|---|---|
-| R01 | 13 |
-| R02 | 01, 13 |
-| R03, R04, R05 | 01, 02, 11, 13 |
-| R10-R14 | 01, 03 |
-| R15 | 04, 06 |
-| R16 | 03, 04 (fake backend implements the contract; the Lua backend itself is not covered) |
-| R20-R22 | 01, 02, 03 |
-| R23-R26 | 02, 04, 06 |
-| R27 | 05, 06 |
-| R28 | 01, 03, 05, 06 |
-| R29 | 13 |
-| R30-R34 | 05, 08, 90 |
-| R40-R45 | 09, 10, 11 |
-| R50-R52 | 07 |
-| R60 | 12 |
-| D-1, D-2 | 90, 11 (`info_` lines) |
+| Rule          | Scripts                                                                              |
+| ------------- | ------------------------------------------------------------------------------------ |
+| R01           | 13                                                                                   |
+| R02           | 01, 13                                                                               |
+| R03, R04, R05 | 01, 02, 11, 13                                                                       |
+| R10-R14       | 01, 03                                                                               |
+| R15           | 04, 06                                                                               |
+| R16           | 03, 04 (fake backend implements the contract; the Lua backend itself is not covered) |
+| R20-R22       | 01, 02, 03                                                                           |
+| R23-R26       | 02, 04, 06                                                                           |
+| R27           | 05, 06                                                                               |
+| R28           | 01, 03, 05, 06                                                                       |
+| R29           | 13                                                                                   |
+| R30-R34       | 05, 08, 90                                                                           |
+| R40-R45       | 09, 10, 11                                                                           |
+| R50-R52       | 07                                                                                   |
+| R60           | 12                                                                                   |
+| D-1, D-2      | 90, 11 (`info_` lines)                                                               |
 
 Section 7 (and D-3, D-4, Q-4, Q-5) have no conformance scripts.
 

@@ -7,25 +7,25 @@ Audience: an engineer who knows Rust and has not worked on OBS internals. Everyt
 You cannot replace what you have not run. Do this once.
 
 1. Presets are in `CMakePresets.json` (`ubuntu`, `ubuntu-ci`, `macos`, `macos-ci`, `windows-x64`, `windows-arm64`, `*-ci-*`, plus a `dependencies` preset). Linux: `cmake --preset ubuntu` then `cmake --build --preset ubuntu` (read `cmake/common/buildspec_common.cmake` for how prebuilt dependencies are fetched).
-2. Unit tests are gated by `ENABLE_UNIT_TESTS` (see `test/CMakeLists.txt`; it adds `test/cmocka`, needs the `cmocka` package). `BUILD_TESTS` builds `test/test-input`, a plugin used by tests. Run with `ctest --test-dir build_<preset>`.
-3. Git submodules: `plugins/obs-websocket` (5.7.6), `plugins/obs-browser` (2.23.4) and `deps/libdshowcapture/src` (no-atl) are initialized in this checkout (a fresh clone still needs `git submodule update --init`); their source files are part of the coverage matrix.
-4. Run the app once, make a scene with a Colour Source and a Text source, record 10 seconds. Open `~/.config/obs-studio/logs/` (Linux) and read the log start-up sequence: it prints every module loaded, the graphics adapter, the video/audio settings. Expect the same lines from the Rust build.
+1. Unit tests are gated by `ENABLE_UNIT_TESTS` (see `test/CMakeLists.txt`; it adds `test/cmocka`, needs the `cmocka` package). `BUILD_TESTS` builds `test/test-input`, a plugin used by tests. Run with `ctest --test-dir build_<preset>`.
+1. Git submodules: `plugins/obs-websocket` (5.7.6), `plugins/obs-browser` (2.23.4) and `deps/libdshowcapture/src` (no-atl) are initialized in this checkout (a fresh clone still needs `git submodule update --init`); their source files are part of the coverage matrix.
+1. Run the app once, make a scene with a Colour Source and a Text source, record 10 seconds. Open `~/.config/obs-studio/logs/` (Linux) and read the log start-up sequence: it prints every module loaded, the graphics adapter, the video/audio settings. Expect the same lines from the Rust build.
 
 ## 2. Repository map (what lives where)
 
-| Path | What it is | Rewritten in |
-|---|---|---|
-| `libobs/util`, `libobs/callback`, `libobs/graphics/*math*` | C utility layer: strings, arrays, threading, config, signals, math | Phase 1 |
-| `libobs/media-io` | video/audio output threads, converters, resamplers, remux | Phase 2 |
-| `libobs/audio-monitoring` | per-OS monitoring backends (`null`, `osx`, `pulse`, `win32`) | Phase 2 |
-| `libobs/graphics` (+ `libobs/data/*.effect`) | `gs_*` API, effect and shader parsers | Phase 3 |
-| `libobs-opengl`, `libobs-d3d11`, `libobs-metal` (Swift), `libobs-winrt` | graphics backends loaded as shared modules | Phase 3 |
-| `libobs/obs-*.c` | sources, scenes, outputs, encoders, services, hotkeys, modules, canvases | Phase 4 |
-| `plugins/*` | 41 modules (5 with their own Qt UI: `aja-output-ui`, `decklink-captions`, `decklink-output-ui`, `frontend-tools`, `obs-vst`; some are submodules) | Phase 5 |
-| `frontend/` | Qt6 application (≈88k C++ lines, 36 `.ui` forms, 77 locales) | Phase 6 |
-| `shared/` | helpers used by several components (`obs-scripting`, `media-playback`, `properties-view`, …) | Phases 5–7 |
-| `deps/` | `blake2`, `glad`, `json11`, `libcaption`, `libdshowcapture`, `w32-pthreads` | Phases 1, 2, 7 |
-| `test/` | cmocka tests + `test-input` plugin | extended in Phase 0 |
+| Path                                                                    | What it is                                                                                                                                        | Rewritten in        |
+| ----------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------- |
+| `libobs/util`, `libobs/callback`, `libobs/graphics/*math*`              | C utility layer: strings, arrays, threading, config, signals, math                                                                                | Phase 1             |
+| `libobs/media-io`                                                       | video/audio output threads, converters, resamplers, remux                                                                                         | Phase 2             |
+| `libobs/audio-monitoring`                                               | per-OS monitoring backends (`null`, `osx`, `pulse`, `win32`)                                                                                      | Phase 2             |
+| `libobs/graphics` (+ `libobs/data/*.effect`)                            | `gs_*` API, effect and shader parsers                                                                                                             | Phase 3             |
+| `libobs-opengl`, `libobs-d3d11`, `libobs-metal` (Swift), `libobs-winrt` | graphics backends loaded as shared modules                                                                                                        | Phase 3             |
+| `libobs/obs-*.c`                                                        | sources, scenes, outputs, encoders, services, hotkeys, modules, canvases                                                                          | Phase 4             |
+| `plugins/*`                                                             | 41 modules (5 with their own Qt UI: `aja-output-ui`, `decklink-captions`, `decklink-output-ui`, `frontend-tools`, `obs-vst`; some are submodules) | Phase 5             |
+| `frontend/`                                                             | Qt6 application (≈88k C++ lines, 36 `.ui` forms, 77 locales)                                                                                      | Phase 6             |
+| `shared/`                                                               | helpers used by several components (`obs-scripting`, `media-playback`, `properties-view`, …)                                                      | Phases 5–7          |
+| `deps/`                                                                 | `blake2`, `glad`, `json11`, `libcaption`, `libdshowcapture`, `w32-pthreads`                                                                       | Phases 1, 2, 7      |
+| `test/`                                                                 | cmocka tests + `test-input` plugin                                                                                                                | extended in Phase 0 |
 
 ## 3. Vocabulary
 
@@ -46,21 +46,22 @@ You cannot replace what you have not run. Do this once.
 
 ## 4. Threads you will meet (verified in code)
 
-| Thread | Created by | Drives | Notes |
-|---|---|---|---|
-| Graphics | `obs_graphics_thread_loop` (`libobs/obs-video.c:1094`) | ticks sources, renders, converts, calls `output_frames()`, renders displays, `video_sleep()` to the frame time | owns GPU context |
-| video-io | `video_thread` (`media-io/video-io.c:190`) | waits on `update_semaphore`, hands cached frames to `video_input` callbacks (encoders/raw outputs) | graphics thread posts the semaphore |
-| audio-io | `audio_thread` (`media-io/audio-io.c:205`) | wakes every `AUDIO_OUTPUT_FRAMES` (1024) samples using `os_sleepto_ns_fast`, calls `input_cb` (= `audio_callback` in `obs-audio.c:548`) to fill 6 mix buffers, clamps to ±1, passes to connected inputs | Windows: MMCSS "Audio" class |
-| Encoder threads | `obs-encoder.c` | pull from video/audio-io, call `encode` | one per encoder |
-| Output threads | per output type | muxing / network send | e.g. `rtmp-stream.c` |
-| Hotkey thread | `obs-hotkey.c` | translate OS events | |
-| UI thread | frontend | Qt event loop | most UI-side API calls must be here |
+| Thread          | Created by                                             | Drives                                                                                                                                                                                                  | Notes                               |
+| --------------- | ------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------- |
+| Graphics        | `obs_graphics_thread_loop` (`libobs/obs-video.c:1094`) | ticks sources, renders, converts, calls `output_frames()`, renders displays, `video_sleep()` to the frame time                                                                                          | owns GPU context                    |
+| video-io        | `video_thread` (`media-io/video-io.c:190`)             | waits on `update_semaphore`, hands cached frames to `video_input` callbacks (encoders/raw outputs)                                                                                                      | graphics thread posts the semaphore |
+| audio-io        | `audio_thread` (`media-io/audio-io.c:205`)             | wakes every `AUDIO_OUTPUT_FRAMES` (1024) samples using `os_sleepto_ns_fast`, calls `input_cb` (= `audio_callback` in `obs-audio.c:548`) to fill 6 mix buffers, clamps to ±1, passes to connected inputs | Windows: MMCSS "Audio" class        |
+| Encoder threads | `obs-encoder.c`                                        | pull from video/audio-io, call `encode`                                                                                                                                                                 | one per encoder                     |
+| Output threads  | per output type                                        | muxing / network send                                                                                                                                                                                   | e.g. `rtmp-stream.c`                |
+| Hotkey thread   | `obs-hotkey.c`                                         | translate OS events                                                                                                                                                                                     |                                     |
+| UI thread       | frontend                                               | Qt event loop                                                                                                                                                                                           | most UI-side API calls must be here |
 
 ## 5. FFI cookbook (applies to Phases 1–7)
 
 OBS's compatibility promise is a C ABI, not a Rust API. Follow these rules in every crate that exports symbols.
 
 **5.1 Layout.** Anything that crosses the boundary is `#[repr(C)]` and has a layout test:
+
 ```rust
 #[repr(C)]
 pub struct DArray { pub array: *mut c_void, pub num: usize, pub capacity: usize }
@@ -69,13 +70,16 @@ const _: () = {
     assert!(core::mem::offset_of!(DArray, num) == size_of::<usize>());
 };
 ```
+
 Generate these assertions from the C headers where possible (P4-35).
 
 **5.2 Exports.** Edition 2024 syntax:
+
 ```rust
 #[unsafe(no_mangle)]
 pub unsafe extern "C" fn bfree(ptr: *mut c_void) { /* … */ }
 ```
+
 Names must match the C header exactly. Keep the symbol list diff (P1-29, P4-34) in CI.
 
 **5.3 Panics must not unwind into C.** Wrap every exported function body (use a macro) with `catch_unwind`; on panic log and `abort()`. Do not rely on `panic = "abort"` alone: tests need unwinding.
@@ -95,12 +99,12 @@ Names must match the C header exactly. Keep the symbol list diff (P1-29, P4-34) 
 ## 6. Test strategy used throughout
 
 1. **Golden tests** compare Rust output to files produced by the C code (`test/golden/*.golden`, tool from P0-13/P0-14). Regenerate only with `UPDATE_GOLDEN=1` on the C side, never on the Rust side.
-2. **Differential tests/fuzzing** run C and Rust on the same random input (`cargo-fuzz`).
-3. **ABI tests** load a real C plugin (P0-15) into the Rust core.
-4. **Behavioural tests** with a fake clock (`Clock` trait) for anything time-based.
-5. **Benchmarks** against the C baseline (P0-17); a >2% regression fails CI.
-6. **Clean-room work** uses the specs in `docs/rust-rewrite/specs/` and the conformance suite in `test/conformance/` (see `docs/rust-rewrite/clean-room/PROCESS.md`).
-7. Add a test-matrix file in `docs/tests/` for every test file (project rule); name it after the issue number when there is one (`I-<n>-<name>.md`).
+1. **Differential tests/fuzzing** run C and Rust on the same random input (`cargo-fuzz`).
+1. **ABI tests** load a real C plugin (P0-15) into the Rust core.
+1. **Behavioural tests** with a fake clock (`Clock` trait) for anything time-based.
+1. **Benchmarks** against the C baseline (P0-17); a >2% regression fails CI.
+1. **Clean-room work** uses the specs in `docs/rust-rewrite/specs/` and the conformance suite in `test/conformance/` (see `docs/rust-rewrite/clean-room/PROCESS.md`).
+1. Add a test-matrix file in `docs/tests/` for every test file (project rule); name it after the issue number when there is one (`I-<n>-<name>.md`).
 
 ## 7. Project rules every PR must follow (from the project guidelines, `AGENTS.md`)
 

@@ -1,12 +1,12 @@
 # S-052 macOS plugins (`mac-capture`, `mac-avcapture`, `mac-videotoolbox`, `mac-virtualcam`) - behavioural catalog
 
-| | |
-|---|---|
-| Status | Ready for review (Tier C catalog; Objective-C / Apple frameworks, **nothing here is reference-produced**) |
-| Reference | OBS Studio 33.0.1: `plugins/mac-capture` (SCK video/audio, legacy display/window capture, CoreAudio), `plugins/mac-avcapture`, `plugins/mac-videotoolbox/encoder.c`, `plugins/mac-virtualcam/src/common/MachProtocol.h` |
-| Target crate | `crates/obs-mac-capture`, `crates/obs-mac-avcapture`, `crates/obs-mac-videotoolbox` (platform glue is out of scope; this spec fixes the decision logic) |
-| Depends on | obs-data / obs-properties specs (settings defaults, `has_user_value`, list items, visibility), S-025 (encoder option parsers; not duplicated), audio-io (`get_audio_channels`) |
-| Conformance | `test/conformance/scripts/maccapture/` (11 scripts, runner `gen/maccapture_runner.c`, README section "maccapture runner (spec S-052)") |
+|              |                                                                                                                                                                                                                         |
+| ------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Status       | Ready for review (Tier C catalog; Objective-C / Apple frameworks, **nothing here is reference-produced**)                                                                                                               |
+| Reference    | OBS Studio 33.0.1: `plugins/mac-capture` (SCK video/audio, legacy display/window capture, CoreAudio), `plugins/mac-avcapture`, `plugins/mac-videotoolbox/encoder.c`, `plugins/mac-virtualcam/src/common/MachProtocol.h` |
+| Target crate | `crates/obs-mac-capture`, `crates/obs-mac-avcapture`, `crates/obs-mac-videotoolbox` (platform glue is out of scope; this spec fixes the decision logic)                                                                 |
+| Depends on   | obs-data / obs-properties specs (settings defaults, `has_user_value`, list items, visibility), S-025 (encoder option parsers; not duplicated), audio-io (`get_audio_channels`)                                          |
+| Conformance  | `test/conformance/scripts/maccapture/` (11 scripts, runner `gen/maccapture_runner.c`, README section "maccapture runner (spec S-052)")                                                                                  |
 
 ## Verification classes
 
@@ -39,17 +39,17 @@ Covered, in priority order: (1) `screen_capture` (ScreenCaptureKit video; settin
 
 ### 4.1 Settings
 
-| key | type | default | meaning |
-|---|---|---|---|
-| `type` | int | 0 | capture type |
-| `display_uuid` | string | NULL (no default) | UUID of display (types 0, 2) |
-| `display` | int | - | legacy display id, migrated away (R4-9) |
-| `window` | int | 0 (`kCGNullWindowID`) | CGWindowID (type 1) |
-| `application` | string | NULL | bundle identifier (type 2) |
-| `show_cursor` | bool | true | |
-| `hide_obs` | bool | false | exclude OBS's own app (type 0 only) |
-| `show_empty_names` | bool | false | list windows without title/app (type 1) |
-| `show_hidden_windows` | bool | false | include off-screen windows |
+| key                   | type   | default               | meaning                                 |
+| --------------------- | ------ | --------------------- | --------------------------------------- |
+| `type`                | int    | 0                     | capture type                            |
+| `display_uuid`        | string | NULL (no default)     | UUID of display (types 0, 2)            |
+| `display`             | int    | -                     | legacy display id, migrated away (R4-9) |
+| `window`              | int    | 0 (`kCGNullWindowID`) | CGWindowID (type 1)                     |
+| `application`         | string | NULL                  | bundle identifier (type 2)              |
+| `show_cursor`         | bool   | true                  |                                         |
+| `hide_obs`            | bool   | false                 | exclude OBS's own app (type 0 only)     |
+| `show_empty_names`    | bool   | false                 | list windows without title/app (type 1) |
+| `show_hidden_windows` | bool   | false                 | include off-screen windows              |
 
 - **S-052-R04 [MODEL]** (`sck_settings.script`) Defaults are exactly as in the table. `sck_audio_capture` defaults: `application` NULL, `type` 0.
 
@@ -58,13 +58,15 @@ Covered, in priority order: (1) `screen_capture` (ScreenCaptureKit video; settin
 - **S-052-R05 [MODEL]** The always-present properties are, in order: `type` (int list: 0 display, 1 window, 2 application), `display_uuid` (string list), `application` (string list), `window` (int list), `show_empty_names`, `show_hidden_windows`, `show_cursor`, `hide_obs`, button `reactivate_capture` (enabled only while `capture_failed`). Visibility by the source's *current* capture type:
 
   | type | display_uuid | window | application | show_empty_names | show_hidden_windows | hide_obs |
-  |---|---|---|---|---|---|---|
-  | 0 | yes | no | no | no | no | yes |
-  | 1 | no | yes | no | yes | yes | no |
-  | 2 | yes | no | yes | no | yes | no |
+  | ---- | ------------ | ------ | ----------- | ---------------- | ------------------- | -------- |
+  | 0    | yes          | no     | no          | no               | no                  | yes      |
+  | 1    | no           | yes    | no          | yes              | yes                 | no       |
+  | 2    | yes          | no     | yes         | no               | yes                 | no       |
 
   For any other `type` value nothing is changed (all properties stay visible, as created). `show_cursor` is always visible. The modified-callbacks (`type`, `show_hidden_windows`, `show_empty_names`) apply the same table, but only `if sc->capture_type != new type` (so toggling `show_hidden_windows` alone never re-applies visibility), then store `show_empty_names`, `show_hidden_windows`, `hide_obs` into the live source, rebuild the content list and the three lists.
+
 - **S-052-R06 [MODEL]** Below macOS 13 two extra text properties exist: `audio_info` (warning) and `capture_type_info` (error). `capture_type_info` is visible when the source's type is 0 or 2, hidden for 1; with no source instance it is hidden. In the type-changed callback it is visible for new type 0 and 2, hidden for 1. [SRC]
+
 - **S-052-R07 [MODEL]** Content query (`SCShareableContent`): `excludingDesktopWindows = YES` always; `onScreenWindowsOnly = NO` when the list is being built for display capture (type 0), otherwise `!show_hidden_windows`. (`sck_content_flags`.) The audio source asks with "display capture" meaning desktop-audio type (0).
 
 ### 4.3 Lists
@@ -77,15 +79,15 @@ Covered, in priority order: (1) `screen_capture` (ScreenCaptureKit video; settin
   - `L && !N`: convert the legacy id to a UUID, write `display_uuid`, erase `display`; if the UUID cannot be created return display id 0 **without** erasing anything.
   - `L && N`: erase `display` (new wins).
   - Then if `display_uuid` is non-empty return the display id for that UUID (0 if unknown), else 0.
-  This mutates the settings object it is given, also when called from `update`.
+    This mutates the settings object it is given, also when called from `update`.
 
 ### 4.4 Create / update
 
 - **S-052-R10 [MODEL]** (`sck_update.script`) `update(settings)`:
   1. `new_window = settings.window`; if `new_window > 0 && new_window != old_window` store it into the source **immediately**, even if the stream is then kept. A `window` setting of 0 never clears a stored window id.
-  2. If the new `type` equals the current type, the stream is **kept** (nothing happens) iff, per type: 0: `display` unchanged and cursor setting unchanged and `hide_obs` unchanged; 1: window id unchanged (after step 1) and cursor setting unchanged; 2: `display` unchanged, `application` string equal and cursor setting unchanged. Otherwise restart with the new values (`type`, `display`, `application`, `hide_cursor = !show_cursor`, `hide_obs`, `show_empty_names`, `show_hidden_windows`).
-  3. Quirk Q-1: the cursor setting is part of the keep test, so toggling the cursor **restarts** the stream instead of updating `showsCursor` live. In the reference the expression is written `sc->hide_cursor != show_cursor`, which equals "unchanged" only because the field is negated; do not port it literally.
-  4. Quirk Q-2: `show_empty_names`/`show_hidden_windows` changes never restart a running stream; they only affect list building.
+  1. If the new `type` equals the current type, the stream is **kept** (nothing happens) iff, per type: 0: `display` unchanged and cursor setting unchanged and `hide_obs` unchanged; 1: window id unchanged (after step 1) and cursor setting unchanged; 2: `display` unchanged, `application` string equal and cursor setting unchanged. Otherwise restart with the new values (`type`, `display`, `application`, `hide_cursor = !show_cursor`, `hide_obs`, `show_empty_names`, `show_hidden_windows`).
+  1. Quirk Q-1: the cursor setting is part of the keep test, so toggling the cursor **restarts** the stream instead of updating `showsCursor` live. In the reference the expression is written `sc->hide_cursor != show_cursor`, which equals "unchanged" only because the field is negated; do not port it literally.
+  1. Quirk Q-2: `show_empty_names`/`show_hidden_windows` changes never restart a running stream; they only affect list building.
 - **S-052-R11 [SRC]** `create`: reads `show_cursor`, `hide_obs`, `show_empty_names`, `show_hidden_windows`, `window`, `type`, `application`, resolves the display via R09, requires the base effect (`DEFAULT_RECT` on OpenGL, `DEFAULT` otherwise) else fails (returns NULL), builds the content list and starts the stream. A failing `init_screen_stream` fails creation.
 - **S-052-R12 [SRC]** Target resolution: display types need a display with id == resolved id; if none: error log, `disp = NULL`, stream not started, creation/`update` still succeeds (returns true). Window type needs `window != 0` and a window with that id, else the same error path. Application type resolves the display the same way; an application whose bundle id does not match leaves the target nil and `initWithObjects:nil` yields an empty include list (captures nothing; no error).
 
@@ -146,7 +148,7 @@ Covered, in priority order: (1) `screen_capture` (ScreenCaptureKit video; settin
 - **S-052-R41 [MODEL]** Frame-rate range text: sort ranges by max descending then min descending, iterate in reverse (ascending); each value rounded to 2 decimals; equal min/max -> single value, else `min-max`; printed `%.0f` if both whole numbers else `%.2f`; at most 10 entries -> joined with `", "` plus `" FPS"`; more than 10 -> `"<lowest min>-<highest max> FPS (<n> values)"` (raw, `%.0f`); zero ranges -> nil.
 - **S-052-R42 [MODEL]** Fallback frame rate for a format (when the configured one is unsupported), output fps `F` (0 if no video info): among ranges choose the one with the greatest `maxFrameRate <= F`; its rate is `timescale/value` of `minFrameDuration`. If none, the range with the smallest `minFrameRate > F`, using `maxFrameDuration` (so the slowest rate of the lowest range above F). If no range qualifies the result is `0/0`.
 - **S-052-R43 [MODEL]** Pixel-format tables. Subtype -> OBS format: `422YpCbCr8`->UYVY, `422YpCbCr8_yuvs`->YUY2, `32BGRA`->BGRA, `420YpCbCr8BiPlanar{Video,Full}Range`->NV12, `420YpCbCr10BiPlanar{Video,Full}Range`->P010, anything else NONE. Full range test is true for exactly `420YpCbCr8PlanarFullRange`, `420YpCbCr8BiPlanarFullRange`, `420YpCbCr10BiPlanarFullRange`, `422YpCbCr8FullRange`. OBS format + range -> subtype: UYVY, YUY2, BGRA ignore range; NV12/P010 choose Full/Video range variant; other -> 0.
-- **S-052-R44 [MODEL]** Colour space/range text: `Default`, `CS 601`, `CS 709`, `sRGB`, `CS 2100 (PQ)`, `CS 2100 (HLG)`, else `Unknown`; range `Default`/`Partial`/`Full`. Valid (selectable) colour spaces are only `DEFAULT`, `601`, `709`. FourCC string<->u32 is big-endian byte order of the 4 characters (`"2vuy"` = 0x32767579); the string builder reads 4 chars and NUL-terminates.
+- **S-052-R44 [MODEL]** Colour space/range text: `Default`, `CS 601`, `CS 709`, `sRGB`, `CS 2100 (PQ)`, `CS 2100 (HLG)`, else `Unknown`; range `Default`/`Partial`/`Full`. Valid (selectable) colour spaces are only `DEFAULT`, `601`, `709`. FourCC string\<->u32 is big-endian byte order of the 4 characters (`"2vuy"` = 0x32767579); the string builder reads 4 chars and NUL-terminates.
 - **S-052-R45 [SRC]** The legacy `resolution` setting is a JSON object `{"width":N,"height":N}` (`legacyDimensionsFromSettings`); missing/zero width or height or empty/invalid JSON -> (0,0); values are clamped to `[0, UINT32_MAX]` before casting to int32.
 
 ## 9. `mac-videotoolbox`
@@ -157,7 +159,7 @@ Covered, in priority order: (1) `screen_capture` (ScreenCaptureKit video; settin
 - **S-052-R49 [MODEL]** Property sets. H.26x: `rate_control` list (string) with `CBR` only if macOS >= 13 && hardware && Apple Silicon, always `ABR`, `CRF` only if hardware && Apple Silicon; `bitrate` int 50..10 000 000 step 50 (suffix " Kbps"); `quality` slider 0..100; `limit_bitrate` bool; `max_bitrate` int 50..10 000 000 step 50; `max_bitrate_window` float 0.10..10.0 (suffix " s"); `keyint_sec` int 0..20 (suffix " s"); `profile` list: H.264 `baseline`, `main`, `high`; HEVC `main`, `main10`, plus `main42210` (label "main 4:2:2 10") on macOS >= 12.3; `bframes` bool; `spatial_aq_mode` int list (Auto, Disabled, Enabled) only on macOS >= 15. ProRes: `codec_type` list of the ProRes subtypes present in the hardware or software list matching the encoder's hardware flag.
 - **S-052-R50 [MODEL]** Visibility on `rate_control` / `limit_bitrate` change: `CBR`: can-limit false, has-bitrate true; `CRF`: can-limit true, has-bitrate false; `ABR`: true/true; any other string leaves both true. `limit_bitrate` visible iff can-limit; `max_bitrate` and `max_bitrate_window` iff can-limit && `limit_bitrate`; `bitrate` iff has-bitrate; `quality` iff not has-bitrate.
 - **S-052-R51 [MODEL]** Settings read (`update_params`): `codec_type` set from the encoder codec (`h264` -> H.264, `hevc` -> HEVC, and written back into settings); else read from settings (ProRes). `keyint_sec`, `bitrate`, `max_bitrate` cast to u32; `quality = int / 100` as float32; `spatial_aq`: mode AUTO -> true iff `rate_control == "CRF"`; otherwise true iff mode == ENABLED (so INVALID/absent -> false). (`vt_params`.)
-- **S-052-R52 [MODEL]** Pixel format (`set_video_format`) by OBS format and range: I420 -> `420YpCbCr8Planar` / `...PlanarFullRange`; NV12 -> `420YpCbCr8BiPlanarVideoRange` / `FullRange`; P010 only for HEVC -> `420YpCbCr10BiPlanar(Video|Full)Range`, H.264+P010 -> unsupported; P216 -> `422YpCbCr16BiPlanarVideoRange`, full range -> FullRangeUnsupported; P416 -> `444YpCbCr16BiPlanarVideoRange`, full -> FullRangeUnsupported; others -> ColorFormatUnsupported. Errors set the encoder last-error text (`ColorFormatUnsupported`, `FullRangeUnsupported`) and a warning log; `create` fails. [Q-4: `vt_update` ignores the return value of `update_params`, so a failing re-read leaves partially updated fields.]
+- **S-052-R52 [MODEL]** Pixel format (`set_video_format`) by OBS format and range: I420 -> `420YpCbCr8Planar` / `...PlanarFullRange`; NV12 -> `420YpCbCr8BiPlanarVideoRange` / `FullRange`; P010 only for HEVC -> `420YpCbCr10BiPlanar(Video|Full)Range`, H.264+P010 -> unsupported; P216 -> `422YpCbCr16BiPlanarVideoRange`, full range -> FullRangeUnsupported; P416 -> `444YpCbCr16BiPlanarVideoRange`, full -> FullRangeUnsupported; others -> ColorFormatUnsupported. Errors set the encoder last-error text (`ColorFormatUnsupported`, `FullRangeUnsupported`) and a warning log; `create` fails. \[Q-4: `vt_update` ignores the return value of `update_params`, so a failing re-read leaves partially updated fields.\]
 - **S-052-R53 [MODEL]** Profile mapping (`vt_profile`): H.264: baseline/main/high -> `H264_{Baseline,Main,High}_AutoLevel`, anything else (including "") -> Main. HEVC: `main` -> Main, except for OBS format P010 -> Main10 with warning `Forcing main10 for P010`; `main10` -> Main10; `main42210` -> Main42210 (macOS >= 12.3 only, else falls to Main); anything else -> Main. Other codec types (ProRes) -> `H264_Baseline_AutoLevel` (unused; the profile property is only set for H.26x sessions).
 - **S-052-R54 [MODEL]** Colour tagging (`vt_cs`): matrix: 601 -> ITU-R 601-4, 2100 PQ/HLG -> ITU-R 2020, else 709-2. Primaries: 601 -> SMPTE-C, 2100 -> 2020, else 709-2. Transfer: sRGB -> sRGB, PQ -> SMPTE ST 2084 PQ, HLG -> ITU-R 2100 HLG, else 709-2. HDR metadata (PQ and HLG only): `MasteringDisplayColorVolume` 24 bytes big-endian: primaries (13250,34500), (7500,3000), (34000,16000), white point (15635,16450) as u16 pairs, `max_luminance = peak * 10000` (u32 BE), `min_luminance = 0`; `ContentLightLevel` 4 bytes: peak twice (u16 BE). `peak` is the OBS nominal HDR peak (u16-truncated) for PQ and fixed **1000** for HLG. (`vt_hdr`.)
 - **S-052-R55 [MODEL]** Rate control (`vt_rc`): `CBR`: on macOS >= 13 and Apple Silicon -> ConstantBitRate, no data-rate limits; on macOS >= 13 without Apple Silicon -> warn, AverageBitRate; below 13 -> warn, AverageBitRate (can-limit true for the fall-back cases). `ABR`: AverageBitRate, can-limit. `CRF`: Apple Silicon -> set `Quality` (float32 = quality%/100), no bitrate property; else warn and AverageBitRate; can-limit. Any other string (the comparison is case-sensitive, so `cbr` is invalid) -> error log `Selected rate control method is not supported: %s`, return `kVTParameterErr`. Bitrate properties are `bitrate_kbps * 1000` as int32. If `limit_bitrate` and can-limit: DataRateLimits = (`max_bitrate * 125 * window` bytes, `window` seconds); a `kVTPropertyNotSupportedErr` is downgraded to a warning and success.
@@ -171,17 +173,17 @@ Covered, in priority order: (1) `screen_capture` (ScreenCaptureKit video; settin
 
 ## 11. Reference quirks and defects
 
-| id | where | summary | required behaviour |
-|---|---|---|---|
-| Q-1 | R10 | cursor toggle restarts the SCK stream | SHOULD match (or update live, no saved-data impact) |
-| Q-2 | R10 | list-filter settings never restart | SHOULD match |
-| Q-3 | R38 | "960x460" label for the 960x540 preset | MAY fix (display only) |
-| Q-4 | R52 | `vt_update` ignores `update_params` failure | SHOULD report error |
-| Q-5 | R57 | only bitrate/limit changes re-applied live | SHOULD match |
-| Q-6 | R10 | `window` setting 0 never clears the stored window | SHOULD match |
-| D-1 | R20 | >8 audio channels overflows plane array | reject buffer |
-| D-2 | R55 | DataRateLimits uses wrong CFNumber types | implement intended values |
-| D-3 | R12 | application type with unmatched bundle id builds an include list containing nil | treat as "no application": capture nothing, log a warning |
+| id  | where | summary                                                                         | required behaviour                                        |
+| --- | ----- | ------------------------------------------------------------------------------- | --------------------------------------------------------- |
+| Q-1 | R10   | cursor toggle restarts the SCK stream                                           | SHOULD match (or update live, no saved-data impact)       |
+| Q-2 | R10   | list-filter settings never restart                                              | SHOULD match                                              |
+| Q-3 | R38   | "960x460" label for the 960x540 preset                                          | MAY fix (display only)                                    |
+| Q-4 | R52   | `vt_update` ignores `update_params` failure                                     | SHOULD report error                                       |
+| Q-5 | R57   | only bitrate/limit changes re-applied live                                      | SHOULD match                                              |
+| Q-6 | R10   | `window` setting 0 never clears the stored window                               | SHOULD match                                              |
+| D-1 | R20   | >8 audio channels overflows plane array                                         | reject buffer                                             |
+| D-2 | R55   | DataRateLimits uses wrong CFNumber types                                        | implement intended values                                 |
+| D-3 | R12   | application type with unmatched bundle id builds an include list containing nil | treat as "no application": capture nothing, log a warning |
 
 ## 12. Implementation notes
 
@@ -191,29 +193,29 @@ Covered, in priority order: (1) `screen_capture` (ScreenCaptureKit video; settin
 
 ## 13. Coverage table
 
-| rules | script | class |
-|---|---|---|
-| R04 R05 R06 R07 | `sck_settings` | MODEL |
-| R10 (+Q-1,2,6) | `sck_update` | MODEL |
-| R13 R18 | `sck_config` | MODEL |
-| R15 R16 | `sck_frames` | MODEL |
-| R19 R20 D-1 | `sck_audio` | MODEL |
-| R08 R09 | `sck_lists` | MODEL |
-| R21-R25 | `legacy_window_display` | MODEL |
-| R26-R35 | `coreaudio` | MODEL |
-| R37-R44 | `avcapture` | MODEL |
-| R46-R57 D-2 | `videotoolbox` | MODEL |
-| R58 | `virtualcam` | MODEL |
-| R01-R03 R11 R12 R14 R17 R36 R45 | none | SRC |
+| rules                           | script                  | class |
+| ------------------------------- | ----------------------- | ----- |
+| R04 R05 R06 R07                 | `sck_settings`          | MODEL |
+| R10 (+Q-1,2,6)                  | `sck_update`            | MODEL |
+| R13 R18                         | `sck_config`            | MODEL |
+| R15 R16                         | `sck_frames`            | MODEL |
+| R19 R20 D-1                     | `sck_audio`             | MODEL |
+| R08 R09                         | `sck_lists`             | MODEL |
+| R21-R25                         | `legacy_window_display` | MODEL |
+| R26-R35                         | `coreaudio`             | MODEL |
+| R37-R44                         | `avcapture`             | MODEL |
+| R46-R57 D-2                     | `videotoolbox`          | MODEL |
+| R58                             | `virtualcam`            | MODEL |
+| R01-R03 R11 R12 R14 R17 R36 R45 | none                    | SRC   |
 
 ## 14. Open questions
 
 1. Exact `CMTime` result of `CMTimeMultiplyByFloat64(CMTimeMake(den,num), 0.9)` (value/timescale rounding) is not derivable from the repository.
-2. Foundation's case-insensitive sort for non-ASCII window/app names and nil handling in the window comparator.
-3. Whether D-2 produces a no-op or a rejected property on shipping macOS versions (needs a Mac).
-4. Numeric FourCC and flag constants should be checked against the SDK headers (the vectors use symbolic names).
-5. `ENABLE_HEVC` is assumed defined for official macOS builds (HEVC rules R46/R47/R49/R53).
-6. The Rust sufficiency check was **skipped** by instruction (cost control); nothing here has been implemented independently.
+1. Foundation's case-insensitive sort for non-ASCII window/app names and nil handling in the window comparator.
+1. Whether D-2 produces a no-op or a rejected property on shipping macOS versions (needs a Mac).
+1. Numeric FourCC and flag constants should be checked against the SDK headers (the vectors use symbolic names).
+1. `ENABLE_HEVC` is assumed defined for official macOS builds (HEVC rules R46/R47/R49/R53).
+1. The Rust sufficiency check was **skipped** by instruction (cost control); nothing here has been implemented independently.
 
 ## 15. Round 8: file citations + capture internals, CoreAudio encoder, Syphon, DAL IPC (added)
 

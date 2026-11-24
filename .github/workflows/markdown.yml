@@ -1,0 +1,38 @@
+name: markdown
+
+# Docs-only changes (docs/**, odd/**, *.md) run this check instead of the full
+# Rust CI (see the path filters in workflows/rust.yml): markdown formatting via
+# mdformat, with table alignment (mdformat-tables) so story/subtask tables stay
+# readable. Run `mdformat .` locally to fix.
+
+on:
+  pull_request:
+    paths:
+      - "**/*.md"
+      - "docs/**"
+      - "odd/**"
+  push:
+    branches: [main]
+    paths:
+      - "**/*.md"
+      - "docs/**"
+      - "odd/**"
+  workflow_dispatch:
+
+concurrency:
+  group: markdown-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  format:
+    name: markdown format (mdformat + tables)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.13"
+      - name: install mdformat
+        run: pip install "mdformat==0.7.22" "mdformat-tables==1.0.0"
+      - name: check
+        run: mdformat --check .

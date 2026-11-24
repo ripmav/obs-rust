@@ -20,15 +20,15 @@ hot path; enforce with the harness from P2-12".
 The current C layout is the baseline (verified in code,
 `docs/rust-rewrite/guides/00-developer-primer.md` §4):
 
-| Thread | Created by | Drives | Notes |
-|---|---|---|---|
-| Graphics | `obs_graphics_thread_loop` (`libobs/obs-video.c:1094`) | ticks sources, renders, converts, calls `output_frames()`, renders displays, `video_sleep()` to the frame time | owns GPU context |
-| video-io | `video_thread` (`media-io/video-io.c:190`) | waits on `update_semaphore`, hands cached frames to `video_input` callbacks (encoders/raw outputs) | graphics thread posts the semaphore |
-| audio-io | `audio_thread` (`media-io/audio-io.c:205`) | wakes every `AUDIO_OUTPUT_FRAMES` (1024) samples using `os_sleepto_ns_fast`, calls `input_cb` (= `audio_callback` in `obs-audio.c:548`) to fill 6 mix buffers, clamps to ±1, passes to connected inputs | Windows: MMCSS "Audio" class |
-| Encoder threads | `obs-encoder.c` | pull from video/audio-io, call `encode` | one per encoder |
-| Output threads | per output type | muxing / network send | e.g. `rtmp-stream.c` |
-| Hotkey thread | `obs-hotkey.c` | translate OS events | |
-| UI thread | frontend | Qt event loop | most UI-side API calls must be here |
+| Thread          | Created by                                             | Drives                                                                                                                                                                                                  | Notes                               |
+| --------------- | ------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------- |
+| Graphics        | `obs_graphics_thread_loop` (`libobs/obs-video.c:1094`) | ticks sources, renders, converts, calls `output_frames()`, renders displays, `video_sleep()` to the frame time                                                                                          | owns GPU context                    |
+| video-io        | `video_thread` (`media-io/video-io.c:190`)             | waits on `update_semaphore`, hands cached frames to `video_input` callbacks (encoders/raw outputs)                                                                                                      | graphics thread posts the semaphore |
+| audio-io        | `audio_thread` (`media-io/audio-io.c:205`)             | wakes every `AUDIO_OUTPUT_FRAMES` (1024) samples using `os_sleepto_ns_fast`, calls `input_cb` (= `audio_callback` in `obs-audio.c:548`) to fill 6 mix buffers, clamps to ±1, passes to connected inputs | Windows: MMCSS "Audio" class        |
+| Encoder threads | `obs-encoder.c`                                        | pull from video/audio-io, call `encode`                                                                                                                                                                 | one per encoder                     |
+| Output threads  | per output type                                        | muxing / network send                                                                                                                                                                                   | e.g. `rtmp-stream.c`                |
+| Hotkey thread   | `obs-hotkey.c`                                         | translate OS events                                                                                                                                                                                     |                                     |
+| UI thread       | frontend                                               | Qt event loop                                                                                                                                                                                           | most UI-side API calls must be here |
 
 The C core additionally carries **46 `pthread_mutex_t` fields in
 `libobs/obs-internal.h`** (1,543 lines) — the lock table below maps each to
@@ -42,16 +42,16 @@ Same seven thread kinds as today (the shape works; the discipline changes):
 
 1. **Video (graphics) thread** — real-time. Ticks sources, renders, converts,
    delivers frames. No allocation/lock/syscall on the tick path.
-2. **Audio-io thread** — real-time, highest priority (MSCCS "Audio" class on
+1. **Audio-io thread** — real-time, highest priority (MSCCS "Audio" class on
    Windows as today). Fills preallocated mix buffers; passes them through
    lock-free queues.
-3. **video-io / audio-io delivery** — event-driven wakeup (semaphore/eventfd),
+1. **video-io / audio-io delivery** — event-driven wakeup (semaphore/eventfd),
    never polling; consumers pull preallocated frames.
-4. **Encoder threads** — one per encoder; may allocate; not real-time.
-5. **Output threads** — muxing; network send lives in `tokio` workers, fed by
+1. **Encoder threads** — one per encoder; may allocate; not real-time.
+1. **Output threads** — muxing; network send lives in `tokio` workers, fed by
    an SPSC mailbox from the encoder side (see Rule 5).
-6. **Hotkey thread** — OS event translation; not real-time.
-7. **UI thread** — frontend event loop; UI-side API calls only.
+1. **Hotkey thread** — OS event translation; not real-time.
+1. **UI thread** — frontend event loop; UI-side API calls only.
 
 ### Lock hierarchy (Rule: downward acquisition only)
 
@@ -73,13 +73,13 @@ L3  configuration/state    obs_data, profile, settings
 
 ### Mutex replacement patterns (applied per entry in the table below)
 
-| C construct | Rust replacement | Level |
-|---|---|---|
-| `pthread_mutex_t` guarding per-object state | `parking_lot::Mutex`/`RwLock` per object | L1 |
-| mutex around a uthash/global list | one collection lock, or sharded lists with per-shard locks | L2 |
-| mutex + condition variable on a data path | SPSC `crossbeam` ring (or `OsEvent` equivalent) + event-driven wakeup | L0 bridge |
-| lock around `obs_data`/profile reads | `ArcSwap`-style immutable snapshot, write-side L3 lock | L3 |
-| manual refcount + mutex (`obs_*_addref/release`) | `Arc` handles (Phase 4, P4 object model) | n/a |
+| C construct                                      | Rust replacement                                                      | Level     |
+| ------------------------------------------------ | --------------------------------------------------------------------- | --------- |
+| `pthread_mutex_t` guarding per-object state      | `parking_lot::Mutex`/`RwLock` per object                              | L1        |
+| mutex around a uthash/global list                | one collection lock, or sharded lists with per-shard locks            | L2        |
+| mutex + condition variable on a data path        | SPSC `crossbeam` ring (or `OsEvent` equivalent) + event-driven wakeup | L0 bridge |
+| lock around `obs_data`/profile reads             | `ArcSwap`-style immutable snapshot, write-side L3 lock                | L3        |
+| manual refcount + mutex (`obs_*_addref/release`) | `Arc` handles (Phase 4, P4 object model)                              | n/a       |
 
 ### RT rules (P0-06.4)
 
@@ -117,12 +117,12 @@ always through the public API on a non-RT thread.
    that is the reason for the rewrite; (b) "no allocation in the audio
    callback" is not enforced anywhere in the C code — a 1:1 port preserves
    that absence of discipline.
-2. **Full async (`tokio`) core, everything on workers.**
+1. **Full async (`tokio`) core, everything on workers.**
    Rejected: (a) real-time audio cannot ride on a cooperative scheduler —
    preemption latency is exactly the xrun; (b) it rewrites the delivery
    contract with encoder/output plugins that expect a pull-based,
    frame-ordered model.
-3. **Mutexes everywhere, no lock-free queues (simpler).**
+1. **Mutexes everywhere, no lock-free queues (simpler).**
    Rejected: (a) a mutex on the audio path is a syscall — it fails the RT
    rule by construction; (b) the 8-track mix and 20-item render benchmarks
    (P0-17) show lock contention on the C layout; the rewrite's performance

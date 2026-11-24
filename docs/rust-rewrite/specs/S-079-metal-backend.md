@@ -1,13 +1,13 @@
 # S-079 Metal graphics backend (macOS)
 
-| | |
-|---|---|
-| Status | Draft (round 9 — behaviour catalog written from C reference; no vectors yet) |
-| Spec version | initial |
-| Reference | OBS Studio 33.0.1, `libobs-metal/` (Swift 5, Apple Metal) |
+|              |                                                                                                                                                                                                                                            |
+| ------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Status       | Draft (round 9 — behaviour catalog written from C reference; no vectors yet)                                                                                                                                                               |
+| Spec version | initial                                                                                                                                                                                                                                    |
+| Reference    | OBS Studio 33.0.1, `libobs-metal/` (Swift 5, Apple Metal)                                                                                                                                                                                  |
 | Target crate | `crates/obs-graphics-metal`. Per **D-13** (confirmed 2026-11-05) this backend is ported to Rust (reference is Swift); the C/Swift `libobs-metal` stays the selectable fallback until the port passes this spec, both are deleted in P7-01. |
-| Depends on | S-044 (the `gs_*` device contract this backend implements), S-011 (the shader parser the transpiler reuses), S-020 (effect/shader source format) |
-| Conformance | planned — none yet (GPU behaviour is not vector-testable headless; see §11) |
+| Depends on   | S-044 (the `gs_*` device contract this backend implements), S-011 (the shader parser the transpiler reuses), S-020 (effect/shader source format)                                                                                           |
+| Conformance  | planned — none yet (GPU behaviour is not vector-testable headless; see §11)                                                                                                                                                                |
 
 ## 1. Scope
 
@@ -152,6 +152,7 @@ returns NULL (or the default) rather than trapping the process.
   expects), `gs_shader_set_viewproj_matrix`/`gs_shader_set_world_matrix`.
 
 ## 5. Buffers (`MetalBuffer.swift`, `metal-vertexbuffer.swift`, `metal-indexbuffer.swift`,
+
 `MetalStageBuffer.swift`, `metal-stagesurf.swift`)
 
 - **S-079-R15** `MetalBuffer` base: `createOrUpdateBuffer` writes the data into an
@@ -175,6 +176,7 @@ returns NULL (or the default) rather than trapping the process.
   the buffer) round out the file.
 
 ## 6. Textures (`MetalTexture.swift`, `metal-texture2d.swift`, `metal-texture3d.swift`,
+
 `MTLTexture+Extensions.swift`)
 
 - **S-079-R18** `MetalTexture` wrapper: holds the `MTLTexture`, its descriptor, a UUID
@@ -240,8 +242,8 @@ returns NULL (or the default) rather than trapping the process.
 ## 9. Format tables (`libobs+Extensions.swift`)
 
 - **S-079-R26** The `gs_*` → Metal mapping tables in this file are the backend's
-  vocabulary: `gs_color_format.mtlFormat` (A8/R8/R8G8/R16/R16F/RG16*/R32F*/RGBA/BGRA*/
-  R10G10B10A2/RGBA16*/RGBA32F/DXT1-3-5 → the matching `MTLPixelFormat`; anything else →
+  vocabulary: `gs_color_format.mtlFormat` (A8/R8/R8G8/R16/R16F/RG16\*/R32F\*/RGBA/BGRA\*/
+  R10G10B10A2/RGBA16\*/RGBA32F/DXT1-3-5 → the matching `MTLPixelFormat`; anything else →
   `.invalid`), `sRGBVariant` (only RGBA and BGRX/BGRA have sRGB counterparts),
   `gs_color_space` (colour-space → format/pixel-format: 709_EXTENDED → `bgra10_xr_srgb`,
   SRGB_16F/709_SCRGB → RGBA16F, rest → RGBA), depth functions, stencil ops, blend
@@ -276,12 +278,12 @@ returns NULL (or the default) rather than trapping the process.
 
 1. Exact contents of `MSLTemplates.header` (the fixed MSL preamble: `#include <metal_stdlib>`,
    usings, the sampler type alias) — re-derived at port time, not pinned here.
-2. The pipeline cache key format (the combined int encoding of render state) — internal;
+1. The pipeline cache key format (the combined int encoding of render state) — internal;
    behaviour is "same state → same `MTLRenderPipelineState`".
-3. `bgra10_xr` vs `bgra10_xr_srgb` selection for HDR pipelines — the reference's choice
+1. `bgra10_xr` vs `bgra10_xr_srgb` selection for HDR pipelines — the reference's choice
    per colour-space is tabled (R26) but the interaction with the EDR headroom (R22) is not
    characterised.
-4. What happens on `MTLDevice` loss / GPU hang (Metal error handler behaviour) — the
+1. What happens on `MTLDevice` loss / GPU hang (Metal error handler behaviour) — the
    reference relies on Metal's own recovery; not specified.
 
 Round 10 second-author check (2026-11-05): corrected R01 (was `device_get_name` =

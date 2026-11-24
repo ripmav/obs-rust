@@ -19,9 +19,11 @@ struct obs_source_info gain_filter = { .id = "gain_filter", .type = OBS_SOURCE_T
     .destroy = gain_destroy, .update = gain_update, .filter_audio = gain_filter_audio,
     .get_defaults = gain_defaults, .get_properties = gain_properties };
 ```
+
 `obs-filters.c` has `OBS_DECLARE_MODULE()`, `OBS_MODULE_USE_DEFAULT_LOCALE("obs-filters", "en-US")` and `obs_module_load()` which calls `obs_register_source(&gain_filter)` for each filter. Strings come from `data/locale/en-US.ini` via `obs_module_text`. CMake: `add_library(obs-filters MODULE)`; the module installs to `core/` (Windows) or `lib/obs-modules/core/` (Linux), data to `core/obs-filters/data` (Windows) or `share/obs/obs-modules/core/obs-filters` (Linux).
 
 The Rust version (**Proposal**, SDK in P5-46) should read like:
+
 ```rust
 #[obs_module(name = "obs-filters", description = "…")]
 mod filters {
@@ -35,28 +37,29 @@ mod filters {
     }
 }
 ```
+
 Until the SDK exists, port plugins with a thin hand-written `extern "C"` registration (same struct fill) so the port does not wait for P5-46.
 
 ## Size and difficulty (measured lines of C/C++/ObjC/Swift per plugin)
 
-| Lines | Plugins |
-|---|---|
-| 15k+ | `obs-filters` (includes vendored RNNoise), `obs-outputs` (includes vendored librtmp), `obs-ffmpeg`, `decklink`, `win-capture`, `obs-websocket` (submodule, tag 5.7.6) |
-| 4k–9k | `aja`, `mac-avcapture`, `obs-qsv11`, `obs-nvenc`, `win-dshow`, `linux-pipewire`, `obs-browser` (submodule, pinned 2.23.4-126-gd4db73e) |
-| 2k–4k | `mac-capture`, `mac-virtualcam`, `frontend-tools`, `nv-filters`, `image-source`, `linux-v4l2`, `text-freetype2`, `linux-capture`, `rtmp-services`, `win-wasapi` |
-| 1k–2k | `obs-transitions`, `obs-vst`, `coreaudio-encoder`, `vlc-video`, `mac-videotoolbox`, `obs-text`, `obs-webrtc`, `linux-pulseaudio` |
-| < 1k | `obs-x264`, `mac-syphon`, `*-output-ui`, `oss-audio`, `linux-alsa`, `sndio`, `linux-jack`, `obs-libfdk`, `decklink-captions` |
+| Lines | Plugins                                                                                                                                                               |
+| ----- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 15k+  | `obs-filters` (includes vendored RNNoise), `obs-outputs` (includes vendored librtmp), `obs-ffmpeg`, `decklink`, `win-capture`, `obs-websocket` (submodule, tag 5.7.6) |
+| 4k–9k | `aja`, `mac-avcapture`, `obs-qsv11`, `obs-nvenc`, `win-dshow`, `linux-pipewire`, `obs-browser` (submodule, pinned 2.23.4-126-gd4db73e)                                |
+| 2k–4k | `mac-capture`, `mac-virtualcam`, `frontend-tools`, `nv-filters`, `image-source`, `linux-v4l2`, `text-freetype2`, `linux-capture`, `rtmp-services`, `win-wasapi`       |
+| 1k–2k | `obs-transitions`, `obs-vst`, `coreaudio-encoder`, `vlc-video`, `mac-videotoolbox`, `obs-text`, `obs-webrtc`, `linux-pulseaudio`                                      |
+| < 1k  | `obs-x264`, `mac-syphon`, `*-output-ui`, `oss-audio`, `linux-alsa`, `sndio`, `linux-jack`, `obs-libfdk`, `decklink-captions`                                          |
 
 Submodule lines are measured the same way (C/C++/ObjC/Swift source files); the submodules are initialised in this checkout (fresh clones still need `git submodule update --init`).
 
 ## Choosing the order (risk-based)
 
 1. **Pure logic with golden tests** (`obs-transitions`, `obs-filters`, `image-source`, `rtmp-services`, `obs-x264`): fastest feedback, proves the SDK. Start with `obs-transitions` (1.9k lines, GPU effects + simple timing) as the pilot (P5-46.5).
-2. **Network and muxing** (`obs-outputs`, `obs-ffmpeg`, `obs-webrtc`, `obs-websocket`): memory-safety win is highest here (parsers and network input). Differential tests against nginx-rtmp/mediamtx/protocol suites.
-3. **Platform capture/audio**: one OS at a time, after the matching Phase 3 shared-texture task exists.
-4. **Hardware encoders**: thin SDK wrappers around vendor DLLs; low safety gain, high test cost (needs hardware).
-5. **Vendor SDK cards**: glue in Rust over FFI to the vendor API (NVENC/QSV/AMF ship C APIs; DeckLink/AJA need hand-written vtable FFI per D-10); the SDKs stay native (D-04).
-6. **Browser**: CEF stays the C++ vendor library (D-09) — the glue is Rust over the C API.
+1. **Network and muxing** (`obs-outputs`, `obs-ffmpeg`, `obs-webrtc`, `obs-websocket`): memory-safety win is highest here (parsers and network input). Differential tests against nginx-rtmp/mediamtx/protocol suites.
+1. **Platform capture/audio**: one OS at a time, after the matching Phase 3 shared-texture task exists.
+1. **Hardware encoders**: thin SDK wrappers around vendor DLLs; low safety gain, high test cost (needs hardware).
+1. **Vendor SDK cards**: glue in Rust over FFI to the vendor API (NVENC/QSV/AMF ship C APIs; DeckLink/AJA need hand-written vtable FFI per D-10); the SDKs stay native (D-04).
+1. **Browser**: CEF stays the C++ vendor library (D-09) — the glue is Rust over the C API.
 
 ## Cross-cutting rules for every plugin port
 
@@ -107,6 +110,6 @@ Submodule lines are measured the same way (C/C++/ObjC/Swift source files); the s
 ## Running this phase's checks
 
 1. **Conformance (per subtask):** the subtask's `Spec:`/`Vectors:` line names the area. Run your Rust runner over `test/conformance/scripts/<area>/` and compare against `test/conformance/vectors/<area>/*.expected` byte-for-byte (log-line and crash rules in `test/conformance/README.md`; `run.sh check` re-verifies the C reference and needs a C toolchain).
-2. **Settings compatibility (S2 bookend):** load the P0-18 corpus settings into the Rust `cdylib` through the P0-15 ABI host (`test/abi-host/`, which drives the module's lifecycle and writes a trace) — effective values must match the C plugin.
-3. **Golden/differential (task "Done when"):** PNG/PCM/box-dump/packet-byte goldens against the C plugin on identical inputs.
-4. **Smoke (E2 bookend):** manual smoke on each supported OS, result recorded in `docs/tests/plugin-<name>.md`.
+1. **Settings compatibility (S2 bookend):** load the P0-18 corpus settings into the Rust `cdylib` through the P0-15 ABI host (`test/abi-host/`, which drives the module's lifecycle and writes a trace) — effective values must match the C plugin.
+1. **Golden/differential (task "Done when"):** PNG/PCM/box-dump/packet-byte goldens against the C plugin on identical inputs.
+1. **Smoke (E2 bookend):** manual smoke on each supported OS, result recorded in `docs/tests/plugin-<name>.md`.

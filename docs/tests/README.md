@@ -12,7 +12,7 @@ file gets a test matrix in `docs/tests/`; every issue gets
 
 ## Template
 
-Copy [`_template.md`](\_template.md). Columns: **Case / Input / Expected /
+Copy [`_template.md`](_template.md). Columns: **Case / Input / Expected /
 Platforms / Status**.
 
 ## Rules
