@@ -1,13 +1,20 @@
-From f3e04df3e79891f15343bca5692c40ef297a0b79 Mon Sep 17 00:00:00 2001
+From 62b306a37e5f479269ccf4eba51477f087e6c9d9 Mon Sep 17 00:00:00 2001
 From: "ripmav-bot[bot]" <353694380+ripmav-bot[bot]@users.noreply.github.com>
-Date: Thu, 19 Nov 2026 19:45:49 +0100
+Date: Tue, 24 Nov 2026 22:52:24 +0100
 Subject: [PATCH] libobs: add OBS_ENABLE_RUST option (Rust leaf-module swap,
  obs-rust P1-08.5)
 
 When OBS_ENABLE_RUST=ON, the ported leaf modules (base.c, lexer.c,
-cf-lexer.c, cf-parser.c, text-lookup.c, threading-posix.c) are excluded
-from the build and their symbols are provided by the Rust staticlib
-named in OBS_RUST_FFI_LIB (cargo build -p obs-ffi --release).
+cf-lexer.c, cf-parser.c, text-lookup.c, threading-posix.c and, with GLib,
+platform-nix-dbus.c / platform-nix-portal.c) are excluded from the build
+and their symbols are provided by the Rust staticlib named in
+OBS_RUST_FFI_LIB (cargo build -p obs-ffi --release --features c-swap).
+
+Regenerated against the 33.0.1 pin (obs-rust D3, WP-30): the previous
+patch targeted the fe1ed79 working tree; against 33.0.1 the hunk
+offsets are clean. WP-30 (P1-07.3) extends the swap set with the two
+Flatpak sleep-inhibition files (the six dbus_/portal_inhibit* symbols
+come from the Rust staticlib; the dispatcher in platform-nix.c stays C).
 Mechanism verified with a shadow CMake project (genex source exclusion
 + imported staticlib resolving the real text_lookup_create symbol); a
 full libobs configure needs the complete OBS dependency set and remains
@@ -15,29 +22,32 @@ unverified here.
 
 Assisted-by: Qwen 3.8 27B (off) via Pi
 ---
- libobs/CMakeLists.txt         | 25 ++++++++++++++++++++-----
- libobs/cmake/os-freebsd.cmake |  2 +-
- libobs/cmake/os-linux.cmake   |  2 +-
+ libobs/CMakeLists.txt         | 27 ++++++++++++++++++++++-----
+ libobs/cmake/os-freebsd.cmake |  9 +++++++--
+ libobs/cmake/os-linux.cmake   |  9 +++++++--
  libobs/cmake/os-macos.cmake   |  2 +-
- 4 files changed, 23 insertions(+), 8 deletions(-)
+ 4 files changed, 37 insertions(+), 10 deletions(-)
+
 diff --git a/libobs/CMakeLists.txt b/libobs/CMakeLists.txt
-index 70e3bee..b08ef90 100644
+index 71459cb..c24e913 100644
 --- a/libobs/CMakeLists.txt
 +++ b/libobs/CMakeLists.txt
-@@ -9,6 +9,12 @@ endif()
+@@ -9,6 +9,14 @@ endif()
  
  include(cmake/obs-core-modules.cmake)
  
 +# Rust rewrite recipe step 5 (obs-rust P1-08.5): when ON, the ported leaf
-+# modules (base.c, lexer.c, cf-lexer.c, cf-parser.c, text-lookup.c and
-+# threading-posix.c) are excluded; their symbols come from the Rust
-+# staticlib pointed to by OBS_RUST_FFI_LIB (cargo build -p obs-ffi --release).
++# modules (base.c, lexer.c, cf-lexer.c, cf-parser.c, text-lookup.c,
++# threading-posix.c and, with GLib, the Flatpak sleep-inhibition files
++# platform-nix-dbus.c / platform-nix-portal.c) are excluded; their symbols
++# come from the Rust staticlib pointed to by OBS_RUST_FFI_LIB
++# (cargo build -p obs-ffi --release).
 +option(OBS_ENABLE_RUST "Replace ported C leaf modules with the Rust staticlib implementation" OFF)
 +
  find_package(SIMDe REQUIRED)
  find_package(Threads REQUIRED)
  
-@@ -88,7 +94,7 @@ target_sources(
+@@ -88,7 +96,7 @@ target_sources(
    PRIVATE
      util/array-serializer.c
      util/array-serializer.h
@@ -46,7 +56,7 @@ index 70e3bee..b08ef90 100644
      util/base.h
      util/bitstream.c
      util/bitstream.h
-@@ -97,9 +103,9 @@ target_sources(
+@@ -97,9 +105,9 @@ target_sources(
      util/buffered-file-serializer.c
      util/buffered-file-serializer.h
      util/c99defs.h
@@ -58,7 +68,7 @@ index 70e3bee..b08ef90 100644
      util/cf-parser.h
      util/config-file.c
      util/config-file.h
-@@ -112,7 +118,7 @@ target_sources(
+@@ -112,7 +120,7 @@ target_sources(
      util/dstr.h
      util/file-serializer.c
      util/file-serializer.h
@@ -67,7 +77,7 @@ index 70e3bee..b08ef90 100644
      util/lexer.h
      util/pipe.c
      util/pipe.h
-@@ -128,7 +134,7 @@ target_sources(
+@@ -127,7 +135,7 @@ target_sources(
      util/sse-intrin.h
      util/task.c
      util/task.h
@@ -76,7 +86,7 @@ index 70e3bee..b08ef90 100644
      util/text-lookup.h
      util/threading.h
      util/utf8.c
-@@ -264,6 +270,15 @@ target_link_libraries(
+@@ -261,6 +269,15 @@ target_link_libraries(
    PUBLIC SIMDe::SIMDe Threads::Threads
  )
  
@@ -93,7 +103,7 @@ index 70e3bee..b08ef90 100644
    include(cmake/os-windows.cmake)
  elseif(OS_MACOS)
 diff --git a/libobs/cmake/os-freebsd.cmake b/libobs/cmake/os-freebsd.cmake
-index 098fce0..0d58bfc 100644
+index 098fce0..c9da868 100644
 --- a/libobs/cmake/os-freebsd.cmake
 +++ b/libobs/cmake/os-freebsd.cmake
 @@ -27,7 +27,7 @@ target_sources(
@@ -105,8 +115,22 @@ index 098fce0..0d58bfc 100644
      util/threading-posix.h
  )
  
+@@ -72,7 +72,12 @@ else()
+ endif()
+ 
+ if(TARGET gio::gio)
+-  target_sources(libobs PRIVATE util/platform-nix-dbus.c util/platform-nix-portal.c)
++  target_sources(
++    libobs
++    PRIVATE
++      $<$<NOT:$<BOOL:${OBS_ENABLE_RUST}>>:util/platform-nix-dbus.c>
++      $<$<NOT:$<BOOL:${OBS_ENABLE_RUST}>>:util/platform-nix-portal.c>
++  )
+   target_link_libraries(libobs PRIVATE gio::gio)
+ endif()
+ 
 diff --git a/libobs/cmake/os-linux.cmake b/libobs/cmake/os-linux.cmake
-index dbc31ee..b11b83b 100644
+index dbc31ee..02386f0 100644
 --- a/libobs/cmake/os-linux.cmake
 +++ b/libobs/cmake/os-linux.cmake
 @@ -13,7 +13,7 @@ target_sources(
@@ -117,6 +141,20 @@ index dbc31ee..b11b83b 100644
 +    $<$<NOT:$<BOOL:${OBS_ENABLE_RUST}>>:util/threading-posix.c>
      util/threading-posix.h
  )
+ 
+@@ -77,7 +77,12 @@ else()
+ endif()
+ 
+ if(TARGET gio::gio)
+-  target_sources(libobs PRIVATE util/platform-nix-dbus.c util/platform-nix-portal.c)
++  target_sources(
++    libobs
++    PRIVATE
++      $<$<NOT:$<BOOL:${OBS_ENABLE_RUST}>>:util/platform-nix-dbus.c>
++      $<$<NOT:$<BOOL:${OBS_ENABLE_RUST}>>:util/platform-nix-portal.c>
++  )
+   target_link_libraries(libobs PRIVATE gio::gio)
+ endif()
  
 diff --git a/libobs/cmake/os-macos.cmake b/libobs/cmake/os-macos.cmake
 index e0dec44..53368ae 100644
@@ -133,3 +171,4 @@ index e0dec44..53368ae 100644
  
 -- 
 2.47.3
+

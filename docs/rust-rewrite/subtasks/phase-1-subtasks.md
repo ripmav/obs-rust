@@ -78,15 +78,15 @@ Corrections to the earlier plan, verified in the tree: the ring buffer is `libob
 
 ### P1-07 File system utilities
 
-- [ ] **P1-07.1 Open/rename/mkdir**
+- [x] **P1-07.1 Open/rename/mkdir**
   - Files: `libobs/util/platform.c` (846), `platform-nix.c` (1108), `platform-windows.c` (1374), `platform-cocoa.m` (530), `platform.h` (224)
   - Steps: `os_fopen`, `os_wfopen`, `os_mkdir`, `os_mkdirs`, `os_rename`, `os_copyfile`, `os_unlink` in `crates/obs-util` (UTF-8↔UTF-16 for every Windows call).
   - Spec: S-023 §5.5–5.6 (Linux; Windows/macOS from C)
   - Vectors: `test/conformance/scripts/platform/`
   - Pitfall: S-023 D-1 — `os_utf8_to_wcs` writes the NUL one unit past `dst` when the text exactly fills it; MUST NOT write outside `dst`. Q-9 — `os_safe_replace` has no rollback when the final rename fails.
   - Done when: tests with unicode and long (>260) paths on Windows.
-- [ ] **P1-07.2 Directory iteration** — `os_opendir/readdir/closedir`, `os_glob`/`os_globfree`. Spec: S-023 §5.6. Vectors: `test/conformance/scripts/platform/` (`ls`, `glob`). Pitfall: S-023 D-5 — the reference keeps the caller's `path` pointer (UAF on a temporary); the port MUST copy it. Done when: sorted result equals C.
-- [ ] **P1-07.3 Config/data paths** — Files: `platform-nix-dbus.c` (166), `platform-nix-portal.c` (223) (Flatpak). `os_get_config_path`, `os_get_program_data_path`, `os_get_abs_path(_ptr)`, `os_get_free_disk_space` + portal/dbus helpers. Spec: S-023 §5.6 (paths), S-055 U4/U5 (dbus/portal sleep inhibition). Vectors: `test/conformance/scripts/platform/` (+ `utilrest/` for dbus). Pitfall: S-023 Q-11 — `os_get_config_path_ptr(NULL or "")` ends with `/`, the buffer form does not. Done when: Flatpak path test.
+- [x] **P1-07.2 Directory iteration** — `os_opendir/readdir/closedir`, `os_glob`/`os_globfree`. Spec: S-023 §5.6. Vectors: `test/conformance/scripts/platform/` (`ls`, `glob`). Pitfall: S-023 D-5 — the reference keeps the caller's `path` pointer (UAF on a temporary); the port MUST copy it. Done when: sorted result equals C.
+- [x] **P1-07.3 Config/data paths** — Files: `platform-nix-dbus.c` (166), `platform-nix-portal.c` (223) (Flatpak). `os_get_config_path`, `os_get_program_data_path`, `os_get_abs_path(_ptr)`, `os_get_free_disk_space` + portal/dbus helpers. Spec: S-023 §5.6 (paths), S-055 U4/U5 (dbus/portal sleep inhibition). Vectors: `test/conformance/scripts/platform/` (+ `utilrest/` for dbus). Pitfall: S-023 Q-11 — `os_get_config_path_ptr(NULL or "")` ends with `/`, the buffer form does not. Done when: Flatpak path test.
 - [ ] **P1-07.4 Recipe and matrix** — Files: `libobs/CMakeLists.txt` (396), `obs-ffi` shim, `docs/tests/` matrix. Vectors: `test/conformance/scripts/platform/`.
 
 ### P1-08 Text encoding and lexers
