@@ -46,6 +46,7 @@ impl SettingsHandle {
     /// The pointer must be a valid `obs_data_t` for the duration of the
     /// callback call that receives the handle. This component never
     /// dereferences it (S-015 §1).
+    // SAFETY: the caller guarantees `ptr` is a valid `obs_data_t` for the duration of the callback (documented above); this type never dereferences it.
     pub const unsafe fn from_ptr(ptr: *mut c_void) -> Self {
         Self { ptr }
     }

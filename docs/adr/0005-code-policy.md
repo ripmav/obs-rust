@@ -1,6 +1,6 @@
 # 0005. Code policy: unsafe, MSRV, dependencies
 
-- Status: Accepted (decisions confirmed 2026-11-05/06: D-07, D-24; rules from `docs/rust-rewrite-plan.md` §3.7 and P0-05 subtasks)
+- Status: Accepted (decisions confirmed 2026-11-05/06: D-07, D-24; rules from `docs/rust-rewrite-plan.md` §3.7 and P0-05 subtasks). Rule 1 amended 2026-11-22 (Amendment 1, decision D1).
 - Date: 2026-11-10
 - Supersedes: —
 - Superseded by: —
@@ -18,19 +18,71 @@ the `deny.toml` allow-list lands in P0-10.
 
 ## Decision
 
-### Rule 1 — `unsafe` boundaries (P0-05.1)
+### Rule 1 — `unsafe` boundaries (P0-05.1, as amended 2026-11-22 — see Amendment 1)
 
 `unsafe` is allowed **only** in:
 
 - `*-sys` crates (FFI bindings to native libraries),
 - `obs-ffi` (the C ABI surface),
-- platform capture/audio crates (WASAPI, DirectShow, PipeWire, V4L2, CoreAudio, AVFoundation, hardware-encoder SDKs).
+- platform capture/audio crates (WASAPI, DirectShow, PipeWire, V4L2, CoreAudio, AVFoundation, hardware-encoder SDKs),
+- the two named exception sets of [Amendment 1](#amendment-1-2026-11-22-rule-1-c-abi-layout-and-platform-tier-exceptions-d1): the C-ABI layout modules and the platform-tier modules.
 
-Every `unsafe` block requires a `// SAFETY:` comment stating the invariant.
-Crate-level `#![deny(unsafe_op_in_unsafe_fn)]` applies everywhere. Pure crates
-(`obs-util`, `obs-math`, `obs-data`, `obs-signal`) run under Miri in CI
-(P0-09.3); a pure crate containing any `unsafe` fails review by definition.
-Lint config is committed in P0-07.1.
+Every `unsafe` block requires a `// SAFETY:` comment stating the invariant, enforced by `clippy::undocumented_unsafe_blocks` in `[workspace.lints.clippy]` (warn; the CI lint job runs clippy with `-D warnings`, so it is deny in CI). Crate-level `#![deny(unsafe_op_in_unsafe_fn)]` applies everywhere. Pure crates (`obs-util`, `obs-math`, `obs-data`, `obs-signal`) run under Miri in CI (P0-09.3); a pure crate containing `unsafe` **outside the named exception sets** fails review by definition. Lint config is committed in P0-07.1.
+
+### Amendment 1 (2026-11-22) — Rule 1: C-ABI layout and platform-tier exceptions (D1)
+
+**Trigger:** the 2026-11-21 status review (finding 1, blocker) measured ~737 `unsafe` lines in pure crates against the "any `unsafe` fails review" sentence. A per-module scan (2026-11-22; reproducible with `grep -rcE '\bunsafe\b' crates/*/src/*.rs`, comment lines excluded, `obs-ffi` removed) shows every one of them falls into a named category:
+
+| Category                                  | Module (pure crate)                                  | `unsafe` lines |
+| ----------------------------------------- | ---------------------------------------------------- | -------------- |
+| C-ABI layout / raw buffer state           | `obs-util::dstr`                                     | 73             |
+|                                           | `obs-signal::signal` (incl. 2 C callback type decls) | 48             |
+|                                           | `obs-util::bmem` (allocator core)                    | 43             |
+|                                           | `obs-util::darray`                                   | 35             |
+|                                           | `obs-util::deque`                                    | 29             |
+|                                           | `obs-signal::calldata`                               | 18             |
+|                                           | `obs-signal::decl`                                   | 5              |
+| Platform tier (`libc` syscall calls only) | `obs-util::threading`                                | 27             |
+|                                           | `obs-util::pipe`                                     | 18             |
+|                                           | `obs-util::dl`                                       | 5              |
+|                                           | `obs-util::os_time`                                  | 5              |
+|                                           | `obs-util::os_proc`                                  | 1              |
+| C function-pointer type declarations      | `obs-signal::signal`, `obs-signal::proc`             | 3              |
+| Opaque C handle, never dereferenced       | `obs-properties::model` (`from_ptr`)                 | 1              |
+| Test-only `env::set_var`/`remove_var`     | `obs-golden` (test code)                             | 2              |
+| **Total**                                 |                                                      | **314**        |
+
+The ADR was also internally inconsistent: the `libc` admission below already concedes that "only these two platform-helper modules in `obs-util` touch libc, each block with a `// SAFETY:` comment" while Rule 1 forbade any `unsafe` in pure crates.
+
+**Decision:** Rule 1 gains two named exception sets, plus two narrow allowances. Adding a module to an exception set requires a one-line note in the PR and a row in the tables below.
+
+1. **C-ABI layout exception.** A `#[repr(C)]` struct whose memory is allocated and/or passed across the FFI boundary by C code (not-yet-ported `libobs` during the strangler migration, ADR 0001, or ecosystem plugins, ADR 0002) must keep the C layout — raw pointer fields are the only representation. `unsafe` in these modules is restricted to accessing that raw state (alloc/free through the S-001 allocator, `from_raw_parts` views, pointer arithmetic within the buffer, the NUL terminator) and to the `unsafe extern "C" fn` type declarations mirroring C function pointers:
+
+   | Module                 | C struct                                                                                                                        | Added      |
+   | ---------------------- | ------------------------------------------------------------------------------------------------------------------------------- | ---------- |
+   | `obs-util::bmem`       | S-001 allocator core: `bmalloc_raw`/`brealloc_raw`/`bfree_raw` are the source of every raw buffer above; raw `std::alloc` calls | 2026-11-22 |
+   | `obs-util::dstr`       | `struct dstr { char *array; size_t len, capacity; }` — plugins read the fields directly                                         | 2026-11-22 |
+   | `obs-util::darray`     | `DARRAY(T).da { T *array; size_t num, capacity; }`                                                                              | 2026-11-22 |
+   | `obs-util::deque`      | `struct deque { void *data; size_t start_pos, size, capacity; }`                                                                | 2026-11-22 |
+   | `obs-signal::signal`   | `struct signal { … callback array … }` + `signal_callback_t`                                                                    | 2026-11-22 |
+   | `obs-signal::calldata` | `calldata_t { uint8_t *stack; size_t size, capacity; }`                                                                         | 2026-11-22 |
+   | `obs-signal::decl`     | `decl_param_t.name` / `decl_t.name` (bmem-allocated C strings)                                                                  | 2026-11-22 |
+
+   The fallback remains available: if a layout module grows beyond raw-state access, its raw layer moves to `obs-ffi` and the safe API stays in the pure crate (rejected now: it would change every caller and still leave the `extern "C"` boundary unsafe).
+
+1. **Platform-tier exception.** Modules whose sole purpose is platform syscalls may use `unsafe` exclusively for `libc::` calls and the `MaybeUninit` storage they require, each block with a `// SAFETY:` comment:
+
+   | Module                | Syscalls                                             | Added      |
+   | --------------------- | ---------------------------------------------------- | ---------- |
+   | `obs-util::threading` | sem\_*, pthread\_*, (S-023 R095–R106)                | 2026-11-22 |
+   | `obs-util::pipe`      | pipe/fork/exec/waitpid/fcntl/close/access (S-055 U2) | 2026-11-22 |
+   | `obs-util::dl`        | dlopen/dlsym/dlclose/dlerror (S-023 R107)            | 2026-11-22 |
+   | `obs-util::os_time`   | clock_gettime/nanosleep/usleep (S-023 R100–R102)     | 2026-11-22 |
+   | `obs-util::os_proc`   | (reserved for S-024 M3 process args)                 | 2026-11-22 |
+
+1. **Narrow allowances (no module list):** opaque C handle wrappers that never dereference their pointer (e.g. `obs-properties::model::from_ptr`); test-only `std::env` mutation (`obs-golden`).
+
+**Consequence added:** the two exception tables are standing maintenance, like the dependency exceptions table — a new module needs the PR note and a row.
 
 ### Rule 2 — MSRV (P0-05.2, D-24)
 

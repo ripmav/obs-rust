@@ -65,6 +65,7 @@ impl Drop for Calldata {
         // Rust wrapper MUST reset if it reuses the struct — Drop does
         // the free + reset in one place.
         if !self.fixed && !self.stack.is_null() {
+            // SAFETY: Calldata invariant — `stack` is a bmem buffer (capacity bytes) uniquely owned by this calldata (NULL is a no-op).
             unsafe { bfree_raw(self.stack) };
         }
         self.stack = std::ptr::null_mut();
@@ -108,6 +109,7 @@ pub fn calldata_clear(d: &mut Calldata) {
         return;
     }
     d.size = W;
+    // SAFETY: Calldata invariant — `d.stack` is a fresh bmem buffer of W bytes (allocated above).
     let stack = unsafe { std::slice::from_raw_parts_mut(d.stack, W) };
     stack.fill(0);
 }
@@ -117,6 +119,7 @@ pub fn calldata_clear(d: &mut Calldata) {
 /// must reset before reuse).
 pub fn calldata_free(d: &mut Calldata) {
     if !d.fixed && !d.stack.is_null() {
+        // SAFETY: Calldata invariant — `d.stack` is a bmem buffer owned by this calldata (NULL is a no-op).
         unsafe { bfree_raw(d.stack) };
     }
 }
@@ -135,6 +138,7 @@ fn find_record(d: &Calldata, name: &[u8]) -> Option<usize> {
     if d.size == 0 || name.is_empty() {
         return None;
     }
+    // SAFETY: Calldata invariant — `d.stack` is a valid bmem buffer and size ≤ capacity.
     let stack = unsafe { std::slice::from_raw_parts(d.stack, d.size) };
     let mut pos = 0usize;
     loop {
@@ -168,6 +172,7 @@ fn ensure(d: &mut Calldata, new_size: usize) -> bool {
         return false;
     }
     let new_capacity = (d.capacity * 2).max(new_size);
+    // SAFETY: Calldata invariant — `d.stack` is a live bmem buffer; the result is stored into `d.stack` immediately.
     d.stack = unsafe { brealloc_raw(d.stack, new_capacity) };
     d.capacity = new_capacity;
     true
@@ -187,6 +192,7 @@ pub fn calldata_get_data(d: &Calldata, name: &[u8], out: &mut [u8]) -> bool {
     let Some(pos) = find_record(d, name) else {
         return false;
     };
+    // SAFETY: Calldata invariant — `d.stack` is a valid bmem buffer and size ≤ capacity.
     let stack = unsafe { std::slice::from_raw_parts(d.stack, d.size) };
     let data_size = read_size(stack, pos);
     if data_size != out.len() {
@@ -211,9 +217,11 @@ pub fn calldata_set_data(d: &mut Calldata, name: &[u8], data: &[u8]) {
     // R11: first write to a growable calldata.
     if !d.fixed && d.stack.is_null() {
         let alloc = 128usize.max(3 * W + name_len + data.len());
+        // SAFETY: Calldata invariant — allocation through the S-001 allocator; the result is stored into `d.stack` immediately.
         d.stack = unsafe { bmalloc_raw(alloc) };
         d.capacity = alloc;
         // record at 0, terminator right after
+        // SAFETY: Calldata invariant — `d.stack` is a fresh bmem buffer of `alloc` bytes (allocated above).
         let stack = unsafe { std::slice::from_raw_parts_mut(d.stack, alloc) };
         write_size(stack, 0, name_len);
         stack[W..W + name.len()].copy_from_slice(name);
@@ -231,6 +239,7 @@ pub fn calldata_set_data(d: &mut Calldata, name: &[u8], data: &[u8]) {
     // R12/R13 (and R16: a fixed calldata's first write goes here).
     if let Some(pos) = find_record(d, name) {
         // existing record: replace the payload (R12)
+        // SAFETY: Calldata invariant — `d.stack` is a valid bmem buffer and size ≤ capacity.
         let stack = unsafe { std::slice::from_raw_parts_mut(d.stack, d.size) };
         let cur = read_size(stack, pos);
         if cur < data.len() {
@@ -238,6 +247,7 @@ pub fn calldata_set_data(d: &mut Calldata, name: &[u8], data: &[u8]) {
             if !ensure(d, d.size + k) {
                 return; // R14: abandoned, no change
             }
+            // SAFETY: Calldata invariant — the write stays within `size + add` bytes (the reserved range).
             unsafe {
                 std::ptr::copy(
                     d.stack.add(pos + W + cur),
@@ -248,6 +258,7 @@ pub fn calldata_set_data(d: &mut Calldata, name: &[u8], data: &[u8]) {
             d.size += k;
         } else if cur > data.len() {
             let k = cur - data.len();
+            // SAFETY: Calldata invariant — the copy stays within `d.size + add` bytes (the reserved range).
             unsafe {
                 std::ptr::copy(
                     d.stack.add(pos + W + cur),
@@ -257,6 +268,7 @@ pub fn calldata_set_data(d: &mut Calldata, name: &[u8], data: &[u8]) {
             }
             d.size -= k;
         }
+        // SAFETY: Calldata invariant — `d.stack` is a valid bmem buffer and size ≤ capacity.
         let stack = unsafe { std::slice::from_raw_parts_mut(d.stack, d.size) };
         write_size(stack, pos, data.len());
         if !data.is_empty() {
@@ -269,9 +281,11 @@ pub fn calldata_set_data(d: &mut Calldata, name: &[u8], data: &[u8]) {
             return; // R14: abandoned, no change
         }
         let at = d.size - W; // before the terminator
+        // SAFETY: Calldata invariant — `src.stack` is valid for src.size + add reads; `d.stack` has the reserved range above.
         unsafe {
             std::ptr::copy(d.stack.add(at), d.stack.add(at + add), W);
         }
+        // SAFETY: Calldata invariant — `d.stack` is a valid bmem buffer of size + add bytes (reserved above).
         let stack = unsafe { std::slice::from_raw_parts_mut(d.stack, d.size + add) };
         write_size(stack, at, name_len);
         stack[at + W..at + W + name.len()].copy_from_slice(name);
@@ -295,6 +309,7 @@ pub fn calldata_get_string<'a>(d: &'a Calldata, name: &[u8]) -> Option<&'a [u8]>
         return None;
     }
     let pos = find_record(d, name)?;
+    // SAFETY: Calldata invariant — `d.stack` is a valid bmem buffer and size ≤ capacity.
     let stack = unsafe { std::slice::from_raw_parts(d.stack, d.size) };
     let data_size = read_size(stack, pos);
     if data_size == 0 {
@@ -393,6 +408,7 @@ pub fn cd_copy_data(dst: &mut Calldata, src: &Calldata) {
         return;
     }
     calldata_init(dst);
+    // SAFETY: Calldata invariant — `src.stack` is a valid bmem buffer and src.size ≤ src.capacity.
     let stack = unsafe { std::slice::from_raw_parts(src.stack, src.size) };
     let mut pos = 0usize;
     while pos < src.size {
@@ -415,6 +431,7 @@ mod tests {
     use super::*;
 
     fn dump(d: &Calldata) -> Vec<u8> {
+        // SAFETY: Calldata invariant — `d.stack` is a valid bmem buffer and size ≤ capacity.
         unsafe { std::slice::from_raw_parts(d.stack, d.size) }.to_vec()
     }
 
@@ -745,6 +762,7 @@ mod tests {
             if self.stack.is_null() {
                 &[]
             } else {
+                // SAFETY: Calldata invariant — `self.stack` is a valid bmem buffer and size ≤ capacity.
                 unsafe { std::slice::from_raw_parts(self.stack, self.size) }
             }
         }

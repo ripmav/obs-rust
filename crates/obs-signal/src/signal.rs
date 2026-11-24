@@ -146,12 +146,14 @@ pub struct SignalHandler {
 // ── List helpers (fresh borrow per call; never held across a callback) ──
 
 unsafe fn cb_count(sp: *const Signal) -> usize {
+    // SAFETY: `sp` points to a live `Signal` (caller contract); fresh borrow, the lock is taken inside and never held across a callback.
     let s = unsafe { &*sp };
     let _g = s.lock.lock();
     s.cbs.len()
 }
 
 unsafe fn cb_at(sp: *const Signal, i: usize) -> Option<(SignalCallback, *mut c_void, u64)> {
+    // SAFETY: `sp` points to a live `Signal` (caller contract); fresh borrow, the lock is taken inside and never held across a callback.
     let s = unsafe { &*sp };
     let _g = s.lock.lock();
     s.cbs
@@ -161,6 +163,7 @@ unsafe fn cb_at(sp: *const Signal, i: usize) -> Option<(SignalCallback, *mut c_v
 }
 
 unsafe fn cb_mark(sp: *mut Signal, i: usize, generation: u64) -> bool {
+    // SAFETY: `sp` points to a live `Signal` and the caller holds its re-entrant lock (exclusive access); fresh borrow, never held across a callback.
     let s = unsafe { &mut *sp };
     let _g = s.lock.lock();
     if i < s.cbs.len() && s.cbs[i].generation == generation {
@@ -174,6 +177,7 @@ unsafe fn cb_mark(sp: *mut Signal, i: usize, generation: u64) -> bool {
 /// Erase entry `i` if marked `remove`; returns `true` if it was a
 /// `keep_ref` entry.
 unsafe fn cb_erase_marked(sp: *mut Signal, i: usize) -> bool {
+    // SAFETY: `sp` points to a live `Signal` and the caller holds its re-entrant lock (exclusive access); fresh borrow, never held across a callback.
     let s = unsafe { &mut *sp };
     let _g = s.lock.lock();
     if i < s.cbs.len() && s.cbs[i].remove {
@@ -186,6 +190,7 @@ unsafe fn cb_erase_marked(sp: *mut Signal, i: usize) -> bool {
 }
 
 unsafe fn cb_set_signalling(sp: *mut Signal, v: bool) {
+    // SAFETY: `sp` points to a live `Signal` and the caller holds its re-entrant lock (exclusive access); fresh borrow, never held across a callback.
     let s = unsafe { &mut *sp };
     let _g = s.lock.lock();
     s.signalling = v;
@@ -232,8 +237,10 @@ impl Inner {
     fn destroy(&self) {
         if self.emitting.load(SeqCst) == 0 {
             let _hl = self.handler_lock.lock().unwrap();
+            // SAFETY: drop path — the handler lock is held (checked above); the `UnsafeCell` access is exclusive.
             unsafe { (*self.state.signals.get()).clear() };
             let _gl = self.global_lock.lock();
+            // SAFETY: drop path — the handler lock is held (checked above); the `UnsafeCell` access is exclusive.
             unsafe { (*self.globals.globals.get()).clear() };
         }
         self.dead.store(true, SeqCst);
@@ -242,8 +249,10 @@ impl Inner {
     fn maybe_free_dead(&self) {
         if self.emitting.fetch_sub(1, SeqCst) == 1 && self.dead.load(SeqCst) {
             let _hl = self.handler_lock.lock().unwrap();
+            // SAFETY: drop path — the handler lock is held (checked above); the `UnsafeCell` access is exclusive.
             unsafe { (*self.state.signals.get()).clear() };
             let _gl = self.global_lock.lock();
+            // SAFETY: drop path — the handler lock is held (checked above); the `UnsafeCell` access is exclusive.
             unsafe { (*self.globals.globals.get()).clear() };
         }
     }
@@ -264,11 +273,13 @@ pub fn signal_handler_add(h: &SignalHandler, signal_decl: &str) -> bool {
     let name = decl.name.clone();
     {
         let _hl = h.inner.handler_lock.lock().unwrap();
+        // SAFETY: the handler lock is held above; the `UnsafeCell` access is exclusive.
         let signals = unsafe { &*h.inner.state.signals.get() };
         if signals.iter().any(|s| s.name == name) {
             eprintln!("Signal declaration '{name}' exists");
             return false;
         }
+        // SAFETY: the handler lock is held above; the `UnsafeCell` access is exclusive; `name` is a valid C string.
         unsafe {
             (*h.inner.state.signals.get()).push(Box::new(Signal {
                 name,
@@ -296,10 +307,12 @@ pub unsafe fn signal_handler_add_array(h: &SignalHandler, decls: *const *const u
     let mut ok = true;
     let mut i = 0usize;
     loop {
+        // SAFETY: the decls pointer array is valid until its null terminator (checked in the loop).
         let p = unsafe { *decls.add(i) };
         if p.is_null() {
             break;
         }
+        // SAFETY: `p` is a live NUL-terminated C string (bmem-allocated decl name).
         let bytes = unsafe { CStr::from_ptr(p as *const c_char) }.to_bytes();
         if !signal_handler_add(h, std::str::from_utf8(bytes).unwrap_or("")) {
             ok = false;
@@ -316,6 +329,7 @@ fn find_signal(h: &SignalHandler, sig: &str) -> Option<*mut Signal> {
         return None;
     }
     let _hl = h.inner.handler_lock.lock().unwrap();
+    // SAFETY: the handler lock is held above; the `UnsafeCell` access is exclusive.
     let signals = unsafe { &*h.inner.state.signals.get() };
     signals
         .iter()
@@ -331,6 +345,7 @@ pub fn signal_handler_connect(h: &SignalHandler, sig: &str, cb: SignalCallback, 
         return;
     };
     let generation = h.inner.generation.fetch_add(1, SeqCst);
+    // SAFETY: the signal's re-entrant lock is taken inside; `sp` points to a live `Signal` found above.
     unsafe {
         let s = &mut *sp;
         let _sl = s.lock.lock();
@@ -364,6 +379,7 @@ pub fn signal_handler_connect_ref(
     };
     h.inner.refs.fetch_add(1, SeqCst);
     let generation = h.inner.generation.fetch_add(1, SeqCst);
+    // SAFETY: the signal's re-entrant lock is taken inside; `sp` points to a live `Signal` found above.
     unsafe {
         let s = &mut *sp;
         let _sl = s.lock.lock();
@@ -390,6 +406,7 @@ pub fn signal_handler_connect_global(
     let generation = h.inner.generation.fetch_add(1, SeqCst);
     let _gl = h.inner.global_lock.lock();
     {
+        // SAFETY: the handler lock is held above; the `UnsafeCell` access is exclusive.
         let gs = unsafe { &mut *h.inner.globals.globals.get() };
         if gs
             .iter()
@@ -421,6 +438,7 @@ pub fn signal_handler_disconnect(
     let Some(sp) = find_signal(h, sig) else {
         return; // no log (R30)
     };
+    // SAFETY: the signal's re-entrant lock is taken inside; `sp` points to a live `Signal` found above.
     unsafe {
         let s = &mut *sp;
         let _sl = s.lock.lock();
@@ -456,6 +474,7 @@ pub fn signal_handler_disconnect_global(
         return;
     }
     let _gl = h.inner.global_lock.lock();
+    // SAFETY: the handler lock is held above; the `UnsafeCell` access is exclusive.
     let gs = unsafe { &mut *h.inner.globals.globals.get() };
     let Some(i) = gs
         .iter()
@@ -470,22 +489,27 @@ pub fn signal_handler_disconnect_global(
 /// of the calling thread for removal. Handler-agnostic, as in C.
 pub fn signal_handler_remove_current() {
     if let Some(c) = CURRENT_CB.take() {
+        // SAFETY: `c.handler` is the handler's Box (live in the table above); fresh borrow under the table lock.
         let h: &SignalHandler = unsafe { &*(c.handler.as_ptr() as *const SignalHandler) };
         let sp: *mut Signal = {
             let _hl = h.inner.handler_lock.lock().unwrap();
+            // SAFETY: the handler lock is held above; the `UnsafeCell` access is exclusive.
             let signals = unsafe { &*h.inner.state.signals.get() };
             match signals.get(c.sig_idx) {
                 Some(sig) => Box::as_ptr(sig).cast_mut(),
                 None => return,
             }
         };
+        // SAFETY: the signal's re-entrant lock is held by the caller; fresh borrow, never held across a callback.
         unsafe { cb_mark(sp, c.entry, c.generation) };
         return;
     }
     if let Some(c) = CURRENT_GLOBAL.take() {
+        // SAFETY: `c.handler` is the handler's Box (live in the table above); fresh borrow under the table lock.
         let h: &SignalHandler = unsafe { &*(c.handler.as_ptr() as *const SignalHandler) };
         let matches = {
             let _gl = h.inner.global_lock.lock();
+            // SAFETY: the handler lock is held above; the `UnsafeCell` access is exclusive.
             let gs = unsafe { &*h.inner.globals.globals.get() };
             c.entry < gs.len() && gs[c.entry].generation == c.generation
         };
@@ -503,12 +527,14 @@ pub fn signal_handler_remove_current() {
 
 fn g_count(h: &SignalHandler) -> usize {
     let _gl = h.inner.global_lock.lock();
+    // SAFETY: the handler lock is held above; the `UnsafeCell` access is exclusive.
     let gs = unsafe { &*h.inner.globals.globals.get() };
     gs.len()
 }
 
 fn g_at(h: &SignalHandler, i: usize) -> Option<(GlobalSignalCallback, *mut c_void, u64)> {
     let _gl = h.inner.global_lock.lock();
+    // SAFETY: the handler lock is held above; the `UnsafeCell` access is exclusive.
     let gs = unsafe { &*h.inner.globals.globals.get() };
     let g = &gs[i];
     if g.remove {
@@ -520,6 +546,7 @@ fn g_at(h: &SignalHandler, i: usize) -> Option<(GlobalSignalCallback, *mut c_voi
 
 fn g_set_signalling(h: &SignalHandler, i: usize, delta: i32) {
     let _gl = h.inner.global_lock.lock();
+    // SAFETY: the handler lock is held above; the `UnsafeCell` access is exclusive.
     let gs = unsafe { &mut *h.inner.globals.globals.get() };
     if i < gs.len() {
         gs[i].signaling = gs[i].signaling.wrapping_add(delta as u32);
@@ -528,6 +555,7 @@ fn g_set_signalling(h: &SignalHandler, i: usize, delta: i32) {
 
 fn g_mark_remove(h: &SignalHandler, i: usize) {
     let _gl = h.inner.global_lock.lock();
+    // SAFETY: the handler lock is held above; the `UnsafeCell` access is exclusive.
     let gs = unsafe { &mut *h.inner.globals.globals.get() };
     if i < gs.len() {
         gs[i].remove = true;
@@ -536,6 +564,7 @@ fn g_mark_remove(h: &SignalHandler, i: usize) {
 
 fn g_erase_marked(h: &SignalHandler, i: usize) -> bool {
     let _gl = h.inner.global_lock.lock();
+    // SAFETY: the handler lock is held above; the `UnsafeCell` access is exclusive.
     let gs = unsafe { &mut *h.inner.globals.globals.get() };
     if i < gs.len() && gs[i].remove && gs[i].signaling == 0 {
         let keep_ref = false; // globals have no reference counting (R62)
@@ -555,6 +584,7 @@ pub fn signal_handler_signal(h: &SignalHandler, sig: &str, params: &mut Calldata
     }
     let (sig_idx, sp) = {
         let _hl = h.inner.handler_lock.lock().unwrap();
+        // SAFETY: the handler lock is held above; the `UnsafeCell` access is exclusive.
         let signals = unsafe { &*h.inner.state.signals.get() };
         let sig_idx = match signals.iter().position(|s| s.name == sig) {
             Some(i) => i,
@@ -567,16 +597,19 @@ pub fn signal_handler_signal(h: &SignalHandler, sig: &str, params: &mut Calldata
     h.inner.emitting.fetch_add(1, SeqCst);
     let handler = NonNull::from(h);
 
+    // SAFETY: the signal's re-entrant lock is held by the caller; fresh borrow, never held across a callback.
     unsafe { cb_set_signalling(sp, true) };
     let mut removed_keep_refs = 0usize;
     // R41.2 / Q-1: index loop, length re-read every iteration — entries
     // appended during the emit are reached by this emit.
     let mut i = 0usize;
     loop {
+        // SAFETY: the signal's re-entrant lock is held by the caller; fresh borrow, never held across a callback.
         let n = unsafe { cb_count(sp) };
         if i >= n {
             break;
         }
+        // SAFETY: the signal's re-entrant lock is held by the caller; fresh borrow, never held across a callback.
         if let Some((f, data, generation)) = unsafe { cb_at(sp, i) } {
             CURRENT_CB.set(Some(Current {
                 handler,
@@ -587,6 +620,7 @@ pub fn signal_handler_signal(h: &SignalHandler, sig: &str, params: &mut Calldata
             // Callbacks are `extern "C"`: a panic aborts (no unwinding
             // into the callback's stack frame), per the S-001
             // "no unwinding into C" guard.
+            // SAFETY: `f` is a C callback stored in `cbs` (live for the duration of the emission); `params` is valid for the call.
             unsafe { (f)(data, params as *mut Calldata) };
             // Q-2: cleared after *any* callback returns.
             CURRENT_CB.set(None);
@@ -594,13 +628,16 @@ pub fn signal_handler_signal(h: &SignalHandler, sig: &str, params: &mut Calldata
         i += 1;
     }
     // R41.3: erase marked entries, back to front.
+    // SAFETY: the signal's re-entrant lock is held by the caller; fresh borrow, never held across a callback.
     let mut j = unsafe { cb_count(sp) };
     while j > 0 {
         j -= 1;
+        // SAFETY: the signal's re-entrant lock is held by the caller; fresh borrow, never held across a callback.
         if unsafe { cb_erase_marked(sp, j) } {
             removed_keep_refs += 1;
         }
     }
+    // SAFETY: the signal's re-entrant lock is held by the caller; fresh borrow, never held across a callback.
     unsafe { cb_set_signalling(sp, false) }; // boolean, Q-3
 
     // R41.5: global pass under the recursive global lock. Copy every
@@ -627,7 +664,9 @@ pub fn signal_handler_signal(h: &SignalHandler, sig: &str, params: &mut Calldata
                 }));
                 // Pointer into the signal's name (stable allocation);
                 // the borrow of the `name` field ends with this statement.
+                // SAFETY: `sp` is a live global callback signal found above; its name is a live C string.
                 let sig_name = unsafe { (*sp).name.as_ptr() };
+                // SAFETY: `f` is the stored C callback (live for the duration of the emission); `sig_name` is a live C string.
                 unsafe { (f)(data, sig_name, params as *mut Calldata) };
                 CURRENT_GLOBAL.set(None);
                 g_set_signalling(h, i, -1);
@@ -657,6 +696,7 @@ pub fn signal_handler_signal(h: &SignalHandler, sig: &str, params: &mut Calldata
 #[must_use]
 pub fn signal_handler_cb_count(h: &SignalHandler, sig: &str) -> Option<usize> {
     let sp = find_signal(h, sig)?;
+    // SAFETY: the signal's re-entrant lock is held by the caller; fresh borrow, never held across a callback.
     Some(unsafe { cb_count(sp) })
 }
 

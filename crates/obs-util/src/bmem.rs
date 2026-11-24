@@ -146,15 +146,18 @@ pub unsafe fn bmalloc_raw(size: usize) -> *mut u8 {
         bcrash(ZERO_BMALLOC)
     }
     let layout = Layout::from_size_align(HEADER + size, ALIGNMENT).expect("valid layout");
+    // SAFETY: layout is valid (HEADER + size ≥ 1, ALIGNMENT is a power of two).
     let block = unsafe { alloc(layout) };
     if block.is_null() {
         oom_crash(size)
     }
+    // SAFETY: `block` was just allocated above; HEADER bytes are valid and usize-aligned.
     unsafe {
         // Store the original size in the header; data starts at +HEADER.
         (block as *mut usize).write(size);
     }
     NUM_ALLOCS.fetch_add(1, Ordering::Relaxed);
+    // SAFETY: HEADER is within the freshly allocated block (size ≥ 1 ⇒ block ≥ HEADER+1 bytes).
     unsafe { block.add(HEADER) }
 }
 
@@ -168,9 +171,12 @@ pub unsafe fn bfree_raw(ptr: *mut u8) {
     if ptr.is_null() {
         return;
     }
+    // SAFETY: caller contract of `bfree_raw` — `ptr` is a live pointer from this allocator.
     let block = unsafe { ptr.sub(HEADER) };
+    // SAFETY: the header word at `block` is valid for a usize read (live allocated block).
     let size = unsafe { (block as *const usize).read() };
     let layout = Layout::from_size_align(HEADER + size, ALIGNMENT).expect("valid layout");
+    // SAFETY: `block` is the original allocation and `layout` matches the allocation-time layout (size recovered from the header).
     unsafe { dealloc(block, layout) };
     NUM_ALLOCS.fetch_sub(1, Ordering::Relaxed);
 }
@@ -191,6 +197,7 @@ pub unsafe fn brealloc_raw(ptr: *mut u8, size: usize) -> *mut u8 {
         if size == 0 {
             bcrash(ZERO_BREALLOC)
         }
+        // SAFETY: raw S-001 API — `brealloc_raw`'s own `# Safety` contract is inherited here.
         let p = unsafe { bmalloc_raw(size) };
         // bmalloc_raw already incremented; R06's pre-increment is the same
         // single increment for the fresh block (net +1 overall).
@@ -200,13 +207,17 @@ pub unsafe fn brealloc_raw(ptr: *mut u8, size: usize) -> *mut u8 {
     if size == 0 {
         bcrash(ZERO_BREALLOC)
     }
+    // SAFETY: caller contract of `brealloc_raw` — `ptr` is a live pointer from this allocator.
     let block = unsafe { ptr.sub(HEADER) };
+    // SAFETY: the header word at `block` is valid for a usize read (live allocated block).
     let old_size = unsafe { (block as *const usize).read() };
     let layout = Layout::from_size_align(HEADER + size, ALIGNMENT).expect("valid layout");
+    // SAFETY: layout is valid (HEADER + size ≥ 1, ALIGNMENT is a power of two).
     let new_block = unsafe { alloc(layout) };
     if new_block.is_null() {
         oom_crash(size)
     }
+    // SAFETY: both buffers are live bmem blocks; the copy stays within min(old, new) bytes and the header write is usize-aligned.
     unsafe {
         std::ptr::copy_nonoverlapping(ptr, new_block.add(HEADER), size.min(old_size));
         (new_block as *mut usize).write(size);
@@ -216,6 +227,7 @@ pub unsafe fn brealloc_raw(ptr: *mut u8, size: usize) -> *mut u8 {
         );
     }
     // R08: counter unchanged.
+    // SAFETY: HEADER is within the freshly allocated block.
     unsafe { new_block.add(HEADER) }
 }
 
@@ -229,8 +241,10 @@ pub unsafe fn brealloc_raw(ptr: *mut u8, size: usize) -> *mut u8 {
 /// `src` must be valid for `size` reads (or `size == 0`).
 #[must_use]
 pub unsafe fn bmemdup_raw(src: *const u8, size: usize) -> *mut u8 {
+    // SAFETY: raw S-001 API — `bmemdup_raw`'s own `# Safety` contract is inherited here.
     let dst = unsafe { bmalloc_raw(size) };
     if size != 0 {
+        // SAFETY: `src` is valid for `size` reads (caller contract); `dst` is a fresh block of `size` bytes, so the ranges do not overlap.
         unsafe { std::ptr::copy_nonoverlapping(src, dst, size) };
     }
     dst
@@ -278,18 +292,21 @@ impl BMem {
 impl std::ops::Deref for BMem {
     type Target = [u8];
     fn deref(&self) -> &[u8] {
+        // SAFETY: BMem invariant — `ptr` is a live bmem block of `len` bytes (see `from_raw`).
         unsafe { std::slice::from_raw_parts(self.ptr, self.len) }
     }
 }
 
 impl std::ops::DerefMut for BMem {
     fn deref_mut(&mut self) -> &mut [u8] {
+        // SAFETY: BMem invariant — `ptr` is a live bmem block of `len` bytes (see `from_raw`).
         unsafe { std::slice::from_raw_parts_mut(self.ptr, self.len) }
     }
 }
 
 impl Drop for BMem {
     fn drop(&mut self) {
+        // SAFETY: BMem invariant — unique ownership; `Drop` runs exactly once per BMem.
         unsafe { bfree_raw(self.ptr) };
     }
 }
@@ -297,16 +314,20 @@ impl Drop for BMem {
 /// Safe `bmemdup` (R11) over a slice.
 #[must_use]
 pub fn bmemdup(src: &[u8]) -> BMem {
+    // SAFETY: `bmemdup_raw` returns a fresh block of `src.len` bytes — the `from_raw` contract holds.
     unsafe { BMem::from_raw(bmemdup_raw(src.as_ptr(), src.len()), src.len()) }
 }
 
 /// S-001-R12: `bzalloc(size)` = `bmalloc(size)` + zero-fill; 0 is fatal.
 #[must_use]
 pub fn bzalloc(size: usize) -> BMem {
+    // SAFETY: raw S-001 API; `size == 0` already crashed via R02 inside `bmalloc_raw`.
     let p = unsafe { bmalloc_raw(size) };
     if size != 0 {
+        // SAFETY: `p` is a fresh bmem block of `size` bytes.
         unsafe { p.write_bytes(0, size) };
     }
+    // SAFETY: `p` is a live bmem block of `size` bytes (allocated above).
     unsafe { BMem::from_raw(p, size) }
 }
 
@@ -345,10 +366,12 @@ mod tests {
     struct Guard(*mut u8);
     impl Drop for Guard {
         fn drop(&mut self) {
+            // SAFETY: Guard owns the block it was handed (the test is the unique owner).
             unsafe { bfree_raw(self.0) };
         }
     }
     fn alloc_guard(size: usize) -> Guard {
+        // SAFETY: test — raw S-001 API used per its `# Safety` contract.
         Guard(unsafe { bmalloc_raw(size) })
     }
 
@@ -394,28 +417,35 @@ mod tests {
     #[test]
     fn bfree_null_is_noop() {
         // S-001-R05 (counter effect in tests/leak_counters.rs)
+        // SAFETY: NULL is the documented no-op case of `bfree_raw`.
         unsafe { bfree_raw(std::ptr::null_mut()) };
     }
 
     #[test]
     fn brealloc_null_is_alloc() {
         // S-001-R06: aligned result (counter effect in tests/leak_counters.rs).
+        // SAFETY: test — `brealloc_raw(NULL, n) ≡ bmalloc_raw(n)` (R06).
         let p = unsafe { brealloc_raw(std::ptr::null_mut(), 64) };
         assert_eq!(p as usize % ALIGNMENT, 0);
+        // SAFETY: `p` is a live block from the call above; this test is the unique owner.
         unsafe { bfree_raw(p) };
     }
 
     #[test]
     fn brealloc_grows_preserving_prefix() {
         // S-001-R08: first min(old,new) bytes preserved.
+        // SAFETY: test — raw S-001 API used per its `# Safety` contract.
         let old = unsafe { bmalloc_raw(16) };
+        // SAFETY: `old` is a live 16-byte block from the call above.
         unsafe {
             for i in 0..16 {
                 *old.add(i) = i.wrapping_mul(7) as u8;
             }
         }
+        // SAFETY: `old` is a live bmem block; this test is the unique owner.
         let new = unsafe { brealloc_raw(old, 256) };
         assert_eq!(new as usize % ALIGNMENT, 0);
+        // SAFETY: `new` is a live 256-byte block from `brealloc_raw` above.
         unsafe {
             for i in 0..16usize {
                 assert_eq!(*new.add(i), i.wrapping_mul(7) as u8);
@@ -427,13 +457,17 @@ mod tests {
     #[test]
     fn brealloc_shrinks_preserving_prefix() {
         // S-001-R08: shrink keeps the first `new` bytes.
+        // SAFETY: test — raw S-001 API used per its `# Safety` contract.
         let old = unsafe { bmalloc_raw(256) };
+        // SAFETY: `old` is a live 256-byte block from the call above.
         unsafe {
             for i in 0..256usize {
                 *old.add(i) = i as u8;
             }
         }
+        // SAFETY: `old` is a live bmem block; this test is the unique owner.
         let new = unsafe { brealloc_raw(old, 32) };
+        // SAFETY: `new` is a live 32-byte block from `brealloc_raw` above.
         unsafe {
             for i in 0..32usize {
                 assert_eq!(*new.add(i), i as u8);
@@ -477,6 +511,7 @@ mod tests {
         // tests/leak_counters.rs).
         let d = bstrdup(b"abc");
         let raw = d.into_raw();
+        // SAFETY: `raw` came from `into_raw` on the same block above; the test re-wraps it with the known length.
         let back = unsafe { BMem::from_raw(raw, 4) };
         assert_eq!(&back[..], b"abc\0");
         drop(back);

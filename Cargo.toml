@@ -32,3 +32,9 @@ rust-version = "1.99"
 [workspace.lints.rust]
 # ADR 0005 rule 1: unsafe is confined to *-sys / obs-ffi / platform crates.
 unsafe_op_in_unsafe_fn = "deny"
+
+[workspace.lints.clippy]
+# ADR 0005 rule 1 (Amendment 1, D1): every unsafe block needs a // SAFETY:
+# comment stating the invariant. Warn locally; the CI lint job runs clippy
+# with -D warnings, so this is deny in CI.
+undocumented_unsafe_blocks = "warn"

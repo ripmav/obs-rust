@@ -75,6 +75,7 @@ mod ffi {
 /// through the installed C handler. `msg` is treated as a C string — an
 /// embedded NUL terminates it.
 pub fn blog(level: c_int, msg: &str) {
+    // SAFETY: the C log sink (installed through the `base_set_log_handler` bridge); `msg` is NUL-terminated for the call.
     unsafe {
         ffi::obs_ffi_log(level, msg.as_ptr().cast());
     }
@@ -88,6 +89,7 @@ pub fn blog(level: c_int, msg: &str) {
 /// handler must follow the C `log_handler_t` contract.
 pub unsafe fn base_set_log_handler(handler: Option<LogHandler>, param: *mut c_void) {
     unsafe {
+        // SAFETY: the C log-handler setter; `handler`/`param` follow the documented C contract.
         ffi::base_set_log_handler(handler, param);
     }
 }
@@ -101,6 +103,7 @@ pub unsafe fn base_set_log_handler(handler: Option<LogHandler>, param: *mut c_vo
 pub unsafe fn base_get_log_handler() -> (Option<LogHandler>, *mut c_void) {
     let mut h: Option<LogHandler> = None;
     let mut p: *mut c_void = std::ptr::null_mut();
+    // SAFETY: `h` and `p` are valid storage for the C out params.
     unsafe {
         ffi::base_get_log_handler(&mut h, &mut p);
     }
@@ -115,6 +118,7 @@ pub unsafe fn base_get_log_handler() -> (Option<LogHandler>, *mut c_void) {
 /// contract (R24).
 pub unsafe fn base_set_crash_handler(handler: CrashHandler, param: *mut c_void) {
     unsafe {
+        // SAFETY: the C crash-handler setter; `handler`/`param` follow the documented C contract.
         ffi::base_set_crash_handler(handler, param);
     }
 }
@@ -137,6 +141,7 @@ mod tests {
         _args: VaList,
         param: *mut c_void,
     ) {
+        // SAFETY: a live NUL-terminated C string (checked above).
         let s = unsafe { CStr::from_ptr(format) }
             .to_string_lossy()
             .into_owned();
@@ -158,6 +163,7 @@ mod tests {
     fn r21_r22_handler_roundtrip() {
         let _lock = TEST_LOCK.lock().unwrap();
         let mut sentinel = 0u8;
+        // SAFETY: the C log-handler setter; `capture` is a valid C function pointer for the process lifetime (test).
         unsafe { base_set_log_handler(Some(capture), &mut sentinel as *mut _ as *mut c_void) };
         blog(LOG_INFO, "hello");
         let (lvl, fmt, p) = CAP.lock().unwrap().take().expect("handler ran");
@@ -165,12 +171,15 @@ mod tests {
         assert_eq!(fmt, "%s");
         assert_eq!(p, &mut sentinel as *mut _ as usize);
 
+        // SAFETY: `h` and `p` are valid storage for the C out params.
         let (h, p) = unsafe { base_get_log_handler() };
         assert!(h.is_some());
         assert_eq!(p as usize, &mut sentinel as *mut _ as usize);
 
         // NULL reinstalls the default (R22): the capture stops receiving
+        // SAFETY: the C log-handler reset (the documented NULL no-op case).
         unsafe { base_set_log_handler(None, std::ptr::null_mut()) };
+        // SAFETY: `h` and `p` are valid storage for the C out params.
         let (h, p) = unsafe { base_get_log_handler() };
         assert!(h.is_some());
         assert!(p.is_null());
@@ -185,11 +194,13 @@ mod tests {
     fn blog_wrapper_formats() {
         let _lock = TEST_LOCK.lock().unwrap();
         let mut sentinel = 0u8;
+        // SAFETY: the C log-handler setter; `capture` is a valid C function pointer for the process lifetime (test).
         unsafe { base_set_log_handler(Some(capture), &mut sentinel as *mut _ as *mut c_void) };
         blog(LOG_ERROR, "plain message");
         let (lvl, fmt, _) = CAP.lock().unwrap().take().expect("handler ran");
         assert_eq!(lvl, LOG_ERROR);
         assert_eq!(fmt, "%s");
+        // SAFETY: the C log-handler reset (the documented NULL no-op case).
         unsafe { base_set_log_handler(None, std::ptr::null_mut()) };
     }
 }

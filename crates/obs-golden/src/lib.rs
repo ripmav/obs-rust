@@ -195,11 +195,13 @@ mod tests {
     /// clears UPDATE_GOLDEN/CI on entry and removes GOLDEN_DIR on exit, so no
     /// other thread observes a torn or stale value during the critical section.
     fn test_set(key: &str, value: impl AsRef<std::ffi::OsStr>) {
+        // SAFETY: test only — env vars are serialized/restored by the guard above; the test binary is single-threaded here.
         unsafe { env::set_var(key, value) }
     }
 
     /// SAFETY: same serialization and restore contract as [`test_set`].
     fn test_remove(key: &str) {
+        // SAFETY: test only — same serialization and restore contract as `test_set`.
         unsafe { env::remove_var(key) }
     }
 

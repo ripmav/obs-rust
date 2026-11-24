@@ -12,6 +12,7 @@ pub fn os_get_executable_path_ptr(name: Option<&str>) -> Option<String> {
     let mut buf = [0u8; 4096];
     // readlink(2) takes a c_char buffer (*mut i8 on x86_64, *mut u8 on
     // aarch64); .cast() infers the platform type.
+    // SAFETY: `buf` is valid for len bytes (allocated above); `c` is a NUL-terminated path.
     let n = unsafe { libc::readlink(c.as_ptr(), buf.as_mut_ptr().cast(), buf.len()) };
     if n <= 0 {
         return None;

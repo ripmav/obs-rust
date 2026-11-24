@@ -50,6 +50,7 @@ impl Deque {
         self.end_pos = 0;
         self.capacity = 0;
         if !data.is_null() {
+            // SAFETY: Deque invariant — `data` is a bmem buffer (capacity bytes) uniquely owned by this deque (NULL is a no-op).
             unsafe { bmem::bfree_raw(data) };
         }
     }
@@ -73,15 +74,18 @@ impl Deque {
         }
         let total = self.start_pos + self.size;
         if total <= self.capacity {
+            // SAFETY: Deque invariant — `data.add(start_pos)` is valid for `size` bytes (start_pos + size ≤ capacity + size bookkeeping above).
             let s = unsafe { std::slice::from_raw_parts(self.data.add(self.start_pos), self.size) };
             [s, &[]]
         } else {
+            // SAFETY: Deque invariant — the front segment is within the buffer.
             let first = unsafe {
                 std::slice::from_raw_parts(
                     self.data.add(self.start_pos),
                     self.capacity - self.start_pos,
                 )
             };
+            // SAFETY: Deque invariant — the wrapped tail segment is within the buffer.
             let second = unsafe { std::slice::from_raw_parts(self.data, total - self.capacity) };
             [first, second]
         }
@@ -93,6 +97,7 @@ impl Deque {
             return;
         }
         let new_cap = (self.capacity * 2).max(self.size);
+        // SAFETY: Deque invariant — `data` is a live bmem buffer; the result is stored into `data` immediately.
         unsafe {
             self.data = bmem::brealloc_raw(self.data, new_cap);
         }
@@ -107,6 +112,7 @@ impl Deque {
             return;
         }
         let difference = new_cap - self.capacity;
+        // SAFETY: Deque invariant — the compaction shift stays within the (grown) buffer.
         unsafe {
             ptr::copy(
                 self.data.add(self.start_pos),
@@ -122,6 +128,7 @@ impl Deque {
         if c <= self.capacity {
             return;
         }
+        // SAFETY: Deque invariant — `data` is a live bmem buffer; the result is stored into `data` immediately.
         unsafe {
             self.data = bmem::brealloc_raw(self.data, c);
         }
@@ -141,15 +148,18 @@ impl Deque {
         if new_end > self.capacity {
             let back = self.capacity - self.end_pos;
             if back > 0 {
+                // SAFETY: Deque invariant — `data.add(end_pos)` has `back` free bytes (end_pos is the write cursor).
                 unsafe {
                     ptr::copy_nonoverlapping(src.as_ptr(), self.data.add(self.end_pos), back);
                 }
             }
+            // SAFETY: Deque invariant — the wrapped prefix is written into `data[0..n-back]` (free range).
             unsafe {
                 ptr::copy_nonoverlapping(src.as_ptr().add(back), self.data, n - back);
             }
             self.end_pos = new_end - self.capacity;
         } else {
+            // SAFETY: Deque invariant — `data.add(end_pos)` has n free bytes (single-segment append).
             unsafe {
                 ptr::copy_nonoverlapping(src.as_ptr(), self.data.add(self.end_pos), n);
             }
@@ -169,22 +179,26 @@ impl Deque {
             // was empty
             self.start_pos = 0;
             self.end_pos = n;
+            // SAFETY: Deque invariant — `data[0..n]` is the free front range (start_pos ≥ n).
             unsafe {
                 ptr::copy_nonoverlapping(src.as_ptr(), self.data, n);
             }
         } else if self.start_pos < n {
             let back = n - self.start_pos;
             if self.start_pos > 0 {
+                // SAFETY: Deque invariant — the wrapped prefix is written into the free front range.
                 unsafe {
                     ptr::copy_nonoverlapping(src.as_ptr().add(back), self.data, self.start_pos);
                 }
             }
             self.start_pos = self.capacity - back;
+            // SAFETY: Deque invariant — `data.add(start_pos)` has `back` free bytes (the free front range).
             unsafe {
                 ptr::copy_nonoverlapping(src.as_ptr(), self.data.add(self.start_pos), back);
             }
         } else {
             self.start_pos -= n;
+            // SAFETY: Deque invariant — `data.add(start_pos)` has n free bytes (the free front range).
             unsafe {
                 ptr::copy_nonoverlapping(src.as_ptr(), self.data.add(self.start_pos), n);
             }
@@ -202,11 +216,14 @@ impl Deque {
         if new_end > self.capacity {
             let back = self.capacity - self.end_pos;
             if back > 0 {
+                // SAFETY: Deque invariant — the tail zero-fill stays within the buffer (back ≤ capacity).
                 unsafe { self.data.add(self.end_pos).write_bytes(0, back) };
             }
+            // SAFETY: Deque invariant — the front zero-fill stays within the buffer (n - back ≤ capacity).
             unsafe { self.data.write_bytes(0, n - back) };
             self.end_pos = new_end - self.capacity;
         } else {
+            // SAFETY: Deque invariant — `data.add(end_pos)` is valid for n bytes (single-segment push).
             unsafe { self.data.add(self.end_pos).write_bytes(0, n) };
             self.end_pos = new_end;
         }
@@ -222,16 +239,20 @@ impl Deque {
         if self.size == n {
             self.start_pos = 0;
             self.end_pos = n;
+            // SAFETY: Deque invariant — the zero-fill stays within the buffer (n ≤ capacity).
             unsafe { self.data.write_bytes(0, n) };
         } else if self.start_pos < n {
             let back = n - self.start_pos;
             if self.start_pos > 0 {
+                // SAFETY: Deque invariant — the front zero-fill stays within the buffer (start_pos ≤ capacity).
                 unsafe { self.data.write_bytes(0, self.start_pos) };
             }
             self.start_pos = self.capacity - back;
+            // SAFETY: Deque invariant — the tail zero-fill stays within the buffer (back ≤ capacity).
             unsafe { self.data.add(self.start_pos).write_bytes(0, back) };
         } else {
             self.start_pos -= n;
+            // SAFETY: Deque invariant — `data.add(start_pos)` is valid for n bytes (single-segment push).
             unsafe { self.data.add(self.start_pos).write_bytes(0, n) };
         }
     }
@@ -249,6 +270,7 @@ impl Deque {
         let mut pos = self.start_pos;
         while written < n {
             let chunk = (self.capacity - pos).min(n - written);
+            // SAFETY: Deque invariant — the chunk is a valid contiguous segment of the ring; `out` has room (checked above).
             unsafe {
                 ptr::copy_nonoverlapping(self.data.add(pos), out[written..].as_mut_ptr(), chunk);
             }
@@ -277,6 +299,7 @@ impl Deque {
         debug_assert!(self.end_pos != 0 || self.size == 0);
         if back_size < n {
             let front_size = n - back_size;
+            // SAFETY: Deque invariant — both ring segments are within the buffer; `out` has room (checked above).
             unsafe {
                 ptr::copy_nonoverlapping(self.data, out[front_size..].as_mut_ptr(), back_size);
                 ptr::copy_nonoverlapping(
@@ -286,6 +309,7 @@ impl Deque {
                 );
             }
         } else {
+            // SAFETY: Deque invariant — the tail segment is within the buffer; `out` has room (checked above).
             unsafe {
                 ptr::copy_nonoverlapping(self.data.add(self.end_pos - n), out.as_mut_ptr(), n);
             }
@@ -341,6 +365,7 @@ impl Deque {
                 phys
             };
             let chunk = (self.capacity - phys).min(n - written);
+            // SAFETY: Deque invariant — `data.add(phys)` is the write cursor with `chunk` free bytes (checked above).
             unsafe {
                 ptr::copy_nonoverlapping(src[written..].as_ptr(), self.data.add(phys), chunk);
             }
@@ -365,6 +390,7 @@ impl Deque {
         let mut remaining = add;
         while remaining > 0 {
             let chunk = (self.capacity - pos).min(remaining);
+            // SAFETY: Deque invariant — `data.add(pos)` is valid for `chunk` bytes (the popped range).
             unsafe { self.data.add(pos).write_bytes(0, chunk) };
             pos = (pos + chunk) % self.capacity;
             remaining -= chunk;
@@ -388,6 +414,7 @@ impl Deque {
         } else {
             pos
         };
+        // SAFETY: Deque invariant — `pos` is a valid index (checked above); `phys` maps into the buffer.
         Some(unsafe { self.data.add(phys) })
     }
 }
@@ -674,8 +701,10 @@ mod tests {
         assert_eq!(&buf, b"7893456");
         d.peek_back(4, Some(&mut buf));
         assert_eq!(&buf[..4], b"3456");
+        // SAFETY: test — the data pointer is valid; the offset maps into the (wrapped) buffer.
         let p0 = unsafe { d.data.add(11) } as *const u8;
         assert_eq!(d.deque_data(0), Some(p0)); // start 11
+        // SAFETY: test — the data pointer is valid; the offset maps into the (wrapped) buffer.
         let p6 = unsafe { d.data.add(5) } as *const u8;
         assert_eq!(d.deque_data(6), Some(p6)); // 11 + 6 = 17 -> wrap to 5
         assert_eq!(d.deque_data(7), None);

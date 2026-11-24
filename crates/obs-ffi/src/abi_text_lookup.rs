@@ -25,6 +25,7 @@ pub unsafe extern "C" fn text_lookup_create(path: *const c_char) -> *mut c_void 
     if path.is_null() {
         return std::ptr::null_mut();
     }
+    // SAFETY: a live NUL-terminated C string (checked above).
     let bytes = unsafe { CStr::from_ptr(path) }.to_bytes();
     match TextLookup::create(bytes) {
         Some(lookup) => Box::into_raw(Box::new(lookup)) as *mut c_void,
@@ -43,7 +44,9 @@ pub unsafe extern "C" fn text_lookup_add(lookup: *mut c_void, path: *const c_cha
     if lookup.is_null() || path.is_null() {
         return false;
     }
+    // SAFETY: C-ABI — the handle is non-NULL (guarded above); the value is live and exclusively owned for the call.
     let lk = unsafe { &mut *(lookup as *mut TextLookup) };
+    // SAFETY: a live NUL-terminated C string (checked above).
     let bytes = unsafe { CStr::from_ptr(path) }.to_bytes();
     lk.add(bytes)
 }
@@ -55,6 +58,7 @@ pub unsafe extern "C" fn text_lookup_add(lookup: *mut c_void, path: *const c_cha
 #[unsafe(no_mangle)]
 pub unsafe extern "C" fn text_lookup_destroy(lookup: *mut c_void) {
     if !lookup.is_null() {
+        // SAFETY: the handle is non-NULL (guarded above) and came from the matching init bridge; ownership C -> Rust.
         unsafe { drop(Box::from_raw(lookup as *mut TextLookup)) };
     }
 }
@@ -77,10 +81,13 @@ pub unsafe extern "C" fn text_lookup_getstr(
     if lookup.is_null() || lookup_val.is_null() || out.is_null() {
         return false;
     }
+    // SAFETY: C-ABI — the handle is non-NULL (guarded above); the value is live for the call.
     let lk = unsafe { &*(lookup as *const TextLookup) };
+    // SAFETY: a live NUL-terminated C string (checked above).
     let key = unsafe { CStr::from_ptr(lookup_val) }.to_bytes();
     match lk.getstr(key) {
         Some(value) => {
+            // SAFETY: C-ABI — `out` is valid out storage (caller contract); the pointer is valid for the call (documented above).
             unsafe { *out = value.as_ptr().cast() };
             true
         }

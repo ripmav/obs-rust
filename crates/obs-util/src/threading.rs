@@ -224,6 +224,7 @@ pub fn os_sem_init(value: i32) -> Result<OsSem, i32> {
             return Err(-1);
         }
         Ok(OsSem {
+            // SAFETY: `sem_init` succeeded (rc == 0 checked above), so the storage is initialized.
             sem: unsafe { sem.assume_init() },
         })
     }
@@ -380,6 +381,7 @@ pub unsafe fn pthread_mutex_init_recursive(mutex: *mut libc::pthread_mutex_t) ->
     if mutex.is_null() {
         return libc::EINVAL;
     }
+    // SAFETY: `pthread_mutexattr_t` is plain old data; zeroed storage is valid until `pthread_mutexattr_init` (whose rc is checked).
     let mut attr: libc::pthread_mutexattr_t = unsafe { std::mem::zeroed() };
     // SAFETY: `attr` is exclusively owned and fully initialized by
     // `pthread_mutexattr_init` before any use; `mutex` (documented caller
@@ -389,12 +391,16 @@ pub unsafe fn pthread_mutex_init_recursive(mutex: *mut libc::pthread_mutex_t) ->
     let rc = unsafe { libc::pthread_mutexattr_init(&mut attr) };
     if rc == 0 {
         let rc =
+            // SAFETY: `attr` is initialized above (`pthread_mutexattr_init` succeeded).
             unsafe { libc::pthread_mutexattr_settype(&mut attr, libc::PTHREAD_MUTEX_RECURSIVE) };
         if rc == 0 {
+            // SAFETY: `mutex` is valid, exclusively owned storage (documented caller contract); `attr` is initialized.
             let rc = unsafe { libc::pthread_mutex_init(mutex, &attr) };
+            // SAFETY: `attr` is valid (`pthread_mutexattr_init` succeeded above).
             unsafe { libc::pthread_mutexattr_destroy(&mut attr) };
             return rc;
         }
+        // SAFETY: `attr` is valid (`pthread_mutexattr_init` succeeded above).
         unsafe { libc::pthread_mutexattr_destroy(&mut attr) };
     }
     rc
@@ -634,6 +640,7 @@ mod tests {
                 libc::pthread_getname_np(libc::pthread_self(), buf.as_mut_ptr(), buf.len())
             };
             let end = buf.iter().position(|&c| c == 0).unwrap_or(buf.len());
+            // SAFETY: test — `buf` holds the bytes written above; `end + 1` bytes are valid.
             let got = unsafe { std::slice::from_raw_parts(buf.as_ptr().cast::<u8>(), end + 1) };
             assert_eq!(rc, 0, "pthread_getname_np");
             let _ = tx.send(String::from_utf8_lossy(&got[..end]).into_owned());
@@ -667,14 +674,19 @@ mod tests {
         // mlock 0; munlock 0
         // SAFETY: `m` was just initialized here and is not locked.
         assert_eq!(unsafe { libc::pthread_mutex_lock(&mut m) }, 0);
+        // SAFETY: test — `m` is a live recursive mutex (initialized above).
         assert_eq!(unsafe { libc::pthread_mutex_unlock(&mut m) }, 0);
         // mrec 0
         // SAFETY: `m` is exclusive and unlocked at this point.
         assert_eq!(unsafe { pthread_mutex_init_recursive(&mut m) }, 0);
         // mlock 0; mlock 0 (re-entrant); munlock 0; munlock 0
+        // SAFETY: test — `m` is a live recursive mutex (initialized above).
         assert_eq!(unsafe { libc::pthread_mutex_lock(&mut m) }, 0);
+        // SAFETY: test — `m` is a live recursive mutex; re-entrant lock is the point of the test.
         assert_eq!(unsafe { libc::pthread_mutex_lock(&mut m) }, 0);
+        // SAFETY: test — `m` is a live recursive mutex (initialized above).
         assert_eq!(unsafe { libc::pthread_mutex_unlock(&mut m) }, 0);
+        // SAFETY: test — `m` is a live recursive mutex (initialized above).
         assert_eq!(unsafe { libc::pthread_mutex_unlock(&mut m) }, 0);
         // NULL handling: `_value` is a no-op (C); `_recursive` returns an
         // error instead of the C reference's NULL deref (documented).
@@ -682,6 +694,7 @@ mod tests {
         unsafe { pthread_mutex_init_value(std::ptr::null_mut()) };
         // SAFETY: null is the documented no-op/error case.
         assert_eq!(
+            // SAFETY: test — NULL is the documented no-op case of the recursive init.
             unsafe { pthread_mutex_init_recursive(std::ptr::null_mut()) },
             libc::EINVAL
         );

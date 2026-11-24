@@ -55,6 +55,7 @@ impl Default for Dstr {
 impl Drop for Dstr {
     fn drop(&mut self) {
         if !self.array.is_null() {
+            // SAFETY: Dstr invariant — `array` is a bmem buffer uniquely owned by this Dstr (NULL is a no-op).
             unsafe { bfree_raw(self.array) };
             self.array = std::ptr::null_mut();
             self.len = 0;
@@ -69,6 +70,7 @@ impl std::ops::Deref for Dstr {
         if self.array.is_null() {
             &[]
         } else {
+            // SAFETY: Dstr invariant — `array` is a valid bmem buffer and len ≤ capacity.
             unsafe { std::slice::from_raw_parts(self.array, self.len) }
         }
     }
@@ -91,8 +93,10 @@ pub fn dstr_ensure_capacity(d: &mut Dstr, n: usize) {
     let new = if d.capacity != 0 { d.capacity * 2 } else { n };
     let new = new.max(n);
     if d.array.is_null() {
+        // SAFETY: Dstr invariant — allocation through the S-001 allocator; the result is stored into `array` immediately.
         d.array = unsafe { bmalloc_raw(new) };
     } else {
+        // SAFETY: Dstr invariant — allocation through the S-001 allocator; the result is stored into `array` immediately.
         d.array = unsafe { brealloc_raw(d.array, new) };
     }
     d.capacity = new;
@@ -106,8 +110,10 @@ pub fn dstr_reserve(d: &mut Dstr, c: usize) {
         return;
     }
     if d.array.is_null() {
+        // SAFETY: Dstr invariant — allocation through the S-001 allocator; the result is stored into `array` immediately.
         d.array = unsafe { bmalloc_raw(c) };
     } else {
+        // SAFETY: Dstr invariant — allocation through the S-001 allocator; the result is stored into `array` immediately.
         d.array = unsafe { brealloc_raw(d.array, c) };
     }
     d.capacity = c;
@@ -125,10 +131,12 @@ pub fn dstr_resize(d: &mut Dstr, n: usize) {
     let old = d.len;
     dstr_ensure_capacity(d, n + 1);
     if n > old {
+        // SAFETY: Dstr invariant — `array` has capacity ≥ n+1 (reserved/allocated above); the zero-fill stays within the buffer.
         unsafe {
             std::ptr::write_bytes(d.array.add(old), 0, n - old);
         }
     }
+    // SAFETY: Dstr invariant — `array` has capacity ≥ n+1; the terminator is written within the buffer.
     unsafe { *d.array.add(n) = 0 };
     d.len = n;
 }
@@ -136,6 +144,7 @@ pub fn dstr_resize(d: &mut Dstr, n: usize) {
 /// S-006-R04: `dstr_free(d)` — free; all fields zero.
 pub fn dstr_free(d: &mut Dstr) {
     if !d.array.is_null() {
+        // SAFETY: Dstr invariant — `array` is a bmem buffer uniquely owned by this Dstr (NULL is a no-op).
         unsafe { bfree_raw(d.array) };
     }
     d.array = std::ptr::null_mut();
@@ -147,6 +156,7 @@ pub fn dstr_free(d: &mut Dstr) {
 /// fields (caller resets them; C inline does exactly this).
 pub fn dstr_array_free(d: &mut Dstr) {
     if !d.array.is_null() {
+        // SAFETY: Dstr invariant — `array` is a bmem buffer uniquely owned by this Dstr (NULL is a no-op).
         unsafe { bfree_raw(d.array) };
         d.array = std::ptr::null_mut();
     }
@@ -225,7 +235,9 @@ pub fn dstr_copy_dstr(d: &mut Dstr, src: &Dstr) {
     if src.len == 0 {
         return;
     }
+    // SAFETY: Dstr invariant — allocation through the S-001 allocator; the result is stored into `array` immediately.
     d.array = unsafe { bmalloc_raw(src.len + 1) };
+    // SAFETY: Dstr invariant — `src.array` is valid for src.len+1 reads; `d.array` is a fresh block of the same size.
     unsafe {
         std::ptr::copy_nonoverlapping(src.array, d.array, src.len + 1);
     }
@@ -245,9 +257,11 @@ pub fn dstr_copy(d: &mut Dstr, s: &[u8]) {
     }
     dstr_ensure_capacity(d, s.len() + 1);
     if d.array.is_null() {
+        // SAFETY: Dstr invariant — allocation through the S-001 allocator; the result is stored into `array` immediately.
         d.array = unsafe { bmalloc_raw(s.len() + 1) };
         d.capacity = s.len() + 1;
     }
+    // SAFETY: Dstr invariant — the copy + NUL write stay within the freshly allocated block.
     unsafe {
         std::ptr::copy_nonoverlapping(s.as_ptr(), d.array, s.len());
         *d.array.add(s.len()) = 0;
@@ -260,6 +274,7 @@ pub fn dstr_copy_strref(d: &mut Dstr, ref_: &StrRef) {
     let bytes = if ref_.array.is_null() || ref_.len == 0 {
         &[][..]
     } else {
+        // SAFETY: Dstr invariant — `array` is a valid bmem buffer and len ≤ capacity.
         unsafe { std::slice::from_raw_parts(ref_.array, ref_.len) }
     };
     dstr_copy(d, bytes);
@@ -275,7 +290,9 @@ pub fn dstr_ncopy(d: &mut Dstr, s: &[u8], n: usize) {
         return;
     }
     let n = n.min(s.len());
+    // SAFETY: Dstr invariant — allocation through the S-001 allocator; the result is stored into `array` immediately.
     d.array = unsafe { bmalloc_raw(n + 1) };
+    // SAFETY: Dstr invariant — `array` has capacity ≥ n+1; the NUL is written within the buffer.
     unsafe {
         std::ptr::copy_nonoverlapping(s.as_ptr(), d.array, n);
         *d.array.add(n) = 0;
@@ -291,7 +308,9 @@ pub fn dstr_ncopy_dstr(d: &mut Dstr, src: &Dstr, n: usize) {
     if m == 0 {
         return;
     }
+    // SAFETY: Dstr invariant — allocation through the S-001 allocator; the result is stored into `array` immediately.
     d.array = unsafe { bmalloc_raw(m + 1) };
+    // SAFETY: Dstr invariant — `array` has capacity ≥ m+1; the NUL is written within the buffer.
     unsafe {
         std::ptr::copy_nonoverlapping(src.array, d.array, m);
         *d.array.add(m) = 0;
@@ -311,6 +330,7 @@ pub fn dstr_cat_strref(d: &mut Dstr, ref_: &StrRef) {
     if ref_.array.is_null() || ref_.len == 0 {
         return;
     }
+    // SAFETY: Dstr invariant — `array` is a valid bmem buffer and len ≤ capacity.
     let bytes = unsafe { std::slice::from_raw_parts(ref_.array, ref_.len) };
     dstr_ncat(d, bytes, bytes.len());
 }
@@ -332,9 +352,11 @@ pub fn dstr_ncat(d: &mut Dstr, s: &[u8], n: usize) {
     let n = n.min(s.len());
     dstr_ensure_capacity(d, d.len + n + 1);
     if d.array.is_null() {
+        // SAFETY: Dstr invariant — allocation through the S-001 allocator; the result is stored into `array` immediately.
         d.array = unsafe { bmalloc_raw(d.len + n + 1) };
         d.capacity = d.len + n + 1;
     }
+    // SAFETY: Dstr invariant — `src.array` is valid for src.len+1 reads; `d` was allocated for the full result above.
     unsafe {
         std::ptr::copy_nonoverlapping(s.as_ptr(), d.array.add(d.len), n);
         *d.array.add(d.len + n) = 0;
@@ -350,6 +372,7 @@ pub fn dstr_cat_dstr(d: &mut Dstr, src: &Dstr) {
     }
     dstr_ncat(
         d,
+        // SAFETY: Dstr invariant — `array` is a valid bmem buffer and len ≤ capacity.
         unsafe { std::slice::from_raw_parts(src.array, src.len) },
         src.len,
     );
@@ -362,6 +385,7 @@ pub fn dstr_ncat_dstr(d: &mut Dstr, src: &Dstr, n: usize) {
     }
     dstr_ncat(
         d,
+        // SAFETY: Dstr invariant — `array` is a valid bmem buffer and len ≤ capacity.
         unsafe { std::slice::from_raw_parts(src.array, src.len) },
         n.min(src.len),
     );
@@ -372,9 +396,11 @@ pub fn dstr_ncat_dstr(d: &mut Dstr, src: &Dstr, n: usize) {
 pub fn dstr_cat_ch(d: &mut Dstr, c: u8) {
     dstr_ensure_capacity(d, d.len + 2);
     if d.array.is_null() {
+        // SAFETY: Dstr invariant — allocation through the S-001 allocator; the result is stored into `array` immediately.
         d.array = unsafe { bmalloc_raw(d.len + 2) };
         d.capacity = d.len + 2;
     }
+    // SAFETY: Dstr invariant — `array` has capacity ≥ d.len+2 (allocated above); the tail shift and NUL stay within the buffer.
     unsafe {
         *d.array.add(d.len) = c;
         *d.array.add(d.len + 1) = 0;
@@ -395,10 +421,13 @@ pub fn dstr_insert(d: &mut Dstr, idx: usize, s: &[u8]) {
     let n = s.len();
     dstr_ensure_capacity(d, d.len + n + 1);
     if d.array.is_null() {
+        // SAFETY: Dstr invariant — allocation through the S-001 allocator; the result is stored into `array` immediately.
         d.array = unsafe { bmalloc_raw(d.len + n + 1) };
         d.capacity = d.len + n + 1;
+        // SAFETY: Dstr invariant — the write stays within `array`'s capacity (allocation just above sized it exactly).
         unsafe { std::ptr::write_bytes(d.array, 0, d.len + n + 1) };
     }
+    // SAFETY: Dstr invariant — `array` was allocated for d.len+n+1 bytes just above.
     unsafe {
         std::ptr::copy(d.array.add(idx), d.array.add(idx + n), d.len - idx + 1);
         std::ptr::copy_nonoverlapping(s.as_ptr(), d.array.add(idx), n);
@@ -411,6 +440,7 @@ pub fn dstr_insert_dstr(d: &mut Dstr, idx: usize, src: &Dstr) {
     if src.len == 0 || src.array.is_null() {
         return;
     }
+    // SAFETY: Dstr invariant — `src.array` is valid for src.len reads; the view lives only until `dstr_insert` returns.
     dstr_insert(d, idx, unsafe {
         std::slice::from_raw_parts(src.array, src.len)
     });
@@ -425,10 +455,13 @@ pub fn dstr_insert_ch(d: &mut Dstr, idx: usize, c: u8) {
     }
     dstr_ensure_capacity(d, d.len + 2);
     if d.array.is_null() {
+        // SAFETY: Dstr invariant — allocation through the S-001 allocator; the result is stored into `array` immediately.
         d.array = unsafe { bmalloc_raw(d.len + 2) };
         d.capacity = d.len + 2;
+        // SAFETY: Dstr invariant — the write stays within `array`'s capacity (allocation just above sized it exactly).
         unsafe { std::ptr::write_bytes(d.array, 0, d.len + 2) };
     }
+    // SAFETY: Dstr invariant — `array` has capacity ≥ d.len+2 (allocated above); the shift and NUL stay within the buffer.
     unsafe {
         std::ptr::copy(d.array.add(idx), d.array.add(idx + 1), d.len - idx + 1);
         *d.array.add(idx) = c;
@@ -448,6 +481,7 @@ pub fn dstr_remove(d: &mut Dstr, idx: usize, count: usize) {
         return;
     }
     let tail = d.len - idx - count;
+    // SAFETY: Dstr invariant — `array` is valid for len+1 bytes; the tail shift stays within the buffer.
     unsafe {
         std::ptr::copy(d.array.add(idx + count), d.array.add(idx), tail + 1);
     }
@@ -458,6 +492,7 @@ pub fn dstr_remove(d: &mut Dstr, idx: usize, count: usize) {
 
 fn cstr_len(s: *const u8) -> usize {
     let mut n = 0;
+    // SAFETY: Dstr invariant — `s` is a non-null buffer holding a NUL-terminated string.
     unsafe {
         while *s.add(n) != 0 {
             n += 1;
@@ -622,6 +657,7 @@ pub fn dstr_ncmpi(d: &Dstr, s: Option<&[u8]>, n: usize) -> i32 {
 /// S-006-R34: `dstr_is_empty` — NULL array, `len == 0`, or `*array == 0`.
 #[must_use]
 pub fn dstr_is_empty(d: &Dstr) -> bool {
+    // SAFETY: Dstr invariant — len ≥ 1 is guarded above, so `array` is non-null and valid for the read.
     d.array.is_null() || d.len == 0 || unsafe { *d.array == 0 }
 }
 
@@ -631,6 +667,7 @@ pub fn dstr_end(d: &Dstr) -> u8 {
     if dstr_is_empty(d) {
         0
     } else {
+        // SAFETY: Dstr invariant — len ≥ 1 is guarded above, so `array` is non-null and valid for the read.
         unsafe { *d.array.add(d.len - 1) }
     }
 }
@@ -672,6 +709,7 @@ fn do_replace_at(d: &mut Dstr, idx: usize, find: &[u8], repl: &[u8]) {
         dstr_ensure_capacity(d, new_len + 1);
     }
     let tail = d.len - idx - find.len();
+    // SAFETY: Dstr invariant — `array` has capacity ≥ d.len+1; both copies stay within the buffer (the replacement is ≤ the match).
     unsafe {
         std::ptr::copy(
             d.array.add(idx + find.len()),
@@ -707,6 +745,7 @@ pub fn dstr_depad(d: &mut Dstr) {
         return;
     }
     let is_pad = |b: u8| b == b' ' || b == b'\t' || b == b'\n' || b == b'\r';
+    // SAFETY: Dstr invariant — `array` is a valid bmem buffer and len ≤ capacity.
     let buf = unsafe { std::slice::from_raw_parts_mut(d.array, d.len) };
     let mut start = 0;
     while start < buf.len() && is_pad(buf[start]) {
@@ -720,10 +759,12 @@ pub fn dstr_depad(d: &mut Dstr) {
         dstr_free(d);
     } else {
         if start > 0 {
+            // SAFETY: Dstr invariant — `array` is valid for len+1 bytes; the tail shift stays within the buffer.
             unsafe {
                 std::ptr::copy(d.array.add(start), d.array, end - start);
             }
         }
+        // SAFETY: Dstr invariant — `array` is valid for len+1 bytes; the terminator is written within the buffer.
         unsafe { *d.array.add(end - start) = 0 };
         d.len = end - start;
     }
@@ -737,6 +778,7 @@ pub fn dstr_left(d: &mut Dstr, src: &Dstr, pos: usize) {
     let pos = pos.min(src.len);
     dstr_resize(d, pos);
     if pos > 0 && !std::ptr::eq(d, src) && !src.array.is_null() {
+        // SAFETY: Dstr invariant — `src.array` is valid for pos reads; `d.array` has capacity ≥ pos.
         unsafe {
             std::ptr::copy_nonoverlapping(src.array, d.array, pos);
         }
@@ -759,7 +801,9 @@ pub fn dstr_mid(d: &mut Dstr, src: &Dstr, start: usize, count: usize) {
     if count == 0 || src.array.is_null() {
         return;
     }
+    // SAFETY: Dstr invariant — allocation through the S-001 allocator; the result is stored into `array` immediately.
     d.array = unsafe { bmalloc_raw(count + 1) };
+    // SAFETY: Dstr invariant — `src.array.add(start)` is valid for count+1 reads; `d.array` is a fresh block of count+1 bytes.
     unsafe {
         std::ptr::copy_nonoverlapping(src.array.add(start), d.array, count);
         *d.array.add(count) = 0;
@@ -781,6 +825,7 @@ pub fn dstr_to_upper(d: &mut Dstr) {
     if dstr_is_empty(d) {
         return;
     }
+    // SAFETY: Dstr invariant — `array` is a valid bmem buffer and len ≤ capacity.
     let buf = unsafe { std::slice::from_raw_parts_mut(d.array, d.len) };
     for b in buf.iter_mut() {
         *b = ascii_toupper(*b);
@@ -792,6 +837,7 @@ pub fn dstr_to_lower(d: &mut Dstr) {
     if dstr_is_empty(d) {
         return;
     }
+    // SAFETY: Dstr invariant — `array` is a valid bmem buffer and len ≤ capacity.
     let buf = unsafe { std::slice::from_raw_parts_mut(d.array, d.len) };
     for b in buf.iter_mut() {
         if *b >= b'A' && *b <= b'Z' {
@@ -809,7 +855,9 @@ pub fn dstr_from_mbs(d: &mut Dstr, s: &[u8]) {
     if s.is_empty() {
         return;
     }
+    // SAFETY: Dstr invariant — allocation through the S-001 allocator; the result is stored into `array` immediately.
     d.array = unsafe { bmalloc_raw(s.len() + 1) };
+    // SAFETY: Dstr invariant — `d.array` is a fresh block of s.len()+1 bytes (allocated above); the copy + NUL fit exactly.
     unsafe {
         std::ptr::copy_nonoverlapping(s.as_ptr(), d.array, s.len());
         *d.array.add(s.len()) = 0;
@@ -849,7 +897,9 @@ pub fn dstr_from_wcs(d: &mut Dstr, w: &[u32]) {
         return;
     }
     let bytes = s.as_bytes();
+    // SAFETY: Dstr invariant — allocation through the S-001 allocator; the result is stored into `array` immediately.
     d.array = unsafe { bmalloc_raw(bytes.len() + 1) };
+    // SAFETY: Dstr invariant — `d.array` is a fresh block of bytes.len()+1 bytes (allocated above); the copy + NUL fit exactly.
     unsafe {
         std::ptr::copy_nonoverlapping(bytes.as_ptr(), d.array, bytes.len());
         *d.array.add(bytes.len()) = 0;
@@ -921,9 +971,12 @@ pub fn strlist_split(s: Option<&[u8]>, ch: u8, include_empty: bool) -> Option<St
     let ptr_size = std::mem::size_of::<*mut u8>();
     let total = s.len() + count + 1;
     let block_size = (count + 1) * ptr_size + total;
+    // SAFETY: strlist block — fresh bmem block of block_size bytes (S-001 allocator).
     let block = unsafe { bmalloc_raw(block_size) };
     let ptrs = block as *mut *mut u8;
+    // SAFETY: the data offset (count+1)·ptr_size is within the block allocated above.
     let data = unsafe { block.add((count + 1) * ptr_size) };
+    // SAFETY: the data region is within the block and is `total` bytes.
     unsafe {
         std::ptr::write_bytes(data, 0, total);
     }
@@ -931,6 +984,7 @@ pub fn strlist_split(s: Option<&[u8]>, ch: u8, include_empty: bool) -> Option<St
     let mut seg_start = 0usize;
     let mut data_pos = 0usize;
     let emit = |i: &mut usize, data_pos: &mut usize, seg_start: usize, len: usize| {
+        // SAFETY: pointer slot and data region are within the block allocated above; the copy stays within the segment.
         unsafe {
             *ptrs.add(*i) = data.add(*data_pos);
             if len > 0 {
@@ -956,6 +1010,7 @@ pub fn strlist_split(s: Option<&[u8]>, ch: u8, include_empty: bool) -> Option<St
     if len > 0 || include_empty {
         emit(&mut i, &mut data_pos, seg_start, len);
     }
+    // SAFETY: the pointer slot is within the block allocated above.
     unsafe {
         *ptrs.add(i) = std::ptr::null_mut();
     }
@@ -971,8 +1026,10 @@ pub fn strlist_split(s: Option<&[u8]>, ch: u8, include_empty: bool) -> Option<St
 /// `i` must be `< list.count` and `list` must be alive.
 #[must_use]
 pub unsafe fn strlist_get(list: &StrList, i: usize) -> &str {
+    // SAFETY: the i-th pointer slot is valid (range checked by the caller) and holds a non-null C string.
     let p = unsafe { *list.ptrs.add(i) };
     let n = cstr_len(p as *const u8);
+    // SAFETY: `p` is a valid NUL-terminated buffer of n+1 bytes (n from `cstr_len` above).
     std::str::from_utf8(unsafe { std::slice::from_raw_parts(p, n) }).unwrap_or("")
 }
 
@@ -980,6 +1037,7 @@ pub unsafe fn strlist_get(list: &StrList, i: usize) -> &str {
 impl Drop for StrList {
     fn drop(&mut self) {
         if !self.block.is_null() {
+            // SAFETY: StrList owns the whole block (allocated in `new`); one `bfree` (R40).
             unsafe { bfree_raw(self.block) };
             self.block = std::ptr::null_mut();
             self.ptrs = std::ptr::null_mut();
@@ -1059,6 +1117,7 @@ mod tests {
         dstr_resize(&mut d, 5);
         assert_eq!(d.len, 5);
         assert_eq!(d.capacity, 6);
+        // SAFETY: test — `array` has capacity ≥ 6; index 5 holds the NUL.
         assert_eq!(unsafe { *d.array.add(5) }, 0);
         dstr_resize(&mut d, 0);
         assert!(dstr_is_empty(&d));
@@ -1081,7 +1140,9 @@ mod tests {
         assert!(d.array.is_null());
         assert_eq!(d.capacity, 1, "null -> cap 1 (R05)");
         // owned buffer "xy" (3 bytes) allocated through the S-001 allocator
+        // SAFETY: test — raw S-001 API used per its `# Safety` contract.
         let p = unsafe { bmalloc_raw(3) };
+        // SAFETY: test — `p` is a live 3-byte block from the call above.
         unsafe {
             *p = b'x';
             *p.add(1) = b'y';
@@ -1387,30 +1448,41 @@ mod tests {
     fn r40_strlist_split_vector_09() {
         let l = strlist_split(Some(b"a,,b"), b',', false).unwrap();
         assert_eq!(l.count, 2);
+        // SAFETY: test — the strlist is live and the index is in range (checked inside `strlist_get`).
         assert_eq!(unsafe { strlist_get(&l, 0) }, "a");
+        // SAFETY: test — the strlist is live and the index is in range (checked inside `strlist_get`).
         assert_eq!(unsafe { strlist_get(&l, 1) }, "b");
 
         let l = strlist_split(Some(b"a,,b"), b',', true).unwrap();
         assert_eq!(l.count, 3);
+        // SAFETY: test — the strlist is live and the index is in range (checked inside `strlist_get`).
         assert_eq!(unsafe { strlist_get(&l, 0) }, "a");
+        // SAFETY: test — the strlist is live and the index is in range (checked inside `strlist_get`).
         assert_eq!(unsafe { strlist_get(&l, 1) }, "");
+        // SAFETY: test — the strlist is live and the index is in range (checked inside `strlist_get`).
         assert_eq!(unsafe { strlist_get(&l, 2) }, "b");
 
         let l = strlist_split(Some(b",a,"), b',', true).unwrap();
         assert_eq!(l.count, 3);
+        // SAFETY: test — the strlist is live and the index is in range (checked inside `strlist_get`).
         assert_eq!(unsafe { strlist_get(&l, 0) }, "");
+        // SAFETY: test — the strlist is live and the index is in range (checked inside `strlist_get`).
         assert_eq!(unsafe { strlist_get(&l, 1) }, "a");
+        // SAFETY: test — the strlist is live and the index is in range (checked inside `strlist_get`).
         assert_eq!(unsafe { strlist_get(&l, 2) }, "");
 
         let l = strlist_split(Some(b""), b',', false).unwrap();
         assert_eq!(l.count, 0);
         let l = strlist_split(Some(b""), b',', true).unwrap();
         assert_eq!(l.count, 1);
+        // SAFETY: test — the strlist is live and the index is in range (checked inside `strlist_get`).
         assert_eq!(unsafe { strlist_get(&l, 0) }, "");
 
         let l = strlist_split(Some(b","), b',', true).unwrap();
         assert_eq!(l.count, 2);
+        // SAFETY: test — the strlist is live and the index is in range (checked inside `strlist_get`).
         assert_eq!(unsafe { strlist_get(&l, 0) }, "");
+        // SAFETY: test — the strlist is live and the index is in range (checked inside `strlist_get`).
         assert_eq!(unsafe { strlist_get(&l, 1) }, "");
 
         assert!(strlist_split(None, b',', false).is_none());

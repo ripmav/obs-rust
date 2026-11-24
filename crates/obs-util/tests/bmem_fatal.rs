@@ -14,11 +14,13 @@ fn worker_or_noop() {
     WORKER.call_once(|| match std::env::var("__BMEM_FATAL").ok().as_deref() {
         // R02 + R24 default handler: exact MUST text, no trailing newline, exit(0).
         Some("default") => {
+            // SAFETY: test — the raw API's zero-size case is the crash under test (this process is the experiment).
             let _ = unsafe { obs_util::bmem::bmalloc_raw(0) };
             unreachable!("bmalloc_raw must not return (S-001-R02/R03)")
         }
         // R07: brealloc zero-size (incl. NULL ptr) fatal, exit(0) via default handler.
         Some("brealloc0") => {
+            // SAFETY: test — the raw API's zero-size case is the crash under test (this process is the experiment).
             let _ = unsafe { obs_util::bmem::brealloc_raw(std::ptr::null_mut(), 0) };
             unreachable!("brealloc_raw must not return (S-001-R07)")
         }
@@ -27,12 +29,14 @@ fn worker_or_noop() {
         Some("handler") => {
             obs_util::bmem::base_set_crash_handler(Some(handler_42), 42);
             obs_util::bmem::base_set_crash_handler(Some(handler_99), 99); // ignored (warning)
+            // SAFETY: test — the raw API's zero-size case is the crash under test (this process is the experiment).
             let _ = unsafe { obs_util::bmem::bmalloc_raw(0) }; // -> handler_42 -> exit(0)
             unreachable!("bmalloc_raw must not return (S-001-R02/R03)")
         }
         // R24 re-entrancy: crash in the crash handler -> stderr note, exit(2).
         Some("reentrant") => {
             obs_util::bmem::base_set_crash_handler(Some(reentrant_handler), 0);
+            // SAFETY: test — the raw API's zero-size case is the crash under test (this process is the experiment).
             let _ = unsafe { obs_util::bmem::bmalloc_raw(0) }; // -> reentrant_handler -> exit(2)
             unreachable!("bmalloc_raw must not return (S-001-R02/R03)")
         }
