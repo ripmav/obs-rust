@@ -21,9 +21,26 @@ use std::os::raw::c_char;
 
 use crate::os_fs::{LOG_DEBUG, log_platform};
 
-/// glibc's `struct dirent` (the swap/conformance builds are Linux CI).
-/// The libc crate's `dirent` is an opaque type, so the layout is
+/// `struct dirent` as `readdir` fills it: the glibc layout (Linux CI and
+/// the conformance swap builds) or the BSD/macOS layout (macOS runner).
+/// The libc crate's `dirent` is an opaque type, so the layouts are
 /// mirrored here to read `d_name`.
+#[cfg(any(target_os = "macos", target_os = "ios"))]
+#[repr(C)]
+struct BsdDirent {
+    d_fileno: u32,
+    d_reclen: i32,
+    d_type: u16,
+    d_namlen: u16,
+    d_name: [c_char; 256],
+}
+
+#[cfg(any(target_os = "macos", target_os = "ios"))]
+type Dirent = BsdDirent;
+#[cfg(not(any(target_os = "macos", target_os = "ios")))]
+type Dirent = GnuDirent;
+
+#[cfg(not(any(target_os = "macos", target_os = "ios")))]
 #[repr(C)]
 struct GnuDirent {
     d_ino: u64,
@@ -100,8 +117,8 @@ pub fn os_readdir(dir: &mut OsDir) -> Option<&OsDirent> {
     if e.is_null() {
         return None;
     }
-    let gd = e as *mut GnuDirent;
-    // SAFETY: `e` is a live glibc `dirent` (see `GnuDirent`); the name is NUL-terminated and copied below before return.
+    let gd = e as *mut Dirent;
+    // SAFETY: `e` is a live platform `dirent` (see `Dirent`); `d_name` is NUL-terminated and copied below before return.
     let name = unsafe { CStr::from_ptr((*gd).d_name.as_ptr()) };
     let name_bytes = name.to_bytes();
     if name_bytes.len() >= 256 {
@@ -410,11 +427,14 @@ mod tests {
         let h = os_glob(&rel("g/.*"), 0xff).expect("match");
         assert_eq!(h.base.gl_pathc, 3);
         os_globfree(h);
-        // no match: glob error 3, no handle
+        // no match: glob error 3, no handle (macOS's glob(3) returns -3
+        // for the literal-tilde pattern; the C reference passes the
+        // glob(3) return through, so the parity value is platform-bound)
+        let no_match = if cfg!(target_os = "macos") { -3 } else { 3 };
         assert_eq!(os_glob(&rel("g/nothing"), 0).err(), Some(3));
         // braces and tilde are literal (no GLOB_BRACE / GLOB_TILDE)
         assert_eq!(os_glob(&rel("g/{a,b}.txt"), 0).err(), Some(3));
-        assert_eq!(os_glob(&c("~"), 0).err(), Some(3));
+        assert_eq!(os_glob(&c("~"), 0).err(), Some(no_match));
         // wildcards never match `/`
         assert_eq!(
             os_glob(&rel("g/*/inner.txt"), 0)

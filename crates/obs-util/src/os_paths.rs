@@ -343,6 +343,7 @@ mod tests {
     /// R75: free disk space — nonzero on the temp dir, 0 on a missing
     /// path (vector 33-system-contracts prints only ok/zero flags).
     #[test]
+    #[cfg_attr(miri, ignore)] // statvfs is a foreign call (Miri isolation)
     fn free_disk_space() {
         assert!(os_get_free_disk_space(Some(&c("/"))) > 0);
         assert_eq!(os_get_free_disk_space(Some(&c("/nonexistent-wp30"))), 0);
