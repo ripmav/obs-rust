@@ -41,9 +41,9 @@ flowchart LR
 ## How a C module becomes Rust (the recipe)
 
 1. Clean-room spec (S-xxx) is the source of truth (T3).
-2. Port lands in the target crate with conformance vectors from the 33.0.1 reference (T11).
-3. `obs-ffi` shims expose the C entry points; the CMake swap set gains the file (D3).
-4. One WP = one branch + one PR; subtask tick and ODD entry in the same PR (T4).
+1. Port lands in the target crate with conformance vectors from the 33.0.1 reference (T11).
+1. `obs-ffi` shims expose the C entry points; the CMake swap set gains the file (D3).
+1. One WP = one branch + one PR; subtask tick and ODD entry in the same PR (T4).
 
 ## Cross-cutting
 
@@ -53,13 +53,15 @@ flowchart LR
   from the GitHub App installation).
 - **Logging / observability:** `blog`/base log for C-side output; Rust-side logging follows
   the crate convention; ODD log (`odd/tasks/`) tracks what shipped and what was skipped.
-- **Build/CI** — the checks every PR must pass (`.github/workflows/rust.yml`):
+- **Build/CI** — the checks every code PR must pass (`.github/workflows/rust.yml`).
+  Docs-only changes (`docs/**`, `odd/**`, `*.md`) run only the markdown format
+  check (`mdformat --check .`, `.github/workflows/markdown.yml`) instead:
   1. `cargo fmt --all --check`
-  2. `cargo clippy --workspace --all-targets -- -D warnings` (incl. `undocumented_unsafe_blocks`, T5)
-  3. `cargo nextest run --workspace`
-  4. `cargo deny check` (T10) + `cargo audit`
-  5. Miri on pure crates (`obs-util`/`obs-math`/`obs-signal`, `--features no-miri-gate`)
-  6. Conformance `check` (26 CI areas, 33.0.1 reference, T11) + `c-swap` lint
+  1. `cargo clippy --workspace --all-targets -- -D warnings` (incl. `undocumented_unsafe_blocks`, T5)
+  1. `cargo nextest run --workspace`
+  1. `cargo deny check` (T10) + `cargo audit`
+  1. Miri on pure crates (`obs-util`/`obs-math`/`obs-signal`, `--features no-miri-gate`)
+  1. Conformance `check` (26 CI areas, 33.0.1 reference, T11) + `c-swap` lint
 - **Docs:** [epics.md](epics.md) (what gets built), [decisions-open.md](decisions-open.md)
   (what is undecided), [adr/](adr/) (why), [rust-rewrite/](rust-rewrite/README.md)
   (specs, phases, subtasks), [docs/tests/](tests/) (test matrices).

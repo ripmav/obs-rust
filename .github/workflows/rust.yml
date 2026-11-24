@@ -3,9 +3,21 @@ name: ci
 on:
   # All PRs, not just base=main: WP PRs are stacked on the Phase 0 head and
   # must run the same pipeline (P0-09).
+  # Docs-only changes (docs/**, odd/**, *.md) are excluded: they run the
+  # markdown format check only (workflows/markdown.yml).
   pull_request:
+    paths:
+      - "**"
+      - "!docs/**"
+      - "!odd/**"
+      - "!**/*.md"
   push:
     branches: [main]
+    paths:
+      - "**"
+      - "!docs/**"
+      - "!odd/**"
+      - "!**/*.md"
   workflow_dispatch:
 
 concurrency:
