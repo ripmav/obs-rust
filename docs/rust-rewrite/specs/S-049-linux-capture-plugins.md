@@ -1,13 +1,13 @@
 # S-049 Linux capture plugins (linux-v4l2, linux-pulseaudio, xshm part of linux-capture; ALSA, JACK, xcomposite catalogued)
 
-| | |
-|---|---|
-| Status | Draft (Tier C behavioural catalog; Rust sufficiency check NOT performed, see 11) |
-| Spec version | initial |
-| Reference | OBS Studio 33.0.1: `plugins/linux-v4l2/{v4l2-helpers,v4l2-controls,v4l2-input}.c`, `plugins/linux-pulseaudio/pulse-input.c`, `plugins/linux-capture/xshm-input.c`, `plugins/linux-alsa/alsa-input.c`, `plugins/linux-jack/{jack-input,jack-wrapper}.c`, `plugins/linux-capture/xcomposite-input.c` |
-| Target crate | `crates/linux-capture-plugins` (modules `v4l2`, `pulse`, `xshm`, `alsa`, `jack`, `xcomposite`) |
-| Depends on | S-014 (obs_data), S-015 (obs_properties), S-004 (signals/procs, xcomposite only) |
-| Conformance | `test/conformance/scripts/linuxcapture/` (26 scripts), runner section "linuxcapture runner" in `test/conformance/README.md` |
+|              |                                                                                                                                                                                                                                                                                                    |
+| ------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Status       | Draft (Tier C behavioural catalog; Rust sufficiency check NOT performed, see 11)                                                                                                                                                                                                                   |
+| Spec version | initial                                                                                                                                                                                                                                                                                            |
+| Reference    | OBS Studio 33.0.1: `plugins/linux-v4l2/{v4l2-helpers,v4l2-controls,v4l2-input}.c`, `plugins/linux-pulseaudio/pulse-input.c`, `plugins/linux-capture/xshm-input.c`, `plugins/linux-alsa/alsa-input.c`, `plugins/linux-jack/{jack-input,jack-wrapper}.c`, `plugins/linux-capture/xcomposite-input.c` |
+| Target crate | `crates/linux-capture-plugins` (modules `v4l2`, `pulse`, `xshm`, `alsa`, `jack`, `xcomposite`)                                                                                                                                                                                                     |
+| Depends on   | S-014 (obs_data), S-015 (obs_properties), S-004 (signals/procs, xcomposite only)                                                                                                                                                                                                                   |
+| Conformance  | `test/conformance/scripts/linuxcapture/` (26 scripts), runner section "linuxcapture runner" in `test/conformance/README.md`                                                                                                                                                                        |
 
 ## 1. Scope
 
@@ -43,19 +43,18 @@ V4L2 constants used (Linux uAPI): `V4L2_CAP_VIDEO_CAPTURE=0x1`, `V4L2_CAP_DEVICE
 
 Registered sources (all `OBS_SOURCE_TYPE_INPUT`):
 
-| id | output flags | name key | icon |
-|---|---|---|---|
-| `v4l2_input` | `ASYNC_VIDEO`, `DO_NOT_DUPLICATE` | `V4L2Input` | camera |
-| `pulse_input_capture` | `AUDIO`, `DO_NOT_DUPLICATE` | `PulseInput` | audio input |
-| `pulse_output_capture` | `AUDIO`, `DO_NOT_DUPLICATE`, `DO_NOT_SELF_MONITOR` | `PulseOutput` | audio output |
-| `xshm_input` (v1) | `VIDEO`, `CUSTOM_DRAW`, `DO_NOT_DUPLICATE`, `SRGB`, `CAP_OBSOLETE` | `X11SharedMemoryDisplayInput` | desktop |
-| `xshm_input_v2` | same minus `CAP_OBSOLETE` | same | desktop |
-| `alsa_input_capture` | `AUDIO` | `AlsaInput` | audio input |
-| `jack_output_capture` | `AUDIO` | `JACKInput` | audio output |
-| `xcomposite_input` | `VIDEO`, `CUSTOM_DRAW`, `DO_NOT_DUPLICATE` | `XCompositeInput` (key to verify) | window |
+| id                     | output flags                                                       | name key                          | icon         |
+| ---------------------- | ------------------------------------------------------------------ | --------------------------------- | ------------ |
+| `v4l2_input`           | `ASYNC_VIDEO`, `DO_NOT_DUPLICATE`                                  | `V4L2Input`                       | camera       |
+| `pulse_input_capture`  | `AUDIO`, `DO_NOT_DUPLICATE`                                        | `PulseInput`                      | audio input  |
+| `pulse_output_capture` | `AUDIO`, `DO_NOT_DUPLICATE`, `DO_NOT_SELF_MONITOR`                 | `PulseOutput`                     | audio output |
+| `xshm_input` (v1)      | `VIDEO`, `CUSTOM_DRAW`, `DO_NOT_DUPLICATE`, `SRGB`, `CAP_OBSOLETE` | `X11SharedMemoryDisplayInput`     | desktop      |
+| `xshm_input_v2`        | same minus `CAP_OBSOLETE`                                          | same                              | desktop      |
+| `alsa_input_capture`   | `AUDIO`                                                            | `AlsaInput`                       | audio input  |
+| `jack_output_capture`  | `AUDIO`                                                            | `JACKInput`                       | audio output |
+| `xcomposite_input`     | `VIDEO`, `CUSTOM_DRAW`, `DO_NOT_DUPLICATE`                         | `XCompositeInput` (key to verify) | window       |
 
-Each source implements `get_name, create, update, destroy, get_defaults, get_properties`; xshm also `video_tick,
-video_render, get_width, get_height`. The module loader registers `v4l2_input` always, the virtual camera output only if
+Each source implements `get_name, create, update, destroy, get_defaults, get_properties`; xshm also `video_tick, video_render, get_width, get_height`. The module loader registers `v4l2_input` always, the virtual camera output only if
 the `v4l2loopback` kernel module is present.
 
 ## 4. Data formats
@@ -89,16 +88,16 @@ Sample format -> OBS: `u8->U8BIT, s16le->16BIT, s32le->32BIT, float32le->FLOAT`,
 Channels -> layout: 1 MONO, 2 STEREO, 3 2.1, 4 4.0, 5 4.1, 6 5.1, 8 7.1, other UNKNOWN (so 7 and 0 are unsupported).
 Layout -> `pa_channel_map` (first N entries, vectors `pulse-01`):
 
-| layout | n | positions |
-|---|---|---|
-| MONO | 1 | mono |
-| STEREO | 2 | FL FR |
-| 2.1 | 3 | FL FR LFE |
-| 4.0 | 4 | FL FR FC RC |
-| 4.1 | 5 | FL FR FC LFE RC |
-| 5.1 | 6 | FL FR FC LFE RL RR |
-| 7.1 | 8 | FL FR FC LFE RL RR SL SR |
-| UNKNOWN/other | 0 | none |
+| layout        | n   | positions                |
+| ------------- | --- | ------------------------ |
+| MONO          | 1   | mono                     |
+| STEREO        | 2   | FL FR                    |
+| 2.1           | 3   | FL FR LFE                |
+| 4.0           | 4   | FL FR FC RC              |
+| 4.1           | 5   | FL FR FC LFE RC          |
+| 5.1           | 6   | FL FR FC LFE RL RR       |
+| 7.1           | 8   | FL FR FC LFE RL RR SL SR |
+| UNKNOWN/other | 0   | none                     |
 
 ## 5. Behaviour
 
@@ -127,8 +126,7 @@ Layout -> `pa_channel_map` (first N entries, vectors `pulse-01`):
 `pixelformat` (list, int), `standard` (list int, **invisible**), `dv_timing` (list int, **invisible**), `resolution` (list int),
 `framerate` (list int), `color_range` (list int with the three items `ColorRange.Default=0`, `ColorRange.Partial=1`,
 `ColorRange.Full=2`), `buffering` (bool), `auto_reset` (bool), `timeout_frames` (int 2..120 step 1, not a slider),
-`controls` (group, normal, empty). Descriptions: `Device, Input, VideoFormat, VideoStandard, DVTiming, Resolution, FrameRate,
-ColorRange, UseBuffering, AutoresetOnTimeout, FramesUntilTimeout, CameraCtrls`. Then the device list is filled (R12-R14) from the
+`controls` (group, normal, empty). Descriptions: `Device, Input, VideoFormat, VideoStandard, DVTiming, Resolution, FrameRate, ColorRange, UseBuffering, AutoresetOnTimeout, FramesUntilTimeout, CameraCtrls`. Then the device list is filled (R12-R14) from the
 source's current settings. Modified-callbacks: `device_id`->R15, `input`->R16, `pixelformat`->R17, `resolution`->R18.
 
 - **S-049-R12** Device list: enumerate the entries of `/sys/class/video4linux` in directory order; skip directories; if the
@@ -265,31 +263,31 @@ Not performed (cost control, as instructed). The statement "an implementer can p
 
 ## 12. Coverage
 
-| Rules | Scripts |
-|---|---|
-| R01 R02 (and 4.1-4.3 tables) | v4l2-01 |
-| R01-R06 | v4l2-02, v4l2-03 |
-| R07-R09 | v4l2-04 |
-| R10 R11 | v4l2-05, v4l2-10 (defaults applied) |
-| R12 R13 R14(part) | v4l2-06 |
-| R14-R23 | v4l2-07, v4l2-08, v4l2-09 |
-| R32 R33 | v4l2-15 |
-| R24 R25 | v4l2-11 |
-| R26 R29 R30 | v4l2-10 |
-| R27 | v4l2-13 |
-| R28 | v4l2-14 |
-| D-1 | v4l2-12 |
-| R40 R41 | pulse-02 |
-| R44 (success, fallbacks) | pulse-03 |
-| R44 (failures) R42 | pulse-04 |
-| R43 R45 Q-3 Q-4 | pulse-05 |
-| R46 | pulse-06 |
-| 4.4 maps | pulse-01 |
-| R50 | xshm-01 |
-| R51 R52 R54 | xshm-04 |
-| R53 R55(part) | xshm-02, xshm-03 |
-| R55 R56 | xshm-05 |
-| R57, 5.6, R60-R83 | not vectored (informative) |
+| Rules                        | Scripts                             |
+| ---------------------------- | ----------------------------------- |
+| R01 R02 (and 4.1-4.3 tables) | v4l2-01                             |
+| R01-R06                      | v4l2-02, v4l2-03                    |
+| R07-R09                      | v4l2-04                             |
+| R10 R11                      | v4l2-05, v4l2-10 (defaults applied) |
+| R12 R13 R14(part)            | v4l2-06                             |
+| R14-R23                      | v4l2-07, v4l2-08, v4l2-09           |
+| R32 R33                      | v4l2-15                             |
+| R24 R25                      | v4l2-11                             |
+| R26 R29 R30                  | v4l2-10                             |
+| R27                          | v4l2-13                             |
+| R28                          | v4l2-14                             |
+| D-1                          | v4l2-12                             |
+| R40 R41                      | pulse-02                            |
+| R44 (success, fallbacks)     | pulse-03                            |
+| R44 (failures) R42           | pulse-04                            |
+| R43 R45 Q-3 Q-4              | pulse-05                            |
+| R46                          | pulse-06                            |
+| 4.4 maps                     | pulse-01                            |
+| R50                          | xshm-01                             |
+| R51 R52 R54                  | xshm-04                             |
+| R53 R55(part)                | xshm-02, xshm-03                    |
+| R55 R56                      | xshm-05                             |
+| R57, 5.6, R60-R83            | not vectored (informative)          |
 
 ## 13. Open questions
 
@@ -316,8 +314,7 @@ inputs this spec had not covered at all — OSS (`oss-audio`) and sndio (`sndio`
   `pulse_output_capture`; `oss-audio.c` "OSS audio input capture" → `oss_input_capture`;
   `sndio.c` "sndio output capture" → `sndio_output_capture`; `linux-v4l2.c` "Video4Linux2(V4L2)
   sources/virtual camera" → `v4l2_input`, plus `virtualcam_info` **only if**
-  `loopback_module_available()`, else WARNING `v4l2loopback not installed, virtual camera not
-  registered`; `linux-capture.c` "xcomposite/xshm based window/screen capture for X11" → only when
+  `loopback_module_available()`, else WARNING `v4l2loopback not installed, virtual camera not registered`; `linux-capture.c` "xcomposite/xshm based window/screen capture for X11" → only when
   `obs_get_nix_platform() == OBS_NIX_PLATFORM_X11_EGL`: register `xshm_input` + `xshm_input_v2` and
   call `xcomposite_load()` (which registers the xcomposite source); `obs_module_unload` mirrors it
   with `xcomposite_unload()` under the same platform check. All use locale "en-US".
@@ -325,8 +322,7 @@ inputs this spec had not covered at all — OSS (`oss-audio`) and sndio (`sndio`
 ### 14.2 v4l2-helpers.h
 
 - **S-049-R85 [SRC]** `#define PACK64(a, b) (((uint64_t)a << 32) | ((uint64_t)b & 0xffffffff))`;
-  `struct v4l2_mmap_info { size_t length; void *start }`; `struct v4l2_buffer_data { uint_fast32_t
-  count; struct v4l2_mmap_info *info }`. `v4l2_to_obs_video_format` is the 4.3 map (YVYU, YUYV→
+  `struct v4l2_mmap_info { size_t length; void *start }`; `struct v4l2_buffer_data { uint_fast32_t count; struct v4l2_mmap_info *info }`. `v4l2_to_obs_video_format` is the 4.3 map (YVYU, YUYV→
   YUY2, UYVY, NV12, YUV420→I420, YVU420→I420, XBGR32→BGRX and ABGR32→BGRA each only when the
   kernel constant is available, BGR24→BGR3, default NONE). The `v4l2_framesizes[]` table (PACK64
   pairs, zero-terminated) is the 4.2 table behind R19/R22.
@@ -335,8 +331,7 @@ inputs this spec had not covered at all — OSS (`oss-audio`) and sndio (`sndio`
 
 - **S-049-R86** Info: id `oss_input_capture`, type INPUT, flags AUDIO, icon AUDIO_INPUT, name key
   `OSSInput`; callbacks create/destroy/update/get_defaults/get_properties only.
-  `struct oss_input_data { obs_source_t *source; char *device; int channels, rate, sample_fmt;
-  pthread_t reader_thr; int notify_pipe[2]; int dsp_fd; void *dsp_buf; size_t dsp_fragsize }`.
+  `struct oss_input_data { obs_source_t *source; char *device; int channels, rate, sample_fmt; pthread_t reader_thr; int notify_pipe[2]; int dsp_fd; void *dsp_buf; size_t dsp_fragsize }`.
   Defaults: `channels = 2`, `rate = 48000`, `sample_fmt = AFMT_S16_LE`, `dsp = "/dev/dsp"`.
 - **S-049-R87** Properties, in order: `dsp` (string list, desc `DSP`: item `Default` = `/dev/dsp`,
   item `Custom` = `/`, plus `oss_prop_add_devices`), `custom_dsp` (text, `CustomDSPPath`), `rate`
@@ -370,8 +365,7 @@ inputs this spec had not covered at all — OSS (`oss-audio`) and sndio (`sndio`
 - **S-049-R89** Reader thread: `poll` on `(dsp_fd, notify_pipe[0])`, POLLIN, infinite. Audio ready:
   read `fragsize` bytes (EINTR retried); `< 0` → ERROR, exit; `0` → ERROR `Unexpected EOF`, exit;
   else one audio packet: `format` = U8BIT/16BIT/32BIT for AFMT_U8/AFMT_S16_LE/AFMT_S32_LE (else
-  UNKNOWN), `speakers` = 1..8 layout (else UNKNOWN), `samples_per_sec` = rate, `frames = nbytes /
-  framesize`, `timestamp = now_ns - frames * 1e9 / rate`, `output_audio`. Pipe ready: read one
+  UNKNOWN), `speakers` = 1..8 layout (else UNKNOWN), `samples_per_sec` = rate, `frames = nbytes / framesize`, `timestamp = now_ns - frames * 1e9 / rate`, `output_audio`. Pipe ready: read one
   byte, exit. Stopping writes one byte to the pipe, joins the thread, closes both pipe ends.
 
 ### 14.4 sndio input (`sndio-input.c`, new component)
@@ -379,10 +373,8 @@ inputs this spec had not covered at all — OSS (`oss-audio`) and sndio (`sndio`
 - **S-049-R90** Info: id `sndio_output_capture`, type INPUT, flags AUDIO, icon AUDIO_OUTPUT, name
   key `SndioInput`; callbacks create/destroy/update/get_defaults/get_properties (the
   `activate`/`deactivate` entries are inside `#if SHUTDOWN_ON_DEACTIVATE`, an **undefined** macro —
-  evaluates to 0, so they are never registered, Q-7). `struct sndio_thr_data { obs_source_t *source;
-  struct obs_source_audio out; struct sio_hdl *hdl; struct sio_par par; int sock }` (the `out`
-  field is never used — the thread builds a local packet); `struct sndio_data { obs_source_t
-  *source; pthread_attr_t attr; int sock }`. Defaults: `device = SIO_DEVANY` (the sndio library's
+  evaluates to 0, so they are never registered, Q-7). `struct sndio_thr_data { obs_source_t *source; struct obs_source_audio out; struct sio_hdl *hdl; struct sio_par par; int sock }` (the `out`
+  field is never used — the thread builds a local packet); `struct sndio_data { obs_source_t *source; pthread_attr_t attr; int sock }`. Defaults: `device = SIO_DEVANY` (the sndio library's
   default device), `rate = 48000`, `bits = 16`, `channels = 2`.
 - **S-049-R91** Properties: `device` (text, `Device`), `rate` (int list, `Rate`: 11025, 22050,
   32000, 44100, 48000, 96000, 192000 Hz), `bits` (int list, `BitsPerSample`: 8, 16, 32),
@@ -403,8 +395,7 @@ inputs this spec had not covered at all — OSS (`oss-audio`) and sndio (`sndio`
   `sio_setpar(new par)` (failure: WARNING `sio_setpar failed, keeping old params`), copy the par
   into `thrdata->par`, `brealloc` the buffer to the new `appbufsz * bps * 2` (failure: error,
   exit), INFO log, `sio_start` (failure: ERROR, exit), `ts = now`, **continue** (this poll
-  iteration's sio events are dropped). Sio side: `sio_revents` POLLHUP → ERROR `sndio device error
-  happened, exiting`; POLLIN: `sio_read` into the buffer — 0 → `sio_eof` ? ERROR, exit : continue;
+  iteration's sio events are dropped). Sio side: `sio_revents` POLLHUP → ERROR `sndio device error happened, exiting`; POLLIN: `sio_read` into the buffer — 0 → `sio_eof` ? ERROR, exit : continue;
   else one packet: `frames = nread / par.bps`, `format` = U8BIT/16BIT/32BIT for 8/16/32-bit par (else
   UNKNOWN), `speakers` from `par.rchan` (1..8, else UNKNOWN), `samples_per_sec = par.rate`,
   `timestamp = ts` then `ts += frames * 1e9 / rate` (timestamps count **forward** from thread start

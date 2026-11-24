@@ -1,13 +1,13 @@
 # S-034 Hotkeys: registration, bindings, polling and dispatch, pairs, persistence, translations
 
-| | |
-|---|---|
-| Status | Draft (no Rust sufficiency check performed, see section 11) |
-| Spec version | initial |
-| Reference | libobs 33.0.1: `obs-hotkey.c` (all of it), `obs-hotkey.h` (public API, types), the hotkey structs of `obs-internal.h`; the key list `obs-hotkeys.h` and the name lookup are specified in S-024 |
-| Target crate | `crates/obs-hotkeys` |
-| Depends on | S-014 (obs_data, obs_data_array), S-004 (signals: the `key` pointer parameter becomes a hotkey handle), S-024 (key table, `obs_key_to_name`, `obs_key_from_name`), S-006 (dstr behaviour for translations) |
-| Conformance | `test/conformance/scripts/hotkeys/` (15 scripts), runner `gen/hotkeys_runner.c` |
+|              |                                                                                                                                                                                                            |
+| ------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Status       | Draft (no Rust sufficiency check performed, see section 11)                                                                                                                                                |
+| Spec version | initial                                                                                                                                                                                                    |
+| Reference    | libobs 33.0.1: `obs-hotkey.c` (all of it), `obs-hotkey.h` (public API, types), the hotkey structs of `obs-internal.h`; the key list `obs-hotkeys.h` and the name lookup are specified in S-024             |
+| Target crate | `crates/obs-hotkeys`                                                                                                                                                                                       |
+| Depends on   | S-014 (obs_data, obs_data_array), S-004 (signals: the `key` pointer parameter becomes a hotkey handle), S-024 (key table, `obs_key_to_name`, `obs_key_from_name`), S-006 (dstr behaviour for translations) |
+| Conformance  | `test/conformance/scripts/hotkeys/` (15 scripts), runner `gen/hotkeys_runner.c`                                                                                                                            |
 
 ## 1. Scope
 
@@ -35,15 +35,15 @@ Callback = the `obs_hotkey_func` supplied at registration.
 
 Modifier mask bits (`INTERACT_*`, shared with the interaction API):
 
-| name | value | persisted as | reported by polling |
-|---|---|---|---|
-| caps | 0x1 | no | no |
-| shift | 0x2 | `"shift"` | yes (key `OBS_KEY_SHIFT`) |
-| control | 0x4 | `"control"` | yes (`OBS_KEY_CONTROL`) |
-| alt | 0x8 | `"alt"` | yes (`OBS_KEY_ALT`) |
-| mouse left/middle/right | 0x10 / 0x20 / 0x40 | no | no |
-| command | 0x80 | `"command"` | yes (`OBS_KEY_META`) |
-| numlock | 0x100, keypad 0x200, left 0x400, right 0x800 | no | no |
+| name                    | value                                        | persisted as | reported by polling       |
+| ----------------------- | -------------------------------------------- | ------------ | ------------------------- |
+| caps                    | 0x1                                          | no           | no                        |
+| shift                   | 0x2                                          | `"shift"`    | yes (key `OBS_KEY_SHIFT`) |
+| control                 | 0x4                                          | `"control"`  | yes (`OBS_KEY_CONTROL`)   |
+| alt                     | 0x8                                          | `"alt"`      | yes (`OBS_KEY_ALT`)       |
+| mouse left/middle/right | 0x10 / 0x20 / 0x40                           | no           | no                        |
+| command                 | 0x80                                         | `"command"`  | yes (`OBS_KEY_META`)      |
+| numlock                 | 0x100, keypad 0x200, left 0x400, right 0x800 | no           | no                        |
 
 Key ids are `enum obs_key` values from S-024 (`OBS_KEY_NONE = 0`, `OBS_KEY_LAST_VALUE = 636`).
 
@@ -95,11 +95,11 @@ Misc: `hotkey_update_atomic(func, data)`, `hotkeys_free()` (internal), translati
 All emitted on the core's hotkey signal handler (S-004) with one pointer parameter named `key` holding the
 hotkey handle. The runner prints `signal NAME id=ID`.
 
-| signal | when |
-|---|---|
-| `hotkey_register` | after a hotkey was added (after its bindings were loaded) |
-| `hotkey_unregister` | after the hotkey left the table, before it is destroyed |
-| `hotkey_bindings_changed` | see R14-R19 |
+| signal                    | when                                                      |
+| ------------------------- | --------------------------------------------------------- |
+| `hotkey_register`         | after a hotkey was added (after its bindings were loaded) |
+| `hotkey_unregister`       | after the hotkey left the table, before it is destroyed   |
+| `hotkey_bindings_changed` | see R14-R19                                               |
 
 Signals are emitted while the hotkey lock is held, synchronously.
 
@@ -281,9 +281,7 @@ Only the four listed bits can come from loading; other bits only arise from `hot
   and the hotkey exists call its callback `(data, id, hotkey, pressed)` directly; otherwise nothing. Script: 08.
 - **S-034-R32** `hotkey_update_atomic(f, d)`: with the core present calls `f(d)` while holding the lock; absent core: `f` is not called. Script: 11.
 - **S-034-R33** `set_translations_s(t, size)`: NULL `t` -> nothing. Copy `min(size, sizeof(struct))` bytes into a zeroed struct (a shorter old-ABI
-  struct leaves the rest NULL). For each of these fields, if non-NULL (an empty string counts) store a copy as the translation of the key: `insert->INSERT, del->DELETE,
-  home->HOME, end->END, page_up->PAGEUP, page_down->PAGEDOWN, num_lock->NUMLOCK, scroll_lock->SCROLLLOCK, caps_lock->CAPSLOCK, backspace->BACKSPACE, tab->TAB,
-  print->PRINT, pause->PAUSE, shift->SHIFT, alt->ALT, control->CONTROL, meta->META, menu->MENU, space->SPACE, escape->ESCAPE`; and on non-Apple builds
+  struct leaves the rest NULL). For each of these fields, if non-NULL (an empty string counts) store a copy as the translation of the key: `insert->INSERT, del->DELETE, home->HOME, end->END, page_up->PAGEUP, page_down->PAGEDOWN, num_lock->NUMLOCK, scroll_lock->SCROLLLOCK, caps_lock->CAPSLOCK, backspace->BACKSPACE, tab->TAB, print->PRINT, pause->PAUSE, shift->SHIFT, alt->ALT, control->CONTROL, meta->META, menu->MENU, space->SPACE, escape->ESCAPE`; and on non-Apple builds
   `numpad_divide->NUMSLASH, numpad_multiply->NUMASTERISK, numpad_minus->NUMMINUS, numpad_plus->NUMPLUS, numpad_decimal->NUMPERIOD`
   (Apple builds use the `apple_keypad_*` fields instead and additionally `apple_keypad_equal->NUMEQUAL`; not testable on Linux).
   The fields `left`, `right`, `up`, `down` are never applied (Q-6). Previously stored translations of keys whose field is NULL are kept.
@@ -323,6 +321,7 @@ Worked trace (vector 05, strict, binding Shift+A): key A down first, Shift later
 [A+Shift] reset (latch := true, no press), next poll: press. With Shift first: [Shift] reset (latch := true), [Shift+A] press at once.
 
 ### 6.2 remove / press interplay
+
 `remove_bindings` and `release` as in R12/R22; the binding array is modified between callbacks, so callbacks that call into the binding API are out of contract (R09).
 
 ## 7. Concurrency
@@ -338,20 +337,20 @@ Worked trace (vector 05, strict, binding Shift+A): key A down first, Shift later
 
 ## 8. Reference defects and quirks
 
-| ID | Kind | Reference behaviour | Required behaviour | Script |
-|---|---|---|---|---|
-| Q-1 | QUIRK | the load test `!modifiers && key==NONE...` takes the address of the local mask, so it is never true: `{}` / unknown key name / `key:NONE` without modifiers create a binding {mods 0, key NONE} (saved back as `{"key":"OBS_KEY_NONE"}`; never pressed by polling but pressed by ANY inject event that matches (R28)) | SHOULD match (saved profiles round-trip and inject behaviour depend on it) | 12 |
-| Q-2 | QUIRK | `inject_event(pressed=false)` is a no-op for already pressed bindings | MUST match | 06 |
-| Q-3 | QUIRK | context load appends instead of replacing | MUST match | 10 |
-| Q-4 | QUIRK | blocked pair side delivers its release to the user callback | MUST match | 07 |
-| Q-5 | QUIRK | `hotkey_load` with empty/NULL array removes bindings without signal; `load_bindings` (combos) signals when something was removed | MUST match | 03, 14 |
-| Q-6 | QUIRK | translation fields left/right/up/down ignored | MUST match | 09 |
-| Q-7 | QUIRK | after exhaustion a real hotkey is registered with id `INVALID`; callers cannot tell it from a failure | SHOULD match; MAY use u64 ids and never hit it | 11 |
-| Q-8 | QUIRK | unregistering a source hotkey releases the weak ref twice, the second time with NULL (no-op) | n/a (ownership detail); a port MUST release exactly once | 02 (`weaks`) |
-| Q-9 | QUIRK | strict-mode first press of a fresh binding is delayed one poll by the latch | SHOULD match | 04, 05 |
-| D-1 | DEFECT | unregister / context release of a hotkey whose binding is pressed: the hotkey is freed and then the pressed binding is released through the dangling pointer (use-after-free; works by luck, passes a clobbered id to the callback) | exactly one callback `(pressed=false)` with the valid id and hotkey, delivered after `hotkey_unregister` and before the binding disappears; no other effect; the hotkey must stay alive until then | 13 (recorded with `quiet` callbacks; do not run under ASan) |
-| D-2 | DEFECT | `set_name`, `set_description`, `pair_set_*` and the translation setters do not take the lock and dereference the core without checking | take the lock; core absent -> no-op | not testable |
-| D-3 | DEFECT | `hotkey_pair_save` leaves out-values unset when the pair is unknown (caller reads garbage if not initialised) | SHOULD set both out-values to NULL when the pair is unknown | 07 |
+| ID  | Kind   | Reference behaviour                                                                                                                                                                                                                                                                                                   | Required behaviour                                                                                                                                                                                 | Script                                                      |
+| --- | ------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------- |
+| Q-1 | QUIRK  | the load test `!modifiers && key==NONE...` takes the address of the local mask, so it is never true: `{}` / unknown key name / `key:NONE` without modifiers create a binding {mods 0, key NONE} (saved back as `{"key":"OBS_KEY_NONE"}`; never pressed by polling but pressed by ANY inject event that matches (R28)) | SHOULD match (saved profiles round-trip and inject behaviour depend on it)                                                                                                                         | 12                                                          |
+| Q-2 | QUIRK  | `inject_event(pressed=false)` is a no-op for already pressed bindings                                                                                                                                                                                                                                                 | MUST match                                                                                                                                                                                         | 06                                                          |
+| Q-3 | QUIRK  | context load appends instead of replacing                                                                                                                                                                                                                                                                             | MUST match                                                                                                                                                                                         | 10                                                          |
+| Q-4 | QUIRK  | blocked pair side delivers its release to the user callback                                                                                                                                                                                                                                                           | MUST match                                                                                                                                                                                         | 07                                                          |
+| Q-5 | QUIRK  | `hotkey_load` with empty/NULL array removes bindings without signal; `load_bindings` (combos) signals when something was removed                                                                                                                                                                                      | MUST match                                                                                                                                                                                         | 03, 14                                                      |
+| Q-6 | QUIRK  | translation fields left/right/up/down ignored                                                                                                                                                                                                                                                                         | MUST match                                                                                                                                                                                         | 09                                                          |
+| Q-7 | QUIRK  | after exhaustion a real hotkey is registered with id `INVALID`; callers cannot tell it from a failure                                                                                                                                                                                                                 | SHOULD match; MAY use u64 ids and never hit it                                                                                                                                                     | 11                                                          |
+| Q-8 | QUIRK  | unregistering a source hotkey releases the weak ref twice, the second time with NULL (no-op)                                                                                                                                                                                                                          | n/a (ownership detail); a port MUST release exactly once                                                                                                                                           | 02 (`weaks`)                                                |
+| Q-9 | QUIRK  | strict-mode first press of a fresh binding is delayed one poll by the latch                                                                                                                                                                                                                                           | SHOULD match                                                                                                                                                                                       | 04, 05                                                      |
+| D-1 | DEFECT | unregister / context release of a hotkey whose binding is pressed: the hotkey is freed and then the pressed binding is released through the dangling pointer (use-after-free; works by luck, passes a clobbered id to the callback)                                                                                   | exactly one callback `(pressed=false)` with the valid id and hotkey, delivered after `hotkey_unregister` and before the binding disappears; no other effect; the hotkey must stay alive until then | 13 (recorded with `quiet` callbacks; do not run under ASan) |
+| D-2 | DEFECT | `set_name`, `set_description`, `pair_set_*` and the translation setters do not take the lock and dereference the core without checking                                                                                                                                                                                | take the lock; core absent -> no-op                                                                                                                                                                | not testable                                                |
+| D-3 | DEFECT | `hotkey_pair_save` leaves out-values unset when the pair is unknown (caller reads garbage if not initialised)                                                                                                                                                                                                         | SHOULD set both out-values to NULL when the pair is unknown                                                                                                                                        | 07                                                          |
 
 ## 9. Implementation notes (non-normative)
 
@@ -363,22 +362,22 @@ Worked trace (vector 05, strict, binding Shift+A): key A down first, Shift later
 
 ## 10. Conformance coverage
 
-| Rules | Scripts |
-|---|---|
-| R01 | 02-register-contexts, 11-lifecycle |
-| R02-R05 | 01-register-basic, 02-register-contexts, 11-lifecycle |
-| R06 | 07-pairs, 10-context-data |
-| R07-R09 | 01, 03, 07 |
+| Rules    | Scripts                                                                    |
+| -------- | -------------------------------------------------------------------------- |
+| R01      | 02-register-contexts, 11-lifecycle                                         |
+| R02-R05  | 01-register-basic, 02-register-contexts, 11-lifecycle                      |
+| R06      | 07-pairs, 10-context-data                                                  |
+| R07-R09  | 01, 03, 07                                                                 |
 | R10-R13b | 01, 02, 07, 10, 11, 13-defect-unregister-pressed, 14-replace-while-pressed |
-| R14-R18 | 03-bindings-load-save, 07, 10, 12-quirks-empty-bindings, 14, 15 |
-| R19-R22b | 03, 07, 10, 15-extra-modifier-bits |
-| R22-R24 | 04-poll-plain-keys, 05-poll-modifiers, 06-inject |
-| R25-R27 | 04, 05, 15 |
-| R28 | 06-inject, 12 |
-| R29-R30 | 07-pairs |
-| R31 | 08-routing |
-| R32 | 11-lifecycle |
-| R33-R36 | 09-translations |
+| R14-R18  | 03-bindings-load-save, 07, 10, 12-quirks-empty-bindings, 14, 15            |
+| R19-R22b | 03, 07, 10, 15-extra-modifier-bits                                         |
+| R22-R24  | 04-poll-plain-keys, 05-poll-modifiers, 06-inject                           |
+| R25-R27  | 04, 05, 15                                                                 |
+| R28      | 06-inject, 12                                                              |
+| R29-R30  | 07-pairs                                                                   |
+| R31      | 08-routing                                                                 |
+| R32      | 11-lifecycle                                                               |
+| R33-R36  | 09-translations                                                            |
 
 ## 11. Open questions
 

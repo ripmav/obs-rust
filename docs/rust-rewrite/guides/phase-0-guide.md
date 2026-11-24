@@ -15,23 +15,27 @@ Phase 0 produces no product code. It produces the means to prove, mechanically, 
 ## Design notes per task group
 
 ### ADRs (P0-01…P0-06)
+
 Write each ADR so a developer who joins in year two understands *why*. Mandatory content: the constraint (e.g. "C plugin ABI, ~1,900 exported functions — unique `EXPORT` names across the `libobs` headers, measured in this checkout"), the options with cost/risk, the decision, and how to revisit it. Measured data beats opinion: attach benchmark numbers (P0-03) and prototype links (P0-04).
 
 - **P0-03 graphics.** Key discovery for the ADR: graphics backends are *loadable modules*. `gs_create()` (`libobs/graphics/graphics.c:198`) does `os_dlopen(module)` and `load_graphics_imports()` (`graphics-imports.c:40`) fills `struct gs_exports` (`graphics-internal.h:30`) with 190 function pointers (`device_create`, `device_texture_create`, …). A `wgpu` backend can therefore be a new shared module exporting the same 190 function names (`device_*`, `gs_*`, `gpu_*` — `dlsym`'d by `load_graphics_imports`), selectable at runtime, **without touching Phase 4**. Say this in the ADR; it removes the biggest ordering risk between Phase 3 and Phase 4.
 - **P0-06 concurrency.** Use section 4 of the primer as the starting diagram and complete the lock table (46 mutexes in `obs-internal.h`).
 
 ### Cargo + CMake (P0-07, P0-08)
+
 - Workspace at repo root, crates under `crates/`. `Cargo.lock` is committed (binary project).
 - Corrosion (`corrosion_import_crate(MANIFEST_PATH …)`) turns a `staticlib` crate into a CMake target. Use **one** aggregate staticlib (`obs-ffi`) that re-exports the others to avoid duplicate Rust runtime symbols when several staticlibs are linked into one binary — this is a classic Corrosion pitfall.
 - Windows: Rust staticlibs need the matching CRT (`/MD` vs `/MT`); `cmake/windows` sets the runtime, match it with `-C target-feature` as needed. macOS: build both `x86_64-apple-darwin` and `aarch64-apple-darwin` for universal builds.
 - Do not make Rust mandatory yet: `OBS_ENABLE_RUST` defaults to OFF; CI builds both.
 
 ### Golden framework and C reference dumper (P0-13, P0-14)
+
 - Goldens must be deterministic: seed the PRNG, print floats with `%.9g` (round-trippable `float`) or hex bits, sort hash-table iteration (`obs_data` uses uthash; iteration order is insertion order in practice but do not rely on it).
 - Write the dumper as a normal CMake executable linking `libobs` (like the cmocka tests do). One subcommand per area (`math`, `data`, `calldata`, `audio-mix`, `pixel`), output to stdout.
 - Line endings: the `.gitattributes` rule (`*.golden -text`) prevents CRLF conversion. Also make the dumper open stdout in binary mode on Windows.
 
 ### ABI plugin test (P0-15)
+
 Model a minimal module on an existing one. `plugins/obs-filters/gain-filter.c` is ~100 lines and shows the entire pattern:
 
 ```c
@@ -42,12 +46,15 @@ struct obs_source_info gain_filter = {
     .get_defaults = gain_defaults, .get_properties = gain_properties,
 };
 ```
+
 registered inside `obs_module_load()` with `obs_register_source(&gain_filter)`. Note `obs_register_source` is a macro (`libobs/obs-source.h:568`) over `obs_register_source_s(info, sizeof(struct obs_source_info))` (defined at `libobs/obs-module.c:1035`): the internal `obs_source_info` is zero-initialised and libobs `memcpy`s exactly the caller's `size` bytes (a caller struct *larger* than libobs's is rejected with a warning), which is why appending fields at the end keeps old plugins working. Your ABI test must include a plugin compiled against an *older* (smaller) struct to prove the Rust loader copes. Trace each callback by logging `(callback name, thread id, order)` into a text file and compare it with goldens.
 
 ### Smoke test (P0-16)
+
 Use the null/software path available on CI. Without a GPU, libobs graphics init fails; the headless test therefore needs either Xvfb + Mesa llvmpipe (OpenGL backend, Linux) or a WARP adapter (D3D11, Windows). Check how the existing `test/test-input` is exercised and whether any current CI job already runs libobs headlessly before inventing a new mechanism.
 
 ### Corpus (P0-18)
+
 Scene collections are JSON; secrets to strip: stream keys (`key` in `service.json`), URLs with tokens (browser sources), window titles, absolute file paths. Keep a mapping from original to placeholder so the structure stays valid.
 
 ## Running this phase's checks

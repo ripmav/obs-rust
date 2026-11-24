@@ -1,13 +1,13 @@
 # S-025 Encoder option logic (obs-x264, obs-nvenc, obs-qsv11, obs-libfdk, obs-ffmpeg encoders)
 
-| | |
-|---|---|
-| Status | Ready for review |
-| Spec version | initial |
-| Reference | OBS Studio 33.0.1: the settings/property/option code of the plugins `obs-x264`, `obs-nvenc` (`nvenc-opts-parser`, `nvenc-properties`), `obs-qsv11` (settings translation only), `obs-libfdk`, `obs-ffmpeg` (`video-encoders`, `audio-encoders`) and the shared `opts-parser` |
-| Target crate | `crates/obs-encoder-opts` (one module per plugin) |
-| Depends on | S-014 (obs_data), S-015 (obs_properties), S-006 (`astrcmpi`, string lists) |
-| Conformance | `test/conformance/scripts/encopts/` (56 scripts, runner described in `test/conformance/README.md`, section "encopts runner") |
+|              |                                                                                                                                                                                                                                                                              |
+| ------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Status       | Ready for review                                                                                                                                                                                                                                                             |
+| Spec version | initial                                                                                                                                                                                                                                                                      |
+| Reference    | OBS Studio 33.0.1: the settings/property/option code of the plugins `obs-x264`, `obs-nvenc` (`nvenc-opts-parser`, `nvenc-properties`), `obs-qsv11` (settings translation only), `obs-libfdk`, `obs-ffmpeg` (`video-encoders`, `audio-encoders`) and the shared `opts-parser` |
+| Target crate | `crates/obs-encoder-opts` (one module per plugin)                                                                                                                                                                                                                            |
+| Depends on   | S-014 (obs_data), S-015 (obs_properties), S-006 (`astrcmpi`, string lists)                                                                                                                                                                                                   |
+| Conformance  | `test/conformance/scripts/encopts/` (56 scripts, runner described in `test/conformance/README.md`, section "encopts runner")                                                                                                                                                 |
 
 ## 1. Scope
 
@@ -80,19 +80,19 @@ unless "(int)" is written.
   `x264opts` `""`; `repeat_headers` bool false. (No default for `bf`, `cbr`.)
 - **S-025-R11** Property list, in order (all initially visible+enabled unless stated):
 
-| name | type | description key | details |
-|---|---|---|---|
-| `rate_control` | list, combo LIST, format STRING | `RateControl` | items (name = value): `CBR`, `ABR`, `VBR`, `CRF`; modified callback `rate_control_modified` |
-| `bitrate` | int | `Bitrate` | 50 .. 10000000 step 50, suffix `" Kbps"` |
-| `use_bufsize` | bool | `CustomBufsize` | modified callback `use_bufsize_modified` |
-| `buffer_size` | int | `BufferSize` | 0 .. 10000000 step 1 |
-| `crf` | int | `CRF` | 0 .. 51 step 1 |
-| `keyint_sec` | int | `KeyframeIntervalSec` | 0 .. 20 step 1, suffix `" s"` |
-| `preset` | list STRING | `CPUPreset` | `ultrafast superfast veryfast faster fast medium slow slower veryslow placebo` (name = value) |
-| `profile` | list STRING | `Profile` | (`None`, `""`), (`baseline`), (`main`), (`high`) |
-| `tune` | list STRING | `Tune` | (`None`, `""`), `film animation grain stillimage psnr ssim fastdecode zerolatency` |
-| `x264opts` | text, type DEFAULT | `EncoderOptions` | |
-| `repeat_headers` | bool | description `repeat_headers` | **invisible** |
+| name             | type                            | description key              | details                                                                                       |
+| ---------------- | ------------------------------- | ---------------------------- | --------------------------------------------------------------------------------------------- |
+| `rate_control`   | list, combo LIST, format STRING | `RateControl`                | items (name = value): `CBR`, `ABR`, `VBR`, `CRF`; modified callback `rate_control_modified`   |
+| `bitrate`        | int                             | `Bitrate`                    | 50 .. 10000000 step 50, suffix `" Kbps"`                                                      |
+| `use_bufsize`    | bool                            | `CustomBufsize`              | modified callback `use_bufsize_modified`                                                      |
+| `buffer_size`    | int                             | `BufferSize`                 | 0 .. 10000000 step 1                                                                          |
+| `crf`            | int                             | `CRF`                        | 0 .. 51 step 1                                                                                |
+| `keyint_sec`     | int                             | `KeyframeIntervalSec`        | 0 .. 20 step 1, suffix `" s"`                                                                 |
+| `preset`         | list STRING                     | `CPUPreset`                  | `ultrafast superfast veryfast faster fast medium slow slower veryslow placebo` (name = value) |
+| `profile`        | list STRING                     | `Profile`                    | (`None`, `""`), (`baseline`), (`main`), (`high`)                                              |
+| `tune`           | list STRING                     | `Tune`                       | (`None`, `""`), `film animation grain stillimage psnr ssim fastdecode zerolatency`            |
+| `x264opts`       | text, type DEFAULT              | `EncoderOptions`             |                                                                                               |
+| `repeat_headers` | bool                            | description `repeat_headers` | **invisible**                                                                                 |
 
 Int properties have number type SCROLLER (0). `vfr` is not present (compile-time off).
 
@@ -201,26 +201,26 @@ if !update: LOG info (settings banner)
 
 - **S-025-R32** `properties(codec)` with caps `c` (and `devices = num_encoder_devices`). In order:
 
-| # | name | cond | type / details |
-|---|---|---|---|
-| 1 | `rate_control` | | list STRING `RateControl`; items (name → value): `CBR`→`CBR`, `CQP`→`CQP`, `VBR`→`VBR`, `CQVBR`→`CQVBR`, and `Lossless`→`lossless` **iff** `c.lossless`; callback R33 |
-| 2 | `bitrate` | | int `Bitrate` 50..4294967 (= u32::MAX/1000) step 50, suffix `" Kbps"` |
-| 3 | `target_quality` | | int `TargetQuality` 1..(63 if AV1 else 51) step 1 |
-| 4 | `max_bitrate` | | int `MaxBitrate` 0..4294967 step 50, suffix `" Kbps"` |
-| 5 | `cqp` | | int `CQP` 1..(63 if AV1 else 51) step 1 |
-| 6 | `keyint_sec` | | int `KeyframeIntervalSec` 0..10 step 1, suffix `" s"` |
-| 7 | `preset` | | list STRING `Preset`; items `Preset.p1` … `Preset.p7` → `p1` … `p7` |
-| 8 | `tune` | | list STRING `Tuning`; items `Tuning.uhq`→`uhq` **iff** `c.uhq`, then `Tuning.hq`→`hq`, `Tuning.ll`→`ll`, `Tuning.ull`→`ull` |
-| 9 | `multipass` | | list STRING `Multipass`; `Multipass.disabled`, `.qres`, `.fullres` → `disabled qres fullres` |
-| 10 | `profile` | | list STRING `Profile`, names = values. HEVC: `main10` (iff `c.ten_bit`), `main`. AV1: `main`. H.264: `high10` (iff `c.ten_bit`; SDK ≥ 13.0), `high`, `main`, `baseline` |
-| 11 | `lookahead` | | bool `LookAhead`, long description `LookAhead.ToolTip` |
-| 12 | `adaptive_quantization` | | bool `AdaptiveQuantization`, long `AdaptiveQuantization.ToolTip` |
-| 13 | `device` | `devices > 1` | int `GPU` -1..`devices` step 1 |
-| 14 | `bf` | `c.bframes > 0` | int `BFrames` 0..`c.bframes` step 1 |
-| 15 | `bframe_ref_mode` | `c.bref_modes != 0` and codec != H.264 | list **INT** `BFrameRefMode`; `BframeRefMode.Disabled`→0; `BframeRefMode.Each`→1 iff `bref_modes & 1`; `BframeRefMode.Middle`→2 iff `bref_modes & 2` |
-| 16 | `split_encode` | AV1 supported by the probe and `c.engines > 1` and no broken-split driver and codec ∈ {HEVC, AV1} | list INT `SplitEncode`: `SplitEncode.Auto`→0, `.Disabled`→15, `.Enabled`→2, `.ThreeWay`→3 iff `engines > 2`, `.FourWay`→4 iff `engines > 3` (values are SDK enum constants, §11) |
-| 17 | `opts` | | text DEFAULT `Opts`, long `Opts.TT` |
-| 18-20 | `repeat_headers`, `force_cuda_tex`, `disable_scenecut` | | bool, description = the name, **invisible** |
+| #     | name                                                   | cond                                                                                              | type / details                                                                                                                                                                   |
+| ----- | ------------------------------------------------------ | ------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1     | `rate_control`                                         |                                                                                                   | list STRING `RateControl`; items (name → value): `CBR`→`CBR`, `CQP`→`CQP`, `VBR`→`VBR`, `CQVBR`→`CQVBR`, and `Lossless`→`lossless` **iff** `c.lossless`; callback R33            |
+| 2     | `bitrate`                                              |                                                                                                   | int `Bitrate` 50..4294967 (= u32::MAX/1000) step 50, suffix `" Kbps"`                                                                                                            |
+| 3     | `target_quality`                                       |                                                                                                   | int `TargetQuality` 1..(63 if AV1 else 51) step 1                                                                                                                                |
+| 4     | `max_bitrate`                                          |                                                                                                   | int `MaxBitrate` 0..4294967 step 50, suffix `" Kbps"`                                                                                                                            |
+| 5     | `cqp`                                                  |                                                                                                   | int `CQP` 1..(63 if AV1 else 51) step 1                                                                                                                                          |
+| 6     | `keyint_sec`                                           |                                                                                                   | int `KeyframeIntervalSec` 0..10 step 1, suffix `" s"`                                                                                                                            |
+| 7     | `preset`                                               |                                                                                                   | list STRING `Preset`; items `Preset.p1` … `Preset.p7` → `p1` … `p7`                                                                                                              |
+| 8     | `tune`                                                 |                                                                                                   | list STRING `Tuning`; items `Tuning.uhq`→`uhq` **iff** `c.uhq`, then `Tuning.hq`→`hq`, `Tuning.ll`→`ll`, `Tuning.ull`→`ull`                                                      |
+| 9     | `multipass`                                            |                                                                                                   | list STRING `Multipass`; `Multipass.disabled`, `.qres`, `.fullres` → `disabled qres fullres`                                                                                     |
+| 10    | `profile`                                              |                                                                                                   | list STRING `Profile`, names = values. HEVC: `main10` (iff `c.ten_bit`), `main`. AV1: `main`. H.264: `high10` (iff `c.ten_bit`; SDK ≥ 13.0), `high`, `main`, `baseline`          |
+| 11    | `lookahead`                                            |                                                                                                   | bool `LookAhead`, long description `LookAhead.ToolTip`                                                                                                                           |
+| 12    | `adaptive_quantization`                                |                                                                                                   | bool `AdaptiveQuantization`, long `AdaptiveQuantization.ToolTip`                                                                                                                 |
+| 13    | `device`                                               | `devices > 1`                                                                                     | int `GPU` -1..`devices` step 1                                                                                                                                                   |
+| 14    | `bf`                                                   | `c.bframes > 0`                                                                                   | int `BFrames` 0..`c.bframes` step 1                                                                                                                                              |
+| 15    | `bframe_ref_mode`                                      | `c.bref_modes != 0` and codec != H.264                                                            | list **INT** `BFrameRefMode`; `BframeRefMode.Disabled`→0; `BframeRefMode.Each`→1 iff `bref_modes & 1`; `BframeRefMode.Middle`→2 iff `bref_modes & 2`                             |
+| 16    | `split_encode`                                         | AV1 supported by the probe and `c.engines > 1` and no broken-split driver and codec ∈ {HEVC, AV1} | list INT `SplitEncode`: `SplitEncode.Auto`→0, `.Disabled`→15, `.Enabled`→2, `.ThreeWay`→3 iff `engines > 2`, `.FourWay`→4 iff `engines > 3` (values are SDK enum constants, §11) |
+| 17    | `opts`                                                 |                                                                                                   | text DEFAULT `Opts`, long `Opts.TT`                                                                                                                                              |
+| 18-20 | `repeat_headers`, `force_cuda_tex`, `disable_scenecut` |                                                                                                   | bool, description = the name, **invisible**                                                                                                                                      |
 
 Number type SCROLLER (0) for ints; list combo type LIST (2).
 
@@ -247,7 +247,7 @@ Number type SCROLLER (0) for ints; list combo type LIST (2).
   - H.264: `level`(special, R37), `idrPeriod` u32, `useBFramesAsRef` 32-bit enum, `tfLevel` 32-bit enum (SDK ≥ 13.0), `enableFillerDataInsertion` 1 bit.
   - HEVC: `level`(special, ×3), `tier` u32, `idrPeriod` u32, `useBFramesAsRef`, `tfLevel` (≥ 12.2), `enableFillerDataInsertion` 1 bit.
   - AV1: `level` u32 (plain int), `tier numTileColumns numTileRows idrPeriod` u32, `useBFramesAsRef`, `tfLevel` (13.0), `enableBitstreamPadding` 1 bit.
-  A name valid for another codec only (e.g. `tier` for H.264, `numTileColumns` for HEVC) is unknown.
+    A name valid for another codec only (e.g. `tier` for H.264, `numTileColumns` for HEVC) is unknown.
 - **S-025-R37** `level` for H.264 and HEVC: if the value contains a `.`: `sscanf(value, "%u.%u")` and, if exactly 2 fields were read, `v = hi*10 + lo` (u32 wrapping;
   `%u` accepts a leading sign and wraps negatives); a failed scan leaves `v = 0`. Without `.`: `v = strtol(value)` truncated to u32. If `v == 0` the level is **not** modified and no debug log is emitted;
   else for HEVC `v := v*3` (u32 wrapping), the level is set and one `LOG debug` is emitted.
@@ -281,7 +281,7 @@ Number type SCROLLER (0) for ints; list combo type LIST (2).
     If `changed`: if lookahead: `latency = (la == 0 || la >= 15) ? "normal" : "low"`; else `latency = (async != 1) ? "normal" : "ultra-low"` (set as user string).
   - `update_targetusage(S)`: `veryslow|quality`→`TU1`; `slower`→`TU2`; `slow`→`TU3`; `medium|balanced`→`TU4`; `fast`→`TU5`; `faster`→`TU6`; `veryfast|speed`→`TU7`; anything else (including `TU1..7`) unchanged. Result is set as user string.
   - `update_ratecontrol(S)`: `VCM`→`CBR`; `AVBR`→`VBR`; others unchanged.
-  `qsv_migrate` (the runner command) = `update_latency; update_targetusage; update_ratecontrol`.
+    `qsv_migrate` (the runner command) = `update_latency; update_targetusage; update_ratecontrol`.
 
 ### 7.4 `create` and `update_params` (R44-R46)
 
@@ -316,7 +316,9 @@ bRepeatHeaders := repeat_headers
 logs: LOG info (settings banner: codec, rate control); LOG info target_bitrate iff rc not in {ICQ, CQP}; LOG info max_bitrate iff rc == VBR; LOG info ICQ quality iff rc == ICQ;
       LOG info LA depth iff LADEPTH != 0; LOG info qp line iff rc == CQP; LOG info (final settings block); LOG info "debug info"
 ```
-  Note the checks on `rate_control` use the **migrated** (by `update_latency`) value; `update_ratecontrol` is **not** called here (so `VCM`/`AVBR` give rc 0).
+
+Note the checks on `rate_control` use the **migrated** (by `update_latency`) value; `update_ratecontrol` is **not** called here (so `VCM`/`AVBR` give rc 0).
+
 - **S-025-R46** `update(enc, S)`: sets `TargetBitRate := u16(int(S,"bitrate"))` only, `CALL qsv_encoder_reconfig`; false (+ `LOG warning`) if it returns 0. Nothing else is re-read.
 - **S-025-R47** `video_info(kind, in)`: `pref = host preferred format`. H.264/v1/v2: valid = {NV12}; AV1/HEVC: valid = {NV12, P010}. `out.format = pref if valid else (in.format if valid else NV12)`.
   Size cap: `out.width/height = encoder size`; platform := host cpu platform, but if the (single) adapter is a discrete GPU, platform := unknown(0); if `platform <= IVB(3)` and `platform != 0`:
@@ -350,6 +352,7 @@ if keyint_sec != 0: gop_size := i32( u32(keyint_sec) * fps_num / fps_den )   els
 enc.height := ctx.height
 for each option of parse(opts) in order: CALL av_opt_set(ctx.priv_data, name, value, 0)      // result ignored; ignored words dropped silently
 ```
+
 - **S-025-R61** `determine(pix_fmt, colorspace)`: with the chroma shifts `(w, h)` of the pixel format: no descriptor → UNSPECIFIED(0); `h == 0`: `w == 0` → CENTER(2), `w == 1` → LEFT(1), else UNSPECIFIED; `h == 1 && w == 1` (4:2:0) → TOPLEFT(3) if `colorspace == BT2020_NCL`(9) else LEFT(1); otherwise UNSPECIFIED.
 
 ### 9.2 Audio encoders (R62)
@@ -378,7 +381,9 @@ frame_size := ctx.frame_size, or 1024 if 0
 after opening: allocate the sample buffer (trace av.samples_alloc with channels, frame_size, sample_fmt)
 audio_size = bytes per frame/sample of the converted format x speakers (R64), planes
 ```
-  A fail path also logs and returns NULL. (`requested = NONE` never matches a listed format.)
+
+A fail path also logs and returns NULL. (`requested = NONE` never matches a listed format.)
+
 - **S-025-R64** `frame_size_bytes = frame_size * audio_size`; `audio_size` = `bytes_per_sample(format) * (planar ? 1 : channels)`, `planes = planar ? channels : 1` with the OBS audio format for the context's sample format (`U8 S16 S32 FLT` interleaved and `…P` planar; other → 16BIT interleaved).
   `channels` is the speaker layout's channel count: 1 mono, 2 stereo, 3 2.1, 4 quad, 5 4.1, 6 5.1, 7 6.1, 8 7.1 (speaker layout number = channel count except 4.1 = 5).
 
@@ -415,39 +420,39 @@ None of this code is thread-safe by itself: defaults/properties/update run on th
 
 ## 13. Conformance coverage
 
-| Rule | Scripts |
-|---|---|
-| R01–R04 | `01-parser-grammar`, `02-parser-quirks`, `09-x264-optstring-params` (R04), `51-ffmpeg-video-options` |
-| R10, R11 | `03-x264-defaults`, `04-x264-properties` |
-| R12, R13 | `05-x264-visibility`, `06-x264-visibility-single-callback`, `72-quirk-x264-visibility-vs-params` |
-| R14, R15 | `10-x264-base-overrides`, `11-x264-preset-tune-validation`, `71-quirk-x264-empty-and-unvalidated` |
-| R16 | `09-x264-optstring-params`, `70-quirk-x264-option-name-case` |
-| R17, R18 | `11`, `12-x264-profile`, `71` |
-| R19 | `07-x264-ratecontrol-params`, `09`, `10`, `14-x264-misc-settings` |
-| R20, R21 | `07`, `08-x264-bufsize-keyint`, `13-x264-video-format-and-color`, `14` |
-| R22 | `13` |
-| R23 | `15-x264-create-rejections`, `16-x264-create-failures` |
-| R24, R25 | `17-x264-update` |
-| R30 | `20-nvenc-defaults` |
-| R31 | `24-nvenc-read-settings` |
-| R32 | `21-nvenc-properties`, `22-nvenc-properties-caps` |
-| R33 | `23-nvenc-visibility`, `73-quirk-nvenc-rate-control-case` |
-| R34–R36 | `25-nvenc-options`, `26-nvenc-qp-options`, `27-nvenc-codec-options` |
-| R37 | `28-nvenc-level-parsing`, `74-quirk-nvenc-level-sscanf` |
-| R38 | `29-nvenc-userarg` |
-| R40 | `30-qsv-defaults` |
-| R41 | `31-qsv-properties` |
-| R42 | `32-qsv-visibility-and-migration`, `75-quirk-qsv-callback-mutates-settings` |
-| R43 | `33-qsv-legacy-migration`, `75`, `77-defect-qsv-item-leak` |
-| R44 | `38-qsv-rejections` |
-| R45 | `34-qsv-params-ratecontrol`, `35-qsv-params-latency`, `36-qsv-params-codecs`, `37-qsv-params-misc`, `76-defect-qsv-16bit-truncation` |
-| R46, R47 | `39-qsv-update-and-video-info` |
-| R50 | `40-fdk-defaults-properties` |
-| R51 | `41-fdk-create-channels`, `42-fdk-create-settings` |
-| R60, R61 | `50-ffmpeg-video-update`, `51`, `52-ffmpeg-video-bitrate-overflow` |
-| R62 | `60-ffmpeg-audio-defaults-properties` |
-| R63, R64 | `61-ffmpeg-audio-create`, `62-ffmpeg-audio-layouts`, `63-ffmpeg-audio-formats-rates`, `78-quirk-audio-sample-rate-snap` |
-| Q-1…Q-12, D-1…D-3 | scripts named in §11 |
+| Rule              | Scripts                                                                                                                              |
+| ----------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
+| R01–R04           | `01-parser-grammar`, `02-parser-quirks`, `09-x264-optstring-params` (R04), `51-ffmpeg-video-options`                                 |
+| R10, R11          | `03-x264-defaults`, `04-x264-properties`                                                                                             |
+| R12, R13          | `05-x264-visibility`, `06-x264-visibility-single-callback`, `72-quirk-x264-visibility-vs-params`                                     |
+| R14, R15          | `10-x264-base-overrides`, `11-x264-preset-tune-validation`, `71-quirk-x264-empty-and-unvalidated`                                    |
+| R16               | `09-x264-optstring-params`, `70-quirk-x264-option-name-case`                                                                         |
+| R17, R18          | `11`, `12-x264-profile`, `71`                                                                                                        |
+| R19               | `07-x264-ratecontrol-params`, `09`, `10`, `14-x264-misc-settings`                                                                    |
+| R20, R21          | `07`, `08-x264-bufsize-keyint`, `13-x264-video-format-and-color`, `14`                                                               |
+| R22               | `13`                                                                                                                                 |
+| R23               | `15-x264-create-rejections`, `16-x264-create-failures`                                                                               |
+| R24, R25          | `17-x264-update`                                                                                                                     |
+| R30               | `20-nvenc-defaults`                                                                                                                  |
+| R31               | `24-nvenc-read-settings`                                                                                                             |
+| R32               | `21-nvenc-properties`, `22-nvenc-properties-caps`                                                                                    |
+| R33               | `23-nvenc-visibility`, `73-quirk-nvenc-rate-control-case`                                                                            |
+| R34–R36           | `25-nvenc-options`, `26-nvenc-qp-options`, `27-nvenc-codec-options`                                                                  |
+| R37               | `28-nvenc-level-parsing`, `74-quirk-nvenc-level-sscanf`                                                                              |
+| R38               | `29-nvenc-userarg`                                                                                                                   |
+| R40               | `30-qsv-defaults`                                                                                                                    |
+| R41               | `31-qsv-properties`                                                                                                                  |
+| R42               | `32-qsv-visibility-and-migration`, `75-quirk-qsv-callback-mutates-settings`                                                          |
+| R43               | `33-qsv-legacy-migration`, `75`, `77-defect-qsv-item-leak`                                                                           |
+| R44               | `38-qsv-rejections`                                                                                                                  |
+| R45               | `34-qsv-params-ratecontrol`, `35-qsv-params-latency`, `36-qsv-params-codecs`, `37-qsv-params-misc`, `76-defect-qsv-16bit-truncation` |
+| R46, R47          | `39-qsv-update-and-video-info`                                                                                                       |
+| R50               | `40-fdk-defaults-properties`                                                                                                         |
+| R51               | `41-fdk-create-channels`, `42-fdk-create-settings`                                                                                   |
+| R60, R61          | `50-ffmpeg-video-update`, `51`, `52-ffmpeg-video-bitrate-overflow`                                                                   |
+| R62               | `60-ffmpeg-audio-defaults-properties`                                                                                                |
+| R63, R64          | `61-ffmpeg-audio-create`, `62-ffmpeg-audio-layouts`, `63-ffmpeg-audio-formats-rates`, `78-quirk-audio-sample-rate-snap`              |
+| Q-1…Q-12, D-1…D-3 | scripts named in §11                                                                                                                 |
 
 ## 14. Open questions
 

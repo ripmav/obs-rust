@@ -1,24 +1,24 @@
 # S-040 Source core: lifecycle, activation, filter chain, async video, deinterlace, transitions (`obssource`)
 
-| | |
-|---|---|
-| Status | Draft (vectors generated and stable; Rust sufficiency check NOT performed, see section 11) |
-| Spec version | initial |
-| Reference | C implementation, libobs 33.0.1: `obs-source.c`, `obs-source-deinterlace.c`, `obs-source-transition.c` (implementers do not read them) |
-| Target crate | `crates/obs-source` |
-| Depends on | S-002 (calldata), S-004 (signals and procs), S-005 (darray: `move_item`, `erase`, `insert`), S-014 (obs_data), S-013 (video formats), S-032 (audio side of sources: ingest, mixing, volume, mute, monitoring), S-033 (scene math), S-029 (consumes `obs_transition_*` helpers) |
-| Conformance | `test/conformance/scripts/obssource/` (51 scripts; runner `gen/obssource_runner.c`, host fake `gen/obssource_stubs.c`, registration `gen/obssource.sources`) |
+|              |                                                                                                                                                                                                                                                                                |
+| ------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Status       | Draft (vectors generated and stable; Rust sufficiency check NOT performed, see section 11)                                                                                                                                                                                     |
+| Spec version | initial                                                                                                                                                                                                                                                                        |
+| Reference    | C implementation, libobs 33.0.1: `obs-source.c`, `obs-source-deinterlace.c`, `obs-source-transition.c` (implementers do not read them)                                                                                                                                         |
+| Target crate | `crates/obs-source`                                                                                                                                                                                                                                                            |
+| Depends on   | S-002 (calldata), S-004 (signals and procs), S-005 (darray: `move_item`, `erase`, `insert`), S-014 (obs_data), S-013 (video formats), S-032 (audio side of sources: ingest, mixing, volume, mute, monitoring), S-033 (scene math), S-029 (consumes `obs_transition_*` helpers) |
+| Conformance  | `test/conformance/scripts/obssource/` (51 scripts; runner `gen/obssource_runner.c`, host fake `gen/obssource_stubs.c`, registration `gen/obssource.sources`)                                                                                                                   |
 
 ## 1. Scope
 
 In scope (observable behaviour of the source object as seen by plug-ins, the frontend and the render loop):
 
-* creation, defaults, reference counting, weak references, removal, deferred destruction, rename, enable, flags, update;
-* show/active reference counting, the tick-time callbacks and the active-child tree;
-* the filter chain: add, remove, ordering, targets, compatibility, copy/duplicate, backup/restore, size resolution;
-* async video: ingest, frame cache, pending queue, timing/selection, unbuffered mode, preload/show, range and rotation,
+- creation, defaults, reference counting, weak references, removal, deferred destruction, rename, enable, flags, update;
+- show/active reference counting, the tick-time callbacks and the active-child tree;
+- the filter chain: add, remove, ordering, targets, compatibility, copy/duplicate, backup/restore, size resolution;
+- async video: ingest, frame cache, pending queue, timing/selection, unbuffered mode, preload/show, range and rotation,
   async filters; deinterlace configuration and the two-frame selection;
-* the transition core (`obs_transition_*`): state machine, time computation, manual mode, child matrices, audio
+- the transition core (`obs_transition_*`): state machine, time computation, manual mode, child matrices, audio
   mixing, completion, save/load, swap; the media-control queue.
 
 Out of scope (listed in section 11 with reasons): GPU rendering paths (`obs_source_video_render`, effects, texture
@@ -42,18 +42,18 @@ Constants: `MAX_TS_VAR = 2_000_000_000` ns, `MAX_ASYNC_FRAMES = 30`, `MAX_UNUSED
 
 Enumerations (numeric values are part of the contract):
 
-| Enum | Values |
-|---|---|
-| source type | INPUT 0, FILTER 1, TRANSITION 2, SCENE 3 |
-| output flags | VIDEO 1, AUDIO 2, ASYNC 4 (ASYNC_VIDEO = 5), CUSTOM_DRAW 8, COMPOSITE 64, DO_NOT_DUPLICATE 128, CONTROLLABLE_MEDIA 8192 |
-| view type | INVALID 0, MAIN 1, AUX 2 |
-| order movement | UP 0, DOWN 1, TOP 2, BOTTOM 3 |
-| transition target | A 0, B 1 |
-| transition mode | AUTO 0, MANUAL 1 |
-| transition scale | MAX_ONLY 0, ASPECT 1, STRETCH 2 |
-| align bits | CENTER 0, LEFT 1, RIGHT 2, TOP 4, BOTTOM 8 |
-| deinterlace mode | DISABLE 0, DISCARD 1, RETRO 2, BLEND 3, BLEND_2X 4, LINEAR 5, LINEAR_2X 6, YADIF 7, YADIF_2X 8 |
-| field order | TOP 0, BOTTOM 1 |
+| Enum              | Values                                                                                                                  |
+| ----------------- | ----------------------------------------------------------------------------------------------------------------------- |
+| source type       | INPUT 0, FILTER 1, TRANSITION 2, SCENE 3                                                                                |
+| output flags      | VIDEO 1, AUDIO 2, ASYNC 4 (ASYNC_VIDEO = 5), CUSTOM_DRAW 8, COMPOSITE 64, DO_NOT_DUPLICATE 128, CONTROLLABLE_MEDIA 8192 |
+| view type         | INVALID 0, MAIN 1, AUX 2                                                                                                |
+| order movement    | UP 0, DOWN 1, TOP 2, BOTTOM 3                                                                                           |
+| transition target | A 0, B 1                                                                                                                |
+| transition mode   | AUTO 0, MANUAL 1                                                                                                        |
+| transition scale  | MAX_ONLY 0, ASPECT 1, STRETCH 2                                                                                         |
+| align bits        | CENTER 0, LEFT 1, RIGHT 2, TOP 4, BOTTOM 8                                                                              |
+| deinterlace mode  | DISABLE 0, DISCARD 1, RETRO 2, BLEND 3, BLEND_2X 4, LINEAR 5, LINEAR_2X 6, YADIF 7, YADIF_2X 8                          |
+| field order       | TOP 0, BOTTOM 1                                                                                                         |
 
 ## 3. Interface
 
@@ -79,21 +79,15 @@ Filters: `filter_add/remove/set_order/set_index/get_index`, `filter_count`, `enu
 Async video: `output_video(frame)`, `output_video2(frame2)`, `preload_video(2)`, `show_preloaded_video`,
 `set_video_frame(2)`, `get_frame`, `release_frame`, `set_async_unbuffered`, `set_async_rotation`.
 Deinterlace: `set/get_deinterlace_mode`, `set/get_deinterlace_field_order`.
-Transitions: `obs_transition_start/set/clear/get_time/get_source/get_active_source/is_active/set_manual_time/
-set_manual_torque/enable_fixed/fixed/set_scale_type/get_scale_type/set_alignment/get_alignment/set_size/get_size/
-video_render/video_render_direct/audio_render/swap_begin/swap_end/force_stop/save/load/enum_sources`.
+Transitions: `obs_transition_start/set/clear/get_time/get_source/get_active_source/is_active/set_manual_time/ set_manual_torque/enable_fixed/fixed/set_scale_type/get_scale_type/set_alignment/get_alignment/set_size/get_size/ video_render/video_render_direct/audio_render/swap_begin/swap_end/force_stop/save/load/enum_sources`.
 Media: `media_play_pause/restart/stop/next/previous/set_time/get_duration/get_time/get_state/started/ended`.
 
 ### 3.3 Signals (source handler unless "global")
 
-Source: `destroy remove update save load activate deactivate show hide mute enable rename volume update_properties
-update_flags audio_sync filter_add filter_remove reorder_filters transition_start transition_video_stop transition_stop
-media_play media_pause media_restart media_stopped media_next media_previous media_started media_ended` (plus
+Source: `destroy remove update save load activate deactivate show hide mute enable rename volume update_properties update_flags audio_sync filter_add filter_remove reorder_filters transition_start transition_video_stop transition_stop media_play media_pause media_restart media_stopped media_next media_previous media_started media_ended` (plus
 audio-related ones from S-032). Parameters used here: `source` (ptr); `filter` (ptr) on filter_add/remove; `enabled`
 (bool) on enable; `flags` (int) on update_flags; `new_name`, `prev_name` (string) on rename.
-Global (`obs->signals`): `source_create source_destroy source_remove source_update source_activate source_deactivate
-source_show source_hide source_rename source_filter_add source_filter_remove source_transition_start
-source_transition_video_stop source_transition_stop`. A global signal is sent only for **non-private** sources, **except**
+Global (`obs->signals`): `source_create source_destroy source_remove source_update source_activate source_deactivate source_show source_hide source_rename source_filter_add source_filter_remove source_transition_start source_transition_video_stop source_transition_stop`. A global signal is sent only for **non-private** sources, **except**
 `source_filter_add`/`source_filter_remove` which are sent unconditionally (filters are always private).
 When both are sent the **global one comes first**.
 
@@ -192,8 +186,7 @@ call `activate(child, MAIN if i < parent.activate_refs else AUX)`; return true. 
 ### 5.3 Filter chain
 
 State: `filters` array (index 0 newest), each filter has `parent` and `target` (the next array element, or the source for the last).
-**R40** `filter_add(source, filter)`: NULL checks. If the filter is already in the array: WARNING `Tried to add a filter that was
-already present on the source`, nothing else. If the source is a *registered* kind and `!compatible(source, filter)`: silently
+**R40** `filter_add(source, filter)`: NULL checks. If the filter is already in the array: WARNING `Tried to add a filter that was already present on the source`, nothing else. If the source is a *registered* kind and `!compatible(source, filter)`: silently
 refuse (no log, no signal). Otherwise take a strong reference on the filter (get_ref), `filter.parent = source`,
 `filter.target = array[0]` or `source` if the array is empty, **insert at index 0**.
 **R41** Then, in this order: global `source_filter_add`, source `filter_add` (both with `source`,`filter`), DEBUG log, then the filter's
@@ -365,6 +358,7 @@ fn ready(s, sys) -> bool:                     // queue non-empty, last_frame_ts 
      ft = next.ts; foff = ft - s.last_frame_ts
   return frame != NULL                                    // get_closest pops queue[0] (== frame)
 ```
+
 Out-of-bounds test: `ts < clock ? clock - ts > MAX_TS_VAR : ts - clock > MAX_TS_VAR` (u64).
 
 ### 6.2 Deinterlaced selection
@@ -386,11 +380,13 @@ fn get_closest_frames(s, sys):
      if s.deint_offset == 0 or |s.deint_offset - off| > half_frame_interval: s.deint_offset = off
 fn first_frame(s): if s.last_frame_ts != 0 return false; if queue.len >= 2: queue[0].prev_frame = true; return true
 ```
+
 `ready_deint` is the buffered selection of R67 adapted to field pairs (it additionally marks the frame preceding the chosen one with `prev_frame = true`, requires two queued frames to leave, and resets `deint_offset` to 0 on every
 resynchronisation); the unbuffered branch keeps at most two frames, sets `queue[0].prev_frame` unless the current pair has not yet elapsed (`sys < ts0 + offset + (ts1-ts0)`, in which case `deint_frame_ts = ts0 - duration`),
 resets `deint_offset` to 0 and returns true. Because this part is intricate the vectors 42 and 43 are normative for it; implementers SHOULD port it from the vectors as a state machine and report differences.
 
 ### 6.3 Frame copy geometry
+
 Rows copied per plane: I420/I010/I40A: `h, (h+1)/2, (h+1)/2`; NV12/P010: `h, (h+1)/2`; I444/I422/I210/I412: three planes of `h`; all packed formats: one plane of `h`. Each row copies `min(linesize_src, linesize_dst)` bytes
 (the destination uses its own allocation layout; only defined bytes are observable).
 
@@ -403,76 +399,76 @@ or signals (D-3).
 
 ## 8. Reference defects and quirks
 
-* **Q-1** `create` returns a source even when the plug-in's `create` fails (R05). SHOULD match. Script 03.
-* **Q-2** `enable` always signals, `flags` only on change, rename only on change (R12-R14). Script 06, 26.
-* **Q-3** Committing a running transition from `start`/`set` sends the stop *signals* but not the plug-in stop callback (R84). SHOULD match. Scripts 51, 52.
-* **Q-4** The "active, manual, same mode, same destination" early return in `start` is dead code (R83); restarting towards the current destination is refused (returns false) after committing. SHOULD match. Scripts 52, 55.
-* **Q-5** `output_video2` with PARTIAL range on an RGB format keeps `full_range = false` (R62), unlike `output_video`. SHOULD match. Script 36.
-* **Q-6** Unbuffered async sources keep the whole queue on the very first selection (R67). SHOULD match. Script 32.
-* **Q-7** `set_video_frame` / `preload_video` never set `async_active`; `get_width` stays 0 until a tick/show (R63, R64). Script 40.
-* **Q-8** `filter_compatible` masks with `VIDEO|ASYNC|AUDIO`, so a plain VIDEO filter cannot be added to an AUDIO-only source and an ASYNC_VIDEO filter cannot be added to a plain VIDEO source (R42). Script 21.
-* **Q-9** Transition audio mixing reads the child's samples from index 0 while writing at an offset (R90). SHOULD match. Script 56.
-* **Q-10** (retired: an early misreading; `get_source` simply returns the requested slot, R91.)
-* **Q-11** `swap_begin/end` moves rather than swaps (R93). Script 59.
-* **Q-12** `restore_filters` sends no signals and calls no filter callbacks (R49). Script 71.
-* **Q-13** `deactivate` decrements descendants unconditionally (R22).
-* **D-1** `filter_set_index` with `index >= count` calls the array move with an out-of-range destination and corrupts memory in the reference (observed: heap corruption abort). **Required:** clamp `index` to `count - 1` (documented as a deviation-free choice; no vector).
-* **D-2** `set_hidden`/`is_hidden` dereference a NULL source. **Required:** NULL is a no-op / returns false.
-* **D-3** If `get_ref(filter)` fails inside `filter_add` (filter already being destroyed) the reference returns with the filter mutex still locked. **Required:** unlock, return.
-* **D-4** `obs_source_filter_add` of a filter that already belongs to *another* source overwrites its `parent`/`target` and leaves it in two arrays. **Required:** SHOULD refuse (log WARNING); behaviour of the reference not scripted.
+- **Q-1** `create` returns a source even when the plug-in's `create` fails (R05). SHOULD match. Script 03.
+- **Q-2** `enable` always signals, `flags` only on change, rename only on change (R12-R14). Script 06, 26.
+- **Q-3** Committing a running transition from `start`/`set` sends the stop *signals* but not the plug-in stop callback (R84). SHOULD match. Scripts 51, 52.
+- **Q-4** The "active, manual, same mode, same destination" early return in `start` is dead code (R83); restarting towards the current destination is refused (returns false) after committing. SHOULD match. Scripts 52, 55.
+- **Q-5** `output_video2` with PARTIAL range on an RGB format keeps `full_range = false` (R62), unlike `output_video`. SHOULD match. Script 36.
+- **Q-6** Unbuffered async sources keep the whole queue on the very first selection (R67). SHOULD match. Script 32.
+- **Q-7** `set_video_frame` / `preload_video` never set `async_active`; `get_width` stays 0 until a tick/show (R63, R64). Script 40.
+- **Q-8** `filter_compatible` masks with `VIDEO|ASYNC|AUDIO`, so a plain VIDEO filter cannot be added to an AUDIO-only source and an ASYNC_VIDEO filter cannot be added to a plain VIDEO source (R42). Script 21.
+- **Q-9** Transition audio mixing reads the child's samples from index 0 while writing at an offset (R90). SHOULD match. Script 56.
+- **Q-10** (retired: an early misreading; `get_source` simply returns the requested slot, R91.)
+- **Q-11** `swap_begin/end` moves rather than swaps (R93). Script 59.
+- **Q-12** `restore_filters` sends no signals and calls no filter callbacks (R49). Script 71.
+- **Q-13** `deactivate` decrements descendants unconditionally (R22).
+- **D-1** `filter_set_index` with `index >= count` calls the array move with an out-of-range destination and corrupts memory in the reference (observed: heap corruption abort). **Required:** clamp `index` to `count - 1` (documented as a deviation-free choice; no vector).
+- **D-2** `set_hidden`/`is_hidden` dereference a NULL source. **Required:** NULL is a no-op / returns false.
+- **D-3** If `get_ref(filter)` fails inside `filter_add` (filter already being destroyed) the reference returns with the filter mutex still locked. **Required:** unlock, return.
+- **D-4** `obs_source_filter_add` of a filter that already belongs to *another* source overwrites its `parent`/`target` and leaves it in two arrays. **Required:** SHOULD refuse (log WARNING); behaviour of the reference not scripted.
 
 ## 9. Implementation notes (non-normative)
 
-* Model the source as an `Arc`-managed object with interior-mutable sub-structures (filters under a `ReentrantMutex<RefCell<..>>`, async state under its own lock). Strong/weak counts follow `Arc`/`Weak`, but destruction must be
+- Model the source as an `Arc`-managed object with interior-mutable sub-structures (filters under a `ReentrantMutex<RefCell<..>>`, async state under its own lock). Strong/weak counts follow `Arc`/`Weak`, but destruction must be
   split into the immediate and the deferred part (R08/R09) and the deferred part must be queued to a worker.
-* Keep the host services behind traits (context, clock, task queue, graphics sink) so the conformance runner can script them.
-* Signal emission order is part of the contract; build helper `emit(source, global: Option<&str>, local: &str, args)` and use it everywhere (global first, only for non-private sources).
-* `filters` as `Vec<Arc<Source>>` with index 0 newest; recompute `target` from the vector after every structural change rather than patching it incrementally (the observable result is identical).
-* `ready()` and the deinterlace selector are order-sensitive state machines: port them literally, test with vectors 31-33, 42, 43.
-* Float formatting in dumps: `%.9g`.
+- Keep the host services behind traits (context, clock, task queue, graphics sink) so the conformance runner can script them.
+- Signal emission order is part of the contract; build helper `emit(source, global: Option<&str>, local: &str, args)` and use it everywhere (global first, only for non-private sources).
+- `filters` as `Vec<Arc<Source>>` with index 0 newest; recompute `target` from the vector after every structural change rather than patching it incrementally (the observable result is identical).
+- `ready()` and the deinterlace selector are order-sensitive state machines: port them literally, test with vectors 31-33, 42, 43.
+- Float formatting in dumps: `%.9g`.
 
 ## 10. Conformance coverage
 
 Script names are `NN_*` in `test/conformance/scripts/obssource/`.
 
-| Rules | Scripts |
-|---|---|
-| R01, R02, R05, R06 | 03 |
-| R03, R04, R07, R09, R10 | 01, 02, 05, 60 |
-| R08 | 04, 05, 60 |
-| R11-R15 | 06, 26 |
-| R16, R17 | 62 |
-| R20-R24 | 10, 11, 12, 13 |
-| R25-R27 | 14, 15, 61 |
-| R40-R43 | 20, 21, 05 |
-| R44 | 22, 22b |
-| R45, R46 | 23, 24 |
-| R47 | 27, 30, 38 |
-| R48 | 25 |
-| R49 | 71 |
-| R60-R62 | 30, 34, 35, 36, 37 |
-| R63, R64 | 30, 38, 40 |
-| R65-R68 | 30, 31, 32, 33 |
-| R69, R70 | 39, 32, 38 |
-| R100, R101 | 41, 42, 43 |
-| R80 | 55, 58 |
-| R81, R82, R83 | 51, 52, 55 |
-| R84-R87 | 50, 51, 52, 53, 60 |
-| R88 | 58 |
-| R89 | 53, 54 |
-| R90 | 53, 56, 57 |
-| R91 | 50, 51, 55, 58 |
-| R92, R93 | 59 |
-| R94 | 70 |
-| Q-1..Q-13 (Q-10 retired) | 03, 06, 51, 52, 55, 36, 32, 40, 21, 56, 59, 71, 11 |
-| D-1..D-4 | none (not scriptable; behaviour required by this spec) |
+| Rules                    | Scripts                                                |
+| ------------------------ | ------------------------------------------------------ |
+| R01, R02, R05, R06       | 03                                                     |
+| R03, R04, R07, R09, R10  | 01, 02, 05, 60                                         |
+| R08                      | 04, 05, 60                                             |
+| R11-R15                  | 06, 26                                                 |
+| R16, R17                 | 62                                                     |
+| R20-R24                  | 10, 11, 12, 13                                         |
+| R25-R27                  | 14, 15, 61                                             |
+| R40-R43                  | 20, 21, 05                                             |
+| R44                      | 22, 22b                                                |
+| R45, R46                 | 23, 24                                                 |
+| R47                      | 27, 30, 38                                             |
+| R48                      | 25                                                     |
+| R49                      | 71                                                     |
+| R60-R62                  | 30, 34, 35, 36, 37                                     |
+| R63, R64                 | 30, 38, 40                                             |
+| R65-R68                  | 30, 31, 32, 33                                         |
+| R69, R70                 | 39, 32, 38                                             |
+| R100, R101               | 41, 42, 43                                             |
+| R80                      | 55, 58                                                 |
+| R81, R82, R83            | 51, 52, 55                                             |
+| R84-R87                  | 50, 51, 52, 53, 60                                     |
+| R88                      | 58                                                     |
+| R89                      | 53, 54                                                 |
+| R90                      | 53, 56, 57                                             |
+| R91                      | 50, 51, 55, 58                                         |
+| R92, R93                 | 59                                                     |
+| R94                      | 70                                                     |
+| Q-1..Q-13 (Q-10 retired) | 03, 06, 51, 52, 55, 36, 32, 40, 21, 56, 59, 71, 11     |
+| D-1..D-4                 | none (not scriptable; behaviour required by this spec) |
 
 ## 11. Open questions and not covered
 
-* **Not covered (no vectors):** GPU rendering and effect paths, `obs_source_process_filter_*`, texture/colour-space conversion results, HDR (`trc`) behaviour, `max_luminance`, the deinterlace *rendering*, `obs_source_draw*`;
+- **Not covered (no vectors):** GPU rendering and effect paths, `obs_source_process_filter_*`, texture/colour-space conversion results, HDR (`trc`) behaviour, `max_luminance`, the deinterlace *rendering*, `obs_source_draw*`;
   audio ingest/mixing/volume/mute/monitoring/push-to-talk/balance (S-032); hotkeys; interaction events; properties; `obs_source_save/load` of settings; scenes/groups and canvases (S-033); the name-uniqueness and
   UUID logic of the context layer; `obs_source_get_audio_mix` implementation; CEA-708 captions callbacks; caption/audio callbacks lists; `obs_source_audio_active`; async decoupled mode; profiler; `source_get_last_async_ts`.
-* The Rust sufficiency check was **not performed** (cost control); consequently the prose of R67 and section 6.2 has not been validated by an independent implementation. The deinterlace selector is described only
+- The Rust sufficiency check was **not performed** (cost control); consequently the prose of R67 and section 6.2 has not been validated by an independent implementation. The deinterlace selector is described only
   approximately; vectors 42/43 are the reference.
-* `filter_add` with a filter that already has a parent (D-4) was not probed.
-* Thread-safety behaviour (concurrent ingest vs tick) is not testable by scripts.
+- `filter_add` with a filter that already has a parent (D-4) was not probed.
+- Thread-safety behaviour (concurrent ingest vs tick) is not testable by scripts.

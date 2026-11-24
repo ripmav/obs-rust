@@ -2,35 +2,37 @@
 
 Detailed, single-task breakdown for the strategy in [`../rust-rewrite-plan.md`](../rust-rewrite-plan.md).
 
-| Phase | File | Theme |
-|---|---|---|
-| 0 | [phase-0-foundation.md](phase-0-foundation.md) | ADRs, workspace, CI, golden and ABI test harness |
-| 1 | [phase-1-leaf-libraries.md](phase-1-leaf-libraries.md) | util, math, signal/proc/calldata, obs-data |
-| 2 | [phase-2-media-pipeline.md](phase-2-media-pipeline.md) | video/audio IO, conversion, mixer, NAL parsers |
-| 3 | [phase-3-graphics.md](phase-3-graphics.md) | effect language, `gs_*` trait, wgpu backend |
-| 4 | [phase-4-core-object-model.md](phase-4-core-object-model.md) | sources, scenes, outputs, encoders, C ABI |
-| 5 | [phase-5-plugins.md](phase-5-plugins.md) | every plugin, one task each |
-| 6 | [phase-6-frontend.md](phase-6-frontend.md) | GUI, scripting, packaging |
-| 7 | [phase-7-retire-c.md](phase-7-retire-c.md) | remove C/C++ and CMake, SDK 1.0 |
+| Phase | File                                                         | Theme                                            |
+| ----- | ------------------------------------------------------------ | ------------------------------------------------ |
+| 0     | [phase-0-foundation.md](phase-0-foundation.md)               | ADRs, workspace, CI, golden and ABI test harness |
+| 1     | [phase-1-leaf-libraries.md](phase-1-leaf-libraries.md)       | util, math, signal/proc/calldata, obs-data       |
+| 2     | [phase-2-media-pipeline.md](phase-2-media-pipeline.md)       | video/audio IO, conversion, mixer, NAL parsers   |
+| 3     | [phase-3-graphics.md](phase-3-graphics.md)                   | effect language, `gs_*` trait, wgpu backend      |
+| 4     | [phase-4-core-object-model.md](phase-4-core-object-model.md) | sources, scenes, outputs, encoders, C ABI        |
+| 5     | [phase-5-plugins.md](phase-5-plugins.md)                     | every plugin, one task each                      |
+| 6     | [phase-6-frontend.md](phase-6-frontend.md)                   | GUI, scripting, packaging                        |
+| 7     | [phase-7-retire-c.md](phase-7-retire-c.md)                   | remove C/C++ and CMake, SDK 1.0                  |
 
 ## Task format
 
-Every task is a checkbox with a stable ID (`P<phase>-<nn>`) and a size — S (<=2 days), M (<=1 week), L (<=3 weeks), XL (split further before starting) — naming the C files it replaces and a verifiable acceptance criterion:
+Every task is a checkbox with a stable ID (`P<phase>-<nn>`) and a size — S (\<=2 days), M (\<=1 week), L (\<=3 weeks), XL (split further before starting) — naming the C files it replaces and a verifiable acceptance criterion:
 
-    - [ ] **P<N>-<nn> Name** (M): <files and work>. Done when: <verifiable result>.
+```
+- [ ] **P<N>-<nn> Name** (M): <files and work>. Done when: <verifiable result>.
+```
 
 Dependencies are stated inline where non-obvious (and in the per-phase "Dependency note"/guide); the day-sized subtasks below carry the precise **Files**, **Steps** and **Done when**.
 
 ## Rules that apply to every task
 
 1. One task is one PR (or one PR stack if it is L/XL). Branch: `<prefix>/<issue>-<short-description>`.
-2. Work starts with the test: add or extend a golden/unit test that fails against the Rust code, then implement.
-3. Keep the C ABI compatible (best-effort, D-02). A task that changes a public header needs an ADR; breaking changes additionally need a deprecation path (D-05).
-4. Tick the checkbox in this file in the same PR that finishes the task.
-5. Every test file gets a test matrix in `docs/tests/`; every issue gets `docs/tests/I-<n>-<name>.md`.
-6. Update README/rustdoc/comments with each change.
-7. Gate before commit: `cargo fmt --check`, `cargo clippy --all-targets -- -D warnings`, `cargo deny check`, `cargo audit`, `cargo test --workspace`, plus the C build (`cmake --build`) and `ctest` while C code remains.
-8. Commit footer: `Assisted-by: [Model] ([Effort]) via [Tool]` (omit the effort brackets when the model has no effort setting).
+1. Work starts with the test: add or extend a golden/unit test that fails against the Rust code, then implement.
+1. Keep the C ABI compatible (best-effort, D-02). A task that changes a public header needs an ADR; breaking changes additionally need a deprecation path (D-05).
+1. Tick the checkbox in this file in the same PR that finishes the task.
+1. Every test file gets a test matrix in `docs/tests/`; every issue gets `docs/tests/I-<n>-<name>.md`.
+1. Update README/rustdoc/comments with each change.
+1. Gate before commit: `cargo fmt --check`, `cargo clippy --all-targets -- -D warnings`, `cargo deny check`, `cargo audit`, `cargo test --workspace`, plus the C build (`cmake --build`) and `ctest` while C code remains.
+1. Commit footer: `Assisted-by: [Model] ([Effort]) via [Tool]` (omit the effort brackets when the model has no effort setting).
 
 ## Subtasks
 

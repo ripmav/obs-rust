@@ -1,13 +1,13 @@
 # S-047 obs-ffmpeg media source and encoder wrappers (ffsources)
 
-| | |
-|---|---|
-| Status | Draft (Rust sufficiency check NOT performed, see section 11) |
-| Spec version | initial |
-| Reference | C implementation, libobs 33.0.1 (plugin obs-ffmpeg: media source, audio encoder wrappers, video encoder wrapper, format helpers) |
-| Target crate | `crates/obs-ffmpeg-sources` (plugin-side; talks to libobs, libavcodec, media-playback through traits) |
-| Depends on | S-014 (obs_data), S-015 (obs_properties), S-004 (proc handler), S-034 (hotkeys), S-036 (media-playback, the player this source drives), S-025 (encoder option parsers and the create-time codec configuration of the ffmpeg audio/video encoders: **not repeated here**), S-040 (obs_source host contract) |
-| Conformance | `test/conformance/scripts/ffsources/` (20 scripts), vectors in `test/conformance/vectors/ffsources/` |
+|              |                                                                                                                                                                                                                                                                                                            |
+| ------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Status       | Draft (Rust sufficiency check NOT performed, see section 11)                                                                                                                                                                                                                                               |
+| Spec version | initial                                                                                                                                                                                                                                                                                                    |
+| Reference    | C implementation, libobs 33.0.1 (plugin obs-ffmpeg: media source, audio encoder wrappers, video encoder wrapper, format helpers)                                                                                                                                                                           |
+| Target crate | `crates/obs-ffmpeg-sources` (plugin-side; talks to libobs, libavcodec, media-playback through traits)                                                                                                                                                                                                      |
+| Depends on   | S-014 (obs_data), S-015 (obs_properties), S-004 (proc handler), S-034 (hotkeys), S-036 (media-playback, the player this source drives), S-025 (encoder option parsers and the create-time codec configuration of the ffmpeg audio/video encoders: **not repeated here**), S-040 (obs_source host contract) |
+| Conformance  | `test/conformance/scripts/ffsources/` (20 scripts), vectors in `test/conformance/vectors/ffsources/`                                                                                                                                                                                                       |
 
 ## 1. Scope
 
@@ -45,20 +45,19 @@ speaker layout UNKNOWN 0, MONO 1, STEREO 2, 2.1 3, 4.0 4, 4.1 5, 5.1 6, 7.1 8; O
 
 ### 3.1 Registration records (MUST be exported exactly)
 
-Source `ffmpeg_source`: `id = "ffmpeg_source"`, type INPUT, `output_flags = ASYNC_VIDEO | AUDIO | DO_NOT_DUPLICATE |
-CONTROLLABLE_MEDIA` (0x2087), icon MEDIA, display name `T("FFmpegSource")`; callbacks: create, destroy,
+Source `ffmpeg_source`: `id = "ffmpeg_source"`, type INPUT, `output_flags = ASYNC_VIDEO | AUDIO | DO_NOT_DUPLICATE | CONTROLLABLE_MEDIA` (0x2087), icon MEDIA, display name `T("FFmpegSource")`; callbacks: create, destroy,
 get_defaults, get_properties, activate, deactivate, video_tick, missing_files, update, media_play_pause,
 media_restart, media_stop, media_get_duration, media_get_time, media_set_time, media_get_state. (S-047-R01)
 
-| kind | id | codec | name key | priming | audio_info | extra_data / frame_size |
-|---|---|---|---|---|---|---|
-| aac | `ffmpeg_aac` | `aac` | `FFmpegAAC` | yes | plain | yes |
-| opus | `ffmpeg_opus` | `opus` | `FFmpegOpus` | yes | plain | yes |
-| pcm | `ffmpeg_pcm_s16le` | `pcm_s16le` | `FFmpegPCM16Bit` | no | plain | yes |
-| pcm24 | `ffmpeg_pcm_s24le` | `pcm_s24le` | `FFmpegPCM24Bit` | no | plain | yes |
-| pcm32 | `ffmpeg_pcm_f32le` | `pcm_f32le` | `FFmpegPCM32BitFloat` | no | **float** (allow_clipping) | yes |
-| alac | `ffmpeg_alac` | `alac` | `FFmpegALAC` | no | plain | yes |
-| flac | `ffmpeg_flac` | `flac` | `FFmpegFLAC` | no | plain | yes |
+| kind  | id                 | codec       | name key              | priming | audio_info                 | extra_data / frame_size |
+| ----- | ------------------ | ----------- | --------------------- | ------- | -------------------------- | ----------------------- |
+| aac   | `ffmpeg_aac`       | `aac`       | `FFmpegAAC`           | yes     | plain                      | yes                     |
+| opus  | `ffmpeg_opus`      | `opus`      | `FFmpegOpus`          | yes     | plain                      | yes                     |
+| pcm   | `ffmpeg_pcm_s16le` | `pcm_s16le` | `FFmpegPCM16Bit`      | no      | plain                      | yes                     |
+| pcm24 | `ffmpeg_pcm_s24le` | `pcm_s24le` | `FFmpegPCM24Bit`      | no      | plain                      | yes                     |
+| pcm32 | `ffmpeg_pcm_f32le` | `pcm_f32le` | `FFmpegPCM32BitFloat` | no      | **float** (allow_clipping) | yes                     |
+| alac  | `ffmpeg_alac`      | `alac`      | `FFmpegALAC`          | no      | plain                      | yes                     |
+| flac  | `ffmpeg_flac`      | `flac`      | `FFmpegFLAC`          | no      | plain                      | yes                     |
 
 All seven: type AUDIO, shared create/destroy/encode/frame-size/defaults/properties/extra-data functions. (S-047-R30)
 
@@ -68,8 +67,7 @@ All seven: type AUDIO, shared create/destroy/encode/frame-size/defaults/properti
 `set_looping`, `set_is_linear_alpha`, `preload_frame`, `get_current_time`, `seek(ms)`, `get_frames`,
 `get_duration` (microseconds), `has_video`. The player's getters tolerate a NULL handle (return 0 / no-op); the
 source relies on this (`src-07`, `src-08`). `info` carries opaque, five callbacks (video, video-preload,
-video-seek, audio, stop) and: `path, format, ffmpeg_options, buffering (bytes), speed, force_range,
-is_linear_alpha, hardware_decoding, is_local_file, reconnecting, request_preload, full_decode`.
+video-seek, audio, stop) and: `path, format, ffmpeg_options, buffering (bytes), speed, force_range, is_linear_alpha, hardware_decoding, is_local_file, reconnecting, request_preload, full_decode`.
 
 ### 3.3 Host interface the source needs
 
@@ -82,22 +80,22 @@ is_linear_alpha, hardware_decoding, is_local_file, reconnecting, request_preload
 
 ### 4.1 Source settings keys
 
-| key | type | default (get_defaults) | used |
-|---|---|---|---|
-| `is_local_file` | bool | true | mode |
-| `local_file` | string | none | path when local |
-| `input`, `input_format` | string | none | URL / demuxer name when network |
-| `looping` | bool | false | local only |
-| `clear_on_media_end` | bool | true | |
-| `restart_on_activate` | bool | true | |
-| `linear_alpha` | bool | false | |
-| `reconnect_delay_sec` | int | 10 | network |
-| `buffering_mb` | int | 2 | |
-| `speed_percent` | int | 100 | |
-| `log_changes` | bool | true | |
-| `hw_decode`, `close_when_inactive`, `seekable`, `full_decode`, `is_stinger`, `is_track_matte` | bool | none (false) | `full_decode`, `is_stinger`, `is_track_matte` have no property |
-| `color_range` | int | none (0) | passed to the player unchanged |
-| `ffmpeg_options` | string | none | |
+| key                                                                                           | type   | default (get_defaults) | used                                                           |
+| --------------------------------------------------------------------------------------------- | ------ | ---------------------- | -------------------------------------------------------------- |
+| `is_local_file`                                                                               | bool   | true                   | mode                                                           |
+| `local_file`                                                                                  | string | none                   | path when local                                                |
+| `input`, `input_format`                                                                       | string | none                   | URL / demuxer name when network                                |
+| `looping`                                                                                     | bool   | false                  | local only                                                     |
+| `clear_on_media_end`                                                                          | bool   | true                   |                                                                |
+| `restart_on_activate`                                                                         | bool   | true                   |                                                                |
+| `linear_alpha`                                                                                | bool   | false                  |                                                                |
+| `reconnect_delay_sec`                                                                         | int    | 10                     | network                                                        |
+| `buffering_mb`                                                                                | int    | 2                      |                                                                |
+| `speed_percent`                                                                               | int    | 100                    |                                                                |
+| `log_changes`                                                                                 | bool   | true                   |                                                                |
+| `hw_decode`, `close_when_inactive`, `seekable`, `full_decode`, `is_stinger`, `is_track_matte` | bool   | none (false)           | `full_decode`, `is_stinger`, `is_track_matte` have no property |
+| `color_range`                                                                                 | int    | none (0)               | passed to the player unchanged                                 |
+| `ffmpeg_options`                                                                              | string | none                   |                                                                |
 
 (S-047-R02) get_defaults sets exactly the nine keys with a default above and no others.
 
@@ -105,29 +103,27 @@ is_linear_alpha, hardware_decoding, is_local_file, reconnecting, request_preload
 
 Flags = DEFER_UPDATE (1). In this order:
 
-| name | type | description key | extra |
-|---|---|---|---|
-| `is_local_file` | bool | `LocalFile` | modified callback (R04) |
-| `local_file` | path (file) | `LocalFile` | filter and default_path below |
-| `looping` | bool | `Looping` | |
-| `restart_on_activate` | bool | `RestartWhenActivated` | |
-| `buffering_mb` | int slider 0..16 step 1 | `BufferingMB` | suffix `" MB"` |
-| `input` | text (default type) | `Input` | |
-| `input_format` | text | `InputFormat` | |
-| `reconnect_delay_sec` | int slider 1..60 step 1 | `ReconnectDelayTime` | suffix `" S"` |
-| `hw_decode` | bool | `HardwareDecode` | |
-| `clear_on_media_end` | bool | `ClearOnMediaEnd` | |
-| `close_when_inactive` | bool | `CloseFileWhenInactive` | long description `CloseFileWhenInactive.ToolTip` |
-| `speed_percent` | int slider 1..200 step 1 | `SpeedPercentage` | suffix `"%"` |
-| `color_range` | list, combo type LIST, format INT | `ColorRange` | items `ColorRange.Auto`=0, `ColorRange.Partial`=1, `ColorRange.Full`=2 |
-| `linear_alpha` | bool | `LinearAlpha` | |
-| `seekable` | bool | `Seekable` | |
-| `ffmpeg_options` | text | `FFmpegOpts` | long description `FFmpegOpts.ToolTip.Source` |
+| name                  | type                              | description key         | extra                                                                  |
+| --------------------- | --------------------------------- | ----------------------- | ---------------------------------------------------------------------- |
+| `is_local_file`       | bool                              | `LocalFile`             | modified callback (R04)                                                |
+| `local_file`          | path (file)                       | `LocalFile`             | filter and default_path below                                          |
+| `looping`             | bool                              | `Looping`               |                                                                        |
+| `restart_on_activate` | bool                              | `RestartWhenActivated`  |                                                                        |
+| `buffering_mb`        | int slider 0..16 step 1           | `BufferingMB`           | suffix `" MB"`                                                         |
+| `input`               | text (default type)               | `Input`                 |                                                                        |
+| `input_format`        | text                              | `InputFormat`           |                                                                        |
+| `reconnect_delay_sec` | int slider 1..60 step 1           | `ReconnectDelayTime`    | suffix `" S"`                                                          |
+| `hw_decode`           | bool                              | `HardwareDecode`        |                                                                        |
+| `clear_on_media_end`  | bool                              | `ClearOnMediaEnd`       |                                                                        |
+| `close_when_inactive` | bool                              | `CloseFileWhenInactive` | long description `CloseFileWhenInactive.ToolTip`                       |
+| `speed_percent`       | int slider 1..200 step 1          | `SpeedPercentage`       | suffix `"%"`                                                           |
+| `color_range`         | list, combo type LIST, format INT | `ColorRange`            | items `ColorRange.Auto`=0, `ColorRange.Partial`=1, `ColorRange.Full`=2 |
+| `linear_alpha`        | bool                              | `LinearAlpha`           |                                                                        |
+| `seekable`            | bool                              | `Seekable`              |                                                                        |
+| `ffmpeg_options`      | text                              | `FFmpegOpts`            | long description `FFmpegOpts.ToolTip.Source`                           |
 
 `local_file` filter string (one string, items separated by `;;`):
-`T("MediaFileFilter.AllMediaFiles") + " (*.mp4 *.m4v *.ts *.mov *.mxf *.flv *.mkv *.avi *.mp3 *.ogg *.aac *.wav *.gif *.webm);;" +
-T("MediaFileFilter.VideoFiles") + " (*.mp4 *.m4v *.ts *.mov *.mxf *.flv *.mkv *.avi *.gif *.webm);;" +
-T("MediaFileFilter.AudioFiles") + " (*.mp3 *.aac *.ogg *.wav);;" + T("MediaFileFilter.AllFiles") + " (*.*)"`.
+`T("MediaFileFilter.AllMediaFiles") + " (*.mp4 *.m4v *.ts *.mov *.mxf *.flv *.mkv *.avi *.mp3 *.ogg *.aac *.wav *.gif *.webm);;" + T("MediaFileFilter.VideoFiles") + " (*.mp4 *.m4v *.ts *.mov *.mxf *.flv *.mkv *.avi *.gif *.webm);;" + T("MediaFileFilter.AudioFiles") + " (*.mp3 *.aac *.ogg *.wav);;" + T("MediaFileFilter.AllFiles") + " (*.*)"`.
 
 ## 5. Behaviour (numbered rules)
 
@@ -148,12 +144,12 @@ T("MediaFileFilter.AudioFiles") + " (*.mp3 *.aac *.ogg *.wav);;" + T("MediaFileF
 
 - **S-047-R06** create(settings, source): initial state all zero (state NONE, `reconnect_delay_sec` 0).
   1. Create the stop event (manual-reset); failure: log ERROR, release, return failure.
-  2. Create the reconnect mutex; failure: destroy the event, log ERROR, return failure. Neither hotkey nor proc is registered on failure.
-  3. Register hotkey `MediaSource.Restart` ("RestartMedia"); register the pair `MediaSource.Play` ("Play") /
+  1. Create the reconnect mutex; failure: destroy the event, log ERROR, return failure. Neither hotkey nor proc is registered on failure.
+  1. Register hotkey `MediaSource.Restart` ("RestartMedia"); register the pair `MediaSource.Play` ("Play") /
      `MediaSource.Pause` ("Pause"); register hotkey `MediaSource.Stop` ("Stop"). In this order.
-  4. Add procs `void restart()`, `void preload_first_frame()`, `void get_duration(out int duration)`,
+  1. Add procs `void restart()`, `void preload_first_frame()`, `void get_duration(out int duration)`,
      `void get_nb_frames(out int num_frames)`, in this order.
-  5. Run update(settings) (R07..R12); return the source.
+  1. Run update(settings) (R07..R12); return the source.
 - **S-047-R26** destroy: stop the reconnect thread (R19); unregister **only** the restart hotkey (the pair and the stop
   hotkey are released by the host with the source); destroy the media object if any; release mutex, event and strings.
 
@@ -173,17 +169,15 @@ hw := bool(hw_decode); range := int(color_range) (stored as the enum without val
 speed := int(speed_percent) as 32-bit; if speed < 1 or speed > 200: speed := 100                      // R09
 opts := str(ffmpeg_options)
 ```
-  Note: for a local file `reconnect_delay_sec` is left unchanged (0 after create; `src-03` shows 10, 25, 10 for a stream).
+
+Note: for a local file `reconnect_delay_sec` is left unchanged (0 after create; `src-03` shows 10, 25, 10 for a stream).
+
 - **S-047-R08** Restart decision, continued: `restart := true` if any of `s.is_hw != hw`, `s.range != range`,
-  `s.speed != speed`, or (`s.ffmpeg_options != NULL` and differs from `opts`). If `active AND s.state == ENDED AND looping
-  AND NOT s.is_looping` then `restart := true` (a user-stopped source, state STOPPED, is not restarted by enabling looping,
+  `s.speed != speed`, or (`s.ffmpeg_options != NULL` and differs from `opts`). If `active AND s.state == ENDED AND looping AND NOT s.is_looping` then `restart := true` (a user-stopped source, state STOPPED, is not restarted by enabling looping,
   `src-10`). Changes of `buffering_mb`, `full_decode`, `clear_on_media_end`, `log_changes` and `is_track_matte` alone do NOT
   restart (Q-1). First update after create always restarts (old `speed` is 0 and old `is_local` false).
 - **S-047-R09** `speed` outside 1..200 becomes 100 (before comparison, so 250 -> 100 compares equal to 100).
-- **S-047-R10** Commit new values to the object: `is_looping, close_when_inactive := bool(close_when_inactive), input, input_format,
-  hw, full_decode := bool(full_decode), clear_on_end := bool(clear_on_media_end), range, linear_alpha := bool(linear_alpha),
-  buffering_mb := int(buffering_mb) (32-bit), speed, is_local, seekable := bool(seekable), ffmpeg_options, is_stinger,
-  is_track_matte, log_changes := bool(log_changes)`.
+- **S-047-R10** Commit new values to the object: `is_looping, close_when_inactive := bool(close_when_inactive), input, input_format, hw, full_decode := bool(full_decode), clear_on_end := bool(clear_on_media_end), range, linear_alpha := bool(linear_alpha), buffering_mb := int(buffering_mb) (32-bit), speed, is_local, seekable := bool(seekable), ffmpeg_options, is_stinger, is_track_matte, log_changes := bool(log_changes)`.
   `restart_on_activate := false` if `input` starts with `rist` (ASCII case-insensitive, 4-byte prefix: `RIST://`, `ristretto://x` and `rist`
   all match, `ris` does not), else `bool(restart_on_activate)` (`src-03`).
 - **S-047-R11** Applying (in this order): if `restart` and a media object exists: destroy it. If a media object still exists: `set_looping(looping)` then
@@ -256,7 +250,9 @@ packet.pts := rescale_ts(avpkt.pts), dts := rescale_ts(avpkt.dts)    // rescale_
 packet.data := packet_buffer, size := avpkt.size, type := AUDIO, keyframe := true, timebase_num := 1, timebase_den := ctx.sample_rate
 unref avpkt; return true
 ```
-  "again" is the codec's EAGAIN (`-EAGAIN` as the codec reports it), "end of file" is `AVERROR_EOF` (-541478725). A send result of again/EOF skips receive and yields "no packet, success".
+
+"again" is the codec's EAGAIN (`-EAGAIN` as the codec reports it), "end of file" is `AVERROR_EOF` (-541478725). A send result of again/EOF skips receive and yields "no packet, success".
+
 - **S-047-R35** Time stamps: the input pts of frame n (0-based, before it) is `n * frame_size` rescaled from `1/sample_rate` to the codec time base (`1/1000`, 48 kHz, 1024: 0, 21, 43), the output pts/dts are rescaled back (50 -> 2400) (`aud-03`).
 - **S-047-R36** See R34 for the error mapping (send error, receive error, fill error -> false; again/EOF -> success without packet).
 - **S-047-R37** Packet fields are exactly those of R34; every other field of the packet struct is untouched.
@@ -312,7 +308,7 @@ an unsignalled event so the wait times out. A body that finished stays "valid" u
 - **Q-5** (QUIRK) Unknown sample formats map to 16-bit; the buffers are sized with that mapping while the codec uses the real format (`aud-02`, `dbl`).
 - **Q-6** (QUIRK) Destroy unregisters only the restart hotkey; the Play/Pause pair and Stop are cleaned up by the host. (`src-08` end).
 - **Q-7** (QUIRK) `rist` is a 4-byte case-insensitive prefix test (`ristretto://` matches). MUST match.
-- **Q-8** (QUIRK) Visibility is not applied by get_properties (all visible at first). 
+- **Q-8** (QUIRK) Visibility is not applied by get_properties (all visible at first).
 - **Q-9** (QUIRK) Video encode: on timeout the call returns false even though the packet was delivered and `received` is true.
 - **Q-10** (QUIRK) Audio encode: on send/receive/fill errors `received` is not written (callers pass false).
 - **D-1** (DEFECT) `ffmpeg_video_encoder_init`, codec-not-found path: the error-text string object is used without initialisation, so the reference crashes or works depending on the stack (`vid-01`: the stack filled with 0xFF crashes, with zeros works).
@@ -328,33 +324,33 @@ an unsignalled event so the wait times out. A body that finished stays "valid" u
 
 ## 10. Conformance coverage
 
-| Rule | Scripts |
-|---|---|
-| R01 | src-00-registration |
-| R02-R05 | src-01-defaults-props |
-| R06 | src-10-create-failures, src-01..09 (creation prologue) |
-| R07-R13 | src-02-update-local, src-03-update-network |
-| R14 | src-04-activate-restart, src-07-playback-control |
-| R15, R16 | src-05-media-callbacks, src-06-reconnect |
-| R17-R19 | src-06-reconnect |
-| R20, R21 | src-04-activate-restart, src-07-playback-control |
-| R22 | src-07-playback-control |
-| R23, R24 | src-08-hotkeys-procs |
-| R25 | src-09-missing-files |
-| R26 | src-08-hotkeys-procs, src-06-reconnect |
-| R27 | src-10-create-failures |
-| R30, R31 | aud-01-registration |
-| R32, R33, R59 | aud-02-create-and-sample-format |
-| R34-R37 | aud-03-encode |
-| R38, R39 | aud-04-info-callbacks |
-| R40 | aud-02, aud-03 (destroy) |
-| R50 | vid-01-init |
-| R51, R52, R53 | vid-02-init-codec |
-| R54 | vid-03-encode |
-| R55-R57 | vid-04-packets-errors |
-| R58 | vid-05-free |
-| Q-1 | src-02 | Q-2 | src-06 | Q-3 | aud-03 | Q-4 | vid-03 | Q-5 | aud-02 | Q-6 | src-08 | Q-7 | src-03 | Q-9 | vid-04 | Q-10 | aud-03 | D-1 | vid-01, vid-05 |
-| D-2 | not testable |
+| Rule          | Scripts                                                |
+| ------------- | ------------------------------------------------------ |
+| R01           | src-00-registration                                    |
+| R02-R05       | src-01-defaults-props                                  |
+| R06           | src-10-create-failures, src-01..09 (creation prologue) |
+| R07-R13       | src-02-update-local, src-03-update-network             |
+| R14           | src-04-activate-restart, src-07-playback-control       |
+| R15, R16      | src-05-media-callbacks, src-06-reconnect               |
+| R17-R19       | src-06-reconnect                                       |
+| R20, R21      | src-04-activate-restart, src-07-playback-control       |
+| R22           | src-07-playback-control                                |
+| R23, R24      | src-08-hotkeys-procs                                   |
+| R25           | src-09-missing-files                                   |
+| R26           | src-08-hotkeys-procs, src-06-reconnect                 |
+| R27           | src-10-create-failures                                 |
+| R30, R31      | aud-01-registration                                    |
+| R32, R33, R59 | aud-02-create-and-sample-format                        |
+| R34-R37       | aud-03-encode                                          |
+| R38, R39      | aud-04-info-callbacks                                  |
+| R40           | aud-02, aud-03 (destroy)                               |
+| R50           | vid-01-init                                            |
+| R51, R52, R53 | vid-02-init-codec                                      |
+| R54           | vid-03-encode                                          |
+| R55-R57       | vid-04-packets-errors                                  |
+| R58           | vid-05-free                                            |
+| Q-1           | src-02                                                 |
+| D-2           | not testable                                           |
 
 Tolerance: none (no floating point output). Vector lines `log LEVEL TEXT`: compare the level; the texts of channel layouts come from libavutil (`stereo`, `5.1(side)`) and may differ between FFmpeg versions.
 
@@ -382,14 +378,7 @@ H.264 encoder (`obs-ffmpeg-openh264.c`) and the standalone AMF diagnostic progra
 ### 12.1 File-to-rule map: media source, audio encoders, video encoders
 
 - **S-047-R60 [SRC]** `obs-ffmpeg-source.c` (38 fns): full `struct ffmpeg_source` field list, in order:
-  `media_playback_t *media; bool destroy_media; enum video_range_type range; bool is_linear_alpha;
-  obs_source_t *source; obs_hotkey_id hotkey; char *input; char *input_format; char *ffmpeg_options;
-  int buffering_mb; int speed_percent; bool is_looping; bool is_local_file; bool is_hw_decoding; bool
-  full_decode; bool is_clear_on_media_end; bool restart_on_activate; bool close_when_inactive; bool
-  seekable; bool is_stinger; bool is_track_matte; bool log_changes; pthread_t reconnect_thread;
-  pthread_mutex_t reconnect_mutex; bool reconnect_thread_valid; os_event_t *reconnect_stop_event;
-  volatile bool reconnecting; int reconnect_delay_sec; enum obs_media_state state; obs_hotkey_pair_id
-  play_pause_hotkey; obs_hotkey_id stop_hotkey`. `hotkey` is the restart hotkey, `play_pause_hotkey`
+  `media_playback_t *media; bool destroy_media; enum video_range_type range; bool is_linear_alpha; obs_source_t *source; obs_hotkey_id hotkey; char *input; char *input_format; char *ffmpeg_options; int buffering_mb; int speed_percent; bool is_looping; bool is_local_file; bool is_hw_decoding; bool full_decode; bool is_clear_on_media_end; bool restart_on_activate; bool close_when_inactive; bool seekable; bool is_stinger; bool is_track_matte; bool log_changes; pthread_t reconnect_thread; pthread_mutex_t reconnect_mutex; bool reconnect_thread_valid; os_event_t *reconnect_stop_event; volatile bool reconnecting; int reconnect_delay_sec; enum obs_media_state state; obs_hotkey_pair_id play_pause_hotkey; obs_hotkey_id stop_hotkey`. `hotkey` is the restart hotkey, `play_pause_hotkey`
   the Play/Pause pair, `stop_hotkey` the stop hotkey (R06 step 3). Behaviour: R01–R27 (UI R01–R05,
   lifecycle R06/R26, update R07–R14, player callbacks R15–R16, reconnect R17–R19, controls R20–R25).
 - **S-047-R61 [SRC]** `obs-ffmpeg-audio-encoders.c` (19 fns): the per-encoder `enc_create` arguments
@@ -409,8 +398,7 @@ H.264 encoder (`obs-ffmpeg-openh264.c`) and the standalone AMF diagnostic progra
 
 - **S-047-R63** Info record: `id = "ffmpeg_openh264"`, type VIDEO, `codec = "h264"`, get_name "OpenH264";
   callbacks create/destroy/encode/defaults/properties/extra-data/video-info as the file's functions; no
-  audio_info. `struct openh264_encoder { struct ffmpeg_video_encoder ffve; enum openh264_encoder_type
-  type; DARRAY(uint8_t) header }` (the enum has the single value `H264_ENCODER_TYPE_OH264`, set when
+  audio_info. `struct openh264_encoder { struct ffmpeg_video_encoder ffve; enum openh264_encoder_type type; DARRAY(uint8_t) header }` (the enum has the single value `H264_ENCODER_TYPE_OH264`, set when
   `enc_lib == "libopenh264"`).
 - **S-047-R64** create: gate 1 — `voi->format` must be in the whitelist
   {I420, NV12, YVYU, YUY2, UYVY, RGBA, BGRA, BGRX, BGR3, Y800, I444, I422, I40A, I42A, YUVA, AYUV},
@@ -451,13 +439,10 @@ H.264 encoder (`obs-ffmpeg-openh264.c`) and the standalone AMF diagnostic progra
   (Q-11). On MSVC the file exports `AmdPowerXpressRequestHighPerformance = 1` (dllexport) so the AMD
   driver picks the high-performance GPU.
 - **S-047-R69 [SRC]** `get_adapter_caps(factory, adapter_idx)`: `EnumAdapters` (failure: return false —
-  end of loop); take `DXGI_ADAPTER_DESC`; `luid_idx := index of desc.AdapterLuid in luid_order, else
-  adapter_idx`; `adapter_info[luid_idx]` is the caps slot (default all-false). If `desc.VendorId !=
-  0x1002` (AMD): leave the slot all-false, return true. Else set `is_amd`, create a D3D11 device on the
+  end of loop); take `DXGI_ADAPTER_DESC`; `luid_idx := index of desc.AdapterLuid in luid_order, else adapter_idx`; `adapter_info[luid_idx]` is the caps slot (default all-false). If `desc.VendorId != 0x1002` (AMD): leave the slot all-false, return true. Else set `is_amd`, create a D3D11 device on the
   adapter (`D3D_DRIVER_TYPE_UNKNOWN`, no debug, flags 0, `D3D11_SDK_VERSION`; failure: return true,
   slot left as-is), `amf_factory->CreateContext` (failure: return true), `amf_context->InitDX11(device)`
-  (failure: return true), then `supports_avc/hevc/av1 := CreateComponent(context,
-  AMFVideoEncoderVCE_AVC / AMFVideoEncoder_HEVC / AMFVideoEncoder_AV1) == AMF_OK`.
+  (failure: return true), then `supports_avc/hevc/av1 := CreateComponent(context, AMFVideoEncoderVCE_AVC / AMFVideoEncoder_HEVC / AMFVideoEncoder_AV1) == AMF_OK`.
 
 ### 12.4 Quirks (added)
 

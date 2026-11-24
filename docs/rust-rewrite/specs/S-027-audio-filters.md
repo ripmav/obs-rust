@@ -1,13 +1,13 @@
 # S-027 Audio filters (obs-filters: gain, invert polarity, compressor, limiter, expander / upward compressor, noise gate, async delay, 3-band EQ, noise suppress plumbing)
 
-| | |
-|---|---|
-| Status | Ready for review |
-| Spec version | initial |
-| Reference | OBS Studio 33.0.1: `plugins/obs-filters/{gain-filter,invert-audio-polarity,compressor-filter,limiter-filter,expander-filter,noise-gate-filter,async-delay-filter,eq-filter,noise-suppress-filter}.c` |
-| Target crate | `crates/obs-filters-audio` (one module per filter) |
-| Depends on | S-014 (obs_data: defaults vs user values, `clear`, `apply`), S-015 (obs_properties) |
-| Conformance | `test/conformance/scripts/audiofilters/` (15 scripts, runner described in `test/conformance/README.md`, section "audiofilters runner") |
+|              |                                                                                                                                                                                                      |
+| ------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Status       | Ready for review                                                                                                                                                                                     |
+| Spec version | initial                                                                                                                                                                                              |
+| Reference    | OBS Studio 33.0.1: `plugins/obs-filters/{gain-filter,invert-audio-polarity,compressor-filter,limiter-filter,expander-filter,noise-gate-filter,async-delay-filter,eq-filter,noise-suppress-filter}.c` |
+| Target crate | `crates/obs-filters-audio` (one module per filter)                                                                                                                                                   |
+| Depends on   | S-014 (obs_data: defaults vs user values, `clear`, `apply`), S-015 (obs_properties)                                                                                                                  |
+| Conformance  | `test/conformance/scripts/audiofilters/` (15 scripts, runner described in `test/conformance/README.md`, section "audiofilters runner")                                                               |
 
 ## 1. Scope
 
@@ -52,36 +52,36 @@ apply when settings are reset), `filter_audio` on the audio thread, `video_tick`
 
 ### 3.1 Registration data (`info`, script 01)
 
-| key | `id` | version | flags | callbacks present beyond create/destroy |
-|---|---|---|---|---|
-| gain | `gain_filter` | 0 | `AUDIO` (0x2) | update, filter_audio, get_defaults, get_properties |
-| invert | `invert_polarity_filter` | 0 | AUDIO | filter_audio only (no update, no defaults, no properties) |
-| compressor | `compressor_filter` | 0 | AUDIO | update, filter_audio, video_tick, get_defaults, get_properties |
-| limiter | `limiter_filter` | 0 | AUDIO | update, filter_audio, defaults, properties |
-| expander | `expander_filter` | 0 | AUDIO | same as limiter |
-| upward | `upward_compressor_filter` | 0 | AUDIO | same as limiter (shares code with expander) |
-| gate | `noise_gate_filter` | 0 | AUDIO | same as limiter |
-| delay | `async_delay_filter` | 0 | `VIDEO|ASYNC` | update, get_properties, filter_video, filter_remove (no defaults) |
-| eq | `basic_eq_filter` | 0 | AUDIO | update, filter_audio, defaults, properties |
-| ns (v1) | `noise_suppress_filter` | 0 | `AUDIO | CAP_OBSOLETE` | update, filter_audio, defaults(v1), properties |
-| ns2 (v2) | `noise_suppress_filter` | 2 | AUDIO | same, defaults(v2) |
+| key        | `id`                       | version | flags         | callbacks present beyond create/destroy                        |
+| ---------- | -------------------------- | ------- | ------------- | -------------------------------------------------------------- |
+| gain       | `gain_filter`              | 0       | `AUDIO` (0x2) | update, filter_audio, get_defaults, get_properties             |
+| invert     | `invert_polarity_filter`   | 0       | AUDIO         | filter_audio only (no update, no defaults, no properties)      |
+| compressor | `compressor_filter`        | 0       | AUDIO         | update, filter_audio, video_tick, get_defaults, get_properties |
+| limiter    | `limiter_filter`           | 0       | AUDIO         | update, filter_audio, defaults, properties                     |
+| expander   | `expander_filter`          | 0       | AUDIO         | same as limiter                                                |
+| upward     | `upward_compressor_filter` | 0       | AUDIO         | same as limiter (shares code with expander)                    |
+| gate       | `noise_gate_filter`        | 0       | AUDIO         | same as limiter                                                |
+| delay      | `async_delay_filter`       | 0       | \`VIDEO       | ASYNC\`                                                        |
+| eq         | `basic_eq_filter`          | 0       | AUDIO         | update, filter_audio, defaults, properties                     |
+| ns (v1)    | `noise_suppress_filter`    | 0       | \`AUDIO       | CAP_OBSOLETE\`                                                 |
+| ns2 (v2)   | `noise_suppress_filter`    | 2       | AUDIO         | same, defaults(v2)                                             |
 
 All have `type = FILTER`. `get_name` returns the text key (`Gain`, `InvertPolarity`, `Compressor`, `Limiter`, `Expander`,
 `Upward.Compressor`, `NoiseGate`, `AsyncDelayFilter`, `3BandEq`, `NoiseSuppress`). Numeric flag values: `OBS_SOURCE_VIDEO = 0x1`, `AUDIO = 0x2`, `ASYNC = 0x4`, `CAP_OBSOLETE = 0x400`; so the registered `output_flags` are gain..eq `0x2`, delay `0x5`, ns v1 `0x402`, ns v2 `0x2`.
 
 ### 3.2 Settings and defaults (scripts 03, 07)
 
-| filter | key (type) default | notes |
-|---|---|---|
-| gain | `db` (double) 0.0 | |
-| limiter | `threshold` (double) -6.0; `release_time` (int, ms) 60 | |
-| compressor | `ratio` (double) 10.0; `threshold` (double) -18.0; `attack_time` (int ms) 6; `release_time` (int ms) 60; `output_gain` (double dB) 0.0; `sidechain_source` (string) `"none"` | |
-| expander | `presets` (string) `"expander"`; `ratio` 2.0; `threshold` -40.0; `attack_time` 10; `release_time` 50; `output_gain` 0.0; `detector` (string) `"RMS"` | gate preset: `presets` `"gate"`, `ratio` 10.0, `release_time` 125, rest equal (R42) |
-| upward | `ratio` 0.5; `threshold` -20.0; `attack_time` 10; `release_time` 50; `output_gain` 0.0; `detector` `"RMS"`; `knee_width` (int dB) 10 | no `presets` default |
-| gate | `open_threshold` (double dB) -26.0; `close_threshold` -32.0; `attack_time` (int ms) 25; `hold_time` 200; `release_time` 150 | |
-| eq | `low`, `mid`, `high` (double dB) 0.0 | |
-| ns | `suppress_level` (int dB) -30; `method` (string): v1 `"speex"`, v2 `"rnnoise"` | with both libraries compiled in (reference Linux build); builds with only RNNoise default v1 to `"rnnoise"`, without RNNoise v2 defaults to `"speex"` |
-| delay | `delay_ms` (int) — **no default** (reads 0 when absent) | |
+| filter     | key (type) default                                                                                                                                                           | notes                                                                                                                                                 |
+| ---------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
+| gain       | `db` (double) 0.0                                                                                                                                                            |                                                                                                                                                       |
+| limiter    | `threshold` (double) -6.0; `release_time` (int, ms) 60                                                                                                                       |                                                                                                                                                       |
+| compressor | `ratio` (double) 10.0; `threshold` (double) -18.0; `attack_time` (int ms) 6; `release_time` (int ms) 60; `output_gain` (double dB) 0.0; `sidechain_source` (string) `"none"` |                                                                                                                                                       |
+| expander   | `presets` (string) `"expander"`; `ratio` 2.0; `threshold` -40.0; `attack_time` 10; `release_time` 50; `output_gain` 0.0; `detector` (string) `"RMS"`                         | gate preset: `presets` `"gate"`, `ratio` 10.0, `release_time` 125, rest equal (R42)                                                                   |
+| upward     | `ratio` 0.5; `threshold` -20.0; `attack_time` 10; `release_time` 50; `output_gain` 0.0; `detector` `"RMS"`; `knee_width` (int dB) 10                                         | no `presets` default                                                                                                                                  |
+| gate       | `open_threshold` (double dB) -26.0; `close_threshold` -32.0; `attack_time` (int ms) 25; `hold_time` 200; `release_time` 150                                                  |                                                                                                                                                       |
+| eq         | `low`, `mid`, `high` (double dB) 0.0                                                                                                                                         |                                                                                                                                                       |
+| ns         | `suppress_level` (int dB) -30; `method` (string): v1 `"speex"`, v2 `"rnnoise"`                                                                                               | with both libraries compiled in (reference Linux build); builds with only RNNoise default v1 to `"rnnoise"`, without RNNoise v2 defaults to `"speex"` |
+| delay      | `delay_ms` (int) — **no default** (reads 0 when absent)                                                                                                                      |                                                                                                                                                       |
 
 `get_defaults` writes **defaults** (not user values) into the given settings object. Only `expander_defaults` reads the object (its
 `presets` effective value decides which preset's defaults are written).
@@ -91,18 +91,18 @@ All have `type = FILTER`. `get_name` returns the text key (`Gain`, `InvertPolari
 Order is insertion order. Identity locale: description = text key. `float slider` = `obs_properties_add_float_slider`,
 `int slider` likewise; "suffix" as given (S-015 getters). A suffix call on a property of the wrong type is a silent no-op.
 
-| filter | properties (name: type, min, max, step, suffix) |
-|---|---|
-| gain | `db`: float slider -30..30 step 0.1 `" dB"`, desc `Gain.GainDB` |
-| limiter | `threshold` float slider -60..0 step 0.1 `" dB"` (`Limiter.Threshold`); `release_time` int **slider** 1..1000 step 1 `" ms"` (`Limiter.ReleaseTime`) |
+| filter     | properties (name: type, min, max, step, suffix)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
+| ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| gain       | `db`: float slider -30..30 step 0.1 `" dB"`, desc `Gain.GainDB`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
+| limiter    | `threshold` float slider -60..0 step 0.1 `" dB"` (`Limiter.Threshold`); `release_time` int **slider** 1..1000 step 1 `" ms"` (`Limiter.ReleaseTime`)                                                                                                                                                                                                                                                                                                                                                                                                                                              |
 | compressor | `ratio` float slider 1..32 step 0.5 `":1"`; `threshold` -60..0 step 0.1 `" dB"`; `attack_time` int slider 1..500 `" ms"`; `release_time` int slider 1..1000 `" ms"`; `output_gain` float slider -32..32 step 0.1 `" dB"`; `sidechain_source`: list (type LIST=2, format STRING) with item `("None" -> text key `None`, "none")` followed by one item (name, name) per enumerated source (host order) that has the `AUDIO` output flag and is not the filter's parent. Texts `Compressor.Ratio/Threshold/AttackTime/ReleaseTime/OutputGain/SidechainSource`. With data == NULL the parent is NULL. |
-| expander | (only when not upward) `presets` list(string) items (`Expander.Presets.Expander`,`expander`), (`Expander.Presets.Gate`,`gate`) with a modified callback that returns true; `ratio` float slider 1..20 step 0.1 `":1"`; `threshold` -60..0 0.1 `" dB"`; `attack_time` int slider 1..100 `" ms"`; `release_time` 1..1000 `" ms"`; `output_gain` -32..32 0.1 `" dB"`; `detector` list(string): (`Expander.RMS`,`RMS`), (`Expander.Peak`,`peak`) |
-| upward | as expander without `presets`/`detector`; `ratio` slider **0..1** step 0.1 `":1"`; plus `knee_width` int slider 0..20 step 1, **no suffix** (Q-1) |
-| gate | `close_threshold` float slider -96..0 step 1 `" dB"`; `open_threshold` likewise (order: close first); `attack_time`, `hold_time`, `release_time`: int (plain, not slider) 0..10000 step 1 `" ms"` |
-| delay | `delay_ms` int (plain) 0..20000 step 1 `" ms"` (`DelayMs`) |
-| eq | order `high`, `mid`, `low`: float slider -20..20 step 0.1 `" dB"`, desc `3BandEq.high` etc. |
-| ns | with both libraries: `method` list(string) items (`NoiseSuppress.Method.Speex`,`speex`), (`...RNNoise`,`rnnoise`) with modified callback `noise_suppress_method_modified`; then `suppress_level` int slider -60..0 step 1 `" dB"`. Callback: `suppress_level.visible = (settings.method == "speex")`, returns true. (Without Speex the slider is absent, without both libraries the method list is absent.) |
-| invert | none (no `get_properties`) |
+| expander   | (only when not upward) `presets` list(string) items (`Expander.Presets.Expander`,`expander`), (`Expander.Presets.Gate`,`gate`) with a modified callback that returns true; `ratio` float slider 1..20 step 0.1 `":1"`; `threshold` -60..0 0.1 `" dB"`; `attack_time` int slider 1..100 `" ms"`; `release_time` 1..1000 `" ms"`; `output_gain` -32..32 0.1 `" dB"`; `detector` list(string): (`Expander.RMS`,`RMS`), (`Expander.Peak`,`peak`)                                                                                                                                                      |
+| upward     | as expander without `presets`/`detector`; `ratio` slider **0..1** step 0.1 `":1"`; plus `knee_width` int slider 0..20 step 1, **no suffix** (Q-1)                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
+| gate       | `close_threshold` float slider -96..0 step 1 `" dB"`; `open_threshold` likewise (order: close first); `attack_time`, `hold_time`, `release_time`: int (plain, not slider) 0..10000 step 1 `" ms"`                                                                                                                                                                                                                                                                                                                                                                                                 |
+| delay      | `delay_ms` int (plain) 0..20000 step 1 `" ms"` (`DelayMs`)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
+| eq         | order `high`, `mid`, `low`: float slider -20..20 step 0.1 `" dB"`, desc `3BandEq.high` etc.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
+| ns         | with both libraries: `method` list(string) items (`NoiseSuppress.Method.Speex`,`speex`), (`...RNNoise`,`rnnoise`) with modified callback `noise_suppress_method_modified`; then `suppress_level` int slider -60..0 step 1 `" dB"`. Callback: `suppress_level.visible = (settings.method == "speex")`, returns true. (Without Speex the slider is absent, without both libraries the method list is absent.)                                                                                                                                                                                       |
+| invert     | none (no `get_properties`)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
 
 ### 3.4 Host and library contract (inputs of the component, faked by the conformance runner)
 
@@ -165,6 +165,7 @@ input `[0.5,0.5,0.5,0.5]` on plane 0 becomes `0.997631192` (4 times). Worked exa
 ### 5.4 Limiter (script 04)
 
 State: `envelope: f32` (0), `slope = 1.0`, buffer `envelope_buf` (length ≥ block).
+
 - **S-027-R20** `update`: `threshold = get_double("threshold") as f32`; `release_ms = get_int("release_time") as f32`;
   `attack_gain = coef(rate, 0.001f / 1000.0f)` (a fixed 1 µs time constant; the 1 ms constant is divided by 1000 **again**, Q-2);
   `release_gain = coef(rate, release_ms / 1000.0f)`; `output_gain = db_to_mul(0) = 1.0`; `slope = 1.0`; `ch`, `rate` stored.
@@ -180,6 +181,7 @@ State: `envelope: f32` (0), `slope = 1.0`, buffer `envelope_buf` (length ≥ blo
 ### 5.5 Compressor (scripts 05, 10)
 
 Same envelope pass and gain pass as R21/R22 with these differences.
+
 - **S-027-R30** `update`: `ratio = get_double("ratio") as f32`; `threshold`; `attack_gain = coef(rate, attack_ms/1000.0f)` with
   `attack_ms = get_int("attack_time") as f32`; `release_gain` likewise; `output_gain = db_to_mul(get_double("output_gain") as f32)`;
   `slope = 1.0f - (1.0f / ratio)` (`ratio = 0` gives `slope = -inf`; ratio < 1 gives negative slope, no clamping). `ch`, `rate`.
@@ -210,6 +212,7 @@ Same envelope pass and gain pass as R21/R22 with these differences.
 ### 5.6 Expander and upward compressor (scripts 06, 07)
 
 State per channel `c < 8`: `runave[c]` (0), `envelope[c]` (0), `gain_db_buf[c]` (0). Flags: `is_upwcomp` (fixed per filter kind), `is_gate` (initially: `presets == "gate"` at create), `detector` (RMS = 0, PEAK = 2; initially RMS).
+
 - **S-027-R40** `update`: first, if not upward: `p = get_string("presets")` (copy it; D-2). If `p == "expander"` and `is_gate`: `clear` all user values of the settings, set user `presets = "expander"`, call the expander default function (R42) on the settings, `is_gate = false`. Else if `p == "gate"` and `!is_gate`: likewise with `"gate"` and `is_gate = true`. Any other `p` (including empty) changes nothing. User values set by the same update call that changes the preset are therefore lost; a call that keeps the preset keeps all user values (script 07).
 - **S-027-R41** `create`: `is_gate = (get_string("presets") == "gate")`, `is_upwcomp` from the kind, then the update logic (no clearing at create).
 - **S-027-R42** Expander defaults: `presets` default is the *effective* `presets` if it equals `"gate"`, else `"expander"`; all other defaults per §3.2 depending on the same flag (ratio 2/10, release 50/125). They are written as defaults, replacing earlier defaults.
@@ -223,7 +226,7 @@ State per channel `c < 8`: `runave[c]` (0), `envelope[c]` (0), `gain_db_buf[c]` 
   - expander: `prev = i>0 ? G[i-1] : g_prev_block`; `gain = (diff > 0) ? fmaxf(slope*diff, -60.0f) : 0.0f`.
   - ballistics (both): `G[i] = (gain > prev) ? attack_gain*prev + inv_a*gain : release_gain*prev + inv_r*gain`.
   - output: expander `m = db_to_mul(fminf(0, G[i]))`, upward `m = db_to_mul(G[i])`; `s[i] *= m * output_gain`.
-  After the block `gain_db_buf[c] = G[n-1]`. Because `G` buffers are zeroed per block, `G[i-1]` for `i = 0` is replaced by the stored value as written.
+    After the block `gain_db_buf[c] = G[n-1]`. Because `G` buffers are zeroed per block, `G[i-1]` for `i = 0` is replaced by the stored value as written.
 - **S-027-R46** `filter_audio`: `frames == 0` returns unchanged; else detection then gain stage on the same block.
 - **S-027-R47** The upward compressor ignores `presets` (never clears; a stray `presets` user value is kept).
 
@@ -258,6 +261,7 @@ State per channel `c < 8`: `runave[c]` (0), `envelope[c]` (0), `gain_db_buf[c]` 
 ### 5.9 Async delay (script 11; video path only)
 
 State: `video_frames` FIFO of frame handles, `last_video_ts: u64` (0), `interval: u64` ns (0), `video_delay_reached`, `reset_video`, `reset_audio`, `samplerate` (read at create, unused).
+
 - **S-027-R80** `create`: `update`, then `samplerate = rate`.
 - **S-027-R81** `update`: `new = get_int("delay_ms") as u64 * 1_000_000`; if `new < interval` release (via `obs_source_release_frame(parent, f)`, oldest first) all queued frames; `reset_audio = reset_video = true`; `interval = new`; `video_delay_reached = false`. (Also true on the very first call: `0 < 0` is false so nothing is released.)
 - **S-027-R82** `filter_video(frame)`: if `reset_video` or `is_jump(frame.ts, last_video_ts)` (`ts < last || ts - last > 1_000_000_000`; the first frame is compared with `last = 0`): release all queued frames, `video_delay_reached = false`, `reset_video = false`. `last_video_ts = frame.ts`. Push the frame; `output =` oldest queued frame; `cur = frame.ts - output.ts` (u64 wrapping); if `!video_delay_reached && cur < interval` return NULL; else pop the oldest, `video_delay_reached = true`, return it (ownership passes to the caller; it is **not** released through the host).
@@ -268,6 +272,7 @@ State: `video_frames` FIFO of frame handles, `last_video_ts: u64` (0), `interval
 ### 5.10 Noise suppress (plumbing; scripts 12, 13)
 
 State: queues per channel `input[c]`, `output[c]` (bytes of f32), `info` queue of `(frames: u32, timestamp: u64)`, `last_timestamp`, `ch`, `frames` (segment length), `suppress_level`, `use_rnnoise`, `has_mono_src`, `latency`.
+
 - **S-027-R90** `update`: `rate`, `ch` from host; `frames = rate / 100` (integer division); `method = get_string("method")`; `suppress_level = get_int("suppress_level") as i32`; `latency = 1_000_000_000 / 100 = 10_000_000`; `use_rnnoise = (method == "rnnoise")`; `self.frames = frames`, `self.ch = ch` are stored on **every** update.
 - **S-027-R91** One-time allocation: only if the relevant state does not exist yet (`!use_rnnoise && speex_states[0]` or `use_rnnoise && rnn_states[0]` exists ⇒ return). With both libraries available the first call allocates **everything** regardless of method: per channel a Speex state `init(frames, rate)` and an RNNoise state (`create(NULL)`), event order per channel `speex.init, rnnoise.create`; segment buffers sized for `frames`/`ch` of that moment; and, if `rate != 48000`, two resamplers: forward `(dst = 48000 Hz, src = rate)` then backward `(dst = rate, src = 48000 Hz)`, float planar, speakers = `layout(ch)` with 1→mono, 2→stereo, 3→2.1, 4→4.0, 5→4.1, 6→5.1, 8→7.1, other→unknown. A later switch of `method` or a second update therefore allocates nothing.
 - **S-027-R92** `filter_audio` prologue: `layout = get_speaker_layout(parent)`; `has_mono_src = (layout == MONO && ch == 2)` (set but not used for processing: Q-6). If the needed library state is absent return the block unchanged (cannot happen after R91).
@@ -317,23 +322,23 @@ filters in practice; the reference does not lock). A Rust implementation must wr
 
 ## 10. Conformance coverage
 
-| Script | Rules |
-|---|---|
-| 01-info | §3.1 |
-| 02-gain-invert | R03, R10, R11, R15, R16, R06 |
-| 03-defaults-props | §3.2, §3.3, Q-1, R99 |
-| 04-limiter | R03-R06, R20-R22, Q-2, Q-7 |
-| 05-compressor | R30, R31, R21-R22, Q-7 |
-| 06-expander | R40-R46, Q-4, Q-7, Q-8 |
-| 07-gate-preset | R40-R42, R47, D-2 |
-| 08-noisegate | R60-R63 |
-| 09-eq | R70-R73 |
-| 10-sidechain | R32-R39, Q-3, §3.3 compressor |
-| 11-async-delay | R80-R85, Q-5 |
-| 12-noise-suppress-speex | R90-R98, Q-6 |
-| 13-noise-suppress-rnn | R91, R96 |
-| 20-defects-crash | D-1, D-3, D-4 |
-| 21-edge-cases | R03, R05, R06 |
+| Script                  | Rules                         |
+| ----------------------- | ----------------------------- |
+| 01-info                 | §3.1                          |
+| 02-gain-invert          | R03, R10, R11, R15, R16, R06  |
+| 03-defaults-props       | §3.2, §3.3, Q-1, R99          |
+| 04-limiter              | R03-R06, R20-R22, Q-2, Q-7    |
+| 05-compressor           | R30, R31, R21-R22, Q-7        |
+| 06-expander             | R40-R46, Q-4, Q-7, Q-8        |
+| 07-gate-preset          | R40-R42, R47, D-2             |
+| 08-noisegate            | R60-R63                       |
+| 09-eq                   | R70-R73                       |
+| 10-sidechain            | R32-R39, Q-3, §3.3 compressor |
+| 11-async-delay          | R80-R85, Q-5                  |
+| 12-noise-suppress-speex | R90-R98, Q-6                  |
+| 13-noise-suppress-rnn   | R91, R96                      |
+| 20-defects-crash        | D-1, D-3, D-4                 |
+| 21-edge-cases           | R03, R05, R06                 |
 
 ## 11. Open questions
 
@@ -341,6 +346,7 @@ filters in practice; the reference does not lock). A Rust implementation must wr
 - Whether to preserve D-2/D-3 exactly in a Rust port is moot (the required behaviour is the safe one).
 - Noise suppress with Speex/RNNoise compiled out (flags `LIBSPEEXDSP_ENABLED`, `LIBRNNOISE_ENABLED`) changes defaults and properties (§3.2/§3.3) and turns `process_*` into no-ops; only the "both enabled" build is covered by vectors.
 - NVIDIA AFX variants (`LIBNVAFX_ENABLED`) of the noise suppress source are not part of this spec.
+
 ## 12. Round 9: audio-side boundary of the RNNoise backend (added)
 
 This round's obs-filters action brings **no new audio filter `.c` files**: the nine audio filters of
@@ -359,8 +365,8 @@ call boundary below.
   480 samples, int16-unit scaling, R96) and `rnnoise_destroy` (R98). The returned VAD probability is
   **discarded** in every call: it is not logged, stored, or fed back into the output. No other function of
   `denoise.c` is reachable from the plugin.
+
 - **S-027-R101** What the library computes (480-sample framing, 22 log bands, RNN/GRU pipeline, pitch
   estimation, the first-frame fade-in) is S-054 §11 R45–R54; per-channel independence and the observed
   behaviour are S-054 R10–R13/R42. S-027's rules are independent of the library internals: a substitute
   denoiser is conforming iff it meets S-054 §5 (and keeps R90–R98's queueing, scaling and reset rules).
-

@@ -11,7 +11,7 @@ To supersede: the new ADR sets `Supersedes: NNNN`; the old ADR gets
 `Superseded by: NNNN` and status `Superseded`. Both edits land in the same PR.
 -->
 
-# NNNN. <Decision title, one line>
+# NNNN. \<Decision title, one line>
 
 - Status: Proposed
 - Date: YYYY-MM-DD

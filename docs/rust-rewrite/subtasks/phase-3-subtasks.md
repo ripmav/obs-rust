@@ -9,6 +9,7 @@ Verified file map (libobs 33.0.1 checkout, line counts): `libobs/graphics/` (46 
 ## A. Effect language
 
 ### P3-01 Effect-file preprocessing
+
 - [ ] **P3-01.1 Backend define**
   - Files: `libobs/graphics/effect-parser.c` (1972) — the define injection; the lexer/preprocessor engine is `libobs/util/cf-lexer.c` (1376), `cf-parser.c` (60), `lexer.c` (305) (P1-08.3, S-011 — already ported in Phase 1).
   - Steps: drive the Phase-1 cf parser on `.effect` files; inject the `gs_preprocessor_name()` define (e.g. `OPENGL`) as an API definition (`cf_preprocessor_add_def`) before `cf_parser_parse`.
@@ -28,6 +29,7 @@ Verified file map (libobs 33.0.1 checkout, line counts): `libobs/graphics/` (46 
   - Done when: committed `.golden`.
 
 ### P3-02 Shader parser
+
 - [ ] **P3-02.1 AST**
   - Files: `libobs/graphics/shader-parser.c` (717), `libobs/graphics/shader-parser.h` (273).
   - Steps: define the AST types for `shader_var`, `shader_struct`, `shader_func`, `cf_token`s, expressions in `crates/obs-graphics` (S-020 target crate); the AST must print itself.
@@ -51,6 +53,7 @@ Verified file map (libobs 33.0.1 checkout, line counts): `libobs/graphics/` (46 
   - Done when: goldens committed and green.
 
 ### P3-03 Effect parser
+
 - [ ] **P3-03.1 Parameters**
   - Files: `libobs/graphics/effect-parser.c` (1972), `libobs/graphics/effect-parser.h` (290).
   - Steps: parse params with annotations and defaults (`uniform float4 color = {...}`) in all param types.
@@ -77,6 +80,7 @@ Verified file map (libobs 33.0.1 checkout, line counts): `libobs/graphics/` (46 
   - Done when: 20 broken inputs compare to C's error text.
 
 ### P3-04 Effect runtime
+
 - [ ] **P3-04.1 Param storage**
   - Files: `libobs/graphics/effect.c` (556), `libobs/graphics/effect.h` (190).
   - Steps: port `gs_effect_set_float/int/bool/vec2/3/4/matrix4/texture/val/default_val`; match the type-mismatch behaviour.
@@ -99,6 +103,7 @@ Verified file map (libobs 33.0.1 checkout, line counts): `libobs/graphics/` (46 
   - Done when: all param types round-trip.
 
 ### P3-05 Shader transpiler to WGSL
+
 - [ ] **P3-05.1 Design note**
   - Steps: spike `naga` IR vs direct text emitter; write the decision.
   - Note: no spec covers WGSL output (wgpu has no C counterpart); the input is the assembled shader text of S-020 §4.3.
@@ -122,6 +127,7 @@ Verified file map (libobs 33.0.1 checkout, line counts): `libobs/graphics/` (46 
   - Done when: goldens committed and `naga`-validated.
 
 ### P3-06 Legacy transpilers
+
 - [ ] **P3-06.1 GLSL**
   - Files: `libobs-opengl/gl-shaderparser.c` (773), `libobs-opengl/gl-shaderparser.h` (88).
   - Steps: port the OBS-HLSL → GLSL text emitter (the GL backend's only algorithmic piece) into `crates/obs-gl-backend` (S-057 target crate).
@@ -140,6 +146,7 @@ Verified file map (libobs 33.0.1 checkout, line counts): `libobs/graphics/` (46 
 ## B. `gs_*` API
 
 ### P3-07 Trait design
+
 - [ ] **P3-07.1 API table**
   - Files: `libobs/graphics/graphics.h` (1025), `libobs/graphics/device-exports.h` (177).
   - Steps: list every exported function in `graphics.h` and `device-exports.h` with a group (texture, buffer, shader, state, draw).
@@ -156,6 +163,7 @@ Verified file map (libobs 33.0.1 checkout, line counts): `libobs/graphics/` (46 
   - Done when: spec.
 
 ### P3-08 C shim
+
 - [ ] **P3-08.1 Context**
   - Files: `libobs/graphics/graphics.c` (3312).
   - Steps: port `gs_enter_context`/`gs_leave_context` (R07–R09): thread-local current graphics, reentrant use count, "leave previous context completely first".
@@ -183,6 +191,7 @@ Verified file map (libobs 33.0.1 checkout, line counts): `libobs/graphics/` (46 
   - Done when: symbol diff empty.
 
 ### P3-09 Matrix stack and transforms
+
 - [ ] **P3-09.1 Stack**
   - Files: `libobs/graphics/graphics.c` (3312; the matrix section), `libobs/graphics/matrix4.c` (333), `matrix4.h` (102).
   - Steps: port `gs_matrix_push/pop/identity/transpose/set/get/mul/translate/rotaa/rotquat/scale` (+ the `...3f`/`4f` f32 variants); frontend only, no backend calls.
@@ -202,6 +211,7 @@ Verified file map (libobs 33.0.1 checkout, line counts): `libobs/graphics/` (46 
   - Done when: goldens committed and green.
 
 ### P3-10 Immediate-mode vertex API
+
 - [ ] **P3-10.1 Recording**
   - Files: `libobs/graphics/graphics.c` (3312; the immediate-mode section).
   - Steps: port `gs_render_start(b_new)`, `gs_vertex*`, `gs_color`, `gs_texcoord*`, `gs_normal3f`, `gs_render_stop` per R13–R16 (512-entry immediate arrays, count checks, retained vs immediate flush).
@@ -221,6 +231,7 @@ Verified file map (libobs 33.0.1 checkout, line counts): `libobs/graphics/` (46 
   - Done when: bench report committed.
 
 ### P3-11 Texture utilities
+
 - [ ] **P3-11.1 texrender**
   - Files: `libobs/graphics/texture-render.c` (151).
   - Steps: port `gs_texrender_create/begin/end/reset` per R41–R43 (viewport/projection/matrix pushes, render-target restore, `rendered` latch).
@@ -247,6 +258,7 @@ Verified file map (libobs 33.0.1 checkout, line counts): `libobs/graphics/` (46 
   - Done when: level count + warning test.
 
 ### P3-12 Image loading
+
 - [ ] **P3-12.1 Static**
   - Files: `libobs/graphics/image-file.c` (409), `image-file.h` (58), `libobs/graphics/graphics-ffmpeg.c` (787).
   - Steps: decode PNG/JPG/BMP/TGA/WebP with the `image` crate in `crates/graphics-image` (S-053 target crate); reproduce the C swscale BGRA conversion (rounding) for gray/palette/YUV inputs; 30 sample files.
@@ -274,6 +286,7 @@ Verified file map (libobs 33.0.1 checkout, line counts): `libobs/graphics/` (46 
 ## C. Backends
 
 ### P3-13 `wgpu` device init
+
 - [ ] **P3-13.1 Adapter**
   - Steps: adapter selection by index/name and power preference; map to `gs_init_data`; enumerate adapters like `gs_enum_adapters`.
   - Spec: S-043 R40 (adapter enumeration).
@@ -292,6 +305,7 @@ Verified file map (libobs 33.0.1 checkout, line counts): `libobs/graphics/` (46 
   - Done when: same on Windows and macOS.
 
 ### P3-14 `wgpu` resources
+
 - [ ] **P3-14.1 Format map**
   - Steps: table every `gs_color_format` (A8, R8, RGBA, BGRX, BGRA, R10G10B10A2, RGBA16, R16, RGBA16F, RGBA32F, RG16F, RG32F, R16F, R32F, DXT1/3/5, R8G8, RGBA_UNORM, BGRX_UNORM, BGRA_UNORM, RG16) to a wgpu format.
   - Spec: S-043 §5.9 (R27–R28 creation, R32 NV12/P010).
@@ -310,6 +324,7 @@ Verified file map (libobs 33.0.1 checkout, line counts): `libobs/graphics/` (46 
   - Done when: every mapped format draws and reads back.
 
 ### P3-15 Pipeline cache
+
 - [ ] **P3-15.1 Key**
   - Steps: key = shader pair + blend + depth + stencil + raster + formats + topology; test the hashing.
   - Done when: hashing tested.
@@ -319,6 +334,7 @@ Verified file map (libobs 33.0.1 checkout, line counts): `libobs/graphics/` (46 
   - Done when: metrics show < 1.
 
 ### P3-16 Render and readback
+
 - [ ] **P3-16.1 Targets/clear**
   - Steps: `gs_set_render_target`, `gs_clear`.
   - Spec: S-043 §5.9 (render-target handling, R27/R28).
@@ -332,6 +348,7 @@ Verified file map (libobs 33.0.1 checkout, line counts): `libobs/graphics/` (46 
   - Done when: no deadlock under single-thread use.
 
 ### P3-17 Frame pacing and presentation
+
 - [ ] **P3-17.1 Display**
   - Files: `libobs/obs-display.c` (311).
   - Steps: port `obs_display_create/resize/destroy` rendering (the `obs_display_*` object model itself is P4-31/S-042); `render_displays` iterates the display list in order.
@@ -348,6 +365,7 @@ Verified file map (libobs 33.0.1 checkout, line counts): `libobs/graphics/` (46 
   - Done when: present path matches C on each OS.
 
 ### P3-18 Shared texture import: Linux
+
 - [ ] **P3-18.1 DMA-BUF**
   - Files: `plugins/linux-pipewire/pipewire.c` (1471; the producer), `libobs/graphics/device-exports.h` (177; `gs_texture_create_from_dmabuf`).
   - Steps: import with modifiers via Vulkan external memory.
@@ -362,6 +380,7 @@ Verified file map (libobs 33.0.1 checkout, line counts): `libobs/graphics/` (46 
   - Done when: both DEs verified.
 
 ### P3-19 Shared texture import: Windows
+
 - [ ] **P3-19.1 Open handle**
   - Files: `plugins/win-capture/graphics-hook/` (the producer), `libobs/graphics/device-exports.h` (177).
   - Steps: port `gs_texture_open_shared` / `_nt_shared` (DXGI shared handle / NT handle).
@@ -374,6 +393,7 @@ Verified file map (libobs 33.0.1 checkout, line counts): `libobs/graphics/` (46 
   - Done when: hook samples render.
 
 ### P3-20 Shared texture import: macOS
+
 - [ ] **P3-20.1 IOSurface**
   - Steps: port `gs_texture_create_from_iosurface`, `gs_texture_rebind_iosurface` (Metal `newTextureWithDescriptor:iosurface:plane:`).
   - Spec: S-052 (mac plugins, MODEL vectors).
@@ -382,6 +402,7 @@ Verified file map (libobs 33.0.1 checkout, line counts): `libobs/graphics/` (46 
   - Done when: sck capture renders.
 
 ### P3-21 GPU encoder texture sharing
+
 - [ ] **P3-21.1 Escape hatch**
   - Steps: `gs_texture_get_obj` returning the native handle plus a kind enum; document it.
   - Spec: S-043 §3.1 (backend contract — native export point).
@@ -396,6 +417,7 @@ Verified file map (libobs 33.0.1 checkout, line counts): `libobs/graphics/` (46 
   - Done when: one per platform proven.
 
 ### P3-22 Legacy backend adapters
+
 - [ ] **P3-22.1 OpenGL**
   - Files: `libobs-opengl/gl-subsystem.c` (1627) + 26 more files in `libobs-opengl/` (see file map).
   - Steps: load `libobs-opengl` via the C `gs_exports` vtable (no Rust re-implementation).
@@ -420,6 +442,7 @@ Verified file map (libobs 33.0.1 checkout, line counts): `libobs/graphics/` (46 
   - Done when: both backends selectable at runtime.
 
 ### P3-23 HDR and colour management
+
 - [ ] **P3-23.1 HDR targets**
   - Steps: `RGBA16F` + scRGB/HDR10 swap chains.
   - Spec: S-043 §5.9 (colour-space handling, R37 `gs_set_linear_srgb`).
@@ -434,6 +457,7 @@ Verified file map (libobs 33.0.1 checkout, line counts): `libobs/graphics/` (46 
 ## D. Built-in effects and render loop
 
 ### P3-24 Built-in effects
+
 - [ ] **P3-24.1 Compile**
   - Files: all 21 `libobs/data/*.effect` (incl. the nine `deinterlace_*.effect`; `format_conversion.effect` is 43.7 KB).
   - Steps: compile every file on `wgpu` through the P3-05 transpiler.
@@ -449,6 +473,7 @@ Verified file map (libobs 33.0.1 checkout, line counts): `libobs/graphics/` (46 
   - Done when: PSNR > 60 dB (or exact for integer paths).
 
 ### P3-25 Plugin effects
+
 - [ ] **P3-25.1 Enumerate**
   - Files: `plugins/obs-filters/data/` (18), `plugins/obs-transitions/data/` (6), `plugins/nv-filters/data/` (3), `plugins/text-freetype2/data/text_default.effect` (1) — 28 total.
   - Steps: glob `plugins/*/data/**/*.effect`; generate the list in CI.
@@ -460,6 +485,7 @@ Verified file map (libobs 33.0.1 checkout, line counts): `libobs/graphics/` (46 
   - Done when: no missing intrinsics remain; the P3-05.3 table grows accordingly.
 
 ### P3-26 Render loop
+
 - [ ] **P3-26.1 Main render**
   - Files: `libobs/obs-video.c` (1200).
   - Steps: port `render_main_texture` (R13: render target + `render_space`, clear (0,0,0,0)) and `render_output_texture` (R14) into `crates/libobs-core` module `video_loop` (S-058 target crate), driven by a static test scene.
@@ -489,6 +515,7 @@ Verified file map (libobs 33.0.1 checkout, line counts): `libobs/graphics/` (46 
   - Done when: 120 frames hashed and equal.
 
 ### P3-27 Multi-canvas render support
+
 - [ ] **P3-27.1 Mixes**
   - Files: `libobs/obs-video.c` (1200).
   - Steps: the render loop iterates `obs->video.mixes` (per-mix `render_texture`/`output_texture`, R10: each mix in array order, only when `mix.view != NULL`); the canvas/view objects themselves are P4-33/P4-31.
@@ -504,6 +531,7 @@ Verified file map (libobs 33.0.1 checkout, line counts): `libobs/graphics/` (46 
 ## E. Cleanup
 
 ### P3-28 Backend selection and fallback
+
 - [ ] **P3-28.1 Fallback** on init failure.
   - Steps: force a `wgpu` init failure; select a legacy backend.
   - Spec: S-043 R05 (creation failure paths — `GS_ERROR_MODULE_NOT_FOUND`, missing exports, `device_create` failure).
@@ -514,6 +542,7 @@ Verified file map (libobs 33.0.1 checkout, line counts): `libobs/graphics/` (46 
   - Done when: both honoured.
 
 ### P3-29 Performance gate
+
 - [ ] **P3-29.1 Scenes**
   - Steps: three reference scenes per OS (simple, 20 sources with filters, 4K); store in `test/fixtures/`.
   - Done when: stored in `test/fixtures`.
@@ -523,6 +552,7 @@ Verified file map (libobs 33.0.1 checkout, line counts): `libobs/graphics/` (46 
   - Done when: within 5% on all scenes, reported.
 
 ### P3-30 Remove `deps/glad`
+
 - [ ] **P3-30.1 Users**
   - Files: `deps/glad/` (in the checkout).
   - Steps: grep `glad` across the tree.
@@ -531,17 +561,19 @@ Verified file map (libobs 33.0.1 checkout, line counts): `libobs/graphics/` (46 
   - Done when: deleted in Phase 7, GL backend still builds.
 
 ### P3-31 Phase 3 review
+
 - [ ] **P3-31.1 Review** visual diffs and perf.
   - Done when: review notes committed.
 - [ ] **P3-31.2 Tick** parents.
   - Done when: parent tasks ticked in `../phase-3-graphics.md`.
 
 ### P3-32 Graphics backend spec coverage (added)
+
 - [x] **P3-32.1 Write S-078** — D3D11 backend (13 files / 272 fns: `libobs-d3d11/*`)
-  - Steps: 1. write `specs/S-078-d3d11-backend.md`: gs_* → ID3D11 device mapping, texture/vertex/index buffer lifecycles, shader compile + processing, rebuild rules, duplicator interop (`d3d11-subsystem.cpp` 156 fns, `d3d11-rebuild.cpp` 20). 2. add the row to `specs/README.md`.
+  - Steps: 1. write `specs/S-078-d3d11-backend.md`: gs\_\* → ID3D11 device mapping, texture/vertex/index buffer lifecycles, shader compile + processing, rebuild rules, duplicator interop (`d3d11-subsystem.cpp` 156 fns, `d3d11-rebuild.cpp` 20). 2. add the row to `specs/README.md`.
   - Done when: S-078 committed; `libobs-d3d11/` fully cited.
 - [x] **P3-32.2 Write S-079** — Metal backend (21 files / 184 fns: `libobs-metal/*`)
-  - Steps: 1. write `specs/S-079-metal-backend.md` (Swift: device/swapchain/texture/buffer/shader semantics, MTL → gs_* mapping; `metal-subsystem.swift` 38, `OBSShader.swift` 20, `MetalDevice.swift` 16). 2. add the row.
+  - Steps: 1. write `specs/S-079-metal-backend.md` (Swift: device/swapchain/texture/buffer/shader semantics, MTL → gs\_\* mapping; `metal-subsystem.swift` 38, `OBSShader.swift` 20, `MetalDevice.swift` 16). 2. add the row.
   - Done when: S-079 committed; `libobs-metal/` fully cited.
 - [x] **P3-32.3 Extend S-057** — OpenGL backend file citations (11 files / 212 fns: `libobs-opengl/*`)
   - Steps: 1. cite the remaining files (`gl-subsystem.c` 85, `gl-x11-egl.c` 31, `gl-egl-common.c` 19, …) and add rules for the uncited helpers.

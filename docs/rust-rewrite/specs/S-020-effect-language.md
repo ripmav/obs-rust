@@ -1,12 +1,12 @@
 # S-020 Effect language: effect parser, shader parser, effect runtime
 
-| | |
-|---|---|
-| Status | Ready for review |
-| Reference | libobs 33.0.1 `graphics/effect-parser.c/.h`, `graphics/shader-parser.c/.h`, `graphics/effect.c/.h`, and the effect entry points of `graphics/graphics.c` (`gs_effect_create`, `gs_effect_create_from_file`) |
-| Target crate | `crates/obs-graphics` (module `effect`) |
-| Depends on | S-001 (allocator), S-011 (lexer, preprocessor, parser helpers: referenced rule by rule, not repeated) |
-| Conformance | `test/conformance/scripts/effect/` (41 scripts, runner `gen/effect_runner.c` + fake backend `gen/effect_stubs.c`), runner language in `test/conformance/README.md` ("effect runner") |
+|              |                                                                                                                                                                                                             |
+| ------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Status       | Ready for review                                                                                                                                                                                            |
+| Reference    | libobs 33.0.1 `graphics/effect-parser.c/.h`, `graphics/shader-parser.c/.h`, `graphics/effect.c/.h`, and the effect entry points of `graphics/graphics.c` (`gs_effect_create`, `gs_effect_create_from_file`) |
+| Target crate | `crates/obs-graphics` (module `effect`)                                                                                                                                                                     |
+| Depends on   | S-001 (allocator), S-011 (lexer, preprocessor, parser helpers: referenced rule by rule, not repeated)                                                                                                       |
+| Conformance  | `test/conformance/scripts/effect/` (41 scripts, runner `gen/effect_runner.c` + fake backend `gen/effect_stubs.c`), runner language in `test/conformance/README.md` ("effect runner")                        |
 
 ## 1. Scope
 
@@ -15,12 +15,12 @@ parameters, structs, sampler states, functions and *techniques* made of *passes*
 
 1. **parses** the file (effect parser), keeping the declared parameters (type, annotations, default values) and,
    per pass, the *entry call* of the vertex and the pixel stage;
-2. **assembles the text of one shader per pass and stage** from exactly the declarations that stage needs, and
+1. **assembles the text of one shader per pass and stage** from exactly the declarations that stage needs, and
    hands it to the graphics backend (`gs_vertexshader_create` / `gs_pixelshader_create`); backends compile or
    transpile that text (S-0xx, WGSL transpiler in Phase 3) - so the exact text, layout included, is an interface;
-3. provides the **effect runtime** (`gs_effect_*`, `gs_technique_*`, `gs_param_*`): parameter lookup, value
+1. provides the **effect runtime** (`gs_effect_*`, `gs_technique_*`, `gs_param_*`): parameter lookup, value
    storage, defaults, the technique/pass iteration protocol that uploads values to the backend;
-4. provides the stand-alone **shader parser** (`shader_parse`, `get_shader_param_type`, `get_sample_filter`,
+1. provides the stand-alone **shader parser** (`shader_parse`, `get_shader_param_type`, `get_sample_filter`,
    `get_address_mode`, `shader_sampler_convert`) that backends run over the assembled text.
 
 Out of scope: the backends themselves, `gs_effect_*` helpers that only forward to graphics state
@@ -40,19 +40,19 @@ token in the lexer that owns it, file = that lexer's file name).
 
 **Cursor helpers** (all defined in S-011 section 5.5; this spec uses these short names):
 
-| name | S-011 | meaning |
-|---|---|---|
-| `NEXT()` | R72 `cf_next_token` | advance one token (not if `cur` is blank/NONE), skip blanks; true unless NONE |
-| `NEXTV()` | R73 | `NEXT()`; on false add `Unexpected EOF` |
-| `PEEKV(t)` | R73 | next non-blank token into `t` without moving; on false add `Unexpected EOF` |
-| `IS(s)` | R74 | current token text equals `s` exactly |
-| `GOTO(a,b)` | R75 | advance to the next token equal to `a` or `b` (skips balanced `{...}` blocks); false at end |
-| `GOTOV(a,b)` | R75 | `GOTO` + `Unexpected EOF` on false |
-| `PASSPAIR` | R77 | `cf_pass_pair('{','}')` |
-| `SHOULD_BE(s,g1,g2)` / `NEXT_SHOULD_BE(...)` | R78 | SUCCESS / CONTINUE (error `Expected 's'`) / EOF |
-| `IS_TYPE(ty,what,g)` | R79 | SUCCESS or `Expected 'what'` (+ skip to `g`) then CONTINUE/EOF |
-| `GET_NAME(dst,what,g)` / `NEXT_NAME` | R80 | `IS_TYPE(NAME,...)` + copy |
-| `expecting(s)`, `eof()`, `syntax()` | R71 | add `Expected 's'`, `Unexpected EOF`, `Syntax error` |
+| name                                         | S-011               | meaning                                                                                     |
+| -------------------------------------------- | ------------------- | ------------------------------------------------------------------------------------------- |
+| `NEXT()`                                     | R72 `cf_next_token` | advance one token (not if `cur` is blank/NONE), skip blanks; true unless NONE               |
+| `NEXTV()`                                    | R73                 | `NEXT()`; on false add `Unexpected EOF`                                                     |
+| `PEEKV(t)`                                   | R73                 | next non-blank token into `t` without moving; on false add `Unexpected EOF`                 |
+| `IS(s)`                                      | R74                 | current token text equals `s` exactly                                                       |
+| `GOTO(a,b)`                                  | R75                 | advance to the next token equal to `a` or `b` (skips balanced `{...}` blocks); false at end |
+| `GOTOV(a,b)`                                 | R75                 | `GOTO` + `Unexpected EOF` on false                                                          |
+| `PASSPAIR`                                   | R77                 | `cf_pass_pair('{','}')`                                                                     |
+| `SHOULD_BE(s,g1,g2)` / `NEXT_SHOULD_BE(...)` | R78                 | SUCCESS / CONTINUE (error `Expected 's'`) / EOF                                             |
+| `IS_TYPE(ty,what,g)`                         | R79                 | SUCCESS or `Expected 'what'` (+ skip to `g`) then CONTINUE/EOF                              |
+| `GET_NAME(dst,what,g)` / `NEXT_NAME`         | R80                 | `IS_TYPE(NAME,...)` + copy                                                                  |
+| `expecting(s)`, `eof()`, `syntax()`          | R71                 | add `Expected 's'`, `Unexpected EOF`, `Syntax error`                                        |
 
 Return codes (used by the grammar procedures): `SUCCESS = 0`, `CONTINUE = -1`, `BREAK = -2`,
 `UNEXPECTED_CONTINUE = -3`, `UNEXPECTED_BREAK = -4`, `EOF = -5`.
@@ -132,6 +132,7 @@ param      := [ 'in' | 'inout' | 'out' | 'uniform' ] TYPE NAME [ ':' SEMANTIC ]
 technique  := 'technique' NAME '{' pass* '}'
 pass       := 'pass' [ NAME ] '{' ( ('vertex_shader'|'vertex_program'|'pixel_shader'|'pixel_program') '=' ['compile'] token* ';' )* '}'
 ```
+
 All words are case sensitive; types are not validated (any NAME). The parser is deliberately lenient and has
 extensive error recovery (rules R30-R70). Comments and the whole preprocessor are S-011 (`#define`, `#ifdef`, `#include`, ...).
 
@@ -139,17 +140,17 @@ extensive error recovery (rules R30-R70). Comments and the whole preprocessor ar
 
 `default_val` bytes (hex, little endian; vector `02-params-defaults`):
 
-| declaration | `default_val` |
-|---|---|
-| `float f = 1.5;` | `0000c03f` (4 bytes) |
-| `float2 v = {1,2};` / `float2(1,2)` | `0000803f00000040` (8 bytes) |
-| `float4x4 m = {1,0,0,0,...}` | 16 floats, 64 bytes, in source order |
-| `int i = -7;` | `f9ffffffffffffff` (one 8-byte long) |
-| `int2 j = {1,-2};` | `0100000000000000feffffffffffffff` (16 bytes) |
-| `bool b = true;` | `0100000000000000` (one long) |
-| `string s = "hello";` | `68656c6c6f00` (text + NUL) |
-| `texture2d t = "a.png";` | text + NUL |
-| no initialiser | empty |
+| declaration                         | `default_val`                                 |
+| ----------------------------------- | --------------------------------------------- |
+| `float f = 1.5;`                    | `0000c03f` (4 bytes)                          |
+| `float2 v = {1,2};` / `float2(1,2)` | `0000803f00000040` (8 bytes)                  |
+| `float4x4 m = {1,0,0,0,...}`        | 16 floats, 64 bytes, in source order          |
+| `int i = -7;`                       | `f9ffffffffffffff` (one 8-byte long)          |
+| `int2 j = {1,-2};`                  | `0100000000000000feffffffffffffff` (16 bytes) |
+| `bool b = true;`                    | `0100000000000000` (one long)                 |
+| `string s = "hello";`               | `68656c6c6f00` (text + NUL)                   |
+| `texture2d t = "a.png";`            | text + NUL                                    |
+| no initialiser                      | empty                                         |
 
 The *runtime type* of a parameter is derived from its declared type name by `get_effect_param_type`: exact names
 `float float2 float3 float4 int2 int3 int4 float4x4 bool int string` map to FLOAT VEC2 VEC3 VEC4 INT2 INT3 INT4 MATRIX4X4 BOOL INT
@@ -177,6 +178,7 @@ uniform float4x4 ViewProj;\n\n\nstruct VOut {\n\tfloat4 pos : POSITION;\n\tfloat
 struct VIn {\n\tfloat4 pos : POSITION;\n\tfloat2 uv : TEXCOORD0;\n};\n\nVOut VS(VIn v)\n{ VOut o; ... return o; }\n\n
 VOut main(VIn v)\n{\n\treturn VS(v);\n}\n
 ```
+
 (no line breaks inside the real text), with location string `basic.effect (Vertex shader, technique Draw, pass 0)`.
 Note the struct order (return type `VOut` before parameter type `VIn`), the two blank lines after the parameter, the
 function header regenerated on its own line, the body copied verbatim starting at `{`, and the wrapper `main`. The
@@ -187,19 +189,19 @@ Vector `30-assembly-basic` holds both exact texts; the FNV-1a hash of every shad
 
 Every message is recorded as `<file> (<row>, <col>): <text>` (S-011-R12/R71). ERROR unless marked W (warning). `X` stands for the quoted word.
 
-| Text | Raised by |
-|---|---|
-| `Unexpected EOF` | every `NEXTV` / `PEEKV` / `GOTOV` that runs into the end; `list` default (R18) |
-| `Expected 'X'` with X = `type`, `name`, `type name`, `variable name`, `mapping name`, `mapping specifier` (`mapping` in the shader parser), `state name`, `numeric value`, `texture path string`, `string`, `true or false`, `assignment value`, `= or ;`, `; or >`, `>`, `<`, `,`, `;`, `=`, `]`, `{`, `}`, `(`, `)` | R10 (type/name), R40, R50, R61, R14, R15-R20, R30 |
-| `Syntax error` | struct member without a name, function parameter list without `(`/`,`, double modifier, unknown pass command, annotation item recovery |
-| `Invalid row count`, `Invalid column count` | R18 |
-| `Invalid type 'T' used for assignment` | R16 |
-| `'kw' keyword already specified` (W) | R11 |
-| `'kw' keyword cannot be used with a function` | R12 |
-| `Unexpected code segment` | R02 (top-level `{`) |
-| `compile keyword not necessary` (W) | R61 |
-| `Error creating shader: TEXT` | R71 |
-| Log lines (not in the error list): `Pass (N) <NAME> missing vertex shader!` / `... pixel shader!`, `Effect shader parameter not found` | R71 |
+| Text                                                                                                                                                                                                                                                                                                                  | Raised by                                                                                                                              |
+| --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------- |
+| `Unexpected EOF`                                                                                                                                                                                                                                                                                                      | every `NEXTV` / `PEEKV` / `GOTOV` that runs into the end; `list` default (R18)                                                         |
+| `Expected 'X'` with X = `type`, `name`, `type name`, `variable name`, `mapping name`, `mapping specifier` (`mapping` in the shader parser), `state name`, `numeric value`, `texture path string`, `string`, `true or false`, `assignment value`, `= or ;`, `; or >`, `>`, `<`, `,`, `;`, `=`, `]`, `{`, `}`, `(`, `)` | R10 (type/name), R40, R50, R61, R14, R15-R20, R30                                                                                      |
+| `Syntax error`                                                                                                                                                                                                                                                                                                        | struct member without a name, function parameter list without `(`/`,`, double modifier, unknown pass command, annotation item recovery |
+| `Invalid row count`, `Invalid column count`                                                                                                                                                                                                                                                                           | R18                                                                                                                                    |
+| `Invalid type 'T' used for assignment`                                                                                                                                                                                                                                                                                | R16                                                                                                                                    |
+| `'kw' keyword already specified` (W)                                                                                                                                                                                                                                                                                  | R11                                                                                                                                    |
+| `'kw' keyword cannot be used with a function`                                                                                                                                                                                                                                                                         | R12                                                                                                                                    |
+| `Unexpected code segment`                                                                                                                                                                                                                                                                                             | R02 (top-level `{`)                                                                                                                    |
+| `compile keyword not necessary` (W)                                                                                                                                                                                                                                                                                   | R61                                                                                                                                    |
+| `Error creating shader: TEXT`                                                                                                                                                                                                                                                                                         | R71                                                                                                                                    |
+| Log lines (not in the error list): `Pass (N) <NAME> missing vertex shader!` / `... pixel shader!`, `Effect shader parameter not found`                                                                                                                                                                                | R71                                                                                                                                    |
 
 ## 5. Behaviour (numbered rules)
 
@@ -485,6 +487,7 @@ boolean(P):
     if IS("false"): append long 0; return SUCCESS
     expecting("true or false"); return EOF
 ```
+
 The shader parser (R91) uses `scalar` and a `list` restricted to `float...` types with only the `{` form (no `NEXT()` before the check: it is `NEXT_SHOULD_BE("{", ";", none)`), with closer `}`.
 
 ### 6.5 Struct (R40)
@@ -554,6 +557,7 @@ sampler_item(S):
     if value non-empty: S.push(state, value)
     return SUCCESS
 ```
+
 (Shader parser variant, R92: `r = NEXT_NAME(...)`; `NEXT_SHOULD_BE("=", ";", none)`; `NEXT_TOKEN_COPY(value)` (NEXTV + copy); `NEXT_SHOULD_BE(";", ";", none)`; push both.)
 
 ### 6.7 Function (R30, R31)
@@ -618,6 +622,7 @@ body(F):
         F.contents += text(cur)
     return true
 ```
+
 The tests "names a declared X" use the first record with exactly that token text among the records already stored; they run for *every* non-brace, non-blank token (including types, keywords, numbers - a number never names anything).
 
 ### 6.8 Technique and pass (R60, R61)
@@ -670,6 +675,7 @@ command(p):
     call.push(cur); call.push(END)
     return SUCCESS
 ```
+
 (`pass` returns `SUCCESS` also for the `CONTINUE` results of commands; a pass is stored even if its commands failed.)
 
 ### 6.9 Shader text (R72-R75)
@@ -699,6 +705,7 @@ write_main(f, callstr):
     if f.mapping: out += " : " + f.mapping
     out += "\n{\n\treturn " + callstr + "\n}\n"
 ```
+
 `write_param`, `write_func` as R73/R74.
 
 ### 6.10 Effect loop (R88)
@@ -716,6 +723,7 @@ loop(e, name):
         technique_end(e.cur_technique); e.looping = false; e.loop_pass = 0; return false
     return true
 ```
+
 (`loop_pass` is incremented whether or not the pass exists, then reset to 0 on failure.)
 
 ## 7. Concurrency
@@ -749,13 +757,20 @@ DEFECTs (required behaviour of a conforming implementation):
 - **D-1** (out-of-bounds read, crash) A function body that is not closed before the end of the input (`float y() {`, `... { return 1;`): after hitting the NONE token the reference steps past it and the top-level loop reads garbage memory
   (`ignore ep d1a...` in `90-defects`; with the reference's heap behaviour it crashes in ~9 % of mutated corpus inputs). **Required:** stop at the NONE token, discard the function, do not read past the token array.
   Recommended: add `Unexpected EOF` (the benign reading of the reference adds nothing, so the effect would silently lose the function). The vectors do not pin either choice.
+
 - **D-2** (NULL dereference) The backend's preprocessor name used as an identifier (`float _OPENGL;`) crashes the reference (the predefined macro has no token array, S-011 D-4 family). **Required:** expand to nothing (empty macro).
+
 - **D-3** `gs_effect_get_technique(e, NULL)` (and so `gs_effect_loop(e, NULL)` when not looping) crashes on `strcmp`. **Required:** return NULL / false.
+
 - **D-4** `gs_technique_get_pass_by_name`, `gs_technique_begin_pass_by_name` crash when an unnamed pass (NULL name) is compared before a match. **Required:** unnamed passes never match; no crash.
+
 - **D-5** `gs_effect_set_default(NULL)` crashes. **Required:** log ERROR `effect_setval_inline: invalid param`, no-op.
+
 - **D-6** `gs_effect_get_param_by_name(e, NULL)` and `gs_param_get_annotation_by_name(p, NULL)` crash when there is something to compare. **Required:** NULL.
+
 - **D-7** `gs_technique_get_pass_by_idx(t, passes)` and `gs_param_get_annotation_by_idx(p, count)` return a pointer one past the end (the bound check is `>` instead of `>=`). **Required:** NULL. The vectors print `past-end` for the reference's non-NULL result and the
   README's comparison rule accepts `null` for it (`60-runtime-lookup`, `90-defects`).
+
 - **D-8** Tokens that come from an `#include`d file keep a pointer to a dead stack object (S-011 D-4): errors positioned inside included files print garbage (file `(null)`, wrong row/column) in the reference.
   **Required:** report the included file's name and its own row/column. (`ignore` case in `90-defects`.)
 
@@ -775,32 +790,32 @@ DEFECTs (required behaviour of a conforming implementation):
 
 ## 10. Conformance coverage
 
-| Rules | Scripts |
-|---|---|
-| R01, R02, R03, R04 | `12-toplevel`, `06-params-errors`, `43-backend`, `66-lifecycle` |
-| R05, R06 | `66-lifecycle` (incl. a missing file) |
-| R10-R13 | `01-params-types`, `03-params-specifiers`, `06-params-errors` |
-| R14 | `04-params-array`, `07-params-quirks` |
-| R15 | `05-params-annotations` |
-| R16-R20 | `02-params-defaults`, `06-params-errors`, `07-params-quirks` |
-| R40 | `10-structs` |
-| R50 | `11-samplers` |
-| R30, R31 | `20-functions`, `21-functions-errors`, `31-assembly-deps` |
-| R60, R61 | `40-techniques`, `41-techniques-errors`, `34-assembly-call` |
-| R70 | `01-params-types`, `60-runtime-lookup`, `70..75-corpus-*` |
-| R71 | `30-assembly-basic`, `43-backend`, `80-quirks` |
-| R72, R73 | `32-assembly-params`, `34-assembly-call`, `80-quirks` |
-| R74 | `31-assembly-deps`, `35-assembly-text` |
-| R75 | `33-assembly-main`, `80-quirks` |
-| R80 | `60-runtime-lookup` (incl. duplicate ViewProj/World), `65-runtime-null` |
-| R81, R82 | `61-runtime-values`, `65-runtime-null` |
-| R83-R87 | `62-runtime-loop`, `63-runtime-passes`, `64-runtime-textures` |
-| R88 | `62-runtime-loop` |
-| R90-R93 | `70-sparse-params`, `71-sparse-structs-samplers`, `72-sparse-functions` |
-| R94-R97 | `71-sparse-structs-samplers`, `73-converters` |
-| Q-1 .. Q-6, Q-A .. Q-K | `07`, `31`, `34`, `40`, `41`, `43`, `71`, `80-quirks` |
-| D-1 .. D-9 | `90-defects` (plus `44-preprocessor` for D-2's non-crashing counterpart) |
-| corpus | `70-corpus-libobs-basic`, `71-corpus-libobs-scale`, `72-corpus-libobs-deinterlace`, `73-corpus-obs-filters`, `74-corpus-obs-transitions`, `75-corpus-other` |
+| Rules                  | Scripts                                                                                                                                                     |
+| ---------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| R01, R02, R03, R04     | `12-toplevel`, `06-params-errors`, `43-backend`, `66-lifecycle`                                                                                             |
+| R05, R06               | `66-lifecycle` (incl. a missing file)                                                                                                                       |
+| R10-R13                | `01-params-types`, `03-params-specifiers`, `06-params-errors`                                                                                               |
+| R14                    | `04-params-array`, `07-params-quirks`                                                                                                                       |
+| R15                    | `05-params-annotations`                                                                                                                                     |
+| R16-R20                | `02-params-defaults`, `06-params-errors`, `07-params-quirks`                                                                                                |
+| R40                    | `10-structs`                                                                                                                                                |
+| R50                    | `11-samplers`                                                                                                                                               |
+| R30, R31               | `20-functions`, `21-functions-errors`, `31-assembly-deps`                                                                                                   |
+| R60, R61               | `40-techniques`, `41-techniques-errors`, `34-assembly-call`                                                                                                 |
+| R70                    | `01-params-types`, `60-runtime-lookup`, `70..75-corpus-*`                                                                                                   |
+| R71                    | `30-assembly-basic`, `43-backend`, `80-quirks`                                                                                                              |
+| R72, R73               | `32-assembly-params`, `34-assembly-call`, `80-quirks`                                                                                                       |
+| R74                    | `31-assembly-deps`, `35-assembly-text`                                                                                                                      |
+| R75                    | `33-assembly-main`, `80-quirks`                                                                                                                             |
+| R80                    | `60-runtime-lookup` (incl. duplicate ViewProj/World), `65-runtime-null`                                                                                     |
+| R81, R82               | `61-runtime-values`, `65-runtime-null`                                                                                                                      |
+| R83-R87                | `62-runtime-loop`, `63-runtime-passes`, `64-runtime-textures`                                                                                               |
+| R88                    | `62-runtime-loop`                                                                                                                                           |
+| R90-R93                | `70-sparse-params`, `71-sparse-structs-samplers`, `72-sparse-functions`                                                                                     |
+| R94-R97                | `71-sparse-structs-samplers`, `73-converters`                                                                                                               |
+| Q-1 .. Q-6, Q-A .. Q-K | `07`, `31`, `34`, `40`, `41`, `43`, `71`, `80-quirks`                                                                                                       |
+| D-1 .. D-9             | `90-defects` (plus `44-preprocessor` for D-2's non-crashing counterpart)                                                                                    |
+| corpus                 | `70-corpus-libobs-basic`, `71-corpus-libobs-scale`, `72-corpus-libobs-deinterlace`, `73-corpus-obs-filters`, `74-corpus-obs-transitions`, `75-corpus-other` |
 
 Conformance classes (README, "Comparison rules"): `07-params-quirks`, `80-quirks` and the QUIRK-marked cases inside `31-assembly-deps` (e4b), `34-assembly-call`, `40-techniques`, `41-techniques-errors`, `43-backend`
 and `71-sparse-structs-samplers` (BorderColor) are **QUIRK** (SHOULD match); `90-defects` is **DEFECT** (the `try-end crash` / `ignore` results are not to be reproduced; `past-end` lines accept `null`);

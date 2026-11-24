@@ -1,13 +1,13 @@
 # S-068 Frontend: settings dialog (pages, dirty/apply/save, hotkeys)
 
-| | |
-|---|---|
-| Status | Draft (round 8 — behaviour catalog written from C reference; no vectors yet) |
-| Spec version | initial |
-| Reference | OBS Studio 33.0.1, `frontend/settings/*` |
-| Target crate | `crates/frontend` (GUI layer; Qt in the reference) |
-| Depends on | S-048 (config files, CLI/frontend API catalog), S-034 (hotkeys core), S-025 (encoder options UI), S-035 (services) |
-| Conformance | planned; none yet (Qt widgets; no executable vectors) |
+|              |                                                                                                                    |
+| ------------ | ------------------------------------------------------------------------------------------------------------------ |
+| Status       | Draft (round 8 — behaviour catalog written from C reference; no vectors yet)                                       |
+| Spec version | initial                                                                                                            |
+| Reference    | OBS Studio 33.0.1, `frontend/settings/*`                                                                           |
+| Target crate | `crates/frontend` (GUI layer; Qt in the reference)                                                                 |
+| Depends on   | S-048 (config files, CLI/frontend API catalog), S-034 (hotkeys core), S-025 (encoder options UI), S-035 (services) |
+| Conformance  | planned; none yet (Qt widgets; no executable vectors)                                                              |
 
 ## 1. Scope
 
@@ -23,6 +23,7 @@ libobs-driven — S-015/S-025), service property lists (S-035), config file
 layout (S-048), theme engine internals.
 
 **Reference files** (all 10, paths relative to the obs-studio root):
+
 - `frontend/settings/OBSBasicSettings.cpp`
 - `frontend/settings/OBSBasicSettings.hpp`
 - `frontend/settings/OBSBasicSettings_Stream.cpp`
@@ -47,9 +48,7 @@ sections are `[General]`, `[Stream1]`, `[Output]`, `[AdvOut]`, `[Audio]`,
 - `OBSBasicSettings : QDialog` — ctor takes `OBSBasic* parent`. Page
   order (`enum Pages`): GENERAL, APPEARANCE, STREAM, OUTPUT, AUDIO,
   VIDEO, HOTKEYS, ACCESSIBILITY, ADVANCED (`NUM_PAGES`).
-- Per-page dirty flags: `generalChanged, stream1Changed, outputsChanged,
-  audioChanged, videoChanged, hotkeysChanged, a11yChanged,
-  appearanceChanged, advancedChanged`; `Changed()` = OR of all.
+- Per-page dirty flags: `generalChanged, stream1Changed, outputsChanged, audioChanged, videoChanged, hotkeysChanged, a11yChanged, appearanceChanged, advancedChanged`; `Changed()` = OR of all.
   `loading` suppresses change-detection while populating pages.
 - State kept across reloads: `pageIndex`, `savedTheme`,
   `sampleRateIndex`, `channelIndex`, `llBufferingEnabled`,
@@ -200,22 +199,21 @@ for every edit: update dupe icon visibility
 - The dirty-flag-per-page + `QueryAllowedToClose` gating is the most
   stateful part; model pages as an enum of `DirtyFlags` and keep the
   button-role dispatch (R03) a pure function of (role, dirty, validation).
-- Hotkey widgets: `OBSHotkeyEdit` maps 1:1 to a `BindingEdit { key,
-  original }`; the atomic-load + `ignoreChangedBindings` handshake is the
+- Hotkey widgets: `OBSHotkeyEdit` maps 1:1 to a `BindingEdit { key, original }`; the atomic-load + `ignoreChangedBindings` handshake is the
   only place re-entrancy actually bites — keep the flag.
 - Encoder combos are data-driven from libobs (S-025); this spec only pins
   the *selection* and *validation* behaviour around them.
 
 ## 10. Conformance coverage
 
-| Rule(s) | Scripts |
-|---|---|
+| Rule(s)       | Scripts                                 |
+| ------------- | --------------------------------------- |
 | all S-068-Rxx | none yet (Qt UI; no executable vectors) |
 
 ## 11. Open questions
 
 1. Exact audio sample-rate entry list and per-platform hiding (only 44100/48000/96000 observed; `96000` presence per device list) not fully pinned.
-2. `AdvOutRecCheckCodecs` capability-matrix details (which encoder caps trigger which warning labels) not enumerated line by line.
-3. The advanced-page raw-config "Apply text" path (how the edited blob is parsed and merged back) was only verified as `DeserializeConfigText` read-back; write/parse-error handling needs a dedicated pass.
-4. Per-service VOD-track compatibility list (`AllowsMultiTrack` protocol list contents) not transcribed in full.
-5. Round 10 second-author check (2026-11-05): corrected R09 (IsWHIP checks combo `ListOpt::WHIP`, not the service type string), R15 (OAuth key fills the key field; persisted into the service settings on save), R18 (bitrate combos come from audio-encoder bitrate lists; `RestrictResetBitrates` uses a fixed 320 cap, reset target = closest of half-max), R22 (invalid res text is not reverted; base-res path shows `videoMsg` `INVALID_RES_STR` warning), R37 (form built from `obs_enum_hotkeys`, not `obs_frontend_get_all_hotkeys`; save iterates only changed widgets), §3 (hotkey-list bool = frontend registerer, not pair partner).
+1. `AdvOutRecCheckCodecs` capability-matrix details (which encoder caps trigger which warning labels) not enumerated line by line.
+1. The advanced-page raw-config "Apply text" path (how the edited blob is parsed and merged back) was only verified as `DeserializeConfigText` read-back; write/parse-error handling needs a dedicated pass.
+1. Per-service VOD-track compatibility list (`AllowsMultiTrack` protocol list contents) not transcribed in full.
+1. Round 10 second-author check (2026-11-05): corrected R09 (IsWHIP checks combo `ListOpt::WHIP`, not the service type string), R15 (OAuth key fills the key field; persisted into the service settings on save), R18 (bitrate combos come from audio-encoder bitrate lists; `RestrictResetBitrates` uses a fixed 320 cap, reset target = closest of half-max), R22 (invalid res text is not reverted; base-res path shows `videoMsg` `INVALID_RES_STR` warning), R37 (form built from `obs_enum_hotkeys`, not `obs_frontend_get_all_hotkeys`; save iterates only changed widgets), §3 (hotkey-list bool = frontend registerer, not pair partner).

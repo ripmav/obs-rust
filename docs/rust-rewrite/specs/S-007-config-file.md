@@ -1,12 +1,12 @@
 # S-007 `config-file` (INI configuration store)
 
-| | |
-|---|---|
-| Status | Ready for review |
-| Reference | libobs 33.0.1 `util/config-file.c`, `config-file.h` (+ platform helpers `os_dtostr`, `os_strtod`, `os_fread_utf8`, `os_safe_replace`) |
-| Target crate | `crates/obs-util` (module `config`) |
-| Depends on | S-001, S-006; platform helpers (below) |
-| Conformance | `test/conformance/scripts/config/` (11 scripts) |
+|              |                                                                                                                                       |
+| ------------ | ------------------------------------------------------------------------------------------------------------------------------------- |
+| Status       | Ready for review                                                                                                                      |
+| Reference    | libobs 33.0.1 `util/config-file.c`, `config-file.h` (+ platform helpers `os_dtostr`, `os_strtod`, `os_fread_utf8`, `os_safe_replace`) |
+| Target crate | `crates/obs-util` (module `config`)                                                                                                   |
+| Depends on   | S-001, S-006; platform helpers (below)                                                                                                |
+| Conformance  | `test/conformance/scripts/config/` (11 scripts)                                                                                       |
 
 ## 1. Scope
 
@@ -37,6 +37,7 @@ const char *config_get_default_string(...) ; int64_t/uint64_t/bool/double config
 bool config_remove_value(config_t*, const char *section, const char *name);
 bool config_has_user_value(...);  bool config_has_default_value(...);
 ```
+
 Platform helpers the module relies on (specified here only as far as it uses them):
 `os_fread_utf8(file, &str)`, `os_dtostr(double, buf, size)`, `os_strtod(str)`,
 `os_safe_replace(target, from, backup)`.
@@ -57,11 +58,11 @@ Input bytes (after removing an optional leading UTF-8 BOM `EF BB BF`) are proces
 A *newline character* is `\r` or `\n`.
 
 1. **Top level.** Skip whitespace (space, tab, newline characters). If the next non-white character is not `[`, the rest of that line (up to and including the newline character) is ignored. Otherwise read a **section header**: all characters after `[` up to the next `]` become the section name, **verbatim, including spaces**. If a newline character comes before `]`, the header ends there (the name read so far is used). **If the resulting name is empty (`[]`), parsing stops entirely** and everything after is ignored (R-D3).
-2. **Section body.** Lines are read until the next line whose first non-white character is `[` (start of the next section) or end of input. For each line: skip leading whitespace (space, tab); a line starting with `#` is a comment; otherwise the **name** is every character up to the first `=` (trailing whitespace before the `=` **is kept** in the name), and the **value** is every character after the `=` up to the end of the line (leading and trailing whitespace **kept**). A line with no `=` before its end, or whose name would start with `=`, is ignored. A name may contain spaces.
-3. **Unescape.** In the value only, `\\` → `\`, `\r` → CR, `\n` → LF. Any other backslash sequence (e.g. `\x`) is kept literally including the backslash. A trailing lone backslash is kept.
-4. An empty value is stored as `""`.
-5. Line endings: `\n`, `\r\n` and `\r` all end a line.
-6. Sections with the same name create separate section records (both listed by `config_num_sections`); lookups find the **later** one (Q-1). The same holds for repeated names inside a section.
+1. **Section body.** Lines are read until the next line whose first non-white character is `[` (start of the next section) or end of input. For each line: skip leading whitespace (space, tab); a line starting with `#` is a comment; otherwise the **name** is every character up to the first `=` (trailing whitespace before the `=` **is kept** in the name), and the **value** is every character after the `=` up to the end of the line (leading and trailing whitespace **kept**). A line with no `=` before its end, or whose name would start with `=`, is ignored. A name may contain spaces.
+1. **Unescape.** In the value only, `\\` → `\`, `\r` → CR, `\n` → LF. Any other backslash sequence (e.g. `\x`) is kept literally including the backslash. A trailing lone backslash is kept.
+1. An empty value is stored as `""`.
+1. Line endings: `\n`, `\r\n` and `\r` all end a line.
+1. Sections with the same name create separate section records (both listed by `config_num_sections`); lookups find the **later** one (Q-1). The same holds for repeated names inside a section.
 
 `config_open_string(str)` parses `str` exactly as above (no BOM handling needed); the resulting
 config has **no file**, so `config_save` fails with `CONFIG_ERROR`.
@@ -111,16 +112,16 @@ Every operation takes the config's recursive mutex; pointers returned by `get_st
 
 ## 9. Conformance coverage
 
-| Rule | Scripts |
-|---|---|
+| Rule           | Scripts                                                                                                           |
+| -------------- | ----------------------------------------------------------------------------------------------------------------- |
 | §4.1, R02, R06 | `01-parse-basic`, `02-parse-edge-cases`, `09-open-file`, `10-whitespace-canonical`, `11-line-endings-and-escapes` |
-| §4.2, R04 | `03-save-format`, `04-typed-values`, `07-remove-and-sections` |
-| R05 | `08-save-safe-and-files` |
-| R07, R08 | `03`, `04` |
-| R09, R10, R03 | `06-defaults`, `09-open-file` |
-| R11–R13 | `04`, `05-value-conversions` |
-| R14, R15 | `07-remove-and-sections`, `06` |
-| Q-1…Q-6 | `02`, `03`, `05`, `06`, `10` |
+| §4.2, R04      | `03-save-format`, `04-typed-values`, `07-remove-and-sections`                                                     |
+| R05            | `08-save-safe-and-files`                                                                                          |
+| R07, R08       | `03`, `04`                                                                                                        |
+| R09, R10, R03  | `06-defaults`, `09-open-file`                                                                                     |
+| R11–R13        | `04`, `05-value-conversions`                                                                                      |
+| R14, R15       | `07-remove-and-sections`, `06`                                                                                    |
+| Q-1…Q-6        | `02`, `03`, `05`, `06`, `10`                                                                                      |
 
 ## 10. Open questions
 

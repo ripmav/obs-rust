@@ -6,24 +6,24 @@ Read [00-developer-primer.md](00-developer-primer.md) first. Tasks: [../phase-6-
 
 ≈ 89k lines of C++/Qt6 Widgets in `frontend/`:
 
-| Directory | Contents |
-|---|---|
-| `obs-main.cpp` (`main` at line 882, `run_program` at 487) | argument parsing (22 flags), log file, single-instance check, crash handler, creates `OBSApp program(argc, argv, nameStore)` and calls `program.OBSInit()` then `program.exec()` |
-| `OBSApp.cpp/.hpp`, `OBSApp_Themes.cpp` | `class OBSApp : public QApplication`: config (`global.ini`), locale, theme, `StartupOBS()` (libobs init), creates `OBSBasic` |
+| Directory                                                                     | Contents                                                                                                                                                                                                                                                                            |
+| ----------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `obs-main.cpp` (`main` at line 882, `run_program` at 487)                     | argument parsing (22 flags), log file, single-instance check, crash handler, creates `OBSApp program(argc, argv, nameStore)` and calls `program.OBSInit()` then `program.exec()`                                                                                                    |
+| `OBSApp.cpp/.hpp`, `OBSApp_Themes.cpp`                                        | `class OBSApp : public QApplication`: config (`global.ini`), locale, theme, `StartupOBS()` (libobs init), creates `OBSBasic`                                                                                                                                                        |
 | `widgets/OBSBasic*.cpp` and related files (≈20K lines in the 33 `.cpp` files) | the main window, split by feature: `_Docks`, `_Hotkeys`, `_Preview`, `_Profiles`, `_SceneCollections`, `_Scenes`, `_SceneItems`, `_Streaming`, `_Recording`, `_ReplayBuffer`, `_StudioMode`, `_Transitions`, `_VirtualCam`, `_SysTray`, `_Updater`, `_YouTube`, `_OutputHandler`, … |
-| `components/` | 43 `.cpp` files of reusable widgets: source tree, scene tree, volume meter/control/slider, toolbars, alignment selector, flow layout, multiview, media controls |
-| `dialogs/` | 20 `.cpp` files: filters, properties, source select, transform, interaction, advanced audio, log viewer, remux, missing files, about, what's new, YouTube actions, extra browsers, permissions, VCam config, update |
-| `docks/` | `OBSDock`, `BrowserDock`, `YouTubeAppDock`, `YouTubeChatDock` |
-| `settings/` | `OBSBasicSettings*.cpp` (+ hotkey widgets) |
-| `wizards/` | auto-configuration wizard (4 pages: start, video, stream, test) |
-| `importers/` | Classic OBS, Streamlabs, OBS Studio, XSplit |
-| `oauth/` | Twitch, YouTube, Restream, local listener |
-| `plugin-manager/` | installed plugin list, loader paths per OS/Flatpak |
-| `updater/` | Windows updater executable (manifest, hashing, patching) |
-| `utility/` | output handlers (`SimpleOutput`, `AdvancedOutput`, `BasicOutputHandler`), multitrack video (`MultitrackVideoOutput`, `GoLiveAPI_*`), FFmpeg format/codec tables, platform helpers per OS, crash handlers, theme types, remux worker, thumbnails |
-| `api/` | `obs-frontend-api` (99 exported functions, 44 `OBS_FRONTEND_EVENT_*`) implemented by `OBSStudioAPI.cpp` over the abstract `obs_frontend_callbacks` (`api/obs-frontend-internal.hpp`) |
-| `forms/` | 36 Qt Designer `.ui` files (29 top-level, 7 in `source-toolbar/`; `AutoConfigFinishPage.ui` is an orphan, build-list only) |
-| `data/` | `locale/` (77 `.ini` files), `themes/` (`.obt` themes, `.ovt` variants), images, `striped_line.effect`, `OBSPublicRSAKey.pem`, `license/` |
+| `components/`                                                                 | 43 `.cpp` files of reusable widgets: source tree, scene tree, volume meter/control/slider, toolbars, alignment selector, flow layout, multiview, media controls                                                                                                                     |
+| `dialogs/`                                                                    | 20 `.cpp` files: filters, properties, source select, transform, interaction, advanced audio, log viewer, remux, missing files, about, what's new, YouTube actions, extra browsers, permissions, VCam config, update                                                                 |
+| `docks/`                                                                      | `OBSDock`, `BrowserDock`, `YouTubeAppDock`, `YouTubeChatDock`                                                                                                                                                                                                                       |
+| `settings/`                                                                   | `OBSBasicSettings*.cpp` (+ hotkey widgets)                                                                                                                                                                                                                                          |
+| `wizards/`                                                                    | auto-configuration wizard (4 pages: start, video, stream, test)                                                                                                                                                                                                                     |
+| `importers/`                                                                  | Classic OBS, Streamlabs, OBS Studio, XSplit                                                                                                                                                                                                                                         |
+| `oauth/`                                                                      | Twitch, YouTube, Restream, local listener                                                                                                                                                                                                                                           |
+| `plugin-manager/`                                                             | installed plugin list, loader paths per OS/Flatpak                                                                                                                                                                                                                                  |
+| `updater/`                                                                    | Windows updater executable (manifest, hashing, patching)                                                                                                                                                                                                                            |
+| `utility/`                                                                    | output handlers (`SimpleOutput`, `AdvancedOutput`, `BasicOutputHandler`), multitrack video (`MultitrackVideoOutput`, `GoLiveAPI_*`), FFmpeg format/codec tables, platform helpers per OS, crash handlers, theme types, remux worker, thumbnails                                     |
+| `api/`                                                                        | `obs-frontend-api` (99 exported functions, 44 `OBS_FRONTEND_EVENT_*`) implemented by `OBSStudioAPI.cpp` over the abstract `obs_frontend_callbacks` (`api/obs-frontend-internal.hpp`)                                                                                                |
+| `forms/`                                                                      | 36 Qt Designer `.ui` files (29 top-level, 7 in `source-toolbar/`; `AutoConfigFinishPage.ui` is an orphan, build-list only)                                                                                                                                                          |
+| `data/`                                                                       | `locale/` (77 `.ini` files), `themes/` (`.obt` themes, `.ovt` variants), images, `striped_line.effect`, `OBSPublicRSAKey.pem`, `license/`                                                                                                                                           |
 
 Startup (verified): `main` → `run_program` → `OBSApp::OBSInit()` (`OBSApp.cpp:1274`): sets the libobs Linux platform (`obs_set_nix_platform` EGL/X11 or Wayland, from `QApplication::platformName()`), calls `StartupOBS(locale, nameStore)` (libobs init), then `new OBSBasic()` and `mainWindow->OBSInit()` (modules load, profile and collection load, UI setup).
 
@@ -32,8 +32,8 @@ Startup (verified): `main` → `run_program` → `OBSApp::OBSInit()` (`OBSApp.cp
 Do **not** rewrite the main window in one go. With Phase 4 done, the C++ frontend already runs on the Rust core through the unchanged C ABI. From there:
 
 1. **Rust library first, UI shell second.** Port non-visual logic into crates that the C++ frontend calls through `cxx`/C ABI: scene-collection and profile managers (`widgets/OBSBasic_SceneCollections.cpp`, `_Profiles.cpp`, `models/SceneCollection`), importers, config handling, OAuth/token storage, updater logic, remux worker, GoLive API client, FFmpeg codec/format tables, theme parsing. These are testable without a display and remove C++ incrementally.
-2. **Then widgets** via `cxx-qt`: reusable components first (`VolumeMeter`, `SourceTree`, `FlowLayout`, toolbars), each exposed as a QObject/QML or widget implemented in Rust and placed in the existing C++ window. Keep `.ui` forms until their last widget has moved.
-3. **Last, the application shell** (`OBSApp`, `OBSBasic`) once everything it owns is Rust.
+1. **Then widgets** via `cxx-qt`: reusable components first (`VolumeMeter`, `SourceTree`, `FlowLayout`, toolbars), each exposed as a QObject/QML or widget implemented in Rust and placed in the existing C++ window. Keep `.ui` forms until their last widget has moved.
+1. **Last, the application shell** (`OBSApp`, `OBSBasic`) once everything it owns is Rust.
 
 If P0-04 picks a non-Qt toolkit this strategy becomes "parallel app + feature parity checklist" and the intermediate hybrid steps are not available; the timeline then grows (re-estimate in the ADR).
 
@@ -49,13 +49,13 @@ If P0-04 picks a non-Qt toolkit this strategy becomes "parallel app + feature pa
 ## Hard parts (budget extra time)
 
 1. **Preview widget** (`OBSBasicPreview.cpp`, `OBSQTDisplay.cpp`): a native child window that libobs renders into via `obs_display_create` with platform handles (X11 window id/Wayland surface/HWND/NSView). Hit-testing, snapping and transform handles are hundreds of lines of subtle geometry (modifier keys, rotation, crop, bounds types). Port after writing a behaviour table from the C++.
-2. **Properties view** (`shared/properties-view` + `widgets`): generates UI from `obs_properties_t` (13 property kinds with callbacks that mutate other properties). Plugin authors rely on every detail.
-3. **Source tree / scene tree**: drag-and-drop reordering with groups, multi-select, in-place rename, accessibility.
-4. **Audio mixer meters**: custom painting with peak-hold, magnitude, clip indicators; pixel-compare against reference renders.
-5. **Auto-configuration wizard**: runs real test streams with a bandwidth test; hard to test without a mock ingest.
-6. **Updater**: Windows self-update replaces the running application; failure modes are severe. Port last; heavy tests; keep rollback.
-7. **macOS/Windows/Linux platform code** in `utility/platform-*.{cpp,mm}`, crash handlers, system info, taskbar/tray.
-8. **Scripting** (`shared/obs-scripting`): Lua/Python bindings generated by SWIG (`obslua.i`, `obspython.i`) from libobs headers — replace the generator by a Rust one that emits the same names; scripts in the wild call hundreds of functions.
+1. **Properties view** (`shared/properties-view` + `widgets`): generates UI from `obs_properties_t` (13 property kinds with callbacks that mutate other properties). Plugin authors rely on every detail.
+1. **Source tree / scene tree**: drag-and-drop reordering with groups, multi-select, in-place rename, accessibility.
+1. **Audio mixer meters**: custom painting with peak-hold, magnitude, clip indicators; pixel-compare against reference renders.
+1. **Auto-configuration wizard**: runs real test streams with a bandwidth test; hard to test without a mock ingest.
+1. **Updater**: Windows self-update replaces the running application; failure modes are severe. Port last; heavy tests; keep rollback.
+1. **macOS/Windows/Linux platform code** in `utility/platform-*.{cpp,mm}`, crash handlers, system info, taskbar/tray.
+1. **Scripting** (`shared/obs-scripting`): Lua/Python bindings generated by SWIG (`obslua.i`, `obspython.i`) from libobs headers — replace the generator by a Rust one that emits the same names; scripts in the wild call hundreds of functions.
 
 ## Pitfalls
 

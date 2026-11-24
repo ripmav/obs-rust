@@ -1,12 +1,12 @@
 # S-003 Declaration language (`parse_decl_string`)
 
-| | |
-|---|---|
-| Status | Ready for review |
-| Reference | libobs 33.0.1 `callback/decl.c`, `decl.h` (uses the generic C-like lexer/parser `util/cf-*.c`, specified separately) |
-| Target crate | `crates/obs-signal` (module `decl`) |
-| Depends on | S-001 |
-| Conformance | `test/conformance/scripts/decl/` (9 scripts) |
+|              |                                                                                                                      |
+| ------------ | -------------------------------------------------------------------------------------------------------------------- |
+| Status       | Ready for review                                                                                                     |
+| Reference    | libobs 33.0.1 `callback/decl.c`, `decl.h` (uses the generic C-like lexer/parser `util/cf-*.c`, specified separately) |
+| Target crate | `crates/obs-signal` (module `decl`)                                                                                  |
+| Depends on   | S-001                                                                                                                |
+| Conformance  | `test/conformance/scripts/decl/` (9 scripts)                                                                         |
 
 ## 1. Scope
 
@@ -79,10 +79,10 @@ token** (see Q-1).
 After `(`:
 
 1. If the next token (after WS) is `)` → empty list, done.
-2. If the next token is a NAME → parse a `param`, then go to step 4.
-3. If it is end of input → error ("Unexpected EOF"). Any other token → error "Expected ')'".
-4. After a param: skip WS; if the next token is `)` → done; if `,` → consume it and go to step 5; **end of input → error ("Unexpected EOF")**; **any other token → stop parsing parameters silently and accept** (Q-3).
-5. After a comma: skip WS; if the next token is `)` → done (**trailing comma accepted**, Q-4); if a NAME → parse a `param` and go to step 4; if EOF → error; anything else → error "Expected ')'".
+1. If the next token is a NAME → parse a `param`, then go to step 4.
+1. If it is end of input → error ("Unexpected EOF"). Any other token → error "Expected ')'".
+1. After a param: skip WS; if the next token is `)` → done; if `,` → consume it and go to step 5; **end of input → error ("Unexpected EOF")**; **any other token → stop parsing parameters silently and accept** (Q-3).
+1. After a comma: skip WS; if the next token is `)` → done (**trailing comma accepted**, Q-4); if a NAME → parse a `param` and go to step 4; if EOF → error; anything else → error "Expected ')'".
 
 ## 6. Reference defects and quirks
 
@@ -107,20 +107,20 @@ After `(`:
 
 ## 9. Conformance coverage
 
-| Rule | Scripts |
-|---|---|
-| R01, R02, R03 | `01-valid`, `04-return-parameter`, `03-case-and-keywords` |
-| R04 | `02-invalid` (`void f(void a)`) |
-| R05 | `02-invalid`, `03-case-and-keywords` |
-| R06 | `02-invalid` (`void f(int a, int a)`), `07-many-and-long` |
-| R07 | `02-invalid` |
-| R08, R09 | `02-invalid`, `03-case-and-keywords`, `09-parameter-list-edges`, `08-lexical` |
-| R10, R11 | all scripts (log lines present before `parse fail`) |
-| R12 | `07-many-and-long` |
-| §5.1 | `09-parameter-list-edges`, `05-lenient-quirks` |
-| Q-1…Q-5 | `05-lenient-quirks` |
-| D-1 | `06-reference-crashes`, `08-lexical` (`void é()`) |
-| Lexical (NAME, WS, comments) | `08-lexical`, `01-valid` |
+| Rule                         | Scripts                                                                       |
+| ---------------------------- | ----------------------------------------------------------------------------- |
+| R01, R02, R03                | `01-valid`, `04-return-parameter`, `03-case-and-keywords`                     |
+| R04                          | `02-invalid` (`void f(void a)`)                                               |
+| R05                          | `02-invalid`, `03-case-and-keywords`                                          |
+| R06                          | `02-invalid` (`void f(int a, int a)`), `07-many-and-long`                     |
+| R07                          | `02-invalid`                                                                  |
+| R08, R09                     | `02-invalid`, `03-case-and-keywords`, `09-parameter-list-edges`, `08-lexical` |
+| R10, R11                     | all scripts (log lines present before `parse fail`)                           |
+| R12                          | `07-many-and-long`                                                            |
+| §5.1                         | `09-parameter-list-edges`, `05-lenient-quirks`                                |
+| Q-1…Q-5                      | `05-lenient-quirks`                                                           |
+| D-1                          | `06-reference-crashes`, `08-lexical` (`void é()`)                             |
+| Lexical (NAME, WS, comments) | `08-lexical`, `01-valid`                                                      |
 
 ## 10. Open questions
 
@@ -136,5 +136,7 @@ After `(`:
 - `libobs/callback/decl.c`
 
 - **S-003-R13** `parse_decl_string`: the entry point — tokenizes the declaration string with the cf-lexer (S-011), splits it into params (`parse_params`, one per `parse_param` call); errors accumulate in the lexer error data and are rendered by `print_errors` (one line per error, with position).
+
 - **S-003-R14** Name rules: reserved param names — `int`, `float`, `bool`, `ptr`, `string`, `void`, `return` — are rejected (`err_reserved_name`); a param name already present in the decl is rejected (`name_exists`).
+
 - **S-003-R15** Type resolution: `get_type` maps the type token to the calldata type; `is_in_out_specifier` recognizes in/out/in-out markers; type defaults and the resulting param order follow the earlier sections.

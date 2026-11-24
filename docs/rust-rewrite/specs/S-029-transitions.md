@@ -1,12 +1,12 @@
 # S-029 Transitions plugin (obs-transitions)
 
-| | |
-|---|---|
-| Status | Ready for review |
-| Reference | libobs 33.0.1 `plugins/obs-transitions` (all `transition-*.c`, `easings.h`, `obs-transitions.c`, `data/`) |
-| Target crate | `crates/obs-transitions` |
-| Depends on | S-014 (obs_data), S-015 (obs_properties), S-020 (effect language, the six `.effect` assets), S-002 (calldata) |
-| Conformance | `test/conformance/scripts/transitions/` (16 scripts); language in `test/conformance/README.md` section "transitions runner" |
+|              |                                                                                                                             |
+| ------------ | --------------------------------------------------------------------------------------------------------------------------- |
+| Status       | Ready for review                                                                                                            |
+| Reference    | libobs 33.0.1 `plugins/obs-transitions` (all `transition-*.c`, `easings.h`, `obs-transitions.c`, `data/`)                   |
+| Target crate | `crates/obs-transitions`                                                                                                    |
+| Depends on   | S-014 (obs_data), S-015 (obs_properties), S-020 (effect language, the six `.effect` assets), S-002 (calldata)               |
+| Conformance  | `test/conformance/scripts/transitions/` (16 scripts); language in `test/conformance/README.md` section "transitions runner" |
 
 ## 1. Scope
 
@@ -39,15 +39,15 @@ Enum numbers: `gs_color_space` 0 sRGB, 1 sRGB_16F, 2 709_EXTENDED, 3 709_SCRGB; 
 
 `obs_module_load()` registers, **in this order**, seven sources, always returns true:
 
-| # | id | display name key | callbacks present |
-|---|---|---|---|
-| 1 | `cut_transition` | `CutTransition` | create destroy video_render audio_render video_get_color_space |
-| 2 | `fade_transition` | `FadeTransition` | same as cut |
-| 3 | `swipe_transition` | `SwipeTransition` | + update get_properties |
-| 4 | `slide_transition` | `SlideTransition` | + update get_properties |
-| 5 | `obs_stinger_transition` | `StingerTransition` | create destroy update get_defaults video_render **video_tick** audio_render **missing_files** get_properties **enum_active_sources enum_all_sources transition_start transition_stop** video_get_color_space |
-| 6 | `fade_to_color_transition` | `FadeToColorTransition` | create destroy update get_defaults get_properties video_render audio_render video_get_color_space |
-| 7 | `wipe_transition` (luma wipe) | `LumaWipeTransition` | same as 6 |
+| #   | id                            | display name key        | callbacks present                                                                                                                                                                                            |
+| --- | ----------------------------- | ----------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| 1   | `cut_transition`              | `CutTransition`         | create destroy video_render audio_render video_get_color_space                                                                                                                                               |
+| 2   | `fade_transition`             | `FadeTransition`        | same as cut                                                                                                                                                                                                  |
+| 3   | `swipe_transition`            | `SwipeTransition`       | + update get_properties                                                                                                                                                                                      |
+| 4   | `slide_transition`            | `SlideTransition`       | + update get_properties                                                                                                                                                                                      |
+| 5   | `obs_stinger_transition`      | `StingerTransition`     | create destroy update get_defaults video_render **video_tick** audio_render **missing_files** get_properties **enum_active_sources enum_all_sources transition_start transition_stop** video_get_color_space |
+| 6   | `fade_to_color_transition`    | `FadeToColorTransition` | create destroy update get_defaults get_properties video_render audio_render video_get_color_space                                                                                                            |
+| 7   | `wipe_transition` (luma wipe) | `LumaWipeTransition`    | same as 6                                                                                                                                                                                                    |
 
 Module description string: `OBS core transitions`. Default locale en-US.
 
@@ -127,13 +127,14 @@ preferred list).
 **R16.** `video_render`: `prev = gs_set_linear_srgb(true)`; `obs_transition_video_render2(source, cb, NULL)`;
 `gs_set_linear_srgb(prev)`. **R17.** Callback with `(a, b, t, cx, cy)`: if both `a` and `b` are NULL do nothing at all
 (not even the srgb toggle). Else: `prev = framebuffer_srgb`; `enable_framebuffer_srgb(true)`;
+
 - one input missing: technique `FadeSingle`; present input P: `set_texture_srgb(tex_a, P)`; if it is A then `t = 1 - t`;
 - both present and `gs_get_color_space() == SRGB`: `set_texture(tex_a, a)`, `set_texture(tex_b, b)` (non-srgb setters), technique `Fade`;
 - both present and space != SRGB: `set_texture_srgb` for both, technique `FadeLinear`;
-then `set_float(fade_val, t)`, one pass `gs_effect_loop(technique)` -> `draw_sprite(NULL, 0, cx, cy)`, then
-`enable_framebuffer_srgb(prev)`. **R18.** Audio mixA `1-t`, mixB `t`. **R19.** `video_get_color_space(count, preferred)`:
-`space = transition_space`; for each preferred `p` in order: `space = p`; stop at the first with `p == transition_space`.
-So with `count = 0` the answer is `transition_space`; if no entry matches the answer is the **last** entry.
+  then `set_float(fade_val, t)`, one pass `gs_effect_loop(technique)` -> `draw_sprite(NULL, 0, cx, cy)`, then
+  `enable_framebuffer_srgb(prev)`. **R18.** Audio mixA `1-t`, mixB `t`. **R19.** `video_get_color_space(count, preferred)`:
+  `space = transition_space`; for each preferred `p` in order: `space = p`; stop at the first with `p == transition_space`.
+  So with `count = 0` the answer is `transition_space`; if no entry matches the answer is the **last** entry.
 
 ### 5.4 Fade to color (`fade_to_color_transition`)
 
@@ -142,8 +143,7 @@ Settings: `color` int default `0xFF000000`; `switch_point` int default 50 (perce
 zero-initialised instance, then `obs_source_update(source, settings)` (deferred; fields are 0 until the first tick).
 **R21.** `update`: `color = (u32)get_int(color) | 0xFF000000` (alpha forced opaque); the value is `0xAABBGGRR`: R = bits 0-7,
 G = 8-15, B = 16-23, each `/255`, A = 1. Two vec4: linear-in-sRGB-space-agnostic `color` and `color_srgb` (each channel
-converted with the sRGB decode `c<=0.04045 ? c/12.92 : ((c+0.055)/1.055)^2.4`, alpha unchanged). `switch_point =
-(float)(u32)get_int(switch_point) / 100`: negative ints wrap through u32 (-10 -> 42949672); no clamp (500 -> 5).
+converted with the sRGB decode `c<=0.04045 ? c/12.92 : ((c+0.055)/1.055)^2.4`, alpha unchanged). `switch_point = (float)(u32)get_int(switch_point) / 100`: negative ints wrap through u32 (-10 -> 42949672); no clamp (500 -> 5).
 **R22.** Properties: `color` (type color, desc key `Color`), `switch_point` (int slider 0..100 step 1, suffix `%`, desc
 `SwitchPoint`); property flags 0. **R23.** Callback(t): `sa = smoothstep(0, sp, t)`, `sb = smoothstep(sp, 1, t)`;
 `swp = t < sp ? sa : 1 - sb`; texture = `t < sp ? a : b`; `nonlinear = (gs_get_color_space() == SRGB)`;
@@ -214,29 +214,27 @@ zeroed instance whose `mix_a/mix_b` are fade-out/fade-in; `obs_transition_enable
 `obs_source_update`.
 
 **R42. Update** (runs at the first tick and after every settings change), in this order:
-1. read `path`, `hw_decode`, `preload`; build media settings `{local_file=path, hw_decode, looping=false,
-   full_decode=preload, is_stinger=true, is_track_matte=<*current* track_matte_enabled field, i.e. the value from before
-   this update>}`;
-2. if a media source exists and `transitioning`: `remove_active_child(media)`; release the old media source; create
+
+1. read `path`, `hw_decode`, `preload`; build media settings `{local_file=path, hw_decode, looping=false, full_decode=preload, is_stinger=true, is_track_matte=<*current* track_matte_enabled field, i.e. the value from before this update>}`;
+1. if a media source exists and `transitioning`: `remove_active_child(media)`; release the old media source; create
    private `ffmpeg_source` named `"<transition name> (Stinger)"`; if created and `transitioning`: `add_active_child`;
-3. `point = get_int(transition_point)`; `tp_is_frame = get_int(tp_type) == 1`; frame mode: `transition_point_frame = (u64)point`;
+1. `point = get_int(transition_point)`; `tp_is_frame = get_int(tp_type) == 1`; frame mode: `transition_point_frame = (u64)point`;
    time mode: `transition_point_ns = (u64)(point * 1000000)` (signed multiply; overflow is UB in the reference, D-1:
    required = wrap modulo 2^64);
-4. `was = track_matte_enabled`; read `track_matte_enabled`, `matte_layout = (int)get_int(track_matte_layout)`;
+1. `was = track_matte_enabled`; read `track_matte_enabled`, `matte_layout = (int)get_int(track_matte_layout)`;
    `matte_width_factor = layout==0 ? 2 : 1`, `matte_height_factor = layout==1 ? 2 : 1`; `invert_matte`;
    `do_texrender = enabled && layout < 2`;
-5. if a matte source exists: (transitioning -> `remove_active_child`), release, clear. If `enabled && layout == 2`: create
+1. if a matte source exists: (transitioning -> `remove_active_child`), release, clear. If `enabled && layout == 2`: create
    private `ffmpeg_source` with NULL name and `{local_file=track_matte_path, looping=false}`; (created && transitioning ->
    `add_active_child`); `set_muted(matte, true)`;
-6. `monitoring = enable_monitoring`; `set_monitoring_enabled(media, monitoring)`;
-7. `fade_style = get_int(audio_fade_style)`: 1 -> cross fade mixers, else fade-out/fade-in mixers;
-8. if `enabled != was`: in graphics destroy both texrenders (matte_tex, stinger_tex); if now enabled create both
+1. `monitoring = enable_monitoring`; `set_monitoring_enabled(media, monitoring)`;
+1. `fade_style = get_int(audio_fade_style)`: 1 -> cross fade mixers, else fade-out/fade-in mixers;
+1. if `enabled != was`: in graphics destroy both texrenders (matte_tex, stinger_tex); if now enabled create both
    (`texrender_create(GS_RGBA, ZS_NONE)`, matte first then stinger).
-Event order within an update is exactly this (vector 06). The media source is **re-created on every update**, even if
-only unrelated keys changed.
+   Event order within an update is exactly this (vector 06). The media source is **re-created on every update**, even if
+   only unrelated keys changed.
 
-**R43. Start.** `transition_start`: if a media source exists: `state = media_get_state`; if `transitioning` **or** `state ==
-PLAYING`: call proc `restart` on the media (and on the matte if present) and **return without changing anything else**
+**R43. Start.** `transition_start`: if a media source exists: `state = media_get_state`; if `transitioning` **or** `state == PLAYING`: call proc `restart` on the media (and on the matte if present) and **return without changing anything else**
 (`transitioning` is not set; Q-1). Else: `matte_rendered = false`; call procs `get_duration` then `get_nb_frames` on the
 media into one calldata; `duration_ns = (u64)duration + 250000000`; `duration_frames = (u64)num_frames`;
 `transition_point = (float)((long double)tp / (long double)duration)` with tp/duration = frame count/frames in frame mode,
@@ -246,8 +244,7 @@ call `get_duration` on the matte, `duration_ns = max(duration_ns, matte_duration
 `obs_transition_enable_fixed(source, true, (u32)(duration_ns / 1000000))` (truncated to 32 bits, D-2);
 `add_active_child(media)`. In every case that gets past the `if (media)` block (including no media at all)
 `transitioning = true` is set at the end. **R44. Stop.** `remove_active_child(media)` if media; `remove_active_child(matte)` if
-matte; call proc `preload_first_frame` on the media's proc handler (a NULL handler is a harmless no-op); `transitioning =
-false`. Stop without start still performs these calls (the child counter goes negative in the fake; the core tolerates it).
+matte; call proc `preload_first_frame` on the media's proc handler (a NULL handler is a harmless no-op); `transitioning = false`. Stop without start still performs these calls (the child counter goes negative in the fake; the core tolerates it).
 
 **R45. Enum/missing.** `enum_active_sources` reports media then matte only while `transitioning`; `enum_all_sources` reports
 whichever exist. **R46. missing_files**: list; if `path` non-empty and the file does not exist, add a source-type missing
@@ -274,52 +271,51 @@ description becomes `AudioTransitionPointType` if enabled else `TransitionPointT
 *Without track matte:* `t = obs_transition_get_time`; target = `t < transition_point ? A : B`;
 `ok = obs_transition_video_render_direct(source, target)`; if `!ok` return.
 *With track matte:* `ready = media active && media_cx != 0 && media_cy != 0`; if ready: `matte_rendered = true`,
-`obs_transition_video_render(source, matte_cb)`; else `render_direct(matte_rendered ? B : A)` (result ignored). If `layout ==
-3 (mask)` return.
+`obs_transition_video_render(source, matte_cb)`; else `render_direct(matte_rendered ? B : A)` (result ignored). If `layout == 3 (mask)` return.
 *Then (all paths that did not return):* `source_cx/cy = obs_source_get_width/height(source)`; if media_cx or media_cy is 0 return.
+
 - `do_texrender` true: `space = media color space`; `stinger_texrender(...)` (below); `prev=fb_srgb`; enable srgb;
-  `(tech, mult) = tech_and_multiplier(gs_get_color_space(), space)`; `e = base default effect`; `set_texture_srgb(image,
-  stinger_tex_texture)`; `set_float(multiplier, mult)`; pass `tech` -> `draw_sprite(NULL,0,source_cx,source_cy)`; restore.
+  `(tech, mult) = tech_and_multiplier(gs_get_color_space(), space)`; `e = base default effect`; `set_texture_srgb(image, stinger_tex_texture)`; `set_float(multiplier, mult)`; pass `tech` -> `draw_sprite(NULL,0,source_cx,source_cy)`; restore.
 - else: `prev = gs_set_linear_srgb(true)`; `matrix_push`; `matrix_scale3f(source_cx/media_cx, source_cy/media_cy, 1)`;
   `obs_source_video_render(media)`; `matrix_pop`; `gs_set_linear_srgb(prev)`.
-**stinger_texrender:** `format = format_from_space(space)` (sRGB -> GS_RGBA(3), others -> 16F format); if the texrender's
-format differs destroy and recreate it; if `texrender_begin(stinger_tex, source_cx, source_cy, space)` succeeds:
-`ortho(0, media_cx/wf, 0, media_cy/hf, -100, 100)`; `blend_state_push`; `enable_blending(false)`; render media; `blend_state_pop`;
-`texrender_end`.
-**tech_and_multiplier(current, source)** with `w = sdr_white_level`:
-source sRGB/sRGB_16F: current 709_SCRGB -> (`DrawMultiply`, w/80) else (`Draw`,1);
-source 709_EXTENDED: current sRGB/sRGB_16F -> (`DrawTonemap`,1); 709_SCRGB -> (`DrawMultiply`, w/80); 709_EXTENDED -> (`Draw`,1);
-source 709_SCRGB: current sRGB/sRGB_16F -> (`DrawMultiplyTonemap`, 80/w); 709_EXTENDED -> (`DrawMultiply`, 80/w); 709_SCRGB -> (`Draw`,1).
-**matte_cb(a, b, t, cx, cy):** `matte_src = layout == 2 ? matte_source : media`; `mcx = width(matte_src)/wf`, `mcy =
-height(matte_src)/hf` (floats); `w_off = layout==0 ? -mcx : 0`, `h_off = layout==1 ? -mcy : 0`; if `mcx>0 && mcy>0`:
-`sx = cx/mcx`, `sy = cy/mcy`; `space = color_space(matte_src)`; if `matte_tex` format != format(space) recreate matte_tex;
-if `texrender_begin(matte_tex, cx, cy, space)`: `matrix_scale3f(sx,sy,1)`, `matrix_translate3f(w_off,h_off,0)`,
-`clear(COLOR, (0,0,0,0), 0, 0)`, `ortho(0,cx,0,cy,-100,100)`, render matte_src, `texrender_end`. Then (always) `prev=fb_srgb`;
-enable srgb; if `gs_get_color_space() == SRGB`: `set_texture(a_tex,a)`, `set_texture(b_tex,b)`, tech `StingerMatte`; else
-`set_texture_srgb` both, tech `StingerMatteLinear`; `set_texture(matte_tex, matte_tex_texture)`, `set_bool(invert_matte)`; pass ->
-`draw_sprite(NULL,0,cx,cy)`; restore. (`t` unused.)
-**R52. Tick.** If `track_matte_enabled`: `texrender_reset(stinger_tex)` then `texrender_reset(matte_tex)`.
-**R53. Audio** `stinger_audio_render(ts_out, audio, mixers, channels, rate)`:
-`ts = 0`; if media exists and `!audio_pending(media)`: `ts = audio_timestamp(media)`; if `ts == 0` **return false** (nothing
-rendered). `success = obs_transition_audio_render(..., s->mix_a, s->mix_b)`; if `ts == 0` return `success`. Else:
-`if (*ts_out == 0 || ts < *ts_out) *ts_out = ts`; get the media's audio mix; for every mixer bit set in `mixers` and each
-channel `< channels`, add the media's 1024 samples to the output; **return true** (even if `success` was false, Q-4).
-**R54. Mix curves.** fade-out/fade-in: `calc_fade(t, m) = min(t*m, 1)` (only the upper clamp);
-`mixA(t) = 1 - calc_fade(t, a_mul)`, `mixB(t) = 1 - calc_fade(1-t, b_mul)`. With a_mul=4, b_mul=1.3333334: mixA(0.1)=0.6,
-mixA(0.25)=0, mixB(0.25)=0.0, mixB(0.5)=0.3333; before start `a_mul = b_mul = 0` (mixA=1, mixB=1). Cross fade: `1-t`, `t`.
-**R55.** `video_get_color_space` = `obs_transition_video_get_color_space(source)`. **R56.** Destroy: release media and matte;
-in graphics destroy both texrenders and the effect; free.
+  **stinger_texrender:** `format = format_from_space(space)` (sRGB -> GS_RGBA(3), others -> 16F format); if the texrender's
+  format differs destroy and recreate it; if `texrender_begin(stinger_tex, source_cx, source_cy, space)` succeeds:
+  `ortho(0, media_cx/wf, 0, media_cy/hf, -100, 100)`; `blend_state_push`; `enable_blending(false)`; render media; `blend_state_pop`;
+  `texrender_end`.
+  **tech_and_multiplier(current, source)** with `w = sdr_white_level`:
+  source sRGB/sRGB_16F: current 709_SCRGB -> (`DrawMultiply`, w/80) else (`Draw`,1);
+  source 709_EXTENDED: current sRGB/sRGB_16F -> (`DrawTonemap`,1); 709_SCRGB -> (`DrawMultiply`, w/80); 709_EXTENDED -> (`Draw`,1);
+  source 709_SCRGB: current sRGB/sRGB_16F -> (`DrawMultiplyTonemap`, 80/w); 709_EXTENDED -> (`DrawMultiply`, 80/w); 709_SCRGB -> (`Draw`,1).
+  **matte_cb(a, b, t, cx, cy):** `matte_src = layout == 2 ? matte_source : media`; `mcx = width(matte_src)/wf`, `mcy = height(matte_src)/hf` (floats); `w_off = layout==0 ? -mcx : 0`, `h_off = layout==1 ? -mcy : 0`; if `mcx>0 && mcy>0`:
+  `sx = cx/mcx`, `sy = cy/mcy`; `space = color_space(matte_src)`; if `matte_tex` format != format(space) recreate matte_tex;
+  if `texrender_begin(matte_tex, cx, cy, space)`: `matrix_scale3f(sx,sy,1)`, `matrix_translate3f(w_off,h_off,0)`,
+  `clear(COLOR, (0,0,0,0), 0, 0)`, `ortho(0,cx,0,cy,-100,100)`, render matte_src, `texrender_end`. Then (always) `prev=fb_srgb`;
+  enable srgb; if `gs_get_color_space() == SRGB`: `set_texture(a_tex,a)`, `set_texture(b_tex,b)`, tech `StingerMatte`; else
+  `set_texture_srgb` both, tech `StingerMatteLinear`; `set_texture(matte_tex, matte_tex_texture)`, `set_bool(invert_matte)`; pass ->
+  `draw_sprite(NULL,0,cx,cy)`; restore. (`t` unused.)
+  **R52. Tick.** If `track_matte_enabled`: `texrender_reset(stinger_tex)` then `texrender_reset(matte_tex)`.
+  **R53. Audio** `stinger_audio_render(ts_out, audio, mixers, channels, rate)`:
+  `ts = 0`; if media exists and `!audio_pending(media)`: `ts = audio_timestamp(media)`; if `ts == 0` **return false** (nothing
+  rendered). `success = obs_transition_audio_render(..., s->mix_a, s->mix_b)`; if `ts == 0` return `success`. Else:
+  `if (*ts_out == 0 || ts < *ts_out) *ts_out = ts`; get the media's audio mix; for every mixer bit set in `mixers` and each
+  channel `< channels`, add the media's 1024 samples to the output; **return true** (even if `success` was false, Q-4).
+  **R54. Mix curves.** fade-out/fade-in: `calc_fade(t, m) = min(t*m, 1)` (only the upper clamp);
+  `mixA(t) = 1 - calc_fade(t, a_mul)`, `mixB(t) = 1 - calc_fade(1-t, b_mul)`. With a_mul=4, b_mul=1.3333334: mixA(0.1)=0.6,
+  mixA(0.25)=0, mixB(0.25)=0.0, mixB(0.5)=0.3333; before start `a_mul = b_mul = 0` (mixA=1, mixB=1). Cross fade: `1-t`, `t`.
+  **R55.** `video_get_color_space` = `obs_transition_video_get_color_space(source)`. **R56.** Destroy: release media and matte;
+  in graphics destroy both texrenders and the effect; free.
 
 ## 6. Algorithms
 
 ### 6.1 Transition point (R43) worked example
+
 Media duration 2.0 s, `transition_point = 500` ms: `duration_ns = 2,250,000,000`; `tp = 0.5e9 / 2.25e9 = 0.2222222`;
 `a_mul = 4.5`, `b_mul = 1.2857143`; fixed duration 2250 ms. Frame mode 60 of 120 frames: `tp = 0.5`, `a_mul = b_mul = 2`.
 
 ### 6.9 Shader pixel semantics (informative; the assets define them)
+
 fade: `lerp(A,B,fade_val)`; `Fade` additionally decodes sRGB->linear on rgb; `FadeSingle`: `A*fade_val`.
-fade-to-color: `lerp(tex, color, swp)`. luma: `luma = l.x` (inverted when `invert`); `time = softness + progress*... = lerp(0, 1+softness,
-progress)`; `luma <= time-softness -> B`; `luma >= time -> A`; else `lerp(A, B, (time-luma)/softness)`. slide: `uvA = uv + a_dir`,
+fade-to-color: `lerp(tex, color, swp)`. luma: `luma = l.x` (inverted when `invert`); `time = softness + progress*... = lerp(0, 1+softness, progress)`; `luma <= time-softness -> B`; `luma >= time -> A`; else `lerp(A, B, (time-luma)/softness)`. slide: `uvA = uv + a_dir`,
 `uvB = uv - b_dir`; if uvA outside [0,1] sample B at uvB else A at uvA. swipe: `uv' = uv + swipe_val`; outside [0,1] -> `tex_b` at `uv`, else
 `tex_a` at `uv'`. stinger matte: `luma = 0.2126r + 0.7152g + 0.0722b` of the matte (inverted if set); `lerp(A,B,luma)`.
 
@@ -358,21 +354,21 @@ by f32 rounding except for pathological values (use `f64` and verify on the vect
 
 ## 10. Conformance coverage
 
-| Rules | Scripts |
-|---|---|
-| R01-R03 | 01-registration |
-| R10 | 01-registration, 15-mix-curves |
-| R11-R19 | 02-cut-fade, 15-mix-curves |
-| R20-R26 | 03-fade-to-color, 15-mix-curves |
-| R27-R31 | 04-luma-wipe, 01-registration (assets) |
-| R32-R36, R37-R40 | 05-slide-swipe, 15-mix-curves |
-| R41, R42 | 06-stinger-config, 16-defects |
-| R43, R44, R45 | 08-stinger-timing, 09-stinger-quirks, 06-stinger-config |
-| R46, R47-R50 | 07-stinger-properties |
-| R51 | 10-stinger-render, 11-stinger-matte, 12-stinger-colorspace |
-| R52 | 06-stinger-config, 11-stinger-matte |
-| R53, R54 | 13-stinger-audio, 14-stinger-audio-mix |
-| R55, R56 | 03-fade-to-color (cspace), 06-stinger-config |
+| Rules            | Scripts                                                    |
+| ---------------- | ---------------------------------------------------------- |
+| R01-R03          | 01-registration                                            |
+| R10              | 01-registration, 15-mix-curves                             |
+| R11-R19          | 02-cut-fade, 15-mix-curves                                 |
+| R20-R26          | 03-fade-to-color, 15-mix-curves                            |
+| R27-R31          | 04-luma-wipe, 01-registration (assets)                     |
+| R32-R36, R37-R40 | 05-slide-swipe, 15-mix-curves                              |
+| R41, R42         | 06-stinger-config, 16-defects                              |
+| R43, R44, R45    | 08-stinger-timing, 09-stinger-quirks, 06-stinger-config    |
+| R46, R47-R50     | 07-stinger-properties                                      |
+| R51              | 10-stinger-render, 11-stinger-matte, 12-stinger-colorspace |
+| R52              | 06-stinger-config, 11-stinger-matte                        |
+| R53, R54         | 13-stinger-audio, 14-stinger-audio-mix                     |
+| R55, R56         | 03-fade-to-color (cspace), 06-stinger-config               |
 
 ## 11. Open questions
 
@@ -395,36 +391,20 @@ data struct and the `obs_source_info` record. Where a rule already pins a value 
   `struct obs_source_info cut_transition` — id `cut_transition`, type TRANSITION, callbacks
   get_name/create/destroy/video_render/audio_render/video_get_color_space only (no update, no
   properties, no defaults). Behaviour R11–R14.
-- **S-029-R58 [SRC]** `transition-fade.c` (9 fns): `struct fade_info { source; gs_effect_t *effect;
-  gs_eparam_t *a_param, *b_param, *fade_param }`; info `fade_transition` (id `fade_transition`),
+- **S-029-R58 [SRC]** `transition-fade.c` (9 fns): `struct fade_info { source; gs_effect_t *effect; gs_eparam_t *a_param, *b_param, *fade_param }`; info `fade_transition` (id `fade_transition`),
   callbacks as R15–R19. Behaviour R15–R19.
-- **S-029-R59 [SRC]** `transition-fade-to-color.c` (14 fns): `struct fade_to_color_info { source;
-  gs_effect_t *effect; gs_eparam_t *ep_tex, *ep_swp, *ep_color; struct vec4 color, color_srgb; float
-  switch_point }` (the two vec4s are the R21 pair); info `fade_to_color_transition`. Behaviour
+- **S-029-R59 [SRC]** `transition-fade-to-color.c` (14 fns): `struct fade_to_color_info { source; gs_effect_t *effect; gs_eparam_t *ep_tex, *ep_swp, *ep_color; struct vec4 color, color_srgb; float switch_point }` (the two vec4s are the R21 pair); info `fade_to_color_transition`. Behaviour
   R20–R26.
-- **S-029-R60 [SRC]** `transition-luma-wipe.c` (13 fns): `struct luma_wipe_info { source;
-  gs_effect_t *effect; gs_eparam_t *ep_a_tex, *ep_b_tex, *ep_l_tex, *ep_progress, *ep_invert,
-  *ep_softness; gs_image_file_ex_t luma_image; bool invert_luma; float softness; obs_data_t
-  *wipes_list }` (`wipes_list` holds the R29 list source); info `luma_wipe_transition`. Behaviour
+- **S-029-R60 [SRC]** `transition-luma-wipe.c` (13 fns): `struct luma_wipe_info { source; gs_effect_t *effect; gs_eparam_t *ep_a_tex, *ep_b_tex, *ep_l_tex, *ep_progress, *ep_invert, *ep_softness; gs_image_file_ex_t luma_image; bool invert_luma; float softness; obs_data_t *wipes_list }` (`wipes_list` holds the R29 list source); info `luma_wipe_transition`. Behaviour
   R27–R31.
-- **S-029-R61 [SRC]** `transition-slide.c` (11 fns): `struct slide_info { source; gs_effect_t
-  *effect; gs_eparam_t *a_param, *b_param, *tex_a_dir_param, *tex_b_dir_param; struct vec2 dir; bool
-  slide_in }` (the instance is bzalloc'd; `slide_in` is never written or read afterwards — a dead
+- **S-029-R61 [SRC]** `transition-slide.c` (11 fns): `struct slide_info { source; gs_effect_t *effect; gs_eparam_t *a_param, *b_param, *tex_a_dir_param, *tex_b_dir_param; struct vec2 dir; bool slide_in }` (the instance is bzalloc'd; `slide_in` is never written or read afterwards — a dead
   field, always 0; the direction mapping is R33); info `slide_transition`. Behaviour R32–R36.
-- **S-029-R62 [SRC]** `transition-swipe.c` (11 fns): `struct swipe_info { source; gs_effect_t
-  *effect; gs_eparam_t *a_param, *b_param, *swipe_param; struct vec2 dir; bool swipe_in }`; info
+- **S-029-R62 [SRC]** `transition-swipe.c` (11 fns): `struct swipe_info { source; gs_effect_t *effect; gs_eparam_t *a_param, *b_param, *swipe_param; struct vec2 dir; bool swipe_in }`; info
   `swipe_transition`. Behaviour R37–R39, R40.
 
 ### 12.2 Stinger
 
-- **S-029-R63 [SRC]** `transition-stinger.c` (26 fns): `struct stinger_info { source; obs_source_t
-  *media_source, *matte_source; uint64_t duration_ns, duration_frames, transition_point_ns,
-  transition_point_frame; float transition_point, transition_a_mul, transition_b_mul; bool
-  transitioning, transition_point_is_frame, monitoring; enum fade_style fade_style; bool
-  track_matte_enabled; int matte_layout; float matte_width_factor, matte_height_factor; bool
-  invert_matte, do_texrender, matte_rendered; gs_effect_t *matte_effect; gs_eparam_t *ep_a_tex,
-  *ep_b_tex, *ep_matte_tex, *ep_invert_matte; gs_texrender_t *matte_tex, *stinger_tex; float
-  (*mix_a)(void *data, float t), (*mix_b)(void *data, float t) }` — the mix function pointers are
+- **S-029-R63 [SRC]** `transition-stinger.c` (26 fns): `struct stinger_info { source; obs_source_t *media_source, *matte_source; uint64_t duration_ns, duration_frames, transition_point_ns, transition_point_frame; float transition_point, transition_a_mul, transition_b_mul; bool transitioning, transition_point_is_frame, monitoring; enum fade_style fade_style; bool track_matte_enabled; int matte_layout; float matte_width_factor, matte_height_factor; bool invert_matte, do_texrender, matte_rendered; gs_effect_t *matte_effect; gs_eparam_t *ep_a_tex, *ep_b_tex, *ep_matte_tex, *ep_invert_matte; gs_texrender_t *matte_tex, *stinger_tex; float (*mix_a)(void *data, float t), (*mix_b)(void *data, float t) }` — the mix function pointers are
   bound in update to the R54 curves (style 0) or the cross-fade pair (style 1); `matte_width_factor`
   / `matte_height_factor` are the R49 layout split factors. `struct obs_source_info stinger_transition`
   — id `obs_stinger_transition`, type TRANSITION, callbacks: get_name, create, destroy, update,

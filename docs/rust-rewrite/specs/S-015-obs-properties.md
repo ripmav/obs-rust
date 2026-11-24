@@ -1,12 +1,12 @@
 # S-015 Properties (obs_properties / obs_property)
 
-| | |
-|---|---|
-| Status | Ready for review |
-| Reference | libobs 33.0.1 `obs-properties.c`, `obs-properties.h` (and the `media_frames_per_second` struct of `media-io/frame-rate.h`) |
-| Target crate | `crates/obs-properties` |
-| Depends on | S-001 (allocation, `blog` levels), the `obs_data` settings object (specified separately; only used as an opaque handle that is passed to callbacks) |
-| Conformance | `test/conformance/scripts/props/` (25 scripts); runner section in `test/conformance/README.md` |
+|              |                                                                                                                                                     |
+| ------------ | --------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Status       | Ready for review                                                                                                                                    |
+| Reference    | libobs 33.0.1 `obs-properties.c`, `obs-properties.h` (and the `media_frames_per_second` struct of `media-io/frame-rate.h`)                          |
+| Target crate | `crates/obs-properties`                                                                                                                             |
+| Depends on   | S-001 (allocation, `blog` levels), the `obs_data` settings object (specified separately; only used as an opaque handle that is passed to callbacks) |
+| Conformance  | `test/conformance/scripts/props/` (25 scripts); runner section in `test/conformance/README.md`                                                      |
 
 ## 1. Scope
 
@@ -37,22 +37,21 @@ Properties are **not thread-safe**: no operation locks anything; callers seriali
 
 ### 3.1 Enumerations (numeric values are ABI)
 
-| Enum | Values |
-|---|---|
-| `obs_property_type` | INVALID 0, BOOL 1, INT 2, FLOAT 3, TEXT 4, PATH 5, LIST 6, COLOR 7, BUTTON 8, FONT 9, EDITABLE_LIST 10, FRAME_RATE 11, GROUP 12, COLOR_ALPHA 13 |
-| `obs_combo_format` | INVALID 0, INT 1, FLOAT 2, STRING 3, BOOL 4 |
-| `obs_combo_type` | INVALID 0, EDITABLE 1, LIST 2, RADIO 3 |
-| `obs_editable_list_type` | STRINGS 0, FILES 1, FILES_AND_URLS 2 |
-| `obs_path_type` | FILE 0, FILE_SAVE 1, DIRECTORY 2 |
-| `obs_text_type` | DEFAULT 0, PASSWORD 1, MULTILINE 2, INFO 3 |
-| `obs_text_info_type` | NORMAL 0, WARNING 1, ERROR 2 |
-| `obs_number_type` | SCROLLER 0, SLIDER 1 |
-| `obs_group_type` | INVALID 0 (named `OBS_COMBO_INVALID` in the header), NORMAL 1, CHECKABLE 2 |
-| `obs_button_type` | DEFAULT 0, URL 1 |
+| Enum                     | Values                                                                                                                                          |
+| ------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------- |
+| `obs_property_type`      | INVALID 0, BOOL 1, INT 2, FLOAT 3, TEXT 4, PATH 5, LIST 6, COLOR 7, BUTTON 8, FONT 9, EDITABLE_LIST 10, FRAME_RATE 11, GROUP 12, COLOR_ALPHA 13 |
+| `obs_combo_format`       | INVALID 0, INT 1, FLOAT 2, STRING 3, BOOL 4                                                                                                     |
+| `obs_combo_type`         | INVALID 0, EDITABLE 1, LIST 2, RADIO 3                                                                                                          |
+| `obs_editable_list_type` | STRINGS 0, FILES 1, FILES_AND_URLS 2                                                                                                            |
+| `obs_path_type`          | FILE 0, FILE_SAVE 1, DIRECTORY 2                                                                                                                |
+| `obs_text_type`          | DEFAULT 0, PASSWORD 1, MULTILINE 2, INFO 3                                                                                                      |
+| `obs_text_info_type`     | NORMAL 0, WARNING 1, ERROR 2                                                                                                                    |
+| `obs_number_type`        | SCROLLER 0, SLIDER 1                                                                                                                            |
+| `obs_group_type`         | INVALID 0 (named `OBS_COMBO_INVALID` in the header), NORMAL 1, CHECKABLE 2                                                                      |
+| `obs_button_type`        | DEFAULT 0, URL 1                                                                                                                                |
 
 Flag constant: `OBS_PROPERTIES_DEFER_UPDATE = 1<<0` (stored/returned like any flag; the
-library never interprets flags). Font flag constants `OBS_FONT_BOLD 1, ITALIC 2, UNDERLINE 4,
-STRIKEOUT 8` are defined in the header but not used by this component.
+library never interprets flags). Font flag constants `OBS_FONT_BOLD 1, ITALIC 2, UNDERLINE 4, STRIKEOUT 8` are defined in the header but not used by this component.
 
 **Enum arguments are never validated.** Any integer passed as an enum is stored and returned
 unchanged (vectors `07`, `10`, `25` use out-of-range values; they print as `?N`). The only
@@ -242,21 +241,21 @@ GROUP `{type, content: Container}`; BOOL, COLOR, COLOR_ALPHA, FONT: none.
 Every kind-specific getter returns the defaults in this table when the property is NULL or of
 another kind (vectors `20`, `12`, `19`, `13`, `06` print them with `probe`):
 
-| Getter family | Default |
-|---|---|
-| `int_min/max/step`, `float_min/max/step`, `list_item_count`, `*_count` | 0 |
-| `int_type`, `float_type` | SCROLLER |
-| suffixes, `path_filter`, `path_default_path`, `editable_list_filter/default_path`, `list_item_name/string`, option name/description | NULL |
-| `text_type` / `text_info_type` | DEFAULT / NORMAL |
-| `text_monospace` | false |
-| `text_info_word_wrap` | **true** |
-| `path_type` | DIRECTORY |
-| `list_type` / `list_format` | INVALID / INVALID |
-| `list_item_int/float/bool/disabled` | 0 / 0.0 / false / false |
-| `editable_list_type` | STRINGS |
-| `fps_range_min/max` | {0,0} |
-| `group_type` / `group_content` | 0 / NULL |
-| `button_type` / `button_url` | DEFAULT / **""** |
+| Getter family                                                                                                                       | Default                 |
+| ----------------------------------------------------------------------------------------------------------------------------------- | ----------------------- |
+| `int_min/max/step`, `float_min/max/step`, `list_item_count`, `*_count`                                                              | 0                       |
+| `int_type`, `float_type`                                                                                                            | SCROLLER                |
+| suffixes, `path_filter`, `path_default_path`, `editable_list_filter/default_path`, `list_item_name/string`, option name/description | NULL                    |
+| `text_type` / `text_info_type`                                                                                                      | DEFAULT / NORMAL        |
+| `text_monospace`                                                                                                                    | false                   |
+| `text_info_word_wrap`                                                                                                               | **true**                |
+| `path_type`                                                                                                                         | DIRECTORY               |
+| `list_type` / `list_format`                                                                                                         | INVALID / INVALID       |
+| `list_item_int/float/bool/disabled`                                                                                                 | 0 / 0.0 / false / false |
+| `editable_list_type`                                                                                                                | STRINGS                 |
+| `fps_range_min/max`                                                                                                                 | {0,0}                   |
+| `group_type` / `group_content`                                                                                                      | 0 / NULL                |
+| `button_type` / `button_url`                                                                                                        | DEFAULT / **""**        |
 
 All setters on a wrong kind or NULL handle are silent no-ops.
 
@@ -284,6 +283,7 @@ get(c, name):
 
 topmost(c) = c while c.parent != none: c = c.parent.owner
 ```
+
 Note `tree_contains` (used by `add`) logs on a hit at any level; `get` does not log.
 
 ### 6.2 apply_settings
@@ -300,7 +300,8 @@ apply_settings(root, settings):
         if p.modified:   p.modified(root, p, settings)
         elif p.modified2: p.modified2(p.priv, root, p, settings)
 ```
-Worked example (vector `18`): top = [first, grp[g1a, g1b, sub[g2a]], last] with callbacks on all;
+
+Worked example (vector `18`): top = \[first, grp\[g1a, g1b, sub[g2a]\], last\] with callbacks on all;
 gather order = first, g1a, g1b, g2a, sub, grp, last; execution order = last, grp, sub, g2a, g1b, g1a, first.
 Mutations of the container by callbacks (adds, visibility, descriptions) are legal; removing
 properties during `apply_settings` leaves dangling entries in the list (D-6) and is outside the contract.
@@ -344,30 +345,30 @@ a property it removed.
 
 ## 10. Conformance coverage
 
-| Rule | Scripts (`scripts/props/`) |
-|---|---|
-| R01, R05, R07 | `01-container-basics` |
-| R02–R04, R06 | `02-param-and-destroy-order`, `16-group-remove` |
-| R08 | `01`, `22-add-int-float-from-group-content` |
-| R09, R10, R12 | `03-lookup-duplicates-remove`, `14-groups`, `16`, `21-quirks`, `25-misc-edges` |
-| R11 | `14` |
-| R13, R14, R20 | `04-simple-kinds`, `19-string-ownership`, `20-wrong-kind-and-null` |
-| R15 | `19` |
-| R16, R17 | `17-modified-callbacks`, `24-priv-sharing-quirk` |
-| R18, R34 | `11-button`, `24` |
-| R19 | `18-apply-settings`, `23-callback-edits-layout` |
-| R21–R23 | `05-int-float` |
-| R24 | `06-text` |
-| R25, R26 | `07-path-editable-list` |
-| R27 | `10-list-creation-rules` |
-| R28–R33 | `08-list-string`, `09-list-int-float-bool`, `10`, `25` |
-| R35 | `12-button-url-type` |
-| R36–R40 | `13-frame-rate` |
-| R41–R43 | `14`, `15-group-rejections`, `16`, `22`, `25` |
-| Section 5.14 defaults | `20`, `06`, `12`, `13`, `19` |
-| Q-1 | `21-quirks`; Q-2 `15`; Q-3 `09`, `10`; Q-4 `24`; Q-5 `17`, `18`; Q-6 `12`; Q-7 `20`; Q-8 `18`; Q-9 `19`; Q-10 `07`; Q-11 `09` |
-| D-1, D-2 | found with a leak sanitizer on `07`, `12`; not observable in vectors |
-| D-3 – D-7 | no vectors (crash or UB in the reference) |
+| Rule                  | Scripts (`scripts/props/`)                                                                                                    |
+| --------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
+| R01, R05, R07         | `01-container-basics`                                                                                                         |
+| R02–R04, R06          | `02-param-and-destroy-order`, `16-group-remove`                                                                               |
+| R08                   | `01`, `22-add-int-float-from-group-content`                                                                                   |
+| R09, R10, R12         | `03-lookup-duplicates-remove`, `14-groups`, `16`, `21-quirks`, `25-misc-edges`                                                |
+| R11                   | `14`                                                                                                                          |
+| R13, R14, R20         | `04-simple-kinds`, `19-string-ownership`, `20-wrong-kind-and-null`                                                            |
+| R15                   | `19`                                                                                                                          |
+| R16, R17              | `17-modified-callbacks`, `24-priv-sharing-quirk`                                                                              |
+| R18, R34              | `11-button`, `24`                                                                                                             |
+| R19                   | `18-apply-settings`, `23-callback-edits-layout`                                                                               |
+| R21–R23               | `05-int-float`                                                                                                                |
+| R24                   | `06-text`                                                                                                                     |
+| R25, R26              | `07-path-editable-list`                                                                                                       |
+| R27                   | `10-list-creation-rules`                                                                                                      |
+| R28–R33               | `08-list-string`, `09-list-int-float-bool`, `10`, `25`                                                                        |
+| R35                   | `12-button-url-type`                                                                                                          |
+| R36–R40               | `13-frame-rate`                                                                                                               |
+| R41–R43               | `14`, `15-group-rejections`, `16`, `22`, `25`                                                                                 |
+| Section 5.14 defaults | `20`, `06`, `12`, `13`, `19`                                                                                                  |
+| Q-1                   | `21-quirks`; Q-2 `15`; Q-3 `09`, `10`; Q-4 `24`; Q-5 `17`, `18`; Q-6 `12`; Q-7 `20`; Q-8 `18`; Q-9 `19`; Q-10 `07`; Q-11 `09` |
+| D-1, D-2              | found with a leak sanitizer on `07`, `12`; not observable in vectors                                                          |
+| D-3 – D-7             | no vectors (crash or UB in the reference)                                                                                     |
 
 CORE: all scripts except `21-quirks` and `24-priv-sharing-quirk` (QUIRK).
 

@@ -9,6 +9,7 @@ Verified facts: the main window is split across `frontend/widgets/OBSBasic*.cpp`
 ## A. Application shell
 
 ### P6-01 Launch and CLI
+
 - [ ] **P6-01.1 Argument table**
   - Files: `frontend/obs-main.cpp` (1108; flag parsing at 958–1062, `arg_is` at 815).
   - Steps: 1. grep every `arg_is(...)` in `obs-main.cpp`; 2. table each flag (flag, short form, variable set); 3. read `run_program` (487+) and record the startup branch each flag controls.
@@ -38,6 +39,7 @@ Verified facts: the main window is split across `frontend/widgets/OBSBasic*.cpp`
   - Done when: logged per OS.
 
 ### P6-02 Application object and config
+
 - [ ] **P6-02.1 Config**
   - Files: `frontend/OBSApp.cpp` (2107; `InitGlobalConfigDefaults` 324–357, `InitUserConfigDefaults` 376–407, global/user open 568–645), `frontend/OBSApp.hpp` (299).
   - Steps: 1. load `global.ini` + `user.ini` via `crates/obs-config` (S-007); 2. run Pre31 split + `MigrateLegacySettings` before defaults; 3. apply the defaults tables (S-048 §4.1–4.2); 4. round-trip test on real files.
@@ -59,6 +61,7 @@ Verified facts: the main window is split across `frontend/widgets/OBSBasic*.cpp`
   - Done when: clean-profile test.
 
 ### P6-03 Themes
+
 - [ ] **P6-03.1 Parser**
   - Files: `frontend/OBSApp_Themes.cpp` (1120; `ParseThemeMeta` 46, `ParseThemeVariables` 290, dir scan 472–485), `frontend/utility/OBSTheme.hpp` (47), `frontend/utility/OBSThemeVariable.hpp` (44).
   - Steps: 1. port the `.obt`/`.ovt` syntax (meta, `@define`, variables, calc expressions); 2. model `OBSTheme` (id/name/extends/isDark/isBaseTheme/isHighContrast/font-scale/density); 3. parse test over all shipped themes.
@@ -79,6 +82,7 @@ Verified facts: the main window is split across `frontend/widgets/OBSBasic*.cpp`
   - Done when: screenshots per shipped theme committed.
 
 ### P6-04 Localisation
+
 - [ ] **P6-04.1 Loader**
   - Files: `frontend/data/locale.ini` (170), `frontend/data/locale/*.ini` (77 files; `en-US.ini` 1729), `frontend/OBSApp.cpp` (2107; `GetLocaleNames` 1727, `InitLocale` 764–845).
   - Steps: 1. load `locale.ini` (tag→`Name` sections) via `crates/obs-config`; 2. build the text lookup: `locale/en-US.ini` as base, the selected `locale/<lang>.ini` added on top; 3. load test over all 77 files.
@@ -97,6 +101,7 @@ Verified facts: the main window is split across `frontend/widgets/OBSBasic*.cpp`
   - Done when: report lists unused/missing.
 
 ### P6-05 Logging and crash upload
+
 - [ ] **P6-05.1 Viewer** +UI
   - Files: `frontend/dialogs/OBSLogViewer.cpp` (130), `OBSLogViewer.hpp` (22), `frontend/forms/OBSLogViewer.ui` (142).
   - Steps: 1. port the view model (log lines, level filter, copy); 2. port the widget with the `.ui` fields (cxx-qt); 3. UI bookend (view-model test, a11y snapshot, keyboard-only).
@@ -112,6 +117,7 @@ Verified facts: the main window is split across `frontend/widgets/OBSBasic*.cpp`
   - Done when: report format diffs clean against a C sample.
 
 ### P6-06 Main window skeleton
+
 - [ ] **P6-06.1 Window/menus** +UI
   - Files: `frontend/widgets/OBSBasic.cpp` (2101), `OBSBasic_MainControls.cpp` (711), `OBSBasic.hpp` (1705), `frontend/forms/OBSBasic.ui` (2294).
   - Steps: 1. port the window shell + menu bar from the `OBSBasic.ui` menu structure; 2. wire every `QAction` to its handler; 3. port the `MainControls` dock toggles; 4. UI bookend.
@@ -138,6 +144,7 @@ Verified facts: the main window is split across `frontend/widgets/OBSBasic*.cpp`
 ## B. Core UI components
 
 ### P6-07 Preview widget
+
 - [ ] **P6-07.1 Display embedding**
   - Files: `frontend/widgets/OBSQTDisplay.cpp` (214), `OBSQTDisplay.hpp` (49), `frontend/widgets/OBSBasicPreview.cpp` (2912; display creation), `frontend/widgets/OBSBasic_Preview.cpp` (683).
   - Steps: 1. create the native child window per platform (X11 window id, Wayland subsurface, HWND, NSView); 2. attach it through the Phase 4 display API; 3. render smoke test on all three OSes.
@@ -180,6 +187,7 @@ Verified facts: the main window is split across `frontend/widgets/OBSBasic*.cpp`
   - Done when: S-067 committed + geometry tests green.
 
 ### P6-08 Scene list
+
 - [ ] **P6-08.1 Model/view** +UI
   - Files: `frontend/components/SceneTree.cpp` (237), `SceneTree.hpp` (42), `frontend/widgets/OBSBasic_Scenes.cpp` (1026).
   - Steps: 1. port the scene tree model (order, current scene); 2. port the list + grid views; 3. UI bookend.
@@ -194,6 +202,7 @@ Verified facts: the main window is split across `frontend/widgets/OBSBasic*.cpp`
   - Done when: all items work.
 
 ### P6-09 Source tree
+
 - [ ] **P6-09.1 Model** +UI
   - Files: `frontend/components/SourceTreeModel.cpp` (450), `SourceTreeModel.hpp` (47), `SourceTreeItem.cpp` (598), `SourceTreeItem.hpp` (80), `SourceTree.cpp` (662), `SourceTree.hpp` (75).
   - Steps: 1. port the source tree model (sources + groups, expand/collapse); 2. UI bookend.
@@ -216,6 +225,7 @@ Verified facts: the main window is split across `frontend/widgets/OBSBasic*.cpp`
   - Done when: accessibility-tree snapshot passes.
 
 ### P6-10 Audio mixer
+
 - [ ] **P6-10.1 Meter**
   - Files: `frontend/components/VolumeMeter.cpp` (908), `VolumeMeter.hpp` (207).
   - Steps: 1. port the meter paint (peak/magnitude/input-peak bars, decay, clip indicator, warning/error thresholds); 2. use the S-032 metering logic from `crates/obs-audio-mix`; 3. pixel-compare against reference frames.
@@ -246,6 +256,7 @@ Verified facts: the main window is split across `frontend/widgets/OBSBasic*.cpp`
   - Done when: pixel diff within threshold.
 
 ### P6-11 Transitions dock
+
 - [ ] **P6-11.1 Selector/duration** +UI
   - Files: `frontend/widgets/OBSBasic_Transitions.cpp` (1569).
   - Steps: 1. port the transition selector + duration field; 2. persist `transitions`/`transition_duration` (S-048 §4.4); 3. UI bookend.
@@ -262,6 +273,7 @@ Verified facts: the main window is split across `frontend/widgets/OBSBasic*.cpp`
   - Done when: transitions fire.
 
 ### P6-12 Controls dock
+
 - [ ] **P6-12.1 Stream/record** +UI
   - Files: `frontend/widgets/OBSBasicControls.cpp` (285), `frontend/forms/OBSBasicControls.ui` (356), `frontend/widgets/OBSBasic_Streaming.cpp` (479), `OBSBasic_Recording.cpp` (431), `frontend/utility/BasicOutputHandler.cpp` (614).
   - Steps: 1. port the control buttons + text/state; 2. port pause + reconnect handling; 3. UI bookend.
@@ -276,6 +288,7 @@ Verified facts: the main window is split across `frontend/widgets/OBSBasic*.cpp`
   - Done when: each state shows its locale text.
 
 ### P6-13 Stats dock
+
 - [ ] **P6-13.1 Collection**
   - Files: `frontend/widgets/OBSBasicStats.cpp` (601).
   - Steps: 1. port the stats dialog (CPU%, mem, disk space, FPS, render time, skipped/missed frames, output bitrate, dropped); 2. feed it from the obs stats API (Phase 4); 3. compare values against a live C session.
@@ -286,6 +299,7 @@ Verified facts: the main window is split across `frontend/widgets/OBSBasic*.cpp`
   - Done when: UI bookend passes.
 
 ### P6-14 Source toolbars
+
 - [ ] **P6-14.1 Simple** +UI
   - Files: `frontend/components/ColorSourceToolbar.cpp` (83), `TextSourceToolbar.cpp` (152), `ImageSourceToolbar.cpp` (54), `SourceToolbar.cpp` (62); forms `frontend/forms/source-toolbar/color-source-toolbar.ui` (93), `text-source-toolbar.ui` (91), `image-source-toolbar.ui` (121).
   - Steps: 1. port the three toolbars + the base class; 2. UI bookend each.
@@ -300,6 +314,7 @@ Verified facts: the main window is split across `frontend/widgets/OBSBasic*.cpp`
   - Done when: UI bookends pass.
 
 ### P6-15 Dock framework
+
 - [ ] **P6-15.1 Base/persist**
   - Files: `frontend/docks/OBSDock.cpp` (46), `OBSDock.hpp` (18), `frontend/widgets/OBSBasic_Docks.cpp` (260).
   - Steps: 1. port the dock base class + dock id registry; 2. persist layout via the P6-06.3 `DockState`; 3. state persistence test.
@@ -315,6 +330,7 @@ Verified facts: the main window is split across `frontend/widgets/OBSBasic*.cpp`
   - Done when: contract test.
 
 ### P6-16 Properties view
+
 - [ ] **P6-16.1 View model**
   - Files: `shared/properties-view/properties-view.cpp` (2420), `properties-view.hpp` (204), `properties-view.moc.hpp` (63).
   - Steps: 1. port the view model from `obs_properties_t` (S-015); 2. cover all 13 property kinds; 3. table-test the model against the `props` vectors.
@@ -348,6 +364,7 @@ Verified facts: the main window is split across `frontend/widgets/OBSBasic*.cpp`
   - Done when: UI bookends pass.
 
 ### P6-17 Media controls
+
 - [ ] **P6-17.1 Play/pause/seek** +UI
   - Files: `frontend/components/MediaControls.cpp` (539), `MediaControls.hpp` (79), `frontend/forms/source-toolbar/media-controls.ui` (312).
   - Steps: 1. port play/pause/seek + the slider; 2. drive the media-playback procs (S-036); 3. UI bookend.
@@ -361,6 +378,7 @@ Verified facts: the main window is split across `frontend/widgets/OBSBasic*.cpp`
   - Done when: match C behaviour.
 
 ### P6-18 Accessibility pass
+
 - [ ] **P6-18.1 Labels**
   - Files: `frontend/components/AccessibleAlignmentSelector.cpp` (126), `AccessibleAlignmentCell.cpp` (71), `VolumeAccessibleInterface.cpp` (62), `frontend/components/AlignmentSelector.cpp` (324).
   - Steps: 1. audit every widget role/name; 2. port the custom a11y interfaces for the custom widgets; 3. commit the report.
@@ -377,6 +395,7 @@ Verified facts: the main window is split across `frontend/widgets/OBSBasic*.cpp`
 ## C. Settings and wizards
 
 ### P6-19 Settings dialog framework
+
 - [ ] **P6-19.1 Pages**
   - Files: `frontend/settings/OBSBasicSettings.cpp` (6034), `OBSBasicSettings.hpp` (455), `frontend/forms/OBSBasicSettings.ui` (9406).
   - Steps: 1. port the settings dialog shell + page navigation from `OBSBasicSettings.ui`; 2. UI bookend.
@@ -395,6 +414,7 @@ Verified facts: the main window is split across `frontend/widgets/OBSBasic*.cpp`
   - Done when: every non-trivial function of the file is in a named step.
 
 ### P6-20 Settings pages
+
 - [ ] **P6-20.1 General/Appearance** +UI
   - Files: `frontend/settings/OBSBasicSettings.cpp` (6034; general page), `OBSBasicSettings_Appearance.cpp` (170).
   - Steps: 1. port language/theme/updates-channel/system-tray/snapping/projectors/preview settings; 2. persist to the S-048 §4.2 keys; 3. UI bookend.
@@ -436,6 +456,7 @@ Verified facts: the main window is split across `frontend/widgets/OBSBasic*.cpp`
   - Done when: display identical values.
 
 ### P6-21 Hotkey editor
+
 - [ ] **P6-21.1 Capture** +UI
   - Files: `frontend/settings/OBSHotkeyEdit.cpp` (223), `OBSHotkeyEdit.hpp` (96), `OBSHotkeyWidget.cpp` (246), `OBSHotkeyWidget.hpp` (99), `OBSHotkeyLabel.cpp` (73), `OBSHotkeyLabel.hpp` (35).
   - Steps: 1. port per-OS key capture incl. mouse buttons; 2. port the hotkey table editing; 3. UI bookend.
@@ -454,6 +475,7 @@ Verified facts: the main window is split across `frontend/widgets/OBSBasic*.cpp`
   - Done when: list updates.
 
 ### P6-22 Auto-configuration wizard
+
 - [ ] **P6-22.1 Framework** +UI
   - Files: `frontend/wizards/AutoConfig.cpp` (388), `AutoConfig.hpp` (124), `AutoConfigStartPage.cpp` (48), `AutoConfigVideoPage.cpp` (131), `AutoConfigStreamPage.cpp` (712); forms `AutoConfigStartPage.ui` (116), `AutoConfigVideoPage.ui` (99), `AutoConfigStreamPage.ui` (562).
   - Steps: 1. port the wizard shell + start/video/stream pages; 2. UI bookend.
@@ -472,6 +494,7 @@ Verified facts: the main window is split across `frontend/widgets/OBSBasic*.cpp`
   - Done when: results appear in profile settings.
 
 ### P6-23 First-run / what's new / about
+
 - [ ] **P6-23.1 About** +UI
   - Files: `frontend/dialogs/OBSAbout.cpp` (172), `frontend/forms/OBSAbout.ui` (251), `frontend/data/license/gplv2.txt` (85).
   - Steps: 1. port the about dialog (authors, licence); 2. UI bookend.
@@ -489,6 +512,7 @@ Verified facts: the main window is split across `frontend/widgets/OBSBasic*.cpp`
 ## D. Profiles, collections, importers
 
 ### P6-24 Scene collection manager
+
 - [ ] **P6-24.1 Load/save**
   - Files: `frontend/widgets/OBSBasic_SceneCollections.cpp` (1705), `frontend/models/SceneCollection.cpp` (71), `SceneCollection.hpp` (64).
   - Steps: 1. port the collection JSON load/save (S-048 §4.4 layout); 2. load the P0-18 corpus.
@@ -510,6 +534,7 @@ Verified facts: the main window is split across `frontend/widgets/OBSBasic*.cpp`
   - Done when: missing files listed on a moved corpus.
 
 ### P6-25 Profile manager
+
 - [ ] **P6-25.1 CRUD** +UI
   - Files: `frontend/widgets/OBSBasic_Profiles.cpp` (1123).
   - Steps: 1. port create/duplicate/rename/remove (S-048 R20–R26); 2. UI bookend.
@@ -530,6 +555,7 @@ Verified facts: the main window is split across `frontend/widgets/OBSBasic*.cpp`
   - Done when: files parse identically.
 
 ### P6-26 Importers
+
 - [ ] **P6-26.1 Classic**
   - Files: `frontend/importers/classic.cpp` (576), `frontend/importers/importers.cpp` (103), `importers.hpp` (168).
   - Steps: 1. port the classic-OBS importer; 2. golden JSON test.
@@ -560,6 +586,7 @@ Verified facts: the main window is split across `frontend/widgets/OBSBasic*.cpp`
   - Done when: every non-trivial importer function is in a named step.
 
 ### P6-27 Missing files dialog
+
 - [ ] **P6-27.1 List/relink** +UI
   - Files: `frontend/dialogs/OBSMissingFiles.cpp` (143), `OBSMissingFiles.hpp` (53), `frontend/forms/OBSMissingFiles.ui` (129), `frontend/utility/MissingFilesModel.cpp` (306), `MissingFilesModel.hpp` (68), `MissingFilesPathItemDelegate.cpp` (163).
   - Steps: 1. port the model + dialog (list, relink, delete); 2. UI bookend.
@@ -570,6 +597,7 @@ Verified facts: the main window is split across `frontend/widgets/OBSBasic*.cpp`
   - Done when: search finds the file.
 
 ### P6-28 Remux dialog
+
 - [ ] **P6-28.1 Queue** +UI
   - Files: `frontend/dialogs/OBSRemux.cpp` (316), `frontend/forms/OBSRemux.ui` (71), `frontend/utility/RemuxQueueModel.cpp` (387), `RemuxQueueModel.hpp` (78).
   - Steps: 1. port the queue model + dialog; 2. UI bookend.
@@ -582,6 +610,7 @@ Verified facts: the main window is split across `frontend/widgets/OBSBasic*.cpp`
 ## E. Services, auth, updater
 
 ### P6-29 OAuth framework
+
 - [ ] **P6-29.1 Listener**
   - Files: `frontend/oauth/AuthListener.cpp` (107), `AuthListener.hpp` (24), `frontend/oauth/OAuth.cpp` (223), `OAuth.hpp` (53).
   - Steps: 1. port the local HTTP redirect listener; 2. port the OAuth base (authorize/refresh/token endpoints); 3. code-received test.
@@ -608,6 +637,7 @@ Verified facts: the main window is split across `frontend/widgets/OBSBasic*.cpp`
   - Done when: expiry simulated.
 
 ### P6-30 YouTube integration
+
 - [ ] **P6-30.1 Broadcast** +UI
   - Files: `frontend/dialogs/OBSYoutubeActions.cpp` (741), `OBSYoutubeActions.hpp` (76), `frontend/forms/OBSYoutubeActions.ui` (695).
   - Steps: 1. port the create/select/schedule broadcast dialog; 2. UI bookend.
@@ -626,6 +656,7 @@ Verified facts: the main window is split across `frontend/widgets/OBSBasic*.cpp`
   - Done when: mock journeys pass.
 
 ### P6-31 Streaming services UI
+
 - [ ] **P6-31.1 Pickers**
   - Files: `frontend/settings/OBSBasicSettings_Stream.cpp` (1868; service/server dropdowns).
   - Steps: 1. port the service/server dropdowns from `crates/plugin-rtmp-services` (S-026); 2. list test against the `rtmpservices` vectors.
@@ -642,6 +673,7 @@ Verified facts: the main window is split across `frontend/widgets/OBSBasic*.cpp`
   - Done when: mock GoLive API.
 
 ### P6-32 Updater
+
 - [ ] **P6-32.1 Manifest**
   - Files: `frontend/updater/manifest.hpp` (93), `http.cpp` (455), `hash.cpp` (81).
   - Steps: 1. port the manifest fetch + version compare; 2. local server test.
@@ -665,6 +697,7 @@ Verified facts: the main window is split across `frontend/widgets/OBSBasic*.cpp`
   - Done when: suite passes.
 
 ### P6-33 Plugin manager
+
 - [ ] **P6-33.1 List** +UI
   - Files: `frontend/plugin-manager/PluginManager.cpp` (386), `PluginManager.hpp` (105), `PluginManagerWindow.cpp` (334), `InstalledPluginRow.cpp` (169), `frontend/forms/PluginManagerWindow.ui` (379).
   - Steps: 1. port the installed-plugin list; 2. UI bookend.
@@ -680,6 +713,7 @@ Verified facts: the main window is split across `frontend/widgets/OBSBasic*.cpp`
   - Done when: Flatpak path correct.
 
 ### P6-34 Virtual camera config
+
 - [ ] **P6-34.1 Dialog** +UI
   - Files: `frontend/dialogs/OBSBasicVCamConfig.cpp` (129), `OBSBasicVCamConfig.hpp` (31), `frontend/forms/OBSBasicVCamConfig.ui` (110).
   - Steps: 1. port the output-type dialog (program, preview, scene, source); 2. UI bookend.
@@ -690,6 +724,7 @@ Verified facts: the main window is split across `frontend/widgets/OBSBasic*.cpp`
   - Done when: choice survives restart.
 
 ### P6-35 Debug dialogs
+
 - [ ] **P6-35.1 Decide**
   - Files: `frontend/dialogs/OBSIdianPlayground.cpp` (141), `OBSIdianPlayground.hpp` (34), `frontend/forms/OBSIdianPlayground.ui` (55).
   - Steps: 1. record the keep/drop decision (it is a widget playground; default drop); 2. note it in the task file.
@@ -702,6 +737,7 @@ Verified facts: the main window is split across `frontend/widgets/OBSBasic*.cpp`
 ## F. Frontend API and tools
 
 ### P6-36 Frontend API
+
 - [ ] **P6-36.1 Inventory**
   - Files: `frontend/api/obs-frontend-api.h` (271; 99 `OBS_FRONTEND_API` exports, 44 `OBS_FRONTEND_EVENT_*` values).
   - Steps: 1. table the 99 functions (name, signature, no-callback result); 2. table the 44 event ids (names are ABI); 3. commit both tables.
@@ -729,6 +765,7 @@ Verified facts: the main window is split across `frontend/widgets/OBSBasic*.cpp`
   - Done when: obs-websocket + test plugin pass.
 
 ### P6-37 Scripting host
+
 - [ ] **P6-37.1 Lua**
   - Files: `shared/obs-scripting/obs-scripting.c` (471), `obs-scripting-lua.c` (1378), `obs-scripting-lua-frontend.c` (335), `obs-scripting-lua-source.c` (725), `obs-scripting-lua.h` (238), `obs-scripting.h` (67).
   - Steps: 1. port the script host with `mlua` (load/unload/reload, `script_*` callbacks, timers); 2. run the example scripts. 3. enumerate the four callbacks generated by the `DEFINE_VOID_DATA_CALLBACK` macro in `obs-scripting-lua-source.c` (activate/deactivate/show/hide) — macro-generated, invisible to ctags and the inventory; they must be registered in the mlua port.
@@ -760,6 +797,7 @@ Verified facts: the main window is split across `frontend/widgets/OBSBasic*.cpp`
   - Done when: S-063 committed; P6-37.2 cites it.
 
 ### P6-38 Auto scene switcher
+
 - [ ] **P6-38.1 Windows**
   - Files: `plugins/frontend-tools/auto-scene-switcher-win.cpp` (77), `auto-scene-switcher.cpp` (525).
   - Steps: 1. port the foreground window title/exe polling (Windows); 2. matching unit test.
@@ -778,6 +816,7 @@ Verified facts: the main window is split across `frontend/widgets/OBSBasic*.cpp`
   - Done when: UI bookend passes.
 
 ### P6-39 Output timer and captions
+
 - [ ] **P6-39.1 Timer** +UI
   - Files: `plugins/frontend-tools/output-timer.cpp` (332), `output-timer.hpp` (44), `plugins/frontend-tools/forms/output-timer.ui` (250).
   - Steps: 1. port the stream/record stop timers; 2. UI bookend.
@@ -792,6 +831,7 @@ Verified facts: the main window is split across `frontend/widgets/OBSBasic*.cpp`
   - Done when: runs on Windows.
 
 ### P6-40 DeckLink/AJA output UIs
+
 - [ ] **P6-40.1 DeckLink** +UI
   - Files: `plugins/decklink-output-ui/DecklinkOutputUI.cpp` (145), `DecklinkOutputUI.h` (34), `decklink-ui-main.cpp` (507), `plugins/decklink-output-ui/forms/output.ui` (113).
   - Steps: 1. port the DeckLink output UI (P5-42 SDK stays FFI per D-10); 2. UI bookend.
@@ -802,6 +842,7 @@ Verified facts: the main window is split across `frontend/widgets/OBSBasic*.cpp`
   - Done when: UI bookend passes.
 
 ### P6-41 Tray and platform bits
+
 - [ ] **P6-41.1 Tray**
   - Files: `frontend/widgets/OBSBasic_SysTray.cpp` (160), `frontend/OBSApp.cpp` (2107; tray notifications).
   - Steps: 1. port the system tray icon + menu (minimize/restore/exit, projector menu); 2. port tray notifications.
@@ -822,6 +863,7 @@ Verified facts: the main window is split across `frontend/widgets/OBSBasic*.cpp`
 ## G. Packaging and release
 
 ### P6-42 Windows
+
 - [ ] **P6-42.0 MSIX feasibility spike** (added; D-39 confirmed 2026-11-06: MSIX)
   - Files: none (spike — record findings in `docs/tests/windows-msix-spike.md`).
   - Steps: 1. build a minimal MSIX around the OBS install tree; 2. verify third-party plugin loading (plugins outside the package directory) under MSIX file-system virtualization; 3. verify per-user install, auto-update (the updater must replace/re-register the package — BOUF `windows-patches` flow, phase-7 guide), and Steam compatibility.
@@ -842,6 +884,7 @@ Verified facts: the main window is split across `frontend/widgets/OBSBasic*.cpp`
   - Done when: signatures verify.
 
 ### P6-43 macOS
+
 - [ ] **P6-43.1 Bundle**
   - Files: `frontend/cmake/macos/` (`Info.plist.in`, `entitlements.plist`, `entitlements-extension.plist`, `exportOptions.plist.in`, `exportOptions-extension.plist.in`, `qt.conf`, `Assets.xcassets/`).
   - Steps: 1. build the universal binary + `.app` bundle; 2. embed the camera extension; 3. bundle launch test.
@@ -856,6 +899,7 @@ Verified facts: the main window is split across `frontend/widgets/OBSBasic*.cpp`
   - Done when: feed tested.
 
 ### P6-44 Linux
+
 - [ ] **P6-44.1 Flatpak**
   - Files: `build-aux/com.obsproject.Studio.json` (171).
   - Steps: 1. adapt the manifest for the Rust build; 2. run flatpak-builder.
@@ -870,6 +914,7 @@ Verified facts: the main window is split across `frontend/widgets/OBSBasic*.cpp`
   - Done when: both pass.
 
 ### P6-45 Size and startup
+
 - [ ] **P6-45.1 Measure**
   - Steps: 1. measure the Rust binary size; 2. measure cold/warm startup; 3. record the numbers vs the C build.
   - Done when: numbers recorded vs the C build.
@@ -878,6 +923,7 @@ Verified facts: the main window is split across `frontend/widgets/OBSBasic*.cpp`
   - Done when: within 10%.
 
 ### P6-46 End-to-end UI tests
+
 - [ ] **P6-46.1 Tooling**
   - Steps: 1. pick the per-OS driver (AT-SPI, UIA, macOS accessibility, or screenshot compare); 2. get one journey passing per OS.
   - Done when: one journey passes per OS.
@@ -889,6 +935,7 @@ Verified facts: the main window is split across `frontend/widgets/OBSBasic*.cpp`
   - Done when: nightly green.
 
 ### P6-47 Beta programme
+
 - [ ] **P6-47.1 Channel**
   - Steps: 1. publish the beta to the beta channel.
   - Done when: beta published.
@@ -897,6 +944,7 @@ Verified facts: the main window is split across `frontend/widgets/OBSBasic*.cpp`
   - Done when: two releases triaged.
 
 ### P6-48 Phase 6 review
+
 - [ ] **P6-48.1 Parity checklist**
   - Steps: 1. walk the menus (from the 36 `.ui` files) and settings pages; 2. generate `docs/rust-rewrite/parity-checklist.md`; 3. commit it.
   - Done when: checklist committed.
@@ -905,6 +953,7 @@ Verified facts: the main window is split across `frontend/widgets/OBSBasic*.cpp`
   - Done when: 100% ticked.
 
 ### P6-49 Frontend components sweep (added)
+
 - [ ] **P6-49.1 Inventory and order**
   - Steps: 1. run `python3 tools/task-coverage.py`; 2. take the P6-49 rows (67 files); 3. sort by number of consumers and document the port order.
   - Done when: port order documented.
@@ -923,9 +972,10 @@ Verified facts: the main window is split across `frontend/widgets/OBSBasic*.cpp`
   - Done when: P6-49 owns zero rows.
 
 ### P6-50 Frontend spec series (added)
+
 - Goal: every `frontend/` file cited by a spec — the frontend (~109k lines) was previously specified only as S-048 (formats/CLI) + S-067 (preview interaction); round 6 adds the behavioural spec series S-068…S-077 + S-087. Per-file lists in `docs/rust-rewrite/specs/BACKLOG.md`; every spec gets a row in `specs/README.md`. UI-heavy behaviour is specified as behavioural tables (the S-048 convention), not line-by-line.
 - [x] **P6-50.1 Write S-068** — frontend settings dialog (10 files / 256 fns)
-  - Files: `frontend/settings/*` (OBSBasicSettings.cpp 158, _Stream 41, _A11y 18, _Appearance 7, OBSHotkey* 27, .hpp 27).
+  - Files: `frontend/settings/*` (OBSBasicSettings.cpp 158, \_Stream 41, \_A11y 18, \_Appearance 7, OBSHotkey\* 27, .hpp 27).
   - Steps: 1. write `specs/S-068-settings-dialog.md`: page structure, dirty-flag/Apply-OK-Cancel semantics, restart-needed rules, per-page load/save key tables (cross-ref S-048 §4), hotkey capture widget. 2. add the row.
   - Done when: S-068 committed; all 10 files cited.
 - [x] **P6-50.2 Write S-069** — frontend main window & controls (58 files / 821 fns)

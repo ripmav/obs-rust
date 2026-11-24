@@ -1,13 +1,13 @@
 # S-021 FLV muxer, AMF0 codec, HEVC/AV1 configuration records (Enhanced RTMP)
 
-| | |
-|---|---|
-| Status | Draft |
-| Spec version | base commit `65c320b46` (libobs 33.0.1) + this file |
-| Reference | C implementation, libobs 33.0.1, plugin `obs-outputs`: `flv-mux.c/.h`, `rtmp-helpers.h`, `rtmp-hevc.c/.h`, `rtmp-av1.c/.h`, vendored `librtmp/amf.c/.h` (names for the spec author only) |
-| Target crate | `crates/obs-flv` (modules `amf0`, `flv`, `hevc_config`, `av1_config`) |
-| Depends on | S-010 (array serializer = a growable big-endian byte writer), S-012 (Annex-B start-code finder, `encoder_packet` layout) |
-| Conformance | `test/conformance/scripts/flv/` (34 scripts), runner section `flv runner (spec S-021)` of `test/conformance/README.md` |
+|              |                                                                                                                                                                                          |
+| ------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Status       | Draft                                                                                                                                                                                    |
+| Spec version | base commit `65c320b46` (libobs 33.0.1) + this file                                                                                                                                      |
+| Reference    | C implementation, libobs 33.0.1, plugin `obs-outputs`: `flv-mux.c/.h`, `rtmp-helpers.h`, `rtmp-hevc.c/.h`, `rtmp-av1.c/.h`, vendored `librtmp/amf.c/.h` (names for the spec author only) |
+| Target crate | `crates/obs-flv` (modules `amf0`, `flv`, `hevc_config`, `av1_config`)                                                                                                                    |
+| Depends on   | S-010 (array serializer = a growable big-endian byte writer), S-012 (Annex-B start-code finder, `encoder_packet` layout)                                                                 |
+| Conformance  | `test/conformance/scripts/flv/` (34 scripts), runner section `flv runner (spec S-021)` of `test/conformance/README.md`                                                                   |
 
 ## 1. Scope
 
@@ -17,12 +17,12 @@ In scope:
    `AMF_Encode`/`AMF_EncodeEcmaArray`/`AMF_EncodeArray`), every decoder (`AMF_Decode*`,
    `AMFProp_Decode`, `AMF_Decode`, `AMF_DecodeArray`), the object/property model
    (`AMF_AddProp`, `AMF_GetProp`, `AMF_CountProp`, `AMFProp_Get*`, `AMF_Reset`).
-2. **FLV muxing** (`flv-mux.c`): the FLV file header, the `@setDataFrame`/`onMetaData` script tag,
+1. **FLV muxing** (`flv-mux.c`): the FLV file header, the `@setDataFrame`/`onMetaData` script tag,
    `write_file_info` (duration/file size patching), legacy video/audio tags (`flv_packet_mux`), the
    Enhanced-RTMP ("Y2023") video tags (`flv_packet_start/_frames/_end/_metadata`), Enhanced-RTMP audio
    tags (`flv_packet_audio_start/_frames`), multitrack variants, timestamp and composition-time
    computation, helper conversions (`to_video_type`, `to_audio_type`, `get_ms_time`).
-3. **Codec configuration record builders**: Annex-B HEVC parameter sets to an `hvcC` record
+1. **Codec configuration record builders**: Annex-B HEVC parameter sets to an `hvcC` record
    (`obs_parse_hevc_header`, including its SPS/VPS/PPS bit parser), AV1 temporal unit to an `av1C`
    record (`obs_parse_av1_header`, including its sequence-header parser) and the AV1 packet filter
    (`obs_parse_av1_packet`).
@@ -72,23 +72,23 @@ decoded from a buffer *refer into* that buffer (no copy). The shared constants `
 
 Functions (all operate on plain memory; no global state except the log callback):
 
-| Function | Signature (C) | Notes |
-|---|---|---|
-| `AMF_EncodeInt16/24/32` | `char *(char *out, char *outend, short/int v)` | returns new position or NULL (R01) |
-| `AMF_EncodeNumber` | `(out, outend, double)` | R02 |
-| `AMF_EncodeBoolean` | `(out, outend, int)` | R03 |
-| `AMF_EncodeString` | `(out, outend, const AVal *)` | R04 |
-| `AMF_EncodeNamedString/Number/Boolean` | `(out, outend, const AVal *name, value)` | R05 |
-| `AMFProp_Encode` | `(AMFObjectProperty *, out, outend)` | R06 |
-| `AMF_Encode` / `AMF_EncodeEcmaArray` / `AMF_EncodeArray` | `(AMFObject *, out, outend)` | R07-R10 |
-| `AMF_DecodeInt16/24/32` | `(const char *) -> u16/u32/u32` | R11 |
-| `AMF_DecodeString/LongString` | `(const char *, AVal *)` | R12 |
-| `AMF_DecodeBoolean/Number` | `(const char *) -> int/double` | R11 |
-| `AMFProp_Decode` | `(prop, buf, size, bDecodeName) -> int` | R13, R14 |
-| `AMF_Decode` | `(obj, buf, size, bDecodeName) -> int` | R15, R17 |
-| `AMF_DecodeArray` | `(obj, buf, size, count, bDecodeName) -> int` | R16, R18 |
-| `AMF_AddProp / AMF_CountProp / AMF_GetProp / AMF_Reset` | | R19 |
-| `AMFProp_GetType/GetName/GetNumber/GetBoolean/GetString/GetObject/IsValid/Reset` and setters | | R19 |
+| Function                                                                                     | Signature (C)                                  | Notes                              |
+| -------------------------------------------------------------------------------------------- | ---------------------------------------------- | ---------------------------------- |
+| `AMF_EncodeInt16/24/32`                                                                      | `char *(char *out, char *outend, short/int v)` | returns new position or NULL (R01) |
+| `AMF_EncodeNumber`                                                                           | `(out, outend, double)`                        | R02                                |
+| `AMF_EncodeBoolean`                                                                          | `(out, outend, int)`                           | R03                                |
+| `AMF_EncodeString`                                                                           | `(out, outend, const AVal *)`                  | R04                                |
+| `AMF_EncodeNamedString/Number/Boolean`                                                       | `(out, outend, const AVal *name, value)`       | R05                                |
+| `AMFProp_Encode`                                                                             | `(AMFObjectProperty *, out, outend)`           | R06                                |
+| `AMF_Encode` / `AMF_EncodeEcmaArray` / `AMF_EncodeArray`                                     | `(AMFObject *, out, outend)`                   | R07-R10                            |
+| `AMF_DecodeInt16/24/32`                                                                      | `(const char *) -> u16/u32/u32`                | R11                                |
+| `AMF_DecodeString/LongString`                                                                | `(const char *, AVal *)`                       | R12                                |
+| `AMF_DecodeBoolean/Number`                                                                   | `(const char *) -> int/double`                 | R11                                |
+| `AMFProp_Decode`                                                                             | `(prop, buf, size, bDecodeName) -> int`        | R13, R14                           |
+| `AMF_Decode`                                                                                 | `(obj, buf, size, bDecodeName) -> int`         | R15, R17                           |
+| `AMF_DecodeArray`                                                                            | `(obj, buf, size, count, bDecodeName) -> int`  | R16, R18                           |
+| `AMF_AddProp / AMF_CountProp / AMF_GetProp / AMF_Reset`                                      |                                                | R19                                |
+| `AMFProp_GetType/GetName/GetNumber/GetBoolean/GetString/GetObject/IsValid/Reset` and setters |                                                | R19                                |
 
 Not specified: `AMF3_Decode`, `AMF3Prop_Decode`, `AMF3CD_*`, `AMF_Dump`, `AMFProp_Dump` (Q-10).
 
@@ -133,16 +133,16 @@ Constants: tag types AUDIO 0x08, VIDEO 0x09, SCRIPT (info) 0x12; `MILLISECOND_DE
 `flv_meta_data` pulls these values from the libobs objects of the output; they are inputs of the muxer.
 A Rust port takes them as a plain struct:
 
-| Accessor (stubbed in `gen/flv_stubs.c`) | Meaning | `cfg` key |
-|---|---|---|
-| `obs_output_get_video_encoder(o)`, `obs_output_get_audio_encoder(o, 0)` | the encoders (audio track 0) | - |
-| `obs_encoder_get_codec(venc)` | video codec name string (`"h264"`, `"av1"`, `"hevc"`, other) | `vcodec` |
-| `obs_encoder_get_width/height(venc)` | `u32` | `width`, `height` |
-| `obs_encoder_get_settings(enc)` + `obs_data_get_double(s, "bitrate")` | video/audio bitrate in kbit/s as double (0.0 if absent) | `vbitrate`, `abitrate` |
-| `obs_encoder_video(venc)` + `video_output_get_frame_rate(v)` | frame rate (double) | `fps` |
-| `obs_encoder_get_sample_rate(aenc)` | `u32` | `arate` |
-| `obs_encoder_audio(aenc)` + `audio_output_get_channels(a)` | channel count (`size_t`) | `channels` |
-| `obs_get_version_string()` | version text | `version` |
+| Accessor (stubbed in `gen/flv_stubs.c`)                                 | Meaning                                                      | `cfg` key              |
+| ----------------------------------------------------------------------- | ------------------------------------------------------------ | ---------------------- |
+| `obs_output_get_video_encoder(o)`, `obs_output_get_audio_encoder(o, 0)` | the encoders (audio track 0)                                 | -                      |
+| `obs_encoder_get_codec(venc)`                                           | video codec name string (`"h264"`, `"av1"`, `"hevc"`, other) | `vcodec`               |
+| `obs_encoder_get_width/height(venc)`                                    | `u32`                                                        | `width`, `height`      |
+| `obs_encoder_get_settings(enc)` + `obs_data_get_double(s, "bitrate")`   | video/audio bitrate in kbit/s as double (0.0 if absent)      | `vbitrate`, `abitrate` |
+| `obs_encoder_video(venc)` + `video_output_get_frame_rate(v)`            | frame rate (double)                                          | `fps`                  |
+| `obs_encoder_get_sample_rate(aenc)`                                     | `u32`                                                        | `arate`                |
+| `obs_encoder_audio(aenc)` + `audio_output_get_channels(a)`              | channel count (`size_t`)                                     | `channels`             |
+| `obs_get_version_string()`                                              | version text                                                 | `version`              |
 
 Defaults used by the scripts: `h264`, 1920, 1080, 2500, 60, 160, 48000, 2, `0.0.0-conformance`. The module
 name is the constant `"obs-output module"`.
@@ -186,20 +186,20 @@ type size=10 ts       ext sid  key|AVC  nalu cts=0          payload        prevs
 
 ### 4.2 AMF0 wire format
 
-| Type | Wire bytes |
-|---|---|
-| Number | `00` + IEEE-754 binary64 big endian (9 bytes). Every bit pattern is preserved, including NaN payloads and -0.0 |
-| Boolean | `01` + `00`/`01` |
-| String (len < 65536) | `02` + u16 length + bytes |
-| Long string (len >= 65536) | `0c` + u32 length + bytes |
-| Object | `03` + (property)* + `00 00 09` |
-| Null | `05` |
-| Undefined / Unsupported | `06` / `0d` (decoded as Null) |
-| ECMA array | `08` + u32 count + (property)* + `00 00 09` |
-| Strict array | `0a` + u32 count + (value)* (no end marker, values nameless) |
-| Date | `0b` + double (ms) + s16 UTC offset (decode only) |
-| XML document | `0f` + u32 length + bytes (decode only) |
-| property (named) | u16 name length + name bytes + value; (nameless: just the value) |
+| Type                       | Wire bytes                                                                                                     |
+| -------------------------- | -------------------------------------------------------------------------------------------------------------- |
+| Number                     | `00` + IEEE-754 binary64 big endian (9 bytes). Every bit pattern is preserved, including NaN payloads and -0.0 |
+| Boolean                    | `01` + `00`/`01`                                                                                               |
+| String (len < 65536)       | `02` + u16 length + bytes                                                                                      |
+| Long string (len >= 65536) | `0c` + u32 length + bytes                                                                                      |
+| Object                     | `03` + (property)\* + `00 00 09`                                                                               |
+| Null                       | `05`                                                                                                           |
+| Undefined / Unsupported    | `06` / `0d` (decoded as Null)                                                                                  |
+| ECMA array                 | `08` + u32 count + (property)\* + `00 00 09`                                                                   |
+| Strict array               | `0a` + u32 count + (value)\* (no end marker, values nameless)                                                  |
+| Date                       | `0b` + double (ms) + s16 UTC offset (decode only)                                                              |
+| XML document               | `0f` + u32 length + bytes (decode only)                                                                        |
+| property (named)           | u16 name length + name bytes + value; (nameless: just the value)                                               |
 
 Worked example (vector `04-amf-encode-objects`): an object with `width` = 1920.0, `stereo` = true, `name` = "abc"
 encodes as
@@ -227,17 +227,13 @@ tag type `12`, DataSize 414 (`00019e`), timestamp 0, stream id 0, body:
 
 ### 4.4 `hvcC` and `av1C` records
 
-hvcC (R42): `01 | space<<6 | tier<<5 | profile_idc | compat u32 | constraint (6 bytes) | level_idc |
-f0 + min_spatial u12 (u16, 0xF000 | v) | fc | parallelismType | fc | chromaFormat | f8 | bitDepthLumaMinus8 |
-f8 | bitDepthChromaMinus8 | avgFrameRate u16 = 0 | constFR(0)<<6 | numTemporalLayers<<3 | nestedFlag<<2 | 3 |
-numOfArrays | arrays`. Each array: `completeness<<7 | nal_type`, count u16, then per NAL: length u16, NAL bytes
+hvcC (R42): `01 | space<<6 | tier<<5 | profile_idc | compat u32 | constraint (6 bytes) | level_idc | f0 + min_spatial u12 (u16, 0xF000 | v) | fc | parallelismType | fc | chromaFormat | f8 | bitDepthLumaMinus8 | f8 | bitDepthChromaMinus8 | avgFrameRate u16 = 0 | constFR(0)<<6 | numTemporalLayers<<3 | nestedFlag<<2 | 3 | numOfArrays | arrays`. Each array: `completeness<<7 | nal_type`, count u16, then per NAL: length u16, NAL bytes
 (with their 2-byte header, emulation prevention bytes kept).
 Worked example (vector `30-hevc-header-basic`, 1080p Main, level 4.0): header
 `01 01 60000000 900000000000 78 f000 fc fd f8 f8 0000 0f 03` + VPS array `a0 0001 0017 <23 bytes>` +
 SPS array `a1 0001 001d <29 bytes>` + PPS array `a2 0001 0006 <6 bytes>` (96 bytes in total).
 
-av1C (R48): `81 | profile<<5 | level | tier<<7|hbd<<6|twelve<<5|mono<<4|subx<<3|suby<<2|pos | 00 |
-sequence header OBU | [last metadata OBU]`. Example (vector `40-av1-header-sequence`):
+av1C (R48): `81 | profile<<5 | level | tier<<7|hbd<<6|twelve<<5|mono<<4|subx<<3|suby<<2|pos | 00 | sequence header OBU | [last metadata OBU]`. Example (vector `40-av1-header-sequence`):
 `81 08 0c 00 0a 0b 00000042abbfc37709d001` (profile 0, level 8, 8-bit 4:2:0, OBU of 13 bytes).
 
 ## 5. Behaviour (numbered rules)
@@ -269,24 +265,24 @@ rule R04/R02/R03 is evaluated after the name; e.g. `ab`/`cd` string needs 4 + 7 
 `flv-mux.c` uses these for every `onMetaData` entry.
 
 **S-021-R06 (property).** `AMFProp_Encode(prop, out, end)`:
+
 1. type INVALID -> NULL (no log).
-2. If type != NULL: when `room <= name.len + 3` (i.e. `out + name.len + 2 + 1 >= end`) -> NULL. (Applies to all
+1. If type != NULL: when `room <= name.len + 3` (i.e. `out + name.len + 2 + 1 >= end`) -> NULL. (Applies to all
    other types, also nameless ones: a nameless property needs `room >= 4` before the value rules are even consulted.)
-3. If type != NULL and `name.len > 0`: write u16 `name.len` and the name. **A NULL-typed property never writes its
+1. If type != NULL and `name.len > 0`: write u16 `name.len` and the name. **A NULL-typed property never writes its
    name** (Q-2): it is a single `05` byte, and requires `room >= 2` (`out + 1 >= end` -> NULL).
-4. By type: NUMBER -> R02 (value `p_number`); BOOLEAN -> R03 (`p_number != 0`); STRING -> R04; OBJECT -> R07;
+1. By type: NUMBER -> R02 (value `p_number`); BOOLEAN -> R03 (`p_number != 0`); STRING -> R04; OBJECT -> R07;
    ECMA_ARRAY -> R08; STRICT_ARRAY -> R09; every other type (DATE, UNDEFINED, REFERENCE, ...) -> log ERROR
    `"%s, invalid type. %d"` and return NULL.
-Names are written for properties inside strict arrays as well when non-empty.
+   Names are written for properties inside strict arrays as well when non-empty.
 
 **S-021-R07 (object).** `AMF_Encode(obj, out, end)`: NULL if `room <= 4` (`out + 4 >= end`). Write `03`. For each
-property in order call R06 on the remaining window; on NULL **log ERROR** `"AMF_Encode - failed to encode property in
-index %d"` and stop iterating (the properties before it stay in the output; later ones are dropped) - the
+property in order call R06 on the remaining window; on NULL **log ERROR** `"AMF_Encode - failed to encode property in index %d"` and stop iterating (the properties before it stay in the output; later ones are dropped) - the
 function does *not* fail (R10). Then, if the remaining room is `<= 3` return NULL, else write `00 00 09`.
 
 **S-021-R08 (ECMA array).** As R07 but the header is `08` + u32 `o_num` (the *declared* count, even if properties were
 dropped), with the entry check `room <= 4` -> NULL, and the same end marker rule (`00 00 09`, NULL if remaining
-room <= 3).
+room \<= 3).
 
 **S-021-R09 (strict array).** `AMF_EncodeArray`: NULL if `room <= 4`; writes `0a`, u32 `o_num`, then the properties as in R07
 (including logging and stopping on a failed one). **No end marker** is written and no room is required for one.
@@ -309,32 +305,33 @@ big endian reinterpreted as binary64 (bit-exact, NaN payloads kept).
 `AMF_DecodeLongString`: `av_len = (i32) u32 at data` (values >= 2^31 are **negative**, Q-19), `av_val = av_len > 0 ? data + 4 : NULL`.
 
 **S-021-R13 (property decode, framing).** `AMFProp_Decode(prop, buf, size, bDecodeName) -> int` (bytes consumed, or -1):
+
 1. `prop.p_name` is cleared (length 0, NULL).
-2. `size == 0` (or NULL buffer) -> -1.
-3. If `bDecodeName`: `size < 4` -> -1. `nameLen = u16(buf)`; `nameLen > size - 2` -> -1. Name = the `nameLen` bytes
+1. `size == 0` (or NULL buffer) -> -1.
+1. If `bDecodeName`: `size < 4` -> -1. `nameLen = u16(buf)`; `nameLen > size - 2` -> -1. Name = the `nameLen` bytes
    (NULL value when `nameLen == 0`); `size -= 2 + nameLen`, advance.
-4. `size == 0` -> -1. Read the type byte (`size -= 1`) and decode the value as in R14.
-5. Return `original_size - remaining_size`.
-No other validation happens. In particular the container cases may return a value **larger than the size supplied**
-(Q-4) and NULL/Undefined consume only the type byte.
+1. `size == 0` -> -1. Read the type byte (`size -= 1`) and decode the value as in R14.
+1. Return `original_size - remaining_size`.
+   No other validation happens. In particular the container cases may return a value **larger than the size supplied**
+   (Q-4) and NULL/Undefined consume only the type byte.
 
 **S-021-R14 (value decoding; `size` = bytes left after the type byte).**
 
-| Type byte | Rule |
-|---|---|
-| 0 NUMBER | `size < 8` -> -1; `p_number` = double; consumes 8 |
-| 1 BOOLEAN | `size < 1` -> -1; `p_number` = 0.0 or 1.0; consumes 1 |
-| 2 STRING | reads u16 `n` (**before checking `size >= 2`**, D-4); `size < n + 2` -> -1; string value (`av_len = n`, `av_val = NULL` when `n == 0`); consumes `2 + n` |
-| 3 OBJECT | `AMF_Decode(obj, buf, size, TRUE)` (R15), -1 -> -1; consumes what it consumed |
-| 4 MOVIECLIP, 7 REFERENCE, 14 RECORDSET, 16 TYPED_OBJECT | log ERROR (`"AMF_MOVIECLIP reserved!"`, `"AMF_REFERENCE not supported!"`, `"AMF_RECORDSET reserved!"`, `"AMF_TYPED_OBJECT not supported!"`) and -1 |
-| 5 NULL, 6 UNDEFINED, 13 UNSUPPORTED | type becomes NULL; consumes 0 |
-| 8 ECMA_ARRAY | `size -= 4` (**not checked**, Q-4); `AMF_Decode(obj, buf + 4, size, TRUE)`; -1 -> -1; the 4-byte count is ignored; consumes `4 + n` |
-| 9 OBJECT_END | -1 |
-| 10 STRICT_ARRAY | reads u32 `n` (**before checking `size >= 4`**, D-4); `size -= 4`; `AMF_DecodeArray(obj, buf + 4, size, (int)n, FALSE)` (R16, R18); -1 -> -1 |
-| 11 DATE | `size < 10` -> -1; `p_number` = double, `p_UTCoffset` = **signed** 16 bit of the next 2 bytes; type stays DATE; consumes 10 |
-| 12 LONG_STRING, 15 XML_DOC | reads u32 `n` (before checking, D-4); `size < n + 4` (64-bit arithmetic) -> -1; value as `AMF_DecodeLongString`; LONG_STRING becomes type **STRING**, XML_DOC stays XML_DOC; consumes `4 + n` |
-| 17 AVMPLUS | AMF3 switch, unspecified (Q-10); a conforming implementation SHOULD return -1 |
-| any other (18..254, 255) | -1 |
+| Type byte                                               | Rule                                                                                                                                                                                          |
+| ------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 0 NUMBER                                                | `size < 8` -> -1; `p_number` = double; consumes 8                                                                                                                                             |
+| 1 BOOLEAN                                               | `size < 1` -> -1; `p_number` = 0.0 or 1.0; consumes 1                                                                                                                                         |
+| 2 STRING                                                | reads u16 `n` (**before checking `size >= 2`**, D-4); `size < n + 2` -> -1; string value (`av_len = n`, `av_val = NULL` when `n == 0`); consumes `2 + n`                                      |
+| 3 OBJECT                                                | `AMF_Decode(obj, buf, size, TRUE)` (R15), -1 -> -1; consumes what it consumed                                                                                                                 |
+| 4 MOVIECLIP, 7 REFERENCE, 14 RECORDSET, 16 TYPED_OBJECT | log ERROR (`"AMF_MOVIECLIP reserved!"`, `"AMF_REFERENCE not supported!"`, `"AMF_RECORDSET reserved!"`, `"AMF_TYPED_OBJECT not supported!"`) and -1                                            |
+| 5 NULL, 6 UNDEFINED, 13 UNSUPPORTED                     | type becomes NULL; consumes 0                                                                                                                                                                 |
+| 8 ECMA_ARRAY                                            | `size -= 4` (**not checked**, Q-4); `AMF_Decode(obj, buf + 4, size, TRUE)`; -1 -> -1; the 4-byte count is ignored; consumes `4 + n`                                                           |
+| 9 OBJECT_END                                            | -1                                                                                                                                                                                            |
+| 10 STRICT_ARRAY                                         | reads u32 `n` (**before checking `size >= 4`**, D-4); `size -= 4`; `AMF_DecodeArray(obj, buf + 4, size, (int)n, FALSE)` (R16, R18); -1 -> -1                                                  |
+| 11 DATE                                                 | `size < 10` -> -1; `p_number` = double, `p_UTCoffset` = **signed** 16 bit of the next 2 bytes; type stays DATE; consumes 10                                                                   |
+| 12 LONG_STRING, 15 XML_DOC                              | reads u32 `n` (before checking, D-4); `size < n + 4` (64-bit arithmetic) -> -1; value as `AMF_DecodeLongString`; LONG_STRING becomes type **STRING**, XML_DOC stays XML_DOC; consumes `4 + n` |
+| 17 AVMPLUS                                              | AMF3 switch, unspecified (Q-10); a conforming implementation SHOULD return -1                                                                                                                 |
+| any other (18..254, 255)                                | -1                                                                                                                                                                                            |
 
 **S-021-R15 (object body, `AMF_Decode`).** `AMF_Decode(obj, buf, size, bDecodeName)` first resets `obj` (0 properties). Loop
 `while size > 0`:
@@ -348,8 +345,9 @@ Consequences, all CORE: an object/ECMA array/top-level list ends at the end mark
 when 1-3 bytes remain that are not an end marker. The end marker is recognised only *between* properties.
 
 **S-021-R16 (strict array count).** The count read for STRICT_ARRAY is an unsigned 32-bit number passed as a C `int`: counts
->= 2^31 are negative and make `AMF_DecodeArray` loop zero times (Q-7: success with an **empty** array that consumed only
-`1 + 4` bytes). Counts that are positive but larger than the remaining values fail with -1 once the data is used up.
+
+> = 2^31 are negative and make `AMF_DecodeArray` loop zero times (Q-7: success with an **empty** array that consumed only
+> `1 + 4` bytes). Counts that are positive but larger than the remaining values fail with -1 once the data is used up.
 
 **S-021-R17 (top-level semantics).** Script bodies are decoded with `bDecodeName = FALSE`: the result is a flat list of
 anonymous values. With `TRUE` each property starts with a name.
@@ -384,12 +382,12 @@ count is **20** followed by these 20 entries in this order (name: type = value) 
 unless noted:
 
 1. `duration` = 0.0; 2. `fileSize` = 0.0; 3. `width` = encoder width; 4. `height` = encoder height;
-5. `videocodecid` (R24); 6. `videodatarate` = video encoder `bitrate` setting; 7. `framerate` = video output frame rate;
-8. `audiocodecid` = 10.0; 9. `audiodatarate` = audio encoder `bitrate`; 10. `audiosamplerate` = audio encoder sample rate;
-11. `audiosamplesize` = 16.0; 12. `audiochannels` = channel count;
-13-19 (booleans): `stereo` = (ch == 2); `2.1` = (ch == 3); `3.1` = (ch == 4); `4.0` = (ch == 4); `4.1` = (ch == 5);
-`5.1` = (ch == 6); `7.1` = (ch == 8). So 4 channels set both `3.1` and `4.0`; 0, 1, 7 and > 8 channels set none (Q-13).
-20. `encoder` = string `"obs-output module (libobs version " + version + ")"`.
+1. `videocodecid` (R24); 6. `videodatarate` = video encoder `bitrate` setting; 7. `framerate` = video output frame rate;
+1. `audiocodecid` = 10.0; 9. `audiodatarate` = audio encoder `bitrate`; 10. `audiosamplerate` = audio encoder sample rate;
+1. `audiosamplesize` = 16.0; 12. `audiochannels` = channel count;
+   13-19 (booleans): `stereo` = (ch == 2); `2.1` = (ch == 3); `3.1` = (ch == 4); `4.0` = (ch == 4); `4.1` = (ch == 5);
+   `5.1` = (ch == 6); `7.1` = (ch == 8). So 4 channels set both `3.1` and `4.0`; 0, 1, 7 and > 8 channels set none (Q-13).
+1. `encoder` = string `"obs-output module (libobs version " + version + ")"`.
 
 Encoding of each entry is R05 (so name = u16 length + bytes, then the typed value). `u32 -> double`, `size_t -> double` conversions are exact
 for the ranges used; `NaN`/`inf`/huge doubles are written as is (vector `10-flv-meta`, last case).
@@ -429,6 +427,7 @@ DataSize = `size + 2`, `time(dts)` (pts ignored), body: `0xaf` (AAC, 44 kHz, 16 
 else `1`, payload; PreviousTagSize.
 
 **S-021-R30 (empty payloads; the three families differ, Q-16).**
+
 - `flv_packet_mux` (video and audio) with NULL/empty data: produces no tag; `*out = NULL`, `*size = 0`.
 - `flv_packet_audio_start/_frames` (Enhanced audio) with NULL/empty data: produces no tag **and does not write `*out` or `*size`** (the runner prefills
   sentinels and prints `untouched`). A Rust port returns `None`.
@@ -439,15 +438,16 @@ else `1`, payload; PreviousTagSize.
 Let `multitrack = (idx > 0)`; `T = type`; frame type `F = 0x10` if `keyframe` else `0x20`
 (for *every* packet type including sequence start/end). Packet types: 0 SEQUENCE_START, 1 CODED_FRAMES, 2 SEQUENCE_END, 3 CODED_FRAMES_X,
 4 METADATA, 5 MPEG2TS_SEQUENCE_START, 6 MULTITRACK. Body:
+
 - not multitrack: `0x80 | F | T`, FourCC, [cts], payload.
 - multitrack: `0x80 | F | 0x06`, `0x00 | T` (multitrack type ONE_TRACK = 0 in the high nibble), FourCC, `idx & 0xff`, [cts], payload.
 - `[cts]` = `BE(cts, 3)` (R27) present **only** when the codec is H.264 or HEVC **and** `T == 1`.
-FourCC: H264 `avc1`, AV1 `av01`, HEVC `hvc1`. DataSize = `size + 5` (+3 with cts) (+2 multitrack). Timestamp = `time(dts)` with the given `dts_offset`.
-Wrappers: `flv_packet_start` = type 0, `dts_offset` 0; `flv_packet_end` = type 2, `dts_offset` 0 (both use the packet's own dts as the timestamp);
-`flv_packet_frames` = type 1, except **type 3** when the codec is H.264/HEVC **and `pts == dts` as raw tick values** (not as milliseconds, so
-`pts = dts + 1` at 90 kHz gives type 1 with `cts = 0`); AV1 always uses type 1 and never has a cts.
-`idx` is truncated to 8 bits for the trackId but `multitrack` stays true (idx 256 -> trackId 0, Q-17).
-`flv_packet_ex` can be driven with any `T`; no validation (vector `ex_raw` cases).
+  FourCC: H264 `avc1`, AV1 `av01`, HEVC `hvc1`. DataSize = `size + 5` (+3 with cts) (+2 multitrack). Timestamp = `time(dts)` with the given `dts_offset`.
+  Wrappers: `flv_packet_start` = type 0, `dts_offset` 0; `flv_packet_end` = type 2, `dts_offset` 0 (both use the packet's own dts as the timestamp);
+  `flv_packet_frames` = type 1, except **type 3** when the codec is H.264/HEVC **and `pts == dts` as raw tick values** (not as milliseconds, so
+  `pts = dts + 1` at 90 kHz gives type 1 with `cts = 0`); AV1 always uses type 1 and never has a cts.
+  `idx` is truncated to 8 bits for the trackId but `multitrack` stays true (idx 256 -> trackId 0, Q-17).
+  `flv_packet_ex` can be driven with any `T`; no validation (vector `ex_raw` cases).
 
 **S-021-R32 (multitrack audio).** `flv_packet_audio_ex(packet, codec, dts_offset, type, idx)` requires an AUDIO packet and `codec != NONE`
 (D-1, D-2). If `data` is NULL or empty: no tag, outputs untouched (R30). `multitrack = idx > 0`. Body: not multitrack: `0x90 | T`, `"mp4a"`, payload; multitrack: `0x90 | 0x05`,
@@ -457,8 +457,7 @@ MULTICHANNEL_CONFIG, 5 MULTITRACK. `flv_packet_audio_start` = type 0, offset 0; 
 **S-021-R33 (audio FourCC).** AAC -> `mp4a`; `AUDIO_CODEC_NONE` is a precondition violation (assert).
 
 **S-021-R34 (colour metadata packet, `flv_packet_metadata`).** Builds the AMF payload
-`02 0009 "colorInfo"  03 { 000b "colorConfig" 03 { 0008 "bitDepth" 00 <bits> | 000e "colorPrimaries" 00 <prim> | 0017 "transferCharacteristics" 00 <trc> |
-0012 "matrixCoefficients" 00 <space> } 00 00 09 [ 0007 "hdrMdcv" 03 { 000c "maxLuminance" 00 <max> | 000c "minLuminance" 00 <min> } 00 00 09 ] } 00 00 09`,
+`02 0009 "colorInfo"  03 { 000b "colorConfig" 03 { 0008 "bitDepth" 00 <bits> | 000e "colorPrimaries" 00 <prim> | 0017 "transferCharacteristics" 00 <trc> | 0012 "matrixCoefficients" 00 <space> } 00 00 09 [ 0007 "hdrMdcv" 03 { 000c "maxLuminance" 00 <max> | 000c "minLuminance" 00 <min> } 00 00 09 ] } 00 00 09`,
 the `hdrMdcv` object being present **only if `max_luminance != 0`** (a non-zero min alone is dropped). All values are doubles converted from the integer arguments
 (`color_primaries` is a `u8`). Tag: type 0x09, DataSize = payload + 5 (+2 multitrack), timestamp 0 (ext 0), StreamID 0; body: not multitrack: `0x84` (ExHeader flag + packet type 4, **no frame type bits**),
 FourCC, payload; multitrack: `0x86`, `0x04`, FourCC, `idx & 0xff`, payload. PreviousTagSize. `codec` must not be NONE.
@@ -494,12 +493,9 @@ reader that returns 0 for bits beyond the NAL end (guaranteed by the reference f
 **S-021-R40 (field extraction).** Initial state: `profile_space = tier = profile_idc = level_idc = 0`, `compat = 0xFFFFFFFF`, `constraint = 0xFFFFFFFFFFFF`, `min_spatial = 4097`,
 everything else 0, `lengthSizeMinusOne = 3`. NAL header (16 bits): forbidden(1), type(6), layer_id(6), tid_plus1(3) are skipped except the type; all following bit counts are for the **unescaped** payload after the header. `u(n)` = n bits MSB first,
 `ue/se` = Exp-Golomb (section 6.4: note the all-zero behaviour), `skip(n)` = read and drop.
+
 - **VPS**: `skip 12; max_sub_layers_minus1 = u(3); numTemporalLayers = max(.., max_sub_layers_minus1 + 1)` (as u8; 8 wraps the field when shifted, Q-11); `skip 17; PTL(max_sub_layers_minus1)`.
-- **SPS**: `skip 4 (vps id); max_sub = u(3); numTemporalLayers = max(.., max_sub + 1); temporalIdNested = u(1); PTL(max_sub); ue (sps id); chromaFormat = ue; if chromaFormat == 3: skip 1;
-  ue (width); ue (height); if u(1): 4 x ue (conformance window); bitDepthLumaMinus8 = ue; bitDepthChromaMinus8 = ue (both stored as u8); log2_poc = ue;
-  i = (u(1) ? 0 : max_sub); for i..=max_sub: 3 x ue; 6 x ue; if u(1) (scaling_list_enabled) and u(1) (data present): scaling lists; skip 2 (amp, sao);
-  if u(1) (pcm): skip 4, skip 4, ue, ue, skip 1; n = ue; n > 64 -> FAIL; for idx in 0..n: RPS(idx, n); if u(1) (long_term_ref_pics_present): k = ue; k > 31 -> FAIL; k times: u(min(log2_poc + 4, 16)) and u(1);
-  skip 2 (temporal mvp, strong intra smoothing); if u(1) (vui_present): VUI`. Everything after (and the rest of the VUI) is ignored.
+- **SPS**: `skip 4 (vps id); max_sub = u(3); numTemporalLayers = max(.., max_sub + 1); temporalIdNested = u(1); PTL(max_sub); ue (sps id); chromaFormat = ue; if chromaFormat == 3: skip 1; ue (width); ue (height); if u(1): 4 x ue (conformance window); bitDepthLumaMinus8 = ue; bitDepthChromaMinus8 = ue (both stored as u8); log2_poc = ue; i = (u(1) ? 0 : max_sub); for i..=max_sub: 3 x ue; 6 x ue; if u(1) (scaling_list_enabled) and u(1) (data present): scaling lists; skip 2 (amp, sao); if u(1) (pcm): skip 4, skip 4, ue, ue, skip 1; n = ue; n > 64 -> FAIL; for idx in 0..n: RPS(idx, n); if u(1) (long_term_ref_pics_present): k = ue; k > 31 -> FAIL; k times: u(min(log2_poc + 4, 16)) and u(1); skip 2 (temporal mvp, strong intra smoothing); if u(1) (vui_present): VUI`. Everything after (and the rest of the VUI) is ignored.
   chromaFormat, bit depths, temporalIdNested are overwritten by **every** SPS (the last one wins); `numTemporalLayers` takes the maximum.
 - **PPS**: `ue; ue; skip 7; ue; ue; se; skip 2; if u(1): ue; se; se; skip 4; tiles = u(1); wpp = u(1)`;
   `parallelismType = 3 if wpp and !tiles; 0 if wpp and tiles; 2 if tiles; else 1` (the last PPS wins).
@@ -507,13 +503,9 @@ everything else 0, `lengthSizeMinusOne = 3`. NAL header (16 bits): forbidden(1),
   `for i < max_sub: profile_present[i] = u(1); level_present[i] = u(1)`; `if max_sub > 0: skip 2 * (8 - max_sub)`;
   `for i < max_sub: if profile_present[i]: skip 88; if level_present[i]: skip 8`.
 - **Scaling lists**: `for sizeId in 0..4: for matrixId in 0..(sizeId == 3 ? 2 : 6): if !u(1): ue; else n = min(64, 1 << (4 + 2*sizeId)); if sizeId > 1: se; n x se`.
-- **RPS(idx, num)**: `if idx != 0 and u(1) (inter_ref_pic_set_prediction): idx >= num -> FAIL (cannot happen from an SPS); skip 1; ue; cnt[idx] = 0; for j in 0..=cnt[idx-1]: used = u(1); use_delta = used ? 0 : u(1); if used or use_delta: cnt[idx] += 1;
-  else: neg = ue; pos = ue; (pos + neg) * 2 > bits_left -> FAIL (the comparison is unsigned 64-bit: a negative `bits_left`, possible once the reader ran past the NAL end, never fails); cnt[idx] = neg + pos; neg times {ue; skip 1}; pos times {ue; skip 1}`. `bits_left` = payload bits minus bits read (bits of the unescaped NAL; slack bits do not count).
-- **VUI** (given `max_sub`): `if u(1): if u(8) == 255: skip 32; if u(1): skip 1; if u(1): skip 4; if u(1): skip 24; if u(1): ue, ue; skip 3; if u(1): 4 x ue;
-  if u(1) (timing): skip 32; skip 32; if u(1): ue; if u(1): HRD(max_sub); if u(1) (bitstream_restriction): skip 3; m = ue; min_spatial = min(min_spatial, m) (as u16); 4 x ue`.
-- **HRD**(max_sub), common-info present = 1: `nal = u(1); vcl = u(1); sub_pic = 0; if nal or vcl: sub_pic = u(1); if sub_pic: skip 19; skip 8; if sub_pic: skip 4; skip 15.
-  for i in 0..=max_sub: fixed_general = u(1); fixed_cvs = 0; if !fixed_general: fixed_cvs = u(1); low_delay = 0; if fixed_cvs: ue else low_delay = u(1);
-  cpb = 0; if !low_delay: cpb = ue; cpb > 31 -> stop HRD parsing, silently (the return value is ignored by the caller); if nal: SUBLAYER(cpb); if vcl: SUBLAYER(cpb)`;
+- **RPS(idx, num)**: `if idx != 0 and u(1) (inter_ref_pic_set_prediction): idx >= num -> FAIL (cannot happen from an SPS); skip 1; ue; cnt[idx] = 0; for j in 0..=cnt[idx-1]: used = u(1); use_delta = used ? 0 : u(1); if used or use_delta: cnt[idx] += 1; else: neg = ue; pos = ue; (pos + neg) * 2 > bits_left -> FAIL (the comparison is unsigned 64-bit: a negative `bits_left`, possible once the reader ran past the NAL end, never fails); cnt[idx] = neg + pos; neg times {ue; skip 1}; pos times {ue; skip 1}`. `bits_left` = payload bits minus bits read (bits of the unescaped NAL; slack bits do not count).
+- **VUI** (given `max_sub`): `if u(1): if u(8) == 255: skip 32; if u(1): skip 1; if u(1): skip 4; if u(1): skip 24; if u(1): ue, ue; skip 3; if u(1): 4 x ue; if u(1) (timing): skip 32; skip 32; if u(1): ue; if u(1): HRD(max_sub); if u(1) (bitstream_restriction): skip 3; m = ue; min_spatial = min(min_spatial, m) (as u16); 4 x ue`.
+- **HRD**(max_sub), common-info present = 1: `nal = u(1); vcl = u(1); sub_pic = 0; if nal or vcl: sub_pic = u(1); if sub_pic: skip 19; skip 8; if sub_pic: skip 4; skip 15. for i in 0..=max_sub: fixed_general = u(1); fixed_cvs = 0; if !fixed_general: fixed_cvs = u(1); low_delay = 0; if fixed_cvs: ue else low_delay = u(1); cpb = 0; if !low_delay: cpb = ue; cpb > 31 -> stop HRD parsing, silently (the return value is ignored by the caller); if nal: SUBLAYER(cpb); if vcl: SUBLAYER(cpb)`;
   `SUBLAYER(cpb): for 0..=cpb: ue; ue; if sub_pic: ue; ue; skip 1`.
   **Q-12:** when `fixed_pic_rate_general_flag` is 1 the reference does *not* treat `fixed_pic_rate_within_cvs_flag` as 1 (as H.265 requires), so the next bit is read as `low_delay_hrd_flag` instead of an
   Exp-Golomb `elemental_duration`: bit streams written per H.265 are mis-parsed (typically giving `min_spatial = 0`). Conforming ports MUST reproduce this.
@@ -548,6 +540,7 @@ All other types are skipped. After the scan `nb_seq == 0` -> FAIL.
 
 **S-021-R47 (sequence header parse).** Let `P` be the payload. Its bit length is: drop all trailing `00` bytes; if none are left the length is 0; else `8 * bytes - (trailing_zero_bits(last byte) + 1)` (the trailing one-bit and the zeros after it are not part of the syntax).
 Syntax (bits MSB first), with the rule that **the syntax must consume exactly that many bits, otherwise FAIL**:
+
 ```
 profile=u(3); skip 1 (still_picture); reduced=u(1);
 if reduced: level = u(5); tier = 0
@@ -578,6 +571,7 @@ color_config:
    unless mono: skip 1 (separate_uv_delta_q)
 skip 1 (film_grain_params_present)
 ```
+
 `uvlc`: count zero bits until a one bit (stop also at the end of the data); if the count is >= 32 read nothing more, else skip that many bits. Initial values `pos = 0`.
 
 **S-021-R48 (record).** The output is `81`, `profile << 5 | level`, `tier << 7 | (bitdepth > 8) << 6 | (bitdepth == 12) << 5 | mono << 4 | subx << 3 | suby << 2 | pos`, `00`, then the complete `seq` OBU bytes (as in the input, including its header and size field), then (if any) the
@@ -644,37 +638,37 @@ packets and buffers. The output plugins call them from the output thread (muxing
 
 Classes: **QUIRK** (SHOULD match), **DEFECT** (crash / UB; required behaviour given). Demonstration scripts are listed.
 
-| ID | Description | Script |
-|---|---|---|
-| Q-1 | Short AMF strings need `len + 5` bytes of room (R04) | `03-amf-encode-capacity` |
-| Q-2 | A NULL-typed property inside a container drops its name and is a single `05` byte (R06) | `04-amf-encode-objects` |
-| Q-3 | A property that does not fit is dropped (log error) and the container is still closed; ECMA count unchanged (R07, R08, R10) | `05-`, `06-` |
-| Q-4 | `AMFProp_Decode` of an ECMA array with fewer than 4 bytes after the marker returns more bytes than supplied; also `08 00000001` consumes the marker (R13, R14) | `08-amf-decode-truncated` |
-| Q-5 | Containers (object, ECMA, top-level list) without end marker are accepted when the data ends (R15) | `08-` |
-| Q-6 | The error-skipping branch of `AMF_Decode` is dead; a bad property always fails the whole call; 1-3 trailing bytes that are not an end marker fail (R15) | `08-` |
-| Q-7 | Strict array counts >= 2^31 decode as empty arrays (R16) | `07-amf-decode-values` |
-| Q-8 | `write_file_info` assumes the FLV header is present (offset 58) (R25) | `13-flv-fileinfo` |
-| Q-9 | `AMFProp_GetObject` ignores ECMA and strict arrays (R19) | `09-amf-accessors` |
-| Q-10 | AMF3 (0x11) not specified: ports SHOULD fail (-1) (R14, R20) | none |
-| Q-11 | `numTemporalLayers == 8` (max_sub_layers_minus1 = 7) overflows into the constantFrameRate bit of the record (R42) | `31-hevc-header-ptl-merge` |
-| Q-12 | `fixed_pic_rate_general_flag = 1` handled differently from H.265 in the VUI HRD parser (R40) | `32-hevc-header-sps-syntax` |
-| Q-13 | The FLV channel flags: 4 channels set `3.1` and `4.0`; 1, 7, > 8 set none (R23) | `11-flv-meta-channels` |
-| Q-14 | `flv_packet_start/_end` use the packet's own dts as timestamp (offset 0); the legacy audio byte `0xaf` is fixed; `timebase_num` is ignored (R27, R29, R31) | `14-`, `15-`, `16-` |
-| Q-15 | The start-code finder misses a start code in the last 3 bytes of the data (R38) | `30-hevc-header-basic` |
-| Q-16 | The three empty-payload behaviours of the muxers (R30) | `20-flv-empty-and-quirks` |
-| Q-17 | The multitrack trackId is `idx & 0xff`: idx 256 gives trackId 0 but stays multitrack (R31, R32) | `17-flv-ex-multitrack`, `18-flv-ex-audio`, `20-` |
-| Q-18 | A NAL longer than 65535 bytes gets a truncated u16 length in the hvcC array (R39) | `34-hevc-header-arrays` |
-| Q-19 | `AMF_DecodeLongString` lengths >= 2^31 are negative `av_len`, value NULL (R12) | `02-amf-strings` |
-| Q-20 | `obs_parse_av1_packet` silently keeps the OBUs before a damaged one (R50) | `43-av1-packet` |
-| D-1 | wrong packet type (video function with audio packet and vice versa) asserts (R31, R32, R36) | `21-flv-defects` |
-| D-2 | codec NONE asserts (R33, R36) | `21-` |
-| D-3 | `timebase_den == 0` divides by zero (R27, R36) | `21-` |
-| D-4 | `AMFProp_Decode` reads the length field of STRING/STRICT_ARRAY/LONG_STRING/XML_DOC before checking `size`: with 0-1 (resp. 0-3) bytes left it reads past the buffer. REQUIRED: -1. | `08-` |
-| D-5 | `flv_meta_data` property buffer (4096 bytes) overrun / NULL deref when the version string exceeds 3699 bytes. REQUIRED: error. | `12-flv-meta-version` |
-| D-6 | the 24-bit DataSize wraps for payloads of >= 16 MiB - header. REQUIRED: error (the runner models the failure) | `21-` |
-| D-7 | `obs_parse_hevc_header` failure after splitting returns a non-zero size with `*header` unset. REQUIRED: 0. | `35-` |
-| D-8 | `obs_parse_hevc_header` with empty input aborts in `bmalloc(0)`. REQUIRED: 0 / no header. | `36-` |
-| D-9 | `obs_parse_av1_header` / `obs_parse_av1_packet` read beyond the input for cut-off OBUs, empty input, and a frame OBU with empty payload; REQUIRED: R49, R51. For `av1_packet` the crash case `3200` must yield `size=2 ... data=3200` (the empty-payload frame OBU is copied without computing a priority). | `42-`, `43-` |
+| ID   | Description                                                                                                                                                                                                                                                                                                 | Script                                           |
+| ---- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------ |
+| Q-1  | Short AMF strings need `len + 5` bytes of room (R04)                                                                                                                                                                                                                                                        | `03-amf-encode-capacity`                         |
+| Q-2  | A NULL-typed property inside a container drops its name and is a single `05` byte (R06)                                                                                                                                                                                                                     | `04-amf-encode-objects`                          |
+| Q-3  | A property that does not fit is dropped (log error) and the container is still closed; ECMA count unchanged (R07, R08, R10)                                                                                                                                                                                 | `05-`, `06-`                                     |
+| Q-4  | `AMFProp_Decode` of an ECMA array with fewer than 4 bytes after the marker returns more bytes than supplied; also `08 00000001` consumes the marker (R13, R14)                                                                                                                                              | `08-amf-decode-truncated`                        |
+| Q-5  | Containers (object, ECMA, top-level list) without end marker are accepted when the data ends (R15)                                                                                                                                                                                                          | `08-`                                            |
+| Q-6  | The error-skipping branch of `AMF_Decode` is dead; a bad property always fails the whole call; 1-3 trailing bytes that are not an end marker fail (R15)                                                                                                                                                     | `08-`                                            |
+| Q-7  | Strict array counts >= 2^31 decode as empty arrays (R16)                                                                                                                                                                                                                                                    | `07-amf-decode-values`                           |
+| Q-8  | `write_file_info` assumes the FLV header is present (offset 58) (R25)                                                                                                                                                                                                                                       | `13-flv-fileinfo`                                |
+| Q-9  | `AMFProp_GetObject` ignores ECMA and strict arrays (R19)                                                                                                                                                                                                                                                    | `09-amf-accessors`                               |
+| Q-10 | AMF3 (0x11) not specified: ports SHOULD fail (-1) (R14, R20)                                                                                                                                                                                                                                                | none                                             |
+| Q-11 | `numTemporalLayers == 8` (max_sub_layers_minus1 = 7) overflows into the constantFrameRate bit of the record (R42)                                                                                                                                                                                           | `31-hevc-header-ptl-merge`                       |
+| Q-12 | `fixed_pic_rate_general_flag = 1` handled differently from H.265 in the VUI HRD parser (R40)                                                                                                                                                                                                                | `32-hevc-header-sps-syntax`                      |
+| Q-13 | The FLV channel flags: 4 channels set `3.1` and `4.0`; 1, 7, > 8 set none (R23)                                                                                                                                                                                                                             | `11-flv-meta-channels`                           |
+| Q-14 | `flv_packet_start/_end` use the packet's own dts as timestamp (offset 0); the legacy audio byte `0xaf` is fixed; `timebase_num` is ignored (R27, R29, R31)                                                                                                                                                  | `14-`, `15-`, `16-`                              |
+| Q-15 | The start-code finder misses a start code in the last 3 bytes of the data (R38)                                                                                                                                                                                                                             | `30-hevc-header-basic`                           |
+| Q-16 | The three empty-payload behaviours of the muxers (R30)                                                                                                                                                                                                                                                      | `20-flv-empty-and-quirks`                        |
+| Q-17 | The multitrack trackId is `idx & 0xff`: idx 256 gives trackId 0 but stays multitrack (R31, R32)                                                                                                                                                                                                             | `17-flv-ex-multitrack`, `18-flv-ex-audio`, `20-` |
+| Q-18 | A NAL longer than 65535 bytes gets a truncated u16 length in the hvcC array (R39)                                                                                                                                                                                                                           | `34-hevc-header-arrays`                          |
+| Q-19 | `AMF_DecodeLongString` lengths >= 2^31 are negative `av_len`, value NULL (R12)                                                                                                                                                                                                                              | `02-amf-strings`                                 |
+| Q-20 | `obs_parse_av1_packet` silently keeps the OBUs before a damaged one (R50)                                                                                                                                                                                                                                   | `43-av1-packet`                                  |
+| D-1  | wrong packet type (video function with audio packet and vice versa) asserts (R31, R32, R36)                                                                                                                                                                                                                 | `21-flv-defects`                                 |
+| D-2  | codec NONE asserts (R33, R36)                                                                                                                                                                                                                                                                               | `21-`                                            |
+| D-3  | `timebase_den == 0` divides by zero (R27, R36)                                                                                                                                                                                                                                                              | `21-`                                            |
+| D-4  | `AMFProp_Decode` reads the length field of STRING/STRICT_ARRAY/LONG_STRING/XML_DOC before checking `size`: with 0-1 (resp. 0-3) bytes left it reads past the buffer. REQUIRED: -1.                                                                                                                          | `08-`                                            |
+| D-5  | `flv_meta_data` property buffer (4096 bytes) overrun / NULL deref when the version string exceeds 3699 bytes. REQUIRED: error.                                                                                                                                                                              | `12-flv-meta-version`                            |
+| D-6  | the 24-bit DataSize wraps for payloads of >= 16 MiB - header. REQUIRED: error (the runner models the failure)                                                                                                                                                                                               | `21-`                                            |
+| D-7  | `obs_parse_hevc_header` failure after splitting returns a non-zero size with `*header` unset. REQUIRED: 0.                                                                                                                                                                                                  | `35-`                                            |
+| D-8  | `obs_parse_hevc_header` with empty input aborts in `bmalloc(0)`. REQUIRED: 0 / no header.                                                                                                                                                                                                                   | `36-`                                            |
+| D-9  | `obs_parse_av1_header` / `obs_parse_av1_packet` read beyond the input for cut-off OBUs, empty input, and a frame OBU with empty payload; REQUIRED: R49, R51. For `av1_packet` the crash case `3200` must yield `size=2 ... data=3200` (the empty-payload frame OBU is copied without computing a priority). | `42-`, `43-`                                     |
 
 ## 9. Implementation notes (non-normative)
 
@@ -691,52 +685,52 @@ Classes: **QUIRK** (SHOULD match), **DEFECT** (crash / UB; required behaviour gi
 
 ## 10. Conformance coverage
 
-| Rule | Scripts |
-|---|---|
-| R01 | `01-amf-ints-numbers`, `03-amf-encode-capacity` |
-| R02, R03 | `01-amf-ints-numbers`, `03-` |
-| R04 | `02-amf-strings`, `03-` |
-| R05 | `02-`, `03-` |
-| R06 | `04-amf-encode-objects`, `05-amf-encode-object-limits`, `06-amf-encode-sweeps` |
-| R07, R08, R09, R10 | `04-`, `05-`, `06-` |
-| R11, R12 | `01-`, `02-` |
-| R13, R14 | `07-amf-decode-values`, `08-amf-decode-truncated` |
-| R15 | `07-`, `08-` |
-| R16 | `07-` (Q-7 block), `08-` |
-| R17, R18 | `07-` |
-| R19 | `09-amf-accessors` |
-| R20 | (no vector; Q-10) |
-| R21-R24 | `10-flv-meta`, `11-flv-meta-channels`, `12-flv-meta-version` |
-| R25 | `13-flv-fileinfo` |
-| R26 | see R28, R29 |
-| R27 | `14-flv-legacy-video`, `15-flv-legacy-audio`, `16-flv-ex-video`, `22-flv-helpers` |
-| R28 | `14-flv-legacy-video` |
-| R29 | `15-flv-legacy-audio` |
-| R30 | `20-flv-empty-and-quirks` |
-| R31 | `16-flv-ex-video`, `17-flv-ex-multitrack` |
-| R32, R33 | `18-flv-ex-audio` |
-| R34 | `19-flv-ex-metadata` |
-| R35 | `22-flv-helpers` |
-| R36 | `21-flv-defects` |
-| R37 | `30-hevc-header-basic`, `36-hevc-header-passthrough` |
-| R38, R39 | `30-`, `34-hevc-header-arrays` |
-| R40 | `31-hevc-header-ptl-merge`, `32-hevc-header-sps-syntax`, `33-hevc-header-pps` |
-| R41 | `31-` |
-| R42 | `30-`, `31-`, `33-`, `34-` |
-| R43 | `35-hevc-header-failures` |
-| R44 | `37-hevc-rbsp` |
-| R45 | `41-av1-header-obus` |
-| R46 | `41-` |
-| R47, R48 | `40-av1-header-sequence` |
-| R49 | `41-`, `42-av1-header-defects` |
-| R50, R51 | `43-av1-packet` |
+| Rule               | Scripts                                                                           |
+| ------------------ | --------------------------------------------------------------------------------- |
+| R01                | `01-amf-ints-numbers`, `03-amf-encode-capacity`                                   |
+| R02, R03           | `01-amf-ints-numbers`, `03-`                                                      |
+| R04                | `02-amf-strings`, `03-`                                                           |
+| R05                | `02-`, `03-`                                                                      |
+| R06                | `04-amf-encode-objects`, `05-amf-encode-object-limits`, `06-amf-encode-sweeps`    |
+| R07, R08, R09, R10 | `04-`, `05-`, `06-`                                                               |
+| R11, R12           | `01-`, `02-`                                                                      |
+| R13, R14           | `07-amf-decode-values`, `08-amf-decode-truncated`                                 |
+| R15                | `07-`, `08-`                                                                      |
+| R16                | `07-` (Q-7 block), `08-`                                                          |
+| R17, R18           | `07-`                                                                             |
+| R19                | `09-amf-accessors`                                                                |
+| R20                | (no vector; Q-10)                                                                 |
+| R21-R24            | `10-flv-meta`, `11-flv-meta-channels`, `12-flv-meta-version`                      |
+| R25                | `13-flv-fileinfo`                                                                 |
+| R26                | see R28, R29                                                                      |
+| R27                | `14-flv-legacy-video`, `15-flv-legacy-audio`, `16-flv-ex-video`, `22-flv-helpers` |
+| R28                | `14-flv-legacy-video`                                                             |
+| R29                | `15-flv-legacy-audio`                                                             |
+| R30                | `20-flv-empty-and-quirks`                                                         |
+| R31                | `16-flv-ex-video`, `17-flv-ex-multitrack`                                         |
+| R32, R33           | `18-flv-ex-audio`                                                                 |
+| R34                | `19-flv-ex-metadata`                                                              |
+| R35                | `22-flv-helpers`                                                                  |
+| R36                | `21-flv-defects`                                                                  |
+| R37                | `30-hevc-header-basic`, `36-hevc-header-passthrough`                              |
+| R38, R39           | `30-`, `34-hevc-header-arrays`                                                    |
+| R40                | `31-hevc-header-ptl-merge`, `32-hevc-header-sps-syntax`, `33-hevc-header-pps`     |
+| R41                | `31-`                                                                             |
+| R42                | `30-`, `31-`, `33-`, `34-`                                                        |
+| R43                | `35-hevc-header-failures`                                                         |
+| R44                | `37-hevc-rbsp`                                                                    |
+| R45                | `41-av1-header-obus`                                                              |
+| R46                | `41-`                                                                             |
+| R47, R48           | `40-av1-header-sequence`                                                          |
+| R49                | `41-`, `42-av1-header-defects`                                                    |
+| R50, R51           | `43-av1-packet`                                                                   |
 
 ## 11. Open questions
 
 1. AMF3 (`AMF_AVMPLUS` and the `AMF3*` functions) is unspecified because the reference reads uninitialised memory for some well-formed inputs;
    the RTMP command layer of OBS never decodes AMF3 from the server in the supported flows. Confirm that failing (-1) is acceptable.
-2. HEVC `ENABLE_HEVC` is a compile-time option of the plugin; the vectors assume it is on. A port must expose it as a feature or a constant.
-3. D-5: the exact capacity accounting of the 4096-byte property buffer was characterised for the default entries (limit 3699 version bytes). If entries are
+1. HEVC `ENABLE_HEVC` is a compile-time option of the plugin; the vectors assume it is on. A port must expose it as a feature or a constant.
+1. D-5: the exact capacity accounting of the 4096-byte property buffer was characterised for the default entries (limit 3699 version bytes). If entries are
    added later the limit changes; the rule is "the body must fit 4096 bytes with the same encoder rules".
-4. Behaviour of `obs_parse_hevc_header` for SPS data truncated by more than 64 bytes (the reference reads foreign memory) is not specified.
-5. `AMF_Dump`, `AMFProp_Dump` only log at debug level and are not covered.
+1. Behaviour of `obs_parse_hevc_header` for SPS data truncated by more than 64 bytes (the reference reads foreign memory) is not specified.
+1. `AMF_Dump`, `AMFProp_Dump` only log at debug level and are not covered.

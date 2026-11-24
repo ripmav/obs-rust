@@ -1,12 +1,12 @@
 # S-002 `calldata` (typed-less parameter stack)
 
-| | |
-|---|---|
-| Status | Ready for review |
-| Reference | libobs 33.0.1 `callback/calldata.c`, `calldata.h` |
-| Target crate | `crates/obs-signal` (module `calldata`) |
-| Depends on | S-001 |
-| Conformance | `test/conformance/scripts/calldata/` (12 scripts) |
+|              |                                                   |
+| ------------ | ------------------------------------------------- |
+| Status       | Ready for review                                  |
+| Reference    | libobs 33.0.1 `callback/calldata.c`, `calldata.h` |
+| Target crate | `crates/obs-signal` (module `calldata`)           |
+| Depends on   | S-001                                             |
+| Conformance  | `test/conformance/scripts/calldata/` (12 scripts) |
 
 ## 1. Scope
 
@@ -44,20 +44,20 @@ bool calldata_get_string(const calldata_t *data, const char *name, const char **
 Header-inline API (stays in the C header; documented because Rust callers need the same
 behaviour and the stack must be consistent with it):
 
-| Function | Behaviour |
-|---|---|
-| `calldata_init(d)` | `memset(d, 0, sizeof *d)` |
-| `calldata_init_fixed(d, buf, n)` | `d->stack = buf; d->capacity = n; d->fixed = true; d->size = 0; calldata_clear(d)` |
-| `calldata_clear(d)` | if `d->stack != NULL`: `d->size = W` and the first `W` bytes of the stack are set to 0 (an empty stack = one zero terminator). If `stack == NULL`: nothing happens |
-| `calldata_free(d)` | if not fixed: `bfree(d->stack)`. **Does not reset the fields.** |
-| `calldata_create()` / `calldata_destroy(cd)` | `bzalloc(sizeof)` / `calldata_free` then `bfree(cd)` |
-| `calldata_get_int(d, name, &v)` | `calldata_get_data(d, name, v, 8)` (`long long`) |
-| `calldata_get_float` | size 8 (`double`) |
-| `calldata_get_bool` | size 1 (`bool`) |
-| `calldata_get_ptr(d, name, &p)` | size `sizeof(void*)` |
-| `calldata_set_int/float/bool/ptr` | `calldata_set_data(d, name, &v, sizeof v)` |
-| `calldata_set_string(d, name, s)` | `s != NULL`: `set_data(…, s, strlen(s)+1)`; `s == NULL`: `set_data(…, NULL, 0)` |
-| `calldata_int/float/bool/ptr/string(d, name)` | the corresponding `get_*` with a zero (NULL) default when the read fails |
+| Function                                      | Behaviour                                                                                                                                                          |
+| --------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `calldata_init(d)`                            | `memset(d, 0, sizeof *d)`                                                                                                                                          |
+| `calldata_init_fixed(d, buf, n)`              | `d->stack = buf; d->capacity = n; d->fixed = true; d->size = 0; calldata_clear(d)`                                                                                 |
+| `calldata_clear(d)`                           | if `d->stack != NULL`: `d->size = W` and the first `W` bytes of the stack are set to 0 (an empty stack = one zero terminator). If `stack == NULL`: nothing happens |
+| `calldata_free(d)`                            | if not fixed: `bfree(d->stack)`. **Does not reset the fields.**                                                                                                    |
+| `calldata_create()` / `calldata_destroy(cd)`  | `bzalloc(sizeof)` / `calldata_free` then `bfree(cd)`                                                                                                               |
+| `calldata_get_int(d, name, &v)`               | `calldata_get_data(d, name, v, 8)` (`long long`)                                                                                                                   |
+| `calldata_get_float`                          | size 8 (`double`)                                                                                                                                                  |
+| `calldata_get_bool`                           | size 1 (`bool`)                                                                                                                                                    |
+| `calldata_get_ptr(d, name, &p)`               | size `sizeof(void*)`                                                                                                                                               |
+| `calldata_set_int/float/bool/ptr`             | `calldata_set_data(d, name, &v, sizeof v)`                                                                                                                         |
+| `calldata_set_string(d, name, s)`             | `s != NULL`: `set_data(…, s, strlen(s)+1)`; `s == NULL`: `set_data(…, NULL, 0)`                                                                                    |
+| `calldata_int/float/bool/ptr/string(d, name)` | the corresponding `get_*` with a zero (NULL) default when the read fails                                                                                           |
 
 ## 4. Data format
 
@@ -161,24 +161,24 @@ None. A calldata is not thread-safe; signal emission (S-004) passes one block to
 
 ## 10. Conformance coverage
 
-| Rule | Scripts |
-|---|---|
-| R01–R03 | `01-basic`, `02-type-is-only-size`, `05-invalid-names-and-empty-stack`, `09-raw-data` |
-| R04, R05 | `01-basic`, `04-null-and-empty-strings`, `11-long-names-and-binary-strings` |
-| R10 | `05-invalid-names-and-empty-stack` |
-| R11 | `01-basic`, `06-capacity-growth` (capacity), `11` |
-| R12 | `03-overwrite-resize`, `10-order-and-duplicates`, `09-raw-data` |
-| R13, R20 | `01-basic`, `10-order-and-duplicates`, `11` |
-| R14 | `06-capacity-growth`, `07-fixed-stack`, `12-fixed-boundary` |
-| R15 | `04-null-and-empty-strings`, `09-raw-data` |
-| R16, R21 | `07-fixed-stack`, `08-clear-and-reuse` |
-| R22 | not scriptable (unit test in the crate) |
+| Rule     | Scripts                                                                               |
+| -------- | ------------------------------------------------------------------------------------- |
+| R01–R03  | `01-basic`, `02-type-is-only-size`, `05-invalid-names-and-empty-stack`, `09-raw-data` |
+| R04, R05 | `01-basic`, `04-null-and-empty-strings`, `11-long-names-and-binary-strings`           |
+| R10      | `05-invalid-names-and-empty-stack`                                                    |
+| R11      | `01-basic`, `06-capacity-growth` (capacity), `11`                                     |
+| R12      | `03-overwrite-resize`, `10-order-and-duplicates`, `09-raw-data`                       |
+| R13, R20 | `01-basic`, `10-order-and-duplicates`, `11`                                           |
+| R14      | `06-capacity-growth`, `07-fixed-stack`, `12-fixed-boundary`                           |
+| R15      | `04-null-and-empty-strings`, `09-raw-data`                                            |
+| R16, R21 | `07-fixed-stack`, `08-clear-and-reuse`                                                |
+| R22      | not scriptable (unit test in the crate)                                               |
 
 CORE: all scripts. QUIRK vectors are embedded in `02` and `12`.
 
 ## 11. Open questions
 
-None. 32-bit (`W = 4`) layouts follow from the formulas in section 4; vectors for W = 4 must be generated from a 32-bit 
+None. 32-bit (`W = 4`) layouts follow from the formulas in section 4; vectors for W = 4 must be generated from a 32-bit
 
 ## 12. Round 9: `calldata.c` uncited functions (added)
 
@@ -187,5 +187,7 @@ None. 32-bit (`W = 4`) layouts follow from the formulas in section 4; vectors fo
 - `libobs/callback/calldata.c`
 
 - **S-002-R23** `calldata_get_data`/`calldata_set_data`: the typed accessors over the param array (get: type check with the default 0/empty-string on mismatch per the earlier sections; set: replaces in place, string params are copied).
+
 - **S-002-R24** `calldata_get_string`/`cd_getparam`: raw param access without type checking — used by proc handlers; `cd_getparam` returns the param at the handler's current cursor.
+
 - **S-002-R25** Copy/serialize internals: `cd_copy_string` (duplicate a param string), `cd_copy_data` (deep copy of the whole calldata — every param, strings duplicated), `cd_ensure_capacity`/`cd_set_first_param` (capacity/cursor management), `cd_serialize_size`/`cd_serialize_string` (the calldata half of the binary serialization format pinned in S-010: size computation, then byte writing).build of the reference.

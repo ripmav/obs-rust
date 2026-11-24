@@ -1,13 +1,13 @@
 # S-053 Graphics image decoding (image-file, graphics-ffmpeg, libnsgif) and the built-in effects
 
-| | |
-|---|---|
-| Status | Draft (vectors complete and produced by the real C; Rust sufficiency check NOT performed, see section 10) |
-| Spec version | initial |
-| Reference | C implementation, libobs 33.0.1: `libobs/graphics/image-file.c`, `graphics-ffmpeg.c`, `libnsgif/{gif.c,lzw.c,nsgif.h}`, `srgb.h` helpers, `libobs/data/*.effect` |
-| Target crate | `crates/graphics-image` (decoding) and `crates/graphics-effects` (embedded effect text + manifest) |
-| Depends on | S-020 (effect language and parser: read it, not repeated here), S-008 (sRGB helpers), S-043 (graphics API), S-030 (image source = the main consumer of the animation clock) |
-| Conformance | `test/conformance/scripts/gfximages/` (21 scripts), runner `gen/gfximages_runner.c` |
+|              |                                                                                                                                                                             |
+| ------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Status       | Draft (vectors complete and produced by the real C; Rust sufficiency check NOT performed, see section 10)                                                                   |
+| Spec version | initial                                                                                                                                                                     |
+| Reference    | C implementation, libobs 33.0.1: `libobs/graphics/image-file.c`, `graphics-ffmpeg.c`, `libnsgif/{gif.c,lzw.c,nsgif.h}`, `srgb.h` helpers, `libobs/data/*.effect`            |
+| Target crate | `crates/graphics-image` (decoding) and `crates/graphics-effects` (embedded effect text + manifest)                                                                          |
+| Depends on   | S-020 (effect language and parser: read it, not repeated here), S-008 (sRGB helpers), S-043 (graphics API), S-030 (image source = the main consumer of the animation clock) |
+| Conformance  | `test/conformance/scripts/gfximages/` (21 scripts), runner `gen/gfximages_runner.c`                                                                                         |
 
 ## 1. Scope
 
@@ -36,17 +36,17 @@ lines after `': ` are replaced by `<ffmpeg-error>` in the vectors and are not pa
 
 ### 3.1 Image file object (`struct gs_image_file_ex`)
 
-| Field | Meaning |
-|---|---|
-| `texture` | texture created by `init_texture` (null before) |
-| `format` | `GS_RGBA` (animated), or the format returned by the still decoder (3.2) |
-| `cx, cy` | size in pixels |
+| Field                                        | Meaning                                                                            |
+| -------------------------------------------- | ---------------------------------------------------------------------------------- |
+| `texture`                                    | texture created by `init_texture` (null before)                                    |
+| `format`                                     | `GS_RGBA` (animated), or the format returned by the still decoder (3.2)            |
+| `cx, cy`                                     | size in pixels                                                                     |
 | `is_animated_gif`, `loaded`, `frame_updated` | flags; `frame_updated` is never touched by this code (stays 0; the caller owns it) |
-| `cur_time` (ns), `cur_frame`, `cur_loop` | animation clock state |
-| `texture_data` | still image pixels until the texture exists, then null |
-| `mem_usage` | bytes accounted (R15) |
-| `alpha_mode`, `space` | present in the struct but **never written** by init (always 0) |
-| `internal` | private (gif handle, frame cache, ...) |
+| `cur_time` (ns), `cur_frame`, `cur_loop`     | animation clock state                                                              |
+| `texture_data`                               | still image pixels until the texture exists, then null                             |
+| `mem_usage`                                  | bytes accounted (R15)                                                              |
+| `alpha_mode`, `space`                        | present in the struct but **never written** by init (always 0)                     |
+| `internal`                                   | private (gif handle, frame cache, ...)                                             |
 
 Functions: `init(image, path, alpha_mode)`, `free(image)`, `init_texture(image)`, `tick(image, elapsed_ns) -> bool`,
 `update_texture(image)`. All take a graphics context for texture calls (`gs_texture_create`, `gs_texture_set_image`,
@@ -54,17 +54,14 @@ Functions: `init(image, path, alpha_mode)`, `free(image)`, `init_texture(image)`
 
 ### 3.2 Still-image decoding
 
-`gs_create_texture_file_data(file, &format, &cx, &cy)` = straight alpha. `..._data2(file, mode, ...)` and `..._data3(file,
-mode, ..., &space)` take a mode: `STRAIGHT`, `PREMULTIPLY_SRGB`, `PREMULTIPLY`. Returns a `bmalloc` buffer of
+`gs_create_texture_file_data(file, &format, &cx, &cy)` = straight alpha. `..._data2(file, mode, ...)` and `..._data3(file, mode, ..., &space)` take a mode: `STRAIGHT`, `PREMULTIPLY_SRGB`, `PREMULTIPLY`. Returns a `bmalloc` buffer of
 `cx*cy*bpp/8` bytes or NULL (null/empty file name -> NULL silently). `space` is always `GS_CS_SRGB` on success.
 Result `format`: RGBA (source RGBA, or RGBA64BE after conversion), BGRA (source BGRA, and every format converted by
 swscale), BGRX (source BGR0), other source formats never reach the mapping (R33).
 
 ### 3.3 libnsgif (public contract used by OBS)
 
-`create(bitmap callbacks, fmt)`, `data_scan(size, data)`, `data_complete`, `get_info` (`width, height, frame_count,
-loop_max, background, global_palette`), `get_frame_info(n)` (`display, transparency, local_palette, interlaced,
-disposal, delay, rect{x0,y0,x1,y1}`), `frame_decode(n) -> bitmap`, `frame_prepare(area, delay, frame)`, `reset`,
+`create(bitmap callbacks, fmt)`, `data_scan(size, data)`, `data_complete`, `get_info` (`width, height, frame_count, loop_max, background, global_palette`), `get_frame_info(n)` (`display, transparency, local_palette, interlaced, disposal, delay, rect{x0,y0,x1,y1}`), `frame_decode(n) -> bitmap`, `frame_prepare(area, delay, frame)`, `reset`,
 `global_palette / local_palette`, `set_frame_delay_behaviour(min, default)`, `strerror`, `destroy`. Error enum
 (positive numbers, strings): OK "Success"; OOM "Out of memory"; DATA "Invalid source data"; BAD_FRAME "Requested
 frame does not exist"; DATA_FRAME "Invalid frame data"; END_OF_DATA "Unexpected end of GIF source data";
@@ -87,6 +84,7 @@ ff 00 00  00 ff 00  00 00 ff  ff ff ff    palette: red green blue white
 21 f9 04 00 14 00 00 00 2c 00 00 00 00 02 00 02 00 00 02 03 9c 02 05 00      frame 1: delay 20 cs, pixels 3 2 1 0
 3b                                        trailer
 ```
+
 Decoded (RGBA): frame 0 = `ff0000ff 00ff00ff 0000ffff ffffffff`; frame 1 = `ffffffff 0000ffff 00ff00ff ff0000ff`.
 Info: `width=2 height=2 frames=2 loop_max=0 background=0xff0000ff global_palette=1`; frame delays 10 and 20.
 (`background` is the u32 whose memory bytes are `r,g,b,a`: red = `0xff0000ff` on little endian.)
@@ -142,7 +140,7 @@ PNG files (8-bit RGBA/RGB/gray/gray+alpha/palette, tRNS, 16-bit RGBA/RGB/gray), 
   A pixel stream shorter than the frame (missing end code or truncated data) leaves the remaining pixels `00000000` and still succeeds. Garbage codes make
   `frame_decode` fail with DATA_FRAME *after* a successful scan. Declared sizes 12 and 13 fail the scan (DATA_FRAME, frame not recorded). Declared sizes 0, 1, 9
   decode implementation-specifically (10 and 11 are untested) (vectors pin the reference output; a replacement decoder MAY differ, QUIRK Q-5).
-- **S-053-R13 Palette API.** `global_palette()` returns up to 256 entries as u32 (memory bytes `r,g,b,a`, alpha 255). 
+- **S-053-R13 Palette API.** `global_palette()` returns up to 256 entries as u32 (memory bytes `r,g,b,a`, alpha 255).
 - **S-053-R14 Output byte order.** For the four requested formats the bytes of one pixel are `r,g,b,a` (R8G8B8A8), `b,g,r,a` (B8G8R8A8), `a,r,g,b`, `a,b,g,r`.
 - **S-053-R15 Truncated input.** Cut at a block boundary: OK with the frames read so far; cut inside a block: END_OF_DATA with frames before it kept.
   A zero-byte input yields END_OF_DATA and zero everything.
@@ -250,9 +248,11 @@ when present (all files except `format_conversion`, which is `-`); `world` is ne
 ## 6. Algorithms
 
 ### 6.1 Premultiply and 16-bit conversion
+
 See R34/R35. In Rust use `f32` arithmetic and `powf`; compare exactly (the vectors contain the u8 results).
 
 ### 6.2 Tick (pseudocode)
+
 ```
 tick(img, ns):
   if !img.animated or !img.loaded: return false
@@ -270,9 +270,11 @@ tick(img, ns):
   if nf != img.cur_frame { switch_frame(img, nf) ; return true }   // R28
   return false
 ```
+
 Precise detail: `++cur_loop` happens only when `loops != 0` (short-circuit); in the finite case `cur_loop` is incremented at every wrap including the final one.
 
 ### 6.3 Frame switch (R28)
+
 ```
 switch_frame(img, target):
   if cache[target] empty:
@@ -281,22 +283,29 @@ switch_frame(img, target):
      if decode(target) ok: cache[target] = copy(canvas) ; last_decoded = target
   done: img.cur_frame = target
 ```
+
 ### 6.4 Worked example (infinite 3-frame animation, delays 10, 5, 0 cs; vector 20)
-`tick(99,999,999)` false (cur_time 99,999,999); `tick(1)` false (cur_time 100,000,000 = t, stays); `tick(1)` true, frame 1, cur_time 1; `tick(50,000,000)` true, frame 2; next `tick(50,000,000)` false (50,000,001 <= 100,000,000, the 0-cs frame lasts 100 ms).
+
+`tick(99,999,999)` false (cur_time 99,999,999); `tick(1)` false (cur_time 100,000,000 = t, stays); `tick(1)` true, frame 1, cur_time 1; `tick(50,000,000)` true, frame 2; next `tick(50,000,000)` false (50,000,001 \<= 100,000,000, the 0-cs frame lasts 100 ms).
 
 ### 6.5 Orientation mapping
+
 The destination index is computed per pixel in tiles of 64x64 (tile size has no observable effect; a 70x3 image rotated is in the vectors). Use the table of R37.
 
 ### 6.6 R10L packing (R41)
+
 `r10 = uint(rgb.r*876 + 64.5)` etc.; pack as in R41 into `float4(uint4(r,g,b,a)) / 255`.
 
 ### 6.7 Disposal example (vector 13)
+
 3x3 canvas, bg index 4 (black). Frame 0 fills red (disposal 1). Frame 1: 2x2 green at (1,1), disposal 2. Frame 2: blue at (0,0), disposal 3. Frame 3: white 1x2 at (2,0). Canvases: after 1: red everywhere but the 2x2 block green; after 2 (frame 1 disposed to opaque black first): black 2x2 block at (1,1), blue pixel at (0,0), rest red; after 3 (frame 2 restored to the canvas before it, i.e. the black block stays and (0,0) returns to red): white at (2,0),(2,1).
 
 ### 6.8 Error mapping for Rust
+
 `load(path) -> Result<Image, LoadError>`; reference conditions that make `loaded = false` map to errors; warnings are log lines (level warning) with the texts in R21..R32.
 
 ### 6.9 What a GIF crate replacement must preserve
+
 Observable through `gs_image_file_ex`: frame count (frames >1 => animated), canvas size (union of screen and frame rects, R04), RGBA canvas bytes per frame with R09/R10 semantics (disposal incl. restore-to-background colour/transparent rule, transparent black for unpainted area, previous-frame transparency),
 raw delays (cs) and `loop_max` as "number of plays, 0 = forever" (R06), a hard failure for corrupt files (never hang, D-1). Typical crates (`gif`) decode frames independently; the replacement must compose them exactly as in R08..R10. libnsgif's separate `frame_prepare` delay rule (R07) is not used by OBS.
 
@@ -333,25 +342,25 @@ None in this area: image loading and ticking are called from the video/graphics 
 The runner `gen/gfximages_runner.c` links the real `image-file.c`, `graphics-ffmpeg.c` (through `gfximages_ffwrap.c`, which includes it and adds hooks into its static functions), `libnsgif/gif.c`, `libnsgif/lzw.c`, `graphics.c`,
 the effect parser and shader parser, over a fake backend (`gfximages_stubs.c`). Every vector is produced by the C code. The `reformat` command feeds fabricated decoded frames (fabricated frame content, real conversion code); `effect` runs the real effect parser. **The Rust sufficiency check was not performed (cost control decision).**
 
-| Rule | Scripts |
-|---|---|
-| R01 R02 R03 R05 R13 R14 R15 | 10-gif-basic, 16-gif-errors |
-| R04 R09 (default table) | 15-gif-palette-geometry |
-| R06 | 12-gif-loop |
-| R07 | 11-gif-timing |
-| R08 R10 | 13-gif-disposal |
-| R09 (transparency) | 14-gif-transparency |
-| R11 | 15-gif-palette-geometry |
-| R12 | 17-gif-lzw |
-| R20 R21 R22 R24 R25 D-1 D-2 | 22-image-gif-limits |
-| R23 R26 R27 R28 R29 R31 | 20-image-gif-animation, 23-image-gif-sequencing, 24-image-gif-decode-failure |
-| R23 (alpha) Q-2 | 21-image-gif-alpha |
-| R30 R32 R33 R34 R35 | 30-still-png, 31-still-formats-errors, 33-reformat-pixel-formats |
-| R36 R37 D-3 | 32-reformat-orientation, 33-reformat-pixel-formats |
-| R40..R44 R45 R46 | 40-effects-default-color |
-| R47..R50 | 41-effects-scaling |
-| R51 | 42-effects-deinterlace |
-| R52 | 43-effects-format-conversion |
+| Rule                        | Scripts                                                                      |
+| --------------------------- | ---------------------------------------------------------------------------- |
+| R01 R02 R03 R05 R13 R14 R15 | 10-gif-basic, 16-gif-errors                                                  |
+| R04 R09 (default table)     | 15-gif-palette-geometry                                                      |
+| R06                         | 12-gif-loop                                                                  |
+| R07                         | 11-gif-timing                                                                |
+| R08 R10                     | 13-gif-disposal                                                              |
+| R09 (transparency)          | 14-gif-transparency                                                          |
+| R11                         | 15-gif-palette-geometry                                                      |
+| R12                         | 17-gif-lzw                                                                   |
+| R20 R21 R22 R24 R25 D-1 D-2 | 22-image-gif-limits                                                          |
+| R23 R26 R27 R28 R29 R31     | 20-image-gif-animation, 23-image-gif-sequencing, 24-image-gif-decode-failure |
+| R23 (alpha) Q-2             | 21-image-gif-alpha                                                           |
+| R30 R32 R33 R34 R35         | 30-still-png, 31-still-formats-errors, 33-reformat-pixel-formats             |
+| R36 R37 D-3                 | 32-reformat-orientation, 33-reformat-pixel-formats                           |
+| R40..R44 R45 R46            | 40-effects-default-color                                                     |
+| R47..R50                    | 41-effects-scaling                                                           |
+| R51                         | 42-effects-deinterlace                                                       |
+| R52                         | 43-effects-format-conversion                                                 |
 
 Not covered by vectors: R36 for lines narrower than the row (code reading only), R53 (descriptive), WIC fallback, FFmpeg-version-dependent text, `obs_glsl_compile` branches (parser level in S-020). The shader *arithmetic* of the effects is specified from the source text; no GPU executes it in the vectors.
 

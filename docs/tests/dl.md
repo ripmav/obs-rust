@@ -12,11 +12,11 @@
   (".so" appended only when the name has no ".so" substring) is pinned
   by the captured log prefix.
 
-| Case | Input | Expected | Platforms | Status |
-| --- | --- | --- | --- | --- |
-| R107 real library | `libm.so.6` | loads; `os_dlsym("cos")` Some, unknown symbol None; close | Linux (glibc name; macOS `.dylib` would hit the append rule — skip) | pass |
-| R107 missing library | `nosuchlibrary_xyz`, `nosuchlibrary_xyz.so` | both `None`, no panic | Linux, Windows, macOS (skip on Miri) | pass |
-| R107 failure log prefix (P1-11.1) | 3 failed opens: without ".so", with ".so", with ".so" mid-name | exactly 3 sink lines; each starts with the vector-pinned `os_dlopen(<path>-><used name>):` (append vs as-is), a dlerror fragment follows, C trailing newline; sink restored to the default (`None`) afterwards | Linux, Windows, macOS (skip on Miri) | pass |
+| Case                              | Input                                                          | Expected                                                                                                                                                                                                       | Platforms                                                           | Status |
+| --------------------------------- | -------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------- | ------ |
+| R107 real library                 | `libm.so.6`                                                    | loads; `os_dlsym("cos")` Some, unknown symbol None; close                                                                                                                                                      | Linux (glibc name; macOS `.dylib` would hit the append rule — skip) | pass   |
+| R107 missing library              | `nosuchlibrary_xyz`, `nosuchlibrary_xyz.so`                    | both `None`, no panic                                                                                                                                                                                          | Linux, Windows, macOS (skip on Miri)                                | pass   |
+| R107 failure log prefix (P1-11.1) | 3 failed opens: without ".so", with ".so", with ".so" mid-name | exactly 3 sink lines; each starts with the vector-pinned `os_dlopen(<path>-><used name>):` (append vs as-is), a dlerror fragment follows, C trailing newline; sink restored to the default (`None`) afterwards | Linux, Windows, macOS (skip on Miri)                                | pass   |
 
 Verification (WP-29): `cargo test -p obs-util -- dl::` 3/3; the dl tests
 serialise on `DL_TEST_LOCK` (the sink and `dlerror` state are

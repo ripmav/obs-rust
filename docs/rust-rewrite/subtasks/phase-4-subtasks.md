@@ -9,6 +9,7 @@ Verified facts: `libobs/obs-internal.h` has 46 `pthread_mutex_t` fields (P4-04 m
 ## A. Design
 
 ### P4-01 Object model design doc
+
 - [ ] **P4-01.1 Handles**
   - Files: `libobs/obs.h` (2734; opaque typedefs + handle APIs), `libobs/obs-internal.h` (1543; per-kind struct layouts), `libobs/obs-source.h` (572), `libobs/obs-scene.h` (116), `libobs/obs-output.h` (96), `libobs/obs-encoder.h` (365), `libobs/obs-service.h` (115).
   - Steps: list every object kind with its create/get_ref/release/weak APIs from the headers; decide `obs_source_t*` etc. are `Box<Arc<Inner>>` pointers, one handle type per kind; define null/dangling rules (invalid handle = debug log + no-op + default return, S-040 §3.2); produce the table.
@@ -31,6 +32,7 @@ Verified facts: `libobs/obs-internal.h` has 46 `pthread_mutex_t` fields (P4-04 m
   - Done when: ADR committed with handle, weak-ref and thread-affinity tables.
 
 ### P4-02 Handle registry and refcount compat
+
 - [ ] **P4-02.1 addref/release**
   - Files: `libobs/obs-source.c` (6070), `libobs/obs-encoder.c` (2286), `libobs/obs-output.c` (3340), `libobs/obs-service.c` (466).
   - Steps: port `obs_source_get_ref`/`obs_source_release` (no exported `obs_source_addref` in 33 — only an internal helper in `obs-internal.h`) and the equivalent for every kind; expose a debug refcount query; run scripted sequences.
@@ -49,6 +51,7 @@ Verified facts: `libobs/obs-internal.h` has 46 `pthread_mutex_t` fields (P4-04 m
   - Done when: model passes.
 
 ### P4-03 Global context
+
 - [ ] **P4-03.1 `Core`**
   - Files: `libobs/obs.c` (3491), `libobs/obs-internal.h` (1543; `struct obs_core` at line 549).
   - Steps: define `Core` in `crates/obs-core` (S-042 target crate) mirroring the `obs_core` field groups (module lists, type arrays, signals/procs, locale, `video`/`audio`/`data`/`hotkeys`, task handlers, `core_modules_loaded`); own it, no `static mut`.
@@ -73,6 +76,7 @@ Verified facts: `libobs/obs-internal.h` has 46 `pthread_mutex_t` fields (P4-04 m
   - Done when: deliberate leak is detected by the check.
 
 ### P4-04 Lock inventory and ordering
+
 - [ ] **P4-04.1 Table of 46 mutexes**
   - Files: `libobs/obs-internal.h` (1543; the 46 `pthread_mutex_t` fields).
   - Steps: enumerate every `pthread_mutex_t` field with its struct member name; grep acquire sites to record what each protects; record the nesting order as encoded in the code; commit the table to the ADR (P4-01.4).
@@ -86,6 +90,7 @@ Verified facts: `libobs/obs-internal.h` has 46 `pthread_mutex_t` fields (P4-04 m
 ## B. Sources
 
 ### P4-05 Source info vtable adapter
+
 - [ ] **P4-05.1 Trait**
   - Files: `libobs/obs-source.h` (572; `struct obs_source_info`), `libobs/obs-source.c` (6070; how each callback is invoked).
   - Steps: define `trait SourceInfo` in `crates/obs-source` (S-040 target crate) mirroring every `obs_source_info` callback (`get_name`, `create`, `destroy`, `get_width/height`, `get_defaults(2)`, `get_properties(2)`, `update`, `activate/deactivate`, `show/hide`, `video_tick`, `video_render`, `filter_video`, `filter_audio`, `audio_render`, `enum_active_sources`, `save/load`, `mouse_*`, `key_click`, `focus`, `missing_files`, `get_color_space`, `media_*`); build the one-to-one C-field → method table.
@@ -111,6 +116,7 @@ Verified facts: `libobs/obs-internal.h` has 46 `pthread_mutex_t` fields (P4-04 m
   - Done when: documented and asserted.
 
 ### P4-06 Source lifecycle
+
 - [ ] **P4-06.1 Create/destroy**
   - Files: `libobs/obs-source.c` (6070; `obs_source_create_internal`).
   - Steps: port `obs_source_create`/`_private` (info copied by value; unknown id still creates a stub-info source so the user's data is not lost R01; `get_defaults` before `create` R04–R05; signal order R06); port destruction: immediate part R08 + deferred part R09 queued to the Phase-1 task queue (S-024 M6).
@@ -138,6 +144,7 @@ Verified facts: `libobs/obs-internal.h` has 46 `pthread_mutex_t` fields (P4-04 m
   - Done when: tests.
 
 ### P4-07 Async video sources
+
 - [ ] **P4-07.1 Frame cache**
   - Files: `libobs/obs-source.c` (6070; `obs_source_output_video(2)`, `async_frames`, `cache`).
   - Steps: port the async frame cache, the `async_frames` queue and the frame selection rules (R60–R62).
@@ -166,6 +173,7 @@ Verified facts: `libobs/obs-internal.h` has 46 `pthread_mutex_t` fields (P4-04 m
   - Done when: tests.
 
 ### P4-08 Audio on sources
+
 - [ ] **P4-08.1 Output audio**
   - Files: `libobs/obs-source.c` (6070; `obs_source_output_audio`), `libobs/obs-audio.c` (721; the mixer consumes the result — P2-13).
   - Steps: port the source-side ingest: resampler hook R02, conversion R03, balance R04, force-mono R05, `filter_audio` chain R06; test 44.1k→48k through the audiomix runner.
@@ -187,6 +195,7 @@ Verified facts: `libobs/obs-internal.h` has 46 `pthread_mutex_t` fields (P4-04 m
   - Done when: callbacks fire per tick with expected data.
 
 ### P4-09 Filters
+
 - [ ] **P4-09.1 Chain**
   - Files: `libobs/obs-source.c` (6070; the filter list ops).
   - Steps: port `obs_source_filter_add/remove/set_order/set_index/get_index/count/enum`, `obs_source_get_filter_by_name`, `obs_filter_get_parent`, `obs_filter_get_target`, `copy_filters`/`copy_single_filter` (R40–R46); recompute `target` after every structural change.
@@ -207,6 +216,7 @@ Verified facts: `libobs/obs-internal.h` has 46 `pthread_mutex_t` fields (P4-04 m
   - Done when: golden.
 
 ### P4-10 Source render path
+
 - [ ] **P4-10.1 Render**
   - Files: `libobs/obs-source.c` (6070; `obs_source_video_render`, `obs_source_default_render`), `libobs/obs-video.c` (1200; the mix hookup, P3-26).
   - Steps: port the default-render effect selection and the source draw; wire into the P3-26 render loop (whose scene walk was deferred to Phase 4); golden-frame compare against C.
@@ -224,6 +234,7 @@ Verified facts: `libobs/obs-internal.h` has 46 `pthread_mutex_t` fields (P4-04 m
   - Done when: tests.
 
 ### P4-11 Transitions
+
 - [ ] **P4-11.1 State**
   - Files: `libobs/obs-source-transition.c` (1072).
   - Steps: port `obs_transition_start/set/clear/get_time` and the duration modes `OBS_TRANSITION_MODE_AUTO/MANUAL` (R80–R87); timeline test.
@@ -252,6 +263,7 @@ Verified facts: `libobs/obs-internal.h` has 46 `pthread_mutex_t` fields (P4-04 m
   - Done when: tests.
 
 ### P4-12 Source signals and procs
+
 - [ ] **P4-12.1 List**
   - Files: `libobs/obs-source.c` (6070; the `source_signals` array passed to `signal_handler_add_array`), `libobs/obs.h` (2734; signal name strings).
   - Steps: extract every signal name and its exact parameter names (source + global lists) and commit them as a table.
@@ -271,6 +283,7 @@ Verified facts: `libobs/obs-internal.h` has 46 `pthread_mutex_t` fields (P4-04 m
   - Done when: table test with a plugin-registered proc.
 
 ### P4-13 Source types registry
+
 - [ ] **P4-13.1 Registration**
   - Files: `libobs/obs-module.c` (1274; `obs_register_source_s` line 1035), `libobs/obs.c` (3491; the `obs_enum_*` entry points).
   - Steps: port `obs_register_source_s` (R82: type check, unversioned-id duplicate check, versioned id storage `"<id>_v<version>"`) and `obs_enum_source_types`, `obs_enum_input_types(2)`, `obs_enum_filter_types`, `obs_enum_transition_types` (R72–R73); compare enumeration order against C.
@@ -285,6 +298,7 @@ Verified facts: `libobs/obs-internal.h` has 46 `pthread_mutex_t` fields (P4-04 m
   - Done when: tests.
 
 ### P4-14 Interaction API
+
 - [ ] **P4-14.1 Types**
   - Files: `libobs/obs-interaction.h` (56).
   - Steps: port the event structs (`obs_source_mouse_info`, `obs_source_key_info`) as `#[repr(C)]`; add their layout assertions to P4-35.1.
@@ -297,6 +311,7 @@ Verified facts: `libobs/obs-internal.h` has 46 `pthread_mutex_t` fields (P4-04 m
   - Done when: events reach C source.
 
 ### P4-15 Missing-files tracking
+
 - [ ] **P4-15.1 Tracker**
   - Files: `libobs/obs-missing-files.c` (142), `libobs/obs-missing-files.h` (53).
   - Steps: port `obs_missing_files_create/add_file/count/get_file/destroy/append` to `crates/obs-missing-files` (S-024 M5).
@@ -313,6 +328,7 @@ Verified facts: `libobs/obs-internal.h` has 46 `pthread_mutex_t` fields (P4-04 m
 ## C. Scenes
 
 ### P4-16 Scene core
+
 - [ ] **P4-16.1 Scene as source**
   - Files: `libobs/obs-scene.c` (4144), `libobs/obs-scene.h` (116).
   - Steps: port `obs_scene_create`/`_private` (a scene is a source of type SCENE registered via R82) and `obs_scene_get_source`; scene size from its canvas (R01–R04).
@@ -346,6 +362,7 @@ Verified facts: `libobs/obs-internal.h` has 46 `pthread_mutex_t` fields (P4-04 m
   - Done when: test.
 
 ### P4-17 Groups and nested scenes
+
 - [ ] **P4-17.1 Groups**
   - Files: `libobs/obs-scene.c` (4144).
   - Steps: port `obs_scene_add_group(2)`, `obs_sceneitem_group_add_item`, `obs_sceneitem_group_ungroup(2)`, `obs_sceneitem_group_enum_items` (R40–R48; group transform conversion §6.4, resize §6.5).
@@ -367,6 +384,7 @@ Verified facts: `libobs/obs-internal.h` has 46 `pthread_mutex_t` fields (P4-04 m
   - Done when: add of parent fails.
 
 ### P4-18 Scene rendering
+
 - [ ] **P4-18.1 Matrix**
   - Files: `libobs/obs-scene.c` (4144; `update_item_transform`).
   - Steps: port the 12-step update pass (R30) and the matrix computation (R31–R36) into `crates/obs-scene-math` (S-033 target crate — pure, no graphics); 50 cases equal to C.
@@ -392,6 +410,7 @@ Verified facts: `libobs/obs-internal.h` has 46 `pthread_mutex_t` fields (P4-04 m
   - Done when: 50 golden cases committed and passing.
 
 ### P4-19 Scene save/load
+
 - [ ] **P4-19.1 Item JSON**
   - Files: `libobs/obs-scene.c` (4144; the scene item save/load), `test/fixtures/` (the P0-18 corpus).
   - Steps: port item save/load with the key set (`name`, `source_uuid`, `visible`, `locked`, `rot`, `pos`, `scale`, `align`, `bounds`, `crop_*`, `blend_type`, `scale_filter`, `group_item_backup`, `show_transition`, …); unknown keys must be preserved.
@@ -408,6 +427,7 @@ Verified facts: `libobs/obs-internal.h` has 46 `pthread_mutex_t` fields (P4-04 m
   - Done when: P0-18 corpus round-trips with stable ids.
 
 ### P4-20 Scene audio mixing
+
 - [ ] **P4-20.1 Compose**
   - Files: `libobs/obs-scene.c` (4144; `scene_audio_render`), `libobs/obs-audio.c` (721; the scene source enters the mixer as a source).
   - Steps: port the scene-source audio composition (child mixing in `audio_render`, audio actions R54); golden PCM.
@@ -424,6 +444,7 @@ Verified facts: `libobs/obs-internal.h` has 46 `pthread_mutex_t` fields (P4-04 m
 ## D. Encoders, outputs, services
 
 ### P4-21 Encoder vtable adapter
+
 - [ ] **P4-21.1 Trait/adapter**
   - Files: `libobs/obs-encoder.h` (365; `obs_encoder_info`), `libobs/obs-encoder.c` (2286).
   - Steps: define `trait EncoderInfo` + the `CEncoder` adapter (adapter pattern) for `obs_encoder_info` callbacks (`create`, `destroy`, `encode`, `encode_texture(2)`, `get_defaults`, `get_properties`, `update`, `get_extra_data`, `get_sei_data`, `get_audio_info/video_info`, `get_frame_size`, `get_name`); register through R81; the P0-15 ABI test encoder works.
@@ -451,6 +472,7 @@ Verified facts: `libobs/obs-internal.h` has 46 `pthread_mutex_t` fields (P4-04 m
   - Done when: size test.
 
 ### P4-22 Encoder lifecycle and signals
+
 - [ ] **P4-22.1 Active state**
   - Files: `libobs/obs-encoder.c` (2286).
   - Steps: port `obs_encoder_active`, `obs_encoder_paused`, the internal `obs_encoder_initialize` (called from `obs_output_start`; no public init/uninit; R04) and `obs_encoder_set_preferred_video_format` (R02); state-diagram test.
@@ -470,6 +492,7 @@ Verified facts: `libobs/obs-internal.h` has 46 `pthread_mutex_t` fields (P4-04 m
   - Done when: tests.
 
 ### P4-23 Output vtable adapter
+
 - [ ] **P4-23.1 Trait/adapter**
   - Files: `libobs/obs-output.h` (96; `obs_output_info`), `libobs/obs-output.c` (3340).
   - Steps: define `trait OutputInfo` + the `COutput` adapter (adapter pattern) for `obs_output_info` callbacks (`create`, `destroy`, `update`, `get_defaults`, `get_name`, `start`, `stop`, `raw_video`, `raw_audio(2)`, `encoded_packet`, `get_properties`, `get_total_bytes`, `get_dropped_frames`, `get_congestion`, `get_connect_time_ms`, codec strings, `protocols` — there is no `get_stats` field in 33); register through R80; the P0-15 ABI test output works.
@@ -500,6 +523,7 @@ Verified facts: `libobs/obs-internal.h` has 46 `pthread_mutex_t` fields (P4-04 m
   - Done when: tests.
 
 ### P4-24 Output flags and multi-track
+
 - [ ] **P4-24.1 Flags**
   - Files: `libobs/obs-output.h` (96; flag defines at lines 20–34).
   - Steps: define `OBS_OUTPUT_MULTI_TRACK` (= `MULTI_TRACK_AUDIO`, 16), `OBS_OUTPUT_MULTI_TRACK_VIDEO` (64), `OBS_OUTPUT_MULTI_TRACK_AV` (composite 16|64), `OBS_OUTPUT_CAN_PAUSE` (32); one behavioural test per flag.
@@ -520,6 +544,7 @@ Verified facts: `libobs/obs-internal.h` has 46 `pthread_mutex_t` fields (P4-04 m
   - Done when: URL/key reach output.
 
 ### P4-25 Service API
+
 - [ ] **P4-25.1 Adapter**
   - Files: `libobs/obs-service.h` (115; `obs_service_info`), `libobs/obs-service.c` (466).
   - Steps: define `trait ServiceInfo` + the `CService` adapter (adapter pattern) for `obs_service_info` callbacks (`create`, `destroy`, `activate`, `deactivate`, `update`, `get_defaults`, `get_properties`, `initialize`, `get_url`, `get_key`, `get_username`, `get_password`, `apply_encoder_settings`, `get_supported_video_codecs`, `get_protocol`, `get_connect_info`, `can_try_to_connect`); register through R01–R04; the P0-15 ABI test service works.
@@ -542,6 +567,7 @@ Verified facts: `libobs/obs-internal.h` has 46 `pthread_mutex_t` fields (P4-04 m
   - Done when: bitrate clamp test.
 
 ### P4-26 Multitrack video plumbing
+
 - [ ] **P4-26.1 Connect info**
   - Files: `libobs/obs-service.h` (115; the `OBS_SERVICE_CONNECT_INFO_*` enum).
   - Steps: port every `OBS_SERVICE_CONNECT_INFO_*` value with its string mapping.
@@ -560,6 +586,7 @@ Verified facts: `libobs/obs-internal.h` has 46 `pthread_mutex_t` fields (P4-04 m
   - Done when: note committed.
 
 ### P4-27 Output state machine tests
+
 - [ ] **P4-27.1 State table**
   - Files: `libobs/obs-output.c` (3340), `libobs/obs-internal.h` (1543; the output state fields at lines 1255–1290).
   - Steps: enumerate starting/active/stopping/reconnecting/paused/delay and list every legal transition from S-041 §5.2–5.6; commit the table.
@@ -582,6 +609,7 @@ Verified facts: `libobs/obs-internal.h` has 46 `pthread_mutex_t` fields (P4-04 m
 ## E. Hotkeys, modules, display
 
 ### P4-28 Hotkey system
+
 - [ ] **P4-28.1 Registration**
   - Files: `libobs/obs-hotkey.c` (1400), `libobs/obs-hotkey.h` (272).
   - Steps: port `obs_hotkey_register_frontend/source/output/encoder/service` and the `unregister` variants (R02–R05; unregister R10–R13) into `crates/obs-hotkeys` (S-034 target crate); ids stable across registration order.
@@ -612,6 +640,7 @@ Verified facts: `libobs/obs-internal.h` has 46 `pthread_mutex_t` fields (P4-04 m
   - Done when: key-code tables equal.
 
 ### P4-29 Module loader
+
 - [ ] **P4-29.1 Descriptor**
   - Files: `libobs/obs-module.c` (1274), `libobs/obs-module.h` (201).
   - Steps: port `obs_module_t` and resolve the exports with `libloading`: required `obs_module_load`, `obs_module_set_pointer`, `obs_module_ver` in that order (first missing → `MODULE_MISSING_EXPORTS` R61), optional list §3.5; version gate `v & 0xFFFF0000 > LIBOBS_API_VER → MODULE_INCOMPATIBLE_VER` (R62); build the module (R63).
@@ -650,6 +679,7 @@ Verified facts: `libobs/obs-internal.h` has 46 `pthread_mutex_t` fields (P4-04 m
   - Done when: generated Rust table.
 
 ### P4-30 Locale and text lookup
+
 - [ ] **P4-30.1 `obs_module_text`**
   - Files: `libobs/obs-module.c` (1274; the locale-file lookup).
   - Steps: port `obs_module_text` (module locale `.ini` → `en-US` → the key itself; R110–R113) and `obs_module_get_config_path` (R114).
@@ -665,6 +695,7 @@ Verified facts: `libobs/obs-internal.h` has 46 `pthread_mutex_t` fields (P4-04 m
   - Done when: missing key returns key.
 
 ### P4-31 Display and views
+
 - [ ] **P4-31.1 Lifecycle**
   - Files: `libobs/obs-display.c` (311).
   - Steps: port `obs_display_create` (R58: inside a graphics context), `destroy` (R63), `resize` (R59: stores `next_cx/next_cy` only) and `obs_display_set_background_color` (R61: `0xAABBGGRR` packed) to `crates/obs-core`; tests with null graphics.
@@ -687,6 +718,7 @@ Verified facts: `libobs/obs-internal.h` has 46 `pthread_mutex_t` fields (P4-04 m
   - Done when: channel set/get.
 
 ### P4-32 Platform integration
+
 - [ ] **P4-32.1 X11**
   - Files: `libobs/obs-nix-x11.c` (1280), `libobs/obs-nix-x11.h` (22), `libobs/obs-nix.c` (458).
   - Steps: port the XInput2 hotkey platform vtable (raw events on the root window, keysym tables, pointer coordinates) via `x11rb` + `obs_nix_x11_log_info`.
@@ -725,6 +757,7 @@ Verified facts: `libobs/obs-internal.h` has 46 `pthread_mutex_t` fields (P4-04 m
   - Done when: all rows of the three tables are pinned by committed vectors.
 
 ### P4-33 Canvases
+
 - [ ] **P4-33.1 Canvas**
   - Files: `libobs/obs-canvas.c` (616).
   - Steps: port `obs_canvas_create(/_private)` (R41: MAIN flag always cleared), `obs_canvas_release/get_ref` (R42; destroy is internal, R43: `canvas_destroy` global signal then canvas `destroy` signal, mix removed), `obs_canvas_get_video_info`, `obs_canvas_reset_video` (R47–R48) and `obs_get_main_canvas` (R40: name `Main`, fixed UUID, R78).
@@ -742,6 +775,7 @@ Verified facts: `libobs/obs-internal.h` has 46 `pthread_mutex_t` fields (P4-04 m
 ## F. ABI surface and verification
 
 ### P4-34 `obs-ffi` header completeness
+
 - [ ] **P4-34.1 C symbol list**
   - Files: the public headers — `libobs/obs.h` (2734), `obs-source.h` (572), `obs-scene.h` (116), `obs-output.h` (96), `obs-encoder.h` (365), `obs-service.h` (115), `obs-data.h` (314), `obs-properties.h` (364), `obs-hotkey.h` (272), `obs-module.h` (201), `obs-missing-files.h` (53), `obs-nix-platform.h` (53), `obs-interaction.h` (56), `obs-audio-controls.h` (250), `obs-nal.h` (37), `obs-av1.h` (47), `obs-avc.h` (55), `obs-hevc.h` (81).
   - Steps: write a script that preprocesses the headers and lists every `EXPORT` function name (~1,000); commit the list file.
@@ -757,6 +791,7 @@ Verified facts: `libobs/obs-internal.h` has 46 `pthread_mutex_t` fields (P4-04 m
   - Done when: C-vs-Rust symbol diff is empty.
 
 ### P4-35 ABI struct layout checks
+
 - [ ] **P4-35.1 Generate**
   - Steps: `size_of`/`offset_of` assertions for each public struct (`obs_source_info`, `obs_source_frame(2)`, `obs_audio_data`, `obs_source_audio`, `encoder_packet`, `encoder_frame`, `obs_video_info` (56 bytes, S-042 §3.1), `obs_audio_info(2)`, `obs_output_info`, `obs_encoder_info`, `obs_service_info` (216 bytes, S-035 §3.2), `gs_init_data`, …); generate from the C headers.
   - Spec: S-035 §3.2, S-042 §3.1 (the layout tables).
@@ -766,6 +801,7 @@ Verified facts: `libobs/obs-internal.h` has 46 `pthread_mutex_t` fields (P4-04 m
   - Done when: matrix green.
 
 ### P4-36 Third-party plugin matrix
+
 - [ ] **P4-36.1 Select**
   - Steps: pick 10 widely used plugins covering sources, filters, transitions, outputs, encoders; commit the list with versions in `docs/tests/third-party-plugins.md`.
   - Done when: list committed in `docs/tests/third-party-plugins.md`.
@@ -777,6 +813,7 @@ Verified facts: `libobs/obs-internal.h` has 46 `pthread_mutex_t` fields (P4-04 m
   - Done when: results matrix committed.
 
 ### P4-37 In-tree plugin compatibility run
+
 - [ ] **P4-37.1 Submodules**
   - Steps: `git submodule update --init plugins/obs-websocket plugins/obs-browser` (5.7.6 / 2.23.4-126); a fresh clone needs exactly this (sources already present in this checkout).
   - Done when: both submodules' sources are present in the build tree.
@@ -788,6 +825,7 @@ Verified facts: `libobs/obs-internal.h` has 46 `pthread_mutex_t` fields (P4-04 m
   - Done when: smoke test passes on the Rust core.
 
 ### P4-38 Thread-safety test
+
 - [ ] **P4-38.1 TSan builds**
   - Steps: build the Rust core with ThreadSanitizer (Linux); run the P0-16 smoke test.
   - Done when: smoke test clean.
@@ -799,6 +837,7 @@ Verified facts: `libobs/obs-internal.h` has 46 `pthread_mutex_t` fields (P4-04 m
   - Done when: all findings fixed or filed with rationale.
 
 ### P4-39 Memory test
+
 - [ ] **P4-39.1 Valgrind/ASan**
   - Steps: run the P0-16 smoke test under Valgrind and ASan; no leaks.
   - Done when: smoke test leak-free.
@@ -807,6 +846,7 @@ Verified facts: `libobs/obs-internal.h` has 46 `pthread_mutex_t` fields (P4-04 m
   - Done when: Miri clean on the pure crates.
 
 ### P4-40 Retire libobs C
+
 - [ ] **P4-40.1 Flip default**
   - Steps: flip the CMake `OBS_ENABLE_RUST` default so the default build links the Rust core.
   - Done when: the default build links the Rust core.
@@ -818,6 +858,7 @@ Verified facts: `libobs/obs-internal.h` has 46 `pthread_mutex_t` fields (P4-04 m
   - Done when: C libobs sources removed from the tree.
 
 ### P4-41 Headless `obs-cli`
+
 - [ ] **P4-41.1 CLI**
   - Steps: build the `obs-cli` binary (`clap`) with `--module-path`, `--collection`, `--profile`, `--record`, `--stream`, `--duration`.
   - Done when: `--help` lists all flags.
@@ -829,6 +870,7 @@ Verified facts: `libobs/obs-internal.h` has 46 `pthread_mutex_t` fields (P4-04 m
   - Done when: replaces the P0-16 host.
 
 ### P4-42 Phase 4 review
+
 - [ ] **P4-42.1 Matrix**
   - Steps: commit the compatibility matrix (P4-36/P4-37 results, symbol diff, layout matrix, conformance areas, stress/memory results) in `docs/tests/`.
   - Done when: matrix committed in `docs/tests/`.

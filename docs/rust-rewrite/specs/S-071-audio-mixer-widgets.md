@@ -1,13 +1,13 @@
 # S-071 Frontend: audio mixer dock & volume widgets
 
-| | |
-|---|---|
-| Status | Draft (round 8 — behaviour catalog written from C reference; no vectors yet) |
-| Spec version | initial |
-| Reference | OBS Studio 33.0.1 frontend (`widgets/AudioMixer.cpp`, `components/Volume*`) |
-| Target crate | `crates/frontend` (mixer UI part) |
-| Depends on | S-032 (audio mixer model — `audiomix` callback, faders, volmeter), S-048 (frontend formats / dock layout) |
-| Conformance | planned `test/conformance/scripts/audmixui/` — none yet |
+|              |                                                                                                           |
+| ------------ | --------------------------------------------------------------------------------------------------------- |
+| Status       | Draft (round 8 — behaviour catalog written from C reference; no vectors yet)                              |
+| Spec version | initial                                                                                                   |
+| Reference    | OBS Studio 33.0.1 frontend (`widgets/AudioMixer.cpp`, `components/Volume*`)                               |
+| Target crate | `crates/frontend` (mixer UI part)                                                                         |
+| Depends on   | S-032 (audio mixer model — `audiomix` callback, faders, volmeter), S-048 (frontend formats / dock layout) |
+| Conformance  | planned `test/conformance/scripts/audmixui/` — none yet                                                   |
 
 ## 1. Scope
 
@@ -42,8 +42,7 @@ persistence medium for mixer UI state.
   source UUID. A source's eligibility comes from `obs_source_get_output_flags` (audio
   output bit). `createVolumeControl(source)` builds the row; rows are created/destroyed as
   sources appear/disappear.
-- **S-071-R02** Active state: `isSourceAudioActive(source) = obs_source_active(source) &&
-  obs_source_audio_active(source)` — used to style/grey rows, not to remove them.
+- **S-071-R02** Active state: `isSourceAudioActive(source) = obs_source_active(source) && obs_source_audio_active(source)` — used to style/grey rows, not to remove them.
 - **S-071-R03** Per-source persisted keys (source private settings, booleans):
   `mixer_pinned` (read by `isPinnedInMixer`), `mixer_hidden` (read by `isHiddenInMixer`),
   `volume_locked` (read by `isVolumeLocked`). `VolumeControl` writes them back
@@ -80,8 +79,7 @@ persistence medium for mixer UI state.
 
 ## 5. Sub-widgets
 
-- **S-071-R10** `VolumeMeter.cpp`: wraps the obs volmeter (S-032 model). `setLevels(magnitude,
-  peak, inputPeak)` feeds per-channel levels; `setPeakMeterType(enum obs_peak_meter_type)`
+- **S-071-R10** `VolumeMeter.cpp`: wraps the obs volmeter (S-032 model). `setLevels(magnitude, peak, inputPeak)` feeds per-channel levels; `setPeakMeterType(enum obs_peak_meter_type)`
   forwards to `obs_volmeter_set_peak_meter_type` and adjusts the display; `resetLevels`
   clears meter ballistics. Defaults: `peakDecayRate = 11.76` (≈ 20 dB / 1.7 s),
   `peakHoldDuration = 20.0` s. The true-peak type follows the EBU Permitted-Maximum
@@ -90,8 +88,7 @@ persistence medium for mixer UI state.
   *absolute* — press or move sets the value to the cursor position, never relative
   stepping: `mousePressEvent` / `mouseMoveEvent` emit `sliderMoved(posToRangeValue(event))`;
   hover emits `absoluteSliderHovered(val)`. Wheel events are ignored (base class).
-- **S-071-R12** `VolumeSlider.cpp`: the volume slider used in the row — `VolumeSlider :
-  AbsoluteSlider` (R11), holding the row's `obs_fader_t` (log) so the 0..`FADER_PRECISION`
+- **S-071-R12** `VolumeSlider.cpp`: the volume slider used in the row — `VolumeSlider : AbsoluteSlider` (R11), holding the row's `obs_fader_t` (log) so the 0..`FADER_PRECISION`
   deflection maps to volume via the fader, and painting fader ticks (dB labels via
   `obs_fader_db_to_def`); `BalanceSlider.hpp`: a left/right balance slider used only in the
   advanced-audio dock row (`OBSAdvAudioCtrl`, S-072), **not** in the mixer row.

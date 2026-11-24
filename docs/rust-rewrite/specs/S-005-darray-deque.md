@@ -1,12 +1,12 @@
 # S-005 Dynamic array (`darray`) and byte ring buffer (`deque`)
 
-| | |
-|---|---|
-| Status | Ready for review |
-| Reference | libobs 33.0.1 `util/darray.h`, `util/deque.h` (header-only) |
-| Target crate | `crates/obs-util` (modules `darray`, `deque`) |
-| Depends on | S-001 |
-| Conformance | `test/conformance/scripts/darray/` (4), `scripts/deque/` (5) |
+|              |                                                              |
+| ------------ | ------------------------------------------------------------ |
+| Status       | Ready for review                                             |
+| Reference    | libobs 33.0.1 `util/darray.h`, `util/deque.h` (header-only)  |
+| Target crate | `crates/obs-util` (modules `darray`, `deque`)                |
+| Depends on   | S-001                                                        |
+| Conformance  | `test/conformance/scripts/darray/` (4), `scripts/deque/` (5) |
 
 ## 1. Scope
 
@@ -91,6 +91,7 @@ instead of 0 when the data ends exactly at the end of the buffer).
 ## 6. Algorithms
 
 ### 6.1 `push_back` (R-D05)
+
 ```
 new_end = end_pos + n; size += n; ensure_capacity()
 if new_end > capacity:
@@ -104,6 +105,7 @@ end_pos = new_end
 ```
 
 ### 6.2 `push_front` (R-D06)
+
 ```
 size += n; ensure_capacity()
 if size == n:                       # was empty
@@ -118,6 +120,7 @@ else:
 ```
 
 ### 6.3 `peek_back` (R-D08)
+
 ```
 back_size = (end_pos != 0) ? end_pos : capacity
 if back_size < n:                    # wraps backwards across offset 0
@@ -127,6 +130,7 @@ if back_size < n:                    # wraps backwards across offset 0
 else:
     copy(out, data + end_pos - n, n)
 ```
+
 (`end_pos == 0` with `size > 0` is believed unreachable through the public operations — pushes leave `end_pos` in `[1, capacity]` and `pop_back` maps to `capacity` — so the `end_pos ? end_pos : capacity` expression is defensive. No vector exercises it; a Rust port SHOULD debug-assert it.)
 
 ## 7. Concurrency
@@ -150,19 +154,19 @@ None; both are plain data structures. Callers synchronise.
 
 ## 10. Conformance coverage
 
-| Rule | Scripts |
-|---|---|
-| R-A01, R-A02, R-A03, R-A04 | `darray/01-growth` |
-| R-A05, R-A06, R-A14 | `darray/02-resize-and-new`, `04` |
-| R-A07 | `darray/03-insert-erase`, `04-find-copy-move` |
-| R-A08, R-A09 | `darray/03-insert-erase` |
-| R-A10, R-A11 | `darray/04-find-copy-move` |
-| R-A12, R-A13 | not covered (unit tests in the crate; join/split/move_item/swap) |
-| R-D01…R-D05, R-D08, R-D09 | `deque/01-push-pop`, `02-wraparound` |
-| R-D06, R-D07 | `deque/03-push-front` |
-| R-D10, R-D11 | `deque/04-zero-place-upsize` |
-| R-D02, R-D03, R-D04 | `deque/05-growth` |
-| R-D12 | not covered (trivial; unit test) |
+| Rule                       | Scripts                                                          |
+| -------------------------- | ---------------------------------------------------------------- |
+| R-A01, R-A02, R-A03, R-A04 | `darray/01-growth`                                               |
+| R-A05, R-A06, R-A14        | `darray/02-resize-and-new`, `04`                                 |
+| R-A07                      | `darray/03-insert-erase`, `04-find-copy-move`                    |
+| R-A08, R-A09               | `darray/03-insert-erase`                                         |
+| R-A10, R-A11               | `darray/04-find-copy-move`                                       |
+| R-A12, R-A13               | not covered (unit tests in the crate; join/split/move_item/swap) |
+| R-D01…R-D05, R-D08, R-D09  | `deque/01-push-pop`, `02-wraparound`                             |
+| R-D06, R-D07               | `deque/03-push-front`                                            |
+| R-D10, R-D11               | `deque/04-zero-place-upsize`                                     |
+| R-D02, R-D03, R-D04        | `deque/05-growth`                                                |
+| R-D12                      | not covered (trivial; unit test)                                 |
 
 CORE: all scripts. Q-A1…Q-A3, Q-D1 have no QUIRK vectors.
 
@@ -179,6 +183,9 @@ CORE: all scripts. Q-A1…Q-A3, Q-D1 have no QUIRK vectors.
 - `libobs/util/darray.h`, `libobs/util/deque.h`
 
 - **S-005-R-E01** `darray.h` — the complete inline surface over the struct pinned in section 2: lifecycle (`darray_init`, `darray_free`, `darray_end`), capacity (`darray_reserve`, `darray_ensure_capacity`, `darray_resize`, `darray_copy`, `darray_copy_array`, `darray_move`), mutation/lookup (`darray_push_back`, `darray_push_back_new`, `darray_push_back_array`, `darray_insert`, `darray_erase`, `darray_find`). Each is a thin wrapper applying the capacity/ensure rules of section 3 (R-A series) to typed element size.
+
 - **S-005-R-E02** The `da_*` typed convenience macros forward to the inlines of R-E01; semantics are identical, element type supplied by the macro.
+
 - **S-005-R-E03** `deque.h` — the byte ring-buffer inline surface: `deque_free`, `deque_reserve`, `deque_ensure_capacity`, `deque_upsize` (realloc + `deque_reorder_data` to fix the wrap point), `deque_place` (internal cursor management).
+
 - **S-005-R-E04** Push/pop inlines: `deque_push_back`/`deque_push_front` (and the `_zero` variants), `deque_peek_front`/`deque_peek_back`, `deque_pop_front`/`deque_pop_back` (plus their array forms copying N bytes) — wrap-around handling per the rules pinned in the earlier sections.

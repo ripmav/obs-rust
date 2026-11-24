@@ -11,6 +11,7 @@ Verified file map (libobs 33.0.1 checkout, line counts): `libobs/media-io/` has 
 ## A. Formats and conversion
 
 ### P2-01 Format enums and helpers
+
 - [ ] **P2-01.1 Enums**
   - Files: `libobs/media-io/video-io.h` (338), `libobs/media-io/audio-io.h` (228).
   - Steps: extract `video_format` (26 values, `NONE`=0…`R10L`=25), `audio_format`, `speaker_layout`, `video_colorspace`, `video_range_type` verbatim; write `#[repr(C)]`/`#[repr(i32)]` enums plus `TryFrom` in `crates/obs-media` module `enums` (S-013 target crate); acceptance is the `mediaconv` `enums` command (script `01-enums-layouts`: every value, `sizeof`, `offsetof`).
@@ -33,6 +34,7 @@ Verified file map (libobs 33.0.1 checkout, line counts): `libobs/media-io/` has 
   - Done when: every `MAKE_FOURCC` alias in the C switch maps to the same format; unknown -> `NONE`.
 
 ### P2-02 Colour matrices
+
 - [ ] **P2-02.1 Tables**
   - Files: `libobs/media-io/video-matrices.c` (256).
   - Steps: port the 16-float matrices for 601/709/2100 × bit depths 8..16 (`bpp_info`[9]) × full/limited = 54 tables into `crates/obs-media` module `matrices`; build them with the R53 `f32` operation order.
@@ -54,6 +56,7 @@ Verified file map (libobs 33.0.1 checkout, line counts): `libobs/media-io/` has 
   - Done when: `obs-ref-dump` output matches (P0-14 goldens).
 
 ### P2-03 `video-scaler` and `video-frame`
+
 - [ ] **P2-03.1 Trait**
   - Files: `libobs/media-io/video-scaler.h` (43) — the contract: `video_scale_info {format, width, height, range, colorspace}`, `video_scaler_t`, status codes (`SUCCESS`, `BAD_CONVERSION`, `FAILED`).
   - Steps: define a `Scaler` trait in `crates/media-io` (S-044 target crate) with `scale(&mut self, dst, src) -> ScalerStatus`; document the error type and the creation-argument shape (dst info, src info, flags).
@@ -80,6 +83,7 @@ Verified file map (libobs 33.0.1 checkout, line counts): `libobs/media-io/` has 
   - Done when: hashes match the C `obs-ref-dump` goldens.
 
 ### P2-04 SIMD pixel converters
+
 - [ ] **P2-04.1 Packed->planar**
   - Files: `libobs/media-io/format-conversion.c` (288), `libobs/media-io/format-conversion.h` (50).
   - Steps: port `compress_uyvx_to_i420`, `compress_uyvx_to_nv12`, `convert_uyvx_to_i444` per R30–R36 (processed width, luma copy, 2×2 chroma average, row/chroma-row writes) to `crates/obs-media` module `convert`.
@@ -107,6 +111,7 @@ Verified file map (libobs 33.0.1 checkout, line counts): `libobs/media-io/` has 
   - Done when: ≥ C speed on x86_64 (bench report).
 
 ### P2-05 HDR helpers
+
 - [ ] **P2-05.1 Transfer functions**
   - Files: none in C (libobs has no CPU-side PQ/HLG maths — `libobs/data/color.effect` + `format_conversion.effect` do it in shaders, S-053 R41; FFmpeg elsewhere). `obs_get_video_hdr_nominal_peak_level` / `obs_get_video_sdr_white_level` are thin getters in `libobs/obs.c` (3491) — Phase 4.
   - Steps: implement SMPTE ST 2084 PQ EOTF/OETF and BT.2100 HLG encode/decode as a pure-Rust reference in `crates/obs-media`; 256-point golden.
@@ -121,6 +126,7 @@ Verified file map (libobs 33.0.1 checkout, line counts): `libobs/media-io/` has 
   - Done when: goldens committed and re-running is byte-identical.
 
 ### P2-06 Audio resampler
+
 - [ ] **P2-06.1 Trait**
   - Files: `libobs/media-io/audio-resampler.h` (44) — the contract: `audio_resampler_t`, `audio_resampler_resample` returning a timestamp offset.
   - Steps: define a `Resampler` trait in `crates/obs-media` with `resample(&mut self, data) -> u64` (ts offset) and a sample-info accessor.
@@ -137,6 +143,7 @@ Verified file map (libobs 33.0.1 checkout, line counts): `libobs/media-io/` has 
   - Done when: golden.
 
 ### P2-07 Audio maths
+
 - [ ] **P2-07.1 dB conversion**
   - Files: `libobs/media-io/audio-math.h` (43).
   - Steps: port `mul_to_db`, `db_to_mul` as f32 per R10: 0 → −inf, negative mul → NaN, +inf → +inf, non-finite db → 0, large db → +inf.
@@ -155,6 +162,7 @@ Verified file map (libobs 33.0.1 checkout, line counts): `libobs/media-io/` has 
 ## B. IO threads
 
 ### P2-08 `audio-io` core
+
 - [ ] **P2-08.1 Thread loop**
   - Files: `libobs/media-io/audio-io.c` (455), `libobs/media-io/audio-io.h` (228).
   - Steps: port the `audio_thread` loop per R80 into `crates/media-io` module `audio_output`: `samples += 1024` (`AUDIO_OUTPUT_FRAMES`), `due = start + frames_to_ns(rate, samples)` (integer arithmetic), `Clock::sleep_until(due)` seam; time derived from the absolute sample counter, not "now + interval".
@@ -184,6 +192,7 @@ Verified file map (libobs 33.0.1 checkout, line counts): `libobs/media-io/` has 
   - Done when: passes the P2-12 `assert_no_alloc` harness.
 
 ### P2-09 `video-io` core
+
 - [ ] **P2-09.1 Thread and cache**
   - Files: `libobs/media-io/video-io.c` (679), `libobs/media-io/video-io.h` (338).
   - Steps: port `video_output_open` (R01–R04: `frame_time = floor(1e9 * fps_den / fps_num)`, cache clamped to 16), the ring of `cached_frame_info {frame, skipped, count}`, and the `video_thread` worker loop (R20–R22) into `crates/media-io` module `video_output`.
@@ -216,6 +225,7 @@ Verified file map (libobs 33.0.1 checkout, line counts): `libobs/media-io/` has 
   - Done when: tests for 24/30/60 and NTSC.
 
 ### P2-10 Timing and clock
+
 - [ ] **P2-10.1 Clock trait**
   - Steps: define `Clock { now_ns(), sleep_until(ns) }` with real and fake implementations; all timing code takes `&dyn Clock` (S-044 §9 recommends exactly this seam).
   - Spec: S-044 §9 (implementation notes).
@@ -234,6 +244,7 @@ Verified file map (libobs 33.0.1 checkout, line counts): `libobs/media-io/` has 
   - Done when: drift test.
 
 ### P2-11 Lock-free queues
+
 - [ ] **P2-11.1 SPSC ring**
   - Files: `libobs/util/deque.h` (the replaced `deque + mutex` pattern).
   - Steps: choose `rtrb` or a custom SPSC ring; write the justification as an ADR note.
@@ -246,6 +257,7 @@ Verified file map (libobs 33.0.1 checkout, line counts): `libobs/media-io/` has 
   - Done when: loom models green.
 
 ### P2-12 Real-time audit
+
 - [ ] **P2-12.1 Harness**
   - Steps: `assert_no_alloc` + lock-detect wrapper in tests.
   - Done when: demonstrates failing on a deliberate alloc.
@@ -258,6 +270,7 @@ Verified file map (libobs 33.0.1 checkout, line counts): `libobs/media-io/` has 
 ## C. Audio mixing and controls
 
 ### P2-13 Audio mixer
+
 - [ ] **P2-13.1 Source buffers**
   - Files: `libobs/obs-audio.c` (721).
   - Steps: consume per-source per-mix float buffers (`source->audio_output_buf[mix][ch]`, allocated by P4-05; supplied by a fake source here) into `audio_output_data` per R30–R33 (setup, render order, `obs_source_audio_render`).
@@ -287,6 +300,7 @@ Verified file map (libobs 33.0.1 checkout, line counts): `libobs/media-io/` has 
   - Done when: 8 sources × 6 mixes × 10 s PCM, hash compare.
 
 ### P2-14 Fader and meter
+
 - [ ] **P2-14.1 Curves**
   - Files: `libobs/obs-audio-controls.c` (878).
   - Steps: port the cubic / IEC 60268-18 / log `def_to_db`/`db_to_def` curves (R45), `obs_fader_set_db` (R46), `attach_source` (R47), the "volume" handler (R48), `obs_fader_db_to_def` (R49) to `crates/obs-audio-mix`.
@@ -312,6 +326,7 @@ Verified file map (libobs 33.0.1 checkout, line counts): `libobs/media-io/` has 
   - Done when: goldens committed and green.
 
 ### P2-15 Audio monitoring
+
 - [ ] **P2-15.1 Trait**
   - Files: `libobs/obs.h` (2734; public `obs_audio_monitoring_available`/`obs_enum_audio_monitoring_devices`), `libobs/obs-internal.h` (1543; `audio_monitor_create/reset/destroy`), each backend's `devices_match`.
   - Steps: define a `MonitorBackend` trait from the C contract.
@@ -337,6 +352,7 @@ Verified file map (libobs 33.0.1 checkout, line counts): `libobs/media-io/` has 
   - Done when: S-065 committed; P2-15.3/.4 cite it.
 
 ### P2-16 Audio volume/pan/mono kernels
+
 - [ ] **P2-16.1 Kernels**
   - Files: `libobs/obs-source.c` (6070) — `apply_audio_volume` (line 5335), `multiply_output_audio` (5252), `process_audio_balancing` (4000), `downmix_to_mono_planar` (3980). P4-05 owns the file; fake buffers here.
   - Steps: port the four as pure functions over fake buffers: per-mix gain, sine-law pan matrix, mono downmix (and the mixer-mask buffer clearing in `process_audio_source_tick`).
@@ -349,6 +365,7 @@ Verified file map (libobs 33.0.1 checkout, line counts): `libobs/media-io/` has 
 ## D. Bitstream parsers
 
 ### P2-17 NAL / start-code
+
 - [ ] **P2-17.1 Scanner**
   - Files: `libobs/obs-nal.c` (66), `libobs/obs-nal.h` (37).
   - Steps: port `obs_nal_find_startcode` per R01–R05 (word-aligned Annex-B scan for `00 00 01`/`00 00 00 01`; the wrapper normalises a 4-byte start code to the 3-byte position) and the `OBS_NAL_PRIORITY` enum to `crates/obs-video-bitstream` (S-012 target crate).
@@ -366,6 +383,7 @@ Verified file map (libobs 33.0.1 checkout, line counts): `libobs/media-io/` has 
   - Done when: fuzz target runs clean in CI.
 
 ### P2-18 AVC
+
 - [ ] **P2-18.1 Keyframe/NAL types**
   - Files: `libobs/obs-avc.c` (321), `libobs/obs-avc.h` (55).
   - Steps: port `obs_avc_keyframe` (R10: first NAL with type 1 or 5) and `obs_avc_find_startcode` (R04).
@@ -391,6 +409,7 @@ Verified file map (libobs 33.0.1 checkout, line counts): `libobs/media-io/` has 
   - Done when: fuzz green, goldens committed.
 
 ### P2-19 HEVC
+
 - [ ] **P2-19.1 Headers**
   - Files: `libobs/obs-hevc.c` (202), `libobs/obs-hevc.h` (81).
   - Steps: port `obs_extract_hevc_headers` (R54: NAL types 32/33/34 → `header`, 39/40 → `sei`, rest → `new`).
@@ -407,6 +426,7 @@ Verified file map (libobs 33.0.1 checkout, line counts): `libobs/media-io/` has 
   - Done when: fuzz green, goldens committed.
 
 ### P2-20 AV1
+
 - [ ] **P2-20.1 OBU parser**
   - Files: `libobs/obs-av1.c` (208), `libobs/obs-av1.h` (47).
   - Steps: port `parse_obu_header` (R70: type/ext/size from the header byte, LEB128 size) and `obs_av1_keyframe` (R71: FRAME(6)/FRAME_HEADER(3) frame-type bits).
@@ -426,6 +446,7 @@ Verified file map (libobs 33.0.1 checkout, line counts): `libobs/media-io/` has 
   - Done when: fuzz green, goldens committed.
 
 ### P2-21 Caption support
+
 - [ ] **P2-21.1 Port libcaption** (D-18, confirmed 2026-11-06)
   - Files: `deps/libcaption/` (≈7,465 lines across `caption/` + `src/`; ported to Rust — `deps/libcaption` dies in P7-04).
   - Steps: port the CEA-608/708 parser (`caption_*`/`sei_*` surface) to a Rust crate; decode against the C build's output as conformance vectors (the parser is stateful protocol logic — pin the full session, not just the happy path).
@@ -443,6 +464,7 @@ Verified file map (libobs 33.0.1 checkout, line counts): `libobs/media-io/` has 
 ## E. Packet queues and delay
 
 ### P2-22 Encoder packet queue
+
 - [ ] **P2-22.1 Packet type**
   - Files: `libobs/obs-encoder.c` (2286), `libobs/obs-encoder.h` (365).
   - Steps: port the `encoder_packet` struct (S-041 §3.3 field list, refcount in the 8 bytes before `data`), `obs_encoder_packet_create_instance`, `obs_encoder_packet_ref/release` to `crates/obs-encoder-output` (S-041 target crate).
@@ -461,6 +483,7 @@ Verified file map (libobs 33.0.1 checkout, line counts): `libobs/media-io/` has 
   - Done when: traces equal the vectors.
 
 ### P2-23 Output delay buffer
+
 - [ ] **P2-23.1 Queue**
   - Files: `libobs/obs-output-delay.c` (209).
   - Steps: port the `process_delay` queue per R72: copy each arriving packet with `ts = clock`, release the front while `now - ts > active_delay_ns` (strictly greater, unsigned), drain **only when a packet arrives** (no timer).
@@ -477,6 +500,7 @@ Verified file map (libobs 33.0.1 checkout, line counts): `libobs/media-io/` has 
   - Done when: 20 s delay recording smoke passes.
 
 ### P2-24 Interleaving
+
 - [ ] **P2-24.1 Interleave/send**
   - Files: `libobs/obs-output.c` (3340; the interleave part).
   - Steps: port `interleave_packets` (R41–R43: keyframe gate, drop-before-insert, insert order), `send_interleaved` (R48–R49: at most two packets per arrival), `find_first_packet_type_idx` (start index R46), `apply_ept_offsets` (R47: video offset = first PTS, audio offset = first dts only if `dts > 0`).
@@ -499,6 +523,7 @@ Verified file map (libobs 33.0.1 checkout, line counts): `libobs/media-io/` has 
 ## F. Integration
 
 ### P2-25 Wire into libobs
+
 - [ ] **P2-25.1 CMake switch** per crate.
   - Files: `CMakeLists.txt`, `libobs/CMakeLists.txt` (the `OBS_ENABLE_RUST` option from P0-08).
   - Steps: add a per-crate CMake switch linking the Rust static libs into `libobs`.
@@ -508,6 +533,7 @@ Verified file map (libobs 33.0.1 checkout, line counts): `libobs/media-io/` has 
   - Done when: CI matrix covers both switches on 3 OSes.
 
 ### P2-26 Soak test
+
 - [ ] **P2-26.1 Script** — 24 h headless record (1080p60, 6 audio mixes, x264). Done when: runs unattended.
 - [ ] **P2-26.2 Metrics** — CPU, RSS, dropped frames every minute to CSV.
   - Done when: CSV produced for the full run.
@@ -515,6 +541,7 @@ Verified file map (libobs 33.0.1 checkout, line counts): `libobs/media-io/` has 
   - Done when: comparison report committed.
 
 ### P2-27 Latency
+
 - [ ] **P2-27.1 Signal** — flash+beep source.
   - Files: `test/test-input/sync-pair-aud.c` (134), `test/test-input/sync-pair-vid.c` (133) exist for this.
   - Done when: flash+beep source built into the test host.
@@ -524,12 +551,14 @@ Verified file map (libobs 33.0.1 checkout, line counts): `libobs/media-io/` has 
   - Done when: delta = 0 ms at defaults, reported.
 
 ### P2-28 Phase 2 review
+
 - [ ] **P2-28.1 Review** benchmarks, fuzz corpus, soak.
   - Done when: review notes committed.
 - [ ] **P2-28.2 Tick** parent tasks.
   - Done when: parent tasks ticked in `../phase-2-media-pipeline.md`.
 
 ### P2-29 `media-remux` (added)
+
 - [ ] **P2-29.1 Port**
   - Files: `libobs/media-io/media-remux.c` (266), `libobs/media-io/media-remux.h` (37).
   - Steps: port the remux helper (open input, copy streams, progress callback) on top of the P2-03 frame/scaler types.

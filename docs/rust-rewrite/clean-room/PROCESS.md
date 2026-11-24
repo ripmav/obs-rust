@@ -15,11 +15,11 @@ case.
 
 ## 1. Roles
 
-| Role | May read | May not read | Produces |
-|---|---|---|---|
-| **Spec author** | everything, including the C implementation | – | specs (`docs/rust-rewrite/specs/S-*.md`), scripts and vectors (`test/conformance/`), reference runners (`test/conformance/gen/`) |
-| **Implementer** (human or AI) | the spec of the component, the conformance README, scripts and vectors, the *published* API/ABI description in the spec, documentation of external standards and third-party libraries | any `.c`, `.cpp`, `.m`, `.mm`, `.swift` implementation file of the component or its callers in this repository, `git log -p`/`git blame` of those files, decompilations; the reference runners in `test/conformance/gen/` (they link the C implementation) | Rust crate, own conformance runner, `DEVIATIONS.md` |
-| **Reviewer** | spec + implementation + provenance log | – | provenance sign-off (section 5) |
+| Role                          | May read                                                                                                                                                                               | May not read                                                                                                                                                                                                                                               | Produces                                                                                                                         |
+| ----------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
+| **Spec author**               | everything, including the C implementation                                                                                                                                             | –                                                                                                                                                                                                                                                          | specs (`docs/rust-rewrite/specs/S-*.md`), scripts and vectors (`test/conformance/`), reference runners (`test/conformance/gen/`) |
+| **Implementer** (human or AI) | the spec of the component, the conformance README, scripts and vectors, the *published* API/ABI description in the spec, documentation of external standards and third-party libraries | any `.c`, `.cpp`, `.m`, `.mm`, `.swift` implementation file of the component or its callers in this repository, `git log -p`/`git blame` of those files, decompilations; the reference runners in `test/conformance/gen/` (they link the C implementation) | Rust crate, own conformance runner, `DEVIATIONS.md`                                                                              |
+| **Reviewer**                  | spec + implementation + provenance log                                                                                                                                                 | –                                                                                                                                                                                                                                                          | provenance sign-off (section 5)                                                                                                  |
 
 Public C headers: an implementer needs struct layouts, constants and function signatures
 (the ABI). The spec reproduces everything required in its "Interface" sections, so
@@ -56,17 +56,17 @@ See [AGENT-BRIEF.md](AGENT-BRIEF.md) for a ready-to-use instruction block for AI
    *no copied code*. They write scripts for every rule and generate vectors with
    `test/conformance/run.sh generate`. Every rule in the spec carries an ID (`S-002-R14`)
    and each rule is referenced by at least one script (coverage table at the end of the spec).
-2. Spec status moves `Draft → Ready` only when a **second spec author** has checked the
+1. Spec status moves `Draft → Ready` only when a **second spec author** has checked the
    spec against the source and the vectors (see section 4).
-3. **Implementer** picks a `Ready` spec, implements the crate, writes a runner for the
+1. **Implementer** picks a `Ready` spec, implements the crate, writes a runner for the
    script language, and runs all scripts. Output is compared per
    `test/conformance/README.md`.
-4. **Questions** go to the spec author as a GitHub issue labelled `spec-question`.
+1. **Questions** go to the spec author as a GitHub issue labelled `spec-question`.
    The answer is **always a change to the spec and, where possible, a new script**, never a
    private explanation. Implementers never receive pointers to source code.
-5. **Deviations** (QUIRK cases deliberately not reproduced, or implementation-defined
+1. **Deviations** (QUIRK cases deliberately not reproduced, or implementation-defined
    points) are listed in the crate's `DEVIATIONS.md` with a reason and a test.
-6. **Review**: the reviewer checks the provenance log and runs the similarity scan (section 5).
+1. **Review**: the reviewer checks the provenance log and runs the similarity scan (section 5).
 
 ## 4. Spec quality bar ("Ready" checklist)
 
@@ -100,10 +100,10 @@ Deviations:          DEVIATIONS.md (n entries)
 The reviewer then:
 
 1. Confirms no forbidden path was read (agent transcripts/tool logs for AI work; attestation for humans).
-2. Runs a similarity scan between the new crate and the C component (token-level, e.g. a
+1. Runs a similarity scan between the new crate and the C component (token-level, e.g. a
    winnowing/`moss`-style tool); any match above the agreed threshold is investigated.
-3. Re-runs all vectors on all supported OSes.
-4. Signs off in the PR.
+1. Re-runs all vectors on all supported OSes.
+1. Signs off in the PR.
 
 ## 6. What if the spec is wrong or incomplete?
 

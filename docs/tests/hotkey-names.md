@@ -6,18 +6,18 @@ names), S-034 for the consumer context. The 636 key ids are the
 0-based positions in the key list of `obs-hotkeys.h`
 (`OBS_KEY_NONE = 0`, `OBS_KEY_LAST_VALUE = 636` is not a key).
 
-| Area | Pinned by test | Conformance vector |
-| --- | --- | --- |
-| **Table (R17)** | | |
-| all 636 entries equal the normative vector, line by line (`to_name` + `from_name`) | `table_matches_normative_vector` | `helpers/hotkeys-fallback-table` |
-| round trip `from_name(to_name(i)) == i` for all ids | `round_trip_is_identity` | — |
-| spot values (NONE, RETURN, ENTER, HYPER_L, NUMASTERISK, A, EDIAERESIS, MOUSE29, `0x07`, VK_OEM_CLEAR) | `known_names` | `helpers/hotkeys-lookup` |
-| no duplicate names in the table | `no_duplicate_names` | — |
-| **to_name (R19)** | | |
-| out of range (636, 100000, `u32::MAX`) → `""` | `to_name_out_of_range` | `helpers/hotkeys-lookup` |
-| **from_name (R18)** | | |
-| exact match: NONE→0, A→121, RETURN→1, MOUSE29→461, `0x07`→470 | `from_name_edge_cases` | `helpers/hotkeys-lookup` |
-| wrongly-cased, padded, no-prefix, empty, `OBS_KEY_LAST_VALUE`, unknown → 0, no error | `from_name_edge_cases` | `helpers/hotkeys-lookup` |
+| Area                                                                                                  | Pinned by test                   | Conformance vector               |
+| ----------------------------------------------------------------------------------------------------- | -------------------------------- | -------------------------------- |
+| **Table (R17)**                                                                                       |                                  |                                  |
+| all 636 entries equal the normative vector, line by line (`to_name` + `from_name`)                    | `table_matches_normative_vector` | `helpers/hotkeys-fallback-table` |
+| round trip `from_name(to_name(i)) == i` for all ids                                                   | `round_trip_is_identity`         | —                                |
+| spot values (NONE, RETURN, ENTER, HYPER_L, NUMASTERISK, A, EDIAERESIS, MOUSE29, `0x07`, VK_OEM_CLEAR) | `known_names`                    | `helpers/hotkeys-lookup`         |
+| no duplicate names in the table                                                                       | `no_duplicate_names`             | —                                |
+| **to_name (R19)**                                                                                     |                                  |                                  |
+| out of range (636, 100000, `u32::MAX`) → `""`                                                         | `to_name_out_of_range`           | `helpers/hotkeys-lookup`         |
+| **from_name (R18)**                                                                                   |                                  |                                  |
+| exact match: NONE→0, A→121, RETURN→1, MOUSE29→461, `0x07`→470                                         | `from_name_edge_cases`           | `helpers/hotkeys-lookup`         |
+| wrongly-cased, padded, no-prefix, empty, `OBS_KEY_LAST_VALUE`, unknown → 0, no error                  | `from_name_edge_cases`           | `helpers/hotkeys-lookup`         |
 
 ## Not covered yet (C-checkout dependent / later phases)
 

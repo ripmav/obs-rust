@@ -9,6 +9,7 @@ Verified: the top-level directories are `libobs`, `libobs-opengl`, `libobs-d3d11
 ## A. Removal
 
 ### P7-01 Delete C libobs and backends
+
 - [ ] **P7-01.1 Preconditions** — `wgpu` default for ≥2 releases, no open P0/P1 graphics bugs, legacy fallback usage < agreed threshold from telemetry or issue count.
   - Files: release-branch tags (two releases with wgpu default), the open P0/P1 graphics issue list, fallback-usage telemetry/issue count.
   - Steps: 1. confirm wgpu default shipped in two release branches; 2. verify no open P0/P1 graphics bug; 3. record fallback usage against the agreed threshold; 4. sign off in `docs/rust-rewrite/retired.md`.
@@ -26,6 +27,7 @@ Verified: the top-level directories are `libobs`, `libobs-opengl`, `libobs-d3d11
   - Done when: build and tests green, and the no-reference grep of step 4 is clean.
 
 ### P7-02 Delete C++ frontend
+
 - [ ] **P7-02.1 Preconditions** — parity checklist (P6-48.1) 100%, beta feedback closed.
   - Files: `docs/rust-rewrite/parity-checklist.md` (P6-48.1), P6-47 beta feedback log.
   - Steps: 1. bring the P6-48.1 parity checklist to 100%; 2. close all open P6-47 beta items; 3. sign off.
@@ -41,6 +43,7 @@ Verified: the top-level directories are `libobs`, `libobs-opengl`, `libobs-d3d11
   - Done when: installers still contain locale and themes, CI green on 3 OSes, tag listed in `docs/rust-rewrite/retired.md`.
 
 ### P7-03 Delete C plugins
+
 - [ ] **P7-03.1 List** — plugin → status table from P5-50.
   - Files: new "P7-03 plugin table" section in this file (41 rows).
   - Steps: 1. list all 41 `plugins/<dir>` entries (counts below); 2. mark each ported (P5-49 table) or kept (P5-50 FFI-shim table); 3. commit the table.
@@ -57,6 +60,7 @@ Verified: the top-level directories are `libobs`, `libobs-opengl`, `libobs-d3d11
   - Done when: list committed and every `plugins/` dir not in it is deleted.
 
 ### P7-04 Delete vendored deps
+
 - [ ] **P7-04.1 Scan** — for each `deps/*` entry, `grep` consumers.
   - Files: `deps/` — `blake2` (6 / 779), `json11` (5 / 1,062), `glad` (10 / 23,223), `libcaption` (31 / 7,465), `w32-pthreads` (417 / 68,102), `libdshowcapture` (ported per D-19 — only the nested vendor `capture-device-support` tree stays, see P7-04.2).
   - Steps: 1. `git grep -n "blake2\|json11\|\bglad\b\|libcaption\|w32-pthreads" -- '*.cmake' CMakeLists.txt .github`; 2. record each consumer and the wave that deletes it (P7-01 `libobs`, P7-02 `frontend`, P7-03 plugins, P7-05 `shared`); 3. commit the table.
@@ -68,6 +72,7 @@ Verified: the top-level directories are `libobs`, `libobs-opengl`, `libobs-d3d11
   - Done when: no CMake/CI references remain, CI green on 3 OSes, tag listed in `docs/rust-rewrite/retired.md`.
 
 ### P7-05 Delete `shared/`
+
 - [ ] **P7-05.1 Mapping table** — `bpm`, `file-updater`, `happy-eyeballs`, `ipc-util`, `media-playback`, `obs-d3d8-api`, `obs-hook-config`, `obs-inject-library`, `obs-scripting`, `obs-shared-memory-queue`, `obs-tiny-nv12-scale`, `opts-parser`, `properties-view`, `qt` → Rust crate or "still used by hook DLL".
   - Files: the 14 modules (141 files / 23,323 lines) with measured CMake consumers: `bpm` (4 / 740; `frontend:24`, `plugins/obs-outputs:16`), `file-updater` (3 / 575; `rtmp-services:15`, `win-capture:21`), `happy-eyeballs` (3 / 935; `obs-outputs:8`), `ipc-util` (6 / 421; `win-capture:17`, `win-capture/graphics-hook:7`), `media-playback` (11 / 2,878; `plugins/obs-ffmpeg`), `obs-d3d8-api` (5 / 3,342; `graphics-hook:15`, `get-graphics-offsets:4`), `obs-hook-config` (4 / 220; `graphics-hook:19`, `get-graphics-offsets:8`), `obs-inject-library` (3 / 160; `win-capture:8`, `inject-helper:8`), `obs-scripting` (26 / 7,005; `frontend-tools:69`), `obs-shared-memory-queue` (3 / 262; `win-dshow:13`, `win-dshow/virtualcam-module:60`), `obs-tiny-nv12-scale` (3 / 239; `win-dshow:9`, `virtualcam-module:56`), `opts-parser` (3 / 120; `obs-nvenc:13`, `obs-outputs:12`, `obs-x264:6`), `properties-view` (8 / 2,831; `aja-output-ui:20`, `decklink-output-ui:17`, `frontend-tools:13`), `qt` (52 / 3,595; `frontend:28`, `frontend-tools:17,21`).
   - Steps: 1. map each module to its Rust replacement (e.g. `media-playback` → the S-036 crate) or "kept by the hook trio"; 2. commit the table in this section.
@@ -79,6 +84,7 @@ Verified: the top-level directories are `libobs`, `libobs-opengl`, `libobs-d3d11
   - Done when: only the P7-05.1-mapped leftovers remain, CI green on 3 OSes, tag listed in `docs/rust-rewrite/retired.md`.
 
 ### P7-25 Delete the C test harness (added)
+
 - [ ] **P7-25.1 Preconditions** — prove the four cmocka suites (`test_bitstream.c`, `test_darray.c`, `test_os_path.c`, `test_serializer.c`) and `test/test-input` are superseded: every exercised behaviour has a Rust test or a `test/conformance/` area.
   - Files: new coverage table in `docs/tests/`.
   - Steps: 1. map `test_bitstream.c` (`util/bitstream.h`) → area `serial` (S-010), `test_darray.c` → `darray` (S-005), `test_os_path.c` (`util/platform.h`) → `platform` (S-023), `test_serializer.c` → `serial` (S-010); 2. map the `test-input` plugin checks (sync/audio-buffering/filter/sinewave/random sources) → `obssource` (S-040) + the Rust crates' own tests; 3. record every behaviour with its Rust test or conformance script; 4. commit the table.
@@ -98,6 +104,7 @@ Verified: the top-level directories are `libobs`, `libobs-opengl`, `libobs-d3d11
 ## B. Build system
 
 ### P7-06 Cargo-first build
+
 - [ ] **P7-06.1 xtask** — commands `build`, `package`, `install`, `test`, `lint`, `fmt`, `deps` (fetch native libs).
   - Files: `xtask/` crate (new) + `.cargo/config.toml` (`alias xtask = "run --package xtask --"`).
   - Steps: 1. implement the seven commands; 2. port the dependency-preset download logic from `cmake/{common,macos,windows}/buildspec*.cmake` into `xtask deps` (pins from P7-07.1); 3. replace the documented CMake commands in the build docs (P7-14.3) and wire CI to `cargo xtask build`/`test`.
@@ -113,6 +120,7 @@ Verified: the top-level directories are `libobs`, `libobs-opengl`, `libobs-d3d11
   - Done when: CI uses xtask only.
 
 ### P7-07 Dependency management
+
 - [ ] **P7-07.1 Pins** — FFmpeg, x264, CEF, SRT, RIST, Qt (if kept), with versions and SHA-256 (the WebRTC stack is webrtc-rs — Rust crates, pinned by Cargo.lock, not this manifest, D-16).
   - Files: `xtask` `deps` manifest (new).
   - Steps: 1. collect the current versions from `cmake/*/buildspec*.cmake` + `deps/`; 2. record version + SHA-256 per native dep in the manifest; 3. `xtask deps` verifies every hash on fetch.
@@ -123,6 +131,7 @@ Verified: the top-level directories are `libobs`, `libobs-opengl`, `libobs-d3d11
   - Done when: an offline build from the pinned manifest succeeds on 3 OSes.
 
 ### P7-08 Cross-compilation and caches
+
 - [ ] **P7-08.1 Windows x64/arm64**.
   - Files: CI build matrix (windows jobs in `build-project.yaml`/`push.yaml`), `xtask build`.
   - Steps: 1. add x64 + arm64 cross-compile jobs; 2. build all artifacts for both.
@@ -141,6 +150,7 @@ Verified: the top-level directories are `libobs`, `libobs-opengl`, `libobs-d3d11
   - Done when: full CI under 30 minutes on all 3 OSes.
 
 ### P7-09 Reproducible and signed builds
+
 - [ ] **P7-09.1 Determinism** — `SOURCE_DATE_EPOCH`, path remapping; two builds hash-equal.
   - Files: `xtask build` (env + `-C remap-path-prefix`).
   - Steps: 1. honour `SOURCE_DATE_EPOCH` and remap paths in every step; 2. build twice from clean checkouts and compare hashes.
@@ -157,6 +167,7 @@ Verified: the top-level directories are `libobs`, `libobs-opengl`, `libobs-d3d11
 ## C. Compatibility layer and SDK
 
 ### P7-10 C ABI as opt-in compat feature
+
 - [ ] **P7-10.1 Feature** — move C exports of `obs-ffi` behind `compat-c-abi` (default on until deprecation).
   - Files: `obs-ffi` `Cargo.toml` (new `compat-c-abi` feature) + the C-export module.
   - Steps: 1. gate the C exports on the feature (default on); 2. load a legacy C plugin with the feature on; 3. build once with it off.
@@ -172,6 +183,7 @@ Verified: the top-level directories are `libobs`, `libobs-opengl`, `libobs-d3d11
   - Done when: ADR merged and timeline published with the SDK 1.0 notes.
 
 ### P7-11 Native plugin SDK 1.0
+
 - [ ] **P7-11.1 Freeze review** — public API audit.
   - Files: `obs-plugin-api` crate (public surface).
   - Steps: 1. audit every public item; 2. freeze the API (semver 1.0).
@@ -190,6 +202,7 @@ Verified: the top-level directories are `libobs`, `libobs-opengl`, `libobs-d3d11
   - Done when: guide published with a C and a Rust version of each type.
 
 ### P7-12 WASM sandbox research
+
 - [ ] **P7-12.1 Spike** — load a WASM component source plugin (wasmtime).
   - Files: spike crate (new) + wasmtime.
   - Steps: 1. build a WASM component source; 2. load it via wasmtime in a headless test.
@@ -204,6 +217,7 @@ Verified: the top-level directories are `libobs`, `libobs-opengl`, `libobs-d3d11
   - Done when: findings ADR committed.
 
 ### P7-13 Scripting API stability
+
 - [ ] **P7-13.1 Corpus** — run all documented script examples + community scripts.
   - Files: script corpus (new, from the `docs/sphinx` examples + community scripts).
   - Steps: 1. collect every documented Lua/Python example; 2. run the corpus against the Rust bindings.
@@ -216,6 +230,7 @@ Verified: the top-level directories are `libobs`, `libobs-opengl`, `libobs-d3d11
 ## D. Documentation and community
 
 ### P7-14 Rewrite docs
+
 - [ ] **P7-14.1 API reference** — rustdoc + cbindgen headers; replaces `docs/sphinx`.
   - Files: rustdoc site + cbindgen-generated headers; `docs/sphinx` (redirect).
   - Steps: 1. generate the rustdoc + cbindgen reference; 2. redirect `docs/sphinx` to it (do not just delete — plugin authors search it).
@@ -230,6 +245,7 @@ Verified: the top-level directories are `libobs`, `libobs-opengl`, `libobs-d3d11
   - Done when: a clean clone follows the per-OS build docs.
 
 ### P7-15 Contributor onboarding
+
 - [ ] **P7-15.1 Architecture overview** + crate map diagram.
   - Files: `docs/rust-rewrite/architecture.md` (new) + crate map diagram.
   - Steps: 1. write the overview; 2. draw the crate map; 3. publish.
@@ -240,6 +256,7 @@ Verified: the top-level directories are `libobs`, `libobs-opengl`, `libobs-d3d11
   - Done when: list published.
 
 ### P7-16 Plugin author outreach
+
 - [ ] **P7-16.1 Announcement**.
   - Files: announcement post (new).
   - Steps: 1. write the announcement (timeline, D-05 deprecation, migration guide); 2. publish.
@@ -254,6 +271,7 @@ Verified: the top-level directories are `libobs`, `libobs-opengl`, `libobs-d3d11
   - Done when: support window published.
 
 ### P7-17 Translator workflow
+
 - [ ] **P7-17.1 Verify** locale flow (Crowdin) unchanged.
   - Files: Crowdin config, `.ini` flow (77 locale `.ini` moved in P7-02.3).
   - Steps: 1. trigger a real Crowdin update; 2. verify it flows to `.ini` in the new data dir.
@@ -266,6 +284,7 @@ Verified: the top-level directories are `libobs`, `libobs-opengl`, `libobs-d3d11
 ## E. Hardening and release
 
 ### P7-18 Security audit
+
 - [ ] **P7-18.1 Scope/auditor** selection.
   - Files: audit scope doc (new).
   - Steps: 1. write the scope (unsafe blocks, network parsing, updater, OAuth); 2. select the auditor.
@@ -284,6 +303,7 @@ Verified: the top-level directories are `libobs`, `libobs-opengl`, `libobs-d3d11
   - Done when: `SECURITY.md` is current.
 
 ### P7-19 Fuzzing in CI
+
 - [ ] **P7-19.1 Targets** — `obs-data` JSON, NAL/OBU parsers, effect parser, FLV/RTMP, MP4 input, importers, config, websocket requests, ffmpeg-mux pipe.
   - Files: fuzz-target crates (new, one per target).
   - Steps: 1. add a fuzzer target per parser listed; 2. run each against its committed corpus.
@@ -298,6 +318,7 @@ Verified: the top-level directories are `libobs`, `libobs-opengl`, `libobs-d3d11
   - Done when: documented triage process and committed corpus.
 
 ### P7-20 Performance acceptance
+
 - [ ] **P7-20.1 Setups** — 3 reference per OS.
   - Files: `docs/rust-rewrite/benchmarks.md` (P0-17.4 machine spec) + 3 reference setups per OS.
   - Steps: 1. define the 3 reference setups per OS on the spec'd machine; 2. commit them.
@@ -312,6 +333,7 @@ Verified: the top-level directories are `libobs`, `libobs-opengl`, `libobs-d3d11
   - Done when: report published and the release passes the acceptance criteria.
 
 ### P7-21 Unsafe budget report
+
 - [ ] **P7-21.1 `cargo-geiger`**.
   - Files: geiger summary (committed).
   - Steps: 1. run `cargo-geiger` over the workspace; 2. commit the summary.
@@ -322,6 +344,7 @@ Verified: the top-level directories are `libobs`, `libobs-opengl`, `libobs-d3d11
   - Done when: every `unsafe` block outside the allowed crates is justified or removed.
 
 ### P7-22 Release candidates
+
 - [ ] **P7-22.1 RC1**.
   - Files: RC build via `cargo xtask package`.
   - Steps: 1. cut RC1; 2. start crash-rate tracking by signature.
@@ -336,6 +359,7 @@ Verified: the top-level directories are `libobs`, `libobs-opengl`, `libobs-d3d11
   - Done when: go/no-go recorded with crash-rate data.
 
 ### P7-23 1.0 release
+
 - [ ] **P7-23.1 Notes** and migration guide.
   - Files: release notes + migration guide (P7-11.4).
   - Steps: 1. write the 1.0 notes; 2. link the migration guide.
@@ -350,6 +374,7 @@ Verified: the top-level directories are `libobs`, `libobs-opengl`, `libobs-d3d11
   - Done when: download pages live.
 
 ### P7-24 Retrospective
+
 - [ ] **P7-24.1 Feedback** from team and plugin authors.
   - Files: collected feedback (new doc).
   - Steps: 1. collect feedback from team + plugin authors (P7-16 window).

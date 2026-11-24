@@ -1,12 +1,12 @@
 # S-012 Video bitstream helpers: Annex-B start codes, H.264 (AVC), H.265 (HEVC), AV1
 
-| | |
-|---|---|
-| Status | Ready for review |
-| Reference | libobs 33.0.1 `obs-nal.c/.h`, `obs-avc.c/.h`, `obs-hevc.c/.h`, `obs-av1.c/.h` |
-| Target crate | `crates/obs-video-bitstream` |
-| Depends on | S-001 (allocation: results are `bmalloc` blocks), S-005 (growable byte arrays, only as an implementation detail) |
-| Conformance | `test/conformance/scripts/nal/` (19 scripts, vectors in `vectors/nal/`) |
+|              |                                                                                                                  |
+| ------------ | ---------------------------------------------------------------------------------------------------------------- |
+| Status       | Ready for review                                                                                                 |
+| Reference    | libobs 33.0.1 `obs-nal.c/.h`, `obs-avc.c/.h`, `obs-hevc.c/.h`, `obs-av1.c/.h`                                    |
+| Target crate | `crates/obs-video-bitstream`                                                                                     |
+| Depends on   | S-001 (allocation: results are `bmalloc` blocks), S-005 (growable byte arrays, only as an implementation detail) |
+| Conformance  | `test/conformance/scripts/nal/` (19 scripts, vectors in `vectors/nal/`)                                          |
 
 ## 1. Scope
 
@@ -62,22 +62,22 @@ SCALABILITY 3, ITUT_T35 4, TIMECODE 5, USER_PRIVATE_6 6.
 
 ### 3.1 `struct encoder_packet` (64-bit)
 
-| field | type | offset |
-|---|---|---|
-| data | `uint8_t *` | 0 |
-| size | `size_t` | 8 |
-| pts | `int64` | 16 |
-| dts | `int64` | 24 |
-| timebase_num | `int32` | 32 |
-| timebase_den | `int32` | 36 |
-| type | `enum obs_encoder_type` (int32; AUDIO=0, VIDEO=1) | 40 |
-| keyframe | `bool` | 44 |
-| dts_usec | `int64` | 48 |
-| sys_dts_usec | `int64` | 56 |
-| priority | `int` | 64 |
-| drop_priority | `int` | 68 |
-| track_idx | `size_t` | 72 |
-| encoder | pointer | 80 |
+| field         | type                                              | offset |
+| ------------- | ------------------------------------------------- | ------ |
+| data          | `uint8_t *`                                       | 0      |
+| size          | `size_t`                                          | 8      |
+| pts           | `int64`                                           | 16     |
+| dts           | `int64`                                           | 24     |
+| timebase_num  | `int32`                                           | 32     |
+| timebase_den  | `int32`                                           | 36     |
+| type          | `enum obs_encoder_type` (int32; AUDIO=0, VIDEO=1) | 40     |
+| keyframe      | `bool`                                            | 44     |
+| dts_usec      | `int64`                                           | 48     |
+| sys_dts_usec  | `int64`                                           | 56     |
+| priority      | `int`                                             | 64     |
+| drop_priority | `int`                                             | 68     |
+| track_idx     | `size_t`                                          | 72     |
+| encoder       | pointer                                           | 80     |
 
 `sizeof = 88` (printed by the `layout` command in every build of the runner; `layout` is not used in vectors).
 
@@ -110,6 +110,7 @@ Per NAL: `uint32 big-endian length | NAL bytes`. Start codes are removed. The ab
 01 | sps[1] sps[2] sps[3] | ff | e1 | be16(len sps) | sps (incl. NAL header byte) | 01 | be16(len pps) | pps
 [ fc|chroma_format_idc, f8|bit_depth_luma_minus8, f8|bit_depth_chroma_minus8, 00 ]   (profile_idc 100,110,122,244 only)
 ```
+
 Worked example (baseline, vector `06-avc-header`): SPS `6742c01ed900a047fe88`, PPS `68ce3c80` ->
 `0142c01e ffe1 000a 6742c01ed900a047fe88 01 0004 68ce3c80`.
 
@@ -152,6 +153,7 @@ nal_scan(data, n):                      // yields (code_start, hdr, nal_end)
         yield (code_start, hdr, nal_end)    // NAL unit = data[hdr .. nal_end]
         pos = nal_end
 ```
+
 **S-012-R06** Bytes before the first start code are ignored. Input without a found start code yields no NAL.
 **S-012-R07** Trailing zero bytes before `n` belong to the last NAL (only the one zero in front of a *found*
 4-byte start code is stripped, R02). A NAL can be empty (`nal_end == hdr`) when two start codes are adjacent;
@@ -233,21 +235,21 @@ None; all functions are reentrant. Results are independent allocations.
 
 ## 8. Reference defects and quirks
 
-| ID | Kind | Input | Reference | Required |
-|---|---|---|---|---|
-| Q-1 | QUIRK | start code in the last 3 bytes | not found, bytes stay in the previous NAL | match (SHOULD); scripts `02`, `04`, `05` |
-| Q-2 | QUIRK | AVC NAL header with bit 7 set | priority 4..7 | match; `19-avc-quirks` |
-| Q-3 | QUIRK | AV1 extract | `new` also contains header OBUs and TDs | match; `14` |
-| Q-4 | QUIRK | adjacent start codes | zero-length NAL emitted (packet: length 0), priority from first byte of next start code | match; `19` |
-| Q-5 | QUIRK | `parse_avc_header` input not starting with a start code | returned as exact copy (also `00 00 00 00 01`, `aa 00 00 00 01`) | match; `07` |
-| Q-6 | QUIRK | `obs_parse_*_packet` | source `keyframe` is only ever raised | match; `19` |
-| Q-7 | QUIRK | AV1 OBU with extension flag but no size field | `size = avail - 1` although the extension byte is also in the header | match R70; `12` |
-| D-1 | DEFECT | AV1: OBU extent past end (size field too large, ext flag without size, header byte `0e` alone) | out-of-bounds read in extract (copies beyond the buffer; `parse_obu_header` with `size - start` underflow reads the whole address space) | clamp (R72); `17` |
-| D-2 | DEFECT | AV1 keyframe: FRAME/FRAME_HEADER with non-zero size but no payload byte present | reads 1 byte past the end | return false (R71); `17` |
-| D-3 | DEFECT | AV1 LEB128 groups 5..8 | `int` shift overflow: wrong values, UB | exact 64-bit value (R70); `17` |
-| D-4 | DEFECT (UB) | AVC high-profile SPS where `ue()` sees 31/32 zero bits or exhausted data | `1 << 32` UB; reference on x86-64 gives garbage/zero fields | unspecified value, no crash, same output length; `16` records the x86 result |
-| D-5 | DEFECT | NULL data with size 0 | every scanning function crashes (pointer arithmetic below 0) | R80; `18` |
-| D-6 | DEFECT | AVC SPS/PPS > 65535 bytes | length field truncated, data written in full => corrupt record | return 0 (not covered by a vector: needs a 64 KiB parameter set; MAY be tested by the implementer) |
+| ID  | Kind        | Input                                                                                          | Reference                                                                                                                                | Required                                                                                           |
+| --- | ----------- | ---------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------- |
+| Q-1 | QUIRK       | start code in the last 3 bytes                                                                 | not found, bytes stay in the previous NAL                                                                                                | match (SHOULD); scripts `02`, `04`, `05`                                                           |
+| Q-2 | QUIRK       | AVC NAL header with bit 7 set                                                                  | priority 4..7                                                                                                                            | match; `19-avc-quirks`                                                                             |
+| Q-3 | QUIRK       | AV1 extract                                                                                    | `new` also contains header OBUs and TDs                                                                                                  | match; `14`                                                                                        |
+| Q-4 | QUIRK       | adjacent start codes                                                                           | zero-length NAL emitted (packet: length 0), priority from first byte of next start code                                                  | match; `19`                                                                                        |
+| Q-5 | QUIRK       | `parse_avc_header` input not starting with a start code                                        | returned as exact copy (also `00 00 00 00 01`, `aa 00 00 00 01`)                                                                         | match; `07`                                                                                        |
+| Q-6 | QUIRK       | `obs_parse_*_packet`                                                                           | source `keyframe` is only ever raised                                                                                                    | match; `19`                                                                                        |
+| Q-7 | QUIRK       | AV1 OBU with extension flag but no size field                                                  | `size = avail - 1` although the extension byte is also in the header                                                                     | match R70; `12`                                                                                    |
+| D-1 | DEFECT      | AV1: OBU extent past end (size field too large, ext flag without size, header byte `0e` alone) | out-of-bounds read in extract (copies beyond the buffer; `parse_obu_header` with `size - start` underflow reads the whole address space) | clamp (R72); `17`                                                                                  |
+| D-2 | DEFECT      | AV1 keyframe: FRAME/FRAME_HEADER with non-zero size but no payload byte present                | reads 1 byte past the end                                                                                                                | return false (R71); `17`                                                                           |
+| D-3 | DEFECT      | AV1 LEB128 groups 5..8                                                                         | `int` shift overflow: wrong values, UB                                                                                                   | exact 64-bit value (R70); `17`                                                                     |
+| D-4 | DEFECT (UB) | AVC high-profile SPS where `ue()` sees 31/32 zero bits or exhausted data                       | `1 << 32` UB; reference on x86-64 gives garbage/zero fields                                                                              | unspecified value, no crash, same output length; `16` records the x86 result                       |
+| D-5 | DEFECT      | NULL data with size 0                                                                          | every scanning function crashes (pointer arithmetic below 0)                                                                             | R80; `18`                                                                                          |
+| D-6 | DEFECT      | AVC SPS/PPS > 65535 bytes                                                                      | length field truncated, data written in full => corrupt record                                                                           | return 0 (not covered by a vector: needs a 64 KiB parameter set; MAY be tested by the implementer) |
 
 ## 9. Implementation notes (non-normative)
 
@@ -258,23 +260,23 @@ None; all functions are reentrant. Results are independent allocations.
 
 ## 10. Conformance coverage
 
-| Rule | Scripts |
-|---|---|
-| R01-R05 | `01-startcode-basic`, `02-startcode-quirks` |
+| Rule     | Scripts                                                           |
+| -------- | ----------------------------------------------------------------- |
+| R01-R05  | `01-startcode-basic`, `02-startcode-quirks`                       |
 | R06, R07 | `01`, `05-avc-extract`, `04-avc-priority-packet`, `19-avc-quirks` |
-| R10 | `03-avc-keyframe` |
-| R20, R21 | `04-avc-priority-packet`, `19-avc-quirks` |
-| R22 | `04-avc-priority-packet`, `19` |
-| R30-R35 | `06-avc-header`, `07-avc-header-edges`, `16-ub-unspecified` |
-| R40 | `05-avc-extract` |
-| R50, R51 | `08-hevc-types`, `09-hevc-keyframe` |
-| R52, R53 | `10-hevc-packet` |
-| R54 | `11-hevc-extract` |
-| R70 | `12-av1-leb128-obu-header`, `17-defects-av1` |
-| R71 | `13-av1-keyframe`, `17` |
-| R72 | `14-av1-extract`, `17` |
-| R73 | `15-av1-metadata` |
-| R80 | `18-defects-null-input` |
+| R10      | `03-avc-keyframe`                                                 |
+| R20, R21 | `04-avc-priority-packet`, `19-avc-quirks`                         |
+| R22      | `04-avc-priority-packet`, `19`                                    |
+| R30-R35  | `06-avc-header`, `07-avc-header-edges`, `16-ub-unspecified`       |
+| R40      | `05-avc-extract`                                                  |
+| R50, R51 | `08-hevc-types`, `09-hevc-keyframe`                               |
+| R52, R53 | `10-hevc-packet`                                                  |
+| R54      | `11-hevc-extract`                                                 |
+| R70      | `12-av1-leb128-obu-header`, `17-defects-av1`                      |
+| R71      | `13-av1-keyframe`, `17`                                           |
+| R72      | `14-av1-extract`, `17`                                            |
+| R73      | `15-av1-metadata`                                                 |
+| R80      | `18-defects-null-input`                                           |
 
 ## 11. Open questions
 

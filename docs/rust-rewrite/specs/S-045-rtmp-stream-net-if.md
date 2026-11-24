@@ -1,12 +1,12 @@
 # S-045 RTMP stream output and network-interface helpers
 
-| | |
-|---|---|
-| Status | Ready for review (Rust sufficiency check NOT performed, by coordinator instruction) |
-| Reference | libobs 33.0.1 tree, `plugins/obs-outputs/rtmp-stream.c`, `rtmp-stream.h`, `net-if.c`, `net-if.h` |
-| Target crate | `crates/obs-rtmp-output` (modules `settings`, `queue`, `dbr`, `connect`, `sender`, `netif`) |
-| Depends on | S-021 (FLV/AMF0 muxing: the `flv_*` calls are inputs here), S-024 (happy-eyeballs address ordering: not repeated), S-031 (RTMP protocol engine: the `RTMP_*` calls are inputs here), S-014/S-015 (settings, properties), S-041 (encoder/output delay) |
-| Conformance | `test/conformance/scripts/rtmpstream/` (30 scripts), runner `gen/rtmpstream_runner.c` |
+|              |                                                                                                                                                                                                                                                       |
+| ------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Status       | Ready for review (Rust sufficiency check NOT performed, by coordinator instruction)                                                                                                                                                                   |
+| Reference    | libobs 33.0.1 tree, `plugins/obs-outputs/rtmp-stream.c`, `rtmp-stream.h`, `net-if.c`, `net-if.h`                                                                                                                                                      |
+| Target crate | `crates/obs-rtmp-output` (modules `settings`, `queue`, `dbr`, `connect`, `sender`, `netif`)                                                                                                                                                           |
+| Depends on   | S-021 (FLV/AMF0 muxing: the `flv_*` calls are inputs here), S-024 (happy-eyeballs address ordering: not repeated), S-031 (RTMP protocol engine: the `RTMP_*` calls are inputs here), S-014/S-015 (settings, properties), S-041 (encoder/output delay) |
+| Conformance  | `test/conformance/scripts/rtmpstream/` (30 scripts), runner `gen/rtmpstream_runner.c`                                                                                                                                                                 |
 
 ## 1. Scope
 
@@ -59,6 +59,7 @@ Fake FLV tag names used by the vectors (`mux`, `vstart`, ...) are test-only.
 ## 5. Behaviour (numbered rules)
 
 ### 5.1 Registration, defaults, properties
+
 - **S-045-R01** The registration record is as in section 3 (vector 01).
 - **S-045-R02** Defaults (written only when no user value): `drop_threshold_ms`=700, `pframe_drop_threshold_ms`=900,
   `max_shutdown_time_sec`=30, `bind_ip`="default"; Windows additionally `new_socket_loop_enabled`=false, `low_latency_mode_enabled`=false.
@@ -68,6 +69,7 @@ Fake FLV tag names used by the vectors (`mux`, `vstart`, ...) are test-only.
   `pframe_drop_threshold_ms` and `dyn_bitrate` are NOT exposed.
 
 ### 5.2 init_connect (runs on the connect thread before connecting)
+
 - **S-045-R04** Without a service: return false, nothing else touched (no state reset; vector 02 end). Otherwise reset
   `disconnected`, `encode_error`, `total_bytes_sent`, `dropped_frames`, `min_priority`, `got_first_packet`.
 - **S-045-R05** Path and key are copied from the service and **trimmed of surrounding whitespace**; username/password copied verbatim.
@@ -81,7 +83,7 @@ Fake FLV tag names used by the vectors (`mux`, `vstart`, ...) are test-only.
   encoder's `bitrate` summed into `dbr_orig_bitrate` (also `dbr_cur_bitrate`), `dbr_inc_bitrate = orig/10` (integer).
   Reset `dbr_data_size`, `dbr_est_bitrate`, `dbr_inc_timeout` to 0 and clear the DBR window (not `dbr_prev_bitrate`).
 - **S-045-R09** DBR capability: `is_multitrack` = any video encoder with index >= 1 present. Each video encoder needs capability bit
-  `DYN_BITRATE` (1<<2) when single-track, `MULTITRACK_DYN_BITRATE` (1<<6) when multitrack; otherwise DBR is incapable and an info log is
+  `DYN_BITRATE` (1\<<2) when single-track, `MULTITRACK_DYN_BITRATE` (1\<<6) when multitrack; otherwise DBR is incapable and an info log is
   written per offending encoder: if it lacks `DYN_BITRATE` the single-track text ("... does not support on-the-fly bitrate reconfiguration"),
   else (multitrack and lacks the multitrack bit) the multitrack text. `dbr_enabled = capable && dyn_bitrate`. A non-zero output delay forces it off (info log).
   Vector 03 pins every combination.
@@ -98,6 +100,7 @@ Fake FLV tag names used by the vectors (`mux`, `vstart`, ...) are test-only.
 - **S-045-R12** `connecting` is not touched by init_connect.
 
 ### 5.3 Packet intake and frame dropping
+
 - **S-045-R13** `encoded_packet(p)`: ignored when `disconnected` or not `active`. `p == NULL` = encoder failure: set `encode_error`, post the send semaphore, return.
   The first packet of any type sets `start_dts_offset = dts * 1000 / timebase_den` (i32 ms) and `got_first_packet`. Video packets whose track codec is NONE are logged
   (error) and discarded without being queued. Otherwise the packet is parsed by its codec (S-012/S-021) / referenced (audio) and queued under the packet lock;
@@ -107,17 +110,18 @@ Fake FLV tag names used by the vectors (`mux`, `vstart`, ...) are test-only.
   packet is itself subject to the new `min_priority` (vector 10).
 - **S-045-R15** `check_to_drop_frames(pframes)`: priorities: b-stage = 2, p-stage = 3; threshold: b = `drop_threshold_usec`, p = `pframe_drop_threshold_usec`.
   1. b-stage with DBR enabled and `dbr_inc_timeout != 0` and `now >= dbr_inc_timeout`: set timeout 0, `dbr_inc_bitrate()`, `dbr_set_bitrate()`.
-  2. If fewer than 5 packets queued: in the b-stage set `congestion = 0`; return.
-  3. Find the first queued video packet that is not a keyframe; none -> return (congestion unchanged).
-  4. `dur = last_dts_usec - first.dts_usec`; b-stage: `congestion = (f32)dur / (f32)threshold_b` (f32 division).
-  5. DBR enabled: p-stage returns; b-stage: if `dur >= 200000` call `dbr_bitrate_lowered()` under the DBR lock and, if it returned true, `dbr_set_bitrate()`. Never drops. Return.
-  6. Else if `dur > threshold` -> `drop_frames(priority)`.
+  1. If fewer than 5 packets queued: in the b-stage set `congestion = 0`; return.
+  1. Find the first queued video packet that is not a keyframe; none -> return (congestion unchanged).
+  1. `dur = last_dts_usec - first.dts_usec`; b-stage: `congestion = (f32)dur / (f32)threshold_b` (f32 division).
+  1. DBR enabled: p-stage returns; b-stage: if `dur >= 200000` call `dbr_bitrate_lowered()` under the DBR lock and, if it returned true, `dbr_set_bitrate()`. Never drops. Return.
+  1. Else if `dur > threshold` -> `drop_frames(priority)`.
 - **S-045-R16** `drop_frames(prio)`: rebuild the queue keeping packets that are audio or have `drop_priority >= prio` (order kept); release the others and count them;
   `min_priority = max(min_priority, prio)`; `dropped_frames += count`. Debug log with the buffer duration (text not normative).
 - **S-045-R17** Statistics (vector 13): total bytes = `total_bytes_sent`; dropped = `dropped_frames`; connect time = engine `connect_time_ms`; congestion = (new socket loop)
   `write_buf_len / write_buf_size` (f32) else `min_priority > 0 ? 1.0 : congestion`.
 
 ### 5.4 Dynamic bitrate
+
 - **S-045-R18** `dbr_add_frame(f)` (vector 06): push f; `front` = oldest frame (may be f itself); `data_size += f.size`;
   `dur_ms = (f.send_end - front.send_beg) / 1_000_000` using **u64 wrapping** subtraction (Q-5). If `dur_ms >= 2000`: `data_size -= front.size` and pop exactly that one frame
   (the estimate below uses the span measured before the pop). `est = dur_ms >= 1000 ? (long)(data_size * 1000 / dur_ms) : 0` (size_t arithmetic), then `est *= 8; est /= 1000`.
@@ -133,6 +137,7 @@ Fake FLV tag names used by the vectors (`mux`, `vstart`, ...) are test-only.
 - **S-045-R22** Window `dbr_frames`: every sent packet (when DBR is on) records (send begin ns, end ns, packet.size) after a successful write (R30) under the DBR lock.
 
 ### 5.5 Connect, start, stop
+
 - **S-045-R23** `try_connect` (vectors 15-17), in order: empty path -> warning, -1. Info log "Connecting to RTMP URL ...". Free any TLS context, `RTMP_Init`.
   `RTMP_SetupURL(path)` fails -> -1. `RTMP_EnableWrite`. flashVer string = `FMLE/3.0 (compatible; FMSc/1.0)` (copied into `encoder_name`); username/password/flashVer set as AVal
   (empty -> NULL/0); `swfUrl = tcUrl`. Bind address per R24. `RTMP_AddStream(key)`. `outChunkSize=4096`, `sendChunkSizeInfo=true`, `useNagle=true`. `RTMP_Connect(NULL)` fails -> `set_output_error` (R28), -2.
@@ -148,11 +153,12 @@ Fake FLV tag names used by the vectors (`mux`, `vstart`, ...) are test-only.
 - **S-045-R28** `stop(ts_ns)` (vector 19): if stopping (stop event set) and `ts != 0`: return. If connecting: join the connect thread. `stop_ts = ts/1000`; if `ts != 0` `shutdown_timeout_ts = ts + max_shutdown_time_sec*1e9`.
   If active: set the stop event; if `stop_ts == 0` post the semaphore. Else signal stop(0) (success) (the stop event is NOT set).
 - **S-045-R29** Error mapping `set_output_error` (vector 14): by the engine's `last_error_code`: ETIMEDOUT->`ConnectionTimedOut`, EACCES->`PermissionDenied`, ECONNABORTED->`ConnectionAborted`, ECONNRESET->`ConnectionReset`,
-  HOST_NOT_FOUND->`HostNotFound`, NO_DATA->`NoData`, EADDRNOTAVAIL->`AddressNotAvailable`, EINVAL->`InvalidParameter`, EHOSTUNREACH->`NoRoute` (Windows uses the WSAE* equivalents); then, if unmapped, -0x2700 ->
+  HOST_NOT_FOUND->`HostNotFound`, NO_DATA->`NoData`, EADDRNOTAVAIL->`AddressNotAvailable`, EINVAL->`InvalidParameter`, EHOSTUNREACH->`NoRoute` (Windows uses the WSAE\* equivalents); then, if unmapped, -0x2700 ->
   `SSLCertVerifyFailed`, -0x7680 -> the literal text "Failed to load root certificates for a secure TLS connection." plus on Linux " Check you have an up to date root certificate bundle in /etc/ssl/certs.". Messages
   are localized keys passed through `module_text`. Unmapped codes (incl. ECONNREFUSED) set nothing. NB: on Linux HOST_NOT_FOUND = 1 and NO_DATA = 4 so they shadow EPERM/EINTR.
 
 ### 5.6 Send thread
+
 - **S-045-R30** Loop (vectors 21-24, 30): wait semaphore; if stopping and `stop_ts == 0` break (queued packets stay for `free_packets`); pop next packet (none -> continue; the loop only ends via the other exits);
   if stopping and (`now >= shutdown_timeout_ts` [info log "Stream shutdown timeout reached (N second(s))"] or `packet.sys_dts_usec >= stop_ts`): release it, break. If headers not sent: `send_headers` (sets `sent_headers`
   first); failure -> `disconnected = true`, break. DBR: record begin time/size. Routing: video where codec != H264 or track != 0 -> enhanced `frames` muxer with `dts_offset = start_dts_offset`; audio with track != 0 -> enhanced audio frames;
@@ -170,6 +176,7 @@ Fake FLV tag names used by the vectors (`mux`, `vstart`, ...) are test-only.
 - **S-045-R37** `destroy` (vector 29): if stopping and not connecting: join send thread. Else if connecting or active: if connecting join connect thread; `stop_ts = 0`, set stop event; if active post semaphore, `end_data_capture`, join send thread. Then free TLS, free queued packets, strings, events, tables.
 
 ### 5.7 Network helpers (net-if.c)
+
 - **S-045-R38** `netif_str_to_addr(out, &len, text)` (vector 27): zero `out`, `len = 0`; NULL text -> false (len stays 0). A ':' anywhere selects IPv6 (family set, len = 28) else IPv4 (len = 16); parsing is inet_pton: success true, failure false with the length and family still
   set and a zero address. Port or brackets are not understood.
 - **S-045-R39** `netif_addr_to_str(in, buf, len)`: false for NULL args, family not INET/INET6, or `len` smaller than 46 (IPv6) / 16 (IPv4); else zero-fill `len` bytes and write the canonical inet_ntop text.
@@ -212,29 +219,29 @@ Keep `long` as `i64` (Linux/macOS 64-bit; Windows `long` is 32-bit: values above
 
 ## 10. Conformance coverage
 
-| Rules | Scripts |
-|---|---|
-| R01-R03 | 01, 13 |
-| R04-R12 | 02, 03, 04 |
-| R11 | 05 |
-| R13, R14 | 09, 10, 11 |
-| R15, R16, R17 | 10, 11, 12, 13 |
-| R18 | 06 |
-| R19, R20 | 07 |
-| R21 | 08 |
-| R22 | 30 |
-| R23, R24 | 15, 16, 17 |
-| R25 | 20 |
-| R26, R41 | 17, 18 |
-| R27, R28 | 19 |
-| R29 | 14 |
+| Rules              | Scripts            |
+| ------------------ | ------------------ |
+| R01-R03            | 01, 13             |
+| R04-R12            | 02, 03, 04         |
+| R11                | 05                 |
+| R13, R14           | 09, 10, 11         |
+| R15, R16, R17      | 10, 11, 12, 13     |
+| R18                | 06                 |
+| R19, R20           | 07                 |
+| R21                | 08                 |
+| R22                | 30                 |
+| R23, R24           | 15, 16, 17         |
+| R25                | 20                 |
+| R26, R41           | 17, 18             |
+| R27, R28           | 19                 |
+| R29                | 14                 |
 | R30, R31, R35, R36 | 21, 22, 23, 24, 30 |
-| R32 | 22, 24 |
-| R33 | 26 |
-| R34 | 25 |
-| R37 | 29 |
-| R38, R39 | 27 |
-| R40 | 28, 01 |
+| R32                | 22, 24             |
+| R33                | 26                 |
+| R34                | 25                 |
+| R37                | 29                 |
+| R38, R39           | 27                 |
+| R40                | 28, 01             |
 
 ## 11. Open questions / not covered
 

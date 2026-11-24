@@ -1,13 +1,13 @@
 # S-078 D3D11 graphics backend (`libobs-d3d11`)
 
-| | |
-|---|---|
-| Status | Draft (round 8 — behavioural catalog written from C reference; no vectors yet) |
-| Spec version | initial |
-| Reference | OBS Studio 33.0.1, `libobs-d3d11/` |
+|              |                                                                                                                                                                                                                                       |
+| ------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Status       | Draft (round 8 — behavioural catalog written from C reference; no vectors yet)                                                                                                                                                        |
+| Spec version | initial                                                                                                                                                                                                                               |
+| Reference    | OBS Studio 33.0.1, `libobs-d3d11/`                                                                                                                                                                                                    |
 | Target crate | `crates/obs-d3d11` (the `gs` backend for Windows). Per **D-13** (confirmed 2026-11-05) this backend is ported to Rust; the C `libobs-d3d11` stays the selectable fallback until the port passes this spec, both are deleted in P7-01. |
-| Depends on | S-043 (graphics API — `gs_*` surface, color formats), S-020 (effect language) |
-| Conformance | planned `test/conformance/scripts/d3d11/` — none yet (Windows-only; vectors via a headless D3D11 device) |
+| Depends on   | S-043 (graphics API — `gs_*` surface, color formats), S-020 (effect language)                                                                                                                                                         |
+| Conformance  | planned `test/conformance/scripts/d3d11/` — none yet (Windows-only; vectors via a headless D3D11 device)                                                                                                                              |
 
 ## 1. Scope
 
@@ -41,11 +41,8 @@ D3D11-specific behaviour of each.
   query the monitor color API; failure aborts device creation.
 - **S-078-R02** `InitAdapter(adapterIdx)`: `factory->EnumAdapters1(adapterIdx, &adapter)`;
   any failure (including an out-of-range index) → `throw UnsupportedHWError("Failed to enumerate DXGIAdapter", hr)` — no default-adapter fallback. The adapter description is queried locally where needed, not cached.
-- **S-078-R03** `InitDevice`: `D3D11CreateDevice(adapter, D3D_DRIVER_TYPE_UNKNOWN,
-  nullptr, createFlags, featureLevels, D3D11_SDK_VERSION, …)` with
-  `featureLevels = { D3D_FEATURE_LEVEL_11_0, D3D_FEATURE_LEVEL_10_1,
-  D3D_FEATURE_LEVEL_10_0 }`; the device logs `D3D11 loaded successfully, feature level
-  used: %x`. `createFlags` is always `D3D11_CREATE_DEVICE_BGRA_SUPPORT` — the
+- **S-078-R03** `InitDevice`: `D3D11CreateDevice(adapter, D3D_DRIVER_TYPE_UNKNOWN, nullptr, createFlags, featureLevels, D3D11_SDK_VERSION, …)` with
+  `featureLevels = { D3D_FEATURE_LEVEL_11_0, D3D_FEATURE_LEVEL_10_1, D3D_FEATURE_LEVEL_10_0 }`; the device logs `D3D11 loaded successfully, feature level used: %x`. `createFlags` is always `D3D11_CREATE_DEVICE_BGRA_SUPPORT` — the
   `D3D11_CREATE_DEVICE_DEBUG` line is present but **commented out** (no debug layer).
   After creation: `increase_maximum_frame_latency` (comment: "prevent stalls sometimes seen in
   Present calls"), HAGS status log, GPU thread-priority tweak on non-Intel.
@@ -102,8 +99,7 @@ D3D11-specific behaviour of each.
 
 - **S-078-R19** Pipeline creation (`gs_shader_create` / pipeline variants): the effect
   source goes through `ShaderProcessor`: `Process(shaderString, file)` (S-020 tokens
-  via the cf preprocessor) → `BuildString` (processed HLSL) → `D3DCompile(src, file,
-  "main", target)` → device shaders. `BuildParams` produces the parameter table
+  via the cf preprocessor) → `BuildString` (processed HLSL) → `D3DCompile(src, file, "main", target)` → device shaders. `BuildParams` produces the parameter table
   (name → S-020 param type), `BuildInputLayout` the input layout, `BuildSamplers` the
   sampler array.
 - **S-078-R20** Failure paths: missing `main`, compile error or unsupported target →
@@ -150,13 +146,12 @@ observed the loss and takes the device lock (Q3).
 
 1. Per-row D3D11 format table for exotic formats (BGR444, RGB9E5, compressed) — cross
    check against S-043 §colour formats when implementing.
-2. Adapter enumeration behaviour when `adapterIdx` exceeds the count — resolved by the
-   Round 10 check: `EnumAdapters1` failure throws `UnsupportedHWError("Failed to enumerate
-   DXGIAdapter", hr)`; there is no default-adapter fallback.
-3. HDR monitor-info API differences between DXGI factory1 and factory2 (R05).
-4. `gs_init_data` flag effects on `createFlags` beyond debug (safe mode, no-RT
+1. Adapter enumeration behaviour when `adapterIdx` exceeds the count — resolved by the
+   Round 10 check: `EnumAdapters1` failure throws `UnsupportedHWError("Failed to enumerate DXGIAdapter", hr)`; there is no default-adapter fallback.
+1. HDR monitor-info API differences between DXGI factory1 and factory2 (R05).
+1. `gs_init_data` flag effects on `createFlags` beyond debug (safe mode, no-RT
    flags).
-5. Round 10 second-author check (2026-11-05): corrected R02 (was "out of range → default
+1. Round 10 second-author check (2026-11-05): corrected R02 (was "out of range → default
    adapter" + "desc1 cached" — it throws on any `EnumAdapters1` failure and the desc is not
    cached), R03 (was "debug layer when OBS runs in a debug/safe-mode context" — the debug flag
    is commented out), R04 (was "specific GPU blocks" — it is a runtime NV12 render probe), R05

@@ -39,13 +39,13 @@ answer is therefore best-effort, not frozen (D-02):
 
 1. `obs-ffi` serves the C ABI from Phase 1 onward; compatibility is
    **actively maintained**, not fossilised.
-2. **Breakage is allowed only with a deprecation path**: announcement +
+1. **Breakage is allowed only with a deprecation path**: announcement +
    migration docs at the time of the breaking change, removal governed by
    D-05 ("announce with SDK 1.0, remove after 3 Rust releases"; P7-10.3 names
    the exact release in this ADR at that time).
-3. Every change to a compat-tracked header requires an ADR
+1. Every change to a compat-tracked header requires an ADR
    (`CONTRIBUTING.md`, "Public header changes"); `CODEOWNERS` routes such PRs.
-4. The compatibility contract is proven mechanically: the ABI conformance
+1. The compatibility contract is proven mechanically: the ABI conformance
    plugin (P0-15) + golden traces run in CI from Phase 0; symbol/layout
    tests from Phase 4.
 
@@ -118,11 +118,11 @@ Both close when the reference checkout is linked (feature doc L3).
 
 Worked examples (classified):
 
-| Change | Breaking? | Bump | Why |
-|---|---|---|---|
-| Add field at end of `struct obs_source_info` | No | MINOR | loader `memcpy`s only the caller's `sizeof` — old (smaller) plugin structs keep working; this is the mechanic P0-15 pins |
-| Remove `obs_source_get_active` | Yes | MAJOR | removed symbol; any plugin calling it fails to load — deprecation path mandatory |
-| Change value of an `OBS_SOURCE_TYPE` constant | Yes | MAJOR | observable value change; plugins comparing the numeric value misbehave even though the header regenerates — deprecation path mandatory |
+| Change                                        | Breaking? | Bump  | Why                                                                                                                                    |
+| --------------------------------------------- | --------- | ----- | -------------------------------------------------------------------------------------------------------------------------------------- |
+| Add field at end of `struct obs_source_info`  | No        | MINOR | loader `memcpy`s only the caller's `sizeof` — old (smaller) plugin structs keep working; this is the mechanic P0-15 pins               |
+| Remove `obs_source_get_active`                | Yes       | MAJOR | removed symbol; any plugin calling it fails to load — deprecation path mandatory                                                       |
+| Change value of an `OBS_SOURCE_TYPE` constant | Yes       | MAJOR | observable value change; plugins comparing the numeric value misbehave even though the header regenerates — deprecation path mandatory |
 
 ### Coexistence with the native Rust plugin API (D-06)
 
@@ -179,12 +179,12 @@ deprecated at native SDK 1.0 (P7-11) and removed **three Rust releases later**
    surface becomes a permanent tax; (b) it contradicts the confirmed
    best-effort answer (D-02): the ecosystem is protected by the deprecation
    path, not by immutability.
-2. **Drop C ABI after one release.**
+1. **Drop C ABI after one release.**
    Rejected: (a) obs-websocket/obs-browser/capture plugins are the reason
    people use OBS; cutting them after one release breaks the product for the
    power-user base; (b) the D-05 timeline (3 releases) is the confirmed floor
    and already generous to the rewrite schedule.
-3. **ABI via `abi_stable`/WASM only, no C compat.**
+1. **ABI via `abi_stable`/WASM only, no C compat.**
    Rejected: (a) D-06 confirmed cdylib + proc-macro for the native path with
    WASM explicitly kept as research (P7-12) — adopting it as the *only* path
    would strand every existing C plugin; (b) `abi_stable` adds a runtime

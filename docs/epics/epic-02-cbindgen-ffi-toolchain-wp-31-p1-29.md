@@ -5,6 +5,6 @@
 cbindgen FFI toolchain (WP-31, P1-29)
 **Why:** every "Apply recipe" subtask's cbindgen diff is blocked on this; the single biggest unlock in M1.
 
-| Story | I want | Acceptance | Status |
-|---|---|---|---|
-| **E2S1** cbindgen config + diff in CI | per-crate cbindgen config and a diff script against the committed `libobs/**/*.h` headers, wired as a CI step | diff is empty on `main`; a deliberate header drift reds the CI step; unblocks the cbindgen half of P1-01.3, P1-02.4, P1-03.3, P1-04.3, P1-05.4, P1-08.5, P1-09.5, P1-10.4, P1-11.4, P1-14.5, P1-15.4, P1-16.5, P1-17.4, P1-18.4, P1-20.3, P1-21.4, P1-22.4, P1-25.6, P1-27.6, P1-28.4 | open |
+| Story                                 | I want                                                                                                        | Acceptance                                                                                                                                                                                                                                                                            | Status |
+| ------------------------------------- | ------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------ |
+| **E2S1** cbindgen config + diff in CI | per-crate cbindgen config and a diff script against the committed `libobs/**/*.h` headers, wired as a CI step | diff is empty on `main`; a deliberate header drift reds the CI step; unblocks the cbindgen half of P1-01.3, P1-02.4, P1-03.3, P1-04.3, P1-05.4, P1-08.5, P1-09.5, P1-10.4, P1-11.4, P1-14.5, P1-15.4, P1-16.5, P1-17.4, P1-18.4, P1-20.3, P1-21.4, P1-22.4, P1-25.6, P1-27.6, P1-28.4 | open   |

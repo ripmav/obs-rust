@@ -9,12 +9,12 @@ through the C allocator (`bmalloc`/`bstrdup`/`bstrdup_bytes` in
 `abi_common.rs`); every `char *` exposed to C is NUL-terminated (the C
 dstr invariant — the conformance runners print with `%s`).
 
-| module | C header | EXPORT fns | bridge | notes |
-| --- | --- | --- | --- | --- |
-| `abi_text_lookup` | `util/text-lookup.h` | 4 | opaque `Box<TextLookup>` handle | value buffers stored NUL-terminated; `getstr` returns the slice without the NUL |
-| `abi_lexer` | `util/lexer.h` | 10 | `repr(C)` `lexer`/`base_token`/`strref`/`error_data`; the tokenizing core runs over the C-owned buffer | `error_data` growth through the C allocator; NULL file prints `(null)` (glibc `%s`) |
-| `abi_cf_lexer` | `util/cf-lexer.h` | 9 | `repr(C)` mirrors composed over the base-lexer state; `SPACE_FILLER` | `cf_literal_to_str` reuses the obs-util engine helper (C-allocated result) |
-| `abi_cf_parser` | `util/cf-parser.h` | 2 (`cf_adderror`, `cf_pass_pair`) | `repr(C)` `cf_parser` composed from the existing mirrors (size 224: `lex@0`, `pp@72`, `error_list@192`, `cur_token@216`); C owns the struct | row/col from the current token's unmerged text; `$n` substitution leaves NULL params verbatim |
+| module            | C header             | EXPORT fns                        | bridge                                                                                                                                      | notes                                                                                         |
+| ----------------- | -------------------- | --------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------- |
+| `abi_text_lookup` | `util/text-lookup.h` | 4                                 | opaque `Box<TextLookup>` handle                                                                                                             | value buffers stored NUL-terminated; `getstr` returns the slice without the NUL               |
+| `abi_lexer`       | `util/lexer.h`       | 10                                | `repr(C)` `lexer`/`base_token`/`strref`/`error_data`; the tokenizing core runs over the C-owned buffer                                      | `error_data` growth through the C allocator; NULL file prints `(null)` (glibc `%s`)           |
+| `abi_cf_lexer`    | `util/cf-lexer.h`    | 9                                 | `repr(C)` mirrors composed over the base-lexer state; `SPACE_FILLER`                                                                        | `cf_literal_to_str` reuses the obs-util engine helper (C-allocated result)                    |
+| `abi_cf_parser`   | `util/cf-parser.h`   | 2 (`cf_adderror`, `cf_pass_pair`) | `repr(C)` `cf_parser` composed from the existing mirrors (size 224: `lex@0`, `pp@72`, `error_list@192`, `cur_token@216`); C owns the struct | row/col from the current token's unmerged text; `$n` substitution leaves NULL params verbatim |
 
 Total: 25/25 C-exported functions bridged.
 

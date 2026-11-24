@@ -1,13 +1,13 @@
 # S-080 obs-webrtc / WHIP output
 
-| | |
-|---|---|
-| Status | Draft (round 9 — behaviour catalog written from C reference; no vectors yet) |
-| Spec version | initial |
-| Reference | OBS Studio 33.0.1, `plugins/obs-webRTC/` (WHIP subset) |
-| Target crate | `crates/obs-webrtc` |
-| Depends on | S-031 (RTMP protocol — the transport patterns), S-041 (output object) |
-| Conformance | planned `test/conformance/scripts/whip/` — none yet |
+|              |                                                                              |
+| ------------ | ---------------------------------------------------------------------------- |
+| Status       | Draft (round 9 — behaviour catalog written from C reference; no vectors yet) |
+| Spec version | initial                                                                      |
+| Reference    | OBS Studio 33.0.1, `plugins/obs-webRTC/` (WHIP subset)                       |
+| Target crate | `crates/obs-webrtc`                                                          |
+| Depends on   | S-031 (RTMP protocol — the transport patterns), S-041 (output object)        |
+| Conformance  | planned `test/conformance/scripts/whip/` — none yet                          |
 
 ## 1. Scope
 
@@ -53,14 +53,14 @@ internals.
   `Stop` drive the sequence below; `Data` is the obs data callback feeding audio/video
   packets into the media tracks.
 - **S-080-R04** Start sequence (on the start/stop thread): `Init` (read the service URL
-  + bearer token via `GetConnectInfo`; empty URL ⇒ `OBS_OUTPUT_BAD_PATH`) → `Setup`
-  (create the `rtc::PeerConnection` with state-change callbacks — `Disconnected`/
-  `Failed` stop the output — configure the media tracks: `ConfigureAudioTrack` /
-  `ConfigureVideoTrack`, then `setLocalDescription()` creates the **offer SDP**) →
-  `Connect` (HTTP **POST** of the offer: `CURLOPT_POST` +
-  `CURLOPT_COPYPOSTFIELDS(offer)`, headers `Content-Type: application/sdp`, optional
-  `Authorization: Bearer <token>`, the user agent; `FOLLOWLOCATION` +
-  `UNRESTRICTED_AUTH` enabled, 8 s timeout) to the service URL.
+  - bearer token via `GetConnectInfo`; empty URL ⇒ `OBS_OUTPUT_BAD_PATH`) → `Setup`
+    (create the `rtc::PeerConnection` with state-change callbacks — `Disconnected`/
+    `Failed` stop the output — configure the media tracks: `ConfigureAudioTrack` /
+    `ConfigureVideoTrack`, then `setLocalDescription()` creates the **offer SDP**) →
+    `Connect` (HTTP **POST** of the offer: `CURLOPT_POST` +
+    `CURLOPT_COPYPOSTFIELDS(offer)`, headers `Content-Type: application/sdp`, optional
+    `Authorization: Bearer <token>`, the user agent; `FOLLOWLOCATION` +
+    `UNRESTRICTED_AUTH` enabled, 8 s timeout) to the service URL.
 - **S-080-R05** Response handling: the POST must return **exactly 201** — any other code
   fails the connect (`OBS_OUTPUT_INVALID_STREAM` / connect failed). There is **no
   401/`WWW-Authenticate` challenge flow** in 33.0.1; authentication is the optional
@@ -87,8 +87,7 @@ internals.
   match of `header` against a full header line; returns the substring after the first
   space, or "" if not present), `curl_writefunction` /
   `curl_header_function` (the libcurl response body / per-line header collectors),
-  `generate_user_agent` (`"User-Agent: Mozilla/5.0 (OBS-Studio/<version>; <os>;
-  <locale>)"`, sent with every WHIP request), `simulcast_layers_in_answer` (R06).
+  `generate_user_agent` (`"User-Agent: Mozilla/5.0 (OBS-Studio/<version>; <os>; <locale>)"`, sent with every WHIP request), `simulcast_layers_in_answer` (R06).
 
 ## 6. Concurrency
 
@@ -100,7 +99,7 @@ connects the peer connection is the sole I/O owner. Stop joins the thread before
 
 1. (resolved) There is no post-401 credential flow in 33.0.1 — authentication is the
    optional `Authorization: Bearer` header from the service (R01/R04/R05).
-2. Retries/backoff on transport failure (the reference's reconnect policy is not pinned —
+1. Retries/backoff on transport failure (the reference's reconnect policy is not pinned —
    treat as: the output stops with an error, the user restarts).
 
 Round 10 second-author check (2026-11-05): corrected R01 (properties are `server` +
