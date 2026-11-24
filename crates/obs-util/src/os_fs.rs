@@ -80,8 +80,8 @@ pub fn os_fopen(path: &CStr, mode: &CStr) -> *mut c_void {
 #[cfg(unix)]
 pub fn os_wfopen(wide: &[u32], mode: &CStr) -> *mut c_void {
     let bytes = crate::utf8::os_wcs_to_utf8_ptr(wide, None);
-    // SAFETY: `bytes` is NUL-terminated (the converter's invariant) and alive for the call; `mode` is a valid C string. The pointer cast keeps the value in the C `FILE *` shape for the caller.
-    unsafe { libc::fopen(bytes.as_ptr(), mode.as_ptr()) as *mut c_void }
+    // SAFETY: `bytes` is NUL-terminated (the converter's invariant) and alive for the call; `mode` is a valid C string. The pointer cast keeps the value in the C `FILE *` shape for the caller; `.cast()` targets `c_char` portably (i8 on x86_64, u8 on aarch64).
+    unsafe { libc::fopen(bytes.as_ptr().cast(), mode.as_ptr()) as *mut c_void }
 }
 
 /// S-023-R70 `os_mkdir(path)`: `mkdir(path, 0755)` (before umask);
@@ -127,8 +127,8 @@ pub fn os_mkdirs(dir: &CStr) -> i32 {
 
 #[cfg(unix)]
 fn recursive_mkdir(path: &mut [u8]) -> i32 {
-    // SAFETY: `path` is NUL-terminated for the whole recursion (invariant of this function and its caller).
-    let c = unsafe { CStr::from_ptr(path.as_ptr()) };
+    // SAFETY: `path` is NUL-terminated for the whole recursion (invariant of this function and its caller); `.cast()` targets `c_char` portably (i8 on x86_64, u8 on aarch64).
+    let c = unsafe { CStr::from_ptr(path.as_ptr().cast()) };
     let ret = os_mkdir(c);
     if ret != MKDIR_ERROR {
         return ret;
