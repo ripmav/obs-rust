@@ -407,6 +407,7 @@ mod tests {
     }
 
     #[test]
+    #[cfg_attr(miri, ignore)] // file system access (Miri isolation)
     fn r20_init_missing_fails() {
         // R20/R30: failure returns None and the serializer is unusable.
         let missing = tmp("r20-missing");
@@ -416,6 +417,7 @@ mod tests {
     }
 
     #[test]
+    #[cfg_attr(miri, ignore)] // file system access (Miri isolation)
     fn r21_r22_file_input_vector() {
         // Vector file_input: 11-byte file 00..0a; short reads at EOF; END
         // adds the offset to the file size (Q-8); negative targets fail
@@ -468,6 +470,7 @@ mod tests {
     }
 
     #[test]
+    #[cfg_attr(miri, ignore)] // file system access (Miri isolation)
     fn q8_file_vs_buffered_seek_end() {
         // Q-8: files ADD the END offset to the file size, the buffered
         // writer SUBTRACTS it from the current write position.
@@ -489,6 +492,7 @@ mod tests {
     }
 
     #[test]
+    #[cfg_attr(miri, ignore)] // file system access (Miri isolation)
     fn r30_r31_file_output_vector() {
         // Vector file_output: truncate on open, seek then overwrite, holes
         // zero fill, get_pos is the logical position, content visible
@@ -528,6 +532,7 @@ mod tests {
     }
 
     #[test]
+    #[cfg_attr(miri, ignore)] // file system access (Miri isolation)
     fn r33_r34_safe_temp_file() {
         // Vector file_output_safe: ext with/without leading '.', empty ext
         // fails, free replaces the target with the temp content.
@@ -578,6 +583,7 @@ mod tests {
     }
 
     #[test]
+    #[cfg_attr(miri, ignore)] // file system access (Miri isolation)
     fn r40_r41_buffered_write_order_and_chunks() {
         // Vector buffered_seek bs-a + buffered_large bl-b: writes applied
         // in call order, holes zero fill, chunked writes, file after free.
@@ -634,6 +640,7 @@ mod tests {
     }
 
     #[test]
+    #[cfg_attr(miri, ignore)] // file system access (Miri isolation)
     fn r42_buffered_seek_no_range_check() {
         // Vector buffered_seek bs-b: seeks far past the end; the file after
         // free is 101 bytes with a zero hole.
@@ -660,6 +667,7 @@ mod tests {
     }
 
     #[test]
+    #[cfg_attr(miri, ignore)] // file system access (Miri isolation)
     fn r43_get_pos_logical_and_q9_negative_start() {
         // Vector buffered_seek bs-c: a seek without a write leaves an empty
         // file; get_pos is the logical position. bs-d: a negative START
@@ -683,6 +691,7 @@ mod tests {
     }
 
     #[test]
+    #[cfg_attr(miri, ignore)] // file system access (Miri isolation)
     fn r44_virtual_capacity_growth() {
         // R44: the reported KiB is the (virtual) deque capacity. It starts
         // at 1 MiB and doubles when the recorded pieces (16-byte header
