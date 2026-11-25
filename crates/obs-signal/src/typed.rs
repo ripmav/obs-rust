@@ -12,7 +12,7 @@
 //! `Connection` is a guard, not a reference: **drop disconnects**
 //! (ADR 0002 Amendment 1). No manual disconnect is needed and no
 //! C-side connection can leak — the guard's drop calls
-//! [`signal_handler_disconnect`] before freeing the closure. A guard
+//! [`signal_handler_disconnect_gen`] before freeing the closure. A guard
 //! may outlive the handler's destruction (`refs` → 0): its disconnect
 //! is a documented no-op on a dead handler, and the closure is still
 //! freed. `Signal` and `Connection` are always `Send + Sync`: the
@@ -23,8 +23,10 @@
 //!
 //! # Drop ordering (why `Drop` is sound)
 //!
-//! After `signal_handler_disconnect(h, sig, cb, data)` returns, no
-//! thread can invoke `(cb, data)` again:
+//! After `signal_handler_disconnect_gen(h, sig, generation)` returns —
+//! the guard disconnects its exact entry, by the generation from
+//! [`signal_handler_connect_gen`] — no thread can invoke `(cb, data)`
+//! again:
 //!
 //! - If `sig` is not emitting, the entry is erased under the signal's
 //!   re-entrant lock; every callback invocation happens under that
@@ -69,7 +71,7 @@ use std::marker::PhantomData;
 
 use crate::calldata::{Calldata, calldata_clear, calldata_get_string};
 use crate::signal::{
-    SignalHandler, signal_handler_connect, signal_handler_disconnect, signal_handler_signal,
+    SignalHandler, signal_handler_connect_gen, signal_handler_disconnect_gen, signal_handler_signal,
 };
 
 /// The typed arguments of a signal (P1-23).
@@ -162,7 +164,7 @@ impl<'h, A: SignalArgs> Signal<'h, A> {
         let outer: Box<Box<dyn Fn(A) + Send + Sync>> = Box::new(inner);
         // `Box::into_raw` of a fresh box is never null.
         let data = Box::into_raw(outer);
-        signal_handler_connect(
+        let generation = signal_handler_connect_gen(
             self.handler,
             A::name(),
             trampoline::<A>,
@@ -171,6 +173,7 @@ impl<'h, A: SignalArgs> Signal<'h, A> {
         Connection {
             handler: self.handler,
             data: DataToken(data),
+            generation,
             _marker: PhantomData,
         }
     }
@@ -217,7 +220,7 @@ unsafe impl<A: SignalArgs> Sync for DataToken<A> {}
 /// RAII guard for a connection made by [`Signal::connect`] (P1-23).
 ///
 /// **Drop disconnects** (ADR 0002 Amendment 1): the drop calls
-/// [`signal_handler_disconnect`] and then frees the closure box — the
+/// [`signal_handler_disconnect_gen`] and then frees the closure box — the
 /// ordering proof is in the module docs. Dropping a guard from inside a
 /// callback for **another** connection (or from a different thread) is
 /// well-defined (S-004-R30/R45: the entry is marked during the emit and
@@ -239,20 +242,16 @@ unsafe impl<A: SignalArgs> Sync for DataToken<A> {}
 pub struct Connection<'h, A: SignalArgs> {
     handler: &'h SignalHandler,
     data: DataToken<A>,
+    generation: u64,
     _marker: PhantomData<fn() -> A>,
 }
 
 impl<'h, A: SignalArgs> Drop for Connection<'h, A> {
     fn drop(&mut self) {
-        // Disconnect first: when it returns, no thread can invoke
-        // (trampoline, data) again (module docs), so the box may be
-        // freed.
-        signal_handler_disconnect(
-            self.handler,
-            A::name(),
-            trampoline::<A>,
-            self.data.0.cast::<c_void>(),
-        );
+        // Disconnect the exact entry this guard created first: when
+        // it returns, no thread can invoke (trampoline, data) again
+        // (module docs), so the box may be freed.
+        signal_handler_disconnect_gen(self.handler, A::name(), self.generation);
         // SAFETY: `self.data` is the `Box::into_raw` of the outer box
         // allocated in `Signal::connect`; the preceding disconnect
         // guarantees no live reference to it remains (module docs).

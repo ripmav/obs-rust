@@ -481,6 +481,76 @@ pub fn signal_handler_disconnect(
     }
 }
 
+/// P1-23 (typed layer): connect and return the new entry's generation —
+/// the entry's *exact* identity, which the typed `Connection` guard
+/// disconnects by. Returns `0` when the signal is not declared (the
+/// R20 warning is logged) or when the C identity dedup of Q-4 applies
+/// (the returned generation is then inert — the guard's drop is a
+/// no-op, and the deduped entry is skipped per R45, so no UAF).
+///
+/// Unlike the C `(cb, data)` pointer identity, a generation is a plain
+/// `u64`: it works identically under Miri (which gives each
+/// function-item coercion a different address) and cannot match a
+/// different entry reusing a freed address.
+pub fn signal_handler_connect_gen(
+    h: &SignalHandler,
+    sig: &str,
+    cb: SignalCallback,
+    data: *mut c_void,
+) -> u64 {
+    let Some(sp) = find_signal(h, sig) else {
+        eprintln!("signal_handler_connect: signal '{sig}' not found");
+        return 0;
+    };
+    let generation = h.inner.generation.fetch_add(1, SeqCst);
+    // SAFETY: the signal's re-entrant lock is taken inside; `sp` points to a live `Signal` found above.
+    unsafe {
+        let s = &mut *sp;
+        let _sl = s.lock.lock();
+        if s.cbs
+            .iter()
+            .any(|c| std::ptr::fn_addr_eq(c.cb, cb) && c.data == data)
+        {
+            return generation; // Q-4 dedup: inert generation
+        }
+        s.cbs.push(Box::new(Cb {
+            cb,
+            data,
+            remove: false,
+            keep_ref: false,
+            generation,
+        }));
+    }
+    generation
+}
+
+/// P1-23 (typed layer): disconnect the entry by generation (exact
+/// identity — see `signal_handler_connect_gen`). Marking vs. erasing
+/// is the same as R30; inert for unknown/inert generations (R26).
+pub fn signal_handler_disconnect_gen(h: &SignalHandler, sig: &str, generation: u64) {
+    let Some(sp) = find_signal(h, sig) else {
+        return;
+    };
+    // SAFETY: the signal's re-entrant lock is taken inside; `sp` points to a live `Signal` found above.
+    unsafe {
+        let s = &mut *sp;
+        let _sl = s.lock.lock();
+        let Some(i) = s.cbs.iter().position(|c| c.generation == generation) else {
+            return;
+        };
+        if s.signalling {
+            s.cbs[i].remove = true;
+            return;
+        }
+        let keep_ref = s.cbs[i].keep_ref;
+        s.cbs.remove(i);
+        drop(_sl);
+        if keep_ref && h.inner.refs.fetch_sub(1, SeqCst) == 1 {
+            h.inner.destroy();
+        }
+    }
+}
+
 /// S-004-R31/Q-5: disconnect_global — the entry is found by (cb, data)
 /// among entries that are **not executing**; an executing entry is never
 /// matched, so a global callback cannot disconnect itself this way.

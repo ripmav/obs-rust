@@ -184,8 +184,14 @@ No C-ABI-visible change: the amendment fixes the Rust-side contract only.
    plus the argument type `A: SignalArgs` (name, S-003 declaration and the
    calldata layout live in `A`). `Copy`.
 1. **`Connection<'h, A>`** — the RAII guard for `Signal::connect( f: impl Fn(A) + Send + Sync + 'static)`. **Drop is disconnect** (no manual
-   disconnect API): the drop calls `signal_handler_disconnect` and *then* frees
-   the closure — so no C-side connection leaks (T2) and no closure box leaks.
+   disconnect API): the drop calls
+   `signal_handler_disconnect_gen` — the *exact* entry the guard created, by
+   the generation `signal_handler_connect_gen` returned (a plain-`u64`
+   identity: identical under Miri, which gives each function-item coercion a
+   different address, and immune to a different entry reusing a freed
+   address) — and *then* frees the closure — so no C-side connection leaks
+   (T2) and no closure box leaks. The handler-level `(cb, data)`-identity
+   disconnect is unchanged, and `connect` keeps the C identity dedup of Q-4.
    Dropping a guard from inside a callback for **another** connection (or from
    another thread) is well-defined (S-004-R30/R45: marked during the emit,
    erased at its end, skipped by any nested re-emit). **A guard must not be
@@ -236,8 +242,11 @@ are alive, as long as no emit of that handler is running at that moment.
   over opaque C `data` payloads with no evidence to support it.
 - manual `Connection::disconnect()` in addition to `Drop`: rejected as
   redundant — drop is the only required path, and a reconnect is a fresh
-  guard (the C identity is (trampoline, box pointer), so no accidental
-  dedupe).
+  guard. (The typed layer does get its own entry identity — the generation
+  from `signal_handler_connect_gen` — because a RAII guard should remove
+  *its own* entry, and C's `(cb, data)` pointer identity is unobservable
+  under Miri: each function-item coercion gets a different address there,
+  which the first WP-33 Miri run exposed as a silent no-op disconnect.)
 - fallible `A::read` (`Result<Self, _>`): rejected — (a) the C contract is
   silent defaults (S-002), and a `Result` in the hot callback path adds
   branching with no C counterpart; (b) a missing parameter is a *value*
