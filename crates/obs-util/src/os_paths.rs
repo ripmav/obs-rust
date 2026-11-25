@@ -237,7 +237,6 @@ mod tests {
         assert_eq!(cstr(&buf), "/usr/loca");
         // NULL name -> empty
         assert_eq!(os_get_program_data_path(None, 0, None), 17);
-        assert_eq!(cstr(&buf[..9]), "/usr/loca");
         // the ptr form
         assert_eq!(
             os_get_program_data_path_ptr(Some(&c("obs"))),
