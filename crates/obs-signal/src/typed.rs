@@ -39,7 +39,8 @@
 //!   then takes the first case.
 //!
 //! The closure box is therefore freed only after its last possible
-//! invocation.
+//! invocation (and never from inside the closure's own call — see the
+//! `Connection` docs).
 //!
 //! # Allocation behaviour (tenet T6)
 //!
@@ -217,10 +218,18 @@ unsafe impl<A: SignalArgs> Sync for DataToken<A> {}
 ///
 /// **Drop disconnects** (ADR 0002 Amendment 1): the drop calls
 /// [`signal_handler_disconnect`] and then frees the closure box — the
-/// ordering proof is in the module docs. Dropping inside the
-/// connected callback itself (self-disconnect) is well-defined
-/// (S-004-R30/R45: the entry is marked during the emit and erased at
-/// its end, and is skipped by any nested re-emit).
+/// ordering proof is in the module docs. Dropping a guard from inside a
+/// callback for **another** connection (or from a different thread) is
+/// well-defined (S-004-R30/R45: the entry is marked during the emit and
+/// erased at its end, and the freed connection is not the running one).
+/// **A guard must not be dropped from inside its own connected
+/// callback** — the drop would free the closure object while it is being
+/// called (undefined behavior; the trampoline borrows the closure for
+/// the call, and Miri's stacked borrows pins it — unlike C, where the
+/// callback code is separate from the `data` payload). To disconnect
+/// oneself, use
+/// [`signal_handler_remove_current`](crate::signal::signal_handler_remove_current)
+/// (S-004-R32) or defer the drop until after the emit.
 ///
 /// A guard may outlive the handler's destruction: the disconnect on a
 /// dead handler is a no-op (S-004 module docs) and the closure is
@@ -485,37 +494,53 @@ mod tests {
         drop(conn);
     }
 
-    // Self-disconnect: dropping the guard from inside its own
-    // callback (S-004-R30/R45). A `'static` closure cannot capture a
-    // guard tied to a shorter handler borrow, so the guard — and the
-    // handler, which must be `'static` for it — live in dedicated
-    // statics (reachable at test end: Miri leak check, not a leak).
-    static SELF_SLOT: std::sync::Mutex<Option<Connection<'static, TArgs>>> =
+    // Disconnecting *another* connection from inside a callback
+    // (S-004-R30/R45): the dropped guard is not the running closure, so
+    // its box is freed once and soundly — marked during the emit,
+    // skipped in this emit, erased at its end. (Dropping a guard from
+    // inside its *own* callback is forbidden — Connection docs.) The
+    // handler must be 'static for the 'static closure, so it and the
+    // dropped guard live in dedicated statics (reachable at test end:
+    // Miri leak check, not a leak).
+    static DROP_SLOT: std::sync::Mutex<Option<Connection<'static, TArgs>>> =
         std::sync::Mutex::new(None);
-    static SELF_HANDLER: std::sync::Mutex<Option<&'static SignalHandler>> =
+    static DROP_HANDLER: std::sync::Mutex<Option<&'static SignalHandler>> =
         std::sync::Mutex::new(None);
-    static SELF_RAN: AtomicUsize = AtomicUsize::new(0);
+    static DROP_A_RAN: AtomicUsize = AtomicUsize::new(0);
+    static DROP_B_RAN: AtomicUsize = AtomicUsize::new(0);
 
     #[test]
-    fn drop_inside_its_own_callback() {
-        // `Box::leak` + the statics below keep the handler reachable
-        // for the whole binary (Miri leak check: not a leak).
+    fn drop_other_connection_during_emit() {
         let h: &'static SignalHandler = Box::leak(signal_handler_create());
         assert!(signal_handler_add(h, TArgs::decl()));
         let sig = Signal::<TArgs>::new(h);
-        let conn = sig.connect(|_| {
-            SELF_RAN.fetch_add(1, SeqCst);
-            // self-disconnect: drop the guard while the emit is running
-            drop(SELF_SLOT.lock().unwrap().take());
+        // A runs first and drops B's guard mid-emit; B (connected
+        // later) must be skipped in this emit, not run.
+        let conn_a = sig.connect(|_| {
+            DROP_A_RAN.fetch_add(1, SeqCst);
+            // drop B's guard while the emit is running (B is not the
+            // running callback — sound; its box is freed exactly once)
+            drop(DROP_SLOT.lock().unwrap().take());
         });
-        *SELF_SLOT.lock().unwrap() = Some(conn);
-        *SELF_HANDLER.lock().unwrap() = Some(h);
+        let conn_b = sig.connect(|_| {
+            DROP_B_RAN.fetch_add(1, SeqCst);
+        });
+        *DROP_SLOT.lock().unwrap() = Some(conn_b);
+        *DROP_HANDLER.lock().unwrap() = Some(h);
         sig.emit(&targs());
-        assert_eq!(SELF_RAN.load(SeqCst), 1);
-        // marked during the emit, erased at its end
+        assert_eq!(DROP_A_RAN.load(SeqCst), 1);
+        assert_eq!(
+            DROP_B_RAN.load(SeqCst),
+            0,
+            "R45: marked before its turn — skipped"
+        );
+        // B erased at the end of the emit; A still connected
+        assert_eq!(signal_handler_cb_count(h, "t"), Some(1));
+        sig.emit(&targs());
+        assert_eq!(DROP_A_RAN.load(SeqCst), 2);
+        assert_eq!(DROP_B_RAN.load(SeqCst), 0, "stays disconnected");
+        drop(conn_a);
         assert_eq!(signal_handler_cb_count(h, "t"), Some(0));
-        sig.emit(&targs());
-        assert_eq!(SELF_RAN.load(SeqCst), 1, "stays disconnected");
     }
 
     #[test]

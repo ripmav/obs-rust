@@ -186,9 +186,15 @@ No C-ABI-visible change: the amendment fixes the Rust-side contract only.
 1. **`Connection<'h, A>`** — the RAII guard for `Signal::connect( f: impl Fn(A) + Send + Sync + 'static)`. **Drop is disconnect** (no manual
    disconnect API): the drop calls `signal_handler_disconnect` and *then* frees
    the closure — so no C-side connection leaks (T2) and no closure box leaks.
-   Dropping inside the connected callback (self-disconnect) is well-defined
-   (S-004-R30/R45: marked during the emit, erased at its end, skipped by any
-   nested re-emit). A guard may outlive the handler's destruction (`refs` →
+   Dropping a guard from inside a callback for **another** connection (or from
+   another thread) is well-defined (S-004-R30/R45: marked during the emit,
+   erased at its end, skipped by any nested re-emit). **A guard must not be
+   dropped from inside its own connected callback** — the drop would free the
+   closure object while it is being called (undefined behavior; the trampoline
+   borrows the closure for the call — unlike C, where the callback code is
+   separate from the `data` payload; caught by the CI Miri job in WP-33). To
+   disconnect oneself: `signal_handler_remove_current()` (S-004-R32) or defer
+   the drop. A guard may outlive the handler's destruction (`refs` →
    0): its disconnect is a documented no-op on a dead handler.
 1. **Typed arguments use the S-002 byte layout verbatim** (`A::write` /
    `A::read` over the calldata stack): the stack bytes are identical to what a
