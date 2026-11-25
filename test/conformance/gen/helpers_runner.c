@@ -847,7 +847,16 @@ static void h_prof_cmd(int argc, char **argv)
 /* ------------------------------------------------------------------------- */
 /* BPM (shared/bpm/bpm.c) with scripted counters                             */
 
+#ifdef OBS_CONFORMANCE_RUST_SWAP_BPM
+/* Swap mode: the Rust staticlib provides bpm_inject/bpm_destroy with the
+ * bpm.h signatures (WP-34, S-024 M8). The fake counters and the wall-clock
+ * model below are the C surface the port calls; the vectors pin the rest. */
+void bpm_inject(obs_output_t *output, struct encoder_packet *pkt,
+		struct encoder_packet_time *pkt_time, void *param);
+void bpm_destroy(obs_output_t *output);
+#else
 #include "../../../shared/bpm/bpm.c"
+#endif
 
 static struct {
 	int out_total, out_dropped;
@@ -1032,7 +1041,41 @@ void freeaddrinfo(struct addrinfo *res)
 	}
 }
 
+#ifndef OBS_CONFORMANCE_RUST_SWAP_HE
 #include "../../../shared/happy-eyeballs/happy-eyeballs.c"
+#else
+/* Swap mode: the Rust staticlib provides build_addr_list (WP-34, S-024 M9).
+ * The context struct is file-local in the reference (not in the header);
+ * this mirror keeps the layout of the whole struct — the he-* vectors pin
+ * the fields the runner fills/reads (bind_addr_len, addresses) and the
+ * port writes (error, error_message, name_resolution_time_ns). */
+#include "../../../shared/happy-eyeballs/happy-eyeballs.h"
+/* The reference #defines the coefficients in the .c, not the header; swap
+ * mode does not include the .c, so mirror them (S-024 §4.9 pins the values).
+ */
+#define HAPPY_EYEBALLS_DELAY_MS 200
+#define HAPPY_EYEBALLS_MAX_ATTEMPTS 6
+#define HAPPY_EYEBALLS_CONNECTION_TIMEOUT_MS 25000
+struct happy_eyeballs_ctx {
+	SOCKET socket_fd;
+	struct sockaddr_storage winner_addr;
+	socklen_t winner_addr_len;
+	int error;
+	const char *error_message;
+	socklen_t bind_addr_len;
+	struct sockaddr_storage bind_addr;
+	struct darray candidates;
+	pthread_mutex_t winner_mutex;
+	pthread_mutex_t candidate_mutex;
+	os_event_t *race_completed_event;
+	struct addrinfo *addresses;
+	uint64_t name_resolution_time_ns;
+	uint64_t connection_time_start;
+	uint64_t connection_time_end;
+	volatile bool is_starting;
+};
+int build_addr_list(const char *hostname, int port, struct happy_eyeballs_ctx *context);
+#endif
 
 static void h_he_cmd(int argc, char **argv)
 {
@@ -1319,9 +1362,49 @@ CURLcode curl_easy_getinfo(CURL *handle, CURLINFO info, ...)
 	return CURLE_OK;
 }
 
+#ifdef OBS_CONFORMANCE_RUST_SWAP_FU
+/* Swap mode: the Rust staticlib provides update_thread/single_file_thread/
+ * get_path/update_info_destroy with the file-updater.h signatures (WP-34,
+ * S-024 M10). The context struct is file-local in the reference (not in
+ * the header); this mirror keeps the layout the runner fills/reads — the
+ * fu_* vectors pin it. */
+#include "../../../shared/file-updater/file-updater/file-updater.h"
+struct update_info {
+	char error[CURL_ERROR_SIZE];
+	struct curl_slist *header;
+	DARRAY(uint8_t) file_data;
+	char *user_agent;
+	CURL *curl;
+	char *url;
+
+	/* directories */
+	char *local;
+	char *cache;
+	char *temp;
+
+	const char *remote_url;
+	obs_data_t *local_package;
+	obs_data_t *cache_package;
+	obs_data_t *remote_package;
+
+	char *etag_local;
+	char *etag_remote;
+
+	confirm_file_callback_t callback;
+	void *param;
+
+	pthread_t thread;
+	bool thread_created;
+	char *log_prefix;
+};
+void *update_thread(void *data);
+void *single_file_thread(void *data);
+char *get_path(const char *dir, const char *file);
+#else
 #include "../../../shared/file-updater/file-updater/file-updater.c"
 #undef info
 #undef warn
+#endif
 
 static int h_fu_confirm_mode; /* 0 accept, 1 reject, 2 replace */
 static char h_fu_replace[256];

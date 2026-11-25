@@ -31,8 +31,20 @@ pub mod abi_common;
 pub mod abi_darray;
 #[cfg(any(test, feature = "c-swap"))]
 pub mod abi_deque;
+// P1-33.1 (WP-34): the BPM injection bridge (S-024 M8).
+#[cfg(any(test, feature = "c-swap"))]
+pub mod abi_bpm;
+// P1-33.2 (WP-34): the file-updater bridge (S-024 M10).
+#[cfg(any(test, feature = "c-swap"))]
+pub mod abi_file_updater;
+// P1-33.3 (WP-34): the happy-eyeballs address-list bridge (S-024 M9).
+#[cfg(any(test, feature = "c-swap"))]
+pub mod abi_happy_eyeballs;
 #[cfg(any(test, feature = "c-swap"))]
 pub mod abi_lexer;
+// P1-33.5 (WP-34): the opts-parser bridge (S-024 M1).
+#[cfg(any(test, feature = "c-swap"))]
+pub mod abi_opts;
 // The Flatpak sleep-inhibition files are unix-only (os_inhibit is
 // `#[cfg(unix)]` in obs-util); the bridge follows the same gate.
 #[cfg(unix)]

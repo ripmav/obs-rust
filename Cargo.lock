@@ -304,6 +304,10 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "cf8baf1c55e62ffcace7a9f06f4bd9cd3f0c4beb022d3b367256b91b87513d98"
 
 [[package]]
+name = "obs-bpm"
+version = "0.1.0"
+
+[[package]]
 name = "obs-cli"
 version = "0.1.0"
 
@@ -325,8 +329,16 @@ version = "0.1.0"
 dependencies = [
  "cbindgen",
  "cc",
+ "obs-bpm",
+ "obs-file-updater",
+ "obs-netutil",
  "obs-util",
+ "obs-util-small",
 ]
+
+[[package]]
+name = "obs-file-updater"
+version = "0.1.0"
 
 [[package]]
 name = "obs-golden"
@@ -341,6 +353,10 @@ name = "obs-hotkey-names"
 version = "0.1.0"
 
 [[package]]
+name = "obs-inject"
+version = "0.1.0"
+
+[[package]]
 name = "obs-math"
 version = "0.1.0"
 dependencies = [
@@ -349,6 +365,10 @@ dependencies = [
 
 [[package]]
 name = "obs-media-io"
+version = "0.1.0"
+
+[[package]]
+name = "obs-netutil"
 version = "0.1.0"
 
 [[package]]

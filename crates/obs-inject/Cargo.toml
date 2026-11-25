@@ -1,0 +1,12 @@
+[package]
+name = "obs-inject"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+description = "P1-33.4 helper module of the OBS Rust rewrite (obs-inject-library symbol resolution and injection control flow)"
+license.workspace = true
+
+[lints]
+workspace = true
+
+[dependencies]

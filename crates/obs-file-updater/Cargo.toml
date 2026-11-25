@@ -1,0 +1,12 @@
+[package]
+name = "obs-file-updater"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+description = "S-024 M10 helper modules of the OBS Rust rewrite (file-updater path/ETag helpers)"
+license.workspace = true
+
+[lints]
+workspace = true
+
+[dependencies]
