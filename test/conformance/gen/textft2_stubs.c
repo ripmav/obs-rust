@@ -416,12 +416,12 @@ void gs_texture_destroy(gs_texture_t *t)
 }
 
 /* ------------------------------------------------------------------ OBS core pieces */
-bool text_lookup_getstr(lookup_t *l, const char *key, const char **out)
+bool __attribute__((weak)) text_lookup_getstr(lookup_t *l, const char *key, const char **out)
 {
 	(void)l, (void)key, (void)out;
 	return false;
 }
-void text_lookup_destroy(lookup_t *l)
+void __attribute__((weak)) text_lookup_destroy(lookup_t *l)
 {
 	(void)l;
 }

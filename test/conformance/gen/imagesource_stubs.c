@@ -431,12 +431,15 @@ void obs_enter_graphics(void) {}
 void obs_leave_graphics(void) {}
 
 /* ---------------- module / misc stubs ---------------- */
-bool text_lookup_getstr(lookup_t *l, const char *v, const char **out)
+/* Weak: in swap mode the staticlib's text-lookup bridge (pulled in with the
+ * swapped lexer sources) provides strong definitions — the runner's locale
+ * loader is stubbed to NULL, so both return false for every lookup. */
+bool __attribute__((weak)) text_lookup_getstr(lookup_t *l, const char *v, const char **out)
 {
 	(void)l, (void)v, (void)out;
 	return false;
 }
-void text_lookup_destroy(lookup_t *l)
+void __attribute__((weak)) text_lookup_destroy(lookup_t *l)
 {
 	(void)l;
 }

@@ -172,6 +172,10 @@ for area in "${!runner_sources[@]}"; do
 		rustlib_link=""
 		if [ "$SWAPPED" = 1 ] || [ -n "${rustlib_area[$area]:-}" ]; then
 			rustlib_link="$rustlib"
+			# !nostubs areas (no common sources) link the staticlib too and
+			# need its C-service stubs (the strong providers in their stub
+			# files win where present; see gen/rustlib_stubs.c).
+			[ "${#commons[@]}" -gt 0 ] || srcs+=("$here/gen/rustlib_stubs.c")
 		fi
 		# P1-33 (WP-34): the shared/ modules the helpers runner #includes
 		# (bpm, happy-eyeballs, file-updater) are gated on their per-module
