@@ -257,9 +257,9 @@ Corrections to the earlier plan, verified in the tree: the ring buffer is `libob
 
 ### P1-29 `obs-ffi` header diff
 
-- [ ] **P1-29.1 cbindgen config** — Files: `crates/*/` cbindgen configs (new), per crate. `cpp_compat`, prefix none. Done when: header generated.
-- [ ] **P1-29.2 Diff script** — normalise whitespace; compare each function declaration to `libobs/**/*.h`. Done when: report of mismatches empty.
-- [ ] **P1-29.3 CI** step. Files: `.github/workflows/`.
+- [x] **P1-29.1 cbindgen config** — Files: `crates/*/` cbindgen configs (new), per crate. `cpp_compat`, prefix none. Done when: header generated.
+- [x] **P1-29.2 Diff script** — normalise whitespace; compare each function declaration to `libobs/**/*.h`. Done when: report of mismatches empty.
+- [x] **P1-29.3 CI** step. Files: `.github/workflows/`.
 
 ### P1-30 Switch default
 
