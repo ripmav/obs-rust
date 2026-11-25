@@ -12,6 +12,13 @@ workspace = true
 [build-dependencies]
 cc = "1.11.2"
 
+[dev-dependencies]
+# P1-29.1 (WP-31): the header generator for tests/header_diff.rs. The
+# version is pinned in Cargo.lock — do not replace it with a
+# cargo-installed cbindgen binary (the conformance job must not depend
+# on a separate toolchain install).
+cbindgen = "0.29.4"
+
 [dependencies]
 obs-util = { path = "../obs-util" }
 

@@ -1,0 +1,36 @@
+# P1-29.1 (WP-31): cbindgen config for the obs-ffi C ABI surface.
+#
+# language = C, cpp_compat = true, no function prefix. The generated header
+# must declare exactly the `#[no_mangle] extern "C"` bridges and the
+# `#[repr(C)]` types they use — nothing else. `test/conformance/cbindgen-header-diff.py`
+# (P1-29.2) diffs every function declaration against the C reference headers
+# under `libobs/` and reds CI on drift.
+language = "C"
+cpp_compat = true
+# The C reference headers use `#pragma once`.
+pragma_once = true
+
+[export]
+# Not part of the C ABI surface: the C symbols the bridges CALL (extern
+# imports from base-logging.c / bmem.c) and the `cargo test` link stand-ins
+# in the abi_cf_lexer test module. Keep this list in sync with the
+# `unsafe extern "C"` blocks and test modules in src/.
+exclude = [
+    # lib.rs `mod ffi` — the C logging shim (base-logging.c) and base.c symbols.
+    "obs_ffi_log",
+    "base_get_log_handler",
+    "base_set_log_handler",
+    "base_set_crash_handler",
+    # abi_common.rs — the C allocator (bmem.c).
+    "bfree_raw",
+    "brealloc",
+    # abi_platform.rs — the C shim's bcrash (base-logging.c).
+    "bcrash",
+    # abi_cf_lexer.rs test stand-ins (cargo test links these instead of
+    # bmem.c + the platform file API).
+    "bmalloc",
+    "bfree",
+    "os_fopen",
+    "os_fread_utf8",
+    "fclose",
+]

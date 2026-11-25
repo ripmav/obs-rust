@@ -77,6 +77,11 @@ jobs:
           path: obs-studio
       - name: link the reference into the repo
         run: tools/link-obs-source.sh "${GITHUB_WORKSPACE}/obs-studio"
+      - name: header diff (cbindgen vs C reference)
+        # P1-29.3 (WP-31): the cbindgen-generated obs-ffi header must declare
+        # exactly the C reference signatures; red on any drift. Needs only
+        # cargo + python3 (both preinstalled) and the linked checkout.
+        run: python3 test/conformance/cbindgen-header-diff.py
       - name: install system deps
         run: |
           sudo apt-get update

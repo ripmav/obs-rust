@@ -1705,7 +1705,7 @@ pub unsafe extern "C" fn cf_preprocess(
 /// `pp` must point to a `cf_preprocessor` from [`cf_preprocessor_init`];
 /// `def` must point to a valid `cf_def` whose token views are readable.
 #[unsafe(no_mangle)]
-pub unsafe extern "C" fn cf_preprocessor_add_def(pp: *mut cf_preprocessor, def: *const cf_def) {
+pub unsafe extern "C" fn cf_preprocessor_add_def(pp: *mut cf_preprocessor, def: *mut cf_def) {
     // SAFETY: C-ABI — the handle is non-NULL (guarded above); the value is live for the call.
     let d = unsafe { &*def };
     let existing = get_def(pp, &d.name.str);
@@ -2058,7 +2058,7 @@ mod tests {
             def.tokens.push(lb.tokens.get(i));
         }
         // SAFETY: test — the structs/args are live C objects (checked above).
-        unsafe { cf_preprocessor_add_def(&mut pp, &def) };
+        unsafe { cf_preprocessor_add_def(&mut pp, &mut def) };
         assert_eq!(pp.defines.num, 1);
 
         // SAFETY: test — the structs/args are live C objects (checked above).
