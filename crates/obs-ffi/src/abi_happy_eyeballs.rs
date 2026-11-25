@@ -74,12 +74,17 @@ unsafe extern "C" {
     fn strerror(err: i32) -> *mut c_char;
     #[cfg(any(target_os = "linux", target_os = "android"))]
     fn __errno_location() -> *mut i32;
-    #[cfg(target_os = "macos")]
-    fn _errno() -> *mut i32;
+    // The macOS CRT function `_errno()` (the `errno` macro is
+    // `(*_errno())`) and the musl `__errno()` share the symbol `__errno`
+    // (the C linker prefix).
+    #[cfg(any(target_os = "macos", target_env = "musl"))]
+    #[link_name = "__errno"]
+    fn errno_ptr() -> *mut i32;
     #[cfg(not(any(
         target_os = "linux",
         target_os = "android",
         target_os = "macos",
+        target_env = "musl",
         windows
     )))]
     static errno: i32;
@@ -96,16 +101,16 @@ unsafe fn get_sock_error() -> i32 {
         // thread's errno (glibc); getaddrinfo was just called.
         unsafe { *__errno_location() }
     }
-    #[cfg(target_os = "macos")]
+    #[cfg(any(target_os = "macos", target_env = "musl"))]
     {
-        // SAFETY: the per-thread errno global of the macOS CRT
-        // (the `errno` macro is `(*_errno())` there).
-        unsafe { *_errno() }
+        // SAFETY: the per-thread errno global of the macOS CRT / musl.
+        unsafe { *errno_ptr() }
     }
     #[cfg(not(any(
         target_os = "linux",
         target_os = "android",
         target_os = "macos",
+        target_env = "musl",
         windows
     )))]
     {
@@ -283,8 +288,13 @@ mod tests {
 
     // Test stand-ins for the C externs (the swap build links the conformance
     // runner's fakes / libobs for these; `cargo test` links these instead,
-    // like the bmalloc/bfree stand-ins of the cf-lexer tests).
+    // like the bmalloc/bfree stand-ins of the cf-lexer tests). The
+    // getaddrinfo/strerror stand-ins are off-Windows only: the MSVC backend
+    // keeps them in the test binary where they would collide with the
+    // ws2_32/msvcrt definitions (LNK2005); on Windows the bridge's externs
+    // link the real system functions (never called by the Windows tests).
     static TEST_ERRNO: std::sync::atomic::AtomicI32 = std::sync::atomic::AtomicI32::new(0);
+    #[cfg(not(windows))]
     #[unsafe(no_mangle)]
     pub extern "C" fn getaddrinfo(
         _node: *const c_char,
@@ -304,6 +314,7 @@ mod tests {
     pub extern "C" fn os_gettime_ns() -> u64 {
         1000
     }
+    #[cfg(not(windows))]
     #[unsafe(no_mangle)]
     pub extern "C" fn strerror(_err: i32) -> *mut c_char {
         c"test strerror".as_ptr() as *mut c_char
@@ -318,6 +329,7 @@ mod tests {
 
     /// build_addr_list through the C ABI: a resolver failure sets error /
     /// error_message and returns -1, leaving `addresses` NULL.
+    #[cfg(not(windows))]
     #[test]
     fn resolve_failure_abi() {
         // SAFETY: the mirror holds only integer and pointer fields; zero

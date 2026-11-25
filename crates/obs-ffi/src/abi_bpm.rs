@@ -523,6 +523,85 @@ pub unsafe extern "C" fn bpm_destroy(output: *mut c_void) {
     }
 }
 
+// Test stand-ins for the C externs the MSVC backend keeps in the test
+// binary (it does not dead-strip `#[no_mangle]` functions the way the ELF
+// backends do, so on Windows every C service the bridge references must
+// resolve here; on ELF the references are stripped and the conformance
+// runner's fakes / the C shim provide them instead). All OBS-specific
+// names — no system-symbol collisions on any platform.
+#[cfg(test)]
+mod test_standin {
+    use super::*;
+
+    #[unsafe(no_mangle)]
+    pub extern "C" fn obs_output_get_total_frames(_output: *mut c_void) -> c_int {
+        0
+    }
+
+    #[unsafe(no_mangle)]
+    pub extern "C" fn obs_output_get_frames_dropped(_output: *mut c_void) -> c_int {
+        0
+    }
+
+    #[unsafe(no_mangle)]
+    pub extern "C" fn obs_get_total_frames() -> u32 {
+        0
+    }
+
+    #[unsafe(no_mangle)]
+    pub extern "C" fn obs_get_lagged_frames() -> u32 {
+        0
+    }
+
+    #[unsafe(no_mangle)]
+    pub extern "C" fn obs_encoder_video(_encoder: *mut c_void) -> *mut c_void {
+        std::ptr::null_mut()
+    }
+
+    #[unsafe(no_mangle)]
+    pub extern "C" fn video_output_get_total_frames(_video: *mut c_void) -> u32 {
+        0
+    }
+
+    #[unsafe(no_mangle)]
+    pub extern "C" fn video_output_get_skipped_frames(_video: *mut c_void) -> u32 {
+        0
+    }
+
+    #[unsafe(no_mangle)]
+    pub extern "C" fn obs_encoder_get_encoded_frames(_encoder: *mut c_void) -> u32 {
+        0
+    }
+
+    #[unsafe(no_mangle)]
+    pub extern "C" fn obs_encoder_get_name(_encoder: *mut c_void) -> *const c_char {
+        std::ptr::null()
+    }
+
+    #[unsafe(no_mangle)]
+    pub extern "C" fn obs_encoder_get_codec(_encoder: *mut c_void) -> *const c_char {
+        std::ptr::null()
+    }
+
+    #[unsafe(no_mangle)]
+    pub extern "C" fn obs_encoder_packet_release(_packet: *mut encoder_packet) {}
+
+    #[unsafe(no_mangle)]
+    pub extern "C" fn os_nstime_to_timespec(
+        timestamp: u64,
+        storage: *mut Timespec,
+    ) -> *mut Timespec {
+        // The identity model (the conformance runner's model): ns →
+        // (sec, nsec). Test-only; never reached on the ELF test builds.
+        // SAFETY: storage is a valid out pointer (the caller's local).
+        unsafe {
+            (*storage).tv_sec = timestamp as i64 / 1_000_000_000;
+            (*storage).tv_nsec = (timestamp % 1_000_000_000) as c_long;
+        }
+        storage
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;

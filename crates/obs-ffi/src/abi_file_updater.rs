@@ -1077,6 +1077,173 @@ fn blog_msg_c(level: c_int, log_prefix: *const c_char, msg: &str) {
     unsafe { bfree(msg_c) };
 }
 
+// Test stand-ins for the C externs the MSVC backend keeps in the test
+// binary (it does not dead-strip `#[no_mangle]` functions the way the ELF
+// backends do, so on Windows every C service the bridge references must
+// resolve here; on ELF the references are stripped and the conformance
+// runner's fakes / the C shim provide them instead). The obs_data/curl/os_
+// names are OBS- or libcurl-specific — no system-symbol collisions; the
+// pthread stand-ins are Windows-only (on ELF the system pthreads provide
+// them and a local definition would shadow them for the whole test
+// binary, including the threading tests).
+#[cfg(test)]
+mod test_standin {
+    use super::*;
+
+    #[unsafe(no_mangle)]
+    pub extern "C" fn obs_data_create() -> *mut c_void {
+        ptr::null_mut()
+    }
+
+    #[unsafe(no_mangle)]
+    pub extern "C" fn obs_data_create_from_json(_json: *const c_char) -> *mut c_void {
+        ptr::null_mut()
+    }
+
+    #[unsafe(no_mangle)]
+    pub extern "C" fn obs_data_create_from_json_file(_path: *const c_char) -> *mut c_void {
+        ptr::null_mut()
+    }
+
+    #[unsafe(no_mangle)]
+    pub extern "C" fn obs_data_release(_data: *mut c_void) {}
+
+    #[unsafe(no_mangle)]
+    pub extern "C" fn obs_data_addref(_data: *mut c_void) {}
+
+    #[unsafe(no_mangle)]
+    pub extern "C" fn obs_data_get_string(
+        _data: *mut c_void,
+        _name: *const c_char,
+    ) -> *const c_char {
+        ptr::null()
+    }
+
+    #[unsafe(no_mangle)]
+    pub extern "C" fn obs_data_get_int(_data: *mut c_void, _name: *const c_char) -> i64 {
+        0
+    }
+
+    #[unsafe(no_mangle)]
+    pub extern "C" fn obs_data_get_array(_data: *mut c_void, _name: *const c_char) -> *mut c_void {
+        ptr::null_mut()
+    }
+
+    #[unsafe(no_mangle)]
+    pub extern "C" fn obs_data_array_count(_array: *mut c_void) -> usize {
+        0
+    }
+
+    #[unsafe(no_mangle)]
+    pub extern "C" fn obs_data_array_item(_array: *mut c_void, _index: usize) -> *mut c_void {
+        ptr::null_mut()
+    }
+
+    #[unsafe(no_mangle)]
+    pub extern "C" fn obs_data_set_string(
+        _data: *mut c_void,
+        _name: *const c_char,
+        _value: *const c_char,
+    ) {
+    }
+
+    #[unsafe(no_mangle)]
+    pub extern "C" fn obs_data_save_json(_data: *mut c_void, _file: *const c_char) -> bool {
+        false
+    }
+
+    #[unsafe(no_mangle)]
+    pub extern "C" fn curl_easy_init() -> *mut c_void {
+        ptr::null_mut()
+    }
+
+    #[unsafe(no_mangle)]
+    pub extern "C" fn curl_easy_cleanup(_handle: *mut c_void) {}
+
+    #[unsafe(no_mangle)]
+    pub unsafe extern "C" fn curl_easy_setopt(
+        _handle: *mut c_void,
+        _option: c_long,
+        _: ... // variadic stand-in: the value is never read.
+    ) -> c_int {
+        -1
+    }
+
+    #[unsafe(no_mangle)]
+    pub extern "C" fn curl_easy_perform(_handle: *mut c_void) -> c_int {
+        6 // CURLE_COULDNT_CONNECT
+    }
+
+    #[unsafe(no_mangle)]
+    pub unsafe extern "C" fn curl_easy_getinfo(
+        _handle: *mut c_void,
+        _info: c_long,
+        _: ... // variadic stand-in: the value is never read.
+    ) -> c_int {
+        -1
+    }
+
+    #[unsafe(no_mangle)]
+    pub extern "C" fn curl_slist_append(_list: *mut c_void, _s: *const c_char) -> *mut c_void {
+        ptr::null_mut()
+    }
+
+    #[unsafe(no_mangle)]
+    pub extern "C" fn curl_slist_free_all(_list: *mut c_void) {}
+
+    #[unsafe(no_mangle)]
+    pub extern "C" fn os_mkdir(_path: *const c_char) -> c_int {
+        -1
+    }
+
+    #[unsafe(no_mangle)]
+    pub extern "C" fn os_rmdir(_path: *const c_char) -> c_int {
+        -1
+    }
+
+    #[unsafe(no_mangle)]
+    pub extern "C" fn os_copyfile(_input: *const c_char, _output: *const c_char) -> c_int {
+        -1
+    }
+
+    #[unsafe(no_mangle)]
+    pub extern "C" fn os_unlink(_path: *const c_char) -> c_int {
+        -1
+    }
+
+    #[unsafe(no_mangle)]
+    pub extern "C" fn os_rename(_from: *const c_char, _to: *const c_char) -> c_int {
+        -1
+    }
+
+    #[unsafe(no_mangle)]
+    pub extern "C" fn os_quick_write_utf8_file(
+        _path: *const c_char,
+        _data: *const c_char,
+        _len: usize,
+        _marker: bool,
+    ) -> bool {
+        false
+    }
+
+    #[cfg(windows)]
+    #[unsafe(no_mangle)]
+    pub extern "C" fn pthread_create(
+        _thread: *mut u64,
+        _attr: *const c_void,
+        _start: *mut c_void,
+        _arg: *mut c_void,
+    ) -> c_int {
+        1 // failure: no threads in the test build
+    }
+
+    #[cfg(windows)]
+    #[unsafe(no_mangle)]
+    pub extern "C" fn pthread_join(_thread: u64, _value: *mut *mut c_void) -> c_int {
+        1
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;

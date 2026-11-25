@@ -64,7 +64,7 @@ exclude = [
     # C reference headers.
     "getaddrinfo",
     "__errno_location",
-    "_errno",
+    "errno_ptr",
     "WSAGetLastError",
     "strerror",
     "os_gettime_ns",
