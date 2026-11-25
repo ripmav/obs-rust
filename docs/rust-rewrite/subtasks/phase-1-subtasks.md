@@ -200,9 +200,9 @@ Corrections to the earlier plan, verified in the tree: the ring buffer is `libob
 
 ### P1-23 Typed Rust API
 
-- [ ] **P1-23.1 Design** — Files: `crates/obs-signal/` (new `Signal<A>` + docs). `Signal<A>` + `Connection` guard in docs. Done when: ADR addendum.
-- [ ] **P1-23.2 Bridge** — typed args to/from `calldata` (S-002 byte layout). Done when: round trip test.
-- [ ] **P1-23.3 Docs/tests** — Files: `crates/obs-signal/` docs + tests.
+- [x] **P1-23.1 Design** — Files: `crates/obs-signal/` (new `Signal<A>` + docs). `Signal<A>` + `Connection` guard in docs. Done when: ADR addendum.
+- [x] **P1-23.2 Bridge** — typed args to/from `calldata` (S-002 byte layout). Done when: round trip test.
+- [x] **P1-23.3 Docs/tests** — Files: `crates/obs-signal/` docs + tests.
 
 ## D. `obs-data`
 

@@ -1,6 +1,6 @@
 # 0002. C plugin ABI policy
 
-- Status: Accepted (D-02, D-05, D-06 confirmed 2026-11-05; policy text per P0-02)
+- Status: Accepted (D-02, D-05, D-06 confirmed 2026-11-05; policy text per P0-02). Typed Rust signal API per Amendment 1 (2026-11-25, P1-23).
 - Date: 2026-11-10
 - Supersedes: —
 - Superseded by: —
@@ -170,6 +170,91 @@ contract (two entry families, one loader, probe order), not the internals.
 Deprecation timeline placeholder: C ABI compatibility is announced as
 deprecated at native SDK 1.0 (P7-11) and removed **three Rust releases later**
 (P7-10.3 names the release; D-05).
+
+### Amendment 1 (2026-11-25) — typed Rust signal API: `Signal<A>` + `Connection`
+
+**Trigger:** P1-23 (WP-33) delivers the typed Rust API over the S-004 signal
+handler in `crates/obs-signal` (`typed` module) — the first slice of the native
+Rust API announced in §"Coexistence with the native Rust plugin API (D-06)".
+No C-ABI-visible change: the amendment fixes the Rust-side contract only.
+
+**Decision:**
+
+1. **`Signal<'h, A>`** — zero-allocation handle: a borrow of `SignalHandler`
+   plus the argument type `A: SignalArgs` (name, S-003 declaration and the
+   calldata layout live in `A`). `Copy`.
+1. **`Connection<'h, A>`** — the RAII guard for `Signal::connect( f: impl Fn(A) + Send + Sync + 'static)`. **Drop is disconnect** (no manual
+   disconnect API): the drop calls
+   `signal_handler_disconnect_gen` — the *exact* entry the guard created, by
+   the generation `signal_handler_connect_gen` returned (a plain-`u64`
+   identity: identical under Miri, which gives each function-item coercion a
+   different address, and immune to a different entry reusing a freed
+   address) — and *then* frees the closure — so no C-side connection leaks
+   (T2) and no closure box leaks. The handler-level `(cb, data)`-identity
+   disconnect is unchanged, and `connect` keeps the C identity dedup of Q-4.
+   Dropping a guard from inside a callback for **another** connection (or from
+   another thread) is well-defined (S-004-R30/R45: marked during the emit,
+   erased at its end, skipped by any nested re-emit). **A guard must not be
+   dropped from inside its own connected callback** — the drop would free the
+   closure object while it is being called (undefined behavior; the trampoline
+   borrows the closure for the call — unlike C, where the callback code is
+   separate from the `data` payload; caught by the CI Miri job in WP-33). To
+   disconnect oneself: `signal_handler_remove_current()` (S-004-R32) or defer
+   the drop. A guard may outlive the handler's destruction (`refs` →
+   0): its disconnect is a documented no-op on a dead handler.
+1. **Typed arguments use the S-002 byte layout verbatim** (`A::write` /
+   `A::read` over the calldata stack): the stack bytes are identical to what a
+   C plugin packs; a missing or mis-sized parameter takes the C default
+   (int `0`, float `0.0`, bool `false`, ptr `NULL`, string `NULL`) — no
+   fallible read, matching the `calldata_int`-family contract.
+1. **`Signal` and `Connection` are always `Send + Sync`** (the handles hold
+   no `A` data; `A`'s thread-safety requirements fall on the closure bound and
+   on each `emit`'s `&A` argument). This required `unsafe impl Sync for SignalHandler` (all shared state mutex-guarded per S-004 §7; SAFETY comment
+   at the impl). `SignalHandler` is **not** `Send` — its `data` payloads are
+   opaque C memory (raw pointers are not `Send` on the current toolchain) —
+   so the `Box<SignalHandler>` stays on its creating thread and plugin code
+   shares `Signal`/`Connection` handles instead.
+1. **Allocation behaviour (T6):** `connect` costs two small heap allocations
+   (the closure box plus the outer identity box that keeps the C `data` token
+   a thin pointer — freed with the guard, never on the emit path); `emit` is
+   one S-001-allocator round trip (≥128 B, S-002-R11), freed at emit end —
+   the same profile as a C caller's `calldata_create()`/`calldata_destroy()`;
+   `emit_on` reuses a caller-owned calldata (zero allocations after the first
+   write — the real-time path); each callback invocation reconstructs `A`
+   (a `string` parameter allocates a `String` per callback, where C plugins
+   borrow a NUL-terminated pointer).
+1. **Panic policy:** a panic in a connected closure **aborts** the process —
+   the trampoline is `extern "C"`, and unwinding through it would corrupt the
+   emit state (same class as the C reference, which cannot unwind at all;
+   S-001 "no unwinding into C").
+
+**Caller contract (inherited from the C reference, S-004):** do not destroy a
+handler (`refs` → 0) while a `connect` of it is in flight from another thread.
+Everything else the guards make safe: a handler may be destroyed while guards
+are alive, as long as no emit of that handler is running at that moment.
+
+**Rejected alternatives:**
+
+- `Signal<A>` owning the handler (`Arc`): rejected — (a) it would hide the
+  destroy ordering behind a refcount and diverge from the C
+  `signal_t { handler, name }` borrow shape; (b) `SignalHandler` is not `Send`
+  on the current toolchain, so the `Arc` would need an `unsafe impl Send`
+  over opaque C `data` payloads with no evidence to support it.
+- manual `Connection::disconnect()` in addition to `Drop`: rejected as
+  redundant — drop is the only required path, and a reconnect is a fresh
+  guard. (The typed layer does get its own entry identity — the generation
+  from `signal_handler_connect_gen` — because a RAII guard should remove
+  *its own* entry, and C's `(cb, data)` pointer identity is unobservable
+  under Miri: each function-item coercion gets a different address there,
+  which the first WP-33 Miri run exposed as a silent no-op disconnect.)
+- fallible `A::read` (`Result<Self, _>`): rejected — (a) the C contract is
+  silent defaults (S-002), and a `Result` in the hot callback path adds
+  branching with no C counterpart; (b) a missing parameter is a *value*
+  condition in calldata (type is only the byte count, Q-1), not an error.
+
+**Consequence added:** the `typed` module's module docs (drop-ordering proof,
+allocation behaviour, panic policy) are the standing reference for P1-23 and
+for later typed APIs built on the handler (procs, P1-21's `Proc` handle).
 
 ## Alternatives
 

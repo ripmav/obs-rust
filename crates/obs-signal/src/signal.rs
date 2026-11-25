@@ -23,6 +23,12 @@
 //!   generation check makes this well-defined while reproducing Q-2).
 //! - `connect_ref` on a nonexistent signal logs (S-004-R20) and leaves
 //!   `refs` unchanged (balanced; the C reference may leak a ref there).
+//! - `SignalHandler` is `Sync` (explicit `unsafe impl`, see the SAFETY
+//!   comment after the struct), so shared references and the typed
+//!   handles (P1-23, ADR 0002 Amendment 1) cross threads. It is not
+//!   `Send` (its `data` payloads are opaque C memory): keep the
+//!   `Box<SignalHandler>` on its creating thread and share `Signal` /
+//!   `Connection` handles instead.
 
 use std::cell::Cell;
 use std::cell::UnsafeCell;
@@ -142,6 +148,19 @@ struct Inner {
 pub struct SignalHandler {
     inner: Inner,
 }
+
+// SAFETY: every piece of shared mutable state is mutex-guarded and all
+// `UnsafeCell` accesses happen under their lock: the handler lock
+// guards the signal list (never held across a callback), each signal's
+// re-entrant lock guards its callbacks and `signalling`, the global
+// lock guards the globals (S-004 §7); the ref/generation/emitting
+// counters are `SeqCst` atomics. The thread-local current-cb record is
+// dereferenced only by the emitting thread while its handler borrow is
+// alive. Inherited caller contract (as in the C reference): do not
+// destroy the handler (`refs` → 0) while a `connect` of it is in
+// flight on another thread — the typed `Signal`/`Connection` guards
+// (P1-23) make the common orderings safe (ADR 0002 Amendment 1).
+unsafe impl Sync for SignalHandler {}
 
 // ── List helpers (fresh borrow per call; never held across a callback) ──
 
@@ -447,6 +466,76 @@ pub fn signal_handler_disconnect(
             .iter()
             .position(|c| std::ptr::fn_addr_eq(c.cb, cb) && c.data == data)
         else {
+            return;
+        };
+        if s.signalling {
+            s.cbs[i].remove = true;
+            return;
+        }
+        let keep_ref = s.cbs[i].keep_ref;
+        s.cbs.remove(i);
+        drop(_sl);
+        if keep_ref && h.inner.refs.fetch_sub(1, SeqCst) == 1 {
+            h.inner.destroy();
+        }
+    }
+}
+
+/// P1-23 (typed layer): connect and return the new entry's generation —
+/// the entry's *exact* identity, which the typed `Connection` guard
+/// disconnects by. Returns `0` when the signal is not declared (the
+/// R20 warning is logged) or when the C identity dedup of Q-4 applies
+/// (the returned generation is then inert — the guard's drop is a
+/// no-op, and the deduped entry is skipped per R45, so no UAF).
+///
+/// Unlike the C `(cb, data)` pointer identity, a generation is a plain
+/// `u64`: it works identically under Miri (which gives each
+/// function-item coercion a different address) and cannot match a
+/// different entry reusing a freed address.
+pub fn signal_handler_connect_gen(
+    h: &SignalHandler,
+    sig: &str,
+    cb: SignalCallback,
+    data: *mut c_void,
+) -> u64 {
+    let Some(sp) = find_signal(h, sig) else {
+        eprintln!("signal_handler_connect: signal '{sig}' not found");
+        return 0;
+    };
+    let generation = h.inner.generation.fetch_add(1, SeqCst);
+    // SAFETY: the signal's re-entrant lock is taken inside; `sp` points to a live `Signal` found above.
+    unsafe {
+        let s = &mut *sp;
+        let _sl = s.lock.lock();
+        if s.cbs
+            .iter()
+            .any(|c| std::ptr::fn_addr_eq(c.cb, cb) && c.data == data)
+        {
+            return generation; // Q-4 dedup: inert generation
+        }
+        s.cbs.push(Box::new(Cb {
+            cb,
+            data,
+            remove: false,
+            keep_ref: false,
+            generation,
+        }));
+    }
+    generation
+}
+
+/// P1-23 (typed layer): disconnect the entry by generation (exact
+/// identity — see `signal_handler_connect_gen`). Marking vs. erasing
+/// is the same as R30; inert for unknown/inert generations (R26).
+pub fn signal_handler_disconnect_gen(h: &SignalHandler, sig: &str, generation: u64) {
+    let Some(sp) = find_signal(h, sig) else {
+        return;
+    };
+    // SAFETY: the signal's re-entrant lock is taken inside; `sp` points to a live `Signal` found above.
+    unsafe {
+        let s = &mut *sp;
+        let _sl = s.lock.lock();
+        let Some(i) = s.cbs.iter().position(|c| c.generation == generation) else {
             return;
         };
         if s.signalling {
