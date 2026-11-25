@@ -57,7 +57,7 @@ declare -A runner_sources=(
 	[decl]="$here/gen/decl_runner.c $libobs/callback/calldata.c $libobs/callback/decl.c ${lexer[*]}"
 	[signal]="$here/gen/signal_runner.c $libobs/callback/calldata.c $libobs/callback/decl.c $libobs/callback/signal.c $libobs/callback/proc.c ${lexer[*]}"
 	[darray]="$here/gen/darray_runner.c"
-	[deque]="$here/gen/deque_runner.c"
+	[deque]="$here/gen/deque_runner.c $here/gen/rustlib_stubs.c"
 	[bmem]="$here/gen/bmem_runner.c"
 	[dstr]="$here/gen/dstr_runner.c"
 	[math]="$here/gen/math_runner.c $libobs/graphics/vec3.c $libobs/graphics/vec4.c $libobs/graphics/quat.c $libobs/graphics/matrix4.c $libobs/graphics/matrix3.c $libobs/graphics/axisang.c $libobs/graphics/plane.c $libobs/graphics/math-extra.c"
@@ -67,7 +67,10 @@ declare -A runner_sources=(
 )
 # P1-04.2 (WP-32): the deque runner drives a Rust-owned deque through the
 # test-only obs_ffi_deque_new/free symbols — link the staticlib in check
-# mode too (the !rustlib form of the .sources marker).
+# mode too (the !rustlib form of the .sources marker). The monolithic
+# staticlib object pulls in every bridge, so the deque runner also links
+# gen/rustlib_stubs.c (abort stubs for the C services the other bridges
+# reference — P1-33, WP-34); no other runner links that file.
 declare -A rustlib_area=()
 rustlib_area[deque]=1
 

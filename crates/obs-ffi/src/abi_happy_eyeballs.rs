@@ -78,7 +78,7 @@ unsafe extern "C" {
     // `(*_errno())`) and the musl `__errno()` share the symbol `__errno`
     // (the C linker prefix).
     #[cfg(any(target_os = "macos", target_env = "musl"))]
-    #[link_name = "__errno"]
+    #[link_name = "_errno"]
     fn errno_ptr() -> *mut i32;
     #[cfg(not(any(
         target_os = "linux",
