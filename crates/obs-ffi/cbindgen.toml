@@ -64,6 +64,8 @@ exclude = [
     # C reference headers.
     "getaddrinfo",
     "__errno_location",
+    "_errno",
+    "WSAGetLastError",
     "strerror",
     "os_gettime_ns",
     # abi_file_updater.rs — C services the bridge calls (obs-data.c,

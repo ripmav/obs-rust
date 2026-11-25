@@ -74,11 +74,21 @@ unsafe extern "C" {
     fn strerror(err: i32) -> *mut c_char;
     #[cfg(any(target_os = "linux", target_os = "android"))]
     fn __errno_location() -> *mut i32;
-    #[cfg(not(any(target_os = "linux", target_os = "android")))]
+    #[cfg(target_os = "macos")]
+    fn _errno() -> *mut i32;
+    #[cfg(not(any(
+        target_os = "linux",
+        target_os = "android",
+        target_os = "macos",
+        windows
+    )))]
     static errno: i32;
+    #[cfg(windows)]
+    fn WSAGetLastError() -> u32;
 }
 
-/// `GetSockError()` of the reference (`errno` on !Windows).
+/// `GetSockError()` of the reference (`WSAGetLastError` on Windows,
+/// `errno` elsewhere).
 unsafe fn get_sock_error() -> i32 {
     #[cfg(any(target_os = "linux", target_os = "android"))]
     {
@@ -86,10 +96,27 @@ unsafe fn get_sock_error() -> i32 {
         // thread's errno (glibc); getaddrinfo was just called.
         unsafe { *__errno_location() }
     }
-    #[cfg(not(any(target_os = "linux", target_os = "android")))]
+    #[cfg(target_os = "macos")]
+    {
+        // SAFETY: the per-thread errno global of the macOS CRT
+        // (the `errno` macro is `(*_errno())` there).
+        unsafe { *_errno() }
+    }
+    #[cfg(not(any(
+        target_os = "linux",
+        target_os = "android",
+        target_os = "macos",
+        windows
+    )))]
     {
         // SAFETY: the per-thread errno global of the other unix ABIs.
-        errno
+        unsafe { errno }
+    }
+    #[cfg(windows)]
+    {
+        // SAFETY: no-args Win32 last-error query (the reference's
+        // GetSockError on Windows).
+        (unsafe { WSAGetLastError() }) as i32
     }
 }
 
@@ -239,7 +266,10 @@ mod tests {
         // reference layout (glibc, both 64-bit targets): the swap-mode
         // runner carries the same C struct, so a drift here is a conformance
         // failure, but pin the offsets directly as well.
-        assert_eq!(std::mem::offset_of!(happy_eyeballs_ctx, winner_addr_len), 136);
+        assert_eq!(
+            std::mem::offset_of!(happy_eyeballs_ctx, winner_addr_len),
+            136
+        );
         assert_eq!(std::mem::offset_of!(happy_eyeballs_ctx, error), 140);
         assert_eq!(std::mem::offset_of!(happy_eyeballs_ctx, bind_addr_len), 152);
         assert_eq!(std::mem::offset_of!(happy_eyeballs_ctx, bind_addr), 160);
