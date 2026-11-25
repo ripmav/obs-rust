@@ -42,6 +42,12 @@ WP-16 (P1-14.3), crate `crates/obs-util-small`. Spec:
 - **Thread names**: the worker thread is named `obs-task-queue` (the
   C thread name is not pinned by the spec).
 
+## M1 opts-parser (WP-34, P1-33.5)
+
+The `opts_parser` module (S-024 M1, added by WP-34) has its own matrix:
+`docs/tests/opts-parser.md` (unit) and `docs/tests/abi-opts.md`
+(bridge).
+
 ## Not covered yet (C-checkout dependent / later phases)
 
 - The P1-14 apply recipe steps for these files (the `extern "C"`

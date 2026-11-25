@@ -34,6 +34,72 @@ exclude = [
     # runner declares it locally (serial_runner.c). No reference declaration
     # to diff against, so it stays out of the generated header.
     "bitstream_reader_read_bit",
+    # abi_bpm.rs — C services the bridge calls (the output/encoder/video
+    # counter surface — the conformance runner links fakes, production
+    # libobs — and the injected wall-clock base; the runner links the
+    # identity model). Declared in libobs headers, not in the diffed C
+    # reference headers.
+    "obs_encoder_get_codec",
+    "obs_encoder_get_encoded_frames",
+    "obs_encoder_get_name",
+    "obs_encoder_packet_release",
+    "obs_encoder_video",
+    "obs_get_lagged_frames",
+    "obs_get_total_frames",
+    "obs_output_get_frames_dropped",
+    "obs_output_get_total_frames",
+    "os_nstime_to_timespec",
+    "video_output_get_skipped_frames",
+    "video_output_get_total_frames",
+    # abi_happy_eyeballs.rs — build_addr_list: file-local (static) in the C
+    # reference, declared in NO C header; the conformance runner declares
+    # it locally in swap mode. No reference declaration to diff against.
+    "build_addr_list",
+    # abi_file_updater.rs — get_path: file-local (static) in the C
+    # reference, declared in NO C header; the conformance runner declares
+    # it locally in swap mode.
+    "get_path",
+    # abi_happy_eyeballs.rs — C services the bridge calls (resolver / clock
+    # / strerror); declared in system / platform headers, not in the diffed
+    # C reference headers.
+    "getaddrinfo",
+    "__errno_location",
+    "strerror",
+    "os_gettime_ns",
+    # abi_file_updater.rs — C services the bridge calls (obs-data.c,
+    # libcurl, the platform file API, base-logging.c, pthreads) and the
+    # file-local thread entry points (static in the C reference, declared
+    # locally by the conformance runner in swap mode).
+    "blog",
+    "curl_easy_cleanup",
+    "curl_easy_getinfo",
+    "curl_easy_init",
+    "curl_easy_perform",
+    "curl_easy_setopt",
+    "curl_slist_append",
+    "curl_slist_free_all",
+    "obs_data_addref",
+    "obs_data_array_count",
+    "obs_data_array_item",
+    "obs_data_create",
+    "obs_data_create_from_json",
+    "obs_data_create_from_json_file",
+    "obs_data_get_array",
+    "obs_data_get_int",
+    "obs_data_get_string",
+    "obs_data_release",
+    "obs_data_save_json",
+    "obs_data_set_string",
+    "os_copyfile",
+    "os_mkdir",
+    "os_quick_write_utf8_file",
+    "os_rename",
+    "os_rmdir",
+    "os_unlink",
+    "pthread_create",
+    "pthread_join",
+    "single_file_thread",
+    "update_thread",
     # abi_deque.rs — test-only layout-sharing symbols (P1-04.2): the deque
     # runner declares them locally; there is no C reference declaration.
     "obs_ffi_deque_new",

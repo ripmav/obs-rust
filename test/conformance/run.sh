@@ -131,13 +131,17 @@ fi
 # patch: lexer.c, cf-lexer.c, cf-parser.c, text-lookup.c, base.c,
 # threading-posix.c, platform-nix-dbus.c, platform-nix-portal.c, and —
 # P1-14.2 (WP-32) — bitstream.c, array-serializer.c, file-serializer.c,
-# buffered-file-serializer.c).
+# buffered-file-serializer.c; plus — P1-33 (WP-34) — the ported shared/ leaf
+# modules: opts-parser.c is a runner source here, bpm.c / happy-eyeballs.c /
+# file-updater.c are #included by the runner behind the per-module
+# -DOBS_CONFORMANCE_RUST_SWAP_{BPM,HE,FU} macros, which swap mode defines
+# below).
 apply_swap() {
 	local -n _srcs=$1
 	local f n=${#_srcs[@]} out=()
 	for f in "${_srcs[@]}"; do
 		case "$f" in
-		*"libobs/util/lexer.c" | *"libobs/util/cf-lexer.c" | *"libobs/util/cf-parser.c" | *"libobs/util/text-lookup.c" | *"libobs/util/base.c" | *"libobs/util/threading-posix.c" | *"libobs/util/platform-nix-dbus.c" | *"libobs/util/platform-nix-portal.c" | *"libobs/util/bitstream.c" | *"libobs/util/array-serializer.c" | *"libobs/util/file-serializer.c" | *"libobs/util/buffered-file-serializer.c") SWAPPED=1 ;;
+		*"libobs/util/lexer.c" | *"libobs/util/cf-lexer.c" | *"libobs/util/cf-parser.c" | *"libobs/util/text-lookup.c" | *"libobs/util/base.c" | *"libobs/util/threading-posix.c" | *"libobs/util/platform-nix-dbus.c" | *"libobs/util/platform-nix-portal.c" | *"libobs/util/bitstream.c" | *"libobs/util/array-serializer.c" | *"libobs/util/file-serializer.c" | *"libobs/util/buffered-file-serializer.c" | *"shared/opts-parser/opts-parser.c" | *"shared/bpm/bpm.c" | *"shared/happy-eyeballs/happy-eyeballs.c" | *"shared/file-updater/file-updater/file-updater.c") SWAPPED=1 ;;
 		*) out+=("$f") ;;
 		esac
 	done
@@ -164,8 +168,11 @@ for area in "${!runner_sources[@]}"; do
 		if [ "$SWAPPED" = 1 ] || [ -n "${rustlib_area[$area]:-}" ]; then
 			rustlib_link="$rustlib"
 		fi
+		# P1-33 (WP-34): the shared/ modules the helpers runner #includes
+		# (bpm, happy-eyeballs, file-updater) are gated on their per-module
+		# swap macros; opts-parser.c is a runner source removed above.
 		# shellcheck disable=SC2086
-		"$cc" "${cflags[@]}" ${extra_flags[$area]:-} -o "$build/$area-runner" "${srcs[@]}" "${commons[@]}" $rustlib_link ${extra_libs[$area]:-} -lpthread -lm
+		"$cc" "${cflags[@]}" -DOBS_CONFORMANCE_RUST_SWAP_BPM -DOBS_CONFORMANCE_RUST_SWAP_HE -DOBS_CONFORMANCE_RUST_SWAP_FU ${extra_flags[$area]:-} -o "$build/$area-runner" "${srcs[@]}" "${commons[@]}" $rustlib_link ${extra_libs[$area]:-} -lpthread -lm
 	else
 		rustlib_link=""
 		if [ -n "${rustlib_area[$area]:-}" ]; then

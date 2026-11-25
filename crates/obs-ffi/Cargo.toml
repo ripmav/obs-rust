@@ -21,6 +21,10 @@ cbindgen = "0.29.4"
 
 [dependencies]
 obs-util = { path = "../obs-util" }
+obs-util-small = { path = "../obs-util-small" }
+obs-netutil = { path = "../obs-netutil" }
+obs-file-updater = { path = "../obs-file-updater" }
+obs-bpm = { path = "../obs-bpm" }
 
 [features]
 # Compile the C-ABI bridges that need libobs C symbols at link time

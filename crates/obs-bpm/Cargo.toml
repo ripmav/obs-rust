@@ -1,0 +1,12 @@
+[package]
+name = "obs-bpm"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+description = "S-024 M8 helper module of the OBS Rust rewrite (BPM SEI/OBU framing and per-codec packet injection)"
+license.workspace = true
+
+[lints]
+workspace = true
+
+[dependencies]

@@ -28,7 +28,7 @@ The diff compares FUNCTION DECLARATIONS ONLY. Intentionally out of scope:
   `struct dbus_sleep_info`, `struct portal_inhibit_info` (aliased below).
 
 Reference declarations in scope (the exact set the bridge must provide,
-64 in total):
+71 in total):
   util/text-lookup.h             4  EXPORT
   util/threading.h              14 EXPORT + the two pthread_mutex_init_* static inlines
   util/lexer.h                  10 EXPORT
@@ -41,6 +41,14 @@ Reference declarations in scope (the exact set the bridge must provide,
   util/file-serializer.h         5  EXPORT
   util/buffered-file-serializer.h 3 EXPORT
   util/darray.h                  4  static inlines (the P1-03.2 helpers)
+  shared/bpm/bpm.h                2  plain (WP-34, P1-33.1)
+  shared/opts-parser/opts-parser.h 2 plain (WP-34, P1-33.5)
+  shared/file-updater/file-updater/file-updater.h 3 plain (WP-34, P1-33.2)
+  (shared/happy-eyeballs: build_addr_list is file-local static in the .c —
+  no reference declaration, the conformance runner declares it in swap
+  mode; the bitstream_reader_read_bit precedent, excluded from the
+  generated header. All paths are relative to the obs-studio checkout
+  root — libobs/ is a symlink into it, shared/ is its sibling.)
 
 The PR #73 platform exports have no header in the 33.0.1 tree — their
 reference declarations are the `extern` block of the `GIO_FOUND` section
@@ -76,6 +84,17 @@ ALIASES = {
     "os_sem_t": "void",
     "dbus_sleep_info": "void",
     "portal_inhibit_info": "void",
+    # WP-34 (P1-33): the opaque handle typedefs of the shared/ modules —
+    # the bridges type them as void* / the repr(C) mirrors.
+    "obs_output_t": "void",
+    "update_info_t": "structupdate_info",
+    # the confirm callback typedef renders as a bare C function pointer in
+    # the generated header (cbindgen's form of Option<extern "C" fn>);
+    # parameter names are dropped by norm_param on both sides.
+    "confirm_file_callback_t": "bool*",
+    # abi_file_updater.rs Rust callback alias (same shape as the C
+    # confirm_file_callback_t typedef).
+    "ConfirmCallback": "bool*",
     "size_t": "uintptr_t",
     # The C `struct darray` (darray.h) — the bridge's mirror is named
     # `darray_c` (the cf-lexer bridge owns the crate-level `darray` name
@@ -86,19 +105,27 @@ ALIASES = {
 # enum parameter types that are plain `int`s in C (the bridges take c_int).
 ENUM_AS_INT = {"os_event_type", "ignore_whitespace"}
 
-# (reference file, extraction patterns) — the diff scope.
+# (reference file, extraction patterns) — the diff scope. Paths are
+# relative to the obs-studio checkout root (the libobs/ symlink's parent);
+# the shared/ entries (WP-34) are siblings of libobs/.
 REFS = [
-    ("util/text-lookup.h", ("export",)),
-    ("util/threading.h", ("export", "pthread-inline")),
-    ("util/lexer.h", ("export",)),
-    ("util/cf-lexer.h", ("export",)),
-    ("util/cf-parser.h", ("export",)),
-    ("util/platform-nix.c", ("extern",)),
-    ("util/bitstream.h", ("export",)),
-    ("util/array-serializer.h", ("export",)),
-    ("util/file-serializer.h", ("export",)),
-    ("util/buffered-file-serializer.h", ("export",)),
-    ("util/darray.h", ("darray-inline",)),
+    ("libobs/util/text-lookup.h", ("export",)),
+    ("libobs/util/threading.h", ("export", "pthread-inline")),
+    ("libobs/util/lexer.h", ("export",)),
+    ("libobs/util/cf-lexer.h", ("export",)),
+    ("libobs/util/cf-parser.h", ("export",)),
+    ("libobs/util/platform-nix.c", ("extern",)),
+    ("libobs/util/bitstream.h", ("export",)),
+    ("libobs/util/array-serializer.h", ("export",)),
+    ("libobs/util/file-serializer.h", ("export",)),
+    ("libobs/util/buffered-file-serializer.h", ("export",)),
+    ("libobs/util/darray.h", ("darray-inline",)),
+    # WP-34 (P1-33): the shared/ leaf modules — plain declarations (no
+    # EXPORT); every function declaration of these headers is in scope
+    # (bpm.h: 2, opts-parser.h: 2, file-updater.h: 3).
+    ("shared/bpm/bpm.h", ("plain",)),
+    ("shared/opts-parser/opts-parser.h", ("plain",)),
+    ("shared/file-updater/file-updater/file-updater.h", ("plain",)),
 ]
 # The only `extern` declarations of platform-nix.c in scope: the six
 # dbus_/portal_inhibit* symbols the bridge provides.
@@ -263,7 +290,12 @@ def extract_c(text, patterns, where):
     decls = {}
     for p in patterns:
         for m in RX[p].finditer(text):
-            got = take_decl(m.group(1))
+            # The plain pattern captures ret/name/params separately;
+            # reassemble the `RET NAME(params` shape take_decl expects.
+            body = (
+                f"{m.group(1)} {m.group(2)}({m.group(3)}" if p == "plain" else m.group(1)
+            )
+            got = take_decl(body)
             if got is None:
                 continue
             sig, name = got
@@ -280,14 +312,22 @@ def extract_c(text, patterns, where):
 
 
 # Declaration shapes: EXPORT fns (with an optional OBS_DEPRECATED suffix),
-# the two linkable pthread_mutex_init_* static inlines, and the extern
-# dbus_/portal declarations of platform-nix.c. The body capture ends at the
-# first `)` — no parameter in scope carries nested parens.
+# the two linkable pthread_mutex_init_* static inlines, the extern
+# dbus_/portal declarations of platform-nix.c, and plain declarations of
+# the shared/ module headers (WP-34; the ret/name/params shape of GEN_FN,
+# whose identifier-before-parenthesis requirement keeps typedefs and macro
+# parameters out). The body capture ends at the first `)` — no parameter
+# in scope carries nested parens.
 RX = {
     "export": re.compile(r"\bEXPORT\b(.*?)\)\s*(?:OBS_DEPRECATED\s*)?[;{]"),
     "pthread-inline": re.compile(r"\bstatic\s+inline\b(.*?)\)\s*(?:;|\{)"),
     "darray-inline": re.compile(r"\bstatic\s+inline\b(.*?)\)\s*(?:;|\{)"),
     "extern": re.compile(r"\bextern\b(.*?)\)\s*;"),
+    "plain": re.compile(
+        r"(?:^|(?<=[;{}]))\s*[{};]*\s*"
+        r"([A-Za-z_][A-Za-z0-9_]*(?:\s+[A-Za-z_][A-Za-z0-9_]*|\s*\**)*?)"
+        r"\s*([a-z_][a-z0-9_]*)\s*\(([^;()]*)\)\s*;"
+    ),
 }
 
 
@@ -339,10 +379,14 @@ def main():
     else:
         die("usage: cbindgen-header-diff.py [GEN.h LIBOBS]")
 
+    # The shared/ reference headers are siblings of libobs/ in the
+    # checkout (the libobs/ entry is a symlink into it).
+    root = libobs.resolve().parent
+
     gen_decls = parse_generated(gen_path.read_text())
     c_decls = {}
     for rel, patterns in REFS:
-        text = (libobs / rel).read_text()
+        text = (root / rel).read_text()
         c_decls.update(extract_c(text, patterns, rel))
 
     mismatches = []
