@@ -23,6 +23,12 @@
 //!   generation check makes this well-defined while reproducing Q-2).
 //! - `connect_ref` on a nonexistent signal logs (S-004-R20) and leaves
 //!   `refs` unchanged (balanced; the C reference may leak a ref there).
+//! - `SignalHandler` is `Sync` (explicit `unsafe impl`, see the SAFETY
+//!   comment after the struct), so shared references and the typed
+//!   handles (P1-23, ADR 0002 Amendment 1) cross threads. It is not
+//!   `Send` (its `data` payloads are opaque C memory): keep the
+//!   `Box<SignalHandler>` on its creating thread and share `Signal` /
+//!   `Connection` handles instead.
 
 use std::cell::Cell;
 use std::cell::UnsafeCell;
@@ -142,6 +148,19 @@ struct Inner {
 pub struct SignalHandler {
     inner: Inner,
 }
+
+// SAFETY: every piece of shared mutable state is mutex-guarded and all
+// `UnsafeCell` accesses happen under their lock: the handler lock
+// guards the signal list (never held across a callback), each signal's
+// re-entrant lock guards its callbacks and `signalling`, the global
+// lock guards the globals (S-004 §7); the ref/generation/emitting
+// counters are `SeqCst` atomics. The thread-local current-cb record is
+// dereferenced only by the emitting thread while its handler borrow is
+// alive. Inherited caller contract (as in the C reference): do not
+// destroy the handler (`refs` → 0) while a `connect` of it is in
+// flight on another thread — the typed `Signal`/`Connection` guards
+// (P1-23) make the common orderings safe (ADR 0002 Amendment 1).
+unsafe impl Sync for SignalHandler {}
 
 // ── List helpers (fresh borrow per call; never held across a callback) ──
 
