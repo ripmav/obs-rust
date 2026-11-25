@@ -47,7 +47,9 @@ cflags=(-std=gnu11 -O0 -g -Wall -Wno-unused-function -I"$libobs" -I"$here/gen")
 cflags+=(${CONFORMANCE_EXTRA_CFLAGS:-})
 
 # Shared sources every runner needs (allocator, logging, threading, text helpers).
-common=("$here/gen/stubs.c" "$libobs/util/bmem.c" "$libobs/util/base.c" "$libobs/util/threading-posix.c"
+# rustlib_stubs.c: weak abort stubs for the C services the obs-ffi
+# staticlib references (see the file header for the weak-symbol rationale).
+common=("$here/gen/stubs.c" "$here/gen/rustlib_stubs.c" "$libobs/util/bmem.c" "$libobs/util/base.c" "$libobs/util/threading-posix.c"
 	"$libobs/util/utf8.c" "$libobs/util/dstr.c")
 # cf-lexer based declaration parser (decl.c) needs the lexer too.
 lexer=("$libobs/util/lexer.c" "$libobs/util/cf-lexer.c" "$libobs/util/cf-parser.c")
@@ -57,7 +59,7 @@ declare -A runner_sources=(
 	[decl]="$here/gen/decl_runner.c $libobs/callback/calldata.c $libobs/callback/decl.c ${lexer[*]}"
 	[signal]="$here/gen/signal_runner.c $libobs/callback/calldata.c $libobs/callback/decl.c $libobs/callback/signal.c $libobs/callback/proc.c ${lexer[*]}"
 	[darray]="$here/gen/darray_runner.c"
-	[deque]="$here/gen/deque_runner.c $here/gen/rustlib_stubs.c"
+	[deque]="$here/gen/deque_runner.c"
 	[bmem]="$here/gen/bmem_runner.c"
 	[dstr]="$here/gen/dstr_runner.c"
 	[math]="$here/gen/math_runner.c $libobs/graphics/vec3.c $libobs/graphics/vec4.c $libobs/graphics/quat.c $libobs/graphics/matrix4.c $libobs/graphics/matrix3.c $libobs/graphics/axisang.c $libobs/graphics/plane.c $libobs/graphics/math-extra.c"
@@ -67,10 +69,10 @@ declare -A runner_sources=(
 )
 # P1-04.2 (WP-32): the deque runner drives a Rust-owned deque through the
 # test-only obs_ffi_deque_new/free symbols — link the staticlib in check
-# mode too (the !rustlib form of the .sources marker). The monolithic
-# staticlib object pulls in every bridge, so the deque runner also links
-# gen/rustlib_stubs.c (abort stubs for the C services the other bridges
-# reference — P1-33, WP-34); no other runner links that file.
+# mode too (the !rustlib form of the .sources marker). Every runner that
+# links the staticlib also picks up gen/rustlib_stubs.c (weak abort stubs
+# for the C services the other bridges reference — P1-33, WP-34) from the
+# common sources.
 declare -A rustlib_area=()
 rustlib_area[deque]=1
 
