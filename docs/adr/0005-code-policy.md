@@ -181,6 +181,12 @@ copy is the librtmp vendored `cencode.c` (a Phase 5 concern, P5-17.4). No Rust
 base64 dependency is admitted for Phase 1; the absence re-verification by grep
 is the C-checkout substep.
 
+P1-14.4 **curl: stays FFI until Phase 6** — `libobs/util/curl/curl-helper.h`
+(the Windows-only `curl_obs_set_revoke_setting` wrapper) is not ported:
+its users are the Phase 5 network plugins (obs-webrtc `whip-output`,
+rtmp-services), and the curl integration is Phase 6 network-stack work. No
+curl Rust dependency is admitted for Phase 1.
+
 ## Consequences
 
 - Easier: reviewers have a mechanical checklist for deps and unsafe; Miri gives

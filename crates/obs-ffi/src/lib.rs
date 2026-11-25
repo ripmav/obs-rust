@@ -20,11 +20,17 @@
 // provide stand-ins. Without the gate, linkers that do not garbage-collect
 // unreferenced sections (MSVC) fail with LNK2019 on the integration tests.
 #[cfg(any(test, feature = "c-swap"))]
+pub mod abi_bitstream;
+#[cfg(any(test, feature = "c-swap"))]
 pub mod abi_cf_lexer;
 #[cfg(any(test, feature = "c-swap"))]
 pub mod abi_cf_parser;
 #[cfg(any(test, feature = "c-swap"))]
 pub mod abi_common;
+#[cfg(any(test, feature = "c-swap"))]
+pub mod abi_darray;
+#[cfg(any(test, feature = "c-swap"))]
+pub mod abi_deque;
 #[cfg(any(test, feature = "c-swap"))]
 pub mod abi_lexer;
 // The Flatpak sleep-inhibition files are unix-only (os_inhibit is
@@ -32,6 +38,8 @@ pub mod abi_lexer;
 #[cfg(unix)]
 #[cfg(any(test, feature = "c-swap"))]
 pub mod abi_platform;
+#[cfg(any(test, feature = "c-swap"))]
+pub mod abi_serializer;
 #[cfg(any(test, feature = "c-swap"))]
 pub mod abi_text_lookup;
 // The threading primitives are unix in obs-util (`#[cfg(unix)]` — the
@@ -78,12 +86,17 @@ mod ffi {
 }
 
 /// `blog(level, "%s", msg)` (primer §5.5): log an already-formatted message
-/// through the installed C handler. `msg` is treated as a C string — an
-/// embedded NUL terminates it.
+/// through the installed C handler. The C handler reads `msg` until a NUL
+/// byte (`vfprintf`), so the str — which is not NUL-terminated — is copied
+/// into a NUL-terminated buffer for the call (an embedded NUL still
+/// terminates the visible message).
 pub fn blog(level: c_int, msg: &str) {
-    // SAFETY: the C log sink (installed through the `base_set_log_handler` bridge); `msg` is NUL-terminated for the call.
+    let mut buf: Vec<u8> = Vec::with_capacity(msg.len() + 1);
+    buf.extend_from_slice(msg.as_bytes());
+    buf.push(0);
+    // SAFETY: `buf` is valid for its whole length, NUL-terminated, and lives for the call; the C sink (installed through the `base_set_log_handler` bridge) reads it only synchronously.
     unsafe {
-        ffi::obs_ffi_log(level, msg.as_ptr().cast());
+        ffi::obs_ffi_log(level, buf.as_ptr().cast());
     }
 }
 

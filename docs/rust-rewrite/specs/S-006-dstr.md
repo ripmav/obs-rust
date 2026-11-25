@@ -123,6 +123,7 @@ dstr_ncmp, dstr_ncmpi, dstr_end
 - **Q-5** `dstr_find` on a NULL array crashes; the Rust port SHOULD return "not found" (DEFECT: required behaviour is *no crash*).
 - **Q-6** `replace` with an empty `find` never terminates; port MUST treat it as a no-op (DEFECT).
 - **Q-7** Locale dependence of `toupper/towupper` outside ASCII (see R24, R31).
+- **Q-8** `dstr_insert_ch` (non-fast path, `0 < idx < len`) shifts the tail with `memmove(dst->array + idx + 1, dst->array + idx, dst->len - idx + 1)` **after** `++dst->len` — one byte more than the tail plus NUL: a 1-byte heap over-read and over-write whenever the buffer has no slack (latent in the C reference; the `dstr_ops` fuzzer gives the C block headroom, the port is correct). DEFECT: required behaviour is *no overflow*.
 
 ## 11. Implementation notes (non-normative)
 

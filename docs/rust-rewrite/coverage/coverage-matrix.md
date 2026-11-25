@@ -1170,7 +1170,7 @@ Build/data files in this area: **1** (34 lines) — owner: same task as the area
 | `libobs/util/utf8.c`                                              | P1-08.1        | S-023       |                                                          |
 | `libobs/util/utf8.h`                                              | P1-08.1        | S-023       |                                                          |
 | `libobs/util/uthash.h`                                            | P1-14.1        | —           | replace with Rust collections                            |
-| `libobs/util/util.hpp`                                            | P1-14.1        | —           |                                                          |
+| `libobs/util/util.hpp`                                            | P1-14.1        | —           | C++-only RAII wrappers; no Rust counterpart (P7-04)      |
 | `libobs/util/util_uint128.h`                                      | P1-14.3        | S-024       |                                                          |
 | `libobs/util/util_uint64.h`                                       | P1-14.3        | S-024       |                                                          |
 | `libobs/util/windows/CoTaskMemPtr.hpp`                            | P1-14.1        | —           | port with P4-32.3/P5-30 as needed                        |

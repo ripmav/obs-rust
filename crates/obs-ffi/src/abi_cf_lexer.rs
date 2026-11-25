@@ -1793,7 +1793,7 @@ mod tests {
             return;
         }
         // SAFETY: the data pointer came from this allocator (8-byte size header just before it).
-        let raw = unsafe { ptr.sub(1) as *const u64 };
+        let raw = unsafe { ptr.cast::<u64>().sub(1) };
         // SAFETY: the size header was written by the matching alloc (checked above).
         let size = unsafe { raw.read() } as usize;
         let layout = Layout::from_size_align(size + 8, 8).expect("valid layout");

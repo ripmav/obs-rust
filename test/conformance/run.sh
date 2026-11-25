@@ -22,7 +22,9 @@
 # New areas register themselves with a file gen/<area>.sources (no edit of this script):
 #   one path per line, relative to the repository root (the runner source and the libobs
 #   files it needs), plus optional lines:  -lfoo / -DFOO (compiler or linker flags),
-#   !nostubs (do not link gen/stubs.c / the common sources; use when linking real platform code).
+#   !nostubs (do not link gen/stubs.c / the common sources; use when linking real platform code),
+#   !rustlib (link the Rust staticlib in check mode too — the runner drives Rust-owned
+#   state through test-only symbols; P1-04.2 deque layout sharing).
 #   '#' starts a comment.
 #
 # The runners link the *C reference implementation* of the area under test. They
@@ -63,6 +65,11 @@ declare -A runner_sources=(
 	# threading-posix.c comes from the common sources.
 	[threading]="$here/gen/threading_runner.c"
 )
+# P1-04.2 (WP-32): the deque runner drives a Rust-owned deque through the
+# test-only obs_ffi_deque_new/free symbols — link the staticlib in check
+# mode too (the !rustlib form of the .sources marker).
+declare -A rustlib_area=()
+rustlib_area[deque]=1
 
 declare -A extra_flags=()
 declare -A extra_libs=()
@@ -79,6 +86,10 @@ for f in "$here"/gen/*.sources; do
 		[ -n "$line" ] || continue
 		case "$line" in
 		'!nostubs') no_common[$a]=1 ;;
+		# P1-04.2 (WP-32): link the Rust staticlib in check mode too —
+		# the area's runner drives Rust-owned state through test-only
+		# symbols (the deque area: obs_ffi_deque_new/free).
+		'!rustlib') rustlib_area[$a]=1 ;;
 		# -l flags are emitted after the objects: linkers that default to
 		# --as-needed (e.g. Ubuntu) drop a shared lib listed before the
 		# objects that need its symbols.
@@ -98,20 +109,35 @@ export CONFORMANCE_TMPDIR="$build"
 # (--features c-swap compiles the abi_* bridges into the staticlib; the
 # OBS_ENABLE_RUST=ON build passes the same feature).
 rustlib="$root/target/release/libobs_ffi.a"
+need_rustlib=0
 if [ "$mode" = swap ]; then
+	need_rustlib=1
+elif [ -n "$only_area" ]; then
+	if [ -n "${rustlib_area[$only_area]:-}" ]; then
+		need_rustlib=1
+	fi
+else
+	for a in "${!rustlib_area[@]}"; do
+		need_rustlib=1
+		break
+	done
+fi
+if [ "$need_rustlib" = 1 ]; then
 	( cd "$root" && cargo build -p obs-ffi --release --features c-swap )
 fi
 
 # Removes the swapped C sources from the array named by $1; sets SWAPPED=1
 # if anything was removed (the full swap set of the OBS_ENABLE_RUST CMake
 # patch: lexer.c, cf-lexer.c, cf-parser.c, text-lookup.c, base.c,
-# threading-posix.c, platform-nix-dbus.c, platform-nix-portal.c).
+# threading-posix.c, platform-nix-dbus.c, platform-nix-portal.c, and —
+# P1-14.2 (WP-32) — bitstream.c, array-serializer.c, file-serializer.c,
+# buffered-file-serializer.c).
 apply_swap() {
 	local -n _srcs=$1
 	local f n=${#_srcs[@]} out=()
 	for f in "${_srcs[@]}"; do
 		case "$f" in
-		*"libobs/util/lexer.c" | *"libobs/util/cf-lexer.c" | *"libobs/util/cf-parser.c" | *"libobs/util/text-lookup.c" | *"libobs/util/base.c" | *"libobs/util/threading-posix.c" | *"libobs/util/platform-nix-dbus.c" | *"libobs/util/platform-nix-portal.c") SWAPPED=1 ;;
+		*"libobs/util/lexer.c" | *"libobs/util/cf-lexer.c" | *"libobs/util/cf-parser.c" | *"libobs/util/text-lookup.c" | *"libobs/util/base.c" | *"libobs/util/threading-posix.c" | *"libobs/util/platform-nix-dbus.c" | *"libobs/util/platform-nix-portal.c" | *"libobs/util/bitstream.c" | *"libobs/util/array-serializer.c" | *"libobs/util/file-serializer.c" | *"libobs/util/buffered-file-serializer.c") SWAPPED=1 ;;
 		*) out+=("$f") ;;
 		esac
 	done
@@ -135,14 +161,30 @@ for area in "${!runner_sources[@]}"; do
 		apply_swap srcs
 		apply_swap commons
 		rustlib_link=""
-		if [ "$SWAPPED" = 1 ]; then
+		if [ "$SWAPPED" = 1 ] || [ -n "${rustlib_area[$area]:-}" ]; then
 			rustlib_link="$rustlib"
 		fi
 		# shellcheck disable=SC2086
 		"$cc" "${cflags[@]}" ${extra_flags[$area]:-} -o "$build/$area-runner" "${srcs[@]}" "${commons[@]}" $rustlib_link ${extra_libs[$area]:-} -lpthread -lm
 	else
+		rustlib_link=""
+		if [ -n "${rustlib_area[$area]:-}" ]; then
+			rustlib_link="$rustlib"
+			# The staticlib provides the blog family (base-logging.c shim) and
+			# the posix threading bridge — drop those C sources (like swap
+			# mode does) to avoid duplicate definitions. base.c (33.0.1)
+			# provides nothing beyond the blog family.
+			out=()
+			for f in "${commons[@]}"; do
+				case "$f" in
+				*"libobs/util/base.c" | *"libobs/util/threading-posix.c") ;;
+				*) out+=("$f") ;;
+				esac
+			done
+			commons=("${out[@]}")
+		fi
 		# shellcheck disable=SC2086
-		"$cc" "${cflags[@]}" ${extra_flags[$area]:-} -o "$build/$area-runner" ${runner_sources[$area]} "${commons[@]}" ${extra_libs[$area]:-} -lpthread -lm
+		"$cc" "${cflags[@]}" ${extra_flags[$area]:-} -o "$build/$area-runner" ${runner_sources[$area]} "${commons[@]}" $rustlib_link ${extra_libs[$area]:-} -lpthread -lm
 	fi
 	mkdir -p "$here/vectors/$area"
 	for script in "$here/scripts/$area"/*.script; do

@@ -26,6 +26,18 @@ exclude = [
     "brealloc",
     # abi_platform.rs — the C shim's bcrash (base-logging.c).
     "bcrash",
+    # abi_darray.rs — the C shim's bcrash (R-A13 OOM path; same symbol as
+    # abi_platform's, a separate extern block per module).
+    # (same name as above — cbindgen dedupes by name)
+    # abi_bitstream.rs — bitstream_reader_read_bit: linkable in the C
+    # reference (bitstream.c) but declared in NO C header; the conformance
+    # runner declares it locally (serial_runner.c). No reference declaration
+    # to diff against, so it stays out of the generated header.
+    "bitstream_reader_read_bit",
+    # abi_deque.rs — test-only layout-sharing symbols (P1-04.2): the deque
+    # runner declares them locally; there is no C reference declaration.
+    "obs_ffi_deque_new",
+    "obs_ffi_deque_free",
     # abi_cf_lexer.rs test stand-ins (cargo test links these instead of
     # bmem.c + the platform file API).
     "bmalloc",

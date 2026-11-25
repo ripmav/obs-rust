@@ -28,13 +28,19 @@ The diff compares FUNCTION DECLARATIONS ONLY. Intentionally out of scope:
   `struct dbus_sleep_info`, `struct portal_inhibit_info` (aliased below).
 
 Reference declarations in scope (the exact set the bridge must provide,
-45 in total):
-  util/text-lookup.h   4  EXPORT
-  util/threading.h     14 EXPORT + the two pthread_mutex_init_* static inlines
-  util/lexer.h         10 EXPORT
-  util/cf-lexer.h       9 EXPORT
-  util/cf-parser.h      2 EXPORT
-  util/platform-nix.c   6 extern dbus_/portal_inhibit* declarations
+64 in total):
+  util/text-lookup.h             4  EXPORT
+  util/threading.h              14 EXPORT + the two pthread_mutex_init_* static inlines
+  util/lexer.h                  10 EXPORT
+  util/cf-lexer.h                9 EXPORT
+  util/cf-parser.h               2 EXPORT
+  util/platform-nix.c            6 extern dbus_/portal_inhibit* declarations
+  util/bitstream.h               4  EXPORT (bitstream_reader_read_bit has no
+                                  declaration in any C header — excluded)
+  util/array-serializer.h        3  EXPORT
+  util/file-serializer.h         5  EXPORT
+  util/buffered-file-serializer.h 3 EXPORT
+  util/darray.h                  4  static inlines (the P1-03.2 helpers)
 
 The PR #73 platform exports have no header in the 33.0.1 tree — their
 reference declarations are the `extern` block of the `GIO_FOUND` section
@@ -71,6 +77,11 @@ ALIASES = {
     "dbus_sleep_info": "void",
     "portal_inhibit_info": "void",
     "size_t": "uintptr_t",
+    # The C `struct darray` (darray.h) — the bridge's mirror is named
+    # `darray_c` (the cf-lexer bridge owns the crate-level `darray` name
+    # for its generic DARRAY view); the alias includes the `struct` prefix
+    # so both sides normalise identically.
+    "darray": "structdarray_c",
 }
 # enum parameter types that are plain `int`s in C (the bridges take c_int).
 ENUM_AS_INT = {"os_event_type", "ignore_whitespace"}
@@ -83,6 +94,11 @@ REFS = [
     ("util/cf-lexer.h", ("export",)),
     ("util/cf-parser.h", ("export",)),
     ("util/platform-nix.c", ("extern",)),
+    ("util/bitstream.h", ("export",)),
+    ("util/array-serializer.h", ("export",)),
+    ("util/file-serializer.h", ("export",)),
+    ("util/buffered-file-serializer.h", ("export",)),
+    ("util/darray.h", ("darray-inline",)),
 ]
 # The only `extern` declarations of platform-nix.c in scope: the six
 # dbus_/portal_inhibit* symbols the bridge provides.
@@ -94,6 +110,10 @@ EXTERN_NAMES = {
     "portal_inhibit",
     "portal_inhibit_info_destroy",
 }
+# The only `static inline` declarations of darray.h in scope: the four
+# P1-03.2 C helpers whose linkable form the bridge provides (the rest of
+# the header's inlines stay static until the P1-03.3 recipe).
+DARRAY_NAMES = {"darray_push_back", "darray_insert", "darray_erase", "darray_move_item"}
 
 TOK = re.compile(r"[A-Za-z_][A-Za-z0-9_]*|\*+")
 IDENT = re.compile(r"[A-Za-z_][A-Za-z0-9_]*\Z")
@@ -205,6 +225,12 @@ def norm_param(param):
     elif len(toks) >= 2 and all(IDENT.match(t) for t in toks):
         # `size_t n`, `unsigned long ms`, `char in`: last word is the name.
         toks = toks[:-1]
+    # A leading `const` carries no ABI difference in this scope: by-value
+    # const is meaningless in C, and pointee const (`const void *`) is a
+    # promise about the callee, not part of the signature cbindgen prints.
+    # Both sides are normalised, so the comparison stays symmetric.
+    if toks and toks[0] == "const":
+        toks = toks[1:]
     return norm_type(toks)
 
 
@@ -243,6 +269,8 @@ def extract_c(text, patterns, where):
             sig, name = got
             if p == "pthread-inline" and not name.startswith("pthread_mutex_init_"):
                 continue
+            if p == "darray-inline" and name not in DARRAY_NAMES:
+                continue
             if p == "extern" and name not in EXTERN_NAMES:
                 continue
             if name in decls:
@@ -258,6 +286,7 @@ def extract_c(text, patterns, where):
 RX = {
     "export": re.compile(r"\bEXPORT\b(.*?)\)\s*(?:OBS_DEPRECATED\s*)?[;{]"),
     "pthread-inline": re.compile(r"\bstatic\s+inline\b(.*?)\)\s*(?:;|\{)"),
+    "darray-inline": re.compile(r"\bstatic\s+inline\b(.*?)\)\s*(?:;|\{)"),
     "extern": re.compile(r"\bextern\b(.*?)\)\s*;"),
 }
 
