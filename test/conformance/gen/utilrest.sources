@@ -3,6 +3,7 @@
 test/conformance/gen/utilrest_runner.c
 test/conformance/gen/utilrest_stubs.c
 test/conformance/gen/utilrest_pafake.c
+test/conformance/gen/utilrest_platform_stubs.c
 libobs/util/crc32.c
 libobs/util/pipe.c
 libobs/util/pipe-posix.c

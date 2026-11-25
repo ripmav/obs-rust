@@ -22,6 +22,16 @@ pub mod dstr;
 pub mod hash;
 pub mod lexer;
 pub mod os_fs;
+// nix-only platform helpers (the Windows port of P1-07.2/.3 is a separate
+// subtask; the C reference for this work package is `platform-nix.c`):
+// `opendir`/`readdir`/`glob`, `dlopen`-based GLib D-Bus/portal inhibition,
+// and the nix path helpers.
+#[cfg(unix)]
+pub mod os_dir;
+#[cfg(unix)]
+pub mod os_inhibit;
+#[cfg(unix)]
+pub mod os_paths;
 #[cfg(unix)]
 pub mod os_proc;
 pub mod os_str;

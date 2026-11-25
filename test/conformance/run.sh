@@ -10,7 +10,9 @@
 #                              base lexer (lexer.c), text-lookup (text-lookup.c) and the
 #                              base-logging shim (base.c); part B adds the C-family lexer
 #                              (cf-lexer.c) and parser (cf-parser.c); P1-05.4 adds the threading
-#                              primitives (threading-posix.c) — the full swap set of
+#                              primitives (threading-posix.c); P1-07.3 adds the Flatpak
+#                              sleep-inhibition files (platform-nix-dbus.c,
+#                              platform-nix-portal.c — utilrest area) — the full swap set of
 #                              the OBS_ENABLE_RUST CMake patch. Areas without any swapped
 #                              file build normally.
 #
@@ -103,13 +105,13 @@ fi
 # Removes the swapped C sources from the array named by $1; sets SWAPPED=1
 # if anything was removed (the full swap set of the OBS_ENABLE_RUST CMake
 # patch: lexer.c, cf-lexer.c, cf-parser.c, text-lookup.c, base.c,
-# threading-posix.c).
+# threading-posix.c, platform-nix-dbus.c, platform-nix-portal.c).
 apply_swap() {
 	local -n _srcs=$1
 	local f n=${#_srcs[@]} out=()
 	for f in "${_srcs[@]}"; do
 		case "$f" in
-		*"libobs/util/lexer.c" | *"libobs/util/cf-lexer.c" | *"libobs/util/cf-parser.c" | *"libobs/util/text-lookup.c" | *"libobs/util/base.c" | *"libobs/util/threading-posix.c") SWAPPED=1 ;;
+		*"libobs/util/lexer.c" | *"libobs/util/cf-lexer.c" | *"libobs/util/cf-parser.c" | *"libobs/util/text-lookup.c" | *"libobs/util/base.c" | *"libobs/util/threading-posix.c" | *"libobs/util/platform-nix-dbus.c" | *"libobs/util/platform-nix-portal.c") SWAPPED=1 ;;
 		*) out+=("$f") ;;
 		esac
 	done
