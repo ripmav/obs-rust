@@ -1,0 +1,24 @@
+[package]
+name = "obs-rust-fuzz"
+description = "cargo-fuzz targets (P1-02.4: dstr random op sequences vs the C reference)."
+version = "0.0.0"
+edition = "2024"
+license = "GPL-2.0-or-later"
+publish = false
+
+[package.metadata]
+cargo-fuzz = true
+
+# cargo-fuzz crates are standalone (excluded from the workspace).
+[workspace]
+
+[dependencies]
+obs-util = { path = "../crates/obs-util" }
+libfuzzer-sys = "0.4"
+
+[build-dependencies]
+cc = "1.11.2"
+
+[[bin]]
+name = "dstr_ops"
+path = "fuzz_targets/dstr_ops.rs"

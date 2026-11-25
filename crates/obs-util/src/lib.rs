@@ -6,6 +6,7 @@
 //! are the oracle. `dl`, `pipe`, `os_proc`, `threading` are POSIX-only so
 //! far (P1-05.3/P1-07/P1-11 Windows parity outstanding, review 2026-11-21).
 
+pub mod bitstream;
 pub mod bmem;
 pub mod cf_lexer;
 pub mod cf_parser;
@@ -40,6 +41,7 @@ pub mod os_time;
 #[cfg(unix)]
 pub mod pipe;
 pub mod process_args;
+pub mod serializer;
 pub mod text_lookup;
 #[cfg(unix)]
 #[cfg(unix)]

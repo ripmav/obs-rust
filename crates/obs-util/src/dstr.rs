@@ -251,7 +251,9 @@ pub fn dstr_copy_dstr(d: &mut Dstr, src: &Dstr) {
 /// `ensure_capacity(strlen + 1)` (capacity is reused across copies),
 /// copy including NUL, `len = strlen(s)`.
 pub fn dstr_copy(d: &mut Dstr, s: &[u8]) {
-    if s.is_empty() {
+    // S-006-R10: C guards `!array || !*array` — a NUL-leading string is
+    // "empty", so the previous content is freed.
+    if s.is_empty() || s[0] == 0 {
         dstr_free(d);
         return;
     }
@@ -346,7 +348,9 @@ pub fn dstr_cat_quoted(d: &mut Dstr, s: &[u8]) {
 /// else `ensure_capacity(len + n + 1)`, append exactly `n` bytes,
 /// terminate.
 pub fn dstr_ncat(d: &mut Dstr, s: &[u8], n: usize) {
-    if s.is_empty() || n == 0 {
+    // S-006-R13: C guards `!array || !*array || !len` — a NUL-leading
+    // buffer is "empty" even with an explicit length.
+    if s.is_empty() || n == 0 || s[0] == 0 {
         return;
     }
     let n = n.min(s.len());
@@ -370,12 +374,15 @@ pub fn dstr_cat_dstr(d: &mut Dstr, src: &Dstr) {
     if src.len == 0 || src.array.is_null() {
         return;
     }
-    dstr_ncat(
-        d,
-        // SAFETY: Dstr invariant — `array` is a valid bmem buffer and len ≤ capacity.
-        unsafe { std::slice::from_raw_parts(src.array, src.len) },
-        src.len,
-    );
+    // S-006-R13: C mirrors `str->len` and copies `str->len + 1` bytes
+    // (content + NUL) — no NUL-leading guard, unlike `dstr_ncat`.
+    let new_len = d.len + src.len;
+    dstr_ensure_capacity(d, new_len + 1);
+    // SAFETY: Dstr invariant — `src.array` is valid for src.len+1 reads; `d` has capacity ≥ new_len+1.
+    unsafe {
+        std::ptr::copy_nonoverlapping(src.array, d.array.add(d.len), src.len + 1);
+    }
+    d.len = new_len;
 }
 
 /// S-006-R13: `dstr_ncat_dstr(d, src, n)` — append `min(n, src.len)`.
@@ -411,7 +418,9 @@ pub fn dstr_cat_ch(d: &mut Dstr, c: u8) {
 /// S-006-R15: `dstr_insert(d, idx, s)` — no-op if empty; `idx == len`
 /// → `cat`; else shift the tail (with NUL) up by `n`, copy `s`.
 pub fn dstr_insert(d: &mut Dstr, idx: usize, s: &[u8]) {
-    if s.is_empty() {
+    // S-006-R15: C guards `!array || !*array` — a NUL-leading string is
+    // "empty" (no-op), even a NUL byte inserted via the slice API.
+    if s.is_empty() || s[0] == 0 {
         return;
     }
     if idx == d.len {
@@ -440,10 +449,24 @@ pub fn dstr_insert_dstr(d: &mut Dstr, idx: usize, src: &Dstr) {
     if src.len == 0 || src.array.is_null() {
         return;
     }
-    // SAFETY: Dstr invariant — `src.array` is valid for src.len reads; the view lives only until `dstr_insert` returns.
-    dstr_insert(d, idx, unsafe {
-        std::slice::from_raw_parts(src.array, src.len)
-    });
+    // S-006-R15: C mirrors `str->len` only (no NUL-leading guard) — must
+    // not route through the guarded `dstr_insert`.
+    if idx == d.len {
+        dstr_cat_dstr(d, src);
+        return;
+    }
+    let new_len = d.len + src.len;
+    dstr_ensure_capacity(d, new_len + 1);
+    // SAFETY: Dstr invariant — `src.array` is valid for src.len reads; the shift and copy stay within the ensured capacity (idx < d.len here, so `d.len - idx + 1 ≥ 2`).
+    unsafe {
+        std::ptr::copy(
+            d.array.add(idx),
+            d.array.add(idx + src.len),
+            d.len - idx + 1,
+        );
+        std::ptr::copy_nonoverlapping(src.array, d.array.add(idx), src.len);
+    }
+    d.len = new_len;
 }
 
 /// S-006-R15: `dstr_insert_ch(d, idx, c)` — `idx == len` → `cat_ch`;
@@ -744,14 +767,24 @@ pub fn dstr_depad(d: &mut Dstr) {
     if d.array.is_null() {
         return;
     }
-    let is_pad = |b: u8| b == b' ' || b == b'\t' || b == b'\n' || b == b'\r';
-    // SAFETY: Dstr invariant — `array` is a valid bmem buffer and len ≤ capacity.
+    // S-006-R22: C's `strdepad`/`depad` work on the **strlen view** —
+    // an embedded NUL (reachable via `cat_ch(0)`/`insert_ch(0)`) ends
+    // the string, and `len` becomes `strlen` of the depadded result;
+    // an empty result frees the dstr.
+    // SAFETY: Dstr invariant — `array` holds at least `len` bytes.
     let buf = unsafe { std::slice::from_raw_parts_mut(d.array, d.len) };
+    let nul = buf.iter().position(|&b| b == 0).unwrap_or(d.len);
+    if nul == 0 {
+        // C: `!\*str` — `strdepad` is a no-op, `!\*array` → free.
+        dstr_free(d);
+        return;
+    }
+    let is_pad = |b: u8| b == b' ' || b == b'\t' || b == b'\n' || b == b'\r';
     let mut start = 0;
-    while start < buf.len() && is_pad(buf[start]) {
+    while start < nul && is_pad(buf[start]) {
         start += 1;
     }
-    let mut end = buf.len();
+    let mut end = nul;
     while end > start && is_pad(buf[end - 1]) {
         end -= 1;
     }
@@ -1512,6 +1545,33 @@ mod tests {
     }
 
     #[test]
+    fn dstr_depad_strlen_view() {
+        // NUL-leading content: C `!*array` → free.
+        let mut d = Dstr::init();
+        dstr_ncopy(&mut d, b"\0abc", 4);
+        dstr_depad(&mut d);
+        assert!(d.array.is_null());
+        assert_eq!(d.len, 0);
+
+        // Embedded NUL: depad the prefix, `len = strlen`.
+        let mut d = Dstr::init();
+        dstr_ncopy(&mut d, b" ab \0xy", 6);
+        dstr_depad(&mut d);
+        assert_eq!(str(&d), "ab");
+        assert_eq!(d.len, 2);
+
+        // Plain padding removal unchanged.
+        let mut d = mk("  hi  ");
+        dstr_depad(&mut d);
+        assert_eq!(str(&d), "hi");
+
+        // All padding: freed.
+        let mut d = mk(" \t\n");
+        dstr_depad(&mut d);
+        assert!(d.array.is_null());
+    }
+
+    #[test]
     fn dstr_as_str_helper() {
         let d = mk("ok");
         assert_eq!(dstr_as_str(&d), Some("ok"));
@@ -1523,5 +1583,50 @@ mod tests {
         assert!(dstr_as_str(&bad).is_none());
         // leak: this dstr owns a foreign pointer — reset before drop
         bad.array = std::ptr::null_mut();
+    }
+
+    /// P1-02.4 fuzz regression: C guards `!*array` in `copy`/`ncat`/`insert`
+    /// — a NUL-leading buffer is "empty" even with an explicit length
+    /// (S-006-R10/R13/R15); `cat_dstr`/`insert_dstr` guard `str->len` only
+    /// and copy NUL-leading content verbatim.
+    #[test]
+    fn dstr_nul_leading_guards() {
+        let nul: [u8; 3] = [0, 5, 0];
+
+        // copy: NUL-leading frees the previous content.
+        let mut d = mk("abc");
+        dstr_copy(&mut d, &nul);
+        assert!(d.array.is_null());
+        assert_eq!(d.len, 0);
+
+        // ncat: NUL-leading with an explicit length is a no-op.
+        let mut d = mk("abc");
+        let cap = d.capacity;
+        dstr_ncat(&mut d, &nul, 2);
+        assert_eq!(str(&d), "abc");
+        assert_eq!(d.capacity, cap);
+
+        // insert: NUL-leading is a no-op.
+        let mut d = mk("abc");
+        dstr_insert(&mut d, 1, &nul);
+        assert_eq!(str(&d), "abc");
+
+        // NUL-leading dstr content is reachable in C via ncopy/insert_ch.
+        let mut src = Dstr::init();
+        dstr_ncopy(&mut src, &nul, 2); // content [0, 5], len 2
+        assert_eq!(src.len, 2);
+
+        // ncat_dstr: NUL-leading source is a no-op.
+        let mut d = mk("abc");
+        dstr_ncat_dstr(&mut d, &src, 2);
+        assert_eq!(str(&d), "abc");
+
+        // cat_dstr / insert_dstr: no NUL guard — content copied verbatim.
+        let mut d = mk("ab");
+        dstr_cat_dstr(&mut d, &src);
+        assert_eq!(str(&d), "ab\0\u{5}");
+        let mut d = mk("abcd");
+        dstr_insert_dstr(&mut d, 2, &src);
+        assert_eq!(str(&d), "ab\0\u{5}cd");
     }
 }
