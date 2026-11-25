@@ -217,7 +217,7 @@ void __attribute__((weak)) obs_encoder_packet_release(struct encoder_packet *pac
 
 /* threading-posix.c (excluded from the rustlib-area common sources —
  * the staticlib's shim does not provide it) */
-uint64_t os_gettime_ns(void)
+uint64_t __attribute__((weak)) os_gettime_ns(void)
 {
 	abort();
 }
