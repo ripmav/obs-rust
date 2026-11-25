@@ -63,9 +63,7 @@ exclude = [
     # / strerror); declared in system / platform headers, not in the diffed
     # C reference headers.
     "getaddrinfo",
-    "__errno_location",
-    "errno_ptr",
-    "WSAGetLastError",
+    "obs_ffi_get_sock_error",
     "strerror",
     "os_gettime_ns",
     # abi_file_updater.rs — C services the bridge calls (obs-data.c,

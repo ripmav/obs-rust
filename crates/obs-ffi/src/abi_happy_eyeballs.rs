@@ -42,7 +42,16 @@ struct addrinfo_mirror {
 
 /// The file-local `struct happy_eyeballs_ctx` of happy-eyeballs.c (glibc
 /// layout — only the fields the port reads/writes and their offsets
-/// matter; the `he-*` vectors pin them through `addresses`).
+/// matter; the `he-*` vectors pin them through `addresses`). The mutex
+/// mirrors are sized per glibc architecture: `__SIZEOF_PTHREAD_MUTEX_T`
+/// is 40 on x86_64 and 48 on aarch64 (bits/pthreadtypes-arch.h) — the
+/// conformance runner compiles the real C struct on its host, so a wrong
+/// size shifts `addresses` and the `he-order*` vectors fail.
+#[cfg(all(target_os = "linux", target_arch = "x86_64"))]
+const GLIBC_MUTEX_MIRROR_LEN: usize = 40;
+#[cfg(not(all(target_os = "linux", target_arch = "x86_64")))]
+const GLIBC_MUTEX_MIRROR_LEN: usize = 48;
+
 #[repr(C)]
 pub struct happy_eyeballs_ctx {
     socket_fd: i32,
@@ -53,8 +62,8 @@ pub struct happy_eyeballs_ctx {
     bind_addr_len: u32,
     bind_addr: sockaddr_storage_mirror,
     candidates: [u8; 24],
-    winner_mutex: [u8; 48],
-    candidate_mutex: [u8; 48],
+    winner_mutex: [u8; GLIBC_MUTEX_MIRROR_LEN],
+    candidate_mutex: [u8; GLIBC_MUTEX_MIRROR_LEN],
     race_completed_event: *mut c_void,
     addresses: *mut addrinfo_mirror,
     name_resolution_time_ns: u64,
@@ -72,57 +81,18 @@ unsafe extern "C" {
     ) -> i32;
     fn os_gettime_ns() -> u64;
     fn strerror(err: i32) -> *mut c_char;
-    #[cfg(any(target_os = "linux", target_os = "android"))]
-    fn __errno_location() -> *mut i32;
-    // The macOS CRT function `_errno()` (the `errno` macro is
-    // `(*_errno())`) and the musl `__errno()` share the symbol `__errno`
-    // (the C linker prefix).
-    #[cfg(any(target_os = "macos", target_env = "musl"))]
-    #[link_name = "_errno"]
-    fn errno_ptr() -> *mut i32;
-    #[cfg(not(any(
-        target_os = "linux",
-        target_os = "android",
-        target_os = "macos",
-        target_env = "musl",
-        windows
-    )))]
-    static errno: i32;
-    #[cfg(windows)]
-    fn WSAGetLastError() -> u32;
+    // c/sock-error.c (the C errno macro / WSAGetLastError per platform).
+    fn obs_ffi_get_sock_error() -> i32;
 }
 
 /// `GetSockError()` of the reference (`WSAGetLastError` on Windows,
-/// `errno` elsewhere).
+/// `errno` elsewhere) — the read lives in c/sock-error.c because the
+/// errno accessor symbol differs per ABI/OS version; the C errno macro
+/// resolves the right one everywhere.
 unsafe fn get_sock_error() -> i32 {
-    #[cfg(any(target_os = "linux", target_os = "android"))]
-    {
-        // SAFETY: __errno_location returns the address of the calling
-        // thread's errno (glibc); getaddrinfo was just called.
-        unsafe { *__errno_location() }
-    }
-    #[cfg(any(target_os = "macos", target_env = "musl"))]
-    {
-        // SAFETY: the per-thread errno global of the macOS CRT / musl.
-        unsafe { *errno_ptr() }
-    }
-    #[cfg(not(any(
-        target_os = "linux",
-        target_os = "android",
-        target_os = "macos",
-        target_env = "musl",
-        windows
-    )))]
-    {
-        // SAFETY: the per-thread errno global of the other unix ABIs.
-        unsafe { errno }
-    }
-    #[cfg(windows)]
-    {
-        // SAFETY: no-args Win32 last-error query (the reference's
-        // GetSockError on Windows).
-        (unsafe { WSAGetLastError() }) as i32
-    }
+    // SAFETY: the C shim returns the calling thread's last socket error;
+    // getaddrinfo was just called.
+    unsafe { obs_ffi_get_sock_error() }
 }
 
 /// `build_addr_list` of the reference (S-024 §4.9): resolver hints from
@@ -268,9 +238,15 @@ mod tests {
     #[test]
     fn ctx_layout_matches_c_reference() {
         // The offsets of the fields the port touches, against the C
-        // reference layout (glibc, both 64-bit targets): the swap-mode
-        // runner carries the same C struct, so a drift here is a conformance
-        // failure, but pin the offsets directly as well.
+        // reference layout (glibc): the swap-mode runner carries the same
+        // C struct, so a drift here is a conformance failure, but pin the
+        // offsets directly as well. The mutex size (and therefore
+        // `addresses` / the total size) differs per glibc architecture:
+        // 40 bytes on x86_64, 48 on aarch64.
+        #[cfg(all(target_os = "linux", target_arch = "x86_64"))]
+        const ADDRESSES_OFFSET: usize = 400;
+        #[cfg(not(all(target_os = "linux", target_arch = "x86_64")))]
+        const ADDRESSES_OFFSET: usize = 416;
         assert_eq!(
             std::mem::offset_of!(happy_eyeballs_ctx, winner_addr_len),
             136
@@ -278,12 +254,18 @@ mod tests {
         assert_eq!(std::mem::offset_of!(happy_eyeballs_ctx, error), 140);
         assert_eq!(std::mem::offset_of!(happy_eyeballs_ctx, bind_addr_len), 152);
         assert_eq!(std::mem::offset_of!(happy_eyeballs_ctx, bind_addr), 160);
-        assert_eq!(std::mem::offset_of!(happy_eyeballs_ctx, addresses), 416);
+        assert_eq!(
+            std::mem::offset_of!(happy_eyeballs_ctx, addresses),
+            ADDRESSES_OFFSET
+        );
         assert_eq!(
             std::mem::offset_of!(happy_eyeballs_ctx, name_resolution_time_ns),
-            424
+            ADDRESSES_OFFSET + 8
         );
-        assert_eq!(std::mem::size_of::<happy_eyeballs_ctx>(), 456);
+        assert_eq!(
+            std::mem::size_of::<happy_eyeballs_ctx>(),
+            ADDRESSES_OFFSET + 40 // two u64 timestamps + bool + tail pad
+        );
     }
 
     // Test stand-ins for the C externs (the swap build links the conformance
@@ -293,7 +275,6 @@ mod tests {
     // keeps them in the test binary where they would collide with the
     // ws2_32/msvcrt definitions (LNK2005); on Windows the bridge's externs
     // link the real system functions (never called by the Windows tests).
-    static TEST_ERRNO: std::sync::atomic::AtomicI32 = std::sync::atomic::AtomicI32::new(0);
     #[cfg(not(windows))]
     #[unsafe(no_mangle)]
     pub extern "C" fn getaddrinfo(
@@ -302,12 +283,8 @@ mod tests {
         _hints: *const addrinfo_mirror,
         res: *mut *mut addrinfo_mirror,
     ) -> i32 {
-        // SAFETY: the stand-in never races (single test binary, no threads
-        // read it concurrently with the store).
-        unsafe {
-            *res = ptr::null_mut();
-            TEST_ERRNO.store(-2, std::sync::atomic::Ordering::Relaxed);
-        }
+        // SAFETY: res is the caller's out pointer (the bridge's local).
+        unsafe { *res = ptr::null_mut() }
         -2
     }
     #[unsafe(no_mangle)]
@@ -319,19 +296,19 @@ mod tests {
     pub extern "C" fn strerror(_err: i32) -> *mut c_char {
         c"test strerror".as_ptr() as *mut c_char
     }
-    #[cfg(any(target_os = "linux", target_os = "android"))]
-    #[unsafe(no_mangle)]
-    pub extern "C" fn __errno_location() -> *mut i32 {
-        // SAFETY: as_ptr yields the address of the atomic i32; it is only
-        // read through the __errno_location ABI (plain load).
-        std::sync::atomic::AtomicI32::as_ptr(&TEST_ERRNO)
-    }
 
     /// build_addr_list through the C ABI: a resolver failure sets error /
-    /// error_message and returns -1, leaving `addresses` NULL.
-    #[cfg(not(windows))]
+    /// error_message and returns -1, leaving `addresses` NULL. Unix-only:
+    /// the resolver-failure errno is seeded through a guaranteed ENOENT
+    /// (the Windows shim reads the Winsock last error, a different value).
+    #[cfg(unix)]
     #[test]
     fn resolve_failure_abi() {
+        // Seed a known non-zero errno for the calling thread: a lookup of
+        // a path that cannot exist fails with ENOENT (2 on every unix ABI
+        // and in the Win32 codes), and the C shim's obs_ffi_get_sock_error
+        // reads the same errno the reference's GetSockError() would.
+        assert!(std::fs::metadata("/definitely/missing/obs-ffi-errno-seed").is_err());
         // SAFETY: the mirror holds only integer and pointer fields; zero
         // mirrors the runner's memset of the C context.
         let mut ctx: happy_eyeballs_ctx = unsafe { std::mem::zeroed() };
@@ -340,7 +317,7 @@ mod tests {
         // memset); host is a valid C string.
         let r = unsafe { build_addr_list(host.as_ptr(), 443, &mut ctx) };
         assert_eq!(r, -1);
-        assert_eq!(ctx.error, -2);
+        assert_eq!(ctx.error, 2); // ENOENT
         assert!(ctx.addresses.is_null());
         assert_eq!(ctx.name_resolution_time_ns, 0); // 1000 - 1000
         assert_eq!(
