@@ -3,10 +3,12 @@
 //
 // The C reference enters the context with `obs->video.graphics`
 // (source-profiler.c); the layout is computed from the real libobs
-// headers here, so the Rust side carries no mirror. A minimal obsconfig.h
-// (the same macros as test/conformance/gen/obsconfig.h) is generated into
-// OUT_DIR by build.rs — the CMake-generated one is not visible to cargo,
-// and the install-path macros do not affect the layout.
+// headers here, so the Rust side carries no mirror. Not compiled by the
+// cargo build.rs (libobs is a gitignored symlink, absent on CI) — the
+// swap conformance runner compiles it as a runner source (run.sh), and
+// the OBS_ENABLE_RUST CMake build compiles it into libobs (the patch
+// adds it to libobs/util/); the c-swap test build links the no-op
+// stand-ins from the crate's test module instead.
 //
 // The `obs` guard: the C reference assumes a live core; a NULL core is
 // UB there, the port skips the (contextually inert) enter/leave instead.
@@ -25,5 +27,7 @@ void obs_ffi_srcprof_enter_context(void)
 
 void obs_ffi_srcprof_leave_context(void)
 {
+	if (!obs)
+		return;
 	gs_leave_context();
 }

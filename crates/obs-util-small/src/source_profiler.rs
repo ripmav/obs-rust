@@ -628,8 +628,7 @@ pub fn remove_source(source: *const c_void) {
 /// C `calculate_tick` (R20).
 fn calculate_tick(ent: &ProfilerEntry, result: &mut SourceProfilerResult) {
     let mut sum = 0u64;
-    for i in 0..ent.tick.num {
-        let delta = ent.tick.array[i];
+    for &delta in &ent.tick.array[..ent.tick.num] {
         if delta > result.tick_max {
             result.tick_max = delta;
         }
@@ -644,13 +643,15 @@ fn calculate_tick(ent: &ProfilerEntry, result: &mut SourceProfilerResult) {
 fn calculate_render(state: &Inner, ent: &ProfilerEntry, result: &mut SourceProfilerResult) {
     let mut sum = 0u64;
     let mut sum_sum = 0u64;
-    for i in 0..ent.render_cpu.num {
-        let delta = ent.render_cpu.array[i];
+    for (&delta, &sum_v) in ent.render_cpu.array[..ent.render_cpu.num]
+        .iter()
+        .zip(&ent.render_cpu_sum.array[..ent.render_cpu.num])
+    {
         if delta > result.render_max {
             result.render_max = delta;
         }
         sum += delta;
-        sum_sum += ent.render_cpu_sum.array[i];
+        sum_sum += sum_v;
     }
     if ent.render_cpu.num > 0 {
         result.render_avg = sum / ent.render_cpu.num as u64;
@@ -661,13 +662,15 @@ fn calculate_render(state: &Inner, ent: &ProfilerEntry, result: &mut SourceProfi
     }
     sum = 0;
     sum_sum = 0;
-    for i in 0..ent.render_gpu.num {
-        let delta = ent.render_gpu.array[i];
+    for (&delta, &sum_v) in ent.render_gpu.array[..ent.render_gpu.num]
+        .iter()
+        .zip(&ent.render_gpu_sum.array[..ent.render_gpu.num])
+    {
         if delta > result.render_gpu_max {
             result.render_gpu_max = delta;
         }
         sum += delta;
-        sum_sum += ent.render_gpu_sum.array[i];
+        sum_sum += sum_v;
     }
     if ent.render_gpu.num > 0 {
         result.render_gpu_avg = sum / ent.render_gpu.num as u64;

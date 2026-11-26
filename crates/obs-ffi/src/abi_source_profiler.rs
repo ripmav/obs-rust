@@ -433,9 +433,17 @@ mod tests {
     pub extern "C" fn gs_timer_create() -> *mut c_void {
         std::ptr::null_mut()
     }
-    // The C shim (srcprof-bridge.c) calls the graphics context pair;
-    // inert stand-ins (the conformance stubs / production graphics
-    // backend provide the real ones).
+    // The C shim (srcprof-bridge.c) is not compiled by cargo (libobs is a
+    // gitignored symlink, absent on CI); the bridge's references to its
+    // context functions resolve to these inert stand-ins in the test
+    // build (the swap conformance runner compiles the real shim, the
+    // OBS_ENABLE_RUST CMake build compiles it into libobs).
+    #[unsafe(no_mangle)]
+    pub extern "C" fn obs_ffi_srcprof_enter_context() {}
+    #[unsafe(no_mangle)]
+    pub extern "C" fn obs_ffi_srcprof_leave_context() {}
+    // The C shim's calls (gs_enter_context & friends) — provided here for
+    // completeness; the real shim is not linked in the test build.
     #[unsafe(no_mangle)]
     pub extern "C" fn gs_enter_context(_graphics: *mut c_void) {}
     #[unsafe(no_mangle)]

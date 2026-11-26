@@ -31,18 +31,16 @@ inline code drives the Rust state).
 
 WP-37 (P1-12.3) extends the swap set with the source profiler
 (source-profiler.c — S-055 U3; the 15 source_profiler_* symbols come
-from the Rust staticlib, source-profiler.h stays the C header).
+from the Rust staticlib, source-profiler.h stays the C header) and adds
+util/srcprof-bridge.c, the profiler bridge's graphics-context shim
+(obs->video.graphics enter/leave — compiled into libobs when the Rust
+staticlib provides the profiler; the conformance swap runner compiles
+the identical copy from crates/obs-ffi/c/).
 
 Assisted-by: Qwen3.8-27B (off) via pi
 ---
- libobs/CMakeLists.txt         | 36 ++++++++++++++++++++++++++---------
- libobs/cmake/os-freebsd.cmake |  9 +++++++--
- libobs/cmake/os-linux.cmake   |  9 +++++++--
- libobs/cmake/os-macos.cmake   |  2 +-
- 4 files changed, 42 insertions(+), 15 deletions(-)
-
 diff --git a/libobs/CMakeLists.txt b/libobs/CMakeLists.txt
-index 71459cb..d32cf3c 100644
+index 70e3bee..729b2d5 100644
 --- a/libobs/CMakeLists.txt
 +++ b/libobs/CMakeLists.txt
 @@ -9,6 +9,14 @@ endif()
@@ -99,10 +97,13 @@ index 71459cb..d32cf3c 100644
      util/lexer.h
      util/pipe.c
      util/pipe.h
-@@ -124,11 +132,11 @@ target_sources(
+@@ -122,13 +130,14 @@ target_sources(
+     util/profiler.h
+     util/profiler.hpp
      util/serializer.h
 -    util/source-profiler.c
 +    $<$<NOT:$<BOOL:${OBS_ENABLE_RUST}>>:util/source-profiler.c>
++    $<$<BOOL:${OBS_ENABLE_RUST}>:util/srcprof-bridge.c>
      util/source-profiler.h
      util/spsc-fifo.h
      util/sse-intrin.h
@@ -113,7 +114,7 @@ index 71459cb..d32cf3c 100644
      util/text-lookup.h
      util/threading.h
      util/utf8.c
-@@ -261,6 +269,15 @@ target_link_libraries(
+@@ -264,6 +273,15 @@ target_link_libraries(
    PUBLIC SIMDe::SIMDe Threads::Threads
  )
  
@@ -196,6 +197,42 @@ index e0dec44..53368ae 100644
      util/threading-posix.h
  )
  
--- 
-2.47.3
-
+diff --git a/libobs/util/srcprof-bridge.c b/libobs/util/srcprof-bridge.c
+new file mode 100644
+index 0000000..f85758f
+--- /dev/null
++++ b/libobs/util/srcprof-bridge.c
+@@ -0,0 +1,33 @@
++// P1-12.3 (S-055 U3): the source profiler's graphics context for the Rust
++// bridge (crates/obs-ffi/src/abi_source_profiler.rs).
++//
++// The C reference enters the context with `obs->video.graphics`
++// (source-profiler.c); the layout is computed from the real libobs
++// headers here, so the Rust side carries no mirror. Not compiled by the
++// cargo build.rs (libobs is a gitignored symlink, absent on CI) — the
++// swap conformance runner compiles it as a runner source (run.sh), and
++// the OBS_ENABLE_RUST CMake build compiles it into libobs (the patch
++// adds it to libobs/util/); the c-swap test build links the no-op
++// stand-ins from the crate's test module instead.
++//
++// The `obs` guard: the C reference assumes a live core; a NULL core is
++// UB there, the port skips the (contextually inert) enter/leave instead.
++// The conformance runner and production libobs always provide a live
++// `obs`, so the counts match the reference exactly.
++
++#include "obs-internal.h"
++#include "graphics/graphics.h"
++
++void obs_ffi_srcprof_enter_context(void)
++{
++	if (!obs)
++		return;
++	gs_enter_context(obs->video.graphics);
++}
++
++void obs_ffi_srcprof_leave_context(void)
++{
++	if (!obs)
++		return;
++	gs_leave_context();
++}
