@@ -585,6 +585,7 @@ version = "0.1.0"
 dependencies = [
  "cbindgen",
  "cc",
+ "log",
  "obs-bpm",
  "obs-file-updater",
  "obs-netutil",

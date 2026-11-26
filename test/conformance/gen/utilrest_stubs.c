@@ -67,6 +67,10 @@ int ur_run_tasks(void)
 static uint64_t last_async_ts;
 void ur_set_async_ts(uint64_t ts) { last_async_ts = ts; }
 uint64_t obs_source_get_last_async_ts(const obs_source_t *s) { (void)s; return last_async_ts; }
+/* The Rust bridge (P1-12.3) resolves the async-video flags through the
+ * exported accessor (the C reference reads source->info.output_flags
+ * inline); same read, through the API. */
+uint32_t obs_source_get_output_flags(const obs_source_t *s) { return s->info.output_flags; }
 
 /* ------------------------------------------------------------ sources / data / audio output */
 static char fake_device_id[128];

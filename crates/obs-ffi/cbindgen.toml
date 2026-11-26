@@ -66,6 +66,30 @@ exclude = [
     "obs_ffi_get_sock_error",
     "strerror",
     "os_gettime_ns",
+    # abi_source_profiler.rs — C services the bridge calls (the graphics
+    # timers, the task queue, the source async accessors, the
+    # graphics-context shim and the non-variadic log entry point);
+    # declared in the libobs graphics / obs headers, not in the diffed
+    # C reference headers (os_gettime_ns: platform-nix.c / the stubs).
+    # gs_enter_context / gs_leave_context: the `cargo test` stand-ins of
+    # the srcprof shim's calls (the cf-lexer stand-in precedent).
+    "gs_enter_context",
+    "gs_leave_context",
+    "gs_timer_begin",
+    "gs_timer_create",
+    "gs_timer_destroy",
+    "gs_timer_end",
+    "gs_timer_get_data",
+    "gs_timer_range_begin",
+    "gs_timer_range_create",
+    "gs_timer_range_destroy",
+    "gs_timer_range_end",
+    "gs_timer_range_get_data",
+    "obs_ffi_srcprof_enter_context",
+    "obs_ffi_srcprof_leave_context",
+    "obs_queue_task",
+    "obs_source_get_last_async_ts",
+    "obs_source_get_output_flags",
     # abi_file_updater.rs — C services the bridge calls (obs-data.c,
     # libcurl, the platform file API, base-logging.c, pthreads) and the
     # file-local thread entry points (static in the C reference, declared

@@ -1519,4 +1519,133 @@ mod tests {
         let r = data_get_defaults(&only);
         assert_eq!(user_str(&r, "a").as_deref(), Some(""), "no default -> \"\"");
     }
+
+    // P1-26.1: the 1:1 Rust mirror of test/conformance/scripts/obsdata/
+    // 04-refcounts.script — the same call sequence, with the counts the
+    // C reference printed (the runner's `refs`/`a_refs` commands peek at
+    // the refcount field; here it is `Rc::strong_count` via `refcount()`).
+    // Done-when for P1-26.1: refcount observed through the debug API
+    // equal to C.
+    #[test]
+    fn r01_r05_refcount_vector_mirror() {
+        use crate::api::{
+            data_clear, data_erase, data_get_array, data_get_obj, data_set_array, data_set_int,
+            data_set_obj,
+        };
+        use crate::model::{array_count, array_erase, array_item, array_push_back, data_newref};
+
+        let a = ObsData::create();
+        let o = ObsData::create();
+        data_set_int(&o, "x", 1);
+        assert_eq!(o.refcount(), 1);
+
+        // set_obj takes its own reference (R03): caller + stored.
+        data_set_obj(&a, "sub", Some(&o));
+        assert_eq!(o.refcount(), 2);
+
+        // get_obj returns a new reference (R02), same identity.
+        let o2 = data_get_obj(&a, "sub").expect("stored object");
+        assert_eq!(o.refcount(), 3);
+        assert!(Rc::ptr_eq(&o.inner, &o2.inner), "identity, not a copy");
+        drop(o2);
+        assert_eq!(o.refcount(), 2);
+
+        // the caller may drop its handle; the container keeps it alive.
+        drop(o);
+        let o3 = data_get_obj(&a, "sub").expect("still alive via the container");
+        assert_eq!(o3.refcount(), 2, "container layer + o3");
+
+        // replacing a value releases the old object.
+        let p = ObsData::create();
+        data_set_obj(&a, "sub", Some(&p));
+        assert_eq!(o3.refcount(), 1);
+        assert_eq!(p.refcount(), 2);
+        data_set_obj(&a, "sub", Some(&p)); // replace with itself: net zero
+        assert_eq!(p.refcount(), 2);
+
+        // replacing with NULL releases too, and stores a present NULL.
+        data_set_obj(&a, "sub", None);
+        assert_eq!(p.refcount(), 1);
+        assert!(
+            data_get_obj(&a, "sub").is_none(),
+            "the stored NULL reads as NULL"
+        );
+        assert!(
+            crate::api::data_has_user_value(&a, "sub"),
+            "the item keeps its user layer"
+        );
+
+        // addref / newref.
+        let p2 = p.clone();
+        assert_eq!(p.refcount(), 2);
+        let p3 = data_newref(Some(&p));
+        assert_eq!(p.refcount(), 3);
+        let fresh = data_newref(None); // the C `newref @null` case
+        assert_eq!(fresh.refcount(), 1);
+        drop(p2);
+        drop(p3);
+        drop(fresh);
+        assert_eq!(p.refcount(), 1);
+
+        // erase and clear release the references (R04).
+        data_set_obj(&a, "again", Some(&p));
+        assert_eq!(p.refcount(), 2);
+        data_erase(&a, "again");
+        assert_eq!(p.refcount(), 1);
+        data_set_obj(&a, "again", Some(&p));
+        data_clear(&a);
+        assert_eq!(p.refcount(), 1);
+
+        // destroying the container releases its children.
+        drop(a);
+        assert_eq!(p.refcount(), 1);
+
+        // arrays are counted the same way (R04/R50).
+        let b = ObsData::create();
+        let ar = ObsDataArray::create();
+        let _ar2 = ObsDataArray::create(); // the script's unused second array
+        data_set_array(&b, "list", Some(&ar));
+        assert_eq!(ar.refcount(), 2);
+        let got = data_get_array(&b, "list").expect("stored array");
+        assert_eq!(ar.refcount(), 3);
+        drop(got);
+        let ar3 = ar.clone();
+        assert_eq!(ar.refcount(), 3);
+        drop(ar3);
+        assert_eq!(ar.refcount(), 2);
+
+        // pushing into an array takes a reference.
+        let e1 = ObsData::create();
+        array_push_back(&ar, &e1);
+        assert_eq!(e1.refcount(), 2);
+        let e1b = array_item(&ar, 0).expect("element 0");
+        assert_eq!(e1.refcount(), 3);
+        assert!(Rc::ptr_eq(&e1.inner, &e1b.inner));
+        drop(e1b);
+        drop(e1); // the array keeps e1 alive
+        let e1c = array_item(&ar, 0).expect("element 0 still alive");
+        assert_eq!(e1c.refcount(), 2);
+        drop(e1c);
+        array_erase(&ar, 0);
+        assert_eq!(array_count(&ar), 0);
+        assert_eq!(ar.refcount(), 2); // b's layer + caller
+
+        // destroying containers destroys children (R01; under a
+        // sanitizer the C vector's "no leak" note).
+        let deep = ObsData::create();
+        let l1 = ObsData::create();
+        let l2 = ObsData::create();
+        data_set_int(&l2, "v", 1);
+        data_set_obj(&l1, "child", Some(&l2));
+        data_set_obj(&deep, "child", Some(&l1));
+        drop(l1); // deep's layer keeps l1
+        drop(l2); // l1's layer keeps l2
+        let got_l1 = data_get_obj(&deep, "child").expect("deep's child");
+        let got_l2 = data_get_obj(&got_l1, "child").expect("nested child");
+        assert_eq!(crate::api::data_get_int(&got_l2, "v"), 1);
+        drop(got_l2);
+        drop(got_l1);
+        drop(deep);
+        drop(b);
+    }
 }

@@ -13,6 +13,8 @@ workspace = true
 cc = "1.11.2"
 
 [dev-dependencies]
+# P1-13.3 (WP-37): the facade's scenario test emits through the macros.
+log = "0.4"
 # P1-29.1 (WP-31): the header generator for tests/header_diff.rs. The
 # version is pinned in Cargo.lock — do not replace it with a
 # cargo-installed cbindgen binary (the conformance job must not depend
@@ -20,6 +22,7 @@ cc = "1.11.2"
 cbindgen = "0.29.4"
 
 [dependencies]
+log = "0.4"
 obs-util = { path = "../obs-util" }
 obs-util-small = { path = "../obs-util-small" }
 obs-netutil = { path = "../obs-netutil" }

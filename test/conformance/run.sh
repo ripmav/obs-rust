@@ -140,13 +140,13 @@ fi
 # modules: opts-parser.c is a runner source here, bpm.c / happy-eyeballs.c /
 # file-updater.c are #included by the runner behind the per-module
 # -DOBS_CONFORMANCE_RUST_SWAP_{BPM,HE,FU} macros, which swap mode defines
-# below).
+# below; and — P1-12.3 (WP-37) — source-profiler.c (S-055 U3)).
 apply_swap() {
 	local -n _srcs=$1
 	local f n=${#_srcs[@]} out=()
 	for f in "${_srcs[@]}"; do
 		case "$f" in
-		*"libobs/util/lexer.c" | *"libobs/util/cf-lexer.c" | *"libobs/util/cf-parser.c" | *"libobs/util/text-lookup.c" | *"libobs/util/base.c" | *"libobs/util/threading-posix.c" | *"libobs/util/platform-nix-dbus.c" | *"libobs/util/platform-nix-portal.c" | *"libobs/util/bitstream.c" | *"libobs/util/array-serializer.c" | *"libobs/util/file-serializer.c" | *"libobs/util/buffered-file-serializer.c" | *"shared/opts-parser/opts-parser.c" | *"shared/bpm/bpm.c" | *"shared/happy-eyeballs/happy-eyeballs.c" | *"shared/file-updater/file-updater/file-updater.c") SWAPPED=1 ;;
+		*"libobs/util/lexer.c" | *"libobs/util/cf-lexer.c" | *"libobs/util/cf-parser.c" | *"libobs/util/text-lookup.c" | *"libobs/util/base.c" | *"libobs/util/threading-posix.c" | *"libobs/util/platform-nix-dbus.c" | *"libobs/util/platform-nix-portal.c" | *"libobs/util/bitstream.c" | *"libobs/util/array-serializer.c" | *"libobs/util/file-serializer.c" | *"libobs/util/buffered-file-serializer.c" | *"libobs/util/source-profiler.c" | *"shared/opts-parser/opts-parser.c" | *"shared/bpm/bpm.c" | *"shared/happy-eyeballs/happy-eyeballs.c" | *"shared/file-updater/file-updater/file-updater.c") SWAPPED=1 ;;
 		*) out+=("$f") ;;
 		esac
 	done
@@ -172,6 +172,12 @@ for area in "${!runner_sources[@]}"; do
 		rustlib_link=""
 		if [ "$SWAPPED" = 1 ] || [ -n "${rustlib_area[$area]:-}" ]; then
 			rustlib_link="$rustlib"
+			# P1-12.3 (WP-37): the profiler bridge's graphics-context shim —
+			# utilrest only (its stubs provide the strong `obs` and
+			# gs_enter/leave_context; the shim compiles against the pinned
+			# libobs headers). Every other runner that links the staticlib
+			# gets the weak enter/leave abort stubs from rustlib_stubs.c.
+			[ "$SWAPPED" = 1 ] && [ "$area" = utilrest ] && srcs+=("$root/crates/obs-ffi/c/srcprof-bridge.c")
 			# !nostubs areas (no common sources) link the staticlib too and
 			# need its C-service stubs (the strong providers in their stub
 			# files win where present; see gen/rustlib_stubs.c).
