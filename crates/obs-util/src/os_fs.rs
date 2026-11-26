@@ -13,8 +13,10 @@
 //! sink pattern — obs-util sits below the S-001 base logging layer;
 //! the `obs-ffi` swap bridge routes it through the C `blog`).
 
+#[cfg(unix)]
 use std::ffi::CStr;
 use std::fs;
+#[cfg(unix)]
 use std::os::raw::c_void;
 use std::path::Path;
 use std::sync::Mutex;
@@ -255,7 +257,7 @@ pub fn os_safe_replace(target: &Path, from: &Path, backup: Option<&Path>) -> i32
 /// The platform log sink is process-global: every test that installs
 /// or asserts on it serialises on this lock (house pattern W9, like
 /// `DL_TEST_LOCK` in dl.rs).
-#[cfg(test)]
+#[cfg(all(test, unix))]
 pub(crate) static PLATFORM_SINK_TEST_LOCK: Mutex<()> = Mutex::new(());
 
 #[cfg(test)]

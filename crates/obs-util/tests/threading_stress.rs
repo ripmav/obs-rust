@@ -27,8 +27,8 @@
 //!
 //! House pattern: one integration binary, real OS threads
 //! (`cf. tests/bmem_fatal.rs`); `#[cfg_attr(miri, ignore)]`.
-
-#![cfg(unix)]
+//! Cross-platform (P1-05.3, WP-38): the same storm runs on the Windows
+//! `CreateEvent`/`CreateSemaphore` HANDLE port.
 
 use std::sync::Arc;
 use std::sync::atomic::{AtomicBool, Ordering};
