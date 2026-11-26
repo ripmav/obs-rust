@@ -1083,8 +1083,9 @@ mod tests {
         let mut e = vec![0u8; 100];
         let n = os_process_pipe_read_err(Some(&p), &mut e);
         e.truncate(n);
-        // the same cmd quirk as in `pipe_windows_read`
-        assert_eq!(e, b"oops \r\n");
+        // the group form adds one more echoed space (the one before
+        // the `&`) on top of the `pipe_windows_read` redirect quirk
+        assert_eq!(e, b"oops  \r\n");
         assert_eq!(os_process_pipe_destroy(Some(p)), 12);
     }
 
