@@ -227,3 +227,88 @@ struct timespec * __attribute__((weak)) os_nstime_to_timespec(uint64_t timestamp
 	(void)storage;
 	abort();
 }
+
+/* source-profiler bridge (P1-12.3, WP-37): the C services the
+ * abi_source_profiler bridge calls (the graphics timers, the task queue,
+ * the source async accessors) and the srcprof context shim. In the
+ * utilrest swap runner the strong providers win (utilrest_stubs.c's
+ * fake timers / accessors, the real c/srcprof-bridge.c shim); elsewhere
+ * they satisfy the link and any call that reaches one means a script
+ * strayed outside the area the harness covers. */
+void *__attribute__((weak)) gs_timer_create(void)
+{
+	abort();
+}
+void __attribute__((weak)) gs_timer_destroy(void *timer)
+{
+	(void)timer;
+	abort();
+}
+void __attribute__((weak)) gs_timer_begin(void *timer)
+{
+	(void)timer;
+	abort();
+}
+void __attribute__((weak)) gs_timer_end(void *timer)
+{
+	(void)timer;
+	abort();
+}
+bool __attribute__((weak)) gs_timer_get_data(void *timer, uint64_t *ticks)
+{
+	(void)timer;
+	(void)ticks;
+	abort();
+}
+void *__attribute__((weak)) gs_timer_range_create(void)
+{
+	abort();
+}
+void __attribute__((weak)) gs_timer_range_destroy(void *range)
+{
+	(void)range;
+	abort();
+}
+void __attribute__((weak)) gs_timer_range_begin(void *range)
+{
+	(void)range;
+	abort();
+}
+void __attribute__((weak)) gs_timer_range_end(void *range)
+{
+	(void)range;
+	abort();
+}
+bool __attribute__((weak)) gs_timer_range_get_data(void *range, bool *disjoint, uint64_t *freq)
+{
+	(void)range;
+	(void)disjoint;
+	(void)freq;
+	abort();
+}
+void __attribute__((weak)) obs_queue_task(int type, void *task, void *param, int wait)
+{
+	(void)type;
+	(void)task;
+	(void)param;
+	(void)wait;
+	abort();
+}
+uint32_t __attribute__((weak)) obs_source_get_output_flags(const void *source)
+{
+	(void)source;
+	abort();
+}
+uint64_t __attribute__((weak)) obs_source_get_last_async_ts(const void *source)
+{
+	(void)source;
+	abort();
+}
+void __attribute__((weak)) obs_ffi_srcprof_enter_context(void)
+{
+	abort();
+}
+void __attribute__((weak)) obs_ffi_srcprof_leave_context(void)
+{
+	abort();
+}
