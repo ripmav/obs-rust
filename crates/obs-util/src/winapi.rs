@@ -55,15 +55,28 @@ pub struct SecurityAttributes {
     pub b_inherit_handle: i32,
 }
 
-/// C `struct STARTUPINFOW` (winbase.h) — the modern 9-field form
-/// (the pre-Win95 console fields `dwX`/`dwY`/… are NOT part of it);
-/// 64 bytes on x86_64/ARM64. `CreateProcessW` requires `cb = sizeof`.
+/// C `struct STARTUPINFOW` (wingdi.h) — the full 19-field form: the
+/// console fields (`dwX`/`dwY`/…) and `lpDesktop` ARE part of the struct
+/// (zeroed here; `CreateProcessW` ignores them when `dwFlags` only sets
+/// `STARTF_USESTDHANDLES`). 104 bytes on x86_64/ARM64; `CreateProcessW`
+/// requires `cb = sizeof`. A drifted layout would make the kernel read
+/// `dwFlags`/the stdio handles from the wrong offsets (WP-38 CI round 2:
+/// the 64-byte "9-field" draft read garbage stdio handles and the
+/// runner aborted with 0xc0000005).
 #[repr(C)]
 #[derive(Clone, Copy)]
 pub struct StartUpInfoW {
     pub cb: u32,
     pub lp_reserved: *mut c_void,
-    pub lp_title: *mut c_void,
+    pub lp_desktop: *mut u16,
+    pub lp_title: *mut u16,
+    pub dw_x: u32,
+    pub dw_y: u32,
+    pub dw_x_size: u32,
+    pub dw_y_size: u32,
+    pub dw_x_count_chars: u32,
+    pub dw_y_count_chars: u32,
+    pub dw_fill_attribute: u32,
     pub dw_flags: u32,
     pub w_show_window: u16,
     pub cb_reserved2: u16,
@@ -188,16 +201,22 @@ mod tests {
     use std::mem::offset_of;
 
     // The Win64 struct sizes are the contract: `StartUpInfoW.cb` is
-    // `sizeof` on the C side, and a drifted layout would write the stdio
-    // handles into the wrong fields.
+    // `sizeof` on the C side, and a drifted layout would make the kernel
+    // read `dwFlags`/the stdio handles from the wrong offsets.
     #[test]
     fn win64_struct_layout_pins() {
-        assert_eq!(size_of::<StartUpInfoW>(), 64);
+        assert_eq!(size_of::<StartUpInfoW>(), 104);
         assert_eq!(offset_of!(StartUpInfoW, cb), 0);
-        assert_eq!(offset_of!(StartUpInfoW, dw_flags), 24);
-        assert_eq!(offset_of!(StartUpInfoW, h_std_input), 40);
-        assert_eq!(offset_of!(StartUpInfoW, h_std_output), 48);
-        assert_eq!(offset_of!(StartUpInfoW, h_std_error), 56);
+        assert_eq!(offset_of!(StartUpInfoW, lp_reserved), 8);
+        assert_eq!(offset_of!(StartUpInfoW, lp_desktop), 16);
+        assert_eq!(offset_of!(StartUpInfoW, lp_title), 24);
+        assert_eq!(offset_of!(StartUpInfoW, dw_x), 32);
+        assert_eq!(offset_of!(StartUpInfoW, dw_flags), 60);
+        assert_eq!(offset_of!(StartUpInfoW, w_show_window), 64);
+        assert_eq!(offset_of!(StartUpInfoW, lp_reserved2), 72);
+        assert_eq!(offset_of!(StartUpInfoW, h_std_input), 80);
+        assert_eq!(offset_of!(StartUpInfoW, h_std_output), 88);
+        assert_eq!(offset_of!(StartUpInfoW, h_std_error), 96);
         assert_eq!(size_of::<ProcessInformation>(), 24);
         assert_eq!(size_of::<SecurityAttributes>(), 24);
     }

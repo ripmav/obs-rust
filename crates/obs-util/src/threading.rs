@@ -551,15 +551,11 @@ pub fn os_set_thread_name(name: &[u8]) {
             .collect();
         // SAFETY: the literal is a valid NUL-terminated byte string for the call.
         let module = unsafe { winapi::LoadLibraryA(c"KernelBase.dll".as_ptr().cast::<u8>()) };
-        // TODO(wp38-diag): temporary CI-round-1 diagnostic for the
-        // windows-latest name read-back failure; remove once root-caused.
-        eprintln!("[wp38diag] set_thread_name module={:?}", module);
         if !module.is_null() {
             // SAFETY: the literal is a valid NUL-terminated byte string.
             let proc = unsafe {
                 winapi::GetProcAddress(module, c"SetThreadDescription".as_ptr().cast::<u8>())
             };
-            eprintln!("[wp38diag] set_thread_name proc={:?}", proc);
             if !proc.is_null() {
                 // SAFETY: `proc` is the address of kernelbase's
                 // `SetThreadDescription` (Win10 1607+); the transmute is a
@@ -569,8 +565,7 @@ pub fn os_set_thread_name(name: &[u8]) {
                     unsafe { std::mem::transmute::<*mut c_void, SetThreadDescriptionFn>(proc) };
                 // SAFETY: `wide` is a live NUL-terminated UTF-16 string for the
                 // call; `GetCurrentThread()` is a valid pseudo-handle.
-                let hr = unsafe { set_desc(winapi::GetCurrentThread(), wide.as_ptr()) };
-                eprintln!("[wp38diag] SetThreadDescription hr={}", hr);
+                unsafe { set_desc(winapi::GetCurrentThread(), wide.as_ptr()) };
             }
             // SAFETY: `module` was loaded above and is not used afterwards.
             unsafe { winapi::FreeLibrary(module) };
@@ -1012,33 +1007,26 @@ mod tests {
             os_set_thread_name(name.as_bytes());
             let mut desc: *mut u16 = std::ptr::null_mut();
             // SAFETY: `desc` is a live out pointer; `GetCurrentThread()` is
-            // the pseudo-handle of the current thread.
-            let hr = unsafe {
+            // the pseudo-handle of the current thread. The return value is
+            // not used as the success criterion: the windows-latest runner
+            // observed a non-HRESULT 0x10000000 return even on success,
+            // while the read-back contract is `desc == NULL` iff no name.
+            unsafe {
                 crate::winapi::GetThreadDescription(crate::winapi::GetCurrentThread(), &mut desc)
             };
-            // TODO(wp38-diag): temporary CI-round-1 diagnostic for the
-            // windows-latest name read-back failure; remove once root-caused.
-            eprintln!("[wp38diag] GetThreadDescription hr={} desc={:?}", hr, desc);
-            let got = if hr == 0 || hr == 1 {
-                // S_OK / S_FALSE
-                if desc.is_null() {
-                    None
-                } else {
-                    // SAFETY: `desc` is a valid NUL-terminated UTF-16 string in
-                    // LocalAlloc memory (the `GetThreadDescription` contract);
-                    // the scan above found the terminator at `end`.
-                    let end = (0..).find(|i| unsafe { *desc.add(*i) } == 0).unwrap();
-                    // SAFETY: as above — `desc..desc+end` is valid UTF-16
-                    // for `from_utf16_lossy` (it also tolerates lone
-                    // surrogates).
-                    let s =
-                        unsafe { String::from_utf16_lossy(std::slice::from_raw_parts(desc, end)) };
-                    // SAFETY: `desc` was allocated by the system for LocalFree.
-                    unsafe { crate::winapi::LocalFree(desc as *mut std::os::raw::c_void) };
-                    Some(s)
-                }
-            } else {
+            let got = if desc.is_null() {
                 None
+            } else {
+                // SAFETY: `desc` is a valid NUL-terminated UTF-16 string in
+                // LocalAlloc memory (the `GetThreadDescription` contract);
+                // the scan below finds the terminator at `end`.
+                let end = (0..).find(|i| unsafe { *desc.add(*i) } == 0).unwrap();
+                // SAFETY: as above — `desc..desc+end` is valid UTF-16 for
+                // `from_utf16_lossy` (it also tolerates lone surrogates).
+                let s = unsafe { String::from_utf16_lossy(std::slice::from_raw_parts(desc, end)) };
+                // SAFETY: `desc` was allocated by the system for LocalFree.
+                unsafe { crate::winapi::LocalFree(desc as *mut std::os::raw::c_void) };
+                Some(s)
             };
             let _ = tx.send(got);
         });
