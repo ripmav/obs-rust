@@ -172,9 +172,9 @@ Corrections to the earlier plan, verified in the tree: the ring buffer is `libob
 
 ### P1-19 SIMD
 
-- [ ] **P1-19.1 Find intrinsics** — Files: `libobs/util/sse-intrin.h` (41). Grep `sse-intrin.h`, `simde` use in `libobs/graphics/*.h`; list functions. Spec: no spec — port from C. Done when: list.
-- [ ] **P1-19.2 Implement** — `std::arch` (x86_64 SSE2/AVX2 with runtime check) and NEON. Done when: scalar fallback results equal.
-- [ ] **P1-19.3 Benchmark** — on x86_64 and aarch64. Done when: not slower than C.
+- [x] **P1-19.1 Find intrinsics** — Files: `libobs/util/sse-intrin.h` (41). Grep `sse-intrin.h`, `simde` use in `libobs/graphics/*.h`; list functions. Spec: no spec — port from C. Done when: list. — **WP-35**: inventory (14 SSE2 float intrinsics, 96 call sites, per-intrinsic table with C users) in the module docs of `crates/obs-math/src/simd.rs`; in-scope files `graphics/{vec3.h,vec4.h,quat.h,matrix3.c,matrix4.c}` — the `_mm_*` users in `obs-audio-controls.c`/`format-conversion.c`/capture plugins belong to their own subtasks.
+- [x] **P1-19.2 Implement** — `std::arch` (x86_64 SSE2/AVX2 with runtime check) and NEON. Done when: scalar fallback results equal. — **WP-35**: `obs_math::simd` (module in `obs-math`, placement rationale in the module docs): `M128F` (16-byte-aligned `__m128` layout) + the 14 ported ops + scalar twins, x86_64 SSE2 (baseline) / AVX2 (runtime `is_x86_feature_detected!`, `binop_slice` batch path) / aarch64 NEON (bitselect min/max matching simde's non-`FAST_NANS` semantics; `vzip1q`/`vzip2q` for the unpacks) / scalar everywhere else; `shuffle_ps` is const-generic (the C immediate form; stdarch 1.9x const-generic `_mm_shuffle_ps`). Equality pinned by golden + 10k-random scalar-vs-intrinsic bit tests (NaN-ness for IEEE-unspecified produced-NaN payloads) + Miri (aarch64) + the x86_64 cross check.
+- [ ] **P1-19.3 Benchmark** — on x86_64 and aarch64. Done when: not slower than C. — **WP-35 (partial)**: the benchmark *code* is delivered (`crates/obs-math/benches/simd.rs`, Criterion) with aarch64-local numbers (Raspberry Pi 5, Cortex-A76: `binop_slice` NEON ≈ 5.5–9× the scalar loop; the 128-bit ops ≈ scalar at equal width — the C reference is 128-bit too). The “not slower than C” comparison itself stays OPEN: it needs the WP-41 C baseline runner + `benchmarks.md` (P0-17) before it can be claimed.
 
 ## C. `obs-signal` (`libobs/callback/`)
 

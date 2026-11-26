@@ -9,6 +9,10 @@
 //! Layout and behaviour reproduce the C reference exactly, including the
 //! documented defects (Q-1 vec3 `w` lane, Q-2 signed `*_close`); see
 //! `docs/rust-rewrite/specs/S-008-vec-quat-matrix4.md`.
+//!
+//! The `simd` module (P1-19) is the `std::arch` port of the graphics
+//! headers' SSE2/simde intrinsics, with a scalar fallback; it is
+//! deliberately not glob-re-exported below (namespaced `simd::*`).
 
 pub mod axisang;
 pub mod bounds;
@@ -18,6 +22,7 @@ pub mod matrix3;
 pub mod matrix4;
 pub mod plane;
 pub mod quat;
+pub mod simd;
 pub mod srgb;
 pub mod vec2;
 pub mod vec3;
