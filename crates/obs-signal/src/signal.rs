@@ -13,6 +13,37 @@
 //! callback invocation** (S-004 §9), so nested re-entrancy (R50) is
 //! well-defined and Miri-clean.
 //!
+//! # Threads (P1-22.3): the lock order, verified
+//!
+//! The structure above is kept as in C (per-signal recursive lock,
+//! handler lock, global-callbacks recursive lock) with **one verified
+//! lock-order rule** (WP-36): a global callback's nested emit takes
+//! the handler lock (signal lookup) and the per-signal lock while the
+//! outer global pass holds the global lock — `global → handler/signal`.
+//! The deferred free (refs → 0: `destroy` and the emit epilogue's
+//! `maybe_free_dead`) therefore clears the two lists in **two
+//! non-nested critical sections** — handler list under the handler
+//! lock, then global list under the global lock, never holding both:
+//! a nested `handler → global` hold would invert the order above and
+//! deadlock (the loom model found it; the `emitting` counter alone
+//! does not exclude it — the emit check is a stale load, not atomic
+//! with the lock acquisitions). All other lock points are single-lock
+//! (the per-signal lock is taken per op and never held across a
+//! callback, S-004 §7), so no other order edge exists.
+//!
+//! Verification: `tests/signal_loom.rs` model-checks this exact lock
+//! structure with loom (connect / disconnect from another thread
+//! during an emit, destroy while an emit with a re-emitting global
+//! callback is in progress — no deadlock over every interleaving).
+//! **Documented deviation:** `parking_lot::ReentrantMutex` is
+//! invisible to loom (it models `std::sync`/`loom` primitives), so the
+//! model is a test double that mirrors the production lock points 1:1
+//! (same locks, same order, recursive re-take = the holder keeps it)
+//! — not the production handler itself. `tests/signal_threads.rs`
+//! runs the production handler under real std threads for the same
+//! scenarios (incl. the Done-when connect-during-emit case and the
+//! S-004 Q-2 remove_current-during-nested-emit case).
+//!
 //! Safe deviations from the C reference (documented, all "safer than C"):
 //! - A handler whose refs reach 0 **during an emit** is marked dead and
 //!   its lists are cleared when the outermost emit finishes; later calls
@@ -255,11 +286,20 @@ impl Inner {
     /// mark dead (the outermost emit's epilogue clears the lists).
     fn destroy(&self) {
         if self.emitting.load(SeqCst) == 0 {
+            // The two free halves are **not** nested (the handler lock
+            // is released before the global lock is taken): a global
+            // callback's nested emit holds the global lock for its pass
+            // while re-taking the handler lock for its signal lookup —
+            // holding the handler lock across the global-lock
+            // acquisition here would be the inverse order and can
+            // deadlock (found by the loom model, tests/signal_loom.rs,
+            // WP-36).
             let _hl = self.handler_lock.lock().unwrap();
             // SAFETY: drop path — the handler lock is held (checked above); the `UnsafeCell` access is exclusive.
             unsafe { (*self.state.signals.get()).clear() };
+            drop(_hl);
             let _gl = self.global_lock.lock();
-            // SAFETY: drop path — the handler lock is held (checked above); the `UnsafeCell` access is exclusive.
+            // SAFETY: drop path — the globals list is guarded by the global lock (the handler lock was released above); the `UnsafeCell` access is exclusive.
             unsafe { (*self.globals.globals.get()).clear() };
         }
         self.dead.store(true, SeqCst);
@@ -267,11 +307,13 @@ impl Inner {
 
     fn maybe_free_dead(&self) {
         if self.emitting.fetch_sub(1, SeqCst) == 1 && self.dead.load(SeqCst) {
+            // Same non-nested free order as `destroy` (see there).
             let _hl = self.handler_lock.lock().unwrap();
             // SAFETY: drop path — the handler lock is held (checked above); the `UnsafeCell` access is exclusive.
             unsafe { (*self.state.signals.get()).clear() };
+            drop(_hl);
             let _gl = self.global_lock.lock();
-            // SAFETY: drop path — the handler lock is held (checked above); the `UnsafeCell` access is exclusive.
+            // SAFETY: drop path — the globals list is guarded by the global lock (the handler lock was released above); the `UnsafeCell` access is exclusive.
             unsafe { (*self.globals.globals.get()).clear() };
         }
     }
