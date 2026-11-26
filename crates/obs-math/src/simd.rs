@@ -62,12 +62,14 @@
 //!
 //! Every op is bit-identical to the C intrinsic on the same architecture
 //! (the randomized tests compare each op against its `*_scalar` twin over
-//! random full `f32` bit patterns plus a curated edge set). The one place
-//! the C reference itself is architecture-dependent is `min`/`max` with a
-//! NaN in the *second* operand: x86 `minps`/`maxps` return the first
-//! operand, while simde's aarch64 emulation (`a < b ? a : b`) returns the
-//! second. The port — and the scalar twins — reproduce that per
-//! architecture.
+//! random full `f32` bit patterns plus a curated edge set). The `min`/
+//! `max` NaN edge is uniform across architectures: the ordered comparison
+//! is false when *either* operand is NaN, so both the x86 `minps`/`maxps`
+//! hardware (verified) and simde's aarch64 emulation (`a < b ? a : b`)
+//! return the second operand — even when that second operand is itself the
+//! NaN. (The Intel intrinsics guide's "the non-NaN operand is returned"
+//! wording does not hold for a second-operand NaN; the first draft encoded
+//! that wording on x86_64 and the CI round 1 caught it.)
 
 #[cfg(target_arch = "x86_64")]
 use std::sync::OnceLock;
@@ -347,24 +349,21 @@ pub fn min_ps(a: M128F, b: M128F) -> M128F {
     min_ps_scalar(a, b)
 }
 
-/// Per-lane `min` scalar semantics.
-///
-/// x86_64 mirrors `minps`: a NaN in either operand is replaced by the
-/// other (first-operand check wins when both are NaN); ordered values take
-/// `a < b ? a : b`, so equal values — including `-0.0` vs `+0.0` — return
-/// `b`, the deterministic `minps` result. Everywhere else the plain ordered
-/// ternary *is* the C behaviour: simde's aarch64 `_mm_min_ps` emulation is
-/// `(a < b) ? a : b` lane-wise.
+/// Per-lane `min` scalar semantics — the plain ordered ternary, on every
+/// architecture: `minps` (x86_64) and simde's aarch64 emulation of
+/// `_mm_min_ps` are both exactly `(a < b) ? a : b` lane-wise. NaN handling
+/// falls out of the ordered comparison being false: **a NaN in either
+/// operand returns `b`** (when `b` itself is NaN the result is that NaN —
+/// hardware-verified on x86_64, the Intel intrinsics guide's "the
+/// non-NaN operand is returned" wording is wrong for `b`-NaN); equal
+/// values — including `-0.0` vs `+0.0` — return `b`, the deterministic
+/// `minps` result.
 #[must_use]
 fn min_lane(x: f32, y: f32) -> f32 {
-    #[cfg(target_arch = "x86_64")]
-    if x.is_nan() || y.is_nan() {
-        return if x.is_nan() { y } else { x };
-    }
     if x < y { x } else { y }
 }
 
-/// Scalar twin of [`min_ps`] (same per-architecture NaN/±0 semantics).
+/// Scalar twin of [`min_ps`] (same NaN/±0 semantics).
 #[must_use]
 pub fn min_ps_scalar(a: M128F, b: M128F) -> M128F {
     M128F::from_lanes([
@@ -402,13 +401,11 @@ pub fn max_ps(a: M128F, b: M128F) -> M128F {
 }
 
 /// Per-lane `max` scalar semantics — the ordered mirror of [`min_lane`]
-/// (`a > b ? a : b`; `maxps` is deterministic on ±0 the same way).
+/// (`a > b ? a : b`; `maxps` NaN/±0 behaviour is the same: an ordered
+/// comparison that is false — NaN in either operand, or equal values —
+/// returns `b`).
 #[must_use]
 fn max_lane(x: f32, y: f32) -> f32 {
-    #[cfg(target_arch = "x86_64")]
-    if x.is_nan() || y.is_nan() {
-        return if x.is_nan() { y } else { x };
-    }
     if x > y { x } else { y }
 }
 
@@ -1037,44 +1034,28 @@ mod tests {
     #[test]
     fn min_max_semantics() {
         let n = f32::NAN;
-        // single NaN: x86 `minps`/`maxps` and the aarch64 simde reference
-        // agree that the NaN is *replaced* (by the non-NaN operand), and
-        // the second-operand NaN keeps the architecture split documented
-        // in the module docs — assert the architecture's own contract:
-        #[cfg(target_arch = "x86_64")]
-        {
-            // x86 `minps`/`maxps`: a NaN in *either* operand is replaced by
-            // the other.
-            assert_eq!(
-                min_ps_scalar(M128F::splat(n), M128F::splat(5.0)),
-                M128F::splat(5.0)
-            );
-            assert_eq!(
-                min_ps_scalar(M128F::splat(5.0), M128F::splat(n)),
-                M128F::splat(5.0)
-            );
-            assert_eq!(
-                max_ps_scalar(M128F::splat(n), M128F::splat(5.0)),
-                M128F::splat(5.0)
-            );
-            assert_eq!(
-                max_ps_scalar(M128F::splat(5.0), M128F::splat(n)),
-                M128F::splat(5.0)
-            );
-        }
-        #[cfg(target_arch = "aarch64")]
-        {
-            // aarch64 (simde C reference): only a NaN in the *first* operand
-            // is replaced; a NaN second operand stays (documented split).
-            assert_eq!(
-                min_ps_scalar(M128F::splat(n), M128F::splat(5.0)),
-                M128F::splat(5.0)
-            );
-            assert_eq!(
-                bits_of(min_ps_scalar(M128F::splat(5.0), M128F::splat(n))),
-                [n.to_bits(); 4]
-            );
-        }
+        // A NaN in either operand makes the ordered comparison false, so
+        // the second operand is returned — on every architecture (the
+        // hardware x86_64 result is QEMU-verified in the WP-35 CI round;
+        // the Intel intrinsics guide's "the non-NaN operand is returned"
+        // wording does not hold when the *second* operand is NaN).
+        assert_eq!(
+            min_ps_scalar(M128F::splat(n), M128F::splat(5.0)),
+            M128F::splat(5.0)
+        );
+        // NaN results are compared by bits (NaN != NaN by value)
+        assert_eq!(
+            bits_of(min_ps_scalar(M128F::splat(5.0), M128F::splat(n))),
+            [n.to_bits(); 4]
+        );
+        assert_eq!(
+            max_ps_scalar(M128F::splat(n), M128F::splat(5.0)),
+            M128F::splat(5.0)
+        );
+        assert_eq!(
+            bits_of(max_ps_scalar(M128F::splat(5.0), M128F::splat(n))),
+            [n.to_bits(); 4]
+        );
         // -0.0 vs +0.0: `minps`/`maxps` return the second operand when the
         // ordered comparison is false (deterministic ±0).
         assert_eq!(
