@@ -1016,12 +1016,14 @@ mod tests {
         let p = os_process_pipe_create("cmd /c exit 200", "r").unwrap();
         assert_eq!(os_process_pipe_destroy(Some(p)), 200);
 
-        // stderr is a separate stream
+        // stderr is a separate stream (cmd quirk: the space before the
+        // `1>&2` redirect is part of `echo`'s output, so the bytes are
+        // "oops " + CRLF)
         let p = os_process_pipe_create("cmd /c echo oops 1>&2", "r").unwrap();
         let mut e = vec![0u8; 100];
         let n = os_process_pipe_read_err(Some(&p), &mut e);
         e.truncate(n);
-        assert_eq!(e, b"oops\r\n");
+        assert_eq!(e, b"oops \r\n");
         assert_eq!(os_process_pipe_read(Some(&p), &mut [0; 100]), 0);
         assert_eq!(os_process_pipe_destroy(Some(p)), 0);
 
@@ -1063,15 +1065,17 @@ mod tests {
     #[cfg(windows)]
     #[cfg_attr(miri, ignore)]
     fn pipe_windows_write() {
-        // `findstr /v \"\"` consumes all of stdin and exits 0 on a
-        // match / 1 on none — the Windows stand-in for the posix
-        // `read x`/`wc -c` write-mode vectors
-        let p = os_process_pipe_create("cmd /c findstr /v \"\"", "w").unwrap();
+        // `findstr payload` consumes all of stdin and exits 0 on a match
+        // / 1 on none — the Windows stand-in for the posix `read x`/`wc -c`
+        // write-mode vectors (a match proves the written bytes reached the
+        // child's stdin)
+        let p = os_process_pipe_create("cmd /c findstr payload", "w").unwrap();
         assert_eq!(os_process_pipe_write(Some(&p), b"payload\n"), 8);
         assert_eq!(os_process_pipe_destroy(Some(p)), 0);
 
-        // destroy without any write: the child sees 0 bytes (no match)
-        let p = os_process_pipe_create("cmd /c findstr /v \"\"", "w").unwrap();
+        // destroy without any write: the child sees EOF with no input
+        // (no match)
+        let p = os_process_pipe_create("cmd /c findstr payload", "w").unwrap();
         assert_eq!(os_process_pipe_destroy(Some(p)), 1);
 
         // the child's stderr is readable in write mode
@@ -1079,7 +1083,8 @@ mod tests {
         let mut e = vec![0u8; 100];
         let n = os_process_pipe_read_err(Some(&p), &mut e);
         e.truncate(n);
-        assert_eq!(e, b"oops\r\n");
+        // the same cmd quirk as in `pipe_windows_read`
+        assert_eq!(e, b"oops \r\n");
         assert_eq!(os_process_pipe_destroy(Some(p)), 12);
     }
 
