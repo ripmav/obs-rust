@@ -172,10 +172,12 @@ for area in "${!runner_sources[@]}"; do
 		rustlib_link=""
 		if [ "$SWAPPED" = 1 ] || [ -n "${rustlib_area[$area]:-}" ]; then
 			rustlib_link="$rustlib"
-			# P1-12.3 (WP-37): the profiler bridge's graphics-context shim
-			# (compiles against the pinned libobs headers; the staticlib's
-			# profiler bridge references its two functions).
-			[ "$SWAPPED" = 1 ] && srcs+=("$root/crates/obs-ffi/c/srcprof-bridge.c")
+			# P1-12.3 (WP-37): the profiler bridge's graphics-context shim —
+			# utilrest only (its stubs provide the strong `obs` and
+			# gs_enter/leave_context; the shim compiles against the pinned
+			# libobs headers). Every other runner that links the staticlib
+			# gets the weak enter/leave abort stubs from rustlib_stubs.c.
+			[ "$SWAPPED" = 1 ] && [ "$area" = utilrest ] && srcs+=("$root/crates/obs-ffi/c/srcprof-bridge.c")
 			# !nostubs areas (no common sources) link the staticlib too and
 			# need its C-service stubs (the strong providers in their stub
 			# files win where present; see gen/rustlib_stubs.c).
