@@ -3,8 +3,10 @@
 //! crc32), dl, os_fs, os_proc/process_args, os_str, os_time, pipe,
 //! text_lookup, threading, utf8. One module per C source group, spec-driven
 //! (S-001..S-011, S-023, S-024, S-055); the committed conformance vectors
-//! are the oracle. `dl`, `pipe`, `os_proc`, `threading` are POSIX-only so
-//! far (P1-05.3/P1-07/P1-11 Windows parity outstanding, review 2026-11-21).
+//! are the oracle. `dl`, `pipe`, `os_proc`, `threading` are cross-platform
+//! (P1-05.3 + finding 5 Windows parity delivered, WP-38); the remaining
+//! nix-only platform helpers (`os_dir`/`os_inhibit`/`os_paths`/`os_time`)
+//! stay unix until their P1-06/P1-07.2/.3 Windows subtasks.
 
 pub mod bitstream;
 pub mod bmem;
@@ -14,10 +16,8 @@ pub mod cf_preprocessor;
 pub mod config;
 pub mod darray;
 pub mod deque;
-// POSIX-only modules: their libc surface (dlopen/readlink/pipe/fork/...) does
-// not exist in the Windows build of the `libc` crate; the Windows variants
-// arrive with the platform crate (S-023) when the C reference is in place.
-#[cfg(unix)]
+// Cross-platform dynamic libs (S-023 R107): `dlopen` family on unix,
+// `LoadLibraryExW`/`GetProcAddress`/`FreeLibrary` on Windows.
 pub mod dl;
 pub mod dstr;
 pub mod hash;
@@ -33,20 +33,25 @@ pub mod os_dir;
 pub mod os_inhibit;
 #[cfg(unix)]
 pub mod os_paths;
-#[cfg(unix)]
+// Cross-platform executable path (S-023 R82): `/proc/self/exe` on Linux,
+// `GetModuleFileNameW` on Windows.
 pub mod os_proc;
 pub mod os_str;
 #[cfg(unix)]
 pub mod os_time;
-#[cfg(unix)]
+// Cross-platform child-process pipes (S-055 U2): fork/exec + `pipe`/`waitpid`
+// on unix, `CreateProcessW` + `CreatePipe`/`ReadFile`/`WriteFile` on Windows.
 pub mod pipe;
 pub mod process_args;
 pub mod serializer;
 pub mod text_lookup;
-#[cfg(unix)]
-#[cfg(unix)]
+// Cross-platform threading primitives (S-061): `pthread`/`sem_*` on unix,
+// `CreateEvent`/`CreateSemaphore`/`WaitForSingleObject` on Windows.
 pub mod threading;
 pub mod utf8;
+// Windows WinAPI surface for the platform-tier modules above (WP-38).
+#[cfg(windows)]
+pub(crate) mod winapi;
 
 #[cfg(test)]
 mod tests {
