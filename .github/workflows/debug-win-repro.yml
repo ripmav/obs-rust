@@ -1,0 +1,31 @@
+# Temporary WP-38 CI debug (deleted once the windows-latest abort is
+# root-caused): runs minimal CreateProcessW / SetThreadDescription repros
+# on a real windows-latest runner, isolated from the obs-util test binary.
+name: debug win repro (temporary)
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [p1/windows-parity]
+    paths:
+      - ".github/workflows/debug-win-repro.yml"
+      - "test/debug-win/**"
+
+jobs:
+  repro:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: dtolnay/rust-toolchain@stable
+      - name: rust repro
+        shell: pwsh
+        run: |
+          rustc -O test/debug-win/repro.rs -o repro-rust.exe
+          .\repro-rust.exe
+      - name: C repro
+        shell: pwsh
+        run: |
+          $vs = & "C:\Program Files (x86)\Microsoft Visual Studio\Installer\vswhere.exe" -latest -products * -requires Microsoft.VisualStudio.Component.VC.Tools.x86.x64 -property installationPath
+          if (-not $vs) { throw "no VS" }
+          cmd /c "`"$vs\VC\Auxiliary\Build\vcvars64.bat`" && cl /nologo /W3 /Fe:repro-c.exe test\debug-win\repro.c"
+          .\repro-c.exe
