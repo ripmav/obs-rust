@@ -551,11 +551,15 @@ pub fn os_set_thread_name(name: &[u8]) {
             .collect();
         // SAFETY: the literal is a valid NUL-terminated byte string for the call.
         let module = unsafe { winapi::LoadLibraryA(c"KernelBase.dll".as_ptr().cast::<u8>()) };
+        // TODO(wp38-diag): temporary CI-round-1 diagnostic for the
+        // windows-latest name read-back failure; remove once root-caused.
+        eprintln!("[wp38diag] set_thread_name module={:?}", module);
         if !module.is_null() {
             // SAFETY: the literal is a valid NUL-terminated byte string.
             let proc = unsafe {
                 winapi::GetProcAddress(module, c"SetThreadDescription".as_ptr().cast::<u8>())
             };
+            eprintln!("[wp38diag] set_thread_name proc={:?}", proc);
             if !proc.is_null() {
                 // SAFETY: `proc` is the address of kernelbase's
                 // `SetThreadDescription` (Win10 1607+); the transmute is a
@@ -565,7 +569,8 @@ pub fn os_set_thread_name(name: &[u8]) {
                     unsafe { std::mem::transmute::<*mut c_void, SetThreadDescriptionFn>(proc) };
                 // SAFETY: `wide` is a live NUL-terminated UTF-16 string for the
                 // call; `GetCurrentThread()` is a valid pseudo-handle.
-                unsafe { set_desc(winapi::GetCurrentThread(), wide.as_ptr()) };
+                let hr = unsafe { set_desc(winapi::GetCurrentThread(), wide.as_ptr()) };
+                eprintln!("[wp38diag] SetThreadDescription hr={}", hr);
             }
             // SAFETY: `module` was loaded above and is not used afterwards.
             unsafe { winapi::FreeLibrary(module) };
@@ -1011,6 +1016,9 @@ mod tests {
             let hr = unsafe {
                 crate::winapi::GetThreadDescription(crate::winapi::GetCurrentThread(), &mut desc)
             };
+            // TODO(wp38-diag): temporary CI-round-1 diagnostic for the
+            // windows-latest name read-back failure; remove once root-caused.
+            eprintln!("[wp38diag] GetThreadDescription hr={} desc={:?}", hr, desc);
             let got = if hr == 0 || hr == 1 {
                 // S_OK / S_FALSE
                 if desc.is_null() {

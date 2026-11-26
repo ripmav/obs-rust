@@ -317,7 +317,17 @@ fn create_pipe(input: &mut *mut c_void, output: &mut *mut c_void) -> bool {
     };
     // SAFETY: `sa` is valid for the call; the two out pointers are live
     // locals the kernel writes.
-    unsafe { winapi::CreatePipe(input, output, &sa, 0) != 0 }
+    let ret = unsafe { winapi::CreatePipe(input, output, &sa, 0) };
+    // SAFETY: no arguments, no memory access.
+    // SAFETY: no arguments, no memory access.
+    let err = unsafe { winapi::GetLastError() };
+    // TODO(wp38-diag): temporary CI-round-1 diagnostic for the
+    // windows-latest abort; remove once root-caused.
+    eprintln!(
+        "[wp38diag] CreatePipe ret={} r={:?} w={:?} err={}",
+        ret, *input, *output, err
+    );
+    ret != 0
 }
 
 #[cfg(windows)]
@@ -345,11 +355,17 @@ fn create_process(
     // NULL, NULL, &si, &pi) — flags = CREATE_NO_WINDOW (the
     // SHOW_SUBPROCESSES define is a debug-only CMake option, never set
     // in a Rust build).
+    // TODO(wp38-diag): temporary CI-round-1 diagnostic for the
+    // windows-latest abort; remove once root-caused.
+    eprintln!(
+        "[wp38diag] CreateProcessW in={:?} out={:?} err={:?} cb={} flags={:#x}",
+        stdin_h, stdout_h, stderr_h, si.cb, si.dw_flags
+    );
     // SAFETY: `cmd_w` is a live NUL-terminated command line; `si`/`pi`
     // are live storage; NULL attributes/environment/cwd are the C form;
     // inherit-handles true (the stdio ends are inheritable, the rest
     // have inheritance off).
-    let ok = unsafe {
+    let ret = unsafe {
         winapi::CreateProcessW(
             std::ptr::null(),
             cmd_w.as_mut_ptr(),
@@ -361,9 +377,15 @@ fn create_process(
             std::ptr::null(),
             &si,
             &mut pi,
-        ) != 0
+        )
     };
-    if ok {
+    // SAFETY: no arguments, no memory access.
+    let err = unsafe { winapi::GetLastError() };
+    eprintln!(
+        "[wp38diag] CreateProcessW ret={} err={} pid={} tid={:?}",
+        ret, err, pi.dw_process_id, pi.h_thread
+    );
+    if ret != 0 {
         *process = pi.h_process;
         // C: CloseHandle(pi.hThread) — the port only needs the process.
         // SAFETY: `pi.h_thread` is a valid handle from CreateProcessW.
@@ -371,7 +393,7 @@ fn create_process(
     }
     // C: blog(LOG_ERROR, "CreateProcessW failed: %lu") on failure — no
     // logger in the crate yet (module docs).
-    ok
+    ret != 0
 }
 
 #[cfg(windows)]
@@ -504,16 +526,28 @@ pub fn os_process_pipe_read(pp: Option<&ProcessPipe>, buf: &mut [u8]) -> usize {
         let mut bytes = 0u32;
         // SAFETY: `pp.handle` is a live pipe end; `buf` is valid for
         // `buf.len()` bytes for the call.
-        let ok = unsafe {
+        let ret = unsafe {
             winapi::ReadFile(
                 pp.handle,
                 buf.as_mut_ptr() as *mut c_void,
                 buf.len() as u32,
                 &mut bytes,
                 std::ptr::null(),
-            ) != 0
+            )
         };
-        if ok && bytes != 0 { bytes as usize } else { 0 }
+        // TODO(wp38-diag): temporary CI-round-1 diagnostic for the
+        // windows-latest abort; remove once root-caused.
+        // SAFETY: no arguments, no memory access.
+        let err = unsafe { winapi::GetLastError() };
+        eprintln!(
+            "[wp38diag] ReadFile handle={:?} ret={} bytes={} err={}",
+            pp.handle, ret, bytes, err
+        );
+        if ret != 0 && bytes != 0 {
+            bytes as usize
+        } else {
+            0
+        }
     }
 }
 
@@ -535,16 +569,28 @@ pub fn os_process_pipe_read_err(pp: Option<&ProcessPipe>, buf: &mut [u8]) -> usi
         let mut bytes = 0u32;
         // SAFETY: `pp.handle_err` is a live pipe end; `buf` is valid for
         // the call.
-        let ok = unsafe {
+        let ret = unsafe {
             winapi::ReadFile(
                 pp.handle_err,
                 buf.as_mut_ptr() as *mut c_void,
                 buf.len() as u32,
                 &mut bytes,
                 std::ptr::null(),
-            ) != 0
+            )
         };
-        if ok && bytes != 0 { bytes as usize } else { 0 }
+        // TODO(wp38-diag): temporary CI-round-1 diagnostic for the
+        // windows-latest abort; remove once root-caused.
+        // SAFETY: no arguments, no memory access.
+        let err = unsafe { winapi::GetLastError() };
+        eprintln!(
+            "[wp38diag] ReadFileErr handle={:?} ret={} bytes={} err={}",
+            pp.handle_err, ret, bytes, err
+        );
+        if ret != 0 && bytes != 0 {
+            bytes as usize
+        } else {
+            0
+        }
     }
 }
 
@@ -593,16 +639,24 @@ pub fn os_process_pipe_write(pp: Option<&ProcessPipe>, data: &[u8]) -> usize {
         let mut written = 0u32;
         // SAFETY: `pp.handle` is a live pipe end; `data` is valid for
         // the call.
-        let ok = unsafe {
+        let ret = unsafe {
             winapi::WriteFile(
                 pp.handle,
                 data.as_ptr() as *const c_void,
                 data.len() as u32,
                 &mut written,
                 std::ptr::null(),
-            ) != 0
+            )
         };
-        if ok && written != 0 {
+        // TODO(wp38-diag): temporary CI-round-1 diagnostic for the
+        // windows-latest abort; remove once root-caused.
+        // SAFETY: no arguments, no memory access.
+        let err = unsafe { winapi::GetLastError() };
+        eprintln!(
+            "[wp38diag] WriteFile handle={:?} ret={} written={} err={}",
+            pp.handle, ret, written, err
+        );
+        if ret != 0 && written != 0 {
             written as usize
         } else {
             0
@@ -664,12 +718,19 @@ pub fn os_process_pipe_destroy(pp: Option<ProcessPipe>) -> i32 {
         // GetExitCodeProcess(process, &code) ? (int)code : 0;
         // CloseHandle(process)
         let mut code = 0u32;
+        // TODO(wp38-diag): temporary CI-round-1 diagnostic for the
+        // windows-latest abort; remove once root-caused.
+        eprintln!(
+            "[wp38diag] destroy handle={:?} handle_err={:?} process={:?}",
+            pp.handle, pp.handle_err, pp.process
+        );
         // SAFETY: all three are live handles owned by this `ProcessPipe`.
         unsafe {
             winapi::CloseHandle(pp.handle);
             winapi::CloseHandle(pp.handle_err);
-            winapi::WaitForSingleObject(pp.process, winapi::INFINITE);
+            let wait = winapi::WaitForSingleObject(pp.process, winapi::INFINITE);
             let ok = winapi::GetExitCodeProcess(pp.process, &mut code) != 0;
+            eprintln!("[wp38diag] destroy wait={} code={} ok={}", wait, code, ok);
             winapi::CloseHandle(pp.process);
             if ok { code as i32 } else { 0 }
         }
@@ -1100,9 +1161,12 @@ mod tests {
             args_to_cmdline(&argv(&["echo", "say \"hi\""])),
             "echo \"say \\\"hi\\\"\""
         );
+        // interior quote without whitespace: no outer quotes (the C
+        // reference quotes only on empty/space/tab); the backslashes
+        // double and the quote escapes
         assert_eq!(
             args_to_cmdline(&argv(&["echo", "a\\\"b"])),
-            "echo \"a\\\\\\\"b\""
+            "echo a\\\\\\\"b"
         );
         // trailing backslashes double before the closing quote
         assert_eq!(args_to_cmdline(&argv(&["echo", "a \\"])), "echo \"a \\\\\"");

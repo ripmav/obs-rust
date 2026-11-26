@@ -28,7 +28,7 @@ pub const CREATE_NO_WINDOW: u32 = 0x0800_0000;
 /// `STARTF_USESTDHANDLES` (winbase.h).
 pub const STARTF_USESTDHANDLES: u32 = 0x0100;
 /// `STARTF_FORCEOFFFEEDBACK` (winbase.h).
-pub const STARTF_FORCEOFFFEEDBACK: u32 = 0x0004;
+pub const STARTF_FORCEOFFFEEDBACK: u32 = 0x0080;
 /// `LOAD_LIBRARY_SEARCH_DLL_LOAD_DIR` (winbase.h, Win8+).
 pub const LOAD_LIBRARY_SEARCH_DLL_LOAD_DIR: u32 = 0x0000_1000;
 /// `LOAD_LIBRARY_SEARCH_DEFAULT_DIRS` (winbase.h, Win8+) — the same value
@@ -86,17 +86,18 @@ pub struct ProcessInformation {
 // kernel32 (the C reference includes windows.h with WIN32_LEAN_AND_MEAN)
 unsafe extern "system" {
     // threading-windows.c
+    // `lp_name` is `LPCSTR` (ANSI) in the C headers
     pub fn CreateEventA(
         lp_event_attributes: *const SecurityAttributes,
         b_manual_reset: i32,
         b_initial_state: i32,
-        lp_name: *const u16,
+        lp_name: *const u8,
     ) -> *mut c_void;
     pub fn CreateSemaphoreA(
         lp_semaphore_attributes: *const SecurityAttributes,
         l_initial_count: i32,
         l_maximum_count: i32,
-        lp_name: *const u16,
+        lp_name: *const u8,
     ) -> *mut c_void;
     pub fn CloseHandle(hObject: *mut c_void) -> i32;
     pub fn WaitForSingleObject(h_handle: *mut c_void, dw_milliseconds: u32) -> u32;
