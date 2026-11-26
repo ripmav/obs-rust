@@ -179,7 +179,7 @@ fn main() {
         )
     };
     println!(
-        "CreateProcessW ret={ret} pid={} tid={:?}",
+        "CreateProcessW ret={} pid={} tid={:?}",
         ret, pi.dw_process_id, pi.h_thread
     );
     if ret != 0 {
@@ -198,7 +198,9 @@ fn main() {
             )
         };
         println!(
-            "ReadFile ret={rr} bytes={bytes}: {:?}",
+            "ReadFile ret={} bytes={}: {:?}",
+            rr,
+            bytes,
             String::from_utf8_lossy(&buf[..bytes as usize])
         );
         unsafe { CloseHandle(input) };
