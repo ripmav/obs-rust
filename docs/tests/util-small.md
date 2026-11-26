@@ -48,6 +48,12 @@ The `opts_parser` module (S-024 M1, added by WP-34) has its own matrix:
 `docs/tests/opts-parser.md` (unit) and `docs/tests/abi-opts.md`
 (bridge).
 
+## source_profiler (WP-37, P1-12.3)
+
+The `source_profiler` module (S-055 U3, added by WP-37) has its own
+matrix: `docs/tests/source-profiler.md` (core + bridge + the
+`utilrest/srcprof_*` conformance vectors).
+
 ## Not covered yet (C-checkout dependent / later phases)
 
 - The P1-14 apply recipe steps for these files (the `extern "C"`

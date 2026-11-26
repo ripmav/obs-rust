@@ -37,6 +37,9 @@ pub mod abi_bpm;
 // P1-33.2 (WP-34): the file-updater bridge (S-024 M10).
 #[cfg(any(test, feature = "c-swap"))]
 pub mod abi_file_updater;
+// P1-12.3 (WP-37): the source profiler bridge (S-055 U3).
+#[cfg(any(test, feature = "c-swap"))]
+pub mod abi_source_profiler;
 // P1-33.3 (WP-34): the happy-eyeballs address-list bridge (S-024 M9).
 #[cfg(any(test, feature = "c-swap"))]
 pub mod abi_happy_eyeballs;
@@ -61,6 +64,9 @@ pub mod abi_text_lookup;
 pub mod abi_threading;
 
 use std::os::raw::{c_int, c_void};
+
+/// P1-13.3 (WP-37): the `log`-crate facade (records forwarded to `blog`).
+pub mod log_facade;
 
 /// S-001 §3 (R20): log level constants; lower numbers are more severe.
 pub const LOG_ERROR: c_int = 100;

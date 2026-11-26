@@ -28,7 +28,7 @@ The diff compares FUNCTION DECLARATIONS ONLY. Intentionally out of scope:
   `struct dbus_sleep_info`, `struct portal_inhibit_info` (aliased below).
 
 Reference declarations in scope (the exact set the bridge must provide,
-71 in total):
+86 in total):
   util/text-lookup.h             4  EXPORT
   util/threading.h              14 EXPORT + the two pthread_mutex_init_* static inlines
   util/lexer.h                  10 EXPORT
@@ -44,6 +44,9 @@ Reference declarations in scope (the exact set the bridge must provide,
   shared/bpm/bpm.h                2  plain (WP-34, P1-33.1)
   shared/opts-parser/opts-parser.h 2 plain (WP-34, P1-33.5)
   shared/file-updater/file-updater/file-updater.h 3 plain (WP-34, P1-33.2)
+  util/source-profiler.h          4  EXPORT (WP-37, P1-12.3)
+  obs-internal.h                 11 extern source_profiler_* declarations
+                                 (WP-37, P1-12.3 — the internal API)
   (shared/happy-eyeballs: build_addr_list is file-local static in the .c —
   no reference declaration, the conformance runner declares it in swap
   mode; the bitstream_reader_read_bit precedent, excluded from the
@@ -84,6 +87,12 @@ ALIASES = {
     "os_sem_t": "void",
     "dbus_sleep_info": "void",
     "portal_inhibit_info": "void",
+    # WP-37 (P1-12.3): the opaque source / graphics-timer handles and the
+    # C profiler_result_t (the bridge's mirror is `profiler_result`).
+    "obs_source_t": "void",
+    "gs_timer_t": "void",
+    "obs_video_info": "void",
+    "profiler_result_t": "structprofiler_result",
     # WP-34 (P1-33): the opaque handle typedefs of the shared/ modules —
     # the bridges type them as void* / the repr(C) mirrors.
     "obs_output_t": "void",
@@ -126,9 +135,14 @@ REFS = [
     ("shared/bpm/bpm.h", ("plain",)),
     ("shared/opts-parser/opts-parser.h", ("plain",)),
     ("shared/file-updater/file-updater/file-updater.h", ("plain",)),
+    # WP-37 (P1-12.3): the public profiler API (EXPORT) and the internal
+    # source_profiler_* externs (obs-internal.h; the name filter below).
+    ("libobs/util/source-profiler.h", ("export",)),
+    ("libobs/obs-internal.h", ("extern",)),
 ]
-# The only `extern` declarations of platform-nix.c in scope: the six
-# dbus_/portal_inhibit* symbols the bridge provides.
+# The only `extern` declarations in scope: the six dbus_/portal_inhibit*
+# symbols the platform bridge provides and the eleven source_profiler_*
+# symbols the profiler bridge provides (WP-37).
 EXTERN_NAMES = {
     "dbus_sleep_info_create",
     "dbus_inhibit_sleep",
@@ -136,6 +150,17 @@ EXTERN_NAMES = {
     "portal_inhibit_info_create",
     "portal_inhibit",
     "portal_inhibit_info_destroy",
+    "source_profiler_frame_begin",
+    "source_profiler_frame_collect",
+    "source_profiler_render_begin",
+    "source_profiler_render_end",
+    "source_profiler_reset_video",
+    "source_profiler_async_frame_received",
+    "source_profiler_source_tick_start",
+    "source_profiler_source_tick_end",
+    "source_profiler_source_render_begin",
+    "source_profiler_source_render_end",
+    "source_profiler_remove_source",
 }
 # The only `static inline` declarations of darray.h in scope: the four
 # P1-03.2 C helpers whose linkable form the bridge provides (the rest of

@@ -29,13 +29,17 @@ buffered-file-serializer.c — their EXPORT symbols come from the Rust
 staticlib; serializer.h, darray.h and deque.h stay C headers whose
 inline code drives the Rust state).
 
+WP-37 (P1-12.3) extends the swap set with the source profiler
+(source-profiler.c — S-055 U3; the 15 source_profiler_* symbols come
+from the Rust staticlib, source-profiler.h stays the C header).
+
 Assisted-by: Qwen3.8-27B (off) via pi
 ---
- libobs/CMakeLists.txt         | 35 ++++++++++++++++++++++++++---------
+ libobs/CMakeLists.txt         | 36 ++++++++++++++++++++++++++---------
  libobs/cmake/os-freebsd.cmake |  9 +++++++--
  libobs/cmake/os-linux.cmake   |  9 +++++++--
  libobs/cmake/os-macos.cmake   |  2 +-
- 4 files changed, 41 insertions(+), 14 deletions(-)
+ 4 files changed, 42 insertions(+), 15 deletions(-)
 
 diff --git a/libobs/CMakeLists.txt b/libobs/CMakeLists.txt
 index 71459cb..d32cf3c 100644
@@ -95,7 +99,12 @@ index 71459cb..d32cf3c 100644
      util/lexer.h
      util/pipe.c
      util/pipe.h
-@@ -127,7 +135,7 @@ target_sources(
+@@ -124,11 +132,11 @@ target_sources(
+     util/serializer.h
+-    util/source-profiler.c
++    $<$<NOT:$<BOOL:${OBS_ENABLE_RUST}>>:util/source-profiler.c>
+     util/source-profiler.h
+     util/spsc-fifo.h
      util/sse-intrin.h
      util/task.c
      util/task.h

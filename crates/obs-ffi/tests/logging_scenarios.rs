@@ -110,6 +110,22 @@ fn worker_or_noop() {
             }
             std::process::exit(3); // unreachable
         }
+        // P1-13.3: the `log` facade forwards records to `blog` (the
+        // capture handler prints level + formatted message per record).
+        Some("facade") => {
+            scenario_marker();
+            // SAFETY: the C log-handler setter; `log_test_cap` is a valid C function for the process lifetime (test).
+            unsafe {
+                base_set_log_handler(Some(ffi_c::log_test_cap), 0x1234usize as *mut c_void);
+            }
+            obs_ffi::log_facade::init().expect("first logger install");
+            log::error!("e-facade");
+            log::warn!("w-facade");
+            log::info!("i-facade");
+            log::debug!("d-facade");
+            log::trace!("t-facade");
+            std::process::exit(0);
+        }
         _ => {}
     });
 }
@@ -229,4 +245,24 @@ fn r25_crash_handler_once() {
         "warning: Tried to set a crash handler when one already exists.\n"
     );
     assert_eq!(err, "B who");
+}
+
+// P1-13.3: `log` records are forwarded to `blog` through the installed
+// handler; `Trace` is demoted to LOG_DEBUG (400) — no C counterpart.
+#[test]
+fn p13_3_log_facade_forwards_to_blog() {
+    if guard_worker() {
+        return;
+    }
+    let (code, out, err) = run("facade");
+    assert_eq!(code, 0);
+    assert_eq!(err, "");
+    assert_eq!(
+        out,
+        "lvl=100 fmt=%s out=e-facade\n\
+         lvl=200 fmt=%s out=w-facade\n\
+         lvl=300 fmt=%s out=i-facade\n\
+         lvl=400 fmt=%s out=d-facade\n\
+         lvl=400 fmt=%s out=t-facade\n"
+    );
 }
