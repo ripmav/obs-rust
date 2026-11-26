@@ -1157,7 +1157,7 @@ Build/data files in this area: **1** (34 lines) — owner: same task as the area
 | `libobs/util/serializer.h`                                        | P1-14.2        | S-010       |                                                          |
 | `libobs/util/source-profiler.c`                                   | P1-12.3        | S-055       |                                                          |
 | `libobs/util/source-profiler.h`                                   | P1-12.3        | S-055       |                                                          |
-| `libobs/util/sse-intrin.h`                                        | P1-19.1        | —           |                                                          |
+| `libobs/util/sse-intrin.h`                                        | P1-19.1        | —           | inventory + port in obs-math simd docs                   |
 | `libobs/util/task.c`                                              | P1-14.3        | S-024       |                                                          |
 | `libobs/util/task.h`                                              | P1-14.3        | S-024       |                                                          |
 | `libobs/util/text-lookup.c`                                       | P1-08.4        | S-010       |                                                          |

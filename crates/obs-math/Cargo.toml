@@ -6,8 +6,15 @@ edition.workspace = true
 license.workspace = true
 rust-version.workspace = true
 
+[[bench]]
+name = "simd"
+harness = false
+
 [lints]
 workspace = true
 
 [dev-dependencies]
 obs-util = { path = "../obs-util" }
+# P1-19.3 (WP-35): the SIMD-vs-scalar benchmark code ships with the
+# implementation; the C baseline + `benchmarks.md` arrive with WP-41.
+criterion = "0.8.2"
