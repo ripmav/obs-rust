@@ -20,7 +20,7 @@ jobs:
       - name: rust repro
         shell: pwsh
         run: |
-          rustc -O test/debug-win/repro.rs -o repro-rust.exe
+          rustc -O --edition 2024 test/debug-win/repro.rs -o repro-rust.exe
           .\repro-rust.exe
       - name: C repro
         shell: pwsh
