@@ -18,6 +18,7 @@ jobs:
       - uses: actions/checkout@v7
       - uses: dtolnay/rust-toolchain@stable
       - name: rust repro
+        continue-on-error: true
         shell: pwsh
         run: |
           rustc -O --edition 2024 test/debug-win/repro.rs -o repro-rust.exe

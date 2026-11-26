@@ -62,6 +62,7 @@ unsafe extern "system" {
     fn CloseHandle(h: *mut c_void) -> i32;
     fn WaitForSingleObject(h: *mut c_void, ms: u32) -> u32;
     fn GetExitCodeProcess(h: *mut c_void, c: *mut u32) -> i32;
+    fn GetLastError() -> u32;
     fn LoadLibraryA(n: *const u8) -> *mut c_void;
     fn GetProcAddress(m: *mut c_void, n: *const u8) -> *mut c_void;
     fn FreeLibrary(m: *mut c_void) -> i32;
@@ -128,7 +129,12 @@ fn main() {
                 &mut pi,
             )
         };
-        println!("CreateProcessW(no-si) ret={ret} pid={}", pi.dw_process_id);
+        println!(
+            "CreateProcessW(no-si) ret={} pid={} err={}",
+            ret,
+            pi.dw_process_id,
+            unsafe { GetLastError() }
+        );
         if ret != 0 {
             unsafe { WaitForSingleObject(pi.h_process, 10000) };
             unsafe { CloseHandle(pi.h_thread) };
