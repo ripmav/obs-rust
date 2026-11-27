@@ -26,6 +26,11 @@
  * comparable across runs and machines. */
 static uint64_t sm_state = 0x0B5ULL;
 
+void rd_reset_prng(void)
+{
+	sm_state = 0x0B5ULL;
+}
+
 static uint64_t next_u64(void)
 {
 	uint64_t z = (sm_state += 0x9E3779B97F4A7C15ULL);
@@ -45,12 +50,19 @@ float next_f32(void)
 	return (float)(next_u32() >> 8) * (1.0f / 16777216.0f);
 }
 
+void obs_ref_dump_math(void);
+
 int main(int argc, char *argv[])
 {
 	if (argc == 2 && strcmp(argv[1], "--list") == 0) {
 		printf("math\n");
 		printf("data\n");
 		printf("media\n");
+		return 0;
+	}
+
+	if (argc == 2 && strcmp(argv[1], "math") == 0) {
+		obs_ref_dump_math();
 		return 0;
 	}
 
