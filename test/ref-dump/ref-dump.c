@@ -51,6 +51,8 @@ float next_f32(void)
 }
 
 void obs_ref_dump_math(void);
+void obs_ref_dump_data(void);
+void obs_ref_dump_media(void);
 
 int main(int argc, char *argv[])
 {
@@ -65,12 +67,21 @@ int main(int argc, char *argv[])
 		obs_ref_dump_math();
 		return 0;
 	}
-
-	if (argc == 2) {
-		printf("not implemented yet: %s\n", argv[1]);
-		return 1;
+	if (argc == 2 && strcmp(argv[1], "data") == 0) {
+		obs_ref_dump_data();
+		return 0;
+	}
+	if (argc == 2 && strcmp(argv[1], "media") == 0) {
+		obs_ref_dump_media();
+		return 0;
+	}
+	if (argc == 2 && strcmp(argv[1], "all") == 0) {
+		obs_ref_dump_math();
+		obs_ref_dump_data();
+		obs_ref_dump_media();
+		return 0;
 	}
 
-	fprintf(stderr, "usage: obs-ref-dump [--list | <area>]\n");
+	fprintf(stderr, "usage: obs-ref-dump [--list | math | data | media | all]\n");
 	return 1;
 }

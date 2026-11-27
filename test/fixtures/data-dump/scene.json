@@ -1,0 +1,28 @@
+{
+  "scene": "Main Scene",
+  "sources": [
+    {
+      "id": "color_source",
+      "name": "bg",
+      "settings": { "color": 16711680, "opacity": 100 },
+      "filters": []
+    },
+    {
+      "id": "text_source",
+      "name": "title",
+      "settings": {
+        "text": "Hello OBS",
+        "font": "Arial",
+        "size": 24.0,
+        "color": 4294967295,
+        "outline": 2,
+        "shadow": 0
+      },
+      "filters": [
+        { "id": "gain_filter", "settings": { "db": 3.5 } }
+      ]
+    }
+  ],
+  "transition": "cut",
+  "bounds": { "x": 10.5, "y": -20, "w": 1280, "h": 720 }
+}

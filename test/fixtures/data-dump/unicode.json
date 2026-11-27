@@ -1,0 +1,11 @@
+{
+  "name": "unicode",
+  "text": "Grüße — 日本語 — émôjî",
+  "control": "tab\there\nnewline",
+  "quotes": "she said \"hi\"",
+  "backslash": "C:\\path\\to\\file",
+  "unicode_escapes": "\u0041\u00e9\u4e2d",
+  "numbers": [ 1, -2, 3.25, 0, 1e10, 1.5e-5 ],
+  "nested_arrays": [ [1, 2], [3, 4], [] ],
+  "mixed": [ { "a": true }, { "b": null } ]
+}

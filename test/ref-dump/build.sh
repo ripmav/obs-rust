@@ -21,6 +21,8 @@ cc -std=gnu11 -O0 -g -Wall -Wno-unused-function -Wno-deprecated-declarations \
 	-I"$LIBOBS" -I"$JANSSON/usr/include" -I"$LIBOBS/util" -I"$JANSSON/include" \
 	"$here/ref-dump.c" \
 	"$here/ref-dump-math.c" \
+	"$here/ref-dump-data.c" \
+	"$here/ref-dump-media.c" \
 	"$LIBOBS"/graphics/{vec2,vec3,vec4,matrix3,matrix4,quat,axisang,plane,bounds,math-extra}.c \
 	"$LIBOBS"/obs-data.c "$LIBOBS"/callback/calldata.c \
 	"$LIBOBS"/media-io/{format-conversion,video-frame,video-matrices,video-fourcc}.c \
