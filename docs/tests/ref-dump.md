@@ -30,7 +30,14 @@ Notes:
   `sinf`/`cosf` are not ULP-stable across the 3-OS CI matrix, which would
   make the mix goldens non-reproducible. The mix arithmetic itself is the
   C code verbatim.
-- Build: `bash test/ref-dump/build.sh` (env: `LIBOBS`, `JANSSON`, `OUT` —
-  CI passes the job's pinned checkout and jansson prefix). The CMake-target
+- Cross-arch: the goldens were generated on aarch64 and verified
+  byte-identical on x86_64 (cross-gcc + qemu user-mode) for all three
+  dumps. The first cross run caught a dumper bug (C argument-evaluation
+  order: `printf(…, calldata_get_int(cd, "i", &i), i)` reads `i` without
+  a sequence point vs the write — x86 gcc reads before the call, aarch64
+  after; fixed with statement-level sequence points, ODD L89).
+- Build: `bash test/ref-dump/build.sh` (env: `LIBOBS`, `JANSSON`, `OUT`,
+  `CC`, `CONFORMANCE_EXTRA_CFLAGS` — CI passes the job's pinned checkout,
+  jansson prefix and the simde include for x86_64). The CMake-target
   half of P0-14.1 is a documented deviation (ODD L89): the standalone
   binary is the single build path.

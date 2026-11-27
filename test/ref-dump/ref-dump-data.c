@@ -315,15 +315,20 @@ static void obs_ref_dump_calldata(void)
 	calldata_set_data(cd, "raw", raw, sizeof(raw));
 
 	long long i = 0;
-	printf("get_int(i)=%d val=%lld\n", (int)calldata_get_int(cd, "i", &i), i);
+	bool gi = calldata_get_int(cd, "i", &i);
+	printf("get_int(i)=%d val=%lld\n", (int)gi, i);
 	double f = 0;
-	printf("get_float(f)=%d val=%.9g\n", (int)calldata_get_float(cd, "f", &f), f);
+	bool gf = calldata_get_float(cd, "f", &f);
+	printf("get_float(f)=%d val=%.9g\n", (int)gf, f);
 	bool b = false;
-	printf("get_bool(b)=%d val=%d\n", (int)calldata_get_bool(cd, "b", &b), (int)b);
+	bool gb = calldata_get_bool(cd, "b", &b);
+	printf("get_bool(b)=%d val=%d\n", (int)gb, (int)b);
 	const char *s = NULL;
-	printf("get_string(s)=%d val=[%s]\n", (int)calldata_get_string(cd, "s", &s), s ? s : "(null)");
+	bool gs = calldata_get_string(cd, "s", &s);
+	printf("get_string(s)=%d val=[%s]\n", (int)gs, s ? s : "(null)");
 	void *p = NULL;
-	printf("get_ptr(p)=%d val=0x%lx\n", (int)calldata_get_ptr(cd, "p", &p), (unsigned long)(uintptr_t)p);
+	bool gp = calldata_get_ptr(cd, "p", &p);
+	printf("get_ptr(p)=%d val=0x%lx\n", (int)gp, (unsigned long)(uintptr_t)p);
 	/* calldata_get_data requires the EXACT stored size (C quirk, pinned) */
 	uint8_t out[6] = {0};
 	bool rd = calldata_get_data(cd, "raw", out, sizeof(out));
@@ -335,11 +340,14 @@ static void obs_ref_dump_calldata(void)
 
 	/* type mismatch + unset */
 	long long wrong = 0;
-	printf("get_int(s) type-mismatch=%d val=%lld\n", (int)calldata_get_int(cd, "s", &wrong), wrong);
+	bool gw = calldata_get_int(cd, "s", &wrong);
+	printf("get_int(s) type-mismatch=%d val=%lld\n", (int)gw, wrong);
 	long long no = 0;
-	printf("get_int(missing)=%d val=%lld\n", (int)calldata_get_int(cd, "missing", &no), no);
+	bool gn = calldata_get_int(cd, "missing", &no);
+	printf("get_int(missing)=%d val=%lld\n", (int)gn, no);
 	const char *ns = NULL;
-	printf("get_string(missing)=%d val=[%s]\n", (int)calldata_get_string(cd, "missing", &ns), ns ? ns : "(null)");
+	bool gns = calldata_get_string(cd, "missing", &ns);
+	printf("get_string(missing)=%d val=[%s]\n", (int)gns, ns ? ns : "(null)");
 
 	/* 'call if you know your data is valid' getters: default on miss */
 	printf("calldata_int(missing)=%lld\n", calldata_int(cd, "missing"));
@@ -352,16 +360,18 @@ static void obs_ref_dump_calldata(void)
 
 	/* overwrite + zero-length data */
 	calldata_set_int(cd, "i", -1);
-	printf("after_set_int(i,-1): get_int(i)=%d val=%lld\n", (int)calldata_get_int(cd, "i", &i), i);
+	bool gi2 = calldata_get_int(cd, "i", &i);
+	printf("after_set_int(i,-1): get_int(i)=%d val=%lld\n", (int)gi2, i);
 	calldata_set_data(cd, "raw", NULL, 0);
 	uint8_t out2[16] = {0xAA};
-	printf("after_set_data(raw,NULL,0): get_data=%d byte0=%02x\n", (int)calldata_get_data(cd, "raw", out2, sizeof(out2)),
-	       out2[0]);
+	bool rd2 = calldata_get_data(cd, "raw", out2, sizeof(out2));
+	printf("after_set_data(raw,NULL,0): get_data=%d byte0=%02x\n", (int)rd2, out2[0]);
 
 	/* clear + get after clear */
 	calldata_clear(cd);
 	long long after = 0;
-	printf("after_clear get_int(i)=%d val=%lld\n", (int)calldata_get_int(cd, "i", &after), after);
+	bool ga = calldata_get_int(cd, "i", &after);
+	printf("after_clear get_int(i)=%d val=%lld\n", (int)ga, after);
 
 	calldata_destroy(cd);
 }
