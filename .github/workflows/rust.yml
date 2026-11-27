@@ -82,6 +82,13 @@ jobs:
         # exactly the C reference signatures; red on any drift. Needs only
         # cargo + python3 (both preinstalled) and the linked checkout.
         run: python3 test/conformance/cbindgen-header-diff.py
+      - name: corpus anonymiser (P0-18.1)
+        # P0-18.1 (WP-42): the anonymiser's seeded-secrets unit test (must
+        # find nothing in the anonymised output) + the gate that every
+        # committed corpus file is fully anonymised. Python stdlib only.
+        run: |
+          python3 test/fixtures/anonymise.py --self-test
+          python3 test/fixtures/anonymise.py --check test/fixtures/scenes/*.json
       - name: install system deps
         run: |
           sudo apt-get update

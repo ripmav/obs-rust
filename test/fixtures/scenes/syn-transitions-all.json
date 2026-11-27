@@ -1,0 +1,287 @@
+{
+    "name": "syn-transitions-all",
+    "sources": [
+        {
+            "prev_ver": 553648129,
+            "name": "A",
+            "uuid": "c0ffe000-0000-4000-8000-000000000030",
+            "id": "scene",
+            "versioned_id": "scene",
+            "settings": {
+                "id_counter": 1,
+                "custom_size": false,
+                "items": [
+                    {
+                        "name": "A",
+                        "source_uuid": "c0ffe000-0000-4000-8000-00000000002f",
+                        "visible": true,
+                        "locked": false,
+                        "rot": 0.0,
+                        "scale_ref": {
+                            "x": 1.0,
+                            "y": 1.0
+                        },
+                        "align": 5,
+                        "bounds_type": 0,
+                        "bounds_align": 0,
+                        "bounds_crop": false,
+                        "crop_left": 0,
+                        "crop_top": 0,
+                        "crop_right": 0,
+                        "crop_bottom": 0,
+                        "id": 1,
+                        "group_item_backup": false,
+                        "pos": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "pos_rel": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "scale": {
+                            "x": 1.0,
+                            "y": 1.0
+                        },
+                        "scale_rel": {
+                            "x": 1.0,
+                            "y": 1.0
+                        },
+                        "bounds": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "bounds_rel": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "scale_filter": "disable",
+                        "blend_method": "default",
+                        "blend_type": "normal",
+                        "show_transition": {
+                            "duration": 0
+                        },
+                        "hide_transition": {
+                            "duration": 0
+                        },
+                        "private_settings": {}
+                    }
+                ]
+            },
+            "mixers": 0,
+            "sync": 0,
+            "flags": 0,
+            "volume": 1.0,
+            "balance": 0.5,
+            "enabled": true,
+            "muted": false,
+            "push-to-mute": false,
+            "push-to-mute-delay": 0,
+            "push-to-talk": false,
+            "push-to-talk-delay": 0,
+            "hotkeys": {},
+            "deinterlace_mode": 0,
+            "deinterlace_field_order": 0,
+            "monitoring_type": 0,
+            "monitoring_enabled": false,
+            "private_settings": {}
+        },
+        {
+            "prev_ver": 553648129,
+            "name": "B",
+            "uuid": "c0ffe000-0000-4000-8000-000000000031",
+            "id": "scene",
+            "versioned_id": "scene",
+            "settings": {
+                "id_counter": 0,
+                "custom_size": false,
+                "items": []
+            },
+            "mixers": 0,
+            "sync": 0,
+            "flags": 0,
+            "volume": 1.0,
+            "balance": 0.5,
+            "enabled": true,
+            "muted": false,
+            "push-to-mute": false,
+            "push-to-mute-delay": 0,
+            "push-to-talk": false,
+            "push-to-talk-delay": 0,
+            "hotkeys": {},
+            "deinterlace_mode": 0,
+            "deinterlace_field_order": 0,
+            "monitoring_type": 0,
+            "monitoring_enabled": false,
+            "private_settings": {}
+        }
+    ],
+    "groups": [],
+    "scene_order": [
+        {
+            "name": "A"
+        },
+        {
+            "name": "B"
+        }
+    ],
+    "current_scene": "A",
+    "current_program_scene": "A",
+    "canvases": [],
+    "current_transition": "Fade",
+    "transition_duration": 400,
+    "transitions": [
+        {
+            "name": "Cut",
+            "id": "cut_transition",
+            "settings": {},
+            "transition_source_a": "",
+            "transition_alignment": 0,
+            "transition_mode": 0,
+            "transition_scale_type": 0,
+            "transition_cx": 0,
+            "transition_cy": 0
+        },
+        {
+            "name": "Fade",
+            "id": "fade_transition",
+            "settings": {
+                "color": 0,
+                "duration": 300
+            },
+            "transition_source_a": "Game Show",
+            "transition_alignment": 0,
+            "transition_mode": 0,
+            "transition_scale_type": 0,
+            "transition_cx": 0,
+            "transition_cy": 0
+        },
+        {
+            "name": "Fade to Black",
+            "id": "fade_to_color_transition",
+            "settings": {
+                "color": 0,
+                "duration": 500
+            },
+            "transition_source_a": "",
+            "transition_alignment": 0,
+            "transition_mode": 0,
+            "transition_scale_type": 0,
+            "transition_cx": 0,
+            "transition_cy": 0
+        },
+        {
+            "name": "Fade to White",
+            "id": "fade_to_color_transition",
+            "settings": {
+                "color": 4294967295,
+                "duration": 500
+            },
+            "transition_source_a": "",
+            "transition_alignment": 0,
+            "transition_mode": 0,
+            "transition_scale_type": 0,
+            "transition_cx": 0,
+            "transition_cy": 0
+        },
+        {
+            "name": "Swipe",
+            "id": "swipe_transition",
+            "settings": {
+                "duration": 400,
+                "direction": 1,
+                "angle": 0,
+                "fade": 10
+            },
+            "transition_source_a": "",
+            "transition_alignment": 0,
+            "transition_mode": 0,
+            "transition_scale_type": 0,
+            "transition_cx": 0,
+            "transition_cy": 0
+        },
+        {
+            "name": "Slide",
+            "id": "slide_transition",
+            "settings": {
+                "duration": 400,
+                "direction": 1,
+                "fade": 10
+            },
+            "transition_source_a": "",
+            "transition_alignment": 0,
+            "transition_mode": 0,
+            "transition_scale_type": 0,
+            "transition_cx": 0,
+            "transition_cy": 0
+        },
+        {
+            "name": "Wipe",
+            "id": "wipe_transition",
+            "settings": {
+                "image": ""
+            },
+            "transition_source_a": "",
+            "transition_alignment": 0,
+            "transition_mode": 0,
+            "transition_scale_type": 0,
+            "transition_cx": 0,
+            "transition_cy": 0
+        },
+        {
+            "name": "Stinger",
+            "id": "obs_stinger_transition",
+            "settings": {
+                "source": "",
+                "transition_id": 0,
+                "show_duration": 1000,
+                "fade_duration": 300
+            },
+            "transition_source_a": "",
+            "transition_alignment": 0,
+            "transition_mode": 0,
+            "transition_scale_type": 0,
+            "transition_cx": 0,
+            "transition_cy": 0
+        }
+    ],
+    "quick_transitions": [
+        {
+            "name": "Cut",
+            "duration": 300,
+            "hotkeys": [],
+            "id": 1,
+            "fade_to_black": false
+        },
+        {
+            "name": "Fade",
+            "duration": 300,
+            "hotkeys": [],
+            "id": 2,
+            "fade_to_black": false
+        },
+        {
+            "name": "Fade to Black",
+            "duration": 300,
+            "hotkeys": [
+                {
+                    "control": true,
+                    "key": "F9"
+                }
+            ],
+            "id": 3,
+            "fade_to_black": true
+        }
+    ],
+    "saved_projectors": [],
+    "preview_locked": false,
+    "scaling_enabled": false,
+    "scaling_level": 0,
+    "scaling_off_x": 0.0,
+    "scaling_off_y": 0.0,
+    "resolution": {
+        "x": 1920,
+        "y": 1080
+    },
+    "version": 2
+}
