@@ -200,6 +200,62 @@ jobs:
           diff -u test/abi-host/traces/trace.golden "$RUNNER_TEMP/abi-c/trace-c.txt"
           diff -u test/abi-host/traces/trace.golden "$RUNNER_TEMP/abi-rust/trace-rust.txt"
 
+  benchmarks:
+    name: benchmarks (P0-17 baseline)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+      - name: checkout OBS reference (pinned 33.0.1)
+        uses: actions/checkout@v7
+        with:
+          repository: obsproject/obs-studio
+          ref: 33.0.1
+          path: obs-studio
+      - name: link the reference into the repo
+        run: tools/link-obs-source.sh "${GITHUB_WORKSPACE}/obs-studio"
+      - name: simde (pinned)
+        run: |
+          git clone -q https://github.com/simd-everywhere/simde.git
+          cd simde && git checkout -q 24fa5420cd413621648063f04a09fa35c7afacf7
+      - name: C baseline runner
+        # P0-17.2/.3: builds test/ref-bench against the pinned 33.0.1 C
+        # sources (same env pattern as the reference-dump step) and runs
+        # the three C workloads -> canonical bench JSON (schema 1).
+        env:
+          CONFORMANCE_EXTRA_CFLAGS: >-
+            -I${{ github.workspace }}/simde
+        run: |
+          LIBOBS="$GITHUB_WORKSPACE/obs-studio/libobs" \
+            OUT="$RUNNER_TEMP/ref-bench" \
+            bash test/ref-bench/build.sh
+          "$RUNNER_TEMP/ref-bench" --runs 30 > ref-bench.json
+          cat ref-bench.json
+      - name: Rust gate (obs-math)
+        # The p017 bench in --gate mode: the same fixed workloads as the
+        # C runner -> canonical bench JSON (schema 1). The full criterion
+        # report (cargo bench -p obs-math --bench p017) is for local/PR
+        # review; the gate only needs the fixed-run numbers.
+        run: |
+          cargo bench -p obs-math --bench p017 -- --gate > rust-gate.json
+          cat rust-gate.json
+      - name: compare vs committed baseline (report mode)
+        # P0-17.5: the 2% regression gate. REPORT MODE for this first
+        # baseline commit; WP-46 (P1-32.1) flips it to blocking
+        # (drop --no-fail). A tracked bench >2% slower than the baseline
+        # is printed as REGRESSION.
+        run: python3 test/ref-bench/compare.py test/ref-bench/baseline.json \
+          --current ref-bench.json --current rust-gate.json --no-fail
+      - name: upload bench JSON
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: p017-bench-json
+          path: |
+            ref-bench.json
+            rust-gate.json
+
   c-swap:
     name: c-swap (obs-ffi non-test build)
     runs-on: ubuntu-latest

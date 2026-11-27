@@ -74,7 +74,7 @@ Start the PR stack with the `docs:` tasks (P0-01 to P0-06).
 - [ ] **P0-16 Headless smoke test** (M)
   - Do: script that starts OBS with `--headless`-equivalent (via test host), builds a scene with a colour source and a text source, records 5 s with `obs-ffmpeg-mux`, and checks the output with `ffprobe`.
   - Done when: runs in CI without a display (Xvfb or no-GUI host).
-- [ ] **P0-17 Benchmark harness** (M)
+- [x] **P0-17 Benchmark harness** (M) (WP-41, 2026-11-28: `test/ref-bench` C runner + `obs-math/benches/p017.rs` criterion benches + `compare.py` 2% gate in report mode + `docs/rust-rewrite/benchmarks.md` baseline; deviations: no C scene-render bench — graphics runtime wall, Rust stand-in over ported math; `obs-media-io/benches/` + Rust pixel/audio benches land with the Phase 2 ports; ODD L91)
   - Do: `criterion` benches plus a C baseline for: matrix multiply, pixel format conversion, audio mix of 8 tracks, scene render of 20 items.
   - Deliverables: baseline numbers stored in `docs/rust-rewrite/benchmarks.md`.
   - Done when: CI fails a PR on >2% regression of a tracked bench.

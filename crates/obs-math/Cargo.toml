@@ -10,6 +10,11 @@ rust-version.workspace = true
 name = "simd"
 harness = false
 
+# P0-17.2/.3 (WP-41): the P0-17 Rust workloads (criterion + --gate JSON).
+[[bench]]
+name = "p017"
+harness = false
+
 [lints]
 workspace = true
 

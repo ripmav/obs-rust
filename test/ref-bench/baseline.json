@@ -1,0 +1,24 @@
+{
+  "schema": 1,
+  "generated": {
+    "date": "2026-11-27",
+    "git": "pending",
+    "machine": "host aarch64 (local) \u2014 replaced by the CI x86_64 runner numbers in the follow-up commit",
+    "cpu": "Raspberry Pi 5 Model B Rev 1.0"
+  },
+  "benches": {
+    "audio_mix": {
+      "c": 26796
+    },
+    "matmul4": {
+      "c": 22,
+      "rust": 14.853225
+    },
+    "nv12_to_rgb": {
+      "c": 1901184
+    },
+    "scene_render": {
+      "rust": 2259.0
+    }
+  }
+}
