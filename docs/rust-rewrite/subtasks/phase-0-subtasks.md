@@ -192,14 +192,19 @@ Facts verified in this checkout that shape Phase 0:
 
 ### P0-15 ABI conformance test plugin
 
-- [ ] **P0-15.1 Extend the existing plugin**
+- [x] **P0-15.1 Extend the existing plugin**
   - Files: `test/test-input/test-input.c` (23), `test-filter.c` (71)
   - Steps: add trace logging to each callback (`create`, `update`, `video_tick`, `video_render`, `get_properties`, `destroy`); do not break the existing tests.
   - Done when: existing test-input users unaffected.
-- [ ] **P0-15.2 Encoder/output/service** — Files: `test/test-input/test-input.c` (extend `obs_module_load`), registration API in `libobs/obs-module.h` (201). Add a dummy encoder, output and service (`obs_register_encoder/output/service`). Done when: all register in `obs_module_load`.
-- [ ] **P0-15.3 Test host** — Files: `test/abi-host/abi-host.c` (new executable), `test/abi-host/CMakeLists.txt` (new). C program loads the module with `obs_open_module`/`obs_init_module`, creates one object of each kind, drives 10 ticks, writes trace.
-- [ ] **P0-15.4 Expected traces** — Files: `test/abi-host/traces/*.golden` (new). Commit trace goldens; compare in cmocka/ctest. Done when: stable across runs.
-- [ ] **P0-15.5 CI wiring** — Files: `.github/workflows/`, `test/CMakeLists.txt` (15). `ctest -R abi`. Done when: runs for `OBS_ENABLE_RUST` ON and OFF.
+  - **Deviation (WP-40, 2026-11-28):** delivered as `test/abi-host/trace-plugin.c` (new plugin, always C) instead of extending `test/test-input` — the pinned obs-studio tree is read-only reference (no patch regeneration); trace logging is on every callback (create/update/video_tick/video_render/get_properties/destroy + encoder/output/service callbacks) via the single `abi_trace` channel; existing test-input users are unaffected (untouched) (ODD L90).
+- [x] **P0-15.2 Encoder/output/service** — Files: `test/test-input/test-input.c` (extend `obs_module_load`), registration API in `libobs/obs-module.h` (201). Add a dummy encoder, output and service (`obs_register_encoder/output/service`). Done when: all register in `obs_module_load`.
+  - **Deviation (WP-40, 2026-11-28):** dummy encoder `abi_enc`, output `abi_out`, service `abi_svc` registered in `obs_module_load` of `test/abi-host/trace-plugin.c` (same rationale as P0-15.1); 33.0.1 registration requirements honoured (`get_name` for the source, `encoded_packet` for the encoded output, `get_protocol` for the service) (ODD L90).
+- [x] **P0-15.3 Test host** — Files: `test/abi-host/abi-host.c` (new executable), `test/abi-host/CMakeLists.txt` (new). C program loads the module with `obs_open_module`/`obs_init_module`, creates one object of each kind, drives 10 ticks, writes trace.
+  - **Deviation (WP-40, 2026-11-28):** `test/abi-host/build.sh` (modes `c`/`rust`) instead of a CMake target — the CMake half needs a full OBS configure (GL/glib/libcurl/ffmpeg) that CI does not verify; `abi-host.c` loads the module with `obs_open_module`/`obs_init_module`, creates one object of each kind, drives 10 ticks + renders, writes the trace (ODD L90).
+- [x] **P0-15.4 Expected traces** — Files: `test/abi-host/traces/*.golden` (new). Commit trace goldens; compare in cmocka/ctest. Done when: stable across runs.
+  - **Deviation (WP-40, 2026-11-28):** golden at `test/abi-host/traces/trace.golden` (152 lines, generated from the `c` build, stable across runs), compared by plain `diff` in the CI step instead of cmocka/ctest (no CMake); the `rust` build's trace must equal it byte-for-byte (ODD L90).
+- [x] **P0-15.5 CI wiring** — Files: `.github/workflows/`, `test/CMakeLists.txt` (15). `ctest -R abi`. Done when: runs for `OBS_ENABLE_RUST` ON and OFF.
+  - **Deviation (WP-40, 2026-11-28):** step "ABI conformance (C vs Rust)" in the `conformance` job of `.github/workflows/rust.yml` (after the reference-dump step) instead of `ctest -R abi` — builds both modes (`c` = OBS_ENABLE_RUST "OFF", `rust` = "ON" swap build) against the pinned 33.0.1 checkout, runs both hosts, diffs both traces against each other and the golden (ODD L90).
 
 ### P0-16 Headless smoke test
 

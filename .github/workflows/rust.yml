@@ -164,6 +164,41 @@ jobs:
             diff -u "$RUNNER_TEMP/refdump/$area.golden-stripped" "$RUNNER_TEMP/refdump/$area.out" || status=1
           done
           exit "$status"
+      - name: "ABI conformance (C vs Rust): build both modes, run, diff traces"
+        # P0-15 (WP-40): the trace plugin (test/abi-host/trace-plugin.c)
+        # is loaded with obs_open_module/obs_init_module in BOTH builds of
+        # the OBS_ENABLE_RUST pair — all-C ("OFF") and the Rust-staticlib
+        # swap ("ON", the 17-file swap set's 11 mini-build files dropped +
+        # target/release/libobs_ffi.a), one object of each kind created,
+        # a fixed workload driven. The traces must be byte-identical to
+        # each other and to the committed golden; any difference is a real
+        # finding in the ported module (do not edit the golden to hide it).
+        env:
+          CONFORMANCE_EXTRA_CFLAGS: >-
+            -I${{ github.workspace }}/simde
+            -I${{ runner.temp }}/jansson/include
+            -L${{ runner.temp }}/jansson/lib
+            -I/usr/include/glib-2.0 -I/usr/include/gio-2.0 -I/usr/include/gio-unix-2.0
+            -I/usr/lib/x86_64-linux-gnu/glib-2.0/include
+        run: |
+          mkdir -p "$RUNNER_TEMP/abi-c" "$RUNNER_TEMP/abi-rust"
+          LIBOBS="$GITHUB_WORKSPACE/obs-studio/libobs" \
+            JANSSON="$RUNNER_TEMP/jansson" \
+            OUT="$RUNNER_TEMP/abi-c" \
+            bash test/abi-host/build.sh c
+          "$RUNNER_TEMP/abi-c/abi-host" "$RUNNER_TEMP/abi-c/trace-c.txt"
+          # the swap step builds the staticlib for the swap areas; make
+          # sure it exists in case the area list ever drops every swap area
+          [ -f target/release/libobs_ffi.a ] || \
+            cargo build -p obs-ffi --release --features c-swap
+          LIBOBS="$GITHUB_WORKSPACE/obs-studio/libobs" \
+            JANSSON="$RUNNER_TEMP/jansson" \
+            OUT="$RUNNER_TEMP/abi-rust" \
+            bash test/abi-host/build.sh rust
+          "$RUNNER_TEMP/abi-rust/abi-host" "$RUNNER_TEMP/abi-rust/trace-rust.txt"
+          diff -u "$RUNNER_TEMP/abi-c/trace-c.txt" "$RUNNER_TEMP/abi-rust/trace-rust.txt"
+          diff -u test/abi-host/traces/trace.golden "$RUNNER_TEMP/abi-c/trace-c.txt"
+          diff -u test/abi-host/traces/trace.golden "$RUNNER_TEMP/abi-rust/trace-rust.txt"
 
   c-swap:
     name: c-swap (obs-ffi non-test build)

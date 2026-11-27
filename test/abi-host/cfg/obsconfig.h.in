@@ -1,0 +1,16 @@
+/* Configured by build.sh (sed) into <OUT>/obsconfig.h — do not edit.
+ *
+ * Minimal stand-in for the CMake-generated obsconfig.h (WP-40 scope cut,
+ * documented in the README): only the macros the mini build consumes.
+ * OBS_DATA_PATH is absolute (the harness data dir next to the binaries),
+ * so find_libobs_data_file() resolves the .effect files there.
+ */
+#pragma once
+
+#define OBS_DATA_PATH "@OBS_DATA_PATH@"
+#define OBS_PLUGIN_PATH "@OBS_PLUGIN_PATH@"
+#define OBS_PLUGIN_DESTINATION "@OBS_PLUGIN_DESTINATION@"
+#define OBS_INSTALL_PREFIX "@OBS_INSTALL_PREFIX@"
+
+#define OBS_RELEASE_CANDIDATE 0
+#define OBS_BETA 0

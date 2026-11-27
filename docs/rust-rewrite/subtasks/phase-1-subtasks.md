@@ -233,7 +233,8 @@ Corrections to the earlier plan, verified in the tree: the ring buffer is `libob
 - [ ] **P1-27.2 Simple kinds** — bool, int, float, text (+types), path (+filters), button (S-015 §5). Vectors: `test/conformance/scripts/props/`. Done when: each reachable via ABI test. — **reopened 2026-11-21:** Done-when needs the ABI plugin test (P0-15/P1-27.5), absent
 - [ ] **P1-27.3 Complex kinds** — list (string/int/float, disabled items), editable list, font, color, frame rate (ranges/options), group. Pitfall: S-015 Q-3 — `list_add_*` on a wrong format returns 0 (not an error). Done when: same. — **reopened 2026-11-21:** Done-when needs the ABI plugin test (P0-15/P1-27.5), absent
 - [x] **P1-27.4 Callbacks** — modified, button clicked, enabled/visible. Pitfall: S-015 Q-5 — v1 beats v2 when both are set; `apply_settings` passes its own root, `modified`/`button_clicked` pass the top-most container. Done when: callback returns `true` triggers refresh.
-- [ ] **P1-27.5 ABI test** — extend the plugin of P0-15 (`test/test-input/`).
+- [x] **P1-27.5 ABI test** — extend the plugin of P0-15 (`test/test-input/`).
+  - **Delivered (WP-40, 2026-11-28):** `test/abi-host/trace-plugin.c` `get_properties` builds every S-015 §5 property kind (bool, int, float, text +types/word-wrap, path +filter, list string/int/float/bool incl. disabled items, editable list, font, color, frame rate, button, group) with distinct ids + non-default values, all observable in the C-vs-Rust byte-identical trace (`traces/trace.golden`); P1-27.2/.3 stay open for WP-43 (the Rust property ports are not in the swap set yet — the identity test certifies the harness they will run under) (ODD L90).
 - [ ] **P1-27.6 Apply recipe (added)** — Files: `libobs/CMakeLists.txt` (396), `obs-ffi` shim. Vectors: `test/conformance/scripts/props/`.
 
 ### P1-28 Hotkey data layer
