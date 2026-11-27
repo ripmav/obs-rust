@@ -9,19 +9,21 @@
 #   LIBOBS=... OUT=... bash build.sh c     # all-C build (OBS_ENABLE_RUST "OFF")
 #   LIBOBS=... OUT=... bash build.sh rust  # Rust-staticlib swap build
 #                                          # (OBS_ENABLE_RUST "ON"): the
-#                                          # 18-file swap set of the OBS_ENABLE_RUST
+#                                          # 27-file swap set of the OBS_ENABLE_RUST
 #                                          # CMake patch — of those, exactly the
-#                                          # 12 util files this mini build compiles
+#                                          # 21 files this mini build compiles
 #                                          # are dropped and
 #                                          # target/release/libobs_ffi.a is linked
 #
-# The 12 dropped files (kept in sync with the apply_swap pattern of
-# test/conformance/run.sh; the other 6 of the 18 — platform-nix-dbus/portal
+# The 21 dropped files (kept in sync with the apply_swap pattern of
+# test/conformance/run.sh; the other 6 of the 27 — platform-nix-dbus/portal
 # and shared/{opts-parser,bpm,happy-eyeballs,file-updater} — are not
 # compiled by the mini build):
 #   util/{lexer,cf-lexer,cf-parser,text-lookup,base,threading-posix,
 #         bitstream,array-serializer,file-serializer,
 #         buffered-file-serializer,source-profiler,bmem}.c
+#   graphics/{vec3,vec4,quat,axisang,matrix3,matrix4,plane,bounds,
+#         math-extra}.c
 # obs-data.c / obs-properties.c / graphics stay C in BOTH builds (they are
 # not in the swap set).
 #
@@ -96,9 +98,7 @@ core=(
 	"$LIBOBS"/obs-source-deinterlace.c "$LIBOBS"/obs-hotkey.c "$LIBOBS"/obs-hotkey-name-map.c
 	"$LIBOBS"/obs-missing-files.c "$LIBOBS"/obs-core-modules-loader-nix.c
 	"$LIBOBS"/callback/calldata.c "$LIBOBS"/callback/decl.c "$LIBOBS"/callback/signal.c "$LIBOBS"/callback/proc.c
-	"$LIBOBS"/graphics/matrix3.c "$LIBOBS"/graphics/matrix4.c "$LIBOBS"/graphics/vec2.c "$LIBOBS"/graphics/vec3.c
-	"$LIBOBS"/graphics/vec4.c "$LIBOBS"/graphics/quat.c "$LIBOBS"/graphics/axisang.c "$LIBOBS"/graphics/plane.c
-	"$LIBOBS"/graphics/bounds.c "$LIBOBS"/graphics/math-extra.c
+	"$LIBOBS"/graphics/vec2.c
 	"$LIBOBS"/media-io/video-frame.c "$LIBOBS"/media-io/format-conversion.c "$LIBOBS"/media-io/video-matrices.c
 	"$LIBOBS"/media-io/video-fourcc.c "$LIBOBS"/media-io/audio-io.c "$LIBOBS"/media-io/video-io.c
 	"$LIBOBS"/audio-monitoring/null/null-audio-monitoring.c
@@ -117,13 +117,18 @@ util=(
 	"$LIBOBS"/util/pipe-posix.c "$LIBOBS"/util/platform.c "$LIBOBS"/util/platform-nix.c
 )
 
-# The 12 swapped util files (OBS_ENABLE_RUST swap set ∩ mini build).
+# The 21 swapped files (OBS_ENABLE_RUST swap set ∩ mini build; the math
+# nine since P1-15.4/P1-16.5/P1-17.4/P1-18.4 (WP-43) — vec2.c stays in
+# core: it is an empty TU, all its helpers are static inline in vec2.h).
 swap=(
 	"$LIBOBS"/util/lexer.c "$LIBOBS"/util/cf-lexer.c "$LIBOBS"/util/cf-parser.c
 	"$LIBOBS"/util/text-lookup.c "$LIBOBS"/util/base.c "$LIBOBS"/util/threading-posix.c
 	"$LIBOBS"/util/bitstream.c "$LIBOBS"/util/array-serializer.c "$LIBOBS"/util/file-serializer.c
 	"$LIBOBS"/util/buffered-file-serializer.c "$LIBOBS"/util/source-profiler.c
 	"$LIBOBS"/util/bmem.c
+	"$LIBOBS"/graphics/vec3.c "$LIBOBS"/graphics/vec4.c "$LIBOBS"/graphics/quat.c
+	"$LIBOBS"/graphics/axisang.c "$LIBOBS"/graphics/matrix3.c "$LIBOBS"/graphics/matrix4.c
+	"$LIBOBS"/graphics/plane.c "$LIBOBS"/graphics/bounds.c "$LIBOBS"/graphics/math-extra.c
 )
 
 rustlink=()

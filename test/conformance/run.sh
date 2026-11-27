@@ -143,13 +143,17 @@ fi
 # below; and — P1-12.3 (WP-37) — source-profiler.c (S-055 U3); and —
 # P1-01.3 (WP-43) — bmem.c (the allocator; from now on every build that
 # links the staticlib must drop every swapped source: the staticlib’s own
-# exports supersede the C definitions, duplicate symbols otherwise)).
+# exports supersede the C definitions, duplicate symbols otherwise));
+# and — P1-15.4/P1-16.5/P1-17.4/P1-18.4 (WP-43) — the nine exported
+# graphics math files (graphics/{vec3,vec4,quat,axisang,matrix3,matrix4,
+# plane,bounds,math-extra}.c; vec2.c stays: its helpers are static inline
+# in vec2.h).
 apply_swap() {
 	local -n _srcs=$1
 	local f n=${#_srcs[@]} out=()
 	for f in "${_srcs[@]}"; do
 		case "$f" in
-		*"libobs/util/lexer.c" | *"libobs/util/cf-lexer.c" | *"libobs/util/cf-parser.c" | *"libobs/util/text-lookup.c" | *"libobs/util/base.c" | *"libobs/util/threading-posix.c" | *"libobs/util/platform-nix-dbus.c" | *"libobs/util/platform-nix-portal.c" | *"libobs/util/bitstream.c" | *"libobs/util/array-serializer.c" | *"libobs/util/file-serializer.c" | *"libobs/util/buffered-file-serializer.c" | *"libobs/util/source-profiler.c" | *"libobs/util/bmem.c" | *"shared/opts-parser/opts-parser.c" | *"shared/bpm/bpm.c" | *"shared/happy-eyeballs/happy-eyeballs.c" | *"shared/file-updater/file-updater/file-updater.c") SWAPPED=1 ;;
+		*"libobs/util/lexer.c" | *"libobs/util/cf-lexer.c" | *"libobs/util/cf-parser.c" | *"libobs/util/text-lookup.c" | *"libobs/util/base.c" | *"libobs/util/threading-posix.c" | *"libobs/util/platform-nix-dbus.c" | *"libobs/util/platform-nix-portal.c" | *"libobs/util/bitstream.c" | *"libobs/util/array-serializer.c" | *"libobs/util/file-serializer.c" | *"libobs/util/buffered-file-serializer.c" | *"libobs/util/source-profiler.c" | *"libobs/util/bmem.c" | *"libobs/graphics/vec3.c" | *"libobs/graphics/vec4.c" | *"libobs/graphics/quat.c" | *"libobs/graphics/axisang.c" | *"libobs/graphics/matrix3.c" | *"libobs/graphics/matrix4.c" | *"libobs/graphics/plane.c" | *"libobs/graphics/bounds.c" | *"libobs/graphics/math-extra.c" | *"shared/opts-parser/opts-parser.c" | *"shared/bpm/bpm.c" | *"shared/happy-eyeballs/happy-eyeballs.c" | *"shared/file-updater/file-updater/file-updater.c") SWAPPED=1 ;;
 		*) out+=("$f") ;;
 		esac
 	done
@@ -227,7 +231,18 @@ for area in "${!runner_sources[@]}"; do
 			else
 				actual="$build/$name.actual"
 				"$build/$area-runner" "$script" >"$actual"
-				if ! diff -u "$out" "$actual" >/dev/null; then
+				# math/math2: the values are printed with %.9g and compared
+				# with the S-008 section-2 tolerance (the C reference uses
+				# SSE; the Rust bridge may drift in the last ulp — Q-5).
+				if [ "$area" = math ] || [ "$area" = math2 ]; then
+					if ! python3 "$here/math-diff.py" "$out" "$actual"; then
+						echo "FAIL $area/$name" >&2
+						diff -u "$out" "$actual" 2>&1 | head -40 >&2
+						status=1
+					else
+						echo "ok   $area/$name"
+					fi
+				elif ! diff -u "$out" "$actual" >/dev/null; then
 					echo "FAIL $area/$name" >&2
 					diff -u "$out" "$actual" 2>&1 | head -40 >&2
 					status=1

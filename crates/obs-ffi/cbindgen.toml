@@ -32,6 +32,11 @@ exclude = [
     # abi_darray.rs — the C shim's bcrash (R-A13 OOM path; same symbol as
     # abi_platform's, a separate extern block per module).
     # (same name as above — cbindgen dedupes by name)
+    # abi_math.rs — matrix4_mul_4x3_only: internal to the C matrix4.c,
+    # declared in NO C header; the conformance math_runner.c declares it
+    # locally. No reference declaration to diff against
+    # (the bitstream_reader_read_bit precedent).
+    "matrix4_mul_4x3_only",
     # abi_bitstream.rs — bitstream_reader_read_bit: linkable in the C
     # reference (bitstream.c) but declared in NO C header; the conformance
     # runner declares it locally (serial_runner.c). No reference declaration
@@ -138,3 +143,13 @@ exclude = [
     "os_fread_utf8",
     "fclose",
 ]
+
+# The math bridges (WP-43, P1-15.4) type their pointers as the repr(C)
+# obs_math mirrors (Vec3, Quat, ...) — defined in the obs-math dependency,
+# so cbindgen must parse dependencies to see their definitions.
+[parse]
+parse_deps = true
+# Only obs-math: the other dependencies' types never appear in the C ABI
+# (and external crates such as the cc build-dep contain types cbindgen
+# cannot render).
+include = ["obs-math"]

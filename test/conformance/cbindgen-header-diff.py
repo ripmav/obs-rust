@@ -28,7 +28,7 @@ The diff compares FUNCTION DECLARATIONS ONLY. Intentionally out of scope:
   `struct dbus_sleep_info`, `struct portal_inhibit_info` (aliased below).
 
 Reference declarations in scope (the exact set the bridge must provide,
-92 in total):
+172 in total):
   util/bmem.h                   6  EXPORT (WP-43, P1-01.3)
   util/text-lookup.h             4  EXPORT
   util/threading.h              14 EXPORT + the two pthread_mutex_init_* static inlines
@@ -48,6 +48,19 @@ Reference declarations in scope (the exact set the bridge must provide,
   util/source-profiler.h          4  EXPORT (WP-37, P1-12.3)
   obs-internal.h                 11 extern source_profiler_* declarations
                                  (WP-37, P1-12.3 — the internal API)
+  graphics/vec3.h                 8  EXPORT (WP-43, P1-15.4)
+  graphics/vec4.h                 2  EXPORT (WP-43, P1-15.4)
+  graphics/quat.h                11  EXPORT (WP-43, P1-15.4)
+  graphics/axisang.h              1  EXPORT (WP-43, P1-16.4)
+  graphics/matrix3.h             11  EXPORT (WP-43, P1-16.5)
+  graphics/matrix4.h             17  EXPORT (WP-43, P1-16.5 —
+                                 matrix4_mul_4x3_only is internal to the
+                                 .c, declared in no header, excluded from
+                                 the generated header in cbindgen.toml)
+  graphics/plane.h                7  EXPORT (WP-43, P1-17.4)
+  graphics/bounds.h              16  EXPORT (WP-43, P1-18.4)
+  graphics/math-extra.h           7  EXPORT (WP-43, P1-18.4)
+  (graphics/vec2.h is out of scope: all its helpers are static inline)
   (shared/happy-eyeballs: build_addr_list is file-local static in the .c —
   no reference declaration, the conformance runner declares it in swap
   mode; the bitstream_reader_read_bit precedent, excluded from the
@@ -111,6 +124,18 @@ ALIASES = {
     # for its generic DARRAY view); the alias includes the `struct` prefix
     # so both sides normalise identically.
     "darray": "structdarray_c",
+    # WP-43 (P1-15.4/P1-16.5/P1-17.4/P1-18.4): the math struct tags — the
+    # C headers use lowercase `struct vec3` & co, cbindgen renders the
+    # Rust mirrors as `struct Vec3` & co; the alias normalises both sides.
+    "vec2": "structVec2",
+    "vec3": "structVec3",
+    "vec4": "structVec4",
+    "quat": "structQuat",
+    "axisang": "structAxisAng",
+    "matrix3": "structMatrix3",
+    "matrix4": "structMatrix4",
+    "plane": "structPlane",
+    "bounds": "structBounds",
 }
 # enum parameter types that are plain `int`s in C (the bridges take c_int).
 ENUM_AS_INT = {"os_event_type", "ignore_whitespace"}
@@ -144,6 +169,21 @@ REFS = [
     # source_profiler_* externs (obs-internal.h; the name filter below).
     ("libobs/util/source-profiler.h", ("export",)),
     ("libobs/obs-internal.h", ("extern",)),
+    # WP-43 (P1-15.4/P1-16.5/P1-17.4/P1-18.4): the nine exported graphics
+    # math headers — the 80 EXPORT declarations the math bridge must
+    # provide (matrix4.h has 17: `matrix4_mul_4x3_only` is internal to
+    # matrix4.c, declared in no header, excluded from the generated
+    # header in cbindgen.toml). vec2.h is out of scope (all its helpers
+    # are static inline).
+    ("libobs/graphics/vec3.h", ("export",)),
+    ("libobs/graphics/vec4.h", ("export",)),
+    ("libobs/graphics/quat.h", ("export",)),
+    ("libobs/graphics/axisang.h", ("export",)),
+    ("libobs/graphics/matrix3.h", ("export",)),
+    ("libobs/graphics/matrix4.h", ("export",)),
+    ("libobs/graphics/plane.h", ("export",)),
+    ("libobs/graphics/bounds.h", ("export",)),
+    ("libobs/graphics/math-extra.h", ("export",)),
 ]
 # The only `extern` declarations in scope: the six dbus_/portal_inhibit*
 # symbols the platform bridge provides and the eleven source_profiler_*

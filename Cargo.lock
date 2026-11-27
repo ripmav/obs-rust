@@ -588,6 +588,7 @@ dependencies = [
  "log",
  "obs-bpm",
  "obs-file-updater",
+ "obs-math",
  "obs-netutil",
  "obs-util",
  "obs-util-small",

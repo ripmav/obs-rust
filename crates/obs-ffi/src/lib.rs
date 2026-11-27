@@ -36,6 +36,8 @@ pub mod abi_common;
 pub mod abi_darray;
 #[cfg(any(test, feature = "c-swap"))]
 pub mod abi_deque;
+#[cfg(any(test, feature = "c-swap"))]
+pub mod abi_math;
 // P1-33.1 (WP-34): the BPM injection bridge (S-024 M8).
 #[cfg(any(test, feature = "c-swap"))]
 pub mod abi_bpm;
