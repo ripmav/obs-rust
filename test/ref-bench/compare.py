@@ -15,6 +15,13 @@ Usage:
   --no-fail   report mode: print the table but exit 0 even on regression
               (used by CI until WP-46 flips the gate to blocking).
 
+CPU awareness: the threshold only applies when the current run's CPU
+model (JSON "cpu" field) matches the baseline's "generated.cpu".
+GitHub's ubuntu-latest runners are heterogeneous (EPYC 9V45 vs EPYC
+7763 are 1.5-3x apart), so cross-model deltas are reported as
+informational ("info (different CPU)") and never fail; a missing bench
+still fails on any CPU (ODD L91).
+
 Exit codes: 0 = no regression above the threshold (or --no-fail),
 1 = regression / missing bench, 2 = bad input.
 
@@ -28,6 +35,7 @@ import tempfile
 
 
 def load_benches(path):
+    """Return ({(name, side): ns_per_op}, cpu) for a runner JSON (schema 1)."""
     with open(path) as f:
         doc = json.load(f)
     if doc.get("schema") != 1:
@@ -38,13 +46,21 @@ def load_benches(path):
     out = {}
     for name, b in doc.get("benches", {}).items():
         out[(name, side)] = float(b["ns_per_op"])
-    return out
+    return out, doc.get("cpu", "unknown")
 
 
-def compare(base, cur, max_regression):
-    """Return (rows, failures). rows: (name, side, base_ns, cur_ns|None, delta%|None, status)."""
+def compare(base, cur, cur_cpu, base_cpu, max_regression):
+    """Return (rows, failures, cpu_changed). rows: (name, side, base_ns, cur_ns|None, delta%|None, status).
+
+    A pair whose current CPU model differs from the baseline CPU model is
+    reported as informational (status "info (different CPU)") and never
+    fails: GitHub's ubuntu-latest runners are heterogeneous (e.g. EPYC
+    9V45 vs EPYC 7763, 1.5-3x apart), so cross-model deltas are hardware
+    noise, not code regressions (ODD L91). A missing bench still fails
+    regardless of CPU."""
     rows = []
     failures = []
+    cpu_changed = False
     for (name, side), base_ns in sorted(base.items()):
         val = cur.get((name, side))
         if val is None:
@@ -52,13 +68,16 @@ def compare(base, cur, max_regression):
             failures.append(f"{name}/{side}: missing from current output")
             continue
         delta = (val - base_ns) / base_ns * 100.0
-        if delta > max_regression:
+        if cur_cpu[(name, side)] != base_cpu:
+            cpu_changed = True
+            status = "info (different CPU)"
+        elif delta > max_regression:
             status = "REGRESSION"
             failures.append(f"{name}/{side}: +{delta:.2f}% > +{max_regression:g}%")
         else:
             status = "ok" if delta >= 0 else "faster"
         rows.append((name, side, base_ns, val, delta, status))
-    return rows, failures
+    return rows, failures, cpu_changed
 
 
 def print_table(rows, max_regression):
@@ -68,7 +87,7 @@ def print_table(rows, max_regression):
         cur = f"{val:.6g}" if val is not None else "-"
         d = f"{delta:+.2f}%" if delta is not None else "-"
         print(f"{name:<15} {side:<5} {base_ns:>14.6g} {cur:>14} {d:>8}  {status}")
-    print(f"(threshold: fail when slower than baseline by more than {max_regression:g}%)")
+    print(f"(threshold: fail when slower than baseline by more than {max_regression:g}% — same CPU model only)")
 
 
 def self_test():
@@ -102,15 +121,26 @@ def self_test():
         bp = os.path.join(tmp, "b.json")
         with open(bp, "w") as f:
             json.dump(base, f)
-        rows, failures = compare({("matmul4", "c"): 100.0, ("audio_mix", "c"): 200.0},
-                                 {("matmul4", "c"): 101.0, ("audio_mix", "c"): 180.0}, 2.0)
+        same_cpu = {("matmul4", "c"): "CPU-A", ("audio_mix", "c"): "CPU-A"}
+        rows, failures, _ = compare({("matmul4", "c"): 100.0, ("audio_mix", "c"): 200.0},
+                                    {("matmul4", "c"): 101.0, ("audio_mix", "c"): 180.0},
+                                    same_cpu, "CPU-A", 2.0)
         assert not failures, f"expected pass, got {failures}"
         assert len(rows) == 2
-        rows, failures = compare({("matmul4", "c"): 100.0, ("audio_mix", "c"): 200.0},
-                                 {("matmul4", "c"): 103.0, ("audio_mix", "c"): 200.0}, 2.0)
+        rows, failures, _ = compare({("matmul4", "c"): 100.0, ("audio_mix", "c"): 200.0},
+                                    {("matmul4", "c"): 103.0, ("audio_mix", "c"): 200.0},
+                                    same_cpu, "CPU-A", 2.0)
         assert len(failures) == 1 and "matmul4" in failures[0], f"expected matmul4 regression: {failures}"
-        rows, failures = compare({("matmul4", "c"): 100.0, ("audio_mix", "c"): 200.0},
-                                 {("matmul4", "c"): 101.0}, 2.0)
+        # different-CPU pair: a +300% delta is informational only, not a failure
+        other_cpu = {("matmul4", "c"): "CPU-B", ("audio_mix", "c"): "CPU-B"}
+        rows, failures, changed = compare({("matmul4", "c"): 100.0, ("audio_mix", "c"): 200.0},
+                                          {("matmul4", "c"): 400.0, ("audio_mix", "c"): 400.0},
+                                          other_cpu, "CPU-A", 2.0)
+        assert not failures and changed, f"expected informational different-CPU rows: {failures}"
+        assert all(r[5] == "info (different CPU)" for r in rows)
+        rows, failures, _ = compare({("matmul4", "c"): 100.0, ("audio_mix", "c"): 200.0},
+                                    {("matmul4", "c"): 101.0},
+                                    {("matmul4", "c"): "CPU-A"}, "CPU-A", 2.0)
         assert len(failures) == 1 and "audio_mix" in failures[0] and "missing" in failures[0], failures
         # the file-based path must round-trip the schema check
         op = os.path.join(tmp, "ok.json")
@@ -118,7 +148,7 @@ def self_test():
         for p, doc in ((op, ok_cur), (sp, slow_cur)):
             with open(p, "w") as f:
                 json.dump(doc, f)
-        assert load_benches(op) == {("matmul4", "c"): 101.0, ("audio_mix", "c"): 180.0}
+        assert load_benches(op) == ({("matmul4", "c"): 101.0, ("audio_mix", "c"): 180.0}, "unknown")
         try:
             bad = os.path.join(tmp, "bad.json")
             with open(bad, "w") as f:
@@ -127,7 +157,7 @@ def self_test():
             raise AssertionError("schema check did not fire")
         except ValueError:
             pass
-    print("self-test: ok (5/5)")
+    print("self-test: ok (6/6)")
     return 0
 
 
@@ -156,15 +186,22 @@ def main():
                 if side not in ("rust", "c"):
                     raise ValueError(f"baseline: unknown side {side!r}")
                 base[(name, side)] = float(ns)
+        base_cpu = base_doc.get("generated", {}).get("cpu", "unknown")
         cur = {}
+        cur_cpu = {}
         for p in args.current:
-            cur.update(load_benches(p))
+            benches, cpu = load_benches(p)
+            cur.update(benches)
+            cur_cpu.update({k: cpu for k in benches})
     except (ValueError, json.JSONDecodeError, KeyError, OSError) as e:
         print(f"compare.py: {e}", file=sys.stderr)
         return 2
 
-    rows, failures = compare(base, cur, args.max_regression)
+    rows, failures, cpu_changed = compare(base, cur, cur_cpu, base_cpu, args.max_regression)
     print_table(rows, args.max_regression)
+    if cpu_changed:
+        print(f"note: current CPU(s) differ from the baseline CPU ({base_cpu!r}) — "
+              "those deltas are informational only, not gated")
     if failures:
         if args.no_fail:
             print(f"REGRESSIONS (report mode, not failing): {failures}")

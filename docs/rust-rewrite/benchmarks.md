@@ -69,6 +69,14 @@ the cargo bench profile (opt-level 3). Both are x86-64-baseline ISA (no
 `-march=native` / no `target-feature=native`), so the two sides are
 ISA-comparable.
 
+**Runner heterogeneity:** `ubuntu-latest` rotates between CPU models —
+the first two `benchmarks` jobs ran on **AMD EPYC 9V45** and **AMD EPYC
+7763** respectively, 1.5–3× apart (the committed baseline is the 9V45
+numbers). The gate therefore only enforces the 2% threshold on the
+*same* CPU model; cross-model deltas are reported as informational
+(ODD L91, `compare.py` CPU awareness). WP-46 (when the gate becomes
+blocking) should pin the runner image and re-baseline per CPU model.
+
 ### Host (local verification only)
 
 - **CPU:** Raspberry Pi 5 Model B Rev 1.0 — 4× ARM Cortex-A76, up to 2.4 GHz

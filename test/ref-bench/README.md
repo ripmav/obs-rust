@@ -94,9 +94,20 @@ python3 test/ref-bench/compare.py baseline.json \
   --current ref-bench.json --no-fail                           # report mode
 ```
 
+**CPU awareness** (ODD L91, found in the first CI push): GitHub's
+`ubuntu-latest` runners are **heterogeneous** — two consecutive runs
+landed on AMD EPYC 9V45 and EPYC 7763, 1.5–3× apart. A percentage
+threshold across different CPU models is hardware noise, not a code
+regression, so the gate only enforces the threshold when the current
+JSON's `cpu` matches the baseline's `generated.cpu`; cross-model deltas
+are printed as `info (different CPU)` and never fail. A **missing**
+tracked bench still fails on any CPU.
+
 CI wiring: the `benchmarks` job in `.github/workflows/rust.yml` builds +
 runs both sides (x86_64 runner) and runs `compare.py` in **report mode**
-for this first baseline commit — WP-46 (P1-32.1) flips it to blocking.
+for this first baseline commit — WP-46 (P1-32.1) flips it to blocking
+by dropping `--no-fail` (and should then also pin the runner image /
+re-baseline per CPU model).
 Deliberate-slowdown demonstration (the P0-17.5 Done-when): see
 `docs/tests/ref-bench.md` row T-06.
 
