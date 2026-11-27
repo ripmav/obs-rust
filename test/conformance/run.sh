@@ -140,13 +140,16 @@ fi
 # modules: opts-parser.c is a runner source here, bpm.c / happy-eyeballs.c /
 # file-updater.c are #included by the runner behind the per-module
 # -DOBS_CONFORMANCE_RUST_SWAP_{BPM,HE,FU} macros, which swap mode defines
-# below; and — P1-12.3 (WP-37) — source-profiler.c (S-055 U3)).
+# below; and — P1-12.3 (WP-37) — source-profiler.c (S-055 U3); and —
+# P1-01.3 (WP-43) — bmem.c (the allocator; from now on every build that
+# links the staticlib must drop every swapped source: the staticlib’s own
+# exports supersede the C definitions, duplicate symbols otherwise)).
 apply_swap() {
 	local -n _srcs=$1
 	local f n=${#_srcs[@]} out=()
 	for f in "${_srcs[@]}"; do
 		case "$f" in
-		*"libobs/util/lexer.c" | *"libobs/util/cf-lexer.c" | *"libobs/util/cf-parser.c" | *"libobs/util/text-lookup.c" | *"libobs/util/base.c" | *"libobs/util/threading-posix.c" | *"libobs/util/platform-nix-dbus.c" | *"libobs/util/platform-nix-portal.c" | *"libobs/util/bitstream.c" | *"libobs/util/array-serializer.c" | *"libobs/util/file-serializer.c" | *"libobs/util/buffered-file-serializer.c" | *"libobs/util/source-profiler.c" | *"shared/opts-parser/opts-parser.c" | *"shared/bpm/bpm.c" | *"shared/happy-eyeballs/happy-eyeballs.c" | *"shared/file-updater/file-updater/file-updater.c") SWAPPED=1 ;;
+		*"libobs/util/lexer.c" | *"libobs/util/cf-lexer.c" | *"libobs/util/cf-parser.c" | *"libobs/util/text-lookup.c" | *"libobs/util/base.c" | *"libobs/util/threading-posix.c" | *"libobs/util/platform-nix-dbus.c" | *"libobs/util/platform-nix-portal.c" | *"libobs/util/bitstream.c" | *"libobs/util/array-serializer.c" | *"libobs/util/file-serializer.c" | *"libobs/util/buffered-file-serializer.c" | *"libobs/util/source-profiler.c" | *"libobs/util/bmem.c" | *"shared/opts-parser/opts-parser.c" | *"shared/bpm/bpm.c" | *"shared/happy-eyeballs/happy-eyeballs.c" | *"shared/file-updater/file-updater/file-updater.c") SWAPPED=1 ;;
 		*) out+=("$f") ;;
 		esac
 	done
@@ -192,18 +195,12 @@ for area in "${!runner_sources[@]}"; do
 		rustlib_link=""
 		if [ -n "${rustlib_area[$area]:-}" ]; then
 			rustlib_link="$rustlib"
-			# The staticlib provides the blog family (base-logging.c shim) and
-			# the posix threading bridge — drop those C sources (like swap
-			# mode does) to avoid duplicate definitions. base.c (33.0.1)
-			# provides nothing beyond the blog family.
-			out=()
-			for f in "${commons[@]}"; do
-				case "$f" in
-				*"libobs/util/base.c" | *"libobs/util/threading-posix.c") ;;
-				*) out+=("$f") ;;
-				esac
-			done
-			commons=("${out[@]}")
+			# The staticlib provides the blog family (base-logging.c shim),
+			# the posix threading bridge and — P1-01.3 (WP-43) — the bmem
+			# allocator exports: drop every swapped source (like swap mode
+			# does) to avoid duplicate definitions.
+			SWAPPED=0
+			apply_swap commons
 		fi
 		# shellcheck disable=SC2086
 		"$cc" "${cflags[@]}" ${extra_flags[$area]:-} -o "$build/$area-runner" ${runner_sources[$area]} "${commons[@]}" $rustlib_link ${extra_libs[$area]:-} -lpthread -lm

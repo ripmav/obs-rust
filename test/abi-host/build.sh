@@ -9,19 +9,19 @@
 #   LIBOBS=... OUT=... bash build.sh c     # all-C build (OBS_ENABLE_RUST "OFF")
 #   LIBOBS=... OUT=... bash build.sh rust  # Rust-staticlib swap build
 #                                          # (OBS_ENABLE_RUST "ON"): the
-#                                          # 17-file swap set of the OBS_ENABLE_RUST
+#                                          # 18-file swap set of the OBS_ENABLE_RUST
 #                                          # CMake patch — of those, exactly the
-#                                          # 11 util files this mini build compiles
+#                                          # 12 util files this mini build compiles
 #                                          # are dropped and
 #                                          # target/release/libobs_ffi.a is linked
 #
-# The 11 dropped files (kept in sync with the apply_swap pattern of
-# test/conformance/run.sh; the other 6 of the 17 — platform-nix-dbus/portal
+# The 12 dropped files (kept in sync with the apply_swap pattern of
+# test/conformance/run.sh; the other 6 of the 18 — platform-nix-dbus/portal
 # and shared/{opts-parser,bpm,happy-eyeballs,file-updater} — are not
 # compiled by the mini build):
 #   util/{lexer,cf-lexer,cf-parser,text-lookup,base,threading-posix,
 #         bitstream,array-serializer,file-serializer,
-#         buffered-file-serializer,source-profiler}.c
+#         buffered-file-serializer,source-profiler,bmem}.c
 # obs-data.c / obs-properties.c / graphics stay C in BOTH builds (they are
 # not in the swap set).
 #
@@ -112,17 +112,18 @@ caption=(
 	"$DEPS/libcaption/src"/utf8.c "$DEPS/libcaption/src"/xds.c "$DEPS/libcaption/src"/vtt.c
 )
 util=(
-	"$LIBOBS"/util/bmem.c "$LIBOBS"/util/utf8.c "$LIBOBS"/util/dstr.c "$LIBOBS"/util/config-file.c
+	"$LIBOBS"/util/utf8.c "$LIBOBS"/util/dstr.c "$LIBOBS"/util/config-file.c
 	"$LIBOBS"/util/crc32.c "$LIBOBS"/util/task.c "$LIBOBS"/util/profiler.c "$LIBOBS"/util/pipe.c
 	"$LIBOBS"/util/pipe-posix.c "$LIBOBS"/util/platform.c "$LIBOBS"/util/platform-nix.c
 )
 
-# The 11 swapped util files (OBS_ENABLE_RUST swap set ∩ mini build).
+# The 12 swapped util files (OBS_ENABLE_RUST swap set ∩ mini build).
 swap=(
 	"$LIBOBS"/util/lexer.c "$LIBOBS"/util/cf-lexer.c "$LIBOBS"/util/cf-parser.c
 	"$LIBOBS"/util/text-lookup.c "$LIBOBS"/util/base.c "$LIBOBS"/util/threading-posix.c
 	"$LIBOBS"/util/bitstream.c "$LIBOBS"/util/array-serializer.c "$LIBOBS"/util/file-serializer.c
 	"$LIBOBS"/util/buffered-file-serializer.c "$LIBOBS"/util/source-profiler.c
+	"$LIBOBS"/util/bmem.c
 )
 
 rustlink=()

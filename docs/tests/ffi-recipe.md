@@ -16,7 +16,9 @@ dstr invariant — the conformance runners print with `%s`).
 | `abi_cf_lexer`    | `util/cf-lexer.h`    | 9                                 | `repr(C)` mirrors composed over the base-lexer state; `SPACE_FILLER`                                                                        | `cf_literal_to_str` reuses the obs-util engine helper (C-allocated result)                    |
 | `abi_cf_parser`   | `util/cf-parser.h`   | 2 (`cf_adderror`, `cf_pass_pair`) | `repr(C)` `cf_parser` composed from the existing mirrors (size 224: `lex@0`, `pp@72`, `error_list@192`, `cur_token@216`); C owns the struct | row/col from the current token's unmerged text; `$n` substitution leaves NULL params verbatim |
 
-Total: 25/25 C-exported functions bridged.
+| `abi_bmem` | `util/bmem.h` | 6 | the `obs_util::bmem` allocator; the swap build's whole process shares this one allocator | first call wires the Rust fatal paths to the C shim's `bcrash`; `abi_common` imports resolve to these exports |
+
+Total: 31/31 C-exported functions bridged.
 
 ## Verification
 

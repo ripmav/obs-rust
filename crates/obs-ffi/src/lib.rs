@@ -15,12 +15,17 @@
 
 // The bridges reference C symbols (`bmalloc`, `bfree`, `os_fopen`, ...) that
 // only exist in the swap build (libobs/util/*.c linked next to this
-// staticlib). They are compiled only for that build (`--features c-swap`,
-// what `OBS_ENABLE_RUST=ON` passes) and for this crate's unit tests, which
-// provide stand-ins. Without the gate, linkers that do not garbage-collect
+// staticlib) or are provided by the bridges themselves (the bmem swap of
+// P1-01.3: `bmalloc`/`bfree`/`brealloc` come from `abi_bmem` in the staticlib;
+// `os_fopen`/`os_fread_utf8`/`fclose` are test stand-ins until the platform
+// fs functions land). They are compiled only for that build (`--features
+// c-swap`, what `OBS_ENABLE_RUST=ON` passes) and for this crate's unit
+// tests. Without the gate, linkers that do not garbage-collect
 // unreferenced sections (MSVC) fail with LNK2019 on the integration tests.
 #[cfg(any(test, feature = "c-swap"))]
 pub mod abi_bitstream;
+#[cfg(any(test, feature = "c-swap"))]
+pub mod abi_bmem;
 #[cfg(any(test, feature = "c-swap"))]
 pub mod abi_cf_lexer;
 #[cfg(any(test, feature = "c-swap"))]

@@ -37,10 +37,18 @@ util/srcprof-bridge.c, the profiler bridge's graphics-context shim
 staticlib provides the profiler; the conformance swap runner compiles
 the identical copy from crates/obs-ffi/c/).
 
+WP-43 (P1-01.3) extends the swap set with util/bmem.c (the six bmem
+symbols — bmalloc, brealloc, bfree, bmemdup, bnum_allocs,
+base_get_alignment — come from the Rust staticlib; the Rust allocator's
+fatal paths route through the C bcrash shim, so crash behaviour is
+unchanged). The whole swap build shares the single Rust allocator from
+here on: any build that links the staticlib must drop every swapped C
+source (duplicate symbols).
+
 Assisted-by: Qwen3.8-27B (off) via pi
 ---
 diff --git a/libobs/CMakeLists.txt b/libobs/CMakeLists.txt
-index 70e3bee..729b2d5 100644
+index 70e3bee..3c0fdfd 100644
 --- a/libobs/CMakeLists.txt
 +++ b/libobs/CMakeLists.txt
 @@ -9,6 +9,14 @@ endif()
@@ -71,7 +79,8 @@ index 70e3bee..729b2d5 100644
 -    util/bitstream.c
 +    $<$<NOT:$<BOOL:${OBS_ENABLE_RUST}>>:util/bitstream.c>
      util/bitstream.h
-     util/bmem.c
+-    util/bmem.c
++    $<$<NOT:$<BOOL:${OBS_ENABLE_RUST}>>:util/bmem.c>
      util/bmem.h
 -    util/buffered-file-serializer.c
 +    $<$<NOT:$<BOOL:${OBS_ENABLE_RUST}>>:util/buffered-file-serializer.c>

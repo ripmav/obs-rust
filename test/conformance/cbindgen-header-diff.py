@@ -28,7 +28,8 @@ The diff compares FUNCTION DECLARATIONS ONLY. Intentionally out of scope:
   `struct dbus_sleep_info`, `struct portal_inhibit_info` (aliased below).
 
 Reference declarations in scope (the exact set the bridge must provide,
-86 in total):
+92 in total):
+  util/bmem.h                   6  EXPORT (WP-43, P1-01.3)
   util/text-lookup.h             4  EXPORT
   util/threading.h              14 EXPORT + the two pthread_mutex_init_* static inlines
   util/lexer.h                  10 EXPORT
@@ -118,6 +119,10 @@ ENUM_AS_INT = {"os_event_type", "ignore_whitespace"}
 # relative to the obs-studio checkout root (the libobs/ symlink's parent);
 # the shared/ entries (WP-34) are siblings of libobs/.
 REFS = [
+    # WP-43 (P1-01.3): the bmem allocator (the six bmem.c exports; from
+    # here on every swap build links the staticlib, whose bmem exports
+    # are the process allocator).
+    ("libobs/util/bmem.h", ("export",)),
     ("libobs/util/text-lookup.h", ("export",)),
     ("libobs/util/threading.h", ("export", "pthread-inline")),
     ("libobs/util/lexer.h", ("export",)),

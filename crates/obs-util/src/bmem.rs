@@ -13,6 +13,7 @@
 use std::alloc::{Layout, alloc, dealloc};
 use std::cell::UnsafeCell;
 use std::process::exit;
+use std::sync::OnceLock;
 use std::sync::atomic::{AtomicBool, AtomicIsize, AtomicUsize, Ordering};
 
 /// S-001-R10: alignment of every block on every platform.
@@ -68,6 +69,22 @@ fn default_crash_handler(msg: &str, _param: usize) {
     exit(0);
 }
 
+/// C-ABI crash sink (P1-01.3, WP-43): installed by `obs-ffi` so that in a
+/// swap build the Rust fatal paths route through the C shim's `bcrash`
+/// (which owns the C-installed crash handler and the in-progress flag).
+/// The sink is expected never to return (the C shim `exit`s); the message
+/// is a fixed literal without `%` (the C callers have the same
+/// precondition). Same shape as the `os_paths` fatal hook.
+type BcrashSink = dyn Fn(&str) + Send + Sync;
+
+static CRASH_SINK: OnceLock<Box<BcrashSink>> = OnceLock::new();
+
+/// Install the C-ABI crash sink (at most once; later calls are ignored).
+/// Without a sink, [`bcrash`] uses the crate-local handler state.
+pub fn set_bcrash_sink(sink: impl Fn(&str) + Send + Sync + 'static) {
+    let _ = CRASH_SINK.set(Box::new(sink));
+}
+
 /// S-001-R24/R25: `bcrash` — never returns.
 ///
 /// - Crash already in progress → `"Crashed in the crash handler"` to stderr,
@@ -76,9 +93,16 @@ fn default_crash_handler(msg: &str, _param: usize) {
 ///   the already-formatted message; if the handler returns, `exit(0)`.
 ///
 /// Callers pass the final formatted string (the C `va_list` form stays in
-/// the `obs-ffi` shim, S-001 §7).
+/// the `obs-ffi` shim, S-001 §7). With a C-ABI sink installed (swap build),
+/// the message is handed to the C shim instead (single crash state).
 #[cold]
 pub fn bcrash(msg: &str) -> ! {
+    if let Some(sink) = CRASH_SINK.get() {
+        // The sink routes through the C shim's `bcrash` (single crash
+        // state for the swap build) and never returns; the fall-through
+        // below covers a (broken) returning sink.
+        sink(msg);
+    }
     if CRASHING.swap(true, Ordering::SeqCst) {
         use std::io::Write;
         let _ = std::io::stderr().write_all(b"Crashed in the crash handler");

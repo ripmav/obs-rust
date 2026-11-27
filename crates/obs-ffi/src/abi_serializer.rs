@@ -18,7 +18,7 @@
 //! the synchronous port tracks). R45: a failed write logs the reference's
 //! `LOG_ERROR` line once (the message detail is platform text — spec §11).
 
-use crate::abi_common::{bfree, bmalloc, c_bytes};
+use crate::abi_common::{bfree, bmalloc_c, c_bytes};
 use obs_util::serializer::{
     BufferedFileOutput, FileInput, FileOutput, SERIALIZE_SEEK_CURRENT, SERIALIZE_SEEK_END,
     SERIALIZE_SEEK_START,
@@ -64,7 +64,7 @@ fn array_ensure(out: &mut array_output_data, new_size: usize) {
     };
     let new_cap = new_cap.max(new_size);
     // SAFETY: C-ABI — S-001 allocation; the fresh block is valid for new_cap bytes.
-    let ptr = unsafe { bmalloc(new_cap) };
+    let ptr = unsafe { bmalloc_c(new_cap) };
     if !out.array.is_null() && out.capacity > 0 {
         // SAFETY: old block valid for capacity bytes; fresh block for new_cap ≥ capacity.
         unsafe {

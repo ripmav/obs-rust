@@ -21,9 +21,12 @@ exclude = [
     "base_get_log_handler",
     "base_set_log_handler",
     "base_set_crash_handler",
-    # abi_common.rs — the C allocator (bmem.c).
+    # abi_common.rs — the C allocator imports (resolve to the abi_bmem
+    # exports; imported under different names so cbindgen does not
+    # duplicate them next to the exports).
+    "bmalloc_c",
     "bfree_raw",
-    "brealloc",
+    "brealloc_c",
     # abi_platform.rs — the C shim's bcrash (base-logging.c).
     "bcrash",
     # abi_darray.rs — the C shim's bcrash (R-A13 OOM path; same symbol as
@@ -129,9 +132,8 @@ exclude = [
     "obs_ffi_deque_new",
     "obs_ffi_deque_free",
     # abi_cf_lexer.rs test stand-ins (cargo test links these instead of
-    # bmem.c + the platform file API).
-    "bmalloc",
-    "bfree",
+    # the platform file stubs; `bmalloc`/`bfree` are real bridges since
+    # P1-01.3 — `abi_bmem` — and are diffed against `util/bmem.h`).
     "os_fopen",
     "os_fread_utf8",
     "fclose",

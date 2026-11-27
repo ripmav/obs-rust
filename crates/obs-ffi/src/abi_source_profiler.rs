@@ -392,8 +392,8 @@ pub unsafe extern "C" fn source_profiler_get_result(source: *const c_void) -> *m
     ensure_backend();
     // SAFETY: the C allocator (the swap build links bmem.c, production
     // libobs the same); the result is `bfree`'d by the caller.
-    let ret =
-        unsafe { crate::abi_common::bmalloc(size_of::<profiler_result>()) } as *mut profiler_result;
+    let ret = unsafe { crate::abi_common::bmalloc_c(size_of::<profiler_result>()) }
+        as *mut profiler_result;
     if ret.is_null() {
         // bmalloc aborts on failure (S-001); the NULL check keeps the
         // branch for a custom allocator.

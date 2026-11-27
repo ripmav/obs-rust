@@ -33,5 +33,9 @@ Notes:
   assertions run sequentially in `tests/leak_counters.rs`.
 - OOM path (R03) is not scriptable with the current runner (S-001 §8) —
   the message text is pinned in code next to the crash call.
-- Wide `bstrdup` variants and the `extern "C"` shim: C-side, tracked per
-  WP (need the C checkout; see phase-1 doc S2).
+- Wide `bstrdup` variants: C-side (wchar_t; not ported — S-001 §8).
+  The `extern "C"` shim for the six narrow exports landed with WP-43
+  (`crates/obs-ffi/src/abi_bmem.rs`; see `docs/tests/abi-bmem.md`): with
+  `OBS_ENABLE_RUST=ON` the swap set drops `util/bmem.c` and the swap
+  build shares the single Rust allocator (the `bmem` conformance area
+  passes in swap mode, crash paths included).

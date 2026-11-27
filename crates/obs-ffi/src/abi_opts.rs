@@ -15,7 +15,7 @@ use std::ptr;
 
 use obs_util_small::opts_parser;
 
-use crate::abi_common::{bfree, bmalloc, bstrdup_bytes, c_bytes};
+use crate::abi_common::{bfree, bmalloc_c, bstrdup_bytes, c_bytes};
 
 /// `struct obs_option` (opts-parser.h).
 #[repr(C)]
@@ -55,7 +55,7 @@ pub unsafe extern "C" fn obs_parse_options(options_string: *const c_char) -> obs
     let n = p.words.len();
     // SAFETY: bmalloc is the C bmem allocator (the swap build links the C
     // implementation); a fresh nonzero-size block is returned.
-    let input_words = unsafe { bmalloc((n + 1) * size_of::<*mut c_char>()) } as *mut *mut c_char;
+    let input_words = unsafe { bmalloc_c((n + 1) * size_of::<*mut c_char>()) } as *mut *mut c_char;
     for (i, w) in p.words.iter().enumerate() {
         // SAFETY: the fresh bmalloc'd word copy is live and exclusively owned by this result.
         unsafe { *input_words.add(i) = bstrdup_bytes(w) };
@@ -69,7 +69,7 @@ pub unsafe extern "C" fn obs_parse_options(options_string: *const c_char) -> obs
     // the reference.
     // SAFETY: bmalloc as above; n >= 1 in a non-zero result (R01/R02), so
     // the size is never zero.
-    let options = unsafe { bmalloc(n * size_of::<obs_option>()) } as *mut obs_option;
+    let options = unsafe { bmalloc_c(n * size_of::<obs_option>()) } as *mut obs_option;
     let mut oi = 0;
     for (wi, kind) in p.kind.iter().enumerate() {
         let Some(eq) = *kind else { continue };
@@ -87,7 +87,7 @@ pub unsafe extern "C" fn obs_parse_options(options_string: *const c_char) -> obs
     // ignored_words: pointers into input_words (`*ignored_word =
     // *input_word` in C), allocated for the full input count (R07).
     // SAFETY: bmalloc as above; n >= 1 (R01/R02).
-    let ignored_words = unsafe { bmalloc(n * size_of::<*mut c_char>()) } as *mut *mut c_char;
+    let ignored_words = unsafe { bmalloc_c(n * size_of::<*mut c_char>()) } as *mut *mut c_char;
     let mut ii = 0;
     for (wi, kind) in p.kind.iter().enumerate() {
         if kind.is_none() {
