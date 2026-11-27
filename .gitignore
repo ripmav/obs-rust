@@ -12,3 +12,6 @@
 
 # Rust (P0-07 workspace)
 /target
+
+# Python (P0-18 corpus tooling: anonymise.py / generate_corpus.py)
+__pycache__/
