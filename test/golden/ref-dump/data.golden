@@ -1,0 +1,118 @@
+# data/obs_data_build
+set values:
+  name=ref-dump
+  count=42
+  ratio=0.5
+  enabled=1
+  empty_str=[]
+  neg_int=-123456789
+  big_double=1e+15
+defaults (unset keys):
+  def_name=d
+  def_count=7
+  def_ratio=1.5
+  def_enabled=1
+  get_default_string(def_name)=d
+  get_default_int(def_count)=7
+  get_default_double(def_ratio)=1.5
+  get_default_bool(def_enabled)=1
+  get_default_string(name)=
+  get_string(missing)=[]
+  get_int(missing)=0
+  get_double(missing)=0
+  get_bool(missing)=0
+settings obj:
+  inner_string=inner
+  inner_int=7
+  inner_double=1.5
+  inner_bool=0
+  settings_json: {"inner_bool":false,"inner_double":1.5,"inner_int":7,"inner_string":"inner"}
+get_obj(missing)=(nil)
+items array:
+  count=3
+  item 0 v=1
+  item 1 v=2
+  item 2 v=3
+  item(99)=(nil)
+get_array(missing)=(nil)
+json: {"big_double":1000000000000000.0,"count":42,"empty_str":"","enabled":true,"items":[{"v":1},{"v":2},{"v":3}],"name":"ref-dump","neg_int":-123456789,"ratio":0.5,"settings":{"inner_bool":false,"inner_double":1.5,"inner_int":7,"inner_string":"inner"}}
+json_with_defaults: {"big_double":1000000000000000.0,"count":42,"def_count":7,"def_enabled":true,"def_name":"d","def_ratio":1.5,"empty_str":"","enabled":true,"items":[{"v":1},{"v":2},{"v":3}],"name":"ref-dump","neg_int":-123456789,"ratio":0.5,"settings":{"inner_bool":false,"inner_double":1.5,"inner_int":7,"inner_string":"inner"}}
+defaults_only: {"big_double":0.0,"count":0,"def_count":7,"def_enabled":true,"def_name":"d","def_ratio":1.5,"empty_str":"","enabled":false,"items":[],"name":"","neg_int":0,"ratio":0.0,"settings":{}}
+round trip:
+  rt_name=ref-dump
+  rt_count=42
+  rt_ratio=0.5
+rt_json: {"big_double":1000000000000000.0,"count":42,"empty_str":"","enabled":true,"items":[{"v":1},{"v":2},{"v":3}],"name":"ref-dump","neg_int":-123456789,"ratio":0.5,"settings":{"inner_bool":false,"inner_double":1.5,"inner_int":7,"inner_string":"inner"}}
+  rt_settings.inner_int=7
+  rt_items[0].v=1
+from_json(invalid)=(nil)
+after_apply: {"count":1,"enabled":false,"name":"patched"}
+after_erase_a: {"b":"2"}
+after_clear: {}
+# data/obs_data_double_roundtrip
+case 0: v=0.51837953412905335 json={"v":0.5183795341290534} reparsed=0.51837953412905335 roundtrip=1
+case 1: v=6.0095587116666141e-301 json={"v":6.009558711666614e-301} reparsed=6.0095587116666141e-301 roundtrip=1
+case 2: v=2.8594218171201645e+307 json={"v":2.8594218171201645e307} reparsed=2.8594218171201645e+307 roundtrip=1
+case 3: v=8896334925666451 json={"v":8896334925666451.0} reparsed=8896334925666451 roundtrip=1
+case 4: v=-0.27054492803290486 json={"v":-0.27054492803290486} reparsed=-0.27054492803290486 roundtrip=1
+case 5: v=1.7679439997300507e-301 json={"v":1.7679439997300507e-301} reparsed=1.7679439997300507e-301 roundtrip=1
+case 6: v=8.689540463965386e+307 json={"v":8.689540463965386e307} reparsed=8.689540463965386e+307 roundtrip=1
+case 7: v=-1963097541593015.2 json={"v":-1963097541593015.2} reparsed=-1963097541593015.2 roundtrip=1
+case 8: v=-0.22055710619315505 json={"v":-0.22055710619315505} reparsed=-0.22055710619315505 roundtrip=1
+case 9: v=4.6693749539554116e-301 json={"v":4.669374953955412e-301} reparsed=4.6693749539554116e-301 roundtrip=1
+case 10: v=1.6688160109333694e+307 json={"v":1.6688160109333694e307} reparsed=1.6688160109333694e+307 roundtrip=1
+case 11: v=-7228096253238618 json={"v":-7228096253238618.0} reparsed=-7228096253238618 roundtrip=1
+case 12: v=0.54821830475702882 json={"v":0.5482183047570288} reparsed=0.54821830475702882 roundtrip=1
+case 13: v=4.8853704240173099e-301 json={"v":4.88537042401731e-301} reparsed=4.8853704240173099e-301 roundtrip=1
+case 14: v=9.2787291249260317e+307 json={"v":9.278729124926032e307} reparsed=9.2787291249260317e+307 roundtrip=1
+case 15: v=-5108355241827667 json={"v":-5108355241827667.0} reparsed=-5108355241827667 roundtrip=1
+case 16: v=0.4064419693313539 json={"v":0.4064419693313539} reparsed=0.4064419693313539 roundtrip=1
+case 17: v=1.3132407283410431e-301 json={"v":1.313240728341043e-301} reparsed=1.3132407283410431e-301 roundtrip=1
+case 18: v=5.9598422329872844e+307 json={"v":5.959842232987284e307} reparsed=5.9598422329872844e+307 roundtrip=1
+case 19: v=6591621125116944 json={"v":6591621125116944.0} reparsed=6591621125116944 roundtrip=1
+case 20: v=0.97543757082894444 json={"v":0.9754375708289444} reparsed=0.97543757082894444 roundtrip=1
+case 21: v=7.6510594761930401e-301 json={"v":7.65105947619304e-301} reparsed=7.6510594761930401e-301 roundtrip=1
+case 22: v=5.0005002343095835e+307 json={"v":5.000500234309583e307} reparsed=5.0005002343095835e+307 roundtrip=1
+case 23: v=-9006596342660487 json={"v":-9006596342660487.0} reparsed=-9006596342660487 roundtrip=1
+case 24: v=-0.29425926227122545 json={"v":-0.29425926227122545} reparsed=-0.29425926227122545 roundtrip=1
+case 25: v=9.8125135758891706e-302 json={"v":9.81251357588917e-302} reparsed=9.8125135758891706e-302 roundtrip=1
+case 26: v=7.8780845250003037e+307 json={"v":7.878084525000304e307} reparsed=7.8780845250003037e+307 roundtrip=1
+case 27: v=2303352602757513.5 json={"v":2303352602757513.5} reparsed=2303352602757513.5 roundtrip=1
+case 28: v=0.09890624787658453 json={"v":0.09890624787658453} reparsed=0.09890624787658453 roundtrip=1
+case 29: v=7.7282263943925494e-301 json={"v":7.72822639439255e-301} reparsed=7.7282263943925494e-301 roundtrip=1
+case 30: v=6.1175347142852843e+307 json={"v":6.117534714285284e307} reparsed=6.1175347142852843e+307 roundtrip=1
+case 31: v=9486547978594900 json={"v":9486547978594900.0} reparsed=9486547978594900 roundtrip=1
+# data/obs_data_fixtures
+file basic.json:
+  json: {"big":1000000000000.5,"count":42,"empty":"","enabled":true,"items":[{"label":"one","v":1},{"label":"two","v":2},{"label":"three","v":3}],"name":"basic","neg":-123456789,"nested":{"deep":{"leaf":"value"},"inner_bool":false,"inner_double":1.5,"inner_int":7,"inner_string":"inner"},"ratio":0.5,"tiny":1e-8,"version":3}
+  rt_json: {"big":1000000000000.5,"count":42,"empty":"","enabled":true,"items":[{"label":"one","v":1},{"label":"two","v":2},{"label":"three","v":3}],"name":"basic","neg":-123456789,"nested":{"deep":{"leaf":"value"},"inner_bool":false,"inner_double":1.5,"inner_int":7,"inner_string":"inner"},"ratio":0.5,"tiny":1e-8,"version":3}
+file empty.json:
+  json: {"empty_array":[],"empty_obj":{},"null_val":null,"only_zero":0}
+  rt_json: {"empty_array":[],"empty_obj":{},"null_val":null,"only_zero":0}
+file scene.json:
+  json: {"bounds":{"h":720,"w":1280,"x":10.5,"y":-20},"scene":"Main Scene","sources":[{"filters":[],"id":"color_source","name":"bg","settings":{"color":16711680,"opacity":100}},{"filters":[{"id":"gain_filter","settings":{"db":3.5}}],"id":"text_source","name":"title","settings":{"color":4294967295,"font":"Arial","outline":2,"shadow":0,"size":24.0,"text":"Hello OBS"}}],"transition":"cut"}
+  rt_json: {"bounds":{"h":720,"w":1280,"x":10.5,"y":-20},"scene":"Main Scene","sources":[{"filters":[],"id":"color_source","name":"bg","settings":{"color":16711680,"opacity":100}},{"filters":[{"id":"gain_filter","settings":{"db":3.5}}],"id":"text_source","name":"title","settings":{"color":4294967295,"font":"Arial","outline":2,"shadow":0,"size":24.0,"text":"Hello OBS"}}],"transition":"cut"}
+file unicode.json:
+  json: {"backslash":"C:\\path\\to\\file","control":"tab\there\nnewline","mixed":[{"a":true},{"b":null}],"name":"unicode","nested_arrays":[],"numbers":[],"quotes":"she said \"hi\"","text":"Grüße — 日本語 — émôjî","unicode_escapes":"Aé中"}
+  rt_json: {"backslash":"C:\\path\\to\\file","control":"tab\there\nnewline","mixed":[{"a":true},{"b":null}],"name":"unicode","nested_arrays":[],"numbers":[],"quotes":"she said \"hi\"","text":"Grüße — 日本語 — émôjî","unicode_escapes":"Aé中"}
+# data/calldata
+get_int(i)=1 val=123456789
+get_float(f)=1 val=3.5
+get_bool(b)=1 val=1
+get_string(s)=1 val=[hello]
+get_ptr(p)=1 val=0xdeadbeef0123
+get_data(raw,6)=1 bytes=00 01 02 03 ff fe
+get_data(raw,16) wrong-size=0 byte0=aa
+get_int(s) type-mismatch=0 val=0
+get_int(missing)=0 val=0
+get_string(missing)=0 val=[(null)]
+calldata_int(missing)=0
+calldata_float(missing)=0
+calldata_bool(missing)=0
+calldata_ptr(missing)=(nil)
+calldata_string(missing)=(nil)
+calldata_int(i)=123456789
+calldata_string(s)=[hello]
+after_set_int(i,-1): get_int(i)=1 val=-1
+after_set_data(raw,NULL,0): get_data=0 byte0=aa
+after_clear get_int(i)=0 val=0

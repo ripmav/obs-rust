@@ -1,0 +1,25 @@
+{
+  "name": "basic",
+  "version": 3,
+  "enabled": true,
+  "count": 42,
+  "ratio": 0.5,
+  "empty": "",
+  "neg": -123456789,
+  "big": 1000000000000.5,
+  "tiny": 0.00000001,
+  "nested": {
+    "inner_string": "inner",
+    "inner_int": 7,
+    "inner_double": 1.5,
+    "inner_bool": false,
+    "deep": {
+      "leaf": "value"
+    }
+  },
+  "items": [
+    { "v": 1, "label": "one" },
+    { "v": 2, "label": "two" },
+    { "v": 3, "label": "three" }
+  ]
+}

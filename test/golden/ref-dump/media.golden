@@ -1,0 +1,43 @@
+# media/mix_audio
+case 0: ts_offset=0 channels=1 ch0_hash=0x5d1022433006cc03 ch1_hash=0xb43a063055adc383 first8=0.25 0.2578125 0.265625 0.2734375 0.28125 0.2890625 0.296875 0.3046875
+case 1: ts_offset=25000 channels=2 ch0_hash=0x276e9a1d85bdf83a ch1_hash=0x4d37cd2fbbd355bd first8=0 0.25 0.2578125 0.265625 0.2734375 0.28125 0.2890625 0.296875
+case 2: ts_offset=50000 channels=3 ch0_hash=0x83320fa2a8c835d3 ch1_hash=0x9424e3a77d066003 first8=0 0 0.25 0.2578125 0.265625 0.2734375 0.28125 0.2890625
+case 3: ts_offset=10666667 channels=1 ch0_hash=0xf74569285ea31243 ch1_hash=0xb43a063055adc383 first8=0 0 0 0 0 0 0 0
+case 4: ts_offset=21333333 channels=2 ch0_hash=0xb286e430543bf53d ch1_hash=0xb439e43055ad89bd first8=0 0 0 0 0 0 0 0
+case 5: ts_offset=21333334 channels=3 ch0_hash=0xb43a063055adc383 ch1_hash=0xb43a063055adc383 first8=0 0 0 0 0 0 0 0
+case 6: ts_offset=2000000000 channels=1 ch0_hash=0xb43a063055adc383 ch1_hash=0xb43a063055adc383 first8=0 0 0 0 0 0 0 0
+case 7: ts_offset=0 channels=2 ch0_hash=0x5d1022433006cc03 ch1_hash=0x72f48eb76e37c103 first8=0.25 0.2578125 0.265625 0.2734375 0.28125 0.2890625 0.296875 0.3046875
+case 8: ts_offset=25000 channels=3 ch0_hash=0x276e9a1d85bdf83a ch1_hash=0x4d37cd2fbbd355bd first8=0 0.25 0.2578125 0.265625 0.2734375 0.28125 0.2890625 0.296875
+case 9: ts_offset=50000 channels=1 ch0_hash=0x83320fa2a8c835d3 ch1_hash=0xb43a063055adc383 first8=0 0 0.25 0.2578125 0.265625 0.2734375 0.28125 0.2890625
+case 10: ts_offset=10666667 channels=2 ch0_hash=0xf74569285ea31243 ch1_hash=0xa6de9dd7eb40527d first8=0 0 0 0 0 0 0 0
+case 11: ts_offset=21333333 channels=3 ch0_hash=0xb286e430543bf53d ch1_hash=0xb439e43055ad89bd first8=0 0 0 0 0 0 0 0
+case 12: ts_offset=21333334 channels=1 ch0_hash=0xb43a063055adc383 ch1_hash=0xb43a063055adc383 first8=0 0 0 0 0 0 0 0
+case 13: ts_offset=2000000000 channels=2 ch0_hash=0xb43a063055adc383 ch1_hash=0xb43a063055adc383 first8=0 0 0 0 0 0 0 0
+case 14: ts_offset=0 channels=3 ch0_hash=0x5d1022433006cc03 ch1_hash=0x72f48eb76e37c103 first8=0.25 0.2578125 0.265625 0.2734375 0.28125 0.2890625 0.296875 0.3046875
+case 15: ts_offset=25000 channels=1 ch0_hash=0x276e9a1d85bdf83a ch1_hash=0xb43a063055adc383 first8=0 0.25 0.2578125 0.265625 0.2734375 0.28125 0.2890625 0.296875
+case 16: ts_offset=50000 channels=2 ch0_hash=0x83320fa2a8c835d3 ch1_hash=0x9424e3a77d066003 first8=0 0 0.25 0.2578125 0.265625 0.2734375 0.28125 0.2890625
+case 17: ts_offset=10666667 channels=3 ch0_hash=0xf74569285ea31243 ch1_hash=0xa6de9dd7eb40527d first8=0 0 0 0 0 0 0 0
+case 18: ts_offset=21333333 channels=1 ch0_hash=0xb286e430543bf53d ch1_hash=0xb43a063055adc383 first8=0 0 0 0 0 0 0 0
+case 19: ts_offset=21333334 channels=2 ch0_hash=0xb43a063055adc383 ch1_hash=0xb43a063055adc383 first8=0 0 0 0 0 0 0 0
+case 20: ts_offset=2000000000 channels=3 ch0_hash=0xb43a063055adc383 ch1_hash=0xb43a063055adc383 first8=0 0 0 0 0 0 0 0
+case 21: ts_offset=0 channels=1 ch0_hash=0x5d1022433006cc03 ch1_hash=0xb43a063055adc383 first8=0.25 0.2578125 0.265625 0.2734375 0.28125 0.2890625 0.296875 0.3046875
+case 22: ts_offset=25000 channels=2 ch0_hash=0x276e9a1d85bdf83a ch1_hash=0x4d37cd2fbbd355bd first8=0 0.25 0.2578125 0.265625 0.2734375 0.28125 0.2890625 0.296875
+case 23: ts_offset=50000 channels=3 ch0_hash=0x83320fa2a8c835d3 ch1_hash=0x9424e3a77d066003 first8=0 0 0.25 0.2578125 0.265625 0.2734375 0.28125 0.2890625
+case 24: ts_offset=10666667 channels=1 ch0_hash=0xf74569285ea31243 ch1_hash=0xb43a063055adc383 first8=0 0 0 0 0 0 0 0
+case 25: ts_offset=21333333 channels=2 ch0_hash=0xb286e430543bf53d ch1_hash=0xb439e43055ad89bd first8=0 0 0 0 0 0 0 0
+case 26: ts_offset=21333334 channels=3 ch0_hash=0xb43a063055adc383 ch1_hash=0xb43a063055adc383 first8=0 0 0 0 0 0 0 0
+case 27: ts_offset=2000000000 channels=1 ch0_hash=0xb43a063055adc383 ch1_hash=0xb43a063055adc383 first8=0 0 0 0 0 0 0 0
+case 28: ts_offset=0 channels=2 ch0_hash=0x5d1022433006cc03 ch1_hash=0x72f48eb76e37c103 first8=0.25 0.2578125 0.265625 0.2734375 0.28125 0.2890625 0.296875 0.3046875
+case 29: ts_offset=25000 channels=3 ch0_hash=0x276e9a1d85bdf83a ch1_hash=0x4d37cd2fbbd355bd first8=0 0.25 0.2578125 0.265625 0.2734375 0.28125 0.2890625 0.296875
+case 30: ts_offset=50000 channels=1 ch0_hash=0x83320fa2a8c835d3 ch1_hash=0xb43a063055adc383 first8=0 0 0.25 0.2578125 0.265625 0.2734375 0.28125 0.2890625
+case 31: ts_offset=10666667 channels=2 ch0_hash=0xf74569285ea31243 ch1_hash=0xa6de9dd7eb40527d first8=0 0 0 0 0 0 0 0
+# media/pixels
+i420: y=0x0f834951205b9bc3 u=0xe3475526812be443 v=0xc4f3b6817cfb9643
+nv12: y=0x0f834951205b9bc3 uv=0x54464fd63de42083
+i444: y=0x0f834951205b9bc3 u=0x09de225254ede783 v=0xac830705b0fbd583
+nv12_roundtrip: uyvx=0xafbb0dccb2299403 equal_to_source=0
+i420_roundtrip: uyvx=0xf4f8a3ee36ca2e03 equal_to_source=0
+yuv422_leading_lum=0: uyvx=0xbb636cab5008c4c3 equal_to_source=0
+yuv422_leading_lum=1: uyvx=0xead00b24167c4d83 equal_to_source=0
+# media/pixels_range
+i420 rows4..8: y=0xaf6bace5fb375843 u=0x84785b390c1f55c3 v=0x582720bae9ecd443
