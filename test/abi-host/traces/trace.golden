@@ -1,0 +1,152 @@
+host start
+host startup locale=en-US
+host open name=abi-trace
+module load
+host module-load ok=1
+source create id=abi_trace
+source create-value key=abi_bool value=1
+source create-value key=abi_int value=42
+source create-value key=abi_int_slider value=77
+source create-value key=abi_float value=3.5
+source create-value key=abi_float_slider value=1.25
+source create-value key=abi_text value=plain
+source create-value key=abi_text_pw value=secret
+source create-value key=abi_text_ml value=line1\nline2
+source create-value key=abi_text_info value=note
+source create-value key=abi_path_file value=/tmp/abi/f.txt
+source create-value key=abi_path_dir value=/tmp/abi/d
+source create-value key=abi_list_str value=optB
+source create-value key=abi_list_int value=202
+source create-value key=abi_list_float value=7.25
+source create-value key=abi_list_bool value=1
+source create-value key=abi_editable value=alpha\nbeta
+source create-value key=abi_font face=Bold style=Bold size=14 flags=1
+source create-value key=abi_color value=ff112233
+source create-value key=abi_color_alpha value=44556677
+source create-value key=abi_group_child value=99
+source create-value key=abi_group_check_child value=5
+source tick i=1 seconds=0.016000
+source render i=1
+source tick i=2 seconds=0.016000
+source render i=2
+source tick i=3 seconds=0.016000
+source render i=3
+source tick i=4 seconds=0.016000
+source render i=4
+source tick i=5 seconds=0.016000
+source render i=5
+source tick i=6 seconds=0.016000
+source render i=6
+source tick i=7 seconds=0.016000
+source render i=7
+source tick i=8 seconds=0.016000
+source render i=8
+source tick i=9 seconds=0.016000
+source render i=9
+source tick i=10 seconds=0.016000
+source render i=10
+source props-build
+source props-built
+prop modified2 name=abi_group_check_child value=1
+prop modified name=abi_group_child value=99
+prop modified name=abi_color value=ff112233
+prop modified name=abi_list_bool value=
+prop modified name=abi_list_float value=
+prop modified name=abi_list_int value=
+prop modified name=abi_list_str value=optB
+prop modified name=abi_text value=plain
+prop modified name=abi_float value=3.5
+prop modified name=abi_int value=42
+prop modified name=abi_bool value=1
+source props-enum
+prop enum name=abi_bool type=1 visible=1 enabled=1
+prop enum name=abi_int type=2 visible=1 enabled=1
+prop enum name=abi_int min=0 max=100 step=1 ntype=0 suffix=x
+prop enum name=abi_int_slider type=2 visible=1 enabled=0
+prop enum name=abi_int_slider min=0 max=100 step=1 ntype=1 suffix=
+prop enum name=abi_float type=3 visible=1 enabled=1
+prop enum name=abi_float min=0 max=10 step=0.25 ntype=0
+prop enum name=abi_float_slider type=3 visible=1 enabled=1
+prop enum name=abi_float_slider min=0 max=10 step=0.25 ntype=1
+prop enum name=abi_text type=4 visible=1 enabled=1
+prop enum name=abi_text ttype=0 mono=0 itype=0 wrap=1
+prop enum name=abi_text_pw type=4 visible=1 enabled=1
+prop enum name=abi_text_pw ttype=1 mono=1 itype=0 wrap=1
+prop enum name=abi_text_ml type=4 visible=1 enabled=1
+prop enum name=abi_text_ml ttype=2 mono=0 itype=0 wrap=1
+prop enum name=abi_text_info type=4 visible=0 enabled=1
+prop enum name=abi_text_info ttype=3 mono=0 itype=1 wrap=1
+prop enum name=abi_path_file type=5 visible=1 enabled=1
+prop enum name=abi_path_file ptype=0 filter=Images (*.png *.jpg);;All files (*.*) default=/tmp/abi/f.txt
+prop enum name=abi_path_dir type=5 visible=1 enabled=1
+prop enum name=abi_path_dir ptype=2 filter= default=/tmp/abi/d
+prop enum name=abi_list_str type=6 visible=1 enabled=1
+prop enum name=abi_list_str ltype=2 lformat=3 items=4
+prop enum name=abi_list_str item=0 name=optA value=a disabled=0
+prop enum name=abi_list_str item=1 name=optB value=b disabled=0
+prop enum name=abi_list_str item=2 name=optC value=c disabled=0
+prop enum name=abi_list_str item=3 name=optX value=x disabled=1
+prop enum name=abi_list_int type=6 visible=1 enabled=1
+prop enum name=abi_list_int ltype=2 lformat=1 items=3
+prop enum name=abi_list_int item=0 name=ten value=10 disabled=0
+prop enum name=abi_list_int item=1 name=hundred value=100 disabled=0
+prop enum name=abi_list_int item=2 name=two-hundred-two value=202 disabled=0
+prop enum name=abi_list_float type=6 visible=1 enabled=1
+prop enum name=abi_list_float ltype=2 lformat=2 items=2
+prop enum name=abi_list_float item=0 name=one value=1 disabled=0
+prop enum name=abi_list_float item=1 name=seven-point-two-five value=7.25 disabled=0
+prop enum name=abi_list_bool type=6 visible=1 enabled=1
+prop enum name=abi_list_bool ltype=3 lformat=4 items=2
+prop enum name=abi_list_bool item=0 name=yes value=1 disabled=0
+prop enum name=abi_list_bool item=1 name=no value=0 disabled=0
+prop enum name=abi_editable type=10 visible=1 enabled=1
+prop enum name=abi_editable etype=0 filter=*.txt default=/tmp/abi
+prop enum name=abi_font type=9 visible=1 enabled=1
+prop enum name=abi_color type=7 visible=1 enabled=1
+prop enum name=abi_color_alpha type=13 visible=1 enabled=1
+prop enum name=abi_frame_rate type=11 visible=1 enabled=1
+prop enum name=abi_frame_rate options=2 ranges=1
+prop enum name=abi_frame_rate option=0 name=30 fps desc=3000
+prop enum name=abi_frame_rate option=1 name=60 fps desc=6000
+prop enum name=abi_frame_rate range=0 min=24/1 max=120/1
+prop enum name=abi_button type=8 visible=1 enabled=1
+prop enum name=abi_button btype=1 url=https://obsproject.com/
+prop enum name=abi_group type=12 visible=1 enabled=1
+prop enum name=abi_group gtype=1
+prop enum name=abi_group_child type=2 visible=1 enabled=1
+prop enum name=abi_group_child min=0 max=1000 step=1 ntype=0 suffix=
+prop enum name=abi_group_check type=12 visible=1 enabled=1
+prop enum name=abi_group_check gtype=2
+prop enum name=abi_group_check_child type=2 visible=1 enabled=1
+prop enum name=abi_group_check_child min=0 max=1000 step=1 ntype=0 suffix=
+source props-enumerated count=25
+prop modified2 name=abi_group_check_child value=1
+prop modified name=abi_group_child value=99
+prop modified name=abi_color value=ff112233
+prop modified name=abi_list_bool value=
+prop modified name=abi_list_float value=
+prop modified name=abi_list_int value=
+prop modified name=abi_list_str value=optB
+prop modified name=abi_text value=plain
+prop modified name=abi_float value=3.5
+prop modified name=abi_int value=42
+prop modified name=abi_bool value=1
+prop clicked name=abi_button
+source props-destroy
+source destroy ticks=10 renders=10
+enc create id=abi_enc bitrate=12345 keyint=48
+enc update bitrate=11111
+enc update bitrate=22222
+enc update bitrate=33333
+enc extra-data size=4
+enc destroy
+out create id=abi_out
+out start
+out started ok=1
+out stop
+out destroy
+svc create id=abi_svc
+svc destroy
+module unload
+host shutdown
+host done

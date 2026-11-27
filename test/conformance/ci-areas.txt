@@ -20,9 +20,11 @@
 # Known aarch64-only local failures (the CI runner is x86_64, where these
 # pass): helpers/u128-defect-div0 (SIGFPE in the 128-bit div-by-zero child is
 # host-dependent UB), lexer/03-strref-cmp, platform/06-07-utf8-encode (aarch64
-# wchar_t is 4 bytes) and utilrest/pipe_read (aarch64 `char` is unsigned, so
-# the (int)(char)WEXITSTATUS exit-code cast prints 200/255/128 instead of
-# -56/-1/-128; see the README "Comparing" section).
+# wchar_t is 4 bytes), obsdata/01-scalars (-2.9 dumps as -2.8999999999999999:
+# jansson shortest-real printing is platform-dependent, WP-40 finding) and
+# utilrest/pipe_read (aarch64 `char` is unsigned, so the (int)(char)WEXITSTATUS
+# exit-code cast prints 200/255/128 instead of -56/-1/-128; see the README
+# "Comparing" section).
 #
 # Local-only (not aarch64): modservice/24-register-other-kinds drifts when the
 # linked obs-studio checkout is ahead of the 33.0.1 pin (the C reference's
