@@ -136,7 +136,7 @@ jobs:
             (cd test/conformance && CONFORMANCE_BUILD_DIR="$RUNNER_TEMP/conform-swap/$area" ./run.sh swap "$area") || status=1
           done
           exit "$status"
-      - name: reference dump (P0-14.5): regenerate goldens + diff
+      - name: "reference dump (P0-14.5): regenerate goldens + diff"
         # Builds obs-ref-dump against the pinned 33.0.1 C sources (same
         # compile recipe as the conformance runners), regenerates every
         # dump and diffs against the committed goldens. Red on any drift.
