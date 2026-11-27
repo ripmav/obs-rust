@@ -25,6 +25,7 @@
 #include <obs-service.h>
 #include <obs-source.h>
 #include <obs-internal.h>
+#include <util/task.h>
 #include <util/threading.h>
 #include "abitrace.h"
 
@@ -40,6 +41,24 @@ static void fail(const char *what)
 {
 	abi_trace("host", "fail", "stage=%s", what);
 	fprintf(stderr, "abi-host: %s failed\n", what);
+}
+
+/* Headless destroy-queue drain. 33.0.1's obs_wait_for_destroy_queue()
+ * early-returns when no video/audio threads exist (obs.c:3364) — but
+ * destroys are queued asynchronously on the destruction task thread
+ * regardless (obs_queue_task OBS_TASK_DESTROY), so a release returns
+ * before the plugin's destroy callback has run. Waiting on the wrong
+ * helper makes the trace order (destroy line vs. the next object's
+ * create line) a main-thread-vs-destroy-thread race: CI's x86_64
+ * caught it (C and Rust builds interleaved differently). Drain the
+ * queue directly, looping until two consecutive waits see no tasks —
+ * a destroy callback can release further objects, re-queueing tasks. */
+static void drain_destroy_queue(void)
+{
+	for (int i = 0; i < 32; i++) {
+		if (!os_task_queue_wait(obs->destruction_task_thread))
+			return;
+	}
 }
 
 /* Recursively enumerate the property tree (group contents included). */
@@ -291,7 +310,7 @@ int main(int argc, char **argv)
 	obs_data_set_bool(settings, "abi_bool", false);
 	obs_source_update(src, settings);
 	obs_source_release(src);
-	obs_wait_for_destroy_queue();
+	drain_destroy_queue();
 	obs_data_release(settings);
 
 	/* --- encoder: create with settings, 3x control (update), extra
@@ -330,7 +349,7 @@ int main(int argc, char **argv)
 	abi_trace("enc", "extra-data", "size=%zu", extra_size);
 	bfree(extra);
 	obs_encoder_release(enc);
-	obs_wait_for_destroy_queue();
+	drain_destroy_queue();
 
 	/* --- output: create, start, stop, release. For OBS_OUTPUT_ENCODED
 	 * outputs 33.0.1 sets output->active only in the raw-data capture
@@ -353,7 +372,7 @@ int main(int argc, char **argv)
 	 * signal or the destroy wait blocks forever. */
 	os_event_signal(((struct obs_output *)out)->stopping_event);
 	obs_output_release(out);
-	obs_wait_for_destroy_queue();
+	drain_destroy_queue();
 
 	/* --- service: create, release (33.0.1 has no public service
 	 * tick/heartbeat API) --- */
@@ -363,7 +382,7 @@ int main(int argc, char **argv)
 		return 1;
 	}
 	obs_service_release(svc);
-	obs_wait_for_destroy_queue();
+	drain_destroy_queue();
 
 	/* module unload happens in obs_shutdown; the destroy queue is
 	 * drained there, so the plugin's destroy/unload lines land before

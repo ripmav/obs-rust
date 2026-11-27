@@ -141,6 +141,17 @@ CMake, no ctest, and no change to the pinned obs-studio tree:
 - The graphics-module wall above (no headless video reset).
 - `obs_output_create` calls `obs_get_video()` unguarded for non-encoded
   outputs → crashes headless (`main_canvas->mix` is NULL).
+- `obs_wait_for_destroy_queue()` early-returns when no video/audio threads
+  exist (obs.c:3364) even though destroys are still queued asynchronously on
+  the destruction task thread — a release therefore returns before the
+  plugin's destroy callback ran. The first harness version used it as the
+  drain, which made the trace order (destroy line vs. next object's create
+  line) a main-thread-vs-destroy-thread race: CI's x86_64 caught the C and
+  Rust builds interleaving differently (`enc create` before/after
+  `source destroy`). The host now drains `obs->destruction_task_thread`
+  directly (`os_task_queue_wait`, looping until quiescent — destroy
+  callbacks can re-queue cascading destroys), which is what makes the trace
+  order deterministic.
 - The plugin resolves all libobs symbols against the host's `-rdynamic`
   export table at dlopen time; rust mode additionally needs `-lcurl`
   (the staticlib's happy-eyeballs bridge references it).
