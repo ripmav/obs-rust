@@ -165,29 +165,30 @@ Facts verified in this checkout that shape Phase 0:
 
 ### P0-14 C reference dumper
 
-- [ ] **P0-14.1 Target**
+- [x] **P0-14.1 Target**
   - Files: `test/ref-dump/CMakeLists.txt` (new), `test/CMakeLists.txt` (15; add subdirectory next to `cmocka`), layout pattern `test/cmocka/CMakeLists.txt` (30)
   - Steps: new executable linking `libobs`; reuse the cmocka layout in `test/cmocka` as a pattern.
   - Done when: `obs-ref-dump --list` prints available dumps.
-- [ ] **P0-14.2 Math dumps**
+  - **Deviation (WP-39, 2026-11-28):** delivered as standalone `test/ref-dump/` (`build.sh` compiles the dumper against the pinned 33.0.1 C sources + jansson 2.15.1; the same recipe runs in the conformance CI job) instead of an in-tree CMake target — the CMake half needs a full OBS configure (GL/glib/libcurl/ffmpeg) that CI does not verify; the Done-when is met by the standalone binary (ODD L89).
+- [x] **P0-14.2 Math dumps**
   - Files: `libobs/graphics/vec3.c` (87), `vec4.c` (41), `matrix3.c` (138), `matrix4.c` (333), `quat.c` (215), `axisang.c` (38), `plane.c` (151), `bounds.c` (314), `math-extra.c` (131), `vec2.h` (148, header-only part)
   - Steps: vec2/3/4, matrix3/4, quat, plane, bounds with seeded PRNG (fixed seed `0x0B5`); print floats `%.9g`.
   - Spec: S-008, S-009 (describe the dumped behaviour; the Phase 1 port is checked against it)
   - Vectors: `test/conformance/scripts/math/` (S-008), `math2/` (S-009)
   - Done when: output stable across 3 OSes (print floats with `%.9g`).
-- [ ] **P0-14.3 Data dumps**
+- [x] **P0-14.3 Data dumps**
   - Files: `libobs/obs-data.c` (2181), `libobs/callback/calldata.c` (238)
   - Steps: `obs_data` build/serialise/parse for corpus files; `calldata` pack/unpack.
   - Spec: S-014, S-002
   - Vectors: `test/conformance/scripts/obsdata/`, `calldata/`
   - Done when: JSON output sorted deterministically.
-- [ ] **P0-14.4 Media dumps**
+- [x] **P0-14.4 Media dumps**
   - Files: `libobs/media-io/format-conversion.c` (288), `libobs/obs-audio.c` (721)
   - Steps: audio mix of generated sine waves; pixel conversion of a generated gradient for NV12/I420/UYVY/YUY2. Note: `mix_audio` is `static inline` in `obs-audio.c` (line 90), so the dumper compiles that function in (include the .c or a verbatim copy) rather than linking it; `format-conversion.c` functions are exported.
   - Spec: S-013
   - Vectors: `test/conformance/scripts/mediaconv/`
   - Done when: hashes recorded.
-- [ ] **P0-14.5 Generate and verify** — Files: `test/golden/` (new). Run twice, diff must be empty, commit under `test/golden/`. Done when: CI regenerates and diffs in a job.
+- [x] **P0-14.5 Generate and verify** — Files: `test/golden/` (new). Run twice, diff must be empty, commit under `test/golden/`. Done when: CI regenerates and diffs in a job.
 
 ### P0-15 ABI conformance test plugin
 

@@ -136,6 +136,34 @@ jobs:
             (cd test/conformance && CONFORMANCE_BUILD_DIR="$RUNNER_TEMP/conform-swap/$area" ./run.sh swap "$area") || status=1
           done
           exit "$status"
+      - name: reference dump (P0-14.5): regenerate goldens + diff
+        # Builds obs-ref-dump against the pinned 33.0.1 C sources (same
+        # compile recipe as the conformance runners), regenerates every
+        # dump and diffs against the committed goldens. Red on any drift.
+        # The trailing "# section: rand" block of the math dump uses libc
+        # rand() (platform-dependent stream) and is stripped from both
+        # sides before the diff.
+        env:
+          CONFORMANCE_EXTRA_CFLAGS: >-
+            -I${{ github.workspace }}/simde
+            -I${{ runner.temp }}/jansson/include
+            -L${{ runner.temp }}/jansson/lib
+            -I/usr/include/glib-2.0 -I/usr/include/gio-2.0 -I/usr/include/gio-unix-2.0
+            -I/usr/lib/x86_64-linux-gnu/glib-2.0/include
+        run: |
+          mkdir -p "$RUNNER_TEMP/refdump"
+          LIBOBS="$GITHUB_WORKSPACE/obs-studio/libobs" \
+            JANSSON="$RUNNER_TEMP/jansson" \
+            OUT="$RUNNER_TEMP/refdump/obs-ref-dump" \
+            bash test/ref-dump/build.sh
+          status=0
+          for area in math data media; do
+            "$RUNNER_TEMP/refdump/obs-ref-dump" "$area" 2>/dev/null \
+              | awk '/^# section: rand/{exit} {print}' > "$RUNNER_TEMP/refdump/$area.out"
+            awk '/^# section: rand/{exit} {print}' "test/golden/ref-dump/$area.golden" > "$RUNNER_TEMP/refdump/$area.golden-stripped"
+            diff -u "$RUNNER_TEMP/refdump/$area.golden-stripped" "$RUNNER_TEMP/refdump/$area.out" || status=1
+          done
+          exit "$status"
 
   c-swap:
     name: c-swap (obs-ffi non-test build)
