@@ -2,23 +2,23 @@
   "schema": 1,
   "generated": {
     "date": "2026-11-27",
-    "git": "pending",
-    "machine": "host aarch64 (local) \u2014 replaced by the CI x86_64 runner numbers in the follow-up commit",
-    "cpu": "Raspberry Pi 5 Model B Rev 1.0"
+    "git": "8ad32a7",
+    "machine": "GitHub Actions ubuntu-latest x86_64 (benchmarks job) \u2014 see docs/rust-rewrite/benchmarks.md",
+    "cpu": "AMD EPYC 9V45 96-Core Processor"
   },
   "benches": {
     "audio_mix": {
-      "c": 26796
+      "c": 4136
     },
     "matmul4": {
-      "c": 22,
-      "rust": 14.853225
+      "c": 8,
+      "rust": 9.873765
     },
     "nv12_to_rgb": {
-      "c": 1901184
+      "c": 109836
     },
     "scene_render": {
-      "rust": 2259.0
+      "rust": 1312.0
     }
   }
 }

@@ -27,16 +27,20 @@ scene frame (scene_render).
 
 | bench          | workload                                                               |    C ns/op (CI x86_64)     | Rust ns/op (CI x86_64) | ratio Rust/C |
 | -------------- | ---------------------------------------------------------------------- | :------------------------: | :--------------------: | :----------: |
-| `matmul4`      | 1M dependent `matrix4_mul` (bounded affine chain)                      |     see baseline.json      |   see baseline.json    |      —       |
-| `nv12_to_rgb`  | 1080p NV12 → packed 444 (`decompress_nv12`)                            |     see baseline.json      |    — (Phase 2 port)    |      —       |
-| `audio_mix`    | 8 tracks × 1024 frames → 6 mixes × 2 ch (verbatim `mix_audio`)         |     see baseline.json      |    — (Phase 2 port)    |      —       |
-| `scene_render` | 20-item scene, per-item transform math (Rust stand-in, see deviations) | — (needs graphics runtime) |   see baseline.json    |      —       |
+| `matmul4`      | 1M dependent `matrix4_mul` (bounded affine chain)                      |             8              |          9.87          |     1.23     |
+| `nv12_to_rgb`  | 1080p NV12 → packed 444 (`decompress_nv12`)                            |          1.0984e5          |    — (Phase 2 port)    |      —       |
+| `audio_mix`    | 8 tracks × 1024 frames → 6 mixes × 2 ch (verbatim `mix_audio`)         |          4.136e3           |    — (Phase 2 port)    |      —       |
+| `scene_render` | 20-item scene, per-item transform math (Rust stand-in, see deviations) | — (needs graphics runtime) |        1.312e3         |      —       |
 
 **Authoritative numbers: the committed `test/ref-bench/baseline.json`**
-(the table is regenerated from it). The first baseline commit records the
-host-aarch64 numbers below; the CI `benchmarks` job (x86_64 runner)
-re-generates and replaces them in the follow-up commit of this WP
-(documented in ODD L91).
+(the table is regenerated from it). The committed baseline is the
+**CI x86_64 runner** (GitHub Actions `benchmarks` job, run 45958004554,
+AMD EPYC 9V45); the host-aarch64 verification numbers are below.
+
+Honest note: on the x86_64 runner Rust `matmul4` is 1.23× the C
+baseline (the host aarch64 run had it at 0.67×) — the P0-17.1
+"not slower than C" bar is per-machine and gets re-verified on each
+runner as the port matures (P1-19.3).
 
 ### Local verification numbers (host aarch64, governor `performance`, 30-run medians)
 
@@ -57,12 +61,13 @@ within the ±3% P0-17.2 Done-when bar.
 ### CI (source of the committed baseline)
 
 GitHub Actions `ubuntu-latest`, **x86_64**, job `benchmarks` in
-`.github/workflows/rust.yml` (2 vCPU-class shared runner; the exact CPU
-string is recorded in the job log — `ref-bench` prints it into the JSON
-artifact `p017-bench-json`). C side compiled `-O3` with the pinned simde
-24fa5420 (GCC's libobs build path); Rust side in the cargo bench profile
-(opt-level 3). Both are x86-64-baseline ISA (no `-march=native` / no
-`target-feature=native`), so the two sides are ISA-comparable.
+`.github/workflows/rust.yml`. Committed baseline: **AMD EPYC 9V45
+96-Core** (run 45958004554; the exact CPU string is recorded in the job
+log and in the JSON artifact `p017-bench-json`). C side compiled `-O3`
+with the pinned simde 24fa5420 (GCC's libobs build path); Rust side in
+the cargo bench profile (opt-level 3). Both are x86-64-baseline ISA (no
+`-march=native` / no `target-feature=native`), so the two sides are
+ISA-comparable.
 
 ### Host (local verification only)
 

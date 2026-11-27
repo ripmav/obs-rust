@@ -245,8 +245,9 @@ jobs:
         # baseline commit; WP-46 (P1-32.1) flips it to blocking
         # (drop --no-fail). A tracked bench >2% slower than the baseline
         # is printed as REGRESSION.
-        run: python3 test/ref-bench/compare.py test/ref-bench/baseline.json \
-          --current ref-bench.json --current rust-gate.json --no-fail
+        run: |
+          python3 test/ref-bench/compare.py test/ref-bench/baseline.json \
+            --current ref-bench.json --current rust-gate.json --no-fail
       - name: upload bench JSON
         if: always()
         uses: actions/upload-artifact@v7
