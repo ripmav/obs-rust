@@ -1,0 +1,24 @@
+{
+  "schema": 1,
+  "generated": {
+    "date": "2026-11-27",
+    "git": "8ad32a7",
+    "machine": "GitHub Actions ubuntu-latest x86_64 (benchmarks job) \u2014 see docs/rust-rewrite/benchmarks.md",
+    "cpu": "AMD EPYC 9V45 96-Core Processor"
+  },
+  "benches": {
+    "audio_mix": {
+      "c": 4136
+    },
+    "matmul4": {
+      "c": 8,
+      "rust": 9.873765
+    },
+    "nv12_to_rgb": {
+      "c": 109836
+    },
+    "scene_render": {
+      "rust": 1312.0
+    }
+  }
+}

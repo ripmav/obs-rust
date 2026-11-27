@@ -216,11 +216,16 @@ Facts verified in this checkout that shape Phase 0:
 
 ### P0-17 Benchmark harness
 
-- [ ] **P0-17.1 Harness** — Files: `crates/obs-math/benches/`, `crates/obs-media-io/benches/` (new criterion benches), `test/ref-bench/ref-bench.c` (new C baseline runner). Criterion crate `benches/`, C baseline runner printing the same metrics as JSON. Done when: one bench runs in both.
-- [ ] **P0-17.2 Math/pixel benches** — C baseline over `libobs/graphics/*.c` (see P0-14.2) and `libobs/media-io/format-conversion.c` (288). 1M matrix multiplies; 1080p NV12→RGB. Done when: stable ±3% between runs.
-- [ ] **P0-17.3 Audio/render benches** — mix 8 tracks × 1024 frames; render 20-item scene headless. Done when: stable.
-- [ ] **P0-17.4 Baselines** — Files: `docs/rust-rewrite/benchmarks.md` (new). Record machine spec + numbers. Done when: baseline committed with the machine spec.
-- [ ] **P0-17.5 Regression gate** — job compares PR vs stored baseline; fails > 2%. Done when: deliberate slowdown trips it.
+- [x] **P0-17.1 Harness** — Files: `crates/obs-math/benches/`, `crates/obs-media-io/benches/` (new criterion benches), `test/ref-bench/ref-bench.c` (new C baseline runner). Criterion crate `benches/`, C baseline runner printing the same metrics as JSON. Done when: one bench runs in both.
+  - **Delivered (WP-41, 2026-11-28):** `crates/obs-math/benches/p017.rs` (criterion `matmul4` + `scene_render`, `--gate` canonical JSON), `test/ref-bench/{ref-bench.c,build.sh}` (same env contract as ref-dump/abi-host), `test/ref-bench/compare.py` + `baseline.json`. `matmul4` runs in both (Done-when). **Deviation:** `crates/obs-media-io/benches/` lands with the Phase 2 format-conversion/audio ports — the crate is a Phase 0 skeleton, there is no Rust code to bench yet (the C baselines for those workloads are committed now; ODD L91).
+- [x] **P0-17.2 Math/pixel benches** — C baseline over `libobs/graphics/*.c` (see P0-14.2) and `libobs/media-io/format-conversion.c` (288). 1M matrix multiplies; 1080p NV12→RGB. Done when: stable ±3% between runs.
+  - **Delivered (WP-41, 2026-11-28):** `matmul4` (1M dependent `matrix4_mul`, bounded affine chain) + `nv12_to_rgb` (1080p `decompress_nv12` — the CPU step of the pipeline; the YUV→RGB matrix is a shader in 33.0.1) + Rust `matmul4` over the ported kernel. Stability verified 3 invocations, all within ±3% (C ±0.0–1.1%, ODD L91). **Deviation:** no Rust NV12→RGB bench yet (Phase 2 port; the C number is the bar).
+- [x] **P0-17.3 Audio/render benches** — mix 8 tracks × 1024 frames; render 20-item scene headless. Done when: stable.
+  - **Delivered (WP-41, 2026-11-28):** `audio_mix` C bench = the REAL mix path (`mix_audio` obs-audio.c:90–124 verbatim, 8 sources × 1024 frames × stereo → 6 mixes) + Rust `scene_render` = the smallest faithful stand-in over ported code (per-item CPU math of `obs-scene.c` 33.0.1:657–661 + :964, 20 items). **Deviation:** no C scene-render bench — the C per-item render path needs the full graphics runtime (texrender/shaders), the documented scope cut (same class as the WP-40 headless harness); no Rust audio-mix bench yet (Phase 2 port). Both stable (ODD L91).
+- [x] **P0-17.4 Baselines** — Files: `docs/rust-rewrite/benchmarks.md` (new). Record machine spec + numbers. Done when: baseline committed with the machine spec.
+  - **Delivered (WP-41, 2026-11-28):** `docs/rust-rewrite/benchmarks.md` (catalogue + machine spec: host aarch64 + CI x86_64 runner) + machine-readable `test/ref-bench/baseline.json`. First commit carries the host-aarch64 numbers; the CI `benchmarks` job re-generates the x86_64 numbers in the follow-up commit (documented in ODD L91).
+- [x] **P0-17.5 Regression gate** — job compares PR vs stored baseline; fails > 2%. Done when: deliberate slowdown trips it.
+  - **Delivered (WP-41, 2026-11-28):** `test/ref-bench/compare.py` (JSON diff, 2% threshold, missing-bench fails, `--self-test` 5/5); deliberate +5% slowdown trips it (exit 1, ODD L91); wired into the new `benchmarks` CI job. **Deviation:** report mode (`--no-fail`) for this first baseline commit — blocking lands with WP-46/P1-32.1, per the WP scope ("does NOT need to block CI on this PR's first baseline commit").
 
 ### P0-18 Scene-collection corpus
 
