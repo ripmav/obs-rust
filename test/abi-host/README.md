@@ -131,7 +131,9 @@ CMake, no ctest, and no change to the pinned obs-studio tree:
 1. **Trace normalisation** (the identity contract): lines contain literals
    and values only — never pointers, addresses, uuids, times or paths
    (scratch dirs are excluded from every line); multi-line setting values
-   are rendered as literal `\n`; the output `stop` timestamp is not traced.
+   are rendered as literal `\n`; the output `stop` timestamp is not traced;
+   font face/style names are not traced (the C source-creation path
+   rewrites them from the platform's font list — environment-dependent).
    Same line format in both builds.
 
 ## Findings pinned by this harness (33.0.1)
@@ -152,6 +154,11 @@ CMake, no ctest, and no change to the pinned obs-studio tree:
   directly (`os_task_queue_wait`, looping until quiescent — destroy
   callbacks can re-queue cascading destroys), which is what makes the trace
   order deterministic.
+- The C source-creation path rewrites font `face`/`style` strings from the
+  platform's font list (CI: set `Serif`/`Bold` came back `Serif`/`Serif`
+  on x86_64 and `Bold`/`Bold` on aarch64) — environment-dependent, so the
+  font create-value trace line carries only `size`/`flags`. The C-vs-Rust
+  identity is unaffected (the font code is C in both builds).
 - The plugin resolves all libobs symbols against the host's `-rdynamic`
   export table at dlopen time; rust mode additionally needs `-lcurl`
   (the staticlib's happy-eyeballs bridge references it).

@@ -20,7 +20,7 @@ source create-value key=abi_list_int value=202
 source create-value key=abi_list_float value=7.25
 source create-value key=abi_list_bool value=1
 source create-value key=abi_editable value=alpha\nbeta
-source create-value key=abi_font face=Bold style=Bold size=14 flags=1
+source create-value key=abi_font size=14 flags=1
 source create-value key=abi_color value=ff112233
 source create-value key=abi_color_alpha value=44556677
 source create-value key=abi_group_child value=99

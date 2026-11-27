@@ -103,9 +103,12 @@ static void *abi_src_create(obs_data_t *settings, obs_source_t *source)
 	{
 		obs_data_t *font = obs_data_get_obj(settings, "abi_font");
 		if (font) {
+			/* size/flags only: the C source-creation path rewrites the
+			 * font face/style strings from the platform's font list
+			 * (fontconfig), so they are environment-dependent and are
+			 * excluded from the trace like pointers and paths */
 			abi_trace("source", "create-value",
-				  "key=abi_font face=%s style=%s size=%lld flags=%lld",
-				  trace_str(obs_data_get_string(font, "face")), trace_str(obs_data_get_string(font, "style")),
+				  "key=abi_font size=%lld flags=%lld",
 				  obs_data_get_int(font, "size"), obs_data_get_int(font, "flags"));
 			obs_data_release(font);
 		}
