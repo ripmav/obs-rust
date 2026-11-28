@@ -153,7 +153,7 @@ apply_swap() {
 	local f n=${#_srcs[@]} out=()
 	for f in "${_srcs[@]}"; do
 		case "$f" in
-		*"libobs/util/lexer.c" | *"libobs/util/cf-lexer.c" | *"libobs/util/cf-parser.c" | *"libobs/util/text-lookup.c" | *"libobs/util/base.c" | *"libobs/util/threading-posix.c" | *"libobs/util/platform-nix-dbus.c" | *"libobs/util/platform-nix-portal.c" | *"libobs/util/bitstream.c" | *"libobs/util/array-serializer.c" | *"libobs/util/file-serializer.c" | *"libobs/util/buffered-file-serializer.c" | *"libobs/util/source-profiler.c" | *"libobs/util/bmem.c" | *"libobs/graphics/vec3.c" | *"libobs/graphics/vec4.c" | *"libobs/graphics/quat.c" | *"libobs/graphics/axisang.c" | *"libobs/graphics/matrix3.c" | *"libobs/graphics/matrix4.c" | *"libobs/graphics/plane.c" | *"libobs/graphics/bounds.c" | *"libobs/graphics/math-extra.c" | *"shared/opts-parser/opts-parser.c" | *"shared/bpm/bpm.c" | *"shared/happy-eyeballs/happy-eyeballs.c" | *"shared/file-updater/file-updater/file-updater.c") SWAPPED=1 ;;
+		*"libobs/util/lexer.c" | *"libobs/util/cf-lexer.c" | *"libobs/util/cf-parser.c" | *"libobs/util/text-lookup.c" | *"libobs/util/base.c" | *"libobs/util/threading-posix.c" | *"libobs/util/platform-nix-dbus.c" | *"libobs/util/platform-nix-portal.c" | *"libobs/util/bitstream.c" | *"libobs/util/array-serializer.c" | *"libobs/util/file-serializer.c" | *"libobs/util/buffered-file-serializer.c" | *"libobs/util/source-profiler.c" | *"libobs/util/bmem.c" | *"libobs/graphics/vec3.c" | *"libobs/graphics/vec4.c" | *"libobs/graphics/quat.c" | *"libobs/graphics/axisang.c" | *"libobs/graphics/matrix3.c" | *"libobs/graphics/matrix4.c" | *"libobs/graphics/plane.c" | *"libobs/graphics/bounds.c" | *"libobs/graphics/math-extra.c" | *"libobs/util/dstr.c" | *"libobs/callback/calldata.c" | *"libobs/callback/decl.c" | *"libobs/callback/proc.c" | *"libobs/callback/signal.c" | *"libobs/util/crc32.c" | *"libobs/util/pipe-posix.c" | *"libobs/util/task.c" | *"libobs/obs-hotkey-name-map.c" | *"shared/opts-parser/opts-parser.c" | *"shared/bpm/bpm.c" | *"shared/happy-eyeballs/happy-eyeballs.c" | *"shared/file-updater/file-updater/file-updater.c") SWAPPED=1 ;;
 		*) out+=("$f") ;;
 		esac
 	done
@@ -162,6 +162,10 @@ apply_swap() {
 	fi
 	return 0
 }
+
+# P1-02.4 (WP-43): the variadic dstr shim for swap builds (empty otherwise).
+dstr_shim=""
+[ "$mode" = swap ] && dstr_shim="$root/crates/obs-ffi/c/dstr-variadic-bridge.c"
 
 status=0
 for area in "${!runner_sources[@]}"; do
@@ -194,7 +198,20 @@ for area in "${!runner_sources[@]}"; do
 		# (bpm, happy-eyeballs, file-updater) are gated on their per-module
 		# swap macros; opts-parser.c is a runner source removed above.
 		# shellcheck disable=SC2086
-		"$cc" "${cflags[@]}" -DOBS_CONFORMANCE_RUST_SWAP_BPM -DOBS_CONFORMANCE_RUST_SWAP_HE -DOBS_CONFORMANCE_RUST_SWAP_FU ${extra_flags[$area]:-} -o "$build/$area-runner" "${srcs[@]}" "${commons[@]}" $rustlib_link ${extra_libs[$area]:-} -lpthread -lm
+		# P1-14.5 (WP-43): the helpers runner #includes task.c for the
+		# file-local state; in swap mode the include is gated out
+		# (-DOBS_CONFORMANCE_RUST_SWAP_TASK) and the os_task_queue_*
+		# symbols come from the staticlib.
+		# P1-28.4 (WP-43): the hotkeys area links the staticlib's real
+		# (Rust) signal system (callback/signal.c swapped) - the runner
+		# switches to a real signal handler with print callbacks so the
+		# emission trace lines match the check-mode stub.
+		# P1-02.4 (WP-43): the four variadic dstr functions cannot be
+		# defined in Rust - the C shim (dstr.c dropped above) provides
+		# them on the shared struct layout.
+		swap_extra=""
+		[ "$area" = hotkeys ] && swap_extra=-DOBS_CONFORMANCE_RUST_SWAP_HK
+		"$cc" "${cflags[@]}" -DOBS_CONFORMANCE_RUST_SWAP_BPM -DOBS_CONFORMANCE_RUST_SWAP_HE -DOBS_CONFORMANCE_RUST_SWAP_FU -DOBS_CONFORMANCE_RUST_SWAP_TASK $swap_extra ${extra_flags[$area]:-} -o "$build/$area-runner" "${srcs[@]}" $dstr_shim "${commons[@]}" $rustlib_link ${extra_libs[$area]:-} -lpthread -lm
 	else
 		rustlib_link=""
 		if [ -n "${rustlib_area[$area]:-}" ]; then
@@ -231,20 +248,40 @@ for area in "${!runner_sources[@]}"; do
 			else
 				actual="$build/$name.actual"
 				"$build/$area-runner" "$script" >"$actual"
+				# helpers/hotkeys-defect-null: the vector records the C
+				# reference crash (`hk_from @null crash`); the documented
+				# comparison rule (the script header) maps it to the
+				# non-crashing result once the Rust name map is swapped.
+				out_cmp="$out"
+				if [ "$mode" = swap ] && [ "$area" = helpers ] && grep -qxF "hk_from @null crash" "$out" 2>/dev/null; then
+					sed 's/^hk_from @null crash$/hk_from 0/' "$out" >"$build/$name.norm"
+					out_cmp="$build/$name.norm"
+				fi
 				# math/math2: the values are printed with %.9g and compared
 				# with the S-008 section-2 tolerance (the C reference uses
 				# SSE; the Rust bridge may drift in the last ulp — Q-5).
 				if [ "$area" = math ] || [ "$area" = math2 ]; then
-					if ! python3 "$here/math-diff.py" "$out" "$actual"; then
+					if ! python3 "$here/math-diff.py" "$out_cmp" "$actual"; then
 						echo "FAIL $area/$name" >&2
-						diff -u "$out" "$actual" 2>&1 | head -40 >&2
+						diff -u "$out_cmp" "$actual" 2>&1 | head -40 >&2
 						status=1
 					else
 						echo "ok   $area/$name"
 					fi
-				elif ! diff -u "$out" "$actual" >/dev/null; then
+				elif [ "$mode" = swap ] && [ "$area" = decl ]; then
+					# The `parse crash` blocks need the README crash
+					# rule (crash == fail, log lines ignored) — a plain
+					# diff would fail every crash vector in swap mode.
+					if ! python3 "$here/decl-diff.py" "$out_cmp" "$actual"; then
+						echo "FAIL $area/$name" >&2
+						diff -u "$out_cmp" "$actual" 2>&1 | head -40 >&2
+						status=1
+					else
+						echo "ok   $area/$name"
+					fi
+				elif ! diff -u "$out_cmp" "$actual" >/dev/null; then
 					echo "FAIL $area/$name" >&2
-					diff -u "$out" "$actual" 2>&1 | head -40 >&2
+					diff -u "$out_cmp" "$actual" 2>&1 | head -40 >&2
 					status=1
 				else
 					echo "ok   $area/$name"

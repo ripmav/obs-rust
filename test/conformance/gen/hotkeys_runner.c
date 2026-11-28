@@ -269,13 +269,54 @@ static bool enumb_cb(void *d, size_t idx, obs_hotkey_binding_t *b)
 }
 
 static struct obs_core *core;
+#ifndef OBS_CONFORMANCE_RUST_SWAP_HK
 static int dummy_signals;
+#endif
+
+#ifdef OBS_CONFORMANCE_RUST_SWAP_HK
+/* Swap mode: callback/signal.c is excluded - the staticlib's real (Rust)
+signal system provides signal_handler_* and its strong signal_handler_
+signal supersedes the check-mode stub (hotkeys_stubs.c, weak). Create a
+real handler and connect a print callback per emitted signal so the
+emission trace lines match the stub's output byte-for-byte. */
+static void hk_signal_print(void *data, calldata_t *params)
+{
+	void *key = NULL;
+	calldata_get_ptr(params, "key", &key);
+	printf("signal %s id=", (const char *)data);
+	obs_hotkey_id id = obs_hotkey_get_id(key);
+	if (id == (size_t)-1)
+		printf("INVALID");
+	else
+		printf("%zu", id);
+	printf("\n");
+}
+#endif
 
 static void core_new(void)
 {
 	core = bzalloc(sizeof *core);
 	pthread_mutex_init_recursive(&core->hotkeys.mutex);
+#ifdef OBS_CONFORMANCE_RUST_SWAP_HK
+	core->hotkeys.signals = signal_handler_create();
+	static const char *hk_sig_decls[] = {
+		"void hotkey_register(in ptr key)",
+		"void hotkey_unregister(in ptr key)",
+		"void hotkey_bindings_changed(in ptr key)",
+	};
+	static const char *hk_sig_names[] = {
+		"hotkey_register",
+		"hotkey_unregister",
+		"hotkey_bindings_changed",
+	};
+	for (size_t i = 0; i < 3; i++) {
+		signal_handler_add(core->hotkeys.signals, hk_sig_decls[i]);
+		signal_handler_connect(core->hotkeys.signals, hk_sig_names[i], hk_signal_print,
+				       (void *)hk_sig_names[i]);
+	}
+#else
 	core->hotkeys.signals = (signal_handler_t *)&dummy_signals;
+#endif
 	core->hotkeys.strict_modifiers = true; /* the product default */
 	obs = core;
 }

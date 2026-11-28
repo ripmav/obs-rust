@@ -15,16 +15,52 @@ patch="$root/test/conformance/obs-enable-rust.patch"
 
 cd "$obs"
 git checkout -q fe1ed79 -- libobs
-rm -f libobs/util/srcprof-bridge.c
+rm -f libobs/util/srcprof-bridge.c libobs/util/dstr-variadic-bridge.c
+# Unstage leftovers from the previous run (git apply refuses a file that is
+# in the index).
+git reset -q -- libobs 2>/dev/null || true
 git apply -v "$patch" >/dev/null
+
+# WP-43 (P1-02.4): the dstr swap also needs the four variadic dstr functions
+# (Rust cannot define `va_list` functions) - the C shim compiles into libobs
+# only in Rust swap builds (the conformance runner compiles the identical
+# copy from crates/obs-ffi/c/). Idempotent: added once, keyed on the dstr.c
+# line (bare or already genex-excluded).
+python3 - libobs/CMakeLists.txt <<'PY'
+import sys
+p = sys.argv[1]
+s = open(p).read()
+shim = "    $<$<BOOL:${OBS_ENABLE_RUST}>:util/dstr-variadic-bridge.c>"
+if "util/dstr-variadic-bridge.c" not in s:
+    bare = "\n    util/dstr.c\n"
+    if bare in s:
+        s = s.replace(bare, bare + shim + "\n", 1)
+    else:
+        excl = "    $<$<NOT:$<BOOL:${OBS_ENABLE_RUST}>>:util/dstr.c>\n"
+        assert excl in s, "dstr.c line not found"
+        s = s.replace(excl, excl + shim + "\n", 1)
+    open(p, "w").write(s)
+PY
 
 for f in "$@"; do
 	fesc="${f//./\\.}"
 	sed -i -E "s|^[[:space:]]*$fesc\.c\$|    \$<\$<NOT:\$<BOOL:\${OBS_ENABLE_RUST}>>:$f.c>|" libobs/CMakeLists.txt
 done
 
+# The platform cmake files carry the same sources (pipe-posix.c,
+# threading-posix.c); the same genex applies (idempotent - only bare
+# source lines match).
 for f in "$@"; do
-	grep -qF "NOT:\$<BOOL:\${OBS_ENABLE_RUST}>>:$f.c" libobs/CMakeLists.txt || {
+	fesc="${f//./\\.}"
+	for cm in libobs/cmake/os-linux.cmake libobs/cmake/os-freebsd.cmake libobs/cmake/os-macos.cmake; do
+		sed -i -E "s|^[[:space:]]*$fesc\.c\$|    \$<\$<NOT:\$<BOOL:\${OBS_ENABLE_RUST}>>:$f.c>|" "$cm"
+	done
+done
+
+for f in "$@"; do
+	# The file may live in libobs/CMakeLists.txt or a platform cmake
+	# (pipe-posix.c, threading-posix.c) - excluded in either.
+	grep -qF "NOT:\$<BOOL:\${OBS_ENABLE_RUST}>>:$f.c" libobs/CMakeLists.txt libobs/cmake/os-linux.cmake libobs/cmake/os-freebsd.cmake libobs/cmake/os-macos.cmake || {
 		echo "ERROR: $f.c not excluded in CMakeLists.txt" >&2
 		grep -nF "$f.c" libobs/CMakeLists.txt >&2
 		exit 1

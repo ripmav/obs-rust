@@ -28,7 +28,7 @@ The diff compares FUNCTION DECLARATIONS ONLY. Intentionally out of scope:
   `struct dbus_sleep_info`, `struct portal_inhibit_info` (aliased below).
 
 Reference declarations in scope (the exact set the bridge must provide,
-172 in total):
+242 in total):
   util/bmem.h                   6  EXPORT (WP-43, P1-01.3)
   util/text-lookup.h             4  EXPORT
   util/threading.h              14 EXPORT + the two pthread_mutex_init_* static inlines
@@ -60,6 +60,26 @@ Reference declarations in scope (the exact set the bridge must provide,
   graphics/plane.h                7  EXPORT (WP-43, P1-17.4)
   graphics/bounds.h              16  EXPORT (WP-43, P1-18.4)
   graphics/math-extra.h           7  EXPORT (WP-43, P1-18.4)
+  callback/calldata.h             3  EXPORT (WP-43, P1-20.3)
+  callback/decl.h                 1  EXPORT (WP-43, P1-21.3/21.4 —
+                                 decl_info_free stays a static inline in
+                                 the C header, not re-exported)
+  callback/proc.h                 4  EXPORT (WP-43, P1-22.4)
+  callback/signal.h              10  EXPORT (WP-43, P1-22.4)
+  util/crc32.h                    1  EXPORT (WP-43, P1-10.4)
+  util/dstr.h                    37  EXPORT (WP-43, P1-02.4 — the four
+                                 variadic dstr_printf/dstr_catf/
+                                 dstr_vprintf/dstr_vcatf stay C in the
+                                 dstr-variadic-bridge.c shim)
+  util/pipe.h                     6  EXPORT (WP-43, P1-11.4 — the five
+                                 os_process_args_* stay C in pipe.c,
+                                 add_argf is variadic)
+  util/task.h                     5  EXPORT (WP-43, P1-14.5)
+  obs-hotkey.h                    2  EXPORT (WP-43, P1-28.4)
+  obs-internal.h                  1  plain (WP-43, P1-28.4 —
+                                 obs_hotkey_name_map_free; the rest of
+                                 the header's externs are the
+                                 source_profiler_* set above)
   (graphics/vec2.h is out of scope: all its helpers are static inline)
   (shared/happy-eyeballs: build_addr_list is file-local static in the .c —
   no reference declaration, the conformance runner declares it in swap
@@ -119,6 +139,34 @@ ALIASES = {
     # confirm_file_callback_t typedef).
     "ConfirmCallback": "bool*",
     "size_t": "uintptr_t",
+    # WP-43 (P1-20.3/P1-21.3/P1-22.4): the opaque callback handles —
+    # cbindgen renders the Rust mirrors (Calldata, DeclInfo, ProcHandler,
+    # SignalHandler) as bare names (the types live in a dependency crate
+    # outside cbindgen's include list).
+    "calldata_t": "Calldata",
+    "decl_info": "DeclInfo",
+    "proc_handler_t": "ProcHandler",
+    "signal_handler_t": "SignalHandler",
+    # The C callback typedefs render as the Rust type-alias names
+    # cbindgen uses in the signatures (cbindgen prints the alias name,
+    # not the function-pointer form).
+    "signal_callback_t": "SignalCallback",
+    "global_signal_callback_t": "GlobalSignalCallback",
+    "proc_handler_proc_t": "ProcProc",
+    # WP-43 (P1-02.4): the dstr / strref struct tags and the C wide char
+    # (glibc 32-bit wchar_t; the bridges type the wide strings as u32).
+    "dstr": "Dstr",
+    "strref": "StrRef",
+    "wchar_t": "uint32_t",
+    # WP-43 (P1-11.4): the process-pipe handles. The args struct is the
+    # bridge's repr(C) mirror of C's `struct os_process_args`.
+    "os_process_pipe_t": "ProcessPipe",
+    "os_process_args_t": "structCProcessArgs",
+    # WP-43 (P1-14.5): the task-queue handle and task callback.
+    "os_task_queue_t": "TaskQueue",
+    "os_task_t": "OsTask",
+    # WP-43 (P1-28.4): the C key enum renders as a plain int.
+    "obs_key_t": "int",
     # The C `struct darray` (darray.h) — the bridge's mirror is named
     # `darray_c` (the cf-lexer bridge owns the crate-level `darray` name
     # for its generic DARRAY view); the alias includes the `struct` prefix
@@ -184,6 +232,30 @@ REFS = [
     ("libobs/graphics/plane.h", ("export",)),
     ("libobs/graphics/bounds.h", ("export",)),
     ("libobs/graphics/math-extra.h", ("export",)),
+    # WP-43 (P1-20.3/P1-21.3/P1-22.4): the callback leaf modules — the
+    # exported functions only (the calldata/decl typed inlines stay C in
+    # the headers, operating on the shared layouts).
+    ("libobs/callback/calldata.h", ("export",)),
+    ("libobs/callback/decl.h", ("export",)),
+    ("libobs/callback/proc.h", ("export",)),
+    ("libobs/callback/signal.h", ("export",)),
+    # WP-43 (P1-10.4): the CRC32 export.
+    ("libobs/util/crc32.h", ("export",)),
+    # WP-43 (P1-02.4): dstr — the 37 non-variadic exports (the four
+    # variadics stay C in the shim, name-filtered like the externs).
+    ("libobs/util/dstr.h", ("dstr-export",)),
+    # WP-43 (P1-11.4): pipe — the six os_process_pipe_* exports (the five
+    # os_process_args_* stay C in pipe.c, name-filtered).
+    ("libobs/util/pipe.h", ("pipe-export",)),
+    # WP-43 (P1-14.5): the task-queue exports.
+    ("libobs/util/task.h", ("export",)),
+    # WP-43 (P1-28.4): the key name map (obs-hotkey.h carries many other
+    # hotkey exports - name-filtered to the two the name-map file
+    # provides) and the plain internal free (obs-internal.h, the second
+    # entry for that file - the extern entry above filters on
+    # EXTERN_NAMES).
+    ("libobs/obs-hotkey.h", ("hotkey-export",)),
+    ("libobs/obs-internal.h", ("hotkey-internal",)),
 ]
 # The only `extern` declarations in scope: the six dbus_/portal_inhibit*
 # symbols the platform bridge provides and the eleven source_profiler_*
@@ -211,6 +283,30 @@ EXTERN_NAMES = {
 # P1-03.2 C helpers whose linkable form the bridge provides (the rest of
 # the header's inlines stay static until the P1-03.3 recipe).
 DARRAY_NAMES = {"darray_push_back", "darray_insert", "darray_erase", "darray_move_item"}
+
+# The non-variadic dstr exports (WP-43, P1-02.4): the four variadic /
+# va_list functions stay C in dstr-variadic-bridge.c.
+DSTR_NAMES = {
+    "astrcmpi", "wstrcmpi", "astrcmp_n", "wstrcmp_n", "astrcmpi_n", "wstrcmpi_n",
+    "astrstri", "wstrstri", "strdepad", "wcsdepad", "strlist_split", "strlist_free",
+    "dstr_init_copy_strref", "dstr_copy", "dstr_copy_strref", "dstr_ncopy",
+    "dstr_ncopy_dstr", "dstr_cat_dstr", "dstr_cat_strref", "dstr_ncat",
+    "dstr_ncat_dstr", "dstr_insert", "dstr_insert_dstr", "dstr_insert_ch",
+    "dstr_remove", "dstr_replace", "dstr_depad", "dstr_left", "dstr_mid",
+    "dstr_right", "dstr_from_mbs", "dstr_to_mbs", "dstr_from_wcs",
+    "dstr_to_wcs", "dstr_to_upper", "dstr_to_lower", "dstr_safe_printf",
+}
+
+# The pipe exports the bridge provides (WP-43, P1-11.4): the five
+# os_process_args_* stay C in pipe.c (add_argf is variadic).
+PIPE_NAMES = {
+    "os_process_pipe_create", "os_process_pipe_create2", "os_process_pipe_destroy",
+    "os_process_pipe_read", "os_process_pipe_read_err", "os_process_pipe_write",
+}
+
+# The hotkey name-map exports (WP-43, P1-28.4).
+HOTKEY_EXPORT_NAMES = {"obs_key_to_name", "obs_key_from_name"}
+HOTKEY_INTERNAL_NAMES = {"obs_hotkey_name_map_free"}
 
 TOK = re.compile(r"[A-Za-z_][A-Za-z0-9_]*|\*+")
 IDENT = re.compile(r"[A-Za-z_][A-Za-z0-9_]*\Z")
@@ -363,7 +459,9 @@ def extract_c(text, patterns, where):
             # The plain pattern captures ret/name/params separately;
             # reassemble the `RET NAME(params` shape take_decl expects.
             body = (
-                f"{m.group(1)} {m.group(2)}({m.group(3)}" if p == "plain" else m.group(1)
+                f"{m.group(1)} {m.group(2)}({m.group(3)}"
+                if p in ("plain", "hotkey-internal")
+                else m.group(1)
             )
             got = take_decl(body)
             if got is None:
@@ -374,6 +472,14 @@ def extract_c(text, patterns, where):
             if p == "darray-inline" and name not in DARRAY_NAMES:
                 continue
             if p == "extern" and name not in EXTERN_NAMES:
+                continue
+            if p == "dstr-export" and name not in DSTR_NAMES:
+                continue
+            if p == "pipe-export" and name not in PIPE_NAMES:
+                continue
+            if p == "hotkey-export" and name not in HOTKEY_EXPORT_NAMES:
+                continue
+            if p == "hotkey-internal" and name not in HOTKEY_INTERNAL_NAMES:
                 continue
             if name in decls:
                 die(f"duplicate C reference for {name} in {where}")
@@ -390,6 +496,18 @@ def extract_c(text, patterns, where):
 # in scope carries nested parens.
 RX = {
     "export": re.compile(r"\bEXPORT\b(.*?)\)\s*(?:OBS_DEPRECATED\s*)?[;{]"),
+    # WP-43: the same EXPORT shape, name-filtered (dstr: the variadics
+    # stay C; pipe: the os_process_args_* stay C; hotkey: the rest of
+    # obs-hotkey.h stays C).
+    "dstr-export": re.compile(r"\bEXPORT\b(.*?)\)\s*(?:OBS_DEPRECATED\s*)?[;{]"),
+    "pipe-export": re.compile(r"\bEXPORT\b(.*?)\)\s*(?:OBS_DEPRECATED\s*)?[;{]"),
+    "hotkey-export": re.compile(r"\bEXPORT\b(.*?)\)\s*(?:OBS_DEPRECATED\s*)?[;{]"),
+    # The plain (non-EXPORT) declaration of obs-internal.h, name-filtered.
+    "hotkey-internal": re.compile(
+        r"(?:^|(?<=[;{}]))\s*[{};]*\s*"
+        r"([A-Za-z_][A-Za-z0-9_]*(?:\s+[A-Za-z_][A-Za-z0-9_]*|\s*\**)*?)"
+        r"\s*([a-z_][a-z0-9_]*)\s*\(([^;()]*)\)\s*;"
+    ),
     "pthread-inline": re.compile(r"\bstatic\s+inline\b(.*?)\)\s*(?:;|\{)"),
     "darray-inline": re.compile(r"\bstatic\s+inline\b(.*?)\)\s*(?:;|\{)"),
     "extern": re.compile(r"\bextern\b(.*?)\)\s*;"),
