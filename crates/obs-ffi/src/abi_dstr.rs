@@ -40,6 +40,15 @@ fn cstr<'a>(p: *const c_char) -> Option<&'a [u8]> {
     crate::abi_common::c_bytes(p)
 }
 
+/// `char` → `u8` (the byte value). `c_char`'s signedness is
+/// target-dependent (i8 on x86_64-linux, u8 on aarch64-linux), so a
+/// direct `as` cast is a same-type cast on half the targets (clippy
+/// `unnecessary_cast`); the C ABI passes the byte in `char` and the
+/// port's `u8` API takes the low byte either way.
+fn c_char_byte(ch: c_char) -> u8 {
+    ch.to_ne_bytes()[0]
+}
+
 /// Read a NUL-terminated wide string (u32) slice (NULL → `None`).
 ///
 /// # Safety
@@ -245,7 +254,7 @@ pub unsafe extern "C" fn strlist_split(
     include_empty: bool,
 ) -> *mut *mut c_char {
     // `str` is a live C string for the scan (safe through `cstr`).
-    let list = cd_strlist_split(cstr(str), split_ch as i8 as u8, include_empty);
+    let list = cd_strlist_split(cstr(str), c_char_byte(split_ch), include_empty);
     match list {
         Some(l) => {
             // The C caller owns the block; drop the Rust Drop guard.
@@ -423,7 +432,7 @@ pub unsafe extern "C" fn dstr_insert_dstr(dst: *mut Dstr, idx: usize, str: *cons
 #[unsafe(no_mangle)]
 pub unsafe extern "C" fn dstr_insert_ch(dst: *mut Dstr, idx: usize, ch: c_char) {
     // SAFETY: caller contract — `dst` live.
-    unsafe { cd_dstr_insert_ch(&mut *dst, idx, ch as i8 as u8) }
+    unsafe { cd_dstr_insert_ch(&mut *dst, idx, c_char_byte(ch)) }
 }
 
 /// `EXPORT void dstr_remove(struct dstr *dst, const size_t idx, const

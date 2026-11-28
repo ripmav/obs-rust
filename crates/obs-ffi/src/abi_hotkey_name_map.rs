@@ -106,10 +106,13 @@ mod tests {
                 let back = obs_key_from_name(name.as_ptr());
                 assert_eq!(back, key, "round trip of {key}");
             }
-            assert_eq!(*obs_key_to_name(OBS_KEY_LAST_VALUE as c_int), b'\0'); // "" (the error log is unobservable here)
+            // `0 as c_char`: c_char's signedness is target-dependent
+            // (i8 on x86_64-linux, u8 on aarch64-linux), so compare as
+            // c_char rather than a byte literal.
+            assert_eq!(*obs_key_to_name(OBS_KEY_LAST_VALUE as c_int), 0 as c_char); // "" (the error log is unobservable here)
             // Negative keys take the same error path (the C enum compares unsigned):
-            assert_eq!(*obs_key_to_name(-1), b'\0');
-            assert_eq!(*obs_key_to_name(-12345), b'\0');
+            assert_eq!(*obs_key_to_name(-1), 0 as c_char);
+            assert_eq!(*obs_key_to_name(-12345), 0 as c_char);
             assert_eq!(obs_key_from_name(c"bogus".as_ptr()), 0);
             assert_eq!(obs_key_from_name(std::ptr::null()), 0);
             obs_hotkey_name_map_free(); // no-op, must not crash
