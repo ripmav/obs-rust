@@ -124,10 +124,14 @@ pub fn calldata_free(d: &mut Calldata) {
     }
 }
 
-/// The exact error text of S-002-R14 (MUST). Routed to stderr until the
-/// obs-log crate lands.
+/// The exact error text of S-002-R14 (MUST); routed through the C log
+/// sink (`log::emit`) so the swap build's harness captures it like the
+/// reference `blog(LOG_ERROR, ...)` line.
 pub(crate) fn fixed_overflow_log() {
-    eprintln!("Tried to go above fixed calldata stack size!");
+    crate::log::emit(
+        crate::log::LOG_ERROR,
+        "Tried to go above fixed calldata stack size!",
+    );
 }
 
 // ── Search (S-002 §6) ───────────────────────────────────────────────────
