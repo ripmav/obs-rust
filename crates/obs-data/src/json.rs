@@ -239,7 +239,13 @@ fn real_fmt(f: f64) -> String {
             }
         }
         if tie && m < LIM {
-            let mid = (m as f64) * 2f64.powi(t - 1);
+            // 2^(t-1) exactly: for any finite f64, t-1 lies in [-341, 307]
+            // (the `{:e}` exponent range), so its biased exponent is a
+            // normal f64 exponent and the bits are just the biased value
+            // in the exponent field — no libm (Miri's `powi` emulation is
+            // not exact and would silently break the tie test).
+            let biased = (t - 1) + 1023;
+            let mid = (m as f64) * f64::from_bits((biased as u64) << 52);
             if mid == f.abs() {
                 // Rust `{:e}` rounds half-up, so on a tie it returned the
                 // upper candidate; the even member of {D, D-1} is D when D
