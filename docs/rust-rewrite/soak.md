@@ -55,8 +55,8 @@ job messages + signal text).
 
 ## Run log
 
-| #   | Date       | Trigger                    | Result                                                                                                                                                                              |
-| --- | ---------- | -------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 1   | 2026-11-28 | manual `workflow_dispatch` | FAILED in 19s — patch path bug: `git -C obs-studio apply` resolved the patch relative to the obs-studio dir. Fixed in `nightly.yml` (absolute `$GITHUB_WORKSPACE` path); see run 2. |
-| 2   | 2026-11-28 | manual `workflow_dispatch` | FAILED same 19s bug — dispatched from `main` before the fix landed (fix rode in with PR #90). See run 3.                                                                            |
-| 3   | 2026-11-28 | manual `workflow_dispatch` | [run 46130532450](https://github.com/ripmav/obs-rust/actions/runs/46130532450) (in progress — first run with the patch-path fix)                                                    |
+| #   | Date       | Trigger                    | Result                                                                                                                                                                                                                  |
+| --- | ---------- | -------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1   | 2026-11-28 | manual `workflow_dispatch` | FAILED in 19s — patch path bug: `git -C obs-studio apply` resolved the patch relative to the obs-studio dir. Fixed in `nightly.yml` (absolute `$GITHUB_WORKSPACE` path); see run 2.                                     |
+| 2   | 2026-11-28 | manual `workflow_dispatch` | FAILED same 19s bug — dispatched from `main` before the fix landed (fix rode in with PR #90). See run 3.                                                                                                                |
+| 3   | 2026-11-28 | manual `workflow_dispatch` | [run 46130532450](https://github.com/ripmav/obs-rust/actions/runs/46130532450) — GREEN (8 m) — first real data point: check + swap over every CI area, 0 failures (summary artifact `soak-46130532450`); soak day 1/14. |

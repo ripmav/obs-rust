@@ -13,9 +13,13 @@ Benchmark harness + C baseline for the Rust rewrite (subtask P0-17,
 - **Committed baseline:** `test/ref-bench/baseline.json` (machine-readable)
   - the table below (human-readable). Keep both in sync when regenerating.
 - **Regression gate (P0-17.5):** `test/ref-bench/compare.py` — fails when a
-  tracked bench is >2% slower than the baseline. Wired into the `benchmarks`
-  CI job in **report mode** for this first baseline commit; WP-46 (P1-32.1)
-  flips it to blocking.
+  tracked **rust-side** bench is >2% slower than the baseline (same CPU
+  model), or when a tracked bench is missing. Wired into the `benchmarks`
+  CI job; **blocking since WP-46 (P1-32.1)** (`--no-fail` dropped). The
+  **c-side** rows are the baseline reference — this repo's changes cannot
+  move them (pinned C sources + pinned simde), so same-CPU deltas there
+  are reported as `drift (c ref, informational)` and the remedy is a
+  re-baseline, not a failed PR (found in the first blocking run).
 - **Contract + usage:** `test/ref-bench/README.md` (JSON schema 1, gate
   semantics, baseline regeneration).
 
@@ -27,34 +31,60 @@ scene frame (scene_render).
 
 | bench          | workload                                                               |    C ns/op (CI x86_64)     | Rust ns/op (CI x86_64) | ratio Rust/C |
 | -------------- | ---------------------------------------------------------------------- | :------------------------: | :--------------------: | :----------: |
-| `matmul4`      | 1M dependent `matrix4_mul` (bounded affine chain)                      |             8              |          9.87          |     1.23     |
-| `nv12_to_rgb`  | 1080p NV12 → packed 444 (`decompress_nv12`)                            |          1.0984e5          |    — (Phase 2 port)    |      —       |
-| `audio_mix`    | 8 tracks × 1024 frames → 6 mixes × 2 ch (verbatim `mix_audio`)         |          4.136e3           |    — (Phase 2 port)    |      —       |
-| `scene_render` | 20-item scene, per-item transform math (Rust stand-in, see deviations) | — (needs graphics runtime) |        1.312e3         |      —       |
+| `matmul4`      | 1M dependent `matrix4_mul` (bounded affine chain)                      |             7              |          9.63          |     1.38     |
+| `nv12_to_rgb`  | 1080p NV12 → packed 444 (`decompress_nv12`)                            |          1.0579e5          |    — (Phase 2 port)    |      —       |
+| `audio_mix`    | 8 tracks × 1024 frames → 6 mixes × 2 ch (verbatim `mix_audio`)         |          4.317e3           |    — (Phase 2 port)    |      —       |
+| `scene_render` | 20-item scene, per-item transform math (Rust stand-in, see deviations) | — (needs graphics runtime) |        1.251e3         |      —       |
 
 **Authoritative numbers: the committed `test/ref-bench/baseline.json`**
 (the table is regenerated from it). The committed baseline is the
-**CI x86_64 runner** (GitHub Actions `benchmarks` job, run 45958004554,
-AMD EPYC 9V45); the host-aarch64 verification numbers are below.
+**CI x86_64 runner** (GitHub Actions `benchmarks` job, run 46142227293,
+AMD EPYC 9V45 — **re-baselined in WP-46** after the runner toolchain
+moved on, rustc 1.100.0 → 1.100.1; the original WP-41 baseline was run
+45958004554, same 9V45 CPU). The host-aarch64 verification numbers are
+below.
 
-Honest note: on the x86_64 runner Rust `matmul4` is 1.23× the C
-baseline (the host aarch64 run had it at 0.67×) — the P0-17.1
-"not slower than C" bar is per-machine and gets re-verified on each
-runner as the port matures (P1-19.3).
+Honest note: on the x86_64 runner Rust `matmul4` is 1.38× the C baseline
+after the WP-46 re-baseline (the WP-41 baseline was 1.23×, the EPYC 7763
+runner 1.15×, and the host aarch64 run 0.67×) — the C side is 7 ns/mul,
+where a 1-ns step is 14%, so the ratio at this scale is quantization-
+noisy. The P0-17.1 "not slower than C" bar is per-machine and gets
+re-verified on each runner as the port matures (P1-19.3); the finding
+stays open (P1-16.4/P1-19.3, `PHASE-1-REVIEW.md`).
+
+### CI cross-check numbers (x86_64, current runner AMD EPYC 7763, WP-46)
+
+From the `benchmarks` job of run
+[46130478940](https://github.com/ripmav/obs-rust/actions/runs/46130478940/job/140934278372)
+(30-run medians, both sides on the same runner):
+
+| bench          |          C ns/op           | Rust ns/op (CI x86_64) | ratio Rust/C |
+| -------------- | :------------------------: | :--------------------: | :----------: |
+| `matmul4`      |             13             |         14.95          |     1.15     |
+| `nv12_to_rgb`  |          3.1605e5          |    — (Phase 2 port)    |      —       |
+| `audio_mix`    |          1.1151e4          |    — (Phase 2 port)    |      —       |
+| `scene_render` | — (needs graphics runtime) |        2.134e3         |      —       |
+
+The 7763 is ~1.5–3× the baseline's 9V45 on the C workloads, so these C
+numbers are not comparable to the committed baseline — they exist to give
+the same-machine Rust-vs-C pair on the current runner (the matmul4 1.15×
+row above). The `compare.py` rows of that run are all `info (different CPU)` (baseline CPU ≠ runner CPU) — the 2% threshold does not apply
+cross-model (ODD L91).
 
 ### Local verification numbers (host aarch64, governor `performance`, 30-run medians)
 
 | bench          | C ns/op | Rust ns/op | ratio Rust/C |
 | -------------- | :-----: | :--------: | :----------: |
-| `matmul4`      |  22.0   |   14.85    |     0.67     |
-| `nv12_to_rgb`  | 2.07e6  |     —      |      —       |
-| `audio_mix`    | 2.64e4  |     —      |      —       |
-| `scene_render` |    —    |   2.27e3   |      —       |
+| `matmul4`      |  22.0   |   14.83    |     0.67     |
+| `nv12_to_rgb`  | 2.122e6 |     —      |      —       |
+| `audio_mix`    | 2.676e4 |     —      |      —       |
+| `scene_render` |    —    |  2.259e3   |      —       |
 
-Stability (3 consecutive runner invocations, same day): matmul4 22/22/22
-(±0.0%), nv12_to_rgb 2.16–2.21e6 (±1.1%), audio_mix 26.3–26.6e3 (±0.7%),
-Rust matmul4 14.82–14.85 (±0.1%), scene_render 2.26–2.30e3 (±0.7%) — all
-within the ±3% P0-17.2 Done-when bar.
+Stability (3 consecutive runner invocations, same day; re-run for WP-46,
+2026-11-28): matmul4 22/22/22 (±0.0%), nv12_to_rgb 2.09–2.19e6 (±1.1%),
+audio_mix 26.76–27.28e3 (±1.0%), Rust matmul4 14.82–14.84 (±0.05%),
+scene_render 2259/2259/2259 (±0.0%) — all within the ±3% P0-17.2
+Done-when bar.
 
 ## Machine spec
 
@@ -69,13 +99,21 @@ the cargo bench profile (opt-level 3). Both are x86-64-baseline ISA (no
 `-march=native` / no `target-feature=native`), so the two sides are
 ISA-comparable.
 
-**Runner heterogeneity:** `ubuntu-latest` rotates between CPU models —
-the first two `benchmarks` jobs ran on **AMD EPYC 9V45** and **AMD EPYC
-7763** respectively, 1.5–3× apart (the committed baseline is the 9V45
-numbers). The gate therefore only enforces the 2% threshold on the
-*same* CPU model; cross-model deltas are reported as informational
-(ODD L91, `compare.py` CPU awareness). WP-46 (when the gate becomes
-blocking) should pin the runner image and re-baseline per CPU model.
+**Runner heterogeneity:** `ubuntu-latest` rotates between CPU models
+**per run** — consecutive `benchmarks` jobs have landed on **AMD EPYC
+9V45** and **AMD EPYC 7763** (1.5–3× apart), and the runner toolchain
+moves on between days (rustc 1.100.0 → 1.100.1 moved every workload by
+2–13% on the same CPU — the first blocking run, 46142227293, caught it
+on the baseline's 9V45: +4.4% C-side drift, −4.7% Rust `scene_render`).
+The gate therefore only enforces the 2% threshold on the *same* CPU model
+(rust side only — c-side rows are the baseline reference, drift is
+informational; missing benches fail on any CPU; ODD L91, `compare.py`
+CPU + side awareness). WP-46 re-baselined to run 46142227293 (9V45,
+rustc 1.100.1), so a PR run that lands on 9V45 is gated directly and a
+run that lands on 7763 (or any other model) reports all rows as
+informational while still catching missing benches. Pinning the runner
+image / re-baselining per CPU model is the open follow-up, recorded as a
+finding in `PHASE-1-REVIEW.md`.
 
 ### Host (local verification only)
 
@@ -115,8 +153,14 @@ blocking) should pin the runner image and re-baseline per CPU model.
 1. **No CMake/ctest** — standalone `build.sh` (WP-39/40 precedent; a CMake
    target needs a full OBS configure that CI does not verify).
 1. **Gate in report mode for the first baseline commit** — the user rule
-   for this WP; WP-46 flips `compare.py` to blocking (drop `--no-fail` in
-   the `benchmarks` job).
+   for WP-41; **WP-46 flipped it to blocking** (drop `--no-fail` in the
+   `benchmarks` job, P1-32.1). The first blocking run (46142227293) hit
+   the baseline's 9V45 CPU with the runner toolchain moved on (rustc
+   1.100.1): the C-side rows showed +4.4% drift that no repo change could
+   cause — so WP-46 also (a) re-baselined to that run (9V45, rustc
+   1.100.1) and (b) made the threshold rust-side-only, c rows being the
+   baseline reference (drift informational, missing benches still
+   fail; `compare.py` side awareness, self-test 6/6).
 
 ## Known reference findings (for the Phase 2 spec, S-013)
 

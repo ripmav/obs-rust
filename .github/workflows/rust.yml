@@ -247,14 +247,19 @@ jobs:
         run: |
           cargo bench -p obs-math --bench p017 -- --gate > rust-gate.json
           cat rust-gate.json
-      - name: compare vs committed baseline (report mode)
-        # P0-17.5: the 2% regression gate. REPORT MODE for this first
-        # baseline commit; WP-46 (P1-32.1) flips it to blocking
-        # (drop --no-fail). A tracked bench >2% slower than the baseline
-        # is printed as REGRESSION.
+      - name: compare vs committed baseline (blocking, P1-32.1)
+        # P0-17.5: the 2% regression gate — BLOCKING since WP-46
+        # (P1-32.1, --no-fail dropped). A tracked rust-side bench >2%
+        # slower than the baseline (same CPU model) or a missing bench
+        # fails the job. CPU-aware (ODD L91): ubuntu-latest rotates CPU
+        # models per run, so on a different-model runner the rows are
+        # informational only. Side-aware: the c-side rows are the baseline
+        # reference (pinned C sources + simde — this repo's changes cannot
+        # move them), their same-CPU deltas are drift (informational);
+        # the remedy for toolchain/runner drift is a re-baseline.
         run: |
           python3 test/ref-bench/compare.py test/ref-bench/baseline.json \
-            --current ref-bench.json --current rust-gate.json --no-fail
+            --current ref-bench.json --current rust-gate.json
       - name: upload bench JSON
         if: always()
         uses: actions/upload-artifact@v7

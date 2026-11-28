@@ -13,7 +13,7 @@ Usage:
       [--max-regression 2.0] [--no-fail]
 
   --no-fail   report mode: print the table but exit 0 even on regression
-              (used by CI until WP-46 flips the gate to blocking).
+              (local review runs; CI has been blocking since WP-46).
 
 CPU awareness: the threshold only applies when the current run's CPU
 model (JSON "cpu" field) matches the baseline's "generated.cpu".
@@ -21,6 +21,13 @@ GitHub's ubuntu-latest runners are heterogeneous (EPYC 9V45 vs EPYC
 7763 are 1.5-3x apart), so cross-model deltas are reported as
 informational ("info (different CPU)") and never fail; a missing bench
 still fails on any CPU (ODD L91).
+
+Side awareness (WP-46, blocking mode): the threshold is enforced on the
+**rust** side only. The **c** side is the baseline reference — this repo's
+changes cannot move it (pinned 33.0.1 sources + pinned simde), only a
+runner/toolchain change can, and that is handled by re-baselining, not by
+failing a PR. Large same-CPU deltas on c rows are reported as
+drift (informational).
 
 Exit codes: 0 = no regression above the threshold (or --no-fail),
 1 = regression / missing bench, 2 = bad input.
@@ -57,7 +64,12 @@ def compare(base, cur, cur_cpu, base_cpu, max_regression):
     fails: GitHub's ubuntu-latest runners are heterogeneous (e.g. EPYC
     9V45 vs EPYC 7763, 1.5-3x apart), so cross-model deltas are hardware
     noise, not code regressions (ODD L91). A missing bench still fails
-    regardless of CPU."""
+    regardless of CPU. On the same CPU, the threshold is enforced on the
+    **rust** side only; the **c** side is the baseline reference (this
+    repo's changes cannot move it — pinned C sources + pinned simde), so
+    a large same-CPU delta on a c row is reported as drift, informational
+    (WP-46: the first blocking run caught +4.4% C-side toolchain drift
+    that no PR in this repo could cause or fix)."""
     rows = []
     failures = []
     cpu_changed = False
@@ -71,6 +83,10 @@ def compare(base, cur, cur_cpu, base_cpu, max_regression):
         if cur_cpu[(name, side)] != base_cpu:
             cpu_changed = True
             status = "info (different CPU)"
+        elif side == "c":
+            status = (
+                "ok (c ref)" if delta >= 0 else "faster (c ref)"
+            ) if abs(delta) <= max_regression else "drift (c ref, informational)"
         elif delta > max_regression:
             status = "REGRESSION"
             failures.append(f"{name}/{side}: +{delta:.2f}% > +{max_regression:g}%")
@@ -87,68 +103,64 @@ def print_table(rows, max_regression):
         cur = f"{val:.6g}" if val is not None else "-"
         d = f"{delta:+.2f}%" if delta is not None else "-"
         print(f"{name:<15} {side:<5} {base_ns:>14.6g} {cur:>14} {d:>8}  {status}")
-    print(f"(threshold: fail when slower than baseline by more than {max_regression:g}% — same CPU model only)")
+    print(f"(threshold: the rust side fails when slower than baseline by more than {max_regression:g}% — same CPU model; c rows are the baseline reference, drift is informational; missing benches fail on any CPU)")
 
 
 def self_test():
     """Synthetic baseline + currents: exercises ok / faster / regression /
-    missing / --no-fail. Returns the number of assertions that passed."""
+    missing / c-ref drift (informational) / different-CPU. Returns the
+    number of assertions that passed."""
     base = {
-        "schema": 1,
-        "side": "c",
-        "benches": {
-            "matmul4": {"iters": 1000000, "runs": 30, "ns_per_op": 100.0},
-            "audio_mix": {"iters": 1, "runs": 30, "ns_per_op": 200.0},
-        },
+        ("matmul4", "rust"): 100.0,
+        ("audio_mix", "rust"): 200.0,
+        ("audio_mix", "c"): 300.0,
     }
+    same_cpu = {k: "CPU-A" for k in base}
+    rows, failures, _ = compare(base,
+                                {("matmul4", "rust"): 101.0,
+                                 ("audio_mix", "rust"): 180.0,
+                                 ("audio_mix", "c"): 290.0},
+                                same_cpu, "CPU-A", 2.0)
+    assert not failures, f"expected pass, got {failures}"
+    assert len(rows) == 3
+    # +3% on the rust side fails; +33% on the c side (the baseline
+    # reference moved — runner/toolchain change) is drift, informational
+    rows, failures, _ = compare(base,
+                                {("matmul4", "rust"): 103.0,
+                                 ("audio_mix", "rust"): 200.0,
+                                 ("audio_mix", "c"): 400.0},
+                                same_cpu, "CPU-A", 2.0)
+    assert len(failures) == 1 and "matmul4/rust" in failures[0], f"expected matmul4/rust regression: {failures}"
+    assert all("/c" not in f for f in failures), f"c-side drift must stay informational: {failures}"
+    assert any(r[5] == "drift (c ref, informational)" for r in rows), f"expected a drift row: {rows}"
+    # different-CPU pair: a +300% delta is informational only, not a failure
+    other_cpu = {k: "CPU-B" for k in base}
+    rows, failures, changed = compare(base,
+                                      {("matmul4", "rust"): 400.0,
+                                       ("audio_mix", "rust"): 400.0,
+                                       ("audio_mix", "c"): 400.0},
+                                      other_cpu, "CPU-A", 2.0)
+    assert not failures and changed, f"expected informational different-CPU rows: {failures}"
+    assert all(r[5] == "info (different CPU)" for r in rows)
+    # a missing rust bench fails on any CPU
+    rows, failures, _ = compare({("matmul4", "rust"): 100.0, ("audio_mix", "rust"): 200.0},
+                                {("matmul4", "rust"): 101.0},
+                                {("matmul4", "rust"): "CPU-A"}, "CPU-A", 2.0)
+    assert len(failures) == 1 and "audio_mix" in failures[0] and "missing" in failures[0], failures
+    # the file-based path must round-trip the schema check (rust side)
     ok_cur = {
         "schema": 1,
-        "side": "c",
+        "side": "rust",
         "benches": {
-            "matmul4": {"iters": 1000000, "runs": 30, "ns_per_op": 101.0},  # +1% ok
-            "audio_mix": {"iters": 1, "runs": 30, "ns_per_op": 180.0},  # faster
-        },
-    }
-    slow_cur = {
-        "schema": 1,
-        "side": "c",
-        "benches": {
-            "matmul4": {"iters": 1000000, "runs": 30, "ns_per_op": 103.0},  # +3% > 2%
-            "audio_mix": {"iters": 1, "runs": 30, "ns_per_op": 200.0},
+            "matmul4": {"iters": 1000000, "runs": 30, "ns_per_op": 101.0},
+            "audio_mix": {"iters": 1, "runs": 30, "ns_per_op": 180.0},
         },
     }
     with tempfile.TemporaryDirectory() as tmp:
-        bp = os.path.join(tmp, "b.json")
-        with open(bp, "w") as f:
-            json.dump(base, f)
-        same_cpu = {("matmul4", "c"): "CPU-A", ("audio_mix", "c"): "CPU-A"}
-        rows, failures, _ = compare({("matmul4", "c"): 100.0, ("audio_mix", "c"): 200.0},
-                                    {("matmul4", "c"): 101.0, ("audio_mix", "c"): 180.0},
-                                    same_cpu, "CPU-A", 2.0)
-        assert not failures, f"expected pass, got {failures}"
-        assert len(rows) == 2
-        rows, failures, _ = compare({("matmul4", "c"): 100.0, ("audio_mix", "c"): 200.0},
-                                    {("matmul4", "c"): 103.0, ("audio_mix", "c"): 200.0},
-                                    same_cpu, "CPU-A", 2.0)
-        assert len(failures) == 1 and "matmul4" in failures[0], f"expected matmul4 regression: {failures}"
-        # different-CPU pair: a +300% delta is informational only, not a failure
-        other_cpu = {("matmul4", "c"): "CPU-B", ("audio_mix", "c"): "CPU-B"}
-        rows, failures, changed = compare({("matmul4", "c"): 100.0, ("audio_mix", "c"): 200.0},
-                                          {("matmul4", "c"): 400.0, ("audio_mix", "c"): 400.0},
-                                          other_cpu, "CPU-A", 2.0)
-        assert not failures and changed, f"expected informational different-CPU rows: {failures}"
-        assert all(r[5] == "info (different CPU)" for r in rows)
-        rows, failures, _ = compare({("matmul4", "c"): 100.0, ("audio_mix", "c"): 200.0},
-                                    {("matmul4", "c"): 101.0},
-                                    {("matmul4", "c"): "CPU-A"}, "CPU-A", 2.0)
-        assert len(failures) == 1 and "audio_mix" in failures[0] and "missing" in failures[0], failures
-        # the file-based path must round-trip the schema check
         op = os.path.join(tmp, "ok.json")
-        sp = os.path.join(tmp, "slow.json")
-        for p, doc in ((op, ok_cur), (sp, slow_cur)):
-            with open(p, "w") as f:
-                json.dump(doc, f)
-        assert load_benches(op) == ({("matmul4", "c"): 101.0, ("audio_mix", "c"): 180.0}, "unknown")
+        with open(op, "w") as f:
+            json.dump(ok_cur, f)
+        assert load_benches(op) == ({("matmul4", "rust"): 101.0, ("audio_mix", "rust"): 180.0}, "unknown")
         try:
             bad = os.path.join(tmp, "bad.json")
             with open(bad, "w") as f:
