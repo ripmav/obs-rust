@@ -37,7 +37,9 @@ job messages + signal text).
   regression vs `test/ref-bench/baseline.json`, x86_64 runner, runs on
   every PR) and must stay green through the soak.
 - **Patch drift** — the nightly's `apply D3 patch` step; red means the D3
-  patch no longer applies cleanly to the pinned tree.
+  patch no longer applies cleanly to the pinned tree (WP-44 re-targeted
+  the patch to the 33.0.1 tag; it previously targeted the fe1ed79 working
+  tree, ODD L94).
 
 ## Stop / flip condition
 
