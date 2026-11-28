@@ -587,9 +587,13 @@ dependencies = [
  "cc",
  "log",
  "obs-bpm",
+ "obs-data",
  "obs-file-updater",
+ "obs-hotkey-names",
  "obs-math",
  "obs-netutil",
+ "obs-properties",
+ "obs-signal",
  "obs-util",
  "obs-util-small",
 ]

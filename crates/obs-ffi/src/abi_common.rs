@@ -11,7 +11,7 @@
 
 use std::ffi::CStr;
 use std::mem::size_of;
-use std::os::raw::c_char;
+use std::os::raw::{c_char, c_int};
 
 use crate::abi_lexer::{error_data, error_item};
 
@@ -182,4 +182,33 @@ pub(crate) unsafe fn error_data_buildstring_c(ed: *const error_data) -> *mut c_c
     }
     // SAFETY: C-ABI — the bytes are valid for the call; the result is bmem-owned.
     unsafe { bstrdup_bytes(s.as_bytes()) }
+}
+
+// ── C log sink (the obs-signal ports) ─────────────────────────────────────
+
+unsafe extern "C" {
+    fn blog(level: c_int, format: *const c_char, ...) -> c_int;
+}
+
+use std::sync::Once;
+
+static OBS_SIGNAL_LOG_SINK: Once = Once::new();
+
+/// Install the obs-signal C log sink once per process (its ports route
+/// `blog(level, "%s", msg)` through it in the swap build; without the
+/// sink they fall back to stderr — the pre-swap behaviour).
+pub(crate) fn ensure_c_log_sink() {
+    // SAFETY: `c_blog_sink` is a valid `CLogFn` (the forwarder declared above).
+    OBS_SIGNAL_LOG_SINK.call_once(|| unsafe {
+        obs_signal::log::set_log_sink(Some(c_blog_sink));
+    });
+}
+
+/// The sink forwarder: one `blog(level, "%s", msg)` per line.
+///
+/// # Safety
+/// `msg` is a NUL-terminated string live for the call (the sink builds it).
+unsafe extern "C" fn c_blog_sink(level: c_int, msg: *const c_char) {
+    // SAFETY: the sink contract — `msg` is a live NUL-terminated string.
+    unsafe { blog(level, c"%s".as_ptr(), msg) };
 }

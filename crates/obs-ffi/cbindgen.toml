@@ -136,6 +136,10 @@ exclude = [
     # runner declares them locally; there is no C reference declaration.
     "obs_ffi_deque_new",
     "obs_ffi_deque_free",
+    # abi_task.rs — test-only symbols (P1-14.5): the conformance helpers
+    # runner declares them locally in swap mode; no C reference declaration.
+    "os_ffi_task_queue_size",
+    "os_ffi_task_queue_waiting",
     # abi_cf_lexer.rs test stand-ins (cargo test links these instead of
     # the platform file stubs; `bmalloc`/`bfree` are real bridges since
     # P1-01.3 — `abi_bmem` — and are diffed against `util/bmem.h`).
