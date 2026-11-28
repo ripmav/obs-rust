@@ -1,0 +1,94 @@
+name: nightly
+
+# P1-30.1 (WP-44): the OBS_ENABLE_RUST=ON soak (P1-30).
+#
+# Nightly build of the C reference — pinned obs-studio 33.0.1 with the D3
+# patch (test/conformance/obs-enable-rust.patch) applied — in both modes of
+# the OBS_ENABLE_RUST pair: OFF (run.sh check, all-C) and ON (run.sh swap —
+# the C sources the D3 patch excludes are dropped, their symbols come from
+# target/release/libobs_ffi.a), over every conformance CI area. Each run
+# leaves one comparable artifact (target/nightly/summary.txt + check.log +
+# swap.log, uploaded as soak-<run id>).
+#
+# Soak contract (start date, what is watched, stop/flip condition):
+# docs/rust-rewrite/soak.md. P1-30.2 (observe two weeks) and P1-30.3 (flip
+# the default) stay open until the flip date.
+on:
+  schedule:
+    - cron: "30 0 * * *" # daily 00:30 UTC
+  workflow_dispatch:
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  nightly:
+    name: nightly (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        # Build matrix: the platforms the C reference build supports in
+        # this repo's CI — ubuntu-latest (x86_64 Linux) only; the
+        # conformance C build (run.sh) has only ever run there. aarch64
+        # (Pi 5 dev host), macOS and Windows are not in CI for the C
+        # reference build.
+        os: [ubuntu-latest]
+    steps:
+      - uses: actions/checkout@v7
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+      - name: checkout OBS reference (pinned 33.0.1)
+        uses: actions/checkout@v7
+        with:
+          repository: obsproject/obs-studio
+          ref: 33.0.1
+          path: obs-studio
+      - name: link the reference into the repo
+        run: tools/link-obs-source.sh "${GITHUB_WORKSPACE}/obs-studio"
+      - name: apply D3 patch (OBS_ENABLE_RUST)
+        # The soak's first signal: the patch must still apply cleanly to
+        # the pinned 33.0.1 tree. Red here = patch drift (soak doc).
+        run: |
+          git -C obs-studio apply --check test/conformance/obs-enable-rust.patch
+          git -C obs-studio apply test/conformance/obs-enable-rust.patch
+      - name: install system deps
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y cmake uthash-dev uuid-dev zlib1g-dev \
+            libcurl4-openssl-dev libglib2.0-dev libpulse-dev
+      - name: simde (pinned)
+        run: |
+          git clone -q https://github.com/simd-everywhere/simde.git
+          cd simde && git checkout -q 24fa5420cd413621648063f04a09fa35c7afacf7
+      - name: jansson 2.15.1 (pinned)
+        run: |
+          git clone -q --depth 1 --branch v2.15.1 https://github.com/akheron/jansson.git
+          cmake -S jansson -B jansson/build -DCMAKE_BUILD_TYPE=Release \
+            -DCMAKE_INSTALL_PREFIX="$RUNNER_TEMP/jansson"
+          cmake --build jansson/build -j4
+          cmake --install jansson/build
+      - name: build the Rust staticlib (OBS_ENABLE_RUST=ON)
+        # The c-swap bridges; run.sh swap links it in place of the dropped
+        # C sources (the D3 patch does the same via OBS_RUST_FFI_LIB).
+        run: cargo build -p obs-ffi --release --features c-swap
+      - name: soak run (ctest OFF + ON)
+        # Both modes of the OBS_ENABLE_RUST pair over every CI area
+        # (test/conformance/ci-areas.txt); writes target/nightly/
+        # (summary.txt + check.log + swap.log), red on any failure.
+        env:
+          CONFORMANCE_EXTRA_CFLAGS: >-
+            -I${{ github.workspace }}/simde
+            -I${{ runner.temp }}/jansson/include
+            -L${{ runner.temp }}/jansson/lib
+            -I/usr/include/glib-2.0 -I/usr/include/gio-2.0 -I/usr/include/gio-unix-2.0
+            -I/usr/lib/x86_64-linux-gnu/glib-2.0/include
+        run: bash test/conformance/nightly.sh
+      - name: upload soak artifact (build log + ctest summary)
+        # One comparable artifact per run (soak-<run id>); the summary
+        # format is stable so consecutive runs diff.
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: soak-${{ github.run_id }}
+          path: target/nightly/
