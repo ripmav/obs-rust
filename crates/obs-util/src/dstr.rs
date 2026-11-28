@@ -978,22 +978,31 @@ pub fn dstr_truncate(d: &mut Dstr, pos: usize) {
 
 /// S-006-R23: `dstr_mid(d, src, start, count)` — copy `src[start..]`
 /// truncated to `count` bytes; `count == 0` → empty.
+///
+/// Aliasing-safe like the C original, which works through a temp copy
+/// of the source: C callers may pass `dst == src` (the 255-byte
+/// truncation in `os_generate_formatted_filename`, cf-lexer's filename
+/// trim), so the slice is detached before `dstr_free(d)`.
 pub fn dstr_mid(d: &mut Dstr, src: &Dstr, start: usize, count: usize) {
     let start = start.min(src.len);
     let count = count.min(src.len - start);
+    // SAFETY: `src.array` is valid for `count` reads before the free;
+    // detached into an owned copy (the C temp) so `d == src` callers
+    // keep working.
+    let bytes = (count > 0 && !src.array.is_null())
+        .then(|| unsafe { std::slice::from_raw_parts(src.array.add(start), count).to_vec() });
     dstr_free(d);
-    if count == 0 || src.array.is_null() {
-        return;
+    if let Some(bytes) = bytes {
+        // SAFETY: Dstr invariant — allocation through the S-001 allocator; the result is stored into `array` immediately.
+        d.array = unsafe { bmalloc_raw(bytes.len() + 1) };
+        // SAFETY: `d.array` is a fresh `bytes.len()+1` block; `bytes` is a copy detached before the free.
+        unsafe {
+            std::ptr::copy_nonoverlapping(bytes.as_ptr(), d.array, bytes.len());
+            *d.array.add(bytes.len()) = 0;
+        }
+        d.len = bytes.len();
+        d.capacity = bytes.len() + 1;
     }
-    // SAFETY: Dstr invariant — allocation through the S-001 allocator; the result is stored into `array` immediately.
-    d.array = unsafe { bmalloc_raw(count + 1) };
-    // SAFETY: Dstr invariant — `src.array.add(start)` is valid for count+1 reads; `d.array` is a fresh block of count+1 bytes.
-    unsafe {
-        std::ptr::copy_nonoverlapping(src.array.add(start), d.array, count);
-        *d.array.add(count) = 0;
-    }
-    d.len = count;
-    d.capacity = count + 1;
 }
 
 /// S-006-R23: `dstr_right(d, src, pos)` — the last `src.len - pos`
@@ -1593,6 +1602,44 @@ mod tests {
         let mut s = mk("hello");
         dstr_truncate(&mut s, 2);
         assert_eq!(str(&s), "he");
+    }
+
+    #[test]
+    fn r23_mid_self_aliased() {
+        // C callers pass `dst == src` through the FFI (the 255-byte
+        // truncation in os_generate_formatted_filename, cf-lexer's
+        // filename trim); the port must stay aliasing-safe, so the
+        // raw-pointer form is reproduced the way the abi_dstr bridge
+        // passes the C pointers.
+        let mut s = mk("hello world");
+        let p = &mut s as *mut Dstr;
+        // SAFETY: `p` is a valid `Dstr`; the aliased references mirror the C
+        // caller passing the same pointer twice (the bridge's pattern).
+        unsafe {
+            dstr_mid(&mut *p, &*p, 6, 5);
+        }
+        assert_eq!(str(&s), "world");
+        // the in-place truncation pattern: keep the first 255 of 300
+        let long = vec![b'a'; 300];
+        let mut t = Dstr::init();
+        dstr_copy(&mut t, &long);
+        let p = &mut t as *mut Dstr;
+        // SAFETY: as above — aliased references over one live `Dstr`.
+        unsafe {
+            dstr_mid(&mut *p, &*p, 0, 255);
+        }
+        assert_eq!(t.len, 255);
+        assert!(!t.array.is_null());
+        // SAFETY: `t` holds a live 255-byte NUL-terminated buffer.
+        let got = unsafe { std::slice::from_raw_parts(t.array, t.len) };
+        assert_eq!(got, &long[..255]);
+        // in-place right
+        let p = &mut t as *mut Dstr;
+        // SAFETY: as above — aliased references over one live `Dstr`.
+        unsafe {
+            dstr_right(&mut *p, &*p, 250);
+        }
+        assert_eq!(t.len, 5);
     }
 
     #[test]
