@@ -32,7 +32,7 @@ use std::ptr;
 use obs_util::cf_lexer::{CfLexer, CfTokenType, cf_literal_to_str as engine_cf_literal_to_str};
 use obs_util::lexer::{LEX_ERROR, LEX_WARNING};
 
-use crate::abi_common::{bfree, bmalloc, bstrdup, c_bytes, error_data_add_c};
+use crate::abi_common::{bfree, bmalloc_c, bstrdup, c_bytes, error_data_add_c};
 use crate::abi_lexer::{error_data, lexer, strref};
 
 /* ------------------------------------------------------------------------- */
@@ -123,7 +123,7 @@ impl<T: Copy> darray<T> {
         };
         // SAFETY: C-ABI darray growth — the fresh bmalloc block is valid and the copy fits in old capacity·esize.
         unsafe {
-            let p = bmalloc(esize * new_cap) as *mut T;
+            let p = bmalloc_c(esize * new_cap) as *mut T;
             if !self.array.is_null() && self.capacity > 0 {
                 ptr::copy_nonoverlapping(self.array, p, self.capacity);
                 bfree(self.array as *mut u8);
@@ -483,7 +483,7 @@ pub unsafe extern "C" fn cf_lexer_lex(
 
     let rf = &eng.reformatted;
     // SAFETY: C-ABI — S-001 allocation; the result is stored into `l.reformatted` immediately.
-    l.reformatted = unsafe { bmalloc(rf.len() + 1) as *mut c_char };
+    l.reformatted = unsafe { bmalloc_c(rf.len() + 1) as *mut c_char };
     // SAFETY: C-ABI — `l.reformatted` is a live C buffer of at least rf.len()+1 bytes; the write and NUL fit (checked above).
     unsafe {
         ptr::copy_nonoverlapping(rf.as_ptr(), l.reformatted.cast::<u8>(), rf.len());
@@ -1769,37 +1769,13 @@ pub unsafe extern "C" fn cf_preprocessor_remove_def(
 #[cfg(test)]
 mod tests {
     use super::*;
-    use std::alloc::Layout;
     use std::ffi::CString;
 
-    // Test stand-ins for the C allocator and file API: `cargo test` links
-    // these instead of libobs/util/bmem.c + the platform stubs (the swap
-    // build conformance run links those for real). The allocator stashes
-    // its size so `bfree` needs no map.
-    #[unsafe(no_mangle)]
-    pub extern "C" fn bmalloc(size: usize) -> *mut u8 {
-        let layout = Layout::from_size_align(size + 8, 8).expect("valid layout");
-        // SAFETY: the layout is non-zero and aligned (checked above); fresh allocation.
-        let raw = unsafe { std::alloc::alloc(layout) } as *mut u64;
-        // SAFETY: the 8-byte size header sits just before the data pointer (the alloc above).
-        unsafe { raw.write(size as u64) };
-        // SAFETY: the data pointer sits just after the 8-byte size header.
-        unsafe { raw.add(1) as *mut u8 }
-    }
-
-    #[unsafe(no_mangle)]
-    pub extern "C" fn bfree(ptr: *mut u8) {
-        if ptr.is_null() {
-            return;
-        }
-        // SAFETY: the data pointer came from this allocator (8-byte size header just before it).
-        let raw = unsafe { ptr.cast::<u64>().sub(1) };
-        // SAFETY: the size header was written by the matching alloc (checked above).
-        let size = unsafe { raw.read() } as usize;
-        let layout = Layout::from_size_align(size + 8, 8).expect("valid layout");
-        // SAFETY: the matching alloc for this layout (size header read above); the allocation is still live.
-        unsafe { std::alloc::dealloc(ptr.sub(8), layout) };
-    }
+    // Test stand-ins for the platform file API: `cargo test` links these
+    // instead of the platform stubs (the swap build conformance run links
+    // those for real). The allocator stand-ins are gone — the real bmem
+    // bridge (`abi_bmem`, P1-01.3) provides `bmalloc`/`bfree` under the
+    // same `cfg(test)` gate.
 
     #[unsafe(no_mangle)]
     pub extern "C" fn os_fopen(_path: *const c_char, _mode: *const c_char) -> *mut c_void {
@@ -2100,21 +2076,24 @@ mod tests {
         let r = unsafe { cf_literal_to_str(s.as_ptr(), 0) };
         assert!(!r.is_null());
         assert_eq!(cbuf(r), b"abc");
-        bfree(r.cast());
+        // SAFETY: `r` came from the cf_literal_to_str above; freed once here.
+        unsafe { bfree(r) };
 
         // the Q-10 quirk: the closing quote leaks after \x
         let s = cstr("'\\x41'");
         // SAFETY: the literal bytes are valid for the call; the result is a C-owned pointer (doc above).
         let r = unsafe { cf_literal_to_str(s.as_ptr(), 0) };
         assert_eq!(cbuf(r), b"A'");
-        bfree(r.cast());
+        // SAFETY: `r` came from the cf_literal_to_str above; freed once here.
+        unsafe { bfree(r) };
 
         // explicit count, and rejection cases
         let s = cstr("\"abc\"");
         // SAFETY: the literal bytes are valid for the call; the result is a C-owned pointer (doc above).
         let r = unsafe { cf_literal_to_str(s.as_ptr(), 5) };
         assert_eq!(cbuf(r), b"abc");
-        bfree(r.cast());
+        // SAFETY: `r` came from the cf_literal_to_str above; freed once here.
+        unsafe { bfree(r) };
         let bad = cstr("\"abc'");
         // SAFETY: the literal bytes are valid for the call; the result is a C-owned pointer (doc above).
         assert!(unsafe { cf_literal_to_str(bad.as_ptr(), 0) }.is_null());

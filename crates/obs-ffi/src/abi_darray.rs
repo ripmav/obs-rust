@@ -15,7 +15,7 @@
 //! element **including padding** (S-005 Q-A2 — the C `memcpy`/`memmove`
 //! semantics).
 
-use crate::abi_common::{bfree, bmalloc};
+use crate::abi_common::{bfree, bmalloc_c};
 use std::os::raw::c_void;
 
 unsafe extern "C" {
@@ -47,7 +47,7 @@ fn ensure_capacity(dst: &mut darray_c, element_size: usize, new_size: usize) {
     };
     let new_cap = new_cap.max(new_size);
     // SAFETY: C-ABI — S-001 allocation; the fresh block is valid for new_cap * es bytes.
-    let ptr = unsafe { bmalloc(new_cap * element_size) };
+    let ptr = unsafe { bmalloc_c(new_cap * element_size) };
     if !dst.array.is_null() && dst.capacity > 0 {
         // SAFETY: old block valid for es * capacity bytes; fresh for new_cap * es ≥ es * capacity.
         unsafe {

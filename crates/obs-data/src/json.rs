@@ -174,6 +174,15 @@ fn write_string(out: &mut String, s: &str) {
 /// §6.2 real format. `digits` is the shortest round-trip digit string (Rust
 /// `{:e}` produces exactly that), `x` its decimal exponent
 /// (`value = d1.d2…dn × 10^x`).
+///
+/// Exact-tie fix (WP-43, golden ref-dump): when `f` is **exactly** the
+/// decimal midpoint of two shortest-length candidates (the midpoint must be
+/// representable as f64), Gay's dtoa (jansson 2.15.1) rounds the last digit
+/// to even (`j == 0 && dig & 1` in its roundoff), while Rust `{:e}` rounds
+/// half-up. E.g. `1963097541593015.25` dumps as `…15.2`, not `…15.3`.
+/// Near-ties where both neighbours merely also round-trip are NOT ties: the
+/// midpoint is not exactly representable, both implementations pick the
+/// closer candidate, and the Rust string is kept as-is.
 fn real_fmt(f: f64) -> String {
     if f == 0.0 {
         return if f.is_sign_negative() {
@@ -185,8 +194,71 @@ fn real_fmt(f: f64) -> String {
     let neg = f.is_sign_negative();
     let e = format!("{:e}", f.abs()); // "d[.ddd]e±xx"
     let (mant, exp) = e.split_once('e').expect("format invariant");
-    let digits: String = mant.chars().filter(|c| *c != '.').collect();
+    let mut digits: String = mant.chars().filter(|c| *c != '.').collect();
     let x: i32 = exp.parse().expect("format invariant");
+    if digits.len() >= 2 {
+        // Exact-tie test: midpoint M = (2D+1)·10^t / 2 of the candidate
+        // Rust `{:e}` returned the upper candidate D, so the pair is
+        // {D-1, D} and the midpoint is (2D-1)·10^t/2 with t = x - (n-1). M
+        // is an f64 iff its odd significand (2D-1)·5^±t fits in 53 bits —
+        // checked exactly in i128 (D ≤ 18 digits).
+        let t = x - (digits.len() as i32 - 1);
+        let d: i128 = digits.parse().expect("digit string");
+        // Bail out of the 5-power loops the moment m (or the required
+        // divisor) passes the 53-bit / value limit — i128 can never
+        // overflow and the tie is impossible past the limit.
+        const LIM: i128 = 1 << 53;
+        let mut m = 2 * d - 1;
+        let mut tie = true;
+        if t >= 0 {
+            for _ in 0..t as u32 {
+                match m.checked_mul(5) {
+                    Some(n) if n < LIM => m = n,
+                    _ => {
+                        tie = false;
+                        break;
+                    }
+                }
+            }
+        } else {
+            let mut need = 1i128;
+            for _ in 0..(-t) as u32 {
+                // need > m => m % need == m != 0 (m>0) => not divisible
+                match need.checked_mul(5) {
+                    Some(n) if n <= m => need = n,
+                    _ => {
+                        tie = false;
+                        break;
+                    }
+                }
+            }
+            if tie && m % need != 0 {
+                tie = false;
+            } else if tie {
+                m /= need;
+            }
+        }
+        if tie && m < LIM {
+            // 2^(t-1) exactly: for any finite f64, t-1 lies in [-341, 307]
+            // (the `{:e}` exponent range), so its biased exponent is a
+            // normal f64 exponent and the bits are just the biased value
+            // in the exponent field — no libm (Miri's `powi` emulation is
+            // not exact and would silently break the tie test).
+            let biased = (t - 1) + 1023;
+            let mid = (m as f64) * f64::from_bits((biased as u64) << 52);
+            if mid == f.abs() {
+                // Rust `{:e}` rounds half-up, so on a tie it returned the
+                // upper candidate; the even member of {D, D-1} is D when D
+                // is even, D-1 when D is odd.
+                if (digits.as_bytes()[digits.len() - 1] - b'0') % 2 == 1 {
+                    let mut low: String = digits.clone();
+                    let last = low.pop().expect("digit") as u8;
+                    low.push((last - 1) as char);
+                    digits = low;
+                }
+            }
+        }
+    }
     let body = if (-4..16).contains(&x) {
         if x >= 0 {
             let xi = x as usize;
@@ -764,6 +836,28 @@ mod tests {
         // always distinguishable from integers
         assert!(real_fmt(1.0).ends_with(".0"));
         assert!(real_fmt(2.0).ends_with(".0"));
+    }
+
+    #[test]
+    fn real_fmt_shortest_tie_breaks_like_jansson() {
+        // Verified against jansson 2.15.1 (Gay's dtoa) with the pinned
+        // library: when the value is **exactly** the midpoint of two
+        // shortest-length decimals (midpoint representable as f64), the even
+        // last digit wins — Rust `{:e}` alone rounds half-up and diverges on
+        // the odd side.
+        let f = |s: &str| real_fmt(s.parse().unwrap());
+        assert_eq!(f("1963097541593015.25"), "1963097541593015.2");
+        assert_eq!(f("-1963097541593015.25"), "-1963097541593015.2");
+        assert_eq!(f("1234567890123456.25"), "1234567890123456.2");
+        assert_eq!(f("1234567890123456.75"), "1234567890123456.8");
+        assert_eq!(f("-1234567890123456.75"), "-1234567890123456.8");
+        // near-tie: both neighbours round-trip but the midpoint is a 62-bit
+        // integer (not an f64) — the value is closer to the …45 side and the
+        // `{:e}` string must NOT be altered
+        assert_eq!(f("2.8594218171201645e307"), "2.8594218171201645e307");
+        // non-ties keep their own (possibly odd) last digit
+        assert_eq!(f("3000000000.75"), "3000000000.75");
+        assert_eq!(f("0.375"), "0.375");
     }
 
     #[test]

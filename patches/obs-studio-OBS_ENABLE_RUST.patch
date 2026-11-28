@@ -37,10 +37,25 @@ util/srcprof-bridge.c, the profiler bridge's graphics-context shim
 staticlib provides the profiler; the conformance swap runner compiles
 the identical copy from crates/obs-ffi/c/).
 
+WP-43 (P1-01.3) extends the swap set with util/bmem.c (the six bmem
+symbols — bmalloc, brealloc, bfree, bmemdup, bnum_allocs,
+base_get_alignment — come from the Rust staticlib; the Rust allocator's
+fatal paths route through the C bcrash shim, so crash behaviour is
+unchanged). The whole swap build shares the single Rust allocator from
+here on: any build that links the staticlib must drop every swapped C
+source (duplicate symbols).
+
+WP-43 (P1-15.4/P1-16.5/P1-17.4/P1-18.4) extends the swap set with the
+nine exported graphics math files (graphics/{vec3,vec4,quat,axisang,
+matrix3,matrix4,plane,bounds,math-extra}.c — the 80 EXPORT symbols
+ come from the Rust staticlib; vec2.c stays, its helpers
+are static inline in vec2.h; matrix4_mul_4x3_only has no header
+declaration and is dropped with the file).
+
 Assisted-by: Qwen3.8-27B (off) via pi
 ---
 diff --git a/libobs/CMakeLists.txt b/libobs/CMakeLists.txt
-index 70e3bee..729b2d5 100644
+index 70e3bee..488aef3 100644
 --- a/libobs/CMakeLists.txt
 +++ b/libobs/CMakeLists.txt
 @@ -9,6 +9,14 @@ endif()
@@ -58,7 +73,16 @@ index 70e3bee..729b2d5 100644
  find_package(SIMDe REQUIRED)
  find_package(Threads REQUIRED)
  
-@@ -86,20 +94,20 @@ target_sources(
+@@ -50,7 +58,7 @@ target_sources(
+     obs-encoder.c
+     obs-encoder.h
+     obs-ffmpeg-compat.h
+-    obs-hotkey-name-map.c
++    $<$<NOT:$<BOOL:${OBS_ENABLE_RUST}>>:obs-hotkey-name-map.c>
+     obs-hotkey.c
+     obs-hotkey.h
+     obs-hotkeys.h
+@@ -86,33 +94,34 @@ target_sources(
  target_sources(
    libobs
    PRIVATE
@@ -71,7 +95,8 @@ index 70e3bee..729b2d5 100644
 -    util/bitstream.c
 +    $<$<NOT:$<BOOL:${OBS_ENABLE_RUST}>>:util/bitstream.c>
      util/bitstream.h
-     util/bmem.c
+-    util/bmem.c
++    $<$<NOT:$<BOOL:${OBS_ENABLE_RUST}>>:util/bmem.c>
      util/bmem.h
 -    util/buffered-file-serializer.c
 +    $<$<NOT:$<BOOL:${OBS_ENABLE_RUST}>>:util/buffered-file-serializer.c>
@@ -85,9 +110,15 @@ index 70e3bee..729b2d5 100644
      util/cf-parser.h
      util/config-file.c
      util/config-file.h
-@@ -110,9 +118,9 @@ target_sources(
+-    util/crc32.c
++    $<$<NOT:$<BOOL:${OBS_ENABLE_RUST}>>:util/crc32.c>
+     util/crc32.h
+     util/curl/curl-helper.h
+     util/darray.h
      util/deque.h
-     util/dstr.c
+-    util/dstr.c
++    $<$<NOT:$<BOOL:${OBS_ENABLE_RUST}>>:util/dstr.c>
++    $<$<BOOL:${OBS_ENABLE_RUST}>:util/dstr-variadic-bridge.c>
      util/dstr.h
 -    util/file-serializer.c
 +    $<$<NOT:$<BOOL:${OBS_ENABLE_RUST}>>:util/file-serializer.c>
@@ -97,7 +128,7 @@ index 70e3bee..729b2d5 100644
      util/lexer.h
      util/pipe.c
      util/pipe.h
-@@ -122,13 +130,14 @@ target_sources(
+@@ -122,13 +131,14 @@ target_sources(
      util/profiler.h
      util/profiler.hpp
      util/serializer.h
@@ -107,14 +138,78 @@ index 70e3bee..729b2d5 100644
      util/source-profiler.h
      util/spsc-fifo.h
      util/sse-intrin.h
-     util/task.c
+-    util/task.c
++    $<$<NOT:$<BOOL:${OBS_ENABLE_RUST}>>:util/task.c>
      util/task.h
 -    util/text-lookup.c
 +    $<$<NOT:$<BOOL:${OBS_ENABLE_RUST}>>:util/text-lookup.c>
      util/text-lookup.h
      util/threading.h
      util/utf8.c
-@@ -264,6 +273,15 @@ target_link_libraries(
+@@ -142,13 +152,13 @@ target_sources(
+ target_sources(
+   libobs
+   PRIVATE
+-    callback/calldata.c
++    $<$<NOT:$<BOOL:${OBS_ENABLE_RUST}>>:callback/calldata.c>
+     callback/calldata.h
+-    callback/decl.c
++    $<$<NOT:$<BOOL:${OBS_ENABLE_RUST}>>:callback/decl.c>
+     callback/decl.h
+-    callback/proc.c
++    $<$<NOT:$<BOOL:${OBS_ENABLE_RUST}>>:callback/proc.c>
+     callback/proc.h
+-    callback/signal.c
++    $<$<NOT:$<BOOL:${OBS_ENABLE_RUST}>>:callback/signal.c>
+     callback/signal.h
+ )
+ 
+@@ -179,9 +189,9 @@ target_sources(
+ target_sources(
+   libobs
+   PRIVATE
+-    graphics/axisang.c
++    $<$<NOT:$<BOOL:${OBS_ENABLE_RUST}>>:graphics/axisang.c>
+     graphics/axisang.h
+-    graphics/bounds.c
++    $<$<NOT:$<BOOL:${OBS_ENABLE_RUST}>>:graphics/bounds.c>
+     graphics/bounds.h
+     graphics/device-exports.h
+     graphics/effect-parser.c
+@@ -202,15 +212,15 @@ target_sources(
+     graphics/libnsgif/lzw.h
+     graphics/libnsgif/nsgif.h
+     graphics/math-defs.h
+-    graphics/math-extra.c
++    $<$<NOT:$<BOOL:${OBS_ENABLE_RUST}>>:graphics/math-extra.c>
+     graphics/math-extra.h
+-    graphics/matrix3.c
++    $<$<NOT:$<BOOL:${OBS_ENABLE_RUST}>>:graphics/matrix3.c>
+     graphics/matrix3.h
+-    graphics/matrix4.c
++    $<$<NOT:$<BOOL:${OBS_ENABLE_RUST}>>:graphics/matrix4.c>
+     graphics/matrix4.h
+-    graphics/plane.c
++    $<$<NOT:$<BOOL:${OBS_ENABLE_RUST}>>:graphics/plane.c>
+     graphics/plane.h
+-    graphics/quat.c
++    $<$<NOT:$<BOOL:${OBS_ENABLE_RUST}>>:graphics/quat.c>
+     graphics/quat.h
+     graphics/shader-parser.c
+     graphics/shader-parser.h
+@@ -218,9 +228,9 @@ target_sources(
+     graphics/texture-render.c
+     graphics/vec2.c
+     graphics/vec2.h
+-    graphics/vec3.c
++    $<$<NOT:$<BOOL:${OBS_ENABLE_RUST}>>:graphics/vec3.c>
+     graphics/vec3.h
+-    graphics/vec4.c
++    $<$<NOT:$<BOOL:${OBS_ENABLE_RUST}>>:graphics/vec4.c>
+     graphics/vec4.h
+ )
+ 
+@@ -264,6 +274,15 @@ target_link_libraries(
    PUBLIC SIMDe::SIMDe Threads::Threads
  )
  
@@ -131,12 +226,15 @@ index 70e3bee..729b2d5 100644
    include(cmake/os-windows.cmake)
  elseif(OS_MACOS)
 diff --git a/libobs/cmake/os-freebsd.cmake b/libobs/cmake/os-freebsd.cmake
-index 098fce0..c9da868 100644
+index 098fce0..7bda1f1 100644
 --- a/libobs/cmake/os-freebsd.cmake
 +++ b/libobs/cmake/os-freebsd.cmake
-@@ -27,7 +27,7 @@ target_sources(
+@@ -25,9 +25,9 @@ target_sources(
+     obs-nix-platform.h
+     obs-nix-x11.c
      obs-nix.c
-     util/pipe-posix.c
+-    util/pipe-posix.c
++    $<$<NOT:$<BOOL:${OBS_ENABLE_RUST}>>:util/pipe-posix.c>
      util/platform-nix.c
 -    util/threading-posix.c
 +    $<$<NOT:$<BOOL:${OBS_ENABLE_RUST}>>:util/threading-posix.c>
@@ -158,12 +256,15 @@ index 098fce0..c9da868 100644
  endif()
  
 diff --git a/libobs/cmake/os-linux.cmake b/libobs/cmake/os-linux.cmake
-index dbc31ee..02386f0 100644
+index dbc31ee..e18ba48 100644
 --- a/libobs/cmake/os-linux.cmake
 +++ b/libobs/cmake/os-linux.cmake
-@@ -13,7 +13,7 @@ target_sources(
+@@ -11,9 +11,9 @@ target_sources(
+     obs-nix-platform.h
+     obs-nix-x11.c
      obs-nix.c
-     util/pipe-posix.c
+-    util/pipe-posix.c
++    $<$<NOT:$<BOOL:${OBS_ENABLE_RUST}>>:util/pipe-posix.c>
      util/platform-nix.c
 -    util/threading-posix.c
 +    $<$<NOT:$<BOOL:${OBS_ENABLE_RUST}>>:util/threading-posix.c>
@@ -185,11 +286,15 @@ index dbc31ee..02386f0 100644
  endif()
  
 diff --git a/libobs/cmake/os-macos.cmake b/libobs/cmake/os-macos.cmake
-index e0dec44..53368ae 100644
+index e0dec44..4ba6423 100644
 --- a/libobs/cmake/os-macos.cmake
 +++ b/libobs/cmake/os-macos.cmake
-@@ -22,7 +22,7 @@ target_sources(
-     util/pipe-posix.c
+@@ -19,10 +19,10 @@ target_sources(
+     audio-monitoring/osx/mac-helpers.h
+     obs-cocoa.m
+     util/apple/cfstring-utils.h
+-    util/pipe-posix.c
++    $<$<NOT:$<BOOL:${OBS_ENABLE_RUST}>>:util/pipe-posix.c>
      util/platform-cocoa.m
      util/platform-nix.c
 -    util/threading-posix.c
@@ -197,6 +302,89 @@ index e0dec44..53368ae 100644
      util/threading-posix.h
  )
  
+diff --git a/libobs/util/dstr-variadic-bridge.c b/libobs/util/dstr-variadic-bridge.c
+new file mode 100644
+index 0000000..b3687b1
+--- /dev/null
++++ b/libobs/util/dstr-variadic-bridge.c
+@@ -0,0 +1,77 @@
++// P1-02.4 (S-006): the four variadic dstr functions, which cannot be
++// defined in Rust (the `va_list` ABI). The C implementation of dstr.c
++// is kept verbatim here; they operate on the shared `struct dstr`
++// (the dstr.h inlines drive the layout the Rust `Dstr` mirrors, the
++// darray/deque precedent).
++//
++// Only swap builds compile this file: the conformance swap runner adds
++// it when it links the Rust staticlib (run.sh; dstr.c itself is then
++// dropped), and the OBS_ENABLE_RUST CMake build compiles it into
++// libobs (the patch adds it to libobs/util/). Check builds compile
++// dstr.c and never see this file.
++
++#include "util/dstr.h"
++
++#include <stdarg.h>
++#include <stdio.h>
++#include <string.h>
++
++void dstr_vprintf(struct dstr *dst, const char *format, va_list args)
++{
++	va_list args_cp;
++	va_copy(args_cp, args);
++
++	int len = vsnprintf(NULL, 0, format, args_cp);
++	va_end(args_cp);
++
++	if (len < 0)
++		len = 4095;
++
++	dstr_ensure_capacity(dst, ((size_t)len) + 1);
++	len = vsnprintf(dst->array, ((size_t)len) + 1, format, args);
++
++	if (!*dst->array) {
++		dstr_free(dst);
++		return;
++	}
++
++	dst->len = len < 0 ? strlen(dst->array) : (size_t)len;
++}
++
++void dstr_printf(struct dstr *dst, const char *format, ...)
++{
++	va_list args;
++	va_start(args, format);
++	dstr_vprintf(dst, format, args);
++	va_end(args);
++}
++
++void dstr_vcatf(struct dstr *dst, const char *format, va_list args)
++{
++	va_list args_cp;
++	va_copy(args_cp, args);
++
++	int len = vsnprintf(NULL, 0, format, args_cp);
++	va_end(args_cp);
++
++	if (len < 0)
++		len = 4095;
++
++	dstr_ensure_capacity(dst, dst->len + ((size_t)len) + 1);
++	len = vsnprintf(dst->array + dst->len, ((size_t)len) + 1, format, args);
++
++	if (!*dst->array) {
++		dstr_free(dst);
++		return;
++	}
++
++	dst->len += len < 0 ? strlen(dst->array + dst->len) : (size_t)len;
++}
++
++void dstr_catf(struct dstr *dst, const char *format, ...)
++{
++	va_list args;
++	va_start(args, format);
++	dstr_vcatf(dst, format, args);
++	va_end(args);
++}
 diff --git a/libobs/util/srcprof-bridge.c b/libobs/util/srcprof-bridge.c
 new file mode 100644
 index 0000000..f85758f

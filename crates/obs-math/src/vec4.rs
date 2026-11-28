@@ -59,6 +59,18 @@ pub fn vec4_sub(a: &Vec4, b: &Vec4) -> Vec4 {
     }
 }
 
+/// S-008-R04: component-wise product on all four lanes (the C `static
+/// inline` in `vec4.h` — no `vec4.c` export, so no bridge).
+#[must_use]
+pub fn vec4_mul(a: &Vec4, b: &Vec4) -> Vec4 {
+    Vec4 {
+        x: a.x * b.x,
+        y: a.y * b.y,
+        z: a.z * b.z,
+        w: a.w * b.w,
+    }
+}
+
 /// S-008-R04: all four lanes, no special-casing.
 #[must_use]
 pub fn vec4_div(a: &Vec4, b: &Vec4) -> Vec4 {
@@ -100,6 +112,18 @@ pub fn vec4_divf(a: &Vec4, f: f32) -> Vec4 {
         y: a.y / f,
         z: a.z / f,
         w: a.w / f,
+    }
+}
+
+/// S-008-R04: `vec4_mulf` multiplies all four lanes (the C `static inline`
+/// in `vec4.h` — no `vec4.c` export, so no bridge).
+#[must_use]
+pub fn vec4_mulf(v: &Vec4, f: f32) -> Vec4 {
+    Vec4 {
+        x: v.x * f,
+        y: v.y * f,
+        z: v.z * f,
+        w: v.w * f,
     }
 }
 
@@ -156,6 +180,53 @@ pub fn vec4_norm(v: &Vec4) -> Vec4 {
 pub fn vec4_close(a: &Vec4, b: &Vec4, eps: f32) -> bool {
     let t = vec4_sub(a, b);
     t.x < eps && t.y < eps && t.z < eps && t.w < eps
+}
+
+/// S-008-R04: C `_mm_min_ps` lane semantics (IEEE minNum — a NaN in either
+/// lane yields the **other** operand, `±0` compare by value). `f32::min`
+/// matches it exactly.
+#[must_use]
+pub fn vec4_min(a: &Vec4, b: &Vec4) -> Vec4 {
+    Vec4 {
+        x: a.x.min(b.x),
+        y: a.y.min(b.y),
+        z: a.z.min(b.z),
+        w: a.w.min(b.w),
+    }
+}
+
+/// S-008-R04: `min` with a scalar (same lane semantics as `vec4_min`).
+#[must_use]
+pub fn vec4_minf(v: &Vec4, f: f32) -> Vec4 {
+    Vec4 {
+        x: v.x.min(f),
+        y: v.y.min(f),
+        z: v.z.min(f),
+        w: v.w.min(f),
+    }
+}
+
+/// S-008-R04: C `_mm_max_ps` lane semantics (IEEE maxNum — a NaN in either
+/// lane yields the **other** operand). `f32::max` matches it exactly.
+#[must_use]
+pub fn vec4_max(a: &Vec4, b: &Vec4) -> Vec4 {
+    Vec4 {
+        x: a.x.max(b.x),
+        y: a.y.max(b.y),
+        z: a.z.max(b.z),
+        w: a.w.max(b.w),
+    }
+}
+
+/// S-008-R04: `max` with a scalar (same lane semantics as `vec4_max`).
+#[must_use]
+pub fn vec4_maxf(v: &Vec4, f: f32) -> Vec4 {
+    Vec4 {
+        x: v.x.max(f),
+        y: v.y.max(f),
+        z: v.z.max(f),
+        w: v.w.max(f),
+    }
 }
 
 /// S-008-R39: absolute value on all four lanes.

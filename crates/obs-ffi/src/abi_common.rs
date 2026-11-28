@@ -11,20 +11,26 @@
 
 use std::ffi::CStr;
 use std::mem::size_of;
-use std::os::raw::c_char;
+use std::os::raw::{c_char, c_int};
 
 use crate::abi_lexer::{error_data, error_item};
 
-// C allocator (`libobs/util/bmem.c`): anything C frees must come from
-// here. Declared once for the whole crate; the swap build links
-// `libobs/util/bmem.c` next to the Rust staticlib.
+// C allocator: anything C frees must come from here. P1-01.3 (WP-43):
+// the swap build's `bmalloc`/`brealloc`/`bfree` symbols ARE the Rust
+// bridge exports (`abi_bmem`) inside the staticlib — these imports
+// resolve to them (and to the same functions in `cargo test`). The
+// import names differ from the exports (cbindgen declares every extern
+// name it sees; a same-named import + export would duplicate in the
+// generated header — the `bfree_raw` precedent).
 unsafe extern "C" {
-    pub(crate) fn bmalloc(size: usize) -> *mut u8;
+    #[link_name = "bmalloc"]
+    pub(crate) fn bmalloc_c(size: usize) -> *mut u8;
     #[link_name = "bfree"]
     fn bfree_raw(ptr: *mut u8);
     /// Used by the part B (cf-lexer/cf-parser) bridges.
     #[allow(dead_code)]
-    pub(crate) fn brealloc(ptr: *mut u8, size: usize) -> *mut u8;
+    #[link_name = "brealloc"]
+    pub(crate) fn brealloc_c(ptr: *mut u8, size: usize) -> *mut u8;
 }
 
 /// C `bfree` for any pointee type: C `char` is `i8` on x86 and `u8` on
@@ -51,7 +57,7 @@ pub(crate) unsafe fn bstrdup(s: *const c_char) -> *mut c_char {
     // SAFETY: a live NUL-terminated C string (checked above).
     let len = unsafe { CStr::from_ptr(s) }.to_bytes().len();
     // SAFETY: C-ABI — S-001 allocation; the result is stored into `p` immediately.
-    let p = unsafe { bmalloc(len + 1) } as *mut c_char;
+    let p = unsafe { bmalloc_c(len + 1) } as *mut c_char;
     // SAFETY: the fresh bmalloc block is valid for len+1 bytes (allocated above); the NUL write fits.
     unsafe {
         std::ptr::copy_nonoverlapping(s, p, len);
@@ -64,7 +70,7 @@ pub(crate) unsafe fn bstrdup(s: *const c_char) -> *mut c_char {
 /// through `bmalloc`. Use this — not [`bstrdup`] — for Rust-owned strings.
 pub(crate) unsafe fn bstrdup_bytes(bytes: &[u8]) -> *mut c_char {
     // SAFETY: C-ABI — S-001 allocation; the result is stored into `p` immediately.
-    let p = unsafe { bmalloc(bytes.len() + 1) } as *mut c_char;
+    let p = unsafe { bmalloc_c(bytes.len() + 1) } as *mut c_char;
     // SAFETY: the fresh bmalloc block is valid for bytes.len()+1 bytes (allocated above); the NUL write fits.
     unsafe {
         std::ptr::copy_nonoverlapping(bytes.as_ptr(), p.cast::<u8>(), bytes.len());
@@ -101,7 +107,7 @@ fn da_ensure(ed: &mut error_data) {
     let new_cap = new_cap.max(new_size);
     // SAFETY: C-ABI error_list growth — the fresh bmalloc block is valid and the copy fits in old capacity·esize.
     unsafe {
-        let ptr = bmalloc(esize * new_cap) as *mut error_item;
+        let ptr = bmalloc_c(esize * new_cap) as *mut error_item;
         if !ed.errors.array.is_null() && ed.errors.capacity > 0 {
             // element count (not bytes): copies esize * old_capacity bytes,
             // exactly like the C `memcpy(ptr, old, element_size * capacity)`
@@ -176,4 +182,33 @@ pub(crate) unsafe fn error_data_buildstring_c(ed: *const error_data) -> *mut c_c
     }
     // SAFETY: C-ABI — the bytes are valid for the call; the result is bmem-owned.
     unsafe { bstrdup_bytes(s.as_bytes()) }
+}
+
+// ── C log sink (the obs-signal ports) ─────────────────────────────────────
+
+unsafe extern "C" {
+    fn blog(level: c_int, format: *const c_char, ...) -> c_int;
+}
+
+use std::sync::Once;
+
+static OBS_SIGNAL_LOG_SINK: Once = Once::new();
+
+/// Install the obs-signal C log sink once per process (its ports route
+/// `blog(level, "%s", msg)` through it in the swap build; without the
+/// sink they fall back to stderr — the pre-swap behaviour).
+pub(crate) fn ensure_c_log_sink() {
+    // SAFETY: `c_blog_sink` is a valid `CLogFn` (the forwarder declared above).
+    OBS_SIGNAL_LOG_SINK.call_once(|| unsafe {
+        obs_signal::log::set_log_sink(Some(c_blog_sink));
+    });
+}
+
+/// The sink forwarder: one `blog(level, "%s", msg)` per line.
+///
+/// # Safety
+/// `msg` is a NUL-terminated string live for the call (the sink builds it).
+unsafe extern "C" fn c_blog_sink(level: c_int, msg: *const c_char) {
+    // SAFETY: the sink contract — `msg` is a live NUL-terminated string.
+    unsafe { blog(level, c"%s".as_ptr(), msg) };
 }

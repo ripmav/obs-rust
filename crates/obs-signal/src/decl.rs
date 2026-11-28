@@ -220,7 +220,35 @@ impl<'a> Scanner<'a> {
             self.pos = p;
             (Tok::Str(start, p), lc)
         } else {
-            self.pos = start + 1;
+            let mut end = start + 1;
+            // The first token (start == 0): a leading comment is one
+            // token — C's cf-lexer emits the leading trivia as
+            // token[0], and the return-type check reports on it (the
+            // vector 05 "(1, 1): Expected 'return type'" pair).
+            if start == 0
+                && b == b'/'
+                && let Some(&nb) = self.src.get(start + 1)
+            {
+                if nb == b'*' {
+                    end = start + 2;
+                    while end + 1 < self.src.len()
+                        && !(self.src[end] == b'*' && self.src[end + 1] == b'/')
+                    {
+                        end += 1;
+                    }
+                    end = if end + 1 < self.src.len() {
+                        end + 2
+                    } else {
+                        self.src.len()
+                    };
+                } else if nb == b'/' {
+                    end = start + 2;
+                    while end < self.src.len() && self.src[end] != b'\n' {
+                        end += 1;
+                    }
+                }
+            }
+            self.pos = end;
             (Tok::Punct(b, start), lc)
         }
     }
@@ -264,6 +292,23 @@ fn diag(sc: &Scanner<'_>, pos: usize, message: &str) -> Diagnostic {
     }
 }
 
+impl<'a> Scanner<'a> {
+    /// C's `cf_go_to_token` (declarations carry no braces, so the
+    /// `{...}` pair-skipping is out of scope): scan tokens forward for
+    /// the punct byte; on a miss `pos` ends at the EOF offset (where
+    /// the caller's "Unexpected EOF" diagnostic belongs).
+    fn scan_for_punct(&mut self, b: u8) -> Option<usize> {
+        loop {
+            let (tok, _) = self.next(true);
+            match &tok {
+                Tok::Punct(c, st) if *c == b => return Some(*st),
+                Tok::Eof(_) => return None,
+                _ => {}
+            }
+        }
+    }
+}
+
 /// The byte-level parse core. Returns diagnostics on failure; an empty
 /// input fails **without** diagnostics (Q-5: no log).
 fn parse_decl_bytes(src: &[u8]) -> Result<Parsed, Vec<Diagnostic>> {
@@ -272,7 +317,14 @@ fn parse_decl_bytes(src: &[u8]) -> Result<Parsed, Vec<Diagnostic>> {
     }
     let mut sc = Scanner { src, pos: 0 };
 
-    // Return type — the first token, no leading WS (Q-1).
+    // Accumulated diagnostics — C's cf_parser records every error it
+    // meets and prints them all; only a hard EOF-abort stops the parse
+    // early.
+    let mut errs: Vec<Diagnostic> = vec![];
+
+    // Return type — the first token, no leading WS (Q-1). A bad return
+    // type is a recorded error, not an abort (C: `get_type` fails ->
+    // `cf_adderror_expecting`, the parse continues).
     let (tok, _) = sc.next(false);
     let ret = match &tok {
         Tok::Name(s, e) => {
@@ -283,12 +335,21 @@ fn parse_decl_bytes(src: &[u8]) -> Result<Parsed, Vec<Diagnostic>> {
                 match type_of(name) {
                     Some(t) => Some(t),
                     None => {
-                        return Err(vec![diag(&sc, *s, "Expected 'return type'")]);
+                        errs.push(diag(&sc, *s, "Expected 'return type'"));
+                        None
                     }
                 }
             }
         }
-        _ => return Err(vec![diag(&sc, tok_pos(&tok), "Expected 'return type'")]),
+        _ => {
+            // C's token[0] here is the leading trivia itself (or any
+            // non-NAME token): `cf_token_is_type` records one error and
+            // the return type stays empty, so the failing `get_type`
+            // records a second one at the same spot (vector 05).
+            errs.push(diag(&sc, tok_pos(&tok), "Expected 'return type'"));
+            errs.push(diag(&sc, tok_pos(&tok), "Expected 'return type'"));
+            None
+        }
     };
 
     // Function name (D-1: not a NAME → error + false, never crash).
@@ -297,22 +358,67 @@ fn parse_decl_bytes(src: &[u8]) -> Result<Parsed, Vec<Diagnostic>> {
         Tok::Name(s, e) => {
             let n = &src[*s..*e];
             if is_reserved(std::str::from_utf8(n).unwrap_or("")) {
-                return Err(vec![diag(
+                // C records the reserved-name error and *continues*;
+                // the parse fails at the end via the collected errors.
+                errs.push(diag(
                     &sc,
                     *s,
                     &format!("'{}' is a reserved name", String::from_utf8_lossy(n)),
-                )]);
+                ));
             }
             n.to_vec()
         }
-        _ => return Err(vec![diag(&sc, tok_pos(&tok), "Expected function name")]),
+        _ => {
+            // C: `cf_next_valid_token` (EOF -> "Unexpected EOF" at the
+            // EOF offset) then `cf_token_is_type` (a present non-name ->
+            // "Expected 'function name'" at the token).
+            let msg = if matches!(tok, Tok::Eof(_)) {
+                "Unexpected EOF"
+            } else {
+                "Expected 'function name'"
+            };
+            errs.push(diag(&sc, tok_pos(&tok), msg));
+            // C: on EOF the `cf_next_valid_token` failure short-circuits
+            // (`PARSE_EOF`, no rescan). On a present non-name,
+            // `cf_get_name` rescans forward for `(` (`cf_go_to_valid_token`):
+            // a miss adds "Unexpected EOF" (at the EOF offset) and
+            // aborts; a hit continues with an empty name — where the
+            // reference crashes (vector 06), so a conforming
+            // implementation stops with the collected errors either way.
+            if !matches!(tok, Tok::Eof(_)) && sc.scan_for_punct(b'(').is_none() {
+                // `scan_for_punct` ends at the EOF offset.
+                errs.push(diag(&sc, sc.pos, "Unexpected EOF"));
+            }
+            return Err(errs);
+        }
     };
 
     // '('
     let (tok, _) = sc.next(true);
-    if !matches!(tok, Tok::Punct(b'(', _)) {
-        return Err(vec![diag(&sc, tok_pos(&tok), "Expected '('")]);
-    }
+    let open_start = match &tok {
+        Tok::Punct(b'(', _) => tok_pos(&tok),
+        Tok::Eof(_) => {
+            // C: `cf_next_token` fails -> "Unexpected EOF" at the EOF
+            // offset, abort.
+            errs.push(diag(&sc, tok_pos(&tok), "Unexpected EOF"));
+            return Err(errs);
+        }
+        _ => match sc.scan_for_punct(b'(') {
+            // C: the mismatch is reported *after* the
+            // `cf_go_to_token(p, "(", NULL)` rescan — a hit moves cur
+            // to the found parenthesis (the error goes there and the
+            // parse continues), a miss aborts silently (the plain
+            // `cf_go_to_token` records no error; PARSE_EOF).
+            Some(open) => {
+                errs.push(diag(&sc, open, "Expected '('"));
+                open
+            }
+            None => return Err(errs),
+        },
+    };
+    // C's first `cf_peek_valid_token` restores the current token to the
+    // `(` before adding the EOF error — the error column is the
+    // parenthesis, not the true EOF.
 
     // Parameter list (S-003 §5.1): the first token decides the entry,
     // then the after-param loop owns the rest.
@@ -322,7 +428,7 @@ fn parse_decl_bytes(src: &[u8]) -> Result<Parsed, Vec<Diagnostic>> {
         Tok::Punct(b')', _) => {} // empty list — done
         Tok::Name(s, e) => {
             if let Some(d) = parse_param(&mut sc, &mut params, src, (*s, *e)) {
-                return Err(vec![d]);
+                return Err(d);
             }
             // After a param (step 4):
             loop {
@@ -335,7 +441,7 @@ fn parse_decl_bytes(src: &[u8]) -> Result<Parsed, Vec<Diagnostic>> {
                             Tok::Punct(b')', _) => break, // Q-4 trailing comma
                             Tok::Name(s, e) => {
                                 if let Some(d) = parse_param(&mut sc, &mut params, src, (*s, *e)) {
-                                    return Err(vec![d]);
+                                    return Err(d);
                                 }
                             }
                             Tok::Eof(_) => {
@@ -349,13 +455,16 @@ fn parse_decl_bytes(src: &[u8]) -> Result<Parsed, Vec<Diagnostic>> {
                 }
             }
         }
-        Tok::Eof(_) => return Err(vec![diag(&sc, sc.pos, "Unexpected EOF")]),
+        Tok::Eof(_) => return Err(vec![diag(&sc, open_start, "Unexpected EOF")]),
         _ => return Err(vec![diag(&sc, tok_pos(&tok), "Expected ')'")]),
     }
 
     // R03: a non-void return type appends the "return" parameter.
     if let Some(t) = ret {
         params.push((b"return".to_vec(), t, CALL_PARAM_OUT));
+    }
+    if !errs.is_empty() {
+        return Err(errs);
     }
     Ok(Parsed { name, params })
 }
@@ -366,7 +475,7 @@ fn parse_param(
     params: &mut Vec<(Vec<u8>, CallParamType, u32)>,
     src: &[u8],
     first: (usize, usize),
-) -> Option<Diagnostic> {
+) -> Option<Vec<Diagnostic>> {
     let mut flags: u32 = 0;
     let mut seen_in = false;
     let mut seen_out = false;
@@ -375,13 +484,13 @@ fn parse_param(
         let name = std::str::from_utf8(&src[cur.0..cur.1]).unwrap_or("");
         if name == "in" {
             if seen_in {
-                return Some(diag(sc, cur.0, "`in` specifier already exists"));
+                return Some(vec![diag(sc, cur.0, "'in' specifier already exists")]);
             }
             seen_in = true;
             flags |= CALL_PARAM_IN;
         } else if name == "out" {
             if seen_out {
-                return Some(diag(sc, cur.0, "`out` specifier already exists"));
+                return Some(vec![diag(sc, cur.0, "'out' specifier already exists")]);
             }
             seen_out = true;
             flags |= CALL_PARAM_OUT;
@@ -393,10 +502,10 @@ fn parse_param(
                     let n = &src[*s..*e];
                     let ns = std::str::from_utf8(n).unwrap_or("");
                     if is_reserved(ns) {
-                        return Some(diag(sc, *s, &format!("'{}' is a reserved name", ns)));
+                        return Some(vec![diag(sc, *s, &format!("'{}' is a reserved name", ns))]);
                     }
                     if params.iter().any(|(p, _, _)| p == n) {
-                        return Some(diag(sc, *s, &format!("duplicate parameter name '{}'", ns)));
+                        return Some(vec![diag(sc, *s, &format!("'{}' already exists", ns))]);
                     }
                     let flags = if flags == 0 {
                         CALL_PARAM_IN // R02: no specifier → IN
@@ -406,15 +515,50 @@ fn parse_param(
                     params.push((n.to_vec(), ty, flags));
                     None
                 }
-                _ => Some(diag(sc, tok_pos(&tok2), "Expected 'parameter name'")),
+                Tok::Eof(_) => {
+                    // C: `cf_next_valid_token` fails at EOF —
+                    // "Unexpected EOF" only (cf_get_name is never
+                    // reached).
+                    Some(vec![diag(sc, tok_pos(&tok2), "Unexpected EOF")])
+                }
+                _ => {
+                    // C: "Expected 'parameter name'" at the token, then
+                    // `cf_go_to_valid_token(p, ",")` — scanning the rest
+                    // for a comma; at EOF without one it adds a second
+                    // "Unexpected EOF" (at the EOF offset).
+                    let mut diags = vec![diag(sc, tok_pos(&tok2), "Expected 'parameter name'")];
+                    if sc.scan_for_punct(b',').is_none() {
+                        // `scan_for_punct` ends at the EOF offset.
+                        diags.push(diag(sc, sc.pos, "Unexpected EOF"));
+                    }
+                    Some(diags)
+                }
             };
         } else {
-            return Some(diag(sc, cur.0, "Expected 'type'"));
+            return Some(vec![diag(sc, cur.0, "Expected 'type'")]);
         }
         let (tok, _) = sc.next(true);
         match &tok {
             Tok::Name(s, e) => cur = (*s, *e),
-            _ => return Some(diag(sc, tok_pos(&tok), "Expected 'type'")),
+            Tok::Eof(_) => {
+                // C: `cf_next_valid_token` fails at EOF — "Unexpected
+                // EOF" only.
+                return Some(vec![diag(sc, tok_pos(&tok), "Unexpected EOF")]);
+            }
+            _ => {
+                // C: "Expected 'type or storage specifier'" +
+                // `cf_go_to_valid_token(",")` — a miss adds a second
+                // "Unexpected EOF" (at the EOF offset, vector 09).
+                let mut diags = vec![diag(
+                    sc,
+                    tok_pos(&tok),
+                    "Expected 'type or storage specifier'",
+                )];
+                if sc.scan_for_punct(b',').is_none() {
+                    diags.push(diag(sc, sc.pos, "Unexpected EOF"));
+                }
+                return Some(diags);
+            }
         }
     }
 }
@@ -425,6 +569,21 @@ fn parse_param(
 /// success; `Err(diagnostics)` on failure — `Err(vec![])` for the empty
 /// string (Q-5: the C function fails without logging).
 #[must_use = "the parse result (decl or diagnostics)"]
+/// C's `print_errors` text (S-003 R11): one line per diagnostic;
+/// every line — including the last — ends with `\n` (the conformance
+/// harness turns the trailing newline into a trailing space).
+pub(crate) fn errors_message(decl_string: &str, diags: &[Diagnostic]) -> String {
+    let lines: Vec<String> = diags
+        .iter()
+        .map(|d| format!("declaration ({}, {}): {}", d.line, d.col, d.message))
+        .collect();
+    format!(
+        "Errors/warnings for '{}':\n\n{}\n",
+        decl_string,
+        lines.join("\n")
+    )
+}
+
 pub fn parse_decl(decl_string: &str) -> Result<Decl, Vec<Diagnostic>> {
     parse_decl_bytes(decl_string.as_bytes()).map(|p| Decl {
         name: String::from_utf8(p.name).unwrap_or_default(),
@@ -457,11 +616,7 @@ pub fn parse_decl_string(decl: &mut DeclInfo, decl_string: &[u8]) -> bool {
             // input produces no diagnostics, hence no log (Q-5).
             if !diags.is_empty() {
                 let s = String::from_utf8_lossy(decl_string);
-                let lines: Vec<String> = diags
-                    .iter()
-                    .map(|d| format!("declaration ({}, {}): {}", d.line, d.col, d.message))
-                    .collect();
-                eprintln!("Errors/warnings for '{}':\n\n{}", s, lines.join("\n"));
+                crate::log::emit(crate::log::LOG_WARNING, &errors_message(&s, &diags));
             }
             false
         }
@@ -544,8 +699,8 @@ mod tests {
         assert!(
             fail("void f(int a, int a)")
                 .iter()
-                .any(|d| d.message.starts_with("duplicate")),
-            "R06"
+                .any(|d| d.message == "'a' already exists"),
+            "R06 (the C err_existing_name text)"
         );
         assert!(
             fail("void f(in in int a)")
@@ -570,8 +725,8 @@ mod tests {
         assert!(
             fail("void f(in)")
                 .iter()
-                .any(|d| d.message == "Expected 'type'"),
-            "R08"
+                .any(|d| d.message == "Expected 'type or storage specifier'"),
+            "R08 (the C cf_next_name_ref wording)"
         );
         assert!(!fail("int f(int a").is_empty(), "EOF after param");
         assert!(!fail("1f()").is_empty(), "leading number");
@@ -748,7 +903,7 @@ mod tests {
         let diags = fail("void f(\n  int a, int a)");
         let dup = diags
             .iter()
-            .find(|d| d.message.starts_with("duplicate"))
+            .find(|d| d.message == "'a' already exists")
             .unwrap();
         assert_eq!(dup.line, 2);
         assert_eq!(dup.col, 14);

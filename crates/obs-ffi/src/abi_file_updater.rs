@@ -20,7 +20,7 @@ use std::ptr;
 
 use obs_file_updater::file_updater;
 
-use crate::abi_common::{bfree, bmalloc, bstrdup_bytes};
+use crate::abi_common::{bfree, bmalloc_c, bstrdup_bytes};
 use crate::{LOG_INFO, LOG_WARNING};
 
 // ---------------------------------------------------------------------------
@@ -201,7 +201,7 @@ fn da_push_bytes(da: &mut darray_c, bytes: &[u8]) {
             while new_cap < da.num + bytes.len() {
                 new_cap *= 2;
             }
-            let new_array = bmalloc(new_cap);
+            let new_array = bmalloc_c(new_cap);
             if !da.array.is_null() {
                 ptr::copy_nonoverlapping(da.array, new_array, da.num);
                 bfree(da.array);
@@ -1003,7 +1003,7 @@ pub unsafe extern "C" fn update_info_create(
     // integers, pointers or POD — zero is a valid pattern); the bstrdup /
     // get_path allocations below are live bmem strings owned by info.
     unsafe {
-        let raw = bmalloc(size_of::<update_info>()) as *mut update_info;
+        let raw = bmalloc_c(size_of::<update_info>()) as *mut update_info;
         ptr::write_bytes(raw as *mut u8, 0, size_of::<update_info>());
         (*raw).log_prefix = bmem_str(&c_str(log_prefix));
         (*raw).user_agent = bmem_str(&c_str(user_agent));
@@ -1047,7 +1047,7 @@ pub unsafe extern "C" fn update_info_create_single(
     // SAFETY: a zeroed update_info of the exact C size; the allocations
     // below are live bmem strings owned by info.
     unsafe {
-        let raw = bmalloc(size_of::<update_info>()) as *mut update_info;
+        let raw = bmalloc_c(size_of::<update_info>()) as *mut update_info;
         ptr::write_bytes(raw as *mut u8, 0, size_of::<update_info>());
         (*raw).log_prefix = bmem_str(&c_str(log_prefix));
         (*raw).user_agent = bmem_str(&c_str(user_agent));

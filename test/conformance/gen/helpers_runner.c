@@ -463,7 +463,18 @@ static void h_log_handler(int level, const char *format, va_list args, void *par
 /* ------------------------------------------------------------------------- */
 /* task queue                                                                */
 
+#ifdef OBS_CONFORMANCE_RUST_SWAP_TASK
+// Swap mode: the os_task_queue_* symbols come from the Rust staticlib
+// (P1-14.5, WP-43) - the public API from the header is all the runner
+// uses, no file-local state. The wait-release gates poll the test-only
+// mirrors of the private C fields (tq->tasks.size incl. the destroy
+// stop entry; tq->waiting) instead of the struct itself.
+#include "util/task.h"
+extern size_t os_ffi_task_queue_size(void *q);
+extern bool os_ffi_task_queue_waiting(void *q);
+#else
 #include "../../../libobs/util/task.c"
+#endif
 
 static pthread_mutex_t h_task_log_mutex = PTHREAD_MUTEX_INITIALIZER;
 static char h_task_log[8192];
@@ -536,9 +547,15 @@ static void *h_helper_thread(void *p)
 	struct h_helper *h = p;
 	for (;;) {
 		bool done;
+#ifdef OBS_CONFORMANCE_RUST_SWAP_TASK
+		bool waiting = os_ffi_task_queue_waiting(h->tq);
+		size_t size = os_ffi_task_queue_size(h->tq);
+		done = h->mode == 0 ? waiting : size >= h->n;
+#else
 		pthread_mutex_lock(&h->tq->mutex);
 		done = h->mode == 0 ? h->tq->waiting : h->tq->tasks.size >= h->n * sizeof(struct os_task_info);
 		pthread_mutex_unlock(&h->tq->mutex);
+#endif
 		if (done)
 			break;
 		usleep(200);

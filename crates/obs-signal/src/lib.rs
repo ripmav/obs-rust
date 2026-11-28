@@ -14,6 +14,9 @@
 
 pub mod calldata;
 pub mod decl;
+/// The C logging sink (the swap build's `blog` forwarder; the FFI bridge
+/// installs it). The ported sources' log lines route through it.
+pub mod log;
 pub mod proc;
 pub mod signal;
 pub mod typed;

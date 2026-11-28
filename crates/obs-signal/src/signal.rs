@@ -71,7 +71,7 @@ use std::sync::atomic::{AtomicBool, AtomicU64, AtomicUsize, Ordering::SeqCst};
 use parking_lot::ReentrantMutex;
 
 use crate::calldata::Calldata;
-use crate::decl::parse_decl;
+use crate::decl::{Decl, parse_decl};
 
 /// `signal_callback_t`: `void (*cb)(void *data, calldata_t *params)`.
 pub type SignalCallback = unsafe extern "C" fn(data: *mut c_void, params: *mut Calldata);
@@ -327,17 +327,37 @@ pub fn signal_handler_add(h: &SignalHandler, signal_decl: &str) -> bool {
     if h.inner.dead.load(SeqCst) {
         return false;
     }
-    let Ok(decl) = parse_decl(signal_decl) else {
-        eprintln!("Signal declaration invalid: {signal_decl}");
-        return false;
-    };
+    match parse_decl(signal_decl) {
+        Ok(decl) => signal_handler_add_parsed(h, decl),
+        Err(diags) => {
+            // C: `signal_add` calls `parse_decl_string`, which logs the
+            // collected diagnostics (LOG_WARNING) before the error.
+            if !diags.is_empty() {
+                crate::log::emit(
+                    crate::log::LOG_WARNING,
+                    &crate::decl::errors_message(signal_decl, &diags),
+                );
+            }
+            crate::log::emit(
+                crate::log::LOG_ERROR,
+                &format!("Signal declaration invalid: {signal_decl}"),
+            );
+            false
+        }
+    }
+}
+
+fn signal_handler_add_parsed(h: &SignalHandler, decl: Decl) -> bool {
     let name = decl.name.clone();
     {
         let _hl = h.inner.handler_lock.lock().unwrap();
         // SAFETY: the handler lock is held above; the `UnsafeCell` access is exclusive.
         let signals = unsafe { &*h.inner.state.signals.get() };
         if signals.iter().any(|s| s.name == name) {
-            eprintln!("Signal declaration '{name}' exists");
+            crate::log::emit(
+                crate::log::LOG_WARNING,
+                &format!("Signal declaration '{name}' exists"),
+            );
             return false;
         }
         // SAFETY: the handler lock is held above; the `UnsafeCell` access is exclusive; `name` is a valid C string.
@@ -402,7 +422,10 @@ fn find_signal(h: &SignalHandler, sig: &str) -> Option<*mut Signal> {
 /// `remove` still count — Q-4).
 pub fn signal_handler_connect(h: &SignalHandler, sig: &str, cb: SignalCallback, data: *mut c_void) {
     let Some(sp) = find_signal(h, sig) else {
-        eprintln!("signal_handler_connect: signal '{sig}' not found");
+        crate::log::emit(
+            crate::log::LOG_WARNING,
+            &format!("signal_handler_connect: signal '{sig}' not found"),
+        );
         return;
     };
     let generation = h.inner.generation.fetch_add(1, SeqCst);
@@ -435,7 +458,10 @@ pub fn signal_handler_connect_ref(
     data: *mut c_void,
 ) {
     let Some(sp) = find_signal(h, sig) else {
-        eprintln!("signal_handler_connect: signal '{sig}' not found");
+        crate::log::emit(
+            crate::log::LOG_WARNING,
+            &format!("signal_handler_connect: signal '{sig}' not found"),
+        );
         return;
     };
     h.inner.refs.fetch_add(1, SeqCst);
@@ -541,7 +567,10 @@ pub fn signal_handler_connect_gen(
     data: *mut c_void,
 ) -> u64 {
     let Some(sp) = find_signal(h, sig) else {
-        eprintln!("signal_handler_connect: signal '{sig}' not found");
+        crate::log::emit(
+            crate::log::LOG_WARNING,
+            &format!("signal_handler_connect: signal '{sig}' not found"),
+        );
         return 0;
     };
     let generation = h.inner.generation.fetch_add(1, SeqCst);

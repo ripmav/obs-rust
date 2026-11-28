@@ -15,12 +15,21 @@
 
 // The bridges reference C symbols (`bmalloc`, `bfree`, `os_fopen`, ...) that
 // only exist in the swap build (libobs/util/*.c linked next to this
-// staticlib). They are compiled only for that build (`--features c-swap`,
-// what `OBS_ENABLE_RUST=ON` passes) and for this crate's unit tests, which
-// provide stand-ins. Without the gate, linkers that do not garbage-collect
+// staticlib) or are provided by the bridges themselves (the bmem swap of
+// P1-01.3: `bmalloc`/`bfree`/`brealloc` come from `abi_bmem` in the staticlib;
+// `os_fopen`/`os_fread_utf8`/`fclose` are test stand-ins until the platform
+// fs functions land). They are compiled only for that build (`--features
+// c-swap`, what `OBS_ENABLE_RUST=ON` passes) and for this crate's unit
+// tests. Without the gate, linkers that do not garbage-collect
 // unreferenced sections (MSVC) fail with LNK2019 on the integration tests.
 #[cfg(any(test, feature = "c-swap"))]
 pub mod abi_bitstream;
+// P1-20.3 (WP-43): the three exported calldata functions (S-002).
+#[cfg(any(test, feature = "c-swap"))]
+pub mod abi_calldata;
+// P1-10.4 (WP-43): the crc32 export (S-055 U1).
+#[cfg(any(test, feature = "c-swap"))]
+pub mod abi_bmem;
 #[cfg(any(test, feature = "c-swap"))]
 pub mod abi_cf_lexer;
 #[cfg(any(test, feature = "c-swap"))]
@@ -28,9 +37,19 @@ pub mod abi_cf_parser;
 #[cfg(any(test, feature = "c-swap"))]
 pub mod abi_common;
 #[cfg(any(test, feature = "c-swap"))]
+pub mod abi_crc32;
+// P1-21.3/21.4 (WP-43): the declaration parser export (S-003).
+#[cfg(any(test, feature = "c-swap"))]
+pub mod abi_decl;
+// P1-02.4 (WP-43): the dstr exports (S-006).
+#[cfg(any(test, feature = "c-swap"))]
 pub mod abi_darray;
 #[cfg(any(test, feature = "c-swap"))]
 pub mod abi_deque;
+#[cfg(any(test, feature = "c-swap"))]
+pub mod abi_dstr;
+#[cfg(any(test, feature = "c-swap"))]
+pub mod abi_math;
 // P1-33.1 (WP-34): the BPM injection bridge (S-024 M8).
 #[cfg(any(test, feature = "c-swap"))]
 pub mod abi_bpm;
@@ -48,6 +67,15 @@ pub mod abi_lexer;
 // P1-33.5 (WP-34): the opts-parser bridge (S-024 M1).
 #[cfg(any(test, feature = "c-swap"))]
 pub mod abi_opts;
+// P1-22.4 procedures (WP-43): proc handlers (S-004 §6).
+#[cfg(any(test, feature = "c-swap"))]
+pub mod abi_proc;
+// P1-11.4 (WP-43): the process pipes (S-055 U2).
+#[cfg(any(test, feature = "c-swap"))]
+pub mod abi_pipe;
+// P1-28.4 (WP-43): the hotkey key<->name map (S-024 M4).
+#[cfg(any(test, feature = "c-swap"))]
+pub mod abi_hotkey_name_map;
 // The Flatpak sleep-inhibition files are unix-only (os_inhibit is
 // `#[cfg(unix)]` in obs-util); the bridge follows the same gate.
 #[cfg(unix)]
@@ -57,6 +85,13 @@ pub mod abi_platform;
 pub mod abi_serializer;
 #[cfg(any(test, feature = "c-swap"))]
 pub mod abi_text_lookup;
+// P1-22.4 (WP-43): signal handlers (S-004).
+#[cfg(any(test, feature = "c-swap"))]
+pub mod abi_signal;
+// P1-14.5 (WP-43): the task queue (S-024 M6; platform-neutral in
+// obs-util-small, so no unix gate).
+#[cfg(any(test, feature = "c-swap"))]
+pub mod abi_task;
 // The threading primitives are unix in obs-util (`#[cfg(unix)]` — the
 // Windows HANDLE port is P1-05.3); the bridge follows the same gate.
 #[cfg(unix)]

@@ -52,7 +52,10 @@ size_t os_mbs_to_utf8_ptr(const char *str, size_t len, char **dst)
 {
 	if (!len)
 		len = strlen(str);
-	*dst = malloc(len + 1);
+	/* bmalloc (not malloc): the reference (platform.c) allocates with
+	 * bmalloc and the callers free with bfree — in a swap build bfree is
+	 * the Rust allocator, which only accepts bmalloc blocks. */
+	*dst = bmalloc(len + 1);
 	memcpy(*dst, str, len);
 	(*dst)[len] = 0;
 	return len;
@@ -61,7 +64,8 @@ size_t os_mbs_to_utf8_ptr(const char *str, size_t len, char **dst)
 size_t os_utf8_to_wcs_ptr(const char *str, size_t len, wchar_t **dst)
 {
 	size_t n = utf8_to_wchar(str, len, NULL, 0, 0);
-	*dst = malloc((n + 1) * sizeof(wchar_t));
+	/* bmalloc, not malloc (see os_mbs_to_utf8_ptr above). */
+	*dst = bmalloc((n + 1) * sizeof(wchar_t));
 	utf8_to_wchar(str, len, *dst, n + 1, 0);
 	(*dst)[n] = 0;
 	return n;

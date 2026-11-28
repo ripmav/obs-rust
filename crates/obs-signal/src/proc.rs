@@ -12,7 +12,7 @@ use std::ffi::c_void;
 use parking_lot::ReentrantMutex;
 
 use crate::calldata::Calldata;
-use crate::decl::parse_decl;
+use crate::decl::{Decl, parse_decl};
 
 /// `proc_handler_proc_t`: `void (*proc)(void *data, calldata_t *params)`.
 pub type ProcProc = unsafe extern "C" fn(data: *mut c_void, params: *mut Calldata);
@@ -57,16 +57,36 @@ pub fn proc_handler_destroy(_h: Box<ProcHandler>) {}
 /// S-004-R61: register a procedure from its declaration (S-003).
 /// The first registration of a name wins.
 pub fn proc_handler_add(h: &ProcHandler, decl_string: &str, proc: ProcProc, data: *mut c_void) {
-    let Ok(decl) = parse_decl(decl_string) else {
-        eprintln!("Function declaration invalid: {decl_string}");
-        return;
-    };
+    match parse_decl(decl_string) {
+        Ok(decl) => proc_handler_add_parsed(h, decl, proc, data),
+        Err(diags) => {
+            // C: `proc_handler_add` calls `parse_decl_string`, which
+            // logs the collected diagnostics (LOG_WARNING) before the
+            // error.
+            if !diags.is_empty() {
+                crate::log::emit(
+                    crate::log::LOG_WARNING,
+                    &crate::decl::errors_message(decl_string, &diags),
+                );
+            }
+            crate::log::emit(
+                crate::log::LOG_ERROR,
+                &format!("Function declaration invalid: {decl_string}"),
+            );
+        }
+    }
+}
+
+fn proc_handler_add_parsed(h: &ProcHandler, decl: Decl, proc: ProcProc, data: *mut c_void) {
     let name = decl.name;
     let _l = h.lock.lock();
     // SAFETY: the caller holds `h.lock` (re-entrant), the guard of this `UnsafeCell`; exclusive access.
     let procs = unsafe { &mut *h.procs.get() };
     if procs.iter().any(|p| p.name == name) {
-        eprintln!("Procedure '{name}' already exists");
+        crate::log::emit(
+            crate::log::LOG_WARNING,
+            &format!("Procedure '{name}' already exists"),
+        );
         return;
     }
     procs.push(Proc {

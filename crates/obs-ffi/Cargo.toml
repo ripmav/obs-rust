@@ -23,6 +23,9 @@ cbindgen = "0.29.4"
 
 [dependencies]
 log = "0.4"
+obs-hotkey-names = { path = "../obs-hotkey-names" }
+obs-math = { path = "../obs-math" }
+obs-signal = { path = "../obs-signal" }
 obs-util = { path = "../obs-util" }
 obs-util-small = { path = "../obs-util-small" }
 obs-netutil = { path = "../obs-netutil" }

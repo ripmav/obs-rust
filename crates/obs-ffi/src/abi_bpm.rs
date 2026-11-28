@@ -15,7 +15,7 @@ use std::sync::Mutex;
 
 use obs_bpm::bpm;
 
-use crate::abi_common::{bfree, bmalloc, bstrdup_bytes};
+use crate::abi_common::{bfree, bmalloc_c, bstrdup_bytes};
 use crate::{LOG_DEBUG, LOG_ERROR};
 
 const OBS_ENCODER_VIDEO: c_int = 1;
@@ -417,7 +417,7 @@ fn process_metrics(
 
     // SAFETY: a fresh bmem allocation of the exact size written; the
     // 8-byte prefix is the reference's `long ref = 1`.
-    let buf = unsafe { bmalloc(new_data.len() + 8) };
+    let buf = unsafe { bmalloc_c(new_data.len() + 8) };
     // SAFETY: buf is a valid allocation of new_data.len() + 8 bytes.
     unsafe {
         std::ptr::copy_nonoverlapping(1i64.to_ne_bytes().as_ptr(), buf, 8);

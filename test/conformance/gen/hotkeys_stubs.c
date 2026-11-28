@@ -34,7 +34,11 @@ void obs_hotkeys_platform_free(struct obs_core_hotkeys *h)
 }
 
 /* ---- signals: each emission is printed ---- */
-void signal_handler_signal(signal_handler_t *handler, const char *signal, calldata_t *params)
+/* Weak (the rustlib_stubs.c precedent): in swap mode the staticlib's
+ * abi_signal provides the strong definition and wins; in check mode
+ * this is the only one. */
+void __attribute__((weak)) signal_handler_signal(signal_handler_t *handler, const char *signal,
+						   calldata_t *params)
 {
 	(void)handler;
 	void *key = NULL;

@@ -204,9 +204,14 @@ pub fn dstr_move(d: &mut Dstr, src: &mut Dstr) {
     src.capacity = 0;
 }
 
-/// S-006-R05: `dstr_init(d)` — all zero.
+/// S-006-R05: `dstr_init(d)` — all zero. **No free**: the C inline
+/// overwrites the fields, so a live old buffer is leaked (C semantics),
+/// and C callers may call the exported composites on uninitialised
+/// stack storage (freeing the garbage pointer would be a double free).
 pub fn dstr_init(d: &mut Dstr) {
-    dstr_free(d);
+    d.array = std::ptr::null_mut();
+    d.len = 0;
+    d.capacity = 0;
 }
 
 /// S-006-R64: `dstr_init_copy(d, s)` — init, then `dstr_copy`.
@@ -603,6 +608,141 @@ pub fn astrcmpi_n(a: Option<&[u8]>, b: Option<&[u8]>, n: usize) -> i32 {
     }
 }
 
+/// ASCII `towupper` on a `wchar_t` (u32): the C-locale behaviour —
+/// only `a`-`z` change (S-006 R31, the `astrcmpi` family is ASCII
+/// specified; the vectors never exercise the locale).
+fn wide_toupper(w: u32) -> u32 {
+    if (0x61..=0x7A).contains(&w) {
+        w - 0x20
+    } else {
+        w
+    }
+}
+
+/// S-006-R31: `wstrcmpi(a, b)` — u32-wise after `toupper` (C locale;
+/// ASCII specified). NULL ≡ `""`. Only the sign is specified.
+#[must_use]
+pub fn wstrcmpi(a: Option<&[u32]>, b: Option<&[u32]>) -> i32 {
+    let a = a.unwrap_or(&[]);
+    let b = b.unwrap_or(&[]);
+    for (x, y) in a.iter().zip(b.iter()) {
+        let x = wide_toupper(*x);
+        let y = wide_toupper(*y);
+        if x != y {
+            return if x < y { -1 } else { 1 };
+        }
+    }
+    if a.len() < b.len() {
+        -1
+    } else if a.len() > b.len() {
+        1
+    } else {
+        0
+    }
+}
+
+/// S-006-R31: `wstrcmp_n(a, b, n)` — at most `n` code units;
+/// `n == 0` → 0.
+#[must_use]
+pub fn wstrcmp_n(a: Option<&[u32]>, b: Option<&[u32]>, n: usize) -> i32 {
+    if n == 0 {
+        return 0;
+    }
+    let a = a.unwrap_or(&[]);
+    let b = b.unwrap_or(&[]);
+    for i in 0..n.min(a.len().min(b.len())) {
+        let x = a[i];
+        let y = b[i];
+        if x != y {
+            return if x < y { -1 } else { 1 };
+        }
+    }
+    let al = a.len().min(n);
+    let bl = b.len().min(n);
+    if al < bl {
+        -1
+    } else if al > bl {
+        1
+    } else {
+        0
+    }
+}
+
+/// S-006-R31: `wstrcmpi_n(a, b, n)` — case-insensitive, at most `n`.
+#[must_use]
+pub fn wstrcmpi_n(a: Option<&[u32]>, b: Option<&[u32]>, n: usize) -> i32 {
+    if n == 0 {
+        return 0;
+    }
+    let a = a.unwrap_or(&[]);
+    let b = b.unwrap_or(&[]);
+    for i in 0..n.min(a.len().min(b.len())) {
+        let x = wide_toupper(a[i]);
+        let y = wide_toupper(b[i]);
+        if x != y {
+            return if x < y { -1 } else { 1 };
+        }
+    }
+    let al = a.len().min(n);
+    let bl = b.len().min(n);
+    if al < bl {
+        -1
+    } else if al > bl {
+        1
+    } else {
+        0
+    }
+}
+
+/// S-006-R33: `wstrstri(str, find)` — first offset (in code units)
+/// where `wstrcmpi_n(p, find, find.len()) == 0`; NULL-arguments →
+/// `None`; empty needle matches at offset 0.
+#[must_use]
+pub fn wstrstri(str: Option<&[u32]>, find: Option<&[u32]>) -> Option<usize> {
+    let str = str?;
+    let find = find?;
+    if find.is_empty() {
+        return Some(0);
+    }
+    if str.len() < find.len() {
+        return None;
+    }
+    for i in 0..=str.len() - find.len() {
+        if wstrcmpi_n(Some(&str[i..]), Some(find), find.len()) == 0 {
+            return Some(i);
+        }
+    }
+    None
+}
+
+/// S-006-R22: `wcsdepad(s)` — removes leading and trailing
+/// `{space, tab, LF, CR}` in place (the trimmed content moves to the
+/// front, the new end is NUL-terminated); null → null; returns the
+/// trimmed view.
+#[must_use]
+pub fn wcsdepad(s: Option<&mut [u32]>) -> Option<&mut [u32]> {
+    let s = s?;
+    let is_pad = |w: u32| w == 0x20 || w == 0x09 || w == 0x0A || w == 0x0D;
+    let mut start = 0;
+    while start < s.len() && is_pad(s[start]) {
+        start += 1;
+    }
+    let mut end = s.len();
+    while end > start && is_pad(s[end - 1]) {
+        end -= 1;
+    }
+    // S-006-R31: C depads **in place** (the trimmed content is moved to
+    // the front, the new end NUL-terminates); the returned slice views
+    // the trimmed result in the same buffer.
+    if start > 0 {
+        s.copy_within(start..end, 0);
+    }
+    if end - start < s.len() {
+        s[end - start] = 0;
+    }
+    Some(&mut s[..end - start])
+}
+
 /// S-006-R33: `astrstri(str, find)` — first offset where
 /// `astrcmpi_n(p, find, strlen(find)) == 0`; NULL-arguments → NULL;
 /// empty needle matches at offset 0.
@@ -745,7 +885,9 @@ fn do_replace_at(d: &mut Dstr, idx: usize, find: &[u8], repl: &[u8]) {
 }
 
 /// S-006-R22: `strdepad(s)` — removes leading and trailing
-/// `{space, tab, LF, CR}` in place; null → null; returns the start.
+/// `{space, tab, LF, CR}` in place (the trimmed content moves to the
+/// front, the new end is NUL-terminated); null → null; returns the
+/// trimmed view.
 #[must_use]
 pub fn strdepad(s: Option<&mut [u8]>) -> Option<&mut [u8]> {
     let s = s?;
@@ -758,7 +900,16 @@ pub fn strdepad(s: Option<&mut [u8]>) -> Option<&mut [u8]> {
     while end > start && is_pad(s[end - 1]) {
         end -= 1;
     }
-    Some(&mut s[start..end])
+    // S-006-R31: C depads **in place** (memmove of the trimmed content to
+    // the front, truncation at the new end); the returned slice views
+    // the trimmed result in the same buffer.
+    if start > 0 {
+        s.copy_within(start..end, 0);
+    }
+    if end - start < s.len() {
+        s[end - start] = 0;
+    }
+    Some(&mut s[..end - start])
 }
 
 /// S-006-R22: `dstr_depad(d)` — depad in place; `len = strlen`; an empty
@@ -825,24 +976,55 @@ pub fn dstr_truncate(d: &mut Dstr, pos: usize) {
     dstr_resize(d, pos);
 }
 
+/// Store the detached slice into `d` (fresh allocation, NUL-terminated);
+/// `None` leaves `d` empty after the free (C: `dstr_ncopy(dst, NULL, _)`).
+fn dstr_mid_store(d: &mut Dstr, bytes: Option<Vec<u8>>) {
+    if let Some(bytes) = bytes {
+        // SAFETY: Dstr invariant — allocation through the S-001 allocator; the result is stored into `array` immediately.
+        d.array = unsafe { bmalloc_raw(bytes.len() + 1) };
+        // SAFETY: `d.array` is a fresh `bytes.len()+1` block; `bytes` was detached before the free.
+        unsafe {
+            std::ptr::copy_nonoverlapping(bytes.as_ptr(), d.array, bytes.len());
+            *d.array.add(bytes.len()) = 0;
+        }
+        d.len = bytes.len();
+        d.capacity = bytes.len() + 1;
+    }
+}
+
 /// S-006-R23: `dstr_mid(d, src, start, count)` — copy `src[start..]`
 /// truncated to `count` bytes; `count == 0` → empty.
+///
+/// Aliasing-safe like the C original, which works through a temp copy
+/// of the source: the slice is detached before `dstr_free(d)`. The
+/// `dst == src` case (legal in C) is unreachable through references —
+/// the bridge dispatches it to `dstr_mid_inplace`.
 pub fn dstr_mid(d: &mut Dstr, src: &Dstr, start: usize, count: usize) {
     let start = start.min(src.len);
     let count = count.min(src.len - start);
+    // SAFETY: `src.array` is valid for `count` reads before the free;
+    // detached into an owned copy (the C temp).
+    let bytes = (count > 0 && !src.array.is_null())
+        .then(|| unsafe { std::slice::from_raw_parts(src.array.add(start), count).to_vec() });
     dstr_free(d);
-    if count == 0 || src.array.is_null() {
-        return;
-    }
-    // SAFETY: Dstr invariant — allocation through the S-001 allocator; the result is stored into `array` immediately.
-    d.array = unsafe { bmalloc_raw(count + 1) };
-    // SAFETY: Dstr invariant — `src.array.add(start)` is valid for count+1 reads; `d.array` is a fresh block of count+1 bytes.
-    unsafe {
-        std::ptr::copy_nonoverlapping(src.array.add(start), d.array, count);
-        *d.array.add(count) = 0;
-    }
-    d.len = count;
-    d.capacity = count + 1;
+    dstr_mid_store(d, bytes);
+}
+
+/// S-006-R23: the self-aliasing case of `dstr_mid` — C callers may pass
+/// `dst == src` (the 255-byte truncation in
+/// `os_generate_formatted_filename`, cf-lexer's filename trim). Rust's
+/// borrow model cannot express that through references, so the bridge
+/// dispatches to this function when the pointers match (the
+/// `dstr_truncate` pattern).
+pub fn dstr_mid_inplace(d: &mut Dstr, start: usize, count: usize) {
+    let start = start.min(d.len);
+    let count = count.min(d.len - start);
+    // SAFETY: `d.array` is valid for `count` reads before the free;
+    // detached into an owned copy so the free cannot strand the source.
+    let bytes = (count > 0 && !d.array.is_null())
+        .then(|| unsafe { std::slice::from_raw_parts(d.array.add(start), count).to_vec() });
+    dstr_free(d);
+    dstr_mid_store(d, bytes);
 }
 
 /// S-006-R23: `dstr_right(d, src, pos)` — the last `src.len - pos`
@@ -850,6 +1032,13 @@ pub fn dstr_mid(d: &mut Dstr, src: &Dstr, start: usize, count: usize) {
 pub fn dstr_right(d: &mut Dstr, src: &Dstr, pos: usize) {
     let pos = pos.min(src.len);
     dstr_mid(d, src, pos, src.len - pos);
+}
+
+/// S-006-R23: the self-aliasing case of `dstr_right` — `dst == src` in
+/// C; the bridge dispatches here (the `dstr_mid_inplace` pattern).
+pub fn dstr_right_inplace(d: &mut Dstr, pos: usize) {
+    let pos = pos.min(d.len);
+    dstr_mid_inplace(d, pos, d.len - pos);
 }
 
 /// S-006-R24: `dstr_to_upper(d)` — ASCII case folding in place (C
@@ -1166,6 +1355,24 @@ mod tests {
         assert_eq!(d.capacity, 0);
     }
 
+    /// S-006-R04 regression: `dstr_init` zeroes but does **not** free —
+    /// the C inline overwrites the fields (the old buffer is leaked), and
+    /// C callers invoke the exported composites on uninitialised stack
+    /// storage, so a free of the stale pointer would be a double free
+    /// (the swapped config-area double free, WP-43).
+    #[test]
+    fn r04_init_does_not_free() {
+        let mut d = mk("hello");
+        let old = d.array;
+        dstr_init(&mut d);
+        assert!(d.array.is_null());
+        assert_eq!(d.len, 0);
+        assert_eq!(d.capacity, 0);
+        // The old buffer was leaked, not freed: we can still release it.
+        // SAFETY: `old` is the leaked buffer (never freed by dstr_init).
+        unsafe { bfree_raw(old) };
+    }
+
     #[test]
     fn r05_move_array_caps() {
         let mut d = Dstr::init();
@@ -1424,6 +1631,31 @@ mod tests {
         let mut s = mk("hello");
         dstr_truncate(&mut s, 2);
         assert_eq!(str(&s), "he");
+    }
+
+    #[test]
+    fn r23_mid_inplace() {
+        // C callers pass `dst == src` (the 255-byte truncation in
+        // os_generate_formatted_filename, cf-lexer's filename trim);
+        // the bridge dispatches to the inplace variants when the
+        // pointers match (the dstr_truncate pattern — Rust references
+        // cannot alias &mut + &, and Miri rejects the raw-pointer form).
+        let mut s = mk("hello world");
+        dstr_mid_inplace(&mut s, 6, 5);
+        assert_eq!(str(&s), "world");
+        // the in-place truncation pattern: keep the first 255 of 300
+        let long = vec![b'a'; 300];
+        let mut t = Dstr::init();
+        dstr_copy(&mut t, &long);
+        dstr_mid_inplace(&mut t, 0, 255);
+        assert_eq!(t.len, 255);
+        assert!(!t.array.is_null());
+        // SAFETY: `t` holds a live 255-byte NUL-terminated buffer.
+        let got = unsafe { std::slice::from_raw_parts(t.array, t.len) };
+        assert_eq!(got, &long[..255]);
+        // in-place right
+        dstr_right_inplace(&mut t, 250);
+        assert_eq!(t.len, 5);
     }
 
     #[test]
