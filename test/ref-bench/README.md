@@ -83,31 +83,44 @@ this is the input of the regression gate:
 
 `compare.py` compares current JSON against the committed baseline
 (`baseline.json` — `{"schema": 1, "benches": {<name>: {"rust": x, "c": y}}}`)
-and **fails when a tracked bench is more than 2% slower**; improvements
-never fail, a tracked bench missing from the current output fails.
+and **fails when a tracked rust-side bench is more than 2% slower**
+(same CPU model); improvements never fail, a tracked bench missing from
+the current output fails (on any CPU). **Blocking in CI since WP-46
+(P1-32.1)** (`--no-fail` dropped).
 
 ```sh
 python3 test/ref-bench/compare.py --self-test                 # built-in synthetic checks
 python3 test/ref-bench/compare.py baseline.json \
-  --current ref-bench.json --current rust-gate.json            # fails > +2%
+  --current ref-bench.json --current rust-gate.json            # fails > +2% (rust side)
 python3 test/ref-bench/compare.py baseline.json \
   --current ref-bench.json --no-fail                           # report mode
 ```
 
 **CPU awareness** (ODD L91, found in the first CI push): GitHub's
-`ubuntu-latest` runners are **heterogeneous** — two consecutive runs
-landed on AMD EPYC 9V45 and EPYC 7763, 1.5–3× apart. A percentage
-threshold across different CPU models is hardware noise, not a code
-regression, so the gate only enforces the threshold when the current
-JSON's `cpu` matches the baseline's `generated.cpu`; cross-model deltas
-are printed as `info (different CPU)` and never fail. A **missing**
-tracked bench still fails on any CPU.
+`ubuntu-latest` runners are **heterogeneous** — consecutive runs have
+landed on AMD EPYC 9V45 and EPYC 7763, 1.5–3× apart, and the runner
+**rotates per run**. A percentage threshold across different CPU models
+is hardware noise, not a code regression, so the gate only enforces the
+threshold when the current JSON's `cpu` matches the baseline's
+`generated.cpu`; cross-model deltas are printed as `info (different CPU)`
+and never fail. A **missing** tracked bench still fails on any CPU.
+
+**Side awareness** (WP-46, found in the first blocking run): the
+threshold is enforced on the **rust** side only. The **c** side is the
+baseline reference — this repo's changes cannot move it (pinned 33.0.1
+sources + pinned simde), only a runner/toolchain change can. The first
+blocking run (46142227293, back on the baseline's 9V45 after the
+rustc 1.100.0 → 1.100.1 bump) showed +4.4% C-side drift that no PR could
+cause or fix — so large same-CPU deltas on c rows are reported as
+`drift (c ref, informational)`, and the remedy is a re-baseline (below),
+not a failed PR.
 
 CI wiring: the `benchmarks` job in `.github/workflows/rust.yml` builds +
-runs both sides (x86_64 runner) and runs `compare.py` in **report mode**
-for this first baseline commit — WP-46 (P1-32.1) flips it to blocking
-by dropping `--no-fail` (and should then also pin the runner image /
-re-baseline per CPU model).
+runs both sides (x86_64 runner) and runs `compare.py` **blocking**. If a
+runner lands on a different CPU model than the baseline, all rows are
+informational (the gate then enforces missing-bench detection only) —
+pinning the runner image / re-baselining per CPU model is the open
+follow-up (ODD L91, PHASE-1-REVIEW.md §Findings B).
 Deliberate-slowdown demonstration (the P0-17.5 Done-when): see
 `docs/tests/ref-bench.md` row T-06.
 

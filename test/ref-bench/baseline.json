@@ -1,24 +1,26 @@
 {
   "schema": 1,
   "generated": {
-    "date": "2026-11-27",
-    "git": "8ad32a7",
-    "machine": "GitHub Actions ubuntu-latest x86_64 (benchmarks job) \u2014 see docs/rust-rewrite/benchmarks.md",
-    "cpu": "AMD EPYC 9V45 96-Core Processor"
+    "date": "2026-11-28",
+    "git": "2343f26",
+    "machine": "GitHub Actions ubuntu-latest x86_64 (benchmarks job) — see docs/rust-rewrite/benchmarks.md",
+    "cpu": "AMD EPYC 9V45 96-Core Processor",
+    "run": "46142227293",
+    "note": "Re-baselined in WP-46 (P1-32.1): the runner toolchain moved on since the WP-41 baseline (run 45958004554) — rustc 1.100.0 → 1.100.1, runner image update — which moved every workload by 2–13% (both sides, same 9V45 CPU). Both sides re-measured on the same runner in run 46142227293. See docs/rust-rewrite/PHASE-1-REVIEW.md §Findings B."
   },
   "benches": {
     "audio_mix": {
-      "c": 4136
+      "c": 4317
     },
     "matmul4": {
-      "c": 8,
-      "rust": 9.873765
+      "c": 7,
+      "rust": 9.631812
     },
     "nv12_to_rgb": {
-      "c": 109836
+      "c": 105789
     },
     "scene_render": {
-      "rust": 1312.0
+      "rust": 1251.0
     }
   }
 }
