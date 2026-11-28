@@ -976,26 +976,13 @@ pub fn dstr_truncate(d: &mut Dstr, pos: usize) {
     dstr_resize(d, pos);
 }
 
-/// S-006-R23: `dstr_mid(d, src, start, count)` — copy `src[start..]`
-/// truncated to `count` bytes; `count == 0` → empty.
-///
-/// Aliasing-safe like the C original, which works through a temp copy
-/// of the source: C callers may pass `dst == src` (the 255-byte
-/// truncation in `os_generate_formatted_filename`, cf-lexer's filename
-/// trim), so the slice is detached before `dstr_free(d)`.
-pub fn dstr_mid(d: &mut Dstr, src: &Dstr, start: usize, count: usize) {
-    let start = start.min(src.len);
-    let count = count.min(src.len - start);
-    // SAFETY: `src.array` is valid for `count` reads before the free;
-    // detached into an owned copy (the C temp) so `d == src` callers
-    // keep working.
-    let bytes = (count > 0 && !src.array.is_null())
-        .then(|| unsafe { std::slice::from_raw_parts(src.array.add(start), count).to_vec() });
-    dstr_free(d);
+/// Store the detached slice into `d` (fresh allocation, NUL-terminated);
+/// `None` leaves `d` empty after the free (C: `dstr_ncopy(dst, NULL, _)`).
+fn dstr_mid_store(d: &mut Dstr, bytes: Option<Vec<u8>>) {
     if let Some(bytes) = bytes {
         // SAFETY: Dstr invariant — allocation through the S-001 allocator; the result is stored into `array` immediately.
         d.array = unsafe { bmalloc_raw(bytes.len() + 1) };
-        // SAFETY: `d.array` is a fresh `bytes.len()+1` block; `bytes` is a copy detached before the free.
+        // SAFETY: `d.array` is a fresh `bytes.len()+1` block; `bytes` was detached before the free.
         unsafe {
             std::ptr::copy_nonoverlapping(bytes.as_ptr(), d.array, bytes.len());
             *d.array.add(bytes.len()) = 0;
@@ -1005,11 +992,53 @@ pub fn dstr_mid(d: &mut Dstr, src: &Dstr, start: usize, count: usize) {
     }
 }
 
+/// S-006-R23: `dstr_mid(d, src, start, count)` — copy `src[start..]`
+/// truncated to `count` bytes; `count == 0` → empty.
+///
+/// Aliasing-safe like the C original, which works through a temp copy
+/// of the source: the slice is detached before `dstr_free(d)`. The
+/// `dst == src` case (legal in C) is unreachable through references —
+/// the bridge dispatches it to `dstr_mid_inplace`.
+pub fn dstr_mid(d: &mut Dstr, src: &Dstr, start: usize, count: usize) {
+    let start = start.min(src.len);
+    let count = count.min(src.len - start);
+    // SAFETY: `src.array` is valid for `count` reads before the free;
+    // detached into an owned copy (the C temp).
+    let bytes = (count > 0 && !src.array.is_null())
+        .then(|| unsafe { std::slice::from_raw_parts(src.array.add(start), count).to_vec() });
+    dstr_free(d);
+    dstr_mid_store(d, bytes);
+}
+
+/// S-006-R23: the self-aliasing case of `dstr_mid` — C callers may pass
+/// `dst == src` (the 255-byte truncation in
+/// `os_generate_formatted_filename`, cf-lexer's filename trim). Rust's
+/// borrow model cannot express that through references, so the bridge
+/// dispatches to this function when the pointers match (the
+/// `dstr_truncate` pattern).
+pub fn dstr_mid_inplace(d: &mut Dstr, start: usize, count: usize) {
+    let start = start.min(d.len);
+    let count = count.min(d.len - start);
+    // SAFETY: `d.array` is valid for `count` reads before the free;
+    // detached into an owned copy so the free cannot strand the source.
+    let bytes = (count > 0 && !d.array.is_null())
+        .then(|| unsafe { std::slice::from_raw_parts(d.array.add(start), count).to_vec() });
+    dstr_free(d);
+    dstr_mid_store(d, bytes);
+}
+
 /// S-006-R23: `dstr_right(d, src, pos)` — the last `src.len - pos`
 /// bytes of `src`.
 pub fn dstr_right(d: &mut Dstr, src: &Dstr, pos: usize) {
     let pos = pos.min(src.len);
     dstr_mid(d, src, pos, src.len - pos);
+}
+
+/// S-006-R23: the self-aliasing case of `dstr_right` — `dst == src` in
+/// C; the bridge dispatches here (the `dstr_mid_inplace` pattern).
+pub fn dstr_right_inplace(d: &mut Dstr, pos: usize) {
+    let pos = pos.min(d.len);
+    dstr_mid_inplace(d, pos, d.len - pos);
 }
 
 /// S-006-R24: `dstr_to_upper(d)` — ASCII case folding in place (C
@@ -1605,40 +1634,27 @@ mod tests {
     }
 
     #[test]
-    fn r23_mid_self_aliased() {
-        // C callers pass `dst == src` through the FFI (the 255-byte
-        // truncation in os_generate_formatted_filename, cf-lexer's
-        // filename trim); the port must stay aliasing-safe, so the
-        // raw-pointer form is reproduced the way the abi_dstr bridge
-        // passes the C pointers.
+    fn r23_mid_inplace() {
+        // C callers pass `dst == src` (the 255-byte truncation in
+        // os_generate_formatted_filename, cf-lexer's filename trim);
+        // the bridge dispatches to the inplace variants when the
+        // pointers match (the dstr_truncate pattern — Rust references
+        // cannot alias &mut + &, and Miri rejects the raw-pointer form).
         let mut s = mk("hello world");
-        let p = &mut s as *mut Dstr;
-        // SAFETY: `p` is a valid `Dstr`; the aliased references mirror the C
-        // caller passing the same pointer twice (the bridge's pattern).
-        unsafe {
-            dstr_mid(&mut *p, &*p, 6, 5);
-        }
+        dstr_mid_inplace(&mut s, 6, 5);
         assert_eq!(str(&s), "world");
         // the in-place truncation pattern: keep the first 255 of 300
         let long = vec![b'a'; 300];
         let mut t = Dstr::init();
         dstr_copy(&mut t, &long);
-        let p = &mut t as *mut Dstr;
-        // SAFETY: as above — aliased references over one live `Dstr`.
-        unsafe {
-            dstr_mid(&mut *p, &*p, 0, 255);
-        }
+        dstr_mid_inplace(&mut t, 0, 255);
         assert_eq!(t.len, 255);
         assert!(!t.array.is_null());
         // SAFETY: `t` holds a live 255-byte NUL-terminated buffer.
         let got = unsafe { std::slice::from_raw_parts(t.array, t.len) };
         assert_eq!(got, &long[..255]);
         // in-place right
-        let p = &mut t as *mut Dstr;
-        // SAFETY: as above — aliased references over one live `Dstr`.
-        unsafe {
-            dstr_right(&mut *p, &*p, 250);
-        }
+        dstr_right_inplace(&mut t, 250);
         assert_eq!(t.len, 5);
     }
 

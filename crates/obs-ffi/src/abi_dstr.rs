@@ -24,15 +24,15 @@ use obs_util::dstr::{
     dstr_from_mbs as cd_dstr_from_mbs, dstr_from_wcs as cd_dstr_from_wcs,
     dstr_init_copy_strref as cd_dstr_init_copy_strref, dstr_insert as cd_dstr_insert,
     dstr_insert_ch as cd_dstr_insert_ch, dstr_insert_dstr as cd_dstr_insert_dstr,
-    dstr_left as cd_dstr_left, dstr_mid as cd_dstr_mid, dstr_ncat as cd_dstr_ncat,
-    dstr_ncat_dstr as cd_dstr_ncat_dstr, dstr_ncopy as cd_dstr_ncopy,
+    dstr_left as cd_dstr_left, dstr_mid as cd_dstr_mid, dstr_mid_inplace as cd_dstr_mid_inplace,
+    dstr_ncat as cd_dstr_ncat, dstr_ncat_dstr as cd_dstr_ncat_dstr, dstr_ncopy as cd_dstr_ncopy,
     dstr_ncopy_dstr as cd_dstr_ncopy_dstr, dstr_remove as cd_dstr_remove,
     dstr_replace as cd_dstr_replace, dstr_right as cd_dstr_right,
-    dstr_safe_printf as cd_dstr_safe_printf, dstr_to_lower as cd_dstr_to_lower,
-    dstr_to_mbs as cd_dstr_to_mbs, dstr_to_upper as cd_dstr_to_upper,
-    dstr_to_wcs as cd_dstr_to_wcs, strdepad as cd_strdepad, strlist_split as cd_strlist_split,
-    wcsdepad as cd_wcsdepad, wstrcmp_n as cd_wstrcmp_n, wstrcmpi as cd_wstrcmpi,
-    wstrcmpi_n as cd_wstrcmpi_n, wstrstri as cd_wstrstri,
+    dstr_right_inplace as cd_dstr_right_inplace, dstr_safe_printf as cd_dstr_safe_printf,
+    dstr_to_lower as cd_dstr_to_lower, dstr_to_mbs as cd_dstr_to_mbs,
+    dstr_to_upper as cd_dstr_to_upper, dstr_to_wcs as cd_dstr_to_wcs, strdepad as cd_strdepad,
+    strlist_split as cd_strlist_split, wcsdepad as cd_wcsdepad, wstrcmp_n as cd_wstrcmp_n,
+    wstrcmpi as cd_wstrcmpi, wstrcmpi_n as cd_wstrcmpi_n, wstrstri as cd_wstrstri,
 };
 
 /// Read a NUL-terminated C string as a byte slice (NULL → `None`).
@@ -485,22 +485,38 @@ pub unsafe extern "C" fn dstr_left(dst: *mut Dstr, str: *const Dstr, pos: usize)
 /// size_t start, const size_t count)`
 ///
 /// # Safety
-/// `dst`/`str` must be live dstrs.
+/// `dst`/`str` must be live dstrs; `dst == src` (C-legal) takes the
+/// inplace path.
 #[unsafe(no_mangle)]
 pub unsafe extern "C" fn dstr_mid(dst: *mut Dstr, str: *const Dstr, start: usize, count: usize) {
-    // SAFETY: caller contract — both live for the call.
-    unsafe { cd_dstr_mid(&mut *dst, &*str, start, count) }
+    // SAFETY: caller contract — both live for the call; dereferenced on
+    // exactly one side of the branch, never as aliased references.
+    unsafe {
+        if std::ptr::eq(dst, str as *mut Dstr) {
+            cd_dstr_mid_inplace(&mut *dst, start, count);
+        } else {
+            cd_dstr_mid(&mut *dst, &*str, start, count);
+        }
+    }
 }
 
 /// `EXPORT void dstr_right(struct dstr *dst, const struct dstr *str,
 /// const size_t pos)`
 ///
 /// # Safety
-/// `dst`/`str` must be live dstrs.
+/// `dst`/`str` must be live dstrs; `dst == src` (C-legal) takes the
+/// inplace path.
 #[unsafe(no_mangle)]
 pub unsafe extern "C" fn dstr_right(dst: *mut Dstr, str: *const Dstr, pos: usize) {
-    // SAFETY: caller contract — both live for the call.
-    unsafe { cd_dstr_right(&mut *dst, &*str, pos) }
+    // SAFETY: caller contract — both live for the call; see `dstr_mid`
+    // for the aliased-pointer dispatch rationale.
+    unsafe {
+        if std::ptr::eq(dst, str as *mut Dstr) {
+            cd_dstr_right_inplace(&mut *dst, pos);
+        } else {
+            cd_dstr_right(&mut *dst, &*str, pos);
+        }
+    }
 }
 
 /// `EXPORT void dstr_from_mbs(struct dstr *dst, const char *mbstr)`
