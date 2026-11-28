@@ -9,21 +9,27 @@
 #   LIBOBS=... OUT=... bash build.sh c     # all-C build (OBS_ENABLE_RUST "OFF")
 #   LIBOBS=... OUT=... bash build.sh rust  # Rust-staticlib swap build
 #                                          # (OBS_ENABLE_RUST "ON"): the
-#                                          # 27-file swap set of the OBS_ENABLE_RUST
+#                                          # 36-file swap set of the OBS_ENABLE_RUST
 #                                          # CMake patch — of those, exactly the
-#                                          # 21 files this mini build compiles
+#                                          # 30 files this mini build compiles
 #                                          # are dropped and
 #                                          # target/release/libobs_ffi.a is linked
 #
-# The 21 dropped files (kept in sync with the apply_swap pattern of
-# test/conformance/run.sh; the other 6 of the 27 — platform-nix-dbus/portal
+# The 30 dropped files (kept in sync with the apply_swap pattern of
+# test/conformance/run.sh; the other 6 of the 36 — platform-nix-dbus/portal
 # and shared/{opts-parser,bpm,happy-eyeballs,file-updater} — are not
-# compiled by the mini build):
+# compiled by the mini build): the 21 C-mode-only swap files below plus the
+# 9 recipe-bridge files (util/{dstr,crc32,pipe-posix,task}.c,
+# callback/{calldata,decl,signal,proc}.c, obs-hotkey-name-map.c) that are
+# listed in util/core and dropped from the link in rust mode:
 #   util/{lexer,cf-lexer,cf-parser,text-lookup,base,threading-posix,
 #         bitstream,array-serializer,file-serializer,
-#         buffered-file-serializer,source-profiler,bmem}.c
+#         buffered-file-serializer,source-profiler,bmem,dstr,crc32,
+#         pipe-posix,task}.c
 #   graphics/{vec3,vec4,quat,axisang,matrix3,matrix4,plane,bounds,
 #         math-extra}.c
+#   callback/{calldata,decl,signal,proc}.c
+#   obs-hotkey-name-map.c
 # obs-data.c / obs-properties.c / graphics stay C in BOTH builds (they are
 # not in the swap set).
 #
@@ -38,8 +44,10 @@
 # Rust mode additionally needs (from the repo root):
 #   cargo build -p obs-ffi --release --features c-swap
 # and links <repo root>/target/release/libobs_ffi.a plus the weak abort
-# stubs test/conformance/gen/rustlib_stubs.c and -lcurl (the staticlib's
-# happy-eyeballs bridge references curl).
+# stubs test/conformance/gen/rustlib_stubs.c, the variadic dstr shim
+# crates/obs-ffi/c/dstr-variadic-bridge.c (the CMake patch's dstr.c
+# replacement) and -lcurl (the staticlib's happy-eyeballs bridge
+# references curl).
 set -eu
 
 mode="${1:-}"
@@ -117,8 +125,10 @@ util=(
 	"$LIBOBS"/util/pipe-posix.c "$LIBOBS"/util/platform.c "$LIBOBS"/util/platform-nix.c
 )
 
-# The 21 swapped files (OBS_ENABLE_RUST swap set ∩ mini build; the math
-# nine since P1-15.4/P1-16.5/P1-17.4/P1-18.4 (WP-43) — vec2.c stays in
+# The 21 C-mode-only swapped files (OBS_ENABLE_RUST swap set ∩ mini build,
+# minus the 9 recipe-bridge files that live in util/core above — dropped
+# from those arrays in rust mode instead; the math nine since
+# P1-15.4/P1-16.5/P1-17.4/P1-18.4 (WP-43) — vec2.c stays in
 # core: it is an empty TU, all its helpers are static inline in vec2.h).
 swap=(
 	"$LIBOBS"/util/lexer.c "$LIBOBS"/util/cf-lexer.c "$LIBOBS"/util/cf-parser.c
@@ -140,7 +150,21 @@ if [ "$mode" = rust ]; then
 	# happy-eyeballs bridge references curl).
 	ruststubs=("$here/../conformance/gen/rustlib_stubs.c")
 	rustlink=("$root/target/release/libobs_ffi.a" -lcurl)
-	srcs=("${util[@]}" "${core[@]}" "${caption[@]}" "${ruststubs[@]}")
+	# The 9 WP-43 recipe-bridge files are listed in util/core above (the C
+	# build compiles them); in rust mode the staticlib provides them, so
+	# drop them from the link.
+	util_rust=()
+	for f in "${util[@]}"; do
+		case "${f##*/}" in dstr.c | crc32.c | pipe-posix.c | task.c) ;; *) util_rust+=("$f") ;; esac
+	done
+	core_rust=()
+	for f in "${core[@]}"; do
+		case "${f##*/}" in calldata.c | decl.c | signal.c | proc.c | obs-hotkey-name-map.c) ;; *) core_rust+=("$f") ;; esac
+	done
+	# the variadic dstr shim (the CMake patch swaps dstr.c for it in
+	# OBS_ENABLE_RUST=ON builds; the four va_list functions cannot be
+	# defined in Rust — see crates/obs-ffi/c/dstr-variadic-bridge.c).
+	srcs=("${util_rust[@]}" "${core_rust[@]}" "${caption[@]}" "$root/crates/obs-ffi/c/dstr-variadic-bridge.c" "${ruststubs[@]}")
 else
 	srcs=("${util[@]}" "${swap[@]}" "${core[@]}" "${caption[@]}")
 fi
