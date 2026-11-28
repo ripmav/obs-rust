@@ -55,6 +55,7 @@ job messages + signal text).
 
 ## Run log
 
-| #   | Date       | Trigger                    | Result |
-| --- | ---------- | -------------------------- | ------ |
-| 1   | 2026-11-28 | manual `workflow_dispatch` | [run 46126019674](https://github.com/ripmav/obs-rust/actions/runs/46126019674) (in progress) |
+| #   | Date       | Trigger                    | Result                                                                                                                                                                              |
+| --- | ---------- | -------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1   | 2026-11-28 | manual `workflow_dispatch` | FAILED in 19s — patch path bug: `git -C obs-studio apply` resolved the patch relative to the obs-studio dir. Fixed in `nightly.yml` (absolute `$GITHUB_WORKSPACE` path); see run 2. |
+| 2   | 2026-11-28 | manual `workflow_dispatch` | (dispatched after the fix)                                                                                                                                                          |

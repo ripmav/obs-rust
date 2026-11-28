@@ -50,8 +50,9 @@ jobs:
         # The soak's first signal: the patch must still apply cleanly to
         # the pinned 33.0.1 tree. Red here = patch drift (soak doc).
         run: |
-          git -C obs-studio apply --check test/conformance/obs-enable-rust.patch
-          git -C obs-studio apply test/conformance/obs-enable-rust.patch
+          patch="${GITHUB_WORKSPACE}/test/conformance/obs-enable-rust.patch"
+          git -C obs-studio apply --check "$patch"
+          git -C obs-studio apply "$patch"
       - name: install system deps
         run: |
           sudo apt-get update
