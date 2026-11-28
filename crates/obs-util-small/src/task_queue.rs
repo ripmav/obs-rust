@@ -88,6 +88,31 @@ fn worker_loop(inner: &Inner) {
     }
 }
 
+impl TaskQueue {
+    /// Total items currently queued (user tasks, wait markers, the stop
+    /// marker) — the swap-mode form of the helpers runner's
+    /// `tq->tasks.size` poll: the C field counts **every** deque entry,
+    /// the destroy stop task included (the C field is private to the
+    /// port, so the bridge exposes this instead).
+    #[must_use]
+    pub fn pending_entries(&self) -> usize {
+        self.inner.lock.lock().unwrap().len()
+    }
+
+    /// Whether a wait marker is currently queued — the swap-mode form of
+    /// the C `tq->waiting` flag (set by `wait` when it queues the marker,
+    /// cleared when the worker processes it).
+    #[must_use]
+    pub fn wait_pending(&self) -> bool {
+        self.inner
+            .lock
+            .lock()
+            .unwrap()
+            .iter()
+            .any(|i| matches!(i, Item::Wait(_)))
+    }
+}
+
 /// `os_task_queue_create`: one queue, one worker thread.
 pub fn task_queue_create() -> TaskQueue {
     let inner = Arc::new(Inner {
