@@ -57,4 +57,4 @@ job messages + signal text).
 
 | #   | Date       | Trigger                    | Result |
 | --- | ---------- | -------------------------- | ------ |
-| 1   | 2026-11-28 | manual `workflow_dispatch` |        |
+| 1   | 2026-11-28 | manual `workflow_dispatch` | [run 46126019674](https://github.com/ripmav/obs-rust/actions/runs/46126019674) (in progress) |
