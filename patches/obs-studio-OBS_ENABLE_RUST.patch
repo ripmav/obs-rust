@@ -52,10 +52,19 @@ matrix3,matrix4,plane,bounds,math-extra}.c — the 80 EXPORT symbols
 are static inline in vec2.h; matrix4_mul_4x3_only has no header
 declaration and is dropped with the file).
 
+WP-44 (P1-30.1) retargets the patch to the 33.0.1 tag (the C reference
+the conformance CI job and the authoritative vectors build): the earlier
+regeneration targeted the fe1ed79 working tree, and against the tag the
+util/source-profiler hunk failed on the `util/spsc-fifo.h` context line
+(added upstream after the tag) — the hunk is re-based onto the tag (line
+offsets and index hashes updated; the swap set is unchanged). The
+nightly workflow (test/conformance/nightly.sh) applies this patch to the
+tag on every run as the patch-drift signal.
+
 Assisted-by: Qwen3.8-27B (off) via pi
 ---
 diff --git a/libobs/CMakeLists.txt b/libobs/CMakeLists.txt
-index 70e3bee..488aef3 100644
+index 71459cb..00fbf8b 100644
 --- a/libobs/CMakeLists.txt
 +++ b/libobs/CMakeLists.txt
 @@ -9,6 +9,14 @@ endif()
@@ -128,7 +137,7 @@ index 70e3bee..488aef3 100644
      util/lexer.h
      util/pipe.c
      util/pipe.h
-@@ -122,13 +131,14 @@ target_sources(
+@@ -122,12 +131,13 @@ target_sources(
      util/profiler.h
      util/profiler.hpp
      util/serializer.h
@@ -136,7 +145,6 @@ index 70e3bee..488aef3 100644
 +    $<$<NOT:$<BOOL:${OBS_ENABLE_RUST}>>:util/source-profiler.c>
 +    $<$<BOOL:${OBS_ENABLE_RUST}>:util/srcprof-bridge.c>
      util/source-profiler.h
-     util/spsc-fifo.h
      util/sse-intrin.h
 -    util/task.c
 +    $<$<NOT:$<BOOL:${OBS_ENABLE_RUST}>>:util/task.c>
@@ -146,7 +154,7 @@ index 70e3bee..488aef3 100644
      util/text-lookup.h
      util/threading.h
      util/utf8.c
-@@ -142,13 +152,13 @@ target_sources(
+@@ -141,13 +151,13 @@ target_sources(
  target_sources(
    libobs
    PRIVATE
@@ -164,7 +172,7 @@ index 70e3bee..488aef3 100644
      callback/signal.h
  )
  
-@@ -179,9 +189,9 @@ target_sources(
+@@ -178,9 +188,9 @@ target_sources(
  target_sources(
    libobs
    PRIVATE
@@ -176,7 +184,7 @@ index 70e3bee..488aef3 100644
      graphics/bounds.h
      graphics/device-exports.h
      graphics/effect-parser.c
-@@ -202,15 +212,15 @@ target_sources(
+@@ -201,15 +211,15 @@ target_sources(
      graphics/libnsgif/lzw.h
      graphics/libnsgif/nsgif.h
      graphics/math-defs.h
@@ -197,7 +205,7 @@ index 70e3bee..488aef3 100644
      graphics/quat.h
      graphics/shader-parser.c
      graphics/shader-parser.h
-@@ -218,9 +228,9 @@ target_sources(
+@@ -217,9 +227,9 @@ target_sources(
      graphics/texture-render.c
      graphics/vec2.c
      graphics/vec2.h
@@ -209,7 +217,7 @@ index 70e3bee..488aef3 100644
      graphics/vec4.h
  )
  
-@@ -264,6 +274,15 @@ target_link_libraries(
+@@ -261,6 +271,15 @@ target_link_libraries(
    PUBLIC SIMDe::SIMDe Threads::Threads
  )
  

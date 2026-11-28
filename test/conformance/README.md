@@ -11,6 +11,7 @@ scripts/<area>/<name>.script      input, hand-written
 vectors/<area>/<name>.expected    output of the C reference runner (authoritative)
 gen/<area>_runner.c               reference runner (links the C implementation)
 run.sh generate | check           (re)generate or verify vectors; needs a C compiler
+nightly.sh (P1-30.1 soak)         check + swap over every CI area → target/nightly/ (docs/rust-rewrite/soak.md)
 ```
 
 Areas (60): `bmem` (S-001), `calldata` (S-002), `decl` (S-003), `signal` (S-004),

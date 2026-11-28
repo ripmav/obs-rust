@@ -264,7 +264,7 @@ Corrections to the earlier plan, verified in the tree: the ring buffer is `libob
 
 ### P1-30 Switch default
 
-- [ ] **P1-30.1 Nightly** with `OBS_ENABLE_RUST=ON` (`CMakePresets.json`).
+- [x] **P1-30.1 Nightly** with `OBS_ENABLE_RUST=ON` (`CMakePresets.json`). — **WP-44:** `.github/workflows/nightly.yml` (daily 00:30 UTC + `workflow_dispatch`) builds the pinned 33.0.1 + D3 patch in both modes — `run.sh check` (OFF, all-C) + `run.sh swap` (ON, the Rust staticlib = the patch's swap set) — over every CI area; matrix `ubuntu-latest` (the only platform the C build supports in CI); one comparable artifact per run (`target/nightly/` → `soak-<run id>`: summary + both build logs). Deviation: no CMake-preset OBS configure (a full OBS configure needs the GL/glib/ffmpeg set CI does not verify — the WP-39/40/41 precedent, ODD L89/L94); the D3 patch's CMake half is verified by the nightly apply step (patch-drift signal). The D3 patch was re-targeted to the 33.0.1 tag (it targeted the fe1ed79 working tree, where the conformance CI job and vectors never run — ODD L94). Soak contract: `docs/rust-rewrite/soak.md` (start 2026-11-28, flip 2026-12-12).
 - [ ] **P1-30.2 Observe** two weeks: crash reports, perf. Done when: no new crash signatures.
 - [ ] **P1-30.3 Flip** default and update docs. Files: `CMakeLists.txt` (37), `CMakePresets.json`.
 
